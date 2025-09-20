@@ -1,0 +1,1 @@
+{"name": "SWSE FoundryVTT System", "version": "1.0.0", "description": "A Star Wars Saga Edition system for Foundry VTT.", "title": "SWSE", "author": "DocflowGM", "url": "https://github.com/docflowGM/foundryvtt-swse", "manifest": "packs/manifest.json", "compatibility": {"foundry": "0.8.6"}}
