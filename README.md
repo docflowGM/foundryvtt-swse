@@ -1,0 +1,2 @@
+# FoundryVTT SWSE
+Initial commit
