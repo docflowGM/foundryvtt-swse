@@ -1,12 +1,12 @@
 {
-  "id": "swse",
+  "name": "swse",
   "title": "Star Wars Saga Edition (SWSE)",
-  "description": "A Star Wars Saga Edition system for Foundry VTT.",
+  "description": "A Foundry VTT system for Star Wars Saga Edition, featuring dynamic actor, droid, and vehicle sheets, modular templates, and robust scripting.",
   "version": "1.0.0",
-  "compatibility": {
-    "minimum": "11",
-    "verified": "13"
-  },
+  "license": "CC BY-SA 4.0",
+  "minimumCoreVersion": "11",
+  "compatibleCoreVersion": "13",
+  "author": "DocflowGM",
   "authors": [
     {
       "name": "DocflowGM",
@@ -16,25 +16,30 @@
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip",
-
   "esmodules": [
     "scripts/swse.js"
+  ],
+  "scripts": [
+    "scripts/races.js",
+    "scripts/swse-actor.js",
+    "scripts/swse-droid.js",
+    "scripts/swse-vehicle.js"
   ],
   "styles": [
     "styles/swse.css"
   ],
   "packs": [
     {
-      "name": "swse-items",
-      "label": "SWSE Items",
-      "path": "packs/items.db",
-      "entity": "Item"
-    },
-    {
       "name": "swse-actors",
       "label": "SWSE Actors",
       "path": "packs/actors.db",
       "entity": "Actor"
+    },
+    {
+      "name": "swse-items",
+      "label": "SWSE Items",
+      "path": "packs/items.db",
+      "entity": "Item"
     }
   ],
   "languages": [
