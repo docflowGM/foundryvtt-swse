@@ -218,7 +218,90 @@ class SWSEActorSheet extends ActorSheet {
     }).render(true);
   }
 }
+activateListeners(html) {
+  super.activateListeners(html);
+  // … your existing binds …
 
+  // Add/custom force powers
+  html.find(".add-forcepower").click(async () => {
+    // Create an embedded Force Power item with default uses
+    await this.actor.createEmbeddedDocuments("Item", [{
+      name: "New Force Power",
+      type: "forcepower",
+      img: "icons/svg/mystery-man.svg",
+      system: {
+        description: "",
+        uses: { current: 1, max: 1 },
+        results: []
+      }
+    }]);
+  });
+
+  // Refresh all uses back to max
+  html.find(".refresh-forcepowers").click(async () => {
+    const updates = this.actor.items
+      .filter(i => i.type === "forcepower")
+      .map(i => ({
+        _id: i.id,
+        "system.uses.current": i.system.uses.max
+      }));
+    await this.actor.updateEmbeddedDocuments("Item", updates);
+  });
+
+  // Use a single force power (decrement + roll)
+  html.find(".roll-forcepower").click(async ev => {
+    const li     = ev.currentTarget.closest(".forcepower-entry");
+    const itemId = li.dataset.itemId;
+    const power  = this.actor.items.get(itemId);
+
+    // Prevent if no uses left
+    if (power.system.uses.current < 1) return ui.notifications.warn("No uses remaining.");
+
+    // Decrement uses
+    await this.actor.updateEmbeddedDocuments("Item", [{
+      _id: itemId,
+      "system.uses.current": power.system.uses.current - 1
+    }]);
+
+    // Roll Use-the-Force check via your existing logic
+    const skill = this.actor.system.skills.use_the_force;
+    const base  = this.actor.getSkillMod(skill);
+    // You can pop your Dialog here, but for brevity we do raw roll:
+    const roll  = new Roll(`1d20 + ${base}`).roll({ async: false });
+    roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      flavor: `<strong>${power.name}</strong>`
+    });
+
+    // Lookup outcome from power.system.results (array of {dc,message})
+    const result = (power.system.results || [])
+      .sort((a,b) => b.dc - a.dc)
+      .find(o => roll.total >= o.dc)?.message
+      || "<em>No special effect.</em>";
+    ChatMessage.create({ content: `<p>${result}</p>` });
+  });
+
+  // Reload a single force power by spending 1 FP
+  html.find(".reload-forcepower").click(async ev => {
+    const li     = ev.currentTarget.closest(".forcepower-entry");
+    const itemId = li.dataset.itemId;
+    const power  = this.actor.items.get(itemId);
+    const fp     = this.actor.system.forcePoints.value || 0;
+    if (fp < 1) return ui.notifications.warn("Not enough Force Points.");
+
+    // Restore one use and deduct 1 FP
+    await this.actor.update({
+      "system.forcePoints.value": fp - 1
+    });
+    await this.actor.updateEmbeddedDocuments("Item", [{
+      _id: itemId,
+      "system.uses.current": Math.min(
+        power.system.uses.current + 1,
+        power.system.uses.max
+      )
+    }]);
+  });
+}
 //──────────────────────────────────────────────────────────────────────────────
 // Helpers
 //──────────────────────────────────────────────────────────────────────────────
