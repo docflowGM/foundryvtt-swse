@@ -58,7 +58,10 @@ Hooks.once("init", () => {
     makeDefault: true,
     label: "SWSE | Item"
   });
-
+Handlebars.registerHelper("getCrewName", id => {
+  const a = game.actors.get(id) || canvas.tokens.get(id)?.actor;
+  return a ? a.name : "";
+});
   /**
    * PRELOAD HANDLEBARS TEMPLATES
    */
