@@ -1,78 +1,38 @@
-// ─────────────────────────────────────────────────────────────
-// Ship Template Definitions
-// ─────────────────────────────────────────────────────────────
+// systems/swse/scripts/swse-vehicle.js
 export const SHIP_TEMPLATES = {
-  starfighter: {
-    label: "Starfighter",
-    hull: 6,
-    shields: 4,
-    handling: 2,
-    notes: "Fast, agile; ideal for dogfights"
-  },
-  freighter: {
-    label: "Freighter",
-    hull: 8,
-    shields: 6,
-    handling: 1,
-    notes: "Heavy cargo runs, slow maneuvers"
-  },
-  capital: {
-    label: "Capital Ship",
-    hull: 12,
-    shields: 10,
-    handling: 0,
-    notes: "Flagship-scale; requires squad support"
-  },
-  shuttle: {
-    label: "Shuttle",
-    hull: 5,
-    shields: 3,
-    handling: 1,
-    notes: "Short-haul transport, lightly armed"
-  },
-  transport: {
-    label: "Transport",
-    hull: 7,
-    shields: 5,
-    handling: 1,
-    notes: "Medium cargo capacity, balanced stats"
-  },
-  corvette: {
-    label: "Corvette",
-    hull: 9,
-    shields: 7,
-    handling: 1,
-    notes: "Escort duties, decent speed and firepower"
-  }
+  starfighter: { label: "Starfighter", hull: 6, shields: 4, handling: 2,
+                 notes: "Fast, agile; dogfights" },
+  freighter:   { label: "Freighter",   hull: 8, shields: 6, handling: 1,
+                 notes: "Cargo runs; slow" },
+  capital:     { label: "Capital Ship",hull:12, shields:10, handling:0,
+                 notes: "Flagship-scale" },
+  shuttle:     { label: "Shuttle",     hull: 5, shields: 3, handling:1,
+                 notes: "Light transport" },
+  transport:   { label: "Transport",   hull: 7, shields: 5, handling:1,
+                 notes: "Medium cargo" },
+  corvette:    { label: "Corvette",    hull: 9, shields: 7, handling:1,
+                 notes: "Escort duties" }
 };
 
-// ─────────────────────────────────────────────────────────────
-// Vehicle Sheet Logic
-// ─────────────────────────────────────────────────────────────
-Hooks.on("renderActorSheet", (app, html, data) => {
-  if (app.actor?.type !== "vehicle") return;
+Hooks.on("renderActorSheet", (app, html) => {
+  if (app.actor.type !== "vehicle") return;
 
-  // Add ship template to actor
-  html.find("#add-ship-template").off("click").on("click", async () => {
-    const dropdown = html.find("#ship-template-dropdown")[0];
-    const selected = dropdown.options[dropdown.selectedIndex];
-    const type = selected.value;
-
+  // Add
+  html.find(".add-ship").off("click").on("click", async () => {
+    const sel = html.find("#ship-template")[0];
+    const type = sel.value;
     if (!type || !SHIP_TEMPLATES[type]) return;
-
     const entry = { type, ...SHIP_TEMPLATES[type] };
-    const templates = duplicate(app.actor.system.shipTemplates || []);
-    templates.push(entry);
-
-    await app.actor.update({ "system.shipTemplates": templates });
+    const list  = duplicate(app.actor.system.shipTemplates || []);
+    list.push(entry);
+    await app.actor.update({ "system.shipTemplates": list });
   });
 
-  // Remove ship template from actor
-  html.find(".remove-ship-template").off("click").on("click", async (ev) => {
-    const index = Number(ev.currentTarget.dataset.index);
-    const templates = duplicate(app.actor.system.shipTemplates || []);
-    templates.splice(index, 1);
-
-    await app.actor.update({ "system.shipTemplates": templates });
+  // Remove
+  html.find(".remove-ship").off("click").on("click", async ev => {
+    const idx = Number(ev.currentTarget.dataset.index);
+    const list = duplicate(app.actor.system.shipTemplates || []);
+    list.splice(idx, 1);
+    await app.actor.update({ "system.shipTemplates": list });
   });
 });
