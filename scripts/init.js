@@ -4,41 +4,64 @@ import { SWSEActor, SWSEActorSheet }    from "./swse-actor.js";
 import { SWSEDroidSheet }               from "./swse-droid.js";
 import { SWSEVehicleSheet }             from "./swse-vehicle.js";
 import { SWSEItemSheet }                from "./swse-item.js";
+import "./swse-force.js";
 import "./swse-levelup.js";
+
 Hooks.once("init", () => {
   console.log("SWSE | Initializing Star Wars Saga Edition (SWSE)");
 
-  // Use our custom Actor class
+  /**
+   * GAME SETTINGS
+   */
+  game.settings.register("swse", "forcePointBonus", {
+    name: "Force Point Bonus",
+    hint: "Extra modifier applied when spending a Force Point on a power.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 2
+  });
+
+  /**
+   * ACTOR CONFIGURATION
+   */
+  // Use our custom Actor class for all actor types
   CONFIG.Actor.documentClass = SWSEActor;
 
-  // Unregister default core sheets
+  // Unregister the default Foundry sheets
   Actors.unregisterSheet("core", ActorSheet);
   Items.unregisterSheet("core", ItemSheet);
 
-  // Register Actor sheets
+  // Register SWSE Character sheet
   Actors.registerSheet("swse", SWSEActorSheet, {
     types: ["character"],
     makeDefault: true,
     label: "SWSE | Character"
   });
+
+  // Register SWSE Droid sheet
   Actors.registerSheet("swse", SWSEDroidSheet, {
-    types: ["character"],
-    makeDefault: false,
+    types: ["droid"],
+    makeDefault: true,
     label: "SWSE | Droid"
   });
+
+  // Register SWSE Vehicle sheet
   Actors.registerSheet("swse", SWSEVehicleSheet, {
     types: ["vehicle"],
     makeDefault: true,
     label: "SWSE | Vehicle"
   });
 
-  // Register Item sheet
+  // Register SWSE Item sheet for all items
   Items.registerSheet("swse", SWSEItemSheet, {
     makeDefault: true,
     label: "SWSE | Item"
   });
 
-  // Preload all Handlebars templates
+  /**
+   * PRELOAD HANDLEBARS TEMPLATES
+   */
   loadTemplates([
     // Actor sheets
     "systems/swse/templates/actor/character-sheet.hbs",
