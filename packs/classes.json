@@ -1,1 +1,3482 @@
-[]
+[]{
+  "name": "Jedi",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 3, 4, 5, 6, 6, 7, 8, 9, 9, 10, 11, 12, 12, 13, 14, 15],
+  "defense_bonus": {
+    "fortitude": [1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11],
+    "reflex":    [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10],
+    "will":      [2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11]
+  },
+  "class_features": {
+    "1": ["Weapon Proficiency (lightsabers)", "Weapon Proficiency (simple weapons)", "Force Sensitivity", "Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"],
+    "11": ["Talent"],
+    "12": ["Bonus Feat"],
+    "13": ["Talent"],
+    "14": ["Bonus Feat"],
+    "15": ["Talent"],
+    "16": ["Bonus Feat"],
+    "17": ["Talent"],
+    "18": ["Bonus Feat"],
+    "19": ["Talent"],
+    "20": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Initiative", "Knowledge (Galactic Lore)", "Perception", "Use the Force"],
+  "talent_trees": ["Lightsaber Combat", "Force Techniques", "Jedi Guardian", "Jedi Consular", "Jedi Sentinel"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Force", "Combat", "Support"]
+}{
+  "name": "Noble",
+  "hit_die": "d6",
+  "base_attack_bonus": [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10],
+  "defense_bonus": {
+    "fortitude": [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9],
+    "reflex":    [2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11],
+    "will":      [2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11]
+  },
+  "class_features": {
+    "1": ["Weapon Proficiency (pistols)", "Weapon Proficiency (simple weapons)", "Linguist", "Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"],
+    "11": ["Talent"],
+    "12": ["Bonus Feat"],
+    "13": ["Talent"],
+    "14": ["Bonus Feat"],
+    "15": ["Talent"],
+    "16": ["Bonus Feat"],
+    "17": ["Talent"],
+    "18": ["Bonus Feat"],
+    "19": ["Talent"],
+    "20": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Deception", "Knowledge (Bureaucracy)", "Persuasion", "Use Computer"],
+  "talent_trees": ["Inspiration", "Leadership", "Connections", "Lineage"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Support", "Social", "Leadership"]
+}{
+  "name": "Scoundrel",
+  "hit_die": "d6",
+  "base_attack_bonus": [0, 1, 2, 3, 3, 4, 5, 6, 6, 7, 8, 9, 9, 10, 11, 12, 12, 13, 14, 15],
+  "defense_bonus": {
+    "fortitude": [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9],
+    "reflex":    [2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11],
+    "will":      [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10]
+  },
+  "class_features": {
+    "1": ["Weapon Proficiency (pistols)", "Weapon Proficiency (simple weapons)", "Point Blank Shot", "Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"],
+    "11": ["Talent"],
+    "12": ["Bonus Feat"],
+    "13": ["Talent"],
+    "14": ["Bonus Feat"],
+    "15": ["Talent"],
+    "16": ["Bonus Feat"],
+    "17": ["Talent"],
+    "18": ["Bonus Feat"],
+    "19": ["Talent"],
+    "20": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Stealth", "Deception", "Persuasion", "Sleight of Hand"],
+  "talent_trees": ["Misfortune", "Fortune", "Spacehound", "Tech Specialist"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Stealth", "Tech", "Luck"]
+}{
+  "name": "Scout",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 3, 4, 5, 6, 6, 7, 8, 9, 9, 10, 11, 12, 12, 13, 14, 15],
+  "defense_bonus": {
+    "fortitude": [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10],
+    "reflex":    [2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11],
+    "will":      [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10]
+  },
+  "class_features": {
+    "1": ["Weapon Proficiency (rifles)", "Weapon Proficiency (simple weapons)", "Shake It Off", "Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"],
+    "11": ["Talent"],
+    "12": ["Bonus Feat"],
+    "13": ["Talent"],
+    "14": ["Bonus Feat"],
+    "15": ["Talent"],
+    "16": ["Bonus Feat"],
+    "17": ["Talent"],
+    "18": ["Bonus Feat"],
+    "19": ["Talent"],
+    "20": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Survival", "Perception", "Stealth", "Knowledge (Life Sciences)"],
+  "talent_trees": ["Camouflage", "Evasion", "Reconnaissance", "Trailblazer"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Rifles"],
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Survival", "Recon", "Mobility"]
+}{
+  "name": "Soldier",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+  "defense_bonus": {
+    "fortitude": [2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11],
+    "reflex":    [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10],
+    "will":      [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9]
+  },
+  "class_features": {
+    "1": ["Weapon Proficiency (simple weapons)", "Weapon Proficiency (rifles)", "Weapon Proficiency (heavy weapons)", "Armor Proficiency (light)", "Armor Proficiency (medium)", "Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"],
+    "11": ["Talent"],
+    "12": ["Bonus Feat"],
+    "13": ["Talent"],
+    "14": ["Bonus Feat"],
+    "15": ["Talent"],
+    "16": ["Bonus Feat"],
+    "17": ["Talent"],
+    "18": ["Bonus Feat"],
+    "19": ["Talent"],
+    "20": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Endurance", "Initiative", "Mechanics", "Survival"],
+  "talent_trees": ["Armor Specialist", "Weapon Specialist", "Battlefield Tactics", "Demolitionist"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium"],
+  "weapon_proficiency": ["Simple", "Rifles", "Heavy Weapons"],
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Combat", "Tactics", "Heavy Weapons"]
+}{
+  "name": "Ace Pilot",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Initiative", "Mechanics", "Perception", "Pilot", "Use Computer"],
+  "talent_trees": ["Ace Pilot Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Pilot": "Trained" },
+    "feats": ["Vehicular Combat"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Pilot", "Vehicle", "Tactics"]
+}{
+  "name": "Bounty Hunter",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Endurance", "Initiative", "Knowledge (Galactic Lore)", "Perception", "Survival"],
+  "talent_trees": ["Bounty Hunter Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Survival": "Trained" },
+    "talents": ["2 talents from Awareness talent tree"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Tracking", "Combat", "Capture"]
+}{
+  "name": "Crime Lord",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 0, 1, 1, 2, 2, 3, 3, 4, 4],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Deception", "Knowledge (Bureaucracy)", "Persuasion", "Use Computer"],
+  "talent_trees": ["Crime Lord Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Deception": "Trained", "Persuasion": "Trained" },
+    "talents": ["1 talent from Fortune, Lineage, or Misfortune talent tree"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Social", "Underworld", "Leadership"]
+}{
+  "name": "Elite Trooper",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 0
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Endurance", "Initiative", "Knowledge (Tactics)", "Mechanics", "Perception", "Survival"],
+  "talent_trees": ["Elite Trooper Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium", "Heavy"],
+  "weapon_proficiency": ["Simple", "Rifles", "Heavy Weapons"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "feats": ["Armor Proficiency (Medium)", "Martial Arts I", "Point-Blank Shot or Flurry"],
+    "talents": ["1 talent from a combat-oriented tree"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Combat", "Heavy Weapons", "Tactics"]
+}{
+  "name": "Force Adept",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Knowledge (Galactic Lore)", "Perception", "Survival"],
+  "talent_trees": ["Force Adept Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity"],
+    "talents": ["3 Force talents"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Force", "Mystic", "Support"]
+}{
+  "name": "Force Disciple",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 0, 1, 1, 2, 2, 3, 3, 4, 4],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Knowledge (Galactic Lore)", "Perception", "Survival"],
+  "talent_trees": ["Force Disciple Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple"],
+  "prerequisites": {
+    "level": 12,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity"],
+    "talents": ["2 Force talents"],
+    "powers": ["Farseeing"],
+    "techniques": ["1 Force Technique"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Force", "Mystic", "Support"]
+}{
+  "name": "Gunslinger",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Initiative", "Perception", "Stealth", "Survival"],
+  "talent_trees": ["Gunslinger Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "feats": ["Point Blank Shot", "Precise Shot", "Quick Draw", "Weapon Proficiency (Pistols)"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Combat", "Ranged", "Style"]
+}{
+  "name": "Jedi Knight",
+  "hit_die": "d8",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Initiative", "Knowledge (Galactic Lore)", "Perception", "Use the Force"],
+  "talent_trees": ["Jedi Knight Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "affiliation": "Jedi"
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Force", "Combat", "Defensive"]
+}{
+  "name": "Jedi Master",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Initiative", "Knowledge (Galactic Lore)", "Perception", "Use the Force"],
+  "talent_trees": ["Jedi Master Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 12,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "techniques": ["1 Force Technique"],
+    "affiliation": "Jedi"
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Force", "Leadership", "Support"]
+}{
+  "name": "Officer",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Initiative", "Knowledge (Tactics)", "Persuasion", "Use Computer"],
+  "talent_trees": ["Officer Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Knowledge (Tactics)": "Trained" },
+    "talents": ["1 talent from Leadership, Commando, or Veteran tree"],
+    "affiliation": "Military organization"
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Leadership", "Combat", "Support"]
+}{
+  "name": "Sith Apprentice",
+  "hit_die": "d8",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Knowledge (Galactic Lore)", "Deception", "Persuasion"],
+  "talent_trees": ["Sith Apprentice Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "alignment": "Dark Side",
+    "affiliation": "Sith"
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Force", "Dark Side", "Combat"]
+}{
+  "name": "Sith Lord",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Knowledge (Galactic Lore)", "Deception", "Persuasion"],
+  "talent_trees": ["Sith Lord Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 12,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "techniques": ["1 Force Technique"],
+    "alignment": "Dark Side",
+    "affiliation": "Sith"
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Force", "Dark Side", "Leadership"]
+}{
+  "name": "Jedi Weapon Master",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Initiative", "Perception", "Survival", "Use the Force"],
+  "talent_trees": ["Jedi Weapon Master Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)", "Weapon Focus (Lightsabers)"],
+    "talents": ["2 talents from Jedi Guardian or Lightsaber Combat trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Combat", "Lightsaber"]
+}{
+  "name": "Sith Marauder",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Initiative", "Perception", "Survival", "Use the Force"],
+  "talent_trees": ["Sith Marauder Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)", "Weapon Focus (Lightsabers)"],
+    "alignment": "Dark Side",
+    "talents": ["2 talents from Sith Apprentice or Lightsaber Combat trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Combat", "Dark Side"]
+}{
+  "name": "Tech Specialist",
+  "hit_die": "d6",
+  "base_attack_bonus": [0, 0, 1, 1, 2, 2, 3, 3, 4, 4],
+  "defense_bonus": {
+    "fortitude": 0,
+    "reflex": 2,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Mechanics", "Use Computer", "Knowledge (Technology)", "Perception"],
+  "talent_trees": ["Tech Specialist Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Mechanics": "Trained", "Use Computer": "Trained" },
+    "feats": ["Tech Specialist", "Skill Focus (Mechanics)"]
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Tech", "Support", "Engineering"]
+}{
+  "name": "Jedi Healer",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Treat Injury", "Use the Force", "Knowledge (Life Sciences)", "Perception"],
+  "talent_trees": ["Jedi Healer Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Treat Injury": "Trained", "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Skill Focus (Treat Injury)"],
+    "talents": ["2 talents from Jedi Consular or Healing trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Healing", "Support"]
+}{
+  "name": "Jedi Shadow",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Stealth", "Use the Force", "Perception", "Knowledge (Galactic Lore)"],
+  "talent_trees": ["Jedi Shadow Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Stealth": "Trained" },
+    "feats": ["Force Sensitivity", "Stealthy"],
+    "talents": ["2 talents from Jedi Sentinel or Stealth trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Stealth", "Espionage"]
+}{
+  "name": "Force Warrior",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Force Warrior Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "talents": ["2 talents from Lightsaber Combat or Force Combat trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Combat", "Aggressive"]
+}{
+  "name": "Corporate Agent",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 0, 1, 1, 2, 2, 3, 3, 4, 4],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Deception", "Knowledge (Bureaucracy)", "Persuasion", "Use Computer"],
+  "talent_trees": ["Corporate Agent Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Persuasion": "Trained", "Knowledge (Bureaucracy)": "Trained" },
+    "feats": ["Skill Focus (Persuasion)", "Connections"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Social", "Corporate", "Influence"]
+}{
+  "name": "Rebel Operative",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Stealth", "Mechanics", "Survival", "Knowledge (Tactics)"],
+  "talent_trees": ["Rebel Operative Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Mechanics": "Trained", "Stealth": "Trained" },
+    "feats": ["Skill Focus (Mechanics)", "Stealthy"]
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Stealth", "Combat", "Sabotage"]
+}{
+  "name": "Imperial Knight",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Imperial Knight Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "talents": ["2 talents from Imperial Knight or Lightsaber Combat trees"],
+    "affiliation": "Imperial Knight Order"
+  },
+  "sourcebook": "Legacy Era Campaign Guide",
+  "tags": ["Force", "Combat", "Imperial"]
+}{
+  "name": "Mandalorian Warrior",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Endurance", "Initiative", "Mechanics", "Survival"],
+  "talent_trees": ["Mandalorian Warrior Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium", "Heavy"],
+  "weapon_proficiency": ["Simple", "Rifles", "Heavy Weapons"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "feats": ["Armor Proficiency (Heavy)", "Weapon Proficiency (Heavy Weapons)"],
+    "skills": { "Endurance": "Trained" },
+    "affiliation": "Mandalorian"
+  },
+  "sourcebook": "Knights of the Old Republic Campaign Guide",
+  "tags": ["Combat", "Heavy Armor", "Mandalorian"]
+}{
+  "name": "Republic Commando",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Initiative", "Mechanics", "Survival", "Knowledge (Tactics)"],
+  "talent_trees": ["Republic Commando Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium", "Heavy"],
+  "weapon_proficiency": ["Simple", "Rifles", "Heavy Weapons"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "feats": ["Armor Proficiency (Heavy)", "Weapon Proficiency (Heavy Weapons)"],
+    "skills": { "Survival": "Trained" },
+    "affiliation": "Republic military"
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Combat", "Tactics", "Squad"]
+}{
+  "name": "Dark Side Devotee",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Knowledge (Galactic Lore)", "Deception", "Persuasion"],
+  "talent_trees": ["Dark Side Devotee Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Dark Side Force Power"],
+    "alignment": "Dark Side"
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Dark Side", "Combat"]
+}{
+  "name": "Jedi Consular",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Use the Force", "Knowledge (Galactic Lore)", "Persuasion", "Perception"],
+  "talent_trees": ["Jedi Consular Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Persuasion": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "talents": ["2 talents from Jedi Consular or Force Power trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Support", "Diplomacy"]
+}{
+  "name": "Jedi Sentinel",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Use the Force", "Stealth", "Perception", "Knowledge (Galactic Lore)"],
+  "talent_trees": ["Jedi Sentinel Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Stealth": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "talents": ["2 talents from Jedi Sentinel or Stealth trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Stealth", "Versatile"]
+}{
+  "name": "Jedi Guardian",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Jedi Guardian Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "talents": ["2 talents from Jedi Guardian or Lightsaber Combat trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Combat", "Aggressive"]
+}{
+  "name": "Jedi Investigator",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Perception", "Knowledge (Galactic Lore)", "Use the Force", "Gather Information"],
+  "talent_trees": ["Jedi Investigator Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Perception": "Trained" },
+    "feats": ["Force Sensitivity", "Skill Focus (Perception)"],
+    "talents": ["2 talents from Jedi Sentinel or Investigation trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Investigation", "Stealth"]
+}{
+  "name": "Jedi Negotiator",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Persuasion", "Knowledge (Galactic Lore)", "Use the Force", "Gather Information"],
+  "talent_trees": ["Jedi Negotiator Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Persuasion": "Trained" },
+    "feats": ["Force Sensitivity", "Skill Focus (Persuasion)"],
+    "talents": ["2 talents from Jedi Consular or Diplomacy trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Diplomacy", "Support"]
+}{
+  "name": "Jedi Watchman",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Stealth", "Perception", "Use the Force", "Knowledge (Galactic Lore)"],
+  "talent_trees": ["Jedi Watchman Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Stealth": "Trained" },
+    "feats": ["Force Sensitivity", "Skill Focus (Stealth)"],
+    "talents": ["2 talents from Jedi Sentinel or Surveillance trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Stealth", "Surveillance"]
+}{
+  "name": "Jedi Ace",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Pilot", "Use the Force", "Mechanics", "Perception"],
+  "talent_trees": ["Jedi Ace Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Pilot": "Trained" },
+    "feats": ["Force Sensitivity", "Vehicular Combat"],
+    "talents": ["2 talents from Jedi Guardian or Ace Pilot trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Pilot", "Combat"]
+}{
+  "name": "Jedi Battlemaster",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Jedi Battlemaster Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 12,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)", "Weapon Focus (Lightsabers)"],
+    "talents": ["3 talents from Lightsaber Combat or Jedi Guardian trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Combat", "Leadership"]
+}{
+  "name": "Jedi Seer",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Use the Force", "Knowledge (Galactic Lore)", "Perception", "Survival"],
+  "talent_trees": ["Jedi Seer Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Knowledge (Galactic Lore)": "Trained" },
+    "feats": ["Force Sensitivity"],
+    "powers": ["Farseeing"],
+    "talents": ["2 talents from Jedi Consular or Sense trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Mystic", "Support"]
+}{
+  "name": "Jedi Weapon Specialist",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Jedi Weapon Specialist Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)", "Weapon Focus (Lightsabers)"],
+    "talents": ["3 talents from Lightsaber Combat or Jedi Guardian trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Combat", "Lightsaber"]
+}{
+  "name": "Jedi Strategist",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Knowledge (Tactics)", "Use the Force", "Perception", "Persuasion"],
+  "talent_trees": ["Jedi Strategist Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Knowledge (Tactics)": "Trained" },
+    "feats": ["Force Sensitivity", "Skill Focus (Knowledge [Tactics])"],
+    "talents": ["2 talents from Jedi Consular or Leadership trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Tactics", "Support"]
+}{
+  "name": "Jedi Guardian Commander",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Initiative", "Knowledge (Tactics)", "Survival"],
+  "talent_trees": ["Jedi Guardian Commander Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Use the Force": "Trained", "Knowledge (Tactics)": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "talents": ["2 talents from Jedi Guardian or Leadership trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Combat", "Leadership"]
+}{
+  "name": "Ace Pilot",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Initiative", "Mechanics", "Perception", "Pilot", "Use Computer"],
+  "talent_trees": ["Ace Pilot Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Pilot": "Trained" },
+    "feats": ["Vehicular Combat"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Pilot", "Vehicle", "Tactics"]
+}{
+  "name": "Assassin",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Stealth", "Perception", "Deception", "Survival"],
+  "talent_trees": ["Assassin Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Stealth": "Trained", "Perception": "Trained" },
+    "feats": ["Stealthy", "Point Blank Shot"],
+    "talents": ["1 talent from Awareness or Stealth tree"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Stealth", "Combat", "Underworld"]
+}{
+  "name": "Beastwarden",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Survival", "Knowledge (Life Sciences)", "Perception", "Treat Injury"],
+  "talent_trees": ["Beastwarden Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Survival": "Trained", "Knowledge (Life Sciences)": "Trained" },
+    "feats": ["Skill Focus (Survival)"],
+    "talents": ["1 talent from Beast Mastery or Survival tree"]
+  },
+  "sourcebook": "The Unknown Regions",
+  "tags": ["Nature", "Survival", "Support"]
+}{
+  "name": "Black Sun Vigo",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Deception", "Persuasion", "Knowledge (Bureaucracy)", "Use Computer"],
+  "talent_trees": ["Black Sun Vigo Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Persuasion": "Trained", "Deception": "Trained" },
+    "feats": ["Skill Focus (Persuasion)", "Connections"],
+    "affiliation": "Black Sun"
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Underworld", "Leadership", "Social"]
+}{
+  "name": "Bounty Hunter",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Endurance", "Initiative", "Knowledge (Galactic Lore)", "Perception", "Survival"],
+  "talent_trees": ["Bounty Hunter Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Survival": "Trained" },
+    "talents": ["2 talents from Awareness talent tree"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Tracking", "Combat", "Capture"]
+}{
+  "name": "Corporate Agent",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 0, 1, 1, 2, 2, 3, 3, 4, 4],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Deception", "Knowledge (Bureaucracy)", "Persuasion", "Use Computer"],
+  "talent_trees": ["Corporate Agent Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Persuasion": "Trained", "Knowledge (Bureaucracy)": "Trained" },
+    "feats": ["Skill Focus (Persuasion)", "Connections"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Social", "Corporate", "Influence"]
+}{
+  "name": "Crime Lord",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 0, 1, 1, 2, 2, 3, 3, 4, 4],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Deception", "Knowledge (Bureaucracy)", "Persuasion", "Use Computer"],
+  "talent_trees": ["Crime Lord Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Deception": "Trained", "Persuasion": "Trained" },
+    "talents": ["1 talent from Fortune, Lineage, or Misfortune tree"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Underworld", "Social", "Leadership"]
+}{
+  "name": "Droid Commander",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Mechanics", "Use Computer", "Knowledge (Technology)", "Perception"],
+  "talent_trees": ["Droid Commander Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Mechanics": "Trained", "Use Computer": "Trained" },
+    "feats": ["Tech Specialist", "Skill Focus (Mechanics)"],
+    "talents": ["1 talent from Droid Interface or Command tree"]
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Tech", "Command", "Support"]
+}{
+  "name": "Elite Trooper",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 0
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Endurance", "Initiative", "Knowledge (Tactics)", "Mechanics", "Perception", "Survival"],
+  "talent_trees": ["Elite Trooper Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium", "Heavy"],
+  "weapon_proficiency": ["Simple", "Rifles", "Heavy Weapons"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "feats": ["Armor Proficiency (Medium)", "Martial Arts I", "Point Blank Shot or Flurry"],
+    "talents": ["1 talent from a combat-oriented tree"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Combat", "Heavy Weapons", "Tactics"]
+}{
+  "name": "Exemplar",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Persuasion", "Knowledge (Galactic Lore)", "Perception", "Use Computer"],
+  "talent_trees": ["Exemplar Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Persuasion": "Trained", "Knowledge (Galactic Lore)": "Trained" },
+    "feats": ["Skill Focus (Persuasion)", "Educated"],
+    "talents": ["1 talent from Lineage or Leadership tree"]
+  },
+  "sourcebook": "Legacy Era Campaign Guide",
+  "tags": ["Social", "Leadership", "Support"]
+}{
+  "name": "Force Adept",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Knowledge (Galactic Lore)", "Perception", "Survival"],
+  "talent_trees": ["Force Adept Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity"],
+    "talents": ["3 Force talents"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Force", "Mystic", "Support"]
+}{
+  "name": "Force Disciple",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 0, 1, 1, 2, 2, 3, 3, 4, 4],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Knowledge (Galactic Lore)", "Perception", "Survival"],
+  "talent_trees": ["Force Disciple Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple"],
+  "prerequisites": {
+    "level": 12,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity"],
+    "talents": ["2 Force talents"],
+    "powers": ["Farseeing"],
+    "techniques": ["1 Force Technique"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Force", "Mystic", "Support"]
+}{
+  "name": "Force Mystic",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Use the Force", "Knowledge (Galactic Lore)", "Perception", "Survival"],
+  "talent_trees": ["Force Mystic Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Knowledge (Galactic Lore)": "Trained" },
+    "feats": ["Force Sensitivity"],
+    "talents": ["2 talents from Force or Mystic trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Mystic", "Support"]
+}{
+  "name": "Force Warrior",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Force Warrior Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "talents": ["2 talents from Lightsaber Combat or Force Combat trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Combat", "Aggressive"]
+}{
+  "name": "Gunslinger",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Initiative", "Perception", "Stealth", "Survival"],
+  "talent_trees": ["Gunslinger Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "feats": ["Point Blank Shot", "Precise Shot", "Quick Draw", "Weapon Proficiency (Pistols)"]
+  },
+  "sourcebook": "Saga Edition Core Rulebook",
+  "tags": ["Combat", "Ranged", "Style"]
+}{
+  "name": "Imperial Advisor",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 0, 1, 1, 2, 2, 3, 3, 4, 4],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Knowledge (Bureaucracy)", "Persuasion", "Use Computer", "Deception"],
+  "talent_trees": ["Imperial Advisor Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Persuasion": "Trained", "Knowledge (Bureaucracy)": "Trained" },
+    "feats": ["Skill Focus (Persuasion)"],
+    "affiliation": "Galactic Empire"
+  },
+  "sourcebook": "Legacy Era Campaign Guide",
+  "tags": ["Imperial", "Social", "Support"]
+}{
+  "name": "Imperial Inquisitor",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Use the Force", "Perception", "Stealth", "Knowledge (Galactic Lore)"],
+  "talent_trees": ["Imperial Inquisitor Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Stealth": "Trained" },
+    "feats": ["Force Sensitivity", "Stealthy"],
+    "alignment": "Dark Side",
+    "affiliation": "Galactic Empire"
+  },
+  "sourcebook": "Legacy Era Campaign Guide",
+  "tags": ["Force", "Imperial", "Stealth"]
+}{
+  "name": "Jedi Archivist",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 0, 1, 1, 2, 2, 3, 3, 4, 4],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Knowledge (Galactic Lore)", "Use the Force", "Perception", "Use Computer"],
+  "talent_trees": ["Jedi Archivist Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Knowledge (Galactic Lore)": "Trained" },
+    "feats": ["Force Sensitivity", "Skill Focus (Knowledge [Galactic Lore])"],
+    "talents": ["2 talents from Jedi Consular or Lore trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Lore", "Support"]
+}{
+  "name": "Jedi Diplomat",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Persuasion", "Knowledge (Galactic Lore)", "Use the Force", "Gather Information"],
+  "talent_trees": ["Jedi Diplomat Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Persuasion": "Trained", "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Skill Focus (Persuasion)"],
+    "talents": ["2 talents from Jedi Consular or Diplomacy trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Diplomacy", "Support"]
+}{
+  "name": "Jedi Instructor",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Knowledge (Galactic Lore)", "Persuasion", "Use the Force", "Gather Information"],
+  "talent_trees": ["Jedi Instructor Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Knowledge (Galactic Lore)": "Trained" },
+    "feats": ["Force Sensitivity", "Skill Focus (Knowledge [Galactic Lore])"],
+    "talents": ["2 talents from Jedi Consular or Teaching trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Education", "Support"]
+}{
+  "name": "Jedi Negotiator",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Persuasion", "Knowledge (Galactic Lore)", "Use the Force", "Gather Information"],
+  "talent_trees": ["Jedi Negotiator Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Persuasion": "Trained" },
+    "feats": ["Force Sensitivity", "Skill Focus (Persuasion)"],
+    "talents": ["2 talents from Jedi Consular or Diplomacy trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Diplomacy", "Support"]
+}{
+  "name": "Jedi Seer",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Use the Force", "Knowledge (Galactic Lore)", "Perception", "Survival"],
+  "talent_trees": ["Jedi Seer Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Knowledge (Galactic Lore)": "Trained" },
+    "feats": ["Force Sensitivity"],
+    "powers": ["Farseeing"],
+    "talents": ["2 talents from Jedi Consular or Sense trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Mystic", "Support"]
+}{
+  "name": "Jedi Strategist",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Knowledge (Tactics)", "Use the Force", "Perception", "Persuasion"],
+  "talent_trees": ["Jedi Strategist Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Knowledge (Tactics)": "Trained" },
+    "feats": ["Force Sensitivity", "Skill Focus (Knowledge [Tactics])"],
+    "talents": ["2 talents from Jedi Consular or Leadership trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Tactics", "Support"]
+}{
+  "name": "Jedi Temple Guard",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Jedi Temple Guard Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Use the Force": "Trained", "Perception": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "talents": ["2 talents from Jedi Guardian or Defensive trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Defense", "Combat"]
+}{
+  "name": "Jedi Watchman",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Stealth", "Perception", "Use the Force", "Knowledge (Galactic Lore)"],
+  "talent_trees": ["Jedi Watchman Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Stealth": "Trained" },
+    "feats": ["Force Sensitivity", "Skill Focus (Stealth)"],
+    "talents": ["2 talents from Jedi Sentinel or Surveillance trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Stealth", "Surveillance"]
+}{
+  "name": "Mandalorian Commander",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Endurance", "Initiative", "Knowledge (Tactics)", "Survival"],
+  "talent_trees": ["Mandalorian Commander Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium", "Heavy"],
+  "weapon_proficiency": ["Simple", "Rifles", "Heavy Weapons"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Knowledge (Tactics)": "Trained" },
+    "feats": ["Armor Proficiency (Heavy)", "Weapon Proficiency (Heavy Weapons)"],
+    "talents": ["2 talents from Mandalorian or Leadership trees"],
+    "affiliation": "Mandalorian"
+  },
+  "sourcebook": "Knights of the Old Republic Campaign Guide",
+  "tags": ["Combat", "Leadership", "Mandalorian"]
+}{
+  "name": "Mandalorian Protector",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Endurance", "Initiative", "Mechanics", "Survival"],
+  "talent_trees": ["Mandalorian Protector Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium", "Heavy"],
+  "weapon_proficiency": ["Simple", "Rifles", "Heavy Weapons"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Endurance": "Trained" },
+    "feats": ["Armor Proficiency (Heavy)", "Weapon Proficiency (Heavy Weapons)"],
+    "talents": ["2 talents from Mandalorian or Defensive trees"],
+    "affiliation": "Mandalorian"
+  },
+  "sourcebook": "Knights of the Old Republic Campaign Guide",
+  "tags": ["Combat", "Defense", "Mandalorian"]
+}{
+  "name": "Pathfinder",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Survival", "Perception", "Stealth", "Knowledge (Galactic Lore)"],
+  "talent_trees": ["Pathfinder Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Survival": "Trained", "Stealth": "Trained" },
+    "feats": ["Skill Focus (Survival)", "Stealthy"],
+    "talents": ["1 talent from Scout or Survival tree"]
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Recon", "Survival", "Stealth"]
+}{
+  "name": "Rebel Commander",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Knowledge (Tactics)", "Persuasion", "Survival", "Initiative"],
+  "talent_trees": ["Rebel Commander Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium"],
+  "weapon_proficiency": ["Simple", "Rifles", "Heavy Weapons"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Knowledge (Tactics)": "Trained", "Persuasion": "Trained" },
+    "feats": ["Skill Focus (Knowledge [Tactics])", "Leadership"],
+    "affiliation": "Rebel Alliance"
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Leadership", "Combat", "Rebel"]
+}{
+  "name": "Rebel Leader",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Persuasion", "Knowledge (Tactics)", "Use Computer", "Perception"],
+  "talent_trees": ["Rebel Leader Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Persuasion": "Trained", "Knowledge (Tactics)": "Trained" },
+    "feats": ["Skill Focus (Persuasion)", "Leadership"],
+    "affiliation": "Rebel Alliance"
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Social", "Leadership", "Rebel"]
+}{
+  "name": "Rebel Saboteur",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Mechanics", "Stealth", "Survival", "Knowledge (Tactics)"],
+  "talent_trees": ["Rebel Saboteur Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Mechanics": "Trained", "Stealth": "Trained" },
+    "feats": ["Skill Focus (Mechanics)", "Stealthy"],
+    "affiliation": "Rebel Alliance"
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Stealth", "Sabotage", "Rebel"]
+}{
+  "name": "Republic General",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Knowledge (Tactics)", "Persuasion", "Survival", "Initiative"],
+  "talent_trees": ["Republic General Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium", "Heavy"],
+  "weapon_proficiency": ["Simple", "Rifles", "Heavy Weapons"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Knowledge (Tactics)": "Trained", "Persuasion": "Trained" },
+    "feats": ["Skill Focus (Knowledge [Tactics])", "Leadership"],
+    "affiliation": "Republic military"
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Combat", "Leadership", "Republic"]
+}{
+  "name": "Republic Officer",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Knowledge (Tactics)", "Persuasion", "Use Computer", "Perception"],
+  "talent_trees": ["Republic Officer Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium"],
+  "weapon_proficiency": ["Simple", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Knowledge (Tactics)": "Trained", "Persuasion": "Trained" },
+    "feats": ["Skill Focus (Persuasion)", "Leadership"],
+    "affiliation": "Republic military"
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Support", "Leadership", "Republic"]
+}{
+  "name": "Republic Tactician",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Knowledge (Tactics)", "Persuasion", "Use Computer", "Perception"],
+  "talent_trees": ["Republic Tactician Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium"],
+  "weapon_proficiency": ["Simple", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Knowledge (Tactics)": "Trained", "Persuasion": "Trained" },
+    "feats": ["Skill Focus (Knowledge [Tactics])", "Leadership"],
+    "affiliation": "Republic military"
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Support", "Tactics", "Republic"]
+}{
+  "name": "Sith Alchemist",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Knowledge (Life Sciences)", "Mechanics", "Use the Force", "Perception"],
+  "talent_trees": ["Sith Alchemist Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained", "Knowledge (Life Sciences)": "Trained" },
+    "feats": ["Force Sensitivity", "Skill Focus (Knowledge [Life Sciences])"],
+    "alignment": "Dark Side",
+    "talents": ["2 talents from Sith or Alchemy trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Dark Side", "Crafting"]
+}{
+  "name": "Sith Ravager",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Sith Ravager Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "alignment": "Dark Side",
+    "talents": ["2 talents from Sith or Dark Side Combat trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Dark Side", "Aggressive"]
+}{
+  "name": "Sith Warrior",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Use the Force", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Sith Warrior Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity", "Weapon Proficiency (Lightsabers)"],
+    "alignment": "Dark Side",
+    "talents": ["2 talents from Sith or Lightsaber Combat trees"]
+  },
+  "sourcebook": "Jedi Academy Training Manual",
+  "tags": ["Force", "Dark Side", "Combat"]
+}{
+  "name": "Underworld Boss",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Deception", "Persuasion", "Knowledge (Bureaucracy)", "Use Computer"],
+  "talent_trees": ["Underworld Boss Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Persuasion": "Trained", "Deception": "Trained" },
+    "feats": ["Skill Focus (Persuasion)", "Connections"],
+    "talents": ["1 talent from Lineage or Misfortune tree"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Underworld", "Social", "Leadership"]
+}{
+  "name": "Charlatan",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Deception", "Persuasion", "Gather Information", "Use Computer"],
+  "talent_trees": ["Charlatan Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Deception": "Trained", "Persuasion": "Trained" },
+    "feats": ["Skill Focus (Deception)", "Skill Focus (Persuasion)"],
+    "talents": ["1 talent from Misfortune or Lineage tree"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Social", "Underworld", "Deception"]
+}{
+  "name": "Enforcer",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Endurance", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Enforcer Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium"],
+  "weapon_proficiency": ["Simple", "Rifles", "Heavy Weapons"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "feats": ["Martial Arts I", "Power Attack"],
+    "talents": ["1 talent from Brawler or Combat tree"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Combat", "Brawler", "Underworld"]
+}{
+  "name": "Galactic Senator",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 0, 1, 1, 2, 2, 3, 3, 4, 4],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Persuasion", "Knowledge (Bureaucracy)", "Gather Information", "Use Computer"],
+  "talent_trees": ["Galactic Senator Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Persuasion": "Trained", "Knowledge (Bureaucracy)": "Trained" },
+    "feats": ["Skill Focus (Persuasion)", "Connections"],
+    "affiliation": "Galactic Republic or Senate"
+  },
+  "sourcebook": "Rebellion Era Campaign Guide",
+  "tags": ["Social", "Political", "Support"]
+}{
+  "name": "Gladiator",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 0
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Endurance", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Gladiator Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium"],
+  "weapon_proficiency": ["Simple", "Rifles", "Heavy Weapons"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "feats": ["Martial Arts I", "Weapon Focus (Melee Weapons)"],
+    "talents": ["1 talent from Brawler or Melee Combat tree"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Combat", "Melee", "Arena"]
+}{
+  "name": "Gray Jedi",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Use the Force", "Knowledge (Galactic Lore)", "Perception", "Survival"],
+  "talent_trees": ["Gray Jedi Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Lightsabers"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Use the Force": "Trained" },
+    "feats": ["Force Sensitivity"],
+    "talents": ["2 talents from Jedi and Sith trees"],
+    "alignment": "Any (must not be fully Light or Dark)"
+  },
+  "sourcebook": "Fan-supplement (community consensus)",
+  "tags": ["Force", "Neutral", "Mystic"]
+}{
+  "name": "Improviser",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Mechanics", "Use Computer", "Survival", "Perception"],
+  "talent_trees": ["Improviser Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Mechanics": "Trained", "Survival": "Trained" },
+    "feats": ["Tech Specialist", "Skill Focus (Mechanics)"],
+    "talents": ["1 talent from Jury-Rig or Survival tree"]
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Tech", "Survival", "Support"]
+}{
+  "name": "Independent Droid",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Mechanics", "Use Computer", "Perception", "Survival"],
+  "talent_trees": ["Independent Droid Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": [],
+  "weapon_proficiency": ["Simple", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "species": "Droid",
+    "skills": { "Use Computer": "Trained", "Mechanics": "Trained" },
+    "feats": ["Skill Focus (Use Computer)", "Tech Specialist"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Droid", "Tech", "Autonomy"]
+}{
+  "name": "Martial Arts Master",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Endurance", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Martial Arts Master Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "feats": ["Martial Arts I", "Martial Arts II", "Martial Arts III"],
+    "talents": ["2 talents from Brawler or Unarmed Combat tree"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Combat", "Unarmed", "Style"]
+}{
+  "name": "Infiltrator",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Stealth", "Deception", "Perception", "Use Computer"],
+  "talent_trees": ["Infiltrator Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Stealth": "Trained", "Deception": "Trained" },
+    "feats": ["Stealthy", "Skill Focus (Deception)"],
+    "talents": ["1 talent from Stealth or Surveillance tree"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Stealth", "Espionage", "Undercover"]
+}{
+  "name": "Master Privateer",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Pilot", "Mechanics", "Use Computer", "Perception"],
+  "talent_trees": ["Master Privateer Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Pilot": "Trained", "Mechanics": "Trained" },
+    "feats": ["Vehicular Combat", "Skill Focus (Pilot)"],
+    "talents": ["1 talent from Privateer or Ace Pilot tree"]
+  },
+  "sourcebook": "Rebellion Era Campaign Guide",
+  "tags": ["Pilot", "Tech", "Privateer"]
+}{
+  "name": "Medic",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Treat Injury", "Survival", "Knowledge (Life Sciences)", "Perception"],
+  "talent_trees": ["Medic Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Treat Injury": "Trained", "Knowledge (Life Sciences)": "Trained" },
+    "feats": ["Skill Focus (Treat Injury)", "Medical Expert"],
+    "talents": ["1 talent from Medicine or Support tree"]
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Support", "Healing", "Survival"]
+}{
+  "name": "Melee Duelist",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 2,
+    "will": 0
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Initiative", "Perception", "Survival", "Endurance"],
+  "talent_trees": ["Melee Duelist Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Melee Weapons"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "feats": ["Weapon Focus (Melee Weapons)", "Duelist"],
+    "talents": ["2 talents from Melee Combat or Brawler tree"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Combat", "Melee", "Style"]
+}{
+  "name": "Military Engineer",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Mechanics", "Use Computer", "Knowledge (Technology)", "Perception"],
+  "talent_trees": ["Military Engineer Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Mechanics": "Trained", "Knowledge (Technology)": "Trained" },
+    "feats": ["Tech Specialist", "Skill Focus (Mechanics)"],
+    "affiliation": "Republic or Imperial military"
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Tech", "Support", "Military"]
+}{
+  "name": "Officer",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Knowledge (Tactics)", "Persuasion", "Use Computer", "Perception"],
+  "talent_trees": ["Officer Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium"],
+  "weapon_proficiency": ["Simple", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Knowledge (Tactics)": "Trained", "Persuasion": "Trained" },
+    "feats": ["Skill Focus (Persuasion)", "Leadership"],
+    "affiliation": "Any military organization"
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Leadership", "Support", "Military"]
+}{
+  "name": "Outlaw",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Stealth", "Deception", "Survival", "Perception"],
+  "talent_trees": ["Outlaw Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Stealth": "Trained", "Survival": "Trained" },
+    "feats": ["Stealthy", "Skill Focus (Survival)"],
+    "talents": ["1 talent from Awareness or Misfortune tree"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Underworld", "Stealth", "Survival"]
+}{
+  "name": "Shaper",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 2
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Knowledge (Life Sciences)", "Mechanics", "Use Computer", "Perception"],
+  "talent_trees": ["Shaper Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Knowledge (Life Sciences)": "Trained", "Mechanics": "Trained" },
+    "feats": ["Skill Focus (Knowledge [Life Sciences])", "Tech Specialist"],
+    "talents": ["1 talent from Bioengineering or Tech tree"]
+  },
+  "sourcebook": "Legacy Era Campaign Guide",
+  "tags": ["Tech", "Bioengineering", "Support"]
+}{
+  "name": "Enforcer",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Endurance", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Enforcer Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium"],
+  "weapon_proficiency": ["Simple", "Rifles", "Heavy Weapons"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "feats": ["Martial Arts I", "Power Attack"],
+    "talents": ["1 talent from Brawler or Combat tree"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Combat", "Brawler", "Underworld"]
+}{
+  "name": "Gunslinger",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Initiative", "Perception", "Stealth", "Survival"],
+  "talent_trees": ["Gunslinger Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Pistols", "Rifles"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "feats": ["Point Blank Shot", "Precise Shot"],
+    "talents": ["2 talents from Pistoleer or Ranged Combat tree"]
+  },
+  "sourcebook": "Scum and Villainy",
+  "tags": ["Combat", "Ranged", "Style"]
+}{
+  "name": "Saboteur",
+  "hit_die": "d8",
+  "base_attack_bonus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "defense_bonus": {
+    "fortitude": 1,
+    "reflex": 2,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "6 + Int modifier",
+  "class_skills": ["Mechanics", "Stealth", "Survival", "Knowledge (Tactics)"],
+  "talent_trees": ["Saboteur Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light"],
+  "weapon_proficiency": ["Simple", "Rifles"],
+  "prerequisites": {
+    "level": 7,
+    "skills": { "Mechanics": "Trained", "Stealth": "Trained" },
+    "feats": ["Skill Focus (Mechanics)", "Stealthy"],
+    "affiliation": "Rebel Alliance or similar insurgent group"
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Stealth", "Sabotage", "Rebel"]
+}{
+  "name": "Vanguard",
+  "hit_die": "d10",
+  "base_attack_bonus": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "defense_bonus": {
+    "fortitude": 2,
+    "reflex": 1,
+    "will": 1
+  },
+  "levels": {
+    "1": ["Talent"],
+    "2": ["Bonus Feat"],
+    "3": ["Talent"],
+    "4": ["Bonus Feat"],
+    "5": ["Talent"],
+    "6": ["Bonus Feat"],
+    "7": ["Talent"],
+    "8": ["Bonus Feat"],
+    "9": ["Talent"],
+    "10": ["Bonus Feat"]
+  },
+  "skill_points": "4 + Int modifier",
+  "class_skills": ["Endurance", "Initiative", "Perception", "Survival"],
+  "talent_trees": ["Vanguard Talents"],
+  "force_points": "5 + ½ character level (rounded down)",
+  "armor_proficiency": ["Light", "Medium", "Heavy"],
+  "weapon_proficiency": ["Simple", "Rifles", "Heavy Weapons"],
+  "prerequisites": {
+    "base_attack_bonus": 7,
+    "feats": ["Armor Proficiency (Heavy)", "Weapon Focus (Rifles)"],
+    "talents": ["2 talents from Combat or Defensive tree"]
+  },
+  "sourcebook": "Galaxy at War",
+  "tags": ["Combat", "Frontline", "Military"]
+}
