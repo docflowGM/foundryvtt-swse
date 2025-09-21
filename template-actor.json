@@ -1,1 +1,23 @@
-{"template": "actor"}
+import { DROID_TEMPLATES } from "./scripts/swse-droid.js";
+
+class SWSEDroidSheet extends ActorSheet {
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      template: "systems/swse/templates/actor/droid-sheet.hbs",
+      classes: ["swse", "sheet", "droid"],
+      width: 800,
+      height: "auto"
+    });
+  }
+
+  getData() {
+    const data = super.getData();
+    data.DROID_TEMPLATES = DROID_TEMPLATES;
+    return data;
+  }
+}
+
+Actors.registerSheet("swse", SWSEDroidSheet, {
+  types: ["character"],
+  label: "SWSE Droid Sheet"
+});
