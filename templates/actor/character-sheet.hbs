@@ -91,3 +91,12 @@
   <label><input type="checkbox" name="data.gmOptions.featEveryLevel" {{#if data.gmOptions.featEveryLevel}}checked{{/if}}/> Every level gives a feat</label>
   <label><input type="checkbox" name="data.gmOptions.anyClassAnyFeat" {{#if data.gmOptions.anyClassAnyFeat}}checked{{/if}}/> Any class can choose any feat</label>
 </section>
+<form class="{{cssClass}} sheet-actor" autocomplete="off">
+  {{!-- STANDARD CHARACTER FIELDS (name, race, class, level, abilities, feats, etc.) --}}
+  {{!-- … your existing character-sheet markup … --}}
+
+  {{!-- DROID SECTION --}}
+  {{#if (eq system.species "droid")}}
+    {{> actor/partials/droid-section}}
+  {{/if}}
+</form>
