@@ -41,7 +41,18 @@
       </div>
     </div>
   </header>
-
+<h3>Weapons <button class="add-weapon">＋</button></h3>
+{{#each system.weapons as |w idx|}}
+  <div class="list-entry" data-index="{{idx}}">
+    <input  name="system.weapons.{{idx}}.name"
+            type="text" value="{{w.name}}"
+            placeholder="Weapon Name" />
+    <textarea
+      name="system.weapons.{{idx}}.description"
+      placeholder="Description">{{w.description}}</textarea>
+    <button type="button" class="roll-weapon">Attack</button>
+  </div>
+{{/each}}
   {{!-- Tabs Navigation --}}
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item active" data-tab="droid">Droid</a>
