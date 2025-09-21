@@ -1,23 +1,55 @@
-import { DROID_TEMPLATES } from "./scripts/swse-droid.js";
-
-class SWSEDroidSheet extends ActorSheet {
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      template: "systems/swse/templates/actor/droid-sheet.hbs",
-      classes: ["swse", "sheet", "droid"],
-      width: 800,
-      height: "auto"
-    });
-  }
-
-  getData() {
-    const data = super.getData();
-    data.DROID_TEMPLATES = DROID_TEMPLATES;
-    return data;
+{
+  "name": "New Actor",
+  "type": "character",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "race": "custom",
+    "species": "",
+    "subtype": "",
+    "level": 1,
+    "class": "",
+    "abilities": {
+      "str": { "base": 10, "temp": 0 },
+      "dex": { "base": 10, "temp": 0 },
+      "con": { "base": 10, "temp": 0 },
+      "int": { "base": 10, "temp": 0 },
+      "wis": { "base": 10, "temp": 0 },
+      "cha": { "base": 10, "temp": 0 }
+    },
+    "defenses": {
+      "reflex":    { "ability": "dex", "class": 0, "armor": 0 },
+      "fortitude": { "ability": "con", "class": 0, "armor": 0 },
+      "will":      { "ability": "wis", "class": 0, "armor": 0 }
+    },
+    "hp": {
+      "value": 0,
+      "max": 0
+    },
+    "conditionTrack": "normal",
+    "secondWind": {
+      "uses": 0,
+      "healing": 0
+    },
+    "skills": [],
+    "feats": [],
+    "talents": [],
+    "gear": [],
+    "weapons": [],
+    "items": [],
+    "droidTemplates": [],
+    "hull": {
+      "total": 0
+    },
+    "shields": {
+      "total": 0
+    },
+    "handling": {
+      "total": 0
+    },
+    "size": "",
+    "crew": "",
+    "cargo": "",
+    "notes": "",
+    "shipTemplates": []
   }
 }
-
-Actors.registerSheet("swse", SWSEDroidSheet, {
-  types: ["character"],
-  label: "SWSE Droid Sheet"
-});
