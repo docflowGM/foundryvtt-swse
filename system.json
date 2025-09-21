@@ -1,7 +1,7 @@
 {
   "name": "swse",
   "title": "Star Wars Saga Edition (SWSE)",
-  "description": "A Foundry VTT system for Star Wars Saga Edition, featuring modular character, droid, vehicle & force‐power sheets; dialog‐driven attack and Force checks; compendium support for armor, classes, equipment, feats, force powers, talents, and weapons.",
+  "description": "A Foundry VTT system for Star Wars Saga Edition, featuring modular character, droid, vehicle & force‐power sheets; dialog‐driven leveling, attacks, Force checks; compendium support for armor, classes, equipment, feats, force powers, talents, and weapons.",
   "version": "1.0.0",
   "license": "CC BY-SA 4.0",
   "authors": [
@@ -15,6 +15,10 @@
   "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip",
   "minimumCoreVersion": "11",
   "compatibleCoreVersion": "13",
+  "entityTypes": {
+    "Actor": ["character", "droid", "vehicle"],
+    "Item": ["armor", "class", "equipment", "feat", "forcepower", "talent", "weapon"]
+  },
   "esmodules": [
     "scripts/init.js",
     "scripts/races.js",
@@ -23,6 +27,7 @@
     "scripts/swse-vehicle.js",
     "scripts/swse-item.js",
     "scripts/swse-force.js",
+    "scripts/swse-levelup.js",
     "scripts/swse.js"
   ],
   "styles": [
@@ -32,7 +37,7 @@
     {
       "name": "swse-armor",
       "label": "SWSE Armor",
-      "path": "packs/Armor.json",
+      "path": "packs/armor.json",
       "entity": "Item"
     },
     {
