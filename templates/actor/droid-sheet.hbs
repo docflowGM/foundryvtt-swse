@@ -1,9 +1,9 @@
 <form class="{{cssClass}} sheet-droid flexcol" autocomplete="off">
 
-  <!-- Header -->
+  {{!-- ─────────────────────────────────────────────────── Header ── --}}
   <header class="sheet-header flexrow">
     <img class="profile-img" src="{{actor.img}}" title="{{actor.name}}" />
-    <div class="header-fields">
+    <div class="header-fields flexcol">
       <h1 class="char-name">
         <input name="name" type="text" value="{{actor.name}}" placeholder="Droid Designation" />
       </h1>
@@ -24,39 +24,34 @@
     </div>
   </header>
 
-  <!-- Tabs -->
+  {{!-- ─────────────────────────────────────────────── Tabs Navigation ── --}}
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item active" data-tab="droid">Droid</a>
-    <a class="item" data-tab="stats">Stats</a>
-    <a class="item" data-tab="inventory">Inventory</a>
+    <a class="item active"    data-tab="droid">Droid</a>
+    <a class="item"           data-tab="stats">Stats</a>
+    <a class="item"           data-tab="inventory">Inventory</a>
   </nav>
 
-  <!-- Body -->
-  <section class="sheet-body">
+  {{!-- ─────────────────────────────────────────────────── Body ── --}}
+  <section class="sheet-body flexcol">
 
-    <!-- Droid Tab -->
+    {{!-- Droid Configuration Tab --}}
     <div class="tab active" data-tab="droid">
-      <h2>Droid Template Configuration</h2>
-
+      <h2>Droid Templates</h2>
       <div class="form-group inline-group">
-        <label for="droid-template-dropdown">Droid Type:</label>
+        <label for="droid-template-dropdown">Template</label>
         <select id="droid-template-dropdown">
-          <option value="">Select Droid Template</option>
+          <option value="">— Select Droid Type —</option>
           {{#each DROID_TEMPLATES as |tpl key|}}
             <option value="{{key}}">{{tpl.label}}</option>
           {{/each}}
         </select>
-        <button type="button" id="add-droid-template">Add</button>
+        <button type="button" id="add-droid-template" class="button">Add</button>
       </div>
 
-      <table id="droid-table" class="droid-table" style="margin-top:1em;">
+      <table class="droid-table">
         <thead>
           <tr>
-            <th>Type</th>
-            <th>Subtype</th>
-            <th>Bonuses</th>
-            <th>Notes</th>
-            <th></th>
+            <th>Type</th><th>Subtype</th><th>Bonuses</th><th>Notes</th><th></th>
           </tr>
         </thead>
         <tbody>
@@ -66,25 +61,33 @@
               <td>{{dt.subtype}}</td>
               <td>{{dt.bonuses}}</td>
               <td>{{dt.notes}}</td>
-              <td><button type="button" class="remove-droid-template" data-index="{{idx}}">🗑️</button></td>
+              <td>
+                <button type="button"
+                        class="remove-droid-template"
+                        data-index="{{idx}}">🗑️</button>
+              </td>
             </tr>
           {{/each}}
         </tbody>
       </table>
     </div>
 
-    <!-- Stats Tab -->
+    {{!-- Stats Tab --}}
     <div class="tab" data-tab="stats">
       <h2>Ability Scores</h2>
       <table class="ability-table">
         <thead>
-          <tr><th>Ability</th><th>Base</th><th>Mod</th></tr>
+          <tr><th>Ability</th><th>Base</th><th>Temp</th><th>Total</th><th>Mod</th></tr>
         </thead>
         <tbody>
           {{#each system.abilities as |ab key|}}
             <tr>
               <td>{{key}}</td>
-              <td><input name="system.abilities.{{key}}.base" type="number" value="{{ab.base}}" /></td>
+              <td><input name="system.abilities.{{key}}.base"
+                         type="number" value="{{ab.base}}" /></td>
+              <td><input name="system.abilities.{{key}}.temp"
+                         type="number" value="{{ab.temp}}" /></td>
+              <td>{{ab.total}}</td>
               <td>{{ab.mod}}</td>
             </tr>
           {{/each}}
@@ -92,10 +95,60 @@
       </table>
     </div>
 
-    <!-- Inventory Tab -->
+    {{!-- Inventory Tab --}}
     <div class="tab" data-tab="inventory">
-      <h2>Gear & Weapons</h2>
-      <p>Coming soon: integrated modules, vocabulator, restraining bolt, etc.</p>
+      <h2>Inventory & Modules</h2>
+      <div class="form-group">
+        <h3>Feats <button class="add-feat">＋</button></h3>
+        {{#each system.feats as |feat idx|}}
+          <div class="list-entry" data-index="{{idx}}">
+            <input name="system.feats.{{idx}}.name"
+                   type="text" value="{{feat.name}}"
+                   placeholder="Feat Name" />
+            <textarea name="system.feats.{{idx}}.description"
+                      placeholder="Description">{{feat.description}}</textarea>
+          </div>
+        {{/each}}
+      </div>
+
+      <div class="form-group">
+        <h3>Talents <button class="add-talent">＋</button></h3>
+        {{#each system.talents as |tal idx|}}
+          <div class="list-entry" data-index="{{idx}}">
+            <input name="system.talents.{{idx}}.name"
+                   type="text" value="{{tal.name}}"
+                   placeholder="Talent Name" />
+            <textarea name="system.talents.{{idx}}.description"
+                      placeholder="Description">{{tal.description}}</textarea>
+          </div>
+        {{/each}}
+      </div>
+
+      <div class="form-group">
+        <h3>Gear <button class="add-gear">＋</button></h3>
+        {{#each system.gear as |g idx|}}
+          <div class="list-entry" data-index="{{idx}}">
+            <input name="system.gear.{{idx}}.name"
+                   type="text" value="{{g.name}}"
+                   placeholder="Item Name" />
+            <textarea name="system.gear.{{idx}}.description"
+                      placeholder="Description">{{g.description}}</textarea>
+          </div>
+        {{/each}}
+      </div>
+
+      <div class="form-group">
+        <h3>Weapons <button class="add-weapon">＋</button></h3>
+        {{#each system.weapons as |w idx|}}
+          <div class="list-entry" data-index="{{idx}}">
+            <input name="system.weapons.{{idx}}.name"
+                   type="text" value="{{w.name}}"
+                   placeholder="Weapon Name" />
+            <textarea name="system.weapons.{{idx}}.description"
+                      placeholder="Description">{{w.description}}</textarea>
+          </div>
+        {{/each}}
+      </div>
     </div>
 
   </section>
