@@ -1,7 +1,21 @@
+//──────────────────────────────────────────────────────────────────────────────
+// Imports & Constants
+//──────────────────────────────────────────────────────────────────────────────
 import { SWSE_RACES } from "./races.js";
-import "./helpers.js";
 
-Hooks.once("init", function() {
+const CONDITION_PENALTIES = {
+  normal:   0,
+  "-1":    -1,
+  "-2":    -2,
+  "-5":    -5,
+  "-10": -10,
+  helpless: -100
+};
+
+//──────────────────────────────────────────────────────────────────────────────
+// Initialization Hook
+//──────────────────────────────────────────────────────────────────────────────
+Hooks.once("init", () => {
   CONFIG.Actor.documentClass = SWSEActor;
   Actors.registerSheet("swse", SWSEActorSheet, {
     types: ["character"],
@@ -9,46 +23,52 @@ Hooks.once("init", function() {
   });
 });
 
-const CONDITION_PENALTIES = {
-  normal: 0,
-  "-1": -1,
-  "-2": -2,
-  "-5": -5,
-  "-10": -10,
-  helpless: -100 // disables rolls
-};
-
+//──────────────────────────────────────────────────────────────────────────────
+// Actor Class
+//──────────────────────────────────────────────────────────────────────────────
 class SWSEActor extends Actor {
   prepareData() {
     super.prepareData();
+    this._applyRacialAbilities();
+    this._applyConditionPenalty();
+    this._prepareDefenses();
+  }
 
-    //── Abilities & Racial Bonuses ──────────────────────────────────────────
-    const raceKey = this.system.race || "custom";
-    const raceBonuses = SWSE_RACES[raceKey]?.bonuses || {};
-    for (const [abbr, abObj] of Object.entries(this.system.abilities)) {
-      abObj.base = Math.max(0, abObj.base);
-      abObj.racial = raceBonuses[abbr] || 0;
-      abObj.total = abObj.base + abObj.racial + (abObj.temp || 0);
-      abObj.mod = Math.floor((abObj.total - 10) / 2);
+  _applyRacialAbilities() {
+    const raceKey      = this.system.race || "custom";
+    const raceBonuses  = SWSE_RACES[raceKey]?.bonuses || {};
+
+    for (const [abbr, ability] of Object.entries(this.system.abilities)) {
+      ability.base    = Math.max(0, ability.base);
+      ability.racial  = raceBonuses[abbr] || 0;
+      ability.total   = ability.base + ability.racial + (ability.temp || 0);
+      ability.mod     = Math.floor((ability.total - 10) / 2);
     }
+  }
 
-    //── Condition Penalty ────────────────────────────────────────────────────
-    const condKey = this.system.conditionTrack || "normal";
-    const condPenalty = CONDITION_PENALTIES[condKey] || 0;
+  _applyConditionPenalty() {
+    this.conditionPenalty = 
+      CONDITION_PENALTIES[this.system.conditionTrack] || 0;
+  }
 
-    //── Defenses ─────────────────────────────────────────────────────────────
-    for (const [defKey, defObj] of Object.entries(this.system.defenses)) {
-      defObj.level = this.system.level;
-      defObj.abilityValue = this.system.abilities[defObj.ability]?.mod || 0;
-      defObj.total =
-        defObj.level +
-        (defObj.class || 0) +
-        defObj.abilityValue +
-        (defObj.armor || 0) +
-        (defObj.armoredDefense || 0) +
-        (defObj.armorMastery || 0) +
-        (defObj.modifier || 0) +
-        (condKey !== "helpless" ? condPenalty : 0);
+  _prepareDefenses() {
+    const { level, defenses } = this.system;
+    const penalty = this.conditionPenalty;
+
+    for (const def of Object.values(defenses)) {
+      const abilMod = def.ability 
+        ? this.system.abilities[def.ability]?.mod || 0 
+        : 0;
+
+      def.level = level;
+      def.total = level
+        + (def.class          || 0)
+        + abilMod
+        + (def.armor          || 0)
+        + (def.armoredDefense || 0)
+        + (def.armorMastery   || 0)
+        + (def.modifier       || 0)
+        + (this.system.conditionTrack === "helpless" ? 0 : penalty);
     }
   }
 
@@ -57,22 +77,26 @@ class SWSEActor extends Actor {
   }
 
   getConditionPenalty() {
-    const condKey = this.system.conditionTrack || "normal";
-    return CONDITION_PENALTIES[condKey] || 0;
+    return CONDITION_PENALTIES[this.system.conditionTrack] || 0;
   }
 
   getSkillMod(skill) {
     if (this.system.conditionTrack === "helpless") return "N/A";
 
-    const halfLevel = this.getHalfLevel();
-    const abilityMod = this.system.abilities[skill.ability]?.mod || 0;
-    let mod = skill.value + abilityMod + halfLevel;
+    let mod = skill.value
+      + (this.system.abilities[skill.ability]?.mod || 0)
+      + this.getHalfLevel();
+
     if (skill.trained) mod += 5;
-    if (skill.trained && skill.focus) mod += 5;
+    if (skill.focus)   mod += 5;
+
     return mod + this.getConditionPenalty();
   }
 }
 
+//──────────────────────────────────────────────────────────────────────────────
+// Sheet Class
+//──────────────────────────────────────────────────────────────────────────────
 class SWSEActorSheet extends ActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
@@ -91,28 +115,32 @@ class SWSEActorSheet extends ActorSheet {
 
   activateListeners(html) {
     super.activateListeners(html);
+    this._bindListButtons(html);
+    this._bindSecondWind(html);
+  }
 
-    // Add a blank entry to feats, talents, gear, or weapons
-    for (const selector of [".add-feat", ".add-talent", ".add-gear", ".add-weapon"]) {
-      html.find(selector).click(() => {
-        const key = selector.replace(".add-", "");
-        const list  = duplicate(this.actor.system[key] || []);
+  _bindListButtons(html) {
+    const selectors = [".add-feat", ".add-talent", ".add-gear", ".add-weapon"];
+    for (const sel of selectors) {
+      html.find(sel).click(async () => {
+        const key  = sel.replace(".add-", "");
+        const list = duplicate(this.actor.system[key] || []);
         list.push({ name: "", description: "" });
-        this.actor.update({ [`system.${key}`]: list });
+        await this.actor.update({ [`system.${key}`]: list });
       });
     }
+  }
 
-    // Second Wind button
-    html.find(".apply-second-wind").click(() => {
-      const healing = Number(this.actor.system.secondWind.healing) || 0;
-      const uses    = this.actor.system.secondWind.uses   || 0;
+  _bindSecondWind(html) {
+    html.find(".apply-second-wind").click(async () => {
+      const { healing = 0, uses = 0 } = this.actor.system.secondWind;
       if (healing > 0 && uses > 0) {
         const newHP = Math.min(
           this.actor.system.hp.value + healing,
           this.actor.system.hp.max
         );
-        this.actor.update({
-          "system.hp.value": newHP,
+        await this.actor.update({
+          "system.hp.value":         newHP,
           "system.secondWind.uses": uses - 1
         });
       }
@@ -120,17 +148,20 @@ class SWSEActorSheet extends ActorSheet {
   }
 }
 
+//──────────────────────────────────────────────────────────────────────────────
 // Handlebars Helpers
+//──────────────────────────────────────────────────────────────────────────────
 Handlebars.registerHelper("eq", (a, b) => a === b);
-Handlebars.registerHelper("getSkillMod", (skill, abilities, level) => {
-  const halfLevel = Math.floor(level / 2);
-  const abilityMod = abilities[skill.ability]?.mod || 0;
-  let mod = skill.value + abilityMod + halfLevel;
-  if (skill.trained) mod += 5;
-  if (skill.trained && skill.focus) mod += 5;
 
-  const condKey = abilities._sheet.system.conditionTrack;
-  const condPenalty = CONDITION_PENALTIES[condKey] || 0;
-  if (condKey === "helpless") return "N/A";
-  return mod + condPenalty;
-});
+Handlebars.registerHelper(
+  "getSkillMod",
+  (skill, abilities, level, conditionTrack) => {
+    if (conditionTrack === "helpless") return "N/A";
+    let mod = skill.value
+      + (abilities[skill.ability]?.mod || 0)
+      + Math.floor(level / 2);
+    if (skill.trained) mod += 5;
+    if (skill.focus)   mod += 5;
+    return mod + (CONDITION_PENALTIES[conditionTrack] || 0);
+  }
+);
