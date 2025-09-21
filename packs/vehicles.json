@@ -1,67 +1,5 @@
 [
-  {
-    "name": "Vehicles",
-    "speed": null,
-    "ranged": [],
-    "fighting_space": null,
-    "base_attack_bonus": null,
-    "grapple": null,
-    "attack_options": null,
-    "special_actions": null,
-    "ability_scores": {
-      "strength": null,
-      "dexterity": null,
-      "intelligence": null
-    },
-    "skills": {
-      "initiative": null,
-      "mechanics": null,
-      "perception": null,
-      "pilot": null,
-      "use_computer": null
-    },
-    "crew_size": null,
-    "passengers": null,
-    "cargo": null,
-    "consumables": null,
-    "carried_craft": null,
-    "hyperdrive_class": null,
-    "backup_class": null,
-    "cost": null,
-    "source_url": "https://swse.fandom.com/wiki/Vehicles"
-  },
-  {
-    "name": "Difficult Terrain",
-    "speed": null,
-    "ranged": [],
-    "fighting_space": null,
-    "base_attack_bonus": null,
-    "grapple": null,
-    "attack_options": null,
-    "special_actions": null,
-    "ability_scores": {
-      "strength": null,
-      "dexterity": null,
-      "intelligence": null
-    },
-    "skills": {
-      "initiative": null,
-      "mechanics": null,
-      "perception": null,
-      "pilot": null,
-      "use_computer": null
-    },
-    "crew_size": null,
-    "passengers": null,
-    "cargo": null,
-    "consumables": null,
-    "carried_craft": null,
-    "hyperdrive_class": null,
-    "backup_class": null,
-    "cost": null,
-    "source_url": "https://swse.fandom.com/wiki/Difficult_Terrain"
-  },
-  {
+   {
     "name": "74-Z Speeder Bike",
     "speed": null,
     "ranged": [],
@@ -19932,4 +19870,5 @@
     "cost": null,
     "source_url": "https://swse.fandom.com/wiki/XQ2_Space_Platform"
   }
+
 ]
