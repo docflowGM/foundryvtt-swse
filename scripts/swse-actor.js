@@ -28,12 +28,41 @@ Hooks.once("init", () => {
 //──────────────────────────────────────────────────────────────────────────────
 class SWSEActor extends Actor {
   prepareData() {
-  super.prepareData();
-  this._applyRacialAbilities();
-  this._applyConditionPenalty();
-  this._applyArmorData();
-  this._applyDefenses();
-  this._applySpeed();
+    super.prepareData();
+    this._applyRacialAbilities();
+    this._applyConditionPenalty();
+    this._applyArmorData();
+    this._applyDefenses();
+    this._applySpeed();
+    this._calculateBaB();
+    this._replaceDefenseClassBonus();
+    this._syncFreeForcePowers();
+  }
+
+/** Sum the BAB from each class item on the actor */
+  _calculateBaB() {
+    let total = 0;
+    for (const cls of this.items.filter(i => i.type === "class")) {
+      const lvl = cls.system.level || 0;
+      const rec = cls.system.levels?.[lvl] || {};
+      total += rec.bab || 0;
+    }
+    this.system.bab = total;
+  }
+
+  /** For each defense, keep the highest “class” bonus across classes */
+  _replaceDefenseClassBonus() {
+    const defs = this.system.defenses;
+    for (const cls of this.items.filter(i => i.type === "class")) {
+      const lvl = cls.system.level || 0;
+      const rec = cls.system.levels?.[lvl]?.defenses || {};
+      for (const [key, d] of Object.entries(rec)) {
+        if (defs[key] && (d.class || 0) > defs[key].class) {
+          defs[key].class = d.class;
+        }
+      }
+    }
+  }
 }
 
 
