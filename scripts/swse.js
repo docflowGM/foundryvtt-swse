@@ -1,7 +1,11 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports & Constants
 //──────────────────────────────────────────────────────────────────────────────
-import { SWSE_RACES } from "./races.js";
+// systems/swse/swse.js
+import "./scripts/races.js";
+import "./scripts/swse-actor.js";
+import "./scripts/swse-droid.js";
+import "./scripts/swse-vehicle.js";
 
 const CONDITION_PENALTIES = {
   normal:   0,
