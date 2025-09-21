@@ -1,1 +1,111 @@
-{"template": "vehicle"}
+<form class="{{cssClass}} sheet-vehicle flexcol" autocomplete="off">
+
+  {{!-- Header --}}
+  <header class="sheet-header">
+    <img class="profile-img" src="{{actor.img}}" title="{{actor.name}}" />
+    <div class="header-fields">
+      <h1 class="ship-name">
+        <input name="name" type="text" value="{{actor.name}}" placeholder="Ship Name" />
+      </h1>
+      <div class="resources grid grid-3col">
+        <div class="form-group">
+          <label>Hull</label>
+          <input name="system.hull.total" type="number" value="{{system.hull.total}}" />
+        </div>
+        <div class="form-group">
+          <label>Shields</label>
+          <input name="system.shields.total" type="number" value="{{system.shields.total}}" />
+        </div>
+        <div class="form-group">
+          <label>Handling</label>
+          <input name="system.handling.total" type="number" value="{{system.handling.total}}" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {{!-- Tab Navigation --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="description">Description</a>
+    <a class="item" data-tab="vehicle">Vehicle</a>
+    <a class="item" data-tab="items">Items</a>
+  </nav>
+
+  {{!-- Tab Contents --}}
+  <section class="sheet-body">
+
+    {{!-- DESCRIPTION TAB --}}
+    <div class="tab active" data-tab="description">
+      <div class="form-group">
+        <label for="system.size">Size</label>
+        <input name="system.size" type="text" value="{{system.size}}" placeholder="Medium, Large, etc."/>
+      </div>
+      <div class="form-group">
+        <label for="system.crew">Crew</label>
+        <input name="system.crew" type="text" value="{{system.crew}}" placeholder="1 Pilot; 2 Gunners"/>
+      </div>
+      <div class="form-group">
+        <label for="system.cargo">Cargo</label>
+        <input name="system.cargo" type="text" value="{{system.cargo}}" placeholder="100 kg"/>
+      </div>
+      <div class="form-group">
+        <label for="system.notes">Notes</label>
+        <textarea name="system.notes">{{system.notes}}</textarea>
+      </div>
+    </div>
+
+    {{!-- VEHICLE TAB --}}
+    <div class="tab" data-tab="vehicle">
+      <h2>Ship Templates</h2>
+
+      <div class="form-group inline-group">
+        <label for="ship-template-dropdown">Choose Template</label>
+        <select id="ship-template-dropdown">
+          <option value="">— Select Template —</option>
+          {{#each SHIP_TEMPLATES as |tpl key|}}
+            <option value="{{key}}">{{tpl.label}}</option>
+          {{/each}}
+        </select>
+        <button type="button" id="add-ship-template" class="button">Add</button>
+      </div>
+
+      <table class="ship-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Hull</th>
+            <th>Shields</th>
+            <th>Handling</th>
+            <th>Notes</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each system.shipTemplates as |ship idx|}}
+            <tr data-index="{{idx}}">
+              <td>{{ship.label}}</td>
+              <td>{{ship.hull}}</td>
+              <td>{{ship.shields}}</td>
+              <td>{{ship.handling}}</td>
+              <td>{{ship.notes}}</td>
+              <td>
+                <button type="button" class="remove-ship-template" data-index="{{idx}}">🗑️</button>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+    {{!-- ITEMS TAB --}}
+    <div class="tab" data-tab="items">
+      {{#each items as |item|}}
+        <div class="item-row">
+          <h3>{{item.name}}</h3>
+          <p>{{item.type}}</p>
+        </div>
+      {{/each}}
+    </div>
+
+  </section>
+</form>
