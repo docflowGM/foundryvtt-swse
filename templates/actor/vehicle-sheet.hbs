@@ -1,148 +1,145 @@
-<form class="{{cssClass}} sheet-vehicle flexcol" autocomplete="off">
-
-  {{!-- ─── Header ─────────────────────────────────────────────────── --}}
+<form class="{{cssClass}} sheet-actor flexcol" autocomplete="off">
   <header class="sheet-header flexrow">
     <img class="profile-img" src="{{actor.img}}" title="{{actor.name}}" />
     <div class="header-fields flexcol">
-      <h1 class="ship-name">
-        <input
-          name="name"
-          type="text"
-          value="{{actor.name}}"
-          placeholder="Vehicle Name"
-        />
+      <h1 class="char-name">
+        <input name="name" type="text" value="{{actor.name}}" placeholder="Vehicle Name"/>
       </h1>
-      <div class="resources grid grid-3col">
-        <div class="form-group">
-          <label>Hull</label>
-          <input
-            name="system.hull.total"
-            type="number"
-            value="{{system.hull.total}}"
-          />
-        </div>
-        <div class="form-group">
-          <label>Shields</label>
-          <input
-            name="system.shields.total"
-            type="number"
-            value="{{system.shields.total}}"
-          />
-        </div>
-        <div class="form-group">
-          <label>Handling</label>
-          <input
-            name="system.handling.total"
-            type="number"
-            value="{{system.handling.total}}"
-          />
-        </div>
+
+      <div class="form-group inline-group">
+        <label>Model</label>
+        <input name="system.model" type="text" value="{{system.model}}" />
+      </div>
+
+      <div class="form-group inline-group">
+        <label>Size</label>
+        <select name="system.size">
+          {{#each (array "tiny" "small" "medium" "large" "huge" "gargantuan") as |sz|}}
+            <option value="{{sz}}" {{#if (eq system.size sz)}}selected{{/if}}>{{sz}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-group inline-group">
+        <label>Speed</label>
+        <input name="system.speed.base" type="number" min="0" value="{{system.speed.base}}" />
+        <span>{{system.speed.total}}</span>
+      </div>
+
+      <div class="form-group inline-group">
+        <label>Shields</label>
+        <input name="system.shields.value" type="number" min="0" max="{{system.shields.max}}" value="{{system.shields.value}}" />
+        /
+        <input name="system.shields.max" type="number" min="0" value="{{system.shields.max}}" />
+      </div>
+
+      <div class="form-group inline-group">
+        <label>Hull</label>
+        <input name="system.hull.value" type="number" min="0" max="{{system.hull.max}}" value="{{system.hull.value}}" />
+        /
+        <input name="system.hull.max" type="number" min="0" value="{{system.hull.max}}" />
       </div>
     </div>
   </header>
 
-  {{!-- ─── Tabs Navigation ───────────────────────────────────────── --}}
+  {{!-- Tabs --}}
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item active" data-tab="templates">Templates</a>
-    <a class="item"        data-tab="details">Details</a>
-    <a class="item"        data-tab="items">Items</a>
+    <a class="item active" data-tab="main">Main</a>
+    <a class="item" data-tab="crew">Crew</a>
+    <a class="item" data-tab="systems">Systems</a>
+    <a class="item" data-tab="gm">GM Options</a>
   </nav>
 
-  {{!-- ─── Body ─────────────────────────────────────────────────── --}}
   <section class="sheet-body flexcol">
-
-    {{!-- Templates Tab --}}
-    <div class="tab active" data-tab="templates">
-      <h2>Ship Templates</h2>
-      <div class="form-group inline-group">
-        <label for="ship-template-dropdown">Ship Type</label>
-        <select id="ship-template-dropdown">
-          <option value="">— Select Template —</option>
-          {{#each SHIP_TEMPLATES as |tpl key|}}
-            <option value="{{key}}">{{tpl.label}}</option>
-          {{/each}}
-        </select>
-        <button type="button" id="add-ship-template" class="button">Add</button>
-      </div>
-
-      <table id="ship-table" class="ship-table">
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Hull</th>
-            <th>Shields</th>
-            <th>Handling</th>
-            <th>Notes</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each system.shipTemplates as |ship idx|}}
-            <tr data-index="{{idx}}">
-              <td>{{lookup SHIP_TEMPLATES ship.type "label"}}</td>
-              <td>{{ship.hull}}</td>
-              <td>{{ship.shields}}</td>
-              <td>{{ship.handling}}</td>
-              <td>{{ship.notes}}</td>
-              <td>
-                <button
-                  type="button"
-                  class="remove-ship-template"
-                  data-index="{{idx}}"
-                >🗑️</button>
-              </td>
-            </tr>
-          {{/each}}
-        </tbody>
-      </table>
+    {{!-- Main Tab --}}
+    <div class="tab active" data-tab="main">
+      <h2>Main</h2>
+      {{!-- Could duplicate Damage Threshold/Second Wind etc. if desired --}}
+      <p>Use the Crew tab to assign crew and make rolls.</p>
     </div>
 
-    {{!-- Details Tab --}}
-    <div class="tab" data-tab="details">
-      <h2>Vehicle Details</h2>
-      <div class="form-group">
-        <label for="system.size">Size</label>
-        <input
-          name="system.size"
-          type="text"
-          value="{{system.size}}"
-          placeholder="Medium, Large, etc."
-        />
-      </div>
-      <div class="form-group">
-        <label for="system.crew">Crew</label>
-        <input
-          name="system.crew"
-          type="text"
-          value="{{system.crew}}"
-          placeholder="1 Pilot; 2 Gunners"
-        />
-      </div>
-      <div class="form-group">
-        <label for="system.cargo">Cargo</label>
-        <input
-          name="system.cargo"
-          type="text"
-          value="{{system.cargo}}"
-          placeholder="100 kg"
-        />
-      </div>
-      <div class="form-group">
-        <label for="system.notes">Notes</label>
-        <textarea name="system.notes">{{system.notes}}</textarea>
-      </div>
-    </div>
+    {{!-- Crew Tab --}}
+    <div class="tab" data-tab="crew">
+      <h2>Crew Assignments</h2>
 
-    {{!-- Items Tab --}}
-    <div class="tab" data-tab="items">
-      <h2>Items & Modules</h2>
-      {{#each items as |item|}}
-        <div class="item-row">
-          <h3>{{item.name}}</h3>
-          <p>{{item.type}}</p>
+      {{!-- Pilot Slot --}}
+      <div class="crew-slot" data-slot="pilot">
+        <label>Pilot</label>
+        <div class="crew-drop" data-slot="pilot">
+          {{#if system.crew.pilot}}
+            {{getCrewName system.crew.pilot}}
+          {{else}}
+            <em>Drop Character Here</em>
+          {{/if}}
+        </div>
+        <button type="button" class="roll-pilot" {{#unless system.crew.pilot}}disabled{{/unless}}>
+          Pilot Check
+        </button>
+      </div>
+
+      {{!-- Shields Slot --}}
+      <div class="crew-slot" data-slot="shields">
+        <label>Shields</label>
+        <div class="crew-drop" data-slot="shields">
+          {{#if system.crew.shields}}
+            {{getCrewName system.crew.shields}}
+          {{else}}
+            <em>Drop Character Here</em>
+          {{/if}}
+        </div>
+        <button type="button" class="roll-shields" {{#unless system.crew.shields}}disabled{{/unless}}>
+          Regenerate Shields
+        </button>
+      </div>
+
+      {{!-- Weapon Hardpoints --}}
+      <h3>Weapon Hardpoints</h3>
+      {{#each system.weapons as |wp idx|}}
+        <div class="crew-slot weapon-slot" data-index="{{idx}}">
+          <label>{{wp.name || "Weapon "+(idx+1)}}</label>
+
+          <div class="crew-drop" data-slot="weapons" data-index="{{idx}}">
+            {{#if wp.gunner}}
+              {{getCrewName wp.gunner}}
+            {{else}}
+              <em>Drop Character Here</em>
+            {{/if}}
+          </div>
+
+          <div class="form-group inline-group">
+            <label>Use Pilot?</label>
+            <input type="checkbox" name="system.weapons.{{idx}}.usePilot" {{#if wp.usePilot}}checked{{/if}} />
+          </div>
+
+          <button type="button" class="roll-gunner" {{#unless wp.gunner}}disabled{{/unless}}>
+            Fire
+          </button>
         </div>
       {{/each}}
     </div>
 
+    {{!-- Systems Tab (show sensors, comms, engineering controls—or leave blank) --}}
+    <div class="tab" data-tab="systems">
+      <h2>Engineering</h2>
+      <div class="crew-slot" data-slot="engineer">
+        <label>Engineer</label>
+        <div class="crew-drop" data-slot="engineer">
+          {{#if system.crew.engineer}}
+            {{getCrewName system.crew.engineer}}
+          {{else}}
+            <em>Drop Character Here</em>
+          {{/if}}
+        </div>
+        <button type="button" class="roll-engineer" {{#unless system.crew.engineer}}disabled{{/unless}}>
+          Engineering Check
+        </button>
+      </div>
+    </div>
+
+    {{!-- GM Options --}}
+    <div class="tab" data-tab="gm">
+      <h2>GM Options</h2>
+      {{!-- whatever toggles you like --}}
+    </div>
   </section>
 </form>
