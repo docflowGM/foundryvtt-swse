@@ -1,32 +1,32 @@
-//──────────────────────────────────────────────────────────────────────────────
-// Imports & Constants
-//──────────────────────────────────────────────────────────────────────────────
+// systems/swse/scripts/swse-actor.js
+
 import { SWSE_RACES } from "./races.js";
 
+//
+// Constants
+//
 const CONDITION_PENALTIES = {
   normal:   0,
   "-1":    -1,
   "-2":    -2,
   "-5":    -5,
-  "-10": -10,
-  helpless: -100
+  "-10":  -10,
+  helpless:-100
 };
 
-//──────────────────────────────────────────────────────────────────────────────
-// Initialization
-//──────────────────────────────────────────────────────────────────────────────
-Hooks.once("init", () => {
-  CONFIG.Actor.documentClass = SWSEActor;
-  Actors.registerSheet("swse", SWSEActorSheet, {
-    types: ["character"],
-    makeDefault: true
-  });
-});
+const SIZE_SPEED_MOD = {
+  tiny:         2,
+  small:        1,
+  medium:       0,
+  large:       -1,
+  huge:        -2,
+  gargantuan:  -4
+};
 
-//──────────────────────────────────────────────────────────────────────────────
-// Actor Class
-//──────────────────────────────────────────────────────────────────────────────
-class SWSEActor extends Actor {
+//
+// SWSEActor: Data Model & Preparation
+//
+export class SWSEActor extends Actor {
   prepareData() {
     super.prepareData();
     this._applyRacialAbilities();
@@ -39,37 +39,11 @@ class SWSEActor extends Actor {
     this._syncFreeForcePowers();
   }
 
-/** Sum the BAB from each class item on the actor */
-  _calculateBaB() {
-    let total = 0;
-    for (const cls of this.items.filter(i => i.type === "class")) {
-      const lvl = cls.system.level || 0;
-      const rec = cls.system.levels?.[lvl] || {};
-      total += rec.bab || 0;
-    }
-    this.system.bab = total;
-  }
-
-  /** For each defense, keep the highest “class” bonus across classes */
-  _replaceDefenseClassBonus() {
-    const defs = this.system.defenses;
-    for (const cls of this.items.filter(i => i.type === "class")) {
-      const lvl = cls.system.level || 0;
-      const rec = cls.system.levels?.[lvl]?.defenses || {};
-      for (const [key, d] of Object.entries(rec)) {
-        if (defs[key] && (d.class || 0) > defs[key].class) {
-          defs[key].class = d.class;
-        }
-      }
-    }
-  }
-}
-
-
+  // Racial ability bonuses → total & mod
   _applyRacialAbilities() {
     const raceKey = this.system.race || "custom";
     const bonuses = SWSE_RACES[raceKey]?.bonuses || {};
-    for (let [abbr, ab] of Object.entries(this.system.abilities)) {
+    for (const [abbr, ab] of Object.entries(this.system.abilities)) {
       ab.base    = Math.max(0, ab.base);
       ab.racial  = bonuses[abbr] || 0;
       ab.total   = ab.base + ab.racial + (ab.temp || 0);
@@ -77,128 +51,103 @@ class SWSEActor extends Actor {
     }
   }
 
+  // Global condition penalty
   _applyConditionPenalty() {
     this.conditionPenalty =
       CONDITION_PENALTIES[this.system.conditionTrack] || 0;
   }
 
-  _prepareDefenses() {
+  // Harvest equipped armor’s stats for Reflex
+  _applyArmorData() {
+    const armor = this.items.find(i =>
+      i.type === "armor" && i.system.equipped
+    );
+    const def   = this.system.defenses.reflex;
+    if (armor) {
+      def.armor    = armor.system.defenseBonus;
+      def.maxDex   = armor.system.maxDex;
+      def.maxSpeed = armor.system.maxSpeed;
+    } else {
+      def.armor    = 0;
+      def.maxDex   = null;
+      def.maxSpeed = null;
+    }
+  }
+
+  // Compute Fortitude, Reflex, and Will
+  _applyDefenses() {
     const { level, defenses } = this.system;
-    for (const def of Object.values(defenses)) {
-      const abilMod = def.ability
-        ? this.system.abilities[def.ability]?.mod || 0
-        : 0;
-      def.level = level;
-      def.total = level
-        + (def.class          || 0)
-        + abilMod
-        + (def.armor          || 0)
-        + (def.armoredDefense || 0)
-        + (def.armorMastery   || 0)
-        + (def.modifier       || 0)
-        + (this.system.conditionTrack === "helpless"
-           ? 0
-           : this.conditionPenalty);
-    }
-  }
-_applyArmorData() {
-  // Assumes exactly one equipped armor item
-  const armor = this.items.find(i => i.type === "armor" && i.system.equipped);
-  const def   = this.system.defenses.reflex;
-  if (armor) {
-    def.armor    = armor.system.defenseBonus;
-    def.maxDex   = armor.system.maxDex;
-    def.maxSpeed = armor.system.maxSpeed;
-  } else {
-    def.armor    = 0;
-    def.maxDex   = null;
-    def.maxSpeed = null;
-  }
-}
+    const pen = this.conditionPenalty;
 
-_applyDefenses() {
-  const { level, defenses } = this.system;
-  const penalty = this.conditionPenalty;
-  // Auto-detect Talents
-  const hasArmored  = this.items.some(i =>
-    i.type==="talent" && i.name==="Armored Defense"
-  );
-  const hasImproved = this.items.some(i =>
-    i.type==="talent" && i.name==="Improved Armored Defense"
-  );
+    // Auto‐detect talents
+    const hasArmored  = this.items.some(i =>
+      i.type === "talent" && i.name === "Armored Defense"
+    );
+    const hasImproved = this.items.some(i =>
+      i.type === "talent" && i.name === "Improved Armored Defense"
+    );
 
-  for (const [key, def] of Object.entries(defenses)) {
-    // Base ability mod
-    let abilMod = this.system.abilities[def.ability]?.mod || 0;
+    for (const [key, def] of Object.entries(defenses)) {
+      // Base ability mod, capped by Max Dex if Reflex+armor
+      let abilMod = this.system.abilities[def.ability]?.mod || 0;
+      if (key === "reflex" && def.armor > 0 && Number.isInteger(def.maxDex)) {
+        abilMod = Math.min(abilMod, def.maxDex);
+      }
 
-    // Cap Dex if armor applies
-    if (key === "reflex" && def.armor > 0 && Number.isInteger(def.maxDex)) {
-      abilMod = Math.min(abilMod, def.maxDex);
-    }
-
-    // Auto-set option if talent owned and no manual select
-    if (key === "reflex" && def.armor > 0) {
-      if (!["armored","improved"].includes(def.option)) {
+      // Auto‐select option from Talents if not manually chosen
+      if (key === "reflex" && def.armor > 0 && !["armored","improved"].includes(def.option)) {
         def.option = hasImproved ? "improved" : (hasArmored ? "armored" : "none");
       }
-    }
 
-    // Compute baseValue before adding ability & class
-    let baseValue;
-    if (key === "reflex" && def.armor > 0) {
-      switch (def.option) {
-        case "armored":
-          baseValue = Math.max(level, def.armor);
-          break;
-        case "improved":
-          const halfArmor = Math.floor(def.armor/2);
-          baseValue = Math.max(level + halfArmor, def.armor);
-          break;
-        default:
-          baseValue = def.armor;  // armor replaces level
+      // Compute base value before adding mods
+      let baseValue;
+      if (key === "reflex" && def.armor > 0) {
+        switch (def.option) {
+          case "armored":
+            baseValue = Math.max(level, def.armor);
+            break;
+          case "improved":
+            const halfArmor = Math.floor(def.armor / 2);
+            baseValue = Math.max(level + halfArmor, def.armor);
+            break;
+          default:
+            baseValue = def.armor;
+        }
+      } else {
+        baseValue = level;
       }
-    } else {
-      baseValue = level;       // fortitude & will always use level
+
+      // Total = base + ability + class + mastery + misc + penalty
+      def.total = baseValue
+        + abilMod
+        + (def.class          || 0)
+        + (def.armorMastery   || 0)
+        + (def.modifier       || 0)
+        + (key !== "helpless" ? pen : 0);
     }
-
-    def.total = baseValue
-      + abilMod
-      + (def.class        || 0)
-      + (def.armorMastery || 0)
-      + (def.modifier     || 0)
-      + (key !== "helpless" ? penalty : 0);
   }
-}
 
-_applySpeed() {
-  // Size speed modifiers (squares)
-  const SIZE_MOD = {
-    tiny:         2,
-    small:        1,
-    medium:      0,
-    large:      -1,
-    huge:       -2,
-    gargantuan: -4
-  };
-  const { size, speed, defenses } = this.system;
-  const sizeMod = SIZE_MOD[size] || 0;
-  let total    = (speed.base || 0) + sizeMod;
+  // Movement speed: base + size modifier, capped by armor
+  _applySpeed() {
+    const { size, speed, defenses } = this.system;
+    const sizeMod = SIZE_SPEED_MOD[size] || 0;
+    let total     = (speed.base || 0) + sizeMod;
+    const cap     = defenses.reflex.maxSpeed;
+    if (Number.isInteger(cap) && total > cap) total = cap;
+    speed.total   = total;
+  }
 
-  // Cap by armor’s maxSpeed
-  const cap = defenses.reflex.maxSpeed;
-  if (Number.isInteger(cap) && total > cap) total = cap;
-
-  this.system.speed.total = total;
-}
-
+  // Floor(level/2)
   getHalfLevel() {
     return Math.floor(this.system.level / 2);
   }
 
+  // Return current condition penalty
   getConditionPenalty() {
     return this.conditionPenalty;
   }
 
+  // Skill modifier calculation
   getSkillMod(skill) {
     if (this.system.conditionTrack === "helpless") return "N/A";
     let mod = skill.value
@@ -209,20 +158,59 @@ _applySpeed() {
     return mod + this.getConditionPenalty();
   }
 
-  /** Compute an attack modifier for a weapon */
+  // Attack roll modifier for a weapon
   getAttackMod(weapon) {
-    // example: weapon.attackBonus + ability mod + half level
-    const baseBonus   = weapon.attackBonus || 0;
-    const abilMod     = this.system.abilities[weapon.ability]?.mod || 0;
-    const halfLevel   = this.getHalfLevel();
-    return baseBonus + abilMod + halfLevel + this.getConditionPenalty();
+    const baseBonus = weapon.attackBonus || 0;
+    const abilMod   = this.system.abilities[weapon.ability]?.mod || 0;
+    return baseBonus
+      + abilMod
+      + this.getHalfLevel()
+      + this.getConditionPenalty();
+  }
+
+  // Sum Base Attack Bonus from each class
+  _calculateBaB() {
+    let total = 0;
+    for (const cls of this.items.filter(i => i.type === "class")) {
+      const lvl   = cls.system.level || 0;
+      const rec   = cls.system.levels?.[lvl] || {};
+      total += rec.bab || 0;
+    }
+    this.system.bab = total;
+  }
+
+  // Replace each defense.class with the highest from any class level
+  _replaceDefenseClassBonus() {
+    const defs = this.system.defenses;
+    for (const cls of this.items.filter(i => i.type === "class")) {
+      const lvl   = cls.system.level || 0;
+      const rec   = cls.system.levels?.[lvl]?.defenses || {};
+      for (const [key, d] of Object.entries(rec)) {
+        if (defs[key] && (d.class || 0) > defs[key].class) {
+          defs[key].class = d.class;
+        }
+      }
+    }
+  }
+
+  // Maintain free Force Power slots from Force Training + Wisdom
+  _syncFreeForcePowers() {
+    const hasFT = this.items.some(i =>
+      i.type === "feat" && i.name === "Force Training"
+    );
+    if (!hasFT) return;
+    const wisMod = this.system.abilities.wis.mod;
+    const maxFP  = 1 + wisMod;
+    const curFP  = this.system.freeForcePowers.current || 0;
+    this.system.freeForcePowers.max     = maxFP;
+    this.system.freeForcePowers.current = Math.max(curFP, maxFP);
   }
 }
 
-//──────────────────────────────────────────────────────────────────────────────
-// Sheet Class
-//──────────────────────────────────────────────────────────────────────────────
-class SWSEActorSheet extends ActorSheet {
+//
+// SWSEActorSheet: UI & Listeners
+//
+export class SWSEActorSheet extends ActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor"],
@@ -240,25 +228,41 @@ class SWSEActorSheet extends ActorSheet {
 
   activateListeners(html) {
     super.activateListeners(html);
+
     this._bindListButtons(html);
     this._bindSecondWind(html);
     this._bindWeaponRoll(html);
+    this._bindForcePowerControls(html);
+
+    // Defense radio change
+    html.find("input[name='system.defenses.reflex.option']").change(ev => {
+      this.actor.update({ "system.defenses.reflex.option": ev.target.value });
+    });
   }
 
+  // Add/delete feats, talents, gear, weapons, forcepowers
   _bindListButtons(html) {
-    for (const sel of [".add-feat", ".add-talent", ".add-gear", ".add-weapon"]) {
+    for (const sel of [
+      ".add-feat", ".add-talent", ".add-gear", ".add-weapon", ".add-forcepower"
+    ]) {
       html.find(sel).click(async () => {
         const key  = sel.replace(".add-", "");
         const list = duplicate(this.actor.system[key] || []);
-        list.push({ name: "", description: "" });
+        // Default template for Force Power
+        const entry = key === "forcepower"
+          ? { name:"New Force Power", type:"forcepower", img:"icons/svg/mystery-man.svg",
+              system:{description:"", uses:{current:1,max:1}, results:[] } }
+          : { name:"", description:"" };
+        list.push(entry);
         await this.actor.update({ [`system.${key}`]: list });
       });
     }
   }
 
+  // Second Wind button
   _bindSecondWind(html) {
     html.find(".apply-second-wind").click(async () => {
-      const { uses = 0, healing = 0 } = this.actor.system.secondWind;
+      let { uses=0, healing=0 } = this.actor.system.secondWind;
       if (uses > 0 && healing > 0) {
         const newHP = Math.min(
           this.actor.system.hp.value + healing,
@@ -272,170 +276,102 @@ class SWSEActorSheet extends ActorSheet {
     });
   }
 
+  // Attack roll button
   _bindWeaponRoll(html) {
     html.find(".roll-weapon").click(ev => {
       ev.preventDefault();
-      const idx    = Number(ev.currentTarget.closest(".list-entry").dataset.index);
+      const idx    = Number(ev.currentTarget.closest(".weapon-entry").dataset.index);
       const weapon = this.actor.system.weapons[idx];
-      const defaultMod = this.actor.getAttackMod(weapon);
-      this._showAttackDialog(weapon, defaultMod);
+      this._rollWeapon(weapon);
     });
   }
 
-  /** Show a roll dialog for a weapon attack */
-  _showAttackDialog(weapon, defaultMod) {
-    const content = `
-      <form>
-        <div class="form-group">
-          <label>Weapon</label>
-          <input type="text" name="name" value="${weapon.name}" disabled />
-        </div>
-        <div class="form-group">
-          <label>Base Attack</label>
-          <input type="number" name="base" value="${defaultMod}" disabled />
-        </div>
-        <div class="form-group">
-          <label>Extra Modifier</label>
-          <input type="number" name="modifier" value="0" />
-        </div>
-        <div class="form-group">
-          <label>Action</label>
-          <select name="action">
-            <option value="">None</option>
-            <option value="charge">Charge</option>
-            <option value="block">Block</option>
-            <option value="deflect">Deflect</option>
-          </select>
-        </div>
-      </form>
-    `;
+  // Force Power controls: roll, reload, remove, refresh all
+  _bindForcePowerControls(html) {
+    // Use Power
+    html.find(".roll-forcepower").click(async ev => {
+      const itemId = ev.currentTarget.closest(".forcepower-entry").dataset.itemId;
+      const power  = this.actor.items.get(itemId);
+      if (power.system.uses.current < 1) return ui.notifications.warn("No uses left");
+      await this.actor.updateEmbeddedDocuments("Item", [{
+        _id: itemId,
+        "system.uses.current": power.system.uses.current - 1
+      }]);
+      // Roll Use-the-Force
+      const skill = this.actor.system.skills.use_the_force;
+      const base  = this.actor.getSkillMod(skill);
+      const roll  = new Roll(`1d20 + ${base}`).roll({async:false});
+      roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        flavor: `<strong>${power.name}</strong>`
+      });
+      // Outcome lookup
+      const res = (power.system.results || [])
+        .sort((a,b)=>b.dc-a.dc)
+        .find(o=>roll.total>=o.dc);
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor:this.actor }),
+        content: `<em>Result:</em> ${res?.message||"No effect."}`
+      });
+    });
+    // Reload one Use via Force Point
+    html.find(".reload-forcepower").click(async ev => {
+      const itemId = ev.currentTarget.closest(".forcepower-entry").dataset.itemId;
+      const power  = this.actor.items.get(itemId);
+      const fp     = this.actor.system.forcePoints.value;
+      if (fp < 1) return ui.notifications.warn("Not enough Force Points");
+      await this.actor.update({ "system.forcePoints.value": fp - 1 });
+      await this.actor.updateEmbeddedDocuments("Item", [{
+        _id: itemId,
+        "system.uses.current": Math.min(
+          power.system.uses.current + 1,
+          power.system.uses.max
+        )
+      }]);
+    });
+    // Remove Force Power
+    html.find(".remove-forcepower").click(async ev => {
+      const itemId = ev.currentTarget.closest(".forcepower-entry").dataset.itemId;
+      await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+    });
+    // Refresh all Uses
+    html.find(".refresh-forcepowers").click(async () => {
+      const updates = this.actor.items
+        .filter(i=>i.type==="forcepower")
+        .map(i=>({ _id:i.id, "system.uses.current": i.system.uses.max }));
+      await this.actor.updateEmbeddedDocuments("Item", updates);
+    });
+  }
 
-    new Dialog({
-      title: `Attack Roll: ${weapon.name}`,
-      content,
-      buttons: {
-        roll: {
-          icon: "<i class='fas fa-dice'></i>",
-          label: "Roll",
-          callback: dlg => {
-            const extra  = Number(dlg.find("[name=modifier]").val()) || 0;
-            const action = dlg.find("[name=action]").val();
-            let totalMod = defaultMod + extra;
-            // e.g. if (action === "charge") totalMod += 2;
-            const formula = `1d20 + ${totalMod}`;
-            new Roll(formula).roll({ async: false })
-              .toMessage({
-                speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-                flavor: `${weapon.name}${action ? ` (${action})` : ""}`
-              });
-          }
-        },
-        cancel: {
-          icon: "<i class='fas fa-times'></i>",
-          label: "Cancel"
-        }
-      },
-      default: "roll"
-    }).render(true);
+  // Roll Attack & Damage
+  _rollWeapon(weapon) {
+    const actor   = this.actor;
+    const halfLev = actor.getHalfLevel();
+    const bab     = actor.system.bab || 0;
+    const abs     = actor.system.abilities;
+    // Attack attribute
+    const atkAbMod = abs[weapon.attackAttr]?.mod || 0;
+    const focus    = weapon.focus ? 1 : 0;
+    const otherMod = weapon.modifier || 0;
+    const atkMod   = halfLev + bab + atkAbMod + focus + otherMod;
+    const atkRoll  = new Roll(`1d20 + ${atkMod}`).roll({async:false});
+    atkRoll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: `<strong>${weapon.name}</strong> Attack`
+    });
+    // Damage attribute
+    let dmgAbMod = 0;
+    if (weapon.damageAttr === "str")    dmgAbMod = abs.str.mod;
+    if (weapon.damageAttr === "dex")    dmgAbMod = abs.dex.mod;
+    if (weapon.damageAttr === "2str")   dmgAbMod = abs.str.mod * 2;
+    if (weapon.damageAttr === "2dex")   dmgAbMod = abs.dex.mod * 2;
+    const spec   = weapon.specialization ? 1 : 0;
+    const baseDie= weapon.damage || "0";
+    const dmgMod = halfLev + dmgAbMod + spec;
+    const dmgRoll= new Roll(`${baseDie} + ${dmgMod}`).roll({async:false});
+    dmgRoll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: `<strong>${weapon.name}</strong> Damage`
+    });
   }
 }
-activateListeners(html) {
-  super.activateListeners(html);
-  // … your existing binds …
-
-  // Add/custom force powers
-  html.find(".add-forcepower").click(async () => {
-    // Create an embedded Force Power item with default uses
-    await this.actor.createEmbeddedDocuments("Item", [{
-      name: "New Force Power",
-      type: "forcepower",
-      img: "icons/svg/mystery-man.svg",
-      system: {
-        description: "",
-        uses: { current: 1, max: 1 },
-        results: []
-      }
-    }]);
-  });
-
-  // Refresh all uses back to max
-  html.find(".refresh-forcepowers").click(async () => {
-    const updates = this.actor.items
-      .filter(i => i.type === "forcepower")
-      .map(i => ({
-        _id: i.id,
-        "system.uses.current": i.system.uses.max
-      }));
-    await this.actor.updateEmbeddedDocuments("Item", updates);
-  });
-
-  // Use a single force power (decrement + roll)
-  html.find(".roll-forcepower").click(async ev => {
-    const li     = ev.currentTarget.closest(".forcepower-entry");
-    const itemId = li.dataset.itemId;
-    const power  = this.actor.items.get(itemId);
-
-    // Prevent if no uses left
-    if (power.system.uses.current < 1) return ui.notifications.warn("No uses remaining.");
-
-    // Decrement uses
-    await this.actor.updateEmbeddedDocuments("Item", [{
-      _id: itemId,
-      "system.uses.current": power.system.uses.current - 1
-    }]);
-
-    // Roll Use-the-Force check via your existing logic
-    const skill = this.actor.system.skills.use_the_force;
-    const base  = this.actor.getSkillMod(skill);
-    // You can pop your Dialog here, but for brevity we do raw roll:
-    const roll  = new Roll(`1d20 + ${base}`).roll({ async: false });
-    roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `<strong>${power.name}</strong>`
-    });
-
-    // Lookup outcome from power.system.results (array of {dc,message})
-    const result = (power.system.results || [])
-      .sort((a,b) => b.dc - a.dc)
-      .find(o => roll.total >= o.dc)?.message
-      || "<em>No special effect.</em>";
-    ChatMessage.create({ content: `<p>${result}</p>` });
-  });
-
-  // Reload a single force power by spending 1 FP
-  html.find(".reload-forcepower").click(async ev => {
-    const li     = ev.currentTarget.closest(".forcepower-entry");
-    const itemId = li.dataset.itemId;
-    const power  = this.actor.items.get(itemId);
-    const fp     = this.actor.system.forcePoints.value || 0;
-    if (fp < 1) return ui.notifications.warn("Not enough Force Points.");
-
-    // Restore one use and deduct 1 FP
-    await this.actor.update({
-      "system.forcePoints.value": fp - 1
-    });
-    await this.actor.updateEmbeddedDocuments("Item", [{
-      _id: itemId,
-      "system.uses.current": Math.min(
-        power.system.uses.current + 1,
-        power.system.uses.max
-      )
-    }]);
-  });
-}
-//──────────────────────────────────────────────────────────────────────────────
-// Helpers
-//──────────────────────────────────────────────────────────────────────────────
-Handlebars.registerHelper("eq", (a, b) => a === b);
-Handlebars.registerHelper(
-  "getSkillMod",
-  (skill, abilities, level, cond) => {
-    if (cond === "helpless") return "N/A";
-    let mod = skill.value
-      + (abilities[skill.ability]?.mod || 0)
-      + Math.floor(level / 2);
-    if (skill.trained) mod += 5;
-    if (skill.focus)   mod += 5;
-    return mod + (CONDITION_PENALTIES[cond] || 0);
-  }
-);
