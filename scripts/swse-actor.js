@@ -28,11 +28,14 @@ Hooks.once("init", () => {
 //──────────────────────────────────────────────────────────────────────────────
 class SWSEActor extends Actor {
   prepareData() {
-    super.prepareData();
-    this._applyRacialAbilities();
-    this._applyConditionPenalty();
-    this._prepareDefenses();
-  }
+  super.prepareData();
+  this._applyRacialAbilities();
+  this._applyConditionPenalty();
+  this._applyArmorData();
+  this._applyDefenses();
+  this._applySpeed();
+}
+
 
   _applyRacialAbilities() {
     const raceKey = this.system.race || "custom";
@@ -69,6 +72,95 @@ class SWSEActor extends Actor {
            : this.conditionPenalty);
     }
   }
+_applyArmorData() {
+  // Assumes exactly one equipped armor item
+  const armor = this.items.find(i => i.type === "armor" && i.system.equipped);
+  const def   = this.system.defenses.reflex;
+  if (armor) {
+    def.armor    = armor.system.defenseBonus;
+    def.maxDex   = armor.system.maxDex;
+    def.maxSpeed = armor.system.maxSpeed;
+  } else {
+    def.armor    = 0;
+    def.maxDex   = null;
+    def.maxSpeed = null;
+  }
+}
+
+_applyDefenses() {
+  const { level, defenses } = this.system;
+  const penalty = this.conditionPenalty;
+  // Auto-detect Talents
+  const hasArmored  = this.items.some(i =>
+    i.type==="talent" && i.name==="Armored Defense"
+  );
+  const hasImproved = this.items.some(i =>
+    i.type==="talent" && i.name==="Improved Armored Defense"
+  );
+
+  for (const [key, def] of Object.entries(defenses)) {
+    // Base ability mod
+    let abilMod = this.system.abilities[def.ability]?.mod || 0;
+
+    // Cap Dex if armor applies
+    if (key === "reflex" && def.armor > 0 && Number.isInteger(def.maxDex)) {
+      abilMod = Math.min(abilMod, def.maxDex);
+    }
+
+    // Auto-set option if talent owned and no manual select
+    if (key === "reflex" && def.armor > 0) {
+      if (!["armored","improved"].includes(def.option)) {
+        def.option = hasImproved ? "improved" : (hasArmored ? "armored" : "none");
+      }
+    }
+
+    // Compute baseValue before adding ability & class
+    let baseValue;
+    if (key === "reflex" && def.armor > 0) {
+      switch (def.option) {
+        case "armored":
+          baseValue = Math.max(level, def.armor);
+          break;
+        case "improved":
+          const halfArmor = Math.floor(def.armor/2);
+          baseValue = Math.max(level + halfArmor, def.armor);
+          break;
+        default:
+          baseValue = def.armor;  // armor replaces level
+      }
+    } else {
+      baseValue = level;       // fortitude & will always use level
+    }
+
+    def.total = baseValue
+      + abilMod
+      + (def.class        || 0)
+      + (def.armorMastery || 0)
+      + (def.modifier     || 0)
+      + (key !== "helpless" ? penalty : 0);
+  }
+}
+
+_applySpeed() {
+  // Size speed modifiers (squares)
+  const SIZE_MOD = {
+    tiny:         2,
+    small:        1,
+    medium:      0,
+    large:      -1,
+    huge:       -2,
+    gargantuan: -4
+  };
+  const { size, speed, defenses } = this.system;
+  const sizeMod = SIZE_MOD[size] || 0;
+  let total    = (speed.base || 0) + sizeMod;
+
+  // Cap by armor’s maxSpeed
+  const cap = defenses.reflex.maxSpeed;
+  if (Number.isInteger(cap) && total > cap) total = cap;
+
+  this.system.speed.total = total;
+}
 
   getHalfLevel() {
     return Math.floor(this.system.level / 2);
