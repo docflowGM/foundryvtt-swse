@@ -1,3 +1,6 @@
+// ─────────────────────────────────────────────────────────────
+// Droid Template Definitions
+// ─────────────────────────────────────────────────────────────
 export const DROID_TEMPLATES = {
   astromech: {
     label: "Astromech Droid",
@@ -36,3 +39,34 @@ export const DROID_TEMPLATES = {
     notes: "Heavy lifting, industrial tasks"
   }
 };
+
+// ─────────────────────────────────────────────────────────────
+// Droid Sheet Logic
+// ─────────────────────────────────────────────────────────────
+Hooks.on("renderActorSheet", (app, html, data) => {
+  if (app.actor?.system?.species !== "droid") return;
+
+  // Add droid template to actor
+  html.find("#add-droid-template").off("click").on("click", async () => {
+    const dropdown = html.find("#droid-template-dropdown")[0];
+    const selected = dropdown.options[dropdown.selectedIndex];
+    const type = selected.value;
+
+    if (!type || !DROID_TEMPLATES[type]) return;
+
+    const entry = { type, ...DROID_TEMPLATES[type] };
+    const templates = duplicate(app.actor.system.droidTemplates || []);
+    templates.push(entry);
+
+    await app.actor.update({ "system.droidTemplates": templates });
+  });
+
+  // Remove droid template from actor
+  html.find(".remove-droid-template").off("click").on("click", async (ev) => {
+    const index = Number(ev.currentTarget.dataset.index);
+    const templates = duplicate(app.actor.system.droidTemplates || []);
+    templates.splice(index, 1);
+
+    await app.actor.update({ "system.droidTemplates": templates });
+  });
+});
