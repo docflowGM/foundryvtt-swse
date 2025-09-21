@@ -1,0 +1,48 @@
+<form class="swse sheet actor-sheet" autocomplete="off">
+  <header class="sheet-header">
+    <h1 class="sheet-title">{{actor.name}}</h1>
+    <div class="sheet-controls">
+      {{> "systems/swse/templates/partials/actor-controls.hbs"}}
+    </div>
+  </header>
+
+  <section class="sheet-body">
+    <div class="section">
+      <h3>Basic Info</h3>
+      <div class="grid">
+        <label>Class: <input type="text" name="system.class" value="{{system.class}}" /></label>
+        <label>Level: <input type="number" name="system.level" value="{{system.level}}" /></label>
+        <label>Species: <input type="text" name="system.species" value="{{system.species}}" /></label>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Ability Scores</h3>
+      <table>
+        <thead>
+          <tr><th>Ability</th><th>Value</th></tr>
+        </thead>
+        <tbody>
+          {{#each system.abilities as |ability key|}}
+          <tr>
+            <td>{{key}}</td>
+            <td><input type="number" name="system.abilities.{{key}}.value" value="{{ability.value}}" /></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h3>Feats & Talents</h3>
+      <ul>
+        {{#each system.feats}}
+          <li>{{this.name}}</li>
+        {{/each}}
+        {{#each system.talents}}
+          <li>{{this.name}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  </section>
+</form>
