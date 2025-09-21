@@ -143,26 +143,90 @@
     </div>
 
     {{!-- Attacks Tab --}}
-    <div class="tab" data-tab="attacks">
-      <h2>Attacks</h2>
-      {{#each system.weapons as |w idx|}}
-        <div class="form-group flexrow weapon-entry" data-index="{{idx}}">
-          <input
-            name="system.weapons.{{idx}}.name"
-            type="text"
-            value="{{w.name}}"
-            placeholder="Weapon Name"
-          />
-          <textarea
-            name="system.weapons.{{idx}}.description"
-            placeholder="Description"
-          >{{w.description}}</textarea>
-          <button type="button" class="roll-weapon">Attack</button>
-          <button type="button" class="remove-weapon">🗑️</button>
-        </div>
-      {{/each}}
-      <button type="button" class="add-weapon">＋ Add Weapon</button>
+    {{#each system.weapons as |w idx|}}
+  <div class="weapon-entry flexcol" data-index="{{idx}}">
+
+    <div class="flexrow">
+      <input
+        name="system.weapons.{{idx}}.name"
+        type="text"
+        value="{{w.name}}"
+        placeholder="Weapon Name"
+      />
+      <button type="button" class="remove-weapon">🗑️</button>
     </div>
+
+    <textarea
+      name="system.weapons.{{idx}}.description"
+      placeholder="Description"
+    >{{w.description}}</textarea>
+
+    <div class="form-group inline-group">
+      <label>Damage</label>
+      <input
+        name="system.weapons.{{idx}}.damage"
+        type="text"
+        value="{{w.damage}}"
+        placeholder="e.g. 1d8 + STR"
+      />
+    </div>
+
+    <div class="form-group inline-group">
+      <label>Attack Attribute</label>
+      <select name="system.weapons.{{idx}}.attackAttr">
+        {{#each (array "str" "dex" "int" "wis" "cha") as |ab|}}
+          <option value="{{ab}}"
+            {{#if (eq w.attackAttr ab)}}selected{{/if}}>
+            {{ab.toUpperCase()}}
+          </option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="form-group inline-group">
+      <label>Damage Attribute</label>
+      <select name="system.weapons.{{idx}}.damageAttr">
+        <option value="none" {{#if (eq w.damageAttr "none")}}selected{{/if}}>None</option>
+        <option value="str"  {{#if (eq w.damageAttr "str")}}selected{{/if}}>STR</option>
+        <option value="dex"  {{#if (eq w.damageAttr "dex")}}selected{{/if}}>DEX</option>
+        <option value="2str" {{#if (eq w.damageAttr "2str")}}selected{{/if}}>2× STR</option>
+        <option value="2dex" {{#if (eq w.damageAttr "2dex")}}selected{{/if}}>2× DEX</option>
+      </select>
+    </div>
+
+    <div class="form-group inline-group">
+      <label>
+        <input
+          type="checkbox"
+          name="system.weapons.{{idx}}.focus"
+          {{#if w.focus}}checked{{/if}}
+        /> Weapon Focus (+1 attack)
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          name="system.weapons.{{idx}}.specialization"
+          {{#unless w.focus}}disabled{{/unless}}
+          {{#if w.specialization}}checked{{/if}}
+        /> Weapon Specialization (+1 damage)
+      </label>
+    </div>
+
+    <div class="form-group inline-group">
+      <label>Other Mod</label>
+      <input
+        name="system.weapons.{{idx}}.modifier"
+        type="number"
+        value="{{w.modifier}}"
+      />
+    </div>
+
+    <button type="button" class="roll-weapon">Roll Attack & Damage</button>
+  </div>
+{{/each}}
+
+<button type="button" class="add-weapon">＋ Add Weapon</button>
+
 
     {{!-- Force Powers Tab --}}
     <div class="tab" data-tab="forcepowers">
