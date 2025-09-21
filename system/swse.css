@@ -1,0 +1,59 @@
+/* SWSE System Styles */
+
+.swse.sheet {
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  color: #ddd;
+  background: #1a1a1a;
+}
+
+.swse .sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5em 1em;
+  background: #222;
+  border-bottom: 1px solid #444;
+}
+
+.swse .sheet-title {
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+.swse .sheet-body {
+  padding: 1em;
+}
+
+.swse .section {
+  margin-bottom: 1em;
+}
+
+.swse .section h3 {
+  margin-bottom: 0.5em;
+  border-bottom: 1px solid #555;
+  font-size: 1.1em;
+  color: #ccc;
+}
+
+.swse input[type="text"],
+.swse input[type="number"],
+.swse select,
+.swse textarea {
+  width: 100%;
+  padding: 4px;
+  background: #2a2a2a;
+  border: 1px solid #555;
+  color: #eee;
+}
+
+.swse table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.swse th,
+.swse td {
+  padding: 4px 8px;
+  border-bottom: 1px solid #444;
+}
