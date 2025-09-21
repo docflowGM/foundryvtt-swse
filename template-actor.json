@@ -1,13 +1,13 @@
 {
-  "name": "New Actor",
+  "name": "New Character",
   "type": "character",
   "img": "icons/svg/mystery-man.svg",
   "system": {
     "race": "custom",
     "species": "",
-    "subtype": "",
-    "level": 1,
     "class": "",
+    "level": 1,
+
     "abilities": {
       "str": { "base": 10, "temp": 0 },
       "dex": { "base": 10, "temp": 0 },
@@ -16,40 +16,30 @@
       "wis": { "base": 10, "temp": 0 },
       "cha": { "base": 10, "temp": 0 }
     },
+
     "defenses": {
       "reflex":    { "ability": "dex", "class": 0, "armor": 0 },
       "fortitude": { "ability": "con", "class": 0, "armor": 0 },
       "will":      { "ability": "wis", "class": 0, "armor": 0 }
     },
+
     "hp": {
       "value": 0,
       "max": 0
     },
+
     "conditionTrack": "normal",
     "secondWind": {
-      "uses": 0,
+      "uses":    0,
       "healing": 0
     },
-    "skills": [],
-    "feats": [],
-    "talents": [],
-    "gear": [],
-    "weapons": [],
-    "items": [],
-    "droidTemplates": [],
-    "hull": {
-      "total": 0
-    },
-    "shields": {
-      "total": 0
-    },
-    "handling": {
-      "total": 0
-    },
-    "size": "",
-    "crew": "",
-    "cargo": "",
-    "notes": "",
-    "shipTemplates": []
+
+    "skills":        [],
+    "customSkills":  [],
+    "feats":         [],
+    "talents":       [],
+    "gear":          [],
+    "weapons":       [],
+    "items":         []
   }
 }
