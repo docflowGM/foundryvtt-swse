@@ -640,388 +640,2459 @@
     "starting_feats": [],
     "credits": "A 1st-level Soldier starts play with 3d4 x 250 credits."
   },
+  
+][
   {
     "class_name": "Ace Pilot",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Ace Pilots gain 1d8 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Ace Pilots gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Vehicle Dodge +1"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Vehicle Dodge +2"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Vehicle Dodge +3"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Vehicle Dodge +4"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Vehicle Dodge +5"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Ace_Pilot"
   },
   {
     "class_name": "Bounty Hunter",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Bounty Hunters gain 1d10 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Bounty Hunters gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Familiar Foe +1"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Familiar Foe +2"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Familiar Foe +3"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Familiar Foe +4"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Familiar Foe +5"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Bounty_Hunter"
   },
   {
     "class_name": "Crime Lord",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Crime Lords gain 1d8 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Crime Lords gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Command Cover +1, Talent"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Command Cover +2, Talent"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Command Cover +3, Talent"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Command Cover +4, Talent"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Command Cover +5, Talent"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Crime_Lord"
   },
   {
     "class_name": "Elite Trooper",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Elite Troopers gain 1d12 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Elite Troopers gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Delay Damage, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Damage Reduction 1"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Damage Reduction 2"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Damage Reduction 3"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Damage Reduction 4"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Damage Reduction 5"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Elite_Trooper"
   },
   {
     "class_name": "Force Adept",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Force Adepts gain 1d8 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Force Adepts gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Force Technique"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Force_Adept"
   },
   {
     "class_name": "Force Disciple",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Force Disciples gain 1d8 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Force Disciples gain a number of Force Points equal to 7 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class (due to their strong connection to The Force , Force Disciples gain more Force Points than most other Prestige Classes ).",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Indomitable, Prophet, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Force Secret , Prophet"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Force Secret , Prophet, Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Force Secret , Prophet"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Force Secret , Prophet, Talent"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Force_Disciple"
   },
   {
     "class_name": "Gunslinger",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Gunslingers gain 1d8 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Gunslingers gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Trusty Sidearm +1"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Trusty Sidearm +2"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Trusty Sidearm +3"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Trusty Sidearm +4"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Trusty Sidearm +5"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Gunslinger"
   },
   {
     "class_name": "Jedi Knight",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Jedi Knights gain 1d10 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Jedi Knights gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Force Technique"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Jedi_Knight"
   },
   {
     "class_name": "Jedi Master",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Jedi Masters gain 1d10 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Jedi Masters gain a number of Force Points equal to 7 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class (Due to their strong connection to The Force , Jedi Masters gain more Force Points than most other Prestige Classes ).",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Fearless, Serenity, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Force Secret"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Force Secret , Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Force Secret"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Force Secret , Talent"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Jedi_Master"
   },
   {
     "class_name": "Officer",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Officers gain 1d8 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Officers gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Command Cover +1, Share Talent"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Command Cover +2, Share Talent"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Command Cover +3, Share Talent"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Command Cover +4, Share Talent"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Command Cover +5, Share Talent"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Officer"
   },
   {
     "class_name": "Sith Apprentice",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Sith Apprentices gain 1d10 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Sith Apprentices gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Force Technique"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Sith_Apprentice"
   },
   {
     "class_name": "Sith Lord",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Sith Lords gain 1d10 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Sith Lords gain a number of Force Points equal to 7 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class (Due to their strong connection to The Force , Sith Lords gain more Force Points than most other Prestige Classes ).",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Fearless, Talent , Temptation"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Force Secret"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Force Secret , Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Force Secret"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Force Secret , Talent"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Sith_Lord"
   },
-  
   {
     "class_name": "Corporate Agent",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Corporate Agents gain 1d8 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Corporate Agents gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Executive Leadership (1/Encounter)"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Executive Leadership (2/Encounter)"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Executive Leadership (3/Encounter)"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Executive Leadership (4/Encounter)"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Executive Leadership (5/Encounter)"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Corporate_Agent"
   },
   {
     "class_name": "Gladiator",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Gladiators gain 1d10 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Gladiators gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Unflinching (1/Encounter)"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Unflinching (2/Encounter)"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Unflinching (3/Encounter)"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Unflinching (4/Encounter)"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Unflinching (5/Encounter)"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Gladiator"
   },
   {
     "class_name": "Melee Duelist",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Melee Duelists gain 1d8 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Melee Duelists gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Master of Movement (1/Encounter)"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Master of Movement (2/Encounter)"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Master of Movement (3/Encounter)"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Master of Movement (4/Encounter)"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Master of Movement (5/Encounter)"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Melee_Duelist"
   },
-  
   {
     "class_name": "Enforcer",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Enforcers gain 1d8 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Enforcers gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, every time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Resources, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Resources, Targeted Suspect +1"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Resources, Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Resources, Targeted Suspect +2"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Resources, Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Resources, Targeted Suspect +3"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Resources, Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Resources, Targeted Suspect +4"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Resources, Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Resources, Targeted Suspect +5"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Enforcer"
   },
   {
     "class_name": "Independent Droid",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Independent Droids gain 1d12 Hit Points.",
-    "hit_points_per_level": "Independent Droids gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Sapience, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Independent Spirit +1"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Independent Spirit +2"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Independent Spirit +3"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Independent Spirit +4"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Independent Spirit +5"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Independent_Droid"
   },
   {
     "class_name": "Infiltrator",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Infiltrators gain 1d8 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Infiltrators gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Unarmed Stun (+1d_)"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Lead Infiltrator"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Unarmed Stun (+2d_)"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Lead Infiltrator (x2)"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Unarmed Stun (+3d_)"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Infiltrator"
   },
   {
     "class_name": "Master Privateer",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Master Privateers gain 1d10 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Master Privateers gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Lure of Piracy, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Veteran Privateer (1/Encounter)"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Veteran Privateer (2/Encounter)"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Veteran Privateer (3/Encounter)"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Veteran Privateer (4/Encounter)"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Veteran Privateer (5/Encounter)"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Master_Privateer"
   },
   {
     "class_name": "Medic",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Medics gain 1d8 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Medics gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, every time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Medical Secret"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Medical Secret"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Medical Secret"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Medical Secret"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Medical Secret"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Medic"
   },
   {
     "class_name": "Saboteur",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Saboteurs gain 1d8 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Saboteurs gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, every time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Talent , Unexpected Results"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Destructive"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Quick Sabotage (Simple Devices)"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Quick Sabotage (Tricky Devices)"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Quick Sabotage (Complex Devices)"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Master Saboteur"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Saboteur"
   },
   {
     "class_name": "Assassin",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Assassins gain 1d10 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Assassins gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Mark +1"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Mark +2"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Mark +3"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Mark +4"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Mark +5"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Assassin"
   },
   {
     "class_name": "Charlatan",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Charlatans gain 1d8 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Charlatans gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Score"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Swindle"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Swindle +1"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Swindle +2"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Swindle +5"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Charlatan"
   },
   {
     "class_name": "Outlaw",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Outlaws gain 1d8 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Outlaws gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Fugitive +1"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Fugitive +2"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Fugitive +3"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Fugitive +4"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Fugitive +5"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Outlaw"
   },
   {
     "class_name": "Droid Commander",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Droid Commanders gain 1d10 Hit Points.",
-    "hit_points_per_level": "Droid Commanders gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, every time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Networked Mind (1 Droid Ally)"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Networked Mind (2 Droid Allies)"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Networked Mind (3 Droid Allies)"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Networked Mind (4 Droid Allies)"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Networked Mind (5 Droid Allies)"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Droid_Commander"
   },
   {
     "class_name": "Military Engineer",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Military Engineers gain 1d8 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Military Engineers gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, every time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Field-Created Weapon +1"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Field-Created Weapon +2"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Field-Created Weapon +3"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Field-Created Weapon +4"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Field-Created Weapon +5"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Military_Engineer"
   },
   {
     "class_name": "Vanguard",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Vanguards gain 1d10 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Vanguards gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, every time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Surprise Attack +1"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Surprise Attack +2"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Surprise Attack +3"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Surprise Attack +4"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Surprise Attack +5"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Vanguard"
   },
   {
     "class_name": "Imperial Knight",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Imperial Knights gain 1d10 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Imperial Knights gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Force Technique"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Force Technique"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Imperial_Knight"
   },
   {
     "class_name": "Shaper",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Shapers gain 1d8 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Shapers, like all Yuuzhan Vong , never gain Force Points .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Shaper Lore +1"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Shaper Lore +2"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Shaper Lore +3, Shaper Hand"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Shaper Lore +4"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Shaper Lore +5"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Shaper"
   },
   {
     "class_name": "Improviser",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Improvisers gain 1d8 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Improvisers gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, No Tools Required, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Contraband (2,000 credits)"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Contraband (3,000 credits), Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Contraband (4,000 credits)"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Contraband (5,000 credits), Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Contraband (6,000 credits)"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Contraband (7,000 credits), Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Contraband (8,000 credits)"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Contraband (9,000 credits), Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Contraband (10,000 credits)"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Improviser"
   },
   {
     "class_name": "Pathfinder",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Pathfinders gain 1d10 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Pathfinders gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+0",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Create Cover (1 Square)"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Create Cover (2 Squares)"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Create Cover (3 Squares)"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Create Cover (4 Squares)"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Create Cover (5 Squares)"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Pathfinder"
   },
   {
     "class_name": "Martial Arts Master",
-    "level_table": [],
-    "class_skill_mod": null,
-    "class_skill_list": [],
-    "hit_points_level_1": "At each level, Martial Arts Masters gain 1d10 Hit Points + their Constitution modifier.",
-    "hit_points_per_level": "Martial Arts Masters gain a number of Force Points equal to 6 + one-half their Character Level, rounded down, each time they gain a new level in this Prestige Class .",
-    "class_features": [],
+    "level_table": [
+      {
+        "level": "1st",
+        "base_attack_bonus": "+1",
+        "class_features": [
+          "Defense Bonuses, Talent"
+        ]
+      },
+      {
+        "level": "2nd",
+        "base_attack_bonus": "+2",
+        "class_features": [
+          "Tough as Durasteel +2"
+        ]
+      },
+      {
+        "level": "3rd",
+        "base_attack_bonus": "+3",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "4th",
+        "base_attack_bonus": "+4",
+        "class_features": [
+          "Tough as Durasteel +4"
+        ]
+      },
+      {
+        "level": "5th",
+        "base_attack_bonus": "+5",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "6th",
+        "base_attack_bonus": "+6",
+        "class_features": [
+          "Tough as Durasteel +6"
+        ]
+      },
+      {
+        "level": "7th",
+        "base_attack_bonus": "+7",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "8th",
+        "base_attack_bonus": "+8",
+        "class_features": [
+          "Tough as Durasteel +8"
+        ]
+      },
+      {
+        "level": "9th",
+        "base_attack_bonus": "+9",
+        "class_features": [
+          "Talent"
+        ]
+      },
+      {
+        "level": "10th",
+        "base_attack_bonus": "+10",
+        "class_features": [
+          "Tough as Durasteel +10"
+        ]
+      }
+    ],
+    "class_skills": [],
+    "hit_points": null,
     "starting_feats": [],
     "credits": null,
     "source_url": "https://swse.fandom.com/wiki/Martial_Arts_Master"
