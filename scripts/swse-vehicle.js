@@ -2,8 +2,39 @@
 
 import { SWSEActorSheet } from "./swse-actor.js";
 
+let SCRAPED_VEHICLES = [];
+
+/**
+ * Load the scraped vehicles.json into memory on game ready.
+ * Expects vehicles.json to live at systems/swse/packs/vehicles.json
+ */
+Hooks.once("ready", async () => {
+  try {
+    SCRAPED_VEHICLES = await fetch("systems/swse/packs/vehicles.json")
+      .then(r => r.json());
+  } catch (err) {
+    console.error("SWSE | Failed to load scraped vehicles data", err);
+  }
+});
+
+/**
+ * Utility to parse strings like "+18" or "15" into an integer.
+ */
+function parseBonus(str) {
+  const m = String(str).match(/([+-]?\d+)/);
+  return m ? Number(m[1]) : 0;
+}
+
+/**
+ * Map full‐word ability names to our three‐letter keys.
+ */
+const AB_MAP = {
+  strength:     "str",
+  dexterity:    "dex",
+  intelligence: "int"
+};
+
 export class SWSEVehicleSheet extends SWSEActorSheet {
-  /** Point to the Vehicle‐specific template */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "vehicle"],
@@ -11,50 +42,109 @@ export class SWSEVehicleSheet extends SWSEActorSheet {
     });
   }
 
-  /** Expose crew IDs and weapon array to the template */
+  /** Expose crew, weapons, and scraped stats to the template */
   getData() {
     const data = super.getData();
-    data.crew    = this.actor.system.crew;
-    data.weapons = this.actor.system.weapons;
+    const sys  = data.actor.system;
+
+    // Find scraped entry by name
+    const scraped = SCRAPED_VEHICLES.find(v => v.name === data.actor.name);
+    data.scraped = scraped || null;
+
+    // If we have scraped data, merge into system for display & rolls
+    if (scraped) {
+      // 1) Speed: take first number of "8 Squares" or similar
+      const spMatch = String(scraped.speed).match(/(\d+)/);
+      if (spMatch) {
+        sys.speed.base  = Number(spMatch[1]);
+        sys.speed.total = sys.speed.base;
+      }
+
+      // 2) Base Attack Bonus
+      sys.bab = parseBonus(scraped.base_attack_bonus);
+
+      // 3) Grapple (store as sys.defenses.grapple for reference)
+      sys.defenses = sys.defenses || {};
+      sys.defenses.grapple = parseBonus(scraped.grapple);
+
+      // 4) Ability Scores
+      for (const [full, val] of Object.entries(scraped.ability_scores)) {
+        const abKey = AB_MAP[full];
+        if (abKey && sys.abilities[abKey]) {
+          sys.abilities[abKey].base = parseInt(val) || sys.abilities[abKey].base;
+        }
+      }
+
+      // 5) Skills
+      for (const [key, val] of Object.entries(scraped.skills)) {
+        if (sys.skills[key]) {
+          sys.skills[key].value = parseBonus(val);
+        }
+      }
+
+      // 6) Crew Size & Passengers (just expose raw for GM)
+      sys.crew_size  = scraped.crew_size;
+      sys.passengers = scraped.passengers;
+
+      // 7) Weapons: if ranged array contains names, override
+      if (Array.isArray(scraped.ranged) && scraped.ranged.length) {
+        sys.weapons = scraped.ranged.map(name => ({
+          name,
+          attackAttr: "dex",
+          damage: "",
+          damageAttr: "none",
+          focus: false,
+          specialization: false,
+          modifier: 0,
+          usePilot: true,
+          gunner: ""
+        }));
+      }
+
+      // 8) Store source_url for quick reference
+      sys.source_url = scraped.source_url;
+    }
+
+    // Pass through for the template
+    data.crew    = sys.crew;
+    data.weapons = sys.weapons;
     return data;
   }
 
-  /** Activate drop zones and roll buttons for crew stations */
   activateListeners(html) {
     super.activateListeners(html);
 
-    // Allow dragging Actors into crew and gunner slots
+    // Crew‐drop zones
     html.find(".crew-drop")
       .on("dragover", ev => ev.preventDefault())
       .on("drop",    ev => this._onCrewDrop(ev));
 
-    // Bind station rolls
+    // Roll buttons
     html.find(".roll-pilot").click(()   => this._rollPilot());
     html.find(".roll-shields").click(() => this._rollShields());
     html.find(".roll-gunner").click(ev  => this._rollGunner(ev));
     html.find(".roll-engineer").click(() => this._rollEngineer());
   }
 
-  /** Handle dropping a Character or Droid into a slot */
   async _onCrewDrop(ev) {
     ev.preventDefault();
-    const dragData = JSON.parse(ev.originalEvent.dataTransfer.getData("text/plain"));
-    if (dragData.type !== "Actor") return;
-    if (!["character", "droid"].includes(dragData.documentType)) return;
+    const drag = JSON.parse(ev.originalEvent.dataTransfer.getData("text/plain"));
+    if (drag.type !== "Actor") return;
+    if (!["character","droid"].includes(drag.documentType)) return;
+
     const slot = ev.currentTarget.dataset.slot;
     const idx  = ev.currentTarget.dataset.index;
     const key  = slot === "weapons"
       ? `system.weapons.${idx}.gunner`
       : `system.crew.${slot}`;
-    await this.actor.update({ [key]: dragData.id });
+
+    await this.actor.update({ [key]: drag.id });
   }
 
-  /** Resolve an Actor by ID or linked Token */
   _getActor(id) {
     return game.actors.get(id) || canvas.tokens.get(id)?.actor;
   }
 
-  /** Pilot skill check using Pilot skill total */
   _rollPilot() {
     const pid = this.actor.system.crew.pilot;
     const pc  = this._getActor(pid);
@@ -67,53 +157,51 @@ export class SWSEVehicleSheet extends SWSEActorSheet {
       });
   }
 
-  /** Shields regeneration using Use Computer skill */
   _rollShields() {
     const sid = this.actor.system.crew.shields;
     const sc  = this._getActor(sid);
     if (!sc) return ui.notifications.warn("No shields operator");
     const mod    = sc.getSkillMod(sc.system.skills.use_computer);
-    const atkRoll= new Roll(`1d20 + ${mod}`).roll({ async: false });
-    atkRoll.toMessage({
+    const atk    = new Roll(`1d20 + ${mod}`).roll({ async: false });
+    atk.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: sc }),
       flavor: "<strong>Shield Regeneration</strong>"
     });
-    const total  = atkRoll.total;
+    const total  = atk.total;
     if (total < 15) return ui.notifications.info("No shield regeneration");
     const bonus  = total - 15;
     const regen  = new Roll(`1d6 + ${bonus}`).roll({ async: false }).total;
     ui.notifications.info(`${sc.name} regenerates ${regen} shield points`);
-    const sh     = this.actor.system.shields;
-    const value  = Math.min(sh.value + regen, sh.max);
+
+    const shields = this.actor.system.shields;
+    const value   = Math.min(shields.value + regen, shields.max);
     this.actor.update({ "system.shields.value": value });
   }
 
-  /** Fire a weapon: attack & damage sourced from assigned gunner or pilot */
   _rollGunner(ev) {
     const idx = ev.currentTarget.closest(".weapon-slot").dataset.index;
     const wp  = this.actor.system.weapons[idx];
-
-    // Determine who fires
-    const actorId = wp.usePilot
+    const shooterId = wp.usePilot
       ? this.actor.system.crew.pilot
       : wp.gunner;
-    const gc = this._getActor(actorId);
+    const gc = this._getActor(shooterId);
     if (!gc) return ui.notifications.warn("No gunner assigned");
 
-    // Attack roll
+    // Attack
     const half  = gc.getHalfLevel();
     const bab   = gc.system.bab || 0;
     const aMod  = gc.system.abilities[wp.attackAttr]?.mod || 0;
     const focus = wp.focus ? 1 : 0;
     const extra = wp.modifier || 0;
-    const atkMod= half + bab + aMod + focus + extra;
+    const atkMod = half + bab + aMod + focus + extra;
+
     new Roll(`1d20 + ${atkMod}`).roll({ async: false })
       .toMessage({
         speaker: ChatMessage.getSpeaker({ actor: gc }),
         flavor: `<strong>${wp.name} Attack</strong>`
       });
 
-    // Damage roll
+    // Damage
     let dMod = 0;
     if (wp.damageAttr === "str")  dMod = gc.system.abilities.str.mod;
     if (wp.damageAttr === "dex")  dMod = gc.system.abilities.dex.mod;
@@ -121,15 +209,13 @@ export class SWSEVehicleSheet extends SWSEActorSheet {
     if (wp.damageAttr === "2dex") dMod = gc.system.abilities.dex.mod * 2;
     const spec  = wp.specialization ? 1 : 0;
     const base  = wp.damage || "0";
-    const dmg   = `${base} + ${half + dMod + spec}`;
-    new Roll(dmg).roll({ async: false })
-      .toMessage({
-        speaker: ChatMessage.getSpeaker({ actor: gc }),
-        flavor: `<strong>${wp.name} Damage</strong>`
-      });
+    const dmgRoll = new Roll(`${base} + ${half + dMod + spec}`).roll({ async: false });
+    dmgRoll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: gc }),
+      flavor: `<strong>${wp.name} Damage</strong>`
+    });
   }
 
-  /** Engineering check using Mechanics skill */
   _rollEngineer() {
     const eid = this.actor.system.crew.engineer;
     const ec  = this._getActor(eid);
