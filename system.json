@@ -1,7 +1,7 @@
 {
   "name": "swse",
   "title": "Star Wars Saga Edition (SWSE)",
-  "description": "A Foundry VTT system for Star Wars Saga Edition, featuring modular character, droid, vehicle & force‐power sheets; dialog-driven attack and Force checks; compendium support for armor, classes, equipment, feats, force powers, talents, and weapons.",
+  "description": "A Foundry VTT system for Star Wars Saga Edition, featuring modular character, droid, vehicle & force‐power sheets; dialog‐driven attack and Force checks; compendium support for armor, classes, equipment, feats, force powers, talents, and weapons.",
   "version": "1.0.0",
   "license": "CC BY-SA 4.0",
   "authors": [
@@ -32,7 +32,7 @@
     {
       "name": "swse-armor",
       "label": "SWSE Armor",
-      "path": "packs/armor.json",
+      "path": "packs/Armor.json",
       "entity": "Item"
     },
     {
