@@ -1,7 +1,7 @@
 {
   "name": "swse",
   "title": "Star Wars Saga Edition (SWSE)",
-  "description": "A Foundry VTT system for Star Wars Saga Edition, featuring modular character, droid, vehicle & force-power sheets; dialog-driven leveling, attacks, Force checks; compendium support for armor, classes, equipment, feats, force powers, talents, and weapons.",
+  "description": "A Foundry VTT system for Star Wars Saga Edition, featuring modular character, droid, vehicle & force-power sheets; dialog-driven leveling, attacks, Force checks; plus JSON data integration for vehicles, feats, talents, and classes.",
   "version": "1.0.0",
   "license": "CC BY-SA 4.0",
   "authors": [
@@ -23,80 +23,19 @@
     "Item": ["armor", "class", "equipment", "feat", "forcepower", "talent", "weapon"]
   },
   "esmodules": [
-    "scripts/init.js",
-    "scripts/races.js",
-    "scripts/swse.js",
-    "scripts/swse-actor.js",
-    "scripts/swse-droid.js",
-    "scripts/swse-vehicle.js",
-    "scripts/swse-item.js",
-    "scripts/swse-force.js",
-    "scripts/swse-levelup.js",
     "scripts/swse-data.js",
-    "scripts/load-templates.js"
+    "scripts/load-templates.js",
+    "scripts/swse-levelup.js",
+    "system/config.js",
+    "system/swse.js"
   ],
   "styles": [
-    "styles/swse.css",
+    "styles/swse-vehicles.css",
     "styles/swse-levelup.css",
-    "styles/swse-vehicles.css"
+    "system/swse.css"
   ],
-  "packs": [
-    {
-      "name": "swse-armor",
-      "label": "SWSE Armor",
-      "path": "packs/armor.json",
-      "entity": "Item"
-    },
-    {
-      "name": "swse-classes",
-      "label": "SWSE Classes",
-      "path": "packs/classes.json",
-      "entity": "Item"
-    },
-    {
-      "name": "swse-equipment",
-      "label": "SWSE Equipment",
-      "path": "packs/equipment.json",
-      "entity": "Item"
-    },
-    {
-      "name": "swse-feats",
-      "label": "SWSE Feats",
-      "path": "packs/feats.json",
-      "entity": "Item"
-    },
-    {
-      "name": "swse-forcepowers",
-      "label": "SWSE Force Powers",
-      "path": "packs/forcepowers.json",
-      "entity": "Item"
-    },
-    {
-      "name": "swse-talents",
-      "label": "SWSE Talents",
-      "path": "packs/talents.json",
-      "entity": "Item"
-    },
-    {
-      "name": "swse-weapons",
-      "label": "SWSE Weapons",
-      "path": "packs/weapons.json",
-      "entity": "Item"
-    }
-  ],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "lang/en.json"
-    }
-  ],
-  "gridDistance": 1,
-  "gridUnits": "m",
   "preloadTemplates": [
-    "systems/swse/templates/actor/character-sheet.hbs",
-    "systems/swse/templates/actor/droid-sheet.hbs",
-    "systems/swse/templates/actor/vehicle-sheet.hbs",
-    "systems/swse/templates/item/item-sheet.hbs"
+    "system/actor-sheet.html",
+    "system/item-sheet.html"
   ]
 }
