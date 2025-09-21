@@ -1,203 +1,118 @@
-// systems/swse/scripts/swse-levelup.js
+// swse-levelup.js
+// Handles level-up logic for SWSE actors, including feat/talent selection
 
-/**
- * SWSE “Level Up” Dialog
- * Presents a wizard to advance your character:
- *  • Pick a class (new or existing)
- *  • Roll or take max HP
- *  • Select new Feats/Talents with live previews
- *  • At every 4th level, pick two distinct abilities to +1
- *  • Handle Force Training free‐power slots
- */
+import { getActorData, getFeats, getTalents, getClassData } from "./swse-data.js";
 
-Hooks.on("renderSWSEActorSheet", (app, html) => {
-  html.find(".level-up").click(ev => {
-    ev.preventDefault();
-    _swseLevelUp(app.actor);
-  });
-});
+export async function handleLevelUp(actor, newLevel) {
+  const className = actor.system.class;
+  const classData = getClassData(className);
+  const levelRow = classData.level_table.find(row => row.level === `${newLevel}th`);
+  if (!levelRow) return ui.notifications.warn("No class data for this level.");
 
-async function _swseLevelUp(actor) {
-  // 1. Load compendia
-  const [classes, feats, talents] = await Promise.all([
-    game.packs.get("swse.swse-classes").getDocuments(),
-    game.packs.get("swse.swse-feats").getDocuments(),
-    game.packs.get("swse.swse-talents").getDocuments()
-  ]);
+  const features = levelRow.class_features.toLowerCase();
+  const feats = getFeats();
+  const talents = getTalents();
 
-  const nextLevel = actor.system.level + 1;
-  const currentClass = actor.system.class;
+  const eligibleFeats = features.includes("bonus feat")
+    ? feats.filter(f => f.bonus_feat_for?.includes(className) && prerequisitesMet(f.prerequisites, actor))
+    : [];
 
-  // 2. Build HTML form
-  const classOptions = classes.map(c =>
-    `<option value="${c.id}" ${c.name === currentClass ? "selected" : ""}>${c.name}</option>`
-  ).join("");
+  const eligibleTalents = features.includes("talent")
+    ? talents.filter(t => t.class === className && prerequisitesMet(t.prerequisites, actor))
+    : [];
 
-  let content = `
-  <form>
-    <div class="form-group">
-      <label>Class to Advance</label>
-      <select name="classId">${classOptions}</select>
-    </div>
+  renderLevelUpDialog(actor, newLevel, eligibleFeats, eligibleTalents);
+}
 
-    <div class="form-group">
-      <label>HP Gain</label>
-      <label><input type="radio" name="hpMode" value="roll" checked/> Roll</label>
-      <label><input type="radio" name="hpMode" value="max"/> Maximum</label>
-    </div>
+function prerequisitesMet(prereqs, actor) {
+  if (!prereqs || prereqs.length === 0) return true;
+  return prereqs.every(req => actorHasRequirement(req, actor));
+}
 
-    <div class="form-group">
-      <label>Choose Feat(s)</label>
-      <select name="featIds" multiple></select>
-      <div class="feat-details"></div>
-    </div>
-
-    <div class="form-group">
-      <label>Choose Talent(s)</label>
-      <select name="talentIds" multiple></select>
-      <div class="talent-details"></div>
-    </div>`;
-
-  // Ability increases on levels 4,8,12,16,20
-  if ([4,8,12,16,20].includes(nextLevel)) {
-    content += `
-    <div class="form-group">
-      <label>Ability Increases (pick 2 distinct)</label>
-      <select name="abi1"></select>
-      <select name="abi2"></select>
-    </div>`;
+function actorHasRequirement(req, actor) {
+  // Basic check: ability scores, feats, skills
+  const lowerReq = req.toLowerCase();
+  if (lowerReq.includes("str") || lowerReq.includes("dex") || lowerReq.includes("int")) {
+    const [stat, value] = lowerReq.split(" ");
+    return actor.system.abilities[stat]?.value >= parseInt(value);
   }
+  if (lowerReq.includes("trained") || lowerReq.includes("skill")) {
+    return actor.system.skills?.some(s => lowerReq.includes(s.name.toLowerCase()) && s.trained);
+  }
+  if (lowerReq.includes("feat")) {
+    return actor.system.feats?.some(f => lowerReq.includes(f.name.toLowerCase()));
+  }
+  return false;
+}
 
-  content += `</form>`;
-
-  // 3. Render Dialog
+function renderLevelUpDialog(actor, level, feats, talents) {
+  const content = `
+    <h2>Level ${level} Advancement</h2>
+    ${feats.length > 0 ? renderFeatTable(feats) : ""}
+    ${talents.length > 0 ? renderTalentTable(talents) : ""}
+  `;
   new Dialog({
-    title: `Level Up to ${nextLevel}`,
+    title: `Level Up: ${actor.name}`,
     content,
-    render: html => {
-      // Populate Feats & Talents
-      const featSel   = html.find("[name=featIds]");
-      const talentSel = html.find("[name=talentIds]");
-      for (let f of feats) {
-        featSel.append(`<option value="${f.id}">${f.name}</option>`);
-      }
-      for (let t of talents) {
-        talentSel.append(`<option value="${t.id}">${t.name}</option>`);
-      }
-
-      // Populate Abilities if needed
-      if (html.find("[name=abi1]").length) {
-        const abilities = Object.keys(actor.system.abilities);
-        const sel1 = html.find("[name=abi1]");
-        const sel2 = html.find("[name=abi2]");
-        for (let ab of abilities) {
-          const label = ab.toUpperCase();
-          sel1.append(`<option value="${ab}">${label}</option>`);
-          sel2.append(`<option value="${ab}">${label}</option>`);
-        }
-      }
-
-      // Live preview for Feat details
-      featSel.change(() => {
-        const id = featSel.val()[0];
-        const f  = feats.find(x => x.id === id);
-        featSel.closest(".form-group")
-          .find(".feat-details")
-          .html(f ? `
-            <h4>${f.name}</h4>
-            <p><strong>Prerequisite:</strong> ${f.system.prerequisites || "None"}</p>
-            <p>${f.system.benefit || f.system.description || ""}</p>
-          ` : "");
-      });
-
-      // Live preview for Talent details
-      talentSel.change(() => {
-        const id = talentSel.val()[0];
-        const t  = talents.find(x => x.id === id);
-        talentSel.closest(".form-group")
-          .find(".talent-details")
-          .html(t ? `
-            <h4>${t.name}</h4>
-            <p><strong>Prerequisite:</strong> ${t.system.prerequisites || "None"}</p>
-            <p>${t.system.description || ""}</p>
-          ` : "");
-      });
-    },
     buttons: {
-      level: {
-        icon: "<i class='fas fa-level-up-alt'></i>",
+      confirm: {
         label: "Apply",
-        callback: async dlg => {
-          const fd       = new FormData(dlg.find("form")[0]);
-          const classId  = fd.get("classId");
-          const hpMode   = fd.get("hpMode");
-          const featIds  = fd.getAll("featIds");
-          const talIds   = fd.getAll("talentIds");
-          const abi1     = fd.get("abi1");
-          const abi2     = fd.get("abi2");
-
-          // 4. Class Record & HP
-          const cls    = classes.find(c => c.id === classId);
-          const lvlRec = cls.system.levels?.[nextLevel] || {};
-          const hd     = lvlRec.hitDie || cls.system.hitDie || 0;
-          const conMod = actor.system.abilities.con.mod;
-          const rollHP = hpMode === "max"
-            ? hd
-            : new Roll(`1d${hd}`).roll({async:false}).total;
-          const gained = rollHP + conMod;
-
-          // 5. Update actor: level, class, HP
-          await actor.update({
-            "system.level": nextLevel,
-            "system.class": cls.name,
-            "system.hp.max": actor.system.hp.max + gained,
-            "system.hp.value": actor.system.hp.value + gained
-          });
-
-          // 6. Grant Feats & Talents
-          const toCreate = [];
-          for (let id of featIds) {
-            const f = feats.find(x => x.id === id);
-            if (f) toCreate.push(duplicate(f.toObject()));
-          }
-          for (let id of talIds) {
-            const t = talents.find(x => x.id === id);
-            if (t) toCreate.push(duplicate(t.toObject()));
-          }
-          if (toCreate.length) {
-            await actor.createEmbeddedDocuments("Item", toCreate);
-          }
-
-          // 7. Ability Increases on milestones
-          if ([4,8,12,16,20].includes(nextLevel) && abi1 && abi2 && abi1 !== abi2) {
-            const updates = {};
-            updates[`system.abilities.${abi1}.base`] =
-              actor.system.abilities[abi1].base + 1;
-            updates[`system.abilities.${abi2}.base`] =
-              actor.system.abilities[abi2].base + 1;
-            await actor.update(updates);
-          }
-
-          // 8. Handle Force Training feat
-          const hasFT = featIds
-            .map(id => feats.find(f => f.id === id)?.name)
-            .includes("Force Training")
-            || actor.items.some(i => i.type === "feat" && i.name === "Force Training");
-          if (hasFT) {
-            const wisMod = actor.system.abilities.wis.mod;
-            const newMax = 1 + wisMod;
-            const oldCur = actor.system.freeForcePowers.current || 0;
-            await actor.update({
-              "system.freeForcePowers.max": newMax,
-              "system.freeForcePowers.current": Math.max(oldCur, newMax)
-            });
-          }
-
-          ui.notifications.info(`${actor.name} is now level ${nextLevel}!`);
-        }
+        callback: html => applySelections(actor, html)
       },
-      cancel: { label: "Cancel" }
-    },
-    default: "level"
+      cancel: {
+        label: "Cancel"
+      }
+    }
   }).render(true);
+}
+
+function renderFeatTable(feats) {
+  return `
+    <h3>Bonus Feats</h3>
+    <div class="scroll-table">
+      <table>
+        <thead><tr><th>Select</th><th>Name</th><th>Prerequisites</th><th>Description</th></tr></thead>
+        <tbody>
+          ${feats.map(f => `
+            <tr>
+              <td><input type="radio" name="feat" value="${f.name}" ${f.selectable === false ? "disabled" : ""}></td>
+              <td>${f.name}</td>
+              <td>${f.prerequisites?.join(", ") || "—"}</td>
+              <td>${f.description}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderTalentTable(talents) {
+  return `
+    <h3>Talents</h3>
+    <div class="scroll-table">
+      <table>
+        <thead><tr><th>Select</th><th>Name</th><th>Tree</th><th>Prerequisites</th><th>Description</th></tr></thead>
+        <tbody>
+          ${talents.map(t => `
+            <tr>
+              <td><input type="radio" name="talent" value="${t.name}" ${t.selectable === false ? "disabled" : ""}></td>
+              <td>${t.name}</td>
+              <td>${t.tree || "—"}</td>
+              <td>${t.prerequisites?.join(", ") || "—"}</td>
+              <td>${t.description}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function applySelections(actor, html) {
+  const feat = html.find("input[name='feat']:checked").val();
+  const talent = html.find("input[name='talent']:checked").val();
+  if (feat) actor.system.feats.push({ name: feat });
+  if (talent) actor.system.talents.push({ name: talent });
+  ui.notifications.info(`${actor.name} leveled up with ${feat || "no feat"} and ${talent || "no talent"}.`);
 }
