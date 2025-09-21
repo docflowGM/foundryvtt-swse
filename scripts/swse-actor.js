@@ -131,3 +131,9 @@ Handlebars.registerHelper("getSkillMod", (skill, abilities, level, cond) => {
   if (skill.focus)   mod += 5;
   return mod + (CONDITION_PENALTIES[cond] || 0);
 });
+for (const [abbr, ab] of Object.entries(this.system.abilities)) {
+  ab.base    = Math.max(0, ab.base);
+  ab.racial  = (SWSE_RACES[this.system.race]?.bonuses[abbr] || 0);
+  ab.total   = ab.base + ab.racial + (ab.temp || 0);
+  ab.mod     = Math.floor((ab.total - 10) / 2);
+}
