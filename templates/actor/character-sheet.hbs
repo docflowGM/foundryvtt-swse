@@ -1,102 +1,208 @@
-{
-  "type": "character",
-  "name": "",
-  "img": "icons/svg/mystery-man.svg",
-  "data": {
-    "level": 1,
-    "abilities": {
-      "str": { "value": 10, "mod": 0 },
-      "dex": { "value": 10, "mod": 0 },
-      "con": { "value": 10, "mod": 0 },
-      "int": { "value": 10, "mod": 0 },
-      "wis": { "value": 10, "mod": 0 },
-      "cha": { "value": 10, "mod": 0 }
-    },
-    "skills": {
-      "acrobatics": { "value": 0, "trained": false, "focus": false, "ability": "dex" },
-      "climb": { "value": 0, "trained": false, "focus": false, "ability": "str" },
-      "deception": { "value": 0, "trained": false, "focus": false, "ability": "cha" },
-      "endurance": { "value": 0, "trained": false, "focus": false, "ability": "con" },
-      "gather_information": { "value": 0, "trained": false, "focus": false, "ability": "cha" },
-      "initiative": { "value": 0, "trained": false, "focus": false, "ability": "dex" },
-      "jump": { "value": 0, "trained": false, "focus": false, "ability": "str" },
-      "knowledge_bureaucracy": { "value": 0, "trained": false, "focus": false, "ability": "int" },
-      "knowledge_galactic_lore": { "value": 0, "trained": false, "focus": false, "ability": "int" },
-      "knowledge_life_sciences": { "value": 0, "trained": false, "focus": false, "ability": "int" },
-      "knowledge_physical_sciences": { "value": 0, "trained": false, "focus": false, "ability": "int" },
-      "knowledge_social_sciences": { "value": 0, "trained": false, "focus": false, "ability": "int" },
-      "knowledge_technology": { "value": 0, "trained": false, "focus": false, "ability": "int" },
-      "mechanics": { "value": 0, "trained": false, "focus": false, "ability": "int" },
-      "perception": { "value": 0, "trained": false, "focus": false, "ability": "wis" },
-      "persuasion": { "value": 0, "trained": false, "focus": false, "ability": "cha" },
-      "pilot": { "value": 0, "trained": false, "focus": false, "ability": "dex" },
-      "ride": { "value": 0, "trained": false, "focus": false, "ability": "dex" },
-      "stealth": { "value": 0, "trained": false, "focus": false, "ability": "dex" },
-      "survival": { "value": 0, "trained": false, "focus": false, "ability": "wis" },
-      "swim": { "value": 0, "trained": false, "focus": false, "ability": "str" },
-      "treat_injury": { "value": 0, "trained": false, "focus": false, "ability": "wis" },
-      "use_computer": { "value": 0, "trained": false, "focus": false, "ability": "int" },
-      "use_the_force": { "value": 0, "trained": false, "focus": false, "ability": "cha" }
-    },
-    "customSkills": [
-      {
-        "name": "",
-        "value": 0,
-        "trained": false,
-        "focus": false,
-        "ability": "int"
-      }
-    ],
-    "defenses": {
-      "fortitude": { "base": 10, "misc": 0 },
-      "reflex": { "base": 10, "misc": 0 },
-      "will": { "base": 10, "misc": 0 }
-    },
-    "hp": {
-      "max": 10,
-      "value": 10
-    }
-  }
-}
-<nav class="sheet-tabs tabs" data-group="primary">
-  <a class="item" data-tab="main">Main</a>
-  <a class="item" data-tab="class">Class</a>
-  <a class="item" data-tab="attacks">Attacks</a>
-  <a class="item" data-tab="forcepowers">Force Powers</a>
-  <a class="item" data-tab="feats">Feats</a>
-  <a class="item" data-tab="talents">Talents</a>
-  <a class="item" data-tab="gm">GM Options</a>
-</nav>
-<section class="tab" data-tab="main">
-  <h1>{{actor.name}}</h1>
-  <img src="{{actor.img}}" alt="Character Image" width="100" height="100"/>
-  <section>
-    <h2>Damage Threshold</h2>
-    <label>Based on:
-      <select name="data.damageThreshold.defenseType">
-        <option value="fortitude" {{#if (eq data.damageThreshold.defenseType "fortitude")}}selected{{/if}}>Fortitude</option>
-        <option value="reflex" {{#if (eq data.damageThreshold.defenseType "reflex")}}selected{{/if}}>Reflex</option>
-        <option value="will" {{#if (eq data.damageThreshold.defenseType "will")}}selected{{/if}}>Will</option>
-      </select>
-    </label>
-    <label>Misc Mod:</label>
-    <input type="number" name="data.damageThreshold.misc" value="{{data.damageThreshold.misc}}" />
-    <span>Total: {{calculateDamageThreshold data}}</span>
-    <button type="button" class="roll-grapple">Grapple</button>
-  </section>
-</section>
-<section class="tab" data-tab="gm">
-  <h2>GM Options</h2>
-  <label><input type="checkbox" name="data.gmOptions.talentEveryLevel" {{#if data.gmOptions.talentEveryLevel}}checked{{/if}}/> Every level gives a talent</label>
-  <label><input type="checkbox" name="data.gmOptions.featEveryLevel" {{#if data.gmOptions.featEveryLevel}}checked{{/if}}/> Every level gives a feat</label>
-  <label><input type="checkbox" name="data.gmOptions.anyClassAnyFeat" {{#if data.gmOptions.anyClassAnyFeat}}checked{{/if}}/> Any class can choose any feat</label>
-</section>
-<form class="{{cssClass}} sheet-actor" autocomplete="off">
-  {{!-- STANDARD CHARACTER FIELDS (name, race, class, level, abilities, feats, etc.) --}}
-  {{!-- … your existing character-sheet markup … --}}
+<form class="{{cssClass}} sheet-actor flexcol" autocomplete="off">
 
-  {{!-- DROID SECTION --}}
-  {{#if (eq system.species "droid")}}
-    {{> actor/partials/droid-section}}
-  {{/if}}
+  {{!-- ─────────────────────────────────────────────────── Header ── --}}
+  <header class="sheet-header flexrow">
+    <img class="profile-img" src="{{actor.img}}" title="{{actor.name}}" />
+    <div class="header-fields flexcol">
+      <h1 class="char-name">
+        <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name" />
+      </h1>
+      <div class="form-group inline-group">
+        <label>Race</label>
+        <select name="system.race">
+          {{#each races as |r key|}}
+            <option value="{{key}}" {{#if (eq system.race key)}}selected{{/if}}>
+              {{r.label}}
+            </option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group inline-group">
+        <label>Class</label>
+        <input name="system.class" type="text" value="{{system.class}}" placeholder="Class" />
+      </div>
+      <div class="form-group inline-group">
+        <label>Level</label>
+        <input name="system.level" type="number" value="{{system.level}}" min="1" />
+      </div>
+    </div>
+  </header>
+
+  {{!-- ───────────────────────────────────────────── Tabs Navigation ── --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="main">Main</a>
+    <a class="item"        data-tab="class">Class</a>
+    <a class="item"        data-tab="attacks">Attacks</a>
+    <a class="item"        data-tab="forcepowers">Force Powers</a>
+    <a class="item"        data-tab="feats">Feats</a>
+    <a class="item"        data-tab="talents">Talents</a>
+    <a class="item"        data-tab="stats">Stats</a>
+    <a class="item"        data-tab="gm">GM Options</a>
+  </nav>
+
+  {{!-- ─────────────────────────────────────────────────── Body ── --}}
+  <section class="sheet-body flexcol">
+
+    {{!-- Main Tab --}}
+    <div class="tab active" data-tab="main">
+      <h2>Damage Threshold</h2>
+      <div class="form-group inline-group">
+        <label>Based on</label>
+        <select name="system.damageThreshold.defenseType">
+          <option value="fortitude" {{#if (eq system.damageThreshold.defenseType "fortitude")}}selected{{/if}}>Fortitude</option>
+          <option value="reflex"    {{#if (eq system.damageThreshold.defenseType "reflex")}}selected{{/if}}>Reflex</option>
+          <option value="will"      {{#if (eq system.damageThreshold.defenseType "will")}}selected{{/if}}>Will</option>
+        </select>
+      </div>
+      <div class="form-group inline-group">
+        <label>Misc Mod</label>
+        <input type="number" name="system.damageThreshold.misc" value="{{system.damageThreshold.misc}}" />
+      </div>
+      <div class="form-group">
+        <span>Total: {{calculateDamageThreshold this}}</span>
+        <button type="button" class="roll-grapple">Grapple</button>
+      </div>
+    </div>
+
+    {{!-- Class Tab --}}
+    <div class="tab" data-tab="class">
+      <h2>Class Features</h2>
+      {{!-- your class feature markup here --}}
+    </div>
+
+    {{!-- Attacks Tab --}}
+    <div class="tab" data-tab="attacks">
+      <h2>Attacks</h2>
+      {{!-- your attacks list here --}}
+    </div>
+
+    {{!-- Force Powers Tab --}}
+    <div class="tab" data-tab="forcepowers">
+      <h2>Force Powers</h2>
+      {{!-- your force powers list here --}}
+    </div>
+
+    {{!-- Feats Tab --}}
+    <div class="tab" data-tab="feats">
+      <h2>Feats <button class="add-feat">＋</button></h2>
+      {{#each system.feats as |feat idx|}}
+        <div class="list-entry" data-index="{{idx}}">
+          <input name="system.feats.{{idx}}.name" type="text" value="{{feat.name}}" placeholder="Feat Name" />
+          <textarea name="system.feats.{{idx}}.description" placeholder="Description">{{feat.description}}</textarea>
+        </div>
+      {{/each}}
+    </div>
+
+    {{!-- Talents Tab --}}
+    <div class="tab" data-tab="talents">
+      <h2>Talents <button class="add-talent">＋</button></h2>
+      {{#each system.talents as |tal idx|}}
+        <div class="list-entry" data-index="{{idx}}">
+          <input name="system.talents.{{idx}}.name" type="text" value="{{tal.name}}" placeholder="Talent Name" />
+          <textarea name="system.talents.{{idx}}.description" placeholder="Description">{{tal.description}}</textarea>
+        </div>
+      {{/each}}
+    </div>
+
+    {{!-- Stats Tab --}}
+    <div class="tab" data-tab="stats">
+      <h2>Ability Scores</h2>
+      <table class="ability-table">
+        <thead>
+          <tr>
+            <th>Ability</th>
+            <th>Base</th>
+            <th>Racial</th>
+            <th>Temp</th>
+            <th>Total</th>
+            <th>Mod</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each system.abilities as |ab key|}}
+            <tr>
+              <td>{{key}}</td>
+              <td>
+                <input
+                  name="system.abilities.{{key}}.base"
+                  type="number"
+                  value="{{ab.base}}" />
+              </td>
+              <td>{{ab.racial}}</td>
+              <td>
+                <input
+                  name="system.abilities.{{key}}.temp"
+                  type="number"
+                  value="{{ab.temp}}" />
+              </td>
+              <td>{{ab.total}}</td>
+              <td>{{ab.mod}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <h2>Skills</h2>
+      <table class="skill-table">
+        <thead>
+          <tr>
+            <th>Skill</th>
+            <th>Mod</th>
+            <th>Trained</th>
+            <th>Focus</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each system.skills as |sk key|}}
+            <tr>
+              <td>{{sk.label}}</td>
+              <td>{{getSkillMod sk system.abilities system.level system.conditionTrack}}</td>
+              <td><input type="checkbox" name="system.skills.{{key}}.trained" {{#if sk.trained}}checked{{/if}}/></td>
+              <td><input type="checkbox" name="system.skills.{{key}}.focus"   {{#if sk.focus}}  checked{{/if}}/></td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <h3>Custom Skills <button class="add-skill">＋</button></h3>
+      {{#each system.customSkills as |cs idx|}}
+        <div class="list-entry" data-index="{{idx}}">
+          <input name="system.customSkills.{{idx}}.name"  type="text"  value="{{cs.name}}"    placeholder="Skill Name" />
+          <input name="system.customSkills.{{idx}}.value" type="number" value="{{cs.value}}" />
+          <select name="system.customSkills.{{idx}}.ability">
+            {{#each (keys system.abilities) as |abKey|}}
+              <option value="{{abKey}}" {{#if (eq cs.ability abKey)}}selected{{/if}}>{{abKey}}</option>
+            {{/each}}
+          </select>
+        </div>
+      {{/each}}
+    </div>
+
+    {{!-- GM Options Tab --}}
+    <div class="tab" data-tab="gm">
+      <h2>GM Options</h2>
+      <label>
+        <input
+          type="checkbox"
+          name="system.gmOptions.talentEveryLevel"
+          {{#if system.gmOptions.talentEveryLevel}}checked{{/if}} />
+        Every level gives a talent
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          name="system.gmOptions.featEveryLevel"
+          {{#if system.gmOptions.featEveryLevel}}checked{{/if}} />
+        Every level gives a feat
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          name="system.gmOptions.anyClassAnyFeat"
+          {{#if system.gmOptions.anyClassAnyFeat}}checked{{/if}} />
+        Any class can choose any feat
+      </label>
+    </div>
+
+  </section>
 </form>
