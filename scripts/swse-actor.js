@@ -21,6 +21,85 @@ class SWSEActor extends Actor {
     this._applyConditionPenalty();
     this._prepareDefenses();
   }
+class SWSEActorSheet extends ActorSheet {
+  // … existing code …
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    // … your existing binds …
+
+    // Bind our new attack‐roll button
+    html.find(".roll-weapon").click(ev => {
+      ev.preventDefault();
+      const idx    = Number(ev.currentTarget.closest(".list-entry").dataset.index);
+      const weapon = this.actor.system.weapons[idx];
+      const defaultMod = this.actor.getSkillMod({ // or define getAttackMod
+        value: weapon.attackBonus || 0,
+        ability: weapon.ability || "str",
+        trained: weapon.trained
+      });
+      this._showAttackDialog(weapon, defaultMod);
+    });
+  }
+
+  /** Show a roll dialog for a weapon attack */
+  _showAttackDialog(weapon, defaultMod) {
+    const content = `
+      <form>
+        <div class="form-group">
+          <label>Weapon</label>
+          <input type="text" name="name" value="${weapon.name}" disabled />
+        </div>
+        <div class="form-group">
+          <label>Base Attack</label>
+          <input type="number" name="base" value="${defaultMod}" disabled />
+        </div>
+        <div class="form-group">
+          <label>Extra Modifier</label>
+          <input type="number" name="modifier" value="0" />
+        </div>
+        <div class="form-group">
+          <label>Action</label>
+          <select name="action">
+            <option value="">None</option>
+            <option value="charge">Charge</option>
+            <option value="block">Block</option>
+            <option value="deflect">Deflect</option>
+          </select>
+        </div>
+      </form>
+    `;
+
+    new Dialog({
+      title: `Rolling Attack: ${weapon.name}`,
+      content,
+      buttons: {
+        roll: {
+          icon: "<i class='fas fa-dice'></i>",
+          label: "Roll",
+          callback: html => {
+            const extra    = Number(html.find("[name=modifier]").val()) || 0;
+            const action   = html.find("[name=action]").val();
+            let totalMod   = defaultMod + extra;
+            // you could add action‐specific adjustments here, e.g.:
+            // if (action === "charge") totalMod += 2;
+            const formula  = `1d20 + ${totalMod}`;
+            new Roll(formula).roll({async: false})
+              .toMessage({
+                speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+                flavor: `${weapon.name}${ action ? ` (${action})` : "" }`
+              });
+          }
+        },
+        cancel: {
+          icon: "<i class='fas fa-times'></i>",
+          label: "Cancel"
+        }
+      },
+      default: "roll"
+    }).render(true);
+  }
+}
 
   _applyRacialAbilities() {
     const raceKey     = this.system.race || "custom";
