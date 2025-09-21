@@ -1,12 +1,9 @@
 {
   "name": "swse",
   "title": "Star Wars Saga Edition (SWSE)",
-  "description": "A Foundry VTT system for Star Wars Saga Edition, featuring dynamic character, droid, and vehicle sheets with template-driven defaults and modular scripting.",
+  "description": "A Foundry VTT system for Star Wars Saga Edition, featuring modular character, droid, vehicle & force‐power sheets; dialog-driven attack and Force checks; compendium support for armor, classes, equipment, feats, force powers, talents, and weapons.",
   "version": "1.0.0",
   "license": "CC BY-SA 4.0",
-  "minimumCoreVersion": "11",
-  "compatibleCoreVersion": "13",
-  "author": "DocflowGM",
   "authors": [
     {
       "name": "DocflowGM",
@@ -16,12 +13,16 @@
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip",
+  "minimumCoreVersion": "11",
+  "compatibleCoreVersion": "13",
   "esmodules": [
     "scripts/init.js",
     "scripts/races.js",
     "scripts/swse-actor.js",
     "scripts/swse-droid.js",
     "scripts/swse-vehicle.js",
+    "scripts/swse-item.js",
+    "scripts/swse-force.js",
     "scripts/swse.js"
   ],
   "styles": [
@@ -31,7 +32,7 @@
     {
       "name": "swse-armor",
       "label": "SWSE Armor",
-      "path": "packs/Armor.json",
+      "path": "packs/armor.json",
       "entity": "Item"
     },
     {
@@ -81,8 +82,9 @@
   "gridDistance": 1,
   "gridUnits": "m",
   "preloadTemplates": [
-    "templates/actor/character-sheet.hbs",
-    "templates/actor/droid-sheet.hbs",
-    "templates/actor/vehicle-sheet.hbs"
+    "systems/swse/templates/actor/character-sheet.hbs",
+    "systems/swse/templates/actor/droid-sheet.hbs",
+    "systems/swse/templates/actor/vehicle-sheet.hbs",
+    "systems/swse/templates/item/item-sheet.hbs"
   ]
 }
