@@ -4,9 +4,16 @@
   <header class="sheet-header flexrow">
     <img class="profile-img" src="{{actor.img}}" title="{{actor.name}}" />
     <div class="header-fields flexcol">
+
       <h1 class="char-name">
-        <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name" />
+        <input
+          name="name"
+          type="text"
+          value="{{actor.name}}"
+          placeholder="Character Name"
+        />
       </h1>
+
       <div class="form-group inline-group">
         <label>Race</label>
         <select name="system.race">
@@ -17,18 +24,61 @@
           {{/each}}
         </select>
       </div>
+
       <div class="form-group inline-group">
         <label>Class</label>
-        <input name="system.class" type="text" value="{{system.class}}" placeholder="Class" />
+        <input
+          name="system.class"
+          type="text"
+          value="{{system.class}}"
+          placeholder="Class"
+        />
       </div>
+
       <div class="form-group inline-group">
         <label>Level</label>
-        <input name="system.level" type="number" value="{{system.level}}" min="1" />
+        <input
+          name="system.level"
+          type="number"
+          value="{{system.level}}"
+          min="1"
+        />
       </div>
+
+      <div class="form-group inline-group">
+        <label>Size</label>
+        <select name="system.size">
+          {{#each (array "tiny" "small" "medium" "large" "huge" "gargantuan") as |sz|}}
+            <option value="{{sz}}" {{#if (eq system.size sz)}}selected{{/if}}>
+              {{sz}}
+            </option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-group inline-group">
+        <label>Base Speed</label>
+        <input
+          name="system.speed.base"
+          type="number"
+          min="0"
+          value="{{system.speed.base}}"
+        />
+      </div>
+      <div class="form-group inline-group">
+        <label>Total Speed</label>
+        <span>{{system.speed.total}}</span>
+      </div>
+
+      <div class="form-group inline-group">
+        <label>Force Points</label>
+        <span>{{system.forcePoints.value}} / {{system.forcePoints.max}}</span>
+      </div>
+
     </div>
   </header>
 
-  {{!-- ───────────────────────────────────────────── Tabs Navigation ── --}}
+  {{!-- ─────────────────────────────────────────────── Tabs Navigation ── --}}
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item active" data-tab="main">Main</a>
     <a class="item"        data-tab="class">Class</a>
@@ -38,84 +88,168 @@
     <a class="item"        data-tab="talents">Talents</a>
     <a class="item"        data-tab="stats">Stats</a>
     <a class="item"        data-tab="gm">GM Options</a>
-    <a class="item"        data-tab="forcepowers">Force Powers</a>
-
   </nav>
 
   {{!-- ─────────────────────────────────────────────────── Body ── --}}
   <section class="sheet-body flexcol">
 
-    <h3>Weapons <button class="add-weapon">＋</button></h3>
-{{#each system.weapons as |w idx|}}
-  <div class="list-entry" data-index="{{idx}}">
-    <input  name="system.weapons.{{idx}}.name"
-            type="text" value="{{w.name}}"
-            placeholder="Weapon Name" />
-    <textarea
-      name="system.weapons.{{idx}}.description"
-      placeholder="Description">{{w.description}}</textarea>
-    <button type="button" class="roll-weapon">Attack</button>
-  </div>
-{{/each}}
     {{!-- Main Tab --}}
     <div class="tab active" data-tab="main">
-      <h2>Damage Threshold</h2>
-      <div class="form-group inline-group">
-        <label>Based on</label>
-        <select name="system.damageThreshold.defenseType">
-          <option value="fortitude" {{#if (eq system.damageThreshold.defenseType "fortitude")}}selected{{/if}}>Fortitude</option>
-          <option value="reflex"    {{#if (eq system.damageThreshold.defenseType "reflex")}}selected{{/if}}>Reflex</option>
-          <option value="will"      {{#if (eq system.damageThreshold.defenseType "will")}}selected{{/if}}>Will</option>
-        </select>
-      </div>
-      <div class="form-group inline-group">
-        <label>Misc Mod</label>
-        <input type="number" name="system.damageThreshold.misc" value="{{system.damageThreshold.misc}}" />
-      </div>
-      <div class="form-group">
-        <span>Total: {{calculateDamageThreshold this}}</span>
-        <button type="button" class="roll-grapple">Grapple</button>
-      </div>
+      <h2>Main</h2>
+
+      <section>
+        <h3>Damage Threshold</h3>
+        <div class="form-group inline-group">
+          <label>Based on</label>
+          <select name="system.damageThreshold.defenseType">
+            <option value="fortitude" {{#if (eq system.damageThreshold.defenseType "fortitude")}}selected{{/if}}>Fortitude</option>
+            <option value="reflex"    {{#if (eq system.damageThreshold.defenseType "reflex")}}selected{{/if}}>Reflex</option>
+            <option value="will"      {{#if (eq system.damageThreshold.defenseType "will")}}selected{{/if}}>Will</option>
+          </select>
+        </div>
+        <div class="form-group inline-group">
+          <label>Misc Mod</label>
+          <input
+            name="system.damageThreshold.misc"
+            type="number"
+            value="{{system.damageThreshold.misc}}"
+          />
+        </div>
+        <div class="form-group">
+          <span>Total: {{calculateDamageThreshold this}}</span>
+          <button type="button" class="roll-grapple">Grapple</button>
+        </div>
+      </section>
+
+      <section>
+        <h3>Second Wind</h3>
+        <div class="form-group inline-group">
+          <label>Uses</label>
+          <span>{{system.secondWind.uses}}</span>
+        </div>
+        <div class="form-group inline-group">
+          <label>Healing</label>
+          <span>{{system.secondWind.healing}}</span>
+        </div>
+        <button type="button" class="apply-second-wind">Take Second Wind</button>
+      </section>
     </div>
 
     {{!-- Class Tab --}}
     <div class="tab" data-tab="class">
       <h2>Class Features</h2>
-      {{!-- your class feature markup here --}}
+      {{!-- Insert your class feature markup or partial here --}}
     </div>
 
     {{!-- Attacks Tab --}}
     <div class="tab" data-tab="attacks">
       <h2>Attacks</h2>
-      {{!-- your attacks list here --}}
+      {{#each system.weapons as |w idx|}}
+        <div class="form-group flexrow weapon-entry" data-index="{{idx}}">
+          <input
+            name="system.weapons.{{idx}}.name"
+            type="text"
+            value="{{w.name}}"
+            placeholder="Weapon Name"
+          />
+          <textarea
+            name="system.weapons.{{idx}}.description"
+            placeholder="Description"
+          >{{w.description}}</textarea>
+          <button type="button" class="roll-weapon">Attack</button>
+          <button type="button" class="remove-weapon">🗑️</button>
+        </div>
+      {{/each}}
+      <button type="button" class="add-weapon">＋ Add Weapon</button>
     </div>
 
     {{!-- Force Powers Tab --}}
     <div class="tab" data-tab="forcepowers">
-      <h2>Force Powers</h2>
-      {{!-- your force powers list here --}}
+      <h2 class="flexrow">
+        Force Powers
+        <button type="button" class="refresh-forcepowers">🔄 Refresh All Uses</button>
+        <button type="button" class="add-forcepower">＋ Add Force Power</button>
+      </h2>
+      <ul class="forcepower-list">
+        {{#each actor.items as |it|}}
+          {{#if (eq it.type "forcepower")}}
+            <li class="flexrow forcepower-entry" data-item-id="{{it._id}}">
+              <input
+                name="items.{{it._id}}.name"
+                type="text"
+                value="{{it.name}}"
+                placeholder="Power Name"
+              />
+              <div class="form-group inline-group">
+                <label>Uses</label>
+                <input
+                  name="items.{{it._id}}.system.uses.current"
+                  type="number"
+                  value="{{it.system.uses.current}}"
+                  min="0"
+                  max="{{it.system.uses.max}}"
+                />
+                /
+                <input
+                  name="items.{{it._id}}.system.uses.max"
+                  type="number"
+                  value="{{it.system.uses.max}}"
+                  min="0"
+                />
+              </div>
+              <button type="button" class="roll-forcepower">Use</button>
+              <button
+                type="button"
+                class="reload-forcepower"
+                {{#if (lte system.forcePoints.value 0)}}disabled{{/if}}
+              >Reload FP</button>
+              <button type="button" class="remove-forcepower">🗑️</button>
+            </li>
+          {{/if}}
+        {{/each}}
+      </ul>
     </div>
 
     {{!-- Feats Tab --}}
     <div class="tab" data-tab="feats">
-      <h2>Feats <button class="add-feat">＋</button></h2>
+      <h2>Feats</h2>
       {{#each system.feats as |feat idx|}}
         <div class="list-entry" data-index="{{idx}}">
-          <input name="system.feats.{{idx}}.name" type="text" value="{{feat.name}}" placeholder="Feat Name" />
-          <textarea name="system.feats.{{idx}}.description" placeholder="Description">{{feat.description}}</textarea>
+          <input
+            name="system.feats.{{idx}}.name"
+            type="text"
+            value="{{feat.name}}"
+            placeholder="Feat Name"
+          />
+          <textarea
+            name="system.feats.{{idx}}.description"
+            placeholder="Description"
+          >{{feat.description}}</textarea>
+          <button type="button" class="remove-feat">🗑️</button>
         </div>
       {{/each}}
+      <button type="button" class="add-feat">＋ Add Feat</button>
     </div>
 
     {{!-- Talents Tab --}}
     <div class="tab" data-tab="talents">
-      <h2>Talents <button class="add-talent">＋</button></h2>
+      <h2>Talents</h2>
       {{#each system.talents as |tal idx|}}
         <div class="list-entry" data-index="{{idx}}">
-          <input name="system.talents.{{idx}}.name" type="text" value="{{tal.name}}" placeholder="Talent Name" />
-          <textarea name="system.talents.{{idx}}.description" placeholder="Description">{{tal.description}}</textarea>
+          <input
+            name="system.talents.{{idx}}.name"
+            type="text"
+            value="{{tal.name}}"
+            placeholder="Talent Name"
+          />
+          <textarea
+            name="system.talents.{{idx}}.description"
+            placeholder="Description"
+          >{{tal.description}}</textarea>
+          <button type="button" class="remove-talent">🗑️</button>
         </div>
       {{/each}}
+      <button type="button" class="add-talent">＋ Add Talent</button>
     </div>
 
     {{!-- Stats Tab --}}
@@ -140,14 +274,16 @@
                 <input
                   name="system.abilities.{{key}}.base"
                   type="number"
-                  value="{{ab.base}}" />
+                  value="{{ab.base}}"
+                />
               </td>
               <td>{{ab.racial}}</td>
               <td>
                 <input
                   name="system.abilities.{{key}}.temp"
                   type="number"
-                  value="{{ab.temp}}" />
+                  value="{{ab.temp}}"
+                />
               </td>
               <td>{{ab.total}}</td>
               <td>{{ab.mod}}</td>
@@ -171,71 +307,51 @@
             <tr>
               <td>{{sk.label}}</td>
               <td>{{getSkillMod sk system.abilities system.level system.conditionTrack}}</td>
-              <td><input type="checkbox" name="system.skills.{{key}}.trained" {{#if sk.trained}}checked{{/if}}/></td>
-              <td><input type="checkbox" name="system.skills.{{key}}.focus"   {{#if sk.focus}}  checked{{/if}}/></td>
+              <td>
+                <input
+                  type="checkbox"
+                  name="system.skills.{{key}}.trained"
+                  {{#if sk.trained}}checked{{/if}}
+                />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  name="system.skills.{{key}}.focus"
+                  {{#if sk.focus}}checked{{/if}}
+                />
+              </td>
             </tr>
           {{/each}}
         </tbody>
       </table>
 
-      <h3>Custom Skills <button class="add-skill">＋</button></h3>
+      <h3>Custom Skills <button type="button" class="add-skill">＋</button></h3>
       {{#each system.customSkills as |cs idx|}}
         <div class="list-entry" data-index="{{idx}}">
-          <input name="system.customSkills.{{idx}}.name"  type="text"  value="{{cs.name}}"    placeholder="Skill Name" />
-          <input name="system.customSkills.{{idx}}.value" type="number" value="{{cs.value}}" />
+          <input
+            name="system.customSkills.{{idx}}.name"
+            type="text"
+            value="{{cs.name}}"
+            placeholder="Skill Name"
+          />
+          <input
+            name="system.customSkills.{{idx}}.value"
+            type="number"
+            value="{{cs.value}}"
+          />
           <select name="system.customSkills.{{idx}}.ability">
             {{#each (keys system.abilities) as |abKey|}}
-              <option value="{{abKey}}" {{#if (eq cs.ability abKey)}}selected{{/if}}>{{abKey}}</option>
+              <option value="{{abKey}}" {{#if (eq cs.ability abKey)}}selected{{/if}}>
+                {{abKey}}
+              </option>
             {{/each}}
           </select>
+          <button type="button" class="remove-skill">🗑️</button>
         </div>
       {{/each}}
     </div>
-<div class="tab" data-tab="forcepowers">
-  <h2 class="flexrow">
-    Force Powers
-    <button type="button" class="refresh-forcepowers">🔄 Refresh All Uses</button>
-    <button type="button" class="add-forcepower">＋ Add Force Power</button>
-  </h2>
 
-  <ul class="forcepower-list">
-    {{#each actor.items as |it|}}
-      {{#if (eq it.type "forcepower")}}
-        <li class="flexrow forcepower-entry" data-item-id="{{it._id}}">
-          <input
-            name="items.{{it._id}}.name"
-            type="text"
-            value="{{it.name}}"
-            placeholder="Power Name"
-          />
-
-          <div class="uses">
-            <label>Uses:</label>
-            <input
-              name="items.{{it._id}}.system.uses.current"
-              type="number"
-              value="{{it.system.uses.current}}"
-              min="0" max="{{it.system.uses.max}}"
-            /> /
-            <input
-              name="items.{{it._id}}.system.uses.max"
-              type="number"
-              value="{{it.system.uses.max}}"
-              min="0"
-            />
-          </div>
-
-          <button type="button" class="roll-forcepower">Use</button>
-          <button
-            type="button"
-            class="reload-forcepower"
-            {{#unless (gt system.forcePoints.value 0)}}disabled{{/unless}}
-          >Reload FP</button>
-        </li>
-      {{/if}}
-    {{/each}}
-  </ul>
-</div>
     {{!-- GM Options Tab --}}
     <div class="tab" data-tab="gm">
       <h2>GM Options</h2>
@@ -243,21 +359,24 @@
         <input
           type="checkbox"
           name="system.gmOptions.talentEveryLevel"
-          {{#if system.gmOptions.talentEveryLevel}}checked{{/if}} />
+          {{#if system.gmOptions.talentEveryLevel}}checked{{/if}}
+        />
         Every level gives a talent
       </label>
       <label>
         <input
           type="checkbox"
           name="system.gmOptions.featEveryLevel"
-          {{#if system.gmOptions.featEveryLevel}}checked{{/if}} />
+          {{#if system.gmOptions.featEveryLevel}}checked{{/if}}
+        />
         Every level gives a feat
       </label>
       <label>
         <input
           type="checkbox"
           name="system.gmOptions.anyClassAnyFeat"
-          {{#if system.gmOptions.anyClassAnyFeat}}checked{{/if}} />
+          {{#if system.gmOptions.anyClassAnyFeat}}checked{{/if}}
+        />
         Any class can choose any feat
       </label>
     </div>
