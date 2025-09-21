@@ -38,6 +38,8 @@
     <a class="item"        data-tab="talents">Talents</a>
     <a class="item"        data-tab="stats">Stats</a>
     <a class="item"        data-tab="gm">GM Options</a>
+    <a class="item"        data-tab="forcepowers">Force Powers</a>
+
   </nav>
 
   {{!-- ─────────────────────────────────────────────────── Body ── --}}
@@ -189,7 +191,51 @@
         </div>
       {{/each}}
     </div>
+<div class="tab" data-tab="forcepowers">
+  <h2 class="flexrow">
+    Force Powers
+    <button type="button" class="refresh-forcepowers">🔄 Refresh All Uses</button>
+    <button type="button" class="add-forcepower">＋ Add Force Power</button>
+  </h2>
 
+  <ul class="forcepower-list">
+    {{#each actor.items as |it|}}
+      {{#if (eq it.type "forcepower")}}
+        <li class="flexrow forcepower-entry" data-item-id="{{it._id}}">
+          <input
+            name="items.{{it._id}}.name"
+            type="text"
+            value="{{it.name}}"
+            placeholder="Power Name"
+          />
+
+          <div class="uses">
+            <label>Uses:</label>
+            <input
+              name="items.{{it._id}}.system.uses.current"
+              type="number"
+              value="{{it.system.uses.current}}"
+              min="0" max="{{it.system.uses.max}}"
+            /> /
+            <input
+              name="items.{{it._id}}.system.uses.max"
+              type="number"
+              value="{{it.system.uses.max}}"
+              min="0"
+            />
+          </div>
+
+          <button type="button" class="roll-forcepower">Use</button>
+          <button
+            type="button"
+            class="reload-forcepower"
+            {{#unless (gt system.forcePoints.value 0)}}disabled{{/unless}}
+          >Reload FP</button>
+        </li>
+      {{/if}}
+    {{/each}}
+  </ul>
+</div>
     {{!-- GM Options Tab --}}
     <div class="tab" data-tab="gm">
       <h2>GM Options</h2>
