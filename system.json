@@ -1,1 +1,49 @@
-{"name": "SWSE FoundryVTT System", "version": "1.0.0", "description": "A Star Wars Saga Edition system for Foundry VTT.", "title": "SWSE", "author": "DocflowGM", "url": "https://github.com/docflowGM/foundryvtt-swse", "manifest": "packs/manifest.json", "compatibility": {"foundry": "0.8.6"}}
+{
+  "id": "swse",
+  "title": "Star Wars Saga Edition (SWSE)",
+  "description": "A Star Wars Saga Edition system for Foundry VTT.",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "11",
+    "verified": "13"
+  },
+  "authors": [
+    {
+      "name": "DocflowGM",
+      "url": "https://github.com/docflowGM"
+    }
+  ],
+  "url": "https://github.com/docflowGM/foundryvtt-swse",
+  "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
+  "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip",
+
+  "esmodules": [
+    "scripts/swse.js"
+  ],
+  "styles": [
+    "styles/swse.css"
+  ],
+  "packs": [
+    {
+      "name": "swse-items",
+      "label": "SWSE Items",
+      "path": "packs/items.db",
+      "entity": "Item"
+    },
+    {
+      "name": "swse-actors",
+      "label": "SWSE Actors",
+      "path": "packs/actors.db",
+      "entity": "Actor"
+    }
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "gridDistance": 1,
+  "gridUnits": "m"
+}
