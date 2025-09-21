@@ -1,16 +1,40 @@
 {
   "name": "New Vehicle",
   "type": "vehicle",
-  "img": "icons/svg/transport.svg",
+  "img": "icons/svg/ship.svg",
   "system": {
-    "hull": { "total": 0 },
-    "shields": { "total": 0 },
-    "handling": { "total": 0 },
-    "size": "Medium",
-    "crew": "",
-    "cargo": "",
-    "notes": "",
-    "shipTemplates": [],
-    "items": []
-  }
+    "model": "",
+    "size": "medium",
+    "speed": {
+      "base": 10,
+      "total": 10
+    },
+    "shields": {
+      "value": 0,
+      "max": 0
+    },
+    "hull": {
+      "value": 0,
+      "max": 0
+    },
+    "crew": {
+      "pilot": "",
+      "shields": "",
+      "engineer": ""
+    },
+    "weapons": [
+      {
+        "name": "",
+        "attackAttr": "dex",
+        "damage": "1d8",
+        "damageAttr": "none",
+        "focus": false,
+        "specialization": false,
+        "modifier": 0,
+        "usePilot": false,
+        "gunner": ""
+      }
+    ]
+  },
+  "items": []
 }
