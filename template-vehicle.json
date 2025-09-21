@@ -3,15 +3,9 @@
   "type": "vehicle",
   "img": "icons/svg/transport.svg",
   "system": {
-    "hull": {
-      "total": 0
-    },
-    "shields": {
-      "total": 0
-    },
-    "handling": {
-      "total": 0
-    },
+    "hull": { "total": 0 },
+    "shields": { "total": 0 },
+    "handling": { "total": 0 },
     "size": "Medium",
     "crew": "",
     "cargo": "",
