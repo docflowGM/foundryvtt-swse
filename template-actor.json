@@ -93,7 +93,19 @@
     "feats": [],
     "talents": [],
     "gear": [],
-    "weapons": [],
+    "weapons": [
+  {
+    "name": "",
+    "description": "",
+    "damage": "1d6",
++   "attackAttr": "str",
++   "damageAttr": "str",
++   "focus": false,
++   "specialization": false,
+    "modifier": 0
+  }
+]
+,
     "items": []
   }
 }
