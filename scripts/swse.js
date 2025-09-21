@@ -1,38 +1,75 @@
-
 import { SWSE_RACES } from "./races.js";
 import "./helpers.js";
 
 Hooks.once("init", function() {
   CONFIG.Actor.documentClass = SWSEActor;
-  Actors.registerSheet("swse", SWSEActorSheet, { types: ["character"], makeDefault: true });
+  Actors.registerSheet("swse", SWSEActorSheet, {
+    types: ["character"],
+    makeDefault: true
+  });
 });
+
+const CONDITION_PENALTIES = {
+  normal: 0,
+  "-1": -1,
+  "-2": -2,
+  "-5": -5,
+  "-10": -10,
+  helpless: -100 // disables rolls
+};
 
 class SWSEActor extends Actor {
   prepareData() {
     super.prepareData();
+
+    //── Abilities & Racial Bonuses ──────────────────────────────────────────
     const raceKey = this.system.race || "custom";
     const raceBonuses = SWSE_RACES[raceKey]?.bonuses || {};
-    for (const [key, ab] of Object.entries(this.system.abilities)) {
-      ab.base = Math.max(0, ab.base);
-      ab.racial = raceBonuses[key] || 0;
-      ab.total = ab.base + ab.racial + (ab.temp || 0);
-      ab.mod = Math.floor((ab.total - 10) / 2);
+    for (const [abbr, abObj] of Object.entries(this.system.abilities)) {
+      abObj.base = Math.max(0, abObj.base);
+      abObj.racial = raceBonuses[abbr] || 0;
+      abObj.total = abObj.base + abObj.racial + (abObj.temp || 0);
+      abObj.mod = Math.floor((abObj.total - 10) / 2);
     }
-    for (const [def, obj] of Object.entries(this.system.defenses)) {
-      obj.level = this.system.level;
-      obj.abilityValue = this.system.abilities[obj.ability]?.mod ?? 0;
-      obj.total = obj.level + (obj.class || 0) + obj.abilityValue + (obj.armor || 0) + (obj.armoredDefense || 0) + (obj.armorMastery || 0) + (obj.modifier || 0);
+
+    //── Condition Penalty ────────────────────────────────────────────────────
+    const condKey = this.system.conditionTrack || "normal";
+    const condPenalty = CONDITION_PENALTIES[condKey] || 0;
+
+    //── Defenses ─────────────────────────────────────────────────────────────
+    for (const [defKey, defObj] of Object.entries(this.system.defenses)) {
+      defObj.level = this.system.level;
+      defObj.abilityValue = this.system.abilities[defObj.ability]?.mod || 0;
+      defObj.total =
+        defObj.level +
+        (defObj.class || 0) +
+        defObj.abilityValue +
+        (defObj.armor || 0) +
+        (defObj.armoredDefense || 0) +
+        (defObj.armorMastery || 0) +
+        (defObj.modifier || 0) +
+        (condKey !== "helpless" ? condPenalty : 0);
     }
   }
-  getHalfLevel() { return Math.floor(this.system.level / 2); }
+
+  getHalfLevel() {
+    return Math.floor(this.system.level / 2);
+  }
+
+  getConditionPenalty() {
+    const condKey = this.system.conditionTrack || "normal";
+    return CONDITION_PENALTIES[condKey] || 0;
+  }
+
   getSkillMod(skill) {
-    const abilities = this.system.abilities;
+    if (this.system.conditionTrack === "helpless") return "N/A";
+
     const halfLevel = this.getHalfLevel();
-    const abilityMod = abilities[skill.ability] ? abilities[skill.ability].mod : 0;
+    const abilityMod = this.system.abilities[skill.ability]?.mod || 0;
     let mod = skill.value + abilityMod + halfLevel;
     if (skill.trained) mod += 5;
     if (skill.trained && skill.focus) mod += 5;
-    return mod;
+    return mod + this.getConditionPenalty();
   }
 }
 
@@ -55,112 +92,45 @@ class SWSEActorSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
-    // Add Feat
-    html.find(".add-feat").click(ev => {
-      const feats = duplicate(this.actor.system.feats || []);
-      feats.push({ name: "", description: "" });
-      this.actor.update({"system.feats": feats});
-    });
-    // Add Talent
-    html.find(".add-talent").click(ev => {
-      const talents = duplicate(this.actor.system.talents || []);
-      talents.push({ name: "", description: "" });
-      this.actor.update({"system.talents": talents});
-    });
-    // Add Gear
-    html.find(".add-gear").click(ev => {
-      const gear = duplicate(this.actor.system.gear || []);
-      gear.push({ name: "", description: "" });
-      this.actor.update({"system.gear": gear});
-    });
-    // Add Weapon
-    html.find(".add-weapon").click(ev => {
-      const weapons = duplicate(this.actor.system.weapons || []);
-      weapons.push({ name: "", description: "" });
-      this.actor.update({"system.weapons": weapons});
-    });
-
-    // Existing skill/roll listeners as before...
-  }
-}
-Handlebars.registerHelper('eq', (a, b) => a === b);
-Handlebars.registerHelper('getSkillMod', (skill, abilities, level) => {
-  const halfLevel = Math.floor(level / 2);
-  const abilityMod = abilities[skill.ability]?.mod ?? 0;
-  let mod = skill.value + abilityMod + halfLevel;
-  if (skill.trained) mod += 5;
-  if (skill.trained && skill.focus) mod += 5;
-  return mod;
-});
-const CONDITION_PENALTIES = {
-  normal: 0,
-  "-1": -1,
-  "-2": -2,
-  "-5": -5,
-  "-10": -10,
-  helpless: -100 // disables rolls
-};
-
-class SWSEActor extends Actor {
-  prepareData() {
-    super.prepareData();
-    // Race logic as before...
-
-    // Condition penalty
-    const condKey = this.system.conditionTrack || "normal";
-    const condPenalty = CONDITION_PENALTIES[condKey] || 0;
-
-    // Abilities logic as before...
-
-    // Skills mod: apply condition penalty unless helpless (then block all rolls)
-    // (Implementation in getSkillMod)
-    // Defenses: apply condition penalty
-    for (const [def, obj] of Object.entries(this.system.defenses)) {
-      obj.level = this.system.level;
-      obj.abilityValue = this.system.abilities[obj.ability]?.mod ?? 0;
-      obj.total = obj.level + (obj.class || 0) + obj.abilityValue +
-        (obj.armor || 0) + (obj.armoredDefense || 0) + (obj.armorMastery || 0) +
-        (obj.modifier || 0) + (condKey !== "helpless" ? condPenalty : 0);
+    // Add a blank entry to feats, talents, gear, or weapons
+    for (const selector of [".add-feat", ".add-talent", ".add-gear", ".add-weapon"]) {
+      html.find(selector).click(() => {
+        const key = selector.replace(".add-", "");
+        const list  = duplicate(this.actor.system[key] || []);
+        list.push({ name: "", description: "" });
+        this.actor.update({ [`system.${key}`]: list });
+      });
     }
-  }
-  getConditionPenalty() {
-    const condKey = this.system.conditionTrack || "normal";
-    return CONDITION_PENALTIES[condKey] || 0;
-  }
-  getSkillMod(skill) {
-    const abilities = this.system.abilities;
-    const halfLevel = Math.floor(this.system.level / 2);
-    const abilityMod = abilities[skill.ability] ? abilities[skill.ability].mod : 0;
-    let mod = skill.value + abilityMod + halfLevel;
-    if (skill.trained) mod += 5;
-    if (skill.trained && skill.focus) mod += 5;
-    const cond = this.getConditionPenalty();
-    if (this.system.conditionTrack === "helpless") return "N/A";
-    return mod + cond;
-  }
-}
 
-class SWSEActorSheet extends ActorSheet {
-  // ... as before ...
-  activateListeners(html) {
-    super.activateListeners(html);
-
-    // Second wind button
-    html.find(".apply-second-wind").click(ev => {
-      const healing = parseInt(this.actor.system.secondWind.healing || 0, 10);
-      if (healing > 0 && this.actor.system.secondWind.uses > 0) {
-        let newHP = Math.min(
+    // Second Wind button
+    html.find(".apply-second-wind").click(() => {
+      const healing = Number(this.actor.system.secondWind.healing) || 0;
+      const uses    = this.actor.system.secondWind.uses   || 0;
+      if (healing > 0 && uses > 0) {
+        const newHP = Math.min(
           this.actor.system.hp.value + healing,
           this.actor.system.hp.max
         );
-        let newUses = this.actor.system.secondWind.uses - 1;
         this.actor.update({
           "system.hp.value": newHP,
-          "system.secondWind.uses": newUses
+          "system.secondWind.uses": uses - 1
         });
       }
     });
-
-    // ... existing listeners ...
   }
 }
+
+// Handlebars Helpers
+Handlebars.registerHelper("eq", (a, b) => a === b);
+Handlebars.registerHelper("getSkillMod", (skill, abilities, level) => {
+  const halfLevel = Math.floor(level / 2);
+  const abilityMod = abilities[skill.ability]?.mod || 0;
+  let mod = skill.value + abilityMod + halfLevel;
+  if (skill.trained) mod += 5;
+  if (skill.trained && skill.focus) mod += 5;
+
+  const condKey = abilities._sheet.system.conditionTrack;
+  const condPenalty = CONDITION_PENALTIES[condKey] || 0;
+  if (condKey === "helpless") return "N/A";
+  return mod + condPenalty;
+});
