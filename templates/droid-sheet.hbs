@@ -1,0 +1,102 @@
+<form class="{{cssClass}} sheet-droid flexcol" autocomplete="off">
+
+  <!-- Header -->
+  <header class="sheet-header flexrow">
+    <img class="profile-img" src="{{actor.img}}" title="{{actor.name}}" />
+    <div class="header-fields">
+      <h1 class="char-name">
+        <input name="name" type="text" value="{{actor.name}}" placeholder="Droid Designation" />
+      </h1>
+      <div class="resources grid grid-3col">
+        <div class="form-group">
+          <label>Subtype</label>
+          <input name="system.subtype" type="text" value="{{system.subtype}}" />
+        </div>
+        <div class="form-group">
+          <label>Level</label>
+          <input name="system.level" type="number" value="{{system.level}}" />
+        </div>
+        <div class="form-group">
+          <label>Class</label>
+          <input name="system.class" type="text" value="{{system.class}}" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="droid">Droid</a>
+    <a class="item" data-tab="stats">Stats</a>
+    <a class="item" data-tab="inventory">Inventory</a>
+  </nav>
+
+  <!-- Body -->
+  <section class="sheet-body">
+
+    <!-- Droid Tab -->
+    <div class="tab active" data-tab="droid">
+      <h2>Droid Template Configuration</h2>
+
+      <div class="form-group inline-group">
+        <label for="droid-template-dropdown">Droid Type:</label>
+        <select id="droid-template-dropdown">
+          <option value="">Select Droid Template</option>
+          {{#each DROID_TEMPLATES as |tpl key|}}
+            <option value="{{key}}">{{tpl.label}}</option>
+          {{/each}}
+        </select>
+        <button type="button" id="add-droid-template">Add</button>
+      </div>
+
+      <table id="droid-table" class="droid-table" style="margin-top:1em;">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Subtype</th>
+            <th>Bonuses</th>
+            <th>Notes</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each system.droidTemplates as |dt idx|}}
+            <tr data-index="{{idx}}">
+              <td>{{lookup DROID_TEMPLATES dt.type "label"}}</td>
+              <td>{{dt.subtype}}</td>
+              <td>{{dt.bonuses}}</td>
+              <td>{{dt.notes}}</td>
+              <td><button type="button" class="remove-droid-template" data-index="{{idx}}">🗑️</button></td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Stats Tab -->
+    <div class="tab" data-tab="stats">
+      <h2>Ability Scores</h2>
+      <table class="ability-table">
+        <thead>
+          <tr><th>Ability</th><th>Base</th><th>Mod</th></tr>
+        </thead>
+        <tbody>
+          {{#each system.abilities as |ab key|}}
+            <tr>
+              <td>{{key}}</td>
+              <td><input name="system.abilities.{{key}}.base" type="number" value="{{ab.base}}" /></td>
+              <td>{{ab.mod}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Inventory Tab -->
+    <div class="tab" data-tab="inventory">
+      <h2>Gear & Weapons</h2>
+      <p>Coming soon: integrated modules, vocabulator, restraining bolt, etc.</p>
+    </div>
+
+  </section>
+</form>
