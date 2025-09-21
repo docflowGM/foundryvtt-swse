@@ -1,7 +1,7 @@
 {
   "name": "swse",
   "title": "Star Wars Saga Edition (SWSE)",
-  "description": "A Foundry VTT system for Star Wars Saga Edition, featuring dynamic actor, droid, and vehicle sheets, modular templates, and robust scripting.",
+  "description": "A Foundry VTT system for Star Wars Saga Edition, featuring dynamic character, droid, and vehicle sheets with template-driven defaults and modular scripting.",
   "version": "1.0.0",
   "license": "CC BY-SA 4.0",
   "minimumCoreVersion": "11",
@@ -17,28 +17,57 @@
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip",
   "esmodules": [
-    "scripts/swse.js"
-  ],
-  "scripts": [
+    "scripts/init.js",
     "scripts/races.js",
     "scripts/swse-actor.js",
     "scripts/swse-droid.js",
-    "scripts/swse-vehicle.js"
+    "scripts/swse-vehicle.js",
+    "scripts/swse.js"
   ],
   "styles": [
     "styles/swse.css"
   ],
   "packs": [
     {
-      "name": "swse-actors",
-      "label": "SWSE Actors",
-      "path": "packs/actors.db",
-      "entity": "Actor"
+      "name": "swse-armor",
+      "label": "SWSE Armor",
+      "path": "packs/Armor.json",
+      "entity": "Item"
     },
     {
-      "name": "swse-items",
-      "label": "SWSE Items",
-      "path": "packs/items.db",
+      "name": "swse-classes",
+      "label": "SWSE Classes",
+      "path": "packs/classes.json",
+      "entity": "Item"
+    },
+    {
+      "name": "swse-equipment",
+      "label": "SWSE Equipment",
+      "path": "packs/equipment.json",
+      "entity": "Item"
+    },
+    {
+      "name": "swse-feats",
+      "label": "SWSE Feats",
+      "path": "packs/feats.json",
+      "entity": "Item"
+    },
+    {
+      "name": "swse-forcepowers",
+      "label": "SWSE Force Powers",
+      "path": "packs/forcepowers.json",
+      "entity": "Item"
+    },
+    {
+      "name": "swse-talents",
+      "label": "SWSE Talents",
+      "path": "packs/talents.json",
+      "entity": "Item"
+    },
+    {
+      "name": "swse-weapons",
+      "label": "SWSE Weapons",
+      "path": "packs/weapons.json",
       "entity": "Item"
     }
   ],
@@ -50,5 +79,10 @@
     }
   ],
   "gridDistance": 1,
-  "gridUnits": "m"
+  "gridUnits": "m",
+  "preloadTemplates": [
+    "templates/actor/character-sheet.hbs",
+    "templates/actor/droid-sheet.hbs",
+    "templates/actor/vehicle-sheet.hbs"
+  ]
 }
