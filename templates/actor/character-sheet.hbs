@@ -43,6 +43,18 @@
   {{!-- ─────────────────────────────────────────────────── Body ── --}}
   <section class="sheet-body flexcol">
 
+    <h3>Weapons <button class="add-weapon">＋</button></h3>
+{{#each system.weapons as |w idx|}}
+  <div class="list-entry" data-index="{{idx}}">
+    <input  name="system.weapons.{{idx}}.name"
+            type="text" value="{{w.name}}"
+            placeholder="Weapon Name" />
+    <textarea
+      name="system.weapons.{{idx}}.description"
+      placeholder="Description">{{w.description}}</textarea>
+    <button type="button" class="roll-weapon">Attack</button>
+  </div>
+{{/each}}
     {{!-- Main Tab --}}
     <div class="tab active" data-tab="main">
       <h2>Damage Threshold</h2>
