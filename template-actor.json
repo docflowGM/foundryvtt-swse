@@ -7,10 +7,15 @@
     "species": "",
     "class": "",
     "level": 1,
-  "forcePoints": {
-    "value": 1,
-    "max": 1
-  }
+    "size": "medium",
+    "speed": {
+      "base": 6,
+      "total": 6
+    },
+    "forcePoints": {
+      "value": 1,
+      "max": 1
+    },
     "abilities": {
       "str": { "base": 10, "temp": 0 },
       "dex": { "base": 10, "temp": 0 },
@@ -19,30 +24,71 @@
       "wis": { "base": 10, "temp": 0 },
       "cha": { "base": 10, "temp": 0 }
     },
-
     "defenses": {
-      "reflex":    { "ability": "dex", "class": 0, "armor": 0 },
-      "fortitude": { "ability": "con", "class": 0, "armor": 0 },
-      "will":      { "ability": "wis", "class": 0, "armor": 0 }
+      "reflex": {
+        "ability": "dex",
+        "class": 0,
+        "armor": 0,
+        "maxDex": null,
+        "maxSpeed": null,
+        "option": "none",
+        "armorMastery": 0,
+        "modifier": 0,
+        "total": 0
+      },
+      "fortitude": {
+        "ability": "con",
+        "class": 0,
+        "modifier": 0,
+        "total": 0
+      },
+      "will": {
+        "ability": "wis",
+        "class": 0,
+        "modifier": 0,
+        "total": 0
+      }
     },
-
     "hp": {
       "value": 0,
       "max": 0
     },
-
     "conditionTrack": "normal",
     "secondWind": {
-      "uses":    0,
+      "uses": 0,
       "healing": 0
     },
-
-    "skills":        [],
-    "customSkills":  [],
-    "feats":         [],
-    "talents":       [],
-    "gear":          [],
-    "weapons":       [],
-    "items":         []
+    "skills": {
+      "acrobatics":                { "value": 0, "trained": false, "focus": false, "ability": "dex" },
+      "climb":                     { "value": 0, "trained": false, "focus": false, "ability": "str" },
+      "deception":                 { "value": 0, "trained": false, "focus": false, "ability": "cha" },
+      "endurance":                 { "value": 0, "trained": false, "focus": false, "ability": "con" },
+      "gather_information":        { "value": 0, "trained": false, "focus": false, "ability": "cha" },
+      "initiative":                { "value": 0, "trained": false, "focus": false, "ability": "dex" },
+      "jump":                      { "value": 0, "trained": false, "focus": false, "ability": "str" },
+      "knowledge_bureaucracy":     { "value": 0, "trained": false, "focus": false, "ability": "int" },
+      "knowledge_galactic_lore":   { "value": 0, "trained": false, "focus": false, "ability": "int" },
+      "knowledge_life_sciences":   { "value": 0, "trained": false, "focus": false, "ability": "int" },
+      "knowledge_physical_sciences":{ "value": 0, "trained": false, "focus": false, "ability": "int" },
+      "knowledge_social_sciences": { "value": 0, "trained": false, "focus": false, "ability": "int" },
+      "knowledge_technology":      { "value": 0, "trained": false, "focus": false, "ability": "int" },
+      "mechanics":                 { "value": 0, "trained": false, "focus": false, "ability": "int" },
+      "perception":                { "value": 0, "trained": false, "focus": false, "ability": "wis" },
+      "persuasion":                { "value": 0, "trained": false, "focus": false, "ability": "cha" },
+      "pilot":                     { "value": 0, "trained": false, "focus": false, "ability": "dex" },
+      "ride":                      { "value": 0, "trained": false, "focus": false, "ability": "dex" },
+      "stealth":                   { "value": 0, "trained": false, "focus": false, "ability": "dex" },
+      "survival":                  { "value": 0, "trained": false, "focus": false, "ability": "wis" },
+      "swim":                      { "value": 0, "trained": false, "focus": false, "ability": "str" },
+      "treat_injury":              { "value": 0, "trained": false, "focus": false, "ability": "wis" },
+      "use_computer":              { "value": 0, "trained": false, "focus": false, "ability": "int" },
+      "use_the_force":             { "value": 0, "trained": false, "focus": false, "ability": "cha" }
+    },
+    "customSkills": [],
+    "feats": [],
+    "talents": [],
+    "gear": [],
+    "weapons": [],
+    "items": []
   }
 }
