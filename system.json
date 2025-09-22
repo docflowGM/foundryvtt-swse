@@ -4,9 +4,14 @@
   "description": "A community-created system for running Star Wars Saga Edition in FoundryVTT.",
   "version": "0.1.0",
   "compatibility": {
-    "minimum": "11",
-    "verified": "11",
-    "maximum": "12"
+  "minimumCoreVersion": "11",
+  "compatibleCoreVersion": "12",
+  "compatibility": {
+  "minimum": "11",
+  "verified": "11",
+  "maximum": "12"
+}
+
   },
   "authors": [
     { "name": "docflowGM", "url": "https://github.com/docflowGM" }
