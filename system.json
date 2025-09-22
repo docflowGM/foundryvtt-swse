@@ -1,19 +1,16 @@
 {
- "system": true,
-"primary": true, 
+  "system": true,
+  "primary": true,
   "id": "swse",
   "title": "Star Wars Saga Edition (SWSE)",
   "description": "A community-created system for running Star Wars Saga Edition in FoundryVTT.",
   "version": "0.1.0",
-  "compatibility": {
   "minimumCoreVersion": "11",
   "compatibleCoreVersion": "12",
   "compatibility": {
-  "minimum": "11",
-  "verified": "11",
-  "maximum": "12"
-}
-
+    "minimum": "11",
+    "verified": "11",
+    "maximum": "12"
   },
   "authors": [
     { "name": "docflowGM", "url": "https://github.com/docflowGM" }
@@ -67,10 +64,9 @@
     }
   ],
   "languages": [
-  { "lang": "en", "name": "English", "path": "lang/en.json" },
-  { "lang": "fr", "name": "Français", "path": "lang/fr.json" }
-]
-
+    { "lang": "en", "name": "English", "path": "lang/en.json" },
+    { "lang": "fr", "name": "Français", "path": "lang/fr.json" }
+  ],
   "templates": [
     "templates"
   ],
