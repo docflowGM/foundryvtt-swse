@@ -221,10 +221,13 @@ export class SWSEActorSheet extends ActorSheet {
   }
 
   getData() {
-    const data = super.getData();
-    data.races = SWSE_RACES;
-    return data;
-  }
+  const data = super.getData();
+  data.labels = {
+    sheetTitle: game.i18n.localize("SWSE.SheetLabel.character")
+  };
+  return data;
+}
+
 
   activateListeners(html) {
     super.activateListeners(html);
