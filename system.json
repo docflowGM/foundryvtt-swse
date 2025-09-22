@@ -11,6 +11,7 @@
     { "name": "docflowGM", "url": "https://github.com/docflowGM" }
   ],
   "url": "https://github.com/docflowGM/foundryvtt-swse",
+  "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip",
 
   "compatibility": {
@@ -31,36 +32,31 @@
       "name": "swse-classes",
       "label": "SWSE Classes",
       "path": "packs/swse-classes.db",
-      "type": "Item",
-      "system": "swse"
+      "type": "Item"
     },
     {
       "name": "swse-talents",
       "label": "SWSE Talents",
       "path": "packs/swse-talents.db",
-      "type": "Item",
-      "system": "swse"
+      "type": "Item"
     },
     {
       "name": "swse-feats",
       "label": "SWSE Feats",
       "path": "packs/swse-feats.db",
-      "type": "Item",
-      "system": "swse"
+      "type": "Item"
     },
     {
       "name": "swse-vehicles",
       "label": "SWSE Vehicles",
       "path": "packs/swse-vehicles.db",
-      "type": "Actor",
-      "system": "swse"
+      "type": "Actor"
     },
     {
       "name": "swse-equipment",
       "label": "SWSE Equipment",
       "path": "packs/swse-equipment.db",
-      "type": "Item",
-      "system": "swse"
+      "type": "Item"
     }
   ],
 
@@ -69,5 +65,8 @@
     { "lang": "fr", "name": "Français", "path": "lang/fr.json" }
   ],
 
+  "gridDistance": 1,
+  "gridUnits": "m",
+  "initiative": "1d20",
   "socket": true
 }
