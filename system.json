@@ -3,8 +3,6 @@
   "title": "Star Wars Saga Edition (SWSE)",
   "description": "A community-created system for running Star Wars Saga Edition in FoundryVTT.",
   "version": "0.1.0",
-  "minimumCoreVersion": "11",
-  "compatibleCoreVersion": "12",
   "compatibility": {
     "minimum": "11",
     "verified": "11",
