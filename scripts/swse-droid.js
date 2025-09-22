@@ -13,8 +13,12 @@ export class SWSEDroidSheet extends SWSEActorSheet {
 
   /** Remove any Force‐Power data before rendering */
   getData() {
-    const data = super.getData();
-
+  const data = super.getData();
+  data.labels = {
+    sheetTitle: game.i18n.localize("SWSE.SheetLabel.character")
+  };
+  return data;
+}
     // Strip out Force‐Power items entirely
     data.actor.items = data.actor.items.filter(i => i.type !== "forcepower");
 
