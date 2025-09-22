@@ -36,21 +36,29 @@ Hooks.once("ready", () => {
     `;
 
     new Dialog({
-      title: "Create SWSE Actor",
-      content,
-      buttons: {
-        create: {
-          label: "Create",
-          callback: html => {
-            const type = html.find("select[name='type']").val();
-            Actor.create({ name: `New ${type}`, type });
-          }
-        },
-        cancel: {
-          label: "Cancel"
-        }
-      },
-      default: "create"
-    }).render(true);
-  };
-});
+  title: game.i18n.localize("SWSE.Dialog.CreateActor.Title"),
+  content: `
+    <form>
+      <div class="form-group">
+        <label>${game.i18n.localize("SWSE.Dialog.CreateActor.Prompt")}</label>
+        <select name="type">
+          <option value="character">${game.i18n.localize("SWSE.ActorType.character")}</option>
+          <option value="droid">${game.i18n.localize("SWSE.ActorType.droid")}</option>
+          <option value="vehicle">${game.i18n.localize("SWSE.ActorType.vehicle")}</option>
+        </select>
+      </div>
+    </form>
+  `,
+  buttons: {
+    create: {
+      label: game.i18n.localize("SWSE.Dialog.CreateActor.Button.Create"),
+      callback: html => {
+        const type = html.find("select[name='type']").val();
+        Actor.create({ name: `New ${type}`, type });
+      }
+    },
+    cancel: {
+      label: game.i18n.localize("SWSE.Dialog.CreateActor.Button.Cancel")
+    }
+  }
+}).render(true);
