@@ -43,10 +43,13 @@ export class SWSEVehicleSheet extends SWSEActorSheet {
   }
 
   /** Expose crew, weapons, and scraped stats to the template */
-  getData() {
-    const data = super.getData();
-    const sys  = data.actor.system;
-
+getData() {
+  const data = super.getData();
+  data.labels = {
+    sheetTitle: game.i18n.localize("SWSE.SheetLabel.character")
+  };
+  return data;
+}
     // Find scraped entry by name
     const scraped = SCRAPED_VEHICLES.find(v => v.name === data.actor.name);
     data.scraped = scraped || null;
