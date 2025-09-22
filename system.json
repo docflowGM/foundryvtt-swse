@@ -12,6 +12,9 @@
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip",
 
+"actorTypes": ["actor", "Droid", "vehicle"]
+
+  
   "compatibility": {
     "minimum": "11",
     "verified": "13",
