@@ -1,4 +1,6 @@
 {
+ "system": true,
+"primary": true, 
   "id": "swse",
   "title": "Star Wars Saga Edition (SWSE)",
   "description": "A community-created system for running Star Wars Saga Edition in FoundryVTT.",
