@@ -1,1 +1,4957 @@
-
+{
+  "0-LT_Utility_Droid": {
+    "initiative": "+3; Senses: Low-Light Vision, Perception +8",
+    "languages": "Basic (understand only), Binary , 2 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
+    "HP": "7, Damage Threshold : 9",
+    "speed": "4 Squares ( Tracked )",
+    "baseAttackBonus": "+1; Grapple : -2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Electroshock Probe",
+          "bonus": "+0",
+          "damage": "1d8 ( Ion"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "0-LT Utility Droid"
+  },
+  "Security_Droid": {
+    "initiative": "+11; Senses: Low-Light Vision, Perception +19",
+    "languages": "Basic, Binary",
+    "reflexDefense": "27 ( Flat-Footed : 26), Fortitude Defense : 26, Will Defense : 22",
+    "HP": "76, Damage Threshold : 26; Shake It Off",
+    "speed": "6 Squares ( Walking ); Expert Tracker , Powerful Charge",
+    "baseAttackBonus": "+9; Grapple : +13",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Stun Baton",
+          "bonus": "+14",
+          "damage": "2d6+9 ( Stun"
+        },
+        {
+          "name": "Stun Baton",
+          "bonus": "+18",
+          "damage": "2d6+14 ( Stun"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Stun Pistol",
+          "bonus": "+10",
+          "damage": "3d6+5 ( Stun"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Security Droid"
+  },
+  "5YQ-Series_Protocol_Droid": {
+    "initiative": "+0; Senses: Perception +6",
+    "languages": "Basic, Binary , 3 Unassigned; Translator Unit (DC 10)",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 11",
+    "HP": "2, Damage Threshold : 9",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : -1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "5YQ-Series Protocol Droid"
+  },
+  "88-Series_Administration_Droid": {
+    "initiative": "+3; Senses: Perception +11",
+    "languages": "Basic, Binary , 7 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 13), Fortitude Defense : 12, Will Defense : 17",
+    "HP": "26, Damage Threshold : 12",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+6; Grapple : +5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+5",
+          "damage": "1d3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "88-Series Administration Droid"
+  },
+  "8D_Smelter_Droid": {
+    "initiative": "-2; Senses: Darkvision , Perception +2",
+    "languages": "Basic, Binary",
+    "reflexDefense": "15 ( Flat-Footed : 15), Fortitude Defense : 14, Will Defense : 10; Duravlex Shell",
+    "HP": "4, Damage Threshold : 14",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : +4",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+2",
+          "damage": "1d4+4"
+        },
+        {
+          "name": "Unarmed",
+          "bonus": "+2",
+          "damage": "2d4+4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "8D Smelter Droid"
+  },
+  "A-DSD_Advanced_Dwarf_Spider_Droid": {
+    "initiative": "+10; Senses: Darkvision , Perception +7",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "14 ( Flat-Footed : 14 (Leg Shields: 18)), Fortitude Defense : 31, Will Defense : 12; Extra Legs",
+    "HP": "59, Damage Threshold : 46",
+    "speed": "8 Squares ( Walking ); Juggernaut",
+    "baseAttackBonus": "+9; Grapple : +27",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Blaster Cannon",
+          "bonus": "+7",
+          "damage": "3d12+1, 1-Square Splash"
+        },
+        {
+          "name": "Blaster Cannon",
+          "bonus": "+5",
+          "damage": "4d12+1, 1-Square Splash"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "A-DSD Advanced Dwarf Spider Droid"
+  },
+  "A-Series_Assassin_Droid": {
+    "initiative": "+14; Senses: Darkvision , Perception +14",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "26 ( Flat-Footed : 24), Fortitude Defense : 27, Will Defense : 19",
+    "HP": "67, Damage Reduction : 1, Damage Threshold : 27",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+13; Grapple : +15",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Finger Blades",
+          "bonus": "+15",
+          "damage": "1d6+6"
+        },
+        {
+          "name": "Finger Blades",
+          "bonus": "+13",
+          "damage": "2d6+6"
+        },
+        {
+          "name": "Finger Blades",
+          "bonus": "+10",
+          "damage": "1d6+6"
+        },
+        {
+          "name": "Finger Blades",
+          "bonus": "+8",
+          "damage": "2d6+6"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Wrist Blaster",
+          "bonus": "+15",
+          "damage": "3d8+4"
+        },
+        {
+          "name": "Wrist Blaster",
+          "bonus": "+13",
+          "damage": "4d8+4"
+        },
+        {
+          "name": "Wrist Blaster",
+          "bonus": "+12",
+          "damage": "3d8+4"
+        },
+        {
+          "name": "Wrist Blaster",
+          "bonus": "+10",
+          "damage": "4d8+4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "A-Series Assassin Droid"
+  },
+  "A-Series_Medical_Droid": {
+    "initiative": "+5; Senses: Perception +7",
+    "languages": "Basic, Binary , 2 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 13), Fortitude Defense : 10, Will Defense : 15",
+    "HP": "18, Damage Threshold : 10",
+    "speed": "4 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : -5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d2-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "A-Series Medical Droid"
+  },
+  "A9G-Series_Archive_Droid": {
+    "initiative": "+1; Senses: Perception +1",
+    "languages": "Basic, Binary , 2 Unassigned; Translator Unit (DC 10)",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 10, Will Defense : 10",
+    "HP": "7, Damage Threshold : 10",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "A9G-Series Archive Droid"
+  },
+  "AD-Series_Weapons_Maintenance_Droid": {
+    "initiative": "+7; Senses: Perception +7",
+    "languages": "Basic, Binary , 3 Unassigned",
+    "reflexDefense": "16 ( Flat-Footed : 14), Fortitude Defense : 13, Will Defense : 13",
+    "HP": "30, Damage Threshold : 13",
+    "speed": "6 Squares ( Walking ), 6 Squares ( Hovering )",
+    "baseAttackBonus": "+1; Grapple : +3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "AD-Series Weapons Maintenance Droid"
+  },
+  "AS23_Aerial_Survey_Droid": {
+    "initiative": "+4; Senses: Darkvision , Perception +14",
+    "languages": "Basic (understand only), Binary , 1 Unassigned",
+    "reflexDefense": "15 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 12",
+    "HP": "3, Damage Threshold : 9",
+    "speed": "9 Squares ( Flying )",
+    "baseAttackBonus": "+0; Grapple : -1",
+    "constitution": "-",
+    "name": "AS23 Aerial Survey Droid"
+  },
+  "ASN-121_Assassin_Droid": {
+    "initiative": "+12; Senses: Darkvision , Perception +13",
+    "languages": "Basic (understand only), Binary , 1 Unassigned",
+    "reflexDefense": "27 ( Flat-Footed : 24), Fortitude Defense : 20, Will Defense : 21",
+    "HP": "74, Damage Threshold : 25",
+    "speed": "9 Squares ( Flying ); Running Attack",
+    "baseAttackBonus": "+9; Grapple : +7",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+8",
+          "damage": "1d3+3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Sniper Blaster",
+          "bonus": "+13",
+          "damage": "3d8+4"
+        },
+        {
+          "name": "Sniper Blaster",
+          "bonus": "+13",
+          "damage": "4d8+4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "ASN-121 Assassin Droid"
+  },
+  "ASP_Labor_Droid": {
+    "initiative": "+2; Senses: Perception +1",
+    "languages": "Basic, Binary",
+    "reflexDefense": "15 ( Flat-Footed : 14), Fortitude Defense : 13, Will Defense : 10",
+    "HP": "5, Damage Threshold : 13",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : +4",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+4",
+          "damage": "1d4+3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "ASP Labor Droid"
+  },
+  "AZ-Series_Battle_Droid": {
+    "initiative": "+10; Senses: Darkvision , Perception +12",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "21 ( Flat-Footed : 19), Fortitude Defense : 23, Will Defense : 18; Extra Legs",
+    "HP": "77, Damage Threshold : 33",
+    "speed": "8 Squares ( Walking ); Charging Fire , Running Attack",
+    "baseAttackBonus": "+6; Grapple : +16",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+11",
+          "damage": "1d6+8"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Cannon",
+          "bonus": "+9",
+          "damage": "3d12+5, 1-Square Splash"
+        },
+        {
+          "name": "Blaster Cannon",
+          "bonus": "+9",
+          "damage": "3d12+5, 1-Square Splash"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "AZ-Series Battle Droid"
+  },
+  "Aggressor-Series_Battle_Droid": {
+    "initiative": "+7; Senses: Perception +6",
+    "languages": "Basic, Binary",
+    "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 15, Will Defense : 12",
+    "HP": "30, Damage Threshold : 15",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : +3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Dire Vibroblade",
+          "bonus": "+4",
+          "damage": "2d6+4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Aggressor-Series Battle Droid"
+  },
+  "B1-A_Air_Battle_Droid": {
+    "initiative": "+9; Senses: Perception +8",
+    "languages": "Basic, Binary",
+    "reflexDefense": "15 ( Flat-Footed : 14), Fortitude Defense : 16, Will Defense : 13",
+    "HP": "24, Damage Threshold : 16",
+    "speed": "6 Squares ( Walking ), 6 Squares ( Jet Pack ); Running Attack",
+    "baseAttackBonus": "+5; Grapple : +6",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Knife",
+          "bonus": "+6",
+          "damage": "1d4+3"
+        },
+        {
+          "name": "Knife",
+          "bonus": "+1",
+          "damage": "1d4+3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Wrist Blaster",
+          "bonus": "+6",
+          "damage": "3d6+1"
+        },
+        {
+          "name": "Wrist Blaster",
+          "bonus": "+4",
+          "damage": "4d6+1"
+        },
+        {
+          "name": "Wrist Blaster",
+          "bonus": "+1",
+          "damage": "3d6+1"
+        },
+        {
+          "name": "Wrist Blaster",
+          "bonus": "-1",
+          "damage": "4d6+1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "B1-A Air Battle Droid"
+  },
+  "B1-Series_Battle_Droid": {
+    "initiative": "+0; Senses: Perception +6",
+    "languages": "Basic, Binary",
+    "reflexDefense": "9 ( Flat-Footed : 9), Fortitude Defense : 11, Will Defense : 10",
+    "HP": "10, Damage Threshold : 11",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+2; Grapple : +3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+3",
+          "damage": "1d3+1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Carbine",
+          "bonus": "+1",
+          "damage": "3d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "B1-Series Battle Droid"
+  },
+  "B2-AA_Air_Assault_Super_Battle_Droid": {
+    "initiative": "+6; Senses: Perception +4",
+    "languages": "Basic, Binary",
+    "reflexDefense": "21 ( Flat-Footed : 19), Fortitude Defense : 15, Will Defense : 12",
+    "HP": "26, Damage Threshold : 15",
+    "speed": "6 Squares ( Walking ), 6 Squares ( Jet Pack ); Charging Fire",
+    "baseAttackBonus": "+6; Grapple : +8",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+7",
+          "damage": "1d3+2"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Wrist Blaster",
+          "bonus": "+8",
+          "damage": "3d8+1"
+        },
+        {
+          "name": "Wrist Blaster",
+          "bonus": "+6",
+          "damage": "4d8+1"
+        },
+        {
+          "name": "Wrist Blaster",
+          "bonus": "+6",
+          "damage": "3d8+1"
+        },
+        {
+          "name": "Wrist Blaster",
+          "bonus": "+4",
+          "damage": "4d8+1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "B2-AA Air Assault Super Battle Droid"
+  },
+  "11-17-Series_Mining_Droid": {
+    "initiative": "+3; Senses: Darkvision , Perception +7",
+    "languages": "Basic (understand only), Binary , 1 Unassigned",
+    "reflexDefense": "18 ( Flat-Footed : 14), Fortitude Defense : 10, Will Defense : 9",
+    "HP": "7, Damage Threshold : 10",
+    "speed": "4 Squares ( Tracked ); Magnetic Feet",
+    "baseAttackBonus": "+2; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Saw",
+          "bonus": "+5",
+          "damage": "1d4+3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blowtorch",
+          "bonus": "+6",
+          "damage": "2d6"
+        },
+        {
+          "name": "Heavy Plasma Jet",
+          "bonus": "+7",
+          "damage": "3d10, 4x2-Square Burst"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "11-17-Series Mining Droid"
+  },
+  "3D-4_Administrative_Droid": {
+    "initiative": "+0; Senses: Perception +0",
+    "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 10)",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 10",
+    "HP": "2, Damage Threshold : 9",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : +0",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d3-1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Hold-Out Blaster Pistol",
+          "bonus": "+0",
+          "damage": "3d4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "3D-4 Administrative Droid"
+  },
+  "B2-GR-Series_Super_Battle_Droid": {
+    "initiative": "+17; Senses: Perception +12",
+    "languages": "Basic, Binary",
+    "reflexDefense": "19 ( Flat-Footed 15), Fortitude Defense : 18, Will Defense 13",
+    "HP": "42, Damage Threshold : 23",
+    "speed": "8 Squares ( Walking )",
+    "baseAttackBonus": "+7; Grapple : +19; Crush , Pin",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+12",
+          "damage": "1d10+5"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "B2-GR-Series Super Battle Droid"
+  },
+  "5-BT_Threat_Analysis_Droid": {
+    "initiative": "+13; Senses: Darkvision , Perception +15",
+    "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 10)",
+    "reflexDefense": "14 ( Flat-Footed : 12), Fortitude Defense : 7, Will Defense : 12",
+    "HP": "7, Damage Threshold : 7",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+2; Grapple : -6",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Hold-Out Blaster Pistol",
+          "bonus": "+4",
+          "damage": "3d4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "5-BT Threat Analysis Droid"
+  },
+  "3Z3_Medical_Droid": {
+    "initiative": "+3; Senses: Low-Light Vision, Perception +11",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "11 ( Flat-Footed : 10), Fortitude Defense : 10, Will Defense : 12",
+    "HP": "10, Damage Threshold : 10",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+3; Grapple : +4",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+3",
+          "damage": "1d3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "3Z3 Medical Droid"
+  },
+  "3PO-Series_Protocol_Droid": {
+    "initiative": "-1; Senses: Perception +1",
+    "languages": "Basic, Binary , 3 Unassigned; Translator Unit (DC 5)",
+    "reflexDefense": "9 ( Flat-Footed : 9), Fortitude Defense : 9, Will Defense : 11",
+    "HP": "2, Damage Threshold : 9",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : -1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "3PO-Series Protocol Droid"
+  },
+  "3PX_Espionage_Droid": {
+    "initiative": "+4; Senses: Low-Light Vision, Perception +12",
+    "languages": "Basic, Binary , 5 Unassigned; Translator Unit (DC 5)",
+    "reflexDefense": "19 ( Flat-Footed : 18), Fortitude Defense : 17, Will Defense : 19",
+    "HP": "37, Damage Threshold : 17",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+4; Grapple : +5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+5",
+          "damage": "1d3+4"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Hold-Out Blaster Pistol",
+          "bonus": "+5",
+          "damage": "3d4+3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "3PX Espionage Droid"
+  },
+  "2-1B_Medical_Droid": {
+    "initiative": "+1; Senses: Low-Light Vision, Perception +5",
+    "languages": "Basic, Binary , 2 Unassigned",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 12",
+    "HP": "5, Damage Threshold : 9",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+0",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "2-1B Medical Droid"
+  },
+  "B2-HA-Series_Super_Battle_Droid": {
+    "initiative": "+4; Senses: Perception +8",
+    "languages": "Basic, Binary",
+    "reflexDefense": "14 ( Flat-Footed : 13), Fortitude Defense : 15, Will Defense : 11",
+    "HP": "42, Damage Threshold : 15",
+    "speed": "6 Squares ( Walking ); Charging Fire",
+    "baseAttackBonus": "+5; Grapple : +12",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+11",
+          "damage": "1d3+2"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Wrist Blasters",
+          "bonus": "+6",
+          "damage": "3d8"
+        },
+        {
+          "name": "Wrist Blasters",
+          "bonus": "+4",
+          "damage": "4d8"
+        },
+        {
+          "name": "Missile Launcher",
+          "bonus": "+6",
+          "damage": "6d6, 2-Square Burst"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "B2-HA-Series Super Battle Droid"
+  },
+  "B2-Series_Super_Battle_Droid": {
+    "initiative": "+3; Senses: Perception +8",
+    "languages": "Basic, Binary",
+    "reflexDefense": "12 ( Flat-Footed : 12), Fortitude Defense : 12, Will Defense : 10",
+    "HP": "21, Damage Threshold : 12",
+    "speed": "6 Squares ( Walking ); Charging Fire",
+    "baseAttackBonus": "+4; Grapple : +6",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+6",
+          "damage": "1d3+2"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Wrist Blasters",
+          "bonus": "+4",
+          "damage": "3d8"
+        },
+        {
+          "name": "Wrist Blasters",
+          "bonus": "+2",
+          "damage": "4d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "B2-Series Super Battle Droid"
+  },
+  "X_Training_Droid": {
+    "initiative": "+9; Senses: Low-Light Vision, Perception +4",
+    "languages": "Basic, Binary",
+    "reflexDefense": "20 ( Flat-Footed : 18), Fortitude Defense : 13, Will Defense : 11",
+    "HP": "17, Damage Reduction : 5 vs Lightsabers , Damage Threshold : 13",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+3; Grapple : +5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+4",
+          "damage": "1d4+1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Carbine",
+          "bonus": "+6",
+          "damage": "3d8+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "X Training Droid"
+  },
+  "BD-3000_Luxury_Droid": {
+    "initiative": "-1; Senses: Darkvision , Perception -1",
+    "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 10)",
+    "reflexDefense": "11 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 9",
+    "HP": "2, Damage Threshold : 9",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "BD-3000 Luxury Droid"
+  },
+  "B4J4_Security_Droid": {
+    "initiative": "+9; Senses: Perception +13",
+    "languages": "Basic, Binary",
+    "reflexDefense": "14 ( Flat-Footed : 13), Fortitude Defense : 11, Will Defense : 10",
+    "HP": "14, Damage Threshold : 11",
+    "speed": "9 Squares ( Flying )",
+    "baseAttackBonus": "+4; Grapple : +0",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+5",
+          "damage": "1d3+1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Heavy Blaster Pistol",
+          "bonus": "+6",
+          "damage": "3d8"
+        },
+        {
+          "name": "Heavy Blaster Pistol",
+          "bonus": "+4",
+          "damage": "4d8"
+        },
+        {
+          "name": "Heavy Blaster Pistol",
+          "bonus": "-4",
+          "damage": "3d8"
+        },
+        {
+          "name": "Heavy Blaster Pistol",
+          "bonus": "-6",
+          "damage": "4d8"
+        },
+        {
+          "name": "Snare Pistol",
+          "bonus": "+6",
+          "damage": "1d4 ( Stun"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "B4J4 Security Droid"
+  },
+  "B3-Series_Ultra_Battle_Droid": {
+    "initiative": "+4; Senses: Low-Light Vision, Perception +12",
+    "languages": "Basic, Binary",
+    "reflexDefense": "17 ( Flat-Footed : 16), Fortitude Defense : 17, Will Defense : 11",
+    "HP": "42, Damage Threshold : 27",
+    "speed": "8 Squares ( Walking )",
+    "baseAttackBonus": "+6; Grapple : +18",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+13",
+          "damage": "1d4+7"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Flamethrower",
+          "bonus": "+2",
+          "damage": "3d6 ( Fire"
+        },
+        {
+          "name": "Missile Launcher",
+          "bonus": "+7",
+          "damage": "6d6, 2-Square Splash"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "B3-Series Ultra Battle Droid"
+  },
+  "B3-A-Series_Ultra_Battle_Droid": {
+    "initiative": "+8; Senses: Low-Light Vision, Perception +10",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "18 ( Flat-Footed : 17), Fortitude Defense : 24, Will Defense : 16",
+    "HP": "72, Damage Threshold : 29",
+    "speed": "8 Squares ( Walking )",
+    "baseAttackBonus": "+5; Grapple : +17",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+12",
+          "damage": "1d4+9"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+7",
+          "damage": "3d10+2, 2-Square Autofire"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+7",
+          "damage": "5d10+2"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+2",
+          "damage": "3d10+2, 2-Square Autofire"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+2",
+          "damage": "5d10+2"
+        },
+        {
+          "name": "Flamethrower",
+          "bonus": "+1",
+          "damage": "3d6+2 ( Fire"
+        },
+        {
+          "name": "Missile Launcher",
+          "bonus": "+7",
+          "damage": "6d6+2, 2-Square Splash"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "B3-A-Series Ultra Battle Droid"
+  },
+  "BD_Explorer_Droid": {
+    "initiative": "+3; Senses: Automap , Darkvision , Perception +10",
+    "languages": "Basic (understand only), Binary , 2 Unassigned",
+    "reflexDefense": "16 ( Flat-Footed : 15), Fortitude Defense : 9, Will Defense : 13",
+    "HP": "11, Damage Threshold : 8",
+    "speed": "4 Square ( Walking ), 2 Squares (Climbing); Jump Servos , Magnetic Feet",
+    "baseAttackBonus": "+1, Grapple : -8",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Electroshock Probe",
+          "bonus": "-2",
+          "damage": "1d8-3 ( Ion"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "BD Explorer Droid"
+  },
+  "BLX_Labor_Droid": {
+    "initiative": "+1; Senses: Perception -1",
+    "languages": "Basic, Binary",
+    "reflexDefense": "15 ( Flat-Footed : 14), Fortitude Defense : 12, Will Defense : 9",
+    "HP": "4, Damage Threshold : 12",
+    "speed": "6 Squares ( Walking ); Magnetic Feet",
+    "baseAttackBonus": "+0; Grapple : +2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+2",
+          "damage": "1d3+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "BLX Labor Droid"
+  },
+  "BL-Series_Legionnaire_Droid": {
+    "initiative": "+16; Senses: Darkvision , Perception +12",
+    "languages": "Basic, Binary , Mando'a",
+    "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 12, Will Defense : 11; Gyroscopic Stabilizers",
+    "HP": "22, Damage Threshold : 12",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+6; Grapple : +8",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Finger Blades",
+          "bonus": "+8",
+          "damage": "2d4+2"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Light Repeating Blaster",
+          "bonus": "+3",
+          "damage": "3d8, 2-Square Autofire"
+        },
+        {
+          "name": "Light Repeating Blaster",
+          "bonus": "+1",
+          "damage": "4d8, 2-Square Autofire"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "BL-Series Legionnaire Droid"
+  },
+  "BL-39_Interrogator_Droid": {
+    "initiative": "+2; Senses: Low-Light Vision, Perception +11",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "15 ( Flat-Footed : 14), Fortitude Defense : 9, Will Defense : 15",
+    "HP": "6, Damage Threshold : 9",
+    "speed": "6 Squares ( Hovering ; Maximum Altitude: 2 Squares)",
+    "baseAttackBonus": "+0; Grapple : -4",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+1",
+          "damage": "3d6"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "BL-39 Interrogator Droid"
+  },
+  "BT-16_Perimeter_Security_Droid": {
+    "initiative": "+6; Senses: Low-Light Vision, Perception +16",
+    "languages": "Basic, Binary",
+    "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 20, Will Defense : 16; Extra Legs",
+    "HP": "39, Damage Threshold : 25",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+6; Grapple : +16",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Leg Spike",
+          "bonus": "+11",
+          "damage": "1d6+6"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+4",
+          "damage": "3d10+1, 2-Square Autofire"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+4",
+          "damage": "5d10+1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "BT-16 Perimeter Security Droid"
+  },
+  "Behemoth_Junk_Droid": {
+    "initiative": "+5; Senses: Perception +11",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "10 ( Flat-Footed : 9), Fortitude Defense : 23, Will Defense : 11",
+    "HP": "63, Damage Threshold : 33",
+    "speed": "8 Squares ( Walking ); Bantha Rush , Powerful Charge",
+    "baseAttackBonus": "+9; Grapple : +31",
+    "constitution": "-",
+    "name": "Behemoth Junk Droid"
+  },
+  "BT7-Series_Valet_Droid": {
+    "initiative": "+0; Senses: Perception +0",
+    "languages": "Basic, Binary , High Galactic, 2 Unassigned; Translator Unit (DC 10)",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 11",
+    "HP": "10, Damage Threshold : 9",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+3; Grapple : +3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+2",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "BT7-Series Valet Droid"
+  },
+  "Buzz_Droid": {
+    "initiative": "+11; Senses: Low-Light Vision, Perception +8",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "21 ( Flat-Footed : 16), Fortitude Defense : 11, Will Defense : 15; Extra Legs",
+    "HP": "41, Damage Threshold : 11",
+    "speed": "9 Squares ( Flying ), 4 Squares ( Walking ( Limited )); Magnetic Feet",
+    "baseAttackBonus": "+3; Grapple : -2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Vibrosaw",
+          "bonus": "+8",
+          "damage": "2d4-1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Plasma Cutting Torch",
+          "bonus": "+8",
+          "damage": "3d6+1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Buzz Droid"
+  },
+  "C-B3_Cortosis_Battle_Droid": {
+    "initiative": "+4; Senses: Perception +9",
+    "languages": "Basic, Binary",
+    "reflexDefense": "19 ( Flat-Footed : 19), Fortitude Defense : 17, Will Defense : 13",
+    "HP": "40, Damage Reduction : 5 ( Lightsabers ), Damage Threshold : 17",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+7; Grapple : +9",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+9",
+          "damage": "1d3+3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Wrist Blasters",
+          "bonus": "+7",
+          "damage": "3d8+1"
+        },
+        {
+          "name": "Wrist Blasters",
+          "bonus": "+5",
+          "damage": "4d8+1"
+        },
+        {
+          "name": "Wrist Blasters",
+          "bonus": "+2",
+          "damage": "5d8+1"
+        },
+        {
+          "name": "Wrist Blasters",
+          "bonus": "+2",
+          "damage": "3d8+1"
+        },
+        {
+          "name": "Wrist Blasters",
+          "bonus": "+0",
+          "damage": "4d8+1"
+        },
+        {
+          "name": "Wrist Blasters",
+          "bonus": "-3",
+          "damage": "5d8+1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "C-B3 Cortosis Battle Droid"
+  },
+  "Brute_Junk_Droid": {
+    "initiative": "+7; Senses: Perception +8",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "13 ( Flat-Footed : 10), Fortitude Defense : 18, Will Defense : 10; Extra Legs",
+    "HP": "43, Damage Threshold : 23",
+    "speed": "8 Squares ( Walking ); Powerful Charge , Running Attack",
+    "baseAttackBonus": "+6; Grapple : +18",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+13",
+          "damage": "1d6+7"
+        },
+        {
+          "name": "Unarmed",
+          "bonus": "+17",
+          "damage": "1d6+11"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Brute Junk Droid"
+  },
+  "CA-B2_Cold_Assault_Battle_Droid": {
+    "initiative": "+2; Senses: Perception +8",
+    "languages": "Basic, Binary",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 14, Will Defense : 10",
+    "HP": "31, Damage Threshold : 19",
+    "speed": "6 Squares ( Walking ); Charging Fire",
+    "baseAttackBonus": "+4; Grapple : +13",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+8",
+          "damage": "1d4+4"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Heavy Blaster Rifle",
+          "bonus": "+3",
+          "damage": "3d10"
+        },
+        {
+          "name": "Heavy Blaster Rifle",
+          "bonus": "+1",
+          "damage": "4d10"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "CA-B2 Cold Assault Battle Droid"
+  },
+  "Chiba_DR-10_Protocol_Droid": {
+    "initiative": "+4; Senses: Perception +3",
+    "languages": "Basic, Binary , 5 Unassigned; Translator Unit (DC 5)",
+    "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 12",
+    "HP": "7, Damage Threshold : 9",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+2; Grapple : +0",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d3-1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+5",
+          "damage": "3d6"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Chiba DR-10 Protocol Droid"
+  },
+  "DE_Training_Droid": {
+    "initiative": "+7; Senses: Perception +0",
+    "languages": "Basic, Binary",
+    "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 15, Will Defense : 11",
+    "HP": "30, Damage Threshold : 15",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : +3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+4",
+          "damage": "1d3+4"
+        },
+        {
+          "name": "Rapier",
+          "bonus": "+4",
+          "damage": "1d8+4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "DE Training Droid"
+  },
+  "CZ-Series_Secretary_Droid": {
+    "initiative": "+0; Senses: Perception +6",
+    "languages": "Basic, Binary , Bocce, Huttese, 3 Unassigned; Translator Unit (DC 10)",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 11",
+    "HP": "3, Damage Threshold : 9",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : +0",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "CZ-Series Secretary Droid"
+  },
+  "DD-13_Medical_Assistant_Droid": {
+    "initiative": "+1; Senses: Low-Light Vision, Perception +10",
+    "languages": "Basic, Binary , 2 Unassigned",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 12",
+    "HP": "8, Damage Threshold : 9",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+2; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d4-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "DD-13 Medical Assistant Droid"
+  },
+  "DRK-1_Probe_Droid": {
+    "initiative": "+11; Senses: Darkvision , Perception +15",
+    "languages": "Basic (understand only), Binary , 3 Unassigned",
+    "reflexDefense": "16 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 12",
+    "HP": "12, Damage Threshold : 9",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+2; Grapple : +2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d2-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "DRK-1 Probe Droid"
+  },
+  "DSD1_Dwarf_Spider_Droid": {
+    "initiative": "+3; Senses: Darkvision , Perception +17",
+    "languages": "Basic, Binary",
+    "reflexDefense": "13 ( Flat-Footed : 13), Fortitude Defense : 16, Will Defense : 11; Extra Legs",
+    "HP": "32, Damage Threshold : 26",
+    "speed": "8 Squares ( Walking ), 4 Squares (Climbing); Magnetic Feet",
+    "baseAttackBonus": "+6; Grapple : +17",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Blaster Cannon",
+          "bonus": "+5",
+          "damage": "3d12, 1-Square Splash"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "DSD1 Dwarf Spider Droid"
+  },
+  "DSH-3_Probe_Droid": {
+    "initiative": "+5; Senses: Darkvision , Perception +15",
+    "languages": "Basic (understand only), Binary , 1 Unassigned",
+    "reflexDefense": "15 ( Flat-Footed : 11), Fortitude Defense : 8, Will Defense : 12; Dodge",
+    "HP": "8, Damage Threshold : 8",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+2; Grapple : +1",
+    "constitution": "-",
+    "name": "DSH-3 Probe Droid"
+  },
+  "DT-16_%22Destructor%22_Battle_Droid": {
+    "initiative": "+3; Senses: Low-Light Vision, Perception +11",
+    "languages": "Basic, Binary",
+    "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 16, Will Defense : 11",
+    "HP": "38, Damage Threshold : 21",
+    "speed": "8 Squares ( Walking )",
+    "baseAttackBonus": "+4; Grapple : +15",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+10",
+          "damage": "1d4+6"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+4",
+          "damage": "3d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "-6",
+          "damage": "3d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+2",
+          "damage": "4d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "-8",
+          "damage": "4d8"
+        },
+        {
+          "name": "Grenade Launcher",
+          "bonus": "+4",
+          "damage": "4d6, 2-Square Burst"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "DT-16 %22Destructor%22 Battle Droid"
+  },
+  "Droideka-Series_Destroyer_Droid": {
+    "initiative": "+8; Senses: Perception +13",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "16 ( Flat-Footed : 14), Fortitude Defense : 13, Will Defense : 12",
+    "HP": "40, Shield Rating : 20, Damage Threshold : 18",
+    "speed": "2 Squares ( Walking ), 10 Squares ( Wheeled ( Exclusive ))",
+    "baseAttackBonus": "+9; Grapple : +17",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+7",
+          "damage": "1d4+3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Laser Cannon",
+          "bonus": "+12",
+          "damage": "3d8"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+10",
+          "damage": "4d8"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+7",
+          "damage": "5d8"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+10",
+          "damage": "3d8"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+8",
+          "damage": "4d8"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+5",
+          "damage": "5d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Droideka-Series Destroyer Droid"
+  },
+  "Devastator_War_Droid": {
+    "initiative": "+13; Senses: Perception +11",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "18 ( Flat-Footed : 15), Fortitude Defense : 16, Will Defense : 13",
+    "HP": "46, Damage Threshold : 16",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+8; Grapple : +11",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+10",
+          "damage": "1d3+3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Devastator War Droid"
+  },
+  "Droideka-Series_Ultra_Destroyer_Droid": {
+    "initiative": "+10; Senses: Perception +15",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 20, Will Defense : 13",
+    "HP": "60, Shield Rating : 20, Damage Threshold : 29",
+    "speed": "3 Squares ( Walking ), 12 Squares ( Wheeled ( Exclusive ))",
+    "baseAttackBonus": "+12; Grapple : +31",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "E-Web Repeating Blaster",
+          "bonus": "+10",
+          "damage": "3d12, 2-Square Autofire"
+        },
+        {
+          "name": "E-Web Repeating Blaster",
+          "bonus": "+10",
+          "damage": "5d12"
+        },
+        {
+          "name": "E-Web Repeating Blaster",
+          "bonus": "+8",
+          "damage": "3d12, 2-Square Autofire"
+        },
+        {
+          "name": "E-Web Repeating Blaster",
+          "bonus": "+8",
+          "damage": "5d12"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Droideka-Series Ultra Destroyer Droid"
+  },
+  "Droideka_Mk_II_Destroyer_Droid": {
+    "initiative": "+16; Senses: Perception +15",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "18 ( Flat-Footed : 15), Fortitude Defense : 19, Will Defense : 16",
+    "HP": "80, Shield Rating : 20, Damage Threshold : 29",
+    "speed": "2 Squares ( Walking ), 10 Squares ( Wheeled ( Exclusive )); Running Attack",
+    "baseAttackBonus": "+13; Grapple : +21",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+16",
+          "damage": "1d4+5"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Laser Cannon",
+          "bonus": "+17",
+          "damage": "3d8+2"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+15",
+          "damage": "4d8+2"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+12",
+          "damage": "5d8+2"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+15",
+          "damage": "3d8+2"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+13",
+          "damage": "4d8+2"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+10",
+          "damage": "5d8+2"
+        },
+        {
+          "name": "Ion Cannon",
+          "bonus": "+17",
+          "damage": "3d8+2 ( Ion"
+        },
+        {
+          "name": "Ion Cannon",
+          "bonus": "+15",
+          "damage": "4d8+2 ( Ion"
+        },
+        {
+          "name": "Ion Cannon",
+          "bonus": "+15",
+          "damage": "3d8+2 ( Ion"
+        },
+        {
+          "name": "Ion Cannon",
+          "bonus": "+13",
+          "damage": "4d8+2 ( Ion"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Droideka Mk II Destroyer Droid"
+  },
+  "E522_Assassin_Droid": {
+    "initiative": "+9; Senses: Darkvision , Perception +10",
+    "languages": "Basic, Binary",
+    "reflexDefense": "24 ( Flat-Footed : 23), Fortitude Defense : 23, Will Defense : 17",
+    "HP": "74, Damage Threshold : 23",
+    "speed": "6 Squares ( Tracked )",
+    "baseAttackBonus": "+6; Grapple : +10",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+10",
+          "damage": "1d4+7"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+7",
+          "damage": "3d10+3, 2-Square Autofire"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+5",
+          "damage": "4d10+3, 2-Square Autofire"
+        },
+        {
+          "name": "Ion Rifle",
+          "bonus": "+7",
+          "damage": "3d8+3 ( Ion"
+        },
+        {
+          "name": "Ion Rifle",
+          "bonus": "+5",
+          "damage": "4d8+3 ( Ion"
+        },
+        {
+          "name": "Needler",
+          "bonus": "+7",
+          "damage": "2d4+3, See Below"
+        },
+        {
+          "name": "Missile Launcher",
+          "bonus": "+7",
+          "damage": "6d6+3, 2-Square Burst"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "E522 Assassin Droid"
+  },
+  "ET-74_Communications_Droid": {
+    "initiative": "+1; Senses: Perception +0",
+    "languages": "Basic, Binary , 5 Unassigned; Translator Unit (DC 10)",
+    "reflexDefense": "12 ( Flat-Footed : 11), Fortitude Defense : 8, Will Defense : 10",
+    "HP": "3, Damage Threshold : 8",
+    "speed": "4 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : -4",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-2",
+          "damage": "1d2-2 (Minimum 1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "ET-74 Communications Droid"
+  },
+  "EW-3_Midwife_Droid": {
+    "initiative": "+1; Senses: Low-Light Vision, Perception +5",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 10, Will Defense : 12",
+    "HP": "6, Damage Threshold : 10",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+1; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "EW-3 Midwife Droid"
+  },
+  "EG-6_Power_Droid": {
+    "initiative": "-1; Senses: Darkvision , Perception -1",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "18 ( Flat-Footed : 18), Fortitude Defense : 12, Will Defense : 9",
+    "HP": "5, Damage Threshold : 12",
+    "speed": "4 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : -3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+2",
+          "damage": "1d2+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "EG-6 Power Droid"
+  },
+  "EVS_Construction_Droid": {
+    "initiative": "+5; Senses: Perception +6",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "6 ( Flat-Footed : 6), Fortitude Defense : 30, Will Defense : 9",
+    "HP": "137, Damage Threshold : 85",
+    "speed": "8 Squares ( Walking )",
+    "baseAttackBonus": "+11; Grapple : +51; Crush , Pin",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Plasma Cutter 1",
+          "bonus": "+10",
+          "damage": "3d6"
+        },
+        {
+          "name": "Implosion Wrecking Ball 1",
+          "bonus": "+10",
+          "damage": "3d10 2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "EVS Construction Droid"
+  },
+  "EV-Series_Supervisor_Droid": {
+    "initiative": "+1; Senses: Perception +3",
+    "languages": "Basic, Binary , 3 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 13), Fortitude Defense : 12, Will Defense : 16",
+    "HP": "10, Damage Threshold : 12",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+2; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "EV-Series Supervisor Droid"
+  },
+  "EI-9_Network_Security_Droid": {
+    "initiative": "+11; Senses: Low-Light Vision, Perception +13",
+    "languages": "Basic, Binary , 3 Unassigned",
+    "reflexDefense": "22 ( Flat-Footed : 21), Fortitude Defense : 19, Will Defense : 20",
+    "HP": "36, Damage Threshold : 19",
+    "speed": "6 Squares ( Walking ); Running Attack",
+    "baseAttackBonus": "+7; Grapple : +8",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+7",
+          "damage": "1d3+3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+8",
+          "damage": "3d8+3"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+6",
+          "damage": "4d8+3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "EI-9 Network Security Droid"
+  },
+  "F1_Exploration_Droid": {
+    "initiative": "+7; Senses: Darkvision , Perception +15",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "17 ( Flat-Footed : 16), Fortitude Defense : 15, Will Defense : 15; Extra Legs",
+    "HP": "33, Damage Threshold : 15",
+    "speed": "4 Squares ( Walking ); Running Attack",
+    "baseAttackBonus": "+2; Grapple : -2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Bite",
+          "bonus": "+3",
+          "damage": "1d3+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "F1 Exploration Droid"
+  },
+  "Eradicator-Series_Battle_Droid": {
+    "initiative": "+6; Senses: Perception +9",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "16 ( Flat-Footed : 14), Fortitude Defense : 14, Will Defense : 10",
+    "HP": "29, Shield Rating : 5, Damage Threshold : 19",
+    "speed": "8 Squares ( Walking )",
+    "baseAttackBonus": "+6; Grapple : +15",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+10",
+          "damage": "1d6+4"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Ion Rifle",
+          "bonus": "+9",
+          "damage": "3d8 ( Ion"
+        },
+        {
+          "name": "Ion Rifle",
+          "bonus": "+7",
+          "damage": "3d8 ( Ion"
+        },
+        {
+          "name": "Light Repeating Blaster",
+          "bonus": "+9",
+          "damage": "3d8, 2-Square Autofire"
+        },
+        {
+          "name": "Light Repeating Blaster",
+          "bonus": "+7",
+          "damage": "3d8, 2-Square Autofire"
+        },
+        {
+          "name": "Light Repeating Blaster",
+          "bonus": "+7",
+          "damage": "3d8, 2-Square Autofire"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Eradicator-Series Battle Droid"
+  },
+  "FIII_Footman_Droid": {
+    "initiative": "+12; Senses: Darkvision , Perception +14",
+    "languages": "Basic, Binary , 3 Unassigned; Translator Unit (DC 15)",
+    "reflexDefense": "22 ( Flat-Footed : 19), Fortitude Defense : 25, Will Defense : 23; Combat Reflexes , Logic Upgrade: Self-Defense",
+    "HP": "54, Damage Threshold : 25",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+7; Grapple : +10",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+12",
+          "damage": "1d4+9"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Miniaturized Rail Cannon",
+          "bonus": "+10",
+          "damage": "3d12+4, 1-Square Splash"
+        },
+        {
+          "name": "Miniaturized Rail Cannon",
+          "bonus": "+8",
+          "damage": "4d12+4, 1-Square Splash"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "FIII Footman Droid"
+  },
+  "FEG-Series_Pilot_Droid": {
+    "initiative": "+2; Senses: Perception +6",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "15 ( Flat-Footed : 13), Fortitude Defense : 12, Will Defense : 13; Vehicular Combat",
+    "HP": "18, Damage Threshold : 12",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d3+1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+2",
+          "damage": "3d6"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "FEG-Series Pilot Droid"
+  },
+  "FA-4_Pilot_Droid": {
+    "initiative": "+13; Senses: Darkvision , Perception +4",
+    "languages": "Basic, Binary , 2 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 11; Vehicular Combat",
+    "HP": "5, Damage Threshold : 9",
+    "speed": "6 Squares ( Wheeled ); Magnetic Feet",
+    "baseAttackBonus": "+1; Grapple : -2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+0",
+          "damage": "1d2-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "FA-4 Pilot Droid"
+  },
+  "FA-5_Valet_Droid": {
+    "initiative": "+2; Senses: Perception +0",
+    "languages": "Basic, Binary",
+    "reflexDefense": "12 ( Flat-Footed : 10), Fortitude Defense : 11, Will Defense : 10",
+    "HP": "3, Damage Threshold : 10",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : +2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d3+1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "FA-5 Valet Droid"
+  },
+  "FLTCH-Series_Battle_Droid": {
+    "initiative": "+6; Senses: Low-Light Vision, Perception +11",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "19 ( Flat-Footed : 17), Fortitude Defense : 22, Will Defense : 14",
+    "HP": "32, Damage Threshold : 22",
+    "speed": "8 Squares ( Walking ), 6 Squares ( Jet Pack ); Running Attack",
+    "baseAttackBonus": "+7; Grapple : +18",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+13",
+          "damage": "1d6+8"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Heavy Blaster Rifle",
+          "bonus": "+10",
+          "damage": "3d10+2"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+10",
+          "damage": "3d8+2"
+        },
+        {
+          "name": "Missile Launcher",
+          "bonus": "+9",
+          "damage": "6d6, 2-Square Burst"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "FLTCH-Series Battle Droid"
+  },
+  "FSD-6D_Surveillance_Droid": {
+    "initiative": "+16; Senses: Darkvision , Perception +17",
+    "languages": "Basic (understand only), Binary , 1 Unassigned",
+    "reflexDefense": "20 ( Flat-Footed : 17), Fortitude Defense : 15, Will Defense : 16",
+    "HP": "47, Damage Threshold : 15",
+    "speed": "9 Squares ( Flying ); Hidden Movement , Running Attack , Sprint",
+    "baseAttackBonus": "+4; Grapple : +2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+4",
+          "damage": "1d3+3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+7",
+          "damage": "3d6+3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "FSD-6D Surveillance Droid"
+  },
+  "FX-7_Medical_Droid": {
+    "initiative": "+1; Senses: Low-Light Vision, Perception +5",
+    "languages": "Basic (understand only), Binary , 2 Unassigned",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 12",
+    "HP": "5, Damage Threshold : 9",
+    "speed": "Immobile",
+    "baseAttackBonus": "+1; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+0",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "FX-7 Medical Droid"
+  },
+  "FX-6_Medical_Assistance_Droid": {
+    "initiative": "+1; Senses: Low-Light Vision, Perception +10",
+    "languages": "Basic, Binary , 2 Unassigned",
+    "reflexDefense": "12 ( Flat-Footed : 12), Fortitude Defense : 9, Will Defense : 12",
+    "HP": "7, Damage Threshold : 9",
+    "speed": "6 Squares ( Tracked )",
+    "baseAttackBonus": "+2; Grapple : +2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d2-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "FX-6 Medical Assistance Droid"
+  },
+  "G2_Repair_Droid": {
+    "initiative": "+1; Senses: Darkvision , Perception +7",
+    "languages": "Basic, Binary , 2 Unassigned",
+    "reflexDefense": "12 ( Flat-Footed : 11), Fortitude Defense : 10, Will Defense : 10",
+    "HP": "3, Damage Threshold : 10",
+    "speed": "4 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : -4",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+0",
+          "damage": "1d2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "G2 Repair Droid"
+  },
+  "G0-T0_Infrastructure-Planning_Droid": {
+    "initiative": "+4; Senses: Low-Light Vision, Perception +4",
+    "languages": "Basic, Binary , 3 Unassigned",
+    "reflexDefense": "15 ( Flat-Footed : 13), Fortitude Defense : 9, Will Defense : 11",
+    "HP": "10, Damage Threshold : 9",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+3; Grapple : -5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Electroshock Probe",
+          "bonus": "+1",
+          "damage": "1d8-2 Ion"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "G0-T0 Infrastructure-Planning Droid"
+  },
+  "GG-Series_Hospitality_Droid": {
+    "initiative": "+2; Senses: Perception +7",
+    "languages": "Basic, Binary ; Translator Unit (DC 10)",
+    "reflexDefense": "11 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 11",
+    "HP": "5, Damage Threshold : 9",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : +2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+0",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "GG-Series Hospitality Droid"
+  },
+  "GD16-Series_Pilot_Droid": {
+    "initiative": "+9; Senses: Low-Light Vision, Perception +10",
+    "languages": "Basic, Binary , 2 Unassigned",
+    "reflexDefense": "19 ( Flat-Footed : 17), Fortitude Defense : 17, Will Defense : 16; Vehicular Combat",
+    "HP": "44, Damage Threshold : 17",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+4; Grapple : +6",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+4",
+          "damage": "1d3+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "GD16-Series Pilot Droid"
+  },
+  "GE3-Series_Protocol_Droid": {
+    "initiative": "+0; Senses: Perception +2",
+    "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 10)",
+    "reflexDefense": "9 ( Flat-Footed : 9), Fortitude Defense : 9, Will Defense : 11",
+    "HP": "5, Damage Threshold : 9",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : +0",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+0",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "GE3-Series Protocol Droid"
+  },
+  "GH-7_Medical_Droid": {
+    "initiative": "+3; Senses: Low-Light Vision, Perception +10",
+    "languages": "Basic, Binary , 3 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 12",
+    "HP": "7, Damage Threshold : 9",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+2, Grapple : -1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d2-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "GH-7 Medical Droid"
+  },
+  "GX1-Series_Battle_Droid": {
+    "initiative": "+18; Senses: Perception +9",
+    "languages": "Basic, Binary",
+    "reflexDefense": "24 ( Flat-Footed : 21), Fortitude Defense : 20, Will Defense : 14; Evasion",
+    "HP": "35, Damage Threshold : 20",
+    "speed": "6 Squares ( Walking ); Repositioning Routines",
+    "baseAttackBonus": "+7; Grapple : +10",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+10",
+          "damage": "1d3+5"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Heavy Blaster Rifle",
+          "bonus": "+11",
+          "damage": "3d10+4"
+        },
+        {
+          "name": "Heavy Blaster Rifle",
+          "bonus": "+9",
+          "damage": "4d10+4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "GX1-Series Battle Droid"
+  },
+  "GNK-Series_Power_Droid": {
+    "initiative": "+1; Senses: Perception +1",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "16 ( Flat-Footed : 16), Fortitude Defense : 12, Will Defense : 10",
+    "HP": "7, Damage Threshold : 12",
+    "speed": "4 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : +3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+3",
+          "damage": "1d3+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "GNK-Series Power Droid"
+  },
+  "GRZ-6B_Demolitions_Droid": {
+    "initiative": "+8; Senses: Perception +14",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 22, Will Defense : 12",
+    "HP": "106, Damage Threshold : 47",
+    "speed": "8 Squares ( Walking )",
+    "baseAttackBonus": "+12; Grapple : +39; Pin",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Claw",
+          "bonus": "+24",
+          "damage": "2d6+12"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Plasma Cannon",
+          "bonus": "+12",
+          "damage": "3d10"
+        },
+        {
+          "name": "Laser Cutter",
+          "bonus": "+12",
+          "damage": "3d8, 2-Square Autofire"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "GRZ-6B Demolitions Droid"
+  },
+  "HK-24_Assassin_Droid": {
+    "initiative": "+13; Senses: Low-Light Vision, Perception +8",
+    "languages": "Basic, Binary ; Translator Unit (DC 5)",
+    "reflexDefense": "23 ( Flat-Footed : 20), Fortitude Defense : 19, Will Defense : 16",
+    "HP": "43, Damage Threshold : 19; Tough as Nails",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+9; Grapple : +12",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+11",
+          "damage": "1d3+4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "HK-24 Assassin Droid"
+  },
+  "HK-50_Assassin_Droid": {
+    "initiative": "+16; Senses: Low-Light Vision, Perception +11",
+    "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 5)",
+    "reflexDefense": "26 ( Flat-Footed : 22), Fortitude Defense : 26, Will Defense : 21",
+    "HP": "75, Damage Reduction : 2, Damage Threshold : 26; Tough as Nails",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+14; Grapple : +17",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+16",
+          "damage": "1d4+7"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "HK-50 Assassin Droid"
+  },
+  "H-1ME_Battle_Mechanic_Droid": {
+    "initiative": "+8; Senses: Perception +0",
+    "languages": "Basic, Binary , 3 Unassigned",
+    "reflexDefense": "17 ( Flat-Footed : 14), Fortitude Defense : 11, Will Defense : 11; Extra Legs",
+    "HP": "24, Damage Threshold : 11",
+    "speed": "4 Squares ( Walking ); Magnetic Feet",
+    "baseAttackBonus": "+0; Grapple : -2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d2-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "H-1ME Battle Mechanic Droid"
+  },
+  "GY-I_Information_Analysis_Droid": {
+    "initiative": "+6; Senses: Low-Light Vision, Perception +9",
+    "languages": "Basic, Binary , 5 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 12), Fortitude Defense : 10, Will Defense : 15",
+    "HP": "18, Damage Threshold : 10",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "GY-I Information Analysis Droid"
+  },
+  "HKB-3_Hunter-Killer_Droid": {
+    "initiative": "+5; Senses: Hunting Sensor, Low-Light Vision, Perception +11",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "18 ( Flat-Footed : 17), Fortitude Defense : 19, Will Defense : 15",
+    "HP": "32, Damage Threshold : 19",
+    "speed": "6 Squares ( Walking ); Expert Tracker",
+    "baseAttackBonus": "+6; Grapple : +8",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+8",
+          "damage": "1d3+4"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+8",
+          "damage": "3d8+4"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+6",
+          "damage": "4d8+4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "HKB-3 Hunter-Killer Droid"
+  },
+  "HK-77_Assassin_Droid": {
+    "initiative": "+10; Senses: Darkvision , Perception +10",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "21 ( Flat-Footed : 18), Fortitude Defense : 18, Will Defense : 15",
+    "HP": "55, Damage Threshold : 18",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+4; Grapple : +7",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+6",
+          "damage": "1d3+4"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+8",
+          "damage": "3d8+4"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+8",
+          "damage": "5d8+4"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+3",
+          "damage": "3d8+4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "HK-77 Assassin Droid"
+  },
+  "HV-7_Loading_Droid": {
+    "initiative": "+3; Senses: Perception +2",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 12, Will Defense : 11",
+    "HP": "7, Damage Threshold : 12",
+    "speed": "8 Squares ( Hovering )",
+    "baseAttackBonus": "+2; Grapple : -5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+4",
+          "damage": "1d3+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "HV-7 Loading Droid"
+  },
+  "IG-110_Lightsaber_Droid": {
+    "initiative": "+11; Senses: Low-Light Vision, Perception +9",
+    "languages": "Basic, Binary",
+    "reflexDefense": "21 ( Flat-Footed : 18 ( Lightsaber Defense : 23)), Fortitude Defense : 20, Will Defense : 18",
+    "HP": "58, Damage Threshold : 20",
+    "speed": "6 Squares ( Walking ); Magnetic Feet",
+    "baseAttackBonus": "+6; Grapple : +9",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Lightsaber",
+          "bonus": "+10",
+          "damage": "2d8+8"
+        },
+        {
+          "name": "Lightsaber",
+          "bonus": "+8",
+          "damage": "3d8+8"
+        },
+        {
+          "name": "Lightsaber",
+          "bonus": "+8",
+          "damage": "2d8+8"
+        },
+        {
+          "name": "Lightsaber",
+          "bonus": "+6",
+          "damage": "3d8+8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "IG-110 Lightsaber Droid"
+  },
+  "IG-Series_Lancer_Droid": {
+    "initiative": "+11; Senses: Perception +3",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 10), Fortitude Defense : 12, Will Defense : 10",
+    "HP": "15, Damage Threshold : 12",
+    "speed": "6 Squares ( Walking ); Powerful Charge , Running Attack",
+    "baseAttackBonus": "+4; Grapple : +7",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Energy Lance",
+          "bonus": "+6",
+          "damage": "2-Square Reach"
+        },
+        {
+          "name": "Energy Lance",
+          "bonus": "+4",
+          "damage": "2-Square Reach"
+        },
+        {
+          "name": "Energy Lance",
+          "bonus": "+8",
+          "damage": "2-Square Reach"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "IG-Series Lancer Droid"
+  },
+  "Holocam_Droid": {
+    "initiative": "+2; Senses: Low-Light Vision, Perception +14",
+    "languages": "Binary , 1 Unassigned (understand only)",
+    "reflexDefense": "14 ( Flat-Footed : 12), Fortitude Defense : 8, Will Defense : 12",
+    "HP": "2, Damage Threshold : 8",
+    "speed": "8 Squares ( Hovering )",
+    "baseAttackBonus": "+0; Grapple : -8",
+    "constitution": "-",
+    "name": "Holocam Droid"
+  },
+  "IG-86_Sentinel_Droid": {
+    "initiative": "+7; Senses: Perception +6",
+    "languages": "Basic, Binary",
+    "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 15, Will Defense : 12",
+    "HP": "30, Damage Threshold : 15",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : +3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+5",
+          "damage": "1d3+3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Carbine",
+          "bonus": "+4",
+          "damage": "3d8"
+        },
+        {
+          "name": "Blaster Carbine",
+          "bonus": "+2",
+          "damage": "4d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "IG-86 Sentinel Droid"
+  },
+  "IM-6_Medical_Droid": {
+    "initiative": "+8; Senses: Low-Light Vision, Perception +5",
+    "languages": "Basic, Binary , 2 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 10, Will Defense : 12",
+    "HP": "7, Damage Threshold : 12",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+2; Grapple : -2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+2",
+          "damage": "1d2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "IM-6 Medical Droid"
+  },
+  "IC-M_General_Utility_Droid": {
+    "initiative": "-1; Senses: Perception -1",
+    "languages": "Basic, Binary",
+    "reflexDefense": "9 ( Flat-Footed : 9); Fortitude Defense : 9; Will Defense : 9",
+    "HP": "3; Damage Threshold : 14",
+    "speed": "6 Squares ( Tracked )",
+    "baseAttackBonus": "+0; Grapple : -1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d4-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "IC-M General Utility Droid"
+  },
+  "Independent_HK-Series_Droid": {
+    "initiative": "+8; Senses: Low-Light Vision, Perception +8",
+    "languages": "Basic, Binary ; Translator Unit (DC 5)",
+    "reflexDefense": "18 ( Flat-Footed : 15), Fortitude Defense : 15, Will Defense : 12",
+    "HP": "30, Damage Threshold : 15; Tough as Nails",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : +4",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+3",
+          "damage": "1d3+2"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+5",
+          "damage": "3d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Independent HK-Series Droid"
+  },
+  "IT-0_Interrogator_Droid": {
+    "initiative": "+8; Senses: Darkvision , Perception +9",
+    "languages": "Basic, Binary , 4 Unassigned",
+    "reflexDefense": "12 ( Flat-Footed : 12), Fortitude Defense : 9, Will Defense : 14",
+    "HP": "17, Damage Threshold : 9",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+0; Grapple : -5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+0",
+          "damage": "1d3-1"
+        },
+        {
+          "name": "Electroshock Probe",
+          "bonus": "+0",
+          "damage": "1d8-1 ( Ion"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+0",
+          "damage": "3d6"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "IT-0 Interrogator Droid"
+  },
+  "Imperial_Espionage_Droid": {
+    "initiative": "+0; Senses: Perception +8",
+    "languages": "Basic, Binary , 3 Unassigned; Translator Unit (DC 5)",
+    "reflexDefense": "9 ( Flat-Footed : 9); Fortitude Defense : 9; Will Defense : 12",
+    "HP": "6; Damage Threshold : 9",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+2; Grapple : -1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Imperial Espionage Droid"
+  },
+  "Imperial_Warden_Droid": {
+    "initiative": "+9; Senses: Perception +8",
+    "languages": "Basic, Binary",
+    "reflexDefense": "13 ( Flat-Footed : 12), Fortitude Defense : 12, Will Defense : 10",
+    "HP": "19, Damage Threshold : 12",
+    "speed": "6 Squares ( Walking ); Powerful Charge",
+    "baseAttackBonus": "+4; Grapple : +6",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Stun Claws",
+          "bonus": "+6",
+          "damage": "1d6+1 ( Stun"
+        },
+        {
+          "name": "Stun Claws",
+          "bonus": "+4",
+          "damage": "2d6+1 ( Stun"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Imperial Warden Droid"
+  },
+  "IW-37_Pincer_Loader_Droid": {
+    "initiative": "+7; Senses: Perception +6",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "15 ( Flat-Footed : 15), Fortitude Defense : 17, Will Defense : 10",
+    "HP": "11, Damage Threshold : 22",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+3; Grapple : +15; Pin",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+10",
+          "damage": "1d6+7"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "IW-37 Pincer Loader Droid"
+  },
+  "JK-13_Security_Droid": {
+    "initiative": "+13, Foresight ; Senses: Low-Light Vision, Use the Force +11",
+    "languages": "Binary , 1 Unassigned",
+    "reflexDefense": "24 ( Flat-Footed : 22), Fortitude Defense : 29, Will Defense : 23; Combat Reflexes , Dodge , Extra Legs",
+    "HP": "120, Shield Rating : 20, Damage Threshold : 44",
+    "speed": "8 Squares ( Walking ), 4 Squares (Climbing); Running Attack",
+    "baseAttackBonus": "+12; Grapple : +20; Pin , Trip",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Stun Tentacles",
+          "bonus": "+16",
+          "damage": "3-Square Reach"
+        },
+        {
+          "name": "Stun Tentacles",
+          "bonus": "+14",
+          "damage": "3-Square Reach"
+        },
+        {
+          "name": "Stun Tentacles",
+          "bonus": "+11",
+          "damage": "3-Square Reach"
+        },
+        {
+          "name": "Stun Tentacles",
+          "bonus": "+9",
+          "damage": "3-Square Reach"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "JK-13 Security Droid"
+  },
+  "IX-6_Heavy_Combat_Droid": {
+    "initiative": "+10; Senses: Darkvision , Perception +9",
+    "languages": "Basic, Binary , Verpine",
+    "reflexDefense": "23 ( Flat-Footed : 20), Fortitude Defense : 20, Will Defense : 16",
+    "HP": "52, Damage Threshold : 20",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+5; Grapple : +7",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+9",
+          "damage": "3d8+2"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+4",
+          "damage": "5d8+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "IX-6 Heavy Combat Droid"
+  },
+  "Infiltrator-Series_Droid": {
+    "initiative": "+8; Senses: Darkvision , Perception +15",
+    "languages": "Basic, Binary",
+    "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 14, Will Defense : 12",
+    "HP": "40, Shield Rating : 20, Damage Threshold : 14",
+    "speed": "6 Squares ( Walking ), 3 Squares (Climbing)",
+    "baseAttackBonus": "+9; Grapple : +13",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Vibroblade",
+          "bonus": "+13",
+          "damage": "2d6+4"
+        },
+        {
+          "name": "Vibroblade",
+          "bonus": "+8",
+          "damage": "2d6+4"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+11",
+          "damage": "3d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+9",
+          "damage": "4d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+6",
+          "damage": "3d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+4",
+          "damage": "4d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Infiltrator-Series Droid"
+  },
+  "Juggernaut_War_Droid": {
+    "initiative": "+12; Senses: Perception +6",
+    "languages": "Basic, Binary",
+    "reflexDefense": "20 ( Flat-Footed : 17), Fortitude Defense : 16, Will Defense : 14",
+    "HP": "26, Damage Threshold : 16",
+    "speed": "6 Squares ( Walking ), 6 Squares ( Jet Pack ); Charging Fire , Running Attack",
+    "baseAttackBonus": "+6; Grapple : +9",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+8",
+          "damage": "1d3+3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Pulse-Wave Rifle",
+          "bonus": "+10",
+          "damage": "3d8+8 (Point-Blank"
+        },
+        {
+          "name": "Heavy Sonic Pistol",
+          "bonus": "+9",
+          "damage": "2d8+1 ( Sonic"
+        },
+        {
+          "name": "Shatter Beam",
+          "bonus": "+9",
+          "damage": "3d8+1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Juggernaut War Droid"
+  },
+  "Junk_Droid": {
+    "initiative": "+4; Senses: Perception +5",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 13, Will Defense : 10",
+    "HP": "12, Damage Threshold : 13",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+2; Grapple : +5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+4",
+          "damage": "1d3+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Junk Droid"
+  },
+  "K-X12_Probe_Droid": {
+    "initiative": "+4; Senses: Low-Light Vision, Perception +17",
+    "languages": "Binary , 1 Unassigned",
+    "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 12, Will Defense : 15",
+    "HP": "12, Damage Threshold : 12",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+2; Grapple : -1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d3-1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+4",
+          "damage": "3d6"
+        },
+        {
+          "name": "Heavy Sonic Pistol",
+          "bonus": "+9",
+          "damage": "2d8+1 ( Sonic"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "K-X12 Probe Droid"
+  },
+  "K-Series_Spaceport_Control_Droid": {
+    "initiative": "+2; Senses: Perception +2",
+    "languages": "Basic, Binary , Bocce, High Galactic, Huttese",
+    "reflexDefense": "11 ( Flat-Footed : 10), Fortitude Defense : 10, Will Defense : 11",
+    "HP": "7, Damage Threshold : 10",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+2; Grapple : +3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+2",
+          "damage": "1d3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "K-Series Spaceport Control Droid"
+  },
+  "KDY-4_Tech_Droid": {
+    "initiative": "+1; Senses: Perception +1",
+    "languages": "Basic, Binary , 2 Unassigned",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 13, Will Defense : 10",
+    "HP": "6, Damage Threshold : 13",
+    "speed": "6 Squares ( Walking ); Magnetic Feet",
+    "baseAttackBonus": "+1; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+4",
+          "damage": "1d3+3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "KDY-4 Tech Droid"
+  },
+  "KM1_Mining_Droid": {
+    "initiative": "+3; Senses: Darkvision , Perception +2",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "17 ( Flat-Footed : 17), Fortitude Defense : 17, Will Defense : 9; Adaptable Programming, Extra Legs",
+    "HP": "31, Shield Rating : 10, Damage Threshold : 22",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+4; Grapple : +16",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+11",
+          "damage": "1d4+7"
+        },
+        {
+          "name": "Unarmed",
+          "bonus": "+10",
+          "damage": "1d4+14"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Laser Cutter",
+          "bonus": "+4",
+          "damage": "3d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "KM1 Mining Droid"
+  },
+  "KX-Series_Security_Droid": {
+    "initiative": "+6; Senses: Perception +10",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "16 ( Flat-Footed : 15), Fortitude Defense : 13, Will Defense : 12",
+    "HP": "40, Damage Threshold : 13",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+6; Grapple : +9; Throw , Trip",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+9",
+          "damage": "1d4+3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Carbine",
+          "bonus": "+7",
+          "damage": "3d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "KX-Series Security Droid"
+  },
+  "Krath_War_Droid": {
+    "initiative": "+7; Senses: Perception +5",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "22 ( Flat-Footed : 19), Fortitude Defense : 20, Will Defense : 14",
+    "HP": "26, Damage Threshold : 20",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+7; Grapple : +12",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Short Sword",
+          "bonus": "+13",
+          "damage": "1d6+8"
+        },
+        {
+          "name": "Short Sword",
+          "bonus": "+11",
+          "damage": "2d6+8"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Pulse-Wave Pistol",
+          "bonus": "+11",
+          "damage": "3d6+1"
+        },
+        {
+          "name": "Pulse-Wave Pistol",
+          "bonus": "+9",
+          "damage": "4d6+1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Krath War Droid"
+  },
+  "LE-Series_Repair_Droid": {
+    "initiative": "+0; Senses: Low-Light Vision, Perception +4",
+    "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 15)",
+    "reflexDefense": "13 ( Flat-Footed : 13), Fortitude Defense : 10, Will Defense : 11",
+    "HP": "7, Damage Threshold : 10",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+2; Grapple : +2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+2",
+          "damage": "1d3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "LE-Series Repair Droid"
+  },
+  "LEP_Service_Droid": {
+    "initiative": "+0; Senses: Perception +10",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 8, Will Defense : 10",
+    "HP": "3, Damage Threshold : 8",
+    "speed": "4 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : +0",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-2",
+          "damage": "1d2-2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "LEP Service Droid"
+  },
+  "LM-432_%22Muckraker%22_Crab_Droid": {
+    "initiative": "+8; Senses: Perception +16",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "16 ( Flat-Footed : 16), Fortitude Defense : 21, Will Defense : 12; Extra Legs",
+    "HP": "145, Damage Threshold : 71",
+    "speed": "6 Squares ( Walking ), 3 Squares (Climbing); Powerful Charge",
+    "baseAttackBonus": "+13; Grapple : +34; Crush , Pin",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Blaster Cannon",
+          "bonus": "+11",
+          "damage": "3d12, 2-Square Splash"
+        },
+        {
+          "name": "Jet Sprayer",
+          "bonus": "+11",
+          "damage": "3d10 ( Stun"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "LM-432 %22Muckraker%22 Crab Droid"
+  },
+  "LR-57_Combat_Droid": {
+    "initiative": "+5; Senses: Low-Light Vision, Perception +18",
+    "languages": "Binary , 1 Unassigned",
+    "reflexDefense": "16 ( Flat-Footed : 15), Fortitude Defense : 17, Will Defense : 12",
+    "HP": "33, Damage Threshold : 22",
+    "speed": "8 Squares ( Walking )",
+    "baseAttackBonus": "+6; Grapple : +18",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+13",
+          "damage": "1d4+7"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "LR-57 Combat Droid"
+  },
+  "M-3PO-Series_Protocol_Droid": {
+    "initiative": "+0; Senses: Darkvision , Perception +1",
+    "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 10)",
+    "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 10, Will Defense : 10",
+    "HP": "4, Damage Threshold : 10",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "M-3PO-Series Protocol Droid"
+  },
+  "Probe_Droid": {
+    "initiative": "+11; Senses: Darkvision , Perception +16",
+    "languages": "Basic (understand only), Binary , 2 Unassigned (understand only)",
+    "reflexDefense": "21 ( Flat-Footed : 17), Fortitude Defense : 13, Will Defense : 14; Dodge",
+    "HP": "16, Damage Threshold : 13",
+    "speed": "6 Squares ( Hovering ); Hidden Movement",
+    "baseAttackBonus": "+2; Grapple : +0",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Probe Droid"
+  },
+  "LV8-Series_Guard_Droid": {
+    "initiative": "+15; Senses: Perception +9",
+    "languages": "Basic, Binary",
+    "reflexDefense": "20 ( Flat-Footed : 17), Fortitude Defense : 12, Will Defense : 13",
+    "HP": "30, Damage Threshold : 12",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+9; Grapple : +11",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+11",
+          "damage": "1d3+2"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+14",
+          "damage": "3d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+12",
+          "damage": "4d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+12",
+          "damage": "3d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+10",
+          "damage": "4d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "LV8-Series Guard Droid"
+  },
+  "LOM-Series_Protocol_Droid": {
+    "initiative": "+0; Senses: Perception +0",
+    "languages": "Basic, Binary , 3 Unassigned; Translator Unit (DC 10)",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 10",
+    "HP": "2, Damage Threshold : 9",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : +0",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "LOM-Series Protocol Droid"
+  },
+  "M4-Series_Messenger_Droid": {
+    "initiative": "+9; Senses: Darkvision , Perception +13",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "18 ( Flat-Footed : 15), Fortitude Defense : 7, Will Defense : 12",
+    "HP": "4, Damage Threshold : 7",
+    "speed": "9 Squares ( Flying )",
+    "baseAttackBonus": "+1; Grapple : -11",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-2",
+          "damage": "1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Hold-Out Blaster Pistol",
+          "bonus": "+4",
+          "damage": "3d4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "M4-Series Messenger Droid"
+  },
+  "M38-Series_Explorer_Droid": {
+    "initiative": "+1; Senses: Advanced Sensors, Darkvision , Perception +15",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "14 ( Flat-Footed : 14), Fortitude Defense : 18, Will Defense : 14",
+    "HP": "28, Damage Threshold : 23",
+    "speed": "6 Squares ( Tracked )",
+    "baseAttackBonus": "+1; Grapple : +6",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+6",
+          "damage": "1d3+6"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "M38-Series Explorer Droid"
+  },
+  "MEV-Series_Medical_Droid": {
+    "initiative": "+9; Senses: Low-Light Vision, Perception +8",
+    "languages": "Basic, Binary , 2 Unassigned",
+    "reflexDefense": "18 ( Flat-Footed : 16), Fortitude Defense : 11, Will Defense : 11",
+    "HP": "18, Damage Threshold : 11",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+3; Grapple : +5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+4",
+          "damage": "1d3+1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "MEV-Series Medical Droid"
+  },
+  "MULE_Droid": {
+    "initiative": "+1; Senses: Perception +12",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 15, Will Defense : 11",
+    "HP": "9, Damage Threshold : 15",
+    "speed": "4 Squares ( Hovering )",
+    "baseAttackBonus": "+1; Grapple : +6",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+6",
+          "damage": "1d4+5"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "MULE Droid"
+  },
+  "MR-200-Series_Minesweeper_Droid": {
+    "initiative": "+1; Senses: Low-Light Vision, Perception +14",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "14 ( Flat-Footed : 14), Fortitude Defense : 15, Will Defense : 12",
+    "HP": "36, Damage Threshold : 25",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+2; Grapple : +7",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Chain Roller",
+          "bonus": "+5",
+          "damage": "3d6+5"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "MR-200-Series Minesweeper Droid"
+  },
+  "MRD-39B_Assassin_Droid": {
+    "initiative": "+18; Senses: Darkvision , Perception +12",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "23 ( Flat-Footed : 18), Fortitude Defense : 19, Will Defense : 18; Combat Reflexes , Extra Legs",
+    "HP": "57, Damage Threshold : 19",
+    "speed": "4 Squares ( Walking ), 2 Squares (Climbing)",
+    "baseAttackBonus": "+6; Grapple : +11",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Vibrodagger",
+          "bonus": "+8",
+          "damage": "2d4+7"
+        },
+        {
+          "name": "Vibrodagger",
+          "bonus": "+6",
+          "damage": "3d4+7"
+        },
+        {
+          "name": "Vibrodagger",
+          "bonus": "-2",
+          "damage": "2d4+7"
+        },
+        {
+          "name": "Vibrodagger",
+          "bonus": "-4",
+          "damage": "3d4+7"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Hold-Out Blaster Pistol",
+          "bonus": "+11",
+          "damage": "3d4+3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "MRD-39B Assassin Droid"
+  },
+  "MK-Series_Maintenance_Droid": {
+    "initiative": "+7; Senses: Perception +5",
+    "languages": "Basic, Binary , Bocce, Huttese",
+    "reflexDefense": "14 ( Flat-Footed : 12), Fortitude Defense : 12, Will Defense : 11",
+    "HP": "24, Damage Threshold : 12; Shake It Off",
+    "speed": "6 Squares ( Tracked )",
+    "baseAttackBonus": "+0; Grapple : +2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d4-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "MK-Series Maintenance Droid"
+  },
+  "MSE-6_Repair_Droid": {
+    "initiative": "+3; Senses: Darkvision , Perception +6",
+    "languages": "Basic (understand only), Binary , 2 Unassigned",
+    "reflexDefense": "14 ( Flat-Footed : 12), Fortitude Defense : 8, Will Defense : 8",
+    "HP": "6, Damage Threshold : 8",
+    "speed": "6 Squares ( Wheeled )",
+    "baseAttackBonus": "+1; Grapple : -7",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d2-2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "MSE-6 Repair Droid"
+  },
+  "Mark_IV_Sentry_Droid": {
+    "initiative": "+5; Senses: Darkvision , Perception +17",
+    "languages": "Basic, Binary",
+    "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 8, Will Defense : 12; Dodge",
+    "HP": "16, Damage Threshold : 8",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+4; Grapple : -9",
+    "constitution": "-",
+    "name": "Mark IV Sentry Droid"
+  },
+  "Mark_IV_Assault_Droid": {
+    "initiative": "+12; Senses: Perception +12",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "19 ( Flat-Footed : 18), Fortitude Defense : 14, Will Defense : 12; Logic Upgrade: Self-Defense",
+    "HP": "52, Shield Rating : 10, Damage Threshold : 19",
+    "speed": "8 Squares ( Walking )",
+    "baseAttackBonus": "+9; Grapple : +17",
+    "constitution": "-",
+    "name": "Mark IV Assault Droid"
+  },
+  "Mark_I_Assault_Droid": {
+    "initiative": "+8; Senses: Perception +13",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "20 ( Flat-Footed : 18), Fortitude Defense : 12, Will Defense : 12",
+    "HP": "30, Shield Rating : 10, Damage Threshold : 12",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+9; Grapple : +11",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+11",
+          "damage": "1d4+2"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+12",
+          "damage": "3d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+10",
+          "damage": "3d8"
+        },
+        {
+          "name": "Flamethrower",
+          "bonus": "+11",
+          "damage": "3d6 ( Fire"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Mark I Assault Droid"
+  },
+  "Mark_VII_%22Inquisitor%22_Seeker_Droid": {
+    "initiative": "+12; Senses: Darkvision , Perception +18",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "27 ( Flat-Footed : 23), Fortitude Defense : 14, Will Defense : 19",
+    "HP": "46, Damage Threshold : 14",
+    "speed": "6 Squares ( Hovering ); Expert Tracker , Running Attack",
+    "baseAttackBonus": "+4; Grapple : -7",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+8",
+          "damage": "3d6+3"
+        },
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+3",
+          "damage": "3d6+3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Mark VII %22Inquisitor%22 Seeker Droid"
+  },
+  "Mark_I_Sentinel_Droid": {
+    "initiative": "+8; Senses: Perception +1",
+    "languages": "Basic, Binary",
+    "reflexDefense": "16 ( Flat-Footed : 14), Fortitude Defense : 13, Will Defense : 10",
+    "HP": "8, Damage Threshold : 13",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+2; Grapple : +5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+5",
+          "damage": "1d3+3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+4",
+          "damage": "3d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+2",
+          "damage": "4d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Mark I Sentinel Droid"
+  },
+  "OOM-Series_Battle_Droid": {
+    "initiative": "+3; Senses: Perception +7",
+    "languages": "Basic, Binary",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 11, Will Defense : 10",
+    "HP": "21, Damage Threshold : 11",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+4; Grapple : +5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+5",
+          "damage": "1d3+1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Carbine",
+          "bonus": "+4",
+          "damage": "3d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "OOM-Series Battle Droid"
+  },
+  "Mark_I_Patrol_Droid": {
+    "initiative": "+11; Senses: Perception +10",
+    "languages": "Basic (understand only), Binary , 1 Unassigned",
+    "reflexDefense": "15 ( Flat-Footed : 12), Fortitude Defense : 9, Will Defense : 13",
+    "HP": "12, Damage Threshold : 9",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+4; Grapple : +2",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+8",
+          "damage": "3d6"
+        },
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+3",
+          "damage": "3d6"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Mark I Patrol Droid"
+  },
+  "P2-Series_Astromech_Droid": {
+    "initiative": "-1; Senses: Darkvision , Perception +6",
+    "languages": "Basic (understand only), Binary , 2 Unassigned",
+    "reflexDefense": "9 ( Flat-Footed : 9), Fortitude Defense : 12, Will Defense : 9",
+    "HP": "5, Damage Threshold : 12",
+    "speed": "8 Squares ( Wheeled ), 6 Squares ( Walking ); Magnetic Feet",
+    "baseAttackBonus": "+0; Grapple : +2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+2",
+          "damage": "1d4+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "P2-Series Astromech Droid"
+  },
+  "Mionne_Security_Droid": {
+    "initiative": "+9; Senses: Low-Light Vision, Perception +4",
+    "languages": "Basic, Binary",
+    "reflexDefense": "21 ( Flat-Footed : 19), Fortitude Defense : 21, Will Defense : 15",
+    "HP": "47, Shield Rating : 10, Damage Threshold : 21",
+    "speed": "8 Squares ( Walking )",
+    "baseAttackBonus": "+4; Grapple : +13",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+8",
+          "damage": "1d4+10"
+        },
+        {
+          "name": "Vibro-Axe",
+          "bonus": "+9",
+          "damage": "2d10+10"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+6",
+          "damage": "3d6+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Mionne Security Droid"
+  },
+  "NR-1100_Slicer_Droid": {
+    "initiative": "+3; Senses: Darkvision , Perception +7",
+    "languages": "Basic (understand only), Binary , 2 Unassigned",
+    "reflexDefense": "18 ( Flat-Footed : 16), Fortitude Defense : 11, Will Defense : 15",
+    "HP": "25, Damage Threshold : 11",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+2; Grapple : -1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+0",
+          "damage": "1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+4",
+          "damage": "3d6+1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "NR-1100 Slicer Droid"
+  },
+  "PI-Series_Medical_Assistant_Droid": {
+    "initiative": "+3; Senses: Low-Light Vision, Perception +12",
+    "languages": "Basic (understand only), Binary , 1 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 11",
+    "HP": "7, Damage Threshold : 9",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+2; Grapple : -1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "PI-Series Medical Assistant Droid"
+  },
+  "PK-2M_Mining_Droid": {
+    "initiative": "+3; Senses: Perception +9",
+    "languages": "Basic, Binary",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 15, Will Defense : 11",
+    "HP": "21, Damage Threshold : 20",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+4; Grapple : +9",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+9",
+          "damage": "1d3+5"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "PK-2M Mining Droid"
+  },
+  "PG-5_Gunnery_Droid": {
+    "initiative": "+0; Senses: Low-Light Vision, Perception +8",
+    "languages": "Basic (understand only), Binary , 2 Unassigned",
+    "reflexDefense": "8 ( Flat-Footed : 8), Fortitude Defense : 15, Will Defense : 10",
+    "HP": "15, Damage Threshold : 20",
+    "speed": "4 Squares ( Wheeled )",
+    "baseAttackBonus": "+1; Grapple : +11",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+6",
+          "damage": "1d6+5"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Laser Welder",
+          "bonus": "+0",
+          "damage": "3d6"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "PG-5 Gunnery Droid"
+  },
+  "PK_Worker_Droid": {
+    "initiative": "+5; Senses: Perception +9",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 12, Will Defense : 11",
+    "HP": "21, Damage Threshold : 12",
+    "speed": "4 Squares ( Walking )",
+    "baseAttackBonus": "+4; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d2+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "PK Worker Droid"
+  },
+  "PLNK-Series_Power_Droid": {
+    "initiative": "+0; Senses: Darkvision , Perception +0",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "18 ( Flat-Footed : 18), Fortitude Defense : 13, Will Defense : 10",
+    "HP": "11, Damage Threshold : 13",
+    "speed": "4 Squares ( Walking ); Failsafe Withdrawal",
+    "baseAttackBonus": "+2; Grapple : +4",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+4",
+          "damage": "1d3+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "PLNK-Series Power Droid"
+  },
+  "R-1_Recon_Droid": {
+    "initiative": "+8; Senses: Darkvision , Perception +9",
+    "languages": "Basic (understand only), Binary , 1 Unassigned",
+    "reflexDefense": "16 ( Flat-Footed : 13), Fortitude Defense : 11, Will Defense : 13",
+    "HP": "24, Damage Threshold : 11",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+0; Grapple : -2",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+4",
+          "damage": "3d6"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "R-1 Recon Droid"
+  },
+  "Pit_Droid": {
+    "initiative": "+3; Senses: Perception +0",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 12, Will Defense : 9",
+    "HP": "5, Damage Threshold : 12",
+    "speed": "4 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : -2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+3",
+          "damage": "1d2+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Pit Droid"
+  },
+  "Q7-Series_Astromech_Droid": {
+    "initiative": "+4; Senses: Darkvision , Perception +8",
+    "languages": "Basic (understand only), Binary , 2 Unassigned",
+    "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 7, Will Defense : 10",
+    "HP": "5, Damage Threshold : 7",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+1; Grapple : -1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Electroshock Probe",
+          "bonus": "-1",
+          "damage": "1d8 ( Ion"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Q7-Series Astromech Droid"
+  },
+  "R-4_Recon_Droid": {
+    "initiative": "+10; Senses: Low-Light Vision, Perception +13",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "20 ( Flat-Footed : 15), Fortitude Defense : 10, Will Defense : 11",
+    "HP": "2, Damage Threshold : 10",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+0; Grapple : -10",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Hold-Out Blaster Pistol",
+          "bonus": "+5",
+          "damage": "3d4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "R-4 Recon Droid"
+  },
+  "R2-R-Series_Astromech_Droid": {
+    "initiative": "+2; Senses: Darkvision , Perception +8",
+    "languages": "Binary , 2 Unassigned",
+    "reflexDefense": "16 ( Flat-Footed : 14), Fortitude Defense : 10, Will Defense : 13",
+    "HP": "24, Damage Threshold : 10",
+    "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking ); Magnetic Feet",
+    "baseAttackBonus": "+0; Grapple : -3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d3-1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Hold-Out Blaster Pistol",
+          "bonus": "+2",
+          "damage": "3d4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "R2-R-Series Astromech Droid"
+  },
+  "R3-Series_Astromech_Droid": {
+    "initiative": "+4; Senses: Darkvision , Perception +3",
+    "languages": "Basic (understand only), Binary , 2 Unassigned",
+    "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
+    "HP": "10, Damage Threshold : 9",
+    "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking )",
+    "baseAttackBonus": "+2; Grapple : +0",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Electroshock Probe",
+          "bonus": "+1",
+          "damage": "1d8 ( Ion"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "R3-Series Astromech Droid"
+  },
+  "R-8009_Utility_Droid": {
+    "initiative": "-1; Senses: Perception +5",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 10",
+    "HP": "4, Damage Threshold : 9",
+    "speed": "4 Squares ( Hovering )",
+    "baseAttackBonus": "+0; Grapple : -5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d2-1 (Minimum 1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "R-8009 Utility Droid"
+  },
+  "R2-Series_Astromech_Droid": {
+    "initiative": "+3; Senses: Darkvision , Perception +8",
+    "languages": "Basic (understand only), Binary , 2 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
+    "HP": "7, Damage Threshold : 9",
+    "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking ), 9 Squares ( Flying ( Limited )); Magnetic Feet",
+    "baseAttackBonus": "+1; Grapple : -2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Electroshock Probe",
+          "bonus": "+0",
+          "damage": "1d8 ( Ion"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "R2-Series Astromech Droid"
+  },
+  "R4-Series_Agromech_Droid": {
+    "initiative": "+4; Senses: Darkvision , Perception +3",
+    "languages": "Basic, Binary , 2 Unassigned",
+    "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 8, Will Defense : 10",
+    "HP": "7, Damage Threshold : 8",
+    "speed": "6 Squares ( Wheeled )",
+    "baseAttackBonus": "+1; Grapple : -1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Electroshock Probe",
+          "bonus": "-1",
+          "damage": "1d8-2 ( Ion"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "R4-Series Agromech Droid"
+  },
+  "R5-Series_Astromech_Droid": {
+    "initiative": "+1; Senses: Darkvision , Perception +3",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
+    "HP": "5, Damage Threshold : 9",
+    "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking ); Magnetic Feet",
+    "baseAttackBonus": "+1; Grapple : -4",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Electroshock Probe",
+          "bonus": "+0",
+          "damage": "1d8 ( Ion"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "R5-Series Astromech Droid"
+  },
+  "R4-Series_Astromech_Droid": {
+    "initiative": "+3; Senses: Darkvision , Perception +1",
+    "languages": "Basic (understand only), Binary , 1 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
+    "HP": "8, Damage Threshold : 9",
+    "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : -2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Electroshock Probe",
+          "bonus": "+0",
+          "damage": "1d8 ( Ion"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "R4-Series Astromech Droid"
+  },
+  "R7-Series_Astromech_Droid": {
+    "initiative": "+11; Senses: Darkvision , Perception +6",
+    "languages": "Basic (understand only), Binary , 3 Unassigned",
+    "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 11",
+    "HP": "21, Damage Threshold : 9",
+    "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking ); Magnetic Feet",
+    "baseAttackBonus": "+4; Grapple : +2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Electroshock Probe",
+          "bonus": "+3",
+          "damage": "1d8 ( Ion"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "R7-Series Astromech Droid"
+  },
+  "RA-7_Protocol_Droid": {
+    "initiative": "+1; Senses: Darkvision , Perception +14",
+    "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 15)",
+    "reflexDefense": "11 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 12",
+    "HP": "2, Damage Threshold : 9",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : +1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "RA-7 Protocol Droid"
+  },
+  "RO-D_Droid": {
+    "initiative": "+3; Senses: Low-Light Vision, Perception +15",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 15, Will Defense : 15",
+    "HP": "13, Damage Threshold : 15",
+    "speed": "6 Squares ( Walking ); Instant Help",
+    "baseAttackBonus": "+2; Grapple : +4; Pin",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+4",
+          "damage": "1d4+3"
+        },
+        {
+          "name": "Stun Baton",
+          "bonus": "+4",
+          "damage": "2d6+3 ( Stun"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "RO-D Droid"
+  },
+  "RX-Series_Pilot_Droid": {
+    "initiative": "+4; Senses: Perception +1",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "12 ( Flat-Footed : 10), Fortitude Defense : 10, Will Defense : 9; Hot-Shot Pilot, Vehicular Combat",
+    "HP": "10, Damage Threshold : 10",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+3; Grapple : +5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+3",
+          "damage": "1d4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "RX-Series Pilot Droid"
+  },
+  "R8-Series_Astromech_Droid": {
+    "initiative": "+2; Senses: Low-Light Vision, Perception +8",
+    "languages": "Basic (understand only), Binary , 2 Unassigned",
+    "reflexDefense": "12 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
+    "HP": "5, Damage Threshold : 9",
+    "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking ( Exclusive )); Magnetic Feet",
+    "baseAttackBonus": "+1; Grapple : -3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Electroshock Probe",
+          "bonus": "+0",
+          "damage": "1d8-1 ( Ion"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Laser Welder",
+          "bonus": "+2",
+          "damage": "3d6"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "R8-Series Astromech Droid"
+  },
+  "RT_Sifter_Droid": {
+    "initiative": "+2; Senses: Automap , Low-Light Vision, Perception +10",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "12 ( Flat-Footed : 11), Fortitude Defense : 11, Will Defense : 12",
+    "HP": "7, Damage Threshold : 11",
+    "speed": "4 Squares ( Tracked )",
+    "baseAttackBonus": "+1; Grapple : -3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-3",
+          "damage": "1d2+1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "RT Sifter Droid"
+  },
+  "RWW-Series_Protocol_Droid": {
+    "initiative": "-1; Senses: Perception +0",
+    "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 10)",
+    "reflexDefense": "9 ( Flat-Footed : 9), Fortitude Defense : 8, Will Defense : 10",
+    "HP": "3, Damage Threshold : 8",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : -1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-2",
+          "damage": "1d3-2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "RWW-Series Protocol Droid"
+  },
+  "Rakatan_Guardian_Droid": {
+    "initiative": "+9; Senses: Darkvision, Perception +15",
+    "languages": "Basic (understand only), Binary , Rakatan, Selkath (understand only), Shyriiwook (understand only), Tusken (understand only), 1 Unassigned",
+    "reflexDefense": "19 ( Flat-Footed : 17), Fortitude Defense : 10, Will Defense : 11",
+    "HP": "38, Damage Threshold : 15",
+    "speed": "8 Squares ( Walking )",
+    "baseAttackBonus": "+11; Grapple : +10",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+13",
+          "damage": "3d8"
+        },
+        {
+          "name": "Flamethrower",
+          "bonus": "+13",
+          "damage": "3d6 ( Fire"
+        },
+        {
+          "name": "Carbonite Projector",
+          "bonus": "+13",
+          "damage": "3d8 ( Stun"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Rakatan Guardian Droid"
+  },
+  "Roving_Eye_Observation_Droid": {
+    "initiative": "+3; Senses: Darkvision , Perception +14",
+    "languages": "Binary , 1 Unassigned",
+    "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 7, Will Defense : 12",
+    "HP": "2, Damage Threshold : 7",
+    "speed": "8 Squares ( Hovering )",
+    "baseAttackBonus": "+0; Grapple : -13",
+    "constitution": "-",
+    "name": "Roving Eye Observation Droid"
+  },
+  "S19_Astromech_Droid": {
+    "initiative": "+1; Senses: Perception +8",
+    "languages": "Basic (understand only), Binary , 3 Unassigned",
+    "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 10, Will Defense : 12",
+    "HP": "4, Damage Threshold : 10",
+    "speed": "4 Squares ( Tracked )",
+    "baseAttackBonus": "+1; Grapple : -4",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "S19 Astromech Droid"
+  },
+  "Maintenance_Droid": {
+    "initiative": "+6; Senses: Low-Light Vision, Perception +15",
+    "languages": "Basic (understand only), Binary , 1 Unassigned",
+    "reflexDefense": "20 ( Flat-Footed : 15), Fortitude Defense : 7, Will Defense : 12",
+    "HP": "5, Damage Threshold : 7",
+    "speed": "9 Squares ( Flying )",
+    "baseAttackBonus": "+1; Grapple : -9",
+    "constitution": "-",
+    "name": "Maintenance Droid"
+  },
+  "SD-X_Stealth_Battle_Droid": {
+    "initiative": "+11; Senses: Darkvision , Perception +13",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "28 ( Flat-Footed : 24), Fortitude Defense : 24, Will Defense : 21; Total Concealment",
+    "HP": "68, Damage Threshold : 24",
+    "speed": "6 Squares ( Walking ); Hidden Movement",
+    "baseAttackBonus": "+7; Grapple : +10",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+10",
+          "damage": "1d6+7"
+        },
+        {
+          "name": "Vibrodagger",
+          "bonus": "+10",
+          "damage": "4d4+7"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+9",
+          "damage": "3d8+4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "SD-X Stealth Battle Droid"
+  },
+  "SD-6_%22Hulk%22_Infantry_Droid": {
+    "initiative": "+11; Senses: Perception +7",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "29 ( Flat-Footed : 28), Fortitude Defense : 37, Will Defense : 24",
+    "HP": "112, Damage Reduction : 3, Damage Threshold : 42",
+    "speed": "8 Squares ( Walking )",
+    "baseAttackBonus": "+14; Grapple : +28",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+23",
+          "damage": "1d8+16"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Ion Rifle",
+          "bonus": "+13",
+          "damage": "3d8+7 ( Ion"
+        },
+        {
+          "name": "E-Web Repeating Blaster",
+          "bonus": "+13",
+          "damage": "5d12+11"
+        },
+        {
+          "name": "E-Web Repeating Blaster",
+          "bonus": "+13",
+          "damage": "3d12+11, 2-Square Autofire"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "SD-6 %22Hulk%22 Infantry Droid"
+  },
+  "SD-9_Battle_Droid": {
+    "initiative": "+15; Senses: Low-Light Vision, Perception +15",
+    "languages": "Basic, Binary",
+    "reflexDefense": "30 ( Flat-Footed : 27), Fortitude Defense : 39, Will Defense : 26",
+    "HP": "108, Damage Reduction : 4, Shield Rating : 15 (vs Ion ), Damage Threshold : 44",
+    "speed": "6 Squares ( Walking ); Running Attack",
+    "baseAttackBonus": "+16; Grapple : +30",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+25",
+          "damage": "1d6+17"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+15",
+          "damage": "3d10+10, 2-Square Autofire"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+15",
+          "damage": "5d10+10"
+        },
+        {
+          "name": "Plasma Burst Cannon",
+          "bonus": "+20",
+          "damage": "3d12+10, 1-Square Splash"
+        },
+        {
+          "name": "Plasma Burst Cannon",
+          "bonus": "+20",
+          "damage": "3d12+10, 1-Square Splash"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "SD-9 Battle Droid"
+  },
+  "Sabacc_Dealer_Droid": {
+    "initiative": "+13; Senses: Low-Light Vision, Perception +20",
+    "languages": "Basic, Binary",
+    "reflexDefense": "14 ( Flat-Footed : 10), Fortitude Defense : 10, Will Defense : 14",
+    "HP": "23, Damage Threshold : 10",
+    "speed": "Immobile",
+    "baseAttackBonus": "+6; Grapple : +10",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+6",
+          "damage": "1d4"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+11",
+          "damage": "3d6"
+        },
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+9",
+          "damage": "3d6"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Sabacc Dealer Droid"
+  },
+  "Scorpenek_Annihilator_Droid": {
+    "initiative": "+17; Senses: Perception +17",
+    "languages": "Basic, Binary",
+    "reflexDefense": "21 ( Flat-Footed : 19), Fortitude Defense : 27, Will Defense : 20; Extra Legs",
+    "HP": "120, Shield Rating : 20, Damage Threshold : 42",
+    "speed": "6 Squares ( Walking ); Running Attack",
+    "baseAttackBonus": "+17; Grapple : +34",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+24",
+          "damage": "1d6+11"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Laser Cannon",
+          "bonus": "+20",
+          "damage": "3d8+4"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+18",
+          "damage": "4d8+4"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+15",
+          "damage": "5d8+4"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+18",
+          "damage": "3d8+4"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+16",
+          "damage": "4d8+4"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+13",
+          "damage": "5d8+4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Scorpenek Annihilator Droid"
+  },
+  "Shadow_Droid": {
+    "initiative": "+21; Senses: Perception +17",
+    "languages": "Basic (understand only), Binary , 1 Unassigned",
+    "reflexDefense": "23 ( Flat-Footed : 19), Fortitude Defense : 28, Will Defense : 16; Vehicular Combat",
+    "HP": "120, Damage Reduction : 20, Damage Threshold : 38; Damage Conversion",
+    "speed": "16 Squares ( Flying ; Character Scale ), 4 Squares ( Flying ; Starship Scale ); Turn and Burn",
+    "baseAttackBonus": "+12; Grapple : +32",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+12",
+          "damage": "3d10+5, 2-Square Autofire"
+        },
+        {
+          "name": "Laser Cannon",
+          "bonus": "+17",
+          "damage": "(4d10+5"
+        },
+        {
+          "name": "Ion Cannon",
+          "bonus": "+17",
+          "damage": "(3d10+5"
+        },
+        {
+          "name": "Concussion Missiles",
+          "bonus": "+17",
+          "damage": "(8d10+5"
+        },
+        {
+          "name": "Proton Torpedoes",
+          "bonus": "+17",
+          "damage": "(9d10+5"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Shadow Droid"
+  },
+  "Shadow_Security_Droid": {
+    "initiative": "+17; Senses: Darkvision , Perception +17",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "35 ( Flat-Footed : 31), Fortitude Defense : 34 (39 vs The Force ), Will Defense : 32 (37 vs The Force )",
+    "HP": "128, Damage Reduction : 5, Damage Threshold : 34",
+    "speed": "8 Squares ( Flying )",
+    "baseAttackBonus": "+17; Grapple : +16",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+21",
+          "damage": "3d10+12, 2-Square Autofire"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+21",
+          "damage": "5d10+12"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+18",
+          "damage": "3d10+12, 2-Square Autofire"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+18",
+          "damage": "5d10+12"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+13",
+          "damage": "3d10+12, 2-Square Autofire"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+13",
+          "damage": "5d10+12"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Shadow Security Droid"
+  },
+  "SP-4_Analysis_Droid": {
+    "initiative": "+1; Senses: Darkvision , Perception +10",
+    "languages": "Basic, Binary , 2 Unassigned",
+    "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 12",
+    "HP": "8, Damage Threshold : 9",
+    "speed": "4 Squares ( Walking )",
+    "baseAttackBonus": "+2; Grapple : -4",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d2-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "SP-4 Analysis Droid"
+  },
+  "T-Series_Tactical_Droid": {
+    "initiative": "+6; Senses: Perception +7",
+    "languages": "Basic, Binary , 2 Unassigned",
+    "reflexDefense": "18 ( Flat-Footed : 17), Fortitude Defense : 13, Will Defense : 13; Vehicular Combat",
+    "HP": "30, Damage Threshold : 13",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : +2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Carbine",
+          "bonus": "+2",
+          "damage": "3d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "T-Series Tactical Droid"
+  },
+  "Spelunker_Probe_Droid": {
+    "initiative": "+10; Senses: Low-Light Vision, Perception +11",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "18 ( Flat-Footed : 17), Fortitude Defense : 17, Will Defense : 15; Cloaking Holoprojector, Extra Legs",
+    "HP": "30, Damage Threshold : 17",
+    "speed": "6 Squares ( Walking ), 3 Squares (Climbing); Hidden Movement",
+    "baseAttackBonus": "+5; Grapple : +6",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+6",
+          "damage": "1d4+3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Laser Cannons",
+          "bonus": "+1",
+          "damage": "3d8+2, 2-Square Autofire"
+        },
+        {
+          "name": "Laser Cannons",
+          "bonus": "+1",
+          "damage": "5d8+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Spelunker Probe Droid"
+  },
+  "T1_Bulk_Loader_Droid": {
+    "initiative": "+1; Senses: Perception +1",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "17 ( Flat-Footed : 17), Fortitude Defense : 17, Will Defense : 10",
+    "HP": "15, Damage Threshold : 22",
+    "speed": "8 Squares ( Walking )",
+    "baseAttackBonus": "+1; Grapple : +13",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+8",
+          "damage": "1d4+7"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "T1 Bulk Loader Droid"
+  },
+  "T0-D_Interrogation_Droid": {
+    "initiative": "+6; Senses: Low-Light Vision, Perception +14",
+    "reflexDefense": "16 ( Flat-Footed : 15), Fortitude Defense : 14, Will Defense : 13",
+    "HP": "29, Damage Threshold : 14",
+    "speed": "6 Squares ( Wheeled )",
+    "baseAttackBonus": "+7, Grapple : +8",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Stun Baton",
+          "bonus": "+9",
+          "damage": "2d6+1 ( Stun"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Sonic Stunner",
+          "bonus": "+9",
+          "damage": "3d6 ( Stun"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "T0-D Interrogation Droid"
+  },
+  "T3-Series_Utility_Droid": {
+    "initiative": "+2; Senses: Darkvision , Perception +3",
+    "languages": "Basic (understand only), Binary , 2 Unassigned",
+    "reflexDefense": "12 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
+    "HP": "5, Damage Threshold : 9",
+    "speed": "6 Squares ( Wheeled ); Magnetic Feet",
+    "baseAttackBonus": "+1; Grapple : -3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Electroshock Probe",
+          "bonus": "+0",
+          "damage": "1d8-1 ( Ion"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Stun Ray",
+          "bonus": "+1",
+          "damage": "3d6 ( Stun"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "T3-Series Utility Droid"
+  },
+  "TC-SC_Infiltration_Droid": {
+    "initiative": "+3; Senses: Perception +5",
+    "languages": "Basic, Binary",
+    "reflexDefense": "16 ( Flat-Footed : 13), Fortitude Defense : 11, Will Defense : 12",
+    "HP": "18, Damage Threshold : 11",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : +3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Knife",
+          "bonus": "+0",
+          "damage": "1d4"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+3",
+          "damage": "3d6"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "TC-SC Infiltration Droid"
+  },
+  "T4_Turret_Droid": {
+    "initiative": "+17; Senses: Darkvision , Perception +5",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 11, Will Defense : 11",
+    "HP": "32, Shield Rating : 20, Damage Threshold : 11",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+6; Grapple : +14",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+7",
+          "damage": "1d4+1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Cannon",
+          "bonus": "+10",
+          "damage": "3d12, 1-Square Splash"
+        },
+        {
+          "name": "Blaster Cannon",
+          "bonus": "+5",
+          "damage": "3d12, 1-Square Splash"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+10",
+          "damage": "3d10, 2-Square Autofire"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+5",
+          "damage": "3d10, 2-Square Autofire"
+        },
+        {
+          "name": "Cutting Laser",
+          "bonus": "+10",
+          "damage": "3d10 ( Fire"
+        },
+        {
+          "name": "Grenade Launcher",
+          "bonus": "+10",
+          "damage": "8d6, 4-Square Burst"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "T4 Turret Droid"
+  },
+  "V2-Series_Commando_Droid": {
+    "initiative": "+7; Senses: Perception +6",
+    "languages": "Basic, Binary , 1 Unassigned",
+    "reflexDefense": "15 ( Flat-Footed : 13), Fortitude Defense : 12, Will Defense : 12",
+    "HP": "24, Damage Threshold : 12",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : +2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+0",
+          "damage": "1d3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+2",
+          "damage": "3d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "V2-Series Commando Droid"
+  },
+  "Vigilant_2X-Series_Picket_Droid": {
+    "initiative": "+11; Senses: Darkvision , Perception +19",
+    "languages": "Basic, Binary",
+    "reflexDefense": "20 ( Flat-Footed : 18), Fortitude Defense : 11, Will Defense : 13",
+    "HP": "22, Damage Threshold : 11",
+    "speed": "6 Squares ( Tracked )",
+    "baseAttackBonus": "+6; Grapple : +8",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+7",
+          "damage": "1d4+1"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+8",
+          "damage": "3d10, 2-Square Autofire"
+        },
+        {
+          "name": "Heavy Repeating Blaster",
+          "bonus": "+3",
+          "damage": "5d10"
+        },
+        {
+          "name": "Grenade Launcher",
+          "bonus": "+8",
+          "damage": "4d6, 2-Square Burst"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Vigilant 2X-Series Picket Droid"
+  },
+  "TC-Series_Protocol_Droid": {
+    "initiative": "-1; Senses: Perception +7",
+    "languages": "Basic, Binary , 3 Unassigned; Translator Unit (DC 5)",
+    "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 10, Will Defense : 15",
+    "HP": "18, Damage Threshold : 10",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : -1",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "-1",
+          "damage": "1d3-1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "TC-Series Protocol Droid"
+  },
+  "V6-Series_Pilot_Droid": {
+    "initiative": "+2; Senses: Perception +6",
+    "languages": "Basic, Binary , 3 Unassigned",
+    "reflexDefense": "13 ( Flat-Footed : 11); Fortitude Defense : 10; Will Defense : 11",
+    "HP": "8; Damage Threshold : 10",
+    "speed": "6 Squares ( Wheeled )",
+    "baseAttackBonus": "+1; Grapple : -2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+1",
+          "damage": "1d2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "V6-Series Pilot Droid"
+  },
+  "VX-Series_Artillery_Droid": {
+    "initiative": "+13; Senses: Low-Light Vision, Perception +13",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "26 ( Flat-Footed : 24), Fortitude Defense : 26, Will Defense : 23",
+    "HP": "90, Damage Threshold : 31, Tough as Nails",
+    "speed": "6 Squares ( Tracked )",
+    "baseAttackBonus": "+12; Grapple : +14",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Missile Launcher",
+          "bonus": "+15",
+          "damage": "6d6+8, 2-Square Splash"
+        },
+        {
+          "name": "Light Concussion Missile",
+          "bonus": "+15",
+          "damage": "+5 vs Large or smaller targets"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "VX-Series Artillery Droid"
+  },
+  "TT-8L_Gatekeeper_Droid": {
+    "initiative": "-3; Senses: Darkvision , Perception +14",
+    "languages": "Basic, Binary , 3 Unassigned",
+    "reflexDefense": "6 ( Flat-Footed : 6), Fortitude Defense : 10, Will Defense : 12 (15 vs Persuasion )",
+    "HP": "13, Damage Threshold : 15",
+    "speed": "Immobile",
+    "baseAttackBonus": "+0; Grapple : +5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+0",
+          "damage": "1d4"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "TT-8L Gatekeeper Droid"
+  },
+  "Viper-Series_Probe_Droid": {
+    "initiative": "+6; Senses: Darkvision , Perception +9",
+    "languages": "Basic (understand only), Binary , 1 Unassigned",
+    "reflexDefense": "16 ( Flat-Footed : 15), Fortitude Defense : 16, Will Defense : 13",
+    "HP": "34, Damage Threshold : 21",
+    "speed": "6 Squares ( Hovering )",
+    "baseAttackBonus": "+0; Grapple : +9",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+4",
+          "damage": "1d6+4"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster",
+          "bonus": "+1",
+          "damage": "3d6"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Viper-Series Probe Droid"
+  },
+  "WSB-15_Sabotage_Droid": {
+    "initiative": "+7; Senses: Low-Light Vision, Perception +12",
+    "languages": "Basic, Binary",
+    "reflexDefense": "22 ( Flat-Footed : 19), Fortitude Defense : 16, Will Defense : 18",
+    "HP": "37, Damage Threshold : 16",
+    "speed": "4 Squares ( Tracked )",
+    "baseAttackBonus": "+6; Grapple : +4",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+6",
+          "damage": "1d3+3"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Plasma Cutter",
+          "bonus": "+9",
+          "damage": "3d4+3"
+        },
+        {
+          "name": "Plasma Cutter",
+          "bonus": "-1",
+          "damage": "3d4+3"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "WSB-15 Sabotage Droid"
+  },
+  "Wing_Guard_Patrol_Droid": {
+    "initiative": "+8; Senses: Perception +1",
+    "languages": "Basic, Binary",
+    "reflexDefense": "21 ( Flat-Footed : 19), Fortitude Defense : 19, Will Defense : 13",
+    "HP": "41, Damage Threshold : 19",
+    "speed": "6 Squares ( Walking ), 12 Squares ( Flying ( Limited )); Bantha Rush",
+    "baseAttackBonus": "+3; Grapple : +7",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+7",
+          "damage": "1d3+10"
+        },
+        {
+          "name": "Force Pike",
+          "bonus": "+8",
+          "damage": "2d8+10"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Pistol",
+          "bonus": "+5",
+          "damage": "3d6+1"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Wing Guard Patrol Droid"
+  },
+  "X-1_Viper_Droid": {
+    "initiative": "+14; Senses: Perception +14",
+    "languages": "Basic (Understand only), Binary , 1 Unassigned",
+    "reflexDefense": "18 ( Flat-Footed : 17); Fortitude Defense : 27; Will Defense : 15; Ion Shielding , Molecular Shielding (see below)",
+    "HP": "110; Damage Threshold : 42; Ion Shielding",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+13; Grapple : +34",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+24",
+          "damage": "1d6+13"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Twin Blaster Cannon",
+          "bonus": "+15",
+          "damage": "(4d10+2"
+        },
+        {
+          "name": "Twin Blaster Cannon",
+          "bonus": "+10",
+          "damage": "(6d10+2"
+        },
+        {
+          "name": "Twin Blaster Cannon",
+          "bonus": "+10",
+          "damage": "(4d10+2"
+        },
+        {
+          "name": "Grenade Launcher",
+          "bonus": "+15",
+          "damage": "4d6+2, 2-Square Burst"
+        },
+        {
+          "name": "Grenade Launcher",
+          "bonus": "+10",
+          "damage": "4d6+2, 2-Square Burst"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "X-1 Viper Droid"
+  },
+  "Wanderer_Scout_Surveyor_Droid": {
+    "initiative": "+3; Senses: Perception +6",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "16 ( Flat-Footed : 16), Fortitude Defense : 14, Will Defense : 12; 360-Degree Vision, Extra Legs",
+    "HP": "26, Damage Threshold : 14",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+0; Grapple : +3",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+2",
+          "damage": "1d4"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Stun Blaster",
+          "bonus": "+3",
+          "damage": "3d6 ( Stun"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Wanderer Scout Surveyor Droid"
+  },
+  "XLT-014_Labor_Droid": {
+    "initiative": "+0; Senses: Perception +12",
+    "languages": "Basic, Binary",
+    "reflexDefense": "14 ( Flat-Footed : 14), Fortitude Defense : 12, Will Defense : 12",
+    "HP": "4, Damage Threshold : 12",
+    "speed": "6 Squares ( Walking ), 6 Squares ( Hovering ( Limited ))",
+    "baseAttackBonus": "+0; Grapple : +2",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+2",
+          "damage": "1d4+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "XLT-014 Labor Droid"
+  },
+  "XK-V8_Excavation_Droid": {
+    "initiative": "+5; Senses: Perception +2",
+    "languages": "Basic (understand only), Binary",
+    "reflexDefense": "18 ( Flat-Footed : 14), Fortitude Defense : 14, Will Defense : 13",
+    "HP": "22, Damage Threshold : 14",
+    "speed": "6 Squares ( Walking ), 3 Squares (Climbing); Leaping Strike, Magnetic Feet , Running Attack , Surefooted",
+    "baseAttackBonus": "+1; Grapple : +5",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Circular Saw",
+          "bonus": "+3",
+          "damage": "2d6+2"
+        },
+        {
+          "name": "Plasma Cutter",
+          "bonus": "+3",
+          "damage": "2d6+2"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "XK-V8 Excavation Droid"
+  },
+  "Z65_Patrol_Droid": {
+    "initiative": "+6; Senses: Low-Light Vision, Perception +12",
+    "languages": "Basic, Binary",
+    "reflexDefense": "21 ( Flat-Footed : 18), Fortitude Defense : 15, Will Defense : 13",
+    "HP": "21, Damage Threshold : 15",
+    "speed": "6 Squares ( Walking )",
+    "baseAttackBonus": "+5; Grapple : +8",
+    "attacks": {
+      "ranged": [
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+8",
+          "damage": "3d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+3",
+          "damage": "5d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "+3",
+          "damage": "3d8"
+        },
+        {
+          "name": "Blaster Rifle",
+          "bonus": "-2",
+          "damage": "5d8"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "Z65 Patrol Droid"
+  },
+  "YVH_Battle_Droid": {
+    "initiative": "+11; Senses: Darkvision , Perception +12",
+    "languages": "Basic, Binary , Yuuzhan Vong; Translator Unit (DC 10)",
+    "reflexDefense": "27 ( Flat-Footed : 24), Fortitude Defense : 27, Will Defense : 20",
+    "HP": "67, Damage Threshold : 27; Tough as Nails",
+    "speed": "6 Squares ( Walking ); Repulsorlift Booster",
+    "baseAttackBonus": "+8; Grapple : +12",
+    "attacks": {
+      "melee": [
+        {
+          "name": "Unarmed",
+          "bonus": "+12",
+          "damage": "1d4+8"
+        },
+        {
+          "name": "Vibroblade",
+          "bonus": "+12",
+          "damage": "2d6+8"
+        }
+      ],
+      "ranged": [
+        {
+          "name": "Blaster Cannon",
+          "bonus": "+10",
+          "damage": "3d12+4, 1-Square Splash"
+        },
+        {
+          "name": "Blaster Cannon",
+          "bonus": "+10",
+          "damage": "4d12+4, 1-Square Splash"
+        }
+      ]
+    },
+    "constitution": "-",
+    "name": "YVH Battle Droid"
+  }
+}
