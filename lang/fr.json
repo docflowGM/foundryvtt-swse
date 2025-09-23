@@ -1,4 +1,13 @@
 {
+  "SWSE.Settings.OverrideActorCreate.Name": "Activer la création personnalisée d'acteurs",
+  "SWSE.Settings.OverrideActorCreate.Hint": "Afficher le dialogue SWSE lors de la création de nouveaux acteurs.",
+  "SWSE.Dialog.CreateActor.Title": "Créer un acteur SWSE",
+  "SWSE.Dialog.CreateActor.Prompt": "Sélectionnez le type d'acteur à créer :",
+  "SWSE.Dialog.CreateActor.Button.Create": "Créer",
+  "SWSE.Dialog.CreateActor.Button.Cancel": "Annuler",
+  /* existing keys… */
+}
+{
   "SWSE.SystemName": "Star Wars Saga Edition",
   "SWSE.ActorType.character": "Personnage",
   "SWSE.ActorType.droid": "Droïde",
