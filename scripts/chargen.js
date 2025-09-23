@@ -115,8 +115,8 @@ async function droidGenerator() {
 async function main() {
   // Load JSON data
   const systemName = game.system.id;  // automatically get current system id
-  const speciesPath = `/systems/${systemName}/data/species.json`;
-  const classesPath = `/systems/${systemName}/data/classes.json`;
+  const speciesPath = `/systems/foundryvtt-swse/data/species.json`;
+  const classesPath = `/systems/foundryvtt-swse/data/classes.json`;
 
   let speciesList = [];
   let classesList = [];
