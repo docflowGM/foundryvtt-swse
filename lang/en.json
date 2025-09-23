@@ -1,4 +1,13 @@
 {
+  "SWSE.Settings.OverrideActorCreate.Name": "Enable Custom Actor Dialog",
+  "SWSE.Settings.OverrideActorCreate.Hint": "Toggle the SWSE dialog when creating new actors.",
+  "SWSE.Dialog.CreateActor.Title": "Create SWSE Actor",
+  "SWSE.Dialog.CreateActor.Prompt": "Select the type of actor to create:",
+  "SWSE.Dialog.CreateActor.Button.Create": "Create",
+  "SWSE.Dialog.CreateActor.Button.Cancel": "Cancel",
+  /* existing keys… */
+}
+{
   "SWSE.SystemName": "Star Wars Saga Edition",
   "SWSE.Welcome": "Welcome to the SWSE system!"
 }
