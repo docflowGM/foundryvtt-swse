@@ -1,3 +1,5 @@
+import { SWSE_RACES, applyRaceBonuses } from "../data/races.js";
+
 // Helper for capitalization
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
