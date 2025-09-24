@@ -1,0 +1,280 @@
+{
+  "meta": {
+    "title": "Saga Edition — Combat Actions (extracted)",
+    "source": "Combat_Skills_Summary_v3.pdf (parsed)",
+    "notes": "Each action lists actionCost, short rules, suggested skill(s) for GM to allow rolls, and typical roll/outcome guidance suitable for automated resolution."
+  },
+  "actions": [
+    {
+      "name": "Activate an item",
+      "actionCost": "swift",
+      "notes": "Start vehicle, turn on device, ignite lightsaber.",
+      "relatedSkills": [
+        { "skill": "Use Computer", "roll": null, "when": "device needs login or friendly computer" },
+        { "skill": "Mechanics", "roll": null, "when": "device is jury-rigged or broken" }
+      ]
+    },
+    {
+      "name": "Aid another",
+      "actionCost": "standard",
+      "notes": "Aid a skill or attack. Skill aid: DC 10 same skill to grant +2 to ally. Aid attack: attack vs Ref 10 to grant +2 to ally vs that target.",
+      "relatedSkills": [
+        { "skill": "Any relevant skill", "roll": "DC 10", "outcome": "+2 bonus to ally on that check" },
+        { "skill": "Attack", "roll": "Attack vs Reflex 10", "outcome": "+2 to ally's next attack vs that target" }
+      ]
+    },
+    {
+      "name": "Aim",
+      "actionCost": "2 swift (consecutive)",
+      "notes": "Ignore target's cover bonus to Reflex on next attack; lose aim if you lose LOS or take other action before attacking; provokes AoO.",
+      "relatedSkills": [
+        { "skill": "Attack (ranged)", "roll": null, "when": "applies to next ranged attack to ignore cover" }
+      ]
+    },
+    {
+      "name": "Attack (single)",
+      "actionCost": "standard",
+      "notes": "Normal attack; rate and damage depend on weapon. Melee 2‑handed uses STR×2 to damage; improvised = -5 attack.",
+      "relatedSkills": [
+        { "skill": "Attack Roll", "roll": "d20 + BAB + modifiers", "outcome": "Compare to target Reflex/Fort/Will as appropriate" }
+      ]
+    },
+    {
+      "name": "Area Attack (burst/splash/cone)",
+      "actionCost": "standard",
+      "notes": "Compare attack roll (if >=10) to each target's Ref; hits full, misses half; natural 20 hits all; cannot aim for area attacks.",
+      "relatedSkills": [
+        { "skill": "Attack Roll", "roll": "d20 + modifiers", "outcome": "Resolve against each target's Ref; apply cover rules" }
+      ]
+    },
+    {
+      "name": "Burst Fire / Autofire (vehicle or weapon)",
+      "actionCost": "standard",
+      "notes": "Autofire targets area 2×2 squares, -5 attack; consumes ammo; braced autofire reduces penalty; burst fire -5 attack +2 dice damage.",
+      "relatedSkills": [
+        { "skill": "Attack Roll", "roll": "d20 + modifiers", "outcome": "Area rules; ammo consumption handled by system" }
+      ]
+    },
+    {
+      "name": "Charge",
+      "actionCost": "standard (move your speed, min 2 sq)",
+      "notes": "Move in straight line; +2 competence to attack; take -2 Reflex until next turn; cannot take other actions after attack.",
+      "relatedSkills": [
+        { "skill": "Attack Roll (melee)", "roll": null, "outcome": "Apply +2 competence, -2 target Reflex" },
+        { "skill": "Acrobatics", "roll": "DC 25", "when": "Nimble Charge: to charge through low objects/difficult terrain" }
+      ]
+    },
+    {
+      "name": "Coup de grace",
+      "actionCost": "full-round",
+      "notes": "Against helpless adjacent opponent; auto-critical; target reduced to 0 HP dies (or destroyed for objects).",
+      "relatedSkills": [
+        { "skill": "Attack Roll", "roll": null, "outcome": "Auto-crit; immediate lethal effect" }
+      ]
+    },
+    {
+      "name": "Draw or Holster Weapon",
+      "actionCost": "move",
+      "notes": "Draw as move (or draw & activate if weapon requires activation and you are proficient). Drawing concealed weapons = standard.",
+      "relatedSkills": [
+        { "skill": "Sleight of Hand / Stealth", "roll": null, "when": "drawing concealed item in secret; GM may allow opposed Perception" }
+      ]
+    },
+    {
+      "name": "Drop an item",
+      "actionCost": "swift",
+      "notes": "Drop item into your space or adjacent square; free/simple.",
+      "relatedSkills": []
+    },
+    {
+      "name": "Draw concealed item (conceal/seek)",
+      "actionCost": "standard",
+      "notes": "If concealed on self, drawing is standard and may be opposed by Perception.",
+      "relatedSkills": [
+        { "skill": "Stealth / Sleight of Hand", "roll": null, "when": "concealing or palming items" },
+        { "skill": "Perception", "roll": "opposed", "outcome": "Detect drawing or concealed item" }
+      ]
+    },
+    {
+      "name": "Feint",
+      "actionCost": "standard",
+      "notes": "Deception vs target's Initiative to make target flat-footed vs your next attack. -5 vs non-humanoids/low INT.",
+      "relatedSkills": [
+        { "skill": "Deception", "roll": "Opposed: target Initiative", "outcome": "Target loses Dex bonus to Ref vs your next attack" }
+      ]
+    },
+    {
+      "name": "Fight defensively",
+      "actionCost": "standard (or full-round variant)",
+      "notes": "Standard: -5 attacks, +2 dodge to Ref (or +5 if trained in Acrobatics). Full-round no attacks: +5 dodge (+10 if trained).",
+      "relatedSkills": [
+        { "skill": "Acrobatics", "roll": null, "when": "trained offers better dodge bonus" }
+      ]
+    },
+    {
+      "name": "Full attack",
+      "actionCost": "full-round",
+      "notes": "Make multiple attacks; penalties apply to all attacks until next turn; two-weapon penalties apply.",
+      "relatedSkills": [
+        { "skill": "Attack Roll", "roll": "Multiple attacks", "outcome": "Resolve sequence with multiple attack penalties" }
+      ]
+    },
+    {
+      "name": "Grapple / Grab",
+      "actionCost": "standard",
+      "notes": "Unarmed attack to grab (-5). If hit, make opposed grapple checks (Grapple uses STR or DEX + BAB + size). Grappled target is denied movement and has -2 attack unless using light weapon.",
+      "relatedSkills": [
+        { "skill": "Grapple (opposed)", "roll": "1d20 + BAB + STR/DEX + size", "outcome": "Grabbed/grappled; escape via Acrobatics vs Grappler's check" },
+        { "skill": "Acrobatics", "roll": "Opposed (escape)", "when": "escape from grapple; DC = grappler's check" }
+      ]
+    },
+    {
+      "name": "Disarm",
+      "actionCost": "standard",
+      "notes": "Melee attack at -10 (-15 if weapon held in more than 1 hand). Failure may provoke free attack against you.",
+      "relatedSkills": [
+        { "skill": "Attack Roll (melee)", "roll": "d20 + BAB -10", "outcome": "If succeed, weapon drops; Acrobatics DC20 to catch item (trained)" },
+        { "skill": "Acrobatics", "roll": "DC 20 (free action)", "when": "catch disarmed item" }
+      ]
+    },
+    {
+      "name": "Escape bonds / Escape net",
+      "actionCost": "standard / full-round",
+      "notes": "Escape nets: Acrobatics DC15 as full-round; nets often require higher DC to escape as standard.",
+      "relatedSkills": [
+        { "skill": "Acrobatics", "roll": "DC 15 (escape net full-round) or DC 25 (standard)", "outcome": "Escape nets; success frees you" }
+      ]
+    },
+    {
+      "name": "Manipulate an item",
+      "actionCost": "move",
+      "notes": "Pick up item (provokes AoO), load weapon (provokes AoO), open door, retrieve stored item (2 move actions, provokes AoO).",
+      "relatedSkills": []
+    },
+    {
+      "name": "Move your speed / Move action",
+      "actionCost": "move",
+      "notes": "Move up to speed; diagonal counts as 2 squares; options include Balance (half speed), Climb (1/4 speed), Tumble (part of move with Acrobatics).",
+      "relatedSkills": [
+        { "skill": "Acrobatics", "roll": "DC 15", "when": "Tumble to avoid AoO (trained)" },
+        { "skill": "Climb", "roll": "Climb check", "when": "Climb surfaces; see Climb DC table" }
+      ]
+    },
+    {
+      "name": "Tumble",
+      "actionCost": "part of move",
+      "notes": "Acrobatics DC15 to move through threatened squares without provoking AoO; each threatened square counts as 2 squares of movement.",
+      "relatedSkills": [
+        { "skill": "Acrobatics", "roll": "DC 15", "outcome": "Avoid AoO when moving through threatened spaces" }
+      ]
+    },
+    {
+      "name": "Run",
+      "actionCost": "full-round",
+      "notes": "Move 4× speed (3× if heavy armor), lose Dex bonus to Ref; can run for CON rounds, then Endurance checks.",
+      "relatedSkills": [
+        { "skill": "Endurance", "roll": "DC 10 (after CON rounds) +1 per additional round", "outcome": "If fail, -1 persistent CT" }
+      ]
+    },
+    {
+      "name": "Reload",
+      "actionCost": "move",
+      "notes": "Reload is normally a move action and provokes AoO unless specified otherwise.",
+      "relatedSkills": []
+    },
+    {
+      "name": "Second Wind",
+      "actionCost": "swift",
+      "notes": "Once per encounter/day: if at or below half hp, heal 1/4 max HP or CON (whichever higher).",
+      "relatedSkills": []
+    },
+    {
+      "name": "Snipe",
+      "actionCost": "standard + move",
+      "notes": "From hiding: make ranged attack then hide again (Stealth check at -10 as move). Must be at least 2 squares away.",
+      "relatedSkills": [
+        { "skill": "Stealth", "roll": "Stealth move-action -10", "outcome": "If success remain hidden; if fail, revealed" },
+        { "skill": "Perception", "roll": null, "when": "Opponents attempt to notice" }
+      ]
+    },
+    {
+      "name": "Stand up from prone",
+      "actionCost": "move",
+      "notes": "Stand normally as move; trained in Acrobatics can DC15 to stand as swift.",
+      "relatedSkills": [
+        { "skill": "Acrobatics", "roll": "DC 15 (swift)", "when": "Stand from prone as swift if trained" }
+      ]
+    },
+    {
+      "name": "Fall prone",
+      "actionCost": "swift",
+      "notes": "If trained in Acrobatics DC15 you can fall prone as a free action; otherwise swift. Prone penalties apply.",
+      "relatedSkills": [
+        { "skill": "Acrobatics", "roll": "DC 15", "when": "Fall prone as free action if trained" }
+      ]
+    },
+    {
+      "name": "Ready an action (prepare)",
+      "actionCost": "standard",
+      "notes": "Specify a trigger and action (move/standard/swift). When trigger occurs you may take the readied action as a reaction; initiative changes to the time you used it.",
+      "relatedSkills": []
+    },
+    {
+      "name": "Ready or Recovery actions for vehicles",
+      "actionCost": "varies (swift, 3 swifts)",
+      "notes": "Vehicle actions include Raise/lower shields (swift), Recharge shields (3 swift w/ Mechanics DC20), regulate power (3 swifts Mechanics DC20).",
+      "relatedSkills": [
+        { "skill": "Mechanics", "roll": "DC 20 (recharge/regulate)", "outcome": "Restore SR or move vehicle CT" }
+      ]
+    },
+    {
+      "name": "Perception / Notice targets",
+      "actionCost": "reaction / standard",
+      "notes": "Perception vs Stealth or passive size DCs; reaction to notice entering LOS. Reaction swift to retry failed Perception.",
+      "relatedSkills": [
+        { "skill": "Perception", "roll": "d20 + Perception", "outcome": "Notice hidden/concealed targets; apply concealment/cover penalties" }
+      ]
+    },
+    {
+      "name": "Create a Diversion to Hide",
+      "actionCost": "standard",
+      "notes": "Deception vs all targets' Will to allow a Stealth attempt while targets are aware. You must be able to reach hiding place with a move.",
+      "relatedSkills": [
+        { "skill": "Deception", "roll": "Opposed by targets' Will", "outcome": "If success, allow Stealth attempt" },
+        { "skill": "Stealth", "roll": null, "when": "Follow-up hide attempt" }
+      ]
+    },
+    {
+      "name": "Use Computer / Access information",
+      "actionCost": "varies (full-round/1 min/1 hr)",
+      "notes": "Use Computer checks to access info: general 15 (1 min), specific 20 (10 min), private 25 (1 hr), secret 30 (1 day) when computer attitude allows.",
+      "relatedSkills": [
+        { "skill": "Use Computer", "roll": "d20 + Use Computer", "outcome": "Access levels depend on DC; computer attitude modifies results" }
+      ]
+    },
+    {
+      "name": "Use the Force (example: Move Light Object / Breath Control)",
+      "actionCost": "varies (move/standard/swift/full-round)",
+      "notes": "UtF powers often require trained UtF checks. Move Light Object: UtF DC10 (move action). Breath Control (UtF) DC15 to double hold-breath rounds.",
+      "relatedSkills": [
+        { "skill": "Use the Force (UtF)", "roll": "DC 10-25 depending on power", "outcome": "Power effect if succeed; failure consequences vary" }
+      ]
+    },
+    {
+      "name": "First Aid / Revivify / Treat Injury",
+      "actionCost": "full-round (First Aid) / full-round (Revivify)",
+      "notes": "First Aid (medpac) DC15 heal; Revivify DC25 (requires medkit) to revive within 1 round of death.",
+      "relatedSkills": [
+        { "skill": "Treat Injury / First Aid", "roll": "DC 15 (First Aid) or DC 25 (Revivify)", "outcome": "Heals HP or revives on success" }
+      ]
+    },
+    {
+      "name": "Disengage / Withdraw",
+      "actionCost": "move",
+      "notes": "Withdraw at half speed; treat first square as non-threatened; cannot withdraw if must move more than one square to exit threatened area.",
+      "relatedSkills": [
+        { "skill": "Acrobatics", "roll": "DC 15 tumble (optional) to avoid AoO", "when": "Tumble instead of provoke AoO" }
+      ]
+    }
+  ]
+}
