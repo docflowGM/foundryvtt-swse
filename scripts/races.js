@@ -2,7 +2,7 @@ export const SWSE_RACES = {
   aleena: { label: "Aleena", bonuses: { dex: 2, cha: -2 } },
   aqualish: { label: "Aqualish", bonuses: { con: 2, wis: 2, dex: -2, int: -2 } },
   arkanian: { label: "Arkanian", bonuses: { int: 2, cha: -2 } },
-  arkanianOffshoot: { label: "Arkanian Offshoot", bonuses: { con: -2 } }, // Choose +2 Str or Dex manually
+  arkanianOffshoot: { label: "Arkanian Offshoot", bonuses: { con: -2 } }, // Manual +2 to Str or Dex
   balosar: { label: "Balosar", bonuses: { dex: 2, cha: 2, con: -2, wis: -2 } },
   bloodCarver: { label: "Blood Carver", bonuses: { dex: 2, wis: -2, cha: -2 } },
   bothan: { label: "Bothan", bonuses: { dex: 2, con: -2 } },
@@ -66,4 +66,43 @@ export const SWSE_RACES = {
   utai: { label: "Utai", bonuses: { con: 2, cha: -2 } },
   vurk: { label: "Vurk", bonuses: { con: 2, cha: 2, dex: -2 } },
   whiphid: { label: "Whiphid", bonuses: { str: 4, int: -2, wis: -2 } },
-  wookiee: { label: "Wookiee", bonuses:
+  wookiee: { label: "Wookiee", bonuses: { str: 4, con: 2, int: -2, cha: -2 } }
+};
+/**
+ * Apply race attribute bonuses to a character's base attributes.
+ * @param {object} baseAttributes - { str, dex, con, int, wis, cha } all numbers
+ * @param {string} raceKey - key in SWSE_RACES, e.g. "wookiee"
+ * @returns {object} - new attributes with bonuses applied
+ */
+export function applyRaceBonuses(baseAttributes, raceKey) {
+  const race = SWSE_RACES[raceKey];
+  if (!race) {
+    console.warn(`Race key "${raceKey}" not found. Returning base attributes.`);
+    return { ...baseAttributes };
+  }
+
+  const bonuses = race.bonuses || {};
+  const result = { ...baseAttributes };
+
+  for (const attr of ["str", "dex", "con", "int", "wis", "cha"]) {
+    result[attr] = (result[attr] || 0) + (bonuses[attr] || 0);
+  }
+
+  return result;
+}
+const baseAttributes = {
+  str: 10,
+  dex: 10,
+  con: 10,
+  int: 10,
+  wis: 10,
+  cha: 10
+};
+
+const race = "wookiee";
+
+const modifiedAttributes = applyRaceBonuses(baseAttributes, race);
+
+console.log(modifiedAttributes);
+// Expected output:
+// { str: 14, dex: 10, con: 12, int: 8, wis: 10, cha: 8 }
