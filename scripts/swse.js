@@ -3,7 +3,7 @@
 Hooks.once("init", () => {
   console.log("SWSE | Initializing system…");
 
-  // 1. Register a client setting to enable/disable the custom dialog
+  // Register a client setting to enable/disable the custom actor creation dialog
   game.settings.register("swse", "overrideActorCreate", {
     name: game.i18n.localize("SWSE.Settings.OverrideActorCreate.Name"),
     hint: game.i18n.localize("SWSE.Settings.OverrideActorCreate.Hint"),
@@ -13,11 +13,10 @@ Hooks.once("init", () => {
     default: true
   });
 
-  // 2. Preload Handlebars templates from your `templates/` folder
+  // Preload Handlebars templates (expand as needed)
   const templatePaths = [
     "templates/actor-sheet.hbs",
     "templates/item-sheet.hbs"
-    // add more templates here as you build them
   ];
   loadTemplates(templatePaths);
 });
@@ -25,45 +24,56 @@ Hooks.once("init", () => {
 Hooks.once("ready", () => {
   console.log("SWSE | Ready hook");
 
-  // Only patch if the override setting is enabled
   if (game.settings.get("swse", "overrideActorCreate")) {
     patchActorDirectoryCreate();
   }
 });
 
 /**
- * Replace the default ActorDirectory _onCreateEntity to show a custom dialog.
- * Falls back to the original method if override is turned off.
+ * Patch ActorDirectory's creation method to show a custom dialog
+ * Supports Foundry versions pre- and post-v9
  */
 function patchActorDirectoryCreate() {
-  const original = ActorDirectory.prototype._onCreateEntity;
+  // Determine method name based on Foundry version
+  const methodName = typeof ActorDirectory.prototype._onCreateDocument === "function"
+    ? "_onCreateDocument"  // Foundry 9+
+    : "_onCreateEntity";   // Foundry 8 or earlier
 
-  ActorDirectory.prototype._onCreateEntity = async function (event) {
+  const original = ActorDirectory.prototype[methodName];
+
+  ActorDirectory.prototype[methodName] = async function (event) {
     event.preventDefault();
 
-    // If the user has disabled the override, call the original handler
     if (!game.settings.get("swse", "overrideActorCreate")) {
       return original.call(this, event);
     }
 
-    // Build localized choice labels
+    // Prevent multiple dialogs from stacking
+    if (ui.dialog && ui.dialog._state === true) return;
+
+    // Localized actor type choices
     const typeChoices = {
       character: game.i18n.localize("SWSE.ActorType.character"),
-      droid:     game.i18n.localize("SWSE.ActorType.droid"),
-      vehicle:   game.i18n.localize("SWSE.ActorType.vehicle")
+      droid: game.i18n.localize("SWSE.ActorType.droid"),
+      vehicle: game.i18n.localize("SWSE.ActorType.vehicle")
     };
+
     const options = Object.entries(typeChoices)
       .map(([value, label]) => `<option value="${value}">${label}</option>`)
       .join("");
 
-    // Render the Create Actor dialog
+    // Render the dialog with type select and name input
     new Dialog({
-      title:   game.i18n.localize("SWSE.Dialog.CreateActor.Title"),
+      title: game.i18n.localize("SWSE.Dialog.CreateActor.Title"),
       content: `
         <form>
           <div class="form-group">
             <label>${game.i18n.localize("SWSE.Dialog.CreateActor.Prompt")}</label>
             <select name="type">${options}</select>
+          </div>
+          <div class="form-group">
+            <label>${game.i18n.localize("SWSE.Dialog.CreateActor.Name")}</label>
+            <input type="text" name="name" placeholder="${game.i18n.localize("SWSE.Dialog.CreateActor.NamePlaceholder")}" />
           </div>
         </form>
       `,
@@ -71,10 +81,18 @@ function patchActorDirectoryCreate() {
         create: {
           icon: "<i class='fas fa-check'></i>",
           label: game.i18n.localize("SWSE.Dialog.CreateActor.Button.Create"),
-          callback: async html => {
+          callback: async (html) => {
             const type = html.find("select[name='type']").val();
-            const name = `New ${type.charAt(0).toUpperCase() + type.slice(1)}`;
-            await Actor.create({ name, type });
+            let name = html.find("input[name='name']").val().trim();
+            if (!name) {
+              name = `New ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            }
+            try {
+              await Actor.create({ name, type });
+            } catch (err) {
+              ui.notifications.error(`Failed to create actor: ${err.message}`);
+              console.error(err);
+            }
           }
         },
         cancel: {
