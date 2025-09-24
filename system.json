@@ -2,7 +2,7 @@
   "id": "swse",
   "title": "Star Wars Saga Edition (SWSE)",
   "description": "A community-created system for running Star Wars Saga Edition in FoundryVTT.",
-  "version": "0.1.1",
+  "version": "0.1.0",
 
   "authors": [
     { "name": "docflowGM", "url": "https://github.com/docflowGM" }
@@ -33,35 +33,35 @@
       "label": "SWSE Classes",
       "description": "Class data for SWSE characters",
       "path": "packs/swse-classes.db",
-      "type": "Item"
+      "entity": "Item"
     },
     {
       "name": "swse-talents",
       "label": "SWSE Talents",
       "description": "Talent data for SWSE characters",
       "path": "packs/swse-talents.db",
-      "type": "Item"
+      "entity": "Item"
     },
     {
       "name": "swse-feats",
       "label": "SWSE Feats",
       "description": "Feat data for SWSE characters",
       "path": "packs/swse-feats.db",
-      "type": "Item"
+      "entity": "Item"
     },
     {
       "name": "swse-vehicles",
       "label": "SWSE Vehicles",
       "description": "Vehicle data for SWSE",
       "path": "packs/swse-vehicles.db",
-      "type": "Actor"
+      "entity": "Actor"
     },
     {
       "name": "swse-equipment",
       "label": "SWSE Equipment",
       "description": "Equipment data for SWSE",
       "path": "packs/swse-equipment.db",
-      "type": "Item"
+      "entity": "Item"
     }
   ],
 
