@@ -1,0 +1,30 @@
+{
+  "npc": {
+    "name": "",
+    "role": "",
+    "level": 1,
+    "abilities": {
+      "Strength": { "score": 10, "modifier": 0 },
+      "Dexterity": { "score": 10, "modifier": 0 },
+      "Constitution": { "score": 10, "modifier": 0 },
+      "Intelligence": { "score": 10, "modifier": 0 },
+      "Wisdom": { "score": 10, "modifier": 0 },
+      "Charisma": { "score": 10, "modifier": 0 }
+    },
+    "defenses": {
+      "Fortitude": { "formula": "10 + Con.mod + level + misc", "total": 10 },
+      "Reflex": { "formula": "10 + Dex.mod + level + misc", "total": 10 },
+      "Will": { "formula": "10 + Wis.mod + level + misc", "total": 10 }
+    },
+    "attacks": {
+      "Melee": { "attack_bonus": "Str.mod + level + misc", "damage": "1d8 + Str.mod + floor(level/2)" },
+      "Ranged": { "attack_bonus": "Dex.mod + level + misc", "damage": "1d8 + Dex.mod + floor(level/2)" }
+    },
+    "skills": {},
+    "equipment": [],
+    "saves": {
+      "Damage Threshold": 10
+    },
+    "notes": []
+  }
+}
