@@ -62,20 +62,15 @@
       "description": "Equipment data for SWSE",
       "path": "packs/swse-equipment.db",
       "entity": "Item"
-    },
-  "grid": {
-    "distance": 1,
-    "units": "m"
-  },
+    }
+  ],
 
-  "initiative": "1d20",
-  "socket": true,
+  "actorTypes": [
+    "character",
+    "vehicle",
+    "npc",
+    "droid"
+  ],
 
-"actorTypes": [
-  "character",
-  "vehicle",
-  "npc",
-  "droid"
-],
-"primaryActorType": "character"
+  "primaryActorType": "character"
 }
