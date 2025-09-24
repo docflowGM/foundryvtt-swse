@@ -1,0 +1,18 @@
+{
+  "name": "New Vehicle",
+  "type": "vehicle",
+  "img": "icons/svg/car.svg",
+  "system": {
+    "class": "speeder",
+    "size": "large",
+    "crew": 1,
+    "passengers": 0,
+    "speed": { "base": 12, "total": 12 },
+    "hp": { "value": 0, "max": 0 },
+    "shield": { "value": 0, "max": 0 },
+    "armor": { "value": 0 },
+    "weapons": [],
+    "mods": [],
+    "cargo": []
+  }
+}
