@@ -1,6 +1,6 @@
 {
   "name": "New Droid",
-  "type": "character",
+  "type": "droid",
   "img": "icons/svg/robot.svg",
   "system": {
     "species": "droid",
