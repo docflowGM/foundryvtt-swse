@@ -1,7 +1,7 @@
 // Helper for capitalization
-String.prototype.capitalize = function() {
-  return this.charAt(0).toUpperCase() + this.slice(1);
-};
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 // Load JSON from system data folder
 async function loadJSON(path) {
@@ -42,21 +42,15 @@ async function askRadioQuestion(title, prompt, options) {
   });
 }
 
-// Show simple yes/no question dialog
+// Show yes/no question
 async function askYesNoQuestion(title, prompt) {
   return new Promise((resolve) => {
     new Dialog({
       title,
       content: `<p>${prompt}</p>`,
       buttons: {
-        yes: {
-          label: "Yes",
-          callback: () => resolve(true)
-        },
-        no: {
-          label: "No",
-          callback: () => resolve(false)
-        }
+        yes: { label: "Yes", callback: () => resolve(true) },
+        no: { label: "No", callback: () => resolve(false) }
       },
       default: "yes",
       close: () => resolve(false)
@@ -64,7 +58,7 @@ async function askYesNoQuestion(title, prompt) {
   });
 }
 
-// Character generator with dynamic JSON species/classes
+// Generate character
 async function characterGenerator(speciesList, classesList) {
   const speciesId = await askRadioQuestion("Species", "Choose your species:", speciesList);
   if (!speciesId) return null;
@@ -76,8 +70,8 @@ async function characterGenerator(speciesList, classesList) {
 
   return {
     name: `${speciesName} ${className}`,
-    type: "character",
-    data: {
+    type: "character",  // Ensure this matches your system's actor types
+    system: {
       species: speciesId,
       class: classId,
       attributes: {},
@@ -88,7 +82,7 @@ async function characterGenerator(speciesList, classesList) {
   };
 }
 
-// Droid generator placeholder
+// Generate droid
 async function droidGenerator() {
   const droidModels = [
     { id: "utility", name: "Utility Droid" },
@@ -103,7 +97,7 @@ async function droidGenerator() {
   return {
     name: modelName,
     type: "droid",
-    data: {
+    system: {
       model: modelId,
       systems: [],
       abilities: [],
@@ -112,24 +106,21 @@ async function droidGenerator() {
   };
 }
 
+// Main generator
 async function main() {
-  // Load JSON data
-  const systemName = game.system.id;  // automatically get current system id
   const speciesPath = `/systems/foundryvtt-swse/data/species.json`;
   const classesPath = `/systems/foundryvtt-swse/data/classes.json`;
 
-  let speciesList = [];
-  let classesList = [];
+  let speciesList = [], classesList = [];
 
   try {
     speciesList = await loadJSON(speciesPath);
     classesList = await loadJSON(classesPath);
   } catch (err) {
-    ui.notifications.error(`Error loading species or classes JSON: ${err.message}`);
+    ui.notifications.error(`Error loading JSON: ${err.message}`);
     return;
   }
 
-  // Ask actor type
   const actorType = await new Promise(resolve => {
     new Dialog({
       title: "New Actor",
@@ -146,7 +137,6 @@ async function main() {
 
   if (!actorType) return;
 
-  // Ask if user wants to use generator
   const useGenerator = await askYesNoQuestion("Character Generator", `Use the ${actorType} generator?`);
 
   if (useGenerator) {
@@ -156,20 +146,20 @@ async function main() {
     } else if (actorType === "droid") {
       actorData = await droidGenerator();
     }
+
     if (!actorData) {
-      ui.notifications.warn("Character generation cancelled.");
+      ui.notifications.warn("Generation cancelled.");
       return;
     }
+
     const actor = await Actor.create(actorData);
-    actor.sheet.render(true);
+    actor.sheet?.render(true);
   } else {
-    // Create blank actor
     const blankActor = await Actor.create({
-      name: `New ${actorType.capitalize()}`,
-      type: actorType,
-      data: {}
+      name: `New ${capitalize(actorType)}`,
+      type: actorType
     });
-    blankActor.sheet.render(true);
+    blankActor.sheet?.render(true);
   }
 }
 
