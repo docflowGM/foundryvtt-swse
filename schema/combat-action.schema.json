@@ -1,1 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Combat Action",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "actionCost": { "type": "string" },
+    "notes": { "type": "string" },
+    "relatedSkills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "skill": { "type": "string" },
+          "roll": { "type": ["string", "null"] },
+          "DC": { "type": ["string", "number", "null"] },
+          "outcome": { "type": ["string", "null"] },
+          "when": { "type": ["string", "null"] }
+        },
+        "required": ["skill"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["name", "actionCost", "notes"],
+  "additionalProperties": false
+}
 
