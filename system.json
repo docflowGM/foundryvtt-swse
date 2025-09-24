@@ -81,7 +81,8 @@
 "actorTypes": [
   "character",
   "vehicle",
-  "npc"
+  "npc",
+  "droid"
 ],
 "primaryActorType": "character"
 }
