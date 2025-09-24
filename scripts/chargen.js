@@ -1,18 +1,17 @@
 import { SWSE_RACES, applyRaceBonuses } from "../data/races.js";
 
-// Helper for capitalization
+// --- Helpers ---
+
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Load JSON from system data folder
 async function loadJSON(path) {
   const response = await fetch(path);
   if (!response.ok) throw new Error(`Failed to load ${path}`);
   return response.json();
 }
 
-// Show radio button question dialog
 async function askRadioQuestion(title, prompt, options) {
   return new Promise((resolve) => {
     const optionsHtml = options.map(opt =>
@@ -44,7 +43,6 @@ async function askRadioQuestion(title, prompt, options) {
   });
 }
 
-// Show yes/no question
 async function askYesNoQuestion(title, prompt) {
   return new Promise((resolve) => {
     new Dialog({
@@ -60,31 +58,249 @@ async function askYesNoQuestion(title, prompt) {
   });
 }
 
-// Generate character
-async function characterGenerator(speciesList, classesList) {
-  const speciesId = await askRadioQuestion("Species", "Choose your species:", speciesList);
+async function askForName() {
+  return new Promise(resolve => {
+    new Dialog({
+      title: "Character Name",
+      content: `<p>What is your character's name?</p><input type="text" name="charName" />`,
+      buttons: {
+        ok: {
+          label: "OK",
+          callback: (html) => {
+            const name = html.find('input[name="charName"]').val().trim();
+            resolve(name || null);
+          }
+        },
+        cancel: {
+          label: "Cancel",
+          callback: () => resolve(null)
+        }
+      },
+      default: "ok",
+      close: () => resolve(null)
+    }).render(true);
+  });
+}
+
+// Ask user to assign stats with point-buy style validation
+async function askForStats() {
+  // Basic point buy: start at 10 for all, 10 points to distribute, min 8 max 18 for each
+  return new Promise(resolve => {
+    const stats = ["str", "dex", "con", "int", "wis", "cha"];
+    let htmlContent = `<p>Distribute 10 additional points among your stats (min 8, max 18).</p><form>`;
+    stats.forEach(stat => {
+      htmlContent += `
+        <label>${stat.toUpperCase()}: </label>
+        <input type="number" name="${stat}" value="10" min="8" max="18" style="width:50px;" /><br/>
+      `;
+    });
+    htmlContent += `</form>`;
+
+    new Dialog({
+      title: "Assign Stats",
+      content: htmlContent,
+      buttons: {
+        ok: {
+          label: "OK",
+          callback: (html) => {
+            const base = 10;
+            const min = 8;
+            const max = 18;
+            const allocated = {};
+            let totalPoints = 0;
+            let valid = true;
+
+            for (const stat of stats) {
+              const val = parseInt(html.find(`input[name="${stat}"]`).val(), 10);
+              if (isNaN(val) || val < min || val > max) {
+                valid = false;
+                break;
+              }
+              allocated[stat] = val;
+              totalPoints += val - base;
+            }
+
+            if (!valid || totalPoints > 10) {
+              ui.notifications.error("Invalid stats assignment: min 8, max 18 per stat, max 10 points distributed.");
+              resolve(null);
+            } else {
+              resolve(allocated);
+            }
+          }
+        },
+        cancel: {
+          label: "Cancel",
+          callback: () => resolve(null)
+        }
+      },
+      default: "ok",
+      close: () => resolve(null)
+    }).render(true);
+  });
+}
+
+// Multi-select skills
+async function askForSkills(classSkills, extraSkills = []) {
+  return new Promise(resolve => {
+    if ((!classSkills || classSkills.length === 0) && (!extraSkills || extraSkills.length === 0)) {
+      resolve([]);
+      return;
+    }
+
+    const combinedSkills = [...(classSkills || []), ...(extraSkills || [])];
+
+    const skillsHtml = combinedSkills.map(skill => `
+      <label>
+        <input type="checkbox" name="skills" value="${skill.id}" />
+        ${skill.name}
+      </label><br/>
+    `).join("");
+
+    new Dialog({
+      title: "Select Skills",
+      content: `<p>Select your skills:</p><form>${skillsHtml}</form>`,
+      buttons: {
+        ok: {
+          label: "OK",
+          callback: (html) => {
+            const selectedSkills = html.find('input[name="skills"]:checked').map((i, el) => el.value).get();
+            resolve(selectedSkills);
+          }
+        },
+        cancel: {
+          label: "Cancel",
+          callback: () => resolve([])
+        }
+      },
+      default: "ok",
+      close: () => resolve([])
+    }).render(true);
+  });
+}
+
+// Force power picker (Jedi only)
+async function askForForcePowers(forcePowersList, maxChoices) {
+  return new Promise(resolve => {
+    if (!forcePowersList || forcePowersList.length === 0 || maxChoices <= 0) {
+      resolve([]);
+      return;
+    }
+
+    const powersHtml = forcePowersList.map(power => `
+      <label>
+        <input type="checkbox" name="forcePower" value="${power.id}" />
+        ${power.name}
+      </label><br/>
+    `).join("");
+
+    new Dialog({
+      title: "Select Force Powers",
+      content: `<p>Select up to ${maxChoices} Force Powers:</p><form>${powersHtml}</form>`,
+      buttons: {
+        ok: {
+          label: "OK",
+          callback: (html) => {
+            const selected = html.find('input[name="forcePower"]:checked').map((i, el) => el.value).get();
+            if (selected.length > maxChoices) {
+              ui.notifications.error(`You can only select up to ${maxChoices} Force Powers.`);
+              resolve([]);
+            } else {
+              resolve(selected);
+            }
+          }
+        },
+        cancel: {
+          label: "Cancel",
+          callback: () => resolve([])
+        }
+      },
+      default: "ok",
+      close: () => resolve([])
+    }).render(true);
+  });
+}
+
+// --- Main Character Generator ---
+
+async function characterGenerator(classesList, forcePowersList) {
+  const speciesOptions = Object.entries(SWSE_RACES).map(([id, data]) => ({
+    id,
+    name: data.label
+  }));
+
+  const speciesId = await askRadioQuestion("Species", "So you want to be an adventurer, eh? Choose your species:", speciesOptions);
   if (!speciesId) return null;
-  const speciesName = speciesList.find(s => s.id === speciesId)?.name || speciesId;
+  const speciesName = SWSE_RACES[speciesId]?.label || speciesId;
 
   const classId = await askRadioQuestion("Class", `You chose ${speciesName}. Now pick your class:`, classesList);
   if (!classId) return null;
-  const className = classesList.find(c => c.id === classId)?.name || classId;
+  const chosenClass = classesList.find(c => c.id === classId);
+  const className = chosenClass?.name || classId;
+
+  const charName = await askForName();
+  if (!charName) return null;
+
+  const baseAttributes = await askForStats();
+  if (!baseAttributes) return null;
+
+  const finalAttributes = applyRaceBonuses(baseAttributes, speciesId);
+
+  // Skills from class
+  const classSkills = chosenClass.skills || [];
+
+  // Extra skill choice for Humans
+  let extraSkills = [];
+  if (speciesId === "human") {
+    // Assuming you want to allow an extra skill pick - let's add some example skills for bonus options
+    extraSkills = [
+      { id: "negotiation", name: "Negotiation (Bonus for Humans)" },
+      { id: "streetwise", name: "Streetwise (Bonus for Humans)" },
+      { id: "pilot", name: "Pilot (Bonus for Humans)" }
+    ];
+  }
+
+  const selectedSkills = await askForSkills(classSkills, extraSkills);
+
+  // Assign feats and talents from class
+  let assignedFeats = chosenClass.feats || [];
+  let assignedTalents = chosenClass.talents || [];
+
+  // Human bonus feat
+  if (speciesId === "human") {
+    assignedFeats = [...assignedFeats, "bonusFeatForHuman"]; // Replace "bonusFeatForHuman" with actual feat id
+  }
+
+  // Jedi special: add Force Training feat and pick Force Powers
+  let assignedForcePowers = [];
+  if (classId === "jedi") {
+    assignedFeats = [...assignedFeats, "forceTraining"]; // "forceTraining" feat grants force powers
+
+    // Calculate max force powers = WIS modifier + 1
+    const wisScore = finalAttributes.wis || 10;
+    const wisMod = Math.floor((wisScore - 10) / 2);
+    const maxForcePowers = Math.max(1, wisMod + 1);
+
+    // Ask to pick Force Powers
+    assignedForcePowers = await askForForcePowers(forcePowersList, maxForcePowers);
+  }
 
   return {
-    name: `${speciesName} ${className}`,
-    type: "character",  // Ensure this matches your system's actor types
+    name: charName,
+    type: "character",
     system: {
       species: speciesId,
       class: classId,
-      attributes: {},
-      talents: [],
-      feats: [],
+      attributes: finalAttributes,
+      skills: selectedSkills,
+      feats: assignedFeats,
+      talents: assignedTalents,
+      forcePowers: assignedForcePowers,
       equipment: []
     }
   };
 }
 
-// Generate droid
+// Droid generator stays same
 async function droidGenerator() {
   const droidModels = [
     { id: "utility", name: "Utility Droid" },
@@ -108,16 +324,19 @@ async function droidGenerator() {
   };
 }
 
-// Main generator
+// Main entrypoint
 async function main() {
-  const speciesPath = `/systems/foundryvtt-swse/data/species.json`;
+  const speciesPath = `/systems/foundryvtt-swse/data/races.js`; // You can load races from JS module, or embed directly
   const classesPath = `/systems/foundryvtt-swse/data/classes.json`;
+  const forcePowersPath = `/systems/foundryvtt-swse/data/forcepowers.json`;
 
-  let speciesList = [], classesList = [];
+  // Load classes and force powers JSON
+  let classesList = [];
+  let forcePowersList = [];
 
   try {
-    speciesList = await loadJSON(speciesPath);
     classesList = await loadJSON(classesPath);
+    forcePowersList = await loadJSON(forcePowersPath);
   } catch (err) {
     ui.notifications.error(`Error loading JSON: ${err.message}`);
     return;
@@ -144,7 +363,7 @@ async function main() {
   if (useGenerator) {
     let actorData = null;
     if (actorType === "character") {
-      actorData = await characterGenerator(speciesList, classesList);
+      actorData = await characterGenerator(classesList, forcePowersList);
     } else if (actorType === "droid") {
       actorData = await droidGenerator();
     }
