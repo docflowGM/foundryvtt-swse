@@ -18,10 +18,11 @@
     "maximum": "13"
   },
 
-  "esmodules": [
-    "scripts/swse.js",
-    "scripts/chargen.js"
-  ],
+"esmodules": [
+  "data/races.js",
+  "scripts/chargen.js"
+],
+"scripts": []
 
   "styles": [
     "styles/swse.css"
