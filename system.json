@@ -62,14 +62,7 @@
       "description": "Equipment data for SWSE",
       "path": "packs/swse-equipment.db",
       "entity": "Item"
-    }
-  ],
-
-  "languages": [
-    { "lang": "en", "name": "English", "path": "lang/en.json" },
-    { "lang": "fr", "name": "Français", "path": "lang/fr.json" }
-  ],
-
+    },
   "grid": {
     "distance": 1,
     "units": "m"
