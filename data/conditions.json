@@ -1,46 +1,70 @@
-{
-  "conditions": [
+"conditions": [
     {
-      "name": "Normal",
       "id": "normal",
-      "duration": {
-        "type": "instant"
-      }
+      "name": "Normal",
+      "description": "No penalties or special status.",
+      "effects": [],
+      "rollable": {}
     },
     {
+      "id": "ct_-1",
       "name": "Condition Track -1",
-      "id": "condition-track--1",
-      "duration": {
-        "type": "instant"
-      }
+      "description": "-1 penalty to all defenses; -1 penalty on attack rolls, ability checks, and skill checks.",
+      "effects": [
+        { "type": "defense_penalty", "value": -1 },
+        { "type": "attack_penalty", "value": -1 },
+        { "type": "ability_checks_penalty", "value": -1 },
+        { "type": "skill_checks_penalty", "value": -1 }
+      ],
+      "rollable": {}
     },
     {
+      "id": "ct_-2",
       "name": "Condition Track -2",
-      "id": "condition-track--2",
-      "duration": {
-        "type": "instant"
-      }
+      "description": "-2 penalty to all defenses; -2 penalty on attack rolls, ability checks, and skill checks.",
+      "effects": [
+        { "type": "defense_penalty", "value": -2 },
+        { "type": "attack_penalty", "value": -2 },
+        { "type": "ability_checks_penalty", "value": -2 },
+        { "type": "skill_checks_penalty", "value": -2 }
+      ],
+      "rollable": {}
     },
     {
+      "id": "ct_-3",
       "name": "Condition Track -3",
-      "id": "condition-track--3",
-      "duration": {
-        "type": "instant"
-      }
+      "description": "-5 penalty to all defenses; -5 penalty on attack rolls, ability checks, and skill checks.",
+      "effects": [
+        { "type": "defense_penalty", "value": -5 },
+        { "type": "attack_penalty", "value": -5 },
+        { "type": "ability_checks_penalty", "value": -5 },
+        { "type": "skill_checks_penalty", "value": -5 }
+      ],
+      "rollable": {}
     },
     {
+      "id": "ct_-4",
       "name": "Condition Track -4",
-      "id": "condition-track--4",
-      "duration": {
-        "type": "instant"
-      }
+      "description": "Move at half speed; -10 penalty to all defenses; -10 penalty on attack rolls, ability checks, and skill checks.",
+      "effects": [
+        { "type": "movement_multiplier", "value": 0.5 },
+        { "type": "defense_penalty", "value": -10 },
+        { "type": "attack_penalty", "value": -10 },
+        { "type": "ability_checks_penalty", "value": -10 },
+        { "type": "skill_checks_penalty", "value": -10 }
+      ],
+      "rollable": {}
     },
     {
+      "id": "ct_-5",
       "name": "Condition Track -5 (Helpless / Unconscious / Disabled)",
-      "id": "condition-track--5-helpless-unconscious-disabled",
-      "duration": {
-        "type": "instant"
-      }
+      "description": "Helpless: unconscious or disabled. For creatures: unconscious and dying; for droids/objects: disabled.",
+      "effects": [
+        { "type": "helpless", "value": true },
+        { "type": "dex_as_zero", "value": true },
+        { "type": "cannot_act", "value": true }
+      ],
+      "rollable": {}
     },
     {
       "name": "Prone",
