@@ -19,9 +19,10 @@
   },
 
   "esmodules": [
-    "scripts/swse.js",
+    "data/races.js",
     "scripts/chargen.js"
   ],
+  "scripts": [],
 
   "styles": [
     "styles/swse.css"
