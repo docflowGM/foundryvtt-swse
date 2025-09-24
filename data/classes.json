@@ -103,7 +103,7 @@
         "class_features": "Bonus Feat (Jedi)"
       }
     ],
-    "class_skill_mod": "Trained in 2 + Intelligence Modifier:",
+    "class_skill_mod": "Trained in 2 + int mod:",
     "class_skill_list": [
       "Acrobatics",
       "Endurance",
@@ -115,15 +115,40 @@
       "Pilot",
       "Use the Force"
     ],
-    "hit_points_level_1": "Jedi begin play at 1st level with a number of hit points equal to 30 + Constitution modifier. At each level after 1st, Jedi gain 1d10 hit points + their Constitution Modifier.",
-    "hit_points_per_level": "Jedi gain a number of Force Points equal to 5+ one-half their character level (rounded down) at 1st level, and every time they gain a new level in this Class . Any Force Points left over from the previous levels are lost.",
+    "hit_points_level_1": "30 + Con mod",
+    "hit_points_per_level": "1d10 + Con mod",
     "class_features": [
       "Force Sensitivity",
       "Weapon Proficiency (Lightsabers)",
       "Weapon Proficiency (Simple Weapons)"
     ],
     "starting_feats": [],
-    "credits": "A 1st-level Jedi starts play with 3d4 x 100 credits."
+    "credits": "A 1st-level Jedi starts play with 3d4 x 100 credits.",
+    "hp_per_level_die": "1d10",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Noble",
@@ -229,7 +254,7 @@
         "class_features": "Bonus Feat (Noble)"
       }
     ],
-    "class_skill_mod": "Trained in 6 + Intelligence Modifier:",
+    "class_skill_mod": "Trained in 6 + int mod:",
     "class_skill_list": [
       "Deception",
       "Gather Information",
@@ -242,15 +267,40 @@
       "Treat Injury",
       "Use Computer"
     ],
-    "hit_points_level_1": "Nobles begin play at 1st level with a number of hit points equal to 18 + their Constitution modifier. At each level after 1st, Nobles gain 1d6 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Nobles gain a number of Force Points equal to 5 + one-half their character level (rounded down) at 1st level, and every time they gain a level in this Class . Any Force Points left over from previous levels are lost.",
+    "hit_points_level_1": "18 + Con mod",
+    "hit_points_per_level": "1d6 + Con mod",
     "class_features": [
       "Linguist*",
       "Weapon Proficiency (Pistols)",
       "Weapon Proficiency (Simple Weapons)"
     ],
     "starting_feats": [],
-    "credits": "A 1st level Noble starts play with 3d4 x 400 credits."
+    "credits": "A 1st level Noble starts play with 3d4 x 400 credits.",
+    "hp_per_level_die": "1d6",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Scoundrel",
@@ -356,7 +406,7 @@
         "class_features": "Bonus Feat (Scoundrel)"
       }
     ],
-    "class_skill_mod": "Trained in 4 + Intelligence Modifier:",
+    "class_skill_mod": "Trained in 4 + int mod:",
     "class_skill_list": [
       "Acrobatics",
       "Deception",
@@ -370,15 +420,40 @@
       "Stealth",
       "Use Computer"
     ],
-    "hit_points_level_1": "Scoundrels begin play at 1st level with a number of hit points equal to 18 + their Constitution modifier. At each level after 1st, Scoundrels gain 1d6 hit point + their Constitution modifier.",
-    "hit_points_per_level": "Scoundrels gain a number of Force Points equal to 5 + one-half their character level (rounded down) at 1st level, and every time they gain a new level in this class. Any Force Points left over from previous levels are lost.",
+    "hit_points_level_1": "18 + Con mod",
+    "hit_points_per_level": "1d6 + Con mod",
     "class_features": [
       "Point-Blank Shot",
       "Weapon Proficiency (Pistols)",
       "Weapon Proficiency (Simple Weapons)"
     ],
     "starting_feats": [],
-    "credits": "A 1st-level Scoundrel starts play with 3d4 x 250 credits."
+    "credits": "A 1st-level Scoundrel starts play with 3d4 x 250 credits.",
+    "hp_per_level_die": "1d6",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Scout",
@@ -484,7 +559,7 @@
         "class_features": "Bonus Feat (Scout)"
       }
     ],
-    "class_skill_mod": "Trained in 5 + Intelligence Modifier:",
+    "class_skill_mod": "Trained in 5 + int mod:",
     "class_skill_list": [
       "Climb",
       "Endurance",
@@ -499,8 +574,8 @@
       "Survival",
       "Swim"
     ],
-    "hit_points_level_1": "Scouts begin play at 1st level with a number of hit points equal to 24 + their Constitution modifier. At each level after 1st, Scouts gain 1d8 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Scouts gain a number of Force Points equal to 5 + one-half their Character Level (rounded down) at 1st level, and every time they gain a new level in this class. Any Force Points left over from previous levels are lost.",
+    "hit_points_level_1": "24 + Con mod",
+    "hit_points_per_level": "1d8 + Con mod",
     "class_features": [
       "Shake It Off*",
       "Weapon Proficiency (Pistols)",
@@ -508,7 +583,32 @@
       "Weapon Proficiency (Simple Weapons)"
     ],
     "starting_feats": [],
-    "credits": "A 1st level Scout starts play with 3d4 x 250 credits."
+    "credits": "A 1st level Scout starts play with 3d4 x 250 credits.",
+    "hp_per_level_die": "1d8",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Soldier",
@@ -614,7 +714,7 @@
         "class_features": "Bonus Feat (Soldier)"
       }
     ],
-    "class_skill_mod": "Trained in 3 + Intelligence modifier:",
+    "class_skill_mod": "Trained in 3 + int mod:",
     "class_skill_list": [
       "Climb",
       "Endurance",
@@ -628,8 +728,8 @@
       "Treat Injury",
       "Use Computer"
     ],
-    "hit_points_level_1": "Soldiers begin play at 1st level with a number of hit points equal to 30 + their Constitution modifier. At each level after 1st, Soldiers gain 1d10 hit points + their Constitution modifier.",
-    "hit_points_per_level": "Soldiers gain a number of Force Points equal to 5 + one-half their Character Level (rounded down) at 1st level, and every time they gain a new level in this class. Any Force Points left over from previous levels are lost.",
+    "hit_points_level_1": "30 + Con mod",
+    "hit_points_per_level": "1d10 + Con mod",
     "class_features": [
       "Armor Proficiency (Light)",
       "Armor Proficiency (Medium)",
@@ -638,10 +738,33 @@
       "Weapon Proficiency (Simple Weapons)"
     ],
     "starting_feats": [],
-    "credits": "A 1st-level Soldier starts play with 3d4 x 250 credits."
+    "credits": "A 1st-level Soldier starts play with 3d4 x 250 credits.",
+    "hp_per_level_die": "1d10",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
-  
-][
   {
     "class_name": "Ace Pilot",
     "level_table": [
@@ -720,7 +843,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Ace_Pilot"
+    "source_url": "https://swse.fandom.com/wiki/Ace_Pilot",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Bounty Hunter",
@@ -800,7 +950,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Bounty_Hunter"
+    "source_url": "https://swse.fandom.com/wiki/Bounty_Hunter",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Crime Lord",
@@ -880,7 +1057,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Crime_Lord"
+    "source_url": "https://swse.fandom.com/wiki/Crime_Lord",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Elite Trooper",
@@ -960,7 +1164,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Elite_Trooper"
+    "source_url": "https://swse.fandom.com/wiki/Elite_Trooper",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Force Adept",
@@ -1040,7 +1271,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Force_Adept"
+    "source_url": "https://swse.fandom.com/wiki/Force_Adept",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Force Disciple",
@@ -1085,7 +1343,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Force_Disciple"
+    "source_url": "https://swse.fandom.com/wiki/Force_Disciple",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Gunslinger",
@@ -1165,7 +1450,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Gunslinger"
+    "source_url": "https://swse.fandom.com/wiki/Gunslinger",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Jedi Knight",
@@ -1245,7 +1557,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Jedi_Knight"
+    "source_url": "https://swse.fandom.com/wiki/Jedi_Knight",
+    "hit_points_level_1": "30 + Con mod",
+    "hp_per_level_die": "1d10",
+    "hit_points_per_level": "1d10 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Jedi Master",
@@ -1290,7 +1629,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Jedi_Master"
+    "source_url": "https://swse.fandom.com/wiki/Jedi_Master",
+    "hit_points_level_1": "30 + Con mod",
+    "hp_per_level_die": "1d10",
+    "hit_points_per_level": "1d10 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Officer",
@@ -1370,7 +1736,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Officer"
+    "source_url": "https://swse.fandom.com/wiki/Officer",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Sith Apprentice",
@@ -1450,7 +1843,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Sith_Apprentice"
+    "source_url": "https://swse.fandom.com/wiki/Sith_Apprentice",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Sith Lord",
@@ -1495,7 +1915,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Sith_Lord"
+    "source_url": "https://swse.fandom.com/wiki/Sith_Lord",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Corporate Agent",
@@ -1575,7 +2022,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Corporate_Agent"
+    "source_url": "https://swse.fandom.com/wiki/Corporate_Agent",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Gladiator",
@@ -1655,7 +2129,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Gladiator"
+    "source_url": "https://swse.fandom.com/wiki/Gladiator",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Melee Duelist",
@@ -1735,7 +2236,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Melee_Duelist"
+    "source_url": "https://swse.fandom.com/wiki/Melee_Duelist",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Enforcer",
@@ -1815,7 +2343,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Enforcer"
+    "source_url": "https://swse.fandom.com/wiki/Enforcer",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Independent Droid",
@@ -1895,7 +2450,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Independent_Droid"
+    "source_url": "https://swse.fandom.com/wiki/Independent_Droid",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Infiltrator",
@@ -1975,7 +2557,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Infiltrator"
+    "source_url": "https://swse.fandom.com/wiki/Infiltrator",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Master Privateer",
@@ -2055,7 +2664,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Master_Privateer"
+    "source_url": "https://swse.fandom.com/wiki/Master_Privateer",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Medic",
@@ -2135,7 +2771,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Medic"
+    "source_url": "https://swse.fandom.com/wiki/Medic",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Saboteur",
@@ -2215,7 +2878,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Saboteur"
+    "source_url": "https://swse.fandom.com/wiki/Saboteur",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Assassin",
@@ -2295,7 +2985,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Assassin"
+    "source_url": "https://swse.fandom.com/wiki/Assassin",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Charlatan",
@@ -2375,7 +3092,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Charlatan"
+    "source_url": "https://swse.fandom.com/wiki/Charlatan",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Outlaw",
@@ -2455,7 +3199,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Outlaw"
+    "source_url": "https://swse.fandom.com/wiki/Outlaw",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Droid Commander",
@@ -2535,7 +3306,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Droid_Commander"
+    "source_url": "https://swse.fandom.com/wiki/Droid_Commander",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Military Engineer",
@@ -2615,7 +3413,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Military_Engineer"
+    "source_url": "https://swse.fandom.com/wiki/Military_Engineer",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Vanguard",
@@ -2695,7 +3520,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Vanguard"
+    "source_url": "https://swse.fandom.com/wiki/Vanguard",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Imperial Knight",
@@ -2775,7 +3627,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Imperial_Knight"
+    "source_url": "https://swse.fandom.com/wiki/Imperial_Knight",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Shaper",
@@ -2855,7 +3734,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Shaper"
+    "source_url": "https://swse.fandom.com/wiki/Shaper",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Improviser",
@@ -2935,7 +3841,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Improviser"
+    "source_url": "https://swse.fandom.com/wiki/Improviser",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Pathfinder",
@@ -3015,7 +3948,34 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Pathfinder"
+    "source_url": "https://swse.fandom.com/wiki/Pathfinder",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   },
   {
     "class_name": "Martial Arts Master",
@@ -3095,6 +4055,33 @@
     "hit_points": null,
     "starting_feats": [],
     "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Martial_Arts_Master"
+    "source_url": "https://swse.fandom.com/wiki/Martial_Arts_Master",
+    "hit_points_level_1": "20 + Con mod",
+    "hp_per_level_die": "1d8",
+    "hit_points_per_level": "1d8 + Con mod",
+    "force_points": {
+      "name": "Force Points",
+      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
+      "formula": "5 + floor(level / 2)",
+      "applies": {
+        "at_first_level": true,
+        "on_each_level_gain": true
+      },
+      "rounding": "floor",
+      "examples": [
+        {
+          "level": 1,
+          "result": 5
+        },
+        {
+          "level": 3,
+          "result": 6
+        },
+        {
+          "level": 4,
+          "result": 7
+        }
+      ]
+    }
   }
 ]
