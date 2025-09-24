@@ -2,7 +2,7 @@
   "id": "swse",
   "title": "Star Wars Saga Edition (SWSE)",
   "description": "A community-created system for running Star Wars Saga Edition in FoundryVTT.",
-  "version": "0.1.0",
+  "version": "0.1.1",
 
   "authors": [
     { "name": "docflowGM", "url": "https://github.com/docflowGM" }
