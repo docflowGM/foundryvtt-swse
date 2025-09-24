@@ -78,9 +78,10 @@
   "initiative": "1d20",
   "socket": true,
 
-  "actorTypes": [
-    "character",
-    "vehicle",
-    "npc"
-  ]
+"actorTypes": [
+  "character",
+  "vehicle",
+  "npc"
+],
+"primaryActorType": "character"
 }
