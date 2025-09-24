@@ -1,0 +1,354 @@
+{
+  "meta": {
+    "title": "Saga Edition — Conditions (rollable)",
+    "source": "Combat_Skills_Summary_v3.pdf (extracted)",
+    "notes": "Each condition entry includes mechanical effects and, where relevant, rollable damage expressions in standard dice notation."
+  },
+  "conditions": [
+    {
+      "id": "normal",
+      "name": "Normal",
+      "description": "No penalties or special status.",
+      "effects": [],
+      "rollable": {}
+    },
+    {
+      "id": "ct_-1",
+      "name": "Condition Track -1",
+      "description": "-1 penalty to all defenses; -1 penalty on attack rolls, ability checks, and skill checks.",
+      "effects": [
+        { "type": "defense_penalty", "value": -1 },
+        { "type": "attack_penalty", "value": -1 },
+        { "type": "ability_checks_penalty", "value": -1 },
+        { "type": "skill_checks_penalty", "value": -1 }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "ct_-2",
+      "name": "Condition Track -2",
+      "description": "-2 penalty to all defenses; -2 penalty on attack rolls, ability checks, and skill checks.",
+      "effects": [
+        { "type": "defense_penalty", "value": -2 },
+        { "type": "attack_penalty", "value": -2 },
+        { "type": "ability_checks_penalty", "value": -2 },
+        { "type": "skill_checks_penalty", "value": -2 }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "ct_-3",
+      "name": "Condition Track -3",
+      "description": "-5 penalty to all defenses; -5 penalty on attack rolls, ability checks, and skill checks.",
+      "effects": [
+        { "type": "defense_penalty", "value": -5 },
+        { "type": "attack_penalty", "value": -5 },
+        { "type": "ability_checks_penalty", "value": -5 },
+        { "type": "skill_checks_penalty", "value": -5 }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "ct_-4",
+      "name": "Condition Track -4",
+      "description": "Move at half speed; -10 penalty to all defenses; -10 penalty on attack rolls, ability checks, and skill checks.",
+      "effects": [
+        { "type": "movement_multiplier", "value": 0.5 },
+        { "type": "defense_penalty", "value": -10 },
+        { "type": "attack_penalty", "value": -10 },
+        { "type": "ability_checks_penalty", "value": -10 },
+        { "type": "skill_checks_penalty", "value": -10 }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "ct_-5",
+      "name": "Condition Track -5 (Helpless / Unconscious / Disabled)",
+      "description": "Helpless: unconscious or disabled. For creatures: unconscious and dying; for droids/objects: disabled.",
+      "effects": [
+        { "type": "helpless", "value": true },
+        { "type": "dex_as_zero", "value": true },
+        { "type": "cannot_act", "value": true }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "prone",
+      "name": "Prone",
+      "description": "Take -5 on melee attacks; attacking a prone target grants +5 melee but -5 ranged.",
+      "effects": [
+        { "type": "melee_attack_bonus_against_target", "value": 5 },
+        { "type": "ranged_attack_penalty_against_target", "value": -5 },
+        { "type": "attacker_penalty_melee", "value": -5 }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "flat_footed",
+      "name": "Flat-footed",
+      "description": "Lose Dexterity and Dodge bonuses to Reflex until first turn.",
+      "effects": [
+        { "type": "lose_dex_bonus_to_reflex", "value": true },
+        { "type": "lose_dodge_bonus_to_reflex", "value": true }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "helpless",
+      "name": "Helpless",
+      "description": "Bound, sleeping, unconscious, or otherwise unable to act; DEX = 0 (-5). Vulnerable to coup de grace.",
+      "effects": [
+        { "type": "dex_value", "value": 0 },
+        { "type": "melee_attack_bonus_against_target", "value": 5 },
+        { "type": "can_be_coup_de_grace", "value": true }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "stunned",
+      "name": "Stunned",
+      "description": "Incapacitated and can take no actions; when stunned from stun-setting weapons, apply stun damage rules.",
+      "effects": [
+        { "type": "incapacitated", "value": true },
+        { "type": "cannot_act", "value": true }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "unconscious",
+      "name": "Unconscious",
+      "description": "Falls unconscious at 0 HP; make DC10 CON check every minute to regain consciousness; failure becomes persistent condition; failure by 5+ or natural 1 on check results in death.",
+      "effects": [
+        { "type": "unconscious", "value": true },
+        { "type": "condition_checks", "value": { "interval_minutes": 1, "dc": 10 } }
+      ],
+      "rollable": {
+        "regain_check": {
+          "label": "CON check to regain consciousness (1 minute intervals)",
+          "roll": "1d20 + CON_mod",
+          "success_threshold": 10,
+          "failure_effect": "remain_unconscious",
+          "critical_failure_effect": "die_if_fail_by_5_or_nat1"
+        }
+      }
+    },
+    {
+      "id": "dying",
+      "name": "Dying / At 0 HP",
+      "description": "At 0 HP: move -5 CT and fall unconscious; if damage that reduced you to 0 HP ≥ damage threshold, you die.",
+      "effects": [
+        { "type": "move_ct_minus", "value": -5 },
+        { "type": "fall_unconscious", "value": true },
+        { "type": "check_death_on_threshold", "value": true }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "dead",
+      "name": "Dead",
+      "description": "Character or object destroyed; can be revived only by specific powers or treatment (Revivify within 1 round using Treat Injury DC25).",
+      "effects": [
+        { "type": "dead", "value": true }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "persistent_condition",
+      "name": "Persistent Condition (poison, disease, etc.)",
+      "description": "Cannot use Recover or natural healing; requires specific treatment to remove. Effects vary by condition.",
+      "effects": [
+        { "type": "blocks_recover_and_natural_healing", "value": true }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "blinded",
+      "name": "Blinded",
+      "description": "Can't see, take -2 to Reflex, lose DEX bonus to Reflex, move at half speed, -5 Perception; all opponents have total concealment to you.",
+      "effects": [
+        { "type": "reflex_penalty", "value": -2 },
+        { "type": "lose_dex_bonus_to_reflex", "value": true },
+        { "type": "movement_multiplier", "value": 0.5 },
+        { "type": "perception_penalty", "value": -5 },
+        { "type": "opponents_total_concealment", "value": true }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "paralyzed",
+      "name": "Paralyzed",
+      "description": "Cannot move or act, treated as helpless, fails saving throws automatically depending on source.",
+      "effects": [
+        { "type": "cannot_act", "value": true },
+        { "type": "helpless", "value": true }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "immobilized",
+      "name": "Immobilized",
+      "description": "Cannot move but can take other actions if allowed by effect; treated as having movement 0.",
+      "effects": [
+        { "type": "movement_value", "value": 0 }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "dazed",
+      "name": "Dazed",
+      "description": "Able to take only a single move action or standard action, not both; effect specifics depend on source.",
+      "effects": [
+        { "type": "action_limitation", "value": "one_action_only" }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "entangled",
+      "name": "Entangled",
+      "description": "Move at half speed; -2 to attack rolls and Reflex; escape typically by Strength or Acrobatics check as defined by effect.",
+      "effects": [
+        { "type": "movement_multiplier", "value": 0.5 },
+        { "type": "attack_penalty", "value": -2 },
+        { "type": "reflex_penalty", "value": -2 }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "burning",
+      "name": "Burning",
+      "description": "Persistent fire damage each round until extinguished; sample roll provided for automation.",
+      "effects": [
+        { "type": "persistent_damage", "value": true }
+      ],
+      "rollable": {
+        "periodic_damage": {
+          "label": "Burning damage per round",
+          "roll": "1d6",
+          "notes": "GM may scale dice by source (e.g., larger explosions)."
+        }
+      }
+    },
+    {
+      "id": "poisoned",
+      "name": "Poisoned",
+      "description": "Effects vary by poison; often causes persistent CT loss or periodic damage until cured; sample generic poison roll included.",
+      "effects": [
+        { "type": "varies", "value": true }
+      ],
+      "rollable": {
+        "initial_save": {
+          "label": "Poison initial save (Fortitude)",
+          "roll": "1d20 + Fort_mod",
+          "success_threshold": "GM_defined"
+        },
+        "periodic_damage": {
+          "label": "Poison periodic damage",
+          "roll": "1d6",
+          "notes": "Use GM-defined damage and duration for specific poisons."
+        }
+      }
+    },
+    {
+      "id": "ion_damage",
+      "name": "Ion Damage (living and droid rules)",
+      "description": "Living creatures: subtract 1/4 of ion damage from HP; if reduced to 0 by ion, fall unconscious as if stunned. Droids/devices: subtract 1/2 ion damage from HP; if ion (pre-halving) exceeds DT, target moves -2 CT; reducing to 0 disables the droid/device.",
+      "effects": [
+        { "type": "living_damage_fraction", "value": 0.25 },
+        { "type": "droid_damage_fraction", "value": 0.5 },
+        { "type": "droid_dt_effect", "value": "if_prehalved_ion_exceeds_DT_then_-2_CT" }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "stun_setting_weapon",
+      "name": "Stun setting (weapons)",
+      "description": "Stun weapons deal stun damage equal to normal dice; apply half of stun damage to HP; if pre-halved stun damage exceeds DT, target moves -2 CT; if reduces HP to 0, target is unconscious or disabled.",
+      "effects": [
+        { "type": "stun_damage_halved_to_hp", "value": true },
+        { "type": "stun_dt_effect", "value": "if_prehalved_damage_exceeds_DT_then_-2_CT" }
+      ],
+      "rollable": {
+        "stun_damage_roll": {
+          "label": "Weapon stun damage roll",
+          "roll": "Weapon_damage_dice",
+          "post_process": "apply_half_to_HP"
+        }
+      }
+    },
+    {
+      "id": "falling_damage",
+      "name": "Falling Damage",
+      "description": "Make attack roll 1d20 + 20 vs Fort; on success take 1d6 per 2 squares (3m) fallen, up to 20d6; on failed save take half that amount. Landing prone is implied.",
+      "effects": [
+        { "type": "requires_save", "save": "Fortitude", "save_roll": "1d20 + 20", "success": "full_damage", "failure": "half_damage" },
+        { "type": "landing_status", "value": "prone" }
+      ],
+      "rollable": {
+        "falling_distance_to_dice": {
+          "label": "Falling damage dice from distance",
+          "formula_description": "1d6 per 2 squares (3 meters)",
+          "dice_expression_template": "Xd6 (where X = min(20, floor( (distance_meters) / 3 )))"
+        },
+        "save_roll": {
+          "label": "Fortitude check to reduce falling damage",
+          "roll": "1d20 + 20",
+          "interpretation": "If roll >= target Fortitude, apply full Xd6; otherwise apply floor(Xd6 / 2)"
+        }
+      }
+    },
+    {
+      "id": "critical_hit",
+      "name": "Critical Hit (auto-critical on coup de grace or nat20)",
+      "description": "Natural 20 is always a critical hit. Coup de grace against helpless is automatic critical and lethal. Criticals have effects per weapon rules and may apply extra effects determined by weapon table.",
+      "effects": [
+        { "type": "auto_crit", "value": true },
+        { "type": "lethal_if_coup_de_grace", "value": true }
+      ],
+      "rollable": {}
+    },
+    {
+      "id": "shield_rating",
+      "name": "Shield Rating (SR) mechanics",
+      "description": "SR absorbs damage up to SR; damage exceeding SR reduces SR by 5 and the remainder hits HP. Recharge: Mechanics DC20 with 3 swift actions to restore 5 SR.",
+      "effects": [
+        { "type": "sr_absorption", "value": true },
+        { "type": "sr_overflow_effect", "value": "excess_hits_hp" }
+      ],
+      "rollable": {
+        "recharge_sr": {
+          "label": "Recharge shields (Mechanics check)",
+          "roll": "1d20 + Mechanics_mod",
+          "success_threshold": 20,
+          "on_success": "restore 5_SR",
+          "action_cost": "3_swift_actions"
+        }
+      }
+    },
+    {
+      "id": "revivify",
+      "name": "Revivify (revive within 1 round)",
+      "description": "Revivify requires Treat Injury DC25 (full-round) and a medkit. Success returns a creature to life but unconscious.",
+      "effects": [
+        { "type": "revivify_check", "value": "Treat Injury DC25" }
+      ],
+      "rollable": {
+        "revivify_check": {
+          "label": "Revivify Treat Injury",
+          "roll": "1d20 + TreatInjury_mod",
+          "success_threshold": 25,
+          "on_success": "target_revived_unconscious"
+        }
+      }
+    },
+    {
+      "id": "damage_threshold_check",
+      "name": "Damage Threshold (DT) effect",
+      "description": "If damage taken in a single instance >= target's DT, move -1 CT. If damage that reduced you to 0 HP >= DT, you die.",
+      "effects": [
+        { "type": "apply_dt", "value": "if_damage >= DT then move_-1_CT" },
+        { "type": "death_on_zero_hp_exceed_dt", "value": "if_reduced_to_0_and_damage >= DT then die" }
+      ],
+      "rollable": {}
+    }
+  ]
+}
