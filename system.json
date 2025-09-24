@@ -21,6 +21,8 @@
   "esmodules": [
     "scripts/swse.js"
   ],
+  "scripts/chargen.js"
+
   "styles": [
     "styles/swse.css"
   ],
