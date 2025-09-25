@@ -83,6 +83,10 @@
     "npc",
     "droid"
   ],
+"types": {
+  "Actor": ["character", "npc", "droid", "vehicle"],
+  "Item": ["feat", "talent", "power", "equipment", "weapon"]
+}
 
   "primaryActorType": "character"
 }
