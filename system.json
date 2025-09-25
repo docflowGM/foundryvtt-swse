@@ -5,10 +5,7 @@
   "version": "0.1.0",
 
   "authors": [
-    {
-      "name": "docflowGM",
-      "url": "https://github.com/docflowGM"
-    }
+    { "name": "docflowGM", "url": "https://github.com/docflowGM" }
   ],
 
   "url": "https://github.com/docflowGM/foundryvtt-swse",
@@ -22,11 +19,9 @@
   },
 
   "esmodules": [
-    "data/races.js",
-    "scripts/chargen.js"
+    "swse.js"
   ],
   "scripts": [],
-
   "styles": [
     "styles/swse.css"
   ],
@@ -35,39 +30,39 @@
     {
       "name": "swse-classes",
       "label": "SWSE Classes",
-      "description": "Class data for SWSE characters",
       "path": "packs/swse-classes.db",
       "type": "Item"
     },
     {
       "name": "swse-talents",
       "label": "SWSE Talents",
-      "description": "Talent data for SWSE characters",
       "path": "packs/swse-talents.db",
       "type": "Item"
     },
     {
       "name": "swse-feats",
       "label": "SWSE Feats",
-      "description": "Feat data for SWSE characters",
       "path": "packs/swse-feats.db",
       "type": "Item"
     },
     {
       "name": "swse-vehicles",
       "label": "SWSE Vehicles",
-      "description": "Vehicle data for SWSE",
       "path": "packs/swse-vehicles.db",
       "type": "Actor"
     },
     {
       "name": "swse-equipment",
       "label": "SWSE Equipment",
-      "description": "Equipment data for SWSE",
       "path": "packs/swse-equipment.db",
       "type": "Item"
     }
   ],
+
+  "types": {
+    "Actor": ["character", "npc", "droid", "vehicle"],
+    "Item": ["feat", "talent", "power", "equipment", "weapon"]
+  },
 
   "grid": {
     "distance": 1,
@@ -76,17 +71,6 @@
 
   "initiative": "1d20",
   "socket": true,
-
-  "actorTypes": [
-    "character",
-    "vehicle",
-    "npc",
-    "droid"
-  ],
-"types": {
-  "Actor": ["character", "npc", "droid", "vehicle"],
-  "Item": ["feat", "talent", "power", "equipment", "weapon"]
-}
 
   "primaryActorType": "character"
 }
