@@ -1,7 +1,7 @@
+// systems/swse/swse.js
 //──────────────────────────────────────────────────────────────────────────────
 // Imports & Constants
 //──────────────────────────────────────────────────────────────────────────────
-// systems/swse/swse.js
 import "./scripts/races.js";
 import "./scripts/swse-actor.js";
 import "./scripts/swse-droid.js";
@@ -20,15 +20,37 @@ const CONDITION_PENALTIES = {
 // Initialization Hook
 //──────────────────────────────────────────────────────────────────────────────
 Hooks.once("init", () => {
+  // Actor registration
   CONFIG.Actor.documentClass = SWSEActor;
+
   Actors.registerSheet("swse", SWSEActorSheet, {
     types: ["character"],
+    makeDefault: true
+  });
+
+  Actors.registerSheet("swse", SWSEDroidSheet, {
+    types: ["droid"],
+    makeDefault: true
+  });
+
+  Actors.registerSheet("swse", SWSEVehicleSheet, {
+    types: ["vehicle"],
+    makeDefault: true
+  });
+
+  Actors.registerSheet("swse", SWSEActorSheet, {
+    types: ["npc"],
+    makeDefault: true
+  });
+
+  // Item registration
+  Items.registerSheet("swse", SWSEItemSheet, {
     makeDefault: true
   });
 });
 
 //──────────────────────────────────────────────────────────────────────────────
-// Actor Class
+// Base Actor Class
 //──────────────────────────────────────────────────────────────────────────────
 class SWSEActor extends Actor {
   prepareData() {
@@ -51,7 +73,7 @@ class SWSEActor extends Actor {
   }
 
   _applyConditionPenalty() {
-    this.conditionPenalty = 
+    this.conditionPenalty =
       CONDITION_PENALTIES[this.system.conditionTrack] || 0;
   }
 
@@ -60,8 +82,8 @@ class SWSEActor extends Actor {
     const penalty = this.conditionPenalty;
 
     for (const def of Object.values(defenses)) {
-      const abilMod = def.ability 
-        ? this.system.abilities[def.ability]?.mod || 0 
+      const abilMod = def.ability
+        ? this.system.abilities[def.ability]?.mod || 0
         : 0;
 
       def.level = level;
@@ -99,30 +121,16 @@ class SWSEActor extends Actor {
 }
 
 //──────────────────────────────────────────────────────────────────────────────
-// Base Sheet Class
+// Sheet Classes
 //──────────────────────────────────────────────────────────────────────────────
 class SWSEActorSheet extends ActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor"],
+      template: "systems/swse/templates/actor/character-sheet.hbs",
       width: 800,
       height: "auto"
     });
-  }
-
-  /** Load a template based on actor type */
-  get template() {
-    switch (this.actor.type) {
-      case "droid":
-        return "systems/swse/templates/actor/droid-sheet.hbs";
-      case "vehicle":
-        return "systems/swse/templates/actor/vehicle-sheet.hbs";
-      case "npc":
-        return "systems/swse/templates/actor/npc-sheet.hbs";
-      case "character":
-      default:
-        return "systems/swse/templates/actor/character-sheet.hbs";
-    }
   }
 
   getData() {
@@ -163,6 +171,41 @@ class SWSEActorSheet extends ActorSheet {
         });
       }
     });
+  }
+}
+
+// Droid Sheet (using droid template)
+class SWSEDroidSheet extends SWSEActorSheet {
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      template: "systems/swse/templates/actor/droid-sheet.hbs"
+    });
+  }
+}
+
+// Vehicle Sheet (using vehicle template)
+class SWSEVehicleSheet extends SWSEActorSheet {
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      template: "systems/swse/templates/actor/vehicle-sheet.hbs"
+    });
+  }
+}
+
+// Item Sheet
+class SWSEItemSheet extends ItemSheet {
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: ["swse", "sheet", "item"],
+      template: "systems/swse/templates/item/item-sheet.hbs",
+      width: 520,
+      height: "auto"
+    });
+  }
+
+  getData() {
+    const data = super.getData();
+    return data;
   }
 }
 
