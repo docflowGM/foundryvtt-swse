@@ -5,7 +5,10 @@
   "version": "0.1.0",
 
   "authors": [
-    { "name": "docflowGM", "url": "https://github.com/docflowGM" }
+    {
+      "name": "docflowGM",
+      "url": "https://github.com/docflowGM"
+    }
   ],
 
   "url": "https://github.com/docflowGM/foundryvtt-swse",
@@ -34,35 +37,35 @@
       "label": "SWSE Classes",
       "description": "Class data for SWSE characters",
       "path": "packs/swse-classes.db",
-      "entity": "Item"
+      "type": "Item"
     },
     {
       "name": "swse-talents",
       "label": "SWSE Talents",
       "description": "Talent data for SWSE characters",
       "path": "packs/swse-talents.db",
-      "entity": "Item"
+      "type": "Item"
     },
     {
       "name": "swse-feats",
       "label": "SWSE Feats",
       "description": "Feat data for SWSE characters",
       "path": "packs/swse-feats.db",
-      "entity": "Item"
+      "type": "Item"
     },
     {
       "name": "swse-vehicles",
       "label": "SWSE Vehicles",
       "description": "Vehicle data for SWSE",
       "path": "packs/swse-vehicles.db",
-      "entity": "Actor"
+      "type": "Actor"
     },
     {
       "name": "swse-equipment",
       "label": "SWSE Equipment",
       "description": "Equipment data for SWSE",
       "path": "packs/swse-equipment.db",
-      "entity": "Item"
+      "type": "Item"
     }
   ],
 
