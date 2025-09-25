@@ -99,16 +99,30 @@ class SWSEActor extends Actor {
 }
 
 //──────────────────────────────────────────────────────────────────────────────
-// Sheet Class
+// Base Sheet Class
 //──────────────────────────────────────────────────────────────────────────────
 class SWSEActorSheet extends ActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor"],
-      template: "systems/swse/templates/actor/character-sheet.hbs",
       width: 800,
       height: "auto"
     });
+  }
+
+  /** Load a template based on actor type */
+  get template() {
+    switch (this.actor.type) {
+      case "droid":
+        return "systems/swse/templates/actor/droid-sheet.hbs";
+      case "vehicle":
+        return "systems/swse/templates/actor/vehicle-sheet.hbs";
+      case "npc":
+        return "systems/swse/templates/actor/npc-sheet.hbs";
+      case "character":
+      default:
+        return "systems/swse/templates/actor/character-sheet.hbs";
+    }
   }
 
   getData() {
