@@ -1,56 +1,25 @@
-// systems/swse/swse.js
 //──────────────────────────────────────────────────────────────────────────────
-// Imports & Constants
+// Imports
 //──────────────────────────────────────────────────────────────────────────────
 import "./scripts/races.js";
 import "./scripts/swse-actor.js";
 import "./scripts/swse-droid.js";
 import "./scripts/swse-vehicle.js";
 
+//──────────────────────────────────────────────────────────────────────────────
+// Constants
+//──────────────────────────────────────────────────────────────────────────────
 const CONDITION_PENALTIES = {
-  normal:   0,
-  "-1":    -1,
-  "-2":    -2,
-  "-5":    -5,
+  normal: 0,
+  "-1": -1,
+  "-2": -2,
+  "-5": -5,
   "-10": -10,
   helpless: -100
 };
 
 //──────────────────────────────────────────────────────────────────────────────
-// Initialization Hook
-//──────────────────────────────────────────────────────────────────────────────
-Hooks.once("init", () => {
-  // Actor registration
-  CONFIG.Actor.documentClass = SWSEActor;
-
-  Actors.registerSheet("swse", SWSEActorSheet, {
-    types: ["character"],
-    makeDefault: true
-  });
-
-  Actors.registerSheet("swse", SWSEDroidSheet, {
-    types: ["droid"],
-    makeDefault: true
-  });
-
-  Actors.registerSheet("swse", SWSEVehicleSheet, {
-    types: ["vehicle"],
-    makeDefault: true
-  });
-
-  Actors.registerSheet("swse", SWSEActorSheet, {
-    types: ["npc"],
-    makeDefault: true
-  });
-
-  // Item registration
-  Items.registerSheet("swse", SWSEItemSheet, {
-    makeDefault: true
-  });
-});
-
-//──────────────────────────────────────────────────────────────────────────────
-// Base Actor Class
+// Actor Class
 //──────────────────────────────────────────────────────────────────────────────
 class SWSEActor extends Actor {
   prepareData() {
@@ -61,20 +30,19 @@ class SWSEActor extends Actor {
   }
 
   _applyRacialAbilities() {
-    const raceKey      = this.system.race || "custom";
-    const raceBonuses  = SWSE_RACES[raceKey]?.bonuses || {};
+    const raceKey = this.system.race || "custom";
+    const raceBonuses = SWSE_RACES[raceKey]?.bonuses || {};
 
     for (const [abbr, ability] of Object.entries(this.system.abilities)) {
-      ability.base    = Math.max(0, ability.base);
-      ability.racial  = raceBonuses[abbr] || 0;
-      ability.total   = ability.base + ability.racial + (ability.temp || 0);
-      ability.mod     = Math.floor((ability.total - 10) / 2);
+      ability.base = Math.max(0, ability.base);
+      ability.racial = raceBonuses[abbr] || 0;
+      ability.total = ability.base + ability.racial + (ability.temp || 0);
+      ability.mod = Math.floor((ability.total - 10) / 2);
     }
   }
 
   _applyConditionPenalty() {
-    this.conditionPenalty =
-      CONDITION_PENALTIES[this.system.conditionTrack] || 0;
+    this.conditionPenalty = CONDITION_PENALTIES[this.system.conditionTrack] || 0;
   }
 
   _prepareDefenses() {
@@ -87,14 +55,15 @@ class SWSEActor extends Actor {
         : 0;
 
       def.level = level;
-      def.total = level
-        + (def.class          || 0)
-        + abilMod
-        + (def.armor          || 0)
-        + (def.armoredDefense || 0)
-        + (def.armorMastery   || 0)
-        + (def.modifier       || 0)
-        + (this.system.conditionTrack === "helpless" ? 0 : penalty);
+      def.total =
+        level +
+        (def.class || 0) +
+        abilMod +
+        (def.armor || 0) +
+        (def.armoredDefense || 0) +
+        (def.armorMastery || 0) +
+        (def.modifier || 0) +
+        (this.system.conditionTrack === "helpless" ? 0 : penalty);
     }
   }
 
@@ -109,19 +78,20 @@ class SWSEActor extends Actor {
   getSkillMod(skill) {
     if (this.system.conditionTrack === "helpless") return "N/A";
 
-    let mod = skill.value
-      + (this.system.abilities[skill.ability]?.mod || 0)
-      + this.getHalfLevel();
+    let mod =
+      skill.value +
+      (this.system.abilities[skill.ability]?.mod || 0) +
+      this.getHalfLevel();
 
     if (skill.trained) mod += 5;
-    if (skill.focus)   mod += 5;
+    if (skill.focus) mod += 5;
 
     return mod + this.getConditionPenalty();
   }
 }
 
 //──────────────────────────────────────────────────────────────────────────────
-// Sheet Classes
+// Actor Sheet
 //──────────────────────────────────────────────────────────────────────────────
 class SWSEActorSheet extends ActorSheet {
   static get defaultOptions() {
@@ -149,7 +119,7 @@ class SWSEActorSheet extends ActorSheet {
     const selectors = [".add-feat", ".add-talent", ".add-gear", ".add-weapon"];
     for (const sel of selectors) {
       html.find(sel).click(async () => {
-        const key  = sel.replace(".add-", "");
+        const key = sel.replace(".add-", "");
         const list = duplicate(this.actor.system[key] || []);
         list.push({ name: "", description: "" });
         await this.actor.update({ [`system.${key}`]: list });
@@ -166,7 +136,7 @@ class SWSEActorSheet extends ActorSheet {
           this.actor.system.hp.max
         );
         await this.actor.update({
-          "system.hp.value":         newHP,
+          "system.hp.value": newHP,
           "system.secondWind.uses": uses - 1
         });
       }
@@ -174,55 +144,29 @@ class SWSEActorSheet extends ActorSheet {
   }
 }
 
-// Droid Sheet (using droid template)
-class SWSEDroidSheet extends SWSEActorSheet {
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      template: "systems/swse/templates/actor/droid-sheet.hbs"
-    });
-  }
-}
-
-// Vehicle Sheet (using vehicle template)
-class SWSEVehicleSheet extends SWSEActorSheet {
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      template: "systems/swse/templates/actor/vehicle-sheet.hbs"
-    });
-  }
-}
-
+//──────────────────────────────────────────────────────────────────────────────
 // Item Sheet
+//──────────────────────────────────────────────────────────────────────────────
 class SWSEItemSheet extends ItemSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "item"],
       template: "systems/swse/templates/item/item-sheet.hbs",
-      width: 520,
+      width: 600,
       height: "auto"
     });
-  }
-
-  getData() {
-    const data = super.getData();
-    return data;
   }
 }
 
 //──────────────────────────────────────────────────────────────────────────────
-// Handlebars Helpers
+// Hooks
 //──────────────────────────────────────────────────────────────────────────────
-Handlebars.registerHelper("eq", (a, b) => a === b);
+Hooks.once("init", () => {
+  console.log("SWSE | Initializing system");
 
-Handlebars.registerHelper(
-  "getSkillMod",
-  (skill, abilities, level, conditionTrack) => {
-    if (conditionTrack === "helpless") return "N/A";
-    let mod = skill.value
-      + (abilities[skill.ability]?.mod || 0)
-      + Math.floor(level / 2);
-    if (skill.trained) mod += 5;
-    if (skill.focus)   mod += 5;
-    return mod + (CONDITION_PENALTIES[conditionTrack] || 0);
-  }
-);
+  CONFIG.Actor.documentClass = SWSEActor;
+
+  Actors.unregisterSheet("core", ActorSheet);
+  Actors.registerSheet("swse", SWSEActorSheet, { makeDefault: true });
+
+  Items.unregisterSheet("core
