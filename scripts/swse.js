@@ -1,107 +1,184 @@
-// scripts/swse.js
+//──────────────────────────────────────────────────────────────────────────────
+// Imports & Constants
+//──────────────────────────────────────────────────────────────────────────────
+// systems/swse/swse.js
+import "./scripts/races.js";
+import "./scripts/swse-actor.js";
+import "./scripts/swse-droid.js";
+import "./scripts/swse-vehicle.js";
 
+const CONDITION_PENALTIES = {
+  normal:   0,
+  "-1":    -1,
+  "-2":    -2,
+  "-5":    -5,
+  "-10": -10,
+  helpless: -100
+};
+
+//──────────────────────────────────────────────────────────────────────────────
+// Initialization Hook
+//──────────────────────────────────────────────────────────────────────────────
 Hooks.once("init", () => {
-  console.log("SWSE | Initializing system…");
+  CONFIG.Actor.documentClass = SWSEActor;
 
-  // Register a client setting to enable/disable the custom actor creation dialog
-  game.settings.register("swse", "overrideActorCreate", {
-    name: game.i18n.localize("SWSE.Settings.OverrideActorCreate.Name"),
-    hint: game.i18n.localize("SWSE.Settings.OverrideActorCreate.Hint"),
-    scope: "client",
-    config: true,
-    type: Boolean,
-    default: true
-  });
-
-  // Preload Handlebars templates (expand as needed)
-  const templatePaths = [
-    "templates/actor-sheet.hbs",
-    "templates/item-sheet.hbs"
-  ];
-  loadTemplates(templatePaths);
-});
-
-Hooks.once("ready", () => {
-  console.log("SWSE | Ready hook");
-
-  if (game.settings.get("swse", "overrideActorCreate")) {
-    patchActorDirectoryCreate();
+  // Register SWSE sheets for all actor types
+  for (const type of ["character", "vehicle", "npc", "droid"]) {
+    Actors.registerSheet("swse", SWSEActorSheet, {
+      types: [type],
+      makeDefault: true
+    });
   }
 });
 
-/**
- * Patch ActorDirectory's creation method to show a custom dialog
- * Supports Foundry versions pre- and post-v9
- */
-function patchActorDirectoryCreate() {
-  // Determine method name based on Foundry version
-  const methodName = typeof ActorDirectory.prototype._onCreateDocument === "function"
-    ? "_onCreateDocument"  // Foundry 9+
-    : "_onCreateEntity";   // Foundry 8 or earlier
+//──────────────────────────────────────────────────────────────────────────────
+// Pre-Create Hook (safety net for missing types)
+//──────────────────────────────────────────────────────────────────────────────
+Hooks.on("preCreateActor", (actor, data, options, userId) => {
+  if (!actor.type) {
+    actor.updateSource({ type: "character" }); // default type
+  }
+});
 
-  const original = ActorDirectory.prototype[methodName];
+//──────────────────────────────────────────────────────────────────────────────
+// Actor Class
+//──────────────────────────────────────────────────────────────────────────────
+class SWSEActor extends Actor {
+  prepareData() {
+    super.prepareData();
+    this._applyRacialAbilities();
+    this._applyConditionPenalty();
+    this._prepareDefenses();
+  }
 
-  ActorDirectory.prototype[methodName] = async function (event) {
-    event.preventDefault();
+  _applyRacialAbilities() {
+    const raceKey      = this.system.race || "custom";
+    const raceBonuses  = SWSE_RACES[raceKey]?.bonuses || {};
 
-    if (!game.settings.get("swse", "overrideActorCreate")) {
-      return original.call(this, event);
+    for (const [abbr, ability] of Object.entries(this.system.abilities)) {
+      ability.base    = Math.max(0, ability.base);
+      ability.racial  = raceBonuses[abbr] || 0;
+      ability.total   = ability.base + ability.racial + (ability.temp || 0);
+      ability.mod     = Math.floor((ability.total - 10) / 2);
     }
+  }
 
-    // Prevent multiple dialogs from stacking
-    if (ui.dialog && ui.dialog._state === true) return;
+  _applyConditionPenalty() {
+    this.conditionPenalty = 
+      CONDITION_PENALTIES[this.system.conditionTrack] || 0;
+  }
 
-    // Localized actor type choices
-    const typeChoices = {
-      character: game.i18n.localize("SWSE.ActorType.character"),
-      droid: game.i18n.localize("SWSE.ActorType.droid"),
-      vehicle: game.i18n.localize("SWSE.ActorType.vehicle")
-    };
+  _prepareDefenses() {
+    const { level, defenses } = this.system;
+    const penalty = this.conditionPenalty;
 
-    const options = Object.entries(typeChoices)
-      .map(([value, label]) => `<option value="${value}">${label}</option>`)
-      .join("");
+    for (const def of Object.values(defenses)) {
+      const abilMod = def.ability 
+        ? this.system.abilities[def.ability]?.mod || 0 
+        : 0;
 
-    // Render the dialog with type select and name input
-    new Dialog({
-      title: game.i18n.localize("SWSE.Dialog.CreateActor.Title"),
-      content: `
-        <form>
-          <div class="form-group">
-            <label>${game.i18n.localize("SWSE.Dialog.CreateActor.Prompt")}</label>
-            <select name="type">${options}</select>
-          </div>
-          <div class="form-group">
-            <label>${game.i18n.localize("SWSE.Dialog.CreateActor.Name")}</label>
-            <input type="text" name="name" placeholder="${game.i18n.localize("SWSE.Dialog.CreateActor.NamePlaceholder")}" />
-          </div>
-        </form>
-      `,
-      buttons: {
-        create: {
-          icon: "<i class='fas fa-check'></i>",
-          label: game.i18n.localize("SWSE.Dialog.CreateActor.Button.Create"),
-          callback: async (html) => {
-            const type = html.find("select[name='type']").val();
-            let name = html.find("input[name='name']").val().trim();
-            if (!name) {
-              name = `New ${type.charAt(0).toUpperCase() + type.slice(1)}`;
-            }
-            try {
-              await Actor.create({ name, type });
-            } catch (err) {
-              ui.notifications.error(`Failed to create actor: ${err.message}`);
-              console.error(err);
-            }
-          }
-        },
-        cancel: {
-          icon: "<i class='fas fa-times'></i>",
-          label: game.i18n.localize("SWSE.Dialog.CreateActor.Button.Cancel"),
-          callback: () => {}
-        }
-      },
-      default: "create"
-    }).render(true);
-  };
+      def.level = level;
+      def.total = level
+        + (def.class          || 0)
+        + abilMod
+        + (def.armor          || 0)
+        + (def.armoredDefense || 0)
+        + (def.armorMastery   || 0)
+        + (def.modifier       || 0)
+        + (this.system.conditionTrack === "helpless" ? 0 : penalty);
+    }
+  }
+
+  getHalfLevel() {
+    return Math.floor(this.system.level / 2);
+  }
+
+  getConditionPenalty() {
+    return CONDITION_PENALTIES[this.system.conditionTrack] || 0;
+  }
+
+  getSkillMod(skill) {
+    if (this.system.conditionTrack === "helpless") return "N/A";
+
+    let mod = skill.value
+      + (this.system.abilities[skill.ability]?.mod || 0)
+      + this.getHalfLevel();
+
+    if (skill.trained) mod += 5;
+    if (skill.focus)   mod += 5;
+
+    return mod + this.getConditionPenalty();
+  }
 }
+
+//──────────────────────────────────────────────────────────────────────────────
+// Sheet Class
+//──────────────────────────────────────────────────────────────────────────────
+class SWSEActorSheet extends ActorSheet {
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: ["swse", "sheet", "actor"],
+      template: "systems/swse/templates/actor/character-sheet.hbs",
+      width: 800,
+      height: "auto"
+    });
+  }
+
+  getData() {
+    const data = super.getData();
+    data.races = SWSE_RACES;
+    return data;
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    this._bindListButtons(html);
+    this._bindSecondWind(html);
+  }
+
+  _bindListButtons(html) {
+    const selectors = [".add-feat", ".add-talent", ".add-gear", ".add-weapon"];
+    for (const sel of selectors) {
+      html.find(sel).click(async () => {
+        const key  = sel.replace(".add-", "");
+        const list = duplicate(this.actor.system[key] || []);
+        list.push({ name: "", description: "" });
+        await this.actor.update({ [`system.${key}`]: list });
+      });
+    }
+  }
+
+  _bindSecondWind(html) {
+    html.find(".apply-second-wind").click(async () => {
+      const { healing = 0, uses = 0 } = this.actor.system.secondWind;
+      if (healing > 0 && uses > 0) {
+        const newHP = Math.min(
+          this.actor.system.hp.value + healing,
+          this.actor.system.hp.max
+        );
+        await this.actor.update({
+          "system.hp.value":         newHP,
+          "system.secondWind.uses": uses - 1
+        });
+      }
+    });
+  }
+}
+
+//──────────────────────────────────────────────────────────────────────────────
+// Handlebars Helpers
+//──────────────────────────────────────────────────────────────────────────────
+Handlebars.registerHelper("eq", (a, b) => a === b);
+
+Handlebars.registerHelper(
+  "getSkillMod",
+  (skill, abilities, level, conditionTrack) => {
+    if (conditionTrack === "helpless") return "N/A";
+    let mod = skill.value
+      + (abilities[skill.ability]?.mod || 0)
+      + Math.floor(level / 2);
+    if (skill.trained) mod += 5;
+    if (skill.focus)   mod += 5;
+    return mod + (CONDITION_PENALTIES[conditionTrack] || 0);
+  }
+);
