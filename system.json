@@ -59,9 +59,8 @@
   ],
 
   "types": {
-    "Actor": ["character", "npc", "droid", "vehicle"],
-    "Item": ["feat", "talent", "power", "equipment", "weapon"]
-  },
+    "actorTypes": ["character", "npc", "vehicle", "droid"],
+"itemTypes": ["weapon", "gear", "feat", "talent"]
 
   "grid": {
     "distance": 1,
