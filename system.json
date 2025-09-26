@@ -22,12 +22,14 @@
   },
 
   "esmodules": [
-    "swse.js"
+    "scripts/swse.js"
   ],
   "scripts": [],
-
   "styles": [
-    "styles/swse.css"
+    "styles/swse.css",
+    "styles/swse-levelup.css",
+    "styles/swse-vehicles.css",
+    "system/swse.css"
   ],
 
   "packs": [
