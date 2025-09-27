@@ -1,1 +1,23 @@
+{
+  "Actor": {
+    "character": { ... contents of template-actor.json ... },
+    "droid": { ... contents of template-droid.json ... },
+    "npc": { ... contents of template-npc.json ... },
+    "vehicle": { ... contents of template-vehicle.json ... }
+  },
+  "Item": {
+    "class": { "type": "class", "system": {} },
+    "feat": { "type": "feat", "system": {} },
+    "talent": { "type": "talent", "system": {} },
+    "forcepower": { "type": "forcepower", "system": {} },
+    "equipment": { "type": "equipment", "system": {} },
+    "weapon": { "type": "weapon", "system": {} },
+    "armor": { "type": "armor", "system": {} },
+    "skill": { "type": "skill", "system": {} },
+    "attribute": { "type": "attribute", "system": {} },
+    "condition": { "type": "condition", "system": {} },
+    "combat-action": { "type": "combat-action", "system": {} },
+    "extra-skill-use": { "type": "extra-skill-use", "system": {} }
+  }
+}
 
