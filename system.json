@@ -22,18 +22,13 @@
   },
 
   "esmodules": [
-    "scripts/swse.js",
-    "scripts/swse-actor.js",
-    "scripts/swse-droid.js",
-    "scripts/swse-vehicle.js",
-    "scripts/races.js"
+    "system/swse.js"
   ],
   "scripts": [],
   "styles": [
     "styles/swse.css",
     "styles/swse-levelup.css",
-    "styles/swse-vehicles.css",
-    "system/swse.css"
+    "styles/swse-vehicles.css"
   ],
 
   "packs": [
