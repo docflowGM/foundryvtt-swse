@@ -21,11 +21,12 @@ Hooks.once("init", () => {
   });
 });
 
-//────────────────────────────────────────────
-// Ensure every actor has a type
-//────────────────────────────────────────────
-Hooks.on("preCreateActor", (doc, data, options, userId) => {
+//────────────────────────────────────────────────────────────
+// Fallback: Ensure all new actors have a type
+//────────────────────────────────────────────────────────────
+Hooks.on("preCreateActor", (actor, data, options, userId) => {
   if (!data.type) {
-    doc.updateSource({ type: "character" });
+    console.warn("[SWSE] Actor created without type, defaulting to 'character'");
+    actor.updateSource({ type: "character" });
   }
 });
