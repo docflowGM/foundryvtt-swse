@@ -29,7 +29,7 @@
     "scripts/chargen.js",
     "scripts/dice-utils.js",
     "scripts/diceroller.js",
-    "scripts/load-templates.js"   // ✅ Added here
+    "scripts/load-templates.js"
   ],
 
   "esmodules": [
