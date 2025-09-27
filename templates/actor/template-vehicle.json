@@ -2,6 +2,13 @@
   "name": "New Vehicle",
   "type": "vehicle",
   "img": "icons/svg/ship.svg",
+  "prototypeToken": {
+    "name": "New Vehicle",
+    "displayName": 0,
+    "actorLink": false,
+    "texture": { "src": "icons/svg/ship.svg" },
+    "vision": false
+  },
   "system": {
     "model": "",
     "size": "medium",
@@ -20,11 +27,17 @@
     "crew": {
       "pilot": "",
       "shields": "",
-      "engineer": ""
+      "engineer": "",
+      "gunners": []
+    },
+    "defenses": {
+      "reflex": { "ability": "dex", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+      "fortitude": { "ability": "con", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+      "will": { "ability": "wis", "class": 0, "armor": 0, "misc": 0, "total": 0 }
     },
     "weapons": [
       {
-        "name": "",
+        "name": "Laser Cannon",
         "attackAttr": "dex",
         "damage": "1d8",
         "damageAttr": "none",
@@ -34,7 +47,9 @@
         "usePilot": false,
         "gunner": ""
       }
-    ]
+    ],
+    "cargo": [],
+    "mods": []
   },
   "items": []
 }
