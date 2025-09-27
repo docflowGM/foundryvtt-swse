@@ -32,9 +32,9 @@
     "scripts/load-templates.js"
   ],
 
- "esmodules": [
-  "system/swse.js",
-  "scripts/import-data.js"
+  "esmodules": [
+    "system/swse.js",
+    "scripts/import-data.js"
   ],
 
   "styles": [
@@ -60,29 +60,15 @@
     { "name": "swse-special-combat-conditions", "label": "SWSE Special Combat Conditions", "path": "packs/swse-special-combat-conditions.db", "type": "Item", "system": "swse" },
     { "name": "swse-weapons", "label": "SWSE Weapons", "path": "packs/swse-weapons.db", "type": "Item", "system": "swse" }
   ],
-"types": {
-  "Actor": ["character", "droid", "vehicle"],
-  "Item": [
-    "class",
-    "feat",
-    "talent",
-    "forcepower",
-    "equipment",
-    "weapon",
-    "armor",
-    "skill",
-    "attribute",
-    "condition",
-    "combat-action",
-    "extra-skill-use"
-  ]
-},
+
   "grid": {
     "distance": 1,
     "units": "m"
   },
 
   "initiative": "1d20",
+
+  "template": "templates/template.json",
 
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
