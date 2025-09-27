@@ -33,8 +33,8 @@
   ],
 
   "esmodules": [
-    "system/swse.js",
-    "scripts/import-data.js"
+    "systems/swse/swse.js",
+    "systems/swse/scripts/import-data.js"
   ],
 
   "styles": [
