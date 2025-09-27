@@ -161,7 +161,61 @@
     "abilitiesSpecial": []
   }
 }},
-    "vehicle": { ... contents of template-vehicle.json ... }
+    "vehicle": {{
+  "name": "New Vehicle",
+  "type": "vehicle",
+  "img": "icons/svg/ship.svg",
+  "prototypeToken": {
+    "name": "New Vehicle",
+    "displayName": 0,
+    "actorLink": false,
+    "texture": { "src": "icons/svg/ship.svg" },
+    "vision": false
+  },
+  "system": {
+    "model": "",
+    "size": "medium",
+    "speed": {
+      "base": 10,
+      "total": 10
+    },
+    "shields": {
+      "value": 0,
+      "max": 0
+    },
+    "hull": {
+      "value": 0,
+      "max": 0
+    },
+    "crew": {
+      "pilot": "",
+      "shields": "",
+      "engineer": "",
+      "gunners": []
+    },
+    "defenses": {
+      "reflex": { "ability": "dex", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+      "fortitude": { "ability": "con", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+      "will": { "ability": "wis", "class": 0, "armor": 0, "misc": 0, "total": 0 }
+    },
+    "weapons": [
+      {
+        "name": "Laser Cannon",
+        "attackAttr": "dex",
+        "damage": "1d8",
+        "damageAttr": "none",
+        "focus": false,
+        "specialization": false,
+        "modifier": 0,
+        "usePilot": false,
+        "gunner": ""
+      }
+    ],
+    "cargo": [],
+    "mods": []
+  },
+  "items": []
+}}
   },
   "Item": {
     "class": { "type": "class", "system": {} },
