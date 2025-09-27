@@ -13,12 +13,14 @@
 
   "compatibility": {
     "minimum": "11",
-    "verified": "13",
+    "verified": "11",
     "maximum": "13"
   },
 
-  "scripts": [
+  "esmodules": [
     "scripts/init.js",
+    "scripts/swse.js",
+    "scripts/import-data.js",
     "scripts/swse-data.js",
     "scripts/swse-actor.js",
     "scripts/swse-droid.js",
@@ -32,10 +34,7 @@
     "scripts/load-templates.js"
   ],
 
-  "esmodules": [
-    "system/swse.js",
-    "scripts/import-data.js"
-  ],
+  "scripts": [],
 
   "styles": [
     "styles/swse.css",
@@ -67,8 +66,6 @@
   },
 
   "initiative": "1d20",
-
-  "template": "templates/template.json",
 
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
