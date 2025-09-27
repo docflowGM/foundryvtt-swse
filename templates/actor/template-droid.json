@@ -2,6 +2,13 @@
   "name": "New Droid",
   "type": "droid",
   "img": "icons/svg/robot.svg",
+  "prototypeToken": {
+    "name": "New Droid",
+    "displayName": 0,
+    "actorLink": false,
+    "texture": { "src": "icons/svg/robot.svg" },
+    "vision": true
+  },
   "system": {
     "species": "droid",
     "subtype": "4th-degree",
@@ -16,9 +23,9 @@
       "cha": { "base": 10, "temp": 0 }
     },
     "defenses": {
-      "reflex": { "ability": "dex", "class": 0, "armor": 0 },
-      "fortitude": { "ability": null, "class": 0, "armor": 0 },
-      "will": { "ability": "wis", "class": 0, "armor": 0 }
+      "reflex": { "ability": "dex", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+      "fortitude": { "ability": null, "class": 0, "armor": 0, "misc": 0, "total": 0 },
+      "will": { "ability": "wis", "class": 0, "armor": 0, "misc": 0, "total": 0 }
     },
     "hp": { "value": 0, "max": 0 },
     "conditionTrack": "normal",
