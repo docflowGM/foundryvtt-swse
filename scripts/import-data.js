@@ -1,58 +1,36 @@
-// scripts/import-data.js
 export async function importAllData() {
-  const mappings = [
-    { file: "classes.json", pack: "swse.swse-classes", type: "class" },
-    { file: "equipment.json", pack: "swse.swse-equipment", type: "equipment" },
-    { file: "feats.json", pack: "swse.swse-feats", type: "feat" },
-    { file: "talents.json", pack: "swse.swse-talents", type: "talent" },
-    { file: "vehicles.json", pack: "swse.swse-vehicles", type: "vehicle" },
-    { file: "skills.json", pack: "swse.swse-skills", type: "skill" },
-    { file: "species.json", pack: "swse.swse-species", type: "species" }
-    // 👆 Add more here if you add new JSON files and packs
+  const dataFiles = [
+    {file: "classes.json", pack: "swse.swse-classes", type: "Item"},
+    {file: "equipment.json", pack: "swse.swse-equipment", type: "Item"},
+    {file: "feats.json", pack: "swse.swse-feats", type: "Item"},
+    {file: "talents.json", pack: "swse.swse-talents", type: "Item"},
+    {file: "vehicles.json", pack: "swse.swse-vehicles", type: "Actor"},
+    {file: "skills.json", pack: "swse.swse-skills", type: "Item"},
+    {file: "species.json", pack: "swse.swse-species", type: "Item"}
   ];
 
-  for (let map of mappings) {
+  for (let {file, pack, type} of dataFiles) {
+    console.log(`📥 Importing ${file} into ${pack}...`);
     try {
-      console.log(`📥 Importing ${map.file} into ${map.pack}...`);
+      const response = await fetch(`systems/swse/data/${file}`);
+      if (!response.ok) throw new Error(`Could not load ${file}`);
+      const json = await response.json();
 
-      const response = await fetch(`systems/swse/data/${map.file}`);
-      if (!response.ok) {
-        ui.notifications.warn(`❌ Could not load ${map.file}`);
-        continue;
-      }
-      const data = await response.json();
+      const compendium = game.packs.get(pack);
+      if (!compendium) throw new Error(`Compendium ${pack} not found`);
 
-      const pack = game.packs.get(map.pack);
-      if (!pack) {
-        ui.notifications.warn(`❌ Pack not found: ${map.pack}`);
-        continue;
-      }
-
-      // Convert JSON into Item documents
-      const docs = data.map(entry => ({
-        name: entry.name ?? "Unnamed",
-        type: map.type,
-        system: entry
+      // Convert JSON into documents
+      const docs = await Promise.all(json.map(entry => {
+        return type === "Actor" ? new Actor(entry).toObject() : new Item(entry).toObject();
       }));
 
-      // Clear old contents before reimporting
-      const existing = await pack.getDocuments();
-      if (existing.length > 0) {
-        await pack.deleteDocuments(existing.map(e => e.id));
-      }
+      // Insert into compendium
+      await compendium.importDocuments(docs);
 
-      await pack.importDocuments(docs);
-      ui.notifications.info(`✅ Imported ${docs.length} entries into ${map.pack}`);
+      console.log(`✅ Imported ${docs.length} entries into ${pack}`);
     } catch (err) {
-      console.error(err);
-      ui.notifications.error(`❌ Failed to import ${map.file}: ${err.message}`);
+      console.error(`❌ Failed to import ${file}:`, err);
+      ui.notifications.error(`❌ Failed to import ${file}: ${err.message}`);
     }
   }
 }
-
-// Expose to game namespace so you can call it easily in dev console
-Hooks.once("ready", () => {
-  game.swse = game.swse || {};
-  game.swse.importAllData = importAllData;
-  console.log("SWSE Importer Ready → use game.swse.importAllData()");
-});
