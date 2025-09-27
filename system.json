@@ -48,7 +48,6 @@
     { "name": "swse-feats", "label": "SWSE Feats", "path": "packs/swse-feats.db", "type": "Item", "system": "swse" },
     { "name": "swse-talents", "label": "SWSE Talents", "path": "packs/swse-talents.db", "type": "Item", "system": "swse" },
     { "name": "swse-vehicles", "label": "SWSE Vehicles", "path": "packs/swse-vehicles.db", "type": "Actor", "system": "swse" },
-
     { "name": "swse-armor", "label": "SWSE Armor", "path": "packs/swse-armor.db", "type": "Item", "system": "swse" },
     { "name": "swse-droids", "label": "SWSE Droids", "path": "packs/swse-droids.db", "type": "Actor", "system": "swse" },
     { "name": "swse-skills", "label": "SWSE Skills", "path": "packs/swse-skills.db", "type": "Item", "system": "swse" },
@@ -68,4 +67,7 @@
 
   "initiative": "1d20",
 
-  "manfest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/refs/heads/main/system.json"
+  "url": "https://github.com/docflowGM/foundryvtt-swse",
+  "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
+  "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip"
+}
