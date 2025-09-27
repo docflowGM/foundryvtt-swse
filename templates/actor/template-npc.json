@@ -1,30 +1,41 @@
 {
-  "npc": {
-    "name": "",
-    "role": "",
+  "name": "New NPC",
+  "type": "npc",
+  "img": "icons/svg/mystery-man.svg",
+  "prototypeToken": {
+    "name": "New NPC",
+    "displayName": 0,
+    "actorLink": false,
+    "texture": { "src": "icons/svg/mystery-man.svg" },
+    "vision": true
+  },
+  "system": {
     "level": 1,
+    "species": "",
+    "class": "",
+    "subtype": "",
+    "alignment": "",
     "abilities": {
-      "Strength": { "score": 10, "modifier": 0 },
-      "Dexterity": { "score": 10, "modifier": 0 },
-      "Constitution": { "score": 10, "modifier": 0 },
-      "Intelligence": { "score": 10, "modifier": 0 },
-      "Wisdom": { "score": 10, "modifier": 0 },
-      "Charisma": { "score": 10, "modifier": 0 }
+      "str": { "base": 10, "temp": 0 },
+      "dex": { "base": 10, "temp": 0 },
+      "con": { "base": 10, "temp": 0 },
+      "int": { "base": 10, "temp": 0 },
+      "wis": { "base": 10, "temp": 0 },
+      "cha": { "base": 10, "temp": 0 }
     },
     "defenses": {
-      "Fortitude": { "formula": "10 + Con.mod + level + misc", "total": 10 },
-      "Reflex": { "formula": "10 + Dex.mod + level + misc", "total": 10 },
-      "Will": { "formula": "10 + Wis.mod + level + misc", "total": 10 }
+      "reflex": { "ability": "dex", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+      "fortitude": { "ability": "con", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+      "will": { "ability": "wis", "class": 0, "armor": 0, "misc": 0, "total": 0 }
     },
-    "attacks": {
-      "Melee": { "attack_bonus": "Str.mod + level + misc", "damage": "1d8 + Str.mod + floor(level/2)" },
-      "Ranged": { "attack_bonus": "Dex.mod + level + misc", "damage": "1d8 + Dex.mod + floor(level/2)" }
-    },
-    "skills": {},
-    "equipment": [],
-    "saves": {
-      "Damage Threshold": 10
-    },
-    "notes": []
+    "hp": { "value": 0, "max": 0 },
+    "conditionTrack": "normal",
+    "secondWind": { "uses": 0, "healing": 0 },
+    "skills": [],
+    "feats": [],
+    "talents": [],
+    "gear": [],
+    "weapons": [],
+    "abilitiesSpecial": []
   }
 }
