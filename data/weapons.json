@@ -1,4 +1,4 @@
-[][
+[
   {
     "name": "Blaster Pistol",
     "category": "Ranged",
@@ -61,7 +61,7 @@
     "type": "Vibro",
     "size": "Medium",
     "damage": "2d6",
-    "critical": "19–20",
+    "critical": "19\u201320",
     "range": null,
     "weight": "2.0 kg",
     "availability": "Common",
@@ -75,7 +75,7 @@
     "type": "Vibro",
     "size": "Medium",
     "damage": "2d8",
-    "critical": "19–20",
+    "critical": "19\u201320",
     "range": null,
     "weight": "3.5 kg",
     "availability": "Common",
@@ -89,13 +89,16 @@
     "type": "Lightsaber",
     "size": "Medium",
     "damage": "2d8",
-    "critical": "19–20",
+    "critical": "19\u201320",
     "range": null,
     "weight": "1.0 kg",
     "availability": "Illegal",
     "cost": "10000",
     "ammo": null,
-    "special": ["Deflect", "Block"]
+    "special": [
+      "Deflect",
+      "Block"
+    ]
   },
   {
     "name": "Ion Blaster",
@@ -109,7 +112,9 @@
     "availability": "Common",
     "cost": "1200",
     "ammo": "50",
-    "special": ["Ion"]
+    "special": [
+      "Ion"
+    ]
   },
   {
     "name": "Frag Grenade",
@@ -123,7 +128,9 @@
     "availability": "Military",
     "cost": "200",
     "ammo": "Single-use",
-    "special": ["Splash"]
+    "special": [
+      "Splash"
+    ]
   },
   {
     "name": "Bowcaster",
@@ -138,8 +145,7 @@
     "cost": "1500",
     "ammo": "10",
     "special": []
-  }
-][
+  },
   {
     "name": "Slugthrower Pistol",
     "category": "Ranged",
@@ -180,7 +186,10 @@
     "availability": "Illegal",
     "cost": "2500",
     "ammo": "20",
-    "special": ["Stun", "Disintegration"]
+    "special": [
+      "Stun",
+      "Disintegration"
+    ]
   },
   {
     "name": "Disruptor Rifle",
@@ -194,7 +203,10 @@
     "availability": "Illegal",
     "cost": "4000",
     "ammo": "20",
-    "special": ["Stun", "Disintegration"]
+    "special": [
+      "Stun",
+      "Disintegration"
+    ]
   },
   {
     "name": "Sonic Pistol",
@@ -208,7 +220,9 @@
     "availability": "Common",
     "cost": "800",
     "ammo": "20",
-    "special": ["Sonic"]
+    "special": [
+      "Sonic"
+    ]
   },
   {
     "name": "Sonic Rifle",
@@ -222,7 +236,9 @@
     "availability": "Common",
     "cost": "1200",
     "ammo": "20",
-    "special": ["Sonic"]
+    "special": [
+      "Sonic"
+    ]
   },
   {
     "name": "Stun Baton",
@@ -236,7 +252,9 @@
     "availability": "Common",
     "cost": "300",
     "ammo": null,
-    "special": ["Stun"]
+    "special": [
+      "Stun"
+    ]
   },
   {
     "name": "Electrostaff",
@@ -250,8 +268,11 @@
     "availability": "Military",
     "cost": "1500",
     "ammo": null,
-    "special": ["Stun", "Double Weapon"]
- },
+    "special": [
+      "Stun",
+      "Double Weapon"
+    ]
+  },
   {
     "name": "Flamethrower",
     "category": "Ranged",
@@ -264,7 +285,10 @@
     "availability": "Military",
     "cost": "2000",
     "ammo": "10",
-    "special": ["Splash", "Fire"]
+    "special": [
+      "Splash",
+      "Fire"
+    ]
   },
   {
     "name": "CryoBan Grenade",
@@ -278,65 +302,76 @@
     "availability": "Military",
     "cost": "300",
     "ammo": "Single-use",
-    "special": ["Splash", "Cold"]
-  }
-]
-[
+    "special": [
+      "Splash",
+      "Cold"
+    ]
+  },
   {
     "name": "Laser Cannon",
     "category": "Vehicle",
     "type": "Energy",
     "size": "Large",
-    "damage": "6d10×2",
+    "damage": "6d10\u00d72",
     "critical": "20",
     "range": "100",
     "weight": "200 kg",
     "availability": "Military",
     "cost": "20,000",
     "ammo": "Unlimited (vehicle power)",
-    "special": ["Autofire"]
+    "special": [
+      "Autofire"
+    ]
   },
   {
     "name": "Heavy Laser Cannon",
     "category": "Vehicle",
     "type": "Energy",
     "size": "Large",
-    "damage": "8d10×2",
+    "damage": "8d10\u00d72",
     "critical": "20",
     "range": "120",
     "weight": "300 kg",
     "availability": "Military",
     "cost": "35,000",
     "ammo": "Unlimited",
-    "special": ["Autofire"]
+    "special": [
+      "Autofire"
+    ]
   },
   {
     "name": "Concussion Missile Launcher",
     "category": "Vehicle",
     "type": "Explosive",
     "size": "Large",
-    "damage": "10d10×2",
+    "damage": "10d10\u00d72",
     "critical": "20",
     "range": "150",
     "weight": "500 kg",
     "availability": "Military",
     "cost": "50,000",
     "ammo": "6",
-    "special": ["Splash", "Missile"]
+    "special": [
+      "Splash",
+      "Missile"
+    ]
   },
   {
     "name": "Proton Torpedo Launcher",
     "category": "Vehicle",
     "type": "Explosive",
     "size": "Large",
-    "damage": "12d10×2",
+    "damage": "12d10\u00d72",
     "critical": "20",
     "range": "200",
     "weight": "600 kg",
     "availability": "Military",
     "cost": "75,000",
     "ammo": "4",
-    "special": ["Splash", "Missile"]
+    "special": [
+      "Splash",
+      "Missile"
+    ]
   },
   {
     "name": "Trandoshan Repeater Rifle",
@@ -350,7 +385,9 @@
     "availability": "Military",
     "cost": "2,000",
     "ammo": "100",
-    "special": ["Autofire"]
+    "special": [
+      "Autofire"
+    ]
   },
   {
     "name": "Gungan Electropole",
@@ -364,7 +401,9 @@
     "availability": "Rare",
     "cost": "1,200",
     "ammo": null,
-    "special": ["Stun"]
+    "special": [
+      "Stun"
+    ]
   },
   {
     "name": "Tusken Cycler Rifle",
@@ -386,7 +425,7 @@
     "type": "Exotic",
     "size": "Medium",
     "damage": "2d10",
-    "critical": "19–20",
+    "critical": "19\u201320",
     "range": null,
     "weight": "5.0 kg",
     "availability": "Rare",
@@ -406,7 +445,9 @@
     "availability": "Rare",
     "cost": "1,200",
     "ammo": null,
-    "special": ["Double Weapon"]
+    "special": [
+      "Double Weapon"
+    ]
   },
   {
     "name": "Verpine Shatter Rifle",
@@ -420,9 +461,11 @@
     "availability": "Rare",
     "cost": "5,000",
     "ammo": "20",
-    "special": ["Silent", "Armor Piercing"]
-  }
-][
+    "special": [
+      "Silent",
+      "Armor Piercing"
+    ]
+  },
   {
     "name": "Mandalorian Ripper",
     "category": "Ranged",
@@ -435,7 +478,9 @@
     "availability": "Military",
     "cost": "2,500",
     "ammo": "10",
-    "special": ["Armor Piercing"]
+    "special": [
+      "Armor Piercing"
+    ]
   },
   {
     "name": "Charric",
@@ -449,7 +494,9 @@
     "availability": "Rare",
     "cost": "3,000",
     "ammo": "50",
-    "special": ["Stun"]
+    "special": [
+      "Stun"
+    ]
   },
   {
     "name": "Sith Tremor Sword",
@@ -457,13 +504,16 @@
     "type": "Exotic",
     "size": "Medium",
     "damage": "2d10",
-    "critical": "19–20",
+    "critical": "19\u201320",
     "range": null,
     "weight": "6.0 kg",
     "availability": "Illegal",
     "cost": "4,000",
     "ammo": null,
-    "special": ["Dark Side", "Vibration"]
+    "special": [
+      "Dark Side",
+      "Vibration"
+    ]
   },
   {
     "name": "Jedi Training Saber",
@@ -471,13 +521,17 @@
     "type": "Lightsaber",
     "size": "Medium",
     "damage": "1d8",
-    "critical": "19–20",
+    "critical": "19\u201320",
     "range": null,
     "weight": "1.0 kg",
     "availability": "Restricted",
     "cost": "2,000",
     "ammo": null,
-    "special": ["Stun", "Deflect", "Block"]
+    "special": [
+      "Stun",
+      "Deflect",
+      "Block"
+    ]
   },
   {
     "name": "Clone DC-15A Blaster Rifle",
@@ -491,7 +545,9 @@
     "availability": "Military",
     "cost": "1,200",
     "ammo": "100",
-    "special": ["Autofire"]
+    "special": [
+      "Autofire"
+    ]
   },
   {
     "name": "Clone DC-15S Blaster Carbine",
@@ -505,7 +561,9 @@
     "availability": "Military",
     "cost": "900",
     "ammo": "100",
-    "special": ["Autofire"]
+    "special": [
+      "Autofire"
+    ]
   },
   {
     "name": "Tusken Gaderffii Stick",
@@ -519,7 +577,9 @@
     "availability": "Common",
     "cost": "100",
     "ammo": null,
-    "special": ["Double Weapon"]
+    "special": [
+      "Double Weapon"
+    ]
   },
   {
     "name": "Wrist Rocket Launcher",
@@ -533,7 +593,10 @@
     "availability": "Military",
     "cost": "1,500",
     "ammo": "1",
-    "special": ["Splash", "Miniature"]
+    "special": [
+      "Splash",
+      "Miniature"
+    ]
   },
   {
     "name": "Verpine Shatter Pistol",
@@ -547,7 +610,10 @@
     "availability": "Rare",
     "cost": "3,500",
     "ammo": "10",
-    "special": ["Silent", "Armor Piercing"]
+    "special": [
+      "Silent",
+      "Armor Piercing"
+    ]
   },
   {
     "name": "Zeltron Neural Whip",
@@ -561,22 +627,26 @@
     "availability": "Rare",
     "cost": "2,000",
     "ammo": null,
-    "special": ["Stun", "Reach"]
-  }
-][
+    "special": [
+      "Stun",
+      "Reach"
+    ]
+  },
   {
     "name": "Cortosis Sword",
     "category": "Melee",
     "type": "Exotic",
     "size": "Medium",
     "damage": "2d8",
-    "critical": "19–20",
+    "critical": "19\u201320",
     "range": null,
     "weight": "3.0 kg",
     "availability": "Rare",
     "cost": "5,000",
     "ammo": null,
-    "special": ["Lightsaber Resistant"]
+    "special": [
+      "Lightsaber Resistant"
+    ]
   },
   {
     "name": "Stealth Carbine",
@@ -590,7 +660,10 @@
     "availability": "Restricted",
     "cost": "2,000",
     "ammo": "100",
-    "special": ["Silent", "+5 Stealth"]
+    "special": [
+      "Silent",
+      "+5 Stealth"
+    ]
   },
   {
     "name": "Sith Lanvarok",
@@ -604,7 +677,10 @@
     "availability": "Illegal",
     "cost": "2,500",
     "ammo": "6",
-    "special": ["Splash", "Dark Side"]
+    "special": [
+      "Splash",
+      "Dark Side"
+    ]
   },
   {
     "name": "Electro-whip",
@@ -618,7 +694,10 @@
     "availability": "Rare",
     "cost": "1,500",
     "ammo": null,
-    "special": ["Reach", "Stun"]
+    "special": [
+      "Reach",
+      "Stun"
+    ]
   },
   {
     "name": "Lightfoil",
@@ -626,13 +705,16 @@
     "type": "Lightsaber",
     "size": "Medium",
     "damage": "2d6",
-    "critical": "19–20",
+    "critical": "19\u201320",
     "range": null,
     "weight": "1.0 kg",
     "availability": "Illegal",
     "cost": "8,000",
     "ammo": null,
-    "special": ["Deflect", "Block"]
+    "special": [
+      "Deflect",
+      "Block"
+    ]
   },
   {
     "name": "Vibrodagger",
@@ -640,13 +722,15 @@
     "type": "Vibro",
     "size": "Small",
     "damage": "1d6",
-    "critical": "19–20",
+    "critical": "19\u201320",
     "range": null,
     "weight": "0.5 kg",
     "availability": "Common",
     "cost": "300",
     "ammo": null,
-    "special": ["Concealable"]
+    "special": [
+      "Concealable"
+    ]
   },
   {
     "name": "Wrist Laser",
@@ -660,7 +744,10 @@
     "availability": "Military",
     "cost": "1,200",
     "ammo": "20",
-    "special": ["Concealed", "Hands-Free"]
+    "special": [
+      "Concealed",
+      "Hands-Free"
+    ]
   },
   {
     "name": "Monomolecular Knife",
@@ -674,7 +761,9 @@
     "availability": "Rare",
     "cost": "1,000",
     "ammo": null,
-    "special": ["Armor Piercing"]
+    "special": [
+      "Armor Piercing"
+    ]
   },
   {
     "name": "Double-Bladed Lightsaber",
@@ -682,13 +771,17 @@
     "type": "Lightsaber",
     "size": "Large",
     "damage": "2d8",
-    "critical": "19–20",
+    "critical": "19\u201320",
     "range": null,
     "weight": "2.0 kg",
     "availability": "Illegal",
     "cost": "12,000",
     "ammo": null,
-    "special": ["Deflect", "Block", "Double Weapon"]
+    "special": [
+      "Deflect",
+      "Block",
+      "Double Weapon"
+    ]
   },
   {
     "name": "Sith Sword",
@@ -696,15 +789,17 @@
     "type": "Exotic",
     "size": "Medium",
     "damage": "2d10",
-    "critical": "19–20",
+    "critical": "19\u201320",
     "range": null,
     "weight": "6.0 kg",
     "availability": "Illegal",
     "cost": "5,000",
     "ammo": null,
-    "special": ["Dark Side", "Lightsaber Resistant"]
-  }
-][
+    "special": [
+      "Dark Side",
+      "Lightsaber Resistant"
+    ]
+  },
   {
     "name": "Sporting Blaster Pistol",
     "category": "Ranged",
@@ -731,7 +826,9 @@
     "availability": "Restricted",
     "cost": "250",
     "ammo": "10",
-    "special": ["Concealable"]
+    "special": [
+      "Concealable"
+    ]
   },
   {
     "name": "Blaster Carbine",
@@ -759,7 +856,9 @@
     "availability": "Military",
     "cost": "2,000",
     "ammo": "200",
-    "special": ["Autofire"]
+    "special": [
+      "Autofire"
+    ]
   },
   {
     "name": "Sniper Rifle",
@@ -773,7 +872,9 @@
     "availability": "Military",
     "cost": "2,500",
     "ammo": "10",
-    "special": ["Requires Aim"]
+    "special": [
+      "Requires Aim"
+    ]
   },
   {
     "name": "Verpine Sniper Rifle",
@@ -787,21 +888,27 @@
     "availability": "Rare",
     "cost": "5,000",
     "ammo": "10",
-    "special": ["Silent", "Armor Piercing"]
+    "special": [
+      "Silent",
+      "Armor Piercing"
+    ]
   },
   {
     "name": "Stun Grenade",
     "category": "Thrown",
     "type": "Explosive",
     "size": "Small",
-    "damage": "—",
-    "critical": "—",
+    "damage": "\u2014",
+    "critical": "\u2014",
     "range": "6",
     "weight": "0.5 kg",
     "availability": "Military",
     "cost": "250",
     "ammo": "Single-use",
-    "special": ["Condition Track", "Splash"]
+    "special": [
+      "Condition Track",
+      "Splash"
+    ]
   },
   {
     "name": "Thermal Detonator",
@@ -815,21 +922,26 @@
     "availability": "Illegal",
     "cost": "10,000",
     "ammo": "Single-use",
-    "special": ["Massive Splash"]
+    "special": [
+      "Massive Splash"
+    ]
   },
   {
     "name": "Electro-net",
     "category": "Thrown",
     "type": "Exotic",
     "size": "Small",
-    "damage": "—",
-    "critical": "—",
+    "damage": "\u2014",
+    "critical": "\u2014",
     "range": "6",
     "weight": "1.0 kg",
     "availability": "Restricted",
     "cost": "500",
     "ammo": "Single-use",
-    "special": ["Entangle", "Stun"]
+    "special": [
+      "Entangle",
+      "Stun"
+    ]
   },
   {
     "name": "Miniature Missile Launcher",
@@ -843,6 +955,9 @@
     "availability": "Military",
     "cost": "1,500",
     "ammo": "1",
-    "special": ["Splash", "Wrist-Mounted"]
+    "special": [
+      "Splash",
+      "Wrist-Mounted"
+    ]
   }
 ]
