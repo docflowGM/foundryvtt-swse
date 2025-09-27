@@ -7,29 +7,23 @@
       "rollable": {}
     },
     {
-      "id": "ct_-1",
-      "name": "Condition Track -1",
-      "description": "-1 penalty to all defenses; -1 penalty on attack rolls, ability checks, and skill checks.",
-      "effects": [
-        { "type": "defense_penalty", "value": -1 },
-        { "type": "attack_penalty", "value": -1 },
-        { "type": "ability_checks_penalty", "value": -1 },
-        { "type": "skill_checks_penalty", "value": -1 }
-      ],
-      "rollable": {}
-    },
-    {
-      "id": "ct_-2",
-      "name": "Condition Track -2",
-      "description": "-2 penalty to all defenses; -2 penalty on attack rolls, ability checks, and skill checks.",
-      "effects": [
-        { "type": "defense_penalty", "value": -2 },
-        { "type": "attack_penalty", "value": -2 },
-        { "type": "ability_checks_penalty", "value": -2 },
-        { "type": "skill_checks_penalty", "value": -2 }
-      ],
-      "rollable": {}
-    },
+    "id": "normal",
+    "name": "Normal",
+    "description": "No penalties or special status.",
+    "effects": []
+  },
+  {
+    "id": "ct_-1",
+    "name": "Condition Track -1",
+    "description": "-1 penalty to all defenses and attack rolls.",
+    "effects": []
+  },
+  {
+    "id": "ct_-2",
+    "name": "Condition Track -2",
+    "description": "-2 penalty to all defenses and attack rolls.",
+    "effects": []
+  },
     {
       "id": "ct_-3",
       "name": "Condition Track -3",
