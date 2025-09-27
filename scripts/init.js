@@ -6,6 +6,7 @@ import { SWSEVehicleSheet }             from "./swse-vehicle.js";
 import { SWSEItemSheet }                from "./swse-item.js";
 import "./swse-force.js";
 import "./swse-levelup.js";
+import "./load-templates.js"; // ✅ include vehicle template loader
 
 Hooks.once("init", () => {
   console.log("SWSE | Initializing Star Wars Saga Edition (SWSE)");
@@ -41,10 +42,11 @@ Hooks.once("init", () => {
   // -----------------------------
   CONFIG.Actor.documentClass = SWSEActor;
 
-  // Unregister default sheets for overridden types
+  // Unregister default sheets
   Actors.unregisterSheet("core", ActorSheet);
   Items.unregisterSheet("core", ItemSheet);
 
+  // Register SWSE sheets
   Actors.registerSheet("swse", SWSEActorSheet, {
     types: ["character"],
     makeDefault: true,
@@ -89,4 +91,9 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", () => {
   console.log("SWSE | System ready.");
+
+  // ✅ Debugging aid: confirm templates loaded
+  if (game.swseVehicles?.templates?.length) {
+    console.log(`SWSE | Loaded ${game.swseVehicles.templates.length} vehicle templates.`);
+  }
 });
