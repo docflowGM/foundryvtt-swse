@@ -120,7 +120,47 @@
     "droidTemplates": []
   }
 }},
-    "npc": { ... contents of template-npc.json ... },
+    "npc": {{
+  "name": "New NPC",
+  "type": "npc",
+  "img": "icons/svg/mystery-man.svg",
+  "prototypeToken": {
+    "name": "New NPC",
+    "displayName": 0,
+    "actorLink": false,
+    "texture": { "src": "icons/svg/mystery-man.svg" },
+    "vision": true
+  },
+  "system": {
+    "level": 1,
+    "species": "",
+    "class": "",
+    "subtype": "",
+    "alignment": "",
+    "abilities": {
+      "str": { "base": 10, "temp": 0 },
+      "dex": { "base": 10, "temp": 0 },
+      "con": { "base": 10, "temp": 0 },
+      "int": { "base": 10, "temp": 0 },
+      "wis": { "base": 10, "temp": 0 },
+      "cha": { "base": 10, "temp": 0 }
+    },
+    "defenses": {
+      "reflex": { "ability": "dex", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+      "fortitude": { "ability": "con", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+      "will": { "ability": "wis", "class": 0, "armor": 0, "misc": 0, "total": 0 }
+    },
+    "hp": { "value": 0, "max": 0 },
+    "conditionTrack": "normal",
+    "secondWind": { "uses": 0, "healing": 0 },
+    "skills": [],
+    "feats": [],
+    "talents": [],
+    "gear": [],
+    "weapons": [],
+    "abilitiesSpecial": []
+  }
+}},
     "vehicle": { ... contents of template-vehicle.json ... }
   },
   "Item": {
