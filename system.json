@@ -22,7 +22,11 @@
   },
 
   "esmodules": [
-    "scripts/swse.js"
+    "scripts/swse.js",
+    "scripts/swse-actor.js",
+    "scripts/swse-droid.js",
+    "scripts/swse-vehicle.js",
+    "scripts/races.js"
   ],
   "scripts": [],
   "styles": [
