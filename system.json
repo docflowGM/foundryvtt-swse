@@ -13,14 +13,12 @@
 
   "compatibility": {
     "minimum": "11",
-    "verified": "11",
+    "verified": "13",
     "maximum": "13"
   },
 
-  "esmodules": [
+  "scripts": [
     "scripts/init.js",
-    "scripts/swse.js",
-    "scripts/import-data.js",
     "scripts/swse-data.js",
     "scripts/swse-actor.js",
     "scripts/swse-droid.js",
@@ -31,10 +29,13 @@
     "scripts/chargen.js",
     "scripts/dice-utils.js",
     "scripts/diceroller.js",
-    "scripts/load-templates.js"
+    "scripts/load-templates.js"   // ✅ Added here
   ],
 
-  "scripts": [],
+  "esmodules": [
+    "system/swse.js",
+    "scripts/import-data.js"
+  ],
 
   "styles": [
     "styles/swse.css",
