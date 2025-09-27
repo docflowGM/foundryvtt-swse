@@ -2,6 +2,13 @@
   "name": "New Character",
   "type": "character",
   "img": "icons/svg/mystery-man.svg",
+  "prototypeToken": {
+    "name": "New Character",
+    "displayName": 0,
+    "actorLink": false,
+    "texture": { "src": "icons/svg/mystery-man.svg" },
+    "vision": true
+  },
   "system": {
     "race": "custom",
     "species": "",
@@ -50,35 +57,4 @@
       "knowledge_technology": { "value": 0, "trained": false, "focus": false, "ability": "int" },
       "mechanics": { "value": 0, "trained": false, "focus": false, "ability": "int" },
       "perception": { "value": 0, "trained": false, "focus": false, "ability": "wis" },
-      "persuasion": { "value": 0, "trained": false, "focus": false, "ability": "cha" },
-      "pilot": { "value": 0, "trained": false, "focus": false, "ability": "dex" },
-      "ride": { "value": 0, "trained": false, "focus": false, "ability": "dex" },
-      "stealth": { "value": 0, "trained": false, "focus": false, "ability": "dex" },
-      "survival": { "value": 0, "trained": false, "focus": false, "ability": "wis" },
-      "swim": { "value": 0, "trained": false, "focus": false, "ability": "str" },
-      "treat_injury": { "value": 0, "trained": false, "focus": false, "ability": "wis" },
-      "use_computer": { "value": 0, "trained": false, "focus": false, "ability": "int" },
-      "use_the_force": { "value": 0, "trained": false, "focus": false, "ability": "cha" }
-    },
-
-    "customSkills": [],
-    "feats": [],
-    "talents": [],
-    "gear": [],
-
-    "weapons": [
-      {
-        "name": "",
-        "description": "",
-        "damage": "1d6",
-        "attackAttr": "str",
-        "damageAttr": "str",
-        "focus": false,
-        "specialization": false,
-        "modifier": 0
-      }
-    ],
-
-    "items": []
-  }
-}
+      "persuasion": { "value": 0, "trained
