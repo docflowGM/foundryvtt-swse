@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Saga Edition — Special Combat Conditions (mechanical)",
+    "title": "Saga Edition \u2014 Special Combat Conditions (mechanical)",
     "source": "Combat_Skills_Summary_v3.pdf (extracted) + derivations",
     "purpose": "Attachable conditions that modify attack/defense math at resolution time. Each entry includes triggers, concrete modifiers, removal methods, and rollable checks where applicable."
   },
@@ -83,7 +83,9 @@
         "defender_reflex_modifier": 10,
         "interaction_with_aim": "Aim removes improved cover as well but attacker still needs LOS adjustments"
       },
-      "removal": { "auto": "Aim or move out of cover" }
+      "removal": {
+        "auto": "Aim or move out of cover"
+      }
     },
     {
       "id": "flanking",
@@ -254,7 +256,9 @@
       "trigger": "when actor is under suppression effect",
       "duration": "until suppression removed",
       "effects": {
-        "reaction_block_list": ["some reactions (GM decides)"],
+        "reaction_block_list": [
+          "some reactions (GM decides)"
+        ],
         "attack_modifier": -2
       }
     },
