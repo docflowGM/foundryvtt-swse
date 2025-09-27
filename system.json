@@ -32,8 +32,9 @@
     "scripts/load-templates.js"
   ],
 
-  "esmodules": [
-    "system/swse.js"
+ "esmodules": [
+  "system/swse.js",
+  "scripts/import-data.js"
   ],
 
   "styles": [
