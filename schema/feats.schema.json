@@ -12,9 +12,10 @@
       "type": "string",
       "description": "The category of the feat (e.g., General, Force, Combat)"
     },
-    "prerequisite": {
-      "type": ["string", "null"],
-      "description": "The prerequisites needed to take the feat"
+    "prerequisites": {
+      "type": "array",
+      "description": "List of prerequisites required to take the feat",
+      "items": { "type": "string" }
     },
     "description": {
       "type": "string",
@@ -25,25 +26,20 @@
       "description": "The book the feat is from"
     },
     "page": {
-      "type": "integer",
+      "type": ["integer", "null"],
       "description": "Page number where the feat is found"
     },
     "tags": {
       "type": "array",
       "description": "Keywords to help categorize the feat",
-      "items": {
-        "type": "string"
-      }
+      "items": { "type": "string" }
     },
     "bonus_feat_for": {
       "type": "array",
       "description": "Which classes receive this as a bonus feat option",
-      "items": {
-        "type": "string"
-      }
+      "items": { "type": "string" }
     }
   },
-  "required": ["name", "type", "description", "sourcebook", "page", "tags", "bonus_feat_for"],
+  "required": ["name", "type", "description", "sourcebook"],
   "additionalProperties": false
 }
-
