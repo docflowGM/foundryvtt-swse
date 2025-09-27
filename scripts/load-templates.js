@@ -1,15 +1,9 @@
-// load-templates.js
-// Handles loading vehicle JSON templates and dropdowns in vehicle sheets
+// systems/swse/scripts/load-templates.js
+// Handles loading vehicle JSON templates from the SWSE system itself
 
 Hooks.once("init", async () => {
-  const mod = game.modules.get("swse-vehicles");
-  if (!mod) {
-    console.warn("SWSE | 'swse-vehicles' module not found. Vehicle templates disabled.");
-    return;
-  }
-
   try {
-    const response = await fetch(`modules/${mod.path}/vehicles.json`);
+    const response = await fetch(`systems/swse/data/vehicles.json`);
     if (!response.ok) throw new Error(`Failed to load vehicles.json (status ${response.status})`);
     game.swseVehicles = { templates: await response.json() };
     console.log(`SWSE | Loaded ${game.swseVehicles.templates.length} vehicle templates.`);
@@ -19,8 +13,8 @@ Hooks.once("init", async () => {
   }
 });
 
-Hooks.on("renderVehicleSheet", (app, html, data) => {
-  if (!game.swseVehicles?.templates?.length) return; // Nothing to show
+Hooks.on("renderSWSEVehicleSheet", (app, html, data) => {
+  if (!game.swseVehicles?.templates?.length) return; // No templates loaded
 
   // Build the <select>
   const select = $(`<select style="margin-left:8px">
@@ -30,7 +24,7 @@ Hooks.on("renderVehicleSheet", (app, html, data) => {
     select.append(`<option value="${tmpl.name}">${tmpl.name}</option>`);
   }
 
-  // Insert into the sheet header
+  // Insert into the sheet header (adjust selector if needed)
   html.find(".sheet-header .sheet-title").after(select);
 
   // Handle selection
