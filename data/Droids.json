@@ -3,7 +3,7 @@
     "initiative": "+3; Senses: Low-Light Vision, Perception +8",
     "languages": "Basic (understand only), Binary , 2 Unassigned",
     "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
-    "HP": "7, Damage Threshold : 9",
+    "HP": "7", "Damage Threshold" :" 9",
     "speed": "4 Squares ( Tracked )",
     "baseAttackBonus": "+1; Grapple : -2",
     "attacks": {
@@ -22,7 +22,7 @@
     "initiative": "+11; Senses: Low-Light Vision, Perception +19",
     "languages": "Basic, Binary",
     "reflexDefense": "27 ( Flat-Footed : 26), Fortitude Defense : 26, Will Defense : 22",
-    "HP": "76, Damage Threshold : 26; Shake It Off",
+    "HP": "76", "Damage Threshold" :" 26; Shake It Off",
     "speed": "6 Squares ( Walking ); Expert Tracker , Powerful Charge",
     "baseAttackBonus": "+9; Grapple : +13",
     "attacks": {
@@ -53,7 +53,7 @@
     "initiative": "+0; Senses: Perception +6",
     "languages": "Basic, Binary , 3 Unassigned; Translator Unit (DC 10)",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 11",
-    "HP": "2, Damage Threshold : 9",
+    "HP": "2", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : -1",
     "attacks": {
@@ -72,7 +72,7 @@
     "initiative": "+3; Senses: Perception +11",
     "languages": "Basic, Binary , 7 Unassigned",
     "reflexDefense": "13 ( Flat-Footed : 13), Fortitude Defense : 12, Will Defense : 17",
-    "HP": "26, Damage Threshold : 12",
+    "HP": "26", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+6; Grapple : +5",
     "attacks": {
@@ -91,7 +91,7 @@
     "initiative": "-2; Senses: Darkvision , Perception +2",
     "languages": "Basic, Binary",
     "reflexDefense": "15 ( Flat-Footed : 15), Fortitude Defense : 14, Will Defense : 10; Duravlex Shell",
-    "HP": "4, Damage Threshold : 14",
+    "HP": "4", "Damage Threshold" :" 14",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : +4",
     "attacks": {
@@ -115,7 +115,7 @@
     "initiative": "+10; Senses: Darkvision , Perception +7",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "14 ( Flat-Footed : 14 (Leg Shields: 18)), Fortitude Defense : 31, Will Defense : 12; Extra Legs",
-    "HP": "59, Damage Threshold : 46",
+    "HP": "59", "Damage Threshold" :" 46",
     "speed": "8 Squares ( Walking ); Juggernaut",
     "baseAttackBonus": "+9; Grapple : +27",
     "attacks": {
@@ -139,7 +139,7 @@
     "initiative": "+14; Senses: Darkvision , Perception +14",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "26 ( Flat-Footed : 24), Fortitude Defense : 27, Will Defense : 19",
-    "HP": "67, Damage Reduction : 1, Damage Threshold : 27",
+    "HP": "67, Damage Reduction : 1", "Damage Threshold" :" 27",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+13; Grapple : +15",
     "attacks": {
@@ -195,7 +195,7 @@
     "initiative": "+5; Senses: Perception +7",
     "languages": "Basic, Binary , 2 Unassigned",
     "reflexDefense": "13 ( Flat-Footed : 13), Fortitude Defense : 10, Will Defense : 15",
-    "HP": "18, Damage Threshold : 10",
+    "HP": "18", "Damage Threshold" :" 10",
     "speed": "4 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : -5",
     "attacks": {
@@ -214,7 +214,7 @@
     "initiative": "+1; Senses: Perception +1",
     "languages": "Basic, Binary , 2 Unassigned; Translator Unit (DC 10)",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 10, Will Defense : 10",
-    "HP": "7, Damage Threshold : 10",
+    "HP": "7", "Damage Threshold" :" 10",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : +1",
     "attacks": {
@@ -233,7 +233,7 @@
     "initiative": "+7; Senses: Perception +7",
     "languages": "Basic, Binary , 3 Unassigned",
     "reflexDefense": "16 ( Flat-Footed : 14), Fortitude Defense : 13, Will Defense : 13",
-    "HP": "30, Damage Threshold : 13",
+    "HP": "30", "Damage Threshold" :" 13",
     "speed": "6 Squares ( Walking ), 6 Squares ( Hovering )",
     "baseAttackBonus": "+1; Grapple : +3",
     "attacks": {
@@ -252,7 +252,7 @@
     "initiative": "+4; Senses: Darkvision , Perception +14",
     "languages": "Basic (understand only), Binary , 1 Unassigned",
     "reflexDefense": "15 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 12",
-    "HP": "3, Damage Threshold : 9",
+    "HP": "3", "Damage Threshold" :" 9",
     "speed": "9 Squares ( Flying )",
     "baseAttackBonus": "+0; Grapple : -1",
     "constitution": "-",
@@ -262,7 +262,7 @@
     "initiative": "+12; Senses: Darkvision , Perception +13",
     "languages": "Basic (understand only), Binary , 1 Unassigned",
     "reflexDefense": "27 ( Flat-Footed : 24), Fortitude Defense : 20, Will Defense : 21",
-    "HP": "74, Damage Threshold : 25",
+    "HP": "74", "Damage Threshold" :" 25",
     "speed": "9 Squares ( Flying ); Running Attack",
     "baseAttackBonus": "+9; Grapple : +7",
     "attacks": {
@@ -293,7 +293,7 @@
     "initiative": "+2; Senses: Perception +1",
     "languages": "Basic, Binary",
     "reflexDefense": "15 ( Flat-Footed : 14), Fortitude Defense : 13, Will Defense : 10",
-    "HP": "5, Damage Threshold : 13",
+    "HP": "5", "Damage Threshold" :" 13",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : +4",
     "attacks": {
@@ -312,7 +312,7 @@
     "initiative": "+10; Senses: Darkvision , Perception +12",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "21 ( Flat-Footed : 19), Fortitude Defense : 23, Will Defense : 18; Extra Legs",
-    "HP": "77, Damage Threshold : 33",
+    "HP": "77", "Damage Threshold" :" 33",
     "speed": "8 Squares ( Walking ); Charging Fire , Running Attack",
     "baseAttackBonus": "+6; Grapple : +16",
     "attacks": {
@@ -343,7 +343,7 @@
     "initiative": "+7; Senses: Perception +6",
     "languages": "Basic, Binary",
     "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 15, Will Defense : 12",
-    "HP": "30, Damage Threshold : 15",
+    "HP": "30", "Damage Threshold" :" 15",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : +3",
     "attacks": {
@@ -362,7 +362,7 @@
     "initiative": "+9; Senses: Perception +8",
     "languages": "Basic, Binary",
     "reflexDefense": "15 ( Flat-Footed : 14), Fortitude Defense : 16, Will Defense : 13",
-    "HP": "24, Damage Threshold : 16",
+    "HP": "24", "Damage Threshold" :" 16",
     "speed": "6 Squares ( Walking ), 6 Squares ( Jet Pack ); Running Attack",
     "baseAttackBonus": "+5; Grapple : +6",
     "attacks": {
@@ -408,7 +408,7 @@
     "initiative": "+0; Senses: Perception +6",
     "languages": "Basic, Binary",
     "reflexDefense": "9 ( Flat-Footed : 9), Fortitude Defense : 11, Will Defense : 10",
-    "HP": "10, Damage Threshold : 11",
+    "HP": "10", "Damage Threshold" :" 11",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+2; Grapple : +3",
     "attacks": {
@@ -434,7 +434,7 @@
     "initiative": "+6; Senses: Perception +4",
     "languages": "Basic, Binary",
     "reflexDefense": "21 ( Flat-Footed : 19), Fortitude Defense : 15, Will Defense : 12",
-    "HP": "26, Damage Threshold : 15",
+    "HP": "26", "Damage Threshold" :" 15",
     "speed": "6 Squares ( Walking ), 6 Squares ( Jet Pack ); Charging Fire",
     "baseAttackBonus": "+6; Grapple : +8",
     "attacks": {
@@ -475,7 +475,7 @@
     "initiative": "+3; Senses: Darkvision , Perception +7",
     "languages": "Basic (understand only), Binary , 1 Unassigned",
     "reflexDefense": "18 ( Flat-Footed : 14), Fortitude Defense : 10, Will Defense : 9",
-    "HP": "7, Damage Threshold : 10",
+    "HP": "7", "Damage Threshold" :" 10",
     "speed": "4 Squares ( Tracked ); Magnetic Feet",
     "baseAttackBonus": "+2; Grapple : +1",
     "attacks": {
@@ -506,7 +506,7 @@
     "initiative": "+0; Senses: Perception +0",
     "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 10)",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 10",
-    "HP": "2, Damage Threshold : 9",
+    "HP": "2", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : +0",
     "attacks": {
@@ -532,7 +532,7 @@
     "initiative": "+17; Senses: Perception +12",
     "languages": "Basic, Binary",
     "reflexDefense": "19 ( Flat-Footed 15), Fortitude Defense : 18, Will Defense 13",
-    "HP": "42, Damage Threshold : 23",
+    "HP": "42", "Damage Threshold" :" 23",
     "speed": "8 Squares ( Walking )",
     "baseAttackBonus": "+7; Grapple : +19; Crush , Pin",
     "attacks": {
@@ -551,7 +551,7 @@
     "initiative": "+13; Senses: Darkvision , Perception +15",
     "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 10)",
     "reflexDefense": "14 ( Flat-Footed : 12), Fortitude Defense : 7, Will Defense : 12",
-    "HP": "7, Damage Threshold : 7",
+    "HP": "7", "Damage Threshold" :" 7",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+2; Grapple : -6",
     "attacks": {
@@ -577,7 +577,7 @@
     "initiative": "+3; Senses: Low-Light Vision, Perception +11",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "11 ( Flat-Footed : 10), Fortitude Defense : 10, Will Defense : 12",
-    "HP": "10, Damage Threshold : 10",
+    "HP": "10", "Damage Threshold" :" 10",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+3; Grapple : +4",
     "attacks": {
@@ -596,7 +596,7 @@
     "initiative": "-1; Senses: Perception +1",
     "languages": "Basic, Binary , 3 Unassigned; Translator Unit (DC 5)",
     "reflexDefense": "9 ( Flat-Footed : 9), Fortitude Defense : 9, Will Defense : 11",
-    "HP": "2, Damage Threshold : 9",
+    "HP": "2", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : -1",
     "attacks": {
@@ -615,7 +615,7 @@
     "initiative": "+4; Senses: Low-Light Vision, Perception +12",
     "languages": "Basic, Binary , 5 Unassigned; Translator Unit (DC 5)",
     "reflexDefense": "19 ( Flat-Footed : 18), Fortitude Defense : 17, Will Defense : 19",
-    "HP": "37, Damage Threshold : 17",
+    "HP": "37", "Damage Threshold" :" 17",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+4; Grapple : +5",
     "attacks": {
@@ -641,7 +641,7 @@
     "initiative": "+1; Senses: Low-Light Vision, Perception +5",
     "languages": "Basic, Binary , 2 Unassigned",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 12",
-    "HP": "5, Damage Threshold : 9",
+    "HP": "5", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : +1",
     "attacks": {
@@ -660,7 +660,7 @@
     "initiative": "+4; Senses: Perception +8",
     "languages": "Basic, Binary",
     "reflexDefense": "14 ( Flat-Footed : 13), Fortitude Defense : 15, Will Defense : 11",
-    "HP": "42, Damage Threshold : 15",
+    "HP": "42", "Damage Threshold" :" 15",
     "speed": "6 Squares ( Walking ); Charging Fire",
     "baseAttackBonus": "+5; Grapple : +12",
     "attacks": {
@@ -696,7 +696,7 @@
     "initiative": "+3; Senses: Perception +8",
     "languages": "Basic, Binary",
     "reflexDefense": "12 ( Flat-Footed : 12), Fortitude Defense : 12, Will Defense : 10",
-    "HP": "21, Damage Threshold : 12",
+    "HP": "21", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Walking ); Charging Fire",
     "baseAttackBonus": "+4; Grapple : +6",
     "attacks": {
@@ -727,7 +727,7 @@
     "initiative": "+9; Senses: Low-Light Vision, Perception +4",
     "languages": "Basic, Binary",
     "reflexDefense": "20 ( Flat-Footed : 18), Fortitude Defense : 13, Will Defense : 11",
-    "HP": "17, Damage Reduction : 5 vs Lightsabers , Damage Threshold : 13",
+    "HP": "17, Damage Reduction : 5 vs Lightsabers ", "Damage Threshold" :" 13",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+3; Grapple : +5",
     "attacks": {
@@ -753,7 +753,7 @@
     "initiative": "-1; Senses: Darkvision , Perception -1",
     "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 10)",
     "reflexDefense": "11 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 9",
-    "HP": "2, Damage Threshold : 9",
+    "HP": "2", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : +1",
     "attacks": {
@@ -772,7 +772,7 @@
     "initiative": "+9; Senses: Perception +13",
     "languages": "Basic, Binary",
     "reflexDefense": "14 ( Flat-Footed : 13), Fortitude Defense : 11, Will Defense : 10",
-    "HP": "14, Damage Threshold : 11",
+    "HP": "14", "Damage Threshold" :" 11",
     "speed": "9 Squares ( Flying )",
     "baseAttackBonus": "+4; Grapple : +0",
     "attacks": {
@@ -818,7 +818,7 @@
     "initiative": "+4; Senses: Low-Light Vision, Perception +12",
     "languages": "Basic, Binary",
     "reflexDefense": "17 ( Flat-Footed : 16), Fortitude Defense : 17, Will Defense : 11",
-    "HP": "42, Damage Threshold : 27",
+    "HP": "42", "Damage Threshold" :" 27",
     "speed": "8 Squares ( Walking )",
     "baseAttackBonus": "+6; Grapple : +18",
     "attacks": {
@@ -849,7 +849,7 @@
     "initiative": "+8; Senses: Low-Light Vision, Perception +10",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "18 ( Flat-Footed : 17), Fortitude Defense : 24, Will Defense : 16",
-    "HP": "72, Damage Threshold : 29",
+    "HP": "72", "Damage Threshold" :" 29",
     "speed": "8 Squares ( Walking )",
     "baseAttackBonus": "+5; Grapple : +17",
     "attacks": {
@@ -900,7 +900,7 @@
     "initiative": "+3; Senses: Automap , Darkvision , Perception +10",
     "languages": "Basic (understand only), Binary , 2 Unassigned",
     "reflexDefense": "16 ( Flat-Footed : 15), Fortitude Defense : 9, Will Defense : 13",
-    "HP": "11, Damage Threshold : 8",
+    "HP": "11", "Damage Threshold" :" 8",
     "speed": "4 Square ( Walking ), 2 Squares (Climbing); Jump Servos , Magnetic Feet",
     "baseAttackBonus": "+1, Grapple : -8",
     "attacks": {
@@ -919,7 +919,7 @@
     "initiative": "+1; Senses: Perception -1",
     "languages": "Basic, Binary",
     "reflexDefense": "15 ( Flat-Footed : 14), Fortitude Defense : 12, Will Defense : 9",
-    "HP": "4, Damage Threshold : 12",
+    "HP": "4", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Walking ); Magnetic Feet",
     "baseAttackBonus": "+0; Grapple : +2",
     "attacks": {
@@ -938,7 +938,7 @@
     "initiative": "+16; Senses: Darkvision , Perception +12",
     "languages": "Basic, Binary , Mando'a",
     "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 12, Will Defense : 11; Gyroscopic Stabilizers",
-    "HP": "22, Damage Threshold : 12",
+    "HP": "22", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+6; Grapple : +8",
     "attacks": {
@@ -969,7 +969,7 @@
     "initiative": "+2; Senses: Low-Light Vision, Perception +11",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "15 ( Flat-Footed : 14), Fortitude Defense : 9, Will Defense : 15",
-    "HP": "6, Damage Threshold : 9",
+    "HP": "6", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Hovering ; Maximum Altitude: 2 Squares)",
     "baseAttackBonus": "+0; Grapple : -4",
     "attacks": {
@@ -988,7 +988,7 @@
     "initiative": "+6; Senses: Low-Light Vision, Perception +16",
     "languages": "Basic, Binary",
     "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 20, Will Defense : 16; Extra Legs",
-    "HP": "39, Damage Threshold : 25",
+    "HP": "39", "Damage Threshold" :" 25",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+6; Grapple : +16",
     "attacks": {
@@ -1019,7 +1019,7 @@
     "initiative": "+5; Senses: Perception +11",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "10 ( Flat-Footed : 9), Fortitude Defense : 23, Will Defense : 11",
-    "HP": "63, Damage Threshold : 33",
+    "HP": "63", "Damage Threshold" :" 33",
     "speed": "8 Squares ( Walking ); Bantha Rush , Powerful Charge",
     "baseAttackBonus": "+9; Grapple : +31",
     "constitution": "-",
@@ -1029,7 +1029,7 @@
     "initiative": "+0; Senses: Perception +0",
     "languages": "Basic, Binary , High Galactic, 2 Unassigned; Translator Unit (DC 10)",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 11",
-    "HP": "10, Damage Threshold : 9",
+    "HP": "10", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+3; Grapple : +3",
     "attacks": {
@@ -1048,7 +1048,7 @@
     "initiative": "+11; Senses: Low-Light Vision, Perception +8",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "21 ( Flat-Footed : 16), Fortitude Defense : 11, Will Defense : 15; Extra Legs",
-    "HP": "41, Damage Threshold : 11",
+    "HP": "41", "Damage Threshold" :" 11",
     "speed": "9 Squares ( Flying ), 4 Squares ( Walking ( Limited )); Magnetic Feet",
     "baseAttackBonus": "+3; Grapple : -2",
     "attacks": {
@@ -1074,7 +1074,7 @@
     "initiative": "+4; Senses: Perception +9",
     "languages": "Basic, Binary",
     "reflexDefense": "19 ( Flat-Footed : 19), Fortitude Defense : 17, Will Defense : 13",
-    "HP": "40, Damage Reduction : 5 ( Lightsabers ), Damage Threshold : 17",
+    "HP": "40, Damage Reduction : 5 ( Lightsabers )", "Damage Threshold" :" 17",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+7; Grapple : +9",
     "attacks": {
@@ -1125,7 +1125,7 @@
     "initiative": "+7; Senses: Perception +8",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "13 ( Flat-Footed : 10), Fortitude Defense : 18, Will Defense : 10; Extra Legs",
-    "HP": "43, Damage Threshold : 23",
+    "HP": "43", "Damage Threshold" :" 23",
     "speed": "8 Squares ( Walking ); Powerful Charge , Running Attack",
     "baseAttackBonus": "+6; Grapple : +18",
     "attacks": {
@@ -1149,7 +1149,7 @@
     "initiative": "+2; Senses: Perception +8",
     "languages": "Basic, Binary",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 14, Will Defense : 10",
-    "HP": "31, Damage Threshold : 19",
+    "HP": "31", "Damage Threshold" :" 19",
     "speed": "6 Squares ( Walking ); Charging Fire",
     "baseAttackBonus": "+4; Grapple : +13",
     "attacks": {
@@ -1180,7 +1180,7 @@
     "initiative": "+4; Senses: Perception +3",
     "languages": "Basic, Binary , 5 Unassigned; Translator Unit (DC 5)",
     "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 12",
-    "HP": "7, Damage Threshold : 9",
+    "HP": "7", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+2; Grapple : +0",
     "attacks": {
@@ -1206,7 +1206,7 @@
     "initiative": "+7; Senses: Perception +0",
     "languages": "Basic, Binary",
     "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 15, Will Defense : 11",
-    "HP": "30, Damage Threshold : 15",
+    "HP": "30", "Damage Threshold" :" 15",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : +3",
     "attacks": {
@@ -1230,7 +1230,7 @@
     "initiative": "+0; Senses: Perception +6",
     "languages": "Basic, Binary , Bocce, Huttese, 3 Unassigned; Translator Unit (DC 10)",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 11",
-    "HP": "3, Damage Threshold : 9",
+    "HP": "3", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : +0",
     "attacks": {
@@ -1249,7 +1249,7 @@
     "initiative": "+1; Senses: Low-Light Vision, Perception +10",
     "languages": "Basic, Binary , 2 Unassigned",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 12",
-    "HP": "8, Damage Threshold : 9",
+    "HP": "8", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+2; Grapple : +1",
     "attacks": {
@@ -1268,7 +1268,7 @@
     "initiative": "+11; Senses: Darkvision , Perception +15",
     "languages": "Basic (understand only), Binary , 3 Unassigned",
     "reflexDefense": "16 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 12",
-    "HP": "12, Damage Threshold : 9",
+    "HP": "12", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+2; Grapple : +2",
     "attacks": {
@@ -1287,7 +1287,7 @@
     "initiative": "+3; Senses: Darkvision , Perception +17",
     "languages": "Basic, Binary",
     "reflexDefense": "13 ( Flat-Footed : 13), Fortitude Defense : 16, Will Defense : 11; Extra Legs",
-    "HP": "32, Damage Threshold : 26",
+    "HP": "32", "Damage Threshold" :" 26",
     "speed": "8 Squares ( Walking ), 4 Squares (Climbing); Magnetic Feet",
     "baseAttackBonus": "+6; Grapple : +17",
     "attacks": {
@@ -1306,7 +1306,7 @@
     "initiative": "+5; Senses: Darkvision , Perception +15",
     "languages": "Basic (understand only), Binary , 1 Unassigned",
     "reflexDefense": "15 ( Flat-Footed : 11), Fortitude Defense : 8, Will Defense : 12; Dodge",
-    "HP": "8, Damage Threshold : 8",
+    "HP": "8", "Damage Threshold" :" 8",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+2; Grapple : +1",
     "constitution": "-",
@@ -1316,7 +1316,7 @@
     "initiative": "+3; Senses: Low-Light Vision, Perception +11",
     "languages": "Basic, Binary",
     "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 16, Will Defense : 11",
-    "HP": "38, Damage Threshold : 21",
+    "HP": "38", "Damage Threshold" :" 21",
     "speed": "8 Squares ( Walking )",
     "baseAttackBonus": "+4; Grapple : +15",
     "attacks": {
@@ -1362,7 +1362,7 @@
     "initiative": "+8; Senses: Perception +13",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "16 ( Flat-Footed : 14), Fortitude Defense : 13, Will Defense : 12",
-    "HP": "40, Shield Rating : 20, Damage Threshold : 18",
+    "HP": "40, Shield Rating : 20", "Damage Threshold" :" 18",
     "speed": "2 Squares ( Walking ), 10 Squares ( Wheeled ( Exclusive ))",
     "baseAttackBonus": "+9; Grapple : +17",
     "attacks": {
@@ -1413,7 +1413,7 @@
     "initiative": "+13; Senses: Perception +11",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "18 ( Flat-Footed : 15), Fortitude Defense : 16, Will Defense : 13",
-    "HP": "46, Damage Threshold : 16",
+    "HP": "46", "Damage Threshold" :" 16",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+8; Grapple : +11",
     "attacks": {
@@ -1432,7 +1432,7 @@
     "initiative": "+10; Senses: Perception +15",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 20, Will Defense : 13",
-    "HP": "60, Shield Rating : 20, Damage Threshold : 29",
+    "HP": "60, Shield Rating : 20", "Damage Threshold" :" 29",
     "speed": "3 Squares ( Walking ), 12 Squares ( Wheeled ( Exclusive ))",
     "baseAttackBonus": "+12; Grapple : +31",
     "attacks": {
@@ -1466,7 +1466,7 @@
     "initiative": "+16; Senses: Perception +15",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "18 ( Flat-Footed : 15), Fortitude Defense : 19, Will Defense : 16",
-    "HP": "80, Shield Rating : 20, Damage Threshold : 29",
+    "HP": "80, Shield Rating : 20", "Damage Threshold" :" 29",
     "speed": "2 Squares ( Walking ), 10 Squares ( Wheeled ( Exclusive )); Running Attack",
     "baseAttackBonus": "+13; Grapple : +21",
     "attacks": {
@@ -1537,7 +1537,7 @@
     "initiative": "+9; Senses: Darkvision , Perception +10",
     "languages": "Basic, Binary",
     "reflexDefense": "24 ( Flat-Footed : 23), Fortitude Defense : 23, Will Defense : 17",
-    "HP": "74, Damage Threshold : 23",
+    "HP": "74", "Damage Threshold" :" 23",
     "speed": "6 Squares ( Tracked )",
     "baseAttackBonus": "+6; Grapple : +10",
     "attacks": {
@@ -1588,7 +1588,7 @@
     "initiative": "+1; Senses: Perception +0",
     "languages": "Basic, Binary , 5 Unassigned; Translator Unit (DC 10)",
     "reflexDefense": "12 ( Flat-Footed : 11), Fortitude Defense : 8, Will Defense : 10",
-    "HP": "3, Damage Threshold : 8",
+    "HP": "3", "Damage Threshold" :" 8",
     "speed": "4 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : -4",
     "attacks": {
@@ -1607,7 +1607,7 @@
     "initiative": "+1; Senses: Low-Light Vision, Perception +5",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 10, Will Defense : 12",
-    "HP": "6, Damage Threshold : 10",
+    "HP": "6", "Damage Threshold" :" 10",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+1; Grapple : +1",
     "attacks": {
@@ -1626,7 +1626,7 @@
     "initiative": "-1; Senses: Darkvision , Perception -1",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "18 ( Flat-Footed : 18), Fortitude Defense : 12, Will Defense : 9",
-    "HP": "5, Damage Threshold : 12",
+    "HP": "5", "Damage Threshold" :" 12",
     "speed": "4 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : -3",
     "attacks": {
@@ -1645,7 +1645,7 @@
     "initiative": "+5; Senses: Perception +6",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "6 ( Flat-Footed : 6), Fortitude Defense : 30, Will Defense : 9",
-    "HP": "137, Damage Threshold : 85",
+    "HP": "137", "Damage Threshold" :" 85",
     "speed": "8 Squares ( Walking )",
     "baseAttackBonus": "+11; Grapple : +51; Crush , Pin",
     "attacks": {
@@ -1669,7 +1669,7 @@
     "initiative": "+1; Senses: Perception +3",
     "languages": "Basic, Binary , 3 Unassigned",
     "reflexDefense": "13 ( Flat-Footed : 13), Fortitude Defense : 12, Will Defense : 16",
-    "HP": "10, Damage Threshold : 12",
+    "HP": "10", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+2; Grapple : +1",
     "attacks": {
@@ -1688,7 +1688,7 @@
     "initiative": "+11; Senses: Low-Light Vision, Perception +13",
     "languages": "Basic, Binary , 3 Unassigned",
     "reflexDefense": "22 ( Flat-Footed : 21), Fortitude Defense : 19, Will Defense : 20",
-    "HP": "36, Damage Threshold : 19",
+    "HP": "36", "Damage Threshold" :" 19",
     "speed": "6 Squares ( Walking ); Running Attack",
     "baseAttackBonus": "+7; Grapple : +8",
     "attacks": {
@@ -1719,7 +1719,7 @@
     "initiative": "+7; Senses: Darkvision , Perception +15",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "17 ( Flat-Footed : 16), Fortitude Defense : 15, Will Defense : 15; Extra Legs",
-    "HP": "33, Damage Threshold : 15",
+    "HP": "33", "Damage Threshold" :" 15",
     "speed": "4 Squares ( Walking ); Running Attack",
     "baseAttackBonus": "+2; Grapple : -2",
     "attacks": {
@@ -1738,7 +1738,7 @@
     "initiative": "+6; Senses: Perception +9",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "16 ( Flat-Footed : 14), Fortitude Defense : 14, Will Defense : 10",
-    "HP": "29, Shield Rating : 5, Damage Threshold : 19",
+    "HP": "29, Shield Rating : 5", "Damage Threshold" :" 19",
     "speed": "8 Squares ( Walking )",
     "baseAttackBonus": "+6; Grapple : +15",
     "attacks": {
@@ -1784,7 +1784,7 @@
     "initiative": "+12; Senses: Darkvision , Perception +14",
     "languages": "Basic, Binary , 3 Unassigned; Translator Unit (DC 15)",
     "reflexDefense": "22 ( Flat-Footed : 19), Fortitude Defense : 25, Will Defense : 23; Combat Reflexes , Logic Upgrade: Self-Defense",
-    "HP": "54, Damage Threshold : 25",
+    "HP": "54", "Damage Threshold" :" 25",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+7; Grapple : +10",
     "attacks": {
@@ -1815,7 +1815,7 @@
     "initiative": "+2; Senses: Perception +6",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "15 ( Flat-Footed : 13), Fortitude Defense : 12, Will Defense : 13; Vehicular Combat",
-    "HP": "18, Damage Threshold : 12",
+    "HP": "18", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : +1",
     "attacks": {
@@ -1841,7 +1841,7 @@
     "initiative": "+13; Senses: Darkvision , Perception +4",
     "languages": "Basic, Binary , 2 Unassigned",
     "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 11; Vehicular Combat",
-    "HP": "5, Damage Threshold : 9",
+    "HP": "5", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Wheeled ); Magnetic Feet",
     "baseAttackBonus": "+1; Grapple : -2",
     "attacks": {
@@ -1860,7 +1860,7 @@
     "initiative": "+2; Senses: Perception +0",
     "languages": "Basic, Binary",
     "reflexDefense": "12 ( Flat-Footed : 10), Fortitude Defense : 11, Will Defense : 10",
-    "HP": "3, Damage Threshold : 10",
+    "HP": "3", "Damage Threshold" :" 10",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : +2",
     "attacks": {
@@ -1879,7 +1879,7 @@
     "initiative": "+6; Senses: Low-Light Vision, Perception +11",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "19 ( Flat-Footed : 17), Fortitude Defense : 22, Will Defense : 14",
-    "HP": "32, Damage Threshold : 22",
+    "HP": "32", "Damage Threshold" :" 22",
     "speed": "8 Squares ( Walking ), 6 Squares ( Jet Pack ); Running Attack",
     "baseAttackBonus": "+7; Grapple : +18",
     "attacks": {
@@ -1915,7 +1915,7 @@
     "initiative": "+16; Senses: Darkvision , Perception +17",
     "languages": "Basic (understand only), Binary , 1 Unassigned",
     "reflexDefense": "20 ( Flat-Footed : 17), Fortitude Defense : 15, Will Defense : 16",
-    "HP": "47, Damage Threshold : 15",
+    "HP": "47", "Damage Threshold" :" 15",
     "speed": "9 Squares ( Flying ); Hidden Movement , Running Attack , Sprint",
     "baseAttackBonus": "+4; Grapple : +2",
     "attacks": {
@@ -1941,7 +1941,7 @@
     "initiative": "+1; Senses: Low-Light Vision, Perception +5",
     "languages": "Basic (understand only), Binary , 2 Unassigned",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 12",
-    "HP": "5, Damage Threshold : 9",
+    "HP": "5", "Damage Threshold" :" 9",
     "speed": "Immobile",
     "baseAttackBonus": "+1; Grapple : +1",
     "attacks": {
@@ -1960,7 +1960,7 @@
     "initiative": "+1; Senses: Low-Light Vision, Perception +10",
     "languages": "Basic, Binary , 2 Unassigned",
     "reflexDefense": "12 ( Flat-Footed : 12), Fortitude Defense : 9, Will Defense : 12",
-    "HP": "7, Damage Threshold : 9",
+    "HP": "7", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Tracked )",
     "baseAttackBonus": "+2; Grapple : +2",
     "attacks": {
@@ -1979,7 +1979,7 @@
     "initiative": "+1; Senses: Darkvision , Perception +7",
     "languages": "Basic, Binary , 2 Unassigned",
     "reflexDefense": "12 ( Flat-Footed : 11), Fortitude Defense : 10, Will Defense : 10",
-    "HP": "3, Damage Threshold : 10",
+    "HP": "3", "Damage Threshold" :" 10",
     "speed": "4 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : -4",
     "attacks": {
@@ -1998,7 +1998,7 @@
     "initiative": "+4; Senses: Low-Light Vision, Perception +4",
     "languages": "Basic, Binary , 3 Unassigned",
     "reflexDefense": "15 ( Flat-Footed : 13), Fortitude Defense : 9, Will Defense : 11",
-    "HP": "10, Damage Threshold : 9",
+    "HP": "10", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+3; Grapple : -5",
     "attacks": {
@@ -2017,7 +2017,7 @@
     "initiative": "+2; Senses: Perception +7",
     "languages": "Basic, Binary ; Translator Unit (DC 10)",
     "reflexDefense": "11 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 11",
-    "HP": "5, Damage Threshold : 9",
+    "HP": "5", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : +2",
     "attacks": {
@@ -2036,7 +2036,7 @@
     "initiative": "+9; Senses: Low-Light Vision, Perception +10",
     "languages": "Basic, Binary , 2 Unassigned",
     "reflexDefense": "19 ( Flat-Footed : 17), Fortitude Defense : 17, Will Defense : 16; Vehicular Combat",
-    "HP": "44, Damage Threshold : 17",
+    "HP": "44", "Damage Threshold" :" 17",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+4; Grapple : +6",
     "attacks": {
@@ -2055,7 +2055,7 @@
     "initiative": "+0; Senses: Perception +2",
     "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 10)",
     "reflexDefense": "9 ( Flat-Footed : 9), Fortitude Defense : 9, Will Defense : 11",
-    "HP": "5, Damage Threshold : 9",
+    "HP": "5", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : +0",
     "attacks": {
@@ -2074,7 +2074,7 @@
     "initiative": "+3; Senses: Low-Light Vision, Perception +10",
     "languages": "Basic, Binary , 3 Unassigned",
     "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 12",
-    "HP": "7, Damage Threshold : 9",
+    "HP": "7", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+2, Grapple : -1",
     "attacks": {
@@ -2093,7 +2093,7 @@
     "initiative": "+18; Senses: Perception +9",
     "languages": "Basic, Binary",
     "reflexDefense": "24 ( Flat-Footed : 21), Fortitude Defense : 20, Will Defense : 14; Evasion",
-    "HP": "35, Damage Threshold : 20",
+    "HP": "35", "Damage Threshold" :" 20",
     "speed": "6 Squares ( Walking ); Repositioning Routines",
     "baseAttackBonus": "+7; Grapple : +10",
     "attacks": {
@@ -2124,7 +2124,7 @@
     "initiative": "+1; Senses: Perception +1",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "16 ( Flat-Footed : 16), Fortitude Defense : 12, Will Defense : 10",
-    "HP": "7, Damage Threshold : 12",
+    "HP": "7", "Damage Threshold" :" 12",
     "speed": "4 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : +3",
     "attacks": {
@@ -2143,7 +2143,7 @@
     "initiative": "+8; Senses: Perception +14",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 22, Will Defense : 12",
-    "HP": "106, Damage Threshold : 47",
+    "HP": "106", "Damage Threshold" :" 47",
     "speed": "8 Squares ( Walking )",
     "baseAttackBonus": "+12; Grapple : +39; Pin",
     "attacks": {
@@ -2174,7 +2174,7 @@
     "initiative": "+13; Senses: Low-Light Vision, Perception +8",
     "languages": "Basic, Binary ; Translator Unit (DC 5)",
     "reflexDefense": "23 ( Flat-Footed : 20), Fortitude Defense : 19, Will Defense : 16",
-    "HP": "43, Damage Threshold : 19; Tough as Nails",
+    "HP": "43", "Damage Threshold" :" 19; Tough as Nails",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+9; Grapple : +12",
     "attacks": {
@@ -2193,7 +2193,7 @@
     "initiative": "+16; Senses: Low-Light Vision, Perception +11",
     "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 5)",
     "reflexDefense": "26 ( Flat-Footed : 22), Fortitude Defense : 26, Will Defense : 21",
-    "HP": "75, Damage Reduction : 2, Damage Threshold : 26; Tough as Nails",
+    "HP": "75, Damage Reduction : 2", "Damage Threshold" :" 26; Tough as Nails",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+14; Grapple : +17",
     "attacks": {
@@ -2212,7 +2212,7 @@
     "initiative": "+8; Senses: Perception +0",
     "languages": "Basic, Binary , 3 Unassigned",
     "reflexDefense": "17 ( Flat-Footed : 14), Fortitude Defense : 11, Will Defense : 11; Extra Legs",
-    "HP": "24, Damage Threshold : 11",
+    "HP": "24", "Damage Threshold" :" 11",
     "speed": "4 Squares ( Walking ); Magnetic Feet",
     "baseAttackBonus": "+0; Grapple : -2",
     "attacks": {
@@ -2231,7 +2231,7 @@
     "initiative": "+6; Senses: Low-Light Vision, Perception +9",
     "languages": "Basic, Binary , 5 Unassigned",
     "reflexDefense": "13 ( Flat-Footed : 12), Fortitude Defense : 10, Will Defense : 15",
-    "HP": "18, Damage Threshold : 10",
+    "HP": "18", "Damage Threshold" :" 10",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : +1",
     "attacks": {
@@ -2250,7 +2250,7 @@
     "initiative": "+5; Senses: Hunting Sensor, Low-Light Vision, Perception +11",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "18 ( Flat-Footed : 17), Fortitude Defense : 19, Will Defense : 15",
-    "HP": "32, Damage Threshold : 19",
+    "HP": "32", "Damage Threshold" :" 19",
     "speed": "6 Squares ( Walking ); Expert Tracker",
     "baseAttackBonus": "+6; Grapple : +8",
     "attacks": {
@@ -2281,7 +2281,7 @@
     "initiative": "+10; Senses: Darkvision , Perception +10",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "21 ( Flat-Footed : 18), Fortitude Defense : 18, Will Defense : 15",
-    "HP": "55, Damage Threshold : 18",
+    "HP": "55", "Damage Threshold" :" 18",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+4; Grapple : +7",
     "attacks": {
@@ -2317,7 +2317,7 @@
     "initiative": "+3; Senses: Perception +2",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 12, Will Defense : 11",
-    "HP": "7, Damage Threshold : 12",
+    "HP": "7", "Damage Threshold" :" 12",
     "speed": "8 Squares ( Hovering )",
     "baseAttackBonus": "+2; Grapple : -5",
     "attacks": {
@@ -2336,7 +2336,7 @@
     "initiative": "+11; Senses: Low-Light Vision, Perception +9",
     "languages": "Basic, Binary",
     "reflexDefense": "21 ( Flat-Footed : 18 ( Lightsaber Defense : 23)), Fortitude Defense : 20, Will Defense : 18",
-    "HP": "58, Damage Threshold : 20",
+    "HP": "58", "Damage Threshold" :" 20",
     "speed": "6 Squares ( Walking ); Magnetic Feet",
     "baseAttackBonus": "+6; Grapple : +9",
     "attacks": {
@@ -2370,7 +2370,7 @@
     "initiative": "+11; Senses: Perception +3",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "13 ( Flat-Footed : 10), Fortitude Defense : 12, Will Defense : 10",
-    "HP": "15, Damage Threshold : 12",
+    "HP": "15", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Walking ); Powerful Charge , Running Attack",
     "baseAttackBonus": "+4; Grapple : +7",
     "attacks": {
@@ -2399,7 +2399,7 @@
     "initiative": "+2; Senses: Low-Light Vision, Perception +14",
     "languages": "Binary , 1 Unassigned (understand only)",
     "reflexDefense": "14 ( Flat-Footed : 12), Fortitude Defense : 8, Will Defense : 12",
-    "HP": "2, Damage Threshold : 8",
+    "HP": "2", "Damage Threshold" :" 8",
     "speed": "8 Squares ( Hovering )",
     "baseAttackBonus": "+0; Grapple : -8",
     "constitution": "-",
@@ -2409,7 +2409,7 @@
     "initiative": "+7; Senses: Perception +6",
     "languages": "Basic, Binary",
     "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 15, Will Defense : 12",
-    "HP": "30, Damage Threshold : 15",
+    "HP": "30", "Damage Threshold" :" 15",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : +3",
     "attacks": {
@@ -2440,7 +2440,7 @@
     "initiative": "+8; Senses: Low-Light Vision, Perception +5",
     "languages": "Basic, Binary , 2 Unassigned",
     "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 10, Will Defense : 12",
-    "HP": "7, Damage Threshold : 12",
+    "HP": "7", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+2; Grapple : -2",
     "attacks": {
@@ -2478,7 +2478,7 @@
     "initiative": "+8; Senses: Low-Light Vision, Perception +8",
     "languages": "Basic, Binary ; Translator Unit (DC 5)",
     "reflexDefense": "18 ( Flat-Footed : 15), Fortitude Defense : 15, Will Defense : 12",
-    "HP": "30, Damage Threshold : 15; Tough as Nails",
+    "HP": "30", "Damage Threshold" :" 15; Tough as Nails",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : +4",
     "attacks": {
@@ -2504,7 +2504,7 @@
     "initiative": "+8; Senses: Darkvision , Perception +9",
     "languages": "Basic, Binary , 4 Unassigned",
     "reflexDefense": "12 ( Flat-Footed : 12), Fortitude Defense : 9, Will Defense : 14",
-    "HP": "17, Damage Threshold : 9",
+    "HP": "17", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+0; Grapple : -5",
     "attacks": {
@@ -2554,7 +2554,7 @@
     "initiative": "+9; Senses: Perception +8",
     "languages": "Basic, Binary",
     "reflexDefense": "13 ( Flat-Footed : 12), Fortitude Defense : 12, Will Defense : 10",
-    "HP": "19, Damage Threshold : 12",
+    "HP": "19", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Walking ); Powerful Charge",
     "baseAttackBonus": "+4; Grapple : +6",
     "attacks": {
@@ -2578,7 +2578,7 @@
     "initiative": "+7; Senses: Perception +6",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "15 ( Flat-Footed : 15), Fortitude Defense : 17, Will Defense : 10",
-    "HP": "11, Damage Threshold : 22",
+    "HP": "11", "Damage Threshold" :" 22",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+3; Grapple : +15; Pin",
     "attacks": {
@@ -2597,7 +2597,7 @@
     "initiative": "+13, Foresight ; Senses: Low-Light Vision, Use the Force +11",
     "languages": "Binary , 1 Unassigned",
     "reflexDefense": "24 ( Flat-Footed : 22), Fortitude Defense : 29, Will Defense : 23; Combat Reflexes , Dodge , Extra Legs",
-    "HP": "120, Shield Rating : 20, Damage Threshold : 44",
+    "HP": "120, Shield Rating : 20", "Damage Threshold" :" 44",
     "speed": "8 Squares ( Walking ), 4 Squares (Climbing); Running Attack",
     "baseAttackBonus": "+12; Grapple : +20; Pin , Trip",
     "attacks": {
@@ -2631,7 +2631,7 @@
     "initiative": "+10; Senses: Darkvision , Perception +9",
     "languages": "Basic, Binary , Verpine",
     "reflexDefense": "23 ( Flat-Footed : 20), Fortitude Defense : 20, Will Defense : 16",
-    "HP": "52, Damage Threshold : 20",
+    "HP": "52", "Damage Threshold" :" 20",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+5; Grapple : +7",
     "attacks": {
@@ -2655,7 +2655,7 @@
     "initiative": "+8; Senses: Darkvision , Perception +15",
     "languages": "Basic, Binary",
     "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 14, Will Defense : 12",
-    "HP": "40, Shield Rating : 20, Damage Threshold : 14",
+    "HP": "40, Shield Rating : 20", "Damage Threshold" :" 14",
     "speed": "6 Squares ( Walking ), 3 Squares (Climbing)",
     "baseAttackBonus": "+9; Grapple : +13",
     "attacks": {
@@ -2701,7 +2701,7 @@
     "initiative": "+12; Senses: Perception +6",
     "languages": "Basic, Binary",
     "reflexDefense": "20 ( Flat-Footed : 17), Fortitude Defense : 16, Will Defense : 14",
-    "HP": "26, Damage Threshold : 16",
+    "HP": "26", "Damage Threshold" :" 16",
     "speed": "6 Squares ( Walking ), 6 Squares ( Jet Pack ); Charging Fire , Running Attack",
     "baseAttackBonus": "+6; Grapple : +9",
     "attacks": {
@@ -2737,7 +2737,7 @@
     "initiative": "+4; Senses: Perception +5",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 13, Will Defense : 10",
-    "HP": "12, Damage Threshold : 13",
+    "HP": "12", "Damage Threshold" :" 13",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+2; Grapple : +5",
     "attacks": {
@@ -2756,7 +2756,7 @@
     "initiative": "+4; Senses: Low-Light Vision, Perception +17",
     "languages": "Binary , 1 Unassigned",
     "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 12, Will Defense : 15",
-    "HP": "12, Damage Threshold : 12",
+    "HP": "12", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+2; Grapple : -1",
     "attacks": {
@@ -2787,7 +2787,7 @@
     "initiative": "+2; Senses: Perception +2",
     "languages": "Basic, Binary , Bocce, High Galactic, Huttese",
     "reflexDefense": "11 ( Flat-Footed : 10), Fortitude Defense : 10, Will Defense : 11",
-    "HP": "7, Damage Threshold : 10",
+    "HP": "7", "Damage Threshold" :" 10",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+2; Grapple : +3",
     "attacks": {
@@ -2806,7 +2806,7 @@
     "initiative": "+1; Senses: Perception +1",
     "languages": "Basic, Binary , 2 Unassigned",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 13, Will Defense : 10",
-    "HP": "6, Damage Threshold : 13",
+    "HP": "6", "Damage Threshold" :" 13",
     "speed": "6 Squares ( Walking ); Magnetic Feet",
     "baseAttackBonus": "+1; Grapple : +1",
     "attacks": {
@@ -2825,7 +2825,7 @@
     "initiative": "+3; Senses: Darkvision , Perception +2",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "17 ( Flat-Footed : 17), Fortitude Defense : 17, Will Defense : 9; Adaptable Programming, Extra Legs",
-    "HP": "31, Shield Rating : 10, Damage Threshold : 22",
+    "HP": "31, Shield Rating : 10", "Damage Threshold" :" 22",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+4; Grapple : +16",
     "attacks": {
@@ -2856,7 +2856,7 @@
     "initiative": "+6; Senses: Perception +10",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "16 ( Flat-Footed : 15), Fortitude Defense : 13, Will Defense : 12",
-    "HP": "40, Damage Threshold : 13",
+    "HP": "40", "Damage Threshold" :" 13",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+6; Grapple : +9; Throw , Trip",
     "attacks": {
@@ -2882,7 +2882,7 @@
     "initiative": "+7; Senses: Perception +5",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "22 ( Flat-Footed : 19), Fortitude Defense : 20, Will Defense : 14",
-    "HP": "26, Damage Threshold : 20",
+    "HP": "26", "Damage Threshold" :" 20",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+7; Grapple : +12",
     "attacks": {
@@ -2918,7 +2918,7 @@
     "initiative": "+0; Senses: Low-Light Vision, Perception +4",
     "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 15)",
     "reflexDefense": "13 ( Flat-Footed : 13), Fortitude Defense : 10, Will Defense : 11",
-    "HP": "7, Damage Threshold : 10",
+    "HP": "7", "Damage Threshold" :" 10",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+2; Grapple : +2",
     "attacks": {
@@ -2937,7 +2937,7 @@
     "initiative": "+0; Senses: Perception +10",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 8, Will Defense : 10",
-    "HP": "3, Damage Threshold : 8",
+    "HP": "3", "Damage Threshold" :" 8",
     "speed": "4 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : +0",
     "attacks": {
@@ -2956,7 +2956,7 @@
     "initiative": "+8; Senses: Perception +16",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "16 ( Flat-Footed : 16), Fortitude Defense : 21, Will Defense : 12; Extra Legs",
-    "HP": "145, Damage Threshold : 71",
+    "HP": "145", "Damage Threshold" :" 71",
     "speed": "6 Squares ( Walking ), 3 Squares (Climbing); Powerful Charge",
     "baseAttackBonus": "+13; Grapple : +34; Crush , Pin",
     "attacks": {
@@ -2980,7 +2980,7 @@
     "initiative": "+5; Senses: Low-Light Vision, Perception +18",
     "languages": "Binary , 1 Unassigned",
     "reflexDefense": "16 ( Flat-Footed : 15), Fortitude Defense : 17, Will Defense : 12",
-    "HP": "33, Damage Threshold : 22",
+    "HP": "33", "Damage Threshold" :" 22",
     "speed": "8 Squares ( Walking )",
     "baseAttackBonus": "+6; Grapple : +18",
     "attacks": {
@@ -2999,7 +2999,7 @@
     "initiative": "+0; Senses: Darkvision , Perception +1",
     "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 10)",
     "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 10, Will Defense : 10",
-    "HP": "4, Damage Threshold : 10",
+    "HP": "4", "Damage Threshold" :" 10",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : +1",
     "attacks": {
@@ -3018,7 +3018,7 @@
     "initiative": "+11; Senses: Darkvision , Perception +16",
     "languages": "Basic (understand only), Binary , 2 Unassigned (understand only)",
     "reflexDefense": "21 ( Flat-Footed : 17), Fortitude Defense : 13, Will Defense : 14; Dodge",
-    "HP": "16, Damage Threshold : 13",
+    "HP": "16", "Damage Threshold" :" 13",
     "speed": "6 Squares ( Hovering ); Hidden Movement",
     "baseAttackBonus": "+2; Grapple : +0",
     "attacks": {
@@ -3037,7 +3037,7 @@
     "initiative": "+15; Senses: Perception +9",
     "languages": "Basic, Binary",
     "reflexDefense": "20 ( Flat-Footed : 17), Fortitude Defense : 12, Will Defense : 13",
-    "HP": "30, Damage Threshold : 12",
+    "HP": "30", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+9; Grapple : +11",
     "attacks": {
@@ -3078,7 +3078,7 @@
     "initiative": "+0; Senses: Perception +0",
     "languages": "Basic, Binary , 3 Unassigned; Translator Unit (DC 10)",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 10",
-    "HP": "2, Damage Threshold : 9",
+    "HP": "2", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : +0",
     "attacks": {
@@ -3097,7 +3097,7 @@
     "initiative": "+9; Senses: Darkvision , Perception +13",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "18 ( Flat-Footed : 15), Fortitude Defense : 7, Will Defense : 12",
-    "HP": "4, Damage Threshold : 7",
+    "HP": "4", "Damage Threshold" :" 7",
     "speed": "9 Squares ( Flying )",
     "baseAttackBonus": "+1; Grapple : -11",
     "attacks": {
@@ -3123,7 +3123,7 @@
     "initiative": "+1; Senses: Advanced Sensors, Darkvision , Perception +15",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "14 ( Flat-Footed : 14), Fortitude Defense : 18, Will Defense : 14",
-    "HP": "28, Damage Threshold : 23",
+    "HP": "28", "Damage Threshold" :" 23",
     "speed": "6 Squares ( Tracked )",
     "baseAttackBonus": "+1; Grapple : +6",
     "attacks": {
@@ -3142,7 +3142,7 @@
     "initiative": "+9; Senses: Low-Light Vision, Perception +8",
     "languages": "Basic, Binary , 2 Unassigned",
     "reflexDefense": "18 ( Flat-Footed : 16), Fortitude Defense : 11, Will Defense : 11",
-    "HP": "18, Damage Threshold : 11",
+    "HP": "18", "Damage Threshold" :" 11",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+3; Grapple : +5",
     "attacks": {
@@ -3161,7 +3161,7 @@
     "initiative": "+1; Senses: Perception +12",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 15, Will Defense : 11",
-    "HP": "9, Damage Threshold : 15",
+    "HP": "9", "Damage Threshold" :" 15",
     "speed": "4 Squares ( Hovering )",
     "baseAttackBonus": "+1; Grapple : +6",
     "attacks": {
@@ -3180,7 +3180,7 @@
     "initiative": "+1; Senses: Low-Light Vision, Perception +14",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "14 ( Flat-Footed : 14), Fortitude Defense : 15, Will Defense : 12",
-    "HP": "36, Damage Threshold : 25",
+    "HP": "36", "Damage Threshold" :" 25",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+2; Grapple : +7",
     "attacks": {
@@ -3199,7 +3199,7 @@
     "initiative": "+18; Senses: Darkvision , Perception +12",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "23 ( Flat-Footed : 18), Fortitude Defense : 19, Will Defense : 18; Combat Reflexes , Extra Legs",
-    "HP": "57, Damage Threshold : 19",
+    "HP": "57", "Damage Threshold" :" 19",
     "speed": "4 Squares ( Walking ), 2 Squares (Climbing)",
     "baseAttackBonus": "+6; Grapple : +11",
     "attacks": {
@@ -3240,7 +3240,7 @@
     "initiative": "+7; Senses: Perception +5",
     "languages": "Basic, Binary , Bocce, Huttese",
     "reflexDefense": "14 ( Flat-Footed : 12), Fortitude Defense : 12, Will Defense : 11",
-    "HP": "24, Damage Threshold : 12; Shake It Off",
+    "HP": "24", "Damage Threshold" :" 12; Shake It Off",
     "speed": "6 Squares ( Tracked )",
     "baseAttackBonus": "+0; Grapple : +2",
     "attacks": {
@@ -3259,7 +3259,7 @@
     "initiative": "+3; Senses: Darkvision , Perception +6",
     "languages": "Basic (understand only), Binary , 2 Unassigned",
     "reflexDefense": "14 ( Flat-Footed : 12), Fortitude Defense : 8, Will Defense : 8",
-    "HP": "6, Damage Threshold : 8",
+    "HP": "6", "Damage Threshold" :" 8",
     "speed": "6 Squares ( Wheeled )",
     "baseAttackBonus": "+1; Grapple : -7",
     "attacks": {
@@ -3278,7 +3278,7 @@
     "initiative": "+5; Senses: Darkvision , Perception +17",
     "languages": "Basic, Binary",
     "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 8, Will Defense : 12; Dodge",
-    "HP": "16, Damage Threshold : 8",
+    "HP": "16", "Damage Threshold" :" 8",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+4; Grapple : -9",
     "constitution": "-",
@@ -3288,7 +3288,7 @@
     "initiative": "+12; Senses: Perception +12",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "19 ( Flat-Footed : 18), Fortitude Defense : 14, Will Defense : 12; Logic Upgrade: Self-Defense",
-    "HP": "52, Shield Rating : 10, Damage Threshold : 19",
+    "HP": "52, Shield Rating : 10", "Damage Threshold" :" 19",
     "speed": "8 Squares ( Walking )",
     "baseAttackBonus": "+9; Grapple : +17",
     "constitution": "-",
@@ -3298,7 +3298,7 @@
     "initiative": "+8; Senses: Perception +13",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "20 ( Flat-Footed : 18), Fortitude Defense : 12, Will Defense : 12",
-    "HP": "30, Shield Rating : 10, Damage Threshold : 12",
+    "HP": "30, Shield Rating : 10", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+9; Grapple : +11",
     "attacks": {
@@ -3334,7 +3334,7 @@
     "initiative": "+12; Senses: Darkvision , Perception +18",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "27 ( Flat-Footed : 23), Fortitude Defense : 14, Will Defense : 19",
-    "HP": "46, Damage Threshold : 14",
+    "HP": "46", "Damage Threshold" :" 14",
     "speed": "6 Squares ( Hovering ); Expert Tracker , Running Attack",
     "baseAttackBonus": "+4; Grapple : -7",
     "attacks": {
@@ -3358,7 +3358,7 @@
     "initiative": "+8; Senses: Perception +1",
     "languages": "Basic, Binary",
     "reflexDefense": "16 ( Flat-Footed : 14), Fortitude Defense : 13, Will Defense : 10",
-    "HP": "8, Damage Threshold : 13",
+    "HP": "8", "Damage Threshold" :" 13",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+2; Grapple : +5",
     "attacks": {
@@ -3389,7 +3389,7 @@
     "initiative": "+3; Senses: Perception +7",
     "languages": "Basic, Binary",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 11, Will Defense : 10",
-    "HP": "21, Damage Threshold : 11",
+    "HP": "21", "Damage Threshold" :" 11",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+4; Grapple : +5",
     "attacks": {
@@ -3415,7 +3415,7 @@
     "initiative": "+11; Senses: Perception +10",
     "languages": "Basic (understand only), Binary , 1 Unassigned",
     "reflexDefense": "15 ( Flat-Footed : 12), Fortitude Defense : 9, Will Defense : 13",
-    "HP": "12, Damage Threshold : 9",
+    "HP": "12", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+4; Grapple : +2",
     "attacks": {
@@ -3439,7 +3439,7 @@
     "initiative": "-1; Senses: Darkvision , Perception +6",
     "languages": "Basic (understand only), Binary , 2 Unassigned",
     "reflexDefense": "9 ( Flat-Footed : 9), Fortitude Defense : 12, Will Defense : 9",
-    "HP": "5, Damage Threshold : 12",
+    "HP": "5", "Damage Threshold" :" 12",
     "speed": "8 Squares ( Wheeled ), 6 Squares ( Walking ); Magnetic Feet",
     "baseAttackBonus": "+0; Grapple : +2",
     "attacks": {
@@ -3458,7 +3458,7 @@
     "initiative": "+9; Senses: Low-Light Vision, Perception +4",
     "languages": "Basic, Binary",
     "reflexDefense": "21 ( Flat-Footed : 19), Fortitude Defense : 21, Will Defense : 15",
-    "HP": "47, Shield Rating : 10, Damage Threshold : 21",
+    "HP": "47, Shield Rating : 10", "Damage Threshold" :" 21",
     "speed": "8 Squares ( Walking )",
     "baseAttackBonus": "+4; Grapple : +13",
     "attacks": {
@@ -3489,7 +3489,7 @@
     "initiative": "+3; Senses: Darkvision , Perception +7",
     "languages": "Basic (understand only), Binary , 2 Unassigned",
     "reflexDefense": "18 ( Flat-Footed : 16), Fortitude Defense : 11, Will Defense : 15",
-    "HP": "25, Damage Threshold : 11",
+    "HP": "25", "Damage Threshold" :" 11",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+2; Grapple : -1",
     "attacks": {
@@ -3515,7 +3515,7 @@
     "initiative": "+3; Senses: Low-Light Vision, Perception +12",
     "languages": "Basic (understand only), Binary , 1 Unassigned",
     "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 11",
-    "HP": "7, Damage Threshold : 9",
+    "HP": "7", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+2; Grapple : -1",
     "attacks": {
@@ -3534,7 +3534,7 @@
     "initiative": "+3; Senses: Perception +9",
     "languages": "Basic, Binary",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 15, Will Defense : 11",
-    "HP": "21, Damage Threshold : 20",
+    "HP": "21", "Damage Threshold" :" 20",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+4; Grapple : +9",
     "attacks": {
@@ -3553,7 +3553,7 @@
     "initiative": "+0; Senses: Low-Light Vision, Perception +8",
     "languages": "Basic (understand only), Binary , 2 Unassigned",
     "reflexDefense": "8 ( Flat-Footed : 8), Fortitude Defense : 15, Will Defense : 10",
-    "HP": "15, Damage Threshold : 20",
+    "HP": "15", "Damage Threshold" :" 20",
     "speed": "4 Squares ( Wheeled )",
     "baseAttackBonus": "+1; Grapple : +11",
     "attacks": {
@@ -3579,7 +3579,7 @@
     "initiative": "+5; Senses: Perception +9",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 12, Will Defense : 11",
-    "HP": "21, Damage Threshold : 12",
+    "HP": "21", "Damage Threshold" :" 12",
     "speed": "4 Squares ( Walking )",
     "baseAttackBonus": "+4; Grapple : +1",
     "attacks": {
@@ -3598,7 +3598,7 @@
     "initiative": "+0; Senses: Darkvision , Perception +0",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "18 ( Flat-Footed : 18), Fortitude Defense : 13, Will Defense : 10",
-    "HP": "11, Damage Threshold : 13",
+    "HP": "11", "Damage Threshold" :" 13",
     "speed": "4 Squares ( Walking ); Failsafe Withdrawal",
     "baseAttackBonus": "+2; Grapple : +4",
     "attacks": {
@@ -3617,7 +3617,7 @@
     "initiative": "+8; Senses: Darkvision , Perception +9",
     "languages": "Basic (understand only), Binary , 1 Unassigned",
     "reflexDefense": "16 ( Flat-Footed : 13), Fortitude Defense : 11, Will Defense : 13",
-    "HP": "24, Damage Threshold : 11",
+    "HP": "24", "Damage Threshold" :" 11",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+0; Grapple : -2",
     "attacks": {
@@ -3636,7 +3636,7 @@
     "initiative": "+3; Senses: Perception +0",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 12, Will Defense : 9",
-    "HP": "5, Damage Threshold : 12",
+    "HP": "5", "Damage Threshold" :" 12",
     "speed": "4 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : -2",
     "attacks": {
@@ -3655,7 +3655,7 @@
     "initiative": "+4; Senses: Darkvision , Perception +8",
     "languages": "Basic (understand only), Binary , 2 Unassigned",
     "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 7, Will Defense : 10",
-    "HP": "5, Damage Threshold : 7",
+    "HP": "5", "Damage Threshold" :" 7",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+1; Grapple : -1",
     "attacks": {
@@ -3674,7 +3674,7 @@
     "initiative": "+10; Senses: Low-Light Vision, Perception +13",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "20 ( Flat-Footed : 15), Fortitude Defense : 10, Will Defense : 11",
-    "HP": "2, Damage Threshold : 10",
+    "HP": "2", "Damage Threshold" :" 10",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+0; Grapple : -10",
     "attacks": {
@@ -3693,7 +3693,7 @@
     "initiative": "+2; Senses: Darkvision , Perception +8",
     "languages": "Binary , 2 Unassigned",
     "reflexDefense": "16 ( Flat-Footed : 14), Fortitude Defense : 10, Will Defense : 13",
-    "HP": "24, Damage Threshold : 10",
+    "HP": "24", "Damage Threshold" :" 10",
     "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking ); Magnetic Feet",
     "baseAttackBonus": "+0; Grapple : -3",
     "attacks": {
@@ -3719,7 +3719,7 @@
     "initiative": "+4; Senses: Darkvision , Perception +3",
     "languages": "Basic (understand only), Binary , 2 Unassigned",
     "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
-    "HP": "10, Damage Threshold : 9",
+    "HP": "10", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking )",
     "baseAttackBonus": "+2; Grapple : +0",
     "attacks": {
@@ -3738,7 +3738,7 @@
     "initiative": "-1; Senses: Perception +5",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "10 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 10",
-    "HP": "4, Damage Threshold : 9",
+    "HP": "4", "Damage Threshold" :" 9",
     "speed": "4 Squares ( Hovering )",
     "baseAttackBonus": "+0; Grapple : -5",
     "attacks": {
@@ -3757,7 +3757,7 @@
     "initiative": "+3; Senses: Darkvision , Perception +8",
     "languages": "Basic (understand only), Binary , 2 Unassigned",
     "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
-    "HP": "7, Damage Threshold : 9",
+    "HP": "7", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking ), 9 Squares ( Flying ( Limited )); Magnetic Feet",
     "baseAttackBonus": "+1; Grapple : -2",
     "attacks": {
@@ -3776,7 +3776,7 @@
     "initiative": "+4; Senses: Darkvision , Perception +3",
     "languages": "Basic, Binary , 2 Unassigned",
     "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 8, Will Defense : 10",
-    "HP": "7, Damage Threshold : 8",
+    "HP": "7", "Damage Threshold" :" 8",
     "speed": "6 Squares ( Wheeled )",
     "baseAttackBonus": "+1; Grapple : -1",
     "attacks": {
@@ -3795,7 +3795,7 @@
     "initiative": "+1; Senses: Darkvision , Perception +3",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
-    "HP": "5, Damage Threshold : 9",
+    "HP": "5", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking ); Magnetic Feet",
     "baseAttackBonus": "+1; Grapple : -4",
     "attacks": {
@@ -3814,7 +3814,7 @@
     "initiative": "+3; Senses: Darkvision , Perception +1",
     "languages": "Basic (understand only), Binary , 1 Unassigned",
     "reflexDefense": "13 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
-    "HP": "8, Damage Threshold : 9",
+    "HP": "8", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : -2",
     "attacks": {
@@ -3833,7 +3833,7 @@
     "initiative": "+11; Senses: Darkvision , Perception +6",
     "languages": "Basic (understand only), Binary , 3 Unassigned",
     "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 11",
-    "HP": "21, Damage Threshold : 9",
+    "HP": "21", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking ); Magnetic Feet",
     "baseAttackBonus": "+4; Grapple : +2",
     "attacks": {
@@ -3852,7 +3852,7 @@
     "initiative": "+1; Senses: Darkvision , Perception +14",
     "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 15)",
     "reflexDefense": "11 ( Flat-Footed : 10), Fortitude Defense : 9, Will Defense : 12",
-    "HP": "2, Damage Threshold : 9",
+    "HP": "2", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : +1",
     "attacks": {
@@ -3871,7 +3871,7 @@
     "initiative": "+3; Senses: Low-Light Vision, Perception +15",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 15, Will Defense : 15",
-    "HP": "13, Damage Threshold : 15",
+    "HP": "13", "Damage Threshold" :" 15",
     "speed": "6 Squares ( Walking ); Instant Help",
     "baseAttackBonus": "+2; Grapple : +4; Pin",
     "attacks": {
@@ -3895,7 +3895,7 @@
     "initiative": "+4; Senses: Perception +1",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "12 ( Flat-Footed : 10), Fortitude Defense : 10, Will Defense : 9; Hot-Shot Pilot, Vehicular Combat",
-    "HP": "10, Damage Threshold : 10",
+    "HP": "10", "Damage Threshold" :" 10",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+3; Grapple : +5",
     "attacks": {
@@ -3914,7 +3914,7 @@
     "initiative": "+2; Senses: Low-Light Vision, Perception +8",
     "languages": "Basic (understand only), Binary , 2 Unassigned",
     "reflexDefense": "12 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
-    "HP": "5, Damage Threshold : 9",
+    "HP": "5", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Wheeled ), 4 Squares ( Walking ( Exclusive )); Magnetic Feet",
     "baseAttackBonus": "+1; Grapple : -3",
     "attacks": {
@@ -3940,7 +3940,7 @@
     "initiative": "+2; Senses: Automap , Low-Light Vision, Perception +10",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "12 ( Flat-Footed : 11), Fortitude Defense : 11, Will Defense : 12",
-    "HP": "7, Damage Threshold : 11",
+    "HP": "7", "Damage Threshold" :" 11",
     "speed": "4 Squares ( Tracked )",
     "baseAttackBonus": "+1; Grapple : -3",
     "attacks": {
@@ -3959,7 +3959,7 @@
     "initiative": "-1; Senses: Perception +0",
     "languages": "Basic, Binary , 1 Unassigned; Translator Unit (DC 10)",
     "reflexDefense": "9 ( Flat-Footed : 9), Fortitude Defense : 8, Will Defense : 10",
-    "HP": "3, Damage Threshold : 8",
+    "HP": "3", "Damage Threshold" :" 8",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : -1",
     "attacks": {
@@ -3978,7 +3978,7 @@
     "initiative": "+9; Senses: Darkvision, Perception +15",
     "languages": "Basic (understand only), Binary , Rakatan, Selkath (understand only), Shyriiwook (understand only), Tusken (understand only), 1 Unassigned",
     "reflexDefense": "19 ( Flat-Footed : 17), Fortitude Defense : 10, Will Defense : 11",
-    "HP": "38, Damage Threshold : 15",
+    "HP": "38", "Damage Threshold" :" 15",
     "speed": "8 Squares ( Walking )",
     "baseAttackBonus": "+11; Grapple : +10",
     "attacks": {
@@ -4007,7 +4007,7 @@
     "initiative": "+3; Senses: Darkvision , Perception +14",
     "languages": "Binary , 1 Unassigned",
     "reflexDefense": "17 ( Flat-Footed : 15), Fortitude Defense : 7, Will Defense : 12",
-    "HP": "2, Damage Threshold : 7",
+    "HP": "2", "Damage Threshold" :" 7",
     "speed": "8 Squares ( Hovering )",
     "baseAttackBonus": "+0; Grapple : -13",
     "constitution": "-",
@@ -4017,7 +4017,7 @@
     "initiative": "+1; Senses: Perception +8",
     "languages": "Basic (understand only), Binary , 3 Unassigned",
     "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 10, Will Defense : 12",
-    "HP": "4, Damage Threshold : 10",
+    "HP": "4", "Damage Threshold" :" 10",
     "speed": "4 Squares ( Tracked )",
     "baseAttackBonus": "+1; Grapple : -4",
     "attacks": {
@@ -4036,7 +4036,7 @@
     "initiative": "+6; Senses: Low-Light Vision, Perception +15",
     "languages": "Basic (understand only), Binary , 1 Unassigned",
     "reflexDefense": "20 ( Flat-Footed : 15), Fortitude Defense : 7, Will Defense : 12",
-    "HP": "5, Damage Threshold : 7",
+    "HP": "5", "Damage Threshold" :" 7",
     "speed": "9 Squares ( Flying )",
     "baseAttackBonus": "+1; Grapple : -9",
     "constitution": "-",
@@ -4046,7 +4046,7 @@
     "initiative": "+11; Senses: Darkvision , Perception +13",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "28 ( Flat-Footed : 24), Fortitude Defense : 24, Will Defense : 21; Total Concealment",
-    "HP": "68, Damage Threshold : 24",
+    "HP": "68", "Damage Threshold" :" 24",
     "speed": "6 Squares ( Walking ); Hidden Movement",
     "baseAttackBonus": "+7; Grapple : +10",
     "attacks": {
@@ -4077,7 +4077,7 @@
     "initiative": "+11; Senses: Perception +7",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "29 ( Flat-Footed : 28), Fortitude Defense : 37, Will Defense : 24",
-    "HP": "112, Damage Reduction : 3, Damage Threshold : 42",
+    "HP": "112, Damage Reduction : 3", "Damage Threshold" :" 42",
     "speed": "8 Squares ( Walking )",
     "baseAttackBonus": "+14; Grapple : +28",
     "attacks": {
@@ -4113,7 +4113,7 @@
     "initiative": "+15; Senses: Low-Light Vision, Perception +15",
     "languages": "Basic, Binary",
     "reflexDefense": "30 ( Flat-Footed : 27), Fortitude Defense : 39, Will Defense : 26",
-    "HP": "108, Damage Reduction : 4, Shield Rating : 15 (vs Ion ), Damage Threshold : 44",
+    "HP": "108, Damage Reduction : 4, Shield Rating : 15 (vs Ion )", "Damage Threshold" :" 44",
     "speed": "6 Squares ( Walking ); Running Attack",
     "baseAttackBonus": "+16; Grapple : +30",
     "attacks": {
@@ -4154,7 +4154,7 @@
     "initiative": "+13; Senses: Low-Light Vision, Perception +20",
     "languages": "Basic, Binary",
     "reflexDefense": "14 ( Flat-Footed : 10), Fortitude Defense : 10, Will Defense : 14",
-    "HP": "23, Damage Threshold : 10",
+    "HP": "23", "Damage Threshold" :" 10",
     "speed": "Immobile",
     "baseAttackBonus": "+6; Grapple : +10",
     "attacks": {
@@ -4185,7 +4185,7 @@
     "initiative": "+17; Senses: Perception +17",
     "languages": "Basic, Binary",
     "reflexDefense": "21 ( Flat-Footed : 19), Fortitude Defense : 27, Will Defense : 20; Extra Legs",
-    "HP": "120, Shield Rating : 20, Damage Threshold : 42",
+    "HP": "120, Shield Rating : 20", "Damage Threshold" :" 42",
     "speed": "6 Squares ( Walking ); Running Attack",
     "baseAttackBonus": "+17; Grapple : +34",
     "attacks": {
@@ -4236,7 +4236,7 @@
     "initiative": "+21; Senses: Perception +17",
     "languages": "Basic (understand only), Binary , 1 Unassigned",
     "reflexDefense": "23 ( Flat-Footed : 19), Fortitude Defense : 28, Will Defense : 16; Vehicular Combat",
-    "HP": "120, Damage Reduction : 20, Damage Threshold : 38; Damage Conversion",
+    "HP": "120, Damage Reduction : 20", "Damage Threshold" :" 38; Damage Conversion",
     "speed": "16 Squares ( Flying ; Character Scale ), 4 Squares ( Flying ; Starship Scale ); Turn and Burn",
     "baseAttackBonus": "+12; Grapple : +32",
     "attacks": {
@@ -4275,7 +4275,7 @@
     "initiative": "+17; Senses: Darkvision , Perception +17",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "35 ( Flat-Footed : 31), Fortitude Defense : 34 (39 vs The Force ), Will Defense : 32 (37 vs The Force )",
-    "HP": "128, Damage Reduction : 5, Damage Threshold : 34",
+    "HP": "128, Damage Reduction : 5", "Damage Threshold" :" 34",
     "speed": "8 Squares ( Flying )",
     "baseAttackBonus": "+17; Grapple : +16",
     "attacks": {
@@ -4319,7 +4319,7 @@
     "initiative": "+1; Senses: Darkvision , Perception +10",
     "languages": "Basic, Binary , 2 Unassigned",
     "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 12",
-    "HP": "8, Damage Threshold : 9",
+    "HP": "8", "Damage Threshold" :" 9",
     "speed": "4 Squares ( Walking )",
     "baseAttackBonus": "+2; Grapple : -4",
     "attacks": {
@@ -4338,7 +4338,7 @@
     "initiative": "+6; Senses: Perception +7",
     "languages": "Basic, Binary , 2 Unassigned",
     "reflexDefense": "18 ( Flat-Footed : 17), Fortitude Defense : 13, Will Defense : 13; Vehicular Combat",
-    "HP": "30, Damage Threshold : 13",
+    "HP": "30", "Damage Threshold" :" 13",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : +2",
     "attacks": {
@@ -4364,7 +4364,7 @@
     "initiative": "+10; Senses: Low-Light Vision, Perception +11",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "18 ( Flat-Footed : 17), Fortitude Defense : 17, Will Defense : 15; Cloaking Holoprojector, Extra Legs",
-    "HP": "30, Damage Threshold : 17",
+    "HP": "30", "Damage Threshold" :" 17",
     "speed": "6 Squares ( Walking ), 3 Squares (Climbing); Hidden Movement",
     "baseAttackBonus": "+5; Grapple : +6",
     "attacks": {
@@ -4395,7 +4395,7 @@
     "initiative": "+1; Senses: Perception +1",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "17 ( Flat-Footed : 17), Fortitude Defense : 17, Will Defense : 10",
-    "HP": "15, Damage Threshold : 22",
+    "HP": "15", "Damage Threshold" :" 22",
     "speed": "8 Squares ( Walking )",
     "baseAttackBonus": "+1; Grapple : +13",
     "attacks": {
@@ -4413,7 +4413,7 @@
   "T0-D_Interrogation_Droid": {
     "initiative": "+6; Senses: Low-Light Vision, Perception +14",
     "reflexDefense": "16 ( Flat-Footed : 15), Fortitude Defense : 14, Will Defense : 13",
-    "HP": "29, Damage Threshold : 14",
+    "HP": "29", "Damage Threshold" :" 14",
     "speed": "6 Squares ( Wheeled )",
     "baseAttackBonus": "+7, Grapple : +8",
     "attacks": {
@@ -4439,7 +4439,7 @@
     "initiative": "+2; Senses: Darkvision , Perception +3",
     "languages": "Basic (understand only), Binary , 2 Unassigned",
     "reflexDefense": "12 ( Flat-Footed : 11), Fortitude Defense : 9, Will Defense : 10",
-    "HP": "5, Damage Threshold : 9",
+    "HP": "5", "Damage Threshold" :" 9",
     "speed": "6 Squares ( Wheeled ); Magnetic Feet",
     "baseAttackBonus": "+1; Grapple : -3",
     "attacks": {
@@ -4465,7 +4465,7 @@
     "initiative": "+3; Senses: Perception +5",
     "languages": "Basic, Binary",
     "reflexDefense": "16 ( Flat-Footed : 13), Fortitude Defense : 11, Will Defense : 12",
-    "HP": "18, Damage Threshold : 11",
+    "HP": "18", "Damage Threshold" :" 11",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : +3",
     "attacks": {
@@ -4491,7 +4491,7 @@
     "initiative": "+17; Senses: Darkvision , Perception +5",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "14 ( Flat-Footed : 11), Fortitude Defense : 11, Will Defense : 11",
-    "HP": "32, Shield Rating : 20, Damage Threshold : 11",
+    "HP": "32, Shield Rating : 20", "Damage Threshold" :" 11",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+6; Grapple : +14",
     "attacks": {
@@ -4542,7 +4542,7 @@
     "initiative": "+7; Senses: Perception +6",
     "languages": "Basic, Binary , 1 Unassigned",
     "reflexDefense": "15 ( Flat-Footed : 13), Fortitude Defense : 12, Will Defense : 12",
-    "HP": "24, Damage Threshold : 12",
+    "HP": "24", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : +2",
     "attacks": {
@@ -4568,7 +4568,7 @@
     "initiative": "+11; Senses: Darkvision , Perception +19",
     "languages": "Basic, Binary",
     "reflexDefense": "20 ( Flat-Footed : 18), Fortitude Defense : 11, Will Defense : 13",
-    "HP": "22, Damage Threshold : 11",
+    "HP": "22", "Damage Threshold" :" 11",
     "speed": "6 Squares ( Tracked )",
     "baseAttackBonus": "+6; Grapple : +8",
     "attacks": {
@@ -4604,7 +4604,7 @@
     "initiative": "-1; Senses: Perception +7",
     "languages": "Basic, Binary , 3 Unassigned; Translator Unit (DC 5)",
     "reflexDefense": "11 ( Flat-Footed : 11), Fortitude Defense : 10, Will Defense : 15",
-    "HP": "18, Damage Threshold : 10",
+    "HP": "18", "Damage Threshold" :" 10",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : -1",
     "attacks": {
@@ -4642,7 +4642,7 @@
     "initiative": "+13; Senses: Low-Light Vision, Perception +13",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "26 ( Flat-Footed : 24), Fortitude Defense : 26, Will Defense : 23",
-    "HP": "90, Damage Threshold : 31, Tough as Nails",
+    "HP": "90", "Damage Threshold" :" 31, Tough as Nails",
     "speed": "6 Squares ( Tracked )",
     "baseAttackBonus": "+12; Grapple : +14",
     "attacks": {
@@ -4666,7 +4666,7 @@
     "initiative": "-3; Senses: Darkvision , Perception +14",
     "languages": "Basic, Binary , 3 Unassigned",
     "reflexDefense": "6 ( Flat-Footed : 6), Fortitude Defense : 10, Will Defense : 12 (15 vs Persuasion )",
-    "HP": "13, Damage Threshold : 15",
+    "HP": "13", "Damage Threshold" :" 15",
     "speed": "Immobile",
     "baseAttackBonus": "+0; Grapple : +5",
     "attacks": {
@@ -4685,7 +4685,7 @@
     "initiative": "+6; Senses: Darkvision , Perception +9",
     "languages": "Basic (understand only), Binary , 1 Unassigned",
     "reflexDefense": "16 ( Flat-Footed : 15), Fortitude Defense : 16, Will Defense : 13",
-    "HP": "34, Damage Threshold : 21",
+    "HP": "34", "Damage Threshold" :" 21",
     "speed": "6 Squares ( Hovering )",
     "baseAttackBonus": "+0; Grapple : +9",
     "attacks": {
@@ -4711,7 +4711,7 @@
     "initiative": "+7; Senses: Low-Light Vision, Perception +12",
     "languages": "Basic, Binary",
     "reflexDefense": "22 ( Flat-Footed : 19), Fortitude Defense : 16, Will Defense : 18",
-    "HP": "37, Damage Threshold : 16",
+    "HP": "37", "Damage Threshold" :" 16",
     "speed": "4 Squares ( Tracked )",
     "baseAttackBonus": "+6; Grapple : +4",
     "attacks": {
@@ -4742,7 +4742,7 @@
     "initiative": "+8; Senses: Perception +1",
     "languages": "Basic, Binary",
     "reflexDefense": "21 ( Flat-Footed : 19), Fortitude Defense : 19, Will Defense : 13",
-    "HP": "41, Damage Threshold : 19",
+    "HP": "41", "Damage Threshold" :" 19",
     "speed": "6 Squares ( Walking ), 12 Squares ( Flying ( Limited )); Bantha Rush",
     "baseAttackBonus": "+3; Grapple : +7",
     "attacks": {
@@ -4819,7 +4819,7 @@
     "initiative": "+3; Senses: Perception +6",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "16 ( Flat-Footed : 16), Fortitude Defense : 14, Will Defense : 12; 360-Degree Vision, Extra Legs",
-    "HP": "26, Damage Threshold : 14",
+    "HP": "26", "Damage Threshold" :" 14",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+0; Grapple : +3",
     "attacks": {
@@ -4845,7 +4845,7 @@
     "initiative": "+0; Senses: Perception +12",
     "languages": "Basic, Binary",
     "reflexDefense": "14 ( Flat-Footed : 14), Fortitude Defense : 12, Will Defense : 12",
-    "HP": "4, Damage Threshold : 12",
+    "HP": "4", "Damage Threshold" :" 12",
     "speed": "6 Squares ( Walking ), 6 Squares ( Hovering ( Limited ))",
     "baseAttackBonus": "+0; Grapple : +2",
     "attacks": {
@@ -4864,7 +4864,7 @@
     "initiative": "+5; Senses: Perception +2",
     "languages": "Basic (understand only), Binary",
     "reflexDefense": "18 ( Flat-Footed : 14), Fortitude Defense : 14, Will Defense : 13",
-    "HP": "22, Damage Threshold : 14",
+    "HP": "22", "Damage Threshold" :" 14",
     "speed": "6 Squares ( Walking ), 3 Squares (Climbing); Leaping Strike, Magnetic Feet , Running Attack , Surefooted",
     "baseAttackBonus": "+1; Grapple : +5",
     "attacks": {
@@ -4888,7 +4888,7 @@
     "initiative": "+6; Senses: Low-Light Vision, Perception +12",
     "languages": "Basic, Binary",
     "reflexDefense": "21 ( Flat-Footed : 18), Fortitude Defense : 15, Will Defense : 13",
-    "HP": "21, Damage Threshold : 15",
+    "HP": "21", "Damage Threshold" :" 15",
     "speed": "6 Squares ( Walking )",
     "baseAttackBonus": "+5; Grapple : +8",
     "attacks": {
@@ -4922,7 +4922,7 @@
     "initiative": "+11; Senses: Darkvision , Perception +12",
     "languages": "Basic, Binary , Yuuzhan Vong; Translator Unit (DC 10)",
     "reflexDefense": "27 ( Flat-Footed : 24), Fortitude Defense : 27, Will Defense : 20",
-    "HP": "67, Damage Threshold : 27; Tough as Nails",
+    "HP": "67", "Damage Threshold" :" 27; Tough as Nails",
     "speed": "6 Squares ( Walking ); Repulsorlift Booster",
     "baseAttackBonus": "+8; Grapple : +12",
     "attacks": {
