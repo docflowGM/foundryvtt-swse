@@ -1,5 +1,5 @@
 // systems/swse/scripts/chargen.js
-import { SWSE_RACES, applyRaceBonuses } from "../data/races.js";
+import { SWSE_RACES, applyRaceBonuses } from "./races.js";
 
 // --- Helpers ---
 function capitalize(str) {
