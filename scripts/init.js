@@ -97,3 +97,24 @@ Hooks.once("ready", () => {
     console.log(`SWSE | Loaded ${game.swseVehicles.templates.length} vehicle templates.`);
   }
 });
+Hooks.once("ready", () => {
+  // Patch Actor.create to log extra validation detail
+  const _create = Actor.create;
+  Actor.create = async function(data, options) {
+    try {
+      return await _create.call(this, data, options);
+    } catch (err) {
+      if (err.name === "DataModelValidationError") {
+        console.error("Actor creation failed with validation errors:", err);
+        console.error("Raw data passed:", data);
+        // If the failure includes field-level issues:
+        if (err.failures) {
+          for (let f of err.failures) {
+            console.error(`Field "${f.path}" failed:`, f.failure);
+          }
+        }
+      }
+      throw err;
+    }
+  };
+});
