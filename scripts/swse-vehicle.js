@@ -10,8 +10,8 @@ let SCRAPED_VEHICLES = [];
  */
 Hooks.once("ready", async () => {
   try {
-    SCRAPED_VEHICLES = await fetch("systems/swse/packs/vehicles.json")
-      .then(r => r.json());
+    const response = await fetch("systems/swse/packs/vehicles.json");
+    SCRAPED_VEHICLES = await response.json();
   } catch (err) {
     console.error("SWSE | Failed to load scraped vehicles data", err);
   }
@@ -43,20 +43,21 @@ export class SWSEVehicleSheet extends SWSEActorSheet {
   }
 
   /** Expose crew, weapons, and scraped stats to the template */
-getData() {
-  const data = super.getData();
-  data.labels = {
-    sheetTitle: game.i18n.localize("SWSE.SheetLabel.character")
-  };
-  return data;
-}
+  getData() {
+    const data = super.getData();
+    const sys = data.actor.system;
+
+    data.labels = {
+      sheetTitle: game.i18n.localize("SWSE.SheetLabel.vehicle")
+    };
+
     // Find scraped entry by name
-    const = SCRAPED_VEHICLES.find(v => v.name === data.actor.name);
+    const scraped = SCRAPED_VEHICLES.find(v => v.name === data.actor.name);
     data.scraped = scraped || null;
 
-    // If we have scraped data, merge into system for display & rolls
+    // Merge scraped data into system
     if (scraped) {
-      // 1) Speed: take first number of "8 Squares" or similar
+      // 1) Speed
       const spMatch = String(scraped.speed).match(/(\d+)/);
       if (spMatch) {
         sys.speed.base  = Number(spMatch[1]);
@@ -66,30 +67,30 @@ getData() {
       // 2) Base Attack Bonus
       sys.bab = parseBonus(scraped.base_attack_bonus);
 
-      // 3) Grapple (store as sys.defenses.grapple for reference)
+      // 3) Grapple
       sys.defenses = sys.defenses || {};
       sys.defenses.grapple = parseBonus(scraped.grapple);
 
       // 4) Ability Scores
-      for (const [full, val] of Object.entries(scraped.ability_scores)) {
+      for (const [full, val] of Object.entries(scraped.ability_scores || {})) {
         const abKey = AB_MAP[full];
-        if (abKey && sys.abilities[abKey]) {
+        if (abKey && sys.abilities?.[abKey]) {
           sys.abilities[abKey].base = parseInt(val) || sys.abilities[abKey].base;
         }
       }
 
       // 5) Skills
-      for (const [key, val] of Object.entries(scraped.skills)) {
-        if (sys.skills[key]) {
+      for (const [key, val] of Object.entries(scraped.skills || {})) {
+        if (sys.skills?.[key]) {
           sys.skills[key].value = parseBonus(val);
         }
       }
 
-      // 6) Crew Size & Passengers (just expose raw for GM)
+      // 6) Crew Size & Passengers
       sys.crew_size  = scraped.crew_size;
       sys.passengers = scraped.passengers;
 
-      // 7) Weapons: if ranged array contains names, override
+      // 7) Weapons
       if (Array.isArray(scraped.ranged) && scraped.ranged.length) {
         sys.weapons = scraped.ranged.map(name => ({
           name,
@@ -104,20 +105,21 @@ getData() {
         }));
       }
 
-      // 8) Store source_url for quick reference
+      // 8) Source URL
       sys.source_url = scraped.source_url;
     }
 
-    // Pass through for the template
+    // Pass through to template
     data.crew    = sys.crew;
     data.weapons = sys.weapons;
+
     return data;
   }
 
   activateListeners(html) {
     super.activateListeners(html);
 
-    // Crew‐drop zones
+    // Crew drop zones
     html.find(".crew-drop")
       .on("dragover", ev => ev.preventDefault())
       .on("drop",    ev => this._onCrewDrop(ev));
@@ -133,7 +135,7 @@ getData() {
     ev.preventDefault();
     const drag = JSON.parse(ev.originalEvent.dataTransfer.getData("text/plain"));
     if (drag.type !== "Actor") return;
-    if (!["character","droid"].includes(drag.documentType)) return;
+    if (!["character", "droid"].includes(drag.documentType)) return;
 
     const slot = ev.currentTarget.dataset.slot;
     const idx  = ev.currentTarget.dataset.index;
