@@ -11,10 +11,11 @@
   ],
   "compatibility": {
     "minimum": "11",
-    "verified": "11",
+    "verified": "13",
     "maximum": "13"
   },
-  "scripts": [
+  "esmodules": [
+    "system/swse.js",
     "scripts/init.js",
     "scripts/swse-data.js",
     "scripts/swse-actor.js",
@@ -26,10 +27,7 @@
     "scripts/chargen.js",
     "scripts/dice-utils.js",
     "scripts/diceroller.js",
-    "scripts/load-templates.js"
-  ],
-  "esmodules": [
-    "system/swse.js",
+    "scripts/load-templates.js",
     "scripts/import-data.js"
   ],
   "styles": [
@@ -54,28 +52,6 @@
     { "name": "swse-special-combat-conditions", "label": "SWSE Special Combat Conditions", "path": "packs/swse-special-combat-conditions.db", "type": "Item", "system": "swse" },
     { "name": "swse-weapons", "label": "SWSE Weapons", "path": "packs/swse-weapons.db", "type": "Item", "system": "swse" }
   ],
-  "types": {
-    "Actor": [
-      "character",
-      "droid",
-      "npc",
-      "vehicle"
-    ],
-    "Item": [
-      "class",
-      "feat",
-      "talent",
-      "forcepower",
-      "equipment",
-      "weapon",
-      "armor",
-      "skill",
-      "attribute",
-      "condition",
-      "combat-action",
-      "extra-skill-use"
-    ]
-  },
   "grid": {
     "distance": 1,
     "units": "m"
