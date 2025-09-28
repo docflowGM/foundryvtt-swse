@@ -10,7 +10,7 @@ let SCRAPED_VEHICLES = [];
  */
 Hooks.once("ready", async () => {
   try {
-    const response = await fetch("systems/swse/packs/vehicles.json");
+    const response = await fetch("systems/swse/data/vehicles.json");
     SCRAPED_VEHICLES = await response.json();
   } catch (err) {
     console.error("SWSE | Failed to load scraped vehicles data", err);
