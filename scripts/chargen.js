@@ -280,6 +280,7 @@ async function characterGenerator(classesList, forcePowersList) {
     system: {
       species: speciesId,
       class: classId,
+      defenses: chosenClass.defenses || {},   // merged in from classes-db
       attributes: finalAttributes,
       skills: selectedSkills,
       feats: assignedFeats,
@@ -316,19 +317,31 @@ async function droidGenerator() {
 
 // Main entrypoint
 async function main() {
-  const classesPath = "systems/swse/data/classes.json";
+  const classesPath = "systems/swse/system/classes.json";
+  const classesDbPath = "systems/swse/system/classes-db.json";
   const forcePowersPath = "systems/swse/data/forcepowers.json";
 
   let classesList = [];
+  let classesDb = {};
   let forcePowersList = [];
 
   try {
     classesList = await loadJSON(classesPath);
+    classesDb = await loadJSON(classesDbPath);
     forcePowersList = await loadJSON(forcePowersPath);
   } catch (err) {
     ui.notifications.error(`Error loading JSON: ${err.message}`);
     return;
   }
+
+  // merge defense bonuses into classes
+  classesList = classesList.map(c => {
+    const dbEntry = classesDb[c.id];
+    if (dbEntry) {
+      c.defenses = dbEntry.defenses || {};
+    }
+    return c;
+  });
 
   const actorType = await new Promise(resolve => {
     new Dialog({
