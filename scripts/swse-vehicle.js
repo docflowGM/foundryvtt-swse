@@ -51,7 +51,7 @@ getData() {
   return data;
 }
     // Find scraped entry by name
-    const scraped = SCRAPED_VEHICLES.find(v => v.name === data.actor.name);
+    const = SCRAPED_VEHICLES.find(v => v.name === data.actor.name);
     data.scraped = scraped || null;
 
     // If we have scraped data, merge into system for display & rolls
