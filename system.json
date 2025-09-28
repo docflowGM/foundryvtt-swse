@@ -3,17 +3,44 @@
   "title": "Star Wars Saga Edition",
   "description": "A FoundryVTT system for Star Wars Saga Edition.",
   "version": "1.0.0",
+
   "authors": [
     {
       "name": "Doc Flow",
       "url": "https://github.com/docflowGM"
     }
   ],
+
   "compatibility": {
     "minimum": "11",
     "verified": "13",
     "maximum": "13"
   },
+
+  "template": "system/templates/template.json",
+
+  "actorTypes": [
+    "character",
+    "droid",
+    "npc",
+    "vehicle"
+  ],
+
+  "itemTypes": [
+    "class",
+    "feat",
+    "talent",
+    "forcepower",
+    "equipment",
+    "weapon",
+    "armor",
+    "skill",
+    "attribute",
+    "condition",
+    "combat-action",
+    "extra-skill-use"
+  ],
+
   "esmodules": [
     "system/swse.js",
     "scripts/init.js",
@@ -30,11 +57,13 @@
     "scripts/load-templates.js",
     "scripts/import-data.js"
   ],
+
   "styles": [
     "styles/swse.css",
     "styles/swse-levelup.css",
     "styles/swse-vehicles.css"
   ],
+
   "packs": [
     { "name": "swse-classes", "label": "SWSE Classes", "path": "packs/swse-classes.db", "type": "Item", "system": "swse" },
     { "name": "swse-equipment", "label": "SWSE Equipment", "path": "packs/swse-equipment.db", "type": "Item", "system": "swse" },
@@ -52,11 +81,14 @@
     { "name": "swse-special-combat-conditions", "label": "SWSE Special Combat Conditions", "path": "packs/swse-special-combat-conditions.db", "type": "Item", "system": "swse" },
     { "name": "swse-weapons", "label": "SWSE Weapons", "path": "packs/swse-weapons.db", "type": "Item", "system": "swse" }
   ],
+
   "grid": {
     "distance": 1,
     "units": "m"
   },
+
   "initiative": "1d20",
+
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip"
