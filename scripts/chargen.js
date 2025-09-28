@@ -221,7 +221,7 @@ async function askForForcePowers(forcePowersList, maxChoices) {
 }
 
 // --- Main Character Generator ---
-async function characterGenerator(classesList, forcePowersList) {
+async function characterGenerator(classesList, classDB, forcePowersList) {
   const speciesOptions = Object.entries(SWSE_RACES).map(([id, data]) => ({
     id,
     name: data.label
@@ -235,6 +235,8 @@ async function characterGenerator(classesList, forcePowersList) {
   if (!classId) return null;
   const chosenClass = classesList.find(c => c.id === classId);
   const className = chosenClass?.name || classId;
+
+  const classBonus = classDB[classId]?.defenses || {};
 
   const charName = await askForName();
   if (!charName) return null;
@@ -280,8 +282,29 @@ async function characterGenerator(classesList, forcePowersList) {
     system: {
       species: speciesId,
       class: classId,
-      defenses: chosenClass.defenses || {},   // merged in from classes-db
       attributes: finalAttributes,
+
+      defenses: {
+        reflex: {
+          ability: "dex",
+          classBonus: classBonus.reflex || 0,
+          misc: 0,
+          total: 10
+        },
+        fortitude: {
+          ability: "con",
+          classBonus: classBonus.fortitude || 0,
+          misc: 0,
+          total: 10
+        },
+        will: {
+          ability: "wis",
+          classBonus: classBonus.will || 0,
+          misc: 0,
+          total: 10
+        }
+      },
+
       skills: selectedSkills,
       feats: assignedFeats,
       talents: assignedTalents,
@@ -317,31 +340,22 @@ async function droidGenerator() {
 
 // Main entrypoint
 async function main() {
-  const classesPath = "systems/swse/system/classes.json";
-  const classesDbPath = "systems/swse/system/classes-db.json";
+  const classesPath = "systems/swse/data/classes.json";
+  const classDBPath = "systems/swse/data/classes-db.json";
   const forcePowersPath = "systems/swse/data/forcepowers.json";
 
   let classesList = [];
-  let classesDb = {};
+  let classDB = {};
   let forcePowersList = [];
 
   try {
     classesList = await loadJSON(classesPath);
-    classesDb = await loadJSON(classesDbPath);
+    classDB = await loadJSON(classDBPath);
     forcePowersList = await loadJSON(forcePowersPath);
   } catch (err) {
     ui.notifications.error(`Error loading JSON: ${err.message}`);
     return;
   }
-
-  // merge defense bonuses into classes
-  classesList = classesList.map(c => {
-    const dbEntry = classesDb[c.id];
-    if (dbEntry) {
-      c.defenses = dbEntry.defenses || {};
-    }
-    return c;
-  });
 
   const actorType = await new Promise(resolve => {
     new Dialog({
@@ -364,7 +378,7 @@ async function main() {
   if (useGenerator) {
     let actorData = null;
     if (actorType === "character") {
-      actorData = await characterGenerator(classesList, forcePowersList);
+      actorData = await characterGenerator(classesList, classDB, forcePowersList);
     } else if (actorType === "droid") {
       actorData = await droidGenerator();
     }
