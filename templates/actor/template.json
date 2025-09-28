@@ -2,6 +2,8 @@
   "Actor": {
     "character": {
       "type": "character",
+      "name": "New Character",
+      "img": "icons/svg/mystery-man.svg",
       "system": {
         "race": "custom",
         "species": "",
@@ -11,12 +13,10 @@
         "bab": 0,
         "size": "medium",
         "speed": { "base": 6, "total": 6 },
-
         "forcePoints": { "value": 1, "max": 1 },
         "destinyPoints": { "value": 0, "max": 0 },
         "secondWind": { "uses": 1, "healing": 0 },
         "conditionTrack": "normal",
-
         "abilities": {
           "str": { "base": 10, "temp": 0 },
           "dex": { "base": 10, "temp": 0 },
@@ -25,53 +25,24 @@
           "wis": { "base": 10, "temp": 0 },
           "cha": { "base": 10, "temp": 0 }
         },
-
         "defenses": {
           "reflex":    { "ability": "dex", "class": 0, "armor": 0, "misc": 0, "total": 10 },
-          "fortitude": { "ability": "con", "class": 0, "misc": 0, "total": 10 },
-          "will":      { "ability": "wis", "class": 0, "misc": 0, "total": 10 }
+          "fortitude": { "ability": "con", "class": 0, "armor": 0, "misc": 0, "total": 10 },
+          "will":      { "ability": "wis", "class": 0, "armor": 0, "misc": 0, "total": 10 }
         },
-
         "hp": { "value": 1, "max": 1, "threshold": 10 },
         "initiative": { "misc": 0, "total": 0 },
-
-        "skills": {
-          "acrobatics":               { "value": 0, "trained": false, "focus": false, "ability": "dex" },
-          "climb":                    { "value": 0, "trained": false, "focus": false, "ability": "str" },
-          "deception":                { "value": 0, "trained": false, "focus": false, "ability": "cha" },
-          "endurance":                { "value": 0, "trained": false, "focus": false, "ability": "con" },
-          "gather_information":       { "value": 0, "trained": false, "focus": false, "ability": "cha" },
-          "initiative":               { "value": 0, "trained": false, "focus": false, "ability": "dex" },
-          "jump":                     { "value": 0, "trained": false, "focus": false, "ability": "str" },
-          "knowledge_bureaucracy":    { "value": 0, "trained": false, "focus": false, "ability": "int" },
-          "knowledge_galactic_lore":  { "value": 0, "trained": false, "focus": false, "ability": "int" },
-          "knowledge_life_sciences":  { "value": 0, "trained": false, "focus": false, "ability": "int" },
-          "knowledge_physical_sciences": { "value": 0, "trained": false, "focus": false, "ability": "int" },
-          "knowledge_social_sciences":   { "value": 0, "trained": false, "focus": false, "ability": "int" },
-          "knowledge_tactics":        { "value": 0, "trained": false, "focus": false, "ability": "int" },
-          "knowledge_technology":     { "value": 0, "trained": false, "focus": false, "ability": "int" },
-          "mechanics":                { "value": 0, "trained": false, "focus": false, "ability": "int" },
-          "perception":               { "value": 0, "trained": false, "focus": false, "ability": "wis" },
-          "persuasion":               { "value": 0, "trained": false, "focus": false, "ability": "cha" },
-          "pilot":                    { "value": 0, "trained": false, "focus": false, "ability": "dex" },
-          "ride":                     { "value": 0, "trained": false, "focus": false, "ability": "dex" },
-          "stealth":                  { "value": 0, "trained": false, "focus": false, "ability": "dex" },
-          "survival":                 { "value": 0, "trained": false, "focus": false, "ability": "wis" },
-          "swim":                     { "value": 0, "trained": false, "focus": false, "ability": "str" },
-          "treat_injury":             { "value": 0, "trained": false, "focus": false, "ability": "wis" },
-          "use_computer":             { "value": 0, "trained": false, "focus": false, "ability": "int" },
-          "use_the_force":            { "value": 0, "trained": false, "focus": false, "ability": "cha" }
-        },
-
+        "skills": {},
         "feats": [],
         "talents": [],
         "forcePowersList": [],
         "equipment": []
       }
     },
-
     "droid": {
       "type": "droid",
+      "name": "New Droid",
+      "img": "icons/svg/robot.svg",
       "system": {
         "species": "droid",
         "subtype": "4th-degree",
@@ -101,9 +72,10 @@
         "droidTemplates": []
       }
     },
-
     "npc": {
       "type": "npc",
+      "name": "New NPC",
+      "img": "icons/svg/mystery-man.svg",
       "system": {
         "level": 1,
         "species": "",
@@ -134,9 +106,10 @@
         "abilitiesSpecial": []
       }
     },
-
     "vehicle": {
       "type": "vehicle",
+      "name": "New Vehicle",
+      "img": "icons/svg/ship.svg",
       "system": {
         "model": "",
         "size": "medium",
@@ -160,7 +133,6 @@
       }
     }
   },
-
   "Item": {
     "class":         { "type": "class", "system": {} },
     "feat":          { "type": "feat", "system": {} },
