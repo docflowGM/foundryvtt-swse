@@ -1,12 +1,11 @@
 // systems/swse/scripts/init.js
 
-import { SWSEActor, SWSEActorSheet }    from "./swse-actor.js";
-import { SWSEDroidSheet }               from "./swse-droid.js";
-import { SWSEVehicleSheet }             from "./swse-vehicle.js";
-import { SWSEItemSheet }                from "./swse-item.js";
+import { SWSEActor, SWSEActorSheet } from "./swse-actor.js";
+import { SWSEDroidSheet } from "./swse-droid.js";
+import { SWSEVehicleSheet } from "./swse-vehicle.js";
+import { SWSEItemSheet } from "./swse-item.js";
 import "./swse-force.js";
 import "./swse-levelup.js";
-import "./load-templates.js"; // ✅ include vehicle template loader
 
 Hooks.once("init", () => {
   console.log("SWSE | Initializing Star Wars Saga Edition (SWSE)");
@@ -18,8 +17,8 @@ Hooks.once("init", () => {
     templates: {
       actor: {
         character: "systems/swse/templates/actor/character-sheet.hbs",
-        droid:     "systems/swse/templates/actor/droid-sheet.hbs",
-        vehicle:   "systems/swse/templates/actor/vehicle-sheet.hbs"
+        droid: "systems/swse/templates/actor/droid-sheet.hbs",
+        vehicle: "systems/swse/templates/actor/vehicle-sheet.hbs"
       },
       item: "systems/swse/templates/item/item-sheet.hbs"
     }
@@ -46,7 +45,7 @@ Hooks.once("init", () => {
   Actors.unregisterSheet("core", ActorSheet);
   Items.unregisterSheet("core", ItemSheet);
 
-  // Register SWSE sheets
+  // Register custom sheets
   Actors.registerSheet("swse", SWSEActorSheet, {
     types: ["character"],
     makeDefault: true,
@@ -91,28 +90,55 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", () => {
   console.log("SWSE | System ready.");
-
-  // ✅ Debugging aid: confirm templates loaded
-  if (game.swseVehicles?.templates?.length) {
-    console.log(`SWSE | Loaded ${game.swseVehicles.templates.length} vehicle templates.`);
-  }
 });
+
+/* ---------------------------------------------------
+   DEBUGGING: Detailed validation error logging
+--------------------------------------------------- */
 Hooks.once("ready", () => {
-  // Patch Actor.create to log extra validation detail
-  const _create = Actor.create;
-  Actor.create = async function(data, options) {
+  // Wrap Actor validation
+  const _actorValidate = Actor.prototype.validate;
+  Actor.prototype.validate = function (data, options) {
     try {
-      return await _create.call(this, data, options);
+      return _actorValidate.call(this, data, options);
     } catch (err) {
       if (err.name === "DataModelValidationError") {
-        console.error("Actor creation failed with validation errors:", err);
-        console.error("Raw data passed:", data);
-        // If the failure includes field-level issues:
+        console.group("⚠️ Actor Validation Error");
+        console.error("Actor instance:", this);
+        console.error("Data being validated:", data);
+        console.error("Options:", options);
+        console.error("Validation Error Object:", err);
         if (err.failures) {
+          console.error("Field-level Failures:");
           for (let f of err.failures) {
-            console.error(`Field "${f.path}" failed:`, f.failure);
+            console.error(`❌ Path: ${f.path}`, "Reason:", f.failure, "Value:", f.value);
           }
         }
+        console.groupEnd();
+      }
+      throw err;
+    }
+  };
+
+  // Wrap Item validation too
+  const _itemValidate = Item.prototype.validate;
+  Item.prototype.validate = function (data, options) {
+    try {
+      return _itemValidate.call(this, data, options);
+    } catch (err) {
+      if (err.name === "DataModelValidationError") {
+        console.group("⚠️ Item Validation Error");
+        console.error("Item instance:", this);
+        console.error("Data being validated:", data);
+        console.error("Options:", options);
+        console.error("Validation Error Object:", err);
+        if (err.failures) {
+          console.error("Field-level Failures:");
+          for (let f of err.failures) {
+            console.error(`❌ Path: ${f.path}`, "Reason:", f.failure, "Value:", f.value);
+          }
+        }
+        console.groupEnd();
       }
       throw err;
     }
