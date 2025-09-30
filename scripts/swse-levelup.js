@@ -1,7 +1,7 @@
 // systems/swse/scripts/swse-levelup.js
 
 import { SWSEActor } from "./swse-actor.js";
-import { SWSEItem } from "./swse-item.js";
+import { SWSEItemSheet } from "./swse-item.js";
 
 /**
  * Handles leveling up a character (adding class levels, feats, talents, etc.)
