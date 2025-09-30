@@ -11,20 +11,26 @@ export class SWSEDroidSheet extends SWSEActorSheet {
     });
   }
 
-  /** Remove any Force‐Power data before rendering */
+  /** Remove Force‐Power data and Con-based features before rendering */
   getData() {
-  const data = super.getData();
-  data.labels = {
-    sheetTitle: game.i18n.localize("SWSE.SheetLabel.character")
-  };
-  return data;
-}
+    const data = super.getData();
+
+    data.labels = {
+      sheetTitle: game.i18n.localize("SWSE.SheetLabel.droid")
+    };
+
     // Strip out Force‐Power items entirely
     data.actor.items = data.actor.items.filter(i => i.type !== "forcepower");
 
-    // Remove Force Points and freeForcePowers from the system
+    // Remove Force-related system fields
     delete data.system.forcePoints;
     delete data.system.freeForcePowers;
+
+    // Droids don't use Second Wind or Constitution-based features
+    if (data.system.abilities?.con?.base === 0) {
+      data.system.secondWind = { uses: 0, healing: 0 };
+      data.system.hp.threshold = 0; // avoids Con-based thresholds
+    }
 
     return data;
   }
