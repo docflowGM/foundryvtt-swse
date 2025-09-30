@@ -7,7 +7,7 @@ export class SWSEItemSheet extends ItemSheet {
       classes: ["swse", "sheet", "item"],
       template: "systems/swse/templates/item/item-sheet.hbs",
       width: 520,
-      height: "auto",
+      height: "auto", // Can leave as "auto" if you want scroll-flexing
       tabs: [
         { navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "data" }
       ]
@@ -15,10 +15,14 @@ export class SWSEItemSheet extends ItemSheet {
   }
 
   /** Provide data to the template */
-  getData() {
-    const data = super.getData();
-    // Alias for convenience in templates
-    data.system = data.item.system;
+  getData(options) {
+    const data = super.getData(options);
+
+    // Foundry v10+ already provides `data.system`, but in case older helpers expect it:
+    if (!data.system && data.item?.system) {
+      data.system = data.item.system;
+    }
+
     return data;
   }
 }
