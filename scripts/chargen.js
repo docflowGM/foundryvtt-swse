@@ -1,96 +1,63 @@
 // systems/swse/scripts/chargen.js
 
-import { applyRaceBonuses, getRaceFeatures, SWSE_RACES } from "./races.js";
+/**
+ * SWSE Character Generator
+ * Adds a button in the Actor Directory to create new SWSE characters.
+ */
 
-/* Existing functions from before … launchCharacterCreator + createSWSEActor … */
+Hooks.on("renderActorDirectory", (app, html) => {
+  // Remove existing chargen button(s)
+  html.querySelectorAll(".swse-chargen").forEach(el => el.remove());
 
-// Add a button to the Actors sidebar
-Hooks.on("renderActorDirectory", (app, html, data) => {
-  const button = $(
-    `<button class="swse-chargen"><i class="fas fa-user-plus"></i> Create SWSE Character</button>`
-  );
+  // Find the header where we’ll insert the button
+  const header = html.querySelector(".directory-header .header-actions");
+  if (!header) return;
 
-  // Prevent duplicates
-  html.find(".swse-chargen").remove();
+  // Build the button
+  const button = document.createElement("button");
+  button.classList.add("swse-chargen");
+  button.innerHTML = `<i class="fas fa-user-plus"></i> Create SWSE Character`;
 
-  // Add button to header controls
-  const header = html.find(".directory-header .header-actions");
-  if (header.length) {
-    header.append(button);
+  // Append to header
+  header.appendChild(button);
 
-    // Launch chargen when clicked
-    button.click(() => {
-      launchCharacterCreator();
-    });
-  }
+  // Launch Character Creator on click
+  button.addEventListener("click", () => launchCharacterCreator());
 });
-export function launchCharacterCreator() {
-  const raceOptions = Object.keys(SWSE_RACES)
-    .map(r => `<option value="${r}">${SWSE_RACES[r].label}</option>`)
-    .join("");
 
-  const classOptions = `
-    <option value="jedi">Jedi</option>
-    <option value="noble">Noble</option>
-    <option value="scoundrel">Scoundrel</option>
-    <option value="scout">Scout</option>
-    <option value="soldier">Soldier</option>
-    <option value="nonheroic">Non-Heroic</option>
-    <option value="droid">Droid</option>
-  `;
-
+/**
+ * Launches the character creation dialog
+ */
+function launchCharacterCreator() {
   const content = `
     <form>
       <div class="form-group">
         <label>Character Name:</label>
-        <input type="text" name="charName" value="New Hero"/>
+        <input type="text" name="name" value="New Character"/>
       </div>
-
       <div class="form-group">
-        <label>Race:</label>
-        <select name="race">${raceOptions}</select>
+        <label>Actor Type:</label>
+        <select name="type">
+          <option value="character">Character</option>
+          <option value="droid">Droid</option>
+          <option value="npc">NPC</option>
+          <option value="vehicle">Vehicle</option>
+        </select>
       </div>
-
-      <div class="form-group">
-        <label>Class:</label>
-        <select name="class">${classOptions}</select>
-      </div>
-
-      <hr/>
-      <h3>Base Attributes</h3>
-      <div class="form-group"><label>Strength</label><input type="number" name="str" value="10"/></div>
-      <div class="form-group"><label>Dexterity</label><input type="number" name="dex" value="10"/></div>
-      <div class="form-group"><label>Constitution</label><input type="number" name="con" value="10"/></div>
-      <div class="form-group"><label>Intelligence</label><input type="number" name="int" value="10"/></div>
-      <div class="form-group"><label>Wisdom</label><input type="number" name="wis" value="10"/></div>
-      <div class="form-group"><label>Charisma</label><input type="number" name="cha" value="10"/></div>
     </form>
   `;
 
   new Dialog({
-    title: "SWSE Character Creation",
+    title: "Create SWSE Actor",
     content,
     buttons: {
       create: {
-        label: "Create Character",
+        label: "Create",
         callback: html => {
           const form = html[0].querySelector("form");
-          const formData = new FormData(form);
-
-          const name = formData.get("charName");
-          const raceKey = formData.get("race");
-          const cls = formData.get("class");
-
-          const baseAttributes = {
-            str: Number(formData.get("str") || 10),
-            dex: Number(formData.get("dex") || 10),
-            con: Number(formData.get("con") || 10),
-            int: Number(formData.get("int") || 10),
-            wis: Number(formData.get("wis") || 10),
-            cha: Number(formData.get("cha") || 10),
-          };
-
-          createSWSEActor(name, raceKey, cls, baseAttributes);
+          const name = form.name.value || "New Actor";
+          const type = form.type.value || "character";
+          createSWSEActor(name, type);
         }
       },
       cancel: {
@@ -102,42 +69,19 @@ export function launchCharacterCreator() {
 }
 
 /**
- * Core Actor creation logic
+ * Actually creates the actor
  */
-export async function createSWSEActor(name, raceKey, cls, baseAttributes) {
+async function createSWSEActor(name, type) {
+  const actorData = {
+    name,
+    type, // Always defined from dialog
+    system: {} // Start with empty system data
+  };
+
   try {
-    const safeName = name || "Unnamed Hero";
-    const safeRace = raceKey || "human";
-    const safeClass = cls || "heroic";
-
-    // Apply racial bonuses
-    const modifiedAttributes = applyRaceBonuses(baseAttributes, safeRace);
-
-    // Apply race-specific features (Humans get bonus feat + skill)
-    const raceFeatures = getRaceFeatures(safeRace);
-
-    const actorData = {
-      name: safeName,
-      type: "character", // must match your system.json actorTypes
-      system: {
-        attributes: modifiedAttributes,
-        details: {
-          race: safeRace,
-          class: safeClass
-        },
-        bonusFeats: raceFeatures.bonusFeats || 0,
-        bonusSkills: raceFeatures.bonusSkills || 0
-      }
-    };
-
-    const actor = await Actor.create(actorData);
-    ui.notifications?.info(`Created character: ${actor.name}`);
-    console.log(`SWSE Actor created: ${actor.name}`, actor);
-
-    return actor;
+    await Actor.create(actorData);
   } catch (err) {
-    console.error("Error creating SWSE Actor:", err);
-    ui.notifications?.error("Failed to create actor. Check console for details.");
-    return null;
+    console.error("Failed to create SWSE Actor:", err);
+    ui.notifications.error(`Error creating actor: ${err.message}`);
   }
 }
