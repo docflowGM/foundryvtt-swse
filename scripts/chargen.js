@@ -289,19 +289,19 @@ async function characterGenerator(classesList, classDB, forcePowersList) {
           ability: "dex",
           classBonus: classBonus.reflex || 0,
           misc: 0,
-          total: 10
+          total: 10 + (classBonus.reflex || 0)
         },
         fortitude: {
           ability: "con",
           classBonus: classBonus.fortitude || 0,
           misc: 0,
-          total: 10
+          total: 10 + (classBonus.fortitude || 0)
         },
         will: {
           ability: "wis",
           classBonus: classBonus.will || 0,
           misc: 0,
-          total: 10
+          total: 10 + (classBonus.will || 0)
         }
       },
 
