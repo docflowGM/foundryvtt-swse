@@ -1,8 +1,15 @@
+// systems/swse/scripts/races.js
+
+/**
+ * Race definitions for SWSE
+ * Bonuses = static ability adjustments
+ * Special = things handled outside simple attributes (feats, skills, etc.)
+ */
 export const SWSE_RACES = {
   aleena: { label: "Aleena", bonuses: { dex: 2, cha: -2 } },
   aqualish: { label: "Aqualish", bonuses: { con: 2, wis: 2, dex: -2, int: -2 } },
   arkanian: { label: "Arkanian", bonuses: { int: 2, cha: -2 } },
-  arkanianOffshoot: { label: "Arkanian Offshoot", bonuses: { con: -2 } }, // Manual +2 to Str or Dex
+  arkanianOffshoot: { label: "Arkanian Offshoot", bonuses: { con: -2 }, notes: "Manual +2 to Str or Dex" },
   balosar: { label: "Balosar", bonuses: { dex: 2, cha: 2, con: -2, wis: -2 } },
   bloodCarver: { label: "Blood Carver", bonuses: { dex: 2, wis: -2, cha: -2 } },
   bothan: { label: "Bothan", bonuses: { dex: 2, con: -2 } },
@@ -28,7 +35,11 @@ export const SWSE_RACES = {
   gamorrean: { label: "Gamorrean", bonuses: { str: 2, dex: -2, int: -2 } },
   gungan: { label: "Gungan", bonuses: { dex: 2, int: -2, cha: -2 } },
   houk: { label: "Houk", bonuses: { str: 2, con: 2, wis: -2, cha: -2 } },
-  human: { label: "Human", bonuses: {} },
+  human: { 
+    label: "Human", 
+    bonuses: {}, 
+    special: { extraFeat: true, extraSkill: true } 
+  },
   iktotchi: { label: "Iktotchi", bonuses: { con: 2, cha: -2 } },
   ishiTib: { label: "Ishi Tib", bonuses: { wis: 2, dex: -2 } },
   ithorian: { label: "Ithorian", bonuses: { wis: 2, cha: 2, dex: -2 } },
@@ -68,17 +79,19 @@ export const SWSE_RACES = {
   whiphid: { label: "Whiphid", bonuses: { str: 4, int: -2, wis: -2 } },
   wookiee: { label: "Wookiee", bonuses: { str: 4, con: 2, int: -2, cha: -2 } }
 };
+
 /**
  * Apply race attribute bonuses to a character's base attributes.
- * @param {object} baseAttributes - { str, dex, con, int, wis, cha } all numbers
+ * Also returns special perks like feats/skills.
+ * @param {object} baseAttributes - { str, dex, con, int, wis, cha }
  * @param {string} raceKey - key in SWSE_RACES, e.g. "wookiee"
- * @returns {object} - new attributes with bonuses applied
+ * @returns {object} - { attributes, special }
  */
 export function applyRaceBonuses(baseAttributes, raceKey) {
   const race = SWSE_RACES[raceKey];
   if (!race) {
     console.warn(`Race key "${raceKey}" not found. Returning base attributes.`);
-    return { ...baseAttributes };
+    return { attributes: { ...baseAttributes }, special: {} };
   }
 
   const bonuses = race.bonuses || {};
@@ -88,21 +101,8 @@ export function applyRaceBonuses(baseAttributes, raceKey) {
     result[attr] = (result[attr] || 0) + (bonuses[attr] || 0);
   }
 
-  return result;
+  return {
+    attributes: result,
+    special: race.special || {}
+  };
 }
-const baseAttributes = {
-  str: 10,
-  dex: 10,
-  con: 10,
-  int: 10,
-  wis: 10,
-  cha: 10
-};
-
-const race = "wookiee";
-
-const modifiedAttributes = applyRaceBonuses(baseAttributes, race);
-
-console.log(modifiedAttributes);
-// Expected output:
-// { str: 14, dex: 10, con: 12, int: 8, wis: 10, cha: 8 }
