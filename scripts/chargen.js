@@ -2,9 +2,28 @@
 
 import { applyRaceBonuses, getRaceFeatures, SWSE_RACES } from "./races.js";
 
-/**
- * Launch Character Creation dialog
- */
+/* Existing functions from before … launchCharacterCreator + createSWSEActor … */
+
+// Add a button to the Actors sidebar
+Hooks.on("renderActorDirectory", (app, html, data) => {
+  const button = $(
+    `<button class="swse-chargen"><i class="fas fa-user-plus"></i> Create SWSE Character</button>`
+  );
+
+  // Prevent duplicates
+  html.find(".swse-chargen").remove();
+
+  // Add button to header controls
+  const header = html.find(".directory-header .header-actions");
+  if (header.length) {
+    header.append(button);
+
+    // Launch chargen when clicked
+    button.click(() => {
+      launchCharacterCreator();
+    });
+  }
+});
 export function launchCharacterCreator() {
   const raceOptions = Object.keys(SWSE_RACES)
     .map(r => `<option value="${r}">${SWSE_RACES[r].label}</option>`)
