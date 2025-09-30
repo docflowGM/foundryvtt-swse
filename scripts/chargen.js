@@ -1,7 +1,7 @@
 // systems/swse/scripts/chargen.js
 import { SWSE_RACES, applyRaceBonuses } from "./races.js";
 
-// --- Helpers ---
+/* ---------------- Helpers ---------------- */
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -12,14 +12,11 @@ async function loadJSON(path) {
   return response.json();
 }
 
-// --- Dialog helpers ---
+/* ---------------- Dialog Helpers ---------------- */
 async function askRadioQuestion(title, prompt, options) {
   return new Promise((resolve) => {
     const optionsHtml = options.map(opt =>
-      `<label>
-        <input type="radio" name="choice" value="${opt.id}" />
-        ${opt.name}
-      </label><br/>`
+      `<label><input type="radio" name="choice" value="${opt.id}" /> ${opt.name}</label><br/>`
     ).join("");
 
     new Dialog({
@@ -33,10 +30,7 @@ async function askRadioQuestion(title, prompt, options) {
             resolve(selected || null);
           }
         },
-        cancel: {
-          label: "Cancel",
-          callback: () => resolve(null)
-        }
+        cancel: { label: "Cancel", callback: () => resolve(null) }
       },
       default: "ok",
       close: () => resolve(null)
@@ -72,10 +66,7 @@ async function askForName() {
             resolve(name || null);
           }
         },
-        cancel: {
-          label: "Cancel",
-          callback: () => resolve(null)
-        }
+        cancel: { label: "Cancel", callback: () => resolve(null) }
       },
       default: "ok",
       close: () => resolve(null)
@@ -83,16 +74,14 @@ async function askForName() {
   });
 }
 
-// Ask user to assign stats with point-buy style validation
+/* ---------------- Stat Assignment ---------------- */
 async function askForStats() {
   return new Promise(resolve => {
     const stats = ["str", "dex", "con", "int", "wis", "cha"];
     let htmlContent = `<p>Distribute 10 additional points among your stats (min 8, max 18).</p><form>`;
     stats.forEach(stat => {
-      htmlContent += `
-        <label>${stat.toUpperCase()}: </label>
-        <input type="number" name="${stat}" value="10" min="8" max="18" style="width:50px;" /><br/>
-      `;
+      htmlContent += `<label>${stat.toUpperCase()}:</label>
+        <input type="number" name="${stat}" value="10" min="8" max="18" style="width:50px;" /><br/>`;
     });
     htmlContent += `</form>`;
 
@@ -103,9 +92,7 @@ async function askForStats() {
         ok: {
           label: "OK",
           callback: (html) => {
-            const base = 10;
-            const min = 8;
-            const max = 18;
+            const base = 10, min = 8, max = 18;
             const allocated = {};
             let totalPoints = 0;
             let valid = true;
@@ -128,10 +115,7 @@ async function askForStats() {
             }
           }
         },
-        cancel: {
-          label: "Cancel",
-          callback: () => resolve(null)
-        }
+        cancel: { label: "Cancel", callback: () => resolve(null) }
       },
       default: "ok",
       close: () => resolve(null)
@@ -139,22 +123,15 @@ async function askForStats() {
   });
 }
 
-// Multi-select skills
+/* ---------------- Skills & Powers ---------------- */
 async function askForSkills(classSkills, extraSkills = []) {
   return new Promise(resolve => {
-    if ((!classSkills || classSkills.length === 0) && (!extraSkills || extraSkills.length === 0)) {
-      resolve([]);
-      return;
-    }
+    if ((!classSkills?.length) && (!extraSkills?.length)) return resolve([]);
 
-    const combinedSkills = [...(classSkills || []), ...(extraSkills || [])];
-
-    const skillsHtml = combinedSkills.map(skill => `
-      <label>
-        <input type="checkbox" name="skills" value="${skill.id}" />
-        ${skill.name}
-      </label><br/>
-    `).join("");
+    const combined = [...(classSkills || []), ...(extraSkills || [])];
+    const skillsHtml = combined.map(skill =>
+      `<label><input type="checkbox" name="skills" value="${skill.id}" /> ${skill.name}</label><br/>`
+    ).join("");
 
     new Dialog({
       title: "Select Skills",
@@ -163,14 +140,11 @@ async function askForSkills(classSkills, extraSkills = []) {
         ok: {
           label: "OK",
           callback: (html) => {
-            const selectedSkills = html.find('input[name="skills"]:checked').map((i, el) => el.value).get();
-            resolve(selectedSkills);
+            const selected = html.find('input[name="skills"]:checked').map((i, el) => el.value).get();
+            resolve(selected);
           }
         },
-        cancel: {
-          label: "Cancel",
-          callback: () => resolve([])
-        }
+        cancel: { label: "Cancel", callback: () => resolve([]) }
       },
       default: "ok",
       close: () => resolve([])
@@ -178,20 +152,13 @@ async function askForSkills(classSkills, extraSkills = []) {
   });
 }
 
-// Force power picker (Jedi only)
 async function askForForcePowers(forcePowersList, maxChoices) {
   return new Promise(resolve => {
-    if (!forcePowersList || forcePowersList.length === 0 || maxChoices <= 0) {
-      resolve([]);
-      return;
-    }
+    if (!forcePowersList?.length || maxChoices <= 0) return resolve([]);
 
-    const powersHtml = forcePowersList.map(power => `
-      <label>
-        <input type="checkbox" name="forcePower" value="${power.id}" />
-        ${power.name}
-      </label><br/>
-    `).join("");
+    const powersHtml = forcePowersList.map(p =>
+      `<label><input type="checkbox" name="forcePower" value="${p.id}" /> ${p.name}</label><br/>`
+    ).join("");
 
     new Dialog({
       title: "Select Force Powers",
@@ -204,15 +171,10 @@ async function askForForcePowers(forcePowersList, maxChoices) {
             if (selected.length > maxChoices) {
               ui.notifications.error(`You can only select up to ${maxChoices} Force Powers.`);
               resolve([]);
-            } else {
-              resolve(selected);
-            }
+            } else resolve(selected);
           }
         },
-        cancel: {
-          label: "Cancel",
-          callback: () => resolve([])
-        }
+        cancel: { label: "Cancel", callback: () => resolve([]) }
       },
       default: "ok",
       close: () => resolve([])
@@ -220,22 +182,16 @@ async function askForForcePowers(forcePowersList, maxChoices) {
   });
 }
 
-// --- Main Character Generator ---
+/* ---------------- Generators ---------------- */
 async function characterGenerator(classesList, classDB, forcePowersList) {
-  const speciesOptions = Object.entries(SWSE_RACES).map(([id, data]) => ({
-    id,
-    name: data.label
-  }));
+  const speciesOptions = Object.entries(SWSE_RACES).map(([id, data]) => ({ id, name: data.label }));
 
   const speciesId = await askRadioQuestion("Species", "Choose your species:", speciesOptions);
   if (!speciesId) return null;
-  const speciesName = SWSE_RACES[speciesId]?.label || speciesId;
 
-  const classId = await askRadioQuestion("Class", `You chose ${speciesName}. Now pick your class:`, classesList);
+  const classId = await askRadioQuestion("Class", `You chose ${speciesId}. Now pick your class:`, classesList);
   if (!classId) return null;
   const chosenClass = classesList.find(c => c.id === classId);
-  const className = chosenClass?.name || classId;
-
   const classBonus = classDB[classId]?.defenses || {};
 
   const charName = await askForName();
@@ -243,35 +199,18 @@ async function characterGenerator(classesList, classDB, forcePowersList) {
 
   const baseAttributes = await askForStats();
   if (!baseAttributes) return null;
-
   const finalAttributes = applyRaceBonuses(baseAttributes, speciesId);
 
-  // Skills
-  const classSkills = chosenClass.skills || [];
-  let extraSkills = [];
-  if (speciesId === "human") {
-    extraSkills = [
-      { id: "negotiation", name: "Negotiation (Bonus for Humans)" },
-      { id: "streetwise", name: "Streetwise (Bonus for Humans)" },
-      { id: "pilot", name: "Pilot (Bonus for Humans)" }
-    ];
-  }
-  const selectedSkills = await askForSkills(classSkills, extraSkills);
+  const selectedSkills = await askForSkills(chosenClass.skills || []);
 
-  // Feats & talents
   let assignedFeats = chosenClass.feats || [];
   let assignedTalents = chosenClass.talents || [];
-
-  if (speciesId === "human") {
-    assignedFeats = [...assignedFeats, "bonusFeatForHuman"];
-  }
-
-  // Jedi force powers
   let assignedForcePowers = [];
+
+  if (speciesId === "human") assignedFeats = [...assignedFeats, "bonusFeatForHuman"];
   if (classId === "jedi") {
     assignedFeats = [...assignedFeats, "forceTraining"];
-    const wisScore = finalAttributes.wis || 10;
-    const wisMod = Math.floor((wisScore - 10) / 2);
+    const wisMod = Math.floor(((finalAttributes.wis ?? 10) - 10) / 2);
     const maxForcePowers = Math.max(1, wisMod + 1);
     assignedForcePowers = await askForForcePowers(forcePowersList, maxForcePowers);
   }
@@ -279,75 +218,72 @@ async function characterGenerator(classesList, classDB, forcePowersList) {
   return {
     name: charName,
     type: "character",
+    img: "icons/svg/mystery-man.svg",
     system: {
       species: speciesId,
       class: classId,
-      attributes: finalAttributes,
-
+      level: 1,
+      abilities: Object.fromEntries(Object.entries(finalAttributes).map(([k, v]) => [k, { base: v, temp: 0 }])),
       defenses: {
-        reflex: {
-          ability: "dex",
-          classBonus: classBonus.reflex || 0,
-          misc: 0,
-          total: 10 + (classBonus.reflex || 0)
-        },
-        fortitude: {
-          ability: "con",
-          classBonus: classBonus.fortitude || 0,
-          misc: 0,
-          total: 10 + (classBonus.fortitude || 0)
-        },
-        will: {
-          ability: "wis",
-          classBonus: classBonus.will || 0,
-          misc: 0,
-          total: 10 + (classBonus.will || 0)
-        }
+        reflex: { ability: "dex", class: classBonus.reflex || 0, armor: 0, misc: 0, total: 10 },
+        fortitude: { ability: "con", class: classBonus.fortitude || 0, armor: 0, misc: 0, total: 10 },
+        will: { ability: "wis", class: classBonus.will || 0, armor: 0, misc: 0, total: 10 }
       },
-
+      hp: { value: 1, max: 1, threshold: 10 },
       skills: selectedSkills,
       feats: assignedFeats,
       talents: assignedTalents,
-      forcePowers: assignedForcePowers,
+      forcePowersList: assignedForcePowers,
       equipment: []
     }
   };
 }
 
-// Droid generator
 async function droidGenerator() {
-  const droidModels = [
+  const models = [
     { id: "utility", name: "Utility Droid" },
     { id: "security", name: "Security Droid" },
     { id: "protocol", name: "Protocol Droid" }
   ];
 
-  const modelId = await askRadioQuestion("Droid Model", "Choose your droid model:", droidModels);
+  const modelId = await askRadioQuestion("Droid Model", "Choose your droid model:", models);
   if (!modelId) return null;
-  const modelName = droidModels.find(m => m.id === modelId)?.name || modelId;
+  const modelName = models.find(m => m.id === modelId)?.name || modelId;
 
   return {
     name: modelName,
     type: "droid",
+    img: "icons/svg/robot.svg",
     system: {
-      model: modelId,
-      systems: [],
-      abilities: [],
-      equipment: []
+      species: "droid",
+      subtype: modelId,
+      level: 1,
+      abilities: {
+        str: { base: 10, temp: 0 },
+        dex: { base: 10, temp: 0 },
+        con: { base: null, temp: 0 },
+        int: { base: 10, temp: 0 },
+        wis: { base: 10, temp: 0 },
+        cha: { base: 10, temp: 0 }
+      },
+      defenses: {
+        reflex: { ability: "dex", class: 0, armor: 0, misc: 0, total: 10 },
+        fortitude: { ability: "con", class: 0, armor: 0, misc: 0, total: 10 },
+        will: { ability: "wis", class: 0, armor: 0, misc: 0, total: 10 }
+      },
+      hp: { value: 0, max: 0 },
+      skills: [], feats: [], talents: [], gear: []
     }
   };
 }
 
-// Main entrypoint
+/* ---------------- Entrypoint ---------------- */
 async function main() {
   const classesPath = "systems/swse/data/classes.json";
   const classDBPath = "systems/swse/data/classes-db.json";
   const forcePowersPath = "systems/swse/data/forcepowers.json";
 
-  let classesList = [];
-  let classDB = {};
-  let forcePowersList = [];
-
+  let classesList = [], classDB = {}, forcePowersList = [];
   try {
     classesList = await loadJSON(classesPath);
     classDB = await loadJSON(classDBPath);
@@ -372,32 +308,24 @@ async function main() {
   });
 
   if (!actorType) return;
-
   const useGenerator = await askYesNoQuestion("Character Generator", `Use the ${actorType} generator?`);
-
-  if (useGenerator) {
-    let actorData = null;
-    if (actorType === "character") {
-      actorData = await characterGenerator(classesList, classDB, forcePowersList);
-    } else if (actorType === "droid") {
-      actorData = await droidGenerator();
-    }
-
-    if (!actorData) {
-      ui.notifications.warn("Generation cancelled.");
-      return;
-    }
-
-    const actor = await Actor.create(actorData);
-    actor.sheet?.render(true);
-  } else {
+  if (!useGenerator) {
     const blankActor = await Actor.create({
       name: `New ${capitalize(actorType)}`,
       type: actorType,
+      img: actorType === "droid" ? "icons/svg/robot.svg" : "icons/svg/mystery-man.svg",
       system: {}
     });
-    blankActor.sheet?.render(true);
+    return blankActor.sheet?.render(true);
   }
+
+  let actorData = null;
+  if (actorType === "character") actorData = await characterGenerator(classesList, classDB, forcePowersList);
+  else if (actorType === "droid") actorData = await droidGenerator();
+
+  if (!actorData) return ui.notifications.warn("Generation cancelled.");
+  const actor = await Actor.create(actorData);
+  actor.sheet?.render(true);
 }
 
 main();
