@@ -1,17 +1,92 @@
 // systems/swse/scripts/chargen.js
 
-import { applyRaceBonuses, getRaceFeatures } from "./races.js";
+import { applyRaceBonuses, getRaceFeatures, SWSE_RACES } from "./races.js";
 
 /**
- * Generate a new Actor during character creation.
- * @param {string} name - Character name
- * @param {string} raceKey - key from SWSE_RACES (e.g., "human", "wookiee")
- * @param {string} cls - class name string (should match your system.json actor types/classes)
- * @param {object} baseAttributes - { str, dex, con, int, wis, cha }
+ * Launch Character Creation dialog
+ */
+export function launchCharacterCreator() {
+  const raceOptions = Object.keys(SWSE_RACES)
+    .map(r => `<option value="${r}">${SWSE_RACES[r].label}</option>`)
+    .join("");
+
+  const classOptions = `
+    <option value="jedi">Jedi</option>
+    <option value="noble">Noble</option>
+    <option value="scoundrel">Scoundrel</option>
+    <option value="scout">Scout</option>
+    <option value="soldier">Soldier</option>
+    <option value="nonheroic">Non-Heroic</option>
+    <option value="droid">Droid</option>
+  `;
+
+  const content = `
+    <form>
+      <div class="form-group">
+        <label>Character Name:</label>
+        <input type="text" name="charName" value="New Hero"/>
+      </div>
+
+      <div class="form-group">
+        <label>Race:</label>
+        <select name="race">${raceOptions}</select>
+      </div>
+
+      <div class="form-group">
+        <label>Class:</label>
+        <select name="class">${classOptions}</select>
+      </div>
+
+      <hr/>
+      <h3>Base Attributes</h3>
+      <div class="form-group"><label>Strength</label><input type="number" name="str" value="10"/></div>
+      <div class="form-group"><label>Dexterity</label><input type="number" name="dex" value="10"/></div>
+      <div class="form-group"><label>Constitution</label><input type="number" name="con" value="10"/></div>
+      <div class="form-group"><label>Intelligence</label><input type="number" name="int" value="10"/></div>
+      <div class="form-group"><label>Wisdom</label><input type="number" name="wis" value="10"/></div>
+      <div class="form-group"><label>Charisma</label><input type="number" name="cha" value="10"/></div>
+    </form>
+  `;
+
+  new Dialog({
+    title: "SWSE Character Creation",
+    content,
+    buttons: {
+      create: {
+        label: "Create Character",
+        callback: html => {
+          const form = html[0].querySelector("form");
+          const formData = new FormData(form);
+
+          const name = formData.get("charName");
+          const raceKey = formData.get("race");
+          const cls = formData.get("class");
+
+          const baseAttributes = {
+            str: Number(formData.get("str") || 10),
+            dex: Number(formData.get("dex") || 10),
+            con: Number(formData.get("con") || 10),
+            int: Number(formData.get("int") || 10),
+            wis: Number(formData.get("wis") || 10),
+            cha: Number(formData.get("cha") || 10),
+          };
+
+          createSWSEActor(name, raceKey, cls, baseAttributes);
+        }
+      },
+      cancel: {
+        label: "Cancel"
+      }
+    },
+    default: "create"
+  }).render(true);
+}
+
+/**
+ * Core Actor creation logic
  */
 export async function createSWSEActor(name, raceKey, cls, baseAttributes) {
   try {
-    // Ensure defaults
     const safeName = name || "Unnamed Hero";
     const safeRace = raceKey || "human";
     const safeClass = cls || "heroic";
@@ -19,13 +94,12 @@ export async function createSWSEActor(name, raceKey, cls, baseAttributes) {
     // Apply racial bonuses
     const modifiedAttributes = applyRaceBonuses(baseAttributes, safeRace);
 
-    // Apply race-specific features (e.g., Human bonus feat + skill)
+    // Apply race-specific features (Humans get bonus feat + skill)
     const raceFeatures = getRaceFeatures(safeRace);
 
-    // Build actor data
     const actorData = {
       name: safeName,
-      type: "character", // must match system.json actorTypes
+      type: "character", // must match your system.json actorTypes
       system: {
         attributes: modifiedAttributes,
         details: {
@@ -37,8 +111,8 @@ export async function createSWSEActor(name, raceKey, cls, baseAttributes) {
       }
     };
 
-    // Create the actor in Foundry
     const actor = await Actor.create(actorData);
+    ui.notifications?.info(`Created character: ${actor.name}`);
     console.log(`SWSE Actor created: ${actor.name}`, actor);
 
     return actor;
@@ -48,9 +122,3 @@ export async function createSWSEActor(name, raceKey, cls, baseAttributes) {
     return null;
   }
 }
-
-/**
- * Example usage (remove or adapt this in production):
- */
-// const baseAttributes = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
-// createSWSEActor("Test Hero", "human", "scoundrel", baseAttributes);
