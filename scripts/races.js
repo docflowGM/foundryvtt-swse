@@ -1,15 +1,10 @@
 // systems/swse/scripts/races.js
 
-/**
- * Race definitions for SWSE
- * Bonuses = static ability adjustments
- * Special = things handled outside simple attributes (feats, skills, etc.)
- */
 export const SWSE_RACES = {
   aleena: { label: "Aleena", bonuses: { dex: 2, cha: -2 } },
   aqualish: { label: "Aqualish", bonuses: { con: 2, wis: 2, dex: -2, int: -2 } },
   arkanian: { label: "Arkanian", bonuses: { int: 2, cha: -2 } },
-  arkanianOffshoot: { label: "Arkanian Offshoot", bonuses: { con: -2 }, notes: "Manual +2 to Str or Dex" },
+  arkanianOffshoot: { label: "Arkanian Offshoot", bonuses: { con: -2 } }, // Manual +2 to Str or Dex
   balosar: { label: "Balosar", bonuses: { dex: 2, cha: 2, con: -2, wis: -2 } },
   bloodCarver: { label: "Blood Carver", bonuses: { dex: 2, wis: -2, cha: -2 } },
   bothan: { label: "Bothan", bonuses: { dex: 2, con: -2 } },
@@ -35,11 +30,7 @@ export const SWSE_RACES = {
   gamorrean: { label: "Gamorrean", bonuses: { str: 2, dex: -2, int: -2 } },
   gungan: { label: "Gungan", bonuses: { dex: 2, int: -2, cha: -2 } },
   houk: { label: "Houk", bonuses: { str: 2, con: 2, wis: -2, cha: -2 } },
-  human: { 
-    label: "Human", 
-    bonuses: {}, 
-    special: { extraFeat: true, extraSkill: true } 
-  },
+  human: { label: "Human", bonuses: {} }, // special handling below
   iktotchi: { label: "Iktotchi", bonuses: { con: 2, cha: -2 } },
   ishiTib: { label: "Ishi Tib", bonuses: { wis: 2, dex: -2 } },
   ithorian: { label: "Ithorian", bonuses: { wis: 2, cha: 2, dex: -2 } },
@@ -82,16 +73,15 @@ export const SWSE_RACES = {
 
 /**
  * Apply race attribute bonuses to a character's base attributes.
- * Also returns special perks like feats/skills.
  * @param {object} baseAttributes - { str, dex, con, int, wis, cha }
  * @param {string} raceKey - key in SWSE_RACES, e.g. "wookiee"
- * @returns {object} - { attributes, special }
+ * @returns {object} - new attributes with bonuses applied
  */
 export function applyRaceBonuses(baseAttributes, raceKey) {
   const race = SWSE_RACES[raceKey];
   if (!race) {
     console.warn(`Race key "${raceKey}" not found. Returning base attributes.`);
-    return { attributes: { ...baseAttributes }, special: {} };
+    return { ...baseAttributes };
   }
 
   const bonuses = race.bonuses || {};
@@ -101,8 +91,23 @@ export function applyRaceBonuses(baseAttributes, raceKey) {
     result[attr] = (result[attr] || 0) + (bonuses[attr] || 0);
   }
 
+  return result;
+}
+
+/**
+ * Get race-specific extra features (like feats or skills).
+ * @param {string} raceKey
+ * @returns {object} - { bonusFeats, bonusSkills }
+ */
+export function getRaceFeatures(raceKey) {
+  if (raceKey === "human") {
+    return {
+      bonusFeats: 1,
+      bonusSkills: 1
+    };
+  }
   return {
-    attributes: result,
-    special: race.special || {}
+    bonusFeats: 0,
+    bonusSkills: 0
   };
 }
