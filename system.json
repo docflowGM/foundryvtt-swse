@@ -150,31 +150,21 @@
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip",
-  "Actor": {
-    "types": [
+  "types": {
+    "Actor": [
       "character",
       "droid",
       "npc",
       "vehicle"
     ],
-    "sheets": {
-      "character": {
-        "label": "Character Sheet",
-        "template": "systems/swse/templates/actor/character-sheet.hbs",
-        "default": true
-      },
-      "droid": {
-        "label": "Droid Sheet",
-        "template": "systems/swse/templates/actor/droid-sheet.hbs"
-      },
-      "npc": {
-        "label": "NPC Sheet",
-        "template": "systems/swse/templates/actor/npc-sheet.hbs"
-      },
-      "vehicle": {
-        "label": "Vehicle Sheet",
-        "template": "systems/swse/templates/actor/vehicle-sheet.hbs"
-      }
-    }
+    "Item": [
+      "class",
+      "feat",
+      "power",
+      "talent",
+      "equipment",
+      "weapon",
+      "armor"
+    ]
   }
 }
