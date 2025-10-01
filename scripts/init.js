@@ -42,8 +42,8 @@ Hooks.once("init", () => {
   CONFIG.Actor.documentClasses.charactereses = SWSEActor;
 
   // Unregister default sheets
-  Actors.unregisterSheet("core", foundry.applications.sheets.ActorSheet);
-  Items.unregisterSheet("core", foundry.applications.sheets.ItemSheet);
+  Actors.unregisterSheet("core", foundry.applications.sheets.foundry.applications.sheets.ActorSheet);
+  Items.unregisterSheet("core", foundry.applications.sheets.foundry.applications.sheets.ItemSheet);
 
   // Register custom sheets
   Actors.registerSheet("swse", SWSEActorSheet, {
