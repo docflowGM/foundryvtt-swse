@@ -210,7 +210,7 @@ export class SWSEActor extends Actor {
 //
 // SWSEActorSheet: UI & Listeners
 //
-export class SWSEActorSheet extends foundry.appv1.sheets.foundry.applications.sheets.foundry.applications.sheets.foundry.applications.sheets.ActorSheet {
+export class SWSEActorSheet extends foundry.appv1.sheets.foundry.apps.sheets.foundry.apps.sheets.foundry.apps.sheets.ActorSheet {
   static get defaultOptions() {
     return foundry.utils.foundry.utils.foundry.utils.foundry.utils.foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor"],

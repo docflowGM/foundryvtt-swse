@@ -149,22 +149,5 @@
   "initiative": "1d20",
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
-  "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip",
-  "types": {
-    "Actor": [
-      "character",
-      "droid",
-      "npc",
-      "vehicle"
-    ],
-    "Item": [
-      "class",
-      "feat",
-      "power",
-      "talent",
-      "equipment",
-      "weapon",
-      "armor"
-    ]
-  }
+  "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip"
 }

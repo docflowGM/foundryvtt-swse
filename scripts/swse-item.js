@@ -1,6 +1,6 @@
 // systems/swse/scripts/swse-item.js
 
-export class SWSEItemSheet extends foundry.appv1.sheets.foundry.applications.sheets.foundry.applications.sheets.foundry.applications.sheets.ItemSheet {
+export class SWSEItemSheet extends foundry.appv1.sheets.foundry.apps.sheets.foundry.apps.sheets.foundry.apps.sheets.ItemSheet {
   /** Configure default options for the SWSE item sheet */
   static get defaultOptions() {
     return foundry.utils.foundry.utils.foundry.utils.foundry.utils.foundry.utils.mergeObject(super.defaultOptions, {
