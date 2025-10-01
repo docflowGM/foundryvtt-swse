@@ -210,7 +210,7 @@ export class SWSEActor extends Actor {
 //
 // SWSEActorSheet: UI & Listeners
 //
-export class SWSEActorSheet extends foundry.appv1.sheets.foundry.apps.sheets.foundry.apps.sheets.foundry.apps.sheets.ActorSheet {
+export class SWSEActorSheet extends foundry.appv1.sheets.foundry.sheet.sheets.foundry.sheet.sheets.foundry.sheet.sheets.ActorSheet {
   static get defaultOptions() {
     return foundry.utils.foundry.utils.foundry.utils.foundry.utils.foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor"],
@@ -378,3 +378,13 @@ export class SWSEActorSheet extends foundry.appv1.sheets.foundry.apps.sheets.fou
     });
   }
 }
+
+
+// Register SWSE Actor Sheets
+Hooks.once("init", function() {
+  Actors.unregisterSheet("core", ActorSheet);
+  Actors.registerSheet("swse", ActorSheet, { types: ["character"], makeDefault: true });
+  Actors.registerSheet("swse", ActorSheet, { types: ["npc"] });
+  Actors.registerSheet("swse", ActorSheet, { types: ["droid"] });
+  Actors.registerSheet("swse", ActorSheet, { types: ["vehicle"] });
+});
