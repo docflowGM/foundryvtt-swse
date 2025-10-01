@@ -1,5 +1,13 @@
-<div class="swse-placeholder">
-  <h2>Placeholder Template</h2>
-  <p>This is a generated placeholder for <strong>systems/swse/templates/actor/character-sheet.hbs</strong>. 
-  Replace with real Handlebars content.</p>
-</div>
+<form class="swse-sheet" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
+    <h1><input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/></h1>
+  </header>
+  <section class="sheet-body">
+    <label>Level: <input type="number" name="system.level" value="{{system.level}}" /></label>
+    <label>HP: <input type="number" name="system.hp" value="{{system.hp}}" /></label>
+    <label>Fortitude: <input type="number" name="system.defenses.fort" value="{{system.defenses.fort}}" /></label>
+    <label>Reflex: <input type="number" name="system.defenses.ref" value="{{system.defenses.ref}}" /></label>
+    <label>Will: <input type="number" name="system.defenses.will" value="{{system.defenses.will}}" /></label>
+  </section>
+</form>
