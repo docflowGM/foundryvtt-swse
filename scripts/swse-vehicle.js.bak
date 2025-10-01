@@ -36,7 +36,7 @@ const AB_MAP = {
 
 export class SWSEVehicleSheet extends SWSEActorSheet {
   static get defaultOptions() {
-    return foundry.utils.foundry.utils.foundry.utils.mergeObject(super.defaultOptions, {
+    return foundry.utils.foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "vehicle"],
       template: "systems/swse/templates/actor/vehicle-sheet.hbs"
     });

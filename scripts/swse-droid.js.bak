@@ -5,7 +5,7 @@ import { SWSEActorSheet } from "./swse-actor.js";
 export class SWSEDroidSheet extends SWSEActorSheet {
   /** Extend defaultOptions to point at the Droid‐specific template */
   static get defaultOptions() {
-    return foundry.utils.foundry.utils.foundry.utils.mergeObject(super.defaultOptions, {
+    return foundry.utils.foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "droid"],
       template: "systems/swse/templates/actor/droid-sheet.hbs"
     });
