@@ -210,9 +210,9 @@ export class SWSEActor extends Actor {
 //
 // SWSEActorSheet: UI & Listeners
 //
-export class SWSEActorSheet extends foundry.appv1?.sheets.foundry?.sheet?.sheets.foundry?.sheet?.sheets.foundry?.sheet?.sheets.ActorSheet {
+export class SWSEActorSheet extends ActorSheet {
   static get defaultOptions() {
-    return foundry.utils.foundry.utils.foundry.utils.foundry.utils.foundry.utils.mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor"],
       template: "systems/swse/templates/actor/character-sheet.hbs",
       width: 800,
@@ -221,13 +221,12 @@ export class SWSEActorSheet extends foundry.appv1?.sheets.foundry?.sheet?.sheets
   }
 
   getData() {
-  const data = super.getData();
-  data.labels = {
-    sheetTitle: game.i18n.localize("SWSE.SheetLabel.character")
-  };
-  return data;
-}
-
+    const data = super.getData();
+    data.labels = {
+      sheetTitle: game.i18n.localize("SWSE.SheetLabel.character")
+    };
+    return data;
+  }
 
   activateListeners(html) {
     super.activateListeners(html);
@@ -289,7 +288,7 @@ export class SWSEActorSheet extends foundry.appv1?.sheets.foundry?.sheet?.sheets
     });
   }
 
-  // Force Power controls: roll, reload, remove, refresh all
+  // Force Power controls
   _bindForcePowerControls(html) {
     // Use Power
     html.find(".roll-forcepower").click(async ev => {
@@ -379,12 +378,11 @@ export class SWSEActorSheet extends foundry.appv1?.sheets.foundry?.sheet?.sheets
   }
 }
 
-
 // Register SWSE Actor Sheets
 Hooks.once("init", function() {
   Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet("swse", ActorSheet, { types: ["character"], makeDefault: true });
-  Actors.registerSheet("swse", ActorSheet, { types: ["npc"] });
-  Actors.registerSheet("swse", ActorSheet, { types: ["droid"] });
-  Actors.registerSheet("swse", ActorSheet, { types: ["vehicle"] });
+  Actors.registerSheet("swse", SWSEActorSheet, { types: ["character"], makeDefault: true });
+  Actors.registerSheet("swse", SWSEActorSheet, { types: ["npc"] });
+  Actors.registerSheet("swse", SWSEActorSheet, { types: ["droid"] });
+  Actors.registerSheet("swse", SWSEActorSheet, { types: ["vehicle"] });
 });
