@@ -147,49 +147,7 @@
     "units": "m"
   },
   "initiative": "1d20",
-  "actorTypes": [
-    "character",
-    "droid",
-    "npc",
-    "vehicle"
-  ],
-  "itemTypes": [
-    "class",
-    "feat",
-    "talent",
-    "forcepower",
-    "equipment",
-    "weapon",
-    "armor",
-    "skill",
-    "attribute",
-    "condition",
-    "combat-action",
-    "extra-skill-use"
-  ],
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
-  "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip",
-  "types": {
-    "actorTypes": [
-      "character",
-      "droid",
-      "npc",
-      "vehicle"
-    ],
-    "Item": [
-      "class",
-      "feat",
-      "talent",
-      "forcepower",
-      "equipment",
-      "weapon",
-      "armor",
-      "skill",
-      "attribute",
-      "condition",
-      "combat-action",
-      "extra-skill-use"
-    ]
-  }
+  "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip"
 }
