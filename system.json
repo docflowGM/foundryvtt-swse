@@ -58,7 +58,7 @@
   },
   "initiative": "1d20",
   "types": {
-    "Actor": ["character", "droid", "npc", "vehicle"],
+    "actorTypes": ["character", "droid", "npc", "vehicle"],
     "Item": [
       "class",
       "feat",
