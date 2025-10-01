@@ -2,86 +2,67 @@
 
 /**
  * SWSE Character Generator
- * Adds a button in the Actor Directory to create new SWSE characters.
+ * Handles the creation of new characters, droids, NPCs, and vehicles.
  */
 
 Hooks.on("renderActorDirectory", (app, html) => {
-  // Remove existing chargen button(s)
-  html.querySelectorAll(".swse-chargen").forEach(el => el.remove());
+  // Add "Create SWSE Character" button
+  const button = $(
+    `<button class="swse-chargen"><i class="fas fa-user-plus"></i> Create SWSE Character</button>`
+  );
+  html.find(".directory-footer").append(button);
 
-  // Find the header where we’ll insert the button
-  const header = html.querySelector(".directory-header .header-actions");
-  if (!header) return;
-
-  // Build the button
-  const button = document.createElement("button");
-  button.classList.add("swse-chargen");
-  button.innerHTML = `<i class="fas fa-user-plus"></i> Create SWSE Character`;
-
-  // Append to header
-  header.appendChild(button);
-
-  // Launch Character Creator on click
-  button.addEventListener("click", () => launchCharacterCreator());
+  button.on("click", () => {
+    new SWSECharGenForm().render(true);
+  });
 });
 
-/**
- * Launches the character creation dialog
- */
-function launchCharacterCreator() {
-  const content = `
-    <form>
-      <div class="form-group">
-        <label>Character Name:</label>
-        <input type="text" name="name" value="New Character"/>
-      </div>
-      <div class="form-group">
-        <label>Actor Type:</label>
-        <select name="type">
-          <option value="character">Character</option>
-          <option value="droid">Droid</option>
-          <option value="npc">NPC</option>
-          <option value="vehicle">Vehicle</option>
-        </select>
-      </div>
-    </form>
-  `;
+class SWSECharGenForm extends FormApplication {
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      id: "swse-chargen-form",
+      classes: ["swse", "chargen"],
+      title: "SWSE Character Generator",
+      template: "systems/swse/templates/apps/chargen.hbs",
+      width: 400,
+      height: "auto",
+    });
+  }
 
-  new Dialog({
-    title: "Create SWSE Actor",
-    content,
-    buttons: {
-      create: {
-        label: "Create",
-        callback: html => {
-          const form = html[0].querySelector("form");
-          const name = form.name.value || "New Actor";
-          const type = form.type.value || "character";
-          createSWSEActor(name, type);
-        }
-      },
-      cancel: {
-        label: "Cancel"
+  getData() {
+    return {
+      actorTypes: [
+        { value: "character", label: "Heroic Character" },
+        { value: "droid", label: "Droid" },
+        { value: "npc", label: "Non-Heroic NPC" },
+        { value: "vehicle", label: "Vehicle" }
+      ]
+    };
+  }
+
+  async _updateObject(event, formData) {
+    const name = formData.name || "New Actor";
+    const type = formData.type || "character"; // ✅ Always define a type
+
+    // Ensure system data is present (even empty)
+    const actorData = {
+      name,
+      type,
+      system: {}
+    };
+
+    console.log("[SWSE] Creating new actor:", actorData);
+
+    try {
+      const actor = await Actor.create(actorData);
+      if (actor) {
+        ui.notifications.info(`Created new ${type}: ${actor.name}`);
+        actor.sheet.render(true);
       }
-    },
-    default: "create"
-  }).render(true);
-}
-
-/**
- * Actually creates the actor
- */
-async function createSWSEActor(name, type) {
-  const actorData = {
-    name,
-    type, // Always defined from dialog
-    system: {} // Start with empty system data
-  };
-
-  try {
-    await Actor.create(actorData);
-  } catch (err) {
-    console.error("Failed to create SWSE Actor:", err);
-    ui.notifications.error(`Error creating actor: ${err.message}`);
+    } catch (err) {
+      console.error("[SWSE] Failed to create actor:", err);
+      ui.notifications.error("Failed to create actor. Check console for details.");
+    }
   }
 }
+
