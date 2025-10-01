@@ -43,7 +43,13 @@ export class SWSECharGen {
               }
 
               try {
-                const actor = await Actor.create({ "type": "character", {...data, type: 'character', { type: 'character', renderSheet: true } }),data, { renderSheet: true , "type": "character", "type": "character"});
+                // Properly create actor
+                const actor = await Actor.create({
+                  name: data.name,
+                  type: data.type,
+                  system: {},   // Optional: initialize system data here
+                }, { renderSheet: true });
+
                 resolve(actor);
               } catch (err) {
                 console.error("[SWSE] Error creating actor:", err);
