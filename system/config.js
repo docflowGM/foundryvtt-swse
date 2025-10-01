@@ -19,8 +19,8 @@ SWSE.CONFIG = {
 };
 
 SWSE.registerSheets = function () {
-  Actors.unregisterSheet("core", foundry.applications.sheets.foundry.applications.sheets.ActorSheet);
-  Items.unregisterSheet("core", foundry.applications.sheets.foundry.applications.sheets.ItemSheet);
+  Actors.unregisterSheet("core", foundry.applications.sheets.foundry.applications.sheets.foundry.applications.sheets.ActorSheet);
+  Items.unregisterSheet("core", foundry.applications.sheets.foundry.applications.sheets.foundry.applications.sheets.ItemSheet);
 
   Actors.registerSheet("swse", SWSEActorSheet, {
     types: ["character"],
