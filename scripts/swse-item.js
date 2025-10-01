@@ -1,6 +1,6 @@
 // systems/swse/scripts/swse-item.js
 
-export class SWSEItemSheet extends foundry.appv1.sheets.foundry.sheet.sheets.foundry.sheet.sheets.foundry.sheet.sheets.ItemSheet {
+export class SWSEItemSheet extends foundry.appv1?.sheets.foundry?.sheet?.sheets.foundry?.sheet?.sheets.foundry?.sheet?.sheets.ItemSheet {
   /** Configure default options for the SWSE item sheet */
   static get defaultOptions() {
     return foundry.utils.foundry.utils.foundry.utils.foundry.utils.foundry.utils.mergeObject(super.defaultOptions, {
@@ -9,7 +9,7 @@ export class SWSEItemSheet extends foundry.appv1.sheets.foundry.sheet.sheets.fou
       width: 520,
       height: "auto", // Can leave as "auto" if you want scroll-flexing
       tabs: [
-        { navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "data" }
+        { navSelector: "?.sheet-tabs", contentSelector: "?.sheet-body", initial: "data" }
       ]
     });
   }
