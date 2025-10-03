@@ -177,7 +177,7 @@
         {{#each (array "str" "dex" "int" "wis" "cha") as |ab|}}
           <option value="{{ab}}"
             {{#if (eq w.attackAttr ab)}}selected{{/if}}>
-            {{ab.toUpperCase()}}
+            {{toUpperCase ab}}
           </option>
         {{/each}}
       </select>
