@@ -23,6 +23,10 @@ Hooks.once("init", () => {
       item: "systems/swse/templates/item/item-sheet.hbs"
     }
   };
+Handlebars.registerHelper("toUpperCase", function(str) {
+  if (typeof str !== "string") return "";
+  return str.toUpperCase();
+});
 
   // -----------------------------
   // GAME SETTINGS
