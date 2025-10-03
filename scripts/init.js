@@ -27,6 +27,10 @@ Handlebars.registerHelper("toUpperCase", function(str) {
   if (typeof str !== "string") return "";
   return str.toUpperCase();
 });
+Handlebars.registerHelper("array", function () {
+  // Removes the final options argument and returns the rest as an array
+  return Array.prototype.slice.call(arguments, 0, -1);
+});
 
   // -----------------------------
   // GAME SETTINGS
