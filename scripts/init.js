@@ -46,7 +46,8 @@ Handlebars.registerHelper("array", function () {
   // -----------------------------
   // ACTOR CONFIGURATION
   // -----------------------------
-  CONFIG.Actor.documentClasses.charactereses = SWSEActor;
+  CONFIG.Actor.documentClasses.character = SWSEActor;
+
 
   // Unregister default sheets
   Actors.unregisterSheet("core", foundry.sheet.sheets.foundry.sheet.sheets.foundry.sheet.sheets.ActorSheet);
