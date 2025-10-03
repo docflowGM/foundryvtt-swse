@@ -4,7 +4,6 @@ import { SWSEActor, SWSEActorSheet } from "./swse-actor.js";
 import { SWSEDroidSheet } from "./swse-droid.js";
 import { SWSEVehicleSheet } from "./swse-vehicle.js";
 import { SWSEItemSheet } from "./swse-item.js";
-import "./swse-force.js";
 import "./swse-levelup.js";
 
 Hooks.once("init", () => {
