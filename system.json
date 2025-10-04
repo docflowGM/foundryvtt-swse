@@ -52,9 +52,12 @@
   ],
 
   "languages": [
-    { "lang": "en", "name": "English", "path": "lang/en.json" }
-  ],
-
+  {
+    "lang": "en",
+    "name": "English",
+    "path": "lang/en.json"
+  }
+],
   "grid": { "distance": 1, "units": "m" },
   "initiative": "1d20",
   "primaryTokenAttribute": "attributes.hp",
