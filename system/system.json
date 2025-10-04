@@ -2,7 +2,7 @@
   "id": "swse",
   "title": "Star Wars Saga Edition",
   "description": "A FoundryVTT system for Star Wars Saga Edition.",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "authors": [
     {
       "name": "Doc Flow",
@@ -39,112 +39,105 @@
     {
       "name": "swse-classes",
       "label": "SWSE Classes",
-      "path": "data/classes.json",
+      "path": "packs/swse-classes.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "swse-equipment",
       "label": "SWSE Equipment",
-      "path": "data/equipment.json",
+      "path": "packs/swse-equipment.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "swse-feats",
       "label": "SWSE Feats",
-      "path": "data/feats.json",
+      "path": "packs/swse-feats.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "swse-talents",
       "label": "SWSE Talents",
-      "path": "data/talents.json",
+      "path": "packs/swse-talents.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "swse-vehicles",
       "label": "SWSE Vehicles",
-      "path": "data/vehicles.json",
+      "path": "packs/swse-vehicles.db",
       "type": "Actor",
       "system": "swse"
     },
     {
-      "name": "swse-armor-light",
-      "label": "SWSE Armor (Light)",
-      "path": "data/armor/light.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-armor-heavy",
-      "label": "SWSE Armor (Heavy)",
-      "path": "data/armor/heavy.json",
+      "name": "swse-armor",
+      "label": "SWSE Armor",
+      "path": "packs/swse-armor.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "swse-droids",
       "label": "SWSE Droids",
-      "path": "data/Droids.json",
+      "path": "packs/swse-droids.db",
       "type": "Actor",
       "system": "swse"
     },
     {
       "name": "swse-skills",
       "label": "SWSE Skills",
-      "path": "data/skills.json",
+      "path": "packs/swse-skills.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "swse-attributes",
       "label": "SWSE Attributes",
-      "path": "data/attributes.json",
+      "path": "packs/swse-attributes.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "swse-combat-actions",
       "label": "SWSE Combat Actions",
-      "path": "data/combat-actions.json",
+      "path": "packs/swse-combat-actions.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "swse-conditions",
       "label": "SWSE Conditions",
-      "path": "data/conditions.json",
+      "path": "packs/swse-conditions.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "swse-extraskilluses",
       "label": "SWSE Extra Skill Uses",
-      "path": "data/extraskilluses.json",
+      "path": "packs/swse-extraskilluses.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "swse-forcepowers",
       "label": "SWSE Force Powers",
-      "path": "data/forcepowers.json",
+      "path": "packs/swse-forcepowers.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "swse-special-combat-conditions",
       "label": "SWSE Special Combat Conditions",
-      "path": "data/special-combat-condition.json",
+      "path": "packs/swse-special-combat-conditions.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "swse-weapons",
       "label": "SWSE Weapons",
-      "path": "data/weapons.json",
+      "path": "packs/swse-weapons.db",
       "type": "Item",
       "system": "swse"
     }
