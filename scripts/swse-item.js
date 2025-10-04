@@ -13,29 +13,51 @@ export class SWSEItemSheet extends ItemSheet {
       width: 520,
       height: "auto", // Allows scroll-flexing
       tabs: [
-        { navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "data" }
+        {
+          navSelector: ".sheet-tabs",
+          contentSelector: ".sheet-body",
+          initial: "data"
+        }
       ]
     });
   }
 
   /** Provide data to the template */
   getData(options = {}) {
-    const data = super.getData(options);
+    const context = super.getData(options);
 
-    // Foundry v10+ already provides `data.system`,
-    // but in case older helpers expect it:
-    if (!data.system && data.item?.system) {
-      data.system = data.item.system;
-    }
+    // Ensure compatibility across Foundry versions
+    const item = context.item ?? this.item;
+    context.system = item.system ?? {};
 
-    return data;
+    // Add localized labels or helpers if needed later
+    context.labels = {
+      sheetTitle: game.i18n.localize("SWSE.SheetLabel.item")
+    };
+
+    return context;
+  }
+
+  /** Activate interactivity */
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    // Example: Expand/collapse item description
+    html.find(".toggle-description").click(ev => {
+      ev.preventDefault();
+      const section = html.find(".item-description");
+      section.toggleClass("collapsed");
+    });
+
+    // You can bind more custom handlers here for future SWSE features
   }
 }
 
 /**
  * Register SWSE item sheets
  */
-Hooks.once("init", function() {
+Hooks.once("init", function () {
+  console.log("SWSE | Registering custom Item Sheet...");
   Items.unregisterSheet("core", ItemSheet);
   Items.registerSheet("swse", SWSEItemSheet, { makeDefault: true });
 });
