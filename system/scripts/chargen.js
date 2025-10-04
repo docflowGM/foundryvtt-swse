@@ -2,19 +2,16 @@
 
 /**
  * Character Generator Dialog
- * Provides a UI to create new Actors for the SWSE system.
  */
 export class SWSECharGen {
   static async show() {
-    // Supported actor types
     const actorTypes = [
       { value: "character", label: "Character" },
       { value: "droid", label: "Droid" },
-      { value: "vehicle", label: "Vehicle" },
-      // { value: "npc", label: "NPC" } // Uncomment once NPC sheet exists
+      { value: "npc", label: "NPC" },
+      { value: "vehicle", label: "Vehicle" }
     ];
 
-    // Render the Handlebars template with actorTypes
     const template = await renderTemplate(
       "systems/swse/templates/apps/chargen.hbs",
       { actorTypes }
@@ -33,26 +30,21 @@ export class SWSECharGen {
               const formData = new FormData(form);
               const data = Object.fromEntries(formData.entries());
 
-              // Default to "character" if no type selected
               if (!data.type) data.type = "character";
 
-              // Ensure we at least have a name
               if (!data.name || data.name.trim() === "") {
                 ui.notifications.error("You must provide a name for the actor.");
                 return;
               }
 
               try {
-                // Create actor using correct class
-                const actor = await CONFIG.Actor.documentClasses[data.type].create({
-                  name: data.name,
-                  type: data.type
-                  // Don't pass empty `system: {}`; let template.json handle defaults
-                }, { renderSheet: true });
-
+                const actor = await Actor.create(
+                  { name: data.name, type: data.type },
+                  { renderSheet: true }
+                );
                 resolve(actor);
               } catch (err) {
-                console.error("[SWSE] Error creating actor:", err, data);
+                console.error("[SWSE] Error creating actor:", err);
                 ui.notifications.error("Failed to create actor. Check console for details.");
                 resolve(null);
               }
