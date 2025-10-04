@@ -1,0 +1,11 @@
+{
+  "SWSE": {
+    "SystemName": "Star Wars Saga Edition",
+    "Actor": {
+      "Label": "Character"
+    },
+    "Item": {
+      "Label": "Item"
+    }
+  }
+}
