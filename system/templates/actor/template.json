@@ -1,0 +1,150 @@
+{
+  "Actor": {
+    "character": {
+      "type": "character",
+      "name": "New Character",
+      "img": "icons/svg/mystery-man.svg",
+      "system": {
+        "race": "custom",
+        "species": "",
+        "class": "",
+        "subtype": "",
+        "level": 1,
+        "bab": 0,
+        "size": "medium",
+        "speed": { "base": 6, "total": 6 },
+        "forcePoints": { "value": 1, "max": 1 },
+        "destinyPoints": { "value": 0, "max": 0 },
+        "secondWind": { "uses": 1, "healing": 0 },
+        "conditionTrack": "normal",
+        "abilities": {
+          "str": { "base": 10, "temp": 0 },
+          "dex": { "base": 10, "temp": 0 },
+          "con": { "base": 10, "temp": 0 },
+          "int": { "base": 10, "temp": 0 },
+          "wis": { "base": 10, "temp": 0 },
+          "cha": { "base": 10, "temp": 0 }
+        },
+        "defenses": {
+          "reflex":    { "ability": "dex", "class": 0, "armor": 0, "misc": 0, "total": 10 },
+          "fortitude": { "ability": "con", "class": 0, "armor": 0, "misc": 0, "total": 10 },
+          "will":      { "ability": "wis", "class": 0, "armor": 0, "misc": 0, "total": 10 }
+        },
+        "hp": { "value": 1, "max": 1, "threshold": 10 },
+        "initiative": { "misc": 0, "total": 0 },
+        "skills": {},
+        "feats": [],
+        "talents": [],
+        "forcePowersList": [],
+        "equipment": []
+      }
+    },
+    "droid": {
+      "type": "droid",
+      "name": "New Droid",
+      "img": "icons/svg/robot.svg",
+      "system": {
+        "species": "droid",
+        "subtype": "4th-degree",
+        "level": 1,
+        "class": "",
+        "abilities": {
+          "str": { "base": 10, "temp": 0 },
+          "dex": { "base": 10, "temp": 0 },
+          "con": { "base": null, "temp": 0 },
+          "int": { "base": 10, "temp": 0 },
+          "wis": { "base": 10, "temp": 0 },
+          "cha": { "base": 10, "temp": 0 }
+        },
+        "defenses": {
+          "reflex":    { "ability": "dex", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+          "fortitude": { "ability": null, "class": 0, "armor": 0, "misc": 0, "total": 0 },
+          "will":      { "ability": "wis", "class": 0, "armor": 0, "misc": 0, "total": 0 }
+        },
+        "hp": { "value": 0, "max": 0 },
+        "conditionTrack": "normal",
+        "secondWind": { "uses": 0, "healing": 0 },
+        "skills": [],
+        "feats": [],
+        "talents": [],
+        "gear": [],
+        "weapons": [],
+        "droidTemplates": []
+      }
+    },
+    "npc": {
+      "type": "npc",
+      "name": "New NPC",
+      "img": "icons/svg/mystery-man.svg",
+      "system": {
+        "level": 1,
+        "species": "",
+        "class": "",
+        "subtype": "",
+        "alignment": "",
+        "abilities": {
+          "str": { "base": 10, "temp": 0 },
+          "dex": { "base": 10, "temp": 0 },
+          "con": { "base": 10, "temp": 0 },
+          "int": { "base": 10, "temp": 0 },
+          "wis": { "base": 10, "temp": 0 },
+          "cha": { "base": 10, "temp": 0 }
+        },
+        "defenses": {
+          "reflex":    { "ability": "dex", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+          "fortitude": { "ability": "con", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+          "will":      { "ability": "wis", "class": 0, "armor": 0, "misc": 0, "total": 0 }
+        },
+        "hp": { "value": 0, "max": 0 },
+        "conditionTrack": "normal",
+        "secondWind": { "uses": 0, "healing": 0 },
+        "skills": [],
+        "feats": [],
+        "talents": [],
+        "gear": [],
+        "weapons": [],
+        "abilitiesSpecial": []
+      }
+    },
+    "vehicle": {
+      "type": "vehicle",
+      "name": "New Vehicle",
+      "img": "icons/svg/ship.svg",
+      "system": {
+        "model": "",
+        "size": "medium",
+        "speed": { "base": 10, "total": 10 },
+        "shields": { "value": 0, "max": 0 },
+        "hull": { "value": 0, "max": 0 },
+        "crew": {
+          "pilot": "",
+          "shields": "",
+          "engineer": "",
+          "gunners": []
+        },
+        "defenses": {
+          "reflex":    { "ability": "dex", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+          "fortitude": { "ability": "con", "class": 0, "armor": 0, "misc": 0, "total": 0 },
+          "will":      { "ability": "wis", "class": 0, "armor": 0, "misc": 0, "total": 0 }
+        },
+        "weapons": [],
+        "cargo": [],
+        "mods": []
+      }
+    }
+  },
+  "Item": {
+    "class":         { "type": "class", "system": {} },
+    "feat":          { "type": "feat", "system": {} },
+    "talent":        { "type": "talent", "system": {} },
+    "forcepower":    { "type": "forcepower", "system": {} },
+    "equipment":     { "type": "equipment", "system": {} },
+    "weapon":        { "type": "weapon", "system": {} },
+    "armor":         { "type": "armor", "system": {} },
+    "skill":         { "type": "skill", "system": {} },
+    "attribute":     { "type": "attribute", "system": {} },
+    "condition":     { "type": "condition", "system": {} },
+    "combat-action": { "type": "combat-action", "system": {} },
+    "extra-skill-use": { "type": "extra-skill-use", "system": {} }
+  }
+}
