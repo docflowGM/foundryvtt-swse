@@ -23,15 +23,51 @@ Hooks.once("init", () => {
     }
   };
 
-  // Handlebars Helpers
+  // -----------------------------
+  // HANDLEBARS HELPERS
+  // -----------------------------
   Handlebars.registerHelper("toUpperCase", function (str) {
     if (typeof str !== "string") return "";
     return str.toUpperCase();
   });
 
   Handlebars.registerHelper("array", function () {
-    // Removes the final options argument and returns the rest as an array
     return Array.prototype.slice.call(arguments, 0, -1);
+  });
+
+  // Crew name resolver
+  Handlebars.registerHelper("getCrewName", id => {
+    const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
+    return actor ? actor.name : "";
+  });
+
+  // Damage Threshold calculation
+  Handlebars.registerHelper("calculateDamageThreshold", function (actor) {
+    if (!actor?.system) return 0;
+
+    // Use stored Fortitude defense, fallback to 10
+    let fortitude = actor.system.defenses?.fortitude?.value ?? 10;
+
+    // Size modifier
+    const size = actor.system.traits?.size ?? "medium";
+    const sizeMods = {
+      tiny: -5,
+      small: 0,
+      medium: 0,
+      large: 5,
+      huge: 10,
+      gargantuan: 20,
+      colossal: 50
+    };
+    let sizeMod = sizeMods[size.toLowerCase()] ?? 0;
+
+    // Feat bonus (Improved Damage Threshold)
+    let featBonus = 0;
+    if (actor.items?.some(i => i.type === "feat" && i.name?.toLowerCase() === "improved damage threshold")) {
+      featBonus += 5;
+    }
+
+    return fortitude + sizeMod + featBonus;
   });
 
   // -----------------------------
@@ -49,8 +85,7 @@ Hooks.once("init", () => {
   // -----------------------------
   // ACTOR CONFIGURATION
   // -----------------------------
-  // Register our Actor document class
-  CONFIG.Actor.documentClass = SWSEActor;
+  CONFIG.Actor.documentClasses.character = SWSEActor;
 
   // Unregister default sheets
   Actors.unregisterSheet("core", ActorSheet);
@@ -81,14 +116,6 @@ Hooks.once("init", () => {
   });
 
   // -----------------------------
-  // HANDLEBARS HELPERS
-  // -----------------------------
-  Handlebars.registerHelper("getCrewName", id => {
-    const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
-    return actor ? actor.name : "";
-  });
-
-  // -----------------------------
   // PRELOAD HANDLEBARS TEMPLATES
   // -----------------------------
   loadTemplates([
@@ -101,13 +128,10 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", () => {
   console.log("SWSE | System ready.");
-});
 
-/* ---------------------------------------------------
-   DEBUGGING: Detailed validation error logging
---------------------------------------------------- */
-Hooks.once("ready", () => {
-  // Wrap Actor validation
+  // -----------------------------
+  // DEBUGGING: Detailed validation error logging
+  // -----------------------------
   const _actorValidate = Actor.prototype.validate;
   Actor.prototype.validate = function (data, options) {
     try {
@@ -131,7 +155,6 @@ Hooks.once("ready", () => {
     }
   };
 
-  // Wrap Item validation too
   const _itemValidate = Item.prototype.validate;
   Item.prototype.validate = function (data, options) {
     try {
