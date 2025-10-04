@@ -22,14 +22,17 @@ Hooks.once("init", () => {
       item: "systems/swse/templates/item/item-sheet.hbs"
     }
   };
-Handlebars.registerHelper("toUpperCase", function(str) {
-  if (typeof str !== "string") return "";
-  return str.toUpperCase();
-});
-Handlebars.registerHelper("array", function () {
-  // Removes the final options argument and returns the rest as an array
-  return Array.prototype.slice.call(arguments, 0, -1);
-});
+
+  // Handlebars Helpers
+  Handlebars.registerHelper("toUpperCase", function (str) {
+    if (typeof str !== "string") return "";
+    return str.toUpperCase();
+  });
+
+  Handlebars.registerHelper("array", function () {
+    // Removes the final options argument and returns the rest as an array
+    return Array.prototype.slice.call(arguments, 0, -1);
+  });
 
   // -----------------------------
   // GAME SETTINGS
@@ -46,12 +49,12 @@ Handlebars.registerHelper("array", function () {
   // -----------------------------
   // ACTOR CONFIGURATION
   // -----------------------------
-  CONFIG.Actor.documentClasses.character = SWSEActor;
-
+  // Register our Actor document class
+  CONFIG.Actor.documentClass = SWSEActor;
 
   // Unregister default sheets
-  Actors.unregisterSheet("core", foundry.sheet.sheets.foundry.sheet.sheets.foundry.sheet.sheets.ActorSheet);
-  Items.unregisterSheet("core", foundry.sheet.sheets.foundry.sheet.sheets.foundry.sheet.sheets.ItemSheet);
+  Actors.unregisterSheet("core", ActorSheet);
+  Items.unregisterSheet("core", ItemSheet);
 
   // Register custom sheets
   Actors.registerSheet("swse", SWSEActorSheet, {
