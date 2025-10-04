@@ -45,7 +45,7 @@ Hooks.once("init", () => {
   Handlebars.registerHelper("calculateDamageThreshold", function (actor) {
     if (!actor?.system) return 0;
 
-    // Use stored Fortitude defense, fallback to 10
+    // Base Fortitude Defense
     let fortitude = actor.system.defenses?.fortitude?.value ?? 10;
 
     // Size modifier
