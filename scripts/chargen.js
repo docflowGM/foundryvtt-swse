@@ -10,8 +10,8 @@ export class SWSECharGen {
     const actorTypes = [
       { value: "character", label: "Character" },
       { value: "droid", label: "Droid" },
-      { value: "npc", label: "NPC" },
-      { value: "vehicle", label: "Vehicle" }
+      { value: "vehicle", label: "Vehicle" },
+      // { value: "npc", label: "NPC" } // Uncomment once NPC sheet exists
     ];
 
     // Render the Handlebars template with actorTypes
@@ -43,16 +43,16 @@ export class SWSECharGen {
               }
 
               try {
-                // Properly create actor
-                const actor = await Actor.create({
+                // Create actor using correct class
+                const actor = await CONFIG.Actor.documentClasses[data.type].create({
                   name: data.name,
-                  type: data.type,
-                  system: {},   // Optional: initialize system data here
+                  type: data.type
+                  // Don't pass empty `system: {}`; let template.json handle defaults
                 }, { renderSheet: true });
 
                 resolve(actor);
               } catch (err) {
-                console.error("[SWSE] Error creating actor:", err);
+                console.error("[SWSE] Error creating actor:", err, data);
                 ui.notifications.error("Failed to create actor. Check console for details.");
                 resolve(null);
               }
