@@ -12,6 +12,7 @@ const CONDITION_PENALTIES = {
   "-10": -10,
   helpless: -100
 };
+import { SWSEStore } from "../system/store/store.js";
 
 const SIZE_SPEED_MOD = {
   tiny: 2,
@@ -231,3 +232,8 @@ Hooks.once("init", () => {
     makeDefault: true
   });
 });
+"system": {
+  "currency": {
+    "credits": 1000
+  }
+};

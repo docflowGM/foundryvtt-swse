@@ -95,3 +95,13 @@ export {
   ImportData,
   Rolls
 };
+// in system/index.js
+import { SWSEStore } from "./store/store.js";
+
+Hooks.once("ready", () => {
+  game.swse = game.swse || {};
+  game.swse.openStore = () => new SWSEStore().render(true);
+
+  // optional macro
+  console.log("SWSE Store ready. Use game.swse.openStore() to open the store.");
+});

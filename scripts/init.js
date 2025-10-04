@@ -40,6 +40,7 @@ Hooks.once("init", () => {
     const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
     return actor ? actor.name : "";
   });
+Handlebars.registerHelper("json", context => JSON.stringify(context));
 
   // Damage Threshold calculation
   Handlebars.registerHelper("calculateDamageThreshold", function (actor) {

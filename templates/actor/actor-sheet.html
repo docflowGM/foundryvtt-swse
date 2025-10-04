@@ -1,49 +1,139 @@
-<form class="swse sheet actor-sheet" autocomplete="off">
-  <header class="sheet-header">
-    <h1 class="sheet-title">{{actor.name}}</h1>
+<form class="swse sheet actor-sheet holo-theme" autocomplete="off">
+  <header class="sheet-header flexrow">
+    <div class="char-info">
+      <h1 class="sheet-title aurebesh">{{actor.name}}</h1>
+      <div class="meta">
+        <label>Class</label>
+        <input type="text" name="system.class" value="{{system.class}}" />
+        <label>Level</label>
+        <input type="number" name="system.level" value="{{system.level}}" />
+        <label>Species</label>
+        <input type="text" name="system.species" value="{{system.species}}" />
+      </div>
+    </div>
+
     <div class="sheet-controls">
+      <button type="button" class="level-up holo-btn">⬆️ Level Up</button>
+      <button type="button" class="visit-store holo-btn">🏪 Visit a Store</button>
       {{> "systems/swse/templates/partials/actor-controls.hbs"}}
     </div>
   </header>
 
+  <!-- TABS -->
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="overview">Overview</a>
+    <a class="item" data-tab="feats">Feats</a>
+    <a class="item" data-tab="talents">Talents</a>
+    <a class="item" data-tab="force">Force Powers</a>
+    <a class="item" data-tab="equipment">Equipment</a>
+    <a class="item" data-tab="vehicles">Vehicles</a>
+    <a class="item" data-tab="droids">Droids</a>
+    <a class="item" data-tab="misc">Misc</a>
+  </nav>
+
+  <!-- BODY -->
   <section class="sheet-body">
-    <div class="section">
-      <h3>Basic Info</h3>
-      <div class="grid">
-        <label>Class: <input type="text" name="system.class" value="{{system.class}}" /></label>
-        <label>Level: <input type="number" name="system.level" value="{{system.level}}" /></label>
-        <label>Species: <input type="text" name="system.species" value="{{system.species}}" /></label>
+
+    <!-- Overview Tab -->
+    <div class="tab overview" data-group="primary" data-tab="overview">
+      <h2 class="section-title">Character Overview</h2>
+      <div class="grid-2col">
+        <div>
+          <h3>Ability Scores</h3>
+          <table class="holo-table">
+            <thead>
+              <tr><th>Ability</th><th>Value</th></tr>
+            </thead>
+            <tbody>
+              {{#each system.abilities as |ability key|}}
+              <tr>
+                <td>{{key}}</td>
+                <td><input type="number" name="system.abilities.{{key}}.value" value="{{ability.value}}" /></td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h3>Derived Stats</h3>
+          <div class="stats-grid">
+            <label>HP: <input type="number" name="system.hp" value="{{system.hp}}" /></label>
+            <label>Reflex: <input type="number" name="system.reflex" value="{{system.reflex}}" /></label>
+            <label>Fortitude: <input type="number" name="system.fortitude" value="{{system.fortitude}}" /></label>
+            <label>Will: <input type="number" name="system.will" value="{{system.will}}" /></label>
+            <label>Defense: <input type="number" name="system.defense" value="{{system.defense}}" /></label>
+            <label>Credits: <input type="number" name="system.credits" value="{{system.credits}}" /></label>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="section">
-      <h3>Ability Scores</h3>
-      <table>
-        <thead>
-          <tr><th>Ability</th><th>Value</th></tr>
-        </thead>
-        <tbody>
-          {{#each system.abilities as |ability key|}}
-          <tr>
-            <td>{{key}}</td>
-            <td><input type="number" name="system.abilities.{{key}}.value" value="{{ability.value}}" /></td>
-          </tr>
-          {{/each}}
-        </tbody>
-      </table>
-    </div>
-
-    <div class="section">
-      <h3>Feats & Talents</h3>
-      <ul>
+    <!-- Feats -->
+    <div class="tab feats" data-group="primary" data-tab="feats">
+      <h2>Feats</h2>
+      <ul class="item-list">
         {{#each system.feats}}
-          <li>{{this.name}}</li>
-        {{/each}}
-        {{#each system.talents}}
-          <li>{{this.name}}</li>
+          <li class="holo-item">{{this.name}}</li>
         {{/each}}
       </ul>
     </div>
+
+    <!-- Talents -->
+    <div class="tab talents" data-group="primary" data-tab="talents">
+      <h2>Talents</h2>
+      <ul class="item-list">
+        {{#each system.talents}}
+          <li class="holo-item">{{this.name}}</li>
+        {{/each}}
+      </ul>
+    </div>
+
+    <!-- Force Powers -->
+    <div class="tab force" data-group="primary" data-tab="force">
+      <h2>Force Powers</h2>
+      <ul class="item-list">
+        {{#each system.forcepowers}}
+          <li class="holo-item">{{this.name}}</li>
+        {{/each}}
+      </ul>
+    </div>
+
+    <!-- Equipment -->
+    <div class="tab equipment" data-group="primary" data-tab="equipment">
+      <h2>Equipment</h2>
+      <ul class="item-list">
+        {{#each system.equipment}}
+          <li class="holo-item">{{this.name}} — {{this.quantity}}</li>
+        {{/each}}
+      </ul>
+    </div>
+
+    <!-- Vehicles -->
+    <div class="tab vehicles" data-group="primary" data-tab="vehicles">
+      <h2>Owned Vehicles</h2>
+      <ul class="item-list">
+        {{#each system.vehicles}}
+          <li class="holo-item">{{this.name}}</li>
+        {{/each}}
+      </ul>
+    </div>
+
+    <!-- Droids -->
+    <div class="tab droids" data-group="primary" data-tab="droids">
+      <h2>Owned Droids</h2>
+      <ul class="item-list">
+        {{#each system.droids}}
+          <li class="holo-item">{{this.name}}</li>
+        {{/each}}
+      </ul>
+    </div>
+
+    <!-- Misc -->
+    <div class="tab misc" data-group="primary" data-tab="misc">
+      <h2>Biography</h2>
+      <textarea name="system.bio" rows="6">{{system.bio}}</textarea>
+    </div>
+
   </section>
 </form>
-<label>{{localize "SWSE.ItemType.feat"}}</label>
