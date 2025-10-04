@@ -1,12 +1,13 @@
 {
   "id": "swse",
   "title": "Star Wars Saga Edition",
-  "description": "A FoundryVTT system for Star Wars Saga Edition.",
-  "version": "1.0.1",
+  "description": "A FoundryVTT system for Star Wars Saga Edition, including automated character sheets, classes, feats, force powers, and more.",
+  "version": "1.0.3",
   "authors": [
     {
       "name": "Doc Flow",
-      "url": "https://github.com/docflowGM"
+      "url": "https://github.com/docflowGM",
+      "discord": "DocFlow#0001"
     }
   ],
   "compatibility": {
@@ -14,148 +15,51 @@
     "verified": "13",
     "maximum": "13"
   },
+  "license": "MIT",
+  "readme": "https://github.com/docflowGM/foundryvtt-swse/blob/main/README.md",
+  "bugs": "https://github.com/docflowGM/foundryvtt-swse/issues",
+  "changelog": "https://github.com/docflowGM/foundryvtt-swse/blob/main/CHANGELOG.md",
+  "url": "https://github.com/docflowGM/foundryvtt-swse",
+  "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
+  "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip",
+
   "esmodules": [
-    "system/index.js",
-    "system/swse.js",
-    "scripts/init.js",
-    "scripts/swse-data.js",
-    "scripts/swse-actor.js",
-    "scripts/swse-droid.js",
-    "scripts/swse-item.js",
-    "scripts/swse-vehicle.js",
-    "scripts/swse-levelup.js",
-    "scripts/races.js",
-    "scripts/chargen.js",
-    "scripts/dice-utils.js",
-    "scripts/diceroller.js",
-    "scripts/load-templates.js",
-    "scripts/import-data.js"
+    "system/index.js"
   ],
+
   "styles": [
     "styles/swse.css",
     "styles/swse-levelup.css",
     "styles/swse-vehicles.css"
   ],
+
   "packs": [
-    {
-      "name": "swse-classes",
-      "label": "SWSE Classes",
-      "path": "data/classes.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-equipment",
-      "label": "SWSE Equipment",
-      "path": "data/equipment.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-feats",
-      "label": "SWSE Feats",
-      "path": "data/feats.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-talents",
-      "label": "SWSE Talents",
-      "path": "data/talents.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-vehicles",
-      "label": "SWSE Vehicles",
-      "path": "data/vehicles.json",
-      "type": "Actor",
-      "system": "swse"
-    },
-    {
-      "name": "swse-armor-light",
-      "label": "SWSE Armor (Light)",
-      "path": "data/armor/light.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-armor-heavy",
-      "label": "SWSE Armor (Heavy)",
-      "path": "data/armor/heavy.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-droids",
-      "label": "SWSE Droids",
-      "path": "data/Droids.json",
-      "type": "Actor",
-      "system": "swse"
-    },
-    {
-      "name": "swse-skills",
-      "label": "SWSE Skills",
-      "path": "data/skills.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-attributes",
-      "label": "SWSE Attributes",
-      "path": "data/attributes.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-combat-actions",
-      "label": "SWSE Combat Actions",
-      "path": "data/combat-actions.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-conditions",
-      "label": "SWSE Conditions",
-      "path": "data/conditions.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-extraskilluses",
-      "label": "SWSE Extra Skill Uses",
-      "path": "data/extraskilluses.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-forcepowers",
-      "label": "SWSE Force Powers",
-      "path": "data/forcepowers.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-special-combat-conditions",
-      "label": "SWSE Special Combat Conditions",
-      "path": "data/special-combat-condition.json",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "swse-weapons",
-      "label": "SWSE Weapons",
-      "path": "data/weapons.json",
-      "type": "Item",
-      "system": "swse"
-    }
+    { "name": "swse-classes", "label": "SWSE Classes", "path": "data/classes.json", "type": "Item" },
+    { "name": "swse-equipment", "label": "SWSE Equipment", "path": "data/equipment.json", "type": "Item" },
+    { "name": "swse-feats", "label": "SWSE Feats", "path": "data/feats.json", "type": "Item" },
+    { "name": "swse-talents", "label": "SWSE Talents", "path": "data/talents.json", "type": "Item" },
+    { "name": "swse-vehicles", "label": "SWSE Vehicles", "path": "data/vehicles.json", "type": "Actor" },
+    { "name": "swse-armor-light", "label": "SWSE Armor (Light)", "path": "data/armor/light.json", "type": "Item" },
+    { "name": "swse-armor-heavy", "label": "SWSE Armor (Heavy)", "path": "data/armor/heavy.json", "type": "Item" },
+    { "name": "swse-droids", "label": "SWSE Droids", "path": "data/droids.json", "type": "Actor" },
+    { "name": "swse-skills", "label": "SWSE Skills", "path": "data/skills.json", "type": "Item" },
+    { "name": "swse-attributes", "label": "SWSE Attributes", "path": "data/attributes.json", "type": "Item" },
+    { "name": "swse-combat-actions", "label": "SWSE Combat Actions", "path": "data/combat-actions.json", "type": "Item" },
+    { "name": "swse-conditions", "label": "SWSE Conditions", "path": "data/conditions.json", "type": "Item" },
+    { "name": "swse-extra-skill-uses", "label": "SWSE Extra Skill Uses", "path": "data/extraskilluses.json", "type": "Item" },
+    { "name": "swse-force-powers", "label": "SWSE Force Powers", "path": "data/forcepowers.json", "type": "Item" },
+    { "name": "swse-special-combat-conditions", "label": "SWSE Special Combat Conditions", "path": "data/special-combat-condition.json", "type": "Item" },
+    { "name": "swse-weapons", "label": "SWSE Weapons", "path": "data/weapons.json", "type": "Item" }
   ],
-  "grid": {
-    "distance": 1,
-    "units": "m"
-  },
+
+  "languages": [
+    { "lang": "en", "name": "English", "path": "lang/en.json" }
+  ],
+
+  "grid": { "distance": 1, "units": "m" },
   "initiative": "1d20",
-  "url": "https://github.com/docflowGM/foundryvtt-swse",
-  "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
-  "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip"
+  "primaryTokenAttribute": "attributes.hp",
+  "secondaryTokenAttribute": "defenses.reflex",
+  "background": "assets/ui/background.jpg",
+  "socket": true
 }
