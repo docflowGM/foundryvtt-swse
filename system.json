@@ -15,6 +15,7 @@
     "maximum": "13"
   },
   "esmodules": [
+    "system/index.js",
     "system/swse.js",
     "scripts/init.js",
     "scripts/swse-data.js",
