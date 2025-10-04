@@ -6,7 +6,7 @@ let SCRAPED_VEHICLES = [];
 
 /**
  * Load the scraped vehicles.json into memory on game ready.
- * Expects vehicles.json to live at systems/swse/packs/vehicles.json
+ * Expects vehicles.json to live at systems/swse/data/vehicles.json
  */
 Hooks.once("ready", async () => {
   try {
@@ -17,17 +17,13 @@ Hooks.once("ready", async () => {
   }
 });
 
-/**
- * Utility to parse strings like "+18" or "15" into an integer.
- */
+/** Utility to parse strings like "+18" or "15" into an integer. */
 function parseBonus(str) {
   const m = String(str).match(/([+-]?\d+)/);
   return m ? Number(m[1]) : 0;
 }
 
-/**
- * Map full‐word ability names to our three‐letter keys.
- */
+/** Map full‐word ability names to our three‐letter keys. */
 const AB_MAP = {
   strength:     "str",
   dexterity:    "dex",
@@ -36,7 +32,7 @@ const AB_MAP = {
 
 export class SWSEVehicleSheet extends SWSEActorSheet {
   static get defaultOptions() {
-    return foundry.utils.foundry.utils.foundry.utils.foundry.utils.foundry.utils.mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "vehicle"],
       template: "systems/swse/templates/actor/vehicle-sheet.hbs"
     });
