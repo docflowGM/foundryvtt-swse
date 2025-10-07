@@ -1,0 +1,59 @@
+.holo-theme {
+  background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
+  color: #9ed0ff;
+  border: 2px solid #1c4b8e;
+  border-radius: 12px;
+  box-shadow: 0 0 20px #0ff3, inset 0 0 10px #123;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.holo-theme input, .holo-theme textarea {
+  background: rgba(0, 30, 60, 0.4);
+  color: #b5daff;
+  border: 1px solid #0af;
+  border-radius: 4px;
+}
+
+.holo-theme .sheet-tabs {
+  display: flex;
+  border-bottom: 1px solid #0af;
+  justify-content: space-around;
+  margin-bottom: 0.5em;
+}
+
+.holo-theme .sheet-tabs .item {
+  padding: 0.4em 0.8em;
+  cursor: pointer;
+  color: #9ed0ff;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.holo-theme .sheet-tabs .item.active {
+  color: #fff;
+  border-bottom: 2px solid #00c6ff;
+  text-shadow: 0 0 5px #00f0ff;
+}
+
+.holo-btn {
+  background: linear-gradient(90deg, #002f6c, #003f8f);
+  border: 1px solid #00baff;
+  color: #b5daff;
+  border-radius: 6px;
+  padding: 4px 8px;
+  transition: 0.2s;
+}
+.holo-btn:hover {
+  background: #00aaff;
+  color: #fff;
+  box-shadow: 0 0 10px #00cfff;
+}
+
+.holo-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.holo-table th, .holo-table td {
+  border-bottom: 1px solid #004d80;
+  padding: 4px 6px;
+}
