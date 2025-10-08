@@ -1,6 +1,16 @@
-/* SWSE base styles */
-.swse.sheet {
-  font-family: "Roboto", sans-serif;
-  background: #1a1a1a;
-  color: #ddd;
+.swse.sheet { font-family: sans-serif; }
+.swse .form-group { margin: 5px 0; }
+.swse label { font-weight: bold; margin-right: 5px; }
+.swse input[type="text"],
+.swse input[type="number"] { border: 1px solid #ccc; padding: 2px 5px; }
+.swse button {
+  padding: 5px 10px;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
+.swse button:hover { background: #357abd; }
+.swse .sheet-tabs { border-bottom: 2px solid #4a90e2; }
+.swse .sheet-tabs .item { padding: 5px 15px; cursor: pointer; }
+.swse .sheet-tabs .item.active { background: #4a90e2; color: white; }

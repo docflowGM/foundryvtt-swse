@@ -1,16 +1,140 @@
 {
   "Actor": {
-    "types": [
-      "character",
-      "droid",
-      "npc",
-      "vehicle"
-    ],
+    "types": ["character", "droid", "npc", "vehicle"],
     "templates": {
-      "character": {},
-      "droid": {},
-      "npc": {},
-      "vehicle": {}
+      "base": {
+        "abilities": {
+          "str": { "base": 10, "racial": 0, "temp": 0, "total": 10, "mod": 0 },
+          "dex": { "base": 10, "racial": 0, "temp": 0, "total": 10, "mod": 0 },
+          "con": { "base": 10, "racial": 0, "temp": 0, "total": 10, "mod": 0 },
+          "int": { "base": 10, "racial": 0, "temp": 0, "total": 10, "mod": 0 },
+          "wis": { "base": 10, "racial": 0, "temp": 0, "total": 10, "mod": 0 },
+          "cha": { "base": 10, "racial": 0, "temp": 0, "total": 10, "mod": 0 }
+        },
+        "hp": { "value": 1, "max": 1 },
+        "defenses": {
+          "reflex": {
+            "ability": "dex",
+            "class": 0,
+            "armor": 0,
+            "armorMastery": 0,
+            "modifier": 0,
+            "maxDex": null,
+            "maxSpeed": null,
+            "option": "none",
+            "total": 10
+          },
+          "fortitude": {
+            "ability": "con",
+            "class": 0,
+            "armor": 0,
+            "modifier": 0,
+            "total": 10
+          },
+          "will": {
+            "ability": "wis",
+            "class": 0,
+            "armor": 0,
+            "modifier": 0,
+            "total": 10
+          }
+        },
+        "initiative": { "misc": 0, "total": 0 },
+        "level": 1,
+        "bab": 0,
+        "size": "medium",
+        "speed": { "base": 6, "total": 6 },
+        "conditionTrack": "normal",
+        "damageThreshold": 10
+      }
+    },
+    "character": {
+      "templates": ["base"],
+      "race": "custom",
+      "species": "",
+      "class": "",
+      "forcePoints": { "value": 1, "max": 1 },
+      "destinyPoints": { "value": 0, "max": 0 },
+      "freeForcePowers": { "current": 0, "max": 0 },
+      "secondWind": { "uses": 1, "healing": 0 },
+      "skills": {},
+      "customSkills": [],
+      "feats": [],
+      "talents": [],
+      "weapons": [],
+      "credits": 1000,
+      "xp": { "value": 0, "required": 1000 },
+      "destiny": "",
+      "bio": "",
+      "notes": "",
+      "gmOptions": {
+        "talentEveryLevel": false,
+        "featEveryLevel": false,
+        "anyClassAnyFeat": false
+      }
+    },
+    "droid": {
+      "templates": ["base"],
+      "species": "droid",
+      "subtype": "",
+      "class": "",
+      "skills": {},
+      "customSkills": [],
+      "feats": [],
+      "talents": [],
+      "weapons": [],
+      "droidTemplates": [],
+      "credits": 0,
+      "notes": ""
+    },
+    "npc": {
+      "templates": ["base"],
+      "species": "",
+      "class": "",
+      "subtype": "",
+      "alignment": "",
+      "role": "standard",
+      "skills": {},
+      "feats": [],
+      "talents": [],
+      "weapons": [],
+      "specialAbilities": [],
+      "notes": ""
+    },
+    "vehicle": {
+      "model": "",
+      "size": "huge",
+      "speed": { "base": 10, "total": 10 },
+      "shields": { "value": 0, "max": 0 },
+      "hull": { "value": 0, "max": 0 },
+      "sr": 0,
+      "crew": {
+        "pilot": "",
+        "copilot": "",
+        "shields": "",
+        "engineer": "",
+        "gunners": []
+      },
+      "abilities": {
+        "str": { "base": 10, "mod": 0 },
+        "dex": { "base": 10, "mod": 0 },
+        "int": { "base": 10, "mod": 0 }
+      },
+      "defenses": {
+        "reflex": { "ability": "dex", "class": 0, "armor": 0, "misc": 0, "total": 10 },
+        "fortitude": { "ability": "str", "class": 0, "armor": 0, "misc": 0, "total": 10 }
+      },
+      "bab": 0,
+      "weapons": [],
+      "cargo": 0,
+      "passengers": 0,
+      "consumables": "",
+      "hyperdrive": "",
+      "cost": 0,
+      "notes": "",
+      "initiative": { "misc": 0, "total": 0 },
+      "damageThreshold": 10,
+      "skills": {}
     }
   },
   "Item": {
@@ -29,18 +153,129 @@
       "extra-skill-use"
     ],
     "templates": {
-      "class": {},
-      "feat": {},
-      "talent": {},
-      "forcepower": {},
-      "equipment": {},
-      "weapon": {},
-      "armor": {},
-      "skill": {},
-      "attribute": {},
-      "condition": {},
-      "combat-action": {},
-      "extra-skill-use": {}
+      "base": {
+        "description": "",
+        "source": "",
+        "sourcebook": "",
+        "page": null
+      }
+    },
+    "class": {
+      "templates": ["base"],
+      "hitDie": "1d6",
+      "level": 1,
+      "baseAttackProgression": "medium",
+      "defenseBonuses": {
+        "fortitude": 0,
+        "reflex": 0,
+        "will": 0
+      },
+      "classSkills": [],
+      "talentTrees": [],
+      "levels": {},
+      "features": []
+    },
+    "feat": {
+      "templates": ["base"],
+      "type": "General",
+      "prerequisites": [],
+      "benefit": "",
+      "normal": "",
+      "special": "",
+      "tags": [],
+      "bonusFeatFor": []
+    },
+    "talent": {
+      "templates": ["base"],
+      "tree": "",
+      "class": [],
+      "prerequisite": "",
+      "benefit": "",
+      "tags": []
+    },
+    "forcepower": {
+      "templates": ["base"],
+      "type": "Force",
+      "descriptor": [],
+      "action": "Standard Action",
+      "target": "",
+      "checkType": "Use the Force",
+      "dcChart": [],
+      "forcePointEffect": "",
+      "maintainable": false,
+      "tags": [],
+      "uses": { "current": 1, "max": 1 }
+    },
+    "equipment": {
+      "templates": ["base"],
+      "category": "gear",
+      "cost": 0,
+      "weight": 0,
+      "quantity": 1,
+      "equipped": false,
+      "availability": "Common",
+      "tags": []
+    },
+    "weapon": {
+      "templates": ["base"],
+      "category": "ranged",
+      "weaponType": "blaster",
+      "size": "medium",
+      "damage": "3d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "30",
+      "weight": 1,
+      "cost": 500,
+      "availability": "Military",
+      "ammo": 50,
+      "special": [],
+      "equipped": false,
+      "proficiency": "simple"
+    },
+    "armor": {
+      "templates": ["base"],
+      "category": "light",
+      "defenseBonus": 2,
+      "maxDex": null,
+      "armorCheckPenalty": 0,
+      "maxSpeed": null,
+      "weight": 5,
+      "cost": 1000,
+      "availability": "Common",
+      "special": [],
+      "equipped": false
+    },
+    "skill": {
+      "templates": ["base"],
+      "attribute": "int",
+      "trainedOnly": false,
+      "roll": "1d20 + modifier",
+      "use": []
+    },
+    "attribute": {
+      "templates": ["base"],
+      "aliases": [],
+      "relatedSkills": [],
+      "modifierFormula": "(value - 10) / 2",
+      "modifierNotes": ""
+    },
+    "condition": {
+      "templates": ["base"],
+      "conditionTrack": [],
+      "effects": []
+    },
+    "combat-action": {
+      "templates": ["base"],
+      "actionCost": "Standard Action",
+      "notes": "",
+      "relatedSkills": []
+    },
+    "extra-skill-use": {
+      "templates": ["base"],
+      "roll": "",
+      "outcome": "",
+      "when": ""
     }
   }
 }

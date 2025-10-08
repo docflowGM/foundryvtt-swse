@@ -1,8 +1,6 @@
-// systems/swse/scripts/chargen.js
-
-/**
- * Character Generator Dialog
- */
+// ============================================
+// FILE: scripts/chargen.js
+// ============================================
 export class SWSECharGen {
   static async show() {
     const actorTypes = [
@@ -17,7 +15,7 @@ export class SWSECharGen {
       { actorTypes }
     );
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       new Dialog({
         title: "Create Actor",
         content: template,
@@ -25,15 +23,14 @@ export class SWSECharGen {
           create: {
             icon: "<i class='fas fa-check'></i>",
             label: "Create",
-            callback: async (html) => {
+            callback: async html => {
               const form = html[0].querySelector("form");
               const formData = new FormData(form);
               const data = Object.fromEntries(formData.entries());
 
               if (!data.type) data.type = "character";
-
               if (!data.name || data.name.trim() === "") {
-                ui.notifications.error("You must provide a name for the actor.");
+                ui.notifications.error("You must provide a name!");
                 return;
               }
 
@@ -44,8 +41,8 @@ export class SWSECharGen {
                 );
                 resolve(actor);
               } catch (err) {
-                console.error("[SWSE] Error creating actor:", err);
-                ui.notifications.error("Failed to create actor. Check console for details.");
+                console.error("Error creating actor:", err);
+                ui.notifications.error("Failed to create actor.");
                 resolve(null);
               }
             }
