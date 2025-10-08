@@ -1,14 +1,17 @@
+// ============================================
+// FILE: rolls/dice.js
+// ============================================
 export async function rollDice(formula, data = {}, label = "Roll") {
   try {
-    const r = new Roll(formula, data);
-    await r.evaluate({ async: true });
-    r.toMessage({
+    const roll = await new Roll(formula, data).evaluate({async: true});
+    roll.toMessage({
       speaker: ChatMessage.getSpeaker(),
       flavor: label
     });
-    return r;
+    return roll;
   } catch (err) {
     ui.notifications.error(`Dice roll failed: ${err.message}`);
     console.error(err);
+    return null;
   }
 }

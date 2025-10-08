@@ -1,46 +1,7 @@
-/**
- * SWSE System Configuration
- * Registers actor types, item types, and sheet classes.
- */
-
-import { SWSEActorSheet } from "./swse-actor.js";
-import { SWSEDroidSheet } from "./swse-droid.js";
-import { SWSEVehicleSheet } from "./swse-vehicle.js";
-import { SWSEItemSheet } from "./swse-item.js";
-
+// ============================================
+// FILE: config.js
+// ============================================
 export const SWSE = {};
 
-SWSE.actorTypes = ["character", "droid", "vehicle"];
-SWSE.itemTypes = ["armor", "class", "equipment", "feat", "forcepower", "talent", "weapon"];
-
-SWSE.registerSheets = function () {
-  console.log("SWSE | Registering custom sheets...");
-
-  // Unregister core sheets
-  Actors.unregisterSheet("core", ActorSheet);
-  Items.unregisterSheet("core", ItemSheet);
-
-  // Register custom actor sheets
-  Actors.registerSheet("swse", SWSEActorSheet, {
-    types: ["character"],
-    label: "SWSE Character Sheet",
-    makeDefault: true
-  });
-
-  Actors.registerSheet("swse", SWSEDroidSheet, {
-    types: ["droid"],
-    label: "SWSE Droid Sheet"
-  });
-
-  Actors.registerSheet("swse", SWSEVehicleSheet, {
-    types: ["vehicle"],
-    label: "SWSE Vehicle Sheet"
-  });
-
-  // Register custom item sheet
-  Items.registerSheet("swse", SWSEItemSheet, {
-    types: SWSE.itemTypes,
-    label: "SWSE Item Sheet",
-    makeDefault: true
-  });
-};
+SWSE.actorTypes = ["character", "droid", "vehicle", "npc"];
+SWSE.itemTypes = ["armor", "class", "equipment", "feat", "forcepower", "talent", "weapon", "skill", "attribute", "condition", "combat-action", "extra-skill-use"];

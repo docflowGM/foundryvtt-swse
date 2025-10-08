@@ -1,97 +1,184 @@
-/**
- * Star Wars Saga Edition - FoundryVTT System
- * Master Entry Point for SWSE System Initialization
- */
-
-import * as System from "./swse.js";
-import * as Init from "./scripts/init.js";
+// ============================================
+// FILE: index.js
+// ============================================
+import { SWSE } from "./config.js";
+import { SWSEActor, SWSEActorSheet } from "./scripts/swse-actor.js";
+import { SWSEDroidSheet } from "./scripts/swse-droid.js";
+import { SWSEVehicleSheet } from "./scripts/swse-vehicle.js";
+import { SWSEItemSheet } from "./scripts/swse-item.js";
+import { preloadHandlebarsTemplates } from "./scripts/load-templates.js";
+import { SWSEStore } from "./store/store.js";
 import * as SWSEData from "./scripts/swse-data.js";
 
-import * as Actor from "./scripts/swse-actor.js";
-import * as Droid from "./scripts/swse-droid.js";
-import * as Vehicle from "./scripts/swse-vehicle.js";
-
-import * as Item from "./scripts/swse-item.js";
-
-import * as LevelUp from "./scripts/swse-levelup.js";
-import * as Races from "./scripts/races.js";
-import * as CharGen from "./scripts/chargen.js";
-
-import * as DiceUtils from "./scripts/dice-utils.js";
-import * as DiceRoller from "./scripts/diceroller.js";
-
-import * as LoadTemplates from "./scripts/load-templates.js";
-import * as ImportData from "./scripts/import-data.js";
-
-import * as Rolls from "./rolls/index.js";
-
-import { SWSEStore } from "./store/store.js";
-import { SWSE } from "./scripts/config.js"; // <—— your config file
-
-// -----------------------------
-// Initialization Hook
-// -----------------------------
 Hooks.once("init", async () => {
   console.log("SWSE | Initializing Star Wars Saga Edition system...");
 
-  // Global namespaces
+  // Set global config
   CONFIG.SWSE = SWSE;
-  game.swse = SWSE;
+  game.swse = {
+    data: SWSEData,
+    SWSE: SWSE
+  };
 
-  // Register system-specific sheets and config
-  if (typeof SWSE.registerSheets === "function") {
-    SWSE.registerSheets();
-  }
+  // Register custom document classes
+  CONFIG.Actor.documentClass = SWSEActor;
 
-  // Optional: Register document classes
-  if (Actor?.SWSEActor) CONFIG.Actor.documentClass = Actor.SWSEActor;
-  if (Item?.SWSEItem) CONFIG.Item.documentClass = Item.SWSEItem;
+  // Unregister core sheets
+  Actors.unregisterSheet("core", ActorSheet);
+  Items.unregisterSheet("core", ItemSheet);
+
+  // Register actor sheets
+  Actors.registerSheet("swse", SWSEActorSheet, {
+    types: ["character"],
+    label: "SWSE Character Sheet",
+    makeDefault: true
+  });
+
+  Actors.registerSheet("swse", SWSEDroidSheet, {
+    types: ["droid"],
+    label: "SWSE Droid Sheet",
+    makeDefault: true
+  });
+
+  Actors.registerSheet("swse", SWSEVehicleSheet, {
+    types: ["vehicle"],
+    label: "SWSE Vehicle Sheet",
+    makeDefault: true
+  });
+
+  // Register item sheet
+  Items.registerSheet("swse", SWSEItemSheet, {
+    types: SWSE.itemTypes,
+    label: "SWSE Item Sheet",
+    makeDefault: true
+  });
+
+  // Register Handlebars helpers
+  registerHandlebarsHelpers();
+
+  // Register game settings
+  registerSettings();
 
   // Preload templates
-  if (typeof LoadTemplates.preloadHandlebarsTemplates === "function") {
-    await LoadTemplates.preloadHandlebarsTemplates();
-  }
-
-  // Load base data
-  if (typeof ImportData.loadDefaultData === "function") {
-    await ImportData.loadDefaultData();
-  }
-
-  // Run any system-level init functions
-  if (System?.registerSystem) System.registerSystem();
+  await preloadHandlebarsTemplates();
 
   console.log("SWSE | System initialization complete.");
 });
 
-// -----------------------------
-// Ready Hook (post-init setup)
-// -----------------------------
 Hooks.once("ready", () => {
-  console.log("SWSE | SWSE system ready. May the Force be with you.");
-
-  // Store setup
+  console.log("SWSE | System ready. May the Force be with you.");
+  
+  // Setup store
   game.swse.openStore = () => new SWSEStore().render(true);
-  console.log("SWSE | SWSE Store ready. Use game.swse.openStore() to open the store UI.");
+  
+  // Load vehicle templates
+  loadVehicleTemplates();
 });
 
-// -----------------------------
-// Export Modules for External Use
-// -----------------------------
-export {
-  System,
-  Init,
-  SWSEData,
-  Actor,
-  Droid,
-  Vehicle,
-  Item,
-  LevelUp,
-  Races,
-  CharGen,
-  DiceUtils,
-  DiceRoller,
-  LoadTemplates,
-  ImportData,
-  Rolls,
-  SWSEStore
-};
+function registerHandlebarsHelpers() {
+  Handlebars.registerHelper("toUpperCase", str => {
+    return typeof str === "string" ? str.toUpperCase() : "";
+  });
+
+  Handlebars.registerHelper("array", function() {
+    return Array.prototype.slice.call(arguments, 0, -1);
+  });
+
+  Handlebars.registerHelper("keys", obj => {
+    return obj ? Object.keys(obj) : [];
+  });
+
+  Handlebars.registerHelper("eq", (a, b) => a === b);
+  Handlebars.registerHelper("lte", (a, b) => a <= b);
+  Handlebars.registerHelper("capitalize", str => {
+    return typeof str === "string" ? str.charAt(0).toUpperCase() + str.slice(1) : "";
+  });
+
+  Handlebars.registerHelper("getCrewName", id => {
+    const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
+    return actor ? actor.name : "";
+  });
+
+  Handlebars.registerHelper("json", context => JSON.stringify(context));
+
+  Handlebars.registerHelper("calculateDamageThreshold", actor => {
+    if (!actor?.system) return 0;
+    const fortitude = actor.system.defenses?.fortitude?.total ?? 10;
+    const size = actor.system.size ?? "medium";
+    const sizeMods = {
+      tiny: -5, small: 0, medium: 0, large: 5,
+      huge: 10, gargantuan: 20, colossal: 50
+    };
+    const sizeMod = sizeMods[size.toLowerCase()] ?? 0;
+    const hasFeat = actor.items?.some(i => 
+      i.type === "feat" && i.name?.toLowerCase() === "improved damage threshold"
+    );
+    const featBonus = hasFeat ? 5 : 0;
+    return fortitude + sizeMod + featBonus;
+  });
+
+  Handlebars.registerHelper("getSkillMod", (skill, abilities, level, conditionTrack) => {
+    if (!skill || !abilities) return 0;
+    const abilMod = abilities[skill.ability]?.mod || 0;
+    const trained = skill.trained ? 5 : 0;
+    const focus = skill.focus ? 1 : 0;
+    const halfLevel = Math.floor((level || 1) / 2);
+    const conditionPenalty = getConditionPenalty(conditionTrack);
+    return abilMod + trained + focus + halfLevel + conditionPenalty;
+  });
+
+  function getConditionPenalty(track) {
+    const penalties = {
+      normal: 0, "-1": -1, "-2": -2, "-5": -5, "-10": -10, helpless: -100
+    };
+    return penalties[track] || 0;
+  }
+}
+
+function registerSettings() {
+  game.settings.register("swse", "forcePointBonus", {
+    name: "Force Point Bonus",
+    hint: "Extra modifier applied when spending a Force Point on a power.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 2
+  });
+
+  game.settings.register("swse", "storeSettings", {
+    name: "Store Price Settings",
+    scope: "world",
+    config: false,
+    type: Object,
+    default: { buyMultiplier: 1.0, sellMultiplier: 0.5 }
+  });
+
+  game.settings.register("swse", "storeMarkup", {
+    name: "Store Markup %",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 0
+  });
+
+  game.settings.register("swse", "storeDiscount", {
+    name: "Store Discount %",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 0
+  });
+}
+
+async function loadVehicleTemplates() {
+  try {
+    const response = await fetch("systems/swse/data/vehicles.json");
+    if (response.ok) {
+      game.swseVehicles = { templates: await response.json() };
+      console.log(`SWSE | Loaded ${game.swseVehicles.templates.length} vehicle templates.`);
+    }
+  } catch (err) {
+    console.warn("SWSE | Could not load vehicle templates:", err);
+    game.swseVehicles = { templates: [] };
+  }
+}
