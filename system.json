@@ -23,8 +23,9 @@
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/archive/refs/heads/main.zip",
 
-"esmodules":
-  ["index.js"],
+  "esmodules": [
+    "index.js"
+  ],
 
   "styles": [
     "styles/swse.css",
@@ -52,16 +53,18 @@
   ],
 
   "languages": [
-  {
-    "lang": "en",
-    "name": "English",
-    "path": "lang/en.json"
-  }
-],
+    { "lang": "en", "name": "English", "path": "lang/en.json" }
+  ],
+
   "grid": { "distance": 1, "units": "m" },
   "initiative": "1d20",
-  "primaryTokenAttribute": "attributes.hp",
-  "secondaryTokenAttribute": "defenses.reflex",
+
+  "actorTypes": ["character", "droid", "vehicle", "npc"],
+  "primaryActorType": "character",
+
+  "primaryTokenAttribute": "system.hp.value",
+  "secondaryTokenAttribute": "system.defenses.reflex.total",
+
   "background": "assets/ui/background.jpg",
   "socket": true
 }
