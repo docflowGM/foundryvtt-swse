@@ -2,7 +2,7 @@
   "id": "swse",
   "title": "Star Wars Saga Edition",
   "description": "A FoundryVTT system for Star Wars Saga Edition, including automated character sheets, classes, feats, force powers, and more.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "authors": [
     {
       "name": "Doc Flow",
@@ -65,6 +65,6 @@
   "primaryTokenAttribute": "system.hp.value",
   "secondaryTokenAttribute": "system.defenses.reflex.total",
 
-  "background": "",
-  "socket": true
+  "background": ""
 }
+
