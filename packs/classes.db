@@ -1,0 +1,191 @@
+{"level": 1, "result": 5, "_id": "5439e8df-d493-4b5b-a328-06c1090da6b6"}
+{"level": 3, "result": 6, "_id": "39f5704f-52bc-49ee-aef9-59692f32859f"}
+{"level": 4, "result": 7, "_id": "954c3fc1-a4d5-4257-97fe-0cf0c626a060"}
+{"level": "1", "base_attack_bonus": "+0", "class_features": "Defense Bonuses, Starting Feats , Talent", "_id": "dbf4fc4c-b83f-4f8d-b752-9b6bc5613d4c"}
+{"level": "2", "base_attack_bonus": "+1", "class_features": "Bonus Feat (Noble)", "_id": "e408e7eb-b744-4785-9f49-48c6b6a17703"}
+{"level": "3", "base_attack_bonus": "+2", "class_features": "Talent", "_id": "2b187875-db2b-4f8d-8cc3-c4dfbf6ed928"}
+{"level": "4", "base_attack_bonus": "+3", "class_features": "Bonus Feat (Noble)", "_id": "9b7b7782-3a65-4aef-8362-25d4ac37350f"}
+{"level": "5", "base_attack_bonus": "+3", "class_features": "Talent", "_id": "4d391a7b-4a92-40df-b0de-f3ebf424527b"}
+{"level": "6", "base_attack_bonus": "+4", "class_features": "Bonus Feat (Noble)", "_id": "2bada78e-32c8-48bd-933f-c273cb8a3186"}
+{"level": "7", "base_attack_bonus": "+5", "class_features": "Talent", "_id": "fe4cd46e-1c09-4e47-9250-5c6beed75300"}
+{"level": "8", "base_attack_bonus": "+6", "class_features": "Bonus Feat (Noble)", "_id": "2af5f9bc-12e2-428e-961d-d24d8b78f2cf"}
+{"level": "9", "base_attack_bonus": "+6", "class_features": "Talent", "_id": "7fe77532-e443-4085-8070-8f970b5def30"}
+{"level": "10", "base_attack_bonus": "+7", "class_features": "Bonus Feat (Noble)", "_id": "6e80f139-0769-4c87-aebb-496087582c8e"}
+{"level": "11", "base_attack_bonus": "+8", "class_features": "Talent", "_id": "065b9058-9a8b-4b0b-afc7-dd4196bd64ae"}
+{"level": "12", "base_attack_bonus": "+9", "class_features": "Bonus Feat (Noble)", "_id": "e6dbaeb5-6653-44aa-a140-b55ca5e3d390"}
+{"level": "13", "base_attack_bonus": "+9", "class_features": "Talent", "_id": "c0f26279-58e8-42d7-8f3a-0cd6240a7e83"}
+{"level": "14", "base_attack_bonus": "+10", "class_features": "Bonus Feat (Noble)", "_id": "fe7539fc-1a16-43a8-a798-38db7eb4cbad"}
+{"level": "15", "base_attack_bonus": "+11", "class_features": "Talent", "_id": "74b11b58-459d-4efc-bb31-8473d6c57c41"}
+{"level": "16", "base_attack_bonus": "+12", "class_features": "Bonus Feat (Noble)", "_id": "176e12a7-382d-4f20-90bd-4feb1b8264fc"}
+{"level": "17", "base_attack_bonus": "+12", "class_features": "Talent", "_id": "d9cdc519-c969-44e1-a667-51dcf3bd1280"}
+{"level": "18", "base_attack_bonus": "+13", "class_features": "Bonus Feat (Noble)", "_id": "8ac0ecca-d8bb-44ff-84d7-d7604a32e82d"}
+{"level": "19", "base_attack_bonus": "+14", "class_features": "Talent", "_id": "c40a9072-0940-40e3-aa85-b2f6a924bdd8"}
+{"level": "20", "base_attack_bonus": "+15", "class_features": "Bonus Feat (Noble)", "_id": "428209a4-72db-4b29-88c9-70de979c054f"}
+{"level": 1, "result": 5, "_id": "58c69c2f-f9a2-42d7-9e29-ff962970a5cd"}
+{"level": 3, "result": 6, "_id": "90815430-e890-4583-8969-ce5ec31d8475"}
+{"level": 4, "result": 7, "_id": "d65c1525-5fa3-4455-a840-a734f4fd04a5"}
+{"level": "1", "base_attack_bonus": "+0", "class_features": "Defense Bonuses, Starting Feats , Talent", "_id": "f8acc78a-b1a0-452c-b076-28caf93f5679"}
+{"level": "2", "base_attack_bonus": "+1", "class_features": "Bonus Feat (Scoundrel)", "_id": "2e9d91cd-96f0-443e-9266-0db076d01165"}
+{"level": "3", "base_attack_bonus": "+2", "class_features": "Talent", "_id": "ca3cc150-3111-496f-8aba-3077dcc5648e"}
+{"level": "4", "base_attack_bonus": "+3", "class_features": "Bonus Feat (Scoundrel)", "_id": "ef970320-d67c-4a85-a1cb-47cbaaf30226"}
+{"level": "5", "base_attack_bonus": "+3", "class_features": "Talent", "_id": "aec3097c-9e82-42c7-9988-52d76c7f1f54"}
+{"level": "6", "base_attack_bonus": "+4", "class_features": "Bonus Feat (Scoundrel)", "_id": "bb9b936c-2550-47ec-aad9-873c4a0c7d98"}
+{"level": "7", "base_attack_bonus": "+5", "class_features": "Talent", "_id": "d732f08e-f88d-4624-ae09-d1ff4b411152"}
+{"level": "8", "base_attack_bonus": "+6", "class_features": "Bonus Feat (Scoundrel)", "_id": "39b5a04a-dcf2-4bec-8c55-3eb9de6af68d"}
+{"level": "9", "base_attack_bonus": "+6", "class_features": "Talent", "_id": "c501ab94-5beb-47ee-bdb9-e6cf68d31987"}
+{"level": "10", "base_attack_bonus": "+7", "class_features": "Bonus Feat (Scoundrel)", "_id": "7ac97357-d5aa-4823-8972-442bb48f5ed2"}
+{"level": "11", "base_attack_bonus": "+8", "class_features": "Talent", "_id": "bd8eed47-4c11-4a10-8062-254b5ed54b31"}
+{"level": "12", "base_attack_bonus": "+9", "class_features": "Bonus Feat (Scoundrel)", "_id": "b2a0cf42-bffc-4750-94a5-82e5de415de6"}
+{"level": "13", "base_attack_bonus": "+9", "class_features": "Talent", "_id": "28ba9e0b-cc45-41db-b7a2-0cc13ce11097"}
+{"level": "14", "base_attack_bonus": "+10", "class_features": "Bonus Feat (Scoundrel)", "_id": "32f2a8a4-c9c5-4e54-9acd-5d921b20eabb"}
+{"level": "15", "base_attack_bonus": "+11", "class_features": "Talent", "_id": "05eef807-38ef-45cf-9bcc-554d384c3183"}
+{"level": "16", "base_attack_bonus": "+12", "class_features": "Bonus Feat (Scoundrel)", "_id": "56769019-83b4-4b53-936a-26337172c7a9"}
+{"level": "17", "base_attack_bonus": "+12", "class_features": "Talent", "_id": "d9c6e8c0-f007-4685-b3df-34b64d007d0c"}
+{"level": "18", "base_attack_bonus": "+13", "class_features": "Bonus Feat (Scoundrel)", "_id": "6f4259e8-ebd5-483a-8fcd-3911211eb2cb"}
+{"level": "19", "base_attack_bonus": "+14", "class_features": "Talent", "_id": "62bbe0f3-ba1f-4241-b7a3-2e65918c1fd2"}
+{"level": "20", "base_attack_bonus": "+15", "class_features": "Bonus Feat (Scoundrel)", "_id": "4f0213bd-0db0-4b36-823d-3af01e58101f"}
+{"level": 1, "result": 5, "_id": "92c29101-4b00-4216-bff7-a210ff681ae8"}
+{"level": 3, "result": 6, "_id": "b113b9a3-7874-464f-bd05-ac50752a7d0a"}
+{"level": 4, "result": 7, "_id": "88565d67-376c-4042-a877-67bf63f47fd6"}
+{"level": "1", "base_attack_bonus": "+0", "class_features": "Defense Bonuses, Starting Feats , Talent", "_id": "2f3c7646-a088-4c6b-a9ac-3a1c227e1143"}
+{"level": "2", "base_attack_bonus": "+1", "class_features": "Bonus Feat (Scout)", "_id": "deba9d27-cbb0-4a5c-ad04-916970ab8c41"}
+{"level": "3", "base_attack_bonus": "+2", "class_features": "Talent", "_id": "3750c0ad-419e-4cb0-aa86-67a46d063d24"}
+{"level": "4", "base_attack_bonus": "+3", "class_features": "Bonus Feat (Scout)", "_id": "c5c4af4f-6f4f-4c48-9e88-7999d88bedb7"}
+{"level": "5", "base_attack_bonus": "+3", "class_features": "Talent", "_id": "2c407063-1b3f-4c5d-b440-2019b3f4e828"}
+{"level": "6", "base_attack_bonus": "+4", "class_features": "Bonus Feat (Scout)", "_id": "bafbd089-4b8e-499d-a7a9-c03111bd1a8c"}
+{"level": "7", "base_attack_bonus": "+5", "class_features": "Talent", "_id": "46167117-dbec-47dd-9a75-1d993454a601"}
+{"level": "8", "base_attack_bonus": "+6", "class_features": "Bonus Feat (Scout)", "_id": "92df6104-3e52-4b5d-b652-c14215ce3d6d"}
+{"level": "9", "base_attack_bonus": "+6", "class_features": "Talent", "_id": "7e8a8dce-2db6-4b03-ae67-f7e941747363"}
+{"level": "10", "base_attack_bonus": "+7", "class_features": "Bonus Feat (Scout)", "_id": "d0efdde3-cce6-4be5-92ff-0eeeede855c3"}
+{"level": "11", "base_attack_bonus": "+8", "class_features": "Talent", "_id": "94746030-fac1-4e1a-84f2-27fefe98c93b"}
+{"level": "12", "base_attack_bonus": "+9", "class_features": "Bonus Feat (Scout)", "_id": "ef96ee1f-c33a-417e-a534-72a7d9279af0"}
+{"level": "13", "base_attack_bonus": "+9", "class_features": "Talent", "_id": "e709a4a5-b0cb-44a8-96d4-379e4f3977a0"}
+{"level": "14", "base_attack_bonus": "+10", "class_features": "Bonus Feat (Scout)", "_id": "90d43dfa-774d-4834-b492-3c300e095469"}
+{"level": "15", "base_attack_bonus": "+11", "class_features": "Talent", "_id": "3e3e176e-de61-4744-a813-8b0133f17b8c"}
+{"level": "16", "base_attack_bonus": "+12", "class_features": "Bonus Feat (Scout)", "_id": "062bd184-6a63-4bcd-8b79-b5b25dbeea30"}
+{"level": "17", "base_attack_bonus": "+12", "class_features": "Talent", "_id": "77eb254e-cce3-4ab4-8e7d-227e285dd9cb"}
+{"level": "18", "base_attack_bonus": "+13", "class_features": "Bonus Feat (Scout)", "_id": "02be3b1b-a0ba-4a05-b2d5-37e29eb5e1b1"}
+{"level": "19", "base_attack_bonus": "+14", "class_features": "Talent", "_id": "414d48f2-837e-4d9b-af13-429cb6605394"}
+{"level": "20", "base_attack_bonus": "+15", "class_features": "Bonus Feat (Scout)", "_id": "eea4fea5-cfda-4ec5-b3af-9fb9a71acc0a"}
+{"level": 1, "result": 5, "_id": "5cecc6d8-d534-4dea-a7a2-7beaef2c349e"}
+{"level": 3, "result": 6, "_id": "ec93420c-4432-43e1-9a4e-7c02ee23a3fd"}
+{"level": 4, "result": 7, "_id": "4cbaa1ee-5293-4a26-a2e2-5c3e7e4fc93a"}
+{"level": "1st", "base_attack_bonus": "+1", "class_features": "Defense Bonuses, Starting Feats , Talent", "_id": "629cbbd2-2dcb-4dac-a767-0b1982fa89c7"}
+{"level": "2nd", "base_attack_bonus": "+2", "class_features": "Bonus Feat (Soldier)", "_id": "0f2df2dd-b0df-48b6-a306-0159d868a104"}
+{"level": "3rd", "base_attack_bonus": "+3", "class_features": "Talent", "_id": "782a99da-6334-4278-ae31-f5aee6f5b29f"}
+{"level": "4th", "base_attack_bonus": "+4", "class_features": "Bonus Feat (Soldier)", "_id": "8f3f69a0-77e1-45a7-9552-385d4abd21d8"}
+{"level": "5th", "base_attack_bonus": "+5", "class_features": "Talent", "_id": "edf03ebe-3cd7-496c-831b-0507a3773a1b"}
+{"level": "6th", "base_attack_bonus": "+6", "class_features": "Bonus Feat (Soldier)", "_id": "b1940347-7fff-43a5-ad1c-e34632f98ef0"}
+{"level": "7th", "base_attack_bonus": "+7", "class_features": "Talent", "_id": "988ff529-540d-4ef7-8d65-a348c00ec700"}
+{"level": "8th", "base_attack_bonus": "+8", "class_features": "Bonus Feat (Soldier)", "_id": "3472e783-5838-4afa-8d84-ce52a0868cbe"}
+{"level": "9th", "base_attack_bonus": "+9", "class_features": "Talent", "_id": "708022d8-e33c-488b-8675-09237d1234f9"}
+{"level": "10th", "base_attack_bonus": "+10", "class_features": "Bonus Feat (Soldier)", "_id": "c02f0ddd-093d-450d-9ab4-31afa885e740"}
+{"level": "11th", "base_attack_bonus": "+11", "class_features": "Talent", "_id": "a8485fdb-cbe4-4a0d-98b3-50996d37a640"}
+{"level": "12th", "base_attack_bonus": "+12", "class_features": "Bonus Feat (Soldier)", "_id": "912b7aa9-2926-44c3-903d-d76d511ead87"}
+{"level": "13th", "base_attack_bonus": "+13", "class_features": "Talent", "_id": "194a7511-16a8-4951-8bef-7ae5d1c9e862"}
+{"level": "14th", "base_attack_bonus": "+14", "class_features": "Bonus Feat (Soldier)", "_id": "0e57b037-f7f2-440c-a108-97e6bfc87b61"}
+{"level": "15th", "base_attack_bonus": "+15", "class_features": "Talent", "_id": "baf08bfc-179c-4a57-8b70-3ec112cf656e"}
+{"level": "16th", "base_attack_bonus": "+16", "class_features": "Bonus Feat (Soldier)", "_id": "4686f281-6286-43fe-8590-1b791288b440"}
+{"level": "17th", "base_attack_bonus": "+17", "class_features": "Talent", "_id": "addd929a-72de-4974-bf0e-2861c3133f84"}
+{"level": "18th", "base_attack_bonus": "+18", "class_features": "Bonus Feat (Soldier)", "_id": "6ee90f38-f158-4c47-955f-1fa5a2472bc5"}
+{"level": "19th", "base_attack_bonus": "+19", "class_features": "Talent", "_id": "edfe2d73-d613-4ed6-b096-ef3749adab6b"}
+{"level": "20th", "base_attack_bonus": "+20", "class_features": "Bonus Feat (Soldier)", "_id": "cd15d07f-9794-4491-96de-aaecb3de168a"}
+{"level": 1, "result": 5, "_id": "e046f7f9-5d64-491d-807f-7e37ee9549e9"}
+{"level": 3, "result": 6, "_id": "7ffd0bd8-5d3c-4c96-856e-3a3e2f4da60e"}
+{"level": 4, "result": 7, "_id": "d710edc2-5d4b-46c7-863f-f4ded34d8c86"}
+{"level": 1, "result": 5, "_id": "93801347-103f-4fdc-97f4-578cf978a1fd"}
+{"level": 3, "result": 6, "_id": "cb8bc22c-b752-40b2-b118-7d2c4a4ab71a"}
+{"level": 4, "result": 7, "_id": "e06c9682-6dbb-4b29-b2cc-74b394a4f5b0"}
+{"level": 1, "result": 5, "_id": "abbd109d-7af2-4032-bba9-1d6459a0a952"}
+{"level": 3, "result": 6, "_id": "39a59df7-1f85-4f05-8f4d-518fb8baa193"}
+{"level": 4, "result": 7, "_id": "5fd4f299-6db9-47b2-bd2c-20a4d9b37df6"}
+{"level": 1, "result": 5, "_id": "f33369bd-677f-4910-a638-a79fa55d972e"}
+{"level": 3, "result": 6, "_id": "ebfa1996-8123-4ec7-b85e-f8823f568af5"}
+{"level": 4, "result": 7, "_id": "3a2c0fe3-a75d-443d-b49d-ede936f2da45"}
+{"level": 1, "result": 5, "_id": "8a95911d-5c9c-480b-aae0-1db828660587"}
+{"level": 3, "result": 6, "_id": "4d92bf88-03d1-4eba-b7b5-d7f5bd233db4"}
+{"level": 4, "result": 7, "_id": "99613f85-cbb4-46cd-89c8-0bf390c5066a"}
+{"level": 1, "result": 5, "_id": "32d8d988-f939-4f6f-bd8a-53094875babc"}
+{"level": 3, "result": 6, "_id": "def1ce2f-f6df-419f-b8ff-0f92b6c6d607"}
+{"level": 4, "result": 7, "_id": "8a5e33ec-1e5f-492c-b661-913dc155c364"}
+{"level": 1, "result": 5, "_id": "fb72be6e-d01f-43b0-9ee8-505680891aba"}
+{"level": 3, "result": 6, "_id": "af585d49-e77d-41e9-a848-5d0e9a897541"}
+{"level": 4, "result": 7, "_id": "86ab63a0-309a-47be-838e-119995acf0ab"}
+{"level": 1, "result": 5, "_id": "332cd25b-2db4-4d27-9dc9-4c09fb65a272"}
+{"level": 3, "result": 6, "_id": "56f47901-9067-44cd-a81c-06d8644d3890"}
+{"level": 4, "result": 7, "_id": "6e0bc691-cbb9-4b8b-9ff3-e65e59d54e33"}
+{"level": 1, "result": 5, "_id": "e5de6d80-7bfe-4045-8346-fdfc625f8510"}
+{"level": 3, "result": 6, "_id": "198e3699-07a0-41f5-a0a7-e62c5a446712"}
+{"level": 4, "result": 7, "_id": "2a2b4ad0-e7e9-4b5b-b376-2ccd689dfdb4"}
+{"level": 1, "result": 5, "_id": "b630360b-804e-4ca9-a05e-12fc3154c5b6"}
+{"level": 3, "result": 6, "_id": "ad007ed8-d390-4d5b-b4d3-c160d6c582ed"}
+{"level": 4, "result": 7, "_id": "5d105ea3-e0f1-41b7-9afb-275a499c13fa"}
+{"level": 1, "result": 5, "_id": "a34f6c0e-3764-46f2-a8b7-fc21fdf70f2d"}
+{"level": 3, "result": 6, "_id": "d8adb208-b335-4ec4-88a2-e083539b7913"}
+{"level": 4, "result": 7, "_id": "86b3767f-f62d-4381-9033-16aea93678b9"}
+{"level": 1, "result": 5, "_id": "eb62eb38-5521-4663-b0e0-9733e110b2fc"}
+{"level": 3, "result": 6, "_id": "8d0c5dcc-57c2-4bea-b57e-43fc23db74ba"}
+{"level": 4, "result": 7, "_id": "2a40bb78-7b3a-4373-a7d6-61f0722a3405"}
+{"level": 1, "result": 5, "_id": "208df4c5-b3fa-4883-ad94-a272fe2556f4"}
+{"level": 3, "result": 6, "_id": "2de7c6ee-7f9b-4a29-ab3c-e0515b05b06e"}
+{"level": 4, "result": 7, "_id": "2619f7af-714c-4687-8fd0-9e935a65ff35"}
+{"level": 1, "result": 5, "_id": "87f503dd-ef2f-4c3a-93b7-382dff1271d9"}
+{"level": 3, "result": 6, "_id": "056dff96-de30-421b-b68e-40680f551280"}
+{"level": 4, "result": 7, "_id": "e5be63c8-40ea-47ab-85dc-40c473010a9d"}
+{"level": 1, "result": 5, "_id": "032a00f6-0b47-4e31-bb74-80648324fe84"}
+{"level": 3, "result": 6, "_id": "c79004f0-be24-4318-bb51-a24181be329a"}
+{"level": 4, "result": 7, "_id": "41d167b1-8e11-4fe1-8f3a-fcfef5f51b5e"}
+{"level": 1, "result": 5, "_id": "303815e3-8a1b-4c9e-933a-463369eecb15"}
+{"level": 3, "result": 6, "_id": "2a2c45cb-41a6-4797-86d0-2b387f3ac516"}
+{"level": 4, "result": 7, "_id": "bbb91b63-9357-4df0-85ce-1ef395e45e31"}
+{"level": 1, "result": 5, "_id": "c151eedb-9a00-4ec0-a9c4-257eaf7b0540"}
+{"level": 3, "result": 6, "_id": "a606c142-c667-4b25-8b7d-2375b3b022ef"}
+{"level": 4, "result": 7, "_id": "2bf4ca80-6881-49b9-ab12-1450ee90e650"}
+{"level": 1, "result": 5, "_id": "fdb0dadf-913f-4ba2-a270-a0812571e229"}
+{"level": 3, "result": 6, "_id": "dbf44560-54ca-4c49-b506-983c9ca5afd9"}
+{"level": 4, "result": 7, "_id": "e29fe1d7-ab92-4784-8d32-408e2f2427b4"}
+{"level": 1, "result": 5, "_id": "717c5799-873b-479c-97d4-1209501e5f01"}
+{"level": 3, "result": 6, "_id": "aa2a79be-b083-44ed-8b67-29bb8685a06d"}
+{"level": 4, "result": 7, "_id": "9b18e758-0ea2-46f8-8c45-c0910a7d511e"}
+{"level": 1, "result": 5, "_id": "cfeb5bf9-967b-4d57-8046-f19b50b927e7"}
+{"level": 3, "result": 6, "_id": "73121d14-7b9f-4847-832d-26d07adbc2bb"}
+{"level": 4, "result": 7, "_id": "30db7b93-9d5d-4821-9d7c-e0f2c5f59c89"}
+{"level": 1, "result": 5, "_id": "38b24059-0602-4863-af1e-3223b4f70b1c"}
+{"level": 3, "result": 6, "_id": "96d0c6cd-57d2-4daa-9d07-38f012b657e3"}
+{"level": 4, "result": 7, "_id": "6dccaeef-13c2-4554-aeb9-446b01ba4184"}
+{"level": 1, "result": 5, "_id": "48f9fb90-f75b-484f-a1de-ed441c9ac5d4"}
+{"level": 3, "result": 6, "_id": "baef6cd6-780c-4310-b419-0874e7d98ead"}
+{"level": 4, "result": 7, "_id": "172e8dfa-4dae-46a7-a196-0f27ae8caab6"}
+{"level": 1, "result": 5, "_id": "f82b3710-f9f7-426b-96b3-c766f4297563"}
+{"level": 3, "result": 6, "_id": "218ef5af-d523-40b7-9fa2-c28e05044b9e"}
+{"level": 4, "result": 7, "_id": "4f32fc96-fa22-4f31-9b70-2c7e3da9272f"}
+{"level": 1, "result": 5, "_id": "ce9501e5-f75d-4921-a011-db8d434018f2"}
+{"level": 3, "result": 6, "_id": "5b247608-aa9d-4e13-a4e7-6bede6f9ee8e"}
+{"level": 4, "result": 7, "_id": "74d67532-5a73-4701-ab2f-a8182d784dfc"}
+{"level": 1, "result": 5, "_id": "03f55109-b6a5-41d6-a81d-3226e0458820"}
+{"level": 3, "result": 6, "_id": "a2fc2ff3-4cc7-4c3a-8da3-743e478a8895"}
+{"level": 4, "result": 7, "_id": "127d73f8-06fc-4fdd-bb0a-9d943abf4b43"}
+{"level": 1, "result": 5, "_id": "aca4da0f-8cb7-40ae-90b4-8b60aa323716"}
+{"level": 3, "result": 6, "_id": "fae7ee9d-daa0-465a-81b3-be64046647cc"}
+{"level": 4, "result": 7, "_id": "ccef977a-383c-4c65-826a-7e19e865ed84"}
+{"level": 1, "result": 5, "_id": "856efe43-8fc8-41af-8785-6dd79e084e26"}
+{"level": 3, "result": 6, "_id": "e68fd67c-9d32-43c1-bc9f-daf09a3135fb"}
+{"level": 4, "result": 7, "_id": "4aa6d1db-a207-46c3-a5dc-155699353948"}
+{"level": 1, "result": 5, "_id": "90b4d081-c705-4fa3-b9de-30c005a3215a"}
+{"level": 3, "result": 6, "_id": "3f74d092-598e-4acf-bd8f-9e4138e23c4d"}
+{"level": 4, "result": 7, "_id": "930f475e-57ee-471f-92be-b405df4e98a0"}
+{"level": 1, "result": 5, "_id": "555c91ce-fff4-417c-9155-5d59e3084c4e"}
+{"level": 3, "result": 6, "_id": "3b16466c-92e3-48f6-b6ed-c5dcf7b2f6bc"}
+{"level": 4, "result": 7, "_id": "44389687-843b-4edf-9799-a3799f36a188"}
+{"level": 1, "result": 5, "_id": "8c650f76-5e0d-422c-9a99-5d625da7463a"}
+{"level": 3, "result": 6, "_id": "111a06c0-4747-4429-b3e1-5c8612b47e13"}
+{"level": 4, "result": 7, "_id": "11cb04c5-00ac-4d01-9878-a8cdc456116b"}
+{"level": 1, "result": 5, "_id": "8ff9ae19-c973-4560-bc38-27be2c4910f5"}
+{"level": 3, "result": 6, "_id": "79bc6d81-1b8c-41d4-a214-83a967f140b6"}
+{"level": 4, "result": 7, "_id": "02ccde23-5058-42ef-8580-9981ac2aa270"}
+{"level": 1, "result": 5, "_id": "2ea47cf6-9ecd-45e3-90fa-b38ae9b3af4f"}
+{"level": 3, "result": 6, "_id": "d93b5c48-5725-4784-8d4f-6893a093a61f"}
+{"level": 4, "result": 7, "_id": "2b4e86b7-0046-478d-a4bf-9f0094d56866"}
+{"level": 1, "result": 5, "_id": "b4ccbbcd-acef-47dc-accf-ec8d0dc5e838"}
+{"level": 3, "result": 6, "_id": "34d6a5aa-f01f-4b11-8d9b-9b6e8fdd2ed1"}
+{"level": 4, "result": 7, "_id": "b11ccf7f-d5d1-4f88-a1dc-ded9612775b8"}

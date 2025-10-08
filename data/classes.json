@@ -1,4087 +1,846 @@
 [
   {
-    "class_name": "Jedi",
-    "level_table": [
-      {
-        "level": "1",
-        "base_attack_bonus": "+1",
-        "class_features": "Defense Bonuses, Lightsaber , Starting Feats , Talent"
-      },
-      {
-        "level": "2",
-        "base_attack_bonus": "+2",
-        "class_features": "Bonus Feat (Jedi)"
-      },
-      {
-        "level": "3",
-        "base_attack_bonus": "+3",
-        "class_features": "Talent"
-      },
-      {
-        "level": "4",
-        "base_attack_bonus": "+4",
-        "class_features": "Bonus Feat (Jedi)"
-      },
-      {
-        "level": "5",
-        "base_attack_bonus": "+5",
-        "class_features": "Talent"
-      },
-      {
-        "level": "6",
-        "base_attack_bonus": "+6",
-        "class_features": "Bonus Feat (Jedi)"
-      },
-      {
-        "level": "7",
-        "base_attack_bonus": "+7",
-        "class_features": "Talent , Lightsaber Construction"
-      },
-      {
-        "level": "8",
-        "base_attack_bonus": "+8",
-        "class_features": "Bonus Feat (Jedi)"
-      },
-      {
-        "level": "9",
-        "base_attack_bonus": "+9",
-        "class_features": "Talent"
-      },
-      {
-        "level": "10",
-        "base_attack_bonus": "+10",
-        "class_features": "Bonus Feat (Jedi)"
-      },
-      {
-        "level": "11",
-        "base_attack_bonus": "+11",
-        "class_features": "Talent"
-      },
-      {
-        "level": "12",
-        "base_attack_bonus": "+12",
-        "class_features": "Bonus Feat (Jedi)"
-      },
-      {
-        "level": "13",
-        "base_attack_bonus": "+13",
-        "class_features": "Talent"
-      },
-      {
-        "level": "14",
-        "base_attack_bonus": "+14",
-        "class_features": "Bonus Feat (Jedi)"
-      },
-      {
-        "level": "15",
-        "base_attack_bonus": "+15",
-        "class_features": "Talent"
-      },
-      {
-        "level": "16",
-        "base_attack_bonus": "+16",
-        "class_features": "Bonus Feat (Jedi)"
-      },
-      {
-        "level": "17",
-        "base_attack_bonus": "+17",
-        "class_features": "Talent"
-      },
-      {
-        "level": "18",
-        "base_attack_bonus": "+18",
-        "class_features": "Bonus Feat (Jedi)"
-      },
-      {
-        "level": "19",
-        "base_attack_bonus": "+19",
-        "class_features": "Talent"
-      },
-      {
-        "level": "20",
-        "base_attack_bonus": "+20",
-        "class_features": "Bonus Feat (Jedi)"
-      }
-    ],
-    "class_skill_mod": "Trained in 2 + int mod:",
-    "class_skill_list": [
-      "Acrobatics",
-      "Endurance",
-      "Initiative",
-      "Jump",
-      "Knowledge(all skills, taken individually)",
-      "Mechanics",
-      "Perception",
-      "Pilot",
-      "Use the Force"
-    ],
-    "hit_points_level_1": "30 + Con mod",
-    "hit_points_per_level": "1d10 + Con mod",
-    "class_features": [
-      "Force Sensitivity",
-      "Weapon Proficiency (Lightsabers)",
-      "Weapon Proficiency (Simple Weapons)"
-    ],
-    "starting_feats": [],
-    "credits": "A 1st-level Jedi starts play with 3d4 x 100 credits.",
-    "hp_per_level_die": "1d10",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": 1,
+    "result": 5
   },
   {
-    "class_name": "Noble",
-    "level_table": [
-      {
-        "level": "1",
-        "base_attack_bonus": "+0",
-        "class_features": "Defense Bonuses, Starting Feats , Talent"
-      },
-      {
-        "level": "2",
-        "base_attack_bonus": "+1",
-        "class_features": "Bonus Feat (Noble)"
-      },
-      {
-        "level": "3",
-        "base_attack_bonus": "+2",
-        "class_features": "Talent"
-      },
-      {
-        "level": "4",
-        "base_attack_bonus": "+3",
-        "class_features": "Bonus Feat (Noble)"
-      },
-      {
-        "level": "5",
-        "base_attack_bonus": "+3",
-        "class_features": "Talent"
-      },
-      {
-        "level": "6",
-        "base_attack_bonus": "+4",
-        "class_features": "Bonus Feat (Noble)"
-      },
-      {
-        "level": "7",
-        "base_attack_bonus": "+5",
-        "class_features": "Talent"
-      },
-      {
-        "level": "8",
-        "base_attack_bonus": "+6",
-        "class_features": "Bonus Feat (Noble)"
-      },
-      {
-        "level": "9",
-        "base_attack_bonus": "+6",
-        "class_features": "Talent"
-      },
-      {
-        "level": "10",
-        "base_attack_bonus": "+7",
-        "class_features": "Bonus Feat (Noble)"
-      },
-      {
-        "level": "11",
-        "base_attack_bonus": "+8",
-        "class_features": "Talent"
-      },
-      {
-        "level": "12",
-        "base_attack_bonus": "+9",
-        "class_features": "Bonus Feat (Noble)"
-      },
-      {
-        "level": "13",
-        "base_attack_bonus": "+9",
-        "class_features": "Talent"
-      },
-      {
-        "level": "14",
-        "base_attack_bonus": "+10",
-        "class_features": "Bonus Feat (Noble)"
-      },
-      {
-        "level": "15",
-        "base_attack_bonus": "+11",
-        "class_features": "Talent"
-      },
-      {
-        "level": "16",
-        "base_attack_bonus": "+12",
-        "class_features": "Bonus Feat (Noble)"
-      },
-      {
-        "level": "17",
-        "base_attack_bonus": "+12",
-        "class_features": "Talent"
-      },
-      {
-        "level": "18",
-        "base_attack_bonus": "+13",
-        "class_features": "Bonus Feat (Noble)"
-      },
-      {
-        "level": "19",
-        "base_attack_bonus": "+14",
-        "class_features": "Talent"
-      },
-      {
-        "level": "20",
-        "base_attack_bonus": "+15",
-        "class_features": "Bonus Feat (Noble)"
-      }
-    ],
-    "class_skill_mod": "Trained in 6 + int mod:",
-    "class_skill_list": [
-      "Deception",
-      "Gather Information",
-      "Initiative",
-      "Knowledge(all skills, taken individually)",
-      "Perception",
-      "Persuasion",
-      "Pilot",
-      "Ride",
-      "Treat Injury",
-      "Use Computer"
-    ],
-    "hit_points_level_1": "18 + Con mod",
-    "hit_points_per_level": "1d6 + Con mod",
-    "class_features": [
-      "Linguist*",
-      "Weapon Proficiency (Pistols)",
-      "Weapon Proficiency (Simple Weapons)"
-    ],
-    "starting_feats": [],
-    "credits": "A 1st level Noble starts play with 3d4 x 400 credits.",
-    "hp_per_level_die": "1d6",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": 3,
+    "result": 6
   },
   {
-    "class_name": "Scoundrel",
-    "level_table": [
-      {
-        "level": "1",
-        "base_attack_bonus": "+0",
-        "class_features": "Defense Bonuses, Starting Feats , Talent"
-      },
-      {
-        "level": "2",
-        "base_attack_bonus": "+1",
-        "class_features": "Bonus Feat (Scoundrel)"
-      },
-      {
-        "level": "3",
-        "base_attack_bonus": "+2",
-        "class_features": "Talent"
-      },
-      {
-        "level": "4",
-        "base_attack_bonus": "+3",
-        "class_features": "Bonus Feat (Scoundrel)"
-      },
-      {
-        "level": "5",
-        "base_attack_bonus": "+3",
-        "class_features": "Talent"
-      },
-      {
-        "level": "6",
-        "base_attack_bonus": "+4",
-        "class_features": "Bonus Feat (Scoundrel)"
-      },
-      {
-        "level": "7",
-        "base_attack_bonus": "+5",
-        "class_features": "Talent"
-      },
-      {
-        "level": "8",
-        "base_attack_bonus": "+6",
-        "class_features": "Bonus Feat (Scoundrel)"
-      },
-      {
-        "level": "9",
-        "base_attack_bonus": "+6",
-        "class_features": "Talent"
-      },
-      {
-        "level": "10",
-        "base_attack_bonus": "+7",
-        "class_features": "Bonus Feat (Scoundrel)"
-      },
-      {
-        "level": "11",
-        "base_attack_bonus": "+8",
-        "class_features": "Talent"
-      },
-      {
-        "level": "12",
-        "base_attack_bonus": "+9",
-        "class_features": "Bonus Feat (Scoundrel)"
-      },
-      {
-        "level": "13",
-        "base_attack_bonus": "+9",
-        "class_features": "Talent"
-      },
-      {
-        "level": "14",
-        "base_attack_bonus": "+10",
-        "class_features": "Bonus Feat (Scoundrel)"
-      },
-      {
-        "level": "15",
-        "base_attack_bonus": "+11",
-        "class_features": "Talent"
-      },
-      {
-        "level": "16",
-        "base_attack_bonus": "+12",
-        "class_features": "Bonus Feat (Scoundrel)"
-      },
-      {
-        "level": "17",
-        "base_attack_bonus": "+12",
-        "class_features": "Talent"
-      },
-      {
-        "level": "18",
-        "base_attack_bonus": "+13",
-        "class_features": "Bonus Feat (Scoundrel)"
-      },
-      {
-        "level": "19",
-        "base_attack_bonus": "+14",
-        "class_features": "Talent"
-      },
-      {
-        "level": "20",
-        "base_attack_bonus": "+15",
-        "class_features": "Bonus Feat (Scoundrel)"
-      }
-    ],
-    "class_skill_mod": "Trained in 4 + int mod:",
-    "class_skill_list": [
-      "Acrobatics",
-      "Deception",
-      "Gather Information",
-      "Initiative",
-      "Knowledge(all skills, taken individually)",
-      "Mechanics",
-      "Perception",
-      "Persuasion",
-      "Pilot",
-      "Stealth",
-      "Use Computer"
-    ],
-    "hit_points_level_1": "18 + Con mod",
-    "hit_points_per_level": "1d6 + Con mod",
-    "class_features": [
-      "Point-Blank Shot",
-      "Weapon Proficiency (Pistols)",
-      "Weapon Proficiency (Simple Weapons)"
-    ],
-    "starting_feats": [],
-    "credits": "A 1st-level Scoundrel starts play with 3d4 x 250 credits.",
-    "hp_per_level_die": "1d6",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": 4,
+    "result": 7
   },
   {
-    "class_name": "Scout",
-    "level_table": [
-      {
-        "level": "1",
-        "base_attack_bonus": "+0",
-        "class_features": "Defense Bonuses, Starting Feats , Talent"
-      },
-      {
-        "level": "2",
-        "base_attack_bonus": "+1",
-        "class_features": "Bonus Feat (Scout)"
-      },
-      {
-        "level": "3",
-        "base_attack_bonus": "+2",
-        "class_features": "Talent"
-      },
-      {
-        "level": "4",
-        "base_attack_bonus": "+3",
-        "class_features": "Bonus Feat (Scout)"
-      },
-      {
-        "level": "5",
-        "base_attack_bonus": "+3",
-        "class_features": "Talent"
-      },
-      {
-        "level": "6",
-        "base_attack_bonus": "+4",
-        "class_features": "Bonus Feat (Scout)"
-      },
-      {
-        "level": "7",
-        "base_attack_bonus": "+5",
-        "class_features": "Talent"
-      },
-      {
-        "level": "8",
-        "base_attack_bonus": "+6",
-        "class_features": "Bonus Feat (Scout)"
-      },
-      {
-        "level": "9",
-        "base_attack_bonus": "+6",
-        "class_features": "Talent"
-      },
-      {
-        "level": "10",
-        "base_attack_bonus": "+7",
-        "class_features": "Bonus Feat (Scout)"
-      },
-      {
-        "level": "11",
-        "base_attack_bonus": "+8",
-        "class_features": "Talent"
-      },
-      {
-        "level": "12",
-        "base_attack_bonus": "+9",
-        "class_features": "Bonus Feat (Scout)"
-      },
-      {
-        "level": "13",
-        "base_attack_bonus": "+9",
-        "class_features": "Talent"
-      },
-      {
-        "level": "14",
-        "base_attack_bonus": "+10",
-        "class_features": "Bonus Feat (Scout)"
-      },
-      {
-        "level": "15",
-        "base_attack_bonus": "+11",
-        "class_features": "Talent"
-      },
-      {
-        "level": "16",
-        "base_attack_bonus": "+12",
-        "class_features": "Bonus Feat (Scout)"
-      },
-      {
-        "level": "17",
-        "base_attack_bonus": "+12",
-        "class_features": "Talent"
-      },
-      {
-        "level": "18",
-        "base_attack_bonus": "+13",
-        "class_features": "Bonus Feat (Scout)"
-      },
-      {
-        "level": "19",
-        "base_attack_bonus": "+14",
-        "class_features": "Talent"
-      },
-      {
-        "level": "20",
-        "base_attack_bonus": "+15",
-        "class_features": "Bonus Feat (Scout)"
-      }
-    ],
-    "class_skill_mod": "Trained in 5 + int mod:",
-    "class_skill_list": [
-      "Climb",
-      "Endurance",
-      "Initiative",
-      "Jump",
-      "Knowledge(all skills, taken individually)",
-      "Mechanics",
-      "Perception",
-      "Pilot",
-      "Ride",
-      "Stealth",
-      "Survival",
-      "Swim"
-    ],
-    "hit_points_level_1": "24 + Con mod",
-    "hit_points_per_level": "1d8 + Con mod",
-    "class_features": [
-      "Shake It Off*",
-      "Weapon Proficiency (Pistols)",
-      "Weapon Proficiency (Rifles)",
-      "Weapon Proficiency (Simple Weapons)"
-    ],
-    "starting_feats": [],
-    "credits": "A 1st level Scout starts play with 3d4 x 250 credits.",
-    "hp_per_level_die": "1d8",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "1",
+    "base_attack_bonus": "+0",
+    "class_features": "Defense Bonuses, Starting Feats , Talent"
   },
   {
-    "class_name": "Soldier",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": "Defense Bonuses, Starting Feats , Talent"
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": "Bonus Feat (Soldier)"
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": "Talent"
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": "Bonus Feat (Soldier)"
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": "Talent"
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": "Bonus Feat (Soldier)"
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": "Talent"
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": "Bonus Feat (Soldier)"
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": "Talent"
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": "Bonus Feat (Soldier)"
-      },
-      {
-        "level": "11th",
-        "base_attack_bonus": "+11",
-        "class_features": "Talent"
-      },
-      {
-        "level": "12th",
-        "base_attack_bonus": "+12",
-        "class_features": "Bonus Feat (Soldier)"
-      },
-      {
-        "level": "13th",
-        "base_attack_bonus": "+13",
-        "class_features": "Talent"
-      },
-      {
-        "level": "14th",
-        "base_attack_bonus": "+14",
-        "class_features": "Bonus Feat (Soldier)"
-      },
-      {
-        "level": "15th",
-        "base_attack_bonus": "+15",
-        "class_features": "Talent"
-      },
-      {
-        "level": "16th",
-        "base_attack_bonus": "+16",
-        "class_features": "Bonus Feat (Soldier)"
-      },
-      {
-        "level": "17th",
-        "base_attack_bonus": "+17",
-        "class_features": "Talent"
-      },
-      {
-        "level": "18th",
-        "base_attack_bonus": "+18",
-        "class_features": "Bonus Feat (Soldier)"
-      },
-      {
-        "level": "19th",
-        "base_attack_bonus": "+19",
-        "class_features": "Talent"
-      },
-      {
-        "level": "20th",
-        "base_attack_bonus": "+20",
-        "class_features": "Bonus Feat (Soldier)"
-      }
-    ],
-    "class_skill_mod": "Trained in 3 + int mod:",
-    "class_skill_list": [
-      "Climb",
-      "Endurance",
-      "Initiative",
-      "Jump",
-      "Knowledge (Tactics)",
-      "Mechanics",
-      "Perception",
-      "Pilot",
-      "Swim",
-      "Treat Injury",
-      "Use Computer"
-    ],
-    "hit_points_level_1": "30 + Con mod",
-    "hit_points_per_level": "1d10 + Con mod",
-    "class_features": [
-      "Armor Proficiency (Light)",
-      "Armor Proficiency (Medium)",
-      "Weapon Proficiency (Pistols)",
-      "Weapon Proficiency (Rifles)",
-      "Weapon Proficiency (Simple Weapons)"
-    ],
-    "starting_feats": [],
-    "credits": "A 1st-level Soldier starts play with 3d4 x 250 credits.",
-    "hp_per_level_die": "1d10",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "2",
+    "base_attack_bonus": "+1",
+    "class_features": "Bonus Feat (Noble)"
   },
   {
-    "class_name": "Ace Pilot",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Vehicle Dodge +1"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Vehicle Dodge +2"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Vehicle Dodge +3"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Vehicle Dodge +4"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Vehicle Dodge +5"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Ace_Pilot",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "3",
+    "base_attack_bonus": "+2",
+    "class_features": "Talent"
   },
   {
-    "class_name": "Bounty Hunter",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Familiar Foe +1"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Familiar Foe +2"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Familiar Foe +3"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Familiar Foe +4"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Familiar Foe +5"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Bounty_Hunter",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "4",
+    "base_attack_bonus": "+3",
+    "class_features": "Bonus Feat (Noble)"
   },
   {
-    "class_name": "Crime Lord",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Command Cover +1, Talent"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Command Cover +2, Talent"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Command Cover +3, Talent"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Command Cover +4, Talent"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Command Cover +5, Talent"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Crime_Lord",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "5",
+    "base_attack_bonus": "+3",
+    "class_features": "Talent"
   },
   {
-    "class_name": "Elite Trooper",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Delay Damage, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Damage Reduction 1"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Damage Reduction 2"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Damage Reduction 3"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Damage Reduction 4"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Damage Reduction 5"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Elite_Trooper",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "6",
+    "base_attack_bonus": "+4",
+    "class_features": "Bonus Feat (Noble)"
   },
   {
-    "class_name": "Force Adept",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Force Technique"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Force_Adept",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "7",
+    "base_attack_bonus": "+5",
+    "class_features": "Talent"
   },
   {
-    "class_name": "Force Disciple",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Indomitable, Prophet, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Force Secret , Prophet"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Force Secret , Prophet, Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Force Secret , Prophet"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Force Secret , Prophet, Talent"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Force_Disciple",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "8",
+    "base_attack_bonus": "+6",
+    "class_features": "Bonus Feat (Noble)"
   },
   {
-    "class_name": "Gunslinger",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Trusty Sidearm +1"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Trusty Sidearm +2"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Trusty Sidearm +3"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Trusty Sidearm +4"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Trusty Sidearm +5"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Gunslinger",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "9",
+    "base_attack_bonus": "+6",
+    "class_features": "Talent"
   },
   {
-    "class_name": "Jedi Knight",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Force Technique"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Jedi_Knight",
-    "hit_points_level_1": "30 + Con mod",
-    "hp_per_level_die": "1d10",
-    "hit_points_per_level": "1d10 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "10",
+    "base_attack_bonus": "+7",
+    "class_features": "Bonus Feat (Noble)"
   },
   {
-    "class_name": "Jedi Master",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Fearless, Serenity, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Force Secret"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Force Secret , Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Force Secret"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Force Secret , Talent"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Jedi_Master",
-    "hit_points_level_1": "30 + Con mod",
-    "hp_per_level_die": "1d10",
-    "hit_points_per_level": "1d10 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "11",
+    "base_attack_bonus": "+8",
+    "class_features": "Talent"
   },
   {
-    "class_name": "Officer",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Command Cover +1, Share Talent"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Command Cover +2, Share Talent"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Command Cover +3, Share Talent"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Command Cover +4, Share Talent"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Command Cover +5, Share Talent"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Officer",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "12",
+    "base_attack_bonus": "+9",
+    "class_features": "Bonus Feat (Noble)"
   },
   {
-    "class_name": "Sith Apprentice",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Force Technique"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Sith_Apprentice",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "13",
+    "base_attack_bonus": "+9",
+    "class_features": "Talent"
   },
   {
-    "class_name": "Sith Lord",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Fearless, Talent , Temptation"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Force Secret"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Force Secret , Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Force Secret"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Force Secret , Talent"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Sith_Lord",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "14",
+    "base_attack_bonus": "+10",
+    "class_features": "Bonus Feat (Noble)"
   },
   {
-    "class_name": "Corporate Agent",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Executive Leadership (1/Encounter)"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Executive Leadership (2/Encounter)"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Executive Leadership (3/Encounter)"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Executive Leadership (4/Encounter)"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Executive Leadership (5/Encounter)"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Corporate_Agent",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "15",
+    "base_attack_bonus": "+11",
+    "class_features": "Talent"
   },
   {
-    "class_name": "Gladiator",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Unflinching (1/Encounter)"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Unflinching (2/Encounter)"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Unflinching (3/Encounter)"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Unflinching (4/Encounter)"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Unflinching (5/Encounter)"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Gladiator",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "16",
+    "base_attack_bonus": "+12",
+    "class_features": "Bonus Feat (Noble)"
   },
   {
-    "class_name": "Melee Duelist",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Master of Movement (1/Encounter)"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Master of Movement (2/Encounter)"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Master of Movement (3/Encounter)"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Master of Movement (4/Encounter)"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Master of Movement (5/Encounter)"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Melee_Duelist",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "17",
+    "base_attack_bonus": "+12",
+    "class_features": "Talent"
   },
   {
-    "class_name": "Enforcer",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Resources, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Resources, Targeted Suspect +1"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Resources, Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Resources, Targeted Suspect +2"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Resources, Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Resources, Targeted Suspect +3"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Resources, Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Resources, Targeted Suspect +4"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Resources, Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Resources, Targeted Suspect +5"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Enforcer",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "18",
+    "base_attack_bonus": "+13",
+    "class_features": "Bonus Feat (Noble)"
   },
   {
-    "class_name": "Independent Droid",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Sapience, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Independent Spirit +1"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Independent Spirit +2"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Independent Spirit +3"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Independent Spirit +4"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Independent Spirit +5"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Independent_Droid",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "19",
+    "base_attack_bonus": "+14",
+    "class_features": "Talent"
   },
   {
-    "class_name": "Infiltrator",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Unarmed Stun (+1d_)"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Lead Infiltrator"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Unarmed Stun (+2d_)"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Lead Infiltrator (x2)"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Unarmed Stun (+3d_)"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Infiltrator",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "20",
+    "base_attack_bonus": "+15",
+    "class_features": "Bonus Feat (Noble)"
   },
   {
-    "class_name": "Master Privateer",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Lure of Piracy, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Veteran Privateer (1/Encounter)"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Veteran Privateer (2/Encounter)"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Veteran Privateer (3/Encounter)"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Veteran Privateer (4/Encounter)"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Veteran Privateer (5/Encounter)"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Master_Privateer",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": 1,
+    "result": 5
   },
   {
-    "class_name": "Medic",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Medical Secret"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Medical Secret"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Medical Secret"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Medical Secret"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Medical Secret"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Medic",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": 3,
+    "result": 6
   },
   {
-    "class_name": "Saboteur",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Talent , Unexpected Results"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Destructive"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Quick Sabotage (Simple Devices)"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Quick Sabotage (Tricky Devices)"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Quick Sabotage (Complex Devices)"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Master Saboteur"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Saboteur",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": 4,
+    "result": 7
   },
   {
-    "class_name": "Assassin",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Mark +1"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Mark +2"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Mark +3"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Mark +4"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Mark +5"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Assassin",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "1",
+    "base_attack_bonus": "+0",
+    "class_features": "Defense Bonuses, Starting Feats , Talent"
   },
   {
-    "class_name": "Charlatan",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Score"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Swindle"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Swindle +1"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Swindle +2"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Swindle +5"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Charlatan",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "2",
+    "base_attack_bonus": "+1",
+    "class_features": "Bonus Feat (Scoundrel)"
   },
   {
-    "class_name": "Outlaw",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Fugitive +1"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Fugitive +2"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Fugitive +3"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Fugitive +4"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Fugitive +5"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Outlaw",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "3",
+    "base_attack_bonus": "+2",
+    "class_features": "Talent"
   },
   {
-    "class_name": "Droid Commander",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Networked Mind (1 Droid Ally)"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Networked Mind (2 Droid Allies)"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Networked Mind (3 Droid Allies)"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Networked Mind (4 Droid Allies)"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Networked Mind (5 Droid Allies)"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Droid_Commander",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "4",
+    "base_attack_bonus": "+3",
+    "class_features": "Bonus Feat (Scoundrel)"
   },
   {
-    "class_name": "Military Engineer",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Field-Created Weapon +1"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Field-Created Weapon +2"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Field-Created Weapon +3"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Field-Created Weapon +4"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Field-Created Weapon +5"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Military_Engineer",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "5",
+    "base_attack_bonus": "+3",
+    "class_features": "Talent"
   },
   {
-    "class_name": "Vanguard",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Surprise Attack +1"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Surprise Attack +2"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Surprise Attack +3"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Surprise Attack +4"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Surprise Attack +5"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Vanguard",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "6",
+    "base_attack_bonus": "+4",
+    "class_features": "Bonus Feat (Scoundrel)"
   },
   {
-    "class_name": "Imperial Knight",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Force Technique"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Force Technique"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Imperial_Knight",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "7",
+    "base_attack_bonus": "+5",
+    "class_features": "Talent"
   },
   {
-    "class_name": "Shaper",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Shaper Lore +1"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Shaper Lore +2"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Shaper Lore +3, Shaper Hand"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Shaper Lore +4"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Shaper Lore +5"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Shaper",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "8",
+    "base_attack_bonus": "+6",
+    "class_features": "Bonus Feat (Scoundrel)"
   },
   {
-    "class_name": "Improviser",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, No Tools Required, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Contraband (2,000 credits)"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Contraband (3,000 credits), Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Contraband (4,000 credits)"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Contraband (5,000 credits), Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Contraband (6,000 credits)"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Contraband (7,000 credits), Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Contraband (8,000 credits)"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Contraband (9,000 credits), Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Contraband (10,000 credits)"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Improviser",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "9",
+    "base_attack_bonus": "+6",
+    "class_features": "Talent"
   },
   {
-    "class_name": "Pathfinder",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+0",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Create Cover (1 Square)"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Create Cover (2 Squares)"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Create Cover (3 Squares)"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Create Cover (4 Squares)"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Create Cover (5 Squares)"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Pathfinder",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "10",
+    "base_attack_bonus": "+7",
+    "class_features": "Bonus Feat (Scoundrel)"
   },
   {
-    "class_name": "Martial Arts Master",
-    "level_table": [
-      {
-        "level": "1st",
-        "base_attack_bonus": "+1",
-        "class_features": [
-          "Defense Bonuses, Talent"
-        ]
-      },
-      {
-        "level": "2nd",
-        "base_attack_bonus": "+2",
-        "class_features": [
-          "Tough as Durasteel +2"
-        ]
-      },
-      {
-        "level": "3rd",
-        "base_attack_bonus": "+3",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "4th",
-        "base_attack_bonus": "+4",
-        "class_features": [
-          "Tough as Durasteel +4"
-        ]
-      },
-      {
-        "level": "5th",
-        "base_attack_bonus": "+5",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "6th",
-        "base_attack_bonus": "+6",
-        "class_features": [
-          "Tough as Durasteel +6"
-        ]
-      },
-      {
-        "level": "7th",
-        "base_attack_bonus": "+7",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "8th",
-        "base_attack_bonus": "+8",
-        "class_features": [
-          "Tough as Durasteel +8"
-        ]
-      },
-      {
-        "level": "9th",
-        "base_attack_bonus": "+9",
-        "class_features": [
-          "Talent"
-        ]
-      },
-      {
-        "level": "10th",
-        "base_attack_bonus": "+10",
-        "class_features": [
-          "Tough as Durasteel +10"
-        ]
-      }
-    ],
-    "class_skills": [],
-    "hit_points": null,
-    "starting_feats": [],
-    "credits": null,
-    "source_url": "https://swse.fandom.com/wiki/Martial_Arts_Master",
-    "hit_points_level_1": "20 + Con mod",
-    "hp_per_level_die": "1d8",
-    "hit_points_per_level": "1d8 + Con mod",
-    "force_points": {
-      "name": "Force Points",
-      "description": "Character gains Force Points equal to 5 + floor(class level / 2) at 1st level and each time they gain a level in this class.",
-      "formula": "5 + floor(level / 2)",
-      "applies": {
-        "at_first_level": true,
-        "on_each_level_gain": true
-      },
-      "rounding": "floor",
-      "examples": [
-        {
-          "level": 1,
-          "result": 5
-        },
-        {
-          "level": 3,
-          "result": 6
-        },
-        {
-          "level": 4,
-          "result": 7
-        }
-      ]
-    }
+    "level": "11",
+    "base_attack_bonus": "+8",
+    "class_features": "Talent"
+  },
+  {
+    "level": "12",
+    "base_attack_bonus": "+9",
+    "class_features": "Bonus Feat (Scoundrel)"
+  },
+  {
+    "level": "13",
+    "base_attack_bonus": "+9",
+    "class_features": "Talent"
+  },
+  {
+    "level": "14",
+    "base_attack_bonus": "+10",
+    "class_features": "Bonus Feat (Scoundrel)"
+  },
+  {
+    "level": "15",
+    "base_attack_bonus": "+11",
+    "class_features": "Talent"
+  },
+  {
+    "level": "16",
+    "base_attack_bonus": "+12",
+    "class_features": "Bonus Feat (Scoundrel)"
+  },
+  {
+    "level": "17",
+    "base_attack_bonus": "+12",
+    "class_features": "Talent"
+  },
+  {
+    "level": "18",
+    "base_attack_bonus": "+13",
+    "class_features": "Bonus Feat (Scoundrel)"
+  },
+  {
+    "level": "19",
+    "base_attack_bonus": "+14",
+    "class_features": "Talent"
+  },
+  {
+    "level": "20",
+    "base_attack_bonus": "+15",
+    "class_features": "Bonus Feat (Scoundrel)"
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": "1",
+    "base_attack_bonus": "+0",
+    "class_features": "Defense Bonuses, Starting Feats , Talent"
+  },
+  {
+    "level": "2",
+    "base_attack_bonus": "+1",
+    "class_features": "Bonus Feat (Scout)"
+  },
+  {
+    "level": "3",
+    "base_attack_bonus": "+2",
+    "class_features": "Talent"
+  },
+  {
+    "level": "4",
+    "base_attack_bonus": "+3",
+    "class_features": "Bonus Feat (Scout)"
+  },
+  {
+    "level": "5",
+    "base_attack_bonus": "+3",
+    "class_features": "Talent"
+  },
+  {
+    "level": "6",
+    "base_attack_bonus": "+4",
+    "class_features": "Bonus Feat (Scout)"
+  },
+  {
+    "level": "7",
+    "base_attack_bonus": "+5",
+    "class_features": "Talent"
+  },
+  {
+    "level": "8",
+    "base_attack_bonus": "+6",
+    "class_features": "Bonus Feat (Scout)"
+  },
+  {
+    "level": "9",
+    "base_attack_bonus": "+6",
+    "class_features": "Talent"
+  },
+  {
+    "level": "10",
+    "base_attack_bonus": "+7",
+    "class_features": "Bonus Feat (Scout)"
+  },
+  {
+    "level": "11",
+    "base_attack_bonus": "+8",
+    "class_features": "Talent"
+  },
+  {
+    "level": "12",
+    "base_attack_bonus": "+9",
+    "class_features": "Bonus Feat (Scout)"
+  },
+  {
+    "level": "13",
+    "base_attack_bonus": "+9",
+    "class_features": "Talent"
+  },
+  {
+    "level": "14",
+    "base_attack_bonus": "+10",
+    "class_features": "Bonus Feat (Scout)"
+  },
+  {
+    "level": "15",
+    "base_attack_bonus": "+11",
+    "class_features": "Talent"
+  },
+  {
+    "level": "16",
+    "base_attack_bonus": "+12",
+    "class_features": "Bonus Feat (Scout)"
+  },
+  {
+    "level": "17",
+    "base_attack_bonus": "+12",
+    "class_features": "Talent"
+  },
+  {
+    "level": "18",
+    "base_attack_bonus": "+13",
+    "class_features": "Bonus Feat (Scout)"
+  },
+  {
+    "level": "19",
+    "base_attack_bonus": "+14",
+    "class_features": "Talent"
+  },
+  {
+    "level": "20",
+    "base_attack_bonus": "+15",
+    "class_features": "Bonus Feat (Scout)"
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": "1st",
+    "base_attack_bonus": "+1",
+    "class_features": "Defense Bonuses, Starting Feats , Talent"
+  },
+  {
+    "level": "2nd",
+    "base_attack_bonus": "+2",
+    "class_features": "Bonus Feat (Soldier)"
+  },
+  {
+    "level": "3rd",
+    "base_attack_bonus": "+3",
+    "class_features": "Talent"
+  },
+  {
+    "level": "4th",
+    "base_attack_bonus": "+4",
+    "class_features": "Bonus Feat (Soldier)"
+  },
+  {
+    "level": "5th",
+    "base_attack_bonus": "+5",
+    "class_features": "Talent"
+  },
+  {
+    "level": "6th",
+    "base_attack_bonus": "+6",
+    "class_features": "Bonus Feat (Soldier)"
+  },
+  {
+    "level": "7th",
+    "base_attack_bonus": "+7",
+    "class_features": "Talent"
+  },
+  {
+    "level": "8th",
+    "base_attack_bonus": "+8",
+    "class_features": "Bonus Feat (Soldier)"
+  },
+  {
+    "level": "9th",
+    "base_attack_bonus": "+9",
+    "class_features": "Talent"
+  },
+  {
+    "level": "10th",
+    "base_attack_bonus": "+10",
+    "class_features": "Bonus Feat (Soldier)"
+  },
+  {
+    "level": "11th",
+    "base_attack_bonus": "+11",
+    "class_features": "Talent"
+  },
+  {
+    "level": "12th",
+    "base_attack_bonus": "+12",
+    "class_features": "Bonus Feat (Soldier)"
+  },
+  {
+    "level": "13th",
+    "base_attack_bonus": "+13",
+    "class_features": "Talent"
+  },
+  {
+    "level": "14th",
+    "base_attack_bonus": "+14",
+    "class_features": "Bonus Feat (Soldier)"
+  },
+  {
+    "level": "15th",
+    "base_attack_bonus": "+15",
+    "class_features": "Talent"
+  },
+  {
+    "level": "16th",
+    "base_attack_bonus": "+16",
+    "class_features": "Bonus Feat (Soldier)"
+  },
+  {
+    "level": "17th",
+    "base_attack_bonus": "+17",
+    "class_features": "Talent"
+  },
+  {
+    "level": "18th",
+    "base_attack_bonus": "+18",
+    "class_features": "Bonus Feat (Soldier)"
+  },
+  {
+    "level": "19th",
+    "base_attack_bonus": "+19",
+    "class_features": "Talent"
+  },
+  {
+    "level": "20th",
+    "base_attack_bonus": "+20",
+    "class_features": "Bonus Feat (Soldier)"
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
+  },
+  {
+    "level": 1,
+    "result": 5
+  },
+  {
+    "level": 3,
+    "result": 6
+  },
+  {
+    "level": 4,
+    "result": 7
   }
 ]

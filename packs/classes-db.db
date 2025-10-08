@@ -1,0 +1,37 @@
+{"name": "Jedi", "type": "Heroic", "defense_bonus": {"fortitude": 1, "reflex": 1, "will": 1}, "_id": "2ab9b1b6-b76b-420b-9124-f1eacb2e6520"}
+{"name": "Noble", "type": "Heroic", "defense_bonus": {"fortitude": 0, "reflex": 1, "will": 2}, "_id": "cc5c212d-0c7c-45fb-b97f-a73ad1ad731f"}
+{"name": "Scoundrel", "type": "Heroic", "defense_bonus": {"fortitude": 0, "reflex": 2, "will": 1}, "_id": "3cfd609d-d271-462b-95d6-391cf035e06f"}
+{"name": "Scout", "type": "Heroic", "defense_bonus": {"fortitude": 1, "reflex": 2, "will": 0}, "_id": "e83bebaf-4ad1-4da2-9063-18d4c0b56f3e"}
+{"name": "Soldier", "type": "Heroic", "defense_bonus": {"fortitude": 2, "reflex": 1, "will": 0}, "_id": "1ff969e6-bc0c-4e13-9928-90f93f034b1c"}
+{"name": "Ace Pilot", "type": "Prestige", "defense_bonus": {"fortitude": 2, "reflex": 4, "will": 0}, "_id": "bafc2aa8-d95b-48fc-b507-06800cb64d13"}
+{"name": "Bounty Hunter", "type": "Prestige", "defense_bonus": {"fortitude": 2, "reflex": 4, "will": 0}, "_id": "e037c167-2a56-42c7-9f30-2818fb6ae211"}
+{"name": "Crime Lord", "type": "Prestige", "defense_bonus": {"fortitude": 0, "reflex": 2, "will": 4}, "_id": "a06a2309-27dc-4047-88cb-ce776d22e921"}
+{"name": "Elite Trooper", "type": "Prestige", "defense_bonus": {"fortitude": 4, "reflex": 2, "will": 0}, "_id": "e0f6d237-731e-48e6-b8fd-97462c95678a"}
+{"name": "Force Adept", "type": "Prestige", "defense_bonus": {"fortitude": 2, "reflex": 2, "will": 4}, "_id": "1f1c6767-d941-4368-8e26-66dcbb33385c"}
+{"name": "Force Disciple", "type": "Prestige", "defense_bonus": {"fortitude": 3, "reflex": 3, "will": 6}, "_id": "4fcadc54-9d53-44a6-bb25-a2e9b7764f45"}
+{"name": "Gunslinger", "type": "Prestige", "defense_bonus": {"fortitude": 0, "reflex": 4, "will": 2}, "_id": "a8286940-45f8-4e96-b85e-4a0325dfdb9d"}
+{"name": "Jedi Knight", "type": "Prestige", "defense_bonus": {"fortitude": 2, "reflex": 2, "will": 2}, "_id": "250fcd91-3be6-4a4c-9cd8-5f3d8423eedf"}
+{"name": "Jedi Master", "type": "Prestige", "defense_bonus": {"fortitude": 3, "reflex": 3, "will": 3}, "_id": "621cc3cd-f254-4a49-ad81-5b39a853da11"}
+{"name": "Officer", "type": "Prestige", "defense_bonus": {"fortitude": 0, "reflex": 2, "will": 4}, "_id": "03960ea2-a46a-4494-ba58-4b72c94eb564"}
+{"name": "Sith Apprentice", "type": "Prestige", "defense_bonus": {"fortitude": 2, "reflex": 2, "will": 2}, "_id": "b5f790fb-9249-4c2b-95df-078be76dc41f"}
+{"name": "Sith Lord", "type": "Prestige", "defense_bonus": {"fortitude": 3, "reflex": 3, "will": 3}, "_id": "4371a860-a303-4e12-be8e-4385650c8c14"}
+{"name": "Corporate Agent", "type": "Prestige", "defense_bonus": {"fortitude": 0, "reflex": 2, "will": 4}, "_id": "18b6f545-c486-4a31-8fe9-506593b5d01c"}
+{"name": "Gladiator", "type": "Prestige", "defense_bonus": {"fortitude": 2, "reflex": 4, "will": 0}, "_id": "6fcb9370-48b9-41d7-bacc-cdfbe9f8f8b6"}
+{"name": "Melee Duelist", "type": "Prestige", "defense_bonus": {"fortitude": 0, "reflex": 4, "will": 2}, "_id": "c77696fb-835b-437d-93b9-1aceccf34b47"}
+{"name": "Enforcer", "type": "Prestige", "defense_bonus": {"fortitude": 0, "reflex": 4, "will": 2}, "_id": "bb8bf420-351f-4a57-9beb-8615856c643b"}
+{"name": "Independent Droid", "type": "Prestige", "defense_bonus": {"fortitude": 0, "reflex": 2, "will": 4}, "_id": "9ca51414-fcf2-4061-91a7-06f233a48cb7"}
+{"name": "Infiltrator", "type": "Prestige", "defense_bonus": {"fortitude": 0, "reflex": 4, "will": 2}, "_id": "450e3115-c125-4988-a302-36f6401587c4"}
+{"name": "Master Privateer", "type": "Prestige", "defense_bonus": {"fortitude": 0, "reflex": 2, "will": 4}, "_id": "47f31d6c-54ca-4f04-ad51-d846170cf280"}
+{"name": "Medic", "type": "Prestige", "defense_bonus": {"fortitude": 4, "reflex": 0, "will": 2}, "_id": "444aee57-2f21-462e-af4a-bd49335c11ca"}
+{"name": "Saboteur", "type": "Prestige", "defense_bonus": {"fortitude": 0, "reflex": 2, "will": 4}, "_id": "01715241-1c10-450d-a6f7-e8cfa563ee21"}
+{"name": "Assassin", "type": "Prestige", "defense_bonus": {"fortitude": 2, "reflex": 4, "will": 0}, "_id": "63d1c584-7c32-49df-a847-90a19b1bf1b0"}
+{"name": "Charlatan", "type": "Prestige", "defense_bonus": {"fortitude": 0, "reflex": 2, "will": 4}, "_id": "36af9d0f-1c15-499a-98e1-07042a8d95d8"}
+{"name": "Outlaw", "type": "Prestige", "defense_bonus": {"fortitude": 2, "reflex": 4, "will": 0}, "_id": "18374c17-af72-4319-8091-3345100b567a"}
+{"name": "Droid Commander", "type": "Prestige", "defense_bonus": {"fortitude": 2, "reflex": 2, "will": 2}, "_id": "a5324bbf-1a70-41f0-9e5b-3155ead6780a"}
+{"name": "Military Engineer", "type": "Prestige", "defense_bonus": {"fortitude": 2, "reflex": 2, "will": 2}, "_id": "eb9f6573-0a29-44d2-8a93-53ece9395003"}
+{"name": "Vanguard", "type": "Prestige", "defense_bonus": {"fortitude": 4, "reflex": 2, "will": 0}, "_id": "85959243-84b2-47ef-92bf-f426341bb25a"}
+{"name": "Imperial Knight", "type": "Prestige", "defense_bonus": {"fortitude": 2, "reflex": 2, "will": 2}, "_id": "6672084b-19ee-4c01-8e2a-5f121480bd7a"}
+{"name": "Shaper", "type": "Prestige", "defense_bonus": {"fortitude": 2, "reflex": 0, "will": 4}, "_id": "952b6d65-54cd-4959-a189-e82db161a2d4"}
+{"name": "Improviser", "type": "Prestige", "defense_bonus": {"fortitude": 0, "reflex": 2, "will": 4}, "_id": "5614d4ff-5eec-4115-bd85-77e639910ff2"}
+{"name": "Pathfinder", "type": "Prestige", "defense_bonus": {"fortitude": 4, "reflex": 2, "will": 0}, "_id": "986cdcd6-c333-4a08-aee1-835c486ada36"}
+{"name": "Martial Arts Master", "type": "Prestige", "defense_bonus": {"fortitude": 4, "reflex": 2, "will": 0}, "_id": "940cf923-2c35-4e92-8af0-ada4c4dd39ed"}

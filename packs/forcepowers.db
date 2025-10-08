@@ -1,0 +1,61 @@
+{"dc": 15, "effect": "+1 attack, +1d6 damage", "_id": "7ff50fc9-dbe7-4c47-9733-9571e26b6fa8"}
+{"dc": 20, "effect": "+1 attack, +2d6 damage", "_id": "617825ee-e218-4384-852d-a18bd05a3eef"}
+{"dc": 25, "effect": "+1 attack, +3d6 damage", "_id": "ccd7d3b8-d566-440a-95bb-e4c2d4545d53"}
+{"dc": 15, "effect": "+2 melee attack and damage until end of turn", "_id": "d4a43501-8e8a-4ff7-885c-f49eef5080d1"}
+{"dc": 20, "effect": "+4 melee attack and damage until end of turn", "_id": "6f691edb-46a7-4244-99e4-8a2e4fdddbb2"}
+{"dc": 25, "effect": "+6 melee attack and damage until end of turn", "_id": "22d83619-8d3b-4156-8329-45a60ad3256e"}
+{"dc": "≥ Will Defense", "effect": "Sense life status, surroundings, emotions", "_id": "45efe7d8-30a8-4504-bc7a-d0f23d815e2c"}
+{"dc": "vs. Disarm rules", "effect": "Disarm target, weapon drops or flies to your hand", "_id": "3c87bb97-7dda-46ae-b1b8-b7834f6eb5a5"}
+{"dc": 15, "effect": "2d6 damage, target limited to swift action", "_id": "64697f9f-c18a-41b9-af2c-d3b9c0100045"}
+{"dc": 20, "effect": "4d6 damage, target limited to swift action", "_id": "f031786c-796b-426d-8e9b-7584806b8100"}
+{"dc": 25, "effect": "6d6 damage, target limited to swift action", "_id": "d6f2abd4-44b1-4d18-8d21-7355e7f9ebc5"}
+{"dc": "≥ Reflex Defense", "effect": "8d6 damage, -1 condition step", "_id": "3d5a121f-b694-4177-87b9-9e15e939dbb7"}
+{"dc": "< Reflex Defense", "effect": "4d6 damage, no condition change", "_id": "c81c2307-3b9c-4b60-9a6c-35a91b420ef7"}
+{"dc": "≥ Fortitude Defense", "effect": "4d6 damage, knocked prone", "_id": "cefeb7e4-3544-4c1e-bffa-e10680060a7f"}
+{"dc": "< Fortitude Defense", "effect": "2d6 damage, not prone", "_id": "996a2c71-88e7-4cec-9e82-4b0acc0c2731"}
+{"dc": "≥ Fortitude Defense", "effect": "-1 condition step", "_id": "ff55522d-5876-4a70-b048-1ba541940453"}
+{"dc": "+5 over", "effect": "-2 condition steps", "_id": "ee218a82-8711-47e1-8169-e2714b1a9676"}
+{"dc": "+10 over", "effect": "-3 condition steps", "_id": "3955c338-89ac-4940-be5f-fe848ef36b87"}
+{"dc": "vs. Strength check", "effect": "Push 1 square +1 per 5 over; 1d6 damage if hitting object", "_id": "64fb3941-a414-4dbb-875a-a51d69193a4b"}
+{"dc": 15, "effect": "Move Medium object, 2d6 damage", "_id": "6ce72572-66d6-40b2-8f8d-c84082496bdb"}
+{"dc": 20, "effect": "Move Large object, 4d6 damage", "_id": "745ac499-0be5-4d36-9702-a97639b009c3"}
+{"dc": 25, "effect": "Move Huge object, 6d6 damage", "_id": "c97b66b8-4288-41c7-99f2-0ca3a5e5213d"}
+{"dc": 30, "effect": "Move Gargantuan object, 8d6 damage", "_id": "4c1ee88f-3e6b-49a4-9c6b-4e2c411af798"}
+{"dc": 35, "effect": "Move Colossal object, 10d6 damage", "_id": "6f673107-535e-481e-ae73-480cad104fa1"}
+{"dc": "≥ enemy Use the Force check", "effect": "Negate power and reflect it back on attacker", "_id": "30918f04-b81b-4f59-bdda-048bf1bd8e60"}
+{"dc": 15, "effect": "Sense if a specific action will lead to good or bad outcome within 24 hours", "_id": "618dce94-e08c-4a84-bf9a-3f31659662dd"}
+{"dc": "≥ Will Defense", "effect": "Target loses Force powers and Force Point access for 24 hours", "_id": "4b44dfcd-4553-4193-b05f-0dd5c51905c9"}
+{"dc": 15, "effect": "+10 speed, +5 Jump checks until end of turn", "_id": "584b2d8a-0018-4912-b08f-9c5da9d28030"}
+{"dc": 20, "effect": "+10 speed, +10 Jump checks until end of turn", "_id": "f3beec29-4643-4243-b137-1f59b72e4427"}
+{"dc": 25, "effect": "+10 speed, +15 Jump checks until end of turn", "_id": "d61088ee-ece4-48be-a423-0efcf34a3b67"}
+{"dc": 15, "effect": "Heal target 1/2 your level in hit points; you take same amount as damage", "_id": "5ec5c074-3acf-4f3b-bda0-71a393b00c38"}
+{"dc": 20, "effect": "Heal target equal to your level; you take half that as damage", "_id": "7dc6efad-f3c2-46a5-ac30-dc83dbde6cfb"}
+{"dc": 25, "effect": "Heal target 2× your level; you take 1/4 that as damage", "_id": "16b087ed-f414-4f8d-8125-5f78aca51659"}
+{"dc": "≥ Will Defense", "effect": "Target believes a simple lie or suggestion", "_id": "241f1c06-6647-47f7-bb54-73b69ae9f3d0"}
+{"dc": "≥ damage dealt", "effect": "Negate energy damage from one attack", "_id": "c3e108c5-e372-410d-8c11-edd069de8697"}
+{"dc": 15, "effect": "+5 to Reflex Defense until start of next turn", "_id": "a60655a8-0c91-4c14-a465-b5eebcdf2429"}
+{"dc": 20, "effect": "+10 to Reflex Defense until start of next turn", "_id": "0f1090ab-bfe6-46f4-af93-9c969988c32e"}
+{"dc": 25, "effect": "+15 to Reflex Defense until start of next turn", "_id": "f2c9b3d2-626d-4ab0-9bb5-4b2ca672d2cb"}
+{"dc": 15, "effect": "+1 to attack rolls, skill checks, and all defenses for 1 minute", "_id": "e8472d6f-7e0a-4bb0-bd08-a942383e6611"}
+{"dc": 20, "effect": "+2 to same bonuses", "_id": "b2254a3e-e7be-4913-990e-bfcdf6733c7c"}
+{"dc": 25, "effect": "+3 to same bonuses", "_id": "397ee49a-3f0b-46cd-a419-97aa9a783f72"}
+{"dc": 15, "effect": "Gain concealment until end of turn", "_id": "0884f173-2a77-4bb9-8960-cb6a6279ca42"}
+{"dc": 20, "effect": "Gain total concealment until end of turn", "_id": "599a640e-e6c3-41af-9c72-56470d338a94"}
+{"dc": 25, "effect": "Gain total concealment and +5 Stealth until end of turn", "_id": "a219d0d8-84f4-4855-9cf9-ccac45386a56"}
+{"dc": "≥ Reflex Defense", "effect": "6d6 damage, pushed 1 square", "_id": "e38a8e9b-ede7-4b4d-adcf-8bf562342a07"}
+{"dc": "< Reflex Defense", "effect": "3d6 damage, no push", "_id": "5787ffb5-87a8-4577-9f89-9761bc7419b9"}
+{"dc": "≥ Reflex Defense", "effect": "8d6 electricity damage, -1 condition step", "_id": "c039ac63-c059-4e56-a1a3-ca502da7e6f4"}
+{"dc": "< Reflex Defense", "effect": "4d6 electricity damage", "_id": "bf6757c3-d837-4180-8aaf-90e77be60861"}
+{"dc": "≥ Will Defense", "effect": "6d6 sonic damage, -1 condition step", "_id": "2ad23783-84fe-4ba2-b6a0-b72536f27746"}
+{"dc": "< Will Defense", "effect": "3d6 sonic damage", "_id": "51c71a04-bfcc-4dd8-a4f9-7afa21b90361"}
+{"dc": 15, "effect": "Ignore concealment and cover from Force-sensitive targets for 1 round", "_id": "f0a71fdd-1fb4-4380-b5ee-9c5dcff99dab"}
+{"dc": 20, "effect": "Same effect for 1 minute", "_id": "b80a0e53-14b5-4f89-ba41-31414b46ab27"}
+{"dc": 25, "effect": "Same effect for 10 minutes", "_id": "23068cc5-b82a-4279-b2d8-f64a673d3f7e"}
+{"dc": "≥ Will Defense", "effect": "Sense direction and distance to target", "_id": "7c1f3b78-3f1c-4288-aa6d-17b3436c905f"}
+{"dc": 15, "effect": "+1d6 damage until end of turn", "_id": "f3c5b5a4-5c3d-4501-a944-62ef934c89f1"}
+{"dc": 20, "effect": "+2d6 damage until end of turn", "_id": "f514659b-381c-4d63-beeb-06647ce72012"}
+{"dc": 25, "effect": "+3d6 damage until end of turn", "_id": "5d7f0660-e130-4d54-9661-55339ab17d54"}
+{"dc": 15, "effect": "+1 to attack rolls until end of turn", "_id": "42a7d142-35b9-4357-9f2b-eba15c34a3b5"}
+{"dc": 20, "effect": "+2 to attack rolls until end of turn", "_id": "2e8a172e-179e-4b7a-8cd4-6556b2348a63"}
+{"dc": 25, "effect": "+3 to attack rolls until end of turn", "_id": "2bf80c3d-0153-43ba-8bb0-5ff7c05ce712"}
+{"dc": "≥ Fortitude Defense", "effect": "Target is nauseated for 1 round", "_id": "0bfcbb0b-9c6b-49d2-afeb-bb797a4cfd3d"}

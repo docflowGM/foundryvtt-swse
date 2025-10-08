@@ -1,45 +1,23 @@
 [
   {
     "name": "Strength",
-    "aliases": [
-      "strength",
-      "str",
-      "Str",
-      "STR"
-    ],
+    "aliases": ["strength", "str", "Str", "STR"],
     "description": "Physical power and force, used for melee damage and carrying capacity.",
-    "relatedSkills": [
-      "Athletics",
-      "Grapple"
-    ],
+    "relatedSkills": ["Athletics", "Grapple"],
     "modifierFormula": "(attributeTotal - 10) / 2",
     "modifierNotes": "Modifier can be negative if attributeTotal < 10"
   },
   {
     "name": "Dexterity",
-    "aliases": [
-      "dexterity",
-      "dex",
-      "Dex",
-      "DEX"
-    ],
+    "aliases": ["dexterity", "dex", "Dex", "DEX"],
     "description": "Agility, reflexes, and balance; important for ranged attacks, initiative, and defense.",
-    "relatedSkills": [
-      "Acrobatics",
-      "Stealth",
-      "Tumble"
-    ],
+    "relatedSkills": ["Acrobatics", "Stealth", "Tumble"],
     "modifierFormula": "(attributeTotal - 10) / 2",
     "modifierNotes": "Modifier can be negative if attributeTotal < 10"
   },
   {
     "name": "Constitution",
-    "aliases": [
-      "constitution",
-      "con",
-      "Con",
-      "CON"
-    ],
+    "aliases": ["constitution", "con", "Con", "CON"],
     "description": "Endurance, stamina, and health; affects hit points and resistances.",
     "relatedSkills": [],
     "modifierFormula": "(attributeTotal - 10) / 2",
@@ -47,50 +25,25 @@
   },
   {
     "name": "Intelligence",
-    "aliases": [
-      "intelligence",
-      "int",
-      "Int",
-      "INT"
-    ],
+    "aliases": ["intelligence", "int", "Int", "INT"],
     "description": "Reasoning and memory; affects knowledge and some skill checks.",
-    "relatedSkills": [
-      "Use Computer",
-      "Knowledge"
-    ],
+    "relatedSkills": ["Use Computer", "Knowledge"],
     "modifierFormula": "(attributeTotal - 10) / 2",
     "modifierNotes": "Modifier can be negative if attributeTotal < 10"
   },
   {
     "name": "Wisdom",
-    "aliases": [
-      "wisdom",
-      "wis",
-      "Wis",
-      "WIS"
-    ],
+    "aliases": ["wisdom", "wis", "Wis", "WIS"],
     "description": "Perception and insight; important for noticing details and resisting certain effects.",
-    "relatedSkills": [
-      "Perception",
-      "Survival"
-    ],
+    "relatedSkills": ["Perception", "Survival"],
     "modifierFormula": "(attributeTotal - 10) / 2",
     "modifierNotes": "Modifier can be negative if attributeTotal < 10"
   },
   {
     "name": "Charisma",
-    "aliases": [
-      "charisma",
-      "cha",
-      "Cha",
-      "CHA"
-    ],
+    "aliases": ["charisma", "cha", "Cha", "CHA"],
     "description": "Force of personality and social influence; used in social skills and some powers.",
-    "relatedSkills": [
-      "Deception",
-      "Diplomacy",
-      "Intimidate"
-    ],
+    "relatedSkills": ["Deception", "Diplomacy", "Intimidate"],
     "modifierFormula": "(attributeTotal - 10) / 2",
     "modifierNotes": "Modifier can be negative if attributeTotal < 10"
   }

@@ -1,0 +1,19 @@
+{"name": "Acrobatics", "ability": "Dex", "classes": {"Jedi": true, "Noble": false, "Scoundrel": true, "Scout": false, "Soldier": false}, "_id": "4a9cb5cf-2e47-494a-828c-9dbf9f0a923f"}
+{"name": "Climb", "ability": "Str", "classes": {"Jedi": false, "Noble": false, "Scoundrel": false, "Scout": true, "Soldier": true}, "_id": "5480ec19-5188-42f8-a0ee-086f25b10968"}
+{"name": "Deception", "ability": "Cha", "classes": {"Jedi": false, "Noble": true, "Scoundrel": true, "Scout": false, "Soldier": false}, "_id": "af9c0a5c-69a2-4e29-ab92-6506fa3385d1"}
+{"name": "Endurance", "ability": "Con", "classes": {"Jedi": true, "Noble": false, "Scoundrel": false, "Scout": true, "Soldier": true}, "_id": "ea9a53de-c35c-44b2-af61-aeb74fdfe5f2"}
+{"name": "Gather Information", "ability": "Cha", "classes": {"Jedi": false, "Noble": true, "Scoundrel": true, "Scout": false, "Soldier": false}, "_id": "b424d92e-97d3-48a0-9716-8156fcef8016"}
+{"name": "Initiative", "ability": "Dex", "classes": {"Jedi": true, "Noble": true, "Scoundrel": true, "Scout": true, "Soldier": true}, "_id": "2897c016-b516-43c8-a41d-1bebaa46ba18"}
+{"name": "Jump", "ability": "Str", "classes": {"Jedi": true, "Noble": false, "Scoundrel": false, "Scout": true, "Soldier": true}, "_id": "87c35409-bd76-45d3-952a-88519332d360"}
+{"name": "Knowledge", "ability": "Int", "classes": {"Jedi": true, "Noble": true, "Scoundrel": true, "Scout": true, "Soldier": "TacticsOnly"}, "_id": "c05a8d83-4871-4ba0-b5eb-d2f4087ba523"}
+{"name": "Mechanics", "ability": "Int", "classes": {"Jedi": true, "Noble": false, "Scoundrel": true, "Scout": true, "Soldier": true}, "_id": "a1b08e16-2647-41bf-b875-982292901929"}
+{"name": "Perception", "ability": "Wis", "classes": {"Jedi": true, "Noble": true, "Scoundrel": true, "Scout": true, "Soldier": true}, "_id": "3401683f-9a60-4920-86b2-d853a2214714"}
+{"name": "Persuasion", "ability": "Cha", "classes": {"Jedi": false, "Noble": true, "Scoundrel": true, "Scout": false, "Soldier": false}, "_id": "1f5f5b3d-44f3-4b4e-9882-8e606996f785"}
+{"name": "Pilot", "ability": "Dex", "classes": {"Jedi": true, "Noble": true, "Scoundrel": true, "Scout": true, "Soldier": true}, "_id": "fb22e133-9fd7-4bbc-96b0-2d36196891a5"}
+{"name": "Ride", "ability": "Dex", "classes": {"Jedi": false, "Noble": true, "Scoundrel": false, "Scout": false, "Soldier": false}, "_id": "30be9b3d-bc28-4bdf-ac7f-6708dcf720c5"}
+{"name": "Stealth", "ability": "Dex", "classes": {"Jedi": false, "Noble": false, "Scoundrel": true, "Scout": true, "Soldier": false}, "_id": "e3587b9b-9da9-4236-95a1-b7cacecbe46c"}
+{"name": "Survival", "ability": "Wis", "classes": {"Jedi": false, "Noble": false, "Scoundrel": false, "Scout": true, "Soldier": false}, "_id": "00316ef0-e0b9-4567-aaed-76bd7fa4f4d1"}
+{"name": "Swim", "ability": "Str", "classes": {"Jedi": false, "Noble": false, "Scoundrel": false, "Scout": true, "Soldier": true}, "_id": "1a7b91a8-f19c-47f0-b5be-cf2aafe703c3"}
+{"name": "Treat Injury", "ability": "Wis", "classes": {"Jedi": false, "Noble": true, "Scoundrel": false, "Scout": false, "Soldier": true}, "_id": "10301969-b7f2-4cb2-bd15-13c666619c32"}
+{"name": "Use Computer", "ability": "Int", "classes": {"Jedi": false, "Noble": true, "Scoundrel": true, "Scout": false, "Soldier": true}, "_id": "d982164a-ce94-4bce-8305-0d3104d12961"}
+{"name": "Use the Force", "ability": "Cha", "classes": {"Jedi": "Requires Force Sensitivity", "Noble": false, "Scoundrel": false, "Scout": false, "Soldier": false}, "_id": "279c3de9-4ea5-49a0-afa9-80b99c1cc01b"}

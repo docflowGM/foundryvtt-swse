@@ -1,0 +1,492 @@
+[
+  {
+    "name": "Battle Strike",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Swift",
+    "target": "You",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": 15, "effect": "+1 attack, +1d6 damage" },
+      { "dc": 20, "effect": "+1 attack, +2d6 damage" },
+      { "dc": 25, "effect": "+1 attack, +3d6 damage" }
+    ],
+    "force_point_effect": "Add +2d6 damage to your next attack",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["attack", "damage", "swift", "self-buff"]
+  },
+  {
+    "name": "Dark Rage",
+    "type": "Force",
+    "descriptor": ["Dark Side"],
+    "action": "Swift",
+    "target": "You",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": 15, "effect": "+2 melee attack and damage until end of turn" },
+      { "dc": 20, "effect": "+4 melee attack and damage until end of turn" },
+      { "dc": 25, "effect": "+6 melee attack and damage until end of turn" }
+    ],
+    "force_point_effect": "Extend rage duration until end of encounter",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["melee", "rage", "dark side", "swift"]
+  },
+  {
+    "name": "Farseeing",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Full-round",
+    "target": "One known creature",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "≥ Will Defense", "effect": "Sense life status, surroundings, emotions" }
+    ],
+    "force_point_effect": "Gain clear mental image of surroundings and nearby creatures",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["perception", "remote sensing", "utility"]
+  },
+  {
+    "name": "Force Disarm",
+    "type": "Force",
+    "descriptor": ["Telekinetic"],
+    "action": "Standard",
+    "target": "One creature within 12 squares",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "vs. Disarm rules", "effect": "Disarm target, weapon drops or flies to your hand" }
+    ],
+    "force_point_effect": "Damage weapon equal to Use the Force check result",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["telekinetic", "disarm", "weapon control"]
+  },
+  {
+    "name": "Force Grip",
+    "type": "Force",
+    "descriptor": ["Telekinetic"],
+    "action": "Standard",
+    "target": "One target within 12 squares",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": 15, "effect": "2d6 damage, target limited to swift action" },
+      { "dc": 20, "effect": "4d6 damage, target limited to swift action" },
+      { "dc": 25, "effect": "6d6 damage, target limited to swift action" }
+    ],
+    "force_point_effect": "Add +2d6 damage",
+    "maintainable": true,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["telekinetic", "damage", "control", "maintainable"]
+  },
+  {
+    "name": "Force Lightning",
+    "type": "Force",
+    "descriptor": ["Dark Side"],
+    "action": "Standard",
+    "target": "One target within 6 squares",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "≥ Reflex Defense", "effect": "8d6 damage, -1 condition step" },
+      { "dc": "< Reflex Defense", "effect": "4d6 damage, no condition change" }
+    ],
+    "force_point_effect": "Move target an additional -1 step on condition track",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["dark side", "damage", "condition", "ranged"]
+  },
+  {
+    "name": "Force Slam",
+    "type": "Force",
+    "descriptor": ["Telekinetic"],
+    "action": "Standard",
+    "target": "All targets in 6-square cone",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "≥ Fortitude Defense", "effect": "4d6 damage, knocked prone" },
+      { "dc": "< Fortitude Defense", "effect": "2d6 damage, not prone" }
+    ],
+    "force_point_effect": "Add +2d6 damage",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["area", "telekinetic", "damage", "prone"]
+  },
+  {
+    "name": "Force Stun",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Standard",
+    "target": "One creature within 6 squares",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "≥ Fortitude Defense", "effect": "-1 condition step" },
+      { "dc": "+5 over", "effect": "-2 condition steps" },
+      { "dc": "+10 over", "effect": "-3 condition steps" }
+    ],
+    "force_point_effect": "Move target an additional -1 step on condition track",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["stun", "condition", "control"]
+  },
+  {
+    "name": "Force Thrust",
+    "type": "Force",
+    "descriptor": ["Telekinetic"],
+    "action": "Standard",
+    "target": "One target within 12 squares",
+    "check_type": "Use the Force vs. Strength check",
+    "dc_chart": [
+      { "dc": "vs. Strength check", "effect": "Push 1 square +1 per 5 over; 1d6 damage if hitting object" }
+    ],
+    "force_point_effect": "Apply -5 penalty to target's Strength check and +2d6 damage on impact",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["telekinetic", "push", "control", "damage"]
+  },
+  {
+    "name": "Move Object",
+    "type": "Force",
+    "descriptor": ["Telekinetic"],
+    "action": "Standard",
+    "target": "One target within 12 squares",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": 15, "effect": "Move Medium object, 2d6 damage" },
+      { "dc": 20, "effect": "Move Large object, 4d6 damage" },
+      { "dc": 25, "effect": "Move Huge object, 6d6 damage" },
+      { "dc": 30, "effect": "Move Gargantuan object, 8d6 damage" },
+      { "dc": 35, "effect": "Move Colossal object, 10d6 damage" }
+    ],
+    "force_point_effect": "Increase size by one category and add +2d6 damage",
+    "maintainable": true,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["telekinetic", "object", "damage", "maintainable"]
+  }
+][
+  {
+    "name": "Rebuke",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Reaction",
+    "target": "Force power targeting you",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "≥ enemy Use the Force check", "effect": "Negate power and reflect it back on attacker" }
+    ],
+    "force_point_effect": "Gain +5 bonus to your Use the Force check",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["counter", "reaction", "negation"]
+  },
+  {
+    "name": "Search Your Feelings",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Full-round",
+    "target": "You",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": 15, "effect": "Sense if a specific action will lead to good or bad outcome within 24 hours" }
+    ],
+    "force_point_effect": "Gain clearer insight or additional detail",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["insight", "utility", "future sensing"]
+  },
+  {
+    "name": "Sever Force",
+    "type": "Force",
+    "descriptor": ["Dark Side"],
+    "action": "Standard",
+    "target": "One creature within 6 squares",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "≥ Will Defense", "effect": "Target loses Force powers and Force Point access for 24 hours" }
+    ],
+    "force_point_effect": "Extend duration to 1 week",
+    "maintainable": false,
+    "sourcebook": "Jedi Academy Training Manual",
+    "page": 32,
+    "tags": ["dark side", "debuff", "force suppression"]
+  },
+  {
+    "name": "Surge",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Standard",
+    "target": "You",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": 15, "effect": "+10 speed, +5 Jump checks until end of turn" },
+      { "dc": 20, "effect": "+10 speed, +10 Jump checks until end of turn" },
+      { "dc": 25, "effect": "+10 speed, +15 Jump checks until end of turn" }
+    ],
+    "force_point_effect": "Extend duration to 1 minute",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["mobility", "buff", "movement"]
+  },
+  {
+    "name": "Vital Transfer",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Standard",
+    "target": "One adjacent living creature",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": 15, "effect": "Heal target 1/2 your level in hit points; you take same amount as damage" },
+      { "dc": 20, "effect": "Heal target equal to your level; you take half that as damage" },
+      { "dc": 25, "effect": "Heal target 2× your level; you take 1/4 that as damage" }
+    ],
+    "force_point_effect": "You take no damage from transfer",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["healing", "transfer", "ally support"]
+  },
+  {
+    "name": "Mind Trick",
+    "type": "Force",
+    "descriptor": ["Mind-Affecting"],
+    "action": "Standard",
+    "target": "One creature within 12 squares",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "≥ Will Defense", "effect": "Target believes a simple lie or suggestion" }
+    ],
+    "force_point_effect": "Target suffers -5 penalty to Will Defense against this power",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["mind-affecting", "deception", "control"]
+  },
+  {
+    "name": "Negate Energy",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Reaction",
+    "target": "You",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "≥ damage dealt", "effect": "Negate energy damage from one attack" }
+    ],
+    "force_point_effect": "Redirect energy back at attacker (same damage)",
+    "maintainable": false,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["defense", "reaction", "energy"]
+  },
+  {
+    "name": "Force Shield",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Standard",
+    "target": "You",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": 15, "effect": "+5 to Reflex Defense until start of next turn" },
+      { "dc": 20, "effect": "+10 to Reflex Defense until start of next turn" },
+      { "dc": 25, "effect": "+15 to Reflex Defense until start of next turn" }
+    ],
+    "force_point_effect": "Extend duration to 1 minute",
+    "maintainable": true,
+    "sourcebook": "Jedi Academy Training Manual",
+    "page": 32,
+    "tags": ["defense", "reflex", "buff", "maintainable"]
+  },
+  {
+    "name": "Force Valor",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Standard",
+    "target": "All allies within 6 squares",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": 15, "effect": "+1 to attack rolls, skill checks, and all defenses for 1 minute" },
+      { "dc": 20, "effect": "+2 to same bonuses" },
+      { "dc": 25, "effect": "+3 to same bonuses" }
+    ],
+    "force_point_effect": "Extend duration to 10 minutes",
+    "maintainable": true,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 96,
+    "tags": ["buff", "team support", "defense", "maintainable"]
+  },
+  {
+    "name": "Force Cloak",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Standard",
+    "target": "You",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": 15, "effect": "Gain concealment until end of turn" },
+      { "dc": 20, "effect": "Gain total concealment until end of turn" },
+      { "dc": 25, "effect": "Gain total concealment and +5 Stealth until end of turn" }
+    ],
+    "force_point_effect": "Extend concealment duration to 1 minute",
+    "maintainable": true,
+    "sourcebook": "Jedi Academy Training Manual",
+    "page": 32,
+    "tags": ["stealth", "concealment", "buff", "maintainable"]
+  }
+][
+  {
+    "name": "Force Blast",
+    "type": "Force",
+    "descriptor": ["Telekinetic"],
+    "action": "Standard",
+    "target": "All targets in 6-square cone",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "≥ Reflex Defense", "effect": "6d6 damage, pushed 1 square" },
+      { "dc": "< Reflex Defense", "effect": "3d6 damage, no push" }
+    ],
+    "force_point_effect": "Push targets an additional square and add +2d6 damage",
+    "maintainable": false,
+    "sourcebook": "Jedi Academy Training Manual",
+    "page": 32,
+    "tags": ["area", "telekinetic", "damage", "push"]
+  },
+  {
+    "name": "Force Storm",
+    "type": "Force",
+    "descriptor": ["Dark Side"],
+    "action": "Standard",
+    "target": "All targets in 6-square radius burst",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "≥ Reflex Defense", "effect": "8d6 electricity damage, -1 condition step" },
+      { "dc": "< Reflex Defense", "effect": "4d6 electricity damage" }
+    ],
+    "force_point_effect": "Move targets an additional -1 step on condition track",
+    "maintainable": false,
+    "sourcebook": "The Force Unleashed Campaign Guide",
+    "page": 35,
+    "tags": ["area", "dark side", "electricity", "condition"]
+  },
+  {
+    "name": "Force Scream",
+    "type": "Force",
+    "descriptor": ["Dark Side"],
+    "action": "Standard",
+    "target": "All targets in 6-square cone",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "≥ Will Defense", "effect": "6d6 sonic damage, -1 condition step" },
+      { "dc": "< Will Defense", "effect": "3d6 sonic damage" }
+    ],
+    "force_point_effect": "Push targets back 1 square and add +2d6 damage",
+    "maintainable": false,
+    "sourcebook": "The Force Unleashed Campaign Guide",
+    "page": 35,
+    "tags": ["area", "dark side", "sonic", "condition"]
+  },
+  {
+    "name": "Force Sight",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Standard",
+    "target": "You",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": 15, "effect": "Ignore concealment and cover from Force-sensitive targets for 1 round" },
+      { "dc": 20, "effect": "Same effect for 1 minute" },
+      { "dc": 25, "effect": "Same effect for 10 minutes" }
+    ],
+    "force_point_effect": "Gain blindsight 6 squares for duration",
+    "maintainable": true,
+    "sourcebook": "Jedi Academy Training Manual",
+    "page": 32,
+    "tags": ["perception", "buff", "force-sensitive", "maintainable"]
+  },
+  {
+    "name": "Force Track",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Full-round",
+    "target": "One known creature",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "≥ Will Defense", "effect": "Sense direction and distance to target" }
+    ],
+    "force_point_effect": "Gain insight into target’s emotional state or surroundings",
+    "maintainable": false,
+    "sourcebook": "Jedi Academy Training Manual",
+    "page": 32,
+    "tags": ["tracking", "utility", "remote sensing"]
+  },
+  {
+    "name": "Force Weapon",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Swift",
+    "target": "One weapon you wield",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": 15, "effect": "+1d6 damage until end of turn" },
+      { "dc": 20, "effect": "+2d6 damage until end of turn" },
+      { "dc": 25, "effect": "+3d6 damage until end of turn" }
+    ],
+    "force_point_effect": "Extend duration to 1 minute",
+    "maintainable": true,
+    "sourcebook": "Jedi Academy Training Manual",
+    "page": 32,
+    "tags": ["weapon", "damage", "buff", "maintainable"]
+  },
+  {
+    "name": "Kinetic Combat",
+    "type": "Force",
+    "descriptor": ["Telekinetic"],
+    "action": "Swift",
+    "target": "One melee weapon you wield",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": 15, "effect": "+1 to attack rolls until end of turn" },
+      { "dc": 20, "effect": "+2 to attack rolls until end of turn" },
+      { "dc": 25, "effect": "+3 to attack rolls until end of turn" }
+    ],
+    "force_point_effect": "Extend duration to 1 minute",
+    "maintainable": true,
+    "sourcebook": "Jedi Academy Training Manual",
+    "page": 32,
+    "tags": ["telekinetic", "weapon", "attack", "buff", "maintainable"]
+  },
+  {
+    "name": "Malacia",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Standard",
+    "target": "One creature within 6 squares",
+    "check_type": "Use the Force",
+    "dc_chart": [
+      { "dc": "≥ Fortitude Defense", "effect": "Target is nauseated for 1 round" }
+    ],
+    "force_point_effect": "Extend nausea duration to 1 minute",
+    "maintainable": false,
+    "sourcebook": "Jedi Academy Training Manual",
+    "page": 32,
+    "tags": ["debuff", "nauseate", "control"]
+  },
+  {
+    "name": "Prescience",
+    "type": "Force",
+    "descriptor": [],
+    "action": "Swift",
+    "target": "You",
+    "check_type": "Use the Force",
+    "dc_chart": 
