@@ -6,7 +6,11 @@ import { SWSEVehicleSheet } from "./swse-vehicle.js";
 import { SWSEItemSheet } from "./swse-item.js";
 import "./swse-levelup.js";
 
-Hooks.once("init", () => {
+/**
+ * Star Wars Saga Edition (SWSE) — Initialization Script
+ * Handles system bootstrapping, template preloading, and enhanced validation logging.
+ */
+Hooks.once("init", async () => {
   console.log("SWSE | Initializing Star Wars Saga Edition (SWSE)");
 
   // -----------------------------
@@ -24,56 +28,82 @@ Hooks.once("init", () => {
   };
 
   // -----------------------------
+  // REGISTER ACTOR DOCUMENT CLASS
+  // -----------------------------
+  CONFIG.Actor.documentClass = SWSEActor;
+
+  // -----------------------------
   // HANDLEBARS HELPERS
   // -----------------------------
-  Handlebars.registerHelper("toUpperCase", function (str) {
-    if (typeof str !== "string") return "";
-    return str.toUpperCase();
-  });
-
-  Handlebars.registerHelper("array", function () {
-    return Array.prototype.slice.call(arguments, 0, -1);
-  });
-
-  // Crew name resolver
-  Handlebars.registerHelper("getCrewName", id => {
-    const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
-    return actor ? actor.name : "";
-  });
-Handlebars.registerHelper("json", context => JSON.stringify(context));
-
-  // Damage Threshold calculation
-  Handlebars.registerHelper("calculateDamageThreshold", function (actor) {
-    if (!actor?.system) return 0;
-
-    // Base Fortitude Defense
-    let fortitude = actor.system.defenses?.fortitude?.value ?? 10;
-
-    // Size modifier
-    const size = actor.system.traits?.size ?? "medium";
-    const sizeMods = {
-      tiny: -5,
-      small: 0,
-      medium: 0,
-      large: 5,
-      huge: 10,
-      gargantuan: 20,
-      colossal: 50
-    };
-    let sizeMod = sizeMods[size.toLowerCase()] ?? 0;
-
-    // Feat bonus (Improved Damage Threshold)
-    let featBonus = 0;
-    if (actor.items?.some(i => i.type === "feat" && i.name?.toLowerCase() === "improved damage threshold")) {
-      featBonus += 5;
-    }
-
-    return fortitude + sizeMod + featBonus;
-  });
+  registerSWSEHandlebarsHelpers();
 
   // -----------------------------
   // GAME SETTINGS
   // -----------------------------
+  registerSWSEGameSettings();
+
+  // -----------------------------
+  // REGISTER SHEETS
+  // -----------------------------
+  registerSWSENativeSheets();
+
+  // -----------------------------
+  // PRELOAD HANDLEBARS TEMPLATES
+  // -----------------------------
+  await preloadSWSEHandlebars();
+
+  console.log("SWSE | Initialization complete.");
+});
+
+/**
+ * Handle post-init operations once Foundry is ready.
+ */
+Hooks.once("ready", () => {
+  console.log("SWSE | System ready.");
+
+  enhanceValidationLogging(Actor, "Actor");
+  enhanceValidationLogging(Item, "Item");
+});
+
+
+// ============================================================
+// ===============  HELPER REGISTRATION  ======================
+// ============================================================
+
+function registerSWSEHandlebarsHelpers() {
+  Handlebars.registerHelper("toUpperCase", str => (typeof str === "string" ? str.toUpperCase() : ""));
+  Handlebars.registerHelper("array", function () {
+    return Array.prototype.slice.call(arguments, 0, -1);
+  });
+
+  Handlebars.registerHelper("json", context => JSON.stringify(context));
+
+  // Resolve crew name from Actor or Token ID
+  Handlebars.registerHelper("getCrewName", id => {
+    const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
+    return actor ? actor.name : "";
+  });
+
+  // Calculate Damage Threshold
+  Handlebars.registerHelper("calculateDamageThreshold", actor => {
+    if (!actor?.system) return 0;
+    const fort = actor.system.defenses?.fortitude?.value ?? 10;
+    const size = actor.system.traits?.size ?? "medium";
+
+    const sizeMods = {
+      tiny: -5, small: 0, medium: 0, large: 5, huge: 10, gargantuan: 20, colossal: 50
+    };
+    const sizeMod = sizeMods[size.toLowerCase()] ?? 0;
+
+    const featBonus = actor.items?.some(i => i.type === "feat" && i.name?.toLowerCase() === "improved damage threshold")
+      ? 5
+      : 0;
+
+    return fort + sizeMod + featBonus;
+  });
+}
+
+function registerSWSEGameSettings() {
   game.settings.register("swse", "forcePointBonus", {
     name: "Force Point Bonus",
     hint: "Extra modifier applied when spending a Force Point on a power.",
@@ -82,17 +112,14 @@ Handlebars.registerHelper("json", context => JSON.stringify(context));
     type: Number,
     default: 2
   });
+}
 
-  // -----------------------------
-  // ACTOR CONFIGURATION
-  // -----------------------------
-  CONFIG.Actor.documentClasses.character = SWSEActor;
-
-  // Unregister default sheets
+function registerSWSENativeSheets() {
+  // Unregister default Foundry sheets
   Actors.unregisterSheet("core", ActorSheet);
   Items.unregisterSheet("core", ItemSheet);
 
-  // Register custom sheets
+  // Register SWSE sheets
   Actors.registerSheet("swse", SWSEActorSheet, {
     types: ["character"],
     makeDefault: true,
@@ -115,37 +142,35 @@ Handlebars.registerHelper("json", context => JSON.stringify(context));
     makeDefault: true,
     label: "SWSE | Item"
   });
+}
 
-  // -----------------------------
-  // PRELOAD HANDLEBARS TEMPLATES
-  // -----------------------------
-  loadTemplates([
+async function preloadSWSEHandlebars() {
+  await loadTemplates([
     CONFIG.SWSE.templates.actor.character,
     CONFIG.SWSE.templates.actor.droid,
     CONFIG.SWSE.templates.actor.vehicle,
     CONFIG.SWSE.templates.item
   ]);
-});
+  console.log("SWSE | Handlebars templates preloaded.");
+}
 
-Hooks.once("ready", () => {
-  console.log("SWSE | System ready.");
+// ============================================================
+// ===============  VALIDATION DEBUG LOGGER  ==================
+// ============================================================
 
-  // -----------------------------
-  // DEBUGGING: Detailed validation error logging
-  // -----------------------------
-  const _actorValidate = Actor.prototype.validate;
-  Actor.prototype.validate = function (data, options) {
+function enhanceValidationLogging(klass, label) {
+  if (klass.prototype._swseValidated) return; // Avoid double wrapping
+  const original = klass.prototype.validate;
+
+  klass.prototype.validate = function (data, options) {
     try {
-      return _actorValidate.call(this, data, options);
+      return original.call(this, data, options);
     } catch (err) {
       if (err.name === "DataModelValidationError") {
-        console.group("⚠️ Actor Validation Error");
-        console.error("Actor instance:", this);
+        console.group(`⚠️ ${label} Validation Error`);
+        console.error(`${label} Instance:`, this);
         console.error("Data being validated:", data);
-        console.error("Options:", options);
-        console.error("Validation Error Object:", err);
         if (err.failures) {
-          console.error("Field-level Failures:");
           for (let f of err.failures) {
             console.error(`❌ Path: ${f.path}`, "Reason:", f.failure, "Value:", f.value);
           }
@@ -156,26 +181,5 @@ Hooks.once("ready", () => {
     }
   };
 
-  const _itemValidate = Item.prototype.validate;
-  Item.prototype.validate = function (data, options) {
-    try {
-      return _itemValidate.call(this, data, options);
-    } catch (err) {
-      if (err.name === "DataModelValidationError") {
-        console.group("⚠️ Item Validation Error");
-        console.error("Item instance:", this);
-        console.error("Data being validated:", data);
-        console.error("Options:", options);
-        console.error("Validation Error Object:", err);
-        if (err.failures) {
-          console.error("Field-level Failures:");
-          for (let f of err.failures) {
-            console.error(`❌ Path: ${f.path}`, "Reason:", f.failure, "Value:", f.value);
-          }
-        }
-        console.groupEnd();
-      }
-      throw err;
-    }
-  };
-});
+  klass.prototype._swseValidated = true;
+}
