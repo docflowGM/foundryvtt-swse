@@ -8,13 +8,17 @@ export class SWSEItemSheet extends ItemSheet {
       template: "systems/swse/templates/item/item-sheet.hbs",
       width: 520,
       height: 480,
-      tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "details"}]
+      tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "data"}],
+      resizable: true
     });
   }
 
   getData() {
     const context = super.getData();
     context.system = this.item.system;
+    context.labels = {
+      sheetTitle: this.item.name
+    };
     return context;
   }
 }

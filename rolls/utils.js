@@ -7,9 +7,9 @@ export function getAbilityMod(score) {
 }
 
 export function halfLevel(level) {
-  return Math.floor(level / 2);
+  return Math.floor((level || 1) / 2);
 }
 
 export function fullLevel(level) {
-  return level;
+  return level || 1;
 }

@@ -4,7 +4,7 @@
 export async function rollDice(formula, data = {}, label = "Roll") {
   try {
     const roll = await new Roll(formula, data).evaluate({async: true});
-    roll.toMessage({
+    await roll.toMessage({
       speaker: ChatMessage.getSpeaker(),
       flavor: label
     });

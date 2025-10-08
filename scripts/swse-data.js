@@ -5,7 +5,12 @@ const CACHE = {
   vehicles: null,
   feats: null,
   talents: null,
-  classes: null
+  classes: null,
+  species: null,
+  weapons: null,
+  armor: null,
+  equipment: null,
+  forcePowers: null
 };
 
 async function loadJson(filename) {
@@ -37,7 +42,38 @@ export async function getClasses() {
   return CACHE.classes;
 }
 
+export async function getSpecies() {
+  if (!CACHE.species) CACHE.species = await loadJson("species.json");
+  return CACHE.species;
+}
+
+export async function getWeapons() {
+  if (!CACHE.weapons) CACHE.weapons = await loadJson("weapons.json");
+  return CACHE.weapons;
+}
+
+export async function getArmor() {
+  if (!CACHE.armor) CACHE.armor = await loadJson("armor.json");
+  return CACHE.armor;
+}
+
+export async function getEquipment() {
+  if (!CACHE.equipment) CACHE.equipment = await loadJson("equipment.json");
+  return CACHE.equipment;
+}
+
+export async function getForcePowers() {
+  if (!CACHE.forcePowers) CACHE.forcePowers = await loadJson("forcepowers.json");
+  return CACHE.forcePowers;
+}
+
 export async function getClassData(className) {
   const classes = await getClasses();
-  return classes.find(c => c.class_name === className);
+  return classes.find(c => c.class_name === className || c.name === className);
+}
+
+export function clearCache() {
+  for (const key in CACHE) {
+    CACHE[key] = null;
+  }
 }

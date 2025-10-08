@@ -1,42 +1,26 @@
-// systems/swse/scripts/swse-levelup.js
+// ============================================
+// FILE: scripts/swse-levelup.js
+// ============================================
+import { getClasses } from "./swse-data.js";
 
-import { SWSEActor } from "./swse-actor.js";
-import { SWSEItemSheet } from "./swse-item.js";
-
-/**
- * Handles leveling up a character (adding class levels, feats, talents, etc.)
- * Patched to handle droids (no Constitution).
- */
 export class SWSELevelUp {
-  /**
-   * Open the Level Up dialog for a given actor.
-   * @param {Actor} actor - The actor leveling up.
-   */
   static async open(actor) {
-    const actorSys = actor.system;
-
-    // Determine available classes
-    const classPacks = game.packs.filter(p => p.metadata.name.includes("classes"));
-    const classItems = [];
-    for (let pack of classPacks) {
-      const content = await pack.getDocuments();
-      classItems.push(...content);
-    }
-
-    // Show available classes
-    const classOptions = classItems.map(i => `<option value="${i.id}">${i.name}</option>`).join("");
+    const classes = await getClasses();
+    const classOptions = classes.map(c => 
+      `<option value="${c.name}">${c.name}</option>`
+    ).join("");
 
     const dialogContent = `
       <form>
         <div class="form-group">
-          <label>${game.i18n.localize("SWSE.LevelUp.chooseClass")}</label>
+          <label>Choose Class</label>
           <select name="classId">${classOptions}</select>
         </div>
         <div class="form-group">
-          <label>${game.i18n.localize("SWSE.LevelUp.hpChoice")}</label>
+          <label>HP Method</label>
           <select name="hpChoice">
-            <option value="roll">${game.i18n.localize("SWSE.LevelUp.roll")}</option>
-            <option value="max">${game.i18n.localize("SWSE.LevelUp.max")}</option>
+            <option value="roll">Roll</option>
+            <option value="max">Max</option>
           </select>
         </div>
       </form>
@@ -44,11 +28,11 @@ export class SWSELevelUp {
 
     return new Promise(resolve => {
       new Dialog({
-        title: game.i18n.localize("SWSE.LevelUp.title"),
+        title: "Level Up",
         content: dialogContent,
         buttons: {
           ok: {
-            label: game.i18n.localize("SWSE.LevelUp.confirm"),
+            label: "Level Up",
             callback: async html => {
               const classId = html.find("[name=classId]").val();
               const hpChoice = html.find("[name=hpChoice]").val();
@@ -57,7 +41,7 @@ export class SWSELevelUp {
             }
           },
           cancel: {
-            label: game.i18n.localize("Cancel"),
+            label: "Cancel",
             callback: () => resolve(false)
           }
         },
@@ -66,72 +50,46 @@ export class SWSELevelUp {
     });
   }
 
-  /**
-   * Apply level up logic
-   */
-  static async apply(actor, classId, hpChoice) {
-    const actorSys = actor.system;
-
-    // Get class definition
-    const classItem = await fromUuid(`Compendium.${game.system.id}.swse-classes.${classId}`);
-    if (!classItem) {
-      ui.notifications.error("Class not found in compendium.");
+  static async apply(actor, className, hpChoice) {
+    const classes = await getClasses();
+    const classData = classes.find(c => c.name === className);
+    if (!classData) {
+      ui.notifications.error("Class not found!");
       return;
     }
 
-    const thisClassDef = classItem.system;
-
-    // --- ATTRIBUTE HANDLING ---
-    // utility to safely pull attribute values (handles droids w/o con)
-    function getAttrValue(actorSys, key, fallback = 10) {
-      const attPath = actorSys.attributes ?? {};
-      return attPath[key]?.value ?? attPath[key] ?? fallback;
-    }
-
-    // build attributes (skip con if droid)
-    const attributes = ["str", "dex", "int", "wis", "cha"];
-    if (actorSys.attributes?.con) {
-      attributes.splice(2, 0, "con");
-    }
-
-    const currentAttrs = {};
-    for (let a of attributes) {
-      currentAttrs[a] = getAttrValue(actorSys, a);
-    }
-
-    // --- HP CALCULATION ---
-    let hitDie = thisClassDef?.hitDie ?? 6;
-    const hasCon = !!actorSys.attributes?.con;
-
-    const conBefore = hasCon ? getAttrValue(actorSys, "con") : null;
-    const conModBefore = hasCon ? Math.floor((conBefore - 10) / 2) : 0;
-    const conAfter = conBefore; // milestone handled separately
-    const conModAfter = hasCon ? Math.floor((conAfter - 10) / 2) : 0;
-    const conModDelta = hasCon ? conModAfter - conModBefore : 0;
-
+    const hitDie = classData.hitDie || 6;
+    const conMod = actor.system.abilities.con?.mod || 0;
+    
     let hpGain = 0;
     if (hpChoice === "max") {
-      hpGain = hitDie + conModAfter;
+      hpGain = hitDie + conMod;
     } else {
-      const roll = await (new Roll(`1d${hitDie}`)).evaluate({ async: true });
-      hpGain = roll.total + conModAfter;
-      roll.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        flavor: `${actor.name} rolls hit points for new level`
+      const roll = await new Roll(`1d${hitDie}`).evaluate({async: true});
+      hpGain = roll.total + conMod;
+      await roll.toMessage({
+        speaker: ChatMessage.getSpeaker({actor}),
+        flavor: `HP Roll for new level`
       });
     }
 
-    // --- CLASS LEVEL ---
-    const newClassItem = classItem.toObject();
-    await actor.createEmbeddedDocuments("Item", [newClassItem]);
+    // Create class item
+    await actor.createEmbeddedDocuments("Item", [{
+      name: className,
+      type: "class",
+      system: { 
+        level: 1,
+        hitDie: `1d${hitDie}`
+      }
+    }]);
 
-    // --- UPDATE ACTOR HP ---
+    // Update actor
     await actor.update({
-      "system.hp.max": (actorSys.hp.max ?? 0) + hpGain,
-      "system.hp.value": (actorSys.hp.value ?? 0) + hpGain
+      "system.level": actor.system.level + 1,
+      "system.hp.max": actor.system.hp.max + hpGain,
+      "system.hp.value": actor.system.hp.value + hpGain
     });
 
-    // --- NOTIFICATION ---
     ui.notifications.info(`${actor.name} leveled up! Gained ${hpGain} HP.`);
   }
 }
