@@ -33,24 +33,7 @@
     "styles/swse-vehicles.css"
   ],
 
-  "packs": [
-    { "name": "swse-classes", "label": "SWSE Classes", "path": "data/classes.json", "type": "Item" },
-    { "name": "swse-equipment", "label": "SWSE Equipment", "path": "data/equipment.json", "type": "Item" },
-    { "name": "swse-feats", "label": "SWSE Feats", "path": "data/feats.json", "type": "Item" },
-    { "name": "swse-talents", "label": "SWSE Talents", "path": "data/talents.json", "type": "Item" },
-    { "name": "swse-vehicles", "label": "SWSE Vehicles", "path": "data/vehicles.json", "type": "Actor" },
-    { "name": "swse-armor-light", "label": "SWSE Armor (Light)", "path": "data/armor/light.json", "type": "Item" },
-    { "name": "swse-armor-heavy", "label": "SWSE Armor (Heavy)", "path": "data/armor/heavy.json", "type": "Item" },
-    { "name": "swse-droids", "label": "SWSE Droids", "path": "data/droids.json", "type": "Actor" },
-    { "name": "swse-skills", "label": "SWSE Skills", "path": "data/skills.json", "type": "Item" },
-    { "name": "swse-attributes", "label": "SWSE Attributes", "path": "data/attributes.json", "type": "Item" },
-    { "name": "swse-combat-actions", "label": "SWSE Combat Actions", "path": "data/combat-actions.json", "type": "Item" },
-    { "name": "swse-conditions", "label": "SWSE Conditions", "path": "data/conditions.json", "type": "Item" },
-    { "name": "swse-extra-skill-uses", "label": "SWSE Extra Skill Uses", "path": "data/extraskilluses.json", "type": "Item" },
-    { "name": "swse-force-powers", "label": "SWSE Force Powers", "path": "data/forcepowers.json", "type": "Item" },
-    { "name": "swse-special-combat-conditions", "label": "SWSE Special Combat Conditions", "path": "data/special-combat-condition.json", "type": "Item" },
-    { "name": "swse-weapons", "label": "SWSE Weapons", "path": "data/weapons.json", "type": "Item" }
-  ],
+  "packs": [],
 
   "languages": [
     { "lang": "en", "name": "English", "path": "lang/en.json" }
@@ -59,12 +42,23 @@
   "grid": { "distance": 1, "units": "m" },
   "initiative": "1d20",
 
-  "actorTypes": ["character", "droid", "vehicle", "npc"],
+  "actorTypes": ["character", "droid", "npc", "vehicle"],
+  "itemTypes": [
+    "class",
+    "feat",
+    "talent",
+    "forcepower",
+    "equipment",
+    "weapon",
+    "armor",
+    "skill",
+    "attribute",
+    "condition",
+    "combat-action",
+    "extra-skill-use"
+  ],
+
   "primaryActorType": "character",
-
   "primaryTokenAttribute": "system.hp.value",
-  "secondaryTokenAttribute": "system.defenses.reflex.total",
-
-  "background": ""
+  "secondaryTokenAttribute": "system.defenses.reflex.total"
 }
-
