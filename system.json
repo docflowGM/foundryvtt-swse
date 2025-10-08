@@ -65,6 +65,6 @@
   "primaryTokenAttribute": "system.hp.value",
   "secondaryTokenAttribute": "system.defenses.reflex.total",
 
-  "background": "assets/ui/background.jpg",
+  "background": "",
   "socket": true
 }
