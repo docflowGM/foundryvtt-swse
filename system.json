@@ -65,4 +65,5 @@
   "primaryTokenAttribute": "system.hp.value",
   "secondaryTokenAttribute": "system.defenses.reflex.total",
 
+  "background": ""
 }
