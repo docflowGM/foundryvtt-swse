@@ -1,51 +1,51 @@
 /**
  * Star Wars Saga Edition - FoundryVTT System
- * Master entry point for SWSE system initialization and module imports.
+ * Master Entry Point for SWSE System Initialization
  *
  * Handles:
- *  - Core system initialization and registration
- *  - Modular imports for actors, items, droids, and vehicles
- *  - Template preloading and data management
- *  - Dice utilities and character progression systems
+ *  - Core system registration and lifecycle hooks
+ *  - Modular imports (actors, items, droids, vehicles)
+ *  - Template and data preloading
+ *  - Dice utilities and store UI
  */
 
 // -----------------------------
 // Core Imports
 // -----------------------------
 import * as System from "./swse.js";
-import * as Init from "../scripts/init.js";
-import * as SWSEData from "../scripts/swse-data.js";
+import * as Init from "./scripts/init.js";
+import * as SWSEData from "./scripts/swse-data.js";
 
 // -----------------------------
 // Actor & Entity Scripts
 // -----------------------------
-import * as Actor from "../scripts/swse-actor.js";
-import * as Droid from "../scripts/swse-droid.js";
-import * as Vehicle from "../scripts/swse-vehicle.js";
+import * as Actor from "./scripts/swse-actor.js";
+import * as Droid from "./scripts/swse-droid.js";
+import * as Vehicle from "./scripts/swse-vehicle.js";
 
 // -----------------------------
 // Item Logic
 // -----------------------------
-import * as Item from "../scripts/swse-item.js";
+import * as Item from "./scripts/swse-item.js";
 
 // -----------------------------
 // Character Creation & Leveling
 // -----------------------------
-import * as LevelUp from "../scripts/swse-levelup.js";
-import * as Races from "../scripts/races.js";
-import * as CharGen from "../scripts/chargen.js";
+import * as LevelUp from "./scripts/swse-levelup.js";
+import * as Races from "./scripts/races.js";
+import * as CharGen from "./scripts/chargen.js";
 
 // -----------------------------
 // Dice Utilities
 // -----------------------------
-import * as DiceUtils from "../scripts/dice-utils.js";
-import * as DiceRoller from "../scripts/diceroller.js";
+import * as DiceUtils from "./scripts/dice-utils.js";
+import * as DiceRoller from "./scripts/diceroller.js";
 
 // -----------------------------
 // Template & Data Loading
 // -----------------------------
-import * as LoadTemplates from "../scripts/load-templates.js";
-import * as ImportData from "../scripts/import-data.js";
+import * as LoadTemplates from "./scripts/load-templates.js";
+import * as ImportData from "./scripts/import-data.js";
 
 // -----------------------------
 // Rolls Subsystem
@@ -53,17 +53,32 @@ import * as ImportData from "../scripts/import-data.js";
 import * as Rolls from "./rolls/index.js";
 
 // -----------------------------
-// System Initialization Hook
+// Store (GM/Player shop system)
+// -----------------------------
+import { SWSEStore } from "./store/store.js";
+
+// -----------------------------
+// Initialization Hook
 // -----------------------------
 Hooks.once("init", async () => {
   console.log("SWSE | Initializing Star Wars Saga Edition system...");
 
-  // Register system settings, custom entities, and sheet classes
+  // System registration
   if (System?.registerSystem) System.registerSystem();
 
-  // Load templates and data
-  await LoadTemplates.preloadHandlebarsTemplates?.();
-  await ImportData.loadDefaultData?.();
+  // Template loading
+  if (typeof LoadTemplates.preloadHandlebarsTemplates === "function") {
+    await LoadTemplates.preloadHandlebarsTemplates();
+  }
+
+  // Import base data sets
+  if (typeof ImportData.loadDefaultData === "function") {
+    await ImportData.loadDefaultData();
+  }
+
+  // Optional: Register custom actor and item classes
+  if (Actor?.SWSEActor) CONFIG.Actor.documentClass = Actor.SWSEActor;
+  if (Item?.SWSEItem) CONFIG.Item.documentClass = Item.SWSEItem;
 
   console.log("SWSE | System initialization complete.");
 });
@@ -71,12 +86,20 @@ Hooks.once("init", async () => {
 // -----------------------------
 // Ready Hook (post-init setup)
 // -----------------------------
-Hooks.once("ready", async () => {
-  console.log("SWSE | System ready. May the Force be with you.");
+Hooks.once("ready", () => {
+  console.log("SWSE | SWSE system ready. May the Force be with you.");
+
+  // Initialize game namespace
+  game.swse = game.swse || {};
+
+  // Attach store access for GMs and players
+  game.swse.openStore = () => new SWSEStore().render(true);
+
+  console.log("SWSE | SWSE Store ready. Use game.swse.openStore() to open the store UI.");
 });
 
 // -----------------------------
-// Export System Namespace
+// Export Modules for External Use
 // -----------------------------
 export {
   System,
@@ -93,15 +116,6 @@ export {
   DiceRoller,
   LoadTemplates,
   ImportData,
-  Rolls
+  Rolls,
+  SWSEStore
 };
-// in system/index.js
-import { SWSEStore } from "./store/store.js";
-
-Hooks.once("ready", () => {
-  game.swse = game.swse || {};
-  game.swse.openStore = () => new SWSEStore().render(true);
-
-  // optional macro
-  console.log("SWSE Store ready. Use game.swse.openStore() to open the store.");
-});
