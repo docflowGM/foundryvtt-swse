@@ -13,15 +13,14 @@ export const SWSE = {};
 SWSE.actorTypes = ["character", "droid", "vehicle"];
 SWSE.itemTypes = ["armor", "class", "equipment", "feat", "forcepower", "talent", "weapon"];
 
-SWSE.CONFIG = {
-  actorTypes: SWSE.actorTypes,
-  itemTypes: SWSE.itemTypes
-};
-
 SWSE.registerSheets = function () {
-  Actors.unregisterSheet("core", foundry.applications.sheets.foundry.applications.sheets.foundry.applications.sheets.ActorSheet);
-  Items.unregisterSheet("core", foundry.applications.sheets.foundry.applications.sheets.foundry.applications.sheets.ItemSheet);
+  console.log("SWSE | Registering custom sheets...");
 
+  // Unregister core sheets
+  Actors.unregisterSheet("core", ActorSheet);
+  Items.unregisterSheet("core", ItemSheet);
+
+  // Register custom actor sheets
   Actors.registerSheet("swse", SWSEActorSheet, {
     types: ["character"],
     label: "SWSE Character Sheet",
@@ -38,6 +37,7 @@ SWSE.registerSheets = function () {
     label: "SWSE Vehicle Sheet"
   });
 
+  // Register custom item sheet
   Items.registerSheet("swse", SWSEItemSheet, {
     types: SWSE.itemTypes,
     label: "SWSE Item Sheet",
