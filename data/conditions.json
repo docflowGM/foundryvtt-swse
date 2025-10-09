@@ -2,11 +2,11 @@
   {
     "id": "normal",
     "name": "Normal",
-    "description": "No penalties or special status.",
+    "description": "No penalties.",
     "effects": []
   },
   {
-    "id": "ct_-1",
+    "id": "ct_minus_1",
     "name": "Condition Track -1",
     "description": "-1 penalty to all defenses and attack rolls.",
     "effects": [
@@ -21,7 +21,7 @@
     ]
   },
   {
-    "id": "ct_-2",
+    "id": "ct_minus_2",
     "name": "Condition Track -2",
     "description": "-2 penalty to all defenses and attack rolls.",
     "effects": [
@@ -36,9 +36,9 @@
     ]
   },
   {
-    "id": "ct_-5",
+    "id": "ct_minus_5",
     "name": "Condition Track -5",
-    "description": "-5 penalty to all defenses; -5 penalty on attack rolls, ability checks, and skill checks.",
+    "description": "-5 penalty to defenses, attacks, and checks.",
     "effects": [
       {
         "type": "defense_penalty",
@@ -49,19 +49,15 @@
         "value": -5
       },
       {
-        "type": "ability_checks_penalty",
-        "value": -5
-      },
-      {
-        "type": "skill_checks_penalty",
+        "type": "skill_penalty",
         "value": -5
       }
     ]
   },
   {
-    "id": "ct_-10",
+    "id": "ct_minus_10",
     "name": "Condition Track -10",
-    "description": "Move at half speed; -10 penalty to all defenses; -10 penalty on attack rolls, ability checks, and skill checks.",
+    "description": "Half speed, -10 to all defenses, attacks, and checks.",
     "effects": [
       {
         "type": "movement_multiplier",
@@ -76,11 +72,7 @@
         "value": -10
       },
       {
-        "type": "ability_checks_penalty",
-        "value": -10
-      },
-      {
-        "type": "skill_checks_penalty",
+        "type": "skill_penalty",
         "value": -10
       }
     ]
@@ -88,7 +80,7 @@
   {
     "id": "helpless",
     "name": "Helpless",
-    "description": "Helpless: unconscious or disabled. Cannot act.",
+    "description": "Cannot act. DEX bonus to Reflex = 0.",
     "effects": [
       {
         "type": "helpless",
@@ -97,41 +89,19 @@
       {
         "type": "dex_as_zero",
         "value": true
-      },
-      {
-        "type": "cannot_act",
-        "value": true
       }
     ]
   },
   {
     "id": "prone",
     "name": "Prone",
-    "description": "Lying on the ground. -5 to melee attacks, +5 to ranged defense against ranged attacks, -5 to defense against melee.",
+    "description": "-5 to melee attacks, +5 to ranged defense vs ranged, -5 vs melee.",
     "effects": []
   },
   {
-    "id": "flat-footed",
+    "id": "flat_footed",
     "name": "Flat-footed",
-    "description": "Lose Dexterity bonus to Reflex Defense.",
-    "effects": []
-  },
-  {
-    "id": "stunned",
-    "name": "Stunned",
-    "description": "Can take no actions.",
-    "effects": []
-  },
-  {
-    "id": "unconscious",
-    "name": "Unconscious",
-    "description": "Helpless and unaware of surroundings.",
-    "effects": []
-  },
-  {
-    "id": "dying",
-    "name": "Dying",
-    "description": "At 0 HP or below.",
+    "description": "Lose DEX bonus to Reflex Defense.",
     "effects": []
   }
 ]

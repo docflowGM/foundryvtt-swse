@@ -1,17 +1,61 @@
 {
   "Actor": {
-    "types": ["character", "droid", "npc", "vehicle"],
+    "types": [
+      "character",
+      "droid",
+      "npc",
+      "vehicle"
+    ],
     "templates": {
       "base": {
         "abilities": {
-          "str": { "base": 10, "racial": 0, "temp": 0, "total": 10, "mod": 0 },
-          "dex": { "base": 10, "racial": 0, "temp": 0, "total": 10, "mod": 0 },
-          "con": { "base": 10, "racial": 0, "temp": 0, "total": 10, "mod": 0 },
-          "int": { "base": 10, "racial": 0, "temp": 0, "total": 10, "mod": 0 },
-          "wis": { "base": 10, "racial": 0, "temp": 0, "total": 10, "mod": 0 },
-          "cha": { "base": 10, "racial": 0, "temp": 0, "total": 10, "mod": 0 }
+          "str": {
+            "base": 10,
+            "racial": 0,
+            "temp": 0,
+            "total": 10,
+            "mod": 0
+          },
+          "dex": {
+            "base": 10,
+            "racial": 0,
+            "temp": 0,
+            "total": 10,
+            "mod": 0
+          },
+          "con": {
+            "base": 10,
+            "racial": 0,
+            "temp": 0,
+            "total": 10,
+            "mod": 0
+          },
+          "int": {
+            "base": 10,
+            "racial": 0,
+            "temp": 0,
+            "total": 10,
+            "mod": 0
+          },
+          "wis": {
+            "base": 10,
+            "racial": 0,
+            "temp": 0,
+            "total": 10,
+            "mod": 0
+          },
+          "cha": {
+            "base": 10,
+            "racial": 0,
+            "temp": 0,
+            "total": 10,
+            "mod": 0
+          }
         },
-        "hp": { "value": 1, "max": 1 },
+        "hp": {
+          "value": 1,
+          "max": 1
+        },
         "defenses": {
           "reflex": {
             "ability": "dex",
@@ -39,31 +83,54 @@
             "total": 10
           }
         },
-        "initiative": { "misc": 0, "total": 0 },
+        "initiative": {
+          "misc": 0,
+          "total": 0
+        },
         "level": 1,
         "bab": 0,
         "size": "medium",
-        "speed": { "base": 6, "total": 6 },
+        "speed": {
+          "base": 6,
+          "total": 6
+        },
         "conditionTrack": "normal",
         "damageThreshold": 10
       }
     },
     "character": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "race": "custom",
       "species": "",
       "class": "",
-      "forcePoints": { "value": 1, "max": 1 },
-      "destinyPoints": { "value": 0, "max": 0 },
-      "freeForcePowers": { "current": 0, "max": 0 },
-      "secondWind": { "uses": 1, "healing": 0 },
+      "forcePoints": {
+        "value": 1,
+        "max": 1
+      },
+      "destinyPoints": {
+        "value": 0,
+        "max": 0
+      },
+      "freeForcePowers": {
+        "current": 0,
+        "max": 0
+      },
+      "secondWind": {
+        "uses": 1,
+        "healing": 0
+      },
       "skills": {},
       "customSkills": [],
       "feats": [],
       "talents": [],
       "weapons": [],
       "credits": 1000,
-      "xp": { "value": 0, "required": 1000 },
+      "xp": {
+        "value": 0,
+        "required": 1000
+      },
       "destiny": "",
       "bio": "",
       "notes": "",
@@ -74,7 +141,9 @@
       }
     },
     "droid": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "species": "droid",
       "subtype": "",
       "class": "",
@@ -88,7 +157,9 @@
       "notes": ""
     },
     "npc": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "species": "",
       "class": "",
       "subtype": "",
@@ -104,9 +175,18 @@
     "vehicle": {
       "model": "",
       "size": "huge",
-      "speed": { "base": 10, "total": 10 },
-      "shields": { "value": 0, "max": 0 },
-      "hull": { "value": 0, "max": 0 },
+      "speed": {
+        "base": 10,
+        "total": 10
+      },
+      "shields": {
+        "value": 0,
+        "max": 0
+      },
+      "hull": {
+        "value": 0,
+        "max": 0
+      },
       "sr": 0,
       "crew": {
         "pilot": "",
@@ -116,13 +196,34 @@
         "gunners": []
       },
       "abilities": {
-        "str": { "base": 10, "mod": 0 },
-        "dex": { "base": 10, "mod": 0 },
-        "int": { "base": 10, "mod": 0 }
+        "str": {
+          "base": 10,
+          "mod": 0
+        },
+        "dex": {
+          "base": 10,
+          "mod": 0
+        },
+        "int": {
+          "base": 10,
+          "mod": 0
+        }
       },
       "defenses": {
-        "reflex": { "ability": "dex", "class": 0, "armor": 0, "misc": 0, "total": 10 },
-        "fortitude": { "ability": "str", "class": 0, "armor": 0, "misc": 0, "total": 10 }
+        "reflex": {
+          "ability": "dex",
+          "class": 0,
+          "armor": 0,
+          "misc": 0,
+          "total": 10
+        },
+        "fortitude": {
+          "ability": "str",
+          "class": 0,
+          "armor": 0,
+          "misc": 0,
+          "total": 10
+        }
       },
       "bab": 0,
       "weapons": [],
@@ -132,7 +233,10 @@
       "hyperdrive": "",
       "cost": 0,
       "notes": "",
-      "initiative": { "misc": 0, "total": 0 },
+      "initiative": {
+        "misc": 0,
+        "total": 0
+      },
       "damageThreshold": 10,
       "skills": {}
     }
@@ -161,7 +265,9 @@
       }
     },
     "class": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "hitDie": "1d6",
       "level": 1,
       "baseAttackProgression": "medium",
@@ -176,7 +282,9 @@
       "features": []
     },
     "feat": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "type": "General",
       "prerequisites": [],
       "benefit": "",
@@ -186,7 +294,9 @@
       "bonusFeatFor": []
     },
     "talent": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "tree": "",
       "class": [],
       "prerequisite": "",
@@ -194,7 +304,9 @@
       "tags": []
     },
     "forcepower": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "type": "Force",
       "descriptor": [],
       "action": "Standard Action",
@@ -204,10 +316,15 @@
       "forcePointEffect": "",
       "maintainable": false,
       "tags": [],
-      "uses": { "current": 1, "max": 1 }
+      "uses": {
+        "current": 1,
+        "max": 1
+      }
     },
     "equipment": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "category": "gear",
       "cost": 0,
       "weight": 0,
@@ -217,7 +334,9 @@
       "tags": []
     },
     "weapon": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "category": "ranged",
       "weaponType": "blaster",
       "size": "medium",
@@ -234,7 +353,9 @@
       "proficiency": "simple"
     },
     "armor": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "category": "light",
       "defenseBonus": 2,
       "maxDex": null,
@@ -247,35 +368,65 @@
       "equipped": false
     },
     "skill": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "attribute": "int",
       "trainedOnly": false,
       "roll": "1d20 + modifier",
       "use": []
     },
     "attribute": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "aliases": [],
       "relatedSkills": [],
       "modifierFormula": "(value - 10) / 2",
       "modifierNotes": ""
     },
     "condition": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "conditionTrack": [],
       "effects": []
     },
     "combat-action": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "actionCost": "Standard Action",
       "notes": "",
       "relatedSkills": []
     },
     "extra-skill-use": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "roll": "",
       "outcome": "",
       "when": ""
+    }
+  },
+  "skills": {
+    "acrobatics": {
+      "ability": "dex",
+      "trained": false,
+      "focus": false,
+      "label": "Acrobatics"
+    },
+    "climb": {
+      "ability": "str",
+      "trained": false,
+      "focus": false,
+      "label": "Climb"
+    },
+    "useTheForce": {
+      "ability": "cha",
+      "trained": true,
+      "focus": false,
+      "label": "Use the Force"
     }
   }
 }
