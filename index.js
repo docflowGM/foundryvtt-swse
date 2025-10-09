@@ -9,6 +9,7 @@ import { SWSEItemSheet } from "./scripts/swse-item.js";
 import { preloadHandlebarsTemplates } from "./scripts/load-templates.js";
 import { SWSEStore } from "./store/store.js";
 import * as SWSEData from "./scripts/swse-data.js";
+import { WorldDataLoader } from "./scripts/world-data-loader.js";
 
 Hooks.once("init", async () => {
   console.log("SWSE | Initializing Star Wars Saga Edition system...");
@@ -182,3 +183,17 @@ async function loadVehicleTemplates() {
     game.swseVehicles = { templates: [] };
   }
 }
+Hooks.once("init", () => {
+  game.settings.register("swse", "dataLoaded", {
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+});
+
+Hooks.once("ready", async () => {
+  if (game.user.isGM) {
+    await WorldDataLoader.autoLoad();
+  }
+});
