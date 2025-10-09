@@ -183,3 +183,19 @@ function enhanceValidationLogging(klass, label) {
 
   klass.prototype._swseValidated = true;
 }
+
+
+// --- Math Helper for Handlebars (Fix Vehicle Template Error) ---
+if (typeof Handlebars !== "undefined") {
+  Handlebars.registerHelper('math', function(lvalue, operator, rvalue) {
+    lvalue = parseFloat(lvalue);
+    rvalue = parseFloat(rvalue);
+    return {
+      '+': lvalue + rvalue,
+      '-': lvalue - rvalue,
+      '*': lvalue * rvalue,
+      '/': lvalue / rvalue,
+      '%': lvalue % rvalue
+    }[operator];
+  });
+}
