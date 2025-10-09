@@ -22,7 +22,7 @@
   "bugs": "https://github.com/docflowGM/foundryvtt-swse/issues",
   "changelog": "CHANGELOG.md",
   "url": "https://github.com/docflowGM/foundryvtt-swse",
-
+  
   "manifest": "https://docflow.forge-vtt.com/systems/swse/system.json",
   "download": "",
 
@@ -47,8 +47,9 @@
   },
 
   "socket": true,
+  
   "initiative": "1d20 + @abilities.dex.mod + @initiative.misc",
-
+  
   "grid": {
     "distance": 1.5,
     "units": "m",
@@ -59,7 +60,6 @@
   "secondaryTokenAttribute": "defenses.reflex",
 
   "background": "ui/swse-background.webp",
-  "icon": "assets/images/ui/title-logo.png",
 
   "media": [
     {
