@@ -21,8 +21,8 @@
   "bugs": "https://github.com/docflowGM/foundryvtt-swse/issues",
   "changelog": "https://github.com/docflowGM/foundryvtt-swse/blob/main/CHANGELOG.md",
   "url": "https://github.com/docflowGM/foundryvtt-swse",
-  "manifest": "https://docflow.forge-vtt.com/systems/swse/system.json",
-  "download": "https://docflow.forge-vtt.com/systems/swse/swse-latest.zip",
+  "manifest": "",
+  "download": "",
   "esmodules": [
     "index.js"
   ],
