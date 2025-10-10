@@ -21,16 +21,20 @@
   "bugs": "https://github.com/docflowGM/foundryvtt-swse/issues",
   "changelog": "https://github.com/docflowGM/foundryvtt-swse/blob/main/CHANGELOG.md",
   "url": "https://github.com/docflowGM/foundryvtt-swse",
-  "manifest": "",
-  "download": "",
+
+  "manifest": "https://docflow.forge-vtt.com/systems/swse/system.json",
+  "download": "https://docflow.forge-vtt.com/systems/swse/swse.zip",
+
   "esmodules": [
     "index.js"
   ],
+
   "styles": [
     "styles/swse-holo.css",
     "styles/swse-components.css",
     "styles/swse-fixes.css"
   ],
+
   "languages": [
     {
       "lang": "en",
@@ -38,24 +42,30 @@
       "path": "lang/en.json"
     }
   ],
+
   "relationships": {
     "systems": [],
     "requires": []
   },
+
   "socket": true,
   "initiative": "1d20 + @abilities.dex.mod + @initiative.misc",
+
   "grid": {
     "distance": 1.5,
     "units": "m",
     "type": 1
   },
+
   "primaryTokenAttribute": "hp",
   "secondaryTokenAttribute": "defenses.reflex",
-  "background": "assets/images/ui/sheet-background.png",
+
+  "background": "ui/sheet-background.png",
+
   "media": [
     {
       "type": "cover",
-      "url": "ui/swse-cover.webp"
+      "url": "ui/title-logo.png"
     },
     {
       "type": "screenshot",
