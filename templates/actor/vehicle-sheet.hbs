@@ -1,146 +1,27 @@
-<form class="{{cssClass}} sheet-actor flexcol" autocomplete="off">
-  <header class="sheet-header flexrow">
-    <img class="profile-img" src="{{actor.img}}" title="{{actor.name}}" />
-    <div class="header-fields flexcol">
-      <h1 class="char-name">
-        <input name="name" type="text" value="{{actor.name}}" placeholder="Vehicle Name"/>
-      </h1>
-
-      <div class="form-group inline-group">
-        <label>Model</label>
-        <input name="system.model" type="text" value="{{system.model}}" />
-      </div>
-
-      <div class="form-group inline-group">
-        <label>Size</label>
-        <select name="system.size">
-          {{#each (array "tiny" "small" "medium" "large" "huge" "gargantuan") as |sz|}}
-            <option value="{{sz}}" {{#if (eq system.size sz)}}selected{{/if}}>{{sz}}</option>
-          {{/each}}
-        </select>
-      </div>
-
-      <div class="form-group inline-group">
-        <label>Speed</label>
-        <input name="system.speed.base" type="number" min="0" value="{{system.speed.base}}" />
-        <span>{{system.speed.total}}</span>
-      </div>
-
-      <div class="form-group inline-group">
-        <label>Shields</label>
-        <input name="system.shields.value" type="number" min="0" max="{{system.shields.max}}" value="{{system.shields.value}}" />
-        /
-        <input name="system.shields.max" type="number" min="0" value="{{system.shields.max}}" />
-      </div>
-
-      <div class="form-group inline-group">
-        <label>Hull</label>
-        <input name="system.hull.value" type="number" min="0" max="{{system.hull.max}}" value="{{system.hull.value}}" />
-        /
-        <input name="system.hull.max" type="number" min="0" value="{{system.hull.max}}" />
-      </div>
-    </div>
+<form class="{{cssClass}} flexcol" autocomplete="off">
+  <header class="sheet-header">
+    <input name="name" type="text" value="{{actor.name}}" placeholder="Vehicle Name"/>
+    <img class="profile-img" src="{{actor.img}}" data-edit="img"/>
   </header>
-
-  {{!-- Tabs --}}
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item active" data-tab="main">Main</a>
+    <a class="item" data-tab="main">Main</a>
     <a class="item" data-tab="crew">Crew</a>
-    <a class="item" data-tab="systems">Systems</a>
-    <a class="item" data-tab="gm">GM Options</a>
   </nav>
-
-  <section class="sheet-body flexcol">
-    {{!-- Main Tab --}}
-    <div class="tab active" data-tab="main">
-      <h2>Main</h2>
-      {{!-- Could duplicate Damage Threshold/Second Wind etc. if desired --}}
-      <p>Use the Crew tab to assign crew and make rolls.</p>
-    </div>
-
-    {{!-- Crew Tab --}}
-    <div class="tab" data-tab="crew">
-      <h2>Crew Assignments</h2>
-
-      {{!-- Pilot Slot --}}
-      <div class="crew-slot" data-slot="pilot">
-        <label>Pilot</label>
-        <div class="crew-drop" data-slot="pilot">
-          {{#if system.crew.pilot}}
-            {{getCrewName system.crew.pilot}}
-          {{else}}
-            <em>Drop Character Here</em>
-          {{/if}}
-        </div>
-        <button type="button" class="roll-pilot" {{#unless system.crew.pilot}}disabled{{/unless}}>
-          Pilot Check
-        </button>
-      </div>
-
-      {{!-- Shields Slot --}}
-      <div class="crew-slot" data-slot="shields">
-        <label>Shields</label>
-        <div class="crew-drop" data-slot="shields">
-          {{#if system.crew.shields}}
-            {{getCrewName system.crew.shields}}
-          {{else}}
-            <em>Drop Character Here</em>
-          {{/if}}
-        </div>
-        <button type="button" class="roll-shields" {{#unless system.crew.shields}}disabled{{/unless}}>
-          Regenerate Shields
-        </button>
-      </div>
-
-      {{!-- Weapon Hardpoints --}}
-      <h3>Weapon Hardpoints</h3>
-      {{#each system.weapons as |wp idx|}}
-        <div class="crew-slot weapon-slot" data-index="{{idx}}">
-          <label>{{wp.name || "Weapon "+(idx+1)}}</label>
-
-          <div class="crew-drop" data-slot="weapons" data-index="{{idx}}">
-            {{#if wp.gunner}}
-              {{getCrewName wp.gunner}}
-            {{else}}
-              <em>Drop Character Here</em>
-            {{/if}}
-          </div>
-
-          <div class="form-group inline-group">
-            <label>Use Pilot?</label>
-            <input type="checkbox" name="system.weapons.{{idx}}.usePilot" {{#if wp.usePilot}}checked{{/if}} />
-          </div>
-
-          <button type="button" class="roll-gunner" {{#unless wp.gunner}}disabled{{/unless}}>
-            Fire
-          </button>
-        </div>
-      {{/each}}
-    </div>
-
-    {{!-- Systems Tab (show sensors, comms, engineering controls—or leave blank) --}}
-    <div class="tab" data-tab="systems">
-      <h2>Engineering</h2>
-      <div class="crew-slot" data-slot="engineer">
-        <label>Engineer</label>
-        <div class="crew-drop" data-slot="engineer">
-          {{#if system.crew.engineer}}
-            {{getCrewName system.crew.engineer}}
-          {{else}}
-            <em>Drop Character Here</em>
-          {{/if}}
-        </div>
-        <button type="button" class="roll-engineer" {{#unless system.crew.engineer}}disabled{{/unless}}>
-          Engineering Check
-        </button>
+  <section class="sheet-body">
+    <div class="tab active" data-group="primary" data-tab="main">
+      <div class="character-section">
+        <h3>Hull Points</h3>
+        <input type="number" name="system.hull.value" value="{{system.hull.value}}" style="width: 80px;"/> / 
+        <input type="number" name="system.hull.max" value="{{system.hull.max}}" style="width: 80px;"/>
       </div>
     </div>
-
-    {{!-- GM Options --}}
-    <div class="tab" data-tab="gm">
-      <h2>GM Options</h2>
-      {{!-- whatever toggles you like --}}
+    <div class="tab" data-group="primary" data-tab="crew">
+      <div class="character-section">
+        <h3>Crew Positions</h3>
+        <div class="crew-slot crew-drop" data-slot="pilot">
+          {{#if crew.pilot}}{{getCrewName crew.pilot}}{{else}}Drop pilot here{{/if}}
+        </div>
+      </div>
     </div>
   </section>
 </form>
-<h1>{{labels.sheetTitle}}</h1>

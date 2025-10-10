@@ -1,4 +1,139 @@
-<div class="swse sheet actor npc">
-  <h1>{{actor.name}}</h1>
-  <p>NPC Sheet Placeholder</p>
-</div>
+<form class="{{cssClass}} flexcol" autocomplete="off">
+  <header class="sheet-header">
+    <div class="header-fields">
+      <div class="field-group">
+        <label>NPC Name</label>
+        <input name="name" type="text" value="{{actor.name}}" placeholder="Enter Name"/>
+      </div>
+      
+      <div class="field-row">
+        <div class="field-group">
+          <label>Species</label>
+          <input name="system.species" type="text" value="{{system.species}}" placeholder="Species"/>
+        </div>
+        
+        <div class="field-group">
+          <label>Role</label>
+          <select name="system.role">
+            {{#each roleTypes as |label key|}}
+              <option value="{{key}}" {{#if (eq ../system.role key)}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </div>
+        
+        <div class="field-group">
+          <label>Level</label>
+          <input name="system.level" type="number" value="{{system.level}}" min="1"/>
+        </div>
+      </div>
+    </div>
+    
+    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="{{actor.name}}"/>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="stats">Stats</a>
+    <a class="item" data-tab="combat">Combat</a>
+    <a class="item" data-tab="abilities">Abilities</a>
+    <a class="item" data-tab="notes">Notes</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab" data-group="primary" data-tab="stats">
+      <div class="character-section">
+        <h3>Quick Actions</h3>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button type="button" class="quick-attack btn-add">
+            <i class="fas fa-sword"></i> Quick Attack
+          </button>
+          <button type="button" class="quick-save btn-add" data-defense="reflex">
+            <i class="fas fa-shield"></i> Reflex
+          </button>
+          <button type="button" class="quick-save btn-add" data-defense="fortitude">
+            <i class="fas fa-heart"></i> Fortitude
+          </button>
+          <button type="button" class="quick-save btn-add" data-defense="will">
+            <i class="fas fa-brain"></i> Will
+          </button>
+        </div>
+      </div>
+      
+      <div class="character-grid">
+        <div class="character-section">
+          <h3>Ability Scores</h3>
+          <div class="abilities-grid">
+            {{#each system.abilities as |ability key|}}
+              <div class="ability-block">
+                <label>{{toUpperCase key}}</label>
+                <input type="number" name="system.abilities.{{key}}.base" value="{{ability.base}}" data-dtype="Number"/>
+                <div class="ability-mod">{{#if (gte ability.mod 0)}}+{{/if}}{{ability.mod}}</div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+        
+        <div class="character-section">
+          <h3>Defenses</h3>
+          <div class="defenses-grid">
+            {{#each system.defenses as |defense key|}}
+              <div class="defense-block">
+                <label>{{capitalize key}}</label>
+                <div class="defense-value">{{defense.total}}</div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+      
+      <div class="character-section">
+        <h3>Stat Block 
+          <button type="button" class="import-statblock btn-add" style="float: right;">
+            <i class="fas fa-file-import"></i> Import
+          </button>
+        </h3>
+        <textarea name="system.statBlock" rows="8" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid #666; color: #0f0; font-family: monospace; padding: 10px;">{{system.statBlock}}</textarea>
+      </div>
+    </div>
+    
+    <div class="tab" data-group="primary" data-tab="combat">
+      <div class="character-section">
+        <h3>Weapons</h3>
+        {{#if weapons}}
+          <div class="items-list">
+            {{#each weapons as |weapon|}}
+              <div class="item-entry" data-item-id="{{weapon._id}}">
+                <span class="item-name">{{weapon.name}}</span>
+                <span style="margin-left: auto; color: #888;">{{weapon.system.damage}}</span>
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <p style="color: #888; text-align: center; padding: 20px;">Drag weapons here</p>
+        {{/if}}
+      </div>
+    </div>
+    
+    <div class="tab" data-group="primary" data-tab="abilities">
+      <div class="character-section">
+        <h3>Feats</h3>
+        {{#if feats}}
+          <div class="items-list">
+            {{#each feats as |feat|}}
+              <div class="item-entry" data-item-id="{{feat._id}}">
+                <i class="fas fa-star" style="margin-right: 8px; color: #ffd700;"></i>
+                <span class="item-name">{{feat.name}}</span>
+              </div>
+            {{/each}}
+          </div>
+        {{/if}}
+      </div>
+    </div>
+    
+    <div class="tab" data-group="primary" data-tab="notes">
+      <div class="character-section">
+        <h3>GM Notes</h3>
+        <textarea name="system.notes" rows="15" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid #666; color: #fff; padding: 10px;">{{system.notes}}</textarea>
+      </div>
+    </div>
+  </section>
+</form>
