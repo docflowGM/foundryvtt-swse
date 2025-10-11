@@ -1,298 +1,381 @@
-<form class="{{cssClass}} flexcol" autocomplete="off">
-  
-  <!-- HEADER -->
-  <header class="sheet-header">
-    <div class="swse-logo"></div>
-    
-    <div class="header-fields">
-      <div class="field-group">
-        <label>Character Name</label>
-        <input name="name" type="text" value="{{actor.name}}" placeholder="Enter Name"/>
-      </div>
-      
-      <div class="field-row">
-        <div class="field-group">
-          <label>Race</label>
-          <select name="system.race" class="race-select">
-            <option value="custom" {{#if (eq system.race "custom")}}selected{{/if}}>Custom</option>
-            {{#each races as |race key|}}
-              <option value="{{key}}" {{#if (eq ../system.race key)}}selected{{/if}}>{{race.label}}</option>
-            {{/each}}
-          </select>
-        </div>
+<form class="{{cssClass}} swse-character-sheet" autocomplete="off">
+    <div class="sheet-frame" style="background-image: url('systems/swse/ui/Sheet-frame.png'); background-size: 100% 100%; padding: 20px;">
         
-        <div class="field-group">
-          <label>Class</label>
-          <input name="system.class" type="text" value="{{system.class}}" placeholder="Class"/>
-        </div>
-        
-        <div class="field-group">
-          <label>Level</label>
-          <input name="system.level" type="number" value="{{system.level}}" min="1"/>
-        </div>
-      </div>
-    </div>
-    
-    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="{{actor.name}}"/>
-  </header>
-
-  <!-- TABS NAVIGATION -->
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="main">Main</a>
-    <a class="item" data-tab="combat">Combat</a>
-    <a class="item" data-tab="skills">Skills</a>
-    <a class="item" data-tab="force">Force</a>
-    <a class="item" data-tab="inventory">Inventory</a>
-    <a class="item" data-tab="biography">Bio</a>
-  </nav>
-
-  <!-- SHEET BODY WITH TABS -->
-  <section class="sheet-body">
-    
-    <!-- MAIN TAB -->
-    <div class="tab" data-group="primary" data-tab="main">
-      
-      <!-- Level Up Section -->
-      <div class="level-up-section">
-        <div>
-          <strong>Level {{system.level}}</strong>
-          <span style="margin-left: 10px;">XP: {{system.xp.value}} / {{system.xp.required}}</span>
-        </div>
-        <button type="button" class="level-up">
-          <i class="fas fa-arrow-up"></i> Level Up
-        </button>
-      </div>
-      
-      <div class="character-grid">
-        
-        <!-- ABILITIES -->
-        <div class="character-section">
-          <h3>Ability Scores</h3>
-          <div class="abilities-grid">
-            {{#each system.abilities as |ability key|}}
-              <div class="ability-block">
-                <label>{{toUpperCase key}}</label>
-                <input type="number" name="system.abilities.{{key}}.base" value="{{ability.base}}" data-dtype="Number"/>
-                <div class="ability-mod">{{#if (gte ability.mod 0)}}+{{/if}}{{ability.mod}}</div>
-              </div>
-            {{/each}}
-          </div>
-        </div>
-        
-        <!-- DEFENSES -->
-        <div class="character-section">
-          <h3>Defenses</h3>
-          <div class="defenses-grid">
-            {{#each system.defenses as |defense key|}}
-              <div class="defense-block">
-                <label>{{capitalize key}}</label>
-                <div class="defense-value">{{defense.total}}</div>
-                <input type="number" name="system.defenses.{{key}}.modifier" value="{{defense.modifier}}" placeholder="Misc" style="width: 60px; margin-top: 5px;"/>
-              </div>
-            {{/each}}
-          </div>
-        </div>
-        
-        <!-- HIT POINTS -->
-        <div class="character-section">
-          <h3>Hit Points</h3>
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <input type="number" name="system.hp.value" value="{{system.hp.value}}" style="width: 80px; font-size: 24px; font-weight: bold; text-align: center;"/>
-            <span style="font-size: 20px;">/</span>
-            <input type="number" name="system.hp.max" value="{{system.hp.max}}" style="width: 80px; font-size: 20px; text-align: center;"/>
-          </div>
-          
-          <div style="margin-top: 10px;">
-            <label>Damage Threshold:</label>
-            <strong>{{system.damageThreshold}}</strong>
-          </div>
-          
-          <div style="margin-top: 10px;">
-            <label>Condition Track:</label>
-            <select name="system.conditionTrack">
-              <option value="normal" {{#if (eq system.conditionTrack "normal")}}selected{{/if}}>Normal</option>
-              <option value="-1" {{#if (eq system.conditionTrack "-1")}}selected{{/if}}>-1</option>
-              <option value="-2" {{#if (eq system.conditionTrack "-2")}}selected{{/if}}>-2</option>
-              <option value="-5" {{#if (eq system.conditionTrack "-5")}}selected{{/if}}>-5</option>
-              <option value="-10" {{#if (eq system.conditionTrack "-10")}}selected{{/if}}>-10</option>
-              <option value="helpless" {{#if (eq system.conditionTrack "helpless")}}selected{{/if}}>Helpless</option>
-            </select>
-          </div>
-        </div>
-        
-        <!-- RESOURCES -->
-        <div class="character-section">
-          <h3>Resources</h3>
-          
-          <div style="margin-bottom: 10px;">
-            <label>Force Points:</label>
-            <input type="number" name="system.forcePoints.value" value="{{system.forcePoints.value}}" style="width: 50px;"/> / 
-            <input type="number" name="system.forcePoints.max" value="{{system.forcePoints.max}}" style="width: 50px;"/>
-          </div>
-          
-          <div style="margin-bottom: 10px;">
-            <label>Destiny Points:</label>
-            <input type="number" name="system.destinyPoints.value" value="{{system.destinyPoints.value}}" style="width: 50px;"/> / 
-            <input type="number" name="system.destinyPoints.max" value="{{system.destinyPoints.max}}" style="width: 50px;"/>
-          </div>
-          
-          <div>
-            <label>Credits:</label>
-            <input type="number" name="system.credits" value="{{system.credits}}" style="width: 100px;"/>
-          </div>
-        </div>
-        
-      </div>
-    </div>
-    
-    <!-- COMBAT TAB -->
-    <div class="tab" data-group="primary" data-tab="combat">
-      <div class="character-section">
-        <h3>Weapons 
-          <button type="button" class="add-weapon btn-add" style="float: right;">
-            <i class="fas fa-plus"></i> Add
-          </button>
-        </h3>
-        
-        {{#if system.weapons}}
-          {{#each system.weapons as |weapon index|}}
-            <div class="weapon-entry item-entry" data-index="{{index}}">
-              <i class="fas fa-grip-vertical" style="margin-right: 5px; color: #666; cursor: grab;"></i>
-              <input type="text" name="system.weapons.{{index}}.name" value="{{weapon.name}}" placeholder="Weapon Name" style="flex: 1;"/>
-              <input type="text" name="system.weapons.{{index}}.damage" value="{{weapon.damage}}" placeholder="Damage" style="width: 80px;"/>
-              <div class="item-controls">
-                <button type="button" class="roll-weapon btn-roll" title="Roll Attack">
-                  <i class="fas fa-dice-d20"></i>
-                </button>
-                <button type="button" class="remove-weapon item-control delete" title="Remove">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
+        <!-- Header with Title Logo -->
+        <div class="sheet-header-container">
+            <img src="systems/swse/ui/title-logo.png" class="title-logo" />
+            
+            <div class="character-info-grid">
+                <div class="info-field">
+                    <label>Name</label>
+                    <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
+                </div>
+                <div class="info-field">
+                    <label>Player</label>
+                    <input name="system.player" type="text" value="{{system.player}}" placeholder="Player Name"/>
+                </div>
+                <div class="info-field">
+                    <label>Classes</label>
+                    <input name="system.class" type="text" value="{{system.class}}" placeholder="Classes"/>
+                </div>
+                <div class="info-field small">
+                    <label>Level</label>
+                    <input name="system.level" type="number" value="{{system.level}}" data-dtype="Number"/>
+                </div>
             </div>
-          {{/each}}
-        {{else}}
-          <p style="color: #888; text-align: center; padding: 20px;">No weapons. Click Add to create one.</p>
-        {{/if}}
-      </div>
-      
-      <div class="character-section">
-        <h3>Feats 
-          <button type="button" class="add-feat btn-add" style="float: right;">
-            <i class="fas fa-plus"></i> Add
-          </button>
-        </h3>
-        
-        {{#if system.feats}}
-          <div class="items-list">
-            {{#each system.feats as |feat index|}}
-              <div class="item-entry list-entry" data-index="{{index}}">
-                <span class="item-name">{{feat.name}}</span>
-                <div class="item-controls">
-                  <button type="button" class="remove-feat item-control delete">
-                    <i class="fas fa-trash"></i>
-                  </button>
+            
+            <div class="character-info-grid secondary">
+                <div class="info-field">
+                    <label>Species</label>
+                    <input name="system.species" type="text" value="{{system.species}}"/>
                 </div>
-              </div>
-            {{/each}}
-          </div>
-        {{else}}
-          <p style="color: #888; text-align: center; padding: 10px;">No feats.</p>
-        {{/if}}
-      </div>
-    </div>
-    
-    <!-- SKILLS TAB -->
-    <div class="tab" data-group="primary" data-tab="skills">
-      <div class="character-section">
-        <h3>Skills</h3>
-        <p style="color: #aaa; font-size: 12px;">Configure skills here</p>
-        
-        <button type="button" class="add-skill btn-add">
-          <i class="fas fa-plus"></i> Add Custom Skill
-        </button>
-      </div>
-    </div>
-    
-    <!-- FORCE TAB -->
-    <div class="tab" data-group="primary" data-tab="force">
-      <div class="character-section">
-        <h3>Force Powers
-          <button type="button" class="add-forcepower btn-add" style="float: right;">
-            <i class="fas fa-plus"></i> Add
-          </button>
-        </h3>
-        
-        {{#if items}}
-          <div class="force-powers-grid">
-            {{#each items as |item|}}
-              {{#if (eq item.type "forcepower")}}
-                <div class="forcepower-entry" data-item-id="{{item._id}}">
-                  <i class="fas fa-hand-sparkles" style="margin-right: 8px; color: #4a90e2;"></i>
-                  <span class="item-name">{{item.name}}</span>
-                  <div class="forcepower-uses">
-                    <span>{{item.system.uses.current}} / {{item.system.uses.max}}</span>
-                    <button type="button" class="roll-forcepower btn-roll" title="Use Power">
-                      <i class="fas fa-dice-d20"></i>
-                    </button>
-                    <button type="button" class="remove-forcepower item-control delete">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
+                <div class="info-field small">
+                    <label>Sex</label>
+                    <input name="system.sex" type="text" value="{{system.sex}}"/>
                 </div>
-              {{/if}}
-            {{/each}}
-          </div>
-        {{else}}
-          <p style="color: #888; text-align: center; padding: 20px;">No Force Powers.</p>
-        {{/if}}
-      </div>
-      
-      <div class="character-section">
-        <h3>Talents
-          <button type="button" class="add-talent btn-add" style="float: right;">
-            <i class="fas fa-plus"></i> Add
-          </button>
-        </h3>
-        
-        {{#if system.talents}}
-          <div class="items-list">
-            {{#each system.talents as |talent index|}}
-              <div class="item-entry list-entry" data-index="{{index}}">
-                <span class="item-name">{{talent.name}}</span>
-                <div class="item-controls">
-                  <button type="button" class="remove-talent item-control delete">
-                    <i class="fas fa-trash"></i>
-                  </button>
+                <div class="info-field small">
+                    <label>Age</label>
+                    <input name="system.age" type="text" value="{{system.age}}"/>
                 </div>
-              </div>
-            {{/each}}
-          </div>
-        {{else}}
-          <p style="color: #888; text-align: center; padding: 10px;">No talents.</p>
-        {{/if}}
-      </div>
+                <div class="info-field">
+                    <label>Height</label>
+                    <input name="system.height" type="text" value="{{system.height}}"/>
+                </div>
+                <div class="info-field">
+                    <label>Weight</label>
+                    <input name="system.weight" type="text" value="{{system.weight}}"/>
+                </div>
+                <div class="info-field small">
+                    <label>Destiny</label>
+                    <input name="system.destiny" type="number" value="{{system.destiny}}" data-dtype="Number"/>
+                </div>
+                <div class="info-field">
+                    <label>XP</label>
+                    <input name="system.experience" type="number" value="{{system.experience}}" data-dtype="Number"/>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Character Sheet Layout -->
+        <div class="sheet-content-grid">
+            
+            <!-- Left Column: Abilities & Skills -->
+            <div class="left-column">
+                <!-- Ability Scores -->
+                <section class="ability-scores-section">
+                    <h3>Ability Scores</h3>
+                    {{#each system.abilities as |ability key|}}
+                    <div class="ability-score-row">
+                        <div class="ability-label">{{upper key}}</div>
+                        <div class="ability-inputs">
+                            <input name="system.abilities.{{key}}.base" type="number" value="{{ability.base}}" data-dtype="Number" placeholder="Base" title="Base Score"/>
+                            <span>+</span>
+                            <input name="system.abilities.{{key}}.racial" type="number" value="{{ability.racial}}" data-dtype="Number" placeholder="0" title="Racial Bonus"/>
+                            <span>+</span>
+                            <input name="system.abilities.{{key}}.modifier" type="number" value="{{ability.modifier}}" data-dtype="Number" placeholder="0" title="Modifier"/>
+                            <span>=</span>
+                            <div class="ability-total">{{ability.total}}</div>
+                            <input name="system.abilities.{{key}}.temp" type="number" value="{{ability.temp}}" data-dtype="Number" placeholder="Temp" title="Temp Override" class="temp-score"/>
+                        </div>
+                        <div class="ability-modifier">{{ability.mod}}</div>
+                    </div>
+                    {{/each}}
+                </section>
+
+                <!-- Tabs Navigation -->
+                <nav class="sheet-tabs tabs" data-group="primary">
+                    <a class="item" data-tab="skills">Skills</a>
+                    <a class="item" data-tab="feats">Feats</a>
+                    <a class="item" data-tab="talents">Talents</a>
+                    <a class="item" data-tab="powers">Force Powers</a>
+                    <a class="item" data-tab="inventory">Equipment</a>
+                    <a class="item" data-tab="bio">Bio</a>
+                </nav>
+
+                <!-- Tab Content -->
+                <div class="sheet-tabs-content">
+                    
+                    <!-- Skills Tab -->
+                    <div class="tab skills-tab" data-group="primary" data-tab="skills">
+                        <div class="skills-header">
+                            <span class="skill-name-header">Skill</span>
+                            <span class="skill-ability-header">Ability</span>
+                            <span>½ Lvl</span>
+                            <span>Total</span>
+                            <span>Train</span>
+                            <span>Focus</span>
+                            <span>Armor</span>
+                            <span>Misc</span>
+                        </div>
+                        <div class="skills-list">
+                            {{#each system.skills as |skill key|}}
+                            <div class="skill-row">
+                                <div class="skill-name">{{skill.label}}</div>
+                                <div class="skill-ability">{{upper skill.ability}}</div>
+                                <div class="skill-half-level">{{halfLevel}}</div>
+                                <div class="skill-total">{{skill.total}}</div>
+                                <input type="checkbox" name="system.skills.{{key}}.trained" {{checked skill.trained}} title="Trained (+5)"/>
+                                <input type="checkbox" name="system.skills.{{key}}.focused" {{checked skill.focused}} title="Focused (+5)"/>
+                                <input name="system.skills.{{key}}.armor" type="number" value="{{skill.armor}}" data-dtype="Number" class="skill-input"/>
+                                <input name="system.skills.{{key}}.misc" type="number" value="{{skill.misc}}" data-dtype="Number" class="skill-input"/>
+                            </div>
+                            {{/each}}
+                        </div>
+                    </div>
+
+                    <!-- Feats Tab -->
+                    <div class="tab" data-group="primary" data-tab="feats">
+                        <div class="tab-header">
+                            <h3>Feats</h3>
+                            <button type="button" class="add-item" data-type="feat"><i class="fas fa-plus"></i> Add Feat</button>
+                        </div>
+                        <ol class="items-list">
+                            {{#each feats as |feat id|}}
+                            <li class="item" data-item-id="{{feat._id}}" draggable="true">
+                                <div class="item-image" style="background-image: url('{{feat.img}}')"></div>
+                                <h4 class="item-name">{{feat.name}}</h4>
+                                <div class="item-controls">
+                                    <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                                </div>
+                            </li>
+                            {{/each}}
+                        </ol>
+                    </div>
+
+                    <!-- Talents Tab -->
+                    <div class="tab" data-group="primary" data-tab="talents">
+                        <div class="tab-header">
+                            <h3>Talents</h3>
+                            <button type="button" class="add-item" data-type="talent"><i class="fas fa-plus"></i> Add Talent</button>
+                        </div>
+                        <ol class="items-list">
+                            {{#each talents as |talent id|}}
+                            <li class="item" data-item-id="{{talent._id}}" draggable="true">
+                                <div class="item-image" style="background-image: url('{{talent.img}}')"></div>
+                                <h4 class="item-name">{{talent.name}}</h4>
+                                <div class="item-controls">
+                                    <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                                </div>
+                            </li>
+                            {{/each}}
+                        </ol>
+                    </div>
+
+                    <!-- Force Powers Tab -->
+                    <div class="tab" data-group="primary" data-tab="powers">
+                        <div class="tab-header">
+                            <h3>Force Powers</h3>
+                            <button type="button" class="add-item" data-type="force-power"><i class="fas fa-plus"></i> Add Force Power</button>
+                        </div>
+                        <ol class="items-list">
+                            {{#each powers as |power id|}}
+                            <li class="item" data-item-id="{{power._id}}" draggable="true">
+                                <div class="item-image" style="background-image: url('{{power.img}}')"></div>
+                                <h4 class="item-name">{{power.name}}</h4>
+                                <div class="power-info">
+                                    <span>{{power.system.uses}}</span>
+                                    <input type="number" name="items.{{power._id}}.system.usesSpent" value="{{power.system.usesSpent}}" class="uses-spent"/>
+                                </div>
+                                <div class="item-controls">
+                                    <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                                </div>
+                            </li>
+                            {{/each}}
+                        </ol>
+                    </div>
+
+                    <!-- Equipment Tab -->
+                    <div class="tab" data-group="primary" data-tab="inventory">
+                        <div class="tab-header">
+                            <h3>Equipment</h3>
+                            <button type="button" class="add-item" data-type="item"><i class="fas fa-plus"></i> Add Item</button>
+                        </div>
+                        
+                        <h4>Weapons</h4>
+                        <ol class="items-list">
+                            {{#each weapons as |weapon id|}}
+                            <li class="item" data-item-id="{{weapon._id}}" draggable="true">
+                                <div class="item-image" style="background-image: url('{{weapon.img}}')"></div>
+                                <h4 class="item-name">{{weapon.name}}</h4>
+                                <div class="weapon-stats">
+                                    <span>{{weapon.system.damage}}</span>
+                                    <span>{{weapon.system.range}}</span>
+                                </div>
+                                <div class="item-controls">
+                                    <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                                </div>
+                            </li>
+                            {{/each}}
+                        </ol>
+
+                        <h4>Armor</h4>
+                        <ol class="items-list">
+                            {{#each armor as |armor id|}}
+                            <li class="item" data-item-id="{{armor._id}}" draggable="true">
+                                <div class="item-image" style="background-image: url('{{armor.img}}')"></div>
+                                <h4 class="item-name">{{armor.name}}</h4>
+                                <div class="armor-stats">
+                                    <span>Bonus: {{armor.system.armorBonus}}</span>
+                                </div>
+                                <div class="item-controls">
+                                    <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                                </div>
+                            </li>
+                            {{/each}}
+                        </ol>
+
+                        <h4>Other Equipment</h4>
+                        <ol class="items-list">
+                            {{#each inventory as |item id|}}
+                            <li class="item" data-item-id="{{item._id}}" draggable="true">
+                                <div class="item-image" style="background-image: url('{{item.img}}')"></div>
+                                <h4 class="item-name">{{item.name}}</h4>
+                                <div class="item-quantity">Qty: {{item.system.quantity}}</div>
+                                <div class="item-controls">
+                                    <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                                </div>
+                            </li>
+                            {{/each}}
+                        </ol>
+
+                        <div class="carrying-info">
+                            <label>Credits: <input name="system.credits" type="number" value="{{system.credits}}" data-dtype="Number"/></label>
+                            <label>Carrying Capacity: {{system.carryingCapacity}}</label>
+                            <label>Total Weight: {{totalWeight}}</label>
+                        </div>
+                    </div>
+
+                    <!-- Biography Tab -->
+                    <div class="tab" data-group="primary" data-tab="bio">
+                        <h3>Biography</h3>
+                        {{editor content=system.biography target="system.biography" button=true owner=owner editable=editable}}
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Column: Combat Stats -->
+            <div class="right-column">
+                
+                <!-- Hit Points -->
+                <section class="hit-points-section">
+                    <h3>Hit Points</h3>
+                    <div class="hp-grid">
+                        <div>
+                            <label>Max</label>
+                            <input name="system.hitPoints.max" type="number" value="{{system.hitPoints.max}}" data-dtype="Number"/>
+                        </div>
+                        <div>
+                            <label>Current</label>
+                            <input name="system.hitPoints.current" type="number" value="{{system.hitPoints.current}}" data-dtype="Number"/>
+                        </div>
+                        <div>
+                            <label>Temp</label>
+                            <input name="system.hitPoints.temp" type="number" value="{{system.hitPoints.temp}}" data-dtype="Number"/>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Defenses -->
+                <section class="defenses-section">
+                    <h3>Defenses</h3>
+                    <div class="defense-row">
+                        <label>Fortitude</label>
+                        <div class="defense-calc">
+                            <span>10 +</span>
+                            <input name="system.defenses.fortitude.armor" type="number" value="{{system.defenses.fortitude.armor}}" data-dtype="Number" placeholder="0"/>
+                            <span>+</span>
+                            <span>{{conMod}}</span>
+                            <span>+</span>
+                            <input name="system.defenses.fortitude.class" type="number" value="{{system.defenses.fortitude.class}}" data-dtype="Number" placeholder="0"/>
+                            <span>+</span>
+                            <input name="system.defenses.fortitude.misc" type="number" value="{{system.defenses.fortitude.misc}}" data-dtype="Number" placeholder="0"/>
+                            <span>=</span>
+                            <div class="defense-total">{{fortTotal}}</div>
+                        </div>
+                    </div>
+                    <div class="defense-row">
+                        <label>Reflex</label>
+                        <div class="defense-calc">
+                            <span>10 +</span>
+                            <input name="system.defenses.reflex.armor" type="number" value="{{system.defenses.reflex.armor}}" data-dtype="Number" placeholder="0"/>
+                            <span>+</span>
+                            <span>{{dexMod}}</span>
+                            <span>+</span>
+                            <input name="system.defenses.reflex.class" type="number" value="{{system.defenses.reflex.class}}" data-dtype="Number" placeholder="0"/>
+                            <span>+</span>
+                            <input name="system.defenses.reflex.misc" type="number" value="{{system.defenses.reflex.misc}}" data-dtype="Number" placeholder="0"/>
+                            <span>=</span>
+                            <div class="defense-total">{{refTotal}}</div>
+                        </div>
+                    </div>
+                    <div class="defense-row">
+                        <label>Will</label>
+                        <div class="defense-calc">
+                            <span>10 +</span>
+                            <input name="system.defenses.will.armor" type="number" value="{{system.defenses.will.armor}}" data-dtype="Number" placeholder="0"/>
+                            <span>+</span>
+                            <span>{{wisMod}}</span>
+                            <span>+</span>
+                            <input name="system.defenses.will.class" type="number" value="{{system.defenses.will.class}}" data-dtype="Number" placeholder="0"/>
+                            <span>+</span>
+                            <input name="system.defenses.will.misc" type="number" value="{{system.defenses.will.misc}}" data-dtype="Number" placeholder="0"/>
+                            <span>=</span>
+                            <div class="defense-total">{{willTotal}}</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Damage Threshold -->
+                <section class="damage-threshold-section">
+                    <label>Damage Threshold</label>
+                    <input name="system.damageThreshold" type="number" value="{{system.damageThreshold}}" data-dtype="Number"/>
+                </section>
+
+                <!-- Base Attack & Speed -->
+                <section class="combat-stats">
+                    <div>
+                        <label>Base Attack</label>
+                        <input name="system.baseAttack" type="number" value="{{system.baseAttack}}" data-dtype="Number"/>
+                    </div>
+                    <div>
+                        <label>Speed</label>
+                        <input name="system.speed" type="number" value="{{system.speed}}" data-dtype="Number"/>
+                    </div>
+                    <div>
+                        <label>Damage Reduction</label>
+                        <input name="system.damageReduction" type="number" value="{{system.damageReduction}}" data-dtype="Number"/>
+                    </div>
+                </section>
+
+                <!-- Force Points & Dark Side -->
+                <section class="force-section">
+                    <div>
+                        <label>Force Points</label>
+                        <input name="system.forcePoints" type="number" value="{{system.forcePoints}}" data-dtype="Number"/>
+                    </div>
+                    <div>
+                        <label>Dark Side Score</label>
+                        <input name="system.darkSideScore" type="number" value="{{system.darkSideScore}}" data-dtype="Number"/>
+                    </div>
+                    <div>
+                        <label>Destiny Points</label>
+                        <input name="system.destiny" type="number" value="{{system.destiny}}" data-dtype="Number"/>
+                    </div>
+                </section>
+
+                <!-- Level Up Button -->
+                <section class="level-up-section">
+                    <button type="button" class="level-up-btn"><i class="fas fa-arrow-up"></i> Level Up</button>
+                </section>
+
+            </div>
+        </div>
     </div>
-    
-    <!-- INVENTORY TAB -->
-    <div class="tab" data-group="primary" data-tab="inventory">
-      <div class="character-section">
-        <h3>Equipment</h3>
-        <p style="color: #888; text-align: center; padding: 20px;">Drag items here from the Items sidebar</p>
-      </div>
-    </div>
-    
-    <!-- BIOGRAPHY TAB -->
-    <div class="tab" data-group="primary" data-tab="biography">
-      <div class="character-section">
-        <h3>Biography</h3>
-        <textarea name="system.bio" rows="10" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid #666; color: #fff; padding: 10px;">{{system.bio}}</textarea>
-      </div>
-      
-      <div class="character-section">
-        <h3>Notes</h3>
-        <textarea name="system.notes" rows="10" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid #666; color: #fff; padding: 10px;">{{system.notes}}</textarea>
-      </div>
-    </div>
-    
-  </section>
 </form>

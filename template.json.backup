@@ -121,7 +121,183 @@
         "uses": 1,
         "healing": 0
       },
-      "skills": {},
+      "skills": {
+        "acrobatics": {
+          "label": "Acrobatics",
+          "ability": "dex",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "climb": {
+          "label": "Climb",
+          "ability": "str",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "deception": {
+          "label": "Deception",
+          "ability": "cha",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "endurance": {
+          "label": "Endurance",
+          "ability": "con",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "gather_information": {
+          "label": "Gather Information",
+          "ability": "cha",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "initiative": {
+          "label": "Initiative",
+          "ability": "dex",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "jump": {
+          "label": "Jump",
+          "ability": "str",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "knowledge_bureaucracy": {
+          "label": "Knowledge (Bureaucracy)",
+          "ability": "int",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "knowledge_galactic_lore": {
+          "label": "Knowledge (Galactic Lore)",
+          "ability": "int",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "knowledge_life_sciences": {
+          "label": "Knowledge (Life Sciences)",
+          "ability": "int",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "knowledge_physical_sciences": {
+          "label": "Knowledge (Physical Sciences)",
+          "ability": "int",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "knowledge_social_sciences": {
+          "label": "Knowledge (Social Sciences)",
+          "ability": "int",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "knowledge_tactics": {
+          "label": "Knowledge (Tactics)",
+          "ability": "int",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "knowledge_technology": {
+          "label": "Knowledge (Technology)",
+          "ability": "int",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "mechanics": {
+          "label": "Mechanics",
+          "ability": "int",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "perception": {
+          "label": "Perception",
+          "ability": "wis",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "persuasion": {
+          "label": "Persuasion",
+          "ability": "cha",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "pilot": {
+          "label": "Pilot",
+          "ability": "dex",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "ride": {
+          "label": "Ride",
+          "ability": "dex",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "stealth": {
+          "label": "Stealth",
+          "ability": "dex",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "survival": {
+          "label": "Survival",
+          "ability": "wis",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "swim": {
+          "label": "Swim",
+          "ability": "str",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "treat_injury": {
+          "label": "Treat Injury",
+          "ability": "wis",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "use_computer": {
+          "label": "Use Computer",
+          "ability": "int",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        },
+        "use_the_force": {
+          "label": "Use the Force",
+          "ability": "cha",
+          "trained": false,
+          "focused": false,
+          "misc": 0
+        }
+      },
       "customSkills": [],
       "feats": [],
       "talents": [],
@@ -243,18 +419,12 @@
   },
   "Item": {
     "types": [
-      "class",
       "feat",
       "talent",
-      "forcepower",
-      "equipment",
+      "power",
+      "item",
       "weapon",
-      "armor",
-      "skill",
-      "attribute",
-      "condition",
-      "combat-action",
-      "extra-skill-use"
+      "armor"
     ],
     "templates": {
       "base": {
@@ -285,23 +455,23 @@
       "templates": [
         "base"
       ],
-      "type": "General",
-      "prerequisites": [],
-      "benefit": "",
-      "normal": "",
-      "special": "",
-      "tags": [],
-      "bonusFeatFor": []
+      "description": "",
+      "prerequisites": {
+        "level": 0,
+        "class": "",
+        "abilities": {}
+      }
     },
     "talent": {
       "templates": [
         "base"
       ],
-      "tree": "",
-      "class": [],
-      "prerequisite": "",
-      "benefit": "",
-      "tags": []
+      "description": "",
+      "prerequisites": {
+        "class": "",
+        "level": 0
+      },
+      "talentTree": ""
     },
     "forcepower": {
       "templates": [
@@ -337,35 +507,21 @@
       "templates": [
         "base"
       ],
-      "category": "ranged",
-      "weaponType": "blaster",
-      "size": "medium",
-      "damage": "3d6",
-      "damageType": "energy",
-      "critical": "20",
-      "range": "30",
-      "weight": 1,
-      "cost": 500,
-      "availability": "Military",
-      "ammo": 50,
-      "special": [],
-      "equipped": false,
-      "proficiency": "simple"
+      "description": "",
+      "damage": "",
+      "range": "",
+      "cost": 0,
+      "weight": 0
     },
     "armor": {
       "templates": [
         "base"
       ],
-      "category": "light",
-      "defenseBonus": 2,
-      "maxDex": null,
-      "armorCheckPenalty": 0,
-      "maxSpeed": null,
-      "weight": 5,
-      "cost": 1000,
-      "availability": "Common",
-      "special": [],
-      "equipped": false
+      "description": "",
+      "armorBonus": 0,
+      "maxDexBonus": 0,
+      "cost": 0,
+      "weight": 0
     },
     "skill": {
       "templates": [
@@ -407,6 +563,24 @@
       "roll": "",
       "outcome": "",
       "when": ""
+    },
+    "power": {
+      "templates": [
+        "base"
+      ],
+      "description": "",
+      "forcePoints": 0,
+      "darkSide": false,
+      "prerequisites": {}
+    },
+    "item": {
+      "templates": [
+        "base"
+      ],
+      "description": "",
+      "quantity": 1,
+      "weight": 0,
+      "cost": 0
     }
   },
   "skills": {
