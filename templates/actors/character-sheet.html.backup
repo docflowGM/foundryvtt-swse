@@ -1,0 +1,165 @@
+<form class="{{cssClass}} flexcol" autocomplete="off">
+    <div class="sheet-frame" style="background-image: url('systems/swse/ui/Sheet-frame.png'); background-size: 100% 100%; padding: 20px;">
+        
+        <!-- Header with Title Logo -->
+        <header class="sheet-header" style="position: relative;">
+            <img src="systems/swse/ui/title-logo.png" class="title-logo" style="display: block; margin: 0 auto 10px; max-width: 300px;" />
+            
+            <div class="header-fields flexrow">
+                <div class="resource">
+                    <label>Character Name</label>
+                    <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
+                </div>
+                <div class="resource">
+                    <label>Level</label>
+                    <input name="system.level" type="number" value="{{system.level}}" data-dtype="Number"/>
+                </div>
+                <div class="resource">
+                    <label>Experience</label>
+                    <input name="system.experience" type="number" value="{{system.experience}}" data-dtype="Number"/>
+                </div>
+            </div>
+            
+            <div class="header-fields flexrow">
+                <div class="resource">
+                    <label>Species</label>
+                    <input name="system.species" type="text" value="{{system.species}}" placeholder="Species"/>
+                </div>
+                <div class="resource">
+                    <label>Class</label>
+                    <input name="system.class" type="text" value="{{system.class}}" placeholder="Class"/>
+                </div>
+                <div class="resource">
+                    <label>Destiny</label>
+                    <input name="system.destiny" type="number" value="{{system.destiny}}" data-dtype="Number"/>
+                </div>
+            </div>
+        </header>
+
+        <!-- Ability Scores -->
+        <section class="ability-scores">
+            <h3>Ability Scores</h3>
+            <div class="abilities flexrow">
+                {{#each system.abilities as |ability key|}}
+                <div class="ability">
+                    <h4>{{key}}</h4>
+                    <div class="ability-details">
+                        <label>Base</label>
+                        <input name="system.abilities.{{key}}.base" type="number" value="{{ability.base}}" data-dtype="Number" style="width: 40px;"/>
+                        <label>Racial</label>
+                        <input name="system.abilities.{{key}}.racial" type="number" value="{{ability.racial}}" data-dtype="Number" style="width: 40px;"/>
+                        <label>Modifier</label>
+                        <input name="system.abilities.{{key}}.modifier" type="number" value="{{ability.modifier}}" data-dtype="Number" style="width: 40px;"/>
+                        <label>Total: <strong>{{ability.total}}</strong></label>
+                        <label>Temp</label>
+                        <input name="system.abilities.{{key}}.temp" type="number" value="{{ability.temp}}" placeholder="-" data-dtype="Number" style="width: 40px;"/>
+                    </div>
+                    <div class="ability-mod">Mod: {{ability.mod}}</div>
+                </div>
+                {{/each}}
+            </div>
+        </section>
+
+        <!-- Tabs -->
+        <nav class="sheet-tabs tabs" data-group="primary">
+            <a class="item" data-tab="skills">Skills</a>
+            <a class="item" data-tab="feats">Feats</a>
+            <a class="item" data-tab="talents">Talents</a>
+            <a class="item" data-tab="powers">Force Powers</a>
+            <a class="item" data-tab="inventory">Inventory</a>
+            <a class="item" data-tab="biography">Biography</a>
+        </nav>
+
+        <!-- Tab Content -->
+        <section class="sheet-body">
+            
+            <!-- Skills Tab -->
+            <div class="tab skills" data-group="primary" data-tab="skills">
+                <h3>Skills</h3>
+                <div class="skills-list">
+                    {{#each system.skills as |skill key|}}
+                    <div class="skill-row flexrow">
+                        <div class="skill-name">{{skill.label}}</div>
+                        <div class="skill-ability">({{skill.ability}})</div>
+                        <input type="checkbox" name="system.skills.{{key}}.trained" {{checked skill.trained}} title="Trained"/>
+                        <label>T</label>
+                        <input type="checkbox" name="system.skills.{{key}}.focused" {{checked skill.focused}} title="Focused"/>
+                        <label>F</label>
+                        <input name="system.skills.{{key}}.misc" type="number" value="{{skill.misc}}" data-dtype="Number" style="width: 40px;" placeholder="0"/>
+                        <div class="skill-total"><strong>{{skill.total}}</strong></div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+
+            <!-- Feats Tab -->
+            <div class="tab feats" data-group="primary" data-tab="feats">
+                <h3>Feats</h3>
+                <ol class="items-list">
+                    {{#each feats as |feat id|}}
+                    <li class="item flexrow" data-item-id="{{feat._id}}">
+                        <div class="item-name">{{feat.name}}</div>
+                        <div class="item-controls">
+                            <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
+            </div>
+
+            <!-- Talents Tab -->
+            <div class="tab talents" data-group="primary" data-tab="talents">
+                <h3>Talents</h3>
+                <ol class="items-list">
+                    {{#each talents as |talent id|}}
+                    <li class="item flexrow" data-item-id="{{talent._id}}">
+                        <div class="item-name">{{talent.name}}</div>
+                        <div class="item-controls">
+                            <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
+            </div>
+
+            <!-- Force Powers Tab -->
+            <div class="tab powers" data-group="primary" data-tab="powers">
+                <h3>Force Powers</h3>
+                <ol class="items-list">
+                    {{#each powers as |power id|}}
+                    <li class="item flexrow" data-item-id="{{power._id}}">
+                        <div class="item-name">{{power.name}}</div>
+                        <div class="item-controls">
+                            <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
+            </div>
+
+            <!-- Inventory Tab -->
+            <div class="tab inventory" data-group="primary" data-tab="inventory">
+                <h3>Inventory</h3>
+                <button type="button" class="add-item-btn"><i class="fas fa-plus"></i> Add Item</button>
+                <ol class="items-list">
+                    {{#each inventory as |item id|}}
+                    <li class="item flexrow" data-item-id="{{item._id}}">
+                        <div class="item-name">{{item.name}}</div>
+                        <div class="item-quantity">Qty: {{item.system.quantity}}</div>
+                        <div class="item-controls">
+                            <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
+            </div>
+
+            <!-- Biography Tab -->
+            <div class="tab biography" data-group="primary" data-tab="biography">
+                <h3>Biography</h3>
+                {{editor content=system.biography target="system.biography" button=true owner=owner editable=editable}}
+            </div>
+
+        </section>
+    </div>
+</form>
