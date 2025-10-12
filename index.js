@@ -1,10 +1,9 @@
-import { registerHandlebarsHelpers } from './helpers/handlebars-helpers.js';
-import { registerHandlebarsHelpers } from './helpers/handlebars-helpers.js';
 // ============================================
 // FILE: index.js
 // Star Wars Saga Edition (SWSE) - FoundryVTT
 // ============================================
 
+import { registerHandlebarsHelpers } from './helpers/handlebars-helpers.js';
 import { SWSE } from "./config.js";
 import { SWSEActor, SWSEActorSheet } from "./scripts/swse-actor.js";
 import { SWSEDroidSheet } from "./scripts/swse-droid.js";
@@ -15,7 +14,6 @@ import { SWSEStore } from "./store/store.js";
 import * as SWSEData from "./scripts/swse-data.js";
 import { WorldDataLoader } from "./scripts/world-data-loader.js";
 import "./scripts/chargen/chargen-init.js";
-
 
 // ============================================
 // INIT HOOK
@@ -107,28 +105,34 @@ Hooks.once("ready", async () => {
 // HANDLEBARS HELPERS
 // ============================================
 function registerHandlebarsHelpers() {
+  // --- String Helpers ---
+  Handlebars.registerHelper("upper", str =>
+    typeof str === "string" ? str.toUpperCase() : ""
+  );
+
   Handlebars.registerHelper("toUpperCase", str =>
     typeof str === "string" ? str.toUpperCase() : ""
   );
 
+  Handlebars.registerHelper("capitalize", str =>
+    typeof str === "string" ? str.charAt(0).toUpperCase() + str.slice(1) : ""
+  );
+
+  // --- Array/Object Helpers ---
   Handlebars.registerHelper("array", function () {
     return Array.prototype.slice.call(arguments, 0, -1);
   });
 
   Handlebars.registerHelper("keys", obj => (obj ? Object.keys(obj) : []));
 
+  // --- Comparison Helpers ---
   Handlebars.registerHelper("eq", (a, b) => a === b);
   Handlebars.registerHelper("lte", (a, b) => a <= b);
 
-  Handlebars.registerHelper("capitalize", str =>
-    typeof str === "string" ? str.charAt(0).toUpperCase() + str.slice(1) : ""
-  );
-
+  // --- Debugging/Utility ---
   Handlebars.registerHelper("json", context => JSON.stringify(context));
 
-  // -------------------------------
-  // Custom Helpers
-  // -------------------------------
+  // --- Custom SWSE Helpers ---
   Handlebars.registerHelper("getCrewName", id => {
     const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
     return actor ? actor.name : "";
@@ -249,8 +253,3 @@ async function loadVehicleTemplates() {
     game.swseVehicles = { templates: [] };
   }
 }
-
-// Register Handlebars helpers
-Hooks.once('init', function() {
-    registerHandlebarsHelpers();
-});
