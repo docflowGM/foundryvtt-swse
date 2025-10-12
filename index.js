@@ -1,3 +1,5 @@
+import { registerHandlebarsHelpers } from './helpers/handlebars-helpers.js';
+import { registerHandlebarsHelpers } from './helpers/handlebars-helpers.js';
 // ============================================
 // FILE: index.js
 // Star Wars Saga Edition (SWSE) - FoundryVTT
@@ -245,3 +247,8 @@ async function loadVehicleTemplates() {
     game.swseVehicles = { templates: [] };
   }
 }
+
+// Register Handlebars helpers
+Hooks.once('init', function() {
+    registerHandlebarsHelpers();
+});

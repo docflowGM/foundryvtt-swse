@@ -315,7 +315,12 @@
       "damageThreshold": 0,
       "damageReduction": 0,
       "baseAttack": 0,
-      "speed": 6,
+      "speed": {
+        "base": 6,
+        "armor": 0,
+        "misc": 0,
+        "total": 6
+      },
       "level": 1,
       "experience": 0,
       "destiny": 1,
@@ -444,6 +449,17 @@
       "fortDefense": 0,
       "refDefense": 0,
       "notes": ""
+    },
+    "equipment": {
+      "description": "",
+      "quantity": 1,
+      "weight": 0,
+      "cost": 0
+    },
+    "skill": {
+      "description": "",
+      "ability": "int",
+      "trained": false
     }
   }
 }
