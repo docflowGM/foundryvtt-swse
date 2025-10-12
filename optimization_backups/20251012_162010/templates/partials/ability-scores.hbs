@@ -1,0 +1,20 @@
+{{!-- Ability Scores Partial --}}
+<section class="ability-scores-section">
+    <h3>Ability Scores</h3>
+    {{#each system.abilities as |ability key|}}
+    <div class="ability-score-row">
+        <div class="ability-label">{{upper key}}</div>
+        <div class="ability-inputs">
+            <input name="system.abilities.{{key}}.base" type="number" value="{{ability.base}}" data-dtype="Number" placeholder="Base" title="Base Score"/>
+            <span>+</span>
+            <input name="system.abilities.{{key}}.racial" type="number" value="{{ability.racial}}" data-dtype="Number" placeholder="0" title="Racial Bonus"/>
+            <span>+</span>
+            <input name="system.abilities.{{key}}.modifier" type="number" value="{{ability.modifier}}" data-dtype="Number" placeholder="0" title="Modifier"/>
+            <span>=</span>
+            <div class="ability-total">{{ability.total}}</div>
+            <input name="system.abilities.{{key}}.temp" type="number" value="{{ability.temp}}" data-dtype="Number" placeholder="Temp" title="Temp Override" class="temp-score"/>
+        </div>
+        <div class="ability-modifier">{{ability.mod}}</div>
+    </div>
+    {{/each}}
+</section>

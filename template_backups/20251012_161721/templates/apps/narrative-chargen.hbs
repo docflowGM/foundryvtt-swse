@@ -1,0 +1,159 @@
+<form class="narrative-chargen holo-theme">
+    <div class="chargen-container">
+        {{!-- Voice Prompt --}}
+        <div class="voice-prompt">
+            <div class="prompt-text">
+                <i class="fas fa-quote-left"></i>
+                <p>{{prompt}}</p>
+                <i class="fas fa-quote-right"></i>
+            </div>
+        </div>
+
+        {{!-- Main Content Area --}}
+        <div class="chargen-content">
+            {{#if (eq step "welcome")}}
+                <div class="welcome-screen">
+                    <img src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition" class="chargen-logo"/>
+                    <button type="button" class="chargen-choice btn-primary" data-value="start">
+                        Begin My Journey
+                    </button>
+                </div>
+            {{/if}}
+
+            {{#if (eq step "name")}}
+                <div class="name-input-screen">
+                    <input type="text" 
+                           class="chargen-input name-input" 
+                           data-field="name" 
+                           value="{{data.name}}" 
+                           placeholder="Enter your name..."
+                           autofocus/>
+                </div>
+            {{/if}}
+
+            {{#if (eq step "race")}}
+                <div class="race-selection">
+                    <div class="race-dropdown-container">
+                        <label for="race-select">Select Your Species:</label>
+                        <select id="race-select" class="race-select">
+                            <option value="">-- Choose a species --</option>
+                            {{#each availableRaces as |race|}}
+                                <option value="{{race.value}}" {{#if (eq ../data.race race.value)}}selected{{/if}}>
+                                    {{race.label}}
+                                </option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    
+                    {{#if data.race}}
+                        <div class="race-bonuses">
+                            <h3>Racial Bonuses</h3>
+                            {{#each availableRaces as |race|}}
+                                {{#if (eq race.value ../data.race)}}
+                                    <p class="bonus-display">{{race.bonuses}}</p>
+                                {{/if}}
+                            {{/each}}
+                        </div>
+                    {{/if}}
+                </div>
+            {{/if}}
+
+            {{#if (eq step "class")}}
+                <div class="class-selection">
+                    {{#each options as |option|}}
+                        <div class="choice-card {{#if (eq ../data.heroicClass option.value)}}selected{{/if}}">
+                            <button type="button" class="chargen-choice" data-value="{{option.value}}">
+                                <h3>{{option.label}}</h3>
+                                <span class="bonus-text">Hit Die: {{option.hp}}</span>
+                            </button>
+                        </div>
+                    {{/each}}
+                </div>
+            {{/if}}
+
+            {{#if (eq step "skills")}}
+                <div class="skills-selection">
+                    <div class="skills-info">
+                        <p>Select <strong>{{classSkillCount}}</strong> trained skills</p>
+                        {{#if (eq data.race "human")}}
+                            <p class="bonus-skill"><i class="fas fa-star"></i> +1 bonus skill as a Human</p>
+                        {{/if}}
+                        <p>Selected: <strong>{{data.trainedSkills.length}}</strong></p>
+                        <p class="training-bonus">Training in a skill grants a +5 bonus to all checks with that skill!</p>
+                    </div>
+                    
+                    <div class="skills-grid">
+                        {{#each availableSkills as |skill|}}
+                            <div class="skill-option {{#if (includes ../data.trainedSkills skill.key)}}selected{{/if}}">
+                                <label class="skill-checkbox">
+                                    <input type="checkbox" 
+                                           class="skill-toggle" 
+                                           data-skill="{{skill.key}}"
+                                           {{#if (includes ../data.trainedSkills skill.key)}}checked{{/if}}/>
+                                    <div class="skill-info">
+                                        <span class="skill-name">{{skill.label}}</span>
+                                        <span class="skill-ability">({{toUpperCase skill.ability}})</span>
+                                        <p class="skill-description">{{skill.description}}</p>
+                                    </div>
+                                </label>
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
+            {{/if}}
+
+            {{#if (eq step "review")}}
+                <div class="review-screen">
+                    <h2>Character Summary</h2>
+                    
+                    <div class="review-sections">
+                        <section class="review-section">
+                            <h3>Basic Information</h3>
+                            <div class="review-item">
+                                <span class="label">Name:</span>
+                                <span class="value">{{data.name}}</span>
+                                <button type="button" class="btn-edit" data-step="name">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                            <div class="review-item">
+                                <span class="label">Race:</span>
+                                <span class="value">{{capitalize data.race}}</span>
+                                <button type="button" class="btn-edit" data-step="race">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                            <div class="review-item">
+                                <span class="label">Class:</span>
+                                <span class="value">{{data.heroicClass}}</span>
+                                <button type="button" class="btn-edit" data-step="class">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            {{/if}}
+        </div>
+
+        {{!-- Navigation --}}
+        <div class="chargen-navigation">
+            {{#if canGoBack}}
+                <button type="button" class="btn-back btn-secondary">
+                    <i class="fas fa-arrow-left">
+                    </i> Back
+                </button>
+            {{/if}}
+            
+            {{#if (eq step "review")}}
+                <button type="button" class="btn-finish btn-primary">
+                    <i class="fas fa-check"></i> Create Character
+                </button>
+            {{else}}
+                <button type="button" class="btn-next btn-primary" {{#unless canGoForward}}disabled{{/unless}}>
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            {{/if}}
+        </div>
+    </div>
+</form>

@@ -6,13 +6,13 @@
     
     <div class="header-fields">
       <div class="field-group">
-        <label>Character Name</label>
+        <label>Droid Designation</label>
         <input name="name" type="text" value="{{actor.name}}" placeholder="Enter Name"/>
       </div>
       
       <div class="field-row">
         <div class="field-group">
-          <label>Race</label>
+          <label>Droid Type</label>
           <select name="system.race" class="race-select">
             <option value="custom" {{#if (eq system.race "custom")}}selected{{/if}}>Custom</option>
             {{#each races as |race key|}}

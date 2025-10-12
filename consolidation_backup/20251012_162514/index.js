@@ -14,8 +14,6 @@ import { preloadHandlebarsTemplates } from "./scripts/load-templates.js";
 import { SWSEStore } from "./store/store.js";
 import * as SWSEData from "./scripts/swse-data.js";
 import { WorldDataLoader } from "./scripts/world-data-loader.js";
-import "./scripts/chargen/chargen-init.js";
-
 
 // ============================================
 // INIT HOOK

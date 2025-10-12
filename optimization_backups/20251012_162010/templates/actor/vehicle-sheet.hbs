@@ -1,0 +1,27 @@
+<form class="{{cssClass}} flexcol" autocomplete="off">
+  <header class="sheet-header">
+    <input name="name" type="text" value="{{actor.name}}" placeholder="Vehicle Name"/>
+    <img class="profile-img" src="{{actor.img}}" data-edit="img"/>
+  </header>
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="main">Main</a>
+    <a class="item" data-tab="crew">Crew</a>
+  </nav>
+  <section class="sheet-body">
+    <div class="tab active" data-group="primary" data-tab="main">
+      <div class="character-section">
+        <h3>Hull Points</h3>
+        <input type="number" name="system.hull.value" value="{{system.hull.value}}" style="width: 80px;"/> / 
+        <input type="number" name="system.hull.max" value="{{system.hull.max}}" style="width: 80px;"/>
+      </div>
+    </div>
+    <div class="tab" data-group="primary" data-tab="crew">
+      <div class="character-section">
+        <h3>Crew Positions</h3>
+        <div class="crew-slot crew-drop" data-slot="pilot">
+          {{#if crew.pilot}}{{getCrewName crew.pilot}}{{else}}Drop pilot here{{/if}}
+        </div>
+      </div>
+    </div>
+  </section>
+</form>
