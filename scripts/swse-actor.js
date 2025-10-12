@@ -246,73 +246,73 @@ export class SWSEActorSheet extends ActorSheet {
     return context;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    
-    // Weapon management
-    html.find(".add-weapon").click(this._onAddWeapon.bind(this));
-    html.find(".remove-weapon").click(this._onRemoveWeapon.bind(this));
-    html.find(".roll-weapon").click(this._onRollWeapon.bind(this));
-    
-    // Feat/Talent management
-    html.find(".add-feat").click(this._onAddFeat.bind(this));
-    html.find(".remove-feat").click(this._onRemoveFeat.bind(this));
-    html.find(".add-talent").click(this._onAddTalent.bind(this));
-    html.find(".remove-talent").click(this._onRemoveTalent.bind(this));
-    
-    // Force powers
-    html.find(".add-forcepower").click(this._onAddForcePower.bind(this));
-    html.find(".remove-forcepower").click(this._onRemoveForcePower.bind(this));
-    html.find(".roll-forcepower").click(this._onRollForcePower.bind(this));
-    html.find(".refresh-forcepowers").click(this._onRefreshForcePowers.bind(this));
-    html.find(".reload-forcepower").click(this._onReloadForcePower.bind(this));
-    
-    // Skills
-    html.find(".add-skill").click(this._onAddSkill.bind(this));
-    html.find(".remove-skill").click(this._onRemoveSkill.bind(this));
-    
-    // Level up
-    html.find(".level-up").click(this._onLevelUp.bind(this));
-    
-    // Second Wind
-    html.find(".apply-second-wind").click(this._onSecondWind.bind(this));
+activateListeners(html) {
+  super.activateListeners(html);
+
+  // Weapon management
+  html.find(".add-weapon").click(this._onAddWeapon.bind(this));
+  html.find(".remove-weapon").click(this._onRemoveWeapon.bind(this));
+  html.find(".roll-weapon").click(this._onRollWeapon.bind(this));
+
+  // Feat/Talent management
+  html.find(".add-feat").click(this._onAddFeat.bind(this));
+  html.find(".remove-feat").click(this._onRemoveFeat.bind(this));
+  html.find(".add-talent").click(this._onAddTalent.bind(this));
+  html.find(".remove-talent").click(this._onRemoveTalent.bind(this));
+
+  // Force powers
+  html.find(".add-forcepower").click(this._onAddForcePower.bind(this));
+  html.find(".remove-forcepower").click(this._onRemoveForcePower.bind(this));
+  html.find(".roll-forcepower").click(this._onRollForcePower.bind(this));
+  html.find(".refresh-forcepowers").click(this._onRefreshForcePowers.bind(this));
+  html.find(".reload-forcepower").click(this._onReloadForcePower.bind(this));
+
+  // Skills
+  html.find(".add-skill").click(this._onAddSkill.bind(this));
+  html.find(".remove-skill").click(this._onRemoveSkill.bind(this));
+
+  // Level up
+  html.find(".level-up").click(this._onLevelUp.bind(this));
+
+  // Second Wind
+  html.find(".apply-second-wind").click(this._onSecondWind.bind(this));
+
+  // Store button
+  html.find(".open-store-btn").click(this._onOpenStore.bind(this));
+}
+
+async _onAddWeapon(event) {
+  event.preventDefault();
+  const weapons = foundry.utils.duplicate(this.actor.system.weapons || []);
+  weapons.push({
+    name: "New Weapon",
+    description: "",
+    damage: "1d8",
+    attackAttr: "str",
+    damageAttr: "str",
+    focus: false,
+    specialization: false,
+    modifier: 0
+  });
+  await this.actor.update({ "system.weapons": weapons });
+}
+
+async _onRemoveWeapon(event) {
+  event.preventDefault();
+  const idx = Number(event.currentTarget.closest(".weapon-entry")?.dataset.index);
+  const weapons = foundry.utils.duplicate(this.actor.system.weapons || []);
+  weapons.splice(idx, 1);
+  await this.actor.update({ "system.weapons": weapons });
+}
+
+async _onOpenStore(event) {
+  event.preventDefault();
+  if (game.swse?.openStore) {
+    game.swse.openStore(this.actor);
+  } else {
+    ui.notifications.warn("Store system not available. Ensure store.js is loaded.");
   }
-
-  async _onAddWeapon(event) {
-    event.preventDefault();
-    const weapons = foundry.utils.duplicate(this.actor.system.weapons || []);
-    weapons.push({
-      name: "New Weapon",
-      description: "",
-      damage: "1d8",
-      attackAttr: "str",
-      damageAttr: "str",
-      focus: false,
-      specialization: false,
-      modifier: 0
-
-    // Store button
-    html.find('.open-store-btn').click(this._onOpenStore.bind(this));
-
-    });
-    await this.actor.update({"system.weapons": weapons});
-  }
-
-  async _onRemoveWeapon(event) {
-    event.preventDefault();
-    const idx = Number(event.currentTarget.closest(".weapon-entry")?.dataset.index);
-    const weapons = foundry.utils.duplicate(this.actor.system.weapons || []);
-    weapons.splice(idx, 1);
-    await this.actor.update({"system.weapons": weapons});
-
-  async _onOpenStore(event) {
-    event.preventDefault();
-    if (game.swse?.openStore) {
-      game.swse.openStore(this.actor);
-    } else {
-      ui.notifications.warn("Store system not available. Ensure store.js is loaded.");
-    }
-  }
+}
 
   }
 
