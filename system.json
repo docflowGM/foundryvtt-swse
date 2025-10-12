@@ -3,7 +3,7 @@
   "type": "system",
   "title": "Star Wars Saga Edition",
   "description": "Complete Star Wars Saga Edition implementation for FoundryVTT with automated character sheets, combat mechanics, Force powers, vehicles, and comprehensive game rules.",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "compatibility": {
     "minimum": "11",
     "verified": "13",
