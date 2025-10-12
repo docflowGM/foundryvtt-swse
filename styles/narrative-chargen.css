@@ -1,0 +1,136 @@
+/* ============================================
+   Narrative Character Generation Styles
+   ============================================ */
+
+.narrative-chargen {
+    background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
+    color: #9ed0ff;
+    font-family: "Orbitron", sans-serif;
+    min-height: 600px;
+    border-radius: 12px;
+}
+
+.voice-prompt {
+    background: linear-gradient(180deg, rgba(0, 20, 40, 0.9) 0%, rgba(0, 10, 20, 0.7) 100%);
+    padding: 2rem;
+    border-bottom: 2px solid #0af;
+    animation: prompt-pulse 3s ease-in-out infinite;
+}
+
+@keyframes prompt-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(0, 170, 255, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(0, 170, 255, 0.5); }
+}
+
+.prompt-text {
+    text-align: center;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #b5daff;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.chargen-content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    min-height: 300px;
+}
+
+.welcome-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 3rem;
+}
+
+.chargen-logo {
+    max-width: 400px;
+    filter: drop-shadow(0 0 20px #0af);
+    animation: logo-glow 2s ease-in-out infinite;
+}
+
+@keyframes logo-glow {
+    0%, 100% { filter: drop-shadow(0 0 20px #0af); }
+    50% { filter: drop-shadow(0 0 30px #00cfff); }
+}
+
+.choice-card {
+    position: relative;
+    transition: all 0.3s;
+}
+
+.choice-card.selected::before {
+    content: "Check";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 30px;
+    height: 30px;
+    background: #00ff88;
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.chargen-choice {
+    width: 100%;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(0, 30, 60, 0.8) 0%, rgba(0, 50, 100, 0.6) 100%);
+    border: 2px solid #0af;
+    color: #fff;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.chargen-choice:hover {
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.6);
+    transform: translateY(-5px);
+}
+
+.review-screen {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.review-section {
+    background: rgba(20, 20, 40, 0.8);
+    border: 2px solid #0af;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.chargen-navigation {
+    display: flex;
+    justify-content: space-between;
+    padding: 1.5rem;
+    background: rgba(10, 10, 20, 0.9);
+    border-top: 2px solid #0af;
+}
+
+.btn-primary {
+    background: linear-gradient(180deg, #0066aa 0%, #004477 100%);
+    border: 2px solid #0af;
+    padding: 1rem 2rem;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-primary:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.8);
+}
+
+button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}

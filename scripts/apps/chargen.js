@@ -271,7 +271,7 @@ export default class NarrativeCharGen extends Application {
         const roll = Math.floor(Math.random() * 6) + 1;
         this.data.credits = roll * 1000;
         
-        ui.notifications.info(`Rolled ${roll} × 1000 = ${this.data.credits} credits`);
+        ui.notifications.info(`Rolled ${roll} x 1000 = ${this.data.credits} credits`);
     }
 
     _maxCredits() {
