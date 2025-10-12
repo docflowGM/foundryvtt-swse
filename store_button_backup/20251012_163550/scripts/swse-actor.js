@@ -290,10 +290,6 @@ export class SWSEActorSheet extends ActorSheet {
       focus: false,
       specialization: false,
       modifier: 0
-
-    // Store button
-    html.find('.open-store-btn').click(this._onOpenStore.bind(this));
-
     });
     await this.actor.update({"system.weapons": weapons});
   }
@@ -304,16 +300,6 @@ export class SWSEActorSheet extends ActorSheet {
     const weapons = foundry.utils.duplicate(this.actor.system.weapons || []);
     weapons.splice(idx, 1);
     await this.actor.update({"system.weapons": weapons});
-
-  async _onOpenStore(event) {
-    event.preventDefault();
-    if (game.swse?.openStore) {
-      game.swse.openStore(this.actor);
-    } else {
-      ui.notifications.warn("Store system not available. Ensure store.js is loaded.");
-    }
-  }
-
   }
 
   async _onRollWeapon(event) {

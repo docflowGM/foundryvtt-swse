@@ -29,8 +29,7 @@
   "styles": [
     "styles/swse-holo.css",
     "styles/swse-components.css",
-    "styles/swse-fixes.css",
-    "scripts/store/store.css"
+    "styles/swse-fixes.css"
   ],
   "languages": [
     {

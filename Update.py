@@ -1,475 +1,373 @@
 #!/usr/bin/env python3
 """
-SWSE System Consolidation Script
-Merges the two parallel systems into one coherent structure
+Add Store Button to SWSE Character Sheet
+Automatically integrates the store button into the character sheet and wires up the handler
 """
 
-import os
 import shutil
 from pathlib import Path
 from datetime import datetime
 
 REPO_PATH = Path(r"C:\Users\Owner\Documents\GitHub\foundryvtt-swse")
-BACKUP_DIR = REPO_PATH / "consolidation_backup" / datetime.now().strftime("%Y%m%d_%H%M%S")
+BACKUP_DIR = REPO_PATH / "store_button_backup" / datetime.now().strftime("%Y%m%d_%H%M%S")
 
-class SystemConsolidator:
+class StoreButtonAdder:
     def __init__(self):
         self.repo_path = REPO_PATH
         self.backup_dir = BACKUP_DIR
         self.actions = []
         self.warnings = []
-        
+    
     def create_backup(self):
-        """Comprehensive backup before consolidation"""
+        """Backup files we'll modify"""
         print("Creating backup...")
         self.backup_dir.mkdir(parents=True, exist_ok=True)
         
-        # Backup critical files
-        critical = ["index.js", "swse.js", "system.json", "template.json", "config.js"]
-        for file in critical:
-            src = self.repo_path / file
-            if src.exists():
-                shutil.copy2(src, self.backup_dir / file)
-                print(f"  ✓ Backed up: {file}")
+        files_to_backup = [
+            "templates/actor/character-sheet.hbs",
+            "scripts/swse-actor.js"
+        ]
         
-        # Backup directories
-        for dir_name in ["scripts", "module", "templates"]:
-            src = self.repo_path / dir_name
+        for file_path in files_to_backup:
+            src = self.repo_path / file_path
             if src.exists():
-                dst = self.backup_dir / dir_name
-                shutil.copytree(src, dst, dirs_exist_ok=True)
-                print(f"  ✓ Backed up: {dir_name}/")
+                dst = self.backup_dir / file_path
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src, dst)
+                print(f"  ✓ Backed up: {file_path}")
+            else:
+                self.warnings.append(f"File not found: {file_path}")
         
         print("✓ Backup complete\n")
     
-    def analyze_structure(self):
-        """Analyze current structure and identify conflicts"""
-        print("Analyzing system structure...\n")
+    def add_button_to_template(self):
+        """Add store button to character sheet template"""
+        print("Adding store button to character sheet...")
         
-        analysis = {
-            "index_js_imports": [],
-            "swse_js_imports": [],
-            "script_classes": [],
-            "module_classes": [],
-            "template_locations": []
-        }
+        template_path = self.repo_path / "templates" / "actor" / "character-sheet.hbs"
         
-        # Check index.js imports
-        index_js = self.repo_path / "index.js"
-        if index_js.exists():
-            with open(index_js, 'r', encoding='utf-8') as f:
-                content = f.read()
-                if "scripts/swse-actor.js" in content:
-                    analysis["index_js_imports"].append("scripts/swse-actor.js")
-                if "scripts/swse-item.js" in content:
-                    analysis["index_js_imports"].append("scripts/swse-item.js")
+        if not template_path.exists():
+            self.warnings.append("Character sheet template not found!")
+            return False
         
-        # Check swse.js imports
-        swse_js = self.repo_path / "swse.js"
-        if swse_js.exists():
-            with open(swse_js, 'r', encoding='utf-8') as f:
-                content = f.read()
-                if "module/sheets/SWSEActorSheet.js" in content:
-                    analysis["swse_js_imports"].append("module/sheets/SWSEActorSheet.js")
-                if "module/chargen" in content:
-                    analysis["swse_js_imports"].append("module/chargen/chargen-init.js")
-        
-        # Check what exists
-        scripts_dir = self.repo_path / "scripts"
-        if scripts_dir.exists():
-            analysis["script_classes"] = [f.name for f in scripts_dir.glob("*.js")]
-        
-        module_sheets = self.repo_path / "module" / "sheets"
-        if module_sheets.exists():
-            analysis["module_classes"] = [f.name for f in module_sheets.glob("*.js")]
-        
-        # Check templates
-        for template_dir in ["templates/actor", "templates/actors"]:
-            template_path = self.repo_path / template_dir
-            if template_path.exists():
-                hbs_files = list(template_path.glob("*.hbs"))
-                html_files = list(template_path.glob("*.html"))
-                all_files = hbs_files + html_files
-                files = [f.name for f in all_files]
-                if files:
-                    analysis["template_locations"].append({
-                        "location": template_dir,
-                        "files": files
-                    })
-        
-        # Report findings
-        print("STRUCTURE ANALYSIS:")
-        print("="*70)
-        print(f"\nindex.js (ACTIVE) imports:")
-        for imp in analysis["index_js_imports"]:
-            print(f"  - {imp}")
-        
-        print(f"\nswse.js (DORMANT) imports:")
-        for imp in analysis["swse_js_imports"]:
-            print(f"  - {imp}")
-        
-        print(f"\nscripts/ directory contains:")
-        for cls in analysis["script_classes"]:
-            print(f"  - {cls}")
-        
-        print(f"\nmodule/sheets/ directory contains:")
-        for cls in analysis["module_classes"]:
-            print(f"  - {cls}")
-        
-        print(f"\nTemplate locations:")
-        for loc in analysis["template_locations"]:
-            print(f"  {loc['location']}:")
-            for f in loc["files"]:
-                print(f"    - {f}")
-        
-        print("\n" + "="*70 + "\n")
-        
-        return analysis
-    
-    def remove_backup_files(self):
-        """Remove all .backup files"""
-        print("Removing backup files...")
-        
-        backup_files = list(self.repo_path.rglob("*.backup"))
-        
-        for backup_file in backup_files:
-            rel_path = backup_file.relative_to(self.repo_path)
-            backup_file.unlink()
-            self.actions.append(f"Removed: {rel_path}")
-            print(f"  ✓ Removed: {rel_path}")
-        
-        print(f"Removed {len(backup_files)} backup files\n")
-    
-    def consolidate_to_scripts(self):
-        """
-        Recommended: Keep scripts/ as primary, integrate module/ features
-        This keeps the ACTIVE system (index.js) and adds missing features
-        """
-        print("Consolidating to scripts/ directory...\n")
-        
-        # 1. Move character generator to scripts/
-        chargen_src = self.repo_path / "module" / "chargen"
-        chargen_dst = self.repo_path / "scripts" / "chargen"
-        
-        if chargen_src.exists():
-            if chargen_dst.exists():
-                shutil.rmtree(chargen_dst)
-            shutil.copytree(chargen_src, chargen_dst)
-            self.actions.append(f"Moved: module/chargen/ → scripts/chargen/")
-            print("  ✓ Moved character generator to scripts/chargen/")
-        
-        # 2. Move helpers if needed
-        helpers_src = self.repo_path / "module" / "scripts" / "helpers.js"
-        if helpers_src.exists():
-            helpers_dst = self.repo_path / "scripts" / "helpers.js"
-            if not helpers_dst.exists():
-                shutil.copy2(helpers_src, helpers_dst)
-                self.actions.append(f"Copied: module/scripts/helpers.js → scripts/helpers.js")
-                print("  ✓ Copied helpers.js to scripts/")
-        
-        # 3. Update index.js to import chargen
-        self.update_index_js_with_chargen()
-        
-        # 4. Consolidate templates to templates/actor/
-        self.consolidate_templates()
-        
-        print()
-    
-    def update_index_js_with_chargen(self):
-        """Add chargen import to index.js"""
-        print("Updating index.js to include character generator...")
-        
-        index_js = self.repo_path / "index.js"
-        
-        if not index_js.exists():
-            self.warnings.append("index.js not found!")
-            return
-        
-        with open(index_js, 'r', encoding='utf-8') as f:
+        with open(template_path, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        # Check if already imported
-        if "chargen" in content.lower():
-            print("  ℹ Character generator already imported")
-            return
+        # Check if button already exists
+        if 'open-store-btn' in content or 'Galactic Trade Exchange' in content:
+            print("  ℹ Store button already exists in template")
+            return True
         
-        # Add import at top
-        import_line = 'import "./scripts/chargen/chargen-init.js";\n'
+        # Store button HTML
+        store_button_html = '''
+                <!-- Store Access -->
+                <section class="store-section">
+                    <button type="button" class="open-store-btn">
+                        <i class="fas fa-shopping-cart"></i> Galactic Trade Exchange
+                    </button>
+                </section>
+'''
         
-        # Find where to insert (after other imports)
+        # Try to find a good location - look for credits or force points section
+        insertion_points = [
+            ('<!-- Force Points & Dark Side -->', 'after'),
+            ('<section class="force-section">', 'after_close'),
+            ('name="system.credits"', 'after_section'),
+            ('<!-- Level Up Button -->', 'before'),
+            ('<section class="level-up-section">', 'before'),
+            ('</div>\n    </div>\n</form>', 'before_last')  # Fallback - before closing tags
+        ]
+        
+        inserted = False
+        for marker, position in insertion_points:
+            if marker in content:
+                if position == 'after':
+                    # Insert after the marker line
+                    lines = content.split('\n')
+                    for i, line in enumerate(lines):
+                        if marker in line:
+                            lines.insert(i + 1, store_button_html)
+                            content = '\n'.join(lines)
+                            inserted = True
+                            print(f"  ✓ Inserted button after '{marker[:50]}...'")
+                            break
+                
+                elif position == 'after_close':
+                    # Find the closing </section> tag after the marker
+                    idx = content.find(marker)
+                    if idx != -1:
+                        # Find next </section>
+                        close_idx = content.find('</section>', idx)
+                        if close_idx != -1:
+                            insert_pos = close_idx + len('</section>')
+                            content = content[:insert_pos] + '\n' + store_button_html + content[insert_pos:]
+                            inserted = True
+                            print(f"  ✓ Inserted button after section containing '{marker[:50]}...'")
+                            break
+                
+                elif position == 'after_section':
+                    # Find the line, then find the next </section> or </div>
+                    idx = content.find(marker)
+                    if idx != -1:
+                        # Find containing section close
+                        close_idx = content.find('</section>', idx)
+                        if close_idx == -1:
+                            close_idx = content.find('</div>', idx)
+                        if close_idx != -1:
+                            insert_pos = close_idx + len('</section>')
+                            content = content[:insert_pos] + '\n' + store_button_html + content[insert_pos:]
+                            inserted = True
+                            print(f"  ✓ Inserted button after section containing '{marker[:50]}...'")
+                            break
+                
+                elif position == 'before':
+                    # Insert before the marker
+                    idx = content.find(marker)
+                    if idx != -1:
+                        content = content[:idx] + store_button_html + '\n' + content[idx:]
+                        inserted = True
+                        print(f"  ✓ Inserted button before '{marker[:50]}...'")
+                        break
+                
+                elif position == 'before_last':
+                    # Insert before the marker (fallback)
+                    idx = content.rfind(marker)
+                    if idx != -1:
+                        content = content[:idx] + store_button_html + '\n' + content[idx:]
+                        inserted = True
+                        print(f"  ✓ Inserted button before closing tags (fallback)")
+                        break
+                
+                if inserted:
+                    break
+        
+        if not inserted:
+            self.warnings.append(
+                "Could not find suitable insertion point in template.\n"
+                "  Please add the store button manually - see backup guide."
+            )
+            return False
+        
+        # Write updated template
+        with open(template_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        self.actions.append("Added store button to character-sheet.hbs")
+        print()
+        return True
+    
+    def add_handler_to_actor_sheet(self):
+        """Add store button handler to SWSEActorSheet"""
+        print("Adding store button handler to actor sheet...")
+        
+        actor_js = self.repo_path / "scripts" / "swse-actor.js"
+        
+        if not actor_js.exists():
+            self.warnings.append("swse-actor.js not found!")
+            return False
+        
+        with open(actor_js, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Check if handler already exists
+        if '_onOpenStore' in content:
+            print("  ℹ Store handler already exists")
+            return True
+        
+        # Find the activateListeners method
+        if 'activateListeners(html)' not in content:
+            self.warnings.append("Could not find activateListeners method in swse-actor.js")
+            return False
+        
+        # Add listener in activateListeners
+        listener_line = "    html.find('.open-store-btn').click(this._onOpenStore.bind(this));\n"
+        
+        # Find activateListeners method and add at the end, before the closing brace
         lines = content.split('\n')
-        insert_index = 0
+        in_activate_listeners = False
+        insert_index = -1
+        brace_count = 0
         
         for i, line in enumerate(lines):
-            if line.strip().startswith('import'):
-                insert_index = i + 1
-        
-        lines.insert(insert_index, import_line)
-        new_content = '\n'.join(lines)
-        
-        with open(index_js, 'w', encoding='utf-8') as f:
-            f.write(new_content)
-        
-        self.actions.append("Updated index.js to import character generator")
-        print("  ✓ Added chargen import to index.js")
-    
-    def consolidate_templates(self):
-        """Consolidate templates to templates/actor/"""
-        print("Consolidating templates...")
-        
-        primary_dir = self.repo_path / "templates" / "actor"
-        deprecated_dir = self.repo_path / "templates" / "actors"
-        
-        if not primary_dir.exists():
-            primary_dir.mkdir(parents=True)
-        
-        # Move any unique files from actors/ to actor/
-        if deprecated_dir.exists():
-            for file in deprecated_dir.glob("*"):
-                if file.is_file() and file.suffix in ['.hbs', '.html']:
-                    # Convert .html to .hbs
-                    target_name = file.stem + '.hbs'
-                    target_path = primary_dir / target_name
-                    
-                    if not target_path.exists():
-                        shutil.copy2(file, target_path)
-                        self.actions.append(f"Moved: {file.name} → templates/actor/{target_name}")
-                        print(f"  ✓ Moved: {file.name}")
+            if 'activateListeners(html)' in line:
+                in_activate_listeners = True
+                brace_count = 0
+                continue
             
-            # Remove deprecated directory
-            shutil.rmtree(deprecated_dir)
-            self.actions.append("Removed: templates/actors/")
-            print("  ✓ Removed templates/actors/")
+            if in_activate_listeners:
+                # Count braces to find method end
+                brace_count += line.count('{') - line.count('}')
+                
+                # When we close the method (brace_count becomes 0), insert before this line
+                if brace_count == 0 and '}' in line:
+                    insert_index = i
+                    break
         
-        print()
-    
-    def cleanup_module_directory(self):
-        """Option: Remove module/ directory after consolidation"""
-        print("Cleaning up module/ directory...")
-        
-        module_dir = self.repo_path / "module"
-        
-        if not module_dir.exists():
-            print("  ℹ module/ already removed")
-            return
-        
-        # List what's in module/
-        contents = list(module_dir.rglob("*"))
-        files = [f for f in contents if f.is_file()]
-        
-        print(f"\n  module/ contains {len(files)} files:")
-        for f in files[:10]:  # Show first 10
-            print(f"    - {f.relative_to(module_dir)}")
-        if len(files) > 10:
-            print(f"    ... and {len(files) - 10} more")
-        
-        # Ask for confirmation (simulated - you'll do this manually)
-        self.warnings.append(
-            "MANUAL ACTION REQUIRED: Review module/ directory\n"
-            "  After verifying everything works, you can safely remove it:\n"
-            "  rm -rf module/"
-        )
-        
-        print("\n  ⚠ Keeping module/ for now - review before deleting")
-        print()
-    
-    def remove_swse_js(self):
-        """Remove the dormant swse.js entry point"""
-        print("Removing dormant swse.js...")
-        
-        swse_js = self.repo_path / "swse.js"
-        
-        if swse_js.exists():
-            swse_js.unlink()
-            self.actions.append("Removed: swse.js (dormant entry point)")
-            print("  ✓ Removed swse.js")
+        if insert_index > 0:
+            # Insert the listener call
+            lines.insert(insert_index, '\n    // Store button')
+            lines.insert(insert_index + 1, listener_line)
+            self.actions.append("Added store button listener to activateListeners()")
+            print("  ✓ Added listener to activateListeners()")
         else:
-            print("  ℹ swse.js already removed")
+            self.warnings.append("Could not find insertion point in activateListeners method")
+            return False
+        
+        # Now add the _onOpenStore method at the end of the class
+        # Find the last method or the end of the class
+        store_handler = '''
+  async _onOpenStore(event) {
+    event.preventDefault();
+    if (game.swse?.openStore) {
+      game.swse.openStore(this.actor);
+    } else {
+      ui.notifications.warn("Store system not available. Ensure store.js is loaded.");
+    }
+  }
+'''
+        
+        # Find the last closing brace of the class (before export or EOF)
+        class_end_index = -1
+        for i in range(len(lines) - 1, -1, -1):
+            line = lines[i].strip()
+            if line == '}' and i > 0:
+                # Check if this might be the class closing brace
+                # Look back for class definition
+                found_class = False
+                for j in range(i, max(0, i - 100), -1):
+                    if 'class SWSEActorSheet' in lines[j]:
+                        found_class = True
+                        break
+                
+                if found_class:
+                    class_end_index = i
+                    break
+        
+        if class_end_index > 0:
+            # Insert the new method before the closing brace
+            lines.insert(class_end_index, store_handler)
+            self.actions.append("Added _onOpenStore() method to SWSEActorSheet")
+            print("  ✓ Added _onOpenStore() method")
+        else:
+            self.warnings.append("Could not find class end to add _onOpenStore method")
+            return False
+        
+        # Write back
+        content = '\n'.join(lines)
+        with open(actor_js, 'w', encoding='utf-8') as f:
+            f.write(content)
         
         print()
+        return True
     
-    def create_migration_guide(self):
-        """Create a guide for the migration"""
-        guide = f"""# SWSE System Consolidation Guide
+    def create_manual_guide(self):
+        """Create a manual guide in case automatic insertion fails"""
+        guide = """# Manual Store Button Integration
 
-## What Was Done
+If the automatic script couldn't add the button, follow these steps:
 
-This script consolidated your two parallel systems into one:
+## 1. Add Button to Character Sheet
 
-**BEFORE:**
+Edit `templates/actor/character-sheet.hbs`
+
+Find a good location (near credits or force points) and add:
+
+```handlebars
+<!-- Store Access -->
+<section class="store-section">
+    <button type="button" class="open-store-btn">
+        <i class="fas fa-shopping-cart"></i> Galactic Trade Exchange
+    </button>
+</section>
 ```
-index.js (ACTIVE) → scripts/ → templates/actor/
-swse.js (DORMANT) → module/ → templates/actors/
-```
 
-**AFTER:**
-```
-index.js (ACTIVE) → scripts/ (includes chargen) → templates/actor/
-```
+## 2. Add Handler to Actor Sheet
 
-## Changes Made
+Edit `scripts/swse-actor.js`
 
-"""
-        for action in self.actions:
-            guide += f"- {action}\n"
-        
-        guide += f"""
+### In activateListeners() method:
 
-## Warnings
-
-"""
-        for warning in self.warnings:
-            guide += f"⚠ {warning}\n\n"
-        
-        guide += """
-
-## What You Need to Do
-
-### 1. Update Template Path in Module Sheets (if any remain)
-
-If you kept any files from `module/sheets/`, update their template paths:
+Add this line before the closing brace:
 
 ```javascript
-// OLD
-template: "systems/swse/templates/actors/character-sheet.html"
-
-// NEW
-template: "systems/swse/templates/actor/character-sheet.hbs"
+activateListeners(html) {
+    super.activateListeners(html);
+    
+    // ... existing listeners ...
+    
+    // Store button
+    html.find('.open-store-btn').click(this._onOpenStore.bind(this));
+}
 ```
 
-### 2. Test Character Generator
+### Add new method to the class:
 
-The character generator should now work because it's imported in index.js:
+Before the class closing brace, add:
 
 ```javascript
-import "./scripts/chargen/chargen-init.js";
+async _onOpenStore(event) {
+    event.preventDefault();
+    if (game.swse?.openStore) {
+        game.swse.openStore(this.actor);
+    } else {
+        ui.notifications.warn("Store system not available. Ensure store.js is loaded.");
+    }
+}
 ```
 
-Test by:
-1. Click "Create Actor" button in Foundry
-2. You should see "Use Character Generator" dialog
-3. Create a test character
+## 3. Optional: Add CSS Styling
 
-### 3. Review Module Directory
+Edit `styles/swse-components.css` or create a new CSS file:
 
-After confirming everything works:
+```css
+.store-section {
+    margin: 10px 0;
+    text-align: center;
+}
 
-```bash
-# List what's left in module/
-ls -la module/
+.open-store-btn {
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: #fff;
+    border: 2px solid #60a5fa;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-# If it's all redundant, remove it
-git rm -rf module/
+.open-store-btn:hover {
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    box-shadow: 0 0 10px #3b82f6;
+    transform: translateY(-2px);
+}
+
+.open-store-btn i {
+    margin-right: 5px;
+}
 ```
 
-### 4. Clean Git History
+## 4. Test
 
-```bash
-# Review changes
-git status
-git diff
+In Foundry console:
 
-# Stage consolidation
-git add .
-git commit -m "Consolidate parallel systems: integrate chargen into main system"
-
-# Remove backup files from git (if tracked)
-git rm --cached **/*.backup
-git commit -m "Remove backup files from version control"
+```javascript
+const char = game.actors.contents[0];
+game.swse.openStore(char);
 ```
-
-### 5. Update .gitignore
-
-Add to `.gitignore`:
-```
-*.backup
-consolidation_backup/
-optimization_backups/
-```
-
-## Testing Checklist
-
-- [ ] Character sheet loads
-- [ ] Character generator works
-- [ ] All tabs functional (Skills, Feats, Talents, Powers, Equipment)
-- [ ] Items can be added/removed
-- [ ] Ability scores calculate correctly
-- [ ] No console errors
-- [ ] Templates render correctly
-
-## File Structure (Recommended Final State)
-
-```
-foundryvtt-swse/
-├── index.js                 # SOLE entry point
-├── config.js                # System configuration
-├── system.json              # Foundry manifest
-├── template.json            # Data model
-├── scripts/
-│   ├── swse-actor.js       # Actor class & sheet
-│   ├── swse-item.js        # Item class & sheet  
-│   ├── swse-droid.js       # Droid sheet
-│   ├── swse-vehicle.js     # Vehicle sheet
-│   ├── load-templates.js   # Template loader
-│   ├── helpers.js          # Handlebars helpers
-│   └── chargen/            # Character generator
-│       ├── chargen-init.js
-│       └── chargen.js
-├── templates/
-│   ├── actor/              # All actor templates here
-│   │   ├── character-sheet.hbs
-│   │   ├── npc-sheet.hbs
-│   │   ├── droid-sheet.hbs
-│   │   └── vehicle-sheet.hbs
-│   ├── item/
-│   │   └── item-sheet.hbs
-│   ├── apps/
-│   │   └── chargen.hbs
-│   └── partials/
-│       └── ...
-└── styles/
-    └── ...
-```
-
-## Rollback Instructions
-
-If something breaks, restore from backup:
-
-```bash
-# Your backup is at: {self.backup_dir}
-
-# Restore a specific file
-cp {self.backup_dir}/index.js ./index.js
-
-# Restore entire directory
-cp -r {self.backup_dir}/scripts ./scripts
-```
-
-## Questions?
-
-Common issues:
-
-**Q: Character generator button doesn't appear**
-A: Check browser console for import errors. Verify chargen-init.js path is correct.
-
-**Q: Templates not rendering**
-A: Check template paths in sheet classes match actual file locations.
-
-**Q: Sheet looks broken**
-A: Verify CSS files are loaded in system.json styles array.
-
 """
         
-        guide_file = self.backup_dir / "CONSOLIDATION_GUIDE.md"
+        guide_file = self.backup_dir / "MANUAL_BUTTON_INTEGRATION.md"
         with open(guide_file, 'w', encoding='utf-8') as f:
             f.write(guide)
         
-        return guide, guide_file
+        return guide_file
     
     def run(self):
-        """Execute consolidation"""
+        """Execute the button addition"""
         print("="*70)
-        print("SWSE System Consolidation")
+        print("Add Store Button to SWSE Character Sheet")
         print("="*70)
         print()
         
@@ -477,48 +375,36 @@ A: Verify CSS files are loaded in system.json styles array.
             print(f"❌ Repository not found: {self.repo_path}")
             return False
         
-        # Step 1: Backup
-        self.create_backup()
-        
-        # Step 2: Analyze
-        analysis = self.analyze_structure()
-        
-        # Step 3: Confirm
-        print("CONSOLIDATION PLAN:")
-        print("="*70)
-        print("1. Remove all .backup files")
-        print("2. Move module/chargen/ → scripts/chargen/")
-        print("3. Add chargen import to index.js")
-        print("4. Consolidate templates to templates/actor/")
-        print("5. Remove swse.js (dormant entry point)")
-        print("6. Keep module/ for manual review")
-        print("="*70)
-        print()
-        
-        input("Press ENTER to continue or Ctrl+C to abort...")
-        print()
-        
-        # Step 4: Execute
         try:
-            self.remove_backup_files()
-            self.consolidate_to_scripts()
-            self.remove_swse_js()
-            self.cleanup_module_directory()
+            # Backup
+            self.create_backup()
             
-            # Step 5: Generate guide
-            guide, guide_file = self.create_migration_guide()
+            # Add button to template
+            template_success = self.add_button_to_template()
             
-            # Final report
+            # Add handler to actor sheet
+            handler_success = self.add_handler_to_actor_sheet()
+            
+            # Create manual guide
+            guide_file = self.create_manual_guide()
+            
+            # Report
             print("="*70)
-            print("✓ Consolidation Complete")
+            if template_success and handler_success:
+                print("✓ Store Button Integration Complete!")
+            else:
+                print("⚠ Partial Integration - Manual Steps Required")
             print("="*70)
             print()
             print(f"Backup: {self.backup_dir}")
-            print(f"Guide: {guide_file}")
+            print(f"Manual Guide: {guide_file}")
             print()
-            print(f"Actions performed: {len(self.actions)}")
-            print(f"Warnings: {len(self.warnings)}")
-            print()
+            
+            if self.actions:
+                print("ACTIONS PERFORMED:")
+                for action in self.actions:
+                    print(f"  ✓ {action}")
+                print()
             
             if self.warnings:
                 print("WARNINGS:")
@@ -527,24 +413,30 @@ A: Verify CSS files are loaded in system.json styles array.
                 print()
             
             print("NEXT STEPS:")
-            print("1. Test system in Foundry VTT")
-            print("2. Verify character generator works")
-            print("3. Review module/ directory")
-            print(f"4. Read full guide: {guide_file}")
-            print("5. Commit changes when satisfied")
+            print("1. Start Foundry VTT")
+            print("2. Open a character sheet")
+            print("3. Look for 'Galactic Trade Exchange' button")
+            print("4. Click it to test the store!")
             print()
+            print("OR test via console:")
+            print("  game.swse.openStore(game.actors.contents[0])")
+            print()
+            
+            if not (template_success and handler_success):
+                print(f"⚠ Some steps failed - see manual guide: {guide_file}")
+                print()
             
             return True
             
         except Exception as e:
-            print(f"\n❌ Error during consolidation: {e}")
-            print(f"Restore from backup: {self.backup_dir}")
+            print(f"\n❌ Error: {e}")
+            print(f"Restore from: {self.backup_dir}")
             raise
 
 
 def main():
-    consolidator = SystemConsolidator()
-    success = consolidator.run()
+    adder = StoreButtonAdder()
+    success = adder.run()
     return 0 if success else 1
 
 
