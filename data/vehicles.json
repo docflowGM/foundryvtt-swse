@@ -47,7 +47,8 @@
     "cost": {
       "new": 6750,
       "used": 1200
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "A-A5 Speeder Truck",
@@ -78,7 +79,8 @@
     "cost": {
       "new": 30500,
       "used": 8000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AAT-1",
@@ -128,7 +130,8 @@
     "cost": {
       "new": 4,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AeroChaser Speeder Bike",
@@ -159,7 +162,8 @@
     "cost": {
       "new": 5800,
       "used": 1000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Arrow-23 Landspeeder",
@@ -209,7 +213,8 @@
     "cost": {
       "new": 10800,
       "used": 3400
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Bantha-II Cargo Skiff",
@@ -240,7 +245,8 @@
     "cost": {
       "new": 8000,
       "used": 3000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "BARC Speeder",
@@ -290,7 +296,8 @@
     "cost": {
       "new": 8300,
       "used": 1550
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Canderous-Class Assault Tank",
@@ -346,7 +353,8 @@
     "cost": {
       "new": 4,
       "used": 1
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "CK-6 Freeco Speeder Bike",
@@ -396,7 +404,8 @@
     "cost": {
       "new": 14700,
       "used": 7400
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corona Luxury Groundspeeder",
@@ -427,7 +436,8 @@
     "cost": {
       "new": 70000,
       "used": 20000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "CS-1 Cargo Sled",
@@ -458,7 +468,8 @@
     "cost": {
       "new": 12000,
       "used": 6500
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "F9-TZ Transport",
@@ -489,7 +500,8 @@
     "cost": {
       "new": 9,
       "used": 15
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "FC-20 Speeder Bike",
@@ -520,7 +532,8 @@
     "cost": {
       "new": 4000,
       "used": 1000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "KAAC Freerunner",
@@ -570,7 +583,8 @@
     "cost": {
       "new": 140000,
       "used": 110000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Kybuck Speeder Bike",
@@ -620,7 +634,8 @@
     "cost": {
       "new": 8000,
       "used": 3500
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Laser Borer",
@@ -673,7 +688,8 @@
     "cost": {
       "new": 10000,
       "used": 3000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "LAVr QH-7 Chariot",
@@ -700,7 +716,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Manta Droid Subfighter",
@@ -750,7 +767,8 @@
     "cost": {
       "new": 22000,
       "used": 3
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Mekuun Heavy Tracker",
@@ -800,7 +818,8 @@
     "cost": {
       "new": 125000,
       "used": 75000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Model 67 Shrieker Speeder Bike",
@@ -827,7 +846,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "MR/RV",
@@ -877,7 +897,8 @@
     "cost": {
       "new": 220000,
       "used": 90000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "MTT",
@@ -927,7 +948,8 @@
     "cost": {
       "new": 138000,
       "used": 80000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "PAC",
@@ -958,7 +980,8 @@
     "cost": {
       "new": 37000,
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "PL-90 Luxury Speeder",
@@ -989,7 +1012,8 @@
     "cost": {
       "new": 48000,
       "used": 29000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "T2-B Repulsor Tank",
@@ -1027,7 +1051,8 @@
     "cost": {
       "new": 5,
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "TT-6 Landspeeder",
@@ -1058,7 +1083,8 @@
     "cost": {
       "new": 12000,
       "used": 3800
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "TX-130 Saber-Class Fighter Tank",
@@ -1108,7 +1134,8 @@
     "cost": {
       "new": 3,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "TX-130T Fighter Tank",
@@ -1158,7 +1185,8 @@
     "cost": {
       "new": 42000,
       "used": 34000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "U-LAV",
@@ -1208,7 +1236,8 @@
     "cost": {
       "new": 50000,
       "used": 22000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "UT-AT",
@@ -1258,7 +1287,8 @@
     "cost": {
       "new": 8,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "V-35 Courier",
@@ -1289,7 +1319,8 @@
     "cost": {
       "new": 8000,
       "used": 2500
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Viper Swoop Bike",
@@ -1319,7 +1350,8 @@
     "cost": {
       "new": 5500,
       "used": 1050
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Wind Skiff",
@@ -1372,7 +1404,8 @@
     "cost": {
       "new": 13000,
       "used": 3500
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "WLO-5 Speeder Tank",
@@ -1422,7 +1455,8 @@
     "cost": {
       "new": 115000,
       "used": 65000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "X-34 Landspeeder",
@@ -1453,7 +1487,8 @@
     "cost": {
       "new": 10550,
       "used": 2500
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "X-34 Speeder Escort",
@@ -1503,7 +1538,8 @@
     "cost": {
       "new": 13550,
       "used": 3500
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AT-AT",
@@ -1553,7 +1589,8 @@
     "cost": {
       "new": 7,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AT-AP",
@@ -1603,7 +1640,8 @@
     "cost": {
       "new": 7,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AT-CT",
@@ -1653,7 +1691,8 @@
     "cost": {
       "new": 8,
       "used": 28
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AT-KT",
@@ -1703,7 +1742,8 @@
     "cost": {
       "new": 6,
       "used": 2
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AT-ST",
@@ -1753,7 +1793,8 @@
     "cost": {
       "new": 6,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AT-TE",
@@ -1803,7 +1844,8 @@
     "cost": {
       "new": 7,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AT-RT",
@@ -1853,7 +1895,8 @@
     "cost": {
       "new": 40000,
       "used": 24000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AT-XT",
@@ -1903,7 +1946,8 @@
     "cost": {
       "new": 14700,
       "used": 2200
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AT-PT",
@@ -1953,7 +1997,8 @@
     "cost": {
       "new": 1,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AT-RCT",
@@ -2003,7 +2048,8 @@
     "cost": {
       "new": 9,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AT-AHT",
@@ -2053,7 +2099,8 @@
     "cost": {
       "new": 8,
       "used": 8
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AT-AA",
@@ -2103,7 +2150,8 @@
     "cost": {
       "new": 2,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Hyena-Class Bomber",
@@ -2159,7 +2207,8 @@
     "cost": {
       "new": 23000,
       "used": 7
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Modified Tsmeu-6 Personal Wheel Bike",
@@ -2186,7 +2235,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Octuptarra Magna Tri-Droid",
@@ -2236,7 +2286,8 @@
     "cost": {
       "new": 100000,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "OG-9 Homing Spider Droid",
@@ -2286,7 +2337,8 @@
     "cost": {
       "new": 70000,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "SPHA",
@@ -2336,7 +2388,8 @@
     "cost": {
       "new": 7,
       "used": 7
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "SPHA-I",
@@ -2363,7 +2416,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "SPHA-V",
@@ -2390,7 +2444,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "SPHA-C",
@@ -2417,7 +2472,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "SPHA-M",
@@ -2444,7 +2500,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Tsmeu-6 Personal Wheel Bike",
@@ -2475,7 +2532,8 @@
     "cost": {
       "new": 15000,
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "\"Vulture\" Droid Starfighter",
@@ -2531,7 +2589,8 @@
     "cost": {
       "new": 19000,
       "used": 7
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "WLO-5 Speeder Tank",
@@ -2581,7 +2640,8 @@
     "cost": {
       "new": 115000,
       "used": 65000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "LAAT/i Gunship",
@@ -2634,7 +2694,8 @@
     "cost": {
       "new": 65000,
       "used": 40000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Modified T-47 Airspeeder",
@@ -2684,7 +2745,8 @@
     "cost": {
       "new": 50000,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Basilisk War Droid",
@@ -2740,7 +2802,8 @@
     "cost": {
       "new": 70000,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Twin-228 Airspeeder",
@@ -2771,7 +2834,8 @@
     "cost": {
       "new": 22000,
       "used": 13500
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Urban Navigator Speeder Bike",
@@ -2802,7 +2866,8 @@
     "cost": {
       "new": 9600,
       "used": 3500
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Flare-S Swoop",
@@ -2833,7 +2898,8 @@
     "cost": {
       "new": 5750,
       "used": 1500
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "DC0052 \"Intergalactic\" Speeder",
@@ -2864,7 +2930,8 @@
     "cost": {
       "new": 10000,
       "used": 2000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "LAAT/c Gunship",
@@ -2914,7 +2981,8 @@
     "cost": {
       "new": 58000,
       "used": 42000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Medlifter Troop Transport",
@@ -2945,7 +3013,8 @@
     "cost": {
       "new": 24000,
       "used": 6100
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "\"Oevvaor\" Jet Catamaran",
@@ -2995,7 +3064,8 @@
     "cost": {
       "new": 12125,
       "used": 2700
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Raddaugh Gnasp Fluttercraft",
@@ -3022,7 +3092,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "RTT",
@@ -3072,7 +3143,8 @@
     "cost": {
       "new": 42000,
       "used": 10200
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "STAP",
@@ -3122,7 +3194,8 @@
     "cost": {
       "new": 2500,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "GPE-3300 Airspeeder",
@@ -3153,7 +3226,8 @@
     "cost": {
       "new": 60000,
       "used": 35000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Veltiss-2 Airspeeder",
@@ -3184,7 +3258,8 @@
     "cost": {
       "new": 19000,
       "used": 9200
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Air-2 Racing Swoop",
@@ -3215,7 +3290,8 @@
     "cost": {
       "new": 8000,
       "used": 2500
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Lancet Aerial Artillery",
@@ -3265,7 +3341,8 @@
     "cost": {
       "new": 6,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Storm IV Twin-Pod Cloud Car",
@@ -3292,7 +3369,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Talon I Combat Cloud Car",
@@ -3319,7 +3397,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Drop Pod",
@@ -3350,7 +3429,8 @@
     "cost": {
       "new": 17000,
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "S-130 Shelter Medical Speeder",
@@ -3377,7 +3457,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Aerosled Mark III",
@@ -3404,7 +3485,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Protector VI Patrol Speeder",
@@ -3454,7 +3536,8 @@
     "cost": {
       "new": 50000,
       "used": 40000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "SkyBlind Landing Sphere",
@@ -3485,7 +3568,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "74-M Speeder Bike",
@@ -3538,7 +3622,8 @@
     "cost": {
       "new": 4000,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "HSP-10 Pursuit Airspeeder",
@@ -3591,7 +3676,8 @@
     "cost": {
       "new": 40000,
       "used": 20000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Imperial RaDAir",
@@ -3618,7 +3704,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Swift Assault 5 Hovercraft",
@@ -3671,7 +3758,8 @@
     "cost": {
       "new": 75000,
       "used": 45000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Tibanna Refinery Platform",
@@ -3724,7 +3812,8 @@
     "cost": {
       "new": 42000,
       "used": 30000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Luke's Snowspeeder",
@@ -3777,7 +3866,8 @@
     "cost": {
       "new": 11,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "UR-40M Patrol Speeder",
@@ -3830,7 +3920,8 @@
     "cost": {
       "new": 55000,
       "used": 30000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Urban Bombardier Speeder Bike",
@@ -3883,7 +3974,8 @@
     "cost": {
       "new": 18000,
       "used": 8500
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "ARC-170 Starfighter",
@@ -3930,7 +4022,8 @@
     "cost": {
       "new": 155000,
       "used": 70000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Droid Tri-Fighter",
@@ -3977,7 +4070,8 @@
     "cost": {
       "new": 40000,
       "used": 7
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Eta-2 Actis Interceptor",
@@ -4024,7 +4118,8 @@
     "cost": {
       "new": 290000,
       "used": 140000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "TIE Fighter",
@@ -4077,7 +4172,8 @@
     "cost": {
       "new": 60000,
       "used": 25000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "TIE Interceptor",
@@ -4130,7 +4226,8 @@
     "cost": {
       "new": 120000,
       "used": 50000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "\"Vulture\" Droid Starfighter",
@@ -4186,7 +4283,8 @@
     "cost": {
       "new": 19000,
       "used": 7
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "T-65B X-Wing Starfighter",
@@ -4239,7 +4337,8 @@
     "cost": {
       "new": 150000,
       "used": 65000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Y-Wing Starfighter",
@@ -4286,7 +4385,8 @@
     "cost": {
       "new": 135000,
       "used": 60000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Advanced V-19 Torrent Starfighter",
@@ -4333,7 +4433,8 @@
     "cost": {
       "new": 9,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "A-Wing Starfighter",
@@ -4380,7 +4481,8 @@
     "cost": {
       "new": 175000,
       "used": 70000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "B-Wing Shuttle",
@@ -4427,7 +4529,8 @@
     "cost": {
       "new": 220000,
       "used": 120000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "B-Wing Starfighter",
@@ -4474,7 +4577,8 @@
     "cost": {
       "new": 220000,
       "used": 120000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "B-Wing/E2 Starfighter",
@@ -4521,7 +4625,8 @@
     "cost": {
       "new": 250000,
       "used": 135000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "CloakShape Fighter",
@@ -4568,7 +4673,8 @@
     "cost": {
       "new": 60000,
       "used": 15000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Coralskipper",
@@ -4618,7 +4724,8 @@
     "cost": {
       "new": 11,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Cutlass-9 Patrol Fighter",
@@ -4665,7 +4772,8 @@
     "cost": {
       "new": 140000,
       "used": 65000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Delta-7 Aethersprite Interceptor",
@@ -4712,7 +4820,8 @@
     "cost": {
       "new": 180000,
       "used": 145000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Escape Pod",
@@ -4743,7 +4852,8 @@
     "cost": {
       "new": 1200,
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "E-Wing Escort Starfighter",
@@ -4770,7 +4880,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Ginivex-Class Starfighter",
@@ -4817,7 +4928,8 @@
     "cost": {
       "new": 11,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Junker TYE-Wing",
@@ -4864,7 +4976,8 @@
     "cost": {
       "new": 60000,
       "used": 25000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "K-Wing Assault Starfighter",
@@ -4911,7 +5024,8 @@
     "cost": {
       "new": 250000,
       "used": 120000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Mankvim-814 Light Interceptor",
@@ -4964,7 +5078,8 @@
     "cost": {
       "new": 15000,
       "used": 6000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Miy'til Assault Bomber",
@@ -5011,7 +5126,8 @@
     "cost": {
       "new": 150000,
       "used": 7
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Miy'til Starfighter",
@@ -5038,7 +5154,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Miy'til Command Starfighter",
@@ -5065,7 +5182,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "N-1 Royal Starfighter",
@@ -5112,7 +5230,8 @@
     "cost": {
       "new": 6,
       "used": 1
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Nantex-Class Territorial Starfighter",
@@ -5159,7 +5278,8 @@
     "cost": {
       "new": 6,
       "used": 1
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Nssis-Class Clawcraft",
@@ -5206,7 +5326,8 @@
     "cost": {
       "new": 11,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "P-38 Starfighter",
@@ -5253,7 +5374,8 @@
     "cost": {
       "new": 120000,
       "used": 50000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Predator-Class Starfighter",
@@ -5300,7 +5422,8 @@
     "cost": {
       "new": 6,
       "used": 1
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Scarab-Class Droid Starfighter",
@@ -5347,7 +5470,8 @@
     "cost": {
       "new": 17000,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Scimitar Assault Bomber",
@@ -5394,7 +5518,8 @@
     "cost": {
       "new": 120000,
       "used": 45000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Sith Interceptor",
@@ -5441,7 +5566,8 @@
     "cost": {
       "new": 4,
       "used": 1
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "StarViper-Class Attack Platform",
@@ -5468,7 +5594,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "T-65BR X-Wing Starfighter",
@@ -5515,7 +5642,8 @@
     "cost": {
       "new": 150000,
       "used": 95000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "T-65XJ3 X-Wing Starfighter",
@@ -5562,7 +5690,8 @@
     "cost": {
       "new": 315000,
       "used": 220000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "TIE Advanced",
@@ -5609,7 +5738,8 @@
     "cost": {
       "new": 160000,
       "used": 65000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "TIE Bomber",
@@ -5662,7 +5792,8 @@
     "cost": {
       "new": 150000,
       "used": 60000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "TIE Defender",
@@ -5709,7 +5840,8 @@
     "cost": {
       "new": 200000,
       "used": 80000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "V-19 Torrent Starfighter",
@@ -5756,7 +5888,8 @@
     "cost": {
       "new": 135000,
       "used": 70000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Virago",
@@ -5803,7 +5936,8 @@
     "cost": {
       "new": 6,
       "used": 1
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "V-Wing Starfighter",
@@ -5850,7 +5984,8 @@
     "cost": {
       "new": 102500,
       "used": 45000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "X-83 TwinTail Starfighter",
@@ -5897,7 +6032,8 @@
     "cost": {
       "new": 160000,
       "used": 75000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Y-Wing \"Courier\" Variant",
@@ -5924,7 +6060,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Y-Wing \"LongProbe\"",
@@ -5951,7 +6088,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Z-95 Headhunter",
@@ -5998,7 +6136,8 @@
     "cost": {
       "new": 80000,
       "used": 45000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Aurek Tactical Strikefighter",
@@ -6045,7 +6184,8 @@
     "cost": {
       "new": 360000,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian S-100 Stinger-Class Starfighter",
@@ -6092,7 +6232,8 @@
     "cost": {
       "new": 150000,
       "used": 90000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian S-250 Chela-Class Starfighter",
@@ -6139,7 +6280,8 @@
     "cost": {
       "new": 420000,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "CX-133 Chaos Fighter",
@@ -6192,7 +6334,8 @@
     "cost": {
       "new": 65000,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Davaab-Type Starfighter",
@@ -6245,7 +6388,8 @@
     "cost": {
       "new": 150000,
       "used": 80000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Star Saber XC-01 Starfighter",
@@ -6292,7 +6436,8 @@
     "cost": {
       "new": 145000,
       "used": 75000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "A-7 Hunter Interceptor",
@@ -6339,7 +6484,8 @@
     "cost": {
       "new": 80000,
       "used": 45000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "H-60 Tempest Bomber",
@@ -6386,7 +6532,8 @@
     "cost": {
       "new": 175000,
       "used": 125000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "M3-A Scyk Fighter",
@@ -6433,7 +6580,8 @@
     "cost": {
       "new": 75000,
       "used": 35000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "NovaSword Space Superiority Fighter",
@@ -6460,7 +6608,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "R-41 Starchaser",
@@ -6507,7 +6656,8 @@
     "cost": {
       "new": 115000,
       "used": 55000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "R-42 Starchaser",
@@ -6554,7 +6704,8 @@
     "cost": {
       "new": 115000,
       "used": 55000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "TIE Prototype",
@@ -6601,7 +6752,8 @@
     "cost": {
       "new": 130000,
       "used": 75000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Toscan 8-Q Starfighter",
@@ -6648,7 +6800,8 @@
     "cost": {
       "new": 180000,
       "used": 40000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Zebra Starfighter",
@@ -6695,7 +6848,8 @@
     "cost": {
       "new": 80000,
       "used": 30000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Azure Angel",
@@ -6742,7 +6896,8 @@
     "cost": {
       "new": 14,
       "used": 9
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Belbullab Heavy Starfighter",
@@ -6789,7 +6944,8 @@
     "cost": {
       "new": 168000,
       "used": 125000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Belbullab Heavy Starfighter",
@@ -6836,7 +6992,8 @@
     "cost": {
       "new": 168000,
       "used": 125000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Belbullab Heavy Starfighter",
@@ -6883,7 +7040,8 @@
     "cost": {
       "new": 168000,
       "used": 125000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "CIS-Advanced Starfighter",
@@ -6930,7 +7088,8 @@
     "cost": {
       "new": 7,
       "used": 2
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Dagger-Class Starfighter",
@@ -6977,7 +7136,8 @@
     "cost": {
       "new": 35000,
       "used": 8000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Delta-7 Aethersprite High-Maneuver Interceptor",
@@ -7004,7 +7164,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Delta-7 Aethersprite High-Speed Interceptor",
@@ -7031,7 +7192,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Dianoga-Class Assault Starfighter",
@@ -7069,7 +7231,8 @@
     "cost": {
       "new": 45000,
       "used": 12000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Droch-Class Boarding Ship",
@@ -7116,7 +7279,8 @@
     "cost": {
       "new": 43000,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Eta-2 Actis Heavy-Defense Interceptor",
@@ -7143,7 +7307,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "A519 Invader Close Support Starfighter",
@@ -7190,7 +7355,8 @@
     "cost": {
       "new": 125000,
       "used": 70000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "BB-2 Starfire Fighter/Bomber",
@@ -7217,7 +7383,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Besh-Type Personal Starfighter",
@@ -7244,7 +7411,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "CF9 Crossfire Starfighter",
@@ -7282,7 +7450,8 @@
     "cost": {
       "new": 7,
       "used": 2
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Fury-Class Starfighter",
@@ -7329,7 +7498,8 @@
     "cost": {
       "new": 16,
       "used": 11
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "I4 Ionizer Starfighter",
@@ -7376,7 +7546,8 @@
     "cost": {
       "new": 7,
       "used": 2
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Jumpstar HPF Starfighter",
@@ -7423,7 +7594,8 @@
     "cost": {
       "new": 275000,
       "used": 125000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Neutralizer-Class Bomber",
@@ -7470,7 +7642,8 @@
     "cost": {
       "new": 7,
       "used": 2
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Phoebos-Class Starfighter",
@@ -7517,7 +7690,8 @@
     "cost": {
       "new": 190000,
       "used": 100000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "R-28 Starfighter",
@@ -7564,7 +7738,8 @@
     "cost": {
       "new": 120000,
       "used": 55000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "RC-2 Twilight Scoutship",
@@ -7611,7 +7786,8 @@
     "cost": {
       "new": 275000,
       "used": 125000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AEG-77 Vigo Gunship",
@@ -7638,7 +7814,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "AEG-77 Vigo Transport",
@@ -7665,7 +7842,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Baronial-Class Yacht",
@@ -7712,7 +7890,8 @@
     "cost": {
       "new": 200000,
       "used": 120000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Baudo-Class Star Yacht",
@@ -7759,7 +7938,8 @@
     "cost": {
       "new": 400000,
       "used": 250000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "BC-714 Luxury Transport",
@@ -7790,7 +7970,8 @@
     "cost": {
       "new": 1,
       "used": 7
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "C-9979 Landing Craft",
@@ -7837,7 +8018,8 @@
     "cost": {
       "new": 200000,
       "used": 75000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Ghtroc 720 Freighter",
@@ -7884,7 +8066,8 @@
     "cost": {
       "new": 98500,
       "used": 23000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Conductor-Class Short-Haul Landing Craft",
@@ -7931,7 +8114,8 @@
     "cost": {
       "new": 250000,
       "used": 100000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Conqueror-Class Assault Ship",
@@ -7978,7 +8162,8 @@
     "cost": {
       "new": 100500,
       "used": 46000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian Barloz-Class Medium Freighter",
@@ -8025,7 +8210,8 @@
     "cost": {
       "new": 120000,
       "used": 17500
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian Consular-Class Cruiser",
@@ -8052,7 +8238,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian CR-20 Troop Transport",
@@ -8099,7 +8286,8 @@
     "cost": {
       "new": 680000,
       "used": 265000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian Crix-Class Assault Shuttle",
@@ -8146,7 +8334,8 @@
     "cost": {
       "new": 600000,
       "used": 260000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian Crix-Class Courier Shuttle",
@@ -8193,7 +8382,8 @@
     "cost": {
       "new": 500000,
       "used": 200000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian G9 Rigger-Class Light Freighter",
@@ -8220,7 +8410,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian HWK-290 Light Freighter",
@@ -8267,7 +8458,8 @@
     "cost": {
       "new": 135000,
       "used": 55000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian JumpMaster 5000 Scout Ship",
@@ -8294,7 +8486,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian KR-TB \"Doomtreader\"",
@@ -8321,7 +8514,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian MT Dropship",
@@ -8368,7 +8562,8 @@
     "cost": {
       "new": 600000,
       "used": 300000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian Nemesis-Class Patrol Ship",
@@ -8415,7 +8610,8 @@
     "cost": {
       "new": 180000,
       "used": 95000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian VCX-350 Light Freighter",
@@ -8462,7 +8658,8 @@
     "cost": {
       "new": 300000,
       "used": 175000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian YT-1250 Freighter",
@@ -8509,7 +8706,8 @@
     "cost": {
       "new": 120000,
       "used": 30000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian YT-1300 Transport",
@@ -8556,7 +8754,8 @@
     "cost": {
       "new": 100000,
       "used": 25000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian YT-1930 Transport",
@@ -8603,7 +8802,8 @@
     "cost": {
       "new": 135000,
       "used": 62000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian YT-2000 Transport",
@@ -8650,7 +8850,8 @@
     "cost": {
       "new": 150000,
       "used": 45000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian YT-2400 Transport",
@@ -8697,7 +8898,8 @@
     "cost": {
       "new": 130000,
       "used": 32000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian YU-410 Light Freighter",
@@ -8744,7 +8946,8 @@
     "cost": {
       "new": 110000,
       "used": 30000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian YV-545 Light Freighter",
@@ -8791,7 +8994,8 @@
     "cost": {
       "new": 120000,
       "used": 35000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian YX-1980 Transport",
@@ -8838,7 +9042,8 @@
     "cost": {
       "new": 150000,
       "used": 80000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian YZ-2500 Heavy Transport",
@@ -8865,7 +9070,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian YZ-775 Medium Transport",
@@ -8912,7 +9118,8 @@
     "cost": {
       "new": 500000,
       "used": 350000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Diamond-Class Cruiser",
@@ -8959,7 +9166,8 @@
     "cost": {
       "new": 5000000,
       "used": 2125000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Dynamic-Class Freighter",
@@ -9006,7 +9214,8 @@
     "cost": {
       "new": 80000,
       "used": 30000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "G-Type Escape Shuttle",
@@ -9033,7 +9242,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "G-Type Light Shuttle",
@@ -9095,7 +9305,8 @@
     "cost": {
       "new": 200000,
       "used": 95000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Gamma-Class Assault Shuttle",
@@ -9142,7 +9353,8 @@
     "cost": {
       "new": 850000,
       "used": 340000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "GAT-12h Skipray Blastboat",
@@ -9169,7 +9381,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Gladius-Class Light Freighter",
@@ -9216,7 +9429,8 @@
     "cost": {
       "new": 190000,
       "used": 105000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Gozanti Cruiser",
@@ -9263,7 +9477,8 @@
     "cost": {
       "new": 150000,
       "used": 50000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "GPE-7300 Space Transport",
@@ -9310,7 +9525,8 @@
     "cost": {
       "new": 165000,
       "used": 90000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "GS-100 Salvage Ship",
@@ -9348,7 +9564,8 @@
     "cost": {
       "new": 190000,
       "used": 95000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Guardian-Class Light Cruiser",
@@ -9395,7 +9612,8 @@
     "cost": {
       "new": 800000,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Gymsnor-3 Light Freighter",
@@ -9442,7 +9660,8 @@
     "cost": {
       "new": 38000,
       "used": 19000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Hardcell-Class Interstellar Transport",
@@ -9469,7 +9688,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Helot-Class Medium Space Transport",
@@ -9496,7 +9716,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Herald-Class Shuttle",
@@ -9543,7 +9764,8 @@
     "cost": {
       "new": 120000,
       "used": 222500
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Hound's Tooth",
@@ -9590,7 +9812,8 @@
     "cost": {
       "new": 12,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "IF-120 Landing Craft",
@@ -9637,7 +9860,8 @@
     "cost": {
       "new": 290000,
       "used": 10
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "ILH-KK Citadel-Class Civilian Cruiser",
@@ -9664,7 +9888,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Imperial Customs Corvette",
@@ -9711,7 +9936,8 @@
     "cost": {
       "new": 6,
       "used": 14
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "J-1 Shuttle",
@@ -9758,7 +9984,8 @@
     "cost": {
       "new": 220000,
       "used": 100000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "J-Type Star Skiff",
@@ -9805,7 +10032,8 @@
     "cost": {
       "new": 5,
       "used": 14
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Junker Class 720 Freighter",
@@ -9832,7 +10060,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Kappa-Class Shuttle",
@@ -9879,7 +10108,8 @@
     "cost": {
       "new": 7,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Kazellis-Class Light Freighter",
@@ -9926,7 +10156,8 @@
     "cost": {
       "new": 50000,
       "used": 23000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Krayt's Honor",
@@ -9973,7 +10204,8 @@
     "cost": {
       "new": 3,
       "used": 13
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "KT-400 Military Droid Carrier",
@@ -10020,7 +10252,8 @@
     "cost": {
       "new": 280000,
       "used": 150000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Lambda-Class Shuttle",
@@ -10067,7 +10300,8 @@
     "cost": {
       "new": 240000,
       "used": 2
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Lethisk-Class Armed Freighter",
@@ -10114,7 +10348,8 @@
     "cost": {
       "new": 470000,
       "used": 225000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Maka-Eekai L4000 Transport",
@@ -10161,7 +10396,8 @@
     "cost": {
       "new": 180000,
       "used": 85000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "MC-24a Light Shuttle",
@@ -10208,7 +10444,8 @@
     "cost": {
       "new": 90000,
       "used": 50000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Ministry-Class Orbital Shuttle",
@@ -10255,7 +10492,8 @@
     "cost": {
       "new": 160000,
       "used": 80000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Modified ILH-KK Citadel-Class Civilian Cruiser",
@@ -10282,7 +10520,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Modified Lambda-Class Shuttle",
@@ -10309,7 +10548,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "MRX-BR Pacifier",
@@ -10356,7 +10596,8 @@
     "cost": {
       "new": 170000,
       "used": 100000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Mu-2 Long Range Shuttle",
@@ -10383,7 +10624,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Nu-Class Attack Shuttle",
@@ -10430,7 +10672,8 @@
     "cost": {
       "new": 85000,
       "used": 50000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Nune-Class Imperial Shuttle",
@@ -10477,7 +10720,8 @@
     "cost": {
       "new": 7,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Pelagia Duplex Command Assault Gunship",
@@ -10504,7 +10748,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Penumbra-Class Attack Shuttle",
@@ -10551,7 +10796,8 @@
     "cost": {
       "new": 250000,
       "used": 135000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "PTV-2100 Incarcerator",
@@ -10598,7 +10844,8 @@
     "cost": {
       "new": 4,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Punworcca 116-Class Interstellar Sloop",
@@ -10645,7 +10892,8 @@
     "cost": {
       "new": 35700,
       "used": 2
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Pursuer-Class Enforcement Ship",
@@ -10692,7 +10940,8 @@
     "cost": {
       "new": 200000,
       "used": 40000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "SCT Scout Craft",
@@ -10739,7 +10988,8 @@
     "cost": {
       "new": 1,
       "used": 2
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Seltiss-2 Caravel",
@@ -10786,7 +11036,8 @@
     "cost": {
       "new": 800000,
       "used": 160000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Seltiss-2 Caravel Cabin",
@@ -10817,7 +11068,8 @@
     "cost": {
       "new": 400000,
       "used": 80000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Sentinel-Class Landing Craft",
@@ -10864,7 +11116,8 @@
     "cost": {
       "new": 240000,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Shaadlar-Type Troopship",
@@ -10917,7 +11170,8 @@
     "cost": {
       "new": 3,
       "used": 1
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Shackles of Nizon",
@@ -10948,7 +11202,8 @@
     "cost": {
       "new": 125000,
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Sheathipede-Class Shuttle",
@@ -10979,7 +11234,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Sigma-Class Long-Range Shuttle",
@@ -11032,7 +11288,8 @@
     "cost": {
       "new": 30,
       "used": 3
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Sith Infiltrator",
@@ -11079,7 +11336,8 @@
     "cost": {
       "new": 15,
       "used": 10
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "SkyBlind Recon Ship",
@@ -11126,7 +11384,8 @@
     "cost": {
       "new": 650000,
       "used": 400000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Slave I",
@@ -11173,7 +11432,8 @@
     "cost": {
       "new": 18,
       "used": 13
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Teroch-Type Gunship",
@@ -11226,7 +11486,8 @@
     "cost": {
       "new": 400000,
       "used": 200000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Banshee",
@@ -11276,7 +11537,8 @@
     "cost": {
       "new": 9,
       "used": 3
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Blood Brother",
@@ -11326,7 +11588,8 @@
     "cost": {
       "new": 1,
       "used": 25
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Bloody Credit",
@@ -11357,7 +11620,8 @@
     "cost": {
       "new": 350000,
       "used": 125000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Ebon Hawk",
@@ -11404,7 +11668,8 @@
     "cost": {
       "new": 154000,
       "used": 7
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Glorious Chariot",
@@ -11431,7 +11696,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Grinning Liar",
@@ -11478,7 +11744,8 @@
     "cost": {
       "new": 5,
       "used": 6
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Last Resort",
@@ -11528,7 +11795,8 @@
     "cost": {
       "new": 2,
       "used": 1
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Millennium Falcon",
@@ -11575,7 +11843,8 @@
     "cost": {
       "new": 13,
       "used": 8
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Moomo Williwaw",
@@ -11625,7 +11894,8 @@
     "cost": {
       "new": 1,
       "used": 8
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Mynock",
@@ -11672,7 +11942,8 @@
     "cost": {
       "new": 9,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Scarlet Star",
@@ -11719,7 +11990,8 @@
     "cost": {
       "new": 4,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Visionary",
@@ -11746,7 +12018,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Theta-Class Shuttle",
@@ -11793,7 +12066,8 @@
     "cost": {
       "new": 1,
       "used": 210000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Tibanna Gas Hauler",
@@ -11824,7 +12098,8 @@
     "cost": {
       "new": 90000,
       "used": 50000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "TIE Shuttle",
@@ -11871,7 +12146,8 @@
     "cost": {
       "new": 120000,
       "used": 45000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "TL-1800 Light Freighter",
@@ -11921,7 +12197,8 @@
     "cost": {
       "new": 41500,
       "used": 15000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Vaya-Class Scout Ship",
@@ -11968,7 +12245,8 @@
     "cost": {
       "new": 45000,
       "used": 15000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "VT-49 Decimator",
@@ -12015,7 +12293,8 @@
     "cost": {
       "new": 8,
       "used": 3
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Y164 Slave Transport",
@@ -12062,7 +12341,8 @@
     "cost": {
       "new": 245000,
       "used": 122000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "YE-4 Gunship",
@@ -12109,7 +12389,8 @@
     "cost": {
       "new": 2,
       "used": 11
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "YKL-37R Nova Courier",
@@ -12156,7 +12437,8 @@
     "cost": {
       "new": 150000,
       "used": 45000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Acclamator I-Class Assault Ship",
@@ -12183,7 +12465,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Acclamator II-Class Assault Ship",
@@ -12229,7 +12512,8 @@
     "cost": {
       "new": 4,
       "used": 11
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Archaic Dreadnaught-Class Heavy Cruiser",
@@ -12256,7 +12540,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Carrack-Class Light Cruiser",
@@ -12303,7 +12588,8 @@
     "cost": {
       "new": 5,
       "used": 13
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Corellian Action VI Bulk Transport",
@@ -12330,7 +12616,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "CR70 Corellian Corvette",
@@ -12361,7 +12648,8 @@
     "cost": {
       "new": 2,
       "used": 9
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "DP20 Corellian Frigate",
@@ -12408,7 +12696,8 @@
     "cost": {
       "new": 4,
       "used": 8
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Dreadnaught-Class Heavy Cruiser",
@@ -12455,7 +12744,8 @@
     "cost": {
       "new": 35555000,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Endurance-Class Fleet Carrier",
@@ -12502,7 +12792,8 @@
     "cost": {
       "new": 5,
       "used": 18
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "GR-75 Medium Transport",
@@ -12549,7 +12840,8 @@
     "cost": {
       "new": 350000,
       "used": 125000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Hapan Battle Dragon",
@@ -12596,7 +12888,8 @@
     "cost": {
       "new": 5,
       "used": 12
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Imperial II-Class Star Destroyer",
@@ -12643,7 +12936,8 @@
     "cost": {
       "new": 5,
       "used": 15
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Immobilizer 418 Interdictor-Class Heavy Cruiser",
@@ -12670,7 +12964,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "IPV-1 System Patrol Craft",
@@ -12697,7 +12992,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Lancer-Class Frigate",
@@ -12744,7 +13040,8 @@
     "cost": {
       "new": 5,
       "used": 12
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Lucrehulk-Class Battleship",
@@ -12791,7 +13088,8 @@
     "cost": {
       "new": 6,
       "used": 16
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Lucrehulk-Class Core Ship",
@@ -12838,7 +13136,8 @@
     "cost": {
       "new": 6,
       "used": 16
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Lucrehulk-Class Droid Control Ship",
@@ -12885,7 +13184,8 @@
     "cost": {
       "new": 6,
       "used": 16
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Marauder-Class Corvette",
@@ -12912,7 +13212,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Marauder-Class Rebel Cruiser",
@@ -12939,7 +13240,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "MC80 Star Cruiser",
@@ -12986,7 +13288,8 @@
     "cost": {
       "new": 6,
       "used": 15
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "MC80a Star Cruiser",
@@ -13033,7 +13336,8 @@
     "cost": {
       "new": 6,
       "used": 15
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Munificent-Class Frigate",
@@ -13080,7 +13384,8 @@
     "cost": {
       "new": 57,
       "used": 40
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Nebula-Class Star Destroyer",
@@ -13127,7 +13432,8 @@
     "cost": {
       "new": 5,
       "used": 18
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Nebulon-B Escort Frigate",
@@ -13154,7 +13460,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Nova-Class Battlecruiser",
@@ -13201,7 +13508,8 @@
     "cost": {
       "new": 20,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Nova-Class Battlecruiser Refit",
@@ -13228,7 +13536,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Outbound Flight",
@@ -13275,7 +13584,8 @@
     "cost": {
       "new": 6,
       "used": 15
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Pellaeon-Class Star Destroyer",
@@ -13322,7 +13632,8 @@
     "cost": {
       "new": 5,
       "used": 16
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Prototype Dreadnaught-Class Heavy Cruiser",
@@ -13349,7 +13660,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Rebel Assault Frigate Mark I",
@@ -13376,7 +13688,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Rebel Assault Frigate Mark II",
@@ -13403,7 +13716,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Recusant-Class Light Destroyer",
@@ -13450,7 +13764,8 @@
     "cost": {
       "new": 5,
       "used": 14
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Star Galleon-Class Frigate",
@@ -13497,7 +13812,8 @@
     "cost": {
       "new": 5,
       "used": 12
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Strike-Class Medium Cruiser",
@@ -13544,7 +13860,8 @@
     "cost": {
       "new": 17,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Venator-Class Star Destroyer",
@@ -13591,7 +13908,8 @@
     "cost": {
       "new": 50,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Victory II-Class Star Destroyer",
@@ -13638,7 +13956,8 @@
     "cost": {
       "new": 5,
       "used": 14
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Vindicator-Class Heavy Cruiser",
@@ -13685,7 +14004,8 @@
     "cost": {
       "new": 43,
       "used": 4
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Centurion-Class Battlecruiser",
@@ -13732,7 +14052,8 @@
     "cost": {
       "new": 6,
       "used": 17
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Derriphan-Class Battleship",
@@ -13779,7 +14100,8 @@
     "cost": {
       "new": 3,
       "used": 7
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Foray-Class Blockade Runner",
@@ -13826,7 +14148,8 @@
     "cost": {
       "new": 3,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Broadside-Class Cruiser",
@@ -13873,7 +14196,8 @@
     "cost": {
       "new": 5,
       "used": 13
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Gladiator-Class Star Destroyer",
@@ -13920,7 +14244,8 @@
     "cost": {
       "new": 34,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Neutron Star-Class Bulk Cruiser",
@@ -13967,7 +14292,8 @@
     "cost": {
       "new": 5,
       "used": 2
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Tartan-Class Patrol Cruiser",
@@ -14014,7 +14340,8 @@
     "cost": {
       "new": 4,
       "used": 2
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Ton-Falk-Class Escort Carrier",
@@ -14061,7 +14388,8 @@
     "cost": {
       "new": 3,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Victory I-Class Star Destroyer",
@@ -14108,7 +14436,8 @@
     "cost": {
       "new": 50,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Charger c70 Corellian Consular-Class Cruiser",
@@ -14135,7 +14464,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Invisible Hand",
@@ -14182,7 +14512,8 @@
     "cost": {
       "new": 6,
       "used": 21
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "MedStar-Class Frigate",
@@ -14229,7 +14560,8 @@
     "cost": {
       "new": 4875000,
       "used": 2550000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Pelta-Class Frigate",
@@ -14256,7 +14588,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Providence-Class Destroyer",
@@ -14303,7 +14636,8 @@
     "cost": {
       "new": 6,
       "used": 18
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Sabaoth Destroyer",
@@ -14350,7 +14684,8 @@
     "cost": {
       "new": 3,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Subjugator-Class Heavy Cruiser",
@@ -14388,7 +14723,8 @@
     "cost": {
       "new": 5,
       "used": 15
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Ardent-Class Fast Frigate",
@@ -14435,7 +14771,8 @@
     "cost": {
       "new": 5,
       "used": 15
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Crimson Axe",
@@ -14462,7 +14799,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Indomitable",
@@ -14509,7 +14847,8 @@
     "cost": {
       "new": 4,
       "used": 16
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Imperious-Class Star Destroyer",
@@ -14556,7 +14895,8 @@
     "cost": {
       "new": 5,
       "used": 17
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "MC140 Scythe-Class Battlecruiser",
@@ -14583,7 +14923,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Sabertooth-Class Assault/Rescue Vessel",
@@ -14610,7 +14951,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "ShaShore-Class Frigate",
@@ -14657,7 +14999,8 @@
     "cost": {
       "new": 6,
       "used": 16
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Spinward-Class Tender",
@@ -14704,7 +15047,8 @@
     "cost": {
       "new": 4,
       "used": 9
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Tri-Scythe-Class Frigate",
@@ -14751,7 +15095,8 @@
     "cost": {
       "new": 6,
       "used": 15
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Baas-Class Space Station",
@@ -14782,7 +15127,8 @@
     "cost": {
       "new": "not publicly available",
       "used": "not publicly available"
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Cardan I-Class Space Station",
@@ -14832,7 +15178,8 @@
     "cost": {
       "new": 2,
       "used": 10
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Cardan II-Class Space Station",
@@ -14882,7 +15229,8 @@
     "cost": {
       "new": 2,
       "used": 10
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Cardan III-Class Space Station",
@@ -14932,7 +15280,8 @@
     "cost": {
       "new": 2,
       "used": 11
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Eclipse-Class Star Dreadnought",
@@ -14979,7 +15328,8 @@
     "cost": {
       "new": 15,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Executor-Class Star Dreadnought",
@@ -15026,7 +15376,8 @@
     "cost": {
       "new": 5,
       "used": 15
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Hyperspace Beacon",
@@ -15057,7 +15408,8 @@
     "cost": {
       "new": 20000,
       "used": 11000
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "StarForge Station",
@@ -15104,7 +15456,8 @@
     "cost": {
       "new": 1000000,
       "used": 5
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Golan VIII Space Defense Platform",
@@ -15151,7 +15504,8 @@
     "cost": {
       "new": 45,
       "used": 20
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "Mobile Spacedock 220",
@@ -15198,7 +15552,8 @@
     "cost": {
       "new": 100,
       "used": 45
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "The Wheel",
@@ -15245,7 +15600,8 @@
     "cost": {
       "new": 6,
       "used": 17
-    }
+    },
+    "type": "vehicle"
   },
   {
     "name": "XQ2 Space Platform",
@@ -15295,6 +15651,7 @@
     "cost": {
       "new": 30,
       "used": 18
-    }
+    },
+    "type": "vehicle"
   }
 ]

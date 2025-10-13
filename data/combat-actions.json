@@ -15,7 +15,8 @@
         "skill": "Mechanics",
         "when": "device is jury-rigged or broken"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Aid another",
@@ -41,7 +42,8 @@
         },
         "outcome": "+2 to ally's next attack vs that target"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Aim",
@@ -55,7 +57,8 @@
         "skill": "Attack (ranged)",
         "when": "applies to next ranged attack to ignore cover"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Attack (single)",
@@ -73,7 +76,8 @@
         },
         "outcome": "Compare to target Reflex/Fort/Will as appropriate"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Area Attack (burst/splash/cone)",
@@ -91,7 +95,8 @@
         },
         "outcome": "Resolve against each target's Ref; apply cover rules"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Burst Fire / Autofire (vehicle or weapon)",
@@ -109,7 +114,8 @@
         },
         "outcome": "Area rules; ammo consumption handled by system"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Charge",
@@ -131,7 +137,8 @@
         },
         "when": "Nimble Charge: to charge through low objects/difficult terrain"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Coup de grace",
@@ -145,7 +152,8 @@
         "skill": "Attack Roll",
         "outcome": "Auto-crit; immediate lethal effect"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Draw or Holster Weapon",
@@ -159,7 +167,8 @@
         "skill": "Sleight of Hand / Stealth",
         "when": "drawing concealed item in secret; GM may allow opposed Perception"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Drop an item",
@@ -168,7 +177,8 @@
       "cost": 1
     },
     "notes": "Drop item into your space or adjacent square; free/simple.",
-    "relatedSkills": []
+    "relatedSkills": [],
+    "type": "combatAction"
   },
   {
     "name": "Draw concealed item (conceal/seek)",
@@ -190,7 +200,8 @@
         },
         "outcome": "Detect drawing or concealed item"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Feint",
@@ -208,7 +219,8 @@
         },
         "outcome": "Target loses Dex bonus to Ref vs your next attack"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Fight defensively",
@@ -222,7 +234,8 @@
         "skill": "Acrobatics",
         "when": "trained offers better dodge bonus"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Full attack",
@@ -240,7 +253,8 @@
         },
         "outcome": "Resolve sequence with multiple attack penalties"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Grapple / Grab",
@@ -266,7 +280,8 @@
         },
         "when": "escape from grapple; DC = grappler's check"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Disarm",
@@ -292,7 +307,8 @@
         },
         "when": "catch disarmed item"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Escape bonds / Escape net",
@@ -310,7 +326,8 @@
         },
         "outcome": "Escape nets; success frees you"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Manipulate an item",
@@ -319,7 +336,8 @@
       "cost": 1
     },
     "notes": "Pick up item (provokes AoO), load weapon (provokes AoO), open door, retrieve stored item (2 move actions, provokes AoO).",
-    "relatedSkills": []
+    "relatedSkills": [],
+    "type": "combatAction"
   },
   {
     "name": "Move your speed / Move action",
@@ -345,7 +363,8 @@
         },
         "when": "Climb surfaces; see Climb DC table"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Tumble",
@@ -363,7 +382,8 @@
         },
         "outcome": "Avoid AoO when moving through threatened spaces"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Run",
@@ -381,7 +401,8 @@
         },
         "outcome": "If fail, -1 persistent CT"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Reload",
@@ -390,7 +411,8 @@
       "cost": 1
     },
     "notes": "Reload is normally a move action and provokes AoO unless specified otherwise.",
-    "relatedSkills": []
+    "relatedSkills": [],
+    "type": "combatAction"
   },
   {
     "name": "Second Wind",
@@ -399,7 +421,8 @@
       "cost": 1
     },
     "notes": "Once per encounter/day: if at or below half hp, heal 1/4 max HP or CON (whichever higher).",
-    "relatedSkills": []
+    "relatedSkills": [],
+    "type": "combatAction"
   },
   {
     "name": "Snipe",
@@ -421,7 +444,8 @@
         "skill": "Perception",
         "when": "Opponents attempt to notice"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Stand up from prone",
@@ -439,7 +463,8 @@
         },
         "when": "Stand from prone as swift if trained"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Fall prone",
@@ -457,7 +482,8 @@
         },
         "when": "Fall prone as free action if trained"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Ready an action (prepare)",
@@ -466,7 +492,8 @@
       "cost": 1
     },
     "notes": "Specify a trigger and action (move/standard/swift). When trigger occurs you may take the readied action as a reaction; initiative changes to the time you used it.",
-    "relatedSkills": []
+    "relatedSkills": [],
+    "type": "combatAction"
   },
   {
     "name": "Ready or Recovery actions for vehicles",
@@ -484,7 +511,8 @@
         },
         "outcome": "Restore SR or move vehicle CT"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Perception / Notice targets",
@@ -502,7 +530,8 @@
         },
         "outcome": "Notice hidden/concealed targets; apply concealment/cover penalties"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Create a Diversion to Hide",
@@ -524,7 +553,8 @@
         "skill": "Stealth",
         "when": "Follow-up hide attempt"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Use Computer / Access information",
@@ -542,7 +572,8 @@
         },
         "outcome": "Access levels depend on DC; computer attitude modifies results"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Use the Force (example: Move Light Object / Breath Control)",
@@ -560,7 +591,8 @@
         },
         "outcome": "Power effect if succeed; failure consequences vary"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "First Aid / Revivify / Treat Injury",
@@ -578,7 +610,8 @@
         },
         "outcome": "Heals HP or revives on success"
       }
-    ]
+    ],
+    "type": "combatAction"
   },
   {
     "name": "Disengage / Withdraw",
@@ -596,6 +629,7 @@
         },
         "when": "Tumble instead of provoke AoO"
       }
-    ]
+    ],
+    "type": "combatAction"
   }
 ]

@@ -1,0 +1,107 @@
+[
+  {
+    "id": "normal",
+    "name": "Normal",
+    "description": "No penalties.",
+    "effects": []
+  },
+  {
+    "id": "ct_minus_1",
+    "name": "Condition Track -1",
+    "description": "-1 penalty to all defenses and attack rolls.",
+    "effects": [
+      {
+        "type": "defense_penalty",
+        "value": -1
+      },
+      {
+        "type": "attack_penalty",
+        "value": -1
+      }
+    ]
+  },
+  {
+    "id": "ct_minus_2",
+    "name": "Condition Track -2",
+    "description": "-2 penalty to all defenses and attack rolls.",
+    "effects": [
+      {
+        "type": "defense_penalty",
+        "value": -2
+      },
+      {
+        "type": "attack_penalty",
+        "value": -2
+      }
+    ]
+  },
+  {
+    "id": "ct_minus_5",
+    "name": "Condition Track -5",
+    "description": "-5 penalty to defenses, attacks, and checks.",
+    "effects": [
+      {
+        "type": "defense_penalty",
+        "value": -5
+      },
+      {
+        "type": "attack_penalty",
+        "value": -5
+      },
+      {
+        "type": "skill_penalty",
+        "value": -5
+      }
+    ]
+  },
+  {
+    "id": "ct_minus_10",
+    "name": "Condition Track -10",
+    "description": "Half speed, -10 to all defenses, attacks, and checks.",
+    "effects": [
+      {
+        "type": "movement_multiplier",
+        "value": 0.5
+      },
+      {
+        "type": "defense_penalty",
+        "value": -10
+      },
+      {
+        "type": "attack_penalty",
+        "value": -10
+      },
+      {
+        "type": "skill_penalty",
+        "value": -10
+      }
+    ]
+  },
+  {
+    "id": "helpless",
+    "name": "Helpless",
+    "description": "Cannot act. DEX bonus to Reflex = 0.",
+    "effects": [
+      {
+        "type": "helpless",
+        "value": true
+      },
+      {
+        "type": "dex_as_zero",
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": "prone",
+    "name": "Prone",
+    "description": "-5 to melee attacks, +5 to ranged defense vs ranged, -5 vs melee.",
+    "effects": []
+  },
+  {
+    "id": "flat_footed",
+    "name": "Flat-footed",
+    "description": "Lose DEX bonus to Reflex Defense.",
+    "effects": []
+  }
+]

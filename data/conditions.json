@@ -3,7 +3,8 @@
     "id": "normal",
     "name": "Normal",
     "description": "No penalties.",
-    "effects": []
+    "effects": [],
+    "type": "condition"
   },
   {
     "id": "ct_minus_1",
@@ -18,7 +19,8 @@
         "type": "attack_penalty",
         "value": -1
       }
-    ]
+    ],
+    "type": "condition"
   },
   {
     "id": "ct_minus_2",
@@ -33,7 +35,8 @@
         "type": "attack_penalty",
         "value": -2
       }
-    ]
+    ],
+    "type": "condition"
   },
   {
     "id": "ct_minus_5",
@@ -52,7 +55,8 @@
         "type": "skill_penalty",
         "value": -5
       }
-    ]
+    ],
+    "type": "condition"
   },
   {
     "id": "ct_minus_10",
@@ -75,7 +79,8 @@
         "type": "skill_penalty",
         "value": -10
       }
-    ]
+    ],
+    "type": "condition"
   },
   {
     "id": "helpless",
@@ -90,18 +95,21 @@
         "type": "dex_as_zero",
         "value": true
       }
-    ]
+    ],
+    "type": "condition"
   },
   {
     "id": "prone",
     "name": "Prone",
     "description": "-5 to melee attacks, +5 to ranged defense vs ranged, -5 vs melee.",
-    "effects": []
+    "effects": [],
+    "type": "condition"
   },
   {
     "id": "flat_footed",
     "name": "Flat-footed",
     "description": "Lose DEX bonus to Reflex Defense.",
-    "effects": []
+    "effects": [],
+    "type": "condition"
   }
 ]

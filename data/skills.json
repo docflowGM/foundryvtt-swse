@@ -8,7 +8,8 @@
       "Scoundrel": true,
       "Scout": false,
       "Soldier": false
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Climb",
@@ -19,7 +20,8 @@
       "Scoundrel": false,
       "Scout": true,
       "Soldier": true
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Deception",
@@ -30,7 +32,8 @@
       "Scoundrel": true,
       "Scout": false,
       "Soldier": false
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Endurance",
@@ -41,7 +44,8 @@
       "Scoundrel": false,
       "Scout": true,
       "Soldier": true
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Gather Information",
@@ -52,7 +56,8 @@
       "Scoundrel": true,
       "Scout": false,
       "Soldier": false
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Initiative",
@@ -63,7 +68,8 @@
       "Scoundrel": true,
       "Scout": true,
       "Soldier": true
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Jump",
@@ -74,7 +80,8 @@
       "Scoundrel": false,
       "Scout": true,
       "Soldier": true
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Knowledge",
@@ -85,7 +92,8 @@
       "Scoundrel": true,
       "Scout": true,
       "Soldier": "TacticsOnly"
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Mechanics",
@@ -96,7 +104,8 @@
       "Scoundrel": true,
       "Scout": true,
       "Soldier": true
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Perception",
@@ -107,7 +116,8 @@
       "Scoundrel": true,
       "Scout": true,
       "Soldier": true
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Persuasion",
@@ -118,7 +128,8 @@
       "Scoundrel": true,
       "Scout": false,
       "Soldier": false
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Pilot",
@@ -129,7 +140,8 @@
       "Scoundrel": true,
       "Scout": true,
       "Soldier": true
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Ride",
@@ -140,7 +152,8 @@
       "Scoundrel": false,
       "Scout": false,
       "Soldier": false
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Stealth",
@@ -151,7 +164,8 @@
       "Scoundrel": true,
       "Scout": true,
       "Soldier": false
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Survival",
@@ -162,7 +176,8 @@
       "Scoundrel": false,
       "Scout": true,
       "Soldier": false
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Swim",
@@ -173,7 +188,8 @@
       "Scoundrel": false,
       "Scout": true,
       "Soldier": true
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Treat Injury",
@@ -184,7 +200,8 @@
       "Scoundrel": false,
       "Scout": false,
       "Soldier": true
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Use Computer",
@@ -195,7 +212,8 @@
       "Scoundrel": true,
       "Scout": false,
       "Soldier": true
-    }
+    },
+    "type": "skill"
   },
   {
     "name": "Use the Force",
@@ -206,6 +224,7 @@
       "Scoundrel": false,
       "Scout": false,
       "Soldier": false
-    }
+    },
+    "type": "skill"
   }
 ]

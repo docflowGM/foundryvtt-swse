@@ -1,246 +1,368 @@
 [
   {
     "dc": 15,
-    "effect": "+1 attack, +1d6 damage"
+    "effect": "+1 attack, +1d6 damage",
+    "name": "Unnamed Forcepower 1",
+    "type": "forcePower"
   },
   {
     "dc": 20,
-    "effect": "+1 attack, +2d6 damage"
+    "effect": "+1 attack, +2d6 damage",
+    "name": "Unnamed Forcepower 2",
+    "type": "forcePower"
   },
   {
     "dc": 25,
-    "effect": "+1 attack, +3d6 damage"
+    "effect": "+1 attack, +3d6 damage",
+    "name": "Unnamed Forcepower 3",
+    "type": "forcePower"
   },
   {
     "dc": 15,
-    "effect": "+2 melee attack and damage until end of turn"
+    "effect": "+2 melee attack and damage until end of turn",
+    "name": "Unnamed Forcepower 4",
+    "type": "forcePower"
   },
   {
     "dc": 20,
-    "effect": "+4 melee attack and damage until end of turn"
+    "effect": "+4 melee attack and damage until end of turn",
+    "name": "Unnamed Forcepower 5",
+    "type": "forcePower"
   },
   {
     "dc": 25,
-    "effect": "+6 melee attack and damage until end of turn"
+    "effect": "+6 melee attack and damage until end of turn",
+    "name": "Unnamed Forcepower 6",
+    "type": "forcePower"
   },
   {
     "dc": "≥ Will Defense",
-    "effect": "Sense life status, surroundings, emotions"
+    "effect": "Sense life status, surroundings, emotions",
+    "name": "Unnamed Forcepower 7",
+    "type": "forcePower"
   },
   {
     "dc": "vs. Disarm rules",
-    "effect": "Disarm target, weapon drops or flies to your hand"
+    "effect": "Disarm target, weapon drops or flies to your hand",
+    "name": "Unnamed Forcepower 8",
+    "type": "forcePower"
   },
   {
     "dc": 15,
-    "effect": "2d6 damage, target limited to swift action"
+    "effect": "2d6 damage, target limited to swift action",
+    "name": "Unnamed Forcepower 9",
+    "type": "forcePower"
   },
   {
     "dc": 20,
-    "effect": "4d6 damage, target limited to swift action"
+    "effect": "4d6 damage, target limited to swift action",
+    "name": "Unnamed Forcepower 10",
+    "type": "forcePower"
   },
   {
     "dc": 25,
-    "effect": "6d6 damage, target limited to swift action"
+    "effect": "6d6 damage, target limited to swift action",
+    "name": "Unnamed Forcepower 11",
+    "type": "forcePower"
   },
   {
     "dc": "≥ Reflex Defense",
-    "effect": "8d6 damage, -1 condition step"
+    "effect": "8d6 damage, -1 condition step",
+    "name": "Unnamed Forcepower 12",
+    "type": "forcePower"
   },
   {
     "dc": "< Reflex Defense",
-    "effect": "4d6 damage, no condition change"
+    "effect": "4d6 damage, no condition change",
+    "name": "Unnamed Forcepower 13",
+    "type": "forcePower"
   },
   {
     "dc": "≥ Fortitude Defense",
-    "effect": "4d6 damage, knocked prone"
+    "effect": "4d6 damage, knocked prone",
+    "name": "Unnamed Forcepower 14",
+    "type": "forcePower"
   },
   {
     "dc": "< Fortitude Defense",
-    "effect": "2d6 damage, not prone"
+    "effect": "2d6 damage, not prone",
+    "name": "Unnamed Forcepower 15",
+    "type": "forcePower"
   },
   {
     "dc": "≥ Fortitude Defense",
-    "effect": "-1 condition step"
+    "effect": "-1 condition step",
+    "name": "Unnamed Forcepower 16",
+    "type": "forcePower"
   },
   {
     "dc": "+5 over",
-    "effect": "-2 condition steps"
+    "effect": "-2 condition steps",
+    "name": "Unnamed Forcepower 17",
+    "type": "forcePower"
   },
   {
     "dc": "+10 over",
-    "effect": "-3 condition steps"
+    "effect": "-3 condition steps",
+    "name": "Unnamed Forcepower 18",
+    "type": "forcePower"
   },
   {
     "dc": "vs. Strength check",
-    "effect": "Push 1 square +1 per 5 over; 1d6 damage if hitting object"
+    "effect": "Push 1 square +1 per 5 over; 1d6 damage if hitting object",
+    "name": "Unnamed Forcepower 19",
+    "type": "forcePower"
   },
   {
     "dc": 15,
-    "effect": "Move Medium object, 2d6 damage"
+    "effect": "Move Medium object, 2d6 damage",
+    "name": "Unnamed Forcepower 20",
+    "type": "forcePower"
   },
   {
     "dc": 20,
-    "effect": "Move Large object, 4d6 damage"
+    "effect": "Move Large object, 4d6 damage",
+    "name": "Unnamed Forcepower 21",
+    "type": "forcePower"
   },
   {
     "dc": 25,
-    "effect": "Move Huge object, 6d6 damage"
+    "effect": "Move Huge object, 6d6 damage",
+    "name": "Unnamed Forcepower 22",
+    "type": "forcePower"
   },
   {
     "dc": 30,
-    "effect": "Move Gargantuan object, 8d6 damage"
+    "effect": "Move Gargantuan object, 8d6 damage",
+    "name": "Unnamed Forcepower 23",
+    "type": "forcePower"
   },
   {
     "dc": 35,
-    "effect": "Move Colossal object, 10d6 damage"
+    "effect": "Move Colossal object, 10d6 damage",
+    "name": "Unnamed Forcepower 24",
+    "type": "forcePower"
   },
   {
     "dc": "≥ enemy Use the Force check",
-    "effect": "Negate power and reflect it back on attacker"
+    "effect": "Negate power and reflect it back on attacker",
+    "name": "Unnamed Forcepower 25",
+    "type": "forcePower"
   },
   {
     "dc": 15,
-    "effect": "Sense if a specific action will lead to good or bad outcome within 24 hours"
+    "effect": "Sense if a specific action will lead to good or bad outcome within 24 hours",
+    "name": "Unnamed Forcepower 26",
+    "type": "forcePower"
   },
   {
     "dc": "≥ Will Defense",
-    "effect": "Target loses Force powers and Force Point access for 24 hours"
+    "effect": "Target loses Force powers and Force Point access for 24 hours",
+    "name": "Unnamed Forcepower 27",
+    "type": "forcePower"
   },
   {
     "dc": 15,
-    "effect": "+10 speed, +5 Jump checks until end of turn"
+    "effect": "+10 speed, +5 Jump checks until end of turn",
+    "name": "Unnamed Forcepower 28",
+    "type": "forcePower"
   },
   {
     "dc": 20,
-    "effect": "+10 speed, +10 Jump checks until end of turn"
+    "effect": "+10 speed, +10 Jump checks until end of turn",
+    "name": "Unnamed Forcepower 29",
+    "type": "forcePower"
   },
   {
     "dc": 25,
-    "effect": "+10 speed, +15 Jump checks until end of turn"
+    "effect": "+10 speed, +15 Jump checks until end of turn",
+    "name": "Unnamed Forcepower 30",
+    "type": "forcePower"
   },
   {
     "dc": 15,
-    "effect": "Heal target 1/2 your level in hit points; you take same amount as damage"
+    "effect": "Heal target 1/2 your level in hit points; you take same amount as damage",
+    "name": "Unnamed Forcepower 31",
+    "type": "forcePower"
   },
   {
     "dc": 20,
-    "effect": "Heal target equal to your level; you take half that as damage"
+    "effect": "Heal target equal to your level; you take half that as damage",
+    "name": "Unnamed Forcepower 32",
+    "type": "forcePower"
   },
   {
     "dc": 25,
-    "effect": "Heal target 2× your level; you take 1/4 that as damage"
+    "effect": "Heal target 2× your level; you take 1/4 that as damage",
+    "name": "Unnamed Forcepower 33",
+    "type": "forcePower"
   },
   {
     "dc": "≥ Will Defense",
-    "effect": "Target believes a simple lie or suggestion"
+    "effect": "Target believes a simple lie or suggestion",
+    "name": "Unnamed Forcepower 34",
+    "type": "forcePower"
   },
   {
     "dc": "≥ damage dealt",
-    "effect": "Negate energy damage from one attack"
+    "effect": "Negate energy damage from one attack",
+    "name": "Unnamed Forcepower 35",
+    "type": "forcePower"
   },
   {
     "dc": 15,
-    "effect": "+5 to Reflex Defense until start of next turn"
+    "effect": "+5 to Reflex Defense until start of next turn",
+    "name": "Unnamed Forcepower 36",
+    "type": "forcePower"
   },
   {
     "dc": 20,
-    "effect": "+10 to Reflex Defense until start of next turn"
+    "effect": "+10 to Reflex Defense until start of next turn",
+    "name": "Unnamed Forcepower 37",
+    "type": "forcePower"
   },
   {
     "dc": 25,
-    "effect": "+15 to Reflex Defense until start of next turn"
+    "effect": "+15 to Reflex Defense until start of next turn",
+    "name": "Unnamed Forcepower 38",
+    "type": "forcePower"
   },
   {
     "dc": 15,
-    "effect": "+1 to attack rolls, skill checks, and all defenses for 1 minute"
+    "effect": "+1 to attack rolls, skill checks, and all defenses for 1 minute",
+    "name": "Unnamed Forcepower 39",
+    "type": "forcePower"
   },
   {
     "dc": 20,
-    "effect": "+2 to same bonuses"
+    "effect": "+2 to same bonuses",
+    "name": "Unnamed Forcepower 40",
+    "type": "forcePower"
   },
   {
     "dc": 25,
-    "effect": "+3 to same bonuses"
+    "effect": "+3 to same bonuses",
+    "name": "Unnamed Forcepower 41",
+    "type": "forcePower"
   },
   {
     "dc": 15,
-    "effect": "Gain concealment until end of turn"
+    "effect": "Gain concealment until end of turn",
+    "name": "Unnamed Forcepower 42",
+    "type": "forcePower"
   },
   {
     "dc": 20,
-    "effect": "Gain total concealment until end of turn"
+    "effect": "Gain total concealment until end of turn",
+    "name": "Unnamed Forcepower 43",
+    "type": "forcePower"
   },
   {
     "dc": 25,
-    "effect": "Gain total concealment and +5 Stealth until end of turn"
+    "effect": "Gain total concealment and +5 Stealth until end of turn",
+    "name": "Unnamed Forcepower 44",
+    "type": "forcePower"
   },
   {
     "dc": "≥ Reflex Defense",
-    "effect": "6d6 damage, pushed 1 square"
+    "effect": "6d6 damage, pushed 1 square",
+    "name": "Unnamed Forcepower 45",
+    "type": "forcePower"
   },
   {
     "dc": "< Reflex Defense",
-    "effect": "3d6 damage, no push"
+    "effect": "3d6 damage, no push",
+    "name": "Unnamed Forcepower 46",
+    "type": "forcePower"
   },
   {
     "dc": "≥ Reflex Defense",
-    "effect": "8d6 electricity damage, -1 condition step"
+    "effect": "8d6 electricity damage, -1 condition step",
+    "name": "Unnamed Forcepower 47",
+    "type": "forcePower"
   },
   {
     "dc": "< Reflex Defense",
-    "effect": "4d6 electricity damage"
+    "effect": "4d6 electricity damage",
+    "name": "Unnamed Forcepower 48",
+    "type": "forcePower"
   },
   {
     "dc": "≥ Will Defense",
-    "effect": "6d6 sonic damage, -1 condition step"
+    "effect": "6d6 sonic damage, -1 condition step",
+    "name": "Unnamed Forcepower 49",
+    "type": "forcePower"
   },
   {
     "dc": "< Will Defense",
-    "effect": "3d6 sonic damage"
+    "effect": "3d6 sonic damage",
+    "name": "Unnamed Forcepower 50",
+    "type": "forcePower"
   },
   {
     "dc": 15,
-    "effect": "Ignore concealment and cover from Force-sensitive targets for 1 round"
+    "effect": "Ignore concealment and cover from Force-sensitive targets for 1 round",
+    "name": "Unnamed Forcepower 51",
+    "type": "forcePower"
   },
   {
     "dc": 20,
-    "effect": "Same effect for 1 minute"
+    "effect": "Same effect for 1 minute",
+    "name": "Unnamed Forcepower 52",
+    "type": "forcePower"
   },
   {
     "dc": 25,
-    "effect": "Same effect for 10 minutes"
+    "effect": "Same effect for 10 minutes",
+    "name": "Unnamed Forcepower 53",
+    "type": "forcePower"
   },
   {
     "dc": "≥ Will Defense",
-    "effect": "Sense direction and distance to target"
+    "effect": "Sense direction and distance to target",
+    "name": "Unnamed Forcepower 54",
+    "type": "forcePower"
   },
   {
     "dc": 15,
-    "effect": "+1d6 damage until end of turn"
+    "effect": "+1d6 damage until end of turn",
+    "name": "Unnamed Forcepower 55",
+    "type": "forcePower"
   },
   {
     "dc": 20,
-    "effect": "+2d6 damage until end of turn"
+    "effect": "+2d6 damage until end of turn",
+    "name": "Unnamed Forcepower 56",
+    "type": "forcePower"
   },
   {
     "dc": 25,
-    "effect": "+3d6 damage until end of turn"
+    "effect": "+3d6 damage until end of turn",
+    "name": "Unnamed Forcepower 57",
+    "type": "forcePower"
   },
   {
     "dc": 15,
-    "effect": "+1 to attack rolls until end of turn"
+    "effect": "+1 to attack rolls until end of turn",
+    "name": "Unnamed Forcepower 58",
+    "type": "forcePower"
   },
   {
     "dc": 20,
-    "effect": "+2 to attack rolls until end of turn"
+    "effect": "+2 to attack rolls until end of turn",
+    "name": "Unnamed Forcepower 59",
+    "type": "forcePower"
   },
   {
     "dc": 25,
-    "effect": "+3 to attack rolls until end of turn"
+    "effect": "+3 to attack rolls until end of turn",
+    "name": "Unnamed Forcepower 60",
+    "type": "forcePower"
   },
   {
     "dc": "≥ Fortitude Defense",
-    "effect": "Target is nauseated for 1 round"
+    "effect": "Target is nauseated for 1 round",
+    "name": "Unnamed Forcepower 61",
+    "type": "forcePower"
   }
 ]

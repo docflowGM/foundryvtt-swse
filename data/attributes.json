@@ -13,7 +13,8 @@
       "Grapple"
     ],
     "modifierFormula": "(attributeTotal - 10) / 2",
-    "modifierNotes": "Modifier can be negative if attributeTotal < 10"
+    "modifierNotes": "Modifier can be negative if attributeTotal < 10",
+    "type": "attribute"
   },
   {
     "name": "Dexterity",
@@ -30,7 +31,8 @@
       "Tumble"
     ],
     "modifierFormula": "(attributeTotal - 10) / 2",
-    "modifierNotes": "Modifier can be negative if attributeTotal < 10"
+    "modifierNotes": "Modifier can be negative if attributeTotal < 10",
+    "type": "attribute"
   },
   {
     "name": "Constitution",
@@ -43,7 +45,8 @@
     "description": "Endurance, stamina, and health; affects hit points and resistances.",
     "relatedSkills": [],
     "modifierFormula": "(attributeTotal - 10) / 2",
-    "modifierNotes": "Modifier can be negative if attributeTotal < 10"
+    "modifierNotes": "Modifier can be negative if attributeTotal < 10",
+    "type": "attribute"
   },
   {
     "name": "Intelligence",
@@ -59,7 +62,8 @@
       "Knowledge"
     ],
     "modifierFormula": "(attributeTotal - 10) / 2",
-    "modifierNotes": "Modifier can be negative if attributeTotal < 10"
+    "modifierNotes": "Modifier can be negative if attributeTotal < 10",
+    "type": "attribute"
   },
   {
     "name": "Wisdom",
@@ -75,7 +79,8 @@
       "Survival"
     ],
     "modifierFormula": "(attributeTotal - 10) / 2",
-    "modifierNotes": "Modifier can be negative if attributeTotal < 10"
+    "modifierNotes": "Modifier can be negative if attributeTotal < 10",
+    "type": "attribute"
   },
   {
     "name": "Charisma",
@@ -92,6 +97,7 @@
       "Intimidate"
     ],
     "modifierFormula": "(attributeTotal - 10) / 2",
-    "modifierNotes": "Modifier can be negative if attributeTotal < 10"
+    "modifierNotes": "Modifier can be negative if attributeTotal < 10",
+    "type": "attribute"
   }
 ]

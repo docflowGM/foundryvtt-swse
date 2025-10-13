@@ -105,6 +105,10 @@ Hooks.once("ready", async () => {
 // HANDLEBARS HELPERS
 // ============================================
 function registerHandlebarsHelpers() {
+  Handlebars.registerHelper("checked", value => value ? "checked" : "");
+
+  Handlebars.registerHelper("gte", (a, b) => a >= b);
+
   // --- String Helpers ---
   Handlebars.registerHelper("upper", str =>
     typeof str === "string" ? str.toUpperCase() : ""
