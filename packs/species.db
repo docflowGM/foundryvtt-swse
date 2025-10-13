@@ -1,68 +1,68 @@
-{"name": "Aleena", "type": "race", "system": {"key": "aleena", "bonuses": {"dex": 2, "cha": -2}}}
-{"name": "Aqualish", "type": "race", "system": {"key": "aqualish", "bonuses": {"con": 2, "wis": 2, "dex": -2, "int": -2}}}
-{"name": "Arkanian", "type": "race", "system": {"key": "arkanian", "bonuses": {"int": 2, "cha": -2}}}
-{"name": "Arkanian Offshoot", "type": "race", "system": {"key": "arkanianOffshoot", "bonuses": {"con": -2}}}
-{"name": "Balosar", "type": "race", "system": {"key": "balosar", "bonuses": {"dex": 2, "cha": 2, "con": -2, "wis": -2}}}
-{"name": "Blood Carver", "type": "race", "system": {"key": "bloodCarver", "bonuses": {"dex": 2, "wis": -2, "cha": -2}}}
-{"name": "Bothan", "type": "race", "system": {"key": "bothan", "bonuses": {"dex": 2, "con": -2}}}
-{"name": "Caamasi", "type": "race", "system": {"key": "caamasi", "bonuses": {"wis": 4, "str": -2, "con": -2}}}
-{"name": "Cathar", "type": "race", "system": {"key": "cathar", "bonuses": {"dex": 2, "int": -2}}}
-{"name": "Cerean", "type": "race", "system": {"key": "cerean", "bonuses": {"int": 2, "wis": 2, "dex": -2}}}
-{"name": "Chagrian", "type": "race", "system": {"key": "chagrian", "bonuses": {"wis": 2, "cha": 2, "dex": -2}}}
-{"name": "Chistori", "type": "race", "system": {"key": "chistori", "bonuses": {"str": 2, "dex": -2}}}
-{"name": "Chiss", "type": "race", "system": {"key": "chiss", "bonuses": {"dex": 2, "int": 2, "cha": -2}}}
-{"name": "Clawdite", "type": "race", "system": {"key": "clawdite", "bonuses": {"cha": 2, "str": -2}}}
-{"name": "Devaronian", "type": "race", "system": {"key": "devaronian", "bonuses": {"dex": 2, "cha": 2, "con": -2}}}
-{"name": "Draethos", "type": "race", "system": {"key": "draethos", "bonuses": {"con": 2, "cha": -2}}}
-{"name": "Dug", "type": "race", "system": {"key": "dug", "bonuses": {"dex": 2, "cha": -2}}}
-{"name": "Duros", "type": "race", "system": {"key": "duros", "bonuses": {"dex": 2, "int": 2, "con": -2}}}
-{"name": "Ewok", "type": "race", "system": {"key": "ewok", "bonuses": {"dex": 2, "str": -2}}}
-{"name": "Falleen", "type": "race", "system": {"key": "falleen", "bonuses": {"cha": 2, "wis": -2}}}
-{"name": "Feeorin", "type": "race", "system": {"key": "feeorin", "bonuses": {"str": 2, "con": 2, "dex": -2, "wis": -2, "cha": -2}}}
-{"name": "Felucian", "type": "race", "system": {"key": "felucian", "bonuses": {"con": 2, "int": -2}}}
-{"name": "Gand", "type": "race", "system": {"key": "gand", "bonuses": {"wis": 2, "cha": -2}}}
-{"name": "Gen'Dai", "type": "race", "system": {"key": "gendai", "bonuses": {"con": 4, "wis": -2, "cha": -2}}}
-{"name": "Geonosian", "type": "race", "system": {"key": "geonosian", "bonuses": {"str": 2, "int": -2, "cha": -2}}}
-{"name": "Gran", "type": "race", "system": {"key": "gran", "bonuses": {"cha": 2, "int": -2}}}
-{"name": "Gamorrean", "type": "race", "system": {"key": "gamorrean", "bonuses": {"str": 2, "dex": -2, "int": -2}}}
-{"name": "Gungan", "type": "race", "system": {"key": "gungan", "bonuses": {"dex": 2, "int": -2, "cha": -2}}}
-{"name": "Houk", "type": "race", "system": {"key": "houk", "bonuses": {"str": 2, "con": 2, "wis": -2, "cha": -2}}}
-{"name": "Human", "type": "race", "system": {"key": "human", "bonuses": {}}}
-{"name": "Iktotchi", "type": "race", "system": {"key": "iktotchi", "bonuses": {"con": 2, "cha": -2}}}
-{"name": "Ishi Tib", "type": "race", "system": {"key": "ishiTib", "bonuses": {"wis": 2, "dex": -2}}}
-{"name": "Ithorian", "type": "race", "system": {"key": "ithorian", "bonuses": {"wis": 2, "cha": 2, "dex": -2}}}
-{"name": "Jawa", "type": "race", "system": {"key": "jawa", "bonuses": {"dex": 2, "str": -2}}}
-{"name": "Kaminoan", "type": "race", "system": {"key": "kaminoan", "bonuses": {"int": 2, "wis": -2}}}
-{"name": "Kaleesh", "type": "race", "system": {"key": "kaleesh", "bonuses": {"cha": 2, "con": 2, "int": -2, "dex": -2}}}
-{"name": "Kel Dor", "type": "race", "system": {"key": "kelDor", "bonuses": {"dex": 2, "wis": 2, "con": -2}}}
-{"name": "Kerkoiden", "type": "race", "system": {"key": "kerkoiden", "bonuses": {"wis": 2, "con": -2}}}
-{"name": "Khil", "type": "race", "system": {"key": "khil", "bonuses": {"int": 2, "cha": 2, "con": -2}}}
-{"name": "Kissai", "type": "race", "system": {"key": "kissai", "bonuses": {"cha": 2, "wis": -2}}}
-{"name": "Mantellian Savrip", "type": "race", "system": {"key": "mantellianSavrip", "bonuses": {"str": 4, "con": 4, "dex": -2, "int": -4, "wis": -4, "cha": -4}}}
-{"name": "Massassi", "type": "race", "system": {"key": "massassi", "bonuses": {"str": 4, "int": -2, "wis": -2, "cha": -2}}}
-{"name": "Miraluka", "type": "race", "system": {"key": "miraluka", "bonuses": {"int": 2, "dex": -2}}}
-{"name": "Mirialan", "type": "race", "system": {"key": "mirialan", "bonuses": {"cha": 2, "wis": 2, "con": -2}}}
-{"name": "Mon Calamari", "type": "race", "system": {"key": "monCalamari", "bonuses": {"int": 2, "wis": 2, "con": -2}}}
-{"name": "Nautolan", "type": "race", "system": {"key": "nautolan", "bonuses": {"con": 2, "int": -2, "wis": -2}}}
-{"name": "Nelvaanian", "type": "race", "system": {"key": "nelvaanian", "bonuses": {"wis": 2, "int": -2}}}
-{"name": "Noghri", "type": "race", "system": {"key": "noghri", "bonuses": {"dex": 2, "wis": 2, "cha": -4}}}
-{"name": "Nosaurian", "type": "race", "system": {"key": "nosaurian", "bonuses": {"dex": 2, "cha": -2}}}
-{"name": "Quarren", "type": "race", "system": {"key": "quarren", "bonuses": {"con": 2, "wis": -2, "cha": -2}}}
-{"name": "Rakata", "type": "race", "system": {"key": "rakata", "bonuses": {"int": 2, "wis": -2}}}
-{"name": "Replica Droid", "type": "race", "system": {"key": "replicaDroid", "bonuses": {"str": 2, "dex": 2, "cha": -2}}}
-{"name": "Rodian", "type": "race", "system": {"key": "rodian", "bonuses": {"dex": 2, "wis": -2, "cha": -2}}}
-{"name": "Ryn", "type": "race", "system": {"key": "ryn", "bonuses": {"cha": 2}}}
-{"name": "Selkath", "type": "race", "system": {"key": "selkath", "bonuses": {"cha": 2}}}
-{"name": "Snivvian", "type": "race", "system": {"key": "snivvian", "bonuses": {"wis": 2}}}
-{"name": "Sullustan", "type": "race", "system": {"key": "sullustan", "bonuses": {"dex": 2, "con": -2}}}
-{"name": "Talz", "type": "race", "system": {"key": "talz", "bonuses": {"con": 2, "int": -2}}}
-{"name": "Togruta", "type": "race", "system": {"key": "togruta", "bonuses": {"dex": 2, "con": -2}}}
-{"name": "Togorian", "type": "race", "system": {"key": "togorian", "bonuses": {"str": 4, "int": -2, "wis": -2}}}
-{"name": "Toydarian", "type": "race", "system": {"key": "toydarian", "bonuses": {"wis": 2, "str": -2}}}
-{"name": "Trandoshan", "type": "race", "system": {"key": "trandoshan", "bonuses": {"str": 2, "dex": -2}}}
-{"name": "Twi’lek", "type": "race", "system": {"key": "twilek", "bonuses": {"cha": 2, "con": -2}}}
-{"name": "Ubese", "type": "race", "system": {"key": "ubese", "bonuses": {"dex": 2, "con": -2}}}
-{"name": "Utai", "type": "race", "system": {"key": "utai", "bonuses": {"con": 2, "cha": -2}}}
-{"name": "Vurk", "type": "race", "system": {"key": "vurk", "bonuses": {"con": 2, "cha": 2, "dex": -2}}}
-{"name": "Whiphid", "type": "race", "system": {"key": "whiphid", "bonuses": {"str": 4, "int": -2, "wis": -2}}}
-{"name": "Wookiee", "type": "race", "system": {"key": "wookiee", "bonuses": {"str": 4, "con": 2, "int": -2, "cha": -2}}}
+{"_id": "jj0q2c4m73i8qvtf", "name": "Aleena", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "aleena", "bonuses": {"dex": 2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "tsndi9y8afbs2vd5", "name": "Aqualish", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "aqualish", "bonuses": {"con": 2, "wis": 2, "dex": -2, "int": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "5569gtotceru2yez", "name": "Arkanian", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "arkanian", "bonuses": {"int": 2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "tzc7uqy3wr67db0g", "name": "Arkanian Offshoot", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "arkanianOffshoot", "bonuses": {"con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "5yl858gsaghmaehd", "name": "Balosar", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "balosar", "bonuses": {"dex": 2, "cha": 2, "con": -2, "wis": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "piy6pbuoagtxo3sm", "name": "Blood Carver", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "bloodCarver", "bonuses": {"dex": 2, "wis": -2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "3pa5ud9ocfq9z9ug", "name": "Bothan", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "bothan", "bonuses": {"dex": 2, "con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "mvfr4crxbpdgk3mx", "name": "Caamasi", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "caamasi", "bonuses": {"wis": 4, "str": -2, "con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "190awegv1j206gz8", "name": "Cathar", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "cathar", "bonuses": {"dex": 2, "int": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "hhwny5bzumhcdtci", "name": "Cerean", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "cerean", "bonuses": {"int": 2, "wis": 2, "dex": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "r4ap43fatjkqnbh9", "name": "Chagrian", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "chagrian", "bonuses": {"wis": 2, "cha": 2, "dex": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "o545limh1vppmma4", "name": "Chistori", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "chistori", "bonuses": {"str": 2, "dex": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "oboxc7lr1srth2bd", "name": "Chiss", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "chiss", "bonuses": {"dex": 2, "int": 2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "d2og2v3lc7mygh77", "name": "Clawdite", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "clawdite", "bonuses": {"cha": 2, "str": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "7fdnjne3krd06r37", "name": "Devaronian", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "devaronian", "bonuses": {"dex": 2, "cha": 2, "con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "fqic5ex4yrdwgapb", "name": "Draethos", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "draethos", "bonuses": {"con": 2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "yw3hubh7tukzq6gn", "name": "Dug", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "dug", "bonuses": {"dex": 2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "g6wbfiby9syj6qv8", "name": "Duros", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "duros", "bonuses": {"dex": 2, "int": 2, "con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "zcfm29ei293l3t9h", "name": "Ewok", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "ewok", "bonuses": {"dex": 2, "str": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "38ftk7hf5bc98y0k", "name": "Falleen", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "falleen", "bonuses": {"cha": 2, "wis": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "tihkhr97ajoqw8gm", "name": "Feeorin", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "feeorin", "bonuses": {"str": 2, "con": 2, "dex": -2, "wis": -2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "lqidjwl9gsgkhjin", "name": "Felucian", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "felucian", "bonuses": {"con": 2, "int": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "6r5v6aoxrmp8xy1w", "name": "Gand", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "gand", "bonuses": {"wis": 2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "mct6651nitugqr4h", "name": "Gen'Dai", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "gendai", "bonuses": {"con": 4, "wis": -2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "b2m33tx0n7qyf0aw", "name": "Geonosian", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "geonosian", "bonuses": {"str": 2, "int": -2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "4d2rzm7mp6rt4odo", "name": "Gran", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "gran", "bonuses": {"cha": 2, "int": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "b64y318dtaadnue0", "name": "Gamorrean", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "gamorrean", "bonuses": {"str": 2, "dex": -2, "int": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "s9o6iew1upwkujwo", "name": "Gungan", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "gungan", "bonuses": {"dex": 2, "int": -2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "iu7h4vhmh8d117n3", "name": "Houk", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "houk", "bonuses": {"str": 2, "con": 2, "wis": -2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "uu6w69r87gocv889", "name": "Human", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "human", "bonuses": {}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "i9r6niouqbderiln", "name": "Iktotchi", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "iktotchi", "bonuses": {"con": 2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "n6vx1n9ttu1gvk2t", "name": "Ishi Tib", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "ishiTib", "bonuses": {"wis": 2, "dex": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "ntdorrfrnp6g9h85", "name": "Ithorian", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "ithorian", "bonuses": {"wis": 2, "cha": 2, "dex": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "kodhlseadtu1q6v3", "name": "Jawa", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "jawa", "bonuses": {"dex": 2, "str": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "l4es7czku8b0lmrf", "name": "Kaminoan", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "kaminoan", "bonuses": {"int": 2, "wis": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "pjcksv7o2s3r151b", "name": "Kaleesh", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "kaleesh", "bonuses": {"cha": 2, "con": 2, "int": -2, "dex": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "l79de7fx8z34qrz9", "name": "Kel Dor", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "kelDor", "bonuses": {"dex": 2, "wis": 2, "con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "nbi8bwcd4ofda5ry", "name": "Kerkoiden", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "kerkoiden", "bonuses": {"wis": 2, "con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "a483m6lhdnjym7mw", "name": "Khil", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "khil", "bonuses": {"int": 2, "cha": 2, "con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "iodd3qp065mvwnod", "name": "Kissai", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "kissai", "bonuses": {"cha": 2, "wis": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "cbfwme5xve6huhzj", "name": "Mantellian Savrip", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "mantellianSavrip", "bonuses": {"str": 4, "con": 4, "dex": -2, "int": -4, "wis": -4, "cha": -4}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "c16wagzxn3x3qft3", "name": "Massassi", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "massassi", "bonuses": {"str": 4, "int": -2, "wis": -2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "fqr0j10lkrsiyp4q", "name": "Miraluka", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "miraluka", "bonuses": {"int": 2, "dex": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "tqwe7uq8mr6efdk2", "name": "Mirialan", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "mirialan", "bonuses": {"cha": 2, "wis": 2, "con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "slzs331scit62th0", "name": "Mon Calamari", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "monCalamari", "bonuses": {"int": 2, "wis": 2, "con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "nuvr30eqn2ydr33f", "name": "Nautolan", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "nautolan", "bonuses": {"con": 2, "int": -2, "wis": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "flxv832og8r4gady", "name": "Nelvaanian", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "nelvaanian", "bonuses": {"wis": 2, "int": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "emteaikh5rve4li6", "name": "Noghri", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "noghri", "bonuses": {"dex": 2, "wis": 2, "cha": -4}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "ubqw0yv8vo1gxibq", "name": "Nosaurian", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "nosaurian", "bonuses": {"dex": 2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "o82x5eqdjufgx10f", "name": "Quarren", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "quarren", "bonuses": {"con": 2, "wis": -2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "cys5kzot0u7q6qew", "name": "Rakata", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "rakata", "bonuses": {"int": 2, "wis": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "suzibxaj37km5u9v", "name": "Replica Droid", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "replicaDroid", "bonuses": {"str": 2, "dex": 2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "pfpr605qsyjl9g26", "name": "Rodian", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "rodian", "bonuses": {"dex": 2, "wis": -2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "0x3jlyahejqxcxo8", "name": "Ryn", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "ryn", "bonuses": {"cha": 2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "4djcerebjnge0blu", "name": "Selkath", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "selkath", "bonuses": {"cha": 2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "4icp0qzt7jkutu52", "name": "Snivvian", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "snivvian", "bonuses": {"wis": 2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "bszooyovn7x7nvrt", "name": "Sullustan", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "sullustan", "bonuses": {"dex": 2, "con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "4vndw26xfspxxajv", "name": "Talz", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "talz", "bonuses": {"con": 2, "int": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "1sdgiokjz6jdzbzl", "name": "Togruta", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "togruta", "bonuses": {"dex": 2, "con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "1s3h0veg8v97p2mh", "name": "Togorian", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "togorian", "bonuses": {"str": 4, "int": -2, "wis": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "gcg2q20uywkh3anx", "name": "Toydarian", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "toydarian", "bonuses": {"wis": 2, "str": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "3z7h7hcdp9afctuv", "name": "Trandoshan", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "trandoshan", "bonuses": {"str": 2, "dex": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "gi5q7gqkql1fdlmb", "name": "Twi’lek", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "twilek", "bonuses": {"cha": 2, "con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "iv358u900fxwe6e2", "name": "Ubese", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "ubese", "bonuses": {"dex": 2, "con": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "qomkv8vj6s7eqfq5", "name": "Utai", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "utai", "bonuses": {"con": 2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "n8pcrc7902bj4o0z", "name": "Vurk", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "vurk", "bonuses": {"con": 2, "cha": 2, "dex": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "nkve0bnjgf6lufok", "name": "Whiphid", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "whiphid", "bonuses": {"str": 4, "int": -2, "wis": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}
+{"_id": "fy0tbirjl5fsk04e", "name": "Wookiee", "type": "species", "img": "icons/svg/mystery-man.svg", "system": {"key": "wookiee", "bonuses": {"str": 4, "con": 2, "int": -2, "cha": -2}}, "effects": [], "folder": null, "sort": 0, "ownership": {"default": 0}, "flags": {}}

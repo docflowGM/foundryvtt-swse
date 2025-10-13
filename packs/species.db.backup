@@ -1,0 +1,68 @@
+{"name": "Aleena", "type": "race", "system": {"key": "aleena", "bonuses": {"dex": 2, "cha": -2}}}
+{"name": "Aqualish", "type": "race", "system": {"key": "aqualish", "bonuses": {"con": 2, "wis": 2, "dex": -2, "int": -2}}}
+{"name": "Arkanian", "type": "race", "system": {"key": "arkanian", "bonuses": {"int": 2, "cha": -2}}}
+{"name": "Arkanian Offshoot", "type": "race", "system": {"key": "arkanianOffshoot", "bonuses": {"con": -2}}}
+{"name": "Balosar", "type": "race", "system": {"key": "balosar", "bonuses": {"dex": 2, "cha": 2, "con": -2, "wis": -2}}}
+{"name": "Blood Carver", "type": "race", "system": {"key": "bloodCarver", "bonuses": {"dex": 2, "wis": -2, "cha": -2}}}
+{"name": "Bothan", "type": "race", "system": {"key": "bothan", "bonuses": {"dex": 2, "con": -2}}}
+{"name": "Caamasi", "type": "race", "system": {"key": "caamasi", "bonuses": {"wis": 4, "str": -2, "con": -2}}}
+{"name": "Cathar", "type": "race", "system": {"key": "cathar", "bonuses": {"dex": 2, "int": -2}}}
+{"name": "Cerean", "type": "race", "system": {"key": "cerean", "bonuses": {"int": 2, "wis": 2, "dex": -2}}}
+{"name": "Chagrian", "type": "race", "system": {"key": "chagrian", "bonuses": {"wis": 2, "cha": 2, "dex": -2}}}
+{"name": "Chistori", "type": "race", "system": {"key": "chistori", "bonuses": {"str": 2, "dex": -2}}}
+{"name": "Chiss", "type": "race", "system": {"key": "chiss", "bonuses": {"dex": 2, "int": 2, "cha": -2}}}
+{"name": "Clawdite", "type": "race", "system": {"key": "clawdite", "bonuses": {"cha": 2, "str": -2}}}
+{"name": "Devaronian", "type": "race", "system": {"key": "devaronian", "bonuses": {"dex": 2, "cha": 2, "con": -2}}}
+{"name": "Draethos", "type": "race", "system": {"key": "draethos", "bonuses": {"con": 2, "cha": -2}}}
+{"name": "Dug", "type": "race", "system": {"key": "dug", "bonuses": {"dex": 2, "cha": -2}}}
+{"name": "Duros", "type": "race", "system": {"key": "duros", "bonuses": {"dex": 2, "int": 2, "con": -2}}}
+{"name": "Ewok", "type": "race", "system": {"key": "ewok", "bonuses": {"dex": 2, "str": -2}}}
+{"name": "Falleen", "type": "race", "system": {"key": "falleen", "bonuses": {"cha": 2, "wis": -2}}}
+{"name": "Feeorin", "type": "race", "system": {"key": "feeorin", "bonuses": {"str": 2, "con": 2, "dex": -2, "wis": -2, "cha": -2}}}
+{"name": "Felucian", "type": "race", "system": {"key": "felucian", "bonuses": {"con": 2, "int": -2}}}
+{"name": "Gand", "type": "race", "system": {"key": "gand", "bonuses": {"wis": 2, "cha": -2}}}
+{"name": "Gen'Dai", "type": "race", "system": {"key": "gendai", "bonuses": {"con": 4, "wis": -2, "cha": -2}}}
+{"name": "Geonosian", "type": "race", "system": {"key": "geonosian", "bonuses": {"str": 2, "int": -2, "cha": -2}}}
+{"name": "Gran", "type": "race", "system": {"key": "gran", "bonuses": {"cha": 2, "int": -2}}}
+{"name": "Gamorrean", "type": "race", "system": {"key": "gamorrean", "bonuses": {"str": 2, "dex": -2, "int": -2}}}
+{"name": "Gungan", "type": "race", "system": {"key": "gungan", "bonuses": {"dex": 2, "int": -2, "cha": -2}}}
+{"name": "Houk", "type": "race", "system": {"key": "houk", "bonuses": {"str": 2, "con": 2, "wis": -2, "cha": -2}}}
+{"name": "Human", "type": "race", "system": {"key": "human", "bonuses": {}}}
+{"name": "Iktotchi", "type": "race", "system": {"key": "iktotchi", "bonuses": {"con": 2, "cha": -2}}}
+{"name": "Ishi Tib", "type": "race", "system": {"key": "ishiTib", "bonuses": {"wis": 2, "dex": -2}}}
+{"name": "Ithorian", "type": "race", "system": {"key": "ithorian", "bonuses": {"wis": 2, "cha": 2, "dex": -2}}}
+{"name": "Jawa", "type": "race", "system": {"key": "jawa", "bonuses": {"dex": 2, "str": -2}}}
+{"name": "Kaminoan", "type": "race", "system": {"key": "kaminoan", "bonuses": {"int": 2, "wis": -2}}}
+{"name": "Kaleesh", "type": "race", "system": {"key": "kaleesh", "bonuses": {"cha": 2, "con": 2, "int": -2, "dex": -2}}}
+{"name": "Kel Dor", "type": "race", "system": {"key": "kelDor", "bonuses": {"dex": 2, "wis": 2, "con": -2}}}
+{"name": "Kerkoiden", "type": "race", "system": {"key": "kerkoiden", "bonuses": {"wis": 2, "con": -2}}}
+{"name": "Khil", "type": "race", "system": {"key": "khil", "bonuses": {"int": 2, "cha": 2, "con": -2}}}
+{"name": "Kissai", "type": "race", "system": {"key": "kissai", "bonuses": {"cha": 2, "wis": -2}}}
+{"name": "Mantellian Savrip", "type": "race", "system": {"key": "mantellianSavrip", "bonuses": {"str": 4, "con": 4, "dex": -2, "int": -4, "wis": -4, "cha": -4}}}
+{"name": "Massassi", "type": "race", "system": {"key": "massassi", "bonuses": {"str": 4, "int": -2, "wis": -2, "cha": -2}}}
+{"name": "Miraluka", "type": "race", "system": {"key": "miraluka", "bonuses": {"int": 2, "dex": -2}}}
+{"name": "Mirialan", "type": "race", "system": {"key": "mirialan", "bonuses": {"cha": 2, "wis": 2, "con": -2}}}
+{"name": "Mon Calamari", "type": "race", "system": {"key": "monCalamari", "bonuses": {"int": 2, "wis": 2, "con": -2}}}
+{"name": "Nautolan", "type": "race", "system": {"key": "nautolan", "bonuses": {"con": 2, "int": -2, "wis": -2}}}
+{"name": "Nelvaanian", "type": "race", "system": {"key": "nelvaanian", "bonuses": {"wis": 2, "int": -2}}}
+{"name": "Noghri", "type": "race", "system": {"key": "noghri", "bonuses": {"dex": 2, "wis": 2, "cha": -4}}}
+{"name": "Nosaurian", "type": "race", "system": {"key": "nosaurian", "bonuses": {"dex": 2, "cha": -2}}}
+{"name": "Quarren", "type": "race", "system": {"key": "quarren", "bonuses": {"con": 2, "wis": -2, "cha": -2}}}
+{"name": "Rakata", "type": "race", "system": {"key": "rakata", "bonuses": {"int": 2, "wis": -2}}}
+{"name": "Replica Droid", "type": "race", "system": {"key": "replicaDroid", "bonuses": {"str": 2, "dex": 2, "cha": -2}}}
+{"name": "Rodian", "type": "race", "system": {"key": "rodian", "bonuses": {"dex": 2, "wis": -2, "cha": -2}}}
+{"name": "Ryn", "type": "race", "system": {"key": "ryn", "bonuses": {"cha": 2}}}
+{"name": "Selkath", "type": "race", "system": {"key": "selkath", "bonuses": {"cha": 2}}}
+{"name": "Snivvian", "type": "race", "system": {"key": "snivvian", "bonuses": {"wis": 2}}}
+{"name": "Sullustan", "type": "race", "system": {"key": "sullustan", "bonuses": {"dex": 2, "con": -2}}}
+{"name": "Talz", "type": "race", "system": {"key": "talz", "bonuses": {"con": 2, "int": -2}}}
+{"name": "Togruta", "type": "race", "system": {"key": "togruta", "bonuses": {"dex": 2, "con": -2}}}
+{"name": "Togorian", "type": "race", "system": {"key": "togorian", "bonuses": {"str": 4, "int": -2, "wis": -2}}}
+{"name": "Toydarian", "type": "race", "system": {"key": "toydarian", "bonuses": {"wis": 2, "str": -2}}}
+{"name": "Trandoshan", "type": "race", "system": {"key": "trandoshan", "bonuses": {"str": 2, "dex": -2}}}
+{"name": "Twi’lek", "type": "race", "system": {"key": "twilek", "bonuses": {"cha": 2, "con": -2}}}
+{"name": "Ubese", "type": "race", "system": {"key": "ubese", "bonuses": {"dex": 2, "con": -2}}}
+{"name": "Utai", "type": "race", "system": {"key": "utai", "bonuses": {"con": 2, "cha": -2}}}
+{"name": "Vurk", "type": "race", "system": {"key": "vurk", "bonuses": {"con": 2, "cha": 2, "dex": -2}}}
+{"name": "Whiphid", "type": "race", "system": {"key": "whiphid", "bonuses": {"str": 4, "int": -2, "wis": -2}}}
+{"name": "Wookiee", "type": "race", "system": {"key": "wookiee", "bonuses": {"str": 4, "con": 2, "int": -2, "cha": -2}}}

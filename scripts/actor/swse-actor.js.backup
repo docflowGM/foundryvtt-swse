@@ -97,7 +97,7 @@ export class SWSEActorSheet extends ActorSheet {
     });
   }
 
-  async getData() {
+  getData() {
     const context = super.getData();
     const actorData = this.actor.toObject(false);
     
@@ -125,7 +125,7 @@ export class SWSEActorSheet extends ActorSheet {
     context.equipment = this.actor.items.filter(i => i.type === "equipment");
     
     // Load available races
-    context.races = await this._getRacesList();
+    context.races = this._getRacesList();
     
     // Calculate skills
     context.skills = this._calculateSkills(context);
@@ -139,32 +139,7 @@ export class SWSEActorSheet extends ActorSheet {
     return fortDef + misc;
   }
 
-  async _getRacesList() {
-    // Try to get species from compendium
-    const pack = game.packs.get("swse.species");
-    
-    if (!pack) {
-      console.warn("SWSE | Species compendium not found, using fallback list");
-      return this._getFallbackRaces();
-    }
-    
-    const species = {};
-    const documents = await pack.getDocuments();
-    
-    for (let doc of documents) {
-      const key = doc.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-      species[key] = {
-        name: doc.name,
-        bonuses: doc.system.bonuses || {},
-        id: doc.id
-      };
-    }
-    
-    return species;
-  }
-
-  _getFallbackRaces() {
-    // Fallback in case compendium is unavailable
+  _getRacesList() {
     return {
       human: { name: "Human", bonuses: { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 } },
       twilek: { name: "Twi'lek", bonuses: { dex: 2, cha: 2 } },
