@@ -5,7 +5,7 @@
     "time": "advance on success",
     "effect": "Climb at slower speeds according to check; progress per successful check",
     "name": "Unnamed Skilluse 1",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Climb rope with bracing or knotted rope",
@@ -13,7 +13,7 @@
     "time": "advance on success",
     "effect": "As above",
     "name": "Unnamed Skilluse 2",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Surface with handholds/footholds",
@@ -21,7 +21,7 @@
     "time": "advance on success",
     "effect": "Climb at half or quarter speed per action type",
     "name": "Unnamed Skilluse 3",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Rough natural rock / tree",
@@ -29,7 +29,7 @@
     "time": "advance",
     "effect": "Normal climbing DCs",
     "name": "Unnamed Skilluse 4",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Uneven surface / narrow handholds",
@@ -37,7 +37,7 @@
     "time": "advance",
     "effect": "Harder climb",
     "name": "Unnamed Skilluse 5",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Overhang/ceiling with handholds",
@@ -45,7 +45,7 @@
     "time": "advance",
     "effect": "High-difficulty climb",
     "name": "Unnamed Skilluse 6",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Climb at full speed (accelerated)",
@@ -53,7 +53,7 @@
     "time": "full-round",
     "effect": "Add +5 DC to climb at full speed",
     "name": "Unnamed Skilluse 7",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Catch self when falling",
@@ -61,7 +61,7 @@
     "time": "immediate",
     "effect": "Avoid falling further if succeed",
     "name": "Unnamed Skilluse 8",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Feint (standard)",
@@ -69,7 +69,7 @@
     "time": "standard",
     "effect": "If success, target loses Dex bonus to Reflex vs your next attack next round",
     "name": "Unnamed Skilluse 9",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Group Feint (full-round)",
@@ -77,7 +77,7 @@
     "time": "full-round",
     "effect": "Sets DC for multiple opponents; successes make those opponents flat-footed vs group's first attacks next round",
     "name": "Unnamed Skilluse 10",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Deceptive Appearance (disguise)",
@@ -85,7 +85,7 @@
     "time": "Simple 1 min / Moderate 10 min / Difficult 1 hr / Incredible 1 day / Outrageous 2 weeks",
     "effect": "Creates disguise/appearance; modifier to Deception check provided (+5 to -20 per table)",
     "name": "Unnamed Skilluse 11",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Deceptive Information",
@@ -93,7 +93,7 @@
     "time": "Simple: 1 standard; Moderate: full-round; Difficult+: 1 min+",
     "effect": "Convey deceptive info; opposed by Will and Perception as relevant; failure severities described",
     "name": "Unnamed Skilluse 12",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Alternate Story (trained)",
@@ -101,7 +101,7 @@
     "time": "variable",
     "effect": "Retry deception at -10 to convey alternate deceptive information after failing",
     "name": "Unnamed Skilluse 13",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Cheat (trained)",
@@ -109,7 +109,7 @@
     "time": "as gambling action",
     "effect": "Use Deception vs Perception to cheat at gambling",
     "name": "Unnamed Skilluse 14",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Innuendo (trained)",
@@ -117,7 +117,7 @@
     "time": "varies",
     "effect": "Transmit secret message; Perception can intercept",
     "name": "Unnamed Skilluse 15",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Create a diversion to hide (standard)",
@@ -125,7 +125,7 @@
     "time": "standard plus move to reach hiding spot",
     "effect": "On success you may attempt a Stealth check (Dex-based) while targets are aware",
     "name": "Unnamed Skilluse 16",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Create a diversion to hide item (standard)",
@@ -133,7 +133,7 @@
     "time": "standard",
     "effect": "Attempt to hide an item while targets distracted; must reach hiding place in a move action",
     "name": "Unnamed Skilluse 17",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Gather Information (general)",
@@ -141,7 +141,7 @@
     "time": "1d6 hours per check",
     "effect": "Gathers local news/rumors; better results for higher DC or spendable resources",
     "name": "Unnamed Skilluse 18",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Analysis (trained)",
@@ -149,7 +149,7 @@
     "time": "post-gather",
     "effect": "Add +10 bonus to original Gather Information check if data is complete; adjust for incomplete data",
     "name": "Unnamed Skilluse 19",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Find Black Market Object",
@@ -157,7 +157,7 @@
     "time": "1/2/5/10 days",
     "effect": "Purchase cost multipliers x2/x3/x4/x5 and wait time; subject to circumstance modifiers",
     "name": "Unnamed Skilluse 20",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Quick Intel (trained)",
@@ -165,7 +165,7 @@
     "time": "halves Gather Info time",
     "effect": "Declare before rolling; +10 DC to halve time required",
     "name": "Unnamed Skilluse 21",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Identify item function",
@@ -173,7 +173,7 @@
     "time": "variable",
     "effect": "Learn primary function; +1 fact per +5 over DC",
     "name": "Unnamed Skilluse 22",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Knowledge (common)",
@@ -181,7 +181,7 @@
     "time": "instant",
     "effect": "General knowledge",
     "name": "Unnamed Skilluse 23",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Knowledge (expert/trained)",
@@ -189,7 +189,7 @@
     "time": "instant",
     "effect": "Specialist knowledge (Tactics, Tech, etc.)",
     "name": "Unnamed Skilluse 24",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Anticipate Enemy Strategy (Knowledge Tactics, trained)",
@@ -197,7 +197,7 @@
     "time": "move action",
     "effect": "Predict if target will attack/move/use special strategies",
     "name": "Unnamed Skilluse 25",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Jump long (DC formula)",
@@ -205,7 +205,7 @@
     "time": "part of movement",
     "effect": "Distance jumped counts against movement; Jump down DC15 reduces falling damage by 3m",
     "name": "Unnamed Skilluse 26",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Initiative (take 10 when appropriate)",
@@ -213,7 +213,7 @@
     "time": "initiative roll",
     "effect": "Allowed only when conditions met (prepared/ambush)",
     "name": "Unnamed Skilluse 27",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Disable Device — Simple",
@@ -221,7 +221,7 @@
     "time": "full-round",
     "effect": "Sabotage mechanical device; basic bypass",
     "name": "Unnamed Skilluse 28",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Disable Device — Tricky",
@@ -229,7 +229,7 @@
     "time": "full-round",
     "effect": "Sabotage electronic device or bypass basic electronic lock",
     "name": "Unnamed Skilluse 29",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Disable Device — Complex",
@@ -237,7 +237,7 @@
     "time": "full-round",
     "effect": "Disarm complex electronic security or bypass complex locks",
     "name": "Unnamed Skilluse 30",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "To leave no trace of tampering",
@@ -245,7 +245,7 @@
     "time": "additional",
     "effect": "Harder to disable but conceals traces",
     "name": "Unnamed Skilluse 31",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Jury-rig (trained, temporary repair)",
@@ -253,7 +253,7 @@
     "time": "full-round",
     "effect": "Temporarily repair disabled mechanical/electronic device: +2 CT and +1d8 HP; decays at end of scene",
     "name": "Unnamed Skilluse 32",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Recharge shields (trained)",
@@ -261,7 +261,7 @@
     "time": "3 swift actions",
     "effect": "Restore 5 SR on success",
     "name": "Unnamed Skilluse 33",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Regulate power (vehicle)",
@@ -269,7 +269,7 @@
     "time": "3 swift actions",
     "effect": "Move vehicle +1 CT",
     "name": "Unnamed Skilluse 34",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Repair object (trained)",
@@ -277,7 +277,7 @@
     "time": "1 hour",
     "effect": "Restore 1d8 HP and remove persistent conditions",
     "name": "Unnamed Skilluse 35",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Repair droid (trained)",
@@ -285,7 +285,7 @@
     "time": "1 hour",
     "effect": "Restore HP equal to droid level; removes persistent conditions (self-repair takes -5 penalty)",
     "name": "Unnamed Skilluse 36",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Refit antiquated vehicle/weapon",
@@ -293,7 +293,7 @@
     "time": "days to months by size",
     "effect": "Apply refitted template; costs 20% base value",
     "name": "Unnamed Skilluse 37",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Modify droid — locomotion",
@@ -301,7 +301,7 @@
     "time": "1 day",
     "effect": "Alter droid locomotion system",
     "name": "Unnamed Skilluse 38",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Modify droid — processor",
@@ -309,7 +309,7 @@
     "time": "1 day",
     "effect": "Change or attach processor functionality (requires Use Computer adjunct)",
     "name": "Unnamed Skilluse 39",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Modify droid — appendage/accessory",
@@ -317,7 +317,7 @@
     "time": "1 hour or 10 mins",
     "effect": "Add/replace appendages or accessories; installing weapon mounting may be DC 15 or 20 depending on degree",
     "name": "Unnamed Skilluse 40",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Reprogram droid (trained)",
@@ -325,7 +325,7 @@
     "time": "10 minutes",
     "effect": "Change droid's master or erase/copy memory (Use Computer adjunct as needed)",
     "name": "Unnamed Skilluse 41",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Shut down unwilling droid (while grabbed)",
@@ -333,7 +333,7 @@
     "time": "standard while grabbed",
     "effect": "If succeed, droid is shut down",
     "name": "Unnamed Skilluse 42",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Persuasion (change attitude, full-round)",
@@ -341,7 +341,7 @@
     "time": "full-round",
     "effect": "Improve attitude by 1 step on success; -5 if language barrier",
     "name": "Unnamed Skilluse 43",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Haggle (reduce or add 50% price)",
@@ -349,7 +349,7 @@
     "time": "as interaction",
     "effect": "Adjust sale price; target won't overpay for common items",
     "name": "Unnamed Skilluse 44",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Bribery (officials)",
@@ -357,7 +357,7 @@
     "time": "variable",
     "effect": "Modify official's compliance based on risk and amount; high bribes reduce DC",
     "name": "Unnamed Skilluse 45",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Intimidate to coerce (full-round)",
@@ -365,7 +365,7 @@
     "time": "full-round",
     "effect": "Force target to back down, surrender possession, or flee for short time; cannot force to endanger life",
     "name": "Unnamed Skilluse 46",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Situational modifiers",
@@ -373,7 +373,7 @@
     "time": "applies to the check",
     "effect": "Modify Intimidate roll",
     "name": "Unnamed Skilluse 47",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Increase vehicle speed (trained, swift)",
@@ -381,7 +381,7 @@
     "time": "swift",
     "effect": "Increase speed by +1 sq for next turn; every +5 over DC adds another +1",
     "name": "Unnamed Skilluse 48",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Avoid collision (reaction)",
@@ -389,7 +389,7 @@
     "time": "reaction",
     "effect": "Reduce or negate collision damage; success halves damage",
     "name": "Unnamed Skilluse 49",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Dogfight (standard)",
@@ -397,7 +397,7 @@
     "time": "standard",
     "effect": "Engage enemy in dogfight on success",
     "name": "Unnamed Skilluse 50",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Start battle while piloting (use Pilot for Initiative)",
@@ -405,7 +405,7 @@
     "time": "initiative roll",
     "effect": "Pilot skill can substitute for Initiative when trained",
     "name": "Unnamed Skilluse 51",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Sneak (opposed)",
@@ -413,7 +413,7 @@
     "time": "move or standard to hide",
     "effect": "Hide from targets; taking certain actions reveals you",
     "name": "Unnamed Skilluse 52",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Conceal item on self (standard)",
@@ -421,7 +421,7 @@
     "time": "standard",
     "effect": "Opponent Perception opposed; +10 to Perception if physically searching",
     "name": "Unnamed Skilluse 53",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Conceal large item (in compartment)",
@@ -429,7 +429,7 @@
     "time": "variable",
     "effect": "Hide large object inside room; use hiding compartments to gain +5 to +20",
     "name": "Unnamed Skilluse 54",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Drop (plant small item quickly)",
@@ -437,7 +437,7 @@
     "time": "swift/standard depending",
     "effect": "Deposit small concealed item without notice; opposed Perception",
     "name": "Unnamed Skilluse 55",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Pick pocket (standard)",
@@ -445,7 +445,7 @@
     "time": "standard",
     "effect": "Take hand-sized object; fail by 5+ = notice",
     "name": "Unnamed Skilluse 56",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Sleight of Hand (palm/perform)",
@@ -453,7 +453,7 @@
     "time": "standard",
     "effect": "Palm small objects or perform unnoticed action",
     "name": "Unnamed Skilluse 57",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Snipe (from hiding, standard+move)",
@@ -461,7 +461,7 @@
     "time": "standard + move",
     "effect": "Make ranged attack from hiding then attempt to remain hidden with -10 Stealth",
     "name": "Unnamed Skilluse 58",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Basic survival (24h)",
@@ -469,7 +469,7 @@
     "time": "1 check = 24h",
     "effect": "Provide food & water for self; each +2 above provides for one more person",
     "name": "Unnamed Skilluse 59",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Create defensive position (trained)",
@@ -477,7 +477,7 @@
     "time": "10 minutes",
     "effect": "Prepare 20×20 area: allies get +2 Ref; opponents -5 Stealth within area; no Perception penalty while sleeping",
     "name": "Unnamed Skilluse 60",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Endure extreme temperatures (field kit)",
@@ -485,7 +485,7 @@
     "time": "once per day",
     "effect": "Ignore extreme temperature attacks for next 24h on success",
     "name": "Unnamed Skilluse 61",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Track (trained)",
@@ -493,7 +493,7 @@
     "time": "per tracking check",
     "effect": "Locate trail; modifiers for terrain, time, weather apply",
     "name": "Unnamed Skilluse 62",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "First Aid (requires medpac)",
@@ -501,7 +501,7 @@
     "time": "full-round",
     "effect": "Heal HP = target level +1 per point over DC; cannot retry on same target for 24h",
     "name": "Unnamed Skilluse 63",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Revivify (trained, medkit)",
@@ -509,7 +509,7 @@
     "time": "full-round (must be within 1 round of death)",
     "effect": "Revive dead target but leaves them unconscious on success",
     "name": "Unnamed Skilluse 64",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Heal Damage (surgery kit, trained)",
@@ -517,7 +517,7 @@
     "time": "1 hour",
     "effect": "Restore HP = CON_mod (min 1) × level and remove persistent conditions; failure deals DT to target",
     "name": "Unnamed Skilluse 65",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Long-term care",
@@ -525,7 +525,7 @@
     "time": "8 hours",
     "effect": "Tend creature for 8h to regain additional HP = level; trained can tend up to 6 creatures",
     "name": "Unnamed Skilluse 66",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Temporary Mending (biotech/vehicle)",
@@ -533,7 +533,7 @@
     "time": "full-round",
     "effect": "Heal 1d8 HP & +2 CT to damaged biotech object or vehicle; +5 with biotech tool kit",
     "name": "Unnamed Skilluse 67",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Access information — General",
@@ -541,7 +541,7 @@
     "time": "1 minute (10 rounds)",
     "effect": "Retrieve general info from network",
     "name": "Unnamed Skilluse 68",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Access information — Specific",
@@ -549,7 +549,7 @@
     "time": "10 minutes",
     "effect": "Retrieve specific info (date of birth, record, etc.)",
     "name": "Unnamed Skilluse 69",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Access information — Private",
@@ -557,7 +557,7 @@
     "time": "1 hour",
     "effect": "Retrieve private channel info",
     "name": "Unnamed Skilluse 70",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Access information — Secret (helpful computer)",
@@ -565,7 +565,7 @@
     "time": "1 day (8 hours)",
     "effect": "Secret credentials only accessible to helpful computers",
     "name": "Unnamed Skilluse 71",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Backtrail (trained)",
@@ -573,7 +573,7 @@
     "time": "varies",
     "effect": "Identify last user of computer and info accessed",
     "name": "Unnamed Skilluse 72",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Copy/reprogram code cylinder or access card",
@@ -581,7 +581,7 @@
     "time": "10 minutes",
     "effect": "Reprogram or copy security access",
     "name": "Unnamed Skilluse 73",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Improve Access (trained)",
@@ -589,7 +589,7 @@
     "time": "varies",
     "effect": "Shift computer attitude by 1 step on success; failure may worsen attitude",
     "name": "Unnamed Skilluse 74",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Disable or erase program (requires helpful attitude)",
@@ -597,7 +597,7 @@
     "time": "10 minutes",
     "effect": "Remove program when computer attitude is helpful",
     "name": "Unnamed Skilluse 75",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Astrogate (plot hyperspace route)",
@@ -605,7 +605,7 @@
     "time": "1 minute; DC30 1 hour if no data",
     "effect": "Success: arrive in days = 1d6 × hyperdrive multiplier; higher DCs reduce time further per +5 over DC",
     "name": "Unnamed Skilluse 76",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Astrogate — reduce travel time (risk/reward)",
@@ -613,7 +613,7 @@
     "time": "pre-declared",
     "effect": "Each +5 over DC reduces travel time; failure can inflict ship CT and damage penalties",
     "name": "Unnamed Skilluse 77",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Breath Control (UtF trained)",
@@ -621,7 +621,7 @@
     "time": "instant / sustained",
     "effect": "Hold breath for 2× CON rounds before Endurance checks",
     "name": "Unnamed Skilluse 78",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Force Trance (UtF trained)",
@@ -629,7 +629,7 @@
     "time": "full-round to enter; each hour gains HP = level; 4 hours heals fully",
     "effect": "Extended rest benefits; reduces need for food/water/air",
     "name": "Unnamed Skilluse 79",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Place other in Force Trance",
@@ -637,7 +637,7 @@
     "time": "full-round",
     "effect": "Place willing adjacent target into trance; only force-user may end trance",
     "name": "Unnamed Skilluse 80",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Move Light Object (UtF trained)",
@@ -645,7 +645,7 @@
     "time": "move action",
     "effect": "Telekinetically move up to 5 kg 6 sq (move action)",
     "name": "Unnamed Skilluse 81",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Move Light Object (hurl, standard)",
@@ -653,7 +653,7 @@
     "time": "standard",
     "effect": "Hurl object vs Ref to deal 1d6; treat as ranged attack",
     "name": "Unnamed Skilluse 82",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Search Your Feelings",
@@ -661,7 +661,7 @@
     "time": "full-round",
     "effect": "Determine short-term favorability of an action (next 10 minutes)",
     "name": "Unnamed Skilluse 83",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Sense Force (trained)",
@@ -669,7 +669,7 @@
     "time": "full-round",
     "effect": "Sense Force-users within wide ranges; opposed UtF can conceal presence; extra ranges for dark side/strong disturbances",
     "name": "Unnamed Skilluse 84",
-    "type": "skillUse"
+    "type": "equipment"
   },
   {
     "application": "Sense Surroundings (trained, swift)",
@@ -677,6 +677,6 @@
     "time": "swift",
     "effect": "Ignore effects of cover and concealment for Perception checks until start of next turn (DC+5 vs total cover)",
     "name": "Unnamed Skilluse 85",
-    "type": "skillUse"
+    "type": "equipment"
   }
 ]

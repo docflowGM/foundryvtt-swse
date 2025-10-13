@@ -46,7 +46,7 @@
   },
   {
     "name": "Ace Pilot",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 2,
       "reflex": 4,
@@ -55,7 +55,7 @@
   },
   {
     "name": "Bounty Hunter",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 2,
       "reflex": 4,
@@ -64,7 +64,7 @@
   },
   {
     "name": "Crime Lord",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 0,
       "reflex": 2,
@@ -73,7 +73,7 @@
   },
   {
     "name": "Elite Trooper",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 4,
       "reflex": 2,
@@ -82,7 +82,7 @@
   },
   {
     "name": "Force Adept",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 2,
       "reflex": 2,
@@ -91,7 +91,7 @@
   },
   {
     "name": "Force Disciple",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 3,
       "reflex": 3,
@@ -100,7 +100,7 @@
   },
   {
     "name": "Gunslinger",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 0,
       "reflex": 4,
@@ -109,7 +109,7 @@
   },
   {
     "name": "Jedi Knight",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 2,
       "reflex": 2,
@@ -118,7 +118,7 @@
   },
   {
     "name": "Jedi Master",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 3,
       "reflex": 3,
@@ -127,7 +127,7 @@
   },
   {
     "name": "Officer",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 0,
       "reflex": 2,
@@ -136,7 +136,7 @@
   },
   {
     "name": "Sith Apprentice",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 2,
       "reflex": 2,
@@ -145,7 +145,7 @@
   },
   {
     "name": "Sith Lord",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 3,
       "reflex": 3,
@@ -154,7 +154,7 @@
   },
   {
     "name": "Corporate Agent",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 0,
       "reflex": 2,
@@ -163,7 +163,7 @@
   },
   {
     "name": "Gladiator",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 2,
       "reflex": 4,
@@ -172,7 +172,7 @@
   },
   {
     "name": "Melee Duelist",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 0,
       "reflex": 4,
@@ -181,7 +181,7 @@
   },
   {
     "name": "Enforcer",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 0,
       "reflex": 4,
@@ -190,7 +190,7 @@
   },
   {
     "name": "Independent Droid",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 0,
       "reflex": 2,
@@ -199,7 +199,7 @@
   },
   {
     "name": "Infiltrator",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 0,
       "reflex": 4,
@@ -208,7 +208,7 @@
   },
   {
     "name": "Master Privateer",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 0,
       "reflex": 2,
@@ -217,7 +217,7 @@
   },
   {
     "name": "Medic",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 4,
       "reflex": 0,
@@ -226,7 +226,7 @@
   },
   {
     "name": "Saboteur",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 0,
       "reflex": 2,
@@ -235,7 +235,7 @@
   },
   {
     "name": "Assassin",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 2,
       "reflex": 4,
@@ -244,7 +244,7 @@
   },
   {
     "name": "Charlatan",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 0,
       "reflex": 2,
@@ -253,7 +253,7 @@
   },
   {
     "name": "Outlaw",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 2,
       "reflex": 4,
@@ -262,7 +262,7 @@
   },
   {
     "name": "Droid Commander",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 2,
       "reflex": 2,
@@ -271,7 +271,7 @@
   },
   {
     "name": "Military Engineer",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 2,
       "reflex": 2,
@@ -280,7 +280,7 @@
   },
   {
     "name": "Vanguard",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 4,
       "reflex": 2,
@@ -289,7 +289,7 @@
   },
   {
     "name": "Imperial Knight",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 2,
       "reflex": 2,
@@ -298,7 +298,7 @@
   },
   {
     "name": "Shaper",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 2,
       "reflex": 0,
@@ -307,7 +307,7 @@
   },
   {
     "name": "Improviser",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 0,
       "reflex": 2,
@@ -316,7 +316,7 @@
   },
   {
     "name": "Pathfinder",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 4,
       "reflex": 2,
@@ -325,7 +325,7 @@
   },
   {
     "name": "Martial Arts Master",
-    "type": "Prestige",
+    "type": "class",
     "defense_bonus": {
       "fortitude": 4,
       "reflex": 2,

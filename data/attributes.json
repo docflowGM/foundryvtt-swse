@@ -14,7 +14,7 @@
     ],
     "modifierFormula": "(attributeTotal - 10) / 2",
     "modifierNotes": "Modifier can be negative if attributeTotal < 10",
-    "type": "attribute"
+    "type": "equipment"
   },
   {
     "name": "Dexterity",
@@ -32,7 +32,7 @@
     ],
     "modifierFormula": "(attributeTotal - 10) / 2",
     "modifierNotes": "Modifier can be negative if attributeTotal < 10",
-    "type": "attribute"
+    "type": "equipment"
   },
   {
     "name": "Constitution",
@@ -46,7 +46,7 @@
     "relatedSkills": [],
     "modifierFormula": "(attributeTotal - 10) / 2",
     "modifierNotes": "Modifier can be negative if attributeTotal < 10",
-    "type": "attribute"
+    "type": "equipment"
   },
   {
     "name": "Intelligence",
@@ -63,7 +63,7 @@
     ],
     "modifierFormula": "(attributeTotal - 10) / 2",
     "modifierNotes": "Modifier can be negative if attributeTotal < 10",
-    "type": "attribute"
+    "type": "equipment"
   },
   {
     "name": "Wisdom",
@@ -80,7 +80,7 @@
     ],
     "modifierFormula": "(attributeTotal - 10) / 2",
     "modifierNotes": "Modifier can be negative if attributeTotal < 10",
-    "type": "attribute"
+    "type": "equipment"
   },
   {
     "name": "Charisma",
@@ -98,6 +98,6 @@
     ],
     "modifierFormula": "(attributeTotal - 10) / 2",
     "modifierNotes": "Modifier can be negative if attributeTotal < 10",
-    "type": "attribute"
+    "type": "equipment"
   }
 ]

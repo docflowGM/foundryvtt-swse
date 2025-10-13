@@ -39,7 +39,7 @@
       "Pilot": 8,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Security_Droid",
@@ -66,7 +66,7 @@
         }
       ]
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "5YQ-Series_Protocol_Droid",
@@ -106,7 +106,7 @@
       "Perception": 6,
       "Persuasion": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "88-Series_Administration_Droid",
@@ -150,7 +150,7 @@
       "Stealth": 8,
       "Use Computer": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "8D_Smelter_Droid",
@@ -195,7 +195,7 @@
       "Endurance": 14,
       "Perception": 2
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "A-DSD_Advanced_Dwarf_Spider_Droid",
@@ -240,7 +240,7 @@
       "Initiative": 10,
       "Perception": 7
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "A-Series_Assassin_Droid",
@@ -347,7 +347,7 @@
       "Perception": 14,
       "Persuasion": 14
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "A-Series_Medical_Droid",
@@ -390,7 +390,7 @@
       "Treat Injury": 12,
       "Use Computer": 7
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "A9G-Series_Archive_Droid",
@@ -431,7 +431,7 @@
       "Perception": 1,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "AD-Series_Weapons_Maintenance_Droid",
@@ -474,7 +474,7 @@
       "Perception": 7,
       "Use Computer": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "AS23_Aerial_Survey_Droid",
@@ -509,7 +509,7 @@
       "Pilot": 14,
       "Survival": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "ASN-121_Assassin_Droid",
@@ -572,7 +572,7 @@
       "Perception": 13,
       "Stealth": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "ASP_Labor_Droid",
@@ -613,7 +613,7 @@
       "Mechanics": 4,
       "Perception": 1
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "AZ-Series_Battle_Droid",
@@ -680,7 +680,7 @@
       "Jump": 13,
       "Perception": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Aggressor-Series_Battle_Droid",
@@ -720,7 +720,7 @@
       "Initiative": 7,
       "Perception": 6
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "B1-A_Air_Battle_Droid",
@@ -821,7 +821,7 @@
       "Initiative": 9,
       "Perception": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "B1-Series_Battle_Droid",
@@ -871,7 +871,7 @@
     "skills": {
       "Perception": 6
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "B2-AA_Air_Assault_Super_Battle_Droid",
@@ -932,7 +932,7 @@
       "Perception": 4,
       "Pilot": 11
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "11-17-Series_Mining_Droid",
@@ -989,7 +989,7 @@
       "Perception": 7,
       "Use Computer": 7
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "3D-4_Administrative_Droid",
@@ -1040,7 +1040,7 @@
       "Perception": 0,
       "Persuasion": 11
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "B2-GR-Series_Super_Battle_Droid",
@@ -1080,7 +1080,7 @@
       "Initiative": 17,
       "Perception": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "5-BT_Threat_Analysis_Droid",
@@ -1131,7 +1131,7 @@
       "Initiative": 13,
       "Perception": 15
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "3Z3_Medical_Droid",
@@ -1172,7 +1172,7 @@
       "Treat Injury": 14,
       "Use Computer": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "3PO-Series_Protocol_Droid",
@@ -1212,7 +1212,7 @@
       "Perception": 1,
       "Persuasion": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "3PX_Espionage_Droid",
@@ -1265,7 +1265,7 @@
       "Stealth": 9,
       "Use Computer": 10
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "2-1B_Medical_Droid",
@@ -1306,7 +1306,7 @@
       "Treat Injury": 13,
       "Use Computer": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "B2-HA-Series_Super_Battle_Droid",
@@ -1361,7 +1361,7 @@
     "skills": {
       "Perception": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "B2-Series_Super_Battle_Droid",
@@ -1421,7 +1421,7 @@
     "skills": {
       "Perception": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "X_Training_Droid",
@@ -1443,7 +1443,7 @@
         }
       ]
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "BD-3000_Luxury_Droid",
@@ -1483,7 +1483,7 @@
       "Persuasion": 12,
       "Pilot": 6
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "B4J4_Security_Droid",
@@ -1569,7 +1569,7 @@
       "Initiative": 9,
       "Perception": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "B3-Series_Ultra_Battle_Droid",
@@ -1619,7 +1619,7 @@
     "skills": {
       "Perception": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "B3-A-Series_Ultra_Battle_Droid",
@@ -1691,7 +1691,7 @@
       "Mechanics": 8,
       "Perception": 10
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "BD_Explorer_Droid",
@@ -1733,7 +1733,7 @@
       "Treat Injury": 13,
       "Use Computer": 14
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "BLX_Labor_Droid",
@@ -1774,7 +1774,7 @@
       "Mechanics": 3,
       "Use Computer": 3
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "BL-Series_Legionnaire_Droid",
@@ -1845,7 +1845,7 @@
       "Initiative": 16,
       "Perception": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "BL-39_Interrogator_Droid",
@@ -1893,7 +1893,7 @@
       "Treat Injury": 14,
       "Use Computer": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "BT-16_Perimeter_Security_Droid",
@@ -1959,7 +1959,7 @@
       "Climb": 19,
       "Perception": 16
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Behemoth_Junk_Droid",
@@ -1995,7 +1995,7 @@
       "Mechanics": 11,
       "Perception": 11
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "BT7-Series_Valet_Droid",
@@ -2036,7 +2036,7 @@
       "Persuasion": 8,
       "Pilot": 7
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Buzz_Droid",
@@ -2084,7 +2084,7 @@
       "Perception": 8,
       "Stealth": 16
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "C-B3_Cortosis_Battle_Droid",
@@ -2189,7 +2189,7 @@
     "skills": {
       "Perception": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Brute_Junk_Droid",
@@ -2236,7 +2236,7 @@
       "Mechanics": 9,
       "Perception": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "CA-B2_Cold_Assault_Battle_Droid",
@@ -2296,7 +2296,7 @@
     "skills": {
       "Perception": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Chiba_DR-10_Protocol_Droid",
@@ -2348,7 +2348,7 @@
       "Perception": 3,
       "Persuasion": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "DE_Training_Droid",
@@ -2395,7 +2395,7 @@
       "Treat Injury": 5,
       "Use Computer": 5
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "CZ-Series_Secretary_Droid",
@@ -2435,7 +2435,7 @@
       "Perception": 6,
       "Use Computer": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "DD-13_Medical_Assistant_Droid",
@@ -2476,7 +2476,7 @@
       "Treat Injury": 13,
       "Use Computer": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "DRK-1_Probe_Droid",
@@ -2525,7 +2525,7 @@
       "Stealth": 23,
       "Use Computer": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "DSD1_Dwarf_Spider_Droid",
@@ -2570,7 +2570,7 @@
       "Climb": 10,
       "Perception": 17
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "DSH-3_Probe_Droid",
@@ -2605,7 +2605,7 @@
       "Stealth": 20,
       "Survival": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "DT-16_%22Destructor%22_Battle_Droid",
@@ -2647,7 +2647,7 @@
         }
       ]
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Droideka-Series_Destroyer_Droid",
@@ -2762,7 +2762,7 @@
     "skills": {
       "Perception": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Devastator_War_Droid",
@@ -2802,7 +2802,7 @@
       "Initiative": 13,
       "Perception": 11
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Droideka-Series_Ultra_Destroyer_Droid",
@@ -2887,7 +2887,7 @@
       "Perception": 15,
       "Stealth": 0
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Droideka_Mk_II_Destroyer_Droid",
@@ -3053,7 +3053,7 @@
       "Initiative": 16,
       "Perception": 15
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "E522_Assassin_Droid",
@@ -3126,7 +3126,7 @@
       "Stealth": 9,
       "Survival": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "ET-74_Communications_Droid",
@@ -3167,7 +3167,7 @@
       "Persuasion": 4,
       "Use Computer": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "EW-3_Midwife_Droid",
@@ -3207,7 +3207,7 @@
       "Perception": 5,
       "Treat Injury": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "EG-6_Power_Droid",
@@ -3246,7 +3246,7 @@
     "skills": {
       "Mechanics": 2
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "EVS_Construction_Droid",
@@ -3298,7 +3298,7 @@
       "Endurance": 12,
       "Perception": 6
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "EV-Series_Supervisor_Droid",
@@ -3340,7 +3340,7 @@
       "Persuasion": 13,
       "Use Computer": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "EI-9_Network_Security_Droid",
@@ -3402,7 +3402,7 @@
       "Perception": 13,
       "Use Computer": 18
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "F1_Exploration_Droid",
@@ -3450,7 +3450,7 @@
       "Stealth": 17,
       "Survival": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Eradicator-Series_Battle_Droid",
@@ -3555,7 +3555,7 @@
     "skills": {
       "Perception": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "FIII_Footman_Droid",
@@ -3609,7 +3609,7 @@
       "Treat Injury": 12,
       "Use Computer": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "FEG-Series_Pilot_Droid",
@@ -3662,7 +3662,7 @@
       "Pilot": 7,
       "Use Computer": 7
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "FA-4_Pilot_Droid",
@@ -3704,7 +3704,7 @@
       "Pilot": 13,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "FA-5_Valet_Droid",
@@ -3745,7 +3745,7 @@
       "Perception": 0,
       "Pilot": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "FLTCH-Series_Battle_Droid",
@@ -3802,7 +3802,7 @@
       "Perception": 11,
       "Persuasion": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "FSD-6D_Surveillance_Droid",
@@ -3857,7 +3857,7 @@
       "Stealth": 21,
       "Use Computer": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "FX-7_Medical_Droid",
@@ -3898,7 +3898,7 @@
       "Treat Injury": 13,
       "Use Computer": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "FX-6_Medical_Assistance_Droid",
@@ -3939,7 +3939,7 @@
       "Treat Injury": 13,
       "Use Computer": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "G2_Repair_Droid",
@@ -3980,7 +3980,7 @@
       "Perception": 7,
       "Use Computer": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "G0-T0_Infrastructure-Planning_Droid",
@@ -4021,7 +4021,7 @@
       "Persuasion": 9,
       "Use Computer": 15
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "GG-Series_Hospitality_Droid",
@@ -4061,7 +4061,7 @@
       "Perception": 7,
       "Persuasion": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "GD16-Series_Pilot_Droid",
@@ -4105,7 +4105,7 @@
       "Stealth": 9,
       "Use Computer": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "GE3-Series_Protocol_Droid",
@@ -4145,7 +4145,7 @@
       "Perception": 2,
       "Persuasion": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "GH-7_Medical_Droid",
@@ -4187,7 +4187,7 @@
       "Treat Injury": 13,
       "Use Computer": 14
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "GX1-Series_Battle_Droid",
@@ -4248,7 +4248,7 @@
       "Initiative": 18,
       "Perception": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "GNK-Series_Power_Droid",
@@ -4288,7 +4288,7 @@
       "Mechanics": 4,
       "Perception": 1
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "GRZ-6B_Demolitions_Droid",
@@ -4349,7 +4349,7 @@
       "Mechanics": 12,
       "Perception": 14
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "HK-24_Assassin_Droid",
@@ -4390,7 +4390,7 @@
       "Perception": 8,
       "Persuasion": 11
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "HK-50_Assassin_Droid",
@@ -4431,7 +4431,7 @@
       "Perception": 11,
       "Persuasion": 14
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "H-1ME_Battle_Mechanic_Droid",
@@ -4476,7 +4476,7 @@
       "Stealth": 13,
       "Use Computer": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "GY-I_Information_Analysis_Droid",
@@ -4519,7 +4519,7 @@
       "Perception": 9,
       "Use Computer": 7
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "HKB-3_Hunter-Killer_Droid",
@@ -4581,7 +4581,7 @@
       "Stealth": 10,
       "Survival": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "HK-77_Assassin_Droid",
@@ -4658,7 +4658,7 @@
       "Perception": 10,
       "Use Computer": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "HV-7_Loading_Droid",
@@ -4700,7 +4700,7 @@
       "Perception": 2,
       "Use Computer": 6
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "IG-110_Lightsaber_Droid",
@@ -4756,7 +4756,7 @@
       "Mechanics": 8,
       "Perception": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "IG-Series_Lancer_Droid",
@@ -4807,7 +4807,7 @@
       "Perception": 3,
       "Pilot": 11
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Holocam_Droid",
@@ -4842,7 +4842,7 @@
       "Stealth": 22,
       "Use Computer": 5
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "IG-86_Sentinel_Droid",
@@ -4905,7 +4905,7 @@
       "Perception": 6,
       "Use Computer": 5
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "IM-6_Medical_Droid",
@@ -4947,7 +4947,7 @@
       "Treat Injury": 13,
       "Use Computer": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "IC-M_General_Utility_Droid",
@@ -4987,7 +4987,7 @@
       "Mechanics": 10,
       "Use Computer": 5
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Independent_HK-Series_Droid",
@@ -5039,7 +5039,7 @@
       "Perception": 8,
       "Use Computer": 5
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "IT-0_Interrogator_Droid",
@@ -5099,7 +5099,7 @@
       "Treat Injury": 7,
       "Use Computer": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Imperial_Espionage_Droid",
@@ -5139,7 +5139,7 @@
       "Deception": 13,
       "Perception": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Imperial_Warden_Droid",
@@ -5184,7 +5184,7 @@
       "Initiative": 9,
       "Perception": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "IW-37_Pincer_Loader_Droid",
@@ -5224,7 +5224,7 @@
       "Initiative": 7,
       "Perception": 6
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "JK-13_Security_Droid",
@@ -5280,7 +5280,7 @@
       "Initiative": 13,
       "Use The Force": 11
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "IX-6_Heavy_Combat_Droid",
@@ -5335,7 +5335,7 @@
       "Initiative": 10,
       "Perception": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Infiltrator-Series_Droid",
@@ -5431,7 +5431,7 @@
       "Perception": 15,
       "Stealth": 18
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Juggernaut_War_Droid",
@@ -5487,7 +5487,7 @@
       "Initiative": 12,
       "Perception": 6
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Junk_Droid",
@@ -5529,7 +5529,7 @@
       "Mechanics": 6,
       "Perception": 5
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "K-X12_Probe_Droid",
@@ -5581,7 +5581,7 @@
       "Stealth": 19,
       "Use Computer": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "K-Series_Spaceport_Control_Droid",
@@ -5623,7 +5623,7 @@
       "Pilot": 7,
       "Use Computer": 14
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "KDY-4_Tech_Droid",
@@ -5664,7 +5664,7 @@
       "Perception": 1,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "KM1_Mining_Droid",
@@ -5720,7 +5720,7 @@
       "Endurance": 8,
       "Perception": 2
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "KX-Series_Security_Droid",
@@ -5771,7 +5771,7 @@
       "Perception": 10,
       "Use Computer": 6
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Krath_War_Droid",
@@ -5837,7 +5837,7 @@
       "Acrobatics": 12,
       "Perception": 5
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "LE-Series_Repair_Droid",
@@ -5878,7 +5878,7 @@
       "Perception": 4,
       "Use Computer": 7
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "LEP_Service_Droid",
@@ -5920,7 +5920,7 @@
       "Treat Injury": 10,
       "Use Computer": 6
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "LM-432_%22Muckraker%22_Crab_Droid",
@@ -5941,7 +5941,7 @@
         }
       ]
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "LR-57_Combat_Droid",
@@ -5992,7 +5992,7 @@
       "Perception": 18,
       "Stealth": 10
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "M-3PO-Series_Protocol_Droid",
@@ -6033,7 +6033,7 @@
       "Persuasion": 8,
       "Use Computer": 7
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Probe_Droid",
@@ -6049,7 +6049,7 @@
       ],
       "ranged": []
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "LV8-Series_Guard_Droid",
@@ -6140,7 +6140,7 @@
       "Initiative": 15,
       "Perception": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "LOM-Series_Protocol_Droid",
@@ -6181,7 +6181,7 @@
       "Persuasion": 7,
       "Use Computer": 11
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "M4-Series_Messenger_Droid",
@@ -6233,7 +6233,7 @@
       "Perception": 13,
       "Stealth": 29
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "M38-Series_Explorer_Droid",
@@ -6274,7 +6274,7 @@
       "Perception": 15,
       "Survival": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "MEV-Series_Medical_Droid",
@@ -6316,7 +6316,7 @@
       "Treat Injury": 13,
       "Use Computer": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "MULE_Droid",
@@ -6356,7 +6356,7 @@
       "Mechanics": 9,
       "Perception": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "MR-200-Series_Minesweeper_Droid",
@@ -6396,7 +6396,7 @@
       "Mechanics": 9,
       "Perception": 14
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "MRD-39B_Assassin_Droid",
@@ -6458,7 +6458,7 @@
       "Mechanics": 8,
       "Perception": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "MK-Series_Maintenance_Droid",
@@ -6502,7 +6502,7 @@
       "Pilot": 7,
       "Use Computer": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "MSE-6_Repair_Droid",
@@ -6545,7 +6545,7 @@
       "Stealth": 8,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Mark_IV_Sentry_Droid",
@@ -6580,7 +6580,7 @@
       "Perception": 17,
       "Stealth": 20
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Mark_IV_Assault_Droid",
@@ -6620,7 +6620,7 @@
       "Initiative": 12,
       "Perception": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Mark_I_Assault_Droid",
@@ -6675,7 +6675,7 @@
     "skills": {
       "Perception": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Mark_VII_%22Inquisitor%22_Seeker_Droid",
@@ -6696,7 +6696,7 @@
         }
       ]
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Mark_I_Sentinel_Droid",
@@ -6757,7 +6757,7 @@
       "Initiative": 8,
       "Perception": 1
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "OOM-Series_Battle_Droid",
@@ -6808,7 +6808,7 @@
       "Perception": 7,
       "Pilot": 5
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Mark_I_Patrol_Droid",
@@ -6870,7 +6870,7 @@
       "Perception": 10,
       "Use Computer": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "P2-Series_Astromech_Droid",
@@ -6912,7 +6912,7 @@
       "Pilot": 4,
       "Use Computer": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Mionne_Security_Droid",
@@ -6969,7 +6969,7 @@
       "Perception": 4,
       "Persuasion": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "NR-1100_Slicer_Droid",
@@ -7018,7 +7018,7 @@
       "Stealth": 18,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "PI-Series_Medical_Assistant_Droid",
@@ -7058,7 +7058,7 @@
       "Perception": 12,
       "Treat Injury": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "PK-2M_Mining_Droid",
@@ -7100,7 +7100,7 @@
       "Mechanics": 7,
       "Perception": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "PG-5_Gunnery_Droid",
@@ -7152,7 +7152,7 @@
       "Perception": 8,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "PK_Worker_Droid",
@@ -7193,7 +7193,7 @@
       "Mechanics": 7,
       "Perception": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "PLNK-Series_Power_Droid",
@@ -7233,7 +7233,7 @@
       "Mechanics": 10,
       "Perception": 0
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "R-1_Recon_Droid",
@@ -7276,7 +7276,7 @@
       "Stealth": 8,
       "Use Computer": 6
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Pit_Droid",
@@ -7318,7 +7318,7 @@
       "Pilot": 8,
       "Use Computer": 6
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Q7-Series_Astromech_Droid",
@@ -7360,7 +7360,7 @@
       "Pilot": 9,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "R-4_Recon_Droid",
@@ -7401,7 +7401,7 @@
       "Perception": 13,
       "Stealth": 20
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "R2-R-Series_Astromech_Droid",
@@ -7456,7 +7456,7 @@
       "Stealth": 7,
       "Use Computer": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "R3-Series_Astromech_Droid",
@@ -7499,7 +7499,7 @@
       "Stealth": 9,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "R-8009_Utility_Droid",
@@ -7540,7 +7540,7 @@
       "Perception": 5,
       "Use Computer": 2
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "R2-Series_Astromech_Droid",
@@ -7582,7 +7582,7 @@
       "Pilot": 8,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "R4-Series_Agromech_Droid",
@@ -7623,7 +7623,7 @@
       "Perception": 3,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "R5-Series_Astromech_Droid",
@@ -7665,7 +7665,7 @@
       "Stealth": 6,
       "Use Computer": 11
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "R4-Series_Astromech_Droid",
@@ -7708,7 +7708,7 @@
       "Stealth": 8,
       "Use Computer": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "R7-Series_Astromech_Droid",
@@ -7752,7 +7752,7 @@
       "Stealth": 11,
       "Use Computer": 16
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "RA-7_Protocol_Droid",
@@ -7793,7 +7793,7 @@
       "Perception": 14,
       "Use Computer": 6
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "RO-D_Droid",
@@ -7845,7 +7845,7 @@
       "Perception": 15,
       "Stealth": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "RX-Series_Pilot_Droid",
@@ -7887,7 +7887,7 @@
       "Pilot": 14,
       "Use Computer": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "R8-Series_Astromech_Droid",
@@ -7940,7 +7940,7 @@
       "Pilot": 12,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "RT_Sifter_Droid",
@@ -7980,7 +7980,7 @@
       "Mechanics": 10,
       "Perception": 10
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "RWW-Series_Protocol_Droid",
@@ -8021,7 +8021,7 @@
       "Perception": 0,
       "Persuasion": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Rakatan_Guardian_Droid",
@@ -8078,7 +8078,7 @@
       "Perception": 15,
       "Survival": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Roving_Eye_Observation_Droid",
@@ -8113,7 +8113,7 @@
       "Stealth": 23,
       "Use Computer": 10
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "S19_Astromech_Droid",
@@ -8154,13 +8154,13 @@
       "Perception": 8,
       "Use Computer": 14
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Maintenance_Droid",
     "degree": null,
     "incomplete": true,
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "SD-X_Stealth_Battle_Droid",
@@ -8219,7 +8219,7 @@
       "Perception": 13,
       "Stealth": 11
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "SD-6_%22Hulk%22_Infantry_Droid",
@@ -8251,7 +8251,7 @@
         }
       ]
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "SD-9_Battle_Droid",
@@ -8313,7 +8313,7 @@
       "Initiative": 15,
       "Perception": 15
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Sabacc_Dealer_Droid",
@@ -8379,7 +8379,7 @@
       "Initiative": 13,
       "Perception": 20
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Scorpenek_Annihilator_Droid",
@@ -8495,7 +8495,7 @@
       "Initiative": 17,
       "Perception": 17
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Shadow_Droid",
@@ -8562,7 +8562,7 @@
       "Pilot": 21,
       "Use Computer": 18
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Shadow_Security_Droid",
@@ -8628,7 +8628,7 @@
       "Perception": 17,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "SP-4_Analysis_Droid",
@@ -8669,7 +8669,7 @@
       "Perception": 10,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "T-Series_Tactical_Droid",
@@ -8722,7 +8722,7 @@
       "Pilot": 6,
       "Use Computer": 7
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Spelunker_Probe_Droid",
@@ -8774,7 +8774,7 @@
       "Perception": 11,
       "Stealth": 15
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "T1_Bulk_Loader_Droid",
@@ -8814,7 +8814,7 @@
       "Endurance": 11,
       "Perception": 1
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "T0-D_Interrogation_Droid",
@@ -8877,7 +8877,7 @@
       "Persuasion": 19,
       "Treat Injury": 14
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "T3-Series_Utility_Droid",
@@ -8930,7 +8930,7 @@
       "Pilot": 7,
       "Use Computer": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "TC-SC_Infiltration_Droid",
@@ -8988,7 +8988,7 @@
       "Perception": 5,
       "Stealth": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "T4_Turret_Droid",
@@ -9099,7 +9099,7 @@
       "Initiative": 17,
       "Perception": 5
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "V2-Series_Commando_Droid",
@@ -9153,7 +9153,7 @@
       "Perception": 6,
       "Stealth": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Vigilant_2X-Series_Picket_Droid",
@@ -9209,7 +9209,7 @@
       "Initiative": 11,
       "Perception": 19
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "TC-Series_Protocol_Droid",
@@ -9251,7 +9251,7 @@
       "Perception": 7,
       "Persuasion": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "V6-Series_Pilot_Droid",
@@ -9294,7 +9294,7 @@
       "Stealth": 7,
       "Use Computer": 8
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "VX-Series_Artillery_Droid",
@@ -9339,7 +9339,7 @@
       "Initiative": 13,
       "Perception": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "TT-8L_Gatekeeper_Droid",
@@ -9379,7 +9379,7 @@
       "Perception": 14,
       "Persuasion": 13
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Viper-Series_Probe_Droid",
@@ -9428,7 +9428,7 @@
       "Stealth": 1,
       "Survival": 7
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "WSB-15_Sabotage_Droid",
@@ -9482,7 +9482,7 @@
       "Stealth": 17,
       "Use Computer": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Wing_Guard_Patrol_Droid",
@@ -9539,7 +9539,7 @@
       "Initiative": 8,
       "Perception": 1
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "X-1_Viper_Droid",
@@ -9642,7 +9642,7 @@
       "Perception": 14,
       "Survival": 14
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Wanderer_Scout_Surveyor_Droid",
@@ -9696,7 +9696,7 @@
       "Survival": 6,
       "Treat Injury": 6
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "XLT-014_Labor_Droid",
@@ -9736,7 +9736,7 @@
       "Perception": 12,
       "Use Computer": 9
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "XK-V8_Excavation_Droid",
@@ -9784,7 +9784,7 @@
       "Perception": 2,
       "Stealth": 10
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "Z65_Patrol_Droid",
@@ -9858,7 +9858,7 @@
     "skills": {
       "Perception": 12
     },
-    "type": "droid"
+    "type": "equipment"
   },
   {
     "name": "YVH_Battle_Droid",
@@ -9916,6 +9916,6 @@
       "Mechanics": 10,
       "Perception": 12
     },
-    "type": "droid"
+    "type": "equipment"
   }
 ]

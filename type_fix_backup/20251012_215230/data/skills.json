@@ -1,0 +1,230 @@
+[
+  {
+    "name": "Acrobatics",
+    "ability": "Dex",
+    "classes": {
+      "Jedi": true,
+      "Noble": false,
+      "Scoundrel": true,
+      "Scout": false,
+      "Soldier": false
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Climb",
+    "ability": "Str",
+    "classes": {
+      "Jedi": false,
+      "Noble": false,
+      "Scoundrel": false,
+      "Scout": true,
+      "Soldier": true
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Deception",
+    "ability": "Cha",
+    "classes": {
+      "Jedi": false,
+      "Noble": true,
+      "Scoundrel": true,
+      "Scout": false,
+      "Soldier": false
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Endurance",
+    "ability": "Con",
+    "classes": {
+      "Jedi": true,
+      "Noble": false,
+      "Scoundrel": false,
+      "Scout": true,
+      "Soldier": true
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Gather Information",
+    "ability": "Cha",
+    "classes": {
+      "Jedi": false,
+      "Noble": true,
+      "Scoundrel": true,
+      "Scout": false,
+      "Soldier": false
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Initiative",
+    "ability": "Dex",
+    "classes": {
+      "Jedi": true,
+      "Noble": true,
+      "Scoundrel": true,
+      "Scout": true,
+      "Soldier": true
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Jump",
+    "ability": "Str",
+    "classes": {
+      "Jedi": true,
+      "Noble": false,
+      "Scoundrel": false,
+      "Scout": true,
+      "Soldier": true
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Knowledge",
+    "ability": "Int",
+    "classes": {
+      "Jedi": true,
+      "Noble": true,
+      "Scoundrel": true,
+      "Scout": true,
+      "Soldier": "TacticsOnly"
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Mechanics",
+    "ability": "Int",
+    "classes": {
+      "Jedi": true,
+      "Noble": false,
+      "Scoundrel": true,
+      "Scout": true,
+      "Soldier": true
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Perception",
+    "ability": "Wis",
+    "classes": {
+      "Jedi": true,
+      "Noble": true,
+      "Scoundrel": true,
+      "Scout": true,
+      "Soldier": true
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Persuasion",
+    "ability": "Cha",
+    "classes": {
+      "Jedi": false,
+      "Noble": true,
+      "Scoundrel": true,
+      "Scout": false,
+      "Soldier": false
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Pilot",
+    "ability": "Dex",
+    "classes": {
+      "Jedi": true,
+      "Noble": true,
+      "Scoundrel": true,
+      "Scout": true,
+      "Soldier": true
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Ride",
+    "ability": "Dex",
+    "classes": {
+      "Jedi": false,
+      "Noble": true,
+      "Scoundrel": false,
+      "Scout": false,
+      "Soldier": false
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Stealth",
+    "ability": "Dex",
+    "classes": {
+      "Jedi": false,
+      "Noble": false,
+      "Scoundrel": true,
+      "Scout": true,
+      "Soldier": false
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Survival",
+    "ability": "Wis",
+    "classes": {
+      "Jedi": false,
+      "Noble": false,
+      "Scoundrel": false,
+      "Scout": true,
+      "Soldier": false
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Swim",
+    "ability": "Str",
+    "classes": {
+      "Jedi": false,
+      "Noble": false,
+      "Scoundrel": false,
+      "Scout": true,
+      "Soldier": true
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Treat Injury",
+    "ability": "Wis",
+    "classes": {
+      "Jedi": false,
+      "Noble": true,
+      "Scoundrel": false,
+      "Scout": false,
+      "Soldier": true
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Use Computer",
+    "ability": "Int",
+    "classes": {
+      "Jedi": false,
+      "Noble": true,
+      "Scoundrel": true,
+      "Scout": false,
+      "Soldier": true
+    },
+    "type": "skill"
+  },
+  {
+    "name": "Use the Force",
+    "ability": "Cha",
+    "classes": {
+      "Jedi": "Requires Force Sensitivity",
+      "Noble": false,
+      "Scoundrel": false,
+      "Scout": false,
+      "Soldier": false
+    },
+    "type": "skill"
+  }
+]

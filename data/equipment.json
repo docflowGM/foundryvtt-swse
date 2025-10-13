@@ -10,7 +10,7 @@
     "damage": "-",
     "stun_setting": "NO",
     "weight": "0.5 kg",
-    "type": "-",
+    "type": "equipment",
     "availability": "Military"
   },
   {
@@ -21,7 +21,7 @@
     "explosive": "Manual Trigger",
     "cost": "100",
     "damage": "-",
-    "type": "-",
+    "type": "equipment",
     "weight": "0.1 kg",
     "size": "Fine",
     "availability": "Licensed"
@@ -34,7 +34,7 @@
     "explosive": "Manual Trigger",
     "cost": "100",
     "damage": "-",
-    "type": "-",
+    "type": "equipment",
     "weight": "0.1 kg",
     "size": "Fine",
     "availability": "Licensed"
@@ -50,7 +50,7 @@
     "damage": "-",
     "stun_setting": "-",
     "weight": "0.5 kg",
-    "type": "-",
+    "type": "equipment",
     "availability": "Restricted"
   },
   {
@@ -61,7 +61,7 @@
     "explosive": "Timer",
     "cost": "250",
     "damage": "-",
-    "type": "-",
+    "type": "equipment",
     "weight": "0.1 kg",
     "size": "Fine",
     "availability": "Licensed"
@@ -74,7 +74,7 @@
     "explosive": "Timer",
     "cost": "250",
     "damage": "-",
-    "type": "-",
+    "type": "equipment",
     "weight": "0.1 kg",
     "size": "Fine",
     "availability": "Licensed"
@@ -90,7 +90,7 @@
     "damage": "8d6",
     "stun_setting": "NO",
     "weight": "0.5 kg",
-    "type": "Bludgeoning",
+    "type": "equipment",
     "availability": "Military"
   },
   {
@@ -104,7 +104,7 @@
     "damage": "-",
     "stun_setting": "NO",
     "weight": "0.5 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Restricted"
   },
   {
@@ -117,7 +117,7 @@
     "cost": "1500",
     "damage": "10d6",
     "weight": "0.5 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Military"
   },
   {
@@ -130,7 +130,7 @@
     "cost": "2000",
     "damage": "8d6",
     "weight": "1.5 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Military"
   },
   {
@@ -144,7 +144,7 @@
     "damage": "3d6",
     "stun_setting": "NO",
     "weight": "0.5 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Restricted"
   },
   {
@@ -155,7 +155,7 @@
     "explosive": "Detonite",
     "cost": "500",
     "damage": "5d6*",
-    "type": "Energy",
+    "type": "weapon",
     "weight": "0.1 kg",
     "size": "Fine",
     "availability": "Restricted"
@@ -168,7 +168,7 @@
     "explosive": "Detonite",
     "cost": "500",
     "damage": "5d6*",
-    "type": "Energy",
+    "type": "weapon",
     "weight": "0.1 kg",
     "size": "Fine",
     "availability": "Restricted"
@@ -181,7 +181,7 @@
     "explosive": "Detonite Cord",
     "cost": "1000",
     "damage": "4d6*",
-    "type": "Energy",
+    "type": "weapon",
     "weight": "1 kg",
     "size": "Tiny",
     "availability": "Restricted"
@@ -194,7 +194,7 @@
     "explosive": "Detonite Cord",
     "cost": "1000",
     "damage": "4d6*",
-    "type": "Energy",
+    "type": "weapon",
     "weight": "1 kg",
     "size": "Tiny",
     "availability": "Restricted"
@@ -207,7 +207,7 @@
     "explosive": "Explosive Charge",
     "cost": "1500",
     "damage": "10d6*",
-    "type": "Energy",
+    "type": "weapon",
     "weight": "0.5 kg",
     "size": "Diminutive",
     "availability": "Restricted"
@@ -220,7 +220,7 @@
     "explosive": "Explosive Charge",
     "cost": "1500",
     "damage": "10d6*",
-    "type": "Energy",
+    "type": "weapon",
     "weight": "0.5 kg",
     "size": "Diminutive",
     "availability": "Restricted"
@@ -236,7 +236,7 @@
     "damage": "Special",
     "stun_setting": "NO",
     "weight": "0.5 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Restricted"
   },
   {
@@ -249,7 +249,7 @@
     "cost": "750",
     "damage": "6d6",
     "weight": "1 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Military"
   },
   {
@@ -262,7 +262,7 @@
     "cost": "800",
     "damage": "8d6 (Ion)",
     "weight": "0.5 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Military"
   },
   {
@@ -275,7 +275,7 @@
     "cost": "500",
     "damage": "8d6",
     "weight": "0.5 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Military"
   },
   {
@@ -288,7 +288,7 @@
     "cost": "700",
     "damage": "6d6",
     "weight": "0.5 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Military"
   },
   {
@@ -301,7 +301,7 @@
     "cost": "300",
     "damage": "6d6",
     "weight": "0.5 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Military"
   },
   {
@@ -312,7 +312,7 @@
     "explosive": "Power Pack Bomb",
     "cost": "N/A",
     "damage": "Varies**",
-    "type": "Energy",
+    "type": "weapon",
     "weight": "0.2-0.5 kg",
     "size": "Small",
     "availability": "Illegal"
@@ -325,7 +325,7 @@
     "explosive": "Power Pack Bomb",
     "cost": "N/A",
     "damage": "Varies**",
-    "type": "Energy",
+    "type": "weapon",
     "weight": "0.2-0.5 kg",
     "size": "Small",
     "availability": "Illegal"
@@ -340,7 +340,7 @@
     "cost": "1500",
     "damage": "6d6",
     "weight": "0.5 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Military"
   },
   {
@@ -354,7 +354,7 @@
     "damage": "3d8",
     "stun_setting": "NO",
     "weight": "0.5 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Illegal"
   },
   {
@@ -368,7 +368,7 @@
     "damage": "4d6",
     "stun_setting": "NO",
     "weight": "1 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Military"
   },
   {
@@ -382,7 +382,7 @@
     "damage": "8d6",
     "stun_setting": "NO",
     "weight": "1 kg",
-    "type": "Energy",
+    "type": "weapon",
     "availability": "Illegal"
   },
   {
@@ -396,7 +396,7 @@
     "damage": "3d6 (Ion)",
     "stun_setting": "NO",
     "weight": "0.5 kg",
-    "type": "Energy (Ion)",
+    "type": "equipment",
     "availability": "Restricted"
   },
   {
@@ -410,7 +410,7 @@
     "damage": "4d6 (Ion)",
     "stun_setting": "NO",
     "weight": "0.5 kg",
-    "type": "Energy (Ion)",
+    "type": "equipment",
     "availability": "Restricted"
   },
   {
@@ -423,7 +423,7 @@
     "cost": "500",
     "damage": "3d10x2 (Ion)",
     "weight": "15 kg",
-    "type": "Energy (Ion)",
+    "type": "equipment",
     "availability": "Military"
   },
   {
@@ -437,7 +437,7 @@
     "damage": "-",
     "stun_setting": "YES (Only, 4d6)",
     "weight": "0.5 kg",
-    "type": "Energy (Stun)",
+    "type": "equipment",
     "availability": "Restricted"
   },
   {
@@ -451,7 +451,7 @@
     "damage": "4d6",
     "stun_setting": "NO",
     "weight": "1 kg",
-    "type": "Ion",
+    "type": "equipment",
     "availability": "Military"
   },
   {
@@ -464,7 +464,7 @@
     "cost": "500",
     "damage": "6d6",
     "weight": "1 kg",
-    "type": "Piercing",
+    "type": "equipment",
     "availability": "Military"
   },
   {
@@ -477,7 +477,7 @@
     "cost": "1200",
     "damage": "8d6",
     "weight": "0.5 kg",
-    "type": "Piercing",
+    "type": "equipment",
     "availability": "Illegal"
   },
   {
@@ -490,7 +490,7 @@
     "cost": "250",
     "damage": "6d6",
     "weight": "1 kg",
-    "type": "Slashing",
+    "type": "equipment",
     "availability": "Military"
   },
   {
@@ -504,7 +504,7 @@
     "damage": "4d6",
     "stun_setting": "NO",
     "weight": "0.5 kg",
-    "type": "Slashing",
+    "type": "equipment",
     "availability": "Military"
   },
   {
@@ -517,7 +517,7 @@
     "cost": "100/m",
     "damage": "2d6",
     "weight": "2 kg/m",
-    "type": "Slashing",
+    "type": "equipment",
     "availability": "Military"
   },
   {
@@ -530,7 +530,7 @@
     "cost": "10/m",
     "damage": "2d6",
     "weight": "2 kg/m",
-    "type": "Slashing",
+    "type": "equipment",
     "availability": "Restricted"
   },
   {
@@ -543,7 +543,7 @@
     "cost": "500",
     "damage": "5d6",
     "weight": "1.5 kg",
-    "type": "Slashing",
+    "type": "equipment",
     "availability": "Military"
   },
   {
@@ -556,7 +556,7 @@
     "cost": "100",
     "damage": "4d6",
     "weight": "1 kg",
-    "type": "Slashing",
+    "type": "equipment",
     "availability": "Military"
   },
   {
@@ -569,7 +569,7 @@
     "cost": "500",
     "damage": "4d10x2",
     "weight": "10 kg",
-    "type": "Slashing",
+    "type": "equipment",
     "availability": "Military"
   },
   {
@@ -578,7 +578,7 @@
       "communication"
     ],
     "communications_device": "Clone Wars Campaign Guide",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Com Scrambler",
@@ -589,7 +589,7 @@
     "data_types": "N/A",
     "cost": "6000",
     "weight": "10 kg",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Comlink",
@@ -597,7 +597,7 @@
       "communication"
     ],
     "communications_device": "Comlink",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Earbud Comlink",
@@ -608,7 +608,7 @@
     "data_types": "Audio",
     "cost": "200",
     "weight": "-",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Galaxy at War",
@@ -616,7 +616,7 @@
       "communication"
     ],
     "communications_device": "Galaxy at War",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Galaxy of Intrigue",
@@ -624,7 +624,7 @@
       "communication"
     ],
     "communications_device": "Galaxy of Intrigue",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Hands-Free Comlink",
@@ -635,7 +635,7 @@
     "data_types": "Audio",
     "cost": "150",
     "weight": "0.1 kg",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Holo Converter",
@@ -646,7 +646,7 @@
     "data_types": "Holo",
     "cost": "3000",
     "weight": "2 kg",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Legacy Era Campaign Guide",
@@ -654,7 +654,7 @@
       "communication"
     ],
     "communications_device": "Legacy Era Campaign Guide",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Long-Range",
@@ -665,7 +665,7 @@
     "data_types": "Audio, Video1, Holo1",
     "cost": "250",
     "weight": "1 kg",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Panic Ring",
@@ -676,7 +676,7 @@
     "data_types": "N/A",
     "cost": "300",
     "weight": "-",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Pocket Scrambler1",
@@ -687,7 +687,7 @@
     "data_types": "N/A",
     "cost": "400",
     "weight": "0.5 kg",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Saga Edition Core Rulebook",
@@ -695,7 +695,7 @@
       "communication"
     ],
     "communications_device": "Saga Edition Core Rulebook",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Short-Range",
@@ -706,7 +706,7 @@
     "data_types": "Audio, Video1, Holo1",
     "cost": "25",
     "weight": "0.1 kg",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Signal Wand",
@@ -717,7 +717,7 @@
     "data_types": "Audio",
     "cost": "300",
     "weight": "0.2 kg",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Targeting Beacon",
@@ -728,7 +728,7 @@
     "data_types": "N/A",
     "cost": "300",
     "weight": "0.1 kg",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Tightbeam Comlink",
@@ -739,7 +739,7 @@
     "data_types": "Audio",
     "cost": "300",
     "weight": "0.5 kg",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Unknown Regions",
@@ -747,7 +747,7 @@
       "communication"
     ],
     "communications_device": "Unknown Regions",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Visual Wrist Comm",
@@ -758,7 +758,7 @@
     "data_types": "Audio, Video",
     "cost": "1300",
     "weight": "0.25 kg",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Vox-Box",
@@ -769,7 +769,7 @@
     "data_types": "Audio",
     "cost": "200",
     "weight": "0.1 kg",
-    "type": "communication"
+    "type": "equipment"
   },
   {
     "name": "Force Unleashed Campaign Guide",
@@ -777,7 +777,7 @@
       "explosive"
     ],
     "explosive": "Force Unleashed Campaign Guide",
-    "type": "explosive"
+    "type": "equipment"
   },
   {
     "name": "Galaxy at War",
@@ -785,7 +785,7 @@
       "explosive"
     ],
     "explosive": "Galaxy at War",
-    "type": "explosive"
+    "type": "equipment"
   },
   {
     "name": "Rebellion Era Campaign Guide",
@@ -793,7 +793,7 @@
       "explosive"
     ],
     "explosive": "Rebellion Era Campaign Guide",
-    "type": "explosive"
+    "type": "equipment"
   },
   {
     "name": "Saga Edition Core Rulebook",
@@ -801,7 +801,7 @@
       "explosive"
     ],
     "explosive": "Saga Edition Core Rulebook",
-    "type": "explosive"
+    "type": "equipment"
   },
   {
     "name": "+10*",
@@ -810,7 +810,7 @@
     ],
     "object_type": "+10*",
     "dc": "Poor quality materials.",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "-10*",
@@ -819,7 +819,7 @@
     ],
     "object_type": "-10*",
     "dc": "Detailed knowledge of specific item.",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "-10*",
@@ -828,7 +828,7 @@
     ],
     "object_type": "-10*",
     "dc": "Have detailed schematics for the object available.",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "-5*",
@@ -837,7 +837,7 @@
     ],
     "object_type": "-5*",
     "dc": "Based on well-known item.",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "1-11 Years",
@@ -850,7 +850,7 @@
     "middle_age": "41-60 Years",
     "old": "61-75 Years",
     "venerable": "76+ Years",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "ABC Scrambler",
@@ -860,7 +860,7 @@
     "survival_gear": "ABC Scrambler",
     "cost": "3000",
     "weight": "3 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "All-Temperature Cloak",
@@ -870,7 +870,7 @@
     "survival_gear": "All-Temperature Cloak",
     "cost": "100",
     "weight": "1.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Ambient Aural Amplifier",
@@ -880,7 +880,7 @@
     "detection_or_surveillance_device": "Ambient Aural Amplifier",
     "cost": "3000",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Anti-Rad Dose",
@@ -890,7 +890,7 @@
     "medical_gear": "Anti-Rad Dose",
     "cost": "50",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Antidote Synthesizer",
@@ -900,7 +900,7 @@
     "medical_gear": "Antidote Synthesizer",
     "cost": "2500",
     "weight": "0.8 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Antisecurity Blades",
@@ -910,7 +910,7 @@
     "tool": "Antisecurity Blades",
     "cost": "-",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Antitoxin Patch",
@@ -920,7 +920,7 @@
     "medical_gear": "Antitoxin Patch",
     "cost": "25",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Aquata Breather",
@@ -930,7 +930,7 @@
     "life_support": "Aquata Breather",
     "cost": "350",
     "weight": "0.2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Armor Reinforcement",
@@ -940,7 +940,7 @@
     "weapon_or_armor_accessory": "Armor Reinforcement",
     "cost": "3000",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Audiorecorder",
@@ -950,7 +950,7 @@
     "detection_or_surveillance_device": "Audiorecorder",
     "cost": "25",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Aural Amplifier",
@@ -960,7 +960,7 @@
     "detection_or_surveillance_device": "Aural Amplifier",
     "cost": "2000",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Bacta (Per Liter)1",
@@ -970,7 +970,7 @@
     "medical_gear": "Bacta (Per Liter)1",
     "cost": "100",
     "weight": "2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Bacta Tank (Empty)",
@@ -980,7 +980,7 @@
     "medical_gear": "Bacta Tank (Empty)",
     "cost": "100000",
     "weight": "500 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Bandolier",
@@ -990,7 +990,7 @@
     "weapon_or_armor_accessory": "Bandolier",
     "cost": "100",
     "weight": "2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Basic Datapad",
@@ -1000,7 +1000,7 @@
     "computer_or_storage_device": "Basic Datapad",
     "cost": "100",
     "weight": "0.3 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Beam Splitter",
@@ -1010,7 +1010,7 @@
     "weapon_or_armor_accessory": "Beam Splitter",
     "cost": "1200",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Binder Cuffs",
@@ -1020,7 +1020,7 @@
     "tool": "Binder Cuffs",
     "cost": "50",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Bio-Stabilizer Implant",
@@ -1029,7 +1029,7 @@
     ],
     "implant": "Nerve Reinforcement Implant",
     "cost": "5000",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "BioTech Borg Construct AJ-6",
@@ -1041,7 +1041,7 @@
     "cost": "80000",
     "surgery_cost": "70000",
     "availability": "Restricted",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Bioscanner",
@@ -1051,7 +1051,7 @@
     "medical_gear": "Bioscanner",
     "cost": "3500",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Biotech Tool Kit",
@@ -1061,7 +1061,7 @@
     "tool": "Biotech Tool Kit",
     "cost": "450",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Blank Datacards (10)",
@@ -1071,7 +1071,7 @@
     "computer_or_storage_device": "Blank Datacards (10)",
     "cost": "10",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Body Spikes",
@@ -1080,7 +1080,7 @@
     ],
     "bio-implant": "Natural Weapon",
     "cost": "4000",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Bracer Computer",
@@ -1090,7 +1090,7 @@
     "computer_or_storage_device": "Bracer Computer",
     "cost": "1300",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Breath Mask",
@@ -1100,7 +1100,7 @@
     "life_support": "Breath Mask",
     "cost": "200",
     "weight": "2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Bundar Root",
@@ -1110,7 +1110,7 @@
     "poison": "Bundar Root",
     "challenge_level": "CL 1",
     "keywords": "Ingested, Natural, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "CIRCUMSTANCES",
@@ -1118,7 +1118,7 @@
       "general"
     ],
     "object_type": "CIRCUMSTANCES",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Camouflage Netting",
@@ -1128,7 +1128,7 @@
     "survival_gear": "Camouflage Netting",
     "cost": "6000",
     "weight": "40 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Camouflage Poncho",
@@ -1138,7 +1138,7 @@
     "survival_gear": "Camouflage Poncho",
     "cost": "125",
     "weight": "1.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Cardio Implant",
@@ -1148,7 +1148,7 @@
     "implant": "4250",
     "cost": "4000",
     "": "Regenerative Implant",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Celegian Life-Support Chamber",
@@ -1158,7 +1158,7 @@
     "life_support": "Celegian Life-Support Chamber",
     "cost": "-",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Chain (3 meters)",
@@ -1168,7 +1168,7 @@
     "survival_gear": "Chain (3 meters)",
     "cost": "25",
     "weight": "2.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Chuba Poison",
@@ -1178,7 +1178,7 @@
     "poison": "Chuba Poison",
     "challenge_level": "CL 8",
     "keywords": "Ingested, Natural, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Climbing Harness",
@@ -1188,7 +1188,7 @@
     "survival_gear": "Climbing Harness",
     "cost": "45",
     "weight": "0.7 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Clone Wars Campaign Guide",
@@ -1196,7 +1196,7 @@
       "general"
     ],
     "communications_device": "Clone Wars Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Clone Wars Campaign Guide",
@@ -1204,7 +1204,7 @@
       "general"
     ],
     "computer_or_storage_device": "Clone Wars Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Clone Wars Campaign Guide",
@@ -1212,7 +1212,7 @@
       "general"
     ],
     "detection_or_surveillance_device": "Clone Wars Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Clone Wars Campaign Guide",
@@ -1220,7 +1220,7 @@
       "general"
     ],
     "medical_gear": "Clone Wars Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Clone Wars Campaign Guide",
@@ -1228,7 +1228,7 @@
       "general"
     ],
     "survival_gear": "Clone Wars Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Code Cylinder",
@@ -1238,7 +1238,7 @@
     "computer_or_storage_device": "Code Cylinder",
     "cost": "500",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Colossal",
@@ -1248,7 +1248,7 @@
     "target_size": "10",
     "dc": "-15",
     "": "Small",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Com Scrambler",
@@ -1259,7 +1259,7 @@
     "data_types": "N/A",
     "cost": "6000",
     "weight": "10 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Combat Implant",
@@ -1269,7 +1269,7 @@
     "implant": "2500",
     "cost": "5000",
     "": "Sensory Implant",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Comlink",
@@ -1277,7 +1277,7 @@
       "general"
     ],
     "communications_device": "Comlink",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Communication Scanner",
@@ -1287,7 +1287,7 @@
     "detection_or_surveillance_device": "Communication Scanner",
     "cost": "1000",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Complex",
@@ -1297,7 +1297,7 @@
     "device": "Complex",
     "dc*": "25",
     "examples": "Disarm an electrical security system, bypass a complex mechanism or electronic lock",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Complex",
@@ -1307,7 +1307,7 @@
     "object_type": "Complex",
     "dc": "40",
     "description": "Item requiring significant design and manufacturing skills, sophisticated parts, and special facilities.",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Computer Interface Visor",
@@ -1317,7 +1317,7 @@
     "computer_or_storage_device": "Computer Interface Visor",
     "cost": "1200",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Computer Spike",
@@ -1327,7 +1327,7 @@
     "computer_or_storage_device": "Computer Spike",
     "cost": "1500",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Computerized Interface Scope",
@@ -1337,7 +1337,7 @@
     "weapon_or_armor_accessory": "Computerized Interface Scope",
     "cost": "2000",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Cosmetic Enhancements",
@@ -1347,7 +1347,7 @@
     "bio-implant": "2500",
     "cost": "200",
     "": "Poison Filter",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Credit Chip",
@@ -1357,7 +1357,7 @@
     "computer_or_storage_device": "Credit Chip",
     "cost": "100",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Cryogenic Pouch",
@@ -1367,7 +1367,7 @@
     "medical_gear": "Cryogenic Pouch",
     "cost": "600",
     "weight": "1.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Cybernetic Prosthesis",
@@ -1378,7 +1378,7 @@
     "cost": "1500",
     "weight": "Varies",
     "installation_cost": "500",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "DC MODIFIER",
@@ -1387,7 +1387,7 @@
     ],
     "object_type": "DC MODIFIER",
     "dc": "DESCRIPTION",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Datapad",
@@ -1395,7 +1395,7 @@
       "general"
     ],
     "computer_or_storage_device": "Datapad",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Dawn of Defiance",
@@ -1403,7 +1403,7 @@
       "general"
     ],
     "medical_gear": "Dawn of Defiance",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Dawn of Defiance",
@@ -1411,7 +1411,7 @@
       "general"
     ],
     "poison": "Dawn of Defiance",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Decoy Glow Rod",
@@ -1421,7 +1421,7 @@
     "detection_or_surveillance_device": "Decoy Glow Rod",
     "cost": "100",
     "weight": "4 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Demolitions Sensor",
@@ -1431,7 +1431,7 @@
     "detection_or_surveillance_device": "Demolitions Sensor",
     "cost": "1000",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Devaronian Blood-Poison",
@@ -1441,7 +1441,7 @@
     "poison": "Devaronian Blood-Poison",
     "challenge_level": "CL 4",
     "keywords": "Contact, Natural, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Dioxis",
@@ -1451,7 +1451,7 @@
     "poison": "Dioxis",
     "challenge_level": "CL 8",
     "keywords": "Atmosphere, Natural, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Distilled Trihexalon",
@@ -1461,7 +1461,7 @@
     "poison": "Distilled Trihexalon",
     "challenge_level": "CL 3",
     "keywords": "Artificial, Contact, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Droid Diagnostic",
@@ -1471,7 +1471,7 @@
     "tool": "Droid Diagnostic",
     "cost": "400",
     "weight": "2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Durasteel Bonding",
@@ -1481,7 +1481,7 @@
     "weapon_or_armor_accessory": "Durasteel Bonding",
     "cost": "2000",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Earbud Comlink",
@@ -1492,7 +1492,7 @@
     "data_types": "Audio",
     "cost": "200",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Electrobinoculars",
@@ -1502,7 +1502,7 @@
     "detection_or_surveillance_device": "Electrobinoculars",
     "cost": "1000",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Emergency Vacuum Seal",
@@ -1512,7 +1512,7 @@
     "life_support": "Emergency Vacuum Seal",
     "cost": "750",
     "weight": "0.9 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Energy Cell",
@@ -1522,7 +1522,7 @@
     "tool": "Energy Cell",
     "cost": "10",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Energy-Binding Prosthesis",
@@ -1533,7 +1533,7 @@
     "cost": "-",
     "weight": "-",
     "installation_cost": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Enhanced Energy Projector",
@@ -1543,7 +1543,7 @@
     "weapon_or_armor_accessory": "Enhanced Energy Projector",
     "cost": "3000",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Enhanced Vision",
@@ -1553,7 +1553,7 @@
     "bio-implant": "2000",
     "cost": "1900",
     "": "Replacement Body Part",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Falsin's Rot",
@@ -1563,7 +1563,7 @@
     "poison": "Falsin's Rot",
     "challenge_level": "CL 7",
     "keywords": "Contact, Natural, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "FastFlesh Medpac",
@@ -1573,7 +1573,7 @@
     "medical_gear": "FastFlesh Medpac",
     "cost": "600",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Field Camouflage Netting",
@@ -1583,7 +1583,7 @@
     "survival_gear": "Field Camouflage Netting",
     "cost": "2000",
     "weight": "5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Field Food Processor",
@@ -1593,7 +1593,7 @@
     "survival_gear": "Field Food Processor",
     "cost": "1500",
     "weight": "4 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Field Kit",
@@ -1603,7 +1603,7 @@
     "survival_gear": "Field Kit",
     "cost": "1000",
     "weight": "10 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Fire Extinguisher",
@@ -1613,7 +1613,7 @@
     "tool": "Fire Extinguisher",
     "cost": "50",
     "weight": "3 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Fire Paste",
@@ -1623,7 +1623,7 @@
     "tool": "Fire Paste",
     "cost": "15",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Fire Rod",
@@ -1633,7 +1633,7 @@
     "tool": "Fire Rod",
     "cost": "25",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Flash Suppressor/Silencer",
@@ -1643,7 +1643,7 @@
     "weapon_or_armor_accessory": "Flash Suppressor/Silencer",
     "cost": "400",
     "weight": "0.2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Flight Suit",
@@ -1653,7 +1653,7 @@
     "life_support": "Flight Suit",
     "cost": "1000",
     "weight": "3 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Force Cage",
@@ -1663,7 +1663,7 @@
     "tool": "Force Cage",
     "cost": "7000",
     "weight": "25 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Force Detector",
@@ -1673,7 +1673,7 @@
     "tool": "Force Detector",
     "cost": "2000",
     "weight": "9 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Force Training Aid",
@@ -1683,7 +1683,7 @@
     "tool": "Force Training Aid",
     "cost": "25",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Force Unleashed Campaign Guide",
@@ -1691,7 +1691,7 @@
       "general"
     ],
     "detection_or_surveillance_device": "Force Unleashed Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Force Unleashed Campaign Guide",
@@ -1699,7 +1699,7 @@
       "general"
     ],
     "explosive": "Force Unleashed Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Force Unleashed Campaign Guide",
@@ -1707,7 +1707,7 @@
       "general"
     ],
     "survival_gear": "Force Unleashed Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Force Unleashed Campaign Guide",
@@ -1715,7 +1715,7 @@
       "general"
     ],
     "tool": "Force Unleashed Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Fusion Lantern",
@@ -1725,7 +1725,7 @@
     "detection_or_surveillance_device": "Fusion Lantern",
     "cost": "25",
     "weight": "2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy at War",
@@ -1733,7 +1733,7 @@
       "general"
     ],
     "communications_device": "Galaxy at War",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy at War",
@@ -1741,7 +1741,7 @@
       "general"
     ],
     "computer_or_storage_device": "Galaxy at War",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy at War",
@@ -1749,7 +1749,7 @@
       "general"
     ],
     "detection_or_surveillance_device": "Galaxy at War",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy at War",
@@ -1757,7 +1757,7 @@
       "general"
     ],
     "explosive": "Galaxy at War",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy at War",
@@ -1765,7 +1765,7 @@
       "general"
     ],
     "medical_gear": "Galaxy at War",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy at War",
@@ -1773,7 +1773,7 @@
       "general"
     ],
     "poison": "Galaxy at War",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy at War",
@@ -1781,7 +1781,7 @@
       "general"
     ],
     "survival_gear": "Galaxy at War",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy at War",
@@ -1789,7 +1789,7 @@
       "general"
     ],
     "tool": "Galaxy at War",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy of Intrigue",
@@ -1797,7 +1797,7 @@
       "general"
     ],
     "communications_device": "Galaxy of Intrigue",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy of Intrigue",
@@ -1805,7 +1805,7 @@
       "general"
     ],
     "detection_or_surveillance_device": "Galaxy of Intrigue",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy of Intrigue",
@@ -1813,7 +1813,7 @@
       "general"
     ],
     "medical_gear": "Galaxy of Intrigue",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy of Intrigue",
@@ -1821,7 +1821,7 @@
       "general"
     ],
     "poison": "Galaxy of Intrigue",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy of Intrigue",
@@ -1829,7 +1829,7 @@
       "general"
     ],
     "tool": "Galaxy of Intrigue",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Galaxy of Intrigue",
@@ -1837,7 +1837,7 @@
       "general"
     ],
     "weapon_or_armor_accessory": "Galaxy of Intrigue",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Gargantuan",
@@ -1847,7 +1847,7 @@
     "target_size": "15",
     "dc": "-10",
     "": "Tiny",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Gargantuan",
@@ -1857,7 +1857,7 @@
     "object_size": "x500",
     "hp_multiplier": "x20",
     "": "Colossal (Station)",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Glow Rod",
@@ -1867,7 +1867,7 @@
     "detection_or_surveillance_device": "Glow Rod",
     "cost": "10",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Hair Trigger",
@@ -1877,7 +1877,7 @@
     "weapon_or_armor_accessory": "Hair Trigger",
     "cost": "1200",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Halo Lamp",
@@ -1887,7 +1887,7 @@
     "detection_or_surveillance_device": "Halo Lamp",
     "cost": "30",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Hands-Free Comlink",
@@ -1898,7 +1898,7 @@
     "data_types": "Audio",
     "cost": "150",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Healing Stimulant",
@@ -1908,7 +1908,7 @@
     "medical_gear": "Healing Stimulant",
     "cost": "-",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Heat Sensor",
@@ -1918,7 +1918,7 @@
     "detection_or_surveillance_device": "Heat Sensor",
     "cost": "250",
     "weight": "0.2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Helmet Package",
@@ -1928,7 +1928,7 @@
     "weapon_or_armor_accessory": "Helmet Package",
     "cost": "4000",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "HiBaka 2000 Mem-Stik",
@@ -1938,7 +1938,7 @@
     "computer_or_storage_device": "HiBaka 2000 Mem-Stik",
     "cost": "50",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Holo Converter",
@@ -1949,7 +1949,7 @@
     "data_types": "Holo",
     "cost": "3000",
     "weight": "2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Holorecorder",
@@ -1959,7 +1959,7 @@
     "detection_or_surveillance_device": "Holorecorder",
     "cost": "100",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Holoshroud",
@@ -1969,7 +1969,7 @@
     "detection_or_surveillance_device": "Holoshroud",
     "cost": "25000",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Holster",
@@ -1977,7 +1977,7 @@
       "general"
     ],
     "weapon_or_armor_accessory": "Holster",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Holster (Concealed)",
@@ -1987,7 +1987,7 @@
     "weapon_or_armor_accessory": "Holster (Concealed)",
     "cost": "50",
     "weight": "0.2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Holster (Hip)",
@@ -1997,7 +1997,7 @@
     "weapon_or_armor_accessory": "Holster (Hip)",
     "cost": "25",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Homebrew",
@@ -2005,7 +2005,7 @@
       "general"
     ],
     "weapon_or_armor_accessory": "Homebrew",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Huge",
@@ -2015,7 +2015,7 @@
     "target_size": "20",
     "dc": "-5",
     "": "Diminutive",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Huge",
@@ -2025,7 +2025,7 @@
     "object_size": "x200",
     "hp_multiplier": "x10",
     "": "Colossal (Cruiser)",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Hush-About Personal Jet Pack",
@@ -2035,7 +2035,7 @@
     "survival_gear": "Hush-About Personal Jet Pack",
     "cost": "3750",
     "weight": "30 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Hypoinjector Wristband",
@@ -2045,7 +2045,7 @@
     "medical_gear": "Hypoinjector Wristband",
     "cost": "350",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Improved Energy Cell",
@@ -2055,7 +2055,7 @@
     "weapon_or_armor_accessory": "Improved Energy Cell",
     "cost": "4000",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Infrared Sensor Eye",
@@ -2067,7 +2067,7 @@
     "cost": "300",
     "surgery_cost": "2250",
     "availability": "Restricted",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Irksh Poison",
@@ -2077,7 +2077,7 @@
     "poison": "Irksh Poison",
     "challenge_level": "CL 13",
     "keywords": "Ingested, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Jedi Academy Training Manual",
@@ -2085,7 +2085,7 @@
       "general"
     ],
     "cybernetic_device": "Jedi Academy Training Manual",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Jedi Academy Training Manual",
@@ -2093,7 +2093,7 @@
       "general"
     ],
     "life_support": "Jedi Academy Training Manual",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Jedi Academy Training Manual",
@@ -2101,7 +2101,7 @@
       "general"
     ],
     "medical_gear": "Jedi Academy Training Manual",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Jedi Academy Training Manual",
@@ -2109,7 +2109,7 @@
       "general"
     ],
     "survival_gear": "Jedi Academy Training Manual",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Jedi Academy Training Manual",
@@ -2117,7 +2117,7 @@
       "general"
     ],
     "tool": "Jedi Academy Training Manual",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Jedi Academy Training Manual",
@@ -2125,7 +2125,7 @@
       "general"
     ],
     "implant": "Jedi Academy Training Manual",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Jet Pack",
@@ -2135,7 +2135,7 @@
     "survival_gear": "Jet Pack",
     "cost": "300",
     "weight": "30 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
@@ -2143,7 +2143,7 @@
       "general"
     ],
     "computer_or_storage_device": "Knights of the Old Republic Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
@@ -2151,7 +2151,7 @@
       "general"
     ],
     "cybernetic_device": "Knights of the Old Republic Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
@@ -2159,7 +2159,7 @@
       "general"
     ],
     "detection_or_surveillance_device": "Knights of the Old Republic Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
@@ -2167,7 +2167,7 @@
       "general"
     ],
     "life_support": "Knights of the Old Republic Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
@@ -2175,7 +2175,7 @@
       "general"
     ],
     "medical_gear": "Knights of the Old Republic Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
@@ -2183,7 +2183,7 @@
       "general"
     ],
     "poison": "Knights of the Old Republic Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
@@ -2191,7 +2191,7 @@
       "general"
     ],
     "tool": "Knights of the Old Republic Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
@@ -2199,7 +2199,7 @@
       "general"
     ],
     "weapon_or_armor_accessory": "Knights of the Old Republic Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
@@ -2207,7 +2207,7 @@
       "general"
     ],
     "implant": "Knights of the Old Republic Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Knockout Drugs",
@@ -2217,7 +2217,7 @@
     "poison": "Knockout Drugs",
     "challenge_level": "CL 2",
     "keywords": "Artificial, Ingested, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Large",
@@ -2227,7 +2227,7 @@
     "target_size": "25",
     "dc": "0",
     "": "Fine",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Large",
@@ -2237,7 +2237,7 @@
     "object_size": "x100",
     "hp_multiplier": "x5",
     "": "Colossal (Frigate)",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Lectroticker",
@@ -2247,7 +2247,7 @@
     "computer_or_storage_device": "Lectroticker",
     "cost": "1500",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Legacy Era Campaign Guide",
@@ -2255,7 +2255,7 @@
       "general"
     ],
     "communications_device": "Legacy Era Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Legacy Era Campaign Guide",
@@ -2263,7 +2263,7 @@
       "general"
     ],
     "computer_or_storage_device": "Legacy Era Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Legacy Era Campaign Guide",
@@ -2271,7 +2271,7 @@
       "general"
     ],
     "detection_or_surveillance_device": "Legacy Era Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Legacy Era Campaign Guide",
@@ -2279,7 +2279,7 @@
       "general"
     ],
     "tool": "Legacy Era Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Legacy Era Campaign Guide",
@@ -2287,7 +2287,7 @@
       "general"
     ],
     "bio-implant": "Legacy Era Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Liquid Cable Dispenser (15 meters)",
@@ -2297,7 +2297,7 @@
     "survival_gear": "Liquid Cable Dispenser (15 meters)",
     "cost": "10",
     "weight": "0.2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Lock Breaking Kit",
@@ -2307,7 +2307,7 @@
     "tool": "Lock Breaking Kit",
     "cost": "8000",
     "weight": "4 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Long-Range",
@@ -2318,7 +2318,7 @@
     "data_types": "Audio, Video1, Holo1",
     "cost": "250",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Man Trap",
@@ -2328,7 +2328,7 @@
     "tool": "Man Trap",
     "cost": "8000",
     "weight": "19 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Mandalorian Jet Pack",
@@ -2338,7 +2338,7 @@
     "survival_gear": "Mandalorian Jet Pack",
     "cost": "-",
     "weight": "30 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Mechanical Interface Visor",
@@ -2348,7 +2348,7 @@
     "tool": "Mechanical Interface Visor",
     "cost": "1250",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Medical Bundle",
@@ -2358,7 +2358,7 @@
     "medical_gear": "Medical Bundle",
     "cost": "200",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Medical Interface Visor",
@@ -2368,7 +2368,7 @@
     "medical_gear": "Medical Interface Visor",
     "cost": "1500",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Medical Kit",
@@ -2378,7 +2378,7 @@
     "medical_gear": "Medical Kit",
     "cost": "600",
     "weight": "20 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Medisensor",
@@ -2388,7 +2388,7 @@
     "medical_gear": "Medisensor",
     "cost": "75",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Medium",
@@ -2397,7 +2397,7 @@
     ],
     "target_size": "Medium",
     "dc": "5",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Medium",
@@ -2407,7 +2407,7 @@
     "object_size": "x50",
     "hp_multiplier": "x2",
     "": "Colossal",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Medpac",
@@ -2417,7 +2417,7 @@
     "medical_gear": "Medpac",
     "cost": "100",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Memory Implant",
@@ -2426,7 +2426,7 @@
     ],
     "implant": "Memory Implant",
     "cost": "2000",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Mesh Tape",
@@ -2436,7 +2436,7 @@
     "tool": "Mesh Tape",
     "cost": "5",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Mesh Underlay",
@@ -2446,7 +2446,7 @@
     "weapon_or_armor_accessory": "Mesh Underlay",
     "cost": "2500",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Microlab",
@@ -2456,7 +2456,7 @@
     "tool": "Microlab",
     "cost": "1800",
     "weight": "0.8 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Moderate",
@@ -2466,7 +2466,7 @@
     "object_type": "Moderate",
     "dc": "25",
     "description": "Item requiring basic electronics, special materials, and/or specialized knowledge.",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Motion Sensing Visor",
@@ -2476,7 +2476,7 @@
     "detection_or_surveillance_device": "Motion Sensing Visor",
     "cost": "2500",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Natural Armor",
@@ -2485,7 +2485,7 @@
     ],
     "bio-implant": "Natural Armor",
     "cost": "7000",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Neural Band",
@@ -2495,7 +2495,7 @@
     "detection_or_surveillance_device": "Neural Band",
     "cost": "3500",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Night Vision Device",
@@ -2505,7 +2505,7 @@
     "weapon_or_armor_accessory": "Night Vision Device",
     "cost": "3000",
     "weight": "0.6 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Null Gas",
@@ -2515,7 +2515,7 @@
     "poison": "Null Gas",
     "challenge_level": "CL 12",
     "keywords": "Atmosphere, Artificial, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Obah",
@@ -2525,7 +2525,7 @@
     "poison": "Obah",
     "challenge_level": "CL 6",
     "keywords": "Atmosphere, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Ooglith Masquer",
@@ -2535,7 +2535,7 @@
     "detection_or_surveillance_device": "Ooglith Masquer",
     "cost": "-",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Panic Ring",
@@ -2546,7 +2546,7 @@
     "data_types": "N/A",
     "cost": "300",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Paralytic Poison",
@@ -2556,7 +2556,7 @@
     "poison": "Paralytic Poison",
     "challenge_level": "CL 5",
     "keywords": "Artificial, Contact, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Personal Field Shelter",
@@ -2566,7 +2566,7 @@
     "survival_gear": "Personal Field Shelter",
     "cost": "500",
     "weight": "1.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Personal Holoprojector",
@@ -2576,7 +2576,7 @@
     "computer_or_storage_device": "Personal Holoprojector",
     "cost": "1000",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Personal Multitool",
@@ -2586,7 +2586,7 @@
     "tool": "Personal Multitool",
     "cost": "100",
     "weight": "0.2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Personal Translator",
@@ -2596,7 +2596,7 @@
     "tool": "Personal Translator",
     "cost": "2000",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Plasma Bridge",
@@ -2606,7 +2606,7 @@
     "survival_gear": "Plasma Bridge",
     "cost": "12500",
     "weight": "700 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Plasma Cutter",
@@ -2616,7 +2616,7 @@
     "tool": "Plasma Cutter",
     "cost": "10000",
     "weight": "110 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Plastent",
@@ -2626,7 +2626,7 @@
     "survival_gear": "Plastent",
     "cost": "300",
     "weight": "2.7 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Pocket Scrambler1",
@@ -2637,7 +2637,7 @@
     "data_types": "N/A",
     "cost": "400",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Portable Beacon",
@@ -2647,7 +2647,7 @@
     "survival_gear": "Portable Beacon",
     "cost": "1500",
     "weight": "6.8 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Portable Computer",
@@ -2657,7 +2657,7 @@
     "computer_or_storage_device": "Portable Computer",
     "cost": "5000",
     "weight": "2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Power Generator",
@@ -2667,7 +2667,7 @@
     "tool": "Power Generator",
     "cost": "750",
     "weight": "15 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Power Pack",
@@ -2677,7 +2677,7 @@
     "tool": "Power Pack",
     "cost": "25",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Power Recharger",
@@ -2687,7 +2687,7 @@
     "tool": "Power Recharger",
     "cost": "100",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Propulsion Pack",
@@ -2697,7 +2697,7 @@
     "life_support": "Propulsion Pack",
     "cost": "200",
     "weight": "10 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Proximity Flare",
@@ -2707,7 +2707,7 @@
     "detection_or_surveillance_device": "Proximity Flare",
     "cost": "50",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Quongoosh Essence",
@@ -2717,7 +2717,7 @@
     "poison": "Quongoosh Essence",
     "challenge_level": "CL 3",
     "keywords": "Ingested, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Radiation Detector",
@@ -2727,7 +2727,7 @@
     "detection_or_surveillance_device": "Radiation Detector",
     "cost": "20",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Ration Pack",
@@ -2737,7 +2737,7 @@
     "survival_gear": "Ration Pack",
     "cost": "5",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Rebellion Era Campaign Guide",
@@ -2745,7 +2745,7 @@
       "general"
     ],
     "detection_or_surveillance_device": "Rebellion Era Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Rebellion Era Campaign Guide",
@@ -2753,7 +2753,7 @@
       "general"
     ],
     "explosive": "Rebellion Era Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Rebellion Era Campaign Guide",
@@ -2761,7 +2761,7 @@
       "general"
     ],
     "life_support": "Rebellion Era Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Rebellion Era Campaign Guide",
@@ -2769,7 +2769,7 @@
       "general"
     ],
     "weapon_or_armor_accessory": "Rebellion Era Campaign Guide",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Recording Unit",
@@ -2777,7 +2777,7 @@
       "general"
     ],
     "detection_or_surveillance_device": "Recording Unit",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Redirection Crystal",
@@ -2787,7 +2787,7 @@
     "tool": "Redirection Crystal",
     "cost": "500",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Repulsor Boots",
@@ -2797,7 +2797,7 @@
     "tool": "Repulsor Boots",
     "cost": "200",
     "weight": "2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Repulsor Hitch",
@@ -2807,7 +2807,7 @@
     "tool": "Repulsor Hitch",
     "cost": "100",
     "weight": "3 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Repulsor Pad",
@@ -2817,7 +2817,7 @@
     "tool": "Repulsor Pad",
     "cost": "200",
     "weight": "6 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Rhen-Orm Biocomputer",
@@ -2828,7 +2828,7 @@
     "cost": "3500",
     "weight": "0.2 kg",
     "installation_cost": "10000",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Riding Saddle",
@@ -2838,7 +2838,7 @@
     "survival_gear": "Riding Saddle",
     "cost": "125",
     "weight": "4 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Saga Edition Core Rulebook",
@@ -2846,7 +2846,7 @@
       "general"
     ],
     "communications_device": "Saga Edition Core Rulebook",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Saga Edition Core Rulebook",
@@ -2854,7 +2854,7 @@
       "general"
     ],
     "computer_or_storage_device": "Saga Edition Core Rulebook",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Saga Edition Core Rulebook",
@@ -2862,7 +2862,7 @@
       "general"
     ],
     "cybernetic_device": "Saga Edition Core Rulebook",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Saga Edition Core Rulebook",
@@ -2870,7 +2870,7 @@
       "general"
     ],
     "detection_or_surveillance_device": "Saga Edition Core Rulebook",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Saga Edition Core Rulebook",
@@ -2878,7 +2878,7 @@
       "general"
     ],
     "explosive": "Saga Edition Core Rulebook",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Saga Edition Core Rulebook",
@@ -2886,7 +2886,7 @@
       "general"
     ],
     "life_support": "Saga Edition Core Rulebook",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Saga Edition Core Rulebook",
@@ -2894,7 +2894,7 @@
       "general"
     ],
     "poison": "Saga Edition Core Rulebook",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Saga Edition Core Rulebook",
@@ -2902,7 +2902,7 @@
       "general"
     ],
     "survival_gear": "Saga Edition Core Rulebook",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Saga Edition Core Rulebook",
@@ -2910,7 +2910,7 @@
       "general"
     ],
     "tool": "Saga Edition Core Rulebook",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Saga Edition Core Rulebook",
@@ -2918,7 +2918,7 @@
       "general"
     ],
     "weapon_or_armor_accessory": "Saga Edition Core Rulebook",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Scum and Villainy",
@@ -2926,7 +2926,7 @@
       "general"
     ],
     "survival_gear": "Scum and Villainy",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Scum and Villainy",
@@ -2934,7 +2934,7 @@
       "general"
     ],
     "tool": "Scum and Villainy",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Security Kit",
@@ -2944,7 +2944,7 @@
     "tool": "Security Kit",
     "cost": "750",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Sensor Pack",
@@ -2954,7 +2954,7 @@
     "detection_or_surveillance_device": "Sensor Pack",
     "cost": "1500",
     "weight": "9 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Sensory Enhancement",
@@ -2966,7 +2966,7 @@
     "cost": "800",
     "surgery_cost": "3000",
     "availability": "Restricted",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Shield Cage",
@@ -2976,7 +2976,7 @@
     "tool": "Shield Cage",
     "cost": "10000",
     "weight": "20 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Shipsuit",
@@ -2986,7 +2986,7 @@
     "life_support": "Shipsuit",
     "cost": "200",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Short-Range",
@@ -2997,7 +2997,7 @@
     "data_types": "Audio, Video1, Holo1",
     "cost": "25",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Signal Wand",
@@ -3008,7 +3008,7 @@
     "data_types": "Audio",
     "cost": "300",
     "weight": "0.2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Simple",
@@ -3018,7 +3018,7 @@
     "device": "Simple",
     "dc*": "15",
     "examples": "Sabotage a mechanical device, jam a blaster, bypass a basic mechanical lock",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Simple",
@@ -3028,7 +3028,7 @@
     "object_type": "Simple",
     "dc": "10",
     "description": "Item easily created from a few raw materials, using common tools and parts.",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Sith Battle Harness",
@@ -3038,7 +3038,7 @@
     "survival_gear": "Sith Battle Harness",
     "cost": "5000",
     "weight": "90 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Sith Poison",
@@ -3048,7 +3048,7 @@
     "poison": "Sith Poison",
     "challenge_level": "CL 10",
     "keywords": "Contact, Ingested, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Skeletal Reinforcement",
@@ -3060,7 +3060,7 @@
     "cost": "10000",
     "surgery_cost": "50000",
     "availability": "Restricted",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Sonar Mapper",
@@ -3070,7 +3070,7 @@
     "detection_or_surveillance_device": "Sonar Mapper",
     "cost": "400",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Sound Sponge",
@@ -3080,7 +3080,7 @@
     "detection_or_surveillance_device": "Sound Sponge",
     "cost": "3500",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Space Suit",
@@ -3090,7 +3090,7 @@
     "life_support": "Space Suit",
     "cost": "2000",
     "weight": "15 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Spacer's Chest",
@@ -3100,7 +3100,7 @@
     "survival_gear": "Spacer's Chest",
     "cost": "200",
     "weight": "10 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Spy Bug",
@@ -3110,7 +3110,7 @@
     "detection_or_surveillance_device": "Spy Bug",
     "cost": "1300",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Standard Datapad",
@@ -3120,7 +3120,7 @@
     "computer_or_storage_device": "Standard Datapad",
     "cost": "1000",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Stealth Field Generator",
@@ -3130,7 +3130,7 @@
     "detection_or_surveillance_device": "Stealth Field Generator",
     "cost": "5000",
     "weight": "0.2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Subcutaneous Comlink",
@@ -3142,7 +3142,7 @@
     "cost": "4000",
     "surgery_cost": "3000",
     "availability": "Restricted",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Subelectronic Converter",
@@ -3153,7 +3153,7 @@
     "cost": "23000",
     "weight": "-",
     "installation_cost": "500",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Subelectronic Converter",
@@ -3162,7 +3162,7 @@
     ],
     "implant": "Subelectronic Converter",
     "cost": "23000",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Subsonic Field Emitter",
@@ -3172,7 +3172,7 @@
     "survival_gear": "Subsonic Field Emitter",
     "cost": "120",
     "weight": "0.2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Surgery Kit",
@@ -3182,7 +3182,7 @@
     "medical_gear": "Surgery Kit",
     "cost": "1000",
     "weight": "10 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Surveillance Detector",
@@ -3192,7 +3192,7 @@
     "detection_or_surveillance_device": "Surveillance Detector",
     "cost": "450",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Surveillance Tagger",
@@ -3202,7 +3202,7 @@
     "detection_or_surveillance_device": "Surveillance Tagger",
     "cost": "450",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Syntherope (45 meters)",
@@ -3212,7 +3212,7 @@
     "survival_gear": "Syntherope (45 meters)",
     "cost": "20",
     "weight": "2.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Targeting Beacon",
@@ -3223,7 +3223,7 @@
     "data_types": "N/A",
     "cost": "300",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Targeting Eye",
@@ -3235,7 +3235,7 @@
     "cost": "500",
     "surgery_cost": "3750",
     "availability": "Military",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Targeting Scope",
@@ -3243,7 +3243,7 @@
       "general"
     ],
     "weapon_or_armor_accessory": "Targeting Scope",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Targeting Scope (Enhanced Low-Light)",
@@ -3253,7 +3253,7 @@
     "weapon_or_armor_accessory": "Targeting Scope (Enhanced Low-Light)",
     "cost": "1000",
     "weight": "1.2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Targeting Scope (Standard)",
@@ -3263,7 +3263,7 @@
     "weapon_or_armor_accessory": "Targeting Scope (Standard)",
     "cost": "100",
     "weight": "0.2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Telescopic Eye",
@@ -3275,7 +3275,7 @@
     "cost": "500",
     "surgery_cost": "3750",
     "availability": "Restricted",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Threats of the Galaxy",
@@ -3283,7 +3283,7 @@
       "general"
     ],
     "computer_or_storage_device": "Threats of the Galaxy",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Threats of the Galaxy",
@@ -3291,7 +3291,7 @@
       "general"
     ],
     "cybernetic_device": "Threats of the Galaxy",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Threats of the Galaxy",
@@ -3299,7 +3299,7 @@
       "general"
     ],
     "detection_or_surveillance_device": "Threats of the Galaxy",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Threats of the Galaxy",
@@ -3307,7 +3307,7 @@
       "general"
     ],
     "medical_gear": "Threats of the Galaxy",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Threats of the Galaxy",
@@ -3315,7 +3315,7 @@
       "general"
     ],
     "survival_gear": "Threats of the Galaxy",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Threats of the Galaxy",
@@ -3323,7 +3323,7 @@
       "general"
     ],
     "tool": "Threats of the Galaxy",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Tightbeam Comlink",
@@ -3334,7 +3334,7 @@
     "data_types": "Audio",
     "cost": "300",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Tool Kit",
@@ -3344,7 +3344,7 @@
     "tool": "Tool Kit",
     "cost": "250",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Toxin Detector",
@@ -3354,7 +3354,7 @@
     "medical_gear": "Toxin Detector",
     "cost": "700",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Trauger",
@@ -3364,7 +3364,7 @@
     "poison": "Trauger",
     "challenge_level": "CL 14",
     "keywords": "Atmosphere, Natural, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Tremor Cell",
@@ -3374,7 +3374,7 @@
     "weapon_or_armor_accessory": "Tremor Cell",
     "cost": "1000",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Tremor Sensor",
@@ -3386,7 +3386,7 @@
     "cost": "400",
     "surgery_cost": "3750",
     "availability": "Restricted",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Triangulation Visor",
@@ -3396,7 +3396,7 @@
     "computer_or_storage_device": "Triangulation Visor",
     "cost": "1400",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Tricky",
@@ -3406,7 +3406,7 @@
     "device": "Tricky",
     "dc*": "20",
     "examples": "Sabotage an electronic device, bypass a basic electronic lock",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Trihexalon",
@@ -3416,7 +3416,7 @@
     "poison": "Trihexalon",
     "challenge_level": "CL 15",
     "keywords": "Contact, Inhaled, Poison",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Universal Energy Cage",
@@ -3426,7 +3426,7 @@
     "tool": "Universal Energy Cage",
     "cost": "20000",
     "weight": "3 Tons",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Unknown Regions",
@@ -3434,7 +3434,7 @@
       "general"
     ],
     "communications_device": "Unknown Regions",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Unknown Regions",
@@ -3442,7 +3442,7 @@
       "general"
     ],
     "detection_or_surveillance_device": "Unknown Regions",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Unknown Regions",
@@ -3450,7 +3450,7 @@
       "general"
     ],
     "life_support": "Unknown Regions",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Unknown Regions",
@@ -3458,7 +3458,7 @@
       "general"
     ],
     "medical_gear": "Unknown Regions",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Unknown Regions",
@@ -3466,7 +3466,7 @@
       "general"
     ],
     "survival_gear": "Unknown Regions",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Unknown Regions",
@@ -3474,7 +3474,7 @@
       "general"
     ],
     "tool": "Unknown Regions",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Utility Belt",
@@ -3482,7 +3482,7 @@
       "general"
     ],
     "tool": "Utility Belt",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Utility Belt (Empty)",
@@ -3492,7 +3492,7 @@
     "tool": "Utility Belt (Empty)",
     "cost": "55",
     "weight": "0.3 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Utility Belt (Standard)",
@@ -3502,7 +3502,7 @@
     "tool": "Utility Belt (Standard)",
     "cost": "500",
     "weight": "4 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Vacuum Mask",
@@ -3512,7 +3512,7 @@
     "life_support": "Vacuum Mask",
     "cost": "650",
     "weight": "0.3 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Vacuum Survival Pouch",
@@ -3522,7 +3522,7 @@
     "survival_gear": "Vacuum Survival Pouch",
     "cost": "800",
     "weight": "1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Veridicator",
@@ -3532,7 +3532,7 @@
     "detection_or_surveillance_device": "Veridicator",
     "cost": "4000",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Vid-Vox Scrambler",
@@ -3542,7 +3542,7 @@
     "detection_or_surveillance_device": "Vid-Vox Scrambler",
     "cost": "3400",
     "weight": "0.5 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Videorecorder",
@@ -3552,7 +3552,7 @@
     "detection_or_surveillance_device": "Videorecorder",
     "cost": "50",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Visual Wrist Comm",
@@ -3563,7 +3563,7 @@
     "data_types": "Audio, Video",
     "cost": "1300",
     "weight": "0.25 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Vox-Box",
@@ -3574,7 +3574,7 @@
     "data_types": "Audio",
     "cost": "200",
     "weight": "0.1 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "War Saddle",
@@ -3584,7 +3584,7 @@
     "survival_gear": "War Saddle",
     "cost": "250",
     "weight": "6 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Water Extractor",
@@ -3594,7 +3594,7 @@
     "tool": "Water Extractor",
     "cost": "400",
     "weight": "3.2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Web Enhancements",
@@ -3602,7 +3602,7 @@
       "general"
     ],
     "detection_or_surveillance_device": "Web Enhancements",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Xcalq Stealth Pack",
@@ -3612,7 +3612,7 @@
     "computer_or_storage_device": "Xcalq Stealth Pack",
     "cost": "1500",
     "weight": "-",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "Xcalq-3GA \"Slicer Special\" Portable Computer",
@@ -3622,7 +3622,7 @@
     "computer_or_storage_device": "Xcalq-3GA \"Slicer Special\" Portable Computer",
     "cost": "7500",
     "weight": "2 kg",
-    "type": "general"
+    "type": "equipment"
   },
   {
     "name": "0-6 Squares",
@@ -3632,7 +3632,7 @@
     "distance": "0-6 Squares",
     "range_category": "Point-Blank Range",
     "penalty": "No penalty",
-    "type": "grenade"
+    "type": "equipment"
   },
   {
     "name": "11-12 Squares",
@@ -3642,7 +3642,7 @@
     "distance": "11-12 Squares",
     "range_category": "Long Range",
     "penalty": "-10 penalty to attack rolls",
-    "type": "grenade"
+    "type": "equipment"
   },
   {
     "name": "7-8 Squares",
@@ -3652,7 +3652,7 @@
     "distance": "7-8 Squares",
     "range_category": "Short Range",
     "penalty": "-2 penalty to attack rolls",
-    "type": "grenade"
+    "type": "equipment"
   },
   {
     "name": "9-10 Squares",
@@ -3662,7 +3662,7 @@
     "distance": "9-10 Squares",
     "range_category": "Medium Range",
     "penalty": "-5 penalty to attack rolls",
-    "type": "grenade"
+    "type": "equipment"
   },
   {
     "name": "Clone Wars Campaign Guide",
@@ -3670,7 +3670,7 @@
       "grenade"
     ],
     "grenade": "Clone Wars Campaign Guide",
-    "type": "grenade"
+    "type": "equipment"
   },
   {
     "name": "Galaxy at War",
@@ -3678,7 +3678,7 @@
       "grenade"
     ],
     "grenade": "Galaxy at War",
-    "type": "grenade"
+    "type": "equipment"
   },
   {
     "name": "Jedi Academy Training Manual",
@@ -3686,7 +3686,7 @@
       "grenade"
     ],
     "grenade": "Jedi Academy Training Manual",
-    "type": "grenade"
+    "type": "equipment"
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
@@ -3694,7 +3694,7 @@
       "grenade"
     ],
     "grenade": "Knights of the Old Republic Campaign Guide",
-    "type": "grenade"
+    "type": "equipment"
   },
   {
     "name": "Rebellion Era Campaign Guide",
@@ -3702,7 +3702,7 @@
       "grenade"
     ],
     "grenade": "Rebellion Era Campaign Guide",
-    "type": "grenade"
+    "type": "equipment"
   },
   {
     "name": "Force Unleashed Campaign Guide",
@@ -3710,7 +3710,7 @@
       "mine"
     ],
     "mine": "Force Unleashed Campaign Guide",
-    "type": "mine"
+    "type": "equipment"
   },
   {
     "name": "Galaxy at War",
@@ -3718,7 +3718,7 @@
       "mine"
     ],
     "mine": "Galaxy at War",
-    "type": "mine"
+    "type": "equipment"
   },
   {
     "name": "Web Enhancements",
@@ -3726,6 +3726,6 @@
       "mine"
     ],
     "mine": "Web Enhancements",
-    "type": "mine"
+    "type": "equipment"
   }
 ]

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Auto-fix SWSE JSON files by adding missing 'name' and 'type' fields
+Fix SWSE JSON files to use valid Foundry item types
+Maps custom types to valid Foundry types based on system template
 """
 
 import json
@@ -9,140 +10,182 @@ from pathlib import Path
 from datetime import datetime
 
 REPO_PATH = Path(r"C:\Users\Owner\Documents\GitHub\foundryvtt-swse")
-BACKUP_DIR = REPO_PATH / "json_autofix_backup" / datetime.now().strftime("%Y%m%d_%H%M%S")
+BACKUP_DIR = REPO_PATH / "type_fix_backup" / datetime.now().strftime("%Y%m%d_%H%M%S")
 
-# Map filename to item/actor type
-TYPE_MAP = {
-    # Items
-    'weapons': 'weapon',
-    'armor': 'armor',
-    'equipment': 'equipment',
-    'feats': 'feat',
-    'talents': 'talent',
-    'forcepowers': 'forcePower',
-    'force-powers': 'forcePower',
-    'classes': 'class',
-    'classes-db': 'class',
-    
-    # Actors
-    'vehicles': 'vehicle',
-    'npc': 'npc',
-    'droids': 'droid',
-    'Droids': 'droid',
-    
-    # Special/System
-    'attributes': 'attribute',
-    'skills': 'skill',
-    'combat-actions': 'combatAction',
-    'conditions': 'condition',
-    'special-combat-condition': 'combatCondition',
-    'extraskilluses': 'skillUse'
-}
-
-class JSONAutoFixer:
+class TypeFixer:
     def __init__(self):
         self.repo_path = REPO_PATH
         self.backup_dir = BACKUP_DIR
-        self.fixed_files = []
         self.stats = {
-            'files_processed': 0,
             'files_fixed': 0,
             'entries_fixed': 0,
-            'names_added': 0,
-            'types_added': 0
+            'type_mappings': {}
         }
+        
+        # First, let's scan what types exist and what the system expects
+        self.valid_types = self.detect_valid_types()
+    
+    def detect_valid_types(self):
+        """Detect valid item types from template.json"""
+        template_path = self.repo_path / "template.json"
+        
+        if template_path.exists():
+            try:
+                with open(template_path, 'r', encoding='utf-8') as f:
+                    template = json.load(f)
+                
+                # Valid types are defined in Item.types
+                if 'Item' in template and 'types' in template['Item']:
+                    types = template['Item']['types']
+                    print(f"Found valid item types in template.json: {types}")
+                    return set(types)
+            except Exception as e:
+                print(f"Could not read template.json: {e}")
+        
+        # Default SWSE item types (adjust based on your system)
+        default_types = {
+            'class', 'feat', 'talent', 'forcePower', 
+            'weapon', 'armor', 'equipment', 'item',
+            'skill', 'combatAction', 'condition'
+        }
+        print(f"Using default types: {default_types}")
+        return default_types
     
     def create_backup(self):
         """Backup data directory"""
-        print("Creating backup...")
+        print("\nCreating backup...")
         self.backup_dir.mkdir(parents=True, exist_ok=True)
         
         data_dir = self.repo_path / "data"
         if data_dir.exists():
             backup_data = self.backup_dir / "data"
             shutil.copytree(data_dir, backup_data, dirs_exist_ok=True)
-            print(f"  ✓ Backed up: data/ → {self.backup_dir}")
-        
+            print(f"  ✓ Backed up to: {self.backup_dir}")
         print()
     
+    def map_invalid_type(self, invalid_type, filename):
+        """Map invalid type to valid type"""
+        # Common mappings based on the errors you showed
+        type_mapping = {
+            # Weapon types
+            'Energy': 'weapon',
+            'Projectile': 'weapon',
+            'Melee': 'weapon',
+            'Thrown': 'weapon',
+            'Simple': 'weapon',
+            'Heavy': 'weapon',
+            'Lightsaber': 'weapon',
+            'Exotic': 'weapon',
+            
+            # Feat types
+            'General': 'feat',
+            'Force': 'feat',
+            'Starship': 'feat',
+            
+            # Equipment types
+            '-': 'equipment',
+            'Equipment': 'equipment',
+            'Cybernetic': 'equipment',
+            'Medical': 'equipment',
+            'Tool': 'equipment',
+            
+            # Armor types
+            'Light': 'armor',
+            'Medium': 'armor',
+            'Heavy Armor': 'armor',
+            
+            # Force powers
+            'Force Power': 'forcePower',
+            'Force Technique': 'forcePower',
+            
+            # Classes
+            'Base': 'class',
+            'Prestige': 'class',
+            'Heroic': 'class',
+        }
+        
+        # Try direct mapping first
+        if invalid_type in type_mapping:
+            return type_mapping[invalid_type]
+        
+        # Infer from filename
+        file_type_map = {
+            'weapons': 'weapon',
+            'armor': 'armor',
+            'equipment': 'equipment',
+            'feats': 'feat',
+            'talents': 'talent',
+            'forcepowers': 'forcePower',
+            'force-powers': 'forcePower',
+            'classes': 'class',
+            'skills': 'skill',
+            'combat-actions': 'combatAction',
+            'conditions': 'condition',
+        }
+        
+        file_stem = Path(filename).stem.lower()
+        if file_stem in file_type_map:
+            return file_type_map[file_stem]
+        
+        # Default to equipment
+        return 'equipment'
+    
     def fix_json_file(self, json_file):
-        """Fix a single JSON file"""
+        """Fix types in a single JSON file"""
         try:
             with open(json_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
             if not isinstance(data, list):
-                print(f"  ⚠ {json_file.name}: Not a list, skipping")
                 return False
             
-            # Determine default type from filename
-            file_stem = json_file.stem
-            default_type = TYPE_MAP.get(file_stem)
-            
-            if not default_type:
-                print(f"  ⚠ {json_file.name}: Unknown file type, skipping")
-                return False
-            
-            # Track changes
             entries_fixed = 0
-            names_added = 0
-            types_added = 0
+            type_changes = {}
             
-            for i, entry in enumerate(data):
+            for entry in data:
                 if not isinstance(entry, dict):
                     continue
                 
-                modified = False
+                if 'type' not in entry:
+                    continue
                 
-                # Fix missing or empty name
-                if 'name' not in entry or not entry.get('name', '').strip():
-                    # Try to generate a reasonable name
-                    if 'id' in entry:
-                        entry['name'] = f"{default_type.title()} {entry['id']}"
-                    else:
-                        entry['name'] = f"Unnamed {default_type.title()} {i+1}"
-                    names_added += 1
-                    modified = True
+                current_type = entry['type']
                 
-                # Fix missing or empty type
-                if 'type' not in entry or not entry.get('type', '').strip():
-                    entry['type'] = default_type
-                    types_added += 1
-                    modified = True
+                # Skip if already valid
+                if current_type in self.valid_types:
+                    continue
                 
-                if modified:
-                    entries_fixed += 1
+                # Map to valid type
+                new_type = self.map_invalid_type(current_type, json_file.name)
+                entry['type'] = new_type
+                
+                # Track changes
+                type_changes[current_type] = new_type
+                entries_fixed += 1
             
-            # Only write if we made changes
+            # Save if we made changes
             if entries_fixed > 0:
                 with open(json_file, 'w', encoding='utf-8') as f:
                     json.dump(data, f, indent=2, ensure_ascii=False)
                 
-                print(f"  ✓ {json_file.name}: Fixed {entries_fixed}/{len(data)} entries")
-                if names_added > 0:
-                    print(f"    - Added {names_added} names")
-                if types_added > 0:
-                    print(f"    - Added {types_added} types")
+                print(f"  ✓ {json_file.name}: Fixed {entries_fixed} entries")
+                for old_type, new_type in type_changes.items():
+                    print(f"    - '{old_type}' → '{new_type}'")
                 
                 self.stats['entries_fixed'] += entries_fixed
-                self.stats['names_added'] += names_added
-                self.stats['types_added'] += types_added
-                self.fixed_files.append(json_file.name)
+                self.stats['type_mappings'].update(type_changes)
                 return True
             else:
-                print(f"  ✓ {json_file.name}: Already valid")
+                print(f"  ✓ {json_file.name}: All types valid")
                 return False
-                
-        except json.JSONDecodeError as e:
-            print(f"  ❌ {json_file.name}: Invalid JSON - {e}")
-            return False
+            
         except Exception as e:
             print(f"  ❌ {json_file.name}: Error - {e}")
             return False
     
     def fix_all_files(self):
-        """Fix all JSON files in data directory"""
-        print("Fixing JSON files...")
+        """Fix all JSON files"""
+        print("Fixing item types...")
         print()
         
         data_dir = self.repo_path / "data"
@@ -153,139 +196,154 @@ class JSONAutoFixer:
         json_files = sorted(data_dir.glob("*.json"))
         
         for json_file in json_files:
-            self.stats['files_processed'] += 1
             if self.fix_json_file(json_file):
                 self.stats['files_fixed'] += 1
         
         print()
         return True
     
-    def verify_fixes(self):
-        """Verify that fixes worked"""
-        print("Verifying fixes...")
-        print()
+    def create_import_script(self):
+        """Create a working import script for Foundry console"""
+        script = '''// SWSE Data Import Script
+// Paste this into Foundry console (F12)
+
+async function importSWSEData() {
+  const files = [
+    { file: 'classes.json', type: 'class' },
+    { file: 'feats.json', type: 'feat' },
+    { file: 'talents.json', type: 'talent' },
+    { file: 'forcepowers.json', type: 'forcePower' },
+    { file: 'weapons.json', type: 'weapon' },
+    { file: 'equipment.json', type: 'equipment' },
+    { file: 'skills.json', type: 'skill' },
+    { file: 'combat-actions.json', type: 'combatAction' },
+    { file: 'conditions.json', type: 'condition' }
+  ];
+  
+  let totalImported = 0;
+  let totalSkipped = 0;
+  
+  for (const {file, type} of files) {
+    try {
+      const response = await fetch(`systems/swse/data/${file}`);
+      if (!response.ok) {
+        console.log(`⚠ ${file} not found - skipping`);
+        continue;
+      }
+      
+      const items = await response.json();
+      let imported = 0;
+      let skipped = 0;
+      
+      for (const itemData of items) {
+        // Validate required fields
+        if (!itemData.name || !itemData.name.trim()) {
+          console.warn(`Skipping item with no name in ${file}`);
+          skipped++;
+          continue;
+        }
         
-        data_dir = self.repo_path / "data"
-        json_files = sorted(data_dir.glob("*.json"))
+        // Check if already exists
+        const existing = game.items.find(i => 
+          i.name === itemData.name && i.type === itemData.type
+        );
         
-        total_issues = 0
+        if (existing) {
+          skipped++;
+          continue;
+        }
         
-        for json_file in json_files:
-            try:
-                with open(json_file, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                
-                if not isinstance(data, list):
-                    continue
-                
-                issues = 0
-                for entry in data:
-                    if not isinstance(entry, dict):
-                        continue
-                    
-                    if 'name' not in entry or not entry.get('name', '').strip():
-                        issues += 1
-                    if 'type' not in entry or not entry.get('type', '').strip():
-                        issues += 1
-                
-                if issues > 0:
-                    print(f"  ⚠ {json_file.name}: Still has {issues} issues")
-                    total_issues += issues
-                else:
-                    print(f"  ✓ {json_file.name}: All entries valid")
-            
-            except Exception as e:
-                print(f"  ❌ {json_file.name}: Error - {e}")
+        // Create item
+        try {
+          await Item.create({
+            name: itemData.name,
+            type: itemData.type,
+            system: itemData
+          });
+          imported++;
+        } catch (err) {
+          console.error(`Failed to create ${itemData.name}:`, err.message);
+          skipped++;
+        }
+      }
+      
+      console.log(`✓ ${file}: Imported ${imported}, Skipped ${skipped}`);
+      totalImported += imported;
+      totalSkipped += skipped;
+      
+    } catch (error) {
+      console.error(`❌ Error loading ${file}:`, error);
+    }
+  }
+  
+  console.log(`\\n✓ Import complete!`);
+  console.log(`  Total imported: ${totalImported}`);
+  console.log(`  Total skipped: ${totalSkipped}`);
+  console.log(`\\nTotal items in world: ${game.items.size}`);
+}
+
+// Run the import
+await importSWSEData();
+'''
         
-        print()
+        script_path = self.backup_dir / "IMPORT_SCRIPT.js"
+        with open(script_path, 'w', encoding='utf-8') as f:
+            f.write(script)
         
-        if total_issues == 0:
-            print("✓ All files verified successfully!")
-        else:
-            print(f"⚠ {total_issues} issues remain")
-        
-        return total_issues == 0
+        return script_path
     
     def run(self):
-        """Execute the auto-fix"""
+        """Execute the fix"""
         print("="*70)
-        print("Auto-Fix SWSE JSON Files")
+        print("Fix SWSE Item Types for Foundry")
         print("="*70)
-        print()
         
         if not self.repo_path.exists():
             print(f"❌ Repository not found: {self.repo_path}")
             return False
         
         try:
-            # Create backup
             self.create_backup()
+            self.fix_all_files()
+            script_path = self.create_import_script()
             
-            # Fix all files
-            if not self.fix_all_files():
-                return False
-            
-            # Verify fixes
-            all_valid = self.verify_fixes()
-            
-            # Print summary
             print("="*70)
-            print("✓ Auto-Fix Complete")
+            print("✓ Type Fix Complete")
             print("="*70)
             print()
             print(f"Backup: {self.backup_dir}")
+            print(f"Import script: {script_path}")
             print()
             print("📊 Statistics:")
-            print(f"  Files processed: {self.stats['files_processed']}")
-            print(f"  Files modified: {self.stats['files_fixed']}")
+            print(f"  Files fixed: {self.stats['files_fixed']}")
             print(f"  Entries fixed: {self.stats['entries_fixed']}")
-            print(f"  Names added: {self.stats['names_added']}")
-            print(f"  Types added: {self.stats['types_added']}")
             print()
             
-            if self.fixed_files:
-                print("Modified files:")
-                for filename in self.fixed_files:
-                    print(f"  • {filename}")
+            if self.stats['type_mappings']:
+                print("Type mappings applied:")
+                for old, new in sorted(set(self.stats['type_mappings'].items())):
+                    print(f"  '{old}' → '{new}'")
                 print()
             
-            if all_valid:
-                print("✓ ALL JSON FILES ARE NOW VALID!")
-                print()
-                print("NEXT STEPS:")
-                print("1. Restart Foundry VTT")
-                print("2. Open console (F12) and run:")
-                print("   WorldDataLoader.loadAll()")
-                print("3. Check console for 'Loaded X items' messages")
-                print("4. Verify data imported correctly")
-            else:
-                print("⚠ Some issues remain - check output above")
-                print(f"  Restore from backup if needed: {self.backup_dir}")
+            print("NEXT STEPS:")
+            print("1. Review the changes above")
+            print("2. Restart Foundry VTT")
+            print(f"3. Open {script_path}")
+            print("4. Copy the script and paste into Foundry console (F12)")
+            print("5. Press Enter to run the import")
+            print()
             
-            return all_valid
+            return True
             
         except Exception as e:
             print(f"\n❌ Error: {e}")
-            print(f"Restore from: {self.backup_dir}")
             import traceback
             traceback.print_exc()
             return False
 
 
 def main():
-    print("\n⚠️  WARNING: This will modify your JSON files!")
-    print(f"Backup will be created at: {BACKUP_DIR}")
-    print()
-    
-    response = input("Continue? (yes/no): ").strip().lower()
-    
-    if response not in ['yes', 'y']:
-        print("Aborted.")
-        return 1
-    
-    print()
-    
-    fixer = JSONAutoFixer()
+    fixer = TypeFixer()
     success = fixer.run()
     return 0 if success else 1
 

@@ -1,0 +1,335 @@
+[
+  {
+    "name": "Jedi",
+    "type": "Heroic",
+    "defense_bonus": {
+      "fortitude": 1,
+      "reflex": 1,
+      "will": 1
+    }
+  },
+  {
+    "name": "Noble",
+    "type": "Heroic",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 1,
+      "will": 2
+    }
+  },
+  {
+    "name": "Scoundrel",
+    "type": "Heroic",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 2,
+      "will": 1
+    }
+  },
+  {
+    "name": "Scout",
+    "type": "Heroic",
+    "defense_bonus": {
+      "fortitude": 1,
+      "reflex": 2,
+      "will": 0
+    }
+  },
+  {
+    "name": "Soldier",
+    "type": "Heroic",
+    "defense_bonus": {
+      "fortitude": 2,
+      "reflex": 1,
+      "will": 0
+    }
+  },
+  {
+    "name": "Ace Pilot",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 2,
+      "reflex": 4,
+      "will": 0
+    }
+  },
+  {
+    "name": "Bounty Hunter",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 2,
+      "reflex": 4,
+      "will": 0
+    }
+  },
+  {
+    "name": "Crime Lord",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 2,
+      "will": 4
+    }
+  },
+  {
+    "name": "Elite Trooper",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 4,
+      "reflex": 2,
+      "will": 0
+    }
+  },
+  {
+    "name": "Force Adept",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 2,
+      "reflex": 2,
+      "will": 4
+    }
+  },
+  {
+    "name": "Force Disciple",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 3,
+      "reflex": 3,
+      "will": 6
+    }
+  },
+  {
+    "name": "Gunslinger",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 4,
+      "will": 2
+    }
+  },
+  {
+    "name": "Jedi Knight",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 2,
+      "reflex": 2,
+      "will": 2
+    }
+  },
+  {
+    "name": "Jedi Master",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 3,
+      "reflex": 3,
+      "will": 3
+    }
+  },
+  {
+    "name": "Officer",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 2,
+      "will": 4
+    }
+  },
+  {
+    "name": "Sith Apprentice",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 2,
+      "reflex": 2,
+      "will": 2
+    }
+  },
+  {
+    "name": "Sith Lord",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 3,
+      "reflex": 3,
+      "will": 3
+    }
+  },
+  {
+    "name": "Corporate Agent",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 2,
+      "will": 4
+    }
+  },
+  {
+    "name": "Gladiator",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 2,
+      "reflex": 4,
+      "will": 0
+    }
+  },
+  {
+    "name": "Melee Duelist",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 4,
+      "will": 2
+    }
+  },
+  {
+    "name": "Enforcer",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 4,
+      "will": 2
+    }
+  },
+  {
+    "name": "Independent Droid",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 2,
+      "will": 4
+    }
+  },
+  {
+    "name": "Infiltrator",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 4,
+      "will": 2
+    }
+  },
+  {
+    "name": "Master Privateer",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 2,
+      "will": 4
+    }
+  },
+  {
+    "name": "Medic",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 4,
+      "reflex": 0,
+      "will": 2
+    }
+  },
+  {
+    "name": "Saboteur",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 2,
+      "will": 4
+    }
+  },
+  {
+    "name": "Assassin",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 2,
+      "reflex": 4,
+      "will": 0
+    }
+  },
+  {
+    "name": "Charlatan",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 2,
+      "will": 4
+    }
+  },
+  {
+    "name": "Outlaw",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 2,
+      "reflex": 4,
+      "will": 0
+    }
+  },
+  {
+    "name": "Droid Commander",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 2,
+      "reflex": 2,
+      "will": 2
+    }
+  },
+  {
+    "name": "Military Engineer",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 2,
+      "reflex": 2,
+      "will": 2
+    }
+  },
+  {
+    "name": "Vanguard",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 4,
+      "reflex": 2,
+      "will": 0
+    }
+  },
+  {
+    "name": "Imperial Knight",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 2,
+      "reflex": 2,
+      "will": 2
+    }
+  },
+  {
+    "name": "Shaper",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 2,
+      "reflex": 0,
+      "will": 4
+    }
+  },
+  {
+    "name": "Improviser",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 0,
+      "reflex": 2,
+      "will": 4
+    }
+  },
+  {
+    "name": "Pathfinder",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 4,
+      "reflex": 2,
+      "will": 0
+    }
+  },
+  {
+    "name": "Martial Arts Master",
+    "type": "Prestige",
+    "defense_bonus": {
+      "fortitude": 4,
+      "reflex": 2,
+      "will": 0
+    }
+  }
+]
