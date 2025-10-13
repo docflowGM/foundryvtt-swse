@@ -3,7 +3,7 @@
     "name": "Acrobatic Strike",
     "type": "feat",
     "prerequisite": "Acrobatics 15 ranks",
-    "description": "You can use Acrobatics to tumble through an enemy’s space and gain a +2 bonus on your next melee attack against that enemy.",
+    "description": "You can use Acrobatics to tumble through an enemy\u2019s space and gain a +2 bonus on your next melee attack against that enemy.",
     "sourcebook": "Galaxy at War",
     "page": 23,
     "tags": [
@@ -14,7 +14,10 @@
     ],
     "bonus_feat_for": [
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You can use Acrobatics to tumble through an enemy\u2019s space and gain a +2 bonus on your next melee attack against that enemy."
+    }
   },
   {
     "name": "Adaptable Talent",
@@ -29,7 +32,10 @@
       "temporary",
       "utility"
     ],
-    "bonus_feat_for": []
+    "bonus_feat_for": [],
+    "system": {
+      "description": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute."
+    }
   },
   {
     "name": "Advanced Melee Weapon Proficiency",
@@ -45,7 +51,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You are proficient with advanced melee weapons and do not take the -5 penalty when using them."
+    }
   },
   {
     "name": "Armor Proficiency (Light)",
@@ -62,7 +71,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You are proficient with light armor and do not take armor check penalties on attack rolls."
+    }
   },
   {
     "name": "Armor Proficiency (Medium)",
@@ -78,7 +90,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You are proficient with medium armor and do not take armor check penalties on attack rolls."
+    }
   },
   {
     "name": "Armor Proficiency (Heavy)",
@@ -94,7 +109,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You are proficient with heavy armor and do not take armor check penalties on attack rolls."
+    }
   },
   {
     "name": "Assured Attack",
@@ -110,7 +128,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "Once per encounter, you may reroll an attack roll and take the better result."
+    }
   },
   {
     "name": "Autofire Assault",
@@ -127,7 +148,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on damage rolls made with autofire attacks."
+    }
   },
   {
     "name": "Bantha Rush",
@@ -144,7 +168,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You may make a bull rush attempt as a swift action after hitting with a melee attack."
+    }
   },
   {
     "name": "Battle Meditation",
@@ -161,7 +188,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You may spend a Force Point to grant allies within line of sight a +1 bonus to attack rolls, skill checks, and Will Defense for 1 minute."
+    }
   },
   {
     "name": "Block",
@@ -178,7 +208,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "Once per round, when you are hit by a melee attack, you may negate the hit. Make a Use the Force check; if the result equals or exceeds the attack roll, the attack is negated."
+    }
   },
   {
     "name": "Burst of Speed",
@@ -194,7 +227,10 @@
     ],
     "bonus_feat_for": [
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "Once per encounter, you may move an additional 2 squares as a swift action."
+    }
   },
   {
     "name": "Charging Fire",
@@ -211,7 +247,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You may make a ranged attack at the end of a charge, taking a -2 penalty on the attack roll."
+    }
   },
   {
     "name": "Cleave",
@@ -227,7 +266,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "If you deal enough damage to drop a target, you may make an immediate melee attack against another target within reach."
+    }
   },
   {
     "name": "Combat Reflexes",
@@ -244,7 +286,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You may make a number of attacks of opportunity per round equal to your Dexterity modifier."
+    }
   },
   {
     "name": "Conditioned",
@@ -261,7 +306,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Endurance checks and may reroll a failed Endurance check once per encounter."
+    }
   },
   {
     "name": "Coordinated Attack",
@@ -278,7 +326,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "When you and an ally both attack the same target in the same round, you each gain a +1 bonus to attack rolls against that target."
+    }
   },
   {
     "name": "Crush",
@@ -294,7 +345,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You may spend a Force Point to move a target -1 step down the condition track when using Force Grip."
+    }
   },
   {
     "name": "Deadeye",
@@ -311,7 +365,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You may reroll a ranged attack roll once per encounter and take the better result."
+    }
   },
   {
     "name": "Delay Damage",
@@ -327,7 +384,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "Once per encounter, you may delay the effects of damage taken until the end of your next turn."
+    }
   },
   {
     "name": "Deflect",
@@ -344,7 +404,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "Once per round, when you are hit by a ranged attack, you may negate the hit. Make a Use the Force check; if the result equals or exceeds the attack roll, the attack is negated."
+    }
   },
   {
     "name": "Desperate Gambit",
@@ -359,7 +422,10 @@
       "penalty",
       "natural 20"
     ],
-    "bonus_feat_for": []
+    "bonus_feat_for": [],
+    "system": {
+      "description": "Once per day, you may take a -5 penalty on a skill check to treat the result as if you had rolled a natural 20."
+    }
   },
   {
     "name": "Double Attack",
@@ -376,7 +442,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You may make two attacks on your turn as a full-round action, each at a -5 penalty."
+    }
   },
   {
     "name": "Dual Weapon Mastery I",
@@ -393,7 +462,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You reduce the penalty for fighting with two weapons by 2."
+    }
   },
   {
     "name": "Dual Weapon Mastery II",
@@ -409,7 +481,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You reduce the penalty for fighting with two weapons by an additional 2."
+    }
   },
   {
     "name": "Dual Weapon Mastery III",
@@ -425,7 +500,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You take no penalty for fighting with two weapons."
+    }
   },
   {
     "name": "Educated",
@@ -441,7 +519,10 @@
     ],
     "bonus_feat_for": [
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "Choose two Knowledge skills. You gain a +5 bonus on checks with those skills."
+    }
   },
   {
     "name": "Elusive Target",
@@ -458,7 +539,10 @@
     ],
     "bonus_feat_for": [
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "When fighting defensively or using the total defense action, you may redirect missed melee attacks to another target adjacent to you."
+    }
   },
   {
     "name": "Far Shot",
@@ -475,7 +559,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You reduce the range penalties for ranged attacks by half."
+    }
   },
   {
     "name": "Fast Surge",
@@ -491,7 +578,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You may activate Surge as a swift action instead of a standard action."
+    }
   },
   {
     "name": "Fast Talk",
@@ -508,7 +598,10 @@
     ],
     "bonus_feat_for": [
       "Scoundrel"
-    ]
+    ],
+    "system": {
+      "description": "You may make a Persuasion check to feint in combat as a swift action instead of a standard action."
+    }
   },
   {
     "name": "Force Boon",
@@ -524,7 +617,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You gain an additional Force Point at the beginning of each level."
+    }
   },
   {
     "name": "Force Focus",
@@ -540,7 +636,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Use the Force checks made to activate a specific Force power you select when taking this feat."
+    }
   },
   {
     "name": "Force Training",
@@ -556,7 +655,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You learn a number of Force powers equal to 1 + your Wisdom modifier."
+    }
   },
   {
     "name": "Forceful Blast",
@@ -572,7 +674,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You may spend a Force Point to move a target -1 step down the condition track when using Force Slam."
+    }
   },
   {
     "name": "Forceful Grip",
@@ -588,7 +693,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Use the Force checks made to activate Force Grip."
+    }
   },
   {
     "name": "Forceful Slam",
@@ -604,7 +712,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Use the Force checks made to activate Force Slam."
+    }
   },
   {
     "name": "Forceful Throw",
@@ -620,7 +731,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Use the Force checks made to activate Move Object."
+    }
   },
   {
     "name": "Forceful Vitality",
@@ -637,7 +751,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Endurance checks and may reroll a failed Endurance check once per encounter."
+    }
   },
   {
     "name": "Frightful Presence",
@@ -654,7 +771,10 @@
     ],
     "bonus_feat_for": [
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "As a standard action, you may make a Persuasion check to intimidate all enemies within 6 squares. On a success, targets move -1 step down the condition track."
+    }
   },
   {
     "name": "Frightening Presence",
@@ -671,13 +791,16 @@
     ],
     "bonus_feat_for": [
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "When you use Frightful Presence, targets that fail their Will Defense check move -2 steps down the condition track instead of -1."
+    }
   },
   {
     "name": "Force Regimen Mastery",
     "type": "feat",
     "prerequisite": "Trained in Use the Force",
-    "description": "You may spend a Force Point to gain the benefit of a Force Regimen you’ve completed within the last 24 hours.",
+    "description": "You may spend a Force Point to gain the benefit of a Force Regimen you\u2019ve completed within the last 24 hours.",
     "sourcebook": "Jedi Academy Training Manual",
     "page": 31,
     "tags": [
@@ -688,7 +811,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You may spend a Force Point to gain the benefit of a Force Regimen you\u2019ve completed within the last 24 hours."
+    }
   },
   {
     "name": "Forceful Recovery",
@@ -705,7 +831,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You may spend a Force Point to reroll a failed Endurance check to recover from a condition or persistent effect."
+    }
   },
   {
     "name": "Forceful Saber Throw",
@@ -722,7 +851,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Use the Force checks made to activate Saber Throw."
+    }
   },
   {
     "name": "Forceful Strike",
@@ -738,7 +870,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You may spend a Force Point to move a target -1 step down the condition track when using Force Stun."
+    }
   },
   {
     "name": "Forceful Stun",
@@ -754,7 +889,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Use the Force checks made to activate Force Stun."
+    }
   },
   {
     "name": "Forceful Telekinesis",
@@ -770,7 +908,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You may spend a Force Point to move a target -1 step down the condition track when using Move Object."
+    }
   },
   {
     "name": "Forceful Warrior",
@@ -787,7 +928,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on melee attack rolls made while using a Force power."
+    }
   },
   {
     "name": "Forceful Weapon",
@@ -803,7 +947,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Use the Force checks made to activate Battle Strike."
+    }
   },
   {
     "name": "Forceful Will",
@@ -820,7 +967,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Will Defense against mind-affecting effects and may reroll a failed Will Defense check once per encounter."
+    }
   },
   {
     "name": "Friendly Fire Avoidance",
@@ -837,7 +987,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You may choose to exclude a number of squares equal to your Dexterity modifier from the area of effect of your autofire attacks."
+    }
   },
   {
     "name": "Frightening Presence",
@@ -854,7 +1007,10 @@
     ],
     "bonus_feat_for": [
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "When you use Frightful Presence, targets that fail their Will Defense check move -2 steps down the condition track instead of -1."
+    }
   },
   {
     "name": "Grappling Strike",
@@ -871,7 +1027,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "When you hit with a melee attack, you may initiate a grapple as a free action without provoking an attack of opportunity."
+    }
   },
   {
     "name": "Great Fortitude",
@@ -888,7 +1047,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus to your Fortitude Defense."
+    }
   },
   {
     "name": "Greater Weapon Focus",
@@ -905,7 +1067,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +1 bonus on attack rolls with the selected weapon group. This stacks with Weapon Focus."
+    }
   },
   {
     "name": "Greater Weapon Specialization",
@@ -922,7 +1087,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on damage rolls with the selected weapon group. This stacks with Weapon Specialization."
+    }
   },
   {
     "name": "Hard Target",
@@ -939,10 +1107,13 @@
     ],
     "bonus_feat_for": [
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus to Reflex Defense against ranged attacks while moving at least 2 squares on your turn."
+    }
   },
   {
-    "name": "Harm’s Way",
+    "name": "Harm\u2019s Way",
     "type": "feat",
     "prerequisite": "Base attack bonus +6",
     "description": "As a reaction, you may take damage dealt to an adjacent ally instead of them.",
@@ -956,7 +1127,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "As a reaction, you may take damage dealt to an adjacent ally instead of them."
+    }
   },
   {
     "name": "Headstrong",
@@ -974,7 +1148,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Will Defense against fear effects and may reroll a failed Will Defense check once per encounter."
+    }
   },
   {
     "name": "Heavy Weapon Proficiency",
@@ -990,7 +1167,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You are proficient with heavy weapons and do not take the -5 penalty when using them."
+    }
   },
   {
     "name": "Heroic Surge",
@@ -1007,7 +1187,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "Once per encounter, you may take an additional standard or move action on your turn."
+    }
   },
   {
     "name": "Hew",
@@ -1024,7 +1207,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "When you use Power Attack, you ignore an amount of damage reduction equal to your base attack bonus."
+    }
   },
   {
     "name": "Improved Defenses",
@@ -1044,7 +1230,10 @@
       "Soldier",
       "Scout",
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +1 bonus to your Reflex, Fortitude, and Will Defense."
+    }
   },
   {
     "name": "Improved Damage Threshold",
@@ -1061,7 +1250,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "Your damage threshold increases by 5."
+    }
   },
   {
     "name": "Improved Disarm",
@@ -1078,7 +1270,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +5 bonus on attack rolls made to disarm an opponent."
+    }
   },
   {
     "name": "Improved Grapple",
@@ -1095,7 +1290,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +5 bonus on grapple checks and do not provoke attacks of opportunity when initiating a grapple."
+    }
   },
   {
     "name": "Improved Knock Prone",
@@ -1112,7 +1310,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +5 bonus on attack rolls made to knock an opponent prone."
+    }
   },
   {
     "name": "Improved Stun",
@@ -1129,7 +1330,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +5 bonus on attack rolls made to stun an opponent."
+    }
   },
   {
     "name": "Indomitable Will",
@@ -1147,7 +1351,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Will Defense against mind-affecting effects and may reroll a failed Will Defense check once per encounter."
+    }
   },
   {
     "name": "Intimidating Presence",
@@ -1165,7 +1372,10 @@
     "bonus_feat_for": [
       "Noble",
       "Scoundrel"
-    ]
+    ],
+    "system": {
+      "description": "You may use Persuasion to intimidate as a swift action instead of a standard action."
+    }
   },
   {
     "name": "Intuitive Initiative",
@@ -1182,7 +1392,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You may reroll your Initiative check and take the better result. You must keep the new result even if it is worse."
+    }
   },
   {
     "name": "Jack of All Trades",
@@ -1199,7 +1412,10 @@
     "bonus_feat_for": [
       "Noble",
       "Scoundrel"
-    ]
+    ],
+    "system": {
+      "description": "You may make untrained skill checks with any skill, even those that normally require training."
+    }
   },
   {
     "name": "Keen Force Mind",
@@ -1216,7 +1432,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Use the Force checks made to activate mind-affecting Force powers."
+    }
   },
   {
     "name": "Knock Prone",
@@ -1232,7 +1451,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You may attempt to knock an opponent prone with a melee attack. If successful, the target falls prone."
+    }
   },
   {
     "name": "Lightning Reflexes",
@@ -1249,7 +1471,10 @@
     "bonus_feat_for": [
       "Scout",
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus to your Reflex Defense."
+    }
   },
   {
     "name": "Linguist",
@@ -1265,7 +1490,10 @@
     ],
     "bonus_feat_for": [
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "You learn three additional languages. You may take this feat multiple times."
+    }
   },
   {
     "name": "Low Profile",
@@ -1283,7 +1511,10 @@
     "bonus_feat_for": [
       "Scout",
       "Scoundrel"
-    ]
+    ],
+    "system": {
+      "description": "You gain cover from enemies at long range and may reroll Stealth checks made to avoid detection."
+    }
   },
   {
     "name": "Lucky Shot",
@@ -1301,7 +1532,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "Once per encounter, you may reroll a ranged attack roll and take the better result."
+    }
   },
   {
     "name": "Melee Defense",
@@ -1318,7 +1552,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "As a swift action, you may take a -5 penalty on melee attack rolls to gain a +5 bonus to your Reflex Defense against melee attacks until the start of your next turn."
+    }
   },
   {
     "name": "Mighty Swing",
@@ -1335,7 +1572,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "Once per encounter, you may reroll a melee attack roll and take the better result."
+    }
   },
   {
     "name": "Mobile Fighting",
@@ -1352,7 +1592,10 @@
     ],
     "bonus_feat_for": [
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You may move up to your speed when using the withdraw action, and you gain a +2 bonus to Reflex Defense against attacks of opportunity provoked by movement."
+    }
   },
   {
     "name": "Mobility",
@@ -1369,7 +1612,10 @@
     ],
     "bonus_feat_for": [
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +5 bonus to Reflex Defense against attacks of opportunity provoked by movement."
+    }
   },
   {
     "name": "Mounted Combat",
@@ -1386,7 +1632,10 @@
     ],
     "bonus_feat_for": [
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "Once per round, when your mount is hit in combat, you may make a Ride check to negate the hit."
+    }
   },
   {
     "name": "Natural Leader",
@@ -1403,7 +1652,10 @@
     ],
     "bonus_feat_for": [
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "You may grant allies within line of sight a +1 bonus on attack rolls and skill checks for 1 minute as a standard action once per encounter."
+    }
   },
   {
     "name": "Noble Fencing Style",
@@ -1420,7 +1672,10 @@
     ],
     "bonus_feat_for": [
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "When wielding a weapon with Weapon Finesse, you may use your Charisma modifier instead of Strength for attack rolls."
+    }
   },
   {
     "name": "Pin",
@@ -1436,7 +1691,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You may attempt to pin a grappled opponent. If successful, the target is immobilized until they escape the grapple."
+    }
   },
   {
     "name": "Point Blank Shot",
@@ -1454,7 +1712,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +1 bonus on attack and damage rolls against targets within 30 squares."
+    }
   },
   {
     "name": "Power Attack",
@@ -1471,7 +1732,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You may take a penalty on melee attack rolls to gain a bonus on melee damage rolls equal to the penalty."
+    }
   },
   {
     "name": "Precise Shot",
@@ -1489,7 +1753,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You do not take the -5 penalty for firing into melee."
+    }
   },
   {
     "name": "Quick Draw",
@@ -1507,7 +1774,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scoundrel"
-    ]
+    ],
+    "system": {
+      "description": "You may draw or holster a weapon as a swift action instead of a move action."
+    }
   },
   {
     "name": "Rapid Shot",
@@ -1525,7 +1795,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "When making a full attack with a ranged weapon, you may make one additional attack. All attacks take a -2 penalty."
+    }
   },
   {
     "name": "Reactive Stealth",
@@ -1542,7 +1815,10 @@
     "bonus_feat_for": [
       "Scoundrel",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "Once per encounter, you may reroll a Stealth check and take the better result."
+    }
   },
   {
     "name": "Reckless Charge",
@@ -1559,7 +1835,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "When you charge, you gain a +2 bonus on melee attack rolls but take a -2 penalty to Reflex Defense until the start of your next turn."
+    }
   },
   {
     "name": "Redirect Shot",
@@ -1576,7 +1855,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "When you successfully negate a ranged attack with Deflect, you may redirect the shot to another target within line of sight."
+    }
   },
   {
     "name": "Resilient Strength",
@@ -1593,7 +1875,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Fortitude Defense against effects that target Strength and may reroll a failed check once per encounter."
+    }
   },
   {
     "name": "Resilient Talent",
@@ -1608,7 +1893,10 @@
       "temporary",
       "resilience"
     ],
-    "bonus_feat_for": []
+    "bonus_feat_for": [],
+    "system": {
+      "description": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute. You may use this talent even if you do not meet its prerequisites."
+    }
   },
   {
     "name": "Running Attack",
@@ -1626,7 +1914,10 @@
     "bonus_feat_for": [
       "Scout",
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You may make a single melee or ranged attack at any point during a move action taken on your turn."
+    }
   },
   {
     "name": "Saber Throw",
@@ -1643,7 +1934,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You may throw your lightsaber as a ranged attack using Use the Force instead of a ranged attack roll. The lightsaber returns to your hand at the end of the turn."
+    }
   },
   {
     "name": "Savage Attack",
@@ -1660,7 +1954,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You may reroll a damage roll and take the better result. You must keep the new result even if it is worse."
+    }
   },
   {
     "name": "Scavenger",
@@ -1678,7 +1975,10 @@
     "bonus_feat_for": [
       "Scoundrel",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You may reroll a Mechanics check made to disable or salvage a device and take the better result."
+    }
   },
   {
     "name": "Rapid Strike",
@@ -1695,7 +1995,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "When making a full attack with a melee weapon, you may make one additional attack. All attacks take a -2 penalty."
+    }
   },
   {
     "name": "Reactive Awareness",
@@ -1713,7 +2016,10 @@
     "bonus_feat_for": [
       "Scout",
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "Once per encounter, you may reroll a Perception check and take the better result."
+    }
   },
   {
     "name": "Resilient Reflexes",
@@ -1730,7 +2036,10 @@
     ],
     "bonus_feat_for": [
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Reflex Defense against effects that target Dexterity and may reroll a failed check once per encounter."
+    }
   },
   {
     "name": "Resilient Will",
@@ -1747,7 +2056,10 @@
     ],
     "bonus_feat_for": [
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Will Defense against effects that target Wisdom and may reroll a failed check once per encounter."
+    }
   },
   {
     "name": "Skill Focus",
@@ -1764,7 +2076,10 @@
     "bonus_feat_for": [
       "Noble",
       "Scoundrel"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +5 bonus on all checks with the selected skill."
+    }
   },
   {
     "name": "Skill Training",
@@ -1781,7 +2096,10 @@
     "bonus_feat_for": [
       "Noble",
       "Scoundrel"
-    ]
+    ],
+    "system": {
+      "description": "You become trained in one additional skill. You may take this feat multiple times."
+    }
   },
   {
     "name": "Slippery Maneuver",
@@ -1798,7 +2116,10 @@
     ],
     "bonus_feat_for": [
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You may reroll a check made to escape a grapple or avoid being pinned and take the better result."
+    }
   },
   {
     "name": "Sniper",
@@ -1815,7 +2136,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You may aim as a move action instead of a standard action when using a rifle or pistol."
+    }
   },
   {
     "name": "Spring Attack",
@@ -1832,7 +2156,10 @@
     ],
     "bonus_feat_for": [
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "When making a melee attack, you may move both before and after the attack, up to your speed, without provoking attacks of opportunity from the target."
+    }
   },
   {
     "name": "Staggering Attack",
@@ -1848,7 +2175,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack."
+    }
   },
   {
     "name": "Stealthy",
@@ -1865,7 +2195,10 @@
     "bonus_feat_for": [
       "Scoundrel",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Stealth checks and may reroll a failed Stealth check once per encounter."
+    }
   },
   {
     "name": "Stunning Strike",
@@ -1881,7 +2214,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack."
+    }
   },
   {
     "name": "Surgical Precision",
@@ -1898,7 +2234,10 @@
     ],
     "bonus_feat_for": [
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Treat Injury checks and may reroll a failed check once per encounter."
+    }
   },
   {
     "name": "Tech Specialist",
@@ -1915,7 +2254,10 @@
     ],
     "bonus_feat_for": [
       "Scoundrel"
-    ]
+    ],
+    "system": {
+      "description": "You may modify equipment, weapons, armor, or droids to grant a +2 equipment bonus to one skill or ability. Takes 1 hour and requires a workshop."
+    }
   },
   {
     "name": "Toughness",
@@ -1932,7 +2274,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You gain +5 hit points."
+    }
   },
   {
     "name": "Triple Crit",
@@ -1949,7 +2294,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "When you score a critical hit with the selected weapon group, you deal triple damage instead of double."
+    }
   },
   {
     "name": "Triple Crit Specialist",
@@ -1966,7 +2314,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "When you score a critical hit with the selected weapon group, you deal triple damage and move the target -1 step down the condition track."
+    }
   },
   {
     "name": "Trustworthy",
@@ -1983,7 +2334,10 @@
     ],
     "bonus_feat_for": [
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on Persuasion checks and may reroll a failed Persuasion check once per encounter."
+    }
   },
   {
     "name": "Two-Weapon Fighting",
@@ -2000,7 +2354,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You reduce the penalty for fighting with two weapons by 2."
+    }
   },
   {
     "name": "Unstoppable Force",
@@ -2017,7 +2374,10 @@
     ],
     "bonus_feat_for": [
       "Jedi"
-    ]
+    ],
+    "system": {
+      "description": "You may spend a Force Point to ignore damage reduction or energy resistance when using a damaging Force power."
+    }
   },
   {
     "name": "Vehicular Combat",
@@ -2034,7 +2394,10 @@
     ],
     "bonus_feat_for": [
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "Once per round, when your vehicle is hit in combat, you may make a Pilot check to negate the hit."
+    }
   },
   {
     "name": "Weapon Finesse",
@@ -2052,7 +2415,10 @@
     "bonus_feat_for": [
       "Scout",
       "Scoundrel"
-    ]
+    ],
+    "system": {
+      "description": "You may use your Dexterity modifier instead of Strength for attack rolls with light melee weapons."
+    }
   },
   {
     "name": "Weapon Focus",
@@ -2069,7 +2435,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +1 bonus on attack rolls with the selected weapon group."
+    }
   },
   {
     "name": "Weapon Proficiency (Heavy Weapons)",
@@ -2085,7 +2454,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You are proficient with heavy weapons and do not take the -5 penalty when using them."
+    }
   },
   {
     "name": "Weapon Proficiency (Pistols)",
@@ -2103,7 +2475,10 @@
       "Soldier",
       "Scout",
       "Scoundrel"
-    ]
+    ],
+    "system": {
+      "description": "You are proficient with pistols and do not take the -5 penalty when using them."
+    }
   },
   {
     "name": "Weapon Proficiency (Rifles)",
@@ -2120,7 +2495,10 @@
     "bonus_feat_for": [
       "Soldier",
       "Scout"
-    ]
+    ],
+    "system": {
+      "description": "You are proficient with rifles and do not take the -5 penalty when using them."
+    }
   },
   {
     "name": "Weapon Proficiency (Simple Weapons)",
@@ -2139,7 +2517,10 @@
       "Scout",
       "Scoundrel",
       "Noble"
-    ]
+    ],
+    "system": {
+      "description": "You are proficient with simple weapons and do not take the -5 penalty when using them."
+    }
   },
   {
     "name": "Weapon Specialization",
@@ -2156,7 +2537,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "You gain a +2 bonus on damage rolls with the selected weapon group."
+    }
   },
   {
     "name": "Whirlwind Attack",
@@ -2173,7 +2557,10 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "When making a melee attack, you may attack all adjacent enemies once each as a full-round action."
+    }
   },
   {
     "name": "Wounding Strike",
@@ -2189,6 +2576,9 @@
     ],
     "bonus_feat_for": [
       "Soldier"
-    ]
+    ],
+    "system": {
+      "description": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack."
+    }
   }
 ]
