@@ -1,0 +1,180 @@
+{{!-- Updated SWSE Character Sheet (automatically generated) --}}
+<div class="character-sheet">
+  <header class="sheet-header">
+    <h1>{{labels.sheetTitle}} — {{name}}</h1>
+    <div class="sheet-controls">
+      <button type="button" class="save-sheet">Save (flags)</button>
+      <button type="button" class="load-sheet">Load (flags)</button>
+    </div>
+  </header>
+
+  <section class="basic-info">
+    <label>Name</label>
+    <input name="name" value="{{name}}" />
+
+    <label>Level</label>
+    <input type="number" name="system.level" value="{{system.level}}" />
+
+    <label>Class(es)</label>
+    <div class="class-list">
+      {{#each system.classes}}
+        <div class="class-row">{{this.name}} (lvl {{this.level}})</div>
+      {{/each}}
+    </div>
+
+    <label>Species</label>
+    <select name="system.race" class="species-select">
+      {{#each races}}
+        <option value="{{@key}}" {{#if (eq @key ../system.race)}}selected{{/if}}>{{this.name}}</option>
+      {{/each}}
+    </select>
+
+    <label>Destiny</label>
+    <input type="number" name="system.destinyPoints.value" value="{{system.destinyPoints.value}}" class="small-input" />
+  </section>
+
+  <section class="main-stats">
+    <div class="abilities">
+      {{!-- abilities displayed from system --}}
+      {{#each system.abilities}}
+        <div class="ability">
+          <label>{{@key}}</label>
+          <input type="number" name="system.abilities.{{@key}}.base" value="{{this.base}}" />
+          <span class="ability-mod">({{this.mod}})</span>
+        </div>
+      {{/each}}
+    </div>
+
+    <div class="combat">
+      <div class="half-level">
+        <label>½ Level</label>
+        <div class="half-value">{{mathFloor (div system.level 2)}}</div>
+      </div>
+
+      <div class="hp-row">
+        <label>HP</label>
+        <input type="number" name="system.hp.value" value="{{system.hp.value}}" class="hp-small" />
+        <span>/</span>
+        <input type="number" name="system.hp.max" value="{{system.hp.max}}" class="hp-small" />
+        <label>Temp</label>
+        <input type="number" name="system.hp.temp" value="{{system.hp.temp}}" class="hp-small" />
+      </div>
+
+      <div class="force-row">
+        <label>Force Points</label>
+        <input type="number" name="system.forcePoints.value" value="{{system.forcePoints.value}}" class="fp-small" />
+        <span>/</span>
+        <input type="number" name="system.forcePoints.max" value="{{system.forcePoints.max}}" class="fp-small" />
+        <select name="system.forcePoints.die" class="fp-die">
+          <option value="1d6" {{#if (eq system.forcePoints.die "1d6")}}selected{{/if}}>1d6</option>
+          <option value="1d8" {{#if (eq system.forcePoints.die "1d8")}}selected{{/if}}>1d8</option>
+          <option value="1d10" {{#if (eq system.forcePoints.die "1d10")}}selected{{/if}}>1d10</option>
+        </select>
+      </div>
+
+      <div class="dt-row">
+        <label>Damage Threshold</label>
+        <div class="dt-value">{{damageThreshold}}</div>
+        <label>Misc</label>
+        <input type="number" name="system.damageThresholdMisc" value="{{system.damageThresholdMisc}}" />
+      </div>
+    </div>
+  </section>
+
+  <section class="condition-secondwind">
+    <div class="condition-track">
+      <label>Condition</label>
+      <select name="system.conditionTrack">
+        <option value="normal" {{#if (eq system.conditionTrack "normal")}}selected{{/if}}>Normal</option>
+        <option value="-1" {{#if (eq system.conditionTrack "-1")}}selected{{/if}}>-1</option>
+        <option value="-2" {{#if (eq system.conditionTrack "-2")}}selected{{/if}}>-2</option>
+        <option value="-5" {{#if (eq system.conditionTrack "-5")}}selected{{/if}}>-5</option>
+        <option value="-10" {{#if (eq system.conditionTrack "-10")}}selected{{/if}}>-10</option>
+        <option value="helpless" {{#if (eq system.conditionTrack "helpless")}}selected{{/if}}>Helpless</option>
+      </select>
+    </div>
+
+    <div class="second-wind">
+      <label>Second Wind</label>
+      <div class="second-stats">
+        <div>Auto heal: <strong>{{system.secondWind.healing}}</strong></div>
+        <label>Misc</label>
+        <input type="number" name="system.secondWind.misc" value="{{system.secondWind.misc}}" />
+        <label>Uses</label>
+        <input type="number" name="system.secondWind.uses" value="{{system.secondWind.uses}}" />
+        <label>Max</label>
+        <input type="number" name="system.secondWind.max" value="{{system.secondWind.max}}" />
+        <button type="button" class="apply-second-wind">Take Second Wind</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="tabs">
+    <div class="tab-list">
+      <button class="tab active" data-tab="armor">Armor & Equipment</button>
+      <button class="tab" data-tab="feats">Feats & Talents</button>
+      <button class="tab" data-tab="powers">Force Powers</button>
+      <button class="tab" data-tab="weapons">Weapons</button>
+    </div>
+
+    <div class="tab-content armor active" id="armor-tab">
+      {{!-- Armor list --}} 
+      <div class="list-armor">
+        {{#each items}}
+          {{#if (eq this.type "armor")}}
+            <div class="armor-entry">{{this.name}}</div>
+          {{/if}}
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="tab-content feats" id="feats-tab">
+      {{!-- Feats & Talents --}}
+      <div class="feats-list">
+        {{#each system.feats}}
+          <div class="feat-entry">{{this.name}}</div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="tab-content powers" id="powers-tab">
+      {{!-- Force powers rendered by items --}}
+      {{#each items}}
+        {{#if (eq this.type "forcepower")}}
+          <div class="forcepower-entry" data-item-id="{{this._id}}">
+            <div>{{this.name}} ({{this.system.uses.current}}/{{this.system.uses.max}})</div>
+            <button class="roll-forcepower">Use</button>
+          </div>
+        {{/if}}
+      {{/each}}
+    </div>
+
+    <div class="tab-content weapons" id="weapons-tab">
+      {{#each system.weapons}}
+        <div class="weapon-entry" data-index="{{@index}}">
+          <div>{{this.name}} — Damage: {{this.damage}}</div>
+          <button class="roll-weapon">Attack</button>
+        </div>
+      {{/each}}
+    </div>
+  </section>
+
+  <footer class="sheet-footer">
+    <small>SWSE — Sheet generated by updater</small>
+  </footer>
+</div>
+
+{{!-- Client-side script hooks (sheet behavior) --}}
+<script>
+  // Note: these jQuery selectors assume Foundry's rendered HTML context where `html` is available.
+  // The ActorSheet.activateListeners will bind these to foundry events.
+</script>
+
+<style>
+/* Compact styling shortcuts (keeps your theme but compacts HP/FP) */
+.character-sheet .hp-small { width: 64px; display:inline-block; }
+.character-sheet .fp-small { width: 48px; display:inline-block; }
+.character-sheet .fp-die { width: 72px; display:inline-block; }
+.character-sheet .small-input { width: 48px; }
+.character-sheet .second-wind { margin-top: 8px; padding: 8px; border: 1px solid #555; border-radius: 6px; background: rgba(255,255,255,0.04); }
+</style>

@@ -1,5 +1,6 @@
 // swse-actor.js (upgraded by swse_sheet_updater.py)
 // Adds defaults, second-wind auto-calculation, flag persistence, and simple data loader.
+// NOTE: This file intentionally retains and extends your original SWSEActor behavior.
 
 import { SWSE_RACES } from "./races.js";
 
@@ -8,7 +9,6 @@ const SIZE_SPEED_MOD = { tiny: 2, small: 1, medium: 0, large: -1, huge: -2, garg
 const SIZE_DAMAGE_MOD = { tiny: -5, small: 0, medium: 0, large: 5, huge: 10, gargantuan: 20, colossal: 50 };
 
 Hooks.once("init", async function() {
-  // Load static JSON config into game.swse for availability in sheets
   if (!game.swse) game.swse = {};
   try {
     const basePath = "systems/swse/data";
@@ -25,7 +25,6 @@ Hooks.once("init", async function() {
     console.warn("SWSE: failed to load data JSON:", err);
   }
 
-  // Attempt to load species compendium if present
   try {
     const pack = game.packs.get("swse.species");
     if (pack) {
@@ -53,7 +52,7 @@ export class SWSEActor extends Actor {
     this._syncFreeForcePowers();
     this._applyDamageThreshold();
     this._calculateInitiative();
-    this._calculateSecondWind(); // ensure second wind healing is present
+    this._calculateSecondWind();
   }
 
   _ensureSystemStructure() {
@@ -61,7 +60,6 @@ export class SWSEActor extends Actor {
     if (!sys.abilities) sys.abilities = {};
     ["str","dex","con","int","wis","cha"].forEach(ab => {
       if (!sys.abilities[ab]) sys.abilities[ab] = { base: 10, racial: 0, temp: 0, total: 10, mod: 0 };
-      // normalize types
       sys.abilities[ab].base = Number(sys.abilities[ab].base || 10);
       sys.abilities[ab].racial = Number(sys.abilities[ab].racial || 0);
       sys.abilities[ab].temp = Number(sys.abilities[ab].temp || 0);
@@ -198,7 +196,7 @@ export class SWSEActor extends Actor {
     const sizeMod = SIZE_DAMAGE_MOD[size] || 0;
     const hasFeat = this.items.some(i => i.type === "feat" && i.name === "Improved Damage Threshold");
     const featBonus = hasFeat ? 5 : 0;
-    this.system.damageThreshold = fort + sizeMod + featBonus + (this.system.damageThresholdMisc || 0);
+    this.system.damageThreshold = fort + sizeMod + featBonus + (Number(this.system.damageThresholdMisc || 0));
   }
 
   _calculateInitiative() {
@@ -218,7 +216,7 @@ export class SWSEActor extends Actor {
     return heal;
   }
 
-  // Helper methods
+  // Helpers
   getSkillMod(skill) {
     if (!skill) return 0;
     const abilMod = this.system.abilities?.[skill.ability]?.mod || 0;
@@ -236,10 +234,10 @@ export class SWSEActor extends Actor {
 export class SWSEActorSheet extends ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "sheet", "actor", "character"],
+      classes: ["swse","sheet","actor","character"],
       template: "systems/swse/templates/actor/character-sheet.hbs",
-      width: 900,
-      height: 650,
+      width: 1000,
+      height: 720,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "main"}],
       resizable: true
     });
@@ -251,9 +249,7 @@ export class SWSEActorSheet extends ActorSheet {
     context.items = this.actor.items.map(i => i.toObject());
     context.damageThreshold = this.actor.system.damageThreshold;
     context.races = SWSE_RACES;
-    context.labels = {
-      sheetTitle: game.i18n.localize("SWSE.SheetLabel.character") || "Character"
-    };
+    context.labels = { sheetTitle: game.i18n.localize("SWSE.SheetLabel.character") || "Character" };
     return context;
   }
 
@@ -281,10 +277,12 @@ export class SWSEActorSheet extends ActorSheet {
     html.find(".level-up").click(this._onLevelUp.bind(this));
 
     html.find(".apply-second-wind").click(this._onSecondWind.bind(this));
+    html.find(".apply-second-wind, .apply-second-wind").click(this._onSecondWind.bind(this));
+    html.find(".apply-second-wind").click(this._onSecondWind.bind(this));
 
     html.find(".open-store-btn").click(this._onOpenStore.bind(this));
 
-    // Save/Load sheet data to flags
+    // Save/Load to flags
     html.find(".save-sheet").click(async ev => {
       ev.preventDefault();
       await this.actor.setFlag("swse", "sheetData", this.actor.system);
@@ -302,7 +300,7 @@ export class SWSEActorSheet extends ActorSheet {
     });
   }
 
-  // --- existing handlers (kept but slightly updated to use flags where appropriate) ---
+  // (most handlers preserved from earlier code — second wind and force power handlers included)
   async _onRollWeapon(event) {
     event.preventDefault();
     const idx = Number(event.currentTarget.closest(".weapon-entry")?.dataset.index);
@@ -454,9 +452,7 @@ export class SWSEActorSheet extends ActorSheet {
       "system.secondWind.uses": this.actor.system.secondWind.uses - 1
     });
 
-    // Persist the sheet data snapshot into flags (so it's easy to restore)
     await this.actor.setFlag("swse", "sheetData", this.actor.system);
-
     ui.notifications.info(`Second Wind! Healed ${healing} HP.`);
   }
 }
