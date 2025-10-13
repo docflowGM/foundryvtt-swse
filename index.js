@@ -1,9 +1,9 @@
 // ============================================
 // FILE: index.js
-// Star Wars Saga Edition (SWSE) - FoundryVTT v13
+// Star Wars Saga Edition (SWSE) - FoundryVTT v13+
 // ============================================
 
-import { registerHandlebarsHelpers } from './helpers/handlebars-helpers.js';
+import { registerHandlebarsHelpers } from "./helpers/handlebars-helpers.js";
 import { SWSE } from "./config.js";
 import { SWSEActor, SWSEActorSheet } from "./scripts/swse-actor.js";
 import { SWSEDroidSheet } from "./scripts/swse-droid.js";
@@ -27,7 +27,7 @@ Hooks.once("init", async () => {
   CONFIG.SWSE = SWSE;
   game.swse = {
     data: SWSEData,
-    SWSE: SWSE
+    SWSE: SWSE,
   };
 
   // -------------------------------
@@ -36,42 +36,46 @@ Hooks.once("init", async () => {
   CONFIG.Actor.documentClass = SWSEActor;
 
   // -------------------------------
-  // Sheet Registration (Foundry v13)
+  // Sheet Registration (Foundry v13+)
   // -------------------------------
+  const { DocumentSheetConfig } = foundry.applications.documents;
+  const { ActorSheet } = foundry.appv1.sheets;
+  const { ItemSheet } = foundry.appv1.sheets;
+
   // Unregister core sheets
-  DocumentSheetConfig.unregisterSheet(Actor, "core", ActorSheet);
-  DocumentSheetConfig.unregisterSheet(Item, "core", ItemSheet);
+  DocumentSheetConfig.unregisterSheet(foundry.documents.BaseActor, "core", ActorSheet);
+  DocumentSheetConfig.unregisterSheet(foundry.documents.BaseItem, "core", ItemSheet);
 
   // Register Actor Sheets
-  DocumentSheetConfig.registerSheet(Actor, "swse", SWSEActorSheet, {
+  DocumentSheetConfig.registerSheet(foundry.documents.BaseActor, "swse", SWSEActorSheet, {
     types: ["character"],
     label: "SWSE Character Sheet",
-    makeDefault: true
+    makeDefault: true,
   });
 
-  DocumentSheetConfig.registerSheet(Actor, "swse", SWSEDroidSheet, {
+  DocumentSheetConfig.registerSheet(foundry.documents.BaseActor, "swse", SWSEDroidSheet, {
     types: ["droid"],
     label: "SWSE Droid Sheet",
-    makeDefault: true
+    makeDefault: true,
   });
 
-  DocumentSheetConfig.registerSheet(Actor, "swse", SWSEVehicleSheet, {
+  DocumentSheetConfig.registerSheet(foundry.documents.BaseActor, "swse", SWSEVehicleSheet, {
     types: ["vehicle"],
     label: "SWSE Vehicle Sheet",
-    makeDefault: true
+    makeDefault: true,
   });
 
-  DocumentSheetConfig.registerSheet(Actor, "swse", SWSEActorSheet, {
+  DocumentSheetConfig.registerSheet(foundry.documents.BaseActor, "swse", SWSEActorSheet, {
     types: ["npc"],
     label: "SWSE NPC Sheet",
-    makeDefault: true
+    makeDefault: true,
   });
 
-  // Register Item Sheet
-  DocumentSheetConfig.registerSheet(Item, "swse", SWSEItemSheet, {
+  // Register Item Sheets
+  DocumentSheetConfig.registerSheet(foundry.documents.BaseItem, "swse", SWSEItemSheet, {
     types: SWSE.itemTypes,
     label: "SWSE Item Sheet",
-    makeDefault: true
+    makeDefault: true,
   });
 
   // -------------------------------
@@ -111,26 +115,6 @@ Hooks.once("ready", async () => {
 });
 
 // ============================================
-// HANDLEBARS HELPERS
-// ============================================
-function registerHandlebarsHelpers() {
-  Handlebars.registerHelper("checked", value => value ? "checked" : "");
-  Handlebars.registerHelper("gte", (a, b) => a >= b);
-  Handlebars.registerHelper("upper", str => typeof str === "string" ? str.toUpperCase() : "");
-  Handlebars.registerHelper("toUpperCase", str => typeof str === "string" ? str.toUpperCase() : "");
-  Handlebars.registerHelper("capitalize", str => typeof str === "string" ? str.charAt(0).toUpperCase() + str.slice(1) : "");
-  Handlebars.registerHelper("array", function () { return Array.prototype.slice.call(arguments, 0, -1); });
-  Handlebars.registerHelper("keys", obj => (obj ? Object.keys(obj) : []));
-  Handlebars.registerHelper("eq", (a, b) => a === b);
-  Handlebars.registerHelper("lte", (a, b) => a <= b);
-  Handlebars.registerHelper("json", context => JSON.stringify(context));
-  Handlebars.registerHelper("getCrewName", id => {
-    const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
-    return actor ? actor.name : "";
-  });
-}
-
-// ============================================
 // SETTINGS
 // ============================================
 function registerSettings() {
@@ -140,7 +124,7 @@ function registerSettings() {
     scope: "world",
     config: true,
     type: Number,
-    default: 2
+    default: 2,
   });
 
   game.settings.register("swse", "storeSettings", {
@@ -148,14 +132,14 @@ function registerSettings() {
     scope: "world",
     config: false,
     type: Object,
-    default: { buyMultiplier: 1.0, sellMultiplier: 0.5 }
+    default: { buyMultiplier: 1.0, sellMultiplier: 0.5 },
   });
 
   game.settings.register("swse", "dataLoaded", {
     scope: "world",
     config: false,
     type: Boolean,
-    default: false
+    default: false,
   });
 }
 
