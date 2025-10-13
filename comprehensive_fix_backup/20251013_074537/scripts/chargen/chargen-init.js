@@ -1,7 +1,7 @@
 import CharacterGenerator from './chargen.js';
 
 Hooks.on('renderActorDirectory', (app, html, data) => {
-    const createButton = $(html).find('.create-entity, .document-create');
+    const createButton = html.find('.create-entity, .document-create');
     
     createButton.on('click', async (event) => {
         const documentName = event.currentTarget.dataset.documentClass || event.currentTarget.dataset.type;
@@ -45,7 +45,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
 // Also add button to actor directory header
 Hooks.on('renderActorDirectory', (app, html, data) => {
     if (game.user.isGM) {
-        const header = $(html).find('.directory-header');
+        const header = html.find('.directory-header');
         if (header.find('.chargen-button').length === 0) {
             const button = $(`<button class="chargen-button"><i class="fas fa-hat-wizard"></i> Character Generator</button>`);
             button.on('click', () => {

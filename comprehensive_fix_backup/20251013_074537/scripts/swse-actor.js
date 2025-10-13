@@ -57,12 +57,7 @@ export class SWSEActor extends Actor {
     });
 
     if (!sys.hp) sys.hp = { value: 1, max: 1 };
-    if (!sys.speed || typeof sys.speed === 'number') {
-      sys.speed = { base: sys.speed || 6, total: sys.speed || 6 };
-    } else if (!sys.speed.base) {
-      sys.speed.base = 6;
-      sys.speed.total = 6;
-    }
+    if (!sys.speed) sys.speed = { base: 6, total: 6 };
     if (!sys.forcePoints) sys.forcePoints = { value: 1, max: 1 };
     if (!sys.destinyPoints) sys.destinyPoints = { value: 0, max: 0 };
     if (!sys.freeForcePowers) sys.freeForcePowers = { current: 0, max: 0 };
