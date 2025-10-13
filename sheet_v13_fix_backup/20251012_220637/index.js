@@ -61,6 +61,7 @@ Hooks.once("init", async () => {
     makeDefault: true
   });
 
+  // Use SWSEActorSheet for NPCs as well (or create SWSENPCSheet if you have one)
   DocumentSheetConfig.registerSheet(Actor, "swse", SWSEActorSheet, {
     types: ["npc"],
     label: "SWSE NPC Sheet",
@@ -115,19 +116,91 @@ Hooks.once("ready", async () => {
 // ============================================
 function registerHandlebarsHelpers() {
   Handlebars.registerHelper("checked", value => value ? "checked" : "");
+
   Handlebars.registerHelper("gte", (a, b) => a >= b);
-  Handlebars.registerHelper("upper", str => typeof str === "string" ? str.toUpperCase() : "");
-  Handlebars.registerHelper("toUpperCase", str => typeof str === "string" ? str.toUpperCase() : "");
-  Handlebars.registerHelper("capitalize", str => typeof str === "string" ? str.charAt(0).toUpperCase() + str.slice(1) : "");
-  Handlebars.registerHelper("array", function () { return Array.prototype.slice.call(arguments, 0, -1); });
+
+  // --- String Helpers ---
+  Handlebars.registerHelper("upper", str =>
+    typeof str === "string" ? str.toUpperCase() : ""
+  );
+
+  Handlebars.registerHelper("toUpperCase", str =>
+    typeof str === "string" ? str.toUpperCase() : ""
+  );
+
+  Handlebars.registerHelper("capitalize", str =>
+    typeof str === "string" ? str.charAt(0).toUpperCase() + str.slice(1) : ""
+  );
+
+  // --- Array/Object Helpers ---
+  Handlebars.registerHelper("array", function () {
+    return Array.prototype.slice.call(arguments, 0, -1);
+  });
+
   Handlebars.registerHelper("keys", obj => (obj ? Object.keys(obj) : []));
+
+  // --- Comparison Helpers ---
   Handlebars.registerHelper("eq", (a, b) => a === b);
   Handlebars.registerHelper("lte", (a, b) => a <= b);
+
+  // --- Debugging/Utility ---
   Handlebars.registerHelper("json", context => JSON.stringify(context));
+
+  // --- Custom SWSE Helpers ---
   Handlebars.registerHelper("getCrewName", id => {
     const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
     return actor ? actor.name : "";
   });
+
+  Handlebars.registerHelper("calculateDamageThreshold", actor => {
+    if (!actor?.system) return 0;
+
+    const fortitude = actor.system.defenses?.fortitude?.total ?? 10;
+    const size = actor.system.size ?? "medium";
+
+    const sizeMods = {
+      tiny: -5,
+      small: 0,
+      medium: 0,
+      large: 5,
+      huge: 10,
+      gargantuan: 20,
+      colossal: 50
+    };
+
+    const sizeMod = sizeMods[size.toLowerCase()] ?? 0;
+
+    const hasFeat = actor.items?.some(
+      i => i.type === "feat" && i.name?.toLowerCase() === "improved damage threshold"
+    );
+
+    const featBonus = hasFeat ? 5 : 0;
+    return fortitude + sizeMod + featBonus;
+  });
+
+  Handlebars.registerHelper("getSkillMod", (skill, abilities, level, conditionTrack) => {
+    if (!skill || !abilities) return 0;
+
+    const abilMod = abilities[skill.ability]?.mod || 0;
+    const trained = skill.trained ? 5 : 0;
+    const focus = skill.focus ? 1 : 0;
+    const halfLevel = Math.floor((level || 1) / 2);
+    const conditionPenalty = getConditionPenalty(conditionTrack);
+
+    return abilMod + trained + focus + halfLevel + conditionPenalty;
+  });
+
+  function getConditionPenalty(track) {
+    const penalties = {
+      normal: 0,
+      "-1": -1,
+      "-2": -2,
+      "-5": -5,
+      "-10": -10,
+      helpless: -100
+    };
+    return penalties[track] || 0;
+  }
 }
 
 // ============================================
@@ -151,6 +224,23 @@ function registerSettings() {
     default: { buyMultiplier: 1.0, sellMultiplier: 0.5 }
   });
 
+  game.settings.register("swse", "storeMarkup", {
+    name: "Store Markup %",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 0
+  });
+
+  game.settings.register("swse", "storeDiscount", {
+    name: "Store Discount %",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 0
+  });
+
+  // Data load flag
   game.settings.register("swse", "dataLoaded", {
     scope: "world",
     config: false,
@@ -165,9 +255,12 @@ function registerSettings() {
 async function loadVehicleTemplates() {
   try {
     const response = await fetch("systems/swse/data/vehicles.json");
+
     if (response.ok) {
       game.swseVehicles = { templates: await response.json() };
-      console.log(`SWSE | Loaded ${game.swseVehicles.templates.length} vehicle templates.`);
+      console.log(
+        `SWSE | Loaded ${game.swseVehicles.templates.length} vehicle templates.`
+      );
     }
   } catch (err) {
     console.warn("SWSE | Could not load vehicle templates:", err);
