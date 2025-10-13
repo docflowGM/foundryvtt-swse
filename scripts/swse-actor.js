@@ -314,7 +314,7 @@ async _onOpenStore(event) {
   }
 }
 
-  }
+  
 
   async _onRollWeapon(event) {
     event.preventDefault();
