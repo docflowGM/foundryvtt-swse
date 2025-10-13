@@ -3,7 +3,7 @@
   "type": "system",
   "title": "Star Wars Saga Edition",
   "description": "Complete Star Wars Saga Edition implementation for FoundryVTT with automated character sheets, combat mechanics, Force powers, vehicles, and comprehensive game rules.",
-  "version": "1.1.22",
+  "version": "1.1.23",
   "compatibility": {
     "minimum": "11",
     "verified": "13",
@@ -66,18 +66,90 @@
     }
   ],
   "packs": [
-    { "name": "classes", "label": "Classes", "path": "packs/classes.db", "type": "Item", "system": "swse" },
-    { "name": "npc-classes", "label": "NPC Classes", "path": "packs/npc-classes.db", "type": "Item", "system": "swse" },
-    { "name": "prestige-classes", "label": "Prestige Classes", "path": "packs/prestige-classes.db", "type": "Item", "system": "swse" },
-    { "name": "talents", "label": "Talents", "path": "packs/talents.db", "type": "Item", "system": "swse" },
-    { "name": "feats", "label": "Feats", "path": "packs/feats.db", "type": "Item", "system": "swse" },
-    { "name": "species", "label": "Species", "path": "packs/species.db", "type": "Item", "system": "swse" },
-    { "name": "equipment", "label": "Equipment", "path": "packs/equipment.db", "type": "Item", "system": "swse" },
-    { "name": "weapons", "label": "Weapons", "path": "packs/weapons.db", "type": "Item", "system": "swse" },
-    { "name": "armor", "label": "Armor", "path": "packs/armor.db", "type": "Item", "system": "swse" },
-    { "name": "force-powers", "label": "Force Powers", "path": "packs/force-powers.db", "type": "Item", "system": "swse" },
-    { "name": "vehicles", "label": "Vehicles", "path": "packs/vehicles.db", "type": "Actor", "system": "swse" },
-    { "name": "npc", "label": "NPCs", "path": "packs/npc.db", "type": "Actor", "system": "swse" }
+    {
+      "name": "classes",
+      "label": "Classes",
+      "path": "packs/classes.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "npc-classes",
+      "label": "NPC Classes",
+      "path": "packs/npc-classes.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "prestige-classes",
+      "label": "Prestige Classes",
+      "path": "packs/prestige-classes.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "talents",
+      "label": "Talents",
+      "path": "packs/talents.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "feats",
+      "label": "Feats",
+      "path": "packs/feats.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "species",
+      "label": "Species",
+      "path": "packs/species.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "equipment",
+      "label": "Equipment",
+      "path": "packs/equipment.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "weapons",
+      "label": "Weapons",
+      "path": "packs/weapons.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "armor",
+      "label": "Armor",
+      "path": "packs/armor.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "force-powers",
+      "label": "Force Powers",
+      "path": "packs/force-powers.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "vehicles",
+      "label": "Vehicles",
+      "path": "packs/vehicles.db",
+      "type": "Actor",
+      "system": "swse"
+    },
+    {
+      "name": "npc",
+      "label": "NPCs",
+      "path": "packs/npc.db",
+      "type": "Actor",
+      "system": "swse"
+    }
   ],
   "models": {
     "Item": {
