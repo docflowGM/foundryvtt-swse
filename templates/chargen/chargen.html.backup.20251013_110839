@@ -1,0 +1,136 @@
+<div class="chargen-container">
+    <div class="chargen-header">
+        <h2>{{#if isLevelUp}}Level Up Character{{else}}Create New Character{{/if}}</h2>
+        <div class="step-indicator">Step: {{currentStep}}</div>
+    </div>
+
+    <div class="chargen-body">
+        {{#if (eq currentStep "name")}}
+        <div class="step-content">
+            <h3>Character Name</h3>
+            <input type="text" class="char-name-input" placeholder="Enter character name" value="{{characterData.name}}"/>
+        </div>
+        {{/if}}
+
+        {{#if (eq currentStep "species")}}
+        <div class="step-content">
+            <h3>Select Species</h3>
+            <div class="species-grid">
+                <button class="select-species species-card" data-species="Human">
+                    <h4>Human</h4>
+                    <p>Versatile and adaptable</p>
+                </button>
+                <button class="select-species species-card" data-species="Twi'lek">
+                    <h4>Twi'lek</h4>
+                    <p>+2 Charisma</p>
+                </button>
+                <button class="select-species species-card" data-species="Wookiee">
+                    <h4>Wookiee</h4>
+                    <p>+2 Strength</p>
+                </button>
+                <button class="select-species species-card" data-species="Bothan">
+                    <h4>Bothan</h4>
+                    <p>+2 Intelligence</p>
+                </button>
+                <button class="select-species species-card" data-species="Zabrak">
+                    <h4>Zabrak</h4>
+                    <p>+2 Constitution</p>
+                </button>
+            </div>
+        </div>
+        {{/if}}
+
+        {{#if (eq currentStep "abilities")}}
+        <div class="step-content">
+            <h3>Assign Ability Scores</h3>
+            <p>Point Buy: 25 points (min 8, max 18)</p>
+            <div class="abilities-grid">
+                {{#each characterData.abilities as |ability key|}}
+                <div class="ability-input">
+                    <label>{{key}}</label>
+                    <input type="number" name="abilities.{{key}}.base" value="{{ability.base}}" min="8" max="18"/>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
+
+        {{#if (eq currentStep "class")}}
+        <div class="step-content">
+            <h3>Select Class</h3>
+            <div class="class-grid">
+                <button class="select-class class-card" data-class="Jedi">
+                    <h4>Jedi</h4>
+                    <p>Force-sensitive warrior</p>
+                </button>
+                <button class="select-class class-card" data-class="Soldier">
+                    <h4>Soldier</h4>
+                    <p>Combat specialist</p>
+                </button>
+                <button class="select-class class-card" data-class="Scoundrel">
+                    <h4>Scoundrel</h4>
+                    <p>Skilled rogue</p>
+                </button>
+                <button class="select-class class-card" data-class="Scout">
+                    <h4>Scout</h4>
+                    <p>Wilderness expert</p>
+                </button>
+                <button class="select-class class-card" data-class="Noble">
+                    <h4>Noble</h4>
+                    <p>Leader and diplomat</p>
+                </button>
+            </div>
+        </div>
+        {{/if}}
+
+        {{#if (eq currentStep "feats")}}
+        <div class="step-content">
+            <h3>Select Feats</h3>
+            <p>Choose {{featsNeeded}} feat(s)</p>
+            <div class="feats-list">
+                {{#each availableFeats as |feat|}}
+                <button class="select-feat feat-card" data-feat-id="{{feat._id}}">
+                    <h4>{{feat.name}}</h4>
+                    <p>{{feat.system.description}}</p>
+                </button>
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
+
+        {{#if (eq currentStep "talents")}}
+        <div class="step-content">
+            <h3>Select Talent</h3>
+            <div class="talents-list">
+                {{#each availableTalents as |talent|}}
+                <button class="select-talent talent-card" data-talent-id="{{talent._id}}">
+                    <h4>{{talent.name}}</h4>
+                    <p>{{talent.system.description}}</p>
+                </button>
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
+
+        {{#if (eq currentStep "skills")}}
+        <div class="step-content">
+            <h3>Train Skills</h3>
+            <p>Select skills to train</p>
+            <div class="skills-list">
+                {{#each characterData.skills as |skill key|}}
+                <div class="skill-row">
+                    <input type="checkbox" name="skills.{{key}}.trained"/>
+                    <label>{{skill.label}}</label>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
+    </div>
+
+    <div class="chargen-footer">
+        <button class="prev-step">Previous</button>
+        <button class="next-step">Next</button>
+        <button class="finish">Finish</button>
+    </div>
+</div>
