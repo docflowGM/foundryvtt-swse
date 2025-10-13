@@ -42,7 +42,7 @@ export default class CharacterGenerator extends Application {
   }
 
   static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+    return mergeObject(super.defaultOptions, {
       classes: ["swse", "chargen"],
       template: "systems/swse/templates/chargen/chargen.html",
       width: 900,
@@ -68,13 +68,7 @@ export default class CharacterGenerator extends Application {
           this._packs[k] = [];
           continue;
         }
-        let docs = [];
-try {
-  const rawDocs = await pack.getDocuments();
-  docs = rawDocs.filter(d => d.name && d.type);
-} catch (err) {
-  console.warn(`Failed to load ${packName}:`, err);
-}
+        const docs = await pack.getDocuments();
         this._packs[k] = docs.map(d => d.toObject());
       } catch (err) {
         console.warn("chargen: failed to load pack", packName, err);

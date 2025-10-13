@@ -45,9 +45,3 @@ export function registerHandlebarsHelpers() {
     
     console.log('SWSE | Handlebars helpers registered');
 }
-/** ============================================
- * SWSE Added Helper: mathFloor
- * ============================================ */
-Handlebars.registerHelper("mathFloor", function(value) {
-  return Math.floor(value);
-});
