@@ -1,80 +1,28 @@
-import os
-import re
-import shutil
+import json
 
-# === CONFIGURATION ===
-BASE_DIR = r"C:\Users\Owner\Documents\GitHub\foundryvtt-swse"
-CHARGEN_PATH = os.path.join(BASE_DIR, "scripts", "chargen", "chargen.js")
-HELPERS_PATH = os.path.join(BASE_DIR, "scripts", "helpers", "handlebars-helpers.js")
-BACKUP_DIR = os.path.join(BASE_DIR, "backups")
+db_path = r"C:\Users\Owner\Documents\GitHub\foundryvtt-swse\packs\classes.db"
+print(f"Checking {db_path}...\n")
 
-# === ENSURE BACKUP DIR EXISTS ===
-os.makedirs(BACKUP_DIR, exist_ok=True)
+bad_entries = []
+valid_count = 0
 
-# === BACKUP ORIGINAL FILES ===
-for path in (CHARGEN_PATH, HELPERS_PATH):
-    if os.path.exists(path):
-        shutil.copy2(path, os.path.join(BACKUP_DIR, os.path.basename(path)))
-        print(f"✅ Backed up: {path}")
-    else:
-        print(f"⚠️ Missing file (skipped backup): {path}")
+with open(db_path, "r", encoding="utf-8") as f:
+    for i, line in enumerate(f, start=1):
+        try:
+            data = json.loads(line)
+            if not data.get("name") or not data.get("type"):
+                bad_entries.append((i, "Missing name or type"))
+            elif data["type"] != "class":
+                bad_entries.append((i, f"Incorrect type: {data['type']}"))
+            else:
+                valid_count += 1
+        except Exception as e:
+            bad_entries.append((i, f"JSON error: {e}"))
 
-# === PATCH chargen.js ===
-if os.path.exists(CHARGEN_PATH):
-    with open(CHARGEN_PATH, "r", encoding="utf-8") as f:
-        chargen_js = f.read()
-
-    # 1️⃣ Replace mergeObject() with foundry.utils.mergeObject()
-    chargen_js = re.sub(
-        r"(?<!foundry\.utils\.)mergeObject",
-        "foundry.utils.mergeObject",
-        chargen_js
-    )
-
-    # 2️⃣ Wrap pack.getDocuments() in try/catch safely
-    if "getDocuments();" in chargen_js and "filter(d => d.name && d.type)" not in chargen_js:
-        chargen_js = re.sub(
-            r"const\s+docs\s*=\s*await\s*pack\.getDocuments\(\);",
-            """let docs = [];
-try {
-  const rawDocs = await pack.getDocuments();
-  docs = rawDocs.filter(d => d.name && d.type);
-} catch (err) {
-  console.warn(`Failed to load ${packName}:`, err);
-}""",
-            chargen_js
-        )
-
-    with open(CHARGEN_PATH, "w", encoding="utf-8") as f:
-        f.write(chargen_js)
-
-    print("✅ Updated chargen.js with safer compendium loading and modern mergeObject usage.")
-
-# === PATCH handlebars-helpers.js ===
-if os.path.exists(HELPERS_PATH):
-    with open(HELPERS_PATH, "r", encoding="utf-8") as f:
-        helpers_js = f.read()
-
-    # Add mathFloor helper if missing
-    if "mathFloor" not in helpers_js:
-        math_helper = """
-/** ============================================
- * SWSE Added Helper: mathFloor
- * ============================================ */
-Handlebars.registerHelper("mathFloor", function(value) {
-  return Math.floor(value);
-});
-"""
-        helpers_js += math_helper
-        with open(HELPERS_PATH, "w", encoding="utf-8") as f:
-            f.write(helpers_js)
-        print("✅ Added mathFloor helper to handlebars-helpers.js")
-    else:
-        print("ℹ️ mathFloor helper already exists; no change made.")
+print(f"✅ Valid classes: {valid_count}")
+if bad_entries:
+    print(f"❌ Invalid entries: {len(bad_entries)}")
+    for line_no, reason in bad_entries:
+        print(f"  Line {line_no}: {reason}")
 else:
-    print("⚠️ No handlebars-helpers.js found; skipping helper patch.")
-
-print("\n🎉 All done! You can now reload Foundry (F5) to test:")
-print("   - Species should appear correctly in Character Generator.")
-print("   - mergeObject warnings should be gone.")
-print("   - Actor sheet should render without 'mathFloor' errors.")
+    print("✅ All class entries valid!")
