@@ -1,86 +1,9 @@
 // ============================================
-// FILE: scripts/swse-actor.js
-// SWSE Actor and Actor Sheet Classes
-// Integrated with existing system
+// FILE: scripts/sheets/swse-actor-sheet.js
+// Connects the HTML character sheet to Foundry VTT
 // ============================================
 
-/**
- * Extend the base Actor document
- */
-export class SWSEActor extends Actor {
-  prepareData() {
-    super.prepareData();
-  }
-
-  prepareDerivedData() {
-    const actorData = this;
-    const systemData = actorData.system;
-    const flags = actorData.flags.swse || {};
-
-    // Calculate ability modifiers
-    if (systemData.abilities) {
-      for (let [key, ability] of Object.entries(systemData.abilities)) {
-        ability.mod = Math.floor((ability.total - 10) / 2);
-      }
-    }
-
-    // Calculate half level
-    const halfLevel = Math.floor(systemData.level / 2);
-
-    // Calculate defenses if not already set
-    if (systemData.defenses) {
-      this._calculateDefenses(systemData, halfLevel);
-    }
-
-    // Calculate damage threshold
-    if (systemData.defenses?.fortitude) {
-      systemData.damageThreshold = systemData.defenses.fortitude.total + (systemData.damageThresholdMisc || 0);
-    }
-
-    // Calculate second wind healing
-    if (systemData.secondWind) {
-      const hpMax = systemData.hp?.max || 1;
-      const conMod = systemData.abilities?.con?.mod || 0;
-      const misc = systemData.secondWind.misc || 0;
-      systemData.secondWind.healing = Math.max(Math.floor(hpMax / 4), conMod) + misc;
-    }
-  }
-
-  _calculateDefenses(systemData, halfLevel) {
-    // Fortitude
-    if (systemData.defenses.fortitude) {
-      const fortAbility = Math.max(
-        systemData.abilities?.con?.mod || 0,
-        systemData.abilities?.str?.mod || 0
-      );
-      systemData.defenses.fortitude.total = 
-        10 + halfLevel + fortAbility + 
-        (systemData.defenses.fortitude.classBonus || 0) + 
-        (systemData.defenses.fortitude.misc || 0);
-    }
-
-    // Reflex
-    if (systemData.defenses.reflex) {
-      systemData.defenses.reflex.total = 
-        10 + halfLevel + (systemData.abilities?.dex?.mod || 0) + 
-        (systemData.defenses.reflex.classBonus || 0) + 
-        (systemData.defenses.reflex.misc || 0);
-    }
-
-    // Will
-    if (systemData.defenses.will) {
-      systemData.defenses.will.total = 
-        10 + halfLevel + (systemData.abilities?.wis?.mod || 0) + 
-        (systemData.defenses.will.classBonus || 0) + 
-        (systemData.defenses.will.misc || 0);
-    }
-  }
-}
-
-/**
- * Extend the base ActorSheet class
- */
-export class SWSEActorSheet extends ActorSheet {
+export default class SWSEActorSheet extends ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor", "character"],
@@ -107,14 +30,25 @@ export class SWSEActorSheet extends ActorSheet {
     // Calculate derived values
     context.halfLevel = Math.floor(context.system.level / 2);
     
-    // Ensure ability modifiers are calculated
-    for (let [key, ability] of Object.entries(context.system.abilities || {})) {
+    // Calculate ability modifiers
+    for (let [key, ability] of Object.entries(context.system.abilities)) {
       ability.mod = Math.floor((ability.total - 10) / 2);
       ability.label = key.toUpperCase();
     }
     
     // Calculate damage threshold
     context.damageThreshold = this._calculateDamageThreshold(context);
+    
+    // Calculate second wind healing
+    if (context.system.secondWind) {
+      const hpMax = context.system.hp.max || 1;
+      const conMod = context.system.abilities.con.mod || 0;
+      const misc = context.system.secondWind.misc || 0;
+      context.system.secondWind.healing = Math.max(
+        Math.floor(hpMax / 4),
+        conMod
+      ) + misc;
+    }
     
     // Organize items by type
     context.armor = this.actor.items.filter(i => i.type === "armor");
@@ -124,10 +58,10 @@ export class SWSEActorSheet extends ActorSheet {
     context.talents = this.actor.items.filter(i => i.type === "talent");
     context.equipment = this.actor.items.filter(i => i.type === "equipment");
     
-    // Load available races
+    // Load available races for dropdown
     context.races = this._getRacesList();
     
-    // Calculate skills
+    // Add skills
     context.skills = this._calculateSkills(context);
     
     return context;
@@ -140,23 +74,22 @@ export class SWSEActorSheet extends ActorSheet {
   }
 
   _getRacesList() {
+    // Return list of available species/races
     return {
       human: { name: "Human", bonuses: { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 } },
       twilek: { name: "Twi'lek", bonuses: { dex: 2, cha: 2 } },
       wookiee: { name: "Wookiee", bonuses: { str: 4, con: 2, int: -2 } },
       zabrak: { name: "Zabrak", bonuses: { con: 2, wis: 2 } },
-      bothan: { name: "Bothan", bonuses: { dex: 2, int: 2 } },
-      rodian: { name: "Rodian", bonuses: { dex: 2, wis: 2 } },
-      duros: { name: "Duros", bonuses: { dex: 2, int: 2 } },
-      sullustan: { name: "Sullustan", bonuses: { dex: 2, int: 2 } }
+      bothan: { name: "Bothan", bonuses: { dex: 2, int: 2 } }
     };
   }
 
   _calculateSkills(context) {
     const skills = context.system.skills || {};
     const halfLevel = Math.floor(context.system.level / 2);
-    const abilities = context.system.abilities || {};
+    const abilities = context.system.abilities;
     
+    // Define SWSE skills with their key abilities
     const skillDefinitions = {
       acrobatics: { ability: "dex", label: "Acrobatics" },
       climb: { ability: "str", label: "Climb" },
@@ -215,6 +148,7 @@ export class SWSEActorSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Make sheet editable only for owner
     if (!this.isEditable) return;
 
     // Tab switching
@@ -228,16 +162,18 @@ export class SWSEActorSheet extends ActorSheet {
 
     // HP/Force Point changes
     html.find('input[name="system.hp.value"]').change(this._onHPChange.bind(this));
+    html.find('input[name^="system.forcePoints"]').change(this._onForcePointChange.bind(this));
 
     // Second Wind
     html.find('.apply-second-wind').click(this._onSecondWind.bind(this));
 
+    // Defense recalculations
+    html.find('input[name^="system.defenses"]').change(this._onDefenseChange.bind(this));
+
     // Item management
-    html.find('.add-armor').click(ev => this._onAddItem("armor", ev));
-    html.find('.add-weapon').click(ev => this._onAddItem("weapon", ev));
-    html.find('.add-feat').click(ev => this._onAddItem("feat", ev));
-    html.find('.add-talent').click(ev => this._onAddItem("talent", ev));
-    html.find('.add-equipment').click(ev => this._onAddItem("equipment", ev));
+    html.find('.add-armor').click(this._onAddItem.bind(this, "armor"));
+    html.find('.add-weapon').click(this._onAddItem.bind(this, "weapon"));
+    html.find('.add-feat').click(this._onAddItem.bind(this, "feat"));
 
     // Force power actions
     html.find('.roll-forcepower').click(this._onUseForcePower.bind(this));
@@ -258,16 +194,21 @@ export class SWSEActorSheet extends ActorSheet {
     // Skill toggles
     html.find('.skill-trained').change(this._onSkillTrainedToggle.bind(this));
     html.find('.skill-focus').change(this._onSkillFocusToggle.bind(this));
+
+    // Drag and drop
+    this._activateDragDrop(html);
   }
 
   _onTabClick(event) {
     event.preventDefault();
     const target = event.currentTarget.dataset.tab;
     
+    // Update active tab
     const tabs = event.currentTarget.closest('.tab-row').querySelectorAll('.tab');
     tabs.forEach(t => t.classList.remove('active'));
     event.currentTarget.classList.add('active');
     
+    // Show corresponding content
     const contents = event.currentTarget.closest('.tabs').querySelectorAll('.tab-content');
     contents.forEach(c => c.classList.remove('active'));
     const targetContent = event.currentTarget.closest('.tabs').querySelector(`#${target}-tab`);
@@ -277,8 +218,9 @@ export class SWSEActorSheet extends ActorSheet {
   async _onAbilityChange(event) {
     event.preventDefault();
     const element = event.currentTarget;
-    const abilityKey = element.name.split('.')[2];
+    const abilityKey = element.name.split('.')[2]; // system.abilities.str.base
     
+    // Recalculate total and mod
     const base = parseInt(element.value) || 10;
     const racial = this.actor.system.abilities[abilityKey].racial || 0;
     const temp = this.actor.system.abilities[abilityKey].temp || 0;
@@ -294,8 +236,7 @@ export class SWSEActorSheet extends ActorSheet {
 
   _onAbilityRoll(event) {
     event.preventDefault();
-    const row = event.currentTarget.closest('.ability-row');
-    const abilityKey = row?.querySelector('.ability-label')?.textContent.toLowerCase().trim();
+    const abilityKey = event.currentTarget.closest('.ability-row')?.querySelector('.ability-label')?.textContent.toLowerCase();
     
     if (!abilityKey) return;
     
@@ -316,11 +257,17 @@ export class SWSEActorSheet extends ActorSheet {
     const value = parseInt(event.currentTarget.value) || 0;
     const max = this.actor.system.hp.max;
     
+    // Warn if HP drops to 0 or below
     if (value <= 0) {
       ui.notifications.warn(`${this.actor.name} has been reduced to 0 HP or below!`);
     }
     
     await this.actor.update({ "system.hp.value": Math.min(value, max) });
+  }
+
+  async _onForcePointChange(event) {
+    event.preventDefault();
+    // Update happens automatically via parent class
   }
 
   async _onSecondWind(event) {
@@ -349,6 +296,12 @@ export class SWSEActorSheet extends ActorSheet {
     });
   }
 
+  async _onDefenseChange(event) {
+    event.preventDefault();
+    // Defenses recalculate automatically via getData
+    this.render(false);
+  }
+
   async _onAddItem(type, event) {
     event.preventDefault();
     
@@ -375,8 +328,9 @@ export class SWSEActorSheet extends ActorSheet {
       return;
     }
     
-    const utfSkill = this.actor.system.skills?.useTheForce || {};
-    const abilityMod = this.actor.system.abilities?.cha?.mod || 0;
+    // Roll Use the Force check
+    const utfSkill = this.actor.system.skills.useTheForce || {};
+    const abilityMod = this.actor.system.abilities.cha.mod || 0;
     const halfLevel = Math.floor(this.actor.system.level / 2);
     const trained = utfSkill.trained ? 5 : 0;
     const focus = utfSkill.focus ? 5 : 0;
@@ -399,7 +353,7 @@ export class SWSEActorSheet extends ActorSheet {
     
     if (!item) return;
     
-    const currentFP = this.actor.system.forcePoints?.value || 0;
+    const currentFP = this.actor.system.forcePoints.value || 0;
     
     if (currentFP <= 0) {
       ui.notifications.warn("No Force Points remaining!");
@@ -431,21 +385,20 @@ export class SWSEActorSheet extends ActorSheet {
 
   async _onWeaponAttack(event) {
     event.preventDefault();
-    const itemId = event.currentTarget.closest('.weapon-entry').dataset.itemId;
-    const weapon = this.actor.items.get(itemId);
+    const weaponIndex = event.currentTarget.closest('.weapon-entry').dataset.index;
+    const weapon = this.actor.system.weapons?.[weaponIndex];
     
     if (!weapon) return;
     
     const bab = this.actor.system.bab || 0;
     const halfLevel = Math.floor(this.actor.system.level / 2);
-    const abilityMod = weapon.system.ability ? 
-      this.actor.system.abilities[weapon.system.ability]?.mod || 0 : 0;
-    const attackBonus = weapon.system.attackBonus || 0;
+    const abilityMod = weapon.ability ? this.actor.system.abilities[weapon.ability].mod : 0;
+    const attackBonus = weapon.attackBonus || 0;
     
     const total = bab + halfLevel + abilityMod + attackBonus;
     
     const attackRoll = new Roll(`1d20 + ${total}`);
-    const damageRoll = new Roll(weapon.system.damage || "1d6");
+    const damageRoll = new Roll(weapon.damage || "1d6");
     
     attackRoll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
@@ -484,6 +437,7 @@ export class SWSEActorSheet extends ActorSheet {
   async _onSaveSheet(event) {
     event.preventDefault();
     
+    // Save current sheet state to flags
     const sheetData = {
       abilities: this.actor.system.abilities,
       skills: this.actor.system.skills,
@@ -525,6 +479,15 @@ export class SWSEActorSheet extends ActorSheet {
     
     await this.actor.update({
       [`system.skills.${skillKey}.focus`]: focus
+    });
+  }
+
+  _activateDragDrop(html) {
+    const handler = ev => this._onDragStart(ev);
+    html.find('.item').each((i, li) => {
+      if (li.classList.contains("inventory-header")) return;
+      li.setAttribute("draggable", true);
+      li.addEventListener("dragstart", handler, false);
     });
   }
 }
