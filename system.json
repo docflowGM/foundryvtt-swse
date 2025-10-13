@@ -92,8 +92,8 @@
         "weapon",
         "armor",
         "forcepower",
-        "skill",           // NEW
-        "combat-action"    // NEW
+        "skill",           
+        "combat-action"    
       ],
       "class": {
         "base_class": true,
@@ -142,14 +142,14 @@
           "max": 1
         }
       },
-      "skill": {              // NEW minimal schema
+      "skill": {              
         "description": "",
         "ability": "",
         "trained": false,
         "focused": false,
         "misc": 0
       },
-      "combat-action": {      // NEW minimal schema
+      "combat-action": {      
         "description": "",
         "attackBonus": 0,
         "damage": ""
