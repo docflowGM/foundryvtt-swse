@@ -8,8 +8,8 @@ export async function preloadHandlebarsTemplates() {
     "systems/swse/templates/actor/vehicle-sheet.hbs",
     "systems/swse/templates/actor/npc-sheet.hbs",
     "systems/swse/templates/item/item-sheet.hbs",
-    // "systems/swse/templates/partials/defense-block.hbs", // Removed - doesn't exist
-    "systems/swse/templates/partials/item-entry.hbs",
+    // // // "systems/swse/templates/partials/defense-block.hbs" // Removed - does not exist, // Removed - does not exist // Removed - doesn't exist
+    // // "systems/swse/templates/partials/item-entry.hbs" // Removed - does not exist, // Removed - does not exist
     "systems/swse/templates/apps/chargen.hbs"
   ];
 

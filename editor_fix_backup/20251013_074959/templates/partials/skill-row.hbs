@@ -1,0 +1,11 @@
+{{!-- Single Skill Row Component --}}
+<div class="skill-row">
+    <div class="skill-name">{{label}}</div>
+    <div class="skill-ability">{{upper ability}}</div>
+    <div class="skill-half-level">{{halfLevel}}</div>
+    <div class="skill-total">{{total}}</div>
+    <input type="checkbox" name="system.skills.{{@key}}.trained" {{checked trained}} title="Trained (+5)"/>
+    <input type="checkbox" name="system.skills.{{@key}}.focused" {{checked focused}} title="Focused (+5)"/>
+    <input name="system.skills.{{@key}}.armor" type="number" value="{{armor}}" data-dtype="Number" class="skill-input"/>
+    <input name="system.skills.{{@key}}.misc" type="number" value="{{misc}}" data-dtype="Number" class="skill-input"/>
+</div>
