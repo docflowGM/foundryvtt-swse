@@ -1,6 +1,7 @@
 // ============================================
 // FILE: index.js
-// Star Wars Saga Edition (SWSE) - FoundryVTT v13+
+// Star Wars Saga Edition (SWSE) - FoundryVTT System
+// Compatible with Foundry v13.350+ and v14+
 // ============================================
 
 import { registerHandlebarsHelpers } from "./helpers/handlebars-helpers.js";
@@ -19,64 +20,24 @@ import "./scripts/chargen/chargen-init.js";
 // INIT HOOK
 // ============================================
 Hooks.once("init", async () => {
-  console.log("SWSE | Initializing Star Wars Saga Edition system...");
+  console.log("🛠️ SWSE | Initializing Star Wars Saga Edition system...");
 
   // -------------------------------
   // Global Config & Namespace
   // -------------------------------
   CONFIG.SWSE = SWSE;
+  CONFIG.Actor.documentClass = SWSEActor;
+
   game.swse = {
     data: SWSEData,
-    SWSE: SWSE,
+    SWSE,
+    version: "v13.350+",
   };
 
   // -------------------------------
-  // Document Classes
+  // Sheet Registration (Dual API)
   // -------------------------------
-  CONFIG.Actor.documentClass = SWSEActor;
-
-  // -------------------------------
-  // Sheet Registration (Foundry v13+)
-  // -------------------------------
-  const { DocumentSheetConfig } = foundry.applications.documents;
-  const { ActorSheet } = foundry.appv1.sheets;
-  const { ItemSheet } = foundry.appv1.sheets;
-
-  // Unregister core sheets
-  DocumentSheetConfig.unregisterSheet(foundry.documents.BaseActor, "core", ActorSheet);
-  DocumentSheetConfig.unregisterSheet(foundry.documents.BaseItem, "core", ItemSheet);
-
-  // Register Actor Sheets
-  DocumentSheetConfig.registerSheet(foundry.documents.BaseActor, "swse", SWSEActorSheet, {
-    types: ["character"],
-    label: "SWSE Character Sheet",
-    makeDefault: true,
-  });
-
-  DocumentSheetConfig.registerSheet(foundry.documents.BaseActor, "swse", SWSEDroidSheet, {
-    types: ["droid"],
-    label: "SWSE Droid Sheet",
-    makeDefault: true,
-  });
-
-  DocumentSheetConfig.registerSheet(foundry.documents.BaseActor, "swse", SWSEVehicleSheet, {
-    types: ["vehicle"],
-    label: "SWSE Vehicle Sheet",
-    makeDefault: true,
-  });
-
-  DocumentSheetConfig.registerSheet(foundry.documents.BaseActor, "swse", SWSEActorSheet, {
-    types: ["npc"],
-    label: "SWSE NPC Sheet",
-    makeDefault: true,
-  });
-
-  // Register Item Sheets
-  DocumentSheetConfig.registerSheet(foundry.documents.BaseItem, "swse", SWSEItemSheet, {
-    types: SWSE.itemTypes,
-    label: "SWSE Item Sheet",
-    makeDefault: true,
-  });
+  registerSWSESheets();
 
   // -------------------------------
   // Register Handlebars Helpers
@@ -84,7 +45,7 @@ Hooks.once("init", async () => {
   registerHandlebarsHelpers();
 
   // -------------------------------
-  // Register Game Settings
+  // Register Settings
   // -------------------------------
   registerSettings();
 
@@ -93,29 +54,115 @@ Hooks.once("init", async () => {
   // -------------------------------
   await preloadHandlebarsTemplates();
 
-  console.log("SWSE | System initialization complete.");
+  console.log("✅ SWSE | System initialization complete.");
 });
 
 // ============================================
 // READY HOOK
 // ============================================
 Hooks.once("ready", async () => {
-  console.log("SWSE | System ready. May the Force be with you.");
+  console.log("🚀 SWSE | System ready. May the Force be with you.");
 
-  // Setup store shortcut
+  // Create shortcut to open the SWSE Store
   game.swse.openStore = () => new SWSEStore().render(true);
 
   // Load vehicle templates
   await loadVehicleTemplates();
 
-  // Auto-load data on first run
+  // Auto-load data on first GM run
   if (game.user.isGM) {
     await WorldDataLoader.autoLoad();
   }
 });
 
 // ============================================
-// SETTINGS
+// REGISTER SHEETS (Dual Compatibility)
+// ============================================
+function registerSWSESheets() {
+  try {
+    // Detect Foundry version & API structure
+    const hasV14API = !!foundry.applications?.documents?.DocumentSheetConfig;
+
+    if (hasV14API) {
+      // ============================================
+      // 🧩 Foundry v14+ (DocumentSheetConfig API)
+      // ============================================
+      console.log("SWSE | Registering sheets using Foundry v14+ API");
+
+      const { DocumentSheetConfig } = foundry.applications.documents;
+      const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
+
+      // Unregister core sheets
+      DocumentSheetConfig.unregisterSheet(foundry.documents.BaseActor, "core", ActorSheet);
+      DocumentSheetConfig.unregisterSheet(foundry.documents.BaseItem, "core", ItemSheet);
+
+      // Register Actor Sheets
+      DocumentSheetConfig.registerSheet(foundry.documents.BaseActor, "swse", SWSEActorSheet, {
+        types: ["character", "npc"],
+        label: "SWSE Character/NPC Sheet",
+        makeDefault: true,
+      });
+
+      DocumentSheetConfig.registerSheet(foundry.documents.BaseActor, "swse", SWSEDroidSheet, {
+        types: ["droid"],
+        label: "SWSE Droid Sheet",
+        makeDefault: true,
+      });
+
+      DocumentSheetConfig.registerSheet(foundry.documents.BaseActor, "swse", SWSEVehicleSheet, {
+        types: ["vehicle"],
+        label: "SWSE Vehicle Sheet",
+        makeDefault: true,
+      });
+
+      // Register Item Sheets
+      DocumentSheetConfig.registerSheet(foundry.documents.BaseItem, "swse", SWSEItemSheet, {
+        types: SWSE.itemTypes,
+        label: "SWSE Item Sheet",
+        makeDefault: true,
+      });
+    } else {
+      // ============================================
+      // 🧱 Foundry v12–v13 Legacy API
+      // ============================================
+      console.log("SWSE | Registering sheets using legacy API");
+
+      Actors.unregisterSheet("core", ActorSheet);
+      Items.unregisterSheet("core", ItemSheet);
+
+      // Register Actor Sheets
+      Actors.registerSheet("swse", SWSEActorSheet, {
+        types: ["character", "npc"],
+        label: "SWSE Character/NPC Sheet",
+        makeDefault: true,
+      });
+
+      Actors.registerSheet("swse", SWSEDroidSheet, {
+        types: ["droid"],
+        label: "SWSE Droid Sheet",
+        makeDefault: true,
+      });
+
+      Actors.registerSheet("swse", SWSEVehicleSheet, {
+        types: ["vehicle"],
+        label: "SWSE Vehicle Sheet",
+        makeDefault: true,
+      });
+
+      // Register Item Sheets
+      Items.registerSheet("swse", SWSEItemSheet, {
+        types: SWSE.itemTypes,
+        label: "SWSE Item Sheet",
+        makeDefault: true,
+      });
+    }
+  } catch (err) {
+    console.error("❌ SWSE | Sheet registration failed:", err);
+  }
+}
+
+// ============================================
+// REGISTER SETTINGS
 // ============================================
 function registerSettings() {
   game.settings.register("swse", "forcePointBonus", {
@@ -151,10 +198,12 @@ async function loadVehicleTemplates() {
     const response = await fetch("systems/swse/data/vehicles.json");
     if (response.ok) {
       game.swseVehicles = { templates: await response.json() };
-      console.log(`SWSE | Loaded ${game.swseVehicles.templates.length} vehicle templates.`);
+      console.log(`🚗 SWSE | Loaded ${game.swseVehicles.templates.length} vehicle templates.`);
+    } else {
+      throw new Error(`HTTP ${response.status}`);
     }
   } catch (err) {
-    console.warn("SWSE | Could not load vehicle templates:", err);
+    console.warn("⚠️ SWSE | Could not load vehicle templates:", err);
     game.swseVehicles = { templates: [] };
   }
 }
