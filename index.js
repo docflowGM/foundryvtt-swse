@@ -1,6 +1,6 @@
 // ============================================
 // FILE: index.js
-// Star Wars Saga Edition (SWSE) - FoundryVTT
+// Star Wars Saga Edition (SWSE) - FoundryVTT v13
 // ============================================
 
 import { registerHandlebarsHelpers } from './helpers/handlebars-helpers.js';
@@ -36,30 +36,40 @@ Hooks.once("init", async () => {
   CONFIG.Actor.documentClass = SWSEActor;
 
   // -------------------------------
-  // Sheet Registration
+  // Sheet Registration (Foundry v13)
   // -------------------------------
-  Actors.unregisterSheet("core", ActorSheet);
-  Items.unregisterSheet("core", ItemSheet);
+  // Unregister core sheets
+  DocumentSheetConfig.unregisterSheet(Actor, "core", ActorSheet);
+  DocumentSheetConfig.unregisterSheet(Item, "core", ItemSheet);
 
-  Actors.registerSheet("swse", SWSEActorSheet, {
+  // Register Actor Sheets
+  DocumentSheetConfig.registerSheet(Actor, "swse", SWSEActorSheet, {
     types: ["character"],
     label: "SWSE Character Sheet",
     makeDefault: true
   });
 
-  Actors.registerSheet("swse", SWSEDroidSheet, {
+  DocumentSheetConfig.registerSheet(Actor, "swse", SWSEDroidSheet, {
     types: ["droid"],
     label: "SWSE Droid Sheet",
     makeDefault: true
   });
 
-  Actors.registerSheet("swse", SWSEVehicleSheet, {
+  DocumentSheetConfig.registerSheet(Actor, "swse", SWSEVehicleSheet, {
     types: ["vehicle"],
     label: "SWSE Vehicle Sheet",
     makeDefault: true
   });
 
-  Items.registerSheet("swse", SWSEItemSheet, {
+  // Use SWSEActorSheet for NPCs as well (or create SWSENPCSheet if you have one)
+  DocumentSheetConfig.registerSheet(Actor, "swse", SWSEActorSheet, {
+    types: ["npc"],
+    label: "SWSE NPC Sheet",
+    makeDefault: true
+  });
+
+  // Register Item Sheet
+  DocumentSheetConfig.registerSheet(Item, "swse", SWSEItemSheet, {
     types: SWSE.itemTypes,
     label: "SWSE Item Sheet",
     makeDefault: true
