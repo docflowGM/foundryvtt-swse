@@ -26,7 +26,7 @@ export default class CharacterGenerator extends Application {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             classes: ["swse", "chargen"],
-            template: "systems/swse/templates/chargen/chargen.html",
+            template: "systems/swse/templates/apps/chargen.html",
             width: 700,
             height: 600,
             title: "Character Generator",
