@@ -1,4 +1,4 @@
-// FILE: scripts/actors/swse-droid.js
+// FILE: scripts/swse-droid.js
 // ============================================
 import { SWSEActorSheet } from "./swse-actor.js";
 
@@ -13,7 +13,6 @@ export class SWSEDroidSheet extends SWSEActorSheet {
   getData() {
     const data = super.getData();
     data.items = data.items.filter(i => i.type !== "forcepower");
-    data.labels = data.labels || {};
     data.labels.sheetTitle = game.i18n.localize("SWSE.SheetLabel.droid") || "Droid";
     delete data.system.forcePoints;
     delete data.system.freeForcePowers;
