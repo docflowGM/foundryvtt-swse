@@ -149,7 +149,7 @@ export async function importConditionsFromDB() {
     
     const items = conditions.filter(c => c.name).map(condition => ({
       name: condition.name || condition.id,
-      type: "condition",
+      type: "equipment",
       img: `systems/swse/assets/icons/conditions/${(condition.name || condition.id).toLowerCase().replace(/\s+/g, '-')}.png`,
       system: {
         description: condition.description || "",

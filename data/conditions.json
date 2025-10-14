@@ -4,7 +4,7 @@
     "name": "Normal",
     "description": "No penalties.",
     "effects": [],
-    "type": "condition"
+    "type": "equipment"
   },
   {
     "id": "ct_minus_1",
@@ -20,7 +20,7 @@
         "value": -1
       }
     ],
-    "type": "condition"
+    "type": "equipment"
   },
   {
     "id": "ct_minus_2",
@@ -36,7 +36,7 @@
         "value": -2
       }
     ],
-    "type": "condition"
+    "type": "equipment"
   },
   {
     "id": "ct_minus_5",
@@ -56,7 +56,7 @@
         "value": -5
       }
     ],
-    "type": "condition"
+    "type": "equipment"
   },
   {
     "id": "ct_minus_10",
@@ -80,7 +80,7 @@
         "value": -10
       }
     ],
-    "type": "condition"
+    "type": "equipment"
   },
   {
     "id": "helpless",
@@ -96,20 +96,20 @@
         "value": true
       }
     ],
-    "type": "condition"
+    "type": "equipment"
   },
   {
     "id": "prone",
     "name": "Prone",
     "description": "-5 to melee attacks, +5 to ranged defense vs ranged, -5 vs melee.",
     "effects": [],
-    "type": "condition"
+    "type": "equipment"
   },
   {
     "id": "flat_footed",
     "name": "Flat-footed",
     "description": "Lose DEX bonus to Reflex Defense.",
     "effects": [],
-    "type": "condition"
+    "type": "equipment"
   }
 ]

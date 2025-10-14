@@ -119,6 +119,8 @@
       "armor",
       "equipment",
       "species",
+      "ability",
+      "background",
       "Heavy",
       "Light",
       "Medium"
@@ -201,6 +203,14 @@
       "description": ""
     },
     "combat-action": {
+      "templates": [],
+      "description": ""
+    },
+    "ability": {
+      "templates": [],
+      "description": ""
+    },
+    "background": {
       "templates": [],
       "description": ""
     },

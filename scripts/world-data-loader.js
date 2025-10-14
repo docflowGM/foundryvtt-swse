@@ -268,11 +268,11 @@ export class WorldDataLoader {
       for (const powerData of powers) {
         const itemData = {
           name: powerData.name,
-          type: "force-power",
+          type: "forcepower",
           system: powerData
         };
         
-        const created = await this.createItem(itemData, "force-power");
+        const created = await this.createItem(itemData, "forcepower");
         if (created) loaded++;
         else skipped++;
       }
