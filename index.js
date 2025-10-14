@@ -6,7 +6,6 @@
 
 import { registerHandlebarsHelpers } from "./scripts/helpers/handlebars-helpers.js";
 import { SWSE } from "./config.js";
-import { SWSEActor } from "./scripts/actor/swse-actor.js";
 import { SWSEActor, SWSEActorSheet } from "./scripts/actor/swse-actor.js";
 import { SWSEDroidSheet } from "./scripts/actors/swse-droid.js";
 import { SWSEVehicleSheet } from "./scripts/actors/swse-vehicle.js";
