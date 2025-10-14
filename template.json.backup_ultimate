@@ -118,7 +118,10 @@
       "weapon",
       "armor",
       "equipment",
-      "species"
+      "species",
+      "Heavy",
+      "Light",
+      "Medium"
     ],
     "templates": {
       "base": {
@@ -198,6 +201,18 @@
       "description": ""
     },
     "combat-action": {
+      "templates": [],
+      "description": ""
+    },
+    "Heavy": {
+      "templates": [],
+      "description": ""
+    },
+    "Light": {
+      "templates": [],
+      "description": ""
+    },
+    "Medium": {
       "templates": [],
       "description": ""
     }
