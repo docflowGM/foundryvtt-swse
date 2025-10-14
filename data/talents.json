@@ -1,1 +1,853 @@
-[]
+{"name": "Adept Negotiator", "talent_tree": "Jedi Consular", "prerequisites": null, "benefit": "Standard action make a Persuasion check vs Will Defense (+5 bonus if opponent higher level); target moves -1 down condition track; if at end, target cannot attack unless attacked or allies attacked."}
+{"name": "Aggressive Negotiator", "talent_tree": "Jedi Consular", "prerequisites": "Adept Negotiator", "benefit": "When you damage an opponent with a lightsaber, you can take 10 on Persuasion checks."}
+{"name": "Consular's Wisdom", "talent_tree": "Jedi Consular", "prerequisites": "Adept Negotiator", "benefit": "Once per encounter, one ally in line of sight adds your Wisdom bonus to Will Defense until end of encounter."}
+{"name": "Force Persuasion", "talent_tree": "Jedi Consular", "prerequisites": "Adept Negotiator", "benefit": "Use the Force instead of Persuasion for checks; considered trained in Persuasion."}
+{"name": "Master Negotiator", "talent_tree": "Jedi Consular", "prerequisites": "Adept Negotiator", "benefit": "As Adept Negotiator, but target moves two steps down the condition track."}
+{"name": "Adversary Lore", "talent_tree": "Jedi Consular", "prerequisites": null, "benefit": "Standard action; make a Use the Force check vs Will on a creature within 12 squares and line of sight; target takes -2 Reflex Defense against you and allies until the end of your next turn."}
+{"name": "Know Weakness", "talent_tree": "Jedi Consular", "prerequisites": "Adversary Lore", "benefit": "Target of Adversary Lore takes +1d6 damage from successful attacks."}
+{"name": "Cleanse Mind", "talent_tree": "Jedi Consular", "prerequisites": null, "benefit": "Once per turn, remove an ongoing mind-affecting effect from one ally in line of sight."}
+{"name": "Collective Visions", "talent_tree": "Jedi Consular", "prerequisites": null, "benefit": "Force-users with Farseeing can aid another as a reaction within 6 squares."}
+{"name": "Consular's Vitality", "talent_tree": "Jedi Consular", "prerequisites": null, "benefit": "Once per round, grant one ally within 12 squares and line of sight hit points equal to 5 + Charisma modifier; you take -5 Use the Force until next turn."}
+{"name": "Improved Consular's Vitality", "talent_tree": "Jedi Consular", "prerequisites": "Consular's Vitality", "benefit": "When you damage an opponent, you can use Consular's Vitality as a free action."}
+{"name": "Entreat Aid", "talent_tree": "Jedi Consular", "prerequisites": null, "benefit": "Once per turn, one adjacent ally can aid another as a reaction to assist you if they have not already aided."}
+{"name": "Force of Will", "talent_tree": "Jedi Consular", "prerequisites": null, "benefit": "Gain +2 Will Defense permanently; all allies within 6 squares gain +2 Will Defense for the rest of the encounter if they remain within 6 squares."}
+{"name": "Guiding Strikes", "talent_tree": "Jedi Consular", "prerequisites": null, "benefit": "Allies adjacent to a target you damaged gain +2 melee attack rolls against that target."}
+{"name": "Recall", "talent_tree": "Jedi Consular", "prerequisites": null, "benefit": "Regain 2 Force powers when a Force Point is spent to regain a power."}
+{"name": "Renew Vision", "talent_tree": "Jedi Consular", "prerequisites": null, "benefit": "Once per encounter, regain all expended uses of Farseeing."}
+{"name": "Skilled Advisor", "talent_tree": "Jedi Consular", "prerequisites": null, "benefit": "Full-round action; one ally gains +5 on a skill check (or +10 if you spend a Force Point); cannot advise yourself."}
+{"name": "WatchCircle Initiate", "talent_tree": "Jedi Consular", "prerequisites": null, "benefit": "Use the Force DC 15; remove Farseeing and add 1 Force Point to an ally in line of sight; replaces normal effect."}
+{"name": "Visionary Attack", "talent_tree": "Jedi Consular", "prerequisites": "WatchCircle Initiate", "benefit": "You or an ally within 12 squares may reroll a missed attack by making a Use the Force check vs target's Will; spend one Farseeing; you take -5 Use the Force until the start of your next turn."}
+{"name": "Visionary Defense", "talent_tree": "Jedi Consular", "prerequisites": "WatchCircle Initiate", "benefit": "You or an ally within 12 squares may gain +5 Reflex Defense when attacked by making a Use the Force check vs target's Will; spend one Farseeing; you take -5 Use the Force until the start of your next turn."}
+{"name": "Acrobatic Recovery", "talent_tree": "Jedi Guardian", "prerequisites": null, "benefit": "Make a DC 20 Acrobatics check to avoid falling prone."}
+{"name": "Battle Meditation", "talent_tree": "Jedi Guardian", "prerequisites": null, "benefit": "Full-round action; spend a Force Point; allies within 6 squares gain +1 attack for the encounter while within 6 squares."}
+{"name": "Improved Battle Meditation", "talent_tree": "Jedi Guardian", "prerequisites": "Battle Meditation", "benefit": "Activate Battle Meditation as a swift action; range increases to 12 squares; enemies in the radius take -1 attack."}
+{"name": "Close Maneuvering", "talent_tree": "Jedi Guardian", "prerequisites": null, "benefit": "Once per turn, designate a target; your movement does not provoke attacks of opportunity from that target if you move adjacent."}
+{"name": "Defensive Acuity", "talent_tree": "Jedi Guardian", "prerequisites": null, "benefit": "While fighting defensively, deal +1 die damage with lightsaber and gain +2 to Block and Deflect."}
+{"name": "Elusive Target", "talent_tree": "Jedi Guardian", "prerequisites": null, "benefit": "If you are in a melee, ranged attacks against you take an additional -5 penalty (on top of the firing-into-melee penalty)."}
+{"name": "Exposing Strike", "talent_tree": "Jedi Guardian", "prerequisites": null, "benefit": "When you damage an opponent with a lightsaber, you may spend a Force Point to make the opponent flat-footed until the end of your next turn."}
+{"name": "Force Intuition", "talent_tree": "Jedi Guardian", "prerequisites": null, "benefit": "Use the Force instead of Initiative; you are considered trained in Initiative."}
+{"name": "Forceful Warrior", "talent_tree": "Jedi Guardian", "prerequisites": null, "benefit": "When you score a critical hit with a lightsaber, gain a temporary Force Point to be used before the end of the encounter."}
+{"name": "Guardian Strike", "talent_tree": "Jedi Guardian", "prerequisites": null, "benefit": "When you damage an opponent with a lightsaber, the target takes -2 attack against anyone but you."}
+{"name": "Immovable", "talent_tree": "Jedi Guardian", "prerequisites": null, "benefit": "Attempts to move you involuntarily suffer a -5 penalty to their check or attack."}
+{"name": "Mobile Combatant", "talent_tree": "Jedi Guardian", "prerequisites": null, "benefit": "If you end your movement adjacent to an opponent and they withdraw, you can move with them."}
+{"name": "Resilience", "talent_tree": "Jedi Guardian", "prerequisites": null, "benefit": "Full-round action; move +2 steps up the condition track."}
+{"name": "Clear Mind", "talent_tree": "Jedi Sentinel", "prerequisites": null, "benefit": "You may reroll a Use the Force check to avoid detection by other Force users; must take the reroll even if worse."}
+{"name": "Force Haze", "talent_tree": "Jedi Sentinel", "prerequisites": "Clear Mind", "benefit": "Standard action; spend a Force Point to hide you and allies up to your class level; make Use the Force vs Will; lasts 1 minute or until you attack from haze."}
+{"name": "Persistent Haze", "talent_tree": "Jedi Sentinel", "prerequisites": "Force Haze", "benefit": "If someone attacks from the haze, they lose concealment but the rest of the group retains it."}
+{"name": "Unseen Eyes", "talent_tree": "Jedi Sentinel", "prerequisites": "Force Haze", "benefit": "Allies hidden in the haze can reroll Perception checks and keep the best; allies gain +2 damage against unaware foes."}
+{"name": "Dampen Presence", "talent_tree": "Jedi Sentinel", "prerequisites": null, "benefit": "Use the Force vs Will; the target does not remember interacting with you (+5 bonus if opponent is higher level)."}
+{"name": "Dark Side Sense", "talent_tree": "Jedi Sentinel", "prerequisites": null, "benefit": "You may reroll a Use the Force check to sense the Dark Side; must take the reroll even if worse."}
+{"name": "Dark Side Bane", "talent_tree": "Jedi Sentinel", "prerequisites": "Dark Side Sense", "benefit": "When you use a damage-dealing Force power against a creature with Dark Side Score 1+, deal extra damage equal to your Charisma modifier (minimum 1)."}
+{"name": "Dark Side Scourge", "talent_tree": "Jedi Sentinel", "prerequisites": "Dark Side Sense", "benefit": "Deal extra damage on melee attacks against Dark Side creatures equal to your Charisma modifier (minimum +1)."}
+{"name": "Resist the Dark Side", "talent_tree": "Jedi Sentinel", "prerequisites": "Dark Side Sense", "benefit": "+5 Force bonus to all Defense scores against powers with the Dark Side descriptor and from Force users with a Dark Side score; effects scale with your Wisdom score."}
+{"name": "Gradual Resistance", "talent_tree": "Jedi Sentinel", "prerequisites": null, "benefit": "If you take damage from a Force power, gain +2 to all Defense scores against that power until the end of the encounter."}
+{"name": "Master of the Great Hunt", "talent_tree": "Jedi Sentinel", "prerequisites": null, "benefit": "+1 attack and +1 die of damage against beasts with a Dark Side Score of 1+."}
+{"name": "Reap Retribution", "talent_tree": "Jedi Sentinel", "prerequisites": null, "benefit": "If you take damage from a Force power, you deal +2 damage against that creature until the end of the encounter."}
+{"name": "Sentinel Strike", "talent_tree": "Jedi Sentinel", "prerequisites": null, "benefit": "When you attack a flat-footed opponent with a damage-dealing Force power or a lightsaber, add +1d6 damage."}
+{"name": "Dark Retaliation", "talent_tree": "Jedi Sentinel", "prerequisites": "Sentinel Strike", "benefit": "Once per encounter, activate a Force power as a reaction if you are targeted by a Dark Side power."}
+{"name": "Sentinel's Gambit", "talent_tree": "Jedi Sentinel", "prerequisites": null, "benefit": "Once per encounter, against an enemy with a Dark Side score 1+, the enemy loses Dexterity to Defense against your attacks until your next turn."}
+{"name": "Sentinel's Observation", "talent_tree": "Jedi Sentinel", "prerequisites": null, "benefit": "If you have concealment against a target, you may spend a Force Point to make the opponent flat-footed until the end of your next turn."}
+{"name": "Steel Resolve", "talent_tree": "Jedi Sentinel", "prerequisites": null, "benefit": "When you take a melee attack penalty of -1 to -5, apply double that number as a penalty to the target's Will Defense; may not exceed your base attack bonus."}
+{"name": "Block", "talent_tree": "Lightsaber Combat", "prerequisites": null, "benefit": "Negate a melee attack with a Use the Force check vs the attack roll; -5 penalty each additional time used in a round; must have an activated lightsaber, be aware, and not flat-footed; may spend a Force Point to protect an adjacent character."}
+{"name": "Riposte", "talent_tree": "Lightsaber Combat", "prerequisites": "Block, base attack bonus +5", "benefit": "Once per encounter, make a lightsaber attack against an opponent you successfully Block (not against area attacks)."}
+{"name": "Cortosis Gauntlet Block", "talent_tree": "Lightsaber Combat", "prerequisites": "Armor Proficiency (light or medium)", "benefit": "You can use Block with cortosis gauntlets; on a successful Block, targeted lightsabers are deactivated."}
+{"name": "Deflect", "talent_tree": "Lightsaber Combat", "prerequisites": null, "benefit": "Negate a ranged attack with a Use the Force check vs the attack roll; -5 penalty each additional time used in a round; must have an activated lightsaber, be aware, and not flat-footed; vs autofire: take half or no damage; may spend a Force Point to protect an adjacent character."}
+{"name": "Redirect Shot", "talent_tree": "Lightsaber Combat", "prerequisites": "Deflect, base attack bonus +5", "benefit": "Once per round, redirect a blaster bolt you deflected to another target; not usable against autofire or non-blaster projectiles."}
+{"name": "Precise Redirect", "talent_tree": "Lightsaber Combat", "prerequisites": "Redirect Shot", "benefit": "Whenever you successfully redirect a blaster bolt and hit, deal +1 die of damage."}
+{"name": "Lightsaber Defense", "talent_tree": "Lightsaber Combat", "prerequisites": null, "benefit": "+1 Reflex Defense while wielding an activated lightsaber, aware, and not flat-footed (max +3)."}
+{"name": "Lightsaber Throw", "talent_tree": "Lightsaber Combat", "prerequisites": null, "benefit": "If the target is within 6 squares, you can throw your lightsaber and pull it back as a swift action with a DC 20 Use the Force check."}
+{"name": "Precision", "talent_tree": "Lightsaber Combat", "prerequisites": null, "benefit": "Against an adjacent opponent, on a successful lightsaber attack, reduce the target’s speed by 2 squares until the end of your turn."}
+{"name": "Shoto Focus", "talent_tree": "Lightsaber Combat", "prerequisites": null, "benefit": "+2 attack with a shoto or guard shoto when wielding a one-handed lightsaber."}
+{"name": "Weapon Specialization", "talent_tree": "Lightsaber Combat", "prerequisites": "Weapon Focus", "benefit": "+2 melee damage."}
+{"name": "Aversion", "talent_tree": "Alter", "prerequisites": null, "benefit": "Until end of encounter, all squares within 2 squares of you are difficult terrain for enemies."}
+{"name": "Disciplined Strike", "talent_tree": "Alter", "prerequisites": null, "benefit": "When making an area attack, you can exclude a number of targets up to your Wisdom modifier."}
+{"name": "Force Flow", "talent_tree": "Alter", "prerequisites": null, "benefit": "When you roll a natural 1 on an attack or Use the Force check, gain +1 temporary Force Point until end of encounter."}
+{"name": "Illusion", "talent_tree": "Alter", "prerequisites": "Mind Trick", "benefit": "Use the Force vs Will Defense to create an illusion; see source details for specific effects."}
+{"name": "Illusion Bond", "talent_tree": "Alter", "prerequisites": "Illusion", "benefit": "You can see or hear as if standing in the space of your humanoid illusion."}
+{"name": "Masquerade", "talent_tree": "Alter", "prerequisites": "Illusion", "benefit": "Use the Force in place of Deception when creating a deceptive appearance."}
+{"name": "Influence Savant", "talent_tree": "Alter", "prerequisites": null, "benefit": "Once per encounter, return one mind-affecting Force power to your suite without spending a Force Point."}
+{"name": "Suppress Force", "talent_tree": "Alter", "prerequisites": "Influence Savant, Mind Trick", "benefit": "Convince a target they cannot use the Force: Intelligence 3+, within 12 squares, Use the Force vs target’s Use the Force."}
+{"name": "Link", "talent_tree": "Alter", "prerequisites": null, "benefit": "Link with one ally within 12 squares and line of sight who is trained in Use the Force; as long as within 12 squares, they can aid another as a reaction; you take -5 to other Use the Force checks."}
+{"name": "Telepathic Link", "talent_tree": "Alter", "prerequisites": null, "benefit": "Establish a Use the Force link within 1 km to communicate as if speaking; once per encounter, may share a Force power between you and the linked ally."}
+{"name": "Telepathic Influence", "talent_tree": "Alter", "prerequisites": "Telepathic Link", "benefit": "When you roll a natural 20 on an attack or Use the Force, you may grant the linked ally a Force Point instead of gaining powers."}
+{"name": "Telekinetic Power", "talent_tree": "Alter", "prerequisites": null, "benefit": "On a natural 20 with a Force power, immediately reuse Force disarm, grip, slam, thrust, or Move Object."}
+{"name": "Move Massive Object", "talent_tree": "Alter", "prerequisites": "Telekinetic Power", "benefit": "Use Move Object to make an area attack (sizes: Large 2x2, Huge 3x3, Gargantuan 4x4, Colossal 6x6); compare Use the Force to Reflex Defense."}
+{"name": "Telekinetic Savant", "talent_tree": "Alter", "prerequisites": null, "benefit": "Once per encounter, return Force disarm, slam, thrust, or Move Object to your suite without spending a Force Point."}
+{"name": "Telekinetic Prodigy", "talent_tree": "Alter", "prerequisites": "Telekinetic Savant, Force Training (Move Object selected)", "benefit": "Gain an extra use of the selected power from disarm, slam, thrust, or Move Object."}
+{"name": "Beast Trick", "talent_tree": "Control", "prerequisites": null, "benefit": "Use Mind Trick on beasts with Intelligence 2 or less; they cannot perform or understand complex directions."}
+{"name": "Channel Energy", "talent_tree": "Control", "prerequisites": null, "benefit": "Convert energy from Negate Energy to activate any power in your suite."}
+{"name": "Damage Reduction 10", "talent_tree": "Control", "prerequisites": null, "benefit": "Gain DR 10 for one minute."}
+{"name": "Equilibrium", "talent_tree": "Control", "prerequisites": null, "benefit": "Remove a debilitating condition affecting you and return to normal, including moving up to the top of the condition track."}
+{"name": "Force Recovery", "talent_tree": "Control", "prerequisites": "Equilibrium, Second Wind", "benefit": "When you use Second Wind, gain additional hit points: 1d6 per Force Point possessed (maximum 10d6)."}
+{"name": "Force Exertion", "talent_tree": "Control", "prerequisites": "Force Training", "benefit": "Designate one Force power; remove another power to refresh the designated power; you move -1 step down the condition track for 1 minute."}
+{"name": "Force Focus", "talent_tree": "Control", "prerequisites": null, "benefit": "DC 15 Use the Force check to regain one Force power."}
+{"name": "Force Harmony", "talent_tree": "Control", "prerequisites": null, "benefit": "Once per encounter, activate a Force talent that requires a Force Point without spending one."}
+{"name": "Force Suppression", "talent_tree": "Control", "prerequisites": null, "benefit": "Attempt to rebuke a Force power; if you fail, lessen its effect by one step; only works on powers with variable effects."}
+{"name": "Indomitable Will", "talent_tree": "Control", "prerequisites": null, "benefit": "Immune to all mind-affecting effects for 1 minute."}
+{"name": "Telekinetic Stability", "talent_tree": "Control", "prerequisites": null, "benefit": "Negate forced movement when being moved against your will."}
+{"name": "The Will to Resist", "talent_tree": "Control", "prerequisites": null, "benefit": "Once per turn, if your Will Defense is targeted, you may replace Will with a Use the Force check; you take -5 to Use the Force until the end of your next turn."}
+{"name": "Consumed by Darkness", "talent_tree": "Dark Side", "prerequisites": null, "benefit": "Take -5 to Will Defense to gain +2 attack."}
+{"name": "Dark Side Savant", "talent_tree": "Dark Side", "prerequisites": null, "benefit": "Once per encounter, return one dark side power to your suite without spending a Force Point."}
+{"name": "Drain Knowledge", "talent_tree": "Dark Side", "prerequisites": null, "benefit": "By touch, make a check vs target's Will Defense to drain knowledge; gain trained status in a skill or a Skill Focus if you already have the skill; target moves down the condition track; you gain a Dark Side Point."}
+{"name": "Power of the Dark Side", "talent_tree": "Dark Side", "prerequisites": null, "benefit": "When spending a Force Point on an attack, you may reroll the die; increase your Dark Side Score by 1."}
+{"name": "Dark Presence", "talent_tree": "Dark Side", "prerequisites": "Charisma 13, Power of the Dark Side", "benefit": "You and allies within 6 squares gain +1 to all Defense scores until end of encounter while you remain conscious."}
+{"name": "Revenge", "talent_tree": "Dark Side", "prerequisites": "Dark Presence", "benefit": "Gain +2 attack and +2 damage if an ally of equal or higher level dies or is reduced to 0 hp within line of sight."}
+{"name": "Dark Preservation", "talent_tree": "Dark Side", "prerequisites": "Power of the Dark Side", "benefit": "Increase your Dark Side Score by 1 to stop moving down the condition track."}
+{"name": "Swift Power", "talent_tree": "Dark Side", "prerequisites": "Power of the Dark Side", "benefit": "Once per day, use a swift action in place of a move or standard action to activate a Force power."}
+{"name": "Wrath of the Dark Side", "talent_tree": "Dark Side", "prerequisites": "Power of the Dark Side", "benefit": "When you roll a natural 20 with a damage-dealing Force power, do not regain powers for damage; target also takes half damage again at the start of your next turn."}
+{"name": "Transfer Essence", "talent_tree": "Dark Side", "prerequisites": null, "benefit": "If your Dark Side Score equals your Wisdom, upon death you become a dark side spirit able to possess others or enter an object."}
+{"name": "Guardian Spirit", "talent_tree": "Guardian Spirit", "prerequisites": null, "benefit": "Your guardian spirit reveals immediate consequences of your actions; gain 1 bonus Force Point per day after 6 hours rest to enhance a Force power, technique, or secret."}
+{"name": "Crucial Advice", "talent_tree": "Guardian Spirit", "prerequisites": null, "benefit": "Once per encounter, reroll a failed skill check with a +2 bonus."}
+{"name": "Manifest Guardian Spirit", "talent_tree": "Guardian Spirit", "prerequisites": null, "benefit": "Your guardian spirit is present for the encounter within 6 squares; while within 12 squares, you gain +1 attack, +2 Use the Force, and +2 Will Defense; you can move the spirit 6 squares as a swift action once per turn."}
+{"name": "Distracting Apparition", "talent_tree": "Guardian Spirit", "prerequisites": "Manifest Guardian Spirit", "benefit": "Enemies within 3 squares of the apparition take -2 Will Defense and -2 attack against you."}
+{"name": "Vital Encouragement", "talent_tree": "Guardian Spirit", "prerequisites": null, "benefit": "Once per encounter, you gain hit points equal to 10 + half your Heroic Level."}
+{"name": "At Peace", "talent_tree": "Light Side", "prerequisites": null, "benefit": "Gain +2 to all Defense scores until end of encounter or until you make an attack."}
+{"name": "Focused Attack", "talent_tree": "Light Side", "prerequisites": null, "benefit": "Reroll an attack against an opponent with a Dark Side Score of 1+."}
+{"name": "Attuned", "talent_tree": "Light Side", "prerequisites": "Focused Attack", "benefit": "When you roll a natural 20 on an attack against a foe with Dark Side Score 1+, you may activate any power with the light side descriptor."}
+{"name": "Surge of Light", "talent_tree": "Light Side", "prerequisites": null, "benefit": "Once per encounter, return any light side power without spending a Force Point."}
+{"name": "Feel the Force", "talent_tree": "Sense", "prerequisites": null, "benefit": "Ignore all concealment for 1 minute."}
+{"name": "Force Perception", "talent_tree": "Sense", "prerequisites": null, "benefit": "Use the Force replaces Perception to avoid surprise, notice enemies, and sense deception or influence; you are considered trained."}
+{"name": "Foresight", "talent_tree": "Sense", "prerequisites": "Force Perception", "benefit": "Reroll Initiative; on a natural 20, regain a Force Point."}
+{"name": "Gauge Force Potential", "talent_tree": "Sense", "prerequisites": "Force Perception", "benefit": "Use the Force vs Will to detect Force sensitivity, number of powers known, and Force Points."}
+{"name": "Motion of the Future", "talent_tree": "Sense", "prerequisites": null, "benefit": "Expend farseeing from your suite; before end of your next turn, force an attacker to reroll an attack and keep the second result."}
+{"name": "Psychometry", "talent_tree": "Sense", "prerequisites": "Farseeing, Force Perception", "benefit": "Target an object you hold; read impressions up to 5 years per level."}
+{"name": "Visions", "talent_tree": "Sense", "prerequisites": "Farseeing, Force Perception", "benefit": "See into the past or future with farseeing, up to one year per your level."}
+{"name": "Force Pilot", "talent_tree": "Sense", "prerequisites": null, "benefit": "Use the Force instead of Pilot; you are considered trained in Pilot."}
+{"name": "Force Reflexes", "talent_tree": "Sense", "prerequisites": "Starship Tactics, Force Pilot", "benefit": "When activating a starship maneuver, reroll the Pilot check."}
+{"name": "Instinctive Navigation", "talent_tree": "Sense", "prerequisites": "Force Pilot", "benefit": "Use the Force replaces Use Computer for astrogation checks."}
+{"name": "Heightened Awareness", "talent_tree": "Sense", "prerequisites": null, "benefit": "Add your Charisma bonus to Perception checks."}
+{"name": "Shift Sense", "talent_tree": "Sense", "prerequisites": null, "benefit": "Gain low-light vision for 1 minute or the rest of the encounter, whichever is longer."}
+{"name": "Double Agent", "talent_tree": "Collaborator", "prerequisites": null, "benefit": "When you roll Initiative, make Deception vs Will Defense against a target in line of sight; if successful, that target cannot attack you until you harm an ally."}
+{"name": "Protection", "talent_tree": "Collaborator", "prerequisites": "Double Agent", "benefit": "Make Persuasion vs Will Defense against a target in line of sight; if successful, one ally cannot be attacked until your next turn."}
+{"name": "Enemy Tactics", "talent_tree": "Collaborator", "prerequisites": null, "benefit": "When an enemy within 12 squares and line of sight gains a bonus, you also gain that bonus and any limitations."}
+{"name": "Friendly Fire", "talent_tree": "Collaborator", "prerequisites": "Enemy Tactics", "benefit": "If engaged in melee and a ranged attack misses you, apply the same attack roll to target the attacker’s opponent instead."}
+{"name": "Feed Information", "talent_tree": "Collaborator", "prerequisites": null, "benefit": "Grant one enemy +1 attack; one ally gains +2 attack."}
+{"name": "Castigate", "talent_tree": "Disgrace", "prerequisites": null, "benefit": "Make Persuasion vs Will Defense to impose -2 to all of the target’s defenses until the end of your next turn."}
+{"name": "Dirty Tactics", "talent_tree": "Disgrace", "prerequisites": null, "benefit": "Once per encounter, allies in line of sight gain +4 flanking bonus to melee attacks."}
+{"name": "Ambush", "talent_tree": "Disgrace", "prerequisites": "Dirty Tactics", "benefit": "If you are not surprised, you may forgo your standard action so non-surprised allies in line of sight gain an extra move or may reroll Initiative and keep the better result."}
+{"name": "Misplaced Loyalty", "talent_tree": "Disgrace", "prerequisites": "Dirty Tactics", "benefit": "Once per turn, make Persuasion vs Will Defense against all opponents in line of sight; the chosen target cannot attack you or one ally within 6 squares."}
+{"name": "Two-Faced", "talent_tree": "Disgrace", "prerequisites": "Misplaced Loyalty", "benefit": "Each once per encounter after you attack: if you use the same attack, you may attack as a reaction; or an opponent cannot attack you; or gain +2 attack if they haven't attacked."}
+{"name": "Unreadable", "talent_tree": "Disgrace", "prerequisites": null, "benefit": "+5 Will Defense vs checks to read your emotions; when you feint in combat, the target is flat-footed against you."}
+{"name": "Noble Fencing Style", "talent_tree": "Fencing", "prerequisites": "Trained in Deception and Persuasion", "benefit": "Use Charisma modifier in place of Strength modifier with light melee weapons or a lightsaber."}
+{"name": "Demoralizing Defense", "talent_tree": "Fencing", "prerequisites": "Noble Fencing Style", "benefit": "Against an enemy you just hit with a melee attack, deal half damage and impose -5 attack against you until your next turn; usable once per round."}
+{"name": "Leading Feint", "talent_tree": "Fencing", "prerequisites": "Noble Fencing Style", "benefit": "When you damage an opponent, you may attempt a Deception check to feint; if successful, one ally within 12 squares treats the target as flat-footed against your opponent."}
+{"name": "Personal Affront", "talent_tree": "Fencing", "prerequisites": "Noble Fencing Style, base attack bonus +5", "benefit": "Once per encounter, make a single melee attack against an adjacent enemy who just damaged you."}
+{"name": "Transposing Strike", "talent_tree": "Fencing", "prerequisites": "Noble Fencing Style, base attack bonus +5", "benefit": "When you hit an opponent with a melee attack, you may deal half damage and switch positions with the foe; does not provoke attacks of opportunity."}
+{"name": "Assault Gambit", "talent_tree": "Gambling Leader", "prerequisites": null, "benefit": "Once per turn, designate one ally and one target with line of effect; both roll Initiative and the winner makes a free attack against the other."}
+{"name": "Direct Fire", "talent_tree": "Gambling Leader", "prerequisites": "Assault Gambit", "benefit": "Once per turn, designate one ally and one target without cover from you; the ally ignores the target’s cover bonus to Reflex Defense."}
+{"name": "Face the Foe", "talent_tree": "Gambling Leader", "prerequisites": null, "benefit": "+1 attack against a target if you do not have cover from that target."}
+{"name": "Lead From the Front", "talent_tree": "Gambling Leader", "prerequisites": "Face the Foe", "benefit": "If you damage a target with a ranged attack while not having cover from that target, allies gain +2 attack against that target and +5 on opposed Initiative checks."}
+{"name": "Luck Favors the Bold", "talent_tree": "Gambling Leader", "prerequisites": "Face the Foe", "benefit": "Gain hit points equal to 5 + half your level if at least one enemy in line of sight is aware and you lack cover against that enemy."}
+{"name": "Presence", "talent_tree": "Influence", "prerequisites": null, "benefit": "Use Persuasion as Intimidation as a standard action instead of a full-round action."}
+{"name": "Demand Surrender", "talent_tree": "Influence", "prerequisites": "Presence", "benefit": "Once per encounter, if the opponent is at half hit points or less, make Persuasion vs Will Defense (+5 if the opponent is higher level); target cannot attack unless attacked or allies are attacked."}
+{"name": "Fluster", "talent_tree": "Influence", "prerequisites": "Presence, Persuasion", "benefit": "Once per encounter, make an Intimidation check against an opponent in line of sight vs Will Defense; target may only take a swift action on their next turn (+5 if opponent is higher level)."}
+{"name": "Intimidating Defense", "talent_tree": "Influence", "prerequisites": "Presence, Persuasion", "benefit": "Once per encounter, if the opponent has attacked you, make Persuasion vs Will Defense; impose -5 on that attack (+5 if opponent is higher level)."}
+{"name": "Weaken Resolve", "talent_tree": "Influence", "prerequisites": "Presence", "benefit": "If you deal damage exceeding the target’s threshold, make Persuasion as a free action vs Will Defense; target flees for one minute but can spend a Force Point (or if higher level) to negate."}
+{"name": "Improved Weaken Resolve", "talent_tree": "Influence", "prerequisites": "Weaken Resolve", "benefit": "As Weaken Resolve, but the target continues fleeing beyond the initial duration."}
+{"name": "Instruction", "talent_tree": "Ideologue", "prerequisites": null, "benefit": "Once per encounter, one ally within 6 squares may use your skill modifier for a skill check (not Use the Force)."}
+{"name": "Idealist", "talent_tree": "Ideologue", "prerequisites": "Charisma 13", "benefit": "Add your Charisma bonus instead of your Wisdom bonus to Will Defense."}
+{"name": "Know Your Enemy", "talent_tree": "Ideologue", "prerequisites": null, "benefit": "Select an enemy in line of sight and make Knowledge (galactic lore) vs DC 15 + target’s character level; learn up to two pieces of information about the enemy."}
+{"name": "Known Dissident", "talent_tree": "Ideologue", "prerequisites": "Know Your Enemy", "benefit": "Make Persuasion vs Will Defense against one opponent in line of sight; the opponent may not attack until your next turn (+5 if higher level)."}
+{"name": "Lead by Example", "talent_tree": "Ideologue", "prerequisites": null, "benefit": "Once per encounter, when you deal damage, all allies gain +1 attack and +1 die of damage on non-area attacks for the remainder of the encounter."}
+{"name": "Bolster Ally", "talent_tree": "Inspiration", "prerequisites": null, "benefit": "Move an ally +1 step up the condition track and they regain hit points equal to their level if below half hit points."}
+{"name": "Beloved", "talent_tree": "Inspiration", "prerequisites": "Bolster Ally, Inspire Confidence", "benefit": "Each once per encounter: an ally within 6 squares gains +2 Reflex as a swift action; or when you attack and are attacked, the ally makes a free attack; or when attacked, allies in line of sight move 2 squares as a reaction."}
+{"name": "Ignite Fervor", "talent_tree": "Inspiration", "prerequisites": "Bolster Ally, Inspire Confidence", "benefit": "If you hit, grant an ally a damage bonus equal to their level."}
+{"name": "Inspire Zeal", "talent_tree": "Inspiration", "prerequisites": "Ignite Fervor", "benefit": "Ally’s attack moves the target one additional step down the condition track."}
+{"name": "Inspire Confidence", "talent_tree": "Inspiration", "prerequisites": null, "benefit": "All allies in sight gain +1 attack and +1 to skill checks for the encounter, or revive one unconscious ally."}
+{"name": "Willpower", "talent_tree": "Inspiration", "prerequisites": "Inspire Confidence", "benefit": "Once per encounter, grant allies in line of sight +2 Will Defense for the encounter, even if they leave line of sight; does not apply to you."}
+{"name": "Inspire Haste", "talent_tree": "Inspiration", "prerequisites": null, "benefit": "An ally may make a skill check as a move action instead of a standard action."}
+{"name": "Born Leader", "talent_tree": "Leadership", "prerequisites": null, "benefit": "Once per encounter, all allies gain +1 attack while in line of sight and you remain conscious."}
+{"name": "Distant Command", "talent_tree": "Leadership", "prerequisites": "Born Leader", "benefit": "You do not lose Born Leader’s benefits if out of line of sight."}
+{"name": "Rally", "talent_tree": "Leadership", "prerequisites": "Distant Command", "benefit": "Once per encounter, allies in line of sight with less than half hit points gain +2 Reflex, +2 Will, and +2 damage."}
+{"name": "Fearless Leader", "talent_tree": "Leadership", "prerequisites": "Born Leader", "benefit": "Allies gain +5 Will Defense vs fear while in line of sight and you remain conscious."}
+{"name": "Reactionary Attack", "talent_tree": "Leadership", "prerequisites": "Born Leader, Persuasion", "benefit": "Once per encounter, as a reaction to an attack, an ally within 6 squares may make an immediate attack against the attacker."}
+{"name": "Trust", "talent_tree": "Leadership", "prerequisites": "Born Leader, Coordinate", "benefit": "Give up your standard action to grant allies an extra action on their next turn."}
+{"name": "Coordinate", "talent_tree": "Leadership", "prerequisites": null, "benefit": "All allies in line of sight gain +1 when using aid another (maximum +5)."}
+{"name": "Unwavering Ally", "talent_tree": "Leadership", "prerequisites": null, "benefit": "Once per turn, one ally in line of sight is immune to effects that make them flat-footed or deny Dexterity to Reflex Defense."}
+{"name": "Connections", "talent_tree": "Lineage", "prerequisites": null, "benefit": "Acquire equipment worth your character level × 1000 credits; reduce black market multiplier by 1."}
+{"name": "Influential Friends", "talent_tree": "Lineage", "prerequisites": "Connections", "benefit": "Once per day, friends may take 20 on a skill check with modifier equal to 5 + half your heroic level; time taken is 10 × result minimum."}
+{"name": "Powerful Friends", "talent_tree": "Lineage", "prerequisites": "Influential Friends", "benefit": "Once per encounter, take 20 on a Persuasion check with no increase in time required."}
+{"name": "Educated", "talent_tree": "Lineage", "prerequisites": null, "benefit": "You may make Knowledge checks untrained."}
+{"name": "Engineer", "talent_tree": "Lineage", "prerequisites": "Educated, trained in Knowledge (technology)", "benefit": "Trained in Mechanics; time to install new vehicle systems reduced by 25%."}
+{"name": "Spontaneous Skill", "talent_tree": "Lineage", "prerequisites": "Educated", "benefit": "Once per day, make a skill check as if trained; may be used multiple times per day with separate skills."}
+{"name": "Wealth", "talent_tree": "Lineage", "prerequisites": null, "benefit": "At every level, gain credits equal to class level × 5000."}
+{"name": "Inspire Loyalty", "talent_tree": "Loyal Protector", "prerequisites": null, "benefit": "Gain one follower with Armor Proficiency feat and trained in Perception; may be taken up to three times."}
+{"name": "Undying Loyalty", "talent_tree": "Loyal Protector", "prerequisites": "Inspire Loyalty", "benefit": "Followers gain the Toughness feat."}
+{"name": "Punishing Protection", "talent_tree": "Loyal Protector", "prerequisites": "Inspire Loyalty, base attack bonus +5", "benefit": "Once per encounter, as a reaction when you are damaged by an attack or Force power, your follower may attack that opponent."}
+{"name": "Protector Actions", "talent_tree": "Loyal Protector", "prerequisites": null, "benefit": "When you attack: redirect the attack to your follower, move your follower toward the target, or impose -1 attack per follower on ranged attacks against the target."}
+{"name": "Cast Suspicion", "talent_tree": "Provocateur", "prerequisites": null, "benefit": "One enemy in line of sight loses all insight and morale bonuses on attacks and cannot be aided until the end of your next turn."}
+{"name": "Friend or Foe", "talent_tree": "Provocateur", "prerequisites": "Cast Suspicion", "benefit": "Once per turn, when an ally in line of sight is missed by a ranged attack, compare the missed attack against an adjacent enemy to see if it hits."}
+{"name": "True Betrayal", "talent_tree": "Provocateur", "prerequisites": "Friend or Foe", "benefit": "Make Persuasion vs Will Defense of one enemy in line of sight to compel them to attack a target you choose; +5 bonus if they are higher level."}
+{"name": "Stolen Advantage", "talent_tree": "Provocateur", "prerequisites": "Cast Suspicion", "benefit": "When an enemy in line of sight aids another, grant +2 attack to one ally in line of sight and the enemy provides no benefit."}
+{"name": "Distress to Discord", "talent_tree": "Provocateur", "prerequisites": null, "benefit": "When an ally in line of sight takes Second Wind, all enemies within 2 squares lose Dexterity to Defense until the end of your next turn."}
+{"name": "Seize the Moment", "talent_tree": "Provocateur", "prerequisites": "Distress to Discord", "benefit": "Once per turn, when an enemy is reduced to 0 hp or moves down the condition track, one ally in line of sight may take Second Wind as a free action and adds hit points equal to their character level."}
+{"name": "Fool's Luck", "talent_tree": "Fortune", "prerequisites": null, "benefit": "For the rest of the encounter, choose one: +1 attack, +5 to skills, or +1 to defenses."}
+{"name": "Avert Disaster", "talent_tree": "Fortune", "prerequisites": "Fool's Luck", "benefit": "Once per encounter, turn a critical hit against you into a normal hit."}
+{"name": "Better Lucky than Dead", "talent_tree": "Fortune", "prerequisites": "Fool's Luck", "benefit": "Once per encounter, gain +5 bonus to one defense until the start of your next turn."}
+{"name": "Dumb Luck", "talent_tree": "Fortune", "prerequisites": "Fool's Luck, Knack", "benefit": "Each once per encounter after you attack: if you damage the target, gain +2 Reflex Defense against them; or if you are damaged, move 2 squares; or if you miss, gain +2 on your next attack."}
+{"name": "Ricochet Shot", "talent_tree": "Fortune", "prerequisites": "Fool's Luck, Knack", "benefit": "With a ranged attack, reduce the target’s cover by one step and deal half damage."}
+{"name": "Uncanny Luck", "talent_tree": "Fortune", "prerequisites": "Fool's Luck, Knack", "benefit": "Once per encounter, any roll of 16 or higher is treated as a natural 20."}
+{"name": "Unlikely Shot", "talent_tree": "Fortune", "prerequisites": "Fool's Luck, Knack", "benefit": "Once per encounter, reroll the damage of one attack."}
+{"name": "Fortune's Favor", "talent_tree": "Fortune", "prerequisites": null, "benefit": "When you score a critical hit, gain a free standard action; must be used before your next turn or it is lost."}
+{"name": "Gambler", "talent_tree": "Fortune", "prerequisites": null, "benefit": "+2 on Wisdom checks when gambling; may be taken multiple times."}
+{"name": "Knack", "talent_tree": "Fortune", "prerequisites": null, "benefit": "Once per day, reroll a skill check."}
+{"name": "Lucky Shot", "talent_tree": "Fortune", "prerequisites": "Knack", "benefit": "Once per day, reroll an attack roll."}
+{"name": "Lucky Stop", "talent_tree": "Fortune", "prerequisites": "Knack", "benefit": "Once per encounter, negate the damage from a single attack that would reduce you to 0 hit points."}
+{"name": "Labyrinthine Mind", "talent_tree": "Fortune", "prerequisites": null, "benefit": "Once per encounter, you become immune to mind-affecting effects until your next turn; the effect ends early if you choose to lose it."}
+{"name": "Malkite Techniques", "talent_tree": "Malkite Poisoner", "prerequisites": null, "benefit": "If your attack exceeds the target’s Fortitude Defense, the target is poisoned; poison attacks each round with d20 + your heroic level vs Fortitude, deals 1d6 + half your heroic level damage, and moves the target down the condition track until it misses or is cured."}
+{"name": "Modify Poison", "talent_tree": "Malkite Poisoner", "prerequisites": "Malkite Techniques", "benefit": "You can modify a poison’s delivery method with a Knowledge (life sciences) check; DC equals the Treat Injury DC."}
+{"name": "Numbing Poison", "talent_tree": "Malkite Poisoner", "prerequisites": "Malkite Techniques", "benefit": "A poisoned target is denied Dexterity to Reflex Defense as long as they remain poisoned."}
+{"name": "Undetectable Poison", "talent_tree": "Malkite Poisoner", "prerequisites": "Malkite Techniques", "benefit": "Increase the Treat Injury DC to detect or treat the poison by 5."}
+{"name": "Vicious Poison", "talent_tree": "Malkite Poisoner", "prerequisites": "Malkite Techniques", "benefit": "Poisons you use gain +2 attack against the target’s Fortitude Defense."}
+{"name": "Befuddle", "talent_tree": "Misfortune", "prerequisites": null, "benefit": "Make Deception vs Will Defense to move through a threatened area without provoking attacks of opportunity; movement through the area counts as 2 squares."}
+{"name": "Disruptive", "talent_tree": "Misfortune", "prerequisites": null, "benefit": "Suppress morale and insight bonuses for all in line of sight until your next turn."}
+{"name": "Walk the Line", "talent_tree": "Misfortune", "prerequisites": "Disruptive", "benefit": "Enemies in line of sight take -2 to defenses until your next turn."}
+{"name": "Cunning Strategist", "talent_tree": "Misfortune", "prerequisites": "Walk the Line", "benefit": "Each once per encounter after you attack: if you damage the target, impose -5 Reflex; or reduce the target’s speed by 2; or against two opponents within 2 squares, each takes -5 attack but you roll damage once."}
+{"name": "Dastardly Attack", "talent_tree": "Misfortune", "prerequisites": "Walk the Line", "benefit": "An attack against an opponent denied Dexterity to Defense moves them -1 step down the condition track."}
+{"name": "Weakening Strike", "talent_tree": "Misfortune", "prerequisites": "Dastardly Attack", "benefit": "If you deal damage to an opponent denied Dexterity to Defense, you may impose -5 to attack and melee damage instead of moving them down the condition track."}
+{"name": "Hesitate", "talent_tree": "Misfortune", "prerequisites": null, "benefit": "Make Persuasion vs Will Defense within 12 squares; target’s speed is -2 and must spend a swift action with their standard action until their next turn."}
+{"name": "Sow Confusion", "talent_tree": "Misfortune", "prerequisites": "Hesitate", "benefit": "Once per encounter, make Deception vs Will Defense against a target in line of sight; target must spend a swift action with their standard action to attack until your next turn."}
+{"name": "Seducer", "talent_tree": "Misfortune", "prerequisites": null, "benefit": "If you fail a Persuasion check to change attitude, reroll using Deception."}
+{"name": "Seize Object", "talent_tree": "Misfortune", "prerequisites": null, "benefit": "Once per encounter, seize an object from an adjacent target with +10 to Disarm; must have a free hand and cannot conceal the object."}
+{"name": "Skirmisher", "talent_tree": "Misfortune", "prerequisites": null, "benefit": "If you move at least 2 squares, gain +1 attack until your next turn."}
+{"name": "Improved Skirmisher", "talent_tree": "Misfortune", "prerequisites": "Skirmisher", "benefit": "If you move at least 2 squares and end in a different square, gain +1 to all defenses."}
+{"name": "Sudden Strike", "talent_tree": "Misfortune", "prerequisites": "Skirmisher, Sneak Attack", "benefit": "Deal sneak attack damage when you use Skirmisher."}
+{"name": "Sneak Attack", "talent_tree": "Misfortune", "prerequisites": null, "benefit": "If the opponent is flat-footed or denied Dexterity to Defense, deal +1d6 damage within 6 squares (maximum 10d6)."}
+{"name": "Stymie", "talent_tree": "Misfortune", "prerequisites": null, "benefit": "Once per round, target within 12 squares and line of sight takes -5 to one skill until the start of your next turn."}
+{"name": "Advantageous Opening", "talent_tree": "Opportunist", "prerequisites": null, "benefit": "When an ally or opponent in line of sight rolls a natural 1 on an attack, you may make an attack against a single target."}
+{"name": "Thrive on Chaos", "talent_tree": "Opportunist", "prerequisites": "Advantageous Opening", "benefit": "When an enemy or ally within 20 squares is reduced to 0 hit points, you gain hit points equal to 5 + half your character level."}
+{"name": "Retribution", "talent_tree": "Opportunist", "prerequisites": null, "benefit": "If an enemy in line of sight moves an ally down the condition track, gain +2 attack against that enemy."}
+{"name": "Vindication", "talent_tree": "Opportunist", "prerequisites": "Retribution", "benefit": "When an enemy you reduced to 0 hit points or the bottom of the condition track, your next attack deals +1 die of damage."}
+{"name": "Slip By", "talent_tree": "Opportunist", "prerequisites": null, "benefit": "When you damage an opponent, you may move through that opponent’s square; attacks of opportunity apply as normal."}
+{"name": "Fast Repairs", "talent_tree": "Outlaw Tech", "prerequisites": null, "benefit": "When you jury-rig a vehicle, it regains hit points equal to your Mechanics check result."}
+{"name": "Hot Wire", "talent_tree": "Outlaw Tech", "prerequisites": null, "benefit": "Use Mechanics instead of Use Computer to improve computer access; you are considered trained."}
+{"name": "Quick Fix", "talent_tree": "Outlaw Tech", "prerequisites": null, "benefit": "Once per encounter, jury-rig an object that is not disabled."}
+{"name": "Personalized Modifications", "talent_tree": "Outlaw Tech", "prerequisites": null, "benefit": "For powered weapons you are using, gain +1 attack and +2 damage for the rest of the encounter."}
+{"name": "Find Openings", "talent_tree": "Recklessness", "prerequisites": null, "benefit": "If you are missed by an attack, gain +2 on your next attack before the end of your next turn."}
+{"name": "Risk for Reward", "talent_tree": "Recklessness", "prerequisites": "Find Openings", "benefit": "Once per turn, if you are damaged by an attack of opportunity, make a single attack against a target."}
+{"name": "Hit the Deck", "talent_tree": "Recklessness", "prerequisites": null, "benefit": "Allies take no or half damage from your area attack."}
+{"name": "Trick Step", "talent_tree": "Recklessness", "prerequisites": null, "benefit": "Make an Initiative check against an enemy in line of sight; the loser is flat-footed against the other."}
+{"name": "Lure Closer", "talent_tree": "Recklessness", "prerequisites": "Trick Step", "benefit": "Once per turn, make Deception vs Will Defense against one enemy within 12 squares and line of sight; the target must move half its speed toward you avoiding hazards (movement stops if a hazard cannot be avoided); does not provoke attacks of opportunity."}
+{"name": "Opportunistic Strike", "talent_tree": "Run and Gun", "prerequisites": null, "benefit": "Once per encounter, make an attack of opportunity against an opponent in point-blank range if they provoke an attack of opportunity from an ally."}
+{"name": "Cheap Shot", "talent_tree": "Run and Gun", "prerequisites": "Opportunistic Strike", "benefit": "Once per encounter, make an attack of opportunity against an opponent that withdraws from an ally in point-blank range."}
+{"name": "No Escape", "talent_tree": "Run and Gun", "prerequisites": "Opportunistic Strike", "benefit": "When an opponent withdraws, that opponent is considered flat-footed against you until the end of your next turn."}
+{"name": "Strike and Run", "talent_tree": "Run and Gun", "prerequisites": null, "benefit": "Once per encounter, after you damage an opponent, you may move your speed."}
+{"name": "Slippery Strike", "talent_tree": "Run and Gun", "prerequisites": "Strike and Run", "benefit": "Once per encounter, designate an opponent you just damaged; that opponent cannot make attacks of opportunity until your next turn."}
+{"name": "Electronic Forgery", "talent_tree": "Slicer", "prerequisites": "Use Computer", "benefit": "Use Computer replaces Deception when using forged documents."}
+{"name": "Electronic Sabotage", "talent_tree": "Slicer", "prerequisites": "Use Computer", "benefit": "Your Use Computer check result replaces a computer’s Will Defense to change its attitude; the computer is considered unfriendly."}
+{"name": "Virus", "talent_tree": "Slicer", "prerequisites": "Electronic Sabotage", "benefit": "Substitute Use Computer for Mechanics to disable a computerized device; 1 minute vs Will Defense; device becomes unfriendly."}
+{"name": "Gimmick", "talent_tree": "Slicer", "prerequisites": null, "benefit": "Issue a routine command to a computer."}
+{"name": "Master Slicer", "talent_tree": "Slicer", "prerequisites": "Gimmick", "benefit": "Reroll Use Computer checks to improve access to computers."}
+{"name": "Security Slicer", "talent_tree": "Slicer", "prerequisites": "Mechanics", "benefit": "Disable security without a security kit; on a failure by 10 or more, something goes wrong."}
+{"name": "Trace", "talent_tree": "Slicer", "prerequisites": null, "benefit": "Substitute Use Computer for Gather Information if you have computer access."}
+{"name": "Art of Concealment", "talent_tree": "Smuggling", "prerequisites": null, "benefit": "Use Stealth to conceal items on your person; you can take 10 even if rushed; conceal as a swift action."}
+{"name": "Fast Talker", "talent_tree": "Smuggling", "prerequisites": "Art of Concealment", "benefit": "Once per day, take 20 on a Deception check as a standard action when attempting to deceive."}
+{"name": "Hidden Weapons", "talent_tree": "Smuggling", "prerequisites": "Art of Concealment", "benefit": "If a weapon you draw is unnoticed, the opponent is flat-footed; you may use Quick Draw as a swift action."}
+{"name": "Illicit Dealings", "talent_tree": "Smuggling", "prerequisites": null, "benefit": "Reroll Persuasion checks when haggling for restricted, military, or illegal goods."}
+{"name": "Surprise Strike", "talent_tree": "Smuggling", "prerequisites": null, "benefit": "If you fail a Deception check, make a single unarmed strike as a free action in the surprise round; or another attack with Quick Draw."}
+{"name": "Hyperdriven", "talent_tree": "Spacer", "prerequisites": null, "benefit": "Once per day, add your class level to an attack, skill, or ability check."}
+{"name": "Spacehound", "talent_tree": "Spacer", "prerequisites": null, "benefit": "No attack penalty in low or zero gravity; ignore space sickness; proficient with starship weapons."}
+{"name": "Starship Raider", "talent_tree": "Spacer", "prerequisites": "Spacehound", "benefit": "+1 attack aboard starships, including with personal weapons."}
+{"name": "Cramped Quarters Fighting", "talent_tree": "Spacer", "prerequisites": "Starship Raider", "benefit": "+2 Reflex Defense when adjacent to an obstacle or barrier."}
+{"name": "Stellar Warrior", "talent_tree": "Spacer", "prerequisites": "Spacehound", "benefit": "On a natural 20 attack roll, gain an extra Force Point for the encounter."}
+{"name": "Make a Break for It", "talent_tree": "Spacer", "prerequisites": "Stellar Warrior", "benefit": "Once per encounter, move up to half your speed on a vehicle, or half the vehicle’s speed if you are the pilot, without provoking attacks of opportunity."}
+{"name": "Biotech Adept", "talent_tree": "Yuuzhan Vong Biotech", "prerequisites": null, "benefit": "Reroll Knowledge (life sciences) or Treat Injury checks to use or repair biotech."}
+{"name": "Bugbite", "talent_tree": "Yuuzhan Vong Biotech", "prerequisites": null, "benefit": "Deal +1 die of damage with razor bugs and thud bugs."}
+{"name": "Curved Throw", "talent_tree": "Yuuzhan Vong Biotech", "prerequisites": "Bugbite", "benefit": "Ignore cover (not total cover) with razor bugs and thud bugs."}
+{"name": "Surprising Weapons", "talent_tree": "Yuuzhan Vong Biotech", "prerequisites": null, "benefit": "If your attack with an amphistaff, thud bug, or razor bug also exceeds the target’s Will Defense, the opponent is flat-footed against you."}
+{"name": "Veiled Biotech", "talent_tree": "Yuuzhan Vong Biotech", "prerequisites": "Trained in Stealth", "benefit": "+10 to Deception and Stealth to conceal biotech; draw biotech as a swift action; if you attack, the opponent loses Dexterity to Defense."}
+{"name": "Acute Senses", "talent_tree": "Awareness", "prerequisites": null, "benefit": "Reroll Perception checks."}
+{"name": "Expert Tracker", "talent_tree": "Awareness", "prerequisites": "Acute Senses", "benefit": "No penalty on Survival checks to track at normal speed."}
+{"name": "Improved Initiative", "talent_tree": "Awareness", "prerequisites": "Acute Senses", "benefit": "Reroll Initiative checks."}
+{"name": "Reset Initiative", "talent_tree": "Awareness", "prerequisites": "Improved Initiative, Initiative", "benefit": "Once per encounter after the first full round, add +5 to Initiative."}
+{"name": "Uncanny Dodge I", "talent_tree": "Awareness", "prerequisites": "Improved Initiative", "benefit": "Do not lose Dexterity bonus when flat-footed or attacked by hidden attackers."}
+{"name": "Uncanny Dodge II", "talent_tree": "Awareness", "prerequisites": "Uncanny Dodge I", "benefit": "Cannot be flanked."}
+{"name": "Keen Shot", "talent_tree": "Awareness", "prerequisites": "Acute Senses", "benefit": "Ignore penalties against opponents with concealment (except total concealment)."}
+{"name": "Weak Point", "talent_tree": "Awareness", "prerequisites": "Keen Shot", "benefit": "Once per encounter, ignore a single target’s DR for the rest of your turn."}
+{"name": "Hunker Down", "talent_tree": "Camouflage", "prerequisites": null, "benefit": "If benefiting from cover, increase cover by one step."}
+{"name": "Improved Stealth", "talent_tree": "Camouflage", "prerequisites": null, "benefit": "Reroll Stealth checks."}
+{"name": "Hidden Movement", "talent_tree": "Camouflage", "prerequisites": "Improved Stealth", "benefit": "No penalty to Stealth at normal movement speed."}
+{"name": "Hide in Plain Sight", "talent_tree": "Camouflage", "prerequisites": "Hidden Movement", "benefit": "Once per encounter, if within 2 squares of cover or concealment, move to it and make a Stealth check as a single move action."}
+{"name": "Shadow Striker", "talent_tree": "Camouflage", "prerequisites": "Hidden Movement", "benefit": "Each once per encounter after you attack: if you deal damage, gain total concealment vs that target; or if the opponent lacks Dex to Defense or you are concealed and deal damage, the target can only take a swift action next turn; or if you have concealment, gain +2 attack (+5 with total concealment)."}
+{"name": "Total Concealment", "talent_tree": "Camouflage", "prerequisites": "Hidden Movement", "benefit": "Gain total concealment in place of any concealment."}
+{"name": "Barter", "talent_tree": "Fringer", "prerequisites": null, "benefit": "Reroll Persuasion checks to haggle."}
+{"name": "Fringe Savant", "talent_tree": "Fringer", "prerequisites": null, "benefit": "Natural 20 on a skill check grants one extra Force Point for the encounter."}
+{"name": "Long Stride", "talent_tree": "Fringer", "prerequisites": null, "benefit": "Move +2 squares if wearing light or no armor."}
+{"name": "Flee", "talent_tree": "Fringer", "prerequisites": "Long Stride", "benefit": "Designate a single opponent and move away: +2 speed; no attacks of opportunity from that opponent."}
+{"name": "Sidestep", "talent_tree": "Fringer", "prerequisites": "Long Stride", "benefit": "Reduce diagonal movement cost to 1 if in light or no armor."}
+{"name": "Swift Strider", "talent_tree": "Fringer", "prerequisites": "Sidestep", "benefit": "Each once per encounter: move your speed and gain +2 Reflex until end of encounter; or no Defense penalty on a charge; or move and gain +2 Reflex vs attacks of opportunity until your next turn."}
+{"name": "Surge", "talent_tree": "Fringer", "prerequisites": "Long Stride", "benefit": "Once per encounter, move up to your speed."}
+{"name": "Jury-Rigger", "talent_tree": "Fringer", "prerequisites": null, "benefit": "Reroll Mechanics checks to jury-rig."}
+{"name": "Keep it Together", "talent_tree": "Fringer", "prerequisites": "Jury-Rigger", "benefit": "When you jury-rig a vehicle, it moves -2 down the condition track at end (instead of -5)."}
+{"name": "Deep-Space Gambit", "talent_tree": "Hyperspace Explorer", "prerequisites": null, "benefit": "Once per encounter, when you or your vehicle is targeted by an attack, force the opponent to reroll and take the worse result."}
+{"name": "Guidance", "talent_tree": "Hyperspace Explorer", "prerequisites": "Perception", "benefit": "Show an ally in line of sight how to ignore difficult terrain until your next turn (does not apply to you)."}
+{"name": "Hidden Attacker", "talent_tree": "Hyperspace Explorer", "prerequisites": "Stealth", "benefit": "Use the snipe action of Stealth as a swift action instead of a move."}
+{"name": "Hyperspace Savant", "talent_tree": "Hyperspace Explorer", "prerequisites": "Pilot", "benefit": "Use Pilot in place of Use Computer for astrogation or operating sensors."}
+{"name": "Vehicle Sneak", "talent_tree": "Hyperspace Explorer", "prerequisites": "Pilot", "benefit": "Treat your ship as two size categories smaller when making Stealth checks."}
+{"name": "Reconnaissance Team Leader", "talent_tree": "Reconnaissance", "prerequisites": null, "benefit": "Gain a follower trained in Perception and Stealth (max 3 times); follower can make Stealth checks with you."}
+{"name": "Close-Combat Assault", "talent_tree": "Reconnaissance", "prerequisites": "Reconnaissance Team Leader", "benefit": "Each follower gains the Point Blank Shot feat."}
+{"name": "Get Into Position", "talent_tree": "Reconnaissance", "prerequisites": "Base attack bonus +5, Reconnaissance Team Leader", "benefit": "One of your followers gains +2 speed."}
+{"name": "Reconnaissance Actions", "talent_tree": "Reconnaissance", "prerequisites": "Reconnaissance Team Leader", "benefit": "When you attack: grant +2 ranged attack to each follower; or +1 Stealth to each; or +1 Perception to each if armed with ranged weapons."}
+{"name": "Blend In", "talent_tree": "Spy", "prerequisites": "Stealth", "benefit": "Use Stealth in place of Deception for a deceptive appearance; considered trained."}
+{"name": "Incognito", "talent_tree": "Spy", "prerequisites": "Blend In", "benefit": "Reroll Deception checks for a deceptive appearance."}
+{"name": "Surveillance", "talent_tree": "Spy", "prerequisites": "Perception", "benefit": "Make Perception vs a target in line of sight (DC 15 or Stealth if higher); you and allies gain +2 attack until next turn and while out of the target’s line of sight."}
+{"name": "Improved Surveillance", "talent_tree": "Spy", "prerequisites": "Surveillance", "benefit": "You and allies gain +1 to all defenses against the target."}
+{"name": "Intimate Knowledge", "talent_tree": "Spy", "prerequisites": "Surveillance", "benefit": "Once per encounter, take 20 on a trained Knowledge check or take 10 on an untrained Knowledge check even if normally not allowed."}
+{"name": "Traceless Tampering", "talent_tree": "Spy", "prerequisites": null, "benefit": "Automatically leave no trace of tampering; on a failure by 10+, something goes wrong (instead of by 5)."}
+{"name": "Hidden Eyes", "talent_tree": "Surveillance", "prerequisites": null, "benefit": "If you have concealment against a target, gain +5 Perception against that target."}
+{"name": "Seek and Destroy", "talent_tree": "Surveillance", "prerequisites": "Hidden Eyes", "benefit": "If you charge an unaware target, that target cannot make a Perception check to notice you."}
+{"name": "Hunt the Hunter", "talent_tree": "Surveillance", "prerequisites": null, "benefit": "While searching for hidden enemies, make one attack against one enemy you notice."}
+{"name": "Spotter", "talent_tree": "Surveillance", "prerequisites": null, "benefit": "Make Perception vs DC 10 + target’s level against a target in line of sight; you and allies gain +1 attack against that target."}
+{"name": "Advanced Intel", "talent_tree": "Surveillance", "prerequisites": "Spotter", "benefit": "If you are not surprised, you may use Spotter in the surprise round."}
+{"name": "Evasion", "talent_tree": "Survivor", "prerequisites": null, "benefit": "If hit by an area attack, take half or no damage."}
+{"name": "Extreme Effort", "talent_tree": "Survivor", "prerequisites": null, "benefit": "Gain +5 on a Strength check in the same round."}
+{"name": "Sprint", "talent_tree": "Survivor", "prerequisites": null, "benefit": "Run up to five times your speed."}
+{"name": "Surefooted", "talent_tree": "Survivor", "prerequisites": null, "benefit": "Speed is not reduced by difficult terrain."}
+{"name": "Aggressive Surge", "talent_tree": "Unpredictable", "prerequisites": null, "benefit": "Once per encounter, when you take Second Wind, make a free charge."}
+{"name": "Blast Back", "talent_tree": "Unpredictable", "prerequisites": null, "benefit": "Once per round, when damaged by an area attack, make an attack against the source if you have line of sight and range."}
+{"name": "Second Strike", "talent_tree": "Unpredictable", "prerequisites": "Blast Back", "benefit": "Once per encounter, when you miss, move half your speed and attack another target without provoking attacks of opportunity; with Combat Reflexes, uses equal to Dex bonus (max once per round)."}
+{"name": "Fade Away", "talent_tree": "Unpredictable", "prerequisites": null, "benefit": "Once per turn, when damaged by an attack, move half your speed without provoking attacks of opportunity."}
+{"name": "Swerve", "talent_tree": "Unpredictable", "prerequisites": "Fade Away", "benefit": "Once per encounter, negate an attack of opportunity and move half your speed without provoking; with Combat Reflexes, uses equal to Dex bonus (max once per round)."}
+{"name": "Adapt and Survive", "talent_tree": "Versatility", "prerequisites": null, "benefit": "When an enemy within 24 squares and line of sight gains a morale or insight bonus, you gain the same bonus until your next turn."}
+{"name": "Unbalancing Adaptation", "talent_tree": "Versatility", "prerequisites": "Adapt and Survive", "benefit": "When you use Adapt and Survive, the enemy in line of sight is denied that bonus."}
+{"name": "Defensive Protection", "talent_tree": "Versatility", "prerequisites": null, "benefit": "Add a Force Point result to any one of your defenses or to one adjacent ally until your next turn."}
+{"name": "Quick on Your Feet", "talent_tree": "Versatility", "prerequisites": null, "benefit": "Once per encounter, move your speed."}
+{"name": "Ready and Willing", "talent_tree": "Versatility", "prerequisites": null, "benefit": "You may take a readied action at the end of the current turn after an opponent takes its action."}
+{"name": "Ambush Specialist", "talent_tree": "Ambusher", "prerequisites": null, "benefit": "If you are not surprised, treat the first round as a surprise round to activate talents; in the surprise round, designate one enemy as a prime target and gain +2 attack against it until end of encounter."}
+{"name": "Destructive Ambusher", "talent_tree": "Ambusher", "prerequisites": "Ambush Specialist", "benefit": "Gain +1 die of damage against your prime target until end of encounter."}
+{"name": "Keep It Going", "talent_tree": "Ambusher", "prerequisites": "Ambush Specialist", "benefit": "If you reduce your prime target to 0 hit points, designate a new prime target."}
+{"name": "Keep Them Reeling", "talent_tree": "Ambusher", "prerequisites": "Ambush Specialist", "benefit": "Once per turn, make an opposed Initiative check vs your prime target; if you win, the prime target is flat-footed against you."}
+{"name": "Perceptive Ambusher", "talent_tree": "Ambusher", "prerequisites": "Ambush Specialist", "benefit": "Gain +5 Perception against your prime target until the end of the encounter."}
+{"name": "Spring the Trap", "talent_tree": "Ambusher", "prerequisites": null, "benefit": "If you and all allies roll higher Initiative than opponents, gain a surprise round even if opponents are aware."}
+{"name": "Armored Defense", "talent_tree": "Armor Specialist", "prerequisites": null, "benefit": "Your Reflex Defense bonus equals either your heroic level or your armor bonus."}
+{"name": "Armor Mastery", "talent_tree": "Armor Specialist", "prerequisites": "Armored Defense", "benefit": "Increase the maximum Dexterity bonus you can apply while wearing armor by +1."}
+{"name": "Improved Armored Defense", "talent_tree": "Armor Specialist", "prerequisites": "Armored Defense", "benefit": "Your Reflex Defense bonus equals either your heroic level + half your armor bonus, or your armor bonus."}
+{"name": "Juggernaut", "talent_tree": "Armor Specialist", "prerequisites": "Armored Defense", "benefit": "Armor does not reduce speed or distance moved."}
+{"name": "Second Skin", "talent_tree": "Armor Specialist", "prerequisites": "Armored Defense", "benefit": "Increase your armor bonus to Reflex Defense and equipment bonus to Fortitude Defense by +1."}
+{"name": "Shield Expert", "talent_tree": "Armor Specialist", "prerequisites": "Armor Proficiency (light)", "benefit": "Once per encounter, spend a swift action to regain 10 shield rating (SR), up to the shield’s maximum, on an active personal shield."}
+{"name": "Cantina Brawler", "talent_tree": "Brawler", "prerequisites": null, "benefit": "When flanked, gain +2 on unarmed attack rolls and damage."}
+{"name": "Pick a Fight", "talent_tree": "Brawler", "prerequisites": "Cantina Brawler", "benefit": "During the surprise round, you and allies within 6 squares gain +1 attack; you retain the +1 attack against targets you damage."}
+{"name": "Counterpunch", "talent_tree": "Brawler", "prerequisites": null, "benefit": "When you fight defensively, any adjacent creature that attacks provokes an attack of opportunity from you."}
+{"name": "Expert Grappler", "talent_tree": "Brawler", "prerequisites": null, "benefit": "Gain +2 on opposed grapple checks."}
+{"name": "Unbalance Strike", "talent_tree": "Brawler", "prerequisites": "Expert Grappler", "benefit": "One opponent loses their Strength bonus to melee attack rolls against you (does not affect damage)."}
+{"name": "Grabber", "talent_tree": "Brawler", "prerequisites": null, "benefit": "You do not take the -5 penalty when using the grab action."}
+{"name": "Gun Club", "talent_tree": "Brawler", "prerequisites": null, "benefit": "Use a gun as a melee weapon without penalty; with a bayonet, it counts as both a blade and a club."}
+{"name": "Bayonet Master", "talent_tree": "Brawler", "prerequisites": "Gun Club", "benefit": "With a full attack, treat a ranged weapon with bayonet as a double weapon, ignoring penalties for double-weapon attacks."}
+{"name": "Hammerblow", "talent_tree": "Brawler", "prerequisites": null, "benefit": "If unarmed and holding no items, double your Strength bonus on unarmed attacks."}
+{"name": "Make Do", "talent_tree": "Brawler", "prerequisites": null, "benefit": "No penalty when using improvised weapons."}
+{"name": "Man Down", "talent_tree": "Brawler", "prerequisites": null, "benefit": "If an ally within 6 squares is reduced to 0 hit points, move up to your speed toward the ally without provoking attacks of opportunity."}
+{"name": "Melee Smash", "talent_tree": "Brawler", "prerequisites": null, "benefit": "Gain +1 damage on melee attacks."}
+{"name": "Devastating Melee Smash", "talent_tree": "Brawler", "prerequisites": "Melee Smash", "benefit": "Once per encounter, before making a melee attack, add half your level to the damage instead of +1."}
+{"name": "Stunning Strike", "talent_tree": "Brawler", "prerequisites": "Melee Smash", "benefit": "When you deal damage with a melee attack and exceed the target’s threshold, move the target 1 step down the condition track."}
+{"name": "Experienced Brawler", "talent_tree": "Brawler", "prerequisites": "Stunning Strike", "benefit": "Each once per encounter after you attack: gain +5 dodge bonus; or +5 Fortitude or +5 Will Defense; or move 2 squares without provoking."}
+{"name": "Unrelenting Assault", "talent_tree": "Brawler", "prerequisites": "Melee Smash", "benefit": "If you miss with a melee attack or your attack is negated, still deal your Strength bonus damage (minimum 1), or double your Strength bonus if attacking two-handed."}
+{"name": "Strong Grab", "talent_tree": "Brawler", "prerequisites": null, "benefit": "When you grab an opponent, they must use a full-round action to break the grab (not a standard)."}
+{"name": "Sucker Punch", "talent_tree": "Brawler", "prerequisites": null, "benefit": "If your melee attack damages an opponent denied Dexterity to Defense, that opponent cannot make attacks of opportunity."}
+{"name": "Gang Leader", "talent_tree": "Brute Squad", "prerequisites": null, "benefit": "Once per encounter, when you intimidate, gain +1 per ally within 6 squares and the target’s line of sight (maximum +5)."}
+{"name": "Melee Assault", "talent_tree": "Brute Squad", "prerequisites": null, "benefit": "With a melee attack against a target with your allies adjacent, if you also exceed Fortitude Defense, deal +1 die of damage and knock the target prone."}
+{"name": "Melee Brute", "talent_tree": "Brute Squad", "prerequisites": null, "benefit": "With a melee attack against a target with your allies adjacent, if you also exceed Fortitude Defense, the target’s speed is -2 and takes -2 Reflex Defense on its next turn."}
+{"name": "Melee Opportunist", "talent_tree": "Brute Squad", "prerequisites": null, "benefit": "Once per encounter, when an ally makes a successful melee attack against a target adjacent to you, make a reaction attack with +2 attack."}
+{"name": "Squad Brutality", "talent_tree": "Brute Squad", "prerequisites": null, "benefit": "With a melee attack against a target with your allies adjacent, reroll damage and keep the better result."}
+{"name": "Squad Superiority", "talent_tree": "Brute Squad", "prerequisites": null, "benefit": "If you and at least two allies are adjacent to the target, the target is flat-footed."}
+{"name": "Battle Analysis", "talent_tree": "Commando", "prerequisites": null, "benefit": "With a DC 15 Knowledge (tactics) check, determine which allies or opponents in line of sight are at half hit points."}
+{"name": "Cover Fire", "talent_tree": "Commando", "prerequisites": "Battle Analysis", "benefit": "When you make a ranged attack, allies within 6 squares gain +1 Defense until your next turn."}
+{"name": "Demolitionist", "talent_tree": "Commando", "prerequisites": null, "benefit": "When using Mechanics to set explosives, deal +2 dice of damage; may be taken multiple times and stacks."}
+{"name": "Draw Fire", "talent_tree": "Commando", "prerequisites": null, "benefit": "Make Persuasion vs Will; target cannot attack anyone within 6 squares if you do not have cover."}
+{"name": "Harm's Way", "talent_tree": "Commando", "prerequisites": "Initiative", "benefit": "Once per round, shield an ally; attacks that would target the ally target you instead."}
+{"name": "Indomitable", "talent_tree": "Commando", "prerequisites": null, "benefit": "Once per day, move +5 steps up the condition track (not persistent conditions); may be taken multiple times."}
+{"name": "Keep Them at Bay", "talent_tree": "Commando", "prerequisites": null, "benefit": "When you aid another to suppress an attack, the enemy takes -5 on its attack instead of -2."}
+{"name": "Tough as Nails", "talent_tree": "Commando", "prerequisites": null, "benefit": "Catch a Second Wind one extra time per encounter."}
+{"name": "Hard Target", "talent_tree": "Commando", "prerequisites": "Tough as Nails", "benefit": "Catch a Second Wind as a reaction instead of a swift action."}
+{"name": "Combined Fire", "talent_tree": "Mercenary", "prerequisites": "Coordinated Attack", "benefit": "Deal +2 damage against targets damaged by an ally since the end of your last turn."}
+{"name": "Mercenary's Teamwork", "talent_tree": "Mercenary", "prerequisites": "Combined Fire", "benefit": "Deal +2 damage against targets damaged by an ally since the end of your last turn (stacks up to +10)."}
+{"name": "Commanding Presence", "talent_tree": "Mercenary", "prerequisites": null, "benefit": "Once per encounter, all enemies take -2 Will Defense; Persuasion becomes a class skill for you."}
+{"name": "Feared Warrior", "talent_tree": "Mercenary", "prerequisites": "Commanding Presence", "benefit": "When you reduce an enemy to 0 hit points, make Persuasion vs targets within 6 squares; those targets take -2 attack for the rest of the encounter (once only)."}
+{"name": "Dirty Fighting", "talent_tree": "Mercenary", "prerequisites": null, "benefit": "Once per encounter, if you damage an opponent, reduce the target’s damage threshold by 2 for the encounter."}
+{"name": "Ruthless", "talent_tree": "Mercenary", "prerequisites": "Dirty Fighting", "benefit": "When you deal damage over the target’s threshold, gain +2 damage against that target for the rest of the encounter."}
+{"name": "Focused Warrior", "talent_tree": "Mercenary", "prerequisites": null, "benefit": "When you deal damage, gain +5 Will Defense until your next turn unless you are surprised or flat-footed."}
+{"name": "Mercenary's Grit", "talent_tree": "Mercenary", "prerequisites": null, "benefit": "When affected by a debilitating condition, convert its penalty into a bonus for 1 round, then move down the condition track."}
+{"name": "Mercenary's Determination", "talent_tree": "Mercenary", "prerequisites": "Mercenary's Grit", "benefit": "Double your speed for 1 round; must wait 5 rounds between uses."}
+{"name": "Jet Pack Training", "talent_tree": "Rocket Jumper", "prerequisites": null, "benefit": "Activate a jet pack as a free action; no Pilot check required to land."}
+{"name": "Burning Assault", "talent_tree": "Rocket Jumper", "prerequisites": "Jet Pack Training", "benefit": "Expend a charge to make an attack as a flamethrower; cannot use while flying."}
+{"name": "Improved Trajectory", "talent_tree": "Rocket Jumper", "prerequisites": "Jet Pack Training", "benefit": "Increase fly speed by 2 squares."}
+{"name": "Jet Pack Withdraw", "talent_tree": "Rocket Jumper", "prerequisites": "Jet Pack Training", "benefit": "Once per encounter, when an enemy moves adjacent, expend one charge to fly, move your speed, or withdraw."}
+{"name": "Commanding Officer", "talent_tree": "Squad Leader", "prerequisites": null, "benefit": "Gain one follower with Armor Proficiency and Weapon Proficiency (rifles); may be taken up to three times."}
+{"name": "Coordinated Tactics", "talent_tree": "Squad Leader", "prerequisites": "Commanding Officer", "benefit": "Each follower gains the Coordinated Attack feat."}
+{"name": "Fire at Will", "talent_tree": "Squad Leader", "prerequisites": "Base attack bonus +5, Commanding Officer", "benefit": "You and one follower each make a ranged attack against a target in line of sight, each taking -5 to attack."}
+{"name": "Squad Actions", "talent_tree": "Squad Leader", "prerequisites": "Commanding Officer", "benefit": "When you attack: extend autofire by 1 square; or gain +2 damage; or gain +1 attack per follower if armed with ranged weapons."}
+{"name": "Comrades in Arms", "talent_tree": "Trooper", "prerequisites": null, "benefit": "If within 3 squares of an ally, gain +1 attack."}
+{"name": "Focused Targeting", "talent_tree": "Trooper", "prerequisites": "Comrades in Arms", "benefit": "If you damage an opponent, all allies within 3 squares gain +2 damage against that target."}
+{"name": "Stick Together", "talent_tree": "Trooper", "prerequisites": "Comrades in Arms", "benefit": "If an ally moves, you may move before your next turn, ending within 3 squares of that ally."}
+{"name": "Watch Your Back", "talent_tree": "Trooper", "prerequisites": null, "benefit": "If adjacent to an ally, you cannot be flanked."}
+{"name": "Phalanx", "talent_tree": "Trooper", "prerequisites": "Watch Your Back", "benefit": "If you provide soft cover to an ally within 3 squares, it becomes improved cover."}
+{"name": "Crushing Assault", "talent_tree": "Weapon Specialist", "prerequisites": "Weapon Specialization", "benefit": "If you damage an opponent with a bludgeoning attack, gain +2 attack and +2 damage on your next attack against that opponent before the end of the encounter."}
+{"name": "Devastating Attack", "talent_tree": "Weapon Specialist", "prerequisites": null, "benefit": "Reduce an opponent’s damage threshold by 5 with a single weapon group."}
+{"name": "Disarming Attack", "talent_tree": "Weapon Specialist", "prerequisites": "Improved Disarm, Intelligence 13, Weapon Specialization", "benefit": "Ignore target’s armor bonus to Reflex Defense when disarming; once per encounter, gain +10 attack on a disarm attempt."}
+{"name": "Impaling Assault", "talent_tree": "Weapon Specialist", "prerequisites": "Weapon Specialization", "benefit": "If you damage an opponent with a piercing attack, the opponent’s speed is -2 until the end of your next turn."}
+{"name": "Improved Suppression Fire", "talent_tree": "Weapon Specialist", "prerequisites": null, "benefit": "When you suppress an enemy, that enemy takes -5 attack; if targeting with autofire, each enemy in the area takes -2 attack."}
+{"name": "Penetrating Attack", "talent_tree": "Weapon Specialist", "prerequisites": "Weapon Focus", "benefit": "Reduce opponent’s DR by 5 with a single weapon group."}
+{"name": "Stinging Assault", "talent_tree": "Weapon Specialist", "prerequisites": "Weapon Specialization", "benefit": "If you damage an opponent with a slashing attack, the opponent takes -2 melee attack until your next turn."}
+{"name": "Weapon Specialization", "talent_tree": "Weapon Specialist", "prerequisites": "Weapon Focus", "benefit": "Gain +2 damage with a single weapon group."}
+{"name":"Outrun","talent_tree":"Blockade Runner","prerequisites":null,"benefit":"When you take an all-out movement as the pilot, gain +2 Reflex Defense."}
+{"name":"Punch Through","talent_tree":"Blockade Runner","prerequisites":null,"benefit":"When you pilot a vehicle, smaller vehicles attempting to dogfight take a -10 penalty instead of -5."}
+{"name":"Small Target","talent_tree":"Blockade Runner","prerequisites":null,"benefit":"If you pilot a colossal or smaller vehicle, capital ships take -20 to attack (not -10) and cannot score critical hits unless you would be hit."}
+{"name":"Watch This","talent_tree":"Blockade Runner","prerequisites":null,"benefit":"You can move into the same space as a frigate or larger without collision and may occupy the same space."}
+{"name":"Close Cover","talent_tree":"Blockade Runner","prerequisites":"Watch This","benefit":"If you occupy the same space as a larger vehicle, gain +5 cover bonus."}
+{"name":"Blind Spot","talent_tree":"Expert Pilot","prerequisites":null,"benefit":"Against a vehicle two sizes bigger that must be adjacent, make an opposed Pilot check; if you win, your attack vs that target +2 and their attacks vs you -2."}
+{"name":"Close Scrape","talent_tree":"Expert Pilot","prerequisites":null,"benefit":"Against a colossal size or smaller vehicle, a successful Pilot check turns a critical hit into a normal hit."}
+{"name":"Elusive Dogfighter","talent_tree":"Expert Pilot","prerequisites":null,"benefit":"Opponents in a dogfight with you take a -10 penalty to attack."}
+{"name":"Full Throttle","talent_tree":"Expert Pilot","prerequisites":null,"benefit":"You may take 10 to increase speed; all-out movement is x5 instead of x4."}
+{"name":"Improved Attack Run","talent_tree":"Expert Pilot","prerequisites":null,"benefit":"You are not required to move in a straight line when making an attack run."}
+{"name":"Keep It Together","talent_tree":"Expert Pilot","prerequisites":null,"benefit":"Once per encounter your vehicle avoids moving down the condition track."}
+{"name":"Relentless Pursuit","talent_tree":"Expert Pilot","prerequisites":null,"benefit":"You may roll twice for a Pilot check to initiate a dogfight and take the better result."}
+{"name":"Renowned Pilot","talent_tree":"Expert Pilot","prerequisites":null,"benefit":"Allies within 6 squares can reroll one Pilot check and keep the best (once per ally)."}
+{"name":"Vehicle Focus","talent_tree":"Expert Pilot","prerequisites":"Wisdom 13","benefit":"Gain +2 attack with a selected vehicle type and may take 10 on Pilot checks for that vehicle."}
+{"name":"Vehicular Evasion","talent_tree":"Expert Pilot","prerequisites":null,"benefit":"If hit by an area attack while moving, take half or no damage."}
+{"name":"Juke","talent_tree":"Expert Pilot","prerequisites":"Vehicular Evasion","benefit":"When fighting defensively, may negate one additional attack per round with vehicular combat."}
+{"name":"Wingman","talent_tree":"Expert Pilot","prerequisites":"Wisdom 13, Pilot DC 15","benefit":"As a swift action, assist an allied starfighter within 2 squares to grant +5 Pilot in a dogfight."}
+{"name":"Expert Gunner","talent_tree":"Gunner","prerequisites":null,"benefit":"Gain +1 attack with vehicle weapons."}
+{"name":"Dogfight Gunner","talent_tree":"Gunner","prerequisites":"Expert Gunner","benefit":"No penalty with vehicle weapons even if you are not the pilot."}
+{"name":"Quick Trigger","talent_tree":"Gunner","prerequisites":"Expert Gunner","benefit":"Can make attacks of opportunity with vehicle weapons."}
+{"name":"Synchronized Fire","talent_tree":"Gunner","prerequisites":"Expert Gunner","benefit":"Once per encounter, coordinate an attack with an ally on the same target to overcome SR, DR, and Threshold together."}
+{"name":"System Hit","talent_tree":"Gunner","prerequisites":"Expert Gunner","benefit":"A successful attack forces the target vehicle an additional step down the condition track."}
+{"name":"Crippling Hit","talent_tree":"Gunner","prerequisites":"System Hit","benefit":"If your attack moves a ship down the track, it may lose hyperdrive, weapons, or communications."}
+{"name":"Great Shot","talent_tree":"Gunner","prerequisites":null,"benefit":"Reduce range penalties by one category (for example, short becomes point-blank)."}
+{"name":"Begin Attack Run","talent_tree":"Squadron Leader","prerequisites":"Charisma 13","benefit":"Designate a single target and gain +5 attack with an attack run."}
+{"name":"Regroup","talent_tree":"Squadron Leader","prerequisites":"Charisma 13","benefit":"Once per encounter, move every ship in your squadron +1 up the condition track."}
+{"name":"Squadron Maneuvers","talent_tree":"Squadron Leader","prerequisites":"Charisma 13, any other Ace talent","benefit":"Once per encounter, grant the prerequisite of a chosen talent to every ship in your squadron until the end of the encounter."}
+{"name":"Squadron Tactics","talent_tree":"Squadron Leader","prerequisites":"Charisma 13, Starship Tactics, Squadron Maneuvers","benefit":"Once per encounter, grant a maneuver you use to every ship in your squadron next round."}
+{"name":"Concentrate All Fire","talent_tree":"Wingman","prerequisites":null,"benefit":"When you aid another's attack with a vehicle weapon, the attack deals +1 die damage; an ally may only benefit once per attack."}
+{"name":"Escort","talent_tree":"Wingman","prerequisites":"Pilot","benefit":"+10 threshold for you and an adjacent ally when adjacent to a colossal or smaller allied ship."}
+{"name":"Run Interference","talent_tree":"Wingman","prerequisites":"Escort","benefit":"Negate an attack targeting an adjacent allied colossal or smaller ship using vehicular combat."}
+{"name":"Wingman Retribution","talent_tree":"Wingman","prerequisites":"Escort","benefit":"Once per round, make a vehicle weapon attack at -5 against an attacker of an adjacent allied colossal or smaller ship if your attack deals damage."}
+{"name":"Lose Pursuit","talent_tree":"Wingman","prerequisites":"Escort","benefit":"+5 to avoid entering a dogfight for you and an adjacent allied colossal or smaller ship."}
+{"name":"Murderous Arts I","talent_tree":"Assassin","prerequisites":null,"benefit":"If you move an opponent down the condition track, they take +1d6 damage."}
+{"name":"Murderous Arts II","talent_tree":"Assassin","prerequisites":"Murderous Arts I","benefit":"If you hit an opponent you have marked, deal +1d6 damage."}
+{"name":"Ruthless","talent_tree":"Assassin","prerequisites":null,"benefit":"Once per encounter, if you drop a foe to 0 hp or to the bottom of the track, you gain an extra standard action."}
+{"name":"Shift","talent_tree":"Assassin","prerequisites":null,"benefit":"Move 1 square without provoking attacks of opportunity."}
+{"name":"Advantageous Positioning","talent_tree":"Assassin","prerequisites":"Shift","benefit":"An opponent you flank is treated as flat-footed."}
+{"name":"Get Some Distance","talent_tree":"Assassin","prerequisites":"Advantageous Positioning","benefit":"Once per encounter, make a melee attack then move your speed away without provoking attacks of opportunity."}
+{"name":"Sniping Assassin","talent_tree":"Assassin","prerequisites":null,"benefit":"When making a ranged attack not at point-blank range, add half your class level to damage."}
+{"name":"Sniping Marksman","talent_tree":"Assassin","prerequisites":"Sniping Assassin","benefit":"Once per encounter when making a ranged attack not at point-blank range, ignore the target's armor bonus to Reflex Defense."}
+{"name":"Sniping Master","talent_tree":"Assassin","prerequisites":"Sniping Marksman","benefit":"Aim with one swift action at a target not in point-blank range."}
+{"name":"Deadly Repercussions","talent_tree":"Genohardan","prerequisites":null,"benefit":"When you reduce an opponent to 0 hp, all opponents in line of sight of you and the target take -2 attack until your next turn."}
+{"name":"Manipulating Strike","talent_tree":"Genohardan","prerequisites":null,"benefit":"Once per turn, when you damage a target with a non-area attack, make Persuasion vs Will Defense to control that target's swift action."}
+{"name":"Improved Manipulating Strike","talent_tree":"Genohardan","prerequisites":"Manipulating Strike","benefit":"Once per turn, when you damage a target with a non-area attack, make Persuasion vs Will Defense to control that target's move action."}
+{"name":"Pulling the Strings","talent_tree":"Genohardan","prerequisites":null,"benefit":"Make Persuasion vs Will Defense within 12 squares to move the target half its speed toward you and make an immediate attack."}
+{"name":"Hunter's Mark","talent_tree":"Bounty Hunter","prerequisites":null,"benefit":"When you aim before attacking, if the attack deals damage, move the target one step down the condition track."}
+{"name":"Hunter's Target","talent_tree":"Bounty Hunter","prerequisites":"Hunter's Mark","benefit":"Once per encounter designate an opponent as your Hunter's Target; damage vs that target increases by an amount tied to your bounty hunter level."}
+{"name":"Dread","talent_tree":"Bounty Hunter","prerequisites":"Hunter's Target","benefit":"Make Persuasion vs Will Defense against your Hunter's Target to impose -5 to their Will Defense as long as you keep line of sight."}
+{"name":"Relentless","talent_tree":"Bounty Hunter","prerequisites":"Hunter's Target","benefit":"Avoid moving down the condition track from effects caused by your designated opponent."}
+{"name":"Tag","talent_tree":"Bounty Hunter","prerequisites":"Hunter's Target","benefit":"If you damage your Hunter's Target, all allies gain +2 on their next attack vs that target until the start of your next turn."}
+{"name":"Jedi Hunter","talent_tree":"Bounty Hunter","prerequisites":null,"benefit":"Gain +1 to Fortitude and Will Defense and deal +1 die damage against Force-sensitives."}
+{"name":"Notorious","talent_tree":"Bounty Hunter","prerequisites":null,"benefit":"Reroll Persuasion checks to Intimidate."}
+{"name":"Fearsome","talent_tree":"Bounty Hunter","prerequisites":"Notorious","benefit":"Opponents with level equal or lower to your heroic level within 6 squares take -1 attack."}
+{"name":"Ruthless Negotiator","talent_tree":"Bounty Hunter","prerequisites":"Notorious","benefit":"Reroll Persuasion when haggling over bounty prices."}
+{"name":"Nowhere to Hide","talent_tree":"Bounty Hunter","prerequisites":null,"benefit":"Reroll Gather Information checks to locate a specific individual."}
+{"name":"Nowhere to Run","talent_tree":"Bounty Hunter","prerequisites":"Nowhere to Hide, Hunter's Target","benefit":"Once per turn when your Hunter's Target attempts to withdraw, you may make an attack of opportunity."}
+{"name":"Signature Item","talent_tree":"Bounty Hunter","prerequisites":null,"benefit":"With a specific item, gain +2 on opposed skill checks; multiple items stack +1 each."}
+{"name":"Force Blank","talent_tree":"Force Hunter","prerequisites":null,"benefit":"Use the Force to reduce by 10 the effectiveness of Sense Surroundings attempts to detect you."}
+{"name":"Lightsaber Evasion","talent_tree":"Force Hunter","prerequisites":null,"benefit":"When an enemy misses you with a lightsaber, you may move 2 squares without provoking attacks of opportunity."}
+{"name":"Precision Fire","talent_tree":"Force Hunter","prerequisites":null,"benefit":"When you aim, increase the difficulty for your attack to be deflected by +5."}
+{"name":"Steel Mind","talent_tree":"Force Hunter","prerequisites":null,"benefit":"If you resist a mind-affecting Force power, the user cannot use that same power against you again."}
+{"name":"Strong-Willed","talent_tree":"Force Hunter","prerequisites":null,"benefit":"Add your class level to Will Defense against Use the Force effects."}
+{"name":"Telekinetic Resistance","talent_tree":"Force Hunter","prerequisites":null,"benefit":"If you are moved by a Force power, reduce the movement distance by half."}
+{"name":"Findsman Ceremonies","talent_tree":"Gand Findsman","prerequisites":null,"benefit":"Once per day, spend a Force Point for a 10-minute ritual to reroll Perception, Stealth, Farseeing, or an attack roll and regain unspent Force Points."}
+{"name":"Findsman's Foresight","talent_tree":"Gand Findsman","prerequisites":"Findsman Ceremonies","benefit":"Roll two dice for Perception to avoid surprise and keep the better result."}
+{"name":"Omens","talent_tree":"Gand Findsman","prerequisites":"Findsman Ceremonies","benefit":"When an ally within 10 squares and line of sight rolls a natural 1 or 20, you gain +2 attack or +2 Reflex Defense until the end of your next turn."}
+{"name":"Target Visions","talent_tree":"Gand Findsman","prerequisites":"Findsman Ceremonies","benefit":"Once per encounter when an enemy moves within 6 squares, you may make an attack against them as a reaction."}
+{"name":"Temporal Awareness","talent_tree":"Gand Findsman","prerequisites":"Findsman Ceremonies","benefit":"Once per encounter when attacked, you can move your speed as an immediate reaction."}
+{"name":"Cunning Distraction","talent_tree":"Trickery","prerequisites":null,"benefit":"If you feint in combat, you may move half your speed as part of the feint."}
+{"name":"Damaging Deception","talent_tree":"Trickery","prerequisites":"Cunning Distraction","benefit":"After a successful Deception vs Will Defense in line of sight, the next attack by your ally against that target deals +2 dice of damage."}
+{"name":"Distracting Shout","talent_tree":"Trickery","prerequisites":"Cunning Distraction","benefit":"Once per encounter when an ally is attacked, your Deception check can substitute for their defense; if it fails, the effect is not used."}
+{"name":"Innocuous","talent_tree":"Trickery","prerequisites":null,"benefit":"Make Deception vs Will Defense within 6 squares and line of sight to impose -5 attack vs you until the start of their next turn."}
+{"name":"Improved Soft Cover","talent_tree":"Trickery","prerequisites":"Innocuous","benefit":"If adjacent to a creature, gain +2 Reflex Defense until you are no longer adjacent or until your next turn."}
+{"name":"Treacherous","talent_tree":"Trickery","prerequisites":"Improved Soft Cover","benefit":"If not adjacent to an attacker and you attack another adjacent target and then move 1 square, you may provoke an attack of opportunity from the attacked creature."}
+{"name":"Competitive Drive","talent_tree":"Corporate Power","prerequisites":null,"benefit":"Once per encounter reroll one Wisdom, Intelligence, or Charisma-based skill check (except Use the Force)."}
+{"name":"Competitive Edge","talent_tree":"Corporate Power","prerequisites":null,"benefit":"When you and allies are not surprised, number of allies equal to your Charisma modifier benefit from Quick Draw."}
+{"name":"Impose Hesitation","talent_tree":"Corporate Power","prerequisites":null,"benefit":"Make a Persuasion cone (6 squares) vs Will; targets lose their swift action on their next turn and cannot take a full-round action."}
+{"name":"Corporate Clout","talent_tree":"Corporate Power","prerequisites":"Impose Hesitation","benefit":"Once per encounter, Persuasion vs Will within line of sight can prevent the target from attacking you; if over by 5, they also cannot attack your allies."}
+{"name":"Impose Confusion","talent_tree":"Corporate Power","prerequisites":"Impose Hesitation","benefit":"Once per encounter, Persuasion in a 12-square cone vs Will forces targets to lose their swift action and a standard action; one target loses a standard action if failed."}
+{"name":"Willful Resolve","talent_tree":"Corporate Power","prerequisites":null,"benefit":"Once per encounter negate the effect of a single attack or skill check made vs your Will Defense."}
+{"name":"Wrong Decision","talent_tree":"Corporate Power","prerequisites":null,"benefit":"Each time you are attacked, the opponent takes -2 to Will Defense until the end of their next turn."}
+{"name":"Inspire Fear I","talent_tree":"Infamy","prerequisites":null,"benefit":"Opponents of equal or lower level take -1 on attack rolls, opposed skill checks, and Use the Force."}
+{"name":"Frighten","talent_tree":"Infamy","prerequisites":"Inspire Fear I","benefit":"Once per encounter force all enemies to move 1 square away from one minion; they cannot make attacks of opportunity."}
+{"name":"Terrify","talent_tree":"Infamy","prerequisites":"Inspire Fear II, Frighten","benefit":"Persuasion vs Will in line of sight forces targets to move away from you; if they cannot move, fear effect doubles."}
+{"name":"Inspire Fear II","talent_tree":"Infamy","prerequisites":"Inspire Fear I","benefit":"Increase penalties to -2 on affected rolls."}
+{"name":"Fear Me","talent_tree":"Infamy","prerequisites":"Inspire Fear II","benefit":"Once per encounter if a minion is down the track, you may reduce them by 1 and the target regains hit points equal to your heroic level unless at 0 hp."}
+{"name":"Inspire Fear III","talent_tree":"Infamy","prerequisites":"Inspire Fear II","benefit":"Increase penalties to -5 on affected rolls."}
+{"name":"Unsavory Reputation","talent_tree":"Infamy","prerequisites":"Inspire Fear III, Notorious","benefit":"When an opponent is reduced to half hit points within 6 squares of you, they take -2 to attack and skill checks for the rest of the encounter."}
+{"name":"Notorious (Infamy)","talent_tree":"Infamy","prerequisites":null,"benefit":"Reroll Persuasion checks when attempting to Intimidate."}
+{"name":"Shared Notoriety","talent_tree":"Infamy","prerequisites":"Notorious","benefit":"Your minions may reroll Persuasion checks to Intimidate."}
+{"name":"Attract Minion","talent_tree":"Mastermind","prerequisites":null,"benefit":"Attract nonheroic minions with levels equal to 3/4 your level; may have multiple minions."}
+{"name":"Bodyguard I","talent_tree":"Mastermind","prerequisites":"Attract Minion","benefit":"Once per turn, redirect an attack to an attracted minion."}
+{"name":"Bodyguard II","talent_tree":"Mastermind","prerequisites":"Bodyguard I","benefit":"Once per turn, redirect an attack to an attracted minion; the minion gains Reflex Defense equal to half your class level."}
+{"name":"Bodyguard III","talent_tree":"Mastermind","prerequisites":"Bodyguard II","benefit":"Once per turn, redirect an attack to an attracted minion; the minion gains Reflex Defense equal to your class level and makes a free attack against the attacker."}
+{"name":"Shelter","talent_tree":"Mastermind","prerequisites":"Attract Minion","benefit":"Any cover bonus to your Reflex Defense is +2 when adjacent to a minion."}
+{"name":"Wealth of Allies","talent_tree":"Mastermind","prerequisites":"Attract Minion","benefit":"If a minion is killed, they are replaced by one of the same level after 24 hours."}
+{"name":"Impel Ally I","talent_tree":"Mastermind","prerequisites":null,"benefit":"Designate an ally to move immediately at normal speed; must move immediately or the effect is wasted; usable three times per turn."}
+{"name":"Impel Ally II","talent_tree":"Mastermind","prerequisites":"Impel Ally I","benefit":"Designated ally can make a standard or move action immediately or the effect is wasted."}
+{"name":"Impel Ally III","talent_tree":"Mastermind","prerequisites":"Impel Ally II","benefit":"Designated ally can take a standard and a move action immediately or the effect is wasted."}
+{"name":"Inspire Wrath","talent_tree":"Mastermind","prerequisites":"Impel Ally II","benefit":"Allies in line of sight gain +2 attack and +2 to skill checks against your designated target."}
+{"name":"Urgency","talent_tree":"Mastermind","prerequisites":"Impel Ally II","benefit":"Once per encounter, increase the speed of allies in line of sight by 2."}
+{"name":"Tactical Superiority","talent_tree":"Mastermind","prerequisites":null,"benefit":"Any cover bonus to your Reflex Defense is +2 when adjacent to a minion."}
+{"name":"Tactical Withdrawal","talent_tree":"Mastermind","prerequisites":null,"benefit":"All allies in line of sight and within 6 squares may withdraw as a swift action until the start of your next turn."}
+{"name":"Extended Critical Range (heavy)","talent_tree":"Critical Master","prerequisites":"Base attack bonus +10, Weapon Proficiency (heavy)","benefit":"Increase critical range of heavy weapons by 1."}
+{"name":"Extended Critical Range (rifles)","talent_tree":"Critical Master","prerequisites":"Base attack bonus +10, Weapon Proficiency (rifles)","benefit":"Increase critical range of rifles by 1."}
+{"name":"Flurry Attack","talent_tree":"Critical Master","prerequisites":null,"benefit":"When you score a critical hit, make an additional attack against a target in range once per turn."}
+{"name":"Knockback","talent_tree":"Critical Master","prerequisites":null,"benefit":"On a critical hit, move the opponent back 1 square if not grabbed or into an obstacle; effect applies within two size categories."}
+{"name":"Reduce Defense","talent_tree":"Critical Master","prerequisites":null,"benefit":"On a critical hit, target suffers -2 Reflex Defense until healed to full hit points."}
+{"name":"Reduce Mobility","talent_tree":"Critical Master","prerequisites":null,"benefit":"On a critical hit, target’s speed is halved until healed to full hit points."}
+{"name":"Deny Move","talent_tree":"Critical Master","prerequisites":"Reduce Mobility","benefit":"On a critical hit, target cannot move on its next turn."}
+{"name":"Teras Kasi Basics","talent_tree":"Master of Teras Kasi","prerequisites":"Martial Arts I","benefit":"With Teras Kasi basics, unarmed attacks deal an additional damage die."}
+{"name":"Ignore Damage Reduction","talent_tree":"Master of Teras Kasi","prerequisites":"Teras Kasi Basics","benefit":"If your damage exceeds a creature's DR, you ignore that DR for that attack."}
+{"name":"Teras Kasi Mastery","talent_tree":"Master of Teras Kasi","prerequisites":"Martial Arts I-III, Teras Kasi Basics","benefit":"Only full-round unarmed actions allowed; take full attack as a standard action."}
+{"name":"Unarmed Parry","talent_tree":"Master of Teras Kasi","prerequisites":"Martial Arts I-II, Teras Kasi Basics","benefit":"When fighting defensively, may negate a melee attack using parry; if successful and attack beats your melee attack, negate the attack and apply -2 cumulative attack vs others."}
+{"name":"Unarmed Counterstrike","talent_tree":"Master of Teras Kasi","prerequisites":"Unarmed Parry","benefit":"If you parry a melee attack, immediately make an unarmed attack as a reaction against the attacker."}
+{"name":"Accurate Blow","talent_tree":"Melee Specialist","prerequisites":null,"benefit":"If you exceed Reflex Defense by 5 or more with a melee attack, deal +1 damage die per melee weapon group."}
+{"name":"Close-Quarters Fighter","talent_tree":"Melee Specialist","prerequisites":null,"benefit":"If adjacent or in the same square as a foe, gain +1 melee attack."}
+{"name":"Ignore Armor","talent_tree":"Melee Specialist","prerequisites":null,"benefit":"Once per encounter, ignore a target’s armor or equipment bonuses with a melee attack."}
+{"name":"Improved Stunning Strike","talent_tree":"Melee Specialist","prerequisites":"Stunning Strike","benefit":"If you move an opponent down the condition track with a melee attack, that target cannot take a standard or full-round action on its next turn."}
+{"name":"Whirling Death","talent_tree":"Melee Specialist","prerequisites":"Unrelenting Assault","benefit":"When using Unrelenting Assault, every adjacent target takes damage equal to your Strength bonus with a melee weapon."}
+{"name":"Bodyguard's Sacrifice","talent_tree":"Protection","prerequisites":null,"benefit":"Take any or all damage that would target an adjacent ally; cannot use again until the end of your next turn."}
+{"name":"Take the Hit","talent_tree":"Protection","prerequisites":"Bodyguard's Sacrifice","benefit":"If you take damage for an ally, your damage threshold is +5."}
+{"name":"Roll With It","talent_tree":"Protection","prerequisites":"Take the Hit","benefit":"If you take damage for an ally, gain Damage Reduction equal to your class level until the end of your next turn."}
+{"name":"Lifesaver","talent_tree":"Protection","prerequisites":"Bodyguard's Sacrifice","benefit":"Once per encounter, when an adjacent ally is reduced to 0 hp or below threshold, you may move your speed to become adjacent and take the damage instead."}
+{"name":"Out of Harm's Way","talent_tree":"Protection","prerequisites":null,"benefit":"Allow one ally within 6 squares to move their speed to become adjacent to you without provoking attacks of opportunity."}
+{"name":"Ward","talent_tree":"Protection","prerequisites":null,"benefit":"Provide soft cover to one adjacent ally."}
+{"name":"Armored Guard","talent_tree":"Protection","prerequisites":"Ward","benefit":"When using Ward, add one-half your armor bonuses to the ally’s Reflex Defense."}
+{"name":"Guard's Endurance","talent_tree":"Protection","prerequisites":"Ward","benefit":"Whenever you begin your turn adjacent to the Ward target, gain hit points equal to your character level."}
+{"name":"Controlled Burst","talent_tree":"Weapon Master","prerequisites":null,"benefit":"Reduce autofire or burst-fire penalty by 2; if braced, no penalty."}
+{"name":"Exotic Weapon Mastery","talent_tree":"Weapon Master","prerequisites":null,"benefit":"Become proficient with any exotic weapon feat even if you do not possess the feat."}
+{"name":"Greater Weapon Focus","talent_tree":"Weapon Master","prerequisites":"Weapon Focus with a proficient weapon","benefit":"Gain +1 attack with the chosen weapon."}
+{"name":"Greater Devastating Attack","talent_tree":"Weapon Master","prerequisites":"Greater Weapon Focus, Devastating Attack","benefit":"With the chosen proficient weapon, reduce target's damage threshold by 10 (replaces Devastating Attack)."}
+{"name":"Greater Penetrating Attack","talent_tree":"Weapon Master","prerequisites":"Greater Weapon Focus, Penetrating Attack","benefit":"With chosen proficient weapon, reduce opponent's DR by 10 (replaces Penetrating Attack)."}
+{"name":"Greater Weapon Specialization","talent_tree":"Weapon Master","prerequisites":"Greater Weapon Focus, Weapon Specialization","benefit":"Gain +2 damage with the chosen proficient weapon."}
+{"name":"Multiattack Proficiency (heavy)","talent_tree":"Weapon Master","prerequisites":null,"benefit":"Reduce multiattack penalty by 2 for heavy weapons."}
+{"name":"Multiattack Proficiency (rifles)","talent_tree":"Weapon Master","prerequisites":null,"benefit":"Reduce multiattack penalty by 2 for rifles."}
+{"name":"Mandalorian Advance","talent_tree":"Mandalorian Warrior","prerequisites":null,"benefit":"Once per encounter on your turn, move your speed as a free action before taking other actions."}
+{"name":"Mandalorian Ferocity","talent_tree":"Mandalorian Warrior","prerequisites":"Dexterity 13, Weapon Proficiency (once)","benefit":"Once per encounter when making more than one attack, add one damage die for each successful hit."}
+{"name":"Mandalorian Glory","talent_tree":"Mandalorian Warrior","prerequisites":null,"benefit":"Once per encounter when you reduce an opponent to 0 hp, gain +5 attack on your next attack in the same encounter."}
+{"name":"Armored Mandalorian","talent_tree":"Mandalorian Warrior","prerequisites":"Dexterity 13, Mandalorian Glory","benefit":"Add your armor's Fortitude Defense bonus to Elite Trooper Damage Reduction; lightsabers that do not ignore DR still do not ignore this DR."}
+{"name":"Ambush (Republic Commando)","talent_tree":"Republic Commando","prerequisites":null,"benefit":"If you hit an opponent that has not yet acted, add +2 dice of damage."}
+{"name":"Higher Yield","talent_tree":"Republic Commando","prerequisites":"Trained in Mechanics","benefit":"Once per encounter, add +1 damage die to a grenade or explosive."}
+{"name":"Rapid Reload","talent_tree":"Republic Commando","prerequisites":null,"benefit":"Retrieve and load an energy cell or power pack as a single swift action."}
+{"name":"Shoulder to Shoulder","talent_tree":"Republic Commando","prerequisites":null,"benefit":"If you begin your turn adjacent to an ally, gain hit points equal to your heroic level."}
+{"name":"Strength in Numbers","talent_tree":"Republic Commando","prerequisites":null,"benefit":"If within 10 squares of an ally, gain +2 Damage Reduction."}
+{"name":"Weapon Shift","talent_tree":"Republic Commando","prerequisites":"Gun Club","benefit":"When using a ranged weapon as a melee weapon, gain +2 melee attack."}
+{"name":"Cover Bracing","talent_tree":"Enforcement","prerequisites":null,"benefit":"Brace an autofire weapon as a swift action when near cover to gain bracing benefits."}
+{"name":"Intentional Crash","talent_tree":"Enforcement","prerequisites":null,"benefit":"On a successful ram as a pilot, you take half the ram damage; if target is same size or smaller, it cannot move next round."}
+{"name":"Nonlethal Tactics","talent_tree":"Enforcement","prerequisites":null,"benefit":"With a stun weapon, gain +1 attack and +1 damage die (nonlethal)."}
+{"name":"Pursuit","talent_tree":"Enforcement","prerequisites":"Dexterity 13","benefit":"Not restricted to a straight line when running; may reroll Endurance checks."}
+{"name":"Respected Officer","talent_tree":"Enforcement","prerequisites":null,"benefit":"Automatically improve the attitude of an indifferent NPC to friendly with no check required."}
+{"name":"Slowing Stun","talent_tree":"Enforcement","prerequisites":null,"benefit":"When you move a target -1 down the condition track, their speed is halved until the condition is removed."}
+{"name":"Takedown","talent_tree":"Enforcement","prerequisites":null,"benefit":"When you deal damage at the end of a charge, you knock the target prone if no more than one size larger than you."}
+{"name":"Charm Beast","talent_tree":"Beastwarden","prerequisites":null,"benefit":"Use the Force in place of Persuasion against animals with Intelligence 2 or less; -5 if the animal does not understand you."}
+{"name":"Bonded Mount","talent_tree":"Beastwarden","prerequisites":"Charm Beast","benefit":"Your bonded mount shares an empathic link, uses your Reflex and Will Defense while you ride it, and you gain the mount’s senses."}
+{"name":"Entreat Beast","talent_tree":"Beastwarden","prerequisites":"Charm Beast","benefit":"Use the Force vs Will Defense of an indifferent or better beast to command a minor task within 30 squares."}
+{"name":"Soothing Presence","talent_tree":"Beastwarden","prerequisites":"Charm Beast","benefit":"Automatically shift an unfriendly beast to indifferent."}
+{"name":"Wild Sense","talent_tree":"Beastwarden","prerequisites":"Charm Beast","benefit":"Once per turn, touch the mind of an indifferent or better beast within 12 squares and line of sight to use the beast’s Perception and line of sight as your own."}
+{"name":"Channel Aggression","talent_tree":"Dark Side Devotee","prerequisites":null,"benefit":"Against a flanked opponent or one denied Dexterity to Defense, deal extra damage equal to 1d6 per class level (maximum 10d6)."}
+{"name":"Channel Anger","talent_tree":"Dark Side Devotee","prerequisites":null,"benefit":"Gain +2 melee attack and damage for a number of rounds equal to 5 + Constitution modifier, then move down one step on the condition track."}
+{"name":"Embrace Dark Side","talent_tree":"Dark Side Devotee","prerequisites":"Channel Anger","benefit":"Reroll Dark Side skills and Use the Force checks; afterwards you can no longer use light-side talents."}
+{"name":"Crippling Strike","talent_tree":"Dark Side Devotee","prerequisites":"Channel Aggression","benefit":"On a critical hit, you can reduce the target’s speed by half until fully healed."}
+{"name":"Dark Side Talisman","talent_tree":"Dark Side Devotee","prerequisites":null,"benefit":"Gain +2 to one Defense against light-side powers."}
+{"name":"Greater Dark Side Talisman","talent_tree":"Dark Side Devotee","prerequisites":"Dark Side Talisman","benefit":"Gain +2 to all Defenses against light-side powers."}
+{"name":"Force Power Adept","talent_tree":"Force Adept","prerequisites":null,"benefit":"Choose a Force power; you may reroll Use the Force checks for that power."}
+{"name":"Force Treatment","talent_tree":"Force Adept","prerequisites":null,"benefit":"Use the Force replaces Treat Injury; you can treat without a medkit or medpac and are considered trained."}
+{"name":"Fortified Body","talent_tree":"Force Adept","prerequisites":null,"benefit":"Immune to disease, poison, and radiation."}
+{"name":"Attune Weapon","talent_tree":"Force Item","prerequisites":null,"benefit":"Grant a melee weapon +1 attack."}
+{"name":"Empower Weapon","talent_tree":"Force Item","prerequisites":null,"benefit":"Add one damage die to the empowered weapon."}
+{"name":"Force Throw","talent_tree":"Force Item","prerequisites":"Empower Weapon","benefit":"If within 6 squares, pull the weapon back as a swift action with a DC 20 Use the Force check."}
+{"name":"Primitive Block","talent_tree":"Force Item","prerequisites":"Empower Weapon","benefit":"Negate a melee attack with a Use the Force check vs the attack roll; -5 each additional use in a round; must have empowered weapon active, be aware and not flat-footed; may spend a Force Point for adjacent character."}
+{"name":"Force Talisman","talent_tree":"Force Item","prerequisites":null,"benefit":"Grant +1 to one Defense; cannot reattune for 24 hours; only one talisman active at a time."}
+{"name":"Focused Force Talisman","talent_tree":"Force Item","prerequisites":"Force Talisman","benefit":"Select a single Force power; when using that power and spending a Force Point, return all spent uses of that power to your suite."}
+{"name":"Greater Focused Force Talisman","talent_tree":"Force Item","prerequisites":"Focused Force Talisman","benefit":"As Focused Force Talisman but the Force Point does not count toward the one-per-turn limit."}
+{"name":"Greater Force Talisman","talent_tree":"Force Item","prerequisites":"Force Talisman","benefit":"Grant +1 to all Defenses."}
+{"name":"Force Interrogation","talent_tree":"Imperial Inquisitor","prerequisites":null,"benefit":"When you damage an opponent with a Force power, make a Persuasion check to intimidate."}
+{"name":"Cower Enemies","talent_tree":"Imperial Inquisitor","prerequisites":"Force Interrogation","benefit":"Persuasion in a 6-square cone to intimidate multiple targets instead of single target."}
+{"name":"Unsettling Presence","talent_tree":"Imperial Inquisitor","prerequisites":"Force Interrogation","benefit":"Use the Force vs Will against all in 6 squares; affected creatures take -2 to attack and skill checks until end of encounter."}
+{"name":"Inquisition","talent_tree":"Imperial Inquisitor","prerequisites":null,"benefit":"+1 attack rolls and +1 die damage against Force-sensitives."}
+{"name":"Channel Vitality","talent_tree":"Mystic","prerequisites":null,"benefit":"Move -1 down the condition track to gain 1 Force Point until the end of your turn."}
+{"name":"Closed Mind","talent_tree":"Mystic","prerequisites":null,"benefit":"Mind-affecting effects against you are rolled twice and you take the lower result."}
+{"name":"Esoteric Technique","talent_tree":"Mystic","prerequisites":null,"benefit":"When you spend a Force Point to activate a technique or secret, you gain hit points equal to 10 + class level."}
+{"name":"Mystic Mastery","talent_tree":"Mystic","prerequisites":null,"benefit":"When you gain a level, gain bonus Force Points equal to number of Force Talents you possess (maximum 6)."}
+{"name":"Regimen Aptitude","talent_tree":"Mystic","prerequisites":"Force Regimen Mastery","benefit":"Gain +5 on skill checks made to perform a Force Regimen."}
+{"name":"Mind Probe","talent_tree":"Telepath","prerequisites":null,"benefit":"Touch a creature with Int 3+; Use the Force vs Will to probe its mind as Gather Information if unwilling."}
+{"name":"Perfect Telepathy","talent_tree":"Telepath","prerequisites":null,"benefit":"You can communicate in full sentences and complete thoughts telepathically without altering the subject."}
+{"name":"Psychic Citadel","talent_tree":"Telepath","prerequisites":null,"benefit":"Gain Will Defense bonus equal to your class level."}
+{"name":"Psychic Defenses","talent_tree":"Telepath","prerequisites":"Psychic Citadel","benefit":"When targeted by mind-affecting powers, they automatically take damage equal to 1d6 × your Wisdom modifier (minimum ×1)."}
+{"name":"Telepathic Intruder","talent_tree":"Telepath","prerequisites":null,"benefit":"If you successfully use a mind-affecting power on a target, gain +2 on future mind-affecting powers against that target."}
+{"name":"Brutal Attack","talent_tree":"Gladiatorial Combat","prerequisites":"Weapon Focus","benefit":"If you deal damage over the threshold, add +1 damage die."}
+{"name":"Distracting Attack","talent_tree":"Gladiatorial Combat","prerequisites":"Brutal Attack","benefit":"If you deal damage, compare your attack to the target's Will Defense; if you meet or exceed it, the target takes -2 Reflex Defense until end of your turn."}
+{"name":"Exotic Weapons Master","talent_tree":"Gladiatorial Combat","prerequisites":null,"benefit":"Treat all exotic weapons as a single weapon group for proficiency and related effects."}
+{"name":"Lockdown Strike","talent_tree":"Gladiatorial Combat","prerequisites":null,"benefit":"When you hit a moving opponent one size larger or smaller with an attack of opportunity, end their movement."}
+{"name":"Multiattack Proficiency (exotic)","talent_tree":"Gladiatorial Combat","prerequisites":"Exotic Weapons Master","benefit":"Reduce multiattack penalty by 2 for exotic weapons."}
+{"name":"Personal Vendetta","talent_tree":"Gladiatorial Combat","prerequisites":null,"benefit":"Taunt enemies within 12 squares and line of sight; they suffer -2 attack on targets that are not you."}
+{"name":"Call Out","talent_tree":"Gladiatorial Combat","prerequisites":"Personal Vendetta","benefit":"As Personal Vendetta but designate one opponent to take -5 attack."}
+{"name":"Unstoppable","talent_tree":"Gladiatorial Combat","prerequisites":null,"benefit":"Once per encounter, reduce an effect that would move you down the condition track by 1 step."}
+{"name":"Blowback","talent_tree":"Carbineer","prerequisites":null,"benefit":"If you exceed the target's threshold, push the target 1 square."}
+{"name":"Close Contact","talent_tree":"Carbineer","prerequisites":null,"benefit":"Point-blank range increased by 5 squares; short range begins 5 squares later but ends at the same distance."}
+{"name":"Multiattack Proficiency (rifles)","talent_tree":"Carbineer","prerequisites":null,"benefit":"Reduce multiattack penalty by 2 for rifles."}
+{"name":"Old Faithful","talent_tree":"Carbineer","prerequisites":null,"benefit":"Your trusty sidearm bonus also applies to any rifle or carbine."}
+{"name":"Opportunity Fire","talent_tree":"Carbineer","prerequisites":null,"benefit":"+2 on attacks of opportunity with rifles."}
+{"name":"Rifle Master","talent_tree":"Carbineer","prerequisites":null,"benefit":"Treat rifles as accurate weapons and take no penalty firing at short range."}
+{"name":"Shoot from the Hip","talent_tree":"Carbineer","prerequisites":null,"benefit":"You can always use rifles to make attacks of opportunity."}
+{"name":"Snap Shot","talent_tree":"Carbineer","prerequisites":null,"benefit":"Aiming with stock extended does not provoke attacks of opportunity."}
+{"name":"Blind Shot","talent_tree":"Gunslinger","prerequisites":null,"benefit":"Ignore penalties from concealment and total concealment when making attacks."}
+{"name":"Debilitating Shot","talent_tree":"Gunslinger","prerequisites":null,"benefit":"When you aim before attacking and deal damage, move the target one step down the condition track."}
+{"name":"Deceptive Shot","talent_tree":"Gunslinger","prerequisites":null,"benefit":"Target in line of sight within 6 squares; Deception vs Will imposes loss of Dexterity to Defense until next turn."}
+{"name":"Improved Quick Draw","talent_tree":"Gunslinger","prerequisites":null,"benefit":"May make attacks in the surprise round."}
+{"name":"Knockdown Shot","talent_tree":"Gunslinger","prerequisites":null,"benefit":"When you aim before attacking and succeed, knock the target prone (target no larger than two size categories)."}
+{"name":"Mobile Attack (pistols)","talent_tree":"Gunslinger","prerequisites":null,"benefit":"Immediately after making a full attack with two pistols, you may move your speed as a free action."}
+{"name":"Multiattack Proficiency (pistols)","talent_tree":"Gunslinger","prerequisites":null,"benefit":"Reduce multiattack penalty by 2 for pistols."}
+{"name":"Ranged Disarm","talent_tree":"Gunslinger","prerequisites":null,"benefit":"Disarm a target with a ranged weapon; does not provoke attacks of opportunity."}
+{"name":"Ranged Flank","talent_tree":"Gunslinger","prerequisites":null,"benefit":"If within 6 squares of the target, you can count as adjacent for flanking against a single target."}
+{"name":"Trigger Work","talent_tree":"Gunslinger","prerequisites":null,"benefit":"No penalty to attack when using Rapid Shot."}
+{"name":"Dash and Blast","talent_tree":"Pistoleer","prerequisites":"Dual Weapon Mastery I, Running Attack","benefit":"Once per encounter with two pistols, move twice your speed and make attacks with each pistol."}
+{"name":"Flanking Foe","talent_tree":"Pistoleer","prerequisites":"Dual Weapon Mastery I","benefit":"If flanked and wielding two pistols, make flanking attacks as a standard action instead of a full; must attack two targets."}
+{"name":"Guaranteed Shot","talent_tree":"Pistoleer","prerequisites":"Dual Weapon Mastery I","benefit":"With two pistols, even if you miss, deal damage equal to half your heroic level."}
+{"name":"Hailfire","talent_tree":"Pistoleer","prerequisites":"Dual Weapon Mastery I","benefit":"With two pistols, attack as if autofire even without autofire, applying autofire penalties."}
+{"name":"Twin Shot","talent_tree":"Pistoleer","prerequisites":"Dual Weapon Mastery I, Rapid Shot","benefit":"With two pistols and Rapid Shot, gain +2 damage."}
+{"name":"Armored Augmentation I","talent_tree":"Knight's Armor","prerequisites":null,"benefit":"Once per encounter, as an action, add your armor bonus to Reflex Defense for threshold until end of encounter."}
+{"name":"Armored Augmentation II","talent_tree":"Knight's Armor","prerequisites":"Armored Augmentation I","benefit":"Also gain Damage Reduction equal to twice your armor's equipment bonus to Fortitude Defense."}
+{"name":"Armor Mastery","talent_tree":"Knight's Armor","prerequisites":null,"benefit":"Reflex Defense bonus equals heroic level + half armor bonus or armor bonus; counts as Armored and Improved Armored Defense."}
+{"name":"Cortosis Defense","talent_tree":"Knight's Armor","prerequisites":null,"benefit":"+2 on opposed unarmed melee attack rolls versus lightsabers."}
+{"name":"Cortosis Retaliation","talent_tree":"Knight's Armor","prerequisites":"Cortosis Defense","benefit":"When you successfully parry a lightsaber attack, you may make an immediate attack against that attacker."}
+{"name":"Knight's Morale","talent_tree":"Knight's Resolve","prerequisites":null,"benefit":"When an ally within 12 squares hits with a lightsaber, you gain +1 to all Defenses until the end of your next turn."}
+{"name":"Strength of the Empire","talent_tree":"Knight's Resolve","prerequisites":null,"benefit":"When an ally within 12 squares hits with a lightsaber, deal +1 damage die on your next lightsaber attack."}
+{"name":"Oath of Duty","talent_tree":"Knight's Resolve","prerequisites":null,"benefit":"When an ally within 12 squares hits with a lightsaber, you gain hit points equal to 3 × class level."}
+{"name":"Praetoria Ishu","talent_tree":"Knight's Resolve","prerequisites":null,"benefit":"May use Block and Deflect to protect an adjacent ally."}
+{"name":"Praetoria Vonil","talent_tree":"Knight's Resolve","prerequisites":"Weapon Focus (lightsabers)","benefit":"With a lightsaber in two hands, if you move at least 1 square before your attack, add +1 damage die."}
+{"name":"Black Market Buyer","talent_tree":"Procurement","prerequisites":null,"benefit":"Automatically locate a black market merchant."}
+{"name":"Only the Finest","talent_tree":"Procurement","prerequisites":"Black Market Buyer","benefit":"Obtain modified items without increasing their base value."}
+{"name":"Excellent Kit","talent_tree":"Procurement","prerequisites":null,"benefit":"All gear you purchase has +50% hit points, +5 Damage Reduction, and you gain +2 on Mechanics checks with those objects."}
+{"name":"Just What Is Needed","talent_tree":"Procurement","prerequisites":null,"benefit":"When using Repair or Mechanics, restore an additional +1d8 hit points."}
+{"name":"Right Gear for the Job","talent_tree":"Procurement","prerequisites":null,"benefit":"+5 equipment bonus to an ally's untrained check and treat the ally as trained (not for Use the Force)."}
+{"name":"Capture Droid","talent_tree":"Improviser","prerequisites":null,"benefit":"Once per encounter against an adjacent droid reduced to 0 hp, Mechanics vs Will Defense to capture: target moves +2 up the track, gains d8 hp and becomes friendly."}
+{"name":"Improved Jury-Rig","talent_tree":"Improviser","prerequisites":null,"benefit":"Jury-rig as a standard action instead of full; no check required to jury-rig; move the vehicle +3 steps up track instead of +2."}
+{"name":"Improvised Device","talent_tree":"Improviser","prerequisites":null,"benefit":"With DC 25 Mechanics and 1 hour, create an item worth 200 × class level credits; item cannot be rare or illegal, destroyed after 24 hours, usable once per day."}
+{"name":"Bigger Bang","talent_tree":"Improviser","prerequisites":"Improvised Device","benefit":"Improvised Device deals +1 damage die."}
+{"name":"Custom Model","talent_tree":"Improviser","prerequisites":"Improvised Device, Tech Specialist","benefit":"Add one modification from Tech Specialist to an Improvised Device without affecting the item's value."}
+{"name":"Always Ready","talent_tree":"Infiltration","prerequisites":null,"benefit":"When a readied action is triggered, your Initiative does not change."}
+{"name":"Concealed Weapon Expert","talent_tree":"Infiltration","prerequisites":null,"benefit":"Once per round with unarmed, hold-out, dagger, or vibrodagger, reroll an attack."}
+{"name":"Creeping Approach","talent_tree":"Infiltration","prerequisites":null,"benefit":"Designate an unaware target within 12 squares; until your next turn that target cannot make Perception checks against you."}
+{"name":"Set for Stun","talent_tree":"Infiltration","prerequisites":null,"benefit":"If stun damage exceeds the threshold, the target moves -3 on the condition track instead of -2."}
+{"name":"Silent Takedown","talent_tree":"Infiltration","prerequisites":null,"benefit":"If you damage an unaware target with Stealth, the target cannot speak or make noise until the end of your next turn."}
+{"name":"Spynet Agent","talent_tree":"Bothan Spynet","prerequisites":"Bothan Spynet","benefit":"Gain Bothan Spynet benefits plus two talents from Infiltration; Gather Information replaces Knowledge (galactic lore) and is considered trained."}
+{"name":"Bothan Resources","talent_tree":"Bothan Spynet","prerequisites":"Spynet Agent","benefit":"With DC 20 Gather Information you can purchase standard equipment at 50% cost or exotic items at 75% cost."}
+{"name":"Knowledge is Life","talent_tree":"Bothan Spynet","prerequisites":"Spynet Agent","benefit":"With Knowledge (galactic lore) DC 15 + target level, gain +2 to one defense vs that target."}
+{"name":"Knowledge is Power","talent_tree":"Bothan Spynet","prerequisites":"Spynet Agent","benefit":"With Knowledge (galactic lore) DC 15 + target level, gain +1 critical range vs that target."}
+{"name":"Knowledge is Strength","talent_tree":"Bothan Spynet","prerequisites":"Spynet Agent","benefit":"With Knowledge (galactic lore) DC 15 + target level, gain a bonus to attacks vs that target."}
+{"name":"Six Questions","talent_tree":"Bothan Spynet","prerequisites":"Spynet Agent","benefit":"With Knowledge (galactic lore) DC 15 + target level, learn the target’s level, classes, abilities, and Force/Destiny points."}
+{"name":"Force Fortification","talent_tree":"Duelist","prerequisites":null,"benefit":"Negate critical hits and take normal damage instead."}
+{"name":"Greater Weapon Focus (lightsabers)","talent_tree":"Duelist","prerequisites":"Weapon Focus (lightsabers)","benefit":"Gain an additional +1 attack with lightsabers."}
+{"name":"Greater Weapon Specialization (lightsabers)","talent_tree":"Duelist","prerequisites":"Weapon Specialization (lightsabers)","benefit":"Gain +2 damage with lightsabers."}
+{"name":"Improved Lightsaber Throw","talent_tree":"Duelist","prerequisites":null,"benefit":"Make a single ranged attack with a thrown lightsaber comparing to Reflex of all targets in a 6-square line; on miss target takes half; DC 20 to return."}
+{"name":"Thrown Lightsaber Mastery","talent_tree":"Duelist","prerequisites":"Improved Lightsaber Throw","benefit":"Targets struck by a thrown lightsaber move at half speed (round down) until your next turn."}
+{"name":"Improved Riposte","talent_tree":"Duelist","prerequisites":"Riposte, Block","benefit":"When you make a riposte, you do not count the initial block penalty."}
+{"name":"Improved Redirect","talent_tree":"Duelist","prerequisites":"Redirect Shot, Deflect","benefit":"Once per turn when you redirect an attack, do not count the initial deflect penalty."}
+{"name":"Lightsaber Form Savant","talent_tree":"Duelist","prerequisites":null,"benefit":"Once per encounter, return one lightsaber form to your suite without spending a Force Point."}
+{"name":"Multiattack Proficiency (lightsabers)","talent_tree":"Duelist","prerequisites":null,"benefit":"Reduce multiattack penalties with lightsabers by 2; may be taken multiple times."}
+{"name":"Severing Strike","talent_tree":"Duelist","prerequisites":null,"benefit":"If you deal damage exceeding current HP and threshold, deal half damage and sever (special effect) while moving down the track."}
+{"name":"Shoto Master","talent_tree":"Duelist","prerequisites":"Shoto Focus","benefit":"One-handed lightsabers are treated as light for shoto; may activate Lightsaber Defense as a free action with a shoto."}
+{"name":"Direct","talent_tree":"Jedi Archivist","prerequisites":null,"benefit":"Return one Force power to any ally within 6 squares and line of sight (one ally’s spent use)."}
+{"name":"Impart Knowledge","talent_tree":"Jedi Archivist","prerequisites":"Skilled Advisor","benefit":"Aid on Knowledge checks for an ally within 6 squares if you are trained in that Knowledge."}
+{"name":"Insight of the Force","talent_tree":"Jedi Archivist","prerequisites":null,"benefit":"Use the Force replaces Knowledge when untrained and is treated as trained."}
+{"name":"Master Advisor","talent_tree":"Jedi Archivist","prerequisites":"Skilled Advisor","benefit":"An ally you aid with Skilled Advisor gains a Force Point to spend before the end of the encounter."}
+{"name":"Scholarly Knowledge","talent_tree":"Jedi Archivist","prerequisites":"Trained in Knowledge","benefit":"Reroll Knowledge checks when you are trained in that Knowledge."}
+{"name":"Call Weapon","talent_tree":"Jedi Artisan","prerequisites":null,"benefit":"Call and ignite a lightsaber you built as a free action if it is within line of sight."}
+{"name":"Masterwork Lightsaber","talent_tree":"Jedi Artisan","prerequisites":null,"benefit":"Add one extra accessory to a lightsaber you built; reroll one damage die if you built it; mentoring another reduces their DC by 5."}
+{"name":"Lightsaber Specialist","talent_tree":"Jedi Artisan","prerequisites":"Masterwork Lightsaber","benefit":"Gain +2 to Block and Deflect with a lightsaber you built."}
+{"name":"Perfect Attunement","talent_tree":"Jedi Artisan","prerequisites":"Masterwork Lightsaber","benefit":"If you spend a Force Point on a lightsaber attack with a lightsaber you built, add that amount to damage."}
+{"name":"Quick Modification","talent_tree":"Jedi Artisan","prerequisites":"Masterwork Lightsaber","benefit":"Spend 1 minute to remove an accessory and add another to a lightsaber you built."}
+{"name":"Jedi Battle Commander","talent_tree":"Jedi Battlemaster","prerequisites":"KotOR 39","benefit":"Your Battle Meditation grants +2 to attack instead of +1."}
+{"name":"Defensive Circle","talent_tree":"Jedi Battlemaster","prerequisites":"Block or Deflect, Jedi Battle Commander","benefit":"You and allies affected by Battle Meditation gain +2 Reflex Defense; you gain +1 on Use the Force to Block/Deflect for each adjacent ally."}
+{"name":"Force Revive","talent_tree":"Jedi Battlemaster","prerequisites":"Jedi Battle Commander","benefit":"An ally affected by Battle Meditation reduced to 0 hp may take Second Wind as a reaction and falls unconscious."}
+{"name":"Slashing Charge","talent_tree":"Jedi Battlemaster","prerequisites":"Block, Riposte, Weapon Focus & Specialization (lightsabers)","benefit":"Once per encounter when you charge with lightsabers, ignore the Use the Force penalty on Block for the charge; applies to Riposte."}
+{"name":"Mobile Attack (lightsabers)","talent_tree":"Jedi Battlemaster","prerequisites":"Multiattack Proficiency (lightsabers), Dual Weapon Mastery I, Weapon Focus (lightsabers)","benefit":"After a full attack with two lightsabers, may move your speed as a free action."}
+{"name":"Force Treatment","talent_tree":"Jedi Healer","prerequisites":null,"benefit":"Use the Force replaces Treat Injury; can treat without a medkit or medpac and is considered trained."}
+{"name":"Healing Boost","talent_tree":"Jedi Healer","prerequisites":"Vital Transfer","benefit":"Damage healed with Vital Transfer increases by 1 point per class level."}
+{"name":"Improved Healing Boost","talent_tree":"Jedi Healer","prerequisites":"Healing Boost","benefit":"Healing Boost increases damage healed by 2 points per class level."}
+{"name":"Soothe","talent_tree":"Jedi Healer","prerequisites":"Vital Transfer","benefit":"Use Vital Transfer to move a target +1 up the condition track instead of healing; you move -1 down the track."}
+{"name":"Apprentice Boon","talent_tree":"Jedi Instructor","prerequisites":null,"benefit":"Add your Force Point result to an ally within 12 squares whose Use the Force modifier is lower than yours."}
+{"name":"Share Force Secret","talent_tree":"Jedi Instructor","prerequisites":"Force Secret","benefit":"Once per turn, grant use of a Force Secret to an ally within 12 squares who is trained in Use the Force."}
+{"name":"Share Force Technique","talent_tree":"Jedi Instructor","prerequisites":"Force Technique","benefit":"Once per turn, grant use of a Force Technique to an ally within 12 squares who is trained in Use the Force; not for Force Point recovery."}
+{"name":"Share Talent","talent_tree":"Jedi Instructor","prerequisites":null,"benefit":"Once per day, grant use of a Lightsaber Combat tree, Duelist, or Forms talent to allies within 12 squares equal to half your class level for the encounter."}
+{"name":"Transfer Power","talent_tree":"Jedi Instructor","prerequisites":"Force Training","benefit":"Spend a power from your suite and give it to an ally trained in Use the Force within 12 squares and line of sight; lost if unused by end of encounter."}
+{"name":"Echoes in the Force","talent_tree":"Jedi Investigator","prerequisites":null,"benefit":"Use Farseeing on a location to view the past; DC 20 plus one per day into the past."}
+{"name":"Jedi Quarry","talent_tree":"Jedi Investigator","prerequisites":null,"benefit":"Gain +2 speed if you end your movement adjacent to your target."}
+{"name":"Prepared for Danger","talent_tree":"Jedi Investigator","prerequisites":null,"benefit":"Spend a remaining Farseeing power to regain any other expended Force power."}
+{"name":"Sense Deception","talent_tree":"Jedi Investigator","prerequisites":null,"benefit":"Use the Force replaces Will Defense against Deception or Persuasion."}
+{"name":"Unclouded Judgment","talent_tree":"Jedi Investigator","prerequisites":"Sense Deception","benefit":"Spend a Force Point to automatically negate a mind-affecting Force power or talent."}
+{"name":"Cover Your Tracks","talent_tree":"Jedi Refugee","prerequisites":null,"benefit":"Gather Information checks to find you suffer a -5 penalty."}
+{"name":"Difficult to Sense","talent_tree":"Jedi Refugee","prerequisites":null,"benefit":"Reroll opposed Use the Force checks to conceal your presence."}
+{"name":"Force Veil","talent_tree":"Jedi Refugee","prerequisites":"Difficult to Sense","benefit":"The detection radius for you is 10 km instead of 100 km."}
+{"name":"Jedi Network","talent_tree":"Jedi Refugee","prerequisites":null,"benefit":"Includes Acquire Equipment or Funds, Obtain Info, Receive Medical Attention, and Secure Safe House benefits."}
+{"name":"Dark Deception","talent_tree":"Jedi Shadow","prerequisites":null,"benefit":"When opponents attempt to sense you with Use the Force, you may act as if your Dark Side equals your Wisdom; Deception is a class skill."}
+{"name":"Taint of the Dark Side","talent_tree":"Jedi Shadow","prerequisites":"Dark Deception","benefit":"Add one dark side Force power to your suite; once per encounter use it without increasing your Dark Side score."}
+{"name":"Improved Sentinel Strike","talent_tree":"Jedi Shadow","prerequisites":null,"benefit":"Increase Sentinel Strike damage die to d8 instead of d6."}
+{"name":"Improved Sentinel's Gambit","talent_tree":"Jedi Shadow","prerequisites":"Sentinel's Gambit","benefit":"You may use Sentinel's Gambit additional times per encounter equal to half your class level."}
+{"name":"Rebuke the Dark","talent_tree":"Jedi Shadow","prerequisites":null,"benefit":"When targeted by a dark side power, roll two dice for rebuke attempt and take the better result."}
+{"name":"Force Warning","talent_tree":"Jedi Watchman","prerequisites":null,"benefit":"Allies within 12 squares may reroll Initiative; if allies are surprised but not you, prevent surprise for up to one ally per your Wisdom modifier."}
+{"name":"Watchman's Advance","talent_tree":"Jedi Watchman","prerequisites":"Force Warning","benefit":"When acting in the surprise round, you and allies gain +1 move maximum."}
+{"name":"Improved Quick Draw (lightsabers)","talent_tree":"Jedi Watchman","prerequisites":"Quick Draw, Weapon Focus (lightsabers)","benefit":"Draw, ignite, and attack with a lightsaber even if surprised; may draw and ignite as a free action."}
+{"name":"Sheltering Stance","talent_tree":"Jedi Watchman","prerequisites":"Block or Deflect, Vigilance","benefit":"May use Block or Deflect to protect an adjacent ally without spending a Force Point."}
+{"name":"Vigilance","talent_tree":"Jedi Watchman","prerequisites":null,"benefit":"Grant one adjacent ally +1 Reflex Defense while they remain adjacent."}
+{"name":"Combat Trance","talent_tree":"Jedi Weapon Master","prerequisites":null,"benefit":"Battle Strike applies to your first attack each round until the end of the encounter."}
+{"name":"Improvised Weapon Master","talent_tree":"Jedi Weapon Master","prerequisites":null,"benefit":"No penalty when using improvised weapons."}
+{"name":"Twin Weapon Style","talent_tree":"Jedi Weapon Master","prerequisites":null,"benefit":"You can attack with both weapons or a double-sided weapon against different targets."}
+{"name":"Twin Weapon Mastery","talent_tree":"Jedi Weapon Master","prerequisites":"Twin Weapon Style","benefit":"You may move 2 squares between attacks without provoking attacks of opportunity."}
+{"name":"Shoto Pin Block","talent_tree":"Jedi Weapon Master","prerequisites":"Shoto Focus","benefit":"When you Block with a shoto, the attacker cannot make a melee attack until its next turn or until you are no longer adjacent."}
+{"name":"Ataru","talent_tree":"Lightsaber Forms","prerequisites":null,"benefit":"May apply Dexterity modifier to damage or double Dexterity bonus if two-handed instead of Strength."}
+{"name":"Djem So","talent_tree":"Lightsaber Forms","prerequisites":null,"benefit":"Once per round, if hit in melee, make an immediate attack against that opponent."}
+{"name":"Juyo","talent_tree":"Lightsaber Forms","prerequisites":"Base attack bonus +10, Weapon Specialization","benefit":"Once per encounter against a single enemy in line of sight, reroll your first attack roll and keep the best."}
+{"name":"Vaapad","talent_tree":"Lightsaber Forms","prerequisites":"Base attack bonus +12, Juyo","benefit":"Critical range extends to 19–20 and 19 is not an automatic hit."}
+{"name":"Makashi","talent_tree":"Lightsaber Forms","prerequisites":null,"benefit":"Increase Lightsaber Defense bonus by +2 (maximum +5)."}
+{"name":"Niman","talent_tree":"Lightsaber Forms","prerequisites":null,"benefit":"+1 Reflex and +1 Will Defense while wielding a lightsaber."}
+{"name":"Jar'Kai","talent_tree":"Lightsaber Forms","prerequisites":"Lightsaber Defense, Niman","benefit":"Apply Lightsaber Defense twice when wielding two lightsabers."}
+{"name":"Shien","talent_tree":"Lightsaber Forms","prerequisites":"Deflect, Redirect Shot","benefit":"+5 on ranged attack rolls for deflected shots."}
+{"name":"Shii-Cho","talent_tree":"Lightsaber Forms","prerequisites":"Block, Deflect","benefit":"Take only a -2 penalty on Use the Force checks for each Block or Deflect made last turn."}
+{"name":"Sokan","talent_tree":"Lightsaber Forms","prerequisites":"Acrobatic Recovery","benefit":"Take 10 on Acrobatics checks to tumble even when distracted; each occupied square counts as 1."}
+{"name":"Soresu","talent_tree":"Lightsaber Forms","prerequisites":"Block, Deflect","benefit":"Reroll Use the Force checks for Block and Deflect."}
+{"name":"Trakata","talent_tree":"Lightsaber Forms","prerequisites":"Base attack bonus +12, Weapon Specialization","benefit":"Use Deception to feint and shut off and reignite lightsaber as part of form actions."}
+{"name":"Bloodthirsty","talent_tree":"Piracy","prerequisites":null,"benefit":"Perform coup de grace as a move action; if you kill with a coup de grace all allies in line of sight gain +2 attack for the encounter."}
+{"name":"Fight to the Death","talent_tree":"Piracy","prerequisites":"Bloodthirsty","benefit":"Once per encounter, all allies within 6 squares heal hit points equal to your heroic level."}
+{"name":"Savage Reputation","talent_tree":"Piracy","prerequisites":"Bloodthirsty","benefit":"All opponents within 6 squares take -1 attack."}
+{"name":"Keep Them Reeling (Piracy)","talent_tree":"Piracy","prerequisites":null,"benefit":"Make a single melee attack within reach; if it hits deal no damage but force the target to move or withdraw next turn."}
+{"name":"Raider's Frenzy","talent_tree":"Piracy","prerequisites":null,"benefit":"Once per round, if you or an ally within 6 squares damage a target, allies in line of sight deal additional damage equal to half your class level to that target."}
+{"name":"Raider's Surge","talent_tree":"Piracy","prerequisites":null,"benefit":"Once per encounter, Deception or Persuasion vs Will in line of sight forces the target to withdraw or suffer -1 attack until end of encounter."}
+{"name":"Take Them Alive","talent_tree":"Piracy","prerequisites":null,"benefit":"If you or allies within 6 squares reduce an enemy to 0 hp, you may instead render them stunned."}
+{"name":"Armored Spacer","talent_tree":"Privateer","prerequisites":null,"benefit":"Treat armor proficiency as Armor Proficiency (heavy)."}
+{"name":"Attract Privateer","talent_tree":"Privateer","prerequisites":null,"benefit":"Attract nonheroic minions with levels equal to 3/4 your level; may have multiple minions."}
+{"name":"Blaster and Blade I","talent_tree":"Privateer","prerequisites":"Dual Weapon I, Weapon Proficiency (advanced & pistols)","benefit":"With a single attack using an advanced melee weapon, make a free pistol attack."}
+{"name":"Blaster and Blade II","talent_tree":"Privateer","prerequisites":"Blaster and Blade I","benefit":"Treat the advanced melee weapon as if you were holding it two-handed for Strength bonus purposes (double Str bonus)."}
+{"name":"Blaster and Blade III","talent_tree":"Privateer","prerequisites":"Blaster and Blade II","benefit":"When attacking with both weapons, you may make a full attack as a standard action."}
+{"name":"Boarder","talent_tree":"Privateer","prerequisites":null,"benefit":"Ignore cover for character-scale ranged attacks when aboard a starship or space station."}
+{"name":"Ion Mastery","talent_tree":"Privateer","prerequisites":null,"benefit":"With ion weapons, gain +1 attack and +1 damage die."}
+{"name":"Multiattack Proficiency (advanced melee)","talent_tree":"Privateer","prerequisites":null,"benefit":"Reduce multiattack penalties by 2 for advanced melee weapons."}
+{"name":"Preserving Shot","talent_tree":"Privateer","prerequisites":null,"benefit":"Instead of destroying a vehicle, you can disable it so it cannot move."}
+{"name":"Bring Them Back","talent_tree":"Advanced Medicine","prerequisites":null,"benefit":"Revive a target that died within a number of rounds equal to half your heroic level."}
+{"name":"Emergency Team","talent_tree":"Advanced Medicine","prerequisites":null,"benefit":"Allies automatically succeed at aid another for medical tasks."}
+{"name":"Extra First Aid","talent_tree":"Advanced Medicine","prerequisites":null,"benefit":"You can perform first aid one additional time per day on a target."}
+{"name":"Medical Miracle","talent_tree":"Advanced Medicine","prerequisites":null,"benefit":"DC 20 Treat Injury on an adjacent target lets them take a Second Wind even if above half hit points."}
+{"name":"Natural Healing","talent_tree":"Advanced Medicine","prerequisites":null,"benefit":"You may make Treat Injury checks using natural substitutes without a medical kit."}
+{"name":"Steady Under Pressure","talent_tree":"Advanced Medicine","prerequisites":null,"benefit":"Reroll Treat Injury checks."}
+{"name":"Battlefield Medic","talent_tree":"Advanced Medicine","prerequisites":"Steady Under Pressure","benefit":"Perform first aid as a standard action instead of a full-round action."}
+{"name":"Second Chance","talent_tree":"Advanced Medicine","prerequisites":"Steady Under Pressure","benefit":"If you fail a Treat Injury check, the patient does not take any additional damage from the failed attempt."}
+{"name":"Advantageous Strike","talent_tree":"Melee Duelist","prerequisites":null,"benefit":"Gain +5 attack on attacks of opportunity made with melee weapons."}
+{"name":"Dirty Tricks","talent_tree":"Melee Duelist","prerequisites":null,"benefit":"Use Deception to feint as a two-swift action against an opponent you threaten."}
+{"name":"Dual Weapon Flourish I","talent_tree":"Melee Duelist","prerequisites":"Dual Weapon Mastery I, Weapon Finesse","benefit":"With two light melee weapons or two lightsabers, when you make a full attack with one weapon you gain a free attack with the other."}
+{"name":"Master of Elegance","talent_tree":"Melee Duelist","prerequisites":"Dual or Single Weapon Flourish I","benefit":"Add Dexterity to melee damage with light melee weapons; double Dexterity bonus if wielding two-handed."}
+{"name":"Dual Weapon Flourish II","talent_tree":"Melee Duelist","prerequisites":"Dual Weapon Mastery II, Dual Weapon Flourish I, Master of Elegance","benefit":"With two light melee weapons or two lightsabers, you may make a full attack as a standard action when using both weapons (once per turn)."}
+{"name":"Multiattack Proficiency (advanced melee)","talent_tree":"Melee Duelist","prerequisites":null,"benefit":"Reduce multiattack penalty by 2 for advanced melee weapons."}
+{"name":"Out of Nowhere","talent_tree":"Melee Duelist","prerequisites":"Deception, Weapon Finesse","benefit":"Once per encounter, after a successful feint you may make an attack with a light melee weapon or lightsaber."}
+{"name":"Single Weapon Flourish I","talent_tree":"Melee Duelist","prerequisites":"Double Attack, Weapon Finesse","benefit":"With one light melee weapon or lightsaber, you can move your speed as a free action."}
+{"name":"Single Weapon Flourish II","talent_tree":"Melee Duelist","prerequisites":"Master of Elegance, Single Weapon Flourish I","benefit":"With one light melee weapon or lightsaber, you may make a full attack as a standard action (once per turn)."}
+{"name":"Breach Cover","talent_tree":"Military Engineer","prerequisites":null,"benefit":"Ignore cover when firing or throwing a weapon with burst or splash."}
+{"name":"Breaching Explosive","talent_tree":"Military Engineer","prerequisites":null,"benefit":"Ignore door and wall thresholds when using mines and non-grenade explosives."}
+{"name":"Prepared Explosive","talent_tree":"Military Engineer","prerequisites":null,"benefit":"A non-grenade explosive you set can turn normal terrain into difficult and difficult into normal."}
+{"name":"Problem Solver","talent_tree":"Military Engineer","prerequisites":null,"benefit":"Once per turn, one vehicle in your line of sight that can hear you ignores difficult terrain and gains +5 Pilot to avoid hazards."}
+{"name":"Repairs on the Fly","talent_tree":"Military Engineer","prerequisites":null,"benefit":"Repair as a standard action once per day per droid, object, or vehicle."}
+{"name":"Quick Modifications","talent_tree":"Military Engineer","prerequisites":"Tech Specialist, Repairs on the Fly","benefit":"When creating a field-created weapon, add one modification at creation."}
+{"name":"Droid Expert","talent_tree":"Military Engineer","prerequisites":"Repairs on the Fly","benefit":"Repair droids gain +1 hp for every point your Mechanics check exceeds DC 20."}
+{"name":"Sabotage Device","talent_tree":"Military Engineer","prerequisites":null,"benefit":"Sabotage an object with an energy cell/power pack to turn it into a grenade; can be restored with a swift action."}
+{"name":"Tech Savant","talent_tree":"Military Engineer","prerequisites":null,"benefit":"Trained in Knowledge (technology); increase speed of a droid or vehicle by 1 square if you occupy or are adjacent to it (once per round)."}
+{"name":"Vehicular Boost","talent_tree":"Military Engineer","prerequisites":null,"benefit":"DC 15 Mechanics check to add hit points to a vehicle equal to 5 × class level."}
+{"name":"Assault Tactics","talent_tree":"Military Tactics","prerequisites":null,"benefit":"DC 15 Tactics check designate a single object or creature; allies who can hear you deal extra d6 damage until your next turn."}
+{"name":"Exploit Weakness","talent_tree":"Military Tactics","prerequisites":"Assault Tactics","benefit":"When you use Assault Tactics, the target takes a cumulative -1 Reflex each time it is damaged (max -5)."}
+{"name":"Deployment Tactics","talent_tree":"Military Tactics","prerequisites":null,"benefit":"DC 15 Tactics check: allies gain +1 attack vs flanked targets or +1 Defense vs attacks of opportunity next turn; synergizes with Born Leader/Battle Analysis for +2."}
+{"name":"Field Tactics","talent_tree":"Military Tactics","prerequisites":"Deployment Tactics, DC 15 Tactics","benefit":"Allies within 10 squares gain a +10 cover bonus if they are in cover until your next turn."}
+{"name":"Outmaneuver","talent_tree":"Military Tactics","prerequisites":"Field Tactics, DC 15 Tactics","benefit":"Enemies in line of sight lose competence/insight/morale/dodge bonuses to Reflex Defense; opposed check to resist."}
+{"name":"One for the Team","talent_tree":"Military Tactics","prerequisites":"Deployment Tactics","benefit":"You may take half or all damage for an adjacent ally; an ally may take the same for you."}
+{"name":"Grand Leader","talent_tree":"Military Tactics","prerequisites":null,"benefit":"Once per encounter, grant hit points equal to 5 + half your class level to all allies within 20 squares and line of sight."}
+{"name":"Shift Defense I","talent_tree":"Military Tactics","prerequisites":null,"benefit":"Redistribute defenses: -2 to one Defense to add +1 to another Defense."}
+{"name":"Shift Defense II","talent_tree":"Military Tactics","prerequisites":"Shift Defense I","benefit":"Redistribute defenses: -5 to one Defense to add +2 to another Defense."}
+{"name":"Shift Defense III","talent_tree":"Military Tactics","prerequisites":"Shift Defense II","benefit":"Redistribute defenses: -5 to two Defenses to add +5 to another Defense."}
+{"name":"Tactical Edge","talent_tree":"Military Tactics","prerequisites":null,"benefit":"Use Assault, Deployment, or Field Tactics as a swift action instead of a standard action."}
+{"name":"Uncanny Defense","talent_tree":"Military Tactics","prerequisites":null,"benefit":"Once per day add half your officer class level to all Defenses for 1 round; must declare at start of your turn."}
+{"name":"Combined Fire (Naval)","talent_tree":"Naval Officer","prerequisites":null,"benefit":"Designate a single vehicle, object, or creature in line of sight; gain extra damage dice for batteries (scaling every 2 batteries) and may designate one weapon or battery to make a single attack."}
+{"name":"Fleet Deployment","talent_tree":"Naval Officer","prerequisites":"Charisma 13","benefit":"A number of vehicles equal to your class level in line of sight may each move a number of squares equal to their speed."}
+{"name":"Fleet Tactics","talent_tree":"Naval Officer","prerequisites":"Charisma 13, Fleet Deployment, DC 15 Tactics","benefit":"Designate a single vehicle; allied gunners in line of sight gain +1 damage die."}
+{"name":"It's a Trap","talent_tree":"Naval Officer","prerequisites":null,"benefit":"Once per encounter set a trap for a single vehicle in line of sight that activates on that vehicle's immediate move action."}
+{"name":"Legendary Commander","talent_tree":"Naval Officer","prerequisites":"Charisma 13, Intelligence 13, Born Leader","benefit":"Gunners on your ship add half your heroic level (or half their HL) to damage and treat crew as one level higher; calculate capital ship Reflex Defense as your HL + 1/2 armor if higher."}
+{"name":"Disciplined Trickery","talent_tree":"Fugitive Commander","prerequisites":null,"benefit":"Once per turn allow one ally within 12 squares to reroll Deception or Stealth."}
+{"name":"Group Perception","talent_tree":"Fugitive Commander","prerequisites":null,"benefit":"All allies within 6 squares may roll Perception when you do, taking the highest result."}
+{"name":"Hasty Withdrawal","talent_tree":"Fugitive Commander","prerequisites":null,"benefit":"Once per turn a number of allies equal to your Charisma bonus (minimum 1) within 12 squares and line of sight may withdraw as a free action."}
+{"name":"Stealthy Withdrawal","talent_tree":"Fugitive Commander","prerequisites":"Hasty Withdrawal","benefit":"An ally using Hasty Withdrawal who ends in cover may make a Stealth check as a free action."}
+{"name":"Stalwart Subordinates","talent_tree":"Fugitive Commander","prerequisites":null,"benefit":"An ally within 12 squares and line of sight targeted by an effect forces the enemy to reroll and take the lowest."}
+{"name":"Stay in the Fight","talent_tree":"Fugitive Commander","prerequisites":"Stalwart Subordinates","benefit":"Remove one mind-affecting or fear effect from an ally within 12 squares and line of sight and grant them hit points equal to 10 + class level."}
+{"name":"Recruit Enemy","talent_tree":"Rebel Recruiter","prerequisites":null,"benefit":"Once per encounter, when you deal damage equal to the target’s current hp and threshold, make Persuasion vs Will Defense; on success deal half damage, move target -1 on track, and the target becomes friendly (higher-level targets get +5 on Will)."}
+{"name":"Bolstered Numbers","talent_tree":"Rebel Recruiter","prerequisites":"Recruit Enemy","benefit":"If Recruit Enemy succeeds, allies gain +2 attack until end of encounter."}
+{"name":"Noble Sacrifice","talent_tree":"Rebel Recruiter","prerequisites":"Recruit Enemy","benefit":"If a recruited enemy is at 0 hp or bottom of track, you and all allies in line of sight gain hit points equal to 10 + your class level."}
+{"name":"Stay in the Fight (Recruit)","talent_tree":"Rebel Recruiter","prerequisites":"Recruit Enemy","benefit":"A recruited enemy may immediately use Second Wind as a reaction."}
+{"name":"Team Recruiting","talent_tree":"Rebel Recruiter","prerequisites":"Recruit Enemy","benefit":"You can use Recruit Enemy when you or an ally would deal killing damage, not only when you deal it."}
+{"name":"Preternatural Senses","talent_tree":"Outlaw","prerequisites":null,"benefit":"Once per encounter add half your class level to one Defense."}
+{"name":"Seize the Moment","talent_tree":"Outlaw","prerequisites":null,"benefit":"Once per round when an ally damages an opponent, you may take a swift action as a reaction."}
+{"name":"Find an Opening","talent_tree":"Outlaw","prerequisites":"Seize the Moment","benefit":"Forfeit the extra swift action to aim with one swift on your next turn."}
+{"name":"Double Up","talent_tree":"Outlaw","prerequisites":"Find an Opening","benefit":"Once per encounter forgo the extra swift to attack; if you hit and damage with a ranged attack, count your and an ally's attack as one for overcoming DR/SR/Threshold."}
+{"name":"Uncanny Instincts","talent_tree":"Outlaw","prerequisites":null,"benefit":"Once per round when damaged, move 1 square as a reaction without provoking attacks of opportunity."}
+{"name":"Opportunistic Defense","talent_tree":"Outlaw","prerequisites":"Uncanny Instincts","benefit":"Once per encounter forgo your extra move to add +5 to one Defense until the end of your next turn."}
+{"name":"Tangle Up","talent_tree":"Outlaw","prerequisites":"Uncanny Instincts","benefit":"If a non-area attack hits, you may choose to do half damage and force the target to lose its next move."}
+{"name":"Confounding Attack","talent_tree":"Outlaw","prerequisites":"Tangle Up","benefit":"Once per encounter forgo your extra move to attack; if you hit and damage with a melee attack, you switch places with the opponent."}
+{"name":"Bunker Blaster","talent_tree":"Pathfinder","prerequisites":null,"benefit":"If adjacent to an object that provides cover to your target, you may aim at that target as a move action."}
+{"name":"Enhance Cover","talent_tree":"Pathfinder","prerequisites":null,"benefit":"One ally in line of sight who has cover is treated as having improved cover while they still have cover."}
+{"name":"Escort Fighter","talent_tree":"Pathfinder","prerequisites":null,"benefit":"When you move one adjacent ally, that ally moves and ends adjacent to you; cannot exceed the ally’s movement."}
+{"name":"Safe Passage","talent_tree":"Pathfinder","prerequisites":null,"benefit":"Once per turn one ally in line of sight may move its speed as a reaction; if a target makes an attack of opportunity against that ally you may make an attack of opportunity against that target."}
+{"name":"Safe Zone","talent_tree":"Pathfinder","prerequisites":null,"benefit":"Create a 4×4 square Safe Zone; an ally that starts its turn in the Safe Zone gains +2 Fortitude and +2 Will Defense; Safe Zones cannot overlap another Safe Zone."}
+{"name":"Defensive Measures","talent_tree":"Pathfinder","prerequisites":"Safe Zone","benefit":"Enemies treat your Safe Zone as difficult terrain."}
+{"name":"Launch Point","talent_tree":"Pathfinder","prerequisites":"Safe Zone","benefit":"Any ally who starts in your Safe Zone and then exits it gains +2 attack."}
+{"name":"Obscuring Defenses","talent_tree":"Pathfinder","prerequisites":"Safe Zone","benefit":"Enemies firing into your Safe Zone take a -2 penalty to attack."}
+{"name":"Relocate","talent_tree":"Pathfinder","prerequisites":"Safe Zone","benefit":"Dismiss your Safe Zone; allies who were in your old Safe Zone gain +2 speed."}
+{"name":"Zone of Recuperation","talent_tree":"Pathfinder","prerequisites":"Safe Zone","benefit":"Any ally who uses Second Wind in your Safe Zone regains additional hit points equal to your class level."}
+{"name":"Device Jammer","talent_tree":"Sabotage","prerequisites":null,"benefit":"DC 20 Mechanics vs an item; on success all items of that type within 12 squares cease functioning; affects one device at a time."}
+{"name":"Droid Jammer","talent_tree":"Sabotage","prerequisites":null,"benefit":"Mechanics vs a droid’s Will Defense within 6 squares; on success the droid can take only swift actions; affects one droid at a time."}
+{"name":"Mine Mastery","talent_tree":"Sabotage","prerequisites":null,"benefit":"Place mines as a standard action instead of a full-round action."}
+{"name":"Skilled Demolitionist","talent_tree":"Sabotage","prerequisites":null,"benefit":"Set a detonator as a swift action; explosives do not detonate on a failure by 10 or more."}
+{"name":"Shaped Explosion","talent_tree":"Sabotage","prerequisites":"Skilled Demolitionist","benefit":"Create blasts in a line or cone: length = 2× radius; cone length = 3× blast radius; origin from explosive’s square."}
+{"name":"Extreme Explosion","talent_tree":"Sabotage","prerequisites":"Shaped Explosion","benefit":"Increase blast radius by 1 square."}
+{"name":"Blaster Turret I","talent_tree":"Turret","prerequisites":null,"benefit":"1/encounter deploy Tiny turret: Init +4, Perception +4, Reflex Def 10, 10 hp, threshold 8, damage 3d6; must be adjacent to you to operate."}
+{"name":"Blaster Turret II","talent_tree":"Turret","prerequisites":"Blaster Turret I","benefit":"1/encounter deploy improved Tiny turret: Init +8, Perception +8, Reflex Def 12, 15 hp, threshold 10, damage 3d8; remote range 12 squares."}
+{"name":"Blaster Turret III","talent_tree":"Turret","prerequisites":"Blaster Turret II","benefit":"1/encounter deploy advanced Tiny turret: Init +8, Perception +8, Reflex Def 12, 15 hp, DR 5, threshold 10, fires twice per activation; remote range 12 squares."}
+{"name":"Ion Turret","talent_tree":"Turret","prerequisites":"Blaster Turret I","benefit":"1/encounter deploy Tiny ion turret: Init +4, Perception +4, Reflex Def 10, 10 hp, threshold 8, deals 3d6 ion; must be adjacent to you to operate."}
+{"name":"Stun Turret","talent_tree":"Turret","prerequisites":"Blaster Turret I","benefit":"1/encounter deploy Tiny stun turret: Init +4, Perception +4, Reflex Def 10, 10 hp, threshold 8, deals 3d6 stun; must be adjacent to you to operate."}
+{"name":"Turret Self-Destruct","talent_tree":"Turret","prerequisites":"Blaster Turret I","benefit":"When a turret is reduced to 0 hp it self-destructs in a 2-square radius dealing its normal damage; you may disable it as a reaction if adjacent."}
+{"name":"Implant (general)","talent_tree":"Turret/Implant","prerequisites":null,"benefit":"If not treated, at end of encounter the implanted target moves -3 down the condition track and requires rest or surgery to recover."}
+{"name":"Adrenaline Implant","talent_tree":"Implant","prerequisites":null,"benefit":"Once per encounter an adjacent ally gains 10 hit points at the start of each of its turns while adjacent (effects do not stack)."}
+{"name":"Precision Implant","talent_tree":"Implant","prerequisites":null,"benefit":"Once per encounter an adjacent ally gains +1 attack."}
+{"name":"Resilience Implant","talent_tree":"Implant","prerequisites":null,"benefit":"Once per encounter an adjacent ally gains +5 to threshold."}
+{"name":"Speed Implant","talent_tree":"Implant","prerequisites":null,"benefit":"Once per encounter an adjacent ally gains +2 speed."}
+{"name":"Strength Implant","talent_tree":"Implant","prerequisites":null,"benefit":"Once per encounter an adjacent ally gains +1 damage die."}
+{"name":"Biotech Mastery","talent_tree":"Shaper","prerequisites":null,"benefit":"Modify biotech in half the usual time and cost; may take 10 on Mechanics checks for biotech work."}
+{"name":"Expert Shaper","talent_tree":"Shaper","prerequisites":null,"benefit":"Reroll Treat Injury checks to repair or modify biotech devices."}
+{"name":"Expedient Mending","talent_tree":"Shaper","prerequisites":"Expert Shaper","benefit":"Mend a damaged or disabled biotech device as a standard action instead of a full action."}
+{"name":"Master Mender","talent_tree":"Shaper","prerequisites":"Expert Shaper","benefit":"When you temporarily mend biotech using Treat Injury, move +4 up the condition track and only move -3 down at the end of the encounter."}
+{"name":"Skilled Implanter","talent_tree":"Shaper","prerequisites":null,"benefit":"When installing an implant you count as having the Biotech Surgery feat for attack bonus calculations (attack bonus is halved)."}
+{"name":"Affliction","talent_tree":"Sith","prerequisites":null,"benefit":"When you damage an opponent with a Force power, they suffer an additional 2d6 damage at the start of their next turn."}
+{"name":"Dark Healing","talent_tree":"Sith","prerequisites":null,"benefit":"Life-drain attack vs a creature within 6 squares: ranged attack vs Fortitude; on hit deals and heals d6 per class level."}
+{"name":"Improved Dark Healing","talent_tree":"Sith","prerequisites":"Dark Healing","benefit":"Increase Dark Healing range to 12 squares; on failure the effect deals and heals half damage."}
+{"name":"Dark Healing Field","talent_tree":"Sith","prerequisites":"Dark Healing","benefit":"Once per encounter, affect up to 3 creatures within 12 squares with Dark Healing using Use the Force vs Fortitude; on success you heal half the damage dealt."}
+{"name":"Dark Scourge","talent_tree":"Sith","prerequisites":null,"benefit":"+1 attack vs Jedi."}
+{"name":"Dark Side Adept","talent_tree":"Sith","prerequisites":null,"benefit":"Reroll one Dark Side skill check."}
+{"name":"Dark Side Master","talent_tree":"Sith","prerequisites":"Dark Side Adept","benefit":"Reroll any Dark Side skill check."}
+{"name":"Sith Alchemy (create)","talent_tree":"Sith","prerequisites":"Dark Side Master","benefit":"Create Sith Talisman (+d6 damage to Force powers or lightsabers, grants a Dark Side point on first use) or create Sith Weapons/Armor with Sith templates."}
+{"name":"Drain Force","talent_tree":"Sith","prerequisites":null,"benefit":"Once per encounter when you damage a Force-sensitive opponent, regain one Force power and the target loses one Force Point."}
+{"name":"Force Deception","talent_tree":"Sith","prerequisites":null,"benefit":"Use the Force replaces Deception checks and is treated as trained."}
+{"name":"Stolen Form","talent_tree":"Sith","prerequisites":null,"benefit":"Choose any Force Technique or a lightsaber form and add it to your usable options."}
+{"name":"Wicked Strike","talent_tree":"Sith","prerequisites":"Weapon Focus, Weapon Specialization (lightsabers)","benefit":"On a lightsaber critical hit, move the target 2 steps down the condition track."}
+{"name":"Rapid Alchemy","talent_tree":"Sith Alchemy","prerequisites":null,"benefit":"+2 attack with a melee weapon; once per encounter you may forgo that bonus to gain +5 on a single damage roll."}
+{"name":"Sith Alchemy (craft)","talent_tree":"Sith Alchemy","prerequisites":null,"benefit":"Create Sith Amulets, Sith Armor, Sith Talismans, or Sith Weapons per Sith Alchemy rules."}
+{"name":"Cause Mutation","talent_tree":"Sith Alchemy","prerequisites":null,"benefit":"Transform a creature into a Sith Abomination or Chrysalis Beast under your control; process takes days and yields creatures with new class level."}
+{"name":"Sith Alchemy Specialist","talent_tree":"Sith Alchemy","prerequisites":"Sith Alchemy","benefit":"Modify items to add Sith Alchemy traits."}
+{"name":"Focus Terror","talent_tree":"Sith Commander","prerequisites":null,"benefit":"Once per encounter all allies within 12 squares and line of sight move +2 up the condition track but take -2 to attack and skill checks for a number of rounds equal to your class level."}
+{"name":"Desperate Measures","talent_tree":"Sith Commander","prerequisites":"Focus Terror","benefit":"Once per encounter all allies within 12 squares and line of sight may make an immediate attack at -5."}
+{"name":"Incite Rage","talent_tree":"Sith Commander","prerequisites":null,"benefit":"Once per encounter all allies within 12 squares and line of sight gain a +1 rage bonus to attack but suffer -2 Reflex Defense until end of encounter."}
+{"name":"Power of Hatred","talent_tree":"Sith Commander","prerequisites":"Incite Rage","benefit":"Once per encounter allies in line of sight with less than half hit points gain hit points equal to your class level."}
+{"name":"Enhanced Vision","talent_tree":"Vanguard","prerequisites":null,"benefit":"Make Perception checks as a swift action instead of a standard action."}
+{"name":"Triangulate","talent_tree":"Vanguard","prerequisites":"Enhanced Vision","benefit":"Once per encounter, if you and allies have line of sight to the same target, you may reroll one ranged attack (each affected ally rerolls one attack)."}
+{"name":"Impenetrable Cover","talent_tree":"Vanguard","prerequisites":null,"benefit":"While you are in cover, gain Damage Reduction equal to your class level provided you still have cover when attacked."}
+{"name":"Mark the Target","talent_tree":"Vanguard","prerequisites":null,"benefit":"When you damage a target with a non-area attack, one ally in line of sight treats that target as flat-footed."}
+{"name":"Maximize Cover","talent_tree":"Vanguard","prerequisites":null,"benefit":"If an opponent uses Aim to negate your cover, they must succeed on a Stealth check vs the attacker’s Initiative to remove your cover."}
+{"name":"Invisible Attacker","talent_tree":"Vanguard","prerequisites":"Maximize Cover","benefit":"If the target is unaware of you when you attack, your ranged attacks deal +1 damage die."}
+{"name":"Soften the Target","talent_tree":"Vanguard","prerequisites":null,"benefit":"When you damage a target with a ranged attack, one ally in line of sight ignores that target’s Damage Reduction and Shield Rating."}
+{"name":"Shellshock","talent_tree":"Vanguard","prerequisites":"Soften the Target","benefit":"If you damage a target with an area attack, the target is flat-footed against you until your next turn."}
