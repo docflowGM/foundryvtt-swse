@@ -111,19 +111,20 @@
       "class",
       "feat",
       "talent",
-      "talenttree",
       "forcepower",
-      "skill",
-      "combat-action",
       "weapon",
       "armor",
       "equipment",
       "species",
+      "talenttree",
+      "force-power",
+      "skill",
+      "combat-action",
       "ability",
       "background",
-      "Heavy",
-      "Light",
-      "Medium"
+      "forcetechnique",
+      "forcesecret",
+      "lightsaberform"
     ],
     "templates": {
       "base": {
@@ -198,6 +199,10 @@
       "templates": [],
       "description": ""
     },
+    "force-power": {
+      "templates": [],
+      "description": ""
+    },
     "skill": {
       "templates": [],
       "description": ""
@@ -214,15 +219,15 @@
       "templates": [],
       "description": ""
     },
-    "Heavy": {
+    "forcetechnique": {
       "templates": [],
       "description": ""
     },
-    "Light": {
+    "forcesecret": {
       "templates": [],
       "description": ""
     },
-    "Medium": {
+    "lightsaberform": {
       "templates": [],
       "description": ""
     }
