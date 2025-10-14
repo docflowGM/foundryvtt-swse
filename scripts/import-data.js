@@ -79,7 +79,7 @@ export async function importForcePowersFromDB() {
     const items = forcePowers.map(power => ({
       name: power.name,
       type: "forcepower",
-      img: `systems/swse/assets/icons/force-powers/${power.name.toLowerCase().replace(/\s+/g, '-')}.png`,
+      img: `systems/swse/assets/icons/forcepowers/${power.name.toLowerCase().replace(/\s+/g, '-')}.png`,
       system: {
         type: power.type || "Force",
         descriptor: power.descriptor || [],

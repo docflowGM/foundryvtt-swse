@@ -255,9 +255,9 @@ export class WorldDataLoader {
    */
   static async loadForcePowers() {
     try {
-      const response = await fetch("systems/swse/data/force-powers.json");
+      const response = await fetch("systems/swse/data/forcepowers.json");
       if (!response.ok) {
-        console.log("SWSE | force-powers.json not found - skipping");
+        console.log("SWSE | forcepowers.json not found - skipping");
         return;
       }
       

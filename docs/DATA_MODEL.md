@@ -164,7 +164,7 @@ talents.db.json – organized by trees.
 classes.db.json – base & prestige classes.
 species.db.json – all playable species.
 weapons.db.json, armor.db.json, equipment.db.json.
-force-powers.db.json – Force powers + scaling DCs.
+forcepowers.db.json – Force powers + scaling DCs.
 starships.db.json – example ships.
 🧩 Relationships
 Actors embed items (weapons, feats, talents, powers).

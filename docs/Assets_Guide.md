@@ -5,7 +5,7 @@ assets/
 ├─ icons/
 │  ├─ feats/
 │  ├─ talents/
-│  ├─ force-powers/
+│  ├─ forcepowers/
 │  ├─ classes/
 │  ├─ conditions/
 │  └─ equipment/
@@ -71,7 +71,7 @@ HUD icons / small chrome
 5. Folder-by-folder specifics
 assets/icons/*
 Square icons for feats/talents/etc. Prefer transparent PNG or SVG.
-Keep subfolders by semantic category: feats/, talents/, force-powers/, equipment/, conditions/.
+Keep subfolders by semantic category: feats/, talents/, forcepowers/, equipment/, conditions/.
 Each Item JSON should reference its icon path (see examples later).
 assets/images/portraits
 Portraits used for actor images and compendium items. Provide both thumbnail and high-res versions.
@@ -88,7 +88,7 @@ Item JSON example (in a compendium or embedded item):
 {
   "name": "Force Push",
   "type": "forcePower",
-  "img": "systems/swse/assets/icons/force-powers/force-push.png",
+  "img": "systems/swse/assets/icons/forcepowers/force-push.png",
   "system": {
     "description": "<p>Pushes a target away.</p>"
   }

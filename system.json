@@ -129,9 +129,9 @@
       "system": "swse"
     },
     {
-      "name": "force-powers",
+      "name": "forcepowers",
       "label": "Force Powers",
-      "path": "packs/force-powers.db",
+      "path": "packs/forcepowers.db",
       "type": "Item",
       "system": "swse"
     },
