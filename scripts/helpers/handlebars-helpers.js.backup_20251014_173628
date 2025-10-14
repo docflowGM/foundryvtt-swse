@@ -4,13 +4,6 @@
 // ============================================
 
 export function registerHandlebarsHelpers() {
-  // Helper registration check - ensure Handlebars is available
-  if (typeof Handlebars === 'undefined') {
-    console.error("SWSE | Handlebars is not defined! Cannot register helpers.");
-    return;
-  }
-
-
     // Uppercase helper
     Handlebars.registerHelper('upper', function(str) {
         if (!str) return '';
