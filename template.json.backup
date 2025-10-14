@@ -115,16 +115,7 @@
       "weapon",
       "armor",
       "equipment",
-      "species",
-      "talenttree",
-      "force-power",
-      "skill",
-      "combat-action",
-      "ability",
-      "background",
-      "forcetechnique",
-      "forcesecret",
-      "lightsaberform"
+      "species"
     ],
     "templates": {
       "base": {
@@ -194,42 +185,6 @@
         "wis": 0,
         "cha": 0
       }
-    },
-    "talenttree": {
-      "templates": [],
-      "description": ""
-    },
-    "force-power": {
-      "templates": [],
-      "description": ""
-    },
-    "skill": {
-      "templates": [],
-      "description": ""
-    },
-    "combat-action": {
-      "templates": [],
-      "description": ""
-    },
-    "ability": {
-      "templates": [],
-      "description": ""
-    },
-    "background": {
-      "templates": [],
-      "description": ""
-    },
-    "forcetechnique": {
-      "templates": [],
-      "description": ""
-    },
-    "forcesecret": {
-      "templates": [],
-      "description": ""
-    },
-    "lightsaberform": {
-      "templates": [],
-      "description": ""
     }
   }
 }
