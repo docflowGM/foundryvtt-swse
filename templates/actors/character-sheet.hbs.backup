@@ -2,7 +2,7 @@
 {{!-- File: templates/actors/character-sheet.hbs --}}
 {{!-- Properly connected to existing SWSE system structure --}}
 
-<form class="swse character-sheet {{cssClass}} holo-theme" autocomplete="off">
+<form class="swse character-sheet {{cssClass}}" autocomplete="off">
     {{!-- Header Section --}}
     <header class="sheet-header">
         <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>

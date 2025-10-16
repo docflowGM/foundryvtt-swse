@@ -234,7 +234,7 @@ export class SWSEActor extends Actor {
 export class SWSEActorSheet extends ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "holo-theme","sheet","actor","character"],
+      classes: ["swse","sheet","actor","character"],
       template: "systems/swse/templates/actors/character-sheet.hbs",
       width: 1000,
       height: 720,

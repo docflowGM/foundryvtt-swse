@@ -1,7 +1,7 @@
 {{!-- SWSE NPC Sheet - Roll20 Inspired Design --}}
 {{!-- File: templates/actors/npc-sheet.hbs --}}
 
-<form class="swse npc-sheet {{cssClass}} holo-theme" autocomplete="off">
+<form class="swse npc-sheet {{cssClass}}" autocomplete="off">
     {{!-- Header Section --}}
     <header class="sheet-header">
         <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="80" width="80"/>

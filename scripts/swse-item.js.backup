@@ -4,7 +4,7 @@
 export class SWSEItemSheet extends ItemSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "holo-theme", "sheet", "item"],
+      classes: ["swse", "sheet", "item"],
       template: "systems/swse/templates/items/item-sheet.hbs",
       width: 520,
       height: 480,

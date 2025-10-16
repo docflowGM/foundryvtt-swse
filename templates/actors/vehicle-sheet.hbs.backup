@@ -1,7 +1,7 @@
 {{!-- SWSE Vehicle Sheet - Roll20 Inspired Design --}}
 {{!-- File: templates/actors/vehicle-sheet.hbs --}}
 
-<form class="swse vehicle-sheet {{cssClass}} holo-theme" autocomplete="off">
+<form class="swse vehicle-sheet {{cssClass}}" autocomplete="off">
     {{!-- Header Section --}}
     <header class="sheet-header">
         <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
