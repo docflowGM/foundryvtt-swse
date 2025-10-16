@@ -1,777 +1,595 @@
-{{!-- SWSE Character Sheet Template --}}
-{{!-- File: templates/actor/character-sheet.hbs --}}
+{{!-- SWSE Character Sheet - Roll20 Inspired Design --}}
+{{!-- File: templates/actors/character-sheet.hbs --}}
+{{!-- Properly connected to existing SWSE system structure --}}
 
-<form class="character-sheet {{cssClass}}" autocomplete="off">
-    <div class="character-sheet-inner">
-        <div class="header">
-            <div>
-                <h1>★ Star Wars Saga Edition ★</h1>
-                <div class="subtitle">CHARACTER RECORD SHEET</div>
-            </div>
-            <div class="actions">
-                <button type="button" class="save-sheet">Save</button>
-                <button type="button" class="load-sheet">Load</button>
-            </div>
-        </div>
-
-        {{!-- BASIC INFO --}}
-        <section class="basic-info">
-            <div class="left">
-                <div class="field-group">
-                    <label>Name</label>
-                    <input name="name" type="text" value="{{actor.name}}" />
+<form class="swse character-sheet {{cssClass}}" autocomplete="off">
+    {{!-- Header Section --}}
+    <header class="sheet-header">
+        <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
+        
+        <div class="header-fields">
+            <h1 class="charname">
+                <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
+            </h1>
+            
+            <div class="header-row">
+                <div class="resource">
+                    <label class="resource-label">Level</label>
+                    <input type="number" name="system.level" value="{{system.level}}" data-dtype="Number"/>
                 </div>
-
-                <div class="field-group">
-                    <label>Class(es)</label>
-                    <div class="class-list">
-                        {{#each system.classes}}
-                        <div class="class-row">{{this.name}} (lvl {{this.level}})</div>
-                        {{/each}}
-                    </div>
-                </div>
-            </div>
-
-            <div class="middle">
-                <div class="field-group">
-                    <label>Level</label>
-                    <input type="number" name="system.level" value="{{system.level}}" />
-                </div>
-
-                <div class="field-group">
-                    <label>Species</label>
+                
+                <div class="resource">
+                    <label class="resource-label">Species</label>
                     <select name="system.race">
                         {{#each races}}
                         <option value="{{@key}}" {{#if (eq @key ../system.race)}}selected{{/if}}>{{this.name}}</option>
                         {{/each}}
                     </select>
                 </div>
-            </div>
-
-            <div class="right">
-                <div class="field-group">
-                    <label>Destiny Points</label>
-                    <input type="number" name="system.destinyPoints.value" value="{{system.destinyPoints.value}}" class="tiny-input" />
-                </div>
-
-                <div class="field-group">
-                    <label>XP</label>
-                    <input type="number" name="system.experience" value="{{system.experience}}" />
-                </div>
-            </div>
-        </section>
-
-        {{!-- MAIN LAYOUT --}}
-        <section class="main-layout">
-            {{!-- Left: Abilities --}}
-            <aside class="abilities-box">
-                <div class="section-title">Abilities</div>
                 
-                {{#each system.abilities}}
-                <div class="ability-row">
-                    <div class="ability-label">{{uppercase @key}}</div>
-                    <input type="number" name="system.abilities.{{@key}}.base" value="{{this.base}}" class="ability-input" />
-                    <div class="ability-total">Tot: {{this.total}}</div>
-                    <div class="ability-mod">Mod: {{#if (gte this.mod 0)}}+{{/if}}{{this.mod}}</div>
-                </div>
-                {{/each}}
-            </aside>
-
-            {{!-- Middle: Combat Stats --}}
-            <section class="combat-box">
-                <div class="stat-row compact-halflvl">
-                    <label>½ Level</label>
-                    <div class="half-value">{{halfLevel}}</div>
-                </div>
-
-                <div class="hp-block">
-                    <div class="hp-row">
-                        <label>HP</label>
-                        <input type="number" name="system.hp.value" value="{{system.hp.value}}" class="hp-small" />
-                        <span>/</span>
-                        <input type="number" name="system.hp.max" value="{{system.hp.max}}" class="hp-small" />
-                        <label>Temp</label>
-                        <input type="number" name="system.hp.temp" value="{{system.hp.temp}}" class="hp-small" />
-                    </div>
-
-                    <div class="hp-actions">
-                        <label>Base Attack</label>
-                        <input type="number" name="system.bab" value="{{system.bab}}" class="tiny-input" />
-                        <label>Speed</label>
-                        <input type="number" name="system.speed.base" value="{{system.speed.base}}" class="tiny-input" />
-                    </div>
-                </div>
-
-                <div class="force-and-dt">
-                    <div class="force-block">
-                        <label>Force Points</label>
-                        <input type="number" name="system.forcePoints.value" value="{{system.forcePoints.value}}" class="fp-small" />
-                        <span>/</span>
-                        <input type="number" name="system.forcePoints.max" value="{{system.forcePoints.max}}" class="fp-small" />
-                        <select name="system.forcePoints.die" class="fp-die">
-                            <option value="1d6" {{#if (eq system.forcePoints.die "1d6")}}selected{{/if}}>1d6</option>
-                            <option value="1d8" {{#if (eq system.forcePoints.die "1d8")}}selected{{/if}}>1d8</option>
-                            <option value="1d10" {{#if (eq system.forcePoints.die "1d10")}}selected{{/if}}>1d10</option>
-                        </select>
-                        <div class="force-note">Base die used when spending FP</div>
-                    </div>
-
-                    <div class="dt-block">
-                        <label>Damage Threshold</label>
-                        <div class="dt-value">{{damageThreshold}}</div>
-                        <label>Misc Modifier</label>
-                        <input type="number" name="system.damageThresholdMisc" value="{{system.damageThresholdMisc}}" class="tiny-input" />
-                    </div>
-                </div>
-            </section>
-
-            {{!-- Right: Defenses --}}
-            <aside class="combat-right">
-                <div class="section-title">Defenses</div>
-                
-                <div class="def-row">
-                    <label>FORTITUDE</label>
-                    <div class="def-value">{{system.defenses.fortitude.total}}</div>
-                </div>
-
-                <div class="def-row">
-                    <label>REFLEX</label>
-                    <div class="def-value">{{system.defenses.reflex.total}}</div>
-                </div>
-
-                <div class="def-row">
-                    <label>WILL</label>
-                    <div class="def-value">{{system.defenses.will.total}}</div>
-                </div>
-
-                <div class="condition-box">
-                    <label>Condition Track</label>
-                    <select name="system.conditionTrack">
-                        <option value="normal" {{#if (eq system.conditionTrack "normal")}}selected{{/if}}>Normal</option>
-                        <option value="-1" {{#if (eq system.conditionTrack "-1")}}selected{{/if}}>-1 (Minor)</option>
-                        <option value="-2" {{#if (eq system.conditionTrack "-2")}}selected{{/if}}>-2 (Hurt)</option>
-                        <option value="-5" {{#if (eq system.conditionTrack "-5")}}selected{{/if}}>-5 (Wounded)</option>
-                        <option value="-10" {{#if (eq system.conditionTrack "-10")}}selected{{/if}}>-10 (Disabled)</option>
-                        <option value="helpless" {{#if (eq system.conditionTrack "helpless")}}selected{{/if}}>Helpless</option>
+                <div class="resource">
+                    <label class="resource-label">Size</label>
+                    <select name="system.size">
+                        <option value="tiny" {{#if (eq system.size "tiny")}}selected{{/if}}>Tiny</option>
+                        <option value="small" {{#if (eq system.size "small")}}selected{{/if}}>Small</option>
+                        <option value="medium" {{#if (eq system.size "medium")}}selected{{/if}}>Medium</option>
+                        <option value="large" {{#if (eq system.size "large")}}selected{{/if}}>Large</option>
+                        <option value="huge" {{#if (eq system.size "huge")}}selected{{/if}}>Huge</option>
+                        <option value="gargantuan" {{#if (eq system.size "gargantuan")}}selected{{/if}}>Gargantuan</option>
+                        <option value="colossal" {{#if (eq system.size "colossal")}}selected{{/if}}>Colossal</option>
                     </select>
                 </div>
-
-                <div class="second-wind-box">
-                    <div class="section-title">Second Wind</div>
-                    <div style="margin-bottom: 8px;">Auto healing: <strong>{{system.secondWind.healing}}</strong></div>
-                    <div class="field-group">
-                        <label>Misc Modifier</label>
-                        <input type="number" name="system.secondWind.misc" value="{{system.secondWind.misc}}" class="tiny-input" />
-                    </div>
-                    <div class="field-group">
-                        <label>Uses</label>
-                        <input type="number" name="system.secondWind.uses" value="{{system.secondWind.uses}}" class="tiny-input" />
-                    </div>
-                    <div class="field-group">
-                        <label>Max/day</label>
-                        <input type="number" name="system.secondWind.max" value="{{system.secondWind.max}}" class="tiny-input" />
-                    </div>
-                    <button type="button" class="apply-second-wind">Take Second Wind</button>
+                
+                <div class="resource">
+                    <label class="resource-label">XP</label>
+                    <input type="number" name="system.experience" value="{{system.experience}}" data-dtype="Number"/>
                 </div>
-            </aside>
-        </section>
-
-        {{!-- TABS --}}
-        <section class="tabs">
-            <div class="tab-row">
-                <button type="button" class="tab active" data-tab="armor">Armor & Equipment</button>
-                <button type="button" class="tab" data-tab="feats">Feats & Talents</button>
-                <button type="button" class="tab" data-tab="powers">Force Powers</button>
-                <button type="button" class="tab" data-tab="weapons">Weapons</button>
+                
+                <div class="resource">
+                    <label class="resource-label">Destiny Points</label>
+                    <input type="number" name="system.destinyPoints.value" value="{{system.destinyPoints.value}}" data-dtype="Number" style="width: 40px;"/>
+                    <span class="sep"> / </span>
+                    <input type="number" name="system.destinyPoints.max" value="{{system.destinyPoints.max}}" data-dtype="Number" style="width: 40px;"/>
+                </div>
             </div>
+        </div>
+        
+        <div class="header-actions">
+            <button type="button" class="save-sheet" title="Save Sheet Data"><i class="fas fa-save"></i> Save</button>
+            <button type="button" class="load-sheet" title="Load Sheet Data"><i class="fas fa-upload"></i> Load</button>
+        </div>
+    </header>
 
-            {{!-- ARMOR TAB --}}
-            <div class="tab-content armor active" id="armor-tab">
-                <button type="button" class="add-armor">+ Add Armor</button>
-                <div class="list-armor">
-                    {{#each armor}}
-                    <div class="armor-entry" data-item-id="{{this._id}}">
-                        <div class="item-header">
-                            <strong>{{this.name}}</strong>
-                            <div>
-                                <button type="button" class="item-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                                <button type="button" class="item-delete" title="Delete"><i class="fas fa-trash"></i></button>
+    {{!-- Main Sheet Body with Tabs --}}
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item active" data-tab="main">Main</a>
+        <a class="item" data-tab="skills">Skills</a>
+        <a class="item" data-tab="combat">Combat</a>
+        <a class="item" data-tab="inventory">Inventory</a>
+        <a class="item" data-tab="features">Features</a>
+        <a class="item" data-tab="force">Force</a>
+        <a class="item" data-tab="bio">Biography</a>
+    </nav>
+
+    {{!-- Main Tab --}}
+    <section class="sheet-body">
+        <div class="tab main active" data-group="primary" data-tab="main">
+            <div class="main-content">
+                {{!-- Left Column: Abilities --}}
+                <div class="abilities-column">
+                    <h3 class="section-header">Abilities</h3>
+                    
+                    {{#each system.abilities as |ability key|}}
+                    <div class="ability">
+                        <h4 class="ability-name">{{uppercase key}}</h4>
+                        <div class="ability-scores">
+                            <div class="ability-score">
+                                <label>Base</label>
+                                <input type="number" name="system.abilities.{{key}}.base" value="{{ability.base}}" data-dtype="Number"/>
+                            </div>
+                            <div class="ability-score">
+                                <label>Racial</label>
+                                <span class="ability-display">{{numberFormat ability.racial decimals=0 sign=true}}</span>
+                            </div>
+                            <div class="ability-score">
+                                <label>Temp</label>
+                                <input type="number" name="system.abilities.{{key}}.temp" value="{{ability.temp}}" data-dtype="Number" style="width: 40px;"/>
                             </div>
                         </div>
-                        <div class="item-details">
-                            {{#if this.system.reflexBonus}}Reflex: +{{this.system.reflexBonus}}{{/if}}
-                            {{#if this.system.maxDex}}Max Dex: {{this.system.maxDex}}{{/if}}
+                        <div class="ability-total">
+                            <span class="total-label">Total:</span>
+                            <span class="total-value">{{ability.total}}</span>
+                        </div>
+                        <div class="ability-modifier rollable" data-ability="{{key}}">
+                            <span class="modifier-value">{{numberFormat ability.mod decimals=0 sign=true}}</span>
+                        </div>
+                    </div>
+                    {{/each}}
+                    
+                    <div class="derived-stats">
+                        <div class="stat-box">
+                            <label>Half Level</label>
+                            <div class="stat-value">{{halfLevel}}</div>
+                        </div>
+                        <div class="stat-box">
+                            <label>Base Attack</label>
+                            <div class="stat-value">{{numberFormat system.bab decimals=0 sign=true}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                {{!-- Middle Column: Defenses & Conditions --}}
+                <div class="defenses-column">
+                    <h3 class="section-header">Defenses</h3>
+                    
+                    <div class="defense-row">
+                        <div class="defense fortitude">
+                            <label>Fortitude Defense</label>
+                            <div class="defense-value">{{system.defenses.fortitude.total}}</div>
+                            <div class="defense-breakdown">
+                                <span>10 + {{system.level}} Level + Ability</span>
+                            </div>
+                            <div class="defense-inputs">
+                                <label>Class Bonus</label>
+                                <input type="number" name="system.defenses.fortitude.class" value="{{system.defenses.fortitude.class}}" data-dtype="Number" style="width: 50px;"/>
+                                <label>Armor Mastery</label>
+                                <input type="number" name="system.defenses.fortitude.armorMastery" value="{{system.defenses.fortitude.armorMastery}}" data-dtype="Number" style="width: 50px;"/>
+                                <label>Misc</label>
+                                <input type="number" name="system.defenses.fortitude.modifier" value="{{system.defenses.fortitude.modifier}}" data-dtype="Number" style="width: 50px;"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="defense-row">
+                        <div class="defense reflex">
+                            <label>Reflex Defense</label>
+                            <div class="defense-value">{{system.defenses.reflex.total}}</div>
+                            <div class="defense-breakdown">
+                                <span>10 + {{system.level}} Level + {{system.abilities.dex.mod}} DEX</span>
+                            </div>
+                            <div class="defense-inputs">
+                                <label>Armor</label>
+                                <input type="number" name="system.defenses.reflex.armor" value="{{system.defenses.reflex.armor}}" data-dtype="Number" style="width: 50px;" disabled/>
+                                <label>Class Bonus</label>
+                                <input type="number" name="system.defenses.reflex.class" value="{{system.defenses.reflex.class}}" data-dtype="Number" style="width: 50px;"/>
+                                {{#if system.defenses.reflex.armor}}
+                                <label>Armored Defense</label>
+                                <select name="system.defenses.reflex.option" style="width: 120px;">
+                                    <option value="none" {{#if (eq system.defenses.reflex.option "none")}}selected{{/if}}>None</option>
+                                    <option value="armored" {{#if (eq system.defenses.reflex.option "armored")}}selected{{/if}}>Armored Defense</option>
+                                    <option value="improved" {{#if (eq system.defenses.reflex.option "improved")}}selected{{/if}}>Improved Armored</option>
+                                </select>
+                                {{/if}}
+                                <label>Misc</label>
+                                <input type="number" name="system.defenses.reflex.modifier" value="{{system.defenses.reflex.modifier}}" data-dtype="Number" style="width: 50px;"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="defense-row">
+                        <div class="defense will">
+                            <label>Will Defense</label>
+                            <div class="defense-value">{{system.defenses.will.total}}</div>
+                            <div class="defense-breakdown">
+                                <span>10 + {{system.level}} Level + {{system.abilities.wis.mod}} WIS</span>
+                            </div>
+                            <div class="defense-inputs">
+                                <label>Class Bonus</label>
+                                <input type="number" name="system.defenses.will.class" value="{{system.defenses.will.class}}" data-dtype="Number" style="width: 50px;"/>
+                                <label>Misc</label>
+                                <input type="number" name="system.defenses.will.modifier" value="{{system.defenses.will.modifier}}" data-dtype="Number" style="width: 50px;"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="condition-track">
+                        <h4>Condition Track</h4>
+                        <select name="system.conditionTrack" class="condition-select">
+                            <option value="normal" {{#if (eq system.conditionTrack "normal")}}selected{{/if}}>Normal</option>
+                            <option value="-1" {{#if (eq system.conditionTrack "-1")}}selected{{/if}}>-1 (Minor)</option>
+                            <option value="-2" {{#if (eq system.conditionTrack "-2")}}selected{{/if}}>-2</option>
+                            <option value="-5" {{#if (eq system.conditionTrack "-5")}}selected{{/if}}>-5 (Wounded)</option>
+                            <option value="-10" {{#if (eq system.conditionTrack "-10")}}selected{{/if}}>-10 (Disabled)</option>
+                            <option value="helpless" {{#if (eq system.conditionTrack "helpless")}}selected{{/if}}>Helpless</option>
+                        </select>
+                    </div>
+                    
+                    <div class="damage-threshold">
+                        <label>Damage Threshold</label>
+                        <div class="dt-value">{{damageThreshold}}</div>
+                        <div class="dt-breakdown">
+                            <span>Fort {{system.defenses.fortitude.total}} + Size + Feats</span>
+                        </div>
+                        <input type="number" name="system.damageThresholdMisc" value="{{system.damageThresholdMisc}}" placeholder="Misc" data-dtype="Number" style="width: 50px;"/>
+                    </div>
+                </div>
+
+                {{!-- Right Column: Health & Resources --}}
+                <div class="resources-column">
+                    <h3 class="section-header">Health & Resources</h3>
+                    
+                    <div class="resource-box hit-points">
+                        <label>Hit Points</label>
+                        <div class="resource-content">
+                            <input type="number" name="system.hp.value" value="{{system.hp.value}}" data-dtype="Number"/>
+                            <span class="sep">/</span>
+                            <input type="number" name="system.hp.max" value="{{system.hp.max}}" data-dtype="Number"/>
+                        </div>
+                        <div class="temp-hp">
+                            <label>Temp HP</label>
+                            <input type="number" name="system.hp.temp" value="{{system.hp.temp}}" data-dtype="Number" style="width: 50px;"/>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-box force-points">
+                        <label>Force Points</label>
+                        <div class="resource-content">
+                            <input type="number" name="system.forcePoints.value" value="{{system.forcePoints.value}}" data-dtype="Number"/>
+                            <span class="sep">/</span>
+                            <input type="number" name="system.forcePoints.max" value="{{system.forcePoints.max}}" data-dtype="Number"/>
+                        </div>
+                        <div class="force-die">
+                            <label>Die</label>
+                            <select name="system.forcePoints.die">
+                                <option value="1d6" {{#if (eq system.forcePoints.die "1d6")}}selected{{/if}}>1d6</option>
+                                <option value="1d8" {{#if (eq system.forcePoints.die "1d8")}}selected{{/if}}>1d8</option>
+                                <option value="1d10" {{#if (eq system.forcePoints.die "1d10")}}selected{{/if}}>1d10</option>
+                                <option value="1d12" {{#if (eq system.forcePoints.die "1d12")}}selected{{/if}}>1d12</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-box free-force-powers">
+                        <label>Free Force Powers</label>
+                        <div class="resource-content">
+                            <input type="number" name="system.freeForcePowers.current" value="{{system.freeForcePowers.current}}" data-dtype="Number" style="width: 40px;"/>
+                            <span class="sep">/</span>
+                            <input type="number" name="system.freeForcePowers.max" value="{{system.freeForcePowers.max}}" data-dtype="Number" style="width: 40px;"/>
+                        </div>
+                        <div class="force-note">1 + WIS mod (Force Training)</div>
+                    </div>
+                    
+                    <div class="resource-box second-wind">
+                        <label>Second Wind</label>
+                        <div class="second-wind-info">
+                            <span>Healing: <strong>{{system.secondWind.healing}}</strong></span>
+                            <div class="sw-formula">max(HP/4, CON) + Misc</div>
+                        </div>
+                        <div class="resource-content">
+                            <span>Uses:</span>
+                            <input type="number" name="system.secondWind.uses" value="{{system.secondWind.uses}}" data-dtype="Number" style="width: 40px;"/>
+                            <span class="sep">/</span>
+                            <input type="number" name="system.secondWind.max" value="{{system.secondWind.max}}" data-dtype="Number" style="width: 40px;"/>
+                        </div>
+                        <div class="sw-misc">
+                            <label>Misc Modifier</label>
+                            <input type="number" name="system.secondWind.misc" value="{{system.secondWind.misc}}" data-dtype="Number" style="width: 50px;"/>
+                        </div>
+                        <button type="button" class="apply-second-wind"><i class="fas fa-heart"></i> Take Second Wind</button>
+                    </div>
+                    
+                    <div class="resource-box movement">
+                        <label>Speed</label>
+                        <div class="speed-content">
+                            <label>Base</label>
+                            <input type="number" name="system.speed.base" value="{{system.speed.base}}" data-dtype="Number" style="width: 50px;"/>
+                            <span class="speed-label">squares</span>
+                        </div>
+                        <div class="speed-total">
+                            <span>Total: <strong>{{system.speed.total}}</strong> squares</span>
+                        </div>
+                        <div class="speed-note">Base + Size modifier - Armor penalty</div>
+                    </div>
+                    
+                    <div class="resource-box initiative">
+                        <label>Initiative</label>
+                        <div class="init-value rollable" data-roll="initiative">{{numberFormat system.initiative.total decimals=0 sign=true}}</div>
+                        <div class="init-breakdown">
+                            <span>{{system.abilities.dex.mod}} DEX</span>
+                        </div>
+                        <div class="init-misc">
+                            <label>Misc</label>
+                            <input type="number" name="system.initiative.misc" value="{{system.initiative.misc}}" data-dtype="Number" style="width: 50px;"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{!-- Skills Tab --}}
+        <div class="tab skills" data-group="primary" data-tab="skills">
+            <h3 class="section-header">Skills</h3>
+            
+            <div class="skills-list">
+                <div class="skills-header">
+                    <div class="skill-name-col">Skill Name</div>
+                    <div class="skill-ability-col">Ability</div>
+                    <div class="skill-train-col" title="Trained (+5)">T</div>
+                    <div class="skill-focus-col" title="Skill Focus (+5)">F</div>
+                    <div class="skill-misc-col">Misc</div>
+                    <div class="skill-total-col">Total</div>
+                    <div class="skill-roll-col">Roll</div>
+                </div>
+                
+                {{#each skills}}
+                <div class="skill-row">
+                    <div class="skill-name">{{this.label}}</div>
+                    <div class="skill-ability">{{this.ability}}</div>
+                    <div class="skill-train">
+                        <input type="checkbox" name="system.skills.{{this.key}}.trained" {{checked this.trained}} data-skill="{{this.key}}" class="skill-trained"/>
+                    </div>
+                    <div class="skill-focus">
+                        <input type="checkbox" name="system.skills.{{this.key}}.focus" {{checked this.focus}} data-skill="{{this.key}}" class="skill-focus"/>
+                    </div>
+                    <div class="skill-misc">
+                        <input type="number" name="system.skills.{{this.key}}.misc" value="{{this.misc}}" data-dtype="Number" style="width: 40px;"/>
+                    </div>
+                    <div class="skill-total">{{numberFormat this.total decimals=0 sign=true}}</div>
+                    <div class="skill-roll">
+                        <a class="skill-roll-button rollable" data-skill="{{this.key}}"><i class="fas fa-dice-d20"></i></a>
+                    </div>
+                </div>
+                {{/each}}
+                
+                {{!-- Custom Skills --}}
+                {{#if system.customSkills}}
+                <div class="custom-skills-section">
+                    <h4>Custom Skills</h4>
+                    {{#each system.customSkills as |skill index|}}
+                    <div class="custom-skill-row">
+                        <input type="text" name="system.customSkills.{{index}}.name" value="{{skill.name}}" placeholder="Skill Name"/>
+                        <select name="system.customSkills.{{index}}.ability">
+                            <option value="str" {{#if (eq skill.ability "str")}}selected{{/if}}>STR</option>
+                            <option value="dex" {{#if (eq skill.ability "dex")}}selected{{/if}}>DEX</option>
+                            <option value="con" {{#if (eq skill.ability "con")}}selected{{/if}}>CON</option>
+                            <option value="int" {{#if (eq skill.ability "int")}}selected{{/if}}>INT</option>
+                            <option value="wis" {{#if (eq skill.ability "wis")}}selected{{/if}}>WIS</option>
+                            <option value="cha" {{#if (eq skill.ability "cha")}}selected{{/if}}>CHA</option>
+                        </select>
+                        <input type="number" name="system.customSkills.{{index}}.value" value="{{skill.value}}" data-dtype="Number"/>
+                        <button type="button" class="remove-skill" data-index="{{index}}"><i class="fas fa-trash"></i></button>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+                
+                <button type="button" class="add-skill"><i class="fas fa-plus"></i> Add Custom Skill</button>
+            </div>
+        </div>
+
+        {{!-- Combat Tab --}}
+        <div class="tab combat" data-group="primary" data-tab="combat">
+            <h3 class="section-header">Weapons</h3>
+            
+            <div class="items-header">
+                <button type="button" class="add-weapon"><i class="fas fa-plus"></i> Add Weapon</button>
+            </div>
+            
+            <div class="items-list">
+                {{#each weapons}}
+                <div class="item weapon-item" data-item-id="{{this._id}}">
+                    <div class="item-image">
+                        <img src="{{this.img}}" title="{{this.name}}" width="36" height="36"/>
+                    </div>
+                    <h4 class="item-name">{{this.name}}</h4>
+                    <div class="item-stats">
+                        <span class="damage">{{this.system.damage}}</span>
+                        <span class="range">Range: {{this.system.range}}</span>
+                        <span class="crit">Crit: {{this.system.crit}}</span>
+                    </div>
+                    <div class="item-controls">
+                        <a class="item-control item-attack rollable" title="Attack" data-item-id="{{this._id}}"><i class="fas fa-crosshairs"></i></a>
+                        <a class="item-control item-edit" title="Edit" data-item-id="{{this._id}}"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete" data-item-id="{{this._id}}"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+                {{/each}}
+                
+                {{!-- System weapons array (legacy support) --}}
+                {{#each system.weapons as |weapon index|}}
+                <div class="weapon-entry legacy" data-index="{{index}}">
+                    <input type="text" name="system.weapons.{{index}}.name" value="{{weapon.name}}" placeholder="Weapon Name"/>
+                    <input type="text" name="system.weapons.{{index}}.damage" value="{{weapon.damage}}" placeholder="Damage"/>
+                    <select name="system.weapons.{{index}}.attackAttr">
+                        <option value="str" {{#if (eq weapon.attackAttr "str")}}selected{{/if}}>STR</option>
+                        <option value="dex" {{#if (eq weapon.attackAttr "dex")}}selected{{/if}}>DEX</option>
+                    </select>
+                    <button type="button" class="roll-weapon rollable" data-index="{{index}}"><i class="fas fa-dice-d20"></i></button>
+                    <button type="button" class="remove-weapon" data-index="{{index}}"><i class="fas fa-trash"></i></button>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+        {{!-- Inventory Tab --}}
+        <div class="tab inventory" data-group="primary" data-tab="inventory">
+            <div class="inventory-section">
+                <h3 class="section-header">Armor</h3>
+                <button type="button" class="add-armor"><i class="fas fa-plus"></i> Add Armor</button>
+                
+                <div class="items-list">
+                    {{#each armor}}
+                    <div class="item armor-item" data-item-id="{{this._id}}">
+                        <div class="item-image">
+                            <img src="{{this.img}}" title="{{this.name}}" width="36" height="36"/>
+                        </div>
+                        <h4 class="item-name">{{this.name}}</h4>
+                        <div class="item-stats">
+                            <span>Reflex: {{numberFormat this.system.defenseBonus decimals=0 sign=true}}</span>
+                            <span>Max Dex: {{this.system.maxDex}}</span>
+                            <span>Max Speed: {{this.system.maxSpeed}}</span>
+                        </div>
+                        <div class="item-controls">
+                            <input type="checkbox" name="equipped" {{checked this.system.equipped}} title="Equipped" data-item-id="{{this._id}}"/>
+                            <a class="item-control item-edit" title="Edit" data-item-id="{{this._id}}"><i class="fas fa-edit"></i></a>
+                            <a class="item-control item-delete" title="Delete" data-item-id="{{this._id}}"><i class="fas fa-trash"></i></a>
                         </div>
                     </div>
                     {{/each}}
                 </div>
-
-                <div style="margin-top: 20px;">
-                    <h3>Equipment</h3>
-                    <button type="button" class="add-equipment">+ Add Equipment</button>
-                    <div class="list-equipment">
-                        {{#each equipment}}
-                        <div class="equipment-entry" data-item-id="{{this._id}}">
-                            <div class="item-header">
-                                <strong>{{this.name}}</strong>
-                                <div>
-                                    <button type="button" class="item-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button type="button" class="item-delete" title="Delete"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                        {{/each}}
-                    </div>
-                </div>
             </div>
-
-            {{!-- FEATS TAB --}}
-            <div class="tab-content feats" id="feats-tab">
-                <div class="two-column">
-                    <div>
-                        <h3>Feats</h3>
-                        <button type="button" class="add-feat">+ Add Feat</button>
-                        <div class="feats-list">
-                            {{#each feats}}
-                            <div class="feat-entry" data-item-id="{{this._id}}">
-                                <div class="item-header">
-                                    <strong>{{this.name}}</strong>
-                                    <div>
-                                        <button type="button" class="item-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                                        <button type="button" class="item-delete" title="Delete"><i class="fas fa-trash"></i></button>
-                                    </div>
-                                </div>
-                                {{#if this.system.description}}
-                                <div class="item-description">{{this.system.description}}</div>
-                                {{/if}}
-                            </div>
-                            {{/each}}
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h3>Talents</h3>
-                        <button type="button" class="add-talent">+ Add Talent</button>
-                        <div class="talents-list">
-                            {{#each talents}}
-                            <div class="talent-entry" data-item-id="{{this._id}}">
-                                <div class="item-header">
-                                    <strong>{{this.name}}</strong>
-                                    <div>
-                                        <button type="button" class="item-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                                        <button type="button" class="item-delete" title="Delete"><i class="fas fa-trash"></i></button>
-                                    </div>
-                                </div>
-                                {{#if this.system.description}}
-                                <div class="item-description">{{this.system.description}}</div>
-                                {{/if}}
-                            </div>
-                            {{/each}}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{!-- FORCE POWERS TAB --}}
-            <div class="tab-content powers" id="powers-tab">
-                <button type="button" class="refresh-forcepowers">Refresh All Powers</button>
+            
+            <div class="inventory-section">
+                <h3 class="section-header">Equipment</h3>
+                <button type="button" class="add-equipment"><i class="fas fa-plus"></i> Add Equipment</button>
                 
-                {{#each forcePowers}}
-                <div class="forcepower-entry" data-item-id="{{this._id}}">
-                    <div class="power-header">
-                        {{this.name}} 
-                        {{#if this.system.uses}}
-                        ({{this.system.uses.current}}/{{this.system.uses.max}} uses)
+                <div class="items-list">
+                    {{#each equipment}}
+                    <div class="item equipment-item" data-item-id="{{this._id}}">
+                        <div class="item-image">
+                            <img src="{{this.img}}" title="{{this.name}}" width="36" height="36"/>
+                        </div>
+                        <h4 class="item-name">{{this.name}}</h4>
+                        {{#if this.system.quantity}}
+                        <div class="item-quantity">Qty: {{this.system.quantity}}</div>
                         {{/if}}
+                        <div class="item-controls">
+                            <a class="item-control item-edit" title="Edit" data-item-id="{{this._id}}"><i class="fas fa-edit"></i></a>
+                            <a class="item-control item-delete" title="Delete" data-item-id="{{this._id}}"><i class="fas fa-trash"></i></a>
+                        </div>
                     </div>
-                    <div class="power-actions">
-                        <button type="button" class="roll-forcepower">Use Power</button>
-                        <button type="button" class="reload-forcepower">Reload (1 FP)</button>
-                        <button type="button" class="item-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button type="button" class="item-delete" title="Delete"><i class="fas fa-trash"></i></button>
+                    {{/each}}
+                </div>
+            </div>
+            
+            <div class="inventory-section credits-section">
+                <h3 class="section-header">Credits</h3>
+                <input type="number" name="system.credits" value="{{system.credits}}" data-dtype="Number" style="width: 150px; font-size: 20px;"/>
+            </div>
+        </div>
+
+        {{!-- Features Tab --}}
+        <div class="tab features" data-group="primary" data-tab="features">
+            <div class="features-section">
+                <h3 class="section-header">Feats</h3>
+                <button type="button" class="add-feat"><i class="fas fa-plus"></i> Add Feat</button>
+                
+                <div class="items-list">
+                    {{#each feats}}
+                    <div class="item feat-item" data-item-id="{{this._id}}">
+                        <div class="item-image">
+                            <img src="{{this.img}}" title="{{this.name}}" width="36" height="36"/>
+                        </div>
+                        <h4 class="item-name">{{this.name}}</h4>
+                        {{#if this.system.description}}
+                        <div class="item-description">{{{this.system.description}}}</div>
+                        {{/if}}
+                        <div class="item-controls">
+                            <a class="item-control item-edit" title="Edit" data-item-id="{{this._id}}"><i class="fas fa-edit"></i></a>
+                            <a class="item-control item-delete" title="Delete" data-item-id="{{this._id}}"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </div>
+                    {{/each}}
+                    
+                    {{!-- System feats array (legacy support) --}}
+                    {{#each system.feats as |feat index|}}
+                    <div class="feat-entry legacy" data-index="{{index}}">
+                        <input type="text" name="system.feats.{{index}}.name" value="{{feat.name}}" placeholder="Feat Name"/>
+                        <textarea name="system.feats.{{index}}.description" placeholder="Description">{{feat.description}}</textarea>
+                        <button type="button" class="remove-feat" data-index="{{index}}"><i class="fas fa-trash"></i></button>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            
+            <div class="features-section">
+                <h3 class="section-header">Talents</h3>
+                <button type="button" class="add-talent"><i class="fas fa-plus"></i> Add Talent</button>
+                
+                <div class="items-list">
+                    {{#each talents}}
+                    <div class="item talent-item" data-item-id="{{this._id}}">
+                        <div class="item-image">
+                            <img src="{{this.img}}" title="{{this.name}}" width="36" height="36"/>
+                        </div>
+                        <h4 class="item-name">{{this.name}}</h4>
+                        {{#if this.system.description}}
+                        <div class="item-description">{{{this.system.description}}}</div>
+                        {{/if}}
+                        <div class="item-controls">
+                            <a class="item-control item-edit" title="Edit" data-item-id="{{this._id}}"><i class="fas fa-edit"></i></a>
+                            <a class="item-control item-delete" title="Delete" data-item-id="{{this._id}}"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </div>
+                    {{/each}}
+                    
+                    {{!-- System talents array (legacy support) --}}
+                    {{#each system.talents as |talent index|}}
+                    <div class="talent-entry legacy" data-index="{{index}}">
+                        <input type="text" name="system.talents.{{index}}.name" value="{{talent.name}}" placeholder="Talent Name"/>
+                        <textarea name="system.talents.{{index}}.description" placeholder="Description">{{talent.description}}</textarea>
+                        <button type="button" class="remove-talent" data-index="{{index}}"><i class="fas fa-trash"></i></button>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            
+            <div class="features-section">
+                <h3 class="section-header">Classes</h3>
+                <button type="button" class="level-up"><i class="fas fa-arrow-up"></i> Level Up</button>
+                
+                <div class="classes-list">
+                    {{#each items}}
+                    {{#if (eq this.type "class")}}
+                    <div class="class-item" data-item-id="{{this._id}}">
+                        <h4>{{this.name}}</h4>
+                        <div class="class-level">
+                            <label>Level</label>
+                            <input type="number" name="level" value="{{this.system.level}}" data-dtype="Number" style="width: 50px;"/>
+                        </div>
+                        <div class="class-stats">
+                            <span>Hit Die: {{this.system.hitDie}}</span>
+                            <span>Skill Points: {{this.system.skillPoints}}</span>
+                        </div>
+                    </div>
+                    {{/if}}
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+
+        {{!-- Force Tab --}}
+        <div class="tab force" data-group="primary" data-tab="force">
+            <h3 class="section-header">Force Powers</h3>
+            
+            <div class="force-controls">
+                <button type="button" class="refresh-forcepowers"><i class="fas fa-sync"></i> Refresh All Powers</button>
+                <button type="button" class="add-forcepower"><i class="fas fa-plus"></i> Add Force Power</button>
+            </div>
+            
+            <div class="items-list">
+                {{#each forcePowers}}
+                <div class="item forcepower-item" data-item-id="{{this._id}}">
+                    <div class="item-image">
+                        <img src="{{this.img}}" title="{{this.name}}" width="36" height="36"/>
+                    </div>
+                    <h4 class="item-name">{{this.name}}</h4>
+                    <div class="power-uses">
+                        <span>{{this.system.uses.current}} / {{this.system.uses.max}} uses</span>
                     </div>
                     {{#if this.system.description}}
-                    <div class="item-description">{{this.system.description}}</div>
+                    <div class="item-description">{{{this.system.description}}}</div>
                     {{/if}}
+                    <div class="item-controls">
+                        <a class="item-control power-use rollable" title="Use Power" data-item-id="{{this._id}}"><i class="fas fa-bolt"></i></a>
+                        <a class="item-control power-reload" title="Reload (1 FP)" data-item-id="{{this._id}}"><i class="fas fa-redo"></i></a>
+                        <a class="item-control item-edit" title="Edit" data-item-id="{{this._id}}"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete" data-item-id="{{this._id}}"><i class="fas fa-trash"></i></a>
+                    </div>
                 </div>
                 {{/each}}
             </div>
+        </div>
 
-            {{!-- WEAPONS TAB --}}
-            <div class="tab-content weapons" id="weapons-tab">
-                <button type="button" class="add-weapon">+ Add Weapon</button>
-                
-                {{#each weapons}}
-                <div class="weapon-entry" data-item-id="{{this._id}}">
-                    <div class="weapon-header">
-                        <strong>{{this.name}}</strong>
-                        <div>
-                            <button type="button" class="item-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                            <button type="button" class="item-delete" title="Delete"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <div class="weapon-stats">
-                        {{#if this.system.damage}}Damage: {{this.system.damage}}{{/if}}
-                        {{#if this.system.range}}Range: {{this.system.range}}{{/if}}
-                        {{#if this.system.crit}}Crit: {{this.system.crit}}{{/if}}
-                    </div>
-                    <button type="button" class="roll-weapon">Attack Roll</button>
-                </div>
-                {{/each}}
+        {{!-- Biography Tab --}}
+        <div class="tab biography" data-group="primary" data-tab="bio">
+            <h3 class="section-header">Biography</h3>
+            {{editor system.biography target="system.biography" button=true owner=owner editable=editable}}
+            
+            <div class="notes-section">
+                <h3 class="section-header">Notes</h3>
+                {{editor system.notes target="system.notes" button=true owner=owner editable=editable}}
             </div>
-        </section>
-
-        <footer class="sheet-footer">
-            <small>Star Wars Saga Edition — Character Sheet v1.0</small>
-        </footer>
-    </div>
+        </div>
+    </section>
 </form>
-
-<style>
-/* Keep your existing CSS here - all the styles from the HTML artifact */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-.character-sheet {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #e8e8e8 0%, #d4d4d4 100%);
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    position: relative;
-}
-
-.character-sheet::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 8px;
-    background: linear-gradient(90deg, #4a4a4a, #6a6a6a, #4a4a4a);
-}
-
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 3px solid #4a4a4a;
-}
-
-.header h1 {
-    font-size: 20px;
-    letter-spacing: 3px;
-    color: #2a2a2a;
-    text-transform: uppercase;
-}
-
-.header .subtitle {
-    font-size: 10px;
-    color: #666;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-
-.header .actions {
-    display: flex;
-    gap: 8px;
-}
-
-.header .actions button {
-    background: linear-gradient(135deg, #4a90e2, #357abd);
-    border: 2px solid #2a5a8d;
-    border-radius: 4px;
-    color: white;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 10px;
-}
-
-.basic-info {
-    display: grid;
-    grid-template-columns: 2fr 1.5fr 1fr;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.basic-info .left,
-.basic-info .middle,
-.basic-info .right {
-    background: rgba(255,255,255,0.3);
-    padding: 12px;
-    border-radius: 6px;
-    border: 2px solid #666;
-}
-
-.field-group {
-    margin-bottom: 10px;
-}
-
-.field-label, label {
-    font-size: 9px;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #555;
-    display: block;
-    margin-bottom: 3px;
-}
-
-input[type="text"], input[type="number"], select {
-    width: 100%;
-    background: white;
-    border: 2px solid #666;
-    border-radius: 4px;
-    padding: 6px 8px;
-    font-size: 13px;
-    font-weight: 500;
-    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);
-}
-
-.tiny-input {
-    width: 60px !important;
-}
-
-.class-list {
-    background: white;
-    border: 2px solid #666;
-    border-radius: 4px;
-    padding: 8px;
-    min-height: 40px;
-}
-
-.class-row {
-    font-size: 12px;
-    padding: 4px;
-    background: rgba(74, 144, 226, 0.1);
-    margin-bottom: 4px;
-    border-radius: 3px;
-}
-
-.main-layout {
-    display: grid;
-    grid-template-columns: 260px 1fr 280px;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.abilities-box, .combat-box, .combat-right {
-    background: linear-gradient(135deg, #b8b8b8, #c8c8c8);
-    border: 3px solid #4a4a4a;
-    border-radius: 8px;
-    padding: 12px;
-    box-shadow: 4px 4px 8px rgba(0,0,0,0.2);
-}
-
-.section-title {
-    font-size: 11px;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #2a2a2a;
-    margin-bottom: 10px;
-    text-align: center;
-    letter-spacing: 1px;
-    border-bottom: 2px solid #4a4a4a;
-    padding-bottom: 5px;
-}
-
-.ability-row {
-    display: grid;
-    grid-template-columns: 35px 60px 60px 60px;
-    gap: 6px;
-    margin-bottom: 8px;
-    align-items: center;
-}
-
-.ability-label {
-    font-size: 11px;
-    font-weight: bold;
-    color: #2a2a2a;
-    text-transform: uppercase;
-}
-
-.ability-input {
-    background: white;
-    border: 2px solid #555;
-    border-radius: 3px;
-    padding: 6px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: bold;
-    width: 100%;
-}
-
-.ability-total, .ability-mod {
-    background: linear-gradient(135deg, #666, #555);
-    color: white;
-    border: 2px solid #333;
-    border-radius: 3px;
-    padding: 6px;
-    text-align: center;
-    font-size: 11px;
-    font-weight: bold;
-}
-
-.stat-row {
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-.half-value {
-    background: white;
-    border: 3px solid #555;
-    border-radius: 6px;
-    padding: 10px;
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.15);
-    margin-top: 5px;
-}
-
-.hp-block, .force-and-dt {
-    background: rgba(255,255,255,0.3);
-    padding: 12px;
-    border-radius: 6px;
-    margin-bottom: 12px;
-}
-
-.hp-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-}
-
-.hp-small {
-    width: 70px;
-    padding: 6px;
-    text-align: center;
-}
-
-.hp-actions {
-    display: grid;
-    grid-template-columns: auto 1fr auto 1fr;
-    gap: 8px;
-    align-items: center;
-}
-
-.fp-small {
-    width: 50px;
-    padding: 4px;
-    text-align: center;
-    display: inline-block;
-}
-
-.fp-die {
-    width: 70px;
-    padding: 4px;
-    margin-left: 5px;
-}
-
-.force-note {
-    font-size: 9px;
-    font-style: italic;
-    color: #666;
-    margin-top: 4px;
-}
-
-.dt-value {
-    background: white;
-    border: 2px solid #555;
-    border-radius: 4px;
-    padding: 8px;
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-    margin: 5px 0;
-}
-
-.def-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    background: rgba(255,255,255,0.3);
-    border-radius: 4px;
-    margin-bottom: 8px;
-}
-
-.def-row label {
-    font-size: 12px;
-    font-weight: bold;
-    color: #2a2a2a;
-}
-
-.def-value {
-    background: linear-gradient(135deg, #666, #555);
-    color: white;
-    border: 2px solid #333;
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 16px;
-}
-
-.condition-box {
-    margin-top: 15px;
-    padding: 12px;
-    background: linear-gradient(135deg, #d44, #b33);
-    border: 3px solid #4a4a4a;
-    border-radius: 6px;
-}
-
-.condition-box label {
-    color: white;
-    margin-bottom: 8px;
-}
-
-.condition-box select {
-    width: 100%;
-    padding: 8px;
-    font-weight: bold;
-}
-
-.second-wind-box {
-    margin-top: 15px;
-    padding: 12px;
-    background: linear-gradient(135deg, #f7e6e6, #f2dede);
-    border: 3px solid #a44;
-    border-radius: 6px;
-}
-
-.second-wind-box .section-title {
-    font-size: 10px;
-    color: #822;
-    border-bottom-color: #a44;
-}
-
-.apply-second-wind {
-    width: 100%;
-    margin-top: 10px;
-    padding: 8px;
-    background: linear-gradient(135deg, #4a90e2, #357abd);
-    border: 2px solid #2a5a8d;
-    border-radius: 4px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.tabs {
-    margin-top: 20px;
-}
-
-.tab-row {
-    display: flex;
-    gap: 5px;
-    margin-bottom: 0;
-    border-bottom: 3px solid #4a4a4a;
-}
-
-.tab {
-    background: linear-gradient(135deg, #999, #888);
-    border: 2px solid #4a4a4a;
-    border-bottom: none;
-    border-radius: 6px 6px 0 0;
-    padding: 8px 16px;
-    font-size: 11px;
-    font-weight: bold;
-    text-transform: uppercase;
-    cursor: pointer;
-    color: #2a2a2a;
-}
-
-.tab.active {
-    background: linear-gradient(135deg, #c8c8c8, #b8b8b8);
-    transform: translateY(2px);
-}
-
-.tab-content {
-    display: none;
-    background: linear-gradient(135deg, #b8b8b8, #c8c8c8);
-    border: 3px solid #4a4a4a;
-    border-radius: 0 8px 8px 8px;
-    padding: 15px;
-    min-height: 300px;
-    max-height: 600px;
-    overflow-y: auto;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-.add-armor, .add-feat, .add-weapon, .add-equipment, .add-talent, .refresh-forcepowers {
-    background: linear-gradient(135deg, #4a90e2, #357abd);
-    border: 2px solid #2a5a8d;
-    border-radius: 4px;
-    color: white;
-    padding: 8px 16px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 11px;
-    margin-bottom: 12px;
-}
-
-.armor-entry, .feat-entry, .forcepower-entry, .weapon-entry, .equipment-entry, .talent-entry {
-    background: rgba(255,255,255,0.4);
-    border: 2px solid #666;
-    border-radius: 4px;
-    padding: 10px;
-    margin-bottom: 8px;
-}
-
-.item-header, .weapon-header, .power-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-}
-
-.item-edit, .item-delete {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    margin-left: 4px;
-}
-
-.item-description {
-    font-size: 11px;
-    color: #555;
-    margin-top: 6px;
-    padding: 6px;
-    background: rgba(255,255,255,0.5);
-    border-radius: 3px;
-}
-
-.roll-forcepower, .reload-forcepower, .roll-weapon {
-    background: linear-gradient(135deg, #4a90e2, #357abd);
-    border: 2px solid #2a5a8d;
-    border-radius: 3px;
-    color: white;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 10px;
-    margin-right: 6px;
-}
-
-.two-column {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-}
-
-.sheet-footer {
-    margin-top: 20px;
-    padding-top: 10px;
-    border-top: 2px solid #4a4a4a;
-    text-align: center;
-    font-size: 10px;
-    color: #666;
-}
-</style>

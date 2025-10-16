@@ -1,16 +1,16 @@
 // ============================================
 // FILE: index.js
 // Star Wars Saga Edition (SWSE) - FoundryVTT System
-// Updated to use correct actor imports
+// Reorganized and optimized structure
 // ============================================
 
 import { registerHandlebarsHelpers } from "./helpers/handlebars-helpers.js";
 import { SWSE } from "./config.js";
-import { SWSEActor, SWSEActorSheet } from "./scripts/swse-actor.js";
-import { SWSEDroidSheet } from "./scripts/swse-droid.js";
-import { SWSEVehicleSheet } from "./scripts/swse-vehicle.js";
-import { SWSENPCSheet } from "./scripts/swse-npc.js";
-import { SWSEItemSheet } from "./scripts/swse-item.js";
+import { SWSEActor, SWSEActorSheet } from "./scripts/actor/swse-actor.js";
+import { SWSEDroidSheet } from "./scripts/actors/swse-droid.js";
+import { SWSEVehicleSheet } from "./scripts/actors/swse-vehicle.js";
+import { SWSENPCSheet } from "./scripts/actors/swse-npc.js";
+import { SWSEItemSheet } from "./scripts/items/swse-item.js";
 import { preloadHandlebarsTemplates } from "./scripts/core/load-templates.js";
 import * as SWSEData from "./scripts/core/swse-data.js";
 import { WorldDataLoader } from "./scripts/core/world-data-loader.js";
@@ -92,17 +92,10 @@ function registerSWSESheets() {
       DocumentSheetConfig.unregisterSheet(Actor, "core", ActorSheet);
       DocumentSheetConfig.unregisterSheet(Item, "core", ItemSheet);
 
-      // Character Sheet (uses base SWSEActorSheet)
+      // Character/NPC Sheet
       DocumentSheetConfig.registerSheet(Actor, "swse", SWSEActorSheet, {
-        types: ["character"],
-        label: "SWSE Character Sheet",
-        makeDefault: true
-      });
-
-      // NPC Sheet
-      DocumentSheetConfig.registerSheet(Actor, "swse", SWSENPCSheet, {
-        types: ["npc"],
-        label: "SWSE NPC Sheet",
+        types: ["character", "npc"],
+        label: "SWSE Character/NPC Sheet",
         makeDefault: true
       });
 
@@ -120,6 +113,12 @@ function registerSWSESheets() {
         makeDefault: true
       });
 
+      // NPC Sheet (alternative)
+      DocumentSheetConfig.registerSheet(Actor, "swse", SWSENPCSheet, {
+        types: ["npc"],
+        label: "SWSE NPC Sheet (Alternative)"
+      });
+
       // Item Sheet
       DocumentSheetConfig.registerSheet(Item, "swse", SWSEItemSheet, {
         types: SWSE.itemTypes,
@@ -135,14 +134,8 @@ function registerSWSESheets() {
       Items.unregisterSheet("core", ItemSheet);
 
       Actors.registerSheet("swse", SWSEActorSheet, {
-        types: ["character"],
-        label: "SWSE Character Sheet",
-        makeDefault: true
-      });
-
-      Actors.registerSheet("swse", SWSENPCSheet, {
-        types: ["npc"],
-        label: "SWSE NPC Sheet",
+        types: ["character", "npc"],
+        label: "SWSE Character/NPC Sheet",
         makeDefault: true
       });
 
@@ -156,6 +149,11 @@ function registerSWSESheets() {
         types: ["vehicle"],
         label: "SWSE Vehicle Sheet",
         makeDefault: true
+      });
+
+      Actors.registerSheet("swse", SWSENPCSheet, {
+        types: ["npc"],
+        label: "SWSE NPC Sheet (Alternative)"
       });
 
       Items.registerSheet("swse", SWSEItemSheet, {
