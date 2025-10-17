@@ -6,10 +6,10 @@
 
 import { registerHandlebarsHelpers } from "./helpers/handlebars-helpers.js";
 import { SWSE } from "./config.js";
-import { SWSEActor, SWSEActorSheet } from "./scripts/swse-actor.js";
-import { SWSEDroidSheet } from "./scripts/swse-droid.js";
-import { SWSEVehicleSheet } from "./scripts/swse-vehicle.js";
-import { SWSENPCSheet } from "./scripts/swse-npc.js";
+import { SWSEActor, SWSEActorSheet } from "./scripts/actors/swse-actor.js";
+import { SWSEDroidSheet } from "./scripts/actors/swse-droid.js";
+import { SWSEVehicleSheet } from "./scripts/actors/swse-vehicle.js";
+import { SWSENPCSheet } from "./scripts/actors/swse-npc.js";
 import { SWSEItemSheet } from "./scripts/swse-item.js";
 import { preloadHandlebarsTemplates } from "./scripts/core/load-templates.js";
 import * as SWSEData from "./scripts/core/swse-data.js";
