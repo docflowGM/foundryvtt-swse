@@ -533,9 +533,208 @@ def create_enhanced_holo_css():
     print(f"✓ Created enhanced holo CSS: {enhanced_path.name}")
     return enhanced_path
 
+def create_missing_chargen_template():
+    """Create the missing chargen.html template"""
+    templates_dir = BASE_PATH / "templates" / "apps"
+    templates_dir.mkdir(parents=True, exist_ok=True)
+    
+    chargen_template_path = templates_dir / "chargen.html"
+    
+    if chargen_template_path.exists():
+        print(f"⚠ chargen.html already exists")
+        return
+    
+    chargen_html = """<form class="swse character-generator holo-theme">
+    <div class="chargen-container">
+        <!-- Header -->
+        <div class="chargen-header">
+            <h1>{{localize "SWSE.CharGen.Title"}}</h1>
+            <p class="step-indicator">Step {{currentStep}} of {{totalSteps}}: {{stepName}}</p>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="chargen-body">
+            {{#if (eq currentStep 1)}}
+                <!-- Step 1: Species Selection -->
+                <div class="chargen-step species-selection">
+                    <h2>Choose Your Species</h2>
+                    <div class="species-grid">
+                        {{#each species}}
+                        <div class="species-card {{#if selected}}selected{{/if}}" data-species="{{id}}">
+                            <h3>{{name}}</h3>
+                            <div class="species-bonuses">
+                                {{#each bonuses}}
+                                <span class="bonus">{{this}}</span>
+                                {{/each}}
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            {{/if}}
+
+            {{#if (eq currentStep 2)}}
+                <!-- Step 2: Class Selection -->
+                <div class="chargen-step class-selection">
+                    <h2>Choose Your Class</h2>
+                    <div class="class-grid">
+                        {{#each classes}}
+                        <div class="class-card {{#if selected}}selected{{/if}}" data-class="{{id}}">
+                            <h3>{{name}}</h3>
+                            <p>{{description}}</p>
+                            <div class="class-stats">
+                                <span>HP: {{hitPoints}}</span>
+                                <span>BAB: {{baseAttackBonus}}</span>
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            {{/if}}
+
+            {{#if (eq currentStep 3)}}
+                <!-- Step 3: Ability Scores -->
+                <div class="chargen-step abilities-selection">
+                    <h2>Set Ability Scores</h2>
+                    <div class="abilities-grid">
+                        {{#each abilities}}
+                        <div class="ability-input">
+                            <label>{{name}}</label>
+                            <input type="number" name="abilities.{{id}}" value="{{value}}" min="8" max="18" />
+                            <span class="modifier">{{modifier}}</span>
+                        </div>
+                        {{/each}}
+                    </div>
+                    <div class="points-remaining">
+                        <p>Points Remaining: <strong>{{pointsRemaining}}</strong></p>
+                    </div>
+                </div>
+            {{/if}}
+
+            {{#if (eq currentStep 4)}}
+                <!-- Step 4: Skills -->
+                <div class="chargen-step skills-selection">
+                    <h2>Train Skills</h2>
+                    <p class="skills-info">Available Skill Points: <strong>{{skillPoints}}</strong></p>
+                    <div class="skills-list">
+                        {{#each skills}}
+                        <div class="skill-option {{#if trained}}selected{{/if}}">
+                            <label class="skill-checkbox">
+                                <input type="checkbox" name="skills.{{id}}" {{#if trained}}checked{{/if}} />
+                                <div class="skill-info">
+                                    <span class="skill-name">{{name}}</span>
+                                    <span class="skill-ability">({{ability}})</span>
+                                </div>
+                            </label>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            {{/if}}
+
+            {{#if (eq currentStep 5)}}
+                <!-- Step 5: Feats -->
+                <div class="chargen-step feats-selection">
+                    <h2>Choose Feats</h2>
+                    <p class="feats-info">Available Feats: <strong>{{featsRemaining}}</strong></p>
+                    <div class="feats-list">
+                        {{#each feats}}
+                        <div class="feat-card {{#if selected}}selected{{/if}}" data-feat="{{id}}">
+                            <h4>{{name}}</h4>
+                            <p>{{description}}</p>
+                            {{#if prerequisite}}
+                            <p class="prerequisite">Prerequisite: {{prerequisite}}</p>
+                            {{/if}}
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            {{/if}}
+
+            {{#if (eq currentStep 6)}}
+                <!-- Step 6: Review -->
+                <div class="chargen-step review-screen">
+                    <h2>Review Your Character</h2>
+                    <div class="review-section">
+                        <h3>Basic Information</h3>
+                        <div class="review-item">
+                            <span class="label">Name:</span>
+                            <input type="text" name="name" value="{{name}}" placeholder="Enter character name" />
+                        </div>
+                        <div class="review-item">
+                            <span class="label">Species:</span>
+                            <span class="value">{{selectedSpecies.name}}</span>
+                            <button type="button" class="btn-edit" data-step="1">Edit</button>
+                        </div>
+                        <div class="review-item">
+                            <span class="label">Class:</span>
+                            <span class="value">{{selectedClass.name}}</span>
+                            <button type="button" class="btn-edit" data-step="2">Edit</button>
+                        </div>
+                    </div>
+
+                    <div class="review-section">
+                        <h3>Ability Scores</h3>
+                        {{#each abilities}}
+                        <div class="review-item">
+                            <span class="label">{{name}}:</span>
+                            <span class="value">{{total}} ({{modifier}})</span>
+                        </div>
+                        {{/each}}
+                        <button type="button" class="btn-edit" data-step="3">Edit</button>
+                    </div>
+
+                    <div class="review-section">
+                        <h3>Trained Skills</h3>
+                        {{#each trainedSkills}}
+                        <div class="review-item">
+                            <span class="value">{{name}}</span>
+                        </div>
+                        {{/each}}
+                        <button type="button" class="btn-edit" data-step="4">Edit</button>
+                    </div>
+
+                    <div class="review-section">
+                        <h3>Feats</h3>
+                        {{#each selectedFeats}}
+                        <div class="review-item">
+                            <span class="value">{{name}}</span>
+                        </div>
+                        {{/each}}
+                        <button type="button" class="btn-edit" data-step="5">Edit</button>
+                    </div>
+                </div>
+            {{/if}}
+        </div>
+
+        <!-- Navigation Footer -->
+        <div class="chargen-footer">
+            <button type="button" class="btn-secondary btn-back" {{#if (eq currentStep 1)}}disabled{{/if}}>
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            
+            {{#if (eq currentStep totalSteps)}}
+                <button type="submit" class="btn-primary btn-finish">
+                    <i class="fas fa-check"></i> Create Character
+                </button>
+            {{else}}
+                <button type="button" class="btn-primary btn-next">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            {{/if}}
+        </div>
+    </div>
+</form>
+"""
+    
+    with open(chargen_template_path, 'w', encoding='utf-8') as f:
+        f.write(chargen_html)
+    
+    print(f"✓ Created missing chargen.html template")
+
 def main():
     print("=" * 60)
-    print("SWSE HOLO THEME APPLIER")
+    print("SWSE HOLO THEME APPLIER & TEMPLATE FIXER")
     print("Transforming SWSE sheets into Star Wars datapads")
     print("=" * 60)
     print()
@@ -546,6 +745,11 @@ def main():
         return
     
     print(f"Working directory: {BASE_PATH}")
+    print()
+    
+    # Step 0: Create missing template
+    print("Step 0: Creating missing chargen template...")
+    create_missing_chargen_template()
     print()
     
     # Step 1: Create enhanced holo CSS
@@ -575,8 +779,9 @@ def main():
     print("Next steps:")
     print("1. Review the changes in your git diff")
     print("2. Test each sheet type (Character, NPC, Droid, Vehicle, Item)")
-    print("3. Adjust holo-enhanced.css if needed for fine-tuning")
-    print("4. Backup files have been created with .backup extension")
+    print("3. Test the character generator")
+    print("4. Adjust holo-enhanced.css if needed for fine-tuning")
+    print("5. Backup files have been created with .backup extension")
     print()
     print("May the Force be with you! ⚡")
 
