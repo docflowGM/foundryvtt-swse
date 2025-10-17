@@ -16,31 +16,21 @@
         "defenses": {
           "fortitude": {
             "base": 10,
+            "classBonus": 0,
             "misc": 0,
-            "total": 10,
-            "ability": "con",
-            "class": 0,
-            "armorMastery": 0,
-            "modifier": 0
+            "total": 10
           },
           "reflex": {
             "base": 10,
+            "classBonus": 0,
             "misc": 0,
-            "total": 10,
-            "ability": "dex",
-            "class": 0,
-            "armor": 0,
-            "armorMastery": 0,
-            "modifier": 0
+            "total": 10
           },
           "will": {
             "base": 10,
+            "classBonus": 0,
             "misc": 0,
-            "total": 10,
-            "ability": "wis",
-            "class": 0,
-            "armorMastery": 0,
-            "modifier": 0
+            "total": 10
           }
         },
         "abilities": {
@@ -86,49 +76,7 @@
             "total": 10,
             "mod": 0
           }
-        },
-        "bab": 0,
-        "level": 1,
-        "race": "custom",
-        "size": "medium",
-        "conditionTrack": "normal",
-        "speed": {
-          "base": 6,
-          "total": 6
-        },
-        "forcePoints": {
-          "value": 5,
-          "max": 5,
-          "die": "1d6"
-        },
-        "destinyPoints": {
-          "value": 1,
-          "max": 1
-        },
-        "freeForcePowers": {
-          "current": 0,
-          "max": 0
-        },
-        "secondWind": {
-          "uses": 1,
-          "max": 1,
-          "misc": 0,
-          "healing": 0
-        },
-        "initiative": {
-          "misc": 0,
-          "total": 0
-        },
-        "damageThreshold": 10,
-        "damageThresholdMisc": 0,
-        "skills": {},
-        "weapons": [],
-        "feats": [],
-        "talents": [],
-        "customSkills": [],
-        "classes": [],
-        "credits": 0,
-        "experience": 0
+        }
       }
     },
     "character": {
@@ -252,16 +200,6 @@
     "combat-action": {
       "templates": [],
       "description": ""
-    },
-    "attribute": {
-      "templates": [
-        "base"
-      ]
-    },
-    "extra-skill-use": {
-      "templates": [
-        "base"
-      ]
     }
   }
 }

@@ -28,7 +28,7 @@
         
         <div class="field-group">
           <label>Level</label>
-          <input name="system.level" type="number" value="{{system.level}}" min="1"/ data-dtype="Number">
+          <input name="system.level" type="number" value="{{system.level}}" min="1"/>
         </div>
       </div>
     </div>
@@ -87,7 +87,7 @@
               <div class="defense-block">
                 <label>{{capitalize key}}</label>
                 <div class="defense-value">{{defense.total}}</div>
-                <input type="number" name="system.defenses.{{key}}.modifier" value="{{defense.modifier}}" placeholder="Misc" style="width: 60px; margin-top: 5px;"/ data-dtype="Number">
+                <input type="number" name="system.defenses.{{key}}.modifier" value="{{defense.modifier}}" placeholder="Misc" style="width: 60px; margin-top: 5px;"/>
               </div>
             {{/each}}
           </div>
@@ -97,9 +97,9 @@
         <div class="character-section">
           <h3>Hit Points</h3>
           <div style="display: flex; align-items: center; gap: 10px;">
-            <input type="number" name="system.hp.value" value="{{system.hp.value}}" style="width: 80px; font-size: 24px; font-weight: bold; text-align: center;"/ data-dtype="Number">
+            <input type="number" name="system.hp.value" value="{{system.hp.value}}" style="width: 80px; font-size: 24px; font-weight: bold; text-align: center;"/>
             <span style="font-size: 20px;">/</span>
-            <input type="number" name="system.hp.max" value="{{system.hp.max}}" style="width: 80px; font-size: 20px; text-align: center;"/ data-dtype="Number">
+            <input type="number" name="system.hp.max" value="{{system.hp.max}}" style="width: 80px; font-size: 20px; text-align: center;"/>
           </div>
           
           <div style="margin-top: 10px;">
@@ -126,19 +126,19 @@
           
           <div style="margin-bottom: 10px;">
             <label>Force Points:</label>
-            <input type="number" name="system.forcePoints.value" value="{{system.forcePoints.value}}" style="width: 50px;"/ data-dtype="Number"> / 
-            <input type="number" name="system.forcePoints.max" value="{{system.forcePoints.max}}" style="width: 50px;"/ data-dtype="Number">
+            <input type="number" name="system.forcePoints.value" value="{{system.forcePoints.value}}" style="width: 50px;"/> / 
+            <input type="number" name="system.forcePoints.max" value="{{system.forcePoints.max}}" style="width: 50px;"/>
           </div>
           
           <div style="margin-bottom: 10px;">
             <label>Destiny Points:</label>
-            <input type="number" name="system.destinyPoints.value" value="{{system.destinyPoints.value}}" style="width: 50px;"/ data-dtype="Number"> / 
-            <input type="number" name="system.destinyPoints.max" value="{{system.destinyPoints.max}}" style="width: 50px;"/ data-dtype="Number">
+            <input type="number" name="system.destinyPoints.value" value="{{system.destinyPoints.value}}" style="width: 50px;"/> / 
+            <input type="number" name="system.destinyPoints.max" value="{{system.destinyPoints.max}}" style="width: 50px;"/>
           </div>
           
           <div>
             <label>Credits:</label>
-            <input type="number" name="system.credits" value="{{system.credits}}" style="width: 100px;"/ data-dtype="Number">
+            <input type="number" name="system.credits" value="{{system.credits}}" style="width: 100px;"/>
           </div>
         </div>
         

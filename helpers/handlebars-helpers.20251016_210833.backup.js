@@ -129,21 +129,4 @@ export function registerHandlebarsHelpers() {
   }
 
   console.log("SWSE | Handlebars helpers registered");
-
-  // Editor helper for rich text fields
-  Handlebars.registerHelper('editor', function(content, options) {
-    // Foundry provides this in v10+, but we include a fallback
-    return new Handlebars.SafeString(content || '');
-  });
-
-  // Number formatting helper
-  Handlebars.registerHelper('numberFormat', function(value, options) {
-    const num = parseFloat(value) || 0;
-    const decimals = options.hash.decimals || 0;
-    const sign = options.hash.sign || false;
-    
-    let result = num.toFixed(decimals);
-    if (sign && num >= 0) result = '+' + result;
-    return result;
-  });
 }

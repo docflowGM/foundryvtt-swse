@@ -35,7 +35,7 @@
             <div class="middle">
                 <div class="field-group">
                     <label>Level</label>
-                    <input type="number" name="system.level" value="{{system.level}}" / data-dtype="Number">
+                    <input type="number" name="system.level" value="{{system.level}}" />
                 </div>
 
                 <div class="field-group">
@@ -51,12 +51,12 @@
             <div class="right">
                 <div class="field-group">
                     <label>Destiny Points</label>
-                    <input type="number" name="system.destinyPoints.value" value="{{system.destinyPoints.value}}" class="tiny-input" / data-dtype="Number">
+                    <input type="number" name="system.destinyPoints.value" value="{{system.destinyPoints.value}}" class="tiny-input" />
                 </div>
 
                 <div class="field-group">
                     <label>XP</label>
-                    <input type="number" name="system.experience" value="{{system.experience}}" / data-dtype="Number">
+                    <input type="number" name="system.experience" value="{{system.experience}}" />
                 </div>
             </div>
         </section>
@@ -70,7 +70,7 @@
                 {{#each system.abilities}}
                 <div class="ability-row">
                     <div class="ability-label">{{uppercase @key}}</div>
-                    <input type="number" name="system.abilities.{{@key}}.base" value="{{this.base}}" class="ability-input" / data-dtype="Number">
+                    <input type="number" name="system.abilities.{{@key}}.base" value="{{this.base}}" class="ability-input" />
                     <div class="ability-total">Tot: {{this.total}}</div>
                     <div class="ability-mod">Mod: {{#if (gte this.mod 0)}}+{{/if}}{{this.mod}}</div>
                 </div>
@@ -87,27 +87,27 @@
                 <div class="hp-block">
                     <div class="hp-row">
                         <label>HP</label>
-                        <input type="number" name="system.hp.value" value="{{system.hp.value}}" class="hp-small" / data-dtype="Number">
+                        <input type="number" name="system.hp.value" value="{{system.hp.value}}" class="hp-small" />
                         <span>/</span>
-                        <input type="number" name="system.hp.max" value="{{system.hp.max}}" class="hp-small" / data-dtype="Number">
+                        <input type="number" name="system.hp.max" value="{{system.hp.max}}" class="hp-small" />
                         <label>Temp</label>
-                        <input type="number" name="system.hp.temp" value="{{system.hp.temp}}" class="hp-small" / data-dtype="Number">
+                        <input type="number" name="system.hp.temp" value="{{system.hp.temp}}" class="hp-small" />
                     </div>
 
                     <div class="hp-actions">
                         <label>Base Attack</label>
-                        <input type="number" name="system.bab" value="{{system.bab}}" class="tiny-input" / data-dtype="Number">
+                        <input type="number" name="system.bab" value="{{system.bab}}" class="tiny-input" />
                         <label>Speed</label>
-                        <input type="number" name="system.speed.base" value="{{system.speed.base}}" class="tiny-input" / data-dtype="Number">
+                        <input type="number" name="system.speed.base" value="{{system.speed.base}}" class="tiny-input" />
                     </div>
                 </div>
 
                 <div class="force-and-dt">
                     <div class="force-block">
                         <label>Force Points</label>
-                        <input type="number" name="system.forcePoints.value" value="{{system.forcePoints.value}}" class="fp-small" / data-dtype="Number">
+                        <input type="number" name="system.forcePoints.value" value="{{system.forcePoints.value}}" class="fp-small" />
                         <span>/</span>
-                        <input type="number" name="system.forcePoints.max" value="{{system.forcePoints.max}}" class="fp-small" / data-dtype="Number">
+                        <input type="number" name="system.forcePoints.max" value="{{system.forcePoints.max}}" class="fp-small" />
                         <select name="system.forcePoints.die" class="fp-die">
                             <option value="1d6" {{#if (eq system.forcePoints.die "1d6")}}selected{{/if}}>1d6</option>
                             <option value="1d8" {{#if (eq system.forcePoints.die "1d8")}}selected{{/if}}>1d8</option>
@@ -120,7 +120,7 @@
                         <label>Damage Threshold</label>
                         <div class="dt-value">{{damageThreshold}}</div>
                         <label>Misc Modifier</label>
-                        <input type="number" name="system.damageThresholdMisc" value="{{system.damageThresholdMisc}}" class="tiny-input" / data-dtype="Number">
+                        <input type="number" name="system.damageThresholdMisc" value="{{system.damageThresholdMisc}}" class="tiny-input" />
                     </div>
                 </div>
             </section>
@@ -161,15 +161,15 @@
                     <div style="margin-bottom: 8px;">Auto healing: <strong>{{system.secondWind.healing}}</strong></div>
                     <div class="field-group">
                         <label>Misc Modifier</label>
-                        <input type="number" name="system.secondWind.misc" value="{{system.secondWind.misc}}" class="tiny-input" / data-dtype="Number">
+                        <input type="number" name="system.secondWind.misc" value="{{system.secondWind.misc}}" class="tiny-input" />
                     </div>
                     <div class="field-group">
                         <label>Uses</label>
-                        <input type="number" name="system.secondWind.uses" value="{{system.secondWind.uses}}" class="tiny-input" / data-dtype="Number">
+                        <input type="number" name="system.secondWind.uses" value="{{system.secondWind.uses}}" class="tiny-input" />
                     </div>
                     <div class="field-group">
                         <label>Max/day</label>
-                        <input type="number" name="system.secondWind.max" value="{{system.secondWind.max}}" class="tiny-input" / data-dtype="Number">
+                        <input type="number" name="system.secondWind.max" value="{{system.secondWind.max}}" class="tiny-input" />
                     </div>
                     <button type="button" class="apply-second-wind">Take Second Wind</button>
                 </div>

@@ -4,4 +4,4 @@
 export const SWSE = {};
 
 SWSE.actorTypes = ["character", "droid", "vehicle", "npc"];
-SWSE.itemTypes = ["armor", "attribute", "class", "combat-action", "equipment", "extra-skill-use", "feat", "forcepower", "skill", "species", "talent", "talenttree", "weapon"];
+SWSE.itemTypes = ["armor", "class", "equipment", "feat", "forcepower", "talent", "weapon", "skill", "attribute", "equipment", "combat-action", "extra-skill-use"];

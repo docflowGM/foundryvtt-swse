@@ -455,24 +455,4 @@ export class SWSEActorSheet extends ActorSheet {
     await this.actor.setFlag("swse", "sheetData", this.actor.system);
     ui.notifications.info(`Second Wind! Healed ${healing} HP.`);
   }
-
-
-  async _onAddArmor(event) {
-    event.preventDefault();
-    await this.actor.createEmbeddedDocuments("Item", [{
-      name: "New Armor",
-      type: "armor",
-      system: { defenseBonus: 0, maxDex: 999 }
-    }]);
-  }
-
-
-  async _onAddEquipment(event) {
-    event.preventDefault();
-    await this.actor.createEmbeddedDocuments("Item", [{
-      name: "New Equipment",
-      type: "equipment",
-      system: { weight: 0, cost: 0 }
-    }]);
-  }
 }
