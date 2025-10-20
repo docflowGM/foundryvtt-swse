@@ -11,7 +11,7 @@ print("=" * 60)
 # ============================================
 # FIX 1: Rename templates/actor to templates/actors
 # ============================================
-print("\n[1/2] Fixing template directory...")
+print("\n[1/3] Fixing template directory...")
 
 old_dir = repo_path / "templates" / "actor"
 new_dir = repo_path / "templates" / "actors"
@@ -36,7 +36,7 @@ else:
 # ============================================
 # FIX 2: Update import paths in index.js
 # ============================================
-print("\n[2/2] Fixing import paths in index.js...")
+print("\n[2/3] Fixing import paths in index.js...")
 
 index_file = repo_path / "index.js"
 
@@ -81,6 +81,57 @@ else:
             print(f"  - {path} → scripts/actors/...")
     else:
         print("✓ Import paths already correct or not found to replace")
+
+# ============================================
+# FIX 3: Fix template paths in all JS files
+# ============================================
+print("\n[3/3] Fixing template paths in all JavaScript files...")
+
+# Find all .js files that might have template paths
+js_files_to_check = [
+    repo_path / "scripts" / "core" / "load-templates.js",
+    repo_path / "scripts" / "init.js",
+    repo_path / "scripts" / "helpers.js",
+    repo_path / "helpers" / "handlebars-helpers.js"
+]
+
+# Also search for any file in scripts/ that might contain template paths
+for js_file in (repo_path / "scripts").rglob("*.js"):
+    if js_file not in js_files_to_check:
+        js_files_to_check.append(js_file)
+
+fixed_files = []
+
+for js_file in js_files_to_check:
+    if not js_file.exists():
+        continue
+    
+    try:
+        with open(js_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        original_content = content
+        
+        # Replace all instances of templates/actor/ with templates/actors/
+        content = content.replace('templates/actor/', 'templates/actors/')
+        content = content.replace('templates\\actor\\', 'templates\\actors\\')
+        content = content.replace('"templates/actor', '"templates/actors')
+        content = content.replace("'templates/actor", "'templates/actors")
+        content = content.replace('`templates/actor', '`templates/actors')
+        
+        if content != original_content:
+            with open(js_file, 'w', encoding='utf-8') as f:
+                f.write(content)
+            fixed_files.append(js_file.relative_to(repo_path))
+    except Exception as e:
+        print(f"⚠ Warning: Could not process {js_file.name}: {e}")
+
+if fixed_files:
+    print(f"✓ Fixed template paths in {len(fixed_files)} file(s):")
+    for file in fixed_files:
+        print(f"  - {file}")
+else:
+    print("✓ No template path fixes needed (already correct)")
 
 # ============================================
 # Summary

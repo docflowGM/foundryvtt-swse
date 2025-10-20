@@ -19,9 +19,9 @@ Hooks.once("init", async () => {
   CONFIG.SWSE = {
     templates: {
       actor: {
-        character: "systems/swse/templates/actor/character-sheet.hbs",
-        droid: "systems/swse/templates/actor/droid-sheet.hbs",
-        vehicle: "systems/swse/templates/actor/vehicle-sheet.hbs"
+        character: "systems/swse/templates/actors/character-sheet.hbs",
+        droid: "systems/swse/templates/actors/droid-sheet.hbs",
+        vehicle: "systems/swse/templates/actors/vehicle-sheet.hbs"
       },
       item: "systems/swse/templates/item/item-sheet.hbs"
     }

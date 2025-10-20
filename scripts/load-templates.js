@@ -3,10 +3,10 @@
 // ============================================
 export async function preloadHandlebarsTemplates() {
   const templatePaths = [
-    "systems/swse/templates/actor/character-sheet.hbs",
-    "systems/swse/templates/actor/droid-sheet.hbs",
-    "systems/swse/templates/actor/npc-sheet.hbs",
-    "systems/swse/templates/actor/vehicle-sheet.hbs",
+    "systems/swse/templates/actors/character-sheet.hbs",
+    "systems/swse/templates/actors/droid-sheet.hbs",
+    "systems/swse/templates/actors/npc-sheet.hbs",
+    "systems/swse/templates/actors/vehicle-sheet.hbs",
     "systems/swse/templates/apps/chargen.hbs",
     "systems/swse/templates/apps/narrative-chargen.hbs",
     "systems/swse/templates/apps/store.hbs",
