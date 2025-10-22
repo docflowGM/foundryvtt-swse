@@ -1,10 +1,10 @@
 // ============================================
 // FILE: index.js
 // Star Wars Saga Edition (SWSE) - FoundryVTT System
-// Updated to use correct actor imports
+// Updated with proper utils and rolls integration
 // ============================================
 
-import { registerHandlebarsHelpers } from "./helpers/handlebars-helpers.js";
+import { registerHandlebarsHelpers } from "./scripts/helpers/handlebars-helpers.js";
 import { SWSE } from "./config.js";
 import { SWSEActor, SWSEActorSheet } from "./scripts/actors/swse-actor.js";
 import { SWSEDroidSheet } from "./scripts/actors/swse-droid.js";
@@ -18,8 +18,6 @@ import { initializeUtils } from "./scripts/core/utils-init.js";
 import { initializeRolls } from "./scripts/core/rolls-init.js";
 import "./scripts/apps/chargen-init.js";
 
-// Utils imports
-
 // ============================================
 // INIT HOOK
 // ============================================
@@ -32,20 +30,21 @@ Hooks.once("init", async () => {
   CONFIG.SWSE = SWSE;
   CONFIG.Actor.documentClass = SWSEActor;
 
-  // Initialize namespace (utils and rolls will be added by their init functions)
+  // Initialize base namespace
   game.swse = {
     data: SWSEData,
     SWSE: SWSE
   };
 
   // -------------------------------
-  // Initialize Utils & Rolls
+  // Initialize Utils & Rolls FIRST
+  // (Must be before helpers that might use them)
   // -------------------------------
   initializeUtils();
   initializeRolls();
 
   // -------------------------------
-  // Register Handlebars Helpers FIRST
+  // Register Handlebars Helpers
   // -------------------------------
   registerHandlebarsHelpers();
 
@@ -65,6 +64,7 @@ Hooks.once("init", async () => {
   await preloadHandlebarsTemplates();
 
   console.log("SWSE | System initialization complete.");
+  console.log("SWSE | Available: game.swse.utils, game.swse.rolls, game.swse.data");
 });
 
 // ============================================
