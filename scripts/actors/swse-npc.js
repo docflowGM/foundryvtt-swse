@@ -1,64 +1,107 @@
 // ============================================
 // FILE: scripts/actors/swse-npc.js
+// NPC actor sheet
 // ============================================
-import { SWSEActorSheet } from "../actors/swse-actor.js";
+
+import { SWSEActorSheet } from "./swse-actor.js";
 
 export class SWSENPCSheet extends SWSEActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "sheet", "npc"],
-      template: "systems/swse/templates/actors/npc-sheet.hbs"
+      classes: ["swse", "sheet", "actor", "npc"],
+      template: "systems/swse/templates/actors/npc-sheet.hbs",
+      width: 800,
+      height: 720
     });
   }
 
   getData() {
-    const data = super.getData();
-    data.labels = data.labels || {};
-    data.labels.sheetTitle = game.i18n.localize("SWSE.SheetLabel.npc") || "NPC";
-    
-    // NPC-specific data processing
-    data.roleTypes = {
-      minion: "Minion",
-      standard: "Standard",
-      elite: "Elite",
-      boss: "Boss"
-    };
-    
-    return data;
+    const context = super.getData();
+    // Add NPC-specific data here
+    return context;
   }
 
   activateListeners(html) {
     super.activateListeners(html);
-
-    // Quick action buttons for NPCs
-    html.find('.quick-attack').click(this._onQuickAttack.bind(this));
-    html.find('.quick-save').click(this._onQuickSave.bind(this));
-    html.find('.import-statblock').click(this._onImportStatBlock.bind(this));
-  }
-
-  async _onQuickAttack(event) {
-    event.preventDefault();
-    // Quick attack roll for NPCs
-    const bab = this.actor.system.bab || 0;
-    const mod = this.actor.system.abilities?.str?.mod || 0;
-    const roll = new Roll(`1d20 + ${bab + mod}`);
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: "Quick Attack"
-    });
-  }
-
-  async _onQuickSave(event) {
-    event.preventDefault();
-    const defense = event.currentTarget.dataset.defense;
-    const def = this.actor.system.defenses?.[defense];
-    if (!def) return;
     
-    ui.notifications.info(`${this.actor.name} ${defense} defense: ${def.total}`);
+    // Only add listeners if not read-only
+    if (!this.options.editable) return;
+    
+    // Add NPC-specific listeners here
+    console.log("SWSE | NPC sheet listeners activated");
   }
 
-  async _onImportStatBlock(event) {
-    event.preventDefault();
-    ui.notifications.warn("Stat block import not yet implemented");
+  // ============================================
+  // INHERITED METHOD STUBS
+  // These prevent errors when parent tries to call them
+  // ============================================
+  
+  async _onAddWeapon(event) {
+    console.log("SWSE | _onAddWeapon not implemented for this sheet type");
   }
+  
+  async _onRemoveWeapon(event) {
+    console.log("SWSE | _onRemoveWeapon not implemented for this sheet type");
+  }
+  
+  async _onRollWeapon(event) {
+    console.log("SWSE | _onRollWeapon not implemented for this sheet type");
+  }
+  
+  async _onAddFeat(event) {
+    console.log("SWSE | _onAddFeat not implemented for this sheet type");
+  }
+  
+  async _onRemoveFeat(event) {
+    console.log("SWSE | _onRemoveFeat not implemented for this sheet type");
+  }
+  
+  async _onAddTalent(event) {
+    console.log("SWSE | _onAddTalent not implemented for this sheet type");
+  }
+  
+  async _onRemoveTalent(event) {
+    console.log("SWSE | _onRemoveTalent not implemented for this sheet type");
+  }
+  
+  async _onAddForcePower(event) {
+    console.log("SWSE | _onAddForcePower not implemented for this sheet type");
+  }
+  
+  async _onRemoveForcePower(event) {
+    console.log("SWSE | _onRemoveForcePower not implemented for this sheet type");
+  }
+  
+  async _onRollForcePower(event) {
+    console.log("SWSE | _onRollForcePower not implemented for this sheet type");
+  }
+  
+  async _onRefreshForcePowers(event) {
+    console.log("SWSE | _onRefreshForcePowers not implemented for this sheet type");
+  }
+  
+  async _onReloadForcePower(event) {
+    console.log("SWSE | _onReloadForcePower not implemented for this sheet type");
+  }
+  
+  async _onAddSkill(event) {
+    console.log("SWSE | _onAddSkill not implemented for this sheet type");
+  }
+  
+  async _onRemoveSkill(event) {
+    console.log("SWSE | _onRemoveSkill not implemented for this sheet type");
+  }
+  
+  async _onLevelUp(event) {
+    console.log("SWSE | _onLevelUp not implemented for this sheet type");
+  }
+  
+  async _onSecondWind(event) {
+    console.log("SWSE | _onSecondWind not implemented for this sheet type");
+  }
+  
+  async _onOpenStore(event) {
+    console.log("SWSE | _onOpenStore not implemented for this sheet type");
+  }
+
 }
