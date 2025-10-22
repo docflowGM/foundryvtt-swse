@@ -20,6 +20,15 @@ Misc modifiers from feats/talents/equipment.
 Skill-specific rules (e.g., Use the Force can replace Reflex Defense with special abilities) are implemented as talent/feat effects.
 Defenses
 Three defenses: Fortitude, Reflex, Will.
+### Defense Ability Selection
+Per SWSE rules, characters may use alternate ability modifiers for defenses in certain situations:
+- **Fortitude**: Normally uses CON, but can use STR (e.g., some talents/feats)
+- **Reflex**: Normally uses DEX, but can use INT (e.g., Combat Expertise)
+- **Will**: Normally uses WIS, but can use CHA (e.g., certain Force users)
+
+The character sheet allows selecting which ability modifier to use via dropdowns on each defense.
+Default values: Fort=CON, Ref=DEX, Will=WIS
+
 Defense calculation:
 10 + ability mod + class bonus + misc + heroic level (for some features)
 Automated recalculation when ability, class, or feat changes.
@@ -36,8 +45,9 @@ Managed in damage.js + condition.js.
 Condition Track
 Condition track stored as system.condition.track.
 Standard states: Normal → -1 → -2 → -5 → -10 → Unconscious.
-Effects applied automatically to attack rolls and skill checks.
-UI: condition indicator on character sheet.
+**Important**: Condition penalties do NOT apply to defenses (Fort/Ref/Will) unless the character is Helpless.
+Condition penalties DO apply to attack rolls and skill checks.
+UI: condition indicator on character sheet with expanded dropdown for clarity.
 ⚔️ Combat Rules
 Attacks
 Attack roll formula:

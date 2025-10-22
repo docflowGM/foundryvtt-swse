@@ -1,147 +1,209 @@
-import os
+#!/usr/bin/env python3
+"""
+SWSE File Formatter - Single Line Converter
+============================================
+This script converts all armor JSON and DB files to single-line format.
+
+- JSON files: Each armor entry becomes one line (array of single-line objects)
+- DB files: Each entry is already one line, but we ensure consistent formatting
+
+This is useful for:
+1. Better git diffs (see exactly which armor changed)
+2. Easier merging of changes
+3. More compact file storage
+4. Industry standard for .db files
+
+Usage:
+    python format_single_line.py
+
+The script will automatically find and format all files in:
+    - data/armor/*.json
+    - packs/armor-*.db
+"""
+
+import json
+import sys
 from pathlib import Path
+from typing import Dict, List, Any
 
-# Your repo path
-repo_path = Path(r"C:\Users\Owner\Documents\GitHub\foundryvtt-swse")
+# Base path - adjust if needed
+BASE_PATH = Path(r"C:\Users\Owner\Documents\GitHub\foundryvtt-swse")
 
-print("=" * 60)
-print("SWSE FoundryVTT Complete Fix Script")
-print("=" * 60)
 
-# ============================================
-# FIX 1: Rename templates/actor to templates/actors
-# ============================================
-print("\n[1/3] Fixing template directory...")
-
-old_dir = repo_path / "templates" / "actor"
-new_dir = repo_path / "templates" / "actors"
-
-if old_dir.exists():
-    if new_dir.exists():
-        print(f"⚠ Warning: {new_dir} already exists!")
-        print("Skipping directory rename.")
-    else:
-        print(f"✓ Renaming {old_dir.name} to {new_dir.name}...")
-        old_dir.rename(new_dir)
-        print(f"✓ Successfully renamed to: {new_dir}")
-        
-        print(f"\nFiles in {new_dir}:")
-        for file in new_dir.iterdir():
-            print(f"  - {file.name}")
-elif new_dir.exists():
-    print(f"✓ Directory already correct: {new_dir}")
-else:
-    print(f"✗ Error: Neither {old_dir} nor {new_dir} exists!")
-
-# ============================================
-# FIX 2: Update import paths in index.js
-# ============================================
-print("\n[2/3] Fixing import paths in index.js...")
-
-index_file = repo_path / "index.js"
-
-if not index_file.exists():
-    print(f"✗ Error: {index_file} not found!")
-else:
-    # Read the file
-    with open(index_file, 'r', encoding='utf-8') as f:
-        content = f.read()
+class SingleLineFormatter:
+    """Converts armor files to single-line format"""
     
-    # Track if we made any changes
-    original_content = content
+    def __init__(self, base_path: Path):
+        self.base_path = Path(base_path)
+        self.data_armor_path = self.base_path / "data" / "armor"
+        self.packs_path = self.base_path / "packs"
+        self.files_processed = 0
+        self.entries_formatted = 0
+        
+    def format_json_single_line(self, filepath: Path) -> bool:
+        """
+        Convert a JSON file to single-line format.
+        Each armor entry becomes one line in the array.
+        """
+        try:
+            print(f"Processing {filepath.name}...")
+            
+            # Read the file
+            with open(filepath, 'r', encoding='utf-8') as f:
+                armor_list = json.load(f)
+            
+            if not isinstance(armor_list, list):
+                print(f"  Warning: {filepath.name} is not a list, skipping")
+                return False
+            
+            # Write back as array with each entry on one line
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write('[\n')
+                for i, armor in enumerate(armor_list):
+                    # Single line JSON, no extra spaces
+                    line = json.dumps(armor, ensure_ascii=False, separators=(',', ': '))
+                    
+                    # Add comma except for last entry
+                    if i < len(armor_list) - 1:
+                        f.write(f'  {line},\n')
+                    else:
+                        f.write(f'  {line}\n')
+                    
+                    self.entries_formatted += 1
+                f.write(']\n')
+            
+            print(f"  ✓ Formatted {len(armor_list)} entries to single-line format")
+            self.files_processed += 1
+            return True
+            
+        except Exception as e:
+            print(f"  ✗ Error processing {filepath.name}: {e}")
+            return False
     
-    # Replace the import paths
-    replacements = {
-        'import { SWSEActor, SWSEActorSheet } from "./scripts/swse-actor.js";': 
-            'import { SWSEActor, SWSEActorSheet } from "./scripts/actors/swse-actor.js";',
-        
-        'import { SWSEDroidSheet } from "./scripts/swse-droid.js";':
-            'import { SWSEDroidSheet } from "./scripts/actors/swse-droid.js";',
-        
-        'import { SWSEVehicleSheet } from "./scripts/swse-vehicle.js";':
-            'import { SWSEVehicleSheet } from "./scripts/actors/swse-vehicle.js";',
-        
-        'import { SWSENPCSheet } from "./scripts/swse-npc.js";':
-            'import { SWSENPCSheet } from "./scripts/actors/swse-npc.js";'
-    }
+    def format_db_single_line(self, filepath: Path) -> bool:
+        """
+        Ensure .db file is in proper single-line format.
+        Each line should be a complete JSON object with consistent formatting.
+        """
+        try:
+            print(f"Processing {filepath.name}...")
+            
+            # Read all lines
+            with open(filepath, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+            
+            formatted_lines = []
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue  # Skip empty lines
+                
+                try:
+                    # Parse and re-format to ensure consistency
+                    obj = json.loads(line)
+                    # Single line with readable spacing (not too compact)
+                    formatted = json.dumps(obj, ensure_ascii=False, separators=(',', ': '))
+                    formatted_lines.append(formatted)
+                    self.entries_formatted += 1
+                    
+                except json.JSONDecodeError as e:
+                    print(f"  Warning: Skipping invalid JSON line: {e}")
+                    continue
+            
+            # Write back with each entry on its own line
+            with open(filepath, 'w', encoding='utf-8') as f:
+                for line in formatted_lines:
+                    f.write(line + '\n')
+            
+            print(f"  ✓ Formatted {len(formatted_lines)} entries to single-line format")
+            self.files_processed += 1
+            return True
+            
+        except Exception as e:
+            print(f"  ✗ Error processing {filepath.name}: {e}")
+            return False
     
-    changes_made = []
-    for old_import, new_import in replacements.items():
-        if old_import in content:
-            content = content.replace(old_import, new_import)
-            changes_made.append(old_import.split(' from ')[1].strip('";'))
-    
-    if content != original_content:
-        # Write the updated content back
-        with open(index_file, 'w', encoding='utf-8') as f:
-            f.write(content)
+    def run(self) -> bool:
+        """Run the formatting process"""
+        print("=" * 60)
+        print("SWSE Single-Line Formatter")
+        print("=" * 60)
+        print("Converting all armor files to single-line format...")
+        print()
         
-        print(f"✓ Updated {len(changes_made)} import path(s) in index.js:")
-        for path in changes_made:
-            print(f"  - {path} → scripts/actors/...")
-    else:
-        print("✓ Import paths already correct or not found to replace")
-
-# ============================================
-# FIX 3: Fix template paths in all JS files
-# ============================================
-print("\n[3/3] Fixing template paths in all JavaScript files...")
-
-# Find all .js files that might have template paths
-js_files_to_check = [
-    repo_path / "scripts" / "core" / "load-templates.js",
-    repo_path / "scripts" / "init.js",
-    repo_path / "scripts" / "helpers.js",
-    repo_path / "helpers" / "handlebars-helpers.js"
-]
-
-# Also search for any file in scripts/ that might contain template paths
-for js_file in (repo_path / "scripts").rglob("*.js"):
-    if js_file not in js_files_to_check:
-        js_files_to_check.append(js_file)
-
-fixed_files = []
-
-for js_file in js_files_to_check:
-    if not js_file.exists():
-        continue
-    
-    try:
-        with open(js_file, 'r', encoding='utf-8') as f:
-            content = f.read()
+        # Check if paths exist
+        if not self.base_path.exists():
+            print(f"✗ Base path not found: {self.base_path}")
+            print(f"  Please update BASE_PATH in the script")
+            return False
         
-        original_content = content
+        success = True
         
-        # Replace all instances of templates/actor/ with templates/actors/
-        content = content.replace('templates/actor/', 'templates/actors/')
-        content = content.replace('templates\\actor\\', 'templates\\actors\\')
-        content = content.replace('"templates/actor', '"templates/actors')
-        content = content.replace("'templates/actor", "'templates/actors")
-        content = content.replace('`templates/actor', '`templates/actors')
+        # Format JSON files
+        if self.data_armor_path.exists():
+            print("Formatting JSON armor files...")
+            print("-" * 60)
+            for json_file in sorted(self.data_armor_path.glob("*.json")):
+                if not self.format_json_single_line(json_file):
+                    success = False
+            print()
+        else:
+            print(f"Warning: Armor data path not found: {self.data_armor_path}")
+            print()
         
-        if content != original_content:
-            with open(js_file, 'w', encoding='utf-8') as f:
-                f.write(content)
-            fixed_files.append(js_file.relative_to(repo_path))
-    except Exception as e:
-        print(f"⚠ Warning: Could not process {js_file.name}: {e}")
+        # Format DB files
+        if self.packs_path.exists():
+            print("Formatting DB armor files...")
+            print("-" * 60)
+            for db_file in sorted(self.packs_path.glob("armor-*.db")):
+                if not self.format_db_single_line(db_file):
+                    success = False
+            print()
+        else:
+            print(f"Warning: Packs path not found: {self.packs_path}")
+            print()
+        
+        # Summary
+        print("=" * 60)
+        print("Formatting Complete")
+        print("=" * 60)
+        print(f"Files processed: {self.files_processed}")
+        print(f"Entries formatted: {self.entries_formatted}")
+        print()
+        
+        if success:
+            print("✓ All files successfully formatted to single-line format!")
+            print()
+            print("Benefits:")
+            print("  • Better git diffs (see exactly what changed)")
+            print("  • Easier to merge changes from multiple contributors")
+            print("  • Standard format for .db files")
+            print("  • Each armor entry is now one line")
+            print()
+            print("Example JSON format:")
+            print('  [')
+            print('    {"name": "Armor 1", "type": "Light", ...},')
+            print('    {"name": "Armor 2", "type": "Medium", ...},')
+            print('    {"name": "Armor 3", "type": "Heavy", ...}')
+            print('  ]')
+            print()
+            print("Example DB format:")
+            print('  {"name": "Armor 1", "system": {...}}')
+            print('  {"name": "Armor 2", "system": {...}}')
+            print('  {"name": "Armor 3", "system": {...}}')
+        else:
+            print("⚠ Some errors occurred during formatting")
+            print("  Please review the output above")
+        
+        return success
 
-if fixed_files:
-    print(f"✓ Fixed template paths in {len(fixed_files)} file(s):")
-    for file in fixed_files:
-        print(f"  - {file}")
-else:
-    print("✓ No template path fixes needed (already correct)")
 
-# ============================================
-# Summary
-# ============================================
-print("\n" + "=" * 60)
-print("FIXES COMPLETE!")
-print("=" * 60)
-print("\nNext steps:")
-print("1. Restart FoundryVTT")
-print("2. Try creating a new character")
-print("3. The validation error should be gone!")
-print("\nIf you still have issues, check the browser console (F12)")
-print("=" * 60)
+def main():
+    """Main entry point"""
+    formatter = SingleLineFormatter(BASE_PATH)
+    success = formatter.run()
+    sys.exit(0 if success else 1)
+
+
+if __name__ == "__main__":
+    main()

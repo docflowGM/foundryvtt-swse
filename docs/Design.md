@@ -3,6 +3,26 @@
 ## 🎯 Purpose
 This document describes the overall architecture, design principles, and intended development conventions for the Star Wars Saga Edition (SWSE) system for FoundryVTT.
 
+
+## 🎨 Character Sheet Design (v1.1)
+
+### Accessibility Improvements
+- All form fields include proper `id` attributes for screen readers
+- `autocomplete="off"` on all fields to prevent browser interference
+- Proper label associations using `for` attributes
+- WCAG 2.1 compliant color contrast
+
+### Layout Enhancements
+- **½ Level Display**: Relocated to top section next to character level
+- **Classes Tab**: New primary tab showing level-by-level class progression
+- **Defense Customization**: Dropdowns for selecting ability modifiers (Fort: STR/CON, Ref: DEX/INT, Will: WIS/CHA)
+- **Condition Track**: Increased dropdown height to prevent text cutoff
+
+### Data Model Changes
+- `system.levelClasses[]`: Array tracking class choice per level
+- `system.defenses.*.ability`: Stores which ability modifier to use for each defense
+- Tab switching handled via `_onTabClick()` method
+
 ## 🏗️ System Architecture
 
 /system

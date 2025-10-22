@@ -1,3 +1,9 @@
+/**
+ * Handlebars Helpers for SWSE System
+ * Note: These helpers are also registered in scripts/swse-actor.js
+ * This file ensures they're available even if swse-actor.js loads later
+ */
+
 
 // Register Handlebars helpers
 Handlebars.registerHelper('upper', function(str) {
@@ -58,4 +64,12 @@ Handlebars.registerHelper('and', function() {
 
 Handlebars.registerHelper('or', function() {
     return Array.prototype.slice.call(arguments, 0, -1).some(Boolean);
+});
+
+Handlebars.registerHelper('add', function(a, b) {
+    return Number(a) + Number(b);
+});
+
+Handlebars.registerHelper('toUpperCase', function(str) {
+    return String(str).toUpperCase();
 });

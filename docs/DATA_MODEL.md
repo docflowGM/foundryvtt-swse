@@ -19,9 +19,9 @@ All actors (PC, NPC, starship) share some base fields:
     "hp": { "max": 0, "value": 0 },
     "threshold": 0,
     "defenses": {
-      "fort": { "base": 10, "misc": 0, "value": 10 },
-      "ref": { "base": 10, "misc": 0, "value": 10 },
-      "will": { "base": 10, "misc": 0, "value": 10 }
+      "fort": { "base": 10, "misc": 0, "value": 10, "ability": "con" },
+      "ref": { "base": 10, "misc": 0, "value": 10, "ability": "dex" },
+      "will": { "base": 10, "misc": 0, "value": 10, "ability": "wis" }
     },
     "condition": { "track": 0 },
     "initiative": { "value": 0 },
@@ -45,6 +45,11 @@ forcePowers: known powers.
 destiny: destiny type.
 "system": {
   "trainedSkills": ["Perception", "Use Computer"],
+    "levelClasses": [
+      { "name": "Jedi Guardian" },
+      { "name": "Soldier" },
+      { "name": "" }
+    ],
   "talents": [],
   "feats": [],
   "forcePowers": [],

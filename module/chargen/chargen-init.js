@@ -31,7 +31,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                             Actor.create({
                                 name: "New Character",
                                 type: "character",
-                                img: "systems/swse/assets/icons/default-character.png"
+                                img: "icons/svg/mystery-man.svg"
                             });
                         }
                     }

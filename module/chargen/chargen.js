@@ -4,15 +4,15 @@ export default class CharacterGenerator extends Application {
         this.actor = actor;
         this.characterData = {
             name: "",
-            species: "",
-            classes: [],
+            race: "",
+            levelClasses: [],
             abilities: {
-                str: {base: 10, racial: 0, modifier: 0},
-                dex: {base: 10, racial: 0, modifier: 0},
-                con: {base: 10, racial: 0, modifier: 0},
-                int: {base: 10, racial: 0, modifier: 0},
-                wis: {base: 10, racial: 0, modifier: 0},
-                cha: {base: 10, racial: 0, modifier: 0}
+                str: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
+                dex: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
+                con: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
+                int: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
+                wis: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
+                cha: {base: 10, racial: 0, temp: 0, total: 10, mod: 0}
             },
             skills: {},
             feats: [],
@@ -48,7 +48,7 @@ export default class CharacterGenerator extends Application {
         html.find('.next-step').click(this._onNextStep.bind(this));
         html.find('.prev-step').click(this._onPrevStep.bind(this));
         html.find('.finish').click(this._onFinish.bind(this));
-        html.find('.select-species').click(this._onSelectSpecies.bind(this));
+        html.find('.select-race').click(this._onSelectRace.bind(this));
         html.find('.select-class').click(this._onSelectClass.bind(this));
         html.find('.select-feat').click(this._onSelectFeat.bind(this));
         html.find('.select-talent').click(this._onSelectTalent.bind(this));
@@ -88,10 +88,10 @@ export default class CharacterGenerator extends Application {
         }
     }
 
-    async _onSelectSpecies(event) {
+    async _onSelectRace(event) {
         event.preventDefault();
-        const species = event.currentTarget.dataset.species;
-        this.characterData.species = species;
+        const species = event.currentTarget.dataset.race;
+        this.characterData.race = species;
         
         // Apply racial ability bonuses
         const racialBonuses = this._getRacialBonuses(species);
@@ -106,10 +106,14 @@ export default class CharacterGenerator extends Application {
         event.preventDefault();
         const className = event.currentTarget.dataset.class;
         
-        this.characterData.classes.push({
-            name: className,
-            level: 1
-        });
+        // Add class to levelClasses array
+        const currentLevel = this.characterData.level;
+        if (this.characterData.levelClasses.length < currentLevel) {
+            while (this.characterData.levelClasses.length < currentLevel) {
+                this.characterData.levelClasses.push({ name: "" });
+            }
+        }
+        this.characterData.levelClasses[currentLevel - 1] = { name: className };
         
         // Show available feats for this class/level
         await this._showFeatSelection(className, this.characterData.level);
@@ -217,9 +221,27 @@ export default class CharacterGenerator extends Application {
         return Math.ceil(level / 2);
     }
 
-    _getRacialBonuses(species) {
+        _getRacialBonuses(race) {
+        // Import from races.js if available
+        if (typeof SWSE_RACES !== 'undefined' && SWSE_RACES[race]) {
+            return SWSE_RACES[race].bonuses || {};
+        }
+        
+        // Fallback bonuses for common species
         const bonuses = {
-            "Human": {},
+            "human": {},
+            "twilek": { cha: 2, con: -2 },
+            "wookiee": { str: 4, con: 2, int: -2, cha: -2 },
+            "bothan": { dex: 2, con: -2 },
+            "zabrak": { con: 2, wis: 2 },
+            "chiss": { dex: 2, int: 2, cha: -2 },
+            "rodian": { dex: 2, wis: -2, cha: -2 },
+            "duros": { dex: 2, int: 2, con: -2 },
+            "sullustan": { dex: 2, con: -2 }
+        };
+        
+        return bonuses[race.toLowerCase()] || {};
+    },
             "Twi'lek": {cha: 2},
             "Wookiee": {str: 2},
             "Bothan": {int: 2},
@@ -251,10 +273,19 @@ export default class CharacterGenerator extends Application {
                 abilities: this.characterData.abilities,
                 skills: this.characterData.skills,
                 level: this.characterData.level,
-                species: this.characterData.species,
-                class: this.characterData.classes[0]?.name || "",
+                race: this.characterData.race,
+                levelClasses: this.characterData.levelClasses,
                 experience: 0,
-                destiny: 1
+                destinyPoints: { value: 1, max: 1 },
+                forcePoints: { value: 5, max: 5, die: "1d6" },
+                hp: { value: 1, max: 1, temp: 0 },
+                defenses: {
+                    fortitude: { ability: "con", class: 0, armor: 0, modifier: 0, total: 10 },
+                    reflex: { ability: "dex", class: 0, armor: 0, modifier: 0, total: 10 },
+                    will: { ability: "wis", class: 0, armor: 0, modifier: 0, total: 10 }
+                },
+                conditionTrack: "normal",
+                secondWind: { uses: 1, max: 1, misc: 0, healing: 0 }
             }
         };
         

@@ -1,3 +1,22 @@
+
+## Character Sheet Specific Assets
+
+The character sheet (v1.1) uses minimal assets for a clean, accessible design:
+- No background images required (pure CSS gradients used)
+- SVG icons for tab indicators (optional)
+- Font-based icons via FontAwesome for UI elements
+
+**Current Asset Usage:**
+- Tab icons: Can use SVG or FontAwesome classes
+- Ability score backgrounds: CSS gradients
+- Defense displays: Styled divs with CSS
+
+**Removed Dependencies:**
+- `Sheet-frame.png` - No longer required (CSS-only design)
+- `title-logo.png` - Optional (can use text-only header)
+
+This reduces initial load time and simplifies deployment.
+
 1. Purpose & Overview
 The assets/ directory contains all static images used by the system: icons, portraits, UI chrome, backgrounds, and other art. These images are referenced directly from actor/item JSON, Handlebars templates, and CSS. Good asset hygiene reduces bundle size, improves load performance, and makes the system look polished and consistent.
 Top-level recommended structure (mirror in repo src/assets/ and copy to dist/assets/ during build):

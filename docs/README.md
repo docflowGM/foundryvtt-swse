@@ -10,8 +10,17 @@
 - **Integrated Store**: Purchase starting equipment
 - **Full Review**: Review and edit all choices before finalizing
 
+
+### Enhanced Character Sheet (v1.1)
+- **Accessible Forms**: All fields properly labeled for screen readers
+- **Classes Management**: Dedicated tab showing class choices by level
+- **Defense Customization**: Choose which ability modifier applies to each defense
+- **Visual Condition Track**: Larger dropdown, clearer text, automatic penalty application
+- **Complete Species List**: All 68+ SWSE species available
+- **Improved Layout**: ½ Level display relocated for better visibility
+
 ### Automated Character Sheet
-- **Official PDF Layout**: Matches the Star Wars Saga Edition character sheet
+- **Improved Layout**: Clean, accessible design inspired by official SWSE character sheet
 - **Automatic Calculations**: All defenses, skills, and modifiers
 - **Force Powers**: Track uses, reload with Force Points
 - **Condition Track**: Visual tracking with automatic penalties
@@ -79,6 +88,16 @@
 - Roll 4d6, drop the lowest die
 - Repeat for all 6 abilities
 - Assign as desired
+
+
+
+## Accessibility
+
+The character sheet is designed with accessibility in mind:
+- All form fields have proper labels and IDs
+- Screen reader compatible
+- Keyboard navigation supported
+- High contrast text for readability
 
 ## Support
 

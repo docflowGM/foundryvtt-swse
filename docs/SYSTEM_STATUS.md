@@ -1,6 +1,19 @@
 # SWSE System Status
 
-Generated: 2025-10-13 07:56:58
+Generated: 2025-10-20 20:22:34
+
+
+## 🆕 Recent Improvements (Character Sheet v1.1)
+
+- **Form Accessibility**: All 136+ form fields now have proper `id` and `autocomplete` attributes
+- **Classes Tab**: New dedicated tab with level-based class slots (auto-adjusts to character level)
+- **Defense Customization**: Added ability score selectors for Fort/Ref/Will defenses
+- **Condition Track Fix**: 
+  - Increased dropdown height to prevent text cutoff
+  - Fixed bug where condition penalties incorrectly affected defenses (now only applies when helpless)
+- **½ Level Display**: Moved next to character level for better visibility
+- **Force Powers**: Enhanced add/edit/delete functionality
+- **Species List**: Now displays all 68+ species from races.js data
 
 ## ✅ Working
 
@@ -21,11 +34,22 @@ You can ignore these warnings. They won't break anything.
 ## Issues Fixed
 
 - Fixed chargen for v13
+- Fixed form accessibility issues (added IDs and autocomplete)
+- Fixed condition track affecting defenses when it shouldn't
+- Fixed species dropdown only showing limited races
+- Fixed ½ level positioning
+
 
 
 ## Remaining Issues
 
-1. **Missing Sheet-frame.png** - Background image not found
+1. **Character Sheet Enhancements Complete** ✓
+   - All form fields properly labeled
+   - Classes management system functional
+   - Defense customization working
+   - Condition track properly styled
+
+2. **Missing Sheet-frame.png** - Background image not found
    - Add the image to ui/ folder, OR
    - Remove background-image CSS from character-sheet.hbs
 
