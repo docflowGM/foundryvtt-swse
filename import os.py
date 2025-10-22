@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Fix classes.json - Convert line-separated JSON objects into proper JSON array
+Fix forcepowers.json - Convert to array AND fix type names
 """
 
 import json
@@ -9,29 +9,31 @@ from datetime import datetime
 
 # Base path
 BASE_PATH = Path(r"C:\Users\Owner\Documents\GitHub\foundryvtt-swse")
-CLASSES_FILE = BASE_PATH / "data" / "classes.json"
+FORCEPOWERS_FILE = BASE_PATH / "data" / "forcepowers.json"
 
-def fix_classes_json():
+def fix_forcepowers_json():
     """
-    Fix classes.json by converting newline-delimited JSON to proper JSON array
+    Fix forcepowers.json:
+    1. Convert from line-delimited JSON to proper array
+    2. Change "force-power" to "forcepower"
     """
     print("\n" + "="*60)
-    print("CLASSES.JSON FIX TOOL")
+    print("🔧 FORCEPOWERS.JSON COMPREHENSIVE FIX")
     print("="*60)
     
-    if not CLASSES_FILE.exists():
-        print(f"\n❌ ERROR: File not found: {CLASSES_FILE}")
+    if not FORCEPOWERS_FILE.exists():
+        print(f"\n❌ ERROR: File not found: {FORCEPOWERS_FILE}")
         return False
     
-    print(f"\n📄 Reading: {CLASSES_FILE}")
+    print(f"\n📄 Reading: {FORCEPOWERS_FILE}")
     
     # Create backup
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    backup_file = CLASSES_FILE.with_suffix(f".json.backup_{timestamp}")
+    backup_file = FORCEPOWERS_FILE.with_suffix(f".json.backup_{timestamp}")
     
     try:
         # Read original file
-        with open(CLASSES_FILE, 'r', encoding='utf-8') as f:
+        with open(FORCEPOWERS_FILE, 'r', encoding='utf-8') as f:
             content = f.read()
         
         print(f"✓ Original file size: {len(content)} characters")
@@ -42,10 +44,12 @@ def fix_classes_json():
         print(f"✓ Backup created: {backup_file.name}")
         
         # Parse each line as separate JSON object
-        classes = []
+        forcepowers = []
         lines = content.strip().split('\n')
         
         print(f"\n🔧 Processing {len(lines)} lines...")
+        
+        type_changes = 0
         
         for i, line in enumerate(lines, 1):
             line = line.strip()
@@ -53,41 +57,62 @@ def fix_classes_json():
                 continue
             
             try:
-                class_obj = json.loads(line)
-                classes.append(class_obj)
-                class_name = class_obj.get('class_name', 'Unknown')
-                print(f"   ✓ Line {i}: {class_name}")
+                power = json.loads(line)
+                
+                # Fix the type if needed
+                if power.get('type') == 'force-power':
+                    power['type'] = 'forcepower'
+                    type_changes += 1
+                
+                forcepowers.append(power)
+                
+                name = power.get('name', 'Unknown')
+                power_type = power.get('type', 'no-type')
+                print(f"   ✓ Line {i}: {name} (type: {power_type})")
+                
             except json.JSONDecodeError as e:
                 print(f"   ⚠️  Line {i}: Failed to parse - {e}")
                 continue
         
-        print(f"\n✓ Successfully parsed {len(classes)} classes")
+        print(f"\n✓ Successfully parsed {len(forcepowers)} force powers")
+        print(f"✓ Changed {type_changes} types from 'force-power' to 'forcepower'")
         
         # Create proper JSON array with nice formatting
-        fixed_json = json.dumps(classes, indent=2, ensure_ascii=False)
+        fixed_json = json.dumps(forcepowers, indent=2, ensure_ascii=False)
         
         # Write fixed version
-        with open(CLASSES_FILE, 'w', encoding='utf-8') as f:
+        with open(FORCEPOWERS_FILE, 'w', encoding='utf-8') as f:
             f.write(fixed_json)
         
         print(f"✓ Fixed file written: {len(fixed_json)} characters")
         
         # Verify it's valid
-        print("\n🔍 Verifying fixed file...")
-        with open(CLASSES_FILE, 'r', encoding='utf-8') as f:
+        print(f"\n🔍 Verifying fixed file...")
+        with open(FORCEPOWERS_FILE, 'r', encoding='utf-8') as f:
             verification = json.load(f)
         
         print(f"✅ SUCCESS! File is now valid JSON!")
         print(f"   Type: {type(verification).__name__}")
-        print(f"   Classes: {len(verification)}")
+        print(f"   Force Powers: {len(verification)}")
         
-        print(f"\n📋 Classes found:")
-        for cls in verification:
-            print(f"   - {cls.get('class_name', 'Unknown')}")
+        # Check types
+        forcepower_count = sum(1 for p in verification if p.get('type') == 'forcepower')
+        bad_count = sum(1 for p in verification if p.get('type') == 'force-power')
+        
+        print(f"\n📊 Type Check:")
+        print(f"   ✓ Correct type 'forcepower': {forcepower_count}")
+        if bad_count > 0:
+            print(f"   ⚠️  Still has 'force-power': {bad_count}")
+        else:
+            print(f"   ✓ No 'force-power' types remaining!")
+        
+        print(f"\n📋 Sample Force Powers:")
+        for power in verification[:5]:
+            print(f"   - {power.get('name', 'Unknown')} (type: {power.get('type', 'none')})")
         
         print(f"\n✅ COMPLETE!")
         print(f"   Original: {backup_file.name}")
-        print(f"   Fixed: {CLASSES_FILE.name}")
+        print(f"   Fixed: {FORCEPOWERS_FILE.name}")
         
         return True
         
@@ -99,7 +124,7 @@ def fix_classes_json():
         if backup_file.exists():
             with open(backup_file, 'r', encoding='utf-8') as f:
                 content = f.read()
-            with open(CLASSES_FILE, 'w', encoding='utf-8') as f:
+            with open(FORCEPOWERS_FILE, 'w', encoding='utf-8') as f:
                 f.write(content)
             print(f"✓ Restored original file")
         
@@ -109,16 +134,17 @@ def main():
     """
     Main function
     """
-    success = fix_classes_json()
+    success = fix_forcepowers_json()
     
     if success:
         print("\n" + "="*60)
-        print("🎉 Your classes.json is now fixed!")
+        print("🎉 Your forcepowers.json is now fixed!")
         print("="*60)
         print("\n💡 Next steps:")
         print("   1. Reload Foundry VTT")
-        print("   2. Check console - errors should be gone!")
+        print("   2. Check console - validation errors should be gone!")
         print("   3. Test: game.swse and CONFIG.SWSE should exist")
+        print("   4. Test: Force powers should load correctly")
     else:
         print("\n" + "="*60)
         print("❌ Fix failed - check error messages above")
@@ -129,4 +155,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

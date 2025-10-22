@@ -205,7 +205,7 @@
                 </div>
             </div>
             
-            <div class="forcepower-options">
+            <div class="force-power-options">
                 <label><input type="checkbox" name="system.darkSide" {{checked system.darkSide}}/> Dark Side Power</label>
                 <label><input type="checkbox" name="system.lightSide" {{checked system.lightSide}}/> Light Side Power</label>
             </div>
