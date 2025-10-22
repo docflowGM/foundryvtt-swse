@@ -4,679 +4,764 @@
     "DC": 0,
     "time": "advance on success",
     "effect": "Climb at slower speeds according to check; progress per successful check",
-    "name": "Unnamed Skilluse 1",
-    "type": "equipment"
+    "name": "Climb slope/knotted rope (easy)",
+    "type": "extra-skill-use",
+    "description": "Climb slope/knotted rope (easy) | Time: advance on success | Effect: Climb at slower speeds according to check; progress per successful check"
   },
   {
     "application": "Climb rope with bracing or knotted rope",
     "DC": 5,
     "time": "advance on success",
     "effect": "As above",
-    "name": "Unnamed Skilluse 2",
-    "type": "equipment"
+    "name": "Climb rope with bracing or knotted rope",
+    "type": "extra-skill-use",
+    "description": "Climb rope with bracing or knotted rope | DC: 5 | Time: advance on success | Effect: As above"
   },
   {
     "application": "Surface with handholds/footholds",
     "DC": 10,
     "time": "advance on success",
     "effect": "Climb at half or quarter speed per action type",
-    "name": "Unnamed Skilluse 3",
-    "type": "equipment"
+    "name": "Surface with handholds/footholds",
+    "type": "extra-skill-use",
+    "description": "Surface with handholds/footholds | DC: 10 | Time: advance on success | Effect: Climb at half or quarter speed per action type"
   },
   {
     "application": "Rough natural rock / tree",
     "DC": 15,
     "time": "advance",
     "effect": "Normal climbing DCs",
-    "name": "Unnamed Skilluse 4",
-    "type": "equipment"
+    "name": "Rough natural rock / tree",
+    "type": "extra-skill-use",
+    "description": "Rough natural rock / tree | DC: 15 | Time: advance | Effect: Normal climbing DCs"
   },
   {
     "application": "Uneven surface / narrow handholds",
     "DC": 20,
     "time": "advance",
     "effect": "Harder climb",
-    "name": "Unnamed Skilluse 5",
-    "type": "equipment"
+    "name": "Uneven surface / narrow handholds",
+    "type": "extra-skill-use",
+    "description": "Uneven surface / narrow handholds | DC: 20 | Time: advance | Effect: Harder climb"
   },
   {
     "application": "Overhang/ceiling with handholds",
     "DC": 25,
     "time": "advance",
     "effect": "High-difficulty climb",
-    "name": "Unnamed Skilluse 6",
-    "type": "equipment"
+    "name": "Overhang/ceiling with handholds",
+    "type": "extra-skill-use",
+    "description": "Overhang/ceiling with handholds | DC: 25 | Time: advance | Effect: High-difficulty climb"
   },
   {
     "application": "Climb at full speed (accelerated)",
     "DC": "+5",
     "time": "full-round",
     "effect": "Add +5 DC to climb at full speed",
-    "name": "Unnamed Skilluse 7",
-    "type": "equipment"
+    "name": "Climb at full speed (accelerated)",
+    "type": "extra-skill-use",
+    "description": "Climb at full speed (accelerated) | DC: +5 | Time: full-round | Effect: Add +5 DC to climb at full speed"
   },
   {
     "application": "Catch self when falling",
     "DC": "wall DC + 20",
     "time": "immediate",
     "effect": "Avoid falling further if succeed",
-    "name": "Unnamed Skilluse 8",
-    "type": "equipment"
+    "name": "Catch self when falling",
+    "type": "extra-skill-use",
+    "description": "Catch self when falling | DC: wall DC + 20 | Time: immediate | Effect: Avoid falling further if succeed"
   },
   {
     "application": "Feint (standard)",
     "DC": "opposed (Deception vs target Initiative)",
     "time": "standard",
     "effect": "If success, target loses Dex bonus to Reflex vs your next attack next round",
-    "name": "Unnamed Skilluse 9",
-    "type": "equipment"
+    "name": "Feint (standard)",
+    "type": "extra-skill-use",
+    "description": "Feint (standard) | DC: opposed (Deception vs target Initiative) | Time: standard | Effect: If success, target loses Dex bonus to Reflex vs your next attack next round"
   },
   {
     "application": "Group Feint (full-round)",
     "DC": "opposed (single Deception roll) ; -5 per extra target",
     "time": "full-round",
     "effect": "Sets DC for multiple opponents; successes make those opponents flat-footed vs group's first attacks next round",
-    "name": "Unnamed Skilluse 10",
-    "type": "equipment"
+    "name": "Group Feint (full-round)",
+    "type": "extra-skill-use",
+    "description": "Group Feint (full-round) | DC: opposed (single Deception roll) ; -5 per extra target | Time: full-round | Effect: Sets DC for multiple opponents; successes make those opponents flat-footed vs group's first attacks next round"
   },
   {
     "application": "Deceptive Appearance (disguise)",
     "DC": "opposed by Perception",
     "time": "Simple 1 min / Moderate 10 min / Difficult 1 hr / Incredible 1 day / Outrageous 2 weeks",
     "effect": "Creates disguise/appearance; modifier to Deception check provided (+5 to -20 per table)",
-    "name": "Unnamed Skilluse 11",
-    "type": "equipment"
+    "name": "Deceptive Appearance (disguise)",
+    "type": "extra-skill-use",
+    "description": "Deceptive Appearance (disguise) | DC: opposed by Perception | Time: Simple 1 min / Moderate 10 min / Difficult 1 hr / Incredible 1 day / Outrageous 2 weeks | Effect: Creates disguise/appearance; modifier to Deception check provided (+5 to -20 per table)"
   },
   {
     "application": "Deceptive Information",
     "DC": "Simple +5, Moderate +0, Difficult -5, Incredible -10, Outrageous -20",
     "time": "Simple: 1 standard; Moderate: full-round; Difficult+: 1 min+",
     "effect": "Convey deceptive info; opposed by Will and Perception as relevant; failure severities described",
-    "name": "Unnamed Skilluse 12",
-    "type": "equipment"
+    "name": "Deceptive Information",
+    "type": "extra-skill-use",
+    "description": "Deceptive Information | DC: Simple +5, Moderate +0, Difficult -5, Incredible -10, Outrageous -20 | Time: Simple: 1 standard; Moderate: full-round; Difficult+: 1 min+ | Effect: Convey deceptive info; opposed by Will and Perception as relevant; failure severities described"
   },
   {
     "application": "Alternate Story (trained)",
     "DC": "GM-determined",
     "time": "variable",
     "effect": "Retry deception at -10 to convey alternate deceptive information after failing",
-    "name": "Unnamed Skilluse 13",
-    "type": "equipment"
+    "name": "Alternate Story (trained)",
+    "type": "extra-skill-use",
+    "description": "Alternate Story (trained) | DC: GM-determined | Time: variable | Effect: Retry deception at -10 to convey alternate deceptive information after failing"
   },
   {
     "application": "Cheat (trained)",
     "DC": "opposed Perception",
     "time": "as gambling action",
     "effect": "Use Deception vs Perception to cheat at gambling",
-    "name": "Unnamed Skilluse 14",
-    "type": "equipment"
+    "name": "Cheat (trained)",
+    "type": "extra-skill-use",
+    "description": "Cheat (trained) | DC: opposed Perception | Time: as gambling action | Effect: Use Deception vs Perception to cheat at gambling"
   },
   {
     "application": "Innuendo (trained)",
     "DC": "10 (simple) to 25 (complex)",
     "time": "varies",
     "effect": "Transmit secret message; Perception can intercept",
-    "name": "Unnamed Skilluse 15",
-    "type": "equipment"
+    "name": "Innuendo (trained)",
+    "type": "extra-skill-use",
+    "description": "Innuendo (trained) | DC: 10 (simple) to 25 (complex) | Time: varies | Effect: Transmit secret message; Perception can intercept"
   },
   {
     "application": "Create a diversion to hide (standard)",
     "DC": "opposed by targets' Will",
     "time": "standard plus move to reach hiding spot",
     "effect": "On success you may attempt a Stealth check (Dex-based) while targets are aware",
-    "name": "Unnamed Skilluse 16",
-    "type": "equipment"
+    "name": "Create a diversion to hide (standard)",
+    "type": "extra-skill-use",
+    "description": "Create a diversion to hide (standard) | DC: opposed by targets' Will | Time: standard plus move to reach hiding spot | Effect: On success you may attempt a Stealth check (Dex-based) while targets are aware"
   },
   {
     "application": "Create a diversion to hide item (standard)",
     "DC": "opposed by targets' Will",
     "time": "standard",
     "effect": "Attempt to hide an item while targets distracted; must reach hiding place in a move action",
-    "name": "Unnamed Skilluse 17",
-    "type": "equipment"
+    "name": "Create a diversion to hide item (standard)",
+    "type": "extra-skill-use",
+    "description": "Create a diversion to hide item (standard) | DC: opposed by targets' Will | Time: standard | Effect: Attempt to hide an item while targets distracted; must reach hiding place in a move action"
   },
   {
     "application": "Gather Information (general)",
     "DC": 10,
     "time": "1d6 hours per check",
     "effect": "Gathers local news/rumors; better results for higher DC or spendable resources",
-    "name": "Unnamed Skilluse 18",
-    "type": "equipment"
+    "name": "Gather Information (general)",
+    "type": "extra-skill-use",
+    "description": "Gather Information (general) | DC: 10 | Time: 1d6 hours per check | Effect: Gathers local news/rumors; better results for higher DC or spendable resources"
   },
   {
     "application": "Analysis (trained)",
     "DC": 15,
     "time": "post-gather",
     "effect": "Add +10 bonus to original Gather Information check if data is complete; adjust for incomplete data",
-    "name": "Unnamed Skilluse 19",
-    "type": "equipment"
+    "name": "Analysis (trained)",
+    "type": "extra-skill-use",
+    "description": "Analysis (trained) | DC: 15 | Time: post-gather | Effect: Add +10 bonus to original Gather Information check if data is complete; adjust for incomplete data"
   },
   {
     "application": "Find Black Market Object",
     "DC": "10/15/20/25 (Licensed/Restricted/Military/Illegal)",
     "time": "1/2/5/10 days",
     "effect": "Purchase cost multipliers x2/x3/x4/x5 and wait time; subject to circumstance modifiers",
-    "name": "Unnamed Skilluse 20",
-    "type": "equipment"
+    "name": "Find Black Market Object",
+    "type": "extra-skill-use",
+    "description": "Find Black Market Object | DC: 10/15/20/25 (Licensed/Restricted/Military/Illegal) | Time: 1/2/5/10 days | Effect: Purchase cost multipliers x2/x3/x4/x5 and wait time; subject to circumstance modifiers"
   },
   {
     "application": "Quick Intel (trained)",
     "DC": "trained use",
     "time": "halves Gather Info time",
     "effect": "Declare before rolling; +10 DC to halve time required",
-    "name": "Unnamed Skilluse 21",
-    "type": "equipment"
+    "name": "Quick Intel (trained)",
+    "type": "extra-skill-use",
+    "description": "Quick Intel (trained) | DC: trained use | Time: halves Gather Info time | Effect: Declare before rolling; +10 DC to halve time required"
   },
   {
     "application": "Identify item function",
     "DC": 20,
     "time": "variable",
     "effect": "Learn primary function; +1 fact per +5 over DC",
-    "name": "Unnamed Skilluse 22",
-    "type": "equipment"
+    "name": "Identify item function",
+    "type": "extra-skill-use",
+    "description": "Identify item function | DC: 20 | Time: variable | Effect: Learn primary function; +1 fact per +5 over DC"
   },
   {
     "application": "Knowledge (common)",
     "DC": 10,
     "time": "instant",
     "effect": "General knowledge",
-    "name": "Unnamed Skilluse 23",
-    "type": "equipment"
+    "name": "Knowledge (common)",
+    "type": "extra-skill-use",
+    "description": "Knowledge (common) | DC: 10 | Time: instant | Effect: General knowledge"
   },
   {
     "application": "Knowledge (expert/trained)",
     "DC": "15-25",
     "time": "instant",
     "effect": "Specialist knowledge (Tactics, Tech, etc.)",
-    "name": "Unnamed Skilluse 24",
-    "type": "equipment"
+    "name": "Knowledge (expert/trained)",
+    "type": "extra-skill-use",
+    "description": "Knowledge (expert/trained) | DC: 15-25 | Time: instant | Effect: Specialist knowledge (Tactics, Tech, etc.)"
   },
   {
     "application": "Anticipate Enemy Strategy (Knowledge Tactics, trained)",
     "DC": "target's Will",
     "time": "move action",
     "effect": "Predict if target will attack/move/use special strategies",
-    "name": "Unnamed Skilluse 25",
-    "type": "equipment"
+    "name": "Anticipate Enemy Strategy (Knowledge Tactics, trained)",
+    "type": "extra-skill-use",
+    "description": "Anticipate Enemy Strategy (Knowledge Tactics, trained) | DC: target's Will | Time: move action | Effect: Predict if target will attack/move/use special strategies"
   },
   {
     "application": "Jump long (DC formula)",
     "DC": "distance_meters × 3 (double without run-up)",
     "time": "part of movement",
     "effect": "Distance jumped counts against movement; Jump down DC15 reduces falling damage by 3m",
-    "name": "Unnamed Skilluse 26",
-    "type": "equipment"
+    "name": "Jump long (DC formula)",
+    "type": "extra-skill-use",
+    "description": "Jump long (DC formula) | DC: distance_meters × 3 (double without run-up) | Time: part of movement | Effect: Distance jumped counts against movement; Jump down DC15 reduces falling damage by 3m"
   },
   {
     "application": "Initiative (take 10 when appropriate)",
     "DC": "N/A",
     "time": "initiative roll",
     "effect": "Allowed only when conditions met (prepared/ambush)",
-    "name": "Unnamed Skilluse 27",
-    "type": "equipment"
+    "name": "Initiative (take 10 when appropriate)",
+    "type": "extra-skill-use",
+    "description": "Initiative (take 10 when appropriate) | DC: N/A | Time: initiative roll | Effect: Allowed only when conditions met (prepared/ambush)"
   },
   {
     "application": "Disable Device — Simple",
     "DC": 15,
     "time": "full-round",
     "effect": "Sabotage mechanical device; basic bypass",
-    "name": "Unnamed Skilluse 28",
-    "type": "equipment"
+    "name": "Disable Device — Simple",
+    "type": "extra-skill-use",
+    "description": "Disable Device — Simple | DC: 15 | Time: full-round | Effect: Sabotage mechanical device; basic bypass"
   },
   {
     "application": "Disable Device — Tricky",
     "DC": 20,
     "time": "full-round",
     "effect": "Sabotage electronic device or bypass basic electronic lock",
-    "name": "Unnamed Skilluse 29",
-    "type": "equipment"
+    "name": "Disable Device — Tricky",
+    "type": "extra-skill-use",
+    "description": "Disable Device — Tricky | DC: 20 | Time: full-round | Effect: Sabotage electronic device or bypass basic electronic lock"
   },
   {
     "application": "Disable Device — Complex",
     "DC": 25,
     "time": "full-round",
     "effect": "Disarm complex electronic security or bypass complex locks",
-    "name": "Unnamed Skilluse 30",
-    "type": "equipment"
+    "name": "Disable Device — Complex",
+    "type": "extra-skill-use",
+    "description": "Disable Device — Complex | DC: 25 | Time: full-round | Effect: Disarm complex electronic security or bypass complex locks"
   },
   {
     "application": "To leave no trace of tampering",
     "DC": "+5 to disable DC",
     "time": "additional",
     "effect": "Harder to disable but conceals traces",
-    "name": "Unnamed Skilluse 31",
-    "type": "equipment"
+    "name": "To leave no trace of tampering",
+    "type": "extra-skill-use",
+    "description": "To leave no trace of tampering | DC: +5 to disable DC | Time: additional | Effect: Harder to disable but conceals traces"
   },
   {
     "application": "Jury-rig (trained, temporary repair)",
     "DC": 25,
     "time": "full-round",
     "effect": "Temporarily repair disabled mechanical/electronic device: +2 CT and +1d8 HP; decays at end of scene",
-    "name": "Unnamed Skilluse 32",
-    "type": "equipment"
+    "name": "Jury-rig (trained, temporary repair)",
+    "type": "extra-skill-use",
+    "description": "Jury-rig (trained, temporary repair) | DC: 25 | Time: full-round | Effect: Temporarily repair disabled mechanical/electronic device: +2 CT and +1d8 HP; decays at end of scene"
   },
   {
     "application": "Recharge shields (trained)",
     "DC": 20,
     "time": "3 swift actions",
     "effect": "Restore 5 SR on success",
-    "name": "Unnamed Skilluse 33",
-    "type": "equipment"
+    "name": "Recharge shields (trained)",
+    "type": "extra-skill-use",
+    "description": "Recharge shields (trained) | DC: 20 | Time: 3 swift actions | Effect: Restore 5 SR on success"
   },
   {
     "application": "Regulate power (vehicle)",
     "DC": 20,
     "time": "3 swift actions",
     "effect": "Move vehicle +1 CT",
-    "name": "Unnamed Skilluse 34",
-    "type": "equipment"
+    "name": "Regulate power (vehicle)",
+    "type": "extra-skill-use",
+    "description": "Regulate power (vehicle) | DC: 20 | Time: 3 swift actions | Effect: Move vehicle +1 CT"
   },
   {
     "application": "Repair object (trained)",
     "DC": 20,
     "time": "1 hour",
     "effect": "Restore 1d8 HP and remove persistent conditions",
-    "name": "Unnamed Skilluse 35",
-    "type": "equipment"
+    "name": "Repair object (trained)",
+    "type": "extra-skill-use",
+    "description": "Repair object (trained) | DC: 20 | Time: 1 hour | Effect: Restore 1d8 HP and remove persistent conditions"
   },
   {
     "application": "Repair droid (trained)",
     "DC": 20,
     "time": "1 hour",
     "effect": "Restore HP equal to droid level; removes persistent conditions (self-repair takes -5 penalty)",
-    "name": "Unnamed Skilluse 36",
-    "type": "equipment"
+    "name": "Repair droid (trained)",
+    "type": "extra-skill-use",
+    "description": "Repair droid (trained) | DC: 20 | Time: 1 hour | Effect: Restore HP equal to droid level; removes persistent conditions (self-repair takes -5 penalty)"
   },
   {
     "application": "Refit antiquated vehicle/weapon",
     "DC": "GM/Mechanics",
     "time": "days to months by size",
     "effect": "Apply refitted template; costs 20% base value",
-    "name": "Unnamed Skilluse 37",
-    "type": "equipment"
+    "name": "Refit antiquated vehicle/weapon",
+    "type": "extra-skill-use",
+    "description": "Refit antiquated vehicle/weapon | DC: GM/Mechanics | Time: days to months by size | Effect: Apply refitted template; costs 20% base value"
   },
   {
     "application": "Modify droid — locomotion",
     "DC": 25,
     "time": "1 day",
     "effect": "Alter droid locomotion system",
-    "name": "Unnamed Skilluse 38",
-    "type": "equipment"
+    "name": "Modify droid — locomotion",
+    "type": "extra-skill-use",
+    "description": "Modify droid — locomotion | DC: 25 | Time: 1 day | Effect: Alter droid locomotion system"
   },
   {
     "application": "Modify droid — processor",
     "DC": "20 Use Computer + 20 Mechanics",
     "time": "1 day",
     "effect": "Change or attach processor functionality (requires Use Computer adjunct)",
-    "name": "Unnamed Skilluse 39",
-    "type": "equipment"
+    "name": "Modify droid — processor",
+    "type": "extra-skill-use",
+    "description": "Modify droid — processor | DC: 20 Use Computer + 20 Mechanics | Time: 1 day | Effect: Change or attach processor functionality (requires Use Computer adjunct)"
   },
   {
     "application": "Modify droid — appendage/accessory",
     "DC": "20/15 Mechanics",
     "time": "1 hour or 10 mins",
     "effect": "Add/replace appendages or accessories; installing weapon mounting may be DC 15 or 20 depending on degree",
-    "name": "Unnamed Skilluse 40",
-    "type": "equipment"
+    "name": "Modify droid — appendage/accessory",
+    "type": "extra-skill-use",
+    "description": "Modify droid — appendage/accessory | DC: 20/15 Mechanics | Time: 1 hour or 10 mins | Effect: Add/replace appendages or accessories; installing weapon mounting may be DC 15 or 20 depending on degree"
   },
   {
     "application": "Reprogram droid (trained)",
     "DC": "droid's Will",
     "time": "10 minutes",
     "effect": "Change droid's master or erase/copy memory (Use Computer adjunct as needed)",
-    "name": "Unnamed Skilluse 41",
-    "type": "equipment"
+    "name": "Reprogram droid (trained)",
+    "type": "extra-skill-use",
+    "description": "Reprogram droid (trained) | DC: droid's Will | Time: 10 minutes | Effect: Change droid's master or erase/copy memory (Use Computer adjunct as needed)"
   },
   {
     "application": "Shut down unwilling droid (while grabbed)",
     "DC": "Mechanics vs droid's Will",
     "time": "standard while grabbed",
     "effect": "If succeed, droid is shut down",
-    "name": "Unnamed Skilluse 42",
-    "type": "equipment"
+    "name": "Shut down unwilling droid (while grabbed)",
+    "type": "extra-skill-use",
+    "description": "Shut down unwilling droid (while grabbed) | DC: Mechanics vs droid's Will | Time: standard while grabbed | Effect: If succeed, droid is shut down"
   },
   {
     "application": "Persuasion (change attitude, full-round)",
     "DC": "target Will with attitude modifiers (-10 to +0)",
     "time": "full-round",
     "effect": "Improve attitude by 1 step on success; -5 if language barrier",
-    "name": "Unnamed Skilluse 43",
-    "type": "equipment"
+    "name": "Persuasion (change attitude, full-round)",
+    "type": "extra-skill-use",
+    "description": "Persuasion (change attitude, full-round) | DC: target Will with attitude modifiers (-10 to +0) | Time: full-round | Effect: Improve attitude by 1 step on success; -5 if language barrier"
   },
   {
     "application": "Haggle (reduce or add 50% price)",
     "DC": "GM-determined Persuasion/Haggle table",
     "time": "as interaction",
     "effect": "Adjust sale price; target won't overpay for common items",
-    "name": "Unnamed Skilluse 44",
-    "type": "equipment"
+    "name": "Haggle (reduce or add 50% price)",
+    "type": "extra-skill-use",
+    "description": "Haggle (reduce or add 50% price) | DC: GM-determined Persuasion/Haggle table | Time: as interaction | Effect: Adjust sale price; target won't overpay for common items"
   },
   {
     "application": "Bribery (officials)",
     "DC": "10/20/30 with risk modifiers",
     "time": "variable",
     "effect": "Modify official's compliance based on risk and amount; high bribes reduce DC",
-    "name": "Unnamed Skilluse 45",
-    "type": "equipment"
+    "name": "Bribery (officials)",
+    "type": "extra-skill-use",
+    "description": "Bribery (officials) | DC: 10/20/30 with risk modifiers | Time: variable | Effect: Modify official's compliance based on risk and amount; high bribes reduce DC"
   },
   {
     "application": "Intimidate to coerce (full-round)",
     "DC": "opposed Will or GM-set",
     "time": "full-round",
     "effect": "Force target to back down, surrender possession, or flee for short time; cannot force to endanger life",
-    "name": "Unnamed Skilluse 46",
-    "type": "equipment"
+    "name": "Intimidate to coerce (full-round)",
+    "type": "extra-skill-use",
+    "description": "Intimidate to coerce (full-round) | DC: opposed Will or GM-set | Time: full-round | Effect: Force target to back down, surrender possession, or flee for short time; cannot force to endanger life"
   },
   {
     "application": "Situational modifiers",
     "DC": "apply modifiers per table (+5 helpless, -5 evenly matched, -10 if you are disadvantaged)",
     "time": "applies to the check",
     "effect": "Modify Intimidate roll",
-    "name": "Unnamed Skilluse 47",
-    "type": "equipment"
+    "name": "Situational modifiers",
+    "type": "extra-skill-use",
+    "description": "Situational modifiers | DC: apply modifiers per table (+5 helpless, -5 evenly matched, -10 if you are disadvantaged) | Time: applies to the check | Effect: Modify Intimidate roll"
   },
   {
     "application": "Increase vehicle speed (trained, swift)",
     "DC": 20,
     "time": "swift",
     "effect": "Increase speed by +1 sq for next turn; every +5 over DC adds another +1",
-    "name": "Unnamed Skilluse 48",
-    "type": "equipment"
+    "name": "Increase vehicle speed (trained, swift)",
+    "type": "extra-skill-use",
+    "description": "Increase vehicle speed (trained, swift) | DC: 20 | Time: swift | Effect: Increase speed by +1 sq for next turn; every +5 over DC adds another +1"
   },
   {
     "application": "Avoid collision (reaction)",
     "DC": 15,
     "time": "reaction",
     "effect": "Reduce or negate collision damage; success halves damage",
-    "name": "Unnamed Skilluse 49",
-    "type": "equipment"
+    "name": "Avoid collision (reaction)",
+    "type": "extra-skill-use",
+    "description": "Avoid collision (reaction) | DC: 15 | Time: reaction | Effect: Reduce or negate collision damage; success halves damage"
   },
   {
     "application": "Dogfight (standard)",
     "DC": "opposed Pilot vs Pilot with -5 penalty",
     "time": "standard",
     "effect": "Engage enemy in dogfight on success",
-    "name": "Unnamed Skilluse 50",
-    "type": "equipment"
+    "name": "Dogfight (standard)",
+    "type": "extra-skill-use",
+    "description": "Dogfight (standard) | DC: opposed Pilot vs Pilot with -5 penalty | Time: standard | Effect: Engage enemy in dogfight on success"
   },
   {
     "application": "Start battle while piloting (use Pilot for Initiative)",
     "DC": "use Pilot mod + vehicle size & DEX",
     "time": "initiative roll",
     "effect": "Pilot skill can substitute for Initiative when trained",
-    "name": "Unnamed Skilluse 51",
-    "type": "equipment"
+    "name": "Start battle while piloting (use Pilot for Initiative)",
+    "type": "extra-skill-use",
+    "description": "Start battle while piloting (use Pilot for Initiative) | DC: use Pilot mod + vehicle size & DEX | Time: initiative roll | Effect: Pilot skill can substitute for Initiative when trained"
   },
   {
     "application": "Sneak (opposed)",
     "DC": "opposed by Perception",
     "time": "move or standard to hide",
     "effect": "Hide from targets; taking certain actions reveals you",
-    "name": "Unnamed Skilluse 52",
-    "type": "equipment"
+    "name": "Sneak (opposed)",
+    "type": "extra-skill-use",
+    "description": "Sneak (opposed) | DC: opposed by Perception | Time: move or standard to hide | Effect: Hide from targets; taking certain actions reveals you"
   },
   {
     "application": "Conceal item on self (standard)",
     "DC": "size-based: item 1 size smaller = -5, 2 sizes smaller = +0, etc.",
     "time": "standard",
     "effect": "Opponent Perception opposed; +10 to Perception if physically searching",
-    "name": "Unnamed Skilluse 53",
-    "type": "equipment"
+    "name": "Conceal item on self (standard)",
+    "type": "extra-skill-use",
+    "description": "Conceal item on self (standard) | DC: size-based: item 1 size smaller = -5, 2 sizes smaller = +0, etc. | Time: standard | Effect: Opponent Perception opposed; +10 to Perception if physically searching"
   },
   {
     "application": "Conceal large item (in compartment)",
     "DC": "Stealth vs Perception +10 if adjacent",
     "time": "variable",
     "effect": "Hide large object inside room; use hiding compartments to gain +5 to +20",
-    "name": "Unnamed Skilluse 54",
-    "type": "equipment"
+    "name": "Conceal large item (in compartment)",
+    "type": "extra-skill-use",
+    "description": "Conceal large item (in compartment) | DC: Stealth vs Perception +10 if adjacent | Time: variable | Effect: Hide large object inside room; use hiding compartments to gain +5 to +20"
   },
   {
     "application": "Drop (plant small item quickly)",
     "DC": "S&V 20 example",
     "time": "swift/standard depending",
     "effect": "Deposit small concealed item without notice; opposed Perception",
-    "name": "Unnamed Skilluse 55",
-    "type": "equipment"
+    "name": "Drop (plant small item quickly)",
+    "type": "extra-skill-use",
+    "description": "Drop (plant small item quickly) | DC: S&V 20 example | Time: swift/standard depending | Effect: Deposit small concealed item without notice; opposed Perception"
   },
   {
     "application": "Pick pocket (standard)",
     "DC": "opposed: target Perception +5",
     "time": "standard",
     "effect": "Take hand-sized object; fail by 5+ = notice",
-    "name": "Unnamed Skilluse 56",
-    "type": "equipment"
+    "name": "Pick pocket (standard)",
+    "type": "extra-skill-use",
+    "description": "Pick pocket (standard) | DC: opposed: target Perception +5 | Time: standard | Effect: Take hand-sized object; fail by 5+ = notice"
   },
   {
     "application": "Sleight of Hand (palm/perform)",
     "DC": "opposed Perception",
     "time": "standard",
     "effect": "Palm small objects or perform unnoticed action",
-    "name": "Unnamed Skilluse 57",
-    "type": "equipment"
+    "name": "Sleight of Hand (palm/perform)",
+    "type": "extra-skill-use",
+    "description": "Sleight of Hand (palm/perform) | DC: opposed Perception | Time: standard | Effect: Palm small objects or perform unnoticed action"
   },
   {
     "application": "Snipe (from hiding, standard+move)",
     "DC": "Must have been hidden; Stealth move action at -10",
     "time": "standard + move",
     "effect": "Make ranged attack from hiding then attempt to remain hidden with -10 Stealth",
-    "name": "Unnamed Skilluse 58",
-    "type": "equipment"
+    "name": "Snipe (from hiding, standard+move)",
+    "type": "extra-skill-use",
+    "description": "Snipe (from hiding, standard+move) | DC: Must have been hidden; Stealth move action at -10 | Time: standard + move | Effect: Make ranged attack from hiding then attempt to remain hidden with -10 Stealth"
   },
   {
     "application": "Basic survival (24h)",
     "DC": 15,
     "time": "1 check = 24h",
     "effect": "Provide food & water for self; each +2 above provides for one more person",
-    "name": "Unnamed Skilluse 59",
-    "type": "equipment"
+    "name": "Basic survival (24h)",
+    "type": "extra-skill-use",
+    "description": "Basic survival (24h) | DC: 15 | Time: 1 check = 24h | Effect: Provide food & water for self; each +2 above provides for one more person"
   },
   {
     "application": "Create defensive position (trained)",
     "DC": 20,
     "time": "10 minutes",
     "effect": "Prepare 20×20 area: allies get +2 Ref; opponents -5 Stealth within area; no Perception penalty while sleeping",
-    "name": "Unnamed Skilluse 60",
-    "type": "equipment"
+    "name": "Create defensive position (trained)",
+    "type": "extra-skill-use",
+    "description": "Create defensive position (trained) | DC: 20 | Time: 10 minutes | Effect: Prepare 20×20 area: allies get +2 Ref; opponents -5 Stealth within area; no Perception penalty while sleeping"
   },
   {
     "application": "Endure extreme temperatures (field kit)",
     "DC": 20,
     "time": "once per day",
     "effect": "Ignore extreme temperature attacks for next 24h on success",
-    "name": "Unnamed Skilluse 61",
-    "type": "equipment"
+    "name": "Endure extreme temperatures (field kit)",
+    "type": "extra-skill-use",
+    "description": "Endure extreme temperatures (field kit) | DC: 20 | Time: once per day | Effect: Ignore extreme temperature attacks for next 24h on success"
   },
   {
     "application": "Track (trained)",
     "DC": "10/20/30 depending on surface",
     "time": "per tracking check",
     "effect": "Locate trail; modifiers for terrain, time, weather apply",
-    "name": "Unnamed Skilluse 62",
-    "type": "equipment"
+    "name": "Track (trained)",
+    "type": "extra-skill-use",
+    "description": "Track (trained) | DC: 10/20/30 depending on surface | Time: per tracking check | Effect: Locate trail; modifiers for terrain, time, weather apply"
   },
   {
     "application": "First Aid (requires medpac)",
     "DC": 15,
     "time": "full-round",
     "effect": "Heal HP = target level +1 per point over DC; cannot retry on same target for 24h",
-    "name": "Unnamed Skilluse 63",
-    "type": "equipment"
+    "name": "First Aid (requires medpac)",
+    "type": "extra-skill-use",
+    "description": "First Aid (requires medpac) | DC: 15 | Time: full-round | Effect: Heal HP = target level +1 per point over DC; cannot retry on same target for 24h"
   },
   {
     "application": "Revivify (trained, medkit)",
     "DC": 25,
     "time": "full-round (must be within 1 round of death)",
     "effect": "Revive dead target but leaves them unconscious on success",
-    "name": "Unnamed Skilluse 64",
-    "type": "equipment"
+    "name": "Revivify (trained, medkit)",
+    "type": "extra-skill-use",
+    "description": "Revivify (trained, medkit) | DC: 25 | Time: full-round (must be within 1 round of death) | Effect: Revive dead target but leaves them unconscious on success"
   },
   {
     "application": "Heal Damage (surgery kit, trained)",
     "DC": 20,
     "time": "1 hour",
     "effect": "Restore HP = CON_mod (min 1) × level and remove persistent conditions; failure deals DT to target",
-    "name": "Unnamed Skilluse 65",
-    "type": "equipment"
+    "name": "Heal Damage (surgery kit, trained)",
+    "type": "extra-skill-use",
+    "description": "Heal Damage (surgery kit, trained) | DC: 20 | Time: 1 hour | Effect: Restore HP = CON_mod (min 1) × level and remove persistent conditions; failure deals DT to target"
   },
   {
     "application": "Long-term care",
     "DC": "untrained or trained",
     "time": "8 hours",
     "effect": "Tend creature for 8h to regain additional HP = level; trained can tend up to 6 creatures",
-    "name": "Unnamed Skilluse 66",
-    "type": "equipment"
+    "name": "Long-term care",
+    "type": "extra-skill-use",
+    "description": "Long-term care | DC: untrained or trained | Time: 8 hours | Effect: Tend creature for 8h to regain additional HP = level; trained can tend up to 6 creatures"
   },
   {
     "application": "Temporary Mending (biotech/vehicle)",
     "DC": 20,
     "time": "full-round",
     "effect": "Heal 1d8 HP & +2 CT to damaged biotech object or vehicle; +5 with biotech tool kit",
-    "name": "Unnamed Skilluse 67",
-    "type": "equipment"
+    "name": "Temporary Mending (biotech/vehicle)",
+    "type": "extra-skill-use",
+    "description": "Temporary Mending (biotech/vehicle) | DC: 20 | Time: full-round | Effect: Heal 1d8 HP & +2 CT to damaged biotech object or vehicle; +5 with biotech tool kit"
   },
   {
     "application": "Access information — General",
     "DC": 15,
     "time": "1 minute (10 rounds)",
     "effect": "Retrieve general info from network",
-    "name": "Unnamed Skilluse 68",
-    "type": "equipment"
+    "name": "Access information — General",
+    "type": "extra-skill-use",
+    "description": "Access information — General | DC: 15 | Time: 1 minute (10 rounds) | Effect: Retrieve general info from network"
   },
   {
     "application": "Access information — Specific",
     "DC": 20,
     "time": "10 minutes",
     "effect": "Retrieve specific info (date of birth, record, etc.)",
-    "name": "Unnamed Skilluse 69",
-    "type": "equipment"
+    "name": "Access information — Specific",
+    "type": "extra-skill-use",
+    "description": "Access information — Specific | DC: 20 | Time: 10 minutes | Effect: Retrieve specific info (date of birth, record, etc.)"
   },
   {
     "application": "Access information — Private",
     "DC": 25,
     "time": "1 hour",
     "effect": "Retrieve private channel info",
-    "name": "Unnamed Skilluse 70",
-    "type": "equipment"
+    "name": "Access information — Private",
+    "type": "extra-skill-use",
+    "description": "Access information — Private | DC: 25 | Time: 1 hour | Effect: Retrieve private channel info"
   },
   {
     "application": "Access information — Secret (helpful computer)",
     "DC": 30,
     "time": "1 day (8 hours)",
     "effect": "Secret credentials only accessible to helpful computers",
-    "name": "Unnamed Skilluse 71",
-    "type": "equipment"
+    "name": "Access information — Secret (helpful computer)",
+    "type": "extra-skill-use",
+    "description": "Access information — Secret (helpful computer) | DC: 30 | Time: 1 day (8 hours) | Effect: Secret credentials only accessible to helpful computers"
   },
   {
     "application": "Backtrail (trained)",
     "DC": 25,
     "time": "varies",
     "effect": "Identify last user of computer and info accessed",
-    "name": "Unnamed Skilluse 72",
-    "type": "equipment"
+    "name": "Backtrail (trained)",
+    "type": "extra-skill-use",
+    "description": "Backtrail (trained) | DC: 25 | Time: varies | Effect: Identify last user of computer and info accessed"
   },
   {
     "application": "Copy/reprogram code cylinder or access card",
     "DC": "20/30/35 (admin/encrypted military/encrypted Imperial)",
     "time": "10 minutes",
     "effect": "Reprogram or copy security access",
-    "name": "Unnamed Skilluse 73",
-    "type": "equipment"
+    "name": "Copy/reprogram code cylinder or access card",
+    "type": "extra-skill-use",
+    "description": "Copy/reprogram code cylinder or access card | DC: 20/30/35 (admin/encrypted military/encrypted Imperial) | Time: 10 minutes | Effect: Reprogram or copy security access"
   },
   {
     "application": "Improve Access (trained)",
     "DC": "vs computer's Will (attitude modifiers apply)",
     "time": "varies",
     "effect": "Shift computer attitude by 1 step on success; failure may worsen attitude",
-    "name": "Unnamed Skilluse 74",
-    "type": "equipment"
+    "name": "Improve Access (trained)",
+    "type": "extra-skill-use",
+    "description": "Improve Access (trained) | DC: vs computer's Will (attitude modifiers apply) | Time: varies | Effect: Shift computer attitude by 1 step on success; failure may worsen attitude"
   },
   {
     "application": "Disable or erase program (requires helpful attitude)",
     "DC": 15,
     "time": "10 minutes",
     "effect": "Remove program when computer attitude is helpful",
-    "name": "Unnamed Skilluse 75",
-    "type": "equipment"
+    "name": "Disable or erase program (requires helpful attitude)",
+    "type": "extra-skill-use",
+    "description": "Disable or erase program (requires helpful attitude) | DC: 15 | Time: 10 minutes | Effect: Remove program when computer attitude is helpful"
   },
   {
     "application": "Astrogate (plot hyperspace route)",
     "DC": "10-30 by data age (applies Use Computer as principal)",
     "time": "1 minute; DC30 1 hour if no data",
     "effect": "Success: arrive in days = 1d6 × hyperdrive multiplier; higher DCs reduce time further per +5 over DC",
-    "name": "Unnamed Skilluse 76",
-    "type": "equipment"
+    "name": "Astrogate (plot hyperspace route)",
+    "type": "extra-skill-use",
+    "description": "Astrogate (plot hyperspace route) | DC: 10-30 by data age (applies Use Computer as principal) | Time: 1 minute; DC30 1 hour if no data | Effect: Success: arrive in days = 1d6 × hyperdrive multiplier; higher DCs reduce time further per +5 over DC"
   },
   {
     "application": "Astrogate — reduce travel time (risk/reward)",
     "DC": "add +5 per desired reduction step (Use Computer applied)",
     "time": "pre-declared",
     "effect": "Each +5 over DC reduces travel time; failure can inflict ship CT and damage penalties",
-    "name": "Unnamed Skilluse 77",
-    "type": "equipment"
+    "name": "Astrogate — reduce travel time (risk/reward)",
+    "type": "extra-skill-use",
+    "description": "Astrogate — reduce travel time (risk/reward) | DC: add +5 per desired reduction step (Use Computer applied) | Time: pre-declared | Effect: Each +5 over DC reduces travel time; failure can inflict ship CT and damage penalties"
   },
   {
     "application": "Breath Control (UtF trained)",
     "DC": 15,
     "time": "instant / sustained",
     "effect": "Hold breath for 2× CON rounds before Endurance checks",
-    "name": "Unnamed Skilluse 78",
-    "type": "equipment"
+    "name": "Breath Control (UtF trained)",
+    "type": "extra-skill-use",
+    "description": "Breath Control (UtF trained) | DC: 15 | Time: instant / sustained | Effect: Hold breath for 2× CON rounds before Endurance checks"
   },
   {
     "application": "Force Trance (UtF trained)",
     "DC": 10,
     "time": "full-round to enter; each hour gains HP = level; 4 hours heals fully",
     "effect": "Extended rest benefits; reduces need for food/water/air",
-    "name": "Unnamed Skilluse 79",
-    "type": "equipment"
+    "name": "Force Trance (UtF trained)",
+    "type": "extra-skill-use",
+    "description": "Force Trance (UtF trained) | DC: 10 | Time: full-round to enter; each hour gains HP = level; 4 hours heals fully | Effect: Extended rest benefits; reduces need for food/water/air"
   },
   {
     "application": "Place other in Force Trance",
     "DC": 15,
     "time": "full-round",
     "effect": "Place willing adjacent target into trance; only force-user may end trance",
-    "name": "Unnamed Skilluse 80",
-    "type": "equipment"
+    "name": "Place other in Force Trance",
+    "type": "extra-skill-use",
+    "description": "Place other in Force Trance | DC: 15 | Time: full-round | Effect: Place willing adjacent target into trance; only force-user may end trance"
   },
   {
     "application": "Move Light Object (UtF trained)",
     "DC": 10,
     "time": "move action",
     "effect": "Telekinetically move up to 5 kg 6 sq (move action)",
-    "name": "Unnamed Skilluse 81",
-    "type": "equipment"
+    "name": "Move Light Object (UtF trained)",
+    "type": "extra-skill-use",
+    "description": "Move Light Object (UtF trained) | DC: 10 | Time: move action | Effect: Telekinetically move up to 5 kg 6 sq (move action)"
   },
   {
     "application": "Move Light Object (hurl, standard)",
     "DC": 15,
     "time": "standard",
     "effect": "Hurl object vs Ref to deal 1d6; treat as ranged attack",
-    "name": "Unnamed Skilluse 82",
-    "type": "equipment"
+    "name": "Move Light Object (hurl, standard)",
+    "type": "extra-skill-use",
+    "description": "Move Light Object (hurl, standard) | DC: 15 | Time: standard | Effect: Hurl object vs Ref to deal 1d6; treat as ranged attack"
   },
   {
     "application": "Search Your Feelings",
     "DC": 15,
     "time": "full-round",
     "effect": "Determine short-term favorability of an action (next 10 minutes)",
-    "name": "Unnamed Skilluse 83",
-    "type": "equipment"
+    "name": "Search Your Feelings",
+    "type": "extra-skill-use",
+    "description": "Search Your Feelings | DC: 15 | Time: full-round | Effect: Determine short-term favorability of an action (next 10 minutes)"
   },
   {
     "application": "Sense Force (trained)",
     "DC": 15,
     "time": "full-round",
     "effect": "Sense Force-users within wide ranges; opposed UtF can conceal presence; extra ranges for dark side/strong disturbances",
-    "name": "Unnamed Skilluse 84",
-    "type": "equipment"
+    "name": "Sense Force (trained)",
+    "type": "extra-skill-use",
+    "description": "Sense Force (trained) | DC: 15 | Time: full-round | Effect: Sense Force-users within wide ranges; opposed UtF can conceal presence; extra ranges for dark side/strong disturbances"
   },
   {
     "application": "Sense Surroundings (trained, swift)",
     "DC": 15,
     "time": "swift",
     "effect": "Ignore effects of cover and concealment for Perception checks until start of next turn (DC+5 vs total cover)",
-    "name": "Unnamed Skilluse 85",
-    "type": "equipment"
+    "name": "Sense Surroundings (trained, swift)",
+    "type": "extra-skill-use",
+    "description": "Sense Surroundings (trained, swift) | DC: 15 | Time: swift | Effect: Ignore effects of cover and concealment for Perception checks until start of next turn (DC+5 vs total cover)"
   }
 ]

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Fix forcepowers.json - Convert to array AND fix type names
+Rename Unnamed Skilluse Items
+Uses the 'application' field as the actual name
 """
 
 import json
@@ -9,149 +10,186 @@ from datetime import datetime
 
 # Base path
 BASE_PATH = Path(r"C:\Users\Owner\Documents\GitHub\foundryvtt-swse")
-FORCEPOWERS_FILE = BASE_PATH / "data" / "forcepowers.json"
 
-def fix_forcepowers_json():
-    """
-    Fix forcepowers.json:
-    1. Convert from line-delimited JSON to proper array
-    2. Change "force-power" to "forcepower"
-    """
+def create_backup(file_path):
+    """Create timestamped backup"""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup_path = file_path.with_suffix(f"{file_path.suffix}.backup_{timestamp}")
+    
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    with open(backup_path, 'w', encoding='utf-8') as f:
+        f.write(content)
+    
+    return backup_path
+
+def rename_json_items():
+    """Rename items in data/extraskilluses.json"""
     print("\n" + "="*60)
-    print("🔧 FORCEPOWERS.JSON COMPREHENSIVE FIX")
+    print("📝 RENAMING: extraskilluses.json")
     print("="*60)
     
-    if not FORCEPOWERS_FILE.exists():
-        print(f"\n❌ ERROR: File not found: {FORCEPOWERS_FILE}")
-        return False
+    json_file = BASE_PATH / "data" / "extraskilluses.json"
     
-    print(f"\n📄 Reading: {FORCEPOWERS_FILE}")
+    if not json_file.exists():
+        print(f"   ❌ File not found: {json_file}")
+        return None
     
-    # Create backup
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    backup_file = FORCEPOWERS_FILE.with_suffix(f".json.backup_{timestamp}")
+    # Backup
+    backup = create_backup(json_file)
+    print(f"   ✓ Backup: {backup.name}")
     
     try:
-        # Read original file
-        with open(FORCEPOWERS_FILE, 'r', encoding='utf-8') as f:
-            content = f.read()
+        with open(json_file, 'r', encoding='utf-8') as f:
+            items = json.load(f)
         
-        print(f"✓ Original file size: {len(content)} characters")
+        print(f"   ✓ Loaded {len(items)} items\n")
         
-        # Backup original
-        with open(backup_file, 'w', encoding='utf-8') as f:
-            f.write(content)
-        print(f"✓ Backup created: {backup_file.name}")
+        name_mapping = {}
+        renamed = 0
         
-        # Parse each line as separate JSON object
-        forcepowers = []
-        lines = content.strip().split('\n')
+        for idx, item in enumerate(items):
+            old_name = item.get('name', '')
+            
+            if old_name.startswith('Unnamed Skilluse'):
+                # Get new name from application field
+                if item.get('application'):
+                    new_name = item['application'].strip()
+                    
+                    # Limit length
+                    if len(new_name) > 60:
+                        new_name = new_name[:57] + "..."
+                    
+                    item['name'] = new_name
+                    name_mapping[idx] = new_name
+                    renamed += 1
+                    
+                    print(f"   ✓ {old_name:25s} → {new_name}")
+                else:
+                    # No application field, use generic name
+                    new_name = f"Extra Skill Use {idx + 1}"
+                    item['name'] = new_name
+                    name_mapping[idx] = new_name
+                    renamed += 1
+                    
+                    print(f"   ⚠️  {old_name:25s} → {new_name} (no application)")
         
-        print(f"\n🔧 Processing {len(lines)} lines...")
+        # Write back
+        with open(json_file, 'w', encoding='utf-8') as f:
+            json.dump(items, f, indent=2, ensure_ascii=False)
         
-        type_changes = 0
+        print(f"\n   ✅ Renamed {renamed} items")
         
-        for i, line in enumerate(lines, 1):
-            line = line.strip()
-            if not line:
+        return name_mapping
+    
+    except Exception as e:
+        print(f"   ❌ Error: {e}")
+        return None
+
+def rename_db_items(name_mapping):
+    """Rename items in packs/extraskilluses.db using the name mapping"""
+    print("\n" + "="*60)
+    print("📦 RENAMING: extraskilluses.db")
+    print("="*60)
+    
+    if name_mapping is None:
+        print("   ⚠️  Skipping - no name mapping available")
+        return 0
+    
+    db_file = BASE_PATH / "packs" / "extraskilluses.db"
+    
+    if not db_file.exists():
+        print(f"   ❌ File not found: {db_file}")
+        return 0
+    
+    # Backup
+    backup = create_backup(db_file)
+    print(f"   ✓ Backup: {backup.name}")
+    
+    try:
+        with open(db_file, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        
+        print(f"   ✓ Loaded {len(lines)} items\n")
+        
+        fixed_lines = []
+        renamed = 0
+        
+        for idx, line in enumerate(lines):
+            if not line.strip():
                 continue
             
             try:
-                power = json.loads(line)
+                item = json.loads(line)
+                old_name = item.get('name', '')
                 
-                # Fix the type if needed
-                if power.get('type') == 'force-power':
-                    power['type'] = 'forcepower'
-                    type_changes += 1
+                # If name is "Unnamed Skilluse" and we have a mapping, rename it
+                if old_name.startswith('Unnamed Skilluse') and idx in name_mapping:
+                    new_name = name_mapping[idx]
+                    item['name'] = new_name
+                    renamed += 1
+                    
+                    print(f"   ✓ Line {idx+1:3d}: {old_name:25s} → {new_name}")
                 
-                forcepowers.append(power)
-                
-                name = power.get('name', 'Unknown')
-                power_type = power.get('type', 'no-type')
-                print(f"   ✓ Line {i}: {name} (type: {power_type})")
-                
-            except json.JSONDecodeError as e:
-                print(f"   ⚠️  Line {i}: Failed to parse - {e}")
-                continue
+                fixed_lines.append(json.dumps(item, ensure_ascii=False))
+            
+            except json.JSONDecodeError:
+                fixed_lines.append(line.strip())
         
-        print(f"\n✓ Successfully parsed {len(forcepowers)} force powers")
-        print(f"✓ Changed {type_changes} types from 'force-power' to 'forcepower'")
+        # Write back
+        with open(db_file, 'w', encoding='utf-8') as f:
+            for line in fixed_lines:
+                f.write(line + '\n')
         
-        # Create proper JSON array with nice formatting
-        fixed_json = json.dumps(forcepowers, indent=2, ensure_ascii=False)
+        print(f"\n   ✅ Renamed {renamed} items")
         
-        # Write fixed version
-        with open(FORCEPOWERS_FILE, 'w', encoding='utf-8') as f:
-            f.write(fixed_json)
-        
-        print(f"✓ Fixed file written: {len(fixed_json)} characters")
-        
-        # Verify it's valid
-        print(f"\n🔍 Verifying fixed file...")
-        with open(FORCEPOWERS_FILE, 'r', encoding='utf-8') as f:
-            verification = json.load(f)
-        
-        print(f"✅ SUCCESS! File is now valid JSON!")
-        print(f"   Type: {type(verification).__name__}")
-        print(f"   Force Powers: {len(verification)}")
-        
-        # Check types
-        forcepower_count = sum(1 for p in verification if p.get('type') == 'forcepower')
-        bad_count = sum(1 for p in verification if p.get('type') == 'force-power')
-        
-        print(f"\n📊 Type Check:")
-        print(f"   ✓ Correct type 'forcepower': {forcepower_count}")
-        if bad_count > 0:
-            print(f"   ⚠️  Still has 'force-power': {bad_count}")
-        else:
-            print(f"   ✓ No 'force-power' types remaining!")
-        
-        print(f"\n📋 Sample Force Powers:")
-        for power in verification[:5]:
-            print(f"   - {power.get('name', 'Unknown')} (type: {power.get('type', 'none')})")
-        
-        print(f"\n✅ COMPLETE!")
-        print(f"   Original: {backup_file.name}")
-        print(f"   Fixed: {FORCEPOWERS_FILE.name}")
-        
-        return True
-        
+        return renamed
+    
     except Exception as e:
-        print(f"\n❌ ERROR: {e}")
-        print(f"\n🔄 Restoring from backup...")
-        
-        # Restore backup if it exists
-        if backup_file.exists():
-            with open(backup_file, 'r', encoding='utf-8') as f:
-                content = f.read()
-            with open(FORCEPOWERS_FILE, 'w', encoding='utf-8') as f:
-                f.write(content)
-            print(f"✓ Restored original file")
-        
-        return False
+        print(f"   ❌ Error: {e}")
+        return 0
 
 def main():
-    """
-    Main function
-    """
-    success = fix_forcepowers_json()
+    """Main function"""
+    print("\n" + "="*60)
+    print("🔧 EXTRA SKILL USE RENAMER")
+    print("="*60)
+    print(f"\nTarget: {BASE_PATH}")
+    print("\n📝 This will rename all 'Unnamed Skilluse X' items")
+    print("   to their actual names from the 'application' field")
+    print("\n📦 Backups will be created")
+    print("\nPress Ctrl+C to cancel, or")
+    input("Press Enter to continue...\n")
     
-    if success:
-        print("\n" + "="*60)
-        print("🎉 Your forcepowers.json is now fixed!")
-        print("="*60)
-        print("\n💡 Next steps:")
-        print("   1. Reload Foundry VTT")
-        print("   2. Check console - validation errors should be gone!")
-        print("   3. Test: game.swse and CONFIG.SWSE should exist")
-        print("   4. Test: Force powers should load correctly")
+    # Rename JSON items and get mapping
+    name_mapping = rename_json_items()
+    
+    # Rename DB items using the mapping
+    if name_mapping:
+        rename_db_items(name_mapping)
+    
+    # Summary
+    print("\n" + "="*60)
+    print("📊 RENAMING COMPLETE")
+    print("="*60)
+    
+    if name_mapping:
+        print(f"\n✅ Successfully renamed items!")
+        print(f"   Items renamed in JSON: {len(name_mapping)}")
+        print("\n💡 Sample new names:")
+        for idx, name in list(name_mapping.items())[:5]:
+            print(f"   - {name}")
+        
+        if len(name_mapping) > 5:
+            print(f"   ... and {len(name_mapping) - 5} more")
+        
+        print("\n🎉 All items now have descriptive names!")
+        print("\n📦 Backups saved with timestamps")
     else:
-        print("\n" + "="*60)
-        print("❌ Fix failed - check error messages above")
-        print("="*60)
+        print("\n⚠️  Renaming failed - check errors above")
     
-    print("\n")
-    input("Press Enter to exit...")
+    print("\n" + "="*60)
+    input("\nPress Enter to exit...")
 
 if __name__ == "__main__":
     main()
