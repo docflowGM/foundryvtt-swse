@@ -23,7 +23,7 @@
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/releases/latest/download/swse.zip",
   "esmodules": [
-    "index.js"
+    "scripts/swse.js"
   ],
   "styles": [
     "styles/swse.css",

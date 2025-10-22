@@ -1,0 +1,79 @@
+
+SWSE System Cleanup Report
+==========================
+Date: 2025-10-22 16:11:56
+Backup Location: C:\Users\Owner\Documents\GitHub\foundryvtt-swse\backup_20251022_161149
+
+Actions Performed:
+------------------
+✅ Deleted duplicate files
+✅ Merged actor implementations
+✅ Created main entry point (scripts/swse.js)
+✅ Reorganized file structure
+✅ Updated import statements
+✅ Updated system.json
+✅ Created proper directory structure
+
+New File Structure:
+-------------------
+scripts/
+├── swse.js                    [NEW] Main entry point
+├── actors/
+│   ├── swse-actor.js         [MERGED] Enhanced with races & conditions
+│   ├── swse-droid.js         [KEPT]
+│   ├── swse-npc.js           [KEPT]
+│   └── swse-vehicle.js       [KEPT]
+├── items/
+│   └── swse-item.js          [KEPT]
+├── apps/
+│   ├── chargen.js            [KEPT]
+│   ├── chargen-init.js       [KEPT]
+│   ├── store.js              [KEPT]
+│   └── swse-levelup.js       [MOVED from root]
+├── core/
+│   ├── load-templates.js     [KEPT]
+│   ├── swse-data.js          [KEPT]
+│   └── world-data-loader.js  [KEPT]
+├── helpers/
+│   ├── dice-utils.js         [KEPT]
+│   └── handlebars-helpers.js [KEPT]
+└── data/
+    └── races.js              [MOVED from root]
+
+Files Deleted:
+--------------
+- scripts/chargen.js (duplicate)
+- scripts/chargen/ (directory)
+- scripts/swse-actor.js (merged)
+- scripts/swse-droid.js (duplicate)
+- scripts/swse-npc.js (duplicate)
+- scripts/swse-vehicle.js (duplicate)
+- scripts/swse-item.js (duplicate)
+- scripts/swse-data.js (duplicate)
+- scripts/swse-data-optimized.js (duplicate)
+- scripts/load-templates.js (duplicate)
+- scripts/world-data-loader.js (duplicate)
+- scripts/helpers.js (duplicate)
+- scripts/helpers/helpers.js (duplicate)
+- scripts/diceroller.js (obsolete)
+- scripts/import-data.js (redundant)
+- scripts/init.js (merged into swse.js)
+- scripts/system-entry.js (merged into swse.js)
+- scripts/sheets/ (directory)
+- scripts/store/ (directory)
+
+Next Steps:
+-----------
+1. Test the system in Foundry VTT
+2. Verify all imports are working correctly
+3. Check that all character sheets load properly
+4. Test character generator
+5. Test store functionality
+6. If everything works, delete backup folder
+
+Rollback Instructions:
+----------------------
+If anything goes wrong:
+1. Delete the scripts/ folder
+2. Restore from: C:\Users\Owner\Documents\GitHub\foundryvtt-swse\backup_20251022_161149/scripts
+3. Run the script again with fixes

@@ -1,6 +1,6 @@
 // FILE: scripts/actors/swse-droid.js
 // ============================================
-import { SWSEActorSheet } from "../actors/swse-actor.js";
+import { SWSEActorSheet } from "./swse-actor.js";
 
 export class SWSEDroidSheet extends SWSEActorSheet {
   static get defaultOptions() {

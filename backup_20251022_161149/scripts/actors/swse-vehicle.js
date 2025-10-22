@@ -1,7 +1,7 @@
 // ============================================
 // FILE: scripts/swse-vehicle.js
 // ============================================
-import { SWSEActorSheet } from "../actors/swse-actor.js";
+import { SWSEActorSheet } from "./swse-actor.js";
 
 export class SWSEVehicleSheet extends SWSEActorSheet {
   static get defaultOptions() {

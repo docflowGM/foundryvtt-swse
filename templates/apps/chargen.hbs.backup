@@ -16,9 +16,9 @@
     {{#if (eq currentStep "name")}}
       <section class="step-name">
         <label>Name</label>
-        <input name="character-name" class="chargen-name-input" type="text" value="{{characterData.name}}"  />
+        <input name="char_name" type="text" value="{{characterData.name}}" oninput="document.querySelector('.chargen-app input[name=char_name]').dataset.value=this.value" />
         <div class="actions">
-          <button type="button" class="next-step btn-primary">Next</button>
+          <button class="next-step">Next</button>
         </div>
       </section>
     {{/if}}
@@ -84,7 +84,7 @@
 
         <div class="nav">
           <button class="prev-step">Previous</button>
-          <button type="button" class="next-step btn-primary">Next</button>
+          <button class="next-step">Next</button>
         </div>
       </section>
     {{/if}}
@@ -102,7 +102,7 @@
         <input type="number" name="class_level" value="1" min="1" / data-dtype="Number">
         <div class="nav">
           <button class="prev-step">Previous</button>
-          <button type="button" class="next-step btn-primary">Next</button>
+          <button class="next-step">Next</button>
         </div>
       </section>
     {{/if}}
@@ -146,7 +146,7 @@
             <div class="skill-row"><label><input type="checkbox" name="skill_train" value="{{this.name}}"/> {{this.name}} ({{this.ability}})</label></div>
           {{/each}}
         </div>
-        <div class="nav"><button class="prev-step">Previous</button><button type="button" class="next-step btn-primary">Next</button></div>
+        <div class="nav"><button class="prev-step">Previous</button><button class="next-step">Next</button></div>
       </section>
     {{/if}}
 
