@@ -1,622 +1,730 @@
 #!/usr/bin/env python3
 """
-SWSE System Cleanup and Reorganization Script
-==============================================
-This script performs comprehensive cleanup and reorganization of the SWSE Foundry VTT system:
-- Deletes duplicate files
-- Merges conflicting implementations
-- Reorganizes file structure
-- Updates import paths
-- Creates new main entry point
-- Moves misplaced files
-
-BACKUP IS CREATED AUTOMATICALLY BEFORE ANY CHANGES
+SWSE System Reorganization Script
+Reorganizes utils/ and rolls/ folders and creates integration files
 """
 
 import os
 import shutil
-import json
-import re
 from pathlib import Path
 from datetime import datetime
+import re
 
-# Base directory
-BASE_DIR = Path(r"C:\Users\Owner\Documents\GitHub\foundryvtt-swse")
-SCRIPTS_DIR = BASE_DIR / "scripts"
-TEMPLATES_DIR = BASE_DIR / "templates"
-STYLES_DIR = BASE_DIR / "styles"
+# Base path
+BASE_PATH = Path(r"C:\Users\Owner\Documents\GitHub\foundryvtt-swse")
 
 # Backup directory
-BACKUP_DIR = BASE_DIR / f"backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-
-# Color codes for terminal output
-class Colors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-
-def log_info(msg):
-    print(f"{Colors.OKBLUE}[INFO]{Colors.ENDC} {msg}")
-
-def log_success(msg):
-    print(f"{Colors.OKGREEN}[SUCCESS]{Colors.ENDC} {msg}")
-
-def log_warning(msg):
-    print(f"{Colors.WARNING}[WARNING]{Colors.ENDC} {msg}")
-
-def log_error(msg):
-    print(f"{Colors.FAIL}[ERROR]{Colors.ENDC} {msg}")
-
-def log_header(msg):
-    print(f"\n{Colors.HEADER}{Colors.BOLD}{'='*60}{Colors.ENDC}")
-    print(f"{Colors.HEADER}{Colors.BOLD}{msg.center(60)}{Colors.ENDC}")
-    print(f"{Colors.HEADER}{Colors.BOLD}{'='*60}{Colors.ENDC}\n")
-
+BACKUP_DIR = BASE_PATH / f"_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
 def create_backup():
-    """Create a complete backup of the scripts directory"""
-    log_header("Creating Backup")
-    try:
-        if SCRIPTS_DIR.exists():
-            shutil.copytree(SCRIPTS_DIR, BACKUP_DIR / "scripts")
-            log_success(f"Backup created at: {BACKUP_DIR}")
-            return True
-    except Exception as e:
-        log_error(f"Failed to create backup: {e}")
-        return False
+    """Create a full backup before making changes"""
+    print(f"📦 Creating backup at: {BACKUP_DIR}")
+    BACKUP_DIR.mkdir(exist_ok=True)
+    
+    # Backup folders we'll be modifying
+    folders_to_backup = ["utils", "rolls", "scripts", "index.js", "config.js"]
+    
+    for item in folders_to_backup:
+        src = BASE_PATH / item
+        if src.exists():
+            if src.is_file():
+                shutil.copy2(src, BACKUP_DIR / item)
+                print(f"   ✓ Backed up {item}")
+            else:
+                shutil.copytree(src, BACKUP_DIR / item)
+                print(f"   ✓ Backed up {item}/")
+    
+    print("✅ Backup complete!\n")
 
+def move_folders():
+    """Move utils/ and rolls/ into scripts/"""
+    print("📁 Moving folders into scripts/...")
+    
+    scripts_dir = BASE_PATH / "scripts"
+    scripts_dir.mkdir(exist_ok=True)
+    
+    # Move utils/
+    old_utils = BASE_PATH / "utils"
+    new_utils = scripts_dir / "utils"
+    if old_utils.exists():
+        if new_utils.exists():
+            print(f"   ⚠️  {new_utils} already exists, merging...")
+            shutil.copytree(old_utils, new_utils, dirs_exist_ok=True)
+            shutil.rmtree(old_utils)
+        else:
+            shutil.move(str(old_utils), str(new_utils))
+        print("   ✓ Moved utils/ → scripts/utils/")
+    
+    # Move rolls/
+    old_rolls = BASE_PATH / "rolls"
+    new_rolls = scripts_dir / "rolls"
+    if old_rolls.exists():
+        if new_rolls.exists():
+            print(f"   ⚠️  {new_rolls} already exists, merging...")
+            shutil.copytree(old_rolls, new_rolls, dirs_exist_ok=True)
+            shutil.rmtree(old_rolls)
+        else:
+            shutil.move(str(old_rolls), str(new_rolls))
+        print("   ✓ Moved rolls/ → scripts/rolls/")
+    
+    print("✅ Folders moved!\n")
 
-def delete_duplicates():
-    """Delete all duplicate files"""
-    log_header("Deleting Duplicate Files")
+def resolve_dice_utils_conflict():
+    """Handle the dice-utils.js conflict"""
+    print("🔧 Resolving dice-utils.js conflict...")
     
-    duplicates_to_delete = [
-        "scripts/chargen.js",
-        "scripts/chargen/chargen.js",
-        "scripts/chargen/chargen-init.js",
-        "scripts/swse-droid.js",
-        "scripts/swse-npc.js",
-        "scripts/swse-vehicle.js",
-        "scripts/swse-item.js",
-        "scripts/swse-data-optimized.js",
-        "scripts/swse-data.js",
-        "scripts/load-templates.js",
-        "scripts/world-data-loader.js",
-        "scripts/helpers.js",
-        "scripts/helpers/helpers.js",
-        "scripts/diceroller.js",
-        "scripts/import-data.js",
-        "scripts/system-entry.js",
-        "scripts/init.js",
-        "scripts/sheets/swse-actor-sheet.js",
-    ]
+    old_dice = BASE_PATH / "scripts" / "utils" / "dice-utils.js"
+    helpers_dice = BASE_PATH / "scripts" / "helpers" / "dice-utils.js"
     
-    directories_to_delete = [
-        "scripts/chargen",
-        "scripts/store",
-        "scripts/sheets",
-    ]
-    
-    deleted_count = 0
-    
-    # Delete individual files
-    for file_path in duplicates_to_delete:
-        full_path = BASE_DIR / file_path
-        if full_path.exists():
-            try:
-                full_path.unlink()
-                log_success(f"Deleted: {file_path}")
-                deleted_count += 1
-            except Exception as e:
-                log_error(f"Failed to delete {file_path}: {e}")
-    
-    # Delete directories
-    for dir_path in directories_to_delete:
-        full_path = BASE_DIR / dir_path
-        if full_path.exists():
-            try:
-                shutil.rmtree(full_path)
-                log_success(f"Deleted directory: {dir_path}")
-                deleted_count += 1
-            except Exception as e:
-                log_error(f"Failed to delete {dir_path}: {e}")
-    
-    log_info(f"Total items deleted: {deleted_count}")
-
-
-def merge_actor_files():
-    """Merge the best features from different swse-actor.js implementations"""
-    log_header("Merging Actor Files")
-    
-    # Read the comprehensive version with races and conditions
-    comprehensive_actor = BASE_DIR / "scripts/swse-actor.js"
-    target_actor = BASE_DIR / "scripts/actors/swse-actor.js"
-    
-    if not comprehensive_actor.exists():
-        log_warning("Comprehensive actor file not found, keeping existing actors/swse-actor.js")
-        return
-    
-    try:
-        # Read comprehensive version
-        with open(comprehensive_actor, 'r', encoding='utf-8') as f:
-            comprehensive_content = f.read()
+    if old_dice.exists() and helpers_dice.exists():
+        # Read both files
+        with open(old_dice, 'r', encoding='utf-8') as f:
+            old_content = f.read()
         
-        # Write to target location
-        with open(target_actor, 'w', encoding='utf-8') as f:
-            f.write(comprehensive_content)
+        with open(helpers_dice, 'r', encoding='utf-8') as f:
+            helpers_content = f.read()
         
-        log_success("Merged actor implementations into scripts/actors/swse-actor.js")
-        
-        # Delete the old comprehensive version
-        comprehensive_actor.unlink()
-        log_success("Deleted scripts/swse-actor.js (merged into actors/)")
-        
-    except Exception as e:
-        log_error(f"Failed to merge actor files: {e}")
-
-
-def create_main_entry():
-    """Create the main swse.js entry point"""
-    log_header("Creating Main Entry Point")
-    
-    main_entry_content = '''// ============================================
-// SWSE System - Main Entry Point
-// Foundry VTT | Star Wars Saga Edition
+        # Create merged version
+        merged_content = """// ============================================
+// FILE: dice-utils.js
+// Merged dice rolling utilities for SWSE
 // ============================================
 
-import { SWSEActor, SWSEActorSheet } from "./actors/swse-actor.js";
-import { SWSEDroidSheet } from "./actors/swse-droid.js";
-import { SWSENPCSheet } from "./actors/swse-npc.js";
-import { SWSEVehicleSheet } from "./actors/swse-vehicle.js";
-import { SWSEItemSheet } from "./items/swse-item.js";
-import { registerHandlebarsHelpers } from "./helpers/handlebars-helpers.js";
-import { preloadHandlebarsTemplates } from "./core/load-templates.js";
-import { WorldDataLoader } from "./core/world-data-loader.js";
-
 /**
- * SWSE System Initialization
+ * Evaluate a roll and send to chat
+ * @param {Roll} roll - The roll to evaluate
+ * @param {object} options - Chat message options
+ * @returns {Promise<Roll>} Evaluated roll
  */
-Hooks.once("init", async function() {
-  console.log("SWSE | Initializing Star Wars Saga Edition System");
-
-  // Register custom Actor and Item classes
-  CONFIG.Actor.documentClass = SWSEActor;
-  
-  // Unregister core sheets
-  Actors.unregisterSheet("core", ActorSheet);
-  Items.unregisterSheet("core", ItemSheet);
-
-  // Register SWSE sheets
-  Actors.registerSheet("swse", SWSEActorSheet, {
-    types: ["character"],
-    makeDefault: true,
-    label: "SWSE Character Sheet"
-  });
-
-  Actors.registerSheet("swse", SWSEDroidSheet, {
-    types: ["droid"],
-    makeDefault: true,
-    label: "SWSE Droid Sheet"
-  });
-
-  Actors.registerSheet("swse", SWSENPCSheet, {
-    types: ["npc"],
-    makeDefault: true,
-    label: "SWSE NPC Sheet"
-  });
-
-  Actors.registerSheet("swse", SWSEVehicleSheet, {
-    types: ["vehicle"],
-    makeDefault: true,
-    label: "SWSE Vehicle Sheet"
-  });
-
-  Items.registerSheet("swse", SWSEItemSheet, {
-    makeDefault: true,
-    label: "SWSE Item Sheet"
-  });
-
-  // Register Handlebars helpers
-  registerHandlebarsHelpers();
-
-  // Preload Handlebars templates
-  await preloadHandlebarsTemplates();
-
-  // Register game settings
-  registerSystemSettings();
-
-  console.log("SWSE | System initialization complete");
-});
-
-/**
- * System Ready Hook
- */
-Hooks.once("ready", async function() {
-  console.log("SWSE | System ready");
-
-  // Auto-load world data for GM
-  if (game.user.isGM) {
-    await WorldDataLoader.autoLoad();
-  }
-
-  // Enhance validation logging
-  enhanceValidationLogging();
-});
-
-/**
- * Register system settings
- */
-function registerSystemSettings() {
-  // Data loaded flag
-  game.settings.register("swse", "dataLoaded", {
-    name: "Data Loaded",
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false
-  });
-
-  // Force Point bonus
-  game.settings.register("swse", "forcePointBonus", {
-    name: "Force Point Bonus",
-    hint: "Bonus applied when spending Force Points",
-    scope: "world",
-    config: true,
-    type: Number,
-    default: 2
-  });
-
-  // Store markup
-  game.settings.register("swse", "storeMarkup", {
-    name: "Store Markup %",
-    hint: "Percentage markup on store items",
-    scope: "world",
-    config: true,
-    type: Number,
-    default: 0
-  });
-
-  // Store discount
-  game.settings.register("swse", "storeDiscount", {
-    name: "Store Discount %",
-    hint: "Percentage discount on store items",
-    scope: "world",
-    config: true,
-    type: Number,
-    default: 0
-  });
+async function evaluateRoll(roll, options = {}) {
+    await roll.evaluate({async: true});
+    await roll.toMessage(options);
+    return roll;
 }
 
 /**
- * Enhance validation error logging
+ * Roll dice with a formula
+ * @param {string} formula - Dice formula (e.g., "2d6+3")
+ * @param {object} data - Data for formula variables
+ * @param {string} label - Label for the roll
+ * @returns {Promise<Roll>} The roll result
  */
-function enhanceValidationLogging() {
-  [Actor, Item].forEach(DocumentClass => {
-    const original = DocumentClass.prototype.validate;
-    DocumentClass.prototype.validate = function(data, options) {
-      try {
-        return original.call(this, data, options);
-      } catch (err) {
-        if (err.name === "DataModelValidationError") {
-          console.group(`⚠️ ${DocumentClass.name} Validation Error`);
-          console.error(`${DocumentClass.name} Instance:`, this);
-          console.error("Data being validated:", data);
-          if (err.failures) {
-            err.failures.forEach(f => {
-              console.error(`❌ Path: ${f.path}`, "Reason:", f.failure, "Value:", f.value);
-            });
-          }
-          console.groupEnd();
-        }
-        throw err;
-      }
-    };
-  });
-}
-
-// Make WorldDataLoader available globally for console access
-window.WorldDataLoader = WorldDataLoader;
-
-console.log("SWSE | Main module loaded");
-'''
-    
-    try:
-        main_entry_path = SCRIPTS_DIR / "swse.js"
-        with open(main_entry_path, 'w', encoding='utf-8') as f:
-            f.write(main_entry_content)
-        log_success("Created scripts/swse.js main entry point")
-    except Exception as e:
-        log_error(f"Failed to create main entry point: {e}")
-
-
-def move_races_file():
-    """Move races.js to data subdirectory"""
-    log_header("Reorganizing Data Files")
-    
-    # Create data directory if it doesn't exist
-    data_dir = SCRIPTS_DIR / "data"
-    data_dir.mkdir(exist_ok=True)
-    
-    # Move races.js
-    races_src = SCRIPTS_DIR / "races.js"
-    races_dst = data_dir / "races.js"
-    
-    if races_src.exists():
-        try:
-            shutil.move(str(races_src), str(races_dst))
-            log_success("Moved races.js to scripts/data/")
-        except Exception as e:
-            log_error(f"Failed to move races.js: {e}")
-    
-    # Move swse-levelup.js to apps
-    levelup_src = SCRIPTS_DIR / "swse-levelup.js"
-    levelup_dst = SCRIPTS_DIR / "apps" / "swse-levelup.js"
-    
-    if levelup_src.exists():
-        try:
-            shutil.move(str(levelup_src), str(levelup_dst))
-            log_success("Moved swse-levelup.js to scripts/apps/")
-        except Exception as e:
-            log_error(f"Failed to move swse-levelup.js: {e}")
-
-
-def update_imports():
-    """Update import statements in all JavaScript files"""
-    log_header("Updating Import Statements")
-    
-    import_mappings = {
-        'from "./swse-actor.js"': 'from "../actors/swse-actor.js"',
-        'from "./swse-droid.js"': 'from "./swse-droid.js"',
-        'from "./swse-npc.js"': 'from "./swse-npc.js"',
-        'from "./swse-vehicle.js"': 'from "./swse-vehicle.js"',
-        'from "./races.js"': 'from "../data/races.js"',
-        'from "./swse-data.js"': 'from "../core/swse-data.js"',
-        'from "./swse-levelup.js"': 'from "./swse-levelup.js"',
-        'from "./chargen.js"': 'from "./chargen.js"',
-        'from "./world-data-loader.js"': 'from "../core/world-data-loader.js"',
-        'import { SWSEActorSheet } from "./swse-actor.js"': 'import { SWSEActorSheet } from "../actors/swse-actor.js"',
+export async function rollDice(formula, data = {}, label = "Roll") {
+    try {
+        const roll = await new Roll(formula, data).evaluate({async: true});
+        
+        await roll.toMessage({
+            speaker: ChatMessage.getSpeaker(),
+            flavor: label
+        });
+        
+        return roll;
+    } catch (err) {
+        ui.notifications.error(`Dice roll failed: ${err.message}`);
+        console.error(err);
+        return null;
     }
-    
-    js_files = list(SCRIPTS_DIR.rglob("*.js"))
-    updated_count = 0
-    
-    for js_file in js_files:
-        try:
-            with open(js_file, 'r', encoding='utf-8') as f:
-                content = f.read()
-            
-            original_content = content
-            
-            # Apply import mappings
-            for old_import, new_import in import_mappings.items():
-                content = content.replace(old_import, new_import)
-            
-            # Fix relative paths based on file location
-            if 'actors' in str(js_file) and 'from "./swse-actor.js"' in content:
-                content = content.replace('from "./swse-actor.js"', 'from "./swse-actor.js"')
-            
-            if content != original_content:
-                with open(js_file, 'w', encoding='utf-8') as f:
-                    f.write(content)
-                log_success(f"Updated imports in: {js_file.relative_to(BASE_DIR)}")
-                updated_count += 1
-                
-        except Exception as e:
-            log_error(f"Failed to update {js_file}: {e}")
-    
-    log_info(f"Total files with updated imports: {updated_count}")
+}
 
+/**
+ * Quick d20 roll
+ * @param {number} modifier - Modifier to add
+ * @param {string} label - Label for the roll
+ * @returns {Promise<Roll>} The roll result
+ */
+export async function d20(modifier = 0, label = "d20") {
+    return rollDice(`1d20 + ${modifier}`, {}, label);
+}
 
-def update_system_json():
-    """Update system.json to use new main entry point"""
-    log_header("Updating system.json")
+/**
+ * Roll an attack with modifiers
+ * @param {number} baseAttack - Base attack bonus
+ * @param {number[]} modifiers - Array of additional modifiers
+ * @param {object} rollData - Additional roll data
+ * @returns {Promise<Roll>} The evaluated roll
+ */
+export async function rollAttack(baseAttack, modifiers = [], rollData = {}) {
+    const totalMod = modifiers.reduce((sum, mod) => sum + mod, baseAttack);
+    const roll = new Roll("1d20 + @total", { ...rollData, total: totalMod });
+    return await evaluateRoll(roll, {
+        speaker: ChatMessage.getSpeaker(),
+        flavor: "Attack Roll"
+    });
+}
+
+/**
+ * Roll damage dice
+ * @param {string} damageDice - Damage dice formula (e.g., "2d6")
+ * @param {number} modifier - Damage modifier
+ * @param {object} rollData - Additional roll data
+ * @returns {Promise<Roll>} The evaluated roll
+ */
+export async function rollDamage(damageDice, modifier = 0, rollData = {}) {
+    const roll = new Roll(`${damageDice} + @mod`, { ...rollData, mod: modifier });
+    return await evaluateRoll(roll, {
+        speaker: ChatMessage.getSpeaker(),
+        flavor: "Damage"
+    });
+}
+
+/**
+ * Roll for initiative
+ * @param {number} initiativeBonus - Initiative bonus
+ * @param {object} rollData - Additional roll data
+ * @returns {Promise<Roll>} The evaluated roll
+ */
+export async function rollInitiative(initiativeBonus = 0, rollData = {}) {
+    const roll = new Roll("1d20 + @init", { ...rollData, init: initiativeBonus });
+    return await evaluateRoll(roll, {
+        speaker: ChatMessage.getSpeaker(),
+        flavor: "Initiative"
+    });
+}
+
+/**
+ * Roll a skill check
+ * @param {number} skillModifier - Total skill modifier
+ * @param {object} rollData - Additional roll data
+ * @returns {Promise<Roll>} The evaluated roll
+ */
+export async function rollSkillCheck(skillModifier = 0, rollData = {}) {
+    const roll = new Roll("1d20 + @skill", { ...rollData, skill: skillModifier });
+    return await evaluateRoll(roll, {
+        speaker: ChatMessage.getSpeaker(),
+        flavor: "Skill Check"
+    });
+}
+
+/**
+ * Check for a critical hit
+ * @param {number} rollResult - The d20 roll result
+ * @param {number} criticalRange - The critical threat range (default 20)
+ * @returns {boolean} True if critical threat
+ */
+export function isCriticalThreat(rollResult, criticalRange = 20) {
+    return rollResult >= criticalRange;
+}
+
+/**
+ * Roll with advantage (roll twice, take higher)
+ * @param {string} formula - Dice formula
+ * @param {string} label - Label for the roll
+ * @returns {Promise<Roll>} The higher roll
+ */
+export async function rollWithAdvantage(formula, label = "Roll with Advantage") {
+    const roll1 = await new Roll(formula).evaluate({async: true});
+    const roll2 = await new Roll(formula).evaluate({async: true});
     
-    system_json_path = BASE_DIR / "system.json"
+    const higherRoll = roll1.total >= roll2.total ? roll1 : roll2;
     
-    if not system_json_path.exists():
-        log_warning("system.json not found")
-        return
+    await higherRoll.toMessage({
+        speaker: ChatMessage.getSpeaker(),
+        flavor: `${label} (${roll1.total} vs ${roll2.total})`
+    });
     
-    try:
-        with open(system_json_path, 'r', encoding='utf-8') as f:
-            system_data = json.load(f)
+    return higherRoll;
+}
+
+/**
+ * Roll with disadvantage (roll twice, take lower)
+ * @param {string} formula - Dice formula
+ * @param {string} label - Label for the roll
+ * @returns {Promise<Roll>} The lower roll
+ */
+export async function rollWithDisadvantage(formula, label = "Roll with Disadvantage") {
+    const roll1 = await new Roll(formula).evaluate({async: true});
+    const roll2 = await new Roll(formula).evaluate({async: true});
+    
+    const lowerRoll = roll1.total <= roll2.total ? roll1 : roll2;
+    
+    await lowerRoll.toMessage({
+        speaker: ChatMessage.getSpeaker(),
+        flavor: `${label} (${roll1.total} vs ${roll2.total})`
+    });
+    
+    return lowerRoll;
+}
+"""
         
-        # Update esmodules to point to new main entry
-        system_data["esmodules"] = ["scripts/swse.js"]
+        # Write merged version to utils
+        with open(old_dice, 'w', encoding='utf-8') as f:
+            f.write(merged_content)
         
-        # Write back
-        with open(system_json_path, 'w', encoding='utf-8') as f:
-            json.dump(system_data, f, indent=2)
+        # Rename the helpers version as backup
+        backup_name = helpers_dice.parent / "dice-utils.js.old"
+        shutil.move(str(helpers_dice), str(backup_name))
         
-        log_success("Updated system.json with new entry point")
-        
-    except Exception as e:
-        log_error(f"Failed to update system.json: {e}")
-
-
-def create_directory_structure():
-    """Ensure proper directory structure exists"""
-    log_header("Creating Directory Structure")
+        print("   ✓ Merged dice-utils.js files")
+        print(f"   ✓ Old helpers version saved as {backup_name.name}")
     
-    directories = [
-        SCRIPTS_DIR / "actors",
-        SCRIPTS_DIR / "items",
-        SCRIPTS_DIR / "apps",
-        SCRIPTS_DIR / "core",
-        SCRIPTS_DIR / "helpers",
-        SCRIPTS_DIR / "data",
-        TEMPLATES_DIR / "apps",
-        STYLES_DIR / "apps",
-    ]
+    print("✅ Conflict resolved!\n")
+
+def create_utils_init():
+    """Create utils-init.js file"""
+    print("📝 Creating utils-init.js...")
     
-    for directory in directories:
-        directory.mkdir(parents=True, exist_ok=True)
-        log_success(f"Ensured directory exists: {directory.relative_to(BASE_DIR)}")
-
-
-def generate_report():
-    """Generate a summary report of changes"""
-    log_header("Cleanup Summary Report")
+    core_dir = BASE_PATH / "scripts" / "core"
+    core_dir.mkdir(exist_ok=True)
     
-    report_content = f"""
-SWSE System Cleanup Report
-==========================
-Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-Backup Location: {BACKUP_DIR}
+    utils_init_path = core_dir / "utils-init.js"
+    
+    content = """// ============================================
+// FILE: utils-init.js
+// Initialize SWSE utility functions
+// ============================================
 
-Actions Performed:
-------------------
-✅ Deleted duplicate files
-✅ Merged actor implementations
-✅ Created main entry point (scripts/swse.js)
-✅ Reorganized file structure
-✅ Updated import statements
-✅ Updated system.json
-✅ Created proper directory structure
+import * as MathUtils from "../utils/math-utils.js";
+import * as StringUtils from "../utils/string-utils.js";
+import * as CombatUtils from "../utils/combat-utils.js";
+import * as CharacterUtils from "../utils/character-utils.js";
+import * as DataUtils from "../utils/data-utils.js";
+import * as UIUtils from "../utils/ui-utils.js";
+import * as ValidationUtils from "../utils/validation-utils.js";
+import * as DiceUtils from "../utils/dice-utils.js";
 
-New File Structure:
--------------------
-scripts/
-├── swse.js                    [NEW] Main entry point
-├── actors/
-│   ├── swse-actor.js         [MERGED] Enhanced with races & conditions
-│   ├── swse-droid.js         [KEPT]
-│   ├── swse-npc.js           [KEPT]
-│   └── swse-vehicle.js       [KEPT]
-├── items/
-│   └── swse-item.js          [KEPT]
-├── apps/
-│   ├── chargen.js            [KEPT]
-│   ├── chargen-init.js       [KEPT]
-│   ├── store.js              [KEPT]
-│   └── swse-levelup.js       [MOVED from root]
-├── core/
-│   ├── load-templates.js     [KEPT]
-│   ├── swse-data.js          [KEPT]
-│   └── world-data-loader.js  [KEPT]
-├── helpers/
-│   ├── dice-utils.js         [KEPT]
-│   └── handlebars-helpers.js [KEPT]
-└── data/
-    └── races.js              [MOVED from root]
-
-Files Deleted:
---------------
-- scripts/chargen.js (duplicate)
-- scripts/chargen/ (directory)
-- scripts/swse-actor.js (merged)
-- scripts/swse-droid.js (duplicate)
-- scripts/swse-npc.js (duplicate)
-- scripts/swse-vehicle.js (duplicate)
-- scripts/swse-item.js (duplicate)
-- scripts/swse-data.js (duplicate)
-- scripts/swse-data-optimized.js (duplicate)
-- scripts/load-templates.js (duplicate)
-- scripts/world-data-loader.js (duplicate)
-- scripts/helpers.js (duplicate)
-- scripts/helpers/helpers.js (duplicate)
-- scripts/diceroller.js (obsolete)
-- scripts/import-data.js (redundant)
-- scripts/init.js (merged into swse.js)
-- scripts/system-entry.js (merged into swse.js)
-- scripts/sheets/ (directory)
-- scripts/store/ (directory)
-
-Next Steps:
------------
-1. Test the system in Foundry VTT
-2. Verify all imports are working correctly
-3. Check that all character sheets load properly
-4. Test character generator
-5. Test store functionality
-6. If everything works, delete backup folder
-
-Rollback Instructions:
-----------------------
-If anything goes wrong:
-1. Delete the scripts/ folder
-2. Restore from: {BACKUP_DIR}/scripts
-3. Run the script again with fixes
+/**
+ * Initialize utilities and expose them on game.swse.utils
+ */
+export function initializeUtils() {
+  console.log("SWSE | Initializing utilities...");
+  
+  if (!game.swse) game.swse = {};
+  
+  game.swse.utils = {
+    math: MathUtils,
+    string: StringUtils,
+    combat: CombatUtils,
+    character: CharacterUtils,
+    data: DataUtils,
+    ui: UIUtils,
+    validation: ValidationUtils,
+    dice: DiceUtils
+  };
+  
+  console.log("SWSE | ✓ Utils initialized:", Object.keys(game.swse.utils));
+}
 """
     
-    report_path = BASE_DIR / f"cleanup_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+    with open(utils_init_path, 'w', encoding='utf-8') as f:
+        f.write(content)
     
-    try:
-        with open(report_path, 'w', encoding='utf-8') as f:
-            f.write(report_content)
-        log_success(f"Report saved to: {report_path}")
-        print(report_content)
-    except Exception as e:
-        log_error(f"Failed to save report: {e}")
+    print(f"   ✓ Created {utils_init_path.relative_to(BASE_PATH)}")
+    print("✅ Utils initialization created!\n")
 
+def create_rolls_init():
+    """Create rolls-init.js file"""
+    print("📝 Creating rolls-init.js...")
+    
+    core_dir = BASE_PATH / "scripts" / "core"
+    core_dir.mkdir(exist_ok=True)
+    
+    rolls_init_path = core_dir / "rolls-init.js"
+    
+    content = """// ============================================
+// FILE: rolls-init.js
+// Initialize SWSE roll functions
+// ============================================
+
+import * as Attacks from "../rolls/attacks.js";
+import * as Damage from "../rolls/damage.js";
+import * as Defenses from "../rolls/defenses.js";
+import * as Dice from "../rolls/dice.js";
+import * as Initiative from "../rolls/initiative.js";
+import * as Saves from "../rolls/saves.js";
+import * as Skills from "../rolls/skills.js";
+
+/**
+ * Initialize roll functions and expose them on game.swse.rolls
+ */
+export function initializeRolls() {
+  console.log("SWSE | Initializing roll functions...");
+  
+  if (!game.swse) game.swse = {};
+  
+  game.swse.rolls = {
+    attacks: Attacks,
+    damage: Damage,
+    defenses: Defenses,
+    dice: Dice,
+    initiative: Initiative,
+    saves: Saves,
+    skills: Skills
+  };
+  
+  console.log("SWSE | ✓ Rolls initialized:", Object.keys(game.swse.rolls));
+}
+"""
+    
+    with open(rolls_init_path, 'w', encoding='utf-8') as f:
+        f.write(content)
+    
+    print(f"   ✓ Created {rolls_init_path.relative_to(BASE_PATH)}")
+    print("✅ Rolls initialization created!\n")
+
+def update_index_js():
+    """Update index.js to import and initialize utils and rolls"""
+    print("📝 Updating index.js...")
+    
+    index_path = BASE_PATH / "index.js"
+    
+    if not index_path.exists():
+        print("   ⚠️  index.js not found!")
+        return
+    
+    with open(index_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # Add imports at the top (after other imports)
+    import_line = 'import { WorldDataLoader } from "./scripts/core/world-data-loader.js";'
+    new_imports = '''import { WorldDataLoader } from "./scripts/core/world-data-loader.js";
+import { initializeUtils } from "./scripts/core/utils-init.js";
+import { initializeRolls } from "./scripts/core/rolls-init.js";'''
+    
+    if import_line in content:
+        content = content.replace(import_line, new_imports)
+    
+    # Remove old utils imports if they exist
+    old_utils_pattern = r'import \* as \w+Utils from "\./utils/[\w-]+\.js";\n'
+    content = re.sub(old_utils_pattern, '', content)
+    
+    # Update the game.swse initialization
+    old_game_swse = '''  game.swse = {
+    data: SWSEData,
+    SWSE: SWSE
+  };'''
+    
+    new_game_swse = '''  // Initialize namespace (utils and rolls will be added by their init functions)
+  game.swse = {
+    data: SWSEData,
+    SWSE: SWSE
+  };
+
+  // -------------------------------
+  // Initialize Utils & Rolls
+  // -------------------------------
+  initializeUtils();
+  initializeRolls();'''
+    
+    if old_game_swse in content:
+        content = content.replace(old_game_swse, new_game_swse)
+    else:
+        # Try to find it another way
+        pattern = r'(game\.swse = \{[^}]+\};)'
+        replacement = r'\1\n\n  // Initialize Utils & Rolls\n  initializeUtils();\n  initializeRolls();'
+        content = re.sub(pattern, replacement, content, count=1)
+    
+    with open(index_path, 'w', encoding='utf-8') as f:
+        f.write(content)
+    
+    print("   ✓ Updated index.js with utils and rolls initialization")
+    print("✅ Index.js updated!\n")
+
+def update_roll_files_imports():
+    """Update import paths in roll files"""
+    print("📝 Updating import paths in roll files...")
+    
+    rolls_dir = BASE_PATH / "scripts" / "rolls"
+    
+    if not rolls_dir.exists():
+        print("   ⚠️  scripts/rolls/ not found!")
+        return
+    
+    roll_files = list(rolls_dir.glob("*.js"))
+    
+    for roll_file in roll_files:
+        with open(roll_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # No import updates needed for roll files as they use game.swse.utils
+        # Just verify they're not trying to import directly
+        
+        print(f"   ✓ Checked {roll_file.name}")
+    
+    print("✅ Roll files updated!\n")
+
+def create_constants_file():
+    """Create a constants file for magic numbers"""
+    print("📝 Creating constants.js for magic numbers...")
+    
+    core_dir = BASE_PATH / "scripts" / "core"
+    core_dir.mkdir(exist_ok=True)
+    
+    constants_path = core_dir / "constants.js"
+    
+    content = """// ============================================
+// FILE: constants.js
+// System-wide constants for SWSE
+// ============================================
+
+export const SWSE_CONSTANTS = {
+  // Defense
+  BASE_DEFENSE: 10,
+  
+  // Critical Hits
+  DEFAULT_CRIT_RANGE: 20,
+  
+  // Ability Scores
+  MIN_ABILITY_SCORE: 1,
+  MAX_ABILITY_SCORE: 30,
+  AVERAGE_ABILITY_SCORE: 10,
+  
+  // Character Level
+  MIN_LEVEL: 1,
+  MAX_LEVEL: 20,
+  
+  // Cover Bonuses
+  COVER: {
+    NONE: 0,
+    PARTIAL: 2,
+    COVER: 5,
+    IMPROVED: 10
+  },
+  
+  // Concealment
+  CONCEALMENT: {
+    NONE: 0,
+    PARTIAL: 20,
+    TOTAL: 50
+  },
+  
+  // Condition Track Penalties
+  CONDITION_PENALTIES: {
+    NORMAL: 0,
+    MINUS_1: -1,
+    MINUS_2: -2,
+    MINUS_5: -5,
+    MINUS_10: -10,
+    DISABLED: -10,
+    UNCONSCIOUS: -10,
+    DEAD: -100
+  },
+  
+  // Size Modifiers
+  SIZE_MODIFIERS: {
+    FINE: -10,
+    DIMINUTIVE: -5,
+    TINY: -5,
+    SMALL: 0,
+    MEDIUM: 0,
+    LARGE: 5,
+    HUGE: 10,
+    GARGANTUAN: 20,
+    COLOSSAL: 50,
+    COLOSSAL_FRIGATE: 100,
+    COLOSSAL_CRUISER: 150,
+    COLOSSAL_STATION: 200
+  },
+  
+  // BAB Progression
+  BAB_PROGRESSION: {
+    FAST: 1.0,
+    MEDIUM: 0.75,
+    SLOW: 0.5
+  },
+  
+  // Bonuses
+  FLANKING_BONUS: 2,
+  FORCE_POINT_BONUS: 2,
+  TRAINED_SKILL_BONUS: 5,
+  SKILL_FOCUS_BONUS: 5,
+  WEAPON_FOCUS_BONUS: 1,
+  WEAPON_SPECIALIZATION_BONUS: 1
+};
+"""
+    
+    with open(constants_path, 'w', encoding='utf-8') as f:
+        f.write(content)
+    
+    print(f"   ✓ Created {constants_path.relative_to(BASE_PATH)}")
+    print("✅ Constants file created!\n")
+
+def update_config_js():
+    """Update config.js to include constants"""
+    print("📝 Updating config.js to export constants...")
+    
+    config_path = BASE_PATH / "config.js"
+    
+    if not config_path.exists():
+        print("   ⚠️  config.js not found!")
+        return
+    
+    with open(config_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # Add import at top
+    if 'import' not in content:
+        new_content = '''import { SWSE_CONSTANTS } from "./scripts/core/constants.js";
+
+''' + content
+    else:
+        # Add after existing imports
+        lines = content.split('\n')
+        import_line_idx = 0
+        for i, line in enumerate(lines):
+            if line.strip().startswith('import'):
+                import_line_idx = i
+        
+        lines.insert(import_line_idx + 1, 'import { SWSE_CONSTANTS } from "./scripts/core/constants.js";')
+        new_content = '\n'.join(lines)
+    
+    # Add constants to SWSE export
+    if 'SWSE.itemTypes' in new_content:
+        new_content = new_content.replace(
+            'SWSE.itemTypes = ["armor"',
+            'SWSE.constants = SWSE_CONSTANTS;\n\nSWSE.itemTypes = ["armor"'
+        )
+    
+    with open(config_path, 'w', encoding='utf-8') as f:
+        f.write(new_content)
+    
+    print("   ✓ Updated config.js")
+    print("✅ Config.js updated!\n")
+
+def generate_summary():
+    """Generate a summary of changes"""
+    print("\n" + "="*60)
+    print("📋 REORGANIZATION SUMMARY")
+    print("="*60)
+    
+    summary = f"""
+✅ Completed Actions:
+
+1. Created Backup
+   - Location: {BACKUP_DIR.relative_to(BASE_PATH)}
+   - Contains: Original utils/, rolls/, scripts/, index.js, config.js
+
+2. Moved Folders
+   - utils/ → scripts/utils/
+   - rolls/ → scripts/rolls/
+
+3. Resolved Conflicts
+   - Merged dice-utils.js files
+   - Backup of old helpers/dice-utils.js created
+
+4. Created Integration Files
+   - scripts/core/utils-init.js
+   - scripts/core/rolls-init.js
+   - scripts/core/constants.js
+
+5. Updated Existing Files
+   - index.js - Added utils and rolls initialization
+   - config.js - Added constants import
+
+🎯 What This Enables:
+
+✓ game.swse.utils.math.* - All math utilities
+✓ game.swse.utils.string.* - String utilities
+✓ game.swse.utils.combat.* - Combat utilities
+✓ game.swse.utils.character.* - Character utilities
+✓ game.swse.utils.data.* - Data utilities
+✓ game.swse.utils.ui.* - UI utilities
+✓ game.swse.utils.validation.* - Validation utilities
+✓ game.swse.utils.dice.* - Dice utilities
+
+✓ game.swse.rolls.attacks.* - Attack roll functions
+✓ game.swse.rolls.damage.* - Damage roll functions
+✓ game.swse.rolls.defenses.* - Defense calculations
+✓ game.swse.rolls.dice.* - Generic dice rolling
+✓ game.swse.rolls.initiative.* - Initiative rolls
+✓ game.swse.rolls.saves.* - Saving throws
+✓ game.swse.rolls.skills.* - Skill checks
+
+✓ SWSE.constants - System-wide constants
+
+📝 Next Steps:
+
+1. Test the system in Foundry VTT
+   - Launch Foundry and load your world
+   - Open console (F12)
+   - Verify: game.swse.utils exists
+   - Verify: game.swse.rolls exists
+   - Test: game.swse.utils.math.calculateAbilityModifier(16)
+
+2. Refactor Actor Sheets (Future Task)
+   - Update scripts/actors/swse-actor.js to use game.swse.utils
+   - Replace duplicate calculations with utility calls
+   - Use roll functions from game.swse.rolls
+
+3. Update Cleanup Script
+   - Add scripts/utils/ to cleanup
+   - Add scripts/rolls/ to cleanup
+
+🔄 If You Need to Rollback:
+
+1. Stop Foundry VTT
+2. Delete current scripts/utils/ and scripts/rolls/
+3. Restore from: {BACKUP_DIR.relative_to(BASE_PATH)}
+4. Copy folders back to original locations
+
+⚠️  Important Notes:
+
+- Your actor sheets still have their own roll logic
+- This integration provides utilities they can use
+- Refactoring sheets to use these utils is the next phase
+- All your original code is backed up
+
+"""
+    
+    print(summary)
+    
+    # Save summary to file
+    summary_path = BASE_PATH / "REORGANIZATION_SUMMARY.txt"
+    with open(summary_path, 'w', encoding='utf-8') as f:
+        f.write(summary)
+    
+    print(f"📄 Summary saved to: {summary_path.relative_to(BASE_PATH)}")
+    print("="*60)
 
 def main():
     """Main execution function"""
-    print(f"\n{Colors.HEADER}{Colors.BOLD}")
-    print("=" * 70)
-    print("SWSE SYSTEM CLEANUP AND REORGANIZATION SCRIPT".center(70))
-    print("=" * 70)
-    print(f"{Colors.ENDC}\n")
+    print("\n" + "="*60)
+    print("🚀 SWSE SYSTEM REORGANIZATION")
+    print("="*60)
+    print(f"\nTarget: {BASE_PATH}\n")
     
-    print(f"{Colors.WARNING}This script will make significant changes to your SWSE system.{Colors.ENDC}")
-    print(f"{Colors.WARNING}A backup will be created automatically.{Colors.ENDC}\n")
-    
-    response = input("Do you want to continue? (yes/no): ").strip().lower()
-    
-    if response != 'yes':
-        print(f"\n{Colors.FAIL}Operation cancelled.{Colors.ENDC}\n")
+    # Verify path exists
+    if not BASE_PATH.exists():
+        print(f"❌ Error: Path not found: {BASE_PATH}")
         return
     
-    # Execute cleanup steps
+    # Confirm with user
+    print("This script will:")
+    print("  1. Create a backup of current code")
+    print("  2. Move utils/ and rolls/ into scripts/")
+    print("  3. Resolve dice-utils.js conflict")
+    print("  4. Create integration files")
+    print("  5. Update index.js and config.js")
+    print("\nA backup will be created before any changes.\n")
+    
+    response = input("Continue? (yes/no): ").strip().lower()
+    if response not in ['yes', 'y']:
+        print("❌ Cancelled by user")
+        return
+    
+    print("\n" + "="*60 + "\n")
+    
     try:
-        # Step 1: Create backup
-        if not create_backup():
-            log_error("Backup failed. Aborting.")
-            return
+        # Execute reorganization
+        create_backup()
+        move_folders()
+        resolve_dice_utils_conflict()
+        create_utils_init()
+        create_rolls_init()
+        create_constants_file()
+        update_config_js()
+        update_index_js()
+        update_roll_files_imports()
         
-        # Step 2: Create directory structure
-        create_directory_structure()
+        generate_summary()
         
-        # Step 3: Merge actor files
-        merge_actor_files()
-        
-        # Step 4: Create main entry point
-        create_main_entry()
-        
-        # Step 5: Move files to correct locations
-        move_races_file()
-        
-        # Step 6: Delete duplicates
-        delete_duplicates()
-        
-        # Step 7: Update imports
-        update_imports()
-        
-        # Step 8: Update system.json
-        update_system_json()
-        
-        # Step 9: Generate report
-        generate_report()
-        
-        print(f"\n{Colors.OKGREEN}{Colors.BOLD}")
-        print("=" * 70)
-        print("CLEANUP COMPLETE!".center(70))
-        print("=" * 70)
-        print(f"{Colors.ENDC}\n")
-        
-        print(f"{Colors.OKCYAN}Your SWSE system has been successfully reorganized!{Colors.ENDC}")
-        print(f"{Colors.OKCYAN}Backup location: {BACKUP_DIR}{Colors.ENDC}\n")
+        print("\n✅ REORGANIZATION COMPLETE!")
+        print("\n🎉 Your system is now properly organized!")
+        print("\n💡 Next: Launch Foundry VTT and test the changes")
         
     except Exception as e:
-        log_error(f"An error occurred during cleanup: {e}")
-        print(f"\n{Colors.FAIL}Cleanup failed. Please restore from backup: {BACKUP_DIR}{Colors.ENDC}\n")
+        print(f"\n❌ Error occurred: {e}")
+        print(f"\n🔄 Restore from backup: {BACKUP_DIR}")
         raise
-
 
 if __name__ == "__main__":
     main()

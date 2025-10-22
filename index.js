@@ -14,17 +14,11 @@ import { SWSEItemSheet } from "./scripts/swse-item.js";
 import { preloadHandlebarsTemplates } from "./scripts/core/load-templates.js";
 import * as SWSEData from "./scripts/core/swse-data.js";
 import { WorldDataLoader } from "./scripts/core/world-data-loader.js";
+import { initializeUtils } from "./scripts/core/utils-init.js";
+import { initializeRolls } from "./scripts/core/rolls-init.js";
 import "./scripts/apps/chargen-init.js";
 
 // Utils imports
-import * as DiceUtils from "./utils/dice-utils.js";
-import * as MathUtils from "./utils/math-utils.js";
-import * as StringUtils from "./utils/string-utils.js";
-import * as DataUtils from "./utils/data-utils.js";
-import * as UIUtils from "./utils/ui-utils.js";
-import * as CombatUtils from "./utils/combat-utils.js";
-import * as CharacterUtils from "./utils/character-utils.js";
-import * as ValidationUtils from "./utils/validation-utils.js";
 
 // ============================================
 // INIT HOOK
@@ -38,10 +32,17 @@ Hooks.once("init", async () => {
   CONFIG.SWSE = SWSE;
   CONFIG.Actor.documentClass = SWSEActor;
 
+  // Initialize namespace (utils and rolls will be added by their init functions)
   game.swse = {
     data: SWSEData,
     SWSE: SWSE
   };
+
+  // -------------------------------
+  // Initialize Utils & Rolls
+  // -------------------------------
+  initializeUtils();
+  initializeRolls();
 
   // -------------------------------
   // Register Handlebars Helpers FIRST
