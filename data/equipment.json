@@ -1,3731 +1,5759 @@
 [
   {
     "name": "Gas Grenade",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Gas Grenade",
-    "size": "Tiny",
-    "cost": "250",
-    "damage": "-",
-    "stun_setting": "NO",
-    "weight": "0.5 kg",
     "type": "equipment",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Manual Trigger",
-    "tags": [
-      "explosive"
-    ],
-    "explosive": "Manual Trigger",
-    "cost": "100",
-    "damage": "-",
     "type": "equipment",
-    "weight": "0.1 kg",
-    "size": "Fine",
-    "availability": "Licensed"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Manual Trigger",
-    "tags": [
-      "general"
-    ],
-    "explosive": "Manual Trigger",
-    "cost": "100",
-    "damage": "-",
     "type": "equipment",
-    "weight": "0.1 kg",
-    "size": "Fine",
-    "availability": "Licensed"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Smoke Grenade",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Smoke Grenade",
-    "size": "Tiny",
-    "cost": "100",
-    "damage": "-",
-    "stun_setting": "-",
-    "weight": "0.5 kg",
     "type": "equipment",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Timer",
-    "tags": [
-      "explosive"
-    ],
-    "explosive": "Timer",
-    "cost": "250",
-    "damage": "-",
     "type": "equipment",
-    "weight": "0.1 kg",
-    "size": "Fine",
-    "availability": "Licensed"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Timer",
-    "tags": [
-      "general"
-    ],
-    "explosive": "Timer",
-    "cost": "250",
-    "damage": "-",
     "type": "equipment",
-    "weight": "0.1 kg",
-    "size": "Fine",
-    "availability": "Licensed"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Concussion Grenade",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Concussion Grenade",
-    "size": "Tiny",
-    "cost": "400",
-    "damage": "8d6",
-    "stun_setting": "NO",
-    "weight": "0.5 kg",
     "type": "equipment",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Adhesive Grenade",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Adhesive Grenade",
-    "size": "Tiny",
-    "cost": "200",
-    "damage": "-",
-    "stun_setting": "NO",
-    "weight": "0.5 kg",
     "type": "weapon",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Antivehicle Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Antivehicle Mine",
-    "size": "Diminutive",
-    "cost": "1500",
-    "damage": "10d6",
-    "weight": "0.5 kg",
     "type": "weapon",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Antivehicle Proton Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Antivehicle Proton Mine",
-    "size": "Small",
-    "cost": "2000",
-    "damage": "8d6",
-    "weight": "1.5 kg",
     "type": "weapon",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "CryoBan Grenade",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "CryoBan Grenade",
-    "size": "Tiny",
-    "cost": "500",
-    "damage": "3d6",
-    "stun_setting": "NO",
-    "weight": "0.5 kg",
     "type": "weapon",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Detonite",
-    "tags": [
-      "explosive"
-    ],
-    "explosive": "Detonite",
-    "cost": "500",
-    "damage": "5d6*",
     "type": "weapon",
-    "weight": "0.1 kg",
-    "size": "Fine",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Detonite",
-    "tags": [
-      "general"
-    ],
-    "explosive": "Detonite",
-    "cost": "500",
-    "damage": "5d6*",
     "type": "weapon",
-    "weight": "0.1 kg",
-    "size": "Fine",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Detonite Cord",
-    "tags": [
-      "explosive"
-    ],
-    "explosive": "Detonite Cord",
-    "cost": "1000",
-    "damage": "4d6*",
     "type": "weapon",
-    "weight": "1 kg",
-    "size": "Tiny",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Detonite Cord",
-    "tags": [
-      "general"
-    ],
-    "explosive": "Detonite Cord",
-    "cost": "1000",
-    "damage": "4d6*",
     "type": "weapon",
-    "weight": "1 kg",
-    "size": "Tiny",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Explosive Charge",
-    "tags": [
-      "explosive"
-    ],
-    "explosive": "Explosive Charge",
-    "cost": "1500",
-    "damage": "10d6*",
     "type": "weapon",
-    "weight": "0.5 kg",
-    "size": "Diminutive",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Explosive Charge",
-    "tags": [
-      "general"
-    ],
-    "explosive": "Explosive Charge",
-    "cost": "1500",
-    "damage": "10d6*",
     "type": "weapon",
-    "weight": "0.5 kg",
-    "size": "Diminutive",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Flash Canister",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Flash Canister",
-    "size": "Tiny",
-    "cost": "100",
-    "damage": "Special",
-    "stun_setting": "NO",
-    "weight": "0.5 kg",
     "type": "weapon",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "HX2 Antipersonnel Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "HX2 Antipersonnel Mine",
-    "size": "Small",
-    "cost": "750",
-    "damage": "6d6",
-    "weight": "1 kg",
     "type": "weapon",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Ion Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Ion Mine",
-    "size": "Tiny",
-    "cost": "800",
-    "damage": "8d6 (Ion)",
-    "weight": "0.5 kg",
     "type": "weapon",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Land Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Land Mine",
-    "size": "Tiny",
-    "cost": "500",
-    "damage": "8d6",
-    "weight": "0.5 kg",
     "type": "weapon",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Laser Trip Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Laser Trip Mine",
-    "size": "Tiny",
-    "cost": "700",
-    "damage": "6d6",
-    "weight": "0.5 kg",
     "type": "weapon",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Limpet Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Limpet Mine",
-    "size": "Tiny",
-    "cost": "300",
-    "damage": "6d6",
-    "weight": "0.5 kg",
     "type": "weapon",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Power Pack Bomb",
-    "tags": [
-      "explosive"
-    ],
-    "explosive": "Power Pack Bomb",
-    "cost": "N/A",
-    "damage": "Varies**",
     "type": "weapon",
-    "weight": "0.2-0.5 kg",
-    "size": "Small",
-    "availability": "Illegal"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Power Pack Bomb",
-    "tags": [
-      "general"
-    ],
-    "explosive": "Power Pack Bomb",
-    "cost": "N/A",
-    "damage": "Varies**",
     "type": "weapon",
-    "weight": "0.2-0.5 kg",
-    "size": "Small",
-    "availability": "Illegal"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Proximity Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Proximity Mine",
-    "size": "Tiny",
-    "cost": "1500",
-    "damage": "6d6",
-    "weight": "0.5 kg",
     "type": "weapon",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Radiation Grenade",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Radiation Grenade",
-    "size": "Tiny",
-    "cost": "500",
-    "damage": "3d8",
-    "stun_setting": "NO",
-    "weight": "0.5 kg",
     "type": "weapon",
-    "availability": "Illegal"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Remote Grenade",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Remote Grenade",
-    "size": "Tiny",
-    "cost": "300",
-    "damage": "4d6",
-    "stun_setting": "NO",
-    "weight": "1 kg",
     "type": "weapon",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "Thermal Detonator1",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Thermal Detonator1",
-    "size": "Tiny",
-    "cost": "2000",
-    "damage": "8d6",
-    "stun_setting": "NO",
-    "weight": "1 kg",
     "type": "weapon",
-    "availability": "Illegal"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "damage": "1d6",
+      "damageType": "energy",
+      "critical": "20",
+      "range": "",
+      "category": "Ranged",
+      "size": "Medium",
+      "weight": "0 kg",
+      "cost": "0",
+      "ammo": "",
+      "availability": "Common",
+      "special": [],
+      "attackBonus": 0,
+      "description": "",
+      "equipped": false
+    }
   },
   {
     "name": "EMP Grenade",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "EMP Grenade",
-    "size": "Small",
-    "cost": "500",
-    "damage": "3d6 (Ion)",
-    "stun_setting": "NO",
-    "weight": "0.5 kg",
     "type": "equipment",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Ion Grenade",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Ion Grenade",
-    "size": "Tiny",
-    "cost": "250",
-    "damage": "4d6 (Ion)",
-    "stun_setting": "NO",
-    "weight": "0.5 kg",
     "type": "equipment",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Repulsorlift Inhibitor",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Repulsorlift Inhibitor",
-    "size": "Tiny",
-    "cost": "500",
-    "damage": "3d10x2 (Ion)",
-    "weight": "15 kg",
     "type": "equipment",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Stun Grenade",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Stun Grenade",
-    "size": "Tiny",
-    "cost": "250",
-    "damage": "-",
-    "stun_setting": "YES (Only, 4d6)",
-    "weight": "0.5 kg",
     "type": "equipment",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Pulse Grenade",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Pulse Grenade",
-    "size": "Small",
-    "cost": "1200",
-    "damage": "4d6",
-    "stun_setting": "NO",
-    "weight": "1 kg",
     "type": "equipment",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Antipersonnel Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Antipersonnel Mine",
-    "size": "Tiny",
-    "cost": "500",
-    "damage": "6d6",
-    "weight": "1 kg",
     "type": "equipment",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Flechette Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Flechette Mine",
-    "size": "Tiny",
-    "cost": "1200",
-    "damage": "8d6",
-    "weight": "0.5 kg",
     "type": "equipment",
-    "availability": "Illegal"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Bounding Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Bounding Mine",
-    "size": "Tiny",
-    "cost": "250",
-    "damage": "6d6",
-    "weight": "1 kg",
     "type": "equipment",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Frag Grenade",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Frag Grenade",
-    "size": "Tiny",
-    "cost": "200",
-    "damage": "4d6",
-    "stun_setting": "NO",
-    "weight": "0.5 kg",
     "type": "equipment",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Fragmentation Wire",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Fragmentation Wire",
-    "size": "Tiny",
-    "cost": "100/m",
-    "damage": "2d6",
-    "weight": "2 kg/m",
     "type": "equipment",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Razor Wire1",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Razor Wire1",
-    "size": "Tiny",
-    "cost": "10/m",
-    "damage": "2d6",
-    "weight": "2 kg/m",
     "type": "equipment",
-    "availability": "Restricted"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Smart Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Smart Mine",
-    "size": "Tiny",
-    "cost": "500",
-    "damage": "5d6",
-    "weight": "1.5 kg",
     "type": "equipment",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Static Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Static Mine",
-    "size": "Tiny",
-    "cost": "100",
-    "damage": "4d6",
-    "weight": "1 kg",
     "type": "equipment",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Vehicular Mine",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Vehicular Mine",
-    "size": "Tiny",
-    "cost": "500",
-    "damage": "4d10x2",
-    "weight": "10 kg",
     "type": "equipment",
-    "availability": "Military"
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Clone Wars Campaign Guide",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Clone Wars Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Com Scrambler",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Com Scrambler",
-    "data_types": "N/A",
-    "cost": "6000",
-    "weight": "10 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Comlink",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Comlink",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Earbud Comlink",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Earbud Comlink",
-    "data_types": "Audio",
-    "cost": "200",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy at War",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Galaxy at War",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy of Intrigue",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Galaxy of Intrigue",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Hands-Free Comlink",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Hands-Free Comlink",
-    "data_types": "Audio",
-    "cost": "150",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Holo Converter",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Holo Converter",
-    "data_types": "Holo",
-    "cost": "3000",
-    "weight": "2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Legacy Era Campaign Guide",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Legacy Era Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Long-Range",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Long-Range",
-    "data_types": "Audio, Video1, Holo1",
-    "cost": "250",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Panic Ring",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Panic Ring",
-    "data_types": "N/A",
-    "cost": "300",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Pocket Scrambler1",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Pocket Scrambler1",
-    "data_types": "N/A",
-    "cost": "400",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Saga Edition Core Rulebook",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Short-Range",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Short-Range",
-    "data_types": "Audio, Video1, Holo1",
-    "cost": "25",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Signal Wand",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Signal Wand",
-    "data_types": "Audio",
-    "cost": "300",
-    "weight": "0.2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Targeting Beacon",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Targeting Beacon",
-    "data_types": "N/A",
-    "cost": "300",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Tightbeam Comlink",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Tightbeam Comlink",
-    "data_types": "Audio",
-    "cost": "300",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Unknown Regions",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Unknown Regions",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Visual Wrist Comm",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Visual Wrist Comm",
-    "data_types": "Audio, Video",
-    "cost": "1300",
-    "weight": "0.25 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Vox-Box",
-    "tags": [
-      "communication"
-    ],
-    "communications_device": "Vox-Box",
-    "data_types": "Audio",
-    "cost": "200",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Force Unleashed Campaign Guide",
-    "tags": [
-      "explosive"
-    ],
-    "explosive": "Force Unleashed Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy at War",
-    "tags": [
-      "explosive"
-    ],
-    "explosive": "Galaxy at War",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Rebellion Era Campaign Guide",
-    "tags": [
-      "explosive"
-    ],
-    "explosive": "Rebellion Era Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "tags": [
-      "explosive"
-    ],
-    "explosive": "Saga Edition Core Rulebook",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "+10*",
-    "tags": [
-      "general"
-    ],
-    "object_type": "+10*",
-    "dc": "Poor quality materials.",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "-10*",
-    "tags": [
-      "general"
-    ],
-    "object_type": "-10*",
-    "dc": "Detailed knowledge of specific item.",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "-10*",
-    "tags": [
-      "general"
-    ],
-    "object_type": "-10*",
-    "dc": "Have detailed schematics for the object available.",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "-5*",
-    "tags": [
-      "general"
-    ],
-    "object_type": "-5*",
-    "dc": "Based on well-known item.",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "1-11 Years",
-    "tags": [
-      "general"
-    ],
-    "child": "1-11 Years",
-    "young_adult": "12-17 Years",
-    "adult": "18-40 Years",
-    "middle_age": "41-60 Years",
-    "old": "61-75 Years",
-    "venerable": "76+ Years",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "ABC Scrambler",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "ABC Scrambler",
-    "cost": "3000",
-    "weight": "3 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "All-Temperature Cloak",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "All-Temperature Cloak",
-    "cost": "100",
-    "weight": "1.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Ambient Aural Amplifier",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Ambient Aural Amplifier",
-    "cost": "3000",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Anti-Rad Dose",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Anti-Rad Dose",
-    "cost": "50",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Antidote Synthesizer",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Antidote Synthesizer",
-    "cost": "2500",
-    "weight": "0.8 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Antisecurity Blades",
-    "tags": [
-      "general"
-    ],
-    "tool": "Antisecurity Blades",
-    "cost": "-",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Antitoxin Patch",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Antitoxin Patch",
-    "cost": "25",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Aquata Breather",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Aquata Breather",
-    "cost": "350",
-    "weight": "0.2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Armor Reinforcement",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Armor Reinforcement",
-    "cost": "3000",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Audiorecorder",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Audiorecorder",
-    "cost": "25",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Aural Amplifier",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Aural Amplifier",
-    "cost": "2000",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Bacta (Per Liter)1",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Bacta (Per Liter)1",
-    "cost": "100",
-    "weight": "2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Bacta Tank (Empty)",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Bacta Tank (Empty)",
-    "cost": "100000",
-    "weight": "500 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Bandolier",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Bandolier",
-    "cost": "100",
-    "weight": "2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Basic Datapad",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Basic Datapad",
-    "cost": "100",
-    "weight": "0.3 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Beam Splitter",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Beam Splitter",
-    "cost": "1200",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Binder Cuffs",
-    "tags": [
-      "general"
-    ],
-    "tool": "Binder Cuffs",
-    "cost": "50",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Bio-Stabilizer Implant",
-    "tags": [
-      "general"
-    ],
-    "implant": "Nerve Reinforcement Implant",
-    "cost": "5000",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "BioTech Borg Construct AJ-6",
-    "tags": [
-      "general"
-    ],
-    "advanced_cybernetic": "BioTech Borg Construct AJ-6",
-    "rejection_attack_bonus": "+14",
-    "cost": "80000",
-    "surgery_cost": "70000",
-    "availability": "Restricted",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Bioscanner",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Bioscanner",
-    "cost": "3500",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Biotech Tool Kit",
-    "tags": [
-      "general"
-    ],
-    "tool": "Biotech Tool Kit",
-    "cost": "450",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Blank Datacards (10)",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Blank Datacards (10)",
-    "cost": "10",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Body Spikes",
-    "tags": [
-      "general"
-    ],
-    "bio-implant": "Natural Weapon",
-    "cost": "4000",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Bracer Computer",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Bracer Computer",
-    "cost": "1300",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Breath Mask",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Breath Mask",
-    "cost": "200",
-    "weight": "2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Bundar Root",
-    "tags": [
-      "general"
-    ],
-    "poison": "Bundar Root",
-    "challenge_level": "CL 1",
-    "keywords": "Ingested, Natural, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "CIRCUMSTANCES",
-    "tags": [
-      "general"
-    ],
-    "object_type": "CIRCUMSTANCES",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Camouflage Netting",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Camouflage Netting",
-    "cost": "6000",
-    "weight": "40 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Camouflage Poncho",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Camouflage Poncho",
-    "cost": "125",
-    "weight": "1.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Cardio Implant",
-    "tags": [
-      "general"
-    ],
-    "implant": "4250",
-    "cost": "4000",
-    "": "Regenerative Implant",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Celegian Life-Support Chamber",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Celegian Life-Support Chamber",
-    "cost": "-",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Chain (3 meters)",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Chain (3 meters)",
-    "cost": "25",
-    "weight": "2.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Chuba Poison",
-    "tags": [
-      "general"
-    ],
-    "poison": "Chuba Poison",
-    "challenge_level": "CL 8",
-    "keywords": "Ingested, Natural, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Climbing Harness",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Climbing Harness",
-    "cost": "45",
-    "weight": "0.7 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Clone Wars Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Clone Wars Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Clone Wars Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Clone Wars Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Clone Wars Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Clone Wars Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Clone Wars Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Clone Wars Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Clone Wars Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Clone Wars Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Code Cylinder",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Code Cylinder",
-    "cost": "500",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Colossal",
-    "tags": [
-      "general"
-    ],
-    "target_size": "10",
-    "dc": "-15",
-    "": "Small",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Com Scrambler",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Com Scrambler",
-    "data_types": "N/A",
-    "cost": "6000",
-    "weight": "10 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Combat Implant",
-    "tags": [
-      "general"
-    ],
-    "implant": "2500",
-    "cost": "5000",
-    "": "Sensory Implant",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Comlink",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Comlink",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Communication Scanner",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Communication Scanner",
-    "cost": "1000",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Complex",
-    "tags": [
-      "general"
-    ],
-    "device": "Complex",
-    "dc*": "25",
-    "examples": "Disarm an electrical security system, bypass a complex mechanism or electronic lock",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Complex",
-    "tags": [
-      "general"
-    ],
-    "object_type": "Complex",
-    "dc": "40",
-    "description": "Item requiring significant design and manufacturing skills, sophisticated parts, and special facilities.",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Computer Interface Visor",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Computer Interface Visor",
-    "cost": "1200",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Computer Spike",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Computer Spike",
-    "cost": "1500",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Computerized Interface Scope",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Computerized Interface Scope",
-    "cost": "2000",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Cosmetic Enhancements",
-    "tags": [
-      "general"
-    ],
-    "bio-implant": "2500",
-    "cost": "200",
-    "": "Poison Filter",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Credit Chip",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Credit Chip",
-    "cost": "100",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Cryogenic Pouch",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Cryogenic Pouch",
-    "cost": "600",
-    "weight": "1.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Cybernetic Prosthesis",
-    "tags": [
-      "general"
-    ],
-    "cybernetic_device": "Cybernetic Prosthesis",
-    "cost": "1500",
-    "weight": "Varies",
-    "installation_cost": "500",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "DC MODIFIER",
-    "tags": [
-      "general"
-    ],
-    "object_type": "DC MODIFIER",
-    "dc": "DESCRIPTION",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Datapad",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Datapad",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Dawn of Defiance",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Dawn of Defiance",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Dawn of Defiance",
-    "tags": [
-      "general"
-    ],
-    "poison": "Dawn of Defiance",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Decoy Glow Rod",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Decoy Glow Rod",
-    "cost": "100",
-    "weight": "4 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Demolitions Sensor",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Demolitions Sensor",
-    "cost": "1000",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Devaronian Blood-Poison",
-    "tags": [
-      "general"
-    ],
-    "poison": "Devaronian Blood-Poison",
-    "challenge_level": "CL 4",
-    "keywords": "Contact, Natural, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Dioxis",
-    "tags": [
-      "general"
-    ],
-    "poison": "Dioxis",
-    "challenge_level": "CL 8",
-    "keywords": "Atmosphere, Natural, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Distilled Trihexalon",
-    "tags": [
-      "general"
-    ],
-    "poison": "Distilled Trihexalon",
-    "challenge_level": "CL 3",
-    "keywords": "Artificial, Contact, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Droid Diagnostic",
-    "tags": [
-      "general"
-    ],
-    "tool": "Droid Diagnostic",
-    "cost": "400",
-    "weight": "2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Durasteel Bonding",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Durasteel Bonding",
-    "cost": "2000",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Earbud Comlink",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Earbud Comlink",
-    "data_types": "Audio",
-    "cost": "200",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Electrobinoculars",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Electrobinoculars",
-    "cost": "1000",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Emergency Vacuum Seal",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Emergency Vacuum Seal",
-    "cost": "750",
-    "weight": "0.9 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Energy Cell",
-    "tags": [
-      "general"
-    ],
-    "tool": "Energy Cell",
-    "cost": "10",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Energy-Binding Prosthesis",
-    "tags": [
-      "general"
-    ],
-    "cybernetic_device": "Energy-Binding Prosthesis",
-    "cost": "-",
-    "weight": "-",
-    "installation_cost": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Enhanced Energy Projector",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Enhanced Energy Projector",
-    "cost": "3000",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Enhanced Vision",
-    "tags": [
-      "general"
-    ],
-    "bio-implant": "2000",
-    "cost": "1900",
-    "": "Replacement Body Part",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Falsin's Rot",
-    "tags": [
-      "general"
-    ],
-    "poison": "Falsin's Rot",
-    "challenge_level": "CL 7",
-    "keywords": "Contact, Natural, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "FastFlesh Medpac",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "FastFlesh Medpac",
-    "cost": "600",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Field Camouflage Netting",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Field Camouflage Netting",
-    "cost": "2000",
-    "weight": "5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Field Food Processor",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Field Food Processor",
-    "cost": "1500",
-    "weight": "4 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Field Kit",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Field Kit",
-    "cost": "1000",
-    "weight": "10 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Fire Extinguisher",
-    "tags": [
-      "general"
-    ],
-    "tool": "Fire Extinguisher",
-    "cost": "50",
-    "weight": "3 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Fire Paste",
-    "tags": [
-      "general"
-    ],
-    "tool": "Fire Paste",
-    "cost": "15",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Fire Rod",
-    "tags": [
-      "general"
-    ],
-    "tool": "Fire Rod",
-    "cost": "25",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Flash Suppressor/Silencer",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Flash Suppressor/Silencer",
-    "cost": "400",
-    "weight": "0.2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Flight Suit",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Flight Suit",
-    "cost": "1000",
-    "weight": "3 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Force Cage",
-    "tags": [
-      "general"
-    ],
-    "tool": "Force Cage",
-    "cost": "7000",
-    "weight": "25 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Force Detector",
-    "tags": [
-      "general"
-    ],
-    "tool": "Force Detector",
-    "cost": "2000",
-    "weight": "9 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Force Training Aid",
-    "tags": [
-      "general"
-    ],
-    "tool": "Force Training Aid",
-    "cost": "25",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Force Unleashed Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Force Unleashed Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Force Unleashed Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "explosive": "Force Unleashed Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Force Unleashed Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Force Unleashed Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Force Unleashed Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "tool": "Force Unleashed Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Fusion Lantern",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Fusion Lantern",
-    "cost": "25",
-    "weight": "2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy at War",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Galaxy at War",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy at War",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Galaxy at War",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy at War",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Galaxy at War",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy at War",
-    "tags": [
-      "general"
-    ],
-    "explosive": "Galaxy at War",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy at War",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Galaxy at War",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy at War",
-    "tags": [
-      "general"
-    ],
-    "poison": "Galaxy at War",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy at War",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Galaxy at War",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy at War",
-    "tags": [
-      "general"
-    ],
-    "tool": "Galaxy at War",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy of Intrigue",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Galaxy of Intrigue",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy of Intrigue",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Galaxy of Intrigue",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy of Intrigue",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Galaxy of Intrigue",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy of Intrigue",
-    "tags": [
-      "general"
-    ],
-    "poison": "Galaxy of Intrigue",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy of Intrigue",
-    "tags": [
-      "general"
-    ],
-    "tool": "Galaxy of Intrigue",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy of Intrigue",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Galaxy of Intrigue",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Gargantuan",
-    "tags": [
-      "general"
-    ],
-    "target_size": "15",
-    "dc": "-10",
-    "": "Tiny",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Gargantuan",
-    "tags": [
-      "general"
-    ],
-    "object_size": "x500",
-    "hp_multiplier": "x20",
-    "": "Colossal (Station)",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Glow Rod",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Glow Rod",
-    "cost": "10",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Hair Trigger",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Hair Trigger",
-    "cost": "1200",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Halo Lamp",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Halo Lamp",
-    "cost": "30",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Hands-Free Comlink",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Hands-Free Comlink",
-    "data_types": "Audio",
-    "cost": "150",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Healing Stimulant",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Healing Stimulant",
-    "cost": "-",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Heat Sensor",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Heat Sensor",
-    "cost": "250",
-    "weight": "0.2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Helmet Package",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Helmet Package",
-    "cost": "4000",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "HiBaka 2000 Mem-Stik",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "HiBaka 2000 Mem-Stik",
-    "cost": "50",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Holo Converter",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Holo Converter",
-    "data_types": "Holo",
-    "cost": "3000",
-    "weight": "2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Holorecorder",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Holorecorder",
-    "cost": "100",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Holoshroud",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Holoshroud",
-    "cost": "25000",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Holster",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Holster",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Holster (Concealed)",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Holster (Concealed)",
-    "cost": "50",
-    "weight": "0.2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Holster (Hip)",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Holster (Hip)",
-    "cost": "25",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Homebrew",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Homebrew",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Huge",
-    "tags": [
-      "general"
-    ],
-    "target_size": "20",
-    "dc": "-5",
-    "": "Diminutive",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Huge",
-    "tags": [
-      "general"
-    ],
-    "object_size": "x200",
-    "hp_multiplier": "x10",
-    "": "Colossal (Cruiser)",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Hush-About Personal Jet Pack",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Hush-About Personal Jet Pack",
-    "cost": "3750",
-    "weight": "30 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Hypoinjector Wristband",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Hypoinjector Wristband",
-    "cost": "350",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Improved Energy Cell",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Improved Energy Cell",
-    "cost": "4000",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Infrared Sensor Eye",
-    "tags": [
-      "general"
-    ],
-    "advanced_cybernetic": "Infrared Sensor Eye",
-    "rejection_attack_bonus": "+14",
-    "cost": "300",
-    "surgery_cost": "2250",
-    "availability": "Restricted",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Irksh Poison",
-    "tags": [
-      "general"
-    ],
-    "poison": "Irksh Poison",
-    "challenge_level": "CL 13",
-    "keywords": "Ingested, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Jedi Academy Training Manual",
-    "tags": [
-      "general"
-    ],
-    "cybernetic_device": "Jedi Academy Training Manual",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Jedi Academy Training Manual",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Jedi Academy Training Manual",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Jedi Academy Training Manual",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Jedi Academy Training Manual",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Jedi Academy Training Manual",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Jedi Academy Training Manual",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Jedi Academy Training Manual",
-    "tags": [
-      "general"
-    ],
-    "tool": "Jedi Academy Training Manual",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Jedi Academy Training Manual",
-    "tags": [
-      "general"
-    ],
-    "implant": "Jedi Academy Training Manual",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Jet Pack",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Jet Pack",
-    "cost": "300",
-    "weight": "30 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Knights of the Old Republic Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "cybernetic_device": "Knights of the Old Republic Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Knights of the Old Republic Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Knights of the Old Republic Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Knights of the Old Republic Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "poison": "Knights of the Old Republic Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "tool": "Knights of the Old Republic Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Knights of the Old Republic Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "implant": "Knights of the Old Republic Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Knockout Drugs",
-    "tags": [
-      "general"
-    ],
-    "poison": "Knockout Drugs",
-    "challenge_level": "CL 2",
-    "keywords": "Artificial, Ingested, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Large",
-    "tags": [
-      "general"
-    ],
-    "target_size": "25",
-    "dc": "0",
-    "": "Fine",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Large",
-    "tags": [
-      "general"
-    ],
-    "object_size": "x100",
-    "hp_multiplier": "x5",
-    "": "Colossal (Frigate)",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Lectroticker",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Lectroticker",
-    "cost": "1500",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Legacy Era Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Legacy Era Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Legacy Era Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Legacy Era Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Legacy Era Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Legacy Era Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Legacy Era Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "tool": "Legacy Era Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Legacy Era Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "bio-implant": "Legacy Era Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Liquid Cable Dispenser (15 meters)",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Liquid Cable Dispenser (15 meters)",
-    "cost": "10",
-    "weight": "0.2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Lock Breaking Kit",
-    "tags": [
-      "general"
-    ],
-    "tool": "Lock Breaking Kit",
-    "cost": "8000",
-    "weight": "4 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Long-Range",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Long-Range",
-    "data_types": "Audio, Video1, Holo1",
-    "cost": "250",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Man Trap",
-    "tags": [
-      "general"
-    ],
-    "tool": "Man Trap",
-    "cost": "8000",
-    "weight": "19 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Mandalorian Jet Pack",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Mandalorian Jet Pack",
-    "cost": "-",
-    "weight": "30 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Mechanical Interface Visor",
-    "tags": [
-      "general"
-    ],
-    "tool": "Mechanical Interface Visor",
-    "cost": "1250",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Medical Bundle",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Medical Bundle",
-    "cost": "200",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Medical Interface Visor",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Medical Interface Visor",
-    "cost": "1500",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Medical Kit",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Medical Kit",
-    "cost": "600",
-    "weight": "20 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Medisensor",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Medisensor",
-    "cost": "75",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Medium",
-    "tags": [
-      "general"
-    ],
-    "target_size": "Medium",
-    "dc": "5",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Medium",
-    "tags": [
-      "general"
-    ],
-    "object_size": "x50",
-    "hp_multiplier": "x2",
-    "": "Colossal",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Medpac",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Medpac",
-    "cost": "100",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Memory Implant",
-    "tags": [
-      "general"
-    ],
-    "implant": "Memory Implant",
-    "cost": "2000",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Mesh Tape",
-    "tags": [
-      "general"
-    ],
-    "tool": "Mesh Tape",
-    "cost": "5",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Mesh Underlay",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Mesh Underlay",
-    "cost": "2500",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Microlab",
-    "tags": [
-      "general"
-    ],
-    "tool": "Microlab",
-    "cost": "1800",
-    "weight": "0.8 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Moderate",
-    "tags": [
-      "general"
-    ],
-    "object_type": "Moderate",
-    "dc": "25",
-    "description": "Item requiring basic electronics, special materials, and/or specialized knowledge.",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Motion Sensing Visor",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Motion Sensing Visor",
-    "cost": "2500",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Natural Armor",
-    "tags": [
-      "general"
-    ],
-    "bio-implant": "Natural Armor",
-    "cost": "7000",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Neural Band",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Neural Band",
-    "cost": "3500",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Night Vision Device",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Night Vision Device",
-    "cost": "3000",
-    "weight": "0.6 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Null Gas",
-    "tags": [
-      "general"
-    ],
-    "poison": "Null Gas",
-    "challenge_level": "CL 12",
-    "keywords": "Atmosphere, Artificial, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Obah",
-    "tags": [
-      "general"
-    ],
-    "poison": "Obah",
-    "challenge_level": "CL 6",
-    "keywords": "Atmosphere, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Ooglith Masquer",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Ooglith Masquer",
-    "cost": "-",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Panic Ring",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Panic Ring",
-    "data_types": "N/A",
-    "cost": "300",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Paralytic Poison",
-    "tags": [
-      "general"
-    ],
-    "poison": "Paralytic Poison",
-    "challenge_level": "CL 5",
-    "keywords": "Artificial, Contact, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Personal Field Shelter",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Personal Field Shelter",
-    "cost": "500",
-    "weight": "1.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Personal Holoprojector",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Personal Holoprojector",
-    "cost": "1000",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Personal Multitool",
-    "tags": [
-      "general"
-    ],
-    "tool": "Personal Multitool",
-    "cost": "100",
-    "weight": "0.2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Personal Translator",
-    "tags": [
-      "general"
-    ],
-    "tool": "Personal Translator",
-    "cost": "2000",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Plasma Bridge",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Plasma Bridge",
-    "cost": "12500",
-    "weight": "700 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Plasma Cutter",
-    "tags": [
-      "general"
-    ],
-    "tool": "Plasma Cutter",
-    "cost": "10000",
-    "weight": "110 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Plastent",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Plastent",
-    "cost": "300",
-    "weight": "2.7 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Pocket Scrambler1",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Pocket Scrambler1",
-    "data_types": "N/A",
-    "cost": "400",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Portable Beacon",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Portable Beacon",
-    "cost": "1500",
-    "weight": "6.8 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Portable Computer",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Portable Computer",
-    "cost": "5000",
-    "weight": "2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Power Generator",
-    "tags": [
-      "general"
-    ],
-    "tool": "Power Generator",
-    "cost": "750",
-    "weight": "15 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Power Pack",
-    "tags": [
-      "general"
-    ],
-    "tool": "Power Pack",
-    "cost": "25",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Power Recharger",
-    "tags": [
-      "general"
-    ],
-    "tool": "Power Recharger",
-    "cost": "100",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Propulsion Pack",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Propulsion Pack",
-    "cost": "200",
-    "weight": "10 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Proximity Flare",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Proximity Flare",
-    "cost": "50",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Quongoosh Essence",
-    "tags": [
-      "general"
-    ],
-    "poison": "Quongoosh Essence",
-    "challenge_level": "CL 3",
-    "keywords": "Ingested, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Radiation Detector",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Radiation Detector",
-    "cost": "20",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Ration Pack",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Ration Pack",
-    "cost": "5",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Rebellion Era Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Rebellion Era Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Rebellion Era Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "explosive": "Rebellion Era Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Rebellion Era Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Rebellion Era Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Rebellion Era Campaign Guide",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Rebellion Era Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Recording Unit",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Recording Unit",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Redirection Crystal",
-    "tags": [
-      "general"
-    ],
-    "tool": "Redirection Crystal",
-    "cost": "500",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Repulsor Boots",
-    "tags": [
-      "general"
-    ],
-    "tool": "Repulsor Boots",
-    "cost": "200",
-    "weight": "2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Repulsor Hitch",
-    "tags": [
-      "general"
-    ],
-    "tool": "Repulsor Hitch",
-    "cost": "100",
-    "weight": "3 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Repulsor Pad",
-    "tags": [
-      "general"
-    ],
-    "tool": "Repulsor Pad",
-    "cost": "200",
-    "weight": "6 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Rhen-Orm Biocomputer",
-    "tags": [
-      "general"
-    ],
-    "cybernetic_device": "Rhen-Orm Biocomputer",
-    "cost": "3500",
-    "weight": "0.2 kg",
-    "installation_cost": "10000",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Riding Saddle",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Riding Saddle",
-    "cost": "125",
-    "weight": "4 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Saga Edition Core Rulebook",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Saga Edition Core Rulebook",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "tags": [
-      "general"
-    ],
-    "cybernetic_device": "Saga Edition Core Rulebook",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Saga Edition Core Rulebook",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "tags": [
-      "general"
-    ],
-    "explosive": "Saga Edition Core Rulebook",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Saga Edition Core Rulebook",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "tags": [
-      "general"
-    ],
-    "poison": "Saga Edition Core Rulebook",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Saga Edition Core Rulebook",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "tags": [
-      "general"
-    ],
-    "tool": "Saga Edition Core Rulebook",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Saga Edition Core Rulebook",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Scum and Villainy",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Scum and Villainy",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Scum and Villainy",
-    "tags": [
-      "general"
-    ],
-    "tool": "Scum and Villainy",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Security Kit",
-    "tags": [
-      "general"
-    ],
-    "tool": "Security Kit",
-    "cost": "750",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Sensor Pack",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Sensor Pack",
-    "cost": "1500",
-    "weight": "9 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Sensory Enhancement",
-    "tags": [
-      "general"
-    ],
-    "advanced_cybernetic": "Sensory Enhancement",
-    "rejection_attack_bonus": "+14",
-    "cost": "800",
-    "surgery_cost": "3000",
-    "availability": "Restricted",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Shield Cage",
-    "tags": [
-      "general"
-    ],
-    "tool": "Shield Cage",
-    "cost": "10000",
-    "weight": "20 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Shipsuit",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Shipsuit",
-    "cost": "200",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Short-Range",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Short-Range",
-    "data_types": "Audio, Video1, Holo1",
-    "cost": "25",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Signal Wand",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Signal Wand",
-    "data_types": "Audio",
-    "cost": "300",
-    "weight": "0.2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Simple",
-    "tags": [
-      "general"
-    ],
-    "device": "Simple",
-    "dc*": "15",
-    "examples": "Sabotage a mechanical device, jam a blaster, bypass a basic mechanical lock",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Simple",
-    "tags": [
-      "general"
-    ],
-    "object_type": "Simple",
-    "dc": "10",
-    "description": "Item easily created from a few raw materials, using common tools and parts.",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Sith Battle Harness",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Sith Battle Harness",
-    "cost": "5000",
-    "weight": "90 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Sith Poison",
-    "tags": [
-      "general"
-    ],
-    "poison": "Sith Poison",
-    "challenge_level": "CL 10",
-    "keywords": "Contact, Ingested, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Skeletal Reinforcement",
-    "tags": [
-      "general"
-    ],
-    "advanced_cybernetic": "Skeletal Reinforcement",
-    "rejection_attack_bonus": "+12",
-    "cost": "10000",
-    "surgery_cost": "50000",
-    "availability": "Restricted",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Sonar Mapper",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Sonar Mapper",
-    "cost": "400",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Sound Sponge",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Sound Sponge",
-    "cost": "3500",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Space Suit",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Space Suit",
-    "cost": "2000",
-    "weight": "15 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Spacer's Chest",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Spacer's Chest",
-    "cost": "200",
-    "weight": "10 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Spy Bug",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Spy Bug",
-    "cost": "1300",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Standard Datapad",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Standard Datapad",
-    "cost": "1000",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Stealth Field Generator",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Stealth Field Generator",
-    "cost": "5000",
-    "weight": "0.2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Subcutaneous Comlink",
-    "tags": [
-      "general"
-    ],
-    "advanced_cybernetic": "Subcutaneous Comlink",
-    "rejection_attack_bonus": "+3",
-    "cost": "4000",
-    "surgery_cost": "3000",
-    "availability": "Restricted",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Subelectronic Converter",
-    "tags": [
-      "general"
-    ],
-    "cybernetic_device": "Subelectronic Converter",
-    "cost": "23000",
-    "weight": "-",
-    "installation_cost": "500",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Subelectronic Converter",
-    "tags": [
-      "general"
-    ],
-    "implant": "Subelectronic Converter",
-    "cost": "23000",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Subsonic Field Emitter",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Subsonic Field Emitter",
-    "cost": "120",
-    "weight": "0.2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Surgery Kit",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Surgery Kit",
-    "cost": "1000",
-    "weight": "10 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Surveillance Detector",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Surveillance Detector",
-    "cost": "450",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Surveillance Tagger",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Surveillance Tagger",
-    "cost": "450",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Syntherope (45 meters)",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Syntherope (45 meters)",
-    "cost": "20",
-    "weight": "2.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Targeting Beacon",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Targeting Beacon",
-    "data_types": "N/A",
-    "cost": "300",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Targeting Eye",
-    "tags": [
-      "general"
-    ],
-    "advanced_cybernetic": "Targeting Eye",
-    "rejection_attack_bonus": "+16",
-    "cost": "500",
-    "surgery_cost": "3750",
-    "availability": "Military",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Targeting Scope",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Targeting Scope",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Targeting Scope (Enhanced Low-Light)",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Targeting Scope (Enhanced Low-Light)",
-    "cost": "1000",
-    "weight": "1.2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Targeting Scope (Standard)",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Targeting Scope (Standard)",
-    "cost": "100",
-    "weight": "0.2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Telescopic Eye",
-    "tags": [
-      "general"
-    ],
-    "advanced_cybernetic": "Telescopic Eye",
-    "rejection_attack_bonus": "+9",
-    "cost": "500",
-    "surgery_cost": "3750",
-    "availability": "Restricted",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Threats of the Galaxy",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Threats of the Galaxy",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Threats of the Galaxy",
-    "tags": [
-      "general"
-    ],
-    "cybernetic_device": "Threats of the Galaxy",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Threats of the Galaxy",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Threats of the Galaxy",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Threats of the Galaxy",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Threats of the Galaxy",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Threats of the Galaxy",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Threats of the Galaxy",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Threats of the Galaxy",
-    "tags": [
-      "general"
-    ],
-    "tool": "Threats of the Galaxy",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Tightbeam Comlink",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Tightbeam Comlink",
-    "data_types": "Audio",
-    "cost": "300",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Tool Kit",
-    "tags": [
-      "general"
-    ],
-    "tool": "Tool Kit",
-    "cost": "250",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Toxin Detector",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Toxin Detector",
-    "cost": "700",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Trauger",
-    "tags": [
-      "general"
-    ],
-    "poison": "Trauger",
-    "challenge_level": "CL 14",
-    "keywords": "Atmosphere, Natural, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Tremor Cell",
-    "tags": [
-      "general"
-    ],
-    "weapon_or_armor_accessory": "Tremor Cell",
-    "cost": "1000",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Tremor Sensor",
-    "tags": [
-      "general"
-    ],
-    "advanced_cybernetic": "Tremor Sensor",
-    "rejection_attack_bonus": "+7",
-    "cost": "400",
-    "surgery_cost": "3750",
-    "availability": "Restricted",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Triangulation Visor",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Triangulation Visor",
-    "cost": "1400",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Tricky",
-    "tags": [
-      "general"
-    ],
-    "device": "Tricky",
-    "dc*": "20",
-    "examples": "Sabotage an electronic device, bypass a basic electronic lock",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Trihexalon",
-    "tags": [
-      "general"
-    ],
-    "poison": "Trihexalon",
-    "challenge_level": "CL 15",
-    "keywords": "Contact, Inhaled, Poison",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Universal Energy Cage",
-    "tags": [
-      "general"
-    ],
-    "tool": "Universal Energy Cage",
-    "cost": "20000",
-    "weight": "3 Tons",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Unknown Regions",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Unknown Regions",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Unknown Regions",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Unknown Regions",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Unknown Regions",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Unknown Regions",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Unknown Regions",
-    "tags": [
-      "general"
-    ],
-    "medical_gear": "Unknown Regions",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Unknown Regions",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Unknown Regions",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Unknown Regions",
-    "tags": [
-      "general"
-    ],
-    "tool": "Unknown Regions",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Utility Belt",
-    "tags": [
-      "general"
-    ],
-    "tool": "Utility Belt",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Utility Belt (Empty)",
-    "tags": [
-      "general"
-    ],
-    "tool": "Utility Belt (Empty)",
-    "cost": "55",
-    "weight": "0.3 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Utility Belt (Standard)",
-    "tags": [
-      "general"
-    ],
-    "tool": "Utility Belt (Standard)",
-    "cost": "500",
-    "weight": "4 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Vacuum Mask",
-    "tags": [
-      "general"
-    ],
-    "life_support": "Vacuum Mask",
-    "cost": "650",
-    "weight": "0.3 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Vacuum Survival Pouch",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "Vacuum Survival Pouch",
-    "cost": "800",
-    "weight": "1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Veridicator",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Veridicator",
-    "cost": "4000",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Vid-Vox Scrambler",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Vid-Vox Scrambler",
-    "cost": "3400",
-    "weight": "0.5 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Videorecorder",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Videorecorder",
-    "cost": "50",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Visual Wrist Comm",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Visual Wrist Comm",
-    "data_types": "Audio, Video",
-    "cost": "1300",
-    "weight": "0.25 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Vox-Box",
-    "tags": [
-      "general"
-    ],
-    "communications_device": "Vox-Box",
-    "data_types": "Audio",
-    "cost": "200",
-    "weight": "0.1 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "War Saddle",
-    "tags": [
-      "general"
-    ],
-    "survival_gear": "War Saddle",
-    "cost": "250",
-    "weight": "6 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Water Extractor",
-    "tags": [
-      "general"
-    ],
-    "tool": "Water Extractor",
-    "cost": "400",
-    "weight": "3.2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Web Enhancements",
-    "tags": [
-      "general"
-    ],
-    "detection_or_surveillance_device": "Web Enhancements",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Xcalq Stealth Pack",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Xcalq Stealth Pack",
-    "cost": "1500",
-    "weight": "-",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Xcalq-3GA \"Slicer Special\" Portable Computer",
-    "tags": [
-      "general"
-    ],
-    "computer_or_storage_device": "Xcalq-3GA \"Slicer Special\" Portable Computer",
-    "cost": "7500",
-    "weight": "2 kg",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "0-6 Squares",
-    "tags": [
-      "grenade"
-    ],
-    "distance": "0-6 Squares",
-    "range_category": "Point-Blank Range",
-    "penalty": "No penalty",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "11-12 Squares",
-    "tags": [
-      "grenade"
-    ],
-    "distance": "11-12 Squares",
-    "range_category": "Long Range",
-    "penalty": "-10 penalty to attack rolls",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "7-8 Squares",
-    "tags": [
-      "grenade"
-    ],
-    "distance": "7-8 Squares",
-    "range_category": "Short Range",
-    "penalty": "-2 penalty to attack rolls",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "9-10 Squares",
-    "tags": [
-      "grenade"
-    ],
-    "distance": "9-10 Squares",
-    "range_category": "Medium Range",
-    "penalty": "-5 penalty to attack rolls",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Clone Wars Campaign Guide",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Clone Wars Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy at War",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Galaxy at War",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Jedi Academy Training Manual",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Jedi Academy Training Manual",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Knights of the Old Republic Campaign Guide",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Knights of the Old Republic Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Rebellion Era Campaign Guide",
-    "tags": [
-      "grenade"
-    ],
-    "grenade": "Rebellion Era Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Force Unleashed Campaign Guide",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Force Unleashed Campaign Guide",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Galaxy at War",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Galaxy at War",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   },
   {
     "name": "Web Enhancements",
-    "tags": [
-      "mine"
-    ],
-    "mine": "Web Enhancements",
-    "type": "equipment"
+    "type": "equipment",
+    "img": "icons/svg/upgrade.svg",
+    "system": {
+      "tags": [],
+      "cost": "0",
+      "weight": "0 kg",
+      "size": "Small",
+      "availability": "Common",
+      "quantity": 1,
+      "description": "",
+      "notes": ""
+    }
   }
 ]
