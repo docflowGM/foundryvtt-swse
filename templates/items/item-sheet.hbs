@@ -2,6 +2,11 @@
 {{!-- File: templates/items/item-sheet.hbs --}}
 
 <form class="swse item-sheet {{cssClass}} holo-theme" autocomplete="off">
+    {{!-- Holographic Frame Header --}}
+    <div class="holo-frame-top">
+        <img class="sw-logo" src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
+    </div>
+
     {{!-- Header Section --}}
     <header class="sheet-header">
         <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" height="80" width="80"/>

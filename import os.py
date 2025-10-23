@@ -1,1207 +1,565 @@
 #!/usr/bin/env python3
 """
-SWSE Character Sheet - Datapad Style
-Creates a sci-fi datapad themed sheet based on Roll20 design
+SWSE Foundry VTT - Apply Uniform Holo Theme
+Applies consistent holo datapad styling across all character sheets
 """
 
+import os
+import re
 from pathlib import Path
 
-class SWSEDatapadSheet:
-    def __init__(self, repo_path):
-        self.repo_path = Path(repo_path)
-        
-    def run(self):
-        """Main execution"""
-        print("=" * 70)
-        print("SWSE CHARACTER SHEET - DATAPAD STYLE")
-        print("=" * 70)
-        
-        print("\nCreating datapad-style character sheet...")
-        self.create_datapad_template()
-        
-        print("\n✓ Datapad character sheet created!")
-        print("  Location: templates/actors/character-sheet.hbs")
-        print("\n" + "=" * 70)
-        
-    def create_datapad_template(self):
-        """Create the datapad-style template"""
-        template_path = self.repo_path / "templates/actors/character-sheet.hbs"
-        
-        content = '''{{!-- SWSE Character Sheet - Datapad Style --}}
-<form class="swse-datapad-sheet {{cssClass}}" autocomplete="off">
-    
-    {{!-- TOP HEADER BAR --}}
-    <header class="datapad-header">
-        <div class="header-left">
-            <div class="header-tabs">
-                <button type="button" class="header-tab active">PC</button>
-                <button type="button" class="header-tab">NPC</button>
-                <button type="button" class="header-tab">Vehicle</button>
-                <button type="button" class="header-tab">Settings</button>
-            </div>
-            
-            <div class="basic-fields">
-                <div class="field-trio">
-                    <div class="field-sm">
-                        <label>Class</label>
-                        <input name="system.class" type="text" value="{{system.class}}"/>
-                    </div>
-                    <div class="field-sm">
-                        <label>Level</label>
-                        <input name="system.level" type="number" value="{{system.level}}" data-dtype="Number"/>
-                    </div>
-                    <div class="field-sm">
-                        <label>½ Lvl</label>
-                        <div class="readonly">{{halfLevel}}</div>
-                    </div>
-                </div>
-                
-                <div class="field-row-2">
-                    <div class="field-md">
-                        <label>Background</label>
-                        <input name="system.background" type="text" value="{{system.background}}"/>
-                    </div>
-                    <div class="field-md">
-                        <label>Species</label>
-                        <input name="system.species" type="text" value="{{system.species}}"/>
-                    </div>
-                </div>
-                
-                <div class="field-row-2">
-                    <div class="field-md">
-                        <label>Gender</label>
-                        <input name="system.gender" type="text" value="{{system.gender}}"/>
-                    </div>
-                    <div class="field-md">
-                        <label>Size</label>
-                        <input name="system.size" type="text" value="{{system.size}}" placeholder="Medium"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="header-center">
-            <img class="sw-logo" src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
-        </div>
-        
-        <div class="header-right">
-            <img class="character-portrait" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
-        </div>
-    </header>
+# Base path to your repo
+REPO_PATH = Path(r"C:\Users\Owner\Documents\GitHub\foundryvtt-swse")
 
-    {{!-- MAIN CONTENT GRID --}}
-    <div class="datapad-main-grid">
-        
-        {{!-- LEFT COLUMN --}}
-        <div class="left-column">
-            
-            {{!-- ATTRIBUTES --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Attributes</div>
-                <div class="attributes-grid">
-                    {{#each system.abilities as |ability key|}}
-                    <div class="attribute-row">
-                        <label class="attr-label">{{toUpperCase key}}</label>
-                        <input type="number" name="system.abilities.{{key}}.base" value="{{ability.base}}" class="attr-input" data-dtype="Number"/>
-                        <button type="button" class="roll-btn">⚅</button>
-                        <div class="attr-mod">{{#if (gte ability.mod 0)}}+{{/if}}{{ability.mod}}</div>
-                        <button type="button" class="roll-btn">⚅</button>
-                    </div>
-                    {{/each}}
-                </div>
-            </section>
+# Holo theme header addition for templates
+HOLO_HEADER_LOGO = '''
+    {{!-- Holographic Frame Header --}}
+    <div class="holo-frame-top">
+        <img class="sw-logo" src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
+    </div>'''
 
-            {{!-- DEFENSES --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Defenses</div>
-                <div class="defenses-layout">
-                    <div class="defense-main">
-                        <div class="defense-item">
-                            <label>Total</label>
-                            <div class="def-box">{{system.defenses.fortitude.total}}</div>
-                        </div>
-                        <div class="defense-calc">
-                            <span>= 10 + {{halfLevel}}</span>
-                        </div>
-                    </div>
-                    <div class="defense-type">
-                        <div class="def-circle fortitude">REF</div>
-                        <div class="def-value">{{system.defenses.reflex.total}}</div>
-                    </div>
-                    <div class="defense-type">
-                        <div class="def-circle will">WILL</div>
-                        <div class="def-value">{{system.defenses.will.total}}</div>
-                    </div>
-                </div>
-            </section>
-
-            {{!-- ARMOR --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Armor</div>
-                <div class="armor-list-compact">
-                    {{#each armor as |item|}}
-                    <div class="armor-line">
-                        <input type="text" value="{{item.name}}" readonly/>
-                        <button class="item-delete-sm">×</button>
-                    </div>
-                    {{/each}}
-                    <button type="button" class="add-armor-btn">+ Add</button>
-                </div>
-            </section>
-
-            {{!-- ATTACKS --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Attacks</div>
-                <div class="attacks-grid">
-                    {{#each weapons as |weapon|}}
-                    <div class="attack-block">
-                        <div class="attack-name">
-                            <input type="text" value="{{weapon.name}}" readonly/>
-                        </div>
-                        <div class="attack-stats">
-                            <div class="stat-cell">
-                                <label>Atk</label>
-                                <button type="button" class="roll-btn">⚅</button>
-                            </div>
-                            <div class="stat-cell">
-                                <label>Dmg</label>
-                                <input type="text" value="{{weapon.system.damage}}"/>
-                            </div>
-                            <div class="stat-cell">
-                                <label>Total</label>
-                                <button type="button" class="roll-btn">⚅</button>
-                            </div>
-                            <div class="stat-cell">
-                                <label>Mod</label>
-                                <button type="button" class="roll-btn">⚅</button>
-                            </div>
-                        </div>
-                    </div>
-                    {{/each}}
-                    <button type="button" class="add-weapon-btn">+ Add Weapon</button>
-                </div>
-            </section>
-        </div>
-
-        {{!-- CENTER COLUMN --}}
-        <div class="center-column">
-            
-            {{!-- HIT POINTS --}}
-            <section class="datapad-section hp-section">
-                <div class="section-header-black">Hit Points</div>
-                <div class="hp-grid">
-                    <div class="hp-current-box">
-                        <label>Current</label>
-                        <input type="number" name="system.hp.value" value="{{system.hp.value}}" class="hp-big" data-dtype="Number"/>
-                    </div>
-                    <div class="hp-max-box">
-                        <label>Maximum</label>
-                        <input type="number" name="system.hp.max" value="{{system.hp.max}}" class="hp-big" data-dtype="Number"/>
-                    </div>
-                </div>
-            </section>
-
-            {{!-- CONDITION --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Condition</div>
-                <select name="system.conditionTrack" class="condition-dropdown">
-                    <option value="normal" {{#if (eq system.conditionTrack "normal")}}selected{{/if}}>Normal</option>
-                    <option value="-1" {{#if (eq system.conditionTrack "-1")}}selected{{/if}}>-1 (minor)</option>
-                    <option value="-2" {{#if (eq system.conditionTrack "-2")}}selected{{/if}}>-2 (hurt)</option>
-                    <option value="-5" {{#if (eq system.conditionTrack "-5")}}selected{{/if}}>-5 (wounded)</option>
-                    <option value="-10" {{#if (eq system.conditionTrack "-10")}}selected{{/if}}>-10 (disabled)</option>
-                    <option value="helpless" {{#if (eq system.conditionTrack "helpless")}}selected{{/if}}>Helpless</option>
-                </select>
-            </section>
-
-            {{!-- SECOND WIND --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Second Wind</div>
-                <div class="second-wind-layout">
-                    <div class="sw-uses">
-                        <label>Uses</label>
-                        <input type="number" name="system.secondWind.uses" value="{{system.secondWind.uses}}" data-dtype="Number"/>
-                    </div>
-                    <div class="sw-heals">
-                        <label>Heals</label>
-                        <div class="readonly-display">{{system.secondWind.healing}}</div>
-                    </div>
-                    <button type="button" class="use-sw-btn">Use</button>
-                </div>
-            </section>
-
-            {{!-- DAMAGE THRESHOLD --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Damage Threshold</div>
-                <div class="dt-display">
-                    <div class="dt-big">{{damageThreshold}}</div>
-                </div>
-            </section>
-
-            {{!-- FORCE POINTS --}}
-            <section class="datapad-section force-section">
-                <div class="section-header-black">Force Points</div>
-                <div class="force-layout">
-                    <div class="fp-tracker">
-                        <input type="number" name="system.forcePoints.value" value="{{system.forcePoints.value}}" data-dtype="Number"/>
-                        <span>/</span>
-                        <input type="number" name="system.forcePoints.max" value="{{system.forcePoints.max}}" data-dtype="Number"/>
-                    </div>
-                    <div class="fp-die-select">
-                        <label>Die</label>
-                        <select name="system.forcePoints.die">
-                            <option value="1d6" {{#if (eq system.forcePoints.die "1d6")}}selected{{/if}}>1d6</option>
-                            <option value="1d8" {{#if (eq system.forcePoints.die "1d8")}}selected{{/if}}>1d8</option>
-                            <option value="1d10" {{#if (eq system.forcePoints.die "1d10")}}selected{{/if}}>1d10</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-
-            {{!-- DESTINY POINTS --}}
-            <section class="datapad-section destiny-section">
-                <div class="section-header-black">Destiny Pts</div>
-                <div class="destiny-layout">
-                    <div class="dp-tracker">
-                        <label>BAB</label>
-                        <input type="number" name="system.bab" value="{{system.bab}}" data-dtype="Number"/>
-                    </div>
-                    <div class="dp-tracker">
-                        <label>Speed</label>
-                        <input type="number" name="system.speed.base" value="{{system.speed.base}}" data-dtype="Number"/>
-                    </div>
-                    <div class="dp-tracker">
-                        <label>Dark Side</label>
-                        <input type="number" name="system.darkSide" value="{{system.darkSide}}" data-dtype="Number"/>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        {{!-- RIGHT COLUMN - SKILLS --}}
-        <div class="right-column">
-            <section class="datapad-section skills-section">
-                <div class="section-header-black">Skills</div>
-                <div class="skills-grid-compact">
-                    <div class="skills-header-row">
-                        <span class="sh-name">Skill</span>
-                        <span class="sh-mod">Mod</span>
-                        <span class="sh-t">T</span>
-                        <span class="sh-f">F</span>
-                        <span class="sh-roll">Roll</span>
-                    </div>
-                    
-                    {{#each skills as |skill|}}
-                    <div class="skill-data-row">
-                        <label class="skill-name-compact">{{skill.name}}</label>
-                        <div class="skill-mod-box">{{skill.mod}}</div>
-                        <input type="checkbox" name="system.skills.{{skill.key}}.trained" {{#if skill.trained}}checked{{/if}}/>
-                        <input type="checkbox" name="system.skills.{{skill.key}}.focus" {{#if skill.focus}}checked{{/if}}/>
-                        <button type="button" class="skill-roll-btn" data-skill="{{skill.key}}">⚅</button>
-                    </div>
-                    {{/each}}
-                </div>
-            </section>
-        </div>
-    </div>
-
-    {{!-- BOTTOM TABS --}}
-    <section class="bottom-tabs-section">
-        <nav class="bottom-tabs">
-            <button type="button" class="bottom-tab active" data-tab="equipment">Equipment</button>
-            <button type="button" class="bottom-tab" data-tab="feats">Feats</button>
-            <button type="button" class="bottom-tab" data-tab="talents">Talents</button>
-            <button type="button" class="bottom-tab" data-tab="force">Force Powers</button>
-            <button type="button" class="bottom-tab" data-tab="languages">Languages</button>
-            <button type="button" class="bottom-tab" data-tab="notes">Notes</button>
-        </nav>
-
-        <div class="bottom-tabs-content">
-            {{!-- EQUIPMENT TAB --}}
-            <div class="bottom-tab-pane active" data-tab="equipment">
-                <div class="equipment-grid">
-                    <div class="equip-column">
-                        <h4>Carried Equipment</h4>
-                        <div class="equip-list">
-                            {{#each equipment as |item|}}
-                            <div class="equip-item">
-                                <input type="text" value="{{item.name}}" readonly/>
-                                <button class="item-delete">×</button>
-                            </div>
-                            {{/each}}
-                        </div>
-                        <button type="button" class="add-equipment-btn">+ Add Equipment</button>
-                    </div>
-                    
-                    <div class="credits-box">
-                        <label>Credits</label>
-                        <input type="number" name="system.credits" value="{{system.credits}}" data-dtype="Number"/>
-                    </div>
-                </div>
-            </div>
-
-            {{!-- FEATS TAB --}}
-            <div class="bottom-tab-pane" data-tab="feats">
-                <div class="feats-list">
-                    {{#each feats as |feat|}}
-                    <div class="feat-item">
-                        <strong>{{feat.name}}</strong>
-                        <button class="item-delete">×</button>
-                        {{#if feat.system.description}}
-                        <p>{{feat.system.description}}</p>
-                        {{/if}}
-                    </div>
-                    {{/each}}
-                </div>
-                <button type="button" class="add-feat-btn">+ Add Feat</button>
-            </div>
-
-            {{!-- TALENTS TAB --}}
-            <div class="bottom-tab-pane" data-tab="talents">
-                <div class="talents-list">
-                    {{#each talents as |talent|}}
-                    <div class="talent-item">
-                        <strong>{{talent.name}}</strong>
-                        <button class="item-delete">×</button>
-                        {{#if talent.system.description}}
-                        <p>{{talent.system.description}}</p>
-                        {{/if}}
-                    </div>
-                    {{/each}}
-                </div>
-                <button type="button" class="add-talent-btn">+ Add Talent</button>
-            </div>
-
-            {{!-- FORCE POWERS TAB --}}
-            <div class="bottom-tab-pane" data-tab="force">
-                <div class="force-powers-list">
-                    {{#each forcePowers as |power|}}
-                    <div class="force-power-item">
-                        <div class="power-header">
-                            <strong>{{power.name}}</strong>
-                            {{#if power.system.uses}}
-                            <span class="uses">{{power.system.uses.current}}/{{power.system.uses.max}}</span>
-                            {{/if}}
-                            <button class="item-delete">×</button>
-                        </div>
-                        <div class="power-actions-compact">
-                            <button type="button" class="use-power-btn">Use</button>
-                            <button type="button" class="reload-power-btn">Reload</button>
-                        </div>
-                    </div>
-                    {{/each}}
-                </div>
-                <button type="button" class="add-power-btn">+ Add Power</button>
-            </div>
-
-            {{!-- LANGUAGES TAB --}}
-            <div class="bottom-tab-pane" data-tab="languages">
-                <textarea name="system.languages" rows="5">{{system.languages}}</textarea>
-            </div>
-
-            {{!-- NOTES TAB --}}
-            <div class="bottom-tab-pane" data-tab="notes">
-                <textarea name="system.notes" rows="10">{{system.notes}}</textarea>
-            </div>
-        </div>
-    </section>
-</form>
-
-<style>
+# CSS for holo frame and logo
+HOLO_FRAME_CSS = '''
 /* ============================================
-   SWSE DATAPAD CHARACTER SHEET
-   Sci-fi holographic interface design
+   HOLOGRAPHIC FRAME & LOGO
    ============================================ */
-
-.swse-datapad-sheet {
-    background: linear-gradient(135deg, #0a1628 0%, #1a2a3e 50%, #0a1628 100%);
-    color: #00d9ff;
-    font-family: 'Courier New', 'Consolas', monospace;
-    padding: 10px;
-    border-radius: 10px;
-    border: 2px solid #00a8cc;
-    box-shadow: 0 0 30px rgba(0, 217, 255, 0.3), inset 0 0 50px rgba(0, 168, 204, 0.1);
-    max-width: 1400px;
+.holo-frame-top {
     position: relative;
-}
-
-/* TOP HEADER */
-.datapad-header {
-    display: grid;
-    grid-template-columns: 300px 1fr 150px;
-    gap: 15px;
-    margin-bottom: 15px;
-    padding: 15px;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 8px;
-    border: 1px solid #00a8cc;
-}
-
-.header-tabs {
     display: flex;
-    gap: 4px;
-    margin-bottom: 10px;
-}
-
-.header-tab {
-    flex: 1;
-    padding: 6px 10px;
-    background: linear-gradient(to bottom, #1a3a4a, #0a2a3a);
-    border: 1px solid #00a8cc;
-    color: #00d9ff;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-.header-tab.active {
-    background: linear-gradient(to bottom, #00a8cc, #007a9c);
-    color: #fff;
-}
-
-.basic-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.field-trio {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 6px;
-}
-
-.field-row-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-}
-
-.field-sm, .field-md {
-    display: flex;
-    flex-direction: column;
-}
-
-.field-sm label, .field-md label {
-    font-size: 9px;
-    color: #00d9ff;
-    font-weight: bold;
-    margin-bottom: 2px;
-}
-
-.field-sm input, .field-md input {
-    padding: 4px 6px;
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid #00a8cc;
-    color: #00ff88;
-    font-size: 11px;
-    border-radius: 3px;
-}
-
-.readonly {
-    padding: 4px 6px;
-    background: rgba(0, 168, 204, 0.2);
-    border: 1px solid #00a8cc;
-    color: #fff;
-    font-size: 11px;
-    border-radius: 3px;
-    text-align: center;
-    font-weight: bold;
-}
-
-.header-center {
-    display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background: linear-gradient(135deg, rgba(26, 77, 122, 0.8), rgba(44, 95, 141, 0.8));
+    border-bottom: 2px solid #0af;
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
+}
+
+.holo-frame-top::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ffff, transparent);
+    animation: holo-border-pulse 2s ease-in-out infinite;
+}
+
+@keyframes holo-border-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
 }
 
 .sw-logo {
     max-width: 200px;
+    height: auto;
     filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.5));
-}
-
-.character-portrait {
-    width: 140px;
-    height: 140px;
-    object-fit: cover;
-    border: 3px solid #00a8cc;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
-    cursor: pointer;
-}
-
-/* MAIN GRID */
-.datapad-main-grid {
-    display: grid;
-    grid-template-columns: 280px 1fr 340px;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-/* SECTIONS */
-.datapad-section {
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid #00a8cc;
-    border-radius: 6px;
-    margin-bottom: 10px;
-    overflow: hidden;
-}
-
-.section-header-black {
-    background: linear-gradient(to right, #000, #1a1a1a, #000);
-    color: #00ff88;
-    text-align: center;
-    padding: 6px;
-    font-weight: bold;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    border-bottom: 2px solid #00a8cc;
-    text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
-}
-
-/* ATTRIBUTES */
-.attributes-grid {
-    padding: 8px;
-}
-
-.attribute-row {
-    display: grid;
-    grid-template-columns: 35px 50px 30px 50px 30px;
-    gap: 4px;
-    align-items: center;
-    margin-bottom: 6px;
-}
-
-.attr-label {
-    font-size: 11px;
-    font-weight: bold;
-    color: #00d9ff;
-}
-
-.attr-input {
-    padding: 4px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #00a8cc;
-    color: #00ff88;
-    text-align: center;
-    font-weight: bold;
-    border-radius: 3px;
-}
-
-.attr-mod {
-    padding: 4px;
-    background: linear-gradient(to bottom, #003a4a, #001a2a);
-    border: 1px solid #00a8cc;
-    color: #fff;
-    text-align: center;
-    font-weight: bold;
-    border-radius: 3px;
-}
-
-.roll-btn {
-    padding: 4px;
-    background: linear-gradient(to bottom, #00a8cc, #007a9c);
-    border: 1px solid #00d9ff;
-    color: #fff;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 3px;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
-}
-
-.roll-btn:hover {
-    background: linear-gradient(to bottom, #00d9ff, #00a8cc);
-    box-shadow: 0 0 10px rgba(0, 217, 255, 0.6);
-}
-
-/* DEFENSES */
-.defenses-layout {
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.defense-main {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.defense-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.defense-item label {
-    font-size: 9px;
-    color: #00d9ff;
-    margin-bottom: 4px;
-}
-
-.def-box {
-    padding: 8px 16px;
-    background: linear-gradient(to bottom, #003a4a, #001a2a);
-    border: 2px solid #00a8cc;
-    color: #fff;
-    font-size: 20px;
-    font-weight: bold;
-    border-radius: 4px;
-    text-align: center;
-}
-
-.defense-calc {
-    font-size: 11px;
-    color: #00d9ff;
-}
-
-.defense-type {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.def-circle {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 10px;
-    border: 2px solid #00a8cc;
-    background: radial-gradient(circle, rgba(0,168,204,0.3), rgba(0,0,0,0.8));
-}
-
-.def-circle.fortitude {
-    border-color: #ff4444;
-    color: #ff4444;
-}
-
-.def-circle.will {
-    border-color: #4444ff;
-    color: #4444ff;
-}
-
-.def-value {
-    font-size: 18px;
-    font-weight: bold;
-    color: #fff;
-}
-
-/* HP SECTION */
-.hp-grid {
-    padding: 10px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-.hp-current-box, .hp-max-box {
-    text-align: center;
-}
-
-.hp-current-box label, .hp-max-box label {
-    display: block;
-    font-size: 10px;
-    color: #00d9ff;
-    margin-bottom: 6px;
-}
-
-.hp-big {
-    width: 100%;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 2px solid #00a8cc;
-    color: #00ff88;
-    font-size: 28px;
-    font-weight: bold;
-    text-align: center;
-    border-radius: 6px;
-}
-
-/* CONDITION */
-.condition-dropdown {
-    width: 100%;
-    padding: 8px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #00a8cc;
-    color: #00ff88;
-    font-weight: bold;
-    font-size: 12px;
-    border-radius: 0 0 6px 6px;
-}
-
-/* SECOND WIND */
-.second-wind-layout {
-    padding: 10px;
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    gap: 8px;
-    align-items: end;
-}
-
-.sw-uses, .sw-heals {
-    display: flex;
-    flex-direction: column;
-}
-
-.sw-uses label, .sw-heals label {
-    font-size: 9px;
-    color: #00d9ff;
-    margin-bottom: 4px;
-}
-
-.sw-uses input {
-    padding: 6px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #00a8cc;
-    color: #00ff88;
-    text-align: center;
-    font-weight: bold;
-    border-radius: 3px;
-}
-
-.readonly-display {
-    padding: 6px;
-    background: rgba(0, 168, 204, 0.2);
-    border: 1px solid #00a8cc;
-    color: #fff;
-    text-align: center;
-    font-weight: bold;
-    border-radius: 3px;
-}
-
-.use-sw-btn {
-    padding: 6px 12px;
-    background: linear-gradient(to bottom, #00a8cc, #007a9c);
-    border: 1px solid #00d9ff;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 11px;
-}
-
-/* DAMAGE THRESHOLD */
-.dt-display {
-    padding: 15px;
-    text-align: center;
-}
-
-.dt-big {
-    font-size: 48px;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
-}
-
-/* FORCE & DESTINY */
-.force-layout, .destiny-layout {
-    padding: 10px;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.fp-tracker, .dp-tracker {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.fp-tracker input, .dp-tracker input {
-    width: 40px;
-    padding: 4px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #00a8cc;
-    color: #00ff88;
-    text-align: center;
-    font-weight: bold;
-    border-radius: 3px;
-}
-
-.fp-die-select, .dp-tracker {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.fp-die-select label, .dp-tracker label {
-    font-size: 8px;
-    color: #00d9ff;
-}
-
-.fp-die-select select {
-    padding: 4px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #00a8cc;
-    color: #00ff88;
-    font-size: 10px;
-    border-radius: 3px;
-}
-
-/* SKILLS */
-.skills-grid-compact {
-    padding: 8px;
-    max-height: 600px;
-    overflow-y: auto;
-}
-
-.skills-header-row {
-    display: grid;
-    grid-template-columns: 1fr 50px 25px 25px 35px;
-    gap: 4px;
-    padding: 4px;
-    background: rgba(0, 168, 204, 0.2);
-    border-bottom: 1px solid #00a8cc;
-    margin-bottom: 4px;
-    font-size: 9px;
-    font-weight: bold;
-}
-
-.skill-data-row {
-    display: grid;
-    grid-template-columns: 1fr 50px 25px 25px 35px;
-    gap: 4px;
-    align-items: center;
-    padding: 4px;
-    margin-bottom: 2px;
-    border-bottom: 1px solid rgba(0, 168, 204, 0.2);
-}
-
-.skill-name-compact {
-    font-size: 10px;
-    color: #00d9ff;
-}
-
-.skill-mod-box {
-    padding: 4px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #00a8cc;
-    color: #00ff88;
-    text-align: center;
-    font-size: 11px;
-    font-weight: bold;
-    border-radius: 3px;
-}
-
-.skill-data-row input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-}
-
-.skill-roll-btn {
-    padding: 4px;
-    background: linear-gradient(to bottom, #00a8cc, #007a9c);
-    border: 1px solid #00d9ff;
-    color: #fff;
-    font-size: 12px;
-    cursor: pointer;
-    border-radius: 3px;
-}
-
-/* ARMOR & ATTACKS */
-.armor-list-compact {
-    padding: 8px;
-}
-
-.armor-line {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 4px;
-}
-
-.armor-line input {
-    flex: 1;
-    padding: 4px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #00a8cc;
-    color: #00ff88;
-    font-size: 11px;
-    border-radius: 3px;
-}
-
-.item-delete-sm {
-    width: 25px;
-    padding: 4px;
-    background: #aa0000;
-    border: 1px solid #ff0000;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 3px;
-    font-weight: bold;
-}
-
-.add-armor-btn, .add-weapon-btn {
-    width: 100%;
-    padding: 6px;
-    background: linear-gradient(to bottom, #00a8cc, #007a9c);
-    border: 1px solid #00d9ff;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 11px;
-}
-
-.attacks-grid {
-    padding: 8px;
-}
-
-.attack-block {
-    margin-bottom: 10px;
-}
-
-.attack-name input {
-    width: 100%;
-    padding: 4px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #00a8cc;
-    color: #00ff88;
-    font-size: 11px;
-    border-radius: 3px;
-    margin-bottom: 6px;
-}
-
-.attack-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-}
-
-.stat-cell {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-}
-
-.stat-cell label {
-    font-size: 8px;
-    color: #00d9ff;
-}
-
-.stat-cell input {
-    width: 100%;
-    padding: 4px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #00a8cc;
-    color: #00ff88;
-    text-align: center;
-    font-size: 10px;
-    border-radius: 3px;
-}
-
-/* BOTTOM TABS */
-.bottom-tabs-section {
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid #00a8cc;
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-.bottom-tabs {
-    display: flex;
-    background: linear-gradient(to right, #000, #1a1a1a, #000);
-    border-bottom: 2px solid #00a8cc;
-}
-
-.bottom-tab {
-    flex: 1;
-    padding: 8px 16px;
-    background: transparent;
-    border: none;
-    border-right: 1px solid #00a8cc;
-    color: #00d9ff;
-    font-weight: bold;
-    font-size: 11px;
-    cursor: pointer;
-    text-transform: uppercase;
-}
-
-.bottom-tab:last-child {
-    border-right: none;
-}
-
-.bottom-tab.active {
-    background: linear-gradient(to bottom, #00a8cc, #007a9c);
-    color: #fff;
-}
-
-.bottom-tabs-content {
-    padding: 15px;
-}
-
-.bottom-tab-pane {
-    display: none;
-}
-
-.bottom-tab-pane.active {
-    display: block;
-}
-
-/* EQUIPMENT, FEATS, TALENTS */
-.equipment-grid {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 15px;
-}
-
-.equip-list, .feats-list, .talents-list, .force-powers-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.equip-item, .feat-item, .talent-item, .force-power-item {
-    padding: 8px;
-    background: rgba(0, 168, 204, 0.1);
-    border: 1px solid #00a8cc;
-    border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.equip-item input {
-    flex: 1;
-    padding: 4px;
-    background: transparent;
-    border: none;
-    color: #00ff88;
-    font-size: 11px;
-}
-
-.item-delete {
-    padding: 4px 8px;
-    background: #aa0000;
-    border: 1px solid #ff0000;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 3px;
-    font-weight: bold;
-}
-
-.credits-box {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.credits-box label {
-    font-size: 12px;
-    color: #00d9ff;
-    font-weight: bold;
-}
-
-.credits-box input {
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 2px solid #00a8cc;
-    color: #00ff88;
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-    border-radius: 6px;
-}
-
-.add-equipment-btn, .add-feat-btn, .add-talent-btn, .add-power-btn {
-    padding: 8px 16px;
-    background: linear-gradient(to bottom, #00a8cc, #007a9c);
-    border: 1px solid #00d9ff;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 12px;
-    margin-top: 10px;
-}
-
-/* FORCE POWERS */
-.force-power-item {
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.power-header {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-}
-
-.power-actions-compact {
-    display: flex;
-    gap: 6px;
-}
-
-.use-power-btn, .reload-power-btn {
-    padding: 4px 12px;
-    background: linear-gradient(to bottom, #00a8cc, #007a9c);
-    border: 1px solid #00d9ff;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 3px;
-    font-size: 10px;
-}
-
-/* TEXTAREAS */
-textarea {
-    width: 100%;
-    min-height: 200px;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #00a8cc;
-    color: #00ff88;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    border-radius: 4px;
-    resize: vertical;
-}
-
-/* SCROLLBAR */
-.skills-grid-compact::-webkit-scrollbar {
-    width: 8px;
-}
-
-.skills-grid-compact::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 4px;
-}
-
-.skills-grid-compact::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #00a8cc, #007a9c);
-    border-radius: 4px;
-}
-
-.skills-grid-compact::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(to bottom, #00d9ff, #00a8cc);
-}
-</style>'''
+    animation: logo-glow 3s ease-in-out infinite;
+}
+
+@keyframes logo-glow {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.5)); }
+    50% { filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.8)); }
+}
+'''
+
+
+def ensure_holo_class(content, sheet_type):
+    """Add holo-theme class to form element if not present"""
+    # Pattern to match the opening form tag
+    form_pattern = r'<form\s+class="([^"]*)"'
+    
+    def add_holo_class(match):
+        classes = match.group(1)
+        if 'holo-theme' not in classes:
+            classes += ' holo-theme'
+        return f'<form class="{classes}"'
+    
+    return re.sub(form_pattern, add_holo_class, content)
+
+
+def add_holo_header(content):
+    """Add holographic header with logo after opening form tag"""
+    # Check if holo-frame-top already exists
+    if 'holo-frame-top' in content:
+        return content
+    
+    # Find the position after the opening form tag
+    form_match = re.search(r'<form[^>]*>\s*', content)
+    if form_match:
+        insert_pos = form_match.end()
+        return content[:insert_pos] + HOLO_HEADER_CSS + '\n    ' + content[insert_pos:]
+    
+    return content
+
+
+def update_template_file(filepath):
+    """Update a template file with holo theme"""
+    print(f"Processing: {filepath}")
+    
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read()
         
-        template_path.write_text(content, encoding='utf-8')
-        print("  ✓ Created datapad-style template")
+        original_content = content
+        
+        # Determine sheet type from filename
+        filename = os.path.basename(filepath)
+        sheet_type = filename.replace('-sheet.hbs', '').replace('.hbs', '')
+        
+        # Add holo-theme class
+        content = ensure_holo_class(content, sheet_type)
+        
+        # Add holo header with logo
+        content = add_holo_header(content)
+        
+        # Only write if content changed
+        if content != original_content:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(content)
+            print(f"  ✓ Updated {filename}")
+            return True
+        else:
+            print(f"  - No changes needed for {filename}")
+            return False
+            
+    except Exception as e:
+        print(f"  ✗ Error processing {filepath}: {e}")
+        return False
 
-# ===========================================
-# MAIN EXECUTION
-# ===========================================
+
+def update_css_file(filepath):
+    """Update CSS file with holo frame styles"""
+    print(f"Processing CSS: {filepath}")
+    
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        original_content = content
+        
+        # Check if holo frame CSS already exists
+        if 'holo-frame-top' not in content:
+            # Add holo frame CSS at the end
+            content += '\n\n' + HOLO_FRAME_CSS
+            
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(content)
+            print(f"  ✓ Added holo frame CSS")
+            return True
+        else:
+            print(f"  - Holo frame CSS already present")
+            return False
+            
+    except Exception as e:
+        print(f"  ✗ Error processing {filepath}: {e}")
+        return False
+
+
+def consolidate_holo_theme():
+    """Ensure all sheets use the enhanced holo theme consistently"""
+    
+    # Main CSS files to update
+    css_files = [
+        REPO_PATH / "styles" / "character-sheet.css",
+        REPO_PATH / "styles" / "unified-sheets.css",
+    ]
+    
+    # Template files to update
+    template_patterns = [
+        REPO_PATH / "templates" / "actors" / "*-sheet.hbs",
+        REPO_PATH / "templates" / "items" / "item-sheet.hbs",
+        REPO_PATH / "templates" / "sheets" / "*-sheet.hbs",
+    ]
+    
+    print("=" * 60)
+    print("SWSE Holo Theme Application")
+    print("=" * 60)
+    
+    # Update CSS files
+    print("\n[1/2] Updating CSS Files...")
+    css_updated = 0
+    for css_file in css_files:
+        if css_file.exists():
+            if update_css_file(css_file):
+                css_updated += 1
+    
+    print(f"\nCSS Files Updated: {css_updated}/{len(css_files)}")
+    
+    # Update template files
+    print("\n[2/2] Updating Template Files...")
+    templates_updated = 0
+    total_templates = 0
+    
+    for pattern in template_patterns:
+        for template_file in Path().glob(str(pattern)):
+            total_templates += 1
+            if update_template_file(template_file):
+                templates_updated += 1
+    
+    print(f"\nTemplate Files Updated: {templates_updated}/{total_templates}")
+    
+    print("\n" + "=" * 60)
+    print("Holo Theme Application Complete!")
+    print("=" * 60)
+    
+    # Create a summary CSS file that can be imported
+    create_summary_css()
+
+
+def create_summary_css():
+    """Create a comprehensive holo theme CSS file"""
+    summary_path = REPO_PATH / "styles" / "swse-holo-complete.css"
+    
+    css_content = '''/* ══════════════════════════════════════════════════════════
+   STAR WARS SAGA EDITION - COMPLETE HOLO THEME
+   Unified holographic datapad styling for all sheets
+   ══════════════════════════════════════════════════════════ */
+
+/* Apply to all SWSE sheets */
+.swse.sheet.holo-theme,
+.swse.character-sheet.holo-theme,
+.swse.npc-sheet.holo-theme,
+.swse.droid-sheet.holo-theme,
+.swse.vehicle-sheet.holo-theme,
+.swse.item-sheet.holo-theme {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
+  color: #9ed0ff;
+  border: 2px solid #1c4b8e;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(17, 34, 51, 0.8);
+  font-family: "Orbitron", "Roboto", sans-serif;
+  animation: holo-flicker 1.2s ease-in-out;
+}
+
+/* Keep content above grid layers */
+.holo-theme form,
+.holo-theme .sheet-body-wrapper,
+.holo-theme .sheet-body {
+  position: relative;
+  z-index: 5;
+}
+
+''' + HOLO_FRAME_CSS + '''
+
+/* ─────────────── Inputs & Textareas ─────────────── */
+.holo-theme input,
+.holo-theme textarea,
+.holo-theme select {
+  background: rgba(0, 30, 60, 0.4);
+  color: #b5daff;
+  border: 1px solid #0af;
+  border-radius: 4px;
+  padding: 4px 6px;
+  transition: all 0.2s ease;
+}
+
+.holo-theme input:focus,
+.holo-theme textarea:focus,
+.holo-theme select:focus {
+  border-color: #00c6ff;
+  box-shadow: 0 0 8px #00c6ff;
+  outline: none;
+  background: rgba(0, 40, 80, 0.6);
+}
+
+.holo-theme input::placeholder {
+  color: rgba(181, 218, 255, 0.5);
+}
+
+/* ─────────────── Headers ─────────────── */
+.holo-theme .sheet-header {
+  background: linear-gradient(135deg, rgba(26, 77, 122, 0.8), rgba(44, 95, 141, 0.8));
+  border-bottom: 2px solid #0af;
+  box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
+}
+
+.holo-theme .charname input,
+.holo-theme h1,
+.holo-theme h2,
+.holo-theme h3 {
+  color: #9ed0ff;
+  text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+}
+
+.holo-theme .section-header {
+  color: #00c6ff;
+  border-bottom-color: #0af;
+  text-shadow: 0 0 5px rgba(0, 170, 255, 0.6);
+}
+
+.holo-theme .section-header-black {
+  background: linear-gradient(to right, #000, #1a1a1a, #000);
+  color: #00ff88;
+  text-align: center;
+  padding: 6px;
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 2px solid #00a8cc;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+}
+
+/* ─────────────── Tabs Navigation ─────────────── */
+.holo-theme .sheet-tabs {
+  display: flex;
+  border-bottom: 1px solid #0af;
+  justify-content: space-around;
+  margin-bottom: 0.5em;
+  background: rgba(0, 20, 40, 0.6);
+}
+
+.holo-theme .sheet-tabs .item {
+  padding: 0.4em 0.8em;
+  cursor: pointer;
+  color: #9ed0ff;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+}
+
+.holo-theme .sheet-tabs .item:hover {
+  color: #fff;
+  text-shadow: 0 0 6px #00baff;
+  background: rgba(0, 170, 255, 0.1);
+}
+
+/* Active tab pulsing holo glow */
+@keyframes holo-tab-pulse {
+  0%, 100% {
+    text-shadow: 0 0 8px #00f0ff, 0 0 15px rgba(0, 170, 255, 0.2);
+    box-shadow: 0 2px 10px rgba(0, 170, 255, 0.2);
+  }
+  50% {
+    text-shadow: 0 0 15px #00f0ff, 0 0 25px rgba(0, 170, 255, 0.67);
+    box-shadow: 0 2px 15px rgba(0, 170, 255, 0.47);
+  }
+}
+
+.holo-theme .sheet-tabs .item.active {
+  color: #fff;
+  border-bottom: 2px solid #00e6ff;
+  background: rgba(0, 170, 255, 0.15);
+  animation: holo-tab-pulse 3s ease-in-out infinite;
+}
+
+/* ─────────────── Buttons ─────────────── */
+.holo-theme button,
+.holo-theme .holo-btn {
+  background: linear-gradient(90deg, #002f6c, #003f8f);
+  border: 1px solid #00baff;
+  color: #b5daff;
+  border-radius: 6px;
+  padding: 6px 12px;
+  transition: 0.2s;
+  cursor: pointer;
+  text-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
+}
+
+.holo-theme button:hover,
+.holo-theme .holo-btn:hover {
+  background: #00aaff;
+  color: #fff;
+  box-shadow: 0 0 10px #00cfff;
+  animation: holo-pulse 1.5s infinite ease-in-out;
+  transform: translateY(-1px);
+}
+
+@keyframes holo-pulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(0, 243, 255, 0.33); }
+  50% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.6); }
+}
+
+/* ─────────────── Stats & Values ─────────────── */
+.holo-theme .ability-modifier,
+.holo-theme .defense-value,
+.holo-theme .stat-value,
+.holo-theme .def-val,
+.holo-theme .modifier-value {
+  color: #00ff88;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+}
+
+.holo-theme .rollable:hover {
+  color: #00ffff;
+  text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+  transform: scale(1.1);
+}
+
+/* ─────────────── Boxes & Containers ─────────────── */
+.holo-theme .ability,
+.holo-theme .defense,
+.holo-theme .resource-box,
+.holo-theme .stat-box,
+.holo-theme .item,
+.holo-theme .npc-weapon,
+.holo-theme .vehicle-weapon,
+.holo-theme .datapad-section {
+  background: rgba(0, 20, 40, 0.6);
+  border: 1px solid rgba(0, 170, 255, 0.4);
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 170, 255, 0.1);
+}
+
+.holo-theme .ability:hover,
+.holo-theme .item:hover {
+  border-color: #0af;
+  box-shadow: 0 0 15px rgba(0, 170, 255, 0.3);
+}
+
+/* ─────────────── Tables ─────────────── */
+.holo-theme table,
+.holo-theme .holo-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.holo-theme th,
+.holo-theme td,
+.holo-theme .holo-table th,
+.holo-theme .holo-table td {
+  border-bottom: 1px solid rgba(0, 77, 128, 0.5);
+  padding: 6px 8px;
+  color: #9ed0ff;
+}
+
+.holo-theme th {
+  color: #00c6ff;
+  text-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
+  background: rgba(0, 170, 255, 0.1);
+}
+
+.holo-theme tr:hover {
+  background: rgba(0, 170, 255, 0.1);
+}
+
+/* ─────────────── Skills ─────────────── */
+.holo-theme .skill-row,
+.holo-theme .skill-data-row {
+  border-bottom-color: rgba(0, 170, 255, 0.2);
+}
+
+.holo-theme .skill-row:hover,
+.holo-theme .skill-data-row:hover {
+  background: rgba(0, 170, 255, 0.15);
+}
+
+.holo-theme .skill-total {
+  color: #00ff88;
+  text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
+}
+
+/* ─────────────── Holographic Grid Overlay ─────────────── */
+.holo-theme::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    linear-gradient(90deg, rgba(0, 180, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0, 180, 255, 0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.25;
+  animation: holo-grid-move 20s linear infinite;
+  z-index: 0;
+}
+
+@keyframes holo-grid-move {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 200px 200px, 200px 200px; }
+}
+
+/* ─────────────── Holographic Glow Wave ─────────────── */
+.holo-theme::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at center, rgba(0,255,255,0.05) 0%, transparent 70%);
+  mix-blend-mode: screen;
+  animation: holo-wave 12s ease-in-out infinite;
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes holo-wave {
+  0%, 100% { transform: scale(1); opacity: 0.15; }
+  50% { transform: scale(1.05); opacity: 0.3; }
+}
+
+/* ─────────────── Holo Boot-up Flicker ─────────────── */
+@keyframes holo-flicker {
+  0% { opacity: 0; filter: brightness(0.5); }
+  15% { opacity: 1; filter: brightness(1.2); }
+  30% { opacity: 0.7; filter: brightness(0.8); }
+  50% { opacity: 1; filter: brightness(1); }
+  75% { opacity: 0.9; filter: brightness(1.3); }
+  100% { opacity: 1; filter: brightness(1); }
+}
+
+/* ─────────────── Scrollbar (Datapad style) ─────────────── */
+.holo-theme ::-webkit-scrollbar {
+  width: 8px;
+}
+
+.holo-theme ::-webkit-scrollbar-track {
+  background: rgba(0, 20, 40, 0.6);
+}
+
+.holo-theme ::-webkit-scrollbar-thumb {
+  background: #0077bb;
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
+}
+
+.holo-theme ::-webkit-scrollbar-thumb:hover {
+  background: #00cfff;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+}
+
+/* ─────────────── Special Effects ─────────────── */
+.holo-theme .profile-img,
+.holo-theme .character-portrait {
+  border-color: #0af;
+  box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+}
+
+.holo-theme .editor-content {
+  background: rgba(0, 20, 40, 0.4);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  color: #b5daff;
+}
+
+/* Add subtle scan line effect */
+.holo-theme .sheet-body::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+  animation: holo-scan 4s linear infinite;
+  pointer-events: none;
+  z-index: 100;
+}
+
+@keyframes holo-scan {
+  from { transform: translateY(0); }
+  to { transform: translateY(600px); }
+}
+'''
+    
+    print(f"\nCreating comprehensive holo theme CSS at: {summary_path}")
+    with open(summary_path, 'w', encoding='utf-8') as f:
+        f.write(css_content)
+    print("  ✓ Created swse-holo-complete.css")
+
 
 if __name__ == "__main__":
-    repo_path = r"C:\Users\Owner\Documents\GitHub\foundryvtt-swse"
-    
-    if not Path(repo_path).exists():
-        print(f"ERROR: Repository path not found: {repo_path}")
-        exit(1)
-    
-    creator = SWSEDatapadSheet(repo_path)
-    creator.run()
-    
-    print("\n✨ Datapad character sheet created!")
-    print("🔄 Restart Foundry VTT to see the changes")
+    consolidate_holo_theme()

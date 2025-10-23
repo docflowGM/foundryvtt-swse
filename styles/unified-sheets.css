@@ -882,3 +882,47 @@
 .holo-theme ::-webkit-scrollbar-thumb:hover {
   background: #00cfff;
 }
+
+
+
+/* ============================================
+   HOLOGRAPHIC FRAME & LOGO
+   ============================================ */
+.holo-frame-top {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background: linear-gradient(135deg, rgba(26, 77, 122, 0.8), rgba(44, 95, 141, 0.8));
+    border-bottom: 2px solid #0af;
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
+}
+
+.holo-frame-top::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ffff, transparent);
+    animation: holo-border-pulse 2s ease-in-out infinite;
+}
+
+@keyframes holo-border-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.sw-logo {
+    max-width: 200px;
+    height: auto;
+    filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.5));
+    animation: logo-glow 3s ease-in-out infinite;
+}
+
+@keyframes logo-glow {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.5)); }
+    50% { filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.8)); }
+}
