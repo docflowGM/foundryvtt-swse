@@ -147,3 +147,6 @@ export function registerHandlebarsHelpers() {
     return result;
   });
 }
+
+// Auto-register helpers on load
+registerHandlebarsHelpers();
