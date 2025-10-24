@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-SWSE Foundry VTT - Apply Uniform Holo Theme
-Applies consistent holo datapad styling across all character sheets
+SWSE Character Sheet Fixes - Updated Version
+With condition buttons, improved defense layout, and armor section
 """
 
 import os
@@ -11,555 +11,1462 @@ from pathlib import Path
 # Base path to your repo
 REPO_PATH = Path(r"C:\Users\Owner\Documents\GitHub\foundryvtt-swse")
 
-# Holo theme header addition for templates
-HOLO_HEADER_LOGO = '''
-    {{!-- Holographic Frame Header --}}
-    <div class="holo-frame-top">
-        <img class="sw-logo" src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
-    </div>'''
+def fix_character_sheet_template():
+    """Fix the character sheet template with all improvements"""
+    
+    template_path = REPO_PATH / "templates" / "actors" / "character-sheet.hbs"
+    
+    if not template_path.exists():
+        print(f"❌ Template not found: {template_path}")
+        return False
+    
+    print(f"📝 Updating character sheet template...")
+    
+    # Create the complete improved template
+    new_template = '''{{!-- SWSE Character Sheet - Fixed and Improved --}}
+<form class="swse-datapad-sheet {{cssClass}} holo-theme" autocomplete="off">
+    
+    {{!-- TOP HEADER BAR --}}
+    <header class="datapad-header">
+        <div class="header-left">
+            <div class="header-tabs">
+                <button type="button" class="header-tab active" data-sheet-mode="character">PC</button>
+                <button type="button" class="header-tab" data-sheet-mode="npc">NPC</button>
+                <button type="button" class="header-tab" data-sheet-mode="vehicle">Vehicle</button>
+                <button type="button" class="header-tab" data-sheet-mode="settings">Settings</button>
+            </div>
+            
+            <div class="basic-fields">
+                <div class="field-trio">
+                    <div class="field-sm">
+                        <label>Class</label>
+                        <input name="system.class" type="text" value="{{system.class}}"/>
+                    </div>
+                    <div class="field-sm">
+                        <label>Level</label>
+                        <input name="system.level" type="number" value="{{system.level}}" data-dtype="Number"/>
+                    </div>
+                    <div class="field-sm">
+                        <label>½ Lvl</label>
+                        <div class="readonly half-level-display">{{halfLevel}}</div>
+                    </div>
+                </div>
+                
+                <div class="field-row-2">
+                    <div class="field-md">
+                        <label>Background</label>
+                        <input name="system.background" type="text" value="{{system.background}}"/>
+                    </div>
+                    <div class="field-md">
+                        <label>Species</label>
+                        <input name="system.species" type="text" value="{{system.species}}"/>
+                    </div>
+                </div>
+                
+                <div class="field-row-2">
+                    <div class="field-md">
+                        <label>Gender</label>
+                        <input name="system.gender" type="text" value="{{system.gender}}"/>
+                    </div>
+                    <div class="field-md">
+                        <label>Size</label>
+                        <input name="system.size" type="text" value="{{system.size}}" placeholder="Medium"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header-center">
+            <img class="sw-logo" src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
+        </div>
+        
+        <div class="header-right">
+            <img class="character-portrait" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
+        </div>
+    </header>
 
-# CSS for holo frame and logo
-HOLO_FRAME_CSS = '''
-/* ============================================
-   HOLOGRAPHIC FRAME & LOGO
-   ============================================ */
-.holo-frame-top {
-    position: relative;
+    {{!-- MAIN CONTENT GRID - SCROLLABLE --}}
+    <div class="datapad-main-grid scrollable-content">
+        
+        {{!-- LEFT COLUMN --}}
+        <div class="left-column">
+            
+            {{!-- ATTRIBUTES --}}
+            <section class="datapad-section">
+                <div class="section-header-black">Attributes</div>
+                <div class="attributes-grid-improved">
+                    {{#each system.abilities as |ability key|}}
+                    <div class="attribute-row-improved">
+                        <label class="attr-label">{{toUpperCase key}}</label>
+                        
+                        <div class="attr-breakdown">
+                            <div class="attr-field">
+                                <label>Base</label>
+                                <input type="number" name="system.abilities.{{key}}.base" value="{{ability.base}}" class="attr-input-sm" data-dtype="Number"/>
+                            </div>
+                            
+                            <div class="attr-field">
+                                <label>Race</label>
+                                <input type="number" name="system.abilities.{{key}}.racial" value="{{ability.racial}}" class="attr-input-sm" data-dtype="Number" placeholder="0"/>
+                            </div>
+                            
+                            <div class="attr-field">
+                                <label>Misc</label>
+                                <input type="number" name="system.abilities.{{key}}.misc" value="{{ability.misc}}" class="attr-input-sm" data-dtype="Number" placeholder="0"/>
+                            </div>
+                            
+                            <div class="attr-field">
+                                <label>Total</label>
+                                <div class="attr-total">{{ability.total}}</div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="roll-btn" data-ability="{{key}}">⚅</button>
+                        <div class="attr-mod">{{#if (gte ability.mod 0)}}+{{/if}}{{ability.mod}}</div>
+                        <button type="button" class="roll-btn" data-ability="{{key}}">⚅</button>
+                    </div>
+                    {{/each}}
+                </div>
+            </section>
+
+            {{!-- DEFENSES - UPDATED LAYOUT --}}
+            <section class="datapad-section">
+                <div class="section-header-black">Defenses</div>
+                
+                <div class="defense-table">
+                    <div class="defense-table-header">
+                        <div class="def-col-label"></div>
+                        <div class="def-col-value">Total</div>
+                        <div class="def-col-formula">= 10 +</div>
+                        <div class="def-col-value">Level/Armor</div>
+                        <div class="def-col-value">Class</div>
+                        <div class="def-col-value">Mod</div>
+                        <div class="def-col-value">Misc</div>
+                    </div>
+                    
+                    {{!-- REFLEX --}}
+                    <div class="defense-table-row reflex-row">
+                        <label class="defense-label-compact">Reflex</label>
+                        <div class="defense-total-compact reflex-total">{{system.defenses.reflex.total}}</div>
+                        <div class="defense-equals">=</div>
+                        <div class="defense-base">10 +</div>
+                        <input type="number" name="system.defenses.reflex.levelArmor" value="{{system.defenses.reflex.levelArmor}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
+                        <input type="number" name="system.defenses.reflex.classBonus" value="{{system.defenses.reflex.classBonus}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
+                        <select name="system.defenses.reflex.abilityMod" class="defense-select-sm">
+                            <option value="dex" {{#if (eq system.defenses.reflex.abilityMod "dex")}}selected{{/if}}>DEX</option>
+                            <option value="str">STR</option>
+                            <option value="con">CON</option>
+                            <option value="int">INT</option>
+                            <option value="wis">WIS</option>
+                            <option value="cha">CHA</option>
+                        </select>
+                        <input type="number" name="system.defenses.reflex.misc" value="{{system.defenses.reflex.misc}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
+                    </div>
+                    
+                    {{!-- FORTITUDE --}}
+                    <div class="defense-table-row fortitude-row">
+                        <label class="defense-label-compact">Fortitude</label>
+                        <div class="defense-total-compact fortitude-total">{{system.defenses.fortitude.total}}</div>
+                        <div class="defense-equals">=</div>
+                        <div class="defense-base">10 +</div>
+                        <input type="number" name="system.defenses.fortitude.levelArmor" value="{{system.defenses.fortitude.levelArmor}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
+                        <input type="number" name="system.defenses.fortitude.classBonus" value="{{system.defenses.fortitude.classBonus}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
+                        <select name="system.defenses.fortitude.abilityMod" class="defense-select-sm">
+                            <option value="con" {{#if (eq system.defenses.fortitude.abilityMod "con")}}selected{{/if}}>CON</option>
+                            <option value="str">STR</option>
+                            <option value="dex">DEX</option>
+                            <option value="int">INT</option>
+                            <option value="wis">WIS</option>
+                            <option value="cha">CHA</option>
+                        </select>
+                        <input type="number" name="system.defenses.fortitude.misc" value="{{system.defenses.fortitude.misc}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
+                    </div>
+                    
+                    {{!-- WILL --}}
+                    <div class="defense-table-row will-row">
+                        <label class="defense-label-compact">Will</label>
+                        <div class="defense-total-compact will-total">{{system.defenses.will.total}}</div>
+                        <div class="defense-equals">=</div>
+                        <div class="defense-base">10 +</div>
+                        <input type="number" name="system.defenses.will.levelArmor" value="{{system.defenses.will.levelArmor}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
+                        <input type="number" name="system.defenses.will.classBonus" value="{{system.defenses.will.classBonus}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
+                        <select name="system.defenses.will.abilityMod" class="defense-select-sm">
+                            <option value="wis" {{#if (eq system.defenses.will.abilityMod "wis")}}selected{{/if}}>WIS</option>
+                            <option value="str">STR</option>
+                            <option value="dex">DEX</option>
+                            <option value="con">CON</option>
+                            <option value="int">INT</option>
+                            <option value="cha">CHA</option>
+                        </select>
+                        <input type="number" name="system.defenses.will.misc" value="{{system.defenses.will.misc}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
+                    </div>
+                    
+                    <div class="defense-notes">
+                        <label>Defense Notes</label>
+                        <input type="text" name="system.defenses.notes" value="{{system.defenses.notes}}" placeholder="Special defense modifiers..."/>
+                    </div>
+                </div>
+            </section>
+
+            {{!-- ARMOR SECTION --}}
+            <section class="datapad-section">
+                <div class="section-header-black">Armor</div>
+                
+                <div class="armor-main-row">
+                    <div class="armor-field-wide">
+                        <label>Armor name</label>
+                        <input type="text" name="system.armor.name" value="{{system.armor.name}}" placeholder="Armor name"/>
+                    </div>
+                    <div class="armor-field-sm">
+                        <label>Def Mod Bonus</label>
+                        <input type="number" name="system.armor.defModBonus" value="{{system.armor.defModBonus}}" data-dtype="Number" placeholder="0"/>
+                    </div>
+                    <div class="armor-field-sm">
+                        <label>Fort Def Bonus</label>
+                        <input type="number" name="system.armor.fortDefBonus" value="{{system.armor.fortDefBonus}}" data-dtype="Number" placeholder="0"/>
+                    </div>
+                    <div class="armor-field-sm">
+                        <label>Max Dex Bonus</label>
+                        <input type="number" name="system.armor.maxDexBonus" value="{{system.armor.maxDexBonus}}" data-dtype="Number" placeholder="0"/>
+                    </div>
+                    <div class="armor-field-sm">
+                        <label>Speed</label>
+                        <input type="number" name="system.armor.speed" value="{{system.armor.speed}}" data-dtype="Number" placeholder="0"/>
+                    </div>
+                </div>
+                
+                <div class="armor-checkboxes-row">
+                    <div class="armor-checkbox-group">
+                        <label>Proficiency</label>
+                        <input type="checkbox" name="system.armor.proficiency" {{#if system.armor.proficiency}}checked{{/if}}/>
+                    </div>
+                    <div class="armor-checkbox-group">
+                        <label>Armored Defense</label>
+                        <input type="checkbox" name="system.armor.armoredDefense" {{#if system.armor.armoredDefense}}checked{{/if}}/>
+                    </div>
+                    <div class="armor-checkbox-group">
+                        <label>Improved Armored Def.</label>
+                        <input type="checkbox" name="system.armor.improvedArmoredDef" {{#if system.armor.improvedArmoredDef}}checked{{/if}}/>
+                    </div>
+                    <div class="armor-select-group">
+                        <label>Armor Type</label>
+                        <select name="system.armor.type">
+                            <option value="none" {{#if (eq system.armor.type "none")}}selected{{/if}}>None</option>
+                            <option value="light" {{#if (eq system.armor.type "light")}}selected{{/if}}>Light</option>
+                            <option value="medium" {{#if (eq system.armor.type "medium")}}selected{{/if}}>Medium</option>
+                            <option value="heavy" {{#if (eq system.armor.type "heavy")}}selected{{/if}}>Heavy</option>
+                        </select>
+                    </div>
+                    <div class="armor-select-group">
+                        <label>Helmet Package</label>
+                        <select name="system.armor.helmetPackage">
+                            <option value="none" {{#if (eq system.armor.helmetPackage "none")}}selected{{/if}}>None</option>
+                            <option value="basic" {{#if (eq system.armor.helmetPackage "basic")}}selected{{/if}}>Basic</option>
+                            <option value="advanced" {{#if (eq system.armor.helmetPackage "advanced")}}selected{{/if}}>Advanced</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="armor-notes">
+                    <label>Armor Notes</label>
+                    <input type="text" name="system.armor.notes" value="{{system.armor.notes}}" placeholder="Special armor properties..."/>
+                </div>
+            </section>
+
+            {{!-- SKILLS SECTION --}}
+            <section class="datapad-section">
+                <div class="section-header-black">Skills</div>
+                <div class="skills-grid-compact">
+                    {{!-- DEFAULT SKILLS --}}
+                    {{#each defaultSkills as |skill|}}
+                    <div class="skill-row">
+                        <div class="skill-name">{{skill.name}}</div>
+                        <div class="skill-bonus">{{skill.bonus}}</div>
+                        <input type="checkbox" class="skill-trained" {{#if skill.trained}}checked{{/if}}/>
+                        <button type="button" class="roll-btn-sm" data-skill="{{skill.name}}">⚅</button>
+                    </div>
+                    {{/each}}
+                    
+                    {{!-- CUSTOM SKILLS DIVIDER --}}
+                    <div class="custom-skills-divider">⚡ CUSTOM SKILLS ⚡</div>
+                    
+                    {{!-- CUSTOM SKILLS --}}
+                    {{#each customSkills as |skill index|}}
+                    <div class="skill-row custom-skill-row">
+                        <input type="text" class="skill-name-input" name="system.customSkills.{{index}}.name" value="{{skill.name}}" placeholder="Skill Name"/>
+                        <div class="skill-bonus">{{skill.bonus}}</div>
+                        <input type="checkbox" class="skill-trained" name="system.customSkills.{{index}}.trained" {{#if skill.trained}}checked{{/if}}/>
+                        <button type="button" class="delete-custom-skill" data-index="{{index}}">×</button>
+                    </div>
+                    {{/each}}
+                    
+                    <button type="button" class="add-custom-skill-btn">+ Add Custom Skill</button>
+                </div>
+            </section>
+        </div>
+        
+        {{!-- CENTER COLUMN --}}
+        <div class="center-column">
+            
+            {{!-- HIT POINTS & VITALS --}}
+            <section class="datapad-section">
+                <div class="section-header-black">Hit Points & Vitals</div>
+                <div class="hp-grid">
+                    <div class="hp-field">
+                        <label>Current HP</label>
+                        <input name="system.hp.value" type="number" value="{{system.hp.value}}" data-dtype="Number"/>
+                    </div>
+                    <div class="hp-field">
+                        <label>Max HP</label>
+                        <input name="system.hp.max" type="number" value="{{system.hp.max}}" data-dtype="Number"/>
+                    </div>
+                    <div class="hp-field">
+                        <label>Temp HP</label>
+                        <input name="system.hp.temp" type="number" value="{{system.hp.temp}}" data-dtype="Number" placeholder="0"/>
+                    </div>
+                </div>
+                
+                <div class="threshold-grid">
+                    <div class="threshold-row">
+                        <label>Damage Threshold</label>
+                        <div class="threshold-formula-compact">
+                            <span class="formula-text-sm">Fort +</span>
+                            <input type="number" name="system.damageThreshold.misc" value="{{system.damageThreshold.misc}}" placeholder="0" class="formula-input-sm" data-dtype="Number"/>
+                            <span class="formula-text-sm">= </span>
+                            <div class="threshold-total">{{system.damageThreshold.total}}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="threshold-row">
+                        <label>Second Wind</label>
+                        <div class="threshold-formula-compact">
+                            <span class="formula-text-sm">¼ HP +</span>
+                            <input type="number" name="system.secondWind.misc" value="{{system.secondWind.misc}}" placeholder="0" class="formula-input-sm" data-dtype="Number"/>
+                            <span class="formula-text-sm">= </span>
+                            <div class="threshold-total">{{system.secondWind.total}}</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {{!-- CONDITION TRACK - BUTTONS INSTEAD OF DROPDOWN --}}
+            <section class="datapad-section">
+                <div class="section-header-black">Condition</div>
+                <div class="condition-buttons">
+                    <button type="button" class="condition-btn {{#if (eq system.condition 'normal')}}active{{/if}}" data-condition="normal">
+                        Normal
+                    </button>
+                    <button type="button" class="condition-btn {{#if (eq system.condition '-2')}}active{{/if}}" data-condition="-2">
+                        -2
+                    </button>
+                    <button type="button" class="condition-btn {{#if (eq system.condition '-5')}}active{{/if}}" data-condition="-5">
+                        -5
+                    </button>
+                    <button type="button" class="condition-btn {{#if (eq system.condition '-10')}}active{{/if}}" data-condition="-10">
+                        -10
+                    </button>
+                    <button type="button" class="condition-btn debilitated {{#if (eq system.condition 'debilitated')}}active{{/if}}" data-condition="debilitated">
+                        Debilitated
+                    </button>
+                    <button type="button" class="condition-btn persistent {{#if (eq system.condition 'persistent')}}active{{/if}}" data-condition="persistent">
+                        Persistent
+                    </button>
+                </div>
+                <input type="hidden" name="system.condition" value="{{system.condition}}"/>
+            </section>
+
+            {{!-- BOTTOM TABS --}}
+            <section class="datapad-section">
+                <div class="bottom-tabs-header">
+                    <button type="button" class="bottom-tab active" data-tab="equipment">Equipment</button>
+                    <button type="button" class="bottom-tab" data-tab="feats">Feats</button>
+                    <button type="button" class="bottom-tab" data-tab="talents">Talents</button>
+                    <button type="button" class="bottom-tab" data-tab="powers">Powers</button>
+                    <button type="button" class="bottom-tab" data-tab="notes">Notes</button>
+                </div>
+                
+                <div class="bottom-tabs-content">
+                    {{!-- EQUIPMENT TAB --}}
+                    <div class="bottom-tab-content" data-tab="equipment">
+                        <div class="equipment-list">
+                            {{#each equipment as |item|}}
+                            <div class="equipment-item">
+                                <img src="{{item.img}}" class="item-icon"/>
+                                <div class="item-name">{{item.name}}</div>
+                                <div class="item-qty">×{{item.system.quantity}}</div>
+                                <button type="button" class="item-btn-sm" data-item-id="{{item.id}}">🔍</button>
+                            </div>
+                            {{/each}}
+                        </div>
+                        <button type="button" class="add-equipment-btn">+ Add Equipment</button>
+                    </div>
+                    
+                    {{!-- FEATS TAB --}}
+                    <div class="bottom-tab-content" data-tab="feats" style="display:none;">
+                        <div class="feat-list">
+                            {{#each feats as |feat|}}
+                            <div class="feat-item">
+                                <div class="feat-name">{{feat.name}}</div>
+                                <button type="button" class="item-btn-sm" data-item-id="{{feat.id}}">🔍</button>
+                            </div>
+                            {{/each}}
+                        </div>
+                        <button type="button" class="add-feat-btn">+ Add Feat</button>
+                    </div>
+                    
+                    {{!-- TALENTS TAB --}}
+                    <div class="bottom-tab-content" data-tab="talents" style="display:none;">
+                        <div class="talent-list">
+                            {{#each talents as |talent|}}
+                            <div class="talent-item">
+                                <div class="talent-name">{{talent.name}}</div>
+                                <button type="button" class="item-btn-sm" data-item-id="{{talent.id}}">🔍</button>
+                            </div>
+                            {{/each}}
+                        </div>
+                        <button type="button" class="add-talent-btn">+ Add Talent</button>
+                    </div>
+                    
+                    {{!-- POWERS TAB --}}
+                    <div class="bottom-tab-content" data-tab="powers" style="display:none;">
+                        <div class="power-list">
+                            {{#each powers as |power|}}
+                            <div class="force-power-item">
+                                <div class="power-header">
+                                    <div class="power-name">{{power.name}}</div>
+                                    <div class="power-actions-compact">
+                                        <button type="button" class="use-power-btn" data-power-id="{{power.id}}">Use</button>
+                                        <button type="button" class="reload-power-btn" data-power-id="{{power.id}}">↻</button>
+                                        <button type="button" class="item-btn-sm" data-item-id="{{power.id}}">🔍</button>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                        <button type="button" class="add-power-btn">+ Add Force Power</button>
+                    </div>
+                    
+                    {{!-- NOTES TAB --}}
+                    <div class="bottom-tab-content" data-tab="notes" style="display:none;">
+                        <textarea name="system.notes" placeholder="Character notes, backstory, etc...">{{system.notes}}</textarea>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        {{!-- RIGHT COLUMN --}}
+        <div class="right-column">
+            
+            {{!-- COMBAT STATS --}}
+            <section class="datapad-section">
+                <div class="section-header-black">Combat Stats</div>
+                
+                <div class="combat-stat-row">
+                    <label>Base Attack Bonus</label>
+                    <input name="system.bab" type="number" value="{{system.bab}}" data-dtype="Number"/>
+                </div>
+                
+                <div class="combat-stat-row">
+                    <label>Speed</label>
+                    <input name="system.speed" type="number" value="{{system.speed}}" data-dtype="Number" placeholder="6"/>
+                </div>
+                
+                <div class="combat-stat-row">
+                    <label>Initiative</label>
+                    <div class="initiative-display">{{initiativeTotal}}</div>
+                    <button type="button" class="roll-btn" data-roll="initiative">⚅</button>
+                </div>
+            </section>
+
+            {{!-- FORCE POINTS --}}
+            <section class="datapad-section">
+                <div class="section-header-black">Force & Destiny</div>
+                <div class="force-grid">
+                    <div class="force-field">
+                        <label>Force Points</label>
+                        <input name="system.forcePoints.value" type="number" value="{{system.forcePoints.value}}" data-dtype="Number"/>
+                        <span>/</span>
+                        <input name="system.forcePoints.max" type="number" value="{{system.forcePoints.max}}" data-dtype="Number"/>
+                    </div>
+                    
+                    <div class="force-field">
+                        <label>Dark Side Score</label>
+                        <input name="system.darkSideScore" type="number" value="{{system.darkSideScore}}" data-dtype="Number" placeholder="0"/>
+                    </div>
+                    
+                    <div class="force-field">
+                        <label>Destiny</label>
+                        <input name="system.destiny" type="number" value="{{system.destiny}}" data-dtype="Number" placeholder="0"/>
+                    </div>
+                </div>
+            </section>
+
+            {{!-- CREDITS & WEALTH --}}
+            <section class="datapad-section">
+                <div class="section-header-black">Credits</div>
+                <input name="system.credits" type="number" value="{{system.credits}}" data-dtype="Number" placeholder="0" class="credits-input-large"/>
+            </section>
+        </div>
+    </div>
+</form>'''
+    
+    with open(template_path, 'w', encoding='utf-8') as f:
+        f.write(new_template)
+    
+    print(f"✅ Character sheet template updated successfully!")
+    return True
+
+
+def add_improved_css():
+    """Add improved CSS with condition buttons and updated defense layout"""
+    
+    css_dir = REPO_PATH / "styles"
+    css_dir.mkdir(exist_ok=True)
+    
+    css_path = css_dir / "character-sheet-fixes.css"
+    
+    print(f"📝 Creating CSS fixes file...")
+    
+    improved_css = '''/* ═══════════════════════════════════════════════════
+   SWSE CHARACTER SHEET FIXES - UPDATED CSS
+   With condition buttons and improved defense layout
+   ═══════════════════════════════════════════════════ */
+
+/* ─────────────── SCROLLABLE MAIN CONTENT ─────────────── */
+.scrollable-content {
+    max-height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 10px;
+}
+
+.scrollable-content::-webkit-scrollbar {
+    width: 12px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+    background: rgba(0, 20, 40, 0.6);
+    border-radius: 6px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #00a8cc, #007a9c);
+    border-radius: 6px;
+    border: 2px solid rgba(0, 20, 40, 0.6);
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #00d9ff, #00a8cc);
+}
+
+/* ─────────────── IMPROVED ATTRIBUTES SECTION ─────────────── */
+.attributes-grid-improved {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.attribute-row-improved {
+    display: grid;
+    grid-template-columns: 60px 1fr auto 80px auto;
     align-items: center;
+    gap: 10px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #00a8cc;
+    border-radius: 4px;
+}
+
+.attr-label {
+    font-weight: bold;
+    font-size: 14px;
+    color: #00d9ff;
+}
+
+.attr-breakdown {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+
+.attr-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.attr-field label {
+    font-size: 9px;
+    color: #00ff88;
+    text-transform: uppercase;
+}
+
+.attr-input-sm {
+    width: 40px;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #00a8cc;
+    color: #00ff88;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.attr-total {
+    width: 40px;
+    padding: 4px;
+    background: rgba(0, 170, 204, 0.2);
+    border: 1px solid #00d9ff;
+    color: #00d9ff;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.attr-mod {
+    font-size: 20px;
+    font-weight: bold;
+    color: #00ff88;
+    min-width: 60px;
+    text-align: center;
+    background: rgba(0, 255, 136, 0.1);
+    padding: 8px;
+    border-radius: 6px;
+    border: 2px solid #00ff88;
+}
+
+.roll-btn {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(to bottom, #00a8cc, #007a9c);
+    border: 2px solid #00d9ff;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.roll-btn:hover {
+    background: linear-gradient(to bottom, #00d9ff, #00a8cc);
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.6);
+}
+
+/* ─────────────── UPDATED DEFENSE TABLE LAYOUT ─────────────── */
+.defense-table {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.defense-table-header {
+    display: grid;
+    grid-template-columns: 80px 50px 50px 80px 50px 60px 50px;
+    gap: 6px;
+    padding: 4px;
+    background: rgba(0, 170, 204, 0.2);
+    border: 1px solid #00a8cc;
+    border-radius: 4px;
+    font-size: 10px;
+    color: #00ff88;
+    font-weight: bold;
+    text-align: center;
+}
+
+.defense-table-row {
+    display: grid;
+    grid-template-columns: 80px 50px 50px 80px 50px 60px 50px;
+    gap: 6px;
+    align-items: center;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid #00a8cc;
+    border-radius: 4px;
+}
+
+.defense-label-compact {
+    font-size: 12px;
+    font-weight: bold;
+    text-align: left;
+    padding-left: 4px;
+}
+
+.reflex-row .defense-label-compact {
+    color: #4ecdc4;
+}
+
+.fortitude-row .defense-label-compact {
+    color: #ff6b6b;
+}
+
+.will-row .defense-label-compact {
+    color: #ffe66d;
+}
+
+.defense-total-compact {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    padding: 6px;
+    border-radius: 4px;
+    border: 2px solid;
+}
+
+.reflex-total {
+    background: rgba(78, 205, 196, 0.2);
+    border-color: #4ecdc4;
+    color: #4ecdc4;
+}
+
+.fortitude-total {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+}
+
+.will-total {
+    background: rgba(255, 230, 109, 0.2);
+    border-color: #ffe66d;
+    color: #ffe66d;
+}
+
+.defense-equals,
+.defense-base {
+    font-size: 11px;
+    color: #00d9ff;
+    font-weight: bold;
+    text-align: center;
+}
+
+.defense-input-sm {
+    width: 100%;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #00a8cc;
+    color: #00ff88;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 3px;
+    font-size: 11px;
+}
+
+.defense-select-sm {
+    width: 100%;
+    padding: 4px 2px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #00a8cc;
+    color: #00ff88;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 3px;
+    font-size: 10px;
+}
+
+.defense-notes {
+    margin-top: 8px;
+}
+
+.defense-notes label {
+    display: block;
+    font-size: 10px;
+    color: #00ff88;
+    margin-bottom: 4px;
+}
+
+.defense-notes input {
+    width: 100%;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #00a8cc;
+    color: #00d9ff;
+    font-size: 11px;
+    border-radius: 3px;
+}
+
+/* ─────────────── ARMOR SECTION ─────────────── */
+.armor-main-row {
+    display: grid;
+    grid-template-columns: 2fr repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.armor-field-wide,
+.armor-field-sm {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.armor-field-wide label,
+.armor-field-sm label {
+    font-size: 9px;
+    color: #00ff88;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.armor-field-wide input,
+.armor-field-sm input {
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #00a8cc;
+    color: #00ff88;
+    font-size: 11px;
+    border-radius: 3px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.armor-checkboxes-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #00a8cc;
+    border-radius: 4px;
+}
+
+.armor-checkbox-group,
+.armor-select-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.armor-checkbox-group label,
+.armor-select-group label {
+    font-size: 9px;
+    color: #00ff88;
+    text-align: center;
+    font-weight: bold;
+}
+
+.armor-checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.armor-select-group select {
+    width: 100%;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #00a8cc;
+    color: #00ff88;
+    font-size: 10px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.armor-notes {
+    margin-top: 4px;
+}
+
+.armor-notes label {
+    display: block;
+    font-size: 10px;
+    color: #00ff88;
+    margin-bottom: 4px;
+}
+
+.armor-notes input {
+    width: 100%;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #00a8cc;
+    color: #00d9ff;
+    font-size: 11px;
+    border-radius: 3px;
+}
+
+/* ─────────────── CONDITION BUTTONS ─────────────── */
+.condition-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
     padding: 10px;
-    background: linear-gradient(135deg, rgba(26, 77, 122, 0.8), rgba(44, 95, 141, 0.8));
-    border-bottom: 2px solid #0af;
-    box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
 }
 
-.holo-frame-top::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #00ffff, transparent);
-    animation: holo-border-pulse 2s ease-in-out infinite;
+.condition-btn {
+    padding: 12px 8px;
+    background: linear-gradient(to bottom, rgba(0, 168, 204, 0.3), rgba(0, 122, 156, 0.3));
+    border: 2px solid #00a8cc;
+    color: #00d9ff;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
 }
 
-@keyframes holo-border-pulse {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
+.condition-btn:hover {
+    background: linear-gradient(to bottom, rgba(0, 168, 204, 0.5), rgba(0, 122, 156, 0.5));
+    border-color: #00d9ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 217, 255, 0.4);
 }
 
-.sw-logo {
-    max-width: 200px;
+.condition-btn.active {
+    background: linear-gradient(to bottom, #00a8cc, #007a9c);
+    border-color: #00ff88;
+    color: #00ff88;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+}
+
+.condition-btn.debilitated {
+    background: linear-gradient(to bottom, rgba(255, 107, 107, 0.3), rgba(204, 85, 85, 0.3));
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+}
+
+.condition-btn.debilitated.active {
+    background: linear-gradient(to bottom, #ff6b6b, #cc5555);
+    border-color: #ffaa00;
+    color: #fff;
+}
+
+.condition-btn.persistent {
+    background: linear-gradient(to bottom, rgba(255, 230, 109, 0.3), rgba(204, 184, 87, 0.3));
+    border-color: #ffe66d;
+    color: #ffe66d;
+}
+
+.condition-btn.persistent.active {
+    background: linear-gradient(to bottom, #ffe66d, #ccb857);
+    border-color: #ffaa00;
+    color: #000;
+    font-weight: bold;
+}
+
+/* ─────────────── HALF LEVEL DISPLAY ─────────────── */
+.half-level-display {
+    padding: 6px 12px;
+    background: rgba(0, 170, 204, 0.3);
+    border: 2px solid #00d9ff;
+    color: #00d9ff;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 4px;
+}
+
+/* ─────────────── DAMAGE THRESHOLD & SECOND WIND ─────────────── */
+.threshold-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.threshold-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #00a8cc;
+    border-radius: 4px;
+}
+
+.threshold-row label {
+    font-size: 11px;
+    font-weight: bold;
+    color: #00d9ff;
+}
+
+.threshold-formula-compact {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.formula-text-sm {
+    color: #00ff88;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.formula-input-sm {
+    width: 40px;
+    padding: 3px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #00a8cc;
+    color: #00ff88;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 3px;
+    font-size: 10px;
+}
+
+.threshold-total {
+    min-width: 50px;
+    padding: 4px 8px;
+    background: rgba(0, 217, 255, 0.2);
+    border: 1px solid #00d9ff;
+    color: #00d9ff;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 4px;
+}
+
+/* ─────────────── SKILLS SECTION ─────────────── */
+.skills-grid-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.skill-row {
+    display: grid;
+    grid-template-columns: 1fr 60px 30px 35px;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid #00a8cc;
+    border-radius: 3px;
+}
+
+.skill-name {
+    font-size: 11px;
+    color: #00d9ff;
+    font-weight: 500;
+}
+
+.skill-bonus {
+    text-align: center;
+    font-weight: bold;
+    color: #00ff88;
+    font-size: 13px;
+    background: rgba(0, 255, 136, 0.1);
+    padding: 4px;
+    border-radius: 3px;
+}
+
+.skill-trained {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.roll-btn-sm {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(to bottom, #00a8cc, #007a9c);
+    border: 1px solid #00d9ff;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.roll-btn-sm:hover {
+    background: linear-gradient(to bottom, #00d9ff, #00a8cc);
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+.custom-skills-divider {
+    text-align: center;
+    padding: 8px;
+    margin: 8px 0;
+    border-top: 2px solid #00a8cc;
+    border-bottom: 2px solid #00a8cc;
+    color: #00ff88;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.custom-skill-row {
+    background: rgba(0, 170, 255, 0.1);
+}
+
+.skill-name-input {
+    padding: 4px 6px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #00a8cc;
+    color: #00d9ff;
+    font-size: 11px;
+    border-radius: 3px;
+    width: 100%;
+}
+
+.delete-custom-skill {
+    width: 30px;
+    height: 30px;
+    padding: 2px;
+    background: #aa0000;
+    border: 1px solid #ff0000;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.add-custom-skill-btn {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(to bottom, #00a8cc, #007a9c);
+    border: 1px solid #00d9ff;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+/* ─────────────── HEADER FIXES (NO DUPLICATE LOGO) ─────────────── */
+.header-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-center .sw-logo {
+    max-width: 180px;
     height: auto;
-    filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.5));
-    animation: logo-glow 3s ease-in-out infinite;
 }
 
-@keyframes logo-glow {
-    0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.5)); }
-    50% { filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.8)); }
+/* Remove any duplicate logos in main grid */
+.datapad-main-grid .sw-logo {
+    display: none;
 }
-'''
 
+/* ─────────────── BOTTOM TABS ─────────────── */
+.bottom-tabs-content {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 
-def ensure_holo_class(content, sheet_type):
-    """Add holo-theme class to form element if not present"""
-    # Pattern to match the opening form tag
-    form_pattern = r'<form\s+class="([^"]*)"'
+.bottom-tabs-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.bottom-tabs-content::-webkit-scrollbar-track {
+    background: rgba(0, 20, 40, 0.6);
+}
+
+.bottom-tabs-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #00a8cc, #007a9c);
+    border-radius: 4px;
+}
+
+/* ─────────────── SHEET MODE SWITCHING ─────────────── */
+.header-tab[data-sheet-mode] {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.header-tab[data-sheet-mode]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 217, 255, 0.4);
+}
+
+/* ─────────────── CREDITS INPUT ─────────────── */
+.credits-input-large {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #00a8cc;
+    color: #00ff88;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 6px;
+}
+
+/* ─────────────── RESPONSIVE ADJUSTMENTS ─────────────── */
+@media (max-width: 1200px) {
+    .attr-breakdown {
+        grid-template-columns: repeat(2, 1fr);
+    }
     
-    def add_holo_class(match):
-        classes = match.group(1)
-        if 'holo-theme' not in classes:
-            classes += ' holo-theme'
-        return f'<form class="{classes}"'
+    .defense-table-row {
+        font-size: 10px;
+    }
     
-    return re.sub(form_pattern, add_holo_class, content)
+    .armor-main-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .armor-checkboxes-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .condition-buttons {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .attribute-row-improved {
+        grid-template-columns: 1fr;
+    }
+    
+    .attr-breakdown {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .defense-table-row {
+        grid-template-columns: 1fr;
+        text-align: left;
+    }
+    
+    .condition-buttons {
+        grid-template-columns: 1fr;
+    }
+}'''
+    
+    with open(css_path, 'w', encoding='utf-8') as f:
+        f.write(improved_css)
+    
+    print(f"✅ CSS fixes file created successfully!")
+    return True
 
 
-def add_holo_header(content):
-    """Add holographic header with logo after opening form tag"""
-    # Check if holo-frame-top already exists
-    if 'holo-frame-top' in content:
-        return content
+def create_javascript_handler():
+    """Create JavaScript file to handle condition button clicks and auto-updates"""
     
-    # Find the position after the opening form tag
-    form_match = re.search(r'<form[^>]*>\s*', content)
-    if form_match:
-        insert_pos = form_match.end()
-        return content[:insert_pos] + HOLO_HEADER_CSS + '\n    ' + content[insert_pos:]
+    js_dir = REPO_PATH / "module" / "sheets"
+    js_dir.mkdir(parents=True, exist_ok=True)
     
-    return content
+    js_path = js_dir / "character-sheet-handlers.js"
+    
+    print(f"📝 Creating JavaScript handler file...")
+    
+    js_content = '''/**
+ * SWSE Character Sheet - Condition Button Handler
+ * Automatically updates affected values when condition changes
+ */
 
-
-def update_template_file(filepath):
-    """Update a template file with holo theme"""
-    print(f"Processing: {filepath}")
+export class SWSECharacterSheetHandlers {
     
-    try:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        original_content = content
-        
-        # Determine sheet type from filename
-        filename = os.path.basename(filepath)
-        sheet_type = filename.replace('-sheet.hbs', '').replace('.hbs', '')
-        
-        # Add holo-theme class
-        content = ensure_holo_class(content, sheet_type)
-        
-        # Add holo header with logo
-        content = add_holo_header(content)
-        
-        # Only write if content changed
-        if content != original_content:
-            with open(filepath, 'w', encoding='utf-8') as f:
-                f.write(content)
-            print(f"  ✓ Updated {filename}")
-            return True
-        else:
-            print(f"  - No changes needed for {filename}")
-            return False
+    /**
+     * Activate condition button listeners
+     * @param {HTMLElement} html - The sheet HTML
+     * @param {Actor} actor - The actor being edited
+     */
+    static activateConditionButtons(html, actor) {
+        html.find('.condition-btn').click(async (event) => {
+            event.preventDefault();
+            const button = $(event.currentTarget);
+            const condition = button.data('condition');
             
-    except Exception as e:
-        print(f"  ✗ Error processing {filepath}: {e}")
-        return False
-
-
-def update_css_file(filepath):
-    """Update CSS file with holo frame styles"""
-    print(f"Processing CSS: {filepath}")
-    
-    try:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        original_content = content
-        
-        # Check if holo frame CSS already exists
-        if 'holo-frame-top' not in content:
-            # Add holo frame CSS at the end
-            content += '\n\n' + HOLO_FRAME_CSS
+            // Update the hidden input
+            html.find('input[name="system.condition"]').val(condition);
             
-            with open(filepath, 'w', encoding='utf-8') as f:
-                f.write(content)
-            print(f"  ✓ Added holo frame CSS")
-            return True
-        else:
-            print(f"  - Holo frame CSS already present")
-            return False
+            // Update active state
+            html.find('.condition-btn').removeClass('active');
+            button.addClass('active');
             
-    except Exception as e:
-        print(f"  ✗ Error processing {filepath}: {e}")
-        return False
-
-
-def consolidate_holo_theme():
-    """Ensure all sheets use the enhanced holo theme consistently"""
+            // Update the actor
+            await actor.update({
+                'system.condition': condition
+            });
+            
+            // Apply condition penalties automatically
+            SWSECharacterSheetHandlers.applyConditionPenalties(actor, condition);
+            
+            ui.notifications.info(`Condition set to: ${SWSECharacterSheetHandlers.getConditionLabel(condition)}`);
+        });
+    }
     
-    # Main CSS files to update
-    css_files = [
-        REPO_PATH / "styles" / "character-sheet.css",
-        REPO_PATH / "styles" / "unified-sheets.css",
-    ]
+    /**
+     * Get human-readable condition label
+     * @param {string} condition - The condition value
+     * @returns {string} - The readable label
+     */
+    static getConditionLabel(condition) {
+        const labels = {
+            'normal': 'Normal',
+            '-2': '-2 penalty',
+            '-5': '-5 penalty',
+            '-10': '-10 penalty',
+            'debilitated': 'Debilitated',
+            'persistent': 'Persistent'
+        };
+        return labels[condition] || condition;
+    }
     
-    # Template files to update
-    template_patterns = [
-        REPO_PATH / "templates" / "actors" / "*-sheet.hbs",
-        REPO_PATH / "templates" / "items" / "item-sheet.hbs",
-        REPO_PATH / "templates" / "sheets" / "*-sheet.hbs",
-    ]
+    /**
+     * Apply condition penalties to rolls and stats
+     * @param {Actor} actor - The actor
+     * @param {string} condition - The condition value
+     */
+    static applyConditionPenalties(actor, condition) {
+        // This method can be expanded to automatically apply penalties
+        // to attack rolls, skill checks, etc.
+        
+        let penalty = 0;
+        
+        switch(condition) {
+            case '-2':
+                penalty = -2;
+                break;
+            case '-5':
+                penalty = -5;
+                break;
+            case '-10':
+                penalty = -10;
+                break;
+            case 'debilitated':
+                // Debilitated: Can only take swift actions
+                penalty = -10; // Or apply special restrictions
+                break;
+            case 'persistent':
+                // Persistent condition: doesn't go away automatically
+                penalty = -5; // Or whatever your system defines
+                break;
+            default:
+                penalty = 0;
+        }
+        
+        // Store the penalty for use in roll calculations
+        if (actor.system.conditionPenalty !== penalty) {
+            actor.update({
+                'system.conditionPenalty': penalty
+            });
+        }
+    }
     
-    print("=" * 60)
-    print("SWSE Holo Theme Application")
-    print("=" * 60)
+    /**
+     * Auto-calculate defense values when inputs change
+     * @param {HTMLElement} html - The sheet HTML
+     * @param {Actor} actor - The actor being edited
+     */
+    static activateDefenseCalculations(html, actor) {
+        // Listen for changes to defense inputs
+        html.find('.defense-input-sm, .defense-select-sm').change(async (event) => {
+            const defenseType = $(event.currentTarget).closest('.defense-table-row').data('defense');
+            
+            if (defenseType) {
+                await SWSECharacterSheetHandlers.recalculateDefense(actor, defenseType);
+            }
+        });
+    }
     
-    # Update CSS files
-    print("\n[1/2] Updating CSS Files...")
-    css_updated = 0
-    for css_file in css_files:
-        if css_file.exists():
-            if update_css_file(css_file):
-                css_updated += 1
+    /**
+     * Recalculate a specific defense
+     * @param {Actor} actor - The actor
+     * @param {string} defenseType - The defense to recalculate (reflex, fortitude, will)
+     */
+    static async recalculateDefense(actor, defenseType) {
+        const defense = actor.system.defenses[defenseType];
+        
+        if (!defense) return;
+        
+        // Get ability modifier
+        const abilityMod = actor.system.abilities[defense.abilityMod]?.mod || 0;
+        
+        // Calculate: 10 + level/armor + class + ability mod + misc
+        const total = 10 + 
+                     (defense.levelArmor || 0) + 
+                     (defense.classBonus || 0) + 
+                     abilityMod + 
+                     (defense.misc || 0);
+        
+        // Update the defense total
+        await actor.update({
+            [`system.defenses.${defenseType}.total`]: total
+        });
+    }
     
-    print(f"\nCSS Files Updated: {css_updated}/{len(css_files)}")
-    
-    # Update template files
-    print("\n[2/2] Updating Template Files...")
-    templates_updated = 0
-    total_templates = 0
-    
-    for pattern in template_patterns:
-        for template_file in Path().glob(str(pattern)):
-            total_templates += 1
-            if update_template_file(template_file):
-                templates_updated += 1
-    
-    print(f"\nTemplate Files Updated: {templates_updated}/{total_templates}")
-    
-    print("\n" + "=" * 60)
-    print("Holo Theme Application Complete!")
-    print("=" * 60)
-    
-    # Create a summary CSS file that can be imported
-    create_summary_css()
-
-
-def create_summary_css():
-    """Create a comprehensive holo theme CSS file"""
-    summary_path = REPO_PATH / "styles" / "swse-holo-complete.css"
-    
-    css_content = '''/* ══════════════════════════════════════════════════════════
-   STAR WARS SAGA EDITION - COMPLETE HOLO THEME
-   Unified holographic datapad styling for all sheets
-   ══════════════════════════════════════════════════════════ */
-
-/* Apply to all SWSE sheets */
-.swse.sheet.holo-theme,
-.swse.character-sheet.holo-theme,
-.swse.npc-sheet.holo-theme,
-.swse.droid-sheet.holo-theme,
-.swse.vehicle-sheet.holo-theme,
-.swse.item-sheet.holo-theme {
-  position: relative;
-  overflow: hidden;
-  background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
-  color: #9ed0ff;
-  border: 2px solid #1c4b8e;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(17, 34, 51, 0.8);
-  font-family: "Orbitron", "Roboto", sans-serif;
-  animation: holo-flicker 1.2s ease-in-out;
-}
-
-/* Keep content above grid layers */
-.holo-theme form,
-.holo-theme .sheet-body-wrapper,
-.holo-theme .sheet-body {
-  position: relative;
-  z-index: 5;
-}
-
-''' + HOLO_FRAME_CSS + '''
-
-/* ─────────────── Inputs & Textareas ─────────────── */
-.holo-theme input,
-.holo-theme textarea,
-.holo-theme select {
-  background: rgba(0, 30, 60, 0.4);
-  color: #b5daff;
-  border: 1px solid #0af;
-  border-radius: 4px;
-  padding: 4px 6px;
-  transition: all 0.2s ease;
-}
-
-.holo-theme input:focus,
-.holo-theme textarea:focus,
-.holo-theme select:focus {
-  border-color: #00c6ff;
-  box-shadow: 0 0 8px #00c6ff;
-  outline: none;
-  background: rgba(0, 40, 80, 0.6);
-}
-
-.holo-theme input::placeholder {
-  color: rgba(181, 218, 255, 0.5);
-}
-
-/* ─────────────── Headers ─────────────── */
-.holo-theme .sheet-header {
-  background: linear-gradient(135deg, rgba(26, 77, 122, 0.8), rgba(44, 95, 141, 0.8));
-  border-bottom: 2px solid #0af;
-  box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
-}
-
-.holo-theme .charname input,
-.holo-theme h1,
-.holo-theme h2,
-.holo-theme h3 {
-  color: #9ed0ff;
-  text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
-}
-
-.holo-theme .section-header {
-  color: #00c6ff;
-  border-bottom-color: #0af;
-  text-shadow: 0 0 5px rgba(0, 170, 255, 0.6);
-}
-
-.holo-theme .section-header-black {
-  background: linear-gradient(to right, #000, #1a1a1a, #000);
-  color: #00ff88;
-  text-align: center;
-  padding: 6px;
-  font-weight: bold;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  border-bottom: 2px solid #00a8cc;
-  text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
-}
-
-/* ─────────────── Tabs Navigation ─────────────── */
-.holo-theme .sheet-tabs {
-  display: flex;
-  border-bottom: 1px solid #0af;
-  justify-content: space-around;
-  margin-bottom: 0.5em;
-  background: rgba(0, 20, 40, 0.6);
-}
-
-.holo-theme .sheet-tabs .item {
-  padding: 0.4em 0.8em;
-  cursor: pointer;
-  color: #9ed0ff;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
-  border: none;
-  background: transparent;
-}
-
-.holo-theme .sheet-tabs .item:hover {
-  color: #fff;
-  text-shadow: 0 0 6px #00baff;
-  background: rgba(0, 170, 255, 0.1);
-}
-
-/* Active tab pulsing holo glow */
-@keyframes holo-tab-pulse {
-  0%, 100% {
-    text-shadow: 0 0 8px #00f0ff, 0 0 15px rgba(0, 170, 255, 0.2);
-    box-shadow: 0 2px 10px rgba(0, 170, 255, 0.2);
-  }
-  50% {
-    text-shadow: 0 0 15px #00f0ff, 0 0 25px rgba(0, 170, 255, 0.67);
-    box-shadow: 0 2px 15px rgba(0, 170, 255, 0.47);
-  }
-}
-
-.holo-theme .sheet-tabs .item.active {
-  color: #fff;
-  border-bottom: 2px solid #00e6ff;
-  background: rgba(0, 170, 255, 0.15);
-  animation: holo-tab-pulse 3s ease-in-out infinite;
-}
-
-/* ─────────────── Buttons ─────────────── */
-.holo-theme button,
-.holo-theme .holo-btn {
-  background: linear-gradient(90deg, #002f6c, #003f8f);
-  border: 1px solid #00baff;
-  color: #b5daff;
-  border-radius: 6px;
-  padding: 6px 12px;
-  transition: 0.2s;
-  cursor: pointer;
-  text-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
-}
-
-.holo-theme button:hover,
-.holo-theme .holo-btn:hover {
-  background: #00aaff;
-  color: #fff;
-  box-shadow: 0 0 10px #00cfff;
-  animation: holo-pulse 1.5s infinite ease-in-out;
-  transform: translateY(-1px);
-}
-
-@keyframes holo-pulse {
-  0%, 100% { box-shadow: 0 0 10px rgba(0, 243, 255, 0.33); }
-  50% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.6); }
-}
-
-/* ─────────────── Stats & Values ─────────────── */
-.holo-theme .ability-modifier,
-.holo-theme .defense-value,
-.holo-theme .stat-value,
-.holo-theme .def-val,
-.holo-theme .modifier-value {
-  color: #00ff88;
-  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
-}
-
-.holo-theme .rollable:hover {
-  color: #00ffff;
-  text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
-  transform: scale(1.1);
-}
-
-/* ─────────────── Boxes & Containers ─────────────── */
-.holo-theme .ability,
-.holo-theme .defense,
-.holo-theme .resource-box,
-.holo-theme .stat-box,
-.holo-theme .item,
-.holo-theme .npc-weapon,
-.holo-theme .vehicle-weapon,
-.holo-theme .datapad-section {
-  background: rgba(0, 20, 40, 0.6);
-  border: 1px solid rgba(0, 170, 255, 0.4);
-  border-radius: 6px;
-  box-shadow: 0 0 10px rgba(0, 170, 255, 0.1);
-}
-
-.holo-theme .ability:hover,
-.holo-theme .item:hover {
-  border-color: #0af;
-  box-shadow: 0 0 15px rgba(0, 170, 255, 0.3);
-}
-
-/* ─────────────── Tables ─────────────── */
-.holo-theme table,
-.holo-theme .holo-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.holo-theme th,
-.holo-theme td,
-.holo-theme .holo-table th,
-.holo-theme .holo-table td {
-  border-bottom: 1px solid rgba(0, 77, 128, 0.5);
-  padding: 6px 8px;
-  color: #9ed0ff;
-}
-
-.holo-theme th {
-  color: #00c6ff;
-  text-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
-  background: rgba(0, 170, 255, 0.1);
-}
-
-.holo-theme tr:hover {
-  background: rgba(0, 170, 255, 0.1);
-}
-
-/* ─────────────── Skills ─────────────── */
-.holo-theme .skill-row,
-.holo-theme .skill-data-row {
-  border-bottom-color: rgba(0, 170, 255, 0.2);
-}
-
-.holo-theme .skill-row:hover,
-.holo-theme .skill-data-row:hover {
-  background: rgba(0, 170, 255, 0.15);
-}
-
-.holo-theme .skill-total {
-  color: #00ff88;
-  text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
-}
-
-/* ─────────────── Holographic Grid Overlay ─────────────── */
-.holo-theme::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-image:
-    linear-gradient(90deg, rgba(0, 180, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(0, 180, 255, 0.08) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: 0.25;
-  animation: holo-grid-move 20s linear infinite;
-  z-index: 0;
-}
-
-@keyframes holo-grid-move {
-  from { background-position: 0 0, 0 0; }
-  to { background-position: 200px 200px, 200px 200px; }
-}
-
-/* ─────────────── Holographic Glow Wave ─────────────── */
-.holo-theme::after {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(circle at center, rgba(0,255,255,0.05) 0%, transparent 70%);
-  mix-blend-mode: screen;
-  animation: holo-wave 12s ease-in-out infinite;
-  opacity: 0.2;
-  pointer-events: none;
-  z-index: 1;
-}
-
-@keyframes holo-wave {
-  0%, 100% { transform: scale(1); opacity: 0.15; }
-  50% { transform: scale(1.05); opacity: 0.3; }
-}
-
-/* ─────────────── Holo Boot-up Flicker ─────────────── */
-@keyframes holo-flicker {
-  0% { opacity: 0; filter: brightness(0.5); }
-  15% { opacity: 1; filter: brightness(1.2); }
-  30% { opacity: 0.7; filter: brightness(0.8); }
-  50% { opacity: 1; filter: brightness(1); }
-  75% { opacity: 0.9; filter: brightness(1.3); }
-  100% { opacity: 1; filter: brightness(1); }
-}
-
-/* ─────────────── Scrollbar (Datapad style) ─────────────── */
-.holo-theme ::-webkit-scrollbar {
-  width: 8px;
-}
-
-.holo-theme ::-webkit-scrollbar-track {
-  background: rgba(0, 20, 40, 0.6);
-}
-
-.holo-theme ::-webkit-scrollbar-thumb {
-  background: #0077bb;
-  border-radius: 10px;
-  box-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
-}
-
-.holo-theme ::-webkit-scrollbar-thumb:hover {
-  background: #00cfff;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
-}
-
-/* ─────────────── Special Effects ─────────────── */
-.holo-theme .profile-img,
-.holo-theme .character-portrait {
-  border-color: #0af;
-  box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
-}
-
-.holo-theme .editor-content {
-  background: rgba(0, 20, 40, 0.4);
-  border: 1px solid rgba(0, 170, 255, 0.3);
-  color: #b5daff;
-}
-
-/* Add subtle scan line effect */
-.holo-theme .sheet-body::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
-  animation: holo-scan 4s linear infinite;
-  pointer-events: none;
-  z-index: 100;
-}
-
-@keyframes holo-scan {
-  from { transform: translateY(0); }
-  to { transform: translateY(600px); }
+    /**
+     * Activate all sheet handlers
+     * @param {HTMLElement} html - The sheet HTML
+     * @param {Actor} actor - The actor being edited
+     */
+    static activate(html, actor) {
+        this.activateConditionButtons(html, actor);
+        this.activateDefenseCalculations(html, actor);
+    }
 }
 '''
     
-    print(f"\nCreating comprehensive holo theme CSS at: {summary_path}")
-    with open(summary_path, 'w', encoding='utf-8') as f:
-        f.write(css_content)
-    print("  ✓ Created swse-holo-complete.css")
+    with open(js_path, 'w', encoding='utf-8') as f:
+        f.write(js_content)
+    
+    print(f"✅ JavaScript handler file created successfully!")
+    return True
+
+
+def main():
+    print("=" * 60)
+    print("SWSE CHARACTER SHEET FIXES - UPDATED")
+    print("=" * 60)
+    print()
+    
+    if not REPO_PATH.exists():
+        print(f"❌ Repository path not found: {REPO_PATH}")
+        print("Please update REPO_PATH in the script")
+        return
+    
+    print(f"📂 Working directory: {REPO_PATH}")
+    print()
+    
+    # Fix the character sheet template
+    template_success = fix_character_sheet_template()
+    
+    # Add improved CSS
+    css_success = add_improved_css()
+    
+    # Create JavaScript handler
+    js_success = create_javascript_handler()
+    
+    print()
+    print("=" * 60)
+    if template_success and css_success and js_success:
+        print("✅ ALL FIXES APPLIED SUCCESSFULLY!")
+        print()
+        print("Changes made:")
+        print("  ✓ Fixed scrolling in main content area")
+        print("  ✓ Improved half-level display")
+        print("  ✓ Added racial/misc/total to attributes")
+        print("  ✓ Removed duplicate logo")
+        print("  ✓ UPDATED: Defense layout with Level/Armor column")
+        print("  ✓ UPDATED: Defense dropdowns for ability selection")
+        print("  ✓ NEW: Armor section with all fields")
+        print("  ✓ NEW: Condition buttons instead of dropdown")
+        print("  ✓ NEW: Auto-updates from condition changes")
+        print("  ✓ Added all default skills")
+        print("  ✓ Added damage threshold misc modifier")
+        print("  ✓ Added second wind misc modifier")
+        print("  ✓ Added sheet mode switching buttons")
+        print("  ✓ Created JavaScript handler for conditions")
+        print()
+        print("Next steps:")
+        print("1. Import the JavaScript handler in your character sheet class")
+        print("   Add this to your activateListeners method:")
+        print("   ")
+        print("   import { SWSECharacterSheetHandlers } from './character-sheet-handlers.js';")
+        print("   SWSECharacterSheetHandlers.activate(html, this.actor);")
+        print()
+        print("2. Refresh Foundry VTT (F5 or Ctrl+F5)")
+        print("3. Open a character sheet")
+        print("4. Test all the improvements!")
+    else:
+        print("⚠️ SOME FIXES MAY HAVE FAILED")
+        print("Check the output above for details")
+    print("=" * 60)
 
 
 if __name__ == "__main__":
-    consolidate_holo_theme()
+    main()
