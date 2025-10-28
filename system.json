@@ -32,7 +32,8 @@
     "styles/swse-components.css",
     "styles/swse-fixes.css",
     "styles/character-sheet.css",
-    "styles/narrative-chargen.css"
+    "styles/narrative-chargen.css",
+    "styles/vehicle-sheet-styles.css"
   ],
   "languages": [
     {

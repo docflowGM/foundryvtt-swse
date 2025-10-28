@@ -1,8 +1,3 @@
-// ============================================
-// FILE: scripts/actors/swse-vehicle.js
-// Vehicle actor sheet
-// ============================================
-
 import { SWSEActorSheet } from "./swse-actor.js";
 
 export class SWSEVehicleSheet extends SWSEActorSheet {
@@ -10,98 +5,98 @@ export class SWSEVehicleSheet extends SWSEActorSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor", "vehicle"],
       template: "systems/swse/templates/actors/vehicle-sheet.hbs",
-      width: 800,
-      height: 720
+      width: 900,
+      height: 800,
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "main" }]
     });
   }
 
   getData() {
     const context = super.getData();
-    // Add vehicle-specific data here
+    
+    if (!context.system.weapons) context.system.weapons = [];
+    if (!context.system.crewPositions) {
+      context.system.crewPositions = {
+        pilot: null, copilot: null, gunner: null,
+        engineer: null, shields: null, commander: null
+      };
+    }
+    if (!context.system.shields) context.system.shields = { value: 0, max: 0 };
+    if (!context.system.hull) context.system.hull = { value: 0, max: 0 };
+    if (!context.system.tags) context.system.tags = [];
+    
     return context;
   }
 
   activateListeners(html) {
     super.activateListeners(html);
-    
-    // Only add listeners if not read-only
     if (!this.options.editable) return;
     
-    // Add vehicle-specific listeners here
-    console.log("SWSE | Vehicle sheet listeners activated");
+    html.find('.weapon-add').click(this._onAddWeapon.bind(this));
+    html.find('.weapon-remove').click(this._onRemoveWeapon.bind(this));
+    html.find('.crew-slot').on('drop', this._onCrewDrop.bind(this));
+    html.find('.crew-slot').on('click', this._onCrewClick.bind(this));
   }
 
-  // ============================================
-  // INHERITED METHOD STUBS
-  // These prevent errors when parent tries to call them
-  // ============================================
-  
   async _onAddWeapon(event) {
-    console.log("SWSE | _onAddWeapon not implemented for this sheet type");
+    event.preventDefault();
+    const weapons = this.actor.system.weapons || [];
+    weapons.push({ name: "New Weapon", arc: "Forward", bonus: "+0", damage: "0d0", range: "Close" });
+    await this.actor.update({ "system.weapons": weapons });
   }
   
   async _onRemoveWeapon(event) {
-    console.log("SWSE | _onRemoveWeapon not implemented for this sheet type");
+    event.preventDefault();
+    const index = parseInt(event.currentTarget.dataset.index);
+    const weapons = [...(this.actor.system.weapons || [])];
+    if (index >= 0 && index < weapons.length) {
+      weapons.splice(index, 1);
+      await this.actor.update({ "system.weapons": weapons });
+    }
   }
   
-  async _onRollWeapon(event) {
-    console.log("SWSE | _onRollWeapon not implemented for this sheet type");
+  async _onRollWeapon(event) { }
+  async _onCrewDrop(event) {
+    event.preventDefault();
+    const slot = event.currentTarget.dataset.slot;
+    try {
+      const data = JSON.parse(event.originalEvent.dataTransfer.getData('text/plain'));
+      if (data.type === 'Actor') {
+        const actor = await fromUuid(data.uuid);
+        if (actor) {
+          await this.actor.update({ [`system.crewPositions.${slot}`]: actor.name });
+        }
+      }
+    } catch (error) { }
   }
   
-  async _onAddFeat(event) {
-    console.log("SWSE | _onAddFeat not implemented for this sheet type");
-  }
-  
-  async _onRemoveFeat(event) {
-    console.log("SWSE | _onRemoveFeat not implemented for this sheet type");
-  }
-  
-  async _onAddTalent(event) {
-    console.log("SWSE | _onAddTalent not implemented for this sheet type");
-  }
-  
-  async _onRemoveTalent(event) {
-    console.log("SWSE | _onRemoveTalent not implemented for this sheet type");
-  }
-  
-  async _onAddForcePower(event) {
-    console.log("SWSE | _onAddForcePower not implemented for this sheet type");
-  }
-  
-  async _onRemoveForcePower(event) {
-    console.log("SWSE | _onRemoveForcePower not implemented for this sheet type");
-  }
-  
-  async _onRollForcePower(event) {
-    console.log("SWSE | _onRollForcePower not implemented for this sheet type");
-  }
-  
-  async _onRefreshForcePowers(event) {
-    console.log("SWSE | _onRefreshForcePowers not implemented for this sheet type");
-  }
-  
-  async _onReloadForcePower(event) {
-    console.log("SWSE | _onReloadForcePower not implemented for this sheet type");
-  }
-  
-  async _onAddSkill(event) {
-    console.log("SWSE | _onAddSkill not implemented for this sheet type");
-  }
-  
-  async _onRemoveSkill(event) {
-    console.log("SWSE | _onRemoveSkill not implemented for this sheet type");
-  }
-  
-  async _onLevelUp(event) {
-    console.log("SWSE | _onLevelUp not implemented for this sheet type");
-  }
-  
-  async _onSecondWind(event) {
-    console.log("SWSE | _onSecondWind not implemented for this sheet type");
-  }
-  
-  async _onOpenStore(event) {
-    console.log("SWSE | _onOpenStore not implemented for this sheet type");
+  async _onCrewClick(event) {
+    event.preventDefault();
+    const slot = event.currentTarget.dataset.slot;
+    const currentCrew = this.actor.system.crewPositions?.[slot];
+    if (currentCrew) {
+      const confirm = await Dialog.confirm({
+        title: "Remove Crew Member",
+        content: `<p>Remove <strong>${currentCrew}</strong> from ${slot} position?</p>`
+      });
+      if (confirm) {
+        await this.actor.update({ [`system.crewPositions.${slot}`]: null });
+      }
+    }
   }
 
+  async _onAddFeat(event) { }
+  async _onRemoveFeat(event) { }
+  async _onAddTalent(event) { }
+  async _onRemoveTalent(event) { }
+  async _onAddForcePower(event) { }
+  async _onRemoveForcePower(event) { }
+  async _onRollForcePower(event) { }
+  async _onRefreshForcePowers(event) { }
+  async _onReloadForcePower(event) { }
+  async _onAddSkill(event) { }
+  async _onRemoveSkill(event) { }
+  async _onLevelUp(event) { }
+  async _onSecondWind(event) { }
+  async _onOpenStore(event) { }
 }
