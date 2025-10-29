@@ -4,7 +4,7 @@
 <form class="swse item-sheet {{cssClass}} holo-theme" autocomplete="off">
     {{!-- Holographic Frame Header --}}
     <div class="holo-frame-top">
-        <img class="sw-logo" src="systems/swse/assets/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
+        <img class="sw-logo" src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
     </div>
 
     {{!-- Header Section --}}
@@ -22,7 +22,7 @@
                     <input type="text" name="type" value="{{item.type}}" disabled style="background: #e0e0e0;"/>
                 </div>
                 
-                {{#if (or (eq item.type "eqassets/uipment") (eq item.type "weapon") (eq item.type "armor"))}}
+                {{#if (or (eq item.type "equipment") (eq item.type "weapon") (eq item.type "armor"))}}
                 <div class="resource">
                     <label class="resource-label">Cost (Credits)</label>
                     <input type="number" name="system.cost" value="{{system.cost}}" data-dtype="Number"/>
@@ -42,7 +42,7 @@
         <a class="item active" data-tab="description">Description</a>
         <a class="item" data-tab="details">Details</a>
         {{#if (or (eq item.type "feat") (eq item.type "talent") (eq item.type "forcepower"))}}
-        <a class="item" data-tab="reqassets/uirements">Reqassets/uirements</a>
+        <a class="item" data-tab="requirements">Requirements</a>
         {{/if}}
     </nav>
 
@@ -140,7 +140,7 @@
             </div>
             
             <div class="stat-field">
-                <label><input type="checkbox" name="system.eqassets/uipped" {{checked system.eqassets/uipped}}/> Currently Eqassets/uipped</label>
+                <label><input type="checkbox" name="system.equipped" {{checked system.eqassets/uipped}}/> Currently Eqassets/uipped</label>
             </div>
             {{/if}}
 
@@ -186,7 +186,7 @@
             <h3 class="section-header">Force Power Statistics</h3>
             <div class="item-stats-grid">
                 <div class="stat-field">
-                    <label>Force Points Reqassets/uired</label>
+                    <label>Force Points Required</label>
                     <input type="number" name="system.forcePoints" value="{{system.forcePoints}}" data-dtype="Number"/>
                 </div>
                 
@@ -249,8 +249,8 @@
             {{/if}}
 
             {{!-- EQUIPMENT DETAILS --}}
-            {{#if (eq item.type "eqassets/uipment")}}
-            <h3 class="section-header">Eqassets/uipment Details</h3>
+            {{#if (eq item.type "equipment")}}
+            <h3 class="section-header">Equipment Details</h3>
             <div class="item-stats-grid">
                 <div class="stat-field">
                     <label>Quantity</label>
@@ -276,38 +276,38 @@
 
         {{!-- Reqassets/uirements Tab --}}
         {{#if (or (eq item.type "feat") (eq item.type "talent") (eq item.type "forcepower"))}}
-        <div class="tab reqassets/uirements" data-group="primary" data-tab="reqassets/uirements">
-            <h3 class="section-header">Prereqassets/uisites</h3>
+        <div class="tab requirements" data-group="primary" data-tab="requirements">
+            <h3 class="section-header">Prerequisites</h3>
             
-            <div class="prereqassets/uisites-grid">
+            <div class="prerequisites-grid">
                 <div class="prereq-field">
                     <label>Minimum Level</label>
-                    <input type="number" name="system.prereqassets/uisites.level" value="{{system.prereqassets/uisites.level}}" data-dtype="Number" placeholder="None"/>
+                    <input type="number" name="system.prerequisites.level" value="{{system.prerequisites.level}}" data-dtype="Number" placeholder="None"/>
                 </div>
                 
                 <div class="prereq-field">
-                    <label>Reqassets/uired Class</label>
-                    <input type="text" name="system.prereqassets/uisites.class" value="{{system.prereqassets/uisites.class}}" placeholder="None"/>
+                    <label>Required Class</label>
+                    <input type="text" name="system.prerequisites.class" value="{{system.prerequisites.class}}" placeholder="None"/>
                 </div>
                 
                 <div class="prereq-field">
                     <label>Minimum BAB</label>
-                    <input type="number" name="system.prereqassets/uisites.bab" value="{{system.prereqassets/uisites.bab}}" data-dtype="Number" placeholder="None"/>
+                    <input type="number" name="system.prerequisites.bab" value="{{system.prerequisites.bab}}" data-dtype="Number" placeholder="None"/>
                 </div>
                 
                 <div class="prereq-field">
-                    <label>Reqassets/uired Feat</label>
-                    <input type="text" name="system.prereqassets/uisites.feat" value="{{system.prereqassets/uisites.feat}}" placeholder="None"/>
+                    <label>Required Feat</label>
+                    <input type="text" name="system.prerequisites.feat" value="{{system.prerequisites.feat}}" placeholder="None"/>
                 </div>
                 
                 <div class="prereq-field full-width">
-                    <label>Reqassets/uired Ability Score</label>
-                    <input type="text" name="system.prereqassets/uisites.ability" value="{{system.prereqassets/uisites.ability}}" placeholder="e.g., Dex 13"/>
+                    <label>Required Ability Score</label>
+                    <input type="text" name="system.prerequisites.ability" value="{{system.prerequisites.ability}}" placeholder="e.g., Dex 13"/>
                 </div>
                 
                 <div class="prereq-field full-width">
                     <label>Other Reqassets/uirements</label>
-                    <textarea name="system.prereqassets/uisites.other" rows="3">{{system.prereqassets/uisites.other}}</textarea>
+                    <textarea name="system.prerequisites.other" rows="3">{{system.prerequisites.other}}</textarea>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 <form class="{{cssClass}} flexcol holo-theme vehicle-sheet" autocomplete="off">
     {{!-- Holographic Frame Header --}}
     <div class="holo-frame-top">
-        <img class="sw-logo" src="systems/swse/assets/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
+        <img class="sw-logo" src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
     </div>
 
     {{!-- Header Section --}}
@@ -35,7 +35,7 @@
                 
                 {{!-- Central Vehicle Image --}}
                 <div class="vehicle-image-container">
-                    <img src="systems/swse/assets/assets/ui/vehicle-stats.png" class="vehicle-silhouette" alt="Vehicle"/>
+                    <img src="systems/swse/assets/ui/vehicle-stats.png" class="vehicle-silhouette" alt="Vehicle"/>
                 </div>
 
                 {{!-- Stats Around the Vehicle --}}
@@ -132,18 +132,18 @@
                 </div>
             </div>
 
-            {{!-- Qassets/uick Stats Bar --}}
-            <div class="qassets/uick-stats-bar">
-                <div class="qassets/uick-stat">
+            {{!-- Quick Stats Bar --}}
+            <div class="quick-stats-bar">
+                <div class="quick-stat">
                     <label>Size:</label>
                     <input type="text" name="system.size" value="{{system.size}}" placeholder="Colossal"/>
                 </div>
-                <div class="qassets/uick-stat">
+                <div class="quick-stat">
                     <label>Cost (New):</label>
                     <input type="number" name="system.cost.new" value="{{system.cost.new}}" data-dtype="Number" placeholder="150000"/>
                     <span class="credits-label">cr</span>
                 </div>
-                <div class="qassets/uick-stat">
+                <div class="quick-stat">
                     <label>Cost (Used):</label>
                     <input type="number" name="system.cost.used" value="{{system.cost.used}}" data-dtype="Number" placeholder="75000"/>
                     <span class="credits-label">cr</span>

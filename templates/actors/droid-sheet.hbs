@@ -1,7 +1,7 @@
 <form class="{{cssClass}} flexcol holo-theme" autocomplete="off">
     {{!-- Holographic Frame Header --}}
     <div class="holo-frame-top">
-        <img class="sw-logo" src="systems/swse/assets/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
+        <img class="sw-logo" src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
     </div>
 
   
@@ -47,7 +47,7 @@
     <a class="item" data-tab="combat">Combat</a>
     <a class="item" data-tab="skills">Skills</a>
     <a class="item" data-tab="force">Force</a>
-    <a class="item" data-tab="inventory">Inventory</a>
+    <a class="item" data-tab="inventory">Equipment</a>
     <a class="item" data-tab="biography">Bio</a>
   </nav>
 
@@ -61,7 +61,7 @@
       <div class="level-up-section">
         <div>
           <strong>Level {{system.level}}</strong>
-          <span style="margin-left: 10px;">XP: {{system.xp.value}} / {{system.xp.reqassets/uired}}</span>
+          <span style="margin-left: 10px;">XP: {{system.xp.value}} / {{system.xp.required}}</span>
         </div>
         <button type="button" class="level-up">
           <i class="fas fa-arrow-up"></i> Level Up
@@ -279,9 +279,9 @@
     </div>
     
     <!-- INVENTORY TAB -->
-    <div class="tab" data-group="primary" data-tab="inventory">
+    <div class="tab equipment" data-group="primary" data-tab="inventory">
       <div class="character-section">
-        <h3>Eqassets/uipment</h3>
+        <h3>Equipment</h3>
         <p style="color: #888; text-align: center; padding: 20px;">Drag items here from the Items sidebar</p>
       </div>
     </div>
