@@ -367,11 +367,11 @@ export class WorldDataLoader {
       let loaded = 0;
       let skipped = 0;
       
-      for (const eqassets/uipData of equipment) {
+      for (const equipData of equipment) {
         const itemData = {
-          name: eqassets/uipData.name,
+          name: equipData.name,
           type: "item",  // or "equipment" if that's a valid type
-          system: eqassets/uipData
+          system: equipData
         };
         
         const created = await this.createItem(itemData, "item");

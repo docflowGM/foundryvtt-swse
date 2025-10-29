@@ -16,7 +16,7 @@ import * as SWSEData from "./scripts/core/swse-data.js";
 import { WorldDataLoader } from "./scripts/core/world-data-loader.js";
 import { initializeUtils } from "./scripts/core/utils-init.js";
 import { initializeRolls } from "./scripts/core/rolls-init.js";
-import "./module/apps/chargen-init.js";
+import "./scripts/apps/chargen-init.js";
 
 // ============================================
 // INIT HOOK

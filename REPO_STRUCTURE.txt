@@ -1,5 +1,5 @@
 Repository Structure Map
-Generated: 2025-10-29 15:53:39
+Generated: 2025-10-29 19:18:40
 ======================================================================
 
 foundryvtt-swse/
@@ -71,9 +71,6 @@ foundryvtt-swse/
 │   │       ├── Vital-Transfer.png (6.4KB)
 │   │       └── words-of-banishment.png (5.7KB)
 │   ├── images/
-│   │   └── ui/
-│   │       ├── swse-cover.webp (8.0B)
-│   │       └── vehicle-stats.png (524.0KB)
 │   └── ui/
 │       ├── ErEwaEfVkAQgT8Q-Picsart-BackgroundRemover.png (43.2KB)
 │       ├── sheet-background.png (39.1KB)
@@ -83,14 +80,17 @@ foundryvtt-swse/
 │       ├── title-logo.png (11.4KB)
 │       ├── title-logo@2x.png (13.5KB)
 │       └── vehicle-stats.png (524.0KB)
+├── cleanup_logs/
+│   ├── final_cleanup_20251029_191343.log (2.7KB)
+│   └── final_cleanup_20251029_191535.log (4.3KB)
 ├── data/
 │   ├── armor/
 │   │   ├── heavy.db (13.5KB)
-│   │   ├── heavy.json (3.7KB)
+│   │   ├── heavy.json (3.6KB)
 │   │   ├── light.db (18.8KB)
-│   │   ├── light.json (5.0KB)
+│   │   ├── light.json (4.9KB)
 │   │   ├── medium.db (15.2KB)
-│   │   └── medium.json (4.1KB)
+│   │   └── medium.json (4.0KB)
 │   ├── attributes.json (2.6KB)
 │   ├── attributes.schema.json (591.0B)
 │   ├── classes.json (120.1KB)
@@ -100,8 +100,8 @@ foundryvtt-swse/
 │   ├── conditions.schema.json (679.0B)
 │   ├── Droids.json (137.3KB)
 │   ├── droids.schema.json (2.0B)
-│   ├── equipment.json (123.3KB)
-│   ├── equipment.schema.json (627.0B)
+│   ├── equipment.json (120.8KB)
+│   ├── equipment.schema.json (620.0B)
 │   ├── extraskilluses.json (38.0KB)
 │   ├── extraskilluses.schema.json (793.0B)
 │   ├── feats.json (74.7KB)
@@ -110,13 +110,13 @@ foundryvtt-swse/
 │   ├── forcepowers.schema.json (1.0KB)
 │   ├── skills.json (4.2KB)
 │   ├── skills.schema.json (485.0B)
-│   ├── special-combat-condition.json (13.4KB)
+│   ├── special-combat-condition.json (13.3KB)
 │   ├── talent_trees.json (6.7KB)
-│   ├── talents.json (172.5KB)
+│   ├── talents.json (172.4KB)
 │   ├── talents.schema.json (1.4KB)
-│   ├── vehicles.json (360.0KB)
+│   ├── vehicles.json (357.6KB)
 │   ├── vehicles.schema.json (3.7KB)
-│   ├── weapons.json (28.4KB)
+│   ├── weapons.json (28.0KB)
 │   └── weapons.schema.json (2.1KB)
 ├── docs/
 │   ├── ARMOR_SYSTEM_UPDATES.md (2.6KB)
@@ -132,69 +132,6 @@ foundryvtt-swse/
 │   └── handlebars-helpers.js (5.7KB)
 ├── lang/
 │   └── en.json (166.0B)
-├── module/
-│   ├── actors/
-│   │   ├── swse-actor.js (19.8KB)
-│   │   ├── swse-droid.js (3.1KB)
-│   │   ├── swse-npc.js (3.1KB)
-│   │   └── swse-vehicle.js (3.5KB)
-│   ├── apps/
-│   │   ├── chargen/
-│   │   │   ├── chargen-constants.js (3.9KB)
-│   │   │   ├── chargen-init.js (3.2KB)
-│   │   │   └── chargen.js (40.4KB)
-│   │   ├── chargen-init.js (2.2KB)
-│   │   ├── chargen.js (26.5KB)
-│   │   ├── store.js (8.2KB)
-│   │   └── swse-levelup.js (8.1KB)
-│   ├── chargen/
-│   │   ├── chargen-init.js (3.2KB)
-│   │   └── chargen.js (40.4KB)
-│   ├── constants/
-│   │   └── chargen-constants.js (3.9KB)
-│   ├── core/
-│   │   ├── config.js (501.0B)
-│   │   ├── constants.js (1.4KB)
-│   │   ├── load-templates.js (1.1KB)
-│   │   ├── rolls-init.js (979.0B)
-│   │   ├── swse-data.js (1.5KB)
-│   │   ├── swse.js (4.4KB)
-│   │   ├── utils-init.js (1.1KB)
-│   │   └── world-data-loader.js (13.4KB)
-│   ├── data/
-│   │   └── races.js (5.8KB)
-│   ├── helpers/
-│   │   └── handlebars-helpers.js (5.7KB)
-│   ├── items/
-│   │   └── swse-item.js (737.0B)
-│   ├── packs/
-│   │   └── armor/
-│   ├── rolls/
-│   │   ├── attacks.js (3.3KB)
-│   │   ├── damage.js (1.9KB)
-│   │   ├── defenses.js (2.1KB)
-│   │   ├── dice.js (2.4KB)
-│   │   ├── initiative.js (1.9KB)
-│   │   ├── saves.js (1.8KB)
-│   │   ├── skills-reference.js (11.1KB)
-│   │   └── skills.js (2.9KB)
-│   ├── scripts/
-│   │   └── helpers.js (1.8KB)
-│   ├── sheets/
-│   │   ├── sheet-handlers.js (8.4KB)
-│   │   └── SWSEItemSheet.js (1.3KB)
-│   ├── templates/
-│   │   └── partials/
-│   │       └── ability-block.hbs (691.0B)
-│   └── utils/
-│       ├── character-utils.js (2.7KB)
-│       ├── combat-utils.js (2.6KB)
-│       ├── data-utils.js (3.3KB)
-│       ├── dice-utils.js (5.2KB)
-│       ├── math-utils.js (2.8KB)
-│       ├── string-utils.js (2.4KB)
-│       ├── ui-utils.js (3.0KB)
-│       └── validation-utils.js (2.5KB)
 ├── packs/
 │   ├── armor-heavy.db (6.7KB)
 │   ├── armor-light.db (9.0KB)
@@ -229,16 +166,16 @@ foundryvtt-swse/
 │   │   ├── store.js (7.8KB)
 │   │   └── swse-levelup.js (8.0KB)
 │   ├── core/
+│   │   ├── config.js (482.0B)
 │   │   ├── constants.js (1.4KB)
 │   │   ├── load-templates.js (1.1KB)
 │   │   ├── rolls-init.js (979.0B)
 │   │   ├── swse-data.js (1.5KB)
+│   │   ├── swse.js (4.3KB)
 │   │   ├── utils-init.js (1.1KB)
 │   │   └── world-data-loader.js (13.3KB)
 │   ├── data/
 │   │   └── races.js (5.8KB)
-│   ├── helpers/
-│   │   └── handlebars-helpers.js (4.4KB)
 │   ├── items/
 │   │   └── swse-item.js (737.0B)
 │   ├── rolls/
@@ -246,7 +183,7 @@ foundryvtt-swse/
 │   │   ├── damage.js (1.9KB)
 │   │   ├── defenses.js (2.1KB)
 │   │   ├── dice.js (2.4KB)
-│   │   ├── initiative.js (1.9KB)
+│   │   ├── initiative.js (1.8KB)
 │   │   ├── saves.js (1.7KB)
 │   │   ├── skills-reference.js (11.0KB)
 │   │   └── skills.js (2.9KB)
@@ -261,13 +198,7 @@ foundryvtt-swse/
 │       ├── string-utils.js (2.4KB)
 │       ├── ui-utils.js (3.0KB)
 │       └── validation-utils.js (2.5KB)
-├── store/
-│   ├── gm-settings.html (497.0B)
-│   ├── gm-settings.js (794.0B)
-│   ├── store.html (1.9KB)
-│   └── store.js (3.4KB)
 ├── styles/
-│   ├── apps/
 │   ├── character-sheet-fixes.css (15.8KB)
 │   ├── character-sheet.css (22.3KB)
 │   ├── narrative-chargen.css (7.2KB)
@@ -288,18 +219,14 @@ foundryvtt-swse/
 │   ├── apps/
 │   │   ├── store/
 │   │   │   ├── gm-settings.html (497.0B)
-│   │   │   ├── gm-settings.js (885.0B)
+│   │   │   ├── gm-settings.js (878.0B)
 │   │   │   ├── store.html (1.9KB)
-│   │   │   └── store.js (3.7KB)
+│   │   │   └── store.js (3.6KB)
 │   │   ├── chargen-fixed.hbs (9.3KB)
 │   │   ├── chargen.hbs (7.4KB)
 │   │   ├── chargen.html (7.3KB)
 │   │   ├── narrative-chargen.hbs (7.5KB)
 │   │   └── store.hbs (1.9KB)
-│   ├── chargen/
-│   │   └── chargen.html (7.3KB)
-│   ├── item/
-│   │   └── item-sheet.hbs (10.9KB)
 │   ├── items/
 │   │   ├── item-sheet.hbs (16.1KB)
 │   │   └── item-sheet.html (5.1KB)
@@ -321,34 +248,28 @@ foundryvtt-swse/
 │   │   ├── scan_repo.py (7.5KB)
 │   │   └── Update.py (954.0B)
 │   ├── cleanup_review.sh (1.3KB)
-│   └── migration-helper.js (1.3KB)
-├── ui/
-│   ├── ErEwaEfVkAQgT8Q-Picsart-BackgroundRemover.png (43.2KB)
-│   ├── sheet-background.png (39.1KB)
-│   ├── sheet-frame.png (182.0KB)
-│   ├── sheet-frame@2x.png (1.1MB)
-│   ├── title-logo.png (11.4KB)
-│   └── title-logo@2x.png (13.5KB)
+│   └── migration-helper.js (1.2KB)
 ├── index.js (5.9KB)
-├── REPO_STRUCTURE.txt (14.4KB)
+├── REPO_STRUCTURE.txt (12.0KB)
+├── scan_repo.py (7.2KB)
 ├── swse.zip (4.6MB)
-├── system.json (3.7KB)
+├── system.json (5.2KB)
 └── template.json (5.0KB)
 
 ======================================================================
 Repository Statistics
 ======================================================================
 
-Total Directories: 57
-Total Files: 274
-Total Size: 12.4MB
+Total Directories: 33
+Total Files: 219
+Total Size: 10.2MB
 
 Files by Type:
-  JavaScript        85 files  (455.2KB)
-  Images            76 files  (4.3MB)
+  Images            68 files  (2.3MB)
+  JavaScript        40 files  (181.8KB)
   Data              33 files  (1.1MB)
-  Other             28 files  (6.2MB)
-  Templates         26 files  (190.9KB)
-  Docs              11 files  (55.4KB)
+  Other             30 files  (6.3MB)
+  Templates         21 files  (169.7KB)
+  Docs              11 files  (53.0KB)
   Styles            10 files  (110.8KB)
-  Python             5 files  (16.8KB)
+  Python             6 files  (24.1KB)

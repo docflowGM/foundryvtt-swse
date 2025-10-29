@@ -8,7 +8,7 @@ import { SWSEDroidSheet } from "./actors/swse-droid.js";
 import { SWSENPCSheet } from "./actors/swse-npc.js";
 import { SWSEVehicleSheet } from "./actors/swse-vehicle.js";
 import { SWSEItemSheet } from "./items/swse-item.js";
-import { registerHandlebarsHelpers } from "./module/module/helpers/handlebars-module/module/helpers.js";
+import { registerHandlebarsHelpers } from "../../helpers/handlebars-helpers.js";
 import { preloadHandlebarsTemplates } from "./core/load-templates.js";
 import { WorldDataLoader } from "./core/world-data-loader.js";
 
