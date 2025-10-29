@@ -1,1273 +1,479 @@
-/* ===========================================
-   SWSE Character Sheet CSS - Roll20 Inspired
-   Connected to existing SWSE system structure
-   =========================================== */
-
-/* Root Variables */
-.swse.sheet {
-  --swse-primary: #1a4d7a;
-  --swse-secondary: #2c5f8d;
-  --swse-accent: #f4d03f;
-  --swse-light: #e8f4f8;
-  --swse-dark: #0d2535;
-  --swse-border: #3a7ba7;
-  --swse-text: #2c3e50;
-  --swse-success: #27ae60;
-  --swse-warning: #e67e22;
-  --swse-danger: #c0392b;
-}
-
-/* General Sheet Styling */
-.swse.character-sheet {
-  font-family: 'Signika', 'Helvetica Neue', Arial, sans-serif;
-  font-size: 13px;
-  color: var(--swse-text);
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-
-.swse.character-sheet .window-content {
-  background: none;
-  padding: 0;
-}
-
-/* Header Styling */
-.swse .sheet-header {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 15px;
-  background: linear-gradient(135deg, var(--swse-primary), var(--swse-secondary));
-  border-bottom: 3px solid var(--swse-accent);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-
-.swse .profile-img {
-  flex: 0 0 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 3px solid var(--swse-accent);
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
-}
-
-.swse .header-fields {
-  flex: 1;
-}
-
-.swse .charname {
-  margin: 0 0 10px 0;
-}
-
-.swse .charname input {
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid var(--swse-accent);
-  padding: 2px 5px;
-  width: 100%;
-}
-
-.swse .header-row {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.swse .resource {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.swse .resource-label {
-  font-size: 10px;
-  text-transform: uppercase;
-  color: var(--swse-accent);
-  margin-bottom: 3px;
-  font-weight: bold;
-}
-
-.swse .resource input,
-.swse .resource select {
-  background: rgba(255,255,255,0.9);
-  border: 1px solid var(--swse-border);
-  border-radius: 3px;
-  padding: 3px 6px;
-  text-align: center;
-}
-
-.swse .header-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.swse .header-actions button {
-  background: var(--swse-accent);
-  border: none;
-  border-radius: 4px;
-  padding: 6px 12px;
-  color: var(--swse-dark);
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.swse .header-actions button:hover {
-  background: #f1c40f;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
-
-/* Tab Navigation */
-.swse .sheet-tabs {
-  display: flex;
-  gap: 2px;
-  background: var(--swse-dark);
-  padding: 0;
-  margin: 0;
-  border-bottom: none;
-}
-
-.swse .sheet-tabs .item {
-  flex: 1;
-  padding: 10px 15px;
-  background: var(--swse-secondary);
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  border: none;
-  border-top: 2px solid transparent;
-  transition: all 0.2s;
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 11px;
-  cursor: pointer;
-}
-
-.swse .sheet-tabs .item:hover {
-  background: var(--swse-primary);
-  border-top-color: var(--swse-accent);
-}
-
-.swse .sheet-tabs .item.active {
-  background: white;
-  color: var(--swse-primary);
-  border-top-color: var(--swse-accent);
-  border-top-width: 3px;
-}
-
-/* Sheet Body */
-.swse .sheet-body {
-  padding: 15px;
-  overflow-y: auto;
-  max-height: calc(100vh - 300px);
-}
-
-.swse .sheet-body .tab {
-  display: none;
-}
-
-.swse .sheet-body .tab.active {
-  display: block;
-}
-
-/* Section Headers */
-.swse .section-header {
-  font-size: 16px;
-  font-weight: bold;
-  color: var(--swse-primary);
-  text-transform: uppercase;
-  border-bottom: 2px solid var(--swse-border);
-  padding-bottom: 5px;
-  margin-bottom: 15px;
-}
-
-/* Main Tab Layout */
-.swse .main-content {
-  display: grid;
-  grid-template-columns: 240px 1fr 280px;
-  gap: 20px;
-}
-
-/* Abilities Column */
-.swse .abilities-column {
-  background: white;
-  border: 2px solid var(--swse-border);
-  border-radius: 6px;
-  padding: 15px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.swse .ability {
-  background: var(--swse-light);
-  border: 1px solid var(--swse-border);
-  border-radius: 4px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.swse .ability-name {
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--swse-primary);
-  margin: 0 0 8px 0;
-  text-align: center;
-}
-
-.swse .ability-scores {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 5px;
-  margin-bottom: 8px;
-}
-
-.swse .ability-score {
-  text-align: center;
-}
-
-.swse .ability-score label {
-  display: block;
-  font-size: 9px;
-  text-transform: uppercase;
-  color: #666;
-  margin-bottom: 2px;
-}
-
-.swse .ability-score input {
-  width: 100%;
-  text-align: center;
-  padding: 3px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-}
-
-.swse .ability-display {
-  display: block;
-  padding: 3px;
-  background: #f0f0f0;
-  border-radius: 3px;
-  font-weight: bold;
-}
-
-.swse .ability-total {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  padding: 5px;
-  background: #f8f8f8;
-  border-radius: 3px;
-  margin-bottom: 5px;
-}
-
-.swse .ability-total .total-value {
-  font-weight: bold;
-  font-size: 16px;
-  color: var(--swse-primary);
-}
-
-.swse .ability-modifier {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px;
-  background: linear-gradient(135deg, var(--swse-primary), var(--swse-secondary));
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.swse .ability-modifier:hover,
-.swse .rollable:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-
-.swse .ability-modifier .modifier-value {
-  font-size: 18px;
-  font-weight: bold;
-  color: white;
-}
-
-.swse .derived-stats {
-  margin-top: 15px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.swse .stat-box {
-  background: var(--swse-light);
-  border: 2px solid var(--swse-border);
-  border-radius: 4px;
-  padding: 10px;
-  text-align: center;
-}
-
-.swse .stat-box label {
-  display: block;
-  font-size: 10px;
-  text-transform: uppercase;
-  color: #666;
-  margin-bottom: 5px;
-}
-
-.swse .stat-value {
-  font-size: 20px;
-  font-weight: bold;
-  color: var(--swse-primary);
-}
-
-/* Defenses Column */
-.swse .defenses-column {
-  background: white;
-  border: 2px solid var(--swse-border);
-  border-radius: 6px;
-  padding: 15px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.swse .defense-row {
-  margin-bottom: 15px;
-}
-
-.swse .defense {
-  background: var(--swse-light);
-  border: 2px solid var(--swse-border);
-  border-radius: 4px;
-  padding: 12px;
-}
-
-.swse .defense label {
-  display: block;
-  font-size: 11px;
-  text-transform: uppercase;
-  font-weight: bold;
-  color: var(--swse-text);
-  margin-bottom: 8px;
-}
-
-.swse .defense-value {
-  font-size: 32px;
-  font-weight: bold;
-  color: var(--swse-primary);
-  text-align: center;
-  margin-bottom: 5px;
-}
-
-.swse .defense.fortitude .defense-value {
-  color: #c0392b;
-}
-
-.swse .defense.reflex .defense-value {
-  color: #27ae60;
-}
-
-.swse .defense.will .defense-value {
-  color: #2980b9;
-}
-
-.swse .defense-breakdown {
-  font-size: 10px;
-  color: #666;
-  text-align: center;
-  margin-bottom: 8px;
-}
-
-.swse .defense-inputs {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 5px;
-  align-items: center;
-  font-size: 11px;
-}
-
-.swse .defense-inputs label {
-  margin: 0;
-  font-size: 10px;
-}
-
-.swse .defense-inputs input,
-.swse .defense-inputs select {
-  padding: 2px 4px;
-}
-
-.swse .condition-track {
-  margin-top: 20px;
-  padding: 12px;
-  background: #fff3cd;
-  border: 2px solid #ffc107;
-  border-radius: 4px;
-}
-
-.swse .condition-track h4 {
-  margin: 0 0 8px 0;
-  font-size: 12px;
-  text-transform: uppercase;
-  color: #856404;
-}
-
-.swse .condition-select {
-  width: 100%;
-  padding: 5px;
-  border: 1px solid #ffc107;
-  border-radius: 3px;
-  background: white;
-}
-
-.swse .damage-threshold {
-  margin-top: 15px;
-  padding: 12px;
-  background: #f8d7da;
-  border: 2px solid #c0392b;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.swse .damage-threshold label {
-  display: block;
-  font-size: 11px;
-  text-transform: uppercase;
-  font-weight: bold;
-  color: #721c24;
-  margin-bottom: 8px;
-}
-
-.swse .dt-value {
-  font-size: 28px;
-  font-weight: bold;
-  color: #c0392b;
-  margin-bottom: 8px;
-}
-
-.swse .dt-breakdown {
-  font-size: 10px;
-  color: #721c24;
-  margin-bottom: 8px;
-}
-
-/* Resources Column */
-.swse .resources-column {
-  background: white;
-  border: 2px solid var(--swse-border);
-  border-radius: 6px;
-  padding: 15px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.swse .resource-box {
-  background: var(--swse-light);
-  border: 2px solid var(--swse-border);
-  border-radius: 4px;
-  padding: 12px;
-  margin-bottom: 15px;
-}
-
-.swse .resource-box label {
-  display: block;
-  font-size: 11px;
-  text-transform: uppercase;
-  font-weight: bold;
-  color: var(--swse-text);
-  margin-bottom: 8px;
-  text-align: center;
-}
-
-.swse .resource-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  margin-bottom: 8px;
-}
-
-.swse .resource-content input {
-  width: 60px;
-  text-align: center;
-  padding: 5px;
-  font-size: 16px;
-  font-weight: bold;
-  border: 1px solid var(--swse-border);
-  border-radius: 3px;
-}
-
-.swse .resource-content .sep {
-  font-size: 16px;
-  font-weight: bold;
-  color: #666;
-}
-
-.swse .hit-points {
-  border-color: #c0392b;
-  background: linear-gradient(135deg, #ffe6e6, #fff0f0);
-}
-
-.swse .force-points {
-  border-color: #2980b9;
-  background: linear-gradient(135deg, #e6f2ff, #f0f8ff);
-}
-
-.swse .free-force-powers {
-  border-color: #8e44ad;
-  background: linear-gradient(135deg, #f4ecf7, #ebdef0);
-}
-
-.swse .force-note,
-.swse .speed-note,
-.swse .sw-formula {
-  font-size: 10px;
-  font-style: italic;
-  color: #666;
-  text-align: center;
-  margin-top: 4px;
-}
-
-.swse .second-wind {
-  border-color: #27ae60;
-  background: linear-gradient(135deg, #e8f8f0, #f0fdf4);
-}
-
-.swse .second-wind-info {
-  text-align: center;
-  margin-bottom: 8px;
-  font-size: 12px;
-}
-
-.swse .sw-misc {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  margin-top: 8px;
-}
-
-.swse .apply-second-wind {
-  width: 100%;
-  padding: 8px;
-  background: var(--swse-success);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-top: 8px;
-}
-
-.swse .apply-second-wind:hover {
-  background: #229954;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.swse .temp-hp,
-.swse .force-die {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  margin-top: 5px;
-}
-
-.swse .speed-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-}
-
-.swse .speed-total {
-  text-align: center;
-  font-size: 11px;
-  margin-top: 5px;
-  color: #666;
-}
-
-.swse .init-value {
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--swse-primary);
-  text-align: center;
-  margin-bottom: 5px;
-  cursor: pointer;
-}
-
-.swse .init-breakdown {
-  font-size: 10px;
-  color: #666;
-  text-align: center;
-}
-
-.swse .init-misc {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  margin-top: 8px;
-}
-
-/* Skills List */
-.swse .skills-list {
-  background: white;
-  border: 2px solid var(--swse-border);
-  border-radius: 6px;
+/* ==========================================================================
+   SWSE Character Sheet — Optimized, Holo Theme, Readable & Scrollable
+   Full replacement stylesheet (drop-in)
+   - Neon blue/green holo look retained
+   - Compact spacing, improved readability
+   - One unified scroll region: .sheet-body
+   - Grouped defenses + damage threshold + second wind
+   ========================================================================== */
+
+/* =========================
+   THEME VARIABLES & ROOT
+   ========================= */
+:root {
+  --holo-blue: #00a8cc;
+  --holo-cyan: #00d9ff;
+  --holo-green: #00ff88;
+  --holo-deep: #062033;
+  --holo-mid: #0f2236;
+  --panel-bg: rgba(3,10,20,0.55);
+  --panel-contrast: rgba(255,255,255,0.03);
+  --muted: #9fb6c9;
+  --accent-warm: #ffd66b;
+  --danger: #ff6b6b;
+  --radius: 8px;
+  --gutter: 10px;
+  --font-sans: "Orbitron", "Signika", "Rajdhani", "Segoe UI", sans-serif;
+  --ui-font-size: 13px;
+  --focus-glow: 0 0 6px var(--holo-cyan);
+  --fast: 180ms;
+  --medium: 280ms;
+  --shadow-weak: 0 6px 20px rgba(0,0,0,0.35);
+}
+
+/* =========================
+   GLOBAL SHEET LAYOUT
+   ========================= */
+.swse,
+.swse.holo-theme,
+.swse.character-sheet,
+form.swse-datapad-sheet {
+  box-sizing: border-box;
+  font-family: var(--font-sans);
+  font-size: var(--ui-font-size);
+  color: #cfeffc;
+  background: radial-gradient(circle at 10% 10%, #071426 0%, #03060b 60%);
+  border-radius: 12px;
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.swse .skills-header {
-  display: grid;
-  grid-template-columns: 2fr 60px 40px 40px 60px 60px 50px;
-  gap: 5px;
-  padding: 10px;
-  background: linear-gradient(135deg, var(--swse-primary), var(--swse-secondary));
-  color: white;
-  font-weight: bold;
-  font-size: 11px;
-  text-transform: uppercase;
-}
+/* Reset some defaults inside */
+.swse * { box-sizing: border-box; }
 
-.swse .skill-row {
-  display: grid;
-  grid-template-columns: 2fr 60px 40px 40px 60px 60px 50px;
-  gap: 5px;
-  padding: 8px 10px;
-  align-items: center;
-  border-bottom: 1px solid #e0e0e0;
-  transition: background 0.2s;
-}
-
-.swse .skill-row:hover {
-  background: var(--swse-light);
-}
-
-.swse .skill-row:last-child {
-  border-bottom: none;
-}
-
-.swse .skill-name {
-  font-weight: 500;
-}
-
-.swse .skill-ability {
-  text-align: center;
-  font-size: 11px;
-  color: #666;
-}
-
-.swse .skill-train,
-.swse .skill-focus {
-  text-align: center;
-}
-
-.swse .skill-train input,
-.swse .skill-focus input {
-  margin: 0;
-  cursor: pointer;
-}
-
-.swse .skill-misc input {
-  width: 100%;
-  text-align: center;
-  padding: 2px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-}
-
-.swse .skill-total {
-  text-align: center;
-  font-weight: bold;
-  color: var(--swse-primary);
-}
-
-.swse .skill-roll {
-  text-align: center;
-}
-
-.swse .skill-roll-button {
-  color: var(--swse-primary);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.swse .skill-roll-button:hover {
-  color: var(--swse-accent);
-  transform: scale(1.2);
-}
-
-/* Custom Skills */
-.swse .custom-skills-section {
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 2px solid var(--swse-border);
-}
-
-.swse .custom-skill-row {
+/* =========================
+   HEADER (compact) - top bar
+   ========================= */
+.swse .datapad-header,
+.swse .sheet-header,
+.holo-frame-top {
   display: flex;
-  gap: 10px;
   align-items: center;
-  padding: 5px;
-  margin-bottom: 5px;
+  gap: 10px;
+  padding: 8px 10px;
+  background: linear-gradient(180deg, rgba(2,10,20,0.65), rgba(0,20,40,0.6));
+  border-bottom: 1px solid rgba(0,170,204,0.12);
+  min-height: 44px; /* compact */
 }
 
-.swse .custom-skill-row input[type="text"] {
-  flex: 1;
+/* Left / center / right columns within header */
+.swse .datapad-header .header-left,
+.swse .datapad-header .header-center,
+.swse .datapad-header .header-right,
+.swse .sheet-header .header-fields {
+  display: flex;
+  align-items: center;
 }
 
-/* Items Lists */
-.swse .items-header {
-  margin-bottom: 15px;
-}
+.swse .header-left { gap: 8px; flex: 1; }
+.swse .header-center { justify-content: center; flex: 0 0 auto; }
+.swse .header-right { justify-content: flex-end; gap: 8px; flex: 0 0 auto; }
 
-.swse .items-header button,
-.swse .add-skill {
-  background: var(--swse-primary);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-weight: bold;
+/* Logo smaller & no duplicates inside main */
+.swse .sw-logo,
+.holo-frame-top .sw-logo { max-height: 44px; display: block; }
+.datapad-main-grid .sw-logo { display: none !important; }
+
+/* Compact portrait */
+.swse .character-portrait,
+.swse .profile-img { width: 56px; height: 56px; border-radius: 6px; object-fit: cover; border: 2px solid rgba(0,168,204,0.12); }
+
+/* Name input styling */
+.swse .charname input,
+.swse .charname { font-weight: 700; color: var(--holo-cyan); }
+
+/* Header controls (tabs, small buttons) */
+.swse .header-tab,
+.swse .sheet-tabs .item {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--holo-cyan);
+  padding: 6px 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 11px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform var(--fast), box-shadow var(--fast), background var(--fast);
+}
+.swse .header-tab.active,
+.swse .sheet-tabs .item.active {
+  background: linear-gradient(180deg, rgba(0,168,204,0.15), rgba(0,100,140,0.15));
+  border-color: rgba(0,168,204,0.25);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,160,210,0.08);
 }
 
-.swse .items-header button:hover,
-.swse .add-skill:hover {
-  background: var(--swse-secondary);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+/* =========================
+   SHEET BODY (single scrollable)
+   ========================= */
+.swse .sheet-body,
+.swse .sheet-body-wrapper,
+.swse .datapad-main-grid,
+.swse form .sheet-body {
+  padding: 12px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  max-height: calc(100vh - 140px); /* allow header+footer */
 }
 
-.swse .items-list {
+/* Scrollbar look (datapad style) */
+.swse .sheet-body::-webkit-scrollbar { width: 10px; }
+.swse .sheet-body::-webkit-scrollbar-track { background: rgba(0,0,0,0.25); border-radius: 6px; }
+.swse .sheet-body::-webkit-scrollbar-thumb { background: linear-gradient(180deg,var(--holo-cyan),var(--holo-blue)); border-radius: 8px; border: 2px solid rgba(0,10,20,0.25); }
+
+/* Reduce repaints: promote sheet-body to layer */
+.swse .sheet-body { transform: translateZ(0); }
+
+/* =========================
+   MAIN GRID: compact three-column layout
+   ========================= */
+.swse .main-content,
+.swse .datapad-main-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr 280px;
+  gap: 12px;
+  align-items: start;
+}
+
+/* Make sections visually distinct */
+.swse .datapad-section,
+.swse .panel,
+.swse .ability,
+.swse .stat-block,
+.swse .resource-box,
+.swse .skill-row,
+.swse .item {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));
+  border: 1px solid rgba(0,168,204,0.08);
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: var(--shadow-weak);
+}
+
+/* Section header */
+.swse .section-header,
+.swse .section-title,
+.swse .section-header-black,
+.swse .section-header-compact {
+  font-weight: 800;
+  color: var(--holo-green);
+  font-size: 12px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  letter-spacing: 0.6px;
+}
+
+/* Labels */
+.swse label,
+.swse .vehicle-label,
+.swse .resource-label {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Inputs unified */
+.swse input,
+.swse select,
+.swse textarea {
+  background: rgba(0, 10, 18, 0.45);
+  border: 1px solid rgba(0,160,200,0.08);
+  color: #d7f7ff;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  transition: box-shadow var(--fast), border-color var(--fast), transform var(--fast);
+}
+.swse input:focus,
+.swse select:focus,
+.swse textarea:focus {
+  box-shadow: var(--focus-glow);
+  border-color: var(--holo-cyan);
+  outline: none;
+  transform: translateZ(0);
+}
+
+/* Buttons unified (holo) */
+.swse .roll-btn,
+.swse .roll-btn-sm,
+.swse .vehicle-btn,
+.swse .holo-btn,
+.swse button {
+  background: linear-gradient(180deg,var(--holo-blue), #006b86);
+  color: #fff;
+  border: 1px solid rgba(0,210,255,0.18);
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform var(--fast), box-shadow var(--fast), opacity var(--fast);
+  will-change: transform;
+}
+.swse .roll-btn:hover,
+.swse .vehicle-btn:hover,
+.swse .holo-btn:hover,
+.swse button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(0,168,204,0.08);
+}
+
+/* Small buttons */
+.swse .roll-btn-sm { padding: 4px 6px; font-size: 12px; border-radius: 6px; }
+
+/* Press feedback */
+.swse .roll-btn:active,
+.swse .vehicle-btn:active,
+.swse .holo-btn:active,
+.swse button:active { transform: scale(0.98); }
+
+/* =========================
+   ATTRIBUTES - compact rows
+   ========================= */
+.attributes-grid-improved {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
-.swse .item {
+.attribute-row-improved {
   display: grid;
-  grid-template-columns: 50px 1fr auto;
-  gap: 10px;
+  grid-template-columns: 56px 1fr 28px 72px 36px;
+  gap: 8px;
   align-items: center;
-  padding: 10px;
-  background: white;
-  border: 2px solid var(--swse-border);
-  border-radius: 4px;
-  transition: all 0.2s;
+  padding: 6px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(255,255,255,0.01));
 }
 
-.swse .item:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  transform: translateY(-2px);
+/* Attribute label + total + mod */
+.attr-label { font-weight: 900; color: var(--holo-cyan); font-size: 13px; text-transform: uppercase; }
+.attr-breakdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.attr-input-sm, .formula-input-sm { width: 56px; padding: 6px; font-weight: 900; text-align: center; border-radius: 6px; }
+.attr-total { width: 56px; padding: 6px; text-align: center; font-weight: 900; color: var(--holo-cyan); background: rgba(0,216,255,0.05); border-radius: 6px; border: 1px solid rgba(0,216,255,0.06); }
+.attr-mod { font-size: 18px; font-weight: 900; color: var(--holo-green); text-align:center; padding:6px 8px; border-radius:6px; background: rgba(0,255,136,0.04); border:1px solid rgba(0,255,136,0.06); }
+
+/* roll icon */
+.roll-btn { width: 36px; height: 36px; display:inline-grid; place-items:center; }
+
+/* =========================
+   DEFENSES + THRESHOLDS - grouped
+   ========================= */
+.defense-group {
+  display: grid;
+  gap: 8px;
 }
 
-.swse .item-image img {
-  width: 36px;
-  height: 36px;
-  border-radius: 4px;
-  border: 1px solid var(--swse-border);
-}
-
-.swse .item-name {
-  margin: 0;
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--swse-primary);
-}
-
-.swse .item-stats,
-.swse .power-uses,
-.swse .item-quantity {
-  display: flex;
-  gap: 10px;
-  font-size: 11px;
-  color: #666;
-  margin-top: 5px;
-}
-
-.swse .item-description {
-  grid-column: 2 / -1;
-  font-size: 12px;
-  color: #666;
+/* Defense table compact */
+.defense-table,
+.vehicle-defense,
+.vehicle-defense-table,
+.defense-table-row {
+  display: grid;
+  grid-template-columns: 94px repeat(5, 1fr);
+  align-items: center;
+  gap: 8px;
   padding: 8px;
-  background: var(--swse-light);
-  border-radius: 3px;
-  margin-top: 5px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.18), rgba(255,255,255,0.01));
+  border: 1px solid rgba(0,168,204,0.06);
 }
 
-.swse .item-controls {
-  display: flex;
+/* Labels and totals */
+.defense-label-compact { font-weight: 900; color: var(--holo-cyan); text-transform: uppercase; }
+.defense-total-compact { font-size: 18px; font-weight: 900; text-align:center; padding:8px; border-radius:6px; }
+.reflex-total { color: #2fe0c6; background: rgba(47,224,198,0.04); border: 1px solid rgba(47,224,198,0.06); }
+.fortitude-total { color: #ff8a8a; background: rgba(255,138,138,0.04); border: 1px solid rgba(255,138,138,0.06); }
+.will-total { color: #ffeaa7; background: rgba(255,234,167,0.03); border: 1px solid rgba(255,234,167,0.04); }
+
+/* Defense inputs & select compact */
+.defense-input-sm,
+.defense-select-sm { padding: 6px; border-radius: 6px; text-align: center; }
+
+/* Damage Threshold & Second Wind grouped */
+.threshold-grid {
+  display: grid;
+  grid-template-columns: 160px 1fr;
   gap: 8px;
   align-items: center;
 }
-
-.swse .item-control {
-  color: var(--swse-primary);
-  cursor: pointer;
-  transition: all 0.2s;
-  background: none;
-  border: none;
-  padding: 4px 8px;
-}
-
-.swse .item-control:hover {
-  color: var(--swse-accent);
-  transform: scale(1.2);
-}
-
-.swse .item-attack {
-  color: var(--swse-danger);
-}
-
-.swse .item-attack:hover {
-  color: #e74c3c;
-}
-
-.swse .power-use {
-  color: var(--swse-warning);
-}
-
-.swse .power-use:hover {
-  color: #f39c12;
-}
-
-/* Legacy support for system arrays */
-.swse .weapon-entry.legacy,
-.swse .feat-entry.legacy,
-.swse .talent-entry.legacy {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding: 10px;
-  background: rgba(255,255,255,0.5);
-  border: 1px solid var(--swse-border);
-  border-radius: 4px;
-  margin-bottom: 8px;
-}
-
-/* Force Controls */
-.swse .force-controls {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.swse .force-controls button {
-  flex: 1;
-  background: var(--swse-primary);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.swse .force-controls button:hover {
-  background: var(--swse-secondary);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.swse .refresh-forcepowers {
-  background: var(--swse-success) !important;
-}
-
-.swse .refresh-forcepowers:hover {
-  background: #229954 !important;
-}
-
-/* Inventory Sections */
-.swse .inventory-section {
-  margin-bottom: 30px;
-}
-
-.swse .inventory-section button {
-  background: var(--swse-primary);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 15px;
-}
-
-.swse .inventory-section button:hover {
-  background: var(--swse-secondary);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.swse .credits-section input {
-  text-align: center;
-  font-weight: bold;
-}
-
-/* Features Sections */
-.swse .features-section {
-  margin-bottom: 30px;
-}
-
-.swse .features-section button {
-  background: var(--swse-primary);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 15px;
-}
-
-.swse .features-section button:hover {
-  background: var(--swse-secondary);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.swse .level-up {
-  background: var(--swse-accent) !important;
-  color: var(--swse-dark) !important;
-}
-
-.swse .level-up:hover {
-  background: #f1c40f !important;
-}
-
-/* Classes List */
-.swse .classes-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.swse .class-item {
-  padding: 15px;
-  background: white;
-  border: 2px solid var(--swse-border);
-  border-radius: 4px;
-}
-
-.swse .class-item h4 {
-  margin: 0 0 10px 0;
-  color: var(--swse-primary);
-}
-
-.swse .class-level {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.swse .class-stats {
-  display: flex;
-  gap: 15px;
-  font-size: 12px;
-  color: #666;
-}
-
-/* Notes Section */
-.swse .notes-section {
-  margin-top: 30px;
-}
-
-/* Rollable Elements */
-.swse .rollable {
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.swse .rollable:hover {
-  color: var(--swse-accent);
-}
-
-/* Inputs General Styling */
-.swse input[type="text"],
-.swse input[type="number"],
-.swse select,
-.swse textarea {
-  font-family: inherit;
-  font-size: inherit;
-}
-
-.swse input[type="text"]:focus,
-.swse input[type="number"]:focus,
-.swse select:focus,
-.swse textarea:focus {
-  outline: none;
-  border-color: var(--swse-accent);
-  box-shadow: 0 0 5px rgba(244, 208, 63, 0.5);
-}
-
-/* Editor */
-.swse .editor {
-  min-height: 300px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 1200px) {
-  .swse .main-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .swse .skills-header,
-  .swse .skill-row {
-    grid-template-columns: 2fr 50px 30px 30px 50px 50px 40px;
-    font-size: 10px;
-  }
-  
-  .swse .header-row {
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 768px) {
-  .swse .sheet-header {
-    flex-direction: column;
-  }
-  
-  .swse .profile-img {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .swse .skills-header,
-  .swse .skill-row {
-    grid-template-columns: 1fr 40px 30px 30px 40px 40px 35px;
-    font-size: 9px;
-  }
-}
-
-
-/* ============================================
-   HOLO THEME INTEGRATION
-   ============================================ */
-/* ──────────────────────────────────────────────── */
-/* STAR WARS SAGA EDITION – HOLO THEME UI          */
-/* by Doc Flow ⚡ GPT-5                             */
-/* ──────────────────────────────────────────────── */
-
-.holo-theme {
-  position: relative;
-  overflow: hidden;
-  background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
-  color: #9ed0ff;
-  border: 2px solid #1c4b8e;
-  border-radius: 12px;
-  box-shadow: 0 0 20px #0ff3, inset 0 0 10px #123;
-  font-family: "Orbitron", sans-serif;
-  animation: holo-flicker 1.2s ease-in-out;
-}
-
-/* Keep content above grid layers */
-.holo-theme form,
-.holo-theme .sheet-body-wrapper {
-  position: relative;
-  z-index: 5;
-}
-
-/* ─────────────── Inputs & Textareas ─────────────── */
-.holo-theme input,
-.holo-theme textarea,
-.holo-theme select {
-  background: rgba(0, 30, 60, 0.4);
-  color: #b5daff;
-  border: 1px solid #0af;
-  border-radius: 4px;
-  padding: 4px 6px;
-  transition: all 0.2s ease;
-}
-
-.holo-theme input:focus,
-.holo-theme textarea:focus,
-.holo-theme select:focus {
-  border-color: #00c6ff;
-  box-shadow: 0 0 8px #00c6ff;
-  outline: none;
-}
-
-/* ─────────────── Tabs Navigation ─────────────── */
-.holo-theme .sheet-tabs {
-  display: flex;
-  border-bottom: 1px solid #0af;
-  justify-content: space-around;
-  margin-bottom: 0.5em;
-}
-
-.holo-theme .sheet-tabs .item {
-  padding: 0.4em 0.8em;
-  cursor: pointer;
-  color: #9ed0ff;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
-}
-
-.holo-theme .sheet-tabs .item:hover {
-  color: #fff;
-  text-shadow: 0 0 6px #00baff;
-}
-
-/* Active tab pulsing holo glow */
-@keyframes holo-tab-pulse {
-  0%, 100% {
-    text-shadow: 0 0 8px #00f0ff, 0 0 15px #00aaff33;
-    box-shadow: 0 2px 10px #00aaff33;
-  }
-  50% {
-    text-shadow: 0 0 15px #00f0ff, 0 0 25px #00aaffaa;
-    box-shadow: 0 2px 15px #00aaff77;
-  }
-}
-
-.holo-theme .sheet-tabs .item.active {
-  color: #fff;
-  border-bottom: 2px solid #00e6ff;
-  animation: holo-tab-pulse 3s ease-in-out infinite;
-}
-
-/* ─────────────── Buttons ─────────────── */
-.holo-btn,
-.holo-theme button {
-  background: linear-gradient(90deg, #002f6c, #003f8f);
-  border: 1px solid #00baff;
-  color: #b5daff;
+.threshold-row {
+  padding: 8px;
   border-radius: 6px;
-  padding: 4px 8px;
-  transition: 0.2s;
-  cursor: pointer;
+  background: linear-gradient(180deg, rgba(0,0,0,0.12), rgba(255,255,255,0.01));
+  border: 1px solid rgba(0,168,204,0.06);
 }
 
-.holo-btn:hover,
-.holo-theme button:hover {
-  background: #00aaff;
-  color: #fff;
-  box-shadow: 0 0 10px #00cfff;
-  animation: holo-pulse 1.5s infinite ease-in-out;
+/* threshold visual */
+.threshold-total { min-width: 64px; font-weight: 900; padding: 6px 10px; border-radius: 6px; background: rgba(0,216,255,0.04); color: var(--holo-cyan); text-align:center; }
+
+/* Second wind compact */
+.second-wind { padding: 8px; border-radius: 6px; background: linear-gradient(180deg, rgba(0,40,20,0.05), rgba(0,0,0,0.04)); border:1px solid rgba(0,168,204,0.04); }
+
+/* =========================
+   CONDITION BUTTONS (compact grid)
+   ========================= */
+.condition-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.condition-btn {
+  padding: 8px; text-transform: uppercase; font-weight: 800; border-radius: 8px; border: 1px solid rgba(0,168,204,0.06);
+  background: linear-gradient(180deg, rgba(0,168,204,0.06), rgba(0,80,110,0.04));
+  color: var(--holo-cyan); cursor: pointer;
+  transition: transform var(--fast), box-shadow var(--fast);
+}
+.condition-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba(0,168,204,0.06); }
+.condition-btn.active { background: linear-gradient(180deg, var(--holo-blue), #006e88); color: #fff; border-color: rgba(0,255,136,0.12); box-shadow: 0 8px 22px rgba(0,255,136,0.06); }
+
+/* Debilitated / Persistent variants (accessible) */
+.condition-btn.debilitated { background: linear-gradient(180deg, rgba(255,107,107,0.06), rgba(160,50,50,0.04)); color: #ff7b7b; }
+.condition-btn.persistent { background: linear-gradient(180deg, rgba(255,230,109,0.06), rgba(180,150,60,0.04)); color: #ffeaa7; }
+
+/* =========================
+   SKILLS LIST - compact, readable
+   ========================= */
+.skills-list { overflow: hidden; }
+.skills-header,
+.skill-row {
+  display: grid;
+  grid-template-columns: 2fr 60px 40px 40px 60px 60px 50px;
+  gap: 8px;
+  align-items: center;
+  padding: 6px;
+}
+.skills-header { background: linear-gradient(90deg, rgba(0,168,204,0.18), rgba(0,120,160,0.06)); color: #e6faff; font-weight:900; text-transform:uppercase; font-size:11px; }
+.skill-row { background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02)); border-bottom: 1px solid rgba(255,255,255,0.02); }
+.skill-row:last-child { border-bottom: none; }
+.skill-name { font-weight:700; color: var(--holo-cyan); }
+.skill-bonus, .skill-total { text-align:center; font-weight:900; color: var(--holo-green); }
+
+/* compact inputs in skills */
+.skill-misc input { padding:6px; border-radius:6px; text-align:center; }
+
+/* add / delete actions */
+.add-custom-skill-btn, .add-equipment-btn, .add-feat-btn, .add-talent-btn, .add-power-btn {
+  width:100%; padding:8px; border-radius:8px; background: linear-gradient(180deg,var(--holo-blue), #006b86); color: white; font-weight: 900;
 }
 
-@keyframes holo-pulse {
-  0%, 100% { box-shadow: 0 0 10px #00f3ff55; }
-  50% { box-shadow: 0 0 20px #00f3ff99; }
-}
+/* =========================
+   ITEMS / FEATS / TALENTS
+   ========================= */
+.items-list { display:flex; flex-direction: column; gap:8px; }
+.item { grid-template-columns: 48px 1fr auto; gap:8px; align-items: center; }
+.item-image img { width: 40px; height: 40px; border-radius:6px; object-fit:cover; border:1px solid rgba(0,168,204,0.06); }
+.item-name { font-weight: 900; color: #e6fbff; font-size: 14px; }
 
-/* ─────────────── Tables ─────────────── */
-.holo-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+/* item controls compact */
+.item-controls { display:flex; gap:8px; align-items:center; }
+.item-control { background: transparent; border: none; color: var(--holo-cyan); cursor: pointer; padding:6px; border-radius:6px; transition: transform var(--fast); }
+.item-control:hover { transform: translateY(-3px); color: var(--accent-warm); }
 
-.holo-table th,
-.holo-table td {
-  border-bottom: 1px solid #004d80;
-  padding: 4px 6px;
-}
+/* =========================
+   RESOURCES / FORCE / HP / CREDITS (right column)
+   ========================= */
+.resource-box, .stat-block { padding: 8px; border-radius: 8px; }
+.resource-content { display:flex; justify-content:center; gap:8px; align-items:center; }
+.resource-content input { width:72px; padding:8px; font-size:16px; font-weight:900; text-align:center; }
 
-/* ─────────────── Holographic Grid Overlay ─────────────── */
+/* hp / force specialized */
+.swse .hit-points { border-color: rgba(255,107,107,0.12); }
+.swse .force-points { border-color: rgba(41,128,185,0.12); }
+
+/* apply-second-wind button */
+.apply-second-wind { width:100%; padding:8px; border-radius:8px; background: linear-gradient(180deg,var(--holo-green), #00b05f); color: #00221a; font-weight:900; border:none; cursor:pointer; }
+.apply-second-wind:hover { box-shadow: 0 8px 20px rgba(0,255,136,0.06); transform: translateY(-3px); }
+
+/* =========================
+   FOOTER / BOTTOM TABS
+   ========================= */
+.bottom-tabs-header { display:flex; gap:6px; padding-top:8px; border-top: 1px dashed rgba(255,255,255,0.02); margin-top:8px; }
+.bottom-tab { padding:6px 10px; background: transparent; border-radius:8px; border:1px solid transparent; color:var(--holo-cyan); cursor:pointer; }
+.bottom-tab.active { background: linear-gradient(180deg, rgba(0,168,204,0.12), rgba(0,100,140,0.06)); color: #fff; }
+
+/* bottom tabs content scrollable */
+.bottom-tabs-content { max-height: 280px; overflow-y:auto; padding-right:6px; }
+
+/* =========================
+   HOLO THEME OVERLAYS (lightweight)
+   ========================= */
+/* subtle holo grid overlay - non-blocking */
 .holo-theme::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  content: ""; position: absolute; inset: 0; pointer-events: none;
   background-image:
-    linear-gradient(90deg, rgba(0, 180, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(0, 180, 255, 0.08) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: 0.25;
-  animation: holo-grid-move 20s linear infinite;
-  z-index: 0;
+    linear-gradient(90deg, rgba(0,180,255,0.03) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0,180,255,0.03) 1px, transparent 1px);
+  background-size: 48px 48px; opacity: 0.12; mix-blend-mode: screen; z-index: 0;
 }
 
-@keyframes holo-grid-move {
-  from { background-position: 0 0, 0 0; }
-  to { background-position: 200px 200px, 200px 200px; }
-}
+/* subtle glow pulse for active tab (low-cost) */
+.holo-theme .sheet-tabs .item.active { box-shadow: 0 8px 30px rgba(0,168,204,0.06); }
 
-/* ─────────────── Holographic Glow Wave ─────────────── */
-.holo-theme::after {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(circle at center, rgba(0,255,255,0.05) 0%, transparent 70%);
-  mix-blend-mode: screen;
-  animation: holo-wave 12s ease-in-out infinite;
-  opacity: 0.2;
-  pointer-events: none;
-  z-index: 1;
-}
-
-@keyframes holo-wave {
-  0%, 100% { transform: scale(1); opacity: 0.15; }
-  50% { transform: scale(1.05); opacity: 0.3; }
-}
-
-/* ─────────────── Holo Boot-up Flicker ─────────────── */
-@keyframes holo-flicker {
-  0% { opacity: 0; filter: brightness(0.5); }
-  15% { opacity: 1; filter: brightness(1.2); }
-  30% { opacity: 0.7; filter: brightness(0.8); }
-  50% { opacity: 1; filter: brightness(1); }
-  75% { opacity: 0.9; filter: brightness(1.3); }
+/* moderate boot-up flicker (only once) - reduced complexity */
+@keyframes holo-flicker-lite {
+  0% { opacity: 0; filter: brightness(0.7); }
+  25% { opacity: 1; filter: brightness(1.05); }
   100% { opacity: 1; filter: brightness(1); }
 }
+.holo-theme { animation: holo-flicker-lite 650ms ease-in-out; }
 
-/* ─────────────── Scrollbar (Datapad style) ─────────────── */
-.holo-theme ::-webkit-scrollbar {
-  width: 8px;
-}
-.holo-theme ::-webkit-scrollbar-thumb {
-  background: #0077bb;
-  border-radius: 10px;
-}
-.holo-theme ::-webkit-scrollbar-thumb:hover {
-  background: #00cfff;
-}
+/* =========================
+   ACCESSIBILITY & CONTRAST TWEAKS
+   ========================= */
+/* Increase contrast on small text */
+.swse .skill-row small,
+.swse .sw-formula,
+.swse .force-note,
+.swse .speed-note { color: var(--muted); }
 
+/* ensure focus visible */
+.swse button:focus,
+.swse input:focus,
+.swse select:focus,
+.swse textarea:focus { outline: 3px solid rgba(0,216,255,0.12); outline-offset: 2px; }
 
-
-/* ============================================
-   HOLOGRAPHIC FRAME & LOGO
-   ============================================ */
-.holo-frame-top {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    background: linear-gradient(135deg, rgba(26, 77, 122, 0.8), rgba(44, 95, 141, 0.8));
-    border-bottom: 2px solid #0af;
-    box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
-}
-
-.holo-frame-top::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #00ffff, transparent);
-    animation: holo-border-pulse 2s ease-in-out infinite;
+/* =========================
+   RESPONSIVE BEHAVIOR
+   ========================= */
+@media (max-width: 1200px) {
+  .swse .main-content,
+  .swse .datapad-main-grid { grid-template-columns: 1fr; }
+  .swse .sheet-body { max-height: calc(100vh - 120px); }
+  .skill-row, .skills-header { grid-template-columns: 1fr 50px 35px 35px 50px 50px 45px; font-size: 11px; }
+  .attribute-row-improved { grid-template-columns: 1fr; gap: 6px; grid-auto-rows: min-content; }
+  .defense-table { grid-template-columns: 1fr; }
+  .bottom-tabs-content { max-height: 220px; }
 }
 
-@keyframes holo-border-pulse {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
+/* small phones */
+@media (max-width: 480px) {
+  .swse .header, .swse .datapad-header { padding: 6px; min-height: 40px; }
+  .swse .sw-logo { max-height: 36px; }
+  .swse .character-portrait { width: 48px; height: 48px; }
+  .swse .resource-content input { width: 56px; font-size: 14px; }
+  .skills-header, .skill-row { grid-template-columns: 1fr 40px 30px 30px 40px 40px 36px; font-size: 10px; }
 }
 
-.sw-logo {
-    max-width: 200px;
-    height: auto;
-    filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.5));
-    animation: logo-glow 3s ease-in-out infinite;
-}
+/* =========================
+   MINOR HELPERS
+   ========================= */
+.hidden { display: none !important; }
+.center { display: flex; justify-content:center; align-items:center; }
+.kicker { font-size: 11px; color: var(--muted); margin-bottom:6px; }
 
-@keyframes logo-glow {
-    0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.5)); }
-    50% { filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.8)); }
-}
+
