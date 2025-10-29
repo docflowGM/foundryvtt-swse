@@ -213,19 +213,19 @@ export default class CharacterGenerator extends Application {
     switch (this.currentStep) {
       case "name":
         if (!this.characterData.name || this.characterData.name.trim() === "") {
-          ui.notifications.warn("Please enter a character name.");
+          assets/ui.notifications.warn("Please enter a character name.");
           return false;
         }
         break;
       case "species":
         if (!this.characterData.species) {
-          ui.notifications.warn("Please select a species.");
+          assets/ui.notifications.warn("Please select a species.");
           return false;
         }
         break;
       case "class":
         if (this.characterData.classes.length === 0) {
-          ui.notifications.warn("Please select a class.");
+          assets/ui.notifications.warn("Please select a class.");
           return false;
         }
         break;
@@ -398,7 +398,7 @@ export default class CharacterGenerator extends Application {
       const deltaCost = costNew - costNow;
       
       if (deltaCost > pool) {
-        ui.notifications.warn("Not enough point-buy points remaining.");
+        assets/ui.notifications.warn("Not enough point-buy points remaining.");
         return;
       }
       
@@ -430,7 +430,7 @@ export default class CharacterGenerator extends Application {
           btn.onclick = () => assignRollToNext(res.total);
           container.appendChild(btn);
         });
-        ui.notifications.info("Standard rolls generated — click a result then click an ability to assign.");
+        assets/ui.notifications.info("Standard rolls generated — click a result then click an ability to assign.");
       }
     };
 
@@ -472,7 +472,7 @@ export default class CharacterGenerator extends Application {
           div.onclick = () => selectOrganicGroup(div);
           container.appendChild(div);
         });
-        ui.notifications.info("Organic roll completed — click a group, then click an ability to assign.");
+        assets/ui.notifications.info("Organic roll completed — click a group, then click an ability to assign.");
       }
       doc._selectedOrganic = null;
     };
@@ -580,7 +580,7 @@ export default class CharacterGenerator extends Application {
       trainedCheck.checked = skillData.trained;
       trainedCheck.onchange = (ev) => {
         if (ev.target.checked && trainedCount >= maxTrained) {
-          ui.notifications.warn(`Maximum trained skills (${maxTrained}) reached!`);
+          assets/ui.notifications.warn(`Maximum trained skills (${maxTrained}) reached!`);
           ev.target.checked = false;
           return;
         }
@@ -681,7 +681,7 @@ export default class CharacterGenerator extends Application {
   }
 
   async _createActor() {
-    // Build proper actor data structure matching SWSEActorSheet expectations
+    // Bassets/uild proper actor data structure matching SWSEActorSheet expectations
     const system = {
       level: this.characterData.level,
       race: this.characterData.species,
@@ -734,10 +734,10 @@ export default class CharacterGenerator extends Application {
       // Open the character sheet
       created.sheet.render(true);
       
-      ui.notifications.info(`Character ${this.characterData.name} created successfully!`);
+      assets/ui.notifications.info(`Character ${this.characterData.name} created successfully!`);
     } catch (err) {
       console.error("chargen: actor creation failed", err);
-      ui.notifications.error("Failed to create character. See console for details.");
+      assets/ui.notifications.error("Failed to create character. See console for details.");
     }
   }
 
@@ -768,6 +768,6 @@ export default class CharacterGenerator extends Application {
       await this.actor.createEmbeddedDocuments("Item", items);
     }
     
-    ui.notifications.info(`${this.actor.name} leveled up to level ${newLevel}!`);
+    assets/ui.notifications.info(`${this.actor.name} leveled up to level ${newLevel}!`);
   }
 }

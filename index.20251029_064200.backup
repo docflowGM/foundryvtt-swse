@@ -4,13 +4,13 @@
 // Updated with proper utils and rolls integration
 // ============================================
 
-import { registerHandlebarsHelpers } from "./helpers/handlebars-helpers.js";
-import { SWSE } from "./module/core/config.js";
+import { registerHandlebarsHelpers } from "./module/module/module/helpers/handlebars-module/module/helpers.js";
+import { SWSE } from "./module/core/module/core/module/core/config.js";
 import { SWSEActor, SWSEActorSheet } from "./module/actors/swse-actor.js";
 import { SWSEDroidSheet } from "./module/actors/swse-droid.js";
 import { SWSEVehicleSheet } from "./module/actors/swse-vehicle.js";
 import { SWSENPCSheet } from "./module/actors/swse-npc.js";
-import { SWSEItemSheet } from "./module/items/swse-item.js";
+import { SWSEItemSheet } from "./scripts/swse-item.js";
 import { preloadHandlebarsTemplates } from "./module/core/load-templates.js";
 import * as SWSEData from "./module/core/swse-data.js";
 import { WorldDataLoader } from "./module/core/world-data-loader.js";

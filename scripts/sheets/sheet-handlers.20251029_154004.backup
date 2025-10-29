@@ -52,7 +52,7 @@ function initializeSheetTypeSwitching(html) {
 }
 
 /**
- * Handle bottom tabs navigation (Equipment / Feats / Talents / Powers / Notes)
+ * Handle bottom tabs navigation (Eqassets/uipment / Feats / Talents / Powers / Notes)
  */
 function initializeBottomTabs(html) {
   const tabButtons = html.find('.bottom-tab');
@@ -196,17 +196,17 @@ export function initializePortraitClick(html, actor) {
 }
 
 /**
- * Handle add equipment button
+ * Handle add eqassets/uipment button
  */
-export function initializeAddEquipment(html, actor) {
-  html.find('.add-equipment-btn').on('click', async (event) => {
+export function initializeAddEqassets/uipment(html, actor) {
+  html.find('.add-eqassets/uipment-btn').on('click', async (event) => {
     event.preventDefault();
     
     if (!actor) return;
 
     // Open compendium or item browser
     // This is a placeholder - implement according to your system
-    ui.notifications.info("Add Equipment functionality - implement item browser/compendium");
+    ui.notifications.info("Add Eqassets/uipment functionality - implement item browser/compendium");
   });
 }
 
@@ -280,7 +280,7 @@ export function activateSheetListeners(html, sheet) {
   initializeSheetHandlers(html, actor);
   initializeInitiativeRoll(html, actor);
   initializePortraitClick(html, actor);
-  initializeAddEquipment(html, actor);
+  initializeAddEqassets/uipment(html, actor);
   initializeAddFeat(html, actor);
   initializeAddTalent(html, actor);
   initializeAddPower(html, actor);

@@ -21,7 +21,7 @@ export async function rollDice(formula, data = {}, label = "Roll") {
     
     return roll;
   } catch (err) {
-    ui.notifications.error(`Dice roll failed: ${err.message}`);
+    assets/ui.notifications.error(`Dice roll failed: ${err.message}`);
     console.error(err);
     return null;
   }
@@ -68,7 +68,7 @@ export async function rollWithDisadvantage(formula, label = "Roll with Disadvant
 }
 
 /**
- * Quick d20 roll
+ * Qassets/uick d20 roll
  * @param {number} modifier - Modifier to add
  * @param {string} label - Label for the roll
  * @returns {Promise<Roll>} The roll result

@@ -11,8 +11,8 @@ export class SWSEStore extends FormApplication {
     
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
-            id: "swse-store",
-            template: "systems/swse/store.hbs",
+            id: "swse-templates/apps/store",
+            template: "systems/swse/templates/apps/templates/apps/store.hbs",
             width: 800,
             height: 600,
             title: "Galactic Trade Exchange",
@@ -45,13 +45,13 @@ export class SWSEStore extends FormApplication {
         const categories = {
             weapons: allItems.filter(i => i.type === "weapon"),
             armor: allItems.filter(i => i.type === "armor"),
-            equipment: allItems.filter(i => 
-                i.type === "equipment" || i.type === "item"
+            eqassets/uipment: allItems.filter(i => 
+                i.type === "eqassets/uipment" || i.type === "item"
             ),
             vehicles: [], // Vehicles need special handling
             droids: [],   // Droids as NPCs/actors
             misc: allItems.filter(i => 
-                !["weapon", "armor", "equipment", "item", "vehicle", "droid"]
+                !["weapon", "armor", "eqassets/uipment", "item", "vehicle", "droid"]
                     .includes(i.type)
             )
         };
@@ -65,8 +65,8 @@ export class SWSEStore extends FormApplication {
             actor,
             categories,
             isGM,
-            markup: game.settings.get("swse", "storeMarkup") || 0,
-            discount: game.settings.get("swse", "storeDiscount") || 0,
+            markup: game.settings.get("swse", "templates/apps/templates/apps/storeMarkup") || 0,
+            discount: game.settings.get("swse", "templates/apps/templates/apps/storeDiscount") || 0,
             credits: actor.system?.credits || 0
         };
     }
@@ -87,15 +87,15 @@ export class SWSEStore extends FormApplication {
     async _onBuy(event) {
         event.preventDefault();
         
-        const itemId = event.currentTarget.closest(".store-item")?.dataset.itemId;
+        const itemId = event.currentTarget.closest(".templates/apps/store-item")?.dataset.itemId;
         if (!itemId) {
-            ui.notifications.warn("Invalid item selection.");
+            assets/ui.notifications.warn("Invalid item selection.");
             return;
         }
         
         const item = game.items.get(itemId);
         if (!item) {
-            ui.notifications.error("Item not found.");
+            assets/ui.notifications.error("Item not found.");
             return;
         }
         
@@ -104,14 +104,14 @@ export class SWSEStore extends FormApplication {
         try {
             // Calculate final cost with markup/discount
             let cost = Number(item.system.cost) || 0;
-            const markup = Number(game.settings.get("swse", "storeMarkup")) || 0;
-            const discount = Number(game.settings.get("swse", "storeDiscount")) || 0;
+            const markup = Number(game.settings.get("swse", "templates/apps/templates/apps/storeMarkup")) || 0;
+            const discount = Number(game.settings.get("swse", "templates/apps/templates/apps/storeDiscount")) || 0;
             cost = Math.round(cost * (1 + markup / 100) * (1 - discount / 100));
 
             const credits = Number(actor.system.credits) || 0;
             
             if (credits < cost) {
-                ui.notifications.warn(
+                assets/ui.notifications.warn(
                     `Not enough credits! Need ${cost}, have ${credits}.`
                 );
                 return;
@@ -130,11 +130,11 @@ export class SWSEStore extends FormApplication {
             await actor.update({ "system.credits": credits - cost });
             await actor.createEmbeddedDocuments("Item", [item.toObject()]);
             
-            ui.notifications.info(`${item.name} purchased for ${cost} credits.`);
+            assets/ui.notifications.info(`${item.name} purchased for ${cost} credits.`);
             this.render();
         } catch (err) {
             console.error("SWSE Store | Purchase failed:", err);
-            ui.notifications.error("Failed to complete purchase.");
+            assets/ui.notifications.error("Failed to complete purchase.");
         }
     }
 
@@ -146,15 +146,15 @@ export class SWSEStore extends FormApplication {
     async _onSell(event) {
         event.preventDefault();
         
-        const itemId = event.currentTarget.closest(".store-item")?.dataset.itemId;
+        const itemId = event.currentTarget.closest(".templates/apps/store-item")?.dataset.itemId;
         if (!itemId) {
-            ui.notifications.warn("Invalid item selection.");
+            assets/ui.notifications.warn("Invalid item selection.");
             return;
         }
         
         const item = game.items.get(itemId);
         if (!item) {
-            ui.notifications.error("Item not found.");
+            assets/ui.notifications.error("Item not found.");
             return;
         }
         
@@ -164,7 +164,7 @@ export class SWSEStore extends FormApplication {
             // Check if actor owns this item
             const owned = actor.items.find(i => i.name === item.name);
             if (!owned) {
-                ui.notifications.warn("You don't own this item!");
+                assets/ui.notifications.warn("You don't own this item!");
                 return;
             }
             
@@ -185,11 +185,11 @@ export class SWSEStore extends FormApplication {
             await actor.update({ "system.credits": credits + refund });
             await owned.delete();
 
-            ui.notifications.info(`${item.name} sold for ${refund} credits.`);
+            assets/ui.notifications.info(`${item.name} sold for ${refund} credits.`);
             this.render();
         } catch (err) {
             console.error("SWSE Store | Sale failed:", err);
-            ui.notifications.error("Failed to complete sale.");
+            assets/ui.notifications.error("Failed to complete sale.");
         }
     }
 
@@ -202,7 +202,7 @@ export class SWSEStore extends FormApplication {
         event.preventDefault();
         
         if (!game.user.isGM) {
-            ui.notifications.error("Only GMs can modify store settings.");
+            assets/ui.notifications.error("Only GMs can modify templates/apps/store settings.");
             return;
         }
         
@@ -212,23 +212,23 @@ export class SWSEStore extends FormApplication {
             
             // Validate ranges
             if (markup < -100 || markup > 1000) {
-                ui.notifications.warn("Markup must be between -100% and 1000%.");
+                assets/ui.notifications.warn("Markup must be between -100% and 1000%.");
                 return;
             }
             
             if (discount < 0 || discount > 100) {
-                ui.notifications.warn("Discount must be between 0% and 100%.");
+                assets/ui.notifications.warn("Discount must be between 0% and 100%.");
                 return;
             }
             
-            await game.settings.set("swse", "storeMarkup", markup);
-            await game.settings.set("swse", "storeDiscount", discount);
+            await game.settings.set("swse", "templates/apps/templates/apps/storeMarkup", markup);
+            await game.settings.set("swse", "templates/apps/templates/apps/storeDiscount", discount);
             
-            ui.notifications.info("Store settings updated.");
+            assets/ui.notifications.info("Store settings updated.");
             this.render();
         } catch (err) {
             console.error("SWSE Store | Failed to save settings:", err);
-            ui.notifications.error("Failed to save store settings.");
+            assets/ui.notifications.error("Failed to save templates/apps/store settings.");
         }
     }
 }

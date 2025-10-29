@@ -1,11 +1,11 @@
 // ============================================
-// FILE: store/store.js
+// FILE: templates/apps/store/templates/apps/store.js
 // ============================================
 export class SWSEStore extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      id: "swse-store",
-      template: "systems/swse/store/store.html",
+      id: "swse-templates/apps/store",
+      template: "systems/swse/templates/apps/templates/apps/store.html",
       width: 800,
       height: 600,
       title: "Galactic Trade Exchange",
@@ -22,18 +22,18 @@ export class SWSEStore extends FormApplication {
     const categories = {
       weapons: allItems.filter(i => i.type === "weapon"),
       armor: allItems.filter(i => i.type === "armor"),
-      equipment: allItems.filter(i => i.type === "equipment"),
+      eqassets/uipment: allItems.filter(i => i.type === "eqassets/uipment"),
       vehicles: allItems.filter(i => i.type === "vehicle"),
       droids: allItems.filter(i => i.type === "droid"),
-      misc: allItems.filter(i => !["weapon","armor","equipment","vehicle","droid"].includes(i.type))
+      misc: allItems.filter(i => !["weapon","armor","eqassets/uipment","vehicle","droid"].includes(i.type))
     };
 
     return {
       actor,
       categories,
       isGM,
-      markup: game.settings.get("swse", "storeMarkup") || 0,
-      discount: game.settings.get("swse", "storeDiscount") || 0
+      markup: game.settings.get("swse", "templates/apps/templates/apps/storeMarkup") || 0,
+      discount: game.settings.get("swse", "templates/apps/templates/apps/storeDiscount") || 0
     };
   }
 
@@ -46,31 +46,31 @@ export class SWSEStore extends FormApplication {
 
   async _onBuy(event) {
     event.preventDefault();
-    const itemId = event.currentTarget.closest(".store-item")?.dataset.itemId;
+    const itemId = event.currentTarget.closest(".templates/apps/store-item")?.dataset.itemId;
     const item = game.items.get(itemId);
     if (!item) return;
     
     const actor = this.object;
     let cost = item.system.cost || 0;
-    const markup = game.settings.get("swse", "storeMarkup") || 0;
-    const discount = game.settings.get("swse", "storeDiscount") || 0;
+    const markup = game.settings.get("swse", "templates/apps/templates/apps/storeMarkup") || 0;
+    const discount = game.settings.get("swse", "templates/apps/templates/apps/storeDiscount") || 0;
     cost = Math.round(cost * (1 + markup / 100) * (1 - discount / 100));
 
     const credits = actor.system.credits || 0;
     if (credits < cost) {
-      ui.notifications.warn("Not enough credits!");
+      assets/ui.notifications.warn("Not enough credits!");
       return;
     }
 
     await actor.update({"system.credits": credits - cost});
     await actor.createEmbeddedDocuments("Item", [item.toObject()]);
-    ui.notifications.info(`${item.name} purchased for ${cost} credits.`);
+    assets/ui.notifications.info(`${item.name} purchased for ${cost} credits.`);
     this.render();
   }
 
   async _onSell(event) {
     event.preventDefault();
-    const itemId = event.currentTarget.closest(".store-item")?.dataset.itemId;
+    const itemId = event.currentTarget.closest(".templates/apps/store-item")?.dataset.itemId;
     const item = game.items.get(itemId);
     if (!item) return;
     
@@ -81,15 +81,15 @@ export class SWSEStore extends FormApplication {
     const owned = actor.items.find(i => i.name === item.name);
     if (owned) await owned.delete();
 
-    ui.notifications.info(`${item.name} sold for ${refund} credits.`);
+    assets/ui.notifications.info(`${item.name} sold for ${refund} credits.`);
     this.render();
   }
 
   async _onSaveGM(event) {
     const markup = parseInt(this.element.find("input[name='markup']").val()) || 0;
     const discount = parseInt(this.element.find("input[name='discount']").val()) || 0;
-    await game.settings.set("swse", "storeMarkup", markup);
-    await game.settings.set("swse", "storeDiscount", discount);
-    ui.notifications.info("Store settings updated.");
+    await game.settings.set("swse", "templates/apps/templates/apps/storeMarkup", markup);
+    await game.settings.set("swse", "templates/apps/templates/apps/storeDiscount", discount);
+    assets/ui.notifications.info("Store settings updated.");
   }
 }

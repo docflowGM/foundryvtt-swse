@@ -62,7 +62,7 @@ export class SWSEVehicleSheet extends SWSEActorSheet {
     try {
       const data = JSON.parse(event.originalEvent.dataTransfer.getData('text/plain'));
       if (data.type === 'Actor') {
-        const actor = await fromUuid(data.uuid);
+        const actor = await fromUassets/uid(data.uassets/uid);
         if (actor) {
           await this.actor.update({ [`system.crewPositions.${slot}`]: actor.name });
         }

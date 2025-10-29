@@ -1,6 +1,6 @@
 /**
  * SWSE Handlebars Helpers
- * Registers custom helpers for use in system templates.
+ * Registers custom module/helpers for use in system templates.
  */
 
 export function registerHandlebarsHelpers() {
@@ -9,7 +9,7 @@ export function registerHandlebarsHelpers() {
     console.log("Handlebars log:", ...args);
   });
 
-  // ---- String helpers ----
+  // ---- String module/helpers ----
   Handlebars.registerHelper("uppercase", str => (str ?? "").toString().toUpperCase());
   Handlebars.registerHelper("lowercase", str => (str ?? "").toString().toLowerCase());
   Handlebars.registerHelper("upper", str => (str ?? "").toString().toUpperCase());
@@ -19,16 +19,16 @@ export function registerHandlebarsHelpers() {
     return str.charAt(0).toUpperCase() + str.slice(1);
   });
 
-  // ---- Boolean/checkbox helpers ----
+  // ---- Boolean/checkbox module/helpers ----
   Handlebars.registerHelper("checked", value => value ? "checked" : "");
 
-  // ---- Math helpers ----
+  // ---- Math module/helpers ----
   Handlebars.registerHelper("add", (a, b) => Number(a) + Number(b));
   Handlebars.registerHelper("sub", (a, b) => Number(a) - Number(b));
   Handlebars.registerHelper("mul", (a, b) => Number(a) * Number(b));
   Handlebars.registerHelper("div", (a, b) => (Number(b) ? Number(a) / Number(b) : 0));
 
-  // ---- Comparison helpers ----
+  // ---- Comparison module/helpers ----
   Handlebars.registerHelper("eq", (a, b) => a === b);
   Handlebars.registerHelper("ne", (a, b) => a !== b);
   Handlebars.registerHelper("gt", (a, b) => a > b);
@@ -36,12 +36,12 @@ export function registerHandlebarsHelpers() {
   Handlebars.registerHelper("gte", (a, b) => a >= b);
   Handlebars.registerHelper("lte", (a, b) => a <= b);
 
-  // ---- Logic helpers ----
+  // ---- Logic module/helpers ----
   Handlebars.registerHelper("and", (a, b) => a && b);
   Handlebars.registerHelper("or", (a, b) => a || b);
   Handlebars.registerHelper("not", a => !a);
 
-  // ---- List / object helpers ----
+  // ---- List / object module/helpers ----
   Handlebars.registerHelper("join", (arr, sep) => Array.isArray(arr) ? arr.join(sep ?? ", ") : arr);
   Handlebars.registerHelper("length", arr => (Array.isArray(arr) ? arr.length : 0));
   Handlebars.registerHelper("json", context => JSON.stringify(context, null, 2));
@@ -72,7 +72,7 @@ export function registerHandlebarsHelpers() {
     }
   });
 
-  // ---- SWSE-specific helpers ----
+  // ---- SWSE-specific module/helpers ----
   Handlebars.registerHelper("getCrewName", id => {
     const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
     return actor ? actor.name : "";
@@ -128,7 +128,7 @@ export function registerHandlebarsHelpers() {
     return penalties[track] || 0;
   }
 
-  console.log("SWSE | Handlebars helpers registered");
+  console.log("SWSE | Handlebars module/helpers registered");
 
   // Editor helper for rich text fields
   Handlebars.registerHelper('editor', function(content, options) {
@@ -148,5 +148,5 @@ export function registerHandlebarsHelpers() {
   });
 }
 
-// Auto-register helpers on load
+// Auto-register module/helpers on load
 registerHandlebarsHelpers();

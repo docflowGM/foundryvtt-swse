@@ -13,7 +13,7 @@ export class SWSELevelUp {
      */
     static async open(actor) {
         if (!actor) {
-            ui.notifications.error("No actor provided for level up.");
+            assets/ui.notifications.error("No actor provided for level up.");
             return false;
         }
         
@@ -21,7 +21,7 @@ export class SWSELevelUp {
             const classes = await getClasses();
             
             if (!classes || classes.length === 0) {
-                ui.notifications.error("No classes available for level up.");
+                assets/ui.notifications.error("No classes available for level up.");
                 return false;
             }
             
@@ -33,7 +33,7 @@ export class SWSELevelUp {
                 <form>
                     <div class="form-group">
                         <label>Choose Class</label>
-                        <select name="classId" required>${classOptions}</select>
+                        <select name="classId" reqassets/uired>${classOptions}</select>
                     </div>
                     <div class="form-group">
                         <label>HP Method</label>
@@ -64,7 +64,7 @@ export class SWSELevelUp {
                                     const hpChoice = html.find("[name=hpChoice]").val();
                                     
                                     if (!classId) {
-                                        ui.notifications.warn("Please select a class.");
+                                        assets/ui.notifications.warn("Please select a class.");
                                         resolve(false);
                                         return;
                                     }
@@ -73,7 +73,7 @@ export class SWSELevelUp {
                                     resolve(true);
                                 } catch (err) {
                                     console.error("SWSE Level Up | Error in callback:", err);
-                                    ui.notifications.error("Failed to level up character.");
+                                    assets/ui.notifications.error("Failed to level up character.");
                                     resolve(false);
                                 }
                             }
@@ -89,7 +89,7 @@ export class SWSELevelUp {
             });
         } catch (err) {
             console.error("SWSE Level Up | Failed to open dialog:", err);
-            ui.notifications.error("Failed to open level up dialog.");
+            assets/ui.notifications.error("Failed to open level up dialog.");
             return false;
         }
     }
@@ -106,7 +106,7 @@ export class SWSELevelUp {
             const classData = classes.find(c => c.name === className);
             
             if (!classData) {
-                ui.notifications.error("Class not found!");
+                assets/ui.notifications.error("Class not found!");
                 return;
             }
 
@@ -185,14 +185,14 @@ export class SWSELevelUp {
                 type: CONST.CHAT_MESSAGE_TYPES.OTHER
             });
 
-            ui.notifications.info(`${actor.name} leveled up to level ${newLevel}!`);
+            assets/ui.notifications.info(`${actor.name} leveled up to level ${newLevel}!`);
             
             // Re-render actor sheet to show changes
             actor.sheet.render(false);
             
         } catch (err) {
             console.error("SWSE Level Up | Error applying level up:", err);
-            ui.notifications.error("Failed to apply level up. See console for details.");
+            assets/ui.notifications.error("Failed to apply level up. See console for details.");
             throw err;
         }
     }

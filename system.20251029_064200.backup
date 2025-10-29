@@ -23,7 +23,8 @@
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/releases/latest/download/swse.zip",
   "esmodules": [
-    "index.js"
+    "module/core/swse.js",
+    "module/module/helpers/handlebars-module/module/helpers.js"
   ],
   "styles": [
     "styles/swse.css",
@@ -43,7 +44,7 @@
   ],
   "relationships": {
     "systems": [],
-    "requires": []
+    "reqassets/uires": []
   },
   "socket": true,
   "initiative": "1d20 + @abilities.dex.mod + @initiative.misc",
@@ -109,9 +110,9 @@
       "system": "swse"
     },
     {
-      "name": "equipment",
-      "label": "Equipment",
-      "path": "packs/equipment.db",
+      "name": "eqassets/uipment",
+      "label": "Eqassets/uipment",
+      "path": "packs/eqassets/assets/uipment.db",
       "type": "Item",
       "system": "swse"
     },

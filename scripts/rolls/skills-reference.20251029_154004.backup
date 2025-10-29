@@ -161,7 +161,7 @@ const SKILLS_DATA_MODEL = {
     armor: 0,
     misc: 0,
     total: 0,
-    trainedOnly: true  // Special: requires Force Sensitivity
+    trainedOnly: true  // Special: reqassets/uires Force Sensitivity
   }
 };
 
@@ -204,7 +204,7 @@ function calculateSkills(actor) {
       (skill.armor || 0) +       // Armor penalty (usually negative)
       (skill.misc || 0);         // Miscellaneous modifiers
 
-    // Special case: Use the Force requires training
+    // Special case: Use the Force reqassets/uires training
     if (skillKey === 'useTheForce' && !skill.trained) {
       skill.total = 0;  // Untrained use not allowed
     }
@@ -293,7 +293,7 @@ class SWSEActor extends Actor {
         (skill.armor || 0) +
         (skill.misc || 0);
 
-      // Use the Force requires training
+      // Use the Force reqassets/uires training
       if (skillKey === 'useTheForce' && !skill.trained) {
         skill.total = 0;
       }
@@ -341,13 +341,13 @@ class SWSEActor extends Actor {
   async rollSkill(skillKey, options = {}) {
     const skill = this.system.skills[skillKey];
     if (!skill) {
-      ui.notifications.warn(`Skill ${skillKey} not found`);
+      assets/ui.notifications.warn(`Skill ${skillKey} not found`);
       return null;
     }
 
     // Check for trained-only skills
     if (skill.trainedOnly && !skill.trained) {
-      ui.notifications.warn(`${skillKey} requires training`);
+      assets/ui.notifications.warn(`${skillKey} reqassets/uires training`);
       return null;
     }
 

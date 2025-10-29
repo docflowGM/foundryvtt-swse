@@ -12,7 +12,7 @@ export class SWSEStore extends FormApplication {
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
             id: "swse-store",
-            template: "systems/swse/store.hbs",
+            template: "systems/swse/templates/apps/store.hbs",
             width: 800,
             height: 600,
             title: "Galactic Trade Exchange",
@@ -65,8 +65,8 @@ export class SWSEStore extends FormApplication {
             actor,
             categories,
             isGM,
-            markup: game.settings.get("swse", "storeMarkup") || 0,
-            discount: game.settings.get("swse", "storeDiscount") || 0,
+            markup: game.settings.get("swse", "templates/apps/storeMarkup") || 0,
+            discount: game.settings.get("swse", "templates/apps/storeDiscount") || 0,
             credits: actor.system?.credits || 0
         };
     }
@@ -104,8 +104,8 @@ export class SWSEStore extends FormApplication {
         try {
             // Calculate final cost with markup/discount
             let cost = Number(item.system.cost) || 0;
-            const markup = Number(game.settings.get("swse", "storeMarkup")) || 0;
-            const discount = Number(game.settings.get("swse", "storeDiscount")) || 0;
+            const markup = Number(game.settings.get("swse", "templates/apps/storeMarkup")) || 0;
+            const discount = Number(game.settings.get("swse", "templates/apps/storeDiscount")) || 0;
             cost = Math.round(cost * (1 + markup / 100) * (1 - discount / 100));
 
             const credits = Number(actor.system.credits) || 0;
@@ -221,8 +221,8 @@ export class SWSEStore extends FormApplication {
                 return;
             }
             
-            await game.settings.set("swse", "storeMarkup", markup);
-            await game.settings.set("swse", "storeDiscount", discount);
+            await game.settings.set("swse", "templates/apps/storeMarkup", markup);
+            await game.settings.set("swse", "templates/apps/storeDiscount", discount);
             
             ui.notifications.info("Store settings updated.");
             this.render();

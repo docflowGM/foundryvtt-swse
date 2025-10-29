@@ -8,7 +8,7 @@ import * as StringUtils from "../utils/string-utils.js";
 import * as CombatUtils from "../utils/combat-utils.js";
 import * as CharacterUtils from "../utils/character-utils.js";
 import * as DataUtils from "../utils/data-utils.js";
-import * as UIUtils from "../utils/ui-utils.js";
+import * as UIUtils from "../utils/assets/assets/ui-utils.js";
 import * as ValidationUtils from "../utils/validation-utils.js";
 import * as DiceUtils from "../utils/dice-utils.js";
 
@@ -26,7 +26,7 @@ export function initializeUtils() {
     combat: CombatUtils,
     character: CharacterUtils,
     data: DataUtils,
-    ui: UIUtils,
+    assets/ui: UIUtils,
     validation: ValidationUtils,
     dice: DiceUtils
   };
