@@ -5,17 +5,17 @@
 // ============================================
 
 import { registerHandlebarsHelpers } from "./helpers/handlebars-helpers.js";
-import { SWSE } from "./module/core/config.js";
-import { SWSEActor, SWSEActorSheet } from "./module/actors/swse-actor.js";
-import { SWSEDroidSheet } from "./module/actors/swse-droid.js";
-import { SWSEVehicleSheet } from "./module/actors/swse-vehicle.js";
-import { SWSENPCSheet } from "./module/actors/swse-npc.js";
-import { SWSEItemSheet } from "./module/items/swse-item.js";
-import { preloadHandlebarsTemplates } from "./module/core/load-templates.js";
-import * as SWSEData from "./module/core/swse-data.js";
-import { WorldDataLoader } from "./module/core/world-data-loader.js";
-import { initializeUtils } from "./module/core/utils-init.js";
-import { initializeRolls } from "./module/core/rolls-init.js";
+import { SWSE } from "./scripts/core/config.js";
+import { SWSEActor, SWSEActorSheet } from "./scripts/actors/swse-actor.js";
+import { SWSEDroidSheet } from "./scripts/actors/swse-droid.js";
+import { SWSEVehicleSheet } from "./scripts/actors/swse-vehicle.js";
+import { SWSENPCSheet } from "./scripts/actors/swse-npc.js";
+import { SWSEItemSheet } from "./scripts/items/swse-item.js";
+import { preloadHandlebarsTemplates } from "./scripts/core/load-templates.js";
+import * as SWSEData from "./scripts/core/swse-data.js";
+import { WorldDataLoader } from "./scripts/core/world-data-loader.js";
+import { initializeUtils } from "./scripts/core/utils-init.js";
+import { initializeRolls } from "./scripts/core/rolls-init.js";
 import "./module/apps/chargen-init.js";
 
 // ============================================
