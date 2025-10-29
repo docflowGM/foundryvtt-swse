@@ -1,24 +1,29 @@
-<!--
-  systems/swse/templates/apps/chargen.html
-  Upgraded by swse_chargen_updater.py
--->
-<div class="chargen-app">
-  <header class="app-header">
-    <h2>SWSE Character Generator</h2>
+<!-- SWSE Character Generator Template - Fixed -->
+<div class="chargen-app swse-chargen">
+  <header class="chargen-header">
+    <h2>Star Wars Saga Edition Character Generator</h2>
+    <div class="step-indicator">Step: <strong>{{currentStep}}</strong></div>
   </header>
-
-  <nav class="chargen-steps">
-    {{!-- Steps navigation will be re-rendered by Application; simple display --}}
-    <div>Step: {{currentStep}}</div>
-  </nav>
 
   <main class="chargen-body">
     {{#if (eq currentStep "name")}}
       <section class="step-name">
-        <label>Name</label>
-        <input name="character-name" class="chargen-name-input" type="text" value="{{characterData.name}}"  />
-        <div class="actions">
-          <button type="button" class="next-step btn-primary">Next</button>
+        <h3>Character Name</h3>
+        <div class="form-group">
+          <label for="character-name">Enter your character's name:</label>
+          <input 
+            id="character-name"
+            name="character-name" 
+            type="text" 
+            class="chargen-name-input" 
+            value="{{characterData.name}}" 
+            placeholder="Enter name..."
+            autofocus />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="next-step btn-primary">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
         </div>
       </section>
     {{/if}}
@@ -26,154 +31,307 @@
     {{#if (eq currentStep "species")}}
       <section class="step-species">
         <h3>Select Species</h3>
-        <div class="species-list">
+        <div class="species-grid">
           {{#each packs.species}}
-            <button type="button" class="select-species" data-species="{{this.name}}">{{this.name}}</button>
+            <button type="button" class="select-species choice-button" data-species="{{this.name}}">
+              <h4>{{this.name}}</h4>
+              {{#if this.system.bonuses}}
+                <div class="bonuses">
+                  {{#each this.system.bonuses}}
+                    <span class="bonus">{{@key}}: {{this}}</span>
+                  {{/each}}
+                </div>
+              {{/if}}
+            </button>
           {{/each}}
         </div>
-        <div class="nav">
-          <button class="prev-step">Previous</button>
+        <div class="form-actions">
+          <button type="button" class="prev-step btn-secondary">
+            <i class="fas fa-arrow-left"></i> Previous
+          </button>
         </div>
       </section>
     {{/if}}
 
     {{#if (eq currentStep "abilities")}}
       <section class="step-abilities">
-        <h3>Generate Abilities</h3>
-        <div class="modes">
-          <button data-mode="point" id="pb-init">Point Buy (32)</button>
-          <button data-mode="standard" id="std-roll-btn">Standard Roll (4d6 drop 1)</button>
-          <button data-mode="organic" id="org-roll-btn">Organic (24d6 → drop 6 → allocate)</button>
+        <h3>Generate Ability Scores</h3>
+        <div class="ability-methods">
+          <button type="button" id="pb-init" class="method-button">
+            <i class="fas fa-calculator"></i> Point Buy (32 points)
+          </button>
+          <button type="button" id="std-roll-btn" class="method-button">
+            <i class="fas fa-dice"></i> Standard Roll (4d6 drop lowest)
+          </button>
+          <button type="button" id="org-roll-btn" class="method-button">
+            <i class="fas fa-dice-d20"></i> Organic Roll (24d6)
+          </button>
         </div>
 
-        <div id="point-mode" class="mode-block">
-          <div>Points remaining: <span id="point-remaining">32</span></div>
+        <div id="point-mode" class="ability-mode">
+          <div class="points-remaining">
+            Points Remaining: <strong><span id="point-remaining">32</span></strong>
+          </div>
           <div class="abilities-grid">
-            {{#each (keys characterData.abilities)}}
+            {{#each characterData.abilities}}
               <div class="ability-card">
-                <label>{{this}}</label>
-                <div class="ability-row">
-                  <button type="button" data-minus="{{this}}">-</button>
-                  <input name="ability_{{this}}" class="ability-input" value="{{lookup ../characterData.abilities this.base}}" />
-                  <button type="button" data-plus="{{this}}">+</button>
+                <label>{{@key}}</label>
+                <div class="ability-controls">
+                  <button type="button" class="ability-btn" data-minus="{{@key}}">−</button>
+                  <input name="ability_{{@key}}" class="ability-input" type="number" value="8" min="8" max="18" />
+                  <button type="button" class="ability-btn" data-plus="{{@key}}">+</button>
                 </div>
-                <div id="display_{{this}}" class="ability-display">Tot 10 (Mod 0)</div>
+                <div id="display_{{@key}}" class="ability-display">Total: 10 (Mod: +0)</div>
               </div>
             {{/each}}
           </div>
         </div>
 
-        <div id="standard-mode" class="mode-block" style="display:none;">
+        <div id="standard-mode" class="ability-mode" style="display:none;">
           <div id="roll-results" class="roll-results"></div>
-          <div class="hint">Click a roll then click an ability to assign.</div>
+          <p class="hint">Click a roll value, then click an ability to assign it.</p>
         </div>
 
-        <div id="organic-mode" class="mode-block" style="display:none;">
+        <div id="organic-mode" class="ability-mode" style="display:none;">
           <div id="organic-groups" class="organic-groups"></div>
-          <div class="hint">Click a group, then click an ability to assign.</div>
+          <p class="hint">Click a group, then click an ability to assign the total.</p>
         </div>
 
-        <div class="hp-and-sw">
-          <label>HP Max</label><input name="hp_max" value="{{characterData.hp.max}}" />
-          <label>Temp HP</label><input name="hp_temp" value="{{characterData.hp.temp}}" />
-          <div class="second-wind">
-            <label>Second Wind Misc</label><input name="sw_misc" id="sw_misc" value="{{characterData.secondWind.misc}}" />
-            <div>Auto heal preview: <span id="sw_heal_preview">{{characterData.secondWind.healing}}</span></div>
-          </div>
-        </div>
-
-        <div class="nav">
-          <button class="prev-step">Previous</button>
-          <button type="button" class="next-step btn-primary">Next</button>
+        <div class="form-actions">
+          <button type="button" class="prev-step btn-secondary">
+            <i class="fas fa-arrow-left"></i> Previous
+          </button>
+          <button type="button" class="next-step btn-primary">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
         </div>
       </section>
     {{/if}}
 
     {{#if (eq currentStep "class")}}
       <section class="step-class">
-        <h3>Choose Class</h3>
-        <label>Class</label>
-        <select name="class_select">
+        <h3>Choose Your Class</h3>
+        <div class="class-grid">
           {{#each packs.classes}}
-            <option value="{{this.name}}">{{this.name}}</option>
-          {{/each}}
-        </select>
-        <label>Level</label>
-        <input type="number" name="class_level" value="1" min="1" / data-dtype="Number">
-        <div class="nav">
-          <button class="prev-step">Previous</button>
-          <button type="button" class="next-step btn-primary">Next</button>
-        </div>
-      </section>
-    {{/if}}
-
-    {{#if (eq currentStep "feats")}}
-      <section class="step-feats">
-        <h3>Available Feats</h3>
-        <div id="feats-list">
-          {{#each availableFeats}}
-            <div class="feat-entry">
-              <button class="select-feat" data-featid="{{this._id}}">{{this.name}}</button>
-              <div class="desc">{{this.system?.description}}</div>
-            </div>
+            <button type="button" class="select-class choice-button" data-class="{{this.name}}">
+              <h4>{{this.name}}</h4>
+              {{#if this.system}}
+                <div class="class-info">
+                  <span>Hit Die: d{{this.system.hitDie}}</span>
+                  <span>BAB: {{this.system.babProgression}}</span>
+                </div>
+              {{/if}}
+            </button>
           {{/each}}
         </div>
-        <div class="nav"><button class="prev-step">Previous</button></div>
-      </section>
-    {{/if}}
-
-    {{#if (eq currentStep "talents")}}
-      <section class="step-talents">
-        <h3>Available Talents</h3>
-        <div id="talents-list">
-          {{#each availableTalents}}
-            <div class="talent-entry">
-              <button class="select-talent" data-talentid="{{this._id}}">{{this.name}}</button>
-              <div class="desc">{{this.system?.description}}</div>
-            </div>
-          {{/each}}
+        <div class="form-actions">
+          <button type="button" class="prev-step btn-secondary">
+            <i class="fas fa-arrow-left"></i> Previous
+          </button>
         </div>
-        <div class="nav"><button class="prev-step">Previous</button></div>
-      </section>
-    {{/if}}
-
-    {{#if (eq currentStep "skills")}}
-      <section class="step-skills">
-        <h3>Choose Skills</h3>
-        <div>Trained skills allowed: <span id="skills-allowed-count">{{characterData.trainedSkillsAllowed}}</span></div>
-        <div id="skills-list" class="skills-list">
-          {{#each skillsJson}}
-            <div class="skill-row"><label><input type="checkbox" name="skill_train" value="{{this.name}}"/> {{this.name}} ({{this.ability}})</label></div>
-          {{/each}}
-        </div>
-        <div class="nav"><button class="prev-step">Previous</button><button type="button" class="next-step btn-primary">Next</button></div>
       </section>
     {{/if}}
 
     {{#if (eq currentStep "summary")}}
       <section class="step-summary">
-        <h3>Summary</h3>
-        <div><strong>Name:</strong> {{characterData.name}}</div>
-        <div><strong>Species:</strong> {{characterData.species}}</div>
-        <div><strong>Classes:</strong> {{#each characterData.classes}}{{this.name}} (lvl {{this.level}}) {{/each}}</div>
-        <h4>Abilities</h4>
-        <ul>
-          {{#each (keys characterData.abilities) }}
-            <li>{{this}}: {{lookup ../characterData.abilities this.total}} (mod {{lookup ../characterData.abilities this.mod}})</li>
-          {{/each}}
-        </ul>
-        <div class="nav"><button class="prev-step">Previous</button><button class="finish">Create Character</button></div>
+        <h3>Character Summary</h3>
+        <div class="summary-grid">
+          <div class="summary-section">
+            <h4>Basic Information</h4>
+            <dl>
+              <dt>Name:</dt>
+              <dd>{{characterData.name}}</dd>
+              <dt>Species:</dt>
+              <dd>{{characterData.species}}</dd>
+              <dt>Level:</dt>
+              <dd>{{characterData.level}}</dd>
+            </dl>
+          </div>
+          
+          <div class="summary-section">
+            <h4>Ability Scores</h4>
+            <dl>
+              {{#each characterData.abilities}}
+                <dt>{{@key}}:</dt>
+                <dd>{{this.total}} ({{#if (gte this.mod 0)}}+{{/if}}{{this.mod}})</dd>
+              {{/each}}
+            </dl>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="prev-step btn-secondary">
+            <i class="fas fa-arrow-left"></i> Previous
+          </button>
+          <button type="button" class="finish btn-primary btn-success">
+            <i class="fas fa-check"></i> Create Character
+          </button>
+        </div>
       </section>
     {{/if}}
   </main>
-
-  <style>
-    .chargen-app { font-family: Arial, sans-serif; padding: 12px; background: linear-gradient(135deg,#e8e8e8,#d4d4d4); border-radius:8px; }
-    .abilities-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-    .ability-card { padding:6px; background:rgba(255,255,255,0.6); border-radius:6px; }
-    .organic-groups { display:flex; gap:6px; flex-wrap:wrap; }
-    .organic-group { padding:6px; border-radius:6px; background:#fff; cursor:pointer; }
-    .selected-group { outline:2px solid #2a90e2; }
-    .roll-results { display:flex; gap:6px; flex-wrap:wrap; }
-  </style>
 </div>
+
+<style>
+.chargen-app {
+  font-family: "Roboto", Arial, sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #e4e4e4;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.chargen-header {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1.5rem;
+  border-bottom: 2px solid #0a74da;
+  text-align: center;
+}
+
+.chargen-header h2 {
+  margin: 0 0 0.5rem 0;
+  color: #0a74da;
+}
+
+.step-indicator {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.chargen-body {
+  padding: 2rem;
+  min-height: 400px;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #0a74da;
+}
+
+.chargen-name-input {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  border: 2px solid #0a74da;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.chargen-name-input:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(10, 116, 218, 0.5);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  gap: 1rem;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0a74da 0%, #0056b3 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 116, 218, 0.4);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #555 0%, #333 100%);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #666 0%, #444 100%);
+}
+
+.species-grid, .class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.choice-button {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #0a74da;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.choice-button:hover {
+  background: rgba(10, 116, 218, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(10, 116, 218, 0.3);
+}
+
+.abilities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.ability-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #0a74da;
+}
+
+.ability-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.ability-btn {
+  width: 30px;
+  height: 30px;
+  background: #0a74da;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.ability-input {
+  flex: 1;
+  text-align: center;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid #0a74da;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.ability-display {
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+</style>
