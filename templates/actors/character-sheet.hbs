@@ -1,47 +1,47 @@
-{{!-- SWSE Character Sheet - Fixed and Improved --}}
+{{!-- SWSE Character Sheet - Enhanced Header + Skills Layout --}}
 <form class="swse-datapad-sheet {{cssClass}} holo-theme" autocomplete="off">
     
-    {{!-- TOP HEADER BAR --}}
+    {{!-- ======================= TOP HEADER ======================= --}}
     <header class="datapad-header">
         <div class="header-left">
-            <div class="header-tabs">
+            <div class="header-tabs clean-tabs">
                 <button type="button" class="header-tab active" data-sheet-mode="character">PC</button>
                 <button type="button" class="header-tab" data-sheet-mode="npc">NPC</button>
                 <button type="button" class="header-tab" data-sheet-mode="vehicle">Vehicle</button>
-                <button type="button" class="header-tab" data-sheet-mode="settings">Settings</button>
+                <button type="button" class="header-tab" data-sheet-mode="settings">⚙</button>
             </div>
             
-            <div class="basic-fields">
+            <div class="basic-fields enhanced-fields">
                 <div class="field-trio">
                     <div class="field-sm">
                         <label>Class</label>
-                        <input name="system.class" type="text" value="{{system.class}}"/>
+                        <input name="system.class" type="text" value="{{system.class}}" placeholder="Class"/>
                     </div>
                     <div class="field-sm">
                         <label>Level</label>
-                        <input name="system.level" type="number" value="{{system.level}}" data-dtype="Number"/>
+                        <input name="system.level" type="number" value="{{system.level}}" data-dtype="Number" placeholder="1"/>
                     </div>
                     <div class="field-sm">
                         <label>½ Lvl</label>
-                        <div class="readonly half-level-display">{{halfLevel}}</div>
+                        <div class="readonly half-level-display holo-text">{{halfLevel}}</div>
                     </div>
                 </div>
-                
+
                 <div class="field-row-2">
                     <div class="field-md">
-                        <label>Background</label>
-                        <input name="system.background" type="text" value="{{system.background}}"/>
+                        <label>Species</label>
+                        <input name="system.species" type="text" value="{{system.species}}" placeholder="Human"/>
                     </div>
                     <div class="field-md">
-                        <label>Species</label>
-                        <input name="system.species" type="text" value="{{system.species}}"/>
+                        <label>Background</label>
+                        <input name="system.background" type="text" value="{{system.background}}" placeholder="Spacer"/>
                     </div>
                 </div>
-                
+
                 <div class="field-row-2">
                     <div class="field-md">
                         <label>Gender</label>
-                        <input name="system.gender" type="text" value="{{system.gender}}"/>
+                        <input name="system.gender" type="text" value="{{system.gender}}" placeholder="M/F/Other"/>
                     </div>
                     <div class="field-md">
                         <label>Size</label>
@@ -51,436 +51,89 @@
             </div>
         </div>
         
-        <div class="header-center">
+        <div class="header-center holo-header-center">
             <img class="sw-logo" src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
         </div>
         
-        <div class="header-right">
-            <img class="character-portrait" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
+        <div class="header-right holo-header-right">
+            <img class="character-portrait holo-portrait" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
+            <div class="portrait-buttons">
+                <button type="button" class="portrait-btn edit" title="Edit Image">✎</button>
+                <button type="button" class="portrait-btn refresh" title="Refresh">↻</button>
+            </div>
         </div>
     </header>
 
-    {{!-- MAIN CONTENT GRID - SCROLLABLE --}}
+    {{!-- ======================= MAIN BODY ======================= --}}
     <div class="datapad-main-grid scrollable-content">
-        
-        {{!-- LEFT COLUMN --}}
         <div class="left-column">
-            
+
             {{!-- ATTRIBUTES --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Attributes</div>
-                <div class="attributes-grid-improved">
-                    {{#each system.abilities as |ability key|}}
-                    <div class="attribute-row-improved">
-                        <label class="attr-label">{{toUpperCase key}}</label>
-                        
-                        <div class="attr-breakdown">
-                            <div class="attr-field">
-                                <label>Base</label>
-                                <input type="number" name="system.abilities.{{key}}.base" value="{{ability.base}}" class="attr-input-sm" data-dtype="Number"/>
-                            </div>
-                            
-                            <div class="attr-field">
-                                <label>Race</label>
-                                <input type="number" name="system.abilities.{{key}}.racial" value="{{ability.racial}}" class="attr-input-sm" data-dtype="Number" placeholder="0"/>
-                            </div>
-                            
-                            <div class="attr-field">
-                                <label>Misc</label>
-                                <input type="number" name="system.abilities.{{key}}.misc" value="{{ability.misc}}" class="attr-input-sm" data-dtype="Number" placeholder="0"/>
-                            </div>
-                            
-                            <div class="attr-field">
-                                <label>Total</label>
-                                <div class="attr-total">{{ability.total}}</div>
-                            </div>
-                        </div>
-                        
-                        <button type="button" class="roll-btn" data-ability="{{key}}">⚅</button>
-                        <div class="attr-mod">{{#if (gte ability.mod 0)}}+{{/if}}{{ability.mod}}</div>
-                        <button type="button" class="roll-btn" data-ability="{{key}}">⚅</button>
-                    </div>
-                    {{/each}}
-                </div>
-            </section>
+            {{> "systems/swse/templates/partials/attributes.hbs"}}
 
-            {{!-- DEFENSES - UPDATED LAYOUT --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Defenses</div>
-                
-                <div class="defense-table">
-                    <div class="defense-table-header">
-                        <div class="def-col-label"></div>
-                        <div class="def-col-value">Total</div>
-                        <div class="def-col-formula">= 10 +</div>
-                        <div class="def-col-value">Level/Armor</div>
-                        <div class="def-col-value">Class</div>
-                        <div class="def-col-value">Mod</div>
-                        <div class="def-col-value">Misc</div>
-                    </div>
-                    
-                    {{!-- REFLEX --}}
-                    <div class="defense-table-row reflex-row">
-                        <label class="defense-label-compact">Reflex</label>
-                        <div class="defense-total-compact reflex-total">{{system.defenses.reflex.total}}</div>
-                        <div class="defense-equals">=</div>
-                        <div class="defense-base">10 +</div>
-                        <input type="number" name="system.defenses.reflex.levelArmor" value="{{system.defenses.reflex.levelArmor}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
-                        <input type="number" name="system.defenses.reflex.classBonus" value="{{system.defenses.reflex.classBonus}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
-                        <select name="system.defenses.reflex.abilityMod" class="defense-select-sm">
-                            <option value="dex" {{#if (eq system.defenses.reflex.abilityMod "dex")}}selected{{/if}}>DEX</option>
-                            <option value="str">STR</option>
-                            <option value="con">CON</option>
-                            <option value="int">INT</option>
-                            <option value="wis">WIS</option>
-                            <option value="cha">CHA</option>
-                        </select>
-                        <input type="number" name="system.defenses.reflex.misc" value="{{system.defenses.reflex.misc}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
-                    </div>
-                    
-                    {{!-- FORTITUDE --}}
-                    <div class="defense-table-row fortitude-row">
-                        <label class="defense-label-compact">Fortitude</label>
-                        <div class="defense-total-compact fortitude-total">{{system.defenses.fortitude.total}}</div>
-                        <div class="defense-equals">=</div>
-                        <div class="defense-base">10 +</div>
-                        <input type="number" name="system.defenses.fortitude.levelArmor" value="{{system.defenses.fortitude.levelArmor}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
-                        <input type="number" name="system.defenses.fortitude.classBonus" value="{{system.defenses.fortitude.classBonus}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
-                        <select name="system.defenses.fortitude.abilityMod" class="defense-select-sm">
-                            <option value="con" {{#if (eq system.defenses.fortitude.abilityMod "con")}}selected{{/if}}>CON</option>
-                            <option value="str">STR</option>
-                            <option value="dex">DEX</option>
-                            <option value="int">INT</option>
-                            <option value="wis">WIS</option>
-                            <option value="cha">CHA</option>
-                        </select>
-                        <input type="number" name="system.defenses.fortitude.misc" value="{{system.defenses.fortitude.misc}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
-                    </div>
-                    
-                    {{!-- WILL --}}
-                    <div class="defense-table-row will-row">
-                        <label class="defense-label-compact">Will</label>
-                        <div class="defense-total-compact will-total">{{system.defenses.will.total}}</div>
-                        <div class="defense-equals">=</div>
-                        <div class="defense-base">10 +</div>
-                        <input type="number" name="system.defenses.will.levelArmor" value="{{system.defenses.will.levelArmor}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
-                        <input type="number" name="system.defenses.will.classBonus" value="{{system.defenses.will.classBonus}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
-                        <select name="system.defenses.will.abilityMod" class="defense-select-sm">
-                            <option value="wis" {{#if (eq system.defenses.will.abilityMod "wis")}}selected{{/if}}>WIS</option>
-                            <option value="str">STR</option>
-                            <option value="dex">DEX</option>
-                            <option value="con">CON</option>
-                            <option value="int">INT</option>
-                            <option value="cha">CHA</option>
-                        </select>
-                        <input type="number" name="system.defenses.will.misc" value="{{system.defenses.will.misc}}" class="defense-input-sm" data-dtype="Number" placeholder="0"/>
-                    </div>
-                    
-                    <div class="defense-notes">
-                        <label>Defense Notes</label>
-                        <input type="text" name="system.defenses.notes" value="{{system.defenses.notes}}" placeholder="Special defense modifiers..."/>
-                    </div>
-                </div>
-            </section>
+            {{!-- DEFENSES --}}
+            {{> "systems/swse/templates/partials/defenses.hbs"}}
 
-            {{!-- ARMOR SECTION --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Armor</div>
-                
-                <div class="armor-main-row">
-                    <div class="armor-field-wide">
-                        <label>Armor name</label>
-                        <input type="text" name="system.armor.name" value="{{system.armor.name}}" placeholder="Armor name"/>
-                    </div>
-                    <div class="armor-field-sm">
-                        <label>Def Mod Bonus</label>
-                        <input type="number" name="system.armor.defModBonus" value="{{system.armor.defModBonus}}" data-dtype="Number" placeholder="0"/>
-                    </div>
-                    <div class="armor-field-sm">
-                        <label>Fort Def Bonus</label>
-                        <input type="number" name="system.armor.fortDefBonus" value="{{system.armor.fortDefBonus}}" data-dtype="Number" placeholder="0"/>
-                    </div>
-                    <div class="armor-field-sm">
-                        <label>Max Dex Bonus</label>
-                        <input type="number" name="system.armor.maxDexBonus" value="{{system.armor.maxDexBonus}}" data-dtype="Number" placeholder="0"/>
-                    </div>
-                    <div class="armor-field-sm">
-                        <label>Speed</label>
-                        <input type="number" name="system.armor.speed" value="{{system.armor.speed}}" data-dtype="Number" placeholder="0"/>
-                    </div>
-                </div>
-                
-                <div class="armor-checkboxes-row">
-                    <div class="armor-checkbox-group">
-                        <label>Proficiency</label>
-                        <input type="checkbox" name="system.armor.proficiency" {{#if system.armor.proficiency}}checked{{/if}}/>
-                    </div>
-                    <div class="armor-checkbox-group">
-                        <label>Armored Defense</label>
-                        <input type="checkbox" name="system.armor.armoredDefense" {{#if system.armor.armoredDefense}}checked{{/if}}/>
-                    </div>
-                    <div class="armor-checkbox-group">
-                        <label>Improved Armored Def.</label>
-                        <input type="checkbox" name="system.armor.improvedArmoredDef" {{#if system.armor.improvedArmoredDef}}checked{{/if}}/>
-                    </div>
-                    <div class="armor-select-group">
-                        <label>Armor Type</label>
-                        <select name="system.armor.type">
-                            <option value="none" {{#if (eq system.armor.type "none")}}selected{{/if}}>None</option>
-                            <option value="light" {{#if (eq system.armor.type "light")}}selected{{/if}}>Light</option>
-                            <option value="medium" {{#if (eq system.armor.type "medium")}}selected{{/if}}>Medium</option>
-                            <option value="heavy" {{#if (eq system.armor.type "heavy")}}selected{{/if}}>Heavy</option>
-                        </select>
-                    </div>
-                    <div class="armor-select-group">
-                        <label>Helmet Package</label>
-                        <select name="system.armor.helmetPackage">
-                            <option value="none" {{#if (eq system.armor.helmetPackage "none")}}selected{{/if}}>None</option>
-                            <option value="basic" {{#if (eq system.armor.helmetPackage "basic")}}selected{{/if}}>Basic</option>
-                            <option value="advanced" {{#if (eq system.armor.helmetPackage "advanced")}}selected{{/if}}>Advanced</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="armor-notes">
-                    <label>Armor Notes</label>
-                    <input type="text" name="system.armor.notes" value="{{system.armor.notes}}" placeholder="Special armor properties..."/>
-                </div>
-            </section>
+            {{!-- ARMOR --}}
+            {{> "systems/swse/templates/partials/armor.hbs"}}
 
-            {{!-- SKILLS SECTION --}}
+            {{!-- ======================= SKILLS ======================= --}}
             <section class="datapad-section">
                 <div class="section-header-black">Skills</div>
-                <div class="skills-grid-compact">
-                    {{!-- DEFAULT SKILLS --}}
+                
+                <div class="skills-grid holo-grid">
+                    <div class="skills-header">
+                        <div class="col-skill-name">Skill</div>
+                        <div class="col-trained">T</div>
+                        <div class="col-bonus">Bonus</div>
+                        <div class="col-roll">Roll</div>
+                    </div>
+
                     {{#each defaultSkills as |skill|}}
-                    <div class="skill-row">
-                        <div class="skill-name">{{skill.name}}</div>
-                        <div class="skill-bonus">{{skill.bonus}}</div>
-                        <input type="checkbox" class="skill-trained" {{#if skill.trained}}checked{{/if}}/>
-                        <button type="button" class="roll-btn-sm" data-skill="{{skill.name}}">⚅</button>
+                    <div class="skill-row holo-row {{#if skill.trained}}trained{{/if}}">
+                        <div class="col-skill-name">
+                            <span class="skill-tooltip" title="Associated Ability: {{skill.ability}}">{{skill.name}}</span>
+                        </div>
+                        <div class="col-trained">
+                            <input type="checkbox" class="skill-trained" {{#if skill.trained}}checked{{/if}}/>
+                        </div>
+                        <div class="col-bonus">{{#if (gte skill.bonus 0)}}+{{/if}}{{skill.bonus}}</div>
+                        <div class="col-roll">
+                            <button type="button" class="roll-btn-sm" data-skill="{{skill.name}}">⚅</button>
+                        </div>
                     </div>
                     {{/each}}
-                    
-                    {{!-- CUSTOM SKILLS DIVIDER --}}
-                    <div class="custom-skills-divider">⚡ CUSTOM SKILLS ⚡</div>
-                    
-                    {{!-- CUSTOM SKILLS --}}
+
+                    <div class="custom-skills-divider">✦ Custom Skills ✦</div>
+
                     {{#each customSkills as |skill index|}}
-                    <div class="skill-row custom-skill-row">
+                    <div class="skill-row custom-skill-row holo-row">
                         <input type="text" class="skill-name-input" name="system.customSkills.{{index}}.name" value="{{skill.name}}" placeholder="Skill Name"/>
-                        <div class="skill-bonus">{{skill.bonus}}</div>
-                        <input type="checkbox" class="skill-trained" name="system.customSkills.{{index}}.trained" {{#if skill.trained}}checked{{/if}}/>
+                        <div class="col-trained">
+                            <input type="checkbox" name="system.customSkills.{{index}}.trained" {{#if skill.trained}}checked{{/if}}/>
+                        </div>
+                        <div class="col-bonus">{{#if (gte skill.bonus 0)}}+{{/if}}{{skill.bonus}}</div>
                         <button type="button" class="delete-custom-skill" data-index="{{index}}">×</button>
                     </div>
                     {{/each}}
-                    
-                    <button type="button" class="add-custom-skill-btn">+ Add Custom Skill</button>
+
+                    <button type="button" class="add-custom-skill-btn holo-add">+ Add Skill</button>
                 </div>
             </section>
         </div>
-        
+
         {{!-- CENTER COLUMN --}}
         <div class="center-column">
-            
-            {{!-- HIT POINTS & VITALS --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Hit Points & Vitals</div>
-                <div class="hp-grid">
-                    <div class="hp-field">
-                        <label>Current HP</label>
-                        <input name="system.hp.value" type="number" value="{{system.hp.value}}" data-dtype="Number"/>
-                    </div>
-                    <div class="hp-field">
-                        <label>Max HP</label>
-                        <input name="system.hp.max" type="number" value="{{system.hp.max}}" data-dtype="Number"/>
-                    </div>
-                    <div class="hp-field">
-                        <label>Temp HP</label>
-                        <input name="system.hp.temp" type="number" value="{{system.hp.temp}}" data-dtype="Number" placeholder="0"/>
-                    </div>
-                </div>
-                
-                <div class="threshold-grid">
-                    <div class="threshold-row">
-                        <label>Damage Threshold</label>
-                        <div class="threshold-formula-compact">
-                            <span class="formula-text-sm">Fort +</span>
-                            <input type="number" name="system.damageThreshold.misc" value="{{system.damageThreshold.misc}}" placeholder="0" class="formula-input-sm" data-dtype="Number"/>
-                            <span class="formula-text-sm">= </span>
-                            <div class="threshold-total">{{system.damageThreshold.total}}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="threshold-row">
-                        <label>Second Wind</label>
-                        <div class="threshold-formula-compact">
-                            <span class="formula-text-sm">¼ HP +</span>
-                            <input type="number" name="system.secondWind.misc" value="{{system.secondWind.misc}}" placeholder="0" class="formula-input-sm" data-dtype="Number"/>
-                            <span class="formula-text-sm">= </span>
-                            <div class="threshold-total">{{system.secondWind.total}}</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {{!-- CONDITION TRACK - BUTTONS INSTEAD OF DROPDOWN --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Condition</div>
-                <div class="condition-buttons">
-                    <button type="button" class="condition-btn {{#if (eq system.condition 'normal')}}active{{/if}}" data-condition="normal">
-                        Normal
-                    </button>
-                    <button type="button" class="condition-btn {{#if (eq system.condition '-2')}}active{{/if}}" data-condition="-2">
-                        -2
-                    </button>
-                    <button type="button" class="condition-btn {{#if (eq system.condition '-5')}}active{{/if}}" data-condition="-5">
-                        -5
-                    </button>
-                    <button type="button" class="condition-btn {{#if (eq system.condition '-10')}}active{{/if}}" data-condition="-10">
-                        -10
-                    </button>
-                    <button type="button" class="condition-btn debilitated {{#if (eq system.condition 'debilitated')}}active{{/if}}" data-condition="debilitated">
-                        Debilitated
-                    </button>
-                    <button type="button" class="condition-btn persistent {{#if (eq system.condition 'persistent')}}active{{/if}}" data-condition="persistent">
-                        Persistent
-                    </button>
-                </div>
-                <input type="hidden" name="system.condition" value="{{system.condition}}"/>
-            </section>
-
-            {{!-- BOTTOM TABS --}}
-            <section class="datapad-section">
-                <div class="bottom-tabs-header">
-                    <button type="button" class="bottom-tab active" data-tab="equipment">Equipment</button>
-                    <button type="button" class="bottom-tab" data-tab="feats">Feats</button>
-                    <button type="button" class="bottom-tab" data-tab="talents">Talents</button>
-                    <button type="button" class="bottom-tab" data-tab="powers">Powers</button>
-                    <button type="button" class="bottom-tab" data-tab="notes">Notes</button>
-                </div>
-                
-                <div class="bottom-tabs-content">
-                    {{!-- EQUIPMENT TAB --}}
-                    <div class="bottom-tab-content" data-tab="equipment">
-                        <div class="equipment-list">
-                            {{#each equipment as |item|}}
-                            <div class="equipment-item">
-                                <img src="{{item.img}}" class="item-icon"/>
-                                <div class="item-name">{{item.name}}</div>
-                                <div class="item-qty">×{{item.system.quantity}}</div>
-                                <button type="button" class="item-btn-sm" data-item-id="{{item.id}}">🔍</button>
-                            </div>
-                            {{/each}}
-                        </div>
-                        <button type="button" class="add-equipment-btn">+ Add Equipment</button>
-                    </div>
-                    
-                    {{!-- FEATS TAB --}}
-                    <div class="bottom-tab-content" data-tab="feats" style="display:none;">
-                        <div class="feat-list">
-                            {{#each feats as |feat|}}
-                            <div class="feat-item">
-                                <div class="feat-name">{{feat.name}}</div>
-                                <button type="button" class="item-btn-sm" data-item-id="{{feat.id}}">🔍</button>
-                            </div>
-                            {{/each}}
-                        </div>
-                        <button type="button" class="add-feat-btn">+ Add Feat</button>
-                    </div>
-                    
-                    {{!-- TALENTS TAB --}}
-                    <div class="bottom-tab-content" data-tab="talents" style="display:none;">
-                        <div class="talent-list">
-                            {{#each talents as |talent|}}
-                            <div class="talent-item">
-                                <div class="talent-name">{{talent.name}}</div>
-                                <button type="button" class="item-btn-sm" data-item-id="{{talent.id}}">🔍</button>
-                            </div>
-                            {{/each}}
-                        </div>
-                        <button type="button" class="add-talent-btn">+ Add Talent</button>
-                    </div>
-                    
-                    {{!-- POWERS TAB --}}
-                    <div class="bottom-tab-content" data-tab="powers" style="display:none;">
-                        <div class="power-list">
-                            {{#each powers as |power|}}
-                            <div class="force-power-item">
-                                <div class="power-header">
-                                    <div class="power-name">{{power.name}}</div>
-                                    <div class="power-actions-compact">
-                                        <button type="button" class="use-power-btn" data-power-id="{{power.id}}">Use</button>
-                                        <button type="button" class="reload-power-btn" data-power-id="{{power.id}}">↻</button>
-                                        <button type="button" class="item-btn-sm" data-item-id="{{power.id}}">🔍</button>
-                                    </div>
-                                </div>
-                            </div>
-                            {{/each}}
-                        </div>
-                        <button type="button" class="add-power-btn">+ Add Force Power</button>
-                    </div>
-                    
-                    {{!-- NOTES TAB --}}
-                    <div class="bottom-tab-content" data-tab="notes" style="display:none;">
-                        <textarea name="system.notes" placeholder="Character notes, backstory, etc...">{{system.notes}}</textarea>
-                    </div>
-                </div>
-            </section>
+            {{> "systems/swse/templates/partials/hp-vitals.hbs"}}
+            {{> "systems/swse/templates/partials/condition.hbs"}}
+            {{> "systems/swse/templates/partials/bottom-tabs.hbs"}}
         </div>
-        
+
         {{!-- RIGHT COLUMN --}}
         <div class="right-column">
-            
-            {{!-- COMBAT STATS --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Combat Stats</div>
-                
-                <div class="combat-stat-row">
-                    <label>Base Attack Bonus</label>
-                    <input name="system.bab" type="number" value="{{system.bab}}" data-dtype="Number"/>
-                </div>
-                
-                <div class="combat-stat-row">
-                    <label>Speed</label>
-                    <input name="system.speed" type="number" value="{{system.speed}}" data-dtype="Number" placeholder="6"/>
-                </div>
-                
-                <div class="combat-stat-row">
-                    <label>Initiative</label>
-                    <div class="initiative-display">{{initiativeTotal}}</div>
-                    <button type="button" class="roll-btn" data-roll="initiative">⚅</button>
-                </div>
-            </section>
-
-            {{!-- FORCE POINTS --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Force & Destiny</div>
-                <div class="force-grid">
-                    <div class="force-field">
-                        <label>Force Points</label>
-                        <input name="system.forcePoints.value" type="number" value="{{system.forcePoints.value}}" data-dtype="Number"/>
-                        <span>/</span>
-                        <input name="system.forcePoints.max" type="number" value="{{system.forcePoints.max}}" data-dtype="Number"/>
-                    </div>
-                    
-                    <div class="force-field">
-                        <label>Dark Side Score</label>
-                        <input name="system.darkSideScore" type="number" value="{{system.darkSideScore}}" data-dtype="Number" placeholder="0"/>
-                    </div>
-                    
-                    <div class="force-field">
-                        <label>Destiny</label>
-                        <input name="system.destiny" type="number" value="{{system.destiny}}" data-dtype="Number" placeholder="0"/>
-                    </div>
-                </div>
-            </section>
-
-            {{!-- CREDITS & WEALTH --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Credits</div>
-                <input name="system.credits" type="number" value="{{system.credits}}" data-dtype="Number" placeholder="0" class="credits-input-large"/>
-            </section>
+            {{> "systems/swse/templates/partials/combat.hbs"}}
+            {{> "systems/swse/templates/partials/force.hbs"}}
+            {{> "systems/swse/templates/partials/credits.hbs"}}
         </div>
     </div>
 </form>
