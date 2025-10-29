@@ -19,6 +19,6 @@ export class SWSEGMSettings extends FormApplication {
       sellMultiplier: parseFloat(formData.sellMultiplier)
     };
     await game.settings.set("swse", "templates/apps/templates/apps/storeSettings", updated);
-    assets/ui.notifications.info("Store settings updated.");
+    ui.notifications.info("Store settings updated.");
   }
 }

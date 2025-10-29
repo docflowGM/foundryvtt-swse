@@ -15,7 +15,7 @@ export async function rollSave(actor, type) {
   // In SWSE, "saves" are just defense checks
   const def = actor.system.defenses?.[type];
   if (!def) {
-    assets/ui.notifications.warn(`Defense type ${type} not found`);
+    ui.notifications.warn(`Defense type ${type} not found`);
     return null;
   }
   
@@ -46,9 +46,9 @@ export function checkSaveSuccess(saveRoll, dc) {
   const success = saveRoll.total >= dc;
   
   if (success) {
-    assets/ui.notifications.info(`Save succeeded! (${saveRoll.total} vs DC ${dc})`);
+    ui.notifications.info(`Save succeeded! (${saveRoll.total} vs DC ${dc})`);
   } else {
-    assets/ui.notifications.warn(`Save failed! (${saveRoll.total} vs DC ${dc})`);
+    ui.notifications.warn(`Save failed! (${saveRoll.total} vs DC ${dc})`);
   }
   
   return success;

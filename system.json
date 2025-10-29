@@ -58,11 +58,11 @@
   "media": [
     {
       "type": "cover",
-      "url": "assets/images/swse-cover.webp"
+      "url": "assets/images/ui/swse-cover.webp"
     },
     {
       "type": "icon",
-      "url": "assets/images/title-logo.png"
+      "url": "assets/ui/title-logo.png"
     }
   ],
   "packs": [
@@ -74,23 +74,16 @@
       "system": "swse"
     },
     {
-      "name": "npc-classes",
-      "label": "NPC Classes",
-      "path": "packs/npc-classes.db",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
-      "name": "prestige-classes",
-      "label": "Prestige Classes",
-      "path": "packs/prestige-classes.db",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
       "name": "talents",
       "label": "Talents",
       "path": "packs/talents.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "talent_trees",
+      "label": "Talent Trees",
+      "path": "packs/talent_trees.db",
       "type": "Item",
       "system": "swse"
     },
@@ -130,6 +123,27 @@
       "system": "swse"
     },
     {
+      "name": "armor_light",
+      "label": "Light Armor",
+      "path": "packs/armor-light.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "armor_medium",
+      "label": "Medium Armor",
+      "path": "packs/armor-medium.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "armor_heavy",
+      "label": "Heavy Armor",
+      "path": "packs/armor-heavy.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
       "name": "forcepowers",
       "label": "Force Powers",
       "path": "packs/forcepowers.db",
@@ -137,9 +151,58 @@
       "system": "swse"
     },
     {
+      "name": "skills",
+      "label": "Skills",
+      "path": "packs/skills.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "extraskilluses",
+      "label": "Extra Skill Uses",
+      "path": "packs/extraskilluses.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "combat_actions",
+      "label": "Combat Actions",
+      "path": "packs/combat-actions.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "conditions",
+      "label": "Conditions",
+      "path": "packs/conditions.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "special_combat_condition",
+      "label": "Special Combat Conditions",
+      "path": "packs/special-combat-condition.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "attributes",
+      "label": "Attributes",
+      "path": "packs/attributes.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
       "name": "vehicles",
       "label": "Vehicles",
       "path": "packs/vehicles.db",
+      "type": "Actor",
+      "system": "swse"
+    },
+    {
+      "name": "droids",
+      "label": "Droids",
+      "path": "packs/droids.db",
       "type": "Actor",
       "system": "swse"
     },

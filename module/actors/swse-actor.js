@@ -108,7 +108,7 @@ export class SWSEActor extends Actor {
   }
 
   _applyArmorData() {
-    const armor = this.items.find(i => i.type === "armor" && i.system?.eqassets/uipped);
+    const armor = this.items.find(i => i.type === "armor" && i.system?.equipped);
     const def = this.system.defenses?.reflex;
     if (!def) return;
     if (armor) {
@@ -317,24 +317,24 @@ export class SWSEActorSheet extends ActorSheet {
     }
 
     if (typeof this._onOpenStore === 'function') {
-      html.find(".open-templates/apps/store-btn").click(this._onOpenStore.bind(this));
+      html.find(".open-store-btn").click(this._onOpenStore.bind(this));
     }
 
     // Save/Load to flags
     html.find(".save-sheet").click(async ev => {
       ev.preventDefault();
       await this.actor.setFlag("swse", "sheetData", this.actor.system);
-      assets/ui.notifications.info("SWSE sheet data saved to flags.");
+      ui.notifications.info("SWSE sheet data saved to flags.");
     });
     html.find(".load-sheet").click(async ev => {
       ev.preventDefault();
       const data = this.actor.getFlag("swse", "sheetData");
       if (!data) {
-        assets/ui.notifications.warn("No saved sheet data found in flags.");
+        ui.notifications.warn("No saved sheet data found in flags.");
         return;
       }
       await this.actor.update({ "system": data });
-      assets/ui.notifications.info("SWSE sheet data loaded from flags.");
+      ui.notifications.info("SWSE sheet data loaded from flags.");
     });
   }
 
@@ -419,7 +419,7 @@ export class SWSEActorSheet extends ActorSheet {
     if (!power) return;
 
     if (power.system.uses.current <= 0) {
-      assets/ui.notifications.warn("No uses remaining!");
+      ui.notifications.warn("No uses remaining!");
       return;
     }
 
@@ -435,13 +435,13 @@ export class SWSEActorSheet extends ActorSheet {
     for (const item of this.actor.items.filter(i => i.type === "forcepower")) {
       await item.update({"system.uses.current": item.system.uses.max});
     }
-    assets/ui.notifications.info("All Force Powers refreshed!");
+    ui.notifications.info("All Force Powers refreshed!");
   }
 
   async _onReloadForcePower(event) {
     event.preventDefault();
     if (this.actor.system.forcePoints.value <= 0) {
-      assets/ui.notifications.warn("No Force Points remaining!");
+      ui.notifications.warn("No Force Points remaining!");
       return;
     }
 
@@ -451,7 +451,7 @@ export class SWSEActorSheet extends ActorSheet {
 
     await this.actor.update({"system.forcePoints.value": this.actor.system.forcePoints.value - 1});
     await power.update({"system.uses.current": power.system.uses.max});
-    assets/ui.notifications.info(`${power.name} reloaded with Force Point!`);
+    ui.notifications.info(`${power.name} reloaded with Force Point!`);
   }
 
   async _onAddSkill(event) {
@@ -478,7 +478,7 @@ export class SWSEActorSheet extends ActorSheet {
   async _onSecondWind(event) {
     event.preventDefault();
     if (this.actor.system.secondWind.uses <= 0) {
-      assets/ui.notifications.warn("No Second Wind uses remaining!");
+      ui.notifications.warn("No Second Wind uses remaining!");
       return;
     }
 
@@ -491,7 +491,7 @@ export class SWSEActorSheet extends ActorSheet {
     });
 
     await this.actor.setFlag("swse", "sheetData", this.actor.system);
-    assets/ui.notifications.info(`Second Wind! Healed ${healing} HP.`);
+    ui.notifications.info(`Second Wind! Healed ${healing} HP.`);
   }
 
 
@@ -509,7 +509,7 @@ export class SWSEActorSheet extends ActorSheet {
     event.preventDefault();
     await this.actor.createEmbeddedDocuments("Item", [{
       name: "New Eqassets/uipment",
-      type: "eqassets/uipment",
+      type: "equipment",
       system: { weight: 0, cost: 0 }
     }]);
   }

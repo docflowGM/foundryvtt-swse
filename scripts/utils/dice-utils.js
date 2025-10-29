@@ -33,7 +33,7 @@ export async function rollDice(formula, data = {}, label = "Roll") {
         
         return roll;
     } catch (err) {
-        assets/ui.notifications.error(`Dice roll failed: ${err.message}`);
+        ui.notifications.error(`Dice roll failed: ${err.message}`);
         console.error(err);
         return null;
     }

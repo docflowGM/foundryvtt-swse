@@ -46,11 +46,11 @@ export class WorldDataLoader {
       await game.settings.set("swse", "dataLoaded", true);
       console.log("SWSE | ✓ Data import complete!");
       
-      assets/ui.notifications.info("SWSE data loaded successfully!");
+      ui.notifications.info("SWSE data loaded successfully!");
       
     } catch (error) {
       console.error("SWSE | Data import failed:", error);
-      assets/ui.notifications.error("Failed to load SWSE data. Check console for details.");
+      ui.notifications.error("Failed to load SWSE data. Check console for details.");
     }
   }
   
@@ -353,24 +353,24 @@ export class WorldDataLoader {
   }
   
   /**
-   * Load eqassets/uipment from JSON
+   * Load equipment from JSON
    */
   static async loadEqassets/uipment() {
     try {
-      const response = await fetch("systems/swse/data/eqassets/uipment.json");
+      const response = await fetch("systems/swse/data/equipment.json");
       if (!response.ok) {
-        console.log("SWSE | eqassets/uipment.json not found - skipping");
+        console.log("SWSE | equipment.json not found - skipping");
         return;
       }
       
-      const eqassets/uipment = await response.json();
+      const equipment = await response.json();
       let loaded = 0;
       let skipped = 0;
       
-      for (const eqassets/uipData of eqassets/uipment) {
+      for (const eqassets/uipData of equipment) {
         const itemData = {
           name: eqassets/uipData.name,
-          type: "item",  // or "eqassets/uipment" if that's a valid type
+          type: "item",  // or "equipment" if that's a valid type
           system: eqassets/uipData
         };
         
@@ -379,10 +379,10 @@ export class WorldDataLoader {
         else skipped++;
       }
       
-      console.log(`SWSE | Loaded ${loaded} eqassets/uipment (${skipped} skipped)`);
+      console.log(`SWSE | Loaded ${loaded} equipment (${skipped} skipped)`);
       
     } catch (error) {
-      console.warn("SWSE | Could not load eqassets/uipment:", error);
+      console.warn("SWSE | Could not load equipment:", error);
     }
   }
   
@@ -480,7 +480,7 @@ export class WorldDataLoader {
     await game.settings.set("swse", "dataLoaded", false);
     
     console.log("SWSE | All data cleared");
-    assets/ui.notifications.info("SWSE data cleared. Reload to re-import.");
+    ui.notifications.info("SWSE data cleared. Reload to re-import.");
   }
 }
 

@@ -24,7 +24,7 @@
       ]
     },
     "notes": "Implement as flat -2 modifier to attack roll prior to calculating hit; when attacking area attacks refer to total concealment rules.",
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "total_concealment",
@@ -50,7 +50,7 @@
         }
       ]
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "cover",
@@ -68,7 +68,7 @@
       "auto": "target leaves cover or Aim used by attacker"
     },
     "notes": "Code path: when computing effective defender Ref = baseRef + cover.defender_reflex_modifier.",
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "improved_cover",
@@ -83,7 +83,7 @@
     "removal": {
       "auto": "Aim or move out of cover"
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "flanking",
@@ -97,7 +97,7 @@
       "stacking": "multiple flanking sources do not stack"
     },
     "notes": "Compute attack = d20 + attack_modifiers + 2 if flanking flag true.",
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "aiming",
@@ -114,7 +114,7 @@
       "prereq": "actor must have performed two consecutive swift actions flagged as AIM",
       "los_check": "boolean: maintain line of sight to target at time of attack"
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "suppressive_fire",
@@ -134,7 +134,7 @@
         "on_success": "apply target_attack_modifier -2 to target's next attack"
       }
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "braced_autofire",
@@ -147,7 +147,7 @@
       "autofire_shots_consumed": 10,
       "notes": "Reqassets/uires weapon capable of bracing; bracing itself consumes 2 swift actions"
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "burst_fire_mode",
@@ -164,7 +164,7 @@
       },
       "ammo_consumption": "weapon_defined"
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "autofire_vs_creature",
@@ -176,7 +176,7 @@
       "attacker_attack_modifier": -5,
       "damage_roll": "compute base damage but treat attack as single-target autofire resolution"
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "suppressive_cover_interaction",
@@ -187,7 +187,7 @@
       "cover_block_check": "line_from_attacker_to_target_center intersects cover_cell ? suppression_ignored : suppression_applied",
       "suppression_penalty_if_applied": -2
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "ranged_into_melee_penalty",
@@ -199,7 +199,7 @@
       "attacker_attack_modifier": -5,
       "exception_feature": "Precise Shot feat removes this penalty"
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "shooting_through_aperture_penalty",
@@ -211,7 +211,7 @@
       "attacker_attack_modifier_formula": "base_penalty = aperture_width_penalty(weapon_size); example: pistol -0, rifle -5",
       "interaction_with_cover": "counts as cover for defender if line touches aperture edges"
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "aim_vs_cover_resolution",
@@ -223,7 +223,7 @@
       "defender_reflex_effective": "defender.base_reflex + defender.other_mods + cover_bonus - (aim_flag ? cover_bonus : 0)",
       "example": "If defender.baseReflex=15, cover_bonus=5, aim removes +5 so effectiveReflex=15"
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "suppression_field",
@@ -235,7 +235,7 @@
       "attacker_attack_modifier_when_suppressed": -2,
       "application_rule": "apply penalty only while target remains in area and not behind total cover"
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "entangling_area",
@@ -257,7 +257,7 @@
         "reflex_modifier": -2
       }
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "suppressed_reaction_block",
@@ -271,7 +271,7 @@
       ],
       "attack_modifier": -2
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "flat_footed_attack_window",
@@ -283,7 +283,7 @@
       "defender_reflex_modifier": "subtract Dex_bonus + Dodge_bonuses",
       "interaction_with_feint": "Feint sets flat-footed for the first attack by the feinter next round"
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "feint_flatfoot",
@@ -298,7 +298,7 @@
         "on_success": "apply flat-footed to target only vs feinter's next attack"
       }
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "aim_vs_total_cover_exception",
@@ -308,7 +308,7 @@
     "effects": {
       "validation": "if total_cover==true then aim_has_no_effect_on_targeting; attacker may spend aim but must still have LOS"
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   },
   {
     "id": "braced_vs_autofire_buff",
@@ -320,6 +320,6 @@
       "ammo_used": 10,
       "damage_resolution": "calculate autoconsistent with autofire rules; braced reduces aim failure chance in sustained bursts (GM)"
     },
-    "type": "eqassets/uipment"
+    "type": "equipment"
   }
 ]

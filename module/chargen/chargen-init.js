@@ -46,7 +46,7 @@ export function initChargenHooks() {
                                     img: "icons/svg/mystery-man.svg"
                                 }).catch(err => {
                                     console.error("Failed to create actor:", err);
-                                    assets/ui.notifications.error("Failed to create character.");
+                                    ui.notifications.error("Failed to create character.");
                                 });
                             }
                         }

@@ -860,7 +860,7 @@ form.swse-datapad-sheet {
 /* =========================
    ITEMS / EQUIPMENT
    ========================= */
-.swse .eqassets/uipment-list,
+.swse .equipment-list,
 .swse .feat-list,
 .swse .talent-list,
 .swse .power-list {
@@ -870,7 +870,7 @@ form.swse-datapad-sheet {
   margin-bottom: 10px;
 }
 
-.swse .eqassets/uipment-item,
+.swse .equipment-item,
 .swse .feat-item,
 .swse .talent-item,
 .swse .force-power-item {
@@ -885,7 +885,7 @@ form.swse-datapad-sheet {
   transition: all var(--fast);
 }
 
-.swse .eqassets/uipment-item:hover,
+.swse .equipment-item:hover,
 .swse .feat-item:hover,
 .swse .talent-item:hover,
 .swse .force-power-item:hover {

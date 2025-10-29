@@ -111,7 +111,7 @@ export async function rollFullAttack(actor, weapon) {
   // Optionally auto-roll damage on crit threat
   const utils = game.swse.utils;
   if (utils.dice.isCriticalThreat(attackRoll.total, weapon.critRange || 20)) {
-    assets/ui.notifications.info("Critical Threat!");
+    ui.notifications.info("Critical Threat!");
     // Could auto-roll damage here
   }
   

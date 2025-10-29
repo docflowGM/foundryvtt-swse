@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Eqassets/uipment",
-  "description": "Schema for weapons, armor, gear, and other eqassets/uipment",
+  "description": "Schema for weapons, armor, gear, and other equipment",
   "type": "object",
   "properties": {
     "name": { "type": "string" },

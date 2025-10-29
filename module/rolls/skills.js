@@ -14,7 +14,7 @@ export async function rollSkill(actor, skillKey) {
   const skill = actor.system.skills?.[skillKey];
   
   if (!skill) {
-    assets/ui.notifications.warn(`Skill ${skillKey} not found`);
+    ui.notifications.warn(`Skill ${skillKey} not found`);
     return null;
   }
   
@@ -65,9 +65,9 @@ export async function rollSkillCheck(actor, skillKey, dc) {
   const success = roll.total >= dc;
   
   if (success) {
-    assets/ui.notifications.info(`Success! (${roll.total} vs DC ${dc})`);
+    ui.notifications.info(`Success! (${roll.total} vs DC ${dc})`);
   } else {
-    assets/ui.notifications.warn(`Failed! (${roll.total} vs DC ${dc})`);
+    ui.notifications.warn(`Failed! (${roll.total} vs DC ${dc})`);
   }
   
   return { roll, success };

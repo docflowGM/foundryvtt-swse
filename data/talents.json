@@ -164,7 +164,7 @@
 {"name": "Trust", "talent_tree": "Leadership", "prereqassets/uisites": "Born Leader, Coordinate", "benefit": "Give up your standard action to grant allies an extra action on their next turn."}
 {"name": "Coordinate", "talent_tree": "Leadership", "prereqassets/uisites": null, "benefit": "All allies in line of sight gain +1 when using aid another (maximum +5)."}
 {"name": "Unwavering Ally", "talent_tree": "Leadership", "prereqassets/uisites": null, "benefit": "Once per turn, one ally in line of sight is immune to effects that make them flat-footed or deny Dexterity to Reflex Defense."}
-{"name": "Connections", "talent_tree": "Lineage", "prereqassets/uisites": null, "benefit": "Acqassets/uire eqassets/uipment worth your character level × 1000 credits; reduce black market multiplier by 1."}
+{"name": "Connections", "talent_tree": "Lineage", "prereqassets/uisites": null, "benefit": "Acqassets/uire equipment worth your character level × 1000 credits; reduce black market multiplier by 1."}
 {"name": "Influential Friends", "talent_tree": "Lineage", "prereqassets/uisites": "Connections", "benefit": "Once per day, friends may take 20 on a skill check with modifier equal to 5 + half your heroic level; time taken is 10 × result minimum."}
 {"name": "Powerful Friends", "talent_tree": "Lineage", "prereqassets/uisites": "Influential Friends", "benefit": "Once per encounter, take 20 on a Persuasion check with no increase in time reqassets/uired."}
 {"name": "Educated", "talent_tree": "Lineage", "prereqassets/uisites": null, "benefit": "You may make Knowledge checks untrained."}
@@ -323,7 +323,7 @@
 {"name": "Armor Mastery", "talent_tree": "Armor Specialist", "prereqassets/uisites": "Armored Defense", "benefit": "Increase the maximum Dexterity bonus you can apply while wearing armor by +1."}
 {"name": "Improved Armored Defense", "talent_tree": "Armor Specialist", "prereqassets/uisites": "Armored Defense", "benefit": "Your Reflex Defense bonus equals either your heroic level + half your armor bonus, or your armor bonus."}
 {"name": "Juggernaut", "talent_tree": "Armor Specialist", "prereqassets/uisites": "Armored Defense", "benefit": "Armor does not reduce speed or distance moved."}
-{"name": "Second Skin", "talent_tree": "Armor Specialist", "prereqassets/uisites": "Armored Defense", "benefit": "Increase your armor bonus to Reflex Defense and eqassets/uipment bonus to Fortitude Defense by +1."}
+{"name": "Second Skin", "talent_tree": "Armor Specialist", "prereqassets/uisites": "Armored Defense", "benefit": "Increase your armor bonus to Reflex Defense and equipment bonus to Fortitude Defense by +1."}
 {"name": "Shield Expert", "talent_tree": "Armor Specialist", "prereqassets/uisites": "Armor Proficiency (light)", "benefit": "Once per encounter, spend a swift action to regain 10 shield rating (SR), up to the shield’s maximum, on an active personal shield."}
 {"name": "Cantina Brawler", "talent_tree": "Brawler", "prereqassets/uisites": null, "benefit": "When flanked, gain +2 on unarmed attack rolls and damage."}
 {"name": "Pick a Fight", "talent_tree": "Brawler", "prereqassets/uisites": "Cantina Brawler", "benefit": "During the surprise round, you and allies within 6 squares gain +1 attack; you retain the +1 attack against targets you damage."}
@@ -506,7 +506,7 @@
 {"name":"Unarmed Counterstrike","talent_tree":"Master of Teras Kasi","prereqassets/uisites":"Unarmed Parry","benefit":"If you parry a melee attack, immediately make an unarmed attack as a reaction against the attacker."}
 {"name":"Accurate Blow","talent_tree":"Melee Specialist","prereqassets/uisites":null,"benefit":"If you exceed Reflex Defense by 5 or more with a melee attack, deal +1 damage die per melee weapon group."}
 {"name":"Close-Quarters Fighter","talent_tree":"Melee Specialist","prereqassets/uisites":null,"benefit":"If adjacent or in the same square as a foe, gain +1 melee attack."}
-{"name":"Ignore Armor","talent_tree":"Melee Specialist","prereqassets/uisites":null,"benefit":"Once per encounter, ignore a target’s armor or eqassets/uipment bonuses with a melee attack."}
+{"name":"Ignore Armor","talent_tree":"Melee Specialist","prereqassets/uisites":null,"benefit":"Once per encounter, ignore a target’s armor or equipment bonuses with a melee attack."}
 {"name":"Improved Stunning Strike","talent_tree":"Melee Specialist","prereqassets/uisites":"Stunning Strike","benefit":"If you move an opponent down the condition track with a melee attack, that target cannot take a standard or full-round action on its next turn."}
 {"name":"Whirling Death","talent_tree":"Melee Specialist","prereqassets/uisites":"Unrelenting Assault","benefit":"When using Unrelenting Assault, every adjacent target takes damage equal to your Strength bonus with a melee weapon."}
 {"name":"Bodyguard's Sacrifice","talent_tree":"Protection","prereqassets/uisites":null,"benefit":"Take any or all damage that would target an adjacent ally; cannot use again until the end of your next turn."}
@@ -610,7 +610,7 @@
 {"name":"Hailfire","talent_tree":"Pistoleer","prereqassets/uisites":"Dual Weapon Mastery I","benefit":"With two pistols, attack as if autofire even without autofire, applying autofire penalties."}
 {"name":"Twin Shot","talent_tree":"Pistoleer","prereqassets/uisites":"Dual Weapon Mastery I, Rapid Shot","benefit":"With two pistols and Rapid Shot, gain +2 damage."}
 {"name":"Armored Augmentation I","talent_tree":"Knight's Armor","prereqassets/uisites":null,"benefit":"Once per encounter, as an action, add your armor bonus to Reflex Defense for threshold until end of encounter."}
-{"name":"Armored Augmentation II","talent_tree":"Knight's Armor","prereqassets/uisites":"Armored Augmentation I","benefit":"Also gain Damage Reduction equal to twice your armor's eqassets/uipment bonus to Fortitude Defense."}
+{"name":"Armored Augmentation II","talent_tree":"Knight's Armor","prereqassets/uisites":"Armored Augmentation I","benefit":"Also gain Damage Reduction equal to twice your armor's equipment bonus to Fortitude Defense."}
 {"name":"Armor Mastery","talent_tree":"Knight's Armor","prereqassets/uisites":null,"benefit":"Reflex Defense bonus equals heroic level + half armor bonus or armor bonus; counts as Armored and Improved Armored Defense."}
 {"name":"Cortosis Defense","talent_tree":"Knight's Armor","prereqassets/uisites":null,"benefit":"+2 on opposed unarmed melee attack rolls versus lightsabers."}
 {"name":"Cortosis Retaliation","talent_tree":"Knight's Armor","prereqassets/uisites":"Cortosis Defense","benefit":"When you successfully parry a lightsaber attack, you may make an immediate attack against that attacker."}
@@ -623,7 +623,7 @@
 {"name":"Only the Finest","talent_tree":"Procurement","prereqassets/uisites":"Black Market Buyer","benefit":"Obtain modified items without increasing their base value."}
 {"name":"Excellent Kit","talent_tree":"Procurement","prereqassets/uisites":null,"benefit":"All gear you purchase has +50% hit points, +5 Damage Reduction, and you gain +2 on Mechanics checks with those objects."}
 {"name":"Just What Is Needed","talent_tree":"Procurement","prereqassets/uisites":null,"benefit":"When using Repair or Mechanics, retemplates/apps/store an additional +1d8 hit points."}
-{"name":"Right Gear for the Job","talent_tree":"Procurement","prereqassets/uisites":null,"benefit":"+5 eqassets/uipment bonus to an ally's untrained check and treat the ally as trained (not for Use the Force)."}
+{"name":"Right Gear for the Job","talent_tree":"Procurement","prereqassets/uisites":null,"benefit":"+5 equipment bonus to an ally's untrained check and treat the ally as trained (not for Use the Force)."}
 {"name":"Capture Droid","talent_tree":"Improviser","prereqassets/uisites":null,"benefit":"Once per encounter against an adjacent droid reduced to 0 hp, Mechanics vs Will Defense to capture: target moves +2 up the track, gains d8 hp and becomes friendly."}
 {"name":"Improved Jury-Rig","talent_tree":"Improviser","prereqassets/uisites":null,"benefit":"Jury-rig as a standard action instead of full; no check reqassets/uired to jury-rig; move the vehicle +3 steps up track instead of +2."}
 {"name":"Improvised Device","talent_tree":"Improviser","prereqassets/uisites":null,"benefit":"With DC 25 Mechanics and 1 hour, create an item worth 200 × class level credits; item cannot be rare or illegal, destroyed after 24 hours, usable once per day."}
@@ -635,7 +635,7 @@
 {"name":"Set for Stun","talent_tree":"Infiltration","prereqassets/uisites":null,"benefit":"If stun damage exceeds the threshold, the target moves -3 on the condition track instead of -2."}
 {"name":"Silent Takedown","talent_tree":"Infiltration","prereqassets/uisites":null,"benefit":"If you damage an unaware target with Stealth, the target cannot speak or make noise until the end of your next turn."}
 {"name":"Spynet Agent","talent_tree":"Bothan Spynet","prereqassets/uisites":"Bothan Spynet","benefit":"Gain Bothan Spynet benefits plus two talents from Infiltration; Gather Information replaces Knowledge (galactic lore) and is considered trained."}
-{"name":"Bothan Resources","talent_tree":"Bothan Spynet","prereqassets/uisites":"Spynet Agent","benefit":"With DC 20 Gather Information you can purchase standard eqassets/uipment at 50% cost or exotic items at 75% cost."}
+{"name":"Bothan Resources","talent_tree":"Bothan Spynet","prereqassets/uisites":"Spynet Agent","benefit":"With DC 20 Gather Information you can purchase standard equipment at 50% cost or exotic items at 75% cost."}
 {"name":"Knowledge is Life","talent_tree":"Bothan Spynet","prereqassets/uisites":"Spynet Agent","benefit":"With Knowledge (galactic lore) DC 15 + target level, gain +2 to one defense vs that target."}
 {"name":"Knowledge is Power","talent_tree":"Bothan Spynet","prereqassets/uisites":"Spynet Agent","benefit":"With Knowledge (galactic lore) DC 15 + target level, gain +1 critical range vs that target."}
 {"name":"Knowledge is Strength","talent_tree":"Bothan Spynet","prereqassets/uisites":"Spynet Agent","benefit":"With Knowledge (galactic lore) DC 15 + target level, gain a bonus to attacks vs that target."}

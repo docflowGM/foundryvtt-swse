@@ -2243,12 +2243,12 @@
     "name": "Tech Specialist",
     "type": "feat",
     "prereqassets/uisite": "Trained in Mechanics",
-    "description": "You may modify eqassets/uipment, weapons, armor, or droids to grant a +2 eqassets/uipment bonus to one skill or ability. Takes 1 hour and reqassets/uires a workshop.",
+    "description": "You may modify equipment, weapons, armor, or droids to grant a +2 equipment bonus to one skill or ability. Takes 1 hour and reqassets/uires a workshop.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
     "tags": [
       "mechanics",
-      "eqassets/uipment",
+      "equipment",
       "modification",
       "bonus"
     ],
@@ -2256,7 +2256,7 @@
       "Scoundrel"
     ],
     "system": {
-      "description": "You may modify eqassets/uipment, weapons, armor, or droids to grant a +2 eqassets/uipment bonus to one skill or ability. Takes 1 hour and reqassets/uires a workshop."
+      "description": "You may modify equipment, weapons, armor, or droids to grant a +2 equipment bonus to one skill or ability. Takes 1 hour and reqassets/uires a workshop."
     }
   },
   {

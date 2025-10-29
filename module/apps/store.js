@@ -45,13 +45,13 @@ export class SWSEStore extends FormApplication {
         const categories = {
             weapons: allItems.filter(i => i.type === "weapon"),
             armor: allItems.filter(i => i.type === "armor"),
-            eqassets/uipment: allItems.filter(i => 
-                i.type === "eqassets/uipment" || i.type === "item"
+            equipment: allItems.filter(i => 
+                i.type === "equipment" || i.type === "item"
             ),
             vehicles: [], // Vehicles need special handling
             droids: [],   // Droids as NPCs/actors
             misc: allItems.filter(i => 
-                !["weapon", "armor", "eqassets/uipment", "item", "vehicle", "droid"]
+                !["weapon", "armor", "equipment", "item", "vehicle", "droid"]
                     .includes(i.type)
             )
         };
@@ -89,13 +89,13 @@ export class SWSEStore extends FormApplication {
         
         const itemId = event.currentTarget.closest(".templates/apps/store-item")?.dataset.itemId;
         if (!itemId) {
-            assets/ui.notifications.warn("Invalid item selection.");
+            ui.notifications.warn("Invalid item selection.");
             return;
         }
         
         const item = game.items.get(itemId);
         if (!item) {
-            assets/ui.notifications.error("Item not found.");
+            ui.notifications.error("Item not found.");
             return;
         }
         
@@ -111,7 +111,7 @@ export class SWSEStore extends FormApplication {
             const credits = Number(actor.system.credits) || 0;
             
             if (credits < cost) {
-                assets/ui.notifications.warn(
+                ui.notifications.warn(
                     `Not enough credits! Need ${cost}, have ${credits}.`
                 );
                 return;
@@ -130,11 +130,11 @@ export class SWSEStore extends FormApplication {
             await actor.update({ "system.credits": credits - cost });
             await actor.createEmbeddedDocuments("Item", [item.toObject()]);
             
-            assets/ui.notifications.info(`${item.name} purchased for ${cost} credits.`);
+            ui.notifications.info(`${item.name} purchased for ${cost} credits.`);
             this.render();
         } catch (err) {
             console.error("SWSE Store | Purchase failed:", err);
-            assets/ui.notifications.error("Failed to complete purchase.");
+            ui.notifications.error("Failed to complete purchase.");
         }
     }
 
@@ -148,13 +148,13 @@ export class SWSEStore extends FormApplication {
         
         const itemId = event.currentTarget.closest(".templates/apps/store-item")?.dataset.itemId;
         if (!itemId) {
-            assets/ui.notifications.warn("Invalid item selection.");
+            ui.notifications.warn("Invalid item selection.");
             return;
         }
         
         const item = game.items.get(itemId);
         if (!item) {
-            assets/ui.notifications.error("Item not found.");
+            ui.notifications.error("Item not found.");
             return;
         }
         
@@ -164,7 +164,7 @@ export class SWSEStore extends FormApplication {
             // Check if actor owns this item
             const owned = actor.items.find(i => i.name === item.name);
             if (!owned) {
-                assets/ui.notifications.warn("You don't own this item!");
+                ui.notifications.warn("You don't own this item!");
                 return;
             }
             
@@ -185,11 +185,11 @@ export class SWSEStore extends FormApplication {
             await actor.update({ "system.credits": credits + refund });
             await owned.delete();
 
-            assets/ui.notifications.info(`${item.name} sold for ${refund} credits.`);
+            ui.notifications.info(`${item.name} sold for ${refund} credits.`);
             this.render();
         } catch (err) {
             console.error("SWSE Store | Sale failed:", err);
-            assets/ui.notifications.error("Failed to complete sale.");
+            ui.notifications.error("Failed to complete sale.");
         }
     }
 
@@ -202,7 +202,7 @@ export class SWSEStore extends FormApplication {
         event.preventDefault();
         
         if (!game.user.isGM) {
-            assets/ui.notifications.error("Only GMs can modify templates/apps/store settings.");
+            ui.notifications.error("Only GMs can modify templates/apps/store settings.");
             return;
         }
         
@@ -212,23 +212,23 @@ export class SWSEStore extends FormApplication {
             
             // Validate ranges
             if (markup < -100 || markup > 1000) {
-                assets/ui.notifications.warn("Markup must be between -100% and 1000%.");
+                ui.notifications.warn("Markup must be between -100% and 1000%.");
                 return;
             }
             
             if (discount < 0 || discount > 100) {
-                assets/ui.notifications.warn("Discount must be between 0% and 100%.");
+                ui.notifications.warn("Discount must be between 0% and 100%.");
                 return;
             }
             
             await game.settings.set("swse", "templates/apps/templates/apps/storeMarkup", markup);
             await game.settings.set("swse", "templates/apps/templates/apps/storeDiscount", discount);
             
-            assets/ui.notifications.info("Store settings updated.");
+            ui.notifications.info("Store settings updated.");
             this.render();
         } catch (err) {
             console.error("SWSE Store | Failed to save settings:", err);
-            assets/ui.notifications.error("Failed to save templates/apps/store settings.");
+            ui.notifications.error("Failed to save templates/apps/store settings.");
         }
     }
 }

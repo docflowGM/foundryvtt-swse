@@ -39,5 +39,5 @@
   }
   
   console.log(`SWSE | Migration complete: ${updated} updated, ${errors} errors`);
-  assets/ui.notifications.info(`Migration complete: ${updated} updated, ${errors} errors`);
+  ui.notifications.info(`Migration complete: ${updated} updated, ${errors} errors`);
 })();

@@ -1,7 +1,7 @@
 [
   {
     "name": "Gas Grenade",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -16,7 +16,7 @@
   },
   {
     "name": "Manual Trigger",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -31,7 +31,7 @@
   },
   {
     "name": "Manual Trigger",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -46,7 +46,7 @@
   },
   {
     "name": "Smoke Grenade",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -61,7 +61,7 @@
   },
   {
     "name": "Timer",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -76,7 +76,7 @@
   },
   {
     "name": "Timer",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -91,7 +91,7 @@
   },
   {
     "name": "Concussion Grenade",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -122,7 +122,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -143,7 +143,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -164,7 +164,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -185,7 +185,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -206,7 +206,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -227,7 +227,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -248,7 +248,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -269,7 +269,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -290,7 +290,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -311,7 +311,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -332,7 +332,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -353,7 +353,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -374,7 +374,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -395,7 +395,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -416,7 +416,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -437,7 +437,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -458,7 +458,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -479,7 +479,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -500,7 +500,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -521,7 +521,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -542,7 +542,7 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
@@ -563,12 +563,12 @@
       "special": [],
       "attackBonus": 0,
       "description": "",
-      "eqassets/uipped": false
+      "equipped": false
     }
   },
   {
     "name": "EMP Grenade",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -583,7 +583,7 @@
   },
   {
     "name": "Ion Grenade",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -598,7 +598,7 @@
   },
   {
     "name": "Repulsorlift Inhibitor",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -613,7 +613,7 @@
   },
   {
     "name": "Stun Grenade",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -628,7 +628,7 @@
   },
   {
     "name": "Pulse Grenade",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -643,7 +643,7 @@
   },
   {
     "name": "Antipersonnel Mine",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -658,7 +658,7 @@
   },
   {
     "name": "Flechette Mine",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -673,7 +673,7 @@
   },
   {
     "name": "Bounding Mine",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -688,7 +688,7 @@
   },
   {
     "name": "Frag Grenade",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -703,7 +703,7 @@
   },
   {
     "name": "Fragmentation Wire",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -718,7 +718,7 @@
   },
   {
     "name": "Razor Wire1",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -733,7 +733,7 @@
   },
   {
     "name": "Smart Mine",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -748,7 +748,7 @@
   },
   {
     "name": "Static Mine",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -763,7 +763,7 @@
   },
   {
     "name": "Vehicular Mine",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -778,7 +778,7 @@
   },
   {
     "name": "Clone Wars Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -793,7 +793,7 @@
   },
   {
     "name": "Com Scrambler",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -808,7 +808,7 @@
   },
   {
     "name": "Comlink",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -823,7 +823,7 @@
   },
   {
     "name": "Earbud Comlink",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -838,7 +838,7 @@
   },
   {
     "name": "Galaxy at War",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -853,7 +853,7 @@
   },
   {
     "name": "Galaxy of Intrigue",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -868,7 +868,7 @@
   },
   {
     "name": "Hands-Free Comlink",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -883,7 +883,7 @@
   },
   {
     "name": "Holo Converter",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -898,7 +898,7 @@
   },
   {
     "name": "Legacy Era Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -913,7 +913,7 @@
   },
   {
     "name": "Long-Range",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -928,7 +928,7 @@
   },
   {
     "name": "Panic Ring",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -943,7 +943,7 @@
   },
   {
     "name": "Pocket Scrambler1",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -958,7 +958,7 @@
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -973,7 +973,7 @@
   },
   {
     "name": "Short-Range",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -988,7 +988,7 @@
   },
   {
     "name": "Signal Wand",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1003,7 +1003,7 @@
   },
   {
     "name": "Targeting Beacon",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1018,7 +1018,7 @@
   },
   {
     "name": "Tightbeam Comlink",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1033,7 +1033,7 @@
   },
   {
     "name": "Unknown Regions",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1048,7 +1048,7 @@
   },
   {
     "name": "Visual Wrist Comm",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1063,7 +1063,7 @@
   },
   {
     "name": "Vox-Box",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1078,7 +1078,7 @@
   },
   {
     "name": "Force Unleashed Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1093,7 +1093,7 @@
   },
   {
     "name": "Galaxy at War",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1108,7 +1108,7 @@
   },
   {
     "name": "Rebellion Era Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1123,7 +1123,7 @@
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1138,7 +1138,7 @@
   },
   {
     "name": "+10*",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1153,7 +1153,7 @@
   },
   {
     "name": "-10*",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1168,7 +1168,7 @@
   },
   {
     "name": "-10*",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1183,7 +1183,7 @@
   },
   {
     "name": "-5*",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1198,7 +1198,7 @@
   },
   {
     "name": "1-11 Years",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1213,7 +1213,7 @@
   },
   {
     "name": "ABC Scrambler",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1228,7 +1228,7 @@
   },
   {
     "name": "All-Temperature Cloak",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1243,7 +1243,7 @@
   },
   {
     "name": "Ambient Aural Amplifier",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1258,7 +1258,7 @@
   },
   {
     "name": "Anti-Rad Dose",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1273,7 +1273,7 @@
   },
   {
     "name": "Antidote Synthesizer",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1288,7 +1288,7 @@
   },
   {
     "name": "Antisecurity Blades",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1303,7 +1303,7 @@
   },
   {
     "name": "Antitoxin Patch",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1318,7 +1318,7 @@
   },
   {
     "name": "Aquata Breather",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1333,7 +1333,7 @@
   },
   {
     "name": "Armor Reinforcement",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1348,7 +1348,7 @@
   },
   {
     "name": "Audiorecorder",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1363,7 +1363,7 @@
   },
   {
     "name": "Aural Amplifier",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1378,7 +1378,7 @@
   },
   {
     "name": "Bacta (Per Liter)1",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1393,7 +1393,7 @@
   },
   {
     "name": "Bacta Tank (Empty)",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1408,7 +1408,7 @@
   },
   {
     "name": "Bandolier",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1423,7 +1423,7 @@
   },
   {
     "name": "Basic Datapad",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1438,7 +1438,7 @@
   },
   {
     "name": "Beam Splitter",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1453,7 +1453,7 @@
   },
   {
     "name": "Binder Cuffs",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1468,7 +1468,7 @@
   },
   {
     "name": "Bio-Stabilizer Implant",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1483,7 +1483,7 @@
   },
   {
     "name": "BioTech Borg Construct AJ-6",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1498,7 +1498,7 @@
   },
   {
     "name": "Bioscanner",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1513,7 +1513,7 @@
   },
   {
     "name": "Biotech Tool Kit",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1528,7 +1528,7 @@
   },
   {
     "name": "Blank Datacards (10)",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1543,7 +1543,7 @@
   },
   {
     "name": "Body Spikes",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1558,7 +1558,7 @@
   },
   {
     "name": "Bracer Computer",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1573,7 +1573,7 @@
   },
   {
     "name": "Breath Mask",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1588,7 +1588,7 @@
   },
   {
     "name": "Bundar Root",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1603,7 +1603,7 @@
   },
   {
     "name": "CIRCUMSTANCES",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1618,7 +1618,7 @@
   },
   {
     "name": "Camouflage Netting",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1633,7 +1633,7 @@
   },
   {
     "name": "Camouflage Poncho",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1648,7 +1648,7 @@
   },
   {
     "name": "Cardio Implant",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1663,7 +1663,7 @@
   },
   {
     "name": "Celegian Life-Support Chamber",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1678,7 +1678,7 @@
   },
   {
     "name": "Chain (3 meters)",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1693,7 +1693,7 @@
   },
   {
     "name": "Chuba Poison",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1708,7 +1708,7 @@
   },
   {
     "name": "Climbing Harness",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1723,7 +1723,7 @@
   },
   {
     "name": "Clone Wars Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1738,7 +1738,7 @@
   },
   {
     "name": "Clone Wars Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1753,7 +1753,7 @@
   },
   {
     "name": "Clone Wars Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1768,7 +1768,7 @@
   },
   {
     "name": "Clone Wars Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1783,7 +1783,7 @@
   },
   {
     "name": "Clone Wars Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1798,7 +1798,7 @@
   },
   {
     "name": "Code Cylinder",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1813,7 +1813,7 @@
   },
   {
     "name": "Colossal",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1828,7 +1828,7 @@
   },
   {
     "name": "Com Scrambler",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1843,7 +1843,7 @@
   },
   {
     "name": "Combat Implant",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1858,7 +1858,7 @@
   },
   {
     "name": "Comlink",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1873,7 +1873,7 @@
   },
   {
     "name": "Communication Scanner",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1888,7 +1888,7 @@
   },
   {
     "name": "Complex",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1903,7 +1903,7 @@
   },
   {
     "name": "Complex",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1918,7 +1918,7 @@
   },
   {
     "name": "Computer Interface Visor",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1933,7 +1933,7 @@
   },
   {
     "name": "Computer Spike",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1948,7 +1948,7 @@
   },
   {
     "name": "Computerized Interface Scope",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1963,7 +1963,7 @@
   },
   {
     "name": "Cosmetic Enhancements",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1978,7 +1978,7 @@
   },
   {
     "name": "Credit Chip",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -1993,7 +1993,7 @@
   },
   {
     "name": "Cryogenic Pouch",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2008,7 +2008,7 @@
   },
   {
     "name": "Cybernetic Prosthesis",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2023,7 +2023,7 @@
   },
   {
     "name": "DC MODIFIER",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2038,7 +2038,7 @@
   },
   {
     "name": "Datapad",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2053,7 +2053,7 @@
   },
   {
     "name": "Dawn of Defiance",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2068,7 +2068,7 @@
   },
   {
     "name": "Dawn of Defiance",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2083,7 +2083,7 @@
   },
   {
     "name": "Decoy Glow Rod",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2098,7 +2098,7 @@
   },
   {
     "name": "Demolitions Sensor",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2113,7 +2113,7 @@
   },
   {
     "name": "Devaronian Blood-Poison",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2128,7 +2128,7 @@
   },
   {
     "name": "Dioxis",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2143,7 +2143,7 @@
   },
   {
     "name": "Distilled Trihexalon",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2158,7 +2158,7 @@
   },
   {
     "name": "Droid Diagnostic",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2173,7 +2173,7 @@
   },
   {
     "name": "Durasteel Bonding",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2188,7 +2188,7 @@
   },
   {
     "name": "Earbud Comlink",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2203,7 +2203,7 @@
   },
   {
     "name": "Electrobinoculars",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2218,7 +2218,7 @@
   },
   {
     "name": "Emergency Vacuum Seal",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2233,7 +2233,7 @@
   },
   {
     "name": "Energy Cell",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2248,7 +2248,7 @@
   },
   {
     "name": "Energy-Binding Prosthesis",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2263,7 +2263,7 @@
   },
   {
     "name": "Enhanced Energy Projector",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2278,7 +2278,7 @@
   },
   {
     "name": "Enhanced Vision",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2293,7 +2293,7 @@
   },
   {
     "name": "Falsin's Rot",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2308,7 +2308,7 @@
   },
   {
     "name": "FastFlesh Medpac",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2323,7 +2323,7 @@
   },
   {
     "name": "Field Camouflage Netting",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2338,7 +2338,7 @@
   },
   {
     "name": "Field Food Processor",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2353,7 +2353,7 @@
   },
   {
     "name": "Field Kit",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2368,7 +2368,7 @@
   },
   {
     "name": "Fire Extingassets/uisher",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2383,7 +2383,7 @@
   },
   {
     "name": "Fire Paste",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2398,7 +2398,7 @@
   },
   {
     "name": "Fire Rod",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2413,7 +2413,7 @@
   },
   {
     "name": "Flash Suppressor/Silencer",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2428,7 +2428,7 @@
   },
   {
     "name": "Flight Sassets/uit",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2443,7 +2443,7 @@
   },
   {
     "name": "Force Cage",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2458,7 +2458,7 @@
   },
   {
     "name": "Force Detector",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2473,7 +2473,7 @@
   },
   {
     "name": "Force Training Aid",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2488,7 +2488,7 @@
   },
   {
     "name": "Force Unleashed Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2503,7 +2503,7 @@
   },
   {
     "name": "Force Unleashed Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2518,7 +2518,7 @@
   },
   {
     "name": "Force Unleashed Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2533,7 +2533,7 @@
   },
   {
     "name": "Force Unleashed Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2548,7 +2548,7 @@
   },
   {
     "name": "Fusion Lantern",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2563,7 +2563,7 @@
   },
   {
     "name": "Galaxy at War",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2578,7 +2578,7 @@
   },
   {
     "name": "Galaxy at War",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2593,7 +2593,7 @@
   },
   {
     "name": "Galaxy at War",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2608,7 +2608,7 @@
   },
   {
     "name": "Galaxy at War",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2623,7 +2623,7 @@
   },
   {
     "name": "Galaxy at War",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2638,7 +2638,7 @@
   },
   {
     "name": "Galaxy at War",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2653,7 +2653,7 @@
   },
   {
     "name": "Galaxy at War",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2668,7 +2668,7 @@
   },
   {
     "name": "Galaxy at War",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2683,7 +2683,7 @@
   },
   {
     "name": "Galaxy of Intrigue",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2698,7 +2698,7 @@
   },
   {
     "name": "Galaxy of Intrigue",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2713,7 +2713,7 @@
   },
   {
     "name": "Galaxy of Intrigue",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2728,7 +2728,7 @@
   },
   {
     "name": "Galaxy of Intrigue",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2743,7 +2743,7 @@
   },
   {
     "name": "Galaxy of Intrigue",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2758,7 +2758,7 @@
   },
   {
     "name": "Galaxy of Intrigue",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2773,7 +2773,7 @@
   },
   {
     "name": "Gargantuan",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2788,7 +2788,7 @@
   },
   {
     "name": "Gargantuan",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2803,7 +2803,7 @@
   },
   {
     "name": "Glow Rod",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2818,7 +2818,7 @@
   },
   {
     "name": "Hair Trigger",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2833,7 +2833,7 @@
   },
   {
     "name": "Halo Lamp",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2848,7 +2848,7 @@
   },
   {
     "name": "Hands-Free Comlink",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2863,7 +2863,7 @@
   },
   {
     "name": "Healing Stimulant",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2878,7 +2878,7 @@
   },
   {
     "name": "Heat Sensor",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2893,7 +2893,7 @@
   },
   {
     "name": "Helmet Package",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2908,7 +2908,7 @@
   },
   {
     "name": "HiBaka 2000 Mem-Stik",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2923,7 +2923,7 @@
   },
   {
     "name": "Holo Converter",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2938,7 +2938,7 @@
   },
   {
     "name": "Holorecorder",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2953,7 +2953,7 @@
   },
   {
     "name": "Holoshroud",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2968,7 +2968,7 @@
   },
   {
     "name": "Holster",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2983,7 +2983,7 @@
   },
   {
     "name": "Holster (Concealed)",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -2998,7 +2998,7 @@
   },
   {
     "name": "Holster (Hip)",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3013,7 +3013,7 @@
   },
   {
     "name": "Homebrew",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3028,7 +3028,7 @@
   },
   {
     "name": "Huge",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3043,7 +3043,7 @@
   },
   {
     "name": "Huge",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3058,7 +3058,7 @@
   },
   {
     "name": "Hush-About Personal Jet Pack",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3073,7 +3073,7 @@
   },
   {
     "name": "Hypoinjector Wristband",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3088,7 +3088,7 @@
   },
   {
     "name": "Improved Energy Cell",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3103,7 +3103,7 @@
   },
   {
     "name": "Infrared Sensor Eye",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3118,7 +3118,7 @@
   },
   {
     "name": "Irksh Poison",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3133,7 +3133,7 @@
   },
   {
     "name": "Jedi Academy Training Manual",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3148,7 +3148,7 @@
   },
   {
     "name": "Jedi Academy Training Manual",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3163,7 +3163,7 @@
   },
   {
     "name": "Jedi Academy Training Manual",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3178,7 +3178,7 @@
   },
   {
     "name": "Jedi Academy Training Manual",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3193,7 +3193,7 @@
   },
   {
     "name": "Jedi Academy Training Manual",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3208,7 +3208,7 @@
   },
   {
     "name": "Jedi Academy Training Manual",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3223,7 +3223,7 @@
   },
   {
     "name": "Jet Pack",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3238,7 +3238,7 @@
   },
   {
     "name": "Knights of the Old Republic Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3253,7 +3253,7 @@
   },
   {
     "name": "Knights of the Old Republic Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3268,7 +3268,7 @@
   },
   {
     "name": "Knights of the Old Republic Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3283,7 +3283,7 @@
   },
   {
     "name": "Knights of the Old Republic Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3298,7 +3298,7 @@
   },
   {
     "name": "Knights of the Old Republic Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3313,7 +3313,7 @@
   },
   {
     "name": "Knights of the Old Republic Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3328,7 +3328,7 @@
   },
   {
     "name": "Knights of the Old Republic Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3343,7 +3343,7 @@
   },
   {
     "name": "Knights of the Old Republic Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3358,7 +3358,7 @@
   },
   {
     "name": "Knights of the Old Republic Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3373,7 +3373,7 @@
   },
   {
     "name": "Knockout Drugs",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3388,7 +3388,7 @@
   },
   {
     "name": "Large",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3403,7 +3403,7 @@
   },
   {
     "name": "Large",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3418,7 +3418,7 @@
   },
   {
     "name": "Lectroticker",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3433,7 +3433,7 @@
   },
   {
     "name": "Legacy Era Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3448,7 +3448,7 @@
   },
   {
     "name": "Legacy Era Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3463,7 +3463,7 @@
   },
   {
     "name": "Legacy Era Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3478,7 +3478,7 @@
   },
   {
     "name": "Legacy Era Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3493,7 +3493,7 @@
   },
   {
     "name": "Legacy Era Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3508,7 +3508,7 @@
   },
   {
     "name": "Liqassets/uid Cable Dispenser (15 meters)",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3523,7 +3523,7 @@
   },
   {
     "name": "Lock Breaking Kit",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3538,7 +3538,7 @@
   },
   {
     "name": "Long-Range",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3553,7 +3553,7 @@
   },
   {
     "name": "Man Trap",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3568,7 +3568,7 @@
   },
   {
     "name": "Mandalorian Jet Pack",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3583,7 +3583,7 @@
   },
   {
     "name": "Mechanical Interface Visor",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3598,7 +3598,7 @@
   },
   {
     "name": "Medical Bundle",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3613,7 +3613,7 @@
   },
   {
     "name": "Medical Interface Visor",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3628,7 +3628,7 @@
   },
   {
     "name": "Medical Kit",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3643,7 +3643,7 @@
   },
   {
     "name": "Medisensor",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3658,7 +3658,7 @@
   },
   {
     "name": "Medium",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3673,7 +3673,7 @@
   },
   {
     "name": "Medium",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3688,7 +3688,7 @@
   },
   {
     "name": "Medpac",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3703,7 +3703,7 @@
   },
   {
     "name": "Memory Implant",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3718,7 +3718,7 @@
   },
   {
     "name": "Mesh Tape",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3733,7 +3733,7 @@
   },
   {
     "name": "Mesh Underlay",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3748,7 +3748,7 @@
   },
   {
     "name": "Microlab",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3763,7 +3763,7 @@
   },
   {
     "name": "Moderate",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3778,7 +3778,7 @@
   },
   {
     "name": "Motion Sensing Visor",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3793,7 +3793,7 @@
   },
   {
     "name": "Natural Armor",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3808,7 +3808,7 @@
   },
   {
     "name": "Neural Band",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3823,7 +3823,7 @@
   },
   {
     "name": "Night Vision Device",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3838,7 +3838,7 @@
   },
   {
     "name": "Null Gas",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3853,7 +3853,7 @@
   },
   {
     "name": "Obah",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3868,7 +3868,7 @@
   },
   {
     "name": "Ooglith Masquer",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3883,7 +3883,7 @@
   },
   {
     "name": "Panic Ring",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3898,7 +3898,7 @@
   },
   {
     "name": "Paralytic Poison",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3913,7 +3913,7 @@
   },
   {
     "name": "Personal Field Shelter",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3928,7 +3928,7 @@
   },
   {
     "name": "Personal Holoprojector",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3943,7 +3943,7 @@
   },
   {
     "name": "Personal Multitool",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3958,7 +3958,7 @@
   },
   {
     "name": "Personal Translator",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3973,7 +3973,7 @@
   },
   {
     "name": "Plasma Bridge",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -3988,7 +3988,7 @@
   },
   {
     "name": "Plasma Cutter",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4003,7 +4003,7 @@
   },
   {
     "name": "Plastent",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4018,7 +4018,7 @@
   },
   {
     "name": "Pocket Scrambler1",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4033,7 +4033,7 @@
   },
   {
     "name": "Portable Beacon",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4048,7 +4048,7 @@
   },
   {
     "name": "Portable Computer",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4063,7 +4063,7 @@
   },
   {
     "name": "Power Generator",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4078,7 +4078,7 @@
   },
   {
     "name": "Power Pack",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4093,7 +4093,7 @@
   },
   {
     "name": "Power Recharger",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4108,7 +4108,7 @@
   },
   {
     "name": "Propulsion Pack",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4123,7 +4123,7 @@
   },
   {
     "name": "Proximity Flare",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4138,7 +4138,7 @@
   },
   {
     "name": "Quongoosh Essence",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4153,7 +4153,7 @@
   },
   {
     "name": "Radiation Detector",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4168,7 +4168,7 @@
   },
   {
     "name": "Ration Pack",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4183,7 +4183,7 @@
   },
   {
     "name": "Rebellion Era Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4198,7 +4198,7 @@
   },
   {
     "name": "Rebellion Era Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4213,7 +4213,7 @@
   },
   {
     "name": "Rebellion Era Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4228,7 +4228,7 @@
   },
   {
     "name": "Rebellion Era Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4243,7 +4243,7 @@
   },
   {
     "name": "Recording Unit",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4258,7 +4258,7 @@
   },
   {
     "name": "Redirection Crystal",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4273,7 +4273,7 @@
   },
   {
     "name": "Repulsor Boots",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4288,7 +4288,7 @@
   },
   {
     "name": "Repulsor Hitch",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4303,7 +4303,7 @@
   },
   {
     "name": "Repulsor Pad",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4318,7 +4318,7 @@
   },
   {
     "name": "Rhen-Orm Biocomputer",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4333,7 +4333,7 @@
   },
   {
     "name": "Riding Saddle",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4348,7 +4348,7 @@
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4363,7 +4363,7 @@
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4378,7 +4378,7 @@
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4393,7 +4393,7 @@
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4408,7 +4408,7 @@
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4423,7 +4423,7 @@
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4438,7 +4438,7 @@
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4453,7 +4453,7 @@
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4468,7 +4468,7 @@
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4483,7 +4483,7 @@
   },
   {
     "name": "Saga Edition Core Rulebook",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4498,7 +4498,7 @@
   },
   {
     "name": "Scum and Villainy",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4513,7 +4513,7 @@
   },
   {
     "name": "Scum and Villainy",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4528,7 +4528,7 @@
   },
   {
     "name": "Security Kit",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4543,7 +4543,7 @@
   },
   {
     "name": "Sensor Pack",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4558,7 +4558,7 @@
   },
   {
     "name": "Sensory Enhancement",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4573,7 +4573,7 @@
   },
   {
     "name": "Shield Cage",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4588,7 +4588,7 @@
   },
   {
     "name": "Shipsassets/uit",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4603,7 +4603,7 @@
   },
   {
     "name": "Short-Range",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4618,7 +4618,7 @@
   },
   {
     "name": "Signal Wand",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4633,7 +4633,7 @@
   },
   {
     "name": "Simple",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4648,7 +4648,7 @@
   },
   {
     "name": "Simple",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4663,7 +4663,7 @@
   },
   {
     "name": "Sith Battle Harness",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4678,7 +4678,7 @@
   },
   {
     "name": "Sith Poison",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4693,7 +4693,7 @@
   },
   {
     "name": "Skeletal Reinforcement",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4708,7 +4708,7 @@
   },
   {
     "name": "Sonar Mapper",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4723,7 +4723,7 @@
   },
   {
     "name": "Sound Sponge",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4738,7 +4738,7 @@
   },
   {
     "name": "Space Sassets/uit",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4753,7 +4753,7 @@
   },
   {
     "name": "Spacer's Chest",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4768,7 +4768,7 @@
   },
   {
     "name": "Spy Bug",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4783,7 +4783,7 @@
   },
   {
     "name": "Standard Datapad",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4798,7 +4798,7 @@
   },
   {
     "name": "Stealth Field Generator",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4813,7 +4813,7 @@
   },
   {
     "name": "Subcutaneous Comlink",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4828,7 +4828,7 @@
   },
   {
     "name": "Subelectronic Converter",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4843,7 +4843,7 @@
   },
   {
     "name": "Subelectronic Converter",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4858,7 +4858,7 @@
   },
   {
     "name": "Subsonic Field Emitter",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4873,7 +4873,7 @@
   },
   {
     "name": "Surgery Kit",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4888,7 +4888,7 @@
   },
   {
     "name": "Surveillance Detector",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4903,7 +4903,7 @@
   },
   {
     "name": "Surveillance Tagger",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4918,7 +4918,7 @@
   },
   {
     "name": "Syntherope (45 meters)",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4933,7 +4933,7 @@
   },
   {
     "name": "Targeting Beacon",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4948,7 +4948,7 @@
   },
   {
     "name": "Targeting Eye",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4963,7 +4963,7 @@
   },
   {
     "name": "Targeting Scope",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4978,7 +4978,7 @@
   },
   {
     "name": "Targeting Scope (Enhanced Low-Light)",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -4993,7 +4993,7 @@
   },
   {
     "name": "Targeting Scope (Standard)",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5008,7 +5008,7 @@
   },
   {
     "name": "Telescopic Eye",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5023,7 +5023,7 @@
   },
   {
     "name": "Threats of the Galaxy",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5038,7 +5038,7 @@
   },
   {
     "name": "Threats of the Galaxy",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5053,7 +5053,7 @@
   },
   {
     "name": "Threats of the Galaxy",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5068,7 +5068,7 @@
   },
   {
     "name": "Threats of the Galaxy",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5083,7 +5083,7 @@
   },
   {
     "name": "Threats of the Galaxy",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5098,7 +5098,7 @@
   },
   {
     "name": "Threats of the Galaxy",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5113,7 +5113,7 @@
   },
   {
     "name": "Tightbeam Comlink",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5128,7 +5128,7 @@
   },
   {
     "name": "Tool Kit",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5143,7 +5143,7 @@
   },
   {
     "name": "Toxin Detector",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5158,7 +5158,7 @@
   },
   {
     "name": "Trauger",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5173,7 +5173,7 @@
   },
   {
     "name": "Tremor Cell",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5188,7 +5188,7 @@
   },
   {
     "name": "Tremor Sensor",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5203,7 +5203,7 @@
   },
   {
     "name": "Triangulation Visor",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5218,7 +5218,7 @@
   },
   {
     "name": "Tricky",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5233,7 +5233,7 @@
   },
   {
     "name": "Trihexalon",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5248,7 +5248,7 @@
   },
   {
     "name": "Universal Energy Cage",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5263,7 +5263,7 @@
   },
   {
     "name": "Unknown Regions",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5278,7 +5278,7 @@
   },
   {
     "name": "Unknown Regions",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5293,7 +5293,7 @@
   },
   {
     "name": "Unknown Regions",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5308,7 +5308,7 @@
   },
   {
     "name": "Unknown Regions",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5323,7 +5323,7 @@
   },
   {
     "name": "Unknown Regions",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5338,7 +5338,7 @@
   },
   {
     "name": "Unknown Regions",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5353,7 +5353,7 @@
   },
   {
     "name": "Utility Belt",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5368,7 +5368,7 @@
   },
   {
     "name": "Utility Belt (Empty)",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5383,7 +5383,7 @@
   },
   {
     "name": "Utility Belt (Standard)",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5398,7 +5398,7 @@
   },
   {
     "name": "Vacuum Mask",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5413,7 +5413,7 @@
   },
   {
     "name": "Vacuum Survival Pouch",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5428,7 +5428,7 @@
   },
   {
     "name": "Veridicator",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5443,7 +5443,7 @@
   },
   {
     "name": "Vid-Vox Scrambler",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5458,7 +5458,7 @@
   },
   {
     "name": "Videorecorder",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5473,7 +5473,7 @@
   },
   {
     "name": "Visual Wrist Comm",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5488,7 +5488,7 @@
   },
   {
     "name": "Vox-Box",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5503,7 +5503,7 @@
   },
   {
     "name": "War Saddle",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5518,7 +5518,7 @@
   },
   {
     "name": "Water Extractor",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5533,7 +5533,7 @@
   },
   {
     "name": "Web Enhancements",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5548,7 +5548,7 @@
   },
   {
     "name": "Xcalq Stealth Pack",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5563,7 +5563,7 @@
   },
   {
     "name": "Xcalq-3GA \"Slicer Special\" Portable Computer",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5578,7 +5578,7 @@
   },
   {
     "name": "0-6 Squares",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5593,7 +5593,7 @@
   },
   {
     "name": "11-12 Squares",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5608,7 +5608,7 @@
   },
   {
     "name": "7-8 Squares",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5623,7 +5623,7 @@
   },
   {
     "name": "9-10 Squares",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5638,7 +5638,7 @@
   },
   {
     "name": "Clone Wars Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5653,7 +5653,7 @@
   },
   {
     "name": "Galaxy at War",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5668,7 +5668,7 @@
   },
   {
     "name": "Jedi Academy Training Manual",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5683,7 +5683,7 @@
   },
   {
     "name": "Knights of the Old Republic Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5698,7 +5698,7 @@
   },
   {
     "name": "Rebellion Era Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5713,7 +5713,7 @@
   },
   {
     "name": "Force Unleashed Campaign Gassets/uide",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5728,7 +5728,7 @@
   },
   {
     "name": "Galaxy at War",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],
@@ -5743,7 +5743,7 @@
   },
   {
     "name": "Web Enhancements",
-    "type": "eqassets/uipment",
+    "type": "equipment",
     "img": "icons/svg/upgrade.svg",
     "system": {
       "tags": [],

@@ -173,7 +173,7 @@ export default class CharacterGenerator extends Application {
         } catch (err) {
             console.error("SWSE CharGen | Critical error loading data:", err);
             this._loadingError = "Failed to load character generation data. Please refresh and try again.";
-            assets/ui.notifications.error(this._loadingError);
+            ui.notifications.error(this._loadingError);
         }
     }
 
@@ -323,21 +323,21 @@ export default class CharacterGenerator extends Application {
         switch (this.currentStep) {
             case "name":
                 if (!this.characterData.name || this.characterData.name.trim() === "") {
-                    assets/ui.notifications.warn("Please enter a character name.");
+                    ui.notifications.warn("Please enter a character name.");
                     return false;
                 }
                 break;
                 
             case "species":
                 if (!this.characterData.species) {
-                    assets/ui.notifications.warn("Please select a species.");
+                    ui.notifications.warn("Please select a species.");
                     return false;
                 }
                 break;
                 
             case "class":
                 if (this.characterData.classes.length === 0) {
-                    assets/ui.notifications.warn("Please select a class.");
+                    ui.notifications.warn("Please select a class.");
                     return false;
                 }
                 break;
@@ -348,7 +348,7 @@ export default class CharacterGenerator extends Application {
                     const base = Number(ability.base || CHARGEN_CONSTANTS.DEFAULT_ABILITY_SCORE);
                     if (base < CHARGEN_CONSTANTS.MIN_ABILITY_SCORE || 
                         base > CHARGEN_CONSTANTS.MAX_ABILITY_SCORE) {
-                        assets/ui.notifications.warn(
+                        ui.notifications.warn(
                             `${key.toUpperCase()} must be between ${CHARGEN_CONSTANTS.MIN_ABILITY_SCORE} and ${CHARGEN_CONSTANTS.MAX_ABILITY_SCORE}.`
                         );
                         return false;
@@ -370,7 +370,7 @@ export default class CharacterGenerator extends Application {
         
         const speciesKey = event.currentTarget.dataset.species;
         if (!speciesKey) {
-            assets/ui.notifications.warn("Invalid species selection.");
+            ui.notifications.warn("Invalid species selection.");
             return;
         }
         
@@ -389,7 +389,7 @@ export default class CharacterGenerator extends Application {
             await this._onNextStep(event);
         } catch (err) {
             console.error("SWSE CharGen | Error selecting species:", err);
-            assets/ui.notifications.error("Failed to apply species bonuses.");
+            ui.notifications.error("Failed to apply species bonuses.");
         }
     }
 
@@ -420,7 +420,7 @@ export default class CharacterGenerator extends Application {
         
         const className = event.currentTarget.dataset.class;
         if (!className) {
-            assets/ui.notifications.warn("Invalid class selection.");
+            ui.notifications.warn("Invalid class selection.");
             return;
         }
         
@@ -431,7 +431,7 @@ export default class CharacterGenerator extends Application {
             );
             
             if (!classDoc) {
-                assets/ui.notifications.error(`Class "${className}" not found.`);
+                ui.notifications.error(`Class "${className}" not found.`);
                 return;
             }
             
@@ -479,7 +479,7 @@ export default class CharacterGenerator extends Application {
             await this._onNextStep(event);
         } catch (err) {
             console.error("SWSE CharGen | Error selecting class:", err);
-            assets/ui.notifications.error("Failed to apply class features.");
+            ui.notifications.error("Failed to apply class features.");
         }
     }
 
@@ -518,19 +518,19 @@ export default class CharacterGenerator extends Application {
         
         const id = event.currentTarget.dataset.featid;
         if (!id) {
-            assets/ui.notifications.warn("Invalid feat selection.");
+            ui.notifications.warn("Invalid feat selection.");
             return;
         }
         
         const feat = this._packs.feats.find(f => f._id === id || f.name === id);
         
         if (!feat) {
-            assets/ui.notifications.warn("Feat not found.");
+            ui.notifications.warn("Feat not found.");
             return;
         }
         
         if (this.characterData.feats.find(f => f.name === feat.name)) {
-            assets/ui.notifications.info("You already have this feat.");
+            ui.notifications.info("You already have this feat.");
             return;
         }
         
@@ -554,19 +554,19 @@ export default class CharacterGenerator extends Application {
         
         const id = event.currentTarget.dataset.talentid;
         if (!id) {
-            assets/ui.notifications.warn("Invalid talent selection.");
+            ui.notifications.warn("Invalid talent selection.");
             return;
         }
         
         const tal = this._packs.talents.find(t => t._id === id || t.name === id);
         
         if (!tal) {
-            assets/ui.notifications.warn("Talent not found.");
+            ui.notifications.warn("Talent not found.");
             return;
         }
         
         if (this.characterData.talents.find(t => t.name === tal.name)) {
-            assets/ui.notifications.info("You already have this talent.");
+            ui.notifications.info("You already have this talent.");
             return;
         }
         
@@ -636,7 +636,7 @@ export default class CharacterGenerator extends Application {
             const deltaCost = costNew - costNow;
             
             if (deltaCost > pool) {
-                assets/ui.notifications.warn("Not enough point-buy points remaining.");
+                ui.notifications.warn("Not enough point-buy points remaining.");
                 return;
             }
             
@@ -668,13 +668,13 @@ export default class CharacterGenerator extends Application {
                         btn.onclick = () => assignRollToNext(res.total);
                         container.appendChild(btn);
                     });
-                    assets/ui.notifications.info(
+                    ui.notifications.info(
                         "Standard rolls generated  click a result then click an ability to assign."
                     );
                 }
             } catch (err) {
                 console.error("SWSE CharGen | Error rolling standard array:", err);
-                assets/ui.notifications.error("Failed to generate ability rolls.");
+                ui.notifications.error("Failed to generate ability rolls.");
             }
         };
 
@@ -722,14 +722,14 @@ export default class CharacterGenerator extends Application {
                         div.onclick = () => selectOrganicGroup(div);
                         container.appendChild(div);
                     });
-                    assets/ui.notifications.info(
+                    ui.notifications.info(
                         "Organic roll completed  click a group, then click an ability to assign."
                     );
                 }
                 doc._selectedOrganic = null;
             } catch (err) {
                 console.error("SWSE CharGen | Error rolling organic:", err);
-                assets/ui.notifications.error("Failed to generate organic rolls.");
+                ui.notifications.error("Failed to generate organic rolls.");
             }
         };
 
@@ -851,7 +851,7 @@ export default class CharacterGenerator extends Application {
             trainedCheck.checked = skillData.trained;
             trainedCheck.onchange = (ev) => {
                 if (ev.target.checked && trainedCount >= maxTrained) {
-                    assets/ui.notifications.warn(
+                    ui.notifications.warn(
                         `Maximum trained skills (${maxTrained}) reached!`
                     );
                     ev.target.checked = false;
@@ -986,7 +986,7 @@ export default class CharacterGenerator extends Application {
             this.close();
         } catch (err) {
             console.error("SWSE CharGen | Error finishing character:", err);
-            assets/ui.notifications.error("Failed to create character. See console for details.");
+            ui.notifications.error("Failed to create character. See console for details.");
         }
     }
 
@@ -1046,7 +1046,7 @@ export default class CharacterGenerator extends Application {
             // Open the character sheet
             created.sheet.render(true);
             
-            assets/ui.notifications.info(
+            ui.notifications.info(
                 `Character ${this.characterData.name} created successfully!`
             );
         } catch (err) {
@@ -1088,7 +1088,7 @@ export default class CharacterGenerator extends Application {
                 await this.actor.createEmbeddedDocuments("Item", items);
             }
             
-            assets/ui.notifications.info(
+            ui.notifications.info(
                 `${this.actor.name} leveled up to level ${newLevel}!`
             );
         } catch (err) {

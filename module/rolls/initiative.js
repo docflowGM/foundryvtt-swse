@@ -60,6 +60,6 @@ export async function setInitiative(actor, initiative) {
   
   if (combatant) {
     await game.combat.setInitiative(combatant.id, initiative);
-    assets/ui.notifications.info(`${actor.name} initiative set to ${initiative}`);
+    ui.notifications.info(`${actor.name} initiative set to ${initiative}`);
   }
 }

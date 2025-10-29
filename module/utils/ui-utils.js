@@ -8,7 +8,7 @@
  * @param {string} type - Notification type: "info", "warning", "error"
  */
 export function notify(message, type = "info") {
-    assets/ui.notifications[type](message);
+    ui.notifications[type](message);
 }
 
 /**

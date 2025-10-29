@@ -58,7 +58,7 @@ export async function applyDamage(token, damage) {
   
   await actor.update({"system.hp.value": newHP});
   
-  assets/ui.notifications.info(`${actor.name} takes ${damage} damage!`);
+  ui.notifications.info(`${actor.name} takes ${damage} damage!`);
   
   return actor;
 }

@@ -93,7 +93,7 @@ function initializeConditionTrack(html, actor) {
     // Update actor
     if (actor) {
       await actor.update({ 'system.condition': condition });
-      assets/ui.notifications.info(`Condition set to: ${condition}`);
+      ui.notifications.info(`Condition set to: ${condition}`);
     }
   });
 }
@@ -122,7 +122,7 @@ function initializeSkillRolls(html, actor) {
           flavor: `${skillKey} Check`
         });
       } else {
-        assets/ui.notifications.warn(`Skill ${skillKey} not found or total not calculated`);
+        ui.notifications.warn(`Skill ${skillKey} not found or total not calculated`);
       }
     }
   });
@@ -141,7 +141,7 @@ function initializeAttributeRolls(html, actor) {
 
     const ability = actor.system.abilities?.[abilityKey];
     if (!ability || ability.mod === undefined) {
-      assets/ui.notifications.warn(`Ability ${abilityKey} not found`);
+      ui.notifications.warn(`Ability ${abilityKey} not found`);
       return;
     }
 
@@ -196,17 +196,17 @@ export function initializePortraitClick(html, actor) {
 }
 
 /**
- * Handle add eqassets/uipment button
+ * Handle add equipment button
  */
 export function initializeAddEqassets/uipment(html, actor) {
-  html.find('.add-eqassets/uipment-btn').on('click', async (event) => {
+  html.find('.add-equipment-btn').on('click', async (event) => {
     event.preventDefault();
     
     if (!actor) return;
 
     // Open compendium or item browser
     // This is a placeholder - implement according to your system
-    assets/ui.notifications.info("Add Eqassets/uipment functionality - implement item browser/compendium");
+    ui.notifications.info("Add Eqassets/uipment functionality - implement item browser/compendium");
   });
 }
 
@@ -219,7 +219,7 @@ export function initializeAddFeat(html, actor) {
     
     if (!actor) return;
 
-    assets/ui.notifications.info("Add Feat functionality - implement feat browser/compendium");
+    ui.notifications.info("Add Feat functionality - implement feat browser/compendium");
   });
 }
 
@@ -232,7 +232,7 @@ export function initializeAddTalent(html, actor) {
     
     if (!actor) return;
 
-    assets/ui.notifications.info("Add Talent functionality - implement talent browser/compendium");
+    ui.notifications.info("Add Talent functionality - implement talent browser/compendium");
   });
 }
 
@@ -245,7 +245,7 @@ export function initializeAddPower(html, actor) {
     
     if (!actor) return;
 
-    assets/ui.notifications.info("Add Force Power functionality - implement power browser/compendium");
+    ui.notifications.info("Add Force Power functionality - implement power browser/compendium");
   });
 }
 
@@ -264,7 +264,7 @@ export function initializeItemView(html, actor) {
     if (item) {
       item.sheet.render(true);
     } else {
-      assets/ui.notifications.warn("Item not found");
+      ui.notifications.warn("Item not found");
     }
   });
 }

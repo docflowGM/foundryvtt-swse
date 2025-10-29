@@ -22,10 +22,10 @@ export class SWSEStore extends FormApplication {
     const categories = {
       weapons: allItems.filter(i => i.type === "weapon"),
       armor: allItems.filter(i => i.type === "armor"),
-      eqassets/uipment: allItems.filter(i => i.type === "eqassets/uipment"),
+      equipment: allItems.filter(i => i.type === "equipment"),
       vehicles: allItems.filter(i => i.type === "vehicle"),
       droids: allItems.filter(i => i.type === "droid"),
-      misc: allItems.filter(i => !["weapon","armor","eqassets/uipment","vehicle","droid"].includes(i.type))
+      misc: allItems.filter(i => !["weapon","armor","equipment","vehicle","droid"].includes(i.type))
     };
 
     return {
@@ -58,13 +58,13 @@ export class SWSEStore extends FormApplication {
 
     const credits = actor.system.credits || 0;
     if (credits < cost) {
-      assets/ui.notifications.warn("Not enough credits!");
+      ui.notifications.warn("Not enough credits!");
       return;
     }
 
     await actor.update({"system.credits": credits - cost});
     await actor.createEmbeddedDocuments("Item", [item.toObject()]);
-    assets/ui.notifications.info(`${item.name} purchased for ${cost} credits.`);
+    ui.notifications.info(`${item.name} purchased for ${cost} credits.`);
     this.render();
   }
 
@@ -81,7 +81,7 @@ export class SWSEStore extends FormApplication {
     const owned = actor.items.find(i => i.name === item.name);
     if (owned) await owned.delete();
 
-    assets/ui.notifications.info(`${item.name} sold for ${refund} credits.`);
+    ui.notifications.info(`${item.name} sold for ${refund} credits.`);
     this.render();
   }
 
@@ -90,6 +90,6 @@ export class SWSEStore extends FormApplication {
     const discount = parseInt(this.element.find("input[name='discount']").val()) || 0;
     await game.settings.set("swse", "templates/apps/templates/apps/storeMarkup", markup);
     await game.settings.set("swse", "templates/apps/templates/apps/storeDiscount", discount);
-    assets/ui.notifications.info("Store settings updated.");
+    ui.notifications.info("Store settings updated.");
   }
 }

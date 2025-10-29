@@ -1,5 +1,5 @@
 Repository Structure Map
-Generated: 2025-10-29 06:38:26
+Generated: 2025-10-29 15:53:39
 ======================================================================
 
 foundryvtt-swse/
@@ -219,26 +219,26 @@ foundryvtt-swse/
 │   └── weapons.db (20.8KB)
 ├── scripts/
 │   ├── actors/
-│   │   ├── swse-actor.js (19.8KB)
+│   │   ├── swse-actor.js (19.7KB)
 │   │   ├── swse-droid.js (3.1KB)
 │   │   ├── swse-npc.js (3.1KB)
 │   │   └── swse-vehicle.js (3.5KB)
 │   ├── apps/
 │   │   ├── chargen-init.js (2.2KB)
-│   │   ├── chargen.js (26.5KB)
-│   │   ├── store.js (8.2KB)
-│   │   └── swse-levelup.js (8.1KB)
+│   │   ├── chargen.js (26.4KB)
+│   │   ├── store.js (7.8KB)
+│   │   └── swse-levelup.js (8.0KB)
 │   ├── core/
 │   │   ├── constants.js (1.4KB)
 │   │   ├── load-templates.js (1.1KB)
 │   │   ├── rolls-init.js (979.0B)
 │   │   ├── swse-data.js (1.5KB)
 │   │   ├── utils-init.js (1.1KB)
-│   │   └── world-data-loader.js (13.4KB)
+│   │   └── world-data-loader.js (13.3KB)
 │   ├── data/
 │   │   └── races.js (5.8KB)
 │   ├── helpers/
-│   │   └── handlebars-helpers.js (4.5KB)
+│   │   └── handlebars-helpers.js (4.4KB)
 │   ├── items/
 │   │   └── swse-item.js (737.0B)
 │   ├── rolls/
@@ -247,11 +247,11 @@ foundryvtt-swse/
 │   │   ├── defenses.js (2.1KB)
 │   │   ├── dice.js (2.4KB)
 │   │   ├── initiative.js (1.9KB)
-│   │   ├── saves.js (1.8KB)
-│   │   ├── skills-reference.js (11.1KB)
+│   │   ├── saves.js (1.7KB)
+│   │   ├── skills-reference.js (11.0KB)
 │   │   └── skills.js (2.9KB)
 │   ├── sheets/
-│   │   └── sheet-handlers.js (8.4KB)
+│   │   └── sheet-handlers.js (8.3KB)
 │   └── utils/
 │       ├── character-utils.js (2.7KB)
 │       ├── combat-utils.js (2.6KB)
@@ -263,9 +263,9 @@ foundryvtt-swse/
 │       └── validation-utils.js (2.5KB)
 ├── store/
 │   ├── gm-settings.html (497.0B)
-│   ├── gm-settings.js (885.0B)
-│   ├── store.html (2.0KB)
-│   └── store.js (3.7KB)
+│   ├── gm-settings.js (794.0B)
+│   ├── store.html (1.9KB)
+│   └── store.js (3.4KB)
 ├── styles/
 │   ├── apps/
 │   ├── character-sheet-fixes.css (15.8KB)
@@ -280,29 +280,29 @@ foundryvtt-swse/
 │   └── vehicle-sheet-styles.css (14.1KB)
 ├── templates/
 │   ├── actors/
-│   │   ├── character-sheet.hbs (55.6KB)
-│   │   ├── droid-sheet.hbs (12.6KB)
-│   │   ├── item-sheet.hbs (5.5KB)
-│   │   ├── npc-sheet.hbs (5.6KB)
+│   │   ├── character-sheet.hbs (55.5KB)
+│   │   ├── droid-sheet.hbs (12.5KB)
+│   │   ├── item-sheet.hbs (5.4KB)
+│   │   ├── npc-sheet.hbs (5.5KB)
 │   │   └── vehicle-sheet.hbs (18.5KB)
 │   ├── apps/
 │   │   ├── store/
 │   │   │   ├── gm-settings.html (497.0B)
 │   │   │   ├── gm-settings.js (885.0B)
-│   │   │   ├── store.html (2.0KB)
+│   │   │   ├── store.html (1.9KB)
 │   │   │   └── store.js (3.7KB)
 │   │   ├── chargen-fixed.hbs (9.3KB)
 │   │   ├── chargen.hbs (7.4KB)
 │   │   ├── chargen.html (7.3KB)
 │   │   ├── narrative-chargen.hbs (7.5KB)
-│   │   └── store.hbs (2.1KB)
+│   │   └── store.hbs (1.9KB)
 │   ├── chargen/
 │   │   └── chargen.html (7.3KB)
 │   ├── item/
-│   │   └── item-sheet.hbs (11.0KB)
+│   │   └── item-sheet.hbs (10.9KB)
 │   ├── items/
-│   │   ├── item-sheet.hbs (16.3KB)
-│   │   └── item-sheet.html (5.2KB)
+│   │   ├── item-sheet.hbs (16.1KB)
+│   │   └── item-sheet.html (5.1KB)
 │   ├── partials/
 │   │   ├── ability-block.hbs (691.0B)
 │   │   ├── ability-scores.hbs (881.0B)
@@ -310,9 +310,9 @@ foundryvtt-swse/
 │   │   ├── item-controls.hbs (244.0B)
 │   │   ├── README.md (906.0B)
 │   │   ├── skill-row.hbs (732.0B)
-│   │   └── tab-navigation.hbs (406.0B)
+│   │   └── tab-navigation.hbs (399.0B)
 │   └── sheets/
-│       └── character-sheet.hbs (11.7KB)
+│       └── character-sheet.hbs (11.6KB)
 ├── tools/
 │   ├── scripts/
 │   │   ├── apply_holo_theme.py (3.8KB)
@@ -330,9 +330,9 @@ foundryvtt-swse/
 │   ├── title-logo.png (11.4KB)
 │   └── title-logo@2x.png (13.5KB)
 ├── index.js (5.9KB)
-├── REPO_STRUCTURE.txt (12.4KB)
+├── REPO_STRUCTURE.txt (14.4KB)
 ├── swse.zip (4.6MB)
-├── system.json (3.9KB)
+├── system.json (3.7KB)
 └── template.json (5.0KB)
 
 ======================================================================
@@ -344,11 +344,11 @@ Total Files: 274
 Total Size: 12.4MB
 
 Files by Type:
-  JavaScript        85 files  (456.8KB)
+  JavaScript        85 files  (455.2KB)
   Images            76 files  (4.3MB)
   Data              33 files  (1.1MB)
-  Other             28 files  (6.3MB)
-  Templates         26 files  (192.1KB)
-  Docs              11 files  (53.3KB)
+  Other             28 files  (6.2MB)
+  Templates         26 files  (190.9KB)
+  Docs              11 files  (55.4KB)
   Styles            10 files  (110.8KB)
   Python             5 files  (16.8KB)

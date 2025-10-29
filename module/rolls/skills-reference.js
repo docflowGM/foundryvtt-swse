@@ -341,13 +341,13 @@ class SWSEActor extends Actor {
   async rollSkill(skillKey, options = {}) {
     const skill = this.system.skills[skillKey];
     if (!skill) {
-      assets/ui.notifications.warn(`Skill ${skillKey} not found`);
+      ui.notifications.warn(`Skill ${skillKey} not found`);
       return null;
     }
 
     // Check for trained-only skills
     if (skill.trainedOnly && !skill.trained) {
-      assets/ui.notifications.warn(`${skillKey} reqassets/uires training`);
+      ui.notifications.warn(`${skillKey} reqassets/uires training`);
       return null;
     }
 

@@ -1,7 +1,7 @@
 // ============================================
 // FILE: index.js
 // Star Wars Saga Edition (SWSE) - FoundryVTT System
-// Updated with proper utils and rolls integration
+// Main entry point for the SWSE system
 // ============================================
 
 import { registerHandlebarsHelpers } from "./helpers/handlebars-helpers.js";
