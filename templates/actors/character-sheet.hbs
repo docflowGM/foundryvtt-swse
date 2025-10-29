@@ -1,139 +1,1246 @@
-{{!-- SWSE Character Sheet - Enhanced Header + Skills Layout --}}
-<form class="swse-datapad-sheet {{cssClass}} holo-theme" autocomplete="off">
+{{!-- ============================================
+     SWSE Character Sheet - Enhanced Template
+     Supports: PC / NPC / Vehicle / Droid
+     Features: Static skills list, sheet switching
+     ============================================ --}}
+
+<form class="swse-datapad-sheet {{cssClass}} holo-theme" autocomplete="off" data-sheet-mode="character">
+
+  {{!-- ==================== HEADER ==================== --}}
+  <header class="datapad-header">
     
-    {{!-- ======================= TOP HEADER ======================= --}}
-    <header class="datapad-header">
-        <div class="header-left">
-            <div class="header-tabs clean-tabs">
-                <button type="button" class="header-tab active" data-sheet-mode="character">PC</button>
-                <button type="button" class="header-tab" data-sheet-mode="npc">NPC</button>
-                <button type="button" class="header-tab" data-sheet-mode="vehicle">Vehicle</button>
-                <button type="button" class="header-tab" data-sheet-mode="settings">⚙</button>
+    {{!-- Left: Navigation & Basic Info --}}
+    <div class="header-left">
+      
+      {{!-- Sheet Type Tabs --}}
+      <div class="header-tabs">
+        <button type="button" class="header-tab active" data-sheet-mode="character">
+          PC
+        </button>
+        <button type="button" class="header-tab" data-sheet-mode="npc">
+          NPC
+        </button>
+        <button type="button" class="header-tab" data-sheet-mode="vehicle">
+          Vehicle
+        </button>
+        <button type="button" class="header-tab" data-sheet-mode="droid">
+          Droid
+        </button>
+      </div>
+
+      {{!-- Basic Character Fields --}}
+      <div class="basic-fields">
+        <div class="field-trio">
+          <div class="field-sm">
+            <label>Class</label>
+            <input name="system.class" type="text" value="{{system.class}}" placeholder="Jedi"/>
+          </div>
+          <div class="field-sm">
+            <label>Level</label>
+            <input name="system.level" type="number" value="{{system.level}}" data-dtype="Number" placeholder="1"/>
+          </div>
+          <div class="field-sm">
+            <label>½ Level</label>
+            <div class="readonly half-level-display">{{halfLevel}}</div>
+          </div>
+        </div>
+
+        <div class="field-row-2">
+          <div class="field-md">
+            <label>Species</label>
+            <input name="system.species" type="text" value="{{system.species}}" placeholder="Human"/>
+          </div>
+          <div class="field-md">
+            <label>Background</label>
+            <input name="system.background" type="text" value="{{system.background}}" placeholder="Soldier"/>
+          </div>
+        </div>
+
+        <div class="field-row-2">
+          <div class="field-md">
+            <label>Gender</label>
+            <input name="system.gender" type="text" value="{{system.gender}}" placeholder="Male"/>
+          </div>
+          <div class="field-md">
+            <label>Size</label>
+            <input name="system.size" type="text" value="{{system.size}}" placeholder="Medium"/>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    {{!-- Center: Logo --}}
+    <div class="header-center">
+      <img class="sw-logo" src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
+    </div>
+
+    {{!-- Right: Character Portrait --}}
+    <div class="header-right">
+      <img class="character-portrait" 
+           src="{{actor.img}}" 
+           data-edit="img" 
+           title="{{actor.name}}"
+           alt="Character Portrait"/>
+    </div>
+
+  </header>
+
+  {{!-- ==================== MAIN CONTENT ==================== --}}
+  <div class="sheet-body">
+    <div class="datapad-main-grid">
+
+      {{!-- ==================== LEFT COLUMN ==================== --}}
+      <div class="left-column">
+
+        {{!-- ATTRIBUTES SECTION --}}
+        <section class="datapad-section sheet-mode-pc">
+          <div class="section-header-black">Attributes</div>
+          
+          <div class="attributes-grid-improved">
+            {{#each system.abilities as |ability key|}}
+              <div class="attribute-row-improved">
+                
+                {{!-- Attribute Label --}}
+                <label class="attr-label">{{toUpperCase key}}</label>
+                
+                {{!-- Breakdown: Base, Racial, Misc, Total --}}
+                <div class="attr-breakdown">
+                  <div class="attr-field">
+                    <label>Base</label>
+                    <input type="number" 
+                           name="system.abilities.{{key}}.base" 
+                           value="{{ability.base}}" 
+                           class="attr-input-sm" 
+                           data-dtype="Number"
+                           placeholder="10"/>
+                  </div>
+                  
+                  <div class="attr-field">
+                    <label>Race</label>
+                    <input type="number" 
+                           name="system.abilities.{{key}}.racial" 
+                           value="{{ability.racial}}" 
+                           class="attr-input-sm" 
+                           data-dtype="Number" 
+                           placeholder="0"/>
+                  </div>
+                  
+                  <div class="attr-field">
+                    <label>Misc</label>
+                    <input type="number" 
+                           name="system.abilities.{{key}}.misc" 
+                           value="{{ability.misc}}" 
+                           class="attr-input-sm" 
+                           data-dtype="Number" 
+                           placeholder="0"/>
+                  </div>
+                  
+                  <div class="attr-field">
+                    <label>Total</label>
+                    <div class="attr-total">{{ability.total}}</div>
+                  </div>
+                </div>
+                
+                {{!-- Roll Button --}}
+                <button type="button" class="roll-btn" data-ability="{{key}}" title="Roll {{toUpperCase key}} check">
+                  ⚅
+                </button>
+                
+                {{!-- Modifier Display --}}
+                <div class="attr-mod" title="{{toUpperCase key}} Modifier">
+                  {{#if (gte ability.mod 0)}}+{{/if}}{{ability.mod}}
+                </div>
+                
+              </div>
+            {{/each}}
+          </div>
+        </section>
+
+        {{!-- DEFENSES SECTION --}}
+        <section class="datapad-section sheet-mode-pc">
+          <div class="section-header-black">Defenses</div>
+          
+          <div class="defense-table">
+            
+            {{!-- Table Header --}}
+            <div class="defense-table-header">
+              <div class="def-col-label"></div>
+              <div class="def-col-value">Total</div>
+              <div class="def-col-formula">=</div>
+              <div class="def-col-value">10 +</div>
+              <div class="def-col-value">Level/Armor</div>
+              <div class="def-col-value">Class</div>
+              <div class="def-col-value">Ability</div>
+              <div class="def-col-value">Misc</div>
+            </div>
+
+            {{!-- REFLEX DEFENSE --}}
+            <div class="defense-table-row reflex-row">
+              <label class="defense-label-compact">Reflex</label>
+              
+              <div class="defense-total-compact reflex-total">
+                {{system.defenses.reflex.total}}
+              </div>
+              
+              <div class="defense-equals">=</div>
+              <div class="defense-base">10 +</div>
+              
+              <input type="number" 
+                     name="system.defenses.reflex.levelArmor" 
+                     value="{{system.defenses.reflex.levelArmor}}" 
+                     class="defense-input-sm" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              
+              <input type="number" 
+                     name="system.defenses.reflex.classBonus" 
+                     value="{{system.defenses.reflex.classBonus}}" 
+                     class="defense-input-sm" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              
+              <select name="system.defenses.reflex.abilityMod" class="defense-select-sm">
+                <option value="dex" {{#if (eq system.defenses.reflex.abilityMod "dex")}}selected{{/if}}>DEX</option>
+                <option value="str" {{#if (eq system.defenses.reflex.abilityMod "str")}}selected{{/if}}>STR</option>
+                <option value="con" {{#if (eq system.defenses.reflex.abilityMod "con")}}selected{{/if}}>CON</option>
+                <option value="int" {{#if (eq system.defenses.reflex.abilityMod "int")}}selected{{/if}}>INT</option>
+                <option value="wis" {{#if (eq system.defenses.reflex.abilityMod "wis")}}selected{{/if}}>WIS</option>
+                <option value="cha" {{#if (eq system.defenses.reflex.abilityMod "cha")}}selected{{/if}}>CHA</option>
+              </select>
+              
+              <input type="number" 
+                     name="system.defenses.reflex.misc" 
+                     value="{{system.defenses.reflex.misc}}" 
+                     class="defense-input-sm" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+            </div>
+
+            {{!-- FORTITUDE DEFENSE --}}
+            <div class="defense-table-row fortitude-row">
+              <label class="defense-label-compact">Fortitude</label>
+              
+              <div class="defense-total-compact fortitude-total">
+                {{system.defenses.fortitude.total}}
+              </div>
+              
+              <div class="defense-equals">=</div>
+              <div class="defense-base">10 +</div>
+              
+              <input type="number" 
+                     name="system.defenses.fortitude.levelArmor" 
+                     value="{{system.defenses.fortitude.levelArmor}}" 
+                     class="defense-input-sm" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              
+              <input type="number" 
+                     name="system.defenses.fortitude.classBonus" 
+                     value="{{system.defenses.fortitude.classBonus}}" 
+                     class="defense-input-sm" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              
+              <select name="system.defenses.fortitude.abilityMod" class="defense-select-sm">
+                <option value="con" {{#if (eq system.defenses.fortitude.abilityMod "con")}}selected{{/if}}>CON</option>
+                <option value="str" {{#if (eq system.defenses.fortitude.abilityMod "str")}}selected{{/if}}>STR</option>
+                <option value="dex" {{#if (eq system.defenses.fortitude.abilityMod "dex")}}selected{{/if}}>DEX</option>
+                <option value="int" {{#if (eq system.defenses.fortitude.abilityMod "int")}}selected{{/if}}>INT</option>
+                <option value="wis" {{#if (eq system.defenses.fortitude.abilityMod "wis")}}selected{{/if}}>WIS</option>
+                <option value="cha" {{#if (eq system.defenses.fortitude.abilityMod "cha")}}selected{{/if}}>CHA</option>
+              </select>
+              
+              <input type="number" 
+                     name="system.defenses.fortitude.misc" 
+                     value="{{system.defenses.fortitude.misc}}" 
+                     class="defense-input-sm" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+            </div>
+
+            {{!-- WILL DEFENSE --}}
+            <div class="defense-table-row will-row">
+              <label class="defense-label-compact">Will</label>
+              
+              <div class="defense-total-compact will-total">
+                {{system.defenses.will.total}}
+              </div>
+              
+              <div class="defense-equals">=</div>
+              <div class="defense-base">10 +</div>
+              
+              <input type="number" 
+                     name="system.defenses.will.levelArmor" 
+                     value="{{system.defenses.will.levelArmor}}" 
+                     class="defense-input-sm" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              
+              <input type="number" 
+                     name="system.defenses.will.classBonus" 
+                     value="{{system.defenses.will.classBonus}}" 
+                     class="defense-input-sm" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              
+              <select name="system.defenses.will.abilityMod" class="defense-select-sm">
+                <option value="wis" {{#if (eq system.defenses.will.abilityMod "wis")}}selected{{/if}}>WIS</option>
+                <option value="str" {{#if (eq system.defenses.will.abilityMod "str")}}selected{{/if}}>STR</option>
+                <option value="dex" {{#if (eq system.defenses.will.abilityMod "dex")}}selected{{/if}}>DEX</option>
+                <option value="con" {{#if (eq system.defenses.will.abilityMod "con")}}selected{{/if}}>CON</option>
+                <option value="int" {{#if (eq system.defenses.will.abilityMod "int")}}selected{{/if}}>INT</option>
+                <option value="cha" {{#if (eq system.defenses.will.abilityMod "cha")}}selected{{/if}}>CHA</option>
+              </select>
+              
+              <input type="number" 
+                     name="system.defenses.will.misc" 
+                     value="{{system.defenses.will.misc}}" 
+                     class="defense-input-sm" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+            </div>
+
+            {{!-- Defense Notes --}}
+            <div class="defense-notes">
+              <label>Defense Notes</label>
+              <input type="text" 
+                     name="system.defenses.notes" 
+                     value="{{system.defenses.notes}}" 
+                     placeholder="Special defense modifiers..."/>
+            </div>
+
+          </div>
+        </section>
+
+        {{!-- ARMOR SECTION --}}
+        <section class="datapad-section sheet-mode-pc">
+          <div class="section-header-black">Armor</div>
+          
+          {{!-- Main Armor Stats --}}
+          <div class="armor-main-row">
+            <div class="armor-field-wide">
+              <label>Armor Name</label>
+              <input type="text" 
+                     name="system.armor.name" 
+                     value="{{system.armor.name}}" 
+                     placeholder="Stormtrooper Armor"/>
             </div>
             
-            <div class="basic-fields enhanced-fields">
-                <div class="field-trio">
-                    <div class="field-sm">
-                        <label>Class</label>
-                        <input name="system.class" type="text" value="{{system.class}}" placeholder="Class"/>
-                    </div>
-                    <div class="field-sm">
-                        <label>Level</label>
-                        <input name="system.level" type="number" value="{{system.level}}" data-dtype="Number" placeholder="1"/>
-                    </div>
-                    <div class="field-sm">
-                        <label>½ Lvl</label>
-                        <div class="readonly half-level-display holo-text">{{halfLevel}}</div>
-                    </div>
-                </div>
-
-                <div class="field-row-2">
-                    <div class="field-md">
-                        <label>Species</label>
-                        <input name="system.species" type="text" value="{{system.species}}" placeholder="Human"/>
-                    </div>
-                    <div class="field-md">
-                        <label>Background</label>
-                        <input name="system.background" type="text" value="{{system.background}}" placeholder="Spacer"/>
-                    </div>
-                </div>
-
-                <div class="field-row-2">
-                    <div class="field-md">
-                        <label>Gender</label>
-                        <input name="system.gender" type="text" value="{{system.gender}}" placeholder="M/F/Other"/>
-                    </div>
-                    <div class="field-md">
-                        <label>Size</label>
-                        <input name="system.size" type="text" value="{{system.size}}" placeholder="Medium"/>
-                    </div>
-                </div>
+            <div class="armor-field-sm">
+              <label>Def Mod Bonus</label>
+              <input type="number" 
+                     name="system.armor.defModBonus" 
+                     value="{{system.armor.defModBonus}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
             </div>
-        </div>
-        
-        <div class="header-center holo-header-center">
-            <img class="sw-logo" src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
-        </div>
-        
-        <div class="header-right holo-header-right">
-            <img class="character-portrait holo-portrait" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
-            <div class="portrait-buttons">
-                <button type="button" class="portrait-btn edit" title="Edit Image">✎</button>
-                <button type="button" class="portrait-btn refresh" title="Refresh">↻</button>
+            
+            <div class="armor-field-sm">
+              <label>Fort Def Bonus</label>
+              <input type="number" 
+                     name="system.armor.fortDefBonus" 
+                     value="{{system.armor.fortDefBonus}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
             </div>
-        </div>
-    </header>
+            
+            <div class="armor-field-sm">
+              <label>Max Dex Bonus</label>
+              <input type="number" 
+                     name="system.armor.maxDexBonus" 
+                     value="{{system.armor.maxDexBonus}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+            </div>
+            
+            <div class="armor-field-sm">
+              <label>Speed Penalty</label>
+              <input type="number" 
+                     name="system.armor.speed" 
+                     value="{{system.armor.speed}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+            </div>
+          </div>
 
-    {{!-- ======================= MAIN BODY ======================= --}}
-    <div class="datapad-main-grid scrollable-content">
-        <div class="left-column">
+          {{!-- Armor Checkboxes & Selects --}}
+          <div class="armor-checkboxes-row">
+            <div class="armor-checkbox-group">
+              <label>
+                <input type="checkbox" 
+                       name="system.armor.proficiency" 
+                       {{#if system.armor.proficiency}}checked{{/if}}/>
+                Proficiency
+              </label>
+            </div>
+            
+            <div class="armor-checkbox-group">
+              <label>
+                <input type="checkbox" 
+                       name="system.armor.armoredDefense" 
+                       {{#if system.armor.armoredDefense}}checked{{/if}}/>
+                Armored Defense
+              </label>
+            </div>
+            
+            <div class="armor-checkbox-group">
+              <label>
+                <input type="checkbox" 
+                       name="system.armor.improvedArmoredDef" 
+                       {{#if system.armor.improvedArmoredDef}}checked{{/if}}/>
+                Improved Armored Def.
+              </label>
+            </div>
+            
+            <div class="armor-select-group">
+              <label>Armor Type</label>
+              <select name="system.armor.type">
+                <option value="none" {{#if (eq system.armor.type "none")}}selected{{/if}}>None</option>
+                <option value="light" {{#if (eq system.armor.type "light")}}selected{{/if}}>Light</option>
+                <option value="medium" {{#if (eq system.armor.type "medium")}}selected{{/if}}>Medium</option>
+                <option value="heavy" {{#if (eq system.armor.type "heavy")}}selected{{/if}}>Heavy</option>
+              </select>
+            </div>
+            
+            <div class="armor-select-group">
+              <label>Helmet Package</label>
+              <select name="system.armor.helmetPackage">
+                <option value="none" {{#if (eq system.armor.helmetPackage "none")}}selected{{/if}}>None</option>
+                <option value="basic" {{#if (eq system.armor.helmetPackage "basic")}}selected{{/if}}>Basic</option>
+                <option value="advanced" {{#if (eq system.armor.helmetPackage "advanced")}}selected{{/if}}>Advanced</option>
+              </select>
+            </div>
+          </div>
 
-            {{!-- ATTRIBUTES --}}
-            {{> "systems/swse/templates/partials/attributes.hbs"}}
+          {{!-- Armor Notes --}}
+          <div class="armor-notes">
+            <label>Armor Notes</label>
+            <input type="text" 
+                   name="system.armor.notes" 
+                   value="{{system.armor.notes}}" 
+                   placeholder="Special armor properties..."/>
+          </div>
+        </section>
 
-            {{!-- DEFENSES --}}
-            {{> "systems/swse/templates/partials/defenses.hbs"}}
+        {{!-- SKILLS SECTION - STATIC LIST --}}
+        <section class="datapad-section sheet-mode-pc">
+          <div class="section-header-black">Skills</div>
+          
+          <div class="skills-grid-compact">
+            
+            {{!-- Skills Header --}}
+            <div class="skills-header">
+              <div>Skill</div>
+              <div>Ability</div>
+              <div>½ Lvl</div>
+              <div>Train</div>
+              <div>Focus</div>
+              <div>Armor</div>
+              <div>Misc</div>
+              <div>Total</div>
+            </div>
 
-            {{!-- ARMOR --}}
-            {{> "systems/swse/templates/partials/armor.hbs"}}
+            {{!-- ACROBATICS (DEX) --}}
+            <div class="skill-row" data-skill="acrobatics">
+              <div class="skill-name">Acrobatics</div>
+              <div class="skill-ability">DEX</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.acrobatics.trained" 
+                     {{#if system.skills.acrobatics.trained}}checked{{/if}}
+                     title="Trained (+5)"/>
+              <input type="checkbox" 
+                     name="system.skills.acrobatics.focused" 
+                     {{#if system.skills.acrobatics.focused}}checked{{/if}}
+                     title="Skill Focus (+5)"/>
+              <input type="number" 
+                     name="system.skills.acrobatics.armor" 
+                     value="{{system.skills.acrobatics.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0" 
+                     class="skill-input"/>
+              <input type="number" 
+                     name="system.skills.acrobatics.misc" 
+                     value="{{system.skills.acrobatics.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0" 
+                     class="skill-input"/>
+              <div class="skill-total">{{system.skills.acrobatics.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="acrobatics" title="Roll Acrobatics">⚅</button>
+            </div>
 
-            {{!-- ======================= SKILLS ======================= --}}
-            <section class="datapad-section">
-                <div class="section-header-black">Skills</div>
-                
-                <div class="skills-grid holo-grid">
-                    <div class="skills-header">
-                        <div class="col-skill-name">Skill</div>
-                        <div class="col-trained">T</div>
-                        <div class="col-bonus">Bonus</div>
-                        <div class="col-roll">Roll</div>
+            {{!-- CLIMB (STR) --}}
+            <div class="skill-row" data-skill="climb">
+              <div class="skill-name">Climb</div>
+              <div class="skill-ability">STR</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.climb.trained" 
+                     {{#if system.skills.climb.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.climb.focused" 
+                     {{#if system.skills.climb.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.climb.armor" 
+                     value="{{system.skills.climb.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.climb.misc" 
+                     value="{{system.skills.climb.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.climb.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="climb">⚅</button>
+            </div>
+
+            {{!-- DECEPTION (CHA) --}}
+            <div class="skill-row" data-skill="deception">
+              <div class="skill-name">Deception</div>
+              <div class="skill-ability">CHA</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.deception.trained" 
+                     {{#if system.skills.deception.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.deception.focused" 
+                     {{#if system.skills.deception.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.deception.armor" 
+                     value="{{system.skills.deception.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.deception.misc" 
+                     value="{{system.skills.deception.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.deception.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="deception">⚅</button>
+            </div>
+
+            {{!-- ENDURANCE (CON) --}}
+            <div class="skill-row" data-skill="endurance">
+              <div class="skill-name">Endurance</div>
+              <div class="skill-ability">CON</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.endurance.trained" 
+                     {{#if system.skills.endurance.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.endurance.focused" 
+                     {{#if system.skills.endurance.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.endurance.armor" 
+                     value="{{system.skills.endurance.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.endurance.misc" 
+                     value="{{system.skills.endurance.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.endurance.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="endurance">⚅</button>
+            </div>
+
+            {{!-- GATHER INFORMATION (CHA) --}}
+            <div class="skill-row" data-skill="gatherInformation">
+              <div class="skill-name">Gather Information</div>
+              <div class="skill-ability">CHA</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.gatherInformation.trained" 
+                     {{#if system.skills.gatherInformation.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.gatherInformation.focused" 
+                     {{#if system.skills.gatherInformation.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.gatherInformation.armor" 
+                     value="{{system.skills.gatherInformation.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.gatherInformation.misc" 
+                     value="{{system.skills.gatherInformation.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.gatherInformation.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="gatherInformation">⚅</button>
+            </div>
+
+            {{!-- INITIATIVE (DEX) --}}
+            <div class="skill-row" data-skill="initiative">
+              <div class="skill-name">Initiative</div>
+              <div class="skill-ability">DEX</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.initiative.trained" 
+                     {{#if system.skills.initiative.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.initiative.focused" 
+                     {{#if system.skills.initiative.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.initiative.armor" 
+                     value="{{system.skills.initiative.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.initiative.misc" 
+                     value="{{system.skills.initiative.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.initiative.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="initiative">⚅</button>
+            </div>
+
+            {{!-- JUMP (STR) --}}
+            <div class="skill-row" data-skill="jump">
+              <div class="skill-name">Jump</div>
+              <div class="skill-ability">STR</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.jump.trained" 
+                     {{#if system.skills.jump.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.jump.focused" 
+                     {{#if system.skills.jump.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.jump.armor" 
+                     value="{{system.skills.jump.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.jump.misc" 
+                     value="{{system.skills.jump.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.jump.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="jump">⚅</button>
+            </div>
+
+            {{!-- KNOWLEDGE (INT) --}}
+            <div class="skill-row" data-skill="knowledge">
+              <div class="skill-name">Knowledge</div>
+              <div class="skill-ability">INT</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.knowledge.trained" 
+                     {{#if system.skills.knowledge.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.knowledge.focused" 
+                     {{#if system.skills.knowledge.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.knowledge.armor" 
+                     value="{{system.skills.knowledge.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.knowledge.misc" 
+                     value="{{system.skills.knowledge.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.knowledge.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="knowledge">⚅</button>
+            </div>
+
+            {{!-- MECHANICS (INT) --}}
+            <div class="skill-row" data-skill="mechanics">
+              <div class="skill-name">Mechanics</div>
+              <div class="skill-ability">INT</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.mechanics.trained" 
+                     {{#if system.skills.mechanics.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.mechanics.focused" 
+                     {{#if system.skills.mechanics.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.mechanics.armor" 
+                     value="{{system.skills.mechanics.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.mechanics.misc" 
+                     value="{{system.skills.mechanics.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.mechanics.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="mechanics">⚅</button>
+            </div>
+
+            {{!-- PERCEPTION (WIS) --}}
+            <div class="skill-row" data-skill="perception">
+              <div class="skill-name">Perception</div>
+              <div class="skill-ability">WIS</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.perception.trained" 
+                     {{#if system.skills.perception.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.perception.focused" 
+                     {{#if system.skills.perception.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.perception.armor" 
+                     value="{{system.skills.perception.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.perception.misc" 
+                     value="{{system.skills.perception.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.perception.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="perception">⚅</button>
+            </div>
+
+            {{!-- PERSUASION (CHA) --}}
+            <div class="skill-row" data-skill="persuasion">
+              <div class="skill-name">Persuasion</div>
+              <div class="skill-ability">CHA</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.persuasion.trained" 
+                     {{#if system.skills.persuasion.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.persuasion.focused" 
+                     {{#if system.skills.persuasion.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.persuasion.armor" 
+                     value="{{system.skills.persuasion.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.persuasion.misc" 
+                     value="{{system.skills.persuasion.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.persuasion.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="persuasion">⚅</button>
+            </div>
+
+            {{!-- PILOT (DEX) --}}
+            <div class="skill-row" data-skill="pilot">
+              <div class="skill-name">Pilot</div>
+              <div class="skill-ability">DEX</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.pilot.trained" 
+                     {{#if system.skills.pilot.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.pilot.focused" 
+                     {{#if system.skills.pilot.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.pilot.armor" 
+                     value="{{system.skills.pilot.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.pilot.misc" 
+                     value="{{system.skills.pilot.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.pilot.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="pilot">⚅</button>
+            </div>
+
+            {{!-- RIDE (DEX) --}}
+            <div class="skill-row" data-skill="ride">
+              <div class="skill-name">Ride</div>
+              <div class="skill-ability">DEX</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.ride.trained" 
+                     {{#if system.skills.ride.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.ride.focused" 
+                     {{#if system.skills.ride.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.ride.armor" 
+                     value="{{system.skills.ride.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.ride.misc" 
+                     value="{{system.skills.ride.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.ride.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="ride">⚅</button>
+            </div>
+
+            {{!-- STEALTH (DEX) --}}
+            <div class="skill-row" data-skill="stealth">
+              <div class="skill-name">Stealth</div>
+              <div class="skill-ability">DEX</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.stealth.trained" 
+                     {{#if system.skills.stealth.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.stealth.focused" 
+                     {{#if system.skills.stealth.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.stealth.armor" 
+                     value="{{system.skills.stealth.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.stealth.misc" 
+                     value="{{system.skills.stealth.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.stealth.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="stealth">⚅</button>
+            </div>
+
+            {{!-- SURVIVAL (WIS) --}}
+            <div class="skill-row" data-skill="survival">
+              <div class="skill-name">Survival</div>
+              <div class="skill-ability">WIS</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.survival.trained" 
+                     {{#if system.skills.survival.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.survival.focused" 
+                     {{#if system.skills.survival.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.survival.armor" 
+                     value="{{system.skills.survival.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.survival.misc" 
+                     value="{{system.skills.survival.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.survival.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="survival">⚅</button>
+            </div>
+
+            {{!-- SWIM (STR) --}}
+            <div class="skill-row" data-skill="swim">
+              <div class="skill-name">Swim</div>
+              <div class="skill-ability">STR</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.swim.trained" 
+                     {{#if system.skills.swim.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.swim.focused" 
+                     {{#if system.skills.swim.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.swim.armor" 
+                     value="{{system.skills.swim.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.swim.misc" 
+                     value="{{system.skills.swim.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.swim.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="swim">⚅</button>
+            </div>
+
+            {{!-- TREAT INJURY (WIS) --}}
+            <div class="skill-row" data-skill="treatInjury">
+              <div class="skill-name">Treat Injury</div>
+              <div class="skill-ability">WIS</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.treatInjury.trained" 
+                     {{#if system.skills.treatInjury.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.treatInjury.focused" 
+                     {{#if system.skills.treatInjury.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.treatInjury.armor" 
+                     value="{{system.skills.treatInjury.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.treatInjury.misc" 
+                     value="{{system.skills.treatInjury.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.treatInjury.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="treatInjury">⚅</button>
+            </div>
+
+            {{!-- USE COMPUTER (INT) --}}
+            <div class="skill-row" data-skill="useComputer">
+              <div class="skill-name">Use Computer</div>
+              <div class="skill-ability">INT</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.useComputer.trained" 
+                     {{#if system.skills.useComputer.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.useComputer.focused" 
+                     {{#if system.skills.useComputer.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.useComputer.armor" 
+                     value="{{system.skills.useComputer.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.useComputer.misc" 
+                     value="{{system.skills.useComputer.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.useComputer.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="useComputer">⚅</button>
+            </div>
+
+            {{!-- USE THE FORCE (CHA) --}}
+            <div class="skill-row" data-skill="useTheForce">
+              <div class="skill-name">Use the Force</div>
+              <div class="skill-ability">CHA</div>
+              <div class="skill-half-level">{{halfLevel}}</div>
+              <input type="checkbox" 
+                     name="system.skills.useTheForce.trained" 
+                     {{#if system.skills.useTheForce.trained}}checked{{/if}}/>
+              <input type="checkbox" 
+                     name="system.skills.useTheForce.focused" 
+                     {{#if system.skills.useTheForce.focused}}checked{{/if}}/>
+              <input type="number" 
+                     name="system.skills.useTheForce.armor" 
+                     value="{{system.skills.useTheForce.armor}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <input type="number" 
+                     name="system.skills.useTheForce.misc" 
+                     value="{{system.skills.useTheForce.misc}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+              <div class="skill-total">{{system.skills.useTheForce.total}}</div>
+              <button type="button" class="roll-btn-sm" data-skill="useTheForce">⚅</button>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+      {{!-- ==================== CENTER COLUMN ==================== --}}
+      <div class="center-column">
+
+        {{!-- HP & VITALS --}}
+        <section class="datapad-section sheet-mode-pc">
+          <div class="section-header-black">Hit Points & Vitals</div>
+          
+          <div class="hp-grid">
+            <div class="hp-field">
+              <label>Current HP</label>
+              <input name="system.hp.value" 
+                     type="number" 
+                     value="{{system.hp.value}}" 
+                     data-dtype="Number"
+                     placeholder="30"/>
+            </div>
+            
+            <div class="hp-field">
+              <label>Max HP</label>
+              <input name="system.hp.max" 
+                     type="number" 
+                     value="{{system.hp.max}}" 
+                     data-dtype="Number"
+                     placeholder="30"/>
+            </div>
+            
+            <div class="hp-field">
+              <label>Temp HP</label>
+              <input name="system.hp.temp" 
+                     type="number" 
+                     value="{{system.hp.temp}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+            </div>
+          </div>
+
+          {{!-- Damage Threshold & Second Wind --}}
+          <div class="threshold-grid">
+            <div class="threshold-row">
+              <label>Damage Threshold</label>
+              <div class="threshold-formula-compact">
+                <span class="formula-text-sm">Fort +</span>
+                <input type="number" 
+                       name="system.damageThreshold.misc" 
+                       value="{{system.damageThreshold.misc}}" 
+                       placeholder="0" 
+                       class="formula-input-sm" 
+                       data-dtype="Number"/>
+                <span class="formula-text-sm">= </span>
+                <div class="threshold-total">{{system.damageThreshold.total}}</div>
+              </div>
+            </div>
+
+            <div class="threshold-row">
+              <label>Second Wind</label>
+              <div class="threshold-formula-compact">
+                <span class="formula-text-sm">¼ HP +</span>
+                <input type="number" 
+                       name="system.secondWind.misc" 
+                       value="{{system.secondWind.misc}}" 
+                       placeholder="0" 
+                       class="formula-input-sm" 
+                       data-dtype="Number"/>
+                <span class="formula-text-sm">= </span>
+                <div class="threshold-total">{{system.secondWind.total}}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {{!-- CONDITION TRACK --}}
+        <section class="datapad-section sheet-mode-pc">
+          <div class="section-header-black">Condition</div>
+          
+          <div class="condition-buttons">
+            <button type="button" 
+                    class="condition-btn {{#if (eq system.condition 'normal')}}active{{/if}}" 
+                    data-condition="normal">
+              Normal
+            </button>
+            
+            <button type="button" 
+                    class="condition-btn {{#if (eq system.condition '-1')}}active{{/if}}" 
+                    data-condition="-1">
+              -1
+            </button>
+            
+            <button type="button" 
+                    class="condition-btn {{#if (eq system.condition '-2')}}active{{/if}}" 
+                    data-condition="-2">
+              -2
+            </button>
+            
+            <button type="button" 
+                    class="condition-btn {{#if (eq system.condition '-5')}}active{{/if}}" 
+                    data-condition="-5">
+              -5
+            </button>
+            
+            <button type="button" 
+                    class="condition-btn {{#if (eq system.condition '-10')}}active{{/if}}" 
+                    data-condition="-10">
+              -10
+            </button>
+            
+            <button type="button" 
+                    class="condition-btn debilitated {{#if (eq system.condition 'debilitated')}}active{{/if}}" 
+                    data-condition="debilitated">
+              Debilitated
+            </button>
+            
+            <button type="button" 
+                    class="condition-btn persistent {{#if (eq system.condition 'persistent')}}active{{/if}}" 
+                    data-condition="persistent">
+              Persistent
+            </button>
+          </div>
+
+          <input type="hidden" name="system.condition" value="{{system.condition}}"/>
+        </section>
+
+        {{!-- BOTTOM TABS SECTION --}}
+        <section class="datapad-section sheet-mode-pc">
+          
+          {{!-- Tab Navigation --}}
+          <div class="bottom-tabs-header">
+            <button type="button" class="bottom-tab active" data-tab="equipment">
+              Equipment
+            </button>
+            <button type="button" class="bottom-tab" data-tab="feats">
+              Feats
+            </button>
+            <button type="button" class="bottom-tab" data-tab="talents">
+              Talents
+            </button>
+            <button type="button" class="bottom-tab" data-tab="powers">
+              Powers
+            </button>
+            <button type="button" class="bottom-tab" data-tab="notes">
+              Notes
+            </button>
+          </div>
+
+          {{!-- Tab Content --}}
+          <div class="bottom-tabs-content">
+            
+            {{!-- EQUIPMENT TAB --}}
+            <div class="bottom-tab-content active" data-tab="equipment">
+              <div class="equipment-list">
+                {{#each equipment as |item|}}
+                  <div class="equipment-item">
+                    <img src="{{item.img}}" class="item-icon" alt="{{item.name}}"/>
+                    <div class="item-name">{{item.name}}</div>
+                    <div class="item-qty">×{{item.system.quantity}}</div>
+                    <button type="button" class="item-btn-sm" data-item-id="{{item.id}}" title="View {{item.name}}">
+                      🔍
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+              <button type="button" class="add-equipment-btn">+ Add Equipment</button>
+            </div>
+
+            {{!-- FEATS TAB --}}
+            <div class="bottom-tab-content" data-tab="feats">
+              <div class="feat-list">
+                {{#each feats as |feat|}}
+                  <div class="feat-item">
+                    <div class="feat-name">{{feat.name}}</div>
+                    <button type="button" class="item-btn-sm" data-item-id="{{feat.id}}" title="View {{feat.name}}">
+                      🔍
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+              <button type="button" class="add-feat-btn">+ Add Feat</button>
+            </div>
+
+            {{!-- TALENTS TAB --}}
+            <div class="bottom-tab-content" data-tab="talents">
+              <div class="talent-list">
+                {{#each talents as |talent|}}
+                  <div class="talent-item">
+                    <div class="talent-name">{{talent.name}}</div>
+                    <button type="button" class="item-btn-sm" data-item-id="{{talent.id}}" title="View {{talent.name}}">
+                      🔍
+                    </button>
+                  </div>
+                {{/each}}
+              </div>
+              <button type="button" class="add-talent-btn">+ Add Talent</button>
+            </div>
+
+            {{!-- POWERS TAB --}}
+            <div class="bottom-tab-content" data-tab="powers">
+              <div class="power-list">
+                {{#each powers as |power|}}
+                  <div class="force-power-item">
+                    <div class="power-name">{{power.name}}</div>
+                    <div class="power-actions-compact">
+                      <button type="button" class="use-power-btn" data-power-id="{{power.id}}" title="Use {{power.name}}">
+                        Use
+                      </button>
+                      <button type="button" class="reload-power-btn" data-power-id="{{power.id}}" title="Reload {{power.name}}">
+                        ↻
+                      </button>
+                      <button type="button" class="item-btn-sm" data-item-id="{{power.id}}" title="View {{power.name}}">
+                        🔍
+                      </button>
                     </div>
+                  </div>
+                {{/each}}
+              </div>
+              <button type="button" class="add-power-btn">+ Add Force Power</button>
+            </div>
 
-                    {{#each defaultSkills as |skill|}}
-                    <div class="skill-row holo-row {{#if skill.trained}}trained{{/if}}">
-                        <div class="col-skill-name">
-                            <span class="skill-tooltip" title="Associated Ability: {{skill.ability}}">{{skill.name}}</span>
-                        </div>
-                        <div class="col-trained">
-                            <input type="checkbox" class="skill-trained" {{#if skill.trained}}checked{{/if}}/>
-                        </div>
-                        <div class="col-bonus">{{#if (gte skill.bonus 0)}}+{{/if}}{{skill.bonus}}</div>
-                        <div class="col-roll">
-                            <button type="button" class="roll-btn-sm" data-skill="{{skill.name}}">⚅</button>
-                        </div>
-                    </div>
-                    {{/each}}
+            {{!-- NOTES TAB --}}
+            <div class="bottom-tab-content" data-tab="notes">
+              <textarea name="system.notes" placeholder="Character notes, backstory, personality traits...">{{system.notes}}</textarea>
+            </div>
 
-                    <div class="custom-skills-divider">✦ Custom Skills ✦</div>
+          </div>
+        </section>
 
-                    {{#each customSkills as |skill index|}}
-                    <div class="skill-row custom-skill-row holo-row">
-                        <input type="text" class="skill-name-input" name="system.customSkills.{{index}}.name" value="{{skill.name}}" placeholder="Skill Name"/>
-                        <div class="col-trained">
-                            <input type="checkbox" name="system.customSkills.{{index}}.trained" {{#if skill.trained}}checked{{/if}}/>
-                        </div>
-                        <div class="col-bonus">{{#if (gte skill.bonus 0)}}+{{/if}}{{skill.bonus}}</div>
-                        <button type="button" class="delete-custom-skill" data-index="{{index}}">×</button>
-                    </div>
-                    {{/each}}
+      </div>
 
-                    <button type="button" class="add-custom-skill-btn holo-add">+ Add Skill</button>
-                </div>
-            </section>
-        </div>
+      {{!-- ==================== RIGHT COLUMN ==================== --}}
+      <div class="right-column">
 
-        {{!-- CENTER COLUMN --}}
-        <div class="center-column">
-            {{> "systems/swse/templates/partials/hp-vitals.hbs"}}
-            {{> "systems/swse/templates/partials/condition.hbs"}}
-            {{> "systems/swse/templates/partials/bottom-tabs.hbs"}}
-        </div>
+        {{!-- COMBAT STATS --}}
+        <section class="datapad-section sheet-mode-pc">
+          <div class="section-header-black">Combat Stats</div>
+          
+          <div class="combat-stat-row">
+            <label>Base Attack Bonus</label>
+            <input name="system.bab" 
+                   type="number" 
+                   value="{{system.bab}}" 
+                   data-dtype="Number"
+                   placeholder="0"/>
+          </div>
 
-        {{!-- RIGHT COLUMN --}}
-        <div class="right-column">
-            {{> "systems/swse/templates/partials/combat.hbs"}}
-            {{> "systems/swse/templates/partials/force.hbs"}}
-            {{> "systems/swse/templates/partials/credits.hbs"}}
-        </div>
+          <div class="combat-stat-row">
+            <label>Speed (squares)</label>
+            <input name="system.speed" 
+                   type="number" 
+                   value="{{system.speed}}" 
+                   data-dtype="Number" 
+                   placeholder="6"/>
+          </div>
+
+          <div class="combat-stat-row">
+            <label>Initiative</label>
+            <div class="initiative-display">{{initiativeTotal}}</div>
+            <button type="button" class="roll-btn" data-roll="initiative" title="Roll Initiative">
+              ⚅
+            </button>
+          </div>
+        </section>
+
+        {{!-- FORCE POINTS & DESTINY --}}
+        <section class="datapad-section sheet-mode-pc">
+          <div class="section-header-black">Force & Destiny</div>
+          
+          <div class="force-grid">
+            <div class="force-field">
+              <label>Force Points</label>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <input name="system.forcePoints.value" 
+                       type="number" 
+                       value="{{system.forcePoints.value}}" 
+                       data-dtype="Number"
+                       placeholder="5"/>
+                <span style="color: var(--muted);">/</span>
+                <input name="system.forcePoints.max" 
+                       type="number" 
+                       value="{{system.forcePoints.max}}" 
+                       data-dtype="Number"
+                       placeholder="5"/>
+              </div>
+            </div>
+
+            <div class="force-field">
+              <label>Dark Side Score</label>
+              <input name="system.darkSideScore" 
+                     type="number" 
+                     value="{{system.darkSideScore}}" 
+                     data-dtype="Number" 
+                     placeholder="0"/>
+            </div>
+
+            <div class="force-field">
+              <label>Destiny Points</label>
+              <input name="system.destiny" 
+                     type="number" 
+                     value="{{system.destiny}}" 
+                     data-dtype="Number" 
+                     placeholder="1"/>
+            </div>
+          </div>
+        </section>
+
+        {{!-- CREDITS & WEALTH --}}
+        <section class="datapad-section sheet-mode-pc">
+          <div class="section-header-black">Credits</div>
+          <input name="system.credits" 
+                 type="number" 
+                 value="{{system.credits}}" 
+                 data-dtype="Number" 
+                 placeholder="1000" 
+                 style="font-size: 18px; text-align: center; font-weight: 900;"/>
+        </section>
+
+      </div>
+
     </div>
+  </div>
+
 </form>

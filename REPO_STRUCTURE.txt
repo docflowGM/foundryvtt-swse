@@ -1,0 +1,306 @@
+Repository Structure Map
+Generated: 2025-10-29 06:12:55
+======================================================================
+
+foundryvtt-swse/
+├── assets/
+│   ├── backgrounds/
+│   │   └── swse-bg.webp (11.3KB)
+│   ├── fonts/
+│   │   ├── Starjedi.ttf (45.4KB)
+│   │   └── Starjhol.ttf (68.1KB)
+│   ├── icons/
+│   │   └── force-powers/
+│   │       ├── art-of-the-small.png (7.8KB)
+│   │       ├── Battle Meditation.png (9.1KB)
+│   │       ├── Battle-Strike.png (6.1KB)
+│   │       ├── Battlemind.png (6.7KB)
+│   │       ├── beam-of-light.png (3.6KB)
+│   │       ├── cleanse-mind.png (5.7KB)
+│   │       ├── Drain-energy.png (6.0KB)
+│   │       ├── Drain-life.png (7.0KB)
+│   │       ├── Farseeing.png (6.6KB)
+│   │       ├── flashburn.png (7.5KB)
+│   │       ├── Force Disarm.png (6.1KB)
+│   │       ├── Force Scream.png (9.2KB)
+│   │       ├── Force Sense.png (5.4KB)
+│   │       ├── Force Strike.png (5.0KB)
+│   │       ├── Force Track.png (7.6KB)
+│   │       ├── Force Weapon.png (7.2KB)
+│   │       ├── force-blinding.png (6.9KB)
+│   │       ├── Force-Body.png (7.8KB)
+│   │       ├── Force-Cloak.png (6.0KB)
+│   │       ├── Force-defense.png (7.3KB)
+│   │       ├── force-enlightenment.png (6.9KB)
+│   │       ├── Force-grip.png (4.2KB)
+│   │       ├── force-harmony.png (6.6KB)
+│   │       ├── force-light.png (7.2KB)
+│   │       ├── force-meld.png (6.6KB)
+│   │       ├── force-power-31.png (6.2KB)
+│   │       ├── force-power-32.png (6.5KB)
+│   │       ├── force-power-33.png (4.9KB)
+│   │       ├── force-power-34.png (5.3KB)
+│   │       ├── force-power-35.png (6.1KB)
+│   │       ├── force-power-36.png (5.5KB)
+│   │       ├── force-power-38.png (5.9KB)
+│   │       ├── force-power-40.png (5.8KB)
+│   │       ├── force-power-42.png (6.6KB)
+│   │       ├── force-power-46.png (7.9KB)
+│   │       ├── force-power-50.png (5.7KB)
+│   │       ├── force-power-52.png (8.7KB)
+│   │       ├── force-power-54.png (6.6KB)
+│   │       ├── force-power-55.png (7.7KB)
+│   │       ├── force-power-56.png (6.3KB)
+│   │       ├── force-power-58.png (7.7KB)
+│   │       ├── force-stasis.png (7.6KB)
+│   │       ├── Force-Storm.png (4.3KB)
+│   │       ├── Force-Thrust.png (5.9KB)
+│   │       ├── force-valor.png (6.0KB)
+│   │       ├── inspire.png (7.3KB)
+│   │       ├── ionize.png (6.6KB)
+│   │       ├── mind-trick.png (7.6KB)
+│   │       ├── morichro.png (7.4KB)
+│   │       ├── Move-object.png (7.4KB)
+│   │       ├── Negate-Energy.png (7.3KB)
+│   │       ├── plant-surge.png (8.2KB)
+│   │       ├── Rebuke.png (8.6KB)
+│   │       ├── restful-sleep.png (5.3KB)
+│   │       ├── sever-force.png (5.7KB)
+│   │       ├── Surge.png (6.1KB)
+│   │       ├── truth-sense.png (8.2KB)
+│   │       ├── Vital-Transfer.png (6.4KB)
+│   │       └── words-of-banishment.png (5.7KB)
+│   ├── images/
+│   │   └── ui/
+│   │       ├── sheet-background.png (8.0B)
+│   │       ├── sheet-frame.png (8.0B)
+│   │       ├── swse-cover.webp (8.0B)
+│   │       ├── title-logo.png (8.0B)
+│   │       └── vehicle-stats.png (524.0KB)
+│   └── ui/
+│       ├── logo.png (11.4KB)
+│       └── logo@2x.png (13.5KB)
+├── data/
+│   ├── armor/
+│   │   ├── heavy.db (13.5KB)
+│   │   ├── heavy.json (3.6KB)
+│   │   ├── light.db (18.8KB)
+│   │   ├── light.json (4.8KB)
+│   │   ├── medium.db (15.2KB)
+│   │   └── medium.json (3.9KB)
+│   ├── attributes.json (2.6KB)
+│   ├── classes.json (120.1KB)
+│   ├── combat-actions.json (17.1KB)
+│   ├── conditions.json (2.4KB)
+│   ├── Droids.json (137.3KB)
+│   ├── equipment.json (120.5KB)
+│   ├── extraskilluses.json (37.8KB)
+│   ├── feats.json (73.6KB)
+│   ├── forcepowers.json (2.0B)
+│   ├── skills.json (4.2KB)
+│   ├── special-combat-condition.json (13.3KB)
+│   ├── talent_trees.json (6.7KB)
+│   ├── talents.json (166.1KB)
+│   ├── vehicles.json (357.4KB)
+│   └── weapons.json (28.0KB)
+├── docs/
+│   ├── ARMOR_SYSTEM_UPDATES.md (2.6KB)
+│   ├── Assets_Guide.md (12.5KB)
+│   ├── DATA_MODEL.md (5.2KB)
+│   ├── Design.md (3.3KB)
+│   ├── MIGRATION_NOTES.md (2.1KB)
+│   ├── README.md (3.9KB)
+│   ├── REORGANIZATION_SUMMARY.txt (2.4KB)
+│   ├── Rules.md (5.5KB)
+│   └── SYSTEM_STATUS.md (2.6KB)
+├── helpers/
+│   └── handlebars-helpers.js (5.7KB)
+├── lang/
+│   └── en.json (166.0B)
+├── module/
+│   ├── chargen/
+│   │   ├── chargen-init.js (3.2KB)
+│   │   └── chargen.js (40.3KB)
+│   ├── constants/
+│   │   └── chargen-constants.js (3.9KB)
+│   ├── packs/
+│   │   └── armor/
+│   ├── scripts/
+│   │   └── helpers.js (1.8KB)
+│   ├── sheets/
+│   │   ├── character-sheet-handlers.js (5.0KB)
+│   │   ├── character-sheet-handlers.js.backup (5.0KB)
+│   │   ├── SWSEActorSheet.js.old (5.4KB)
+│   │   └── SWSEItemSheet.js (1.3KB)
+│   └── templates/
+│       └── partials/
+│           └── ability-block.hbs (691.0B)
+├── packs/
+│   ├── armor-heavy.db (6.7KB)
+│   ├── armor-light.db (9.0KB)
+│   ├── armor-medium.db (7.5KB)
+│   ├── armor.db (21.5KB)
+│   ├── attributes.db (2.1KB)
+│   ├── classes.db (12.5KB)
+│   ├── combat-actions.db (12.3KB)
+│   ├── conditions.db (3.7KB)
+│   ├── droids.db (83.6KB)
+│   ├── equipment.db (265.5KB)
+│   ├── extraskilluses.db (32.5KB)
+│   ├── feats.db (78.8KB)
+│   ├── forcepowers.db (11.2KB)
+│   ├── npc.db (68.7KB)
+│   ├── skills.db (4.1KB)
+│   ├── special-combat-condition.db (7.9KB)
+│   ├── species.db (22.5KB)
+│   ├── talent_trees.db (43.6KB)
+│   ├── talents.db (439.4KB)
+│   ├── vehicles.db (337.6KB)
+│   └── weapons.db (20.8KB)
+├── schema/
+│   ├── attributes.schema.json (584.0B)
+│   ├── combat-action.schema.json (806.0B)
+│   ├── conditions.schema.json (665.0B)
+│   ├── droids.schema.json (2.0B)
+│   ├── equipment.schema.json (606.0B)
+│   ├── extraskilluses.schema.json (786.0B)
+│   ├── feats.schema.json (1.3KB)
+│   ├── forcepowers.schema.json (1.0KB)
+│   ├── skills.schema.json (478.0B)
+│   ├── talents.schema.json (1.3KB)
+│   ├── vehicles.schema.json (3.7KB)
+│   └── weapons.schema.json (2.1KB)
+├── scripts/
+│   ├── actors/
+│   │   ├── swse-actor.js (19.7KB)
+│   │   ├── swse-droid.js (3.1KB)
+│   │   ├── swse-npc.js (3.1KB)
+│   │   └── swse-vehicle.js (3.5KB)
+│   ├── apps/
+│   │   ├── chargen-init.js (2.2KB)
+│   │   ├── chargen.js (26.4KB)
+│   │   ├── store.js (7.8KB)
+│   │   └── swse-levelup.js (8.0KB)
+│   ├── core/
+│   │   ├── constants.js (1.4KB)
+│   │   ├── load-templates.js (1.1KB)
+│   │   ├── rolls-init.js (979.0B)
+│   │   ├── swse-data.js (1.5KB)
+│   │   ├── utils-init.js (1.1KB)
+│   │   └── world-data-loader.js (13.3KB)
+│   ├── data/
+│   │   └── races.js (5.8KB)
+│   ├── helpers/
+│   │   ├── dice-utils.js.old (481.0B)
+│   │   └── handlebars-helpers.js (4.4KB)
+│   ├── items/
+│   │   └── swse-item.js (737.0B)
+│   ├── rolls/
+│   │   ├── attacks.js (3.3KB)
+│   │   ├── damage.js (1.9KB)
+│   │   ├── defenses.js (2.1KB)
+│   │   ├── dice.js (2.4KB)
+│   │   ├── initiative.js (1.8KB)
+│   │   ├── saves.js (1.7KB)
+│   │   ├── skills-reference.js (10.6KB)
+│   │   └── skills.js (2.9KB)
+│   ├── sheets/
+│   │   └── sheet-handlers.js (8.0KB)
+│   ├── utils/
+│   │   ├── character-utils.js (2.7KB)
+│   │   ├── combat-utils.js (2.6KB)
+│   │   ├── data-utils.js (3.3KB)
+│   │   ├── dice-utils.js (5.2KB)
+│   │   ├── math-utils.js (2.8KB)
+│   │   ├── string-utils.js (2.4KB)
+│   │   ├── ui-utils.js (3.0KB)
+│   │   └── validation-utils.js (2.5KB)
+│   ├── dice-utils.js (481.0B)
+│   ├── swse-item.js (772.0B)
+│   └── swse.js (4.2KB)
+├── store/
+│   ├── gm-settings.html (482.0B)
+│   ├── gm-settings.js (773.0B)
+│   ├── store.html (1.9KB)
+│   └── store.js (3.4KB)
+├── styles/
+│   ├── apps/
+│   ├── character-sheet-fixes.css (15.8KB)
+│   ├── character-sheet.css (22.3KB)
+│   ├── narrative-chargen.css (7.2KB)
+│   ├── swse-components.css (12.4KB)
+│   ├── swse-fixes.css (194.0B)
+│   ├── swse-holo-enhanced.css (9.2KB)
+│   ├── swse-holo.css (5.2KB)
+│   ├── swse.css (3.7KB)
+│   ├── unified-sheets.css (20.6KB)
+│   └── vehicle-sheet-styles.css (14.1KB)
+├── templates/
+│   ├── actors/
+│   │   ├── character-sheet.hbs (55.5KB)
+│   │   ├── droid-sheet.hbs (12.5KB)
+│   │   ├── item-sheet.hbs (5.4KB)
+│   │   ├── npc-sheet.hbs (5.5KB)
+│   │   └── vehicle-sheet.hbs (18.5KB)
+│   ├── apps/
+│   │   ├── chargen-fixed.hbs (9.3KB)
+│   │   ├── chargen.hbs (7.4KB)
+│   │   ├── chargen.html (8.2KB)
+│   │   ├── narrative-chargen.hbs (7.5KB)
+│   │   └── store.hbs (1.9KB)
+│   ├── chargen/
+│   │   └── chargen.html (7.3KB)
+│   ├── item/
+│   │   └── item-sheet.hbs (10.9KB)
+│   ├── items/
+│   │   ├── item-sheet.hbs (16.1KB)
+│   │   └── item-sheet.html (5.1KB)
+│   ├── partials/
+│   │   ├── ability-block.hbs (303.0B)
+│   │   ├── ability-scores.hbs (881.0B)
+│   │   ├── defenses.hbs (767.0B)
+│   │   ├── item-controls.hbs (244.0B)
+│   │   ├── README.md (906.0B)
+│   │   ├── skill-row.hbs (732.0B)
+│   │   └── tab-navigation.hbs (399.0B)
+│   └── sheets/
+│       └── character-sheet.hbs (11.6KB)
+├── ui/
+│   ├── ErEwaEfVkAQgT8Q-Picsart-BackgroundRemover.png (43.2KB)
+│   ├── sheet-background.png (39.1KB)
+│   ├── sheet-frame.png (182.0KB)
+│   ├── sheet-frame@2x.png (1.1MB)
+│   ├── title-logo.png (11.4KB)
+│   └── title-logo@2x.png (13.5KB)
+├── apply_holo_theme.py (3.8KB)
+├── cleanup_report_20251022_161156.txt (2.6KB)
+├── cleanup_review.sh (1.3KB)
+├── config.js (483.0B)
+├── import os.py (1.7KB)
+├── index.js (5.9KB)
+├── migration-helper.js (1.2KB)
+├── rebuild_classes_db.py (3.0KB)
+├── scan_repo.py (7.5KB)
+├── swse-sheet-preview.html (26.4KB)
+├── swse.zip (2.7MB)
+├── system.json (3.8KB)
+├── template.json (5.0KB)
+└── Update.py (954.0B)
+
+======================================================================
+Repository Statistics
+======================================================================
+
+Total Directories: 46
+Total Files: 237
+Total Size: 8.4MB
+
+Files by Type:
+  Images            73 files  (2.4MB)
+  JavaScript        49 files  (241.7KB)
+  Data              33 files  (1.1MB)
+  Other             31 files  (4.3MB)
+  Templates         25 files  (215.4KB)
+  Docs              11 files  (43.6KB)
+  Styles            10 files  (110.7KB)
+  Python             5 files  (16.8KB)
