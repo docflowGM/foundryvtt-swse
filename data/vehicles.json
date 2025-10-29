@@ -48,7 +48,7 @@
       "new": 6750,
       "used": 1200
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "A-A5 Speeder Truck",
@@ -80,7 +80,7 @@
       "new": 30500,
       "used": 8000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AAT-1",
@@ -131,7 +131,7 @@
       "new": 4,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AeroChaser Speeder Bike",
@@ -163,7 +163,7 @@
       "new": 5800,
       "used": 1000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Arrow-23 Landspeeder",
@@ -214,7 +214,7 @@
       "new": 10800,
       "used": 3400
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Bantha-II Cargo Skiff",
@@ -246,7 +246,7 @@
       "new": 8000,
       "used": 3000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "BARC Speeder",
@@ -297,7 +297,7 @@
       "new": 8300,
       "used": 1550
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Canderous-Class Assault Tank",
@@ -354,7 +354,7 @@
       "new": 4,
       "used": 1
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "CK-6 Freeco Speeder Bike",
@@ -405,7 +405,7 @@
       "new": 14700,
       "used": 7400
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corona Luxury Groundspeeder",
@@ -437,7 +437,7 @@
       "new": 70000,
       "used": 20000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "CS-1 Cargo Sled",
@@ -469,7 +469,7 @@
       "new": 12000,
       "used": 6500
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "F9-TZ Transport",
@@ -501,7 +501,7 @@
       "new": 9,
       "used": 15
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "FC-20 Speeder Bike",
@@ -533,7 +533,7 @@
       "new": 4000,
       "used": 1000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "KAAC Freerunner",
@@ -584,7 +584,7 @@
       "new": 140000,
       "used": 110000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Kybuck Speeder Bike",
@@ -635,7 +635,7 @@
       "new": 8000,
       "used": 3500
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Laser Borer",
@@ -689,7 +689,7 @@
       "new": 10000,
       "used": 3000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "LAVr QH-7 Chariot",
@@ -717,7 +717,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Manta Droid Subfighter",
@@ -768,7 +768,7 @@
       "new": 22000,
       "used": 3
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Mekuun Heavy Tracker",
@@ -819,7 +819,7 @@
       "new": 125000,
       "used": 75000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Model 67 Shrieker Speeder Bike",
@@ -847,7 +847,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "MR/RV",
@@ -898,7 +898,7 @@
       "new": 220000,
       "used": 90000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "MTT",
@@ -949,7 +949,7 @@
       "new": 138000,
       "used": 80000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "PAC",
@@ -981,7 +981,7 @@
       "new": 37000,
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "PL-90 Luxury Speeder",
@@ -1013,7 +1013,7 @@
       "new": 48000,
       "used": 29000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "T2-B Repulsor Tank",
@@ -1052,7 +1052,7 @@
       "new": 5,
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "TT-6 Landspeeder",
@@ -1084,7 +1084,7 @@
       "new": 12000,
       "used": 3800
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "TX-130 Saber-Class Fighter Tank",
@@ -1135,7 +1135,7 @@
       "new": 3,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "TX-130T Fighter Tank",
@@ -1186,7 +1186,7 @@
       "new": 42000,
       "used": 34000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "U-LAV",
@@ -1237,7 +1237,7 @@
       "new": 50000,
       "used": 22000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "UT-AT",
@@ -1288,7 +1288,7 @@
       "new": 8,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "V-35 Courier",
@@ -1320,7 +1320,7 @@
       "new": 8000,
       "used": 2500
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Viper Swoop Bike",
@@ -1351,7 +1351,7 @@
       "new": 5500,
       "used": 1050
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Wind Skiff",
@@ -1405,7 +1405,7 @@
       "new": 13000,
       "used": 3500
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "WLO-5 Speeder Tank",
@@ -1456,7 +1456,7 @@
       "new": 115000,
       "used": 65000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "X-34 Landspeeder",
@@ -1488,7 +1488,7 @@
       "new": 10550,
       "used": 2500
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "X-34 Speeder Escort",
@@ -1539,7 +1539,7 @@
       "new": 13550,
       "used": 3500
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AT-AT",
@@ -1590,7 +1590,7 @@
       "new": 7,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AT-AP",
@@ -1641,7 +1641,7 @@
       "new": 7,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AT-CT",
@@ -1692,7 +1692,7 @@
       "new": 8,
       "used": 28
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AT-KT",
@@ -1743,7 +1743,7 @@
       "new": 6,
       "used": 2
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AT-ST",
@@ -1794,7 +1794,7 @@
       "new": 6,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AT-TE",
@@ -1845,7 +1845,7 @@
       "new": 7,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AT-RT",
@@ -1896,7 +1896,7 @@
       "new": 40000,
       "used": 24000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AT-XT",
@@ -1947,7 +1947,7 @@
       "new": 14700,
       "used": 2200
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AT-PT",
@@ -1998,7 +1998,7 @@
       "new": 1,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AT-RCT",
@@ -2049,7 +2049,7 @@
       "new": 9,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AT-AHT",
@@ -2100,7 +2100,7 @@
       "new": 8,
       "used": 8
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AT-AA",
@@ -2151,7 +2151,7 @@
       "new": 2,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Hyena-Class Bomber",
@@ -2208,7 +2208,7 @@
       "new": 23000,
       "used": 7
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Modified Tsmeu-6 Personal Wheel Bike",
@@ -2236,7 +2236,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Octuptarra Magna Tri-Droid",
@@ -2287,7 +2287,7 @@
       "new": 100000,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "OG-9 Homing Spider Droid",
@@ -2338,7 +2338,7 @@
       "new": 70000,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "SPHA",
@@ -2389,7 +2389,7 @@
       "new": 7,
       "used": 7
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "SPHA-I",
@@ -2417,7 +2417,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "SPHA-V",
@@ -2445,7 +2445,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "SPHA-C",
@@ -2473,7 +2473,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "SPHA-M",
@@ -2501,7 +2501,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Tsmeu-6 Personal Wheel Bike",
@@ -2533,7 +2533,7 @@
       "new": 15000,
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "\"Vulture\" Droid Starfighter",
@@ -2590,7 +2590,7 @@
       "new": 19000,
       "used": 7
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "WLO-5 Speeder Tank",
@@ -2641,7 +2641,7 @@
       "new": 115000,
       "used": 65000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "LAAT/i Gunship",
@@ -2695,7 +2695,7 @@
       "new": 65000,
       "used": 40000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Modified T-47 Airspeeder",
@@ -2746,7 +2746,7 @@
       "new": 50000,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Basilisk War Droid",
@@ -2803,7 +2803,7 @@
       "new": 70000,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Twin-228 Airspeeder",
@@ -2835,7 +2835,7 @@
       "new": 22000,
       "used": 13500
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Urban Navigator Speeder Bike",
@@ -2867,7 +2867,7 @@
       "new": 9600,
       "used": 3500
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Flare-S Swoop",
@@ -2899,7 +2899,7 @@
       "new": 5750,
       "used": 1500
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "DC0052 \"Intergalactic\" Speeder",
@@ -2931,7 +2931,7 @@
       "new": 10000,
       "used": 2000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "LAAT/c Gunship",
@@ -2982,7 +2982,7 @@
       "new": 58000,
       "used": 42000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Medlifter Troop Transport",
@@ -3014,7 +3014,7 @@
       "new": 24000,
       "used": 6100
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "\"Oevvaor\" Jet Catamaran",
@@ -3065,7 +3065,7 @@
       "new": 12125,
       "used": 2700
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Raddaugh Gnasp Fluttercraft",
@@ -3093,7 +3093,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "RTT",
@@ -3144,7 +3144,7 @@
       "new": 42000,
       "used": 10200
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "STAP",
@@ -3195,7 +3195,7 @@
       "new": 2500,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "GPE-3300 Airspeeder",
@@ -3227,7 +3227,7 @@
       "new": 60000,
       "used": 35000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Veltiss-2 Airspeeder",
@@ -3259,7 +3259,7 @@
       "new": 19000,
       "used": 9200
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Air-2 Racing Swoop",
@@ -3291,7 +3291,7 @@
       "new": 8000,
       "used": 2500
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Lancet Aerial Artillery",
@@ -3342,7 +3342,7 @@
       "new": 6,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Storm IV Twin-Pod Cloud Car",
@@ -3370,7 +3370,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Talon I Combat Cloud Car",
@@ -3398,7 +3398,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Drop Pod",
@@ -3430,7 +3430,7 @@
       "new": 17000,
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "S-130 Shelter Medical Speeder",
@@ -3458,7 +3458,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Aerosled Mark III",
@@ -3486,7 +3486,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Protector VI Patrol Speeder",
@@ -3537,7 +3537,7 @@
       "new": 50000,
       "used": 40000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "SkyBlind Landing Sphere",
@@ -3569,7 +3569,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "74-M Speeder Bike",
@@ -3623,10 +3623,10 @@
       "new": 4000,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "HSP-10 Pursuit Airspeeder",
+    "name": "HSP-10 Pursassets/uit Airspeeder",
     "vehicle_type": "Speeder",
     "tags": [
       "speeder"
@@ -3677,7 +3677,7 @@
       "new": 40000,
       "used": 20000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Imperial RaDAir",
@@ -3705,7 +3705,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Swift Assault 5 Hovercraft",
@@ -3759,7 +3759,7 @@
       "new": 75000,
       "used": 45000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Tibanna Refinery Platform",
@@ -3813,7 +3813,7 @@
       "new": 42000,
       "used": 30000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Luke's Snowspeeder",
@@ -3867,7 +3867,7 @@
       "new": 11,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "UR-40M Patrol Speeder",
@@ -3921,7 +3921,7 @@
       "new": 55000,
       "used": 30000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Urban Bombardier Speeder Bike",
@@ -3975,7 +3975,7 @@
       "new": 18000,
       "used": 8500
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "ARC-170 Starfighter",
@@ -4023,7 +4023,7 @@
       "new": 155000,
       "used": 70000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Droid Tri-Fighter",
@@ -4071,7 +4071,7 @@
       "new": 40000,
       "used": 7
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Eta-2 Actis Interceptor",
@@ -4119,7 +4119,7 @@
       "new": 290000,
       "used": 140000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "TIE Fighter",
@@ -4173,7 +4173,7 @@
       "new": 60000,
       "used": 25000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "TIE Interceptor",
@@ -4227,7 +4227,7 @@
       "new": 120000,
       "used": 50000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "\"Vulture\" Droid Starfighter",
@@ -4284,7 +4284,7 @@
       "new": 19000,
       "used": 7
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "T-65B X-Wing Starfighter",
@@ -4338,7 +4338,7 @@
       "new": 150000,
       "used": 65000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Y-Wing Starfighter",
@@ -4386,7 +4386,7 @@
       "new": 135000,
       "used": 60000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Advanced V-19 Torrent Starfighter",
@@ -4434,7 +4434,7 @@
       "new": 9,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "A-Wing Starfighter",
@@ -4482,7 +4482,7 @@
       "new": 175000,
       "used": 70000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "B-Wing Shuttle",
@@ -4530,7 +4530,7 @@
       "new": 220000,
       "used": 120000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "B-Wing Starfighter",
@@ -4578,7 +4578,7 @@
       "new": 220000,
       "used": 120000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "B-Wing/E2 Starfighter",
@@ -4626,7 +4626,7 @@
       "new": 250000,
       "used": 135000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "CloakShape Fighter",
@@ -4674,7 +4674,7 @@
       "new": 60000,
       "used": 15000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Coralskipper",
@@ -4725,7 +4725,7 @@
       "new": 11,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Cutlass-9 Patrol Fighter",
@@ -4773,7 +4773,7 @@
       "new": 140000,
       "used": 65000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Delta-7 Aethersprite Interceptor",
@@ -4821,7 +4821,7 @@
       "new": 180000,
       "used": 145000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Escape Pod",
@@ -4853,7 +4853,7 @@
       "new": 1200,
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "E-Wing Escort Starfighter",
@@ -4881,7 +4881,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Ginivex-Class Starfighter",
@@ -4929,7 +4929,7 @@
       "new": 11,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Junker TYE-Wing",
@@ -4977,7 +4977,7 @@
       "new": 60000,
       "used": 25000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "K-Wing Assault Starfighter",
@@ -5025,7 +5025,7 @@
       "new": 250000,
       "used": 120000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Mankvim-814 Light Interceptor",
@@ -5079,7 +5079,7 @@
       "new": 15000,
       "used": 6000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Miy'til Assault Bomber",
@@ -5127,7 +5127,7 @@
       "new": 150000,
       "used": 7
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Miy'til Starfighter",
@@ -5155,7 +5155,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Miy'til Command Starfighter",
@@ -5183,7 +5183,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "N-1 Royal Starfighter",
@@ -5231,7 +5231,7 @@
       "new": 6,
       "used": 1
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Nantex-Class Territorial Starfighter",
@@ -5279,7 +5279,7 @@
       "new": 6,
       "used": 1
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Nssis-Class Clawcraft",
@@ -5327,7 +5327,7 @@
       "new": 11,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "P-38 Starfighter",
@@ -5375,7 +5375,7 @@
       "new": 120000,
       "used": 50000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Predator-Class Starfighter",
@@ -5423,7 +5423,7 @@
       "new": 6,
       "used": 1
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Scarab-Class Droid Starfighter",
@@ -5471,7 +5471,7 @@
       "new": 17000,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Scimitar Assault Bomber",
@@ -5519,7 +5519,7 @@
       "new": 120000,
       "used": 45000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Sith Interceptor",
@@ -5567,7 +5567,7 @@
       "new": 4,
       "used": 1
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "StarViper-Class Attack Platform",
@@ -5595,7 +5595,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "T-65BR X-Wing Starfighter",
@@ -5643,7 +5643,7 @@
       "new": 150000,
       "used": 95000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "T-65XJ3 X-Wing Starfighter",
@@ -5691,7 +5691,7 @@
       "new": 315000,
       "used": 220000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "TIE Advanced",
@@ -5739,7 +5739,7 @@
       "new": 160000,
       "used": 65000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "TIE Bomber",
@@ -5793,7 +5793,7 @@
       "new": 150000,
       "used": 60000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "TIE Defender",
@@ -5841,7 +5841,7 @@
       "new": 200000,
       "used": 80000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "V-19 Torrent Starfighter",
@@ -5889,7 +5889,7 @@
       "new": 135000,
       "used": 70000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Virago",
@@ -5937,7 +5937,7 @@
       "new": 6,
       "used": 1
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "V-Wing Starfighter",
@@ -5985,7 +5985,7 @@
       "new": 102500,
       "used": 45000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "X-83 TwinTail Starfighter",
@@ -6033,7 +6033,7 @@
       "new": 160000,
       "used": 75000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Y-Wing \"Courier\" Variant",
@@ -6061,7 +6061,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Y-Wing \"LongProbe\"",
@@ -6089,7 +6089,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Z-95 Headhunter",
@@ -6137,7 +6137,7 @@
       "new": 80000,
       "used": 45000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Aurek Tactical Strikefighter",
@@ -6185,7 +6185,7 @@
       "new": 360000,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian S-100 Stinger-Class Starfighter",
@@ -6233,7 +6233,7 @@
       "new": 150000,
       "used": 90000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian S-250 Chela-Class Starfighter",
@@ -6281,7 +6281,7 @@
       "new": 420000,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "CX-133 Chaos Fighter",
@@ -6335,7 +6335,7 @@
       "new": 65000,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Davaab-Type Starfighter",
@@ -6389,7 +6389,7 @@
       "new": 150000,
       "used": 80000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Star Saber XC-01 Starfighter",
@@ -6437,7 +6437,7 @@
       "new": 145000,
       "used": 75000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "A-7 Hunter Interceptor",
@@ -6485,7 +6485,7 @@
       "new": 80000,
       "used": 45000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "H-60 Tempest Bomber",
@@ -6533,7 +6533,7 @@
       "new": 175000,
       "used": 125000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "M3-A Scyk Fighter",
@@ -6581,7 +6581,7 @@
       "new": 75000,
       "used": 35000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "NovaSword Space Superiority Fighter",
@@ -6609,7 +6609,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "R-41 Starchaser",
@@ -6657,7 +6657,7 @@
       "new": 115000,
       "used": 55000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "R-42 Starchaser",
@@ -6705,7 +6705,7 @@
       "new": 115000,
       "used": 55000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "TIE Prototype",
@@ -6753,7 +6753,7 @@
       "new": 130000,
       "used": 75000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Toscan 8-Q Starfighter",
@@ -6801,7 +6801,7 @@
       "new": 180000,
       "used": 40000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Zebra Starfighter",
@@ -6849,7 +6849,7 @@
       "new": 80000,
       "used": 30000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Azure Angel",
@@ -6897,7 +6897,7 @@
       "new": 14,
       "used": 9
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Belbullab Heavy Starfighter",
@@ -6945,7 +6945,7 @@
       "new": 168000,
       "used": 125000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Belbullab Heavy Starfighter",
@@ -6993,7 +6993,7 @@
       "new": 168000,
       "used": 125000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Belbullab Heavy Starfighter",
@@ -7041,7 +7041,7 @@
       "new": 168000,
       "used": 125000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "CIS-Advanced Starfighter",
@@ -7089,7 +7089,7 @@
       "new": 7,
       "used": 2
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Dagger-Class Starfighter",
@@ -7137,7 +7137,7 @@
       "new": 35000,
       "used": 8000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Delta-7 Aethersprite High-Maneuver Interceptor",
@@ -7165,7 +7165,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Delta-7 Aethersprite High-Speed Interceptor",
@@ -7193,7 +7193,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Dianoga-Class Assault Starfighter",
@@ -7232,7 +7232,7 @@
       "new": 45000,
       "used": 12000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Droch-Class Boarding Ship",
@@ -7280,7 +7280,7 @@
       "new": 43000,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Eta-2 Actis Heavy-Defense Interceptor",
@@ -7308,7 +7308,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "A519 Invader Close Support Starfighter",
@@ -7356,7 +7356,7 @@
       "new": 125000,
       "used": 70000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "BB-2 Starfire Fighter/Bomber",
@@ -7384,7 +7384,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Besh-Type Personal Starfighter",
@@ -7412,7 +7412,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "CF9 Crossfire Starfighter",
@@ -7451,7 +7451,7 @@
       "new": 7,
       "used": 2
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Fury-Class Starfighter",
@@ -7499,7 +7499,7 @@
       "new": 16,
       "used": 11
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "I4 Ionizer Starfighter",
@@ -7547,7 +7547,7 @@
       "new": 7,
       "used": 2
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Jumpstar HPF Starfighter",
@@ -7595,7 +7595,7 @@
       "new": 275000,
       "used": 125000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Neutralizer-Class Bomber",
@@ -7643,7 +7643,7 @@
       "new": 7,
       "used": 2
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Phoebos-Class Starfighter",
@@ -7691,7 +7691,7 @@
       "new": 190000,
       "used": 100000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "R-28 Starfighter",
@@ -7739,7 +7739,7 @@
       "new": 120000,
       "used": 55000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "RC-2 Twilight Scoutship",
@@ -7787,7 +7787,7 @@
       "new": 275000,
       "used": 125000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AEG-77 Vigo Gunship",
@@ -7815,7 +7815,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "AEG-77 Vigo Transport",
@@ -7843,7 +7843,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Baronial-Class Yacht",
@@ -7891,7 +7891,7 @@
       "new": 200000,
       "used": 120000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Baudo-Class Star Yacht",
@@ -7939,7 +7939,7 @@
       "new": 400000,
       "used": 250000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "BC-714 Luxury Transport",
@@ -7971,7 +7971,7 @@
       "new": 1,
       "used": 7
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "C-9979 Landing Craft",
@@ -8019,7 +8019,7 @@
       "new": 200000,
       "used": 75000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Ghtroc 720 Freighter",
@@ -8067,7 +8067,7 @@
       "new": 98500,
       "used": 23000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Conductor-Class Short-Haul Landing Craft",
@@ -8115,7 +8115,7 @@
       "new": 250000,
       "used": 100000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Conqueror-Class Assault Ship",
@@ -8163,7 +8163,7 @@
       "new": 100500,
       "used": 46000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian Barloz-Class Medium Freighter",
@@ -8211,10 +8211,10 @@
       "new": 120000,
       "used": 17500
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Corellian Consular-Class Cruiser",
+    "name": "Corellian Consular-Class Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -8239,7 +8239,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian CR-20 Troop Transport",
@@ -8287,7 +8287,7 @@
       "new": 680000,
       "used": 265000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian Crix-Class Assault Shuttle",
@@ -8335,7 +8335,7 @@
       "new": 600000,
       "used": 260000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian Crix-Class Courier Shuttle",
@@ -8383,7 +8383,7 @@
       "new": 500000,
       "used": 200000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian G9 Rigger-Class Light Freighter",
@@ -8411,7 +8411,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian HWK-290 Light Freighter",
@@ -8459,7 +8459,7 @@
       "new": 135000,
       "used": 55000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian JumpMaster 5000 Scout Ship",
@@ -8487,7 +8487,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian KR-TB \"Doomtreader\"",
@@ -8515,7 +8515,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian MT Dropship",
@@ -8563,7 +8563,7 @@
       "new": 600000,
       "used": 300000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian Nemesis-Class Patrol Ship",
@@ -8611,7 +8611,7 @@
       "new": 180000,
       "used": 95000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian VCX-350 Light Freighter",
@@ -8659,7 +8659,7 @@
       "new": 300000,
       "used": 175000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian YT-1250 Freighter",
@@ -8707,7 +8707,7 @@
       "new": 120000,
       "used": 30000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian YT-1300 Transport",
@@ -8755,7 +8755,7 @@
       "new": 100000,
       "used": 25000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian YT-1930 Transport",
@@ -8803,7 +8803,7 @@
       "new": 135000,
       "used": 62000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian YT-2000 Transport",
@@ -8851,7 +8851,7 @@
       "new": 150000,
       "used": 45000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian YT-2400 Transport",
@@ -8899,7 +8899,7 @@
       "new": 130000,
       "used": 32000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian YU-410 Light Freighter",
@@ -8947,7 +8947,7 @@
       "new": 110000,
       "used": 30000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian YV-545 Light Freighter",
@@ -8995,7 +8995,7 @@
       "new": 120000,
       "used": 35000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian YX-1980 Transport",
@@ -9043,7 +9043,7 @@
       "new": 150000,
       "used": 80000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian YZ-2500 Heavy Transport",
@@ -9071,7 +9071,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian YZ-775 Medium Transport",
@@ -9119,10 +9119,10 @@
       "new": 500000,
       "used": 350000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Diamond-Class Cruiser",
+    "name": "Diamond-Class Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -9167,7 +9167,7 @@
       "new": 5000000,
       "used": 2125000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Dynamic-Class Freighter",
@@ -9215,7 +9215,7 @@
       "new": 80000,
       "used": 30000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "G-Type Escape Shuttle",
@@ -9243,7 +9243,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "G-Type Light Shuttle",
@@ -9306,7 +9306,7 @@
       "new": 200000,
       "used": 95000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Gamma-Class Assault Shuttle",
@@ -9354,7 +9354,7 @@
       "new": 850000,
       "used": 340000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "GAT-12h Skipray Blastboat",
@@ -9382,7 +9382,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Gladius-Class Light Freighter",
@@ -9430,10 +9430,10 @@
       "new": 190000,
       "used": 105000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Gozanti Cruiser",
+    "name": "Gozanti Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -9478,7 +9478,7 @@
       "new": 150000,
       "used": 50000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "GPE-7300 Space Transport",
@@ -9526,7 +9526,7 @@
       "new": 165000,
       "used": 90000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "GS-100 Salvage Ship",
@@ -9565,10 +9565,10 @@
       "new": 190000,
       "used": 95000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Guardian-Class Light Cruiser",
+    "name": "Guardian-Class Light Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -9613,7 +9613,7 @@
       "new": 800000,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Gymsnor-3 Light Freighter",
@@ -9661,7 +9661,7 @@
       "new": 38000,
       "used": 19000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Hardcell-Class Interstellar Transport",
@@ -9689,7 +9689,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Helot-Class Medium Space Transport",
@@ -9717,7 +9717,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Herald-Class Shuttle",
@@ -9765,7 +9765,7 @@
       "new": 120000,
       "used": 222500
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Hound's Tooth",
@@ -9813,7 +9813,7 @@
       "new": 12,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "IF-120 Landing Craft",
@@ -9861,10 +9861,10 @@
       "new": 290000,
       "used": 10
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "ILH-KK Citadel-Class Civilian Cruiser",
+    "name": "ILH-KK Citadel-Class Civilian Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -9889,7 +9889,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Imperial Customs Corvette",
@@ -9937,7 +9937,7 @@
       "new": 6,
       "used": 14
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "J-1 Shuttle",
@@ -9985,7 +9985,7 @@
       "new": 220000,
       "used": 100000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "J-Type Star Skiff",
@@ -10033,7 +10033,7 @@
       "new": 5,
       "used": 14
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Junker Class 720 Freighter",
@@ -10061,7 +10061,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Kappa-Class Shuttle",
@@ -10109,7 +10109,7 @@
       "new": 7,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Kazellis-Class Light Freighter",
@@ -10157,7 +10157,7 @@
       "new": 50000,
       "used": 23000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Krayt's Honor",
@@ -10205,7 +10205,7 @@
       "new": 3,
       "used": 13
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "KT-400 Military Droid Carrier",
@@ -10253,7 +10253,7 @@
       "new": 280000,
       "used": 150000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Lambda-Class Shuttle",
@@ -10301,7 +10301,7 @@
       "new": 240000,
       "used": 2
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Lethisk-Class Armed Freighter",
@@ -10349,7 +10349,7 @@
       "new": 470000,
       "used": 225000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Maka-Eekai L4000 Transport",
@@ -10397,7 +10397,7 @@
       "new": 180000,
       "used": 85000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "MC-24a Light Shuttle",
@@ -10445,7 +10445,7 @@
       "new": 90000,
       "used": 50000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Ministry-Class Orbital Shuttle",
@@ -10493,10 +10493,10 @@
       "new": 160000,
       "used": 80000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Modified ILH-KK Citadel-Class Civilian Cruiser",
+    "name": "Modified ILH-KK Citadel-Class Civilian Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -10521,7 +10521,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Modified Lambda-Class Shuttle",
@@ -10549,7 +10549,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "MRX-BR Pacifier",
@@ -10597,7 +10597,7 @@
       "new": 170000,
       "used": 100000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Mu-2 Long Range Shuttle",
@@ -10625,7 +10625,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Nu-Class Attack Shuttle",
@@ -10673,7 +10673,7 @@
       "new": 85000,
       "used": 50000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Nune-Class Imperial Shuttle",
@@ -10721,7 +10721,7 @@
       "new": 7,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Pelagia Duplex Command Assault Gunship",
@@ -10749,7 +10749,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Penumbra-Class Attack Shuttle",
@@ -10797,7 +10797,7 @@
       "new": 250000,
       "used": 135000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "PTV-2100 Incarcerator",
@@ -10845,7 +10845,7 @@
       "new": 4,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Punworcca 116-Class Interstellar Sloop",
@@ -10893,7 +10893,7 @@
       "new": 35700,
       "used": 2
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Pursuer-Class Enforcement Ship",
@@ -10941,7 +10941,7 @@
       "new": 200000,
       "used": 40000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "SCT Scout Craft",
@@ -10989,7 +10989,7 @@
       "new": 1,
       "used": 2
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Seltiss-2 Caravel",
@@ -11037,7 +11037,7 @@
       "new": 800000,
       "used": 160000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Seltiss-2 Caravel Cabin",
@@ -11069,7 +11069,7 @@
       "new": 400000,
       "used": 80000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Sentinel-Class Landing Craft",
@@ -11117,7 +11117,7 @@
       "new": 240000,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Shaadlar-Type Troopship",
@@ -11171,7 +11171,7 @@
       "new": 3,
       "used": 1
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Shackles of Nizon",
@@ -11203,7 +11203,7 @@
       "new": 125000,
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Sheathipede-Class Shuttle",
@@ -11235,7 +11235,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Sigma-Class Long-Range Shuttle",
@@ -11289,7 +11289,7 @@
       "new": 30,
       "used": 3
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Sith Infiltrator",
@@ -11337,7 +11337,7 @@
       "new": 15,
       "used": 10
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "SkyBlind Recon Ship",
@@ -11385,7 +11385,7 @@
       "new": 650000,
       "used": 400000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Slave I",
@@ -11433,7 +11433,7 @@
       "new": 18,
       "used": 13
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Teroch-Type Gunship",
@@ -11487,7 +11487,7 @@
       "new": 400000,
       "used": 200000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Banshee",
@@ -11538,7 +11538,7 @@
       "new": 9,
       "used": 3
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Blood Brother",
@@ -11589,7 +11589,7 @@
       "new": 1,
       "used": 25
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Bloody Credit",
@@ -11621,7 +11621,7 @@
       "new": 350000,
       "used": 125000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Ebon Hawk",
@@ -11669,7 +11669,7 @@
       "new": 154000,
       "used": 7
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Glorious Chariot",
@@ -11697,7 +11697,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Grinning Liar",
@@ -11745,7 +11745,7 @@
       "new": 5,
       "used": 6
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Last Resort",
@@ -11796,7 +11796,7 @@
       "new": 2,
       "used": 1
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Millennium Falcon",
@@ -11844,7 +11844,7 @@
       "new": 13,
       "used": 8
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Moomo Williwaw",
@@ -11895,7 +11895,7 @@
       "new": 1,
       "used": 8
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Mynock",
@@ -11943,7 +11943,7 @@
       "new": 9,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Scarlet Star",
@@ -11991,7 +11991,7 @@
       "new": 4,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Visionary",
@@ -12019,7 +12019,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Theta-Class Shuttle",
@@ -12067,7 +12067,7 @@
       "new": 1,
       "used": 210000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Tibanna Gas Hauler",
@@ -12099,7 +12099,7 @@
       "new": 90000,
       "used": 50000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "TIE Shuttle",
@@ -12147,7 +12147,7 @@
       "new": 120000,
       "used": 45000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "TL-1800 Light Freighter",
@@ -12198,7 +12198,7 @@
       "new": 41500,
       "used": 15000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Vaya-Class Scout Ship",
@@ -12246,7 +12246,7 @@
       "new": 45000,
       "used": 15000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "VT-49 Decimator",
@@ -12294,7 +12294,7 @@
       "new": 8,
       "used": 3
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Y164 Slave Transport",
@@ -12342,7 +12342,7 @@
       "new": 245000,
       "used": 122000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "YE-4 Gunship",
@@ -12390,7 +12390,7 @@
       "new": 2,
       "used": 11
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "YKL-37R Nova Courier",
@@ -12438,7 +12438,7 @@
       "new": 150000,
       "used": 45000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Acclamator I-Class Assault Ship",
@@ -12466,7 +12466,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Acclamator II-Class Assault Ship",
@@ -12513,10 +12513,10 @@
       "new": 4,
       "used": 11
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Archaic Dreadnaught-Class Heavy Cruiser",
+    "name": "Archaic Dreadnaught-Class Heavy Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -12541,10 +12541,10 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Carrack-Class Light Cruiser",
+    "name": "Carrack-Class Light Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -12589,7 +12589,7 @@
       "new": 5,
       "used": 13
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Corellian Action VI Bulk Transport",
@@ -12617,7 +12617,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "CR70 Corellian Corvette",
@@ -12649,7 +12649,7 @@
       "new": 2,
       "used": 9
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "DP20 Corellian Frigate",
@@ -12697,10 +12697,10 @@
       "new": 4,
       "used": 8
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Dreadnaught-Class Heavy Cruiser",
+    "name": "Dreadnaught-Class Heavy Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -12745,7 +12745,7 @@
       "new": 35555000,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Endurance-Class Fleet Carrier",
@@ -12793,7 +12793,7 @@
       "new": 5,
       "used": 18
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "GR-75 Medium Transport",
@@ -12841,7 +12841,7 @@
       "new": 350000,
       "used": 125000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Hapan Battle Dragon",
@@ -12889,7 +12889,7 @@
       "new": 5,
       "used": 12
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Imperial II-Class Star Destroyer",
@@ -12937,10 +12937,10 @@
       "new": 5,
       "used": 15
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Immobilizer 418 Interdictor-Class Heavy Cruiser",
+    "name": "Immobilizer 418 Interdictor-Class Heavy Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -12965,7 +12965,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "IPV-1 System Patrol Craft",
@@ -12993,7 +12993,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Lancer-Class Frigate",
@@ -13041,7 +13041,7 @@
       "new": 5,
       "used": 12
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Lucrehulk-Class Battleship",
@@ -13089,7 +13089,7 @@
       "new": 6,
       "used": 16
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Lucrehulk-Class Core Ship",
@@ -13137,7 +13137,7 @@
       "new": 6,
       "used": 16
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Lucrehulk-Class Droid Control Ship",
@@ -13185,7 +13185,7 @@
       "new": 6,
       "used": 16
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Marauder-Class Corvette",
@@ -13213,10 +13213,10 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Marauder-Class Rebel Cruiser",
+    "name": "Marauder-Class Rebel Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13241,10 +13241,10 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "MC80 Star Cruiser",
+    "name": "MC80 Star Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13289,10 +13289,10 @@
       "new": 6,
       "used": 15
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "MC80a Star Cruiser",
+    "name": "MC80a Star Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13337,7 +13337,7 @@
       "new": 6,
       "used": 15
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Munificent-Class Frigate",
@@ -13385,7 +13385,7 @@
       "new": 57,
       "used": 40
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Nebula-Class Star Destroyer",
@@ -13433,7 +13433,7 @@
       "new": 5,
       "used": 18
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Nebulon-B Escort Frigate",
@@ -13461,10 +13461,10 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Nova-Class Battlecruiser",
+    "name": "Nova-Class Battlecrassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13509,10 +13509,10 @@
       "new": 20,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Nova-Class Battlecruiser Refit",
+    "name": "Nova-Class Battlecrassets/uiser Refit",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13537,7 +13537,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Outbound Flight",
@@ -13585,7 +13585,7 @@
       "new": 6,
       "used": 15
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Pellaeon-Class Star Destroyer",
@@ -13633,10 +13633,10 @@
       "new": 5,
       "used": 16
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Prototype Dreadnaught-Class Heavy Cruiser",
+    "name": "Prototype Dreadnaught-Class Heavy Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13661,7 +13661,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Rebel Assault Frigate Mark I",
@@ -13689,7 +13689,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Rebel Assault Frigate Mark II",
@@ -13717,7 +13717,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Recusant-Class Light Destroyer",
@@ -13765,7 +13765,7 @@
       "new": 5,
       "used": 14
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Star Galleon-Class Frigate",
@@ -13813,10 +13813,10 @@
       "new": 5,
       "used": 12
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Strike-Class Medium Cruiser",
+    "name": "Strike-Class Medium Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13861,7 +13861,7 @@
       "new": 17,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Venator-Class Star Destroyer",
@@ -13909,7 +13909,7 @@
       "new": 50,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Victory II-Class Star Destroyer",
@@ -13957,10 +13957,10 @@
       "new": 5,
       "used": 14
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Vindicator-Class Heavy Cruiser",
+    "name": "Vindicator-Class Heavy Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14005,10 +14005,10 @@
       "new": 43,
       "used": 4
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Centurion-Class Battlecruiser",
+    "name": "Centurion-Class Battlecrassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14053,7 +14053,7 @@
       "new": 6,
       "used": 17
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Derriphan-Class Battleship",
@@ -14101,7 +14101,7 @@
       "new": 3,
       "used": 7
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Foray-Class Blockade Runner",
@@ -14149,10 +14149,10 @@
       "new": 3,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Broadside-Class Cruiser",
+    "name": "Broadside-Class Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14197,7 +14197,7 @@
       "new": 5,
       "used": 13
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Gladiator-Class Star Destroyer",
@@ -14245,10 +14245,10 @@
       "new": 34,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Neutron Star-Class Bulk Cruiser",
+    "name": "Neutron Star-Class Bulk Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14293,10 +14293,10 @@
       "new": 5,
       "used": 2
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Tartan-Class Patrol Cruiser",
+    "name": "Tartan-Class Patrol Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14341,7 +14341,7 @@
       "new": 4,
       "used": 2
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Ton-Falk-Class Escort Carrier",
@@ -14389,7 +14389,7 @@
       "new": 3,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Victory I-Class Star Destroyer",
@@ -14437,10 +14437,10 @@
       "new": 50,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Charger c70 Corellian Consular-Class Cruiser",
+    "name": "Charger c70 Corellian Consular-Class Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14465,7 +14465,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Invisible Hand",
@@ -14513,7 +14513,7 @@
       "new": 6,
       "used": 21
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "MedStar-Class Frigate",
@@ -14561,7 +14561,7 @@
       "new": 4875000,
       "used": 2550000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Pelta-Class Frigate",
@@ -14589,7 +14589,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Providence-Class Destroyer",
@@ -14637,7 +14637,7 @@
       "new": 6,
       "used": 18
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Sabaoth Destroyer",
@@ -14685,10 +14685,10 @@
       "new": 3,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "Subjugator-Class Heavy Cruiser",
+    "name": "Subjugator-Class Heavy Crassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14724,7 +14724,7 @@
       "new": 5,
       "used": 15
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Ardent-Class Fast Frigate",
@@ -14772,7 +14772,7 @@
       "new": 5,
       "used": 15
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Crimson Axe",
@@ -14800,7 +14800,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Indomitable",
@@ -14848,7 +14848,7 @@
       "new": 4,
       "used": 16
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Imperious-Class Star Destroyer",
@@ -14896,10 +14896,10 @@
       "new": 5,
       "used": 17
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
-    "name": "MC140 Scythe-Class Battlecruiser",
+    "name": "MC140 Scythe-Class Battlecrassets/uiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14924,7 +14924,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Sabertooth-Class Assault/Rescue Vessel",
@@ -14952,7 +14952,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "ShaShore-Class Frigate",
@@ -15000,7 +15000,7 @@
       "new": 6,
       "used": 16
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Spinward-Class Tender",
@@ -15048,7 +15048,7 @@
       "new": 4,
       "used": 9
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Tri-Scythe-Class Frigate",
@@ -15096,7 +15096,7 @@
       "new": 6,
       "used": 15
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Baas-Class Space Station",
@@ -15128,7 +15128,7 @@
       "new": "not publicly available",
       "used": "not publicly available"
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Cardan I-Class Space Station",
@@ -15179,7 +15179,7 @@
       "new": 2,
       "used": 10
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Cardan II-Class Space Station",
@@ -15230,7 +15230,7 @@
       "new": 2,
       "used": 10
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Cardan III-Class Space Station",
@@ -15281,7 +15281,7 @@
       "new": 2,
       "used": 11
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Eclipse-Class Star Dreadnought",
@@ -15329,7 +15329,7 @@
       "new": 15,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Executor-Class Star Dreadnought",
@@ -15377,7 +15377,7 @@
       "new": 5,
       "used": 15
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Hyperspace Beacon",
@@ -15409,7 +15409,7 @@
       "new": 20000,
       "used": 11000
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "StarForge Station",
@@ -15457,7 +15457,7 @@
       "new": 1000000,
       "used": 5
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Golan VIII Space Defense Platform",
@@ -15505,7 +15505,7 @@
       "new": 45,
       "used": 20
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "Mobile Spacedock 220",
@@ -15553,7 +15553,7 @@
       "new": 100,
       "used": 45
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "The Wheel",
@@ -15601,7 +15601,7 @@
       "new": 6,
       "used": 17
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   },
   {
     "name": "XQ2 Space Platform",
@@ -15652,6 +15652,6 @@
       "new": 30,
       "used": 18
     },
-    "type": "equipment"
+    "type": "eqassets/uipment"
   }
 ]

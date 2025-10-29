@@ -72,7 +72,7 @@
 
     {{!-- Center: Logo --}}
     <div class="header-center">
-      <img class="sw-logo" src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
+      <img class="sw-logo" src="systems/swse/assets/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
     </div>
 
     {{!-- Right: Character Portrait --}}
@@ -1051,8 +1051,8 @@
           
           {{!-- Tab Navigation --}}
           <div class="bottom-tabs-header">
-            <button type="button" class="bottom-tab active" data-tab="equipment">
-              Equipment
+            <button type="button" class="bottom-tab active" data-tab="eqassets/uipment">
+              Eqassets/uipment
             </button>
             <button type="button" class="bottom-tab" data-tab="feats">
               Feats
@@ -1072,10 +1072,10 @@
           <div class="bottom-tabs-content">
             
             {{!-- EQUIPMENT TAB --}}
-            <div class="bottom-tab-content active" data-tab="equipment">
-              <div class="equipment-list">
-                {{#each equipment as |item|}}
-                  <div class="equipment-item">
+            <div class="bottom-tab-content active" data-tab="eqassets/uipment">
+              <div class="eqassets/uipment-list">
+                {{#each eqassets/uipment as |item|}}
+                  <div class="eqassets/uipment-item">
                     <img src="{{item.img}}" class="item-icon" alt="{{item.name}}"/>
                     <div class="item-name">{{item.name}}</div>
                     <div class="item-qty">×{{item.system.quantity}}</div>
@@ -1085,7 +1085,7 @@
                   </div>
                 {{/each}}
               </div>
-              <button type="button" class="add-equipment-btn">+ Add Equipment</button>
+              <button type="button" class="add-eqassets/uipment-btn">+ Add Eqassets/uipment</button>
             </div>
 
             {{!-- FEATS TAB --}}

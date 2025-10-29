@@ -1,10 +1,10 @@
 // ============================================
-// FILE: scripts/helpers/handlebars-helpers.js
-// Handlebars template helpers for SWSE
+// FILE: module/module/helpers/handlebars-module/helpers.js
+// Handlebars template module/helpers for SWSE
 // ============================================
 
 export function registerHandlebarsHelpers() {
-  console.log("SWSE | Registering Handlebars helpers...");
+  console.log("SWSE | Registering Handlebars module/helpers...");
 
   // ============================================
   // TEXT FORMATTING
@@ -159,5 +159,5 @@ export function registerHandlebarsHelpers() {
     return JSON.stringify(value, null, 2);
   });
 
-  console.log("SWSE | ✓ Handlebars helpers registered");
+  console.log("SWSE | ✓ Handlebars module/helpers registered");
 }

@@ -219,7 +219,7 @@
     "name": "Use the Force",
     "ability": "Cha",
     "classes": {
-      "Jedi": "Requires Force Sensitivity",
+      "Jedi": "Reqassets/uires Force Sensitivity",
       "Noble": false,
       "Scoundrel": false,
       "Scout": false,

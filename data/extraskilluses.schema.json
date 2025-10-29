@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Extra Skill Use",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "roll": {
+      "type": "string"
+    },
+    "outcome": {
+      "type": "string"
+    },
+    "when": {
+      "type": "string"
+    },
+    "application": {
+      "type": "string"
+    },
+    "DC": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "time": {
+      "type": "string"
+    },
+    "effect": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "const": "extra-skill-use"
+    }
+  },
+  "reqassets/uired": [
+    "name",
+    "description"
+  ],
+  "additionalProperties": false
+}

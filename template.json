@@ -169,7 +169,7 @@
       "combat-action",
       "weapon",
       "armor",
-      "equipment",
+      "eqassets/uipment",
       "species"
     ],
     "templates": {
@@ -189,7 +189,7 @@
       "templates": [
         "base"
       ],
-      "prerequisites": ""
+      "prereqassets/uisites": ""
     },
     "talent": {
       "templates": [
@@ -221,7 +221,7 @@
       "reflexBonus": 0,
       "maxDex": 999
     },
-    "equipment": {
+    "eqassets/uipment": {
       "templates": [
         "base"
       ],

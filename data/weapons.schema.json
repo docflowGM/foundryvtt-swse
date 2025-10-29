@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Weapon",
+  "description": "Schema for Saga Edition weapons (melee, ranged, explosives, vehicle weapons, etc.)",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the weapon"
+    },
+    "category": {
+      "type": "string",
+      "description": "Category of weapon (Melee, Ranged, Thrown, Vehicle)"
+    },
+    "type": {
+      "type": "string",
+      "description": "Weapon type (Energy, Vibro, Projectile, Explosive, Lightsaber, Exotic, etc.)"
+    },
+    "size": {
+      "type": ["string", "null"],
+      "description": "Weapon size category (Small, Medium, Large, etc.)"
+    },
+    "damage": {
+      "type": ["string", "null"],
+      "description": "Damage dice or formula (e.g., 3d8, 2d10, etc.)"
+    },
+    "critical": {
+      "type": ["string", "null"],
+      "description": "Critical hit range or value (e.g., 20, 19–20)"
+    },
+    "range": {
+      "type": ["string", "null"],
+      "description": "Range increment in squares or meters"
+    },
+    "weight": {
+      "type": ["string", "null"],
+      "description": "Weapon weight, usually in kilograms"
+    },
+    "availability": {
+      "type": ["string", "null"],
+      "description": "Availability (e.g., Common, Military, Illegal, Restricted, Rare)"
+    },
+    "cost": {
+      "type": ["string", "integer", "null"],
+      "description": "Cost of the weapon (in credits)"
+    },
+    "ammo": {
+      "type": ["string", "null"],
+      "description": "Ammo capacity or note (e.g., 50, Single-use, Unlimited)"
+    },
+    "special": {
+      "type": "array",
+      "description": "Special qualities of the weapon",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sourcebook": {
+      "type": ["string", "null"],
+      "description": "Sourcebook reference"
+    },
+    "page": {
+      "type": ["integer", "null"],
+      "description": "Page number reference"
+    }
+  },
+  "reqassets/uired": ["name", "category", "type", "damage", "critical"],
+  "additionalProperties": false
+}

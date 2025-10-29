@@ -1,11 +1,11 @@
 /**
  * Handlebars Helpers for SWSE System
- * Note: These helpers are also registered in scripts/swse-actor.js
+ * Note: These module/helpers are also registered in scripts/swse-actor.js
  * This file ensures they're available even if swse-actor.js loads later
  */
 
 
-// Register Handlebars helpers
+// Register Handlebars module/helpers
 Handlebars.registerHelper('upper', function(str) {
     if (typeof str === 'string') {
         return str.toUpperCase();

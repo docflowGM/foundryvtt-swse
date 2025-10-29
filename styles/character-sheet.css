@@ -24,7 +24,7 @@
   --radius: 8px;
   --gutter: 10px;
   --font-sans: "Orbitron", "Signika", "Rajdhani", "Segoe UI", sans-serif;
-  --ui-font-size: 13px;
+  --assets/ui-font-size: 13px;
   --focus-glow: 0 0 6px var(--holo-cyan);
   --fast: 180ms;
   --medium: 280ms;
@@ -40,7 +40,7 @@
 form.swse-datapad-sheet {
   box-sizing: border-box;
   font-family: var(--font-sans);
-  font-size: var(--ui-font-size);
+  font-size: var(--assets/ui-font-size);
   color: #cfeffc;
   background: radial-gradient(circle at 10% 10%, #071426 0%, #03060b 60%);
   border-radius: 12px;
@@ -860,7 +860,7 @@ form.swse-datapad-sheet {
 /* =========================
    ITEMS / EQUIPMENT
    ========================= */
-.swse .equipment-list,
+.swse .eqassets/uipment-list,
 .swse .feat-list,
 .swse .talent-list,
 .swse .power-list {
@@ -870,7 +870,7 @@ form.swse-datapad-sheet {
   margin-bottom: 10px;
 }
 
-.swse .equipment-item,
+.swse .eqassets/uipment-item,
 .swse .feat-item,
 .swse .talent-item,
 .swse .force-power-item {
@@ -885,7 +885,7 @@ form.swse-datapad-sheet {
   transition: all var(--fast);
 }
 
-.swse .equipment-item:hover,
+.swse .eqassets/uipment-item:hover,
 .swse .feat-item:hover,
 .swse .talent-item:hover,
 .swse .force-power-item:hover {

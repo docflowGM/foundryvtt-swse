@@ -1,181 +1,179 @@
-<form class="swse character-generator holo-theme">
-    <div class="chargen-container">
-        <!-- Header -->
-        <div class="chargen-header">
-            <h1>{{localize "SWSE.CharGen.Title"}}</h1>
-            <p class="step-indicator">Step {{currentStep}} of {{totalSteps}}: {{stepName}}</p>
+<!--
+  systems/swse/templates/apps/chargen.html
+  Upgraded by swse_chargen_updater.py
+-->
+<div class="chargen-app">
+  <header class="app-header">
+    <h2>SWSE Character Generator</h2>
+  </header>
+
+  <nav class="chargen-steps">
+    {{!-- Steps navigation will be re-rendered by Application; simple display --}}
+    <div>Step: {{currentStep}}</div>
+  </nav>
+
+  <main class="chargen-body">
+    {{#if (eq currentStep "name")}}
+      <section class="step-name">
+        <label>Name</label>
+        <input name="char_name" type="text" value="{{characterData.name}}" oninput="document.querySelector('.chargen-app input[name=char_name]').dataset.value=this.value" />
+        <div class="actions">
+          <button class="next-step">Next</button>
+        </div>
+      </section>
+    {{/if}}
+
+    {{#if (eq currentStep "species")}}
+      <section class="step-species">
+        <h3>Select Species</h3>
+        <div class="species-list">
+          {{#each packs.species}}
+            <button type="button" class="select-species" data-species="{{this.name}}">{{this.name}}</button>
+          {{/each}}
+        </div>
+        <div class="nav">
+          <button class="prev-step">Previous</button>
+        </div>
+      </section>
+    {{/if}}
+
+    {{#if (eq currentStep "abilities")}}
+      <section class="step-abilities">
+        <h3>Generate Abilities</h3>
+        <div class="modes">
+          <button data-mode="point" id="pb-init">Point Buy (32)</button>
+          <button data-mode="standard" id="std-roll-btn">Standard Roll (4d6 drop 1)</button>
+          <button data-mode="organic" id="org-roll-btn">Organic (24d6 → drop 6 → allocate)</button>
         </div>
 
-        <!-- Main Content Area -->
-        <div class="chargen-body">
-            {{#if (eq currentStep 1)}}
-                <!-- Step 1: Species Selection -->
-                <div class="chargen-step species-selection">
-                    <h2>Choose Your Species</h2>
-                    <div class="species-grid">
-                        {{#each species}}
-                        <div class="species-card {{#if selected}}selected{{/if}}" data-species="{{id}}">
-                            <h3>{{name}}</h3>
-                            <div class="species-bonuses">
-                                {{#each bonuses}}
-                                <span class="bonus">{{this}}</span>
-                                {{/each}}
-                            </div>
-                        </div>
-                        {{/each}}
-                    </div>
+        <div id="point-mode" class="mode-block">
+          <div>Points remaining: <span id="point-remaining">32</span></div>
+          <div class="abilities-grid">
+            {{#each (keys characterData.abilities)}}
+              <div class="ability-card">
+                <label>{{this}}</label>
+                <div class="ability-row">
+                  <button type="button" data-minus="{{this}}">-</button>
+                  <input name="ability_{{this}}" class="ability-input" value="{{lookup ../characterData.abilities this.base}}" />
+                  <button type="button" data-plus="{{this}}">+</button>
                 </div>
-            {{/if}}
-
-            {{#if (eq currentStep 2)}}
-                <!-- Step 2: Class Selection -->
-                <div class="chargen-step class-selection">
-                    <h2>Choose Your Class</h2>
-                    <div class="class-grid">
-                        {{#each classes}}
-                        <div class="class-card {{#if selected}}selected{{/if}}" data-class="{{id}}">
-                            <h3>{{name}}</h3>
-                            <p>{{description}}</p>
-                            <div class="class-stats">
-                                <span>HP: {{hitPoints}}</span>
-                                <span>BAB: {{baseAttackBonus}}</span>
-                            </div>
-                        </div>
-                        {{/each}}
-                    </div>
-                </div>
-            {{/if}}
-
-            {{#if (eq currentStep 3)}}
-                <!-- Step 3: Ability Scores -->
-                <div class="chargen-step abilities-selection">
-                    <h2>Set Ability Scores</h2>
-                    <div class="abilities-grid">
-                        {{#each abilities}}
-                        <div class="ability-input">
-                            <label>{{name}}</label>
-                            <input type="number" name="abilities.{{id}}" value="{{value}}" min="8" max="18" />
-                            <span class="modifier">{{modifier}}</span>
-                        </div>
-                        {{/each}}
-                    </div>
-                    <div class="points-remaining">
-                        <p>Points Remaining: <strong>{{pointsRemaining}}</strong></p>
-                    </div>
-                </div>
-            {{/if}}
-
-            {{#if (eq currentStep 4)}}
-                <!-- Step 4: Skills -->
-                <div class="chargen-step skills-selection">
-                    <h2>Train Skills</h2>
-                    <p class="skills-info">Available Skill Points: <strong>{{skillPoints}}</strong></p>
-                    <div class="skills-list">
-                        {{#each skills}}
-                        <div class="skill-option {{#if trained}}selected{{/if}}">
-                            <label class="skill-checkbox">
-                                <input type="checkbox" name="skills.{{id}}" {{#if trained}}checked{{/if}} />
-                                <div class="skill-info">
-                                    <span class="skill-name">{{name}}</span>
-                                    <span class="skill-ability">({{ability}})</span>
-                                </div>
-                            </label>
-                        </div>
-                        {{/each}}
-                    </div>
-                </div>
-            {{/if}}
-
-            {{#if (eq currentStep 5)}}
-                <!-- Step 5: Feats -->
-                <div class="chargen-step feats-selection">
-                    <h2>Choose Feats</h2>
-                    <p class="feats-info">Available Feats: <strong>{{featsRemaining}}</strong></p>
-                    <div class="feats-list">
-                        {{#each feats}}
-                        <div class="feat-card {{#if selected}}selected{{/if}}" data-feat="{{id}}">
-                            <h4>{{name}}</h4>
-                            <p>{{description}}</p>
-                            {{#if prerequisite}}
-                            <p class="prerequisite">Prerequisite: {{prerequisite}}</p>
-                            {{/if}}
-                        </div>
-                        {{/each}}
-                    </div>
-                </div>
-            {{/if}}
-
-            {{#if (eq currentStep 6)}}
-                <!-- Step 6: Review -->
-                <div class="chargen-step review-screen">
-                    <h2>Review Your Character</h2>
-                    <div class="review-section">
-                        <h3>Basic Information</h3>
-                        <div class="review-item">
-                            <span class="label">Name:</span>
-                            <input type="text" name="name" value="{{name}}" placeholder="Enter character name" />
-                        </div>
-                        <div class="review-item">
-                            <span class="label">Species:</span>
-                            <span class="value">{{selectedSpecies.name}}</span>
-                            <button type="button" class="btn-edit" data-step="1">Edit</button>
-                        </div>
-                        <div class="review-item">
-                            <span class="label">Class:</span>
-                            <span class="value">{{selectedClass.name}}</span>
-                            <button type="button" class="btn-edit" data-step="2">Edit</button>
-                        </div>
-                    </div>
-
-                    <div class="review-section">
-                        <h3>Ability Scores</h3>
-                        {{#each abilities}}
-                        <div class="review-item">
-                            <span class="label">{{name}}:</span>
-                            <span class="value">{{total}} ({{modifier}})</span>
-                        </div>
-                        {{/each}}
-                        <button type="button" class="btn-edit" data-step="3">Edit</button>
-                    </div>
-
-                    <div class="review-section">
-                        <h3>Trained Skills</h3>
-                        {{#each trainedSkills}}
-                        <div class="review-item">
-                            <span class="value">{{name}}</span>
-                        </div>
-                        {{/each}}
-                        <button type="button" class="btn-edit" data-step="4">Edit</button>
-                    </div>
-
-                    <div class="review-section">
-                        <h3>Feats</h3>
-                        {{#each selectedFeats}}
-                        <div class="review-item">
-                            <span class="value">{{name}}</span>
-                        </div>
-                        {{/each}}
-                        <button type="button" class="btn-edit" data-step="5">Edit</button>
-                    </div>
-                </div>
-            {{/if}}
+                <div id="display_{{this}}" class="ability-display">Tot 10 (Mod 0)</div>
+              </div>
+            {{/each}}
+          </div>
         </div>
 
-        <!-- Navigation Footer -->
-        <div class="chargen-footer">
-            <button type="button" class="btn-secondary btn-back" {{#if (eq currentStep 1)}}disabled{{/if}}>
-                <i class="fas fa-arrow-left"></i> Back
-            </button>
-            
-            {{#if (eq currentStep totalSteps)}}
-                <button type="submit" class="btn-primary btn-finish">
-                    <i class="fas fa-check"></i> Create Character
-                </button>
-            {{else}}
-                <button type="button" class="btn-primary btn-next">
-                    Next <i class="fas fa-arrow-right"></i>
-                </button>
-            {{/if}}
+        <div id="standard-mode" class="mode-block" style="display:none;">
+          <div id="roll-results" class="roll-results"></div>
+          <div class="hint">Click a roll then click an ability to assign.</div>
         </div>
-    </div>
-</form>
+
+        <div id="organic-mode" class="mode-block" style="display:none;">
+          <div id="organic-groups" class="organic-groups"></div>
+          <div class="hint">Click a group, then click an ability to assign.</div>
+        </div>
+
+        <div class="hp-and-sw">
+          <label>HP Max</label><input name="hp_max" value="{{characterData.hp.max}}" />
+          <label>Temp HP</label><input name="hp_temp" value="{{characterData.hp.temp}}" />
+          <div class="second-wind">
+            <label>Second Wind Misc</label><input name="sw_misc" id="sw_misc" value="{{characterData.secondWind.misc}}" />
+            <div>Auto heal preview: <span id="sw_heal_preview">{{characterData.secondWind.healing}}</span></div>
+          </div>
+        </div>
+
+        <div class="nav">
+          <button class="prev-step">Previous</button>
+          <button class="next-step">Next</button>
+        </div>
+      </section>
+    {{/if}}
+
+    {{#if (eq currentStep "class")}}
+      <section class="step-class">
+        <h3>Choose Class</h3>
+        <label>Class</label>
+        <select name="class_select">
+          {{#each packs.classes}}
+            <option value="{{this.name}}">{{this.name}}</option>
+          {{/each}}
+        </select>
+        <label>Level</label>
+        <input type="number" name="class_level" value="1" min="1" />
+        <div class="nav">
+          <button class="prev-step">Previous</button>
+          <button class="next-step">Next</button>
+        </div>
+      </section>
+    {{/if}}
+
+    {{#if (eq currentStep "feats")}}
+      <section class="step-feats">
+        <h3>Available Feats</h3>
+        <div id="feats-list">
+          {{#each availableFeats}}
+            <div class="feat-entry">
+              <button class="select-feat" data-featid="{{this._id}}">{{this.name}}</button>
+              <div class="desc">{{this.system?.description}}</div>
+            </div>
+          {{/each}}
+        </div>
+        <div class="nav"><button class="prev-step">Previous</button></div>
+      </section>
+    {{/if}}
+
+    {{#if (eq currentStep "talents")}}
+      <section class="step-talents">
+        <h3>Available Talents</h3>
+        <div id="talents-list">
+          {{#each availableTalents}}
+            <div class="talent-entry">
+              <button class="select-talent" data-talentid="{{this._id}}">{{this.name}}</button>
+              <div class="desc">{{this.system?.description}}</div>
+            </div>
+          {{/each}}
+        </div>
+        <div class="nav"><button class="prev-step">Previous</button></div>
+      </section>
+    {{/if}}
+
+    {{#if (eq currentStep "skills")}}
+      <section class="step-skills">
+        <h3>Choose Skills</h3>
+        <div>Trained skills allowed: <span id="skills-allowed-count">{{characterData.trainedSkillsAllowed}}</span></div>
+        <div id="skills-list" class="skills-list">
+          {{#each skillsJson}}
+            <div class="skill-row"><label><input type="checkbox" name="skill_train" value="{{this.name}}"/> {{this.name}} ({{this.ability}})</label></div>
+          {{/each}}
+        </div>
+        <div class="nav"><button class="prev-step">Previous</button><button class="next-step">Next</button></div>
+      </section>
+    {{/if}}
+
+    {{#if (eq currentStep "summary")}}
+      <section class="step-summary">
+        <h3>Summary</h3>
+        <div><strong>Name:</strong> {{characterData.name}}</div>
+        <div><strong>Species:</strong> {{characterData.species}}</div>
+        <div><strong>Classes:</strong> {{#each characterData.classes}}{{this.name}} (lvl {{this.level}}) {{/each}}</div>
+        <h4>Abilities</h4>
+        <ul>
+          {{#each (keys characterData.abilities) }}
+            <li>{{this}}: {{lookup ../characterData.abilities this.total}} (mod {{lookup ../characterData.abilities this.mod}})</li>
+          {{/each}}
+        </ul>
+        <div class="nav"><button class="prev-step">Previous</button><button class="finish">Create Character</button></div>
+      </section>
+    {{/if}}
+  </main>
+
+  <style>
+    .chargen-app { font-family: Arial, sans-serif; padding: 12px; background: linear-gradient(135deg,#e8e8e8,#d4d4d4); border-radius:8px; }
+    .abilities-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+    .ability-card { padding:6px; background:rgba(255,255,255,0.6); border-radius:6px; }
+    .organic-groups { display:flex; gap:6px; flex-wrap:wrap; }
+    .organic-group { padding:6px; border-radius:6px; background:#fff; cursor:pointer; }
+    .selected-group { outline:2px solid #2a90e2; }
+    .roll-results { display:flex; gap:6px; flex-wrap:wrap; }
+  </style>
+</div>

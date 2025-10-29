@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Condition",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "desc": { "type": "string" },
+    "conditionTrack": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stage": { "type": "string" },
+          "desc": { "type": "string" }
+        },
+        "reqassets/uired": ["stage", "desc"],
+        "additionalProperties": false
+      }
+    },
+    "effects": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "reqassets/uired": ["name", "desc"],
+  "additionalProperties": false
+}

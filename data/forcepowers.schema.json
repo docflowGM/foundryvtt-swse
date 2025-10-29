@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Force Powers",
+  "description": "Schema for Force powers",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "type": { "type": "string", "enum": ["Force"] },
+    "descriptor": { "type": "array", "items": { "type": "string" } },
+    "action": { "type": "string" },
+    "target": { "type": "string" },
+    "check_type": { "type": "string" },
+    "dc_chart": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dc": { "type": ["string", "number"] },
+          "effect": { "type": "string" }
+        },
+        "reqassets/uired": ["dc", "effect"]
+      }
+    },
+    "force_point_effect": { "type": "string" },
+    "maintainable": { "type": "boolean" },
+    "sourcebook": { "type": "string" },
+    "page": { "type": "integer" },
+    "tags": { "type": "array", "items": { "type": "string" } }
+  },
+  "reqassets/uired": ["name", "action", "target", "check_type"]
+}
+

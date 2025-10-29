@@ -28,7 +28,7 @@
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
-.swse.npc-sheet .quick-actions {
+.swse.npc-sheet .qassets/uick-actions {
   display: flex;
   gap: 10px;
   padding: 10px 15px;
@@ -36,7 +36,7 @@
   border-bottom: 2px solid var(--swse-accent);
 }
 
-.swse.npc-sheet .quick-actions button {
+.swse.npc-sheet .qassets/uick-actions button {
   flex: 1;
   padding: 8px 12px;
   background: var(--swse-primary);
@@ -48,7 +48,7 @@
   transition: all 0.2s;
 }
 
-.swse.npc-sheet .quick-actions button:hover {
+.swse.npc-sheet .qassets/uick-actions button:hover {
   background: var(--swse-accent);
   color: var(--swse-dark);
   transform: translateY(-2px);
@@ -455,7 +455,7 @@
   font-weight: bold;
 }
 
-.swse.item-sheet .prerequisites-grid {
+.swse.item-sheet .prereqassets/uisites-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 15px;

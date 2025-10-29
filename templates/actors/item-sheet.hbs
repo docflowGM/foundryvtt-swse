@@ -1,7 +1,7 @@
 <form class="{{cssClass}} sheet-item flexcol holo-theme" autocomplete="off">
     {{!-- Holographic Frame Header --}}
     <div class="holo-frame-top">
-        <img class="sw-logo" src="systems/swse/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
+        <img class="sw-logo" src="systems/swse/assets/assets/ui/logo.png" alt="Star Wars Saga Edition"/>
     </div>
 
 
@@ -70,8 +70,8 @@
         </div>
       {{/if}}
 
-      <!-- Equipment -->
-      {{#if (eq item.type "equipment")}}
+      <!-- Eqassets/uipment -->
+      {{#if (eq item.type "eqassets/uipment")}}
         <div class="form-group">
           <label>Weight</label>
           <input name="system.weight" type="text" value="{{system.weight}}" />
@@ -85,8 +85,8 @@
       <!-- Feats -->
       {{#if (eq item.type "feat")}}
         <div class="form-group">
-          <label>Prerequisites</label>
-          <textarea name="system.prerequisites">{{system.prerequisites}}</textarea>
+          <label>Prereqassets/uisites</label>
+          <textarea name="system.prereqassets/uisites">{{system.prereqassets/uisites}}</textarea>
         </div>
         <div class="form-group">
           <label>Benefit</label>
@@ -105,8 +105,8 @@
       <!-- Talents -->
       {{#if (eq item.type "talent")}}
         <div class="form-group">
-          <label>Prerequisites</label>
-          <textarea name="system.prerequisites">{{system.prerequisites}}</textarea>
+          <label>Prereqassets/uisites</label>
+          <textarea name="system.prereqassets/uisites">{{system.prereqassets/uisites}}</textarea>
         </div>
       {{/if}}
 

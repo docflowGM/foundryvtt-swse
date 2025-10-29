@@ -90,13 +90,13 @@
     "description": "Group Feint (full-round) | DC: opposed (single Deception roll) ; -5 per extra target | Time: full-round | Effect: Sets DC for multiple opponents; successes make those opponents flat-footed vs group's first attacks next round"
   },
   {
-    "application": "Deceptive Appearance (disguise)",
+    "application": "Deceptive Appearance (disgassets/uise)",
     "DC": "opposed by Perception",
     "time": "Simple 1 min / Moderate 10 min / Difficult 1 hr / Incredible 1 day / Outrageous 2 weeks",
-    "effect": "Creates disguise/appearance; modifier to Deception check provided (+5 to -20 per table)",
-    "name": "Deceptive Appearance (disguise)",
+    "effect": "Creates disgassets/uise/appearance; modifier to Deception check provided (+5 to -20 per table)",
+    "name": "Deceptive Appearance (disgassets/uise)",
     "type": "extra-skill-use",
-    "description": "Deceptive Appearance (disguise) | DC: opposed by Perception | Time: Simple 1 min / Moderate 10 min / Difficult 1 hr / Incredible 1 day / Outrageous 2 weeks | Effect: Creates disguise/appearance; modifier to Deception check provided (+5 to -20 per table)"
+    "description": "Deceptive Appearance (disgassets/uise) | DC: opposed by Perception | Time: Simple 1 min / Moderate 10 min / Difficult 1 hr / Incredible 1 day / Outrageous 2 weeks | Effect: Creates disgassets/uise/appearance; modifier to Deception check provided (+5 to -20 per table)"
   },
   {
     "application": "Deceptive Information",
@@ -180,13 +180,13 @@
     "description": "Find Black Market Object | DC: 10/15/20/25 (Licensed/Restricted/Military/Illegal) | Time: 1/2/5/10 days | Effect: Purchase cost multipliers x2/x3/x4/x5 and wait time; subject to circumstance modifiers"
   },
   {
-    "application": "Quick Intel (trained)",
+    "application": "Qassets/uick Intel (trained)",
     "DC": "trained use",
     "time": "halves Gather Info time",
-    "effect": "Declare before rolling; +10 DC to halve time required",
-    "name": "Quick Intel (trained)",
+    "effect": "Declare before rolling; +10 DC to halve time reqassets/uired",
+    "name": "Qassets/uick Intel (trained)",
     "type": "extra-skill-use",
-    "description": "Quick Intel (trained) | DC: trained use | Time: halves Gather Info time | Effect: Declare before rolling; +10 DC to halve time required"
+    "description": "Qassets/uick Intel (trained) | DC: trained use | Time: halves Gather Info time | Effect: Declare before rolling; +10 DC to halve time reqassets/uired"
   },
   {
     "application": "Identify item function",
@@ -291,10 +291,10 @@
     "application": "Recharge shields (trained)",
     "DC": 20,
     "time": "3 swift actions",
-    "effect": "Restore 5 SR on success",
+    "effect": "Retemplates/apps/store 5 SR on success",
     "name": "Recharge shields (trained)",
     "type": "extra-skill-use",
-    "description": "Recharge shields (trained) | DC: 20 | Time: 3 swift actions | Effect: Restore 5 SR on success"
+    "description": "Recharge shields (trained) | DC: 20 | Time: 3 swift actions | Effect: Retemplates/apps/store 5 SR on success"
   },
   {
     "application": "Regulate power (vehicle)",
@@ -309,19 +309,19 @@
     "application": "Repair object (trained)",
     "DC": 20,
     "time": "1 hour",
-    "effect": "Restore 1d8 HP and remove persistent conditions",
+    "effect": "Retemplates/apps/store 1d8 HP and remove persistent conditions",
     "name": "Repair object (trained)",
     "type": "extra-skill-use",
-    "description": "Repair object (trained) | DC: 20 | Time: 1 hour | Effect: Restore 1d8 HP and remove persistent conditions"
+    "description": "Repair object (trained) | DC: 20 | Time: 1 hour | Effect: Retemplates/apps/store 1d8 HP and remove persistent conditions"
   },
   {
     "application": "Repair droid (trained)",
     "DC": 20,
     "time": "1 hour",
-    "effect": "Restore HP equal to droid level; removes persistent conditions (self-repair takes -5 penalty)",
+    "effect": "Retemplates/apps/store HP equal to droid level; removes persistent conditions (self-repair takes -5 penalty)",
     "name": "Repair droid (trained)",
     "type": "extra-skill-use",
-    "description": "Repair droid (trained) | DC: 20 | Time: 1 hour | Effect: Restore HP equal to droid level; removes persistent conditions (self-repair takes -5 penalty)"
+    "description": "Repair droid (trained) | DC: 20 | Time: 1 hour | Effect: Retemplates/apps/store HP equal to droid level; removes persistent conditions (self-repair takes -5 penalty)"
   },
   {
     "application": "Refit antiquated vehicle/weapon",
@@ -345,10 +345,10 @@
     "application": "Modify droid — processor",
     "DC": "20 Use Computer + 20 Mechanics",
     "time": "1 day",
-    "effect": "Change or attach processor functionality (requires Use Computer adjunct)",
+    "effect": "Change or attach processor functionality (reqassets/uires Use Computer adjunct)",
     "name": "Modify droid — processor",
     "type": "extra-skill-use",
-    "description": "Modify droid — processor | DC: 20 Use Computer + 20 Mechanics | Time: 1 day | Effect: Change or attach processor functionality (requires Use Computer adjunct)"
+    "description": "Modify droid — processor | DC: 20 Use Computer + 20 Mechanics | Time: 1 day | Effect: Change or attach processor functionality (reqassets/uires Use Computer adjunct)"
   },
   {
     "application": "Modify droid — appendage/accessory",
@@ -486,13 +486,13 @@
     "description": "Conceal large item (in compartment) | DC: Stealth vs Perception +10 if adjacent | Time: variable | Effect: Hide large object inside room; use hiding compartments to gain +5 to +20"
   },
   {
-    "application": "Drop (plant small item quickly)",
+    "application": "Drop (plant small item qassets/uickly)",
     "DC": "S&V 20 example",
     "time": "swift/standard depending",
     "effect": "Deposit small concealed item without notice; opposed Perception",
-    "name": "Drop (plant small item quickly)",
+    "name": "Drop (plant small item qassets/uickly)",
     "type": "extra-skill-use",
-    "description": "Drop (plant small item quickly) | DC: S&V 20 example | Time: swift/standard depending | Effect: Deposit small concealed item without notice; opposed Perception"
+    "description": "Drop (plant small item qassets/uickly) | DC: S&V 20 example | Time: swift/standard depending | Effect: Deposit small concealed item without notice; opposed Perception"
   },
   {
     "application": "Pick pocket (standard)",
@@ -558,13 +558,13 @@
     "description": "Track (trained) | DC: 10/20/30 depending on surface | Time: per tracking check | Effect: Locate trail; modifiers for terrain, time, weather apply"
   },
   {
-    "application": "First Aid (requires medpac)",
+    "application": "First Aid (reqassets/uires medpac)",
     "DC": 15,
     "time": "full-round",
     "effect": "Heal HP = target level +1 per point over DC; cannot retry on same target for 24h",
-    "name": "First Aid (requires medpac)",
+    "name": "First Aid (reqassets/uires medpac)",
     "type": "extra-skill-use",
-    "description": "First Aid (requires medpac) | DC: 15 | Time: full-round | Effect: Heal HP = target level +1 per point over DC; cannot retry on same target for 24h"
+    "description": "First Aid (reqassets/uires medpac) | DC: 15 | Time: full-round | Effect: Heal HP = target level +1 per point over DC; cannot retry on same target for 24h"
   },
   {
     "application": "Revivify (trained, medkit)",
@@ -579,10 +579,10 @@
     "application": "Heal Damage (surgery kit, trained)",
     "DC": 20,
     "time": "1 hour",
-    "effect": "Restore HP = CON_mod (min 1) × level and remove persistent conditions; failure deals DT to target",
+    "effect": "Retemplates/apps/store HP = CON_mod (min 1) × level and remove persistent conditions; failure deals DT to target",
     "name": "Heal Damage (surgery kit, trained)",
     "type": "extra-skill-use",
-    "description": "Heal Damage (surgery kit, trained) | DC: 20 | Time: 1 hour | Effect: Restore HP = CON_mod (min 1) × level and remove persistent conditions; failure deals DT to target"
+    "description": "Heal Damage (surgery kit, trained) | DC: 20 | Time: 1 hour | Effect: Retemplates/apps/store HP = CON_mod (min 1) × level and remove persistent conditions; failure deals DT to target"
   },
   {
     "application": "Long-term care",
@@ -666,13 +666,13 @@
     "description": "Improve Access (trained) | DC: vs computer's Will (attitude modifiers apply) | Time: varies | Effect: Shift computer attitude by 1 step on success; failure may worsen attitude"
   },
   {
-    "application": "Disable or erase program (requires helpful attitude)",
+    "application": "Disable or erase program (reqassets/uires helpful attitude)",
     "DC": 15,
     "time": "10 minutes",
     "effect": "Remove program when computer attitude is helpful",
-    "name": "Disable or erase program (requires helpful attitude)",
+    "name": "Disable or erase program (reqassets/uires helpful attitude)",
     "type": "extra-skill-use",
-    "description": "Disable or erase program (requires helpful attitude) | DC: 15 | Time: 10 minutes | Effect: Remove program when computer attitude is helpful"
+    "description": "Disable or erase program (reqassets/uires helpful attitude) | DC: 15 | Time: 10 minutes | Effect: Remove program when computer attitude is helpful"
   },
   {
     "application": "Astrogate (plot hyperspace route)",

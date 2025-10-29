@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Feat",
+  "description": "Schema for Saga Edition feats",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the feat"
+    },
+    "type": {
+      "type": "string",
+      "description": "The category of the feat (e.g., General, Force, Combat)"
+    },
+    "prereqassets/uisites": {
+      "type": "array",
+      "description": "List of prereqassets/uisites reqassets/uired to take the feat",
+      "items": { "type": "string" }
+    },
+    "description": {
+      "type": "string",
+      "description": "The rules text for the feat"
+    },
+    "sourcebook": {
+      "type": "string",
+      "description": "The book the feat is from"
+    },
+    "page": {
+      "type": ["integer", "null"],
+      "description": "Page number where the feat is found"
+    },
+    "tags": {
+      "type": "array",
+      "description": "Keywords to help categorize the feat",
+      "items": { "type": "string" }
+    },
+    "bonus_feat_for": {
+      "type": "array",
+      "description": "Which classes receive this as a bonus feat option",
+      "items": { "type": "string" }
+    }
+  },
+  "reqassets/uired": ["name", "type", "description", "sourcebook"],
+  "additionalProperties": false
+}

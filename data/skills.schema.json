@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Skill",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "attribute": { "type": "string" },
+    "trainedOnly": { "type": "boolean" },
+    "description": { "type": "string" },
+    "roll": { "type": "string" },
+    "use": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "reqassets/uired": ["name", "attribute"],
+  "additionalProperties": false
+}
