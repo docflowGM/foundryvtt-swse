@@ -58,15 +58,15 @@ form.swse-datapad-sheet {
 /* =========================
    HEADER - Top Navigation Bar
    ========================= */
-.swse .datapad-header {
+.swse .datapad-header { padding: 3px 4px; min-height: 20px;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 12px;
+  /* padding: 3px 4px;
   background: linear-gradient(180deg, rgba(2, 10, 20, 0.65), rgba(0, 20, 40, 0.6));
   border-bottom: 1px solid rgba(0, 170, 204, 0.12);
-  min-height: 60px;
-}
+  /* min-height: 20px;
+ }
 
 .swse .header-left {
   display: flex;
@@ -138,7 +138,7 @@ form.swse-datapad-sheet {
 }
 
 .swse .sw-logo {
-  max-height: 48px;
+  max-height: 16px;
   display: block;
 }
 
@@ -149,11 +149,11 @@ form.swse-datapad-sheet {
 }
 
 .swse .character-portrait {
-  width: 60px;
-  height: 60px;
+  width: 20px;
+  height: 20px;
   border-radius: 6px;
   object-fit: cover;
-  border: 2px solid rgba(0, 168, 204, 0.3);
+  border: 1px solid rgba(0, 168, 204, 0.3);
   cursor: pointer;
   transition: transform var(--fast);
 }
@@ -166,13 +166,11 @@ form.swse-datapad-sheet {
 /* =========================
    SHEET BODY - Scrollable Content
    ========================= */
-.swse .sheet-body {
-  padding: 12px;
+.swse .sheet-body { overflow-y: auto; overflow-x: hidden; max-height: calc(100vh - 100px);padding: 4px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   max-height: calc(100vh - 160px);
-  transform: translateZ(0);
-}
+  transform: translateZ(0); }
 
 .swse .sheet-body::-webkit-scrollbar {
   width: 10px;
@@ -186,7 +184,7 @@ form.swse-datapad-sheet {
 .swse .sheet-body::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, var(--holo-cyan), var(--holo-blue));
   border-radius: 8px;
-  border: 2px solid rgba(0, 10, 20, 0.25);
+  border: 1px solid rgba(0, 10, 20, 0.25);
 }
 
 /* =========================
@@ -206,7 +204,7 @@ form.swse-datapad-sheet {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.08));
   border: 1px solid rgba(0, 168, 204, 0.15);
   border-radius: 8px;
-  padding: 12px;
+  padding: 4px;
   box-shadow: var(--shadow-weak);
   margin-bottom: 12px;
 }
@@ -266,7 +264,7 @@ form.swse-datapad-sheet {
 }
 
 .swse textarea {
-  min-height: 80px;
+  min-height: 27px;
   resize: vertical;
   font-family: inherit;
 }
@@ -403,11 +401,9 @@ form.swse-datapad-sheet {
 /* =========================
    SKILLS SECTION - ENHANCED
    ========================= */
-.swse .skills-grid-compact {
-  display: flex;
+.swse .skills-grid-compact { overflow-y: auto; overflow-x: hidden; display: flex;
   flex-direction: column;
-  gap: 2px;
-}
+  gap: 2px; }
 
 .swse .skills-header {
   display: grid;
@@ -663,7 +659,7 @@ form.swse-datapad-sheet {
   font-size: 16px;
   font-weight: 900;
   text-align: center;
-  padding: 10px;
+  padding: 3px;
 }
 
 .swse .threshold-grid {
@@ -676,7 +672,7 @@ form.swse-datapad-sheet {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 3px;
   border-radius: 6px;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(255, 255, 255, 0.02));
   border: 1px solid rgba(0, 168, 204, 0.1);
@@ -699,7 +695,7 @@ form.swse-datapad-sheet {
 }
 
 .swse .formula-input-sm {
-  width: 60px;
+  width: 20px;
   padding: 6px;
   text-align: center;
 }
@@ -726,7 +722,7 @@ form.swse-datapad-sheet {
 }
 
 .swse .condition-btn {
-  padding: 10px;
+  padding: 3px;
   text-transform: uppercase;
   font-weight: 800;
   border-radius: 8px;
@@ -844,10 +840,8 @@ form.swse-datapad-sheet {
   border-color: var(--holo-cyan);
 }
 
-.swse .bottom-tabs-content {
-  max-height: 300px;
-  overflow-y: auto;
-}
+.swse .bottom-tabs-content { overflow-y: auto; overflow-x: hidden;max-height: 300px;
+  overflow-y: auto; }
 
 .swse .bottom-tab-content {
   display: none;
@@ -863,12 +857,10 @@ form.swse-datapad-sheet {
 .swse .equipment-list,
 .swse .feat-list,
 .swse .talent-list,
-.swse .power-list {
-  display: flex;
+.swse .power-list { overflow-y: auto; overflow-x: hidden; display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 10px;
-}
+  margin-bottom: 10px; }
 
 .swse .equipment-item,
 .swse .feat-item,
@@ -1014,10 +1006,10 @@ form.swse-datapad-sheet {
 }
 
 @media (max-width: 768px) {
-  .swse .datapad-header {
+  .swse .datapad-header { padding: 3px 4px; min-height: 20px;
     flex-direction: column;
     align-items: stretch;
-  }
+   }
 
   .swse .header-left,
   .swse .header-center,

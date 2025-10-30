@@ -8,7 +8,7 @@
   overflow: hidden;
   background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
   color: #9ed0ff;
-  border: 2px solid #1c4b8e;
+  border: 1px solid #1c4b8e;
   border-radius: 12px;
   box-shadow: 0 0 20px #0ff3, inset 0 0 10px #123;
   font-family: "Orbitron", sans-serif;
@@ -77,7 +77,7 @@
 
 .holo-theme .sheet-tabs .item.active {
   color: #fff;
-  border-bottom: 2px solid #00e6ff;
+  border-bottom: 1px solid #00e6ff;
   animation: holo-tab-pulse 3s ease-in-out infinite;
 }
 

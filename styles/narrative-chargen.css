@@ -13,7 +13,7 @@
 .voice-prompt {
     background: linear-gradient(180deg, rgba(0, 20, 40, 0.9) 0%, rgba(0, 10, 20, 0.7) 100%);
     padding: 2rem;
-    border-bottom: 2px solid #0af;
+    border-bottom: 1px solid #0af;
     animation: prompt-pulse 3s ease-in-out infinite;
 }
 
@@ -31,12 +31,10 @@
     margin: 0 auto;
 }
 
-.chargen-content {
-    flex: 1;
+.chargen-content { overflow-y: auto; overflow-x: hidden; flex: 1;
     padding: 2rem;
     overflow-y: auto;
-    min-height: 300px;
-}
+    min-height: 300px; }
 
 .welcome-screen {
     display: flex;
@@ -79,7 +77,7 @@
     width: 100%;
     padding: 1rem;
     background: rgba(0, 30, 60, 0.8);
-    border: 2px solid #0af;
+    border: 1px solid #0af;
     color: #fff;
     border-radius: 8px;
     font-size: 1.1rem;
@@ -94,7 +92,7 @@
 
 .race-bonuses {
     background: rgba(0, 50, 100, 0.6);
-    border: 2px solid #0af;
+    border: 1px solid #0af;
     border-radius: 10px;
     padding: 1.5rem;
     text-align: center;
@@ -131,7 +129,7 @@
 
 .skills-info {
     background: rgba(0, 50, 100, 0.6);
-    border: 2px solid #0af;
+    border: 1px solid #0af;
     border-radius: 10px;
     padding: 1rem;
     margin-bottom: 1.5rem;
@@ -165,7 +163,7 @@
 
 .skill-option {
     background: rgba(20, 20, 40, 0.8);
-    border: 2px solid rgba(0, 170, 255, 0.3);
+    border: 1px solid rgba(0, 170, 255, 0.3);
     border-radius: 8px;
     padding: 1rem;
     transition: all 0.3s;
@@ -247,7 +245,7 @@
     width: 100%;
     padding: 1.5rem;
     background: linear-gradient(135deg, rgba(0, 30, 60, 0.8) 0%, rgba(0, 50, 100, 0.6) 100%);
-    border: 2px solid #0af;
+    border: 1px solid #0af;
     color: #fff;
     border-radius: 10px;
     cursor: pointer;
@@ -266,7 +264,7 @@
 
 .review-section {
     background: rgba(20, 20, 40, 0.8);
-    border: 2px solid #0af;
+    border: 1px solid #0af;
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 1rem;
@@ -312,12 +310,12 @@
     justify-content: space-between;
     padding: 1.5rem;
     background: rgba(10, 10, 20, 0.9);
-    border-top: 2px solid #0af;
+    border-top: 1px solid #0af;
 }
 
 .btn-primary {
     background: linear-gradient(180deg, #0066aa 0%, #004477 100%);
-    border: 2px solid #0af;
+    border: 1px solid #0af;
     padding: 1rem 2rem;
     color: #fff;
     font-weight: bold;
@@ -333,7 +331,7 @@
 
 .btn-secondary {
     background: linear-gradient(180deg, #444 0%, #222 100%);
-    border: 2px solid #666;
+    border: 1px solid #666;
     padding: 1rem 2rem;
     color: #fff;
     font-weight: bold;

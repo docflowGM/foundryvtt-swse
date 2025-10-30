@@ -5,13 +5,13 @@
     font-family: 'Orbitron', 'Segoe UI', sans-serif;
 }
 
-.vehicle-header {
+.vehicle-header { padding: 5px; min-height: 20px;
     background: linear-gradient(90deg, #1a2845 0%, #2a3a5a 100%);
-    border: 2px solid #3a9dd6;
-    padding: 15px;
+    border: 1px solid #3a9dd6;
+    /* padding: 5px;
     margin-bottom: 10px;
     box-shadow: 0 0 20px rgba(58, 157, 214, 0.3);
-}
+ }
 
 .header-row {
     display: flex;
@@ -56,17 +56,17 @@
 
 .sheet-tabs {
     background: #1a2845;
-    border-bottom: 2px solid #3a9dd6;
+    border-bottom: 1px solid #3a9dd6;
     display: flex;
     gap: 0;
 }
 
 .sheet-tabs .item {
     flex: 1;
-    padding: 12px 20px;
+    padding: 4px 20px;
     background: rgba(26, 40, 69, 0.6);
     border: none;
-    border-right: 1px solid #2a3a5a;
+    border-left: 0px solid #2a3a5a;
     color: #8a9abd;
     text-transform: uppercase;
     font-size: 12px;
@@ -92,7 +92,7 @@
     position: relative;
     min-height: 600px;
     background: radial-gradient(ellipse at center, #1a2845 0%, #0a0e27 100%);
-    border: 2px solid #3a9dd6;
+    border: 1px solid #3a9dd6;
     border-radius: 8px;
     padding: 40px 20px;
     margin: 20px;
@@ -128,9 +128,9 @@
 .stat-box {
     position: absolute;
     background: linear-gradient(135deg, rgba(26, 40, 69, 0.95) 0%, rgba(15, 25, 45, 0.95) 100%);
-    border: 2px solid #3a9dd6;
+    border: 1px solid #3a9dd6;
     border-radius: 6px;
-    padding: 10px 15px;
+    padding: 3px 15px;
     min-width: 140px;
     box-shadow: 0 0 15px rgba(58, 157, 214, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.5);
     z-index: 10;
@@ -221,7 +221,7 @@
 
 .line-hull {
     width: 2px;
-    height: 60px;
+    height: 20px;
     top: 100%;
     left: 50%;
     transform: translateX(-50%);
@@ -252,7 +252,7 @@
 
 .line-weapons {
     width: 2px;
-    height: 60px;
+    height: 20px;
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
@@ -284,7 +284,7 @@
 .qassets/uick-stats-bar {
     display: flex;
     gap: 20px;
-    padding: 15px 20px;
+    padding: 5px 20px;
     background: rgba(26, 40, 69, 0.6);
     border: 1px solid #2a7aa6;
     border-radius: 6px;
@@ -323,7 +323,7 @@
 }
 
 .combat-section {
-    padding: 20px;
+    padding: 7px;
 }
 
 .defense-stats-grid {
@@ -337,7 +337,7 @@
     background: rgba(26, 40, 69, 0.6);
     border: 1px solid #2a7aa6;
     border-radius: 6px;
-    padding: 12px;
+    padding: 4px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -372,7 +372,7 @@
     background: rgba(26, 40, 69, 0.6);
     border: 1px solid #2a7aa6;
     border-radius: 6px;
-    padding: 12px;
+    padding: 4px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -396,9 +396,9 @@
 
 .weapons-section {
     background: rgba(26, 40, 69, 0.6);
-    border: 2px solid #3a9dd6;
+    border: 1px solid #3a9dd6;
     border-radius: 6px;
-    padding: 15px;
+    padding: 5px;
     margin-top: 20px;
 }
 
@@ -415,7 +415,7 @@
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1.5fr 1fr 80px;
     gap: 10px;
-    padding: 10px;
+    padding: 3px;
     background: rgba(58, 157, 214, 0.2);
     border-radius: 4px;
     margin-bottom: 10px;
@@ -425,13 +425,11 @@
     font-weight: bold;
 }
 
-.weapons-list {
-    display: flex;
+.weapons-list { overflow-y: auto; overflow-x: hidden; display: flex;
     flex-direction: column;
     gap: 8px;
     max-height: 300px;
-    overflow-y: auto;
-}
+    overflow-y: auto; }
 
 .weapon-item {
     display: grid;
@@ -474,7 +472,7 @@
     background: rgba(0, 180, 0, 0.6);
     border: 1px solid #44ff44;
     color: #44ff44;
-    padding: 10px;
+    padding: 3px;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s;
@@ -507,16 +505,14 @@
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid #2a7aa6;
     color: #e0e6ff;
-    padding: 10px;
+    padding: 3px;
     font-size: 13px;
     border-radius: 4px;
     resize: vertical;
     font-family: inherit;
 }
 
-.crew-section {
-    padding: 20px;
-}
+.crew-section { overflow-y: auto; overflow-x: hidden; padding: 7px; }
 
 .crew-section h3 {
     color: #3a9dd6;
@@ -538,7 +534,7 @@
     background: rgba(26, 40, 69, 0.6);
     border: 1px solid #2a7aa6;
     border-radius: 6px;
-    padding: 12px;
+    padding: 4px;
 }
 
 .crew-position label {
@@ -552,9 +548,9 @@
 
 .crew-slot {
     background: rgba(0, 0, 0, 0.5);
-    border: 2px dashed #2a7aa6;
+    border: 1px dashed #2a7aa6;
     border-radius: 4px;
-    padding: 12px;
+    padding: 4px;
     min-height: 40px;
     display: flex;
     align-items: center;
@@ -597,16 +593,14 @@
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid #2a7aa6;
     color: #e0e6ff;
-    padding: 10px;
+    padding: 3px;
     font-size: 13px;
     border-radius: 4px;
     resize: vertical;
     font-family: inherit;
 }
 
-.details-section {
-    padding: 20px;
-}
+.details-section { overflow-y: auto; overflow-x: hidden; padding: 7px; }
 
 .carried-craft,
 .tags-section,
@@ -631,7 +625,7 @@
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid #2a7aa6;
     color: #e0e6ff;
-    padding: 10px;
+    padding: 3px;
     font-size: 13px;
     border-radius: 4px;
     resize: vertical;

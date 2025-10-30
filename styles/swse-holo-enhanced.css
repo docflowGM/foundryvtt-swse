@@ -14,7 +14,7 @@
   overflow: hidden;
   background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
   color: #9ed0ff;
-  border: 2px solid #1c4b8e;
+  border: 1px solid #1c4b8e;
   border-radius: 12px;
   box-shadow: 0 0 20px #0ff3, inset 0 0 10px #123;
   font-family: "Orbitron", "Roboto", sans-serif;
@@ -24,10 +24,8 @@
 /* Keep content above grid layers */
 .holo-theme form,
 .holo-theme .sheet-body-wrapper,
-.holo-theme .sheet-body {
-  position: relative;
-  z-index: 5;
-}
+.holo-theme .sheet-body { overflow-y: auto; overflow-x: hidden; max-height: calc(100vh - 100px);position: relative;
+  z-index: 5; }
 
 /* ─────────────── Inputs & Textareas ─────────────── */
 .holo-theme input,
@@ -55,11 +53,11 @@
 }
 
 /* ─────────────── Headers ─────────────── */
-.holo-theme .sheet-header {
+.holo-theme .sheet-header { padding: 3px 4px; min-height: 20px;
   background: linear-gradient(135deg, rgba(26, 77, 122, 0.8), rgba(44, 95, 141, 0.8));
-  border-bottom: 2px solid #0af;
+  border-bottom: 1px solid #0af;
   box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
-}
+ }
 
 .holo-theme .charname input,
 .holo-theme h1,
@@ -114,7 +112,7 @@
 
 .holo-theme .sheet-tabs .item.active {
   color: #fff;
-  border-bottom: 2px solid #00e6ff;
+  border-bottom: 1px solid #00e6ff;
   background: rgba(0, 170, 255, 0.15);
   animation: holo-tab-pulse 3s ease-in-out infinite;
 }

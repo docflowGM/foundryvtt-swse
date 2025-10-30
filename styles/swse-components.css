@@ -1,7 +1,7 @@
 /* ===== Start of swse.css ===== */
 .swse.sheet { font-family: sans-serif; }
 .swse .form-group { margin: 5px 0; }
-.swse label { font-weight: bold; margin-right: 5px; }
+.swse label { font-weight: bold; margin-left: 0px; }
 .swse input[type="text"],
 .swse input[type="number"] { border: 1px solid #ccc; padding: 2px 5px; }
 .swse button {
@@ -12,7 +12,7 @@
   cursor: pointer;
 }
 .swse button:hover { background: #357abd; }
-.swse .sheet-tabs { border-bottom: 2px solid #4a90e2; }
+.swse .sheet-tabs { border-bottom: 1px solid #4a90e2; }
 .swse .sheet-tabs .item { padding: 5px 15px; cursor: pointer; }
 .swse .sheet-tabs .item.active { background: #4a90e2; color: white; }
 /* ===== End of swse.css ===== */
@@ -75,7 +75,7 @@
 /* ──────────────────────────────── Sheet Body ─────────────────────────────── */
 .sheet-body-wrapper {
   background: rgba(0, 0, 0, 0.55);
-  padding: 20px;
+  padding: 7px;
   border-radius: 12px;
   box-shadow: 0 0 10px #00aaff33 inset;
   overflow-y: auto;
@@ -108,7 +108,7 @@
   color: #00aaff;
   border-radius: 6px;
   padding: 4px 10px;
-  margin-right: 5px;
+  margin-left: 0px;
   text-transform: uppercase;
   transition: background 0.3s, color 0.3s;
 }
@@ -221,23 +221,21 @@ button:active {
   background: #1a1a1a;
 }
 
-.swse.vehicle-sheet .sheet-header {
+.swse.vehicle-sheet .sheet-header { padding: 3px 4px; min-height: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5em 1em;
+  /* padding: 0.5em 1em;
   background: #222;
   border-bottom: 1px solid #444;
-}
+ }
 
 .swse.vehicle-sheet .sheet-title {
   font-size: 1.4em;
   font-weight: bold;
 }
 
-.swse.vehicle-sheet .sheet-body {
-  padding: 1em;
-}
+.swse.vehicle-sheet .sheet-body { overflow-y: auto; overflow-x: hidden; max-height: calc(100vh - 100px);padding: 1em; }
 
 .swse.vehicle-sheet .section {
   margin-bottom: 1em;
@@ -303,7 +301,7 @@ button:active {
   overflow: hidden;
   background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
   color: #9ed0ff;
-  border: 2px solid #1c4b8e;
+  border: 1px solid #1c4b8e;
   border-radius: 12px;
   box-shadow: 0 0 20px #0ff3, inset 0 0 10px #123;
   font-family: "Orbitron", sans-serif;
@@ -372,7 +370,7 @@ button:active {
 
 .holo-theme .sheet-tabs .item.active {
   color: #fff;
-  border-bottom: 2px solid #00e6ff;
+  border-bottom: 1px solid #00e6ff;
   animation: holo-tab-pulse 3s ease-in-out infinite;
 }
 

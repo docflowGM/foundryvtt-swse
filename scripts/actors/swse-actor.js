@@ -53,6 +53,7 @@ export class SWSEActor extends Actor {
     this._applyDamageThreshold();
     this._calculateInitiative();
     this._calculateSecondWind();
+    this._calculateSkillTotals();
   }
 
   _ensureSystemStructure() {
@@ -67,15 +68,53 @@ export class SWSEActor extends Actor {
 
     if (!sys.defenses) sys.defenses = {};
     ["reflex","fortitude","will"].forEach(def => {
-      if (!sys.defenses[def]) {
+      if (!sys.defenses[def] || typeof sys.defenses[def] !== 'object' || typeof sys.defenses[def] === 'string') {
         const abilityMap = { reflex: "dex", fortitude: "con", will: "wis" };
-        sys.defenses[def] = { ability: abilityMap[def], class: 0, armor: 0, modifier: 0, total: 10 };
+        sys.defenses[def] = { 
+          ability: abilityMap[def], 
+          levelArmor: 0, 
+          classBonus: 0, 
+          abilityMod: abilityMap[def],
+          armor: 0, 
+          misc: 0, 
+          total: 10 
+        };
       }
     });
 
     if (!sys.hp) sys.hp = { value: 1, max: 1, temp: 0 };
-    if (!sys.speed || typeof sys.speed === "number") sys.speed = { base: sys.speed || 6, total: sys.speed || 6 };
+    if (!sys.speed || typeof sys.speed !== 'object') {
+      const oldSpeed = Number(sys.speed) || 6;
+      sys.speed = { base: oldSpeed, total: oldSpeed };
+    }
     if (!sys.forcePoints) sys.forcePoints = { value: 1, max: 1, die: "1d6" };
+    
+    if (!sys.skills || typeof sys.skills !== 'object') sys.skills = {};
+    const skillsList = [
+      {name: "acrobatics", ability: "dex"}, {name: "climb", ability: "str"},
+      {name: "deception", ability: "cha"}, {name: "endurance", ability: "con"},
+      {name: "gatherInformation", ability: "cha"}, {name: "initiative", ability: "dex"},
+      {name: "jump", ability: "str"}, {name: "knowledge", ability: "int"},
+      {name: "mechanics", ability: "int"}, {name: "perception", ability: "wis"},
+      {name: "persuasion", ability: "cha"}, {name: "pilot", ability: "dex"},
+      {name: "ride", ability: "dex"}, {name: "stealth", ability: "dex"},
+      {name: "survival", ability: "wis"}, {name: "swim", ability: "str"},
+      {name: "treatInjury", ability: "wis"}, {name: "useComputer", ability: "int"},
+      {name: "useTheForce", ability: "cha"}
+    ];
+    skillsList.forEach(skill => {
+      if (!sys.skills[skill.name] || typeof sys.skills[skill.name] !== 'object') {
+        sys.skills[skill.name] = { ability: skill.ability, trained: false, focused: false, armor: 0, misc: 0, total: 0 };
+      }
+    });
+    
+    if (!sys.armor || typeof sys.armor !== 'object') {
+      sys.armor = {
+        name: "", defModBonus: 0, fortDefBonus: 0, maxDexBonus: 0, speed: 0,
+        proficiency: false, armoredDefense: false, improvedArmoredDef: false,
+        type: "none", helmetPackage: "none", notes: ""
+      };
+    }
     if (!sys.destinyPoints) sys.destinyPoints = { value: 0, max: 0 };
     if (!sys.freeForcePowers) sys.freeForcePowers = { current: 0, max: 0 };
     if (!sys.secondWind) sys.secondWind = { uses: 1, max: 1, misc: 0, healing: 0 };
@@ -88,7 +127,15 @@ export class SWSEActor extends Actor {
     if (!sys.bab) sys.bab = 0;
     if (!sys.size) sys.size = "medium";
     if (!sys.conditionTrack) sys.conditionTrack = "normal";
+    if (!sys.condition) sys.condition = sys.conditionTrack || "normal";
+    sys.conditionTrack = sys.condition;
     if (!sys.race) sys.race = "custom";
+    if (!sys.species) sys.species = "";
+    if (!sys.class) sys.class = "";
+    if (!sys.background) sys.background = "";
+    if (!sys.gender) sys.gender = "";
+    if (!sys.credits) sys.credits = 0;
+    if (!sys.notes) sys.notes = "";
   }
 
   _applyRacialAbilities() {
@@ -144,7 +191,8 @@ export class SWSEActor extends Actor {
         }
       } else baseValue = level;
 
-      def.total = 10 + baseValue + abilMod + (def.class || 0) + (def.armorMastery || 0) + (def.modifier || 0) + (key !== "helpless" ? pen : 0);
+      def.levelArmor = baseValue;
+      def.total = 10 + baseValue + abilMod + (def.classBonus || 0) + (def.armorMastery || 0) + (def.misc || 0) + (key !== "helpless" ? pen : 0);
     }
   }
 
@@ -173,7 +221,9 @@ export class SWSEActor extends Actor {
       const lvl = Number(cls.system.level || 0);
       const rec = (cls.system.levels || {})[lvl]?.defenses || {};
       for (const [key, d] of Object.entries(rec)) {
-        if (defs[key] && (d.class || 0) > (defs[key].class || 0)) defs[key].class = d.class;
+        if (defs[key] && (d.classBonus || d.class || 0) > (defs[key].classBonus || 0)) {
+          defs[key].classBonus = d.classBonus || d.class;
+        }
       }
     }
   }
@@ -196,7 +246,10 @@ export class SWSEActor extends Actor {
     const sizeMod = SIZE_DAMAGE_MOD[size] || 0;
     const hasFeat = this.items.some(i => i.type === "feat" && i.name === "Improved Damage Threshold");
     const featBonus = hasFeat ? 5 : 0;
-    this.system.damageThreshold = fort + sizeMod + featBonus + (Number(this.system.damageThresholdMisc || 0));
+    if (!this.system.damageThreshold || typeof this.system.damageThreshold !== 'object') {
+      this.system.damageThreshold = { misc: 0, total: 0 };
+    }
+    this.system.damageThreshold.total = fort + sizeMod + featBonus + (Number(this.system.damageThreshold.misc || 0));
   }
 
   _calculateInitiative() {
@@ -213,7 +266,20 @@ export class SWSEActor extends Actor {
     const heal = Math.max(Math.floor(maxHP / 4), Math.floor(con)) + misc;
     this.system.secondWind = this.system.secondWind || {};
     this.system.secondWind.healing = heal;
+    this.system.secondWind.total = heal;
     return heal;
+  }
+
+  _calculateSkillTotals() {
+    const halfLevel = Math.floor((this.system.level || 1) / 2);
+    for (const [key, skill] of Object.entries(this.system.skills || {})) {
+      const abilMod = this.system.abilities?.[skill.ability]?.mod || 0;
+      const trained = skill.trained ? 5 : 0;
+      const focused = skill.focused ? 5 : 0;
+      const armor = Number(skill.armor || 0);
+      const misc = Number(skill.misc || 0);
+      skill.total = abilMod + halfLevel + trained + focused + armor + misc + this.conditionPenalty;
+    }
   }
 
   // Helpers
@@ -247,9 +313,19 @@ export class SWSEActorSheet extends ActorSheet {
     const context = super.getData();
     context.system = this.actor.system;
     context.items = this.actor.items.map(i => i.toObject());
-    context.damageThreshold = this.actor.system.damageThreshold;
+    context.damageThreshold = this.actor.system.damageThreshold?.total || this.actor.system.damageThreshold || 0;
     context.races = SWSE_RACES;
     context.labels = { sheetTitle: game.i18n.localize("SWSE.SheetLabel.character") || "Character" };
+    
+    context.halfLevel = Math.floor((this.actor.system.level || 1) / 2);
+    context.initiativeTotal = this.actor.system.initiative?.total || 0;
+    
+    context.equipment = this.actor.items.filter(i => i.type === "equipment");
+    context.feats = this.actor.items.filter(i => i.type === "feat");
+    context.talents = this.actor.items.filter(i => i.type === "talent");
+    context.powers = this.actor.items.filter(i => i.type === "forcepower");
+    context.weapons = this.actor.items.filter(i => i.type === "weapon");
+    
     return context;
   }
 
