@@ -1,13 +1,15 @@
 /* ──────────────────────────────────────────────── */
 /* STAR WARS SAGA EDITION – ENHANCED HOLO THEME    */
 /* Compact Datapad-style UI for all SWSE sheets     */
-/* Updated for optimized layout compatibility       */
+/* Updated with correct class selectors             */
 /* ──────────────────────────────────────────────── */
 
 /* Additional Holo Effects for Compact Layout */
 
 /* Scan Line Effect */
-.swse.sheet .sheet-body::after {
+.swse-datapad-sheet .sheet-body::after,
+.swse.character-sheet .sheet-body::after,
+.holo-theme .sheet-body::after {
   content: "";
   position: absolute;
   top: 0;
@@ -27,9 +29,15 @@
 }
 
 /* Enhanced Glow on Focus */
-.swse.sheet input:focus,
-.swse.sheet textarea:focus,
-.swse.sheet select:focus {
+.swse-datapad-sheet input:focus,
+.swse-datapad-sheet textarea:focus,
+.swse-datapad-sheet select:focus,
+.swse.character-sheet input:focus,
+.swse.character-sheet textarea:focus,
+.swse.character-sheet select:focus,
+.holo-theme input:focus,
+.holo-theme textarea:focus,
+.holo-theme select:focus {
   animation: input-glow-pulse 2s ease-in-out infinite;
 }
 
@@ -45,9 +53,12 @@
 }
 
 /* Holographic Flicker on Hover */
-.swse.sheet .ability:hover,
-.swse.sheet .defense:hover,
-.swse.sheet .resource:hover {
+.swse-datapad-sheet .ability:hover,
+.swse-datapad-sheet .defense:hover,
+.swse-datapad-sheet .resource:hover,
+.swse.character-sheet .ability:hover,
+.swse.character-sheet .defense:hover,
+.swse.character-sheet .resource:hover {
   animation: holo-flicker-subtle 0.3s ease-in-out;
 }
 
@@ -61,7 +72,9 @@
 /* Data Readout Effect for Values */
 .ability-score,
 .defense-value,
-.stat-value {
+.stat-value,
+.attr-total,
+.defense-total-compact {
   animation: data-readout 0.5s ease-out;
 }
 
@@ -76,36 +89,15 @@
   }
 }
 
-/* Rollable Highlight Enhancement */
-.rollable {
-  position: relative;
-}
-
-.rollable::before {
-  content: "";
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border: 1px solid transparent;
-  border-radius: 3px;
-  transition: all 0.2s;
-  pointer-events: none;
-}
-
-.rollable:hover::before {
-  border-color: #00ffff;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-}
-
 /* Section Header Glow */
-.section-header {
+.section-header,
+.section-header-black {
   position: relative;
   overflow: hidden;
 }
 
-.section-header::before {
+.section-header::before,
+.section-header-black::before {
   content: "";
   position: absolute;
   top: 0;
@@ -119,188 +111,6 @@
 @keyframes header-sweep {
   0% { left: -100%; }
   50%, 100% { left: 100%; }
-}
-
-/* Button Press Effect */
-.swse.sheet button:active {
-  animation: button-press 0.1s ease-out;
-}
-
-@keyframes button-press {
-  0% { transform: scale(1); }
-  50% { transform: scale(0.95); }
-  100% { transform: scale(1); }
-}
-
-/* Loading State Animation */
-.loading {
-  animation: loading-pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes loading-pulse {
-  0%, 100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.02);
-  }
-}
-
-/* Datapad Power Button */
-.power-indicator {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 8px;
-  height: 8px;
-  background: #00ff88;
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
-  animation: power-blink 2s ease-in-out infinite;
-  z-index: 1000;
-}
-
-@keyframes power-blink {
-  0%, 90%, 100% { opacity: 1; }
-  95% { opacity: 0.3; }
-}
-
-/* Holographic Noise (subtle) */
-.swse.sheet::before {
-  animation: holo-grid-move 20s linear infinite, holo-noise 0.5s steps(10) infinite;
-}
-
-@keyframes holo-noise {
-  0%, 100% { opacity: 0.25; }
-  50% { opacity: 0.22; }
-}
-
-/* Tab Indicator Line */
-.sheet-tabs .item.active::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #00ffff, transparent);
-  animation: tab-line-sweep 2s ease-in-out infinite;
-}
-
-@keyframes tab-line-sweep {
-  0%, 100% { transform: scaleX(0.5); opacity: 0.5; }
-  50% { transform: scaleX(1); opacity: 1; }
-}
-
-/* Enhanced Item Hover */
-.items-list .item:hover {
-  position: relative;
-}
-
-.items-list .item:hover::before {
-  content: ">";
-  position: absolute;
-  left: -10px;
-  color: #00ffff;
-  animation: item-arrow 0.5s ease-in-out infinite alternate;
-}
-
-@keyframes item-arrow {
-  from { transform: translateX(0); }
-  to { transform: translateX(3px); }
-}
-
-/* Skill Row Enhancement */
-.skill-row:hover .skill-total.rollable {
-  animation: skill-ready 0.5s ease-in-out infinite alternate;
-}
-
-@keyframes skill-ready {
-  from { transform: scale(1); }
-  to { transform: scale(1.15); }
-}
-
-/* Critical Success/Failure Flash */
-@keyframes crit-success {
-  0%, 100% { background: transparent; }
-  50% { background: rgba(0, 255, 136, 0.3); }
-}
-
-@keyframes crit-fail {
-  0%, 100% { background: transparent; }
-  50% { background: rgba(255, 0, 0, 0.3); }
-}
-
-.crit-success {
-  animation: crit-success 0.5s ease-in-out 3;
-}
-
-.crit-fail {
-  animation: crit-fail 0.5s ease-in-out 3;
-}
-
-/* Datapad Boot Sequence */
-@keyframes boot-sequence {
-  0% {
-    opacity: 0;
-    filter: brightness(0);
-  }
-  20% {
-    opacity: 0.3;
-    filter: brightness(1.5);
-  }
-  40% {
-    opacity: 0.7;
-    filter: brightness(0.8);
-  }
-  60% {
-    opacity: 1;
-    filter: brightness(1.2);
-  }
-  80% {
-    opacity: 0.9;
-    filter: brightness(1.1);
-  }
-  100% {
-    opacity: 1;
-    filter: brightness(1);
-  }
-}
-
-.swse.sheet.booting {
-  animation: boot-sequence 1.5s ease-out;
-}
-
-/* Terminal Text Effect */
-.terminal-text {
-  font-family: "Courier New", monospace;
-  color: #00ff88;
-  text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
-}
-
-/* Glitch Effect (for errors or warnings) */
-@keyframes glitch {
-  0%, 100% {
-    transform: translate(0);
-  }
-  20% {
-    transform: translate(-2px, 2px);
-  }
-  40% {
-    transform: translate(-2px, -2px);
-  }
-  60% {
-    transform: translate(2px, 2px);
-  }
-  80% {
-    transform: translate(2px, -2px);
-  }
-}
-
-.glitch {
-  animation: glitch 0.3s ease-in-out;
 }
 
 /* Status Indicators */
@@ -342,37 +152,4 @@
 @keyframes danger-pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.2); }
-}
-
-/* Energy Shield Effect */
-.energy-shield {
-  position: relative;
-}
-
-.energy-shield::after {
-  content: "";
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border: 1px solid #00ffff;
-  border-radius: inherit;
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-}
-
-.energy-shield:hover::after {
-  opacity: 1;
-  animation: shield-pulse 1s ease-in-out infinite;
-}
-
-@keyframes shield-pulse {
-  0%, 100% {
-    box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
-  }
-  50% {
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
-  }
 }

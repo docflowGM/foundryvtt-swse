@@ -1,13 +1,16 @@
 /* ============================================
    SWSE Character Sheet - Optimized Compact Layout
    Holo Theme with Enhanced Organization
+   CORRECTED to match actual template class names
    ============================================ */
 
 /* ─────────────── Global Holo Theme Base ─────────────── */
-.swse.sheet,
+.swse-datapad-sheet,
 .swse.character-sheet,
 .swse.npc-sheet,
-.swse.droid-sheet {
+.swse.droid-sheet,
+.swse.vehicle-sheet,
+.holo-theme {
   position: relative;
   overflow: hidden;
   background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
@@ -23,7 +26,9 @@
 }
 
 /* ─────────────── Holographic Grid Overlay ─────────────── */
-.swse.sheet::before {
+.swse-datapad-sheet::before,
+.swse.character-sheet::before,
+.holo-theme::before {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -44,7 +49,9 @@
 }
 
 /* ─────────────── Holographic Glow Wave ─────────────── */
-.swse.sheet::after {
+.swse-datapad-sheet::after,
+.swse.character-sheet::after,
+.holo-theme::after {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -62,15 +69,22 @@
 }
 
 /* ─────────────── Content Layer ─────────────── */
-.swse.sheet form,
-.swse.sheet .sheet-body,
-.swse.sheet .sheet-body-wrapper {
+.swse-datapad-sheet form,
+.swse-datapad-sheet .sheet-body,
+.swse-datapad-sheet .sheet-body-wrapper,
+.swse-datapad-sheet .datapad-main-grid,
+.swse.character-sheet form,
+.swse.character-sheet .sheet-body,
+.swse.character-sheet .sheet-body-wrapper,
+.holo-theme form,
+.holo-theme .sheet-body {
   position: relative;
   z-index: 5;
 }
 
 /* ─────────────── Compact Header ─────────────── */
-.sheet-header {
+.sheet-header,
+.datapad-header {
   background: linear-gradient(135deg, rgba(26, 77, 122, 0.9), rgba(44, 95, 141, 0.9));
   border-bottom: 1px solid #0af;
   padding: 8px 12px;
@@ -79,18 +93,23 @@
   flex-shrink: 0;
 }
 
-.header-fields {
+.header-fields,
+.basic-fields {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 8px;
   margin-bottom: 8px;
 }
 
-.header-fields .form-group {
+.header-fields .form-group,
+.header-fields .field,
+.basic-fields .field-trio,
+.basic-fields .field-row-2 {
   margin: 0;
 }
 
-.header-fields label {
+.header-fields label,
+.basic-fields label {
   font-size: 9px;
   text-transform: uppercase;
   color: #0af;
@@ -101,18 +120,17 @@
 }
 
 .header-fields input,
-.header-fields select {
+.header-fields select,
+.basic-fields input,
+.basic-fields select {
   width: 100%;
   padding: 4px 6px;
   font-size: 11px;
 }
 
 /* ─────────────── Character Name ─────────────── */
-.charname {
-  margin-bottom: 8px;
-}
-
-.charname input {
+.charname input,
+.header-fields .name input {
   font-size: 16px !important;
   font-weight: bold;
   padding: 6px 10px !important;
@@ -122,7 +140,9 @@
 }
 
 /* ─────────────── Tab Navigation ─────────────── */
-.sheet-tabs {
+.sheet-tabs,
+.header-tabs,
+.bottom-tabs-header {
   display: flex;
   border-bottom: 1px solid #0af;
   justify-content: space-around;
@@ -132,7 +152,10 @@
   margin: 0;
 }
 
-.sheet-tabs .item {
+.sheet-tabs .item,
+.sheet-tabs a,
+.header-tab,
+.bottom-tab {
   flex: 1;
   padding: 6px 12px;
   cursor: pointer;
@@ -147,7 +170,10 @@
   letter-spacing: 1px;
 }
 
-.sheet-tabs .item:hover {
+.sheet-tabs .item:hover,
+.sheet-tabs a:hover,
+.header-tab:hover,
+.bottom-tab:hover {
   color: #fff;
   text-shadow: 0 0 6px #00baff;
   background: rgba(0, 170, 255, 0.1);
@@ -164,7 +190,10 @@
   }
 }
 
-.sheet-tabs .item.active {
+.sheet-tabs .item.active,
+.sheet-tabs a.active,
+.header-tab.active,
+.bottom-tab.active {
   color: #fff;
   border-bottom: 2px solid #00e6ff;
   background: rgba(0, 170, 255, 0.15);
@@ -173,7 +202,8 @@
 
 /* ─────────────── Scrollable Body ─────────────── */
 .sheet-body,
-.sheet-body-wrapper {
+.sheet-body-wrapper,
+.datapad-main-grid {
   overflow-y: auto;
   overflow-x: hidden;
   flex: 1;
@@ -184,33 +214,43 @@
 
 /* Custom Scrollbar */
 .sheet-body::-webkit-scrollbar,
-.sheet-body-wrapper::-webkit-scrollbar {
+.sheet-body-wrapper::-webkit-scrollbar,
+.datapad-main-grid::-webkit-scrollbar {
   width: 8px;
 }
 
 .sheet-body::-webkit-scrollbar-track,
-.sheet-body-wrapper::-webkit-scrollbar-track {
+.sheet-body-wrapper::-webkit-scrollbar-track,
+.datapad-main-grid::-webkit-scrollbar-track {
   background: rgba(0, 20, 40, 0.6);
   border-radius: 4px;
 }
 
 .sheet-body::-webkit-scrollbar-thumb,
-.sheet-body-wrapper::-webkit-scrollbar-thumb {
+.sheet-body-wrapper::-webkit-scrollbar-thumb,
+.datapad-main-grid::-webkit-scrollbar-thumb {
   background: #0077bb;
   border-radius: 4px;
   box-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
 }
 
 .sheet-body::-webkit-scrollbar-thumb:hover,
-.sheet-body-wrapper::-webkit-scrollbar-thumb:hover {
+.sheet-body-wrapper::-webkit-scrollbar-thumb:hover,
+.datapad-main-grid::-webkit-scrollbar-thumb:hover {
   background: #00cfff;
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
 }
 
 /* ─────────────── Inputs & Form Elements ─────────────── */
-.swse.sheet input,
-.swse.sheet textarea,
-.swse.sheet select {
+.swse-datapad-sheet input,
+.swse-datapad-sheet textarea,
+.swse-datapad-sheet select,
+.swse.character-sheet input,
+.swse.character-sheet textarea,
+.swse.character-sheet select,
+.holo-theme input,
+.holo-theme textarea,
+.holo-theme select {
   background: rgba(0, 30, 60, 0.4);
   color: #b5daff;
   border: 1px solid #0af;
@@ -221,27 +261,38 @@
   font-family: inherit;
 }
 
-.swse.sheet input:focus,
-.swse.sheet textarea:focus,
-.swse.sheet select:focus {
+.swse-datapad-sheet input:focus,
+.swse-datapad-sheet textarea:focus,
+.swse-datapad-sheet select:focus,
+.swse.character-sheet input:focus,
+.swse.character-sheet textarea:focus,
+.swse.character-sheet select:focus,
+.holo-theme input:focus,
+.holo-theme textarea:focus,
+.holo-theme select:focus {
   border-color: #00c6ff;
   box-shadow: 0 0 8px rgba(0, 198, 255, 0.6);
   outline: none;
   background: rgba(0, 40, 80, 0.6);
 }
 
-.swse.sheet input::placeholder {
+.swse-datapad-sheet input::placeholder,
+.swse.character-sheet input::placeholder,
+.holo-theme input::placeholder {
   color: rgba(181, 218, 255, 0.5);
 }
 
-.swse.sheet input[type="checkbox"] {
+.swse-datapad-sheet input[type="checkbox"],
+.swse.character-sheet input[type="checkbox"],
+.holo-theme input[type="checkbox"] {
   width: 14px;
   height: 14px;
   margin: 0 4px 0 0;
 }
 
 /* ─────────────── Compact Sections ─────────────── */
-.sheet-section {
+.sheet-section,
+.datapad-section {
   background: rgba(0, 20, 40, 0.5);
   border: 1px solid rgba(0, 170, 255, 0.3);
   border-radius: 4px;
@@ -249,7 +300,8 @@
   margin-bottom: 8px;
 }
 
-.section-header {
+.section-header,
+.section-header-black {
   color: #00c6ff;
   font-size: 11px;
   font-weight: bold;
@@ -262,14 +314,17 @@
 }
 
 /* ─────────────── Compact Ability Scores ─────────────── */
-.abilities {
+.abilities,
+.abilities-block,
+.attributes-grid-improved {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 6px;
   margin-bottom: 10px;
 }
 
-.ability {
+.ability,
+.attribute-row-improved {
   background: rgba(0, 20, 40, 0.6);
   border: 1px solid rgba(0, 170, 255, 0.4);
   border-radius: 4px;
@@ -278,12 +333,15 @@
   transition: all 0.2s;
 }
 
-.ability:hover {
+.ability:hover,
+.attribute-row-improved:hover {
   border-color: #0af;
   box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
 }
 
-.ability h4 {
+.ability h4,
+.ability-name,
+.attr-label {
   margin: 0 0 4px 0;
   font-size: 9px;
   text-transform: uppercase;
@@ -292,7 +350,8 @@
   letter-spacing: 0.5px;
 }
 
-.ability-score {
+.ability-score,
+.attr-total {
   font-size: 16px;
   font-weight: bold;
   color: #00ff88;
@@ -300,13 +359,15 @@
   margin-bottom: 2px;
 }
 
-.ability-modifier {
+.ability-modifier,
+.attr-mod {
   font-size: 12px;
   color: #00ffff;
   text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
 }
 
-.ability input {
+.ability input,
+.attr-input-sm {
   width: 100%;
   text-align: center;
   font-weight: bold;
@@ -314,14 +375,17 @@
 }
 
 /* ─────────────── Compact Defenses ─────────────── */
-.defenses {
+.defenses,
+.defenses-section,
+.defense-table {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   margin-bottom: 10px;
 }
 
-.defense {
+.defense,
+.defense-table-row {
   background: rgba(0, 20, 40, 0.6);
   border: 1px solid rgba(0, 170, 255, 0.4);
   border-radius: 4px;
@@ -329,7 +393,8 @@
   text-align: center;
 }
 
-.defense label {
+.defense label,
+.defense-label-compact {
   display: block;
   font-size: 9px;
   text-transform: uppercase;
@@ -339,14 +404,16 @@
   letter-spacing: 0.5px;
 }
 
-.defense-value {
+.defense-value,
+.defense-total-compact {
   font-size: 18px;
   font-weight: bold;
   color: #00ff88;
   text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
 }
 
-.defense input {
+.defense input,
+.defense-input-sm {
   width: 100%;
   text-align: center;
   font-size: 16px;
@@ -386,7 +453,8 @@
 }
 
 /* ─────────────── Compact Skills ─────────────── */
-.skills-list {
+.skills-list,
+.skills-grid-compact {
   max-height: 300px;
   overflow-y: auto;
   padding-right: 4px;
@@ -394,7 +462,7 @@
 
 .skill-row {
   display: grid;
-  grid-template-columns: 20px 2fr 80px 40px 40px;
+  grid-template-columns: 20px 2fr 80px 40px 40px 40px 40px 60px 30px;
   gap: 6px;
   align-items: center;
   padding: 4px 6px;
@@ -440,20 +508,29 @@
   margin: 0;
 }
 
-.skill-row input[type="number"] {
+.skill-row input[type="number"],
+.skill-input {
   width: 100%;
   text-align: center;
   padding: 2px;
 }
 
 /* ─────────────── Compact Items List ─────────────── */
-.items-list {
+.items-list,
+.equipment-list,
+.feat-list,
+.talent-list,
+.power-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.items-list .item {
+.items-list .item,
+.equipment-item,
+.feat-item,
+.talent-item,
+.force-power-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -463,17 +540,27 @@
   font-size: 11px;
 }
 
-.items-list .item:hover {
+.items-list .item:hover,
+.equipment-item:hover,
+.feat-item:hover,
+.talent-item:hover,
+.force-power-item:hover {
   background: rgba(0, 170, 255, 0.15);
 }
 
-.item-name {
+.item-name,
+.feat-name,
+.talent-name,
+.power-name {
   flex: 1;
   color: #9ed0ff;
   cursor: pointer;
 }
 
-.item-name:hover {
+.item-name:hover,
+.feat-name:hover,
+.talent-name:hover,
+.power-name:hover {
   color: #00ffff;
   text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
 }
@@ -484,7 +571,9 @@
   align-items: center;
 }
 
-.item-control {
+.item-control,
+.item-btn-sm,
+.roll-btn-sm {
   width: 18px;
   height: 18px;
   display: flex;
@@ -497,15 +586,20 @@
   font-size: 12px;
 }
 
-.item-control:hover {
+.item-control:hover,
+.item-btn-sm:hover,
+.roll-btn-sm:hover {
   color: #00ffff;
   background: rgba(0, 170, 255, 0.2);
   box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
 }
 
 /* ─────────────── Buttons ─────────────── */
-.swse.sheet button,
-.holo-btn {
+.swse-datapad-sheet button,
+.swse.character-sheet button,
+.holo-theme button,
+.holo-btn,
+.roll-btn {
   background: linear-gradient(90deg, #002f6c, #003f8f);
   border: 1px solid #00baff;
   color: #b5daff;
@@ -520,8 +614,11 @@
   letter-spacing: 0.5px;
 }
 
-.swse.sheet button:hover,
-.holo-btn:hover {
+.swse-datapad-sheet button:hover,
+.swse.character-sheet button:hover,
+.holo-theme button:hover,
+.holo-btn:hover,
+.roll-btn:hover {
   background: #00aaff;
   color: #fff;
   box-shadow: 0 0 12px rgba(0, 207, 255, 0.8);
@@ -533,27 +630,38 @@
   50% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.9); }
 }
 
-.swse.sheet button:active,
-.holo-btn:active {
+.swse-datapad-sheet button:active,
+.swse.character-sheet button:active,
+.holo-theme button:active,
+.holo-btn:active,
+.roll-btn:active {
   transform: translateY(0);
 }
 
 /* ─────────────── Tables ─────────────── */
-.swse.sheet table {
+.swse-datapad-sheet table,
+.swse.character-sheet table,
+.holo-theme table {
   width: 100%;
   border-collapse: collapse;
   font-size: 11px;
 }
 
-.swse.sheet th,
-.swse.sheet td {
+.swse-datapad-sheet th,
+.swse-datapad-sheet td,
+.swse.character-sheet th,
+.swse.character-sheet td,
+.holo-theme th,
+.holo-theme td {
   border-bottom: 1px solid rgba(0, 77, 128, 0.5);
   padding: 4px 6px;
   color: #9ed0ff;
   text-align: left;
 }
 
-.swse.sheet th {
+.swse-datapad-sheet th,
+.swse.character-sheet th,
+.holo-theme th {
   color: #00c6ff;
   text-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
   background: rgba(0, 170, 255, 0.1);
@@ -563,7 +671,9 @@
   letter-spacing: 0.5px;
 }
 
-.swse.sheet tr:hover {
+.swse-datapad-sheet tr:hover,
+.swse.character-sheet tr:hover,
+.holo-theme tr:hover {
   background: rgba(0, 170, 255, 0.1);
 }
 
@@ -599,14 +709,27 @@
   width: 100%;
 }
 
-/* ─────────────── Two Column Layout ─────────────── */
+/* ─────────────── Grid Layouts ─────────────── */
+.datapad-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.left-column,
+.center-column,
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .two-column {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
-/* ─────────────── Three Column Layout ─────────────── */
 .three-column {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -614,12 +737,24 @@
 }
 
 /* ─────────────── Responsive Adjustments ─────────────── */
+@media (max-width: 1200px) {
+  .datapad-main-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (max-width: 800px) {
-  .abilities {
+  .datapad-main-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .abilities,
+  .attributes-grid-improved {
     grid-template-columns: repeat(3, 1fr);
   }
   
-  .defenses {
+  .defenses,
+  .defense-table {
     grid-template-columns: 1fr;
   }
   
@@ -629,7 +764,7 @@
   }
   
   .skill-row {
-    grid-template-columns: 20px 1fr 40px;
+    grid-template-columns: 20px 1fr 60px 30px;
     font-size: 10px;
   }
   
@@ -651,7 +786,8 @@
 }
 
 /* ─────────────── Profile Image ─────────────── */
-.profile-img {
+.profile-img,
+.character-portrait {
   border: 2px solid #0af;
   border-radius: 4px;
   box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
@@ -660,11 +796,15 @@
 }
 
 /* ─────────────── Tooltips ─────────────── */
-.swse.sheet [data-tooltip] {
+.swse-datapad-sheet [data-tooltip],
+.swse.character-sheet [data-tooltip],
+.holo-theme [data-tooltip] {
   position: relative;
 }
 
-.swse.sheet [data-tooltip]:hover::after {
+.swse-datapad-sheet [data-tooltip]:hover::after,
+.swse.character-sheet [data-tooltip]:hover::after,
+.holo-theme [data-tooltip]:hover::after {
   content: attr(data-tooltip);
   position: absolute;
   bottom: 100%;
@@ -681,55 +821,48 @@
   box-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
 }
 
-/* ─────────────── Stat Boxes ─────────────── */
-.stat-box {
-  background: rgba(0, 20, 40, 0.6);
-  border: 1px solid rgba(0, 170, 255, 0.4);
-  border-radius: 4px;
+/* ─────────────── Condition Track ─────────────── */
+.condition-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.condition-btn {
+  flex: 1;
+  min-width: 60px;
   padding: 6px;
-  text-align: center;
-}
-
-.stat-label {
-  font-size: 9px;
-  text-transform: uppercase;
-  color: #0af;
-  font-weight: bold;
-  margin-bottom: 4px;
-  letter-spacing: 0.5px;
-}
-
-.stat-value {
-  font-size: 14px;
-  font-weight: bold;
-  color: #00ff88;
-  text-shadow: 0 0 6px rgba(0, 255, 136, 0.6);
-}
-
-/* ─────────────── Attack Rows ─────────────── */
-.attack-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 80px;
-  gap: 6px;
-  align-items: center;
-  padding: 4px 6px;
-  border-bottom: 1px solid rgba(0, 170, 255, 0.2);
   font-size: 11px;
 }
 
-.attack-row:hover {
-  background: rgba(0, 170, 255, 0.15);
+.condition-btn.active {
+  background: #00aaff;
+  color: #fff;
+  border-color: #00ffff;
 }
 
-/* ─────────────── Compact Spacing ─────────────── */
-.compact {
-  margin: 4px 0;
-  padding: 4px;
+/* ─────────────── HP & Vitals ─────────────── */
+.hp-grid,
+.hp-display {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
-.compact-sm {
-  margin: 2px 0;
-  padding: 2px;
+.hp-field {
+  flex: 1;
+}
+
+/* ─────────────── Combat Stats ─────────────── */
+.combat-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.combat-stat-row label {
+  flex: 1;
 }
 
 /* ─────────────── Utility Classes ─────────────── */
@@ -774,7 +907,6 @@
 .p-2 { padding: 8px; }
 .p-3 { padding: 12px; }
 
-/* ─────────────── Flexbox Utilities ─────────────── */
 .flex {
   display: flex;
 }
@@ -799,7 +931,6 @@
 .gap-2 { gap: 8px; }
 .gap-3 { gap: 12px; }
 
-/* ─────────────── Grid Utilities ─────────────── */
 .grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
