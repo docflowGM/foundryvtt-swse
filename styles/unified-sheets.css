@@ -1,31 +1,27 @@
 /* ============================================
-   SWSE Character Sheet - Optimized Compact Layout
-   Holo Theme with Enhanced Organization
-   CORRECTED to match actual template class names
+   SWSE Character Sheet - ULTRA COMPACT Layout
+   Direct copy/paste into unified-sheets.css
    ============================================ */
 
-/* ─────────────── Global Holo Theme Base ─────────────── */
+/* ─────────────── Global Reset & Compact Base ─────────────── */
 .swse-datapad-sheet,
 .swse.character-sheet,
-.swse.npc-sheet,
-.swse.droid-sheet,
-.swse.vehicle-sheet,
 .holo-theme {
   position: relative;
   overflow: hidden;
   background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
   color: #9ed0ff;
   border: 1px solid #1c4b8e;
-  border-radius: 8px;
+  border-radius: 6px;
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 20, 40, 0.8);
   font-family: "Orbitron", "Roboto", sans-serif;
-  font-size: 12px;
+  font-size: 10px;
   max-height: 95vh;
   display: flex;
   flex-direction: column;
 }
 
-/* ─────────────── Holographic Grid Overlay ─────────────── */
+/* ─────────────── Holographic Effects ─────────────── */
 .swse-datapad-sheet::before,
 .swse.character-sheet::before,
 .holo-theme::before {
@@ -35,213 +31,215 @@
   background-image:
     linear-gradient(90deg, rgba(0, 180, 255, 0.08) 1px, transparent 1px),
     linear-gradient(0deg, rgba(0, 180, 255, 0.08) 1px, transparent 1px);
-  background-size: 40px 40px;
+  background-size: 30px 30px;
   pointer-events: none;
   mix-blend-mode: screen;
-  opacity: 0.25;
+  opacity: 0.2;
   animation: holo-grid-move 20s linear infinite;
   z-index: 0;
 }
 
 @keyframes holo-grid-move {
-  from { background-position: 0 0, 0 0; }
-  to { background-position: 200px 200px, 200px 200px; }
+  from { background-position: 0 0; }
+  to { background-position: 200px 200px; }
 }
 
-/* ─────────────── Holographic Glow Wave ─────────────── */
 .swse-datapad-sheet::after,
 .swse.character-sheet::after,
 .holo-theme::after {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(circle at center, rgba(0,255,255,0.05) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(0,255,255,0.03) 0%, transparent 70%);
   mix-blend-mode: screen;
   animation: holo-wave 12s ease-in-out infinite;
-  opacity: 0.2;
+  opacity: 0.15;
   pointer-events: none;
   z-index: 1;
 }
 
 @keyframes holo-wave {
-  0%, 100% { transform: scale(1); opacity: 0.15; }
-  50% { transform: scale(1.05); opacity: 0.3; }
+  0%, 100% { transform: scale(1); opacity: 0.1; }
+  50% { transform: scale(1.03); opacity: 0.2; }
 }
 
 /* ─────────────── Content Layer ─────────────── */
 .swse-datapad-sheet form,
 .swse-datapad-sheet .sheet-body,
-.swse-datapad-sheet .sheet-body-wrapper,
 .swse-datapad-sheet .datapad-main-grid,
 .swse.character-sheet form,
-.swse.character-sheet .sheet-body,
-.swse.character-sheet .sheet-body-wrapper,
-.holo-theme form,
-.holo-theme .sheet-body {
+.swse.character-sheet .sheet-body {
   position: relative;
   z-index: 5;
 }
 
-/* ─────────────── Compact Header ─────────────── */
-.sheet-header,
-.datapad-header {
+/* ─────────────── ULTRA COMPACT HEADER ─────────────── */
+.datapad-header,
+.sheet-header {
   background: linear-gradient(135deg, rgba(26, 77, 122, 0.9), rgba(44, 95, 141, 0.9));
   border-bottom: 1px solid #0af;
-  padding: 8px 12px;
-  min-height: auto;
-  box-shadow: 0 2px 20px rgba(0, 170, 255, 0.3);
-  flex-shrink: 0;
-}
-
-.header-fields,
-.basic-fields {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.header-fields .form-group,
-.header-fields .field,
-.basic-fields .field-trio,
-.basic-fields .field-row-2 {
-  margin: 0;
-}
-
-.header-fields label,
-.basic-fields label {
-  font-size: 9px;
-  text-transform: uppercase;
-  color: #0af;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  margin-bottom: 2px;
-  display: block;
-}
-
-.header-fields input,
-.header-fields select,
-.basic-fields input,
-.basic-fields select {
-  width: 100%;
   padding: 4px 6px;
-  font-size: 11px;
-}
-
-/* ─────────────── Character Name ─────────────── */
-.charname input,
-.header-fields .name input {
-  font-size: 16px !important;
-  font-weight: bold;
-  padding: 6px 10px !important;
-  text-align: center;
-  color: #00ffff;
-  text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
-}
-
-/* ─────────────── Tab Navigation ─────────────── */
-.sheet-tabs,
-.header-tabs,
-.bottom-tabs-header {
-  display: flex;
-  border-bottom: 1px solid #0af;
-  justify-content: space-around;
-  background: rgba(0, 20, 40, 0.6);
+  min-height: auto;
+  box-shadow: 0 2px 15px rgba(0, 170, 255, 0.3);
   flex-shrink: 0;
-  padding: 0;
-  margin: 0;
 }
 
-.sheet-tabs .item,
-.sheet-tabs a,
-.header-tab,
-.bottom-tab {
+.header-left {
+  display: flex;
+  gap: 8px;
   flex: 1;
-  padding: 6px 12px;
+}
+
+.header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Logo - Much Smaller */
+.sw-logo {
+  max-width: 80px;
+  height: auto;
+  opacity: 0.8;
+}
+
+/* Portrait - DRAMATICALLY SMALLER */
+.character-portrait {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border: 1px solid #0af;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0, 170, 255, 0.4);
+}
+
+/* ─────────────── COMPACT TAB BUTTONS ─────────────── */
+.header-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 80px;
+}
+
+.header-tab {
+  padding: 3px 8px;
   cursor: pointer;
   color: #9ed0ff;
   text-transform: uppercase;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: bold;
   transition: all 0.2s ease;
-  border: none;
-  background: transparent;
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  background: rgba(0, 20, 40, 0.5);
   text-align: center;
-  letter-spacing: 1px;
+  border-radius: 3px;
 }
 
-.sheet-tabs .item:hover,
-.sheet-tabs a:hover,
-.header-tab:hover,
-.bottom-tab:hover {
+.header-tab:hover {
   color: #fff;
-  text-shadow: 0 0 6px #00baff;
-  background: rgba(0, 170, 255, 0.1);
+  background: rgba(0, 170, 255, 0.2);
 }
 
-@keyframes holo-tab-pulse {
-  0%, 100% {
-    text-shadow: 0 0 8px #00f0ff, 0 0 15px rgba(0, 170, 255, 0.3);
-    box-shadow: 0 2px 10px rgba(0, 170, 255, 0.3);
-  }
-  50% {
-    text-shadow: 0 0 15px #00f0ff, 0 0 25px rgba(0, 170, 255, 0.6);
-    box-shadow: 0 2px 15px rgba(0, 170, 255, 0.5);
-  }
-}
-
-.sheet-tabs .item.active,
-.sheet-tabs a.active,
-.header-tab.active,
-.bottom-tab.active {
+.header-tab.active {
   color: #fff;
-  border-bottom: 2px solid #00e6ff;
-  background: rgba(0, 170, 255, 0.15);
-  animation: holo-tab-pulse 3s ease-in-out infinite;
+  border-color: #00e6ff;
+  background: rgba(0, 170, 255, 0.4);
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.5);
 }
 
-/* ─────────────── Scrollable Body ─────────────── */
+/* ─────────────── COMPACT BASIC FIELDS ─────────────── */
+.basic-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.field-trio,
+.field-row-2 {
+  display: flex;
+  gap: 4px;
+}
+
+.field-sm,
+.field-md {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.basic-fields label {
+  font-size: 7px;
+  text-transform: uppercase;
+  color: #0af;
+  font-weight: bold;
+  letter-spacing: 0.3px;
+  margin-bottom: 1px;
+}
+
+.basic-fields input,
+.basic-fields select {
+  width: 100%;
+  padding: 2px 4px;
+  font-size: 9px;
+  height: 18px;
+}
+
+.readonly,
+.half-level-display {
+  background: rgba(0, 20, 40, 0.6);
+  border: 1px solid rgba(0, 170, 255, 0.4);
+  padding: 2px 4px;
+  font-size: 9px;
+  text-align: center;
+  color: #00ff88;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─────────────── SCROLLABLE BODY ─────────────── */
 .sheet-body,
-.sheet-body-wrapper,
 .datapad-main-grid {
   overflow-y: auto;
   overflow-x: hidden;
   flex: 1;
-  padding: 10px;
+  padding: 6px;
   background: rgba(0, 0, 0, 0.3);
-  border-radius: 0 0 8px 8px;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - Thinner */
 .sheet-body::-webkit-scrollbar,
-.sheet-body-wrapper::-webkit-scrollbar,
 .datapad-main-grid::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .sheet-body::-webkit-scrollbar-track,
-.sheet-body-wrapper::-webkit-scrollbar-track,
 .datapad-main-grid::-webkit-scrollbar-track {
   background: rgba(0, 20, 40, 0.6);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .sheet-body::-webkit-scrollbar-thumb,
-.sheet-body-wrapper::-webkit-scrollbar-thumb,
 .datapad-main-grid::-webkit-scrollbar-thumb {
   background: #0077bb;
-  border-radius: 4px;
+  border-radius: 3px;
   box-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
 }
 
 .sheet-body::-webkit-scrollbar-thumb:hover,
-.sheet-body-wrapper::-webkit-scrollbar-thumb:hover,
 .datapad-main-grid::-webkit-scrollbar-thumb:hover {
   background: #00cfff;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
 }
 
-/* ─────────────── Inputs & Form Elements ─────────────── */
+/* ─────────────── ULTRA COMPACT INPUTS ─────────────── */
 .swse-datapad-sheet input,
 .swse-datapad-sheet textarea,
 .swse-datapad-sheet select,
@@ -254,11 +252,13 @@
   background: rgba(0, 30, 60, 0.4);
   color: #b5daff;
   border: 1px solid #0af;
-  border-radius: 3px;
-  padding: 4px 6px;
+  border-radius: 2px;
+  padding: 2px 4px;
   transition: all 0.2s ease;
-  font-size: 11px;
+  font-size: 9px;
   font-family: inherit;
+  height: 20px;
+  line-height: 1;
 }
 
 .swse-datapad-sheet input:focus,
@@ -266,209 +266,339 @@
 .swse-datapad-sheet select:focus,
 .swse.character-sheet input:focus,
 .swse.character-sheet textarea:focus,
-.swse.character-sheet select:focus,
-.holo-theme input:focus,
-.holo-theme textarea:focus,
-.holo-theme select:focus {
+.swse.character-sheet select:focus {
   border-color: #00c6ff;
-  box-shadow: 0 0 8px rgba(0, 198, 255, 0.6);
+  box-shadow: 0 0 6px rgba(0, 198, 255, 0.6);
   outline: none;
   background: rgba(0, 40, 80, 0.6);
 }
 
 .swse-datapad-sheet input::placeholder,
-.swse.character-sheet input::placeholder,
-.holo-theme input::placeholder {
+.swse.character-sheet input::placeholder {
   color: rgba(181, 218, 255, 0.5);
+  font-size: 8px;
 }
 
 .swse-datapad-sheet input[type="checkbox"],
-.swse.character-sheet input[type="checkbox"],
-.holo-theme input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-  margin: 0 4px 0 0;
+.swse.character-sheet input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  margin: 0 2px 0 0;
 }
 
-/* ─────────────── Compact Sections ─────────────── */
-.sheet-section,
+.swse-datapad-sheet textarea,
+.swse.character-sheet textarea {
+  height: auto;
+  min-height: 40px;
+  resize: vertical;
+}
+
+/* ─────────────── COMPACT SECTIONS ─────────────── */
 .datapad-section {
   background: rgba(0, 20, 40, 0.5);
   border: 1px solid rgba(0, 170, 255, 0.3);
-  border-radius: 4px;
-  padding: 8px;
-  margin-bottom: 8px;
+  border-radius: 3px;
+  padding: 4px;
+  margin-bottom: 4px;
 }
 
-.section-header,
 .section-header-black {
   color: #00c6ff;
-  font-size: 11px;
+  font-size: 9px;
   font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
-  padding-bottom: 4px;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+  padding-bottom: 2px;
   border-bottom: 1px solid rgba(0, 170, 255, 0.4);
   text-shadow: 0 0 5px rgba(0, 170, 255, 0.6);
 }
 
-/* ─────────────── Compact Ability Scores ─────────────── */
-.abilities,
-.abilities-block,
+/* ─────────────── COMPACT ATTRIBUTES ─────────────── */
 .attributes-grid-improved {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
-  margin-bottom: 10px;
+  grid-template-columns: 1fr;
+  gap: 3px;
+  margin-bottom: 6px;
 }
 
-.ability,
 .attribute-row-improved {
   background: rgba(0, 20, 40, 0.6);
-  border: 1px solid rgba(0, 170, 255, 0.4);
-  border-radius: 4px;
-  padding: 6px 4px;
-  text-align: center;
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  border-radius: 3px;
+  padding: 3px;
+  display: grid;
+  grid-template-columns: 40px 1fr auto auto;
+  gap: 4px;
+  align-items: center;
   transition: all 0.2s;
 }
 
-.ability:hover,
 .attribute-row-improved:hover {
   border-color: #0af;
-  box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.3);
 }
 
-.ability h4,
-.ability-name,
 .attr-label {
-  margin: 0 0 4px 0;
-  font-size: 9px;
+  font-size: 8px;
   text-transform: uppercase;
   color: #0af;
   font-weight: bold;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
-.ability-score,
-.attr-total {
-  font-size: 16px;
-  font-weight: bold;
-  color: #00ff88;
-  text-shadow: 0 0 6px rgba(0, 255, 136, 0.6);
-  margin-bottom: 2px;
+.attr-breakdown {
+  display: flex;
+  gap: 3px;
+  align-items: center;
 }
 
-.ability-modifier,
-.attr-mod {
-  font-size: 12px;
-  color: #00ffff;
-  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+.attr-field {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 35px;
 }
 
-.ability input,
+.attr-field label {
+  font-size: 6px;
+  text-transform: uppercase;
+  color: #6a9dcd;
+  text-align: center;
+}
+
 .attr-input-sm {
   width: 100%;
   text-align: center;
+  font-size: 9px;
+  padding: 1px 2px;
+  height: 16px;
+}
+
+.attr-total {
+  font-size: 12px;
   font-weight: bold;
-  padding: 2px;
+  color: #00ff88;
+  text-shadow: 0 0 5px rgba(0, 255, 136, 0.6);
+  text-align: center;
+  min-width: 25px;
 }
 
-/* ─────────────── Compact Defenses ─────────────── */
-.defenses,
-.defenses-section,
-.defense-table {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.defense,
-.defense-table-row {
-  background: rgba(0, 20, 40, 0.6);
-  border: 1px solid rgba(0, 170, 255, 0.4);
-  border-radius: 4px;
-  padding: 6px;
+.attr-mod {
+  font-size: 14px;
+  font-weight: bold;
+  color: #00ffff;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+  min-width: 30px;
   text-align: center;
 }
 
-.defense label,
-.defense-label-compact {
-  display: block;
-  font-size: 9px;
+.roll-btn {
+  width: 20px;
+  height: 20px;
+  padding: 2px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─────────────── COMPACT DEFENSE TABLE ─────────────── */
+.defense-table {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.defense-table-header {
+  display: grid;
+  grid-template-columns: 60px 40px 20px 35px 60px 40px 50px 40px;
+  gap: 3px;
+  font-size: 7px;
   text-transform: uppercase;
   color: #0af;
   font-weight: bold;
-  margin-bottom: 4px;
-  letter-spacing: 0.5px;
+  padding: 2px;
+  background: rgba(0, 170, 255, 0.1);
+  border-radius: 2px;
 }
 
-.defense-value,
+.defense-table-row {
+  display: grid;
+  grid-template-columns: 60px 40px 20px 35px 60px 40px 50px 40px;
+  gap: 3px;
+  padding: 2px;
+  background: rgba(0, 20, 40, 0.4);
+  border: 1px solid rgba(0, 170, 255, 0.2);
+  border-radius: 2px;
+  align-items: center;
+}
+
+.defense-label-compact {
+  font-size: 8px;
+  text-transform: uppercase;
+  color: #0af;
+  font-weight: bold;
+}
+
 .defense-total-compact {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: bold;
   color: #00ff88;
-  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+  text-shadow: 0 0 5px rgba(0, 255, 136, 0.6);
+  text-align: center;
 }
 
-.defense input,
+.defense-equals,
+.defense-base {
+  font-size: 8px;
+  color: #9ed0ff;
+  text-align: center;
+}
+
 .defense-input-sm {
   width: 100%;
   text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-  padding: 4px;
+  font-size: 8px;
+  padding: 1px 2px;
+  height: 16px;
 }
 
-/* ─────────────── Compact Resources ─────────────── */
-.resources {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 8px;
-  margin-bottom: 10px;
+.defense-select-sm {
+  width: 100%;
+  font-size: 7px;
+  padding: 1px 2px;
+  height: 16px;
 }
 
-.resource {
-  background: rgba(0, 20, 40, 0.6);
-  border: 1px solid rgba(0, 170, 255, 0.4);
-  border-radius: 4px;
-  padding: 6px;
+.defense-notes {
+  margin-top: 4px;
 }
 
-.resource label {
+.defense-notes label {
+  font-size: 7px;
+  text-transform: uppercase;
+  color: #0af;
+  margin-bottom: 2px;
   display: block;
-  font-size: 9px;
+}
+
+.defense-notes input {
+  width: 100%;
+  font-size: 8px;
+  height: 18px;
+}
+
+/* ─────────────── COMPACT ARMOR ─────────────── */
+.armor-main-row {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 3px;
+}
+
+.armor-field-wide {
+  flex: 2;
+}
+
+.armor-field-sm {
+  flex: 1;
+}
+
+.armor-field-wide label,
+.armor-field-sm label {
+  font-size: 7px;
+  text-transform: uppercase;
+  color: #0af;
+  margin-bottom: 1px;
+  display: block;
+}
+
+.armor-field-wide input,
+.armor-field-sm input {
+  font-size: 8px;
+  height: 18px;
+}
+
+.armor-checkboxes-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 3px;
+  align-items: center;
+}
+
+.armor-checkbox-group,
+.armor-select-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.armor-checkbox-group label,
+.armor-select-group label {
+  font-size: 7px;
+  color: #9ed0ff;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.armor-select-group select {
+  font-size: 7px;
+  padding: 1px 2px;
+  height: 16px;
+}
+
+.armor-notes {
+  margin-top: 3px;
+}
+
+.armor-notes label {
+  font-size: 7px;
+  text-transform: uppercase;
+  color: #0af;
+  margin-bottom: 1px;
+  display: block;
+}
+
+.armor-notes input {
+  font-size: 8px;
+  height: 18px;
+}
+
+/* ─────────────── ULTRA COMPACT SKILLS ─────────────── */
+.skills-grid-compact {
+  max-height: 250px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.skills-header {
+  display: grid;
+  grid-template-columns: 100px 35px 30px 30px 30px 35px 35px 40px 25px;
+  gap: 2px;
+  font-size: 7px;
   text-transform: uppercase;
   color: #0af;
   font-weight: bold;
-  margin-bottom: 4px;
-  letter-spacing: 0.5px;
-}
-
-.resource input {
-  width: 100%;
-  text-align: center;
-  font-weight: bold;
-}
-
-/* ─────────────── Compact Skills ─────────────── */
-.skills-list,
-.skills-grid-compact {
-  max-height: 300px;
-  overflow-y: auto;
-  padding-right: 4px;
+  padding: 2px;
+  background: rgba(0, 170, 255, 0.1);
+  border-radius: 2px;
+  margin-bottom: 2px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .skill-row {
   display: grid;
-  grid-template-columns: 20px 2fr 80px 40px 40px 40px 40px 60px 30px;
-  gap: 6px;
+  grid-template-columns: 100px 35px 30px 30px 30px 35px 35px 40px 25px;
+  gap: 2px;
   align-items: center;
-  padding: 4px 6px;
-  border-bottom: 1px solid rgba(0, 170, 255, 0.2);
+  padding: 2px;
+  border-bottom: 1px solid rgba(0, 170, 255, 0.15);
   transition: all 0.2s;
-  font-size: 11px;
+  font-size: 8px;
 }
 
 .skill-row:hover {
@@ -478,12 +608,20 @@
 .skill-name {
   color: #9ed0ff;
   font-weight: 500;
+  font-size: 8px;
 }
 
 .skill-ability {
-  font-size: 9px;
+  font-size: 7px;
   color: #6a9dcd;
   text-transform: uppercase;
+  text-align: center;
+}
+
+.skill-half-level {
+  font-size: 8px;
+  color: #9ed0ff;
+  text-align: center;
 }
 
 .skill-total {
@@ -491,61 +629,217 @@
   font-weight: bold;
   color: #00ff88;
   text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
-}
-
-.skill-total.rollable {
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.skill-total.rollable:hover {
-  color: #00ffff;
-  text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
-  transform: scale(1.1);
+  font-size: 9px;
 }
 
 .skill-row input[type="checkbox"] {
   margin: 0;
+  justify-self: center;
 }
 
 .skill-row input[type="number"],
 .skill-input {
   width: 100%;
   text-align: center;
-  padding: 2px;
+  padding: 1px 2px;
+  font-size: 8px;
+  height: 14px;
 }
 
-/* ─────────────── Compact Items List ─────────────── */
-.items-list,
+.roll-btn-sm {
+  width: 20px;
+  height: 14px;
+  padding: 0;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─────────────── COMPACT HP & VITALS ─────────────── */
+.hp-grid {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.hp-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.hp-field label {
+  font-size: 7px;
+  text-transform: uppercase;
+  color: #0af;
+}
+
+.hp-field input {
+  text-align: center;
+  font-size: 11px;
+  font-weight: bold;
+  height: 22px;
+}
+
+.threshold-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.threshold-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.threshold-row label {
+  font-size: 8px;
+  text-transform: uppercase;
+  color: #0af;
+  min-width: 70px;
+}
+
+.threshold-formula-compact {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.formula-text-sm {
+  font-size: 7px;
+  color: #9ed0ff;
+}
+
+.formula-input-sm {
+  width: 35px;
+  text-align: center;
+  font-size: 8px;
+  height: 16px;
+}
+
+.threshold-total {
+  font-size: 12px;
+  font-weight: bold;
+  color: #00ff88;
+  text-shadow: 0 0 5px rgba(0, 255, 136, 0.6);
+  min-width: 30px;
+  text-align: center;
+}
+
+/* ─────────────── COMPACT CONDITION TRACK ─────────────── */
+.condition-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+}
+
+.condition-btn {
+  padding: 3px;
+  font-size: 8px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.condition-btn.active {
+  background: #00aaff;
+  color: #fff;
+  border-color: #00ffff;
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.6);
+}
+
+/* ─────────────── BOTTOM TABS ─────────────── */
+.bottom-tabs-header {
+  display: flex;
+  border-bottom: 1px solid #0af;
+  background: rgba(0, 20, 40, 0.6);
+  margin-bottom: 4px;
+}
+
+.bottom-tab {
+  flex: 1;
+  padding: 3px 6px;
+  cursor: pointer;
+  color: #9ed0ff;
+  text-transform: uppercase;
+  font-size: 8px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+  text-align: center;
+}
+
+.bottom-tab:hover {
+  color: #fff;
+  background: rgba(0, 170, 255, 0.1);
+}
+
+.bottom-tab.active {
+  color: #fff;
+  border-bottom: 2px solid #00e6ff;
+  background: rgba(0, 170, 255, 0.15);
+}
+
+.bottom-tabs-content {
+  min-height: 100px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.bottom-tab-content {
+  display: none;
+}
+
+.bottom-tab-content.active {
+  display: block;
+}
+
+/* ─────────────── COMPACT EQUIPMENT/FEATS/TALENTS ─────────────── */
 .equipment-list,
 .feat-list,
 .talent-list,
 .power-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 180px;
+  overflow-y: auto;
 }
 
-.items-list .item,
 .equipment-item,
 .feat-item,
 .talent-item,
 .force-power-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 4px 6px;
-  border-bottom: 1px solid rgba(0, 170, 255, 0.2);
+  gap: 4px;
+  padding: 2px 4px;
+  background: rgba(0, 20, 40, 0.4);
+  border: 1px solid rgba(0, 170, 255, 0.2);
+  border-radius: 2px;
   transition: all 0.2s;
-  font-size: 11px;
+  font-size: 8px;
 }
 
-.items-list .item:hover,
 .equipment-item:hover,
 .feat-item:hover,
 .talent-item:hover,
 .force-power-item:hover {
   background: rgba(0, 170, 255, 0.15);
+  border-color: #0af;
+}
+
+.item-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: cover;
+  border-radius: 2px;
 }
 
 .item-name,
@@ -554,166 +848,132 @@
 .power-name {
   flex: 1;
   color: #9ed0ff;
-  cursor: pointer;
+  font-size: 8px;
 }
 
-.item-name:hover,
-.feat-name:hover,
-.talent-name:hover,
-.power-name:hover {
-  color: #00ffff;
-  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+.item-qty {
+  font-size: 7px;
+  color: #6a9dcd;
 }
 
-.item-controls {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
-
-.item-control,
-.item-btn-sm,
-.roll-btn-sm {
-  width: 18px;
-  height: 18px;
+.item-btn-sm {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  font-size: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  color: #9ed0ff;
-  transition: all 0.2s;
-  border-radius: 2px;
-  font-size: 12px;
 }
 
-.item-control:hover,
-.item-btn-sm:hover,
-.roll-btn-sm:hover {
-  color: #00ffff;
-  background: rgba(0, 170, 255, 0.2);
-  box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+.add-equipment-btn,
+.add-feat-btn,
+.add-talent-btn,
+.add-power-btn {
+  margin-top: 4px;
+  width: 100%;
+  padding: 3px;
+  font-size: 8px;
+  height: 20px;
 }
 
-/* ─────────────── Buttons ─────────────── */
+/* ─────────────── COMPACT COMBAT STATS ─────────────── */
+.combat-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.combat-stat-row label {
+  font-size: 8px;
+  text-transform: uppercase;
+  color: #0af;
+  flex: 1;
+}
+
+.combat-stat-row input {
+  width: 50px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: bold;
+  height: 20px;
+}
+
+.initiative-display {
+  font-size: 14px;
+  font-weight: bold;
+  color: #00ff88;
+  text-shadow: 0 0 5px rgba(0, 255, 136, 0.6);
+  min-width: 40px;
+  text-align: center;
+}
+
+/* ─────────────── COMPACT FORCE & DESTINY ─────────────── */
+.force-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.force-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.force-field label {
+  font-size: 7px;
+  text-transform: uppercase;
+  color: #0af;
+}
+
+.force-field input {
+  text-align: center;
+  font-size: 10px;
+  height: 20px;
+}
+
+/* ─────────────── BUTTONS ─────────────── */
 .swse-datapad-sheet button,
 .swse.character-sheet button,
-.holo-theme button,
-.holo-btn,
-.roll-btn {
+.holo-btn {
   background: linear-gradient(90deg, #002f6c, #003f8f);
   border: 1px solid #00baff;
   color: #b5daff;
-  border-radius: 4px;
-  padding: 6px 12px;
+  border-radius: 3px;
+  padding: 3px 6px;
   transition: all 0.2s;
   cursor: pointer;
   text-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
-  font-size: 11px;
+  font-size: 8px;
   font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+  height: auto;
+  line-height: 1;
 }
 
 .swse-datapad-sheet button:hover,
 .swse.character-sheet button:hover,
-.holo-theme button:hover,
-.holo-btn:hover,
-.roll-btn:hover {
+.holo-btn:hover {
   background: #00aaff;
   color: #fff;
-  box-shadow: 0 0 12px rgba(0, 207, 255, 0.8);
+  box-shadow: 0 0 10px rgba(0, 207, 255, 0.8);
   transform: translateY(-1px);
 }
 
-@keyframes holo-pulse {
-  0%, 100% { box-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
-  50% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.9); }
-}
-
 .swse-datapad-sheet button:active,
-.swse.character-sheet button:active,
-.holo-theme button:active,
-.holo-btn:active,
-.roll-btn:active {
+.swse.character-sheet button:active {
   transform: translateY(0);
 }
 
-/* ─────────────── Tables ─────────────── */
-.swse-datapad-sheet table,
-.swse.character-sheet table,
-.holo-theme table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 11px;
-}
-
-.swse-datapad-sheet th,
-.swse-datapad-sheet td,
-.swse.character-sheet th,
-.swse.character-sheet td,
-.holo-theme th,
-.holo-theme td {
-  border-bottom: 1px solid rgba(0, 77, 128, 0.5);
-  padding: 4px 6px;
-  color: #9ed0ff;
-  text-align: left;
-}
-
-.swse-datapad-sheet th,
-.swse.character-sheet th,
-.holo-theme th {
-  color: #00c6ff;
-  text-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
-  background: rgba(0, 170, 255, 0.1);
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 10px;
-  letter-spacing: 0.5px;
-}
-
-.swse-datapad-sheet tr:hover,
-.swse.character-sheet tr:hover,
-.holo-theme tr:hover {
-  background: rgba(0, 170, 255, 0.1);
-}
-
-/* ─────────────── Rollable Elements ─────────────── */
-.rollable {
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.rollable:hover {
-  color: #00ffff;
-  text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
-}
-
-/* ─────────────── Compact Form Groups ─────────────── */
-.form-group {
-  margin-bottom: 6px;
-}
-
-.form-group label {
-  font-size: 9px;
-  text-transform: uppercase;
-  color: #0af;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  margin-bottom: 2px;
-  display: block;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-}
-
-/* ─────────────── Grid Layouts ─────────────── */
+/* ─────────────── GRID LAYOUT ─────────────── */
 .datapad-main-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: 1fr 1fr 0.8fr;
+  gap: 6px;
+  padding: 6px;
 }
 
 .left-column,
@@ -721,230 +981,36 @@
 .right-column {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.two-column {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.three-column {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-/* ─────────────── Responsive Adjustments ─────────────── */
-@media (max-width: 1200px) {
-  .datapad-main-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 800px) {
-  .datapad-main-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .abilities,
-  .attributes-grid-improved {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  .defenses,
-  .defense-table {
-    grid-template-columns: 1fr;
-  }
-  
-  .two-column,
-  .three-column {
-    grid-template-columns: 1fr;
-  }
-  
-  .skill-row {
-    grid-template-columns: 20px 1fr 60px 30px;
-    font-size: 10px;
-  }
-  
-  .skill-ability {
-    display: none;
-  }
-}
-
-/* ─────────────── Editor Content ─────────────── */
-.editor-content {
-  background: rgba(0, 20, 40, 0.4);
-  border: 1px solid rgba(0, 170, 255, 0.3);
-  color: #b5daff;
-  padding: 8px;
-  border-radius: 4px;
-  min-height: 100px;
-  font-size: 11px;
-  line-height: 1.5;
-}
-
-/* ─────────────── Profile Image ─────────────── */
-.profile-img,
-.character-portrait {
-  border: 2px solid #0af;
-  border-radius: 4px;
-  box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
-  max-width: 100%;
-  height: auto;
-}
-
-/* ─────────────── Tooltips ─────────────── */
-.swse-datapad-sheet [data-tooltip],
-.swse.character-sheet [data-tooltip],
-.holo-theme [data-tooltip] {
-  position: relative;
-}
-
-.swse-datapad-sheet [data-tooltip]:hover::after,
-.swse.character-sheet [data-tooltip]:hover::after,
-.holo-theme [data-tooltip]:hover::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 30, 60, 0.95);
-  color: #b5daff;
-  padding: 4px 8px;
-  border-radius: 3px;
-  border: 1px solid #0af;
-  font-size: 10px;
-  white-space: nowrap;
-  z-index: 1000;
-  box-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
-}
-
-/* ─────────────── Condition Track ─────────────── */
-.condition-buttons {
-  display: flex;
-  flex-wrap: wrap;
   gap: 4px;
 }
 
-.condition-btn {
-  flex: 1;
-  min-width: 60px;
-  padding: 6px;
-  font-size: 11px;
+/* ─────────────── RESPONSIVE ─────────────── */
+@media (max-width: 1400px) {
+  .datapad-main-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .right-column {
+    grid-column: 1 / -1;
+  }
 }
 
-.condition-btn.active {
-  background: #00aaff;
-  color: #fff;
-  border-color: #00ffff;
+@media (max-width: 900px) {
+  .datapad-main-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .character-portrait {
+    width: 50px;
+    height: 50px;
+  }
 }
 
-/* ─────────────── HP & Vitals ─────────────── */
-.hp-grid,
-.hp-display {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.hp-field {
-  flex: 1;
-}
-
-/* ─────────────── Combat Stats ─────────────── */
-.combat-stat-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.combat-stat-row label {
-  flex: 1;
-}
-
-/* ─────────────── Utility Classes ─────────────── */
-.text-center {
-  text-align: center;
-}
-
-.text-right {
-  text-align: right;
-}
-
-.font-bold {
-  font-weight: bold;
-}
-
-.uppercase {
-  text-transform: uppercase;
-}
-
-.glow-cyan {
-  color: #00ffff;
-  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
-}
-
-.glow-green {
-  color: #00ff88;
-  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
-}
-
+/* ─────────────── UTILITY CLASSES ─────────────── */
+.text-center { text-align: center; }
+.font-bold { font-weight: bold; }
 .mb-0 { margin-bottom: 0; }
-.mb-1 { margin-bottom: 4px; }
-.mb-2 { margin-bottom: 8px; }
-.mb-3 { margin-bottom: 12px; }
-
-.mt-0 { margin-top: 0; }
-.mt-1 { margin-top: 4px; }
-.mt-2 { margin-top: 8px; }
-.mt-3 { margin-top: 12px; }
-
+.mb-1 { margin-bottom: 2px; }
+.mb-2 { margin-bottom: 4px; }
 .p-0 { padding: 0; }
-.p-1 { padding: 4px; }
-.p-2 { padding: 8px; }
-.p-3 { padding: 12px; }
-
-.flex {
-  display: flex;
-}
-
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.flex-wrap {
-  flex-wrap: wrap;
-}
-
-.gap-1 { gap: 4px; }
-.gap-2 { gap: 8px; }
-.gap-3 { gap: 12px; }
-
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.grid-3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-.grid-4 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 8px;
-}
+.p-1 { padding: 2px; }
