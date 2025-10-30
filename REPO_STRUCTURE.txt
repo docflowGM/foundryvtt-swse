@@ -1,5 +1,5 @@
 Repository Structure Map
-Generated: 2025-10-29 19:18:40
+Generated: 2025-10-29 20:45:09
 ======================================================================
 
 foundryvtt-swse/
@@ -80,9 +80,6 @@ foundryvtt-swse/
 │       ├── title-logo.png (11.4KB)
 │       ├── title-logo@2x.png (13.5KB)
 │       └── vehicle-stats.png (524.0KB)
-├── cleanup_logs/
-│   ├── final_cleanup_20251029_191343.log (2.7KB)
-│   └── final_cleanup_20251029_191535.log (4.3KB)
 ├── data/
 │   ├── armor/
 │   │   ├── heavy.db (13.5KB)
@@ -156,7 +153,7 @@ foundryvtt-swse/
 │   └── weapons.db (20.8KB)
 ├── scripts/
 │   ├── actors/
-│   │   ├── swse-actor.js (19.7KB)
+│   │   ├── swse-actor.js (23.2KB)
 │   │   ├── swse-droid.js (3.1KB)
 │   │   ├── swse-npc.js (3.1KB)
 │   │   └── swse-vehicle.js (3.5KB)
@@ -200,15 +197,15 @@ foundryvtt-swse/
 │       └── validation-utils.js (2.5KB)
 ├── styles/
 │   ├── character-sheet-fixes.css (15.8KB)
-│   ├── character-sheet.css (22.3KB)
-│   ├── narrative-chargen.css (7.2KB)
-│   ├── swse-components.css (12.4KB)
+│   ├── character-sheet.css (22.6KB)
+│   ├── narrative-chargen.css (7.3KB)
+│   ├── swse-components.css (12.5KB)
 │   ├── swse-fixes.css (194.0B)
-│   ├── swse-holo-enhanced.css (9.2KB)
+│   ├── swse-holo-enhanced.css (9.3KB)
 │   ├── swse-holo.css (5.2KB)
 │   ├── swse.css (3.7KB)
-│   ├── unified-sheets.css (20.6KB)
-│   └── vehicle-sheet-styles.css (14.1KB)
+│   ├── unified-sheets.css (20.8KB)
+│   └── vehicle-sheet-styles.css (14.2KB)
 ├── templates/
 │   ├── actors/
 │   │   ├── character-sheet.hbs (55.5KB)
@@ -223,7 +220,7 @@ foundryvtt-swse/
 │   │   │   ├── store.html (1.9KB)
 │   │   │   └── store.js (3.6KB)
 │   │   ├── chargen-fixed.hbs (9.3KB)
-│   │   ├── chargen.hbs (7.4KB)
+│   │   ├── chargen.hbs (9.3KB)
 │   │   ├── chargen.html (7.3KB)
 │   │   ├── narrative-chargen.hbs (7.5KB)
 │   │   └── store.hbs (1.9KB)
@@ -250,9 +247,9 @@ foundryvtt-swse/
 │   ├── cleanup_review.sh (1.3KB)
 │   └── migration-helper.js (1.2KB)
 ├── index.js (5.9KB)
-├── REPO_STRUCTURE.txt (12.0KB)
+├── REPO_STRUCTURE.txt (11.3KB)
 ├── scan_repo.py (7.2KB)
-├── swse.zip (4.6MB)
+├── swse.zip (2.7MB)
 ├── system.json (5.2KB)
 └── template.json (5.0KB)
 
@@ -260,16 +257,16 @@ foundryvtt-swse/
 Repository Statistics
 ======================================================================
 
-Total Directories: 33
-Total Files: 219
-Total Size: 10.2MB
+Total Directories: 32
+Total Files: 217
+Total Size: 8.3MB
 
 Files by Type:
   Images            68 files  (2.3MB)
-  JavaScript        40 files  (181.8KB)
+  JavaScript        40 files  (185.2KB)
   Data              33 files  (1.1MB)
-  Other             30 files  (6.3MB)
-  Templates         21 files  (169.7KB)
-  Docs              11 files  (53.0KB)
-  Styles            10 files  (110.8KB)
+  Other             28 files  (4.3MB)
+  Templates         21 files  (171.6KB)
+  Docs              11 files  (52.3KB)
+  Styles            10 files  (111.6KB)
   Python             6 files  (24.1KB)

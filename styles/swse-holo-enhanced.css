@@ -1,313 +1,13 @@
 /* ──────────────────────────────────────────────── */
 /* STAR WARS SAGA EDITION – ENHANCED HOLO THEME    */
-/* Datapad-style UI for all SWSE sheets             */
+/* Compact Datapad-style UI for all SWSE sheets     */
+/* Updated for optimized layout compatibility       */
 /* ──────────────────────────────────────────────── */
 
-/* Apply to all SWSE sheets */
-.swse.sheet.holo-theme,
-.swse.character-sheet.holo-theme,
-.swse.npc-sheet.holo-theme,
-.swse.droid-sheet.holo-theme,
-.swse.vehicle-sheet.holo-theme,
-.swse.item-sheet.holo-theme {
-  position: relative;
-  overflow: hidden;
-  background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
-  color: #9ed0ff;
-  border: 1px solid #1c4b8e;
-  border-radius: 12px;
-  box-shadow: 0 0 20px #0ff3, inset 0 0 10px #123;
-  font-family: "Orbitron", "Roboto", sans-serif;
-  animation: holo-flicker 1.2s ease-in-out;
-}
+/* Additional Holo Effects for Compact Layout */
 
-/* Keep content above grid layers */
-.holo-theme form,
-.holo-theme .sheet-body-wrapper,
-.holo-theme .sheet-body { overflow-y: auto; overflow-x: hidden; max-height: calc(100vh - 100px);position: relative;
-  z-index: 5; }
-
-/* ─────────────── Inputs & Textareas ─────────────── */
-.holo-theme input,
-.holo-theme textarea,
-.holo-theme select {
-  background: rgba(0, 30, 60, 0.4);
-  color: #b5daff;
-  border: 1px solid #0af;
-  border-radius: 4px;
-  padding: 4px 6px;
-  transition: all 0.2s ease;
-}
-
-.holo-theme input:focus,
-.holo-theme textarea:focus,
-.holo-theme select:focus {
-  border-color: #00c6ff;
-  box-shadow: 0 0 8px #00c6ff;
-  outline: none;
-  background: rgba(0, 40, 80, 0.6);
-}
-
-.holo-theme input::placeholder {
-  color: rgba(181, 218, 255, 0.5);
-}
-
-/* ─────────────── Headers ─────────────── */
-.holo-theme .sheet-header { padding: 3px 4px; min-height: 20px;
-  background: linear-gradient(135deg, rgba(26, 77, 122, 0.8), rgba(44, 95, 141, 0.8));
-  border-bottom: 1px solid #0af;
-  box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
- }
-
-.holo-theme .charname input,
-.holo-theme h1,
-.holo-theme h2,
-.holo-theme h3 {
-  color: #9ed0ff;
-  text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
-}
-
-.holo-theme .section-header {
-  color: #00c6ff;
-  border-bottom-color: #0af;
-  text-shadow: 0 0 5px rgba(0, 170, 255, 0.6);
-}
-
-/* ─────────────── Tabs Navigation ─────────────── */
-.holo-theme .sheet-tabs {
-  display: flex;
-  border-bottom: 1px solid #0af;
-  justify-content: space-around;
-  margin-bottom: 0.5em;
-  background: rgba(0, 20, 40, 0.6);
-}
-
-.holo-theme .sheet-tabs .item {
-  padding: 0.4em 0.8em;
-  cursor: pointer;
-  color: #9ed0ff;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
-  border: none;
-  background: transparent;
-}
-
-.holo-theme .sheet-tabs .item:hover {
-  color: #fff;
-  text-shadow: 0 0 6px #00baff;
-  background: rgba(0, 170, 255, 0.1);
-}
-
-/* Active tab pulsing holo glow */
-@keyframes holo-tab-pulse {
-  0%, 100% {
-    text-shadow: 0 0 8px #00f0ff, 0 0 15px #00aaff33;
-    box-shadow: 0 2px 10px #00aaff33;
-  }
-  50% {
-    text-shadow: 0 0 15px #00f0ff, 0 0 25px #00aaffaa;
-    box-shadow: 0 2px 15px #00aaff77;
-  }
-}
-
-.holo-theme .sheet-tabs .item.active {
-  color: #fff;
-  border-bottom: 1px solid #00e6ff;
-  background: rgba(0, 170, 255, 0.15);
-  animation: holo-tab-pulse 3s ease-in-out infinite;
-}
-
-/* ─────────────── Buttons ─────────────── */
-.holo-theme button,
-.holo-theme .holo-btn {
-  background: linear-gradient(90deg, #002f6c, #003f8f);
-  border: 1px solid #00baff;
-  color: #b5daff;
-  border-radius: 6px;
-  padding: 6px 12px;
-  transition: 0.2s;
-  cursor: pointer;
-  text-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
-}
-
-.holo-theme button:hover,
-.holo-theme .holo-btn:hover {
-  background: #00aaff;
-  color: #fff;
-  box-shadow: 0 0 10px #00cfff;
-  animation: holo-pulse 1.5s infinite ease-in-out;
-  transform: translateY(-1px);
-}
-
-@keyframes holo-pulse {
-  0%, 100% { box-shadow: 0 0 10px #00f3ff55; }
-  50% { box-shadow: 0 0 20px #00f3ff99; }
-}
-
-/* ─────────────── Stats & Values ─────────────── */
-.holo-theme .ability-modifier,
-.holo-theme .defense-value,
-.holo-theme .stat-value,
-.holo-theme .def-val,
-.holo-theme .modifier-value {
-  color: #00ff88;
-  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
-}
-
-.holo-theme .rollable:hover {
-  color: #00ffff;
-  text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
-  transform: scale(1.1);
-}
-
-/* ─────────────── Boxes & Containers ─────────────── */
-.holo-theme .ability,
-.holo-theme .defense,
-.holo-theme .resource-box,
-.holo-theme .stat-box,
-.holo-theme .item,
-.holo-theme .npc-weapon,
-.holo-theme .vehicle-weapon {
-  background: rgba(0, 20, 40, 0.6);
-  border: 1px solid rgba(0, 170, 255, 0.4);
-  border-radius: 6px;
-  box-shadow: 0 0 10px rgba(0, 170, 255, 0.1);
-}
-
-.holo-theme .ability:hover,
-.holo-theme .item:hover {
-  border-color: #0af;
-  box-shadow: 0 0 15px rgba(0, 170, 255, 0.3);
-}
-
-/* ─────────────── Tables ─────────────── */
-.holo-theme table,
-.holo-theme .holo-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.holo-theme th,
-.holo-theme td,
-.holo-theme .holo-table th,
-.holo-theme .holo-table td {
-  border-bottom: 1px solid rgba(0, 77, 128, 0.5);
-  padding: 6px 8px;
-  color: #9ed0ff;
-}
-
-.holo-theme th {
-  color: #00c6ff;
-  text-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
-  background: rgba(0, 170, 255, 0.1);
-}
-
-.holo-theme tr:hover {
-  background: rgba(0, 170, 255, 0.1);
-}
-
-/* ─────────────── Skills ─────────────── */
-.holo-theme .skill-row {
-  border-bottom-color: rgba(0, 170, 255, 0.2);
-}
-
-.holo-theme .skill-row:hover {
-  background: rgba(0, 170, 255, 0.15);
-}
-
-.holo-theme .skill-total {
-  color: #00ff88;
-  text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
-}
-
-/* ─────────────── Holographic Grid Overlay ─────────────── */
-.holo-theme::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-image:
-    linear-gradient(90deg, rgba(0, 180, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(0, 180, 255, 0.08) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: 0.25;
-  animation: holo-grid-move 20s linear infinite;
-  z-index: 0;
-}
-
-@keyframes holo-grid-move {
-  from { background-position: 0 0, 0 0; }
-  to { background-position: 200px 200px, 200px 200px; }
-}
-
-/* ─────────────── Holographic Glow Wave ─────────────── */
-.holo-theme::after {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(circle at center, rgba(0,255,255,0.05) 0%, transparent 70%);
-  mix-blend-mode: screen;
-  animation: holo-wave 12s ease-in-out infinite;
-  opacity: 0.2;
-  pointer-events: none;
-  z-index: 1;
-}
-
-@keyframes holo-wave {
-  0%, 100% { transform: scale(1); opacity: 0.15; }
-  50% { transform: scale(1.05); opacity: 0.3; }
-}
-
-/* ─────────────── Holo Boot-up Flicker ─────────────── */
-@keyframes holo-flicker {
-  0% { opacity: 0; filter: brightness(0.5); }
-  15% { opacity: 1; filter: brightness(1.2); }
-  30% { opacity: 0.7; filter: brightness(0.8); }
-  50% { opacity: 1; filter: brightness(1); }
-  75% { opacity: 0.9; filter: brightness(1.3); }
-  100% { opacity: 1; filter: brightness(1); }
-}
-
-/* ─────────────── Scrollbar (Datapad style) ─────────────── */
-.holo-theme ::-webkit-scrollbar {
-  width: 8px;
-}
-
-.holo-theme ::-webkit-scrollbar-track {
-  background: rgba(0, 20, 40, 0.6);
-}
-
-.holo-theme ::-webkit-scrollbar-thumb {
-  background: #0077bb;
-  border-radius: 10px;
-  box-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
-}
-
-.holo-theme ::-webkit-scrollbar-thumb:hover {
-  background: #00cfff;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
-}
-
-/* ─────────────── Special Effects ─────────────── */
-.holo-theme .profile-img {
-  border-color: #0af;
-  box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
-}
-
-.holo-theme .editor-content {
-  background: rgba(0, 20, 40, 0.4);
-  border: 1px solid rgba(0, 170, 255, 0.3);
-  color: #b5daff;
-}
-
-/* ─────────────── Datapad Status Indicator ─────────────── */
-.holo-theme::before {
-  /* Grid effect already defined above */
-}
-
-/* Add subtle scan line effect */
-.holo-theme .sheet-body::after {
+/* Scan Line Effect */
+.swse.sheet .sheet-body::after {
   content: "";
   position: absolute;
   top: 0;
@@ -318,9 +18,361 @@
   animation: holo-scan 4s linear infinite;
   pointer-events: none;
   z-index: 100;
+  opacity: 0.5;
 }
 
 @keyframes holo-scan {
   from { transform: translateY(0); }
-  to { transform: translateY(600px); }
+  to { transform: translateY(100%); }
+}
+
+/* Enhanced Glow on Focus */
+.swse.sheet input:focus,
+.swse.sheet textarea:focus,
+.swse.sheet select:focus {
+  animation: input-glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes input-glow-pulse {
+  0%, 100% {
+    border-color: #00c6ff;
+    box-shadow: 0 0 8px rgba(0, 198, 255, 0.6);
+  }
+  50% {
+    border-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.9);
+  }
+}
+
+/* Holographic Flicker on Hover */
+.swse.sheet .ability:hover,
+.swse.sheet .defense:hover,
+.swse.sheet .resource:hover {
+  animation: holo-flicker-subtle 0.3s ease-in-out;
+}
+
+@keyframes holo-flicker-subtle {
+  0%, 100% { opacity: 1; }
+  25% { opacity: 0.9; }
+  50% { opacity: 1; }
+  75% { opacity: 0.95; }
+}
+
+/* Data Readout Effect for Values */
+.ability-score,
+.defense-value,
+.stat-value {
+  animation: data-readout 0.5s ease-out;
+}
+
+@keyframes data-readout {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Rollable Highlight Enhancement */
+.rollable {
+  position: relative;
+}
+
+.rollable::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  transition: all 0.2s;
+  pointer-events: none;
+}
+
+.rollable:hover::before {
+  border-color: #00ffff;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+/* Section Header Glow */
+.section-header {
+  position: relative;
+  overflow: hidden;
+}
+
+.section-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+  animation: header-sweep 3s ease-in-out infinite;
+}
+
+@keyframes header-sweep {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
+}
+
+/* Button Press Effect */
+.swse.sheet button:active {
+  animation: button-press 0.1s ease-out;
+}
+
+@keyframes button-press {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* Loading State Animation */
+.loading {
+  animation: loading-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loading-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+/* Datapad Power Button */
+.power-indicator {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background: #00ff88;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+  animation: power-blink 2s ease-in-out infinite;
+  z-index: 1000;
+}
+
+@keyframes power-blink {
+  0%, 90%, 100% { opacity: 1; }
+  95% { opacity: 0.3; }
+}
+
+/* Holographic Noise (subtle) */
+.swse.sheet::before {
+  animation: holo-grid-move 20s linear infinite, holo-noise 0.5s steps(10) infinite;
+}
+
+@keyframes holo-noise {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.22; }
+}
+
+/* Tab Indicator Line */
+.sheet-tabs .item.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ffff, transparent);
+  animation: tab-line-sweep 2s ease-in-out infinite;
+}
+
+@keyframes tab-line-sweep {
+  0%, 100% { transform: scaleX(0.5); opacity: 0.5; }
+  50% { transform: scaleX(1); opacity: 1; }
+}
+
+/* Enhanced Item Hover */
+.items-list .item:hover {
+  position: relative;
+}
+
+.items-list .item:hover::before {
+  content: ">";
+  position: absolute;
+  left: -10px;
+  color: #00ffff;
+  animation: item-arrow 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes item-arrow {
+  from { transform: translateX(0); }
+  to { transform: translateX(3px); }
+}
+
+/* Skill Row Enhancement */
+.skill-row:hover .skill-total.rollable {
+  animation: skill-ready 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes skill-ready {
+  from { transform: scale(1); }
+  to { transform: scale(1.15); }
+}
+
+/* Critical Success/Failure Flash */
+@keyframes crit-success {
+  0%, 100% { background: transparent; }
+  50% { background: rgba(0, 255, 136, 0.3); }
+}
+
+@keyframes crit-fail {
+  0%, 100% { background: transparent; }
+  50% { background: rgba(255, 0, 0, 0.3); }
+}
+
+.crit-success {
+  animation: crit-success 0.5s ease-in-out 3;
+}
+
+.crit-fail {
+  animation: crit-fail 0.5s ease-in-out 3;
+}
+
+/* Datapad Boot Sequence */
+@keyframes boot-sequence {
+  0% {
+    opacity: 0;
+    filter: brightness(0);
+  }
+  20% {
+    opacity: 0.3;
+    filter: brightness(1.5);
+  }
+  40% {
+    opacity: 0.7;
+    filter: brightness(0.8);
+  }
+  60% {
+    opacity: 1;
+    filter: brightness(1.2);
+  }
+  80% {
+    opacity: 0.9;
+    filter: brightness(1.1);
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+.swse.sheet.booting {
+  animation: boot-sequence 1.5s ease-out;
+}
+
+/* Terminal Text Effect */
+.terminal-text {
+  font-family: "Courier New", monospace;
+  color: #00ff88;
+  text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
+}
+
+/* Glitch Effect (for errors or warnings) */
+@keyframes glitch {
+  0%, 100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+}
+
+.glitch {
+  animation: glitch 0.3s ease-in-out;
+}
+
+/* Status Indicators */
+.status-indicator {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.status-indicator.active {
+  background: #00ff88;
+  box-shadow: 0 0 5px rgba(0, 255, 136, 0.8);
+}
+
+.status-indicator.inactive {
+  background: #666;
+  box-shadow: none;
+}
+
+.status-indicator.warning {
+  background: #ffaa00;
+  box-shadow: 0 0 5px rgba(255, 170, 0, 0.8);
+  animation: warning-blink 1s ease-in-out infinite;
+}
+
+@keyframes warning-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.status-indicator.danger {
+  background: #ff0000;
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
+  animation: danger-pulse 0.5s ease-in-out infinite;
+}
+
+@keyframes danger-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* Energy Shield Effect */
+.energy-shield {
+  position: relative;
+}
+
+.energy-shield::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 1px solid #00ffff;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.energy-shield:hover::after {
+  opacity: 1;
+  animation: shield-pulse 1s ease-in-out infinite;
+}
+
+@keyframes shield-pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+  }
 }
