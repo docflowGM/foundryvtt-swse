@@ -1,194 +1,82 @@
-// ============================================
-// FILE: index.js
-// Star Wars Saga Edition (SWSE) - FoundryVTT System
-// Main entry point for the SWSE system
-// ============================================
+/**
+ * SWSE System - Main Entry Point
+ * Star Wars Saga Edition for Foundry VTT
+ * Modern V10+ Architecture
+ */
 
-import { registerHandlebarsHelpers } from "./helpers/handlebars-helpers.js";
-import { SWSE } from "./scripts/core/config.js";
-import { SWSEActor, SWSEActorSheet } from "./scripts/actors/swse-actor.js";
-import { SWSEDroidSheet } from "./scripts/actors/swse-droid.js";
-import { SWSEVehicleSheet } from "./scripts/actors/swse-vehicle.js";
-import { SWSENPCSheet } from "./scripts/actors/swse-npc.js";
-import { SWSEItemSheet } from "./scripts/items/swse-item.js";
-import { preloadHandlebarsTemplates } from "./scripts/core/load-templates.js";
-import * as SWSEData from "./scripts/core/swse-data.js";
-import { WorldDataLoader } from "./scripts/core/world-data-loader.js";
-import { initializeUtils } from "./scripts/core/utils-init.js";
-import { initializeRolls } from "./scripts/core/rolls-init.js";
-import "./scripts/apps/chargen-init.js";
+import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
+import { preloadHandlebarsTemplates } from './scripts/core/load-templates.js';
+import { registerSystemSettings } from './scripts/core/settings.js';
+import { SWSEDropHandler } from './scripts/drag-drop/drop-handler.js';
+
+// Import actor classes (TODO: Create these files)
+// import { SWSEActorBase } from './scripts/actors/base/swse-actor-base.js';
+// import { SWSECharacter } from './scripts/actors/character/swse-character.js';
+
+// Import data models (TODO: Create these files)
+// import { SWSECharacterDataModel } from './scripts/data-models/character-model.js';
+// import { SWSEVehicleDataModel } from './scripts/data-models/vehicle-model.js';
+
+// Import automation (TODO: Create these files)
+// import { SWSECombatAutomation } from './scripts/automation/combat-automation.js';
+// import { SWSEHomebrewManager } from './scripts/gm-tools/homebrew-manager.js';
 
 // ============================================
-// INIT HOOK
+// INIT HOOK - System Initialization
 // ============================================
 Hooks.once("init", async () => {
   console.log("SWSE | Initializing Star Wars Saga Edition system...");
-
-  // -------------------------------
-  // Global Config & Namespace
-  // -------------------------------
-  CONFIG.SWSE = SWSE;
-  CONFIG.Actor.documentClass = SWSEActor;
-
-  // Initialize base namespace
-  game.swse = {
-    data: SWSEData,
-    SWSE: SWSE
-  };
-
-  // -------------------------------
-  // Initialize Utils & Rolls FIRST
-  // (Must be before module/helpers that might use them)
-  // -------------------------------
-  initializeUtils();
-  initializeRolls();
-
-  // -------------------------------
-  // Register Handlebars Helpers
-  // -------------------------------
+  
+  // TODO: Set base Actor class
+  // CONFIG.Actor.documentClass = SWSEActorBase;
+  
+  // TODO: Register DataModels
+  // CONFIG.Actor.systemDataModels = {
+  //   character: SWSECharacterDataModel,
+  //   npc: SWSEActorDataModel,
+  //   droid: SWSEActorDataModel,
+  //   vehicle: SWSEVehicleDataModel
+  // };
+  
+  // Register Handlebars helpers
   registerHandlebarsHelpers();
-
-  // -------------------------------
-  // Sheet Registration
-  // -------------------------------
-  registerSWSESheets();
-
-  // -------------------------------
-  // Register Settings
-  // -------------------------------
-  registerSettings();
-
-  // -------------------------------
-  // Preload Templates
-  // -------------------------------
+  
+  // Register system settings
+  registerSystemSettings();
+  
+  // Preload templates
   await preloadHandlebarsTemplates();
-
+  
+  // TODO: Register sheets
+  // registerSheets();
+  
   console.log("SWSE | System initialization complete.");
-  console.log("SWSE | Available: game.swse.utils, game.swse.rolls, game.swse.data");
 });
 
 // ============================================
-// READY HOOK
+// READY HOOK - Post-Initialization
 // ============================================
 Hooks.once("ready", async () => {
   console.log("SWSE | System ready. May the Force be with you.");
-
-  // Auto-load data on first GM run
-  if (game.user.isGM) {
-    await WorldDataLoader.autoLoad();
-  }
+  
+  // TODO: Initialize combat automation
+  // SWSECombatAutomation.init();
+  
+  // TODO: Initialize GM tools
+  // if (game.user.isGM && game.settings.get('swse', 'enableHomebrewTools')) {
+  //   SWSEHomebrewManager.init();
+  // }
 });
 
 // ============================================
-// REGISTER SHEETS
+// DRAG-DROP HOOKS
 // ============================================
-function registerSWSESheets() {
-  try {
-    const hasV13API = typeof DocumentSheetConfig !== "undefined";
+Hooks.on("dropActorSheetData", async (actor, sheet, data) => {
+  return SWSEDropHandler.handleDrop(actor, data);
+});
 
-    if (hasV13API) {
-      // Foundry v13+ API
-      console.log("SWSE | Using Foundry v13+ sheet registration");
-
-      DocumentSheetConfig.unregisterSheet(Actor, "core", ActorSheet);
-      DocumentSheetConfig.unregisterSheet(Item, "core", ItemSheet);
-
-      // Character Sheet (uses base SWSEActorSheet)
-      DocumentSheetConfig.registerSheet(Actor, "swse", SWSEActorSheet, {
-        types: ["character"],
-        label: "SWSE Character Sheet",
-        makeDefault: true
-      });
-
-      // NPC Sheet
-      DocumentSheetConfig.registerSheet(Actor, "swse", SWSENPCSheet, {
-        types: ["npc"],
-        label: "SWSE NPC Sheet",
-        makeDefault: true
-      });
-
-      // Droid Sheet
-      DocumentSheetConfig.registerSheet(Actor, "swse", SWSEDroidSheet, {
-        types: ["droid"],
-        label: "SWSE Droid Sheet",
-        makeDefault: true
-      });
-
-      // Vehicle Sheet
-      DocumentSheetConfig.registerSheet(Actor, "swse", SWSEVehicleSheet, {
-        types: ["vehicle"],
-        label: "SWSE Vehicle Sheet",
-        makeDefault: true
-      });
-
-      // Item Sheet
-      DocumentSheetConfig.registerSheet(Item, "swse", SWSEItemSheet, {
-        types: SWSE.itemTypes,
-        label: "SWSE Item Sheet",
-        makeDefault: true
-      });
-
-    } else {
-      // Foundry v11-v12 Legacy API
-      console.log("SWSE | Using legacy sheet registration");
-
-      Actors.unregisterSheet("core", ActorSheet);
-      Items.unregisterSheet("core", ItemSheet);
-
-      Actors.registerSheet("swse", SWSEActorSheet, {
-        types: ["character"],
-        label: "SWSE Character Sheet",
-        makeDefault: true
-      });
-
-      Actors.registerSheet("swse", SWSENPCSheet, {
-        types: ["npc"],
-        label: "SWSE NPC Sheet",
-        makeDefault: true
-      });
-
-      Actors.registerSheet("swse", SWSEDroidSheet, {
-        types: ["droid"],
-        label: "SWSE Droid Sheet",
-        makeDefault: true
-      });
-
-      Actors.registerSheet("swse", SWSEVehicleSheet, {
-        types: ["vehicle"],
-        label: "SWSE Vehicle Sheet",
-        makeDefault: true
-      });
-
-      Items.registerSheet("swse", SWSEItemSheet, {
-        types: SWSE.itemTypes,
-        label: "SWSE Item Sheet",
-        makeDefault: true
-      });
-    }
-
-    console.log("SWSE | Sheet registration complete");
-  } catch (err) {
-    console.error("SWSE | Sheet registration failed:", err);
-  }
-}
-
-// ============================================
-// REGISTER SETTINGS
-// ============================================
-function registerSettings() {
-  game.settings.register("swse", "forcePointBonus", {
-    name: "Force Point Bonus",
-    hint: "Extra modifier applied when spending a Force Point on a power.",
-    scope: "world",
-    config: true,
-    type: Number,
-    default: 2
-  });
-
-  game.settings.register("swse", "dataLoaded", {
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false
-  });
-}
+// TODO: Add more hooks
+// - Combat hooks
+// - Macro hooks
+// - Chat hooks
+// - Keybinding hooks

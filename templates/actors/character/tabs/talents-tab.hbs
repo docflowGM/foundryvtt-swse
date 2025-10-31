@@ -1,0 +1,97 @@
+{{!-- Talents Tab with Visual Tree Interface --}}
+<div class="tab talents-tab" data-group="primary" data-tab="talents">
+  
+  <div class="talents-controls flexrow">
+    <div class="filter-buttons">
+      <button class="filter-btn active" data-filter="all" type="button">All Trees</button>
+      {{#each talentTreeFilters as |filter|}}
+        <button class="filter-btn" data-filter="{{filter.id}}" type="button">
+          {{filter.label}}
+        </button>
+      {{/each}}
+    </div>
+    
+    <div class="talent-points">
+      <label>Available Talent Selections:</label>
+      <span class="points-value">{{availableTalentSelections}}</span>
+    </div>
+  </div>
+  
+  {{#each talentTrees as |tree|}}
+    <div class="talent-tree {{tree.class}}" data-tree-id="{{tree.id}}">
+      <div class="tree-header">
+        <h3 class="tree-name">{{tree.name}}</h3>
+        <button class="tree-toggle" data-action="toggleTree" type="button">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+      
+      <div class="tree-content">
+        <div class="tree-description">
+          <p>{{tree.description}}</p>
+        </div>
+        
+        <div class="talent-tree-container">
+          {{#each tree.tiers as |tier tierIndex|}}
+            <div class="tree-tier" data-tier="{{tierIndex}}">
+              <div class="tier-label">Tier {{add tierIndex 1}}</div>
+              <div class="tier-talents flexrow">
+                {{#each tier.talents as |talent|}}
+                  <div class="talent-node {{talent.state}}"
+                       data-talent-id="{{talent._id}}"
+                       data-action="selectTalent"
+                       title="{{talent.name}}">
+                    <div class="talent-icon">
+                      <i class="{{talent.icon}}"></i>
+                    </div>
+                    <div class="talent-name">{{talent.name}}</div>
+                    
+                    {{#if talent.prerequisite}}
+                      <div class="talent-prereq">
+                        <i class="fas fa-link"></i>
+                      </div>
+                    {{/if}}
+                    
+                    {{#if (eq talent.state "locked")}}
+                      <div class="talent-lock">
+                        <i class="fas fa-lock"></i>
+                      </div>
+                    {{/if}}
+                    
+                    {{#if (eq talent.state "acquired")}}
+                      <div class="talent-check">
+                        <i class="fas fa-check-circle"></i>
+                      </div>
+                    {{/if}}
+                  </div>
+                {{/each}}
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  {{/each}}
+  
+  {{!-- Acquired Talents Summary --}}
+  <section class="acquired-talents">
+    <h3 class="section-header">Acquired Talents</h3>
+    <div class="talents-list">
+      {{#each acquiredTalents as |talent|}}
+        <div class="talent-summary flexrow">
+          <div class="talent-summary-name">
+            <strong>{{talent.name}}</strong>
+            <span class="talent-tree-label">({{talent.treeName}})</span>
+          </div>
+          <div class="talent-summary-effect">
+            {{talent.summary}}
+          </div>
+          <a class="talent-view" data-action="viewTalent" data-talent-id="{{talent._id}}">
+            <i class="fas fa-eye"></i>
+          </a>
+        </div>
+      {{/each}}
+    </div>
+  </section>
+  
+</div>

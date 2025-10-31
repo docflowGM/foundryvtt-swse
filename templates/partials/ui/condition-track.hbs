@@ -1,0 +1,53 @@
+{{!-- Interactive Condition Track --}}
+<div class="condition-track">
+  <label class="track-label">Condition Track</label>
+  
+  <div class="track-display flexrow">
+    {{#each conditionSteps as |step index|}}
+      <div class="track-step {{#if (eq @root.system.conditionTrack.current index)}}active{{/if}}"
+           data-step="{{index}}"
+           data-action="setConditionTrack"
+           title="{{step.label}}: {{step.penalty}} penalty">
+        <div class="step-label">{{step.label}}</div>
+        <div class="step-penalty">{{step.penalty}}</div>
+      </div>
+    {{/each}}
+  </div>
+  
+  <div class="track-controls flexrow">
+    <button class="track-button improve" 
+            data-action="improveCondition" 
+            type="button"
+            title="Recover one step">
+      <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <label class="persistent-checkbox" title="Prevents recovery">
+      <input type="checkbox" 
+             name="system.conditionTrack.persistent"
+             {{checked system.conditionTrack.persistent}}/>
+      <span>Persistent</span>
+    </label>
+    
+    <button class="track-button worsen" 
+            data-action="worsenCondition" 
+            type="button"
+            title="Worsen one step">
+      <i class="fas fa-arrow-down"></i>
+    </button>
+  </div>
+  
+  {{#if (gt system.conditionTrack.penalty 0)}}
+    <div class="penalty-display">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>{{system.conditionTrack.penalty}} penalty to all d20 rolls</span>
+    </div>
+  {{/if}}
+  
+  {{#if system.conditionTrack.helpless}}
+    <div class="helpless-warning">
+      <i class="fas fa-skull-crossbones"></i>
+      <span>Helpless!</span>
+    </div>
+  {{/if}}
+</div>

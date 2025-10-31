@@ -1,0 +1,70 @@
+{{!-- Enhanced SWSE Character Sheet --}}
+<form class="{{cssClass}} swse-character-sheet" autocomplete="off" data-theme="holo">
+  
+  {{!-- Persistent Header --}}
+  {{> "systems/swse/templates/partials/actor/persistent-header.hbs"}}
+  
+  {{!-- Navigation Tabs --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="summary">Summary</a>
+    <a class="item" data-tab="combat">Combat</a>
+    <a class="item" data-tab="skills">Skills</a>
+    <a class="item" data-tab="talents">Talents</a>
+    {{#if system.forceSensitive}}
+      <a class="item" data-tab="force">Force</a>
+    {{/if}}
+    <a class="item" data-tab="equipment">Equipment</a>
+    <a class="item" data-tab="feats">Feats</a>
+    <a class="item" data-tab="biography">Biography</a>
+  </nav>
+  
+  {{!-- Sheet Body --}}
+  <section class="sheet-body">
+    {{!-- Summary Tab --}}
+    {{> "systems/swse/templates/actors/character/tabs/summary-tab.hbs"}}
+    
+    {{!-- Combat Tab --}}
+    <div class="tab combat-tab" data-group="primary" data-tab="combat">
+      <h3 class="section-header">Combat Details</h3>
+      <p><em>Combat tab content will be implemented in future updates.</em></p>
+      <p>For now, use the Summary tab for quick combat reference.</p>
+    </div>
+    
+    {{!-- Skills Tab --}}
+    <div class="tab skills-tab" data-group="primary" data-tab="skills">
+      <h3 class="section-header">Skills</h3>
+      <p><em>Skills tab content will be implemented in future updates.</em></p>
+      <p>Trained skills are available in the Summary tab.</p>
+    </div>
+    
+    {{!-- Talents Tab --}}
+    {{> "systems/swse/templates/actors/character/tabs/talents-tab.hbs"}}
+    
+    {{!-- Force Tab --}}
+    {{#if system.forceSensitive}}
+      {{> "systems/swse/templates/actors/character/tabs/force-tab.hbs"}}
+    {{/if}}
+    
+    {{!-- Equipment Tab --}}
+    <div class="tab equipment-tab" data-group="primary" data-tab="equipment">
+      <h3 class="section-header">Equipment</h3>
+      <p><em>Equipment tab content will be implemented in future updates.</em></p>
+      <p>Equipped weapons are available in the Summary tab.</p>
+    </div>
+    
+    {{!-- Feats Tab --}}
+    <div class="tab feats-tab" data-group="primary" data-tab="feats">
+      <h3 class="section-header">Feats</h3>
+      <p><em>Feats tab content will be implemented in future updates.</em></p>
+    </div>
+    
+    {{!-- Biography Tab --}}
+    <div class="tab biography-tab" data-group="primary" data-tab="biography">
+      <h3 class="section-header">Biography</h3>
+      <div class="editor-content">
+        {{editor enrichedBiography target="system.biography" button=true owner=owner editable=editable}}
+      </div>
+    </div>
+  </section>
+  
+</form>

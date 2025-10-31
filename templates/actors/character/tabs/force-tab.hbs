@@ -1,0 +1,150 @@
+{{!-- Force Powers Tab with Suite Management --}}
+<div class="tab force-tab" data-group="primary" data-tab="force">
+  
+  <div class="force-powers-container flexrow">
+    
+    {{!-- Known Powers Column --}}
+    <div class="powers-column known-powers flex1">
+      <div class="column-header">
+        <h3>Known Powers</h3>
+        <button class="add-power" data-action="createItem" data-type="forcepower" type="button">
+          <i class="fas fa-plus"></i> Add Power
+        </button>
+      </div>
+      
+      <div class="powers-list" data-suite="false">
+        {{#each knownPowers as |power|}}
+          <div class="power-item" data-item-id="{{power._id}}" draggable="true">
+            <div class="power-header flexrow">
+              <img src="{{power.img}}" width="32" height="32" alt="{{power.name}}"/>
+              <h4 class="power-name">{{power.name}}</h4>
+              
+              {{#if power.system.forcePointCost}}
+                <div class="power-cost">
+                  <i class="fas fa-star"></i> {{power.system.forcePointCost}}
+                </div>
+              {{/if}}
+              
+              <div class="power-controls">
+                <a class="power-add-suite" 
+                   title="Add to Active Suite"
+                   data-action="toggleSuite">
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+                <a class="power-edit" title="Edit" data-action="editItem">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a class="power-delete" title="Delete" data-action="deleteItem">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </div>
+            </div>
+            
+            <div class="power-details" style="display: none;">
+              <div class="power-stats flexrow">
+                <span><strong>Action:</strong> {{power.system.action}}</span>
+                <span><strong>Target:</strong> {{power.system.target}}</span>
+                <span><strong>Duration:</strong> {{power.system.duration}}</span>
+              </div>
+              {{#if power.system.useTheForce}}
+                <div class="power-utf">
+                  <strong>Use the Force DC:</strong> {{power.system.dc}}
+                </div>
+              {{/if}}
+              <div class="power-description">
+                {{{power.system.description}}}
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    
+    {{!-- Active Suite Column --}}
+    <div class="powers-column active-suite flex1">
+      <div class="column-header">
+        <h3>Active Force Suite</h3>
+        <span class="suite-count">{{activeSuite.length}} / {{maxSuitePowers}}</span>
+      </div>
+      
+      <div class="suite-info">
+        <p>Drag powers here to add them to your active suite. Powers in your suite can be used at-will.</p>
+      </div>
+      
+      <div class="powers-list suite-drop-zone" data-suite="true">
+        {{#each activeSuite as |power|}}
+          <div class="power-item in-suite" data-item-id="{{power._id}}" draggable="true">
+            <div class="power-header flexrow">
+              <img src="{{power.img}}" width="32" height="32" alt="{{power.name}}"/>
+              <h4 class="power-name rollable" 
+                  data-roll="1d20+@skills.useTheForce.mod"
+                  data-label="Use the Force: {{power.name}}">
+                {{power.name}}
+              </h4>
+              
+              {{#if power.system.forcePointCost}}
+                <div class="power-cost">
+                  <i class="fas fa-star"></i> {{power.system.forcePointCost}}
+                </div>
+              {{/if}}
+              
+              <div class="power-controls">
+                <a class="power-remove-suite" 
+                   title="Remove from Suite"
+                   data-action="toggleSuite">
+                  <i class="fas fa-arrow-left"></i>
+                </a>
+                <a class="power-use" 
+                   title="Use Power"
+                   data-action="usePower">
+                  <i class="fas fa-hand-sparkles"></i>
+                </a>
+              </div>
+            </div>
+            
+            <div class="power-details" style="display: none;">
+              <div class="power-stats flexrow">
+                <span><strong>Action:</strong> {{power.system.action}}</span>
+                <span><strong>Target:</strong> {{power.system.target}}</span>
+                <span><strong>Duration:</strong> {{power.system.duration}}</span>
+              </div>
+              {{#if power.system.useTheForce}}
+                <div class="power-utf">
+                  <strong>Use the Force DC:</strong> {{power.system.dc}}
+                </div>
+              {{/if}}
+              <div class="power-description">
+                {{{power.system.description}}}
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    
+  </div>
+  
+  {{!-- Force Point Spending Interface --}}
+  <section class="force-point-actions">
+    <h3 class="section-header">Force Point Actions</h3>
+    <div class="fp-actions flexrow">
+      <button class="fp-action reroll" data-action="spendForcePoint" data-type="reroll" type="button">
+        <i class="fas fa-dice"></i>
+        <span>Reroll ({{forceRerollDice}})</span>
+      </button>
+      
+      <button class="fp-action avoid-death" data-action="spendForcePoint" data-type="avoidDeath" type="button">
+        <i class="fas fa-heart"></i>
+        <span>Avoid Death</span>
+      </button>
+      
+      {{#if system.darkSideScore}}
+        <button class="fp-action reduce-darkside" data-action="spendForcePoint" data-type="reduceDarkside" type="button">
+          <i class="fas fa-moon"></i>
+          <span>Reduce Dark Side</span>
+        </button>
+      {{/if}}
+    </div>
+  </section>
+  
+</div>
