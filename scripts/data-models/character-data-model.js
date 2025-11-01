@@ -1,94 +1,123 @@
 /**
- * Character Data Model
- * Extends base actor model with character-specific fields
+ * Character Data Model for SWSE
  */
-
-import { SWSEActorDataModel } from './actor-data-model.js';
-
-export class SWSECharacterDataModel extends SWSEActorDataModel {
+export class SWSECharacterDataModel extends foundry.abstract.TypeDataModel {
   
   static defineSchema() {
-    const schema = super.defineSchema();
     const fields = foundry.data.fields;
     
-    // Add character-specific fields
     return {
-      ...schema,
-      
-      // Destiny Points (character-only)
-      destinyPoints: new fields.SchemaField({
-        value: new fields.NumberField({required: true, initial: 1, min: 0, integer: true}),
-        max: new fields.NumberField({required: true, initial: 1, min: 0, integer: true})
+      abilities: new fields.SchemaField({
+        str: new fields.SchemaField(this._abilitySchema()),
+        dex: new fields.SchemaField(this._abilitySchema()),
+        con: new fields.SchemaField(this._abilitySchema()),
+        int: new fields.SchemaField(this._abilitySchema()),
+        wis: new fields.SchemaField(this._abilitySchema()),
+        cha: new fields.SchemaField(this._abilitySchema())
       }),
       
-      // Dark Side Score
-      darkSideScore: new fields.NumberField({
+      defenses: new fields.SchemaField({
+        reflex: new fields.SchemaField(this._defenseSchema()),
+        fortitude: new fields.SchemaField(this._defenseSchema()),
+        will: new fields.SchemaField(this._defenseSchema())
+      }),
+      
+      hp: new fields.SchemaField({
+        value: new fields.NumberField({ required: true, initial: 1, min: 0, integer: true }),
+        max: new fields.NumberField({ required: true, initial: 1, min: 1, integer: true }),
+        temp: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true })
+      }),
+      
+      damageThreshold: new fields.SchemaField({
+        fortitude: new fields.NumberField({ initial: 10, integer: true }),
+        size: new fields.NumberField({ initial: 0, integer: true }),
+        total: new fields.NumberField({ initial: 10, integer: true })
+      }),
+      
+      level: new fields.NumberField({
         required: true,
-        initial: 0,
-        min: 0,
-        integer: true,
-        label: "Dark Side Score"
+        initial: 1,
+        min: 1,
+        max: 20,
+        integer: true
       }),
       
-      // Force Power Suite
-      forceSuite: new fields.SchemaField({
-        size: new fields.NumberField({required: true, initial: 6, min: 0, integer: true}),
-        powers: new fields.ArrayField(new fields.StringField())
+      bab: new fields.NumberField({ required: true, initial: 0, integer: true }),
+      
+      conditionTrack: new fields.StringField({
+        required: true,
+        initial: "normal",
+        choices: ["normal", "-1", "-2", "-5", "-10", "helpless"]
       }),
       
-      // Languages
-      languages: new fields.ArrayField(
-        new fields.StringField(),
-        {label: "Known Languages"}
-      ),
+      forcePoints: new fields.SchemaField({
+        value: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
+        max: new fields.NumberField({ required: true, initial: 5, min: 0, integer: true })
+      }),
       
-      // Carrying Capacity
-      carryingCapacity: new fields.SchemaField({
-        light: new fields.NumberField({required: true, initial: 0}),
-        medium: new fields.NumberField({required: true, initial: 0}),
-        heavy: new fields.NumberField({required: true, initial: 0}),
-        current: new fields.NumberField({required: true, initial: 0})
-      })
+      secondWind: new fields.SchemaField({
+        uses: new fields.NumberField({ required: true, initial: 1, min: 0, integer: true }),
+        healing: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true })
+      }),
+      
+      skills: new fields.SchemaField({
+        acrobatics: new fields.SchemaField(this._skillSchema()),
+        climb: new fields.SchemaField(this._skillSchema()),
+        deception: new fields.SchemaField(this._skillSchema()),
+        endurance: new fields.SchemaField(this._skillSchema()),
+        initiative: new fields.SchemaField(this._skillSchema()),
+        perception: new fields.SchemaField(this._skillSchema()),
+        persuasion: new fields.SchemaField(this._skillSchema()),
+        pilot: new fields.SchemaField(this._skillSchema()),
+        stealth: new fields.SchemaField(this._skillSchema()),
+        useTheForce: new fields.SchemaField(this._skillSchema())
+      }),
+      
+      size: new fields.StringField({
+        required: true,
+        initial: "medium",
+        choices: ["fine", "diminutive", "tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"]
+      }),
+      
+      speed: new fields.SchemaField({
+        base: new fields.NumberField({ required: true, initial: 6, min: 0, integer: true }),
+        total: new fields.NumberField({ required: true, initial: 6, min: 0, integer: true })
+      }),
+      
+      biography: new fields.HTMLField(),
+      notes: new fields.HTMLField()
     };
   }
   
-  prepareDerivedData() {
-    super.prepareDerivedData();
-    
-    // Calculate carrying capacity
-    this._prepareCarryingCapacity();
-    
-    // Check Force alignment
-    this._prepareForceAlignment();
-  }
-  
-  _prepareCarryingCapacity() {
-    const strScore = this.abilities.str.total;
-    const sizeMultiplier = this._getSizeMultiplier();
-    
-    this.carryingCapacity.light = Math.floor(strScore * 10 * sizeMultiplier);
-    this.carryingCapacity.medium = Math.floor(strScore * 20 * sizeMultiplier);
-    this.carryingCapacity.heavy = Math.floor(strScore * 30 * sizeMultiplier);
-  }
-  
-  _getSizeMultiplier() {
-    const multipliers = {
-      fine: 0.125,
-      diminutive: 0.25,
-      tiny: 0.5,
-      small: 0.75,
-      medium: 1,
-      large: 2,
-      huge: 4,
-      gargantuan: 8,
-      colossal: 16
+  static _abilitySchema() {
+    const fields = foundry.data.fields;
+    return {
+      base: new fields.NumberField({ required: true, initial: 10, min: 0, max: 30, integer: true }),
+      racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+      temp: new fields.NumberField({ required: true, initial: 0, integer: true }),
+      total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+      mod: new fields.NumberField({ required: true, initial: 0, integer: true })
     };
-    return multipliers[this.size] || 1;
   }
   
-  _prepareForceAlignment() {
-    // Check if Dark Side Score >= half level
-    const halfLevel = Math.floor(this.level / 2);
-    this.isDarkSide = this.darkSideScore >= halfLevel;
+  static _defenseSchema() {
+    const fields = foundry.data.fields;
+    return {
+      base: new fields.NumberField({ initial: 10, integer: true }),
+      levelArmor: new fields.NumberField({ initial: 0, integer: true }),
+      ability: new fields.NumberField({ initial: 0, integer: true }),
+      misc: new fields.NumberField({ initial: 0, integer: true }),
+      total: new fields.NumberField({ initial: 10, integer: true })
+    };
+  }
+  
+  static _skillSchema() {
+    const fields = foundry.data.fields;
+    return {
+      trained: new fields.BooleanField({ required: true, initial: false }),
+      focusRanks: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
+      misc: new fields.NumberField({ required: true, initial: 0, integer: true }),
+      total: new fields.NumberField({ required: true, initial: 0, integer: true })
+    };
   }
 }

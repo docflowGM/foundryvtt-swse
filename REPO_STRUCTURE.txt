@@ -1,5 +1,5 @@
 Repository Structure Map
-Generated: 2025-10-30 20:30:52
+Generated: 2025-10-30 20:44:06
 ======================================================================
 
 foundryvtt-swse/
@@ -341,7 +341,7 @@ foundryvtt-swse/
 ├── IMPLEMENTATION_ROADMAP.md (9.2KB)
 ├── index-enhanced.js (1.0KB)
 ├── index.js (2.7KB)
-├── REPO_STRUCTURE.txt (25.4KB)
+├── REPO_STRUCTURE.txt (14.8KB)
 ├── RESTRUCTURE_REPORT.json (4.2KB)
 ├── swse.zip (2.7MB)
 ├── system.json (5.2KB)
@@ -361,6 +361,6 @@ Files by Type:
   Data              34 files  (1.1MB)
   Other             27 files  (4.3MB)
   Templates         26 files  (181.2KB)
-  Docs              11 files  (76.6KB)
+  Docs              11 files  (66.1KB)
   Styles            10 files  (149.5KB)
   Python             3 files  (14.2KB)

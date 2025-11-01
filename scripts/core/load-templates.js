@@ -1,24 +1,37 @@
-// ============================================
-// FILE: scripts/load-templates.js (UPDATED)
-// ============================================
+/**
+ * Preload Handlebars templates
+ */
 export async function preloadHandlebarsTemplates() {
   const templatePaths = [
-    "systems/swse/templates/actors/character-sheet.hbs",
-    "systems/swse/templates/actors/droid-sheet.hbs",
-    "systems/swse/templates/actors/vehicle-sheet.hbs",
-    "systems/swse/templates/actors/npc-sheet.hbs",
+    "systems/swse/templates/actors/character/character-sheet.hbs",
+    "systems/swse/templates/actors/droid/droid-sheet.hbs",
+    "systems/swse/templates/actors/vehicle/vehicle-sheet.hbs",
+    "systems/swse/templates/actors/npc/npc-sheet.hbs",
     "systems/swse/templates/actors/item-sheet.hbs",
-    // // // "systems/swse/templates/partials/defense-block.hbs" // Removed - does not exist, // Removed - does not exist // Removed - doesn't exist
-    // // "systems/swse/templates/partials/item-entry.hbs" // Removed - does not exist, // Removed - does not exist
-    "systems/swse/templates/apps/chargen.hbs"
+    "systems/swse/templates/actors/character/tabs/force-tab.hbs",
+    "systems/swse/templates/actors/character/tabs/summary-tab.hbs",
+    "systems/swse/templates/actors/character/tabs/talents-tab.hbs",
+    "systems/swse/templates/partials/ability-block.hbs",
+    "systems/swse/templates/partials/skill-row.hbs"
   ];
 
-  console.log("SWSE | Preloading Handlebars templates...");
-  try {
-    await loadTemplates(templatePaths);
-    console.log(`SWSE | Successfully preloaded ${templatePaths.length} templates`);
-  } catch (err) {
-    console.error("SWSE | Error preloading templates:", err);
+  console.log("SWSE | Preloading templates...");
+  
+  let loaded = 0;
+  let failed = 0;
+  
+  for (const path of templatePaths) {
+    try {
+      await getTemplate(path);
+      loaded++;
+    } catch (err) {
+      console.error(`SWSE | Failed to load: ${path}`, err);
+      failed++;
+    }
   }
-  return true;
+  
+  console.log(`SWSE | Loaded ${loaded}/${templatePaths.length} templates`);
+  if (failed > 0) {
+    console.warn(`SWSE | ${failed} template(s) failed to load`);
+  }
 }
