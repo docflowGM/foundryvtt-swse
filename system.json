@@ -27,7 +27,6 @@
   ],
   "styles": [
     "styles/swse.css",
-    "styles/swse-holo.css",
     "styles/swse-components.css",
     "styles/swse-fixes.css",
     "styles/character-sheet.css",
