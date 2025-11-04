@@ -50,11 +50,11 @@ form.swse-datapad-sheet {
   color: #cfeffc;
   background: radial-gradient(circle at 10% 10%, #071426 0%, #03060b 60%);
   border-radius: 12px;
-  overflow: hidden;
+  overflow-y: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
-  min-height: 600px;
+  min-min-height: 80px;
 }
 
 .swse * {
@@ -64,14 +64,14 @@ form.swse-datapad-sheet {
 /* =========================
    HEADER - Top Navigation Bar
    ========================= */
-.swse .datapad-header { padding: 3px 4px; min-height: 20px;
+.swse .datapad-header { padding: 3px 4px; min-min-height: 80px;
   display: flex;
   align-items: center;
   gap: 12px;
   /* padding: 3px 4px;
   background: linear-gradient(180deg, rgba(2, 10, 20, 0.65), rgba(0, 20, 40, 0.6));
   border-bottom: 1px solid rgba(0, 170, 204, 0.12);
-  /* min-height: 20px;
+  /* min-min-height: 80px;
  }
 
 .swse .header-left {
@@ -144,7 +144,7 @@ form.swse-datapad-sheet {
 }
 
 .swse .sw-logo {
-  max-height: 16px;
+  max-min-height: 80px;
   display: block;
 }
 
@@ -156,7 +156,7 @@ form.swse-datapad-sheet {
 
 .swse .character-portrait {
   width: 20px;
-  height: 20px;
+  min-height: 80px;
   border-radius: 6px;
   object-fit: cover;
   border: 1px solid rgba(0, 168, 204, 0.3);
@@ -270,7 +270,7 @@ form.swse-datapad-sheet {
 }
 
 .swse textarea {
-  min-height: 27px;
+  min-min-height: 80px;
   resize: vertical;
   font-family: inherit;
 }
@@ -316,7 +316,7 @@ form.swse-datapad-sheet {
 
 .swse .roll-btn {
   width: 40px;
-  height: 40px;
+  min-height: 80px;
   display: inline-grid;
   place-items: center;
   padding: 0;
@@ -498,7 +498,7 @@ form.swse-datapad-sheet {
 
 .swse .skill-row input[type="checkbox"] {
   width: 16px;
-  height: 16px;
+  min-height: 80px;
   margin: 0 auto;
   display: block;
 }
@@ -846,7 +846,7 @@ form.swse-datapad-sheet {
   border-color: var(--holo-cyan);
 }
 
-.swse .bottom-tabs-content { overflow-y: auto; overflow-x: hidden;max-height: 300px;
+.swse .bottom-tabs-content { overflow-y: auto; overflow-x: hidden;max-min-height: 80px;
   overflow-y: auto; }
 
 .swse .bottom-tab-content {
@@ -893,7 +893,7 @@ form.swse-datapad-sheet {
 
 .swse .item-icon {
   width: 40px;
-  height: 40px;
+  min-height: 80px;
   border-radius: 6px;
   object-fit: cover;
   border: 1px solid rgba(0, 168, 204, 0.15);
@@ -1012,7 +1012,7 @@ form.swse-datapad-sheet {
 }
 
 @media (max-width: 768px) {
-  .swse .datapad-header { padding: 3px 4px; min-height: 20px;
+  .swse .datapad-header { padding: 3px 4px; min-min-height: 80px;
     flex-direction: column;
     align-items: stretch;
    }
@@ -1050,12 +1050,12 @@ form.swse-datapad-sheet {
   }
 
   .swse .sw-logo {
-    max-height: 36px;
+    max-min-height: 80px;
   }
 
   .swse .character-portrait {
     width: 48px;
-    height: 48px;
+    min-height: 80px;
   }
 
   .swse .skills-header {
@@ -1100,7 +1100,7 @@ form.swse-datapad-sheet {
 
 /* ─────────────── SCROLLABLE MAIN CONTENT ─────────────── */
 .scrollable-content {
-    max-height: 600px;
+    max-min-height: 80px;
     overflow-y: auto;
     overflow-x: hidden;
     padding-left: 0px;
@@ -1206,7 +1206,7 @@ form.swse-datapad-sheet {
 
 .roll-btn {
     width: 36px;
-    height: 36px;
+    min-height: 80px;
     background: linear-gradient(to bottom, #00a8cc, #007a9c);
     border: 1px solid #00d9ff;
     color: #fff;
@@ -1418,7 +1418,7 @@ form.swse-datapad-sheet {
 
 .armor-checkbox-group input[type="checkbox"] {
     width: 20px;
-    height: 20px;
+    min-height: 80px;
     cursor: pointer;
 }
 
@@ -1591,7 +1591,7 @@ form.swse-datapad-sheet {
 .skills-grid-compact { overflow-y: auto; overflow-x: hidden; display: flex;
     flex-direction: column;
     gap: 4px;
-    max-height: 400px;
+    max-min-height: 80px;
     overflow-y: auto;
     padding-left: 0px; }
 
@@ -1624,13 +1624,13 @@ form.swse-datapad-sheet {
 
 .skill-trained {
     width: 20px;
-    height: 20px;
+    min-height: 80px;
     cursor: pointer;
 }
 
 .roll-btn-sm {
     width: 30px;
-    height: 30px;
+    min-height: 80px;
     background: linear-gradient(to bottom, #00a8cc, #007a9c);
     border: 1px solid #00d9ff;
     color: #fff;
@@ -1672,7 +1672,7 @@ form.swse-datapad-sheet {
 
 .delete-custom-skill {
     width: 30px;
-    height: 30px;
+    min-height: 80px;
     padding: 2px;
     background: #aa0000;
     border: 1px solid #ff0000;
@@ -1714,7 +1714,7 @@ form.swse-datapad-sheet {
 }
 
 /* ─────────────── BOTTOM TABS ─────────────── */
-.bottom-tabs-content { overflow-y: auto; overflow-x: hidden;max-height: 300px;
+.bottom-tabs-content { overflow-y: auto; overflow-x: hidden;max-min-height: 80px;
     overflow-y: auto;
     overflow-x: hidden; }
 

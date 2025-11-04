@@ -23,7 +23,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow-y: auto;
   background-color: #000; /* fallback for no image */
   font-family: "Orbitron", "StarJedi", sans-serif;
   color: #e0e0e0;
@@ -181,7 +181,7 @@ button:active {
 }
 
 .swse-levelup .scroll-table {
-  max-height: 300px;
+  max-min-height: 80px;
   overflow-y: auto;
   border: 1px solid #444;
   margin-bottom: 1em;
@@ -221,7 +221,7 @@ button:active {
   background: #1a1a1a;
 }
 
-.swse.vehicle-sheet .sheet-header { padding: 3px 4px; min-height: 20px;
+.swse.vehicle-sheet .sheet-header { padding: 3px 4px; min-min-height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -298,7 +298,7 @@ button:active {
 
 .holo-theme {
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
   background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
   color: #9ed0ff;
   border: 1px solid #1c4b8e;

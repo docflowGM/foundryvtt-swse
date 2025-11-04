@@ -80,7 +80,7 @@
 
 /* Skills */
 .skills-list {
-    max-height: 400px;
+    max-min-height: 80px;
     overflow-y: auto;
 }
 
