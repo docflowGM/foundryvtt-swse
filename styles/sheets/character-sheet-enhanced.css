@@ -249,7 +249,7 @@
   height: 6px;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 3px;
-  overflow: hidden;
+  overflow-y: auto;
   margin-top: 0.25rem;
 }
 
@@ -652,7 +652,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
   background: var(--color-bg-block);
-  min-height: 400px;
+  min-min-height: 80px;
 }
 
 .column-header {
@@ -691,7 +691,7 @@
 }
 
 .suite-drop-zone {
-  min-height: 300px;
+  min-min-height: 80px;
   border: 2px dashed transparent;
   transition: all 0.2s;
 }
@@ -1049,7 +1049,7 @@
   top: -8px;
   right: -8px;
   width: 20px;
-  height: 20px;
+  min-height: 80px;
   background: var(--color-accent);
   border-radius: 50%;
   display: flex;
@@ -1175,7 +1175,7 @@
   .track-button,
   .fp-action,
   .filter-btn {
-    min-height: 44px;
+    min-min-height: 80px;
     min-width: 44px;
     padding: 0.5rem;
   }

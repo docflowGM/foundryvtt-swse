@@ -1,11 +1,11 @@
 /* Vehicle Sheet Styles */
 .vehicle-sheet {
-    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+    background: linear-gradient(135deg, var(--swse-primary) 0%, #1a1f3a 100%);
     color: #e0e6ff;
     font-family: 'Orbitron', 'Segoe UI', sans-serif;
 }
 
-.vehicle-header { padding: 5px; min-height: 20px;
+.vehicle-header { padding: 5px; min-min-height: 80px;
     background: linear-gradient(90deg, #1a2845 0%, #2a3a5a 100%);
     border: 1px solid #3a9dd6;
     /* padding: 5px;
@@ -90,8 +90,8 @@
 
 .vehicle-display-container {
     position: relative;
-    min-height: 600px;
-    background: radial-gradient(ellipse at center, #1a2845 0%, #0a0e27 100%);
+    min-min-height: 80px;
+    background: radial-gradient(ellipse at center, #1a2845 0%, var(--swse-primary) 100%);
     border: 1px solid #3a9dd6;
     border-radius: 8px;
     padding: 40px 20px;
@@ -105,7 +105,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 400px;
-    height: 400px;
+    min-height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -122,7 +122,7 @@
 .stat-displays {
     position: relative;
     width: 100%;
-    height: 600px;
+    min-height: 80px;
 }
 
 .stat-box {
@@ -221,7 +221,7 @@
 
 .line-hull {
     width: 2px;
-    height: 20px;
+    min-height: 80px;
     top: 100%;
     left: 50%;
     transform: translateX(-50%);
@@ -252,7 +252,7 @@
 
 .line-weapons {
     width: 2px;
-    height: 20px;
+    min-height: 80px;
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
@@ -428,7 +428,7 @@
 .weapons-list { overflow-y: auto; overflow-x: hidden; display: flex;
     flex-direction: column;
     gap: 8px;
-    max-height: 300px;
+    max-min-height: 80px;
     overflow-y: auto; }
 
 .weapon-item {
@@ -551,7 +551,7 @@
     border: 1px dashed #2a7aa6;
     border-radius: 4px;
     padding: 4px;
-    min-height: 40px;
+    min-min-height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -699,11 +699,11 @@
     }
     
     .vehicle-display-container {
-        min-height: 500px;
+        min-min-height: 80px;
     }
     
     .vehicle-image-container {
         width: 300px;
-        height: 300px;
+        min-height: 80px;
     }
 }
