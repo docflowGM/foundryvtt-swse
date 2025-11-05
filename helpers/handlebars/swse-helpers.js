@@ -1,40 +1,51 @@
 export const swseHelpers = {
-  numberFormat: function(value, options) {
-    const num = parseFloat(value) || 0;
-    const decimals = options?.hash?.decimals ?? 0;
-    const sign = options?.hash?.sign ?? false;
-    
-    let result = num.toFixed(decimals);
-    if (sign && num >= 0) result = '+' + result;
-    return result;
+  halfLevel: (level) => Math.floor(Number(level || 1) / 2),
+
+  conditionPenalty: (track) => {
+    const penalties = { 'normal': 0, '-1': -1, '-2': -2, '-5': -5, '-10': -10, 'helpless': 0 };
+    return penalties[track] || 0;
   },
-  
-  dice: function(formula, options) {
-    if (!formula) return '';
-    const sign = options?.hash?.sign ?? false;
-    const str = String(formula);
-    
-    if (sign && !str.startsWith('-') && !str.startsWith('+')) {
-      return '+' + str;
+
+  isHelpless: (track) => track === 'helpless' || track === 5,
+
+  defenseCalculation: (defense, actor) => {
+    // This would be better in the actor class, but available as helper
+    if (defense === 'reflex' && actor?.system?.armor?.equipped) {
+      return `10 + Armor ${actor.system.armor.reflexBonus || 0}`;
     }
-    return str;
+    return `10 + Level ${actor?.system?.level || 1}`;
   },
-  
-  classes: function(...classes) {
-    classes = classes.slice(0, -1);
-    return classes.filter(Boolean).join(' ');
+
+  forceRerollDice: (level) => {
+    const l = Number(level || 1);
+    if (l >= 15) return '+3d6';
+    if (l >= 8) return '+2d6';
+    return '+1d6';
   },
-  
+
+  skillTotal: (skill, halfLevel, abilityMod, conditionPenalty) => {
+    let total = Number(halfLevel || 0) + Number(abilityMod || 0);
+    if (skill?.trained) total += 5;
+    if (skill?.focused) total += 5;
+    total += Number(skill?.misc || 0);
+    total += Number(conditionPenalty || 0);
+    return total;
+  },
+
+  sign: (value) => {
+    const num = Number(value || 0);
+    return num >= 0 ? `+${num}` : String(num);
+  }
+};
+,
+
   times: function(n, block) {
     let result = '';
-    for (let i = 0; i < n; i++) {
-      result += block.fn({...this, index: i, number: i + 1});
+    for(let i = 0; i < n; i++) {
+      result += block.fn(i);
     }
     return result;
   },
-  
-  getProperty: function(obj, path) {
-    if (!obj || !path) return undefined;
-    return foundry.utils.getProperty(obj, path);
-  }
+
+  subtract: (a, b) => Number(a || 0) - Number(b || 0)
 };

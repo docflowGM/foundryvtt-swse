@@ -13,7 +13,7 @@ export class SWSEVehicleSheet extends SWSEActorSheet {
 
   getData() {
     const context = super.getData();
-    
+
     if (!context.system.weapons) context.system.weapons = [];
     if (!context.system.crewPositions) {
       context.system.crewPositions = {
@@ -24,14 +24,14 @@ export class SWSEVehicleSheet extends SWSEActorSheet {
     if (!context.system.shields) context.system.shields = { value: 0, max: 0 };
     if (!context.system.hull) context.system.hull = { value: 0, max: 0 };
     if (!context.system.tags) context.system.tags = [];
-    
+
     return context;
   }
 
   activateListeners(html) {
     super.activateListeners(html);
     if (!this.options.editable) return;
-    
+
     html.find('.weapon-add').click(this._onAddWeapon.bind(this));
     html.find('.weapon-remove').click(this._onRemoveWeapon.bind(this));
     html.find('.crew-slot').on('drop', this._onCrewDrop.bind(this));
@@ -44,7 +44,7 @@ export class SWSEVehicleSheet extends SWSEActorSheet {
     weapons.push({ name: "New Weapon", arc: "Forward", bonus: "+0", damage: "0d0", range: "Close" });
     await this.actor.update({ "system.weapons": weapons });
   }
-  
+
   async _onRemoveWeapon(event) {
     event.preventDefault();
     const index = parseInt(event.currentTarget.dataset.index);
@@ -54,7 +54,7 @@ export class SWSEVehicleSheet extends SWSEActorSheet {
       await this.actor.update({ "system.weapons": weapons });
     }
   }
-  
+
   async _onRollWeapon(event) { }
   async _onCrewDrop(event) {
     event.preventDefault();
@@ -69,7 +69,7 @@ export class SWSEVehicleSheet extends SWSEActorSheet {
       }
     } catch (error) { }
   }
-  
+
   async _onCrewClick(event) {
     event.preventDefault();
     const slot = event.currentTarget.dataset.slot;

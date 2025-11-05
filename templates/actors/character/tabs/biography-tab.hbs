@@ -1,0 +1,47 @@
+<div class="tab biography-tab" data-group="primary" data-tab="biography">
+  <h3 class="section-header">Character Details</h3>
+
+  <div class="details-grid">
+    <div class="detail-field">
+      <label>Species</label>
+      <input type="text" name="system.species" value="{{system.species}}" placeholder="Human"/>
+    </div>
+
+    <div class="detail-field">
+      <label>Class</label>
+      <input type="text" name="system.class" value="{{system.class}}" placeholder="Jedi"/>
+    </div>
+
+    <div class="detail-field">
+      <label>Background</label>
+      <input type="text" name="system.background" value="{{system.background}}" placeholder="Noble"/>
+    </div>
+
+    <div class="detail-field">
+      <label>Size</label>
+      <select name="system.size">
+        <option value="Fine" {{#if (eq system.size "Fine")}}selected{{/if}}>Fine</option>
+        <option value="Diminutive" {{#if (eq system.size "Diminutive")}}selected{{/if}}>Diminutive</option>
+        <option value="Tiny" {{#if (eq system.size "Tiny")}}selected{{/if}}>Tiny</option>
+        <option value="Small" {{#if (eq system.size "Small")}}selected{{/if}}>Small</option>
+        <option value="Medium" {{#if (eq system.size "Medium")}}selected{{/if}}>Medium</option>
+        <option value="Large" {{#if (eq system.size "Large")}}selected{{/if}}>Large</option>
+        <option value="Huge" {{#if (eq system.size "Huge")}}selected{{/if}}>Huge</option>
+        <option value="Gargantuan" {{#if (eq system.size "Gargantuan")}}selected{{/if}}>Gargantuan</option>
+        <option value="Colossal" {{#if (eq system.size "Colossal")}}selected{{/if}}>Colossal</option>
+      </select>
+    </div>
+  </div>
+
+  <h3 class="section-header">Biography</h3>
+
+  <div class="editor-content">
+    {{editor enrichedBiography target="system.biography" button=true owner=owner editable=editable}}
+  </div>
+
+  <h3 class="section-header">Notes</h3>
+
+  <div class="editor-content">
+    {{editor enrichedNotes target="system.notes" button=true owner=owner editable=editable}}
+  </div>
+</div>

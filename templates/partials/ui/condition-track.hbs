@@ -1,56 +1,83 @@
-<div class="swse-sheet">
-{{!-- Interactive Condition Track --}}
 <div class="condition-track">
   <label class="track-label">Condition Track</label>
-  
-  <div class="track-display flexrow">
-    {{#each conditionSteps as |step index|}}
-      <div class="track-step {{#if (eq @root.system.conditionTrack.current index)}}active{{/if}}"
-           data-step="{{index}}"
-           data-action="setConditionTrack"
-           title="{{step.label}}: {{step.penalty}} penalty">
-        <div class="step-label">{{step.label}}</div>
-        <div class="step-penalty">{{step.penalty}}</div>
-      </div>
-    {{/each}}
+
+  <div class="track-visual flexrow">
+    <div class="track-step normal {{#if (eq system.conditionTrack.current 0)}}active{{/if}}"
+         data-step="0"
+         data-action="setConditionTrack"
+         title="Normal">
+      <div class="step-label">Normal</div>
+    </div>
+
+    <div class="track-step {{#if (eq system.conditionTrack.current 1)}}active{{/if}}"
+         data-step="1"
+         data-action="setConditionTrack"
+         title="-1 to all d20 rolls">
+      <div class="step-label">-1</div>
+      <div class="step-penalty">-1</div>
+    </div>
+
+    <div class="track-step {{#if (eq system.conditionTrack.current 2)}}active{{/if}}"
+         data-step="2"
+         data-action="setConditionTrack"
+         title="-2 to all d20 rolls">
+      <div class="step-label">-2</div>
+      <div class="step-penalty">-2</div>
+    </div>
+
+    <div class="track-step {{#if (eq system.conditionTrack.current 3)}}active{{/if}}"
+         data-step="3"
+         data-action="setConditionTrack"
+         title="-5 to all d20 rolls">
+      <div class="step-label">-5</div>
+      <div class="step-penalty">-5</div>
+    </div>
+
+    <div class="track-step {{#if (eq system.conditionTrack.current 4)}}active{{/if}}"
+         data-step="4"
+         data-action="setConditionTrack"
+         title="-10 to all d20 rolls, half speed">
+      <div class="step-label">-10</div>
+      <div class="step-penalty">-10</div>
+    </div>
+
+    <div class="track-step helpless {{#if (eq system.conditionTrack.current 5)}}active{{/if}}"
+         data-step="5"
+         data-action="setConditionTrack"
+         title="Helpless">
+      <div class="step-label">Helpless</div>
+    </div>
   </div>
-  
+
   <div class="track-controls flexrow">
     <button class="track-button improve" 
             data-action="improveCondition" 
             type="button"
             title="Recover one step">
       <i class="fas fa-arrow-up"></i>
+      Recover
     </button>
-    
+
     <label class="persistent-checkbox" title="Prevents recovery">
       <input type="checkbox" 
              name="system.conditionTrack.persistent"
              {{checked system.conditionTrack.persistent}}/>
       <span>Persistent</span>
     </label>
-    
+
     <button class="track-button worsen" 
             data-action="worsenCondition" 
             type="button"
             title="Worsen one step">
       <i class="fas fa-arrow-down"></i>
+      Damage
     </button>
   </div>
-  
+
   {{#if (gt system.conditionTrack.penalty 0)}}
-    <div class="penalty-display">
+    <div class="penalty-warning">
       <i class="fas fa-exclamation-triangle"></i>
       <span>{{system.conditionTrack.penalty}} penalty to all d20 rolls</span>
     </div>
   {{/if}}
-  
-  {{#if system.conditionTrack.helpless}}
-    <div class="helpless-warning">
-      <i class="fas fa-skull-crossbones"></i>
-      <span>Helpless!</span>
-    </div>
-  {{/if}}
 </div>
-
-</div><!-- swse-sheet -->

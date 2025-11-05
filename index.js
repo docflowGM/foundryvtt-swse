@@ -1,134 +1,150 @@
-/**
- * Star Wars Saga Edition System for Foundry VTT
- */
-
-// Import Actor classes
+// SWSE System Initialization
 import { SWSEActorBase } from './scripts/actors/base/swse-actor-base.js';
-
-// Import Sheet classes
 import { SWSECharacterSheet } from './scripts/actors/character/swse-character-sheet.js';
 import { SWSEDroidSheet } from './scripts/actors/droid/swse-droid.js';
 import { SWSENPCSheet } from './scripts/actors/npc/swse-npc.js';
 import { SWSEVehicleSheet } from './scripts/actors/vehicle/swse-vehicle.js';
+import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 
-// Import Data Models
+// Data Models
+import { SWSEActorDataModel } from './scripts/data-models/actor-data-model.js';
 import { SWSECharacterDataModel } from './scripts/data-models/character-data-model.js';
 import { SWSEVehicleDataModel } from './scripts/data-models/vehicle-data-model.js';
 
-// Import core functionality
+// Core Systems
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
 import { preloadHandlebarsTemplates } from './scripts/core/load-templates.js';
 import { registerSystemSettings } from './scripts/core/settings.js';
+import { SWSERoll } from './scripts/rolls/swse-roll.js';
+import { SWSECombatAutomation } from './scripts/automation/combat-automation.js';
 
-// Import enhancements
-import { SWSEDropHandler } from './scripts/drag-drop/drop-handler.js';
-import { SWSECombatIntegration } from './scripts/combat/combat-integration.js';
-import { registerMacroFunctions } from './scripts/macros/macro-functions.js';
-import { registerChatCommands } from './scripts/chat/chat-commands.js';
-import { registerKeybindings } from './scripts/core/keybindings.js';
+/* -------------------------------------------- */
+/*  System Initialization                      */
+/* -------------------------------------------- */
 
 Hooks.once("init", async function() {
-  console.log("SWSE | Initializing Star Wars Saga Edition system...");
-  
-  // Create global namespace
+  console.log("SWSE | Initializing Star Wars Saga Edition System");
+
+  // Create namespace
   game.swse = {
-    config: {},
     SWSEActorBase,
-    utils: {}
+    SWSERoll,
+    config: CONFIG.SWSE
   };
-  
-  // Set base Actor class
+
+  // Define custom Document classes
   CONFIG.Actor.documentClass = SWSEActorBase;
-  
-  // Register DataModels
+
+  // Register Data Models
   CONFIG.Actor.systemDataModels = {
     character: SWSECharacterDataModel,
     npc: SWSECharacterDataModel,
     droid: SWSECharacterDataModel,
     vehicle: SWSEVehicleDataModel
   };
-  
-  // Unregister default sheets
+
+  // Unregister core sheets
   Actors.unregisterSheet("core", ActorSheet);
-  
-  // Register SWSE sheets
+  Items.unregisterSheet("core", ItemSheet);
+
+  // Register Actor sheets
   Actors.registerSheet("swse", SWSECharacterSheet, {
     types: ["character"],
     makeDefault: true,
-    label: "SWSE Character Sheet"
+    label: "SWSE.SheetLabels.Character"
   });
-  
+
   Actors.registerSheet("swse", SWSENPCSheet, {
     types: ["npc"],
     makeDefault: true,
-    label: "SWSE NPC Sheet"
+    label: "SWSE.SheetLabels.NPC"
   });
-  
+
   Actors.registerSheet("swse", SWSEDroidSheet, {
     types: ["droid"],
     makeDefault: true,
-    label: "SWSE Droid Sheet"
+    label: "SWSE.SheetLabels.Droid"
   });
-  
+
   Actors.registerSheet("swse", SWSEVehicleSheet, {
     types: ["vehicle"],
     makeDefault: true,
-    label: "SWSE Vehicle Sheet"
+    label: "SWSE.SheetLabels.Vehicle"
   });
-  
-  // Register helpers
+
+  // Register Item sheets
+  Items.registerSheet("swse", SWSEItemSheet, {
+    types: ["weapon", "armor", "equipment", "feat", "talent", "forcepower", "class", "species"],
+    makeDefault: true,
+    label: "SWSE.SheetLabels.Item"
+  });
+
+  // Register Handlebars helpers
   registerHandlebarsHelpers();
-  
-  // Register settings
+
+  // Register system settings
   registerSystemSettings();
-  
+
   // Preload templates
   await preloadHandlebarsTemplates();
-  
-  // Register keybindings
-  registerKeybindings();
-  
-  console.log("SWSE | System initialization complete.");
+
+  // Configure dice
+  CONFIG.Dice.terms["d"] = Die;
+
+  console.log("SWSE | System Initialized");
 });
+
+/* -------------------------------------------- */
+/*  System Ready                                */
+/* -------------------------------------------- */
 
 Hooks.once("ready", async function() {
-  console.log("SWSE | System ready.");
-  
-  // Initialize combat integration
-  SWSECombatIntegration.init();
-  
-  // Register macro functions
-  registerMacroFunctions();
-  
-  // Register chat commands
-  registerChatCommands();
-  
-  console.log("SWSE | May the Force be with you.");
-});
+  console.log("SWSE | System Ready");
 
-Hooks.on("dropActorSheetData", async (actor, sheet, data) => {
-  return SWSEDropHandler.handleDrop(actor, data);
-});
-
-Hooks.on("hotbarDrop", async (bar, data, slot) => {
-  if (data.type === "skill") {
-    return createSkillMacro(data, slot);
+  // Initialize combat automation
+  if (game.settings.get('swse', 'enableAutomation')) {
+    SWSECombatAutomation.init();
   }
-  return true;
+
+  // Show welcome message
+  if (game.user.isGM && !game.settings.get('swse', 'welcomeShown')) {
+    ui.notifications.info("SWSE System Loaded - May the Force be with you!");
+    await game.settings.set('swse', 'welcomeShown', true);
+  }
 });
 
-async function createSkillMacro(data, slot) {
-  const actor = game.actors.get(data.actorId);
-  if (!actor) return;
-  
-  const macroData = {
-    name: `${actor.name}: ${data.skillLabel}`,
-    type: "script",
-    img: "icons/svg/d20-grey.svg",
-    command: `game.swse.rollSkill("${data.actorId}", "${data.skillKey}");`,
-    flags: { "swse.skillMacro": true }
-  };
-  
-  const macro = await Macro.create(macroData);
-  game.user.assignHotbarMacro(macro, slot);
-}
+/* -------------------------------------------- */
+/*  Other Hooks                                 */
+/* -------------------------------------------- */
+
+// Handle item drops on actor sheets
+Hooks.on("dropActorSheetData", async (actor, sheet, data) => {
+  if (data.type === "Item") {
+    return actor._onDropItem(data);
+  }
+});
+
+// Add chat message listeners
+Hooks.on("renderChatMessage", (message, html, data) => {
+  html.find('.apply-damage').click(async ev => {
+    const damage = parseInt(ev.currentTarget.dataset.damage);
+    const targets = game.user.targets;
+
+    for (let target of targets) {
+      await target.actor.applyDamage(damage, {checkThreshold: true});
+    }
+  });
+
+  html.find('.roll-damage').click(async ev => {
+    const itemId = ev.currentTarget.dataset.itemId;
+    const actor = game.actors.get(message.speaker.actor);
+    const item = actor?.items.get(itemId);
+
+    if (item) {
+      await SWSERoll.rollDamage(actor, item);
+    }
+  });
+});
+
+// Export for debugging
+window.SWSE = game.swse;

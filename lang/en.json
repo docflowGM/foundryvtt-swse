@@ -1,11 +1,54 @@
 {
   "SWSE": {
     "SystemName": "Star Wars Saga Edition",
-    "Actor": {
-      "Label": "Character"
+    "SheetLabels": {
+      "Character": "Character Sheet",
+      "NPC": "NPC Sheet",
+      "Droid": "Droid Sheet",
+      "Vehicle": "Vehicle Sheet",
+      "Item": "Item Sheet"
     },
-    "Item": {
-      "Label": "Item"
+    "Abilities": {
+      "STR": "Strength",
+      "DEX": "Dexterity",
+      "CON": "Constitution",
+      "INT": "Intelligence",
+      "WIS": "Wisdom",
+      "CHA": "Charisma"
+    },
+    "Defenses": {
+      "Reflex": "Reflex Defense",
+      "Fortitude": "Fortitude Defense",
+      "Will": "Will Defense"
+    },
+    "Skills": {
+      "Acrobatics": "Acrobatics",
+      "Climb": "Climb",
+      "Deception": "Deception",
+      "Endurance": "Endurance",
+      "GatherInformation": "Gather Information",
+      "Initiative": "Initiative",
+      "Jump": "Jump",
+      "Knowledge": "Knowledge",
+      "Mechanics": "Mechanics",
+      "Perception": "Perception",
+      "Persuasion": "Persuasion",
+      "Pilot": "Pilot",
+      "Ride": "Ride",
+      "Stealth": "Stealth",
+      "Survival": "Survival",
+      "Swim": "Swim",
+      "TreatInjury": "Treat Injury",
+      "UseComputer": "Use Computer",
+      "UseTheForce": "Use the Force"
+    },
+    "ConditionTrack": {
+      "Normal": "Normal",
+      "Minus1": "-1",
+      "Minus2": "-2",
+      "Minus5": "-5",
+      "Minus10": "-10",
+      "Helpless": "Helpless"
     }
   }
 }

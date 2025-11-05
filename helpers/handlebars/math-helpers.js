@@ -1,23 +1,21 @@
-/**
- * Math helpers for Handlebars
- */
 export const mathHelpers = {
-  add: (a, b) => (parseFloat(a) || 0) + (parseFloat(b) || 0),
-  subtract: (a, b) => (parseFloat(a) || 0) - (parseFloat(b) || 0),
-  multiply: (a, b) => (parseFloat(a) || 0) * (parseFloat(b) || 0),
+  add: (a, b) => Number(a || 0) + Number(b || 0),
+  subtract: (a, b) => Number(a || 0) - Number(b || 0),
+  multiply: (a, b) => Number(a || 0) * Number(b || 0),
   divide: (a, b) => {
-    const divisor = parseFloat(b) || 0;
-    return divisor === 0 ? 0 : (parseFloat(a) || 0) / divisor;
+    const divisor = Number(b);
+    return divisor !== 0 ? Number(a || 0) / divisor : 0;
   },
-  abs: (num) => Math.abs(parseFloat(num) || 0),
-  round: (num) => Math.round(parseFloat(num) || 0),
-  floor: (num) => Math.floor(parseFloat(num) || 0),
-  ceil: (num) => Math.ceil(parseFloat(num) || 0),
-  numberFormat: (num, options) => {
-    const n = parseFloat(num) || 0;
-    const opts = options?.hash || {};
-    if (opts.sign && n >= 0) return '+' + n;
-    if (opts.decimals !== undefined) return n.toFixed(opts.decimals);
-    return String(n);
+  floor: (value) => Math.floor(Number(value || 0)),
+  ceil: (value) => Math.ceil(Number(value || 0)),
+  round: (value) => Math.round(Number(value || 0)),
+  abs: (value) => Math.abs(Number(value || 0)),
+  min: (...args) => Math.min(...args.map(Number)),
+  max: (...args) => Math.max(...args.map(Number)),
+  numberFormat: (value, options = {}) => {
+    const num = Number(value || 0);
+    const { decimals = 0, sign = false } = options.hash || {};
+    const formatted = num.toFixed(decimals);
+    return sign && num >= 0 ? `+${formatted}` : formatted;
   }
 };
