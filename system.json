@@ -28,11 +28,15 @@
   "styles": [
     "styles/swse.css",
     "styles/swse-holo.css",
-    "styles/swse-components.css",
-    "styles/swse-fixes.css",
+    "styles/base/swse-base.css",
+    "styles/components/swse-components.css",
     "styles/character-sheet.css",
-    "styles/narrative-chargen.css",
-    "styles/vehicle-sheet-styles.css"
+    "styles/sheets/character-sheet.css",
+    "styles/sheets/character-sheet-enhanced.css",
+    "styles/sheets/unified-sheets.css",
+    "styles/sheets/vehicle-sheet.css",
+    "styles/apps/chargen.css",
+    "styles/themes/holo-theme.css"
   ],
   "languages": [
     {
@@ -58,7 +62,7 @@
   "media": [
     {
       "type": "cover",
-      "url": "assets/images/ui/swse-cover.webp"
+      "url": "assets/ui/swse-cover.webp"
     },
     {
       "type": "icon",
@@ -216,8 +220,5 @@
   ],
   "compatibleCoreVersion": "11",
   "minimumCoreVersion": "10",
-  "lastRefactor": "2025-11-03T22:12:53.783469",
-  "scripts": [
-    "scripts/swse-init.js"
-  ]
+  "lastCleanup": "2025-11-05T18:13:41.824038"
 }
