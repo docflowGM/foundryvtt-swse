@@ -218,6 +218,6 @@
   "minimumCoreVersion": "10",
   "lastRefactor": "2025-11-03T22:12:53.783469",
   "scripts": [
-    "scripts/core/init.js"
+    "scripts/swse-init.js"
   ]
 }

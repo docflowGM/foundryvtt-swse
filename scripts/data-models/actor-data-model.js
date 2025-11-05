@@ -1,14 +1,15 @@
 /**
  * Base Actor Data Model
- * Defines schema for all SWSE actors with validation and derived data preparation
+ * This is the foundation that ALL actor types (character, NPC, vehicle) build upon.
+ * Think of it as the common DNA that all actors share.
  */
+export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
-export class SWSEActorDataModel extends foundry.abstract.DataModel {
-  
   static defineSchema() {
     const fields = foundry.data.fields;
+
     return {
-      // Ability Scores
+      // The six core abilities that define a character's raw potential
       abilities: new fields.SchemaField({
         str: new fields.SchemaField(this._abilitySchema()),
         dex: new fields.SchemaField(this._abilitySchema()),
@@ -17,317 +18,221 @@ export class SWSEActorDataModel extends foundry.abstract.DataModel {
         wis: new fields.SchemaField(this._abilitySchema()),
         cha: new fields.SchemaField(this._abilitySchema())
       }),
-      
-      // Defenses
+
+      // The three defenses that replace saving throws in SWSE
       defenses: new fields.SchemaField({
         reflex: new fields.SchemaField(this._defenseSchema()),
         fortitude: new fields.SchemaField(this._defenseSchema()),
         will: new fields.SchemaField(this._defenseSchema())
       }),
-      
-      // Hit Points
+
+      // Health tracking
       hp: new fields.SchemaField({
-        value: new fields.NumberField({
-          required: true,
-          initial: 1,
-          min: 0,
-          integer: true,
-          label: "Current HP"
-        }),
-        max: new fields.NumberField({
-          required: true,
-          initial: 1,
-          min: 1,
-          integer: true,
-          label: "Maximum HP"
-        }),
-        temp: new fields.NumberField({
+        value: new fields.NumberField({required: true, initial: 1, min: 0}),
+        max: new fields.NumberField({required: true, initial: 1, min: 1}),
+        temp: new fields.NumberField({required: true, initial: 0, min: 0})
+      }),
+
+      // The unique condition track system
+      conditionTrack: new fields.SchemaField({
+        current: new fields.NumberField({
           required: true,
           initial: 0,
           min: 0,
-          integer: true,
-          label: "Temporary HP"
+          max: 5,
+          label: "Current Step (0=Normal, 5=Helpless)"
+        }),
+        penalty: new fields.NumberField({
+          required: true,
+          initial: 0,
+          label: "Current Penalty"
+        }),
+        persistent: new fields.BooleanField({
+          required: true,
+          initial: false,
+          label: "Persistent Condition"
         })
       }),
-      
-      // Damage Threshold
-      damageThreshold: new fields.SchemaField({
-        base: new fields.NumberField({required: true, initial: 0, integer: true}),
-        armor: new fields.NumberField({required: true, initial: 0, integer: true}),
-        misc: new fields.NumberField({required: true, initial: 0, integer: true}),
-        total: new fields.NumberField({required: true, initial: 0, integer: true})
-      }),
-      
-      // Level and Experience
+
+      // Character progression
       level: new fields.NumberField({
         required: true,
         initial: 1,
         min: 1,
-        max: 20,
-        integer: true,
-        label: "Character Level"
+        max: 20
       }),
-      
+
       experience: new fields.NumberField({
         required: true,
         initial: 0,
-        min: 0,
-        integer: true,
-        label: "Experience Points"
+        min: 0
       }),
-      
-      // Base Attack Bonus
+
+      // Combat stats
       bab: new fields.NumberField({
         required: true,
         initial: 0,
-        integer: true,
         label: "Base Attack Bonus"
       }),
-      
-      // Condition Track
-      conditionTrack: new fields.StringField({
+
+      damageThreshold: new fields.NumberField({
         required: true,
-        initial: "normal",
-        choices: ["normal", "-1", "-2", "-5", "-10", "helpless"],
-        label: "Condition Track"
+        initial: 10,
+        label: "Damage Threshold"
       }),
-      
-      // Force Points
-      forcePoints: new fields.SchemaField({
-        value: new fields.NumberField({required: true, initial: 5, min: 0, integer: true}),
-        max: new fields.NumberField({required: true, initial: 5, min: 0, integer: true})
+
+      // Movement
+      speed: new fields.SchemaField({
+        base: new fields.NumberField({required: true, initial: 6}),
+        armor: new fields.NumberField({required: true, initial: 0}),
+        total: new fields.NumberField({required: true, initial: 6})
       }),
-      
-      // Second Wind
-      secondWind: new fields.SchemaField({
-        uses: new fields.NumberField({required: true, initial: 1, min: 0, integer: true}),
-        healing: new fields.NumberField({required: true, initial: 0, min: 0, integer: true})
-      }),
-      
-      // Skills
-      skills: new fields.SchemaField({
-        acrobatics: new fields.SchemaField(this._skillSchema()),
-        climb: new fields.SchemaField(this._skillSchema()),
-        deception: new fields.SchemaField(this._skillSchema()),
-        endurance: new fields.SchemaField(this._skillSchema()),
-        gatherInformation: new fields.SchemaField(this._skillSchema()),
-        initiative: new fields.SchemaField(this._skillSchema()),
-        jump: new fields.SchemaField(this._skillSchema()),
-        knowledge: new fields.SchemaField(this._skillSchema()),
-        mechanics: new fields.SchemaField(this._skillSchema()),
-        perception: new fields.SchemaField(this._skillSchema()),
-        persuasion: new fields.SchemaField(this._skillSchema()),
-        pilot: new fields.SchemaField(this._skillSchema()),
-        ride: new fields.SchemaField(this._skillSchema()),
-        stealth: new fields.SchemaField(this._skillSchema()),
-        survival: new fields.SchemaField(this._skillSchema()),
-        swim: new fields.SchemaField(this._skillSchema()),
-        treatInjury: new fields.SchemaField(this._skillSchema()),
-        useComputer: new fields.SchemaField(this._skillSchema()),
-        useTheForce: new fields.SchemaField(this._skillSchema())
-      }),
-      
-      // Size
+
+      // Size affects many calculations
       size: new fields.StringField({
         required: true,
         initial: "medium",
-        choices: ["fine", "diminutive", "tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"],
-        label: "Size Category"
+        choices: ["fine", "diminutive", "tiny", "small", "medium", 
+                  "large", "huge", "gargantuan", "colossal"]
       }),
-      
-      // Speed
-      speed: new fields.SchemaField({
-        base: new fields.NumberField({required: true, initial: 6, min: 0, integer: true}),
-        armor: new fields.NumberField({required: true, initial: 0, integer: true}),
-        misc: new fields.NumberField({required: true, initial: 0, integer: true}),
-        total: new fields.NumberField({required: true, initial: 6, min: 0, integer: true})
-      }),
-      
-      // Biography
-      biography: new fields.HTMLField({label: "Biography"}),
-      
-      // Notes
-      notes: new fields.HTMLField({label: "GM Notes"})
+
+      // Skills - the complete list
+      skills: new fields.SchemaField(this._generateSkillsSchema()),
+
+      // Currency
+      credits: new fields.NumberField({
+        required: true,
+        initial: 0,
+        min: 0
+      })
     };
   }
-  
+
   static _abilitySchema() {
     const fields = foundry.data.fields;
     return {
-      base: new fields.NumberField({
-        required: true,
-        initial: 10,
-        min: 0,
-        max: 30,
-        integer: true,
-        label: "Base Score"
-      }),
-      racial: new fields.NumberField({
-        required: true,
-        initial: 0,
-        integer: true,
-        label: "Racial Bonus"
-      }),
-      enhancement: new fields.NumberField({
-        required: true,
-        initial: 0,
-        min: 0,
-        max: 6,
-        integer: true,
-        label: "Enhancement Bonus"
-      }),
-      temp: new fields.NumberField({
-        required: true,
-        initial: 0,
-        integer: true,
-        label: "Temporary Modifier"
-      }),
-      total: new fields.NumberField({
-        required: true,
-        initial: 10,
-        integer: true,
-        label: "Total Score"
-      }),
-      mod: new fields.NumberField({
-        required: true,
-        initial: 0,
-        integer: true,
-        label: "Ability Modifier"
-      })
+      base: new fields.NumberField({required: true, initial: 10, min: 1, max: 30}),
+      racial: new fields.NumberField({required: true, initial: 0}),
+      enhancement: new fields.NumberField({required: true, initial: 0, min: 0, max: 6}),
+      temp: new fields.NumberField({required: true, initial: 0}),
+      total: new fields.NumberField({required: true, initial: 10}),
+      mod: new fields.NumberField({required: true, initial: 0})
     };
   }
-  
+
   static _defenseSchema() {
     const fields = foundry.data.fields;
     return {
-      ability: new fields.StringField({
-        required: true,
-        initial: "dex",
-        choices: ["str", "dex", "con", "int", "wis", "cha"],
-        label: "Key Ability"
-      }),
-      levelArmor: new fields.NumberField({
-        required: true,
-        initial: 0,
-        integer: true,
-        label: "Level or Armor Bonus"
-      }),
-      classBonus: new fields.NumberField({
-        required: true,
-        initial: 0,
-        integer: true,
-        label: "Class Bonus"
-      }),
-      armor: new fields.NumberField({
-        required: true,
-        initial: 0,
-        integer: true,
-        label: "Armor Bonus"
-      }),
-      natural: new fields.NumberField({
-        required: true,
-        initial: 0,
-        integer: true,
-        label: "Natural Armor"
-      }),
-      misc: new fields.NumberField({
-        required: true,
-        initial: 0,
-        integer: true,
-        label: "Misc Modifier"
-      }),
-      total: new fields.NumberField({
-        required: true,
-        initial: 10,
-        integer: true,
-        label: "Total Defense"
-      })
+      base: new fields.NumberField({required: true, initial: 10}),
+      armor: new fields.NumberField({required: true, initial: 0}),
+      classBonus: new fields.NumberField({required: true, initial: 0}),
+      natural: new fields.NumberField({required: true, initial: 0}),
+      size: new fields.NumberField({required: true, initial: 0}),
+      misc: new fields.NumberField({required: true, initial: 0}),
+      total: new fields.NumberField({required: true, initial: 10})
     };
   }
-  
-  static _skillSchema() {
+
+  static _generateSkillsSchema() {
     const fields = foundry.data.fields;
-    return {
-      trained: new fields.BooleanField({
-        required: true,
-        initial: false,
-        label: "Trained"
-      }),
-      focusRanks: new fields.NumberField({
-        required: true,
-        initial: 0,
-        min: 0,
-        integer: true,
-        label: "Skill Focus Ranks"
-      }),
-      misc: new fields.NumberField({
-        required: true,
-        initial: 0,
-        integer: true,
-        label: "Misc Modifier"
-      }),
-      total: new fields.NumberField({
-        required: true,
-        initial: 0,
-        integer: true,
-        label: "Total Modifier"
-      })
-    };
+    const skills = [
+      'acrobatics', 'climb', 'deception', 'endurance', 'gatherInformation',
+      'initiative', 'jump', 'knowledge', 'mechanics', 'perception',
+      'persuasion', 'pilot', 'ride', 'stealth', 'survival',
+      'swim', 'treatInjury', 'useComputer', 'useTheForce'
+    ];
+
+    const schema = {};
+    for (const skill of skills) {
+      schema[skill] = new fields.SchemaField({
+        trained: new fields.BooleanField({required: true, initial: false}),
+        focus: new fields.NumberField({required: true, initial: 0, min: 0}),
+        misc: new fields.NumberField({required: true, initial: 0}),
+        total: new fields.NumberField({required: true, initial: 0})
+      });
+    }
+    return schema;
   }
-  
-  /**
-   * Prepare derived data - called after base data is loaded
-   */
+
   prepareDerivedData() {
-    // Calculate ability modifiers
-    this._prepareAbilities();
-    
-    // Calculate defenses
-    this._prepareDefenses();
-    
-    // Calculate skills
-    this._prepareSkills();
-    
-    // Calculate resources
-    this._prepareResources();
-    
-    // Calculate speed
-    this._prepareSpeed();
-    
-    // Calculate damage threshold
-    this._prepareDamageThreshold();
+    // Calculate all derived values in the correct order
+    this._calculateAbilities();
+    this._applyConditionPenalties();
+    this._calculateDefenses();
+    this._calculateSkills();
+    this._calculateDamageThreshold();
+    this._calculateSpeed();
   }
-  
-  _prepareAbilities() {
+
+  _calculateAbilities() {
     for (const [key, ability] of Object.entries(this.abilities)) {
       ability.total = ability.base + ability.racial + ability.enhancement + ability.temp;
       ability.mod = Math.floor((ability.total - 10) / 2);
     }
   }
-  
-  _prepareDefenses() {
-    // Import calculation module
-    // This will be filled in by the calculation modules
+
+  _applyConditionPenalties() {
+    const penalties = [0, -1, -2, -5, -10, 0]; // 0=Normal, 5=Helpless
+    this.conditionTrack.penalty = penalties[this.conditionTrack.current];
   }
-  
-  _prepareSkills() {
-    // Import calculation module
-    // This will be filled in by the calculation modules
+
+  _calculateDefenses() {
+    const level = this.level || 1;
+
+    // Reflex: 10 + armor/level + dex + size + misc
+    const reflexArmor = this._getReflexArmorBonus();
+    this.defenses.reflex.total = 10 + reflexArmor + 
+      this.abilities.dex.mod + this.defenses.reflex.size + 
+      this.defenses.reflex.misc + this.conditionTrack.penalty;
+
+    // Fortitude: 10 + level + con/str + misc
+    const fortAbility = Math.max(this.abilities.con.mod, this.abilities.str.mod);
+    this.defenses.fortitude.total = 10 + level + fortAbility + 
+      this.defenses.fortitude.misc + this.conditionTrack.penalty;
+
+    // Will: 10 + level + wis + misc
+    this.defenses.will.total = 10 + level + this.abilities.wis.mod + 
+      this.defenses.will.misc + this.conditionTrack.penalty;
   }
-  
-  _prepareResources() {
-    // Calculate Second Wind healing
-    const level = this.parent.system.level || 1;
-    const conMod = this.abilities.con.mod;
-    this.secondWind.healing = Math.floor(level / 4) + conMod;
+
+  _getReflexArmorBonus() {
+    // This is where the armor vs level logic happens
+    const level = this.level || 1;
+    const armorBonus = this.defenses.reflex.armor;
+
+    // If wearing armor, use armor bonus, otherwise use level
+    return armorBonus > 0 ? armorBonus : level;
   }
-  
-  _prepareSpeed() {
-    this.speed.total = Math.max(0, this.speed.base + this.speed.armor + this.speed.misc);
+
+  _calculateSkills() {
+    const halfLevel = Math.floor((this.level || 1) / 2);
+    const abilityMap = {
+      acrobatics: 'dex', climb: 'str', deception: 'cha',
+      endurance: 'con', gatherInformation: 'cha', initiative: 'dex',
+      jump: 'str', knowledge: 'int', mechanics: 'int',
+      perception: 'wis', persuasion: 'cha', pilot: 'dex',
+      ride: 'dex', stealth: 'dex', survival: 'wis',
+      swim: 'str', treatInjury: 'wis', useComputer: 'int',
+      useTheForce: 'cha'
+    };
+
+    for (const [skillKey, skill] of Object.entries(this.skills)) {
+      const abilityKey = abilityMap[skillKey];
+      const abilityMod = this.abilities[abilityKey]?.mod || 0;
+
+      skill.total = halfLevel + abilityMod + 
+        (skill.trained ? 5 : 0) + 
+        (skill.focus * 5) + 
+        skill.misc + 
+        this.conditionTrack.penalty;
+    }
   }
-  
-  _prepareDamageThreshold() {
-    const fortDef = this.defenses.fortitude.total;
-    this.damageThreshold.total = fortDef + this.damageThreshold.armor + this.damageThreshold.misc;
+
+  _calculateDamageThreshold() {
+    this.damageThreshold = this.defenses.fortitude.total;
+  }
+
+  _calculateSpeed() {
+    this.speed.total = Math.max(0, this.speed.base - this.speed.armor);
   }
 }
