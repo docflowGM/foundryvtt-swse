@@ -3,9 +3,7 @@
 // NPC actor sheet
 // ============================================
 
-import { SWSEActorSheet } from "./swse-actor.js";
-
-export class SWSENPCSheet extends SWSEActorSheet {
+export class SWSENPCSheet extends SWSECharacterSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor", "npc"],
@@ -35,22 +33,5 @@ export class SWSENPCSheet extends SWSEActorSheet {
   // INHERITED METHOD STUBS
   // These prevent errors when parent tries to call them
   // ============================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

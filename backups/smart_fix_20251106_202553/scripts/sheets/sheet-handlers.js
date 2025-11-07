@@ -297,7 +297,7 @@ export function activateSheetListeners(html, sheet) {
  *     super.activateListeners(html);
  *     
  *     // Import and use the handler
- *     import { activateSheetListeners } from './sheet-handlers.js';
+ *     import { activateSheetListeners } from './path/to/sheet-handlers.js';
  *     activateSheetListeners(html, this);
  *   }
  * }

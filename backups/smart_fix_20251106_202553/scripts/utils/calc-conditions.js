@@ -2,7 +2,7 @@
  * Condition Track Effects
  */
 
-import { CONDITION_PENALTIES } from '../core/constants.js';
+import { CONDITION_PENALTIES } from '../../helpers/constants.js';
 
 export function applyConditionPenalty(actor) {
   const track = actor.system.conditionTrack || 'normal';

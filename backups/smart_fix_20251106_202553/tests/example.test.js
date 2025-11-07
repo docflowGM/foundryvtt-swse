@@ -4,7 +4,7 @@
  */
 
 import { calculateAbilities } from '../scripts/calculations/abilities.js';
-import { calculateDefenses } from '../scripts/rolls/defenses.js';
+import { calculateDefenses } from '../scripts/calculations/defenses.js';
 import { TestUtils } from './test-utils.js';
 
 describe('SWSE Core Systems', () => {

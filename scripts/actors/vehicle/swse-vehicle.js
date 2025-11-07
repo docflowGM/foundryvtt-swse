@@ -1,6 +1,6 @@
-import { SWSEActorSheet } from "./swse-actor.js";
 
-export class SWSEVehicleSheet extends SWSEActorSheet {
+
+export class SWSEVehicleSheet extends SWSECharacterSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor", "vehicle"],

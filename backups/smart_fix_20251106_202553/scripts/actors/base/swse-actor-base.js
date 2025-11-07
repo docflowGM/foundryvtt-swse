@@ -1,4 +1,4 @@
-import { SWSERoll } from '../../rolls/enhanced-rolls.js';
+import { SWSERoll } from '../rolls/enhanced-rolls.js';
 
 export class SWSEActorBase extends Actor {
 
