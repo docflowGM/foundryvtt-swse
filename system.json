@@ -26,13 +26,8 @@
     "index.js"
   ],
   "styles": [
-    "styles/swse.css",
-    "styles/swse-holo.css",
-    "styles/base/swse-base.css",
     "styles/components/swse-components.css",
-    "styles/character-sheet.css",
     "styles/sheets/character-sheet.css",
-    "styles/sheets/character-sheet-enhanced.css",
     "styles/sheets/unified-sheets.css",
     "styles/sheets/vehicle-sheet.css",
     "styles/apps/chargen.css",
@@ -219,6 +214,5 @@
     }
   ],
   "compatibleCoreVersion": "11",
-  "minimumCoreVersion": "10",
-  "lastCleanup": "2025-11-05T18:13:41.824038"
+  "minimumCoreVersion": "10"
 }

@@ -93,7 +93,7 @@
 .section-header,
 .section-header-black {
   position: relative;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .section-header::before,
