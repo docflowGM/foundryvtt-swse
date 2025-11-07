@@ -21,8 +21,6 @@ import { SWSEVehicleDataModel } from './scripts/data-models/vehicle-data-model.j
 // Core Systems
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
 import { preloadHandlebarsTemplates } from './scripts/core/load-templates.js';
-import { SWSERoll } from './scripts/rolls/swse-roll.js';
-import { SWSECombatAutomation } from './scripts/automation/combat-automation.js';
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 
 // Components
@@ -54,7 +52,6 @@ Hooks.once("init", async function() {
   // Create namespace for global access
   game.swse = {
     SWSEActorBase,
-    SWSERoll,
     DamageSystem,
     config: CONFIG.SWSE,
     components: {
@@ -171,9 +168,9 @@ Hooks.once("ready", async function() {
     `);
   }
 
-  // Initialize combat automation
+  // Initialize combat automation if enabled
   if (game.settings.get('swse', 'enableAutomation')) {
-    SWSECombatAutomation.init();
+    setupCombatAutomation();
   }
 
   // Set up condition recovery automation
@@ -273,6 +270,16 @@ function registerSystemSettings() {
 /* -------------------------------------------- */
 
 /**
+ * Set up combat automation hooks
+ */
+function setupCombatAutomation() {
+  console.log("SWSE | Setting up combat automation");
+  
+  // Add your combat automation hooks here if needed
+  // This is a placeholder for future combat automation features
+}
+
+/**
  * Set up automatic condition recovery on combat turn
  */
 function setupConditionRecovery() {
@@ -357,8 +364,8 @@ Hooks.on("renderChatMessage", (message, html, data) => {
     const actor = game.actors.get(message.speaker.actor);
     const item = actor?.items.get(itemId);
 
-    if (item) {
-      await SWSERoll.rollDamage(actor, item);
+    if (item && actor.rollDamage) {
+      await actor.rollDamage(item);
     }
   });
 });
@@ -402,7 +409,6 @@ function enhanceValidationLogging() {
 window.SWSE = {
   ConditionTrack: ConditionTrackComponent,
   ForceSuite: ForceSuiteComponent,
-  Roll: SWSERoll,
   Damage: DamageSystem,
   WorldDataLoader: WorldDataLoader
 };
