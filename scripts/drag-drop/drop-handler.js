@@ -3,11 +3,9 @@
  * Handles dropping Items onto Actors with automatic stat application
  */
 
-export class SWSEDropHandler {
+export class DropHandler {
   
-  static async handleDrop(actor, data) {
-    // TODO: Route drop events by item type
-    
+  static async handleItemDrop(actor, data) {
     if (data.type !== 'Item') return;
     
     const item = await Item.implementation.fromDropData(data);
@@ -34,40 +32,71 @@ export class SWSEDropHandler {
   }
   
   static async handleSpeciesDrop(actor, species) {
-    // TODO: Apply species bonuses
+    // Apply species bonuses:
     // - Ability score modifiers
     // - Size
     // - Speed
     // - Special abilities/features
     
+    // Check if actor already has a species
+    const existingSpecies = actor.items.find(i => i.type === 'species');
+    if (existingSpecies) {
+      const replace = await Dialog.confirm({
+        title: 'Replace Species?',
+        content: `<p>${actor.name} already has species: <strong>${existingSpecies.name}</strong></p>
+                  <p>Replace with <strong>${species.name}</strong>?</p>`
+      });
+      
+      if (!replace) return;
+      await existingSpecies.delete();
+    }
+    
     await actor.createEmbeddedDocuments('Item', [species.toObject()]);
     
     // Apply racial bonuses
+    const abilityMods = species.system.abilityMods || species.system.bonuses || {};
     const updates = {
-      'system.abilities.str.racial': species.system.abilityMods?.str || 0,
-      'system.abilities.dex.racial': species.system.abilityMods?.dex || 0,
-      // ... etc
+      'system.abilities.str.racial': abilityMods.str || 0,
+      'system.abilities.dex.racial': abilityMods.dex || 0,
+      'system.abilities.con.racial': abilityMods.con || 0,
+      'system.abilities.int.racial': abilityMods.int || 0,
+      'system.abilities.wis.racial': abilityMods.wis || 0,
+      'system.abilities.cha.racial': abilityMods.cha || 0,
       'system.size': species.system.size || 'medium',
       'system.speed.base': species.system.speed || 6
     };
     
     await actor.update(updates);
     
-    ui.notifications.info(\`Applied \${species.name} racial traits\`);
+    ui.notifications.info(`Applied ${species.name} racial traits to ${actor.name}`);
+    return true;
   }
   
   static async handleClassDrop(actor, classItem) {
-    // TODO: Add class level
+    // Add class level:
     // - Grant class features for this level
     // - Update BAB progression
     // - Update defense bonuses
     // - Add class skills
     
+    // Check if this class already exists
+    const existingClass = actor.items.find(i => 
+      i.type === 'class' && i.name === classItem.name
+    );
+    
+    if (existingClass) {
+      ui.notifications.warn(`${actor.name} already has ${classItem.name} class`);
+      return false;
+    }
+    
     await actor.createEmbeddedDocuments('Item', [classItem.toObject()]);
+    
+    ui.notifications.info(`Added ${classItem.name} class to ${actor.name}`);
+    return true;
   }
   
   static async handleDroidChassisDrop(actor, chassis) {
-    // TODO: Apply droid chassis template
+    // Apply droid chassis template:
     // - Replace ALL actor stats with chassis stats
     // - Set ability scores
     // - Set defenses
@@ -75,57 +104,141 @@ export class SWSEDropHandler {
     // - Set speed
     // - Add system slots
     
+    if (actor.type !== 'droid') {
+      ui.notifications.warn('Droid chassis can only be applied to droid actors!');
+      return false;
+    }
+    
+    const confirm = await Dialog.confirm({
+      title: 'Apply Droid Chassis?',
+      content: `<p>This will replace <strong>${actor.name}</strong>'s stats with the ${chassis.name} chassis.</p>
+                <p><strong>This cannot be undone!</strong></p>`
+    });
+    
+    if (!confirm) return false;
+    
     const updates = {
       'system.abilities.str.base': chassis.system.abilities?.str || 10,
       'system.abilities.dex.base': chassis.system.abilities?.dex || 10,
-      // ... complete stat replacement
+      'system.abilities.con.base': chassis.system.abilities?.con || 10,
+      'system.abilities.int.base': chassis.system.abilities?.int || 10,
+      'system.abilities.wis.base': chassis.system.abilities?.wis || 10,
+      'system.abilities.cha.base': chassis.system.abilities?.cha || 10,
+      'system.hp.max': chassis.system.hp || 30,
+      'system.hp.value': chassis.system.hp || 30,
+      'system.speed.base': chassis.system.speed || 6
     };
     
     await actor.update(updates);
     
-    ui.notifications.info(\`Applied \${chassis.name} droid chassis\`);
+    ui.notifications.info(`Applied ${chassis.name} droid chassis to ${actor.name}`);
+    return true;
   }
   
   static async handleVehicleTemplateDrop(actor, template) {
-    // TODO: Apply vehicle template
+    // Apply vehicle template:
     // - Replace ALL vehicle stats
     // - Set ship systems
     // - Set weapons
     // - Set crew requirements
     // - Set cargo capacity
     
-    await actor.update({
-      'system.type': template.system.vehicleType,
-      'system.shields': template.system.shields,
-      // ... complete vehicle stat replacement
+    if (actor.type !== 'vehicle') {
+      ui.notifications.warn('Vehicle templates can only be applied to vehicle actors!');
+      return false;
+    }
+    
+    const confirm = await Dialog.confirm({
+      title: 'Apply Vehicle Template?',
+      content: `<p>This will replace <strong>${actor.name}</strong>'s stats with the ${template.name} template.</p>
+                <p><strong>This cannot be undone!</strong></p>`
     });
     
-    ui.notifications.info(\`Applied \${template.name} vehicle template\`);
+    if (!confirm) return false;
+    
+    await actor.update({
+      'system.vehicleType': template.system.vehicleType || 'starfighter',
+      'system.shields': template.system.shields || 0,
+      'system.hull': template.system.hull || 0,
+      'system.speed': template.system.speed || 0
+    });
+    
+    ui.notifications.info(`Applied ${template.name} vehicle template to ${actor.name}`);
+    return true;
   }
   
   static async handleForcePowerDrop(actor, power) {
-    // TODO: Add to known powers
+    // Add to known powers:
     // - Check prerequisites
     // - Add to Force Powers list
     // - Optionally add to active suite
+    
+    // Check if already known
+    const existingPower = actor.items.find(i => 
+      i.type === 'forcepower' && i.name === power.name
+    );
+    
+    if (existingPower) {
+      ui.notifications.warn(`${actor.name} already knows ${power.name}`);
+      return false;
+    }
+    
+    await actor.createEmbeddedDocuments('Item', [power.toObject()]);
+    ui.notifications.info(`${actor.name} learned ${power.name}`);
+    return true;
   }
   
   static async handleFeatDrop(actor, feat) {
-    // TODO: Add feat
+    // Add feat:
     // - Check prerequisites
     // - Apply passive bonuses automatically
     // - Trigger recalculation
+    
+    // Check if already has feat
+    const existingFeat = actor.items.find(i => 
+      i.type === 'feat' && i.name === feat.name
+    );
+    
+    if (existingFeat) {
+      ui.notifications.warn(`${actor.name} already has ${feat.name}`);
+      return false;
+    }
+    
+    await actor.createEmbeddedDocuments('Item', [feat.toObject()]);
+    ui.notifications.info(`${actor.name} gained feat: ${feat.name}`);
+    return true;
   }
   
   static async handleTalentDrop(actor, talent) {
-    // TODO: Add talent
+    // Add talent:
     // - Check tree prerequisites
     // - Validate class access
     // - Apply bonuses
+    
+    // Check if already has talent
+    const existingTalent = actor.items.find(i => 
+      i.type === 'talent' && i.name === talent.name
+    );
+    
+    if (existingTalent) {
+      ui.notifications.warn(`${actor.name} already has ${talent.name}`);
+      return false;
+    }
+    
+    await actor.createEmbeddedDocuments('Item', [talent.toObject()]);
+    ui.notifications.info(`${actor.name} gained talent: ${talent.name}`);
+    return true;
   }
   
   static async handleDefaultDrop(actor, item) {
     // Standard item addition
-    return actor.createEmbeddedDocuments('Item', [item.toObject()]);
+    const created = await actor.createEmbeddedDocuments('Item', [item.toObject()]);
+    
+    if (created && created.length > 0) {
+      ui.notifications.info(`Added ${item.name} to ${actor.name}`);
+      return true;
+    }
+    
+    return false;
   }
 }
