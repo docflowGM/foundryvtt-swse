@@ -212,7 +212,5 @@
       "type": "Actor",
       "system": "swse"
     }
-  ],
-  "compatibleCoreVersion": "11",
-  "minimumCoreVersion": "10"
+  ]
 }
