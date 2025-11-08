@@ -32,9 +32,8 @@ export class SWSEActorSheetBase extends ActorSheet {
     // Organize items by type
     this._prepareItems(context);
     
-    // Enrich biography (using non-deprecated API)
-    const TextEditorImpl = foundry.applications?.ux?.TextEditor?.implementation || TextEditor;
-    context.enrichedBiography = await TextEditorImpl.enrichHTML(
+    // Enrich biography
+    context.enrichedBiography = await TextEditor.enrichHTML(
       system.biography || '',
       {
         async: true,
@@ -43,116 +42,11 @@ export class SWSEActorSheetBase extends ActorSheet {
       }
     );
     
-    // Convert string numbers to actual numbers to prevent toFixed errors
-    this._ensureNumericTypes(context);
-    
     // Add useful calculated values
     context.halfLevel = Math.floor((system.level || 1) / 2);
     context.conditionPenalty = actor.conditionPenalty || 0;
     
     return context;
-  }
-  
-  /**
-   * Ensure all numeric fields are actual numbers, not strings
-   * Prevents "value.toFixed is not a function" errors in templates
-   */
-  _ensureNumericTypes(context) {
-    if (!context.system) return;
-    
-    const system = context.system;
-    
-    // Helper to safely convert to number
-    const toNumber = (val, defaultVal = 0) => {
-      if (val === null || val === undefined || val === '') return defaultVal;
-      const num = Number(val);
-      return isNaN(num) ? defaultVal : num;
-    };
-    
-    // Convert top-level numeric fields
-    const numericFields = [
-      'level', 'experience', 'credits',
-      'currentHP', 'maxHP', 'temporaryHP',
-      'darkSideScore', 'forcePoints', 'destinyPoints'
-    ];
-    
-    numericFields.forEach(field => {
-      if (field in system) {
-        system[field] = toNumber(system[field]);
-      }
-    });
-    
-    // Handle nested objects with value properties
-    const nestedObjects = ['destinyPoints', 'forcePoints', 'darkSideScore'];
-    nestedObjects.forEach(obj => {
-      if (system[obj] && typeof system[obj] === 'object') {
-        if ('value' in system[obj]) {
-          system[obj].value = toNumber(system[obj].value);
-        }
-        if ('max' in system[obj]) {
-          system[obj].max = toNumber(system[obj].max);
-        }
-      }
-    });
-    
-    // Convert ability scores
-    if (system.abilities) {
-      for (const [key, ability] of Object.entries(system.abilities)) {
-        if (ability && typeof ability === 'object') {
-          ability.value = toNumber(ability.value, 10);
-          ability.mod = toNumber(ability.mod, 0);
-        }
-      }
-    }
-    
-    // Convert skills
-    if (system.skills) {
-      for (const [key, skill] of Object.entries(system.skills)) {
-        if (skill && typeof skill === 'object') {
-          skill.value = toNumber(skill.value, 0);
-          skill.mod = toNumber(skill.mod, 0);
-          skill.bonus = toNumber(skill.bonus, 0);
-        }
-      }
-    }
-    
-    // Convert defenses
-    if (system.defenses) {
-      for (const [key, defense] of Object.entries(system.defenses)) {
-        if (defense && typeof defense === 'object') {
-          defense.value = toNumber(defense.value, 10);
-          defense.flatFooted = toNumber(defense.flatFooted, 10);
-        }
-      }
-    }
-    
-    // Convert attack bonuses
-    if (system.attacks) {
-      for (const [key, attack] of Object.entries(system.attacks)) {
-        if (attack && typeof attack === 'object') {
-          attack.value = toNumber(attack.value, 0);
-          attack.bonus = toNumber(attack.bonus, 0);
-        }
-      }
-    }
-    
-    // Convert condition track
-    if (system.condition) {
-      system.condition = toNumber(system.condition, 0);
-    }
-    
-    // Convert vehicle/starship stats
-    if (system.shields) {
-      system.shields.value = toNumber(system.shields.value, 0);
-      system.shields.max = toNumber(system.shields.max, 0);
-    }
-    if (system.hull) {
-      system.hull.value = toNumber(system.hull.value, 0);
-      system.hull.max = toNumber(system.hull.max, 0);
-    }
-    if (system.speed) {
-      system.speed = toNumber(system.speed, 0);
-    }
   }
   
   _prepareItems(context) {
@@ -351,8 +245,7 @@ export class SWSEActorSheetBase extends ActorSheet {
    * Handle drop
    */
   async _onDrop(event) {
-    const TextEditorImpl = foundry.applications?.ux?.TextEditor?.implementation || TextEditor;
-    const data = TextEditorImpl.getDragEventData(event);
+    const data = TextEditor.getDragEventData(event);
     const actor = this.actor;
     
     // Handle different drop types

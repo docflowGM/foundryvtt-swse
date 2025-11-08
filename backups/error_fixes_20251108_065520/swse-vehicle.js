@@ -16,12 +16,6 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
   getData() {
     const context = super.getData();
 
-    // Ensure system object exists before accessing properties
-    if (!context.system) {
-      context.system = {};
-    }
-
-    // Initialize vehicle-specific properties safely
     if (!context.system.weapons) context.system.weapons = [];
     if (!context.system.crewPositions) {
       context.system.crewPositions = {

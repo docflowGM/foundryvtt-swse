@@ -5,7 +5,7 @@ export async function preloadHandlebarsTemplates() {
     "systems/swse/templates/actors/droid/droid-sheet.hbs",
     "systems/swse/templates/actors/npc/npc-sheet.hbs",
     "systems/swse/templates/actors/vehicle/vehicle-sheet.hbs",
-    "systems/swse/templates/items/base/item-sheet.hbs",
+    "systems/swse/templates/actors/item-sheet.hbs",
 
     // Character tabs
     "systems/swse/templates/actors/character/tabs/summary-tab.hbs",
