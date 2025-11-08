@@ -5,7 +5,7 @@
 
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
 
-export class SWSECharacterSheet extends ActorSheet {
+export class SWSECharacterSheet extends foundry.appv1.sheets.ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['swse', 'sheet', 'actor', 'character'],
@@ -40,7 +40,7 @@ export class SWSECharacterSheet extends ActorSheet {
     context.flags = actorData.flags;
     
     // Enrich editor content
-    context.enrichedBiography = await TextEditor.enrichHTML(
+    context.enrichedBiography = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
       this.actor.system.biography || '', 
       {
         async: true,

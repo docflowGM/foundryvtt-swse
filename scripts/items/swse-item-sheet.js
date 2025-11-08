@@ -1,4 +1,4 @@
-export class SWSEItemSheet extends ItemSheet {
+export class SWSEItemSheet extends foundry.appv1.sheets.ItemSheet {
 
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {

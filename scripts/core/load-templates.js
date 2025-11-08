@@ -31,7 +31,7 @@ export async function preloadHandlebarsTemplates() {
   console.log("SWSE | Preloading templates...");
 
   try {
-    await loadTemplates(templatePaths);
+    await foundry.applications.handlebars.loadTemplates(templatePaths);
     console.log(`SWSE | Successfully loaded ${templatePaths.length} templates`);
     return true;
   } catch (err) {

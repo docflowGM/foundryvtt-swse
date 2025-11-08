@@ -150,32 +150,32 @@ Hooks.once("init", async function() {
   // Unregister Core Sheets
   // ============================================
   
-  Actors.unregisterSheet("core", ActorSheet);
-  Items.unregisterSheet("core", ItemSheet);
+  foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
+  foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
 
   // ============================================
   // Register Actor Sheets
   // ============================================
   
-  Actors.registerSheet("swse", SWSECharacterSheet, {
+  foundry.documents.collections.foundry.documents.collections.Actors.registerSheet("swse", SWSECharacterSheet, {
     types: ["character"],
     makeDefault: true,
     label: "SWSE.SheetLabels.Character"
   });
 
-  Actors.registerSheet("swse", SWSENPCSheet, {
+  foundry.documents.collections.foundry.documents.collections.Actors.registerSheet("swse", SWSENPCSheet, {
     types: ["npc"],
     makeDefault: true,
     label: "SWSE.SheetLabels.NPC"
   });
 
-  Actors.registerSheet("swse", SWSEDroidSheet, {
+  foundry.documents.collections.foundry.documents.collections.Actors.registerSheet("swse", SWSEDroidSheet, {
     types: ["droid"],
     makeDefault: true,
     label: "SWSE.SheetLabels.Droid"
   });
 
-  Actors.registerSheet("swse", SWSEVehicleSheet, {
+  foundry.documents.collections.foundry.documents.collections.Actors.registerSheet("swse", SWSEVehicleSheet, {
     types: ["vehicle"],
     makeDefault: true,
     label: "SWSE.SheetLabels.Vehicle"
@@ -185,7 +185,7 @@ Hooks.once("init", async function() {
   // Register Item Sheets
   // ============================================
   
-  Items.registerSheet("swse", SWSEItemSheet, {
+  foundry.documents.collections.foundry.documents.collections.Items.registerSheet("swse", SWSEItemSheet, {
     types: ["weapon", "armor", "equipment", "feat", "talent", "forcepower", "class", "species"],
     makeDefault: true,
     label: "SWSE.SheetLabels.Item"
@@ -202,22 +202,34 @@ Hooks.once("init", async function() {
   // Register Handlebars Helpers
   // ============================================
   
-  registerHandlebarsHelpers();
+  // Register Handlebars helpers (with duplicate check)
+  if (!Handlebars.helpers.numberFormat) {
+    // Register Handlebars helpers (with duplicate check)
+  if (!Handlebars.helpers.numberFormat) {
+    registerHandlebarsHelpers();
+  }
+  }
 
   // Register condition-specific helpers
-  Handlebars.registerHelper('conditionPenalty', function(track) {
-    const penalties = [0, -1, -2, -5, -10, 0];
-    return penalties[track] || 0;
-  });
+  if (!Handlebars.helpers['conditionPenalty']) {
+    Handlebars.registerHelper('conditionPenalty', function(track) {
+      const penalties = [0, -1, -2, -5, -10, 0];
+      return penalties[track] || 0;
+    });
+  }
 
-  Handlebars.registerHelper('isHelpless', function(track) {
-    return track === 5;
-  });
+  if (!Handlebars.helpers['isHelpless']) {
+    Handlebars.registerHelper('isHelpless', function(track) {
+      return track === 5;
+    });
+  }
 
-  Handlebars.registerHelper('formatModifier', function(value) {
-    const num = Number(value) || 0;
-    return num >= 0 ? `+${num}` : `${num}`;
-  });
+  if (!Handlebars.helpers['formatModifier']) {
+    Handlebars.registerHelper('formatModifier', function(value) {
+      const num = Number(value) || 0;
+      return num >= 0 ? `+${num}` : `${num}`;
+    });
+  }
 
   // ============================================
   // Preload Templates
@@ -229,7 +241,7 @@ Hooks.once("init", async function() {
   // Configure Dice
   // ============================================
   
-  CONFIG.Dice.terms["d"] = Die;
+  CONFIG.Dice.terms["d"] = foundry.dice.terms.Die;
 
   // ============================================
   // Development Enhancements
