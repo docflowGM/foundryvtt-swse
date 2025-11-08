@@ -1,344 +1,206 @@
 /**
- * SWSE Houserule Settings
- * Comprehensive houserule configuration system
+ * House Rules Settings Registration
+ * Registers all configurable house rule settings for the SWSE system
  */
 
-export class SWSEHouseruleSettings {
-  static registerSettings() {
-    console.log("SWSE | Registering houserule settings...");
-    
-    // ==========================================
-    // MENU REGISTRATIONS
-    // ==========================================
-    
-    game.settings.registerMenu("swse", "characterCreationMenu", {
-      name: "SWSE.Settings.CharacterCreation.Name",
-      label: "SWSE.Settings.CharacterCreation.Label",
-      hint: "SWSE.Settings.CharacterCreation.Hint",
-      icon: "fas fa-user-plus",
-      type: CharacterCreationMenu,
-      restricted: true
-    });
-    
-    game.settings.registerMenu("swse", "advancementMenu", {
-      name: "SWSE.Settings.Advancement.Name",
-      label: "SWSE.Settings.Advancement.Label",
-      hint: "SWSE.Settings.Advancement.Hint",
-      icon: "fas fa-level-up-alt",
-      type: AdvancementMenu,
-      restricted: true
-    });
-    
-    game.settings.registerMenu("swse", "combatMenu", {
-      name: "SWSE.Settings.Combat.Name",
-      label: "SWSE.Settings.Combat.Label",
-      hint: "SWSE.Settings.Combat.Hint",
-      icon: "fas fa-swords",
-      type: CombatMenu,
-      restricted: true
-    });
-    
-    game.settings.registerMenu("swse", "forceMenu", {
-      name: "SWSE.Settings.Force.Name",
-      label: "SWSE.Settings.Force.Label",
-      hint: "SWSE.Settings.Force.Hint",
-      icon: "fas fa-hand-sparkles",
-      type: ForceMenu,
-      restricted: true
-    });
-    
-    game.settings.registerMenu("swse", "presetsMenu", {
-      name: "SWSE.Settings.Presets.Name",
-      label: "SWSE.Settings.Presets.Label",
-      hint: "SWSE.Settings.Presets.Hint",
-      icon: "fas fa-cog",
-      type: PresetsMenu,
-      restricted: true
-    });
-    
-    // ==========================================
-    // TIER 1: CRITICAL HOUSERULES
-    // ==========================================
-    
-    // Character Creation Settings (hidden - accessed via menu)
-    game.settings.register("swse", "characterCreation", {
-      scope: "world",
-      config: false,
-      type: Object,
-      default: {
-        abilityScoreMethod: "4d6drop",
-        pointBuyPool: 28,
-        pointBuyMin: 8,
-        pointBuyMax: 18,
-        arrayValues: [15, 14, 13, 12, 10, 8],
-        allowReroll: true,
-        rerollThreshold: 8,
-        hpGeneration: "roll",
-        maxHPLevels: 0,
-        startingCredits: "class"
-      }
-    });
-    
-    // Second Wind Improvement
-    game.settings.register("swse", "secondWindImproved", {
-      name: "SWSE.Settings.SecondWindImproved.Name",
-      hint: "SWSE.Settings.SecondWindImproved.Hint",
-      scope: "world",
-      config: true,
-      type: Boolean,
-      default: false
-    });
-    
-    // Talent Every Level
-    game.settings.register("swse", "talentEveryLevel", {
-      name: "SWSE.Settings.TalentEveryLevel.Name",
-      hint: "SWSE.Settings.TalentEveryLevel.Hint",
-      scope: "world",
-      config: true,
-      type: Boolean,
-      default: false
-    });
-    
-    // Death System Settings
-    game.settings.register("swse", "deathSystem", {
-      scope: "world",
-      config: false,
-      type: Object,
-      default: {
-        system: "standard",
-        strikesUntilDeath: 3,
-        returnToHP: 0,
-        strikeRemoval: "never",
-        displayStrikes: true,
-        deathAtNegativeCon: false,
-        massiveDamageThreshold: "fortitude"
-      }
-    });
-    
-    // Cross-class Skill Training
-    game.settings.register("swse", "crossClassSkillTraining", {
-      name: "SWSE.Settings.CrossClassSkills.Name",
-      hint: "SWSE.Settings.CrossClassSkills.Hint",
-      scope: "world",
-      config: true,
-      type: Boolean,
-      default: false
-    });
-    
-    // ==========================================
-    // TIER 2: BALANCE AND QOL HOUSERULES
-    // ==========================================
-    
-    // Skill Focus Restriction
-    game.settings.register("swse", "skillFocusRestriction", {
-      name: "SWSE.Settings.SkillFocusRestriction.Name",
-      hint: "SWSE.Settings.SkillFocusRestriction.Hint",
-      scope: "world",
-      config: false,
-      type: Object,
-      default: {
-        useTheForce: 8,
-        scaling: false
-      }
-    });
-    
-    // Armored Defense for All
-    game.settings.register("swse", "armoredDefenseForAll", {
-      name: "SWSE.Settings.ArmoredDefenseForAll.Name",
-      hint: "SWSE.Settings.ArmoredDefenseForAll.Hint",
-      scope: "world",
-      config: true,
-      type: Boolean,
-      default: false
-    });
-    
-    // Weapon Ranges
-    game.settings.register("swse", "weaponRangeMultiplier", {
-      name: "SWSE.Settings.WeaponRanges.Name",
-      hint: "SWSE.Settings.WeaponRanges.Hint",
-      scope: "world",
-      config: true,
-      type: Number,
-      choices: {
-        0.25: "Tactical (0.25x)",
-        0.5: "Halved (0.5x - Recommended)",
-        1.0: "Core Rules (1.0x)",
-        2.0: "Extended (2.0x)"
-      },
-      default: 0.5
-    });
-    
-    // Athletics Consolidation
-    game.settings.register("swse", "athleticsConsolidation", {
-      name: "SWSE.Settings.AthleticsConsolidation.Name",
-      hint: "SWSE.Settings.AthleticsConsolidation.Hint",
-      scope: "world",
-      config: true,
-      type: Boolean,
-      default: false
-    });
-    
-    // Diagonal Movement
-    game.settings.register("swse", "diagonalMovement", {
-      name: "SWSE.Settings.DiagonalMovement.Name",
-      hint: "SWSE.Settings.DiagonalMovement.Hint",
-      scope: "world",
-      config: true,
-      type: String,
-      choices: {
-        "swse": "All diagonals = 2 squares (SWSE)",
-        "alternating": "Alternating 1-2-1 (D&D 3.5)",
-        "simplified": "All diagonals = 1 square"
-      },
-      default: "alternating"
-    });
-    
-    // Force Point Recovery
-    game.settings.register("swse", "forcePointRecovery", {
-      name: "SWSE.Settings.ForcePointRecovery.Name",
-      hint: "SWSE.Settings.ForcePointRecovery.Hint",
-      scope: "world",
-      config: true,
-      type: String,
-      choices: {
-        "level": "Per Level (Standard)",
-        "session": "Per Session",
-        "daily": "Daily (Extended Rest)",
-        "encounter": "Per Encounter (Heroic)"
-      },
-      default: "level"
-    });
-    
-    // Condition Track Damage Cap
-    game.settings.register("swse", "conditionTrackCap", {
-      name: "SWSE.Settings.ConditionTrackCap.Name",
-      hint: "SWSE.Settings.ConditionTrackCap.Hint",
-      scope: "world",
-      config: true,
-      type: Number,
-      choices: {
-        0: "Unlimited",
-        1: "1 Step Maximum",
-        2: "2 Steps Maximum",
-        3: "3 Steps Maximum",
-        5: "5 Steps Maximum"
-      },
-      default: 0
-    });
-    
-    // ==========================================
-    // TIER 3: ADVANCED HOUSERULES
-    // ==========================================
-    
-    // Knowledge Skill Mode
-    game.settings.register("swse", "knowledgeSkillMode", {
-      name: "SWSE.Settings.KnowledgeSkills.Name",
-      hint: "SWSE.Settings.KnowledgeSkills.Hint",
-      scope: "world",
-      config: true,
-      type: String,
-      choices: {
-        "standard": "Standard (Separate Skills)",
-        "consolidated4": "Consolidated (4 Skills)",
-        "simplified2": "Simplified (2 Skills)"
-      },
-      default: "standard"
-    });
-    
-    // Dark Side Temptation
-    game.settings.register("swse", "darkSideTemptation", {
-      name: "SWSE.Settings.DarkSideTemptation.Name",
-      hint: "SWSE.Settings.DarkSideTemptation.Hint",
-      scope: "world",
-      config: true,
-      type: Boolean,
-      default: false
-    });
-    
-    // Blaster Charge Tracking
-    game.settings.register("swse", "trackBlasterCharges", {
-      name: "SWSE.Settings.BlasterCharges.Name",
-      hint: "SWSE.Settings.BlasterCharges.Hint",
-      scope: "world",
-      config: true,
-      type: Boolean,
-      default: false
-    });
-    
-    // Critical Hit Variant
-    game.settings.register("swse", "criticalHitVariant", {
-      name: "SWSE.Settings.CriticalHit.Name",
-      hint: "SWSE.Settings.CriticalHit.Hint",
-      scope: "world",
-      config: true,
-      type: String,
-      choices: {
-        "standard": "Standard (Double Damage)",
-        "maxplus": "Maximum + Roll",
-        "exploding": "Exploding Dice",
-        "trackonly": "Condition Track Only"
-      },
-      default: "standard"
-    });
-    
-    // Retraining
-    game.settings.register("swse", "retrainingEnabled", {
-      name: "SWSE.Settings.Retraining.Name",
-      hint: "SWSE.Settings.Retraining.Hint",
-      scope: "world",
-      config: true,
-      type: Boolean,
-      default: false
-    });
-    
-    // ==========================================
-    // SYSTEM TRACKING
-    // ==========================================
-    
-    game.settings.register("swse", "houseruleVersion", {
-      scope: "world",
-      config: false,
-      type: String,
-      default: "1.0.0"
-    });
-    
-    game.settings.register("swse", "houserulePreset", {
-      scope: "world",
-      config: false,
-      type: String,
-      default: "custom"
-    });
-    
-    console.log("SWSE | Houserule settings registered");
-  }
+export function registerHouseruleSettings() {
   
-  /**
-   * Get all houserule settings as an object
-   */
-  static getAllSettings() {
-    return {
-      // Character Creation
-      characterCreation: game.settings.get("swse", "characterCreation"),
-      secondWindImproved: game.settings.get("swse", "secondWindImproved"),
-      talentEveryLevel: game.settings.get("swse", "talentEveryLevel"),
-      deathSystem: game.settings.get("swse", "deathSystem"),
-      crossClassSkillTraining: game.settings.get("swse", "crossClassSkillTraining"),
-      
-      // Balance & QoL
-      skillFocusRestriction: game.settings.get("swse", "skillFocusRestriction"),
-      armoredDefenseForAll: game.settings.get("swse", "armoredDefenseForAll"),
-      weaponRangeMultiplier: game.settings.get("swse", "weaponRangeMultiplier"),
-      athleticsConsolidation: game.settings.get("swse", "athleticsConsolidation"),
-      diagonalMovement: game.settings.get("swse", "diagonalMovement"),
-      forcePointRecovery: game.settings.get("swse", "forcePointRecovery"),
-      conditionTrackCap: game.settings.get("swse", "conditionTrackCap"),
-      
-      // Advanced
-      knowledgeSkillMode: game.settings.get("swse", "knowledgeSkillMode"),
-      darkSideTemptation: game.settings.get("swse", "darkSideTemptation"),
-      trackBlasterCharges: game.settings.get("swse", "trackBlasterCharges"),
-      criticalHitVariant: game.settings.get("swse", "criticalHitVariant"),
-      retrainingEnabled: game.settings.get("swse", "retrainingEnabled")
-    };
-  }
+  // ============================================
+  // Character Creation
+  // ============================================
+  
+  game.settings.register("swse", "abilityScoreMethod", {
+    name: "Ability Score Generation Method",
+    hint: "How players generate ability scores during character creation",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "4d6drop": "4d6 Drop Lowest",
+      "organic": "Organic (24d6)",
+      "pointbuy": "Point Buy",
+      "array": "Standard Array",
+      "3d6": "3d6 Straight",
+      "2d6plus6": "2d6+6"
+    },
+    default: "4d6drop"
+  });
+
+  game.settings.register("swse", "pointBuyPool", {
+    name: "Point Buy Pool",
+    hint: "Total points available for point buy system",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 32,
+    range: {
+      min: 10,
+      max: 50,
+      step: 1
+    }
+  });
+
+  game.settings.register("swse", "allowAbilityReroll", {
+    name: "Allow Ability Score Rerolls",
+    hint: "Allow players to reroll if their total modifiers are too low",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  // ============================================
+  // Hit Points
+  // ============================================
+  
+  game.settings.register("swse", "hpGeneration", {
+    name: "HP Generation Method",
+    hint: "How HP is calculated when leveling up",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "roll": "Roll Hit Die",
+      "average": "Take Average",
+      "maximum": "Take Maximum",
+      "average_minimum": "Roll with Average Minimum"
+    },
+    default: "average"
+  });
+
+  game.settings.register("swse", "maxHPLevels", {
+    name: "Levels with Maximum HP",
+    hint: "Number of levels that automatically get max HP (usually 1st level)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 1,
+    range: {
+      min: 0,
+      max: 20,
+      step: 1
+    }
+  });
+
+  // ============================================
+  // Death & Dying
+  // ============================================
+  
+  game.settings.register("swse", "deathSystem", {
+    name: "Death System",
+    hint: "How character death is determined",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "standard": "Standard (-10 HP)",
+      "threeStrikes": "Three Strikes",
+      "negativeCon": "Negative CON Score"
+    },
+    default: "standard"
+  });
+
+  game.settings.register("swse", "deathSaveDC", {
+    name: "Death Save DC",
+    hint: "DC for death saves (if using three strikes system)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 10,
+    range: {
+      min: 5,
+      max: 20,
+      step: 1
+    }
+  });
+
+  // ============================================
+  // Combat
+  // ============================================
+  
+  game.settings.register("swse", "conditionTrackCap", {
+    name: "Condition Track Damage Cap",
+    hint: "Maximum condition track moves from a single hit (0 = unlimited)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 0,
+    range: {
+      min: 0,
+      max: 5,
+      step: 1
+    }
+  });
+
+  game.settings.register("swse", "criticalHitVariant", {
+    name: "Critical Hit Variant",
+    hint: "How critical hits are calculated",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "standard": "Standard (Double Damage)",
+      "maxplus": "Maximum + Roll",
+      "exploding": "Exploding Dice",
+      "trackonly": "Condition Track Only"
+    },
+    default: "standard"
+  });
+
+  game.settings.register("swse", "diagonalMovement", {
+    name: "Diagonal Movement Cost",
+    hint: "How diagonal movement is calculated",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "swse": "All = 2 squares (SWSE Default)",
+      "alternating": "1-2-1 Alternating (D&D 3.5)",
+      "simplified": "All = 1 square"
+    },
+    default: "swse"
+  });
+
+  game.settings.register("swse", "weaponRangeMultiplier", {
+    name: "Weapon Range Multiplier",
+    hint: "Multiplier applied to all weapon ranges",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 1.0,
+    range: {
+      min: 0.25,
+      max: 2.0,
+      step: 0.25
+    }
+  });
+
+  // ============================================
+  // Second Wind
+  // ============================================
+  
+  game.settings.register("swse", "secondWindImproved", {
+    name: "Improved Second Wind",
+    hint: "Second Wind also improves condition track by one step",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register("swse", "secondWindRecovery", {
+    name: "Second Wind Recovery",
+    hint: "When Second Wind uses are recovered",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "encounter": "After Each Encounter",
+      "short": "After Short Rest",
+      "extended": "After Extended Rest"
+    },
+    default: "encounter"
+  });
+
+  console.log("SWSE | House rule settings registered");
 }
