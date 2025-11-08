@@ -1,5 +1,5 @@
 Repository Structure Map
-Generated: 2025-11-06 20:00:29
+Generated: 2025-11-08 12:13:41
 ======================================================================
 
 foundryvtt-swse/
@@ -82,38 +82,38 @@ foundryvtt-swse/
 ├── data/
 │   ├── armor/
 │   │   ├── heavy.db (13.5KB)
-│   │   ├── heavy.json (3.6KB)
+│   │   ├── heavy.json (4.9KB)
 │   │   ├── light.db (18.8KB)
-│   │   ├── light.json (4.9KB)
+│   │   ├── light.json (6.5KB)
 │   │   ├── medium.db (15.2KB)
-│   │   └── medium.json (4.0KB)
+│   │   └── medium.json (5.4KB)
 │   ├── attributes.json (2.6KB)
-│   ├── attributes.schema.json (591.0B)
+│   ├── attributes.schema.json (725.0B)
 │   ├── classes.json (120.1KB)
 │   ├── combat-actions.json (17.2KB)
-│   ├── combat-actions.schema.json (820.0B)
+│   ├── combat-actions.schema.json (1.2KB)
 │   ├── conditions.json (2.4KB)
-│   ├── conditions.schema.json (679.0B)
+│   ├── conditions.schema.json (813.0B)
 │   ├── Droids.json (137.3KB)
 │   ├── droids.schema.json (2.0B)
 │   ├── equipment.json (120.8KB)
-│   ├── equipment.schema.json (620.0B)
+│   ├── equipment.schema.json (762.0B)
 │   ├── extraskilluses.json (38.0KB)
 │   ├── extraskilluses.schema.json (793.0B)
 │   ├── feats.json (74.7KB)
-│   ├── feats.schema.json (1.3KB)
+│   ├── feats.schema.json (1.4KB)
 │   ├── forcepowers.json (2.0B)
-│   ├── forcepowers.schema.json (1.0KB)
+│   ├── forcepowers.schema.json (1.4KB)
 │   ├── skills.json (4.2KB)
-│   ├── skills.schema.json (485.0B)
+│   ├── skills.schema.json (574.0B)
 │   ├── special-combat-condition.json (13.3KB)
 │   ├── talent_trees.json (6.7KB)
 │   ├── talents.json (172.4KB)
-│   ├── talents.schema.json (1.4KB)
+│   ├── talents.schema.json (1.5KB)
 │   ├── vehicles.json (357.6KB)
-│   ├── vehicles.schema.json (3.7KB)
+│   ├── vehicles.schema.json (4.7KB)
 │   ├── weapons.json (28.0KB)
-│   └── weapons.schema.json (2.1KB)
+│   └── weapons.schema.json (2.4KB)
 ├── docs/
 │   ├── reports/
 │   │   └── .gitignore (38.0B)
@@ -132,13 +132,13 @@ foundryvtt-swse/
 │   └── handlebars/
 │       ├── array-helpers.js (733.0B)
 │       ├── comparison-helpers.js (515.0B)
-│       ├── index.js (1.2KB)
+│       ├── index.js (1.3KB)
 │       ├── math-helpers.js (882.0B)
 │       ├── string-helpers.js (474.0B)
 │       ├── swse-helpers.js (1.4KB)
 │       └── utility-helpers.js (509.0B)
 ├── lang/
-│   └── en.json (1.4KB)
+│   └── en.json (4.5KB)
 ├── packs/
 │   ├── armor-heavy.db (6.7KB)
 │   ├── armor-light.db (9.0KB)
@@ -164,11 +164,9 @@ foundryvtt-swse/
 ├── scripts/
 │   ├── actors/
 │   │   ├── base/
-│   │   │   └── swse-actor-base.js (5.1KB)
+│   │   │   └── swse-actor-base.js (5.5KB)
 │   │   ├── character/
-│   │   │   ├── swse-character-sheet-enhanced.js (18.3KB)
-│   │   │   ├── swse-character-sheet.js (4.6KB)
-│   │   │   └── swse-character.js (877.0B)
+│   │   │   └── swse-character-sheet.js (25.1KB)
 │   │   ├── droid/
 │   │   │   ├── swse-droid-handler.js (1.2KB)
 │   │   │   └── swse-droid.js (1.1KB)
@@ -176,7 +174,7 @@ foundryvtt-swse/
 │   │   │   └── swse-npc.js (1.1KB)
 │   │   └── vehicle/
 │   │       ├── swse-vehicle-handler.js (1.0KB)
-│   │       └── swse-vehicle.js (3.5KB)
+│   │       └── swse-vehicle.js (3.7KB)
 │   ├── apps/
 │   │   ├── chargen-init.js (2.2KB)
 │   │   ├── chargen.js (26.4KB)
@@ -197,12 +195,11 @@ foundryvtt-swse/
 │   │   ├── constants.js (1.5KB)
 │   │   ├── init.js (167.0B)
 │   │   ├── keybindings.js (525.0B)
-│   │   ├── load-templates.js (1.7KB)
+│   │   ├── load-templates.js (1.8KB)
 │   │   ├── races.js (5.8KB)
 │   │   ├── rolls-init.js (979.0B)
 │   │   ├── settings.js (700.0B)
 │   │   ├── swse-data.js (1.5KB)
-│   │   ├── swse.js (4.3KB)
 │   │   ├── utils-init.js (1.1KB)
 │   │   └── world-data-loader.js (13.3KB)
 │   ├── data-models/
@@ -217,6 +214,11 @@ foundryvtt-swse/
 │   │   └── drop-handler.js (3.9KB)
 │   ├── gm-tools/
 │   │   └── homebrew-manager.js (1.1KB)
+│   ├── houserules/
+│   │   ├── houserule-mechanics.js (10.8KB)
+│   │   ├── houserule-menus.js (9.0KB)
+│   │   ├── houserule-presets.js (5.1KB)
+│   │   └── houserule-settings.js (10.7KB)
 │   ├── items/
 │   │   ├── base/
 │   │   │   └── swse-item-base.js (737.0B)
@@ -232,90 +234,93 @@ foundryvtt-swse/
 │   │   ├── initiative.js (1.8KB)
 │   │   ├── saves.js (1.7KB)
 │   │   ├── skills-reference.js (11.0KB)
-│   │   ├── skills.js (2.9KB)
-│   │   └── swse-roll.js (1.6KB)
+│   │   └── skills.js (2.9KB)
 │   ├── sheets/
-│   │   ├── base-sheet.js (7.3KB)
+│   │   ├── base-sheet.js (10.8KB)
 │   │   └── sheet-handlers.js (8.3KB)
-│   ├── utils/
-│   │   ├── calc-abilities.js (554.0B)
-│   │   ├── calc-conditions.js (500.0B)
-│   │   ├── calc-defenses.js (2.3KB)
-│   │   ├── calc-skills.js (891.0B)
-│   │   ├── character-utils.js (2.7KB)
-│   │   ├── combat-utils.js (2.6KB)
-│   │   ├── data-utils.js (3.3KB)
-│   │   ├── dice-utils.js (5.2KB)
-│   │   ├── macro-functions.js (607.0B)
-│   │   ├── math-utils.js (2.8KB)
-│   │   ├── string-utils.js (2.4KB)
-│   │   ├── ui-utils.js (3.0KB)
-│   │   └── validation-utils.js (2.5KB)
-│   └── swse-init.js (5.3KB)
+│   └── utils/
+│       ├── calc-abilities.js (554.0B)
+│       ├── calc-conditions.js (494.0B)
+│       ├── calc-defenses.js (2.3KB)
+│       ├── calc-skills.js (885.0B)
+│       ├── character-utils.js (2.7KB)
+│       ├── combat-utils.js (2.6KB)
+│       ├── data-utils.js (3.3KB)
+│       ├── dice-utils.js (5.2KB)
+│       ├── macro-functions.js (607.0B)
+│       ├── math-utils.js (2.8KB)
+│       ├── string-utils.js (2.4KB)
+│       ├── ui-utils.js (3.0KB)
+│       └── validation-utils.js (2.5KB)
 ├── styles/
 │   ├── apps/
 │   │   └── chargen.css (7.3KB)
 │   ├── components/
-│   │   └── swse-components.css (12.5KB)
+│   │   └── swse-components.css (12.4KB)
 │   ├── sheets/
 │   │   ├── character-sheet.css (33.6KB)
 │   │   ├── unified-sheets.css (20.8KB)
-│   │   └── vehicle-sheet.css (14.3KB)
+│   │   └── vehicle-sheet.css (14.2KB)
 │   └── themes/
 │       └── holo-theme.css (3.7KB)
 ├── templates/
 │   ├── actors/
 │   │   ├── character/
 │   │   │   ├── tabs/
-│   │   │   │   ├── abilities-tab.hbs (3.3KB)
-│   │   │   │   ├── biography-tab.hbs (2.0KB)
-│   │   │   │   ├── combat-tab.hbs (3.3KB)
-│   │   │   │   ├── force-tab.hbs (3.8KB)
-│   │   │   │   ├── inventory-tab.hbs (1.4KB)
-│   │   │   │   ├── skills-tab.hbs (3.2KB)
-│   │   │   │   ├── summary-tab.hbs (4.4KB)
-│   │   │   │   └── talents-tab.hbs (3.5KB)
-│   │   │   └── character-sheet.hbs (1.7KB)
+│   │   │   │   ├── abilities-tab.hbs (2.4KB)
+│   │   │   │   ├── biography-tab.hbs (1.9KB)
+│   │   │   │   ├── combat-tab.hbs (2.8KB)
+│   │   │   │   ├── force-tab.hbs (3.2KB)
+│   │   │   │   ├── inventory-tab.hbs (1.2KB)
+│   │   │   │   ├── skills-tab.hbs (2.5KB)
+│   │   │   │   ├── summary-tab.hbs (3.3KB)
+│   │   │   │   └── talents-tab.hbs (2.6KB)
+│   │   │   └── character-sheet.hbs (1.6KB)
 │   │   ├── droid/
-│   │   │   └── droid-sheet.hbs (12.6KB)
+│   │   │   └── droid-sheet.hbs (10.1KB)
 │   │   ├── npc/
-│   │   │   └── npc-sheet.hbs (5.6KB)
+│   │   │   └── npc-sheet.hbs (4.6KB)
 │   │   ├── tabs/
-│   │   │   ├── force-tab.hbs (1.6KB)
-│   │   │   └── summary-tab.hbs (2.5KB)
-│   │   ├── vehicle/
-│   │   │   └── vehicle-sheet.hbs (18.5KB)
-│   │   └── item-sheet.hbs (5.5KB)
+│   │   │   ├── force-tab.hbs (1.3KB)
+│   │   │   └── summary-tab.hbs (2.1KB)
+│   │   └── vehicle/
+│   │       └── vehicle-sheet.hbs (12.4KB)
 │   ├── apps/
 │   │   ├── chargen/
-│   │   │   ├── chargen.hbs (9.3KB)
-│   │   │   └── narrative-chargen.hbs (7.6KB)
+│   │   │   ├── chargen.hbs (7.8KB)
+│   │   │   └── narrative-chargen.hbs (4.4KB)
+│   │   ├── houserules/
+│   │   │   ├── advancement.hbs (60.0B)
+│   │   │   ├── character-creation.hbs (2.5KB)
+│   │   │   ├── combat.hbs (3.2KB)
+│   │   │   ├── force.hbs (54.0B)
+│   │   │   └── presets.hbs (56.0B)
 │   │   ├── store/
 │   │   │   ├── gm-settings.html (497.0B)
-│   │   │   ├── gm-settings.js (878.0B)
-│   │   │   ├── store.hbs (2.0KB)
+│   │   │   ├── gm-settings.js (803.0B)
+│   │   │   ├── store.hbs (1.8KB)
 │   │   │   ├── store.html (1.9KB)
-│   │   │   └── store.js (3.6KB)
-│   │   └── chargen.hbs (9.3KB)
+│   │   │   └── store.js (3.4KB)
+│   │   └── chargen.hbs (7.8KB)
 │   ├── gm-tools/
-│   │   └── homebrew-dialog.hbs (572.0B)
+│   │   └── homebrew-dialog.hbs (546.0B)
 │   ├── items/
 │   │   └── base/
-│   │       └── item-sheet.hbs (16.2KB)
+│   │       └── item-sheet.hbs (4.6KB)
 │   ├── partials/
 │   │   ├── actor/
-│   │   │   └── persistent-header.hbs (4.0KB)
+│   │   │   └── persistent-header.hbs (3.2KB)
 │   │   ├── ui/
-│   │   │   └── condition-track.hbs (2.7KB)
-│   │   ├── ability-block.hbs (744.0B)
-│   │   ├── ability-scores.hbs (934.0B)
-│   │   ├── defenses.hbs (820.0B)
-│   │   ├── item-controls.hbs (297.0B)
+│   │   │   └── condition-track.hbs (2.4KB)
+│   │   ├── ability-block.hbs (597.0B)
+│   │   ├── ability-scores.hbs (820.0B)
+│   │   ├── defenses.hbs (702.0B)
+│   │   ├── item-controls.hbs (238.0B)
 │   │   ├── README.md (906.0B)
-│   │   ├── skill-row.hbs (785.0B)
-│   │   └── tab-navigation.hbs (452.0B)
+│   │   ├── skill-row.hbs (708.0B)
+│   │   └── tab-navigation.hbs (381.0B)
 │   └── sheets/
-│       └── character-sheet.hbs (11.7KB)
+│       └── character-sheet-legacy.hbs (8.5KB)
 ├── tests/
 │   ├── example.test.js (1.7KB)
 │   └── test-utils.js (945.0B)
@@ -325,7 +330,9 @@ foundryvtt-swse/
 │   │   ├── rebuild_classes_db.py (3.0KB)
 │   │   └── scan_repo.py (7.5KB)
 │   └── migration-helper.js (1.2KB)
-├── index.js (5.0KB)
+├── HOUSERULE_IMPLEMENTATION_SUMMARY.txt (1.9KB)
+├── index.js (11.8KB)
+├── REPO_STRUCTURE.txt (14.6KB)
 ├── swse.zip (2.7MB)
 ├── system.json (5.2KB)
 └── template.json (5.0KB)
@@ -334,16 +341,16 @@ foundryvtt-swse/
 Repository Statistics
 ======================================================================
 
-Total Directories: 62
-Total Files: 264
+Total Directories: 64
+Total Files: 269
 Total Size: 8.3MB
 
 Files by Type:
-  JavaScript        82 files  (269.8KB)
+  JavaScript        81 files  (306.1KB)
   Images            68 files  (2.3MB)
+  Templates         36 files  (104.4KB)
   Data              33 files  (1.1MB)
-  Templates         32 files  (142.5KB)
   Other             28 files  (4.3MB)
-  Docs              12 files  (49.0KB)
-  Styles             6 files  (92.2KB)
+  Docs              14 files  (65.5KB)
+  Styles             6 files  (92.1KB)
   Python             3 files  (14.2KB)

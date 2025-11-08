@@ -3,30 +3,80 @@
 // Foundry VTT | Star Wars Saga Edition
 // ============================================
 
-// Actor Classes and Sheets
+/* -------------------------------------------- */
+/*  Actor Classes and Sheets                    */
+/* -------------------------------------------- */
+
 import { SWSEActorBase } from './scripts/actors/base/swse-actor-base.js';
+import { SWSECharacterSheet } from './scripts/actors/character/swse-character-sheet.js';
 import { SWSEDroidSheet } from './scripts/actors/droid/swse-droid.js';
 import { SWSENPCSheet } from './scripts/actors/npc/swse-npc.js';
 import { SWSEVehicleSheet } from './scripts/actors/vehicle/swse-vehicle.js';
 
-// Item Sheets
+/* -------------------------------------------- */
+/*  Item Classes and Sheets                     */
+/* -------------------------------------------- */
+
+import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
 import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 
-// Data Models
+/* -------------------------------------------- */
+/*  Data Models                                 */
+/* -------------------------------------------- */
+
 import { SWSECharacterDataModel } from './scripts/data-models/character-data-model.js';
 import { SWSEVehicleDataModel } from './scripts/data-models/vehicle-data-model.js';
 
-// Core Systems
+/* -------------------------------------------- */
+/*  Core Systems                                */
+/* -------------------------------------------- */
+
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
 import { preloadHandlebarsTemplates } from './scripts/core/load-templates.js';
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 
-// Components
+/* -------------------------------------------- */
+/*  Components                                  */
+/* -------------------------------------------- */
+
 import { ConditionTrackComponent } from './scripts/components/condition-track.js';
 import { ForceSuiteComponent } from './scripts/components/force-suite.js';
 
-// Combat Systems
+/* -------------------------------------------- */
+/*  Combat Systems                              */
+/* -------------------------------------------- */
+
 import { DamageSystem } from './scripts/combat/damage-system.js';
+
+/* -------------------------------------------- */
+/*  Applications                                */
+/* -------------------------------------------- */
+
+// Character Generator is initialized via its init file
+import './scripts/apps/chargen-init.js';
+
+// Store and Level Up apps
+import { SWSEStore } from './scripts/apps/store.js';
+import { SWSELevelUp } from './scripts/apps/swse-levelup.js';
+
+/* -------------------------------------------- */
+/*  Drag & Drop                                 */
+/* -------------------------------------------- */
+
+import { DropHandler } from './scripts/drag-drop/drop-handler.js';
+
+/* -------------------------------------------- */
+/*  Chat                                        */
+/* -------------------------------------------- */
+
+import './scripts/chat/chat-commands.js';
+
+/* -------------------------------------------- */
+/*  House Rules                                 */
+/* -------------------------------------------- */
+
+import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
+import { HouseruleMechanics } from './scripts/houserules/houserule-mechanics.js';
 
 /* -------------------------------------------- */
 /*  System Configuration                        */
@@ -46,22 +96,49 @@ CONFIG.SWSE = SWSE;
 
 Hooks.once("init", async function() {
   console.log("SWSE | Initializing Star Wars Saga Edition System");
-
-  // Create namespace for global access
+  
+  // ============================================
+  // Create Global Namespace
+  // ============================================
+  
   game.swse = {
+    // Core Classes
     SWSEActorBase,
+    SWSEItemBase,
+    
+    // Systems
     DamageSystem,
+    WorldDataLoader,
+    DropHandler,
+    HouseruleMechanics,
+    
+    // Configuration
     config: CONFIG.SWSE,
+    
+    // Components
     components: {
       ConditionTrack: ConditionTrackComponent,
       ForceSuite: ForceSuiteComponent
+    },
+    
+    // Applications
+    apps: {
+      Store: SWSEStore,
+      LevelUp: SWSELevelUp
     }
   };
 
-  // Define custom Document classes
+  // ============================================
+  // Configure Document Classes
+  // ============================================
+  
   CONFIG.Actor.documentClass = SWSEActorBase;
+  CONFIG.Item.documentClass = SWSEItemBase;
 
-  // Register Data Models (Foundry V11+ uses systemDataModels)
+  // ============================================
+  // Register Data Models (Foundry V11+)
+  // ============================================
+  
   CONFIG.Actor.systemDataModels = {
     character: SWSECharacterDataModel,
     npc: SWSECharacterDataModel,
@@ -69,11 +146,17 @@ Hooks.once("init", async function() {
     vehicle: SWSEVehicleDataModel
   };
 
-  // Unregister core sheets
+  // ============================================
+  // Unregister Core Sheets
+  // ============================================
+  
   Actors.unregisterSheet("core", ActorSheet);
   Items.unregisterSheet("core", ItemSheet);
 
+  // ============================================
   // Register Actor Sheets
+  // ============================================
+  
   Actors.registerSheet("swse", SWSECharacterSheet, {
     types: ["character"],
     makeDefault: true,
@@ -98,20 +181,30 @@ Hooks.once("init", async function() {
     label: "SWSE.SheetLabels.Vehicle"
   });
 
-  // Register Item sheets
+  // ============================================
+  // Register Item Sheets
+  // ============================================
+  
   Items.registerSheet("swse", SWSEItemSheet, {
     types: ["weapon", "armor", "equipment", "feat", "talent", "forcepower", "class", "species"],
     makeDefault: true,
     label: "SWSE.SheetLabels.Item"
   });
 
-  // Register system settings
+  // ============================================
+  // Register System Settings
+  // ============================================
+  
   registerSystemSettings();
+  registerHouseruleSettings();
 
-  // Register Handlebars helpers
+  // ============================================
+  // Register Handlebars Helpers
+  // ============================================
+  
   registerHandlebarsHelpers();
 
-  // Register custom Handlebars helpers for conditions
+  // Register condition-specific helpers
   Handlebars.registerHelper('conditionPenalty', function(track) {
     const penalties = [0, -1, -2, -5, -10, 0];
     return penalties[track] || 0;
@@ -126,59 +219,91 @@ Hooks.once("init", async function() {
     return num >= 0 ? `+${num}` : `${num}`;
   });
 
-  // Preload templates
+  // ============================================
+  // Preload Templates
+  // ============================================
+  
   await preloadHandlebarsTemplates();
 
-  // Configure dice (Die is a Foundry global)
+  // ============================================
+  // Configure Dice
+  // ============================================
+  
   CONFIG.Dice.terms["d"] = Die;
 
-  // Enhance validation logging
+  // ============================================
+  // Development Enhancements
+  // ============================================
+  
   enhanceValidationLogging();
 
-  console.log("SWSE | System Initialized");
+  console.log("SWSE | System Initialized Successfully");
 });
 
 /* -------------------------------------------- */
-/*  System Ready                                */
+/*  System Ready Hook                           */
 /* -------------------------------------------- */
 
 Hooks.once("ready", async function() {
   console.log("SWSE | System Ready");
 
-  // Auto-load world data for GM
+  // ============================================
+  // Load World Data (GM Only)
+  // ============================================
+  
   if (game.user.isGM) {
     await WorldDataLoader.autoLoad();
 
-    // Show welcome message
-    ui.notifications.info(`
-      SWSE Enhanced System Loaded!
-      • Visual Condition Track active
-      • Damage Threshold automation enabled
-      • Force Suite management ready
-      • Check the Summary tab for your combat dashboard
-    `);
+    // Show welcome message (only once)
+    if (!game.settings.get('swse', 'welcomeShown')) {
+      ui.notifications.info(`
+        <strong>SWSE Enhanced System Loaded!</strong><br>
+        • Visual Condition Track active<br>
+        • Damage Threshold automation enabled<br>
+        • Force Suite management ready<br>
+        • Check the Summary tab for your combat dashboard
+      `, { permanent: false });
+      
+      await game.settings.set('swse', 'welcomeShown', true);
+    }
   }
 
-  // Initialize combat automation if enabled
+  // ============================================
+  // Initialize Combat Automation
+  // ============================================
+  
   if (game.settings.get('swse', 'enableAutomation')) {
     setupCombatAutomation();
   }
 
-  // Set up condition recovery automation
+  // ============================================
+  // Initialize Condition Recovery
+  // ============================================
+  
   if (game.settings.get('swse', 'autoConditionRecovery')) {
     setupConditionRecovery();
   }
+
+  // ============================================
+  // Initialize House Rules
+  // ============================================
+  
+  HouseruleMechanics.initialize();
 });
 
 /* -------------------------------------------- */
-/*  System Settings                             */
+/*  System Settings Registration                */
 /* -------------------------------------------- */
 
 /**
- * Register all system settings
+ * Register all core system settings
  */
 function registerSystemSettings() {
-  // Data loaded flag
+  
+  // ============================================
+  // Data Management
+  // ============================================
+  
   game.settings.register("swse", "dataLoaded", {
     name: "Data Loaded",
     scope: "world",
@@ -187,7 +312,6 @@ function registerSystemSettings() {
     default: false
   });
 
-  // Welcome message shown flag
   game.settings.register('swse', 'welcomeShown', {
     scope: 'world',
     config: false,
@@ -195,69 +319,90 @@ function registerSystemSettings() {
     default: false
   });
 
-  // Combat automation
+  // ============================================
+  // Combat Automation
+  // ============================================
+  
   game.settings.register('swse', 'enableAutomation', {
-    name: 'Enable Combat Automation',
-    hint: 'Automatically apply combat effects and track conditions',
+    name: 'SWSE.Settings.EnableAutomation.Name',
+    hint: 'SWSE.Settings.EnableAutomation.Hint',
     scope: 'world',
     config: true,
     type: Boolean,
     default: true
   });
 
-  // Condition recovery
   game.settings.register('swse', 'autoConditionRecovery', {
-    name: 'Automatic Condition Recovery',
-    hint: 'Prompt for condition recovery at start of turn',
+    name: 'SWSE.Settings.AutoConditionRecovery.Name',
+    hint: 'SWSE.Settings.AutoConditionRecovery.Hint',
     scope: 'world',
     config: true,
     type: Boolean,
     default: true
   });
 
-  // Damage threshold
   game.settings.register('swse', 'autoDamageThreshold', {
-    name: 'Automatic Damage Threshold',
-    hint: 'Automatically move condition track when damage exceeds threshold',
+    name: 'SWSE.Settings.AutoDamageThreshold.Name',
+    hint: 'SWSE.Settings.AutoDamageThreshold.Hint',
     scope: 'world',
     config: true,
     type: Boolean,
     default: true
   });
 
-  // Force Point bonus
+  // ============================================
+  // Force Points
+  // ============================================
+  
   game.settings.register("swse", "forcePointBonus", {
-    name: "Force Point Bonus",
-    hint: "Bonus applied when spending Force Points",
+    name: 'SWSE.Settings.ForcePointBonus.Name',
+    hint: 'SWSE.Settings.ForcePointBonus.Hint',
     scope: "world",
     config: true,
     type: Number,
-    default: 2
+    default: 2,
+    range: {
+      min: 0,
+      max: 10,
+      step: 1
+    }
   });
 
-  // Store markup
+  // ============================================
+  // Store Settings
+  // ============================================
+  
   game.settings.register("swse", "storeMarkup", {
-    name: "Store Markup %",
-    hint: "Percentage markup on store items",
+    name: 'SWSE.Settings.StoreMarkup.Name',
+    hint: 'SWSE.Settings.StoreMarkup.Hint',
     scope: "world",
     config: true,
     type: Number,
-    default: 0
+    default: 0,
+    range: {
+      min: -100,
+      max: 1000,
+      step: 5
+    }
   });
 
-  // Store discount
   game.settings.register("swse", "storeDiscount", {
-    name: "Store Discount %",
-    hint: "Percentage discount on store items",
+    name: 'SWSE.Settings.StoreDiscount.Name',
+    hint: 'SWSE.Settings.StoreDiscount.Hint',
     scope: "world",
     config: true,
     type: Number,
-    default: 0
+    default: 0,
+    range: {
+      min: 0,
+      max: 100,
+      step: 5
+    }
   });
 }
 
 /* -------------------------------------------- */
-/*  Combat Automation                           */
+/*  Combat Automation Setup                     */
 /* -------------------------------------------- */
 
 /**
@@ -266,8 +411,23 @@ function registerSystemSettings() {
 function setupCombatAutomation() {
   console.log("SWSE | Setting up combat automation");
   
-  // Add your combat automation hooks here if needed
-  // This is a placeholder for future combat automation features
+  // Initialize combat tracking
+  Hooks.on('createCombat', (combat, options, userId) => {
+    console.log("SWSE | Combat created:", combat.name);
+  });
+  
+  // Track combat rounds
+  Hooks.on('combatRound', (combat, updateData, updateOptions) => {
+    console.log(`SWSE | Combat Round ${combat.round}`);
+  });
+  
+  // Track combat turns
+  Hooks.on('combatTurn', (combat, updateData, updateOptions) => {
+    const combatant = combat.combatant;
+    if (combatant?.actor) {
+      console.log(`SWSE | Turn: ${combatant.actor.name}`);
+    }
+  });
 }
 
 /**
@@ -282,31 +442,39 @@ function setupConditionRecovery() {
     if (!actor) return;
 
     // Check if actor is on condition track
-    if (actor.system.conditionTrack?.current > 0 && 
-        !actor.system.conditionTrack?.persistent) {
+    const conditionTrack = actor.system.conditionTrack;
+    if (!conditionTrack || conditionTrack.current <= 0) return;
+    if (conditionTrack.persistent) return;
 
-      // Prompt for recovery
-      const recover = await Dialog.confirm({
-        title: 'Condition Recovery',
-        content: `<p>${actor.name} can attempt condition recovery.</p>
-                  <p>Make a DC 10 Endurance check?</p>`
+    // Prompt for recovery
+    const recover = await Dialog.confirm({
+      title: 'Condition Recovery',
+      content: `
+        <p><strong>${actor.name}</strong> can attempt condition recovery.</p>
+        <p>Current position: ${conditionTrack.current}/5</p>
+        <p>Make a DC 10 Endurance check?</p>
+      `
+    });
+
+    if (!recover) return;
+
+    // Make recovery check
+    const endurance = actor.system.skills?.endurance;
+    const bonus = endurance?.total || 0;
+    const roll = await new Roll(`1d20 + ${bonus}`).evaluate({async: true});
+
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({actor}),
+      flavor: 'Condition Recovery Check (DC 10)'
+    });
+
+    if (roll.total >= 10) {
+      await actor.update({
+        'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
       });
-
-      if (recover) {
-        const endurance = actor.system.skills?.endurance;
-        const bonus = endurance?.total || 0;
-        const roll = await new Roll(`1d20 + ${bonus}`).evaluate({async: true});
-
-        await roll.toMessage({
-          speaker: ChatMessage.getSpeaker({actor}),
-          flavor: 'Condition Recovery (DC 10)'
-        });
-
-        if (roll.total >= 10) {
-          await actor.moveConditionTrack(-1);
-          ui.notifications.info(`${actor.name} recovers!`);
-        }
-      }
+      ui.notifications.info(`${actor.name} recovers one step on the condition track!`);
+    } else {
+      ui.notifications.warn(`${actor.name} fails to recover.`);
     }
   });
 }
@@ -315,51 +483,122 @@ function setupConditionRecovery() {
 /*  Other Hooks                                 */
 /* -------------------------------------------- */
 
-// Handle item drops on actor sheets
+/**
+ * Handle item drops on actor sheets
+ */
 Hooks.on("dropActorSheetData", async (actor, sheet, data) => {
   if (data.type === "Item") {
-    return actor._onDropItem(data);
+    return DropHandler.handleItemDrop(actor, data);
   }
 });
 
-// Handle condition track changes
+/**
+ * Handle condition track changes
+ */
 Hooks.on('preUpdateActor', function(actor, changes, options, userId) {
   // If condition track changes, update penalty
   if (changes.system?.conditionTrack?.current !== undefined) {
     const penalties = [0, -1, -2, -5, -10, 0];
     const newPos = changes.system.conditionTrack.current;
 
+    // Ensure conditionTrack object exists
     if (!changes.system.conditionTrack) {
       changes.system.conditionTrack = {};
     }
 
-    changes.system.conditionTrack.penalty = penalties[newPos];
+    // Update penalty
+    changes.system.conditionTrack.penalty = penalties[newPos] || 0;
   }
 });
 
-// Add chat message listeners
+/**
+ * Add chat message listeners for interactive buttons
+ */
 Hooks.on("renderChatMessage", (message, html, data) => {
+  
   // Apply damage button
   html.find('.apply-damage').click(async ev => {
+    ev.preventDefault();
     const damage = parseInt(ev.currentTarget.dataset.damage);
     const targets = game.user.targets;
 
+    if (targets.size === 0) {
+      ui.notifications.warn("No targets selected!");
+      return;
+    }
+
     for (let target of targets) {
-      await target.actor.applyDamage(damage, {checkThreshold: true});
+      if (target.actor) {
+        await DamageSystem.applyDamage(target.actor, damage, {
+          checkThreshold: game.settings.get('swse', 'autoDamageThreshold')
+        });
+      }
     }
   });
 
   // Roll damage button
   html.find('.roll-damage').click(async ev => {
+    ev.preventDefault();
     const itemId = ev.currentTarget.dataset.itemId;
-    const actor = game.actors.get(message.speaker.actor);
+    const actorId = message.speaker.actor;
+    const actor = game.actors.get(actorId);
     const item = actor?.items.get(itemId);
 
-    if (item && actor.rollDamage) {
+    if (item && typeof actor.rollDamage === 'function') {
       await actor.rollDamage(item);
+    } else {
+      ui.notifications.error("Cannot roll damage for this item.");
     }
   });
 });
+
+/**
+ * Handle hotbar drops
+ */
+Hooks.on("hotbarDrop", (bar, data, slot) => {
+  if (data.type === "Item") {
+    createItemMacro(data, slot);
+    return false;
+  }
+});
+
+/**
+ * Create a macro from an item drop
+ */
+async function createItemMacro(data, slot) {
+  if (!data.uuid) return;
+  
+  const item = await fromUuid(data.uuid);
+  if (!item) return;
+
+  // Create the macro command
+  const command = `
+    const item = await fromUuid("${data.uuid}");
+    if (item) {
+      if (item.actor) {
+        item.actor.useItem(item);
+      } else {
+        ui.notifications.warn("This item is not owned by an actor.");
+      }
+    }
+  `;
+
+  let macro = game.macros.find(m => 
+    (m.name === item.name) && (m.command === command)
+  );
+
+  if (!macro) {
+    macro = await Macro.create({
+      name: item.name,
+      type: "script",
+      img: item.img,
+      command: command,
+      flags: { "swse.itemMacro": true }
+    });
+  }
+
+  game.user.assignHotbarMacro(macro, slot);
+}
 
 /* -------------------------------------------- */
 /*  Utility Functions                           */
@@ -371,19 +610,25 @@ Hooks.on("renderChatMessage", (message, html, data) => {
 function enhanceValidationLogging() {
   [Actor, Item].forEach(DocumentClass => {
     const original = DocumentClass.prototype.validate;
+    
     DocumentClass.prototype.validate = function(data, options) {
       try {
         return original.call(this, data, options);
       } catch (err) {
         if (err.name === "DataModelValidationError") {
-          console.group(`⚠️ ${DocumentClass.name} Validation Error`);
-          console.error(`${DocumentClass.name} Instance:`, this);
-          console.error("Data being validated:", data);
+          console.group(`⚠️ SWSE ${DocumentClass.name} Validation Error`);
+          console.error(`Document:`, this.name || "Unnamed");
+          console.error(`Type:`, this.type);
+          console.error(`Data:`, data);
+          
           if (err.failures) {
+            console.error("Validation Failures:");
             err.failures.forEach(f => {
-              console.error(`❌ Path: ${f.path}`, "Reason:", f.failure, "Value:", f.value);
+              console.error(`  ❌ ${f.path}:`, f.failure);
+              console.error(`     Value:`, f.value);
             });
           }
+          
           console.groupEnd();
         }
         throw err;
@@ -393,15 +638,32 @@ function enhanceValidationLogging() {
 }
 
 /* -------------------------------------------- */
-/*  Export for Debugging                        */
+/*  Global Exports for Debugging                */
 /* -------------------------------------------- */
 
 // Make system components available globally for console access
 window.SWSE = {
+  // Components
   ConditionTrack: ConditionTrackComponent,
   ForceSuite: ForceSuiteComponent,
+  
+  // Systems
   Damage: DamageSystem,
-  WorldDataLoader: WorldDataLoader
+  WorldDataLoader: WorldDataLoader,
+  DropHandler: DropHandler,
+  HouseruleMechanics: HouseruleMechanics,
+  
+  // Apps
+  Store: SWSEStore,
+  LevelUp: SWSELevelUp,
+  
+  // Actor/Item Classes
+  SWSEActorBase: SWSEActorBase,
+  SWSEItemBase: SWSEItemBase,
+  
+  // Configuration
+  config: CONFIG.SWSE
 };
 
-console.log("SWSE | Enhanced system fully loaded");
+console.log("SWSE | Enhanced System Fully Loaded");
+console.log("SWSE | Use 'window.SWSE' in console to access system components");
