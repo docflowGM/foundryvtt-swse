@@ -82,7 +82,6 @@ export class SWSEActorBase extends Actor {
     return newPosition;
   }
 
-  
   async useSecondWind() {
     if (this.type !== 'character') {
       ui.notifications.warn('Only characters can use Second Wind');
@@ -113,7 +112,7 @@ export class SWSEActorBase extends Actor {
     }
 
     return true;
-  }}
+  }
 
   async spendForcePoint(reason = 'unspecified') {
     if (this.type !== 'character') return false;
