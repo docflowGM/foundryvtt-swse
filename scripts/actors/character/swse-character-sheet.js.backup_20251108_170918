@@ -28,6 +28,10 @@ export class SWSECharacterSheet extends foundry.appv1.sheets.ActorSheet {
     });
   }
 
+  get template() {
+    return `systems/swse/templates/actors/${this.actor.type}/character-sheet.hbs`;
+  }
+
   async getData() {
     const context = super.getData();
     const actorData = this.actor.toObject(false);

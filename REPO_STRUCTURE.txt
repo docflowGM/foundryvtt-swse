@@ -1,5 +1,5 @@
 Repository Structure Map
-Generated: 2025-11-08 16:44:19
+Generated: 2025-11-08 17:05:11
 ======================================================================
 
 foundryvtt-swse/
@@ -335,17 +335,19 @@ foundryvtt-swse/
 │   │   └── scan_repo.py (7.5KB)
 │   └── migration-helper.js (1.2KB)
 ├── HOUSERULE_IMPLEMENTATION_SUMMARY.txt (1.9KB)
-├── index.js (20.1KB)
-├── REPO_STRUCTURE.txt (14.9KB)
+├── index.js (20.2KB)
+├── index.js.backup_20251108_164802 (20.2KB)
+├── REPO_STRUCTURE.txt (15.0KB)
 ├── system.json (5.6KB)
-└── template.json (5.0KB)
+├── template.json (5.3KB)
+└── template.json.backup_20251108_164802 (5.3KB)
 
 ======================================================================
 Repository Statistics
 ======================================================================
 
 Total Directories: 64
-Total Files: 272
+Total Files: 274
 Total Size: 5.7MB
 
 Files by Type:
@@ -353,7 +355,7 @@ Files by Type:
   Images            68 files  (2.3MB)
   Data              37 files  (1.1MB)
   Templates         36 files  (104.4KB)
-  Other             27 files  (1.6MB)
-  Docs              14 files  (65.8KB)
+  Other             29 files  (1.6MB)
+  Docs              14 files  (65.9KB)
   Styles             6 files  (92.1KB)
   Python             3 files  (14.2KB)
