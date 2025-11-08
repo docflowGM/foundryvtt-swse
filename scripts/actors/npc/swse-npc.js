@@ -1,3 +1,5 @@
+import { SWSECharacterSheet } from '../character/swse-character-sheet.js';
+
 // ============================================
 // FILE: module/actors/swse-npc.js
 // NPC actor sheet
@@ -7,7 +9,7 @@ export class SWSENPCSheet extends SWSECharacterSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor", "npc"],
-      template: "systems/swse/templates/actors/npc-sheet.hbs",
+      template: "systems/swse/templates/actors/npc/npc-sheet.hbs",
       width: 800,
       height: 720
     });

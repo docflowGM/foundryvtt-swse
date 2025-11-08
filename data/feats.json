@@ -3,7 +3,7 @@
     "name": "Acrobatic Strike",
     "type": "feat",
     "prereqassets/uisite": "Acrobatics 15 ranks",
-    "description": "You can use Acrobatics to tumble through an enemy\u2019s space and gain a +2 bonus on your next melee attack against that enemy.",
+    "description": "You can use Acrobatics to tumble through an enemy’s space and gain a +2 bonus on your next melee attack against that enemy.",
     "sourcebook": "Galaxy at War",
     "page": 23,
     "tags": [
@@ -16,7 +16,7 @@
       "Scout"
     ],
     "system": {
-      "description": "You can use Acrobatics to tumble through an enemy\u2019s space and gain a +2 bonus on your next melee attack against that enemy."
+      "description": "You can use Acrobatics to tumble through an enemy’s space and gain a +2 bonus on your next melee attack against that enemy."
     }
   },
   {
@@ -800,7 +800,7 @@
     "name": "Force Regimen Mastery",
     "type": "feat",
     "prereqassets/uisite": "Trained in Use the Force",
-    "description": "You may spend a Force Point to gain the benefit of a Force Regimen you\u2019ve completed within the last 24 hours.",
+    "description": "You may spend a Force Point to gain the benefit of a Force Regimen you’ve completed within the last 24 hours.",
     "sourcebook": "Jedi Academy Training Manual",
     "page": 31,
     "tags": [
@@ -813,7 +813,7 @@
       "Jedi"
     ],
     "system": {
-      "description": "You may spend a Force Point to gain the benefit of a Force Regimen you\u2019ve completed within the last 24 hours."
+      "description": "You may spend a Force Point to gain the benefit of a Force Regimen you’ve completed within the last 24 hours."
     }
   },
   {
@@ -1113,7 +1113,7 @@
     }
   },
   {
-    "name": "Harm\u2019s Way",
+    "name": "Harm’s Way",
     "type": "feat",
     "prereqassets/uisite": "Base attack bonus +6",
     "description": "As a reaction, you may take damage dealt to an adjacent ally instead of them.",

@@ -33,7 +33,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  background: url("../assets/assets/assets/ui/sheet-frame.png") no-repeat center center;
+  background: url("../../assets/ui/sheet-frame.png") no-repeat center center;
   background-size: contain;
   box-sizing: border-box;
   padding: 25px;
@@ -41,7 +41,7 @@
 
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .sheet-frame {
-    background-image: url("../assets/assets/assets/ui/sheet-frame@2x.png");
+    background-image: url("../../assets/ui/sheet-frame@2x.png");
   }
 }
 
@@ -52,7 +52,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("../assets/assets/assets/ui/sheet-background.png") no-repeat center center;
+  background: url("../../assets/ui/sheet-background.png") no-repeat center center;
   background-size: cover;
   opacity: 0.95;
   z-index: -1;
@@ -181,7 +181,7 @@ button:active {
 }
 
 .swse-levelup .scroll-table {
-  max-min-height: 80px;
+  max-height: 80px;
   overflow-y: auto;
   border: 1px solid #444;
   margin-bottom: 1em;
@@ -221,7 +221,7 @@ button:active {
   background: #1a1a1a;
 }
 
-.swse.vehicle-sheet .sheet-header { padding: 3px 4px; min-min-height: 80px;
+.swse.vehicle-sheet .sheet-header { padding: 3px 4px; min-height: 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;

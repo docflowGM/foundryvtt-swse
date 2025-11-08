@@ -13,67 +13,116 @@
       "description": "Category of vehicle (Speeder, Starfighter, Capital Ship, etc.)"
     },
     "size": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Vehicle size category (Small, Medium, Large, etc.)"
     },
     "crew": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Crew complement and quality"
     },
     "passengers": {
-      "type": ["integer", "string", "null"],
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ],
       "description": "Number of passengers"
     },
     "cargo_capacity": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Cargo space available"
     },
     "consumables": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Duration vehicle can sustain crew without resupply"
     },
     "initiative": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Initiative modifier"
     },
     "senses": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Special sensor sassets/uites"
     },
     "reflexDefense": {
-      "type": ["integer", "null"],
+      "type": [
+        "integer",
+        "null"
+      ],
       "description": "Vehicle Reflex Defense"
     },
     "flatFooted": {
-      "type": ["integer", "null"],
+      "type": [
+        "integer",
+        "null"
+      ],
       "description": "Flat-footed Reflex Defense"
     },
     "fortitudeDefense": {
-      "type": ["integer", "null"],
+      "type": [
+        "integer",
+        "null"
+      ],
       "description": "Fortitude Defense"
     },
     "damageThreshold": {
-      "type": ["integer", "null"],
+      "type": [
+        "integer",
+        "null"
+      ],
       "description": "Damage Threshold"
     },
     "HP": {
-      "type": ["integer", "null"],
+      "type": [
+        "integer",
+        "null"
+      ],
       "description": "Vehicle hit points"
     },
     "damageReduction": {
-      "type": ["integer", "null"],
+      "type": [
+        "integer",
+        "null"
+      ],
       "description": "Damage Reduction (DR) value"
     },
     "speed": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Speed in squares and/or maximum velocity"
     },
     "maneuver": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Vehicle maneuver modifier"
     },
     "baseAttackBonus": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Base attack bonus of the vehicle"
     },
     "weapons": {
@@ -82,40 +131,89 @@
       "items": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "arc": { "type": ["string", "null"] },
-          "bonus": { "type": ["string", "null"] },
-          "damage": { "type": ["string", "null"] },
-          "range": { "type": ["string", "null"] }
+          "name": {
+            "type": "string"
+          },
+          "arc": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bonus": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "damage": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "range": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         },
-        "reqassets/uired": ["name"]
+        "reqassets/uired": [
+          "name"
+        ]
       }
     },
     "carried_craft": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Craft carried inside this vehicle"
     },
     "hyperdrive_class": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Hyperdrive class rating (e.g., 1.0, 2.0)"
     },
     "backup_class": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Backup hyperdrive class rating"
     },
     "cost": {
       "type": "object",
       "properties": {
-        "new": { "type": ["integer", "null"] },
-        "used": { "type": ["integer", "null"] }
+        "new": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "used": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
       }
     },
     "sourcebook": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Sourcebook reference"
     },
     "page": {
-      "type": ["integer", "null"],
+      "type": [
+        "integer",
+        "null"
+      ],
       "description": "Page number reference"
     },
     "tags": {
@@ -126,7 +224,9 @@
       }
     }
   },
-  "reqassets/uired": ["name", "type"],
+  "reqassets/uired": [
+    "name",
+    "type"
+  ],
   "additionalProperties": false
 }
-

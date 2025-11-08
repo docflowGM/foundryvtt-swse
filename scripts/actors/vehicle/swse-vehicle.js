@@ -1,10 +1,12 @@
+import { SWSECharacterSheet } from '../character/swse-character-sheet.js';
+
 
 
 export class SWSEVehicleSheet extends SWSECharacterSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor", "vehicle"],
-      template: "systems/swse/templates/actors/vehicle-sheet.hbs",
+      template: "systems/swse/templates/actors/vehicle/vehicle-sheet.hbs",
       width: 900,
       height: 800,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "main" }]

@@ -5,7 +5,7 @@
     font-family: 'Orbitron', 'Segoe UI', sans-serif;
 }
 
-.vehicle-header { padding: 5px; min-min-height: 80px;
+.vehicle-header { padding: 5px; min-height: 18px;
     background: linear-gradient(90deg, #1a2845 0%, #2a3a5a 100%);
     border: 1px solid #3a9dd6;
     /* padding: 5px;
@@ -90,7 +90,7 @@
 
 .vehicle-display-container {
     position: relative;
-    min-min-height: 80px;
+    min-height: 18px;
     background: radial-gradient(ellipse at center, #1a2845 0%, var(--swse-primary) 100%);
     border: 1px solid #3a9dd6;
     border-radius: 8px;
@@ -281,7 +281,7 @@
     transform: translateY(-50%);
 }
 
-.qassets/uick-stats-bar {
+.quick-stats-bar {
     display: flex;
     gap: 20px;
     padding: 5px 20px;
@@ -291,14 +291,14 @@
     margin: 20px;
 }
 
-.qassets/uick-stat {
+.quick-stat {
     flex: 1;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.qassets/uick-stat label {
+.quick-stat label {
     font-size: 11px;
     text-transform: uppercase;
     color: #3a9dd6;
@@ -306,7 +306,7 @@
     white-space: nowrap;
 }
 
-.qassets/uick-stat input {
+.quick-stat input {
     flex: 1;
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid #2a7aa6;
@@ -428,7 +428,7 @@
 .weapons-list { overflow-y: auto; overflow-x: hidden; display: flex;
     flex-direction: column;
     gap: 8px;
-    max-min-height: 80px;
+    max-height: 80px;
     overflow-y: auto; }
 
 .weapon-item {
@@ -551,7 +551,7 @@
     border: 1px dashed #2a7aa6;
     border-radius: 4px;
     padding: 4px;
-    min-min-height: 80px;
+    min-height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -699,7 +699,7 @@
     }
     
     .vehicle-display-container {
-        min-min-height: 80px;
+        min-height: 18px;
     }
     
     .vehicle-image-container {

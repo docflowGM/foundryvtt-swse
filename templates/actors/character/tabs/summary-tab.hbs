@@ -1,126 +1,123 @@
-<div class="swse-sheet">
 {{!-- Summary Tab: Combat Dashboard --}}
 <div class="tab summary-tab active" data-group="primary" data-tab="summary">
-  
-  <section class="combat-stats">
-    <h3 class="section-header">Combat Statistics</h3>
-    
-    <div class="combat-grid grid grid-2col">
-      {{!-- Left Column --}}
-      <div class="combat-column">
-        <div class="stat-block initiative">
-          <label>Initiative</label>
-          <div class="stat-value rollable" 
-               data-roll="1d20+@initiative" 
-               data-label="Initiative">
-            {{numberFormat system.initiative sign=true}}
-          </div>
-        </div>
-        
-        <div class="stat-block speed">
-          <label>Speed</label>
-          <div class="stat-value">
-            {{system.movement.base}} squares
-            {{#if (lt system.conditionTrack.current 4)}}
-              <span class="speed-normal"></span>
-            {{else}}
-              <span class="speed-reduced">(Half: {{divide system.movement.base 2}})</span>
-            {{/if}}
-          </div>
-        </div>
-        
-        <div class="stat-block base-attack">
-          <label>Base Attack Bonus</label>
-          <div class="stat-value">
-            {{numberFormat system.baseAttack sign=true}}
-          </div>
-        </div>
-        
-        <div class="stat-block damage-threshold">
-          <label>Damage Threshold</label>
-          <div class="stat-value" title="Equal to Fortitude Defense">
-            {{system.defenses.fortitude.total}}
-          </div>
-        </div>
-      </div>
-      
-      {{!-- Right Column --}}
-      <div class="combat-column">
-        {{!-- Quick Attacks --}}
-        <div class="quick-attacks">
-          <h4>Common Attacks</h4>
-          <div class="attacks-list">
-            {{#each weapons as |weapon|}}
-              {{#if weapon.system.equipped}}
-                <div class="attack-item flexrow">
-                  <img src="{{weapon.img}}" width="24" height="24" alt="{{weapon.name}}"/>
-                  <span class="attack-name rollable" 
-                        data-roll="1d20+@baseAttack+@abilities.{{weapon.system.attackAbility}}.mod"
-                        data-label="{{weapon.name}} Attack">
-                    {{weapon.name}}
-                  </span>
-                  <span class="attack-bonus">
-                    {{numberFormat weapon.system.attackBonus sign=true}}
-                  </span>
-                  <span class="attack-damage rollable"
-                        data-roll="{{weapon.system.damage}}"
-                        data-label="{{weapon.name}} Damage">
-                    {{weapon.system.damage}}
-                  </span>
-                </div>
-              {{/if}}
-            {{/each}}
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  
-  {{!-- Ability Scores Quick Reference --}}
-  <section class="abilities-quick">
-    <h3 class="section-header">Ability Scores</h3>
-    <div class="abilities-row flexrow">
-      {{#each system.abilities as |ability key|}}
-        <div class="ability-quick flex0">
-          <label class="rollable" 
-                 data-roll="1d20+@abilities.{{key}}.mod"
-                 data-label="{{ability.label}}">
-            {{ability.label}}
-          </label>
-          <div class="ability-score">{{ability.value}}</div>
-          <div class="ability-mod rollable"
-               data-roll="1d20+@abilities.{{key}}.mod">
-            {{numberFormat ability.mod decimals=0 sign=true}}
-          </div>
-        </div>
-      {{/each}}
-    </div>
-  </section>
-  
-  {{!-- Trained Skills Quick Access --}}
-  <section class="skills-quick">
-    <h3 class="section-header">Trained Skills</h3>
-    <div class="trained-skills-list">
-      {{#each system.skills as |skill key|}}
-        {{#if skill.trained}}
-          <div class="skill-quick flexrow">
-            <span class="skill-name rollable"
-                  data-roll="1d20+@skills.{{key}}.mod"
-                  data-label="{{skill.label}}">
-              {{skill.label}}
-            </span>
-            <span class="skill-mod">
-              {{numberFormat skill.mod sign=true}}
-            </span>
-            {{#if skill.focus}}
-              <i class="fas fa-star skill-focus-icon" title="Skill Focus"></i>
-            {{/if}}
-          </div>
-        {{/if}}
-      {{/each}}
-    </div>
-  </section>
-  
+ 
+ <section class="combat-stats">
+ <h3 class="section-header">Combat Statistics</h3>
+ 
+ <div class="combat-grid grid grid-2col">
+ {{!-- Left Column --}}
+ <div class="combat-column">
+ <div class="stat-block initiative">
+ <label>Initiative</label>
+ <div class="stat-value rollable" 
+ data-roll="1d20+@initiative" 
+ data-label="Initiative">
+ {{numberFormat system.initiative sign=true}}
+ </div>
+ </div>
+ 
+ <div class="stat-block speed">
+ <label>Speed</label>
+ <div class="stat-value">
+ {{system.movement.base}} squares
+ {{#if (lt system.conditionTrack.current 4)}}
+ <span class="speed-normal"></span>
+ {{else}}
+ <span class="speed-reduced">(Half: {{divide system.movement.base 2}})</span>
+ {{/if}}
+ </div>
+ </div>
+ 
+ <div class="stat-block base-attack">
+ <label>Base Attack Bonus</label>
+ <div class="stat-value">
+ {{numberFormat system.baseAttack sign=true}}
+ </div>
+ </div>
+ 
+ <div class="stat-block damage-threshold">
+ <label>Damage Threshold</label>
+ <div class="stat-value" title="Equal to Fortitude Defense">
+ {{system.defenses.fortitude.total}}
+ </div>
+ </div>
+ </div>
+ 
+ {{!-- Right Column --}}
+ <div class="combat-column">
+ {{!-- Quick Attacks --}}
+ <div class="quick-attacks">
+ <h4>Common Attacks</h4>
+ <div class="attacks-list">
+ {{#each weapons as |weapon|}}
+ {{#if weapon.system.equipped}}
+ <div class="attack-item flexrow">
+ <img src="{{weapon.img}}" width="24" height="24" alt="{{weapon.name}}"/>
+ <span class="attack-name rollable" 
+ data-roll="1d20+@baseAttack+@abilities.{{weapon.system.attackAbility}}.mod"
+ data-label="{{weapon.name}} Attack">
+ {{weapon.name}}
+ </span>
+ <span class="attack-bonus">
+ {{numberFormat weapon.system.attackBonus sign=true}}
+ </span>
+ <span class="attack-damage rollable"
+ data-roll="{{weapon.system.damage}}"
+ data-label="{{weapon.name}} Damage">
+ {{weapon.system.damage}}
+ </span>
+ </div>
+ {{/if}}
+ {{/each}}
+ </div>
+ </div>
+ </div>
+ </div>
+ </section>
+ 
+ {{!-- Ability Scores Quick Reference --}}
+ <section class="abilities-quick">
+ <h3 class="section-header">Ability Scores</h3>
+ <div class="abilities-row flexrow">
+ {{#each system.abilities as |ability key|}}
+ <div class="ability-quick flex0">
+ <label class="rollable" 
+ data-roll="1d20+@abilities.{{key}}.mod"
+ data-label="{{ability.label}}">
+ {{ability.label}}
+ </label>
+ <div class="ability-score">{{ability.value}}</div>
+ <div class="ability-mod rollable"
+ data-roll="1d20+@abilities.{{key}}.mod">
+ {{numberFormat ability.mod decimals=0 sign=true}}
+ </div>
+ </div>
+ {{/each}}
+ </div>
+ </section>
+ 
+ {{!-- Trained Skills Quick Access --}}
+ <section class="skills-quick">
+ <h3 class="section-header">Trained Skills</h3>
+ <div class="trained-skills-list">
+ {{#each system.skills as |skill key|}}
+ {{#if skill.trained}}
+ <div class="skill-quick flexrow">
+ <span class="skill-name rollable"
+ data-roll="1d20+@skills.{{key}}.mod"
+ data-label="{{skill.label}}">
+ {{skill.label}}
+ </span>
+ <span class="skill-mod">
+ {{numberFormat skill.mod sign=true}}
+ </span>
+ {{#if skill.focus}}
+ <i class="fas fa-star skill-focus-icon" title="Skill Focus"></i>
+ {{/if}}
+ </div>
+ {{/if}}
+ {{/each}}
+ </div>
+ </section>
+ 
 </div>
-
-</div><!-- swse-sheet -->

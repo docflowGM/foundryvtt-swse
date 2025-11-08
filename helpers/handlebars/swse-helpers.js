@@ -9,7 +9,6 @@ export const swseHelpers = {
   isHelpless: (track) => track === 'helpless' || track === 5,
 
   defenseCalculation: (defense, actor) => {
-    // This would be better in the actor class, but available as helper
     if (defense === 'reflex' && actor?.system?.armor?.equipped) {
       return `10 + Armor ${actor.system.armor.reflexBonus || 0}`;
     }
@@ -35,9 +34,7 @@ export const swseHelpers = {
   sign: (value) => {
     const num = Number(value || 0);
     return num >= 0 ? `+${num}` : String(num);
-  }
-};
-,
+  },
 
   times: function(n, block) {
     let result = '';

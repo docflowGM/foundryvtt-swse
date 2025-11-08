@@ -289,7 +289,7 @@
 .swse-datapad-sheet textarea,
 .swse.character-sheet textarea {
   height: auto;
-  min-min-height: 80px;
+  min-height: 18px;
   resize: vertical;
 }
 
@@ -568,7 +568,7 @@
 
 /* ─────────────── ULTRA COMPACT SKILLS ─────────────── */
 .skills-grid-compact {
-  max-min-height: 80px;
+  max-height: 80px;
   overflow-y: auto;
   padding-right: 2px;
 }
@@ -787,8 +787,8 @@
 }
 
 .bottom-tabs-content {
-  min-min-height: 80px;
-  max-min-height: 80px;
+  min-height: 18px;
+  max-height: 80px;
   overflow-y: auto;
 }
 
@@ -808,7 +808,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  max-min-height: 80px;
+  max-height: 80px;
   overflow-y: auto;
 }
 

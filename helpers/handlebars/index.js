@@ -3,6 +3,7 @@ import { mathHelpers } from './math-helpers.js';
 import { comparisonHelpers } from './comparison-helpers.js';
 import { arrayHelpers } from './array-helpers.js';
 import { swseHelpers } from './swse-helpers.js';
+import { utilityHelpers } from './utility-helpers.js';
 
 /**
  * Register all Handlebars helpers for SWSE system
@@ -17,7 +18,8 @@ export function registerHandlebarsHelpers() {
     ...comparisonHelpers,
     ...arrayHelpers,
     ...swseHelpers
-  };
+  ,
+  ...utilityHelpers};
 
   let registered = 0;
   let skipped = 0;

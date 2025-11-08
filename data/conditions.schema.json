@@ -3,25 +3,41 @@
   "title": "Condition",
   "type": "object",
   "properties": {
-    "name": { "type": "string" },
-    "desc": { "type": "string" },
+    "name": {
+      "type": "string"
+    },
+    "desc": {
+      "type": "string"
+    },
     "conditionTrack": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "stage": { "type": "string" },
-          "desc": { "type": "string" }
+          "stage": {
+            "type": "string"
+          },
+          "desc": {
+            "type": "string"
+          }
         },
-        "reqassets/uired": ["stage", "desc"],
+        "reqassets/uired": [
+          "stage",
+          "desc"
+        ],
         "additionalProperties": false
       }
     },
     "effects": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     }
   },
-  "reqassets/uired": ["name", "desc"],
+  "reqassets/uired": [
+    "name",
+    "desc"
+  ],
   "additionalProperties": false
 }

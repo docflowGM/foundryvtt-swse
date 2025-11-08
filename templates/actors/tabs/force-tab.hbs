@@ -1,48 +1,48 @@
 <div class="tab force-tab" data-tab="force" data-group="primary">
-  <div class="force-layout">
+ <div class="force-layout">
 
-    <!-- Force Points Management -->
-    <div class="force-points-section">
-      <h3>Force Points</h3>
-      <div class="force-points-display">
-        <div class="points-current">{{system.forcePoints.value}}</div>
-        <div class="points-divider">/</div>
-        <div class="points-max">{{system.forcePoints.max}}</div>
-      </div>
-      <div class="force-info">
-        <p>Reroll Dice: {{system.forceRerollDice}}</p>
-        <p>Dark Side Score: {{system.forcePoints.darkSide}}</p>
-      </div>
-      <div class="force-actions">
-        <button data-action="spendForcePoint" data-type="reroll">
-          <i class="fas fa-dice"></i> Reroll
-        </button>
-        <button data-action="spendForcePoint" data-type="power">
-          <i class="fas fa-hand-sparkles"></i> Activate Power
-        </button>
-        <button data-action="spendForcePoint" data-type="special">
-          <i class="fas fa-star"></i> Special
-        </button>
-      </div>
-    </div>
+ <!-- Force Points Management -->
+ <div class="force-points-section">
+ <h3>Force Points</h3>
+ <div class="force-points-display">
+ <div class="points-current">{{system.forcePoints.value}}</div>
+ <div class="points-divider">/</div>
+ <div class="points-max">{{system.forcePoints.max}}</div>
+ </div>
+ <div class="force-info">
+ <p>Reroll Dice: {{system.forceRerollDice}}</p>
+ <p>Dark Side Score: {{system.forcePoints.darkSide}}</p>
+ </div>
+ <div class="force-actions">
+ <button data-action="spendForcePoint" data-type="reroll">
+ <i class="fas fa-dice"></i> Reroll
+ </button>
+ <button data-action="spendForcePoint" data-type="power">
+ <i class="fas fa-hand-sparkles"></i> Activate Power
+ </button>
+ <button data-action="spendForcePoint" data-type="special">
+ <i class="fas fa-star"></i> Special
+ </button>
+ </div>
+ </div>
 
-    <!-- Force Suite Management -->
-    <div class="force-suite-section">
-      {{{forceSuite}}}
-    </div>
+ <!-- Force Suite Management -->
+ <div class="force-suite-section">
+ {{{forceSuite}}}
+ </div>
 
-    <!-- Force Techniques/Secrets -->
-    <div class="force-techniques">
-      <h3>Force Techniques</h3>
-      <div class="techniques-list">
-        {{#each forceTechniques as |technique|}}
-          <div class="technique-item">
-            <h4>{{technique.name}}</h4>
-            <p>{{technique.description}}</p>
-          </div>
-        {{/each}}
-      </div>
-    </div>
+ <!-- Force Techniques/Secrets -->
+ <div class="force-techniques">
+ <h3>Force Techniques</h3>
+ <div class="techniques-list">
+ {{#each forceTechniques as |technique|}}
+ <div class="technique-item">
+ <h4>{{technique.name}}</h4>
+ <p>{{technique.description}}</p>
+ </div>
+ {{/each}}
+ </div>
+ </div>
 
-  </div>
+ </div>
 </div>

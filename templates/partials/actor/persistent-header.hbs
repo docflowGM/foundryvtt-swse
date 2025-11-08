@@ -1,104 +1,101 @@
-<div class="swse-sheet">
 {{!-- Persistent Header with Critical Resources --}}
 <header class="sheet-header flexrow">
-  <div class="header-left flex0">
-    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="100" height="100"/>
-    <div class="character-name">
-      <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
-    </div>
-  </div>
-  
-  <div class="header-center flex2">
-    {{!-- Three Defenses --}}
-    <div class="defenses grid grid-3col">
-      <div class="defense reflex-defense">
-        <label class="defense-label">Reflex Defense</label>
-        <div class="defense-value rollable" 
-             data-roll="1d20" 
-             data-label="Reflex Defense"
-             title="Click to roll vs. Reflex">
-          {{system.defenses.reflex.total}}
-        </div>
-        <div class="defense-breakdown">
-          {{#if system.armor.equipped}}
-            <span class="breakdown-item">10 + Armor {{system.armor.reflexBonus}}</span>
-          {{else}}
-            <span class="breakdown-item active">10 + Level {{system.level.heroic}}</span>
-          {{/if}}
-          <span class="breakdown-item">+ Dex {{numberFormat system.abilities.dex.mod sign=true}}</span>
-        </div>
-      </div>
-      
-      <div class="defense fortitude-defense">
-        <label class="defense-label">Fortitude Defense</label>
-        <div class="defense-value rollable" 
-             data-roll="1d20" 
-             data-label="Fortitude Defense"
-             title="Click to roll vs. Fortitude">
-          {{system.defenses.fortitude.total}}
-        </div>
-        <div class="defense-breakdown">
-          <span class="breakdown-item">10 + Level {{system.level.heroic}}</span>
-          <span class="breakdown-item">+ Con {{numberFormat system.abilities.con.mod sign=true}}</span>
-        </div>
-      </div>
-      
-      <div class="defense will-defense">
-        <label class="defense-label">Will Defense</label>
-        <div class="defense-value rollable" 
-             data-roll="1d20" 
-             data-label="Will Defense"
-             title="Click to roll vs. Will">
-          {{system.defenses.will.total}}
-        </div>
-        <div class="defense-breakdown">
-          <span class="breakdown-item">10 + Level {{system.level.heroic}}</span>
-          <span class="breakdown-item">+ Wis {{numberFormat system.abilities.wis.mod sign=true}}</span>
-        </div>
-      </div>
-    </div>
-    
-    {{!-- Resources: HP and Force Points --}}
-    <div class="resources flexrow">
-      <div class="resource hp flex1">
-        <label>Hit Points</label>
-        <div class="resource-bar flexrow">
-          <input type="text" 
-                 name="system.hp.value" 
-                 value="{{system.hp.value}}" 
-                 data-dtype="Number"
-                 class="resource-input"/>
-          <span class="separator">/</span>
-          <span class="resource-max">{{system.hp.max}}</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" style="width: {{hpPercentage}}%"></div>
-        </div>
-      </div>
-      
-      {{#if system.forceSensitive}}
-      <div class="resource force-points flex1">
-        <label>Force Points</label>
-        <div class="resource-content flexrow">
-          <input type="text" 
-                 name="system.forcePoints.value" 
-                 value="{{system.forcePoints.value}}" 
-                 data-dtype="Number"
-                 class="resource-input"/>
-          <span class="separator">/</span>
-          <span class="resource-max">{{system.forcePoints.max}}</span>
-        </div>
-        <div class="reroll-bonus">
-          <i class="fas fa-dice"></i> Reroll: {{forceRerollDice}}
-        </div>
-      </div>
-      {{/if}}
-    </div>
-  </div>
-  
-  <div class="header-right flex0">
-    {{> "systems/swse/templates/partials/ui/condition-track.hbs"}}
-  </div>
+ <div class="header-left flex0">
+ <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="100" height="100"/>
+ <div class="character-name">
+ <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
+ </div>
+ </div>
+ 
+ <div class="header-center flex2">
+ {{!-- Three Defenses --}}
+ <div class="defenses grid grid-3col">
+ <div class="defense reflex-defense">
+ <label class="defense-label">Reflex Defense</label>
+ <div class="defense-value rollable" 
+ data-roll="1d20" 
+ data-label="Reflex Defense"
+ title="Click to roll vs. Reflex">
+ {{system.defenses.reflex.total}}
+ </div>
+ <div class="defense-breakdown">
+ {{#if system.armor.equipped}}
+ <span class="breakdown-item">10 + Armor {{system.armor.reflexBonus}}</span>
+ {{else}}
+ <span class="breakdown-item active">10 + Level {{system.level.heroic}}</span>
+ {{/if}}
+ <span class="breakdown-item">+ Dex {{numberFormat system.abilities.dex.mod sign=true}}</span>
+ </div>
+ </div>
+ 
+ <div class="defense fortitude-defense">
+ <label class="defense-label">Fortitude Defense</label>
+ <div class="defense-value rollable" 
+ data-roll="1d20" 
+ data-label="Fortitude Defense"
+ title="Click to roll vs. Fortitude">
+ {{system.defenses.fortitude.total}}
+ </div>
+ <div class="defense-breakdown">
+ <span class="breakdown-item">10 + Level {{system.level.heroic}}</span>
+ <span class="breakdown-item">+ Con {{numberFormat system.abilities.con.mod sign=true}}</span>
+ </div>
+ </div>
+ 
+ <div class="defense will-defense">
+ <label class="defense-label">Will Defense</label>
+ <div class="defense-value rollable" 
+ data-roll="1d20" 
+ data-label="Will Defense"
+ title="Click to roll vs. Will">
+ {{system.defenses.will.total}}
+ </div>
+ <div class="defense-breakdown">
+ <span class="breakdown-item">10 + Level {{system.level.heroic}}</span>
+ <span class="breakdown-item">+ Wis {{numberFormat system.abilities.wis.mod sign=true}}</span>
+ </div>
+ </div>
+ </div>
+ 
+ {{!-- Resources: HP and Force Points --}}
+ <div class="resources flexrow">
+ <div class="resource hp flex1">
+ <label>Hit Points</label>
+ <div class="resource-bar flexrow">
+ <input type="text" 
+ name="system.hp.value" 
+ value="{{system.hp.value}}" 
+ data-dtype="Number"
+ class="resource-input"/>
+ <span class="separator">/</span>
+ <span class="resource-max">{{system.hp.max}}</span>
+ </div>
+ <div class="progress-bar">
+ <div class="progress-fill" style="width: {{hpPercentage}}%"></div>
+ </div>
+ </div>
+ 
+ {{#if system.forceSensitive}}
+ <div class="resource force-points flex1">
+ <label>Force Points</label>
+ <div class="resource-content flexrow">
+ <input type="text" 
+ name="system.forcePoints.value" 
+ value="{{system.forcePoints.value}}" 
+ data-dtype="Number"
+ class="resource-input"/>
+ <span class="separator">/</span>
+ <span class="resource-max">{{system.forcePoints.max}}</span>
+ </div>
+ <div class="reroll-bonus">
+ <i class="fas fa-dice"></i> Reroll: {{forceRerollDice}}
+ </div>
+ </div>
+ {{/if}}
+ </div>
+ </div>
+ 
+ <div class="header-right flex0">
+ {{> "systems/swse/templates/partials/ui/condition-track.hbs"}}
+ </div>
 </header>
-
-</div><!-- swse-sheet -->

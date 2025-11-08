@@ -1,106 +1,106 @@
 <div class="tab combat-tab" data-group="primary" data-tab="combat">
-  <h3 class="section-header">Combat Statistics</h3>
+ <h3 class="section-header">Combat Statistics</h3>
 
-  <div class="combat-stats-grid">
-    <div class="combat-stat">
-      <label>Base Attack Bonus</label>
-      <input type="number" 
-             name="system.bab" 
-             value="{{system.bab}}" 
-             data-dtype="Number"
-             placeholder="0"/>
-    </div>
+ <div class="combat-stats-grid">
+ <div class="combat-stat">
+ <label>Base Attack Bonus</label>
+ <input type="number" 
+ name="system.bab" 
+ value="{{system.bab}}" 
+ data-dtype="Number"
+ placeholder="0"/>
+ </div>
 
-    <div class="combat-stat">
-      <label>Speed</label>
-      <input type="number" 
-             name="system.speed" 
-             value="{{system.speed}}" 
-             data-dtype="Number"
-             placeholder="6"/> squares
-    </div>
+ <div class="combat-stat">
+ <label>Speed</label>
+ <input type="number" 
+ name="system.speed" 
+ value="{{system.speed}}" 
+ data-dtype="Number"
+ placeholder="6"/> squares
+ </div>
 
-    <div class="combat-stat">
-      <label>Initiative</label>
-      <div class="initiative-value rollable"
-           data-roll="1d20+@initiative"
-           data-label="Initiative">
-        {{numberFormat system.initiative sign=true}}
-      </div>
-    </div>
+ <div class="combat-stat">
+ <label>Initiative</label>
+ <div class="initiative-value rollable"
+ data-roll="1d20+@initiative"
+ data-label="Initiative">
+ {{numberFormat system.initiative sign=true}}
+ </div>
+ </div>
 
-    <div class="combat-stat">
-      <label>Damage Threshold</label>
-      <div class="threshold-value">{{system.damageThreshold}}</div>
-    </div>
-  </div>
+ <div class="combat-stat">
+ <label>Damage Threshold</label>
+ <div class="threshold-value">{{system.damageThreshold}}</div>
+ </div>
+ </div>
 
-  <h3 class="section-header">Weapons</h3>
+ <h3 class="section-header">Weapons</h3>
 
-  <div class="weapons-list">
-    <div class="weapons-header flexrow">
-      <div class="weapon-col-name">Weapon</div>
-      <div class="weapon-col-attack">Attack</div>
-      <div class="weapon-col-damage">Damage</div>
-      <div class="weapon-col-crit">Critical</div>
-      <div class="weapon-col-controls"></div>
-    </div>
+ <div class="weapons-list">
+ <div class="weapons-header flexrow">
+ <div class="weapon-col-name">Weapon</div>
+ <div class="weapon-col-attack">Attack</div>
+ <div class="weapon-col-damage">Damage</div>
+ <div class="weapon-col-crit">Critical</div>
+ <div class="weapon-col-controls"></div>
+ </div>
 
-    {{#each weapons as |weapon|}}
-      <div class="weapon-row flexrow" data-item-id="{{weapon._id}}">
-        <div class="weapon-name">
-          <img src="{{weapon.img}}" width="24" height="24" alt="{{weapon.name}}"/>
-          {{weapon.name}}
-        </div>
+ {{#each weapons as |weapon|}}
+ <div class="weapon-row flexrow" data-item-id="{{weapon._id}}">
+ <div class="weapon-name">
+ <img src="{{weapon.img}}" width="24" height="24" alt="{{weapon.name}}"/>
+ {{weapon.name}}
+ </div>
 
-        <div class="weapon-attack rollable"
-             data-action="rollAttack"
-             data-item-id="{{weapon._id}}">
-          {{numberFormat weapon.system.attackBonus sign=true}}
-        </div>
+ <div class="weapon-attack rollable"
+ data-action="rollAttack"
+ data-item-id="{{weapon._id}}">
+ {{numberFormat weapon.system.attackBonus sign=true}}
+ </div>
 
-        <div class="weapon-damage rollable"
-             data-action="rollDamage"
-             data-item-id="{{weapon._id}}">
-          {{weapon.system.damage}}
-        </div>
+ <div class="weapon-damage rollable"
+ data-action="rollDamage"
+ data-item-id="{{weapon._id}}">
+ {{weapon.system.damage}}
+ </div>
 
-        <div class="weapon-crit">
-          {{weapon.system.critical}}
-        </div>
+ <div class="weapon-crit">
+ {{weapon.system.critical}}
+ </div>
 
-        <div class="weapon-controls flexrow">
-          <a class="item-control item-edit" title="Edit">
-            <i class="fas fa-edit"></i>
-          </a>
-          <a class="item-control item-delete" title="Delete">
-            <i class="fas fa-trash"></i>
-          </a>
-        </div>
-      </div>
-    {{/each}}
+ <div class="weapon-controls flexrow">
+ <a class="item-control item-edit" title="Edit">
+ <i class="fas fa-edit"></i>
+ </a>
+ <a class="item-control item-delete" title="Delete">
+ <i class="fas fa-trash"></i>
+ </a>
+ </div>
+ </div>
+ {{/each}}
 
-    <button class="add-weapon" data-action="createItem" data-type="weapon">
-      <i class="fas fa-plus"></i> Add Weapon
-    </button>
-  </div>
+ <button class="add-weapon" data-action="createItem" data-type="weapon">
+ <i class="fas fa-plus"></i> Add Weapon
+ </button>
+ </div>
 
-  <h3 class="section-header">Armor</h3>
+ <h3 class="section-header">Armor</h3>
 
-  <div class="armor-section">
-    {{#each armor as |item|}}
-      <div class="armor-row flexrow" data-item-id="{{item._id}}">
-        <img src="{{item.img}}" width="24" height="24" alt="{{item.name}}"/>
-        <span class="armor-name">{{item.name}}</span>
-        <span class="armor-bonus">Reflex: +{{item.system.reflexBonus}}</span>
-        <span class="armor-fort">Fort: +{{item.system.fortBonus}}</span>
-        <label>
-          <input type="checkbox" 
-                 name="items.{{item._id}}.system.equipped"
-                 {{checked item.system.equipped}}/>
-          Equipped
-        </label>
-      </div>
-    {{/each}}
-  </div>
+ <div class="armor-section">
+ {{#each armor as |item|}}
+ <div class="armor-row flexrow" data-item-id="{{item._id}}">
+ <img src="{{item.img}}" width="24" height="24" alt="{{item.name}}"/>
+ <span class="armor-name">{{item.name}}</span>
+ <span class="armor-bonus">Reflex: +{{item.system.reflexBonus}}</span>
+ <span class="armor-fort">Fort: +{{item.system.fortBonus}}</span>
+ <label>
+ <input type="checkbox" 
+ name="items.{{item._id}}.system.equipped"
+ {{checked item.system.equipped}}/>
+ Equipped
+ </label>
+ </div>
+ {{/each}}
+ </div>
 </div>

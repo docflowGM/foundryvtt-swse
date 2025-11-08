@@ -1,41 +1,41 @@
 <div class="tab inventory-tab" data-group="primary" data-tab="inventory">
-  <h3 class="section-header">Equipment</h3>
+ <h3 class="section-header">Equipment</h3>
 
-  <div class="inventory-list">
-    {{#each equipment as |item|}}
-      <div class="item-row flexrow" data-item-id="{{item._id}}">
-        <img src="{{item.img}}" width="24" height="24" alt="{{item.name}}"/>
-        <span class="item-name">{{item.name}}</span>
-        <input type="number" 
-               name="items.{{item._id}}.system.quantity"
-               value="{{item.system.quantity}}"
-               data-dtype="Number"
-               placeholder="1"
-               class="item-quantity"/>
-        <span class="item-weight">{{item.system.weight}} kg</span>
-        <div class="item-controls flexrow">
-          <a class="item-control item-edit" title="Edit">
-            <i class="fas fa-edit"></i>
-          </a>
-          <a class="item-control item-delete" title="Delete">
-            <i class="fas fa-trash"></i>
-          </a>
-        </div>
-      </div>
-    {{/each}}
-  </div>
+ <div class="inventory-list">
+ {{#each equipment as |item|}}
+ <div class="item-row flexrow" data-item-id="{{item._id}}">
+ <img src="{{item.img}}" width="24" height="24" alt="{{item.name}}"/>
+ <span class="item-name">{{item.name}}</span>
+ <input type="number" 
+ name="items.{{item._id}}.system.quantity"
+ value="{{item.system.quantity}}"
+ data-dtype="Number"
+ placeholder="1"
+ class="item-quantity"/>
+ <span class="item-weight">{{item.system.weight}} kg</span>
+ <div class="item-controls flexrow">
+ <a class="item-control item-edit" title="Edit">
+ <i class="fas fa-edit"></i>
+ </a>
+ <a class="item-control item-delete" title="Delete">
+ <i class="fas fa-trash"></i>
+ </a>
+ </div>
+ </div>
+ {{/each}}
+ </div>
 
-  <button class="add-equipment" data-action="createItem" data-type="equipment">
-    <i class="fas fa-plus"></i> Add Equipment
-  </button>
+ <button class="add-equipment" data-action="createItem" data-type="equipment">
+ <i class="fas fa-plus"></i> Add Equipment
+ </button>
 
-  <div class="currency-section">
-    <h3 class="section-header">Credits</h3>
-    <input type="number" 
-           name="system.credits"
-           value="{{system.credits}}"
-           data-dtype="Number"
-           placeholder="0"
-           class="credits-input"/>
-  </div>
+ <div class="currency-section">
+ <h3 class="section-header">Credits</h3>
+ <input type="number" 
+ name="system.credits"
+ value="{{system.credits}}"
+ data-dtype="Number"
+ placeholder="0"
+ class="credits-input"/>
+ </div>
 </div>

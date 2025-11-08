@@ -4,13 +4,34 @@
   "description": "Schema for character attributes (Strength, Dexterity, etc.)",
   "type": "object",
   "properties": {
-    "name": { "type": "string" },
-    "aliases": { "type": "array", "items": { "type": "string" } },
-    "description": { "type": "string" },
-    "relatedSkills": { "type": "array", "items": { "type": "string" } },
-    "modifierFormula": { "type": "string" },
-    "modifierNotes": { "type": "string" }
+    "name": {
+      "type": "string"
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string"
+    },
+    "relatedSkills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "modifierFormula": {
+      "type": "string"
+    },
+    "modifierNotes": {
+      "type": "string"
+    }
   },
-  "reqassets/uired": ["name", "description", "modifierFormula"]
+  "reqassets/uired": [
+    "name",
+    "description",
+    "modifierFormula"
+  ]
 }
-

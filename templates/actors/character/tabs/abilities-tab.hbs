@@ -1,103 +1,103 @@
 <div class="tab abilities-tab" data-group="primary" data-tab="abilities">
-  <h3 class="section-header">Ability Scores</h3>
+ <h3 class="section-header">Ability Scores</h3>
 
-  <div class="abilities-grid">
-    {{#each system.abilities as |ability key|}}
-      <div class="ability-row">
-        <label class="ability-label">{{upper key}}</label>
+ <div class="abilities-grid">
+ {{#each system.abilities as |ability key|}}
+ <div class="ability-row">
+ <label class="ability-label">{{upper key}}</label>
 
-        <div class="ability-inputs flexrow">
-          <input type="number" 
-                 name="system.abilities.{{key}}.base" 
-                 value="{{ability.base}}" 
-                 data-dtype="Number"
-                 placeholder="10"
-                 title="Base Score"/>
+ <div class="ability-inputs flexrow">
+ <input type="number" 
+ name="system.abilities.{{key}}.base" 
+ value="{{ability.base}}" 
+ data-dtype="Number"
+ placeholder="10"
+ title="Base Score"/>
 
-          <span>+</span>
+ <span>+</span>
 
-          <input type="number" 
-                 name="system.abilities.{{key}}.racial" 
-                 value="{{ability.racial}}" 
-                 data-dtype="Number"
-                 placeholder="0"
-                 title="Racial Modifier"/>
+ <input type="number" 
+ name="system.abilities.{{key}}.racial" 
+ value="{{ability.racial}}" 
+ data-dtype="Number"
+ placeholder="0"
+ title="Racial Modifier"/>
 
-          <span>+</span>
+ <span>+</span>
 
-          <input type="number" 
-                 name="system.abilities.{{key}}.misc" 
-                 value="{{ability.misc}}" 
-                 data-dtype="Number"
-                 placeholder="0"
-                 title="Miscellaneous"/>
+ <input type="number" 
+ name="system.abilities.{{key}}.misc" 
+ value="{{ability.misc}}" 
+ data-dtype="Number"
+ placeholder="0"
+ title="Miscellaneous"/>
 
-          <span>=</span>
+ <span>=</span>
 
-          <div class="ability-total">{{ability.total}}</div>
-        </div>
+ <div class="ability-total">{{ability.total}}</div>
+ </div>
 
-        <div class="ability-mod rollable" 
-             data-roll="1d20+@abilities.{{key}}.mod"
-             data-label="{{upper key}} Check">
-          {{numberFormat ability.mod sign=true}}
-        </div>
-      </div>
-    {{/each}}
-  </div>
+ <div class="ability-mod rollable" 
+ data-roll="1d20+@abilities.{{key}}.mod"
+ data-label="{{upper key}} Check">
+ {{numberFormat ability.mod sign=true}}
+ </div>
+ </div>
+ {{/each}}
+ </div>
 
-  <h3 class="section-header">Defenses</h3>
+ <h3 class="section-header">Defenses</h3>
 
-  <div class="defenses-detail">
-    {{#each system.defenses as |defense key|}}
-      <div class="defense-detail-row">
-        <label>{{capitalize key}} Defense</label>
+ <div class="defenses-detail">
+ {{#each system.defenses as |defense key|}}
+ <div class="defense-detail-row">
+ <label>{{capitalize key}} Defense</label>
 
-        <div class="defense-calculation flexrow">
-          <span>10 +</span>
+ <div class="defense-calculation flexrow">
+ <span>10 +</span>
 
-          {{#if (eq key "reflex")}}
-            <input type="number" 
-                   name="system.defenses.{{key}}.armor" 
-                   value="{{defense.armor}}" 
-                   data-dtype="Number"
-                   placeholder="Level/Armor"
-                   title="Armor bonus or Level"/>
-          {{else}}
-            <span>Level ({{@root.system.level}})</span>
-          {{/if}}
+ {{#if (eq key "reflex")}}
+ <input type="number" 
+ name="system.defenses.{{key}}.armor" 
+ value="{{defense.armor}}" 
+ data-dtype="Number"
+ placeholder="Level/Armor"
+ title="Armor bonus or Level"/>
+ {{else}}
+ <span>Level ({{@root.system.level}})</span>
+ {{/if}}
 
-          <span>+</span>
+ <span>+</span>
 
-          <span title="Ability Modifier">
-            {{#if (eq key "reflex")}}Dex {{numberFormat @root.system.abilities.dex.mod sign=true}}{{/if}}
-            {{#if (eq key "fortitude")}}Con {{numberFormat @root.system.abilities.con.mod sign=true}}{{/if}}
-            {{#if (eq key "will")}}Wis {{numberFormat @root.system.abilities.wis.mod sign=true}}{{/if}}
-          </span>
+ <span title="Ability Modifier">
+ {{#if (eq key "reflex")}}Dex {{numberFormat @root.system.abilities.dex.mod sign=true}}{{/if}}
+ {{#if (eq key "fortitude")}}Con {{numberFormat @root.system.abilities.con.mod sign=true}}{{/if}}
+ {{#if (eq key "will")}}Wis {{numberFormat @root.system.abilities.wis.mod sign=true}}{{/if}}
+ </span>
 
-          <span>+</span>
+ <span>+</span>
 
-          <input type="number" 
-                 name="system.defenses.{{key}}.classBonus" 
-                 value="{{defense.classBonus}}" 
-                 data-dtype="Number"
-                 placeholder="0"
-                 title="Class Bonus"/>
+ <input type="number" 
+ name="system.defenses.{{key}}.classBonus" 
+ value="{{defense.classBonus}}" 
+ data-dtype="Number"
+ placeholder="0"
+ title="Class Bonus"/>
 
-          <span>+</span>
+ <span>+</span>
 
-          <input type="number" 
-                 name="system.defenses.{{key}}.misc" 
-                 value="{{defense.misc}}" 
-                 data-dtype="Number"
-                 placeholder="0"
-                 title="Miscellaneous"/>
+ <input type="number" 
+ name="system.defenses.{{key}}.misc" 
+ value="{{defense.misc}}" 
+ data-dtype="Number"
+ placeholder="0"
+ title="Miscellaneous"/>
 
-          <span>=</span>
+ <span>=</span>
 
-          <div class="defense-total">{{defense.total}}</div>
-        </div>
-      </div>
-    {{/each}}
-  </div>
+ <div class="defense-total">{{defense.total}}</div>
+ </div>
+ </div>
+ {{/each}}
+ </div>
 </div>

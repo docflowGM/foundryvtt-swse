@@ -3,26 +3,60 @@
   "title": "Combat Action",
   "type": "object",
   "properties": {
-    "name": { "type": "string" },
-    "actionCost": { "type": "string" },
-    "notes": { "type": "string" },
+    "name": {
+      "type": "string"
+    },
+    "actionCost": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
     "relatedSkills": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "skill": { "type": "string" },
-          "roll": { "type": ["string", "null"] },
-          "DC": { "type": ["string", "number", "null"] },
-          "outcome": { "type": ["string", "null"] },
-          "when": { "type": ["string", "null"] }
+          "skill": {
+            "type": "string"
+          },
+          "roll": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "DC": {
+            "type": [
+              "string",
+              "number",
+              "null"
+            ]
+          },
+          "outcome": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "when": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         },
-        "reqassets/uired": ["skill"],
+        "reqassets/uired": [
+          "skill"
+        ],
         "additionalProperties": false
       }
     }
   },
-  "reqassets/uired": ["name", "actionCost", "notes"],
+  "reqassets/uired": [
+    "name",
+    "actionCost",
+    "notes"
+  ],
   "additionalProperties": false
 }
-

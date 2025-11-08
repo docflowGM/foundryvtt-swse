@@ -1,107 +1,107 @@
 <div class="tab force-tab" data-group="primary" data-tab="force">
-  <h3 class="section-header">Force Points</h3>
+ <h3 class="section-header">Force Points</h3>
 
-  <div class="force-points-section flexrow">
-    <div class="force-points-display">
-      <label>Force Points</label>
-      <div class="resource-bar flexrow">
-        <input type="number" 
-               name="system.forcePoints.value"
-               value="{{system.forcePoints.value}}"
-               data-dtype="Number"
-               class="force-current"/>
-        <span>/</span>
-        <span class="force-max">{{system.forcePoints.max}}</span>
-      </div>
-    </div>
+ <div class="force-points-section flexrow">
+ <div class="force-points-display">
+ <label>Force Points</label>
+ <div class="resource-bar flexrow">
+ <input type="number" 
+ name="system.forcePoints.value"
+ value="{{system.forcePoints.value}}"
+ data-dtype="Number"
+ class="force-current"/>
+ <span>/</span>
+ <span class="force-max">{{system.forcePoints.max}}</span>
+ </div>
+ </div>
 
-    <div class="force-reroll">
-      <label>Reroll Dice</label>
-      <div class="reroll-dice">{{forceRerollDice}}</div>
-    </div>
+ <div class="force-reroll">
+ <label>Reroll Dice</label>
+ <div class="reroll-dice">{{forceRerollDice}}</div>
+ </div>
 
-    <div class="dark-side">
-      <label>Dark Side Score</label>
-      <input type="number" 
-             name="system.darkSideScore"
-             value="{{system.darkSideScore}}"
-             data-dtype="Number"
-             placeholder="0"/>
-    </div>
-  </div>
+ <div class="dark-side">
+ <label>Dark Side Score</label>
+ <input type="number" 
+ name="system.darkSideScore"
+ value="{{system.darkSideScore}}"
+ data-dtype="Number"
+ placeholder="0"/>
+ </div>
+ </div>
 
-  <div class="force-actions flexrow">
-    <button class="force-action" data-action="spendForcePoint" data-type="reroll">
-      <i class="fas fa-dice"></i> Reroll
-    </button>
-    <button class="force-action" data-action="spendForcePoint" data-type="avoid-death">
-      <i class="fas fa-heart"></i> Avoid Death
-    </button>
-    <button class="force-action" data-action="spendForcePoint" data-type="reduce-dark">
-      <i class="fas fa-moon"></i> Reduce Dark Side
-    </button>
-  </div>
+ <div class="force-actions flexrow">
+ <button class="force-action" data-action="spendForcePoint" data-type="reroll">
+ <i class="fas fa-dice"></i> Reroll
+ </button>
+ <button class="force-action" data-action="spendForcePoint" data-type="avoid-death">
+ <i class="fas fa-heart"></i> Avoid Death
+ </button>
+ <button class="force-action" data-action="spendForcePoint" data-type="reduce-dark">
+ <i class="fas fa-moon"></i> Reduce Dark Side
+ </button>
+ </div>
 
-  <h3 class="section-header">Force Powers Suite</h3>
+ <h3 class="section-header">Force Powers Suite</h3>
 
-  <div class="force-suite-manager flexrow">
-    <div class="powers-column known-powers">
-      <h4>Known Powers</h4>
-      <div class="powers-list drop-zone" data-zone="known">
-        {{#each knownPowers as |power|}}
-          <div class="power-card" 
-               draggable="true"
-               data-item-id="{{power._id}}">
-            <img src="{{power.img}}" width="32" height="32" alt="{{power.name}}"/>
-            <span class="power-name">{{power.name}}</span>
-            <div class="power-controls">
-              <a class="add-to-suite" data-action="addToSuite" data-item-id="{{power._id}}">
-                <i class="fas fa-arrow-right"></i>
-              </a>
-            </div>
-          </div>
-        {{/each}}
-      </div>
+ <div class="force-suite-manager flexrow">
+ <div class="powers-column known-powers">
+ <h4>Known Powers</h4>
+ <div class="powers-list drop-zone" data-zone="known">
+ {{#each knownPowers as |power|}}
+ <div class="power-card" 
+ draggable="true"
+ data-item-id="{{power._id}}">
+ <img src="{{power.img}}" width="32" height="32" alt="{{power.name}}"/>
+ <span class="power-name">{{power.name}}</span>
+ <div class="power-controls">
+ <a class="add-to-suite" data-action="addToSuite" data-item-id="{{power._id}}">
+ <i class="fas fa-arrow-right"></i>
+ </a>
+ </div>
+ </div>
+ {{/each}}
+ </div>
 
-      <button class="add-power" data-action="createItem" data-type="forcepower">
-        <i class="fas fa-plus"></i> Add Power
-      </button>
-    </div>
+ <button class="add-power" data-action="createItem" data-type="forcepower">
+ <i class="fas fa-plus"></i> Add Power
+ </button>
+ </div>
 
-    <div class="suite-arrow">
-      <i class="fas fa-exchange-alt"></i>
-    </div>
+ <div class="suite-arrow">
+ <i class="fas fa-exchange-alt"></i>
+ </div>
 
-    <div class="powers-column active-suite">
-      <h4>Active Suite ({{activeSuite.length}}/{{system.forceSuite.max}})</h4>
-      <div class="powers-list drop-zone suite-zone" data-zone="suite">
-        {{#each activeSuite as |power|}}
-          <div class="power-card in-suite" 
-               draggable="true"
-               data-item-id="{{power._id}}">
-            <img src="{{power.img}}" width="32" height="32" alt="{{power.name}}"/>
-            <span class="power-name">{{power.name}}</span>
-            <div class="power-controls">
-              <a class="use-power" data-action="usePower" data-item-id="{{power._id}}">
-                <i class="fas fa-hand-sparkles"></i>
-              </a>
-              <a class="remove-from-suite" data-action="removeFromSuite" data-item-id="{{power._id}}">
-                <i class="fas fa-arrow-left"></i>
-              </a>
-            </div>
-          </div>
-        {{/each}}
+ <div class="powers-column active-suite">
+ <h4>Active Suite ({{activeSuite.length}}/{{system.forceSuite.max}})</h4>
+ <div class="powers-list drop-zone suite-zone" data-zone="suite">
+ {{#each activeSuite as |power|}}
+ <div class="power-card in-suite" 
+ draggable="true"
+ data-item-id="{{power._id}}">
+ <img src="{{power.img}}" width="32" height="32" alt="{{power.name}}"/>
+ <span class="power-name">{{power.name}}</span>
+ <div class="power-controls">
+ <a class="use-power" data-action="usePower" data-item-id="{{power._id}}">
+ <i class="fas fa-hand-sparkles"></i>
+ </a>
+ <a class="remove-from-suite" data-action="removeFromSuite" data-item-id="{{power._id}}">
+ <i class="fas fa-arrow-left"></i>
+ </a>
+ </div>
+ </div>
+ {{/each}}
 
-        {{#times (subtract system.forceSuite.max activeSuite.length)}}
-          <div class="empty-slot">Empty Slot</div>
-        {{/times}}
-      </div>
-    </div>
-  </div>
+ {{#times (subtract system.forceSuite.max activeSuite.length)}}
+ <div class="empty-slot">Empty Slot</div>
+ {{/times}}
+ </div>
+ </div>
+ </div>
 
-  <h3 class="section-header">Force Techniques</h3>
+ <h3 class="section-header">Force Techniques</h3>
 
-  <div class="force-techniques">
-    <p class="placeholder">Force techniques and secrets will be displayed here.</p>
-  </div>
+ <div class="force-techniques">
+ <p class="placeholder">Force techniques and secrets will be displayed here.</p>
+ </div>
 </div>

@@ -1,3 +1,5 @@
+import { SWSECharacterSheet } from '../character/swse-character-sheet.js';
+
 // ============================================
 // FILE: module/actors/swse-droid.js
 // Droid actor sheet
@@ -7,7 +9,7 @@ export class SWSEDroidSheet extends SWSECharacterSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor", "droid"],
-      template: "systems/swse/templates/actors/droid-sheet.hbs",
+      template: "systems/swse/templates/actors/droid/droid-sheet.hbs",
       width: 800,
       height: 720
     });

@@ -5,7 +5,7 @@ export class SWSEStore extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "swse-templates/apps/store",
-      template: "systems/swse/templates/apps/templates/apps/store.html",
+      template: "systems/swse/store.html",
       width: 800,
       height: 600,
       title: "Galactic Trade Exchange",
@@ -32,8 +32,8 @@ export class SWSEStore extends FormApplication {
       actor,
       categories,
       isGM,
-      markup: game.settings.get("swse", "templates/apps/templates/apps/storeMarkup") || 0,
-      discount: game.settings.get("swse", "templates/apps/templates/apps/storeDiscount") || 0
+      markup: game.settings.get("swse", "storeMarkup") || 0,
+      discount: game.settings.get("swse", "storeDiscount") || 0
     };
   }
 
@@ -52,8 +52,8 @@ export class SWSEStore extends FormApplication {
     
     const actor = this.object;
     let cost = item.system.cost || 0;
-    const markup = game.settings.get("swse", "templates/apps/templates/apps/storeMarkup") || 0;
-    const discount = game.settings.get("swse", "templates/apps/templates/apps/storeDiscount") || 0;
+    const markup = game.settings.get("swse", "storeMarkup") || 0;
+    const discount = game.settings.get("swse", "storeDiscount") || 0;
     cost = Math.round(cost * (1 + markup / 100) * (1 - discount / 100));
 
     const credits = actor.system.credits || 0;
@@ -88,8 +88,8 @@ export class SWSEStore extends FormApplication {
   async _onSaveGM(event) {
     const markup = parseInt(this.element.find("input[name='markup']").val()) || 0;
     const discount = parseInt(this.element.find("input[name='discount']").val()) || 0;
-    await game.settings.set("swse", "templates/apps/templates/apps/storeMarkup", markup);
-    await game.settings.set("swse", "templates/apps/templates/apps/storeDiscount", discount);
+    await game.settings.set("swse", "storeMarkup", markup);
+    await game.settings.set("swse", "storeDiscount", discount);
     ui.notifications.info("Store settings updated.");
   }
 }

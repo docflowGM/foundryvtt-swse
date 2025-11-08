@@ -1,0 +1,251 @@
+<div class="swse-sheet">
+<form class="swse character-sheet holo-theme" autocomplete="off">
+ {{!-- Holographic Frame Header --}}
+ <div class="holo-frame-top">
+ <img class="sw-logo" src="systems/swse/assets/ui/swse-logo.png" alt="Star Wars Saga Edition"/>
+ </div>
+
+ {{!-- Header Section --}}
+ <header class="sheet-header">
+ <img class="title-logo" src="systems/swse/assets/ui/swse-logo.png" alt="Star Wars Saga Edition"/>
+ 
+ <div class="header-fields flexrow">
+ <div class="field name">
+ <label>Character Name</label>
+ <input type="text" name="name" value="{{actor.name}}" placeholder="Character Name"/>
+ </div>
+ <div class="field species">
+ <label>Species</label>
+ <input type="text" name="system.species" value="{{system.species}}" placeholder="Human"/>
+ </div>
+ <div class="field class">
+ <label>Class</label>
+ <input type="text" name="system.class" value="{{system.class}}" placeholder="Jedi"/>
+ </div>
+ <div class="field level">
+ <label>Level</label>
+ <input type="number" name="system.level" value="{{system.level}}" min="1"/ data-dtype="Number">
+ </div>
+ </div>
+ </header>
+
+ {{!-- Main Stats Section (Top Row) --}}
+ <section class="stats-row flexrow">
+ {{!-- Abilities --}}
+ <div class="abilities-block">
+ <h3>Abilities</h3>
+ {{#each system.abilities as |ability key|}}
+ <div class="ability" data-ability="{{key}}">
+ <div class="ability-name">{{toUpperCase key}}</div>
+ <div class="ability-score">
+ <input type="number" name="system.abilities.{{key}}.base" value="{{ability.base}}" data-dtype="Number"/>
+ </div>
+ <div class="ability-modifier">
+ {{#if (gte ability.mod 0)}}+{{/if}}{{ability.mod}}
+ </div>
+ </div>
+ {{/each}}
+ </div>
+
+ {{!-- Hit Points & Defenses --}}
+ <div class="vitals-block">
+ <div class="hp-section">
+ <label>Hit Points</label>
+ <div class="hp-display">
+ <input type="number" name="system.hp.value" value="{{system.hp.value}}" data-dtype="Number"/>
+ <span class="separator">/</span>
+ <input type="number" name="system.hp.max" value="{{system.hp.max}}" data-dtype="Number"/>
+ </div>
+ </div>
+ 
+ <div class="threshold-section">
+ <label>Damage Threshold</label>
+ <div class="threshold-display">{{system.damageThreshold}}</div>
+ </div>
+ 
+ <div class="defenses-section">
+ <h4>Defenses</h4>
+ {{#each system.defenses as |def key|}}
+ <div class="defense" data-defense="{{key}}">
+ <span class="defense-name">{{capitalize key}}</span>
+ <span class="defense-value">{{def.total}}</span>
+ </div>
+ {{/each}}
+ </div>
+ 
+ <div class="condition-track">
+ <label>Condition Track</label>
+ <select name="system.conditionTrack">
+ <option value="normal" {{#if (eq system.conditionTrack "normal")}}selected{{/if}}>Normal</option>
+ <option value="-1" {{#if (eq system.conditionTrack "-1")}}selected{{/if}}>-1</option>
+ <option value="-2" {{#if (eq system.conditionTrack "-2")}}selected{{/if}}>-2</option>
+ <option value="-5" {{#if (eq system.conditionTrack "-5")}}selected{{/if}}>-5</option>
+ <option value="-10" {{#if (eq system.conditionTrack "-10")}}selected{{/if}}>-10</option>
+ <option value="helpless" {{#if (eq system.conditionTrack "helpless")}}selected{{/if}}>Helpless</option>
+ </select>
+ </div>
+ </div>
+
+ {{!-- Force & Destiny --}}
+ <div class="force-block">
+ <div class="force-points">
+ <label>Force Points</label>
+ <div class="points-display">
+ <input type="number" name="system.forcePoints.value" value="{{system.forcePoints.value}}"/ data-dtype="Number">
+ <span>/</span>
+ <input type="number" name="system.forcePoints.max" value="{{system.forcePoints.max}}"/ data-dtype="Number">
+ </div>
+ </div>
+ 
+ <div class="destiny-points">
+ <label>Destiny Points</label>
+ <div class="points-display">
+ <input type="number" name="system.destinyPoints.value" value="{{system.destinyPoints.value}}"/ data-dtype="Number">
+ <span>/</span>
+ <input type="number" name="system.destinyPoints.max" value="{{system.destinyPoints.max}}"/ data-dtype="Number">
+ </div>
+ </div>
+ 
+ <div class="speed">
+ <label>Speed</label>
+ <span class="speed-value">{{system.speed.total}} squares</span>
+ </div>
+ 
+ <div class="bab">
+ <label>Base Attack Bonus</label>
+ <span class="bab-value">+{{system.bab}}</span>
+ </div>
+ </div>
+ </section>
+
+ {{!-- Tabs Navigation --}}
+ <nav class="sheet-tabs tabs" data-group="primary">
+ <a class="item" data-tab="skills">Skills</a>
+ <a class="item" data-tab="feats">Feats & Talents</a>
+ <a class="item" data-tab="powers">Force Powers</a>
+ <a class="item" data-tab="equipment">Equipment</a>
+ <a class="item" data-tab="biography">Biography</a>
+ </nav>
+
+ {{!-- Tab Content --}}
+ <section class="sheet-body">
+ {{!-- Skills Tab --}}
+ <div class="tab skills" data-group="primary" data-tab="skills">
+ <div class="skills-list">
+ {{#each system.skills as |skill key|}}
+ <div class="skill-row">
+ <input type="checkbox" name="system.skills.{{key}}.trained" {{checked skill.trained}}/>
+ <label class="skill-name">{{skill.label}}</label>
+ <span class="skill-ability">({{toUpperCase skill.ability}})</span>
+ <button type="button" class="roll-skill" data-skill="{{key}}">
+ <i class="fas fa-dice-d20"></i>
+ {{#if (gte skill.total 0)}}+{{/if}}{{skill.total}}
+ </button>
+ </div>
+ {{/each}}
+ </div>
+ </div>
+
+ {{!-- Feats & Talents Tab --}}
+ <div class="tab feats" data-group="primary" data-tab="feats">
+ <div class="feats-section">
+ <h3>Feats</h3>
+ <button type="button" class="add-feat">+ Add Feat</button>
+ <ul class="feats-list">
+ {{#each system.feats as |feat index|}}
+ <li class="feat-entry" data-index="{{index}}">
+ <input type="text" name="system.feats.{{index}}.name" value="{{feat.name}}" placeholder="Feat Name"/>
+ <button type="button" class="remove-feat" data-index="{{index}}">
+ <i class="fas fa-trash"></i>
+ </button>
+ </li>
+ {{/each}}
+ </ul>
+ </div>
+ 
+ <div class="talents-section">
+ <h3>Talents</h3>
+ <button type="button" class="add-talent">+ Add Talent</button>
+ <ul class="talents-list">
+ {{#each system.talents as |talent index|}}
+ <li class="talent-entry" data-index="{{index}}">
+ <input type="text" name="system.talents.{{index}}.name" value="{{talent.name}}" placeholder="Talent Name"/>
+ <button type="button" class="remove-talent" data-index="{{index}}">
+ <i class="fas fa-trash"></i>
+ </button>
+ </li>
+ {{/each}}
+ </ul>
+ </div>
+ </div>
+
+ {{!-- Force Powers Tab --}}
+ <div class="tab powers" data-group="primary" data-tab="powers">
+ <div class="powers-header">
+ <h3>Force Powers</h3>
+ <button type="button" class="add-forcepower">+ Add Power</button>
+ <button type="button" class="refresh-forcepowers">Refresh All</button>
+ </div>
+ 
+ <ul class="powers-list">
+ {{#each items as |item|}}
+ {{#if (eq item.type "forcepower")}}
+ <li class="forcepower-entry" data-item-id="{{item._id}}">
+ <div class="power-header">
+ <h4>{{item.name}}</h4>
+ <div class="power-uses">
+ {{item.system.uses.current}} / {{item.system.uses.max}}
+ </div>
+ </div>
+ <div class="power-actions">
+ <button type="button" class="roll-forcepower">Use Power</button>
+ <button type="button" class="reload-forcepower">Reload (FP)</button>
+ <button type="button" class="remove-forcepower">
+ <i class="fas fa-trash"></i>
+ </button>
+ </div>
+ </li>
+ {{/if}}
+ {{/each}}
+ </ul>
+ </div>
+
+ {{!-- Equipment Tab --}}
+ <div class="tab equipment" data-group="primary" data-tab="equipment">
+ <div class="equipment-header">
+ <h3>Weapons</h3>
+ <button type="button" class="add-weapon">+ Add Weapon</button>
+ </div>
+ 
+ <div class="weapons-list">
+ {{#each system.weapons as |weapon index|}}
+ <div class="weapon-entry" data-index="{{index}}">
+ <input type="text" name="system.weapons.{{index}}.name" value="{{weapon.name}}" placeholder="Weapon Name"/>
+ <input type="text" name="system.weapons.{{index}}.damage" value="{{weapon.damage}}" placeholder="Damage"/>
+ <select name="system.weapons.{{index}}.attackAttr">
+ <option value="str" {{#if (eq weapon.attackAttr "str")}}selected{{/if}}>STR</option>
+ <option value="dex" {{#if (eq weapon.attackAttr "dex")}}selected{{/if}}>DEX</option>
+ </select>
+ <button type="button" class="roll-weapon">
+ <i class="fas fa-dice-d20"></i> Attack
+ </button>
+ <button type="button" class="remove-weapon">
+ <i class="fas fa-trash"></i>
+ </button>
+ </div>
+ {{/each}}
+ </div>
+ 
+ <div class="credits-section">
+ <label>Credits</label>
+ <input type="number" name="system.credits" value="{{system.credits}}" data-dtype="Number"/>
+ </div>
+ </div>
+
+ {{!-- Biography Tab --}}
+ <div class="tab biography" data-group="primary" data-tab="biography">
+ <textarea name="system.bio" rows="20">{{system.bio}}</textarea>
+ </div>
+ </section>
+</form>
+</div><!-- swse-sheet -->

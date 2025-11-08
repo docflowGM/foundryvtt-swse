@@ -4,16 +4,39 @@
   "description": "Schema for weapons, armor, gear, and other equipment",
   "type": "object",
   "properties": {
-    "name": { "type": "string" },
-    "tags": { "type": "array", "items": { "type": "string" } },
-    "size": { "type": "string" },
-    "cost": { "type": "string" },
-    "damage": { "type": "string" },
-    "stun_setting": { "type": "string" },
-    "weight": { "type": "string" },
-    "type": { "type": "string" },
-    "availability": { "type": "string" }
+    "name": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "size": {
+      "type": "string"
+    },
+    "cost": {
+      "type": "string"
+    },
+    "damage": {
+      "type": "string"
+    },
+    "stun_setting": {
+      "type": "string"
+    },
+    "weight": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "availability": {
+      "type": "string"
+    }
   },
-  "reqassets/uired": ["name", "type"]
+  "reqassets/uired": [
+    "name",
+    "type"
+  ]
 }
-

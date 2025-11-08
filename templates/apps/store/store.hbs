@@ -1,55 +1,55 @@
 <div class="swse-sheet">
 <form class="swse-store holo-theme" autocomplete="off">
-  <header class="store-header flexrow">
-    <h1 class="aurebesh">Galactic Trade Exchange</h1>
-    <div class="credits-display">
-      Credits: <span class="credits-value">{{actor.system.credits}}</span>
-    </div>
-  </header>
+ <header class="store-header flexrow">
+ <h1 class="aurebesh">Galactic Trade Exchange</h1>
+ <div class="credits-display">
+ Credits: <span class="credits-value">{{actor.system.credits}}</span>
+ </div>
+ </header>
 
-  <nav class="sheet-tabs tabs" data-group="store">
-    <a class="item" data-tab="weapons">Weapons</a>
-    <a class="item" data-tab="armor">Armor</a>
-    <a class="item" data-tab="equipment">Equipment</a>
-    <a class="item" data-tab="vehicles">Vehicles</a>
-    <a class="item" data-tab="droids">Droids</a>
-    <a class="item" data-tab="misc">Misc</a>
-    {{#if isGM}}
-    <a class="item gm-controls" data-tab="gm">GM</a>
-    {{/if}}
-  </nav>
+ <nav class="sheet-tabs tabs" data-group="store">
+ <a class="item" data-tab="weapons">Weapons</a>
+ <a class="item" data-tab="armor">Armor</a>
+ <a class="item" data-tab="equipment">Equipment</a>
+ <a class="item" data-tab="vehicles">Vehicles</a>
+ <a class="item" data-tab="droids">Droids</a>
+ <a class="item" data-tab="misc">Misc</a>
+ {{#if isGM}}
+ <a class="item gm-controls" data-tab="gm">GM</a>
+ {{/if}}
+ </nav>
 
-  <section class="sheet-body">
-    {{#each categories as |items category|}}
-    <div class="tab" data-group="store" data-tab="{{category}}">
-      <h2>{{capitalize category}}</h2>
-      <div class="grid-3col">
-        {{#each items}}
-        <div class="store-item holo-card" data-item-id="{{this._id}}">
-          <h3>{{this.name}}</h3>
-          <p>{{this.system.description}}</p>
-          <p>Cost: {{this.system.cost}} cr</p>
-          <button type="button" class="buy-item holo-btn">Buy</button>
-          {{#if ../isGM}}
-          <button type="button" class="sell-item holo-btn red">Force Sell</button>
-          {{/if}}
-        </div>
-        {{/each}}
-      </div>
-    </div>
-    {{/each}}
+ <section class="sheet-body">
+ {{#each categories as |items category|}}
+ <div class="tab" data-group="store" data-tab="{{category}}">
+ <h2>{{capitalize category}}</h2>
+ <div class="grid-3col">
+ {{#each items}}
+ <div class="store-item holo-card" data-item-id="{{this._id}}">
+ <h3>{{this.name}}</h3>
+ <p>{{this.system.description}}</p>
+ <p>Cost: {{this.system.cost}} cr</p>
+ <button type="button" class="buy-item holo-btn">Buy</button>
+ {{#if ../isGM}}
+ <button type="button" class="sell-item holo-btn red">Force Sell</button>
+ {{/if}}
+ </div>
+ {{/each}}
+ </div>
+ </div>
+ {{/each}}
 
-    {{#if isGM}}
-    <div class="tab gm" data-group="store" data-tab="gm">
-      <h2>GM Price Modifiers</h2>
-      <label>Global Markup (%)</label>
-      <input type="number" name="markup" value="{{markup}}" / data-dtype="Number">
-      <label>Global Discount (%)</label>
-      <input type="number" name="discount" value="{{discount}}" / data-dtype="Number">
-      <button type="button" class="save-gm holo-btn">Save</button>
-    </div>
-    {{/if}}
-  </section>
+ {{#if isGM}}
+ <div class="tab gm" data-group="store" data-tab="gm">
+ <h2>GM Price Modifiers</h2>
+ <label>Global Markup (%)</label>
+ <input type="number" name="markup" value="{{markup}}" / data-dtype="Number">
+ <label>Global Discount (%)</label>
+ <input type="number" name="discount" value="{{discount}}" / data-dtype="Number">
+ <button type="button" class="save-gm holo-btn">Save</button>
+ </div>
+ {{/if}}
+ </section>
 </form>
 
 </div><!-- swse-sheet -->
