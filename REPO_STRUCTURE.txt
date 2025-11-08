@@ -1,5 +1,5 @@
 Repository Structure Map
-Generated: 2025-11-08 12:13:41
+Generated: 2025-11-08 16:44:19
 ======================================================================
 
 foundryvtt-swse/
@@ -138,7 +138,11 @@ foundryvtt-swse/
 │       ├── swse-helpers.js (1.4KB)
 │       └── utility-helpers.js (509.0B)
 ├── lang/
-│   └── en.json (4.5KB)
+│   ├── de.json (4.8KB)
+│   ├── en.json (4.5KB)
+│   ├── es.json (4.8KB)
+│   ├── fr.json (5.0KB)
+│   └── ru.json (6.4KB)
 ├── packs/
 │   ├── armor-heavy.db (6.7KB)
 │   ├── armor-light.db (9.0KB)
@@ -164,7 +168,7 @@ foundryvtt-swse/
 ├── scripts/
 │   ├── actors/
 │   │   ├── base/
-│   │   │   └── swse-actor-base.js (5.5KB)
+│   │   │   └── swse-actor-base.js (5.3KB)
 │   │   ├── character/
 │   │   │   └── swse-character-sheet.js (25.1KB)
 │   │   ├── droid/
@@ -211,18 +215,18 @@ foundryvtt-swse/
 │   │   ├── vehicle-data-model.js (2.0KB)
 │   │   └── vehicle-model.js (554.0B)
 │   ├── drag-drop/
-│   │   └── drop-handler.js (3.9KB)
+│   │   └── drop-handler.js (7.7KB)
 │   ├── gm-tools/
 │   │   └── homebrew-manager.js (1.1KB)
 │   ├── houserules/
-│   │   ├── houserule-mechanics.js (10.8KB)
+│   │   ├── houserule-mechanics.js (6.0KB)
 │   │   ├── houserule-menus.js (9.0KB)
 │   │   ├── houserule-presets.js (5.1KB)
-│   │   └── houserule-settings.js (10.7KB)
+│   │   └── houserule-settings.js (5.1KB)
 │   ├── items/
 │   │   ├── base/
-│   │   │   └── swse-item-base.js (737.0B)
-│   │   └── swse-item-sheet.js (642.0B)
+│   │   │   └── swse-item-base.js (6.0KB)
+│   │   └── swse-item-sheet.js (663.0B)
 │   ├── migration/
 │   │   └── array-to-items.js (4.8KB)
 │   ├── rolls/
@@ -331,10 +335,9 @@ foundryvtt-swse/
 │   │   └── scan_repo.py (7.5KB)
 │   └── migration-helper.js (1.2KB)
 ├── HOUSERULE_IMPLEMENTATION_SUMMARY.txt (1.9KB)
-├── index.js (11.8KB)
-├── REPO_STRUCTURE.txt (14.6KB)
-├── swse.zip (2.7MB)
-├── system.json (5.2KB)
+├── index.js (20.1KB)
+├── REPO_STRUCTURE.txt (14.9KB)
+├── system.json (5.6KB)
 └── template.json (5.0KB)
 
 ======================================================================
@@ -342,15 +345,15 @@ Repository Statistics
 ======================================================================
 
 Total Directories: 64
-Total Files: 269
-Total Size: 8.3MB
+Total Files: 272
+Total Size: 5.7MB
 
 Files by Type:
-  JavaScript        81 files  (306.1KB)
+  JavaScript        81 files  (313.0KB)
   Images            68 files  (2.3MB)
+  Data              37 files  (1.1MB)
   Templates         36 files  (104.4KB)
-  Data              33 files  (1.1MB)
-  Other             28 files  (4.3MB)
-  Docs              14 files  (65.5KB)
+  Other             27 files  (1.6MB)
+  Docs              14 files  (65.8KB)
   Styles             6 files  (92.1KB)
   Python             3 files  (14.2KB)

@@ -170,7 +170,9 @@
       "weapon",
       "armor",
       "equipment",
-      "species"
+      "species",
+      "condition",
+      "force-power"
     ],
     "templates": {
       "base": {
@@ -189,7 +191,7 @@
       "templates": [
         "base"
       ],
-      "prereqassets/uisites": ""
+      "prerequisites": ""
     },
     "talent": {
       "templates": [
@@ -262,6 +264,24 @@
       "templates": [
         "base"
       ]
+    },
+    "condition": {
+      "templates": [
+        "base"
+      ],
+      "severity": 0,
+      "duration": "",
+      "persistent": false
+    },
+    "force-power": {
+      "templates": [
+        "base"
+      ],
+      "level": 1,
+      "uses": {
+        "current": 1,
+        "max": 1
+      }
     }
   }
 }

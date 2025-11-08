@@ -157,25 +157,25 @@ Hooks.once("init", async function() {
   // Register Actor Sheets
   // ============================================
   
-  foundry.documents.collections.foundry.documents.collections.Actors.registerSheet("swse", SWSECharacterSheet, {
+  Actors.registerSheet("swse", SWSECharacterSheet, {
     types: ["character"],
     makeDefault: true,
     label: "SWSE.SheetLabels.Character"
   });
 
-  foundry.documents.collections.foundry.documents.collections.Actors.registerSheet("swse", SWSENPCSheet, {
+  Actors.registerSheet("swse", SWSENPCSheet, {
     types: ["npc"],
     makeDefault: true,
     label: "SWSE.SheetLabels.NPC"
   });
 
-  foundry.documents.collections.foundry.documents.collections.Actors.registerSheet("swse", SWSEDroidSheet, {
+  Actors.registerSheet("swse", SWSEDroidSheet, {
     types: ["droid"],
     makeDefault: true,
     label: "SWSE.SheetLabels.Droid"
   });
 
-  foundry.documents.collections.foundry.documents.collections.Actors.registerSheet("swse", SWSEVehicleSheet, {
+  Actors.registerSheet("swse", SWSEVehicleSheet, {
     types: ["vehicle"],
     makeDefault: true,
     label: "SWSE.SheetLabels.Vehicle"
@@ -185,7 +185,7 @@ Hooks.once("init", async function() {
   // Register Item Sheets
   // ============================================
   
-  foundry.documents.collections.foundry.documents.collections.Items.registerSheet("swse", SWSEItemSheet, {
+  Items.registerSheet("swse", SWSEItemSheet, {
     types: ["weapon", "armor", "equipment", "feat", "talent", "forcepower", "class", "species"],
     makeDefault: true,
     label: "SWSE.SheetLabels.Item"
@@ -204,10 +204,7 @@ Hooks.once("init", async function() {
   
   // Register Handlebars helpers (with duplicate check)
   if (!Handlebars.helpers.numberFormat) {
-    // Register Handlebars helpers (with duplicate check)
-  if (!Handlebars.helpers.numberFormat) {
     registerHandlebarsHelpers();
-  }
   }
 
   // Register condition-specific helpers
@@ -360,6 +357,24 @@ function registerSystemSettings() {
     config: true,
     type: Boolean,
     default: true
+  });
+
+  // ============================================
+  // Weapon Settings
+  // ============================================
+  
+  game.settings.register('swse', 'weaponRangeMultiplier', {
+    name: 'SWSE.Settings.WeaponRangeMultiplier.Name',
+    hint: 'SWSE.Settings.WeaponRangeMultiplier.Hint',
+    scope: 'world',
+    config: true,
+    type: Number,
+    default: 1.0,
+    range: {
+      min: 0.5,
+      max: 5.0,
+      step: 0.1
+    }
   });
 
   // ============================================
