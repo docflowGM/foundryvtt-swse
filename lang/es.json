@@ -1,0 +1,141 @@
+{
+  "SWSE": {
+    "SystemName": "Star Wars Edición Saga",
+    "SheetLabels": {
+      "Character": "Hoja de Personaje",
+      "NPC": "Hoja de PNJ",
+      "Droid": "Hoja de Droide",
+      "Vehicle": "Hoja de Vehículo",
+      "Item": "Hoja de Objeto"
+    },
+    "Abilities": {
+      "STR": "Fuerza",
+      "DEX": "Destreza",
+      "CON": "Constitución",
+      "INT": "Inteligencia",
+      "WIS": "Sabiduría",
+      "CHA": "Carisma"
+    },
+    "Defenses": {
+      "Reflex": "Defensa de Reflejos",
+      "Fortitude": "Defensa de Fortaleza",
+      "Will": "Defensa de Voluntad"
+    },
+    "Skills": {
+      "Acrobatics": "Acrobacias",
+      "Climb": "Escalar",
+      "Deception": "Engaño",
+      "Endurance": "Aguante",
+      "GatherInformation": "Reunir Información",
+      "Initiative": "Iniciativa",
+      "Jump": "Saltar",
+      "Knowledge": "Conocimiento",
+      "Mechanics": "Mecánica",
+      "Perception": "Percepción",
+      "Persuasion": "Persuasión",
+      "Pilot": "Pilotar",
+      "Ride": "Montar",
+      "Stealth": "Sigilo",
+      "Survival": "Supervivencia",
+      "Swim": "Nadar",
+      "TreatInjury": "Tratar Heridas",
+      "UseComputer": "Usar Computadora",
+      "UseTheForce": "Usar la Fuerza"
+    },
+    "ConditionTrack": {
+      "Normal": "Normal",
+      "Minus1": "-1",
+      "Minus2": "-2",
+      "Minus5": "-5",
+      "Minus10": "-10",
+      "Helpless": "Indefenso"
+    },
+    "Settings": {
+      "CharacterCreation": {
+        "Name": "Reglas de Creación de Personaje",
+        "Label": "Configurar",
+        "Hint": "Configurar generación de puntuaciones de habilidad, PG y opciones de creación de personaje"
+      },
+      "Advancement": {
+        "Name": "Reglas de Avance",
+        "Label": "Configurar",
+        "Hint": "Configurar subida de nivel, talentos, dotes y opciones de progresión"
+      },
+      "Combat": {
+        "Name": "Reglas de Combate",
+        "Label": "Configurar",
+        "Hint": "Configurar combate, daño, muerte y reglas de la pista de condición"
+      },
+      "Force": {
+        "Name": "Reglas de la Fuerza y Destino",
+        "Label": "Configurar",
+        "Hint": "Configurar Puntos de Fuerza, Lado Oscuro y reglas de poderes de la Fuerza"
+      },
+      "Presets": {
+        "Name": "Preajustes de Reglas de Casa",
+        "Label": "Gestionar Preajustes",
+        "Hint": "Aplicar configuraciones de reglas de casa preajustadas o importar/exportar ajustes"
+      },
+      "SecondWindImproved": {
+        "Name": "Segundo Aliento Mejorado",
+        "Hint": "Segundo Aliento también mejora la pista de condición un paso"
+      },
+      "TalentEveryLevel": {
+        "Name": "Talento Cada Nivel",
+        "Hint": "Los personajes ganan un talento en cada nivel en lugar de cada nivel impar"
+      },
+      "CrossClassSkills": {
+        "Name": "Entrenamiento de Habilidades Entre Clases",
+        "Hint": "Permitir entrenar habilidades que no son de clase por 2 casillas de habilidad"
+      },
+      "SkillFocusRestriction": {
+        "Name": "Restricciones de Enfoque en Habilidad",
+        "Hint": "Restringir Enfoque en Habilidad (Usar la Fuerza) para prevenir dominio temprano en el juego"
+      },
+      "ArmoredDefenseForAll": {
+        "Name": "Defensa Acorazada para Todos",
+        "Hint": "Todos los personajes pueden usar bonus de armadura a la Defensa de Reflejos"
+      },
+      "WeaponRanges": {
+        "Name": "Modificador de Alcance de Armas",
+        "Hint": "Multiplicar todos los alcances de armas por este factor"
+      },
+      "AthleticsConsolidation": {
+        "Name": "Habilidad de Atletismo",
+        "Hint": "Fusionar Escalar, Saltar y Nadar en una sola habilidad de Atletismo"
+      },
+      "DiagonalMovement": {
+        "Name": "Movimiento Diagonal",
+        "Hint": "Cómo contar el movimiento diagonal en la cuadrícula"
+      },
+      "ForcePointRecovery": {
+        "Name": "Recuperación de Puntos de Fuerza",
+        "Hint": "Cuándo se refrescan los Puntos de Fuerza"
+      },
+      "ConditionTrackCap": {
+        "Name": "Límite de Daño de Pista de Condición",
+        "Hint": "Pasos máximos de pista de condición por un solo ataque"
+      },
+      "KnowledgeSkills": {
+        "Name": "Modo de Habilidad de Conocimiento",
+        "Hint": "Consolidar múltiples habilidades de conocimiento"
+      },
+      "DarkSideTemptation": {
+        "Name": "Tentación del Lado Oscuro",
+        "Hint": "Gastar Punto de Fuerza para ganar temporalmente poderes del Lado Oscuro"
+      },
+      "BlasterCharges": {
+        "Name": "Rastrear Cargas de Bláster",
+        "Hint": "Rastrear munición para armas de energía"
+      },
+      "CriticalHit": {
+        "Name": "Variante de Golpe Crítico",
+        "Hint": "Cálculos alternativos de daño de golpe crítico"
+      },
+      "Retraining": {
+        "Name": "Permitir Reentrenamiento",
+        "Hint": "Permitir intercambiar dotes/talentos al subir de nivel"
+      }
+    }
+  }
+}

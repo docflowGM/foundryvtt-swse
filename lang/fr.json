@@ -1,0 +1,141 @@
+{
+  "SWSE": {
+    "SystemName": "Star Wars Édition Saga",
+    "SheetLabels": {
+      "Character": "Feuille de Personnage",
+      "NPC": "Feuille de PNJ",
+      "Droid": "Feuille de Droïde",
+      "Vehicle": "Feuille de Véhicule",
+      "Item": "Feuille d'Objet"
+    },
+    "Abilities": {
+      "STR": "Force",
+      "DEX": "Dextérité",
+      "CON": "Constitution",
+      "INT": "Intelligence",
+      "WIS": "Sagesse",
+      "CHA": "Charisme"
+    },
+    "Defenses": {
+      "Reflex": "Défense de Réflexes",
+      "Fortitude": "Défense de Vigueur",
+      "Will": "Défense de Volonté"
+    },
+    "Skills": {
+      "Acrobatics": "Acrobaties",
+      "Climb": "Escalade",
+      "Deception": "Tromperie",
+      "Endurance": "Endurance",
+      "GatherInformation": "Collecte d'Informations",
+      "Initiative": "Initiative",
+      "Jump": "Saut",
+      "Knowledge": "Connaissances",
+      "Mechanics": "Mécanique",
+      "Perception": "Perception",
+      "Persuasion": "Persuasion",
+      "Pilot": "Pilotage",
+      "Ride": "Équitation",
+      "Stealth": "Discrétion",
+      "Survival": "Survie",
+      "Swim": "Natation",
+      "TreatInjury": "Premiers Soins",
+      "UseComputer": "Utilisation d'Ordinateur",
+      "UseTheForce": "Utiliser la Force"
+    },
+    "ConditionTrack": {
+      "Normal": "Normal",
+      "Minus1": "-1",
+      "Minus2": "-2",
+      "Minus5": "-5",
+      "Minus10": "-10",
+      "Helpless": "Sans Défense"
+    },
+    "Settings": {
+      "CharacterCreation": {
+        "Name": "Règles de Création de Personnage",
+        "Label": "Configurer",
+        "Hint": "Configurer la génération des scores de caractéristiques, PV et options de création de personnage"
+      },
+      "Advancement": {
+        "Name": "Règles de Progression",
+        "Label": "Configurer",
+        "Hint": "Configurer la montée de niveau, talents, dons et options de progression"
+      },
+      "Combat": {
+        "Name": "Règles de Combat",
+        "Label": "Configurer",
+        "Hint": "Configurer le combat, les dégâts, la mort et les règles de piste d'état"
+      },
+      "Force": {
+        "Name": "Règles de la Force et Destinée",
+        "Label": "Configurer",
+        "Hint": "Configurer les Points de Force, le Côté Obscur et les règles des pouvoirs de la Force"
+      },
+      "Presets": {
+        "Name": "Préréglages de Règles Maison",
+        "Label": "Gérer les Préréglages",
+        "Hint": "Appliquer des configurations de règles maison prédéfinies ou importer/exporter des paramètres"
+      },
+      "SecondWindImproved": {
+        "Name": "Second Souffle Amélioré",
+        "Hint": "Le Second Souffle améliore également la piste d'état d'un cran"
+      },
+      "TalentEveryLevel": {
+        "Name": "Talent à Chaque Niveau",
+        "Hint": "Les personnages gagnent un talent à chaque niveau au lieu de chaque niveau impair"
+      },
+      "CrossClassSkills": {
+        "Name": "Formation en Compétences Hors Classe",
+        "Hint": "Permettre l'entraînement de compétences hors classe pour 2 emplacements de compétence"
+      },
+      "SkillFocusRestriction": {
+        "Name": "Restrictions de Focalisation de Compétence",
+        "Hint": "Restreindre Focalisation de Compétence (Utiliser la Force) pour éviter la domination en début de partie"
+      },
+      "ArmoredDefenseForAll": {
+        "Name": "Défense Blindée pour Tous",
+        "Hint": "Tous les personnages peuvent utiliser le bonus d'armure à la Défense de Réflexes"
+      },
+      "WeaponRanges": {
+        "Name": "Modificateur de Portée d'Arme",
+        "Hint": "Multiplier toutes les portées d'armes par ce facteur"
+      },
+      "AthleticsConsolidation": {
+        "Name": "Compétence d'Athlétisme",
+        "Hint": "Fusionner Escalade, Saut et Natation en une seule compétence d'Athlétisme"
+      },
+      "DiagonalMovement": {
+        "Name": "Mouvement Diagonal",
+        "Hint": "Comment compter le mouvement diagonal sur la grille"
+      },
+      "ForcePointRecovery": {
+        "Name": "Récupération des Points de Force",
+        "Hint": "Quand les Points de Force se régénèrent"
+      },
+      "ConditionTrackCap": {
+        "Name": "Plafond de Dégâts de Piste d'État",
+        "Hint": "Crans maximum de piste d'état par une seule attaque"
+      },
+      "KnowledgeSkills": {
+        "Name": "Mode de Compétence de Connaissances",
+        "Hint": "Consolider plusieurs compétences de connaissances"
+      },
+      "DarkSideTemptation": {
+        "Name": "Tentation du Côté Obscur",
+        "Hint": "Dépenser un Point de Force pour obtenir temporairement des pouvoirs du Côté Obscur"
+      },
+      "BlasterCharges": {
+        "Name": "Suivre les Charges de Blaster",
+        "Hint": "Suivre les munitions pour les armes énergétiques"
+      },
+      "CriticalHit": {
+        "Name": "Variante de Coup Critique",
+        "Hint": "Calculs alternatifs des dégâts de coup critique"
+      },
+      "Retraining": {
+        "Name": "Permettre le Réentraînement",
+        "Hint": "Permettre l'échange de dons/talents lors de la montée de niveau"
+      }
+    }
+  }
+}

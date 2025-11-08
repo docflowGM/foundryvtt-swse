@@ -1,0 +1,141 @@
+{
+  "SWSE": {
+    "SystemName": "Star Wars Saga Edition",
+    "SheetLabels": {
+      "Character": "Charakterbogen",
+      "NPC": "NSC-Bogen",
+      "Droid": "Droiden-Bogen",
+      "Vehicle": "Fahrzeug-Bogen",
+      "Item": "Gegenstands-Bogen"
+    },
+    "Abilities": {
+      "STR": "Stärke",
+      "DEX": "Geschicklichkeit",
+      "CON": "Konstitution",
+      "INT": "Intelligenz",
+      "WIS": "Weisheit",
+      "CHA": "Charisma"
+    },
+    "Defenses": {
+      "Reflex": "Reflexverteidigung",
+      "Fortitude": "Widerstandsverteidigung",
+      "Will": "Willensverteidigung"
+    },
+    "Skills": {
+      "Acrobatics": "Akrobatik",
+      "Climb": "Klettern",
+      "Deception": "Täuschung",
+      "Endurance": "Ausdauer",
+      "GatherInformation": "Informationen Sammeln",
+      "Initiative": "Initiative",
+      "Jump": "Springen",
+      "Knowledge": "Wissen",
+      "Mechanics": "Mechanik",
+      "Perception": "Wahrnehmung",
+      "Persuasion": "Überreden",
+      "Pilot": "Pilotieren",
+      "Ride": "Reiten",
+      "Stealth": "Heimlichkeit",
+      "Survival": "Überleben",
+      "Swim": "Schwimmen",
+      "TreatInjury": "Verletzung Behandeln",
+      "UseComputer": "Computer Benutzen",
+      "UseTheForce": "Macht Anwenden"
+    },
+    "ConditionTrack": {
+      "Normal": "Normal",
+      "Minus1": "-1",
+      "Minus2": "-2",
+      "Minus5": "-5",
+      "Minus10": "-10",
+      "Helpless": "Hilflos"
+    },
+    "Settings": {
+      "CharacterCreation": {
+        "Name": "Charaktererstellungsregeln",
+        "Label": "Konfigurieren",
+        "Hint": "Attributswertgenerierung, TP und Charaktererstellungsoptionen konfigurieren"
+      },
+      "Advancement": {
+        "Name": "Fortschrittsregeln",
+        "Label": "Konfigurieren",
+        "Hint": "Stufenaufstieg, Talente, Vorzüge und Fortschrittsoptionen konfigurieren"
+      },
+      "Combat": {
+        "Name": "Kampfregeln",
+        "Label": "Konfigurieren",
+        "Hint": "Kampf, Schaden, Tod und Zustandsleisten-Regeln konfigurieren"
+      },
+      "Force": {
+        "Name": "Macht & Schicksalsregeln",
+        "Label": "Konfigurieren",
+        "Hint": "Machtpunkte, Dunkle Seite und Machtkraft-Regeln konfigurieren"
+      },
+      "Presets": {
+        "Name": "Hausregel-Voreinstellungen",
+        "Label": "Voreinstellungen Verwalten",
+        "Hint": "Vordefinierte Hausregel-Konfigurationen anwenden oder Einstellungen importieren/exportieren"
+      },
+      "SecondWindImproved": {
+        "Name": "Verbesserter Zweiter Atem",
+        "Hint": "Zweiter Atem verbessert auch die Zustandsleiste um einen Schritt"
+      },
+      "TalentEveryLevel": {
+        "Name": "Talent Jede Stufe",
+        "Hint": "Charaktere erhalten jede Stufe ein Talent statt jeder ungeraden Stufe"
+      },
+      "CrossClassSkills": {
+        "Name": "Klassenübergreifende Fertigkeitsausbildung",
+        "Hint": "Ausbildung von Nicht-Klassenfertigkeiten für 2 Fertigkeitsplätze erlauben"
+      },
+      "SkillFocusRestriction": {
+        "Name": "Fertigkeitsfokus-Beschränkungen",
+        "Hint": "Fertigkeitsfokus (Macht Anwenden) einschränken, um frühe Dominanz zu verhindern"
+      },
+      "ArmoredDefenseForAll": {
+        "Name": "Gepanzerte Verteidigung für Alle",
+        "Hint": "Alle Charaktere können Rüstungsbonus auf Reflexverteidigung nutzen"
+      },
+      "WeaponRanges": {
+        "Name": "Waffenreichweiten-Modifikator",
+        "Hint": "Alle Waffenreichweiten mit diesem Faktor multiplizieren"
+      },
+      "AthleticsConsolidation": {
+        "Name": "Athletik-Fertigkeit",
+        "Hint": "Klettern, Springen und Schwimmen zu einer Athletik-Fertigkeit zusammenfassen"
+      },
+      "DiagonalMovement": {
+        "Name": "Diagonale Bewegung",
+        "Hint": "Wie diagonale Bewegung auf dem Raster gezählt wird"
+      },
+      "ForcePointRecovery": {
+        "Name": "Machtpunkt-Erholung",
+        "Hint": "Wann Machtpunkte sich regenerieren"
+      },
+      "ConditionTrackCap": {
+        "Name": "Zustandsleisten-Schadensgrenze",
+        "Hint": "Maximale Zustandsleisten-Schritte durch einen einzelnen Angriff"
+      },
+      "KnowledgeSkills": {
+        "Name": "Wissensfertigkeits-Modus",
+        "Hint": "Mehrere Wissensfertigkeiten zusammenfassen"
+      },
+      "DarkSideTemptation": {
+        "Name": "Versuchung der Dunklen Seite",
+        "Hint": "Machtpunkt ausgeben, um vorübergehend Kräfte der Dunklen Seite zu erlangen"
+      },
+      "BlasterCharges": {
+        "Name": "Blaster-Ladungen Verfolgen",
+        "Hint": "Munition für Energiewaffen verfolgen"
+      },
+      "CriticalHit": {
+        "Name": "Kritischer Treffer Variante",
+        "Hint": "Alternative Berechnungen für kritischen Trefferschaden"
+      },
+      "Retraining": {
+        "Name": "Umschulung Erlauben",
+        "Hint": "Austausch von Vorzügen/Talenten beim Stufenaufstieg erlauben"
+      }
+    }
+  }
+}
