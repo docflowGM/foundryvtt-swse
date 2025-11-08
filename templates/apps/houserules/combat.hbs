@@ -1,0 +1,70 @@
+<form>
+  <nav class="tabs" data-group="primary-tabs">
+    <a class="item active" data-tab="death">Death & Dying</a>
+    <a class="item" data-tab="damage">Damage</a>
+    <a class="item" data-tab="movement">Movement</a>
+  </nav>
+  
+  <section class="content">
+    <div class="tab active" data-group="primary-tabs" data-tab="death">
+      <div class="form-group">
+        <label>Death System</label>
+        <select name="deathSystem.system">
+          <option value="standard" {{#if (eq deathSystem.system "standard")}}selected{{/if}}>Standard (-10 HP)</option>
+          <option value="threeStrikes" {{#if (eq deathSystem.system "threeStrikes")}}selected{{/if}}>Three Strikes</option>
+          <option value="negativeCon" {{#if (eq deathSystem.system "negativeCon")}}selected{{/if}}>Negative CON Score</option>
+        </select>
+      </div>
+      
+      {{#if (eq deathSystem.system "threeStrikes")}}
+      <div class="form-group">
+        <label>Strikes Until Death</label>
+        <input type="number" name="deathSystem.strikesUntilDeath" value="{{deathSystem.strikesUntilDeath}}" min="1" max="10"/>
+      </div>
+      
+      <div class="form-group">
+        <label>Return to HP</label>
+        <input type="number" name="deathSystem.returnToHP" value="{{deathSystem.returnToHP}}" min="0"/>
+      </div>
+      {{/if}}
+    </div>
+    
+    <div class="tab" data-group="primary-tabs" data-tab="damage">
+      <div class="form-group">
+        <label>Condition Track Damage Cap</label>
+        <input type="number" name="conditionTrackCap" value="{{conditionTrackCap}}" min="0" max="5"/>
+        <p class="notes">0 = Unlimited</p>
+      </div>
+      
+      <div class="form-group">
+        <label>Critical Hit Variant</label>
+        <select name="criticalHitVariant">
+          <option value="standard" {{#if (eq criticalHitVariant "standard")}}selected{{/if}}>Standard (Double Damage)</option>
+          <option value="maxplus" {{#if (eq criticalHitVariant "maxplus")}}selected{{/if}}>Maximum + Roll</option>
+          <option value="exploding" {{#if (eq criticalHitVariant "exploding")}}selected{{/if}}>Exploding Dice</option>
+          <option value="trackonly" {{#if (eq criticalHitVariant "trackonly")}}selected{{/if}}>Condition Track Only</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="tab" data-group="primary-tabs" data-tab="movement">
+      <div class="form-group">
+        <label>Diagonal Movement</label>
+        <select name="diagonalMovement">
+          <option value="swse" {{#if (eq diagonalMovement "swse")}}selected{{/if}}>All = 2 squares (SWSE)</option>
+          <option value="alternating" {{#if (eq diagonalMovement "alternating")}}selected{{/if}}>1-2-1 Alternating (D&D 3.5)</option>
+          <option value="simplified" {{#if (eq diagonalMovement "simplified")}}selected{{/if}}>All = 1 square</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Weapon Range Multiplier</label>
+        <input type="number" name="weaponRangeMultiplier" value="{{weaponRangeMultiplier}}" min="0.25" max="2" step="0.25"/>
+      </div>
+    </div>
+  </section>
+  
+  <footer class="sheet-footer">
+    <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+  </footer>
+</form>

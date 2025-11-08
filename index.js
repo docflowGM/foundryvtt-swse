@@ -5,8 +5,6 @@
 
 // Actor Classes and Sheets
 import { SWSEActorBase } from './scripts/actors/base/swse-actor-base.js';
-import { SWSECharacterSheet } from './scripts/actors/character/swse-character-sheet.js';
-import SWSEActorSheetEnhanced from './scripts/actors/character/swse-character-sheet-enhanced.js';
 import { SWSEDroidSheet } from './scripts/actors/droid/swse-droid.js';
 import { SWSENPCSheet } from './scripts/actors/npc/swse-npc.js';
 import { SWSEVehicleSheet } from './scripts/actors/vehicle/swse-vehicle.js';
@@ -80,13 +78,6 @@ Hooks.once("init", async function() {
     types: ["character"],
     makeDefault: true,
     label: "SWSE.SheetLabels.Character"
-  });
-
-  // Enhanced character sheet (alternative)
-  Actors.registerSheet("swse", SWSEActorSheetEnhanced, {
-    types: ["character"],
-    makeDefault: false,
-    label: "SWSE.SheetLabels.CharacterEnhanced"
   });
 
   Actors.registerSheet("swse", SWSENPCSheet, {

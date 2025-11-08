@@ -82,6 +82,7 @@ export class SWSEActorBase extends Actor {
     return newPosition;
   }
 
+  
   async useSecondWind() {
     if (this.type !== 'character') {
       ui.notifications.warn('Only characters can use Second Wind');
@@ -96,15 +97,23 @@ export class SWSEActorBase extends Actor {
     const healing = this.system.secondWind.value;
     await this.applyHealing(healing);
     await this.update({'system.secondWind.used': true});
-    await this.moveConditionTrack(-1);
-
-    ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({actor: this}),
-      content: `${this.name} uses Second Wind, healing ${healing} HP and improving condition!`
-    });
+    
+    // Check for improved Second Wind houserule
+    if (game.settings.get("swse", "secondWindImproved")) {
+      await this.moveConditionTrack(-1);
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({actor: this}),
+        content: `${this.name} uses Second Wind, healing ${healing} HP and improving condition!`
+      });
+    } else {
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({actor: this}),
+        content: `${this.name} uses Second Wind, healing ${healing} HP!`
+      });
+    }
 
     return true;
-  }
+  }}
 
   async spendForcePoint(reason = 'unspecified') {
     if (this.type !== 'character') return false;

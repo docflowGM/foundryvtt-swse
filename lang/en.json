@@ -49,6 +49,93 @@
       "Minus5": "-5",
       "Minus10": "-10",
       "Helpless": "Helpless"
+    },
+    "Settings": {
+      "CharacterCreation": {
+        "Name": "Character Creation Rules",
+        "Label": "Configure",
+        "Hint": "Configure ability score generation, HP, and character creation options"
+      },
+      "Advancement": {
+        "Name": "Advancement Rules",
+        "Label": "Configure",
+        "Hint": "Configure level-up, talents, feats, and progression options"
+      },
+      "Combat": {
+        "Name": "Combat Rules",
+        "Label": "Configure",
+        "Hint": "Configure combat, damage, death, and condition track rules"
+      },
+      "Force": {
+        "Name": "Force & Destiny Rules",
+        "Label": "Configure",
+        "Hint": "Configure Force Points, Dark Side, and Force power rules"
+      },
+      "Presets": {
+        "Name": "Houserule Presets",
+        "Label": "Manage Presets",
+        "Hint": "Apply preset houserule configurations or import/export settings"
+      },
+      "SecondWindImproved": {
+        "Name": "Improved Second Wind",
+        "Hint": "Second Wind also improves condition track by one step"
+      },
+      "TalentEveryLevel": {
+        "Name": "Talent Every Level",
+        "Hint": "Characters gain a talent at every level instead of every odd level"
+      },
+      "CrossClassSkills": {
+        "Name": "Cross-Class Skill Training",
+        "Hint": "Allow training non-class skills for 2 skill slots"
+      },
+      "SkillFocusRestriction": {
+        "Name": "Skill Focus Restrictions",
+        "Hint": "Restrict Skill Focus (Use the Force) to prevent early game dominance"
+      },
+      "ArmoredDefenseForAll": {
+        "Name": "Armored Defense for All",
+        "Hint": "All characters can use armor bonus to Reflex Defense"
+      },
+      "WeaponRanges": {
+        "Name": "Weapon Range Modifier",
+        "Hint": "Multiply all weapon ranges by this factor"
+      },
+      "AthleticsConsolidation": {
+        "Name": "Athletics Skill",
+        "Hint": "Merge Climb, Jump, and Swim into single Athletics skill"
+      },
+      "DiagonalMovement": {
+        "Name": "Diagonal Movement",
+        "Hint": "How to count diagonal movement on grid"
+      },
+      "ForcePointRecovery": {
+        "Name": "Force Point Recovery",
+        "Hint": "When Force Points refresh"
+      },
+      "ConditionTrackCap": {
+        "Name": "Condition Track Damage Cap",
+        "Hint": "Maximum condition track steps from single attack"
+      },
+      "KnowledgeSkills": {
+        "Name": "Knowledge Skill Mode",
+        "Hint": "Consolidate multiple knowledge skills"
+      },
+      "DarkSideTemptation": {
+        "Name": "Dark Side Temptation",
+        "Hint": "Spend Force Point to temporarily gain Dark Side powers"
+      },
+      "BlasterCharges": {
+        "Name": "Track Blaster Charges",
+        "Hint": "Track ammunition for energy weapons"
+      },
+      "CriticalHit": {
+        "Name": "Critical Hit Variant",
+        "Hint": "Alternative critical hit damage calculations"
+      },
+      "Retraining": {
+        "Name": "Allow Retraining",
+        "Hint": "Allow swapping feats/talents at level-up"
+      }
     }
   }
 }

@@ -1,0 +1,54 @@
+<form>
+  <nav class="tabs" data-group="primary-tabs">
+    <a class="item active" data-tab="abilities">Ability Scores</a>
+    <a class="item" data-tab="hp">Hit Points</a>
+    <a class="item" data-tab="other">Other</a>
+  </nav>
+  
+  <section class="content">
+    <div class="tab active" data-group="primary-tabs" data-tab="abilities">
+      <div class="form-group">
+        <label>Ability Score Method</label>
+        <select name="abilityScoreMethod">
+          <option value="4d6drop" {{#if (eq abilityScoreMethod "4d6drop")}}selected{{/if}}>4d6 Drop Lowest</option>
+          <option value="organic" {{#if (eq abilityScoreMethod "organic")}}selected{{/if}}>Organic (24d6)</option>
+          <option value="pointbuy" {{#if (eq abilityScoreMethod "pointbuy")}}selected{{/if}}>Point Buy</option>
+          <option value="array" {{#if (eq abilityScoreMethod "array")}}selected{{/if}}>Standard Array</option>
+          <option value="3d6" {{#if (eq abilityScoreMethod "3d6")}}selected{{/if}}>3d6 Straight</option>
+          <option value="2d6plus6" {{#if (eq abilityScoreMethod "2d6plus6")}}selected{{/if}}>2d6+6</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Point Buy Pool</label>
+        <input type="number" name="pointBuyPool" value="{{pointBuyPool}}"/>
+      </div>
+      
+      <div class="form-group">
+        <label>Allow Rerolls</label>
+        <input type="checkbox" name="allowReroll" {{#if allowReroll}}checked{{/if}}/>
+      </div>
+    </div>
+    
+    <div class="tab" data-group="primary-tabs" data-tab="hp">
+      <div class="form-group">
+        <label>HP Generation Method</label>
+        <select name="hpGeneration">
+          <option value="roll" {{#if (eq hpGeneration "roll")}}selected{{/if}}>Roll</option>
+          <option value="average" {{#if (eq hpGeneration "average")}}selected{{/if}}>Average</option>
+          <option value="maximum" {{#if (eq hpGeneration "maximum")}}selected{{/if}}>Maximum</option>
+          <option value="average_minimum" {{#if (eq hpGeneration "average_minimum")}}selected{{/if}}>Roll (Average Minimum)</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Levels with Max HP</label>
+        <input type="number" name="maxHPLevels" value="{{maxHPLevels}}" min="0" max="20"/>
+      </div>
+    </div>
+  </section>
+  
+  <footer class="sheet-footer">
+    <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+  </footer>
+</form>
