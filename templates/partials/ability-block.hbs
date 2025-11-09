@@ -9,7 +9,7 @@
  <span>{{ability.total}}</span>
  </div>
  <div class="ability-mod">
- <span class="ability-mod-value">{{numberFormat ability.mod decimals=0 sign=true}}</span>
+ <span class="ability-mod-value">{{numberFormat (safeNumber ability.mod) decimals=0 sign=true}}</span>
  </div>
  </div>
  {{/each}}

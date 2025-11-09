@@ -12,7 +12,7 @@
  <div class="stat-value rollable" 
  data-roll="1d20+@initiative" 
  data-label="Initiative">
- {{numberFormat system.initiative sign=true}}
+ {{numberFormat (safeNumber system.initiative) sign=true}}
  </div>
  </div>
  
@@ -31,7 +31,7 @@
  <div class="stat-block base-attack">
  <label>Base Attack Bonus</label>
  <div class="stat-value">
- {{numberFormat system.baseAttack sign=true}}
+ {{numberFormat (safeNumber system.baseAttack) sign=true}}
  </div>
  </div>
  
@@ -59,7 +59,7 @@
  {{weapon.name}}
  </span>
  <span class="attack-bonus">
- {{numberFormat weapon.system.attackBonus sign=true}}
+ {{numberFormat (safeNumber weapon.system.attackBonus) sign=true}}
  </span>
  <span class="attack-damage rollable"
  data-roll="{{weapon.system.damage}}"
@@ -88,8 +88,8 @@
  </label>
  <div class="ability-score">{{ability.value}}</div>
  <div class="ability-mod rollable"
- data-roll="1d20+@abilities.{{key}}.mod">
- {{numberFormat ability.mod decimals=0 sign=true}}
+ data-roll="1d20+{{safeNumber ability.mod}}">
+ {{numberFormat (safeNumber ability.mod) decimals=0 sign=true}}
  </div>
  </div>
  {{/each}}
@@ -109,7 +109,7 @@
  {{skill.label}}
  </span>
  <span class="skill-mod">
- {{numberFormat skill.mod sign=true}}
+ {{numberFormat (safeNumber skill.mod) sign=true}}
  </span>
  {{#if skill.focus}}
  <i class="fas fa-star skill-focus-icon" title="Skill Focus"></i>

@@ -41,4 +41,25 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       })
     };
   }
+
+  prepareDerivedData() {
+    // Vehicles don't need most character calculations
+    // Just ensure numeric values exist
+    
+    // Ensure defenses are numbers
+    this.reflexDefense = Number(this.reflexDefense) || 10;
+    this.fortitudeDefense = Number(this.fortitudeDefense) || 10;
+    this.damageThreshold = Number(this.damageThreshold) || 30;
+    
+    // Ensure shield/hull values are numbers
+    if (this.shields) {
+      this.shields.value = Number(this.shields.value) || 0;
+      this.shields.max = Number(this.shields.max) || 0;
+    }
+    
+    if (this.hull) {
+      this.hull.value = Number(this.hull.value) || 0;
+      this.hull.max = Number(this.hull.max) || 0;
+    }
+  }
 }

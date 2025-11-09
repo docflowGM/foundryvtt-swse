@@ -57,4 +57,14 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Base 6, can be modified by talents
     this.forceSuite.max = 6;
   }
+
+  _calculateBaseAttack() {
+    // Override parent to use class-based BAB progression
+    const level = this.level || 1;
+    
+    // For now, use medium progression
+    // TODO: Get actual class progression from class items
+    this.bab = Math.floor(level * 0.75);
+    this.baseAttack = this.bab;
+  }
 }

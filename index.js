@@ -226,6 +226,14 @@ Hooks.once("init", async function() {
       const num = Number(value) || 0;
       return num >= 0 ? `+${num}` : `${num}`;
     });
+
+  if (!Handlebars.helpers['safeNumber']) {
+    Handlebars.registerHelper('safeNumber', function(value, options) {
+      const num = Number(value);
+      if (isNaN(num)) return 0;
+      return num;
+    });
+  }
   }
 
   // ============================================

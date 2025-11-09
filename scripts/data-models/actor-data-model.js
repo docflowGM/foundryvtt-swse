@@ -41,6 +41,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
       // Combat
       bab: new fields.NumberField({required: true, initial: 0, integer: true}),
+      baseAttack: new fields.NumberField({required: true, initial: 0, integer: true}),
       initiative: new fields.NumberField({required: true, initial: 0, integer: true}),
       speed: new fields.NumberField({required: true, initial: 6, min: 0, integer: true}),
       damageThreshold: new fields.NumberField({required: true, initial: 10, integer: true}),
@@ -103,6 +104,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
     this._applyConditionPenalties();
     this._calculateDefenses();
     this._calculateSkills();
+    this._calculateBaseAttack();
     this._calculateDamageThreshold();
     this._calculateInitiative();
   }
@@ -158,6 +160,9 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
                     (skill.focused ? 5 : 0) + 
                     skill.armor + skill.misc + 
                     this.conditionTrack.penalty;
+      
+      // Add mod property (same as total) for template compatibility
+      skill.mod = skill.total;
     }
   }
 
@@ -167,5 +172,17 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
   _calculateInitiative() {
     this.initiative = (this.skills.initiative?.total || 0);
+  }
+
+  _calculateBaseAttack() {
+    // Calculate base attack bonus based on level
+    // This is a simple calculation - should be overridden by class-specific logic
+    const level = this.level || 1;
+    
+    // Default to medium progression (3/4 level)
+    this.bab = Math.floor(level * 0.75);
+    
+    // Also set baseAttack for template compatibility
+    this.baseAttack = this.bab;
   }
 }
