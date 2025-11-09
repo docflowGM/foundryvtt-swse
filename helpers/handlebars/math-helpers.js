@@ -10,11 +10,31 @@ export const mathHelpers = {
   ceil: (value) => Math.ceil(Number(value || 0)),
   round: (value) => Math.round(Number(value || 0)),
   abs: (value) => Math.abs(Number(value || 0)),
-  min: (...args) => Math.min(...args.map(Number)),
-  max: (...args) => Math.max(...args.map(Number)),
-  numberFormat: (value, options = {}) => {
-    const num = Number(value || 0);
-    const { decimals = 0, sign = false } = options.hash || {};
+  min: (...args) => {
+    const values = args.slice(0, -1).map(v => Number(v || 0));
+    return Math.min(...values);
+  },
+  max: (...args) => {
+    const values = args.slice(0, -1).map(v => Number(v || 0));
+    return Math.max(...values);
+  },
+  
+  numberFormat: (value, options) => {
+    // SAFE VERSION - handles non-numeric values gracefully
+    const num = Number(value);
+    
+    // Return '0' for non-numeric values instead of crashing
+    if (isNaN(num) || !isFinite(num)) {
+      console.warn('SWSE | numberFormat: Non-numeric value received:', value);
+      return '0';
+    }
+    
+    // Get options from hash
+    const opts = options?.hash || {};
+    const decimals = Number(opts.decimals) || 0;
+    const sign = opts.sign || false;
+    
+    // Format the number
     const formatted = num.toFixed(decimals);
     return sign && num >= 0 ? `+${formatted}` : formatted;
   }

@@ -153,3 +153,152 @@
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.2); }
 }
+
+
+/* ============================================================================
+   FOUNDRY SHEET POSITIONING FIXES
+   Makes sheets float instead of pushing content
+   ============================================================================ */
+
+/* Make actor sheets float and not push other elements */
+.swse.sheet.actor {
+  position: fixed !important;
+  z-index: 100;
+}
+
+/* Prevent sheets from pushing the sidebar */
+.swse.sheet.actor.character,
+.swse.sheet.actor.npc,
+.swse.sheet.actor.droid,
+.swse.sheet.actor.vehicle {
+  position: fixed !important;
+  left: 100px !important; /* Start from left side with some padding */
+  top: 100px !important;
+}
+
+/* Ensure sheets can be moved freely */
+.swse.sheet .window-header {
+  cursor: move;
+}
+
+/* Make sheets semi-transparent when dragging */
+.swse.sheet.dragging {
+  opacity: 0.8;
+}
+
+
+
+/* ============================================================================
+   FOUNDRY SHEET POSITIONING FIXES
+   Makes sheets float instead of pushing content
+   ============================================================================ */
+
+/* Make actor sheets float and not push other elements */
+.app.window-app.sheet.actor {
+  position: fixed !important;
+}
+
+/* Position sheets starting from left side */
+.swse.sheet.actor {
+  left: 120px !important;
+  top: 120px !important;
+}
+
+/* Ensure sheets can be moved freely */
+.app.window-app .window-header {
+  cursor: move;
+}
+
+/* Make sheets semi-transparent when dragging */
+.app.window-app.dragging {
+  opacity: 0.8;
+}
+
+/* Ensure sheets don't push sidebar */
+#ui-right {
+  position: fixed !important;
+  right: 0 !important;
+}
+
+
+
+/* ============================================================================
+   FOUNDRY SHEET POSITIONING FIXES
+   Makes sheets float instead of pushing content
+   ============================================================================ */
+
+/* Make actor sheets float and not push other elements */
+.app.window-app.sheet.actor {
+  position: fixed !important;
+}
+
+/* Position sheets starting from left side */
+.swse.sheet.actor {
+  left: 120px !important;
+  top: 120px !important;
+}
+
+/* Ensure sheets can be moved freely */
+.app.window-app .window-header {
+  cursor: move;
+}
+
+/* Make sheets semi-transparent when dragging */
+.app.window-app.dragging {
+  opacity: 0.8;
+}
+
+/* Ensure sheets don't push sidebar */
+#ui-right {
+  position: fixed !important;
+  right: 0 !important;
+}
+
+
+
+/* ============================================================================
+   SHEET POSITIONING FIX
+   Makes sheets float instead of pushing content around
+   ============================================================================ */
+
+/* Force all application windows to be positioned */
+.app.window-app {
+  position: fixed !important;
+}
+
+/* Position actor sheets from the left side */
+.swse.sheet.actor {
+  left: 120px !important;
+  top: 120px !important;
+}
+
+/* Ensure sidebar stays fixed on right */
+#ui-right {
+  position: fixed !important;
+  right: 0 !important;
+  top: 0 !important;
+}
+
+/* Make window draggable */
+.app.window-app .window-header {
+  cursor: move;
+  user-select: none;
+}
+
+/* Visual feedback when dragging */
+.app.window-app.dragging {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* Ensure sheets stay above canvas but below UI */
+.app.window-app.sheet {
+  z-index: 95 !important;
+}
+
+/* Keep controls and other UI elements above sheets */
+#controls,
+#ui-left,
+#ui-right {
+  z-index: 100 !important;
+}
