@@ -202,10 +202,8 @@ Hooks.once("init", async function() {
   // Register Handlebars Helpers
   // ============================================
   
-  // Register Handlebars helpers (with duplicate check)
-  if (!Handlebars.helpers.numberFormat) {
-    registerHandlebarsHelpers();
-  }
+  // Register Handlebars helpers
+  registerHandlebarsHelpers();
 
   // Register condition-specific helpers
   if (!Handlebars.helpers['conditionPenalty']) {

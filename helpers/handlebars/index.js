@@ -17,9 +17,8 @@ export function registerHandlebarsHelpers() {
     ...mathHelpers,
     ...comparisonHelpers,
     ...arrayHelpers,
-    ...swseHelpers
-  ,
-  ...utilityHelpers};
+    ...swseHelpers,
+    ...utilityHelpers};
 
   let registered = 0;
   let skipped = 0;
