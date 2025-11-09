@@ -1,0 +1,80 @@
+
+# Update Your Character Sheet Template
+
+Your templates need `data-action` attributes to work with Foundry V2 sheets.
+
+## Location
+C:\Users\Owner\Documents\GitHub\foundryvtt-swse\templates\actors\character\character-sheet.hbs
+
+## Find and Replace
+
+### Change 1: Add Weapon Button
+**Find:**
+```handlebars
+<button type="button" class="add-weapon btn-add">
+```
+
+**Replace with:**
+```handlebars
+<button type="button" class="add-weapon btn-add" data-action="addWeapon">
+```
+
+### Change 2: Add Feat Button
+**Find:**
+```handlebars
+<button type="button" class="add-feat btn-add">
+```
+
+**Replace with:**
+```handlebars
+<button type="button" class="add-feat btn-add" data-action="addFeat">
+```
+
+### Change 3: Add Skill Button
+**Find:**
+```handlebars
+<button type="button" class="add-skill btn-add">
+```
+
+**Replace with:**
+```handlebars
+<button type="button" class="add-skill btn-add" data-action="addSkill">
+```
+
+### Change 4: Add Force Power Button
+**Find:**
+```handlebars
+<button type="button" class="add-forcepower btn-add">
+```
+
+**Replace with:**
+```handlebars
+<button type="button" class="add-forcepower btn-add" data-action="addForcepower">
+```
+
+### Change 5: Add Talent Button
+**Find:**
+```handlebars
+<button type="button" class="add-talent btn-add">
+```
+
+**Replace with:**
+```handlebars
+<button type="button" class="add-talent btn-add" data-action="addTalent">
+```
+
+### Change 6: Level Up Button
+**Find:**
+```handlebars
+<button type="button" class="level-up">
+```
+
+**Replace with:**
+```handlebars
+<button type="button" class="level-up" data-action="levelUp">
+```
+
+## Pattern
+All buttons need: `data-action="actionName"`
+
+The action name should match the method in the JavaScript class.

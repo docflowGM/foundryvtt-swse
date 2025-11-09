@@ -1,5 +1,5 @@
 Repository Structure Map
-Generated: 2025-11-08 17:05:11
+Generated: 2025-11-09 08:59:32
 ======================================================================
 
 foundryvtt-swse/
@@ -133,7 +133,8 @@ foundryvtt-swse/
 │       ├── array-helpers.js (733.0B)
 │       ├── comparison-helpers.js (515.0B)
 │       ├── index.js (1.3KB)
-│       ├── math-helpers.js (882.0B)
+│       ├── math-helpers.js (1.4KB)
+│       ├── skill-helpers.js (1.4KB)
 │       ├── string-helpers.js (474.0B)
 │       ├── swse-helpers.js (1.4KB)
 │       └── utility-helpers.js (509.0B)
@@ -170,15 +171,15 @@ foundryvtt-swse/
 │   │   ├── base/
 │   │   │   └── swse-actor-base.js (5.3KB)
 │   │   ├── character/
-│   │   │   └── swse-character-sheet.js (25.1KB)
+│   │   │   └── swse-character-sheet.js (4.8KB)
 │   │   ├── droid/
 │   │   │   ├── swse-droid-handler.js (1.2KB)
 │   │   │   └── swse-droid.js (1.1KB)
 │   │   ├── npc/
 │   │   │   └── swse-npc.js (1.1KB)
 │   │   └── vehicle/
-│   │       ├── swse-vehicle-handler.js (1.0KB)
-│   │       └── swse-vehicle.js (3.7KB)
+│   │       ├── swse-vehicle-handler.js (3.9KB)
+│   │       └── swse-vehicle.js (8.2KB)
 │   ├── apps/
 │   │   ├── chargen-init.js (2.2KB)
 │   │   ├── chargen.js (26.4KB)
@@ -208,11 +209,11 @@ foundryvtt-swse/
 │   │   └── world-data-loader.js (13.3KB)
 │   ├── data-models/
 │   │   ├── actor-base-model.js (677.0B)
-│   │   ├── actor-data-model.js (6.9KB)
-│   │   ├── character-data-model.js (1.9KB)
+│   │   ├── actor-data-model.js (7.5KB)
+│   │   ├── character-data-model.js (14.1KB)
 │   │   ├── character-model.js (497.0B)
 │   │   ├── item-data-models.js (8.0KB)
-│   │   ├── vehicle-data-model.js (2.0KB)
+│   │   ├── vehicle-data-model.js (4.7KB)
 │   │   └── vehicle-model.js (554.0B)
 │   ├── drag-drop/
 │   │   └── drop-handler.js (7.7KB)
@@ -226,7 +227,7 @@ foundryvtt-swse/
 │   ├── items/
 │   │   ├── base/
 │   │   │   └── swse-item-base.js (6.0KB)
-│   │   └── swse-item-sheet.js (663.0B)
+│   │   └── swse-item-sheet.js (681.0B)
 │   ├── migration/
 │   │   └── array-to-items.js (4.8KB)
 │   ├── rolls/
@@ -262,11 +263,11 @@ foundryvtt-swse/
 │   ├── components/
 │   │   └── swse-components.css (12.4KB)
 │   ├── sheets/
-│   │   ├── character-sheet.css (33.6KB)
+│   │   ├── character-sheet.css (37.0KB)
 │   │   ├── unified-sheets.css (20.8KB)
-│   │   └── vehicle-sheet.css (14.2KB)
+│   │   └── vehicle-sheet.css (16.2KB)
 │   └── themes/
-│       └── holo-theme.css (3.7KB)
+│       └── holo-theme.css (7.2KB)
 ├── templates/
 │   ├── actors/
 │   │   ├── character/
@@ -316,12 +317,13 @@ foundryvtt-swse/
 │   │   │   └── persistent-header.hbs (3.2KB)
 │   │   ├── ui/
 │   │   │   └── condition-track.hbs (2.4KB)
-│   │   ├── ability-block.hbs (597.0B)
+│   │   ├── ability-block.hbs (610.0B)
 │   │   ├── ability-scores.hbs (820.0B)
 │   │   ├── defenses.hbs (702.0B)
 │   │   ├── item-controls.hbs (238.0B)
 │   │   ├── README.md (906.0B)
 │   │   ├── skill-row.hbs (708.0B)
+│   │   ├── skills-section.hbs (2.6KB)
 │   │   └── tab-navigation.hbs (381.0B)
 │   └── sheets/
 │       └── character-sheet-legacy.hbs (8.5KB)
@@ -335,27 +337,26 @@ foundryvtt-swse/
 │   │   └── scan_repo.py (7.5KB)
 │   └── migration-helper.js (1.2KB)
 ├── HOUSERULE_IMPLEMENTATION_SUMMARY.txt (1.9KB)
-├── index.js (20.2KB)
-├── index.js.backup_20251108_164802 (20.2KB)
-├── REPO_STRUCTURE.txt (15.0KB)
+├── index.js (20.3KB)
+├── REPO_STRUCTURE.txt (15.1KB)
 ├── system.json (5.6KB)
 ├── template.json (5.3KB)
-└── template.json.backup_20251108_164802 (5.3KB)
+└── TEMPLATE_UPDATE_GUIDE.txt (1.7KB)
 
 ======================================================================
 Repository Statistics
 ======================================================================
 
 Total Directories: 64
-Total Files: 274
+Total Files: 275
 Total Size: 5.7MB
 
 Files by Type:
-  JavaScript        81 files  (313.0KB)
+  JavaScript        82 files  (317.7KB)
   Images            68 files  (2.3MB)
   Data              37 files  (1.1MB)
-  Templates         36 files  (104.4KB)
-  Other             29 files  (1.6MB)
-  Docs              14 files  (65.9KB)
-  Styles             6 files  (92.1KB)
+  Templates         37 files  (107.1KB)
+  Other             27 files  (1.6MB)
+  Docs              15 files  (67.7KB)
+  Styles             6 files  (100.9KB)
   Python             3 files  (14.2KB)

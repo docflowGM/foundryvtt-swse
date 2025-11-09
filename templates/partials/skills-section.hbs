@@ -1,0 +1,82 @@
+{{!-- Static Skills Section --}}
+<div class="skills-section">
+  <h3 class="section-header">
+    <i class="fas fa-graduation-cap"></i> Skills
+    <span class="skill-points">Trained: {{countTrained system.skills}}/{{maxSkills}}</span>
+  </h3>
+
+  <div class="skills-list">
+    {{!-- General Skills --}}
+    <div class="skill-category">
+      <h4>General Skills</h4>
+      {{#each system.skills as |skill key|}}
+        {{#unless (contains key "knowledge")}}
+          {{> skillRow skill=skill key=key}}
+        {{/unless}}
+      {{/each}}
+    </div>
+
+    {{!-- Knowledge Skills --}}
+    <div class="skill-category">
+      <h4>Knowledge Skills</h4>
+      {{#each system.skills as |skill key|}}
+        {{#if (contains key "knowledge")}}
+          {{> skillRow skill=skill key=key}}
+        {{/if}}
+      {{/each}}
+    </div>
+  </div>
+</div>
+
+{{!-- Skill Row Partial --}}
+{{#*inline "skillRow"}}
+<div class="skill-row {{#if skill.trained}}trained{{/if}} {{#unless skill.canUse}}untrained-only{{/unless}}">
+  <div class="skill-checkbox">
+    <input type="checkbox" 
+           name="system.skills.{{key}}.trained" 
+           {{checked skill.trained}}
+           {{#unless skill.untrained}}disabled{{/unless}}
+           data-tooltip="{{#if skill.trained}}Trained{{else}}Untrained{{/if}}" />
+  </div>
+  
+  <div class="skill-name">
+    {{skillName key}}
+    {{#unless skill.untrained}}
+      <span class="trained-only-badge" data-tooltip="Requires Training">T</span>
+    {{/unless}}
+  </div>
+  
+  <div class="skill-ability">
+    {{uppercase skill.ability}}
+  </div>
+  
+  <div class="skill-total">
+    <button type="button" 
+            class="skill-roll" 
+            data-action="rollSkill"
+            data-skill="{{key}}"
+            {{#unless skill.canUse}}disabled{{/unless}}>
+      {{sign skill.total}}
+    </button>
+  </div>
+  
+  <div class="skill-breakdown" data-tooltip="Ability: {{sign skill.abilityMod}} | Level: +{{halfLevel}} | Training: {{#if skill.trained}}+5{{else}}+0{{/if}} | Focus: {{sign skill.focusMod}} | Misc: {{sign skill.miscMod}}">
+    <i class="fas fa-info-circle"></i>
+  </div>
+  
+  <div class="skill-mods">
+    <input type="number" 
+           name="system.skills.{{key}}.focusMod" 
+           value="{{skill.focusMod}}" 
+           placeholder="0"
+           data-tooltip="Skill Focus Bonus"
+           class="skill-mod-input" />
+    <input type="number" 
+           name="system.skills.{{key}}.miscMod" 
+           value="{{skill.miscMod}}" 
+           placeholder="0"
+           data-tooltip="Miscellaneous Bonus"
+           class="skill-mod-input" />
+  </div>
+</div>
+{{/inline}}

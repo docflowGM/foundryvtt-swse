@@ -4,67 +4,267 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
   static defineSchema() {
     const fields = foundry.data.fields;
-    const baseSchema = super.defineSchema();
 
     return {
-      ...baseSchema,
-
-      // Force
-      forcePoints: new fields.SchemaField({
-        value: new fields.NumberField({required: true, initial: 5, min: 0, integer: true}),
-        max: new fields.NumberField({required: true, initial: 5, min: 0, integer: true})
+      // Attributes
+      attributes: new fields.SchemaField({
+        str: new fields.SchemaField({
+          base: new fields.NumberField({required: true, initial: 10, integer: true}),
+          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
+          enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
+          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        dex: new fields.SchemaField({
+          base: new fields.NumberField({required: true, initial: 10, integer: true}),
+          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
+          enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
+          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        con: new fields.SchemaField({
+          base: new fields.NumberField({required: true, initial: 10, integer: true}),
+          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
+          enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
+          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        int: new fields.SchemaField({
+          base: new fields.NumberField({required: true, initial: 10, integer: true}),
+          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
+          enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
+          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        wis: new fields.SchemaField({
+          base: new fields.NumberField({required: true, initial: 10, integer: true}),
+          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
+          enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
+          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        cha: new fields.SchemaField({
+          base: new fields.NumberField({required: true, initial: 10, integer: true}),
+          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
+          enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
+          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+        })
       }),
 
-      darkSideScore: new fields.NumberField({required: true, initial: 0, min: 0, integer: true}),
-
-      destinyPoints: new fields.NumberField({required: true, initial: 1, min: 0, integer: true}),
-
-      // Second Wind
-      secondWind: new fields.SchemaField({
-        used: new fields.BooleanField({required: true, initial: false}),
-        value: new fields.NumberField({required: true, initial: 0, integer: true})
+      // STATIC SKILLS - Always present
+      skills: new fields.SchemaField({
+        acrobatics: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        climb: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        deception: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        endurance: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        gather_information: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        initiative: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        jump: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        knowledge_bureaucracy: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        knowledge_galactic_lore: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        knowledge_life_sciences: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        knowledge_physical_sciences: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        knowledge_social_sciences: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        knowledge_tactics: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        knowledge_technology: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        mechanics: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        perception: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        persuasion: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        pilot: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        ride: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        stealth: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        survival: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        swim: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        treat_injury: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        use_computer: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        use_the_force: new fields.SchemaField({
+          trained: new fields.BooleanField({required: true, initial: false}),
+          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+        })
       }),
 
-      // Force Suite
-      forceSuite: new fields.SchemaField({
-        max: new fields.NumberField({required: true, initial: 0, integer: true})
+      // Rest of character data
+      hp: new fields.SchemaField({
+        value: new fields.NumberField({required: true, initial: 30, min: 0, integer: true}),
+        max: new fields.NumberField({required: true, initial: 30, min: 1, integer: true}),
+        temp: new fields.NumberField({required: true, initial: 0, integer: true})
       }),
 
-      // Character details
-      species: new fields.StringField({required: false, initial: "Human"}),
-      class: new fields.StringField({required: false, initial: ""}),
-      background: new fields.StringField({required: false, initial: ""}),
-      size: new fields.StringField({required: false, initial: "Medium"})
+      level: new fields.SchemaField({
+        heroic: new fields.NumberField({required: true, initial: 1, min: 1, max: 20, integer: true})
+      }),
+
+      defenses: new fields.SchemaField({
+        reflex: new fields.NumberField({required: true, initial: 10, integer: true}),
+        fortitude: new fields.NumberField({required: true, initial: 10, integer: true}),
+        will: new fields.NumberField({required: true, initial: 10, integer: true})
+      }),
+
+      biography: new fields.StringField({required: false, initial: ""})
     };
   }
 
   prepareDerivedData() {
     super.prepareDerivedData();
-    this._calculateSecondWind();
-    this._calculateForcePoints();
-    this._calculateForceSuite();
+
+    // Calculate ability modifiers
+    for (const [key, ability] of Object.entries(this.attributes)) {
+      const total = ability.base + ability.racial + ability.enhancement + ability.temp;
+      ability.total = total;
+      ability.mod = Math.floor((total - 10) / 2);
+    }
+
+    // Calculate skill totals
+    this._prepareSkills();
   }
 
-  _calculateSecondWind() {
-    this.secondWind.value = Math.floor((this.hp.max || 1) / 4) + this.abilities.con.mod;
-  }
+  _prepareSkills() {
+    const skillData = {
+      acrobatics: { ability: 'dex', untrained: true },
+      climb: { ability: 'str', untrained: true },
+      deception: { ability: 'cha', untrained: true },
+      endurance: { ability: 'con', untrained: true },
+      gather_information: { ability: 'cha', untrained: true },
+      initiative: { ability: 'dex', untrained: true },
+      jump: { ability: 'str', untrained: true },
+      knowledge_bureaucracy: { ability: 'int', untrained: false },
+      knowledge_galactic_lore: { ability: 'int', untrained: false },
+      knowledge_life_sciences: { ability: 'int', untrained: false },
+      knowledge_physical_sciences: { ability: 'int', untrained: false },
+      knowledge_social_sciences: { ability: 'int', untrained: false },
+      knowledge_tactics: { ability: 'int', untrained: false },
+      knowledge_technology: { ability: 'int', untrained: false },
+      mechanics: { ability: 'int', untrained: true },
+      perception: { ability: 'wis', untrained: true },
+      persuasion: { ability: 'cha', untrained: true },
+      pilot: { ability: 'dex', untrained: true },
+      ride: { ability: 'dex', untrained: true },
+      stealth: { ability: 'dex', untrained: true },
+      survival: { ability: 'wis', untrained: true },
+      swim: { ability: 'str', untrained: true },
+      treat_injury: { ability: 'wis', untrained: true },
+      use_computer: { ability: 'int', untrained: true },
+      use_the_force: { ability: 'cha', untrained: false }
+    };
 
-  _calculateForcePoints() {
-    this.forcePoints.max = 5 + Math.floor((this.level || 1) / 2);
-  }
+    const halfLevel = Math.floor(this.level.heroic / 2);
 
-  _calculateForceSuite() {
-    // Base 6, can be modified by talents
-    this.forceSuite.max = 6;
-  }
-
-  _calculateBaseAttack() {
-    // Override parent to use class-based BAB progression
-    const level = this.level || 1;
-    
-    // For now, use medium progression
-    // TODO: Get actual class progression from class items
-    this.bab = Math.floor(level * 0.75);
-    this.baseAttack = this.bab;
+    for (const [skillKey, skill] of Object.entries(this.skills)) {
+      const data = skillData[skillKey];
+      const abilityMod = this.attributes[data.ability]?.mod || 0;
+      
+      // Calculate total bonus
+      let total = abilityMod + skill.miscMod;
+      
+      // Add training bonus (+5)
+      if (skill.trained) {
+        total += 5;
+      }
+      
+      // Add half level (always, even untrained)
+      total += halfLevel;
+      
+      // Add skill focus bonus
+      total += skill.focusMod;
+      
+      // Store calculated values
+      skill.total = total;
+      skill.ability = data.ability;
+      skill.abilityMod = abilityMod;
+      skill.untrained = data.untrained;
+      skill.canUse = skill.trained || data.untrained;
+    }
   }
 }
