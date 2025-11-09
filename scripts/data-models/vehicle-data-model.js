@@ -5,8 +5,41 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
 
-    // Vehicles have different structure
     return {
+      // Vehicles have attributes too!
+      attributes: new fields.SchemaField({
+        str: new fields.SchemaField({
+          base: new fields.NumberField({required: true, initial: 10, integer: true}),
+          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
+          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        dex: new fields.SchemaField({
+          base: new fields.NumberField({required: true, initial: 10, integer: true}),
+          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
+          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        con: new fields.SchemaField({
+          base: new fields.NumberField({required: true, initial: 10, integer: true}),
+          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
+          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        int: new fields.SchemaField({
+          base: new fields.NumberField({required: true, initial: 10, integer: true}),
+          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
+          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        wis: new fields.SchemaField({
+          base: new fields.NumberField({required: true, initial: 10, integer: true}),
+          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
+          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+        }),
+        cha: new fields.SchemaField({
+          base: new fields.NumberField({required: true, initial: 10, integer: true}),
+          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
+          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+        })
+      }),
+      
       // Vehicle stats
       hull: new fields.SchemaField({
         value: new fields.NumberField({required: true, initial: 50, min: 0, integer: true}),
@@ -43,8 +76,12 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
   }
 
   prepareDerivedData() {
-    // Vehicles don't need most character calculations
-    // Just ensure numeric values exist
+    // Calculate ability modifiers
+    for (const [key, ability] of Object.entries(this.attributes)) {
+      const total = ability.base + ability.racial + ability.temp;
+      ability.total = total;
+      ability.mod = Math.floor((total - 10) / 2);
+    }
     
     // Ensure defenses are numbers
     this.reflexDefense = Number(this.reflexDefense) || 10;

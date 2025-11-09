@@ -1,6 +1,5 @@
 import { SWSECharacterSheet } from '../character/swse-character-sheet.js';
-
-
+import { SWSEVehicleHandler } from './swse-vehicle-handler.js';
 
 export class SWSEVehicleSheet extends SWSECharacterSheet {
   static get defaultOptions() {
@@ -9,7 +8,11 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
       template: "systems/swse/templates/actors/vehicle/vehicle-sheet.hbs",
       width: 900,
       height: 800,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "main" }]
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "main" }],
+      dragDrop: [{
+        dragSelector: '.item-list .item',
+        dropSelector: null
+      }]
     });
   }
 
@@ -33,6 +36,18 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     if (!context.system.hull) context.system.hull = { value: 0, max: 0 };
     if (!context.system.tags) context.system.tags = [];
 
+    // Ensure attributes exist with calculated values
+    if (!context.system.attributes) {
+      context.system.attributes = {
+        str: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
+        dex: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
+        con: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
+        int: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
+        wis: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
+        cha: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 }
+      };
+    }
+
     return context;
   }
 
@@ -42,14 +57,106 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
 
     html.find('.weapon-add').click(this._onAddWeapon.bind(this));
     html.find('.weapon-remove').click(this._onRemoveWeapon.bind(this));
+    html.find('.weapon-roll').click(this._onRollWeapon.bind(this));
     html.find('.crew-slot').on('drop', this._onCrewDrop.bind(this));
     html.find('.crew-slot').on('click', this._onCrewClick.bind(this));
+  }
+
+  /**
+   * Handle dropping items onto the vehicle sheet
+   * Handles both vehicle templates and individual weapons
+   */
+  async _onDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    let data;
+    try {
+      data = JSON.parse(event.dataTransfer.getData('text/plain'));
+    } catch (err) {
+      console.error('SWSE | Failed to parse drop data:', err);
+      return false;
+    }
+    
+    // Handle Item drops
+    if (data.type === 'Item') {
+      const item = await fromUuid(data.uuid);
+      if (!item) {
+        console.warn('SWSE | Could not find dropped item');
+        return false;
+      }
+      
+      console.log('SWSE | Item dropped on vehicle:', item.name, item.type);
+      
+      // Check if this is a weapon Item
+      if (item.type === 'weapon') {
+        return await this._handleWeaponDrop(item);
+      }
+      
+      // Check if this is a vehicle template
+      if (SWSEVehicleHandler.isVehicleTemplate(item)) {
+        const confirmed = await Dialog.confirm({
+          title: 'Apply Vehicle Template',
+          content: `<p>Apply <strong>${item.name}</strong> template to this vehicle?</p>
+                    <p><em>This will replace current vehicle statistics.</em></p>`
+        });
+        
+        if (confirmed) {
+          return await SWSEVehicleHandler.applyVehicleTemplate(this.actor, item);
+        }
+        return false;
+      }
+    }
+    
+    // Let parent handle other drops
+    return super._onDrop(event);
+  }
+
+  /**
+   * Handle dropping a weapon Item onto the vehicle
+   * Converts weapon Item to vehicle weapon format and adds to array
+   */
+  async _handleWeaponDrop(weaponItem) {
+    console.log('SWSE | Adding weapon to vehicle:', weaponItem.name);
+    
+    const weapons = [...(this.actor.system.weapons || [])];
+    
+    // Convert weapon Item to vehicle weapon format
+    const vehicleWeapon = {
+      name: weaponItem.name,
+      arc: 'Forward',  // Default arc
+      bonus: this._formatAttackBonus(weaponItem.system.attackBonus || 0),
+      damage: weaponItem.system.damage || '0d0',
+      range: weaponItem.system.range || 'Close'
+    };
+    
+    // Add to weapons array
+    weapons.push(vehicleWeapon);
+    
+    await this.actor.update({ 'system.weapons': weapons });
+    
+    ui.notifications.info(`${weaponItem.name} added to vehicle weapons`);
+    return true;
+  }
+
+  /**
+   * Format attack bonus with +/- sign
+   */
+  _formatAttackBonus(bonus) {
+    const num = Number(bonus) || 0;
+    return num >= 0 ? `+${num}` : `${num}`;
   }
 
   async _onAddWeapon(event) {
     event.preventDefault();
     const weapons = this.actor.system.weapons || [];
-    weapons.push({ name: "New Weapon", arc: "Forward", bonus: "+0", damage: "0d0", range: "Close" });
+    weapons.push({ 
+      name: "New Weapon", 
+      arc: "Forward", 
+      bonus: "+0", 
+      damage: "0d0", 
+      range: "Close" 
+    });
     await this.actor.update({ "system.weapons": weapons });
   }
 
@@ -63,7 +170,41 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     }
   }
 
-  async _onRollWeapon(event) { }
+  async _onRollWeapon(event) {
+    event.preventDefault();
+    const index = parseInt(event.currentTarget.dataset.index);
+    const weapon = this.actor.system.weapons?.[index];
+    
+    if (!weapon) return;
+    
+    // Roll attack
+    const attackRoll = new Roll(`1d20${weapon.bonus}`, this.actor.getRollData());
+    await attackRoll.evaluate({async: true});
+    
+    await attackRoll.toMessage({
+      speaker: ChatMessage.getSpeaker({actor: this.actor}),
+      flavor: `<strong>${weapon.name}</strong> Attack Roll`,
+      rollMode: game.settings.get('core', 'rollMode')
+    });
+    
+    // Ask if hit
+    const hit = await Dialog.confirm({
+      title: 'Roll Damage?',
+      content: `<p>Did the attack hit?</p>`
+    });
+    
+    if (hit) {
+      const damageRoll = new Roll(weapon.damage, this.actor.getRollData());
+      await damageRoll.evaluate({async: true});
+      
+      await damageRoll.toMessage({
+        speaker: ChatMessage.getSpeaker({actor: this.actor}),
+        flavor: `<strong>${weapon.name}</strong> Damage`,
+        rollMode: game.settings.get('core', 'rollMode')
+      });
+    }
+  }
+  
   async _onCrewDrop(event) {
     event.preventDefault();
     const slot = event.currentTarget.dataset.slot;
@@ -93,6 +234,7 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     }
   }
 
+  // Stub methods to prevent errors from parent class
   async _onAddFeat(event) { }
   async _onRemoveFeat(event) { }
   async _onAddTalent(event) { }
