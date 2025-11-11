@@ -197,6 +197,37 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
   }
 
   prepareDerivedData() {
+    // --- Compatibility alias: provide `abilities` derived object for templates ---
+    if (!this.attributes) this.attributes = {
+      str: { base:10, racial:0, enhancement:0, temp:0 },
+      dex: { base:10, racial:0, enhancement:0, temp:0 },
+      con: { base:10, racial:0, enhancement:0, temp:0 },
+      int: { base:10, racial:0, enhancement:0, temp:0 },
+      wis: { base:10, racial:0, enhancement:0, temp:0 },
+      cha: { base:10, racial:0, enhancement:0, temp:0 }
+    };
+
+    this.abilities = this.abilities || {};
+
+    for (const [ab, ability] of Object.entries(this.attributes)) {
+      const total = (ability.total !== undefined)
+        ? ability.total
+        : (ability.base || 0) + (ability.racial || 0) + (ability.enhancement || 0) + (ability.temp || 0);
+
+      const mod = (ability.mod !== undefined)
+        ? ability.mod
+        : Math.floor((total - 10) / 2);
+
+      this.abilities[ab] = {
+        base: ability.base || 0,
+        racial: ability.racial || 0,
+        enhancement: ability.enhancement || 0,
+        temp: ability.temp || 0,
+        total: total,
+        mod: mod
+      };
+    }
+
     super.prepareDerivedData();
 
     // Calculate ability modifiers

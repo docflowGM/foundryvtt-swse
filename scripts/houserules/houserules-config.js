@@ -119,4 +119,9 @@ Hooks.once('ready', () => {
     type: HouserulesConfig,
     restricted: true
   });
+
+  /** Required by FormApplication: handle form submit (no-op for now) */
+  async _updateObject(event, formData) {
+    return;
+  }
 });
