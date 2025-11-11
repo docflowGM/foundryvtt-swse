@@ -141,7 +141,7 @@ Hooks.once("init", async function() {
   // Register Data Models (Foundry V11+)
   // ============================================
   
-  CONFIG.Actor.systemDataModels = {
+  CONFIG.Actor.dataModels = {
     character: SWSECharacterDataModel,
     npc: SWSECharacterDataModel,
     droid: SWSECharacterDataModel,

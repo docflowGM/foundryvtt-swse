@@ -107,6 +107,11 @@ export class HouserulesConfig extends FormApplication {
         break;
     }
   }
+    /** Required by FormApplication */
+    async _updateObject(event, formData) {
+        return;
+    }
+
 }
 
 // Register the config button in settings
