@@ -23,41 +23,41 @@
   "manifest": "https://github.com/docflowGM/foundryvtt-swse/releases/latest/download/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.1.101/swse.zip",
   "esmodules": [
-    "index.js"
+    "systems/swse/index.js"
   ],
   "styles": [
-    "styles/components/swse-components.css",
-    "styles/sheets/character-sheet.css",
-    "styles/sheets/unified-sheets.css",
-    "styles/sheets/vehicle-sheet.css",
-    "styles/apps/chargen.css",
-    "styles/themes/holo-theme.css"
+    "systems/swse/styles/components/swse-components.css",
+    "systems/swse/styles/sheets/character-sheet.css",
+    "systems/swse/styles/sheets/unified-sheets.css",
+    "systems/swse/styles/sheets/vehicle-sheet.css",
+    "systems/swse/styles/apps/chargen.css",
+    "systems/swse/styles/themes/holo-theme.css"
   ],
   "languages": [
     {
       "lang": "en",
       "name": "English",
-      "path": "lang/en.json"
+      "path": "systems/swse/lang/en.json"
     },
     {
       "lang": "es",
-      "name": "Español",
-      "path": "lang/es.json"
+      "name": "Espa\u00f1ol",
+      "path": "systems/swse/lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Français",
-      "path": "lang/fr.json"
+      "name": "Fran\u00e7ais",
+      "path": "systems/swse/lang/fr.json"
     },
     {
       "lang": "de",
       "name": "Deutsch",
-      "path": "lang/de.json"
+      "path": "systems/swse/lang/de.json"
     },
     {
       "lang": "ru",
-      "name": "Русский",
-      "path": "lang/ru.json"
+      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "path": "systems/swse/lang/ru.json"
     }
   ],
   "relationships": {
@@ -88,152 +88,152 @@
     {
       "name": "classes",
       "label": "Classes",
-      "path": "packs/classes.db",
+      "path": "systems/swse/packs/classes.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "talents",
       "label": "Talents",
-      "path": "packs/talents.db",
+      "path": "systems/swse/packs/talents.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "talent_trees",
       "label": "Talent Trees",
-      "path": "packs/talent_trees.db",
+      "path": "systems/swse/packs/talent_trees.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "feats",
       "label": "Feats",
-      "path": "packs/feats.db",
+      "path": "systems/swse/packs/feats.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "species",
       "label": "Species",
-      "path": "packs/species.db",
+      "path": "systems/swse/packs/species.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "equipment",
       "label": "Equipment",
-      "path": "packs/equipment.db",
+      "path": "systems/swse/packs/equipment.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "weapons",
       "label": "Weapons",
-      "path": "packs/weapons.db",
+      "path": "systems/swse/packs/weapons.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "armor",
       "label": "Armor",
-      "path": "packs/armor.db",
+      "path": "systems/swse/packs/armor.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "armor_light",
       "label": "Light Armor",
-      "path": "packs/armor-light.db",
+      "path": "systems/swse/packs/armor-light.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "armor_medium",
       "label": "Medium Armor",
-      "path": "packs/armor-medium.db",
+      "path": "systems/swse/packs/armor-medium.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "armor_heavy",
       "label": "Heavy Armor",
-      "path": "packs/armor-heavy.db",
+      "path": "systems/swse/packs/armor-heavy.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "forcepowers",
       "label": "Force Powers",
-      "path": "packs/forcepowers.db",
+      "path": "systems/swse/packs/forcepowers.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "skills",
       "label": "Skills",
-      "path": "packs/skills.db",
+      "path": "systems/swse/packs/skills.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "extraskilluses",
       "label": "Extra Skill Uses",
-      "path": "packs/extraskilluses.db",
+      "path": "systems/swse/packs/extraskilluses.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "combat_actions",
       "label": "Combat Actions",
-      "path": "packs/combat-actions.db",
+      "path": "systems/swse/packs/combat-actions.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "conditions",
       "label": "Conditions",
-      "path": "packs/conditions.db",
+      "path": "systems/swse/packs/conditions.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "special_combat_condition",
       "label": "Special Combat Conditions",
-      "path": "packs/special-combat-condition.db",
+      "path": "systems/swse/packs/special-combat-condition.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "attributes",
       "label": "Attributes",
-      "path": "packs/attributes.db",
+      "path": "systems/swse/packs/attributes.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "vehicles",
       "label": "Vehicles",
-      "path": "packs/vehicles.db",
+      "path": "systems/swse/packs/vehicles.db",
       "type": "Actor",
       "system": "swse"
     },
     {
       "name": "droids",
       "label": "Droids",
-      "path": "packs/droids.db",
+      "path": "systems/swse/packs/droids.db",
       "type": "Actor",
       "system": "swse"
     },
     {
       "name": "npc",
       "label": "NPCs",
-      "path": "packs/npc.db",
+      "path": "systems/swse/packs/npc.db",
       "type": "Actor",
       "system": "swse"
     }
   ],
   "scripts": [
-    "scripts/core/load-templates.js"
+    "systems/swse/scripts/core/load-templates.js"
   ]
 }
