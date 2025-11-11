@@ -268,3 +268,34 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     }
   }
 }
+    // --- Compatibility shim for template expectations ---
+    // Ensure `.abilities` exists with { total, mod }
+    if (!this.abilities) this.abilities = {};
+    try {
+      for (const [k, attr] of Object.entries(this.attributes || {})) {
+        const total = (attr.base || 0) + (attr.racial || 0) + (attr.enhancement || 0) + (attr.temp || 0);
+        const mod = Math.floor((total - 10) / 2);
+
+        this.abilities[k] = {
+          base: attr.base || 0,
+          total,
+          mod
+        };
+      }
+    } catch (err) {
+      console.warn("SWSE | abilities shim failure:", err);
+    }
+
+    // Normalize defenses into { total } objects
+    try {
+      const def = this.defenses || {};
+      this.defenses = {
+        reflex: typeof def.reflex === "number" ? { total: def.reflex } : def.reflex,
+        fortitude: typeof def.fortitude === "number" ? { total: def.fortitude } : def.fortitude,
+        will: typeof def.will === "number" ? { total: def.will } : def.will
+      };
+    } catch (err) {
+      console.warn("SWSE | defenses shim failure:", err);
+    }
+    // --- End compatibility shim ---
+

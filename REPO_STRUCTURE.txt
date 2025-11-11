@@ -1,5 +1,5 @@
 Repository Structure Map
-Generated: 2025-11-09 08:59:32
+Generated: 2025-11-10 19:50:58
 ======================================================================
 
 foundryvtt-swse/
@@ -76,8 +76,8 @@ foundryvtt-swse/
 │       ├── sheet-frame.png (182.0KB)
 │       ├── sheet-frame@2x.png (1.1MB)
 │       ├── swse-cover.webp (8.0B)
-│       ├── title-logo.png (11.4KB)
-│       ├── title-logo@2x.png (13.5KB)
+│       ├── swse-logo.png (11.4KB)
+│       ├── swse-logo@2x.png (13.5KB)
 │       └── vehicle-stats.png (524.0KB)
 ├── data/
 │   ├── armor/
@@ -132,7 +132,8 @@ foundryvtt-swse/
 │   └── handlebars/
 │       ├── array-helpers.js (733.0B)
 │       ├── comparison-helpers.js (515.0B)
-│       ├── index.js (1.3KB)
+│       ├── index.js (1.4KB)
+│       ├── index.js.bak (1.3KB)
 │       ├── math-helpers.js (1.4KB)
 │       ├── skill-helpers.js (1.4KB)
 │       ├── string-helpers.js (474.0B)
@@ -220,10 +221,12 @@ foundryvtt-swse/
 │   ├── gm-tools/
 │   │   └── homebrew-manager.js (1.1KB)
 │   ├── houserules/
-│   │   ├── houserule-mechanics.js (6.0KB)
-│   │   ├── houserule-menus.js (9.0KB)
+│   │   ├── houserule-mechanics.js (10.2KB)
+│   │   ├── houserule-menus.js (13.3KB)
 │   │   ├── houserule-presets.js (5.1KB)
-│   │   └── houserule-settings.js (5.1KB)
+│   │   ├── houserule-settings.js (8.9KB)
+│   │   ├── houserules-config.js (3.5KB)
+│   │   └── houserules-data.js (8.2KB)
 │   ├── items/
 │   │   ├── base/
 │   │   │   └── swse-item-base.js (6.0KB)
@@ -259,7 +262,8 @@ foundryvtt-swse/
 │       └── validation-utils.js (2.5KB)
 ├── styles/
 │   ├── apps/
-│   │   └── chargen.css (7.3KB)
+│   │   ├── chargen.css (7.3KB)
+│   │   └── houserules.css (6.0KB)
 │   ├── components/
 │   │   └── swse-components.css (12.4KB)
 │   ├── sheets/
@@ -280,7 +284,8 @@ foundryvtt-swse/
 │   │   │   │   ├── skills-tab.hbs (2.5KB)
 │   │   │   │   ├── summary-tab.hbs (3.3KB)
 │   │   │   │   └── talents-tab.hbs (2.6KB)
-│   │   │   └── character-sheet.hbs (1.6KB)
+│   │   │   ├── character-sheet.hbs (1.6KB)
+│   │   │   └── character-sheet.hbs.bak (1.6KB)
 │   │   ├── droid/
 │   │   │   └── droid-sheet.hbs (10.1KB)
 │   │   ├── npc/
@@ -297,9 +302,12 @@ foundryvtt-swse/
 │   │   ├── houserules/
 │   │   │   ├── advancement.hbs (60.0B)
 │   │   │   ├── character-creation.hbs (2.5KB)
-│   │   │   ├── combat.hbs (3.2KB)
-│   │   │   ├── force.hbs (54.0B)
-│   │   │   └── presets.hbs (56.0B)
+│   │   │   ├── combat.hbs (6.4KB)
+│   │   │   ├── force.hbs (4.1KB)
+│   │   │   ├── houserules-config.hbs (293.0B)
+│   │   │   ├── presets.hbs (56.0B)
+│   │   │   ├── skills-feats.hbs (4.2KB)
+│   │   │   └── space-combat.hbs (2.8KB)
 │   │   ├── store/
 │   │   │   ├── gm-settings.html (497.0B)
 │   │   │   ├── gm-settings.js (803.0B)
@@ -337,7 +345,7 @@ foundryvtt-swse/
 │   │   └── scan_repo.py (7.5KB)
 │   └── migration-helper.js (1.2KB)
 ├── HOUSERULE_IMPLEMENTATION_SUMMARY.txt (1.9KB)
-├── index.js (20.3KB)
+├── index.js (20.4KB)
 ├── REPO_STRUCTURE.txt (15.1KB)
 ├── system.json (5.6KB)
 ├── template.json (5.3KB)
@@ -348,15 +356,15 @@ Repository Statistics
 ======================================================================
 
 Total Directories: 64
-Total Files: 275
+Total Files: 283
 Total Size: 5.7MB
 
 Files by Type:
-  JavaScript        82 files  (317.7KB)
+  JavaScript        84 files  (342.0KB)
   Images            68 files  (2.3MB)
+  Templates         40 files  (121.5KB)
   Data              37 files  (1.1MB)
-  Templates         37 files  (107.1KB)
-  Other             27 files  (1.6MB)
+  Other             29 files  (1.6MB)
   Docs              15 files  (67.7KB)
-  Styles             6 files  (100.9KB)
+  Styles             7 files  (106.9KB)
   Python             3 files  (14.2KB)

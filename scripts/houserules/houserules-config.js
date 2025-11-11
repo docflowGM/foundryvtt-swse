@@ -11,7 +11,8 @@ import { SkillsFeatsMenu } from './houserule-menus.js';
 import { SpaceCombatMenu } from './houserule-menus.js';
 import { PresetsMenu } from './houserule-menus.js';
 
-export class HouserulesConfig extends Application {
+/* Upgraded to FormApplication for Foundry compatibility */
+export class HouserulesConfig extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "swse-houserules-config",
