@@ -1,0 +1,15 @@
+<div class="houserules-config">
+  {{#each menus}}
+  <div class="houserule-menu-button" data-menu="{{id}}">
+    <i class="{{icon}}"></i>
+    <h3>{{title}}</h3>
+    <p>{{description}}</p>
+  </div>
+  {{/each}}
+</div>
+
+<style>
+  .houserules-config {
+    padding: 1rem;
+  }
+</style>

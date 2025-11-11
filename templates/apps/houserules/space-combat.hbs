@@ -1,0 +1,68 @@
+<form>
+  <nav class="tabs" data-group="primary-tabs">
+    <a class="item active" data-tab="initiative">Initiative</a>
+    <a class="item" data-tab="roles">Crew Roles</a>
+  </nav>
+  
+  <section class="content">
+    <div class="tab active" data-group="primary-tabs" data-tab="initiative">
+      <div class="form-group">
+        <label>Space Combat Initiative</label>
+        <select name="spaceInitiativeSystem">
+          <option value="individual" {{#if (eq spaceInitiativeSystem "individual")}}selected{{/if}}>Individual (Standard)</option>
+          <option value="shipBased" {{#if (eq spaceInitiativeSystem "shipBased")}}selected{{/if}}>Ship-Based with Role Priority</option>
+        </select>
+        <p class="notes">Ship-Based: Ship rolls initiative, crew acts in role priority order</p>
+      </div>
+      
+      {{#if (eq spaceInitiativeSystem "shipBased")}}
+      <div class="form-group">
+        <label>Initiative Role Priority Order</label>
+        <p class="notes">Default order (drag to reorder):</p>
+        <ol class="role-priority-list" data-name="initiativeRolePriority">
+          {{#each initiativeRolePriority}}
+          <li data-role="{{this}}" draggable="true">
+            <i class="fas fa-grip-vertical"></i>
+            <span>{{capitalize this}}</span>
+          </li>
+          {{else}}
+          <li data-role="pilot" draggable="true">
+            <i class="fas fa-grip-vertical"></i>
+            <span>Pilot</span>
+          </li>
+          <li data-role="shields" draggable="true">
+            <i class="fas fa-grip-vertical"></i>
+            <span>Shield Operator</span>
+          </li>
+          <li data-role="weapons" draggable="true">
+            <i class="fas fa-grip-vertical"></i>
+            <span>Weapons</span>
+          </li>
+          <li data-role="engineering" draggable="true">
+            <i class="fas fa-grip-vertical"></i>
+            <span>Engineering</span>
+          </li>
+          <li data-role="other" draggable="true">
+            <i class="fas fa-grip-vertical"></i>
+            <span>Everyone Else</span>
+          </li>
+          {{/each}}
+        </ol>
+        <p class="notes">Multiple weapons operators roll initiative among themselves</p>
+      </div>
+      {{/if}}
+    </div>
+    
+    <div class="tab" data-group="primary-tabs" data-tab="roles">
+      <div class="form-group">
+        <label>Multiple Weapons Operators</label>
+        <input type="checkbox" name="weaponsOperatorsRollInit" {{#if weaponsOperatorsRollInit}}checked{{/if}}/>
+        <label>Weapons operators roll initiative to determine order among themselves</label>
+      </div>
+    </div>
+  </section>
+  
+  <footer class="sheet-footer">
+    <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+  </footer>
+</form>

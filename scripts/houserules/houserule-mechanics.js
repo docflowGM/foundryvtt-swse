@@ -1,3 +1,4 @@
+import { HouserulesData, getFeintSkill, getSkillFocusBonus, canTakeForceSensitive, getForceTrainingAttribute, hasBlockDeflectCombined, hasDefaultWeaponFinesse, getRolePriorityOrder } from './houserules-data.js';
 /**
  * House Rules Mechanics
  * Applies house rule modifications to game mechanics
@@ -16,6 +17,8 @@ export class HouseruleMechanics {
     this.setupConditionTrackLimits();
     this.setupDiagonalMovement();
     this.setupDeathSystem();
+    this.setupFeintSkill();
+    this.setupSpaceCombatInitiative();
     
     console.log("SWSE | House rule mechanics initialized");
   }
@@ -219,4 +222,158 @@ export class HouseruleMechanics {
         return baseRoll.total * 2;
     }
   }
+
+  /**
+   * Apply feint skill rules
+   */
+  static setupFeintSkill() {
+    Hooks.on('preRollSkill', (actor, skillName, options) => {
+      if (skillName === 'feint') {
+        const feintSkill = game.settings.get('swse', 'feintSkill');
+        if (feintSkill === 'persuasion') {
+          options.useSkill = 'persuasion';
+        }
+      }
+    });
+  }
+
+  /**
+   * Calculate Skill Focus bonus based on variant
+   */
+  static getSkillFocusBonus(actor, skillName) {
+    const variant = game.settings.get('swse', 'skillFocusVariant');
+    const level = actor.system.level || 1;
+    
+    switch (variant) {
+      case 'scaled':
+        return Math.min(5, Math.floor(level / 2));
+      
+      case 'delayed':
+        const activationLevel = game.settings.get('swse', 'skillFocusActivationLevel');
+        return level >= activationLevel ? 5 : 0;
+      
+      case 'normal':
+      default:
+        return 5;
+    }
+  }
+
+  /**
+   * Get Force Training attribute
+   */
+  static getForceTrainingAttribute() {
+    return game.settings.get('swse', 'forceTrainingAttribute');
+  }
+
+  /**
+   * Check if Block and Deflect are combined
+   */
+  static isBlockDeflectCombined() {
+    return game.settings.get('swse', 'blockDeflectTalents') === 'combined';
+  }
+
+  /**
+   * Check if Force Sensitive is restricted to Jedi
+   */
+  static isForceSensitiveRestricted() {
+    return game.settings.get('swse', 'forceSensitiveJediOnly');
+  }
+
+  /**
+   * Check if Weapon Finesse is default
+   */
+  static hasDefaultWeaponFinesse(actor) {
+    return game.settings.get('swse', 'weaponFinesseDefault');
+  }
+
+  /**
+   * Apply space combat initiative system
+   */
+  static setupSpaceCombatInitiative() {
+    const system = game.settings.get('swse', 'spaceInitiativeSystem');
+    
+    if (system === 'shipBased') {
+      Hooks.on('preCreateCombatant', (combatant, data, options, userId) => {
+        // Check if this is a vehicle/ship combat
+        const actor = game.actors.get(data.actorId);
+        if (actor?.type === 'vehicle') {
+          // Set up ship-based initiative tracking
+          data.flags = data.flags || {};
+          data.flags.swse = data.flags.swse || {};
+          data.flags.swse.shipBasedInitiative = true;
+        }
+      });
+      
+      Hooks.on('combatTurn', (combat, updateData, options) => {
+        // Handle role priority order
+        const rolePriority = game.settings.get('swse', 'initiativeRolePriority');
+        // Implementation would depend on how crew roles are stored
+      });
+    }
+  }
+
+  /**
+   * Get space combat role priority
+   */
+  static getInitiativeRolePriority() {
+    return game.settings.get('swse', 'initiativeRolePriority');
+  }
+
+
+  /**
+   * Import houserules data
+   */
+  static get data() {
+    return HouserulesData;
+  }
+
+  /**
+   * Apply feint skill houserule
+   */
+  static getFeintSkill() {
+    return getFeintSkill();
+  }
+
+  /**
+   * Calculate Skill Focus bonus with houserule variant
+   */
+  static calculateSkillFocusBonus(level) {
+    return getSkillFocusBonus(level);
+  }
+
+  /**
+   * Check if actor can take Force Sensitive feat
+   */
+  static canTakeForceSensitive(actor) {
+    return canTakeForceSensitive(actor);
+  }
+
+  /**
+   * Get the Force Training attribute
+   */
+  static getForceAttribute() {
+    return getForceTrainingAttribute();
+  }
+
+  /**
+   * Check if Block and Deflect are combined
+   */
+  static areBlockDeflectCombined() {
+    return hasBlockDeflectCombined();
+  }
+
+  /**
+   * Check if character has Weapon Finesse by default
+   */
+  static hasWeaponFinesseByDefault() {
+    return hasDefaultWeaponFinesse();
+  }
+
+  /**
+   * Get space combat initiative role order
+   */
+  static getSpaceCombatRoleOrder() {
+    return getRolePriorityOrder();
+  }
+
 }

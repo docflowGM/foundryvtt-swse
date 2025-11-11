@@ -254,3 +254,131 @@ export class PresetsMenu extends FormApplication {
     // This menu doesn't directly save settings
   }
 }
+
+
+// ==========================================
+// SKILLS & FEATS MENU
+// ==========================================
+export class SkillsFeatsMenu extends FormApplication {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      id: "swse-skills-feats-menu",
+      title: "Skills & Feats Rules",
+      template: "systems/swse/templates/apps/houserules/skills-feats.hbs",
+      width: 600,
+      height: "auto",
+      tabs: [{navSelector: ".tabs", contentSelector: ".content", initial: "skills"}]
+    });
+  }
+  
+  getData() {
+    return {
+      feintSkill: game.settings.get("swse", "feintSkill"),
+      skillFocusVariant: game.settings.get("swse", "skillFocusVariant"),
+      skillFocusActivationLevel: game.settings.get("swse", "skillFocusActivationLevel"),
+      isGM: game.user.isGM
+    };
+  }
+  
+  async _updateObject(event, formData) {
+    await game.settings.set("swse", "feintSkill", formData.feintSkill);
+    await game.settings.set("swse", "skillFocusVariant", formData.skillFocusVariant);
+    if (formData.skillFocusActivationLevel) {
+      await game.settings.set("swse", "skillFocusActivationLevel", Number(formData.skillFocusActivationLevel));
+    }
+    ui.notifications.info("Skills & Feats rules updated");
+  }
+}
+
+// ==========================================
+// SPACE COMBAT MENU
+// ==========================================
+export class SpaceCombatMenu extends FormApplication {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      id: "swse-space-combat-menu",
+      title: "Space Combat Rules",
+      template: "systems/swse/templates/apps/houserules/space-combat.hbs",
+      width: 600,
+      height: "auto",
+      tabs: [{navSelector: ".tabs", contentSelector: ".content", initial: "initiative"}]
+    });
+  }
+  
+  getData() {
+    return {
+      spaceInitiativeSystem: game.settings.get("swse", "spaceInitiativeSystem"),
+      initiativeRolePriority: game.settings.get("swse", "initiativeRolePriority"),
+      weaponsOperatorsRollInit: game.settings.get("swse", "weaponsOperatorsRollInit"),
+      isGM: game.user.isGM
+    };
+  }
+  
+  activateListeners(html) {
+    super.activateListeners(html);
+    
+    // Drag and drop for role priority
+    const list = html.find('.role-priority-list')[0];
+    if (list) {
+      this._setupDragAndDrop(list);
+    }
+  }
+  
+  _setupDragAndDrop(list) {
+    let draggedElement = null;
+    
+    list.querySelectorAll('li').forEach(item => {
+      item.addEventListener('dragstart', (e) => {
+        draggedElement = item;
+        e.dataTransfer.effectAllowed = 'move';
+        item.classList.add('dragging');
+      });
+      
+      item.addEventListener('dragend', (e) => {
+        item.classList.remove('dragging');
+      });
+      
+      item.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        
+        const afterElement = this._getDragAfterElement(list, e.clientY);
+        if (afterElement == null) {
+          list.appendChild(draggedElement);
+        } else {
+          list.insertBefore(draggedElement, afterElement);
+        }
+      });
+    });
+  }
+  
+  _getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('li:not(.dragging)')];
+    
+    return draggableElements.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
+      } else {
+        return closest;
+      }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  }
+  
+  async _updateObject(event, formData) {
+    await game.settings.set("swse", "spaceInitiativeSystem", formData.spaceInitiativeSystem);
+    await game.settings.set("swse", "weaponsOperatorsRollInit", formData.weaponsOperatorsRollInit);
+    
+    // Get role priority from list order
+    const list = this.element.find('.role-priority-list')[0];
+    if (list) {
+      const roles = Array.from(list.querySelectorAll('li')).map(li => li.dataset.role);
+      await game.settings.set("swse", "initiativeRolePriority", roles);
+    }
+    
+    ui.notifications.info("Space Combat rules updated");
+  }
+}
+

@@ -1,8 +1,9 @@
-<form>
+<form class="houserules-form">
   <nav class="tabs" data-group="primary-tabs">
     <a class="item active" data-tab="death">Death & Dying</a>
     <a class="item" data-tab="damage">Damage</a>
     <a class="item" data-tab="movement">Movement</a>
+    <a class="item" data-tab="feats">Combat Feats</a>
   </nav>
   
   <section class="content">
@@ -10,21 +11,34 @@
       <div class="form-group">
         <label>Death System</label>
         <select name="deathSystem.system">
-          <option value="standard" {{#if (eq deathSystem.system "standard")}}selected{{/if}}>Standard (-10 HP)</option>
-          <option value="threeStrikes" {{#if (eq deathSystem.system "threeStrikes")}}selected{{/if}}>Three Strikes</option>
-          <option value="negativeCon" {{#if (eq deathSystem.system "negativeCon")}}selected{{/if}}>Negative CON Score</option>
+          <option value="standard" {{#if (eq deathSystem.system "standard")}}selected{{/if}}>
+            Standard (-10 HP)
+          </option>
+          <option value="threeStrikes" {{#if (eq deathSystem.system "threeStrikes")}}selected{{/if}}>
+            Three Strikes
+          </option>
+          <option value="negativeCon" {{#if (eq deathSystem.system "negativeCon")}}selected{{/if}}>
+            Negative CON Score
+          </option>
         </select>
+        <p class="notes">
+          <strong>Standard:</strong> Character dies at -10 HP or below.<br>
+          <strong>Three Strikes:</strong> Character makes death saves; dies after 3 failures.<br>
+          <strong>Negative CON:</strong> Character dies when HP reaches negative Constitution score.
+        </p>
       </div>
       
       {{#if (eq deathSystem.system "threeStrikes")}}
       <div class="form-group">
         <label>Strikes Until Death</label>
         <input type="number" name="deathSystem.strikesUntilDeath" value="{{deathSystem.strikesUntilDeath}}" min="1" max="10"/>
+        <p class="notes">Number of failed death saves before character dies</p>
       </div>
       
       <div class="form-group">
         <label>Return to HP</label>
         <input type="number" name="deathSystem.returnToHP" value="{{deathSystem.returnToHP}}" min="0"/>
+        <p class="notes">HP value character stabilizes at (usually 0 or 1)</p>
       </div>
       {{/if}}
     </div>
@@ -33,17 +47,34 @@
       <div class="form-group">
         <label>Condition Track Damage Cap</label>
         <input type="number" name="conditionTrackCap" value="{{conditionTrackCap}}" min="0" max="5"/>
-        <p class="notes">0 = Unlimited</p>
+        <p class="notes">
+          Maximum condition track steps from a single attack (0 = unlimited).<br>
+          Recommended: 2-3 to prevent instant death from massive damage.
+        </p>
       </div>
       
       <div class="form-group">
         <label>Critical Hit Variant</label>
         <select name="criticalHitVariant">
-          <option value="standard" {{#if (eq criticalHitVariant "standard")}}selected{{/if}}>Standard (Double Damage)</option>
-          <option value="maxplus" {{#if (eq criticalHitVariant "maxplus")}}selected{{/if}}>Maximum + Roll</option>
-          <option value="exploding" {{#if (eq criticalHitVariant "exploding")}}selected{{/if}}>Exploding Dice</option>
-          <option value="trackonly" {{#if (eq criticalHitVariant "trackonly")}}selected{{/if}}>Condition Track Only</option>
+          <option value="standard" {{#if (eq criticalHitVariant "standard")}}selected{{/if}}>
+            Standard (Double Damage)
+          </option>
+          <option value="maxplus" {{#if (eq criticalHitVariant "maxplus")}}selected{{/if}}>
+            Maximum + Roll
+          </option>
+          <option value="exploding" {{#if (eq criticalHitVariant "exploding")}}selected{{/if}}>
+            Exploding Dice
+          </option>
+          <option value="trackonly" {{#if (eq criticalHitVariant "trackonly")}}selected{{/if}}>
+            Condition Track Only
+          </option>
         </select>
+        <p class="notes">
+          <strong>Standard:</strong> Roll damage twice and add together.<br>
+          <strong>Maximum + Roll:</strong> Maximum damage + one normal roll.<br>
+          <strong>Exploding:</strong> Dice that roll maximum explode (roll again and add).<br>
+          <strong>Track Only:</strong> Normal damage, but automatically moves condition track.
+        </p>
       </div>
     </div>
     
@@ -51,20 +82,56 @@
       <div class="form-group">
         <label>Diagonal Movement</label>
         <select name="diagonalMovement">
-          <option value="swse" {{#if (eq diagonalMovement "swse")}}selected{{/if}}>All = 2 squares (SWSE)</option>
-          <option value="alternating" {{#if (eq diagonalMovement "alternating")}}selected{{/if}}>1-2-1 Alternating (D&D 3.5)</option>
-          <option value="simplified" {{#if (eq diagonalMovement "simplified")}}selected{{/if}}>All = 1 square</option>
+          <option value="swse" {{#if (eq diagonalMovement "swse")}}selected{{/if}}>
+            All = 2 squares (SWSE)
+          </option>
+          <option value="alternating" {{#if (eq diagonalMovement "alternating")}}selected{{/if}}>
+            1-2-1 Alternating (D&D 3.5)
+          </option>
+          <option value="simplified" {{#if (eq diagonalMovement "simplified")}}selected{{/if}}>
+            All = 1 square
+          </option>
         </select>
+        <p class="notes">
+          <strong>SWSE Standard:</strong> Every diagonal costs 2 squares (5-foot square = 1.5m ≈ 3m diagonal).<br>
+          <strong>Alternating:</strong> First diagonal = 1, second = 2, third = 1, etc. More realistic.<br>
+          <strong>Simplified:</strong> Every diagonal = 1 square. Simpler but less realistic.
+        </p>
       </div>
       
       <div class="form-group">
         <label>Weapon Range Multiplier</label>
         <input type="number" name="weaponRangeMultiplier" value="{{weaponRangeMultiplier}}" min="0.25" max="2" step="0.25"/>
+        <p class="notes">
+          Multiplier for all weapon ranges. Use 0.5 for shorter ranges (more tactical), 1.5-2.0 for longer ranges (more cinematic).
+        </p>
+      </div>
+    </div>
+    
+    <div class="tab" data-group="primary-tabs" data-tab="feats">
+      <div class="form-group">
+        <label>Weapon Finesse</label>
+        <input type="checkbox" name="weaponFinesseDefault" {{#if weaponFinesseDefault}}checked{{/if}}/>
+        <label>All characters gain Weapon Finesse by default</label>
+        <p class="notes">
+          <strong>What this does:</strong> Characters can use DEX instead of STR for melee attacks with light weapons (vibrodaggers, lightsabers, etc.).<br>
+          <strong>Standard:</strong> Requires taking the Weapon Finesse feat.<br>
+          <strong>Houserule:</strong> All characters have this ability innately, freeing up a feat slot.
+        </p>
+      </div>
+      
+      <div class="info-box">
+        <h4><i class="fas fa-sword"></i> Weapon Finesse Details</h4>
+        <p><strong>Applies to:</strong> Light melee weapons (vibrodagger, lightsaber, etc.)</p>
+        <p><strong>Attack Rolls:</strong> Use DEX modifier instead of STR</p>
+        <p><strong>Damage:</strong> Still uses STR modifier (unchanged)</p>
+        <p><strong>Why houserule:</strong> Makes DEX-based combatants viable without feat tax</p>
       </div>
     </div>
   </section>
   
   <footer class="sheet-footer">
     <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+    <button type="button" class="reset-defaults"><i class="fas fa-undo"></i> Reset to Defaults</button>
   </footer>
 </form>

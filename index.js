@@ -77,6 +77,7 @@ import './scripts/chat/chat-commands.js';
 
 import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
 import { HouseruleMechanics } from './scripts/houserules/houserule-mechanics.js';
+import { HouserulesConfig } from './scripts/houserules/houserules-config.js';
 
 /* -------------------------------------------- */
 /*  System Configuration                        */
@@ -111,6 +112,7 @@ Hooks.once("init", async function() {
     WorldDataLoader,
     DropHandler,
     HouseruleMechanics,
+    HouserulesConfig,
     
     // Configuration
     config: CONFIG.SWSE,
@@ -685,6 +687,7 @@ window.SWSE = {
   WorldDataLoader: WorldDataLoader,
   DropHandler: DropHandler,
   HouseruleMechanics: HouseruleMechanics,
+    HouserulesConfig,
   
   // Apps
   Store: SWSEStore,

@@ -202,5 +202,138 @@ export function registerHouseruleSettings() {
     default: "encounter"
   });
 
+
+  // ============================================
+  // Skills & Feats
+  // ============================================
+  
+  game.settings.register("swse", "feintSkill", {
+    name: "Feint Skill",
+    hint: "Which skill is used for feinting against Will Defense",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "deception": "Deception (Standard)",
+      "persuasion": "Persuasion"
+    },
+    default: "deception"
+  });
+
+  game.settings.register("swse", "skillFocusVariant", {
+    name: "Skill Focus Variant",
+    hint: "How the Skill Focus feat works",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "normal": "Normal (+5 flat)",
+      "scaled": "Scaled (+1/2 level, max +5 at 10)",
+      "delayed": "Delayed (+5 at specified level)"
+    },
+    default: "normal"
+  });
+
+  game.settings.register("swse", "skillFocusActivationLevel", {
+    name: "Skill Focus Activation Level",
+    hint: "Level at which delayed Skill Focus activates",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 7,
+    range: {
+      min: 1,
+      max: 20,
+      step: 1
+    }
+  });
+
+  // ============================================
+  // Force Powers
+  // ============================================
+  
+  game.settings.register("swse", "forceTrainingAttribute", {
+    name: "Force Training Attribute",
+    hint: "Which ability score governs Force Training",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "wisdom": "Wisdom (Standard)",
+      "charisma": "Charisma"
+    },
+    default: "wisdom"
+  });
+
+  game.settings.register("swse", "blockDeflectTalents", {
+    name: "Block/Deflect Talents",
+    hint: "Whether Block and Deflect are separate or combined",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "separate": "Separate Talents (Standard)",
+      "combined": "Combined as One Talent"
+    },
+    default: "separate"
+  });
+
+  game.settings.register("swse", "forceSensitiveJediOnly", {
+    name: "Force Sensitive Restriction",
+    hint: "Restrict Force Sensitive feat to Jedi classes only",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  // ============================================
+  // Combat Feats
+  // ============================================
+  
+  game.settings.register("swse", "weaponFinesseDefault", {
+    name: "Default Weapon Finesse",
+    hint: "All characters automatically have Weapon Finesse",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  // ============================================
+  // Space Combat
+  // ============================================
+  
+  game.settings.register("swse", "spaceInitiativeSystem", {
+    name: "Space Combat Initiative System",
+    hint: "How initiative works in space combat",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "individual": "Individual (Standard)",
+      "shipBased": "Ship-Based with Role Priority"
+    },
+    default: "individual"
+  });
+
+  game.settings.register("swse", "initiativeRolePriority", {
+    name: "Initiative Role Priority",
+    hint: "Order of crew actions in ship-based initiative",
+    scope: "world",
+    config: false,
+    type: Array,
+    default: ["pilot", "shields", "weapons", "engineering", "other"]
+  });
+
+  game.settings.register("swse", "weaponsOperatorsRollInit", {
+    name: "Weapons Operators Roll Initiative",
+    hint: "Multiple weapons operators roll to determine order among themselves",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   console.log("SWSE | House rule settings registered");
 }
