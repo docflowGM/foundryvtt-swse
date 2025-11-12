@@ -42,8 +42,6 @@ import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 import { ConditionTrackComponent } from './scripts/components/condition-track.js';
 import { ForceSuiteComponent } from './scripts/components/force-suite.js';
 
-import './scripts/migration/fix-defense-schema.js';
-
 /* -------------------------------------------- */
 /*  Combat Systems                              */
 /* -------------------------------------------- */

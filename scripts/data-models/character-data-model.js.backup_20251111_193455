@@ -175,61 +175,69 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
         })
       }),
 
-      // HP
+      // Rest of character data
       hp: new fields.SchemaField({
         value: new fields.NumberField({required: true, initial: 30, min: 0, integer: true}),
         max: new fields.NumberField({required: true, initial: 30, min: 1, integer: true}),
         temp: new fields.NumberField({required: true, initial: 0, integer: true})
       }),
 
-      // Level
       level: new fields.SchemaField({
         heroic: new fields.NumberField({required: true, initial: 1, min: 1, max: 20, integer: true})
       }),
 
-      // Biography
+      defenses: new fields.SchemaField({
+        reflex: new fields.NumberField({required: true, initial: 10, integer: true}),
+        fortitude: new fields.NumberField({required: true, initial: 10, integer: true}),
+        will: new fields.NumberField({required: true, initial: 10, integer: true})
+      }),
+
       biography: new fields.StringField({required: false, initial: ""})
     };
   }
 
   prepareDerivedData() {
-    // Ensure attributes exist
-    if (!this.attributes) {
-      this.attributes = {
-        str: { base: 10, racial: 0, enhancement: 0, temp: 0 },
-        dex: { base: 10, racial: 0, enhancement: 0, temp: 0 },
-        con: { base: 10, racial: 0, enhancement: 0, temp: 0 },
-        int: { base: 10, racial: 0, enhancement: 0, temp: 0 },
-        wis: { base: 10, racial: 0, enhancement: 0, temp: 0 },
-        cha: { base: 10, racial: 0, enhancement: 0, temp: 0 }
+    // --- Compatibility alias: provide `abilities` derived object for templates ---
+    if (!this.attributes) this.attributes = {
+      str: { base:10, racial:0, enhancement:0, temp:0 },
+      dex: { base:10, racial:0, enhancement:0, temp:0 },
+      con: { base:10, racial:0, enhancement:0, temp:0 },
+      int: { base:10, racial:0, enhancement:0, temp:0 },
+      wis: { base:10, racial:0, enhancement:0, temp:0 },
+      cha: { base:10, racial:0, enhancement:0, temp:0 }
+    };
+
+    this.abilities = this.abilities || {};
+
+    for (const [ab, ability] of Object.entries(this.attributes)) {
+      const total = (ability.total !== undefined)
+        ? ability.total
+        : (ability.base || 0) + (ability.racial || 0) + (ability.enhancement || 0) + (ability.temp || 0);
+
+      const mod = (ability.mod !== undefined)
+        ? ability.mod
+        : Math.floor((total - 10) / 2);
+
+      this.abilities[ab] = {
+        base: ability.base || 0,
+        racial: ability.racial || 0,
+        enhancement: ability.enhancement || 0,
+        temp: ability.temp || 0,
+        total: total,
+        mod: mod
       };
     }
 
-    // Calculate ability modifiers for attributes
+    super.prepareDerivedData();
+
+    // Calculate ability modifiers
     for (const [key, ability] of Object.entries(this.attributes)) {
       const total = ability.base + ability.racial + ability.enhancement + ability.temp;
       ability.total = total;
       ability.mod = Math.floor((total - 10) / 2);
     }
 
-    // Create abilities alias for parent class compatibility
-    if (!this.abilities) {
-      this.abilities = {};
-      for (const [key, attr] of Object.entries(this.attributes)) {
-        this.abilities[key] = {
-          base: attr.base || 10,
-          racial: attr.racial || 0,
-          misc: (attr.enhancement || 0) + (attr.temp || 0),
-          total: attr.total || 10,
-          mod: attr.mod || 0
-        };
-      }
-    }
-
-    // Call parent to calculate defenses, skills, etc.
-    super.prepareDerivedData();
-
-    // Override skill calculations with our static skill system
+    // Calculate skill totals
     this._prepareSkills();
   }
 
@@ -266,8 +274,6 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     for (const [skillKey, skill] of Object.entries(this.skills)) {
       const data = skillData[skillKey];
-      if (!data) continue;
-      
       const abilityMod = this.attributes[data.ability]?.mod || 0;
       
       // Calculate total bonus
