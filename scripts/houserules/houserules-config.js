@@ -107,11 +107,11 @@ export class HouserulesConfig extends FormApplication {
         break;
     }
   }
-    /** Required by FormApplication */
-    async _updateObject(event, formData) {
-        return;
-    }
-
+  
+  /** Required by FormApplication */
+  async _updateObject(event, formData) {
+    return;
+  }
 }
 
 // Register the config button in settings
@@ -124,9 +124,4 @@ Hooks.once('ready', () => {
     type: HouserulesConfig,
     restricted: true
   });
-
-  /** Required by FormApplication: handle form submit (no-op for now) */
-  async _updateObject(event, formData) {
-    return;
-  }
 });
