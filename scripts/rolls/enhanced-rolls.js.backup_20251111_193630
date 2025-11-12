@@ -302,9 +302,7 @@ export class SWSERoll {
 window.SWSERoll = SWSERoll;
 
 // Hook into chat messages to handle button clicks
-Hooks.on("renderChatMessageHTML", (message, html) => {
-    // Note: html is now an HTMLElement, wrap in $() for jQuery: $(html).find(...)
-
+Hooks.on('renderChatMessage', (message, html) => {
   // Roll damage button
   html.find('.roll-damage').click(async (event) => {
     const weaponId = event.currentTarget.dataset.weaponId;

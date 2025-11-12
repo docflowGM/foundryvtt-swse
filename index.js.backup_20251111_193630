@@ -551,9 +551,7 @@ Hooks.on('preUpdateActor', function(actor, changes, options, userId) {
 /**
  * Add chat message listeners for interactive buttons
  */
-Hooks.on("renderChatMessageHTML", (message, html, data) => {
-    // Note: html is now an HTMLElement, wrap in $() for jQuery: $(html).find(...)
-
+Hooks.on("renderChatMessage", (message, html, data) => {
   
   // Apply damage button
   html.find('.apply-damage').click(async ev => {
