@@ -2,7 +2,7 @@
   "id": "swse",
   "title": "Star Wars Saga Edition",
   "description": "Complete Star Wars Saga Edition implementation for FoundryVTT with automated character sheets, combat mechanics, Force powers, vehicles, and comprehensive game rules.",
-  "version": "1.1.102",
+  "version": "1.1.103",
   "compatibility": {
     "minimum": "11",
     "verified": "13",
@@ -21,7 +21,7 @@
   "changelog": "https://github.com/docflowGM/foundryvtt-swse/blob/main/CHANGELOG.md",
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://github.com/docflowGM/foundryvtt-swse/releases/latest/download/system.json",
-  "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.1.102/swse.zip",
+  "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.1.103/swse.zip",
   "esmodules": [
     "index.js"
   ],
@@ -41,12 +41,12 @@
     },
     {
       "lang": "es",
-      "name": "Espa\u00f1ol",
+      "name": "Español",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Fran\u00e7ais",
+      "name": "Français",
       "path": "lang/fr.json"
     },
     {
@@ -56,7 +56,7 @@
     },
     {
       "lang": "ru",
-      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "name": "Русский",
       "path": "lang/ru.json"
     }
   ],
@@ -233,7 +233,5 @@
       "system": "swse"
     }
   ],
-  "scripts": [
-    "scripts/core/load-templates.js"
-  ]
+  "scripts": []
 }
