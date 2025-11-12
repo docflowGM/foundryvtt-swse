@@ -556,7 +556,7 @@ Hooks.on("renderChatMessageHTML", (message, html, data) => {
 
   
   // Apply damage button
-  $(html).find('.apply-damage').click(async ev => {
+  html.find('.apply-damage').click(async ev => {
     ev.preventDefault();
     const damage = parseInt(ev.currentTarget.dataset.damage);
     const targets = game.user.targets;
@@ -576,7 +576,7 @@ Hooks.on("renderChatMessageHTML", (message, html, data) => {
   });
 
   // Roll damage button
-  $(html).find('.roll-damage').click(async ev => {
+  html.find('.roll-damage').click(async ev => {
     ev.preventDefault();
     const itemId = ev.currentTarget.dataset.itemId;
     const actorId = message.speaker.actor;

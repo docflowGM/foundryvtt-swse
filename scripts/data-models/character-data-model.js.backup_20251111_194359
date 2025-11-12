@@ -182,14 +182,6 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
         temp: new fields.NumberField({required: true, initial: 0, integer: true})
       }),
 
-
-      // Condition Track
-      conditionTrack: new fields.SchemaField({
-        current: new fields.NumberField({required: true, initial: 0, min: 0, max: 5, integer: true}),
-        persistent: new fields.BooleanField({required: true, initial: false}),
-        penalty: new fields.NumberField({required: true, initial: 0, integer: true})
-      }),
-
       // Level
       level: new fields.SchemaField({
         heroic: new fields.NumberField({required: true, initial: 1, min: 1, max: 20, integer: true})

@@ -306,7 +306,7 @@ Hooks.on("renderChatMessageHTML", (message, html) => {
     // Note: html is now an HTMLElement, wrap in $() for jQuery: $(html).find(...)
 
   // Roll damage button
-  $(html).find('.roll-damage').click(async (event) => {
+  html.find('.roll-damage').click(async (event) => {
     const weaponId = event.currentTarget.dataset.weaponId;
     const speaker = message.speaker;
     const actor = game.actors.get(speaker.actor);
@@ -318,7 +318,7 @@ Hooks.on("renderChatMessageHTML", (message, html) => {
   });
 
   // Apply damage button
-  $(html).find('.apply-damage').click(async (event) => {
+  html.find('.apply-damage').click(async (event) => {
     const damage = parseInt(event.currentTarget.dataset.damage);
     const tokens = canvas.tokens.controlled;
 
