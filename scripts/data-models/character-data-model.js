@@ -6,6 +6,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     const fields = foundry.data.fields;
 
     return {
+      // Droid Status
+      isDroid: new fields.BooleanField({required: true, initial: false}),
+      droidDegree: new fields.StringField({required: false, initial: ""}),
+
       // Attributes
       attributes: new fields.SchemaField({
         str: new fields.SchemaField({
@@ -272,32 +276,44 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     const halfLevel = Math.floor(this.level.heroic / 2);
 
+    // Droids can only use these skills untrained (unless they have Heuristic Processor)
+    const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
+
     for (const [skillKey, skill] of Object.entries(this.skills)) {
       const data = skillData[skillKey];
       if (!data) continue;
-      
+
       const abilityMod = this.attributes[data.ability]?.mod || 0;
-      
+
       // Calculate total bonus
       let total = abilityMod + skill.miscMod;
-      
+
       // Add training bonus (+5)
       if (skill.trained) {
         total += 5;
       }
-      
+
       // Add half level (always, even untrained)
       total += halfLevel;
-      
+
       // Add skill focus bonus
       total += skill.focusMod;
-      
+
+      // Determine if skill can be used untrained
+      let canUseUntrained = data.untrained;
+
+      // Droids have restricted untrained skills
+      if (this.isDroid && !skill.trained) {
+        canUseUntrained = droidUntrainedSkills.includes(skillKey);
+        // TODO: Check for Heuristic Processor feat to override this
+      }
+
       // Store calculated values
       skill.total = total;
       skill.ability = data.ability;
       skill.abilityMod = abilityMod;
-      skill.untrained = data.untrained;
-      skill.canUse = skill.trained || data.untrained;
+      skill.untrained = canUseUntrained;
+      skill.canUse = skill.trained || canUseUntrained;
     }
   }
 }

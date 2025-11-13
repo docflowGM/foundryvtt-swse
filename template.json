@@ -136,7 +136,9 @@
         "base"
       ],
       "level": 1,
-      "race": "human"
+      "race": "human",
+      "isDroid": false,
+      "droidDegree": ""
     },
     "npc": {
       "templates": [
