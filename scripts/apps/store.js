@@ -51,13 +51,67 @@ export class SWSEStore extends FormApplication {
                 && (a.system?.cost ?? 0) > 0;
         });
 
+        // Helper to categorize equipment by keywords
+        const categorizeEquipment = (item) => {
+            const name = item.name.toLowerCase();
+            const desc = (item.system?.description || "").toLowerCase();
+            const text = `${name} ${desc}`;
+
+            // Grenades & Explosives
+            if (name.includes("grenade") || name.includes("explosive") || name.includes("mine") ||
+                name.includes("detonator") || name.includes("thermal detonator")) {
+                return "grenades";
+            }
+
+            // Medical Supplies
+            if (name.includes("medpac") || name.includes("medical") || name.includes("stim") ||
+                name.includes("bacta") || name.includes("antidote") || name.includes("antitoxin")) {
+                return "medical";
+            }
+
+            // Tech Items
+            if (name.includes("comlink") || name.includes("datapad") || name.includes("scanner") ||
+                name.includes("holoprojector") || name.includes("sensor") || name.includes("holo") ||
+                name.includes("recording") || name.includes("computer")) {
+                return "tech";
+            }
+
+            // Security Items
+            if (name.includes("binder") || name.includes("restraining") || name.includes("lock") ||
+                name.includes("security") || name.includes("code cylinder")) {
+                return "security";
+            }
+
+            // Survival Gear
+            if (name.includes("ration") || name.includes("glow rod") || name.includes("tent") ||
+                name.includes("breath mask") || name.includes("rebreather") || name.includes("climbing")) {
+                return "survival";
+            }
+
+            // Tools
+            if (name.includes("tool") || name.includes("kit") || name.includes("fusion cutter") ||
+                name.includes("hydrospanner") || name.includes("welding")) {
+                return "tools";
+            }
+
+            // Default to general equipment
+            return "equipment";
+        };
+
+        // Get equipment items and categorize them
+        const equipmentItems = allItems.filter(i => i.type === "equipment" || i.type === "item");
+
         // Categorize items
         const categories = {
             weapons: allItems.filter(i => i.type === "weapon"),
             armor: allItems.filter(i => i.type === "armor"),
-            equipment: allItems.filter(i =>
-                i.type === "equipment" || i.type === "item"
-            ),
+            grenades: equipmentItems.filter(i => categorizeEquipment(i) === "grenades"),
+            medical: equipmentItems.filter(i => categorizeEquipment(i) === "medical"),
+            tech: equipmentItems.filter(i => categorizeEquipment(i) === "tech"),
+            security: equipmentItems.filter(i => categorizeEquipment(i) === "security"),
+            survival: equipmentItems.filter(i => categorizeEquipment(i) === "survival"),
+            tools: equipmentItems.filter(i => categorizeEquipment(i) === "tools"),
+            equipment: equipmentItems.filter(i => categorizeEquipment(i) === "equipment"),
             vehicles: allActors.filter(a => a.type === "vehicle" || a.system?.isVehicle),
             droids: allActors.filter(a => a.type === "droid" || a.system?.isDroid)
         };
