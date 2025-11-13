@@ -4,10 +4,11 @@
  */
 
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
+import { SWSEStore } from '../../apps/store.js';
 import { SWSEActorSheetBase } from '../../sheets/base-sheet.js';
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
-  
+
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['swse', 'sheet', 'actor', 'character'],
@@ -29,6 +30,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     // Add character-specific listeners
     html.find('.level-up').click(this._onLevelUp.bind(this));
+    html.find('.open-store').click(this._onOpenStore.bind(this));
 
     console.log('SWSE | Character sheet listeners activated');
   }
@@ -40,7 +42,19 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     event.preventDefault();
     console.log('SWSE | Level up clicked');
 
-    const dialog = new SWSELevelUp(this.actor);
-    dialog.render(true);
+    // Use the static open method
+    await SWSELevelUp.open(this.actor);
+  }
+
+  /**
+   * Handle opening the store
+   */
+  async _onOpenStore(event) {
+    event.preventDefault();
+    console.log('SWSE | Store button clicked');
+
+    // Create and render the store application
+    const store = new SWSEStore(this.actor);
+    store.render(true);
   }
 }
