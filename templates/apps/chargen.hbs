@@ -9,17 +9,32 @@
  <main class="chargen-body">
  {{#if (eq currentStep "name")}}
  <section class="step-name">
- <h3>Character Name</h3>
+ <h3>Character Name & Level</h3>
  <div class="form-group">
  <label for="character-name">Enter your character's name:</label>
- <input 
+ <input
  id="character-name"
- name="character-name" 
- type="text" 
- class="chargen-name-input" 
- value="{{characterData.name}}" 
+ name="character-name"
+ type="text"
+ class="chargen-name-input"
+ value="{{characterData.name}}"
  placeholder="Enter name..."
  autofocus />
+ </div>
+ <div class="form-group">
+ <label for="target-level-input">Starting Level:</label>
+ <div class="level-selector">
+ <input
+ id="target-level-input"
+ name="target-level"
+ type="number"
+ class="chargen-level-input"
+ value="{{targetLevel}}"
+ min="1"
+ max="20"
+ placeholder="1" />
+ <span class="level-hint">Levels 2-20 will be automatically applied after character creation</span>
+ </div>
  </div>
  <div class="form-actions">
  <button type="button" class="next-step btn-primary">
@@ -247,6 +262,34 @@
 .chargen-name-input:focus {
  outline: none;
  box-shadow: 0 0 10px rgba(10, 116, 218, 0.5);
+}
+
+.chargen-level-input {
+ width: 100px;
+ padding: 0.75rem;
+ font-size: 1.1rem;
+ border: 2px solid #0a74da;
+ border-radius: 4px;
+ background: rgba(255, 255, 255, 0.1);
+ color: #fff;
+ text-align: center;
+}
+
+.chargen-level-input:focus {
+ outline: none;
+ box-shadow: 0 0 10px rgba(10, 116, 218, 0.5);
+}
+
+.level-selector {
+ display: flex;
+ align-items: center;
+ gap: 1rem;
+}
+
+.level-hint {
+ font-size: 0.85rem;
+ color: #aaa;
+ font-style: italic;
 }
 
 .form-actions {

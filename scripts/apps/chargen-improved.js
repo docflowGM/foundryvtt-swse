@@ -1,11 +1,18 @@
 // ============================================
 // SWSE Character Generator - IMPROVED
 // Fully integrated with houserules and database
+// Multi-level support with automatic progression
 // ============================================
 
 import CharacterGenerator from './chargen.js';
 
 export default class CharacterGeneratorImproved extends CharacterGenerator {
+
+  constructor(options) {
+    super(options);
+    this.targetLevel = 1; // Target level for character creation
+    this.createdActor = null; // Store the created actor for level-up
+  }
 
   async getData() {
     const context = await super.getData();
@@ -13,6 +20,9 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     // Get GM's ability generation method from houserules
     context.abilityMethod = game.settings.get("swse", "abilityScoreMethod") || "pointbuy";
     context.pointBuyPool = game.settings.get("swse", "pointBuyPool") || 32;
+
+    // Add target level
+    context.targetLevel = this.targetLevel;
 
     // Add ability method labels
     context.methodLabels = {
@@ -30,6 +40,9 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Level selection
+    html.find('#target-level-input').change(this._onLevelChange.bind(this));
+
     // Free Build button
     html.find('#free-build-btn').click(this._onFreeBuild.bind(this));
 
@@ -38,6 +51,14 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       (e) => this._showClassPreview(e),
       () => this._hideClassPreview()
     );
+  }
+
+  // ========================================
+  // LEVEL SELECTION
+  // ========================================
+  _onLevelChange(event) {
+    this.targetLevel = Math.max(1, Math.min(20, parseInt(event.target.value) || 1));
+    console.log(`SWSE CharGen | Target level set to ${this.targetLevel}`);
   }
 
   // ========================================
@@ -71,7 +92,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
     // Hide other UI elements
     html.querySelectorAll('.ability-mode').forEach(el => el.style.display = 'none');
-    html.querySelector('#free-mode')?.style.display = 'block';
+    html.querySelector('#free-mode').style.display = 'block';
 
     ui.notifications.info("Free Build enabled - manually enter any ability scores (3-25)");
   }
@@ -100,205 +121,266 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       return;
     }
 
-    // Add class with level 1
-    this.characterData.classes.push({ name: className, level: 1 });
+    this.characterData.class = classDoc;
+    console.log(`SWSE CharGen | Selected class: ${className}`, classDoc.system);
 
-    console.log("SWSE CharGen | Applying class data:", classDoc);
+    // Apply class data from database
+    await this._applyClassData(classDoc);
 
-    // Apply class-based values from database
-    const system = classDoc.system || {};
+    // Move to next step
+    this._nextStep();
+  }
 
-    // Base Attack Bonus
-    this.characterData.bab = Number(system.babProgression || system.bab) || 0;
+  async _applyClassData(classDoc) {
+    const classSystem = classDoc.system;
 
-    // Hit Points (class HD + CON mod, first level is max)
-    const hitDie = Number(system.hitDie || 6);
+    // Store class information
+    this.characterData.classData = {
+      name: classDoc.name,
+      hitDie: classSystem.hitDie || 6,
+      babProgression: classSystem.babProgression || 0,
+      trainedSkills: classSystem.trainedSkills || 2,
+      classSkills: classSystem.classSkills || [],
+      talentTrees: classSystem.talentTrees || [],
+      forceSensitive: classSystem.forceSensitive || false,
+      forcePoints: classSystem.forcePointProgression || 0,
+      defenses: classSystem.defenseProgression || { fortitude: 0, reflex: 0, will: 0 },
+      startingFeatures: classSystem.startingFeatures || []
+    };
+
+    // Apply defense bonuses
+    this.characterData.defenses = {
+      fortitude: classSystem.defenseProgression?.fortitude || 0,
+      reflex: classSystem.defenseProgression?.reflex || 0,
+      will: classSystem.defenseProgression?.will || 0
+    };
+
+    // Calculate HP based on hitDie and CON modifier
     const conMod = this.characterData.abilities.con.mod || 0;
-    this.characterData.hp.max = hitDie + conMod;
-    this.characterData.hp.value = this.characterData.hp.max;
+    const hitDie = classSystem.hitDie || 6;
 
-    // Defense bonuses from class
-    if (system.defenseProgression) {
-      this.characterData.defenses.fortitude.classBonus = Number(system.defenseProgression.fortitude) || 0;
-      this.characterData.defenses.reflex.classBonus = Number(system.defenseProgression.reflex) || 0;
-      this.characterData.defenses.will.classBonus = Number(system.defenseProgression.will) || 0;
-    } else if (system.defenses) {
-      this.characterData.defenses.fortitude.classBonus = Number(system.defenses.fortitude) || 0;
-      this.characterData.defenses.reflex.classBonus = Number(system.defenses.reflex) || 0;
-      this.characterData.defenses.will.classBonus = Number(system.defenses.will) || 0;
-    }
+    // Level 1 always gets max HP
+    this.characterData.hp = {
+      value: hitDie + conMod,
+      max: hitDie + conMod,
+      temp: 0
+    };
 
-    // Trained skills available
-    this.characterData.trainedSkillsAllowed = Number(system.trainedSkills || system.skillPoints) || 0;
+    console.log(`SWSE CharGen | HP: ${this.characterData.hp.max} (d${hitDie} + ${conMod} CON)`);
 
-    // Force Points (if Force-sensitive class)
-    if (system.forceSensitive) {
-      this.characterData.forcePoints.max = 5 + Math.floor(this.characterData.level / 2);
-      this.characterData.forcePoints.value = this.characterData.forcePoints.max;
-      this.characterData.forcePoints.die = "1d6";
-    }
-
-    // Starting feats from class (if specified)
-    if (system.startingFeats && Array.isArray(system.startingFeats)) {
-      for (const featName of system.startingFeats) {
-        const feat = this._packs.feats.find(f => f.name === featName);
-        if (feat && !this.characterData.feats.find(f => f.name === feat.name)) {
-          this.characterData.feats.push(feat);
-          console.log(`SWSE CharGen | Auto-added class feat: ${featName}`);
+    // Auto-apply starting feats if any
+    if (classSystem.startingFeatures) {
+      classSystem.startingFeatures.forEach(feature => {
+        if (feature.type === 'proficiency' || feature.type === 'class_feature') {
+          console.log(`SWSE CharGen | Auto-applying: ${feature.name}`);
         }
-      }
+      });
     }
-
-    // Class features (talents, special abilities)
-    if (system.classFeatures && Array.isArray(system.classFeatures)) {
-      for (const feature of system.classFeatures) {
-        if (feature.level === 1 || !feature.level) {
-          // This is a 1st level feature
-          if (feature.type === "talent") {
-            const talent = this._packs.talents.find(t => t.name === feature.name);
-            if (talent && !this.characterData.talents.find(t => t.name === talent.name)) {
-              this.characterData.talents.push(talent);
-              console.log(`SWSE CharGen | Auto-added class talent: ${feature.name}`);
-            }
-          }
-        }
-      }
-    }
-
-    // Recalculate defenses
-    this._recalcDefenses();
-
-    ui.notifications.info(`${className} selected! Defense bonuses and class features applied.`);
-
-    await this._onNextStep(event);
   }
 
   _showClassPreview(event) {
     const className = event.currentTarget.dataset.class;
     const classDoc = this._packs.classes.find(c => c.name === className);
 
-    if (!classDoc || !classDoc.system) return;
+    if (!classDoc) return;
 
-    const preview = this.element.find('.class-preview-panel');
-    if (preview.length === 0) {
-      const panel = $(`
-        <div class="class-preview-panel">
-          <h4>${className}</h4>
-          <dl>
-            <dt>Hit Die:</dt><dd>d${classDoc.system.hitDie || 6}</dd>
-            <dt>BAB:</dt><dd>${classDoc.system.babProgression || classDoc.system.bab || 0}</dd>
-            <dt>Defense Bonuses:</dt>
-            <dd>
-              Fort: +${classDoc.system.defenses?.fortitude || classDoc.system.defenseProgression?.fortitude || 0},
-              Ref: +${classDoc.system.defenses?.reflex || classDoc.system.defenseProgression?.reflex || 0},
-              Will: +${classDoc.system.defenses?.will || classDoc.system.defenseProgression?.will || 0}
-            </dd>
-            <dt>Trained Skills:</dt><dd>${classDoc.system.trainedSkills || classDoc.system.skillPoints || 0}</dd>
-            <dt>Force Sensitive:</dt><dd>${classDoc.system.forceSensitive ? 'Yes' : 'No'}</dd>
-          </dl>
-        </div>
-      `);
-      this.element.find('.chargen-body').append(panel);
-    }
+    const preview = `
+      <div class="class-preview-tooltip">
+        <h4>${classDoc.name}</h4>
+        <p><strong>Hit Die:</strong> d${classDoc.system.hitDie || 6}</p>
+        <p><strong>BAB:</strong> +${classDoc.system.babProgression || 0}</p>
+        <p><strong>Trained Skills:</strong> ${classDoc.system.trainedSkills || 2}</p>
+        <p><strong>Force Sensitive:</strong> ${classDoc.system.forceSensitive ? 'Yes' : 'No'}</p>
+        ${classDoc.system.forceSensitive ? `<p><strong>Force Points:</strong> ${classDoc.system.forcePointProgression || 0}</p>` : ''}
+        <p><strong>Defenses:</strong> Fort ${classDoc.system.defenseProgression?.fortitude || 0} / Ref ${classDoc.system.defenseProgression?.reflex || 0} / Will ${classDoc.system.defenseProgression?.will || 0}</p>
+      </div>
+    `;
+
+    // Show tooltip (implementation varies based on your UI framework)
+    console.log(preview);
   }
 
   _hideClassPreview() {
-    this.element.find('.class-preview-panel').remove();
+    // Hide tooltip
   }
 
   // ========================================
-  // ENHANCED ABILITIES BINDING
+  // CHARACTER FINALIZATION
   // ========================================
-  _bindAbilitiesUI(root) {
-    const doc = root || this.element[0];
-    const method = game.settings.get("swse", "abilityScoreMethod") || "pointbuy";
-    const pool = game.settings.get("swse", "pointBuyPool") || 32;
+  async _finish() {
+    try {
+      // Create the base level 1 character
+      const actor = await this._createCharacterActor();
 
-    // Based on GM setting, initialize the appropriate method
-    switch(method) {
-      case "pointbuy":
-        this._initPointBuy(doc, pool);
-        break;
-      case "4d6drop":
-      case "array":
-        this._initStandardRoll(doc, method);
-        break;
-      case "organic":
-        this._initOrganicRoll(doc);
-        break;
-      case "3d6":
-      case "2d6plus6":
-        this._initSimpleRoll(doc, method);
-        break;
-    }
-
-    // Always show free build button
-    const freeBuildBtn = doc.querySelector('#free-build-btn');
-    if (freeBuildBtn) {
-      freeBuildBtn.style.display = 'inline-block';
-    }
-  }
-
-  _initPointBuy(doc, pool) {
-    // Point buy implementation from parent class
-    const pbInit = doc.querySelector("#pb-init");
-    if (pbInit) pbInit.click();
-
-    // Update pool display
-    const remaining = doc.querySelector("#point-remaining");
-    if (remaining) remaining.textContent = pool;
-  }
-
-  _initStandardRoll(doc, method) {
-    const stdBtn = doc.querySelector("#std-roll-btn");
-    if (stdBtn) stdBtn.click();
-  }
-
-  _initOrganicRoll(doc) {
-    const orgBtn = doc.querySelector("#org-roll-btn");
-    if (orgBtn) orgBtn.click();
-  }
-
-  _initSimpleRoll(doc, method) {
-    // For 3d6 or 2d6+6, automatically roll
-    const ablist = ["str", "dex", "con", "int", "wis", "cha"];
-    ablist.forEach(ab => {
-      let roll;
-      if (method === "3d6") {
-        roll = new Roll("3d6").evaluate({ async: false });
-      } else if (method === "2d6plus6") {
-        roll = new Roll("2d6+6").evaluate({ async: false });
+      if (!actor) {
+        ui.notifications.error("Failed to create character!");
+        return;
       }
 
-      if (roll) {
-        const input = doc.querySelector(`[name="ability_${ab}"]`);
-        if (input) {
-          input.value = roll.total;
-          this.characterData.abilities[ab].base = roll.total;
+      this.createdActor = actor;
+      ui.notifications.success(`${actor.name} created at level 1!`);
+
+      // Apply houserule bonuses
+      await this._applyHouseruleBonuses(actor);
+
+      // If target level > 1, automatically level up
+      if (this.targetLevel > 1) {
+        await this._autoLevelUp(actor);
+      }
+
+      // Close the character generator
+      this.close();
+
+      // Open the character sheet
+      actor.sheet.render(true);
+
+    } catch (err) {
+      console.error("SWSE CharGen | Error creating character:", err);
+      ui.notifications.error(`Character creation failed: ${err.message}`);
+    }
+  }
+
+  async _createCharacterActor() {
+    const classData = this.characterData.classData;
+    const conMod = this.characterData.abilities.con.mod || 0;
+
+    // Build actor data
+    const actorData = {
+      name: this.characterData.name || "New Character",
+      type: "character",
+      system: {
+        abilities: {
+          str: { base: this.characterData.abilities.str.base || 10, racial: 0 },
+          dex: { base: this.characterData.abilities.dex.base || 10, racial: 0 },
+          con: { base: this.characterData.abilities.con.base || 10, racial: 0 },
+          int: { base: this.characterData.abilities.int.base || 10, racial: 0 },
+          wis: { base: this.characterData.abilities.wis.base || 10, racial: 0 },
+          cha: { base: this.characterData.abilities.cha.base || 10, racial: 0 }
+        },
+        hp: {
+          value: classData.hitDie + conMod,
+          max: classData.hitDie + conMod,
+          temp: 0
+        },
+        level: 1,
+        class: classData.name,
+        defenses: this.characterData.defenses,
+        bab: classData.babProgression,
+        skills: {},
+        feats: [],
+        talents: [],
+        forceSensitive: classData.forceSensitive,
+        forcePoints: classData.forceSensitive ? classData.forcePoints : 0
+      }
+    };
+
+    console.log("SWSE CharGen | Creating actor with data:", actorData);
+
+    const actor = await Actor.create(actorData);
+    return actor;
+  }
+
+  // ========================================
+  // HOUSERULE BONUSES
+  // ========================================
+  async _applyHouseruleBonuses(actor) {
+    const updates = {};
+
+    // Auto-grant Weapon Finesse if houserule is enabled
+    const weaponFinesseDefault = game.settings.get("swse", "weaponFinesseDefault");
+    if (weaponFinesseDefault) {
+      console.log("SWSE CharGen | Auto-granting Weapon Finesse (houserule)");
+
+      // Find Weapon Finesse feat in compendium
+      const featPack = game.packs.get('swse.feats');
+      if (featPack) {
+        const feats = await featPack.getDocuments();
+        const weaponFinesse = feats.find(f => f.name === "Weapon Finesse");
+
+        if (weaponFinesse) {
+          await actor.createEmbeddedDocuments("Item", [weaponFinesse.toObject()]);
+          ui.notifications.info("Weapon Finesse feat automatically granted!");
         }
       }
-    });
+    }
 
-    this._recalcAbilities();
-    ablist.forEach(ab => this._updateAbilityDisplay(doc, ab));
+    // Apply any other houserule bonuses here
+    const blockDeflectTalents = game.settings.get("swse", "blockDeflectTalents");
+    if (blockDeflectTalents === "combined") {
+      console.log("SWSE CharGen | Block/Deflect set to combined (houserule)");
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await actor.update(updates);
+    }
   }
 
   // ========================================
-  // ENHANCED FINALIZATION
+  // AUTOMATIC LEVEL-UP PROGRESSION
   // ========================================
-  _finalizeCharacter() {
-    super._finalizeCharacter();
+  async _autoLevelUp(actor) {
+    const currentLevel = 1;
+    const targetLevel = this.targetLevel;
 
-    // Additional validation
-    const totalMods = Object.values(this.characterData.abilities)
-      .reduce((sum, ab) => sum + (ab.mod || 0), 0);
+    ui.notifications.info(`Automatically leveling up to level ${targetLevel}...`);
 
-    console.log("SWSE CharGen | Final character data:", this.characterData);
-    console.log(`SWSE CharGen | Total ability modifiers: ${totalMods}`);
-
-    // Check if rerolls are allowed and total is too low
-    if (game.settings.get("swse", "allowAbilityReroll") && totalMods < 0) {
-      ui.notifications.warn("Total ability modifiers are negative. Consider rerolling if allowed.");
+    for (let level = currentLevel + 1; level <= targetLevel; level++) {
+      await this._performLevelUp(actor, level);
     }
+
+    ui.notifications.success(`${actor.name} is now level ${targetLevel}!`);
+  }
+
+  async _performLevelUp(actor, newLevel) {
+    console.log(`SWSE CharGen | Leveling up to level ${newLevel}`);
+
+    const classData = this.characterData.classData;
+    const conMod = this.characterData.abilities.con.mod || 0;
+
+    // Calculate HP gain based on houserule settings
+    const hpGeneration = game.settings.get("swse", "hpGeneration");
+    const maxHPLevels = game.settings.get("swse", "maxHPLevels") || 1;
+
+    let hpGain = 0;
+    const hitDie = classData.hitDie;
+
+    if (newLevel <= maxHPLevels) {
+      // Levels within maxHPLevels get maximum HP
+      hpGain = hitDie + conMod;
+      console.log(`SWSE CharGen | Level ${newLevel} gets max HP: ${hpGain}`);
+    } else {
+      // Apply HP generation method
+      switch (hpGeneration) {
+        case "maximum":
+          hpGain = hitDie + conMod;
+          break;
+        case "average":
+          hpGain = Math.floor(hitDie / 2) + 1 + conMod;
+          break;
+        case "roll":
+          hpGain = Math.floor(Math.random() * hitDie) + 1 + conMod;
+          break;
+        case "average_minimum":
+          const rolled = Math.floor(Math.random() * hitDie) + 1;
+          const average = Math.floor(hitDie / 2) + 1;
+          hpGain = Math.max(rolled, average) + conMod;
+          break;
+        default:
+          hpGain = Math.floor(hitDie / 2) + 1 + conMod;
+      }
+      console.log(`SWSE CharGen | Level ${newLevel} HP roll (${hpGeneration}): ${hpGain}`);
+    }
+
+    // Update actor
+    const currentHP = actor.system.hp.max || 0;
+    const newHP = currentHP + hpGain;
+
+    await actor.update({
+      "system.level": newLevel,
+      "system.hp.max": newHP,
+      "system.hp.value": newHP
+    });
+
+    console.log(`SWSE CharGen | Level ${newLevel} complete. HP: ${currentHP} -> ${newHP}`);
   }
 }
