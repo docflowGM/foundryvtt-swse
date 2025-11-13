@@ -59,7 +59,8 @@ export default class CharacterGenerator extends Application {
       },
       bab: 0,
       speed: { base: 6 },
-      damageThresholdMisc: 0
+      damageThresholdMisc: 0,
+      credits: 1000  // Starting credits
     };
     this.currentStep = "name";
     
@@ -241,6 +242,9 @@ export default class CharacterGenerator extends Application {
       this.characterData.name = ev.target.value;
     });
 
+    // Shop button
+    html.find('.open-shop-btn').click(this._onOpenShop.bind(this));
+
     // Abilities UI
     if (this.currentStep === "abilities") {
       this._bindAbilitiesUI(html[0]);
@@ -277,28 +281,38 @@ export default class CharacterGenerator extends Application {
       steps.push("species");
     }
 
-    steps.push("abilities", "class", "feats", "talents", "skills", "summary");
+    steps.push("abilities", "class", "feats", "talents", "skills", "summary", "shop");
     return steps;
   }
 
   async _onNextStep(event) {
     event.preventDefault();
-    
+
     // Validate current step
     if (!this._validateCurrentStep()) {
       return;
     }
-    
+
     const steps = this._getSteps();
     const idx = steps.indexOf(this.currentStep);
     if (idx >= 0 && idx < steps.length - 1) {
-      this.currentStep = steps[idx + 1];
-      
+      const nextStep = steps[idx + 1];
+
+      // Create character when moving from summary to shop
+      if (this.currentStep === "summary" && nextStep === "shop") {
+        this._finalizeCharacter();
+        if (!this.actor) {
+          await this._createActor();
+        }
+      }
+
+      this.currentStep = nextStep;
+
       // Auto-calculate derived values when moving forward
       if (this.currentStep === "summary") {
         this._finalizeCharacter();
       }
-      
+
       await this.render();
     }
   }
@@ -1648,16 +1662,41 @@ export default class CharacterGenerator extends Application {
   // ========================================
   async _onFinish(event) {
     event.preventDefault();
-    
+
     this._finalizeCharacter();
-    
+
     if (this.actor) {
       await this._updateActor();
     } else {
       await this._createActor();
     }
-    
+
     this.close();
+  }
+
+  /**
+   * Open the shop for the created character
+   * @param {Event} event - Click event
+   * @private
+   */
+  async _onOpenShop(event) {
+    event.preventDefault();
+
+    // Ensure character has been created
+    if (!this.actor) {
+      this._finalizeCharacter();
+      await this._createActor();
+    }
+
+    // Import and open the store
+    try {
+      const { SWSEStore } = await import('./store.js');
+      const store = new SWSEStore(this.actor);
+      store.render(true);
+    } catch (err) {
+      console.error("SWSE | Failed to open store:", err);
+      ui.notifications.error("Failed to open the shop. You can access it from your character sheet.");
+    }
   }
 
   async _createActor() {
@@ -1676,6 +1715,7 @@ export default class CharacterGenerator extends Application {
       bab: this.characterData.bab,
       speed: this.characterData.speed,
       damageThresholdMisc: this.characterData.damageThresholdMisc || 0,
+      credits: this.characterData.credits || 1000,
       weapons: []
     };
     

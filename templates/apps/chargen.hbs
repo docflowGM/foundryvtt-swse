@@ -663,8 +663,58 @@
  <button type="button" class="prev-step btn-secondary">
  <i class="fas fa-arrow-left"></i> Previous
  </button>
- <button type="button" class="finish btn-primary btn-success">
- <i class="fas fa-check"></i> Create Character
+ <button type="button" class="next-step btn-primary">
+ <i class="fas fa-arrow-right"></i> Next: Shopping
+ </button>
+ </div>
+ </section>
+ {{/if}}
+
+ {{!-- Shop Step --}}
+ {{#if (eq currentStep "shop")}}
+ <section class="step-shop">
+ {{!-- Holographic Welcome Banner --}}
+ <div class="holo-banner">
+ <div class="holo-speaker">
+ <i class="fas fa-volume-up"></i>
+ <span class="speaker-name">RENDARR:</span>
+ </div>
+ <div class="holo-message">
+ "Welcome to my shop, lad! Spend to your heart's desire!"
+ </div>
+ </div>
+
+ <div class="shop-intro">
+ <p>Your character has been created! Now you can spend your starting credits on equipment, weapons, and gear.</p>
+ <p class="credits-available">
+ <i class="fas fa-wallet"></i>
+ <strong>Available Credits:</strong> <span class="credits-value">{{characterData.credits}}</span> cr
+ </p>
+ </div>
+
+ <div class="shop-options">
+ <div class="shop-option-card">
+ <i class="fas fa-store"></i>
+ <h4>Browse the Marketplace</h4>
+ <p>Purchase weapons, armor, equipment, and more from the Galactic Trade Exchange.</p>
+ <button type="button" class="open-shop-btn btn-primary">
+ <i class="fas fa-shopping-cart"></i> Open Shop
+ </button>
+ </div>
+
+ <div class="shop-option-card">
+ <i class="fas fa-forward"></i>
+ <h4>Skip for Now</h4>
+ <p>You can always access the shop later from your character sheet.</p>
+ <button type="button" class="finish btn-secondary">
+ <i class="fas fa-check"></i> Complete Character Creation
+ </button>
+ </div>
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Back to Summary
  </button>
  </div>
  </section>
