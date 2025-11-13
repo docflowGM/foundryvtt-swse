@@ -11,9 +11,27 @@ export default class CharacterGenerator extends Application {
       name: "",
       isDroid: false,
       droidDegree: "",
+      droidSize: "medium",
       species: "",
       importedDroidData: null,
       preselectedSkills: [],
+      droidSystems: {
+        locomotion: null,
+        processor: { name: "Heuristic Processor", cost: 0, weight: 5 }, // Free
+        appendages: [
+          { name: "Hand", cost: 0, weight: 5 }, // Free
+          { name: "Hand", cost: 0, weight: 5 }  // Free
+        ],
+        accessories: [],
+        totalCost: 0,
+        totalWeight: 10
+      },
+      droidCredits: {
+        base: 1000,
+        class: 0,
+        spent: 0,
+        remaining: 1000
+      },
       classes: [],
       abilities: {
         str: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
@@ -201,6 +219,7 @@ export default class CharacterGenerator extends Application {
     // Selections
     html.find('.select-type').click(this._onSelectType.bind(this));
     html.find('.select-degree').click(this._onSelectDegree.bind(this));
+    html.find('.select-size').click(this._onSelectSize.bind(this));
     html.find('.import-droid-btn').click(this._onImportDroid.bind(this));
     html.find('.select-species').click(this._onSelectSpecies.bind(this));
     html.find('.select-class').click(this._onSelectClass.bind(this));
@@ -238,9 +257,9 @@ export default class CharacterGenerator extends Application {
     // Include type selection (living/droid) after name
     const steps = ["name", "type"];
 
-    // If droid, show degree selection; if living, show species
+    // If droid, show degree and size selection; if living, show species
     if (this.characterData.isDroid) {
-      steps.push("degree");
+      steps.push("degree", "size", "droid-builder");
     } else {
       steps.push("species");
     }
@@ -346,6 +365,21 @@ export default class CharacterGenerator extends Application {
     await this._onNextStep(event);
   }
 
+  async _onSelectSize(event) {
+    event.preventDefault();
+    const size = event.currentTarget.dataset.size;
+    this.characterData.droidSize = size;
+
+    // Apply size modifiers to abilities
+    if (size === "small") {
+      this.characterData.abilities.dex.racial += 2;
+      this.characterData.abilities.str.racial -= 2;
+    }
+
+    this._recalcAbilities();
+    await this._onNextStep(event);
+  }
+
   _getDroidDegreeBonuses(degree) {
     const bonuses = {
       "1st-degree": { int: 2, wis: 2, str: -2 },
@@ -355,6 +389,16 @@ export default class CharacterGenerator extends Application {
       "5th-degree": { str: 4, int: -4, cha: -4 }
     };
     return bonuses[degree] || {};
+  }
+
+  _getCostFactor() {
+    const size = this.characterData.droidSize || "medium";
+    const costFactors = {
+      "small": 2,
+      "medium": 1,
+      "large": 0.5
+    };
+    return costFactors[size] || 1;
   }
 
   async _onImportDroid(event) {
