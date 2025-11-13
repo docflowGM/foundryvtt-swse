@@ -230,8 +230,8 @@ export default class CharacterGenerator extends Application {
     html.find('.select-talent').click(this._onSelectTalent.bind(this));
     html.find('.skill-select').change(this._onSkillSelect.bind(this));
 
-    // Droid builder
-    html.find('.builder-tab').click(this._onBuilderTabClick.bind(this));
+    // Droid builder/shop
+    html.find('.shop-tab').click(this._onShopTabClick.bind(this));
     html.find('.accessory-tab').click(this._onAccessoryTabClick.bind(this));
     html.find('.purchase-system').click(this._onPurchaseSystem.bind(this));
     html.find('.remove-system').click(this._onRemoveSystem.bind(this));
@@ -603,19 +603,24 @@ export default class CharacterGenerator extends Application {
     container.innerHTML = html;
   }
 
-  _onBuilderTabClick(event) {
+  _onShopTabClick(event) {
     event.preventDefault();
     const tabName = event.currentTarget.dataset.tab;
     const doc = this.element[0];
 
     // Switch active tab
-    doc.querySelectorAll('.builder-tab').forEach(t => t.classList.remove('active'));
+    doc.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
     event.currentTarget.classList.add('active');
 
     // Switch active panel
-    doc.querySelectorAll('.builder-panel').forEach(p => p.classList.remove('active'));
+    doc.querySelectorAll('.shop-panel').forEach(p => p.classList.remove('active'));
     const panel = doc.querySelector(`[data-panel="${tabName}"]`);
     if (panel) panel.classList.add('active');
+
+    // Update cart if switching to cart tab
+    if (tabName === 'cart') {
+      this._updateCartDisplay(doc);
+    }
   }
 
   _onAccessoryTabClick(event) {
@@ -818,6 +823,150 @@ export default class CharacterGenerator extends Application {
     // Update total weight
     const weightEl = doc.querySelector('.total-weight');
     if (weightEl) weightEl.textContent = this.characterData.droidSystems.totalWeight.toLocaleString();
+
+    // Update cart count
+    this._updateCartCount(doc);
+  }
+
+  _updateCartCount(doc) {
+    // Count total items (locomotion + appendages + accessories, not counting free processor and free hands)
+    let count = 0;
+
+    if (this.characterData.droidSystems.locomotion) count++;
+
+    // Count appendages beyond the 2 free hands
+    const extraAppendages = this.characterData.droidSystems.appendages.length;
+    count += extraAppendages;
+
+    // Count accessories
+    count += this.characterData.droidSystems.accessories.length;
+
+    // Add 2 for the free items (processor + 2 hands)
+    const totalCount = count + 2;
+
+    const cartCountEl = doc.querySelector('#cart-count');
+    if (cartCountEl) cartCountEl.textContent = totalCount;
+  }
+
+  _updateCartDisplay(doc) {
+    const cartItemsList = doc.querySelector('#cart-items-list');
+    if (!cartItemsList) return;
+
+    // Clear cart
+    cartItemsList.innerHTML = '';
+
+    const items = [];
+
+    // Add locomotion
+    if (this.characterData.droidSystems.locomotion) {
+      const sys = this.characterData.droidSystems.locomotion;
+      items.push({
+        icon: 'fa-shoe-prints',
+        name: sys.name,
+        specs: `Speed: ${sys.speed} squares`,
+        cost: sys.cost,
+        category: 'locomotion',
+        id: sys.id
+      });
+    }
+
+    // Add appendages (beyond free hands)
+    for (const app of this.characterData.droidSystems.appendages) {
+      if (app.cost > 0) { // Only paid appendages
+        items.push({
+          icon: 'fa-hand-paper',
+          name: app.name,
+          specs: `Weight: ${app.weight} kg`,
+          cost: app.cost,
+          category: 'appendage',
+          id: app.id
+        });
+      }
+    }
+
+    // Add accessories
+    for (const acc of this.characterData.droidSystems.accessories) {
+      items.push({
+        icon: 'fa-tools',
+        name: acc.name,
+        specs: acc.data?.description || `Weight: ${acc.weight} kg`,
+        cost: acc.cost,
+        category: 'accessory',
+        id: acc.id,
+        subcategory: acc.category
+      });
+    }
+
+    // Render cart items
+    if (items.length === 0) {
+      cartItemsList.innerHTML = `
+        <div class="cart-empty-message">
+          <i class="fas fa-box-open"></i>
+          <p>No systems added yet. Browse the shop to customize your droid!</p>
+        </div>
+      `;
+    } else {
+      for (const item of items) {
+        const removeDataAttrs = item.category === 'accessory'
+          ? `data-category="${item.category}" data-subcategory="${item.subcategory}" data-id="${item.id}"`
+          : `data-category="${item.category}" data-id="${item.id}"`;
+
+        cartItemsList.innerHTML += `
+          <div class="cart-item">
+            <div class="item-icon"><i class="fas ${item.icon}"></i></div>
+            <div class="item-details">
+              <div class="item-name">${item.name}</div>
+              <div class="item-specs">${item.specs}</div>
+            </div>
+            <div class="item-price">
+              <span class="price-amount">${item.cost.toLocaleString()} cr</span>
+            </div>
+            <button type="button" class="remove-from-cart remove-system" ${removeDataAttrs}>
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    // Update validation
+    this._updateCartValidation(doc);
+  }
+
+  _updateCartValidation(doc) {
+    const validationContainer = doc.querySelector('#cart-validation');
+    if (!validationContainer) return;
+
+    const issues = [];
+
+    if (!this.characterData.droidSystems.locomotion) {
+      issues.push({ id: 'locomotion', text: 'Locomotion system required' });
+    }
+
+    if (this.characterData.droidSystems.appendages.length === 0) {
+      issues.push({ id: 'appendages', text: 'At least one appendage required' });
+    }
+
+    if (this.characterData.droidCredits.remaining < 0) {
+      issues.push({ id: 'budget', text: 'Over budget! Remove some systems.' });
+    }
+
+    // Render validation issues
+    if (issues.length === 0) {
+      validationContainer.innerHTML = `
+        <div class="validation-success">
+          <i class="fas fa-check-circle"></i>
+          <span>All requirements met! Ready to proceed.</span>
+        </div>
+      `;
+    } else {
+      validationContainer.innerHTML = issues.map(issue => `
+        <div class="validation-item" id="validation-${issue.id}">
+          <i class="fas fa-exclamation-circle"></i>
+          <span>${issue.text}</span>
+        </div>
+      `).join('');
+    }
   }
 
   _validateDroidBuilder() {

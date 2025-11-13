@@ -180,112 +180,220 @@
  {{/if}}
 
  {{#if (eq currentStep "droid-builder")}}
- <section class="step-droid-builder">
- <h3>Build Your Droid</h3>
- <p class="hint">Customize your droid with systems and accessories.</p>
-
- <div id="droid-credits-display" class="droid-budget">
- <div class="budget-item">
- <strong>Base Credits:</strong> <span class="base-credits">{{characterData.droidCredits.base}}</span> cr
+ <section class="step-droid-builder holo-shop">
+ {{!-- Holographic Welcome Banner --}}
+ <div class="holo-banner">
+ <div class="holo-speaker">
+ <i class="fas fa-volume-up"></i>
+ <span class="speaker-name">RENDARR:</span>
  </div>
- <div class="budget-item">
- <strong>Spent:</strong> <span class="spent-credits">{{characterData.droidSystems.totalCost}}</span> cr
- </div>
- <div class="budget-item">
- <strong>Remaining:</strong> <span class="remaining-credits {{#if (lt characterData.droidCredits.remaining 0)}}overbudget{{/if}}">{{characterData.droidCredits.remaining}}</span> cr
- </div>
- <div class="budget-item">
- <strong>Weight:</strong> <span class="total-weight">{{characterData.droidSystems.totalWeight}}</span> kg
+ <div class="holo-message">
+ "Welcome to my shop, lad! Spend to your heart's desire!"
  </div>
  </div>
 
- <div class="droid-builder-tabs">
- <nav class="builder-tabs">
- <button type="button" class="builder-tab active" data-tab="locomotion">
- <i class="fas fa-shoe-prints"></i> Locomotion <span class="required">*</span>
+ {{!-- Credit Balance Display (Prominent) --}}
+ <div class="credit-wallet">
+ <div class="wallet-header">
+ <i class="fas fa-wallet"></i>
+ <span>ACCOUNT BALANCE</span>
+ </div>
+ <div class="wallet-amount">
+ <span class="credits-icon">₢</span>
+ <span class="remaining-credits {{#if (lt characterData.droidCredits.remaining 0)}}overbudget{{/if}}">{{characterData.droidCredits.remaining}}</span>
+ <span class="credits-label">credits</span>
+ </div>
+ <div class="wallet-details">
+ <div class="wallet-detail-item">
+ <span class="detail-label">Budget:</span>
+ <span class="base-credits">{{characterData.droidCredits.base}}</span> cr
+ </div>
+ <div class="wallet-detail-item">
+ <span class="detail-label">Spent:</span>
+ <span class="spent-credits">{{characterData.droidSystems.totalCost}}</span> cr
+ </div>
+ </div>
+ </div>
+
+ {{!-- Main Shop Interface --}}
+ <div class="holo-datapad">
+ <nav class="shop-tabs">
+ <button type="button" class="shop-tab active" data-tab="locomotion">
+ <i class="fas fa-shoe-prints"></i>
+ <span class="tab-label">Locomotion</span>
+ <span class="required-badge">REQUIRED</span>
  </button>
- <button type="button" class="builder-tab" data-tab="processor">
- <i class="fas fa-microchip"></i> Processor <span class="required">*</span>
+ <button type="button" class="shop-tab" data-tab="processor">
+ <i class="fas fa-microchip"></i>
+ <span class="tab-label">Processors</span>
+ <span class="required-badge">REQUIRED</span>
  </button>
- <button type="button" class="builder-tab" data-tab="appendages">
- <i class="fas fa-hand-paper"></i> Appendages <span class="required">*</span>
+ <button type="button" class="shop-tab" data-tab="appendages">
+ <i class="fas fa-hand-paper"></i>
+ <span class="tab-label">Appendages</span>
+ <span class="required-badge">REQUIRED</span>
  </button>
- <button type="button" class="builder-tab" data-tab="accessories">
- <i class="fas fa-tools"></i> Accessories
+ <button type="button" class="shop-tab" data-tab="accessories">
+ <i class="fas fa-tools"></i>
+ <span class="tab-label">Accessories</span>
+ </button>
+ <button type="button" class="shop-tab cart-tab" data-tab="cart">
+ <i class="fas fa-shopping-cart"></i>
+ <span class="tab-label">Cart</span>
+ <span class="cart-count" id="cart-count">2</span>
  </button>
  </nav>
 
- <div class="builder-content">
+ <div class="shop-content">
  {{!-- Locomotion Tab --}}
- <div class="builder-panel active" data-panel="locomotion">
- <h4>Locomotion Systems</h4>
- <p class="panel-hint">Select at least one locomotion system. Additional systems increase in cost.</p>
- {{!-- Locomotion systems will be populated by JavaScript --}}
- <div id="locomotion-list" class="systems-list"></div>
+ <div class="shop-panel active" data-panel="locomotion">
+ <div class="panel-header">
+ <h4><i class="fas fa-shoe-prints"></i> Locomotion Systems</h4>
+ <p class="panel-desc">Choose how your droid moves through the galaxy</p>
+ </div>
+ <div id="locomotion-list" class="product-grid"></div>
  </div>
 
  {{!-- Processor Tab --}}
- <div class="builder-panel" data-panel="processor">
- <h4>Processor</h4>
- <p class="panel-hint">Heuristic Processor included free. You may upgrade or add additional processors.</p>
- <div id="processor-list" class="systems-list"></div>
+ <div class="shop-panel" data-panel="processor">
+ <div class="panel-header">
+ <h4><i class="fas fa-microchip"></i> Processor Units</h4>
+ <p class="panel-desc">The brain of your droid. Heuristic processor included free.</p>
+ </div>
+ <div id="processor-list" class="product-grid"></div>
  </div>
 
  {{!-- Appendages Tab --}}
- <div class="builder-panel" data-panel="appendages">
- <h4>Appendages</h4>
- <p class="panel-hint">Two hand appendages included free. You may add or modify appendages.</p>
- <div id="appendages-list" class="systems-list"></div>
+ <div class="shop-panel" data-panel="appendages">
+ <div class="panel-header">
+ <h4><i class="fas fa-hand-paper"></i> Appendages</h4>
+ <p class="panel-desc">Tools and manipulators. Two hands included free.</p>
+ </div>
+ <div id="appendages-list" class="product-grid"></div>
  </div>
 
  {{!-- Accessories Tab --}}
- <div class="builder-panel" data-panel="accessories">
- <h4>Accessories</h4>
+ <div class="shop-panel" data-panel="accessories">
+ <div class="panel-header">
+ <h4><i class="fas fa-tools"></i> Accessories & Upgrades</h4>
+ <p class="panel-desc">Enhance your droid with specialized equipment</p>
+ </div>
  <nav class="accessory-tabs">
- <button type="button" class="accessory-tab active" data-acc-tab="armor">Armor</button>
- <button type="button" class="accessory-tab" data-acc-tab="communications">Communications</button>
- <button type="button" class="accessory-tab" data-acc-tab="sensors">Sensors</button>
- <button type="button" class="accessory-tab" data-acc-tab="shields">Shields</button>
- <button type="button" class="accessory-tab" data-acc-tab="translators">Translators</button>
- <button type="button" class="accessory-tab" data-acc-tab="misc">Miscellaneous</button>
+ <button type="button" class="accessory-tab active" data-accessorytab="armor">
+ <i class="fas fa-shield-alt"></i> Armor
+ </button>
+ <button type="button" class="accessory-tab" data-accessorytab="communications">
+ <i class="fas fa-broadcast-tower"></i> Comms
+ </button>
+ <button type="button" class="accessory-tab" data-accessorytab="sensors">
+ <i class="fas fa-radar"></i> Sensors
+ </button>
+ <button type="button" class="accessory-tab" data-accessorytab="shields">
+ <i class="fas fa-shield-halved"></i> Shields
+ </button>
+ <button type="button" class="accessory-tab" data-accessorytab="translators">
+ <i class="fas fa-language"></i> Translators
+ </button>
+ <button type="button" class="accessory-tab" data-accessorytab="miscellaneous">
+ <i class="fas fa-box"></i> Misc
+ </button>
  </nav>
  <div class="accessory-content">
- <div class="accessory-panel active" data-acc-panel="armor">
- <div id="armor-list" class="accessories-list"></div>
+ <div class="accessory-panel active" data-accessory-panel="armor">
+ <div id="accessories-armor" class="product-grid"></div>
  </div>
- <div class="accessory-panel" data-acc-panel="communications">
- <div id="communications-list" class="accessories-list"></div>
+ <div class="accessory-panel" data-accessory-panel="communications">
+ <div id="accessories-communications" class="product-grid"></div>
  </div>
- <div class="accessory-panel" data-acc-panel="sensors">
- <div id="sensors-list" class="accessories-list"></div>
+ <div class="accessory-panel" data-accessory-panel="sensors">
+ <div id="accessories-sensors" class="product-grid"></div>
  </div>
- <div class="accessory-panel" data-acc-panel="shields">
- <div id="shields-list" class="accessories-list"></div>
+ <div class="accessory-panel" data-accessory-panel="shields">
+ <div id="accessories-shields" class="product-grid"></div>
  </div>
- <div class="accessory-panel" data-acc-panel="translators">
- <div id="translators-list" class="accessories-list"></div>
+ <div class="accessory-panel" data-accessory-panel="translators">
+ <div id="accessories-translators" class="product-grid"></div>
  </div>
- <div class="accessory-panel" data-acc-panel="misc">
- <div id="misc-list" class="accessories-list"></div>
+ <div class="accessory-panel" data-accessory-panel="miscellaneous">
+ <div id="accessories-miscellaneous" class="product-grid"></div>
  </div>
+ </div>
+ </div>
+
+ {{!-- Cart Tab --}}
+ <div class="shop-panel cart-panel" data-panel="cart">
+ <div class="panel-header">
+ <h4><i class="fas fa-shopping-cart"></i> Your Cart</h4>
+ <p class="panel-desc">Review your droid configuration</p>
+ </div>
+
+ <div class="cart-container">
+ <div class="cart-section">
+ <h5 class="cart-section-title">
+ <i class="fas fa-gift"></i> Included (Free)
+ </h5>
+ <div class="cart-items">
+ <div class="cart-item free-item">
+ <div class="item-icon"><i class="fas fa-microchip"></i></div>
+ <div class="item-details">
+ <div class="item-name">Heuristic Processor</div>
+ <div class="item-specs">Standard droid brain unit</div>
+ </div>
+ <div class="item-price">
+ <span class="price-amount free">FREE</span>
+ </div>
+ </div>
+ <div class="cart-item free-item">
+ <div class="item-icon"><i class="fas fa-hand-paper"></i></div>
+ <div class="item-details">
+ <div class="item-name">Hand Appendages (×2)</div>
+ <div class="item-specs">Basic manipulators</div>
+ </div>
+ <div class="item-price">
+ <span class="price-amount free">FREE</span>
  </div>
  </div>
  </div>
  </div>
 
- <div class="selected-systems">
- <h4>Selected Systems</h4>
- <div class="selected-list">
- <div class="selected-item default">
- <span class="item-name">Heuristic Processor</span>
- <span class="item-cost">Free</span>
+ <div class="cart-section" id="cart-purchased-section">
+ <h5 class="cart-section-title">
+ <i class="fas fa-shopping-bag"></i> Purchased Systems
+ </h5>
+ <div class="cart-items" id="cart-items-list">
+ <div class="cart-empty-message">
+ <i class="fas fa-box-open"></i>
+ <p>No systems added yet. Browse the shop to customize your droid!</p>
  </div>
- <div class="selected-item default">
- <span class="item-name">Hand Appendage ×2</span>
- <span class="item-cost">Free</span>
  </div>
- {{!-- Additional selected items populated by JavaScript --}}
- <div id="selected-systems-list"></div>
+ </div>
+
+ <div class="cart-summary">
+ <div class="summary-line">
+ <span class="summary-label">Subtotal:</span>
+ <span class="summary-value"><span class="spent-credits">0</span> cr</span>
+ </div>
+ <div class="summary-line">
+ <span class="summary-label">Total Weight:</span>
+ <span class="summary-value"><span class="total-weight">10</span> kg</span>
+ </div>
+ <div class="summary-line total-line">
+ <span class="summary-label">Total Cost:</span>
+ <span class="summary-value">
+ <span class="credits-icon">₢</span>
+ <span class="spent-credits">0</span>
+ </span>
+ </div>
+ </div>
+
+ <div class="cart-validation" id="cart-validation">
+ <div class="validation-item" id="validation-locomotion">
+ <i class="fas fa-exclamation-circle"></i>
+ <span>Locomotion system required</span>
+ </div>
+ </div>
+ </div>
+ </div>
  </div>
  </div>
 
