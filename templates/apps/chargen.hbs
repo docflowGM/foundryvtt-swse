@@ -57,9 +57,15 @@
  {{#if (eq currentStep "abilities")}}
  <section class="step-abilities">
  <h3>Generate Ability Scores</h3>
+ <div class="ability-header">
+ <button type="button" id="free-build-btn" class="free-build-button">
+ <i class="fas fa-edit"></i> Free Build (Manual Entry)
+ </button>
+ <p class="method-hint">GM's Setting: <strong>{{methodLabels.[abilityMethod]}}</strong></p>
+ </div>
  <div class="ability-methods">
  <button type="button" id="pb-init" class="method-button">
- <i class="fas fa-calculator"></i> Point Buy (32 points)
+ <i class="fas fa-calculator"></i> Point Buy ({{pointBuyPool}} points)
  </button>
  <button type="button" id="std-roll-btn" class="method-button">
  <i class="fas fa-dice"></i> Standard Roll (4d6 drop lowest)
@@ -96,6 +102,19 @@
  <div id="organic-mode" class="ability-mode" style="display:none;">
  <div id="organic-groups" class="organic-groups"></div>
  <p class="hint">Click a group, then click an ability to assign the total.</p>
+ </div>
+
+ <div id="free-mode" class="ability-mode" style="display:none;">
+ <p class="hint">Manually enter any ability score values (3-25).</p>
+ <div class="abilities-grid">
+ {{#each characterData.abilities}}
+ <div class="ability-card">
+ <label>{{@key}}</label>
+ <input name="ability_{{@key}}" class="ability-input free-input" type="number" value="10" min="3" max="25" />
+ <div id="display_{{@key}}" class="ability-display">Total: 10 (Mod: +0)</div>
+ </div>
+ {{/each}}
+ </div>
  </div>
 
  <div class="form-actions">
@@ -286,6 +305,64 @@
  background: rgba(10, 116, 218, 0.2);
  transform: translateY(-4px);
  box-shadow: 0 6px 16px rgba(10, 116, 218, 0.3);
+}
+
+.ability-header {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ margin-bottom: 1rem;
+ padding: 1rem;
+ background: rgba(0, 0, 0, 0.2);
+ border-radius: 6px;
+}
+
+.free-build-button {
+ padding: 0.75rem 1.5rem;
+ background: linear-gradient(135deg, #00d9ff 0%, #0a74da 100%);
+ border: none;
+ border-radius: 4px;
+ color: white;
+ font-weight: bold;
+ cursor: pointer;
+ transition: all 0.3s;
+}
+
+.free-build-button:hover {
+ transform: translateY(-2px);
+ box-shadow: 0 4px 12px rgba(0, 217, 255, 0.4);
+}
+
+.method-hint {
+ margin: 0;
+ color: #aaa;
+ font-size: 0.9rem;
+}
+
+.method-hint strong {
+ color: #00d9ff;
+}
+
+.ability-methods {
+ display: flex;
+ gap: 1rem;
+ margin-bottom: 1.5rem;
+}
+
+.method-button {
+ flex: 1;
+ padding: 0.75rem;
+ background: rgba(255, 255, 255, 0.05);
+ border: 2px solid #0a74da;
+ border-radius: 6px;
+ color: #fff;
+ cursor: pointer;
+ transition: all 0.3s;
+}
+
+.method-button:hover {
+ background: rgba(10, 116, 218, 0.2);
+ transform: translateY(-2px);
 }
 
 .abilities-grid {

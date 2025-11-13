@@ -290,10 +290,23 @@ export function registerHouseruleSettings() {
   // ============================================
   // Combat Feats
   // ============================================
-  
+
   game.settings.register("swse", "weaponFinesseDefault", {
     name: "Default Weapon Finesse",
     hint: "All characters automatically have Weapon Finesse",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  // ============================================
+  // Talents
+  // ============================================
+
+  game.settings.register("swse", "groupDeflectBlock", {
+    name: "Group Deflect and Block Talents",
+    hint: "Display Deflect and Block as a grouped talent in character generator and talent trees",
     scope: "world",
     config: true,
     type: Boolean,
