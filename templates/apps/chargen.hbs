@@ -123,26 +123,26 @@
 
  <button type="button" class="select-size choice-button" data-size="large">
  <h4>Large</h4>
- <p><strong>CF:</strong> 0.5× | <strong>Mod:</strong> +8 STR, -2 DEX</p>
- <p><strong>HP:</strong> +10 | <strong>DT:</strong> +5</p>
+ <p><strong>CF:</strong> 2× | <strong>Mod:</strong> +4 STR, -2 DEX</p>
+ <p><strong>Reflex:</strong> -1 | <strong>Stealth:</strong> -5</p>
  </button>
 
  <button type="button" class="select-size choice-button" data-size="huge">
  <h4>Huge</h4>
- <p><strong>CF:</strong> 0.2× | <strong>Mod:</strong> +16 STR, -4 DEX</p>
- <p><strong>HP:</strong> +20 | <strong>DT:</strong> +10</p>
+ <p><strong>CF:</strong> 5× | <strong>Mod:</strong> +8 STR, -4 DEX</p>
+ <p><strong>Reflex:</strong> -2 | <strong>Stealth:</strong> -10</p>
  </button>
 
  <button type="button" class="select-size choice-button" data-size="gargantuan">
  <h4>Gargantuan</h4>
- <p><strong>CF:</strong> 0.1× | <strong>Mod:</strong> +24 STR, -4 DEX</p>
- <p><strong>HP:</strong> +50 | <strong>DT:</strong> +20</p>
+ <p><strong>CF:</strong> 10× | <strong>Mod:</strong> +12 STR, -4 DEX</p>
+ <p><strong>Reflex:</strong> -4 | <strong>Stealth:</strong> -15</p>
  </button>
 
  <button type="button" class="select-size choice-button" data-size="colossal">
  <h4>Colossal</h4>
- <p><strong>CF:</strong> 0.05× | <strong>Mod:</strong> +32 STR, -4 DEX</p>
- <p><strong>HP:</strong> +100 | <strong>DT:</strong> +50</p>
+ <p><strong>CF:</strong> 20× | <strong>Mod:</strong> +16 STR, -4 DEX</p>
+ <p><strong>Reflex:</strong> -5 | <strong>Stealth:</strong> -20</p>
  </button>
  </div>
 
@@ -184,21 +184,18 @@
  <h3>Build Your Droid</h3>
  <p class="hint">Customize your droid with systems and accessories.</p>
 
- <div class="droid-budget">
+ <div id="droid-credits-display" class="droid-budget">
  <div class="budget-item">
- <strong>Base Credits:</strong> {{characterData.droidCredits.base}} cr
+ <strong>Base Credits:</strong> <span class="base-credits">{{characterData.droidCredits.base}}</span> cr
  </div>
  <div class="budget-item">
  <strong>Spent:</strong> <span class="spent-credits">{{characterData.droidSystems.totalCost}}</span> cr
  </div>
  <div class="budget-item">
- <strong>Remaining:</strong> <span class="remaining-credits">{{characterData.droidCredits.remaining}}</span> cr
+ <strong>Remaining:</strong> <span class="remaining-credits {{#if (lt characterData.droidCredits.remaining 0)}}overbudget{{/if}}">{{characterData.droidCredits.remaining}}</span> cr
  </div>
  <div class="budget-item">
  <strong>Weight:</strong> <span class="total-weight">{{characterData.droidSystems.totalWeight}}</span> kg
- </div>
- <div class="budget-item">
- <strong>Cost Factor:</strong> ×{{costFactor}}
  </div>
  </div>
 

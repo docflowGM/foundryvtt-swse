@@ -428,10 +428,10 @@ export default class CharacterGenerator extends Application {
       "tiny": 5,
       "small": 2,
       "medium": 1,
-      "large": 0.5,
-      "huge": 0.2,
-      "gargantuan": 0.1,
-      "colossal": 0.05
+      "large": 2,
+      "huge": 5,
+      "gargantuan": 10,
+      "colossal": 20
     };
     return costFactors[size] || 1;
   }
@@ -794,20 +794,30 @@ export default class CharacterGenerator extends Application {
   }
 
   _updateDroidCreditsDisplay(doc) {
-    const display = doc.querySelector('#droid-credits-display');
-    if (display) {
-      const remaining = this.characterData.droidCredits.remaining;
-      const spent = this.characterData.droidCredits.spent;
-      const total = this.characterData.droidCredits.base;
+    // Update base credits
+    const baseEl = doc.querySelector('.base-credits');
+    if (baseEl) baseEl.textContent = this.characterData.droidCredits.base.toLocaleString();
 
-      display.innerHTML = `
-        <div class="credits-info">
-          <p><strong>Total Credits:</strong> ${total.toLocaleString()} cr</p>
-          <p><strong>Spent:</strong> ${spent.toLocaleString()} cr</p>
-          <p><strong>Remaining:</strong> <span class="${remaining < 0 ? 'overbudget' : ''}">${remaining.toLocaleString()} cr</span></p>
-        </div>
-      `;
+    // Update spent credits
+    const spentEl = doc.querySelector('.spent-credits');
+    if (spentEl) spentEl.textContent = this.characterData.droidCredits.spent.toLocaleString();
+
+    // Update remaining credits
+    const remainingEl = doc.querySelector('.remaining-credits');
+    if (remainingEl) {
+      remainingEl.textContent = this.characterData.droidCredits.remaining.toLocaleString();
+
+      // Add overbudget class if negative
+      if (this.characterData.droidCredits.remaining < 0) {
+        remainingEl.classList.add('overbudget');
+      } else {
+        remainingEl.classList.remove('overbudget');
+      }
     }
+
+    // Update total weight
+    const weightEl = doc.querySelector('.total-weight');
+    if (weightEl) weightEl.textContent = this.characterData.droidSystems.totalWeight.toLocaleString();
   }
 
   _validateDroidBuilder() {
