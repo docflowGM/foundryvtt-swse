@@ -81,6 +81,34 @@ export function registerHouseruleSettings() {
     }
   });
 
+  game.settings.register("swse", "droidConstructionCredits", {
+    name: "Droid Construction Credits",
+    hint: "Base credits available for custom droid construction (before class credits)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 1000,
+    range: {
+      min: 0,
+      max: 5000,
+      step: 100
+    }
+  });
+
+  game.settings.register("swse", "standardDroidModelLimit", {
+    name: "Standard Droid Model Credit Limit",
+    hint: "Maximum total cost for standard droid models (including modifications)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 5000,
+    range: {
+      min: 1000,
+      max: 10000,
+      step: 500
+    }
+  });
+
   // ============================================
   // Hit Points
   // ============================================
