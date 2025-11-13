@@ -1,0 +1,50 @@
+{{!-- Static Skill Row - skill data may be undefined, provide defaults --}}
+<div class="skill-row flexrow" draggable="true" data-skill="{{key}}">
+ <div class="skill-name">{{label}}</div>
+
+ <div class="skill-ability">{{ability}}</div>
+
+ <div class="skill-trained">
+ <input type="checkbox"
+ name="system.skills.{{key}}.trained"
+ {{#if skill}}{{checked skill.trained}}{{/if}}
+ title="Trained (+5)"/>
+ </div>
+
+ <div class="skill-focus">
+ <input type="checkbox"
+ name="system.skills.{{key}}.focused"
+ {{#if skill}}{{checked skill.focused}}{{/if}}
+ title="Skill Focus (+5)"/>
+ </div>
+
+ <div class="skill-armor">
+ <input type="number"
+ name="system.skills.{{key}}.armor"
+ value="{{#if skill}}{{skill.armor}}{{else}}0{{/if}}"
+ data-dtype="Number"
+ placeholder="0"/>
+ </div>
+
+ <div class="skill-misc">
+ <input type="number"
+ name="system.skills.{{key}}.misc"
+ value="{{#if skill}}{{skill.misc}}{{else}}0{{/if}}"
+ data-dtype="Number"
+ placeholder="0"/>
+ </div>
+
+ <div class="skill-total {{#if skill.trained}}trained{{/if}}">
+ {{#if skill}}{{skill.total}}{{else}}0{{/if}}
+ </div>
+
+ <div class="skill-roll">
+ <button class="roll-skill rollable"
+ data-skill="{{key}}"
+ data-roll="1d20+@skills.{{key}}.total"
+ data-label="{{label}}"
+ title="Roll {{label}}">
+ <i class="fas fa-dice-d20"></i>
+ </button>
+ </div>
+</div>

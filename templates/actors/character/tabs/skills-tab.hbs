@@ -13,76 +13,81 @@
  </div>
 
  <div class="skills-list">
- {{#each system.skills as |skill key|}}
- <div class="skill-row flexrow" draggable="true" data-skill="{{key}}">
- <div class="skill-name">{{capitalize key}}</div>
+ {{!-- All SWSE skills listed statically --}}
+ {{#with system.skills.acrobatics as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="acrobatics" label="Acrobatics" ability="DEX"}}
+ {{/with}}
 
- <div class="skill-ability">
- {{#if (eq key "acrobatics")}}DEX{{/if}}
- {{#if (eq key "climb")}}STR{{/if}}
- {{#if (eq key "deception")}}CHA{{/if}}
- {{#if (eq key "endurance")}}CON{{/if}}
- {{#if (eq key "gatherInformation")}}CHA{{/if}}
- {{#if (eq key "initiative")}}DEX{{/if}}
- {{#if (eq key "jump")}}STR{{/if}}
- {{#if (eq key "knowledge")}}INT{{/if}}
- {{#if (eq key "mechanics")}}INT{{/if}}
- {{#if (eq key "perception")}}WIS{{/if}}
- {{#if (eq key "persuasion")}}CHA{{/if}}
- {{#if (eq key "pilot")}}DEX{{/if}}
- {{#if (eq key "ride")}}DEX{{/if}}
- {{#if (eq key "stealth")}}DEX{{/if}}
- {{#if (eq key "survival")}}WIS{{/if}}
- {{#if (eq key "swim")}}STR{{/if}}
- {{#if (eq key "treatInjury")}}WIS{{/if}}
- {{#if (eq key "useComputer")}}INT{{/if}}
- {{#if (eq key "useTheForce")}}CHA{{/if}}
- </div>
+ {{#with system.skills.climb as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="climb" label="Climb" ability="STR"}}
+ {{/with}}
 
- <div class="skill-trained">
- <input type="checkbox" 
- name="system.skills.{{key}}.trained" 
- {{checked skill.trained}}
- title="Trained (+5)"/>
- </div>
+ {{#with system.skills.deception as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="deception" label="Deception" ability="CHA"}}
+ {{/with}}
 
- <div class="skill-focus">
- <input type="checkbox" 
- name="system.skills.{{key}}.focused" 
- {{checked skill.focused}}
- title="Skill Focus (+5)"/>
- </div>
+ {{#with system.skills.endurance as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="endurance" label="Endurance" ability="CON"}}
+ {{/with}}
 
- <div class="skill-armor">
- <input type="number" 
- name="system.skills.{{key}}.armor" 
- value="{{skill.armor}}" 
- data-dtype="Number"
- placeholder="0"/>
- </div>
+ {{#with system.skills.gatherInformation as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="gatherInformation" label="Gather Information" ability="CHA"}}
+ {{/with}}
 
- <div class="skill-misc">
- <input type="number" 
- name="system.skills.{{key}}.misc" 
- value="{{skill.misc}}" 
- data-dtype="Number"
- placeholder="0"/>
- </div>
+ {{#with system.skills.initiative as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="initiative" label="Initiative" ability="DEX"}}
+ {{/with}}
 
- <div class="skill-total {{#if skill.trained}}trained{{/if}}">
- {{skill.total}}
- </div>
+ {{#with system.skills.jump as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="jump" label="Jump" ability="STR"}}
+ {{/with}}
 
- <div class="skill-roll">
- <button class="roll-skill rollable" 
- data-skill="{{key}}"
- data-roll="1d20+@skills.{{key}}.total"
- data-label="{{capitalize key}}"
- title="Roll {{capitalize key}}">
- <i class="fas fa-dice-d20"></i>
- </button>
- </div>
- </div>
- {{/each}}
+ {{#with system.skills.knowledge as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge" label="Knowledge" ability="INT"}}
+ {{/with}}
+
+ {{#with system.skills.mechanics as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="mechanics" label="Mechanics" ability="INT"}}
+ {{/with}}
+
+ {{#with system.skills.perception as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="perception" label="Perception" ability="WIS"}}
+ {{/with}}
+
+ {{#with system.skills.persuasion as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="persuasion" label="Persuasion" ability="CHA"}}
+ {{/with}}
+
+ {{#with system.skills.pilot as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="pilot" label="Pilot" ability="DEX"}}
+ {{/with}}
+
+ {{#with system.skills.ride as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="ride" label="Ride" ability="DEX"}}
+ {{/with}}
+
+ {{#with system.skills.stealth as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="stealth" label="Stealth" ability="DEX"}}
+ {{/with}}
+
+ {{#with system.skills.survival as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="survival" label="Survival" ability="WIS"}}
+ {{/with}}
+
+ {{#with system.skills.swim as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="swim" label="Swim" ability="STR"}}
+ {{/with}}
+
+ {{#with system.skills.treatInjury as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="treatInjury" label="Treat Injury" ability="WIS"}}
+ {{/with}}
+
+ {{#with system.skills.useComputer as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="useComputer" label="Use Computer" ability="INT"}}
+ {{/with}}
+
+ {{#with system.skills.useTheForce as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="useTheForce" label="Use the Force" ability="CHA"}}
+ {{/with}}
  </div>
 </div>

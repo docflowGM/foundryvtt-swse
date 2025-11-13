@@ -11,7 +11,12 @@ export class SWSEDroidSheet extends SWSECharacterSheet {
       classes: ["swse", "sheet", "actor", "droid"],
       template: "systems/swse/templates/actors/droid/droid-sheet.hbs",
       width: 800,
-      height: 720
+      height: 720,
+      tabs: [{
+        navSelector: '.sheet-tabs',
+        contentSelector: '.sheet-body',
+        initial: 'main'
+      }]
     });
   }
 
