@@ -80,6 +80,15 @@ export class SWSELevelUpEnhanced extends FormApplication {
     return [4, 8, 12, 16, 20].includes(newLevel);
   }
 
+  /**
+   * Check if the new level grants a milestone feat
+   * @returns {boolean}
+   */
+  _getsMilestoneFeat() {
+    const newLevel = this.actor.system.level + 1;
+    return [3, 6, 9, 12, 15, 18].includes(newLevel);
+  }
+
   activateListeners(html) {
     super.activateListeners(html);
 
@@ -823,6 +832,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
         await this.actor.createEmbeddedDocuments("Item", featObjects);
       }
 
+      // Check for milestone feat at levels 3, 6, 9, 12, 15, 18
+      const newLevel = this.actor.system.level + 1;
+      const getMilestoneFeat = [3, 6, 9, 12, 15, 18].includes(newLevel);
+      if (getMilestoneFeat) {
+        ui.notifications.info(`Level ${newLevel}! You gain a bonus general feat.`);
+        console.log(`SWSE LevelUp | Level ${newLevel} milestone - bonus general feat granted`);
+      }
+
       // Update trained skills if selected
       const updates = {};
       if (this.selectedSkills.length > 0) {
@@ -929,6 +946,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
           ${abilityText}
           ${this.selectedTalent ? `<p><strong>Talent:</strong> ${this.selectedTalent.name}</p>` : ''}
           ${this.selectedFeats.length > 0 ? `<p><strong>Feat:</strong> ${this.selectedFeats.map(f => f.name).join(', ')}</p>` : ''}
+          ${getMilestoneFeat ? `<p><strong>Milestone Feat:</strong> Gain 1 bonus general feat!</p>` : ''}
         </div>
       `;
 
