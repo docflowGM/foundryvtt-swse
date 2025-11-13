@@ -220,6 +220,132 @@
  </section>
  {{/if}}
 
+ {{#if (eq currentStep "feats")}}
+ <section class="step-feats">
+ <h3>Select Starting Feat</h3>
+ <p class="help-text">All characters gain 1 general feat at 1st level.</p>
+
+ <div class="feats-list">
+ {{#each packs.feats}}
+ <div class="feat-item">
+ <button type="button" class="select-feat choice-button" data-featid="{{this._id}}">
+ <h4>{{this.name}}</h4>
+ {{#if this.system.description}}
+ <p class="feat-description">{{this.system.description}}</p>
+ {{/if}}
+ {{#if this.system.prerequisites}}
+ <p class="feat-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</p>
+ {{/if}}
+ </button>
+ </div>
+ {{/each}}
+ </div>
+
+ <div class="selected-feats">
+ <h4>Selected Feats ({{characterData.feats.length}}/1)</h4>
+ {{#each characterData.feats}}
+ <div class="selected-feat">
+ <span>{{this.name}}</span>
+ <button type="button" class="remove-feat" data-featid="{{this._id}}">×</button>
+ </div>
+ {{/each}}
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ {{#if (gte characterData.feats.length 1)}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{/if}}
+ </div>
+ </section>
+ {{/if}}
+
+ {{#if (eq currentStep "talents")}}
+ <section class="step-talents">
+ <h3>Select Starting Talent</h3>
+ <p class="help-text">Select a talent from your class talent trees.</p>
+
+ <div class="talents-list">
+ {{#each packs.talents}}
+ <div class="talent-item">
+ <button type="button" class="select-talent choice-button" data-talentid="{{this._id}}">
+ <h4>{{this.name}}</h4>
+ {{#if this.system.tree}}
+ <p class="talent-tree"><strong>Tree:</strong> {{this.system.tree}}</p>
+ {{/if}}
+ {{#if this.system.description}}
+ <p class="talent-description">{{this.system.description}}</p>
+ {{/if}}
+ </button>
+ </div>
+ {{/each}}
+ </div>
+
+ <div class="selected-talents">
+ <h4>Selected Talents ({{characterData.talents.length}}/1)</h4>
+ {{#each characterData.talents}}
+ <div class="selected-talent">
+ <span>{{this.name}}</span>
+ </div>
+ {{/each}}
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ {{#if (gte characterData.talents.length 1)}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{/if}}
+ </div>
+ </section>
+ {{/if}}
+
+ {{#if (eq currentStep "skills")}}
+ <section class="step-skills">
+ <h3>Select Trained Skills</h3>
+ <p class="help-text">Select {{characterData.trainedSkillsAllowed}} trained skills from your class skill list.</p>
+
+ <div class="skills-selection">
+ {{#each availableSkills}}
+ <div class="skill-checkbox">
+ <label>
+ <input type="checkbox"
+ class="skill-select"
+ data-skill="{{this.key}}"
+ {{#if this.trained}}checked{{/if}}
+ {{#if (gte ../characterData.trainedSkillsCount ../characterData.trainedSkillsAllowed)}}
+ {{#unless this.trained}}disabled{{/unless}}
+ {{/if}}>
+ {{this.name}}
+ </label>
+ </div>
+ {{/each}}
+ </div>
+
+ <div class="skills-summary">
+ <p>Skills Selected: {{characterData.trainedSkillsCount}} / {{characterData.trainedSkillsAllowed}}</p>
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ {{#if (gte characterData.trainedSkillsCount characterData.trainedSkillsAllowed)}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{/if}}
+ </div>
+ </section>
+ {{/if}}
+
  {{#if (eq currentStep "summary")}}
  <section class="step-summary">
  <h3>Character Summary</h3>

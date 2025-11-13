@@ -155,9 +155,37 @@ export default class CharacterGenerator extends Application {
       });
     }
 
+    // Filter feats for droids (no Force feats, no species-specific)
+    if (this.characterData.isDroid && context.packs.feats) {
+      context.packs.feats = context.packs.feats.filter(f => {
+        const featName = (f.name || "").toLowerCase();
+        const prereqs = (f.system?.prerequisites || "").toLowerCase();
+
+        // Exclude Force feats
+        if (featName.includes("force") || prereqs.includes("force")) return false;
+
+        // Exclude species-specific feats (unless droid-specific)
+        if (prereqs.includes("species") && !prereqs.includes("droid")) return false;
+
+        // Exclude Force Sensitivity feat
+        if (featName === "force sensitivity") return false;
+
+        return true;
+      });
+    }
+
     // Point buy pools
     context.droidPointBuyPool = game.settings.get("swse", "droidPointBuyPool") || 20;
     context.livingPointBuyPool = game.settings.get("swse", "livingPointBuyPool") || 25;
+
+    // Skills count for skills step
+    context.characterData.trainedSkillsCount = Object.values(this.characterData.skills).filter(s => s.trained).length;
+
+    // Available skills for selection
+    context.availableSkills = this._getAvailableSkills().map(skill => ({
+      ...skill,
+      trained: this.characterData.skills[skill.key]?.trained || false
+    }));
 
     return context;
   }
@@ -177,7 +205,9 @@ export default class CharacterGenerator extends Application {
     html.find('.select-species').click(this._onSelectSpecies.bind(this));
     html.find('.select-class').click(this._onSelectClass.bind(this));
     html.find('.select-feat').click(this._onSelectFeat.bind(this));
+    html.find('.remove-feat').click(this._onRemoveFeat.bind(this));
     html.find('.select-talent').click(this._onSelectTalent.bind(this));
+    html.find('.skill-select').change(this._onSkillSelect.bind(this));
 
     // Name input
     html.find('input[name="character-name"]').change((ev) => {
@@ -626,12 +656,31 @@ export default class CharacterGenerator extends Application {
     event.preventDefault();
     const id = event.currentTarget.dataset.talentid;
     const tal = this._packs.talents.find(t => t._id === id || t.name === id);
-    
+
     if (tal && !this.characterData.talents.find(t => t.name === tal.name)) {
       this.characterData.talents.push(tal);
     }
-    
+
     await this._onNextStep(event);
+  }
+
+  async _onRemoveFeat(event) {
+    event.preventDefault();
+    const id = event.currentTarget.dataset.featid;
+    this.characterData.feats = this.characterData.feats.filter(f => f._id !== id && f.name !== id);
+    await this.render();
+  }
+
+  async _onSkillSelect(event) {
+    const skillKey = event.currentTarget.dataset.skill;
+    const checked = event.currentTarget.checked;
+
+    if (!this.characterData.skills[skillKey]) {
+      this.characterData.skills[skillKey] = { trained: false };
+    }
+
+    this.characterData.skills[skillKey].trained = checked;
+    await this.render();
   }
 
   _getFeatsNeeded() {
