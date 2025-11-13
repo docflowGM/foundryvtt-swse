@@ -86,8 +86,10 @@
  {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="useComputer" label="Use Computer" ability="INT"}}
  {{/with}}
 
+ {{#unless @root.system.isDroid}}
  {{#with system.skills.useTheForce as |skill|}}
  {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="useTheForce" label="Use the Force" ability="CHA"}}
  {{/with}}
+ {{/unless}}
  </div>
 </div>
