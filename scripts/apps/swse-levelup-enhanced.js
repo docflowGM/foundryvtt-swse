@@ -831,27 +831,68 @@ export class SWSELevelUpEnhanced extends FormApplication {
         });
       }
 
+      // Store old modifiers before applying ability increases
+      const oldIntMod = this.actor.system.abilities.int?.mod || 0;
+      const oldConMod = this.actor.system.abilities.con?.mod || 0;
+
       // Apply ability score increases if any
+      let intIncreased = false;
+      let conIncreased = false;
       if (Object.keys(this.abilityIncreases).length > 0) {
         for (const [ability, increase] of Object.entries(this.abilityIncreases)) {
           if (increase > 0) {
             const currentBase = this.actor.system.abilities[ability].base || 10;
-            updates[`system.abilities.${ability}.base`] = currentBase + increase;
-            console.log(`SWSE LevelUp | Increasing ${ability} by +${increase} (${currentBase} → ${currentBase + increase})`);
+            const newBase = currentBase + increase;
+            updates[`system.abilities.${ability}.base`] = newBase;
+            console.log(`SWSE LevelUp | Increasing ${ability} by +${increase} (${currentBase} → ${newBase})`);
+
+            // Track if INT or CON increased
+            if (ability === 'int') intIncreased = true;
+            if (ability === 'con') conIncreased = true;
           }
         }
       }
 
       // Update actor level and HP
       const newLevel = this.actor.system.level + 1;
-      const newHPMax = this.actor.system.hp.max + this.hpGain;
-      const newHPValue = this.actor.system.hp.value + this.hpGain;
+      let totalHPGain = this.hpGain;
 
       updates["system.level"] = newLevel;
-      updates["system.hp.max"] = newHPMax;
-      updates["system.hp.value"] = newHPValue;
 
+      // Apply updates first so we can calculate new modifiers
       await this.actor.update(updates);
+
+      // Now check if modifiers actually increased
+      const newIntMod = this.actor.system.abilities.int?.mod || 0;
+      const newConMod = this.actor.system.abilities.con?.mod || 0;
+
+      let bonusSkillGranted = false;
+      let retroactiveHPGain = 0;
+
+      // If INT modifier increased, grant additional trained skill
+      if (intIncreased && newIntMod > oldIntMod) {
+        console.log(`SWSE LevelUp | INT modifier increased from ${oldIntMod} to ${newIntMod} - granting bonus skill`);
+        bonusSkillGranted = true;
+        ui.notifications.info("Intelligence increased! You may train an additional skill.");
+      }
+
+      // If CON modifier increased, grant retroactive HP
+      if (conIncreased && newConMod > oldConMod) {
+        const modIncrase = newConMod - oldConMod;
+        retroactiveHPGain = newLevel * modIncrase;
+        totalHPGain += retroactiveHPGain;
+        console.log(`SWSE LevelUp | CON modifier increased from ${oldConMod} to ${newConMod} - granting ${retroactiveHPGain} retroactive HP`);
+        ui.notifications.info(`Constitution increased! You gain ${retroactiveHPGain} retroactive HP!`);
+      }
+
+      // Update HP with any retroactive gains
+      const newHPMax = this.actor.system.hp.max + totalHPGain;
+      const newHPValue = this.actor.system.hp.value + totalHPGain;
+
+      await this.actor.update({
+        "system.hp.max": newHPMax,
+        "system.hp.value": newHPValue
+      });
 
       // Build ability increases text
       let abilityText = '';
@@ -861,6 +902,20 @@ export class SWSELevelUpEnhanced extends FormApplication {
           .map(([ability, val]) => `${ability.toUpperCase()} +${val}`)
           .join(', ');
         abilityText = `<p><strong>Ability Increases:</strong> ${increases}</p>`;
+
+        // Add bonus messages
+        if (bonusSkillGranted) {
+          abilityText += `<p><em>INT modifier increased! May train 1 additional skill.</em></p>`;
+        }
+        if (retroactiveHPGain > 0) {
+          abilityText += `<p><em>CON modifier increased! Gained ${retroactiveHPGain} retroactive HP.</em></p>`;
+        }
+      }
+
+      // Build HP gain text
+      let hpGainText = `${this.hpGain}`;
+      if (retroactiveHPGain > 0) {
+        hpGainText += ` (+ ${retroactiveHPGain} from CON increase)`;
       }
 
       // Create chat message
@@ -869,7 +924,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
           <h3><i class="fas fa-level-up-alt"></i> Level Up!</h3>
           <p><strong>${this.actor.name}</strong> advanced to level <strong>${newLevel}</strong>!</p>
           <p><strong>Class:</strong> ${this.selectedClass.name}</p>
-          <p><strong>HP Gained:</strong> ${this.hpGain}</p>
+          <p><strong>HP Gained:</strong> ${hpGainText}</p>
           <p><strong>New HP Total:</strong> ${newHPMax}</p>
           ${abilityText}
           ${this.selectedTalent ? `<p><strong>Talent:</strong> ${this.selectedTalent.name}</p>` : ''}
