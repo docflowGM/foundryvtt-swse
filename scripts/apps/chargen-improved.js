@@ -19,7 +19,13 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
     // Get GM's ability generation method from houserules
     context.abilityMethod = game.settings.get("swse", "abilityScoreMethod") || "pointbuy";
-    context.pointBuyPool = game.settings.get("swse", "pointBuyPool") || 32;
+
+    // Use droid or living point buy pool based on character type
+    if (this.characterData.isDroid) {
+      context.pointBuyPool = game.settings.get("swse", "droidPointBuyPool") || 20;
+    } else {
+      context.pointBuyPool = game.settings.get("swse", "livingPointBuyPool") || 25;
+    }
 
     // Add target level
     context.targetLevel = this.targetLevel;
@@ -242,20 +248,23 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
   async _createCharacterActor() {
     const classData = this.characterData.classData;
-    const conMod = this.characterData.abilities.con.mod || 0;
+    const conMod = this.characterData.isDroid ? 0 : (this.characterData.abilities.con.mod || 0);
 
     // Build actor data
     const actorData = {
       name: this.characterData.name || "New Character",
       type: "character",
       system: {
+        isDroid: this.characterData.isDroid || false,
+        droidDegree: this.characterData.droidDegree || "",
+        species: this.characterData.isDroid ? this.characterData.droidDegree : this.characterData.species,
         abilities: {
-          str: { base: this.characterData.abilities.str.base || 10, racial: 0 },
-          dex: { base: this.characterData.abilities.dex.base || 10, racial: 0 },
-          con: { base: this.characterData.abilities.con.base || 10, racial: 0 },
-          int: { base: this.characterData.abilities.int.base || 10, racial: 0 },
-          wis: { base: this.characterData.abilities.wis.base || 10, racial: 0 },
-          cha: { base: this.characterData.abilities.cha.base || 10, racial: 0 }
+          str: { base: this.characterData.abilities.str.base || 10, racial: this.characterData.abilities.str.racial || 0 },
+          dex: { base: this.characterData.abilities.dex.base || 10, racial: this.characterData.abilities.dex.racial || 0 },
+          con: { base: this.characterData.isDroid ? 0 : (this.characterData.abilities.con.base || 10), racial: 0 },
+          int: { base: this.characterData.abilities.int.base || 10, racial: this.characterData.abilities.int.racial || 0 },
+          wis: { base: this.characterData.abilities.wis.base || 10, racial: this.characterData.abilities.wis.racial || 0 },
+          cha: { base: this.characterData.abilities.cha.base || 10, racial: this.characterData.abilities.cha.racial || 0 }
         },
         hp: {
           value: classData.hitDie + conMod,
@@ -335,7 +344,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     console.log(`SWSE CharGen | Leveling up to level ${newLevel}`);
 
     const classData = this.characterData.classData;
-    const conMod = this.characterData.abilities.con.mod || 0;
+    const conMod = this.characterData.isDroid ? 0 : (this.characterData.abilities.con.mod || 0);
 
     // Calculate HP gain based on houserule settings
     const hpGeneration = game.settings.get("swse", "hpGeneration");

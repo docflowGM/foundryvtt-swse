@@ -50,6 +50,38 @@ export function registerHouseruleSettings() {
   });
 
   // ============================================
+  // Droids
+  // ============================================
+
+  game.settings.register("swse", "droidPointBuyPool", {
+    name: "Droid Point Buy Pool",
+    hint: "Total points available for droid characters using point buy (only shown if Point Buy is selected)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 20,
+    range: {
+      min: 10,
+      max: 50,
+      step: 1
+    }
+  });
+
+  game.settings.register("swse", "livingPointBuyPool", {
+    name: "Living Point Buy Pool",
+    hint: "Total points available for living characters using point buy (only shown if Point Buy is selected)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 25,
+    range: {
+      min: 10,
+      max: 50,
+      step: 1
+    }
+  });
+
+  // ============================================
   // Hit Points
   // ============================================
   

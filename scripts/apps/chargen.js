@@ -9,6 +9,8 @@ export default class CharacterGenerator extends Application {
     this.actor = actor;
     this.characterData = {
       name: "",
+      isDroid: false,
+      droidDegree: "",
       species: "",
       classes: [],
       abilities: {
@@ -122,16 +124,37 @@ export default class CharacterGenerator extends Application {
   async getData() {
     const context = super.getData();
     if (!this._packs.species) await this._loadData();
-    
+
     context.characterData = this.characterData;
     context.currentStep = this.currentStep;
     context.isLevelUp = !!this.actor;
-    context.packs = this._packs;
+    context.packs = foundry.utils.deepClone(this._packs);
     context.skillsJson = this._skillsJson || [];
-    
+
     // Calculate half level for display
     context.halfLevel = Math.floor(this.characterData.level / 2);
-    
+
+    // Droid degree data
+    context.droidDegrees = [
+      { key: "1st-degree", name: "1st-Degree Droid", bonuses: "+2 INT, +2 WIS, -2 STR", description: "Medical and scientific droids" },
+      { key: "2nd-degree", name: "2nd-Degree Droid", bonuses: "+2 INT, -2 CHA", description: "Engineering and technical droids" },
+      { key: "3rd-degree", name: "3rd-Degree Droid", bonuses: "+2 WIS, +2 CHA, -2 STR", description: "Protocol and service droids" },
+      { key: "4th-degree", name: "4th-Degree Droid", bonuses: "+2 DEX, -2 INT, -2 CHA", description: "Security and military droids" },
+      { key: "5th-degree", name: "5th-Degree Droid", bonuses: "+4 STR, -4 INT, -4 CHA", description: "Labor and utility droids" }
+    ];
+
+    // Filter classes for droids (no Jedi classes)
+    if (this.characterData.isDroid && context.packs.classes) {
+      context.packs.classes = context.packs.classes.filter(c => {
+        const className = (c.name || "").toLowerCase();
+        return !className.includes("jedi");
+      });
+    }
+
+    // Point buy pools
+    context.droidPointBuyPool = game.settings.get("swse", "droidPointBuyPool") || 20;
+    context.livingPointBuyPool = game.settings.get("swse", "livingPointBuyPool") || 25;
+
     return context;
   }
 
@@ -144,6 +167,8 @@ export default class CharacterGenerator extends Application {
     html.find('.finish').click(this._onFinish.bind(this));
 
     // Selections
+    html.find('.select-type').click(this._onSelectType.bind(this));
+    html.find('.select-degree').click(this._onSelectDegree.bind(this));
     html.find('.select-species').click(this._onSelectSpecies.bind(this));
     html.find('.select-class').click(this._onSelectClass.bind(this));
     html.find('.select-feat').click(this._onSelectFeat.bind(this));
@@ -174,7 +199,19 @@ export default class CharacterGenerator extends Application {
     if (this.actor) {
       return ["class", "feats", "talents", "skills", "summary"];
     }
-    return ["name", "species", "abilities", "class", "feats", "talents", "skills", "summary"];
+
+    // Include type selection (living/droid) after name
+    const steps = ["name", "type"];
+
+    // If droid, show degree selection; if living, show species
+    if (this.characterData.isDroid) {
+      steps.push("degree");
+    } else {
+      steps.push("species");
+    }
+
+    steps.push("abilities", "class", "feats", "talents", "skills", "summary");
+    return steps;
   }
 
   async _onNextStep(event) {
@@ -217,6 +254,15 @@ export default class CharacterGenerator extends Application {
           return false;
         }
         break;
+      case "type":
+        // Type is set by button click, isDroid will be true or false
+        break;
+      case "degree":
+        if (!this.characterData.droidDegree) {
+          ui.notifications.warn("Please select a droid degree.");
+          return false;
+        }
+        break;
       case "species":
         if (!this.characterData.species) {
           ui.notifications.warn("Please select a species.");
@@ -233,11 +279,54 @@ export default class CharacterGenerator extends Application {
     return true;
   }
 
+  async _onSelectType(event) {
+    event.preventDefault();
+    const type = event.currentTarget.dataset.type;
+    this.characterData.isDroid = (type === "droid");
+
+    console.log(`SWSE CharGen | Selected type: ${type} (isDroid: ${this.characterData.isDroid})`);
+    await this._onNextStep(event);
+  }
+
+  async _onSelectDegree(event) {
+    event.preventDefault();
+    const degree = event.currentTarget.dataset.degree;
+    this.characterData.droidDegree = degree;
+
+    // Apply droid degree bonuses
+    const bonuses = this._getDroidDegreeBonuses(degree);
+    for (const [k, v] of Object.entries(bonuses || {})) {
+      if (this.characterData.abilities[k]) {
+        this.characterData.abilities[k].racial = Number(v || 0);
+      }
+    }
+
+    // Droids don't have CON
+    this.characterData.abilities.con.base = 0;
+    this.characterData.abilities.con.racial = 0;
+    this.characterData.abilities.con.total = 0;
+    this.characterData.abilities.con.mod = 0;
+
+    this._recalcAbilities();
+    await this._onNextStep(event);
+  }
+
+  _getDroidDegreeBonuses(degree) {
+    const bonuses = {
+      "1st-degree": { int: 2, wis: 2, str: -2 },
+      "2nd-degree": { int: 2, cha: -2 },
+      "3rd-degree": { wis: 2, cha: 2, str: -2 },
+      "4th-degree": { dex: 2, int: -2, cha: -2 },
+      "5th-degree": { str: 4, int: -4, cha: -4 }
+    };
+    return bonuses[degree] || {};
+  }
+
   async _onSelectSpecies(event) {
     event.preventDefault();
     const speciesKey = event.currentTarget.dataset.species;
     this.characterData.species = speciesKey;
-    
+
     // Apply racial bonuses
     const bonuses = await this._getRacialBonuses(speciesKey);
     for (const [k, v] of Object.entries(bonuses || {})) {
@@ -245,7 +334,7 @@ export default class CharacterGenerator extends Application {
         this.characterData.abilities[k].racial = Number(v || 0);
       }
     }
-    
+
     this._recalcAbilities();
     await this._onNextStep(event);
   }
