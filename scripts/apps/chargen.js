@@ -46,7 +46,8 @@ export default class CharacterGenerator extends Application {
       species: null,
       feats: null,
       talents: null,
-      classes: null
+      classes: null,
+      droids: null
     };
     this._skillsJson = null;
   }
@@ -67,9 +68,10 @@ export default class CharacterGenerator extends Application {
       species: "swse.species",
       feats: "swse.feats",
       talents: "swse.talents",
-      classes: "swse.classes"
+      classes: "swse.classes",
+      droids: "swse.droids"
     };
-    
+
     for (const [k, packName] of Object.entries(packNames)) {
       try {
         const pack = game.packs.get(packName);
@@ -169,6 +171,7 @@ export default class CharacterGenerator extends Application {
     // Selections
     html.find('.select-type').click(this._onSelectType.bind(this));
     html.find('.select-degree').click(this._onSelectDegree.bind(this));
+    html.find('.import-droid-btn').click(this._onImportDroid.bind(this));
     html.find('.select-species').click(this._onSelectSpecies.bind(this));
     html.find('.select-class').click(this._onSelectClass.bind(this));
     html.find('.select-feat').click(this._onSelectFeat.bind(this));
@@ -320,6 +323,202 @@ export default class CharacterGenerator extends Application {
       "5th-degree": { str: 4, int: -4, cha: -4 }
     };
     return bonuses[degree] || {};
+  }
+
+  async _onImportDroid(event) {
+    event.preventDefault();
+
+    if (!this._packs.droids) await this._loadData();
+
+    // Create a search dialog
+    const droidList = this._packs.droids.map(d => ({
+      name: d.name,
+      id: d._id,
+      system: d.system
+    }));
+
+    const dialogContent = `
+      <div class="droid-import-dialog">
+        <p>Search for a droid type to import:</p>
+        <input type="text" id="droid-search" placeholder="Type droid name..." autofocus />
+        <div id="droid-results" class="droid-results"></div>
+      </div>
+      <style>
+        .droid-import-dialog {
+          padding: 1rem;
+        }
+        #droid-search {
+          width: 100%;
+          padding: 0.5rem;
+          margin-bottom: 1rem;
+          font-size: 1rem;
+        }
+        .droid-results {
+          max-height: 300px;
+          overflow-y: auto;
+        }
+        .droid-result-item {
+          padding: 0.75rem;
+          margin: 0.5rem 0;
+          background: rgba(0, 0, 0, 0.2);
+          border: 1px solid #0a74da;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .droid-result-item:hover {
+          background: rgba(10, 116, 218, 0.2);
+          transform: translateX(4px);
+        }
+      </style>
+    `;
+
+    const dialog = new Dialog({
+      title: "Import Droid Type",
+      content: dialogContent,
+      buttons: {
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      render: (html) => {
+        const searchInput = html.find('#droid-search');
+        const resultsDiv = html.find('#droid-results');
+
+        const renderResults = (query) => {
+          const filtered = query
+            ? droidList.filter(d => d.name.toLowerCase().includes(query.toLowerCase()))
+            : droidList;
+
+          const resultsHTML = filtered.map(d => `
+            <div class="droid-result-item" data-droid-id="${d.id}">
+              <strong>${d.name}</strong>
+            </div>
+          `).join('');
+
+          resultsDiv.html(resultsHTML || '<p>No droids found</p>');
+
+          // Add click handlers to results
+          resultsDiv.find('.droid-result-item').click(async (e) => {
+            const droidId = e.currentTarget.dataset.droidId;
+            const droid = droidList.find(d => d.id === droidId);
+            if (droid) {
+              await this._importDroidType(droid);
+              dialog.close();
+            }
+          });
+        };
+
+        // Initial render
+        renderResults('');
+
+        // Search on input
+        searchInput.on('input', (e) => {
+          renderResults(e.target.value);
+        });
+      }
+    }, {
+      width: 500
+    });
+
+    dialog.render(true);
+  }
+
+  async _importDroidType(droid) {
+    console.log(`SWSE CharGen | Importing droid type: ${droid.name}`, droid);
+
+    // Apply droid's ability scores
+    if (droid.system && droid.system.abilities) {
+      for (const [ability, value] of Object.entries(droid.system.abilities)) {
+        if (this.characterData.abilities[ability]) {
+          this.characterData.abilities[ability].base = value.value || value || 10;
+        }
+      }
+    }
+
+    // Set as droid
+    this.characterData.isDroid = true;
+    this.characterData.droidDegree = droid.system.droidDegree || "2nd-degree"; // Default if not specified
+
+    // Droids don't have CON
+    this.characterData.abilities.con.base = 0;
+    this.characterData.abilities.con.total = 0;
+    this.characterData.abilities.con.mod = 0;
+
+    this._recalcAbilities();
+
+    // Create actor with imported droid stats
+    const actor = await this._createImportedDroidActor(droid);
+
+    if (actor) {
+      ui.notifications.success(`${droid.name} imported successfully!`);
+      this.close();
+      actor.sheet.render(true);
+    } else {
+      ui.notifications.error("Failed to import droid!");
+    }
+  }
+
+  async _createImportedDroidActor(droid) {
+    try {
+      // Build actor data from imported droid
+      const actorData = {
+        name: this.characterData.name || droid.name,
+        type: "character",
+        system: {
+          isDroid: true,
+          droidDegree: droid.system.droidDegree || "2nd-degree",
+          species: droid.system.droidDegree || "Droid",
+          abilities: {},
+          hp: droid.system.hp || { value: 10, max: 10, temp: 0 },
+          level: 1,
+          defenses: droid.system.defenses || {
+            fortitude: { base: 10, classBonus: 0, misc: 0, total: 10 },
+            reflex: { base: 10, classBonus: 0, misc: 0, total: 10 },
+            will: { base: 10, classBonus: 0, misc: 0, total: 10 }
+          },
+          bab: 0,
+          speed: droid.system.speed || { base: 6 },
+          skills: droid.system.skills || {},
+          damageThresholdMisc: 0
+        }
+      };
+
+      // Copy abilities
+      if (droid.system && droid.system.abilities) {
+        for (const [ability, value] of Object.entries(droid.system.abilities)) {
+          actorData.system.abilities[ability] = {
+            base: value.value || value || 10,
+            racial: 0,
+            temp: 0
+          };
+        }
+      }
+
+      // Ensure CON is 0 for droids
+      actorData.system.abilities.con = { base: 0, racial: 0, temp: 0 };
+
+      console.log("SWSE CharGen | Creating imported droid actor with data:", actorData);
+
+      const actor = await Actor.create(actorData);
+
+      // Add equipment from droid if any
+      if (droid.system && droid.system.equipment) {
+        const items = Array.isArray(droid.system.equipment)
+          ? droid.system.equipment
+          : Object.values(droid.system.equipment || {});
+
+        if (items.length > 0) {
+          await actor.createEmbeddedDocuments("Item", items);
+        }
+      }
+
+      return actor;
+    } catch (err) {
+      console.error("SWSE CharGen | Error creating imported droid actor:", err);
+      return null;
+    }
   }
 
   async _onSelectSpecies(event) {

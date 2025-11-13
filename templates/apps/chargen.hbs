@@ -72,6 +72,14 @@
  <section class="step-degree">
  <h3>Select Droid Degree</h3>
  <p class="hint">Choose your droid's classification and specialization.</p>
+
+ <div class="import-option">
+ <button type="button" class="import-droid-btn btn-primary">
+ <i class="fas fa-download"></i> Import Existing Droid Type
+ </button>
+ <p class="import-hint">Or select a degree below to build from scratch</p>
+ </div>
+
  <div class="degree-grid">
  {{#each droidDegrees}}
  <button type="button" class="select-degree choice-button" data-degree="{{this.key}}">
@@ -394,6 +402,28 @@
 .type-grid .choice-button i {
  font-size: 3rem;
  margin-bottom: 0.5rem;
+}
+
+.import-option {
+ text-align: center;
+ margin: 2rem 0;
+ padding: 1.5rem;
+ background: rgba(0, 217, 255, 0.1);
+ border: 2px dashed #00d9ff;
+ border-radius: 8px;
+}
+
+.import-option .import-droid-btn {
+ padding: 1rem 2rem;
+ font-size: 1.1rem;
+ margin-bottom: 0.5rem;
+}
+
+.import-hint {
+ margin: 0.5rem 0 0 0;
+ font-size: 0.9rem;
+ color: #aaa;
+ font-style: italic;
 }
 
 .degree-grid {
