@@ -23,11 +23,12 @@ export class SWSELevelUpEnhanced extends FormApplication {
   constructor(actor, options = {}) {
     super(actor, options);
     this.actor = actor;
-    this.currentStep = 'class'; // class, multiclass-bonus, talent, skills, summary
+    this.currentStep = 'class'; // class, multiclass-bonus, ability-increase, talent, skills, summary
     this.selectedClass = null;
     this.selectedTalent = null;
     this.selectedFeats = [];
     this.selectedSkills = [];
+    this.abilityIncreases = {}; // Track ability score increases
     this.hpGain = 0;
     this.talentData = null;
   }
@@ -56,6 +57,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Talent tree restriction from houserules
     data.talentTreeRestriction = game.settings.get("swse", "talentTreeRestriction");
 
+    // Ability increase settings
+    data.abilityIncreaseMethod = game.settings.get("swse", "abilityIncreaseMethod") || "flexible";
+    data.getsAbilityIncrease = this._getsAbilityIncrease();
+    data.abilityIncreases = this.abilityIncreases;
+
     // If class selected, get talent trees
     if (this.selectedClass) {
       data.selectedClass = this.selectedClass;
@@ -63,6 +69,15 @@ export class SWSELevelUpEnhanced extends FormApplication {
     }
 
     return data;
+  }
+
+  /**
+   * Check if the new level grants an ability score increase
+   * @returns {boolean}
+   */
+  _getsAbilityIncrease() {
+    const newLevel = this.actor.system.level + 1;
+    return [4, 8, 12, 16, 20].includes(newLevel);
   }
 
   activateListeners(html) {
@@ -74,6 +89,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Multiclass bonus selection
     html.find('.select-feat-btn').click(this._onSelectMulticlassFeat.bind(this));
     html.find('.select-skill-btn').click(this._onSelectMulticlassSkill.bind(this));
+
+    // Ability score increases
+    html.find('.ability-increase-btn').click(this._onAbilityIncrease.bind(this));
 
     // Talent tree selection
     html.find('.select-talent-tree').click(this._onSelectTalentTree.bind(this));
@@ -164,10 +182,15 @@ export class SWSELevelUpEnhanced extends FormApplication {
     const characterClasses = this._getCharacterClasses();
     const isMulticlassing = Object.keys(characterClasses).length > 0 && !characterClasses[classDoc.name];
     const isBaseClass = this._isBaseClass(classDoc.name);
+    const getsAbilityIncrease = this._getsAbilityIncrease();
 
+    // Determine next step in order: multiclass bonus -> ability increase -> talent -> summary
     if (isMulticlassing && isBaseClass) {
       // Taking a new base class - offer multiclass bonus
       this.currentStep = 'multiclass-bonus';
+    } else if (getsAbilityIncrease) {
+      // This level grants ability score increases
+      this.currentStep = 'ability-increase';
     } else if (classDoc.system.forceSensitive || classDoc.system.talentTrees?.length > 0) {
       // Class has talents - go to talent selection
       this.currentStep = 'talent';
@@ -245,6 +268,57 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.selectedSkills = [skillName];
     ui.notifications.info(`Selected trained skill: ${skillName}`);
     this._onNextStep();
+  }
+
+  // ========================================
+  // ABILITY SCORE INCREASES
+  // ========================================
+
+  _onAbilityIncrease(event) {
+    event.preventDefault();
+    const ability = event.currentTarget.dataset.ability;
+    const abilityIncreaseMethod = game.settings.get("swse", "abilityIncreaseMethod");
+
+    if (!this.abilityIncreases[ability]) {
+      this.abilityIncreases[ability] = 0;
+    }
+
+    // Calculate total points allocated
+    const totalAllocated = Object.values(this.abilityIncreases).reduce((sum, val) => sum + val, 0);
+
+    if (abilityIncreaseMethod === "flexible") {
+      // Flexible: Can do 1+1 or 2 to one attribute
+      if (totalAllocated >= 2) {
+        ui.notifications.warn("You've already allocated 2 ability points!");
+        return;
+      }
+
+      // Check if adding this point would exceed 2 total
+      if (this.abilityIncreases[ability] >= 2) {
+        ui.notifications.warn("You can't add more than 2 points to a single ability!");
+        return;
+      }
+
+      this.abilityIncreases[ability]++;
+      ui.notifications.info(`+1 to ${ability.toUpperCase()} (Total increases: ${totalAllocated + 1}/2)`);
+
+    } else {
+      // Standard: Must allocate 1 point to 2 different attributes
+      if (totalAllocated >= 2) {
+        ui.notifications.warn("You've already allocated 2 ability points!");
+        return;
+      }
+
+      if (this.abilityIncreases[ability] >= 1) {
+        ui.notifications.warn("Standard method: You must allocate to 2 different attributes!");
+        return;
+      }
+
+      this.abilityIncreases[ability]++;
+      ui.notifications.info(`+1 to ${ability.toUpperCase()} (Total increases: ${totalAllocated + 1}/2)`);
+    }
+
+    this.render();
   }
 
   // ========================================
@@ -636,13 +710,35 @@ export class SWSELevelUpEnhanced extends FormApplication {
   // ========================================
 
   _onNextStep() {
-    // Determine next step based on current step
+    const getsAbilityIncrease = this._getsAbilityIncrease();
+    const hasTalents = this.selectedClass?.system.forceSensitive || this.selectedClass?.system.talentTrees?.length > 0;
+
+    // Determine next step dynamically based on what's applicable
     switch (this.currentStep) {
       case 'class':
-        this.currentStep = 'multiclass-bonus';
+        this.currentStep = 'multiclass-bonus'; // This won't show if not multiclassing
         break;
       case 'multiclass-bonus':
-        this.currentStep = 'talent';
+        if (getsAbilityIncrease) {
+          this.currentStep = 'ability-increase';
+        } else if (hasTalents) {
+          this.currentStep = 'talent';
+        } else {
+          this.currentStep = 'summary';
+        }
+        break;
+      case 'ability-increase':
+        // Check if they've allocated all 2 points
+        const totalAllocated = Object.values(this.abilityIncreases).reduce((sum, val) => sum + val, 0);
+        if (totalAllocated < 2) {
+          ui.notifications.warn("You must allocate all 2 ability points before continuing!");
+          return;
+        }
+        if (hasTalents) {
+          this.currentStep = 'talent';
+        } else {
+          this.currentStep = 'summary';
+        }
         break;
       case 'talent':
         this.currentStep = 'summary';
@@ -653,16 +749,43 @@ export class SWSELevelUpEnhanced extends FormApplication {
   }
 
   _onPrevStep() {
-    // Go back one step
+    const getsAbilityIncrease = this._getsAbilityIncrease();
+    const characterClasses = this._getCharacterClasses();
+    const isMulticlassing = Object.keys(characterClasses).length > 0 && !characterClasses[this.selectedClass?.name];
+    const isBaseClass = this.selectedClass ? this._isBaseClass(this.selectedClass.name) : false;
+
+    // Go back one step dynamically
     switch (this.currentStep) {
       case 'multiclass-bonus':
         this.currentStep = 'class';
         break;
+      case 'ability-increase':
+        if (isMulticlassing && isBaseClass) {
+          this.currentStep = 'multiclass-bonus';
+        } else {
+          this.currentStep = 'class';
+        }
+        break;
       case 'talent':
-        this.currentStep = 'multiclass-bonus';
+        if (getsAbilityIncrease) {
+          this.currentStep = 'ability-increase';
+        } else if (isMulticlassing && isBaseClass) {
+          this.currentStep = 'multiclass-bonus';
+        } else {
+          this.currentStep = 'class';
+        }
         break;
       case 'summary':
-        this.currentStep = 'talent';
+        const hasTalents = this.selectedClass?.system.forceSensitive || this.selectedClass?.system.talentTrees?.length > 0;
+        if (hasTalents) {
+          this.currentStep = 'talent';
+        } else if (getsAbilityIncrease) {
+          this.currentStep = 'ability-increase';
+        } else if (isMulticlassing && isBaseClass) {
+          this.currentStep = 'multiclass-bonus';
+        } else {
+          this.currentStep = 'class';
+        }
         break;
     }
 
@@ -701,12 +824,22 @@ export class SWSELevelUpEnhanced extends FormApplication {
       }
 
       // Update trained skills if selected
+      const updates = {};
       if (this.selectedSkills.length > 0) {
-        const updates = {};
         this.selectedSkills.forEach(skill => {
           updates[`system.skills.${skill}.trained`] = true;
         });
-        await this.actor.update(updates);
+      }
+
+      // Apply ability score increases if any
+      if (Object.keys(this.abilityIncreases).length > 0) {
+        for (const [ability, increase] of Object.entries(this.abilityIncreases)) {
+          if (increase > 0) {
+            const currentBase = this.actor.system.abilities[ability].base || 10;
+            updates[`system.abilities.${ability}.base`] = currentBase + increase;
+            console.log(`SWSE LevelUp | Increasing ${ability} by +${increase} (${currentBase} → ${currentBase + increase})`);
+          }
+        }
       }
 
       // Update actor level and HP
@@ -714,11 +847,21 @@ export class SWSELevelUpEnhanced extends FormApplication {
       const newHPMax = this.actor.system.hp.max + this.hpGain;
       const newHPValue = this.actor.system.hp.value + this.hpGain;
 
-      await this.actor.update({
-        "system.level": newLevel,
-        "system.hp.max": newHPMax,
-        "system.hp.value": newHPValue
-      });
+      updates["system.level"] = newLevel;
+      updates["system.hp.max"] = newHPMax;
+      updates["system.hp.value"] = newHPValue;
+
+      await this.actor.update(updates);
+
+      // Build ability increases text
+      let abilityText = '';
+      if (Object.keys(this.abilityIncreases).length > 0) {
+        const increases = Object.entries(this.abilityIncreases)
+          .filter(([_, val]) => val > 0)
+          .map(([ability, val]) => `${ability.toUpperCase()} +${val}`)
+          .join(', ');
+        abilityText = `<p><strong>Ability Increases:</strong> ${increases}</p>`;
+      }
 
       // Create chat message
       const chatContent = `
@@ -728,6 +871,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
           <p><strong>Class:</strong> ${this.selectedClass.name}</p>
           <p><strong>HP Gained:</strong> ${this.hpGain}</p>
           <p><strong>New HP Total:</strong> ${newHPMax}</p>
+          ${abilityText}
           ${this.selectedTalent ? `<p><strong>Talent:</strong> ${this.selectedTalent.name}</p>` : ''}
           ${this.selectedFeats.length > 0 ? `<p><strong>Feat:</strong> ${this.selectedFeats.map(f => f.name).join(', ')}</p>` : ''}
         </div>

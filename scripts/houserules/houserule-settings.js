@@ -332,16 +332,33 @@ export function registerHouseruleSettings() {
 
   game.settings.register("swse", "multiclassBonusChoice", {
     name: "Multi-class Bonus Choice",
-    hint: "What bonus players get when taking a second base class",
+    hint: "What bonus players get when taking a second base class (players can always choose feat OR skill)",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "single_feat": "Single Starting Feat",
-      "single_skill": "Single Trained Skill",
+      "single_feat": "Single Starting Feat (or Skill)",
+      "single_skill": "Single Trained Skill (or Feat)",
       "all_feats": "All Starting Feats"
     },
     default: "single_feat"
+  });
+
+  // ============================================
+  // Ability Score Increases
+  // ============================================
+
+  game.settings.register("swse", "abilityIncreaseMethod", {
+    name: "Ability Score Increase Method",
+    hint: "How players can allocate ability increases at levels 4, 8, 12, 16, 20",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "standard": "1 Point to 2 Attributes (Standard)",
+      "flexible": "1 to 2 Attributes OR 2 to 1 Attribute"
+    },
+    default: "flexible"
   });
 
   // ============================================

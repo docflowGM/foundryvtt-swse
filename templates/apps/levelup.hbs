@@ -71,34 +71,40 @@
     {{#if (eq currentStep "multiclass-bonus")}}
     <section class="step-multiclass-bonus">
       <h3>Multi-class Bonus</h3>
-      <p class="hint">You are taking a second base class! Choose your bonus based on the GM's houserule setting:</p>
+      <p class="hint">You are taking a second base class! Choose your bonus (you can always choose feat OR skill):</p>
 
       <div class="multiclass-choice">
-        <h4>Bonus Type: {{multiclassBonusChoice}}</h4>
+        {{#unless (eq multiclassBonusChoice "all_feats")}}
+        <div class="bonus-options">
+          <div class="bonus-option">
+            <h4>Choose ONE Starting Feat</h4>
+            <div class="feat-selection">
+              {{#each selectedClass.system.startingFeatures}}
+                {{#if (eq this.type "feat_grant")}}
+                <button class="select-feat-btn choice-button" data-feat-id="{{this.name}}">
+                  <i class="fas fa-star"></i> {{this.name}}
+                </button>
+                {{/if}}
+              {{/each}}
+            </div>
+          </div>
 
-        {{#if (eq multiclassBonusChoice "single_feat")}}
-        <p>Choose ONE starting feat from {{selectedClass.name}}:</p>
-        <div class="feat-selection">
-          {{#each selectedClass.system.startingFeatures}}
-            {{#if (eq this.type "feat_grant")}}
-            <button class="select-feat-btn choice-button" data-feat-id="{{this.name}}">
-              {{this.name}}
-            </button>
-            {{/if}}
-          {{/each}}
-        </div>
-        {{/if}}
+          <div class="bonus-option-divider">
+            <span>OR</span>
+          </div>
 
-        {{#if (eq multiclassBonusChoice "single_skill")}}
-        <p>Choose ONE trained skill from {{selectedClass.name}} class skills:</p>
-        <div class="skill-selection">
-          {{#each selectedClass.system.classSkills}}
-          <button class="select-skill-btn choice-button" data-skill="{{this}}">
-            {{this}}
-          </button>
-          {{/each}}
+          <div class="bonus-option">
+            <h4>Choose ONE Trained Skill</h4>
+            <div class="skill-selection">
+              {{#each selectedClass.system.classSkills}}
+              <button class="select-skill-btn choice-button" data-skill="{{this}}">
+                <i class="fas fa-check-circle"></i> {{this}}
+              </button>
+              {{/each}}
+            </div>
+          </div>
         </div>
-        {{/if}}
+        {{/unless}}
 
         {{#if (eq multiclassBonusChoice "all_feats")}}
         <p>You will receive ALL starting feats from {{selectedClass.name}}!</p>
@@ -110,7 +116,55 @@
     </section>
     {{/if}}
 
-    {{!-- STEP 3: TALENT SELECTION --}}
+    {{!-- STEP 3: ABILITY SCORE INCREASES --}}
+    {{#if (eq currentStep "ability-increase")}}
+    <section class="step-ability-increase">
+      <h3>Ability Score Increase</h3>
+      <p class="hint">
+        At level {{newLevel}}, you gain +2 ability score points to allocate.
+        {{#if (eq abilityIncreaseMethod "flexible")}}
+          <br><strong>Flexible Method:</strong> You can apply 2 points to ONE attribute OR 1 point to TWO attributes.
+        {{else}}
+          <br><strong>Standard Method:</strong> You must apply 1 point to TWO different attributes.
+        {{/if}}
+      </p>
+
+      <div class="ability-increase-grid">
+        {{#each actor.system.abilities}}
+        <div class="ability-increase-card">
+          <h4>{{@key}}</h4>
+          <div class="ability-current">
+            <span>Current: {{this.base}}</span>
+            <span>Mod: {{#if (gte this.mod 0)}}+{{/if}}{{this.mod}}</span>
+          </div>
+          <button class="ability-increase-btn btn-primary" data-ability="{{@key}}">
+            <i class="fas fa-plus-circle"></i> Add +1
+          </button>
+          {{#if (lookup ../abilityIncreases @key)}}
+          <div class="ability-allocated">
+            +{{lookup ../abilityIncreases @key}} allocated
+          </div>
+          {{/if}}
+        </div>
+        {{/each}}
+      </div>
+
+      <div class="ability-progress">
+        <p>Points Allocated: <strong>{{#each abilityIncreases}}{{this}}{{#unless @last}}+{{/unless}}{{/each}} / 2</strong></p>
+      </div>
+
+      <div class="form-actions">
+        <button class="prev-step btn-secondary">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="next-step btn-primary">
+          Continue <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </section>
+    {{/if}}
+
+    {{!-- STEP 4: TALENT SELECTION --}}
     {{#if (eq currentStep "talent")}}
     <section class="step-talent-selection">
       <h3>Select a Talent</h3>
@@ -149,7 +203,7 @@
     </section>
     {{/if}}
 
-    {{!-- STEP 4: SUMMARY --}}
+    {{!-- STEP 5: SUMMARY --}}
     {{#if (eq currentStep "summary")}}
     <section class="step-summary">
       <h3>Level Up Summary</h3>
@@ -326,6 +380,108 @@
   background: rgba(10, 116, 218, 0.2);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(10, 116, 218, 0.4);
+}
+
+.bonus-options {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.bonus-option {
+  flex: 1;
+}
+
+.bonus-option h4 {
+  color: #00d9ff;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.bonus-option-divider {
+  display: flex;
+  align-items: center;
+  padding-top: 3rem;
+}
+
+.bonus-option-divider span {
+  padding: 0.5rem 1rem;
+  background: rgba(0, 217, 255, 0.2);
+  border: 2px solid #00d9ff;
+  border-radius: 50%;
+  font-weight: bold;
+  color: #00d9ff;
+}
+
+.feat-selection, .skill-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ability-increase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.ability-increase-card {
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #0a74da;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.ability-increase-card:hover {
+  background: rgba(10, 116, 218, 0.1);
+  border-color: #00d9ff;
+}
+
+.ability-increase-card h4 {
+  margin: 0 0 1rem 0;
+  color: #00d9ff;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+}
+
+.ability-current {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.ability-increase-btn {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.ability-allocated {
+  color: #00ff88;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+.ability-progress {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(0, 217, 255, 0.1);
+  border: 2px solid #00d9ff;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+}
+
+.ability-progress strong {
+  color: #00d9ff;
+  font-size: 1.2rem;
 }
 
 .talent-tree-grid {
