@@ -229,6 +229,11 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       // Apply houserule bonuses
       await this._applyHouseruleBonuses(actor);
 
+      // Add imported droid equipment if applicable
+      if (this.characterData.importedDroidData) {
+        await this._addImportedDroidEquipment(actor, this.characterData.importedDroidData);
+      }
+
       // If target level > 1, automatically level up
       if (this.targetLevel > 1) {
         await this._autoLevelUp(actor);
@@ -287,6 +292,30 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
     const actor = await Actor.create(actorData);
     return actor;
+  }
+
+  // ========================================
+  // IMPORTED DROID EQUIPMENT
+  // ========================================
+  async _addImportedDroidEquipment(actor, droid) {
+    try {
+      if (!droid.system || !droid.system.equipment) {
+        console.log("SWSE CharGen | No equipment found for imported droid");
+        return;
+      }
+
+      const items = Array.isArray(droid.system.equipment)
+        ? droid.system.equipment
+        : Object.values(droid.system.equipment || {});
+
+      if (items.length > 0) {
+        await actor.createEmbeddedDocuments("Item", items);
+        console.log(`SWSE CharGen | Added ${items.length} equipment items from imported droid`);
+        ui.notifications.info(`Added ${items.length} equipment items from droid template`);
+      }
+    } catch (err) {
+      console.error("SWSE CharGen | Error adding imported droid equipment:", err);
+    }
   }
 
   // ========================================

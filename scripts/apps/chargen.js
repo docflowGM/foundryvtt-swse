@@ -12,6 +12,8 @@ export default class CharacterGenerator extends Application {
       isDroid: false,
       droidDegree: "",
       species: "",
+      importedDroidData: null,
+      preselectedSkills: [],
       classes: [],
       abilities: {
         str: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
@@ -439,25 +441,26 @@ export default class CharacterGenerator extends Application {
 
     // Set as droid
     this.characterData.isDroid = true;
-    this.characterData.droidDegree = droid.system.droidDegree || "2nd-degree"; // Default if not specified
+    this.characterData.droidDegree = droid.system.droidDegree || "2nd-degree";
+    this.characterData.importedDroidData = droid; // Store for later use
 
     // Droids don't have CON
     this.characterData.abilities.con.base = 0;
     this.characterData.abilities.con.total = 0;
     this.characterData.abilities.con.mod = 0;
 
+    // Auto-select droid's default skills
+    if (droid.system && droid.system.skills) {
+      this.characterData.preselectedSkills = Object.keys(droid.system.skills || {});
+    }
+
     this._recalcAbilities();
 
-    // Create actor with imported droid stats
-    const actor = await this._createImportedDroidActor(droid);
+    ui.notifications.success(`${droid.name} template loaded! Continue with class selection.`);
 
-    if (actor) {
-      ui.notifications.success(`${droid.name} imported successfully!`);
-      this.close();
-      actor.sheet.render(true);
-    } else {
-      ui.notifications.error("Failed to import droid!");
-    }
+    // Continue to class selection
+    this.currentStep = "class";
+    await this.render();
   }
 
   async _createImportedDroidActor(droid) {
