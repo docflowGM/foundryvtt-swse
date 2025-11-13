@@ -97,6 +97,63 @@
  </section>
  {{/if}}
 
+ {{#if (eq currentStep "size")}}
+ <section class="step-size">
+ <h3>Select Droid Size</h3>
+ <p class="hint">Size determines your Cost Factor, ability modifiers, and base statistics.</p>
+
+ <div class="size-grid-full">
+ <button type="button" class="select-size choice-button" data-size="tiny">
+ <h4>Tiny</h4>
+ <p><strong>CF:</strong> 5× | <strong>Mod:</strong> +4 DEX, -4 STR</p>
+ <p><strong>Reflex:</strong> +2 | <strong>Stealth:</strong> +10</p>
+ </button>
+
+ <button type="button" class="select-size choice-button" data-size="small">
+ <h4>Small</h4>
+ <p><strong>CF:</strong> 2× | <strong>Mod:</strong> +2 DEX, -2 STR</p>
+ <p><strong>Reflex:</strong> +1 | <strong>Stealth:</strong> +5</p>
+ </button>
+
+ <button type="button" class="select-size choice-button recommended" data-size="medium">
+ <h4>Medium ★</h4>
+ <p><strong>CF:</strong> 1× | <strong>Mod:</strong> None</p>
+ <p>Recommended for players</p>
+ </button>
+
+ <button type="button" class="select-size choice-button" data-size="large">
+ <h4>Large</h4>
+ <p><strong>CF:</strong> 0.5× | <strong>Mod:</strong> +8 STR, -2 DEX</p>
+ <p><strong>HP:</strong> +10 | <strong>DT:</strong> +5</p>
+ </button>
+
+ <button type="button" class="select-size choice-button" data-size="huge">
+ <h4>Huge</h4>
+ <p><strong>CF:</strong> 0.2× | <strong>Mod:</strong> +16 STR, -4 DEX</p>
+ <p><strong>HP:</strong> +20 | <strong>DT:</strong> +10</p>
+ </button>
+
+ <button type="button" class="select-size choice-button" data-size="gargantuan">
+ <h4>Gargantuan</h4>
+ <p><strong>CF:</strong> 0.1× | <strong>Mod:</strong> +24 STR, -4 DEX</p>
+ <p><strong>HP:</strong> +50 | <strong>DT:</strong> +20</p>
+ </button>
+
+ <button type="button" class="select-size choice-button" data-size="colossal">
+ <h4>Colossal</h4>
+ <p><strong>CF:</strong> 0.05× | <strong>Mod:</strong> +32 STR, -4 DEX</p>
+ <p><strong>HP:</strong> +100 | <strong>DT:</strong> +50</p>
+ </button>
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ </div>
+ </section>
+ {{/if}}
+
  {{#if (eq currentStep "species")}}
  <section class="step-species">
  <h3>Select Species</h3>
@@ -117,6 +174,130 @@
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
  <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ </div>
+ </section>
+ {{/if}}
+
+ {{#if (eq currentStep "droid-builder")}}
+ <section class="step-droid-builder">
+ <h3>Build Your Droid</h3>
+ <p class="hint">Customize your droid with systems and accessories.</p>
+
+ <div class="droid-budget">
+ <div class="budget-item">
+ <strong>Base Credits:</strong> {{characterData.droidCredits.base}} cr
+ </div>
+ <div class="budget-item">
+ <strong>Spent:</strong> <span class="spent-credits">{{characterData.droidSystems.totalCost}}</span> cr
+ </div>
+ <div class="budget-item">
+ <strong>Remaining:</strong> <span class="remaining-credits">{{characterData.droidCredits.remaining}}</span> cr
+ </div>
+ <div class="budget-item">
+ <strong>Weight:</strong> <span class="total-weight">{{characterData.droidSystems.totalWeight}}</span> kg
+ </div>
+ <div class="budget-item">
+ <strong>Cost Factor:</strong> ×{{costFactor}}
+ </div>
+ </div>
+
+ <div class="droid-builder-tabs">
+ <nav class="builder-tabs">
+ <button type="button" class="builder-tab active" data-tab="locomotion">
+ <i class="fas fa-shoe-prints"></i> Locomotion <span class="required">*</span>
+ </button>
+ <button type="button" class="builder-tab" data-tab="processor">
+ <i class="fas fa-microchip"></i> Processor <span class="required">*</span>
+ </button>
+ <button type="button" class="builder-tab" data-tab="appendages">
+ <i class="fas fa-hand-paper"></i> Appendages <span class="required">*</span>
+ </button>
+ <button type="button" class="builder-tab" data-tab="accessories">
+ <i class="fas fa-tools"></i> Accessories
+ </button>
+ </nav>
+
+ <div class="builder-content">
+ {{!-- Locomotion Tab --}}
+ <div class="builder-panel active" data-panel="locomotion">
+ <h4>Locomotion Systems</h4>
+ <p class="panel-hint">Select at least one locomotion system. Additional systems increase in cost.</p>
+ {{!-- Locomotion systems will be populated by JavaScript --}}
+ <div id="locomotion-list" class="systems-list"></div>
+ </div>
+
+ {{!-- Processor Tab --}}
+ <div class="builder-panel" data-panel="processor">
+ <h4>Processor</h4>
+ <p class="panel-hint">Heuristic Processor included free. You may upgrade or add additional processors.</p>
+ <div id="processor-list" class="systems-list"></div>
+ </div>
+
+ {{!-- Appendages Tab --}}
+ <div class="builder-panel" data-panel="appendages">
+ <h4>Appendages</h4>
+ <p class="panel-hint">Two hand appendages included free. You may add or modify appendages.</p>
+ <div id="appendages-list" class="systems-list"></div>
+ </div>
+
+ {{!-- Accessories Tab --}}
+ <div class="builder-panel" data-panel="accessories">
+ <h4>Accessories</h4>
+ <nav class="accessory-tabs">
+ <button type="button" class="accessory-tab active" data-acc-tab="armor">Armor</button>
+ <button type="button" class="accessory-tab" data-acc-tab="communications">Communications</button>
+ <button type="button" class="accessory-tab" data-acc-tab="sensors">Sensors</button>
+ <button type="button" class="accessory-tab" data-acc-tab="shields">Shields</button>
+ <button type="button" class="accessory-tab" data-acc-tab="translators">Translators</button>
+ <button type="button" class="accessory-tab" data-acc-tab="misc">Miscellaneous</button>
+ </nav>
+ <div class="accessory-content">
+ <div class="accessory-panel active" data-acc-panel="armor">
+ <div id="armor-list" class="accessories-list"></div>
+ </div>
+ <div class="accessory-panel" data-acc-panel="communications">
+ <div id="communications-list" class="accessories-list"></div>
+ </div>
+ <div class="accessory-panel" data-acc-panel="sensors">
+ <div id="sensors-list" class="accessories-list"></div>
+ </div>
+ <div class="accessory-panel" data-acc-panel="shields">
+ <div id="shields-list" class="accessories-list"></div>
+ </div>
+ <div class="accessory-panel" data-acc-panel="translators">
+ <div id="translators-list" class="accessories-list"></div>
+ </div>
+ <div class="accessory-panel" data-acc-panel="misc">
+ <div id="misc-list" class="accessories-list"></div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="selected-systems">
+ <h4>Selected Systems</h4>
+ <div class="selected-list">
+ <div class="selected-item default">
+ <span class="item-name">Heuristic Processor</span>
+ <span class="item-cost">Free</span>
+ </div>
+ <div class="selected-item default">
+ <span class="item-name">Hand Appendage ×2</span>
+ <span class="item-cost">Free</span>
+ </div>
+ {{!-- Additional selected items populated by JavaScript --}}
+ <div id="selected-systems-list"></div>
+ </div>
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ <button type="button" class="next-step btn-primary" id="droid-builder-next">
+ Next <i class="fas fa-arrow-right"></i>
  </button>
  </div>
  </section>

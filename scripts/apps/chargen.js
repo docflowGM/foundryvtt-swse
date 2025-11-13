@@ -3,6 +3,8 @@
 // Fixed to properly integrate with SWSEActorSheet
 // ============================================
 
+import { DROID_SYSTEMS } from '../data/droid-systems.js';
+
 export default class CharacterGenerator extends Application {
   constructor(actor = null, options = {}) {
     super(options);
@@ -228,6 +230,12 @@ export default class CharacterGenerator extends Application {
     html.find('.select-talent').click(this._onSelectTalent.bind(this));
     html.find('.skill-select').change(this._onSkillSelect.bind(this));
 
+    // Droid builder
+    html.find('.builder-tab').click(this._onBuilderTabClick.bind(this));
+    html.find('.accessory-tab').click(this._onAccessoryTabClick.bind(this));
+    html.find('.purchase-system').click(this._onPurchaseSystem.bind(this));
+    html.find('.remove-system').click(this._onRemoveSystem.bind(this));
+
     // Name input
     html.find('input[name="character-name"]').change((ev) => {
       this.characterData.name = ev.target.value;
@@ -241,6 +249,11 @@ export default class CharacterGenerator extends Application {
     // Skills UI
     if (this.currentStep === "skills") {
       this._bindSkillsUI(html[0]);
+    }
+
+    // Droid Builder UI
+    if (this.currentStep === "droid-builder") {
+      this._populateDroidBuilder(html[0]);
     }
 
     // Class change
@@ -317,6 +330,14 @@ export default class CharacterGenerator extends Application {
           return false;
         }
         break;
+      case "size":
+        if (!this.characterData.droidSize) {
+          ui.notifications.warn("Please select a droid size.");
+          return false;
+        }
+        break;
+      case "droid-builder":
+        return this._validateDroidBuilder();
       case "species":
         if (!this.characterData.species) {
           ui.notifications.warn("Please select a species.");
@@ -370,10 +391,20 @@ export default class CharacterGenerator extends Application {
     const size = event.currentTarget.dataset.size;
     this.characterData.droidSize = size;
 
-    // Apply size modifiers to abilities
-    if (size === "small") {
-      this.characterData.abilities.dex.racial += 2;
-      this.characterData.abilities.str.racial -= 2;
+    // Apply size modifiers to abilities (in addition to degree bonuses)
+    const sizeModifiers = {
+      "tiny": { dex: 4, str: -4 },
+      "small": { dex: 2, str: -2 },
+      "medium": {},
+      "large": { str: 4, dex: -2 },
+      "huge": { str: 8, dex: -4 },
+      "gargantuan": { str: 12, dex: -4 },
+      "colossal": { str: 16, dex: -4 }
+    };
+
+    const mods = sizeModifiers[size] || {};
+    for (const [ability, modifier] of Object.entries(mods)) {
+      this.characterData.abilities[ability].racial += modifier;
     }
 
     this._recalcAbilities();
@@ -394,11 +425,417 @@ export default class CharacterGenerator extends Application {
   _getCostFactor() {
     const size = this.characterData.droidSize || "medium";
     const costFactors = {
+      "tiny": 5,
       "small": 2,
       "medium": 1,
-      "large": 0.5
+      "large": 0.5,
+      "huge": 0.2,
+      "gargantuan": 0.1,
+      "colossal": 0.05
     };
     return costFactors[size] || 1;
+  }
+
+  // ========================================
+  // DROID BUILDER METHODS
+  // ========================================
+
+  _populateDroidBuilder(root) {
+    const doc = root || this.element[0];
+    if (!doc) return;
+
+    // Get house rule settings for credits
+    const baseCredits = game.settings.get("swse", "droidConstructionCredits") || 1000;
+    this.characterData.droidCredits.base = baseCredits;
+    this.characterData.droidCredits.remaining = baseCredits - this.characterData.droidCredits.spent;
+
+    // Update credits display
+    this._updateDroidCreditsDisplay(doc);
+
+    // Populate all tabs
+    this._populateLocomotionSystems(doc);
+    this._populateProcessorSystems(doc);
+    this._populateAppendageSystems(doc);
+    this._populateAccessories(doc);
+  }
+
+  _populateLocomotionSystems(doc) {
+    const container = doc.querySelector('#locomotion-list');
+    if (!container) return;
+
+    const costFactor = this._getCostFactor();
+    const size = this.characterData.droidSize;
+    let html = '<div class="systems-grid">';
+
+    for (const loco of DROID_SYSTEMS.locomotion) {
+      const speed = loco.speeds[size] || loco.speeds.medium;
+      const cost = loco.costFormula(speed, costFactor);
+      const weight = loco.weightFormula(costFactor);
+      const isPurchased = this.characterData.droidSystems.locomotion?.id === loco.id;
+
+      html += `
+        <div class="system-item ${isPurchased ? 'purchased' : ''}">
+          <h4>${loco.name}</h4>
+          <p><strong>Speed:</strong> ${speed} squares</p>
+          <p><strong>Cost:</strong> ${cost.toLocaleString()} cr</p>
+          <p><strong>Weight:</strong> ${weight} kg</p>
+          <p><strong>Availability:</strong> ${loco.availability}</p>
+          ${isPurchased
+            ? '<button type="button" class="remove-system" data-category="locomotion" data-id="' + loco.id + '"><i class="fas fa-times"></i> Remove</button>'
+            : '<button type="button" class="purchase-system" data-category="locomotion" data-id="' + loco.id + '" data-cost="' + cost + '" data-weight="' + weight + '" data-speed="' + speed + '"><i class="fas fa-cart-plus"></i> Select</button>'
+          }
+        </div>
+      `;
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  _populateProcessorSystems(doc) {
+    const container = doc.querySelector('#processor-list');
+    if (!container) return;
+
+    const costFactor = this._getCostFactor();
+    let html = '<div class="systems-grid">';
+
+    for (const proc of DROID_SYSTEMS.processors) {
+      const cost = proc.costFormula(costFactor);
+      const weight = proc.weightFormula(costFactor);
+      const isPurchased = this.characterData.droidSystems.processor?.id === proc.id;
+      const isFree = proc.id === 'heuristic';
+
+      html += `
+        <div class="system-item ${isPurchased ? 'purchased' : ''} ${isFree ? 'free-item' : ''}">
+          <h4>${proc.name} ${isFree ? '<span class="free-badge">FREE</span>' : ''}</h4>
+          <p class="system-description">${proc.description}</p>
+          <p><strong>Cost:</strong> ${cost > 0 ? cost.toLocaleString() + ' cr' : 'Free'}</p>
+          <p><strong>Weight:</strong> ${weight} kg</p>
+          <p><strong>Availability:</strong> ${proc.availability}</p>
+          ${isPurchased
+            ? '<button type="button" class="remove-system" data-category="processor" data-id="' + proc.id + '"><i class="fas fa-times"></i> Remove</button>'
+            : '<button type="button" class="purchase-system" data-category="processor" data-id="' + proc.id + '" data-cost="' + cost + '" data-weight="' + weight + '"><i class="fas fa-cart-plus"></i> Select</button>'
+          }
+        </div>
+      `;
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  _populateAppendageSystems(doc) {
+    const container = doc.querySelector('#appendages-list');
+    if (!container) return;
+
+    const costFactor = this._getCostFactor();
+    let html = '<div class="systems-grid">';
+
+    for (const app of DROID_SYSTEMS.appendages) {
+      const cost = app.costFormula(costFactor);
+      const weight = app.weightFormula(costFactor);
+      const purchaseCount = this.characterData.droidSystems.appendages.filter(a => a.id === app.id).length;
+      const isFree = app.id === 'hand' && purchaseCount < 2;
+
+      html += `
+        <div class="system-item ${purchaseCount > 0 ? 'purchased' : ''} ${isFree ? 'free-item' : ''}">
+          <h4>${app.name} ${isFree ? '<span class="free-badge">FREE (2×)</span>' : ''}</h4>
+          <p class="system-description">${app.description}</p>
+          <p><strong>Cost:</strong> ${isFree ? 'Free (2×)' : cost.toLocaleString() + ' cr'}</p>
+          <p><strong>Weight:</strong> ${weight} kg</p>
+          <p><strong>Availability:</strong> ${app.availability}</p>
+          ${purchaseCount > 0 ? '<p class="purchase-count">Owned: ' + purchaseCount + '</p>' : ''}
+          <button type="button" class="purchase-system" data-category="appendage" data-id="${app.id}" data-cost="${isFree ? 0 : cost}" data-weight="${weight}"><i class="fas fa-cart-plus"></i> Add</button>
+          ${purchaseCount > 0 ? '<button type="button" class="remove-system" data-category="appendage" data-id="' + app.id + '"><i class="fas fa-minus"></i> Remove One</button>' : ''}
+        </div>
+      `;
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  _populateAccessories(doc) {
+    // Populate all accessory categories
+    this._populateAccessoryCategory(doc, 'armor', DROID_SYSTEMS.accessories.armor);
+    this._populateAccessoryCategory(doc, 'communications', DROID_SYSTEMS.accessories.communications);
+    this._populateAccessoryCategory(doc, 'sensors', DROID_SYSTEMS.accessories.sensors);
+    this._populateAccessoryCategory(doc, 'shields', DROID_SYSTEMS.accessories.shields);
+    this._populateAccessoryCategory(doc, 'translators', DROID_SYSTEMS.accessories.translators);
+    this._populateAccessoryCategory(doc, 'miscellaneous', DROID_SYSTEMS.accessories.miscellaneous);
+  }
+
+  _populateAccessoryCategory(doc, category, items) {
+    const container = doc.querySelector(`#accessories-${category}`);
+    if (!container) return;
+
+    const costFactor = this._getCostFactor();
+    let html = '<div class="systems-grid">';
+
+    for (const item of items) {
+      const cost = item.costFormula(costFactor);
+      const weight = item.weightFormula(costFactor);
+      const isPurchased = this.characterData.droidSystems.accessories.some(a => a.id === item.id);
+
+      html += `
+        <div class="system-item ${isPurchased ? 'purchased' : ''}">
+          <h4>${item.name}</h4>
+          <p class="system-description">${item.description || ''}</p>
+          ${item.type ? '<p><strong>Type:</strong> ' + item.type + '</p>' : ''}
+          ${item.reflexBonus ? '<p><strong>Reflex Bonus:</strong> +' + item.reflexBonus + '</p>' : ''}
+          ${item.maxDex !== undefined ? '<p><strong>Max Dex:</strong> ' + item.maxDex + '</p>' : ''}
+          ${item.armorPenalty ? '<p><strong>Armor Penalty:</strong> ' + item.armorPenalty + '</p>' : ''}
+          ${item.sr ? '<p><strong>Shield Rating:</strong> SR ' + item.sr + '</p>' : ''}
+          ${item.dc ? '<p><strong>Translator DC:</strong> DC ' + item.dc + '</p>' : ''}
+          ${item.bonus ? '<p><strong>Bonus:</strong> ' + item.bonus + '</p>' : ''}
+          <p><strong>Cost:</strong> ${cost.toLocaleString()} cr</p>
+          <p><strong>Weight:</strong> ${weight} kg</p>
+          <p><strong>Availability:</strong> ${item.availability}</p>
+          ${isPurchased
+            ? '<button type="button" class="remove-system" data-category="accessory" data-subcategory="' + category + '" data-id="' + item.id + '"><i class="fas fa-times"></i> Remove</button>'
+            : '<button type="button" class="purchase-system" data-category="accessory" data-subcategory="' + category + '" data-id="' + item.id + '" data-cost="' + cost + '" data-weight="' + weight + '"><i class="fas fa-cart-plus"></i> Purchase</button>'
+          }
+        </div>
+      `;
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  _onBuilderTabClick(event) {
+    event.preventDefault();
+    const tabName = event.currentTarget.dataset.tab;
+    const doc = this.element[0];
+
+    // Switch active tab
+    doc.querySelectorAll('.builder-tab').forEach(t => t.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    // Switch active panel
+    doc.querySelectorAll('.builder-panel').forEach(p => p.classList.remove('active'));
+    const panel = doc.querySelector(`[data-panel="${tabName}"]`);
+    if (panel) panel.classList.add('active');
+  }
+
+  _onAccessoryTabClick(event) {
+    event.preventDefault();
+    const tabName = event.currentTarget.dataset.accessorytab;
+    const doc = this.element[0];
+
+    // Switch active accessory tab
+    doc.querySelectorAll('.accessory-tab').forEach(t => t.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    // Switch active accessory panel
+    doc.querySelectorAll('.accessory-panel').forEach(p => p.classList.remove('active'));
+    const panel = doc.querySelector(`[data-accessory-panel="${tabName}"]`);
+    if (panel) panel.classList.add('active');
+  }
+
+  _onPurchaseSystem(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const category = button.dataset.category;
+    const subcategory = button.dataset.subcategory;
+    const id = button.dataset.id;
+    const cost = Number(button.dataset.cost || 0);
+    const weight = Number(button.dataset.weight || 0);
+
+    // Check if can afford
+    if (cost > this.characterData.droidCredits.remaining) {
+      ui.notifications.warn("Not enough credits!");
+      return;
+    }
+
+    // Find the system data
+    let system;
+    if (category === 'locomotion') {
+      system = DROID_SYSTEMS.locomotion.find(s => s.id === id);
+      if (system) {
+        const speed = button.dataset.speed;
+        this.characterData.droidSystems.locomotion = {
+          id: system.id,
+          name: system.name,
+          cost,
+          weight,
+          speed: Number(speed)
+        };
+      }
+    } else if (category === 'processor') {
+      system = DROID_SYSTEMS.processors.find(s => s.id === id);
+      if (system) {
+        this.characterData.droidSystems.processor = {
+          id: system.id,
+          name: system.name,
+          cost,
+          weight
+        };
+      }
+    } else if (category === 'appendage') {
+      system = DROID_SYSTEMS.appendages.find(s => s.id === id);
+      if (system) {
+        // Check if this is a free hand
+        const handCount = this.characterData.droidSystems.appendages.filter(a => a.id === 'hand').length;
+        const actualCost = (id === 'hand' && handCount < 2) ? 0 : cost;
+
+        this.characterData.droidSystems.appendages.push({
+          id: system.id,
+          name: system.name,
+          cost: actualCost,
+          weight
+        });
+
+        this.characterData.droidCredits.spent += actualCost;
+      }
+    } else if (category === 'accessory') {
+      const accessoryCategory = DROID_SYSTEMS.accessories[subcategory];
+      system = accessoryCategory?.find(s => s.id === id);
+      if (system) {
+        this.characterData.droidSystems.accessories.push({
+          id: system.id,
+          name: system.name,
+          category: subcategory,
+          cost,
+          weight,
+          data: system
+        });
+      }
+    }
+
+    // Update credits (except for appendages which update above)
+    if (category !== 'appendage') {
+      this.characterData.droidCredits.spent += cost;
+    }
+    this.characterData.droidCredits.remaining = this.characterData.droidCredits.base - this.characterData.droidCredits.spent;
+
+    // Recalculate totals
+    this._recalculateDroidTotals();
+
+    // Re-render
+    this.render();
+  }
+
+  _onRemoveSystem(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const category = button.dataset.category;
+    const subcategory = button.dataset.subcategory;
+    const id = button.dataset.id;
+
+    if (category === 'locomotion') {
+      const system = this.characterData.droidSystems.locomotion;
+      if (system) {
+        this.characterData.droidCredits.spent -= system.cost;
+        this.characterData.droidSystems.locomotion = null;
+      }
+    } else if (category === 'processor') {
+      const system = this.characterData.droidSystems.processor;
+      if (system && system.id !== 'heuristic') { // Can't remove free heuristic
+        this.characterData.droidCredits.spent -= system.cost;
+        this.characterData.droidSystems.processor = {
+          name: "Heuristic Processor",
+          id: "heuristic",
+          cost: 0,
+          weight: 5
+        };
+      }
+    } else if (category === 'appendage') {
+      const idx = this.characterData.droidSystems.appendages.findIndex(a => a.id === id);
+      if (idx >= 0) {
+        const system = this.characterData.droidSystems.appendages[idx];
+        this.characterData.droidCredits.spent -= system.cost;
+        this.characterData.droidSystems.appendages.splice(idx, 1);
+      }
+    } else if (category === 'accessory') {
+      const idx = this.characterData.droidSystems.accessories.findIndex(a => a.id === id);
+      if (idx >= 0) {
+        const system = this.characterData.droidSystems.accessories[idx];
+        this.characterData.droidCredits.spent -= system.cost;
+        this.characterData.droidSystems.accessories.splice(idx, 1);
+      }
+    }
+
+    this.characterData.droidCredits.remaining = this.characterData.droidCredits.base - this.characterData.droidCredits.spent;
+
+    // Recalculate totals
+    this._recalculateDroidTotals();
+
+    // Re-render
+    this.render();
+  }
+
+  _recalculateDroidTotals() {
+    let totalCost = 0;
+    let totalWeight = 0;
+
+    if (this.characterData.droidSystems.locomotion) {
+      totalCost += this.characterData.droidSystems.locomotion.cost;
+      totalWeight += this.characterData.droidSystems.locomotion.weight;
+    }
+
+    if (this.characterData.droidSystems.processor) {
+      totalCost += this.characterData.droidSystems.processor.cost;
+      totalWeight += this.characterData.droidSystems.processor.weight;
+    }
+
+    for (const app of this.characterData.droidSystems.appendages) {
+      totalCost += app.cost;
+      totalWeight += app.weight;
+    }
+
+    for (const acc of this.characterData.droidSystems.accessories) {
+      totalCost += acc.cost;
+      totalWeight += acc.weight;
+    }
+
+    this.characterData.droidSystems.totalCost = totalCost;
+    this.characterData.droidSystems.totalWeight = totalWeight;
+  }
+
+  _updateDroidCreditsDisplay(doc) {
+    const display = doc.querySelector('#droid-credits-display');
+    if (display) {
+      const remaining = this.characterData.droidCredits.remaining;
+      const spent = this.characterData.droidCredits.spent;
+      const total = this.characterData.droidCredits.base;
+
+      display.innerHTML = `
+        <div class="credits-info">
+          <p><strong>Total Credits:</strong> ${total.toLocaleString()} cr</p>
+          <p><strong>Spent:</strong> ${spent.toLocaleString()} cr</p>
+          <p><strong>Remaining:</strong> <span class="${remaining < 0 ? 'overbudget' : ''}">${remaining.toLocaleString()} cr</span></p>
+        </div>
+      `;
+    }
+  }
+
+  _validateDroidBuilder() {
+    // Must have locomotion
+    if (!this.characterData.droidSystems.locomotion) {
+      ui.notifications.warn("Droids must have a locomotion system!");
+      return false;
+    }
+
+    // Must have processor (always true since Heuristic is free)
+    if (!this.characterData.droidSystems.processor) {
+      ui.notifications.warn("Droids must have a processor!");
+      return false;
+    }
+
+    // Must have at least one appendage
+    if (this.characterData.droidSystems.appendages.length === 0) {
+      ui.notifications.warn("Droids must have at least one appendage!");
+      return false;
+    }
+
+    // Can't be over budget
+    if (this.characterData.droidCredits.remaining < 0) {
+      ui.notifications.warn("You are over budget! Remove some systems.");
+      return false;
+    }
+
+    return true;
   }
 
   async _onImportDroid(event) {
