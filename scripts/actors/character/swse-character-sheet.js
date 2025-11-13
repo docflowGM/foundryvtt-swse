@@ -42,8 +42,8 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     event.preventDefault();
     console.log('SWSE | Level up clicked');
 
-    // Use the static open method
-    await SWSELevelUp.open(this.actor);
+    // Use the enhanced version with visual talent trees and multi-classing
+    await SWSELevelUp.openEnhanced(this.actor);
   }
 
   /**

@@ -313,6 +313,37 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  game.settings.register("swse", "talentTreeRestriction", {
+    name: "Talent Tree Access",
+    hint: "Which talent trees can players choose from when leveling up",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "current": "Current Class Only",
+      "all": "Any Class With Levels"
+    },
+    default: "current"
+  });
+
+  // ============================================
+  // Multi-classing
+  // ============================================
+
+  game.settings.register("swse", "multiclassBonusChoice", {
+    name: "Multi-class Bonus Choice",
+    hint: "What bonus players get when taking a second base class",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "single_feat": "Single Starting Feat",
+      "single_skill": "Single Trained Skill",
+      "all_feats": "All Starting Feats"
+    },
+    default: "single_feat"
+  });
+
   // ============================================
   // Space Combat
   // ============================================
