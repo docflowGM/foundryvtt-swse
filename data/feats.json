@@ -2,7 +2,7 @@
   {
     "name": "Acrobatic Strike",
     "type": "feat",
-    "prereqassets/uisite": "Acrobatics 15 ranks",
+    "prerequisite": "Acrobatics 15 ranks",
     "description": "You can use Acrobatics to tumble through an enemy’s space and gain a +2 bonus on your next melee attack against that enemy.",
     "sourcebook": "Galaxy at War",
     "page": 23,
@@ -22,7 +22,7 @@
   {
     "name": "Adaptable Talent",
     "type": "feat",
-    "prereqassets/uisite": "Level 6",
+    "prerequisite": "Level 6",
     "description": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute.",
     "sourcebook": "Galaxy of Intrigue",
     "page": 23,
@@ -40,7 +40,7 @@
   {
     "name": "Advanced Melee Weapon Proficiency",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You are proficient with advanced melee weapons and do not take the -5 penalty when using them.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 85,
@@ -59,7 +59,7 @@
   {
     "name": "Armor Proficiency (Light)",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You are proficient with light armor and do not take armor check penalties on attack rolls.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 85,
@@ -79,7 +79,7 @@
   {
     "name": "Armor Proficiency (Medium)",
     "type": "feat",
-    "prereqassets/uisite": "Armor Proficiency (Light)",
+    "prerequisite": "Armor Proficiency (Light)",
     "description": "You are proficient with medium armor and do not take armor check penalties on attack rolls.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 85,
@@ -98,7 +98,7 @@
   {
     "name": "Armor Proficiency (Heavy)",
     "type": "feat",
-    "prereqassets/uisite": "Armor Proficiency (Medium)",
+    "prerequisite": "Armor Proficiency (Medium)",
     "description": "You are proficient with heavy armor and do not take armor check penalties on attack rolls.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 85,
@@ -117,7 +117,7 @@
   {
     "name": "Assured Attack",
     "type": "feat",
-    "prereqassets/uisite": "Base attack bonus +6",
+    "prerequisite": "Base attack bonus +6",
     "description": "Once per encounter, you may reroll an attack roll and take the better result.",
     "sourcebook": "Galaxy at War",
     "page": 23,
@@ -136,7 +136,7 @@
   {
     "name": "Autofire Assault",
     "type": "feat",
-    "prereqassets/uisite": "Point Blank Shot, Weapon Proficiency (rifles)",
+    "prerequisite": "Point Blank Shot, Weapon Proficiency (rifles)",
     "description": "You gain a +2 bonus on damage rolls made with autofire attacks.",
     "sourcebook": "Galaxy at War",
     "page": 23,
@@ -156,7 +156,7 @@
   {
     "name": "Bantha Rush",
     "type": "feat",
-    "prereqassets/uisite": "Strength 13, Power Attack",
+    "prerequisite": "Strength 13, Power Attack",
     "description": "You may make a bull rush attempt as a swift action after hitting with a melee attack.",
     "sourcebook": "Galaxy at War",
     "page": 23,
@@ -176,7 +176,7 @@
   {
     "name": "Battle Meditation",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "You may spend a Force Point to grant allies within line of sight a +1 bonus to attack rolls, skill checks, and Will Defense for 1 minute.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 94,
@@ -196,7 +196,7 @@
   {
     "name": "Block",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "Once per round, when you are hit by a melee attack, you may negate the hit. Make a Use the Force check; if the result equals or exceeds the attack roll, the attack is negated.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 94,
@@ -216,7 +216,7 @@
   {
     "name": "Burst of Speed",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13",
+    "prerequisite": "Dex 13",
     "description": "Once per encounter, you may move an additional 2 squares as a swift action.",
     "sourcebook": "Galaxy at War",
     "page": 24,
@@ -235,7 +235,7 @@
   {
     "name": "Charging Fire",
     "type": "feat",
-    "prereqassets/uisite": "Point Blank Shot",
+    "prerequisite": "Point Blank Shot",
     "description": "You may make a ranged attack at the end of a charge, taking a -2 penalty on the attack roll.",
     "sourcebook": "Galaxy at War",
     "page": 24,
@@ -255,7 +255,7 @@
   {
     "name": "Cleave",
     "type": "feat",
-    "prereqassets/uisite": "Str 13, Power Attack",
+    "prerequisite": "Str 13, Power Attack",
     "description": "If you deal enough damage to drop a target, you may make an immediate melee attack against another target within reach.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 85,
@@ -274,7 +274,7 @@
   {
     "name": "Combat Reflexes",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13",
+    "prerequisite": "Dex 13",
     "description": "You may make a number of attacks of opportunity per round equal to your Dexterity modifier.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 85,
@@ -294,7 +294,7 @@
   {
     "name": "Conditioned",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You gain a +2 bonus on Endurance checks and may reroll a failed Endurance check once per encounter.",
     "sourcebook": "Galaxy at War",
     "page": 24,
@@ -314,7 +314,7 @@
   {
     "name": "Coordinated Attack",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "When you and an ally both attack the same target in the same round, you each gain a +1 bonus to attack rolls against that target.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 85,
@@ -334,9 +334,9 @@
   {
     "name": "Crush",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force, Force Grip",
+    "prerequisite": "Trained in Use the Force, Force Grip",
     "description": "You may spend a Force Point to move a target -1 step down the condition track when using Force Grip.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -353,7 +353,7 @@
   {
     "name": "Deadeye",
     "type": "feat",
-    "prereqassets/uisite": "Point Blank Shot",
+    "prerequisite": "Point Blank Shot",
     "description": "You may reroll a ranged attack roll once per encounter and take the better result.",
     "sourcebook": "Galaxy at War",
     "page": 24,
@@ -373,7 +373,7 @@
   {
     "name": "Delay Damage",
     "type": "feat",
-    "prereqassets/uisite": "Con 13",
+    "prerequisite": "Con 13",
     "description": "Once per encounter, you may delay the effects of damage taken until the end of your next turn.",
     "sourcebook": "Galaxy at War",
     "page": 24,
@@ -392,7 +392,7 @@
   {
     "name": "Deflect",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "Once per round, when you are hit by a ranged attack, you may negate the hit. Make a Use the Force check; if the result equals or exceeds the attack roll, the attack is negated.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 94,
@@ -412,7 +412,7 @@
   {
     "name": "Desperate Gambit",
     "type": "feat",
-    "prereqassets/uisite": "Level 6",
+    "prerequisite": "Level 6",
     "description": "Once per day, you may take a -5 penalty on a skill check to treat the result as if you had rolled a natural 20.",
     "sourcebook": "Galaxy of Intrigue",
     "page": 24,
@@ -430,7 +430,7 @@
   {
     "name": "Double Attack",
     "type": "feat",
-    "prereqassets/uisite": "Base attack bonus +6",
+    "prerequisite": "Base attack bonus +6",
     "description": "You may make two attacks on your turn as a full-round action, each at a -5 penalty.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 86,
@@ -450,7 +450,7 @@
   {
     "name": "Dual Weapon Mastery I",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13, Two-Weapon Fighting",
+    "prerequisite": "Dex 13, Two-Weapon Fighting",
     "description": "You reduce the penalty for fighting with two weapons by 2.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 86,
@@ -470,7 +470,7 @@
   {
     "name": "Dual Weapon Mastery II",
     "type": "feat",
-    "prereqassets/uisite": "Dual Weapon Mastery I",
+    "prerequisite": "Dual Weapon Mastery I",
     "description": "You reduce the penalty for fighting with two weapons by an additional 2.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 86,
@@ -489,7 +489,7 @@
   {
     "name": "Dual Weapon Mastery III",
     "type": "feat",
-    "prereqassets/uisite": "Dual Weapon Mastery II",
+    "prerequisite": "Dual Weapon Mastery II",
     "description": "You take no penalty for fighting with two weapons.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 86,
@@ -508,7 +508,7 @@
   {
     "name": "Educated",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "Choose two Knowledge skills. You gain a +5 bonus on checks with those skills.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 86,
@@ -527,7 +527,7 @@
   {
     "name": "Elusive Target",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13, Dodge",
+    "prerequisite": "Dex 13, Dodge",
     "description": "When fighting defensively or using the total defense action, you may redirect missed melee attacks to another target adjacent to you.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 86,
@@ -547,7 +547,7 @@
   {
     "name": "Far Shot",
     "type": "feat",
-    "prereqassets/uisite": "Point Blank Shot",
+    "prerequisite": "Point Blank Shot",
     "description": "You reduce the range penalties for ranged attacks by half.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 86,
@@ -567,7 +567,7 @@
   {
     "name": "Fast Surge",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "You may activate Surge as a swift action instead of a standard action.",
     "sourcebook": "Jedi Academy Training Manual",
     "page": 30,
@@ -586,7 +586,7 @@
   {
     "name": "Fast Talk",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Persuasion",
+    "prerequisite": "Trained in Persuasion",
     "description": "You may make a Persuasion check to feint in combat as a swift action instead of a standard action.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 86,
@@ -606,7 +606,7 @@
   {
     "name": "Force Boon",
     "type": "feat",
-    "prereqassets/uisite": "Force Sensitivity",
+    "prerequisite": "Force Sensitivity",
     "description": "You gain an additional Force Point at the beginning of each level.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 94,
@@ -625,7 +625,7 @@
   {
     "name": "Force Focus",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "You gain a +2 bonus on Use the Force checks made to activate a specific Force power you select when taking this feat.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 94,
@@ -644,7 +644,7 @@
   {
     "name": "Force Training",
     "type": "feat",
-    "prereqassets/uisite": "Force Sensitivity, Trained in Use the Force",
+    "prerequisite": "Force Sensitivity, Trained in Use the Force",
     "description": "You learn a number of Force powers equal to 1 + your Wisdom modifier.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 94,
@@ -663,9 +663,9 @@
   {
     "name": "Forceful Blast",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force, Force Slam",
+    "prerequisite": "Trained in Use the Force, Force Slam",
     "description": "You may spend a Force Point to move a target -1 step down the condition track when using Force Slam.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -682,9 +682,9 @@
   {
     "name": "Forceful Grip",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force, Force Grip",
+    "prerequisite": "Trained in Use the Force, Force Grip",
     "description": "You gain a +2 bonus on Use the Force checks made to activate Force Grip.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -701,9 +701,9 @@
   {
     "name": "Forceful Slam",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force, Force Slam",
+    "prerequisite": "Trained in Use the Force, Force Slam",
     "description": "You gain a +2 bonus on Use the Force checks made to activate Force Slam.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -720,9 +720,9 @@
   {
     "name": "Forceful Throw",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force, Move Object",
+    "prerequisite": "Trained in Use the Force, Move Object",
     "description": "You gain a +2 bonus on Use the Force checks made to activate Move Object.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -739,9 +739,9 @@
   {
     "name": "Forceful Vitality",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "You gain a +2 bonus on Endurance checks and may reroll a failed Endurance check once per encounter.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -759,7 +759,7 @@
   {
     "name": "Frightful Presence",
     "type": "feat",
-    "prereqassets/uisite": "Charisma 15",
+    "prerequisite": "Charisma 15",
     "description": "As a standard action, you may make a Persuasion check to intimidate all enemies within 6 squares. On a success, targets move -1 step down the condition track.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 86,
@@ -779,7 +779,7 @@
   {
     "name": "Frightening Presence",
     "type": "feat",
-    "prereqassets/uisite": "Charisma 15, Frightful Presence",
+    "prerequisite": "Charisma 15, Frightful Presence",
     "description": "When you use Frightful Presence, targets that fail their Will Defense check move -2 steps down the condition track instead of -1.",
     "sourcebook": "Galaxy of Intrigue",
     "page": 25,
@@ -799,7 +799,7 @@
   {
     "name": "Force Regimen Mastery",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "You may spend a Force Point to gain the benefit of a Force Regimen you’ve completed within the last 24 hours.",
     "sourcebook": "Jedi Academy Training Manual",
     "page": 31,
@@ -819,9 +819,9 @@
   {
     "name": "Forceful Recovery",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "You may spend a Force Point to reroll a failed Endurance check to recover from a condition or persistent effect.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -839,9 +839,9 @@
   {
     "name": "Forceful Saber Throw",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force, Saber Throw",
+    "prerequisite": "Trained in Use the Force, Saber Throw",
     "description": "You gain a +2 bonus on Use the Force checks made to activate Saber Throw.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -859,9 +859,9 @@
   {
     "name": "Forceful Strike",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force, Force Stun",
+    "prerequisite": "Trained in Use the Force, Force Stun",
     "description": "You may spend a Force Point to move a target -1 step down the condition track when using Force Stun.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -878,9 +878,9 @@
   {
     "name": "Forceful Stun",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force, Force Stun",
+    "prerequisite": "Trained in Use the Force, Force Stun",
     "description": "You gain a +2 bonus on Use the Force checks made to activate Force Stun.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -897,9 +897,9 @@
   {
     "name": "Forceful Telekinesis",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force, Move Object",
+    "prerequisite": "Trained in Use the Force, Move Object",
     "description": "You may spend a Force Point to move a target -1 step down the condition track when using Move Object.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -916,9 +916,9 @@
   {
     "name": "Forceful Warrior",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "You gain a +2 bonus on melee attack rolls made while using a Force power.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -936,9 +936,9 @@
   {
     "name": "Forceful Weapon",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force, Battle Strike",
+    "prerequisite": "Trained in Use the Force, Battle Strike",
     "description": "You gain a +2 bonus on Use the Force checks made to activate Battle Strike.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -955,9 +955,9 @@
   {
     "name": "Forceful Will",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "You gain a +2 bonus on Will Defense against mind-affecting effects and may reroll a failed Will Defense check once per encounter.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 34,
     "tags": [
       "force",
@@ -975,7 +975,7 @@
   {
     "name": "Friendly Fire Avoidance",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13, Point Blank Shot",
+    "prerequisite": "Dex 13, Point Blank Shot",
     "description": "You may choose to exclude a number of squares equal to your Dexterity modifier from the area of effect of your autofire attacks.",
     "sourcebook": "Galaxy at War",
     "page": 25,
@@ -995,7 +995,7 @@
   {
     "name": "Frightening Presence",
     "type": "feat",
-    "prereqassets/uisite": "Charisma 15, Frightful Presence",
+    "prerequisite": "Charisma 15, Frightful Presence",
     "description": "When you use Frightful Presence, targets that fail their Will Defense check move -2 steps down the condition track instead of -1.",
     "sourcebook": "Galaxy of Intrigue",
     "page": 25,
@@ -1015,7 +1015,7 @@
   {
     "name": "Grappling Strike",
     "type": "feat",
-    "prereqassets/uisite": "Base attack bonus +6",
+    "prerequisite": "Base attack bonus +6",
     "description": "When you hit with a melee attack, you may initiate a grapple as a free action without provoking an attack of opportunity.",
     "sourcebook": "Galaxy at War",
     "page": 25,
@@ -1035,7 +1035,7 @@
   {
     "name": "Great Fortitude",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You gain a +2 bonus to your Fortitude Defense.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1055,7 +1055,7 @@
   {
     "name": "Greater Weapon Focus",
     "type": "feat",
-    "prereqassets/uisite": "Weapon Focus with selected weapon group, base attack bonus +8",
+    "prerequisite": "Weapon Focus with selected weapon group, base attack bonus +8",
     "description": "You gain a +1 bonus on attack rolls with the selected weapon group. This stacks with Weapon Focus.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1075,7 +1075,7 @@
   {
     "name": "Greater Weapon Specialization",
     "type": "feat",
-    "prereqassets/uisite": "Weapon Specialization with selected weapon group, base attack bonus +12",
+    "prerequisite": "Weapon Specialization with selected weapon group, base attack bonus +12",
     "description": "You gain a +2 bonus on damage rolls with the selected weapon group. This stacks with Weapon Specialization.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1095,7 +1095,7 @@
   {
     "name": "Hard Target",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13, Dodge",
+    "prerequisite": "Dex 13, Dodge",
     "description": "You gain a +2 bonus to Reflex Defense against ranged attacks while moving at least 2 squares on your turn.",
     "sourcebook": "Galaxy at War",
     "page": 25,
@@ -1115,7 +1115,7 @@
   {
     "name": "Harm’s Way",
     "type": "feat",
-    "prereqassets/uisite": "Base attack bonus +6",
+    "prerequisite": "Base attack bonus +6",
     "description": "As a reaction, you may take damage dealt to an adjacent ally instead of them.",
     "sourcebook": "Galaxy at War",
     "page": 25,
@@ -1135,7 +1135,7 @@
   {
     "name": "Headstrong",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You gain a +2 bonus on Will Defense against fear effects and may reroll a failed Will Defense check once per encounter.",
     "sourcebook": "Galaxy at War",
     "page": 25,
@@ -1156,7 +1156,7 @@
   {
     "name": "Heavy Weapon Proficiency",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You are proficient with heavy weapons and do not take the -5 penalty when using them.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1175,7 +1175,7 @@
   {
     "name": "Heroic Surge",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "Once per encounter, you may take an additional standard or move action on your turn.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1195,7 +1195,7 @@
   {
     "name": "Hew",
     "type": "feat",
-    "prereqassets/uisite": "Power Attack",
+    "prerequisite": "Power Attack",
     "description": "When you use Power Attack, you ignore an amount of damage reduction equal to your base attack bonus.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1215,7 +1215,7 @@
   {
     "name": "Improved Defenses",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You gain a +1 bonus to your Reflex, Fortitude, and Will Defense.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1238,7 +1238,7 @@
   {
     "name": "Improved Damage Threshold",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "Your damage threshold increases by 5.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1258,7 +1258,7 @@
   {
     "name": "Improved Disarm",
     "type": "feat",
-    "prereqassets/uisite": "Int 13, Disarm",
+    "prerequisite": "Int 13, Disarm",
     "description": "You gain a +5 bonus on attack rolls made to disarm an opponent.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1278,7 +1278,7 @@
   {
     "name": "Improved Grapple",
     "type": "feat",
-    "prereqassets/uisite": "Int 13, Grapple",
+    "prerequisite": "Int 13, Grapple",
     "description": "You gain a +5 bonus on grapple checks and do not provoke attacks of opportunity when initiating a grapple.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1298,7 +1298,7 @@
   {
     "name": "Improved Knock Prone",
     "type": "feat",
-    "prereqassets/uisite": "Int 13, Knock Prone",
+    "prerequisite": "Int 13, Knock Prone",
     "description": "You gain a +5 bonus on attack rolls made to knock an opponent prone.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1318,7 +1318,7 @@
   {
     "name": "Improved Stun",
     "type": "feat",
-    "prereqassets/uisite": "Int 13, Stun",
+    "prerequisite": "Int 13, Stun",
     "description": "You gain a +5 bonus on attack rolls made to stun an opponent.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1338,7 +1338,7 @@
   {
     "name": "Indomitable Will",
     "type": "feat",
-    "prereqassets/uisite": "Wis 13",
+    "prerequisite": "Wis 13",
     "description": "You gain a +2 bonus on Will Defense against mind-affecting effects and may reroll a failed Will Defense check once per encounter.",
     "sourcebook": "Galaxy at War",
     "page": 26,
@@ -1359,7 +1359,7 @@
   {
     "name": "Intimidating Presence",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Persuasion",
+    "prerequisite": "Trained in Persuasion",
     "description": "You may use Persuasion to intimidate as a swift action instead of a standard action.",
     "sourcebook": "Galaxy of Intrigue",
     "page": 26,
@@ -1378,9 +1378,9 @@
     }
   },
   {
-    "name": "Intassets/uitive Initiative",
+    "name": "Intuitive Initiative",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "You may reroll your Initiative check and take the better result. You must keep the new result even if it is worse.",
     "sourcebook": "Jedi Academy Training Manual",
     "page": 31,
@@ -1400,8 +1400,8 @@
   {
     "name": "Jack of All Trades",
     "type": "feat",
-    "prereqassets/uisite": null,
-    "description": "You may make untrained skill checks with any skill, even those that normally reqassets/uire training.",
+    "prerequisite": null,
+    "description": "You may make untrained skill checks with any skill, even those that normally require training.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
     "tags": [
@@ -1414,13 +1414,13 @@
       "Scoundrel"
     ],
     "system": {
-      "description": "You may make untrained skill checks with any skill, even those that normally reqassets/uire training."
+      "description": "You may make untrained skill checks with any skill, even those that normally require training."
     }
   },
   {
     "name": "Keen Force Mind",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "You gain a +2 bonus on Use the Force checks made to activate mind-affecting Force powers.",
     "sourcebook": "Jedi Academy Training Manual",
     "page": 31,
@@ -1440,7 +1440,7 @@
   {
     "name": "Knock Prone",
     "type": "feat",
-    "prereqassets/uisite": "Int 13",
+    "prerequisite": "Int 13",
     "description": "You may attempt to knock an opponent prone with a melee attack. If successful, the target falls prone.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1459,7 +1459,7 @@
   {
     "name": "Lightning Reflexes",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You gain a +2 bonus to your Reflex Defense.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1477,9 +1477,9 @@
     }
   },
   {
-    "name": "Lingassets/uist",
+    "name": "Linguist",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You learn three additional languages. You may take this feat multiple times.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1498,7 +1498,7 @@
   {
     "name": "Low Profile",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13",
+    "prerequisite": "Dex 13",
     "description": "You gain cover from enemies at long range and may reroll Stealth checks made to avoid detection.",
     "sourcebook": "Galaxy at War",
     "page": 26,
@@ -1519,7 +1519,7 @@
   {
     "name": "Lucky Shot",
     "type": "feat",
-    "prereqassets/uisite": "Point Blank Shot",
+    "prerequisite": "Point Blank Shot",
     "description": "Once per encounter, you may reroll a ranged attack roll and take the better result.",
     "sourcebook": "Galaxy at War",
     "page": 26,
@@ -1540,7 +1540,7 @@
   {
     "name": "Melee Defense",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "As a swift action, you may take a -5 penalty on melee attack rolls to gain a +5 bonus to your Reflex Defense against melee attacks until the start of your next turn.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -1560,7 +1560,7 @@
   {
     "name": "Mighty Swing",
     "type": "feat",
-    "prereqassets/uisite": "Base attack bonus +6",
+    "prerequisite": "Base attack bonus +6",
     "description": "Once per encounter, you may reroll a melee attack roll and take the better result.",
     "sourcebook": "Galaxy at War",
     "page": 26,
@@ -1580,7 +1580,7 @@
   {
     "name": "Mobile Fighting",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13, Dodge",
+    "prerequisite": "Dex 13, Dodge",
     "description": "You may move up to your speed when using the withdraw action, and you gain a +2 bonus to Reflex Defense against attacks of opportunity provoked by movement.",
     "sourcebook": "Galaxy at War",
     "page": 26,
@@ -1600,7 +1600,7 @@
   {
     "name": "Mobility",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13",
+    "prerequisite": "Dex 13",
     "description": "You gain a +5 bonus to Reflex Defense against attacks of opportunity provoked by movement.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -1620,7 +1620,7 @@
   {
     "name": "Mounted Combat",
     "type": "feat",
-    "prereqassets/uisite": "Ride 1 rank",
+    "prerequisite": "Ride 1 rank",
     "description": "Once per round, when your mount is hit in combat, you may make a Ride check to negate the hit.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -1640,7 +1640,7 @@
   {
     "name": "Natural Leader",
     "type": "feat",
-    "prereqassets/uisite": "Charisma 13",
+    "prerequisite": "Charisma 13",
     "description": "You may grant allies within line of sight a +1 bonus on attack rolls and skill checks for 1 minute as a standard action once per encounter.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -1660,7 +1660,7 @@
   {
     "name": "Noble Fencing Style",
     "type": "feat",
-    "prereqassets/uisite": "Weapon Finesse, Noble level 1",
+    "prerequisite": "Weapon Finesse, Noble level 1",
     "description": "When wielding a weapon with Weapon Finesse, you may use your Charisma modifier instead of Strength for attack rolls.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -1680,7 +1680,7 @@
   {
     "name": "Pin",
     "type": "feat",
-    "prereqassets/uisite": "Int 13",
+    "prerequisite": "Int 13",
     "description": "You may attempt to pin a grappled opponent. If successful, the target is immobilized until they escape the grapple.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -1699,7 +1699,7 @@
   {
     "name": "Point Blank Shot",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You gain a +1 bonus on attack and damage rolls against targets within 30 squares.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -1720,7 +1720,7 @@
   {
     "name": "Power Attack",
     "type": "feat",
-    "prereqassets/uisite": "Str 13",
+    "prerequisite": "Str 13",
     "description": "You may take a penalty on melee attack rolls to gain a bonus on melee damage rolls equal to the penalty.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -1740,7 +1740,7 @@
   {
     "name": "Precise Shot",
     "type": "feat",
-    "prereqassets/uisite": "Point Blank Shot",
+    "prerequisite": "Point Blank Shot",
     "description": "You do not take the -5 penalty for firing into melee.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -1759,9 +1759,9 @@
     }
   },
   {
-    "name": "Qassets/uick Draw",
+    "name": "Quick Draw",
     "type": "feat",
-    "prereqassets/uisite": "Base attack bonus +1",
+    "prerequisite": "Base attack bonus +1",
     "description": "You may draw or holster a weapon as a swift action instead of a move action.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -1782,7 +1782,7 @@
   {
     "name": "Rapid Shot",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13",
+    "prerequisite": "Dex 13",
     "description": "When making a full attack with a ranged weapon, you may make one additional attack. All attacks take a -2 penalty.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -1803,7 +1803,7 @@
   {
     "name": "Reactive Stealth",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Stealth",
+    "prerequisite": "Trained in Stealth",
     "description": "Once per encounter, you may reroll a Stealth check and take the better result.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -1823,7 +1823,7 @@
   {
     "name": "Reckless Charge",
     "type": "feat",
-    "prereqassets/uisite": "Str 13",
+    "prerequisite": "Str 13",
     "description": "When you charge, you gain a +2 bonus on melee attack rolls but take a -2 penalty to Reflex Defense until the start of your next turn.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -1843,7 +1843,7 @@
   {
     "name": "Redirect Shot",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force, Deflect",
+    "prerequisite": "Trained in Use the Force, Deflect",
     "description": "When you successfully negate a ranged attack with Deflect, you may redirect the shot to another target within line of sight.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 94,
@@ -1863,7 +1863,7 @@
   {
     "name": "Resilient Strength",
     "type": "feat",
-    "prereqassets/uisite": "Str 13",
+    "prerequisite": "Str 13",
     "description": "You gain a +2 bonus on Fortitude Defense against effects that target Strength and may reroll a failed check once per encounter.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -1883,8 +1883,8 @@
   {
     "name": "Resilient Talent",
     "type": "feat",
-    "prereqassets/uisite": "Level 6",
-    "description": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute. You may use this talent even if you do not meet its prereqassets/uisites.",
+    "prerequisite": "Level 6",
+    "description": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute. You may use this talent even if you do not meet its prerequisites.",
     "sourcebook": "Galaxy of Intrigue",
     "page": 27,
     "tags": [
@@ -1895,13 +1895,13 @@
     ],
     "bonus_feat_for": [],
     "system": {
-      "description": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute. You may use this talent even if you do not meet its prereqassets/uisites."
+      "description": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute. You may use this talent even if you do not meet its prerequisites."
     }
   },
   {
     "name": "Running Attack",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13",
+    "prerequisite": "Dex 13",
     "description": "You may make a single melee or ranged attack at any point during a move action taken on your turn.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -1922,7 +1922,7 @@
   {
     "name": "Saber Throw",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "You may throw your lightsaber as a ranged attack using Use the Force instead of a ranged attack roll. The lightsaber returns to your hand at the end of the turn.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 94,
@@ -1942,7 +1942,7 @@
   {
     "name": "Savage Attack",
     "type": "feat",
-    "prereqassets/uisite": "Str 13",
+    "prerequisite": "Str 13",
     "description": "You may reroll a damage roll and take the better result. You must keep the new result even if it is worse.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -1962,7 +1962,7 @@
   {
     "name": "Scavenger",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Mechanics",
+    "prerequisite": "Trained in Mechanics",
     "description": "You may reroll a Mechanics check made to disable or salvage a device and take the better result.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -1983,7 +1983,7 @@
   {
     "name": "Rapid Strike",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13",
+    "prerequisite": "Dex 13",
     "description": "When making a full attack with a melee weapon, you may make one additional attack. All attacks take a -2 penalty.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -2003,7 +2003,7 @@
   {
     "name": "Reactive Awareness",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Perception",
+    "prerequisite": "Trained in Perception",
     "description": "Once per encounter, you may reroll a Perception check and take the better result.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -2024,7 +2024,7 @@
   {
     "name": "Resilient Reflexes",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13",
+    "prerequisite": "Dex 13",
     "description": "You gain a +2 bonus on Reflex Defense against effects that target Dexterity and may reroll a failed check once per encounter.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -2044,7 +2044,7 @@
   {
     "name": "Resilient Will",
     "type": "feat",
-    "prereqassets/uisite": "Wis 13",
+    "prerequisite": "Wis 13",
     "description": "You gain a +2 bonus on Will Defense against effects that target Wisdom and may reroll a failed check once per encounter.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -2064,7 +2064,7 @@
   {
     "name": "Skill Focus",
     "type": "feat",
-    "prereqassets/uisite": "Trained in the chosen skill",
+    "prerequisite": "Trained in the chosen skill",
     "description": "You gain a +5 bonus on all checks with the selected skill.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -2084,7 +2084,7 @@
   {
     "name": "Skill Training",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You become trained in one additional skill. You may take this feat multiple times.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -2104,7 +2104,7 @@
   {
     "name": "Slippery Maneuver",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13",
+    "prerequisite": "Dex 13",
     "description": "You may reroll a check made to escape a grapple or avoid being pinned and take the better result.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -2124,7 +2124,7 @@
   {
     "name": "Sniper",
     "type": "feat",
-    "prereqassets/uisite": "Point Blank Shot",
+    "prerequisite": "Point Blank Shot",
     "description": "You may aim as a move action instead of a standard action when using a rifle or pistol.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -2144,7 +2144,7 @@
   {
     "name": "Spring Attack",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13, Mobility",
+    "prerequisite": "Dex 13, Mobility",
     "description": "When making a melee attack, you may move both before and after the attack, up to your speed, without provoking attacks of opportunity from the target.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -2164,7 +2164,7 @@
   {
     "name": "Staggering Attack",
     "type": "feat",
-    "prereqassets/uisite": "Base attack bonus +6",
+    "prerequisite": "Base attack bonus +6",
     "description": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -2183,7 +2183,7 @@
   {
     "name": "Stealthy",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You gain a +2 bonus on Stealth checks and may reroll a failed Stealth check once per encounter.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -2203,7 +2203,7 @@
   {
     "name": "Stunning Strike",
     "type": "feat",
-    "prereqassets/uisite": "Base attack bonus +6",
+    "prerequisite": "Base attack bonus +6",
     "description": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -2222,7 +2222,7 @@
   {
     "name": "Surgical Precision",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Treat Injury",
+    "prerequisite": "Trained in Treat Injury",
     "description": "You gain a +2 bonus on Treat Injury checks and may reroll a failed check once per encounter.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -2242,8 +2242,8 @@
   {
     "name": "Tech Specialist",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Mechanics",
-    "description": "You may modify equipment, weapons, armor, or droids to grant a +2 equipment bonus to one skill or ability. Takes 1 hour and reqassets/uires a workshop.",
+    "prerequisite": "Trained in Mechanics",
+    "description": "You may modify equipment, weapons, armor, or droids to grant a +2 equipment bonus to one skill or ability. Takes 1 hour and requires a workshop.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
     "tags": [
@@ -2256,13 +2256,13 @@
       "Scoundrel"
     ],
     "system": {
-      "description": "You may modify equipment, weapons, armor, or droids to grant a +2 equipment bonus to one skill or ability. Takes 1 hour and reqassets/uires a workshop."
+      "description": "You may modify equipment, weapons, armor, or droids to grant a +2 equipment bonus to one skill or ability. Takes 1 hour and requires a workshop."
     }
   },
   {
     "name": "Toughness",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You gain +5 hit points.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -2282,7 +2282,7 @@
   {
     "name": "Triple Crit",
     "type": "feat",
-    "prereqassets/uisite": "Weapon Focus with selected weapon group, base attack bonus +12",
+    "prerequisite": "Weapon Focus with selected weapon group, base attack bonus +12",
     "description": "When you score a critical hit with the selected weapon group, you deal triple damage instead of double.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -2302,7 +2302,7 @@
   {
     "name": "Triple Crit Specialist",
     "type": "feat",
-    "prereqassets/uisite": "Triple Crit, Weapon Specialization with selected weapon group",
+    "prerequisite": "Triple Crit, Weapon Specialization with selected weapon group",
     "description": "When you score a critical hit with the selected weapon group, you deal triple damage and move the target -1 step down the condition track.",
     "sourcebook": "Galaxy at War",
     "page": 27,
@@ -2322,7 +2322,7 @@
   {
     "name": "Trustworthy",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You gain a +2 bonus on Persuasion checks and may reroll a failed Persuasion check once per encounter.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -2342,7 +2342,7 @@
   {
     "name": "Two-Weapon Fighting",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13",
+    "prerequisite": "Dex 13",
     "description": "You reduce the penalty for fighting with two weapons by 2.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -2362,9 +2362,9 @@
   {
     "name": "Unstoppable Force",
     "type": "feat",
-    "prereqassets/uisite": "Trained in Use the Force",
+    "prerequisite": "Trained in Use the Force",
     "description": "You may spend a Force Point to ignore damage reduction or energy resistance when using a damaging Force power.",
-    "sourcebook": "The Force Unleashed Campaign Gassets/uide",
+    "sourcebook": "The Force Unleashed Campaign Guide",
     "page": 35,
     "tags": [
       "force",
@@ -2382,7 +2382,7 @@
   {
     "name": "Vehicular Combat",
     "type": "feat",
-    "prereqassets/uisite": "Pilot 1 rank",
+    "prerequisite": "Pilot 1 rank",
     "description": "Once per round, when your vehicle is hit in combat, you may make a Pilot check to negate the hit.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -2402,7 +2402,7 @@
   {
     "name": "Weapon Finesse",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13",
+    "prerequisite": "Dex 13",
     "description": "You may use your Dexterity modifier instead of Strength for attack rolls with light melee weapons.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -2423,7 +2423,7 @@
   {
     "name": "Weapon Focus",
     "type": "feat",
-    "prereqassets/uisite": "Proficient with selected weapon group",
+    "prerequisite": "Proficient with selected weapon group",
     "description": "You gain a +1 bonus on attack rolls with the selected weapon group.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -2443,7 +2443,7 @@
   {
     "name": "Weapon Proficiency (Heavy Weapons)",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You are proficient with heavy weapons and do not take the -5 penalty when using them.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -2462,7 +2462,7 @@
   {
     "name": "Weapon Proficiency (Pistols)",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You are proficient with pistols and do not take the -5 penalty when using them.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -2483,7 +2483,7 @@
   {
     "name": "Weapon Proficiency (Rifles)",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You are proficient with rifles and do not take the -5 penalty when using them.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -2503,7 +2503,7 @@
   {
     "name": "Weapon Proficiency (Simple Weapons)",
     "type": "feat",
-    "prereqassets/uisite": null,
+    "prerequisite": null,
     "description": "You are proficient with simple weapons and do not take the -5 penalty when using them.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 87,
@@ -2525,7 +2525,7 @@
   {
     "name": "Weapon Specialization",
     "type": "feat",
-    "prereqassets/uisite": "Soldier level 4, Weapon Focus with selected weapon group",
+    "prerequisite": "Soldier level 4, Weapon Focus with selected weapon group",
     "description": "You gain a +2 bonus on damage rolls with the selected weapon group.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -2545,7 +2545,7 @@
   {
     "name": "Whirlwind Attack",
     "type": "feat",
-    "prereqassets/uisite": "Dex 13, Mobility, Spring Attack",
+    "prerequisite": "Dex 13, Mobility, Spring Attack",
     "description": "When making a melee attack, you may attack all adjacent enemies once each as a full-round action.",
     "sourcebook": "Saga Edition Core Rulebook",
     "page": 88,
@@ -2565,7 +2565,7 @@
   {
     "name": "Wounding Strike",
     "type": "feat",
-    "prereqassets/uisite": "Base attack bonus +6",
+    "prerequisite": "Base attack bonus +6",
     "description": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack.",
     "sourcebook": "Galaxy at War",
     "page": 27,

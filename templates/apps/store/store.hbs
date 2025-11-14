@@ -1,55 +1,601 @@
 <div class="swse-sheet">
-<form class="swse-store holo-theme" autocomplete="off">
- <header class="store-header flexrow">
- <h1 class="aurebesh">Galactic Trade Exchange</h1>
- <div class="credits-display">
- Credits: <span class="credits-value">{{actor.system.credits}}</span>
- </div>
- </header>
+<form class="swse-store" autocomplete="off">
+  {{!-- Holographic Welcome Banner --}}
+  <div class="holo-banner">
+    <div class="holo-speaker">
+      <i class="fas fa-volume-up"></i>
+      <span class="speaker-name">RENDARR:</span>
+    </div>
+    <div class="holo-message">
+      "Welcome to my shop, lad! Spend to your heart's desire!"
+    </div>
+  </div>
 
- <nav class="sheet-tabs tabs" data-group="store">
- <a class="item" data-tab="weapons">Weapons</a>
- <a class="item" data-tab="armor">Armor</a>
- <a class="item" data-tab="equipment">Equipment</a>
- <a class="item" data-tab="vehicles">Vehicles</a>
- <a class="item" data-tab="droids">Droids</a>
- <a class="item" data-tab="misc">Misc</a>
- {{#if isGM}}
- <a class="item gm-controls" data-tab="gm">GM</a>
- {{/if}}
- </nav>
+  {{!-- Credit Wallet Display --}}
+  <div class="credit-wallet">
+    <div class="wallet-header">
+      <i class="fas fa-wallet"></i>
+      <span>ACCOUNT BALANCE</span>
+    </div>
+    <div class="wallet-amount">
+      <span class="credits-icon">₢</span>
+      <span class="remaining-credits">{{credits}}</span>
+      <span class="credits-label">credits</span>
+    </div>
+  </div>
 
- <section class="sheet-body">
- {{#each categories as |items category|}}
- <div class="tab" data-group="store" data-tab="{{category}}">
- <h2>{{capitalize category}}</h2>
- <div class="grid-3col">
- {{#each items}}
- <div class="store-item holo-card" data-item-id="{{this._id}}">
- <h3>{{this.name}}</h3>
- <p>{{this.system.description}}</p>
- <p>Cost: {{this.system.cost}} cr</p>
- <button type="button" class="buy-item holo-btn">Buy</button>
- {{#if ../isGM}}
- <button type="button" class="sell-item holo-btn red">Force Sell</button>
- {{/if}}
- </div>
- {{/each}}
- </div>
- </div>
- {{/each}}
+  {{!-- Shop Navigation Tabs --}}
+  <nav class="shop-tabs">
+    <button type="button" class="shop-tab active" data-tab="weapons">
+      <i class="fas fa-crosshairs"></i>
+      <span class="tab-label">Weapons</span>
+    </button>
+    <button type="button" class="shop-tab" data-tab="armor">
+      <i class="fas fa-shield-alt"></i>
+      <span class="tab-label">Armor</span>
+    </button>
+    <button type="button" class="shop-tab" data-tab="grenades">
+      <i class="fas fa-bomb"></i>
+      <span class="tab-label">Grenades</span>
+    </button>
+    <button type="button" class="shop-tab" data-tab="medical">
+      <i class="fas fa-medkit"></i>
+      <span class="tab-label">Medical</span>
+    </button>
+    <button type="button" class="shop-tab" data-tab="tech">
+      <i class="fas fa-laptop"></i>
+      <span class="tab-label">Tech</span>
+    </button>
+    <button type="button" class="shop-tab" data-tab="tools">
+      <i class="fas fa-wrench"></i>
+      <span class="tab-label">Tools</span>
+    </button>
+    <button type="button" class="shop-tab" data-tab="survival">
+      <i class="fas fa-campground"></i>
+      <span class="tab-label">Survival</span>
+    </button>
+    <button type="button" class="shop-tab" data-tab="security">
+      <i class="fas fa-lock"></i>
+      <span class="tab-label">Security</span>
+    </button>
+    <button type="button" class="shop-tab" data-tab="equipment">
+      <i class="fas fa-toolbox"></i>
+      <span class="tab-label">Other</span>
+    </button>
+    <button type="button" class="shop-tab" data-tab="droids">
+      <i class="fas fa-robot"></i>
+      <span class="tab-label">Droids</span>
+    </button>
+    <button type="button" class="shop-tab" data-tab="vehicles">
+      <i class="fas fa-rocket"></i>
+      <span class="tab-label">Vehicles</span>
+    </button>
+    <button type="button" class="shop-tab cart-tab" data-tab="cart">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="tab-label">Cart</span>
+      <span class="cart-count" id="cart-count">0</span>
+    </button>
+    {{#if isGM}}
+    <button type="button" class="shop-tab gm-tab" data-tab="gm">
+      <i class="fas fa-cog"></i>
+      <span class="tab-label">GM</span>
+    </button>
+    {{/if}}
+  </nav>
 
- {{#if isGM}}
- <div class="tab gm" data-group="store" data-tab="gm">
- <h2>GM Price Modifiers</h2>
- <label>Global Markup (%)</label>
- <input type="number" name="markup" value="{{markup}}" / data-dtype="Number">
- <label>Global Discount (%)</label>
- <input type="number" name="discount" value="{{discount}}" / data-dtype="Number">
- <button type="button" class="save-gm holo-btn">Save</button>
- </div>
- {{/if}}
- </section>
+  {{!-- Shop Body --}}
+  <div class="shop-body">
+
+    {{!-- Weapons Tab --}}
+    <div class="shop-panel active" data-panel="weapons">
+      <div class="panel-header">
+        <h4><i class="fas fa-crosshairs"></i> Weapons</h4>
+        <p class="panel-desc">Blasters, vibroblades, and more</p>
+      </div>
+      <div class="products-grid" id="weapons-list">
+        {{#each categories.weapons}}
+        <div class="product-card" data-item-id="{{this._id}}">
+          <div class="product-image">
+            <img src="{{this.img}}" alt="{{this.name}}"/>
+          </div>
+          <div class="product-info">
+            <h5 class="product-name">{{this.name}}</h5>
+            <p class="product-desc">{{truncate this.system.description 80}}</p>
+            <div class="product-stats">
+              {{#if this.system.damage}}
+              <span class="stat-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
+              {{/if}}
+            </div>
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              <span class="credits-icon">₢</span>
+              <span class="price-amount">{{this.system.cost}}</span>
+            </div>
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
+              <i class="fas fa-cart-plus"></i> Buy
+            </button>
+          </div>
+        </div>
+        {{else}}
+        <div class="empty-message">
+          <i class="fas fa-box-open"></i>
+          <p>No weapons available in the database.</p>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Armor Tab --}}
+    <div class="shop-panel" data-panel="armor">
+      <div class="panel-header">
+        <h4><i class="fas fa-shield-alt"></i> Armor</h4>
+        <p class="panel-desc">Protective equipment and gear</p>
+      </div>
+      <div class="products-grid" id="armor-list">
+        {{#each categories.armor}}
+        <div class="product-card" data-item-id="{{this._id}}">
+          <div class="product-image">
+            <img src="{{this.img}}" alt="{{this.name}}"/>
+          </div>
+          <div class="product-info">
+            <h5 class="product-name">{{this.name}}</h5>
+            <p class="product-desc">{{truncate this.system.description 80}}</p>
+            <div class="product-stats">
+              {{#if this.system.reflexBonus}}
+              <span class="stat-item"><i class="fas fa-shield-alt"></i> +{{this.system.reflexBonus}} Reflex</span>
+              {{/if}}
+            </div>
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              <span class="credits-icon">₢</span>
+              <span class="price-amount">{{this.system.cost}}</span>
+            </div>
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
+              <i class="fas fa-cart-plus"></i> Buy
+            </button>
+          </div>
+        </div>
+        {{else}}
+        <div class="empty-message">
+          <i class="fas fa-box-open"></i>
+          <p>No armor available in the database.</p>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Grenades Tab --}}
+    <div class="shop-panel" data-panel="grenades">
+      <div class="panel-header">
+        <h4><i class="fas fa-bomb"></i> Grenades & Explosives</h4>
+        <p class="panel-desc">Grenades, mines, and explosive devices</p>
+      </div>
+      <div class="products-grid" id="grenades-list">
+        {{#each categories.grenades}}
+        <div class="product-card" data-item-id="{{this._id}}">
+          <div class="product-image">
+            <img src="{{this.img}}" alt="{{this.name}}"/>
+          </div>
+          <div class="product-info">
+            <h5 class="product-name">{{this.name}}</h5>
+            <p class="product-desc">{{truncate this.system.description 80}}</p>
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              <span class="credits-icon">₢</span>
+              <span class="price-amount">{{this.system.cost}}</span>
+            </div>
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
+              <i class="fas fa-cart-plus"></i> Buy
+            </button>
+          </div>
+        </div>
+        {{else}}
+        <div class="empty-message">
+          <i class="fas fa-box-open"></i>
+          <p>No grenades available in the database.</p>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Medical Tab --}}
+    <div class="shop-panel" data-panel="medical">
+      <div class="panel-header">
+        <h4><i class="fas fa-medkit"></i> Medical Supplies</h4>
+        <p class="panel-desc">Medpacs, bacta, stims, and healing items</p>
+      </div>
+      <div class="products-grid" id="medical-list">
+        {{#each categories.medical}}
+        <div class="product-card" data-item-id="{{this._id}}">
+          <div class="product-image">
+            <img src="{{this.img}}" alt="{{this.name}}"/>
+          </div>
+          <div class="product-info">
+            <h5 class="product-name">{{this.name}}</h5>
+            <p class="product-desc">{{truncate this.system.description 80}}</p>
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              <span class="credits-icon">₢</span>
+              <span class="price-amount">{{this.system.cost}}</span>
+            </div>
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
+              <i class="fas fa-cart-plus"></i> Buy
+            </button>
+          </div>
+        </div>
+        {{else}}
+        <div class="empty-message">
+          <i class="fas fa-box-open"></i>
+          <p>No medical supplies available in the database.</p>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Tech Tab --}}
+    <div class="shop-panel" data-panel="tech">
+      <div class="panel-header">
+        <h4><i class="fas fa-laptop"></i> Tech Items</h4>
+        <p class="panel-desc">Comlinks, datapads, scanners, and computers</p>
+      </div>
+      <div class="products-grid" id="tech-list">
+        {{#each categories.tech}}
+        <div class="product-card" data-item-id="{{this._id}}">
+          <div class="product-image">
+            <img src="{{this.img}}" alt="{{this.name}}"/>
+          </div>
+          <div class="product-info">
+            <h5 class="product-name">{{this.name}}</h5>
+            <p class="product-desc">{{truncate this.system.description 80}}</p>
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              <span class="credits-icon">₢</span>
+              <span class="price-amount">{{this.system.cost}}</span>
+            </div>
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
+              <i class="fas fa-cart-plus"></i> Buy
+            </button>
+          </div>
+        </div>
+        {{else}}
+        <div class="empty-message">
+          <i class="fas fa-box-open"></i>
+          <p>No tech items available in the database.</p>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Tools Tab --}}
+    <div class="shop-panel" data-panel="tools">
+      <div class="panel-header">
+        <h4><i class="fas fa-wrench"></i> Tools & Kits</h4>
+        <p class="panel-desc">Repair tools, fusion cutters, and equipment kits</p>
+      </div>
+      <div class="products-grid" id="tools-list">
+        {{#each categories.tools}}
+        <div class="product-card" data-item-id="{{this._id}}">
+          <div class="product-image">
+            <img src="{{this.img}}" alt="{{this.name}}"/>
+          </div>
+          <div class="product-info">
+            <h5 class="product-name">{{this.name}}</h5>
+            <p class="product-desc">{{truncate this.system.description 80}}</p>
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              <span class="credits-icon">₢</span>
+              <span class="price-amount">{{this.system.cost}}</span>
+            </div>
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
+              <i class="fas fa-cart-plus"></i> Buy
+            </button>
+          </div>
+        </div>
+        {{else}}
+        <div class="empty-message">
+          <i class="fas fa-box-open"></i>
+          <p>No tools available in the database.</p>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Survival Tab --}}
+    <div class="shop-panel" data-panel="survival">
+      <div class="panel-header">
+        <h4><i class="fas fa-campground"></i> Survival Gear</h4>
+        <p class="panel-desc">Rations, breath masks, climbing gear, and survival equipment</p>
+      </div>
+      <div class="products-grid" id="survival-list">
+        {{#each categories.survival}}
+        <div class="product-card" data-item-id="{{this._id}}">
+          <div class="product-image">
+            <img src="{{this.img}}" alt="{{this.name}}"/>
+          </div>
+          <div class="product-info">
+            <h5 class="product-name">{{this.name}}</h5>
+            <p class="product-desc">{{truncate this.system.description 80}}</p>
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              <span class="credits-icon">₢</span>
+              <span class="price-amount">{{this.system.cost}}</span>
+            </div>
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
+              <i class="fas fa-cart-plus"></i> Buy
+            </button>
+          </div>
+        </div>
+        {{else}}
+        <div class="empty-message">
+          <i class="fas fa-box-open"></i>
+          <p>No survival gear available in the database.</p>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Security Tab --}}
+    <div class="shop-panel" data-panel="security">
+      <div class="panel-header">
+        <h4><i class="fas fa-lock"></i> Security Items</h4>
+        <p class="panel-desc">Binders, locks, and security devices</p>
+      </div>
+      <div class="products-grid" id="security-list">
+        {{#each categories.security}}
+        <div class="product-card" data-item-id="{{this._id}}">
+          <div class="product-image">
+            <img src="{{this.img}}" alt="{{this.name}}"/>
+          </div>
+          <div class="product-info">
+            <h5 class="product-name">{{this.name}}</h5>
+            <p class="product-desc">{{truncate this.system.description 80}}</p>
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              <span class="credits-icon">₢</span>
+              <span class="price-amount">{{this.system.cost}}</span>
+            </div>
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
+              <i class="fas fa-cart-plus"></i> Buy
+            </button>
+          </div>
+        </div>
+        {{else}}
+        <div class="empty-message">
+          <i class="fas fa-box-open"></i>
+          <p>No security items available in the database.</p>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Other Equipment Tab --}}
+    <div class="shop-panel" data-panel="equipment">
+      <div class="panel-header">
+        <h4><i class="fas fa-toolbox"></i> Other Equipment</h4>
+        <p class="panel-desc">Miscellaneous supplies and general gear</p>
+      </div>
+      <div class="products-grid" id="equipment-list">
+        {{#each categories.equipment}}
+        <div class="product-card" data-item-id="{{this._id}}">
+          <div class="product-image">
+            <img src="{{this.img}}" alt="{{this.name}}"/>
+          </div>
+          <div class="product-info">
+            <h5 class="product-name">{{this.name}}</h5>
+            <p class="product-desc">{{truncate this.system.description 80}}</p>
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              <span class="credits-icon">₢</span>
+              <span class="price-amount">{{this.system.cost}}</span>
+            </div>
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
+              <i class="fas fa-cart-plus"></i> Buy
+            </button>
+          </div>
+        </div>
+        {{else}}
+        <div class="empty-message">
+          <i class="fas fa-box-open"></i>
+          <p>No other equipment available in the database.</p>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Droids Tab --}}
+    <div class="shop-panel" data-panel="droids">
+      <div class="panel-header">
+        <h4><i class="fas fa-robot"></i> Droids</h4>
+        <p class="panel-desc">Mechanical companions and assistants</p>
+      </div>
+
+      {{!-- Special: Create Custom Droid --}}
+      <div class="special-purchase-section">
+        <div class="special-card create-droid-card">
+          <div class="special-icon">
+            <i class="fas fa-wrench"></i>
+          </div>
+          <div class="special-info">
+            <h5>Build a Custom Droid</h5>
+            <p>Design your own droid companion from scratch using the droid construction system.</p>
+            <p class="special-price"><strong>Minimum:</strong> 1,000 credits</p>
+          </div>
+          <button type="button" class="create-custom-droid holo-btn special" {{#if (lt credits 1000)}}disabled{{/if}}>
+            <i class="fas fa-tools"></i> Build Droid
+          </button>
+        </div>
+      </div>
+
+      {{!-- Pre-Made Droids from Database --}}
+      <div class="products-grid" id="droids-list">
+        {{#each categories.droids}}
+        <div class="product-card droid-card" data-actor-id="{{this._id}}">
+          <div class="product-image">
+            <img src="{{this.img}}" alt="{{this.name}}"/>
+          </div>
+          <div class="product-info">
+            <h5 class="product-name">{{this.name}}</h5>
+            <p class="product-desc">{{truncate this.system.biography 80}}</p>
+            <div class="product-stats">
+              {{#if this.system.level}}
+              <span class="stat-item"><i class="fas fa-level-up-alt"></i> Level {{this.system.level}}</span>
+              {{/if}}
+            </div>
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              <span class="credits-icon">₢</span>
+              <span class="price-amount">{{this.system.cost}}</span>
+            </div>
+            <button type="button" class="buy-droid holo-btn" data-actor-id="{{this._id}}">
+              <i class="fas fa-cart-plus"></i> Buy
+            </button>
+          </div>
+        </div>
+        {{else}}
+        <div class="empty-message">
+          <i class="fas fa-box-open"></i>
+          <p>No pre-made droids available in the database.</p>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Vehicles Tab --}}
+    <div class="shop-panel" data-panel="vehicles">
+      <div class="panel-header">
+        <h4><i class="fas fa-rocket"></i> Vehicles & Starships</h4>
+        <p class="panel-desc">Transportation and combat vehicles</p>
+      </div>
+
+      <div class="products-grid" id="vehicles-list">
+        {{#each categories.vehicles}}
+        <div class="product-card vehicle-card" data-actor-id="{{this._id}}">
+          <div class="product-image">
+            <img src="{{this.img}}" alt="{{this.name}}"/>
+          </div>
+          <div class="product-info">
+            <h5 class="product-name">{{this.name}}</h5>
+            <p class="product-desc">{{truncate this.system.biography 80}}</p>
+            <div class="product-stats">
+              {{#if this.system.speed}}
+              <span class="stat-item"><i class="fas fa-tachometer-alt"></i> Speed {{this.system.speed}}</span>
+              {{/if}}
+            </div>
+          </div>
+          <div class="product-footer vehicle-purchase-options">
+            <div class="product-price">
+              <div class="price-option">
+                <label>New</label>
+                <div class="price-value">
+                  <span class="credits-icon">₢</span>
+                  <span class="price-amount">{{this.system.cost}}</span>
+                </div>
+              </div>
+              <div class="price-option">
+                <label>Used</label>
+                <div class="price-value">
+                  <span class="credits-icon">₢</span>
+                  <span class="price-amount">{{divide this.system.cost 2}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="vehicle-buttons">
+              <button type="button" class="buy-vehicle holo-btn" data-actor-id="{{this._id}}" data-condition="new">
+                <i class="fas fa-cart-plus"></i> Buy New
+              </button>
+              <button type="button" class="buy-vehicle holo-btn secondary" data-actor-id="{{this._id}}" data-condition="used">
+                <i class="fas fa-cart-plus"></i> Buy Used
+              </button>
+            </div>
+          </div>
+        </div>
+        {{else}}
+        <div class="empty-message">
+          <i class="fas fa-box-open"></i>
+          <p>No vehicles available in the database.</p>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Cart Tab --}}
+    <div class="shop-panel cart-panel" data-panel="cart">
+      <div class="panel-header">
+        <h4><i class="fas fa-shopping-cart"></i> Your Cart</h4>
+        <p class="panel-desc">Review your purchases</p>
+      </div>
+
+      <div class="cart-container">
+        <div class="cart-items" id="cart-items-list">
+          {{!-- Populated by JavaScript --}}
+        </div>
+
+        <div class="cart-summary">
+          <div class="summary-line">
+            <span class="summary-label">Subtotal:</span>
+            <span class="summary-value">
+              <span class="credits-icon">₢</span>
+              <span id="cart-subtotal">0</span>
+            </span>
+          </div>
+          <div class="summary-line total-line">
+            <span class="summary-label">Total Cost:</span>
+            <span class="summary-value">
+              <span class="credits-icon">₢</span>
+              <span id="cart-total">0</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="cart-actions">
+          <button type="button" class="checkout-btn holo-btn" id="checkout-cart">
+            <i class="fas fa-credit-card"></i> Complete Purchase
+          </button>
+          <button type="button" class="clear-cart-btn holo-btn secondary" id="clear-cart">
+            <i class="fas fa-trash"></i> Clear Cart
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {{!-- GM Tab --}}
+    {{#if isGM}}
+    <div class="shop-panel gm-panel" data-panel="gm">
+      <div class="panel-header">
+        <h4><i class="fas fa-cog"></i> GM Controls</h4>
+        <p class="panel-desc">Configure store settings</p>
+      </div>
+
+      <div class="gm-controls-grid">
+        <div class="control-group">
+          <label>Global Markup (%)</label>
+          <input type="number" name="markup" value="{{markup}}" data-dtype="Number" placeholder="0"/>
+          <p class="control-hint">Increase prices by this percentage</p>
+        </div>
+
+        <div class="control-group">
+          <label>Global Discount (%)</label>
+          <input type="number" name="discount" value="{{discount}}" data-dtype="Number" placeholder="0"/>
+          <p class="control-hint">Decrease prices by this percentage</p>
+        </div>
+
+        <button type="button" class="save-gm holo-btn">
+          <i class="fas fa-save"></i> Save Settings
+        </button>
+      </div>
+    </div>
+    {{/if}}
+
+  </div>{{!-- shop-body --}}
 </form>
-
-</div><!-- swse-sheet -->
+</div>{{!-- swse-sheet --}}

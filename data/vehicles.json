@@ -3626,7 +3626,7 @@
     "type": "equipment"
   },
   {
-    "name": "HSP-10 Pursassets/uit Airspeeder",
+    "name": "HSP-10 Pursuit Airspeeder",
     "vehicle_type": "Speeder",
     "tags": [
       "speeder"
@@ -8214,7 +8214,7 @@
     "type": "equipment"
   },
   {
-    "name": "Corellian Consular-Class Crassets/uiser",
+    "name": "Corellian Consular-Class Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -9122,7 +9122,7 @@
     "type": "equipment"
   },
   {
-    "name": "Diamond-Class Crassets/uiser",
+    "name": "Diamond-Class Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -9433,7 +9433,7 @@
     "type": "equipment"
   },
   {
-    "name": "Gozanti Crassets/uiser",
+    "name": "Gozanti Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -9568,7 +9568,7 @@
     "type": "equipment"
   },
   {
-    "name": "Guardian-Class Light Crassets/uiser",
+    "name": "Guardian-Class Light Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -9864,7 +9864,7 @@
     "type": "equipment"
   },
   {
-    "name": "ILH-KK Citadel-Class Civilian Crassets/uiser",
+    "name": "ILH-KK Citadel-Class Civilian Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -10496,7 +10496,7 @@
     "type": "equipment"
   },
   {
-    "name": "Modified ILH-KK Citadel-Class Civilian Crassets/uiser",
+    "name": "Modified ILH-KK Citadel-Class Civilian Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -12516,7 +12516,7 @@
     "type": "equipment"
   },
   {
-    "name": "Archaic Dreadnaught-Class Heavy Crassets/uiser",
+    "name": "Archaic Dreadnaught-Class Heavy Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -12544,7 +12544,7 @@
     "type": "equipment"
   },
   {
-    "name": "Carrack-Class Light Crassets/uiser",
+    "name": "Carrack-Class Light Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -12700,7 +12700,7 @@
     "type": "equipment"
   },
   {
-    "name": "Dreadnaught-Class Heavy Crassets/uiser",
+    "name": "Dreadnaught-Class Heavy Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -12940,7 +12940,7 @@
     "type": "equipment"
   },
   {
-    "name": "Immobilizer 418 Interdictor-Class Heavy Crassets/uiser",
+    "name": "Immobilizer 418 Interdictor-Class Heavy Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13216,7 +13216,7 @@
     "type": "equipment"
   },
   {
-    "name": "Marauder-Class Rebel Crassets/uiser",
+    "name": "Marauder-Class Rebel Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13244,7 +13244,7 @@
     "type": "equipment"
   },
   {
-    "name": "MC80 Star Crassets/uiser",
+    "name": "MC80 Star Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13292,7 +13292,7 @@
     "type": "equipment"
   },
   {
-    "name": "MC80a Star Crassets/uiser",
+    "name": "MC80a Star Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13464,7 +13464,7 @@
     "type": "equipment"
   },
   {
-    "name": "Nova-Class Battlecrassets/uiser",
+    "name": "Nova-Class Battlecruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13512,7 +13512,7 @@
     "type": "equipment"
   },
   {
-    "name": "Nova-Class Battlecrassets/uiser Refit",
+    "name": "Nova-Class Battlecruiser Refit",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13636,7 +13636,7 @@
     "type": "equipment"
   },
   {
-    "name": "Prototype Dreadnaught-Class Heavy Crassets/uiser",
+    "name": "Prototype Dreadnaught-Class Heavy Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13816,7 +13816,7 @@
     "type": "equipment"
   },
   {
-    "name": "Strike-Class Medium Crassets/uiser",
+    "name": "Strike-Class Medium Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -13960,7 +13960,7 @@
     "type": "equipment"
   },
   {
-    "name": "Vindicator-Class Heavy Crassets/uiser",
+    "name": "Vindicator-Class Heavy Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14008,7 +14008,7 @@
     "type": "equipment"
   },
   {
-    "name": "Centurion-Class Battlecrassets/uiser",
+    "name": "Centurion-Class Battlecruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14152,7 +14152,7 @@
     "type": "equipment"
   },
   {
-    "name": "Broadside-Class Crassets/uiser",
+    "name": "Broadside-Class Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14248,7 +14248,7 @@
     "type": "equipment"
   },
   {
-    "name": "Neutron Star-Class Bulk Crassets/uiser",
+    "name": "Neutron Star-Class Bulk Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14296,7 +14296,7 @@
     "type": "equipment"
   },
   {
-    "name": "Tartan-Class Patrol Crassets/uiser",
+    "name": "Tartan-Class Patrol Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14440,7 +14440,7 @@
     "type": "equipment"
   },
   {
-    "name": "Charger c70 Corellian Consular-Class Crassets/uiser",
+    "name": "Charger c70 Corellian Consular-Class Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14688,7 +14688,7 @@
     "type": "equipment"
   },
   {
-    "name": "Subjugator-Class Heavy Crassets/uiser",
+    "name": "Subjugator-Class Heavy Cruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"
@@ -14899,7 +14899,7 @@
     "type": "equipment"
   },
   {
-    "name": "MC140 Scythe-Class Battlecrassets/uiser",
+    "name": "MC140 Scythe-Class Battlecruiser",
     "vehicle_type": "Vehicle",
     "tags": [
       "vehicle"

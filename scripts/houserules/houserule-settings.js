@@ -50,6 +50,66 @@ export function registerHouseruleSettings() {
   });
 
   // ============================================
+  // Droids
+  // ============================================
+
+  game.settings.register("swse", "droidPointBuyPool", {
+    name: "Droid Point Buy Pool",
+    hint: "Total points available for droid characters using point buy (only shown if Point Buy is selected)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 20,
+    range: {
+      min: 10,
+      max: 50,
+      step: 1
+    }
+  });
+
+  game.settings.register("swse", "livingPointBuyPool", {
+    name: "Living Point Buy Pool",
+    hint: "Total points available for living characters using point buy (only shown if Point Buy is selected)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 25,
+    range: {
+      min: 10,
+      max: 50,
+      step: 1
+    }
+  });
+
+  game.settings.register("swse", "droidConstructionCredits", {
+    name: "Droid Construction Credits",
+    hint: "Base credits available for custom droid construction (before class credits)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 1000,
+    range: {
+      min: 0,
+      max: 5000,
+      step: 100
+    }
+  });
+
+  game.settings.register("swse", "standardDroidModelLimit", {
+    name: "Standard Droid Model Credit Limit",
+    hint: "Maximum total cost for standard droid models (including modifications)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 5000,
+    range: {
+      min: 1000,
+      max: 10000,
+      step: 500
+    }
+  });
+
+  // ============================================
   // Hit Points
   // ============================================
   
@@ -290,7 +350,7 @@ export function registerHouseruleSettings() {
   // ============================================
   // Combat Feats
   // ============================================
-  
+
   game.settings.register("swse", "weaponFinesseDefault", {
     name: "Default Weapon Finesse",
     hint: "All characters automatically have Weapon Finesse",
@@ -298,6 +358,67 @@ export function registerHouseruleSettings() {
     config: true,
     type: Boolean,
     default: false
+  });
+
+  // ============================================
+  // Talents
+  // ============================================
+
+  game.settings.register("swse", "groupDeflectBlock", {
+    name: "Group Deflect and Block Talents",
+    hint: "Display Deflect and Block as a grouped talent in character generator and talent trees",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register("swse", "talentTreeRestriction", {
+    name: "Talent Tree Access",
+    hint: "Which talent trees can players choose from when leveling up",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "current": "Current Class Only",
+      "all": "Any Class With Levels"
+    },
+    default: "current"
+  });
+
+  // ============================================
+  // Multi-classing
+  // ============================================
+
+  game.settings.register("swse", "multiclassBonusChoice", {
+    name: "Multi-class Bonus Choice",
+    hint: "What bonus players get when taking a second base class (players can always choose feat OR skill)",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "single_feat": "Single Starting Feat (or Skill)",
+      "single_skill": "Single Trained Skill (or Feat)",
+      "all_feats": "All Starting Feats"
+    },
+    default: "single_feat"
+  });
+
+  // ============================================
+  // Ability Score Increases
+  // ============================================
+
+  game.settings.register("swse", "abilityIncreaseMethod", {
+    name: "Ability Score Increase Method",
+    hint: "How players can allocate ability increases at levels 4, 8, 12, 16, 20",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "standard": "1 Point to 2 Attributes (Standard)",
+      "flexible": "1 to 2 Attributes OR 2 to 1 Attribute"
+    },
+    default: "flexible"
   });
 
   // ============================================

@@ -1,11 +1,29 @@
 /**
  * SWSE Level Up System
  * Handles character leveling with class selection and HP rolls
+ * Uses enhanced version for visual talent trees and multi-classing
  */
 
 import { getClasses } from "../core/swse-data.js";
+import { SWSELevelUpEnhanced } from "./swse-levelup-enhanced.js";
 
 export class SWSELevelUp {
+    /**
+     * Open enhanced level up dialog
+     * @param {Actor} actor - The actor to level up
+     * @returns {Promise<boolean>} True if leveled up, false if cancelled
+     */
+    static async openEnhanced(actor) {
+        if (!actor) {
+            ui.notifications.error("No actor provided for level up.");
+            return false;
+        }
+
+        const levelUpDialog = new SWSELevelUpEnhanced(actor);
+        levelUpDialog.render(true);
+        return true;
+    }
+
     /**
      * Open level up dialog for an actor
      * @param {Actor} actor - The actor to level up

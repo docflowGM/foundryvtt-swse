@@ -1,0 +1,562 @@
+<div class="swse-levelup">
+  <header class="levelup-header">
+    <h2>Level Up: {{actor.name}}</h2>
+    <div class="level-indicator">
+      <span>Current Level: <strong>{{currentLevel}}</strong></span>
+      <i class="fas fa-arrow-right"></i>
+      <span>New Level: <strong>{{newLevel}}</strong></span>
+    </div>
+  </header>
+
+  <main class="levelup-body">
+
+    {{!-- STEP 1: CLASS SELECTION --}}
+    {{#if (eq currentStep "class")}}
+    <section class="step-class-selection">
+      <h3>Choose Your Class</h3>
+      <p class="hint">Select a class to add to your character. Base classes can be taken multiple times for multi-classing.</p>
+
+      <div class="current-classes">
+        <h4>Current Classes:</h4>
+        {{#each characterClasses}}
+          <span class="class-badge">{{@key}} ({{this}})</span>
+        {{else}}
+          <span class="empty">No classes yet</span>
+        {{/each}}
+      </div>
+
+      <div class="class-categories">
+        <h4>Base Classes</h4>
+        <div class="class-grid">
+          {{#each availableClasses}}
+            {{#if this.isBase}}
+            <div class="class-card">
+              <h5>{{this.name}}</h5>
+              <div class="class-stats">
+                <span>Hit Die: d{{this.system.hitDie}}</span>
+                <span>BAB: +{{this.system.babProgression}}</span>
+                <span>Skills: {{this.system.trainedSkills}}</span>
+              </div>
+              <button class="select-class-btn btn-primary" data-class-id="{{this.id}}">
+                <i class="fas fa-user-plus"></i> Select
+              </button>
+            </div>
+            {{/if}}
+          {{/each}}
+        </div>
+
+        <h4>Prestige Classes</h4>
+        <div class="class-grid">
+          {{#each availableClasses}}
+            {{#if this.isPrestige}}
+            <div class="class-card prestige">
+              <h5>{{this.name}}</h5>
+              <div class="class-stats">
+                <span>Hit Die: d{{this.system.hitDie}}</span>
+                <span>BAB: +{{this.system.babProgression}}</span>
+                <span class="prestige-label">Prestige</span>
+              </div>
+              <button class="select-class-btn btn-primary" data-class-id="{{this.id}}">
+                <i class="fas fa-star"></i> Select
+              </button>
+            </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+    </section>
+    {{/if}}
+
+    {{!-- STEP 2: MULTICLASS BONUS --}}
+    {{#if (eq currentStep "multiclass-bonus")}}
+    <section class="step-multiclass-bonus">
+      <h3>Multi-class Bonus</h3>
+      <p class="hint">You are taking a second base class! Choose your bonus (you can always choose feat OR skill):</p>
+
+      <div class="multiclass-choice">
+        {{#unless (eq multiclassBonusChoice "all_feats")}}
+        <div class="bonus-options">
+          <div class="bonus-option">
+            <h4>Choose ONE Starting Feat</h4>
+            <div class="feat-selection">
+              {{#each selectedClass.system.startingFeatures}}
+                {{#if (eq this.type "feat_grant")}}
+                <button class="select-feat-btn choice-button" data-feat-id="{{this.name}}">
+                  <i class="fas fa-star"></i> {{this.name}}
+                </button>
+                {{/if}}
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="bonus-option-divider">
+            <span>OR</span>
+          </div>
+
+          <div class="bonus-option">
+            <h4>Choose ONE Trained Skill</h4>
+            <div class="skill-selection">
+              {{#each selectedClass.system.classSkills}}
+              <button class="select-skill-btn choice-button" data-skill="{{this}}">
+                <i class="fas fa-check-circle"></i> {{this}}
+              </button>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+        {{/unless}}
+
+        {{#if (eq multiclassBonusChoice "all_feats")}}
+        <p>You will receive ALL starting feats from {{selectedClass.name}}!</p>
+        <button class="next-step btn-primary">
+          Continue <i class="fas fa-arrow-right"></i>
+        </button>
+        {{/if}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{!-- STEP 3: ABILITY SCORE INCREASES --}}
+    {{#if (eq currentStep "ability-increase")}}
+    <section class="step-ability-increase">
+      <h3>Ability Score Increase</h3>
+      <p class="hint">
+        At level {{newLevel}}, you gain +2 ability score points to allocate.
+        {{#if (eq abilityIncreaseMethod "flexible")}}
+          <br><strong>Flexible Method:</strong> You can apply 2 points to ONE attribute OR 1 point to TWO attributes.
+        {{else}}
+          <br><strong>Standard Method:</strong> You must apply 1 point to TWO different attributes.
+        {{/if}}
+      </p>
+
+      <div class="ability-increase-grid">
+        {{#each actor.system.abilities}}
+        <div class="ability-increase-card">
+          <h4>{{@key}}</h4>
+          <div class="ability-current">
+            <span>Current: {{this.base}}</span>
+            <span>Mod: {{#if (gte this.mod 0)}}+{{/if}}{{this.mod}}</span>
+          </div>
+          <button class="ability-increase-btn btn-primary" data-ability="{{@key}}">
+            <i class="fas fa-plus-circle"></i> Add +1
+          </button>
+          {{#if (lookup ../abilityIncreases @key)}}
+          <div class="ability-allocated">
+            +{{lookup ../abilityIncreases @key}} allocated
+          </div>
+          {{/if}}
+        </div>
+        {{/each}}
+      </div>
+
+      <div class="ability-progress">
+        <p>Points Allocated: <strong>{{#each abilityIncreases}}{{this}}{{#unless @last}}+{{/unless}}{{/each}} / 2</strong></p>
+      </div>
+
+      <div class="form-actions">
+        <button class="prev-step btn-secondary">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="next-step btn-primary">
+          Continue <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </section>
+    {{/if}}
+
+    {{!-- STEP 4: TALENT SELECTION --}}
+    {{#if (eq currentStep "talent")}}
+    <section class="step-talent-selection">
+      <h3>Select a Talent</h3>
+      <p class="hint">
+        {{#if (eq talentTreeRestriction "current")}}
+          Choose a talent tree from {{selectedClass.name}}
+        {{else}}
+          Choose a talent tree from any of your classes
+        {{/if}}
+      </p>
+
+      <div class="talent-tree-grid">
+        {{#each talentTrees}}
+        <button class="select-talent-tree choice-button" data-tree="{{this}}">
+          <i class="fas fa-tree"></i>
+          <span>{{this}}</span>
+        </button>
+        {{/each}}
+      </div>
+
+      <div class="selected-talent-display">
+        {{#if selectedTalent}}
+        <h4>Selected: {{selectedTalent.name}}</h4>
+        <p>{{selectedTalent.system.benefit}}</p>
+        {{/if}}
+      </div>
+
+      <div class="form-actions">
+        <button class="prev-step btn-secondary">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="next-step btn-primary">
+          Continue <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </section>
+    {{/if}}
+
+    {{!-- STEP 5: SUMMARY --}}
+    {{#if (eq currentStep "summary")}}
+    <section class="step-summary">
+      <h3>Level Up Summary</h3>
+
+      <div class="summary-grid">
+        <div class="summary-section">
+          <h4>Class</h4>
+          <p><strong>{{selectedClass.name}}</strong></p>
+          <p>Hit Die: d{{selectedClass.system.hitDie}}</p>
+        </div>
+
+        <div class="summary-section">
+          <h4>HP Gain</h4>
+          <p><strong>+{{hpGain}} HP</strong></p>
+          <p>New Total: {{add actor.system.hp.max hpGain}}</p>
+        </div>
+
+        {{#if selectedTalent}}
+        <div class="summary-section">
+          <h4>Talent</h4>
+          <p><strong>{{selectedTalent.name}}</strong></p>
+        </div>
+        {{/if}}
+
+        {{#if selectedFeats}}
+        <div class="summary-section">
+          <h4>Feats</h4>
+          {{#each selectedFeats}}
+          <p>{{this.name}}</p>
+          {{/each}}
+        </div>
+        {{/if}}
+
+        {{#if selectedSkills}}
+        <div class="summary-section">
+          <h4>Trained Skills</h4>
+          {{#each selectedSkills}}
+          <p>{{this}}</p>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+
+      <div class="form-actions">
+        <button class="prev-step btn-secondary">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="complete-levelup btn-success">
+          <i class="fas fa-check"></i> Complete Level Up
+        </button>
+      </div>
+    </section>
+    {{/if}}
+
+  </main>
+</div>
+
+<style>
+.swse-levelup {
+  font-family: "Roboto", Arial, sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #e4e4e4;
+  border-radius: 8px;
+}
+
+.levelup-header {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1.5rem;
+  border-bottom: 2px solid #0a74da;
+  text-align: center;
+}
+
+.levelup-header h2 {
+  margin: 0 0 0.5rem 0;
+  color: #00d9ff;
+}
+
+.level-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
+}
+
+.level-indicator i {
+  color: #00d9ff;
+}
+
+.levelup-body {
+  padding: 2rem;
+  min-height: 400px;
+}
+
+.hint {
+  text-align: center;
+  color: #aaa;
+  font-style: italic;
+  margin-bottom: 1.5rem;
+}
+
+.current-classes {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+.class-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #0a74da 0%, #0056b3 100%);
+  border-radius: 4px;
+  margin: 0.25rem;
+  font-weight: bold;
+}
+
+.class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.class-card {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #0a74da;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.class-card:hover {
+  background: rgba(10, 116, 218, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(10, 116, 218, 0.3);
+}
+
+.class-card.prestige {
+  border-color: #ffd700;
+}
+
+.class-card h5 {
+  margin: 0 0 0.5rem 0;
+  color: #00d9ff;
+  font-size: 1.1rem;
+}
+
+.class-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.prestige-label {
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.choice-button {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #0a74da;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.choice-button:hover {
+  background: rgba(10, 116, 218, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 116, 218, 0.4);
+}
+
+.bonus-options {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.bonus-option {
+  flex: 1;
+}
+
+.bonus-option h4 {
+  color: #00d9ff;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.bonus-option-divider {
+  display: flex;
+  align-items: center;
+  padding-top: 3rem;
+}
+
+.bonus-option-divider span {
+  padding: 0.5rem 1rem;
+  background: rgba(0, 217, 255, 0.2);
+  border: 2px solid #00d9ff;
+  border-radius: 50%;
+  font-weight: bold;
+  color: #00d9ff;
+}
+
+.feat-selection, .skill-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ability-increase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.ability-increase-card {
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #0a74da;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.ability-increase-card:hover {
+  background: rgba(10, 116, 218, 0.1);
+  border-color: #00d9ff;
+}
+
+.ability-increase-card h4 {
+  margin: 0 0 1rem 0;
+  color: #00d9ff;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+}
+
+.ability-current {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.ability-increase-btn {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.ability-allocated {
+  color: #00ff88;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+.ability-progress {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(0, 217, 255, 0.1);
+  border: 2px solid #00d9ff;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+}
+
+.ability-progress strong {
+  color: #00d9ff;
+  font-size: 1.2rem;
+}
+
+.talent-tree-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.selected-talent-display {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  min-height: 80px;
+  margin-bottom: 1.5rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summary-section {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border-left: 4px solid #00d9ff;
+}
+
+.summary-section h4 {
+  margin: 0 0 0.5rem 0;
+  color: #00d9ff;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-primary, .btn-secondary, .btn-success {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0a74da 0%, #0056b3 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 116, 218, 0.4);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #555 0%, #333 100%);
+  color: white;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #00d966 0%, #00a84a 100%);
+  color: white;
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 217, 102, 0.4);
+}
+</style>

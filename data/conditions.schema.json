@@ -21,7 +21,7 @@
             "type": "string"
           }
         },
-        "reqassets/uired": [
+        "required": [
           "stage",
           "desc"
         ],
@@ -35,7 +35,7 @@
       }
     }
   },
-  "reqassets/uired": [
+  "required": [
     "name",
     "desc"
   ],

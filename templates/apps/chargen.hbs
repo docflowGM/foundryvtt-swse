@@ -9,21 +9,146 @@
  <main class="chargen-body">
  {{#if (eq currentStep "name")}}
  <section class="step-name">
- <h3>Character Name</h3>
+ <h3>Character Name & Level</h3>
  <div class="form-group">
  <label for="character-name">Enter your character's name:</label>
- <input 
+ <input
  id="character-name"
- name="character-name" 
- type="text" 
- class="chargen-name-input" 
- value="{{characterData.name}}" 
+ name="character-name"
+ type="text"
+ class="chargen-name-input"
+ value="{{characterData.name}}"
  placeholder="Enter name..."
  autofocus />
+ </div>
+ <div class="form-group">
+ <label for="target-level-input">Starting Level:</label>
+ <div class="level-selector">
+ <input
+ id="target-level-input"
+ name="target-level"
+ type="number"
+ class="chargen-level-input"
+ value="{{targetLevel}}"
+ min="1"
+ max="20"
+ placeholder="1" />
+ <span class="level-hint">Levels 2-20 will be automatically applied after character creation</span>
+ </div>
  </div>
  <div class="form-actions">
  <button type="button" class="next-step btn-primary">
  Next <i class="fas fa-arrow-right"></i>
+ </button>
+ </div>
+ </section>
+ {{/if}}
+
+ {{#if (eq currentStep "type")}}
+ <section class="step-type">
+ <h3>What are you?</h3>
+ <p class="hint">Choose whether you're creating a living being or a droid character.</p>
+ <div class="type-grid">
+ <button type="button" class="select-type choice-button" data-type="living">
+ <i class="fas fa-user"></i>
+ <h4>Living Being</h4>
+ <p>Organic species with unique traits</p>
+ </button>
+ <button type="button" class="select-type choice-button" data-type="droid">
+ <i class="fas fa-robot"></i>
+ <h4>Droid</h4>
+ <p>Mechanical beings with specialized functions</p>
+ </button>
+ </div>
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ </div>
+ </section>
+ {{/if}}
+
+ {{#if (eq currentStep "degree")}}
+ <section class="step-degree">
+ <h3>Select Droid Degree</h3>
+ <p class="hint">Choose your droid's classification and specialization.</p>
+
+ <div class="import-option">
+ <button type="button" class="import-droid-btn btn-primary">
+ <i class="fas fa-download"></i> Import Existing Droid Type
+ </button>
+ <p class="import-hint">Or select a degree below to build from scratch</p>
+ </div>
+
+ <div class="degree-grid">
+ {{#each droidDegrees}}
+ <button type="button" class="select-degree choice-button" data-degree="{{this.key}}">
+ <h4>{{this.name}}</h4>
+ <div class="bonuses">{{this.bonuses}}</div>
+ <p class="description">{{this.description}}</p>
+ </button>
+ {{/each}}
+ </div>
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ </div>
+ </section>
+ {{/if}}
+
+ {{#if (eq currentStep "size")}}
+ <section class="step-size">
+ <h3>Select Droid Size</h3>
+ <p class="hint">Size determines your Cost Factor, ability modifiers, and base statistics.</p>
+
+ <div class="size-grid-full">
+ <button type="button" class="select-size choice-button" data-size="tiny">
+ <h4>Tiny</h4>
+ <p><strong>CF:</strong> 5× | <strong>Mod:</strong> +4 DEX, -4 STR</p>
+ <p><strong>Reflex:</strong> +2 | <strong>Stealth:</strong> +10</p>
+ </button>
+
+ <button type="button" class="select-size choice-button" data-size="small">
+ <h4>Small</h4>
+ <p><strong>CF:</strong> 2× | <strong>Mod:</strong> +2 DEX, -2 STR</p>
+ <p><strong>Reflex:</strong> +1 | <strong>Stealth:</strong> +5</p>
+ </button>
+
+ <button type="button" class="select-size choice-button recommended" data-size="medium">
+ <h4>Medium ★</h4>
+ <p><strong>CF:</strong> 1× | <strong>Mod:</strong> None</p>
+ <p>Recommended for players</p>
+ </button>
+
+ <button type="button" class="select-size choice-button" data-size="large">
+ <h4>Large</h4>
+ <p><strong>CF:</strong> 2× | <strong>Mod:</strong> +4 STR, -2 DEX</p>
+ <p><strong>Reflex:</strong> -1 | <strong>Stealth:</strong> -5</p>
+ </button>
+
+ <button type="button" class="select-size choice-button" data-size="huge">
+ <h4>Huge</h4>
+ <p><strong>CF:</strong> 5× | <strong>Mod:</strong> +8 STR, -4 DEX</p>
+ <p><strong>Reflex:</strong> -2 | <strong>Stealth:</strong> -10</p>
+ </button>
+
+ <button type="button" class="select-size choice-button" data-size="gargantuan">
+ <h4>Gargantuan</h4>
+ <p><strong>CF:</strong> 10× | <strong>Mod:</strong> +12 STR, -4 DEX</p>
+ <p><strong>Reflex:</strong> -4 | <strong>Stealth:</strong> -15</p>
+ </button>
+
+ <button type="button" class="select-size choice-button" data-size="colossal">
+ <h4>Colossal</h4>
+ <p><strong>CF:</strong> 20× | <strong>Mod:</strong> +16 STR, -4 DEX</p>
+ <p><strong>Reflex:</strong> -5 | <strong>Stealth:</strong> -20</p>
+ </button>
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
  </button>
  </div>
  </section>
@@ -54,12 +179,247 @@
  </section>
  {{/if}}
 
+ {{#if (eq currentStep "droid-builder")}}
+ <section class="step-droid-builder holo-shop">
+ {{!-- Holographic Welcome Banner --}}
+ <div class="holo-banner">
+ <div class="holo-speaker">
+ <i class="fas fa-volume-up"></i>
+ <span class="speaker-name">RENDARR:</span>
+ </div>
+ <div class="holo-message">
+ "Welcome to my shop, lad! Spend to your heart's desire!"
+ </div>
+ </div>
+
+ {{!-- Credit Balance Display (Prominent) --}}
+ <div class="credit-wallet">
+ <div class="wallet-header">
+ <i class="fas fa-wallet"></i>
+ <span>ACCOUNT BALANCE</span>
+ </div>
+ <div class="wallet-amount">
+ <span class="credits-icon">₢</span>
+ <span class="remaining-credits {{#if (lt characterData.droidCredits.remaining 0)}}overbudget{{/if}}">{{characterData.droidCredits.remaining}}</span>
+ <span class="credits-label">credits</span>
+ </div>
+ <div class="wallet-details">
+ <div class="wallet-detail-item">
+ <span class="detail-label">Budget:</span>
+ <span class="base-credits">{{characterData.droidCredits.base}}</span> cr
+ </div>
+ <div class="wallet-detail-item">
+ <span class="detail-label">Spent:</span>
+ <span class="spent-credits">{{characterData.droidSystems.totalCost}}</span> cr
+ </div>
+ </div>
+ </div>
+
+ {{!-- Main Shop Interface --}}
+ <div class="holo-datapad">
+ <nav class="shop-tabs">
+ <button type="button" class="shop-tab active" data-tab="locomotion">
+ <i class="fas fa-shoe-prints"></i>
+ <span class="tab-label">Locomotion</span>
+ <span class="required-badge">REQUIRED</span>
+ </button>
+ <button type="button" class="shop-tab" data-tab="processor">
+ <i class="fas fa-microchip"></i>
+ <span class="tab-label">Processors</span>
+ <span class="required-badge">REQUIRED</span>
+ </button>
+ <button type="button" class="shop-tab" data-tab="appendages">
+ <i class="fas fa-hand-paper"></i>
+ <span class="tab-label">Appendages</span>
+ <span class="required-badge">REQUIRED</span>
+ </button>
+ <button type="button" class="shop-tab" data-tab="accessories">
+ <i class="fas fa-tools"></i>
+ <span class="tab-label">Accessories</span>
+ </button>
+ <button type="button" class="shop-tab cart-tab" data-tab="cart">
+ <i class="fas fa-shopping-cart"></i>
+ <span class="tab-label">Cart</span>
+ <span class="cart-count" id="cart-count">2</span>
+ </button>
+ </nav>
+
+ <div class="shop-content">
+ {{!-- Locomotion Tab --}}
+ <div class="shop-panel active" data-panel="locomotion">
+ <div class="panel-header">
+ <h4><i class="fas fa-shoe-prints"></i> Locomotion Systems</h4>
+ <p class="panel-desc">Choose how your droid moves through the galaxy</p>
+ </div>
+ <div id="locomotion-list" class="product-grid"></div>
+ </div>
+
+ {{!-- Processor Tab --}}
+ <div class="shop-panel" data-panel="processor">
+ <div class="panel-header">
+ <h4><i class="fas fa-microchip"></i> Processor Units</h4>
+ <p class="panel-desc">The brain of your droid. Heuristic processor included free.</p>
+ </div>
+ <div id="processor-list" class="product-grid"></div>
+ </div>
+
+ {{!-- Appendages Tab --}}
+ <div class="shop-panel" data-panel="appendages">
+ <div class="panel-header">
+ <h4><i class="fas fa-hand-paper"></i> Appendages</h4>
+ <p class="panel-desc">Tools and manipulators. Two hands included free.</p>
+ </div>
+ <div id="appendages-list" class="product-grid"></div>
+ </div>
+
+ {{!-- Accessories Tab --}}
+ <div class="shop-panel" data-panel="accessories">
+ <div class="panel-header">
+ <h4><i class="fas fa-tools"></i> Accessories & Upgrades</h4>
+ <p class="panel-desc">Enhance your droid with specialized equipment</p>
+ </div>
+ <nav class="accessory-tabs">
+ <button type="button" class="accessory-tab active" data-accessorytab="armor">
+ <i class="fas fa-shield-alt"></i> Armor
+ </button>
+ <button type="button" class="accessory-tab" data-accessorytab="communications">
+ <i class="fas fa-broadcast-tower"></i> Comms
+ </button>
+ <button type="button" class="accessory-tab" data-accessorytab="sensors">
+ <i class="fas fa-radar"></i> Sensors
+ </button>
+ <button type="button" class="accessory-tab" data-accessorytab="shields">
+ <i class="fas fa-shield-halved"></i> Shields
+ </button>
+ <button type="button" class="accessory-tab" data-accessorytab="translators">
+ <i class="fas fa-language"></i> Translators
+ </button>
+ <button type="button" class="accessory-tab" data-accessorytab="miscellaneous">
+ <i class="fas fa-box"></i> Misc
+ </button>
+ </nav>
+ <div class="accessory-content">
+ <div class="accessory-panel active" data-accessory-panel="armor">
+ <div id="accessories-armor" class="product-grid"></div>
+ </div>
+ <div class="accessory-panel" data-accessory-panel="communications">
+ <div id="accessories-communications" class="product-grid"></div>
+ </div>
+ <div class="accessory-panel" data-accessory-panel="sensors">
+ <div id="accessories-sensors" class="product-grid"></div>
+ </div>
+ <div class="accessory-panel" data-accessory-panel="shields">
+ <div id="accessories-shields" class="product-grid"></div>
+ </div>
+ <div class="accessory-panel" data-accessory-panel="translators">
+ <div id="accessories-translators" class="product-grid"></div>
+ </div>
+ <div class="accessory-panel" data-accessory-panel="miscellaneous">
+ <div id="accessories-miscellaneous" class="product-grid"></div>
+ </div>
+ </div>
+ </div>
+
+ {{!-- Cart Tab --}}
+ <div class="shop-panel cart-panel" data-panel="cart">
+ <div class="panel-header">
+ <h4><i class="fas fa-shopping-cart"></i> Your Cart</h4>
+ <p class="panel-desc">Review your droid configuration</p>
+ </div>
+
+ <div class="cart-container">
+ <div class="cart-section">
+ <h5 class="cart-section-title">
+ <i class="fas fa-gift"></i> Included (Free)
+ </h5>
+ <div class="cart-items">
+ <div class="cart-item free-item">
+ <div class="item-icon"><i class="fas fa-microchip"></i></div>
+ <div class="item-details">
+ <div class="item-name">Heuristic Processor</div>
+ <div class="item-specs">Standard droid brain unit</div>
+ </div>
+ <div class="item-price">
+ <span class="price-amount free">FREE</span>
+ </div>
+ </div>
+ <div class="cart-item free-item">
+ <div class="item-icon"><i class="fas fa-hand-paper"></i></div>
+ <div class="item-details">
+ <div class="item-name">Hand Appendages (×2)</div>
+ <div class="item-specs">Basic manipulators</div>
+ </div>
+ <div class="item-price">
+ <span class="price-amount free">FREE</span>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="cart-section" id="cart-purchased-section">
+ <h5 class="cart-section-title">
+ <i class="fas fa-shopping-bag"></i> Purchased Systems
+ </h5>
+ <div class="cart-items" id="cart-items-list">
+ <div class="cart-empty-message">
+ <i class="fas fa-box-open"></i>
+ <p>No systems added yet. Browse the shop to customize your droid!</p>
+ </div>
+ </div>
+ </div>
+
+ <div class="cart-summary">
+ <div class="summary-line">
+ <span class="summary-label">Subtotal:</span>
+ <span class="summary-value"><span class="spent-credits">0</span> cr</span>
+ </div>
+ <div class="summary-line">
+ <span class="summary-label">Total Weight:</span>
+ <span class="summary-value"><span class="total-weight">10</span> kg</span>
+ </div>
+ <div class="summary-line total-line">
+ <span class="summary-label">Total Cost:</span>
+ <span class="summary-value">
+ <span class="credits-icon">₢</span>
+ <span class="spent-credits">0</span>
+ </span>
+ </div>
+ </div>
+
+ <div class="cart-validation" id="cart-validation">
+ <div class="validation-item" id="validation-locomotion">
+ <i class="fas fa-exclamation-circle"></i>
+ <span>Locomotion system required</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ <button type="button" class="next-step btn-primary" id="droid-builder-next">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ </div>
+ </section>
+ {{/if}}
+
  {{#if (eq currentStep "abilities")}}
  <section class="step-abilities">
  <h3>Generate Ability Scores</h3>
+ <div class="ability-header">
+ <button type="button" id="free-build-btn" class="free-build-button">
+ <i class="fas fa-edit"></i> Free Build (Manual Entry)
+ </button>
+ <p class="method-hint">GM's Setting: <strong>{{methodLabels.[abilityMethod]}}</strong></p>
+ </div>
  <div class="ability-methods">
  <button type="button" id="pb-init" class="method-button">
- <i class="fas fa-calculator"></i> Point Buy (32 points)
+ <i class="fas fa-calculator"></i> Point Buy ({{pointBuyPool}} points)
  </button>
  <button type="button" id="std-roll-btn" class="method-button">
  <i class="fas fa-dice"></i> Standard Roll (4d6 drop lowest)
@@ -98,6 +458,19 @@
  <p class="hint">Click a group, then click an ability to assign the total.</p>
  </div>
 
+ <div id="free-mode" class="ability-mode" style="display:none;">
+ <p class="hint">Manually enter any ability score values (3-25).</p>
+ <div class="abilities-grid">
+ {{#each characterData.abilities}}
+ <div class="ability-card">
+ <label>{{@key}}</label>
+ <input name="ability_{{@key}}" class="ability-input free-input" type="number" value="10" min="3" max="25" />
+ <div id="display_{{@key}}" class="ability-display">Total: 10 (Mod: +0)</div>
+ </div>
+ {{/each}}
+ </div>
+ </div>
+
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
  <i class="fas fa-arrow-left"></i> Previous
@@ -133,6 +506,132 @@
  </section>
  {{/if}}
 
+ {{#if (eq currentStep "feats")}}
+ <section class="step-feats">
+ <h3>Select Starting Feat</h3>
+ <p class="help-text">All characters gain 1 general feat at 1st level.</p>
+
+ <div class="feats-list">
+ {{#each packs.feats}}
+ <div class="feat-item">
+ <button type="button" class="select-feat choice-button" data-featid="{{this._id}}">
+ <h4>{{this.name}}</h4>
+ {{#if this.system.description}}
+ <p class="feat-description">{{this.system.description}}</p>
+ {{/if}}
+ {{#if this.system.prerequisites}}
+ <p class="feat-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</p>
+ {{/if}}
+ </button>
+ </div>
+ {{/each}}
+ </div>
+
+ <div class="selected-feats">
+ <h4>Selected Feats ({{characterData.feats.length}}/1)</h4>
+ {{#each characterData.feats}}
+ <div class="selected-feat">
+ <span>{{this.name}}</span>
+ <button type="button" class="remove-feat" data-featid="{{this._id}}">×</button>
+ </div>
+ {{/each}}
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ {{#if (gte characterData.feats.length 1)}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{/if}}
+ </div>
+ </section>
+ {{/if}}
+
+ {{#if (eq currentStep "talents")}}
+ <section class="step-talents">
+ <h3>Select Starting Talent</h3>
+ <p class="help-text">Select a talent from your class talent trees.</p>
+
+ <div class="talents-list">
+ {{#each packs.talents}}
+ <div class="talent-item">
+ <button type="button" class="select-talent choice-button" data-talentid="{{this._id}}">
+ <h4>{{this.name}}</h4>
+ {{#if this.system.tree}}
+ <p class="talent-tree"><strong>Tree:</strong> {{this.system.tree}}</p>
+ {{/if}}
+ {{#if this.system.description}}
+ <p class="talent-description">{{this.system.description}}</p>
+ {{/if}}
+ </button>
+ </div>
+ {{/each}}
+ </div>
+
+ <div class="selected-talents">
+ <h4>Selected Talents ({{characterData.talents.length}}/1)</h4>
+ {{#each characterData.talents}}
+ <div class="selected-talent">
+ <span>{{this.name}}</span>
+ </div>
+ {{/each}}
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ {{#if (gte characterData.talents.length 1)}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{/if}}
+ </div>
+ </section>
+ {{/if}}
+
+ {{#if (eq currentStep "skills")}}
+ <section class="step-skills">
+ <h3>Select Trained Skills</h3>
+ <p class="help-text">Select {{characterData.trainedSkillsAllowed}} trained skills from your class skill list.</p>
+
+ <div class="skills-selection">
+ {{#each availableSkills}}
+ <div class="skill-checkbox">
+ <label>
+ <input type="checkbox"
+ class="skill-select"
+ data-skill="{{this.key}}"
+ {{#if this.trained}}checked{{/if}}
+ {{#if (gte ../characterData.trainedSkillsCount ../characterData.trainedSkillsAllowed)}}
+ {{#unless this.trained}}disabled{{/unless}}
+ {{/if}}>
+ {{this.name}}
+ </label>
+ </div>
+ {{/each}}
+ </div>
+
+ <div class="skills-summary">
+ <p>Skills Selected: {{characterData.trainedSkillsCount}} / {{characterData.trainedSkillsAllowed}}</p>
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ {{#if (gte characterData.trainedSkillsCount characterData.trainedSkillsAllowed)}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{/if}}
+ </div>
+ </section>
+ {{/if}}
+
  {{#if (eq currentStep "summary")}}
  <section class="step-summary">
  <h3>Character Summary</h3>
@@ -164,8 +663,58 @@
  <button type="button" class="prev-step btn-secondary">
  <i class="fas fa-arrow-left"></i> Previous
  </button>
- <button type="button" class="finish btn-primary btn-success">
- <i class="fas fa-check"></i> Create Character
+ <button type="button" class="next-step btn-primary">
+ <i class="fas fa-arrow-right"></i> Next: Shopping
+ </button>
+ </div>
+ </section>
+ {{/if}}
+
+ {{!-- Shop Step --}}
+ {{#if (eq currentStep "shop")}}
+ <section class="step-shop">
+ {{!-- Holographic Welcome Banner --}}
+ <div class="holo-banner">
+ <div class="holo-speaker">
+ <i class="fas fa-volume-up"></i>
+ <span class="speaker-name">RENDARR:</span>
+ </div>
+ <div class="holo-message">
+ "Welcome to my shop, lad! Spend to your heart's desire!"
+ </div>
+ </div>
+
+ <div class="shop-intro">
+ <p>Your character has been created! Now you can spend your starting credits on equipment, weapons, and gear.</p>
+ <p class="credits-available">
+ <i class="fas fa-wallet"></i>
+ <strong>Available Credits:</strong> <span class="credits-value">{{characterData.credits}}</span> cr
+ </p>
+ </div>
+
+ <div class="shop-options">
+ <div class="shop-option-card">
+ <i class="fas fa-store"></i>
+ <h4>Browse the Marketplace</h4>
+ <p>Purchase weapons, armor, equipment, and more from the Galactic Trade Exchange.</p>
+ <button type="button" class="open-shop-btn btn-primary">
+ <i class="fas fa-shopping-cart"></i> Open Shop
+ </button>
+ </div>
+
+ <div class="shop-option-card">
+ <i class="fas fa-forward"></i>
+ <h4>Skip for Now</h4>
+ <p>You can always access the shop later from your character sheet.</p>
+ <button type="button" class="finish btn-secondary">
+ <i class="fas fa-check"></i> Complete Character Creation
+ </button>
+ </div>
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Back to Summary
  </button>
  </div>
  </section>
@@ -230,6 +779,34 @@
  box-shadow: 0 0 10px rgba(10, 116, 218, 0.5);
 }
 
+.chargen-level-input {
+ width: 100px;
+ padding: 0.75rem;
+ font-size: 1.1rem;
+ border: 2px solid #0a74da;
+ border-radius: 4px;
+ background: rgba(255, 255, 255, 0.1);
+ color: #fff;
+ text-align: center;
+}
+
+.chargen-level-input:focus {
+ outline: none;
+ box-shadow: 0 0 10px rgba(10, 116, 218, 0.5);
+}
+
+.level-selector {
+ display: flex;
+ align-items: center;
+ gap: 1rem;
+}
+
+.level-hint {
+ font-size: 0.85rem;
+ color: #aaa;
+ font-style: italic;
+}
+
 .form-actions {
  display: flex;
  justify-content: space-between;
@@ -266,6 +843,80 @@
  background: linear-gradient(135deg, #666 0%, #444 100%);
 }
 
+.type-grid {
+ display: grid;
+ grid-template-columns: repeat(2, 1fr);
+ gap: 2rem;
+ max-width: 600px;
+ margin: 2rem auto;
+}
+
+.type-grid .choice-button {
+ padding: 2rem;
+ min-height: 150px;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center;
+ gap: 0.5rem;
+}
+
+.type-grid .choice-button i {
+ font-size: 3rem;
+ margin-bottom: 0.5rem;
+}
+
+.import-option {
+ text-align: center;
+ margin: 2rem 0;
+ padding: 1.5rem;
+ background: rgba(0, 217, 255, 0.1);
+ border: 2px dashed #00d9ff;
+ border-radius: 8px;
+}
+
+.import-option .import-droid-btn {
+ padding: 1rem 2rem;
+ font-size: 1.1rem;
+ margin-bottom: 0.5rem;
+}
+
+.import-hint {
+ margin: 0.5rem 0 0 0;
+ font-size: 0.9rem;
+ color: #aaa;
+ font-style: italic;
+}
+
+.degree-grid {
+ display: grid;
+ grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+ gap: 1rem;
+}
+
+.degree-grid .choice-button {
+ padding: 1.5rem;
+ min-height: 160px;
+ display: flex;
+ flex-direction: column;
+}
+
+.degree-grid .bonuses {
+ margin: 0.5rem 0;
+ padding: 0.5rem;
+ background: rgba(10, 116, 218, 0.2);
+ border-radius: 4px;
+ font-size: 0.9rem;
+ font-weight: bold;
+}
+
+.degree-grid .description {
+ margin-top: 0.5rem;
+ font-size: 0.85rem;
+ color: #aaa;
+ font-style: italic;
+}
+
 .species-grid, .class-grid {
  display: grid;
  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -286,6 +937,64 @@
  background: rgba(10, 116, 218, 0.2);
  transform: translateY(-4px);
  box-shadow: 0 6px 16px rgba(10, 116, 218, 0.3);
+}
+
+.ability-header {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ margin-bottom: 1rem;
+ padding: 1rem;
+ background: rgba(0, 0, 0, 0.2);
+ border-radius: 6px;
+}
+
+.free-build-button {
+ padding: 0.75rem 1.5rem;
+ background: linear-gradient(135deg, #00d9ff 0%, #0a74da 100%);
+ border: none;
+ border-radius: 4px;
+ color: white;
+ font-weight: bold;
+ cursor: pointer;
+ transition: all 0.3s;
+}
+
+.free-build-button:hover {
+ transform: translateY(-2px);
+ box-shadow: 0 4px 12px rgba(0, 217, 255, 0.4);
+}
+
+.method-hint {
+ margin: 0;
+ color: #aaa;
+ font-size: 0.9rem;
+}
+
+.method-hint strong {
+ color: #00d9ff;
+}
+
+.ability-methods {
+ display: flex;
+ gap: 1rem;
+ margin-bottom: 1.5rem;
+}
+
+.method-button {
+ flex: 1;
+ padding: 0.75rem;
+ background: rgba(255, 255, 255, 0.05);
+ border: 2px solid #0a74da;
+ border-radius: 6px;
+ color: #fff;
+ cursor: pointer;
+ transition: all 0.3s;
+}
+
+.method-button:hover {
+ background: rgba(10, 116, 218, 0.2);
+ transform: translateY(-2px);
 }
 
 .abilities-grid {

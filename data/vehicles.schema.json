@@ -60,7 +60,7 @@
         "string",
         "null"
       ],
-      "description": "Special sensor sassets/uites"
+      "description": "Special sensor suites"
     },
     "reflexDefense": {
       "type": [
@@ -159,7 +159,7 @@
             ]
           }
         },
-        "reqassets/uired": [
+        "required": [
           "name"
         ]
       }
@@ -224,7 +224,7 @@
       }
     }
   },
-  "reqassets/uired": [
+  "required": [
     "name",
     "type"
   ],

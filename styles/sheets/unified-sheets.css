@@ -112,7 +112,7 @@
 /* Portrait - DRAMATICALLY SMALLER */
 .character-portrait {
   width: 60px;
-  min-height: 80px;
+  height: 80px;
   object-fit: cover;
   border: 1px solid #0af;
   border-radius: 4px;
@@ -188,7 +188,7 @@
   width: 100%;
   padding: 2px 4px;
   font-size: 9px;
-  min-height: 80px;
+  height: 18px;
 }
 
 .readonly,
@@ -199,7 +199,7 @@
   font-size: 9px;
   text-align: center;
   color: #00ff88;
-  min-height: 80px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -257,7 +257,7 @@
   transition: all 0.2s ease;
   font-size: 9px;
   font-family: inherit;
-  min-height: 80px;
+  height: 20px;
   line-height: 1;
 }
 
@@ -282,7 +282,7 @@
 .swse-datapad-sheet input[type="checkbox"],
 .swse.character-sheet input[type="checkbox"] {
   width: 12px;
-  min-height: 80px;
+  height: 12px;
   margin: 0 2px 0 0;
 }
 
@@ -372,7 +372,7 @@
   text-align: center;
   font-size: 9px;
   padding: 1px 2px;
-  min-height: 80px;
+  height: 18px;
 }
 
 .attr-total {
@@ -395,7 +395,7 @@
 
 .roll-btn {
   width: 20px;
-  min-height: 80px;
+  height: 20px;
   padding: 2px;
   font-size: 10px;
   display: flex;
@@ -461,14 +461,14 @@
   text-align: center;
   font-size: 8px;
   padding: 1px 2px;
-  min-height: 80px;
+  height: 18px;
 }
 
 .defense-select-sm {
   width: 100%;
   font-size: 7px;
   padding: 1px 2px;
-  min-height: 80px;
+  height: 18px;
 }
 
 .defense-notes {
@@ -486,7 +486,7 @@
 .defense-notes input {
   width: 100%;
   font-size: 8px;
-  min-height: 80px;
+  height: 18px;
 }
 
 /* ─────────────── COMPACT ARMOR ─────────────── */
@@ -516,7 +516,7 @@
 .armor-field-wide input,
 .armor-field-sm input {
   font-size: 8px;
-  min-height: 80px;
+  height: 18px;
 }
 
 .armor-checkboxes-row {
@@ -546,7 +546,7 @@
 .armor-select-group select {
   font-size: 7px;
   padding: 1px 2px;
-  min-height: 80px;
+  height: 18px;
 }
 
 .armor-notes {
@@ -563,12 +563,12 @@
 
 .armor-notes input {
   font-size: 8px;
-  min-height: 80px;
+  height: 18px;
 }
 
 /* ─────────────── ULTRA COMPACT SKILLS ─────────────── */
 .skills-grid-compact {
-  max-height: 80px;
+  max-height: 200px;
   overflow-y: auto;
   padding-right: 2px;
 }
@@ -643,12 +643,12 @@
   text-align: center;
   padding: 1px 2px;
   font-size: 8px;
-  min-height: 80px;
+  height: 18px;
 }
 
 .roll-btn-sm {
   width: 20px;
-  min-height: 80px;
+  height: 18px;
   padding: 0;
   font-size: 9px;
   display: flex;
@@ -680,7 +680,7 @@
   text-align: center;
   font-size: 11px;
   font-weight: bold;
-  min-height: 80px;
+  height: 22px;
 }
 
 .threshold-grid {
@@ -718,7 +718,7 @@
   width: 35px;
   text-align: center;
   font-size: 8px;
-  min-height: 80px;
+  height: 18px;
 }
 
 .threshold-total {
@@ -740,7 +740,7 @@
 .condition-btn {
   padding: 3px;
   font-size: 8px;
-  min-height: 80px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -788,7 +788,7 @@
 
 .bottom-tabs-content {
   min-height: 18px;
-  max-height: 80px;
+  max-height: 200px;
   overflow-y: auto;
 }
 
@@ -808,7 +808,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  max-height: 80px;
+  max-height: 200px;
   overflow-y: auto;
 }
 
@@ -837,7 +837,7 @@
 
 .item-icon {
   width: 16px;
-  min-height: 80px;
+  height: 16px;
   object-fit: cover;
   border-radius: 2px;
 }
@@ -858,7 +858,7 @@
 
 .item-btn-sm {
   width: 16px;
-  min-height: 80px;
+  height: 16px;
   padding: 0;
   font-size: 9px;
   display: flex;
@@ -874,7 +874,7 @@
   width: 100%;
   padding: 3px;
   font-size: 8px;
-  min-height: 80px;
+  height: 24px;
 }
 
 /* ─────────────── COMPACT COMBAT STATS ─────────────── */
@@ -897,7 +897,7 @@
   text-align: center;
   font-size: 10px;
   font-weight: bold;
-  min-height: 80px;
+  height: 22px;
 }
 
 .initiative-display {
@@ -931,7 +931,7 @@
 .force-field input {
   text-align: center;
   font-size: 10px;
-  min-height: 80px;
+  height: 22px;
 }
 
 /* ─────────────── BUTTONS ─────────────── */
@@ -999,10 +999,10 @@
   .datapad-main-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .character-portrait {
     width: 50px;
-    min-height: 80px;
+    height: 65px;
   }
 }
 
@@ -1014,3 +1014,531 @@
 .mb-2 { margin-bottom: 4px; }
 .p-0 { padding: 0; }
 .p-1 { padding: 2px; }
+
+/* ============================================
+   SKILL ACTIONS PANELS
+   Combat actions and extra skill uses display
+   ============================================ */
+
+/* Skill row container */
+.skill-row-container {
+  position: relative;
+  margin-bottom: 2px;
+}
+
+/* Skill actions toggle button */
+.skill-actions-toggle {
+  background: transparent;
+  border: none;
+  color: #00b8ff;
+  cursor: pointer;
+  padding: 0 4px;
+  margin-left: 4px;
+  font-size: 10px;
+  transition: all 0.2s ease;
+}
+
+.skill-actions-toggle:hover {
+  color: #00ffff;
+  text-shadow: 0 0 8px #00ffff;
+}
+
+.skill-actions-toggle i {
+  transition: transform 0.2s ease;
+}
+
+/* Actions panel */
+.skill-actions-panel {
+  background: rgba(0, 20, 40, 0.9);
+  border: 1px solid #1c4b8e;
+  border-radius: 4px;
+  padding: 8px;
+  margin: 4px 0 6px 0;
+  box-shadow: inset 0 0 10px rgba(0, 100, 180, 0.3);
+  animation: panel-slide-down 0.2s ease-out;
+}
+
+@keyframes panel-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Actions category */
+.actions-category {
+  margin-bottom: 10px;
+}
+
+.actions-category:last-child {
+  margin-bottom: 0;
+}
+
+.actions-category h4 {
+  color: #00b8ff;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 6px 0;
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(0, 184, 255, 0.3);
+  text-shadow: 0 0 5px rgba(0, 184, 255, 0.5);
+}
+
+.actions-category h4 i {
+  margin-right: 5px;
+  font-size: 10px;
+}
+
+/* Actions list */
+.actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Individual action item */
+.action-item {
+  background: rgba(0, 40, 80, 0.5);
+  border: 1px solid rgba(0, 140, 200, 0.4);
+  border-radius: 3px;
+  padding: 6px 8px;
+  transition: all 0.2s ease;
+}
+
+.action-item:hover {
+  background: rgba(0, 60, 120, 0.6);
+  border-color: rgba(0, 184, 255, 0.6);
+  box-shadow: 0 0 8px rgba(0, 184, 255, 0.3);
+}
+
+/* Action header */
+.action-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.action-name {
+  color: #9ed0ff;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.action-type {
+  background: rgba(0, 100, 180, 0.5);
+  color: #00ffff;
+  font-size: 8px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(0, 184, 255, 0.4);
+}
+
+.action-cost {
+  background: rgba(180, 100, 0, 0.5);
+  color: #ffaa00;
+  font-size: 8px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 170, 0, 0.4);
+}
+
+/* Action details */
+.action-dc,
+.action-when,
+.action-outcome,
+.action-notes {
+  font-size: 9px;
+  line-height: 1.3;
+  margin-top: 3px;
+  color: #b0d5ff;
+}
+
+.action-dc {
+  color: #ffaa00;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.action-dc i {
+  font-size: 8px;
+  color: #00b8ff;
+}
+
+.action-when {
+  color: #9ed0ff;
+  font-style: italic;
+}
+
+.action-outcome {
+  color: #80ff80;
+}
+
+.action-notes {
+  color: #aaa;
+  font-size: 8px;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(0, 100, 180, 0.3);
+}
+
+/* Skill name with toggle button */
+.skill-name {
+  display: flex;
+  align-items: center;
+}
+
+
+/* ============================================
+   SHIP COMBAT ACTIONS PANELS
+   Combat actions for vehicle/ship crew positions
+   ============================================ */
+
+/* Crew position header with toggle */
+.crew-position-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.crew-position-header label {
+  margin: 0;
+}
+
+/* Crew actions toggle button */
+.crew-actions-toggle {
+  background: transparent;
+  border: none;
+  color: #00b8ff;
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 10px;
+  transition: all 0.2s ease;
+  margin-left: auto;
+}
+
+.crew-actions-toggle:hover {
+  color: #00ffff;
+  text-shadow: 0 0 8px #00ffff;
+}
+
+.crew-actions-toggle i {
+  transition: transform 0.2s ease;
+}
+
+/* Crew position styling */
+.crew-position {
+  position: relative;
+  margin-bottom: 6px;
+}
+
+/* Crew actions panel */
+.crew-actions-panel {
+  background: rgba(0, 20, 40, 0.9);
+  border: 1px solid #1c4b8e;
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 6px;
+  box-shadow: inset 0 0 10px rgba(0, 100, 180, 0.3);
+  animation: panel-slide-down 0.2s ease-out;
+}
+
+/* Ship actions list */
+.ship-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Individual ship action item */
+.ship-action-item {
+  background: rgba(0, 40, 80, 0.5);
+  border: 1px solid rgba(0, 140, 200, 0.4);
+  border-radius: 3px;
+  padding: 6px 8px;
+  transition: all 0.2s ease;
+}
+
+.ship-action-item:hover {
+  background: rgba(0, 60, 120, 0.6);
+  border-color: rgba(0, 184, 255, 0.6);
+  box-shadow: 0 0 8px rgba(0, 184, 255, 0.3);
+}
+
+/* Ship action header */
+.ship-action-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.ship-action-name {
+  color: #9ed0ff;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.ship-action-type {
+  background: rgba(0, 100, 180, 0.5);
+  color: #00ffff;
+  font-size: 8px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(0, 184, 255, 0.4);
+}
+
+.ship-action-cost {
+  background: rgba(180, 100, 0, 0.5);
+  color: #ffaa00;
+  font-size: 8px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 170, 0, 0.4);
+}
+
+/* Ship action details */
+.ship-action-dc,
+.ship-action-when,
+.ship-action-outcome,
+.ship-action-notes {
+  font-size: 9px;
+  line-height: 1.3;
+  margin-top: 3px;
+  color: #b0d5ff;
+}
+
+.ship-action-dc {
+  color: #ffaa00;
+  font-weight: bold;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.ship-action-dc i {
+  font-size: 8px;
+  color: #00b8ff;
+  margin-top: 2px;
+}
+
+.ship-action-when {
+  color: #9ed0ff;
+  font-style: italic;
+}
+
+.ship-action-outcome {
+  color: #80ff80;
+}
+
+.ship-action-notes {
+  color: #aaa;
+  font-size: 8px;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(0, 100, 180, 0.3);
+}
+
+/* Crew slot enhancements for drag & drop */
+.crew-slot {
+  min-height: 28px;
+  padding: 4px 8px;
+  background: rgba(0, 20, 40, 0.6);
+  border: 1px solid rgba(0, 140, 200, 0.4);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.crew-slot:hover {
+  background: rgba(0, 40, 80, 0.7);
+  border-color: rgba(0, 184, 255, 0.6);
+}
+
+.crew-member {
+  color: #9ed0ff;
+  font-weight: bold;
+  font-size: 10px;
+}
+
+.crew-empty {
+  color: #666;
+  font-style: italic;
+  font-size: 9px;
+}
+
+/* ─────────────── Character Traits Section ─────────────── */
+.character-traits {
+  margin: 8px 0;
+  padding: 8px;
+  background: rgba(0, 20, 40, 0.5);
+  border: 1px solid rgba(0, 140, 200, 0.3);
+  border-radius: 4px;
+}
+
+.traits-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.trait-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trait-toggle .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px 10px;
+  background: rgba(0, 40, 80, 0.4);
+  border: 1px solid rgba(0, 140, 200, 0.4);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.trait-toggle .checkbox-label:hover {
+  background: rgba(0, 60, 100, 0.6);
+  border-color: rgba(0, 184, 255, 0.6);
+  box-shadow: 0 0 8px rgba(0, 184, 255, 0.3);
+}
+
+.trait-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #0af;
+}
+
+.trait-toggle .fa-hand-sparkles {
+  color: #00d4ff;
+  font-size: 14px;
+}
+
+.trait-toggle span {
+  color: #9ed0ff;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* ─────────────── Force Secrets & Techniques ─────────────── */
+.force-secrets-section,
+.force-techniques-section {
+  margin: 12px 0;
+  padding: 8px;
+  background: rgba(0, 20, 40, 0.5);
+  border: 1px solid rgba(0, 140, 200, 0.3);
+  border-radius: 4px;
+}
+
+.secrets-list,
+.techniques-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.secret-item,
+.technique-item {
+  background: rgba(0, 40, 80, 0.5);
+  border: 1px solid rgba(0, 140, 200, 0.4);
+  border-radius: 3px;
+  padding: 6px 8px;
+  transition: all 0.2s ease;
+}
+
+.secret-item:hover,
+.technique-item:hover {
+  background: rgba(0, 60, 100, 0.6);
+  border-color: rgba(0, 184, 255, 0.6);
+  box-shadow: 0 0 8px rgba(0, 184, 255, 0.3);
+}
+
+.secret-header,
+.technique-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.secret-name,
+.technique-name {
+  flex: 1;
+  color: #9ed0ff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.secret-description,
+.technique-description {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(0, 100, 180, 0.3);
+  color: #aaa;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.empty-list {
+  color: #666;
+  font-style: italic;
+  font-size: 9px;
+  text-align: center;
+  padding: 12px;
+  margin: 0;
+}
+
+.add-secret,
+.add-technique {
+  width: 100%;
+  padding: 6px 10px;
+  background: rgba(0, 100, 180, 0.3);
+  border: 1px solid rgba(0, 140, 200, 0.5);
+  border-radius: 3px;
+  color: #00d4ff;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.add-secret:hover,
+.add-technique:hover {
+  background: rgba(0, 140, 200, 0.5);
+  border-color: rgba(0, 184, 255, 0.8);
+  box-shadow: 0 0 10px rgba(0, 184, 255, 0.4);
+  color: #fff;
+}
+
+.add-secret i,
+.add-technique i {
+  font-size: 10px;
+}
+

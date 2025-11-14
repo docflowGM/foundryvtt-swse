@@ -29,7 +29,7 @@
     ]
   },
   {
-    "name": "Corellian Powersassets/uit",
+    "name": "Corellian Powersuit",
     "type": "Medium",
     "armor_bonus": 7,
     "equipment_bonus": 0,
@@ -66,7 +66,7 @@
     "cost": 6000,
     "weight": "6 kg",
     "availability": "Restricted",
-    "sourcebook": "Clone Wars Campaign Gassets/uide",
+    "sourcebook": "Clone Wars Campaign Guide",
     "tags": [
       "Stealth",
       "Recon"
@@ -111,7 +111,7 @@
     "cost": "Varies",
     "weight": "1 kg",
     "availability": "-",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Shield",
       "Energy"
@@ -126,7 +126,7 @@
     "cost": 7000,
     "weight": "16 kg",
     "availability": "Rare",
-    "sourcebook": "Legacy Era Campaign Gassets/uide",
+    "sourcebook": "Legacy Era Campaign Guide",
     "tags": [
       "Imperial",
       "Knight"
@@ -171,7 +171,7 @@
     "cost": 6000,
     "weight": "13 kg",
     "availability": "Military",
-    "sourcebook": "Legacy Era Campaign Gassets/uide",
+    "sourcebook": "Legacy Era Campaign Guide",
     "tags": [
       "Anti-Jedi",
       "Combat"
@@ -201,7 +201,7 @@
     "cost": "-",
     "weight": "18 kg",
     "availability": "Rare",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Mandalorian",
       "Combat"
@@ -231,7 +231,7 @@
     "cost": 6000,
     "weight": "13 kg",
     "availability": "Restricted",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Combat"
     ]
@@ -245,7 +245,7 @@
     "cost": 11000,
     "weight": "17 kg",
     "availability": "Military",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Powered",
       "Combat"

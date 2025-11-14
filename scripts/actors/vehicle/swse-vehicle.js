@@ -1,5 +1,6 @@
 import { SWSECharacterSheet } from '../character/swse-character-sheet.js';
 import { SWSEVehicleHandler } from './swse-vehicle-handler.js';
+import { CombatActionsMapper } from '../../utils/combat-actions-mapper.js';
 
 export class SWSEVehicleSheet extends SWSECharacterSheet {
   static get defaultOptions() {
@@ -48,6 +49,9 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
       };
     }
 
+    // Add ship combat actions by crew position
+    context.shipActions = CombatActionsMapper.getAllShipActionsByPosition();
+
     return context;
   }
 
@@ -60,6 +64,34 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     html.find('.weapon-roll').click(this._onRollWeapon.bind(this));
     html.find('.crew-slot').on('drop', this._onCrewDrop.bind(this));
     html.find('.crew-slot').on('click', this._onCrewClick.bind(this));
+
+    // Ship combat actions toggle
+    html.find('.crew-actions-toggle').click(this._onCrewActionsToggle.bind(this));
+  }
+
+  /**
+   * Handle crew position combat actions toggle
+   */
+  _onCrewActionsToggle(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const button = event.currentTarget;
+    const position = button.dataset.position;
+    const container = button.closest('.crew-position');
+    const panel = container?.querySelector('.crew-actions-panel');
+    const icon = button.querySelector('i');
+
+    if (panel) {
+      const isHidden = panel.style.display === 'none';
+      panel.style.display = isHidden ? 'block' : 'none';
+
+      // Toggle icon
+      if (icon) {
+        icon.classList.toggle('fa-chevron-down', !isHidden);
+        icon.classList.toggle('fa-chevron-up', isHidden);
+      }
+    }
   }
 
   /**
@@ -216,7 +248,9 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
           await this.actor.update({ [`system.crewPositions.${slot}`]: actor.name });
         }
       }
-    } catch (error) { }
+    } catch (error) {
+      console.warn('SWSE | Failed to assign crew member:', error.message);
+    }
   }
 
   async _onCrewClick(event) {

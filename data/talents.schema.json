@@ -19,13 +19,13 @@
         "type": "string"
       }
     },
-    "prereqassets/uisite": {
+    "prerequisite": {
       "type": [
         "string",
         "array",
         "null"
       ],
-      "description": "Prereqassets/uisites for this talent (other talents, feats, training, etc.)"
+      "description": "Prerequisites for this talent (other talents, feats, training, etc.)"
     },
     "description": {
       "type": "string",
@@ -53,7 +53,7 @@
       }
     }
   },
-  "reqassets/uired": [
+  "required": [
     "name",
     "tree",
     "class",

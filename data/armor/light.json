@@ -1,6 +1,6 @@
 [
   {
-    "name": "Armored Flight Sassets/uit",
+    "name": "Armored Flight Suit",
     "type": "Light",
     "armor_bonus": 3,
     "equipment_bonus": 0,
@@ -68,7 +68,7 @@
     "cost": "-",
     "weight": "-",
     "availability": "-",
-    "sourcebook": "Clone Wars Campaign Gassets/uide",
+    "sourcebook": "Clone Wars Campaign Guide",
     "tags": [
       "Republic",
       "Combat"
@@ -83,7 +83,7 @@
     "cost": "Varies",
     "weight": "1 kg",
     "availability": "-",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Shield",
       "Energy"
@@ -98,7 +98,7 @@
     "cost": "3000",
     "weight": "10 kg",
     "availability": "Licensed",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Combat"
     ]
@@ -112,7 +112,7 @@
     "cost": "6000",
     "weight": "9 kg",
     "availability": "Military",
-    "sourcebook": "Legacy Era Campaign Gassets/uide",
+    "sourcebook": "Legacy Era Campaign Guide",
     "tags": [
       "Alliance"
     ]
@@ -155,7 +155,7 @@
     "cost": "2500",
     "weight": "6 kg",
     "availability": "Military",
-    "sourcebook": "Rebellion Era Campaign Gassets/uide",
+    "sourcebook": "Rebellion Era Campaign Guide",
     "tags": [
       "Riot"
     ]
@@ -169,7 +169,7 @@
     "cost": "3500",
     "weight": "10 kg",
     "availability": "Military",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Combat"
     ]
@@ -228,13 +228,13 @@
     "cost": "6500",
     "weight": "12 kg",
     "availability": "Military",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Powered"
     ]
   },
   {
-    "name": "Mandalorian Combat Sassets/uit",
+    "name": "Mandalorian Combat Suit",
     "type": "Light",
     "armor_bonus": 4,
     "equipment_bonus": 1,
@@ -242,7 +242,7 @@
     "cost": "-",
     "weight": "8 kg",
     "availability": "Military, Rare",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Mandalorian"
     ]
@@ -256,7 +256,7 @@
     "cost": "-",
     "weight": "-",
     "availability": "-",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Mandalorian",
       "Combat"
@@ -299,7 +299,7 @@
     "cost": "-",
     "weight": "42 kg",
     "availability": "Rare",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Mandalorian"
     ]

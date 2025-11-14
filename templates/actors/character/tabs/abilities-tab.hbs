@@ -3,44 +3,54 @@
 
  <div class="abilities-grid">
  {{#each system.abilities as |ability key|}}
- <div class="ability-row">
- <label class="ability-label">{{upper key}}</label>
+ <div class="ability-row{{#if (and @root.system.isDroid (eq key 'con'))}} droid-no-con{{/if}}">
+ <label class="ability-label">
+ {{upper key}}
+ {{#if (and @root.system.isDroid (eq key 'con'))}}
+ <span class="droid-note" title="Droids have no Constitution score">—</span>
+ {{/if}}
+ </label>
 
  <div class="ability-inputs flexrow">
- <input type="number" 
- name="system.abilities.{{key}}.base" 
- value="{{ability.base}}" 
+ <input type="number"
+ name="system.abilities.{{key}}.base"
+ value="{{ability.base}}"
  data-dtype="Number"
  placeholder="10"
- title="Base Score"/>
+ title="Base Score"
+ {{#if (and @root.system.isDroid (eq key 'con'))}}disabled{{/if}}/>
 
  <span>+</span>
 
- <input type="number" 
- name="system.abilities.{{key}}.racial" 
- value="{{ability.racial}}" 
+ <input type="number"
+ name="system.abilities.{{key}}.racial"
+ value="{{ability.racial}}"
  data-dtype="Number"
  placeholder="0"
- title="Racial Modifier"/>
+ title="Racial Modifier"
+ {{#if (and @root.system.isDroid (eq key 'con'))}}disabled{{/if}}/>
 
  <span>+</span>
 
- <input type="number" 
- name="system.abilities.{{key}}.misc" 
- value="{{ability.misc}}" 
+ <input type="number"
+ name="system.abilities.{{key}}.misc"
+ value="{{ability.misc}}"
  data-dtype="Number"
  placeholder="0"
- title="Miscellaneous"/>
+ title="Miscellaneous"
+ {{#if (and @root.system.isDroid (eq key 'con'))}}disabled{{/if}}/>
 
  <span>=</span>
 
- <div class="ability-total">{{ability.total}}</div>
+ <div class="ability-total">
+ {{#if (and @root.system.isDroid (eq key 'con'))}}—{{else}}{{ability.total}}{{/if}}
+ </div>
  </div>
 
- <div class="ability-mod rollable" 
+ <div class="ability-mod rollable"
  data-roll="1d20+@abilities.{{key}}.mod"
  data-label="{{upper key}} Check">
- {{numberFormat ability.mod sign=true}}
+ {{#if (and @root.system.isDroid (eq key 'con'))}}—{{else}}{{numberFormat ability.mod sign=true}}{{/if}}
  </div>
  </div>
  {{/each}}
@@ -71,7 +81,13 @@
 
  <span title="Ability Modifier">
  {{#if (eq key "reflex")}}Dex {{numberFormat @root.system.abilities.dex.mod sign=true}}{{/if}}
- {{#if (eq key "fortitude")}}Con {{numberFormat @root.system.abilities.con.mod sign=true}}{{/if}}
+ {{#if (eq key "fortitude")}}
+ {{#if @root.system.isDroid}}
+ Str {{numberFormat @root.system.abilities.str.mod sign=true}} <span class="droid-note" title="Droids use STR for Fortitude">(Droid)</span>
+ {{else}}
+ Con {{numberFormat @root.system.abilities.con.mod sign=true}}
+ {{/if}}
+ {{/if}}
  {{#if (eq key "will")}}Wis {{numberFormat @root.system.abilities.wis.mod sign=true}}{{/if}}
  </span>
 

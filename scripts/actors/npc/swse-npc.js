@@ -11,7 +11,12 @@ export class SWSENPCSheet extends SWSECharacterSheet {
       classes: ["swse", "sheet", "actor", "npc"],
       template: "systems/swse/templates/actors/npc/npc-sheet.hbs",
       width: 800,
-      height: 720
+      height: 720,
+      tabs: [{
+        navSelector: '.sheet-tabs',
+        contentSelector: '.sheet-body',
+        initial: 'summary'
+      }]
     });
   }
 

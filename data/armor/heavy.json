@@ -1,6 +1,6 @@
 [
   {
-    "name": "Armored Space Sassets/uit",
+    "name": "Armored Space Suit",
     "type": "Heavy",
     "armor_bonus": 9,
     "equipment_bonus": 3,
@@ -38,7 +38,7 @@
     "cost": "Varies",
     "weight": "1 kg",
     "availability": "-",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Shield",
       "Energy"
@@ -97,14 +97,14 @@
     "cost": 19000,
     "weight": "32 kg",
     "availability": "Military",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Powered",
       "Combat"
     ]
   },
   {
-    "name": "Heavy Pressure Sassets/uit",
+    "name": "Heavy Pressure Suit",
     "type": "Heavy",
     "armor_bonus": 9,
     "equipment_bonus": 3,
@@ -127,7 +127,7 @@
     "cost": 9000,
     "weight": "25 kg",
     "availability": "Restricted",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Combat"
     ]
@@ -141,7 +141,7 @@
     "cost": "-",
     "weight": "65 kg",
     "availability": "Military, Rare",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Mandalorian",
       "Elite"
@@ -171,7 +171,7 @@
     "cost": "-",
     "weight": "26 kg",
     "availability": "Military",
-    "sourcebook": "Knights of the Old Republic Campaign Gassets/uide",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
     "tags": [
       "Republic",
       "Combat"
@@ -186,7 +186,7 @@
     "cost": 15000,
     "weight": "35 kg",
     "availability": "-",
-    "sourcebook": "Clone Wars Campaign Gassets/uide",
+    "sourcebook": "Clone Wars Campaign Guide",
     "tags": [
       "Environmental",
       "Vacuum"
@@ -201,7 +201,7 @@
     "cost": 17000,
     "weight": "38 kg",
     "availability": "Military",
-    "sourcebook": "Legacy Era Campaign Gassets/uide",
+    "sourcebook": "Legacy Era Campaign Guide",
     "tags": [
       "Combat",
       "Elite"
@@ -216,7 +216,7 @@
     "cost": 21000,
     "weight": "38 kg",
     "availability": "Military",
-    "sourcebook": "Rebellion Era Campaign Gassets/uide",
+    "sourcebook": "Rebellion Era Campaign Guide",
     "tags": [
       "Imperial",
       "Vacuum"

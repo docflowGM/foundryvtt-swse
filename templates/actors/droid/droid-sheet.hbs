@@ -1,5 +1,5 @@
 <div class="swse-sheet">
-<form class="{{cssClass}} flexcol holo-theme" autocomplete="off">
+<form class="{{cssClass}} flexcol" autocomplete="off">
  {{!-- Holographic Frame Header --}}
  <div class="holo-frame-top">
  <img class="sw-logo" src="systems/swse/assets/ui/swse-logo.png" alt="Star Wars Saga Edition"/>
@@ -76,12 +76,22 @@
  <h3>Ability Scores</h3>
  <div class="abilities-grid">
  {{#each system.abilities as |ability key|}}
- <div class="ability-block">
- <label>{{toUpperCase key}}</label>
- <input type="number" name="system.abilities.{{key}}.base" value="{{ability.base}}" data-dtype="Number"/>
- <div class="ability-mod">{{#if (gte ability.mod 0)}}+{{/if}}{{ability.mod}}</div>
+ <div class="ability-block{{#if (eq key 'con')}} droid-no-con{{/if}}">
+ <label>{{toUpperCase key}}
+ {{#if (eq key 'con')}}
+ <span class="droid-note" title="Droids have no Constitution score">—</span>
+ {{/if}}
+ </label>
+ <input type="number" name="system.abilities.{{key}}.base" value="{{ability.base}}" data-dtype="Number"
+ {{#if (eq key 'con')}}disabled placeholder="—"{{/if}}/>
+ <div class="ability-mod">
+ {{#if (eq key 'con')}}—{{else}}{{#if (gte ability.mod 0)}}+{{/if}}{{ability.mod}}{{/if}}
+ </div>
  </div>
  {{/each}}
+ </div>
+ <div class="droid-fortitude-note">
+ <i class="fas fa-info-circle"></i> <em>Droids use STR modifier for Fortitude Defense</em>
  </div>
  </div>
  
@@ -208,16 +218,7 @@
  </div>
  
  <!-- SKILLS TAB -->
- <div class="tab" data-group="primary" data-tab="skills">
- <div class="character-section">
- <h3>Skills</h3>
- <p style="color: #aaa; font-size: 12px;">Configure skills here</p>
- 
- <button type="button" class="add-skill btn-add">
- <i class="fas fa-plus"></i> Add Custom Skill
- </button>
- </div>
- </div>
+ {{> "systems/swse/templates/actors/character/tabs/skills-tab.hbs"}}
  
  <!-- FORCE TAB -->
  <div class="tab" data-group="primary" data-tab="force">

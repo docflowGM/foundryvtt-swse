@@ -36,6 +36,19 @@ import { preloadHandlebarsTemplates } from './scripts/core/load-templates.js';
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 
 /* -------------------------------------------- */
+/*  Utilities                                   */
+/* -------------------------------------------- */
+
+import { SWSENotifications } from './scripts/utils/notifications.js';
+import { SWSELogger } from './scripts/utils/logger.js';
+
+/* -------------------------------------------- */
+/*  Configuration                               */
+/* -------------------------------------------- */
+
+import { SWSE_SKILLS, getSkillConfig, getSkillsArray } from './scripts/config/skills.js';
+
+/* -------------------------------------------- */
 /*  Components                                  */
 /* -------------------------------------------- */
 
@@ -49,6 +62,25 @@ import './scripts/migration/fix-defense-schema.js';
 /* -------------------------------------------- */
 
 import { DamageSystem } from './scripts/combat/damage-system.js';
+import { SWSECombatAutomation } from './scripts/automation/combat-automation.js';
+import { CombatActionsMapper } from './scripts/utils/combat-actions-mapper.js';
+
+/* -------------------------------------------- */
+/*  Force Powers                                */
+/* -------------------------------------------- */
+
+import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
+import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
+
+/* -------------------------------------------- */
+/*  Performance & Optimization                  */
+/* -------------------------------------------- */
+
+import { cacheManager } from './scripts/core/cache-manager.js';
+import { dataPreloader } from './scripts/core/data-preloader.js';
+import { errorHandler, errorCommands, logError } from './scripts/core/error-handler.js';
+import { lazyLoader } from './scripts/core/lazy-loader.js';
+import { perfMonitor, debounce, throttle } from './scripts/utils/performance-utils.js';
 
 /* -------------------------------------------- */
 /*  Applications                                */
@@ -74,12 +106,13 @@ import { DropHandler } from './scripts/drag-drop/drop-handler.js';
 import './scripts/chat/chat-commands.js';
 
 /* -------------------------------------------- */
-/*  House Rules                                 */
+/*  House Rules & GM Tools                      */
 /* -------------------------------------------- */
 
 import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
 import { HouseruleMechanics } from './scripts/houserules/houserule-mechanics.js';
 import { HouserulesConfig } from './scripts/houserules/houserules-config.js';
+import { SWSEHomebrewManager } from './scripts/gm-tools/homebrew-manager.js';
 
 /* -------------------------------------------- */
 /*  System Configuration                        */
@@ -103,33 +136,61 @@ Hooks.once("init", async function() {
   // ============================================
   // Create Global Namespace
   // ============================================
-  
+
   game.swse = {
     // Core Classes
     SWSEActorBase,
     SWSEItemBase,
-    
+
     // Systems
     DamageSystem,
+    CombatAutomation: SWSECombatAutomation,
     WorldDataLoader,
     DropHandler,
     HouseruleMechanics,
     HouserulesConfig,
-    
+
+    // Utilities
+    notifications: SWSENotifications,
+    logger: SWSELogger,
+
     // Configuration
     config: CONFIG.SWSE,
-    
+    skills: SWSE_SKILLS,
+    getSkillConfig,
+    getSkillsArray,
+
     // Components
     components: {
       ConditionTrack: ConditionTrackComponent,
       ForceSuite: ForceSuiteComponent
     },
-    
+
     // Applications
     apps: {
       Store: SWSEStore,
       LevelUp: SWSELevelUp
+    },
+
+    // Performance & Optimization
+    cacheManager,
+    dataPreloader,
+    errorHandler,
+    lazyLoader,
+    perfMonitor,
+    utils: {
+      debounce,
+      throttle
     }
+  };
+
+  // ============================================
+  // Make Lazy Loader Available Early
+  // ============================================
+
+  window.SWSE = {
+    lazyLoader,
+    perfMonitor
   };
 
   // ============================================
@@ -201,6 +262,8 @@ Hooks.once("init", async function() {
   
   registerSystemSettings();
   registerHouseruleSettings();
+  SWSEHomebrewManager.registerSettings();
+  SWSEHomebrewManager.init();
 
   // ============================================
   // Register Handlebars Helpers
@@ -228,6 +291,7 @@ Hooks.once("init", async function() {
       const num = Number(value) || 0;
       return num >= 0 ? `+${num}` : `${num}`;
     });
+  }
 
   if (!Handlebars.helpers['safeNumber']) {
     Handlebars.registerHelper('safeNumber', function(value, options) {
@@ -235,7 +299,6 @@ Hooks.once("init", async function() {
       if (isNaN(num)) return 0;
       return num;
     });
-  }
   }
 
   // ============================================
@@ -251,9 +314,15 @@ Hooks.once("init", async function() {
   CONFIG.Dice.terms["d"] = foundry.dice.terms.Die;
 
   // ============================================
+  // Initialize Combat Automation
+  // ============================================
+
+  SWSECombatAutomation.init();
+
+  // ============================================
   // Development Enhancements
   // ============================================
-  
+
   enhanceValidationLogging();
 
   console.log("SWSE | System Initialized Successfully");
@@ -267,9 +336,48 @@ Hooks.once("ready", async function() {
   console.log("SWSE | System Ready");
 
   // ============================================
+  // Initialize Error Handler
+  // ============================================
+
+  errorHandler.initialize();
+
+  // ============================================
+  // Preload Data (Priority)
+  // ============================================
+
+  await perfMonitor.measureAsync('Data Preloading', async () => {
+    await dataPreloader.preload({
+      priority: ['classes', 'skills'],
+      background: ['feats', 'talents', 'forcePowers', 'species'],
+      verbose: true
+    });
+  });
+
+  // ============================================
+  // Initialize Combat Actions Mapper
+  // ============================================
+
+  await perfMonitor.measureAsync('Combat Actions Init', async () => {
+    await CombatActionsMapper.init();
+  });
+
+  // ============================================
+  // Initialize Force Power Hooks
+  // ============================================
+
+  initializeForcePowerHooks();
+
+  // ============================================
+  // Setup Lazy Loading
+  // ============================================
+
+  lazyLoader.setupLazyImages();
+  SWSELogger.log('Lazy image loading initialized');
+
+  // ============================================
   // Load World Data (GM Only)
   // ============================================
-  
+
   if (game.user.isGM) {
     await WorldDataLoader.autoLoad();
 
@@ -282,15 +390,22 @@ Hooks.once("ready", async function() {
         • Force Suite management ready<br>
         • Check the Summary tab for your combat dashboard
       `, { permanent: false });
-      
+
       await game.settings.set('swse', 'welcomeShown', true);
     }
   }
 
   // ============================================
+  // Initialize Theme
+  // ============================================
+
+  const currentTheme = game.settings.get('swse', 'sheetTheme');
+  applyTheme(currentTheme);
+
+  // ============================================
   // Initialize Combat Automation
   // ============================================
-  
+
   if (game.settings.get('swse', 'enableAutomation')) {
     setupCombatAutomation();
   }
@@ -298,7 +413,7 @@ Hooks.once("ready", async function() {
   // ============================================
   // Initialize Condition Recovery
   // ============================================
-  
+
   if (game.settings.get('swse', 'autoConditionRecovery')) {
     setupConditionRecovery();
   }
@@ -306,8 +421,41 @@ Hooks.once("ready", async function() {
   // ============================================
   // Initialize House Rules
   // ============================================
-  
+
   HouseruleMechanics.initialize();
+
+  // ============================================
+  // Export to Window for Console Access
+  // ============================================
+
+  Object.assign(window.SWSE, {
+    // Core systems
+    cacheManager,
+    dataPreloader,
+    errorHandler,
+    lazyLoader,
+    perfMonitor,
+
+    // Force Powers
+    ForcePowerManager,
+
+    // Combat
+    CombatActionsMapper,
+    DamageSystem,
+
+    // Utilities
+    debounce,
+    throttle,
+    logError,
+
+    // Error management commands
+    errors: errorCommands,
+
+    // Access to game.swse
+    ...game.swse
+  });
+
+  SWSELogger.log('Global namespace exported to window.SWSE');
 });
 
 /* -------------------------------------------- */
@@ -408,7 +556,7 @@ function registerSystemSettings() {
   // ============================================
   // Store Settings
   // ============================================
-  
+
   game.settings.register("swse", "storeMarkup", {
     name: 'SWSE.Settings.StoreMarkup.Name',
     hint: 'SWSE.Settings.StoreMarkup.Hint',
@@ -436,6 +584,85 @@ function registerSystemSettings() {
       step: 5
     }
   });
+
+  // ============================================
+  // Theme Settings
+  // ============================================
+
+  game.settings.register("swse", "sheetTheme", {
+    name: 'Sheet Theme',
+    hint: 'Select the visual theme for character sheets and UI elements',
+    scope: "client",
+    config: true,
+    type: String,
+    choices: {
+      "holo": "Default (Holo)",
+      "high-contrast": "High Contrast",
+      "starship": "Starship",
+      "sand-people": "Sand People",
+      "jedi": "Jedi",
+      "high-republic": "High Republic"
+    },
+    default: "holo",
+    onChange: value => {
+      applyTheme(value);
+    }
+  });
+
+  // ============================================
+  // Developer Settings
+  // ============================================
+
+  game.settings.register("swse", "devMode", {
+    name: "Developer Mode",
+    hint: "Enable detailed error logging and stack traces for debugging",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+}
+
+/* -------------------------------------------- */
+/*  Theme Management                            */
+/* -------------------------------------------- */
+
+/**
+ * Apply the selected theme to all sheets
+ */
+function applyTheme(themeName) {
+  SWSELogger.log(`Applying theme: ${themeName}`);
+
+  // Remove all existing theme classes
+  const themes = ['holo-theme', 'high-contrast-theme', 'starship-theme', 'sand-people-theme', 'jedi-theme', 'high-republic-theme'];
+  const body = document.body;
+
+  themes.forEach(theme => {
+    body.classList.remove(theme);
+  });
+
+  // Add the new theme class
+  body.classList.add(`${themeName}-theme`);
+
+  // Store the theme preference
+  document.documentElement.setAttribute('data-theme', themeName);
+
+  // Re-render only SWSE sheets to apply the theme (optimize performance)
+  Object.values(ui.windows).forEach(app => {
+    // Only re-render sheets from this system
+    if (app.render && typeof app.render === 'function') {
+      const isSWSESheet = app instanceof SWSECharacterSheet ||
+                          app instanceof SWSEDroidSheet ||
+                          app instanceof SWSENPCSheet ||
+                          app instanceof SWSEVehicleSheet ||
+                          app instanceof SWSEItemSheet ||
+                          app.constructor?.name?.startsWith('SWSE');
+
+      if (isSWSESheet) {
+        app.render(false);
+      }
+    }
+  });
 }
 
 /* -------------------------------------------- */
@@ -446,23 +673,23 @@ function registerSystemSettings() {
  * Set up combat automation hooks
  */
 function setupCombatAutomation() {
-  console.log("SWSE | Setting up combat automation");
-  
+  SWSELogger.log("Setting up combat automation");
+
   // Initialize combat tracking
   Hooks.on('createCombat', (combat, options, userId) => {
-    console.log("SWSE | Combat created:", combat.name);
+    SWSELogger.log("Combat created:", combat.name);
   });
-  
+
   // Track combat rounds
   Hooks.on('combatRound', (combat, updateData, updateOptions) => {
-    console.log(`SWSE | Combat Round ${combat.round}`);
+    SWSELogger.log(`Combat Round ${combat.round}`);
   });
-  
+
   // Track combat turns
   Hooks.on('combatTurn', (combat, updateData, updateOptions) => {
     const combatant = combat.combatant;
     if (combatant?.actor) {
-      console.log(`SWSE | Turn: ${combatant.actor.name}`);
+      SWSELogger.log(`Turn: ${combatant.actor.name}`);
     }
   });
 }
@@ -649,7 +876,7 @@ async function createItemMacro(data, slot) {
 function enhanceValidationLogging() {
   [Actor, Item].forEach(DocumentClass => {
     const original = DocumentClass.prototype.validate;
-    
+
     DocumentClass.prototype.validate = function(data, options) {
       try {
         return original.call(this, data, options);
@@ -658,22 +885,52 @@ function enhanceValidationLogging() {
           console.group(`⚠️ SWSE ${DocumentClass.name} Validation Error`);
           console.error(`Document:`, this.name || "Unnamed");
           console.error(`Type:`, this.type);
-          console.error(`Data:`, data);
-          
-          if (err.failures) {
-            console.error("Validation Failures:");
-            err.failures.forEach(f => {
-              console.error(`  ❌ ${f.path}:`, f.failure);
-              console.error(`     Value:`, f.value);
-            });
-          }
-          
+          console.error(`ID:`, this.id || "No ID");
+
+          // Show full data for inspection
+          console.group(`Data Object:`);
+          console.dir(data, {depth: 3});
           console.groupEnd();
+
+          // Show detailed validation failures
+          if (err.failures && err.failures.length > 0) {
+            console.group(`Validation Failures (${err.failures.length}):`);
+            err.failures.forEach((f, index) => {
+              console.group(`${index + 1}. Field: ${f.path}`);
+              console.error(`   Message:`, f.failure?.message || f.failure);
+              console.error(`   Actual Value:`, f.value);
+              console.error(`   Expected:`, f.failure?.expected || 'N/A');
+              console.groupEnd();
+            });
+            console.groupEnd();
+          }
+
+          // Show error message
+          if (err.message) {
+            console.error(`Error Message:`, err.message);
+          }
+
+          // Show stack trace in development mode
+          if (game.settings?.get('swse', 'devMode')) {
+            console.group(`Stack Trace:`);
+            console.error(err.stack);
+            console.groupEnd();
+          }
+
+          console.groupEnd();
+
+          // Show user-friendly notification
+          ui.notifications?.error(
+            `Validation error in ${DocumentClass.name}: ${this.name || 'Unnamed'}. Check console for details.`,
+            {permanent: false}
+          );
         }
         throw err;
       }
     };
   });
+
+  SWSELogger.log("Enhanced validation logging enabled");
 }
 
 /* -------------------------------------------- */
@@ -681,29 +938,38 @@ function enhanceValidationLogging() {
 /* -------------------------------------------- */
 
 // Make system components available globally for console access
-window.SWSE = {
+Object.assign(window.SWSE, {
   // Components
   ConditionTrack: ConditionTrackComponent,
   ForceSuite: ForceSuiteComponent,
-  
+
   // Systems
   Damage: DamageSystem,
   WorldDataLoader: WorldDataLoader,
   DropHandler: DropHandler,
   HouseruleMechanics: HouseruleMechanics,
-    HouserulesConfig,
-  
+  HouserulesConfig,
+
+  // Utilities
+  notifications: SWSENotifications,
+  logger: SWSELogger,
+
   // Apps
   Store: SWSEStore,
   LevelUp: SWSELevelUp,
-  
+
   // Actor/Item Classes
   SWSEActorBase: SWSEActorBase,
   SWSEItemBase: SWSEItemBase,
-  
+
+  // Force Powers
+  ForcePowerManager: ForcePowerManager,
+
   // Configuration
-  config: CONFIG.SWSE
-};
+  config: CONFIG.SWSE,
+  skills: SWSE_SKILLS
+});
 
 console.log("SWSE | Enhanced System Fully Loaded");
 console.log("SWSE | Use 'window.SWSE' in console to access system components");
+console.log("SWSE | Error tracking commands: SWSE.errors.recent(), SWSE.errors.stats(), SWSE.errors.export()");
