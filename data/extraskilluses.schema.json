@@ -38,7 +38,7 @@
       "const": "extra-skill-use"
     }
   },
-  "reqassets/uired": [
+  "required": [
     "name",
     "description"
   ],

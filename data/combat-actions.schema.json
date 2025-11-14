@@ -46,14 +46,14 @@
             ]
           }
         },
-        "reqassets/uired": [
+        "required": [
           "skill"
         ],
         "additionalProperties": false
       }
     }
   },
-  "reqassets/uired": [
+  "required": [
     "name",
     "actionCost",
     "notes"

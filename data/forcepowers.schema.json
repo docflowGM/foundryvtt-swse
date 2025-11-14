@@ -43,7 +43,7 @@
             "type": "string"
           }
         },
-        "reqassets/uired": [
+        "required": [
           "dc",
           "effect"
         ]
@@ -68,7 +68,7 @@
       }
     }
   },
-  "reqassets/uired": [
+  "required": [
     "name",
     "action",
     "target",

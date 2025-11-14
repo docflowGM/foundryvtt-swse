@@ -95,7 +95,7 @@
       "description": "Page number reference"
     }
   },
-  "reqassets/uired": [
+  "required": [
     "name",
     "category",
     "type",
