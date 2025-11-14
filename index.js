@@ -78,7 +78,7 @@ import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js'
 
 import { cacheManager } from './scripts/core/cache-manager.js';
 import { dataPreloader } from './scripts/core/data-preloader.js';
-import { errorHandler } from './scripts/core/error-handler.js';
+import { errorHandler, errorCommands, logError } from './scripts/core/error-handler.js';
 import { lazyLoader } from './scripts/core/lazy-loader.js';
 import { perfMonitor, debounce, throttle } from './scripts/utils/performance-utils.js';
 
@@ -446,6 +446,10 @@ Hooks.once("ready", async function() {
     // Utilities
     debounce,
     throttle,
+    logError,
+
+    // Error management commands
+    errors: errorCommands,
 
     // Access to game.swse
     ...game.swse
@@ -968,3 +972,4 @@ Object.assign(window.SWSE, {
 
 console.log("SWSE | Enhanced System Fully Loaded");
 console.log("SWSE | Use 'window.SWSE' in console to access system components");
+console.log("SWSE | Error tracking commands: SWSE.errors.recent(), SWSE.errors.stats(), SWSE.errors.export()");

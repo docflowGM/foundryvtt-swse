@@ -1,6 +1,7 @@
 /**
  * Error Handler
  * Provides graceful error handling and recovery mechanisms
+ * Enhanced with detailed Foundry/Forge error logging
  */
 
 export class ErrorHandler {
@@ -9,12 +10,16 @@ export class ErrorHandler {
     this._maxLogSize = 100;
     this._recoveryHandlers = new Map();
     this._criticalErrors = new Set();
+    this._devMode = false;
   }
 
   /**
    * Initialize error handler with global hooks
    */
   initialize() {
+    // Get devMode setting
+    this._devMode = game.settings?.get('swse', 'devMode') ?? false;
+
     // Hook into Foundry's error handling
     if (typeof Hooks !== 'undefined') {
       Hooks.on('error', (location, error, data) => {
@@ -33,7 +38,7 @@ export class ErrorHandler {
         filename: event.filename,
         lineno: event.lineno,
         colno: event.colno,
-        source: 'window'
+        source: 'window-error'
       });
     });
 
@@ -45,7 +50,7 @@ export class ErrorHandler {
       });
     });
 
-    console.log('SWSE | Error handler initialized');
+    console.log('SWSE | Error handler initialized with enhanced logging');
   }
 
   /**
@@ -58,10 +63,12 @@ export class ErrorHandler {
       error,
       context,
       timestamp: Date.now(),
-      stack: error?.stack
+      stack: error?.stack,
+      foundryContext: this._captureFoundryContext(),
+      systemContext: this._captureSystemContext()
     };
 
-    // Log the error
+    // Log the error with enhanced details
     this._logError(errorInfo);
 
     // Check if critical
@@ -95,7 +102,66 @@ export class ErrorHandler {
   }
 
   /**
-   * Log error to internal log
+   * Capture current Foundry context
+   * @private
+   */
+  _captureFoundryContext() {
+    try {
+      return {
+        foundryVersion: game?.version || 'unknown',
+        systemVersion: game?.system?.version || 'unknown',
+        worldId: game?.world?.id || 'unknown',
+        userId: game?.user?.id || 'unknown',
+        userName: game?.user?.name || 'unknown',
+        isGM: game?.user?.isGM ?? false,
+        activeScene: game?.scenes?.active?.name || 'none',
+        combat: game?.combat?.id ? {
+          id: game.combat.id,
+          round: game.combat.round,
+          turn: game.combat.turn,
+          combatant: game.combat.combatant?.name
+        } : null,
+        openSheets: Object.values(ui.windows || {}).map(app => ({
+          type: app.constructor.name,
+          id: app.id,
+          document: app.document?.name || app.actor?.name || app.item?.name
+        }))
+      };
+    } catch (e) {
+      return { error: 'Failed to capture Foundry context' };
+    }
+  }
+
+  /**
+   * Capture system-specific context
+   * @private
+   */
+  _captureSystemContext() {
+    try {
+      return {
+        activeModules: game?.modules?.filter(m => m.active).map(m => ({
+          id: m.id,
+          title: m.title,
+          version: m.version
+        })) || [],
+        cacheStats: window.SWSE?.cacheManager?.getStats() || null,
+        errorStats: this.getStats(),
+        performance: {
+          memory: performance?.memory ? {
+            used: Math.round(performance.memory.usedJSHeapSize / 1024 / 1024),
+            total: Math.round(performance.memory.totalJSHeapSize / 1024 / 1024),
+            limit: Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024)
+          } : 'unavailable',
+          timing: performance?.now ? Math.round(performance.now()) : 'unavailable'
+        }
+      };
+    } catch (e) {
+      return { error: 'Failed to capture system context' };
+    }
+  }
+
+  /**
+   * Log error to internal log with enhanced formatting
    * @private
    */
   _logError(errorInfo) {
@@ -106,13 +172,76 @@ export class ErrorHandler {
       this._errorLog.shift();
     }
 
-    // Console logging with context
-    const { error, context } = errorInfo;
-    console.error('SWSE Error:', {
-      message: error?.message,
-      context,
-      stack: error?.stack
-    });
+    // Update devMode from settings
+    this._devMode = game.settings?.get('swse', 'devMode') ?? this._devMode;
+
+    // Console logging with enhanced details
+    const { error, context, foundryContext, systemContext, stack } = errorInfo;
+
+    // Always log errors, but format based on devMode
+    console.group('%c🚨 SWSE ERROR DETECTED', 'color: red; font-weight: bold; font-size: 14px');
+
+    console.error('%cError Message:', 'color: orange; font-weight: bold');
+    console.error(error?.message || 'Unknown error');
+
+    console.error('%cError Type:', 'color: orange; font-weight: bold');
+    console.error(error?.constructor?.name || 'Error');
+
+    if (context.source) {
+      console.error('%cSource:', 'color: orange; font-weight: bold');
+      console.error(context.source);
+    }
+
+    if (context.location) {
+      console.error('%cLocation:', 'color: orange; font-weight: bold');
+      console.error(context.location);
+    }
+
+    if (context.filename) {
+      console.error('%cFile:', 'color: orange; font-weight: bold');
+      console.error(`${context.filename}:${context.lineno}:${context.colno}`);
+    }
+
+    // Stack trace (always show)
+    if (stack) {
+      console.error('%cStack Trace:', 'color: orange; font-weight: bold');
+      console.error(stack);
+    }
+
+    // Detailed context (only in devMode)
+    if (this._devMode) {
+      console.group('%c📊 DETAILED CONTEXT', 'color: cyan; font-weight: bold');
+
+      console.log('%cFoundry Context:', 'color: cyan; font-weight: bold');
+      console.table(foundryContext);
+
+      console.log('%cActive Modules:', 'color: cyan; font-weight: bold');
+      console.table(systemContext.activeModules);
+
+      console.log('%cPerformance:', 'color: cyan; font-weight: bold');
+      console.log(systemContext.performance);
+
+      if (systemContext.cacheStats) {
+        console.log('%cCache Stats:', 'color: cyan; font-weight: bold');
+        console.log(systemContext.cacheStats);
+      }
+
+      console.log('%cOpen Sheets:', 'color: cyan; font-weight: bold');
+      console.table(foundryContext.openSheets);
+
+      if (context.data) {
+        console.log('%cAdditional Data:', 'color: cyan; font-weight: bold');
+        console.log(context.data);
+      }
+
+      console.groupEnd();
+    }
+
+    console.log('%c💡 TIP:', 'color: yellow; font-weight: bold');
+    console.log('Enable Developer Mode in settings for more detailed error information');
+    console.log('Access error log: window.SWSE.errorHandler.getRecentErrors()');
+
+    console.groupEnd();
   }
 
   /**
@@ -333,3 +462,106 @@ export function validateRequired(data, required) {
 
 // Global error handler instance
 export const errorHandler = new ErrorHandler();
+
+/**
+ * Manually log an error with custom context
+ * Use this to log errors from try-catch blocks
+ * @param {Error|string} error - Error object or message
+ * @param {Object} context - Additional context
+ */
+export function logError(error, context = {}) {
+  const errorObj = typeof error === 'string' ? new Error(error) : error;
+
+  if (window.SWSE?.errorHandler) {
+    window.SWSE.errorHandler.handleError(errorObj, {
+      ...context,
+      source: context.source || 'manual-log',
+      manual: true
+    });
+  } else {
+    console.error('SWSE | Error (handler not ready):', errorObj, context);
+  }
+}
+
+/**
+ * Console commands for error management
+ * Access via: SWSE.errors.*
+ */
+export const errorCommands = {
+  /**
+   * Get recent errors
+   * @param {number} count - Number of recent errors
+   */
+  recent: (count = 10) => {
+    if (!window.SWSE?.errorHandler) {
+      console.warn('Error handler not initialized');
+      return [];
+    }
+    const errors = window.SWSE.errorHandler.getRecentErrors(count);
+    console.table(errors.map(e => ({
+      timestamp: new Date(e.timestamp).toLocaleTimeString(),
+      message: e.error?.message,
+      type: e.error?.constructor?.name,
+      source: e.context.source,
+      location: e.context.location
+    })));
+    return errors;
+  },
+
+  /**
+   * Get error statistics
+   */
+  stats: () => {
+    if (!window.SWSE?.errorHandler) {
+      console.warn('Error handler not initialized');
+      return {};
+    }
+    const stats = window.SWSE.errorHandler.getStats();
+    console.log('%c📊 ERROR STATISTICS', 'color: cyan; font-weight: bold; font-size: 14px');
+    console.table(stats);
+    return stats;
+  },
+
+  /**
+   * Clear error log
+   */
+  clear: () => {
+    if (!window.SWSE?.errorHandler) {
+      console.warn('Error handler not initialized');
+      return;
+    }
+    window.SWSE.errorHandler.clearLog();
+    console.log('✅ Error log cleared');
+  },
+
+  /**
+   * Get full error log
+   */
+  all: () => {
+    if (!window.SWSE?.errorHandler) {
+      console.warn('Error handler not initialized');
+      return [];
+    }
+    return window.SWSE.errorHandler.getErrorLog();
+  },
+
+  /**
+   * Export error log as JSON
+   */
+  export: () => {
+    if (!window.SWSE?.errorHandler) {
+      console.warn('Error handler not initialized');
+      return;
+    }
+    const errors = window.SWSE.errorHandler.getErrorLog();
+    const json = JSON.stringify(errors, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `swse-errors-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    console.log('✅ Error log exported');
+  }
+};
