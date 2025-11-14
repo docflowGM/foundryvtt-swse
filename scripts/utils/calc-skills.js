@@ -17,12 +17,15 @@ export function calculateSkills(actor) {
     
     // Calculate total
     let total = abilMod + penalty;
-    
-    // Add half level if trained
+
+    // Add half level (applies to all skills)
+    total += halfLevel;
+
+    // Add training bonus
     if (skill.trained) {
-      total += halfLevel;
+      total += 5;
     }
-    
+
     // Add Skill Focus bonus
     if (skill.focusRanks > 0) {
       total += 5 * skill.focusRanks;

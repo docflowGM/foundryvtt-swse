@@ -93,7 +93,7 @@
     "duration": "until one flanker moves or condition changes",
     "effects": {
       "attacker_attack_modifier": 2,
-      "reqassets/uires_melee": true,
+      "requires_melee": true,
       "stacking": "multiple flanking sources do not stack"
     },
     "notes": "Compute attack = d20 + attack_modifiers + 2 if flanking flag true.",
@@ -145,7 +145,7 @@
     "effects": {
       "attacker_attack_modifier": -2,
       "autofire_shots_consumed": 10,
-      "notes": "Reqassets/uires weapon capable of bracing; bracing itself consumes 2 swift actions"
+      "notes": "Requires weapon capable of bracing; bracing itself consumes 2 swift actions"
     },
     "type": "equipment"
   },
@@ -228,7 +228,7 @@
   {
     "id": "suppression_field",
     "name": "Suppression Field (area effect)",
-    "summary": "Area effect imposes -2 to attacks for creatures inside area while effect active; each activation reqassets/uires attack vs Ref 10 to maintain for targets.",
+    "summary": "Area effect imposes -2 to attacks for creatures inside area while effect active; each activation requires attack vs Ref 10 to maintain for targets.",
     "trigger": "attack resolution for any actor affected by suppression field",
     "duration": "area duration set by effect",
     "effects": {

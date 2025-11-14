@@ -161,7 +161,7 @@
       "type": "move",
       "cost": 1
     },
-    "notes": "Draw as move (or draw & activate if weapon reqassets/uires activation and you are proficient). Drawing concealed weapons = standard.",
+    "notes": "Draw as move (or draw & activate if weapon requires activation and you are proficient). Drawing concealed weapons = standard.",
     "relatedSkills": [
       {
         "skill": "Sleight of Hand / Stealth",
@@ -316,7 +316,7 @@
       "type": "standard / full-round",
       "cost": null
     },
-    "notes": "Escape nets: Acrobatics DC15 as full-round; nets often reqassets/uire higher DC to escape as standard.",
+    "notes": "Escape nets: Acrobatics DC15 as full-round; nets often require higher DC to escape as standard.",
     "relatedSkills": [
       {
         "skill": "Acrobatics",
@@ -581,7 +581,7 @@
       "type": "varies (move/standard/swift/full-round)",
       "cost": null
     },
-    "notes": "UtF powers often reqassets/uire trained UtF checks. Move Light Object: UtF DC10 (move action). Breath Control (UtF) DC15 to double hold-breath rounds.",
+    "notes": "UtF powers often require trained UtF checks. Move Light Object: UtF DC10 (move action). Breath Control (UtF) DC15 to double hold-breath rounds.",
     "relatedSkills": [
       {
         "skill": "Use the Force (UtF)",
@@ -600,7 +600,7 @@
       "type": "full-round (first aid) / full-round (revivify)",
       "cost": null
     },
-    "notes": "First Aid (medpac) DC15 heal; Revivify DC25 (reqassets/uires medkit) to revive within 1 round of death.",
+    "notes": "First Aid (medpac) DC15 heal; Revivify DC25 (requires medkit) to revive within 1 round of death.",
     "relatedSkills": [
       {
         "skill": "Treat Injury / First Aid",

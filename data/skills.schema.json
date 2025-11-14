@@ -25,7 +25,7 @@
       }
     }
   },
-  "reqassets/uired": [
+  "required": [
     "name",
     "attribute"
   ],

@@ -12,9 +12,9 @@
       "type": "string",
       "description": "The category of the feat (e.g., General, Force, Combat)"
     },
-    "prereqassets/uisites": {
+    "prerequisites": {
       "type": "array",
-      "description": "List of prereqassets/uisites reqassets/uired to take the feat",
+      "description": "List of prerequisites required to take the feat",
       "items": {
         "type": "string"
       }
@@ -49,7 +49,7 @@
       }
     }
   },
-  "reqassets/uired": [
+  "required": [
     "name",
     "type",
     "description",

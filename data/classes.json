@@ -320,7 +320,7 @@
     ],
     "starting_features": [
       {
-        "name": "Lingassets/uist*",
+        "name": "Linguist*",
         "type": "class_feature"
       },
       {
@@ -2039,7 +2039,7 @@
       "Dark Side Devotee",
       "Force Adept",
       "Force Item",
-      "Imperial Inqassets/uisitor",
+      "Imperial Inquisitor",
       "Beastwarden",
       "Mystic",
       "Telepath"
@@ -2652,7 +2652,7 @@
       "Military Tactics",
       "Naval Officer",
       "Fugitive Commander",
-      "Rebel Recrassets/uiter"
+      "Rebel Recruiter"
     ],
     "starting_features": [],
     "level_progression": [
@@ -4212,7 +4212,7 @@
         "bab": 3,
         "features": [
           {
-            "name": "Qassets/uick Sabotage (Simple Devices)",
+            "name": "Quick Sabotage (Simple Devices)",
             "type": "class_feature"
           }
         ],
@@ -4234,7 +4234,7 @@
         "bab": 4,
         "features": [
           {
-            "name": "Qassets/uick Sabotage (Tricky Devices)",
+            "name": "Quick Sabotage (Tricky Devices)",
             "type": "class_feature"
           }
         ],
@@ -4256,7 +4256,7 @@
         "bab": 6,
         "features": [
           {
-            "name": "Qassets/uick Sabotage (Complex Devices)",
+            "name": "Quick Sabotage (Complex Devices)",
             "type": "class_feature"
           }
         ],
@@ -5397,7 +5397,7 @@
             "type": "class_feature"
           },
           {
-            "name": "No Tools Reqassets/uired",
+            "name": "No Tools Required",
             "type": "class_feature"
           },
           {

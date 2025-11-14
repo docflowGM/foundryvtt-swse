@@ -1,7 +1,7 @@
 import CharacterGenerator from './chargen.js';
 
 Hooks.on('renderActorDirectory', (app, html, data) => {
-    const createButton = $(html).find('.create-entity, .document-create');
+    const createButton = $(html).find('.document-create');
     
     createButton.on('click', async (event) => {
         const documentName = event.currentTarget.dataset.documentClass || event.currentTarget.dataset.type;
