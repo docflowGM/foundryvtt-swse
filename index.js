@@ -372,7 +372,7 @@ Hooks.once("ready", async function() {
   // ============================================
 
   lazyLoader.setupLazyImages();
-  console.log('SWSE | Lazy image loading initialized');
+  SWSELogger.log('Lazy image loading initialized');
 
   // ============================================
   // Load World Data (GM Only)
@@ -451,7 +451,7 @@ Hooks.once("ready", async function() {
     ...game.swse
   });
 
-  console.log('SWSE | Global namespace exported to window.SWSE');
+  SWSELogger.log('Global namespace exported to window.SWSE');
 });
 
 /* -------------------------------------------- */
@@ -604,6 +604,19 @@ function registerSystemSettings() {
       applyTheme(value);
     }
   });
+
+  // ============================================
+  // Developer Settings
+  // ============================================
+
+  game.settings.register("swse", "devMode", {
+    name: "Developer Mode",
+    hint: "Enable detailed error logging and stack traces for debugging",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: false
+  });
 }
 
 /* -------------------------------------------- */
@@ -614,7 +627,7 @@ function registerSystemSettings() {
  * Apply the selected theme to all sheets
  */
 function applyTheme(themeName) {
-  console.log(`SWSE | Applying theme: ${themeName}`);
+  SWSELogger.log(`Applying theme: ${themeName}`);
 
   // Remove all existing theme classes
   const themes = ['holo-theme', 'high-contrast-theme', 'starship-theme', 'sand-people-theme', 'jedi-theme', 'high-republic-theme'];
@@ -656,23 +669,23 @@ function applyTheme(themeName) {
  * Set up combat automation hooks
  */
 function setupCombatAutomation() {
-  console.log("SWSE | Setting up combat automation");
-  
+  SWSELogger.log("Setting up combat automation");
+
   // Initialize combat tracking
   Hooks.on('createCombat', (combat, options, userId) => {
-    console.log("SWSE | Combat created:", combat.name);
+    SWSELogger.log("Combat created:", combat.name);
   });
-  
+
   // Track combat rounds
   Hooks.on('combatRound', (combat, updateData, updateOptions) => {
-    console.log(`SWSE | Combat Round ${combat.round}`);
+    SWSELogger.log(`Combat Round ${combat.round}`);
   });
-  
+
   // Track combat turns
   Hooks.on('combatTurn', (combat, updateData, updateOptions) => {
     const combatant = combat.combatant;
     if (combatant?.actor) {
-      console.log(`SWSE | Turn: ${combatant.actor.name}`);
+      SWSELogger.log(`Turn: ${combatant.actor.name}`);
     }
   });
 }
@@ -913,7 +926,7 @@ function enhanceValidationLogging() {
     };
   });
 
-  console.log("SWSE | Enhanced validation logging enabled");
+  SWSELogger.log("Enhanced validation logging enabled");
 }
 
 /* -------------------------------------------- */
