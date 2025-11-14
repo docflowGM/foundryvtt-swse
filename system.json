@@ -31,7 +31,12 @@
     "styles/sheets/unified-sheets.css",
     "styles/sheets/vehicle-sheet.css",
     "styles/apps/chargen.css",
-    "styles/themes/holo-theme.css"
+    "styles/themes/holo-theme.css",
+    "styles/themes/high-contrast-theme.css",
+    "styles/themes/starship-theme.css",
+    "styles/themes/sand-people-theme.css",
+    "styles/themes/jedi-theme.css",
+    "styles/themes/high-republic-theme.css"
   ],
   "languages": [
     {

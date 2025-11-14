@@ -269,7 +269,7 @@ Hooks.once("ready", async function() {
   // ============================================
   // Load World Data (GM Only)
   // ============================================
-  
+
   if (game.user.isGM) {
     await WorldDataLoader.autoLoad();
 
@@ -282,15 +282,22 @@ Hooks.once("ready", async function() {
         • Force Suite management ready<br>
         • Check the Summary tab for your combat dashboard
       `, { permanent: false });
-      
+
       await game.settings.set('swse', 'welcomeShown', true);
     }
   }
 
   // ============================================
+  // Initialize Theme
+  // ============================================
+
+  const currentTheme = game.settings.get('swse', 'sheetTheme');
+  applyTheme(currentTheme);
+
+  // ============================================
   // Initialize Combat Automation
   // ============================================
-  
+
   if (game.settings.get('swse', 'enableAutomation')) {
     setupCombatAutomation();
   }
@@ -298,7 +305,7 @@ Hooks.once("ready", async function() {
   // ============================================
   // Initialize Condition Recovery
   // ============================================
-  
+
   if (game.settings.get('swse', 'autoConditionRecovery')) {
     setupConditionRecovery();
   }
@@ -306,7 +313,7 @@ Hooks.once("ready", async function() {
   // ============================================
   // Initialize House Rules
   // ============================================
-  
+
   HouseruleMechanics.initialize();
 });
 
@@ -408,7 +415,7 @@ function registerSystemSettings() {
   // ============================================
   // Store Settings
   // ============================================
-  
+
   game.settings.register("swse", "storeMarkup", {
     name: 'SWSE.Settings.StoreMarkup.Name',
     hint: 'SWSE.Settings.StoreMarkup.Hint',
@@ -434,6 +441,62 @@ function registerSystemSettings() {
       min: 0,
       max: 100,
       step: 5
+    }
+  });
+
+  // ============================================
+  // Theme Settings
+  // ============================================
+
+  game.settings.register("swse", "sheetTheme", {
+    name: 'Sheet Theme',
+    hint: 'Select the visual theme for character sheets and UI elements',
+    scope: "client",
+    config: true,
+    type: String,
+    choices: {
+      "holo": "Default (Holo)",
+      "high-contrast": "High Contrast",
+      "starship": "Starship",
+      "sand-people": "Sand People",
+      "jedi": "Jedi",
+      "high-republic": "High Republic"
+    },
+    default: "holo",
+    onChange: value => {
+      applyTheme(value);
+    }
+  });
+}
+
+/* -------------------------------------------- */
+/*  Theme Management                            */
+/* -------------------------------------------- */
+
+/**
+ * Apply the selected theme to all sheets
+ */
+function applyTheme(themeName) {
+  console.log(`SWSE | Applying theme: ${themeName}`);
+
+  // Remove all existing theme classes
+  const themes = ['holo-theme', 'high-contrast-theme', 'starship-theme', 'sand-people-theme', 'jedi-theme', 'high-republic-theme'];
+  const body = document.body;
+
+  themes.forEach(theme => {
+    body.classList.remove(theme);
+  });
+
+  // Add the new theme class
+  body.classList.add(`${themeName}-theme`);
+
+  // Store the theme preference
+  document.documentElement.setAttribute('data-theme', themeName);
+
+  // Re-render all open sheets to apply the theme
+  Object.values(ui.windows).forEach(app => {
+    if (app.render && typeof app.render === 'function') {
+      app.render(false);
     }
   });
 }
