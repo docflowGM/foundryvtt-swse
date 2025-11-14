@@ -237,11 +237,19 @@
  {{!-- CREW & SYSTEMS TAB --}}
  <div class="tab" data-group="primary" data-tab="crew">
  <div class="crew-section">
- <h3>Crew Positions</h3>
- 
+ <h3>Crew Positions & Combat Actions</h3>
+
  <div class="crew-positions-grid">
+ {{!-- Pilot --}}
  <div class="crew-position">
+ <div class="crew-position-header">
  <label>Pilot:</label>
+ {{#if @root.shipActions.pilot.hasActions}}
+ <button type="button" class="crew-actions-toggle" data-position="pilot" title="Show available actions">
+ <i class="fas fa-chevron-down"></i>
+ </button>
+ {{/if}}
+ </div>
  <div class="crew-slot" data-slot="pilot">
  {{#if system.crewPositions.pilot}}
  <span class="crew-member">{{system.crewPositions.pilot}}</span>
@@ -249,10 +257,21 @@
  <span class="crew-empty">Unassigned</span>
  {{/if}}
  </div>
+ {{#if @root.shipActions.pilot.hasActions}}
+ {{> "systems/swse/templates/partials/ship-combat-actions-panel.hbs" actions=@root.shipActions.pilot.actions position="pilot"}}
+ {{/if}}
  </div>
 
+ {{!-- Co-Pilot --}}
  <div class="crew-position">
+ <div class="crew-position-header">
  <label>Co-Pilot:</label>
+ {{#if @root.shipActions.copilot.hasActions}}
+ <button type="button" class="crew-actions-toggle" data-position="copilot" title="Show available actions">
+ <i class="fas fa-chevron-down"></i>
+ </button>
+ {{/if}}
+ </div>
  <div class="crew-slot" data-slot="copilot">
  {{#if system.crewPositions.copilot}}
  <span class="crew-member">{{system.crewPositions.copilot}}</span>
@@ -260,10 +279,21 @@
  <span class="crew-empty">Unassigned</span>
  {{/if}}
  </div>
+ {{#if @root.shipActions.copilot.hasActions}}
+ {{> "systems/swse/templates/partials/ship-combat-actions-panel.hbs" actions=@root.shipActions.copilot.actions position="copilot"}}
+ {{/if}}
  </div>
 
+ {{!-- Gunner --}}
  <div class="crew-position">
+ <div class="crew-position-header">
  <label>Gunner(s):</label>
+ {{#if @root.shipActions.gunner.hasActions}}
+ <button type="button" class="crew-actions-toggle" data-position="gunner" title="Show available actions">
+ <i class="fas fa-chevron-down"></i>
+ </button>
+ {{/if}}
+ </div>
  <div class="crew-slot" data-slot="gunner">
  {{#if system.crewPositions.gunner}}
  <span class="crew-member">{{system.crewPositions.gunner}}</span>
@@ -271,10 +301,21 @@
  <span class="crew-empty">Unassigned</span>
  {{/if}}
  </div>
+ {{#if @root.shipActions.gunner.hasActions}}
+ {{> "systems/swse/templates/partials/ship-combat-actions-panel.hbs" actions=@root.shipActions.gunner.actions position="gunner"}}
+ {{/if}}
  </div>
 
+ {{!-- Engineer --}}
  <div class="crew-position">
+ <div class="crew-position-header">
  <label>Engineer:</label>
+ {{#if @root.shipActions.engineer.hasActions}}
+ <button type="button" class="crew-actions-toggle" data-position="engineer" title="Show available actions">
+ <i class="fas fa-chevron-down"></i>
+ </button>
+ {{/if}}
+ </div>
  <div class="crew-slot" data-slot="engineer">
  {{#if system.crewPositions.engineer}}
  <span class="crew-member">{{system.crewPositions.engineer}}</span>
@@ -282,10 +323,21 @@
  <span class="crew-empty">Unassigned</span>
  {{/if}}
  </div>
+ {{#if @root.shipActions.engineer.hasActions}}
+ {{> "systems/swse/templates/partials/ship-combat-actions-panel.hbs" actions=@root.shipActions.engineer.actions position="engineer"}}
+ {{/if}}
  </div>
 
+ {{!-- Shields --}}
  <div class="crew-position">
+ <div class="crew-position-header">
  <label>Shields:</label>
+ {{#if @root.shipActions.shields.hasActions}}
+ <button type="button" class="crew-actions-toggle" data-position="shields" title="Show available actions">
+ <i class="fas fa-chevron-down"></i>
+ </button>
+ {{/if}}
+ </div>
  <div class="crew-slot" data-slot="shields">
  {{#if system.crewPositions.shields}}
  <span class="crew-member">{{system.crewPositions.shields}}</span>
@@ -293,10 +345,21 @@
  <span class="crew-empty">Unassigned</span>
  {{/if}}
  </div>
+ {{#if @root.shipActions.shields.hasActions}}
+ {{> "systems/swse/templates/partials/ship-combat-actions-panel.hbs" actions=@root.shipActions.shields.actions position="shields"}}
+ {{/if}}
  </div>
 
+ {{!-- Commander --}}
  <div class="crew-position">
+ <div class="crew-position-header">
  <label>Commander:</label>
+ {{#if @root.shipActions.commander.hasActions}}
+ <button type="button" class="crew-actions-toggle" data-position="commander" title="Show available actions">
+ <i class="fas fa-chevron-down"></i>
+ </button>
+ {{/if}}
+ </div>
  <div class="crew-slot" data-slot="commander">
  {{#if system.crewPositions.commander}}
  <span class="crew-member">{{system.crewPositions.commander}}</span>
@@ -304,6 +367,9 @@
  <span class="crew-empty">Unassigned</span>
  {{/if}}
  </div>
+ {{#if @root.shipActions.commander.hasActions}}
+ {{> "systems/swse/templates/partials/ship-combat-actions-panel.hbs" actions=@root.shipActions.commander.actions position="commander"}}
+ {{/if}}
  </div>
  </div>
 

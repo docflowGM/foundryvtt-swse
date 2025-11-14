@@ -24,6 +24,8 @@ export async function preloadHandlebarsTemplates() {
     "systems/swse/templates/partials/ability-scores.hbs",
     "systems/swse/templates/partials/defenses.hbs",
     "systems/swse/templates/partials/skill-row.hbs",
+    "systems/swse/templates/partials/skill-row-static.hbs",
+    "systems/swse/templates/partials/ship-combat-actions-panel.hbs",
     "systems/swse/templates/partials/tab-navigation.hbs",
     "systems/swse/templates/partials/item-controls.hbs"
   ];

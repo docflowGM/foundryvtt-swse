@@ -7,6 +7,7 @@ export class CombatActionsMapper {
 
   static _combatActionsData = null;
   static _extraSkillUsesData = null;
+  static _shipCombatActionsData = null;
   static _initialized = false;
 
   /**
@@ -24,12 +25,17 @@ export class CombatActionsMapper {
       const skillResponse = await fetch('systems/swse/data/extraskilluses.json');
       this._extraSkillUsesData = await skillResponse.json();
 
+      // Load ship combat actions
+      const shipResponse = await fetch('systems/swse/data/ship-combat-actions.json');
+      this._shipCombatActionsData = await shipResponse.json();
+
       this._initialized = true;
-      console.log('SWSE | Combat Actions Mapper initialized');
+      console.log('SWSE | Combat Actions Mapper initialized (character & ship combat)');
     } catch (error) {
       console.error('SWSE | Failed to load combat actions data:', error);
       this._combatActionsData = [];
       this._extraSkillUsesData = [];
+      this._shipCombatActionsData = [];
     }
   }
 
@@ -171,5 +177,77 @@ export class CombatActionsMapper {
     }
 
     return actionsBySkill;
+  }
+
+  /**
+   * Get ship combat actions for a specific crew position
+   * @param {string} crewPosition - The crew position (pilot, gunner, engineer, shields, commander, etc.)
+   * @returns {Array} Array of actions available to that crew position
+   */
+  static getActionsForCrewPosition(crewPosition) {
+    if (!this._initialized || !this._shipCombatActionsData) {
+      console.warn('SWSE | Combat Actions Mapper not initialized');
+      return [];
+    }
+
+    const normalizedPosition = crewPosition.toLowerCase();
+
+    return this._shipCombatActionsData
+      .filter(action => {
+        if (!action.crewPosition) return false;
+
+        // Match exact position or "any"
+        if (action.crewPosition === 'any') return true;
+
+        return action.crewPosition.toLowerCase() === normalizedPosition;
+      })
+      .map(action => ({
+        name: action.name,
+        actionType: action.action.type,
+        cost: action.action.cost,
+        notes: action.notes,
+        relatedSkills: action.relatedSkills || [],
+        crewPosition: action.crewPosition
+      }));
+  }
+
+  /**
+   * Get all ship combat actions organized by crew position
+   * @returns {Object} Object with crew positions as keys, arrays of actions as values
+   */
+  static getAllShipActionsByPosition() {
+    const positions = ['pilot', 'copilot', 'gunner', 'engineer', 'shields', 'commander', 'system operator'];
+
+    const actionsByPosition = {};
+
+    for (const position of positions) {
+      const actions = this.getActionsForCrewPosition(position);
+      if (actions.length > 0) {
+        actionsByPosition[position] = {
+          actions: actions,
+          hasActions: true
+        };
+      }
+    }
+
+    // Add "any" position actions to all positions
+    const anyActions = this._shipCombatActionsData
+      ?.filter(action => action.crewPosition === 'any') || [];
+
+    if (anyActions.length > 0) {
+      actionsByPosition['any'] = {
+        actions: anyActions.map(action => ({
+          name: action.name,
+          actionType: action.action.type,
+          cost: action.action.cost,
+          notes: action.notes,
+          relatedSkills: action.relatedSkills || [],
+          crewPosition: action.crewPosition
+        })),
+        hasActions: true
+      };
+    }
+
+    return actionsByPosition;
   }
 }
