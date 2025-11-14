@@ -1,0 +1,174 @@
+<div class="swse-sheet vehicle-modification-sheet">
+  <div class="vehicle-mod-container">
+
+    {{!-- Marl Skindar Holographic Narrator --}}
+    <div class="marl-narrator-panel">
+      <div class="marl-hologram">
+        <div class="hologram-flicker"></div>
+        <i class="fas fa-user-secret marl-icon"></i>
+      </div>
+      <div class="marl-dialogue">
+        <div class="dialogue-header">
+          <span class="speaker-name">MARL SKINDAR</span>
+          <span class="speaker-title">Republic Intelligence</span>
+        </div>
+        <div class="dialogue-text">
+          {{{marlDialogue}}}
+        </div>
+      </div>
+    </div>
+
+    {{#if (eq currentStep 'intro')}}
+    {{!-- Introduction Step --}}
+    <div class="starship-intro">
+      <h2>Starship Acquisition</h2>
+      <p>Ready to begin? Select a stock ship to start your customization.</p>
+      <button type="button" class="start-selection holo-btn" onclick="this.closest('.vehicle-mod-container').querySelector('[data-step=ship-selection]').click()">
+        <i class="fas fa-rocket"></i> Begin Ship Selection
+      </button>
+    </div>
+    {{/if}}
+
+    {{#unless selectedShip}}
+    {{!-- Ship Selection Grid --}}
+    <div class="ship-selection-grid">
+      <h3><i class="fas fa-rocket"></i> Select Stock Ship</h3>
+      <div class="stock-ships-grid">
+        {{#each stockShips}}
+        <div class="stock-ship-card" data-ship="{{this.name}}">
+          <div class="ship-image">
+            <i class="fas fa-space-shuttle"></i>
+          </div>
+          <div class="ship-info">
+            <h4>{{this.name}}</h4>
+            <div class="ship-stats">
+              <span class="stat-item"><i class="fas fa-ruler-combined"></i> {{this.size}}</span>
+              <span class="stat-item"><i class="fas fa-plug"></i> {{this.emplacementPoints}} EP</span>
+            </div>
+            <div class="ship-cost">
+              <span class="credits-icon">₢</span>
+              <span>{{this.cost}}</span>
+            </div>
+          </div>
+          <button type="button" class="select-ship holo-btn" data-ship="{{this.name}}">
+            <i class="fas fa-check"></i> Select
+          </button>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/unless}}
+
+    {{#if selectedShip}}
+    {{!-- Modification Interface --}}
+    <div class="modification-interface">
+
+      {{!-- Selected Ship Info --}}
+      <div class="selected-ship-panel">
+        <h3>{{selectedShip.name}}</h3>
+        <div class="ship-stats-grid">
+          <div class="stat-box">
+            <label>Size</label>
+            <span>{{selectedShip.size}}</span>
+          </div>
+          <div class="stat-box">
+            <label>Base Cost</label>
+            <span>₢{{baseCost}}</span>
+          </div>
+          <div class="stat-box {{#if (gt emplacementPoints.used emplacementPoints.total)}}over-limit{{/if}}">
+            <label>Emplacement Points</label>
+            <span>{{emplacementPoints.used}} / {{emplacementPoints.total}}</span>
+          </div>
+          <div class="stat-box">
+            <label>Total Cost</label>
+            <span class="total-cost">₢{{totalCost}}</span>
+          </div>
+        </div>
+      </div>
+
+      {{!-- Modification Browser --}}
+      <div class="modification-browser">
+        <div class="mod-categories">
+          {{#each categories}}
+          <button type="button" class="category-tab {{#if (eq ../selectedCategory this.id)}}active{{/if}}" data-category="{{this.id}}">
+            <i class="fas {{this.icon}}"></i>
+            <span>{{this.label}}</span>
+          </button>
+          {{/each}}
+        </div>
+
+        <div class="mod-list-container">
+          <h4>Available Modifications</h4>
+          <div class="available-mods-list">
+            {{#each availableModifications}}
+            <div class="modification-item" data-mod-id="{{this.id}}">
+              <div class="mod-header">
+                <h5>{{this.name}}</h5>
+                <span class="mod-cost">₢{{this.cost}}</span>
+              </div>
+              <div class="mod-details">
+                <p class="mod-description">{{this.description}}</p>
+                <div class="mod-stats">
+                  <span class="mod-stat"><i class="fas fa-plug"></i> {{this.emplacementPoints}} EP</span>
+                  <span class="mod-stat"><i class="fas fa-tag"></i> {{this.availability}}</span>
+                  {{#if this.sizeRestriction}}
+                  <span class="mod-stat"><i class="fas fa-ruler-combined"></i> {{this.sizeRestriction}}</span>
+                  {{/if}}
+                </div>
+                <div class="mod-effect">
+                  <strong>Effect:</strong> {{this.effect}}
+                </div>
+              </div>
+              <button type="button" class="add-modification holo-btn" data-mod-id="{{this.id}}">
+                <i class="fas fa-plus"></i> Add
+              </button>
+            </div>
+            {{else}}
+            <div class="empty-message">
+              <i class="fas fa-box-open"></i>
+              <p>No modifications available in this category.</p>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="installed-mods-container">
+          <h4>Installed Modifications</h4>
+          <div class="installed-mods-list">
+            {{#each installedModifications}}
+            <div class="installed-mod-item">
+              <div class="mod-info">
+                <h5>{{this.name}}</h5>
+                <span class="mod-category-badge">{{this.category}}</span>
+              </div>
+              <div class="mod-stats-compact">
+                <span>{{this.emplacementPoints}} EP</span>
+                <span>₢{{this.cost}}</span>
+              </div>
+              <button type="button" class="remove-modification" data-mod-id="{{this.id}}" title="Remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            {{else}}
+            <div class="empty-message">
+              <p>No modifications installed yet.</p>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+
+      {{!-- Action Buttons --}}
+      <div class="modification-actions">
+        <button type="button" class="reset-ship holo-btn secondary">
+          <i class="fas fa-undo"></i> Start Over
+        </button>
+        <button type="button" class="finalize-ship holo-btn primary">
+          <i class="fas fa-check-circle"></i> Finalize Starship
+        </button>
+      </div>
+    </div>
+    {{/if}}
+
+  </div>
+</div>

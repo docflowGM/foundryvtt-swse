@@ -194,13 +194,6 @@
       "system": "swse"
     },
     {
-      "name": "combat_actions",
-      "label": "Combat Actions",
-      "path": "packs/combat-actions.db",
-      "type": "Item",
-      "system": "swse"
-    },
-    {
       "name": "conditions",
       "label": "Conditions",
       "path": "packs/conditions.db",

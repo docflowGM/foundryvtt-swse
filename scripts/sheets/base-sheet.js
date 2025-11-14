@@ -4,6 +4,7 @@
  */
 
 import { CombatActionsMapper } from '../utils/combat-actions-mapper.js';
+import { CustomItemDialog } from '../apps/custom-item-dialog.js';
 
 export class SWSEActorSheetBase extends ActorSheet {
   
@@ -269,14 +270,27 @@ export class SWSEActorSheetBase extends ActorSheet {
    */
   async _onItemCreate(button) {
     const type = button.dataset.type;
+
+    // Use custom dialog for supported types
+    const customTypes = ['weapon', 'armor', 'equipment', 'feat', 'talent', 'forcepower', 'force-power'];
+    if (customTypes.includes(type)) {
+      const created = await CustomItemDialog.create(this.actor, type);
+      if (created) {
+        ui.notifications.info(`Created custom ${type}: ${created.name}`);
+        return created.sheet?.render(true);
+      }
+      return;
+    }
+
+    // Default creation for other types
     const name = `New ${type.capitalize()}`;
-    
+
     const itemData = {
       name: name,
       type: type,
       system: {}
     };
-    
+
     const created = await this.actor.createEmbeddedDocuments('Item', [itemData]);
     return created[0]?.sheet.render(true);
   }

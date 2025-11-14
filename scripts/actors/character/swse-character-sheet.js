@@ -6,6 +6,7 @@
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { SWSEStore } from '../../apps/store.js';
 import { SWSEActorSheetBase } from '../../sheets/base-sheet.js';
+import { CombatActionsMapper } from '../../utils/combat-actions-mapper.js';
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
@@ -48,6 +49,31 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     const forcePointDie = this.actor.system.forcePoints?.die || '1d6';
     context.forceRerollDice = forcePointDie;
 
+    // Get combat actions from CombatActionsMapper
+    // Get all combat actions as a flat list for the combat tab
+    const actionsBySkill = CombatActionsMapper.getAllActionsBySkill();
+    const allActions = [];
+
+    for (const [skillKey, data] of Object.entries(actionsBySkill)) {
+      if (data.combatActions && data.combatActions.length > 0) {
+        allActions.push(...data.combatActions.map(action => ({
+          ...action,
+          skill: skillKey
+        })));
+      }
+    }
+
+    // Sort by action type and name
+    allActions.sort((a, b) => {
+      const typeOrder = { swift: 0, move: 1, standard: 2, 'full-round': 3 };
+      const aType = typeOrder[a.actionType?.toLowerCase()] ?? 99;
+      const bType = typeOrder[b.actionType?.toLowerCase()] ?? 99;
+      if (aType !== bType) return aType - bType;
+      return a.name.localeCompare(b.name);
+    });
+
+    context.combatActions = allActions;
+
     return context;
   }
 
@@ -59,6 +85,10 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // Add character-specific listeners
     html.find('.level-up').click(this._onLevelUp.bind(this));
     html.find('.open-store').click(this._onOpenStore.bind(this));
+
+    // Combat actions filter and search
+    html.find('.combat-action-search').on('input', this._onFilterCombatActions.bind(this));
+    html.find('.action-type-filter').on('change', this._onFilterCombatActions.bind(this));
 
     console.log('SWSE | Character sheet listeners activated');
   }
@@ -84,5 +114,51 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // Create and render the store application
     const store = new SWSEStore(this.actor);
     store.render(true);
+  }
+
+  /**
+   * Filter combat actions by search term and action type
+   */
+  _onFilterCombatActions(event) {
+    const html = this.element;
+    const searchTerm = html.find('.combat-action-search').val().toLowerCase();
+    const actionType = html.find('.action-type-filter').val();
+
+    html.find('.combat-action-row').each((i, row) => {
+      const $row = $(row);
+      const actionName = $row.data('action-name').toLowerCase();
+      const rowActionType = $row.data('action-type');
+
+      const matchesSearch = !searchTerm || actionName.includes(searchTerm);
+      const matchesType = !actionType || rowActionType === actionType;
+
+      $row.toggle(matchesSearch && matchesType);
+    });
+  }
+
+  /**
+   * Handle rolling a combat action (posts to chat)
+   */
+  async _onRollCombatAction(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const actionName = element.dataset.actionName;
+    const notes = element.dataset.notes;
+    const dc = element.dataset.dc;
+
+    const content = `
+      <div class="swse-combat-action">
+        <h3>${actionName}</h3>
+        <p><strong>Description:</strong> ${notes}</p>
+        ${dc ? `<p><strong>DC:</strong> ${dc}</p>` : ''}
+      </div>
+    `;
+
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: content,
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER
+    });
   }
 }

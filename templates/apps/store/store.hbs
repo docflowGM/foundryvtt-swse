@@ -477,6 +477,24 @@
         <p class="panel-desc">Transportation and combat vehicles</p>
       </div>
 
+      {{!-- Special: Build Custom Starship --}}
+      <div class="special-purchase-section">
+        <div class="special-card create-starship-card">
+          <div class="special-icon">
+            <i class="fas fa-space-shuttle"></i>
+          </div>
+          <div class="special-info">
+            <h5>Build a Custom Starship</h5>
+            <p>Work with Marl Skindar, Republic Intelligence, to design and modify your own starship from stock hull to fully customized vessel.</p>
+            <p class="special-price"><strong>Minimum:</strong> 5,000 credits (Light Fighter base)</p>
+          </div>
+          <button type="button" class="create-custom-starship holo-btn special" {{#if (lt credits 5000)}}disabled{{/if}}>
+            <i class="fas fa-tools"></i> Build Starship
+          </button>
+        </div>
+      </div>
+
+      {{!-- Pre-Made Vehicles from Database --}}
       <div class="products-grid" id="vehicles-list">
         {{#each categories.vehicles}}
         <div class="product-card vehicle-card" data-actor-id="{{this._id}}">
