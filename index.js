@@ -64,6 +64,7 @@ import './scripts/migration/fix-defense-schema.js';
 import { DamageSystem } from './scripts/combat/damage-system.js';
 import { SWSECombatAutomation } from './scripts/automation/combat-automation.js';
 import { CombatActionsMapper } from './scripts/utils/combat-actions-mapper.js';
+import { SWSECombat } from './scripts/combat/enhanced-combat-system.js';
 
 /* -------------------------------------------- */
 /*  Force Powers                                */
@@ -145,6 +146,7 @@ Hooks.once("init", async function() {
     // Systems
     DamageSystem,
     CombatAutomation: SWSECombatAutomation,
+    Combat: SWSECombat,
     WorldDataLoader,
     DropHandler,
     HouseruleMechanics,
@@ -409,6 +411,13 @@ Hooks.once("ready", async function() {
   if (game.settings.get('swse', 'enableAutomation')) {
     setupCombatAutomation();
   }
+
+  // ============================================
+  // Initialize Enhanced Combat System
+  // ============================================
+
+  SWSECombat.init();
+  SWSELogger.log('Enhanced Combat System initialized');
 
   // ============================================
   // Initialize Condition Recovery

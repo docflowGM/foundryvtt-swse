@@ -33,6 +33,38 @@
  <label>Damage Threshold</label>
  <div class="threshold-value">{{system.damageThreshold}}</div>
  </div>
+
+ <div class="combat-stat shields-stat">
+ <label>Personal Shields</label>
+ <div class="shields-display">
+ <input type="number"
+ name="system.shields.value"
+ value="{{system.shields.value}}"
+ data-dtype="Number"
+ placeholder="0"
+ class="shield-current"/>
+ <span>/</span>
+ <input type="number"
+ name="system.shields.max"
+ value="{{system.shields.max}}"
+ data-dtype="Number"
+ placeholder="0"
+ class="shield-max"/>
+ </div>
+ {{#if (gt system.shields.max 0)}}
+ <div class="shield-rating">Rating: SR {{system.shields.rating}}</div>
+ {{/if}}
+ </div>
+
+ <div class="combat-stat dr-stat">
+ <label>Damage Reduction (DR)</label>
+ <input type="number"
+ name="system.damageReduction"
+ value="{{system.damageReduction}}"
+ data-dtype="Number"
+ placeholder="0"
+ class="dr-value"/>
+ </div>
  </div>
 
  <h3 class="section-header">Weapons</h3>

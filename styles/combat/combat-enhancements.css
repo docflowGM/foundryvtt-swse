@@ -1,0 +1,364 @@
+/* ============================================================================
+   Enhanced Combat System Styling
+   Styles for shields, DR, and improved combat chat messages
+   ============================================================================ */
+
+/* ─────────────── Combat Stats Display ─────────────── */
+.swse .shields-stat,
+.swse .dr-stat {
+  border: 1px solid var(--color-border, #555);
+  background: var(--color-bg-block, rgba(0, 0, 0, 0.2));
+  padding: 0.75rem;
+  border-radius: var(--border-radius, 4px);
+}
+
+.swse .shields-stat {
+  border-color: rgba(0, 170, 255, 0.4);
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.1), rgba(0, 100, 140, 0.05));
+}
+
+.swse .dr-stat {
+  border-color: rgba(200, 150, 50, 0.4);
+  background: linear-gradient(135deg, rgba(200, 150, 50, 0.1), rgba(150, 100, 30, 0.05));
+}
+
+.swse .shields-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.swse .shield-current,
+.swse .shield-max {
+  width: 4rem;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  color: #00d9ff;
+}
+
+.swse .shield-rating {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #aaa);
+  font-style: italic;
+}
+
+.swse .dr-value {
+  width: 100%;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(200, 150, 50, 0.3);
+  color: #ffa500;
+}
+
+/* ─────────────── Enhanced Chat Messages ─────────────── */
+.swse-attack-roll,
+.swse-damage-roll,
+.swse-force-power-roll {
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(0, 20, 40, 0.9), rgba(0, 10, 20, 0.8));
+  border: 1px solid var(--color-primary, #00a8cc);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.swse-attack-roll .attack-header,
+.swse-damage-roll .damage-header,
+.swse-force-power-roll .force-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-primary, #00a8cc);
+}
+
+.swse-attack-roll .attack-header h3,
+.swse-damage-roll .damage-header h3,
+.swse-force-power-roll .force-header h3 {
+  margin: 0;
+  color: var(--color-accent, #00a8cc);
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.swse-attack-roll .dice-roll,
+.swse-damage-roll .dice-roll,
+.swse-force-power-roll .dice-roll {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.swse-attack-roll .dice-result,
+.swse-damage-roll .dice-result,
+.swse-force-power-roll .dice-result {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--color-primary, #00a8cc);
+  border-radius: 8px;
+}
+
+.swse-attack-roll .dice-formula,
+.swse-damage-roll .dice-formula,
+.swse-force-power-roll .dice-formula {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #aaa);
+  margin-bottom: 0.5rem;
+}
+
+.swse-attack-roll .dice-total,
+.swse-damage-roll .dice-total,
+.swse-force-power-roll .dice-total {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--color-text-emphatic, #fff);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+.swse-damage-roll .damage-total {
+  color: #ff6b6b;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+}
+
+.swse-attack-roll .attack-breakdown {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #aaa);
+}
+
+.swse-attack-roll .attack-result,
+.swse-force-power-roll .force-result {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.swse-attack-roll .result-text,
+.swse-force-power-roll .result-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+.swse-attack-roll .result-text.hit,
+.swse-force-power-roll .result-text.hit {
+  color: #00ff88;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+}
+
+.swse-attack-roll .result-text.miss,
+.swse-force-power-roll .result-text.miss {
+  color: #ff6b6b;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.6);
+}
+
+.swse-attack-roll .crit-threat {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 140, 0, 0.1));
+  border: 2px solid #ffd700;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.swse-attack-roll .crit-confirmed {
+  color: #ffd700;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+.swse-attack-roll .crit-failed {
+  color: #aaa;
+  margin-top: 0.5rem;
+}
+
+.swse-attack-roll .roll-damage-btn {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.swse-attack-roll .swse-btn {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(200, 50, 50, 0.2));
+  border: 2px solid #ff6b6b;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.swse-attack-roll .swse-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.5), rgba(200, 50, 50, 0.3));
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+  transform: translateY(-2px);
+}
+
+.swse-damage-roll .damage-applied {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid var(--color-border, #555);
+}
+
+.swse-damage-roll .damage-applied > div {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.swse-damage-roll .threshold-warning {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: rgba(255, 107, 107, 0.2);
+  border: 1px solid #ff6b6b;
+  border-radius: 4px;
+  color: #ff6b6b;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* ─────────────── Persistent Header Shields/Resources ─────────────── */
+.swse .header-center .shields-resource {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.1), rgba(0, 100, 140, 0.05));
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  border-radius: var(--border-radius, 4px);
+}
+
+.swse .header-center .shields-resource label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #00d9ff;
+  margin-bottom: 0.5rem;
+}
+
+.swse .header-center .shields-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.swse .header-center .shield-input {
+  width: 3rem;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  color: #00d9ff;
+  padding: 0.25rem;
+  border-radius: 2px;
+}
+
+.swse .header-center .shield-max-display {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #00d9ff;
+}
+
+/* ─────────────── Combat Action Buttons ─────────────── */
+.swse .combat-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.swse .combat-action-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, rgba(0, 168, 204, 0.2), rgba(0, 100, 140, 0.1));
+  border: 1px solid var(--color-primary, #00a8cc);
+  border-radius: var(--border-radius, 4px);
+  color: var(--color-text-emphatic, #fff);
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.swse .combat-action-btn:hover {
+  background: linear-gradient(135deg, rgba(0, 168, 204, 0.4), rgba(0, 100, 140, 0.2));
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.swse .combat-action-btn i {
+  margin-right: 0.5rem;
+}
+
+/* ─────────────── Target Selection Display ─────────────── */
+.swse .target-display {
+  padding: 0.75rem;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid #ffd700;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.swse .target-display .target-name {
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.swse .target-display .target-defenses {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.swse .target-display .defense-value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.swse .target-display .defense-value label {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #aaa);
+  text-transform: uppercase;
+}
+
+.swse .target-display .defense-value span {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--color-text-emphatic, #fff);
+}
+
+/* ─────────────── Responsive ─────────────── */
+@media (max-width: 768px) {
+  .swse .shields-display {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .swse .combat-actions {
+    flex-direction: column;
+  }
+
+  .swse .combat-action-btn {
+    min-width: 100%;
+  }
+}
