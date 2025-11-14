@@ -36,6 +36,19 @@ import { preloadHandlebarsTemplates } from './scripts/core/load-templates.js';
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 
 /* -------------------------------------------- */
+/*  Utilities                                   */
+/* -------------------------------------------- */
+
+import { SWSENotifications } from './scripts/utils/notifications.js';
+import { SWSELogger } from './scripts/utils/logger.js';
+
+/* -------------------------------------------- */
+/*  Configuration                               */
+/* -------------------------------------------- */
+
+import { SWSE_SKILLS, getSkillConfig, getSkillsArray } from './scripts/config/skills.js';
+
+/* -------------------------------------------- */
 /*  Components                                  */
 /* -------------------------------------------- */
 
@@ -108,23 +121,30 @@ Hooks.once("init", async function() {
     // Core Classes
     SWSEActorBase,
     SWSEItemBase,
-    
+
     // Systems
     DamageSystem,
     WorldDataLoader,
     DropHandler,
     HouseruleMechanics,
     HouserulesConfig,
-    
+
+    // Utilities
+    notifications: SWSENotifications,
+    logger: SWSELogger,
+
     // Configuration
     config: CONFIG.SWSE,
-    
+    skills: SWSE_SKILLS,
+    getSkillConfig,
+    getSkillsArray,
+
     // Components
     components: {
       ConditionTrack: ConditionTrackComponent,
       ForceSuite: ForceSuiteComponent
     },
-    
+
     // Applications
     apps: {
       Store: SWSEStore,
@@ -748,24 +768,29 @@ window.SWSE = {
   // Components
   ConditionTrack: ConditionTrackComponent,
   ForceSuite: ForceSuiteComponent,
-  
+
   // Systems
   Damage: DamageSystem,
   WorldDataLoader: WorldDataLoader,
   DropHandler: DropHandler,
   HouseruleMechanics: HouseruleMechanics,
-    HouserulesConfig,
-  
+  HouserulesConfig,
+
+  // Utilities
+  notifications: SWSENotifications,
+  logger: SWSELogger,
+
   // Apps
   Store: SWSEStore,
   LevelUp: SWSELevelUp,
-  
+
   // Actor/Item Classes
   SWSEActorBase: SWSEActorBase,
   SWSEItemBase: SWSEItemBase,
-  
+
   // Configuration
-  config: CONFIG.SWSE
+  config: CONFIG.SWSE,
+  skills: SWSE_SKILLS
 };
 
 console.log("SWSE | Enhanced System Fully Loaded");

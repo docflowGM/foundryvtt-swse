@@ -26,6 +26,7 @@
     "index.js"
   ],
   "styles": [
+    "styles/core/variables.css",
     "styles/components/swse-components.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/unified-sheets.css",
