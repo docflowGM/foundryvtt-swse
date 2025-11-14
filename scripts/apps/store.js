@@ -4,6 +4,7 @@
  */
 
 import { SWSECharacterGenerator } from './chargen.js';
+import { VehicleModificationApp } from './vehicle-modification-app.js';
 
 export class SWSEStore extends FormApplication {
     constructor(actor, options = {}) {
@@ -139,6 +140,7 @@ export class SWSEStore extends FormApplication {
         html.find(".buy-droid").click(this._onBuyDroid.bind(this));
         html.find(".buy-vehicle").click(this._onBuyVehicle.bind(this));
         html.find(".create-custom-droid").click(this._onCreateCustomDroid.bind(this));
+        html.find(".create-custom-starship").click(this._onCreateCustomStarship.bind(this));
 
         // Cart management
         html.find("#checkout-cart").click(this._onCheckout.bind(this));
@@ -397,6 +399,45 @@ export class SWSEStore extends FormApplication {
         } catch (err) {
             console.error("SWSE Store | Failed to launch droid builder:", err);
             ui.notifications.error("Failed to open droid builder.");
+        }
+    }
+
+    /**
+     * Launch custom starship builder
+     * @param {Event} event - Click event
+     * @private
+     */
+    async _onCreateCustomStarship(event) {
+        event.preventDefault();
+
+        const credits = Number(this.actor.system.credits) || 0;
+
+        if (credits < 5000) {
+            ui.notifications.warn("You need at least 5,000 credits to build a custom starship.");
+            return;
+        }
+
+        // Confirm
+        const confirmed = await Dialog.confirm({
+            title: "Build Custom Starship",
+            content: `<p>Enter the starship modification system with Marl Skindar?</p>
+                     <p>You will select a stock ship and customize it with modifications.</p>
+                     <p><strong>Minimum cost:</strong> 5,000 credits (Light Fighter)</p>
+                     <p><em>Warning: Marl will judge your choices harshly.</em></p>`,
+            defaultYes: true
+        });
+
+        if (!confirmed) return;
+
+        try {
+            // Close this store window
+            this.close();
+
+            // Launch vehicle modification app
+            await VehicleModificationApp.open(this.actor);
+        } catch (err) {
+            console.error("SWSE Store | Failed to launch starship builder:", err);
+            ui.notifications.error("Failed to open starship builder.");
         }
     }
 

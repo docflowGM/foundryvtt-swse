@@ -96,6 +96,10 @@ import './scripts/apps/chargen-init.js';
 import { SWSEStore } from './scripts/apps/store.js';
 import { SWSELevelUp } from './scripts/apps/swse-levelup.js';
 
+// Vehicle Modification System
+import { VehicleModificationManager } from './scripts/apps/vehicle-modification-manager.js';
+import { VehicleModificationApp } from './scripts/apps/vehicle-modification-app.js';
+
 /* -------------------------------------------- */
 /*  Drag & Drop                                 */
 /* -------------------------------------------- */
@@ -175,8 +179,12 @@ Hooks.once("init", async function() {
     // Applications
     apps: {
       Store: SWSEStore,
-      LevelUp: SWSELevelUp
+      LevelUp: SWSELevelUp,
+      VehicleModificationApp: VehicleModificationApp
     },
+
+    // Vehicle Modification System
+    VehicleModificationManager,
 
     // Performance & Optimization
     cacheManager,
@@ -365,6 +373,14 @@ Hooks.once("ready", async function() {
 
   await perfMonitor.measureAsync('Combat Actions Init', async () => {
     await CombatActionsMapper.init();
+  });
+
+  // ============================================
+  // Initialize Vehicle Modification System
+  // ============================================
+
+  await perfMonitor.measureAsync('Vehicle Modification Init', async () => {
+    await VehicleModificationManager.init();
   });
 
   // ============================================
@@ -984,6 +1000,10 @@ Object.assign(window.SWSE, {
   // Apps
   Store: SWSEStore,
   LevelUp: SWSELevelUp,
+  VehicleModificationApp: VehicleModificationApp,
+
+  // Vehicle Modification System
+  VehicleModificationManager,
 
   // Actor/Item Classes
   SWSEActorBase: SWSEActorBase,
