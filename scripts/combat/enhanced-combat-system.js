@@ -125,7 +125,7 @@ export class SWSECombat {
   }
 
   /**
-   * Apply damage to a target (with shields and DR)
+   * Apply damage to a target (with Shield Rating and DR)
    * @param {Actor} target - The target actor
    * @param {number} damage - Raw damage amount
    * @param {Object} options - Additional options
@@ -135,23 +135,36 @@ export class SWSECombat {
     let remainingDamage = damage;
     const result = {
       totalDamage: damage,
-      shieldDamage: 0,
+      shieldReduction: 0,
+      shieldRatingLost: 0,
       drReduced: 0,
       hpDamage: 0,
       thresholdExceeded: false
     };
 
-    // 1. Apply to shields first
-    const shields = target.system.shields?.value || 0;
-    if (shields > 0) {
-      const shieldDamage = Math.min(remainingDamage, shields);
-      result.shieldDamage = shieldDamage;
-      remainingDamage -= shieldDamage;
+    // 1. Apply Shield Rating (SR) reduction
+    // SR reduces ALL damage from the attack
+    // SR only decreases by 5 if the attack damage exceeds the current SR
+    const currentSR = target.system.shields?.rating || 0;
+    if (currentSR > 0) {
+      // Shield Rating reduces damage up to its current value
+      const shieldReduction = Math.min(remainingDamage, currentSR);
+      result.shieldReduction = shieldReduction;
+      remainingDamage -= shieldReduction;
 
-      await target.update({'system.shields.value': shields - shieldDamage});
+      // If attack damage exceeded SR, reduce SR by 5
+      if (damage > currentSR) {
+        const newSR = Math.max(0, currentSR - 5);
+        result.shieldRatingLost = 5;
+        await target.update({'system.shields.rating': newSR});
 
-      if (shieldDamage > 0) {
-        ui.notifications.info(`${target.name}'s shields absorb ${shieldDamage} damage! (${shields - shieldDamage} remaining)`);
+        if (newSR === 0) {
+          ui.notifications.warn(`${target.name}'s shields have been depleted!`);
+        } else {
+          ui.notifications.info(`${target.name}'s shields reduce damage by ${shieldReduction}! (SR reduced from ${currentSR} to ${newSR})`);
+        }
+      } else {
+        ui.notifications.info(`${target.name}'s shields reduce damage by ${shieldReduction}! (SR ${currentSR} holds)`);
       }
     }
 
@@ -306,6 +319,11 @@ export class SWSECombat {
       }
     }
 
+    // Half heroic level (rounded down)
+    // Official SWSE: All damage includes ½ heroic level
+    const heroicLevel = system.heroicLevel || system.level || 1;
+    const halfHeroicLevel = Math.floor(heroicLevel / 2);
+
     // Ability modifier for damage
     const damageAbility = weaponData.damageAbility || weaponData.attackAbility || 'str';
     let abilityMod = system.abilities?.[damageAbility]?.mod || 0;
@@ -321,8 +339,8 @@ export class SWSECombat {
     // Specialization bonus
     const specializationBonus = weaponData.specialization ? 2 : 0;
 
-    // Total modifier
-    const totalMod = abilityMod + misc + specializationBonus;
+    // Total modifier (includes half heroic level per official rules)
+    const totalMod = halfHeroicLevel + abilityMod + misc + specializationBonus;
 
     // Build formula
     const formula = totalMod !== 0 ? `${baseDamage} + ${totalMod}` : baseDamage;
@@ -331,6 +349,7 @@ export class SWSECombat {
       formula,
       breakdown: {
         baseDamage,
+        halfHeroicLevel,
         abilityMod,
         misc,
         specializationBonus,
@@ -434,7 +453,7 @@ export class SWSECombat {
       content += `
         <div class="damage-applied">
           <strong>Damage Applied to ${target.name}:</strong>
-          ${damageApplied.shieldDamage > 0 ? `<div>⚡ Shields: ${damageApplied.shieldDamage}</div>` : ''}
+          ${damageApplied.shieldReduction > 0 ? `<div>⚡ Shield Rating Reduced: ${damageApplied.shieldReduction}${damageApplied.shieldRatingLost > 0 ? ` (SR -${damageApplied.shieldRatingLost})` : ''}</div>` : ''}
           ${damageApplied.drReduced > 0 ? `<div>🛡️ DR Reduced: ${damageApplied.drReduced}</div>` : ''}
           ${damageApplied.hpDamage > 0 ? `<div>❤️ HP Damage: ${damageApplied.hpDamage}</div>` : ''}
           ${damageApplied.thresholdExceeded ? `<div class="threshold-warning">⚠️ Damage Threshold Exceeded!</div>` : ''}

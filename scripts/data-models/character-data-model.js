@@ -238,6 +238,14 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       }
     }
 
+    // Calculate Condition Track penalty
+    // Official SWSE: Normal(0), -1(1), -2(2), -5(3), -10(4), Helpless(5)
+    if (this.conditionTrack) {
+      const conditionStep = this.conditionTrack.current || 0;
+      const penalties = [0, -1, -2, -5, -10, 0]; // Helpless doesn't have numeric penalty
+      this.conditionTrack.penalty = penalties[conditionStep] || 0;
+    }
+
     // Call parent to calculate defenses, skills, etc.
     super.prepareDerivedData();
 

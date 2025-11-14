@@ -19,29 +19,33 @@ The Star Wars Saga Edition combat system follows this sequence:
 
 ## New Features
 
-### 1. **Personal Energy Shields**
+### 1. **Shield Rating (SR) System**
 
-Personal energy shields now work for all character types, not just vehicles.
+Shield Rating (SR) represents personal energy shields that reduce incoming damage.
+
+**Official SWSE Mechanics**:
+- SR reduces ALL damage from every attack by an amount equal to the current SR
+- SR only decreases by 5 points when attack damage **exceeds** the current SR
+- Example: SR 15 reduces 15 damage from a 20-damage attack (5 gets through), SR becomes 10
+- Example: SR 15 reduces 12 damage completely (0 gets through), SR stays at 15
 
 **Data Model** (template.json):
 ```json
 "shields": {
-  "value": 0,     // Current shield points
-  "max": 0,       // Maximum shield points
-  "rating": 0,    // Shield rating (SR)
-  "regenRate": 0  // Shields per round regeneration
+  "rating": 0     // Current Shield Rating (SR)
 }
 ```
 
 **Display**:
-- Combat tab shows shield value/max and rating
-- Shields absorb damage before HP
-- Visual indication when shields are active
+- Combat tab shows current Shield Rating
+- Displays SR mechanics reminder
+- Shows recharge instructions
 
 **Game Rules**:
-- Shields are depleted first when taking damage
-- Shield Rating (SR) indicates quality/strength
-- Can be recharged via mechanics skill or rest
+- SR reduces damage equal to its value on every attack
+- SR decreases by 5 only when attack damage > SR
+- Recharge: DC 20 Mechanics check (3 Swift Actions) restores +5 SR
+- SR 0 = shields depleted, no damage reduction
 
 ### 2. **Damage Reduction (DR)**
 
@@ -110,15 +114,56 @@ Force powers can now make Use the Force skill checks against any defense.
 await game.swse.Combat.rollForcePowerAttack(attacker, power, target, 'will');
 ```
 
-### 6. **Integrated Damage Application**
+### 6. **Grappling System**
 
-Damage application now follows the complete SWSE damage sequence.
+Complete implementation of SWSE grappling mechanics.
+
+**Three Grapple States**:
+1. **Grabbed**: Target grabbed, -5 Reflex Defense, cannot move away
+2. **Grappled**: Both parties grappling, -5 Reflex Defense, restricted movement
+3. **Pinned**: Target immobilized and helpless (requires Pin feat)
+
+**Mechanics**:
+- **Grab Attack**: Unarmed attack (-5 if untrained) vs Reflex Defense
+- **Grapple Check**: Opposed d20 + STR mod + BAB + size modifier
+- **Pin**: Requires Pin feat, successful grapple check
+- **Escape**: Standard action, opposed grapple check
+
+**Usage**:
+```javascript
+// Attempt to grab an opponent
+await game.swse.Grappling.attemptGrab(attacker, target);
+
+// Opposed grapple check
+await game.swse.Grappling.opposedGrappleCheck(attacker, defender);
+
+// Attempt to pin (requires Pin feat)
+await game.swse.Grappling.attemptPin(attacker, target);
+
+// Escape attempt
+await game.swse.Grappling.attemptEscape(escaper, grappler);
+```
+
+**Grapple Options** (on winning grapple check):
+- Maintain grapple
+- Move (drag opponent)
+- Deal damage (unarmed strike)
+- Pin (if you have Pin feat)
+
+### 7. **Integrated Damage Application**
+
+Damage application now follows the complete SWSE damage sequence with official formulas.
+
+**Damage Formulas** (Official SWSE):
+- **Melee**: Weapon Damage + ½ Heroic Level (rounded down) + STR modifier
+- **Ranged**: Weapon Damage + ½ Heroic Level (rounded down)
+- **Two-Handed Melee**: Add 2× STR modifier instead of 1×
 
 **Damage Sequence**:
-1. Check for shields → apply to shields first
-2. Check for DR → reduce remaining damage
-3. Apply to HP → remaining damage to hit points
-4. Check damage threshold → move condition track if exceeded
+1. Shield Rating (SR) → reduces damage by SR value, SR drops by 5 if damage > SR
+2. Damage Reduction (DR) → reduce remaining damage by flat DR amount
+3. HP Damage → apply remaining damage to hit points
+4. Damage Threshold → move condition track if total damage ≥ threshold
 
 **Chat Display**:
 - Shows damage breakdown (shields, DR, HP)
@@ -220,14 +265,15 @@ await SWSECombat.applyDamageToTarget(target, damage, options);
 **Example**:
 ```javascript
 const target = game.actors.getName("Han Solo");
-const damageApplied = await game.swse.Combat.applyDamageToTarget(target, 15);
+const damageApplied = await game.swse.Combat.applyDamageToTarget(target, 20);
 
 console.log(damageApplied);
 // {
-//   totalDamage: 15,
-//   shieldDamage: 5,
-//   drReduced: 2,
-//   hpDamage: 8,
+//   totalDamage: 20,
+//   shieldReduction: 15,    // SR reduced damage by 15
+//   shieldRatingLost: 5,    // SR decreased by 5 (damage exceeded SR)
+//   drReduced: 2,           // DR reduced remaining 5 damage by 2
+//   hpDamage: 3,            // Final 3 damage to HP
 //   thresholdExceeded: false
 // }
 ```
@@ -400,11 +446,13 @@ Combat chat messages are beautifully styled and include:
 
 | File | Purpose |
 |------|---------|
-| `scripts/combat/enhanced-combat-system.js` | Main combat system implementation |
-| `styles/combat/combat-enhancements.css` | Combat UI styling |
-| `template.json` | Added shields and DR to actor data model |
-| `templates/actors/character/tabs/combat-tab.hbs` | Combat tab UI with shields/DR |
-| `index.js` | System initialization |
+| `scripts/combat/enhanced-combat-system.js` | Main combat system with SR, DR, attacks, damage |
+| `scripts/combat/grappling-system.js` | Complete grappling subsystem |
+| `scripts/data-models/character-data-model.js` | Auto-calculates condition track penalties |
+| `styles/combat/combat-enhancements.css` | Combat UI styling for all systems |
+| `template.json` | Added shields (SR) and DR to actor data model |
+| `templates/actors/character/tabs/combat-tab.hbs` | Combat tab UI with SR/DR display |
+| `index.js` | System initialization and namespace registration |
 
 ## Configuration
 

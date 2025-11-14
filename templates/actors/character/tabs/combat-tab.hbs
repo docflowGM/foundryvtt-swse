@@ -35,25 +35,25 @@
  </div>
 
  <div class="combat-stat shields-stat">
- <label>Personal Shields</label>
+ <label>Shield Rating (SR)</label>
  <div class="shields-display">
+ <div class="sr-current-label">Current SR:</div>
  <input type="number"
- name="system.shields.value"
- value="{{system.shields.value}}"
+ name="system.shields.rating"
+ value="{{system.shields.rating}}"
  data-dtype="Number"
  placeholder="0"
- class="shield-current"/>
- <span>/</span>
- <input type="number"
- name="system.shields.max"
- value="{{system.shields.max}}"
- data-dtype="Number"
- placeholder="0"
- class="shield-max"/>
+ class="sr-value"
+ title="Shield Rating - reduces damage and decreases by 5 when exceeded"/>
  </div>
- {{#if (gt system.shields.max 0)}}
- <div class="shield-rating">Rating: SR {{system.shields.rating}}</div>
+ {{#if (gt system.shields.rating 0)}}
+ <div class="shield-info">
+ <small>SR reduces damage equal to its value. When attack damage exceeds SR, SR decreases by 5.</small>
+ </div>
  {{/if}}
+ <div class="shield-recharge-info">
+ <small>Recharge: DC 20 Mechanics (3 Swift Actions) restores +5 SR</small>
+ </div>
  </div>
 
  <div class="combat-stat dr-stat">
