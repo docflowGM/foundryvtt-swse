@@ -170,4 +170,63 @@
  <i class="fas fa-star"></i> Add Feat
  </button>
  </div>
+
+ <h3 class="section-header">Combat Actions</h3>
+
+ <div class="combat-actions-section">
+ <div class="combat-actions-filter">
+ <input type="text"
+ class="combat-action-search"
+ placeholder="Search actions..."
+ title="Filter combat actions by name"/>
+ <select class="action-type-filter">
+ <option value="">All Action Types</option>
+ <option value="swift">Swift Actions</option>
+ <option value="move">Move Actions</option>
+ <option value="standard">Standard Actions</option>
+ <option value="full-round">Full-Round Actions</option>
+ </select>
+ </div>
+
+ <div class="combat-actions-list">
+ {{#each combatActions as |action|}}
+ <div class="combat-action-row"
+ data-action-type="{{action.actionType}}"
+ data-action-name="{{action.name}}">
+ <div class="action-header">
+ <span class="action-name rollable"
+ data-action="rollCombatAction"
+ data-action-name="{{action.name}}"
+ data-dc="{{action.dc.value}}"
+ data-notes="{{action.notes}}"
+ title="Click to post to chat">
+ <i class="fas fa-dice-d20"></i> {{action.name}}
+ </span>
+ <span class="action-type-badge {{action.actionType}}">
+ {{action.actionType}}
+ </span>
+ </div>
+ <div class="action-details">
+ <p class="action-notes">{{action.notes}}</p>
+ {{#if action.dc}}
+ <p class="action-dc">
+ <strong>DC:</strong>
+ {{#if action.dc.value}}
+ {{action.dc.value}}
+ {{else}}
+ {{action.dc.type}}
+ {{/if}}
+ </p>
+ {{/if}}
+ {{#if action.outcome}}
+ <p class="action-outcome"><strong>Effect:</strong> {{action.outcome}}</p>
+ {{/if}}
+ {{#if action.when}}
+ <p class="action-when"><em>{{action.when}}</em></p>
+ {{/if}}
+ </div>
+ </div>
+ {{/each}}
+ </div>
+ </div>
 </div>
