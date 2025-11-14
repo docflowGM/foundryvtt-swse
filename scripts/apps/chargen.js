@@ -4,6 +4,7 @@
 // ============================================
 
 import { DROID_SYSTEMS } from '../data/droid-systems.js';
+import { escapeHtml } from '../utils/string-utils.js';
 
 export default class CharacterGenerator extends Application {
   constructor(actor = null, options = {}) {
@@ -866,7 +867,7 @@ export default class CharacterGenerator extends Application {
     const cartItemsList = doc.querySelector('#cart-items-list');
     if (!cartItemsList) return;
 
-    // Clear cart
+    // Clear cart (safe - emptying element)
     cartItemsList.innerHTML = '';
 
     const items = [];
@@ -975,9 +976,9 @@ export default class CharacterGenerator extends Application {
       `;
     } else {
       validationContainer.innerHTML = issues.map(issue => `
-        <div class="validation-item" id="validation-${issue.id}">
+        <div class="validation-item" id="validation-${escapeHtml(issue.id)}">
           <i class="fas fa-exclamation-circle"></i>
-          <span>${issue.text}</span>
+          <span>${escapeHtml(issue.text)}</span>
         </div>
       `).join('');
     }

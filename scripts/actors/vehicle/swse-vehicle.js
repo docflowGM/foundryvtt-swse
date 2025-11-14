@@ -248,7 +248,9 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
           await this.actor.update({ [`system.crewPositions.${slot}`]: actor.name });
         }
       }
-    } catch (error) { }
+    } catch (error) {
+      console.warn('SWSE | Failed to assign crew member:', error.message);
+    }
   }
 
   async _onCrewClick(event) {

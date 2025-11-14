@@ -60,6 +60,46 @@ export function titleCase(text) {
 }
 
 /**
+ * Escape HTML special characters to prevent XSS
+ * @param {string} text - Text to escape
+ * @returns {string} Escaped HTML-safe text
+ */
+export function escapeHtml(text) {
+    if (!text) return "";
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+/**
+ * Sanitize HTML to allow only safe tags
+ * For user-generated content, use this to prevent XSS attacks
+ * @param {string} html - HTML to sanitize
+ * @returns {string} Sanitized HTML
+ */
+export function sanitizeHtml(html) {
+    if (!html) return "";
+
+    // Create a temporary element
+    const temp = document.createElement('div');
+    temp.textContent = html; // This escapes everything
+    const escaped = temp.innerHTML;
+
+    // Allow only specific safe tags (basic formatting)
+    // This is a simple whitelist approach - for complex HTML, use DOMPurify or similar
+    return escaped
+        .replace(/&lt;b&gt;/gi, '<b>')
+        .replace(/&lt;\/b&gt;/gi, '</b>')
+        .replace(/&lt;i&gt;/gi, '<i>')
+        .replace(/&lt;\/i&gt;/gi, '</i>')
+        .replace(/&lt;em&gt;/gi, '<em>')
+        .replace(/&lt;\/em&gt;/gi, '</em>')
+        .replace(/&lt;strong&gt;/gi, '<strong>')
+        .replace(/&lt;\/strong&gt;/gi, '</strong>')
+        .replace(/&lt;br\s*\/?&gt;/gi, '<br>');
+}
+
+/**
  * Remove HTML tags from string
  * @param {string} html - HTML string
  * @returns {string} Plain text
@@ -67,7 +107,7 @@ export function titleCase(text) {
 export function stripHtml(html) {
     if (!html) return "";
     const tmp = document.createElement("DIV");
-    tmp.innerHTML = html;
+    tmp.innerHTML = html; // This is safe here - we're extracting text, not rendering user content
     return tmp.textContent || tmp.innerText || "";
 }
 

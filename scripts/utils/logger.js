@@ -9,7 +9,8 @@ export class SWSELogger {
    * @returns {boolean}
    */
   static isDebugMode() {
-    return game.settings.get('swse', 'debugMode') ?? false;
+    // Use devMode setting (Developer Mode in settings)
+    return game.settings?.get('swse', 'devMode') ?? false;
   }
 
   /**

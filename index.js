@@ -291,6 +291,7 @@ Hooks.once("init", async function() {
       const num = Number(value) || 0;
       return num >= 0 ? `+${num}` : `${num}`;
     });
+  }
 
   if (!Handlebars.helpers['safeNumber']) {
     Handlebars.registerHelper('safeNumber', function(value, options) {
@@ -298,7 +299,6 @@ Hooks.once("init", async function() {
       if (isNaN(num)) return 0;
       return num;
     });
-  }
   }
 
   // ============================================
@@ -428,7 +428,7 @@ Hooks.once("ready", async function() {
   // Export to Window for Console Access
   // ============================================
 
-  window.SWSE = {
+  Object.assign(window.SWSE, {
     // Core systems
     cacheManager,
     dataPreloader,
@@ -449,7 +449,7 @@ Hooks.once("ready", async function() {
 
     // Access to game.swse
     ...game.swse
-  };
+  });
 
   console.log('SWSE | Global namespace exported to window.SWSE');
 });
@@ -630,10 +630,20 @@ function applyTheme(themeName) {
   // Store the theme preference
   document.documentElement.setAttribute('data-theme', themeName);
 
-  // Re-render all open sheets to apply the theme
+  // Re-render only SWSE sheets to apply the theme (optimize performance)
   Object.values(ui.windows).forEach(app => {
+    // Only re-render sheets from this system
     if (app.render && typeof app.render === 'function') {
-      app.render(false);
+      const isSWSESheet = app instanceof SWSECharacterSheet ||
+                          app instanceof SWSEDroidSheet ||
+                          app instanceof SWSENPCSheet ||
+                          app instanceof SWSEVehicleSheet ||
+                          app instanceof SWSEItemSheet ||
+                          app.constructor?.name?.startsWith('SWSE');
+
+      if (isSWSESheet) {
+        app.render(false);
+      }
     }
   });
 }
@@ -911,7 +921,7 @@ function enhanceValidationLogging() {
 /* -------------------------------------------- */
 
 // Make system components available globally for console access
-window.SWSE = {
+Object.assign(window.SWSE, {
   // Components
   ConditionTrack: ConditionTrackComponent,
   ForceSuite: ForceSuiteComponent,
@@ -941,7 +951,7 @@ window.SWSE = {
   // Configuration
   config: CONFIG.SWSE,
   skills: SWSE_SKILLS
-};
+});
 
 console.log("SWSE | Enhanced System Fully Loaded");
 console.log("SWSE | Use 'window.SWSE' in console to access system components");

@@ -86,7 +86,7 @@ class Cache {
     this._data = new Map();
     this._timers = new Map();
     this._stats = stats;
-    this._lruQueue = [];
+    this._lruTimestamps = new Map(); // O(1) LRU tracking using timestamps
   }
 
   get size() {
@@ -125,10 +125,22 @@ class Cache {
     // Set TTL timer
     if (this._timers.has(key)) {
       clearTimeout(this._timers.get(key));
+      this._timers.delete(key);
     }
 
     const timer = setTimeout(() => {
-      this.delete(key);
+      try {
+        // Clean up timer reference before delete to prevent leak
+        if (this._timers.has(key)) {
+          this._timers.delete(key);
+        }
+
+        // Remove data and LRU entry
+        this._data.delete(key);
+        this._lruTimestamps.delete(key);
+      } catch (error) {
+        console.error(`SWSE | Cache TTL cleanup error for key "${key}":`, error);
+      }
     }, this.ttl);
 
     this._timers.set(key, timer);
@@ -153,11 +165,7 @@ class Cache {
       this._timers.delete(key);
     }
     this._data.delete(key);
-
-    const index = this._lruQueue.indexOf(key);
-    if (index > -1) {
-      this._lruQueue.splice(index, 1);
-    }
+    this._lruTimestamps.delete(key);
   }
 
   /**
@@ -169,7 +177,7 @@ class Cache {
     }
     this._timers.clear();
     this._data.clear();
-    this._lruQueue = [];
+    this._lruTimestamps.clear();
   }
 
   /**
@@ -189,27 +197,35 @@ class Cache {
   }
 
   /**
-   * Touch LRU for key (move to end)
+   * Touch LRU for key (update access timestamp) - O(1)
    * @private
    */
   _touchLRU(key) {
-    const index = this._lruQueue.indexOf(key);
-    if (index > -1) {
-      this._lruQueue.splice(index, 1);
-    }
-    this._lruQueue.push(key);
+    this._lruTimestamps.set(key, Date.now());
   }
 
   /**
-   * Evict least recently used entry
+   * Evict least recently used entry - O(n) only during eviction
    * @private
    */
   _evictLRU() {
-    if (this._lruQueue.length === 0) return;
+    if (this._lruTimestamps.size === 0) return;
 
-    const key = this._lruQueue.shift();
-    this.delete(key);
-    this._stats.evictions++;
+    // Find the least recently used key (oldest timestamp)
+    let oldestKey = null;
+    let oldestTime = Infinity;
+
+    for (const [key, timestamp] of this._lruTimestamps.entries()) {
+      if (timestamp < oldestTime) {
+        oldestTime = timestamp;
+        oldestKey = key;
+      }
+    }
+
+    if (oldestKey) {
+      this.delete(oldestKey);
+      this._stats.evictions++;
+    }
   }
 }
 

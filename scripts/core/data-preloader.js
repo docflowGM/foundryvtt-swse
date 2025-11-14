@@ -70,19 +70,27 @@ export class DataPreloader {
    */
   async _preloadBackground(types, verbose) {
     setTimeout(async () => {
-      if (verbose) {
-        console.log('SWSE | Background preloading...');
-      }
+      try {
+        if (verbose) {
+          console.log('SWSE | Background preloading...');
+        }
 
-      for (const type of types) {
-        await this._preloadType(type);
+        for (const type of types) {
+          try {
+            await this._preloadType(type);
+          } catch (error) {
+            console.warn(`SWSE | Failed to preload ${type}:`, error.message);
+          }
 
-        // Yield between types
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
+          // Yield between types
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
 
-      if (verbose) {
-        console.log('SWSE | Background preloading complete');
+        if (verbose) {
+          console.log('SWSE | Background preloading complete');
+        }
+      } catch (error) {
+        console.error('SWSE | Background preloading error:', error);
       }
     }, 500);
   }
