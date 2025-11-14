@@ -75,6 +75,25 @@
  </div>
  </section>
 
+ {{!-- Character Traits --}}
+ <section class="character-traits">
+ <h3 class="section-header">Character Traits</h3>
+ <div class="traits-grid">
+ {{#unless system.isDroid}}
+ <div class="trait-toggle">
+ <label class="checkbox-label">
+ <input type="checkbox"
+ name="system.forceSensitive"
+ {{checked system.forceSensitive}}
+ title="Force Sensitive characters can access the Force tab and Use the Force skill"/>
+ <i class="fas fa-hand-sparkles"></i>
+ <span>Force Sensitive</span>
+ </label>
+ </div>
+ {{/unless}}
+ </div>
+ </section>
+
  {{!-- Droid Immunities --}}
  {{#if system.isDroid}}
  <section class="droid-immunities">

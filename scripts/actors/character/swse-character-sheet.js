@@ -23,6 +23,34 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     });
   }
 
+  async getData() {
+    const context = await super.getData();
+
+    // Filter feats for Force Secrets and Force Techniques
+    const feats = this.actor.items.filter(i => i.type === 'feat');
+
+    context.forceSecrets = feats.filter(f =>
+      f.name.toLowerCase().includes('force secret')
+    );
+
+    context.forceTechniques = feats.filter(f =>
+      f.name.toLowerCase().includes('force technique')
+    );
+
+    // Organize force powers
+    const allForcePowers = this.actor.items.filter(i => i.type === 'forcepower' || i.type === 'force-power');
+    const forceSuite = this.actor.system.forceSuite || { powers: [], max: 0 };
+
+    context.knownPowers = allForcePowers.filter(p => !forceSuite.powers?.includes(p.id));
+    context.activeSuite = allForcePowers.filter(p => forceSuite.powers?.includes(p.id));
+
+    // Force reroll dice calculation
+    const forcePointDie = this.actor.system.forcePoints?.die || '1d6';
+    context.forceRerollDice = forcePointDie;
+
+    return context;
+  }
+
   activateListeners(html) {
     super.activateListeners(html);
 

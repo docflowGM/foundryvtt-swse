@@ -1385,3 +1385,160 @@
   font-size: 9px;
 }
 
+/* ─────────────── Character Traits Section ─────────────── */
+.character-traits {
+  margin: 8px 0;
+  padding: 8px;
+  background: rgba(0, 20, 40, 0.5);
+  border: 1px solid rgba(0, 140, 200, 0.3);
+  border-radius: 4px;
+}
+
+.traits-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.trait-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trait-toggle .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px 10px;
+  background: rgba(0, 40, 80, 0.4);
+  border: 1px solid rgba(0, 140, 200, 0.4);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.trait-toggle .checkbox-label:hover {
+  background: rgba(0, 60, 100, 0.6);
+  border-color: rgba(0, 184, 255, 0.6);
+  box-shadow: 0 0 8px rgba(0, 184, 255, 0.3);
+}
+
+.trait-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #0af;
+}
+
+.trait-toggle .fa-hand-sparkles {
+  color: #00d4ff;
+  font-size: 14px;
+}
+
+.trait-toggle span {
+  color: #9ed0ff;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* ─────────────── Force Secrets & Techniques ─────────────── */
+.force-secrets-section,
+.force-techniques-section {
+  margin: 12px 0;
+  padding: 8px;
+  background: rgba(0, 20, 40, 0.5);
+  border: 1px solid rgba(0, 140, 200, 0.3);
+  border-radius: 4px;
+}
+
+.secrets-list,
+.techniques-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.secret-item,
+.technique-item {
+  background: rgba(0, 40, 80, 0.5);
+  border: 1px solid rgba(0, 140, 200, 0.4);
+  border-radius: 3px;
+  padding: 6px 8px;
+  transition: all 0.2s ease;
+}
+
+.secret-item:hover,
+.technique-item:hover {
+  background: rgba(0, 60, 100, 0.6);
+  border-color: rgba(0, 184, 255, 0.6);
+  box-shadow: 0 0 8px rgba(0, 184, 255, 0.3);
+}
+
+.secret-header,
+.technique-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.secret-name,
+.technique-name {
+  flex: 1;
+  color: #9ed0ff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.secret-description,
+.technique-description {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(0, 100, 180, 0.3);
+  color: #aaa;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.empty-list {
+  color: #666;
+  font-style: italic;
+  font-size: 9px;
+  text-align: center;
+  padding: 12px;
+  margin: 0;
+}
+
+.add-secret,
+.add-technique {
+  width: 100%;
+  padding: 6px 10px;
+  background: rgba(0, 100, 180, 0.3);
+  border: 1px solid rgba(0, 140, 200, 0.5);
+  border-radius: 3px;
+  color: #00d4ff;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.add-secret:hover,
+.add-technique:hover {
+  background: rgba(0, 140, 200, 0.5);
+  border-color: rgba(0, 184, 255, 0.8);
+  box-shadow: 0 0 10px rgba(0, 184, 255, 0.4);
+  color: #fff;
+}
+
+.add-secret i,
+.add-technique i {
+  font-size: 10px;
+}
+
