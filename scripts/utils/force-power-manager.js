@@ -62,10 +62,26 @@ export class ForcePowerManager {
 
   /**
    * Get all available force powers from compendium
+   * Uses cache when available for better performance
    * @returns {Promise<Array>} Array of force power items
    */
   static async getAvailablePowers() {
     try {
+      // Try to use preloaded data if available
+      if (window.SWSE?.dataPreloader) {
+        const cache = window.SWSE.dataPreloader._forcePowersCache;
+        const cachedIndex = cache.get('_index');
+
+        if (cachedIndex) {
+          const pack = game.packs.get('swse.forcepowers');
+          if (!pack) return [];
+
+          const powers = await pack.getDocuments();
+          return powers.map(p => p.toObject());
+        }
+      }
+
+      // Fallback to direct pack access
       const pack = game.packs.get('swse.forcepowers');
       if (!pack) {
         console.warn('SWSE | Force powers compendium not found');

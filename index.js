@@ -59,6 +59,15 @@ import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
 import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
 
 /* -------------------------------------------- */
+/*  Performance & Optimization                  */
+/* -------------------------------------------- */
+
+import { cacheManager } from './scripts/core/cache-manager.js';
+import { dataPreloader } from './scripts/core/data-preloader.js';
+import { errorHandler } from './scripts/core/error-handler.js';
+import { perfMonitor, debounce, throttle } from './scripts/utils/performance-utils.js';
+
+/* -------------------------------------------- */
 /*  Applications                                */
 /* -------------------------------------------- */
 
@@ -111,32 +120,42 @@ Hooks.once("init", async function() {
   // ============================================
   // Create Global Namespace
   // ============================================
-  
+
   game.swse = {
     // Core Classes
     SWSEActorBase,
     SWSEItemBase,
-    
+
     // Systems
     DamageSystem,
     WorldDataLoader,
     DropHandler,
     HouseruleMechanics,
     HouserulesConfig,
-    
+
     // Configuration
     config: CONFIG.SWSE,
-    
+
     // Components
     components: {
       ConditionTrack: ConditionTrackComponent,
       ForceSuite: ForceSuiteComponent
     },
-    
+
     // Applications
     apps: {
       Store: SWSEStore,
       LevelUp: SWSELevelUp
+    },
+
+    // Performance & Optimization
+    cacheManager,
+    dataPreloader,
+    errorHandler,
+    perfMonitor,
+    utils: {
+      debounce,
+      throttle
     }
   };
 
@@ -275,10 +294,30 @@ Hooks.once("ready", async function() {
   console.log("SWSE | System Ready");
 
   // ============================================
+  // Initialize Error Handler
+  // ============================================
+
+  errorHandler.initialize();
+
+  // ============================================
+  // Preload Data (Priority)
+  // ============================================
+
+  await perfMonitor.measureAsync('Data Preloading', async () => {
+    await dataPreloader.preload({
+      priority: ['classes', 'skills'],
+      background: ['feats', 'talents', 'forcePowers', 'species'],
+      verbose: true
+    });
+  });
+
+  // ============================================
   // Initialize Combat Actions Mapper
   // ============================================
 
-  await CombatActionsMapper.init();
+  await perfMonitor.measureAsync('Combat Actions Init', async () => {
+    await CombatActionsMapper.init();
+  });
 
   // ============================================
   // Initialize Force Power Hooks
@@ -326,8 +365,36 @@ Hooks.once("ready", async function() {
   // ============================================
   // Initialize House Rules
   // ============================================
-  
+
   HouseruleMechanics.initialize();
+
+  // ============================================
+  // Export to Window for Console Access
+  // ============================================
+
+  window.SWSE = {
+    // Core systems
+    cacheManager,
+    dataPreloader,
+    errorHandler,
+    perfMonitor,
+
+    // Force Powers
+    ForcePowerManager,
+
+    // Combat
+    CombatActionsMapper,
+    DamageSystem,
+
+    // Utilities
+    debounce,
+    throttle,
+
+    // Access to game.swse
+    ...game.swse
+  };
+
+  console.log('SWSE | Global namespace exported to window.SWSE');
 });
 
 /* -------------------------------------------- */
