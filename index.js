@@ -65,6 +65,7 @@ import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js'
 import { cacheManager } from './scripts/core/cache-manager.js';
 import { dataPreloader } from './scripts/core/data-preloader.js';
 import { errorHandler } from './scripts/core/error-handler.js';
+import { lazyLoader } from './scripts/core/lazy-loader.js';
 import { perfMonitor, debounce, throttle } from './scripts/utils/performance-utils.js';
 
 /* -------------------------------------------- */
@@ -152,11 +153,21 @@ Hooks.once("init", async function() {
     cacheManager,
     dataPreloader,
     errorHandler,
+    lazyLoader,
     perfMonitor,
     utils: {
       debounce,
       throttle
     }
+  };
+
+  // ============================================
+  // Make Lazy Loader Available Early
+  // ============================================
+
+  window.SWSE = {
+    lazyLoader,
+    perfMonitor
   };
 
   // ============================================
@@ -326,6 +337,13 @@ Hooks.once("ready", async function() {
   initializeForcePowerHooks();
 
   // ============================================
+  // Setup Lazy Loading
+  // ============================================
+
+  lazyLoader.setupLazyImages();
+  console.log('SWSE | Lazy image loading initialized');
+
+  // ============================================
   // Load World Data (GM Only)
   // ============================================
 
@@ -377,6 +395,7 @@ Hooks.once("ready", async function() {
     cacheManager,
     dataPreloader,
     errorHandler,
+    lazyLoader,
     perfMonitor,
 
     // Force Powers
