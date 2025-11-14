@@ -1,0 +1,336 @@
+/**
+ * Vehicle Combat Styling
+ * Styles for vehicle combat chat messages and UI elements
+ */
+
+/* ─────────────── Vehicle Attack Rolls ─────────────── */
+.swse-vehicle-attack-roll {
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(0, 60, 100, 0.9), rgba(0, 30, 50, 0.8));
+  border: 1px solid #4a9eff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.swse-vehicle-attack-roll .attack-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #4a9eff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.swse-vehicle-attack-roll .attack-header h3 {
+  margin: 0;
+  color: #4a9eff;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.swse-vehicle-attack-roll .vehicle-name {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #aaa);
+  font-style: italic;
+}
+
+.swse-vehicle-attack-roll .attack-breakdown {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #aaa);
+}
+
+.swse-vehicle-attack-roll .attack-result {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* ─────────────── Vehicle Damage Rolls ─────────────── */
+.swse-vehicle-damage-roll {
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(140, 20, 0, 0.9), rgba(80, 10, 0, 0.8));
+  border: 1px solid #ff6b35;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.swse-vehicle-damage-roll .damage-header h3 {
+  margin: 0;
+  color: #ff6b35;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #ff6b35;
+}
+
+.swse-vehicle-damage-roll .damage-calculation {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.swse-vehicle-damage-roll .damage-calculation strong {
+  color: #ff6b35;
+  font-size: 1.5rem;
+}
+
+.swse-vehicle-damage-roll .damage-applied {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 3px solid #ff6b35;
+  border-radius: 4px;
+}
+
+.swse-vehicle-damage-roll .damage-applied > div {
+  margin: 0.5rem 0;
+}
+
+/* ─────────────── Dogfight Rolls ─────────────── */
+.swse-dogfight-roll {
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(100, 50, 0, 0.9), rgba(60, 30, 0, 0.8));
+  border: 1px solid #ffaa00;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.swse-dogfight-roll .dogfight-header h3 {
+  margin: 0;
+  color: #ffaa00;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #ffaa00;
+}
+
+.swse-dogfight-roll .opposed-rolls {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.swse-dogfight-roll .initiator-roll,
+.swse-dogfight-roll .defender-roll {
+  flex: 1;
+  text-align: center;
+}
+
+.swse-dogfight-roll .vs {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffaa00;
+  padding: 0 1rem;
+}
+
+.swse-dogfight-roll .dice-total {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--color-text-emphatic, #fff);
+  margin-top: 0.5rem;
+}
+
+.swse-dogfight-roll .dice-total.winner {
+  color: #00ff88;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+}
+
+.swse-dogfight-roll .dogfight-result {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* ─────────────── Collision Rolls ─────────────── */
+.swse-collision-roll {
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(100, 0, 0, 0.9), rgba(60, 0, 0, 0.8));
+  border: 1px solid #ff0000;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.swse-collision-roll .collision-header h3 {
+  margin: 0;
+  color: #ff0000;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #ff0000;
+}
+
+.swse-collision-roll .collision-info {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.swse-collision-roll .avoid-roll {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.swse-collision-roll .collision-damage {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 3px solid #ff0000;
+  border-radius: 4px;
+}
+
+.swse-collision-roll .collision-damage > div {
+  margin: 0.5rem 0;
+}
+
+/* ─────────────── Weapon Battery Rolls ─────────────── */
+.swse-battery-roll {
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(0, 100, 60, 0.9), rgba(0, 60, 30, 0.8));
+  border: 1px solid #00ff88;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.swse-battery-roll .battery-header h3 {
+  margin: 0;
+  color: #00ff88;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #00ff88;
+}
+
+.swse-battery-roll .battery-info {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #aaa);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.swse-battery-roll .attack-result {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.swse-battery-roll .extra-hits {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: rgba(0, 255, 136, 0.1);
+  border-left: 3px solid #00ff88;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.swse-battery-roll .battery-damage {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.swse-battery-roll .battery-damage strong {
+  color: #00ff88;
+  font-size: 1.5rem;
+}
+
+/* ─────────────── Common Elements ─────────────── */
+.dice-roll .dice-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+}
+
+.dice-roll .dice-formula {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #aaa);
+  margin-bottom: 0.5rem;
+}
+
+.dice-roll .dice-total {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--color-text-emphatic, #fff);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.result-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+.result-text.hit {
+  color: #00ff88;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+}
+
+.result-text.miss {
+  color: #ff4444;
+  text-shadow: 0 0 10px rgba(255, 68, 68, 0.6);
+}
+
+.threshold-warning {
+  color: #ff6b35;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+  text-shadow: 0 0 10px rgba(255, 107, 53, 0.6);
+}
+
+/* ─────────────── Responsive ─────────────── */
+@media (max-width: 768px) {
+  .swse-dogfight-roll .opposed-rolls,
+  .swse-grapple-check .opposed-rolls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .swse-dogfight-roll .vs,
+  .swse-grapple-check .vs {
+    padding: 0.5rem 0;
+  }
+
+  .dice-roll .dice-total,
+  .result-text {
+    font-size: 1.5rem;
+  }
+}

@@ -34,6 +34,7 @@
     "styles/sheets/improved-contrast.css",
     "styles/sheets/sheet-improvements.css",
     "styles/combat/combat-enhancements.css",
+    "styles/combat/vehicle-combat.css",
     "styles/apps/chargen.css",
     "styles/themes/holo-theme.css",
     "styles/themes/high-contrast-theme.css",

@@ -66,6 +66,7 @@ import { SWSECombatAutomation } from './scripts/automation/combat-automation.js'
 import { CombatActionsMapper } from './scripts/utils/combat-actions-mapper.js';
 import { SWSECombat } from './scripts/combat/enhanced-combat-system.js';
 import { SWSEGrappling } from './scripts/combat/grappling-system.js';
+import { SWSEVehicleCombat } from './scripts/combat/vehicle-combat-system.js';
 
 /* -------------------------------------------- */
 /*  Force Powers                                */
@@ -149,6 +150,7 @@ Hooks.once("init", async function() {
     CombatAutomation: SWSECombatAutomation,
     Combat: SWSECombat,
     Grappling: SWSEGrappling,
+    VehicleCombat: SWSEVehicleCombat,
     WorldDataLoader,
     DropHandler,
     HouseruleMechanics,
@@ -427,6 +429,13 @@ Hooks.once("ready", async function() {
 
   SWSEGrappling.init();
   SWSELogger.log('Grappling System initialized');
+
+  // ============================================
+  // Initialize Vehicle Combat System
+  // ============================================
+
+  SWSEVehicleCombat.init();
+  SWSELogger.log('Vehicle Combat System initialized');
 
   // ============================================
   // Initialize Condition Recovery
