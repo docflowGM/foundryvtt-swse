@@ -30,6 +30,7 @@
     "styles/sheets/character-sheet.css",
     "styles/sheets/unified-sheets.css",
     "styles/sheets/vehicle-sheet.css",
+    "styles/sheets/improved-contrast.css",
     "styles/apps/chargen.css",
     "styles/themes/holo-theme.css"
   ],

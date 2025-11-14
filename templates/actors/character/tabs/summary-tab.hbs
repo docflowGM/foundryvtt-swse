@@ -74,7 +74,65 @@
  </div>
  </div>
  </section>
- 
+
+ {{!-- Character Traits --}}
+ <section class="character-traits">
+ <h3 class="section-header">Character Traits</h3>
+ <div class="traits-grid">
+ {{#unless system.isDroid}}
+ <div class="trait-toggle">
+ <label class="checkbox-label">
+ <input type="checkbox"
+ name="system.forceSensitive"
+ {{checked system.forceSensitive}}
+ title="Force Sensitive characters can access the Force tab and Use the Force skill"/>
+ <i class="fas fa-hand-sparkles"></i>
+ <span>Force Sensitive</span>
+ </label>
+ </div>
+ {{/unless}}
+ </div>
+ </section>
+
+ {{!-- Droid Immunities --}}
+ {{#if system.isDroid}}
+ <section class="droid-immunities">
+ <h3 class="section-header">Droid Traits & Immunities</h3>
+ <div class="immunities-grid">
+ <div class="trait-item">
+ <i class="fas fa-shield-alt"></i>
+ <span><strong>Immune:</strong> Poison, Disease, Radiation</span>
+ </div>
+ <div class="trait-item">
+ <i class="fas fa-wind"></i>
+ <span><strong>Immune:</strong> Atmospheric Hazards, Vacuum</span>
+ </div>
+ <div class="trait-item">
+ <i class="fas fa-brain"></i>
+ <span><strong>Immune:</strong> Mind-Affecting Effects</span>
+ </div>
+ <div class="trait-item">
+ <i class="fas fa-bolt"></i>
+ <span><strong>Vulnerable:</strong> Ion Damage (treated as stun)</span>
+ </div>
+ <div class="trait-item">
+ <i class="fas fa-wrench"></i>
+ <span><strong>Repair Only:</strong> Mechanics skill required for healing</span>
+ </div>
+ <div class="trait-item">
+ <i class="fas fa-heartbeat"></i>
+ <span><strong>No CON Score:</strong> Fortitude uses STR modifier</span>
+ </div>
+ {{#if (ne system.droidDegree "4th-degree")}}
+ <div class="trait-item">
+ <i class="fas fa-user-shield"></i>
+ <span><strong>Inhibitors:</strong> Cannot harm sentient beings</span>
+ </div>
+ {{/if}}
+ </div>
+ </section>
+ {{/if}}
+
  {{!-- Ability Scores Quick Reference --}}
  <section class="abilities-quick">
  <h3 class="section-header">Ability Scores</h3>

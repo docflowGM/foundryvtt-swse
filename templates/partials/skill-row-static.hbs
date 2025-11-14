@@ -1,0 +1,142 @@
+{{!-- Static Skill Row - skill data may be undefined, provide defaults --}}
+<div class="skill-row-container" data-skill="{{key}}">
+ <div class="skill-row flexrow" draggable="true">
+ <div class="skill-name">
+ {{label}}
+ {{#if @root.skillActions}}
+ {{#with (lookup @root.skillActions key)}}
+ {{#if hasActions}}
+ <button type="button" class="skill-actions-toggle" data-skill="{{../key}}" title="Show available actions">
+ <i class="fas fa-chevron-down"></i>
+ </button>
+ {{/if}}
+ {{/with}}
+ {{/if}}
+ </div>
+
+ <div class="skill-ability">{{ability}}</div>
+
+ <div class="skill-trained">
+ <input type="checkbox"
+ name="system.skills.{{key}}.trained"
+ {{#if skill}}{{checked skill.trained}}{{/if}}
+ title="Trained (+5)"/>
+ </div>
+
+ <div class="skill-focus">
+ <input type="checkbox"
+ name="system.skills.{{key}}.focused"
+ {{#if skill}}{{checked skill.focused}}{{/if}}
+ title="Skill Focus (+5)"/>
+ </div>
+
+ <div class="skill-armor">
+ <input type="number"
+ name="system.skills.{{key}}.armor"
+ value="{{#if skill}}{{skill.armor}}{{else}}0{{/if}}"
+ data-dtype="Number"
+ placeholder="0"/>
+ </div>
+
+ <div class="skill-misc">
+ <input type="number"
+ name="system.skills.{{key}}.misc"
+ value="{{#if skill}}{{skill.misc}}{{else}}0{{/if}}"
+ data-dtype="Number"
+ placeholder="0"/>
+ </div>
+
+ <div class="skill-total {{#if skill.trained}}trained{{/if}}">
+ {{#if skill}}{{skill.total}}{{else}}0{{/if}}
+ </div>
+
+ <div class="skill-roll">
+ <button class="roll-skill rollable"
+ data-skill="{{key}}"
+ data-roll="1d20+@skills.{{key}}.total"
+ data-label="{{label}}"
+ title="Roll {{label}}">
+ <i class="fas fa-dice-d20"></i>
+ </button>
+ </div>
+ </div>
+
+ {{!-- Expandable Combat Actions Section --}}
+ {{#if @root.skillActions}}
+ {{#with (lookup @root.skillActions key)}}
+ {{#if hasActions}}
+ <div class="skill-actions-panel" style="display: none;" data-skill="{{../key}}">
+
+ {{#if combatActions}}
+ <div class="actions-category">
+ <h4><i class="fas fa-fist-raised"></i> Combat Actions</h4>
+ <div class="actions-list">
+ {{#each combatActions}}
+ <div class="action-item">
+ <div class="action-header">
+ <strong class="action-name">{{name}}</strong>
+ <span class="action-type">{{actionType}}</span>
+ {{#if cost}}
+ <span class="action-cost">Cost: {{cost}}</span>
+ {{/if}}
+ </div>
+ {{#if dc}}
+ <div class="action-dc">
+ <i class="fas fa-dice-d20"></i>
+ DC:
+ {{#if dc.value}}
+ {{dc.value}}
+ {{else if dc.type}}
+ {{dc.type}}
+ {{else}}
+ Varies
+ {{/if}}
+ </div>
+ {{/if}}
+ {{#if when}}
+ <div class="action-when"><em>When:</em> {{when}}</div>
+ {{/if}}
+ {{#if outcome}}
+ <div class="action-outcome"><em>Effect:</em> {{outcome}}</div>
+ {{/if}}
+ {{#if notes}}
+ <div class="action-notes">{{notes}}</div>
+ {{/if}}
+ </div>
+ {{/each}}
+ </div>
+ </div>
+ {{/if}}
+
+ {{#if extraUses}}
+ <div class="actions-category">
+ <h4><i class="fas fa-book"></i> Other Uses</h4>
+ <div class="actions-list">
+ {{#each extraUses}}
+ <div class="action-item">
+ <div class="action-header">
+ <strong class="action-name">{{name}}</strong>
+ {{#if time}}
+ <span class="action-type">{{time}}</span>
+ {{/if}}
+ </div>
+ {{#if dc}}
+ <div class="action-dc">
+ <i class="fas fa-dice-d20"></i>
+ DC: {{dc}}
+ </div>
+ {{/if}}
+ {{#if effect}}
+ <div class="action-outcome"><em>Effect:</em> {{effect}}</div>
+ {{/if}}
+ </div>
+ {{/each}}
+ </div>
+ </div>
+ {{/if}}
+
+ </div>
+ {{/if}}
+ {{/with}}
+ {{/if}}
+</div>

@@ -21,6 +21,7 @@ export class SWSEActorBase extends Actor {
     let damageToApply = amount;
     const currentHP = this.system.hp.value;
     const tempHP = this.system.hp.temp;
+    const isDroid = this.system.isDroid || false;
 
     // Apply to temp HP first
     if (tempHP > 0 && !options.ignoreTemp) {
@@ -31,35 +32,81 @@ export class SWSEActorBase extends Actor {
 
     // Apply to regular HP
     if (damageToApply > 0) {
-      const newHP = Math.max(0, currentHP - damageToApply);
+      let newHP = Math.max(currentHP - damageToApply, isDroid ? -Infinity : 0);
+
+      // For droids, check if single hit exceeds Damage Threshold
+      if (isDroid && options.checkThreshold !== false) {
+        const damageThreshold = this.system.damageThreshold || 10;
+
+        if (amount >= damageThreshold) {
+          // Droid is destroyed if hit exceeds threshold
+          newHP = Math.min(newHP, -1);
+          await this.update({'system.hp.value': newHP});
+          ui.notifications.error(`${this.name} is DESTROYED! (Damage exceeded threshold)`);
+          return amount;
+        }
+      }
+
+      // Cap HP at 0 for living beings
+      if (!isDroid) {
+        newHP = Math.max(0, newHP);
+      }
+
       await this.update({'system.hp.value': newHP});
 
-      // Check damage threshold
-      if (options.checkThreshold !== false && amount >= this.system.damageThreshold) {
+      // Check damage threshold for condition track (living beings)
+      if (!isDroid && options.checkThreshold !== false && amount >= this.system.damageThreshold) {
         await this.moveConditionTrack(1);
         ui.notifications.warn(`${this.name} takes a hit! Moved down the condition track.`);
       }
 
-      // Check for death
-      if (newHP === 0 && this.isHelpless) {
-        ui.notifications.error(`${this.name} has been defeated!`);
+      // Check for disabled/destroyed state
+      if (isDroid) {
+        if (newHP <= -1) {
+          ui.notifications.error(`${this.name} is DESTROYED!`);
+        } else if (newHP === 0) {
+          ui.notifications.warn(`${this.name} is DISABLED! Can only take standard actions.`);
+        }
+      } else {
+        // Check for death (living beings)
+        if (newHP === 0 && this.isHelpless) {
+          ui.notifications.error(`${this.name} has been defeated!`);
+        }
       }
     }
 
     return amount;
   }
 
-  async applyHealing(amount) {
+  async applyHealing(amount, options = {}) {
     if (typeof amount !== 'number' || amount < 0) return;
 
     const currentHP = this.system.hp.value;
     const maxHP = this.system.hp.max;
-    const newHP = Math.min(maxHP, currentHP + amount);
+    const isDroid = this.system.isDroid || false;
 
+    // Droids can only be repaired via Mechanics skill, not natural healing
+    if (isDroid && !options.isRepair) {
+      ui.notifications.warn(`${this.name} is a droid and can only be repaired with the Mechanics skill!`);
+      return 0;
+    }
+
+    // Destroyed droids cannot be repaired (HP <= -1)
+    if (isDroid && currentHP <= -1) {
+      ui.notifications.error(`${this.name} is destroyed and cannot be repaired!`);
+      return 0;
+    }
+
+    const newHP = Math.min(maxHP, currentHP + amount);
     await this.update({'system.hp.value': newHP});
 
     const actualHealing = newHP - currentHP;
-    ui.notifications.info(`${this.name} heals ${actualHealing} HP`);
+
+    if (isDroid) {
+      ui.notifications.info(`${this.name} is repaired for ${actualHealing} HP`);
+    } else {
+      ui.notifications.info(`${this.name} heals ${actualHealing} HP`);
+    }
 
     return actualHealing;
   }

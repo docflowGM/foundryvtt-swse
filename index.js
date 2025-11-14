@@ -50,6 +50,24 @@ import './scripts/migration/fix-defense-schema.js';
 
 import { DamageSystem } from './scripts/combat/damage-system.js';
 import { SWSECombatAutomation } from './scripts/automation/combat-automation.js';
+import { CombatActionsMapper } from './scripts/utils/combat-actions-mapper.js';
+
+/* -------------------------------------------- */
+/*  Force Powers                                */
+/* -------------------------------------------- */
+
+import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
+import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
+
+/* -------------------------------------------- */
+/*  Performance & Optimization                  */
+/* -------------------------------------------- */
+
+import { cacheManager } from './scripts/core/cache-manager.js';
+import { dataPreloader } from './scripts/core/data-preloader.js';
+import { errorHandler } from './scripts/core/error-handler.js';
+import { lazyLoader } from './scripts/core/lazy-loader.js';
+import { perfMonitor, debounce, throttle } from './scripts/utils/performance-utils.js';
 
 /* -------------------------------------------- */
 /*  Applications                                */
@@ -105,7 +123,7 @@ Hooks.once("init", async function() {
   // ============================================
   // Create Global Namespace
   // ============================================
-  
+
   game.swse = {
     // Core Classes
     SWSEActorBase,
@@ -118,21 +136,41 @@ Hooks.once("init", async function() {
     DropHandler,
     HouseruleMechanics,
     HouserulesConfig,
-    
+
     // Configuration
     config: CONFIG.SWSE,
-    
+
     // Components
     components: {
       ConditionTrack: ConditionTrackComponent,
       ForceSuite: ForceSuiteComponent
     },
-    
+
     // Applications
     apps: {
       Store: SWSEStore,
       LevelUp: SWSELevelUp
+    },
+
+    // Performance & Optimization
+    cacheManager,
+    dataPreloader,
+    errorHandler,
+    lazyLoader,
+    perfMonitor,
+    utils: {
+      debounce,
+      throttle
     }
+  };
+
+  // ============================================
+  // Make Lazy Loader Available Early
+  // ============================================
+
+  window.SWSE = {
+    lazyLoader,
+    perfMonitor
   };
 
   // ============================================
@@ -278,9 +316,48 @@ Hooks.once("ready", async function() {
   console.log("SWSE | System Ready");
 
   // ============================================
+  // Initialize Error Handler
+  // ============================================
+
+  errorHandler.initialize();
+
+  // ============================================
+  // Preload Data (Priority)
+  // ============================================
+
+  await perfMonitor.measureAsync('Data Preloading', async () => {
+    await dataPreloader.preload({
+      priority: ['classes', 'skills'],
+      background: ['feats', 'talents', 'forcePowers', 'species'],
+      verbose: true
+    });
+  });
+
+  // ============================================
+  // Initialize Combat Actions Mapper
+  // ============================================
+
+  await perfMonitor.measureAsync('Combat Actions Init', async () => {
+    await CombatActionsMapper.init();
+  });
+
+  // ============================================
+  // Initialize Force Power Hooks
+  // ============================================
+
+  initializeForcePowerHooks();
+
+  // ============================================
+  // Setup Lazy Loading
+  // ============================================
+
+  lazyLoader.setupLazyImages();
+  console.log('SWSE | Lazy image loading initialized');
+
+  // ============================================
   // Load World Data (GM Only)
   // ============================================
-  
+
   if (game.user.isGM) {
     await WorldDataLoader.autoLoad();
 
@@ -293,7 +370,7 @@ Hooks.once("ready", async function() {
         • Force Suite management ready<br>
         • Check the Summary tab for your combat dashboard
       `, { permanent: false });
-      
+
       await game.settings.set('swse', 'welcomeShown', true);
     }
   }
@@ -317,8 +394,37 @@ Hooks.once("ready", async function() {
   // ============================================
   // Initialize House Rules
   // ============================================
-  
+
   HouseruleMechanics.initialize();
+
+  // ============================================
+  // Export to Window for Console Access
+  // ============================================
+
+  window.SWSE = {
+    // Core systems
+    cacheManager,
+    dataPreloader,
+    errorHandler,
+    lazyLoader,
+    perfMonitor,
+
+    // Force Powers
+    ForcePowerManager,
+
+    // Combat
+    CombatActionsMapper,
+    DamageSystem,
+
+    // Utilities
+    debounce,
+    throttle,
+
+    // Access to game.swse
+    ...game.swse
+  };
+
+  console.log('SWSE | Global namespace exported to window.SWSE');
 });
 
 /* -------------------------------------------- */
@@ -737,11 +843,14 @@ window.SWSE = {
   // Apps
   Store: SWSEStore,
   LevelUp: SWSELevelUp,
-  
+
   // Actor/Item Classes
   SWSEActorBase: SWSEActorBase,
   SWSEItemBase: SWSEItemBase,
-  
+
+  // Force Powers
+  ForcePowerManager: ForcePowerManager,
+
   // Configuration
   config: CONFIG.SWSE
 };

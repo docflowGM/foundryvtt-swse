@@ -5,6 +5,17 @@
  <div class="character-name">
  <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
  </div>
+ <div class="character-level">
+ <label>Level {{system.level}}</label>
+ <button class="level-up" title="Level Up Character">
+ <i class="fas fa-level-up-alt"></i> Level Up
+ </button>
+ </div>
+ <div class="character-actions">
+ <button class="open-store" title="Open Marketplace">
+ <i class="fas fa-store"></i> Shop
+ </button>
+ </div>
  </div>
  
  <div class="header-center flex2">
@@ -30,15 +41,19 @@
  
  <div class="defense fortitude-defense">
  <label class="defense-label">Fortitude Defense</label>
- <div class="defense-value rollable" 
- data-roll="1d20" 
+ <div class="defense-value rollable"
+ data-roll="1d20"
  data-label="Fortitude Defense"
  title="Click to roll vs. Fortitude">
  {{system.defenses.fortitude.total}}
  </div>
  <div class="defense-breakdown">
  <span class="breakdown-item">10 + Level {{system.level.heroic}}</span>
+ {{#if system.isDroid}}
+ <span class="breakdown-item">+ Str {{numberFormat system.abilities.str.mod sign=true}} <span class="droid-note">(Droid)</span></span>
+ {{else}}
  <span class="breakdown-item">+ Con {{numberFormat system.abilities.con.mod sign=true}}</span>
+ {{/if}}
  </div>
  </div>
  

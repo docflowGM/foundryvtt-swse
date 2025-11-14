@@ -99,9 +99,65 @@
  </div>
  </div>
 
+ <h3 class="section-header">Force Secrets</h3>
+
+ <div class="force-secrets-section">
+ <div class="secrets-list">
+ {{#each forceSecrets as |secret|}}
+ <div class="secret-item" data-item-id="{{secret._id}}">
+ <div class="secret-header flexrow">
+ <img src="{{secret.img}}" width="24" height="24" alt="{{secret.name}}"/>
+ <span class="secret-name">{{secret.name}}</span>
+ <div class="item-controls">
+ <a class="item-control item-edit" data-action="edit" title="Edit Secret">
+ <i class="fas fa-edit"></i>
+ </a>
+ <a class="item-control item-delete" data-action="delete" title="Delete Secret">
+ <i class="fas fa-trash"></i>
+ </a>
+ </div>
+ </div>
+ {{#if secret.system.description}}
+ <div class="secret-description">{{secret.system.description}}</div>
+ {{/if}}
+ </div>
+ {{else}}
+ <p class="empty-list">No Force Secrets. Jedi Knights and Masters gain these through level up.</p>
+ {{/each}}
+ </div>
+ <button class="add-secret" data-action="createItem" data-type="feat" title="Add Force Secret">
+ <i class="fas fa-plus"></i> Add Force Secret
+ </button>
+ </div>
+
  <h3 class="section-header">Force Techniques</h3>
 
- <div class="force-techniques">
- <p class="placeholder">Force techniques and secrets will be displayed here.</p>
+ <div class="force-techniques-section">
+ <div class="techniques-list">
+ {{#each forceTechniques as |technique|}}
+ <div class="technique-item" data-item-id="{{technique._id}}">
+ <div class="technique-header flexrow">
+ <img src="{{technique.img}}" width="24" height="24" alt="{{technique.name}}"/>
+ <span class="technique-name">{{technique.name}}</span>
+ <div class="item-controls">
+ <a class="item-control item-edit" data-action="edit" title="Edit Technique">
+ <i class="fas fa-edit"></i>
+ </a>
+ <a class="item-control item-delete" data-action="delete" title="Delete Technique">
+ <i class="fas fa-trash"></i>
+ </a>
+ </div>
+ </div>
+ {{#if technique.system.description}}
+ <div class="technique-description">{{technique.system.description}}</div>
+ {{/if}}
+ </div>
+ {{else}}
+ <p class="empty-list">No Force Techniques. Jedi Knights and Masters gain these through level up.</p>
+ {{/each}}
+ </div>
+ <button class="add-technique" data-action="createItem" data-type="feat" title="Add Force Technique">
+ <i class="fas fa-plus"></i> Add Force Technique
+ </button>
  </div>
 </div>

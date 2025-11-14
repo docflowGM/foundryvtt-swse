@@ -1,0 +1,45 @@
+{{!-- Ship Combat Actions Panel for Crew Positions --}}
+<div class="crew-actions-panel" style="display: none;" data-position="{{position}}">
+ <div class="ship-actions-list">
+ {{#each actions}}
+ <div class="ship-action-item">
+ <div class="ship-action-header">
+ <strong class="ship-action-name">{{name}}</strong>
+ <span class="ship-action-type">{{actionType}}</span>
+ {{#if cost}}
+ <span class="ship-action-cost">Cost: {{cost}}</span>
+ {{/if}}
+ </div>
+
+ {{#if relatedSkills}}
+ {{#each relatedSkills}}
+ {{#if dc}}
+ <div class="ship-action-dc">
+ <i class="fas fa-dice-d20"></i>
+ <strong>{{skill}}:</strong>
+ DC
+ {{#if dc.value}}
+ {{dc.value}}
+ {{else if dc.type}}
+ {{dc.type}}
+ {{else}}
+ Varies
+ {{/if}}
+ </div>
+ {{/if}}
+ {{#if when}}
+ <div class="ship-action-when"><em>When:</em> {{when}}</div>
+ {{/if}}
+ {{#if outcome}}
+ <div class="ship-action-outcome"><em>Effect:</em> {{outcome}}</div>
+ {{/if}}
+ {{/each}}
+ {{/if}}
+
+ {{#if notes}}
+ <div class="ship-action-notes">{{notes}}</div>
+ {{/if}}
+ </div>
+ {{/each}}
+ </div>
+</div>

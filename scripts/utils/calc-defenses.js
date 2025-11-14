@@ -27,8 +27,9 @@ export function calculateDefenses(actor) {
   );
   
   // FORTITUDE DEFENSE
+  const isDroid = sys.isDroid || false;
   sys.defenses.fortitude.total = calculateFortitude(
-    level, sys.abilities, armor, penalty, sizeMod
+    level, sys.abilities, armor, penalty, sizeMod, isDroid
   );
   
   // WILL DEFENSE
@@ -65,12 +66,17 @@ function calculateReflex(level, abilities, armor, hasArmored, hasImproved, penal
   return base + abilMod + penalty + sizeMod;
 }
 
-function calculateFortitude(level, abilities, armor, penalty, sizeMod) {
+function calculateFortitude(level, abilities, armor, penalty, sizeMod, isDroid = false) {
   const base = 10 + level;
-  const conMod = abilities.con?.mod || 0;
+
+  // Droids use STR modifier for Fortitude Defense (they have no CON)
+  const abilityMod = isDroid
+    ? (abilities.str?.mod || 0)
+    : (abilities.con?.mod || 0);
+
   const armorBonus = armor?.system.fortBonus || 0;
-  
-  return base + conMod + armorBonus + penalty + sizeMod;
+
+  return base + abilityMod + armorBonus + penalty + sizeMod;
 }
 
 function calculateWill(level, abilities, penalty, sizeMod) {

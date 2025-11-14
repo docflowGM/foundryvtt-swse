@@ -100,30 +100,36 @@ export class DamageSystem {
    */
   static async showHealingDialog(actor = null) {
     const targetActor = actor || (canvas.tokens.controlled[0]?.actor);
-    
+
     if (!targetActor) {
       ui.notifications.warn('No actor selected');
       return;
     }
-    
+
+    const isDroid = targetActor.system.isDroid || false;
+    const title = isDroid ? `Repair ${targetActor.name}` : `Heal ${targetActor.name}`;
+    const label = isDroid ? 'Apply Repair' : 'Apply Healing';
+    const icon = isDroid ? 'fa-wrench' : 'fa-medkit';
+
     return new Promise((resolve) => {
       new Dialog({
-        title: `Heal ${targetActor.name}`,
+        title: title,
         content: `
           <form>
             <div class="form-group">
-              <label>Healing Amount</label>
+              <label>${isDroid ? 'Repair Amount (via Mechanics)' : 'Healing Amount'}</label>
               <input type="number" name="amount" value="0" min="0" autofocus style="width: 100%;"/>
             </div>
+            ${isDroid ? '<p style="color: #999; font-size: 0.9em;">Droids can only be repaired with the Mechanics skill.</p>' : ''}
           </form>
         `,
         buttons: {
           apply: {
-            icon: '<i class="fas fa-medkit"></i>',
-            label: 'Apply Healing',
+            icon: `<i class="fas ${icon}"></i>`,
+            label: label,
             callback: async html => {
               const amount = parseInt(html.find('[name="amount"]').val()) || 0;
-              await targetActor.applyHealing(amount);
+              await targetActor.applyHealing(amount, { isRepair: isDroid });
               resolve(amount);
             }
           },

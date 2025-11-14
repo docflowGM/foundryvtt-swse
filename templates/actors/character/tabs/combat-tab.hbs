@@ -92,15 +92,50 @@
  <div class="armor-row flexrow" data-item-id="{{item._id}}">
  <img src="{{item.img}}" width="24" height="24" alt="{{item.name}}"/>
  <span class="armor-name">{{item.name}}</span>
- <span class="armor-bonus">Reflex: +{{item.system.reflexBonus}}</span>
- <span class="armor-fort">Fort: +{{item.system.fortBonus}}</span>
+ <span class="armor-bonus">Reflex: +{{item.system.defenseBonus}}</span>
+ <span class="armor-max-dex">Max Dex: +{{item.system.maxDexBonus}}</span>
  <label>
- <input type="checkbox" 
+ <input type="checkbox"
  name="items.{{item._id}}.system.equipped"
  {{checked item.system.equipped}}/>
  Equipped
  </label>
+ <div class="item-controls flexrow">
+ <a class="item-control item-edit" title="Edit">
+ <i class="fas fa-edit"></i>
+ </a>
+ <a class="item-control item-delete" title="Delete">
+ <i class="fas fa-trash"></i>
+ </a>
+ </div>
  </div>
  {{/each}}
+
+ <button class="add-armor" data-action="createItem" data-type="armor">
+ <i class="fas fa-shield-alt"></i> Add Armor
+ </button>
+ </div>
+
+ <h3 class="section-header">Feats</h3>
+
+ <div class="feats-list">
+ {{#each feats as |feat|}}
+ <div class="feat-row flexrow" data-item-id="{{feat._id}}">
+ <img src="{{feat.img}}" width="20" height="20" alt="{{feat.name}}"/>
+ <span class="feat-name">{{feat.name}}</span>
+ <div class="item-controls flexrow">
+ <a class="item-control item-edit" title="Edit">
+ <i class="fas fa-edit"></i>
+ </a>
+ <a class="item-control item-delete" title="Delete">
+ <i class="fas fa-trash"></i>
+ </a>
+ </div>
+ </div>
+ {{/each}}
+
+ <button class="add-feat" data-action="createItem" data-type="feat">
+ <i class="fas fa-star"></i> Add Feat
+ </button>
  </div>
 </div>
