@@ -49,6 +49,7 @@ import './scripts/migration/fix-defense-schema.js';
 /* -------------------------------------------- */
 
 import { DamageSystem } from './scripts/combat/damage-system.js';
+import { CombatActionsMapper } from './scripts/utils/combat-actions-mapper.js';
 
 /* -------------------------------------------- */
 /*  Applications                                */
@@ -267,9 +268,15 @@ Hooks.once("ready", async function() {
   console.log("SWSE | System Ready");
 
   // ============================================
+  // Initialize Combat Actions Mapper
+  // ============================================
+
+  await CombatActionsMapper.init();
+
+  // ============================================
   // Load World Data (GM Only)
   // ============================================
-  
+
   if (game.user.isGM) {
     await WorldDataLoader.autoLoad();
 
@@ -282,7 +289,7 @@ Hooks.once("ready", async function() {
         • Force Suite management ready<br>
         • Check the Summary tab for your combat dashboard
       `, { permanent: false });
-      
+
       await game.settings.set('swse', 'welcomeShown', true);
     }
   }

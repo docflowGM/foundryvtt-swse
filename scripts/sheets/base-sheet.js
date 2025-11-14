@@ -3,6 +3,8 @@
  * Provides common functionality for all SWSE actor sheets
  */
 
+import { CombatActionsMapper } from '../utils/combat-actions-mapper.js';
+
 export class SWSEActorSheetBase extends ActorSheet {
   
   static get defaultOptions() {
@@ -49,7 +51,10 @@ export class SWSEActorSheetBase extends ActorSheet {
     // Add useful calculated values
     context.halfLevel = Math.floor((system.level || 1) / 2);
     context.conditionPenalty = actor.conditionPenalty || 0;
-    
+
+    // Add combat actions mapped by skill
+    context.skillActions = CombatActionsMapper.getAllActionsBySkill();
+
     return context;
   }
   
@@ -193,16 +198,19 @@ export class SWSEActorSheetBase extends ActorSheet {
   
   activateListeners(html) {
     super.activateListeners(html);
-    
+
     // Event delegation pattern
     html.on('click', '[data-action]', this._onAction.bind(this));
-    
+
     // Item controls
     html.on('click', '.item-control', this._onItemControl.bind(this));
-    
+
     // Rollable elements
     html.on('click', '.rollable', this._onRoll.bind(this));
-    
+
+    // Skill actions toggle
+    html.on('click', '.skill-actions-toggle', this._onSkillActionsToggle.bind(this));
+
     // Editable elements (if owner)
     if (this.isEditable) {
       // Item quantity/equipped changes
@@ -298,15 +306,40 @@ export class SWSEActorSheetBase extends ActorSheet {
     event.preventDefault();
     const element = event.currentTarget;
     const dataset = element.dataset;
-    
+
     if (dataset.roll) {
       const roll = new Roll(dataset.roll, this.actor.getRollData());
       const label = dataset.label || 'Roll';
-      
+
       roll.toMessage({
         speaker: ChatMessage.getSpeaker({actor: this.actor}),
         flavor: label
       });
+    }
+  }
+
+  /**
+   * Handle skill actions toggle
+   */
+  _onSkillActionsToggle(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const button = event.currentTarget;
+    const skillKey = button.dataset.skill;
+    const container = button.closest('.skill-row-container');
+    const panel = container?.querySelector('.skill-actions-panel');
+    const icon = button.querySelector('i');
+
+    if (panel) {
+      const isHidden = panel.style.display === 'none';
+      panel.style.display = isHidden ? 'block' : 'none';
+
+      // Toggle icon
+      if (icon) {
+        icon.classList.toggle('fa-chevron-down', !isHidden);
+        icon.classList.toggle('fa-chevron-up', isHidden);
+      }
     }
   }
   
