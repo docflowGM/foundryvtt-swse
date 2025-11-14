@@ -124,6 +124,13 @@
         },
         "damageThreshold": 10,
         "damageThresholdMisc": 0,
+        "shields": {
+          "value": 0,
+          "max": 0,
+          "rating": 0,
+          "regenRate": 0
+        },
+        "damageReduction": 0,
         "skills": {},
         "weapons": [],
         "feats": [],

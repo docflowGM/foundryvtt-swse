@@ -33,6 +33,38 @@
  <label>Damage Threshold</label>
  <div class="threshold-value">{{system.damageThreshold}}</div>
  </div>
+
+ <div class="combat-stat shields-stat">
+ <label>Shield Rating (SR)</label>
+ <div class="shields-display">
+ <div class="sr-current-label">Current SR:</div>
+ <input type="number"
+ name="system.shields.rating"
+ value="{{system.shields.rating}}"
+ data-dtype="Number"
+ placeholder="0"
+ class="sr-value"
+ title="Shield Rating - reduces damage and decreases by 5 when exceeded"/>
+ </div>
+ {{#if (gt system.shields.rating 0)}}
+ <div class="shield-info">
+ <small>SR reduces damage equal to its value. When attack damage exceeds SR, SR decreases by 5.</small>
+ </div>
+ {{/if}}
+ <div class="shield-recharge-info">
+ <small>Recharge: DC 20 Mechanics (3 Swift Actions) restores +5 SR</small>
+ </div>
+ </div>
+
+ <div class="combat-stat dr-stat">
+ <label>Damage Reduction (DR)</label>
+ <input type="number"
+ name="system.damageReduction"
+ value="{{system.damageReduction}}"
+ data-dtype="Number"
+ placeholder="0"
+ class="dr-value"/>
+ </div>
  </div>
 
  <h3 class="section-header">Weapons</h3>
