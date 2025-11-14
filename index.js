@@ -49,6 +49,7 @@ import './scripts/migration/fix-defense-schema.js';
 /* -------------------------------------------- */
 
 import { DamageSystem } from './scripts/combat/damage-system.js';
+import { SWSECombatAutomation } from './scripts/automation/combat-automation.js';
 
 /* -------------------------------------------- */
 /*  Applications                                */
@@ -74,12 +75,13 @@ import { DropHandler } from './scripts/drag-drop/drop-handler.js';
 import './scripts/chat/chat-commands.js';
 
 /* -------------------------------------------- */
-/*  House Rules                                 */
+/*  House Rules & GM Tools                      */
 /* -------------------------------------------- */
 
 import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
 import { HouseruleMechanics } from './scripts/houserules/houserule-mechanics.js';
 import { HouserulesConfig } from './scripts/houserules/houserules-config.js';
+import { SWSEHomebrewManager } from './scripts/gm-tools/homebrew-manager.js';
 
 /* -------------------------------------------- */
 /*  System Configuration                        */
@@ -108,9 +110,10 @@ Hooks.once("init", async function() {
     // Core Classes
     SWSEActorBase,
     SWSEItemBase,
-    
+
     // Systems
     DamageSystem,
+    CombatAutomation: SWSECombatAutomation,
     WorldDataLoader,
     DropHandler,
     HouseruleMechanics,
@@ -201,6 +204,8 @@ Hooks.once("init", async function() {
   
   registerSystemSettings();
   registerHouseruleSettings();
+  SWSEHomebrewManager.registerSettings();
+  SWSEHomebrewManager.init();
 
   // ============================================
   // Register Handlebars Helpers
@@ -251,9 +256,15 @@ Hooks.once("init", async function() {
   CONFIG.Dice.terms["d"] = foundry.dice.terms.Die;
 
   // ============================================
+  // Initialize Combat Automation
+  // ============================================
+
+  SWSECombatAutomation.init();
+
+  // ============================================
   // Development Enhancements
   // ============================================
-  
+
   enhanceValidationLogging();
 
   console.log("SWSE | System Initialized Successfully");
@@ -649,7 +660,7 @@ async function createItemMacro(data, slot) {
 function enhanceValidationLogging() {
   [Actor, Item].forEach(DocumentClass => {
     const original = DocumentClass.prototype.validate;
-    
+
     DocumentClass.prototype.validate = function(data, options) {
       try {
         return original.call(this, data, options);
@@ -658,22 +669,52 @@ function enhanceValidationLogging() {
           console.group(`⚠️ SWSE ${DocumentClass.name} Validation Error`);
           console.error(`Document:`, this.name || "Unnamed");
           console.error(`Type:`, this.type);
-          console.error(`Data:`, data);
-          
-          if (err.failures) {
-            console.error("Validation Failures:");
-            err.failures.forEach(f => {
-              console.error(`  ❌ ${f.path}:`, f.failure);
-              console.error(`     Value:`, f.value);
-            });
-          }
-          
+          console.error(`ID:`, this.id || "No ID");
+
+          // Show full data for inspection
+          console.group(`Data Object:`);
+          console.dir(data, {depth: 3});
           console.groupEnd();
+
+          // Show detailed validation failures
+          if (err.failures && err.failures.length > 0) {
+            console.group(`Validation Failures (${err.failures.length}):`);
+            err.failures.forEach((f, index) => {
+              console.group(`${index + 1}. Field: ${f.path}`);
+              console.error(`   Message:`, f.failure?.message || f.failure);
+              console.error(`   Actual Value:`, f.value);
+              console.error(`   Expected:`, f.failure?.expected || 'N/A');
+              console.groupEnd();
+            });
+            console.groupEnd();
+          }
+
+          // Show error message
+          if (err.message) {
+            console.error(`Error Message:`, err.message);
+          }
+
+          // Show stack trace in development mode
+          if (game.settings?.get('swse', 'devMode')) {
+            console.group(`Stack Trace:`);
+            console.error(err.stack);
+            console.groupEnd();
+          }
+
+          console.groupEnd();
+
+          // Show user-friendly notification
+          ui.notifications?.error(
+            `Validation error in ${DocumentClass.name}: ${this.name || 'Unnamed'}. Check console for details.`,
+            {permanent: false}
+          );
         }
         throw err;
       }
     };
   });
+
+  console.log("SWSE | Enhanced validation logging enabled");
 }
 
 /* -------------------------------------------- */
