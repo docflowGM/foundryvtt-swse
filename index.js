@@ -36,6 +36,19 @@ import { preloadHandlebarsTemplates } from './scripts/core/load-templates.js';
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 
 /* -------------------------------------------- */
+/*  Utilities                                   */
+/* -------------------------------------------- */
+
+import { SWSENotifications } from './scripts/utils/notifications.js';
+import { SWSELogger } from './scripts/utils/logger.js';
+
+/* -------------------------------------------- */
+/*  Configuration                               */
+/* -------------------------------------------- */
+
+import { SWSE_SKILLS, getSkillConfig, getSkillsArray } from './scripts/config/skills.js';
+
+/* -------------------------------------------- */
 /*  Components                                  */
 /* -------------------------------------------- */
 
@@ -137,8 +150,15 @@ Hooks.once("init", async function() {
     HouseruleMechanics,
     HouserulesConfig,
 
+    // Utilities
+    notifications: SWSENotifications,
+    logger: SWSELogger,
+
     // Configuration
     config: CONFIG.SWSE,
+    skills: SWSE_SKILLS,
+    getSkillConfig,
+    getSkillsArray,
 
     // Components
     components: {
@@ -376,9 +396,16 @@ Hooks.once("ready", async function() {
   }
 
   // ============================================
+  // Initialize Theme
+  // ============================================
+
+  const currentTheme = game.settings.get('swse', 'sheetTheme');
+  applyTheme(currentTheme);
+
+  // ============================================
   // Initialize Combat Automation
   // ============================================
-  
+
   if (game.settings.get('swse', 'enableAutomation')) {
     setupCombatAutomation();
   }
@@ -386,7 +413,7 @@ Hooks.once("ready", async function() {
   // ============================================
   // Initialize Condition Recovery
   // ============================================
-  
+
   if (game.settings.get('swse', 'autoConditionRecovery')) {
     setupConditionRecovery();
   }
@@ -525,7 +552,7 @@ function registerSystemSettings() {
   // ============================================
   // Store Settings
   // ============================================
-  
+
   game.settings.register("swse", "storeMarkup", {
     name: 'SWSE.Settings.StoreMarkup.Name',
     hint: 'SWSE.Settings.StoreMarkup.Hint',
@@ -551,6 +578,62 @@ function registerSystemSettings() {
       min: 0,
       max: 100,
       step: 5
+    }
+  });
+
+  // ============================================
+  // Theme Settings
+  // ============================================
+
+  game.settings.register("swse", "sheetTheme", {
+    name: 'Sheet Theme',
+    hint: 'Select the visual theme for character sheets and UI elements',
+    scope: "client",
+    config: true,
+    type: String,
+    choices: {
+      "holo": "Default (Holo)",
+      "high-contrast": "High Contrast",
+      "starship": "Starship",
+      "sand-people": "Sand People",
+      "jedi": "Jedi",
+      "high-republic": "High Republic"
+    },
+    default: "holo",
+    onChange: value => {
+      applyTheme(value);
+    }
+  });
+}
+
+/* -------------------------------------------- */
+/*  Theme Management                            */
+/* -------------------------------------------- */
+
+/**
+ * Apply the selected theme to all sheets
+ */
+function applyTheme(themeName) {
+  console.log(`SWSE | Applying theme: ${themeName}`);
+
+  // Remove all existing theme classes
+  const themes = ['holo-theme', 'high-contrast-theme', 'starship-theme', 'sand-people-theme', 'jedi-theme', 'high-republic-theme'];
+  const body = document.body;
+
+  themes.forEach(theme => {
+    body.classList.remove(theme);
+  });
+
+  // Add the new theme class
+  body.classList.add(`${themeName}-theme`);
+
+  // Store the theme preference
+  document.documentElement.setAttribute('data-theme', themeName);
+
+  // Re-render all open sheets to apply the theme
+  Object.values(ui.windows).forEach(app => {
+    if (app.render && typeof app.render === 'function') {
+      app.render(false);
     }
   });
 }
@@ -832,14 +915,18 @@ window.SWSE = {
   // Components
   ConditionTrack: ConditionTrackComponent,
   ForceSuite: ForceSuiteComponent,
-  
+
   // Systems
   Damage: DamageSystem,
   WorldDataLoader: WorldDataLoader,
   DropHandler: DropHandler,
   HouseruleMechanics: HouseruleMechanics,
-    HouserulesConfig,
-  
+  HouserulesConfig,
+
+  // Utilities
+  notifications: SWSENotifications,
+  logger: SWSELogger,
+
   // Apps
   Store: SWSEStore,
   LevelUp: SWSELevelUp,
@@ -852,7 +939,8 @@ window.SWSE = {
   ForcePowerManager: ForcePowerManager,
 
   // Configuration
-  config: CONFIG.SWSE
+  config: CONFIG.SWSE,
+  skills: SWSE_SKILLS
 };
 
 console.log("SWSE | Enhanced System Fully Loaded");

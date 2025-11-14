@@ -1,0 +1,391 @@
+/* ──────────────────────────────────────────────── */
+/* STAR WARS SAGA EDITION – JEDI THEME             */
+/* Serene Force aesthetic with lightsaber accents   */
+/* ──────────────────────────────────────────────── */
+
+.jedi-theme {
+  --primary-text: #e8f4f8;
+  --secondary-text: #a8c8d8;
+  --background-dark: #0a1628;
+  --background-mid: #132744;
+  --background-light: #1e3a5f;
+  --accent-primary: #4da6ff;
+  --accent-secondary: #66d9ff;
+  --lightsaber-blue: #00bfff;
+  --lightsaber-green: #00ff88;
+  --force-glow: #88ccff;
+  --border-color: #2b5278;
+  --success: #00ff88;
+  --warning: #ffd700;
+  --danger: #ff6b6b;
+}
+
+/* Base Sheet Styling */
+.jedi-theme .window-app {
+  background: radial-gradient(ellipse at center, var(--background-mid) 0%, var(--background-dark) 100%);
+  border: 2px solid var(--border-color);
+  box-shadow: 0 0 30px rgba(77, 166, 255, 0.3), 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.jedi-theme .window-content {
+  background: transparent;
+  color: var(--primary-text);
+}
+
+/* Headers */
+.jedi-theme .window-header {
+  background: linear-gradient(180deg, var(--background-light) 0%, var(--background-mid) 100%);
+  border-bottom: 2px solid var(--lightsaber-blue);
+  color: var(--force-glow);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(77, 166, 255, 0.8);
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+}
+
+.jedi-theme .section-header,
+.jedi-theme .section-header-black {
+  background: linear-gradient(90deg, transparent 0%, var(--background-light) 50%, transparent 100%);
+  color: var(--lightsaber-blue);
+  border-left: 4px solid var(--lightsaber-blue);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 16px;
+  margin: 10px 0;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 8px rgba(0, 191, 255, 0.6);
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.jedi-theme .section-header::after,
+.jedi-theme .section-header-black::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(77, 166, 255, 0.3), transparent);
+  animation: force-sweep 4s ease-in-out infinite;
+}
+
+@keyframes force-sweep {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+/* Tabs */
+.jedi-theme .tabs {
+  background: var(--background-mid);
+  border-bottom: 2px solid var(--border-color);
+  box-shadow: 0 0 10px rgba(77, 166, 255, 0.2);
+}
+
+.jedi-theme .tabs .item {
+  color: var(--secondary-text);
+  border: 1px solid transparent;
+  border-bottom: none;
+  padding: 8px 16px;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.jedi-theme .tabs .item:hover {
+  color: var(--accent-secondary);
+  background: rgba(77, 166, 255, 0.1);
+  text-shadow: 0 0 8px rgba(102, 217, 255, 0.6);
+}
+
+.jedi-theme .tabs .item.active {
+  color: var(--lightsaber-blue);
+  background: var(--background-dark);
+  border: 1px solid var(--lightsaber-blue);
+  border-bottom: none;
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.4), inset 0 0 10px rgba(77, 166, 255, 0.2);
+  text-shadow: 0 0 10px rgba(0, 191, 255, 0.8);
+}
+
+/* Inputs */
+.jedi-theme input,
+.jedi-theme textarea,
+.jedi-theme select {
+  background: var(--background-dark);
+  color: var(--primary-text);
+  border: 1px solid var(--border-color);
+  padding: 5px 10px;
+  transition: all 0.3s ease;
+}
+
+.jedi-theme input:focus,
+.jedi-theme textarea:focus,
+.jedi-theme select:focus {
+  border-color: var(--lightsaber-blue);
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+  outline: none;
+  background: var(--background-mid);
+  animation: force-pulse 2s ease-in-out infinite;
+}
+
+@keyframes force-pulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(0, 191, 255, 0.7);
+  }
+}
+
+.jedi-theme input:disabled,
+.jedi-theme textarea:disabled,
+.jedi-theme select:disabled {
+  background: var(--background-mid);
+  color: var(--secondary-text);
+  opacity: 0.6;
+}
+
+/* Buttons */
+.jedi-theme button,
+.jedi-theme .button {
+  background: linear-gradient(180deg, var(--background-light) 0%, var(--background-mid) 100%);
+  color: var(--lightsaber-blue);
+  border: 1px solid var(--lightsaber-blue);
+  padding: 6px 14px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+  text-shadow: 0 0 5px rgba(77, 166, 255, 0.5);
+}
+
+.jedi-theme button:hover,
+.jedi-theme .button:hover {
+  background: linear-gradient(180deg, var(--lightsaber-blue) 0%, var(--accent-primary) 100%);
+  color: #ffffff;
+  border-color: var(--lightsaber-blue);
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.jedi-theme button:active,
+.jedi-theme .button:active {
+  background: var(--accent-primary);
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  transform: translateY(0);
+}
+
+/* Roll Buttons */
+.jedi-theme .rollable {
+  transition: all 0.3s ease;
+}
+
+.jedi-theme .rollable:hover {
+  color: var(--lightsaber-green);
+  text-shadow: 0 0 12px rgba(0, 255, 136, 0.8);
+  cursor: pointer;
+}
+
+/* Stats and Values */
+.jedi-theme .ability-score,
+.jedi-theme .defense-value,
+.jedi-theme .stat-value {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--force-glow);
+  text-shadow: 0 0 10px rgba(136, 204, 255, 0.8);
+  font-family: 'Orbitron', 'Consolas', monospace;
+  animation: force-number-glow 3s ease-in-out infinite;
+}
+
+@keyframes force-number-glow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(136, 204, 255, 0.8);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(136, 204, 255, 1), 0 0 30px rgba(77, 166, 255, 0.6);
+  }
+}
+
+/* Status Indicators */
+.jedi-theme .status-indicator.active {
+  background: var(--lightsaber-green);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.9);
+  animation: lightsaber-glow 2s ease-in-out infinite;
+}
+
+.jedi-theme .status-indicator.warning {
+  background: var(--warning);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.9);
+  animation: warning-flicker 1.5s ease-in-out infinite;
+}
+
+.jedi-theme .status-indicator.danger {
+  background: var(--danger);
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.9);
+  animation: danger-flicker 1s ease-in-out infinite;
+}
+
+@keyframes lightsaber-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.9);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 1), 0 0 30px rgba(0, 255, 136, 0.7);
+  }
+}
+
+@keyframes warning-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes danger-flicker {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.15); }
+}
+
+/* Resources and Progress Bars */
+.jedi-theme .resource-bar {
+  background: var(--background-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.jedi-theme .resource-bar-fill {
+  background: linear-gradient(90deg, var(--lightsaber-blue) 0%, var(--lightsaber-green) 100%);
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  transition: width 0.4s ease;
+  animation: force-flow 2s linear infinite;
+}
+
+@keyframes force-flow {
+  0% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.2);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
+/* Items and Inventory */
+.jedi-theme .item {
+  background: var(--background-mid);
+  border: 1px solid var(--border-color);
+  margin: 3px 0;
+  padding: 6px;
+  transition: all 0.3s ease;
+}
+
+.jedi-theme .item:hover {
+  background: var(--background-light);
+  border-color: var(--lightsaber-blue);
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
+  transform: translateX(3px);
+}
+
+.jedi-theme .item-name {
+  color: var(--primary-text);
+  font-weight: 500;
+}
+
+/* Grid and Lists */
+.jedi-theme .grid,
+.jedi-theme .flexrow {
+  gap: 5px;
+}
+
+.jedi-theme hr {
+  border-color: var(--border-color);
+  border-width: 1px;
+  margin: 10px 0;
+  box-shadow: 0 0 5px rgba(77, 166, 255, 0.3);
+}
+
+/* Condition Track */
+.jedi-theme .condition-track {
+  border: 2px solid var(--border-color);
+  background: var(--background-dark);
+  box-shadow: 0 0 15px rgba(77, 166, 255, 0.2);
+}
+
+.jedi-theme .condition-step {
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.jedi-theme .condition-step.active {
+  background: var(--danger);
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+  border-color: var(--danger);
+  animation: condition-pulse 2s ease-in-out infinite;
+}
+
+@keyframes condition-pulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 107, 107, 1);
+  }
+}
+
+/* Tooltips */
+.jedi-theme .tooltip {
+  background: var(--background-dark);
+  color: var(--primary-text);
+  border: 1px solid var(--lightsaber-blue);
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+}
+
+/* Links */
+.jedi-theme a {
+  color: var(--lightsaber-blue);
+  text-decoration: none;
+  text-shadow: 0 0 5px rgba(0, 191, 255, 0.4);
+}
+
+.jedi-theme a:hover {
+  color: var(--accent-secondary);
+  text-decoration: underline;
+  text-shadow: 0 0 10px rgba(102, 217, 255, 0.8);
+}
+
+/* Force Energy Effect */
+.jedi-theme .sheet-body::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(77, 166, 255, 0.05) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 1;
+  animation: force-energy 6s ease-in-out infinite;
+}
+
+@keyframes force-energy {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
