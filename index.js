@@ -52,6 +52,13 @@ import { DamageSystem } from './scripts/combat/damage-system.js';
 import { CombatActionsMapper } from './scripts/utils/combat-actions-mapper.js';
 
 /* -------------------------------------------- */
+/*  Force Powers                                */
+/* -------------------------------------------- */
+
+import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
+import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
+
+/* -------------------------------------------- */
 /*  Applications                                */
 /* -------------------------------------------- */
 
@@ -272,6 +279,12 @@ Hooks.once("ready", async function() {
   // ============================================
 
   await CombatActionsMapper.init();
+
+  // ============================================
+  // Initialize Force Power Hooks
+  // ============================================
+
+  initializeForcePowerHooks();
 
   // ============================================
   // Load World Data (GM Only)
@@ -703,11 +716,14 @@ window.SWSE = {
   // Apps
   Store: SWSEStore,
   LevelUp: SWSELevelUp,
-  
+
   // Actor/Item Classes
   SWSEActorBase: SWSEActorBase,
   SWSEItemBase: SWSEItemBase,
-  
+
+  // Force Powers
+  ForcePowerManager: ForcePowerManager,
+
   // Configuration
   config: CONFIG.SWSE
 };
