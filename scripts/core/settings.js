@@ -67,5 +67,15 @@ export function registerSystemSettings() {
     default: false
   });
 
+  // Migration tracking setting (hidden from config UI)
+  game.settings.register("swse", "actorValidationMigration", {
+    name: "Actor Validation Migration Version",
+    hint: "Tracks the version of the actor validation migration that has been run",
+    scope: "world",
+    config: false,
+    type: String,
+    default: ""
+  });
+
   console.log("SWSE | Settings registered");
 }

@@ -57,6 +57,7 @@ import { ForceSuiteComponent } from './scripts/components/force-suite.js';
 
 import './scripts/migration/fix-defense-schema.js';
 import './scripts/migration/fix-actor-size.js';
+import './scripts/migration/actor-validation-migration.js';
 
 /* -------------------------------------------- */
 /*  Combat Systems                              */
