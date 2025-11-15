@@ -26,7 +26,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
   constructor(actor, options = {}) {
     super(actor, options);
     this.actor = actor;
-    this.currentStep = 'class'; // class, multiclass-bonus, ability-increase, talent, skills, summary
+    this.currentStep = 'class'; // class, multiclass-bonus, ability-increase, feat, talent, skills, summary
     this.selectedClass = null;
     this.selectedTalent = null;
     this.selectedFeats = [];
@@ -34,11 +34,16 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.abilityIncreases = {}; // Track ability score increases
     this.hpGain = 0;
     this.talentData = null;
+    this.featData = null;
 
     // Mentor system - initially use base class mentor, will update when class is selected
     const level1Class = getLevel1Class(this.actor);
     this.mentor = getMentorForClass(level1Class);
-    this.mentorGreeting = getMentorGreeting(this.mentor, this.actor.system.level + 1, this.actor);
+
+    // Get the class level for the starting class to show appropriate mentor greeting
+    const characterClasses = this._getCharacterClasses();
+    const level1ClassLevel = (characterClasses[level1Class] || 0) + 1;
+    this.mentorGreeting = getMentorGreeting(this.mentor, level1ClassLevel, this.actor);
     this.currentMentorClass = level1Class; // Track which class's mentor we're showing
   }
 
@@ -70,6 +75,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
     data.abilityIncreaseMethod = game.settings.get("swse", "abilityIncreaseMethod") || "flexible";
     data.getsAbilityIncrease = this._getsAbilityIncrease();
     data.abilityIncreases = this.abilityIncreases;
+
+    // Feat selection
+    data.getsBonusFeat = this._getsBonusFeat();
+    if (data.getsBonusFeat && !this.featData) {
+      // Load feats asynchronously if needed
+      this._loadFeats();
+    }
+    data.availableFeats = this.featData || [];
 
     // Mentor data
     data.mentor = this.mentor;
@@ -113,6 +126,16 @@ export class SWSELevelUpEnhanced extends FormApplication {
   }
 
   /**
+   * Check if the new level grants a bonus feat
+   * In SWSE, characters get a feat at every odd level (1, 3, 5, 7, 9, 11, 13, 15, 17, 19)
+   * @returns {boolean}
+   */
+  _getsBonusFeat() {
+    const newLevel = this.actor.system.level + 1;
+    return newLevel % 2 === 1; // Odd levels grant feats
+  }
+
+  /**
    * Check if the new level grants a milestone feat
    * @returns {boolean}
    */
@@ -134,6 +157,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Ability score increases
     html.find('.ability-increase-btn').click(this._onAbilityIncrease.bind(this));
 
+    // Bonus feat selection
+    html.find('.select-bonus-feat').click(this._onSelectBonusFeat.bind(this));
+
     // Talent tree selection
     html.find('.select-talent-tree').click(this._onSelectTalentTree.bind(this));
 
@@ -143,6 +169,38 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     // Final level up
     html.find('.complete-levelup').click(this._onCompleteLevelUp.bind(this));
+  }
+
+  // ========================================
+  // FEAT LOADING AND SELECTION
+  // ========================================
+
+  async _loadFeats() {
+    try {
+      const featPack = game.packs.get('swse.feats');
+      if (!featPack) {
+        this.featData = [];
+        return;
+      }
+
+      const allFeats = await featPack.getDocuments();
+      this.featData = allFeats.map(f => f.toObject());
+    } catch (err) {
+      console.error("SWSE LevelUp | Failed to load feats:", err);
+      this.featData = [];
+    }
+  }
+
+  async _onSelectBonusFeat(event) {
+    event.preventDefault();
+    const featId = event.currentTarget.dataset.featId;
+
+    const feat = this.featData.find(f => f._id === featId);
+    if (feat && !this.selectedFeats.find(f => f._id === featId)) {
+      this.selectedFeats.push(feat);
+      ui.notifications.info(`Selected feat: ${feat.name}`);
+      await this.render();
+    }
   }
 
   // ========================================
@@ -244,13 +302,18 @@ export class SWSELevelUpEnhanced extends FormApplication {
     const isBaseClass = this._isBaseClass(classDoc.name);
     const getsAbilityIncrease = this._getsAbilityIncrease();
 
-    // Determine next step in order: multiclass bonus -> ability increase -> talent -> summary
+    const getsBonusFeat = this._getsBonusFeat();
+
+    // Determine next step in order: multiclass bonus -> ability increase -> feat -> talent -> summary
     if (isMulticlassing && isBaseClass) {
       // Taking a new base class - offer multiclass bonus
       this.currentStep = 'multiclass-bonus';
     } else if (getsAbilityIncrease) {
       // This level grants ability score increases
       this.currentStep = 'ability-increase';
+    } else if (getsBonusFeat) {
+      // This level grants a bonus feat
+      this.currentStep = 'feat';
     } else if (classDoc.system.forceSensitive || classDoc.system.talentTrees?.length > 0) {
       // Class has talents - go to talent selection
       this.currentStep = 'talent';
@@ -771,6 +834,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
   _onNextStep() {
     const getsAbilityIncrease = this._getsAbilityIncrease();
+    const getsBonusFeat = this._getsBonusFeat();
     const hasTalents = this.selectedClass?.system.forceSensitive || this.selectedClass?.system.talentTrees?.length > 0;
 
     // Determine next step dynamically based on what's applicable
@@ -781,6 +845,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
       case 'multiclass-bonus':
         if (getsAbilityIncrease) {
           this.currentStep = 'ability-increase';
+        } else if (getsBonusFeat) {
+          this.currentStep = 'feat';
         } else if (hasTalents) {
           this.currentStep = 'talent';
         } else {
@@ -792,6 +858,20 @@ export class SWSELevelUpEnhanced extends FormApplication {
         const totalAllocated = Object.values(this.abilityIncreases).reduce((sum, val) => sum + val, 0);
         if (totalAllocated < 2) {
           ui.notifications.warn("You must allocate all 2 ability points before continuing!");
+          return;
+        }
+        if (getsBonusFeat) {
+          this.currentStep = 'feat';
+        } else if (hasTalents) {
+          this.currentStep = 'talent';
+        } else {
+          this.currentStep = 'summary';
+        }
+        break;
+      case 'feat':
+        // Check if they selected a feat
+        if (this.selectedFeats.length === 0) {
+          ui.notifications.warn("You must select a feat before continuing!");
           return;
         }
         if (hasTalents) {
@@ -810,9 +890,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
   _onPrevStep() {
     const getsAbilityIncrease = this._getsAbilityIncrease();
+    const getsBonusFeat = this._getsBonusFeat();
     const characterClasses = this._getCharacterClasses();
     const isMulticlassing = Object.keys(characterClasses).length > 0 && !characterClasses[this.selectedClass?.name];
     const isBaseClass = this.selectedClass ? this._isBaseClass(this.selectedClass.name) : false;
+    const hasTalents = this.selectedClass?.system.forceSensitive || this.selectedClass?.system.talentTrees?.length > 0;
 
     // Go back one step dynamically
     switch (this.currentStep) {
@@ -826,7 +908,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
           this.currentStep = 'class';
         }
         break;
-      case 'talent':
+      case 'feat':
         if (getsAbilityIncrease) {
           this.currentStep = 'ability-increase';
         } else if (isMulticlassing && isBaseClass) {
@@ -835,10 +917,22 @@ export class SWSELevelUpEnhanced extends FormApplication {
           this.currentStep = 'class';
         }
         break;
+      case 'talent':
+        if (getsBonusFeat) {
+          this.currentStep = 'feat';
+        } else if (getsAbilityIncrease) {
+          this.currentStep = 'ability-increase';
+        } else if (isMulticlassing && isBaseClass) {
+          this.currentStep = 'multiclass-bonus';
+        } else {
+          this.currentStep = 'class';
+        }
+        break;
       case 'summary':
-        const hasTalents = this.selectedClass?.system.forceSensitive || this.selectedClass?.system.talentTrees?.length > 0;
         if (hasTalents) {
           this.currentStep = 'talent';
+        } else if (getsBonusFeat) {
+          this.currentStep = 'feat';
         } else if (getsAbilityIncrease) {
           this.currentStep = 'ability-increase';
         } else if (isMulticlassing && isBaseClass) {
@@ -1018,9 +1112,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       ui.notifications.success(`${this.actor.name} leveled up to level ${newLevel}!`);
 
-      // Close dialog and re-render actor sheet
+      // Close dialog and re-render actor sheet to show changes
       this.close();
-      this.actor.sheet.render(false);
+      this.actor.sheet.render(true);
 
     } catch (err) {
       console.error("SWSE LevelUp | Error completing level up:", err);
