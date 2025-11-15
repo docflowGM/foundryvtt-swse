@@ -274,6 +274,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.conditionTrack.penalty = penalties[conditionStep] || 0;
     }
 
+    // Calculate multiclass BAB and defenses BEFORE calling parent
+    this._calculateMulticlassStats();
+
     // Call parent to calculate defenses, skills, etc.
     super.prepareDerivedData();
 
@@ -282,6 +285,74 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Override skill calculations with our static skill system
     this._prepareSkills();
+  }
+
+  /**
+   * Calculate BAB and defenses for multiclassed characters
+   * SWSE Rules:
+   * - BAB is additive across all classes
+   * - Defenses take the highest bonus from any class for each defense type
+   */
+  _calculateMulticlassStats() {
+    // Get actor instance to access items
+    const actor = this.parent;
+    if (!actor || !actor.items) return;
+
+    // Get all class items
+    const classItems = actor.items.filter(i => i.type === 'class');
+
+    if (classItems.length === 0) {
+      // No classes, use defaults
+      this.bab = 0;
+      if (this.defenses) {
+        this.defenses.fortitude.classBonus = 0;
+        this.defenses.reflex.classBonus = 0;
+        this.defenses.will.classBonus = 0;
+      }
+      return;
+    }
+
+    // Calculate total BAB (additive)
+    let totalBAB = 0;
+
+    // Track highest defense bonuses
+    let maxFortBonus = 0;
+    let maxRefBonus = 0;
+    let maxWillBonus = 0;
+
+    for (const classItem of classItems) {
+      const classLevel = classItem.system.level || 1;
+      const classData = classItem.system;
+
+      // BAB - Add from each class (SWSE multiclass rule)
+      const babProgression = Number(classData.babProgression) || 0.75;
+      const classBab = Math.floor(classLevel * babProgression);
+      totalBAB += classBab;
+
+      // Defenses - Track maximum for each (SWSE multiclass rule)
+      const fortPerLevel = Number(classData.defenses?.fortitude) || 0;
+      const refPerLevel = Number(classData.defenses?.reflex) || 0;
+      const willPerLevel = Number(classData.defenses?.will) || 0;
+
+      const classFort = fortPerLevel * classLevel;
+      const classRef = refPerLevel * classLevel;
+      const classWill = willPerLevel * classLevel;
+
+      maxFortBonus = Math.max(maxFortBonus, classFort);
+      maxRefBonus = Math.max(maxRefBonus, classRef);
+      maxWillBonus = Math.max(maxWillBonus, classWill);
+    }
+
+    // Set calculated values
+    this.bab = totalBAB;
+    this.baseAttack = totalBAB; // For compatibility
+
+    // Set defense class bonuses (these get added in parent's _calculateDefenses)
+    if (this.defenses) {
+      this.defenses.fortitude.classBonus = maxFortBonus;
+      this.defenses.reflex.classBonus = maxRefBonus;
+      this.defenses.will.classBonus = maxWillBonus;
+    }
   }
 
   _prepareSkills() {

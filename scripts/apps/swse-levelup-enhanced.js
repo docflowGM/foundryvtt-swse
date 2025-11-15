@@ -959,17 +959,38 @@ export class SWSELevelUpEnhanced extends FormApplication {
         await setLevel1Class(this.actor, this.selectedClass.name);
       }
 
-      // Create class item
-      const classItem = {
-        name: this.selectedClass.name,
-        type: "class",
-        system: {
-          level: 1,
-          hitDie: `1d${this.selectedClass.system.hitDie || 6}`
-        }
-      };
+      // Check if character already has this class
+      const existingClass = this.actor.items.find(i => i.type === 'class' && i.name === this.selectedClass.name);
 
-      await this.actor.createEmbeddedDocuments("Item", [classItem]);
+      if (existingClass) {
+        // Level up existing class
+        await existingClass.update({
+          'system.level': (existingClass.system.level || 1) + 1
+        });
+      } else {
+        // Create new class item with full class data
+        const classItem = {
+          name: this.selectedClass.name,
+          type: "class",
+          img: this.selectedClass.img,
+          system: {
+            level: 1,
+            hitDie: this.selectedClass.system.hitDie || 6,
+            babProgression: this.selectedClass.system.babProgression || 0.75,
+            defenses: {
+              fortitude: this.selectedClass.system.defenses?.fortitude || 0,
+              reflex: this.selectedClass.system.defenses?.reflex || 0,
+              will: this.selectedClass.system.defenses?.will || 0
+            },
+            description: this.selectedClass.system.description || '',
+            classSkills: this.selectedClass.system.classSkills || [],
+            talentTrees: this.selectedClass.system.talentTrees || [],
+            forceSensitive: this.selectedClass.system.forceSensitive || false
+          }
+        };
+
+        await this.actor.createEmbeddedDocuments("Item", [classItem]);
+      }
 
       // Add selected talent if any
       if (this.selectedTalent) {
