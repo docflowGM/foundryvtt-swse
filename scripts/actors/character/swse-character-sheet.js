@@ -127,6 +127,9 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find('.combat-action-search').on('input', this._onFilterCombatActions.bind(this));
     html.find('.action-type-filter').on('change', this._onFilterCombatActions.bind(this));
 
+    // Combat action click to post to chat
+    html.find('.action-name.rollable').click(this._onPostCombatAction.bind(this));
+
     // Feat action listeners
     html.find('.feat-action-toggle').click(this._onToggleFeatAction.bind(this));
     html.find('.feat-action-slider-input').on('input', this._onUpdateVariableAction.bind(this));
@@ -261,6 +264,85 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       content: content,
       type: CONST.CHAT_MESSAGE_TYPES.OTHER
     });
+  }
+
+  /**
+   * Post combat action to chat
+   */
+  async _onPostCombatAction(event) {
+    event.preventDefault();
+    const actionName = event.currentTarget.dataset.actionName;
+
+    // Find the action data from the rendered context
+    const actionRow = $(event.currentTarget).closest('.combat-action-row');
+    const actionType = actionRow.data('actionType');
+    const notes = actionRow.find('.action-notes').text();
+
+    // Check for active talent enhancements
+    const activeEnhancements = this.actor.getFlag('swse', 'activeEnhancements') || {};
+    const actionEnhancements = activeEnhancements[actionName] || [];
+
+    // Build enhancement text
+    let enhancementText = '';
+    if (actionEnhancements.length > 0) {
+      enhancementText = `<div class="enhancement-active">
+        <p><strong><i class="fas fa-star"></i> Active Talent Effects:</strong></p>
+        <ul>
+          ${actionEnhancements.map(e => `<li>${e}</li>`).join('')}
+        </ul>
+      </div>`;
+    }
+
+    // Create chat message
+    const content = `
+      <div class="swse-combat-action-chat">
+        <h3><i class="fas fa-fist-raised"></i> ${this.actor.name} ${this._getActionVerb(actionName)}</h3>
+        <div class="action-info">
+          <span class="action-type-badge ${actionType}">${actionType}</span>
+        </div>
+        <p class="action-description">${notes}</p>
+        ${enhancementText}
+      </div>
+    `;
+
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: content,
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER
+    });
+  }
+
+  /**
+   * Get the appropriate verb for an action (e.g., "is taking aim", "is charging")
+   */
+  _getActionVerb(actionName) {
+    const verbMap = {
+      'Aim': 'is taking aim',
+      'Charge': 'is charging',
+      'Attack (single)': 'attacks',
+      'Full attack': 'makes a full attack',
+      'Total Defense': 'takes total defense',
+      'Fight defensively': 'fights defensively',
+      'Second Wind': 'takes a second wind',
+      'Aid another': 'aids an ally',
+      'Feint': 'attempts to feint',
+      'Grapple / Grab': 'attempts to grapple',
+      'Disarm': 'attempts to disarm',
+      'Run': 'runs',
+      'Draw or Holster Weapon': 'draws/holsters a weapon',
+      'Reload': 'reloads',
+      'Coup de grace': 'delivers a coup de grâce',
+      'Ready an action (prepare)': 'readies an action',
+      'Burst Fire / Autofire (vehicle or weapon)': 'fires on full auto',
+      'Area Attack (burst/splash/cone)': 'makes an area attack',
+      'Tumble': 'tumbles',
+      'Stand up from prone': 'stands up',
+      'Fall prone': 'falls prone',
+      'Snipe': 'snipes from hiding'
+    };
+
+    return verbMap[actionName] || `uses ${actionName}`;
   }
 
   /**
