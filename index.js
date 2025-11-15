@@ -715,6 +715,19 @@ function registerSystemSettings() {
     type: Boolean,
     default: false
   });
+
+  // ============================================
+  // Migration Tracking (Hidden)
+  // ============================================
+
+  game.settings.register("swse", "actorValidationMigration", {
+    name: "Actor Validation Migration Version",
+    hint: "Tracks the version of the actor validation migration that has been run",
+    scope: "world",
+    config: false,
+    type: String,
+    default: ""
+  });
 }
 
 /* -------------------------------------------- */
