@@ -15,7 +15,7 @@
       "discord": "DocFlow#0001"
     }
   ],
-  "license": "LICENSE.txt",
+  "license": "MIT",
   "readme": "https://github.com/docflowGM/foundryvtt-swse/blob/main/README.md",
   "bugs": "https://github.com/docflowGM/foundryvtt-swse/issues",
   "changelog": "https://github.com/docflowGM/foundryvtt-swse/blob/main/CHANGELOG.md",
@@ -235,6 +235,5 @@
       "type": "Actor",
       "system": "swse"
     }
-  ],
-  "scripts": []
+  ]
 }

@@ -228,9 +228,9 @@ Hooks.once("init", async function() {
   // ============================================
   // Unregister Core Sheets
   // ============================================
-  
-  foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
-  foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
+
+  Actors.unregisterSheet("core", ActorSheet);
+  Items.unregisterSheet("core", ItemSheet);
 
   // ============================================
   // Register Actor Sheets
@@ -263,9 +263,9 @@ Hooks.once("init", async function() {
   // ============================================
   // Register Item Sheets
   // ============================================
-  
+
   Items.registerSheet("swse", SWSEItemSheet, {
-    types: ["weapon", "armor", "equipment", "feat", "talent", "forcepower", "class", "species"],
+    types: ["weapon", "armor", "equipment", "feat", "talent", "forcepower", "force-power", "class", "species", "talenttree", "skill", "combat-action", "condition"],
     makeDefault: true,
     label: "SWSE.SheetLabels.Item"
   });

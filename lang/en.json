@@ -51,6 +51,34 @@
       "Helpless": "Helpless"
     },
     "Settings": {
+      "EnableAutomation": {
+        "Name": "Enable Combat Automation",
+        "Hint": "Automatically track combat rounds, turns, and apply combat effects"
+      },
+      "AutoConditionRecovery": {
+        "Name": "Automatic Condition Recovery",
+        "Hint": "Prompt for condition track recovery checks at the start of each combatant's turn"
+      },
+      "AutoDamageThreshold": {
+        "Name": "Automatic Damage Threshold",
+        "Hint": "Automatically move characters down the condition track when damage exceeds their damage threshold"
+      },
+      "WeaponRangeMultiplier": {
+        "Name": "Weapon Range Multiplier",
+        "Hint": "Multiply all weapon ranges by this factor (useful for different scale grids)"
+      },
+      "ForcePointBonus": {
+        "Name": "Force Point Reroll Bonus",
+        "Hint": "Bonus die size when spending Force Points to reroll (d6 = +1d6)"
+      },
+      "StoreMarkup": {
+        "Name": "Store Price Markup",
+        "Hint": "Percentage markup for items purchased from the store (can be negative for discounts)"
+      },
+      "StoreDiscount": {
+        "Name": "Store Sell Discount",
+        "Hint": "Percentage of original price when selling items to the store"
+      },
       "CharacterCreation": {
         "Name": "Character Creation Rules",
         "Label": "Configure",

@@ -51,6 +51,34 @@
       "Helpless": "Indefenso"
     },
     "Settings": {
+      "EnableAutomation": {
+        "Name": "Habilitar Automatización de Combate",
+        "Hint": "Rastrear automáticamente rondas, turnos y aplicar efectos de combate"
+      },
+      "AutoConditionRecovery": {
+        "Name": "Recuperación Automática de Condición",
+        "Hint": "Solicitar chequeos de recuperación de pista de condición al inicio del turno de cada combatiente"
+      },
+      "AutoDamageThreshold": {
+        "Name": "Umbral de Daño Automático",
+        "Hint": "Mover automáticamente a los personajes por la pista de condición cuando el daño exceda su umbral de daño"
+      },
+      "WeaponRangeMultiplier": {
+        "Name": "Multiplicador de Alcance de Armas",
+        "Hint": "Multiplicar todos los alcances de armas por este factor (útil para cuadrículas de diferentes escalas)"
+      },
+      "ForcePointBonus": {
+        "Name": "Bonificación de Retirada de Punto de Fuerza",
+        "Hint": "Tamaño del dado de bonificación al gastar Puntos de Fuerza para retirar (d6 = +1d6)"
+      },
+      "StoreMarkup": {
+        "Name": "Sobreprecio de Tienda",
+        "Hint": "Porcentaje de sobreprecio para objetos comprados en la tienda (puede ser negativo para descuentos)"
+      },
+      "StoreDiscount": {
+        "Name": "Descuento de Venta en Tienda",
+        "Hint": "Porcentaje del precio original al vender objetos a la tienda"
+      },
       "CharacterCreation": {
         "Name": "Reglas de Creación de Personaje",
         "Label": "Configurar",
