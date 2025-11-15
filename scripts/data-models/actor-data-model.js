@@ -39,6 +39,24 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       level: new fields.NumberField({required: true, initial: 1, min: 1, max: 20, integer: true}),
       experience: new fields.NumberField({required: true, initial: 0, min: 0, integer: true}),
 
+      // Size
+      size: new fields.StringField({
+        required: true,
+        initial: "medium",
+        choices: {
+          "fine": "Fine",
+          "diminutive": "Diminutive",
+          "tiny": "Tiny",
+          "small": "Small",
+          "medium": "Medium",
+          "large": "Large",
+          "huge": "Huge",
+          "gargantuan": "Gargantuan",
+          "colossal": "Colossal",
+          "colossal2": "Colossal (Frigate)"
+        }
+      }),
+
       // Combat
       bab: new fields.NumberField({required: true, initial: 0, integer: true}),
       baseAttack: new fields.NumberField({required: true, initial: 0, integer: true}),
@@ -122,21 +140,33 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
   }
 
   _calculateDefenses() {
+    // Ensure defenses object exists
+    if (!this.defenses) {
+      console.warn('Actor defenses not initialized, skipping defense calculations');
+      return;
+    }
+
     const level = this.level || 1;
+
+    // Ensure individual defense objects exist
+    if (!this.defenses.reflex || !this.defenses.fortitude || !this.defenses.will) {
+      console.warn('Actor defense sub-objects not initialized, skipping defense calculations');
+      return;
+    }
 
     // Reflex
     const reflexArmor = this.defenses.reflex.armor > 0 ? this.defenses.reflex.armor : level;
-    this.defenses.reflex.total = 10 + reflexArmor + this.abilities.dex.mod + 
-                                  this.defenses.reflex.classBonus + this.defenses.reflex.misc;
+    this.defenses.reflex.total = 10 + reflexArmor + (this.abilities?.dex?.mod || 0) +
+                                  (this.defenses.reflex.classBonus || 0) + (this.defenses.reflex.misc || 0);
 
     // Fortitude
-    const fortAbility = Math.max(this.abilities.con.mod, this.abilities.str.mod);
-    this.defenses.fortitude.total = 10 + level + fortAbility + 
-                                     this.defenses.fortitude.classBonus + this.defenses.fortitude.misc;
+    const fortAbility = Math.max(this.abilities?.con?.mod || 0, this.abilities?.str?.mod || 0);
+    this.defenses.fortitude.total = 10 + level + fortAbility +
+                                     (this.defenses.fortitude.classBonus || 0) + (this.defenses.fortitude.misc || 0);
 
     // Will
-    this.defenses.will.total = 10 + level + this.abilities.wis.mod + 
-                                this.defenses.will.classBonus + this.defenses.will.misc;
+    this.defenses.will.total = 10 + level + (this.abilities?.wis?.mod || 0) +
+                                (this.defenses.will.classBonus || 0) + (this.defenses.will.misc || 0);
   }
 
   _calculateSkills() {
