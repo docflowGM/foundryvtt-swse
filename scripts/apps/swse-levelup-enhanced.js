@@ -927,7 +927,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       }
 
       // Update actor level and HP
-      const newLevel = this.actor.system.level + 1;
+      // newLevel already declared above at line 892
       let totalHPGain = this.hpGain;
 
       updates["system.level"] = newLevel;
