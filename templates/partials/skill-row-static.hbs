@@ -32,7 +32,9 @@
  <select name="system.skills.{{key}}.selectedAbility" title="Ability modifier for this skill">
  <option value="str" {{#if skill}}{{#if (eq skill.selectedAbility 'str')}}selected{{/if}}{{else}}{{#if (eq defaultAbility 'str')}}selected{{/if}}{{/if}}>STR</option>
  <option value="dex" {{#if skill}}{{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}{{else}}{{#if (eq defaultAbility 'dex')}}selected{{/if}}{{/if}}>DEX</option>
+ {{#unless @root.system.isDroid}}
  <option value="con" {{#if skill}}{{#if (eq skill.selectedAbility 'con')}}selected{{/if}}{{else}}{{#if (eq defaultAbility 'con')}}selected{{/if}}{{/if}}>CON</option>
+ {{/unless}}
  <option value="int" {{#if skill}}{{#if (eq skill.selectedAbility 'int')}}selected{{/if}}{{else}}{{#if (eq defaultAbility 'int')}}selected{{/if}}{{/if}}>INT</option>
  <option value="wis" {{#if skill}}{{#if (eq skill.selectedAbility 'wis')}}selected{{/if}}{{else}}{{#if (eq defaultAbility 'wis')}}selected{{/if}}{{/if}}>WIS</option>
  <option value="cha" {{#if skill}}{{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}{{else}}{{#if (eq defaultAbility 'cha')}}selected{{/if}}{{/if}}>CHA</option>
