@@ -6,8 +6,8 @@
  </div>
 
  {{!-- Header Section --}}
- <header class="sheet-header vehicle-header">
- <div class="header-row">
+ <header class="sheet-header vehicle-header window-app-header">
+ <div class="header-row window-app-drag-handle">
  <div class="vehicle-name-section">
  <label>Vehicle Name:</label>
  <input name="name" type="text" value="{{actor.name}}" placeholder="Enter Vehicle Name"/>
@@ -45,13 +45,8 @@
  {{!-- MAIN STATS TAB --}}
  <div class="tab active" data-group="primary" data-tab="main">
  <div class="vehicle-display-container">
- 
- {{!-- Central Vehicle Image --}}
- <div class="vehicle-image-container">
- <img src="systems/swse/assets/ui/vehicle-stats.png" class="vehicle-silhouette" alt="Vehicle"/>
- </div>
 
- {{!-- Stats Around the Vehicle --}}
+ {{!-- Stats Around the Vehicle (ship image is now background) --}}
  <div class="stat-displays">
  
  {{!-- Hull/HP (Top) --}}
@@ -169,11 +164,6 @@
  <label>DEX</label>
  <input type="number" name="system.attributes.dex.base" value="{{system.attributes.dex.base}}" data-dtype="Number" class="attr-input"/>
  <span class="attr-mod">{{formatModifier system.attributes.dex.mod}}</span>
- </div>
- <div class="attribute-item">
- <label>CON</label>
- <input type="number" name="system.attributes.con.base" value="{{system.attributes.con.base}}" data-dtype="Number" class="attr-input"/>
- <span class="attr-mod">{{formatModifier system.attributes.con.mod}}</span>
  </div>
  <div class="attribute-item">
  <label>INT</label>

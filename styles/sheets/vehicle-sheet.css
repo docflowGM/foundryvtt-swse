@@ -160,6 +160,9 @@
     border-bottom: 1px solid #3a9dd6;
     display: flex;
     gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .sheet-tabs .item {
@@ -191,8 +194,13 @@
 
 .vehicle-display-container {
     position: relative;
-    min-height: 350px;
-    background: radial-gradient(ellipse at center, #1a2845 0%, var(--swse-primary) 100%);
+    min-height: 400px;
+    background:
+        radial-gradient(ellipse at center, rgba(26, 40, 69, 0.7) 0%, rgba(15, 20, 35, 0.9) 100%),
+        url('../../assets/ui/vehicle-stats.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
     border: 1px solid #3a9dd6;
     border-radius: 8px;
     padding: 20px 15px;
@@ -200,30 +208,10 @@
     box-shadow: 0 0 30px rgba(58, 157, 214, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.5);
 }
 
-.vehicle-image-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
-    height: 180px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1;
-}
-
-.vehicle-silhouette {
-    max-width: 100%;
-    max-height: 100%;
-    filter: drop-shadow(0 0 20px rgba(58, 157, 214, 0.5));
-    opacity: 0.9;
-}
-
 .stat-displays {
     position: relative;
     width: 100%;
-    height: 350px;
+    height: 400px;
 }
 
 .stat-box {
@@ -424,7 +412,7 @@
 
 .attributes-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 10px;
 }
 
@@ -508,9 +496,10 @@
 
 .defense-stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
     margin-bottom: 20px;
+    max-width: 800px;
 }
 
 .defense-stat {
@@ -873,17 +862,16 @@
     .defense-stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .crew-positions-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .vehicle-display-container {
-        min-height: 18px;
+        min-height: 300px;
     }
-    
-    .vehicle-image-container {
-        width: 300px;
-        min-height: 80px;
+
+    .stat-displays {
+        height: 300px;
     }
 }

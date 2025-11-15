@@ -25,24 +25,39 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       hp: new fields.SchemaField({
         value: new fields.NumberField({
           required: true,
+          nullable: true,
           initial: 1,
           min: 0,
           integer: true,
-          clean: value => Math.floor(Number(value) || 1)
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 1;
+            const num = Number(value);
+            return Number.isNaN(num) ? 1 : Math.floor(num);
+          }
         }),
         max: new fields.NumberField({
           required: true,
+          nullable: true,
           initial: 1,
           min: 1,
           integer: true,
-          clean: value => Math.floor(Number(value) || 1)
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 1;
+            const num = Number(value);
+            return Number.isNaN(num) ? 1 : Math.floor(num);
+          }
         }),
         temp: new fields.NumberField({
           required: true,
+          nullable: true,
           initial: 0,
           min: 0,
           integer: true,
-          clean: value => Math.floor(Number(value) || 0)
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
         })
       }),
 
@@ -50,94 +65,138 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       conditionTrack: new fields.SchemaField({
         current: new fields.NumberField({
           required: true,
+          nullable: true,
           initial: 0,
           min: 0,
           max: 5,
           integer: true,
-          clean: value => Math.floor(Number(value) || 0)
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
         }),
         persistent: new fields.BooleanField({required: true, initial: false}),
         penalty: new fields.NumberField({
           required: true,
+          nullable: true,
           initial: 0,
           integer: true,
-          clean: value => Math.floor(Number(value) || 0)
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
         })
       }),
 
       // Level & Experience
       level: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 1,
         min: 1,
         max: 20,
         integer: true,
-        clean: value => Math.floor(Number(value) || 1)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 1;
+          const num = Number(value);
+          return Number.isNaN(num) ? 1 : Math.floor(num);
+        }
       }),
       experience: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 0,
         min: 0,
         integer: true,
-        clean: value => Math.floor(Number(value) || 0)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
       }),
 
       // Size (with automatic normalization for backwards compatibility)
+      // Note: choices removed to allow clean function to run before validation
       size: new fields.StringField({
         required: true,
         initial: "medium",
-        choices: {
-          "fine": "Fine",
-          "diminutive": "Diminutive",
-          "tiny": "Tiny",
-          "small": "Small",
-          "medium": "Medium",
-          "large": "Large",
-          "huge": "Huge",
-          "gargantuan": "Gargantuan",
-          "colossal": "Colossal",
-          "colossal2": "Colossal (Frigate)"
-        },
         clean: value => {
           // Normalize capitalized values to lowercase for backwards compatibility
           if (typeof value === 'string') {
-            return value.toLowerCase();
+            const normalized = value.toLowerCase();
+            // Map any known valid sizes to their correct form
+            const validSizes = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal', 'colossal2'];
+            return validSizes.includes(normalized) ? normalized : "medium";
           }
-          return value;
+          return "medium";
+        },
+        validate: value => {
+          // Validate after cleaning
+          const validSizes = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal', 'colossal2'];
+          if (!validSizes.includes(value)) {
+            console.warn(`SWSE | Invalid size value "${value}" was auto-corrected to "medium". Valid sizes are: ${validSizes.join(', ')}`);
+          }
         }
       }),
 
       // Combat (with automatic integer coercion for backwards compatibility)
       bab: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 0,
         integer: true,
-        clean: value => Math.floor(Number(value) || 0)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
       }),
       baseAttack: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 0,
         integer: true,
-        clean: value => Math.floor(Number(value) || 0)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
       }),
       initiative: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 0,
         integer: true,
-        clean: value => Math.floor(Number(value) || 0)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
       }),
       speed: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 6,
         min: 0,
         integer: true,
-        clean: value => Math.floor(Number(value) || 6)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 6;
+          const num = Number(value);
+          return Number.isNaN(num) ? 6 : Math.floor(num);
+        }
       }),
       damageThreshold: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 10,
         integer: true,
-        clean: value => Math.floor(Number(value) || 10)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 10;
+          const num = Number(value);
+          return Number.isNaN(num) ? 10 : Math.floor(num);
+        }
       }),
 
       // Skills
@@ -146,10 +205,15 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       // Resources
       credits: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 0,
         min: 0,
         integer: true,
-        clean: value => Math.floor(Number(value) || 0)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
       })
     };
   }
@@ -159,35 +223,60 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
     return {
       base: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 10,
         min: 1,
         max: 30,
         integer: true,
-        clean: value => Math.floor(Number(value) || 10)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 10;
+          const num = Number(value);
+          return Number.isNaN(num) ? 10 : Math.floor(num);
+        }
       }),
       racial: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 0,
         integer: true,
-        clean: value => Math.floor(Number(value) || 0)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
       }),
       misc: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 0,
         integer: true,
-        clean: value => Math.floor(Number(value) || 0)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
       }),
       total: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 10,
         integer: true,
-        clean: value => Math.floor(Number(value) || 10)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 10;
+          const num = Number(value);
+          return Number.isNaN(num) ? 10 : Math.floor(num);
+        }
       }),
       mod: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 0,
         integer: true,
-        clean: value => Math.floor(Number(value) || 0)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
       })
     };
   }
@@ -197,39 +286,69 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
     return {
       base: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 10,
         integer: true,
-        clean: value => Math.floor(Number(value) || 10)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 10;
+          const num = Number(value);
+          return Number.isNaN(num) ? 10 : Math.floor(num);
+        }
       }),
       armor: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 0,
         integer: true,
-        clean: value => Math.floor(Number(value) || 0)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
       }),
       ability: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 0,
         integer: true,
-        clean: value => Math.floor(Number(value) || 0)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
       }),
       classBonus: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 0,
         integer: true,
-        clean: value => Math.floor(Number(value) || 0)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
       }),
       misc: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 0,
         integer: true,
-        clean: value => Math.floor(Number(value) || 0)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
       }),
       total: new fields.NumberField({
         required: true,
+        nullable: true,
         initial: 10,
         integer: true,
-        clean: value => Math.floor(Number(value) || 10)
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 10;
+          const num = Number(value);
+          return Number.isNaN(num) ? 10 : Math.floor(num);
+        }
       })
     };
   }
@@ -250,21 +369,36 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
         focused: new fields.BooleanField({required: true, initial: false}),
         armor: new fields.NumberField({
           required: true,
+          nullable: true,
           initial: 0,
           integer: true,
-          clean: value => Math.floor(Number(value) || 0)
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
         }),
         misc: new fields.NumberField({
           required: true,
+          nullable: true,
           initial: 0,
           integer: true,
-          clean: value => Math.floor(Number(value) || 0)
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
         }),
         total: new fields.NumberField({
           required: true,
+          nullable: true,
           initial: 0,
           integer: true,
-          clean: value => Math.floor(Number(value) || 0)
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
         })
       });
     }
