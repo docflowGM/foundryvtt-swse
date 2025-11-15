@@ -17,6 +17,11 @@ export default class CharacterGenerator extends Application {
       droidDegree: "",
       droidSize: "medium",
       species: "",
+      size: "Medium",  // Character size (Small, Medium, Large)
+      specialAbilities: [],  // Racial special abilities
+      languages: [],  // Known languages
+      racialSkillBonuses: [],  // Racial skill bonuses (e.g., "+2 Perception")
+      speciesSource: "",  // Source book for species
       importedDroidData: null,
       preselectedSkills: [],
       droidSystems: {
@@ -1216,24 +1221,129 @@ export default class CharacterGenerator extends Application {
   async _onSelectSpecies(event) {
     event.preventDefault();
     const speciesKey = event.currentTarget.dataset.species;
+
+    // Find the species document
+    if (!this._packs.species) await this._loadData();
+    const speciesDoc = this._packs.species.find(s => s.name === speciesKey || s._id === speciesKey);
+
+    if (!speciesDoc) {
+      console.warn(`CharGen | Species not found: ${speciesKey}`);
+      return;
+    }
+
     this.characterData.species = speciesKey;
 
-    // Apply racial bonuses
-    const bonuses = await this._getRacialBonuses(speciesKey);
-    for (const [k, v] of Object.entries(bonuses || {})) {
-      if (this.characterData.abilities[k]) {
-        this.characterData.abilities[k].racial = Number(v || 0);
-      }
-    }
+    // Apply all species data
+    this._applySpeciesData(speciesDoc);
 
     this._recalcAbilities();
     await this._onNextStep(event);
   }
 
+  /**
+   * Apply all species data to character
+   * @param {Object} speciesDoc - Species document from compendium
+   */
+  _applySpeciesData(speciesDoc) {
+    const system = speciesDoc.system || {};
+
+    // 1. Apply ability score modifiers
+    const abilityBonuses = this._parseAbilityString(system.abilities || "None");
+    for (const [ability, bonus] of Object.entries(abilityBonuses)) {
+      if (this.characterData.abilities[ability]) {
+        this.characterData.abilities[ability].racial = bonus;
+      }
+    }
+
+    // 2. Apply speed
+    if (system.speed) {
+      this.characterData.speed.base = Number(system.speed);
+    }
+
+    // 3. Store size
+    this.characterData.size = system.size || "Medium";
+
+    // 4. Store special abilities
+    this.characterData.specialAbilities = system.special || [];
+
+    // 5. Store languages
+    this.characterData.languages = system.languages || [];
+
+    // 6. Apply skill bonuses (store for later application)
+    this.characterData.racialSkillBonuses = system.skillBonuses || [];
+
+    // 7. Store source
+    this.characterData.speciesSource = system.source || "";
+
+    console.log(`CharGen | Applied species data for ${speciesDoc.name}:`, {
+      abilities: abilityBonuses,
+      speed: this.characterData.speed.base,
+      size: this.characterData.size,
+      special: this.characterData.specialAbilities,
+      languages: this.characterData.languages,
+      skillBonuses: this.characterData.racialSkillBonuses
+    });
+  }
+
+  /**
+   * Parse ability string like "+2 Dex, -2 Con" or "+4 Str, +2 Con, -2 Int, -2 Cha"
+   * @param {string} abilityString - Ability modifier string
+   * @returns {Object} Map of ability keys to numeric bonuses
+   */
+  _parseAbilityString(abilityString) {
+    const bonuses = {
+      str: 0,
+      dex: 0,
+      con: 0,
+      int: 0,
+      wis: 0,
+      cha: 0
+    };
+
+    if (!abilityString || abilityString === "None" || abilityString === "none") {
+      return bonuses;
+    }
+
+    // Map of ability name variations to keys
+    const abilityMap = {
+      'str': 'str', 'strength': 'str',
+      'dex': 'dex', 'dexterity': 'dex',
+      'con': 'con', 'constitution': 'con',
+      'int': 'int', 'intelligence': 'int',
+      'wis': 'wis', 'wisdom': 'wis',
+      'cha': 'cha', 'charisma': 'cha'
+    };
+
+    // Split by comma and parse each part
+    const parts = abilityString.split(',').map(p => p.trim());
+
+    for (const part of parts) {
+      // Match patterns like "+2 Dex", "-2 Con", "+4 Str"
+      const match = part.match(/([+-]?\d+)\s*([a-zA-Z]+)/);
+      if (match) {
+        const value = parseInt(match[1]);
+        const abilityName = match[2].toLowerCase();
+        const abilityKey = abilityMap[abilityName];
+
+        if (abilityKey) {
+          bonuses[abilityKey] = value;
+        }
+      }
+    }
+
+    return bonuses;
+  }
+
   async _getRacialBonuses(speciesName) {
     if (!this._packs.species) await this._loadData();
     const found = this._packs.species.find(s => s.name === speciesName || s._id === speciesName);
-    return (found && found.system && found.system.bonuses) ? found.system.bonuses : {};
+
+    if (!found || !found.system) {
+      return {};
+    }
+
+    // Parse the abilities string to get bonuses
+    return this._parseAbilityString(found.system.abilities || "None");
   }
 
   async _onSelectClass(event) {
@@ -1816,6 +1926,7 @@ export default class CharacterGenerator extends Application {
     const system = {
       level: this.characterData.level,
       race: this.characterData.species,
+      size: this.characterData.size || "Medium",
       abilities: this.characterData.abilities,
       skills: this.characterData.skills,
       hp: this.characterData.hp,
@@ -1828,7 +1939,12 @@ export default class CharacterGenerator extends Application {
       speed: this.characterData.speed,
       damageThresholdMisc: this.characterData.damageThresholdMisc || 0,
       credits: this.characterData.credits || 1000,
-      weapons: []
+      weapons: [],
+      // Species data
+      specialAbilities: this.characterData.specialAbilities || [],
+      languages: this.characterData.languages || [],
+      racialSkillBonuses: this.characterData.racialSkillBonuses || [],
+      speciesSource: this.characterData.speciesSource || ""
     };
     
     const actorData = {
