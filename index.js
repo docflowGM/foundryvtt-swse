@@ -113,6 +113,12 @@ import { DropHandler } from './scripts/drag-drop/drop-handler.js';
 import './scripts/chat/chat-commands.js';
 
 /* -------------------------------------------- */
+/*  Canvas UI                                   */
+/* -------------------------------------------- */
+
+import { CanvasUIManager } from './scripts/canvas-ui/canvas-ui-manager.js';
+
+/* -------------------------------------------- */
 /*  House Rules & GM Tools                      */
 /* -------------------------------------------- */
 
@@ -175,6 +181,9 @@ Hooks.once("init", async function() {
       ConditionTrack: ConditionTrackComponent,
       ForceSuite: ForceSuiteComponent
     },
+
+    // Canvas UI
+    CanvasUIManager,
 
     // Applications
     apps: {
@@ -437,6 +446,13 @@ Hooks.once("ready", async function() {
   // ============================================
 
   SWSECombat.init();
+
+  // ============================================
+  // Initialize Canvas UI Manager
+  // ============================================
+
+  CanvasUIManager.initialize();
+  console.log("SWSE | Canvas UI Tools initialized");
   SWSELogger.log('Enhanced Combat System initialized');
 
   // ============================================

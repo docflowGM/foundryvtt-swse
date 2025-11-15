@@ -47,7 +47,10 @@ export async function preloadHandlebarsTemplates() {
     "systems/swse/templates/partials/skill-row.hbs",
     "systems/swse/templates/partials/ship-combat-actions-panel.hbs",
     "systems/swse/templates/partials/tab-navigation.hbs",
-    "systems/swse/templates/partials/item-controls.hbs"
+    "systems/swse/templates/partials/item-controls.hbs",
+
+    // Canvas UI
+    "systems/swse/templates/canvas-ui/toolbar.hbs"
   ];
 
   console.log(`SWSE | Preloading ${criticalTemplates.length} critical templates...`);
@@ -110,7 +113,8 @@ export function getTemplatePaths() {
       "systems/swse/templates/partials/skill-row.hbs",
       "systems/swse/templates/partials/ship-combat-actions-panel.hbs",
       "systems/swse/templates/partials/tab-navigation.hbs",
-      "systems/swse/templates/partials/item-controls.hbs"
+      "systems/swse/templates/partials/item-controls.hbs",
+      "systems/swse/templates/canvas-ui/toolbar.hbs"
     ]
   };
 }

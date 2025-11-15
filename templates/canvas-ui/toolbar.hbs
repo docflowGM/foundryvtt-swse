@@ -1,0 +1,60 @@
+<div id="swse-canvas-toolbar" class="swse-canvas-toolbar">
+    <div class="toolbar-container">
+        <div class="toolbar-header">
+            <i class="fas fa-star-wars"></i>
+            <span>SWSE Tools</span>
+        </div>
+        <div class="toolbar-tools">
+            {{#each tools}}
+                {{#if (eq type "button")}}
+                    <div class="swse-tool" data-tool="{{id}}">
+                        <button type="button" data-action="{{action}}" title="{{title}}">
+                            <i class="{{icon}}"></i>
+                            <span class="tool-label">{{title}}</span>
+                        </button>
+                    </div>
+                {{/if}}
+
+                {{#if (eq type "dropdown")}}
+                    <div class="swse-tool dropdown" data-tool="{{id}}">
+                        <button type="button" title="{{title}}">
+                            <i class="{{icon}}"></i>
+                            <span class="tool-label">{{title}}</span>
+                            <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            {{#if commands}}
+                                {{#each commands}}
+                                    <div class="dropdown-item" data-action="chatCommand" data-command="{{command}}">
+                                        <span>{{label}}</span>
+                                    </div>
+                                {{/each}}
+                            {{/if}}
+
+                            {{#if conditions}}
+                                {{#each conditions}}
+                                    <div class="dropdown-item" data-action="applyCondition" data-condition="{{value}}">
+                                        <span>{{label}}</span>
+                                    </div>
+                                {{/each}}
+                            {{/if}}
+
+                            {{#if options}}
+                                {{#each options}}
+                                    <div class="dropdown-item" data-action="{{action}}">
+                                        <span>{{label}}</span>
+                                    </div>
+                                {{/each}}
+                            {{/if}}
+                        </div>
+                    </div>
+                {{/if}}
+            {{/each}}
+        </div>
+        <div class="toolbar-toggle">
+            <button type="button" id="swse-toolbar-collapse" title="Collapse Toolbar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+    </div>
+</div>

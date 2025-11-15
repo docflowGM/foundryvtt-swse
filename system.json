@@ -36,6 +36,7 @@
     "styles/combat/combat-enhancements.css",
     "styles/combat/vehicle-combat.css",
     "styles/apps/chargen.css",
+    "styles/canvas/canvas-ui.css",
     "styles/themes/holo-theme.css",
     "styles/themes/high-contrast-theme.css",
     "styles/themes/starship-theme.css",
