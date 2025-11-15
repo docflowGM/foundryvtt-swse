@@ -23,23 +23,66 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
       // HP
       hp: new fields.SchemaField({
-        value: new fields.NumberField({required: true, initial: 1, min: 0, integer: true}),
-        max: new fields.NumberField({required: true, initial: 1, min: 1, integer: true}),
-        temp: new fields.NumberField({required: true, initial: 0, min: 0, integer: true})
+        value: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          clean: value => Math.floor(Number(value) || 1)
+        }),
+        max: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 1,
+          integer: true,
+          clean: value => Math.floor(Number(value) || 1)
+        }),
+        temp: new fields.NumberField({
+          required: true,
+          initial: 0,
+          min: 0,
+          integer: true,
+          clean: value => Math.floor(Number(value) || 0)
+        })
       }),
 
       // Condition Track
       conditionTrack: new fields.SchemaField({
-        current: new fields.NumberField({required: true, initial: 0, min: 0, max: 5, integer: true}),
+        current: new fields.NumberField({
+          required: true,
+          initial: 0,
+          min: 0,
+          max: 5,
+          integer: true,
+          clean: value => Math.floor(Number(value) || 0)
+        }),
         persistent: new fields.BooleanField({required: true, initial: false}),
-        penalty: new fields.NumberField({required: true, initial: 0, integer: true})
+        penalty: new fields.NumberField({
+          required: true,
+          initial: 0,
+          integer: true,
+          clean: value => Math.floor(Number(value) || 0)
+        })
       }),
 
       // Level & Experience
-      level: new fields.NumberField({required: true, initial: 1, min: 1, max: 20, integer: true}),
-      experience: new fields.NumberField({required: true, initial: 0, min: 0, integer: true}),
+      level: new fields.NumberField({
+        required: true,
+        initial: 1,
+        min: 1,
+        max: 20,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 1)
+      }),
+      experience: new fields.NumberField({
+        required: true,
+        initial: 0,
+        min: 0,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 0)
+      }),
 
-      // Size
+      // Size (with automatic normalization for backwards compatibility)
       size: new fields.StringField({
         required: true,
         initial: "medium",
@@ -54,44 +97,140 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
           "gargantuan": "Gargantuan",
           "colossal": "Colossal",
           "colossal2": "Colossal (Frigate)"
+        },
+        clean: value => {
+          // Normalize capitalized values to lowercase for backwards compatibility
+          if (typeof value === 'string') {
+            return value.toLowerCase();
+          }
+          return value;
         }
       }),
 
-      // Combat
-      bab: new fields.NumberField({required: true, initial: 0, integer: true}),
-      baseAttack: new fields.NumberField({required: true, initial: 0, integer: true}),
-      initiative: new fields.NumberField({required: true, initial: 0, integer: true}),
-      speed: new fields.NumberField({required: true, initial: 6, min: 0, integer: true}),
-      damageThreshold: new fields.NumberField({required: true, initial: 10, integer: true}),
+      // Combat (with automatic integer coercion for backwards compatibility)
+      bab: new fields.NumberField({
+        required: true,
+        initial: 0,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 0)
+      }),
+      baseAttack: new fields.NumberField({
+        required: true,
+        initial: 0,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 0)
+      }),
+      initiative: new fields.NumberField({
+        required: true,
+        initial: 0,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 0)
+      }),
+      speed: new fields.NumberField({
+        required: true,
+        initial: 6,
+        min: 0,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 6)
+      }),
+      damageThreshold: new fields.NumberField({
+        required: true,
+        initial: 10,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 10)
+      }),
 
       // Skills
       skills: new fields.SchemaField(this._generateSkillsSchema()),
 
       // Resources
-      credits: new fields.NumberField({required: true, initial: 0, min: 0, integer: true})
+      credits: new fields.NumberField({
+        required: true,
+        initial: 0,
+        min: 0,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 0)
+      })
     };
   }
 
   static _abilitySchema() {
     const fields = foundry.data.fields;
     return {
-      base: new fields.NumberField({required: true, initial: 10, min: 1, max: 30, integer: true}),
-      racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-      misc: new fields.NumberField({required: true, initial: 0, integer: true}),
-      total: new fields.NumberField({required: true, initial: 10, integer: true}),
-      mod: new fields.NumberField({required: true, initial: 0, integer: true})
+      base: new fields.NumberField({
+        required: true,
+        initial: 10,
+        min: 1,
+        max: 30,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 10)
+      }),
+      racial: new fields.NumberField({
+        required: true,
+        initial: 0,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 0)
+      }),
+      misc: new fields.NumberField({
+        required: true,
+        initial: 0,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 0)
+      }),
+      total: new fields.NumberField({
+        required: true,
+        initial: 10,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 10)
+      }),
+      mod: new fields.NumberField({
+        required: true,
+        initial: 0,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 0)
+      })
     };
   }
 
   static _defenseSchema() {
     const fields = foundry.data.fields;
     return {
-      base: new fields.NumberField({required: true, initial: 10, integer: true}),
-      armor: new fields.NumberField({required: true, initial: 0, integer: true}),
-      ability: new fields.NumberField({required: true, initial: 0, integer: true}),
-      classBonus: new fields.NumberField({required: true, initial: 0, integer: true}),
-      misc: new fields.NumberField({required: true, initial: 0, integer: true}),
-      total: new fields.NumberField({required: true, initial: 10, integer: true})
+      base: new fields.NumberField({
+        required: true,
+        initial: 10,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 10)
+      }),
+      armor: new fields.NumberField({
+        required: true,
+        initial: 0,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 0)
+      }),
+      ability: new fields.NumberField({
+        required: true,
+        initial: 0,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 0)
+      }),
+      classBonus: new fields.NumberField({
+        required: true,
+        initial: 0,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 0)
+      }),
+      misc: new fields.NumberField({
+        required: true,
+        initial: 0,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 0)
+      }),
+      total: new fields.NumberField({
+        required: true,
+        initial: 10,
+        integer: true,
+        clean: value => Math.floor(Number(value) || 10)
+      })
     };
   }
 
@@ -109,9 +248,24 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       schema[skill] = new fields.SchemaField({
         trained: new fields.BooleanField({required: true, initial: false}),
         focused: new fields.BooleanField({required: true, initial: false}),
-        armor: new fields.NumberField({required: true, initial: 0, integer: true}),
-        misc: new fields.NumberField({required: true, initial: 0, integer: true}),
-        total: new fields.NumberField({required: true, initial: 0, integer: true})
+        armor: new fields.NumberField({
+          required: true,
+          initial: 0,
+          integer: true,
+          clean: value => Math.floor(Number(value) || 0)
+        }),
+        misc: new fields.NumberField({
+          required: true,
+          initial: 0,
+          integer: true,
+          clean: value => Math.floor(Number(value) || 0)
+        }),
+        total: new fields.NumberField({
+          required: true,
+          initial: 0,
+          integer: true,
+          clean: value => Math.floor(Number(value) || 0)
+        })
       });
     }
     return schema;
