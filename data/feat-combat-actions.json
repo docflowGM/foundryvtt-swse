@@ -1,0 +1,172 @@
+{
+  "power-attack": {
+    "name": "Power Attack",
+    "actionType": "modifier",
+    "requiredFeat": "Power Attack",
+    "description": "Trade attack bonus for extra damage",
+    "variable": true,
+    "variableType": "slider",
+    "variableOptions": {
+      "min": 1,
+      "max": 5,
+      "step": 1
+    },
+    "effects": [
+      {
+        "type": "penalty",
+        "target": "attack",
+        "formula": "-{value}"
+      },
+      {
+        "type": "bonus",
+        "target": "damage",
+        "formula": "+{value*2}"
+      }
+    ],
+    "notes": "Take -{value} to attack rolls, gain +{value*2} to damage",
+    "relatedSkills": ["attack"]
+  },
+  "defensive-fighting": {
+    "name": "Defensive Fighting",
+    "actionType": "swift",
+    "requiredFeat": "Defensive Fighting",
+    "description": "Gain +2 to Reflex Defense, take -2 to attacks",
+    "toggleable": true,
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.defenses.reflex.bonus",
+        "value": 2
+      },
+      {
+        "type": "penalty",
+        "target": "system.attackBonus.all",
+        "value": -2
+      }
+    ],
+    "notes": "Swift action to toggle on/off. +2 Reflex Defense, -2 to attack rolls",
+    "relatedSkills": []
+  },
+  "total-defense": {
+    "name": "Total Defense",
+    "actionType": "standard",
+    "requiredFeat": null,
+    "description": "Gain +2 to all defenses, cannot attack",
+    "toggleable": true,
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.defenses.reflex.bonus",
+        "value": 2
+      },
+      {
+        "type": "bonus",
+        "target": "system.defenses.fortitude.bonus",
+        "value": 2
+      },
+      {
+        "type": "bonus",
+        "target": "system.defenses.will.bonus",
+        "value": 2
+      }
+    ],
+    "notes": "Standard action. +2 to all defenses until start of your next turn. Cannot make attacks while active.",
+    "relatedSkills": []
+  },
+  "rapid-shot": {
+    "name": "Rapid Shot",
+    "actionType": "full-round",
+    "requiredFeat": "Rapid Shot",
+    "description": "Make one extra ranged attack at -2 to all attacks",
+    "toggleable": false,
+    "effects": [
+      {
+        "type": "penalty",
+        "target": "system.attackBonus.ranged",
+        "value": -2
+      },
+      {
+        "type": "grant",
+        "target": "extra-attack",
+        "value": 1
+      }
+    ],
+    "notes": "Full-round action. Make one extra ranged attack. All attacks take -2 penalty.",
+    "relatedSkills": ["attack"]
+  },
+  "cleave": {
+    "name": "Cleave",
+    "actionType": "reaction",
+    "requiredFeat": "Cleave",
+    "description": "Make immediate melee attack after dropping enemy",
+    "toggleable": false,
+    "trigger": "You drop an enemy to 0 HP with a melee attack",
+    "effects": [
+      {
+        "type": "grant",
+        "target": "immediate-attack",
+        "value": 1
+      }
+    ],
+    "notes": "When you drop an enemy to 0 HP with a melee attack, you can immediately make one melee attack against another adjacent enemy.",
+    "relatedSkills": ["attack"]
+  },
+  "power-attack-2": {
+    "name": "Power Attack (Advanced)",
+    "actionType": "modifier",
+    "requiredFeat": "Power Attack",
+    "description": "Trade attack bonus for extra damage (up to -10 attack)",
+    "variable": true,
+    "variableType": "slider",
+    "variableOptions": {
+      "min": 1,
+      "max": 10,
+      "step": 1
+    },
+    "effects": [
+      {
+        "type": "penalty",
+        "target": "attack",
+        "formula": "-{value}"
+      },
+      {
+        "type": "bonus",
+        "target": "damage",
+        "formula": "+{value*2}"
+      }
+    ],
+    "notes": "Trade up to -{value} attack for +{value*2} damage. Increases as BAB increases.",
+    "relatedSkills": ["attack"],
+    "prerequisites": "BAB +4"
+  },
+  "combat-reflexes": {
+    "name": "Combat Reflexes",
+    "actionType": "passive",
+    "requiredFeat": "Combat Reflexes",
+    "description": "Make additional attacks of opportunity",
+    "effects": [
+      {
+        "type": "grant",
+        "target": "extra-aoo",
+        "formula": "{dex_mod}"
+      }
+    ],
+    "notes": "You can make a number of attacks of opportunity per round equal to your Dexterity modifier (minimum 1).",
+    "relatedSkills": []
+  },
+  "dodge": {
+    "name": "Dodge",
+    "actionType": "passive",
+    "requiredFeat": "Dodge",
+    "description": "+1 to Reflex Defense",
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.defenses.reflex.bonus",
+        "value": 1
+      }
+    ],
+    "notes": "Passive +1 bonus to Reflex Defense",
+    "relatedSkills": []
+  }
+}

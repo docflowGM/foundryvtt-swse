@@ -1,0 +1,126 @@
+{{!-- Feat Actions Panel - Shows feat-granted combat actions --}}
+<div class="feat-actions-panel">
+  <h4><i class="fas fa-star"></i> Feat Actions</h4>
+
+  {{#if featActions}}
+    {{!-- Toggleable Actions --}}
+    {{#if featActions.toggleable}}
+      <div class="feat-actions-section">
+        <h5>Toggleable</h5>
+        <div class="feat-actions-list">
+          {{#each featActions.toggleable}}
+            <div class="feat-action-item {{#if toggled}}active{{/if}}">
+              <div class="feat-action-header">
+                <button class="feat-action-toggle" data-action-key="{{key}}" title="Toggle {{name}}">
+                  <i class="fas {{#if toggled}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i>
+                </button>
+                <strong>{{name}}</strong>
+                <span class="action-type-badge {{actionType}}">{{actionType}}</span>
+              </div>
+              <div class="feat-action-description">{{description}}</div>
+              <div class="feat-action-notes">{{notes}}</div>
+              {{#if source}}
+                <div class="feat-action-source"><em>Source: {{source}}</em></div>
+              {{/if}}
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- Variable Actions (with sliders) --}}
+    {{#if featActions.variable}}
+      <div class="feat-actions-section">
+        <h5>Variable Effects</h5>
+        <div class="feat-actions-list">
+          {{#each featActions.variable}}
+            <div class="feat-action-item">
+              <div class="feat-action-header">
+                <strong>{{name}}</strong>
+                <span class="action-type-badge {{actionType}}">{{actionType}}</span>
+              </div>
+              <div class="feat-action-description">{{description}}</div>
+
+              {{#if variableOptions}}
+                <div class="feat-action-slider">
+                  <label for="{{key}}-slider">
+                    Value: <span class="slider-value">{{variableValue}}</span>
+                  </label>
+                  <input
+                    type="range"
+                    id="{{key}}-slider"
+                    class="feat-action-slider-input"
+                    data-action-key="{{key}}"
+                    min="{{variableOptions.min}}"
+                    max="{{variableOptions.max}}"
+                    step="{{variableOptions.step}}"
+                    value="{{variableValue}}" />
+                </div>
+              {{/if}}
+
+              <div class="feat-action-notes">{{notes}}</div>
+              {{#if source}}
+                <div class="feat-action-source"><em>Source: {{source}}</em></div>
+              {{/if}}
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- Standard Actions --}}
+    {{#if featActions.standard}}
+      <div class="feat-actions-section">
+        <h5>Standard Actions</h5>
+        <div class="feat-actions-list">
+          {{#each featActions.standard}}
+            <div class="feat-action-item">
+              <div class="feat-action-header">
+                <strong>{{name}}</strong>
+                <span class="action-type-badge {{actionType}}">{{actionType}}</span>
+                {{#if trigger}}
+                  <button class="feat-action-use" data-action-key="{{key}}" title="Use {{name}}">
+                    <i class="fas fa-play-circle"></i>
+                  </button>
+                {{/if}}
+              </div>
+              <div class="feat-action-description">{{description}}</div>
+              {{#if trigger}}
+                <div class="feat-action-trigger"><strong>Trigger:</strong> {{trigger}}</div>
+              {{/if}}
+              <div class="feat-action-notes">{{notes}}</div>
+              {{#if source}}
+                <div class="feat-action-source"><em>Source: {{source}}</em></div>
+              {{/if}}
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- Passive Actions --}}
+    {{#if featActions.passive}}
+      <div class="feat-actions-section">
+        <h5>Passive Benefits</h5>
+        <div class="feat-actions-list">
+          {{#each featActions.passive}}
+            <div class="feat-action-item passive">
+              <div class="feat-action-header">
+                <i class="fas fa-circle-notch"></i>
+                <strong>{{name}}</strong>
+              </div>
+              <div class="feat-action-description">{{description}}</div>
+              <div class="feat-action-notes">{{notes}}</div>
+              {{#if source}}
+                <div class="feat-action-source"><em>Source: {{source}}</em></div>
+              {{/if}}
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+  {{else}}
+    <p class="feat-actions-empty">No feat actions available. Gain feats to unlock special combat abilities!</p>
+  {{/if}}
+</div>

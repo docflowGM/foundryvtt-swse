@@ -204,13 +204,33 @@
       "templates": [
         "base"
       ],
-      "prerequisites": ""
+      "prerequisites": "",
+      "grantsActions": [],
+      "grantsBonuses": {
+        "skills": {},
+        "combat": {},
+        "other": {}
+      },
+      "toggleable": false,
+      "toggled": false,
+      "variable": false,
+      "variableValue": 0
     },
     "talent": {
       "templates": [
         "base"
       ],
-      "tree": ""
+      "tree": "",
+      "grantsActions": [],
+      "grantsBonuses": {
+        "skills": {},
+        "combat": {},
+        "other": {}
+      },
+      "toggleable": false,
+      "toggled": false,
+      "variable": false,
+      "variableValue": 0
     },
     "forcepower": {
       "templates": [

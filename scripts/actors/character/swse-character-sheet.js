@@ -7,6 +7,7 @@ import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { SWSEStore } from '../../apps/store.js';
 import { SWSEActorSheetBase } from '../../sheets/base-sheet.js';
 import { CombatActionsMapper } from '../../utils/combat-actions-mapper.js';
+import { FeatActionsMapper } from '../../utils/feat-actions-mapper.js';
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
@@ -74,6 +75,26 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     context.combatActions = allActions;
 
+    // Get feat-granted actions
+    const featActions = FeatActionsMapper.getActionsByType(this.actor);
+    const activeEffects = this.actor.effects.filter(e => e.flags?.swse?.type === 'feat-action');
+
+    // Mark toggled actions
+    for (const category of ['toggleable', 'variable', 'standard', 'passive']) {
+      if (featActions[category]) {
+        featActions[category] = featActions[category].map(action => {
+          const effect = activeEffects.find(e => e.flags?.swse?.actionKey === action.key);
+          return {
+            ...action,
+            toggled: !!effect,
+            variableValue: effect?.flags?.swse?.variableValue || action.variableOptions?.min || 0
+          };
+        });
+      }
+    }
+
+    context.featActions = featActions;
+
     return context;
   }
 
@@ -89,6 +110,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // Combat actions filter and search
     html.find('.combat-action-search').on('input', this._onFilterCombatActions.bind(this));
     html.find('.action-type-filter').on('change', this._onFilterCombatActions.bind(this));
+
+    // Feat action listeners
+    html.find('.feat-action-toggle').click(this._onToggleFeatAction.bind(this));
+    html.find('.feat-action-slider-input').on('input', this._onUpdateVariableAction.bind(this));
+    html.find('.feat-action-use').click(this._onUseFeatAction.bind(this));
 
     console.log('SWSE | Character sheet listeners activated');
   }
@@ -151,6 +177,62 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
         <h3>${actionName}</h3>
         <p><strong>Description:</strong> ${notes}</p>
         ${dc ? `<p><strong>DC:</strong> ${dc}</p>` : ''}
+      </div>
+    `;
+
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: content,
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER
+    });
+  }
+
+  /**
+   * Handle toggling a feat action
+   */
+  async _onToggleFeatAction(event) {
+    event.preventDefault();
+    const actionKey = event.currentTarget.dataset.actionKey;
+
+    const newState = await FeatActionsMapper.toggleAction(this.actor, actionKey);
+
+    ui.notifications.info(`${newState ? 'Activated' : 'Deactivated'} feat action`);
+  }
+
+  /**
+   * Handle updating a variable feat action
+   */
+  async _onUpdateVariableAction(event) {
+    event.preventDefault();
+    const actionKey = event.currentTarget.dataset.actionKey;
+    const value = parseInt(event.currentTarget.value);
+
+    // Update the display
+    const $slider = $(event.currentTarget);
+    $slider.closest('.feat-action-slider').find('.slider-value').text(value);
+
+    // Update the effect
+    await FeatActionsMapper.updateVariableAction(this.actor, actionKey, value);
+  }
+
+  /**
+   * Handle using a feat action (posts to chat)
+   */
+  async _onUseFeatAction(event) {
+    event.preventDefault();
+    const actionKey = event.currentTarget.dataset.actionKey;
+    const action = FeatActionsMapper.getAllFeatActions()[actionKey];
+
+    if (!action) return;
+
+    const content = `
+      <div class="swse-feat-action">
+        <h3><i class="fas fa-star"></i> ${action.name}</h3>
+        <p><strong>Type:</strong> ${action.actionType}</p>
+        <p><strong>Description:</strong> ${action.description}</p>
+        ${action.trigger ? `<p><strong>Trigger:</strong> ${action.trigger}</p>` : ''}
+        <p>${action.notes}</p>
       </div>
     `;
 
