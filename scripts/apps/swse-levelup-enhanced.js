@@ -8,6 +8,7 @@
  */
 
 import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from './mentor-dialogues.js';
+import { PrerequisiteValidator } from '../utils/prerequisite-validator.js';
 
 export class SWSELevelUpEnhanced extends FormApplication {
 
@@ -80,9 +81,12 @@ export class SWSELevelUpEnhanced extends FormApplication {
     data.getsBonusFeat = this._getsBonusFeat();
     if (data.getsBonusFeat && !this.featData) {
       // Load feats asynchronously if needed
-      this._loadFeats();
+      await this._loadFeats();
     }
-    data.availableFeats = this.featData || [];
+    // Only show feats the character qualifies for
+    data.availableFeats = (this.featData || []).filter(f => f.isQualified);
+    data.allFeats = this.featData || [];  // For debugging/info
+    data.selectedFeats = this.selectedFeats;
 
     // Mentor data
     data.mentor = this.mentor;
@@ -184,7 +188,20 @@ export class SWSELevelUpEnhanced extends FormApplication {
       }
 
       const allFeats = await featPack.getDocuments();
-      this.featData = allFeats.map(f => f.toObject());
+      const featObjects = allFeats.map(f => f.toObject());
+
+      // Prepare pending data for prerequisite checking
+      const pendingData = {
+        selectedFeats: this.selectedFeats,
+        selectedClass: this.selectedClass,
+        abilityIncreases: this.abilityIncreases,
+        selectedSkills: this.selectedSkills
+      };
+
+      // Filter feats based on prerequisites
+      this.featData = PrerequisiteValidator.filterQualifiedFeats(featObjects, this.actor, pendingData);
+
+      console.log(`SWSE LevelUp | Loaded ${this.featData.length} feats, ${this.featData.filter(f => f.isQualified).length} qualified`);
     } catch (err) {
       console.error("SWSE LevelUp | Failed to load feats:", err);
       this.featData = [];
@@ -239,9 +256,16 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Base classes have no prerequisites
     if (this._isBaseClass(classDoc.name)) return true;
 
-    // TODO: Check prestige class prerequisites
-    // For now, allow all prestige classes at level 2+
-    return this.actor.system.level >= 1;
+    // Check prestige class prerequisites
+    const pendingData = {
+      selectedFeats: this.selectedFeats,
+      selectedClass: this.selectedClass,
+      abilityIncreases: this.abilityIncreases,
+      selectedSkills: this.selectedSkills
+    };
+
+    const check = PrerequisiteValidator.checkClassPrerequisites(classDoc, this.actor, pendingData);
+    return check.valid;
   }
 
   _getCharacterClasses() {
@@ -804,6 +828,21 @@ export class SWSELevelUpEnhanced extends FormApplication {
   _selectTalent(talentName) {
     const talent = this.talentData.find(t => t.name === talentName);
     if (!talent) return;
+
+    // Check prerequisites
+    const pendingData = {
+      selectedFeats: this.selectedFeats,
+      selectedClass: this.selectedClass,
+      abilityIncreases: this.abilityIncreases,
+      selectedSkills: this.selectedSkills,
+      selectedTalents: this.selectedTalent ? [this.selectedTalent] : []
+    };
+
+    const check = PrerequisiteValidator.checkTalentPrerequisites(talent, this.actor, pendingData);
+    if (!check.valid) {
+      ui.notifications.warn(`Cannot select ${talentName}: ${check.reasons.join(', ')}`);
+      return;
+    }
 
     this.selectedTalent = talent;
     ui.notifications.info(`Selected talent: ${talentName}`);

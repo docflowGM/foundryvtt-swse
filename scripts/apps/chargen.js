@@ -5,6 +5,7 @@
 
 import { DROID_SYSTEMS } from '../data/droid-systems.js';
 import { escapeHtml } from '../utils/string-utils.js';
+import { PrerequisiteValidator } from '../utils/prerequisite-validator.js';
 
 export default class CharacterGenerator extends Application {
   constructor(actor = null, options = {}) {
@@ -177,23 +178,26 @@ export default class CharacterGenerator extends Application {
       });
     }
 
-    // Filter feats for droids (no Force feats, no species-specific)
-    if (this.characterData.isDroid && context.packs.feats) {
-      context.packs.feats = context.packs.feats.filter(f => {
-        const featName = (f.name || "").toLowerCase();
-        const prereqs = (f.system?.prerequisites || "").toLowerCase();
+    // Filter feats based on prerequisites
+    if (context.packs.feats) {
+      // Create a temporary actor-like object for prerequisite checking during character generation
+      const tempActor = this.actor || this._createTempActorForValidation();
 
-        // Exclude Force feats
-        if (featName.includes("force") || prereqs.includes("force")) return false;
+      // Prepare pending data
+      const pendingData = {
+        selectedFeats: this.characterData.feats || [],
+        selectedClass: this.characterData.classes?.[0],
+        abilityIncreases: {},
+        selectedSkills: Object.keys(this.characterData.skills).filter(k => this.characterData.skills[k]?.trained),
+        selectedTalents: this.characterData.talents || []
+      };
 
-        // Exclude species-specific feats (unless droid-specific)
-        if (prereqs.includes("species") && !prereqs.includes("droid")) return false;
+      // Filter feats based on prerequisites
+      const filteredFeats = PrerequisiteValidator.filterQualifiedFeats(context.packs.feats, tempActor, pendingData);
+      context.packs.feats = filteredFeats.filter(f => f.isQualified);
+      context.packs.allFeats = filteredFeats; // Include all feats with qualification status
 
-        // Exclude Force Sensitivity feat
-        if (featName === "force sensitivity") return false;
-
-        return true;
-      });
+      console.log(`CharGen | Filtered feats: ${context.packs.feats.length} qualified out of ${filteredFeats.length} total`);
     }
 
     // Point buy pools
@@ -1608,6 +1612,113 @@ export default class CharacterGenerator extends Application {
       
       skillsContainer.appendChild(row);
     }
+  }
+
+  /**
+   * Create a temporary actor-like object for prerequisite validation during character generation
+   */
+  _createTempActorForValidation() {
+    // Ensure abilities are calculated
+    this._recalcAbilities();
+
+    // Create a mock actor object with the structure expected by PrerequisiteValidator
+    const tempActor = {
+      system: {
+        level: this.characterData.level || 1,
+        bab: this.characterData.bab || 0,
+        abilities: foundry.utils.deepClone(this.characterData.abilities),
+        skills: {},
+        defenses: foundry.utils.deepClone(this.characterData.defenses)
+      },
+      items: {
+        filter: (filterFn) => {
+          const items = [];
+
+          // Add feats
+          if (this.characterData.feats) {
+            for (const feat of this.characterData.feats) {
+              items.push({
+                type: 'feat',
+                name: feat.name || feat,
+                system: feat.system || {}
+              });
+            }
+          }
+
+          // Add talents
+          if (this.characterData.talents) {
+            for (const talent of this.characterData.talents) {
+              items.push({
+                type: 'talent',
+                name: talent.name || talent,
+                system: talent.system || {}
+              });
+            }
+          }
+
+          // Add classes
+          if (this.characterData.classes) {
+            for (const cls of this.characterData.classes) {
+              items.push({
+                type: 'class',
+                name: cls.name || cls,
+                system: cls.system || { level: 1 }
+              });
+            }
+          }
+
+          return items.filter(filterFn);
+        },
+        some: (filterFn) => {
+          const items = [];
+
+          // Add feats
+          if (this.characterData.feats) {
+            for (const feat of this.characterData.feats) {
+              items.push({
+                type: 'feat',
+                name: feat.name || feat,
+                system: feat.system || {}
+              });
+            }
+          }
+
+          // Add talents
+          if (this.characterData.talents) {
+            for (const talent of this.characterData.talents) {
+              items.push({
+                type: 'talent',
+                name: talent.name || talent,
+                system: talent.system || {}
+              });
+            }
+          }
+
+          // Add classes
+          if (this.characterData.classes) {
+            for (const cls of this.characterData.classes) {
+              items.push({
+                type: 'class',
+                name: cls.name || cls,
+                system: cls.system || { level: 1, forceSensitive: cls.system?.forceSensitive || false }
+              });
+            }
+          }
+
+          return items.some(filterFn);
+        }
+      }
+    };
+
+    // Map skills to the expected structure
+    for (const [key, skill] of Object.entries(this.characterData.skills)) {
+      tempActor.system.skills[key] = {
+        trained: skill.trained || false,
+        focused: skill.focused || false
+      };
+    }
+
+    return tempActor;
   }
 
   _recalcAbilities() {
