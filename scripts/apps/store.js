@@ -123,7 +123,8 @@ export class SWSEStore extends FormApplication {
             isGM,
             markup: game.settings.get("swse", "storeMarkup") || 0,
             discount: game.settings.get("swse", "storeDiscount") || 0,
-            credits: actor.system?.credits || 0
+            credits: actor.system?.credits || 0,
+            rendarrImage: "systems/swse/icons/characters/rendarr.webp"
         };
     }
 
