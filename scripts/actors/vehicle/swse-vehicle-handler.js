@@ -14,78 +14,113 @@ export class SWSEVehicleHandler {
       ui.notifications.warn('Can only apply vehicle templates to vehicle actors!');
       return false;
     }
-    
+
     if (vehicleItem.type !== 'equipment' && vehicleItem.type !== 'vehicle') {
       ui.notifications.warn('Invalid vehicle template item!');
       return false;
     }
-    
+
     console.log('SWSE | Applying vehicle template:', vehicleItem.name);
-    
+
     const template = vehicleItem.system;
-    
-    // Build update object, mapping JSON structure to vehicle data model
+
+    // Build update object - the template now uses the migrated schema
     const updates = {
       name: vehicleItem.name,
-      'system.vehicleType': template.vehicle_type || 'Vehicle',
-      'system.size': this._extractSize(template.crew_size) || 'Colossal',
-      'system.speed': template.speed || '12 squares',
-      
-      // Hull (from hit_points)
-      'system.hull.value': template.hit_points || 50,
-      'system.hull.max': template.hit_points || 50,
-      
-      // Shields (default to 0 if not specified)
+      img: vehicleItem.img || actor.img,
+
+      // Attributes (copy from template if present)
+      'system.attributes': template.attributes || {
+        str: { base: 10, racial: 0, temp: 0 },
+        dex: { base: 10, racial: 0, temp: 0 },
+        con: { base: 10, racial: 0, temp: 0 },
+        int: { base: 10, racial: 0, temp: 0 },
+        wis: { base: 10, racial: 0, temp: 0 },
+        cha: { base: 10, racial: 0, temp: 0 }
+      },
+
+      // Hull (already in correct format)
+      'system.hull.value': template.hull?.value || template.hull?.max || 50,
+      'system.hull.max': template.hull?.max || 50,
+
+      // Shields (already in correct format)
       'system.shields.value': template.shields?.value || 0,
       'system.shields.max': template.shields?.max || 0,
-      
-      // Defenses
-      'system.reflexDefense': template.defenses?.reflex || 10,
-      'system.fortitudeDefense': template.defenses?.fortitude || 10,
-      'system.damageThreshold': template.damage_threshold || 30,
-      'system.damageReduction': template.damage_reduction || 0,
-      
+
+      // Defenses (already flattened in migrated schema)
+      'system.reflexDefense': template.reflexDefense || 10,
+      'system.fortitudeDefense': template.fortitudeDefense || 10,
+      'system.flatFooted': template.flatFooted || template.reflexDefense || 10,
+      'system.damageThreshold': template.damageThreshold || 30,
+      'system.damageReduction': template.damageReduction || 0,
+
+      // Armor and crew quality
+      'system.armorBonus': template.armorBonus || 0,
+      'system.usePilotLevel': template.usePilotLevel !== undefined ? template.usePilotLevel : false,
+      'system.crewQuality': template.crewQuality || 'normal',
+
       // Movement
+      'system.speed': template.speed || '12 squares',
+      'system.starshipSpeed': template.starshipSpeed || null,
+      'system.maxVelocity': template.maxVelocity || '800 km/h',
       'system.maneuver': template.maneuver || '+0',
-      
+      'system.initiative': template.initiative || '+0',
+
+      // Combat stats
+      'system.baseAttackBonus': template.baseAttackBonus || '+0',
+
+      // Size and type
+      'system.size': template.size || 'Colossal',
+      'system.type': template.type || 'Vehicle',
+
       // Crew & Cargo
-      'system.crew': template.crew_size || '1',
+      'system.crew': template.crew || '1',
       'system.passengers': template.passengers || '0',
-      'system.cargo': template.cargo_capacity || '100 kg',
+      'system.cargo': template.cargo || '100 kg',
       'system.consumables': template.consumables || '1 week',
-      
+
       // Hyperdrive
-      'system.hyperdrive': template.hyperdrive_class || 'None',
-      
+      'system.hyperdrive_class': template.hyperdrive_class || null,
+      'system.backup_class': template.backup_class || null,
+
       // Cost
       'system.cost.new': template.cost?.new || 0,
       'system.cost.used': template.cost?.used || 0,
-      
-      // Description & Tags
+
+      // Weapons (already in correct format)
+      'system.weapons': template.weapons || [],
+
+      // Sensors
+      'system.senses': template.senses || 'Perception +0',
+
+      // Condition Track
+      'system.conditionTrack': template.conditionTrack || { current: 0, penalty: 0 },
+
+      // Cover
+      'system.cover': template.cover || 'total',
+
+      // Crew positions
+      'system.crewPositions': template.crewPositions || {
+        pilot: null,
+        copilot: null,
+        gunner: null,
+        engineer: null,
+        shields: null,
+        commander: null
+      },
+
+      // Additional fields
+      'system.carried_craft': template.carried_craft || null,
+      'system.crewNotes': template.crewNotes || '',
+      'system.tags': template.tags || [],
       'system.description': template.description || '',
-      'system.tags': template.tags || []
+      'system.sourcebook': template.sourcebook || '',
+      'system.page': template.page || null
     };
-    
-    // Handle weapons if they exist and are properly formatted
-    if (template.weapons && Array.isArray(template.weapons)) {
-      const validWeapons = template.weapons.filter(w => 
-        w.name && !w.name.toLowerCase().includes('categories')
-      );
-      
-      if (validWeapons.length > 0) {
-        updates['system.weapons'] = validWeapons.map(w => ({
-          name: w.name || 'Weapon',
-          arc: w.arc || 'Forward',
-          bonus: w.bonus || '+0',
-          damage: w.damage || '0d0',
-          range: w.range || 'Close'
-        }));
-      }
-    }
-    
+
     await actor.update(updates);
-    
-    ui.notifications.info(`${actor.name} configured as ${vehicleItem.name}`);
+
+    ui.notifications.info(`${vehicleItem.name} applied to ${actor.name}`);
     return true;
   }
   
@@ -107,12 +142,12 @@ export class SWSEVehicleHandler {
    */
   static isVehicleTemplate(item) {
     if (!item) return false;
-    
-    // Check if it has vehicle-specific properties
+
+    // Check if it has vehicle-specific properties (migrated schema)
     const sys = item.system;
     return (
       (item.type === 'equipment' || item.type === 'vehicle') &&
-      (sys.vehicle_type || sys.hit_points || sys.damage_threshold)
+      (sys.hull || sys.damageThreshold || sys.reflexDefense || sys.type)
     );
   }
 }
