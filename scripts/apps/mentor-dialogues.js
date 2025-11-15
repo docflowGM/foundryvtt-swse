@@ -1079,10 +1079,18 @@ export function getMentorForClass(className) {
  * Get mentor greeting for specific level
  * @param {Object} mentor - The mentor object
  * @param {number} level - The level being achieved
+ * @param {Actor} actor - The actor (optional, needed for conditional greetings)
  * @returns {string} The greeting message
  */
-export function getMentorGreeting(mentor, level) {
-    return mentor.levelGreetings[level] || mentor.levelGreetings[20];
+export function getMentorGreeting(mentor, level, actor = null) {
+    let greeting = mentor.levelGreetings[level] || mentor.levelGreetings[20];
+
+    // If greeting is a function, call it with the actor
+    if (typeof greeting === 'function' && actor) {
+        greeting = greeting(actor);
+    }
+
+    return greeting;
 }
 
 /**

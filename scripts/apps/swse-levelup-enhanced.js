@@ -35,10 +35,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.hpGain = 0;
     this.talentData = null;
 
-    // Mentor system
+    // Mentor system - initially use base class mentor, will update when class is selected
     const level1Class = getLevel1Class(this.actor);
     this.mentor = getMentorForClass(level1Class);
-    this.mentorGreeting = getMentorGreeting(this.mentor, this.actor.system.level + 1);
+    this.mentorGreeting = getMentorGreeting(this.mentor, this.actor.system.level + 1, this.actor);
+    this.currentMentorClass = level1Class; // Track which class's mentor we're showing
   }
 
   get title() {
@@ -215,12 +216,31 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.selectedClass = classDoc;
     console.log(`SWSE LevelUp | Selected class: ${classDoc.name}`, classDoc.system);
 
+    // Update mentor for prestige classes
+    const isPrestige = !this._isBaseClass(classDoc.name);
+    if (isPrestige) {
+      // For prestige classes, use the prestige class mentor
+      this.mentor = getMentorForClass(classDoc.name);
+      this.currentMentorClass = classDoc.name;
+      console.log(`SWSE LevelUp | Switched to prestige class mentor: ${this.mentor.name}`);
+    } else {
+      // For base classes, use the level 1 class mentor
+      const level1Class = getLevel1Class(this.actor);
+      this.mentor = getMentorForClass(level1Class);
+      this.currentMentorClass = level1Class;
+    }
+
+    // Get appropriate greeting for the current class level
+    // For prestige classes, we need to know which level of that prestige class this is
+    const currentClasses = this._getCharacterClasses();
+    const classLevel = (currentClasses[classDoc.name] || 0) + 1;
+    this.mentorGreeting = getMentorGreeting(this.mentor, classLevel, this.actor);
+
     // Calculate HP gain
     await this._calculateHPGain(classDoc);
 
     // Determine next step
-    const characterClasses = this._getCharacterClasses();
-    const isMulticlassing = Object.keys(characterClasses).length > 0 && !characterClasses[classDoc.name];
+    const isMulticlassing = Object.keys(currentClasses).length > 0 && !currentClasses[classDoc.name];
     const isBaseClass = this._isBaseClass(classDoc.name);
     const getsAbilityIncrease = this._getsAbilityIncrease();
 
