@@ -73,7 +73,23 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       return a.name.localeCompare(b.name);
     });
 
-    context.combatActions = allActions;
+    // Add talent enhancements to combat actions
+    const actionsWithEnhancements = CombatActionsMapper.addEnhancementsToActions(allActions, this.actor);
+
+    // Get active enhancements from actor flags
+    const activeEnhancements = this.actor.getFlag('swse', 'activeEnhancements') || {};
+
+    // Mark which enhancements are active
+    for (const action of actionsWithEnhancements) {
+      if (action.enhancements && activeEnhancements[action.name]) {
+        action.enhancements = action.enhancements.map(enhancement => ({
+          ...enhancement,
+          active: activeEnhancements[action.name].includes(enhancement.name)
+        }));
+      }
+    }
+
+    context.combatActions = actionsWithEnhancements;
 
     // Get feat-granted actions
     const featActions = FeatActionsMapper.getActionsByType(this.actor);
@@ -115,6 +131,9 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find('.feat-action-toggle').click(this._onToggleFeatAction.bind(this));
     html.find('.feat-action-slider-input').on('input', this._onUpdateVariableAction.bind(this));
     html.find('.feat-action-use').click(this._onUseFeatAction.bind(this));
+
+    // Talent enhancement listeners
+    html.find('.talent-enhancement-toggle').on('change', this._onToggleTalentEnhancement.bind(this));
 
     console.log('SWSE | Character sheet listeners activated');
   }
@@ -242,5 +261,42 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       content: content,
       type: CONST.CHAT_MESSAGE_TYPES.OTHER
     });
+  }
+
+  /**
+   * Handle toggling a talent enhancement checkbox
+   */
+  async _onToggleTalentEnhancement(event) {
+    const checkbox = event.currentTarget;
+    const actionName = checkbox.dataset.actionName;
+    const enhancementName = checkbox.dataset.enhancementName;
+    const talentName = checkbox.dataset.talentName;
+
+    const isChecked = checkbox.checked;
+
+    // Store enhancement state in actor flags
+    const enhancements = this.actor.getFlag('swse', 'activeEnhancements') || {};
+
+    if (!enhancements[actionName]) {
+      enhancements[actionName] = [];
+    }
+
+    if (isChecked) {
+      // Add enhancement to active list
+      if (!enhancements[actionName].includes(enhancementName)) {
+        enhancements[actionName].push(enhancementName);
+      }
+      ui.notifications.info(`Enabled ${enhancementName} for ${actionName}`);
+    } else {
+      // Remove enhancement from active list
+      enhancements[actionName] = enhancements[actionName].filter(e => e !== enhancementName);
+      if (enhancements[actionName].length === 0) {
+        delete enhancements[actionName];
+      }
+      ui.notifications.info(`Disabled ${enhancementName} for ${actionName}`);
+    }
+
+    // Update actor flags
+    await this.actor.setFlag('swse', 'activeEnhancements', enhancements);
   }
 }

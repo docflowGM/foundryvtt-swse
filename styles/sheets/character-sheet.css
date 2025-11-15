@@ -2219,3 +2219,100 @@ img[loading="lazy"] {
   padding: 20px;
   font-size: 12px;
 }
+/* =========================
+   TALENT ENHANCEMENTS
+   ========================= */
+
+.swse .talent-enhancements {
+  margin-top: 15px;
+  padding: 12px;
+  background: linear-gradient(180deg, rgba(255, 215, 0, 0.05), rgba(255, 180, 0, 0.02));
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 6px;
+}
+
+.swse .talent-enhancements h5 {
+  color: var(--holo-gold);
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse .talent-enhancements h5 i {
+  color: #ffd700;
+}
+
+.swse .talent-enhancement-item {
+  padding: 8px;
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  border-radius: 4px;
+  transition: all var(--fast);
+}
+
+.swse .talent-enhancement-item:last-child {
+  margin-bottom: 0;
+}
+
+.swse .talent-enhancement-item:hover {
+  background: rgba(255, 215, 0, 0.05);
+  border-color: rgba(255, 215, 0, 0.3);
+}
+
+.swse .enhancement-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+.swse .enhancement-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #ffd700;
+}
+
+.swse .enhancement-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.swse .enhancement-label strong {
+  color: #ffd700;
+  font-size: 13px;
+}
+
+.swse .talent-tree-badge {
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 400;
+  font-style: italic;
+}
+
+.swse .enhancement-description {
+  font-size: 11px;
+  color: #cfeffc;
+  margin: 0 0 4px 26px;
+  line-height: 1.4;
+}
+
+.swse .enhancement-description em {
+  color: var(--holo-gold);
+  font-style: italic;
+}
+
+.swse .enhancement-notes {
+  font-size: 10px;
+  color: var(--muted);
+  margin: 0 0 0 26px;
+  font-style: italic;
+}

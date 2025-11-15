@@ -8,6 +8,7 @@ export class CombatActionsMapper {
   static _combatActionsData = null;
   static _extraSkillUsesData = null;
   static _shipCombatActionsData = null;
+  static _talentEnhancementsData = null;
   static _initialized = false;
 
   /**
@@ -29,13 +30,18 @@ export class CombatActionsMapper {
       const shipResponse = await fetch('systems/swse/data/ship-combat-actions.json');
       this._shipCombatActionsData = await shipResponse.json();
 
+      // Load talent enhancements
+      const talentResponse = await fetch('systems/swse/data/talent-enhancements.json');
+      this._talentEnhancementsData = await talentResponse.json();
+
       this._initialized = true;
-      console.log('SWSE | Combat Actions Mapper initialized (character & ship combat)');
+      console.log('SWSE | Combat Actions Mapper initialized (character & ship combat, talent enhancements)');
     } catch (error) {
       console.error('SWSE | Failed to load combat actions data:', error);
       this._combatActionsData = [];
       this._extraSkillUsesData = [];
       this._shipCombatActionsData = [];
+      this._talentEnhancementsData = {};
     }
   }
 
@@ -249,5 +255,77 @@ export class CombatActionsMapper {
     }
 
     return actionsByPosition;
+  }
+
+  /**
+   * Get talent enhancements available for a combat action
+   * @param {string} actionKey - The action key (e.g., 'aim', 'attack_melee')
+   * @param {Actor} actor - The actor to check for talents
+   * @returns {Array} Array of available talent enhancements
+   */
+  static getEnhancementsForAction(actionKey, actor) {
+    if (!this._initialized || !this._talentEnhancementsData) {
+      console.warn('SWSE | Talent enhancements data not loaded');
+      return [];
+    }
+
+    const enhancementData = this._talentEnhancementsData[actionKey];
+    if (!enhancementData || !enhancementData.enhancements) {
+      return [];
+    }
+
+    // Get actor's talents
+    const actorTalents = actor?.items?.filter(i => i.type === 'talent') || [];
+    const talentNames = new Set(actorTalents.map(t => t.name));
+
+    // Filter enhancements to only those the actor has
+    const availableEnhancements = enhancementData.enhancements.filter(enhancement => {
+      return talentNames.has(enhancement.requiredTalent);
+    });
+
+    return availableEnhancements;
+  }
+
+  /**
+   * Get talent enhancements for a combat action by action name
+   * @param {string} actionName - The combat action name (e.g., 'Aim', 'Attack (single)')
+   * @param {Actor} actor - The actor to check for talents
+   * @returns {Array} Array of available talent enhancements
+   */
+  static getEnhancementsForActionName(actionName, actor) {
+    if (!this._initialized || !this._talentEnhancementsData) {
+      return [];
+    }
+
+    // Find the enhancement key that matches this action name
+    for (const [key, data] of Object.entries(this._talentEnhancementsData)) {
+      if (data.baseAction === actionName) {
+        return this.getEnhancementsForAction(key, actor);
+      }
+    }
+
+    return [];
+  }
+
+  /**
+   * Add talent enhancements to combat actions for display
+   * @param {Array} actions - Array of combat actions
+   * @param {Actor} actor - The actor to check for talents
+   * @returns {Array} Actions with enhancements added
+   */
+  static addEnhancementsToActions(actions, actor) {
+    if (!this._initialized || !this._talentEnhancementsData) {
+      return actions;
+    }
+
+    return actions.map(action => {
+      const enhancements = this.getEnhancementsForActionName(action.name, actor);
+
+      return {
+        ...action,
+        enhancements: enhancements,
+        hasEnhancements: enhancements.length > 0
+      };
+    });
   }
 }
