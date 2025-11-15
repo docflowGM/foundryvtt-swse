@@ -49,5 +49,23 @@ export function registerSystemSettings() {
     default: false
   });
 
+  game.settings.register("swse", "dailyForcePoints", {
+    name: "Daily Force Points",
+    hint: "Use daily Force Points instead of per-level (1-5th: 1 FP, 6-10th: 2 FP, 11-15th: 3 FP, 16+: 4 FP per day)",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register("swse", "darkSideTemptation", {
+    name: "Dark Side Temptation",
+    hint: "Allow characters to call upon the Dark Side when spending Force Points (requires Dark Side Score ≤ half Wisdom)",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   console.log("SWSE | Settings registered");
 }

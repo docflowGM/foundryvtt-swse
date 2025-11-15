@@ -249,6 +249,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Call parent to calculate defenses, skills, etc.
     super.prepareDerivedData();
 
+    // Calculate Force Points
+    this._calculateForcePoints();
+
     // Override skill calculations with our static skill system
     this._prepareSkills();
   }
@@ -322,6 +325,45 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       skill.abilityMod = abilityMod;
       skill.untrained = canUseUntrained;
       skill.canUse = skill.trained || canUseUntrained;
+    }
+  }
+
+  _calculateForcePoints() {
+    // Ensure forcePoints exists
+    if (!this.forcePoints) {
+      this.forcePoints = { value: 5, max: 5, die: "1d6" };
+    }
+
+    const level = this.level?.heroic || 1;
+
+    // Check for daily Force Points optional rule
+    const useDailyForcePoints = game.settings?.get('swse', 'dailyForcePoints') || false;
+
+    if (useDailyForcePoints) {
+      // Daily Force Points based on level ranges
+      // 1-5: 1 FP, 6-10: 2 FP, 11-15: 3 FP, 16+: 4 FP
+      if (level >= 16) {
+        this.forcePoints.max = 4;
+      } else if (level >= 11) {
+        this.forcePoints.max = 3;
+      } else if (level >= 6) {
+        this.forcePoints.max = 2;
+      } else {
+        this.forcePoints.max = 1;
+      }
+    } else {
+      // Standard Force Points: 5 + half level (rounded down)
+      this.forcePoints.max = 5 + Math.floor(level / 2);
+    }
+
+    // Calculate Force Point die based on level
+    // 1-7: 1d6, 8-14: 2d6 (take highest), 15+: 3d6 (take highest)
+    if (level >= 15) {
+      this.forcePoints.die = "3d6";
+    } else if (level >= 8) {
+      this.forcePoints.die = "2d6";
+    } else {
+      this.forcePoints.die = "1d6";
     }
   }
 }
