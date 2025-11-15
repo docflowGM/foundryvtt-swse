@@ -3,7 +3,7 @@
  * Maps feat-granted combat actions to character abilities
  */
 
-import featActions from '../../data/feat-combat-actions.json' assert { type: 'json' };
+import featActions from '../../data/feat-combat-actions.json' with { type: 'json' };
 
 export class FeatActionsMapper {
   /**
