@@ -139,6 +139,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     // Add character-specific listeners
     html.find('.level-up').click(this._onLevelUp.bind(this));
+    html.find('.character-generator').click(this._onOpenCharGen.bind(this));
     html.find('.open-store').click(this._onOpenStore.bind(this));
 
     // Combat actions filter and search
@@ -168,6 +169,24 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     // Use the enhanced version with visual talent trees and multi-classing
     await SWSELevelUp.openEnhanced(this.actor);
+  }
+
+  /**
+   * Handle opening the character generator
+   */
+  async _onOpenCharGen(event) {
+    event.preventDefault();
+    console.log('SWSE | Character generator clicked');
+
+    // Import and open the character generator
+    try {
+      const CharacterGenerator = (await import('../../apps/chargen.js')).default;
+      const chargen = new CharacterGenerator(this.actor);
+      chargen.render(true);
+    } catch (err) {
+      console.error("SWSE | Failed to open character generator:", err);
+      ui.notifications.error("Failed to open the character generator. See console for details.");
+    }
   }
 
   /**
