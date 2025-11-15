@@ -51,6 +51,34 @@
       "Helpless": "Sans Défense"
     },
     "Settings": {
+      "EnableAutomation": {
+        "Name": "Activer l'Automatisation de Combat",
+        "Hint": "Suivre automatiquement les rounds, tours et appliquer les effets de combat"
+      },
+      "AutoConditionRecovery": {
+        "Name": "Récupération Automatique d'État",
+        "Hint": "Demander des jets de récupération de piste d'état au début du tour de chaque combattant"
+      },
+      "AutoDamageThreshold": {
+        "Name": "Seuil de Dégâts Automatique",
+        "Hint": "Déplacer automatiquement les personnages sur la piste d'état lorsque les dégâts dépassent leur seuil de dégâts"
+      },
+      "WeaponRangeMultiplier": {
+        "Name": "Multiplicateur de Portée d'Arme",
+        "Hint": "Multiplier toutes les portées d'armes par ce facteur (utile pour différentes échelles de grilles)"
+      },
+      "ForcePointBonus": {
+        "Name": "Bonus de Relance de Point de Force",
+        "Hint": "Taille du dé de bonus lors de la dépense de Points de Force pour relancer (d6 = +1d6)"
+      },
+      "StoreMarkup": {
+        "Name": "Majoration de Prix du Magasin",
+        "Hint": "Pourcentage de majoration pour les objets achetés au magasin (peut être négatif pour des réductions)"
+      },
+      "StoreDiscount": {
+        "Name": "Réduction de Vente au Magasin",
+        "Hint": "Pourcentage du prix d'origine lors de la vente d'objets au magasin"
+      },
       "CharacterCreation": {
         "Name": "Règles de Création de Personnage",
         "Label": "Configurer",

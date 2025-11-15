@@ -51,6 +51,34 @@
       "Helpless": "Hilflos"
     },
     "Settings": {
+      "EnableAutomation": {
+        "Name": "Kampfautomatisierung Aktivieren",
+        "Hint": "Kampfrunden, Züge automatisch verfolgen und Kampfeffekte anwenden"
+      },
+      "AutoConditionRecovery": {
+        "Name": "Automatische Zustandserholung",
+        "Hint": "Zustandsleisten-Erholungswürfe zu Beginn jedes Kämpferzugs anfordern"
+      },
+      "AutoDamageThreshold": {
+        "Name": "Automatische Schadensschwelle",
+        "Hint": "Charaktere automatisch auf der Zustandsleiste bewegen, wenn Schaden ihre Schadensschwelle übersteigt"
+      },
+      "WeaponRangeMultiplier": {
+        "Name": "Waffenreichweiten-Multiplikator",
+        "Hint": "Alle Waffenreichweiten mit diesem Faktor multiplizieren (nützlich für unterschiedliche Rastermaßstäbe)"
+      },
+      "ForcePointBonus": {
+        "Name": "Machtpunkt-Wiederholungsbonus",
+        "Hint": "Bonuswürfelgröße beim Ausgeben von Machtpunkten zum Wiederholen (d6 = +1d6)"
+      },
+      "StoreMarkup": {
+        "Name": "Laden-Preisaufschlag",
+        "Hint": "Prozentualer Aufschlag für im Laden gekaufte Gegenstände (kann negativ für Rabatte sein)"
+      },
+      "StoreDiscount": {
+        "Name": "Laden-Verkaufsrabatt",
+        "Hint": "Prozentsatz des Originalpreises beim Verkauf von Gegenständen an den Laden"
+      },
       "CharacterCreation": {
         "Name": "Charaktererstellungsregeln",
         "Label": "Konfigurieren",
