@@ -228,9 +228,9 @@ Hooks.once("init", async function() {
   // ============================================
   // Unregister Core Sheets
   // ============================================
-  
-  foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
-  foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
+
+  Actors.unregisterSheet("core", ActorSheet);
+  Items.unregisterSheet("core", ItemSheet);
 
   // ============================================
   // Register Actor Sheets
