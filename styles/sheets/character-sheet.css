@@ -671,7 +671,7 @@ form.swse-datapad-sheet {
 
 .swse .skills-header {
   display: grid;
-  grid-template-columns: 2fr 50px 40px 40px 50px 60px 50px 45px;
+  grid-template-columns: 45px 50px 2fr 120px 40px 40px 60px;
   gap: 6px;
   align-items: center;
   padding: 8px 6px;
@@ -691,13 +691,13 @@ form.swse-datapad-sheet {
   text-align: center;
 }
 
-.swse .skills-header > div:first-child {
+.swse .skills-header > div:nth-child(3) {
   text-align: left;
 }
 
 .swse .skill-row {
   display: grid;
-  grid-template-columns: 2fr 50px 40px 40px 50px 60px 50px 45px;
+  grid-template-columns: 45px 50px 2fr 120px 40px 40px 60px;
   gap: 6px;
   align-items: center;
   padding: 6px;
@@ -721,11 +721,35 @@ form.swse-datapad-sheet {
 }
 
 .swse .skill-ability {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   font-size: 10px;
-  color: var(--muted);
-  text-transform: uppercase;
+}
+
+.swse .skill-ability select {
+  padding: 2px 4px;
+  font-size: 10px;
   font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(0, 168, 204, 0.1);
+  border: 1px solid rgba(0, 168, 204, 0.3);
+  border-radius: 3px;
+  color: var(--holo-cyan);
+  cursor: pointer;
+}
+
+.swse .skill-ability select:hover {
+  background: rgba(0, 168, 204, 0.2);
+  border-color: rgba(0, 168, 204, 0.5);
+}
+
+.swse .skill-ability .ability-mod {
+  font-weight: 700;
+  color: var(--holo-green);
+  min-width: 25px;
+  text-align: center;
 }
 
 .swse .skill-half-level,
@@ -1514,7 +1538,7 @@ form.swse-datapad-sheet {
 
   .swse .skills-header,
   .swse .skill-row {
-    grid-template-columns: 1.5fr 45px 35px 35px 45px 55px 45px 40px;
+    grid-template-columns: 40px 45px 1.5fr 110px 35px 35px 55px;
     font-size: 11px;
   }
 
@@ -1548,7 +1572,7 @@ form.swse-datapad-sheet {
 
   .swse .skills-header,
   .swse .skill-row {
-    grid-template-columns: 1fr 40px 35px 35px 40px 50px 40px 35px;
+    grid-template-columns: 35px 40px 1fr 100px 35px 35px 50px;
     font-size: 10px;
   }
 

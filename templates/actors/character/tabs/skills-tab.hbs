@@ -2,94 +2,117 @@
  <h3 class="section-header">Skills</h3>
 
  <div class="skills-header flexrow">
+ <div class="skill-col-roll"></div>
+ <div class="skill-col-total">Total</div>
  <div class="skill-col-name">Skill</div>
  <div class="skill-col-ability">Ability</div>
  <div class="skill-col-trained">Trained</div>
  <div class="skill-col-focus">Focus</div>
- <div class="skill-col-armor">Armor</div>
  <div class="skill-col-misc">Misc</div>
- <div class="skill-col-total">Total</div>
- <div class="skill-col-roll"></div>
  </div>
 
  <div class="skills-list">
  {{!-- All SWSE skills listed statically --}}
  {{#with system.skills.acrobatics as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="acrobatics" label="Acrobatics" ability="DEX"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="acrobatics" label="Acrobatics" defaultAbility="dex"}}
  {{/with}}
 
  {{#with system.skills.climb as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="climb" label="Climb" ability="STR"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="climb" label="Climb" defaultAbility="str"}}
  {{/with}}
 
  {{#with system.skills.deception as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="deception" label="Deception" ability="CHA"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="deception" label="Deception" defaultAbility="cha"}}
  {{/with}}
 
  {{#with system.skills.endurance as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="endurance" label="Endurance" ability="CON"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="endurance" label="Endurance" defaultAbility="con"}}
  {{/with}}
 
- {{#with system.skills.gatherInformation as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="gatherInformation" label="Gather Information" ability="CHA"}}
+ {{#with system.skills.gather_information as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="gather_information" label="Gather Information" defaultAbility="cha"}}
  {{/with}}
 
  {{#with system.skills.initiative as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="initiative" label="Initiative" ability="DEX"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="initiative" label="Initiative" defaultAbility="dex"}}
  {{/with}}
 
  {{#with system.skills.jump as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="jump" label="Jump" ability="STR"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="jump" label="Jump" defaultAbility="str"}}
  {{/with}}
 
- {{#with system.skills.knowledge as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge" label="Knowledge" ability="INT"}}
+ {{#with system.skills.knowledge_bureaucracy as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_bureaucracy" label="Knowledge (Bureaucracy)" defaultAbility="int"}}
+ {{/with}}
+
+ {{#with system.skills.knowledge_galactic_lore as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_galactic_lore" label="Knowledge (Galactic Lore)" defaultAbility="int"}}
+ {{/with}}
+
+ {{#with system.skills.knowledge_life_sciences as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_life_sciences" label="Knowledge (Life Sciences)" defaultAbility="int"}}
+ {{/with}}
+
+ {{#with system.skills.knowledge_physical_sciences as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_physical_sciences" label="Knowledge (Physical Sciences)" defaultAbility="int"}}
+ {{/with}}
+
+ {{#with system.skills.knowledge_social_sciences as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_social_sciences" label="Knowledge (Social Sciences)" defaultAbility="int"}}
+ {{/with}}
+
+ {{#with system.skills.knowledge_tactics as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_tactics" label="Knowledge (Tactics)" defaultAbility="int"}}
+ {{/with}}
+
+ {{#with system.skills.knowledge_technology as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_technology" label="Knowledge (Technology)" defaultAbility="int"}}
  {{/with}}
 
  {{#with system.skills.mechanics as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="mechanics" label="Mechanics" ability="INT"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="mechanics" label="Mechanics" defaultAbility="int"}}
  {{/with}}
 
  {{#with system.skills.perception as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="perception" label="Perception" ability="WIS"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="perception" label="Perception" defaultAbility="wis"}}
  {{/with}}
 
  {{#with system.skills.persuasion as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="persuasion" label="Persuasion" ability="CHA"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="persuasion" label="Persuasion" defaultAbility="cha"}}
  {{/with}}
 
  {{#with system.skills.pilot as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="pilot" label="Pilot" ability="DEX"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="pilot" label="Pilot" defaultAbility="dex"}}
  {{/with}}
 
  {{#with system.skills.ride as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="ride" label="Ride" ability="DEX"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="ride" label="Ride" defaultAbility="dex"}}
  {{/with}}
 
  {{#with system.skills.stealth as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="stealth" label="Stealth" ability="DEX"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="stealth" label="Stealth" defaultAbility="dex"}}
  {{/with}}
 
  {{#with system.skills.survival as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="survival" label="Survival" ability="WIS"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="survival" label="Survival" defaultAbility="wis"}}
  {{/with}}
 
  {{#with system.skills.swim as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="swim" label="Swim" ability="STR"}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="swim" label="Swim" defaultAbility="str"}}
  {{/with}}
 
- {{#with system.skills.treatInjury as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="treatInjury" label="Treat Injury" ability="WIS"}}
+ {{#with system.skills.treat_injury as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="treat_injury" label="Treat Injury" defaultAbility="wis"}}
  {{/with}}
 
- {{#with system.skills.useComputer as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="useComputer" label="Use Computer" ability="INT"}}
+ {{#with system.skills.use_computer as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="use_computer" label="Use Computer" defaultAbility="int"}}
  {{/with}}
 
  {{#if @root.system.forceSensitive}}
  {{#unless @root.system.isDroid}}
- {{#with system.skills.useTheForce as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="useTheForce" label="Use the Force" ability="CHA"}}
+ {{#with system.skills.use_the_force as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="use_the_force" label="Use the Force" defaultAbility="cha"}}
  {{/with}}
  {{/unless}}
  {{/if}}
