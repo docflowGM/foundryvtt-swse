@@ -117,16 +117,18 @@
 }
 
 .vehicle-name-section,
-.vehicle-type-section {
+.vehicle-type-section,
+.vehicle-size-section {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 3px;
 }
 
 .vehicle-name-section label,
-.vehicle-type-section label {
-    font-size: 11px;
+.vehicle-type-section label,
+.vehicle-size-section label {
+    font-size: 10px;
     text-transform: uppercase;
     color: #3a9dd6;
     font-weight: bold;
@@ -134,18 +136,20 @@
 }
 
 .vehicle-name-section input,
-.vehicle-type-section input {
+.vehicle-type-section input,
+.vehicle-size-section select {
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid #3a9dd6;
     color: #e0e6ff;
-    padding: 8px 12px;
-    font-size: 16px;
+    padding: 6px 10px;
+    font-size: 14px;
     border-radius: 4px;
     transition: all 0.3s;
 }
 
 .vehicle-name-section input:focus,
-.vehicle-type-section input:focus {
+.vehicle-type-section input:focus,
+.vehicle-size-section select:focus {
     border-color: #5acdff;
     box-shadow: 0 0 10px rgba(90, 205, 255, 0.5);
     outline: none;
@@ -187,12 +191,12 @@
 
 .vehicle-display-container {
     position: relative;
-    min-height: 18px;
+    min-height: 350px;
     background: radial-gradient(ellipse at center, #1a2845 0%, var(--swse-primary) 100%);
     border: 1px solid #3a9dd6;
     border-radius: 8px;
-    padding: 40px 20px;
-    margin: 20px;
+    padding: 20px 15px;
+    margin: 15px;
     box-shadow: 0 0 30px rgba(58, 157, 214, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.5);
 }
 
@@ -201,8 +205,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px;
-    min-height: 80px;
+    width: 300px;
+    height: 180px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -219,16 +223,16 @@
 .stat-displays {
     position: relative;
     width: 100%;
-    min-height: 80px;
+    height: 350px;
 }
 
 .stat-box {
     position: absolute;
     background: linear-gradient(135deg, rgba(26, 40, 69, 0.95) 0%, rgba(15, 25, 45, 0.95) 100%);
     border: 1px solid #3a9dd6;
-    border-radius: 6px;
-    padding: 3px 15px;
-    min-width: 140px;
+    border-radius: 4px;
+    padding: 6px 12px;
+    min-width: 110px;
     box-shadow: 0 0 15px rgba(58, 157, 214, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.5);
     z-index: 10;
     backdrop-filter: blur(5px);
@@ -378,14 +382,93 @@
     transform: translateY(-50%);
 }
 
-.quick-stats-bar {
+.line-reflex {
+    width: 70px;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+}
+
+.stat-value-large {
+    font-size: 32px;
+    font-weight: bold;
+    color: #4ade80;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.6);
+    padding: 5px 0;
+}
+
+.attributes-quick-stats {
     display: flex;
-    gap: 20px;
-    padding: 5px 20px;
+    gap: 15px;
+    margin: 0 20px 20px 20px;
+}
+
+.attributes-section {
+    flex: 2;
     background: rgba(26, 40, 69, 0.6);
     border: 1px solid #2a7aa6;
     border-radius: 6px;
-    margin: 20px;
+    padding: 10px 15px;
+}
+
+.attributes-section .section-header {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #3a9dd6;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.attributes-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+}
+
+.attribute-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.attribute-item label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #3a9dd6;
+    font-weight: bold;
+}
+
+.attribute-item .attr-input {
+    width: 45px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #2a7aa6;
+    color: #e0e6ff;
+    padding: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 3px;
+    text-align: center;
+}
+
+.attribute-item .attr-mod {
+    font-size: 12px;
+    color: #4ade80;
+    font-weight: bold;
+}
+
+.quick-stats-bar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 15px;
+    background: rgba(26, 40, 69, 0.6);
+    border: 1px solid #2a7aa6;
+    border-radius: 6px;
 }
 
 .quick-stat {
