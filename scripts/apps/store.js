@@ -124,7 +124,7 @@ export class SWSEStore extends FormApplication {
             markup: game.settings.get("swse", "storeMarkup") || 0,
             discount: game.settings.get("swse", "storeDiscount") || 0,
             credits: actor.system?.credits || 0,
-            rendarrImage: "systems/swse/icons/characters/rendarr.webp"
+            rendarrImage: "systems/swse/assets/icons/rendarr.webp"
         };
     }
 
