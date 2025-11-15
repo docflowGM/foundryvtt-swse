@@ -12,7 +12,7 @@
 
 export class ActorValidationMigration {
 
-  static MIGRATION_VERSION = "1.1.116";
+  static MIGRATION_VERSION = "1.1.119";
   static MIGRATION_KEY = "actorValidationMigration";
 
   /**
@@ -88,8 +88,9 @@ export class ActorValidationMigration {
           console.log(`Fixing ${actor.name}: initiative to integer`);
         }
 
-        // Speed
-        if (actor.system?.speed !== undefined &&
+        // Speed (skip for vehicles as they use string speed values)
+        if (actor.type !== 'vehicle' &&
+            actor.system?.speed !== undefined &&
             !Number.isInteger(actor.system.speed)) {
           updates['system.speed'] = Math.floor(Number(actor.system.speed) || 6);
           needsUpdate = true;
