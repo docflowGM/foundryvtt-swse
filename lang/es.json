@@ -163,6 +163,42 @@
       "Retraining": {
         "Name": "Permitir Reentrenamiento",
         "Hint": "Permitir intercambiar dotes/talentos al subir de nivel"
+      },
+      "DailyForcePoints": {
+        "Name": "Puntos de Fuerza Diarios",
+        "Hint": "Usar Puntos de Fuerza diarios en lugar de por nivel (1-5°: 1 PF, 6-10°: 2 PF, 11-15°: 3 PF, 16+: 4 PF por día)"
+      },
+      "DarkSideTemptationMechanic": {
+        "Name": "Mecánica de Tentación del Lado Oscuro",
+        "Hint": "Permitir a los personajes invocar el Lado Oscuro al gastar Puntos de Fuerza (requiere Puntuación de Lado Oscuro ≤ mitad de Sabiduría, +1d6, aumenta Puntuación de Lado Oscuro en 1)"
+      }
+    },
+    "ForcePoints": {
+      "SpendDialog": {
+        "Title": "Gastar Punto de Fuerza",
+        "Question": "¿Gastar un Punto de Fuerza para {reason}?",
+        "RollInfo": "Tirarás {die} y añadirás el {method} a tu tirada.",
+        "CallDarkSide": "Invocar el Lado Oscuro (+1d6, aumenta Puntuación de Lado Oscuro en 1)",
+        "Remaining": "Puntos de Fuerza Restantes:",
+        "Spend": "Gastar Punto de Fuerza",
+        "Cancel": "Cancelar"
+      },
+      "Chat": {
+        "Title": "Punto de Fuerza Gastado",
+        "Highest": "Más Alto:",
+        "Result": "Resultado:",
+        "DarkSideBonus": "Bonificación de Lado Oscuro:",
+        "DarkSideWarning": "Puntuación de Lado Oscuro aumentada en 1",
+        "TotalBonus": "Bonificación Total:",
+        "UsedFor": "Usado para:",
+        "ReducedDarkSide": "Puntuación de Lado Oscuro reducida a {score}",
+        "AvoidDeath": "¡{name} gasta un Punto de Fuerza para evitar la muerte y cae inconsciente!",
+        "AlreadyZero": "Tu Puntuación de Lado Oscuro ya es 0.",
+        "NoPointsRemaining": "¡No quedan Puntos de Fuerza!"
+      },
+      "Methods": {
+        "result": "resultado",
+        "highest_result": "resultado más alto"
       }
     }
   }

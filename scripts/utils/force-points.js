@@ -82,7 +82,7 @@ export class ForcePointsUtil {
    */
   static canUseDarkSide(actor) {
     // Check if Dark Side Temptation is enabled
-    const darkSideEnabled = game.settings.get('swse', 'darkSideTemptation');
+    const darkSideEnabled = game.settings.get('swse', 'darkSideTemptationMechanic');
     if (!darkSideEnabled) return false;
 
     // Check if Dark Side Score <= half Wisdom

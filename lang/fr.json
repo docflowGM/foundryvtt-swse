@@ -163,6 +163,42 @@
       "Retraining": {
         "Name": "Permettre le Réentraînement",
         "Hint": "Permettre l'échange de dons/talents lors de la montée de niveau"
+      },
+      "DailyForcePoints": {
+        "Name": "Points de Force Quotidiens",
+        "Hint": "Utiliser des Points de Force quotidiens au lieu de par niveau (1-5e: 1 PF, 6-10e: 2 PF, 11-15e: 3 PF, 16+: 4 PF par jour)"
+      },
+      "DarkSideTemptationMechanic": {
+        "Name": "Mécanique de Tentation du Côté Obscur",
+        "Hint": "Permettre aux personnages d'invoquer le Côté Obscur lors de la dépense de Points de Force (nécessite Score Côté Obscur ≤ moitié de la Sagesse, +1d6, augmente le Score Côté Obscur de 1)"
+      }
+    },
+    "ForcePoints": {
+      "SpendDialog": {
+        "Title": "Dépenser un Point de Force",
+        "Question": "Dépenser un Point de Force pour {reason} ?",
+        "RollInfo": "Vous lancerez {die} et ajouterez le {method} à votre jet.",
+        "CallDarkSide": "Invoquer le Côté Obscur (+1d6, augmente le Score Côté Obscur de 1)",
+        "Remaining": "Points de Force Restants :",
+        "Spend": "Dépenser Point de Force",
+        "Cancel": "Annuler"
+      },
+      "Chat": {
+        "Title": "Point de Force Dépensé",
+        "Highest": "Plus Élevé :",
+        "Result": "Résultat :",
+        "DarkSideBonus": "Bonus Côté Obscur :",
+        "DarkSideWarning": "Score Côté Obscur augmenté de 1",
+        "TotalBonus": "Bonus Total :",
+        "UsedFor": "Utilisé pour :",
+        "ReducedDarkSide": "Score Côté Obscur réduit à {score}",
+        "AvoidDeath": "{name} dépense un Point de Force pour éviter la mort et tombe inconscient !",
+        "AlreadyZero": "Votre Score Côté Obscur est déjà à 0.",
+        "NoPointsRemaining": "Plus de Points de Force !"
+      },
+      "Methods": {
+        "result": "résultat",
+        "highest_result": "résultat le plus élevé"
       }
     }
   }

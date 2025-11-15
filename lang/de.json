@@ -163,6 +163,42 @@
       "Retraining": {
         "Name": "Umschulung Erlauben",
         "Hint": "Austausch von Vorzügen/Talenten beim Stufenaufstieg erlauben"
+      },
+      "DailyForcePoints": {
+        "Name": "Tägliche Machtpunkte",
+        "Hint": "Verwende tägliche Machtpunkte statt pro Stufe (1.-5. Stufe: 1 MP, 6.-10.: 2 MP, 11.-15.: 3 MP, 16+: 4 MP pro Tag)"
+      },
+      "DarkSideTemptationMechanic": {
+        "Name": "Versuchung der Dunklen Seite Mechanik",
+        "Hint": "Erlaube Charakteren, die Dunkle Seite anzurufen beim Ausgeben von Machtpunkten (erfordert Dunkle-Seite-Wert ≤ halbe Weisheit, +1W6, erhöht Dunkle-Seite-Wert um 1)"
+      }
+    },
+    "ForcePoints": {
+      "SpendDialog": {
+        "Title": "Machtpunkt Ausgeben",
+        "Question": "Machtpunkt für {reason} ausgeben?",
+        "RollInfo": "Sie würfeln {die} und addieren das {method} zu Ihrem Wurf.",
+        "CallDarkSide": "Dunkle Seite anrufen (+1W6, erhöht Dunkle-Seite-Wert um 1)",
+        "Remaining": "Verbleibende Machtpunkte:",
+        "Spend": "Machtpunkt Ausgeben",
+        "Cancel": "Abbrechen"
+      },
+      "Chat": {
+        "Title": "Machtpunkt Ausgegeben",
+        "Highest": "Höchste:",
+        "Result": "Ergebnis:",
+        "DarkSideBonus": "Dunkle-Seite-Bonus:",
+        "DarkSideWarning": "Dunkle-Seite-Wert um 1 erhöht",
+        "TotalBonus": "Gesamtbonus:",
+        "UsedFor": "Verwendet für:",
+        "ReducedDarkSide": "Dunkle-Seite-Wert reduziert auf {score}",
+        "AvoidDeath": "{name} gibt einen Machtpunkt aus, um dem Tod zu entgehen und wird bewusstlos!",
+        "AlreadyZero": "Ihr Dunkle-Seite-Wert ist bereits 0.",
+        "NoPointsRemaining": "Keine Machtpunkte mehr!"
+      },
+      "Methods": {
+        "result": "Ergebnis",
+        "highest_result": "höchstes Ergebnis"
       }
     }
   }

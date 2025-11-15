@@ -163,6 +163,42 @@
       "Retraining": {
         "Name": "Allow Retraining",
         "Hint": "Allow swapping feats/talents at level-up"
+      },
+      "DailyForcePoints": {
+        "Name": "Daily Force Points",
+        "Hint": "Use daily Force Points instead of per-level (1-5th: 1 FP, 6-10th: 2 FP, 11-15th: 3 FP, 16+: 4 FP per day)"
+      },
+      "DarkSideTemptationMechanic": {
+        "Name": "Dark Side Temptation Mechanic",
+        "Hint": "Allow characters to call upon the Dark Side when spending Force Points (requires Dark Side Score ≤ half Wisdom, adds +1d6, increases Dark Side Score by 1)"
+      }
+    },
+    "ForcePoints": {
+      "SpendDialog": {
+        "Title": "Spend Force Point",
+        "Question": "Spend a Force Point for {reason}?",
+        "RollInfo": "You will roll {die} and add the {method} to your roll.",
+        "CallDarkSide": "Call upon the Dark Side (+1d6, increases Dark Side Score by 1)",
+        "Remaining": "Force Points Remaining:",
+        "Spend": "Spend Force Point",
+        "Cancel": "Cancel"
+      },
+      "Chat": {
+        "Title": "Force Point Spent",
+        "Highest": "Highest:",
+        "Result": "Result:",
+        "DarkSideBonus": "Dark Side Bonus:",
+        "DarkSideWarning": "Dark Side Score increased by 1",
+        "TotalBonus": "Total Bonus:",
+        "UsedFor": "Used for:",
+        "ReducedDarkSide": "Dark Side Score reduced to {score}",
+        "AvoidDeath": "{name} spends a Force Point to avoid death and falls unconscious!",
+        "AlreadyZero": "Your Dark Side Score is already 0.",
+        "NoPointsRemaining": "No Force Points remaining!"
+      },
+      "Methods": {
+        "result": "result",
+        "highest_result": "highest result"
       }
     }
   }
