@@ -7,8 +7,9 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor", "vehicle"],
       template: "systems/swse/templates/actors/vehicle/vehicle-sheet.hbs",
-      width: 900,
-      height: 800,
+      width: 750,
+      height: 700,
+      resizable: true,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "main" }],
       dragDrop: [{
         dragSelector: '.item-list .item',

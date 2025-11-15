@@ -16,6 +16,18 @@
  <label>Type:</label>
  <input name="system.type" type="text" value="{{system.type}}" placeholder="Starfighter, Speeder, etc."/>
  </div>
+ <div class="vehicle-size-section">
+ <label>Size:</label>
+ <select name="system.size" data-dtype="String">
+ <option value="large" {{#if (eq system.size "large")}}selected{{/if}}>Large</option>
+ <option value="huge" {{#if (eq system.size "huge")}}selected{{/if}}>Huge</option>
+ <option value="gargantuan" {{#if (eq system.size "gargantuan")}}selected{{/if}}>Gargantuan</option>
+ <option value="colossal" {{#if (eq system.size "colossal")}}selected{{/if}}>Colossal</option>
+ <option value="colossal (frigate)" {{#if (eq system.size "colossal (frigate)")}}selected{{/if}}>Colossal (Frigate)</option>
+ <option value="colossal (cruiser)" {{#if (eq system.size "colossal (cruiser)")}}selected{{/if}}>Colossal (Cruiser)</option>
+ <option value="colossal (station)" {{#if (eq system.size "colossal (station)")}}selected{{/if}}>Colossal (Station)</option>
+ </select>
+ </div>
  </div>
  </header>
 
@@ -130,15 +142,59 @@
  <div class="connector-line line-consumables"></div>
  </div>
 
+ {{!-- Reflex Defense (Center Right) --}}
+ <div class="stat-box stat-reflex" style="top: 50%; right: 5%; transform: translateY(-50%);">
+ <div class="stat-label">REFLEX DEF</div>
+ <div class="stat-value-large">
+ {{system.reflexDefense}}
+ </div>
+ <div class="connector-line line-reflex"></div>
+ </div>
+
  </div>
  </div>
 
- {{!-- Quick Stats Bar --}}
- <div class="quick-stats-bar">
- <div class="quick-stat">
- <label>Size:</label>
- <input type="text" name="system.size" value="{{system.size}}" placeholder="Colossal"/>
+ {{!-- Attributes & Quick Stats Bar --}}
+ <div class="attributes-quick-stats">
+ {{!-- Attributes Section --}}
+ <div class="attributes-section">
+ <h4 class="section-header">Attributes</h4>
+ <div class="attributes-grid">
+ <div class="attribute-item">
+ <label>STR</label>
+ <input type="number" name="system.attributes.str.base" value="{{system.attributes.str.base}}" data-dtype="Number" class="attr-input"/>
+ <span class="attr-mod">{{formatModifier system.attributes.str.mod}}</span>
  </div>
+ <div class="attribute-item">
+ <label>DEX</label>
+ <input type="number" name="system.attributes.dex.base" value="{{system.attributes.dex.base}}" data-dtype="Number" class="attr-input"/>
+ <span class="attr-mod">{{formatModifier system.attributes.dex.mod}}</span>
+ </div>
+ <div class="attribute-item">
+ <label>CON</label>
+ <input type="number" name="system.attributes.con.base" value="{{system.attributes.con.base}}" data-dtype="Number" class="attr-input"/>
+ <span class="attr-mod">{{formatModifier system.attributes.con.mod}}</span>
+ </div>
+ <div class="attribute-item">
+ <label>INT</label>
+ <input type="number" name="system.attributes.int.base" value="{{system.attributes.int.base}}" data-dtype="Number" class="attr-input"/>
+ <span class="attr-mod">{{formatModifier system.attributes.int.mod}}</span>
+ </div>
+ <div class="attribute-item">
+ <label>WIS</label>
+ <input type="number" name="system.attributes.wis.base" value="{{system.attributes.wis.base}}" data-dtype="Number" class="attr-input"/>
+ <span class="attr-mod">{{formatModifier system.attributes.wis.mod}}</span>
+ </div>
+ <div class="attribute-item">
+ <label>CHA</label>
+ <input type="number" name="system.attributes.cha.base" value="{{system.attributes.cha.base}}" data-dtype="Number" class="attr-input"/>
+ <span class="attr-mod">{{formatModifier system.attributes.cha.mod}}</span>
+ </div>
+ </div>
+ </div>
+
+ {{!-- Quick Stats --}}
+ <div class="quick-stats-bar">
  <div class="quick-stat">
  <label>Cost (New):</label>
  <input type="number" name="system.cost.new" value="{{system.cost.new}}" data-dtype="Number" placeholder="150000"/>
@@ -148,6 +204,7 @@
  <label>Cost (Used):</label>
  <input type="number" name="system.cost.used" value="{{system.cost.used}}" data-dtype="Number" placeholder="75000"/>
  <span class="credits-label">cr</span>
+ </div>
  </div>
  </div>
  </div>

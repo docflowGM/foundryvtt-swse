@@ -80,8 +80,23 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       // Other vehicle properties
       size: new fields.StringField({
         required: false,
-        initial: "Colossal",
-        choices: ['Large', 'Huge', 'Gargantuan', 'Colossal', 'Colossal (Frigate)', 'Colossal (Cruiser)', 'Colossal (Station)']
+        initial: "colossal",
+        choices: {
+          'large': 'Large',
+          'huge': 'Huge',
+          'gargantuan': 'Gargantuan',
+          'colossal': 'Colossal',
+          'colossal (frigate)': 'Colossal (Frigate)',
+          'colossal (cruiser)': 'Colossal (Cruiser)',
+          'colossal (station)': 'Colossal (Station)'
+        },
+        clean: value => {
+          // Normalize capitalized values to lowercase for backwards compatibility
+          if (typeof value === 'string') {
+            return value.toLowerCase();
+          }
+          return value;
+        }
       }),
       crew: new fields.StringField({required: false, initial: "1"}),
       passengers: new fields.StringField({required: false, initial: "0"}),
@@ -168,7 +183,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
    * @private
    */
   _getSizeModifier() {
-    const size = (this.size || 'medium').toLowerCase();
+    const size = (this.size || 'colossal').toLowerCase();
     const modifiers = {
       'large': -1,
       'huge': -2,
@@ -186,7 +201,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
    * @private
    */
   _getSizeDamageThresholdModifier() {
-    const size = (this.size || 'medium').toLowerCase();
+    const size = (this.size || 'colossal').toLowerCase();
     const modifiers = {
       'large': 5,
       'huge': 10,
