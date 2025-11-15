@@ -7,8 +7,27 @@ import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { SWSEStore } from '../../apps/store.js';
 import { SWSEActorSheetBase } from '../../sheets/base-sheet.js';
 import { CombatActionsMapper } from '../../utils/combat-actions-mapper.js';
+import { FeatActionsMapper } from '../../utils/feat-actions-mapper.js';
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
+
+  static _forcePowerDescriptions = null;
+
+  /**
+   * Load Force power descriptions
+   */
+  static async loadForcePowerDescriptions() {
+    if (this._forcePowerDescriptions) return this._forcePowerDescriptions;
+
+    try {
+      const response = await fetch('systems/swse/data/force-power-descriptions.json');
+      this._forcePowerDescriptions = await response.json();
+      return this._forcePowerDescriptions;
+    } catch (error) {
+      console.error('SWSE | Failed to load Force power descriptions:', error);
+      return null;
+    }
+  }
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -72,7 +91,43 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       return a.name.localeCompare(b.name);
     });
 
-    context.combatActions = allActions;
+    // Add talent enhancements to combat actions
+    const actionsWithEnhancements = CombatActionsMapper.addEnhancementsToActions(allActions, this.actor);
+
+    // Get active enhancements from actor flags
+    const activeEnhancements = this.actor.getFlag('swse', 'activeEnhancements') || {};
+
+    // Mark which enhancements are active
+    for (const action of actionsWithEnhancements) {
+      if (action.enhancements && activeEnhancements[action.name]) {
+        action.enhancements = action.enhancements.map(enhancement => ({
+          ...enhancement,
+          active: activeEnhancements[action.name].includes(enhancement.name)
+        }));
+      }
+    }
+
+    context.combatActions = actionsWithEnhancements;
+
+    // Get feat-granted actions
+    const featActions = FeatActionsMapper.getActionsByType(this.actor);
+    const activeEffects = this.actor.effects.filter(e => e.flags?.swse?.type === 'feat-action');
+
+    // Mark toggled actions
+    for (const category of ['toggleable', 'variable', 'standard', 'passive']) {
+      if (featActions[category]) {
+        featActions[category] = featActions[category].map(action => {
+          const effect = activeEffects.find(e => e.flags?.swse?.actionKey === action.key);
+          return {
+            ...action,
+            toggled: !!effect,
+            variableValue: effect?.flags?.swse?.variableValue || action.variableOptions?.min || 0
+          };
+        });
+      }
+    }
+
+    context.featActions = featActions;
 
     return context;
   }
@@ -89,6 +144,17 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // Combat actions filter and search
     html.find('.combat-action-search').on('input', this._onFilterCombatActions.bind(this));
     html.find('.action-type-filter').on('change', this._onFilterCombatActions.bind(this));
+
+    // Combat action click to post to chat
+    html.find('.action-name.rollable').click(this._onPostCombatAction.bind(this));
+
+    // Feat action listeners
+    html.find('.feat-action-toggle').click(this._onToggleFeatAction.bind(this));
+    html.find('.feat-action-slider-input').on('input', this._onUpdateVariableAction.bind(this));
+    html.find('.feat-action-use').click(this._onUseFeatAction.bind(this));
+
+    // Talent enhancement listeners
+    html.find('.talent-enhancement-toggle').on('change', this._onToggleTalentEnhancement.bind(this));
 
     console.log('SWSE | Character sheet listeners activated');
   }
@@ -160,5 +226,292 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       content: content,
       type: CONST.CHAT_MESSAGE_TYPES.OTHER
     });
+  }
+
+  /**
+   * Handle toggling a feat action
+   */
+  async _onToggleFeatAction(event) {
+    event.preventDefault();
+    const actionKey = event.currentTarget.dataset.actionKey;
+
+    const newState = await FeatActionsMapper.toggleAction(this.actor, actionKey);
+
+    ui.notifications.info(`${newState ? 'Activated' : 'Deactivated'} feat action`);
+  }
+
+  /**
+   * Handle updating a variable feat action
+   */
+  async _onUpdateVariableAction(event) {
+    event.preventDefault();
+    const actionKey = event.currentTarget.dataset.actionKey;
+    const value = parseInt(event.currentTarget.value);
+
+    // Update the display
+    const $slider = $(event.currentTarget);
+    $slider.closest('.feat-action-slider').find('.slider-value').text(value);
+
+    // Update the effect
+    await FeatActionsMapper.updateVariableAction(this.actor, actionKey, value);
+  }
+
+  /**
+   * Handle using a feat action (posts to chat)
+   */
+  async _onUseFeatAction(event) {
+    event.preventDefault();
+    const actionKey = event.currentTarget.dataset.actionKey;
+    const action = FeatActionsMapper.getAllFeatActions()[actionKey];
+
+    if (!action) return;
+
+    const content = `
+      <div class="swse-feat-action">
+        <h3><i class="fas fa-star"></i> ${action.name}</h3>
+        <p><strong>Type:</strong> ${action.actionType}</p>
+        <p><strong>Description:</strong> ${action.description}</p>
+        ${action.trigger ? `<p><strong>Trigger:</strong> ${action.trigger}</p>` : ''}
+        <p>${action.notes}</p>
+      </div>
+    `;
+
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: content,
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER
+    });
+  }
+
+  /**
+   * Post combat action to chat
+   */
+  async _onPostCombatAction(event) {
+    event.preventDefault();
+    const actionName = event.currentTarget.dataset.actionName;
+
+    // Find the action data from the rendered context
+    const actionRow = $(event.currentTarget).closest('.combat-action-row');
+    const actionType = actionRow.data('actionType');
+    const notes = actionRow.find('.action-notes').text();
+
+    // Check for active talent enhancements
+    const activeEnhancements = this.actor.getFlag('swse', 'activeEnhancements') || {};
+    const actionEnhancements = activeEnhancements[actionName] || [];
+
+    // Build enhancement text
+    let enhancementText = '';
+    if (actionEnhancements.length > 0) {
+      enhancementText = `<div class="enhancement-active">
+        <p><strong><i class="fas fa-star"></i> Active Talent Effects:</strong></p>
+        <ul>
+          ${actionEnhancements.map(e => `<li>${e}</li>`).join('')}
+        </ul>
+      </div>`;
+    }
+
+    // Create chat message
+    const content = `
+      <div class="swse-combat-action-chat">
+        <h3><i class="fas fa-fist-raised"></i> ${this.actor.name} ${this._getActionVerb(actionName)}</h3>
+        <div class="action-info">
+          <span class="action-type-badge ${actionType}">${actionType}</span>
+        </div>
+        <p class="action-description">${notes}</p>
+        ${enhancementText}
+      </div>
+    `;
+
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: content,
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER
+    });
+  }
+
+  /**
+   * Get the appropriate verb for an action (e.g., "is taking aim", "is charging")
+   */
+  _getActionVerb(actionName) {
+    const verbMap = {
+      'Aim': 'is taking aim',
+      'Charge': 'is charging',
+      'Attack (single)': 'attacks',
+      'Full attack': 'makes a full attack',
+      'Total Defense': 'takes total defense',
+      'Fight defensively': 'fights defensively',
+      'Second Wind': 'takes a second wind',
+      'Aid another': 'aids an ally',
+      'Feint': 'attempts to feint',
+      'Grapple / Grab': 'attempts to grapple',
+      'Disarm': 'attempts to disarm',
+      'Run': 'runs',
+      'Draw or Holster Weapon': 'draws/holsters a weapon',
+      'Reload': 'reloads',
+      'Coup de grace': 'delivers a coup de grâce',
+      'Ready an action (prepare)': 'readies an action',
+      'Burst Fire / Autofire (vehicle or weapon)': 'fires on full auto',
+      'Area Attack (burst/splash/cone)': 'makes an area attack',
+      'Tumble': 'tumbles',
+      'Stand up from prone': 'stands up',
+      'Fall prone': 'falls prone',
+      'Snipe': 'snipes from hiding'
+    };
+
+    return verbMap[actionName] || `uses ${actionName}`;
+  }
+
+  /**
+   * Handle toggling a talent enhancement checkbox
+   */
+  async _onToggleTalentEnhancement(event) {
+    const checkbox = event.currentTarget;
+    const actionName = checkbox.dataset.actionName;
+    const enhancementName = checkbox.dataset.enhancementName;
+    const talentName = checkbox.dataset.talentName;
+
+    const isChecked = checkbox.checked;
+
+    // Store enhancement state in actor flags
+    const enhancements = this.actor.getFlag('swse', 'activeEnhancements') || {};
+
+    if (!enhancements[actionName]) {
+      enhancements[actionName] = [];
+    }
+
+    if (isChecked) {
+      // Add enhancement to active list
+      if (!enhancements[actionName].includes(enhancementName)) {
+        enhancements[actionName].push(enhancementName);
+      }
+      ui.notifications.info(`Enabled ${enhancementName} for ${actionName}`);
+    } else {
+      // Remove enhancement from active list
+      enhancements[actionName] = enhancements[actionName].filter(e => e !== enhancementName);
+      if (enhancements[actionName].length === 0) {
+        delete enhancements[actionName];
+      }
+      ui.notifications.info(`Disabled ${enhancementName} for ${actionName}`);
+    }
+
+    // Update actor flags
+    await this.actor.setFlag('swse', 'activeEnhancements', enhancements);
+  }
+
+  /**
+   * Handle using a Force power
+   */
+  async _onUsePower(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const itemId = button.dataset.itemId;
+    const power = this.actor.items.get(itemId);
+
+    if (!power) {
+      ui.notifications.error('Force power not found');
+      return;
+    }
+
+    // Load descriptions
+    const descriptions = await SWSECharacterSheet.loadForcePowerDescriptions();
+
+    // Get random intro and manifestation based on discipline
+    const discipline = power.system.discipline || 'telekinetic';
+    const powerName = power.name;
+
+    let intro = '';
+    let manifestation = '';
+
+    // Check if power has specific description
+    if (descriptions?.specific[powerName]) {
+      intro = descriptions.specific[powerName].description;
+      manifestation = descriptions.specific[powerName].manifestation;
+    } else {
+      // Use discipline-based description
+      const disciplineData = descriptions?.disciplines[discipline];
+      if (disciplineData) {
+        const introOptions = disciplineData.intro || [];
+        const manifestOptions = disciplineData.manifestation || [];
+
+        intro = introOptions[Math.floor(Math.random() * introOptions.length)];
+        manifestation = manifestOptions[Math.floor(Math.random() * manifestOptions.length)];
+      }
+    }
+
+    // Determine if this is a dark side power
+    const isDarkSide = power.system.tags?.includes('dark-side') || discipline === 'dark-side';
+
+    // Build DC chart display
+    let dcChartHtml = '';
+    if (power.system.dcChart && power.system.dcChart.length > 0) {
+      dcChartHtml = '<div class="force-dc-chart"><strong>Use the Force DC:</strong><ul>';
+      for (const dc of power.system.dcChart) {
+        dcChartHtml += `<li><strong>DC ${dc.dc}:</strong> ${dc.effect || dc.description}</li>`;
+      }
+      dcChartHtml += '</ul></div>';
+    }
+
+    // Build special/warning text
+    let specialHtml = '';
+    if (power.system.special) {
+      specialHtml = `<div class="force-special">${power.system.special}</div>`;
+    }
+
+    // Create chat message
+    const content = `
+      <div class="swse-force-power-use ${isDarkSide ? 'dark-side-power' : ''}">
+        <h3><i class="fas fa-hand-sparkles"></i> ${this.actor.name} uses ${powerName}</h3>
+
+        <div class="force-intro">
+          <em>${this.actor.name} ${intro}</em>
+        </div>
+
+        <div class="force-manifestation">
+          ${manifestation}
+        </div>
+
+        <div class="power-details">
+          <div class="power-stats">
+            <span class="power-level">Level ${power.system.powerLevel}</span>
+            <span class="power-discipline">${discipline}</span>
+            <span class="power-time">${power.system.time}</span>
+            ${isDarkSide ? '<span class="dark-side-tag"><i class="fas fa-skull"></i> Dark Side</span>' : ''}
+          </div>
+
+          <div class="power-range">
+            <strong>Range:</strong> ${power.system.range} | <strong>Target:</strong> ${power.system.target}
+          </div>
+
+          ${dcChartHtml}
+
+          <div class="power-effect">
+            ${power.system.effect}
+          </div>
+
+          ${specialHtml}
+        </div>
+      </div>
+    `;
+
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: content,
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      flags: {
+        swse: {
+          type: 'force-power',
+          powerId: itemId,
+          isDarkSide: isDarkSide
+        }
+      }
+    });
+
+    // Optional: Post a roll prompt if power has DCs
+    if (power.system.dcChart && power.system.dcChart.length > 0) {
+      ui.notifications.info(`Roll Use the Force (DC ${power.system.useTheForce}+) to activate ${powerName}`);
+    }
   }
 }

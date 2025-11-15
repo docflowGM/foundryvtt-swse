@@ -1,0 +1,286 @@
+{
+  "power-attack": {
+    "name": "Power Attack",
+    "actionType": "modifier",
+    "requiredFeat": "Power Attack",
+    "description": "Trade attack bonus for extra damage",
+    "variable": true,
+    "variableType": "slider",
+    "variableOptions": {
+      "min": 1,
+      "max": 5,
+      "step": 1
+    },
+    "effects": [
+      {
+        "type": "penalty",
+        "target": "system.attackBonus.melee",
+        "formula": "-{value}"
+      },
+      {
+        "type": "bonus",
+        "target": "system.damageBonus.melee",
+        "formula": "+{value}"
+      }
+    ],
+    "notes": "Take -{value} to melee attack rolls, gain +{value} to melee damage",
+    "relatedSkills": ["attack"]
+  },
+  "defensive-fighting": {
+    "name": "Defensive Fighting",
+    "actionType": "swift",
+    "requiredFeat": null,
+    "description": "Gain +2 to Reflex Defense, take -2 to attacks",
+    "toggleable": true,
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.defenses.reflex.bonus",
+        "value": 2
+      },
+      {
+        "type": "penalty",
+        "target": "system.attackBonus.all",
+        "value": -2
+      }
+    ],
+    "notes": "Swift action to toggle on/off. +2 Reflex Defense, -2 to attack rolls",
+    "relatedSkills": []
+  },
+  "total-defense": {
+    "name": "Total Defense",
+    "actionType": "standard",
+    "requiredFeat": null,
+    "description": "Gain +2 to all defenses, cannot attack",
+    "toggleable": true,
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.defenses.reflex.bonus",
+        "value": 2
+      },
+      {
+        "type": "bonus",
+        "target": "system.defenses.fortitude.bonus",
+        "value": 2
+      },
+      {
+        "type": "bonus",
+        "target": "system.defenses.will.bonus",
+        "value": 2
+      }
+    ],
+    "notes": "Standard action. +2 to all defenses until start of your next turn. Cannot make attacks while active.",
+    "relatedSkills": []
+  },
+  "rapid-shot": {
+    "name": "Rapid Shot",
+    "actionType": "full-round",
+    "requiredFeat": "Rapid Shot",
+    "description": "Make one extra ranged attack at -2 to all attacks",
+    "toggleable": false,
+    "effects": [],
+    "notes": "Full-round action. Make one extra ranged attack. All attacks take -2 penalty.",
+    "relatedSkills": ["attack"]
+  },
+  "double-attack": {
+    "name": "Double Attack",
+    "actionType": "full-round",
+    "requiredFeat": "Double Attack",
+    "description": "Make two attacks at -5 each",
+    "toggleable": false,
+    "effects": [],
+    "notes": "Full-round action. Make two attacks, each at -5 penalty. Requires BAB +6.",
+    "relatedSkills": ["attack"]
+  },
+  "running-attack": {
+    "name": "Running Attack",
+    "actionType": "move",
+    "requiredFeat": "Running Attack",
+    "description": "Make single attack during move action",
+    "toggleable": false,
+    "effects": [],
+    "notes": "Make a single melee or ranged attack at any point during a move action.",
+    "relatedSkills": ["attack"]
+  },
+  "charging-fire": {
+    "name": "Charging Fire",
+    "actionType": "standard",
+    "requiredFeat": "Charging Fire",
+    "description": "Make ranged attack at end of charge",
+    "toggleable": false,
+    "effects": [
+      {
+        "type": "penalty",
+        "target": "system.attackBonus.ranged",
+        "value": -2
+      }
+    ],
+    "notes": "Make a ranged attack at the end of a charge, taking -2 penalty on the attack roll.",
+    "relatedSkills": ["attack"]
+  },
+  "cleave": {
+    "name": "Cleave",
+    "actionType": "reaction",
+    "requiredFeat": "Cleave",
+    "description": "Make immediate melee attack after dropping enemy",
+    "toggleable": false,
+    "trigger": "You drop an enemy to 0 HP with a melee attack",
+    "effects": [],
+    "notes": "When you drop an enemy to 0 HP with a melee attack, you can immediately make one melee attack against another adjacent enemy.",
+    "relatedSkills": ["attack"]
+  },
+  "combat-reflexes": {
+    "name": "Combat Reflexes",
+    "actionType": "passive",
+    "requiredFeat": "Combat Reflexes",
+    "description": "Make additional attacks of opportunity",
+    "effects": [],
+    "notes": "You can make a number of attacks of opportunity per round equal to your Dexterity modifier (minimum 1).",
+    "relatedSkills": []
+  },
+  "dodge": {
+    "name": "Dodge",
+    "actionType": "passive",
+    "requiredFeat": "Dodge",
+    "description": "+1 to Reflex Defense",
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.defenses.reflex.bonus",
+        "value": 1
+      }
+    ],
+    "notes": "Passive +1 bonus to Reflex Defense",
+    "relatedSkills": []
+  },
+  "trigger-work": {
+    "name": "Trigger Work (Rapid Shot)",
+    "actionType": "passive",
+    "requiredTalent": "Trigger Work",
+    "description": "No penalty when using Rapid Shot",
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.attackBonus.ranged",
+        "value": 2,
+        "condition": "when using Rapid Shot"
+      }
+    ],
+    "notes": "Negates the -2 penalty from Rapid Shot feat. Requires Gunslinger talent tree.",
+    "relatedSkills": ["attack"]
+  },
+  "controlled-burst": {
+    "name": "Controlled Burst",
+    "actionType": "passive",
+    "requiredTalent": "Controlled Burst",
+    "description": "Reduce autofire/burst-fire penalty by 2",
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.attackBonus.autofire",
+        "value": 2
+      }
+    ],
+    "notes": "Reduce autofire or burst-fire penalty by 2. If braced, no penalty. Requires Weapon Master talent tree.",
+    "relatedSkills": ["attack"]
+  },
+  "multiattack-proficiency-rifles": {
+    "name": "Multiattack Proficiency (Rifles)",
+    "actionType": "passive",
+    "requiredTalent": "Multiattack Proficiency (rifles)",
+    "description": "Reduce multiattack penalty by 2 for rifles",
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.attackBonus.rifles",
+        "value": 2,
+        "condition": "when making multiple attacks"
+      }
+    ],
+    "notes": "Reduce multiattack penalty by 2 when using rifles. Requires Weapon Master talent tree.",
+    "relatedSkills": ["attack"]
+  },
+  "multiattack-proficiency-pistols": {
+    "name": "Multiattack Proficiency (Pistols)",
+    "actionType": "passive",
+    "requiredTalent": "Multiattack Proficiency (pistols)",
+    "description": "Reduce multiattack penalty by 2 for pistols",
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.attackBonus.pistols",
+        "value": 2,
+        "condition": "when making multiple attacks"
+      }
+    ],
+    "notes": "Reduce multiattack penalty by 2 when using pistols. Requires Gunslinger talent tree.",
+    "relatedSkills": ["attack"]
+  },
+  "multiattack-proficiency-heavy": {
+    "name": "Multiattack Proficiency (Heavy)",
+    "actionType": "passive",
+    "requiredTalent": "Multiattack Proficiency (heavy)",
+    "description": "Reduce multiattack penalty by 2 for heavy weapons",
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.attackBonus.heavy",
+        "value": 2,
+        "condition": "when making multiple attacks"
+      }
+    ],
+    "notes": "Reduce multiattack penalty by 2 when using heavy weapons. Requires Weapon Master talent tree.",
+    "relatedSkills": ["attack"]
+  },
+  "dash-and-blast": {
+    "name": "Dash and Blast",
+    "actionType": "full-round",
+    "requiredTalent": "Dash and Blast",
+    "description": "Move twice your speed and attack with each pistol",
+    "toggleable": false,
+    "effects": [],
+    "notes": "Once per encounter. Move twice your speed and make attacks with each pistol. Requires Pistoleer talent tree.",
+    "relatedSkills": ["attack"]
+  },
+  "hailfire": {
+    "name": "Hailfire",
+    "actionType": "full-round",
+    "requiredTalent": "Hailfire",
+    "description": "Attack as if autofire with two pistols",
+    "toggleable": false,
+    "effects": [],
+    "notes": "With two pistols, attack as if using autofire even without autofire, applying autofire penalties. Requires Pistoleer talent tree.",
+    "relatedSkills": ["attack"]
+  },
+  "improved-suppression-fire": {
+    "name": "Improved Suppression Fire",
+    "actionType": "standard",
+    "requiredTalent": "Improved Suppression Fire",
+    "description": "Enhanced suppression penalties",
+    "toggleable": false,
+    "effects": [],
+    "notes": "When you suppress an enemy, that enemy takes -5 attack. If targeting with autofire, each enemy in the area takes -2 attack. Requires Weapon Specialist talent tree.",
+    "relatedSkills": ["attack"]
+  },
+  "draw-fire": {
+    "name": "Draw Fire",
+    "actionType": "standard",
+    "requiredTalent": "Draw Fire",
+    "description": "Force enemy to target you",
+    "toggleable": false,
+    "effects": [],
+    "notes": "Make Persuasion vs Will. Target cannot attack anyone within 6 squares if you do not have cover. Requires Commando talent tree.",
+    "relatedSkills": ["persuasion"]
+  },
+  "cover-fire": {
+    "name": "Cover Fire",
+    "actionType": "modifier",
+    "requiredTalent": "Cover Fire",
+    "description": "Grant allies +1 Defense when you attack",
+    "toggleable": true,
+    "effects": [],
+    "notes": "When you make a ranged attack, allies within 6 squares gain +1 Defense until your next turn. Requires Commando talent tree.",
+    "relatedSkills": ["attack"]
+  }
+}

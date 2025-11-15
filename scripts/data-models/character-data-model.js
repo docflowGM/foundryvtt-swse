@@ -54,128 +54,153 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       skills: new fields.SchemaField({
         acrobatics: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'dex'})
         }),
         climb: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'str'})
         }),
         deception: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'cha'})
         }),
         endurance: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'con'})
         }),
         gather_information: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'cha'})
         }),
         initiative: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'dex'})
         }),
         jump: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'str'})
         }),
         knowledge_bureaucracy: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'int'})
         }),
         knowledge_galactic_lore: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'int'})
         }),
         knowledge_life_sciences: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'int'})
         }),
         knowledge_physical_sciences: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'int'})
         }),
         knowledge_social_sciences: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'int'})
         }),
         knowledge_tactics: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'int'})
         }),
         knowledge_technology: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'int'})
         }),
         mechanics: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'int'})
         }),
         perception: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'wis'})
         }),
         persuasion: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'cha'})
         }),
         pilot: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'dex'})
         }),
         ride: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'dex'})
         }),
         stealth: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'dex'})
         }),
         survival: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'wis'})
         }),
         swim: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'str'})
         }),
         treat_injury: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'wis'})
         }),
         use_computer: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'int'})
         }),
         use_the_force: new fields.SchemaField({
           trained: new fields.BooleanField({required: true, initial: false}),
-          focusMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true})
+          focused: new fields.BooleanField({required: true, initial: false}),
+          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+          selectedAbility: new fields.StringField({required: true, initial: 'cha'})
         })
       }),
 
@@ -258,31 +283,31 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
   _prepareSkills() {
     const skillData = {
-      acrobatics: { ability: 'dex', untrained: true },
-      climb: { ability: 'str', untrained: true },
-      deception: { ability: 'cha', untrained: true },
-      endurance: { ability: 'con', untrained: true },
-      gather_information: { ability: 'cha', untrained: true },
-      initiative: { ability: 'dex', untrained: true },
-      jump: { ability: 'str', untrained: true },
-      knowledge_bureaucracy: { ability: 'int', untrained: false },
-      knowledge_galactic_lore: { ability: 'int', untrained: false },
-      knowledge_life_sciences: { ability: 'int', untrained: false },
-      knowledge_physical_sciences: { ability: 'int', untrained: false },
-      knowledge_social_sciences: { ability: 'int', untrained: false },
-      knowledge_tactics: { ability: 'int', untrained: false },
-      knowledge_technology: { ability: 'int', untrained: false },
-      mechanics: { ability: 'int', untrained: true },
-      perception: { ability: 'wis', untrained: true },
-      persuasion: { ability: 'cha', untrained: true },
-      pilot: { ability: 'dex', untrained: true },
-      ride: { ability: 'dex', untrained: true },
-      stealth: { ability: 'dex', untrained: true },
-      survival: { ability: 'wis', untrained: true },
-      swim: { ability: 'str', untrained: true },
-      treat_injury: { ability: 'wis', untrained: true },
-      use_computer: { ability: 'int', untrained: true },
-      use_the_force: { ability: 'cha', untrained: false }
+      acrobatics: { defaultAbility: 'dex', untrained: true },
+      climb: { defaultAbility: 'str', untrained: true },
+      deception: { defaultAbility: 'cha', untrained: true },
+      endurance: { defaultAbility: 'con', untrained: true },
+      gather_information: { defaultAbility: 'cha', untrained: true },
+      initiative: { defaultAbility: 'dex', untrained: true },
+      jump: { defaultAbility: 'str', untrained: true },
+      knowledge_bureaucracy: { defaultAbility: 'int', untrained: false },
+      knowledge_galactic_lore: { defaultAbility: 'int', untrained: false },
+      knowledge_life_sciences: { defaultAbility: 'int', untrained: false },
+      knowledge_physical_sciences: { defaultAbility: 'int', untrained: false },
+      knowledge_social_sciences: { defaultAbility: 'int', untrained: false },
+      knowledge_tactics: { defaultAbility: 'int', untrained: false },
+      knowledge_technology: { defaultAbility: 'int', untrained: false },
+      mechanics: { defaultAbility: 'int', untrained: true },
+      perception: { defaultAbility: 'wis', untrained: true },
+      persuasion: { defaultAbility: 'cha', untrained: true },
+      pilot: { defaultAbility: 'dex', untrained: true },
+      ride: { defaultAbility: 'dex', untrained: true },
+      stealth: { defaultAbility: 'dex', untrained: true },
+      survival: { defaultAbility: 'wis', untrained: true },
+      swim: { defaultAbility: 'str', untrained: true },
+      treat_injury: { defaultAbility: 'wis', untrained: true },
+      use_computer: { defaultAbility: 'int', untrained: true },
+      use_the_force: { defaultAbility: 'cha', untrained: false }
     };
 
     const halfLevel = Math.floor(this.level.heroic / 2);
@@ -294,10 +319,12 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       const data = skillData[skillKey];
       if (!data) continue;
 
-      const abilityMod = this.attributes[data.ability]?.mod || 0;
+      // Use selectedAbility if set, otherwise use default
+      const abilityKey = skill.selectedAbility || data.defaultAbility;
+      const abilityMod = this.attributes[abilityKey]?.mod || 0;
 
       // Calculate total bonus
-      let total = abilityMod + skill.miscMod;
+      let total = abilityMod + (skill.miscMod || 0);
 
       // Add training bonus (+5)
       if (skill.trained) {
@@ -307,8 +334,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       // Add half level (always, even untrained)
       total += halfLevel;
 
-      // Add skill focus bonus
-      total += skill.focusMod;
+      // Add skill focus bonus (+5 if focused checkbox is checked)
+      if (skill.focused) {
+        total += 5;
+      }
 
       // Determine if skill can be used untrained
       let canUseUntrained = data.untrained;
@@ -321,8 +350,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
       // Store calculated values
       skill.total = total;
-      skill.ability = data.ability;
+      skill.ability = abilityKey;  // Store the selected ability
       skill.abilityMod = abilityMod;
+      skill.defaultAbility = data.defaultAbility;  // Store default for reference
       skill.untrained = canUseUntrained;
       skill.canUse = skill.trained || canUseUntrained;
     }

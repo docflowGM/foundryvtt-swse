@@ -36,16 +36,22 @@ function determineFeatType(feat) {
 }
 
 /**
- * Create Active Effect for simple skill bonus
+ * Create Active Effect for simple skill bonus (goes to miscMod field)
  */
 function createSkillBonusEffect(skillName, bonus, featName) {
-  const skillKey = skillName.toLowerCase().replace(/\s+/g, '');
+  // Convert skill name to data model key (e.g., "Perception" -> "perception")
+  let skillKey = skillName.toLowerCase().replace(/\s+/g, '');
+
+  // Handle knowledge skills with special naming
+  if (skillKey.startsWith('knowledge')) {
+    skillKey = skillKey.replace('knowledge', 'knowledge_');
+  }
 
   return {
     name: `${featName}`,
     icon: "icons/svg/upgrade.svg",
     changes: [{
-      key: `system.skills.${skillKey}.bonus`,
+      key: `system.skills.${skillKey}.miscMod`,  // Target miscMod field
       mode: 2,  // ADD
       value: String(bonus),
       priority: 20
@@ -56,7 +62,8 @@ function createSkillBonusEffect(skillName, bonus, featName) {
     flags: {
       swse: {
         type: "skill-bonus",
-        skill: skillName
+        skill: skillName,
+        source: featName
       }
     }
   };

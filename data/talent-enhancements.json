@@ -1,0 +1,144 @@
+{
+  "aim": {
+    "baseAction": "Aim",
+    "enhancements": [
+      {
+        "name": "Hunter's Mark",
+        "requiredTalent": "Hunter's Mark",
+        "talentTree": "Bounty Hunter",
+        "description": "Move target one step down condition track",
+        "trigger": "After aiming, if attack deals damage",
+        "effect": {
+          "type": "condition_track",
+          "value": -1
+        },
+        "notes": "Target must take damage from the attack after aiming",
+        "optional": true
+      },
+      {
+        "name": "Debilitating Shot",
+        "requiredTalent": "Debilitating Shot",
+        "talentTree": "Gunslinger",
+        "description": "Move target one step down condition track",
+        "trigger": "After aiming, if attack deals damage",
+        "effect": {
+          "type": "condition_track",
+          "value": -1
+        },
+        "notes": "Target must take damage from the attack after aiming",
+        "optional": true
+      },
+      {
+        "name": "Knockdown Shot",
+        "requiredTalent": "Knockdown Shot",
+        "talentTree": "Gunslinger",
+        "description": "Knock target prone",
+        "trigger": "After aiming, if attack succeeds",
+        "effect": {
+          "type": "prone",
+          "value": true
+        },
+        "notes": "Target must be no larger than two size categories bigger than you",
+        "optional": true
+      },
+      {
+        "name": "Precision Fire",
+        "requiredTalent": "Precision Fire",
+        "talentTree": "Force Hunter",
+        "description": "Increase deflection difficulty by +5",
+        "trigger": "When you aim",
+        "effect": {
+          "type": "deflection_penalty",
+          "value": 5
+        },
+        "notes": "Makes it harder for Force users to deflect your attack",
+        "optional": true
+      }
+    ]
+  },
+  "attack_melee": {
+    "baseAction": "Attack (single)",
+    "actionFilter": "melee",
+    "enhancements": [
+      {
+        "name": "Stunning Strike",
+        "requiredTalent": "Stunning Strike",
+        "talentTree": "Brawler",
+        "prerequisites": "Melee Smash",
+        "description": "Move target one step down condition track",
+        "trigger": "When you deal damage with melee attack and exceed damage threshold",
+        "effect": {
+          "type": "condition_track",
+          "value": -1
+        },
+        "notes": "Only applies if damage exceeds target's damage threshold",
+        "optional": true
+      }
+    ]
+  },
+  "attack_vs_flatfooted": {
+    "baseAction": "Attack (single)",
+    "actionFilter": "target denied Dex to Defense",
+    "enhancements": [
+      {
+        "name": "Dastardly Attack",
+        "requiredTalent": "Dastardly Attack",
+        "talentTree": "Misfortune",
+        "prerequisites": "Walk the Line",
+        "description": "Move target one step down condition track",
+        "trigger": "Attack against opponent denied Dexterity to Defense",
+        "effect": {
+          "type": "condition_track",
+          "value": -1
+        },
+        "notes": "Target must be denied Dex bonus to Reflex Defense",
+        "optional": true
+      },
+      {
+        "name": "Weakening Strike",
+        "requiredTalent": "Weakening Strike",
+        "talentTree": "Misfortune",
+        "prerequisites": "Dastardly Attack",
+        "description": "Impose -5 to attack and melee damage instead of condition track",
+        "trigger": "When you deal damage to opponent denied Dex to Defense",
+        "effect": {
+          "type": "penalty",
+          "target": "attack_and_damage",
+          "value": -5
+        },
+        "notes": "Alternative to moving down condition track; player choice",
+        "optional": true,
+        "mutuallyExclusive": ["Dastardly Attack"]
+      }
+    ]
+  },
+  "suppress": {
+    "baseAction": "Aid another",
+    "actionFilter": "suppress attack",
+    "enhancements": [
+      {
+        "name": "Keep Them at Bay",
+        "requiredTalent": "Keep Them at Bay",
+        "talentTree": "Commando",
+        "description": "Increase suppression penalty to -5",
+        "trigger": "When you aid another to suppress an attack",
+        "effect": {
+          "type": "penalty_enhancement",
+          "original": -2,
+          "enhanced": -5
+        },
+        "notes": "Increases standard -2 suppression to -5",
+        "optional": false
+      }
+    ]
+  },
+  "total_defense": {
+    "baseAction": "Fight defensively",
+    "actionFilter": "full-round no attacks",
+    "enhancements": []
+  },
+  "charge": {
+    "baseAction": "Charge",
+    "enhancements": []
+  }
+}

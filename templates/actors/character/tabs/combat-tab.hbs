@@ -171,6 +171,9 @@
  </button>
  </div>
 
+ {{!-- Feat Actions Panel --}}
+ {{> "systems/swse/templates/partials/feat-actions-panel.hbs" featActions=featActions}}
+
  <h3 class="section-header">Combat Actions</h3>
 
  <div class="combat-actions-section">
@@ -224,6 +227,37 @@
  {{#if action.when}}
  <p class="action-when"><em>{{action.when}}</em></p>
  {{/if}}
+
+ {{!-- Talent Enhancements --}}
+ {{#if action.hasEnhancements}}
+ <div class="talent-enhancements">
+ <h5><i class="fas fa-star"></i> Optional Talent Effects:</h5>
+ {{#each action.enhancements as |enhancement|}}
+ <div class="talent-enhancement-item">
+ <label class="enhancement-checkbox">
+ <input type="checkbox"
+ class="talent-enhancement-toggle"
+ data-action-name="{{../action.name}}"
+ data-enhancement-name="{{enhancement.name}}"
+ data-talent-name="{{enhancement.requiredTalent}}"
+ {{#if enhancement.active}}checked{{/if}}
+ title="{{enhancement.trigger}}"/>
+ <span class="enhancement-label">
+ <strong>{{enhancement.name}}</strong>
+ <span class="talent-tree-badge">({{enhancement.talentTree}})</span>
+ </span>
+ </label>
+ <p class="enhancement-description">
+ <em>{{enhancement.trigger}}</em> — {{enhancement.description}}
+ </p>
+ {{#if enhancement.notes}}
+ <p class="enhancement-notes">{{enhancement.notes}}</p>
+ {{/if}}
+ </div>
+ {{/each}}
+ </div>
+ {{/if}}
+
  </div>
  </div>
  {{/each}}
