@@ -155,6 +155,13 @@ Hooks.once("init", async function() {
     SWSEActorBase,
     SWSEItemBase,
 
+    // Sheet Classes
+    SWSECharacterSheet,
+    SWSEDroidSheet,
+    SWSENPCSheet,
+    SWSEVehicleSheet,
+    SWSEItemSheet,
+
     // Systems
     DamageSystem,
     CombatAutomation: SWSECombatAutomation,
@@ -515,6 +522,14 @@ Hooks.once("ready", async function() {
   });
 
   SWSELogger.log('Global namespace exported to window.SWSE');
+
+  // ============================================
+  // System Fully Loaded
+  // ============================================
+
+  console.log("SWSE | Enhanced System Fully Loaded");
+  console.log("SWSE | Use 'window.SWSE' in console to access system components");
+  console.log("SWSE | Error tracking commands: SWSE.errors.recent(), SWSE.errors.stats(), SWSE.errors.export()");
 });
 
 /* -------------------------------------------- */
@@ -1010,46 +1025,7 @@ function enhanceValidationLogging() {
 }
 
 /* -------------------------------------------- */
-/*  Global Exports for Debugging                */
+/*  NOTE: Global exports moved to ready hook    */
 /* -------------------------------------------- */
-
-// Make system components available globally for console access
-Object.assign(window.SWSE, {
-  // Components
-  ConditionTrack: ConditionTrackComponent,
-  ForceSuite: ForceSuiteComponent,
-
-  // Systems
-  Damage: DamageSystem,
-  WorldDataLoader: WorldDataLoader,
-  DropHandler: DropHandler,
-  HouseruleMechanics: HouseruleMechanics,
-  HouserulesConfig,
-
-  // Utilities
-  notifications: SWSENotifications,
-  logger: SWSELogger,
-
-  // Apps
-  Store: SWSEStore,
-  LevelUp: SWSELevelUp,
-  VehicleModificationApp: VehicleModificationApp,
-
-  // Vehicle Modification System
-  VehicleModificationManager,
-
-  // Actor/Item Classes
-  SWSEActorBase: SWSEActorBase,
-  SWSEItemBase: SWSEItemBase,
-
-  // Force Powers
-  ForcePowerManager: ForcePowerManager,
-
-  // Configuration
-  config: CONFIG.SWSE,
-  skills: SWSE_SKILLS
-});
-
-console.log("SWSE | Enhanced System Fully Loaded");
-console.log("SWSE | Use 'window.SWSE' in console to access system components");
-console.log("SWSE | Error tracking commands: SWSE.errors.recent(), SWSE.errors.stats(), SWSE.errors.export()");
+// All global exports are now properly initialized in the 'ready' hook
+// at lines 490-517 to ensure window.SWSE exists before assignment.
