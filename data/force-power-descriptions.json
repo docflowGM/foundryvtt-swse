@@ -1,0 +1,166 @@
+{
+  "disciplines": {
+    "dark-side": {
+      "intro": [
+        "reaches deep within, touching the wellspring of rage and fury",
+        "embraces the darkness within, channeling raw emotion and anger",
+        "delves into the shadowed depths of their soul, drawing upon forbidden power",
+        "surrenders to passion and anger, letting darkness flow through them",
+        "taps into the primal fury that lurks beneath the surface"
+      ],
+      "manifestation": [
+        "The air crackles with malevolent energy as shadows seem to deepen around them",
+        "A palpable aura of menace radiates outward, making the Force itself recoil",
+        "Dark energy writhes and coils around their form like living smoke",
+        "The temperature drops as the Force bends unnaturally to their will",
+        "Reality warps subtly, corrupted by the touch of the dark side"
+      ]
+    },
+    "telepathic": {
+      "intro": [
+        "reaches out with their mind, touching the consciousness around them",
+        "extends their awareness beyond their body, sensing thoughts and emotions",
+        "opens themselves to the Force, their consciousness expanding outward",
+        "sends tendrils of thought through the Force, seeking connection",
+        "projects their will into the minds of others through invisible threads of power"
+      ],
+      "manifestation": [
+        "An invisible presence brushes against the minds of those nearby",
+        "The Force flows like water between minds, carrying thoughts and intentions",
+        "Reality seems to shimmer as mental energy permeates the space",
+        "A subtle pressure builds in the minds of those touched by the power",
+        "The boundary between self and other blurs for just a moment"
+      ]
+    },
+    "telekinetic": {
+      "intro": [
+        "reaches out with invisible hands of Force energy",
+        "extends their will into the physical world, grasping objects with pure thought",
+        "channels the Force into a tangible extension of themselves",
+        "focuses on the objects around them, bending reality to their will",
+        "calls upon the Force to manipulate the material world"
+      ],
+      "manifestation": [
+        "Objects tremble and rise as if gripped by unseen hands",
+        "The air ripples visibly as waves of telekinetic force radiate outward",
+        "Reality bends as matter yields to the power of pure will",
+        "Items shift and hover, defying gravity through Force manipulation",
+        "The Force manifests as a tangible pressure moving through space"
+      ]
+    },
+    "enhancement": {
+      "intro": [
+        "focuses inward, enhancing their physical form with Force energy",
+        "channels the Force through their body, transcending mortal limitations",
+        "draws upon the Living Force to augment their capabilities",
+        "becomes one with the Force, body and energy flowing together",
+        "taps into reservoirs of power deep within themselves"
+      ],
+      "manifestation": [
+        "Their movements take on an otherworldly grace and precision",
+        "Energy courses through their veins, visible as a faint aura",
+        "They move with impossible speed and strength, defying natural limits",
+        "The Force suffuses their being, elevating them beyond mere flesh",
+        "Power radiates from them as they transcend their physical form"
+      ]
+    },
+    "healing": {
+      "intro": [
+        "reaches out with gentle tendrils of healing energy",
+        "channels the Living Force into wounds and injuries",
+        "focuses their compassion into restorative power",
+        "touches the broken flesh with light-side energy",
+        "calls upon the Force to mend what has been torn"
+      ],
+      "manifestation": [
+        "A warm, soothing energy flows into the injured",
+        "Wounds begin to knit and close with unnatural speed",
+        "The healing light of the Force banishes pain and damage",
+        "Vitality returns as the Force restores what was lost",
+        "Life energy pulses and flows, reversing injury and trauma"
+      ]
+    },
+    "defense": {
+      "intro": [
+        "wraps themselves in protective layers of Force energy",
+        "creates a barrier between themselves and harm",
+        "channels defensive power into an invisible shield",
+        "focuses their will into a protective cocoon of energy",
+        "draws the Force around themselves like armor"
+      ],
+      "manifestation": [
+        "An invisible barrier shimmers into existence around them",
+        "The Force forms a protective shell, deflecting danger",
+        "Energy crackles and flows in defensive patterns",
+        "Reality bends around them, creating a pocket of safety",
+        "The air hardens into an impenetrable barrier of pure will"
+      ]
+    }
+  },
+  "specific": {
+    "Force Lightning": {
+      "description": "summons arcs of devastating Force Lightning from their fingertips",
+      "manifestation": "Blue-white electricity crackles and arcs through the air, illuminating everything with its terrible power"
+    },
+    "Force Storm": {
+      "description": "conjures a massive storm of Force energy and lightning",
+      "manifestation": "The sky darkens as reality itself tears apart, unleashing a maelstrom of destructive power"
+    },
+    "Force Grip": {
+      "description": "reaches out with invisible hands to crush and choke their target",
+      "manifestation": "The victim rises into the air, clutching at their throat as an invisible force constricts around them"
+    },
+    "Force Slam": {
+      "description": "hurls their target through the air with overwhelming telekinetic force",
+      "manifestation": "The target is violently thrown backwards as if struck by a giant invisible fist"
+    },
+    "Mind Trick": {
+      "description": "weaves subtle suggestions into the mind of their target",
+      "manifestation": "A glazed look passes over the target's eyes as their will bends to the Force user's words"
+    },
+    "Battle Meditation": {
+      "description": "spreads their consciousness across the battlefield, bolstering allies and weakening foes",
+      "manifestation": "Waves of calm confidence flow to allies while enemies feel doubt and confusion creep into their minds"
+    },
+    "Move Object": {
+      "description": "lifts and manipulates objects through the air with telekinetic power",
+      "manifestation": "Objects float and dance through the air, moving with graceful precision guided by thought alone"
+    },
+    "Force Cloak": {
+      "description": "bends light and perception around themselves, fading from view",
+      "manifestation": "They seem to blur and fade, becoming nearly invisible as the Force shields them from sight"
+    },
+    "Force Sense": {
+      "description": "opens themselves to the currents of the Force, sensing danger and disturbances",
+      "manifestation": "Their eyes unfocus as awareness expands, perceiving threats before they manifest"
+    },
+    "Drain Life": {
+      "description": "siphons the very life essence from their victim to sustain themselves",
+      "manifestation": "Dark tendrils of energy flow from the victim to the Force user, carrying stolen vitality"
+    },
+    "Vital Transfer": {
+      "description": "transfers their own life energy to heal another",
+      "manifestation": "Golden light flows between Force user and recipient, carrying healing energy"
+    },
+    "Force Scream": {
+      "description": "releases a devastating shockwave of pure dark side rage",
+      "manifestation": "Reality itself seems to shatter as the Force-amplified scream tears through the area"
+    },
+    "Rebuke": {
+      "description": "projects a wave of Force energy to push back and stun opponents",
+      "manifestation": "An invisible wave of power radiates outward, staggering all in its path"
+    },
+    "Farseeing": {
+      "description": "casts their perception across vast distances and through time itself",
+      "manifestation": "Their eyes glow faintly as visions of distant places and times fill their mind"
+    },
+    "Sever Force": {
+      "description": "tears away another's connection to the Force itself",
+      "manifestation": "Invisible threads of Force energy are severed, leaving the victim cut off from the cosmic power"
+    },
+    "Force Weapon": {
+      "description": "imbues their weapon with crackling Force energy",
+      "manifestation": "Their weapon glows with power, wreathed in visible Force energy that hums with potential"
+    }
+  }
+}

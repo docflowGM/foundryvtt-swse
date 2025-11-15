@@ -11,6 +11,24 @@ import { FeatActionsMapper } from '../../utils/feat-actions-mapper.js';
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
+  static _forcePowerDescriptions = null;
+
+  /**
+   * Load Force power descriptions
+   */
+  static async loadForcePowerDescriptions() {
+    if (this._forcePowerDescriptions) return this._forcePowerDescriptions;
+
+    try {
+      const response = await fetch('systems/swse/data/force-power-descriptions.json');
+      this._forcePowerDescriptions = await response.json();
+      return this._forcePowerDescriptions;
+    } catch (error) {
+      console.error('SWSE | Failed to load Force power descriptions:', error);
+      return null;
+    }
+  }
+
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['swse', 'sheet', 'actor', 'character'],
@@ -380,5 +398,120 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     // Update actor flags
     await this.actor.setFlag('swse', 'activeEnhancements', enhancements);
+  }
+
+  /**
+   * Handle using a Force power
+   */
+  async _onUsePower(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const itemId = button.dataset.itemId;
+    const power = this.actor.items.get(itemId);
+
+    if (!power) {
+      ui.notifications.error('Force power not found');
+      return;
+    }
+
+    // Load descriptions
+    const descriptions = await SWSECharacterSheet.loadForcePowerDescriptions();
+
+    // Get random intro and manifestation based on discipline
+    const discipline = power.system.discipline || 'telekinetic';
+    const powerName = power.name;
+
+    let intro = '';
+    let manifestation = '';
+
+    // Check if power has specific description
+    if (descriptions?.specific[powerName]) {
+      intro = descriptions.specific[powerName].description;
+      manifestation = descriptions.specific[powerName].manifestation;
+    } else {
+      // Use discipline-based description
+      const disciplineData = descriptions?.disciplines[discipline];
+      if (disciplineData) {
+        const introOptions = disciplineData.intro || [];
+        const manifestOptions = disciplineData.manifestation || [];
+
+        intro = introOptions[Math.floor(Math.random() * introOptions.length)];
+        manifestation = manifestOptions[Math.floor(Math.random() * manifestOptions.length)];
+      }
+    }
+
+    // Determine if this is a dark side power
+    const isDarkSide = power.system.tags?.includes('dark-side') || discipline === 'dark-side';
+
+    // Build DC chart display
+    let dcChartHtml = '';
+    if (power.system.dcChart && power.system.dcChart.length > 0) {
+      dcChartHtml = '<div class="force-dc-chart"><strong>Use the Force DC:</strong><ul>';
+      for (const dc of power.system.dcChart) {
+        dcChartHtml += `<li><strong>DC ${dc.dc}:</strong> ${dc.effect || dc.description}</li>`;
+      }
+      dcChartHtml += '</ul></div>';
+    }
+
+    // Build special/warning text
+    let specialHtml = '';
+    if (power.system.special) {
+      specialHtml = `<div class="force-special">${power.system.special}</div>`;
+    }
+
+    // Create chat message
+    const content = `
+      <div class="swse-force-power-use ${isDarkSide ? 'dark-side-power' : ''}">
+        <h3><i class="fas fa-hand-sparkles"></i> ${this.actor.name} uses ${powerName}</h3>
+
+        <div class="force-intro">
+          <em>${this.actor.name} ${intro}</em>
+        </div>
+
+        <div class="force-manifestation">
+          ${manifestation}
+        </div>
+
+        <div class="power-details">
+          <div class="power-stats">
+            <span class="power-level">Level ${power.system.powerLevel}</span>
+            <span class="power-discipline">${discipline}</span>
+            <span class="power-time">${power.system.time}</span>
+            ${isDarkSide ? '<span class="dark-side-tag"><i class="fas fa-skull"></i> Dark Side</span>' : ''}
+          </div>
+
+          <div class="power-range">
+            <strong>Range:</strong> ${power.system.range} | <strong>Target:</strong> ${power.system.target}
+          </div>
+
+          ${dcChartHtml}
+
+          <div class="power-effect">
+            ${power.system.effect}
+          </div>
+
+          ${specialHtml}
+        </div>
+      </div>
+    `;
+
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: content,
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      flags: {
+        swse: {
+          type: 'force-power',
+          powerId: itemId,
+          isDarkSide: isDarkSide
+        }
+      }
+    });
+
+    // Optional: Post a roll prompt if power has DCs
+    if (power.system.dcChart && power.system.dcChart.length > 0) {
+      ui.notifications.info(`Roll Use the Force (DC ${power.system.useTheForce}+) to activate ${powerName}`);
+    }
   }
 }
