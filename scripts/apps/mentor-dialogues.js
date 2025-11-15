@@ -790,7 +790,7 @@ export const MENTORS = {
     },
 
     Infiltrator: {
-        name: "Echo",
+        name: "Delta",
         title: "Master of Disguise",
         description: "A shapeshifting spy who has infiltrated every major organization",
         portrait: "systems/swse/assets/mentors/echo.webp",
@@ -844,7 +844,7 @@ export const MENTORS = {
     },
 
     "Master Privateer": {
-        name: "Captain Tideborn",
+        name: "'The Captain'",
         title: "Scourge of the Spacelanes",
         description: "A legendary pirate captain who commands respect and fear across the stars",
         portrait: "systems/swse/assets/mentors/tideborn.webp",
@@ -1006,7 +1006,7 @@ export const MENTORS = {
     },
 
     Shaper: {
-        name: "Artisan Vel",
+        name: "Shaper Urza",
         title: "Master of Living Technology",
         description: "A bioengineering expert who crafts living tools and organisms",
         portrait: "systems/swse/assets/mentors/vel.webp",
