@@ -1,15 +1,19 @@
 // ============================================
 // SWSE Character Generator - NARRATIVE ENHANCED
-// Personalized responses, talent tree visualization
+// Personalized responses by Ol' Salty the Space Pirate
+// Talent tree visualization
 // ============================================
 
 import CharacterGeneratorImproved from './chargen-improved.js';
+import { MENTORS } from './mentor-dialogues.js';
 
 export default class CharacterGeneratorNarrative extends CharacterGeneratorImproved {
 
   constructor(options) {
     super(options);
-    this.narratorPersonality = this._selectNarratorPersonality();
+    // Always use Ol' Salty (the Scoundrel mentor) as the chargen narrator
+    this.narrator = MENTORS.Scoundrel;
+    this.narratorPersonality = 'salty'; // Ol' Salty's unique personality
     this.selectedTalentTree = null;
     this.talentData = null;
   }
@@ -29,72 +33,45 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   }
 
   // ========================================
-  // NARRATOR PERSONALITY SYSTEM
+  // OL' SALTY NARRATOR SYSTEM
   // ========================================
-
-  _selectNarratorPersonality() {
-    const personalities = ['snarky', 'wise', 'excited', 'mysterious', 'sarcastic'];
-    return personalities[Math.floor(Math.random() * personalities.length)];
-  }
 
   _getNarratorComment() {
     const step = this.characterData.currentStep;
-    const personality = this.narratorPersonality;
 
     switch(step) {
       case 'name':
-        return this._getNameComment(personality);
+        return this._getNameComment();
       case 'species':
-        return this._getSpeciesComment(personality);
+        return this._getSpeciesComment();
       case 'abilities':
-        return this._getAbilitiesComment(personality);
+        return this._getAbilitiesComment();
       case 'class':
-        return this._getClassComment(personality);
+        return this._getClassComment();
       case 'talents':
-        return this._getTalentsComment(personality);
+        return this._getTalentsComment();
       case 'skills':
-        return this._getSkillsComment(personality);
+        return this._getSkillsComment();
       case 'summary':
-        return this._getSummaryComment(personality);
+        return this._getSummaryComment();
       default:
         return '';
     }
   }
 
-  _getNameComment(personality) {
-    const comments = {
-      snarky: [
-        "Ah, picking a name. The hardest part of character creation. Or is it?",
-        "Choose wisely. This name will echo through the galaxy... or at least this campaign.",
-        "A name is just a label, but make it a GOOD one."
-      ],
-      wise: [
-        "Names hold power in the Force. Choose one that resonates with your destiny.",
-        "The first step on any journey is knowing who you are.",
-        "A Jedi's name becomes legend. What will yours be?"
-      ],
-      excited: [
-        "YES! Let's create an AMAZING character! First, what's their name?!",
-        "This is going to be SO COOL! What should we call your hero?",
-        "Oh boy oh boy! Time to name your galactic adventurer!"
-      ],
-      mysterious: [
-        "Names are but shadows of our true selves... but we need one anyway.",
-        "The Force whispers to me... it asks, what shall we call you?",
-        "Identity is fluid, names are permanent. Choose carefully..."
-      ],
-      sarcastic: [
-        "Oh great, another would-be hero. What's the name this time?",
-        "Let me guess, you're gonna name them after your cat, aren't you?",
-        "Pick a name. Any name. Preferably one that doesn't make me cringe."
-      ]
-    };
+  _getNameComment() {
+    const comments = [
+      "Arr, every great spacer needs a name that strikes fear in the hearts of Imperials! What'll it be?",
+      "A name, ye say? Choose one that'll look good on a bounty poster, har har!",
+      "Pick a name that the cantina singers will remember when they sing yer shanties!",
+      "What shall we call ye, me young buccaneer? Make it memorable like 'Ol' Salty himself!",
+      "Arr! First things first - what name will echo through the spaceways when ye plunder and pillage?"
+    ];
 
-    const list = comments[personality] || comments.snarky;
-    return list[Math.floor(Math.random() * list.length)];
+    return comments[Math.floor(Math.random() * comments.length)];
   }
 
-  _getAbilitiesComment(personality) {
+  _getAbilitiesComment() {
     const abilities = this.characterData.abilities;
 
     // Determine highest ability
@@ -108,177 +85,106 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     }
 
     const abilityComments = {
-      str: {
-        snarky: "Ah, a muscle-head! Because brains are overrated, right?",
-        wise: "Strength of body can move mountains. But remember: true power comes from within.",
-        excited: "WOW! Look at those MUSCLES! You're gonna CRUSH things!",
-        mysterious: "Physical prowess... the crudest manifestation of power, yet effective.",
-        sarcastic: "High Strength? Let me guess, you'll solve every problem by hitting it."
-      },
-      dex: {
-        snarky: "Nimble fingers and quick feet. A duelist's dream... or a pickpocket's.",
-        wise: "Agility serves both the warrior and the diplomat. A valuable asset.",
-        excited: "ZOOOM! You're gonna be SO FAST! Like a speeder bike!",
-        mysterious: "Grace and precision... the hallmarks of a true artist of combat.",
-        sarcastic: "High Dex? Great, another flippy-spinny character."
-      },
-      con: {
-        snarky: "Tough as a rancor, twice as stubborn. Good luck killing THIS one.",
-        wise: "Endurance is the foundation upon which all great deeds are built.",
-        excited: "You're gonna be SUPER TOUGH! Nothing can stop you!",
-        mysterious: "Resilience... the quiet strength that outlasts all flashy displays.",
-        sarcastic: "High Con? So you're a damage sponge. How... thrilling."
-      },
-      int: {
-        snarky: "Ah, a big brain! Finally, someone who can actually READ the rulebook.",
-        wise: "Knowledge is the path to understanding. The Force flows through all who seek wisdom.",
-        excited: "SO SMART! You're gonna know EVERYTHING!",
-        mysterious: "Intelligence... the key to unlocking the universe's deepest secrets.",
-        sarcastic: "High Intelligence? Don't worry, your party won't appreciate it."
-      },
-      wis: {
-        snarky: "Perceptive AND insightful? Careful, you might actually survive.",
-        wise: "Wisdom is the rarest of gifts. You see beyond what others merely observe.",
-        excited: "You're gonna be SO WISE! Like a Jedi Master!",
-        mysterious: "Perception pierces all veils... you will see what others cannot.",
-        sarcastic: "High Wisdom? Too bad you can't use it to make better life choices... like playing this campaign."
-      },
-      cha: {
-        snarky: "Charming AND persuasive? You're either the face of the party or a used speeder salesman.",
-        wise: "Charisma is the Force's way of saying 'you have a gift for inspiring others.'",
-        excited: "EVERYONE'S GONNA LOVE YOU! You're so CHARMING!",
-        mysterious: "The power to bend others to your will through mere presence... fascinating.",
-        sarcastic: "High Charisma? Great, another smooth-talker who thinks they can seduce the BBEG."
-      }
+      str: "Arr! Strong as a Wookiee, ye are! Perfect for smashin' skulls and liftin' treasure chests!",
+      dex: "Quick as a Mynock in a power coupling! Ye'll be dodgin' blaster bolts like a true spacer!",
+      con: "Tough as durasteel hull plating! Takes more than a few shots to sink this ship!",
+      int: "Smart as a protocol droid! Ye'll be hackin' security systems and outsmartin' Imps in no time!",
+      wis: "Perceptive like a scanner! Ye won't fall for no Jedi mind tricks or smuggler's cons!",
+      cha: "Charmin' as a Corellian con artist! Ye could talk a Hutt out of his credits, har har!"
     };
 
     if (highest && abilityComments[highest]) {
-      return abilityComments[highest][personality] || abilityComments[highest].snarky;
+      return abilityComments[highest];
     }
 
-    return "Interesting ability spread. Let's see how this plays out...";
+    return "Arr, a well-balanced scallywag! Ye'll be ready for whatever the galaxy throws at ye!";
   }
 
-  _getClassComment(personality) {
+  _getClassComment() {
     const classes = this.characterData.classes;
     if (classes.length === 0) return '';
 
     const className = classes[0].name;
 
     const classComments = {
-      'Jedi': {
-        snarky: "A Jedi? How original. At least you didn't pick 'Darth' as your first name.",
-        wise: "The path of the Jedi is noble and ancient. May the Force guide you.",
-        excited: "AWESOME! LIGHTSABERS AND FORCE POWERS! THIS IS GONNA BE EPIC!",
-        mysterious: "The Force calls to you... will you answer with light, or darkness?",
-        sarcastic: "Jedi. *sigh* Let me guess, you're gonna try to solve everything peacefully?"
-      },
-      'Soldier': {
-        snarky: "Soldier? Someone's gotta carry all the blasters. Might as well be you.",
-        wise: "The warrior's path demands discipline, courage, and sacrifice.",
-        excited: "YES! GUNS! LOTS OF GUNS! PEW PEW PEW!",
-        mysterious: "A soldier knows that death walks beside them... always.",
-        sarcastic: "Soldier. Because subtlety is for suckers, right?"
-      },
-      'Scoundrel': {
-        snarky: "A scoundrel! I like you already. Just don't steal from the party.",
-        wise: "The clever survive where the strong fall. Use your wits wisely.",
-        excited: "Ooh, sneaky! You're gonna be like Han Solo!",
-        mysterious: "Those who walk in shadows see truths others fear to acknowledge.",
-        sarcastic: "Scoundrel? So you're gonna backstab the party. Got it."
-      },
-      'Noble': {
-        snarky: "A Noble! How fancy. Do we need to bow, Your Highness?",
-        wise: "Leadership is a heavy burden. Those with privilege must serve with honor.",
-        excited: "Ooh la la! FANCY! You're gonna have SO MANY CREDITS!",
-        mysterious: "Power and responsibility... the eternal balance of nobility.",
-        sarcastic: "Noble. Great. Another entitled rich kid playing hero."
-      },
-      'Scout': {
-        snarky: "Scout? Good choice. Someone needs to see the trap BEFORE the party walks into it.",
-        wise: "The path finder goes where others fear to tread. Your courage will be tested.",
-        excited: "ADVENTURE! EXPLORATION! You're gonna discover SO MUCH!",
-        mysterious: "The unknown calls to you... and you answer without hesitation.",
-        sarcastic: "Scout. So you're the one who gets to say 'I told you so' when everyone dies."
-      }
+      'Jedi': "A Jedi, eh? Fancy lightsaber-swingers! Just remember - laser swords don't help much when negotiatin' with Hutts, har har!",
+      'Soldier': "A Soldier! Now that's a proper fighter! Load up on blasters and grenades - that's how ye survive the spaceways!",
+      'Scoundrel': "HAR HAR! A SCOUNDREL! Now THAT'S what I'm talkin' about! Welcome to the brotherhood of rogues and rascals!",
+      'Noble': "A Noble? All fancy-like with yer credits and estates? Well, at least ye can afford to buy ol' Salty a drink!",
+      'Scout': "A Scout! Sneaky and resourceful! Ye'll be findin' treasure and avoidin' trouble like a true spacer!"
     };
 
-    const comment = classComments[className]?.[personality];
+    const comment = classComments[className];
     if (comment) return comment;
 
-    return `${className}... interesting choice. Let's see what you can do with it.`;
+    return `${className}... arr, an interesting choice, me buccaneer! Let's see what ye can do with it!`;
   }
 
-  _getSpeciesComment(personality) {
-    return '';  // Implement based on selected species
+  _getSpeciesComment() {
+    return '';  // Could add Ol' Salty comments for species
   }
 
-  _getTalentsComment(personality) {
-    const comments = {
-      snarky: "Time to pick talents. Try not to min-max TOO hard.",
-      wise: "Talents are expressions of your training and experience. Choose what resonates with your path.",
-      excited: "TALENT TIME! These are gonna make you SO POWERFUL!",
-      mysterious: "Your abilities crystallize here... choose the path that calls to you.",
-      sarcastic: "Talents. Because your class features weren't enough, apparently."
-    };
-    return comments[personality] || comments.snarky;
+  _getTalentsComment() {
+    const comments = [
+      "Talents, ye say? Pick the ones that'll help ye plunder more loot and survive more battles!",
+      "Special abilities make the difference between a dead pirate and a RICH pirate, savvy?",
+      "Choose yer talents wisely, matey! They're yer secret weapons in the battle for survival!",
+      "Arr! These talents are like tools in a smuggler's kit - pick the best for the job!"
+    ];
+    return comments[Math.floor(Math.random() * comments.length)];
   }
 
-  _getSkillsComment(personality) {
-    const comments = {
-      snarky: "Skills! Because knowing how to hack a computer is occasionally useful.",
-      wise: "Every skill is a tool. A wise individual masters many.",
-      excited: "SO MANY THINGS TO LEARN! What are you gonna be good at?!",
-      mysterious: "Skills define what you can do... but talent determines what you will do.",
-      sarcastic: "Skills. Sure, go ahead and put points in 'Use Rope' or whatever."
-    };
-    return comments[personality] || comments.snarky;
+  _getSkillsComment() {
+    const comments = [
+      "Skills! Can't pilot a ship, slice a computer, or talk yer way past guards without 'em!",
+      "A good scoundrel needs to know how to do EVERYTHING! Pick yer skills carefully, matey!",
+      "Skills are what separate the professional pirates from the dead ones, har har!",
+      "Arr! Ye need skills to survive in the galaxy - piloting, shooting, sweet-talking, the works!"
+    ];
+    return comments[Math.floor(Math.random() * comments.length)];
   }
 
-  _getSummaryComment(personality) {
+  _getSummaryComment() {
     const totalMods = Object.values(this.characterData.abilities)
       .reduce((sum, ab) => sum + (ab.mod || 0), 0);
 
     if (totalMods >= 12) {
-      return this._getEpicSummaryComment(personality);
+      return this._getEpicSummaryComment();
     } else if (totalMods <= -2) {
-      return this._getTerribleSummaryComment(personality);
+      return this._getTerribleSummaryComment();
     } else {
-      return this._getAverageSummaryComment(personality);
+      return this._getAverageSummaryComment();
     }
   }
 
-  _getEpicSummaryComment(personality) {
-    const comments = {
-      snarky: "Well, LOOK at you! Someone rolled well. Try not to let it go to your head.",
-      wise: "Your potential is extraordinary. Use it wisely, for great power demands great responsibility.",
-      excited: "WHOA! YOUR CHARACTER IS AMAZING! This is gonna be SO EPIC!",
-      mysterious: "Impressive... the Force is strong with this one.",
-      sarcastic: "Wow, amazing stats. Let's see how fast you can get them killed."
-    };
-    return comments[personality] || comments.snarky;
+  _getEpicSummaryComment() {
+    const comments = [
+      "BLOW ME DOWN! Look at those stats! Ye're gonna be a LEGEND across the galaxy, ye magnificent scoundrel!",
+      "Shiver me hyperdrives! That's one powerful character! The Empire itself should be shakin' in their boots!",
+      "HAR HAR! With stats like those, ye'll be the most feared pirate from here to the Corporate Sector!",
+      "Arr! Ye rolled better than a Sabacc champion! This character is destined for GREATNESS!"
+    ];
+    return comments[Math.floor(Math.random() * comments.length)];
   }
 
-  _getTerribleSummaryComment(personality) {
-    const comments = {
-      snarky: "Oof. Those are... certainly numbers. May the Force be with you. You're gonna need it.",
-      wise: "Even the weakest spark can ignite a great fire. Your journey will be challenging, but not impossible.",
-      excited: "Hey, it's not about the stats, it's about having FUN! ...right?",
-      mysterious: "Adversity reveals true character. You will be tested.",
-      sarcastic: "Those stats are tragic. Want to reroll before it's too late?"
-    };
-    return comments[personality] || comments.snarky;
+  _getTerribleSummaryComment() {
+    const comments = [
+      "Oof... those stats are rougher than a space slug's belly. But hey, underdogs make the best stories, savvy?",
+      "Arr... well... at least ye have HEART, right? Right? ...May the Force be with ye, ye poor soul.",
+      "Those numbers are lower than me expectations for Imperial intelligence! But a true pirate survives anyway!",
+      "Har... not the best rolls, but Ol' Salty's seen worse. Grab a blaster and hope for the best!"
+    ];
+    return comments[Math.floor(Math.random() * comments.length)];
   }
 
-  _getAverageSummaryComment(personality) {
-    const comments = {
-      snarky: "Solid. Not amazing, not terrible. Perfectly average. The galaxy needs people like you too, I guess.",
-      wise: "A balanced beginning. Your choices will determine your path more than your attributes.",
-      excited: "Looking good! Your character is gonna be awesome!",
-      mysterious: "Average power, unlimited potential. Let us see what you become.",
-      sarcastic: "Congrats on your aggressively mediocre stat line."
-    };
-    return comments[personality] || comments.snarky;
+  _getAverageSummaryComment() {
+    const comments = [
+      "Solid numbers, matey! Not legendary, but ye'll do just fine plunderin' the spaceways!",
+      "Arr, a respectable character! Ye won't be the strongest, but ye'll be crafty enough to survive!",
+      "Good enough for me! These stats'll get ye through most scrapes, especially if ye play it smart!",
+      "Har! Average is just fine - most of the galaxy's heroes started out just like ye!"
+    ];
+    return comments[Math.floor(Math.random() * comments.length)];
   }
 
   // ========================================

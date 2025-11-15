@@ -4,7 +4,10 @@
  * - Prestige class integration
  * - Visual talent tree selection
  * - Class prerequisite checking
+ * - Mentor-based narration system
  */
+
+import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from './mentor-dialogues.js';
 
 export class SWSELevelUpEnhanced extends FormApplication {
 
@@ -31,6 +34,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.abilityIncreases = {}; // Track ability score increases
     this.hpGain = 0;
     this.talentData = null;
+
+    // Mentor system
+    const level1Class = getLevel1Class(this.actor);
+    this.mentor = getMentorForClass(level1Class);
+    this.mentorGreeting = getMentorGreeting(this.mentor, this.actor.system.level + 1);
   }
 
   get title() {
@@ -62,6 +70,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
     data.getsAbilityIncrease = this._getsAbilityIncrease();
     data.abilityIncreases = this.abilityIncreases;
 
+    // Mentor data
+    data.mentor = this.mentor;
+    data.mentorGreeting = this.mentorGreeting;
+    data.mentorGuidance = this._getMentorGuidanceForCurrentStep();
+
     // If class selected, get talent trees
     if (this.selectedClass) {
       data.selectedClass = this.selectedClass;
@@ -69,6 +82,24 @@ export class SWSELevelUpEnhanced extends FormApplication {
     }
 
     return data;
+  }
+
+  /**
+   * Get mentor guidance for the current step
+   * @returns {string}
+   */
+  _getMentorGuidanceForCurrentStep() {
+    const guidanceMap = {
+      'class': 'class',
+      'multiclass-bonus': 'multiclass',
+      'ability-increase': 'ability',
+      'talent': 'talent',
+      'skills': 'skill',
+      'summary': 'hp'
+    };
+
+    const choiceType = guidanceMap[this.currentStep] || 'class';
+    return getMentorGuidance(this.mentor, choiceType);
   }
 
   /**
@@ -809,6 +840,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
     event.preventDefault();
 
     try {
+      // If this is level 1, save the starting class for mentor system
+      if (this.actor.system.level === 1) {
+        await setLevel1Class(this.actor, this.selectedClass.name);
+      }
+
       // Create class item
       const classItem = {
         name: this.selectedClass.name,
@@ -935,10 +971,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
         hpGainText += ` (+ ${retroactiveHPGain} from CON increase)`;
       }
 
-      // Create chat message
+      // Create chat message with mentor narration
       const chatContent = `
         <div class="swse level-up-message">
           <h3><i class="fas fa-level-up-alt"></i> Level Up!</h3>
+          <div class="mentor-narration" style="background: rgba(0,0,0,0.3); padding: 0.5rem; border-left: 3px solid #00d9ff; margin: 0.5rem 0; font-style: italic;">
+            <strong>${this.mentor.name}, ${this.mentor.title}:</strong><br>
+            "${this.mentorGreeting}"
+          </div>
           <p><strong>${this.actor.name}</strong> advanced to level <strong>${newLevel}</strong>!</p>
           <p><strong>Class:</strong> ${this.selectedClass.name}</p>
           <p><strong>HP Gained:</strong> ${hpGainText}</p>
