@@ -430,6 +430,55 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         })
       }),
 
+      // Weapons array
+      weapons: new fields.ArrayField(new fields.SchemaField({
+        name: new fields.StringField({required: false, initial: ""}),
+        arc: new fields.StringField({required: false, initial: ""}),
+        bonus: new fields.StringField({required: false, initial: ""}),
+        damage: new fields.StringField({required: false, initial: ""}),
+        range: new fields.StringField({required: false, initial: ""})
+      }), {initial: []}),
+
+      // Crew positions
+      crewPositions: new fields.SchemaField({
+        pilot: new fields.StringField({required: false, initial: null}),
+        copilot: new fields.StringField({required: false, initial: null}),
+        gunner: new fields.StringField({required: false, initial: null}),
+        engineer: new fields.StringField({required: false, initial: null}),
+        shields: new fields.StringField({required: false, initial: null}),
+        commander: new fields.StringField({required: false, initial: null})
+      }),
+
+      // Crew notes
+      crewNotes: new fields.StringField({required: false, initial: ""}),
+
+      // Additional details
+      carried_craft: new fields.StringField({required: false, initial: ""}),
+      tags: new fields.ArrayField(new fields.StringField(), {initial: []}),
+      description: new fields.StringField({required: false, initial: ""}),
+      sourcebook: new fields.StringField({required: false, initial: ""}),
+      page: new fields.NumberField({
+        required: false,
+        nullable: true,
+        initial: null,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return null;
+          const num = Number(value);
+          return Number.isNaN(num) ? null : Math.floor(num);
+        }
+      }),
+
+      // Hyperdrive classes
+      hyperdrive_class: new fields.StringField({required: false, initial: ""}),
+      backup_class: new fields.StringField({required: false, initial: ""}),
+
+      // Cargo capacity (string to allow units)
+      cargo_capacity: new fields.StringField({required: false, initial: ""}),
+
+      // Sensors
+      senses: new fields.StringField({required: false, initial: ""}),
+
       // Cover provided to occupants
       cover: new fields.StringField({
         required: true,
