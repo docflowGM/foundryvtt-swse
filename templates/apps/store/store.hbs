@@ -11,7 +11,7 @@
         <span class="speaker-name">RENDARR:</span>
       </div>
       <div class="holo-message">
-        "Welcome to my shop, lad! Spend to your heart's desire!"
+        "{{rendarrWelcome}}"
       </div>
     </div>
   </div>
@@ -576,6 +576,13 @@
             <span class="summary-value">
               <span class="credits-icon">₢</span>
               <span id="cart-total">0</span>
+            </span>
+          </div>
+          <div class="summary-line remaining-line">
+            <span class="summary-label">Remaining Credits:</span>
+            <span class="summary-value" id="remaining-credits-preview">
+              <span class="credits-icon">₢</span>
+              <span id="cart-remaining">{{credits}}</span>
             </span>
           </div>
         </div>
