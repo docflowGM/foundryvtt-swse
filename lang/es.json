@@ -189,6 +189,28 @@
         "Hint": "Habilitar registro detallado de errores y trazas de pila para depuración"
       }
     },
+    "Compendium": {
+      "Classes": "Clases",
+      "Talents": "Talentos",
+      "TalentTrees": "Árboles de Talentos",
+      "Feats": "Dotes",
+      "Species": "Especies",
+      "Equipment": "Equipo",
+      "Weapons": "Armas",
+      "Armor": "Armadura",
+      "ArmorLight": "Armadura Ligera",
+      "ArmorMedium": "Armadura Media",
+      "ArmorHeavy": "Armadura Pesada",
+      "ForcePowers": "Poderes de la Fuerza",
+      "Skills": "Habilidades",
+      "ExtraSkillUses": "Usos Adicionales de Habilidad",
+      "Conditions": "Condiciones",
+      "SpecialCombatConditions": "Condiciones Especiales de Combate",
+      "Attributes": "Atributos",
+      "Vehicles": "Vehículos",
+      "Droids": "Droides",
+      "NPCs": "PNJs"
+    },
     "ForcePoints": {
       "SpendDialog": {
         "Title": "Gastar Punto de Fuerza",

@@ -97,140 +97,140 @@
   "packs": [
     {
       "name": "classes",
-      "label": "Classes",
+      "label": "SWSE.Compendium.Classes",
       "path": "packs/classes.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "talents",
-      "label": "Talents",
+      "label": "SWSE.Compendium.Talents",
       "path": "packs/talents.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "talent_trees",
-      "label": "Talent Trees",
+      "label": "SWSE.Compendium.TalentTrees",
       "path": "packs/talent_trees.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "feats",
-      "label": "Feats",
+      "label": "SWSE.Compendium.Feats",
       "path": "packs/feats.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "species",
-      "label": "Species",
+      "label": "SWSE.Compendium.Species",
       "path": "packs/species.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "equipment",
-      "label": "Equipment",
+      "label": "SWSE.Compendium.Equipment",
       "path": "packs/equipment.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "weapons",
-      "label": "Weapons",
+      "label": "SWSE.Compendium.Weapons",
       "path": "packs/weapons.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "armor",
-      "label": "Armor",
+      "label": "SWSE.Compendium.Armor",
       "path": "packs/armor.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "armor_light",
-      "label": "Light Armor",
+      "label": "SWSE.Compendium.ArmorLight",
       "path": "packs/armor-light.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "armor_medium",
-      "label": "Medium Armor",
+      "label": "SWSE.Compendium.ArmorMedium",
       "path": "packs/armor-medium.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "armor_heavy",
-      "label": "Heavy Armor",
+      "label": "SWSE.Compendium.ArmorHeavy",
       "path": "packs/armor-heavy.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "forcepowers",
-      "label": "Force Powers",
+      "label": "SWSE.Compendium.ForcePowers",
       "path": "packs/forcepowers.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "skills",
-      "label": "Skills",
+      "label": "SWSE.Compendium.Skills",
       "path": "packs/skills.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "extraskilluses",
-      "label": "Extra Skill Uses",
+      "label": "SWSE.Compendium.ExtraSkillUses",
       "path": "packs/extraskilluses.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "conditions",
-      "label": "Conditions",
+      "label": "SWSE.Compendium.Conditions",
       "path": "packs/conditions.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "special_combat_condition",
-      "label": "Special Combat Conditions",
+      "label": "SWSE.Compendium.SpecialCombatConditions",
       "path": "packs/special-combat-condition.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "attributes",
-      "label": "Attributes",
+      "label": "SWSE.Compendium.Attributes",
       "path": "packs/attributes.db",
       "type": "Item",
       "system": "swse"
     },
     {
       "name": "vehicles",
-      "label": "Vehicles",
+      "label": "SWSE.Compendium.Vehicles",
       "path": "packs/vehicles.db",
       "type": "Actor",
       "system": "swse"
     },
     {
       "name": "droids",
-      "label": "Droids",
+      "label": "SWSE.Compendium.Droids",
       "path": "packs/droids.db",
       "type": "Actor",
       "system": "swse"
     },
     {
       "name": "npc",
-      "label": "NPCs",
+      "label": "SWSE.Compendium.NPCs",
       "path": "packs/npc.db",
       "type": "Actor",
       "system": "swse"

@@ -189,6 +189,28 @@
         "Hint": "Включить подробное логирование ошибок и трассировку стека для отладки"
       }
     },
+    "Compendium": {
+      "Classes": "Классы",
+      "Talents": "Таланты",
+      "TalentTrees": "Деревья Талантов",
+      "Feats": "Черты",
+      "Species": "Виды",
+      "Equipment": "Снаряжение",
+      "Weapons": "Оружие",
+      "Armor": "Броня",
+      "ArmorLight": "Лёгкая Броня",
+      "ArmorMedium": "Средняя Броня",
+      "ArmorHeavy": "Тяжёлая Броня",
+      "ForcePowers": "Силовые Способности",
+      "Skills": "Навыки",
+      "ExtraSkillUses": "Дополнительные Применения Навыков",
+      "Conditions": "Состояния",
+      "SpecialCombatConditions": "Особые Боевые Состояния",
+      "Attributes": "Атрибуты",
+      "Vehicles": "Транспорт",
+      "Droids": "Дроиды",
+      "NPCs": "НИПы"
+    },
     "ForcePoints": {
       "SpendDialog": {
         "Title": "Потратить Очко Силы",

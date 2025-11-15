@@ -189,6 +189,28 @@
         "Hint": "Enable detailed error logging and stack traces for debugging"
       }
     },
+    "Compendium": {
+      "Classes": "Classes",
+      "Talents": "Talents",
+      "TalentTrees": "Talent Trees",
+      "Feats": "Feats",
+      "Species": "Species",
+      "Equipment": "Equipment",
+      "Weapons": "Weapons",
+      "Armor": "Armor",
+      "ArmorLight": "Light Armor",
+      "ArmorMedium": "Medium Armor",
+      "ArmorHeavy": "Heavy Armor",
+      "ForcePowers": "Force Powers",
+      "Skills": "Skills",
+      "ExtraSkillUses": "Extra Skill Uses",
+      "Conditions": "Conditions",
+      "SpecialCombatConditions": "Special Combat Conditions",
+      "Attributes": "Attributes",
+      "Vehicles": "Vehicles",
+      "Droids": "Droids",
+      "NPCs": "NPCs"
+    },
     "ForcePoints": {
       "SpendDialog": {
         "Title": "Spend Force Point",

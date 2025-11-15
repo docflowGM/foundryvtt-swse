@@ -189,6 +189,28 @@
         "Hint": "Activer la journalisation détaillée des erreurs et les traces de pile pour le débogage"
       }
     },
+    "Compendium": {
+      "Classes": "Classes",
+      "Talents": "Talents",
+      "TalentTrees": "Arbres de Talents",
+      "Feats": "Dons",
+      "Species": "Espèces",
+      "Equipment": "Équipement",
+      "Weapons": "Armes",
+      "Armor": "Armure",
+      "ArmorLight": "Armure Légère",
+      "ArmorMedium": "Armure Moyenne",
+      "ArmorHeavy": "Armure Lourde",
+      "ForcePowers": "Pouvoirs de la Force",
+      "Skills": "Compétences",
+      "ExtraSkillUses": "Utilisations Supplémentaires de Compétence",
+      "Conditions": "États",
+      "SpecialCombatConditions": "États de Combat Spéciaux",
+      "Attributes": "Attributs",
+      "Vehicles": "Véhicules",
+      "Droids": "Droïdes",
+      "NPCs": "PNJs"
+    },
     "ForcePoints": {
       "SpendDialog": {
         "Title": "Dépenser un Point de Force",

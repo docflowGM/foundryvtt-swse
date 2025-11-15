@@ -189,6 +189,28 @@
         "Hint": "Aktiviert detaillierte Fehlerprotokollierung und Stack-Traces für Debugging"
       }
     },
+    "Compendium": {
+      "Classes": "Klassen",
+      "Talents": "Talente",
+      "TalentTrees": "Talentbäume",
+      "Feats": "Vorzüge",
+      "Species": "Spezies",
+      "Equipment": "Ausrüstung",
+      "Weapons": "Waffen",
+      "Armor": "Rüstung",
+      "ArmorLight": "Leichte Rüstung",
+      "ArmorMedium": "Mittlere Rüstung",
+      "ArmorHeavy": "Schwere Rüstung",
+      "ForcePowers": "Machtkräfte",
+      "Skills": "Fertigkeiten",
+      "ExtraSkillUses": "Zusätzliche Fertigkeitsnutzungen",
+      "Conditions": "Zustände",
+      "SpecialCombatConditions": "Besondere Kampfzustände",
+      "Attributes": "Attribute",
+      "Vehicles": "Fahrzeuge",
+      "Droids": "Droiden",
+      "NPCs": "NSCs"
+    },
     "ForcePoints": {
       "SpendDialog": {
         "Title": "Machtpunkt Ausgeben",
