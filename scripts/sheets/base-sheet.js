@@ -356,7 +356,27 @@ export class SWSEActorSheetBase extends ActorSheet {
       }
     }
   }
-  
+
+  /**
+   * Handle Force Point actions
+   */
+  async _onSpendForcePoint(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const type = button.dataset.type;
+
+    switch(type) {
+      case 'reroll':
+        return this.actor.rollForcePoint('reroll');
+      case 'avoid-death':
+        return this.actor.avoidDeathWithForcePoint();
+      case 'reduce-dark':
+        return this.actor.reduceDarkSideScore();
+      default:
+        return this.actor.rollForcePoint('general use');
+    }
+  }
+
   /**
    * Handle quantity changes
    */

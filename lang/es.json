@@ -163,6 +163,205 @@
       "Retraining": {
         "Name": "Permitir Reentrenamiento",
         "Hint": "Permitir intercambiar dotes/talentos al subir de nivel"
+      },
+      "DailyForcePoints": {
+        "Name": "Puntos de Fuerza Diarios",
+        "Hint": "Usar Puntos de Fuerza diarios en lugar de por nivel (1-5°: 1 PF, 6-10°: 2 PF, 11-15°: 3 PF, 16+: 4 PF por día)"
+      },
+      "DarkSideTemptationMechanic": {
+        "Name": "Mecánica de Tentación del Lado Oscuro",
+        "Hint": "Permitir a los personajes invocar el Lado Oscuro al gastar Puntos de Fuerza (requiere Puntuación de Lado Oscuro ≤ mitad de Sabiduría, +1d6, aumenta Puntuación de Lado Oscuro en 1)"
+      },
+      "DarkSideTemptation": {
+        "Name": "Tentación del Lado Oscuro",
+        "Hint": "Permitir a los personajes invocar el Lado Oscuro al gastar Puntos de Fuerza (requiere Puntuación de Lado Oscuro ≤ mitad de Sabiduría)"
+      },
+      "ResetResourcesOnCombat": {
+        "Name": "Restablecer Recursos al Inicio del Combate",
+        "Hint": "Restablecer automáticamente recursos temporales (como Segundo Aliento) cuando comienza el combate"
+      },
+      "WelcomeShown": {
+        "Name": "Mensaje de Bienvenida Mostrado",
+        "Hint": "Rastrea si el mensaje de bienvenida ha sido mostrado"
+      },
+      "DevMode": {
+        "Name": "Modo Desarrollador",
+        "Hint": "Habilitar registro detallado de errores y trazas de pila para depuración"
+      }
+    },
+    "Compendium": {
+      "Classes": "Clases",
+      "Talents": "Talentos",
+      "TalentTrees": "Árboles de Talentos",
+      "Feats": "Dotes",
+      "Species": "Especies",
+      "Equipment": "Equipo",
+      "Weapons": "Armas",
+      "Armor": "Armadura",
+      "ArmorLight": "Armadura Ligera",
+      "ArmorMedium": "Armadura Media",
+      "ArmorHeavy": "Armadura Pesada",
+      "ForcePowers": "Poderes de la Fuerza",
+      "Skills": "Habilidades",
+      "ExtraSkillUses": "Usos Adicionales de Habilidad",
+      "Conditions": "Condiciones",
+      "SpecialCombatConditions": "Condiciones Especiales de Combate",
+      "Attributes": "Atributos",
+      "Vehicles": "Vehículos",
+      "Droids": "Droides",
+      "NPCs": "PNJs"
+    },
+    "ForcePoints": {
+      "SpendDialog": {
+        "Title": "Gastar Punto de Fuerza",
+        "Question": "¿Gastar un Punto de Fuerza para {reason}?",
+        "RollInfo": "Tirarás {die} y añadirás el {method} a tu tirada.",
+        "CallDarkSide": "Invocar el Lado Oscuro (+1d6, aumenta Puntuación de Lado Oscuro en 1)",
+        "Remaining": "Puntos de Fuerza Restantes:",
+        "Spend": "Gastar Punto de Fuerza",
+        "Cancel": "Cancelar"
+      },
+      "Chat": {
+        "Title": "Punto de Fuerza Gastado",
+        "Highest": "Más Alto:",
+        "Result": "Resultado:",
+        "DarkSideBonus": "Bonificación de Lado Oscuro:",
+        "DarkSideWarning": "Puntuación de Lado Oscuro aumentada en 1",
+        "TotalBonus": "Bonificación Total:",
+        "UsedFor": "Usado para:",
+        "ReducedDarkSide": "Puntuación de Lado Oscuro reducida a {score}",
+        "AvoidDeath": "¡{name} gasta un Punto de Fuerza para evitar la muerte y cae inconsciente!",
+        "AlreadyZero": "Tu Puntuación de Lado Oscuro ya es 0.",
+        "NoPointsRemaining": "¡No quedan Puntos de Fuerza!"
+      },
+      "Methods": {
+        "result": "resultado",
+        "highest_result": "resultado más alto"
+      }
+    },
+    "Notifications": {
+      "Welcome": {
+        "Title": "¡Sistema SWSE Mejorado Cargado!",
+        "ConditionTrack": "Pista de Condición Visual activa",
+        "DamageThreshold": "Automatización de Umbral de Daño habilitada",
+        "ForceSuite": "Gestión de Suite de Fuerza lista",
+        "Summary": "Consulta la pestaña Resumen para tu panel de combate"
+      },
+      "Condition": {
+        "RecoverySuccess": "¡{name} recupera un paso en la pista de condición!",
+        "RecoveryFailed": "{name} falla al recuperarse."
+      },
+      "Combat": {
+        "NoTargets": "¡No hay objetivos seleccionados!",
+        "NoActorSelected": "No hay actor seleccionado"
+      },
+      "Damage": {
+        "CannotRoll": "No se puede tirar daño para este objeto."
+      },
+      "Rolls": {
+        "DefenseNotFound": "Tipo de defensa {type} no encontrado",
+        "SaveSucceeded": "¡Salvación exitosa! ({total} contra CD {dc})",
+        "SaveFailed": "¡Salvación fallida! ({total} contra CD {dc})",
+        "DiceRollFailed": "Tirada de dados fallida: {error}",
+        "SkillNotFound": "Habilidad {skill} no encontrada",
+        "UseForceRequiresTraining": "¡Usar la Fuerza requiere entrenamiento!"
+      },
+      "Items": {
+        "NotOwnedByActor": "Este objeto no pertenece a ningún actor.",
+        "SpeciesApplied": "Rasgos raciales de {species} aplicados a {actor}",
+        "AlreadyHasClass": "{actor} ya tiene la clase {class}"
+      },
+      "System": {
+        "MigrationComplete": "Migración completa: {updated} actualizados, {errors} errores"
+      }
+    },
+    "Dialogs": {
+      "ConditionRecovery": {
+        "Title": "Recuperación de Condición",
+        "Content": "<p><strong>{name}</strong> puede intentar recuperarse.</p><p>Posición actual: {current}/5</p><p>¿Hacer una prueba de Aguante CD 10?</p>"
+      },
+      "ReplaceSpecies": {
+        "Title": "¿Reemplazar Especie?",
+        "Content": "<p>{actor} ya tiene la especie: <strong>{existing}</strong></p><p>¿Reemplazar con <strong>{new}</strong>?</p>"
+      },
+      "ApplyDroidChassis": {
+        "Title": "¿Aplicar Chasis de Droide?"
+      },
+      "ApplyVehicleTemplate": {
+        "Title": "¿Aplicar Plantilla de Vehículo?"
+      },
+      "ApplyDamage": {
+        "Title": "Aplicar Daño a {name}",
+        "Amount": "Cantidad de Daño",
+        "CheckThreshold": "Verificar Umbral de Daño",
+        "IgnoreTemp": "Ignorar PG Temporales",
+        "Button": "Aplicar Daño"
+      },
+      "Healing": {
+        "TitleHeal": "Curar a {name}",
+        "TitleRepair": "Reparar a {name}",
+        "Amount": "Cantidad de Curación",
+        "RepairAmount": "Cantidad de Reparación (vía Mecánica)",
+        "ButtonHeal": "Aplicar Curación",
+        "ButtonRepair": "Aplicar Reparación",
+        "DroidNote": "Los droides solo pueden repararse con la habilidad Mecánica."
+      },
+      "ConditionTrack": {
+        "Title": "Pista de Condición: {name}"
+      },
+      "Store": {
+        "Title": "Bolsa de Intercambio Galáctica",
+        "ConfirmDroidPurchase": "Confirmar Compra de Droide",
+        "ConfirmVehiclePurchase": "Confirmar Compra de Vehículo",
+        "BuildCustomDroid": "Construir Droide Personalizado",
+        "BuildCustomStarship": "Construir Nave Estelar Personalizada",
+        "CompletePurchase": "Completar Compra"
+      },
+      "LevelUp": {
+        "Title": "Subir de Nivel {name}"
+      },
+      "HouseRules": {
+        "Title": "Configuración de Reglas de Casa SWSE",
+        "CharacterCreation": "Creación de Personaje",
+        "SkillsFeats": "Habilidades y Dotes",
+        "Advancement": "Avance",
+        "Combat": "Combate",
+        "ForceDestiny": "Fuerza y Destino",
+        "SpaceCombat": "Combate Espacial",
+        "Presets": "Preajustes",
+        "CharacterCreationRules": "Reglas de Creación de Personaje",
+        "AdvancementRules": "Reglas de Avance",
+        "CombatRules": "Reglas de Combate",
+        "ForceDestinyRules": "Reglas de Fuerza y Destino"
+      },
+      "CharacterGenerator": {
+        "Title": "Generador de Personaje",
+        "ImportDroidType": "Importar Tipo de Droide"
+      },
+      "Buttons": {
+        "Confirm": "Confirmar",
+        "Cancel": "Cancelar",
+        "Apply": "Aplicar",
+        "Close": "Cerrar",
+        "Save": "Guardar",
+        "Delete": "Eliminar"
+      }
+    },
+    "Chat": {
+      "Flavors": {
+        "ConditionRecovery": "Prueba de Recuperación de Condición (CD 10)",
+        "Attack": "Ataque de {weapon}",
+        "Damage": "Daño de {weapon}",
+        "Save": "{name} lanza una salvación de {type} ({modifier})",
+        "Skill": "Prueba de {skill}"
+      },
+      "Roll": {
+        "CriticalThreat": "¡AMENAZA CRÍTICA!",
+        "RollDamage": "Tirar Daño",
+        "ApplyDamage": "Aplicar Daño",
+        "DiceTotal": "Total",
+        "Formula": "Fórmula",
+        "Breakdown": "Desglose"
       }
     }
   }

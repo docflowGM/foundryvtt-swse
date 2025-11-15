@@ -42,17 +42,20 @@ export class DropHandler {
     const existingSpecies = actor.items.find(i => i.type === 'species');
     if (existingSpecies) {
       const replace = await Dialog.confirm({
-        title: 'Replace Species?',
-        content: `<p>${actor.name} already has species: <strong>${existingSpecies.name}</strong></p>
-                  <p>Replace with <strong>${species.name}</strong>?</p>`
+        title: game.i18n.localize('SWSE.Dialogs.ReplaceSpecies.Title'),
+        content: game.i18n.format('SWSE.Dialogs.ReplaceSpecies.Content', {
+          actor: actor.name,
+          existing: existingSpecies.name,
+          new: species.name
+        })
       });
-      
+
       if (!replace) return;
       await existingSpecies.delete();
     }
-    
+
     await actor.createEmbeddedDocuments('Item', [species.toObject()]);
-    
+
     // Apply racial bonuses
     const abilityMods = species.system.abilityMods || species.system.bonuses || {};
     const updates = {
@@ -65,10 +68,10 @@ export class DropHandler {
       'system.size': species.system.size || 'medium',
       'system.speed.base': species.system.speed || 6
     };
-    
+
     await actor.update(updates);
-    
-    ui.notifications.info(`Applied ${species.name} racial traits to ${actor.name}`);
+
+    ui.notifications.info(game.i18n.format('SWSE.Notifications.Items.SpeciesApplied', {species: species.name, actor: actor.name}));
     return true;
   }
   
@@ -85,7 +88,7 @@ export class DropHandler {
     );
     
     if (existingClass) {
-      ui.notifications.warn(`${actor.name} already has ${classItem.name} class`);
+      ui.notifications.warn(game.i18n.format('SWSE.Notifications.Items.AlreadyHasClass', {actor: actor.name, class: classItem.name}));
       return false;
     }
     

@@ -406,11 +406,11 @@ Hooks.once("ready", async function() {
     // Show welcome message (only once)
     if (!game.settings.get('swse', 'welcomeShown')) {
       ui.notifications.info(`
-        <strong>SWSE Enhanced System Loaded!</strong><br>
-        • Visual Condition Track active<br>
-        • Damage Threshold automation enabled<br>
-        • Force Suite management ready<br>
-        • Check the Summary tab for your combat dashboard
+        <strong>${game.i18n.localize('SWSE.Notifications.Welcome.Title')}</strong><br>
+        • ${game.i18n.localize('SWSE.Notifications.Welcome.ConditionTrack')}<br>
+        • ${game.i18n.localize('SWSE.Notifications.Welcome.DamageThreshold')}<br>
+        • ${game.i18n.localize('SWSE.Notifications.Welcome.ForceSuite')}<br>
+        • ${game.i18n.localize('SWSE.Notifications.Welcome.Summary')}
       `, { permanent: false });
 
       await game.settings.set('swse', 'welcomeShown', true);
@@ -581,7 +581,7 @@ function registerSystemSettings() {
   // ============================================
   // Force Points
   // ============================================
-  
+
   game.settings.register("swse", "forcePointBonus", {
     name: 'SWSE.Settings.ForcePointBonus.Name',
     hint: 'SWSE.Settings.ForcePointBonus.Hint',
@@ -594,6 +594,24 @@ function registerSystemSettings() {
       max: 10,
       step: 1
     }
+  });
+
+  game.settings.register("swse", "dailyForcePoints", {
+    name: "SWSE.Settings.DailyForcePoints.Name",
+    hint: "SWSE.Settings.DailyForcePoints.Hint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register("swse", "darkSideTemptationMechanic", {
+    name: "SWSE.Settings.DarkSideTemptationMechanic.Name",
+    hint: "SWSE.Settings.DarkSideTemptationMechanic.Hint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
   });
 
   // ============================================
@@ -755,12 +773,11 @@ function setupConditionRecovery() {
 
     // Prompt for recovery
     const recover = await Dialog.confirm({
-      title: 'Condition Recovery',
-      content: `
-        <p><strong>${actor.name}</strong> can attempt condition recovery.</p>
-        <p>Current position: ${conditionTrack.current}/5</p>
-        <p>Make a DC 10 Endurance check?</p>
-      `
+      title: game.i18n.localize('SWSE.Dialogs.ConditionRecovery.Title'),
+      content: game.i18n.format('SWSE.Dialogs.ConditionRecovery.Content', {
+        name: actor.name,
+        current: conditionTrack.current
+      })
     });
 
     if (!recover) return;
@@ -772,16 +789,16 @@ function setupConditionRecovery() {
 
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({actor}),
-      flavor: 'Condition Recovery Check (DC 10)'
+      flavor: game.i18n.localize('SWSE.Chat.Flavors.ConditionRecovery')
     });
 
     if (roll.total >= 10) {
       await actor.update({
         'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
       });
-      ui.notifications.info(`${actor.name} recovers one step on the condition track!`);
+      ui.notifications.info(game.i18n.format('SWSE.Notifications.Condition.RecoverySuccess', {name: actor.name}));
     } else {
-      ui.notifications.warn(`${actor.name} fails to recover.`);
+      ui.notifications.warn(game.i18n.format('SWSE.Notifications.Condition.RecoveryFailed', {name: actor.name}));
     }
   });
 }
@@ -832,7 +849,7 @@ Hooks.on("renderChatMessageHTML", (message, html, data) => {
     const targets = game.user.targets;
 
     if (targets.size === 0) {
-      ui.notifications.warn("No targets selected!");
+      ui.notifications.warn(game.i18n.localize('SWSE.Notifications.Combat.NoTargets'));
       return;
     }
 
@@ -856,7 +873,7 @@ Hooks.on("renderChatMessageHTML", (message, html, data) => {
     if (item && typeof actor.rollDamage === 'function') {
       await actor.rollDamage(item);
     } else {
-      ui.notifications.error("Cannot roll damage for this item.");
+      ui.notifications.error(game.i18n.localize('SWSE.Notifications.Damage.CannotRoll'));
     }
   });
 });

@@ -163,6 +163,205 @@
       "Retraining": {
         "Name": "Разрешить Переобучение",
         "Hint": "Разрешить замену черт/талантов при повышении уровня"
+      },
+      "DailyForcePoints": {
+        "Name": "Ежедневные Очки Силы",
+        "Hint": "Использовать ежедневные Очки Силы вместо за уровень (1-5 ур: 1 ОС, 6-10 ур: 2 ОС, 11-15 ур: 3 ОС, 16+ ур: 4 ОС в день)"
+      },
+      "DarkSideTemptationMechanic": {
+        "Name": "Механика Искушения Тёмной Стороны",
+        "Hint": "Позволить персонажам призывать Тёмную Сторону при трате Очков Силы (требует Счёт Тёмной Стороны ≤ половины Мудрости, +1к6, увеличивает Счёт Тёмной Стороны на 1)"
+      },
+      "DarkSideTemptation": {
+        "Name": "Искушение Тёмной Стороны",
+        "Hint": "Позволить персонажам призывать Тёмную Сторону при трате Очков Силы (требует Счёт Тёмной Стороны ≤ половины Мудрости)"
+      },
+      "ResetResourcesOnCombat": {
+        "Name": "Сбросить Ресурсы при Начале Боя",
+        "Hint": "Автоматически сбрасывать временные ресурсы (например, Второе Дыхание) при начале боя"
+      },
+      "WelcomeShown": {
+        "Name": "Приветственное Сообщение Показано",
+        "Hint": "Отслеживает, было ли показано приветственное сообщение"
+      },
+      "DevMode": {
+        "Name": "Режим Разработчика",
+        "Hint": "Включить подробное логирование ошибок и трассировку стека для отладки"
+      }
+    },
+    "Compendium": {
+      "Classes": "Классы",
+      "Talents": "Таланты",
+      "TalentTrees": "Деревья Талантов",
+      "Feats": "Черты",
+      "Species": "Виды",
+      "Equipment": "Снаряжение",
+      "Weapons": "Оружие",
+      "Armor": "Броня",
+      "ArmorLight": "Лёгкая Броня",
+      "ArmorMedium": "Средняя Броня",
+      "ArmorHeavy": "Тяжёлая Броня",
+      "ForcePowers": "Силовые Способности",
+      "Skills": "Навыки",
+      "ExtraSkillUses": "Дополнительные Применения Навыков",
+      "Conditions": "Состояния",
+      "SpecialCombatConditions": "Особые Боевые Состояния",
+      "Attributes": "Атрибуты",
+      "Vehicles": "Транспорт",
+      "Droids": "Дроиды",
+      "NPCs": "НИПы"
+    },
+    "ForcePoints": {
+      "SpendDialog": {
+        "Title": "Потратить Очко Силы",
+        "Question": "Потратить Очко Силы для {reason}?",
+        "RollInfo": "Вы бросите {die} и добавите {method} к вашему броску.",
+        "CallDarkSide": "Призвать Тёмную Сторону (+1к6, увеличивает Счёт Тёмной Стороны на 1)",
+        "Remaining": "Осталось Очков Силы:",
+        "Spend": "Потратить Очко Силы",
+        "Cancel": "Отмена"
+      },
+      "Chat": {
+        "Title": "Очко Силы Потрачено",
+        "Highest": "Наивысший:",
+        "Result": "Результат:",
+        "DarkSideBonus": "Бонус Тёмной Стороны:",
+        "DarkSideWarning": "Счёт Тёмной Стороны увеличен на 1",
+        "TotalBonus": "Общий Бонус:",
+        "UsedFor": "Использовано для:",
+        "ReducedDarkSide": "Счёт Тёмной Стороны снижен до {score}",
+        "AvoidDeath": "{name} тратит Очко Силы, чтобы избежать смерти и теряет сознание!",
+        "AlreadyZero": "Ваш Счёт Тёмной Стороны уже 0.",
+        "NoPointsRemaining": "Очков Силы не осталось!"
+      },
+      "Methods": {
+        "result": "результат",
+        "highest_result": "наивысший результат"
+      }
+    },
+    "Notifications": {
+      "Welcome": {
+        "Title": "Улучшенная Система SWSE Загружена!",
+        "ConditionTrack": "Визуальная Шкала Состояния активна",
+        "DamageThreshold": "Автоматизация Порога Урона включена",
+        "ForceSuite": "Управление Набором Силы готово",
+        "Summary": "Проверьте вкладку Сводка для панели боя"
+      },
+      "Condition": {
+        "RecoverySuccess": "{name} восстанавливается на один шаг по шкале состояния!",
+        "RecoveryFailed": "{name} не удаётся восстановиться."
+      },
+      "Combat": {
+        "NoTargets": "Цели не выбраны!",
+        "NoActorSelected": "Актёр не выбран"
+      },
+      "Damage": {
+        "CannotRoll": "Невозможно бросить урон для этого предмета."
+      },
+      "Rolls": {
+        "DefenseNotFound": "Тип защиты {type} не найден",
+        "SaveSucceeded": "Спасбросок успешен! ({total} против СЛ {dc})",
+        "SaveFailed": "Спасбросок провален! ({total} против СЛ {dc})",
+        "DiceRollFailed": "Бросок кубика не удался: {error}",
+        "SkillNotFound": "Навык {skill} не найден",
+        "UseForceRequiresTraining": "Использование Силы требует тренировки!"
+      },
+      "Items": {
+        "NotOwnedByActor": "Этот предмет не принадлежит актёру.",
+        "SpeciesApplied": "Расовые черты {species} применены к {actor}",
+        "AlreadyHasClass": "{actor} уже имеет класс {class}"
+      },
+      "System": {
+        "MigrationComplete": "Миграция завершена: {updated} обновлено, {errors} ошибок"
+      }
+    },
+    "Dialogs": {
+      "ConditionRecovery": {
+        "Title": "Восстановление Состояния",
+        "Content": "<p><strong>{name}</strong> может попытаться восстановиться.</p><p>Текущая позиция: {current}/5</p><p>Сделать проверку Выносливости СЛ 10?</p>"
+      },
+      "ReplaceSpecies": {
+        "Title": "Заменить Вид?",
+        "Content": "<p>{actor} уже имеет вид: <strong>{existing}</strong></p><p>Заменить на <strong>{new}</strong>?</p>"
+      },
+      "ApplyDroidChassis": {
+        "Title": "Применить Шасси Дроида?"
+      },
+      "ApplyVehicleTemplate": {
+        "Title": "Применить Шаблон Транспорта?"
+      },
+      "ApplyDamage": {
+        "Title": "Применить Урон к {name}",
+        "Amount": "Количество Урона",
+        "CheckThreshold": "Проверить Порог Урона",
+        "IgnoreTemp": "Игнорировать Временные ОЗ",
+        "Button": "Применить Урон"
+      },
+      "Healing": {
+        "TitleHeal": "Вылечить {name}",
+        "TitleRepair": "Отремонтировать {name}",
+        "Amount": "Количество Лечения",
+        "RepairAmount": "Количество Ремонта (через Механику)",
+        "ButtonHeal": "Применить Лечение",
+        "ButtonRepair": "Применить Ремонт",
+        "DroidNote": "Дроиды могут быть отремонтированы только навыком Механика."
+      },
+      "ConditionTrack": {
+        "Title": "Шкала Состояния: {name}"
+      },
+      "Store": {
+        "Title": "Галактическая Торговая Биржа",
+        "ConfirmDroidPurchase": "Подтвердить Покупку Дроида",
+        "ConfirmVehiclePurchase": "Подтвердить Покупку Транспорта",
+        "BuildCustomDroid": "Построить Пользовательского Дроида",
+        "BuildCustomStarship": "Построить Пользовательский Звездолёт",
+        "CompletePurchase": "Завершить Покупку"
+      },
+      "LevelUp": {
+        "Title": "Повысить Уровень {name}"
+      },
+      "HouseRules": {
+        "Title": "Конфигурация Домашних Правил SWSE",
+        "CharacterCreation": "Создание Персонажа",
+        "SkillsFeats": "Навыки и Черты",
+        "Advancement": "Развитие",
+        "Combat": "Бой",
+        "ForceDestiny": "Сила и Судьба",
+        "SpaceCombat": "Космический Бой",
+        "Presets": "Предустановки",
+        "CharacterCreationRules": "Правила Создания Персонажа",
+        "AdvancementRules": "Правила Развития",
+        "CombatRules": "Правила Боя",
+        "ForceDestinyRules": "Правила Силы и Судьбы"
+      },
+      "CharacterGenerator": {
+        "Title": "Генератор Персонажа",
+        "ImportDroidType": "Импортировать Тип Дроида"
+      },
+      "Buttons": {
+        "Confirm": "Подтвердить",
+        "Cancel": "Отмена",
+        "Apply": "Применить",
+        "Close": "Закрыть",
+        "Save": "Сохранить",
+        "Delete": "Удалить"
+      }
+    },
+    "Chat": {
+      "Flavors": {
+        "ConditionRecovery": "Проверка Восстановления Состояния (СЛ 10)",
+        "Attack": "Атака {weapon}",
+        "Damage": "Урон {weapon}",
+        "Save": "{name} бросает спасбросок {type} ({modifier})",
+        "Skill": "Проверка {skill}"
+      },
+      "Roll": {
+        "CriticalThreat": "КРИТИЧЕСКАЯ УГРОЗА!",
+        "RollDamage": "Бросить Урон",
+        "ApplyDamage": "Применить Урон",
+        "DiceTotal": "Итого",
+        "Formula": "Формула",
+        "Breakdown": "Разбивка"
       }
     }
   }

@@ -1,4 +1,5 @@
 import { SWSERoll } from '../../rolls/enhanced-rolls.js';
+import { ForcePointsUtil } from '../../utils/force-points.js';
 
 export class SWSEActorBase extends Actor {
 
@@ -161,7 +162,7 @@ export class SWSEActorBase extends Actor {
     return true;
   }
 
-  async spendForcePoint(reason = 'unspecified') {
+  async spendForcePoint(reason = 'unspecified', options = {}) {
     if (this.type !== 'character') return false;
 
     const current = this.system.forcePoints?.value || 0;
@@ -172,12 +173,57 @@ export class SWSEActorBase extends Actor {
 
     await this.update({'system.forcePoints.value': current - 1});
 
-    ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({actor: this}),
-      content: `${this.name} spends a Force Point for ${reason} (${current - 1} remaining)`
-    });
+    // If no dialog and not silent, create a simple chat message
+    if (!options.silent && !options.showDialog) {
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({actor: this}),
+        content: `${this.name} spends a Force Point for ${reason} (${current - 1} remaining)`
+      });
+    }
 
     return true;
+  }
+
+  /**
+   * Roll a Force Point with dialog for Dark Side temptation
+   * @param {string} reason - The reason for rolling the Force Point
+   * @returns {Promise<number|null>} The bonus from the roll, or null if cancelled
+   */
+  async rollForcePoint(reason = 'boost') {
+    const current = this.system.forcePoints?.value || 0;
+    if (current <= 0) {
+      ui.notifications.warn('No Force Points remaining!');
+      return null;
+    }
+
+    // Show dialog
+    const result = await ForcePointsUtil.showForcePointDialog(this, reason);
+    if (!result) return null; // Cancelled
+
+    // Spend the Force Point
+    await this.spendForcePoint(reason, { silent: true });
+
+    // Roll and get bonus
+    const bonus = await ForcePointsUtil.rollForcePoint(this, {
+      reason,
+      useDarkSide: result.useDarkSide
+    });
+
+    return bonus;
+  }
+
+  /**
+   * Reduce Dark Side Score by spending a Force Point
+   */
+  async reduceDarkSideScore() {
+    return await ForcePointsUtil.reduceDarkSide(this);
+  }
+
+  /**
+   * Avoid death by spending a Force Point
+   */
+  async avoidDeathWithForcePoint() {
+    return await ForcePointsUtil.avoidDeath(this);
   }
 
   async rollSkill(skillKey) {

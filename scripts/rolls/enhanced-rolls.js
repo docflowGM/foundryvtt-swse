@@ -162,7 +162,7 @@ export class SWSERoll {
   static async rollSkill(actor, skillKey, options = {}) {
     const skill = actor.system.skills[skillKey];
     if (!skill) {
-      ui.notifications.warn(`Skill ${skillKey} not found`);
+      ui.notifications.warn(game.i18n.format('SWSE.Notifications.Rolls.SkillNotFound', {skill: skillKey}));
       return;
     }
 
@@ -245,7 +245,7 @@ export class SWSERoll {
     const skill = actor.system.skills.useTheForce;
 
     if (!skill || !skill.trained) {
-      ui.notifications.warn('Use the Force requires training!');
+      ui.notifications.warn(game.i18n.localize('SWSE.Notifications.Rolls.UseForceRequiresTraining'));
       return;
     }
 

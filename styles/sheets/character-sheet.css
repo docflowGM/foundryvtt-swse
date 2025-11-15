@@ -1811,8 +1811,115 @@ img[loading="lazy"] {
     grid-template-columns: 1fr;
     gap: 8px;
   }
-  
+
   .skill-mods {
     justify-content: center;
   }
+}
+
+/* =========================
+   FORCE POINT ROLLS
+   ========================= */
+
+.swse.force-point-roll {
+  background: linear-gradient(135deg, rgba(0, 168, 204, 0.1) 0%, rgba(0, 217, 255, 0.05) 100%);
+  border: 1px solid var(--holo-cyan);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin: 8px 0;
+}
+
+.swse.force-point-roll h3 {
+  color: var(--holo-cyan);
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse.force-point-roll .dice-roll {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px;
+  border-radius: 4px;
+  margin: 6px 0;
+}
+
+.swse.force-point-roll .dice-formula {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.swse.force-point-roll .dice-tooltip {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin: 6px 0;
+}
+
+.swse.force-point-roll .die {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--holo-blue);
+  border-radius: 4px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.swse.force-point-roll .die.max {
+  background: var(--holo-cyan);
+  color: #000;
+  border-color: var(--holo-cyan);
+  box-shadow: 0 0 8px var(--holo-cyan);
+}
+
+.swse.force-point-roll .dice-total {
+  text-align: center;
+  margin-top: 6px;
+  color: var(--holo-green);
+  font-size: 13px;
+}
+
+.swse.force-point-roll .dark-side-bonus {
+  background: rgba(120, 46, 34, 0.3);
+  border: 1px solid var(--color-danger);
+  border-radius: 4px;
+  padding: 6px;
+  margin: 6px 0;
+  color: var(--color-danger);
+  text-align: center;
+}
+
+.swse.force-point-roll .dark-side-bonus i {
+  margin-right: 4px;
+}
+
+.swse.force-point-roll .dark-side-bonus .warning {
+  font-size: 10px;
+  font-style: italic;
+  margin-top: 2px;
+  color: var(--color-warning);
+}
+
+.swse.force-point-roll .force-point-total {
+  text-align: center;
+  font-size: 16px;
+  color: var(--holo-green);
+  margin: 8px 0;
+  padding: 6px;
+  background: rgba(0, 255, 136, 0.1);
+  border-radius: 4px;
+}
+
+.swse.force-point-roll .force-point-reason {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 4px;
 }
