@@ -95,72 +95,148 @@
         "Reality bends around them, creating a pocket of safety",
         "The air hardens into an impenetrable barrier of pure will"
       ]
+    },
+    "vital": {
+      "intro": [
+        "channels the Living Force through their very cells and tissues",
+        "connects to the fundamental life energy that sustains all beings",
+        "manipulates the biological processes through Force mastery",
+        "touches the essence of life itself, bending it to their purpose",
+        "harmonizes their body with the cosmic rhythm of the Force"
+      ],
+      "manifestation": [
+        "Their body glows with an inner radiance as life energy surges",
+        "Cellular structure shifts and adapts beyond natural capability",
+        "The Force flows through them like a rushing river of vitality",
+        "Their physical form responds to commands that transcend biology",
+        "Life energy manifests visibly, wreathing them in living light"
+      ]
     }
   },
   "specific": {
-    "Force Lightning": {
-      "description": "summons arcs of devastating Force Lightning from their fingertips",
-      "manifestation": "Blue-white electricity crackles and arcs through the air, illuminating everything with its terrible power"
+    "Battle Strike": {
+      "description": "channels raw Force energy into their next strike, empowering it with devastating power",
+      "manifestation": "Their weapon or fist blazes with azure Force energy, promising tremendous impact"
     },
-    "Force Storm": {
-      "description": "conjures a massive storm of Force energy and lightning",
-      "manifestation": "The sky darkens as reality itself tears apart, unleashing a maelstrom of destructive power"
-    },
-    "Force Grip": {
-      "description": "reaches out with invisible hands to crush and choke their target",
-      "manifestation": "The victim rises into the air, clutching at their throat as an invisible force constricts around them"
-    },
-    "Force Slam": {
-      "description": "hurls their target through the air with overwhelming telekinetic force",
-      "manifestation": "The target is violently thrown backwards as if struck by a giant invisible fist"
-    },
-    "Mind Trick": {
-      "description": "weaves subtle suggestions into the mind of their target",
-      "manifestation": "A glazed look passes over the target's eyes as their will bends to the Force user's words"
+    "Battlemind": {
+      "description": "sharpens their combat instincts to superhuman levels through Force clarity",
+      "manifestation": "Time seems to slow as their perception expands, seeing attacks before they come"
     },
     "Battle Meditation": {
       "description": "spreads their consciousness across the battlefield, bolstering allies and weakening foes",
       "manifestation": "Waves of calm confidence flow to allies while enemies feel doubt and confusion creep into their minds"
     },
-    "Move Object": {
-      "description": "lifts and manipulates objects through the air with telekinetic power",
-      "manifestation": "Objects float and dance through the air, moving with graceful precision guided by thought alone"
-    },
-    "Force Cloak": {
-      "description": "bends light and perception around themselves, fading from view",
-      "manifestation": "They seem to blur and fade, becoming nearly invisible as the Force shields them from sight"
-    },
-    "Force Sense": {
-      "description": "opens themselves to the currents of the Force, sensing danger and disturbances",
-      "manifestation": "Their eyes unfocus as awareness expands, perceiving threats before they manifest"
+    "Drain Energy": {
+      "description": "extends dark tendrils of Force power to corrupt and drain technological systems",
+      "manifestation": "Dark lightning arcs toward machinery, causing circuits to overload and systems to fail catastrophically"
     },
     "Drain Life": {
       "description": "siphons the very life essence from their victim to sustain themselves",
       "manifestation": "Dark tendrils of energy flow from the victim to the Force user, carrying stolen vitality"
     },
-    "Vital Transfer": {
-      "description": "transfers their own life energy to heal another",
-      "manifestation": "Golden light flows between Force user and recipient, carrying healing energy"
+    "Farseeing": {
+      "description": "casts their perception across vast distances and through time itself",
+      "manifestation": "Their eyes glow faintly as visions of distant places and times fill their mind"
+    },
+    "Force Body": {
+      "description": "floods their physical form with overwhelming Force energy, becoming nearly invulnerable",
+      "manifestation": "Their body hardens like living steel as Force energy reinforces every fiber of their being"
+    },
+    "Force Cloak": {
+      "description": "bends light and perception around themselves, fading from view",
+      "manifestation": "They seem to blur and fade, becoming nearly invisible as the Force shields them from sight"
+    },
+    "Force Defense": {
+      "description": "snaps a telekinetic barrier into existence to deflect incoming danger",
+      "manifestation": "The air shimmers and solidifies as an invisible shield intercepts the attack"
+    },
+    "Force Disarm": {
+      "description": "seizes their opponent's weapon with invisible Force hands and tears it away",
+      "manifestation": "The weapon flies from the target's grasp as if yanked by unseen hands"
+    },
+    "Force Grip": {
+      "description": "reaches out with invisible hands to crush and choke their target",
+      "manifestation": "The victim rises into the air, clutching at their throat as an invisible force constricts around them"
+    },
+    "Force Lightning": {
+      "description": "summons arcs of devastating Force Lightning from their fingertips",
+      "manifestation": "Blue-white electricity crackles and arcs through the air, illuminating everything with its terrible power"
     },
     "Force Scream": {
       "description": "releases a devastating shockwave of pure dark side rage",
       "manifestation": "Reality itself seems to shatter as the Force-amplified scream tears through the area"
     },
+    "Force Sense": {
+      "description": "opens themselves to the currents of the Force, sensing danger and disturbances",
+      "manifestation": "Their eyes unfocus as awareness expands, perceiving threats before they manifest"
+    },
+    "Force Slam": {
+      "description": "hurls their target through the air with overwhelming telekinetic force",
+      "manifestation": "The target is violently thrown backwards as if struck by a giant invisible fist"
+    },
+    "Force Storm": {
+      "description": "conjures a massive storm of Force energy and lightning",
+      "manifestation": "The sky darkens as reality itself tears apart, unleashing a maelstrom of destructive power"
+    },
+    "Force Strike": {
+      "description": "unleashes a concentrated telekinetic blow that hits like a physical punch",
+      "manifestation": "The air compresses into a visible shockwave that crashes into the target with brutal force"
+    },
+    "Force Stun": {
+      "description": "overwhelms their target's mind with telepathic pressure, freezing them in place",
+      "manifestation": "The victim's eyes go blank as their nervous system locks up, paralyzed by mental assault"
+    },
+    "Force Thrust": {
+      "description": "unleashes an explosive wave of telekinetic force to hurl enemies away",
+      "manifestation": "A concussive blast of invisible energy erupts outward, sending targets flying"
+    },
+    "Force Track": {
+      "description": "places an invisible Force mark on their quarry, allowing them to hunt across any distance",
+      "manifestation": "An imperceptible thread of Force energy connects hunter to prey, stretching across space itself"
+    },
+    "Force Weapon": {
+      "description": "imbues their weapon with crackling Force energy",
+      "manifestation": "Their weapon glows with power, wreathed in visible Force energy that hums with potential"
+    },
+    "Inspire": {
+      "description": "sends a surge of confidence and courage through the Force to bolster an ally",
+      "manifestation": "The recipient stands taller as renewed determination fills their spirit"
+    },
+    "Malacia": {
+      "description": "disrupts their opponent's equilibrium and inner balance through gentle Force manipulation",
+      "manifestation": "The target staggers and reels as their sense of balance betrays them, overcome by nausea"
+    },
+    "Mind Trick": {
+      "description": "weaves subtle suggestions into the mind of their target",
+      "manifestation": "A glazed look passes over the target's eyes as their will bends to the Force user's words"
+    },
+    "Move Object": {
+      "description": "lifts and manipulates objects through the air with telekinetic power",
+      "manifestation": "Objects float and dance through the air, moving with graceful precision guided by thought alone"
+    },
+    "Negate Energy": {
+      "description": "creates a protective barrier that absorbs and disperses incoming energy attacks",
+      "manifestation": "Energy blasts dissipate harmlessly against an invisible shield, their power neutralized"
+    },
     "Rebuke": {
       "description": "projects a wave of Force energy to push back and stun opponents",
       "manifestation": "An invisible wave of power radiates outward, staggering all in its path"
-    },
-    "Farseeing": {
-      "description": "casts their perception across vast distances and through time itself",
-      "manifestation": "Their eyes glow faintly as visions of distant places and times fill their mind"
     },
     "Sever Force": {
       "description": "tears away another's connection to the Force itself",
       "manifestation": "Invisible threads of Force energy are severed, leaving the victim cut off from the cosmic power"
     },
-    "Force Weapon": {
-      "description": "imbues their weapon with crackling Force energy",
-      "manifestation": "Their weapon glows with power, wreathed in visible Force energy that hums with potential"
+    "Sever Force (Lesser)": {
+      "description": "temporarily suppresses their target's ability to touch the Force",
+      "manifestation": "The victim gasps as their connection to the Force dims and fades like a dying flame"
+    },
+    "Surge": {
+      "description": "floods their muscles with explosive Force energy for a burst of superhuman speed",
+      "manifestation": "They blur into motion, moving with speed that defies mortal limits"
+    },
+    "Vital Transfer": {
+      "description": "transfers their own life energy to heal another",
+      "manifestation": "Golden light flows between Force user and recipient, carrying healing energy"
     }
   }
 }
