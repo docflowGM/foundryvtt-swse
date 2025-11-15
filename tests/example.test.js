@@ -3,8 +3,8 @@
  * Run these tests to verify core functionality
  */
 
-import { calculateAbilities } from '../scripts/calculations/abilities.js';
-import { calculateDefenses } from '../scripts/rolls/defenses.js';
+import { calculateAbilities } from '../scripts/utils/calc-abilities.js';
+import { calculateAllDefenses } from '../scripts/rolls/defenses.js';
 import { TestUtils } from './test-utils.js';
 
 describe('SWSE Core Systems', () => {
@@ -33,8 +33,8 @@ describe('SWSE Core Systems', () => {
         }
       });
       
-      calculateDefenses(mockActor);
-      
+      calculateAllDefenses(mockActor);
+
       // 10 + 5 (level) + 2 (dex mod) = 17
       expect(mockActor.system.defenses.reflex.total).toBe(17);
     });

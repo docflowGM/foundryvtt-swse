@@ -3,7 +3,7 @@
  * Provides a holographic marketplace interface for buying and selling items
  */
 
-import { SWSECharacterGenerator } from './chargen.js';
+import CharacterGenerator from './chargen.js';
 import { VehicleModificationApp } from './vehicle-modification-app.js';
 
 export class SWSEStore extends FormApplication {
@@ -873,7 +873,7 @@ export class SWSEStore extends FormApplication {
             this.close();
 
             // Launch character generator in droid-building mode
-            const chargen = new SWSECharacterGenerator(null, {
+            const chargen = new CharacterGenerator(null, {
                 droidBuilderMode: true,
                 ownerActor: this.actor,
                 droidLevel: this.actor.system.level || 1,
