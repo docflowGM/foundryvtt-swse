@@ -13,34 +13,62 @@ export class VehicleModificationManager {
   static _initialized = false;
 
   /**
-   * Initialize by loading all modification data
+   * Initialize by loading all modification data from compendium packs
    */
   static async init() {
     if (this._initialized) return;
 
     try {
-      // Load all modification data
-      const [stockShips, movement, defense, weapons, accessories] = await Promise.all([
-        fetch('systems/swse/data/stock-ships.json').then(r => r.json()),
-        fetch('systems/swse/data/vehicle-modifications/movement-systems.json').then(r => r.json()),
-        fetch('systems/swse/data/vehicle-modifications/defense-systems.json').then(r => r.json()),
-        fetch('systems/swse/data/vehicle-modifications/weapon-systems.json').then(r => r.json()),
-        fetch('systems/swse/data/vehicle-modifications/accessories.json').then(r => r.json())
-      ]);
+      // Load stock ships from compendium
+      const stockShipsPack = game.packs.get('swse.stock_ships');
+      if (stockShipsPack) {
+        const shipDocs = await stockShipsPack.getDocuments();
+        this._stockShips = shipDocs.map(doc => this._convertActorToStockShip(doc));
+      } else {
+        console.warn('SWSE | Stock ships compendium not found');
+        this._stockShips = [];
+      }
 
-      this._stockShips = stockShips;
-      this._movementSystems = movement;
-      this._defenseSystems = defense;
-      this._weaponSystems = weapons;
-      this._accessories = accessories;
+      // Load vehicle modifications from compendium
+      const modsPack = game.packs.get('swse.vehicle_modifications');
+      if (modsPack) {
+        const modDocs = await modsPack.getDocuments();
+
+        // Separate by category
+        this._movementSystems = [];
+        this._defenseSystems = [];
+        this._weaponSystems = [];
+        this._accessories = [];
+
+        for (const doc of modDocs) {
+          const mod = this._convertItemToModification(doc);
+          const category = doc.system.category || doc.flags?.swse?.modCategory || 'Accessory';
+
+          if (category.toLowerCase().includes('movement')) {
+            this._movementSystems.push(mod);
+          } else if (category.toLowerCase().includes('defense')) {
+            this._defenseSystems.push(mod);
+          } else if (category.toLowerCase().includes('weapon')) {
+            this._weaponSystems.push(mod);
+          } else {
+            this._accessories.push(mod);
+          }
+        }
+      } else {
+        console.warn('SWSE | Vehicle modifications compendium not found');
+        this._movementSystems = [];
+        this._defenseSystems = [];
+        this._weaponSystems = [];
+        this._accessories = [];
+      }
 
       this._initialized = true;
       console.log('SWSE | Vehicle Modification Manager initialized');
-      console.log(`  - ${stockShips.length} stock ships`);
-      console.log(`  - ${movement.length} movement systems`);
-      console.log(`  - ${defense.length} defense systems`);
-      console.log(`  - ${weapons.length} weapon systems`);
-      console.log(`  - ${accessories.length} accessories`);
+      console.log(`  - ${this._stockShips.length} stock ships`);
+      console.log(`  - ${this._movementSystems.length} movement systems`);
+      console.log(`  - ${this._defenseSystems.length} defense systems`);
+      console.log(`  - ${this._weaponSystems.length} weapon systems`);
+      console.log(`  - ${this._accessories.length} accessories`);
     } catch (error) {
       console.error('SWSE | Failed to load vehicle modification data:', error);
       this._stockShips = [];
@@ -49,6 +77,59 @@ export class VehicleModificationManager {
       this._weaponSystems = [];
       this._accessories = [];
     }
+  }
+
+  /**
+   * Convert FoundryVTT vehicle actor to stock ship data format
+   * @private
+   */
+  static _convertActorToStockShip(doc) {
+    const sys = doc.system;
+    return {
+      name: doc.name,
+      size: sys.size || "Huge",
+      strength: sys.abilities?.str?.base || 10,
+      dexterity: sys.abilities?.dex?.base || 10,
+      intelligence: sys.abilities?.int?.base || 10,
+      speedCharacter: sys.speed || "0 sq.",
+      speedStarship: sys.speedStarship || "0 sq.",
+      hitPoints: sys.hp?.max || 100,
+      dr: sys.damageReduction || 0,
+      armor: sys.armor || 0,
+      cost: sys.cost || 0,
+      costModifier: sys.costModifier || 1,
+      crew: sys.crew || 1,
+      passengers: sys.passengers || 0,
+      cargoCapacity: sys.cargoCapacity || "0 kg",
+      consumables: sys.consumables || "0 Days",
+      emplacementPoints: sys.emplacementPoints || 0,
+      unusedEmplacementPoints: sys.unusedEmplacementPoints || 0
+    };
+  }
+
+  /**
+   * Convert FoundryVTT equipment item to modification data format
+   * @private
+   */
+  static _convertItemToModification(doc) {
+    const sys = doc.system;
+    const vehicleData = sys.vehicleModData || {};
+
+    return {
+      id: sys.modId || vehicleData.originalId || doc.name.toLowerCase().replace(/\s+/g, '-'),
+      name: doc.name,
+      category: sys.category || vehicleData.category || 'Accessory',
+      weaponType: sys.weaponType || vehicleData.weaponType || '',
+      damage: sys.damage || '',
+      emplacementPoints: sys.emplacementPoints || 0,
+      availability: sys.availability || 'Common',
+      sizeRestriction: sys.sizeRestriction || vehicleData.sizeRestriction || null,
+      cost: sys.cost || 0,
+      costType: sys.costType || 'flat',
+      costMultiplier: sys.costMultiplier || 1,
+      description: doc.system.description || '',
+      effect: vehicleData.effect || ''
+    };
   }
 
   /**

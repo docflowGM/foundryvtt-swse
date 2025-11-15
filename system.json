@@ -234,6 +234,20 @@
       "path": "packs/npc.db",
       "type": "Actor",
       "system": "swse"
+    },
+    {
+      "name": "stock_ships",
+      "label": "Stock Ships",
+      "path": "packs/stock-ships.db",
+      "type": "Actor",
+      "system": "swse"
+    },
+    {
+      "name": "vehicle_modifications",
+      "label": "Vehicle Modifications",
+      "path": "packs/vehicle-modifications.db",
+      "type": "Item",
+      "system": "swse"
     }
   ],
   "scripts": []
