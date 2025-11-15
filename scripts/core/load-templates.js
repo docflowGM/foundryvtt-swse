@@ -14,8 +14,15 @@ export async function preloadHandlebarsTemplates() {
     "systems/swse/templates/actors/npc/npc-sheet.hbs",
     "systems/swse/templates/actors/vehicle/vehicle-sheet.hbs",
 
-    // Summary tab (always shown first)
+    // Character tabs (all included in main template, must load immediately)
     "systems/swse/templates/actors/character/tabs/summary-tab.hbs",
+    "systems/swse/templates/actors/character/tabs/abilities-tab.hbs",
+    "systems/swse/templates/actors/character/tabs/skills-tab.hbs",
+    "systems/swse/templates/actors/character/tabs/combat-tab.hbs",
+    "systems/swse/templates/actors/character/tabs/force-tab.hbs",
+    "systems/swse/templates/actors/character/tabs/talents-tab.hbs",
+    "systems/swse/templates/actors/character/tabs/inventory-tab.hbs",
+    "systems/swse/templates/actors/character/tabs/biography-tab.hbs",
 
     // Critical partials
     "systems/swse/templates/partials/actor/persistent-header.hbs",
@@ -25,18 +32,9 @@ export async function preloadHandlebarsTemplates() {
 
   // ============================================
   // LAZY TEMPLATES - Load on Demand
-  // These load when their tab is opened
+  // These load when needed (dialogs, apps, etc.)
   // ============================================
   const lazyTemplates = [
-    // Character tabs (loaded when clicked)
-    "systems/swse/templates/actors/character/tabs/abilities-tab.hbs",
-    "systems/swse/templates/actors/character/tabs/skills-tab.hbs",
-    "systems/swse/templates/actors/character/tabs/combat-tab.hbs",
-    "systems/swse/templates/actors/character/tabs/force-tab.hbs",
-    "systems/swse/templates/actors/character/tabs/talents-tab.hbs",
-    "systems/swse/templates/actors/character/tabs/inventory-tab.hbs",
-    "systems/swse/templates/actors/character/tabs/biography-tab.hbs",
-
     // Item sheets
     "systems/swse/templates/items/base/item-sheet.hbs",
 
@@ -94,11 +92,6 @@ export function getTemplatePaths() {
       "systems/swse/templates/actors/npc/npc-sheet.hbs",
       "systems/swse/templates/actors/vehicle/vehicle-sheet.hbs",
       "systems/swse/templates/actors/character/tabs/summary-tab.hbs",
-      "systems/swse/templates/partials/actor/persistent-header.hbs",
-      "systems/swse/templates/partials/ui/condition-track.hbs",
-      "systems/swse/templates/partials/skill-row-static.hbs"
-    ],
-    lazy: [
       "systems/swse/templates/actors/character/tabs/abilities-tab.hbs",
       "systems/swse/templates/actors/character/tabs/skills-tab.hbs",
       "systems/swse/templates/actors/character/tabs/combat-tab.hbs",
@@ -106,6 +99,11 @@ export function getTemplatePaths() {
       "systems/swse/templates/actors/character/tabs/talents-tab.hbs",
       "systems/swse/templates/actors/character/tabs/inventory-tab.hbs",
       "systems/swse/templates/actors/character/tabs/biography-tab.hbs",
+      "systems/swse/templates/partials/actor/persistent-header.hbs",
+      "systems/swse/templates/partials/ui/condition-track.hbs",
+      "systems/swse/templates/partials/skill-row-static.hbs"
+    ],
+    lazy: [
       "systems/swse/templates/items/base/item-sheet.hbs",
       "systems/swse/templates/partials/ability-block.hbs",
       "systems/swse/templates/partials/ability-scores.hbs",
