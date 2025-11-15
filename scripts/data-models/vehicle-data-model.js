@@ -12,56 +12,330 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       // Vehicles have attributes too! (override parent abilities)
       attributes: new fields.SchemaField({
         str: new fields.SchemaField({
-          base: new fields.NumberField({required: true, initial: 10, integer: true}),
-          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+          base: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 10,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 10;
+              const num = Number(value);
+              return Number.isNaN(num) ? 10 : Math.floor(num);
+            }
+          }),
+          racial: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 0,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 0;
+              const num = Number(value);
+              return Number.isNaN(num) ? 0 : Math.floor(num);
+            }
+          }),
+          temp: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 0,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 0;
+              const num = Number(value);
+              return Number.isNaN(num) ? 0 : Math.floor(num);
+            }
+          })
         }),
         dex: new fields.SchemaField({
-          base: new fields.NumberField({required: true, initial: 10, integer: true}),
-          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+          base: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 10,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 10;
+              const num = Number(value);
+              return Number.isNaN(num) ? 10 : Math.floor(num);
+            }
+          }),
+          racial: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 0,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 0;
+              const num = Number(value);
+              return Number.isNaN(num) ? 0 : Math.floor(num);
+            }
+          }),
+          temp: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 0,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 0;
+              const num = Number(value);
+              return Number.isNaN(num) ? 0 : Math.floor(num);
+            }
+          })
         }),
         con: new fields.SchemaField({
-          base: new fields.NumberField({required: true, initial: 10, integer: true}),
-          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+          base: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 10,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 10;
+              const num = Number(value);
+              return Number.isNaN(num) ? 10 : Math.floor(num);
+            }
+          }),
+          racial: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 0,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 0;
+              const num = Number(value);
+              return Number.isNaN(num) ? 0 : Math.floor(num);
+            }
+          }),
+          temp: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 0,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 0;
+              const num = Number(value);
+              return Number.isNaN(num) ? 0 : Math.floor(num);
+            }
+          })
         }),
         int: new fields.SchemaField({
-          base: new fields.NumberField({required: true, initial: 10, integer: true}),
-          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+          base: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 10,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 10;
+              const num = Number(value);
+              return Number.isNaN(num) ? 10 : Math.floor(num);
+            }
+          }),
+          racial: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 0,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 0;
+              const num = Number(value);
+              return Number.isNaN(num) ? 0 : Math.floor(num);
+            }
+          }),
+          temp: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 0,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 0;
+              const num = Number(value);
+              return Number.isNaN(num) ? 0 : Math.floor(num);
+            }
+          })
         }),
         wis: new fields.SchemaField({
-          base: new fields.NumberField({required: true, initial: 10, integer: true}),
-          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+          base: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 10,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 10;
+              const num = Number(value);
+              return Number.isNaN(num) ? 10 : Math.floor(num);
+            }
+          }),
+          racial: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 0,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 0;
+              const num = Number(value);
+              return Number.isNaN(num) ? 0 : Math.floor(num);
+            }
+          }),
+          temp: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 0,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 0;
+              const num = Number(value);
+              return Number.isNaN(num) ? 0 : Math.floor(num);
+            }
+          })
         }),
         cha: new fields.SchemaField({
-          base: new fields.NumberField({required: true, initial: 10, integer: true}),
-          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-          temp: new fields.NumberField({required: true, initial: 0, integer: true})
+          base: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 10,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 10;
+              const num = Number(value);
+              return Number.isNaN(num) ? 10 : Math.floor(num);
+            }
+          }),
+          racial: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 0,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 0;
+              const num = Number(value);
+              return Number.isNaN(num) ? 0 : Math.floor(num);
+            }
+          }),
+          temp: new fields.NumberField({
+            required: true,
+            nullable: true,
+            initial: 0,
+            integer: true,
+            clean: value => {
+              if (value === null || value === undefined || value === "") return 0;
+              const num = Number(value);
+              return Number.isNaN(num) ? 0 : Math.floor(num);
+            }
+          })
         })
       }),
 
       // Vehicle stats
       hull: new fields.SchemaField({
-        value: new fields.NumberField({required: true, initial: 50, min: 0, integer: true}),
-        max: new fields.NumberField({required: true, initial: 50, min: 1, integer: true})
+        value: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 50,
+          min: 0,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 50;
+            const num = Number(value);
+            return Number.isNaN(num) ? 50 : Math.floor(num);
+          }
+        }),
+        max: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 50,
+          min: 1,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 50;
+            const num = Number(value);
+            return Number.isNaN(num) ? 50 : Math.floor(num);
+          }
+        })
       }),
 
       shields: new fields.SchemaField({
-        value: new fields.NumberField({required: true, initial: 0, min: 0, integer: true}),
-        max: new fields.NumberField({required: true, initial: 0, min: 0, integer: true})
+        value: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 0,
+          min: 0,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
+        }),
+        max: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 0,
+          min: 0,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
+        })
       }),
 
       // Defenses (calculated in prepareDerivedData)
-      reflexDefense: new fields.NumberField({required: true, initial: 10, integer: true}),
-      fortitudeDefense: new fields.NumberField({required: true, initial: 10, integer: true}),
-      damageThreshold: new fields.NumberField({required: true, initial: 30, integer: true}),
-      damageReduction: new fields.NumberField({required: true, initial: 0, integer: true}),
+      reflexDefense: new fields.NumberField({
+        required: true,
+        nullable: true,
+        initial: 10,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 10;
+          const num = Number(value);
+          return Number.isNaN(num) ? 10 : Math.floor(num);
+        }
+      }),
+      fortitudeDefense: new fields.NumberField({
+        required: true,
+        nullable: true,
+        initial: 10,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 10;
+          const num = Number(value);
+          return Number.isNaN(num) ? 10 : Math.floor(num);
+        }
+      }),
+      damageThreshold: new fields.NumberField({
+        required: true,
+        nullable: true,
+        initial: 30,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 30;
+          const num = Number(value);
+          return Number.isNaN(num) ? 30 : Math.floor(num);
+        }
+      }),
+      damageReduction: new fields.NumberField({
+        required: true,
+        nullable: true,
+        initial: 0,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
+      }),
 
       // Armor bonus (or can use pilot's heroic level)
-      armorBonus: new fields.NumberField({required: true, initial: 0, integer: true}),
+      armorBonus: new fields.NumberField({
+        required: true,
+        nullable: true,
+        initial: 0,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
+      }),
       usePilotLevel: new fields.BooleanField({required: true, initial: true}),
 
       // Crew Quality
@@ -78,24 +352,24 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       maneuver: new fields.StringField({required: false, initial: "+0"}),
 
       // Other vehicle properties
+      // Note: choices removed to allow clean function to run before validation
       size: new fields.StringField({
         required: false,
         initial: "colossal",
-        choices: {
-          'large': 'Large',
-          'huge': 'Huge',
-          'gargantuan': 'Gargantuan',
-          'colossal': 'Colossal',
-          'colossal (frigate)': 'Colossal (Frigate)',
-          'colossal (cruiser)': 'Colossal (Cruiser)',
-          'colossal (station)': 'Colossal (Station)'
-        },
         clean: value => {
           // Normalize capitalized values to lowercase for backwards compatibility
           if (typeof value === 'string') {
-            return value.toLowerCase();
+            const normalized = value.toLowerCase();
+            const validSizes = ['large', 'huge', 'gargantuan', 'colossal', 'colossal (frigate)', 'colossal (cruiser)', 'colossal (station)'];
+            return validSizes.includes(normalized) ? normalized : "colossal";
           }
-          return value;
+          return "colossal";
+        },
+        validate: value => {
+          const validSizes = ['large', 'huge', 'gargantuan', 'colossal', 'colossal (frigate)', 'colossal (cruiser)', 'colossal (station)'];
+          if (value && !validSizes.includes(value)) {
+            console.warn(`SWSE | Invalid vehicle size "${value}" was auto-corrected to "colossal". Valid sizes are: ${validSizes.join(', ')}`);
+          }
         }
       }),
       crew: new fields.StringField({required: false, initial: "1"}),
@@ -104,14 +378,56 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       consumables: new fields.StringField({required: false, initial: "1 week"}),
       hyperdrive: new fields.StringField({required: false, initial: "x1"}),
       cost: new fields.SchemaField({
-        new: new fields.NumberField({required: true, initial: 0, integer: true}),
-        used: new fields.NumberField({required: true, initial: 0, integer: true})
+        new: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 0,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
+        }),
+        used: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 0,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
+        })
       }),
 
       // Condition Track for vehicles
       conditionTrack: new fields.SchemaField({
-        current: new fields.NumberField({required: true, initial: 0, min: 0, max: 5, integer: true}),
-        penalty: new fields.NumberField({required: true, initial: 0, integer: true})
+        current: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 0,
+          min: 0,
+          max: 5,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
+        }),
+        penalty: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 0,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
+        })
       }),
 
       // Cover provided to occupants
