@@ -171,6 +171,22 @@
       "DarkSideTemptationMechanic": {
         "Name": "Mecánica de Tentación del Lado Oscuro",
         "Hint": "Permitir a los personajes invocar el Lado Oscuro al gastar Puntos de Fuerza (requiere Puntuación de Lado Oscuro ≤ mitad de Sabiduría, +1d6, aumenta Puntuación de Lado Oscuro en 1)"
+      },
+      "DarkSideTemptation": {
+        "Name": "Tentación del Lado Oscuro",
+        "Hint": "Permitir a los personajes invocar el Lado Oscuro al gastar Puntos de Fuerza (requiere Puntuación de Lado Oscuro ≤ mitad de Sabiduría)"
+      },
+      "ResetResourcesOnCombat": {
+        "Name": "Restablecer Recursos al Inicio del Combate",
+        "Hint": "Restablecer automáticamente recursos temporales (como Segundo Aliento) cuando comienza el combate"
+      },
+      "WelcomeShown": {
+        "Name": "Mensaje de Bienvenida Mostrado",
+        "Hint": "Rastrea si el mensaje de bienvenida ha sido mostrado"
+      },
+      "DevMode": {
+        "Name": "Modo Desarrollador",
+        "Hint": "Habilitar registro detallado de errores y trazas de pila para depuración"
       }
     },
     "ForcePoints": {

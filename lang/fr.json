@@ -171,6 +171,22 @@
       "DarkSideTemptationMechanic": {
         "Name": "Mécanique de Tentation du Côté Obscur",
         "Hint": "Permettre aux personnages d'invoquer le Côté Obscur lors de la dépense de Points de Force (nécessite Score Côté Obscur ≤ moitié de la Sagesse, +1d6, augmente le Score Côté Obscur de 1)"
+      },
+      "DarkSideTemptation": {
+        "Name": "Tentation du Côté Obscur",
+        "Hint": "Permettre aux personnages d'invoquer le Côté Obscur lors de la dépense de Points de Force (nécessite Score Côté Obscur ≤ moitié de la Sagesse)"
+      },
+      "ResetResourcesOnCombat": {
+        "Name": "Réinitialiser les Ressources au Début du Combat",
+        "Hint": "Réinitialiser automatiquement les ressources temporaires (comme Second Souffle) lorsque le combat commence"
+      },
+      "WelcomeShown": {
+        "Name": "Message de Bienvenue Affiché",
+        "Hint": "Suit si le message de bienvenue a été affiché"
+      },
+      "DevMode": {
+        "Name": "Mode Développeur",
+        "Hint": "Activer la journalisation détaillée des erreurs et les traces de pile pour le débogage"
       }
     },
     "ForcePoints": {

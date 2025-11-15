@@ -171,6 +171,22 @@
       "DarkSideTemptationMechanic": {
         "Name": "Dark Side Temptation Mechanic",
         "Hint": "Allow characters to call upon the Dark Side when spending Force Points (requires Dark Side Score ≤ half Wisdom, adds +1d6, increases Dark Side Score by 1)"
+      },
+      "DarkSideTemptation": {
+        "Name": "Dark Side Temptation",
+        "Hint": "Allow characters to call upon the Dark Side when spending Force Points (requires Dark Side Score ≤ half Wisdom)"
+      },
+      "ResetResourcesOnCombat": {
+        "Name": "Reset Resources on Combat Start",
+        "Hint": "Automatically reset temporary resources (like Second Wind) when combat begins"
+      },
+      "WelcomeShown": {
+        "Name": "Welcome Message Shown",
+        "Hint": "Tracks if the welcome message has been displayed"
+      },
+      "DevMode": {
+        "Name": "Developer Mode",
+        "Hint": "Enable detailed error logging and stack traces for debugging"
       }
     },
     "ForcePoints": {

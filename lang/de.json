@@ -171,6 +171,22 @@
       "DarkSideTemptationMechanic": {
         "Name": "Versuchung der Dunklen Seite Mechanik",
         "Hint": "Erlaube Charakteren, die Dunkle Seite anzurufen beim Ausgeben von Machtpunkten (erfordert Dunkle-Seite-Wert ≤ halbe Weisheit, +1W6, erhöht Dunkle-Seite-Wert um 1)"
+      },
+      "DarkSideTemptation": {
+        "Name": "Versuchung der Dunklen Seite",
+        "Hint": "Erlaube Charakteren, die Dunkle Seite anzurufen beim Ausgeben von Machtpunkten (erfordert Dunkle-Seite-Wert ≤ halbe Weisheit)"
+      },
+      "ResetResourcesOnCombat": {
+        "Name": "Ressourcen bei Kampfbeginn Zurücksetzen",
+        "Hint": "Temporäre Ressourcen (wie Zweiter Atem) automatisch zurücksetzen, wenn Kampf beginnt"
+      },
+      "WelcomeShown": {
+        "Name": "Willkommensnachricht Angezeigt",
+        "Hint": "Verfolgt, ob die Willkommensnachricht angezeigt wurde"
+      },
+      "DevMode": {
+        "Name": "Entwicklermodus",
+        "Hint": "Aktiviert detaillierte Fehlerprotokollierung und Stack-Traces für Debugging"
       }
     },
     "ForcePoints": {
