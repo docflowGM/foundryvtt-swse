@@ -35,19 +35,19 @@ export class FeatActionsMapper {
   }
 
   /**
-   * Get all actions available to an actor based on their feats
+   * Get all actions available to an actor based on their feats and talents
    * @param {Actor} actor - The actor to check
    * @returns {Array} Array of available actions
    */
   static getAvailableActions(actor) {
     if (!actor || !actor.items) return [];
 
-    const feats = actor.items.filter(i => i.type === 'feat' || i.type === 'talent');
+    const featsAndTalents = actor.items.filter(i => i.type === 'feat' || i.type === 'talent');
     const availableActions = [];
 
-    // Add actions that don't require a feat (like Total Defense)
+    // Add actions that don't require a feat/talent (like Total Defense, Defensive Fighting)
     for (const [key, action] of Object.entries(featActions)) {
-      if (action.requiredFeat === null) {
+      if (action.requiredFeat === null && !action.requiredTalent) {
         availableActions.push({
           ...action,
           key: key,
@@ -56,15 +56,27 @@ export class FeatActionsMapper {
       }
     }
 
-    // Add actions from character's feats
-    for (const feat of feats) {
+    // Add actions from character's feats and talents
+    for (const item of featsAndTalents) {
       for (const [key, action] of Object.entries(featActions)) {
-        if (action.requiredFeat === feat.name) {
+        // Check if this action requires this specific feat
+        if (action.requiredFeat === item.name) {
           availableActions.push({
             ...action,
             key: key,
-            source: feat.name,
-            featId: feat.id
+            source: item.name,
+            itemId: item.id,
+            itemType: item.type
+          });
+        }
+        // Check if this action requires this specific talent
+        if (action.requiredTalent === item.name) {
+          availableActions.push({
+            ...action,
+            key: key,
+            source: item.name,
+            itemId: item.id,
+            itemType: item.type
           });
         }
       }
