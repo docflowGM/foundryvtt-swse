@@ -125,7 +125,8 @@ export class ForcePowerDataModel extends foundry.abstract.DataModel {
         label: "Force Power Level"
       }),
       discipline: new fields.StringField({
-        required: true,
+        required: false,
+        initial: "telekinetic",
         choices: ["telekinetic", "telepathic", "vital", "dark-side", "light-side"],
         label: "Force Discipline"
       }),
@@ -136,16 +137,45 @@ export class ForcePowerDataModel extends foundry.abstract.DataModel {
         integer: true,
         label: "Use the Force DC"
       }),
-      time: new fields.StringField({initial: "standard", label: "Activation Time"}),
+      time: new fields.StringField({initial: "Standard Action", label: "Activation Time"}),
       range: new fields.StringField({initial: "6 squares", label: "Range"}),
-      target: new fields.StringField({label: "Target"}),
-      duration: new fields.StringField({initial: "instantaneous", label: "Duration"}),
+      target: new fields.StringField({initial: "One target", label: "Target"}),
+      duration: new fields.StringField({initial: "Instantaneous", label: "Duration"}),
       effect: new fields.HTMLField({label: "Effect"}),
       special: new fields.HTMLField({label: "Special"}),
-      
+
+      // Descriptors (e.g., [Mind-Affecting], [Dark Side], [Telekinetic])
+      descriptor: new fields.ArrayField(
+        new fields.StringField(),
+        {label: "Descriptors"}
+      ),
+
+      // DC Chart for powers with variable effects based on check result
+      dcChart: new fields.ArrayField(
+        new fields.SchemaField({
+          dc: new fields.NumberField({required: true, integer: true, label: "DC"}),
+          effect: new fields.StringField({required: true, label: "Effect Summary"}),
+          description: new fields.StringField({label: "Detailed Description"})
+        }),
+        {label: "DC Chart"}
+      ),
+
+      // Maintainable powers can be sustained as a Swift action
+      maintainable: new fields.BooleanField({initial: false, label: "Maintainable"}),
+
+      // Sourcebook reference
+      sourcebook: new fields.StringField({initial: "", label: "Sourcebook"}),
+      page: new fields.NumberField({required: false, integer: true, label: "Page Number"}),
+
+      // Tags for categorization and filtering
+      tags: new fields.ArrayField(
+        new fields.StringField(),
+        {label: "Tags"}
+      ),
+
       // Suite tracking
       inSuite: new fields.BooleanField({required: true, initial: false}),
-      
+
       // Uses (for reloadable powers)
       uses: new fields.SchemaField({
         current: new fields.NumberField({initial: 0, min: 0, integer: true}),
