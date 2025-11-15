@@ -4,9 +4,12 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
 
   static defineSchema() {
     const fields = foundry.data.fields;
+    const parentSchema = super.defineSchema();
 
     return {
-      // Vehicles have attributes too!
+      ...parentSchema, // Inherit all parent fields
+
+      // Vehicles have attributes too! (override parent abilities)
       attributes: new fields.SchemaField({
         str: new fields.SchemaField({
           base: new fields.NumberField({required: true, initial: 10, integer: true}),

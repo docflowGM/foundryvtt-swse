@@ -4,13 +4,16 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
   static defineSchema() {
     const fields = foundry.data.fields;
+    const parentSchema = super.defineSchema();
 
     return {
+      ...parentSchema, // Inherit all parent fields (size, defenses, abilities, etc.)
+
       // Droid Status
       isDroid: new fields.BooleanField({required: true, initial: false}),
       droidDegree: new fields.StringField({required: false, initial: ""}),
 
-      // Attributes
+      // Attributes (override parent abilities with enhanced attributes)
       attributes: new fields.SchemaField({
         str: new fields.SchemaField({
           base: new fields.NumberField({required: true, initial: 10, integer: true}),
