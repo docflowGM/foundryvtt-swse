@@ -197,6 +197,11 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
   }
 
   _calculateDamageThreshold() {
+    // Ensure defenses and fortitude are initialized
+    if (!this.defenses || !this.defenses.fortitude) {
+      console.warn('Actor defenses not initialized, skipping damage threshold calculation');
+      return;
+    }
     this.damageThreshold = this.defenses.fortitude.total;
   }
 
