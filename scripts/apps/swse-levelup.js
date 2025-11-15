@@ -6,6 +6,7 @@
 
 import { getClasses } from "../core/swse-data.js";
 import { SWSELevelUpEnhanced } from "./swse-levelup-enhanced.js";
+import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } from './mentor-dialogues.js';
 
 export class SWSELevelUp {
     /**
@@ -186,10 +187,24 @@ export class SWSELevelUp {
                 "system.hp.value": newHPValue
             });
 
-            // Create chat message summarizing level up
+            // Get mentor for narration
+            const level1Class = getLevel1Class(actor);
+            const mentor = getMentorForClass(level1Class);
+            const mentorGreeting = getMentorGreeting(mentor, newLevel);
+
+            // If this is level 1, save the starting class
+            if (actor.system.level === 1) {
+                await setLevel1Class(actor, className);
+            }
+
+            // Create chat message summarizing level up with mentor narration
             const chatContent = `
                 <div class="swse level-up-message">
                     <h3><i class="fas fa-level-up-alt"></i> Level Up!</h3>
+                    <div class="mentor-narration" style="background: rgba(0,0,0,0.3); padding: 0.5rem; border-left: 3px solid #00d9ff; margin: 0.5rem 0; font-style: italic;">
+                        <strong>${mentor.name}, ${mentor.title}:</strong><br>
+                        "${mentorGreeting}"
+                    </div>
                     <p><strong>${actor.name}</strong> advanced to level <strong>${newLevel}</strong>!</p>
                     <p><strong>Class:</strong> ${className}</p>
                     <p><strong>HP Gained:</strong> ${rollMessage}</p>

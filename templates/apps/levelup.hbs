@@ -8,6 +8,36 @@
     </div>
   </header>
 
+  {{!-- MENTOR NARRATION PANEL --}}
+  {{#if mentor}}
+  <aside class="mentor-panel">
+    <div class="mentor-header">
+      <div class="mentor-info">
+        <h4>{{mentor.name}}</h4>
+        <span class="mentor-title">{{mentor.title}}</span>
+      </div>
+      {{!--
+      <div class="mentor-portrait">
+        <img src="{{mentor.portrait}}" alt="{{mentor.name}}" />
+      </div>
+      --}}
+    </div>
+    <div class="mentor-message">
+      <div class="mentor-greeting">
+        <i class="fas fa-quote-left"></i>
+        <p>{{mentorGreeting}}</p>
+        <i class="fas fa-quote-right"></i>
+      </div>
+      {{#if mentorGuidance}}
+      <div class="mentor-guidance">
+        <i class="fas fa-lightbulb"></i>
+        <p>{{mentorGuidance}}</p>
+      </div>
+      {{/if}}
+    </div>
+  </aside>
+  {{/if}}
+
   <main class="levelup-body">
 
     {{!-- STEP 1: CLASS SELECTION --}}
@@ -291,6 +321,108 @@
 
 .level-indicator i {
   color: #00d9ff;
+}
+
+/* MENTOR PANEL STYLES */
+.mentor-panel {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(10, 116, 218, 0.1) 100%);
+  border-left: 4px solid #00d9ff;
+  border-right: 4px solid #0a74da;
+  padding: 1.5rem;
+  margin: 0;
+}
+
+.mentor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.mentor-info h4 {
+  margin: 0;
+  color: #00d9ff;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.mentor-title {
+  color: #aaa;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.mentor-portrait {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid #00d9ff;
+  overflow: hidden;
+}
+
+.mentor-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mentor-message {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mentor-greeting {
+  position: relative;
+  padding: 1rem 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border-left: 3px solid #00d9ff;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.mentor-greeting p {
+  margin: 0;
+  color: #fff;
+  font-size: 1.05rem;
+}
+
+.mentor-greeting .fa-quote-left {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  color: rgba(0, 217, 255, 0.3);
+  font-size: 1.5rem;
+}
+
+.mentor-greeting .fa-quote-right {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  color: rgba(0, 217, 255, 0.3);
+  font-size: 1.5rem;
+}
+
+.mentor-guidance {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 193, 7, 0.1);
+  border-radius: 6px;
+  border-left: 3px solid #ffc107;
+}
+
+.mentor-guidance i {
+  color: #ffc107;
+  font-size: 1.2rem;
+}
+
+.mentor-guidance p {
+  margin: 0;
+  color: #f0f0f0;
+  font-size: 0.95rem;
 }
 
 .levelup-body {
