@@ -156,7 +156,7 @@ export class VehicleModificationManager {
    * @param {Array} currentModifications - Currently installed modifications
    * @returns {Object} - {canInstall: boolean, reason: string}
    */
-  static canInstall Modification(modification, stockShip, currentModifications = []) {
+  static canInstallModification(modification, stockShip, currentModifications = []) {
     // Check size restriction
     if (modification.sizeRestriction) {
       const allowed = this._checkSizeRestriction(stockShip.size, modification.sizeRestriction);
