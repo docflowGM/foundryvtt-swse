@@ -188,9 +188,23 @@ export class SWSELevelUp {
             });
 
             // Get mentor for narration
-            const level1Class = getLevel1Class(actor);
-            const mentor = getMentorForClass(level1Class);
-            const mentorGreeting = getMentorGreeting(mentor, newLevel);
+            // Check if this is a prestige class
+            const isPrestige = !['Jedi', 'Noble', 'Scoundrel', 'Scout', 'Soldier'].includes(className);
+            let mentor, mentorGreeting, classLevel;
+
+            if (isPrestige) {
+                // For prestige classes, use the prestige class mentor
+                mentor = getMentorForClass(className);
+                // Determine which level of this prestige class this is
+                const classItems = actor.items.filter(i => i.type === 'class' && i.name === className);
+                classLevel = classItems.length + 1;
+                mentorGreeting = getMentorGreeting(mentor, classLevel, actor);
+            } else {
+                // For base classes, use the level 1 class mentor
+                const level1Class = getLevel1Class(actor);
+                mentor = getMentorForClass(level1Class);
+                mentorGreeting = getMentorGreeting(mentor, newLevel, actor);
+            }
 
             // If this is level 1, save the starting class
             if (actor.system.level === 1) {
