@@ -238,6 +238,131 @@
         "result": "Ergebnis",
         "highest_result": "höchstes Ergebnis"
       }
+    },
+    "Notifications": {
+      "Welcome": {
+        "Title": "SWSE Erweitertes System Geladen!",
+        "ConditionTrack": "Visuelle Zustandsleiste aktiv",
+        "DamageThreshold": "Schadensschwellen-Automatisierung aktiviert",
+        "ForceSuite": "Macht-Suite Verwaltung bereit",
+        "Summary": "Überprüfen Sie den Zusammenfassungs-Tab für Ihr Kampf-Dashboard"
+      },
+      "Condition": {
+        "RecoverySuccess": "{name} erholt sich um einen Schritt auf der Zustandsleiste!",
+        "RecoveryFailed": "{name} schafft es nicht, sich zu erholen."
+      },
+      "Combat": {
+        "NoTargets": "Keine Ziele ausgewählt!",
+        "NoActorSelected": "Kein Akteur ausgewählt"
+      },
+      "Damage": {
+        "CannotRoll": "Kann Schaden für diesen Gegenstand nicht würfeln."
+      },
+      "Rolls": {
+        "DefenseNotFound": "Verteidigungstyp {type} nicht gefunden",
+        "SaveSucceeded": "Rettungswurf erfolgreich! ({total} gegen SW {dc})",
+        "SaveFailed": "Rettungswurf gescheitert! ({total} gegen SW {dc})",
+        "DiceRollFailed": "Würfelwurf fehlgeschlagen: {error}",
+        "SkillNotFound": "Fertigkeit {skill} nicht gefunden",
+        "UseForceRequiresTraining": "Macht Anwenden erfordert Training!"
+      },
+      "Items": {
+        "NotOwnedByActor": "Dieser Gegenstand gehört keinem Akteur.",
+        "SpeciesApplied": "{species} Rasseneigenschaften auf {actor} angewendet",
+        "AlreadyHasClass": "{actor} hat bereits die Klasse {class}"
+      },
+      "System": {
+        "MigrationComplete": "Migration abgeschlossen: {updated} aktualisiert, {errors} Fehler"
+      }
+    },
+    "Dialogs": {
+      "ConditionRecovery": {
+        "Title": "Zustandserholung",
+        "Content": "<p><strong>{name}</strong> kann versuchen, sich zu erholen.</p><p>Aktuelle Position: {current}/5</p><p>Ausdauer-Probe (SW 10) machen?</p>"
+      },
+      "ReplaceSpecies": {
+        "Title": "Spezies Ersetzen?",
+        "Content": "<p>{actor} hat bereits Spezies: <strong>{existing}</strong></p><p>Ersetzen mit <strong>{new}</strong>?</p>"
+      },
+      "ApplyDroidChassis": {
+        "Title": "Droiden-Chassis Anwenden?"
+      },
+      "ApplyVehicleTemplate": {
+        "Title": "Fahrzeug-Vorlage Anwenden?"
+      },
+      "ApplyDamage": {
+        "Title": "Schaden auf {name} Anwenden",
+        "Amount": "Schadensmenge",
+        "CheckThreshold": "Schadensschwelle Prüfen",
+        "IgnoreTemp": "Temporäre TP Ignorieren",
+        "Button": "Schaden Anwenden"
+      },
+      "Healing": {
+        "TitleHeal": "{name} Heilen",
+        "TitleRepair": "{name} Reparieren",
+        "Amount": "Heilungsmenge",
+        "RepairAmount": "Reparaturmenge (via Mechanik)",
+        "ButtonHeal": "Heilung Anwenden",
+        "ButtonRepair": "Reparatur Anwenden",
+        "DroidNote": "Droiden können nur mit der Mechanik-Fertigkeit repariert werden."
+      },
+      "ConditionTrack": {
+        "Title": "Zustandsleiste: {name}"
+      },
+      "Store": {
+        "Title": "Galaktische Handelsstation",
+        "ConfirmDroidPurchase": "Droiden-Kauf Bestätigen",
+        "ConfirmVehiclePurchase": "Fahrzeug-Kauf Bestätigen",
+        "BuildCustomDroid": "Benutzerdefinierten Droiden Bauen",
+        "BuildCustomStarship": "Benutzerdefiniertes Raumschiff Bauen",
+        "CompletePurchase": "Kauf Abschließen"
+      },
+      "LevelUp": {
+        "Title": "{name} Stufe Aufsteigen"
+      },
+      "HouseRules": {
+        "Title": "SWSE Hausregeln Konfiguration",
+        "CharacterCreation": "Charaktererstellung",
+        "SkillsFeats": "Fertigkeiten & Vorzüge",
+        "Advancement": "Fortschritt",
+        "Combat": "Kampf",
+        "ForceDestiny": "Macht & Schicksal",
+        "SpaceCombat": "Weltraumkampf",
+        "Presets": "Voreinstellungen",
+        "CharacterCreationRules": "Charaktererstellungsregeln",
+        "AdvancementRules": "Fortschrittsregeln",
+        "CombatRules": "Kampfregeln",
+        "ForceDestinyRules": "Macht & Schicksalsregeln"
+      },
+      "CharacterGenerator": {
+        "Title": "Charakter-Generator",
+        "ImportDroidType": "Droiden-Typ Importieren"
+      },
+      "Buttons": {
+        "Confirm": "Bestätigen",
+        "Cancel": "Abbrechen",
+        "Apply": "Anwenden",
+        "Close": "Schließen",
+        "Save": "Speichern",
+        "Delete": "Löschen"
+      }
+    },
+    "Chat": {
+      "Flavors": {
+        "ConditionRecovery": "Zustandserholungs-Probe (SW 10)",
+        "Attack": "{weapon} Angriff",
+        "Damage": "{weapon} Schaden",
+        "Save": "{name} würfelt einen {type}-Rettungswurf ({modifier})",
+        "Skill": "{skill} Probe"
+      },
+      "Roll": {
+        "CriticalThreat": "KRITISCHE BEDROHUNG!",
+        "RollDamage": "Schaden Würfeln",
+        "ApplyDamage": "Schaden Anwenden",
+        "DiceTotal": "Gesamt",
+        "Formula": "Formel",
+        "Breakdown": "Aufschlüsselung"
+      }
     }
   }
 }

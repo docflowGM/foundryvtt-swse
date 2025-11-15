@@ -238,6 +238,131 @@
         "result": "результат",
         "highest_result": "наивысший результат"
       }
+    },
+    "Notifications": {
+      "Welcome": {
+        "Title": "Улучшенная Система SWSE Загружена!",
+        "ConditionTrack": "Визуальная Шкала Состояния активна",
+        "DamageThreshold": "Автоматизация Порога Урона включена",
+        "ForceSuite": "Управление Набором Силы готово",
+        "Summary": "Проверьте вкладку Сводка для панели боя"
+      },
+      "Condition": {
+        "RecoverySuccess": "{name} восстанавливается на один шаг по шкале состояния!",
+        "RecoveryFailed": "{name} не удаётся восстановиться."
+      },
+      "Combat": {
+        "NoTargets": "Цели не выбраны!",
+        "NoActorSelected": "Актёр не выбран"
+      },
+      "Damage": {
+        "CannotRoll": "Невозможно бросить урон для этого предмета."
+      },
+      "Rolls": {
+        "DefenseNotFound": "Тип защиты {type} не найден",
+        "SaveSucceeded": "Спасбросок успешен! ({total} против СЛ {dc})",
+        "SaveFailed": "Спасбросок провален! ({total} против СЛ {dc})",
+        "DiceRollFailed": "Бросок кубика не удался: {error}",
+        "SkillNotFound": "Навык {skill} не найден",
+        "UseForceRequiresTraining": "Использование Силы требует тренировки!"
+      },
+      "Items": {
+        "NotOwnedByActor": "Этот предмет не принадлежит актёру.",
+        "SpeciesApplied": "Расовые черты {species} применены к {actor}",
+        "AlreadyHasClass": "{actor} уже имеет класс {class}"
+      },
+      "System": {
+        "MigrationComplete": "Миграция завершена: {updated} обновлено, {errors} ошибок"
+      }
+    },
+    "Dialogs": {
+      "ConditionRecovery": {
+        "Title": "Восстановление Состояния",
+        "Content": "<p><strong>{name}</strong> может попытаться восстановиться.</p><p>Текущая позиция: {current}/5</p><p>Сделать проверку Выносливости СЛ 10?</p>"
+      },
+      "ReplaceSpecies": {
+        "Title": "Заменить Вид?",
+        "Content": "<p>{actor} уже имеет вид: <strong>{existing}</strong></p><p>Заменить на <strong>{new}</strong>?</p>"
+      },
+      "ApplyDroidChassis": {
+        "Title": "Применить Шасси Дроида?"
+      },
+      "ApplyVehicleTemplate": {
+        "Title": "Применить Шаблон Транспорта?"
+      },
+      "ApplyDamage": {
+        "Title": "Применить Урон к {name}",
+        "Amount": "Количество Урона",
+        "CheckThreshold": "Проверить Порог Урона",
+        "IgnoreTemp": "Игнорировать Временные ОЗ",
+        "Button": "Применить Урон"
+      },
+      "Healing": {
+        "TitleHeal": "Вылечить {name}",
+        "TitleRepair": "Отремонтировать {name}",
+        "Amount": "Количество Лечения",
+        "RepairAmount": "Количество Ремонта (через Механику)",
+        "ButtonHeal": "Применить Лечение",
+        "ButtonRepair": "Применить Ремонт",
+        "DroidNote": "Дроиды могут быть отремонтированы только навыком Механика."
+      },
+      "ConditionTrack": {
+        "Title": "Шкала Состояния: {name}"
+      },
+      "Store": {
+        "Title": "Галактическая Торговая Биржа",
+        "ConfirmDroidPurchase": "Подтвердить Покупку Дроида",
+        "ConfirmVehiclePurchase": "Подтвердить Покупку Транспорта",
+        "BuildCustomDroid": "Построить Пользовательского Дроида",
+        "BuildCustomStarship": "Построить Пользовательский Звездолёт",
+        "CompletePurchase": "Завершить Покупку"
+      },
+      "LevelUp": {
+        "Title": "Повысить Уровень {name}"
+      },
+      "HouseRules": {
+        "Title": "Конфигурация Домашних Правил SWSE",
+        "CharacterCreation": "Создание Персонажа",
+        "SkillsFeats": "Навыки и Черты",
+        "Advancement": "Развитие",
+        "Combat": "Бой",
+        "ForceDestiny": "Сила и Судьба",
+        "SpaceCombat": "Космический Бой",
+        "Presets": "Предустановки",
+        "CharacterCreationRules": "Правила Создания Персонажа",
+        "AdvancementRules": "Правила Развития",
+        "CombatRules": "Правила Боя",
+        "ForceDestinyRules": "Правила Силы и Судьбы"
+      },
+      "CharacterGenerator": {
+        "Title": "Генератор Персонажа",
+        "ImportDroidType": "Импортировать Тип Дроида"
+      },
+      "Buttons": {
+        "Confirm": "Подтвердить",
+        "Cancel": "Отмена",
+        "Apply": "Применить",
+        "Close": "Закрыть",
+        "Save": "Сохранить",
+        "Delete": "Удалить"
+      }
+    },
+    "Chat": {
+      "Flavors": {
+        "ConditionRecovery": "Проверка Восстановления Состояния (СЛ 10)",
+        "Attack": "Атака {weapon}",
+        "Damage": "Урон {weapon}",
+        "Save": "{name} бросает спасбросок {type} ({modifier})",
+        "Skill": "Проверка {skill}"
+      },
+      "Roll": {
+        "CriticalThreat": "КРИТИЧЕСКАЯ УГРОЗА!",
+        "RollDamage": "Бросить Урон",
+        "ApplyDamage": "Применить Урон",
+        "DiceTotal": "Итого",
+        "Formula": "Формула",
+        "Breakdown": "Разбивка"
+      }
     }
   }
 }

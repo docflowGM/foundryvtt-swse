@@ -238,6 +238,131 @@
         "result": "result",
         "highest_result": "highest result"
       }
+    },
+    "Notifications": {
+      "Welcome": {
+        "Title": "SWSE Enhanced System Loaded!",
+        "ConditionTrack": "Visual Condition Track active",
+        "DamageThreshold": "Damage Threshold automation enabled",
+        "ForceSuite": "Force Suite management ready",
+        "Summary": "Check the Summary tab for your combat dashboard"
+      },
+      "Condition": {
+        "RecoverySuccess": "{name} recovers one step on the condition track!",
+        "RecoveryFailed": "{name} fails to recover."
+      },
+      "Combat": {
+        "NoTargets": "No targets selected!",
+        "NoActorSelected": "No actor selected"
+      },
+      "Damage": {
+        "CannotRoll": "Cannot roll damage for this item."
+      },
+      "Rolls": {
+        "DefenseNotFound": "Defense type {type} not found",
+        "SaveSucceeded": "Save succeeded! ({total} vs DC {dc})",
+        "SaveFailed": "Save failed! ({total} vs DC {dc})",
+        "DiceRollFailed": "Dice roll failed: {error}",
+        "SkillNotFound": "Skill {skill} not found",
+        "UseForceRequiresTraining": "Use the Force requires training!"
+      },
+      "Items": {
+        "NotOwnedByActor": "This item is not owned by an actor.",
+        "SpeciesApplied": "Applied {species} racial traits to {actor}",
+        "AlreadyHasClass": "{actor} already has {class} class"
+      },
+      "System": {
+        "MigrationComplete": "Migration complete: {updated} updated, {errors} errors"
+      }
+    },
+    "Dialogs": {
+      "ConditionRecovery": {
+        "Title": "Condition Recovery",
+        "Content": "<p><strong>{name}</strong> can attempt condition recovery.</p><p>Current position: {current}/5</p><p>Make a DC 10 Endurance check?</p>"
+      },
+      "ReplaceSpecies": {
+        "Title": "Replace Species?",
+        "Content": "<p>{actor} already has species: <strong>{existing}</strong></p><p>Replace with <strong>{new}</strong>?</p>"
+      },
+      "ApplyDroidChassis": {
+        "Title": "Apply Droid Chassis?"
+      },
+      "ApplyVehicleTemplate": {
+        "Title": "Apply Vehicle Template?"
+      },
+      "ApplyDamage": {
+        "Title": "Apply Damage to {name}",
+        "Amount": "Damage Amount",
+        "CheckThreshold": "Check Damage Threshold",
+        "IgnoreTemp": "Ignore Temporary HP",
+        "Button": "Apply Damage"
+      },
+      "Healing": {
+        "TitleHeal": "Heal {name}",
+        "TitleRepair": "Repair {name}",
+        "Amount": "Healing Amount",
+        "RepairAmount": "Repair Amount (via Mechanics)",
+        "ButtonHeal": "Apply Healing",
+        "ButtonRepair": "Apply Repair",
+        "DroidNote": "Droids can only be repaired with the Mechanics skill."
+      },
+      "ConditionTrack": {
+        "Title": "Condition Track: {name}"
+      },
+      "Store": {
+        "Title": "Galactic Trade Exchange",
+        "ConfirmDroidPurchase": "Confirm Droid Purchase",
+        "ConfirmVehiclePurchase": "Confirm Vehicle Purchase",
+        "BuildCustomDroid": "Build Custom Droid",
+        "BuildCustomStarship": "Build Custom Starship",
+        "CompletePurchase": "Complete Purchase"
+      },
+      "LevelUp": {
+        "Title": "Level Up {name}"
+      },
+      "HouseRules": {
+        "Title": "SWSE House Rules Configuration",
+        "CharacterCreation": "Character Creation",
+        "SkillsFeats": "Skills & Feats",
+        "Advancement": "Advancement",
+        "Combat": "Combat",
+        "ForceDestiny": "Force & Destiny",
+        "SpaceCombat": "Space Combat",
+        "Presets": "Presets",
+        "CharacterCreationRules": "Character Creation Rules",
+        "AdvancementRules": "Advancement Rules",
+        "CombatRules": "Combat Rules",
+        "ForceDestinyRules": "Force & Destiny Rules"
+      },
+      "CharacterGenerator": {
+        "Title": "Character Generator",
+        "ImportDroidType": "Import Droid Type"
+      },
+      "Buttons": {
+        "Confirm": "Confirm",
+        "Cancel": "Cancel",
+        "Apply": "Apply",
+        "Close": "Close",
+        "Save": "Save",
+        "Delete": "Delete"
+      }
+    },
+    "Chat": {
+      "Flavors": {
+        "ConditionRecovery": "Condition Recovery Check (DC 10)",
+        "Attack": "{weapon} Attack",
+        "Damage": "{weapon} Damage",
+        "Save": "{name} rolls a {type} save ({modifier})",
+        "Skill": "{skill} Check"
+      },
+      "Roll": {
+        "CriticalThreat": "CRITICAL THREAT!",
+        "RollDamage": "Roll Damage",
+        "ApplyDamage": "Apply Damage",
+        "DiceTotal": "Total",
+        "Formula": "Formula",
+        "Breakdown": "Breakdown"
+      }
     }
   }
 }

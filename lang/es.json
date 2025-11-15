@@ -238,6 +238,131 @@
         "result": "resultado",
         "highest_result": "resultado más alto"
       }
+    },
+    "Notifications": {
+      "Welcome": {
+        "Title": "¡Sistema SWSE Mejorado Cargado!",
+        "ConditionTrack": "Pista de Condición Visual activa",
+        "DamageThreshold": "Automatización de Umbral de Daño habilitada",
+        "ForceSuite": "Gestión de Suite de Fuerza lista",
+        "Summary": "Consulta la pestaña Resumen para tu panel de combate"
+      },
+      "Condition": {
+        "RecoverySuccess": "¡{name} recupera un paso en la pista de condición!",
+        "RecoveryFailed": "{name} falla al recuperarse."
+      },
+      "Combat": {
+        "NoTargets": "¡No hay objetivos seleccionados!",
+        "NoActorSelected": "No hay actor seleccionado"
+      },
+      "Damage": {
+        "CannotRoll": "No se puede tirar daño para este objeto."
+      },
+      "Rolls": {
+        "DefenseNotFound": "Tipo de defensa {type} no encontrado",
+        "SaveSucceeded": "¡Salvación exitosa! ({total} contra CD {dc})",
+        "SaveFailed": "¡Salvación fallida! ({total} contra CD {dc})",
+        "DiceRollFailed": "Tirada de dados fallida: {error}",
+        "SkillNotFound": "Habilidad {skill} no encontrada",
+        "UseForceRequiresTraining": "¡Usar la Fuerza requiere entrenamiento!"
+      },
+      "Items": {
+        "NotOwnedByActor": "Este objeto no pertenece a ningún actor.",
+        "SpeciesApplied": "Rasgos raciales de {species} aplicados a {actor}",
+        "AlreadyHasClass": "{actor} ya tiene la clase {class}"
+      },
+      "System": {
+        "MigrationComplete": "Migración completa: {updated} actualizados, {errors} errores"
+      }
+    },
+    "Dialogs": {
+      "ConditionRecovery": {
+        "Title": "Recuperación de Condición",
+        "Content": "<p><strong>{name}</strong> puede intentar recuperarse.</p><p>Posición actual: {current}/5</p><p>¿Hacer una prueba de Aguante CD 10?</p>"
+      },
+      "ReplaceSpecies": {
+        "Title": "¿Reemplazar Especie?",
+        "Content": "<p>{actor} ya tiene la especie: <strong>{existing}</strong></p><p>¿Reemplazar con <strong>{new}</strong>?</p>"
+      },
+      "ApplyDroidChassis": {
+        "Title": "¿Aplicar Chasis de Droide?"
+      },
+      "ApplyVehicleTemplate": {
+        "Title": "¿Aplicar Plantilla de Vehículo?"
+      },
+      "ApplyDamage": {
+        "Title": "Aplicar Daño a {name}",
+        "Amount": "Cantidad de Daño",
+        "CheckThreshold": "Verificar Umbral de Daño",
+        "IgnoreTemp": "Ignorar PG Temporales",
+        "Button": "Aplicar Daño"
+      },
+      "Healing": {
+        "TitleHeal": "Curar a {name}",
+        "TitleRepair": "Reparar a {name}",
+        "Amount": "Cantidad de Curación",
+        "RepairAmount": "Cantidad de Reparación (vía Mecánica)",
+        "ButtonHeal": "Aplicar Curación",
+        "ButtonRepair": "Aplicar Reparación",
+        "DroidNote": "Los droides solo pueden repararse con la habilidad Mecánica."
+      },
+      "ConditionTrack": {
+        "Title": "Pista de Condición: {name}"
+      },
+      "Store": {
+        "Title": "Bolsa de Intercambio Galáctica",
+        "ConfirmDroidPurchase": "Confirmar Compra de Droide",
+        "ConfirmVehiclePurchase": "Confirmar Compra de Vehículo",
+        "BuildCustomDroid": "Construir Droide Personalizado",
+        "BuildCustomStarship": "Construir Nave Estelar Personalizada",
+        "CompletePurchase": "Completar Compra"
+      },
+      "LevelUp": {
+        "Title": "Subir de Nivel {name}"
+      },
+      "HouseRules": {
+        "Title": "Configuración de Reglas de Casa SWSE",
+        "CharacterCreation": "Creación de Personaje",
+        "SkillsFeats": "Habilidades y Dotes",
+        "Advancement": "Avance",
+        "Combat": "Combate",
+        "ForceDestiny": "Fuerza y Destino",
+        "SpaceCombat": "Combate Espacial",
+        "Presets": "Preajustes",
+        "CharacterCreationRules": "Reglas de Creación de Personaje",
+        "AdvancementRules": "Reglas de Avance",
+        "CombatRules": "Reglas de Combate",
+        "ForceDestinyRules": "Reglas de Fuerza y Destino"
+      },
+      "CharacterGenerator": {
+        "Title": "Generador de Personaje",
+        "ImportDroidType": "Importar Tipo de Droide"
+      },
+      "Buttons": {
+        "Confirm": "Confirmar",
+        "Cancel": "Cancelar",
+        "Apply": "Aplicar",
+        "Close": "Cerrar",
+        "Save": "Guardar",
+        "Delete": "Eliminar"
+      }
+    },
+    "Chat": {
+      "Flavors": {
+        "ConditionRecovery": "Prueba de Recuperación de Condición (CD 10)",
+        "Attack": "Ataque de {weapon}",
+        "Damage": "Daño de {weapon}",
+        "Save": "{name} lanza una salvación de {type} ({modifier})",
+        "Skill": "Prueba de {skill}"
+      },
+      "Roll": {
+        "CriticalThreat": "¡AMENAZA CRÍTICA!",
+        "RollDamage": "Tirar Daño",
+        "ApplyDamage": "Aplicar Daño",
+        "DiceTotal": "Total",
+        "Formula": "Fórmula",
+        "Breakdown": "Desglose"
+      }
     }
   }
 }

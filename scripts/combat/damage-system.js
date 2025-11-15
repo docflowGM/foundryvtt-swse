@@ -44,29 +44,29 @@ export class DamageSystem {
     const targetActor = actor || (canvas.tokens.controlled[0]?.actor);
     
     if (!targetActor) {
-      ui.notifications.warn('No actor selected');
+      ui.notifications.warn(game.i18n.localize('SWSE.Notifications.Combat.NoActorSelected'));
       return;
     }
-    
+
     return new Promise((resolve) => {
       new Dialog({
-        title: `Apply Damage to ${targetActor.name}`,
+        title: game.i18n.format('SWSE.Dialogs.ApplyDamage.Title', {name: targetActor.name}),
         content: `
           <form>
             <div class="form-group">
-              <label>Damage Amount</label>
+              <label>${game.i18n.localize('SWSE.Dialogs.ApplyDamage.Amount')}</label>
               <input type="number" name="amount" value="0" min="0" autofocus style="width: 100%;"/>
             </div>
             <div class="form-group">
               <label>
                 <input type="checkbox" name="threshold" checked/>
-                Check Damage Threshold
+                ${game.i18n.localize('SWSE.Dialogs.ApplyDamage.CheckThreshold')}
               </label>
             </div>
             <div class="form-group">
               <label>
                 <input type="checkbox" name="ignoreTemp"/>
-                Ignore Temporary HP
+                ${game.i18n.localize('SWSE.Dialogs.ApplyDamage.IgnoreTemp')}
               </label>
             </div>
           </form>
@@ -74,19 +74,19 @@ export class DamageSystem {
         buttons: {
           apply: {
             icon: '<i class="fas fa-heart-broken"></i>',
-            label: 'Apply Damage',
+            label: game.i18n.localize('SWSE.Dialogs.ApplyDamage.Button'),
             callback: async html => {
               const amount = parseInt(html.find('[name="amount"]').val()) || 0;
               const checkThreshold = html.find('[name="threshold"]').is(':checked');
               const ignoreTemp = html.find('[name="ignoreTemp"]').is(':checked');
-              
+
               await targetActor.applyDamage(amount, {checkThreshold, ignoreTemp});
               resolve(amount);
             }
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: 'Cancel',
+            label: game.i18n.localize('SWSE.Dialogs.Buttons.Cancel'),
             callback: () => resolve(null)
           }
         },
@@ -102,13 +102,17 @@ export class DamageSystem {
     const targetActor = actor || (canvas.tokens.controlled[0]?.actor);
 
     if (!targetActor) {
-      ui.notifications.warn('No actor selected');
+      ui.notifications.warn(game.i18n.localize('SWSE.Notifications.Combat.NoActorSelected'));
       return;
     }
 
     const isDroid = targetActor.system.isDroid || false;
-    const title = isDroid ? `Repair ${targetActor.name}` : `Heal ${targetActor.name}`;
-    const label = isDroid ? 'Apply Repair' : 'Apply Healing';
+    const title = isDroid
+      ? game.i18n.format('SWSE.Dialogs.Healing.TitleRepair', {name: targetActor.name})
+      : game.i18n.format('SWSE.Dialogs.Healing.TitleHeal', {name: targetActor.name});
+    const label = isDroid
+      ? game.i18n.localize('SWSE.Dialogs.Healing.ButtonRepair')
+      : game.i18n.localize('SWSE.Dialogs.Healing.ButtonHeal');
     const icon = isDroid ? 'fa-wrench' : 'fa-medkit';
 
     return new Promise((resolve) => {
@@ -117,10 +121,10 @@ export class DamageSystem {
         content: `
           <form>
             <div class="form-group">
-              <label>${isDroid ? 'Repair Amount (via Mechanics)' : 'Healing Amount'}</label>
+              <label>${isDroid ? game.i18n.localize('SWSE.Dialogs.Healing.RepairAmount') : game.i18n.localize('SWSE.Dialogs.Healing.Amount')}</label>
               <input type="number" name="amount" value="0" min="0" autofocus style="width: 100%;"/>
             </div>
-            ${isDroid ? '<p style="color: #999; font-size: 0.9em;">Droids can only be repaired with the Mechanics skill.</p>' : ''}
+            ${isDroid ? `<p style="color: #999; font-size: 0.9em;">${game.i18n.localize('SWSE.Dialogs.Healing.DroidNote')}</p>` : ''}
           </form>
         `,
         buttons: {
@@ -135,7 +139,7 @@ export class DamageSystem {
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: 'Cancel',
+            label: game.i18n.localize('SWSE.Dialogs.Buttons.Cancel'),
             callback: () => resolve(null)
           }
         },
@@ -187,7 +191,7 @@ export class DamageSystem {
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: 'Cancel',
+            label: game.i18n.localize('SWSE.Dialogs.Buttons.Cancel'),
             callback: () => resolve(null)
           }
         },

@@ -238,6 +238,131 @@
         "result": "résultat",
         "highest_result": "résultat le plus élevé"
       }
+    },
+    "Notifications": {
+      "Welcome": {
+        "Title": "Système SWSE Amélioré Chargé !",
+        "ConditionTrack": "Piste d'État Visuelle active",
+        "DamageThreshold": "Automatisation du Seuil de Dégâts activée",
+        "ForceSuite": "Gestion de la Suite de Force prête",
+        "Summary": "Consultez l'onglet Résumé pour votre tableau de bord de combat"
+      },
+      "Condition": {
+        "RecoverySuccess": "{name} récupère d'un cran sur la piste d'état !",
+        "RecoveryFailed": "{name} échoue à récupérer."
+      },
+      "Combat": {
+        "NoTargets": "Aucune cible sélectionnée !",
+        "NoActorSelected": "Aucun acteur sélectionné"
+      },
+      "Damage": {
+        "CannotRoll": "Impossible de lancer les dégâts pour cet objet."
+      },
+      "Rolls": {
+        "DefenseNotFound": "Type de défense {type} non trouvé",
+        "SaveSucceeded": "Jet de sauvegarde réussi ! ({total} contre ND {dc})",
+        "SaveFailed": "Jet de sauvegarde échoué ! ({total} contre ND {dc})",
+        "DiceRollFailed": "Lancer de dés échoué : {error}",
+        "SkillNotFound": "Compétence {skill} non trouvée",
+        "UseForceRequiresTraining": "Utiliser la Force nécessite un entraînement !"
+      },
+      "Items": {
+        "NotOwnedByActor": "Cet objet n'appartient à aucun acteur.",
+        "SpeciesApplied": "Traits raciaux {species} appliqués à {actor}",
+        "AlreadyHasClass": "{actor} a déjà la classe {class}"
+      },
+      "System": {
+        "MigrationComplete": "Migration terminée : {updated} mis à jour, {errors} erreurs"
+      }
+    },
+    "Dialogs": {
+      "ConditionRecovery": {
+        "Title": "Récupération d'État",
+        "Content": "<p><strong>{name}</strong> peut tenter de récupérer.</p><p>Position actuelle : {current}/5</p><p>Faire un test d'Endurance ND 10 ?</p>"
+      },
+      "ReplaceSpecies": {
+        "Title": "Remplacer l'Espèce ?",
+        "Content": "<p>{actor} a déjà l'espèce : <strong>{existing}</strong></p><p>Remplacer par <strong>{new}</strong> ?</p>"
+      },
+      "ApplyDroidChassis": {
+        "Title": "Appliquer le Châssis de Droïde ?"
+      },
+      "ApplyVehicleTemplate": {
+        "Title": "Appliquer le Modèle de Véhicule ?"
+      },
+      "ApplyDamage": {
+        "Title": "Appliquer les Dégâts à {name}",
+        "Amount": "Montant des Dégâts",
+        "CheckThreshold": "Vérifier le Seuil de Dégâts",
+        "IgnoreTemp": "Ignorer les PV Temporaires",
+        "Button": "Appliquer les Dégâts"
+      },
+      "Healing": {
+        "TitleHeal": "Soigner {name}",
+        "TitleRepair": "Réparer {name}",
+        "Amount": "Montant de Soins",
+        "RepairAmount": "Montant de Réparation (via Mécanique)",
+        "ButtonHeal": "Appliquer les Soins",
+        "ButtonRepair": "Appliquer la Réparation",
+        "DroidNote": "Les droïdes ne peuvent être réparés qu'avec la compétence Mécanique."
+      },
+      "ConditionTrack": {
+        "Title": "Piste d'État : {name}"
+      },
+      "Store": {
+        "Title": "Bourse d'Échange Galactique",
+        "ConfirmDroidPurchase": "Confirmer l'Achat de Droïde",
+        "ConfirmVehiclePurchase": "Confirmer l'Achat de Véhicule",
+        "BuildCustomDroid": "Construire un Droïde Personnalisé",
+        "BuildCustomStarship": "Construire un Vaisseau Spatial Personnalisé",
+        "CompletePurchase": "Finaliser l'Achat"
+      },
+      "LevelUp": {
+        "Title": "Monter de Niveau {name}"
+      },
+      "HouseRules": {
+        "Title": "Configuration des Règles Maison SWSE",
+        "CharacterCreation": "Création de Personnage",
+        "SkillsFeats": "Compétences & Dons",
+        "Advancement": "Progression",
+        "Combat": "Combat",
+        "ForceDestiny": "Force & Destin",
+        "SpaceCombat": "Combat Spatial",
+        "Presets": "Préréglages",
+        "CharacterCreationRules": "Règles de Création de Personnage",
+        "AdvancementRules": "Règles de Progression",
+        "CombatRules": "Règles de Combat",
+        "ForceDestinyRules": "Règles de Force & Destin"
+      },
+      "CharacterGenerator": {
+        "Title": "Générateur de Personnage",
+        "ImportDroidType": "Importer un Type de Droïde"
+      },
+      "Buttons": {
+        "Confirm": "Confirmer",
+        "Cancel": "Annuler",
+        "Apply": "Appliquer",
+        "Close": "Fermer",
+        "Save": "Sauvegarder",
+        "Delete": "Supprimer"
+      }
+    },
+    "Chat": {
+      "Flavors": {
+        "ConditionRecovery": "Test de Récupération d'État (ND 10)",
+        "Attack": "Attaque {weapon}",
+        "Damage": "Dégâts {weapon}",
+        "Save": "{name} lance un jet de sauvegarde de {type} ({modifier})",
+        "Skill": "Test de {skill}"
+      },
+      "Roll": {
+        "CriticalThreat": "MENACE CRITIQUE !",
+        "RollDamage": "Lancer les Dégâts",
+        "ApplyDamage": "Appliquer les Dégâts",
+        "DiceTotal": "Total",
+        "Formula": "Formule",
+        "Breakdown": "Détail"
+      }
     }
   }
 }
