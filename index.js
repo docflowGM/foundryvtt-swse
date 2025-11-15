@@ -263,9 +263,9 @@ Hooks.once("init", async function() {
   // ============================================
   // Register Item Sheets
   // ============================================
-  
+
   Items.registerSheet("swse", SWSEItemSheet, {
-    types: ["weapon", "armor", "equipment", "feat", "talent", "forcepower", "class", "species"],
+    types: ["weapon", "armor", "equipment", "feat", "talent", "forcepower", "force-power", "class", "species", "talenttree", "skill", "combat-action", "condition"],
     makeDefault: true,
     label: "SWSE.SheetLabels.Item"
   });
