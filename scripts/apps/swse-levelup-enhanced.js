@@ -1316,35 +1316,53 @@ export class SWSELevelUpEnhanced extends FormApplication {
     if (!levelProgression || !Array.isArray(levelProgression)) return;
 
     const levelData = levelProgression.find(lp => lp.level === classLevel);
-    if (!levelData || !levelData.features) return;
+    if (!levelData) return;
 
-    console.log(`SWSE LevelUp | Applying class features for ${classDoc.name} level ${classLevel}:`, levelData.features);
+    console.log(`SWSE LevelUp | Applying class features for ${classDoc.name} level ${classLevel}:`, levelData);
+
+    // Apply Force Points if specified
+    if (levelData.force_points && levelData.force_points > 0) {
+      const currentMax = this.actor.system.forcePoints?.max || 5;
+      const newMax = currentMax + levelData.force_points;
+      const currentValue = this.actor.system.forcePoints?.value || 5;
+      const newValue = currentValue + levelData.force_points;
+
+      await this.actor.update({
+        "system.forcePoints.max": newMax,
+        "system.forcePoints.value": newValue
+      });
+
+      console.log(`SWSE LevelUp | Increased Force Points by ${levelData.force_points} (${currentMax} → ${newMax})`);
+      ui.notifications.info(`Force Points increased by ${levelData.force_points}!`);
+    }
 
     // Process each feature that's not a choice (talents and feats are already handled)
-    for (const feature of levelData.features) {
-      if (feature.type === 'proficiency' || feature.type === 'class_feature' || feature.type === 'feat_grant') {
-        console.log(`SWSE LevelUp | Granting class feature: ${feature.name}`);
+    if (levelData.features) {
+      for (const feature of levelData.features) {
+        if (feature.type === 'proficiency' || feature.type === 'class_feature' || feature.type === 'feat_grant') {
+          console.log(`SWSE LevelUp | Granting class feature: ${feature.name}`);
 
-        // Create a feature item on the actor
-        const featureItem = {
-          name: feature.name,
-          type: "feat", // Use feat type for class features
-          img: "icons/svg/upgrade.svg",
-          system: {
-            description: `Class feature from ${classDoc.name} level ${classLevel}`,
-            source: `${classDoc.name} ${classLevel}`,
-            type: feature.type
+          // Create a feature item on the actor
+          const featureItem = {
+            name: feature.name,
+            type: "feat", // Use feat type for class features
+            img: "icons/svg/upgrade.svg",
+            system: {
+              description: `Class feature from ${classDoc.name} level ${classLevel}`,
+              source: `${classDoc.name} ${classLevel}`,
+              type: feature.type
+            }
+          };
+
+          // Check if this feature already exists
+          const existingFeature = this.actor.items.find(i =>
+            i.name === feature.name && i.system.source === featureItem.system.source
+          );
+
+          if (!existingFeature) {
+            await this.actor.createEmbeddedDocuments("Item", [featureItem]);
+            ui.notifications.info(`Gained class feature: ${feature.name}`);
           }
-        };
-
-        // Check if this feature already exists
-        const existingFeature = this.actor.items.find(i =>
-          i.name === feature.name && i.system.source === featureItem.system.source
-        );
-
-        if (!existingFeature) {
-          await this.actor.createEmbeddedDocuments("Item", [featureItem]);
-          ui.notifications.info(`Gained class feature: ${feature.name}`);
         }
       }
     }
@@ -1511,9 +1529,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       await this.actor.update({
         "system.bab": totalBAB,
-        "system.defenses.fortitude.class": defenseBonuses.fortitude,
-        "system.defenses.reflex.class": defenseBonuses.reflex,
-        "system.defenses.will.class": defenseBonuses.will
+        "system.defenses.fortitude.classBonus": defenseBonuses.fortitude,
+        "system.defenses.reflex.classBonus": defenseBonuses.reflex,
+        "system.defenses.will.classBonus": defenseBonuses.will
       });
 
       // Build ability increases text

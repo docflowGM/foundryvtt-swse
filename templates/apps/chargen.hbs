@@ -161,11 +161,9 @@
  {{#each packs.species}}
  <button type="button" class="select-species choice-button" data-species="{{this.name}}">
  <h4>{{this.name}}</h4>
- {{#if this.system.bonuses}}
+ {{#if this.system.abilities}}
  <div class="bonuses">
- {{#each this.system.bonuses}}
- <span class="bonus">{{@key}}: {{this}}</span>
- {{/each}}
+ <span class="bonus">{{this.system.abilities}}</span>
  </div>
  {{/if}}
  </button>
