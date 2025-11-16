@@ -345,7 +345,8 @@
     box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
 }
 
-button:disabled {
+.chargen-app button:disabled,
+.swse-chargen button:disabled {
     opacity: 0.4;
     cursor: not-allowed;
 }
