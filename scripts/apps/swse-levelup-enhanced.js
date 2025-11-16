@@ -1057,6 +1057,110 @@ export class SWSELevelUpEnhanced extends FormApplication {
   }
 
   // ========================================
+  // BAB AND DEFENSE CALCULATIONS
+  // ========================================
+
+  /**
+   * Calculate total BAB from all class items
+   * @returns {number} Total BAB
+   */
+  _calculateTotalBAB() {
+    const classItems = this.actor.items.filter(i => i.type === 'class');
+    let totalBAB = 0;
+
+    for (const classItem of classItems) {
+      const classLevel = classItem.system.level || 1;
+      const className = classItem.name;
+
+      // Check if class has level_progression data with BAB
+      if (classItem.system.level_progression && Array.isArray(classItem.system.level_progression)) {
+        const levelData = classItem.system.level_progression.find(lp => lp.level === classLevel);
+        if (levelData && typeof levelData.bab === 'number') {
+          totalBAB += levelData.bab;
+          continue;
+        }
+      }
+
+      // Fallback: Use babProgression if available
+      if (classItem.system.babProgression) {
+        totalBAB += Math.floor(classLevel * classItem.system.babProgression);
+        continue;
+      }
+
+      // Fallback: Calculate from known class names
+      const fullBABClasses = ['Jedi', 'Soldier'];
+      if (fullBABClasses.includes(className)) {
+        totalBAB += classLevel;
+      } else {
+        // 3/4 BAB for other base classes
+        totalBAB += Math.floor(classLevel * 0.75);
+      }
+    }
+
+    return totalBAB;
+  }
+
+  /**
+   * Calculate defense bonuses from all class items
+   * @returns {{fortitude: number, reflex: number, will: number}}
+   */
+  _calculateDefenseBonuses() {
+    const classItems = this.actor.items.filter(i => i.type === 'class');
+    const bonuses = { fortitude: 0, reflex: 0, will: 0 };
+
+    // Defense progression by class (good = +2 per level, poor = +0 per level)
+    const defenseProgression = {
+      'Jedi': { fortitude: 2, reflex: 2, will: 2 },
+      'Noble': { fortitude: 0, reflex: 0, will: 2 },
+      'Scoundrel': { fortitude: 0, reflex: 2, will: 0 },
+      'Scout': { fortitude: 0, reflex: 2, will: 0 },
+      'Soldier': { fortitude: 2, reflex: 0, will: 0 },
+
+      // Prestige classes typically have varied progressions
+      // Using conservative defaults for prestige classes
+      'Ace Pilot': { fortitude: 0, reflex: 2, will: 0 },
+      'Bounty Hunter': { fortitude: 2, reflex: 0, will: 0 },
+      'Crime Lord': { fortitude: 0, reflex: 0, will: 2 },
+      'Elite Trooper': { fortitude: 2, reflex: 0, will: 0 },
+      'Force Adept': { fortitude: 0, reflex: 0, will: 2 },
+      'Force Disciple': { fortitude: 0, reflex: 0, will: 2 },
+      'Gunslinger': { fortitude: 0, reflex: 2, will: 0 },
+      'Jedi Knight': { fortitude: 2, reflex: 2, will: 2 },
+      'Jedi Master': { fortitude: 2, reflex: 2, will: 2 },
+      'Officer': { fortitude: 0, reflex: 0, will: 2 },
+      'Sith Apprentice': { fortitude: 0, reflex: 0, will: 2 },
+      'Sith Lord': { fortitude: 2, reflex: 2, will: 2 },
+      'Imperial Knight': { fortitude: 2, reflex: 2, will: 2 }
+    };
+
+    for (const classItem of classItems) {
+      const classLevel = classItem.system.level || 1;
+      const className = classItem.name;
+
+      // Check if class item has defenses specified
+      if (classItem.system.defenses) {
+        bonuses.fortitude += (classItem.system.defenses.fortitude || 0) * classLevel;
+        bonuses.reflex += (classItem.system.defenses.reflex || 0) * classLevel;
+        bonuses.will += (classItem.system.defenses.will || 0) * classLevel;
+        continue;
+      }
+
+      // Use known defense progressions
+      const progression = defenseProgression[className];
+      if (progression) {
+        bonuses.fortitude += progression.fortitude * classLevel;
+        bonuses.reflex += progression.reflex * classLevel;
+        bonuses.will += progression.will * classLevel;
+      } else {
+        // Default: assume poor/poor/poor for unknown classes
+        console.warn(`SWSE LevelUp | Unknown defense progression for class ${className}, using defaults`);
+      }
+    }
+
+    return bonuses;
+  }
+
+  // ========================================
   // COMPLETE LEVEL UP
   // ========================================
 
@@ -1190,6 +1294,20 @@ export class SWSELevelUpEnhanced extends FormApplication {
       await this.actor.update({
         "system.hp.max": newHPMax,
         "system.hp.value": newHPValue
+      });
+
+      // Recalculate BAB and defense bonuses from all class items
+      const totalBAB = this._calculateTotalBAB();
+      const defenseBonuses = this._calculateDefenseBonuses();
+
+      console.log(`SWSE LevelUp | Updating BAB to ${totalBAB}`);
+      console.log(`SWSE LevelUp | Updating defense bonuses: Fort +${defenseBonuses.fortitude}, Ref +${defenseBonuses.reflex}, Will +${defenseBonuses.will}`);
+
+      await this.actor.update({
+        "system.bab": totalBAB,
+        "system.defenses.fortitude.class": defenseBonuses.fortitude,
+        "system.defenses.reflex.class": defenseBonuses.reflex,
+        "system.defenses.will.class": defenseBonuses.will
       });
 
       // Build ability increases text
