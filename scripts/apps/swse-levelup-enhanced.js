@@ -1102,13 +1102,16 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
   /**
    * Calculate defense bonuses from all class items
+   * In SWSE, class defense bonuses are applied ONCE per class, not per level
+   * Good defense = +2 class bonus, Poor defense = +0 class bonus
    * @returns {{fortitude: number, reflex: number, will: number}}
    */
   _calculateDefenseBonuses() {
     const classItems = this.actor.items.filter(i => i.type === 'class');
     const bonuses = { fortitude: 0, reflex: 0, will: 0 };
 
-    // Defense progression by class (good = +2 per level, poor = +0 per level)
+    // Defense bonuses by class (good = +2 once, poor = +0)
+    // These are ONE-TIME bonuses, not multiplied by level
     const defenseProgression = {
       'Jedi': { fortitude: 2, reflex: 2, will: 2 },
       'Noble': { fortitude: 0, reflex: 0, will: 2 },
@@ -1116,8 +1119,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       'Scout': { fortitude: 0, reflex: 2, will: 0 },
       'Soldier': { fortitude: 2, reflex: 0, will: 0 },
 
-      // Prestige classes typically have varied progressions
-      // Using conservative defaults for prestige classes
+      // Prestige classes (one-time bonuses)
       'Ace Pilot': { fortitude: 0, reflex: 2, will: 0 },
       'Bounty Hunter': { fortitude: 2, reflex: 0, will: 0 },
       'Crime Lord': { fortitude: 0, reflex: 0, will: 2 },
@@ -1134,23 +1136,22 @@ export class SWSELevelUpEnhanced extends FormApplication {
     };
 
     for (const classItem of classItems) {
-      const classLevel = classItem.system.level || 1;
       const className = classItem.name;
 
-      // Check if class item has defenses specified
+      // Check if class item has defenses specified (not multiplied by level!)
       if (classItem.system.defenses) {
-        bonuses.fortitude += (classItem.system.defenses.fortitude || 0) * classLevel;
-        bonuses.reflex += (classItem.system.defenses.reflex || 0) * classLevel;
-        bonuses.will += (classItem.system.defenses.will || 0) * classLevel;
+        bonuses.fortitude += (classItem.system.defenses.fortitude || 0);
+        bonuses.reflex += (classItem.system.defenses.reflex || 0);
+        bonuses.will += (classItem.system.defenses.will || 0);
         continue;
       }
 
-      // Use known defense progressions
+      // Use known defense progressions (not multiplied by level!)
       const progression = defenseProgression[className];
       if (progression) {
-        bonuses.fortitude += progression.fortitude * classLevel;
-        bonuses.reflex += progression.reflex * classLevel;
-        bonuses.will += progression.will * classLevel;
+        bonuses.fortitude += progression.fortitude;
+        bonuses.reflex += progression.reflex;
+        bonuses.will += progression.will;
       } else {
         // Default: assume poor/poor/poor for unknown classes
         console.warn(`SWSE LevelUp | Unknown defense progression for class ${className}, using defaults`);
