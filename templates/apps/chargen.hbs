@@ -506,8 +506,8 @@
 
  {{#if (eq currentStep "feats")}}
  <section class="step-feats">
- <h3>Select Starting Feat</h3>
- <p class="help-text">All characters gain 1 general feat at 1st level.</p>
+ <h3>Select Starting Feat{{#if (gt characterData.featsRequired 1)}}s{{/if}}</h3>
+ <p class="help-text">All characters gain 1 general feat at 1st level.{{#if (gt characterData.featsRequired 1)}} Humans gain 1 bonus feat.{{/if}}</p>
 
  <div class="feats-list">
  {{#each packs.feats}}
@@ -526,7 +526,7 @@
  </div>
 
  <div class="selected-feats">
- <h4>Selected Feats ({{characterData.feats.length}}/1)</h4>
+ <h4>Selected Feats ({{characterData.feats.length}}/{{characterData.featsRequired}})</h4>
  {{#each characterData.feats}}
  <div class="selected-feat">
  <span>{{this.name}}</span>
@@ -539,7 +539,7 @@
  <button type="button" class="prev-step btn-secondary">
  <i class="fas fa-arrow-left"></i> Previous
  </button>
- {{#if (gte characterData.feats.length 1)}}
+ {{#if (gte characterData.feats.length characterData.featsRequired)}}
  <button type="button" class="next-step btn-primary">
  Next <i class="fas fa-arrow-right"></i>
  </button>

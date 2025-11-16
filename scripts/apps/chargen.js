@@ -52,6 +52,7 @@ export default class CharacterGenerator extends Application {
       },
       skills: {},
       feats: [],
+      featsRequired: 1, // Base 1, +1 for Human
       talents: [],
       powers: [],
       level: 1,
@@ -1298,13 +1299,21 @@ export default class CharacterGenerator extends Application {
     // 4. Store special abilities
     this.characterData.specialAbilities = system.special || [];
 
-    // 5. Store languages
+    // 5. Check for Human racial bonuses
+    if (speciesDoc.name === "Human" || speciesDoc.name === "human") {
+      this.characterData.featsRequired = 2; // Humans get bonus feat
+      console.log("CharGen | Human species: Bonus feat granted (2 feats required)");
+    } else {
+      this.characterData.featsRequired = 1; // All other species get 1 feat
+    }
+
+    // 6. Store languages
     this.characterData.languages = system.languages || [];
 
-    // 6. Apply skill bonuses (store for later application)
+    // 7. Apply skill bonuses (store for later application)
     this.characterData.racialSkillBonuses = system.skillBonuses || [];
 
-    // 7. Store source
+    // 8. Store source
     this.characterData.speciesSource = system.source || "";
 
     console.log(`CharGen | Applied species data for ${speciesDoc.name}:`, {
@@ -1408,8 +1417,13 @@ export default class CharacterGenerator extends Application {
         this.characterData.defenses.will.classBonus = Number(classDoc.system.defenses.will) || 0;
       }
       
-      // Trained skills available
-      this.characterData.trainedSkillsAllowed = Number(classDoc.system.trainedSkills) || 0;
+      // Trained skills available (class base + INT modifier, minimum 1)
+      const classSkills = Number(classDoc.system.trained_skills || classDoc.system.trainedSkills) || 0;
+      const intMod = this.characterData.abilities.int.mod || 0;
+      const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
+      this.characterData.trainedSkillsAllowed = Math.max(1, classSkills + intMod + humanBonus);
+
+      console.log(`CharGen | Skill trainings: ${classSkills} (class) + ${intMod} (INT) + ${humanBonus} (Human) = ${this.characterData.trainedSkillsAllowed}`);
       
       // Force Points (if Force-sensitive class)
       if (classDoc.system.forceSensitive) {
@@ -1429,12 +1443,16 @@ export default class CharacterGenerator extends Application {
     await this._loadData();
     const classNode = (htmlRoot || this.element[0]).querySelector('[name="class_select"]');
     if (!classNode) return;
-    
+
     const cls = classNode.value;
     const classDoc = this._packs.classes.find(c => c.name === cls || c._id === cls);
-    const trained = classDoc && classDoc.system ? Number(classDoc.system.trainedSkills || 0) : 0;
-    this.characterData.trainedSkillsAllowed = trained;
-    
+
+    // Calculate skill trainings (class base + INT modifier, minimum 1)
+    const classSkills = classDoc && classDoc.system ? Number(classDoc.system.trained_skills || classDoc.system.trainedSkills || 0) : 0;
+    const intMod = this.characterData.abilities.int.mod || 0;
+    const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
+    this.characterData.trainedSkillsAllowed = Math.max(1, classSkills + intMod + humanBonus);
+
     if (!initial) await this.render();
   }
 
