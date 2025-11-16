@@ -144,59 +144,34 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       // Combat (with automatic integer coercion for backwards compatibility)
       bab: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       baseAttack: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       initiative: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       speed: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 6,
         min: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 6;
-          const num = Number(value);
-          return Number.isNaN(num) ? 6 : Math.floor(num);
-        }
+        integer: true
       }),
       damageThreshold: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 10,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 10;
-          const num = Number(value);
-          return Number.isNaN(num) ? 10 : Math.floor(num);
-        }
+        integer: true
       }),
 
       // Skills
@@ -286,69 +261,39 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
     return {
       base: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 10,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 10;
-          const num = Number(value);
-          return Number.isNaN(num) ? 10 : Math.floor(num);
-        }
+        integer: true
       }),
       armor: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       ability: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       classBonus: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       misc: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       total: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 10,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 10;
-          const num = Number(value);
-          return Number.isNaN(num) ? 10 : Math.floor(num);
-        }
+        integer: true
       })
     };
   }
