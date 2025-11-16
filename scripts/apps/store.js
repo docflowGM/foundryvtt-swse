@@ -717,7 +717,7 @@ export class SWSEStore extends FormApplication {
             return;
         }
 
-        const baseCost = Number(item.system.cost) || 0;
+        const baseCost = Number(item.system?.cost) || 0;
         const finalCost = this._calculateFinalCost(baseCost);
 
         // Add to cart
