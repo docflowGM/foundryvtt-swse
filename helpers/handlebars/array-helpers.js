@@ -12,5 +12,14 @@ export const arrayHelpers = {
       const bVal = key ? b[key] : b;
       return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
     });
+  },
+  find: (array, key, value) => {
+    if (!Array.isArray(array)) return undefined;
+    // If only two arguments, treat as (array, value)
+    if (value === undefined) {
+      return array.find(item => item === key);
+    }
+    // Three arguments: (array, key, value) - find by property
+    return array.find(item => item && item[key] === value);
   }
 };
