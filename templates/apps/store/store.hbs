@@ -97,28 +97,25 @@
         <h4><i class="fas fa-crosshairs"></i> Weapons</h4>
         <p class="panel-desc">Blasters, vibroblades, and more</p>
       </div>
-      <div class="products-grid" id="weapons-list">
+      <div class="products-list" id="weapons-list">
         {{#each categories.weapons}}
-        <div class="product-card" data-item-id="{{this._id}}">
-          <div class="product-image">
-            <img src="{{this.img}}" alt="{{this.name}}"/>
-          </div>
+        <div class="product-item" data-item-id="{{this._id}}">
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
-            <p class="product-desc">{{truncate this.system.description 80}}</p>
-            <div class="product-stats">
+            <div class="product-details">
               {{#if this.system.damage}}
-              <span class="stat-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
+              <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
               {{/if}}
+              <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
-          <div class="product-footer">
+          <div class="product-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
-              <span class="price-amount">{{this.system.cost}}</span>
+              <span class="price-amount">{{this.finalCost}}</span>
             </div>
             <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
-              <i class="fas fa-cart-plus"></i> Buy
+              <i class="fas fa-cart-plus"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -137,28 +134,25 @@
         <h4><i class="fas fa-shield-alt"></i> Armor</h4>
         <p class="panel-desc">Protective equipment and gear</p>
       </div>
-      <div class="products-grid" id="armor-list">
+      <div class="products-list" id="armor-list">
         {{#each categories.armor}}
-        <div class="product-card" data-item-id="{{this._id}}">
-          <div class="product-image">
-            <img src="{{this.img}}" alt="{{this.name}}"/>
-          </div>
+        <div class="product-item" data-item-id="{{this._id}}">
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
-            <p class="product-desc">{{truncate this.system.description 80}}</p>
-            <div class="product-stats">
+            <div class="product-details">
               {{#if this.system.reflexBonus}}
-              <span class="stat-item"><i class="fas fa-shield-alt"></i> +{{this.system.reflexBonus}} Reflex</span>
+              <span class="detail-item"><i class="fas fa-shield-alt"></i> +{{this.system.reflexBonus}} Reflex</span>
               {{/if}}
+              <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
-          <div class="product-footer">
+          <div class="product-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
-              <span class="price-amount">{{this.system.cost}}</span>
+              <span class="price-amount">{{this.finalCost}}</span>
             </div>
             <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
-              <i class="fas fa-cart-plus"></i> Buy
+              <i class="fas fa-cart-plus"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -177,23 +171,22 @@
         <h4><i class="fas fa-bomb"></i> Grenades & Explosives</h4>
         <p class="panel-desc">Grenades, mines, and explosive devices</p>
       </div>
-      <div class="products-grid" id="grenades-list">
+      <div class="products-list" id="grenades-list">
         {{#each categories.grenades}}
-        <div class="product-card" data-item-id="{{this._id}}">
-          <div class="product-image">
-            <img src="{{this.img}}" alt="{{this.name}}"/>
-          </div>
+        <div class="product-item" data-item-id="{{this._id}}">
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
-            <p class="product-desc">{{truncate this.system.description 80}}</p>
+            <div class="product-details">
+              <span class="detail-desc">{{truncate this.system.description 120}}</span>
+            </div>
           </div>
-          <div class="product-footer">
+          <div class="product-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
-              <span class="price-amount">{{this.system.cost}}</span>
+              <span class="price-amount">{{this.finalCost}}</span>
             </div>
             <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
-              <i class="fas fa-cart-plus"></i> Buy
+              <i class="fas fa-cart-plus"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -212,23 +205,22 @@
         <h4><i class="fas fa-medkit"></i> Medical Supplies</h4>
         <p class="panel-desc">Medpacs, bacta, stims, and healing items</p>
       </div>
-      <div class="products-grid" id="medical-list">
+      <div class="products-list" id="medical-list">
         {{#each categories.medical}}
-        <div class="product-card" data-item-id="{{this._id}}">
-          <div class="product-image">
-            <img src="{{this.img}}" alt="{{this.name}}"/>
-          </div>
+        <div class="product-item" data-item-id="{{this._id}}">
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
-            <p class="product-desc">{{truncate this.system.description 80}}</p>
+            <div class="product-details">
+              <span class="detail-desc">{{truncate this.system.description 120}}</span>
+            </div>
           </div>
-          <div class="product-footer">
+          <div class="product-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
-              <span class="price-amount">{{this.system.cost}}</span>
+              <span class="price-amount">{{this.finalCost}}</span>
             </div>
             <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
-              <i class="fas fa-cart-plus"></i> Buy
+              <i class="fas fa-cart-plus"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -247,23 +239,22 @@
         <h4><i class="fas fa-laptop"></i> Tech Items</h4>
         <p class="panel-desc">Comlinks, datapads, scanners, and computers</p>
       </div>
-      <div class="products-grid" id="tech-list">
+      <div class="products-list" id="tech-list">
         {{#each categories.tech}}
-        <div class="product-card" data-item-id="{{this._id}}">
-          <div class="product-image">
-            <img src="{{this.img}}" alt="{{this.name}}"/>
-          </div>
+        <div class="product-item" data-item-id="{{this._id}}">
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
-            <p class="product-desc">{{truncate this.system.description 80}}</p>
+            <div class="product-details">
+              <span class="detail-desc">{{truncate this.system.description 120}}</span>
+            </div>
           </div>
-          <div class="product-footer">
+          <div class="product-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
-              <span class="price-amount">{{this.system.cost}}</span>
+              <span class="price-amount">{{this.finalCost}}</span>
             </div>
             <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
-              <i class="fas fa-cart-plus"></i> Buy
+              <i class="fas fa-cart-plus"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -282,23 +273,22 @@
         <h4><i class="fas fa-wrench"></i> Tools & Kits</h4>
         <p class="panel-desc">Repair tools, fusion cutters, and equipment kits</p>
       </div>
-      <div class="products-grid" id="tools-list">
+      <div class="products-list" id="tools-list">
         {{#each categories.tools}}
-        <div class="product-card" data-item-id="{{this._id}}">
-          <div class="product-image">
-            <img src="{{this.img}}" alt="{{this.name}}"/>
-          </div>
+        <div class="product-item" data-item-id="{{this._id}}">
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
-            <p class="product-desc">{{truncate this.system.description 80}}</p>
+            <div class="product-details">
+              <span class="detail-desc">{{truncate this.system.description 120}}</span>
+            </div>
           </div>
-          <div class="product-footer">
+          <div class="product-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
-              <span class="price-amount">{{this.system.cost}}</span>
+              <span class="price-amount">{{this.finalCost}}</span>
             </div>
             <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
-              <i class="fas fa-cart-plus"></i> Buy
+              <i class="fas fa-cart-plus"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -317,23 +307,22 @@
         <h4><i class="fas fa-campground"></i> Survival Gear</h4>
         <p class="panel-desc">Rations, breath masks, climbing gear, and survival equipment</p>
       </div>
-      <div class="products-grid" id="survival-list">
+      <div class="products-list" id="survival-list">
         {{#each categories.survival}}
-        <div class="product-card" data-item-id="{{this._id}}">
-          <div class="product-image">
-            <img src="{{this.img}}" alt="{{this.name}}"/>
-          </div>
+        <div class="product-item" data-item-id="{{this._id}}">
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
-            <p class="product-desc">{{truncate this.system.description 80}}</p>
+            <div class="product-details">
+              <span class="detail-desc">{{truncate this.system.description 120}}</span>
+            </div>
           </div>
-          <div class="product-footer">
+          <div class="product-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
-              <span class="price-amount">{{this.system.cost}}</span>
+              <span class="price-amount">{{this.finalCost}}</span>
             </div>
             <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
-              <i class="fas fa-cart-plus"></i> Buy
+              <i class="fas fa-cart-plus"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -352,23 +341,22 @@
         <h4><i class="fas fa-lock"></i> Security Items</h4>
         <p class="panel-desc">Binders, locks, and security devices</p>
       </div>
-      <div class="products-grid" id="security-list">
+      <div class="products-list" id="security-list">
         {{#each categories.security}}
-        <div class="product-card" data-item-id="{{this._id}}">
-          <div class="product-image">
-            <img src="{{this.img}}" alt="{{this.name}}"/>
-          </div>
+        <div class="product-item" data-item-id="{{this._id}}">
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
-            <p class="product-desc">{{truncate this.system.description 80}}</p>
+            <div class="product-details">
+              <span class="detail-desc">{{truncate this.system.description 120}}</span>
+            </div>
           </div>
-          <div class="product-footer">
+          <div class="product-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
-              <span class="price-amount">{{this.system.cost}}</span>
+              <span class="price-amount">{{this.finalCost}}</span>
             </div>
             <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
-              <i class="fas fa-cart-plus"></i> Buy
+              <i class="fas fa-cart-plus"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -387,23 +375,22 @@
         <h4><i class="fas fa-toolbox"></i> Other Equipment</h4>
         <p class="panel-desc">Miscellaneous supplies and general gear</p>
       </div>
-      <div class="products-grid" id="equipment-list">
+      <div class="products-list" id="equipment-list">
         {{#each categories.equipment}}
-        <div class="product-card" data-item-id="{{this._id}}">
-          <div class="product-image">
-            <img src="{{this.img}}" alt="{{this.name}}"/>
-          </div>
+        <div class="product-item" data-item-id="{{this._id}}">
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
-            <p class="product-desc">{{truncate this.system.description 80}}</p>
+            <div class="product-details">
+              <span class="detail-desc">{{truncate this.system.description 120}}</span>
+            </div>
           </div>
-          <div class="product-footer">
+          <div class="product-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
-              <span class="price-amount">{{this.system.cost}}</span>
+              <span class="price-amount">{{this.finalCost}}</span>
             </div>
             <button type="button" class="buy-item holo-btn" data-item-id="{{this._id}}">
-              <i class="fas fa-cart-plus"></i> Buy
+              <i class="fas fa-cart-plus"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -441,28 +428,25 @@
       </div>
 
       {{!-- Pre-Made Droids from Database --}}
-      <div class="products-grid" id="droids-list">
+      <div class="products-list" id="droids-list">
         {{#each categories.droids}}
-        <div class="product-card droid-card" data-actor-id="{{this._id}}">
-          <div class="product-image">
-            <img src="{{this.img}}" alt="{{this.name}}"/>
-          </div>
+        <div class="product-item droid-item" data-actor-id="{{this._id}}">
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
-            <p class="product-desc">{{truncate this.system.biography 80}}</p>
-            <div class="product-stats">
+            <div class="product-details">
               {{#if this.system.level}}
-              <span class="stat-item"><i class="fas fa-level-up-alt"></i> Level {{this.system.level}}</span>
+              <span class="detail-item"><i class="fas fa-level-up-alt"></i> Level {{this.system.level}}</span>
               {{/if}}
+              <span class="detail-desc">{{truncate this.system.biography 120}}</span>
             </div>
           </div>
-          <div class="product-footer">
+          <div class="product-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
-              <span class="price-amount">{{this.system.cost}}</span>
+              <span class="price-amount">{{this.finalCost}}</span>
             </div>
             <button type="button" class="buy-droid holo-btn" data-actor-id="{{this._id}}">
-              <i class="fas fa-cart-plus"></i> Buy
+              <i class="fas fa-shopping-cart"></i> Purchase
             </button>
           </div>
         </div>
@@ -500,44 +484,37 @@
       </div>
 
       {{!-- Pre-Made Vehicles from Database --}}
-      <div class="products-grid" id="vehicles-list">
+      <div class="products-list" id="vehicles-list">
         {{#each categories.vehicles}}
-        <div class="product-card vehicle-card" data-actor-id="{{this._id}}">
-          <div class="product-image">
-            <img src="{{this.img}}" alt="{{this.name}}"/>
-          </div>
+        <div class="product-item vehicle-item" data-actor-id="{{this._id}}">
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
-            <p class="product-desc">{{truncate this.system.biography 80}}</p>
-            <div class="product-stats">
+            <div class="product-details">
               {{#if this.system.speed}}
-              <span class="stat-item"><i class="fas fa-tachometer-alt"></i> Speed {{this.system.speed}}</span>
+              <span class="detail-item"><i class="fas fa-tachometer-alt"></i> Speed {{this.system.speed}}</span>
               {{/if}}
+              <span class="detail-desc">{{truncate this.system.biography 120}}</span>
             </div>
           </div>
-          <div class="product-footer vehicle-purchase-options">
-            <div class="product-price">
+          <div class="product-actions vehicle-actions">
+            <div class="vehicle-pricing">
               <div class="price-option">
-                <label>New</label>
-                <div class="price-value">
-                  <span class="credits-icon">₢</span>
-                  <span class="price-amount">{{this.system.cost}}</span>
-                </div>
+                <span class="option-label">New:</span>
+                <span class="credits-icon">₢</span>
+                <span class="price-amount">{{this.finalCost}}</span>
               </div>
               <div class="price-option">
-                <label>Used</label>
-                <div class="price-value">
-                  <span class="credits-icon">₢</span>
-                  <span class="price-amount">{{divide this.system.cost 2}}</span>
-                </div>
+                <span class="option-label">Used:</span>
+                <span class="credits-icon">₢</span>
+                <span class="price-amount">{{this.finalCostUsed}}</span>
               </div>
             </div>
             <div class="vehicle-buttons">
               <button type="button" class="buy-vehicle holo-btn" data-actor-id="{{this._id}}" data-condition="new">
-                <i class="fas fa-cart-plus"></i> Buy New
+                <i class="fas fa-shopping-cart"></i> Buy New
               </button>
               <button type="button" class="buy-vehicle holo-btn secondary" data-actor-id="{{this._id}}" data-condition="used">
-                <i class="fas fa-cart-plus"></i> Buy Used
+                <i class="fas fa-shopping-cart"></i> Buy Used
               </button>
             </div>
           </div>

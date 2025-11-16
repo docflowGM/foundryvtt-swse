@@ -36,6 +36,8 @@
     "styles/combat/combat-enhancements.css",
     "styles/combat/vehicle-combat.css",
     "styles/apps/chargen.css",
+    "styles/apps/houserules.css",
+    "styles/apps/store.css",
     "styles/canvas/canvas-ui.css",
     "styles/themes/holo-theme.css",
     "styles/themes/high-contrast-theme.css",
