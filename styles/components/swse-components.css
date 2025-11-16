@@ -474,3 +474,40 @@
 .holo-theme ::-webkit-scrollbar-thumb:hover {
   background: #00cfff;
 }
+
+/* ===============================================
+   Z-Index Fix for Application Windows
+   ===============================================
+   Ensures SWSE applications and dialogs appear
+   above Foundry's UI controls (hotbar, etc.)
+   =============================================== */
+
+/* Character sheets and all SWSE applications */
+.swse.sheet.actor,
+.swse.sheet,
+.swse-character-sheet,
+.swse-vehicle-sheet,
+.swse-levelup,
+.swse-chargen,
+.chargen-app {
+  z-index: 100 !important;
+}
+
+/* SWSE dialogs and popups */
+.swse.dialog,
+.swse .dialog,
+dialog.swse {
+  z-index: 150 !important;
+}
+
+/* Store and other SWSE apps */
+.swse-store,
+.swse-app {
+  z-index: 100 !important;
+}
+
+/* Ensure minimized state still works */
+.swse.sheet.minimized,
+.swse-character-sheet.minimized {
+  z-index: 95 !important;
+}
