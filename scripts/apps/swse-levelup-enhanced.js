@@ -256,7 +256,25 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Base classes have no prerequisites
     if (this._isBaseClass(classDoc.name)) return true;
 
-    // Check prestige class prerequisites
+    // Hardcoded prerequisites for prestige classes (from SWSE core rules)
+    const prestigePrerequisites = this._getPrestigeClassPrerequisites(classDoc.name);
+
+    // If we have hardcoded prerequisites, use those
+    if (prestigePrerequisites) {
+      const check = PrerequisiteValidator.checkClassPrerequisites(
+        { system: { prerequisites: prestigePrerequisites } },
+        this.actor,
+        {
+          selectedFeats: this.selectedFeats,
+          selectedClass: this.selectedClass,
+          abilityIncreases: this.abilityIncreases,
+          selectedSkills: this.selectedSkills
+        }
+      );
+      return check.valid;
+    }
+
+    // Fall back to checking classDoc prerequisites
     const pendingData = {
       selectedFeats: this.selectedFeats,
       selectedClass: this.selectedClass,
@@ -266,6 +284,59 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     const check = PrerequisiteValidator.checkClassPrerequisites(classDoc, this.actor, pendingData);
     return check.valid;
+  }
+
+  /**
+   * Get hardcoded prerequisites for prestige classes
+   * Based on SWSE Core Rulebook and supplements
+   * @param {string} className - Name of the prestige class
+   * @returns {string|null} - Prerequisite string or null
+   */
+  _getPrestigeClassPrerequisites(className) {
+    const prerequisites = {
+      // Core Rulebook Prestige Classes
+      "Ace Pilot": "Trained in Pilot, BAB +2",
+      "Bounty Hunter": "Trained in Gather Information, BAB +3",
+      "Crime Lord": "Trained in Deception, Trained in Persuasion",
+      "Elite Trooper": "Armor Proficiency (Light), Armor Proficiency (Medium), BAB +5",
+      "Force Adept": "Force Sensitive, Trained in Use the Force",
+      "Force Disciple": "Force Sensitive, Trained in Use the Force, BAB +1",
+      "Gunslinger": "Weapon Proficiency (Pistols), BAB +3",
+      "Jedi Knight": "Jedi 7, Force Sensitive, Trained in Use the Force, BAB +5",
+      "Jedi Master": "Jedi Knight 5, Force Sensitive, Trained in Use the Force, BAB +10",
+      "Officer": "Trained in Knowledge (Tactics), BAB +2",
+      "Sith Apprentice": "Force Sensitive, Trained in Use the Force, Dark Side Score 1",
+      "Sith Lord": "Sith Apprentice 5, Force Sensitive, BAB +7, Dark Side Score 5",
+
+      // Knights of the Old Republic Campaign Guide
+      "Sith Assassin": "Force Sensitive, Trained in Stealth, Trained in Use the Force",
+      "Sith Marauder": "Force Sensitive, Trained in Use the Force, BAB +5",
+
+      // Legacy Era Campaign Guide
+      "Imperial Knight": "Force Sensitive, Trained in Use the Force, BAB +3",
+      "Sith Trooper": "Armor Proficiency (Light), Weapon Proficiency (Rifles), BAB +3",
+
+      // The Force Unleashed Campaign Guide
+      "Sith Acolyte": "Force Sensitive, Trained in Use the Force",
+
+      // Scum and Villainy
+      "Charlatan": "Trained in Deception, Trained in Persuasion",
+      "Enforcer": "BAB +2",
+      "Gambler": "Trained in Deception, Trained in Perception",
+      "Saboteur": "Trained in Mechanics, Trained in Stealth",
+
+      // Clone Wars Campaign Guide
+      "Clone Commander": "Soldier 1, BAB +3",
+      "Jedi Padawan": "Jedi 1, Force Sensitive, Trained in Use the Force",
+
+      // Rebellion Era Campaign Guide
+      "Rebel Ace": "Trained in Pilot, BAB +2",
+      "Rebel Leader": "Trained in Persuasion, Character level 3rd",
+
+      // Add more prestige classes as needed
+    };
+
+    return prerequisites[className] || null;
   }
 
   _getCharacterClasses() {
