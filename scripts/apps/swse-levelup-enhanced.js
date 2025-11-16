@@ -256,7 +256,25 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Base classes have no prerequisites
     if (this._isBaseClass(classDoc.name)) return true;
 
-    // Check prestige class prerequisites
+    // Hardcoded prerequisites for prestige classes (from SWSE core rules)
+    const prestigePrerequisites = this._getPrestigeClassPrerequisites(classDoc.name);
+
+    // If we have hardcoded prerequisites, use those
+    if (prestigePrerequisites) {
+      const check = PrerequisiteValidator.checkClassPrerequisites(
+        { system: { prerequisites: prestigePrerequisites } },
+        this.actor,
+        {
+          selectedFeats: this.selectedFeats,
+          selectedClass: this.selectedClass,
+          abilityIncreases: this.abilityIncreases,
+          selectedSkills: this.selectedSkills
+        }
+      );
+      return check.valid;
+    }
+
+    // Fall back to checking classDoc prerequisites
     const pendingData = {
       selectedFeats: this.selectedFeats,
       selectedClass: this.selectedClass,
@@ -266,6 +284,59 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     const check = PrerequisiteValidator.checkClassPrerequisites(classDoc, this.actor, pendingData);
     return check.valid;
+  }
+
+  /**
+   * Get hardcoded prerequisites for prestige classes
+   * Based on SWSE Core Rulebook and supplements
+   * @param {string} className - Name of the prestige class
+   * @returns {string|null} - Prerequisite string or null
+   */
+  _getPrestigeClassPrerequisites(className) {
+    const prerequisites = {
+      // Core Rulebook Prestige Classes
+      "Ace Pilot": "Trained in Pilot, BAB +2",
+      "Bounty Hunter": "Trained in Gather Information, BAB +3",
+      "Crime Lord": "Trained in Deception, Trained in Persuasion",
+      "Elite Trooper": "Armor Proficiency (Light), Armor Proficiency (Medium), BAB +5",
+      "Force Adept": "Force Sensitive, Trained in Use the Force",
+      "Force Disciple": "Force Sensitive, Trained in Use the Force, BAB +1",
+      "Gunslinger": "Weapon Proficiency (Pistols), BAB +3",
+      "Jedi Knight": "Jedi 7, Force Sensitive, Trained in Use the Force, BAB +5",
+      "Jedi Master": "Jedi Knight 5, Force Sensitive, Trained in Use the Force, BAB +10",
+      "Officer": "Trained in Knowledge (Tactics), BAB +2",
+      "Sith Apprentice": "Force Sensitive, Trained in Use the Force, Dark Side Score 1",
+      "Sith Lord": "Sith Apprentice 5, Force Sensitive, BAB +7, Dark Side Score 5",
+
+      // Knights of the Old Republic Campaign Guide
+      "Sith Assassin": "Force Sensitive, Trained in Stealth, Trained in Use the Force",
+      "Sith Marauder": "Force Sensitive, Trained in Use the Force, BAB +5",
+
+      // Legacy Era Campaign Guide
+      "Imperial Knight": "Force Sensitive, Trained in Use the Force, BAB +3",
+      "Sith Trooper": "Armor Proficiency (Light), Weapon Proficiency (Rifles), BAB +3",
+
+      // The Force Unleashed Campaign Guide
+      "Sith Acolyte": "Force Sensitive, Trained in Use the Force",
+
+      // Scum and Villainy
+      "Charlatan": "Trained in Deception, Trained in Persuasion",
+      "Enforcer": "BAB +2",
+      "Gambler": "Trained in Deception, Trained in Perception",
+      "Saboteur": "Trained in Mechanics, Trained in Stealth",
+
+      // Clone Wars Campaign Guide
+      "Clone Commander": "Soldier 1, BAB +3",
+      "Jedi Padawan": "Jedi 1, Force Sensitive, Trained in Use the Force",
+
+      // Rebellion Era Campaign Guide
+      "Rebel Ace": "Trained in Pilot, BAB +2",
+      "Rebel Leader": "Trained in Persuasion, Character level 3rd",
+
+      // Add more prestige classes as needed
+    };
+
+    return prerequisites[className] || null;
   }
 
   _getCharacterClasses() {
@@ -986,6 +1057,150 @@ export class SWSELevelUpEnhanced extends FormApplication {
   }
 
   // ========================================
+  // BAB AND DEFENSE CALCULATIONS
+  // ========================================
+
+  /**
+   * Get defense bonuses for a specific class
+   * @param {string} className - Name of the class
+   * @returns {{fortitude: number, reflex: number, will: number}} Defense bonuses
+   */
+  _getClassDefenseBonuses(className) {
+    // Defense bonuses by class (applied once per class, NOT multiplied by level)
+    // Format: Reflex/Fortitude/Will
+    const defenseProgression = {
+      // Base Classes
+      'Jedi': { reflex: 1, fortitude: 1, will: 1 },
+      'Noble': { reflex: 1, fortitude: 0, will: 2 },
+      'Scout': { reflex: 2, fortitude: 1, will: 0 },
+      'Soldier': { reflex: 1, fortitude: 2, will: 0 },
+      'Scoundrel': { reflex: 2, fortitude: 0, will: 1 },
+
+      // Prestige Classes - Core Rulebook
+      'Ace Pilot': { reflex: 4, fortitude: 2, will: 0 },
+      'Bounty Hunter': { reflex: 4, fortitude: 2, will: 0 },
+      'Crime Lord': { reflex: 2, fortitude: 0, will: 4 },
+      'Elite Trooper': { reflex: 2, fortitude: 4, will: 0 },
+      'Force Adept': { reflex: 2, fortitude: 2, will: 4 },
+      'Force Disciple': { reflex: 3, fortitude: 3, will: 6 },
+      'Gunslinger': { reflex: 4, fortitude: 0, will: 2 },
+      'Jedi Knight': { reflex: 2, fortitude: 2, will: 2 },
+      'Jedi Master': { reflex: 3, fortitude: 3, will: 3 },
+      'Officer': { reflex: 2, fortitude: 0, will: 4 },
+      'Sith Apprentice': { reflex: 2, fortitude: 2, will: 2 },
+      'Sith Lord': { reflex: 3, fortitude: 3, will: 3 },
+
+      // Additional Prestige Classes
+      'Corporate Agent': { reflex: 2, fortitude: 0, will: 4 },
+      'Gladiator': { reflex: 4, fortitude: 2, will: 0 },
+      'Melee Duelist': { reflex: 4, fortitude: 0, will: 2 },
+      'Enforcer': { reflex: 4, fortitude: 0, will: 2 },
+      'Independent Droid': { reflex: 2, fortitude: 0, will: 4 },
+      'Infiltrator': { reflex: 4, fortitude: 0, will: 2 },
+      'Master Privateer': { reflex: 2, fortitude: 0, will: 4 },
+      'Medic': { reflex: 0, fortitude: 4, will: 2 },
+      'Saboteur': { reflex: 2, fortitude: 0, will: 4 },
+      'Assassin': { reflex: 4, fortitude: 2, will: 0 },
+      'Charlatan': { reflex: 2, fortitude: 0, will: 4 },
+      'Outlaw': { reflex: 4, fortitude: 2, will: 0 },
+      'Droid Commander': { reflex: 2, fortitude: 2, will: 2 },
+      'Military Engineer': { reflex: 2, fortitude: 2, will: 2 },
+      'Vanguard': { reflex: 2, fortitude: 4, will: 0 },
+      'Imperial Knight': { reflex: 2, fortitude: 2, will: 2 },
+      'Shaper': { reflex: 0, fortitude: 2, will: 4 },
+      'Improviser': { reflex: 2, fortitude: 0, will: 4 },
+      'Pathfinder': { reflex: 2, fortitude: 4, will: 0 },
+      'Martial Arts Master': { reflex: 2, fortitude: 4, will: 0 }
+    };
+
+    return defenseProgression[className] || { reflex: 0, fortitude: 0, will: 0 };
+  }
+
+  /**
+   * Calculate total BAB from all class items
+   * @returns {number} Total BAB
+   */
+  _calculateTotalBAB() {
+    const classItems = this.actor.items.filter(i => i.type === 'class');
+    let totalBAB = 0;
+
+    for (const classItem of classItems) {
+      const classLevel = classItem.system.level || 1;
+      const className = classItem.name;
+
+      // Check if class has level_progression data with BAB
+      if (classItem.system.level_progression && Array.isArray(classItem.system.level_progression)) {
+        const levelData = classItem.system.level_progression.find(lp => lp.level === classLevel);
+        if (levelData && typeof levelData.bab === 'number') {
+          totalBAB += levelData.bab;
+          continue;
+        }
+      }
+
+      // Fallback: Use babProgression if available
+      if (classItem.system.babProgression) {
+        totalBAB += Math.floor(classLevel * classItem.system.babProgression);
+        continue;
+      }
+
+      // Fallback: Calculate from known class names
+      const fullBABClasses = ['Jedi', 'Soldier'];
+      if (fullBABClasses.includes(className)) {
+        totalBAB += classLevel;
+      } else {
+        // 3/4 BAB for other base classes
+        totalBAB += Math.floor(classLevel * 0.75);
+      }
+    }
+
+    return totalBAB;
+  }
+
+  /**
+   * Calculate defense bonuses from all class items
+   * In SWSE, class defense bonuses are applied ONCE per class, not per level
+   * Format: { reflex, fortitude, will }
+   * @returns {{fortitude: number, reflex: number, will: number}}
+   */
+  _calculateDefenseBonuses() {
+    const classItems = this.actor.items.filter(i => i.type === 'class');
+    const bonuses = { fortitude: 0, reflex: 0, will: 0 };
+
+    for (const classItem of classItems) {
+      const className = classItem.name;
+
+      // Check if class item has defenses specified (not multiplied by level!)
+      if (classItem.system.defenses &&
+          (classItem.system.defenses.fortitude || classItem.system.defenses.reflex || classItem.system.defenses.will)) {
+        bonuses.fortitude += (classItem.system.defenses.fortitude || 0);
+        bonuses.reflex += (classItem.system.defenses.reflex || 0);
+        bonuses.will += (classItem.system.defenses.will || 0);
+      } else {
+        // Use known defense progressions
+        const progression = this._getClassDefenseBonuses(className);
+        bonuses.fortitude += progression.fortitude;
+        bonuses.reflex += progression.reflex;
+        bonuses.will += progression.will;
+
+        // If defenses aren't set on the class item, update it to store them
+        if (classItem.system.defenses === undefined ||
+            (!classItem.system.defenses.fortitude && !classItem.system.defenses.reflex && !classItem.system.defenses.will)) {
+          console.log(`SWSE LevelUp | Updating ${className} with defense bonuses: Fort +${progression.fortitude}, Ref +${progression.reflex}, Will +${progression.will}`);
+          classItem.update({
+            'system.defenses': {
+              fortitude: progression.fortitude,
+              reflex: progression.reflex,
+              will: progression.will
+            }
+          });
+        }
+      }
+    }
+
+    return bonuses;
+  }
+
+  // ========================================
   // COMPLETE LEVEL UP
   // ========================================
 
@@ -1008,6 +1223,13 @@ export class SWSELevelUpEnhanced extends FormApplication {
         });
       } else {
         // Create new class item with full class data
+        // Get defense bonuses for this class
+        const defenses = this.selectedClass.system.defenses?.fortitude ||
+                        this.selectedClass.system.defenses?.reflex ||
+                        this.selectedClass.system.defenses?.will
+          ? this.selectedClass.system.defenses
+          : this._getClassDefenseBonuses(this.selectedClass.name);
+
         const classItem = {
           name: this.selectedClass.name,
           type: "class",
@@ -1017,9 +1239,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
             hitDie: this.selectedClass.system.hitDie || 6,
             babProgression: this.selectedClass.system.babProgression || 0.75,
             defenses: {
-              fortitude: this.selectedClass.system.defenses?.fortitude || 0,
-              reflex: this.selectedClass.system.defenses?.reflex || 0,
-              will: this.selectedClass.system.defenses?.will || 0
+              fortitude: defenses.fortitude || 0,
+              reflex: defenses.reflex || 0,
+              will: defenses.will || 0
             },
             description: this.selectedClass.system.description || '',
             classSkills: this.selectedClass.system.classSkills || [],
@@ -1027,6 +1249,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
             forceSensitive: this.selectedClass.system.forceSensitive || false
           }
         };
+
+        console.log(`SWSE LevelUp | Creating ${classItem.name} with defense bonuses: Fort +${classItem.system.defenses.fortitude}, Ref +${classItem.system.defenses.reflex}, Will +${classItem.system.defenses.will}`);
 
         await this.actor.createEmbeddedDocuments("Item", [classItem]);
       }
@@ -1119,6 +1343,20 @@ export class SWSELevelUpEnhanced extends FormApplication {
       await this.actor.update({
         "system.hp.max": newHPMax,
         "system.hp.value": newHPValue
+      });
+
+      // Recalculate BAB and defense bonuses from all class items
+      const totalBAB = this._calculateTotalBAB();
+      const defenseBonuses = this._calculateDefenseBonuses();
+
+      console.log(`SWSE LevelUp | Updating BAB to ${totalBAB}`);
+      console.log(`SWSE LevelUp | Updating defense bonuses: Fort +${defenseBonuses.fortitude}, Ref +${defenseBonuses.reflex}, Will +${defenseBonuses.will}`);
+
+      await this.actor.update({
+        "system.bab": totalBAB,
+        "system.defenses.fortitude.class": defenseBonuses.fortitude,
+        "system.defenses.reflex.class": defenseBonuses.reflex,
+        "system.defenses.will.class": defenseBonuses.will
       });
 
       // Build ability increases text

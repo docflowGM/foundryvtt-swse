@@ -24,10 +24,11 @@ export async function preloadHandlebarsTemplates() {
     "systems/swse/templates/actors/character/tabs/inventory-tab.hbs",
     "systems/swse/templates/actors/character/tabs/biography-tab.hbs",
 
-    // Critical partials
+    // Critical partials (used by critical templates above)
     "systems/swse/templates/partials/actor/persistent-header.hbs",
     "systems/swse/templates/partials/ui/condition-track.hbs",
-    "systems/swse/templates/partials/skill-row-static.hbs"
+    "systems/swse/templates/partials/skill-row-static.hbs",
+    "systems/swse/templates/partials/feat-actions-panel.hbs"
   ];
 
   // ============================================
@@ -43,7 +44,6 @@ export async function preloadHandlebarsTemplates() {
     "systems/swse/templates/partials/ability-scores.hbs",
     "systems/swse/templates/partials/defenses.hbs",
     "systems/swse/templates/partials/skill-row.hbs",
-    "systems/swse/templates/partials/feat-actions-panel.hbs",
     "systems/swse/templates/partials/ship-combat-actions-panel.hbs",
     "systems/swse/templates/partials/tab-navigation.hbs",
     "systems/swse/templates/partials/item-controls.hbs",
@@ -102,7 +102,8 @@ export function getTemplatePaths() {
       "systems/swse/templates/actors/character/tabs/biography-tab.hbs",
       "systems/swse/templates/partials/actor/persistent-header.hbs",
       "systems/swse/templates/partials/ui/condition-track.hbs",
-      "systems/swse/templates/partials/skill-row-static.hbs"
+      "systems/swse/templates/partials/skill-row-static.hbs",
+      "systems/swse/templates/partials/feat-actions-panel.hbs"
     ],
     lazy: [
       "systems/swse/templates/items/base/item-sheet.hbs",
@@ -110,7 +111,6 @@ export function getTemplatePaths() {
       "systems/swse/templates/partials/ability-scores.hbs",
       "systems/swse/templates/partials/defenses.hbs",
       "systems/swse/templates/partials/skill-row.hbs",
-      "systems/swse/templates/partials/feat-actions-panel.hbs",
       "systems/swse/templates/partials/ship-combat-actions-panel.hbs",
       "systems/swse/templates/partials/tab-navigation.hbs",
       "systems/swse/templates/partials/item-controls.hbs",
