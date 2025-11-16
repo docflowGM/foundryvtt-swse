@@ -27,7 +27,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
   constructor(actor, options = {}) {
     super(actor, options);
     this.actor = actor;
-    this.currentStep = 'class'; // class, multiclass-bonus, ability-increase, feat, talent, skills, summary
+
+    // For level 0 characters, start with species selection
+    const isLevel0 = (this.actor.system.level || 0) === 0;
+    this.currentStep = isLevel0 ? 'species' : 'class'; // species, attributes, class, multiclass-bonus, ability-increase, feat, talent, skills, summary
+
     this.selectedClass = null;
     this.selectedTalent = null;
     this.selectedFeats = [];
@@ -36,6 +40,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.hpGain = 0;
     this.talentData = null;
     this.featData = null;
+    this.selectedSpecies = null; // For level 0 characters
+    this.abilityScores = {}; // For level 0 characters
 
     // Mentor system - initially use base class mentor, will update when class is selected
     const level1Class = getLevel1Class(this.actor);
@@ -59,6 +65,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
     data.currentLevel = this.actor.system.level;
     data.newLevel = this.actor.system.level + 1;
     data.currentStep = this.currentStep;
+    data.isLevel0 = this.actor.system.level === 0;
+
+    // For level 0 characters, get available species
+    if (data.isLevel0) {
+      data.availableSpecies = await this._getAvailableSpecies();
+      data.selectedSpecies = this.selectedSpecies;
+      data.abilityScores = this.abilityScores;
+    }
 
     // Get available classes
     data.availableClasses = await this._getAvailableClasses();
@@ -107,6 +121,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
    * @returns {string}
    */
   _getMentorGuidanceForCurrentStep() {
+    // Special guidance for level 0 character creation steps
+    if (this.currentStep === 'species') {
+      return "Lets take a look at yer, What species are ye?";
+    }
+    if (this.currentStep === 'attributes') {
+      return "Lets see what kinda build we're working with.";
+    }
+
     const guidanceMap = {
       'class': 'class',
       'multiclass-bonus': 'multiclass',
@@ -165,7 +187,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
     const levelProgression = this.selectedClass.system.level_progression;
     if (!levelProgression || !Array.isArray(levelProgression)) {
       // Fallback: if no level_progression, check if class has talent trees
-      return (this.selectedClass.system.forceSensitive || this.selectedClass.system.talentTrees?.length > 0);
+      const trees = this.selectedClass.system.talent_trees || this.selectedClass.system.talentTrees;
+      return (this.selectedClass.system.forceSensitive || trees?.length > 0);
     }
 
     const levelData = levelProgression.find(lp => lp.level === classLevel);
@@ -197,6 +220,10 @@ export class SWSELevelUpEnhanced extends FormApplication {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Level 0 character creation steps
+    html.find('.select-species-btn').click(this._onSelectSpecies.bind(this));
+    html.find('.confirm-attributes-btn').click(this._onConfirmAttributes.bind(this));
+
     // Class selection
     html.find('.select-class-btn').click(this._onSelectClass.bind(this));
 
@@ -219,6 +246,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     // Final level up
     html.find('.complete-levelup').click(this._onCompleteLevelUp.bind(this));
+
+    // Bind ability score UI for level 0 attributes step
+    if (this.currentStep === 'attributes') {
+      this._bindAbilitiesUI(html[0]);
+    }
   }
 
   // ========================================
@@ -307,18 +339,43 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     // Check prerequisites for each class
     for (const classDoc of allClasses) {
+      const isBaseClass = this._isBaseClass(classDoc.name) || classDoc.system.base_class === true;
+
       if (this._meetsPrerequisites(classDoc)) {
         availableClasses.push({
           id: classDoc._id,
           name: classDoc.name,
           system: classDoc.system,
-          isBase: this._isBaseClass(classDoc.name),
-          isPrestige: !this._isBaseClass(classDoc.name)
+          isBase: isBaseClass,
+          isPrestige: !isBaseClass
         });
       }
     }
 
     return availableClasses;
+  }
+
+  /**
+   * Get available species from the species compendium
+   * @returns {Array} - Array of species objects
+   */
+  async _getAvailableSpecies() {
+    const speciesPack = game.packs.get('swse.species');
+    if (!speciesPack) return [];
+
+    const allSpecies = await speciesPack.getDocuments();
+    const availableSpecies = [];
+
+    for (const speciesDoc of allSpecies) {
+      availableSpecies.push({
+        id: speciesDoc._id,
+        name: speciesDoc.name,
+        system: speciesDoc.system,
+        img: speciesDoc.img
+      });
+    }
+
+    return availableSpecies;
   }
 
   _isBaseClass(className) {
@@ -369,45 +426,52 @@ export class SWSELevelUpEnhanced extends FormApplication {
   _getPrestigeClassPrerequisites(className) {
     const prerequisites = {
       // Core Rulebook Prestige Classes
-      "Ace Pilot": "Trained in Pilot, BAB +2",
-      "Bounty Hunter": "Trained in Gather Information, BAB +3",
-      "Crime Lord": "Trained in Deception, Trained in Persuasion",
-      "Elite Trooper": "Armor Proficiency (Light), Armor Proficiency (Medium), BAB +5",
-      "Force Adept": "Force Sensitive, Trained in Use the Force",
-      "Force Disciple": "Force Sensitive, Trained in Use the Force, BAB +1",
-      "Gunslinger": "Weapon Proficiency (Pistols), BAB +3",
-      "Jedi Knight": "Jedi 7, Force Sensitive, Trained in Use the Force, BAB +5",
-      "Jedi Master": "Jedi Knight 5, Force Sensitive, Trained in Use the Force, BAB +10",
-      "Officer": "Trained in Knowledge (Tactics), BAB +2",
-      "Sith Apprentice": "Force Sensitive, Trained in Use the Force, Dark Side Score 1",
-      "Sith Lord": "Sith Apprentice 5, Force Sensitive, BAB +7, Dark Side Score 5",
+      "Ace Pilot": "Character Level 7, Trained in Pilot, Vehicular Combat",
+      "Bounty Hunter": "Character Level 7, Trained in Survival, 2 Awareness Talents",
+      "Crime Lord": "Character Level 7, Trained in Deception, Trained in Persuasion, 1 Fortune/Lineage/Misfortune Talent",
+      "Elite Trooper": "BAB +7, Armor Proficiency (Medium), Martial Arts I, Point-Blank Shot or Flurry, 1 Armor Specialist/Commando/Mercenary/Weapon Specialist Talent",
+      "Force Adept": "Character Level 7, Trained in Use the Force, Force Sensitivity, 3 Force Talents",
+      "Force Disciple": "Character Level 12, Trained in Use the Force, Force Sensitivity, 2 Dark Side Devotee/Force Adept/Force Item Talents, Farseeing Power, 1 Force Technique",
+      "Gunslinger": "Character Level 7, Point-Blank Shot, Precise Shot, Quick Draw, Weapon Proficiency (Pistols)",
+      "Jedi Knight": "BAB +7, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), Member of The Jedi",
+      "Jedi Master": "Character Level 12, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), 1 Force Technique, Member of The Jedi",
+      "Officer": "Character Level 7, Trained in Knowledge (Tactics), 1 Leadership/Commando/Veteran Talent, Military/Paramilitary Organization",
+      "Sith Apprentice": "Character Level 7, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), Dark Side Score Equal to Wisdom, Member of The Sith",
+      "Sith Lord": "Character Level 12, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), 1 Force Technique, Dark Side Score Equal to Wisdom, Member of The Sith",
 
       // Knights of the Old Republic Campaign Guide
-      "Sith Assassin": "Force Sensitive, Trained in Stealth, Trained in Use the Force",
-      "Sith Marauder": "Force Sensitive, Trained in Use the Force, BAB +5",
-
-      // Legacy Era Campaign Guide
-      "Imperial Knight": "Force Sensitive, Trained in Use the Force, BAB +3",
-      "Sith Trooper": "Armor Proficiency (Light), Weapon Proficiency (Rifles), BAB +3",
+      "Corporate Agent": "Character Level 7, Trained in Gather Information, Trained in Knowledge (Bureaucracy), Skill Focus (Knowledge (Bureaucracy)), Employed by Major Corporation",
+      "Gladiator": "Character Level 7, BAB +7, Improved Damage Threshold, Weapon Proficiency (Advanced Melee Weapons)",
+      "Melee Duelist": "Character Level 7, BAB +7, Melee Defense, Rapid Strike, Weapon Focus (Melee Weapon)",
 
       // The Force Unleashed Campaign Guide
-      "Sith Acolyte": "Force Sensitive, Trained in Use the Force",
+      "Enforcer": "Character Level 7, Trained in Gather Information, Trained in Perception, 1 Survivor Talent, Law Enforcement Organization",
+      "Independent Droid": "Character Level 3, Trained in Use Computer, Heuristic Processor",
+      "Infiltrator": "Character Level 7, Trained in Perception, Trained in Stealth, Skill Focus (Stealth), 2 Camouflage/Spy Talents",
+      "Master Privateer": "Character Level 7, Trained in Deception, Trained in Pilot, Vehicular Combat, 2 Misfortune/Smuggling/Spacer Talents",
+      "Medic": "Character Level 7, Trained in Knowledge (Life Sciences), Trained in Treat Injury, Surgical Expertise",
+      "Saboteur": "Character Level 7, Trained in Deception, Trained in Mechanics, Trained in Use Computer",
 
       // Scum and Villainy
-      "Charlatan": "Trained in Deception, Trained in Persuasion",
-      "Enforcer": "BAB +2",
-      "Gambler": "Trained in Deception, Trained in Perception",
-      "Saboteur": "Trained in Mechanics, Trained in Stealth",
+      "Assassin": "Character Level 7, Trained in Stealth, Sniper, Dastardly Strike Talent",
+      "Charlatan": "Character Level 7, Trained in Deception, Trained in Persuasion, 1 Disgrace/Influence/Lineage Talent",
+      "Outlaw": "Character Level 7, Trained in Stealth, Trained in Survival, 1 Disgrace/Misfortune Talent, Wanted in at Least One System",
 
       // Clone Wars Campaign Guide
-      "Clone Commander": "Soldier 1, BAB +3",
-      "Jedi Padawan": "Jedi 1, Force Sensitive, Trained in Use the Force",
+      "Droid Commander": "Character Level 7, Trained in Knowledge (Tactics), Trained in Use Computer, 1 Leadership/Commando Talent, Must be a Droid",
+      "Military Engineer": "BAB +7, Trained in Mechanics, Trained in Use Computer",
+      "Vanguard": "Character Level 7, Trained in Perception, Trained in Stealth, 2 Camouflage/Commando Talents",
+
+      // Legacy Era Campaign Guide
+      "Imperial Knight": "BAB +7, Trained in Use the Force, Armor Proficiency (Medium), Force Sensitivity, Weapon Proficiency (Lightsabers), Sworn Defender of Fel Empire",
+      "Shaper": "Character Level 7, Yuuzhan Vong Species, Trained in Knowledge (Life Sciences), Trained in Treat Injury, Biotech Specialist",
 
       // Rebellion Era Campaign Guide
-      "Rebel Ace": "Trained in Pilot, BAB +2",
-      "Rebel Leader": "Trained in Persuasion, Character level 3rd",
+      "Improviser": "Character Level 7, Trained in Mechanics, Trained in Use Computer, Skill Focus (Mechanics)",
+      "Pathfinder": "Character Level 7, Trained in Perception, Trained in Survival, 2 Awareness/Camouflage/Survivor Talents",
 
-      // Add more prestige classes as needed
+      // Galaxy at War
+      "Martial Arts Master": "BAB +7, Martial Arts II, Melee Defense, 1 Martial Arts Feat, 1 Brawler/Survivor Talent"
     };
 
     return prerequisites[className] || null;
@@ -428,6 +492,279 @@ export class SWSELevelUpEnhanced extends FormApplication {
     return classes;
   }
 
+  // ========================================
+  // LEVEL 0 CHARACTER CREATION HANDLERS
+  // ========================================
+
+  /**
+   * Handle species selection for level 0 characters
+   * @param {Event} event - Click event
+   */
+  async _onSelectSpecies(event) {
+    event.preventDefault();
+    const speciesId = event.currentTarget.dataset.speciesId;
+    const speciesName = event.currentTarget.dataset.speciesName;
+
+    const speciesPack = game.packs.get('swse.species');
+    const speciesDoc = await speciesPack.getDocument(speciesId);
+
+    if (!speciesDoc) {
+      ui.notifications.error("Species not found!");
+      return;
+    }
+
+    this.selectedSpecies = speciesDoc;
+    console.log(`SWSE LevelUp | Selected species: ${speciesName}`, speciesDoc.system);
+
+    // Move to attributes step
+    this.currentStep = 'attributes';
+    ui.notifications.info(`Species selected: ${speciesName}`);
+    this.render();
+  }
+
+  /**
+   * Handle attributes confirmation for level 0 characters
+   * @param {Event} event - Click event
+   */
+  async _onConfirmAttributes(event) {
+    event.preventDefault();
+
+    // Gather ability scores from the form
+    const form = event.currentTarget.closest('section');
+    const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    this.abilityScores = {};
+
+    for (const ability of abilities) {
+      const input = form.querySelector(`[name="ability_${ability}"]`);
+      if (input) {
+        this.abilityScores[ability] = parseInt(input.value) || 10;
+      }
+    }
+
+    console.log(`SWSE LevelUp | Confirmed ability scores:`, this.abilityScores);
+
+    // Move to class selection step
+    this.currentStep = 'class';
+    ui.notifications.info("Ability scores confirmed");
+    this.render();
+  }
+
+  /**
+   * Bind the abilities UI for point buy, standard roll, and organic roll
+   * Adapted from chargen.js
+   * @param {HTMLElement} root - Root element
+   */
+  _bindAbilitiesUI(root) {
+    const doc = root || this.element[0];
+    const ablist = ["str", "dex", "con", "int", "wis", "cha"];
+
+    // Point buy system
+    let pool = 32;
+    const pointCosts = (from, to) => {
+      const costForIncrement = (v) => {
+        if (v < 12) return 1;
+        if (v < 14) return 2;
+        return 3;
+      };
+      let cost = 0;
+      for (let v = from; v < to; v++) cost += costForIncrement(v);
+      return cost;
+    };
+
+    const updatePointRemaining = () => {
+      const el = doc.querySelector("#point-remaining");
+      if (el) el.textContent = pool;
+    };
+
+    const initPointBuy = () => {
+      pool = 32;
+      ablist.forEach(a => {
+        const inp = doc.querySelector(`[name="ability_${a}"]`);
+        if (inp) inp.value = 8;
+        const plus = doc.querySelector(`[data-plus="${a}"]`);
+        const minus = doc.querySelector(`[data-minus="${a}"]`);
+        if (plus) plus.onclick = () => adjustAttribute(a, +1);
+        if (minus) minus.onclick = () => adjustAttribute(a, -1);
+      });
+      updatePointRemaining();
+      recalcPreview();
+    };
+
+    const adjustAttribute = (ab, delta) => {
+      const el = doc.querySelector(`[name="ability_${ab}"]`);
+      if (!el) return;
+
+      let cur = Number(el.value || 8);
+      const newVal = Math.max(8, Math.min(18, cur + delta));
+      const costNow = pointCosts(8, cur);
+      const costNew = pointCosts(8, newVal);
+      const deltaCost = costNew - costNow;
+
+      if (deltaCost > pool) {
+        ui.notifications.warn("Not enough point-buy points remaining.");
+        return;
+      }
+
+      pool -= deltaCost;
+      el.value = newVal;
+      updatePointRemaining();
+      recalcPreview();
+    };
+
+    // Standard array roll
+    const rollStandard = () => {
+      const results = [];
+      for (let i = 0; i < 6; i++) {
+        const r = new Roll("4d6kh3").evaluate({ async: false });
+        const total = r.total;
+        results.push({ total });
+      }
+
+      const container = doc.querySelector("#roll-results");
+      if (container) {
+        container.innerHTML = "";
+        results.forEach(res => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "assign-roll";
+          btn.textContent = `${res.total}`;
+          btn.dataset.value = res.total;
+          btn.onclick = () => assignRollToNext(res.total);
+          container.appendChild(btn);
+        });
+        ui.notifications.info("Standard rolls generated — click a result then click an ability to assign.");
+      }
+    };
+
+    const assignRollToNext = (val) => {
+      let target = doc.querySelector(".ability-input:focus");
+      if (!target) {
+        const inputs = ablist.map(a => doc.querySelector(`[name="ability_${a}"]`)).filter(Boolean);
+        inputs.sort((x, y) => Number(x.value) - Number(y.value));
+        target = inputs[0];
+      }
+      if (target) {
+        target.value = val;
+        recalcPreview();
+      }
+    };
+
+    // Organic roll
+    const rollOrganic = () => {
+      const r = new Roll("24d6").evaluate({ async: false });
+      if (!r.dice || !r.dice[0] || !r.dice[0].results) {
+        ui.notifications.error("Failed to roll dice. Please try again.");
+        console.error("SWSE | Roll failed:", r);
+        return;
+      }
+      const rolls = r.dice[0].results.map(x => x.result).sort((a, b) => b - a);
+      const kept = rolls.slice(0, 18);
+
+      const groups = [];
+      for (let i = 0; i < 6; i++) {
+        groups.push(kept.slice(i * 3, (i + 1) * 3));
+      }
+
+      const container = doc.querySelector("#organic-groups");
+      if (container) {
+        container.innerHTML = "";
+        groups.forEach((g, idx) => {
+          const div = document.createElement("div");
+          div.className = "organic-group";
+          const s = g.reduce((a, b) => a + b, 0);
+          div.textContent = `${g.join(", ")} = ${s}`;
+          div.dataset.sum = s;
+          div.onclick = () => selectOrganicGroup(div);
+          container.appendChild(div);
+        });
+        ui.notifications.info("Organic roll completed — click a group, then click an ability to assign.");
+      }
+      doc._selectedOrganic = null;
+    };
+
+    const selectOrganicGroup = (div) => {
+      doc.querySelectorAll(".organic-group").forEach(d => d.classList.remove("selected-group"));
+      div.classList.add("selected-group");
+      doc._selectedOrganic = Number(div.dataset.sum);
+
+      ablist.forEach(a => {
+        const input = doc.querySelector(`[name="ability_${a}"]`);
+        if (input) {
+          input.onclick = () => {
+            if (doc._selectedOrganic == null) return;
+            input.value = doc._selectedOrganic;
+            recalcPreview();
+            doc.querySelectorAll(".organic-group").forEach(d => d.classList.remove("selected-group"));
+            doc._selectedOrganic = null;
+          };
+        }
+      });
+    };
+
+    const recalcPreview = () => {
+      ablist.forEach(a => {
+        const inp = doc.querySelector(`[name="ability_${a}"]`);
+        const display = doc.querySelector(`#display_${a}`);
+        const base = Number(inp?.value || 10);
+        const total = base;
+        const mod = Math.floor((total - 10) / 2);
+
+        if (display) display.textContent = `Total: ${total} (Mod: ${mod >= 0 ? "+" : ""}${mod})`;
+      });
+    };
+
+    // Mode switching function
+    const switchMode = (modeName) => {
+      // Hide all mode divs
+      const modes = ['point-mode', 'standard-mode', 'organic-mode', 'free-mode'];
+      modes.forEach(mode => {
+        const modeDiv = doc.querySelector(`#${mode}`);
+        if (modeDiv) modeDiv.style.display = 'none';
+      });
+
+      // Show selected mode
+      const selectedMode = doc.querySelector(`#${modeName}`);
+      if (selectedMode) selectedMode.style.display = 'block';
+
+      // Update button states
+      const buttons = doc.querySelectorAll('.method-button');
+      buttons.forEach(btn => btn.classList.remove('active'));
+    };
+
+    // Wire buttons with mode switching
+    const stdBtn = doc.querySelector("#std-roll-btn");
+    if (stdBtn) {
+      stdBtn.onclick = () => {
+        switchMode('standard-mode');
+        stdBtn.classList.add('active');
+        rollStandard();
+      };
+    }
+
+    const orgBtn = doc.querySelector("#org-roll-btn");
+    if (orgBtn) {
+      orgBtn.onclick = () => {
+        switchMode('organic-mode');
+        orgBtn.classList.add('active');
+        rollOrganic();
+      };
+    }
+
+    const pbInit = doc.querySelector("#pb-init");
+    if (pbInit) {
+      pbInit.onclick = () => {
+        switchMode('point-mode');
+        pbInit.classList.add('active');
+        initPointBuy();
+      };
+    }
+
+    // Initialize
+    switchMode('point-mode');
+    if (pbInit) pbInit.classList.add('active');
+    initPointBuy();
+  }
+
   async _onSelectClass(event) {
     event.preventDefault();
     const classId = event.currentTarget.dataset.classId;
@@ -443,18 +780,25 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.selectedClass = classDoc;
     console.log(`SWSE LevelUp | Selected class: ${classDoc.name}`, classDoc.system);
 
-    // Update mentor for prestige classes
+    // Update mentor based on class type and character level
     const isPrestige = !this._isBaseClass(classDoc.name);
+    const currentLevel = this.actor.system.level || 0;
+
     if (isPrestige) {
       // For prestige classes, use the prestige class mentor
       this.mentor = getMentorForClass(classDoc.name);
       this.currentMentorClass = classDoc.name;
       console.log(`SWSE LevelUp | Switched to prestige class mentor: ${this.mentor.name}`);
+    } else if (currentLevel === 0 || currentLevel === 1) {
+      // For level 0->1 or level 1->2, use the selected base class mentor
+      this.mentor = getMentorForClass(classDoc.name);
+      this.currentMentorClass = classDoc.name;
+      console.log(`SWSE LevelUp | Switched to base class mentor: ${this.mentor.name}`);
     } else {
-      // For base classes, use the level 1 class mentor
+      // For higher levels, use the level 1 class mentor
       const level1Class = getLevel1Class(this.actor);
-      this.mentor = getMentorForClass(level1Class);
-      this.currentMentorClass = level1Class;
+      this.mentor = getMentorForClass(level1Class || classDoc.name);
+      this.currentMentorClass = level1Class || classDoc.name;
     }
 
     // Get appropriate greeting for the current class level
@@ -502,7 +846,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
   }
 
   async _calculateHPGain(classDoc) {
-    const hitDie = classDoc.system.hitDie || 6;
+    // Parse hit die from string like "1d10" to get the die size (10)
+    const hitDieString = classDoc.system.hit_die || classDoc.system.hitDie || "1d6";
+    const hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
     const conMod = this.actor.system.abilities.con?.mod || 0;
     const hpGeneration = game.settings.get("swse", "hpGeneration") || "average";
     const maxHPLevels = game.settings.get("swse", "maxHPLevels") || 1;
@@ -625,7 +971,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     if (talentTreeRestriction === "current") {
       // Only talent trees from the selected class
-      availableTrees = classDoc.system.talentTrees || [];
+      availableTrees = classDoc.system.talent_trees || classDoc.system.talentTrees || [];
     } else {
       // Talent trees from any class the character has levels in
       const characterClasses = this._getCharacterClasses();
@@ -635,15 +981,17 @@ export class SWSELevelUpEnhanced extends FormApplication {
         const classDoc = await classPack.index.find(c => c.name === className);
         if (classDoc) {
           const fullClass = await classPack.getDocument(classDoc._id);
-          if (fullClass.system.talentTrees) {
-            availableTrees.push(...fullClass.system.talentTrees);
+          const trees = fullClass.system.talent_trees || fullClass.system.talentTrees;
+          if (trees) {
+            availableTrees.push(...trees);
           }
         }
       }
 
       // Add current class trees
-      if (classDoc.system.talentTrees) {
-        availableTrees.push(...classDoc.system.talentTrees);
+      const trees = classDoc.system.talent_trees || classDoc.system.talentTrees;
+      if (trees) {
+        availableTrees.push(...trees);
       }
 
       // Remove duplicates
@@ -1295,35 +1643,53 @@ export class SWSELevelUpEnhanced extends FormApplication {
     if (!levelProgression || !Array.isArray(levelProgression)) return;
 
     const levelData = levelProgression.find(lp => lp.level === classLevel);
-    if (!levelData || !levelData.features) return;
+    if (!levelData) return;
 
-    console.log(`SWSE LevelUp | Applying class features for ${classDoc.name} level ${classLevel}:`, levelData.features);
+    console.log(`SWSE LevelUp | Applying class features for ${classDoc.name} level ${classLevel}:`, levelData);
+
+    // Apply Force Points if specified
+    if (levelData.force_points && levelData.force_points > 0) {
+      const currentMax = this.actor.system.forcePoints?.max || 5;
+      const newMax = currentMax + levelData.force_points;
+      const currentValue = this.actor.system.forcePoints?.value || 5;
+      const newValue = currentValue + levelData.force_points;
+
+      await this.actor.update({
+        "system.forcePoints.max": newMax,
+        "system.forcePoints.value": newValue
+      });
+
+      console.log(`SWSE LevelUp | Increased Force Points by ${levelData.force_points} (${currentMax} → ${newMax})`);
+      ui.notifications.info(`Force Points increased by ${levelData.force_points}!`);
+    }
 
     // Process each feature that's not a choice (talents and feats are already handled)
-    for (const feature of levelData.features) {
-      if (feature.type === 'proficiency' || feature.type === 'class_feature' || feature.type === 'feat_grant') {
-        console.log(`SWSE LevelUp | Granting class feature: ${feature.name}`);
+    if (levelData.features) {
+      for (const feature of levelData.features) {
+        if (feature.type === 'proficiency' || feature.type === 'class_feature' || feature.type === 'feat_grant') {
+          console.log(`SWSE LevelUp | Granting class feature: ${feature.name}`);
 
-        // Create a feature item on the actor
-        const featureItem = {
-          name: feature.name,
-          type: "feat", // Use feat type for class features
-          img: "icons/svg/upgrade.svg",
-          system: {
-            description: `Class feature from ${classDoc.name} level ${classLevel}`,
-            source: `${classDoc.name} ${classLevel}`,
-            type: feature.type
+          // Create a feature item on the actor
+          const featureItem = {
+            name: feature.name,
+            type: "feat", // Use feat type for class features
+            img: "icons/svg/upgrade.svg",
+            system: {
+              description: `Class feature from ${classDoc.name} level ${classLevel}`,
+              source: `${classDoc.name} ${classLevel}`,
+              type: feature.type
+            }
+          };
+
+          // Check if this feature already exists
+          const existingFeature = this.actor.items.find(i =>
+            i.name === feature.name && i.system.source === featureItem.system.source
+          );
+
+          if (!existingFeature) {
+            await this.actor.createEmbeddedDocuments("Item", [featureItem]);
+            ui.notifications.info(`Gained class feature: ${feature.name}`);
           }
-        };
-
-        // Check if this feature already exists
-        const existingFeature = this.actor.items.find(i =>
-          i.name === feature.name && i.system.source === featureItem.system.source
-        );
-
-        if (!existingFeature) {
-          await this.actor.createEmbeddedDocuments("Item", [featureItem]);
-          ui.notifications.info(`Gained class feature: ${feature.name}`);
         }
       }
     }
@@ -1364,7 +1730,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
           img: this.selectedClass.img,
           system: {
             level: 1,
-            hitDie: this.selectedClass.system.hitDie || 6,
+            hitDie: this.selectedClass.system.hit_die || this.selectedClass.system.hitDie || "1d6",
             babProgression: this.selectedClass.system.babProgression || 0.75,
             defenses: {
               fortitude: defenses.fortitude || 0,
@@ -1490,9 +1856,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       await this.actor.update({
         "system.bab": totalBAB,
-        "system.defenses.fortitude.class": defenseBonuses.fortitude,
-        "system.defenses.reflex.class": defenseBonuses.reflex,
-        "system.defenses.will.class": defenseBonuses.will
+        "system.defenses.fortitude.classBonus": defenseBonuses.fortitude,
+        "system.defenses.reflex.classBonus": defenseBonuses.reflex,
+        "system.defenses.will.classBonus": defenseBonuses.will
       });
 
       // Build ability increases text

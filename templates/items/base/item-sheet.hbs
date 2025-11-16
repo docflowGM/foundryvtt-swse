@@ -38,36 +38,83 @@
  <input name="system.damage" type="text" value="{{system.damage}}" />
  </div>
  <div class="form-group">
- <label>Critical</label>
- <input name="system.crit" type="text" value="{{system.crit}}" />
+ <label>Damage Type</label>
+ <select name="system.damageType">
+ <option value="energy" {{#if (eq system.damageType "energy")}}selected{{/if}}>Energy</option>
+ <option value="kinetic" {{#if (eq system.damageType "kinetic")}}selected{{/if}}>Kinetic</option>
+ <option value="ion" {{#if (eq system.damageType "ion")}}selected{{/if}}>Ion</option>
+ </select>
+ </div>
+ <div class="form-group">
+ <label>Attack Bonus</label>
+ <input name="system.attackBonus" type="number" value="{{system.attackBonus}}" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Attack Attribute</label>
+ <select name="system.attackAttribute">
+ <option value="str" {{#if (eq system.attackAttribute "str")}}selected{{/if}}>Strength</option>
+ <option value="dex" {{#if (eq system.attackAttribute "dex")}}selected{{/if}}>Dexterity</option>
+ </select>
  </div>
  <div class="form-group">
  <label>Range</label>
  <input name="system.range" type="text" value="{{system.range}}" />
  </div>
  <div class="form-group">
- <label>Special</label>
- <textarea name="system.special">{{system.special}}</textarea>
+ <label>Weight (kg)</label>
+ <input name="system.weight" type="number" value="{{system.weight}}" step="0.1" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Cost (credits)</label>
+ <input name="system.cost" type="number" value="{{system.cost}}" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Equipped</label>
+ <input name="system.equipped" type="checkbox" {{#if system.equipped}}checked{{/if}} />
  </div>
  {{/if}}
 
  <!-- Armor -->
  {{#if (eq item.type "armor")}}
  <div class="form-group">
+ <label>Armor Type</label>
+ <select name="system.armorType">
+ <option value="light" {{#if (eq system.armorType "light")}}selected{{/if}}>Light</option>
+ <option value="medium" {{#if (eq system.armorType "medium")}}selected{{/if}}>Medium</option>
+ <option value="heavy" {{#if (eq system.armorType "heavy")}}selected{{/if}}>Heavy</option>
+ </select>
+ </div>
+ <div class="form-group">
  <label>Defense Bonus</label>
- <input name="system.defenseBonus" type="number" value="{{system.defenseBonus}}" / data-dtype="Number">
+ <input name="system.defenseBonus" type="number" value="{{system.defenseBonus}}" data-dtype="Number" />
  </div>
  <div class="form-group">
  <label>Max Dex Bonus</label>
- <input name="system.maxDex" type="number" value="{{system.maxDex}}" / data-dtype="Number">
+ <input name="system.maxDexBonus" type="number" value="{{system.maxDexBonus}}" data-dtype="Number" />
  </div>
  <div class="form-group">
  <label>Armor Check Penalty</label>
- <input name="system.armorCheck" type="number" value="{{system.armorCheck}}" / data-dtype="Number">
+ <input name="system.armorCheckPenalty" type="number" value="{{system.armorCheckPenalty}}" data-dtype="Number" />
  </div>
  <div class="form-group">
- <label>Speed Modifier</label>
- <input name="system.speed" type="text" value="{{system.speed}}" />
+ <label>Fortitude Bonus</label>
+ <input name="system.fortBonus" type="number" value="{{system.fortBonus}}" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Speed Penalty (squares)</label>
+ <input name="system.speedPenalty" type="number" value="{{system.speedPenalty}}" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Weight (kg)</label>
+ <input name="system.weight" type="number" value="{{system.weight}}" step="0.1" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Cost (credits)</label>
+ <input name="system.cost" type="number" value="{{system.cost}}" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Equipped</label>
+ <input name="system.equipped" type="checkbox" {{#if system.equipped}}checked{{/if}} />
  </div>
  {{/if}}
 
@@ -86,8 +133,16 @@
  <!-- Feats -->
  {{#if (eq item.type "feat")}}
  <div class="form-group">
- <label>Prerequisites</label>
- <textarea name="system.prerequisites">{{system.prerequisites}}</textarea>
+ <label>Feat Type</label>
+ <select name="system.featType">
+ <option value="general" {{#if (eq system.featType "general")}}selected{{/if}}>General</option>
+ <option value="force" {{#if (eq system.featType "force")}}selected{{/if}}>Force</option>
+ <option value="species" {{#if (eq system.featType "species")}}selected{{/if}}>Species</option>
+ </select>
+ </div>
+ <div class="form-group">
+ <label>Prerequisite</label>
+ <textarea name="system.prerequisite">{{system.prerequisite}}</textarea>
  </div>
  <div class="form-group">
  <label>Benefit</label>
@@ -95,7 +150,7 @@
  </div>
  <div class="form-group">
  <label>Normal</label>
- <textarea name="system.normal">{{system.normal}}</textarea>
+ <textarea name="system.normalText">{{system.normalText}}</textarea>
  </div>
  <div class="form-group">
  <label>Special</label>
@@ -106,24 +161,66 @@
  <!-- Talents -->
  {{#if (eq item.type "talent")}}
  <div class="form-group">
- <label>Prerequisites</label>
- <textarea name="system.prerequisites">{{system.prerequisites}}</textarea>
+ <label>Talent Tree</label>
+ <input name="system.tree" type="text" value="{{system.tree}}" />
+ </div>
+ <div class="form-group">
+ <label>Prerequisite</label>
+ <textarea name="system.prerequisite">{{system.prerequisite}}</textarea>
+ </div>
+ <div class="form-group">
+ <label>Benefit</label>
+ <textarea name="system.benefit">{{system.benefit}}</textarea>
+ </div>
+ <div class="form-group">
+ <label>Special</label>
+ <textarea name="system.special">{{system.special}}</textarea>
  </div>
  {{/if}}
 
  <!-- Force Powers -->
  {{#if (eq item.type "forcepower")}}
  <div class="form-group">
- <label>Difficulty</label>
- <input name="system.difficulty" type="text" value="{{system.difficulty}}" />
+ <label>Power Level</label>
+ <input name="system.powerLevel" type="number" value="{{system.powerLevel}}" min="1" max="6" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Discipline</label>
+ <select name="system.discipline">
+ <option value="telekinetic" {{#if (eq system.discipline "telekinetic")}}selected{{/if}}>Telekinetic</option>
+ <option value="telepathic" {{#if (eq system.discipline "telepathic")}}selected{{/if}}>Telepathic</option>
+ <option value="vital" {{#if (eq system.discipline "vital")}}selected{{/if}}>Vital</option>
+ <option value="dark-side" {{#if (eq system.discipline "dark-side")}}selected{{/if}}>Dark Side</option>
+ <option value="light-side" {{#if (eq system.discipline "light-side")}}selected{{/if}}>Light Side</option>
+ </select>
+ </div>
+ <div class="form-group">
+ <label>Use the Force DC</label>
+ <input name="system.useTheForce" type="number" value="{{system.useTheForce}}" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Activation Time</label>
+ <input name="system.time" type="text" value="{{system.time}}" />
  </div>
  <div class="form-group">
  <label>Range</label>
  <input name="system.range" type="text" value="{{system.range}}" />
  </div>
  <div class="form-group">
+ <label>Target</label>
+ <input name="system.target" type="text" value="{{system.target}}" />
+ </div>
+ <div class="form-group">
+ <label>Duration</label>
+ <input name="system.duration" type="text" value="{{system.duration}}" />
+ </div>
+ <div class="form-group">
  <label>Effect</label>
  <textarea name="system.effect">{{system.effect}}</textarea>
+ </div>
+ <div class="form-group">
+ <label>Special</label>
+ <textarea name="system.special">{{system.special}}</textarea>
  </div>
  {{/if}}
 
@@ -135,7 +232,7 @@
  </div>
  <div class="form-group">
  <label>Skill Points</label>
- <input name="system.skillPoints" type="number" value="{{system.skillPoints}}" / data-dtype="Number">
+ <input name="system.skillPoints" type="number" value="{{system.skillPoints}}" data-dtype="Number" />
  </div>
  <div class="form-group">
  <label>Features</label>

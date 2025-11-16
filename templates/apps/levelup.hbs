@@ -38,6 +38,134 @@
 
   <main class="levelup-body">
 
+    {{!-- STEP 0A: SPECIES SELECTION (Level 0 only) --}}
+    {{#if (eq currentStep "species")}}
+    <section class="step-species-selection">
+      <h3>Choose Your Species</h3>
+      <p class="hint">Select the species for your character. Each species grants unique bonuses and abilities.</p>
+
+      <div class="species-grid">
+        {{#each availableSpecies}}
+        <div class="species-card">
+          {{#if this.img}}
+          <div class="species-image">
+            <img src="{{this.img}}" alt="{{this.name}}" />
+          </div>
+          {{/if}}
+          <h5>{{this.name}}</h5>
+          <div class="species-bonuses">
+            {{#if this.system.abilities}}
+            <span class="bonus-label">{{this.system.abilities}}</span>
+            {{/if}}
+          </div>
+          <button class="select-species-btn btn-primary" data-species-id="{{this.id}}" data-species-name="{{this.name}}">
+            <i class="fas fa-dna"></i> Select
+          </button>
+        </div>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{!-- STEP 0B: ATTRIBUTES SELECTION (Level 0 only) --}}
+    {{#if (eq currentStep "attributes")}}
+    <section class="step-attributes-selection">
+      <h3>Set Your Ability Scores</h3>
+      <p class="hint">Determine your character's base ability scores using the point-buy system or rolling dice.</p>
+
+      {{!-- Reuse the ability generation UI from chargen --}}
+      <div class="ability-methods">
+        <button type="button" id="pb-init" class="method-button active">
+          <i class="fas fa-calculator"></i> Point Buy (32 points)
+        </button>
+        <button type="button" id="std-roll-btn" class="method-button">
+          <i class="fas fa-dice"></i> Standard Roll (4d6 drop lowest)
+        </button>
+        <button type="button" id="org-roll-btn" class="method-button">
+          <i class="fas fa-dice-d20"></i> Organic Roll (24d6)
+        </button>
+      </div>
+
+      <div id="point-mode" class="ability-mode">
+        <div class="points-remaining">
+          Points Remaining: <strong><span id="point-remaining">32</span></strong>
+        </div>
+        <div class="abilities-grid">
+          <div class="ability-card">
+            <label>STR</label>
+            <div class="ability-controls">
+              <button type="button" class="ability-btn" data-minus="str">−</button>
+              <input name="ability_str" class="ability-input" type="number" value="8" min="8" max="18" />
+              <button type="button" class="ability-btn" data-plus="str">+</button>
+            </div>
+            <div id="display_str" class="ability-display">Total: 8 (Mod: -1)</div>
+          </div>
+          <div class="ability-card">
+            <label>DEX</label>
+            <div class="ability-controls">
+              <button type="button" class="ability-btn" data-minus="dex">−</button>
+              <input name="ability_dex" class="ability-input" type="number" value="8" min="8" max="18" />
+              <button type="button" class="ability-btn" data-plus="dex">+</button>
+            </div>
+            <div id="display_dex" class="ability-display">Total: 8 (Mod: -1)</div>
+          </div>
+          <div class="ability-card">
+            <label>CON</label>
+            <div class="ability-controls">
+              <button type="button" class="ability-btn" data-minus="con">−</button>
+              <input name="ability_con" class="ability-input" type="number" value="8" min="8" max="18" />
+              <button type="button" class="ability-btn" data-plus="con">+</button>
+            </div>
+            <div id="display_con" class="ability-display">Total: 8 (Mod: -1)</div>
+          </div>
+          <div class="ability-card">
+            <label>INT</label>
+            <div class="ability-controls">
+              <button type="button" class="ability-btn" data-minus="int">−</button>
+              <input name="ability_int" class="ability-input" type="number" value="8" min="8" max="18" />
+              <button type="button" class="ability-btn" data-plus="int">+</button>
+            </div>
+            <div id="display_int" class="ability-display">Total: 8 (Mod: -1)</div>
+          </div>
+          <div class="ability-card">
+            <label>WIS</label>
+            <div class="ability-controls">
+              <button type="button" class="ability-btn" data-minus="wis">−</button>
+              <input name="ability_wis" class="ability-input" type="number" value="8" min="8" max="18" />
+              <button type="button" class="ability-btn" data-plus="wis">+</button>
+            </div>
+            <div id="display_wis" class="ability-display">Total: 8 (Mod: -1)</div>
+          </div>
+          <div class="ability-card">
+            <label>CHA</label>
+            <div class="ability-controls">
+              <button type="button" class="ability-btn" data-minus="cha">−</button>
+              <input name="ability_cha" class="ability-input" type="number" value="8" min="8" max="18" />
+              <button type="button" class="ability-btn" data-plus="cha">+</button>
+            </div>
+            <div id="display_cha" class="ability-display">Total: 8 (Mod: -1)</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="standard-mode" class="ability-mode" style="display:none;">
+        <div id="roll-results" class="roll-results"></div>
+        <p class="hint">Click a roll value, then click an ability to assign it.</p>
+      </div>
+
+      <div id="organic-mode" class="ability-mode" style="display:none;">
+        <div id="organic-groups" class="organic-groups"></div>
+        <p class="hint">Click a group, then click an ability to assign the total.</p>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="confirm-attributes-btn btn-primary">
+          Confirm Attributes <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </section>
+    {{/if}}
+
     {{!-- STEP 1: CLASS SELECTION --}}
     {{#if (eq currentStep "class")}}
     <section class="step-class-selection">
