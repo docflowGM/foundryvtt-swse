@@ -20,6 +20,9 @@ export class SWSEStore extends FormApplication {
 
         // Track cart total for animations
         this.cartTotal = 0;
+
+        // Store items by ID for quick lookup
+        this.itemsById = new Map();
     }
 
     /**
@@ -517,8 +520,8 @@ export class SWSEStore extends FormApplication {
 
         // Get all items from world items
         const worldItems = game.items.filter(i => {
-            const cost = i.system?.cost ?? i.system?.price ?? 0;
-            return cost > 0;
+            // Include all items - cost filtering can be added as a setting later
+            return true;
         });
 
         // Load items from compendium packs
@@ -528,16 +531,19 @@ export class SWSEStore extends FormApplication {
             const pack = game.packs.get(packName);
             if (pack) {
                 const documents = await pack.getDocuments();
-                const itemsWithCost = documents.filter(i => {
-                    const cost = i.system?.cost ?? i.system?.price ?? 0;
-                    return cost > 0;
-                });
-                packItems.push(...itemsWithCost);
+                // Include all items from compendium - many items have cost "0" that need to be displayed
+                packItems.push(...documents);
             }
         }
 
         // Combine world items and pack items
         const allItems = [...worldItems, ...packItems];
+
+        // Store items by ID for quick lookup
+        this.itemsById.clear();
+        allItems.forEach(item => {
+            this.itemsById.set(item.id, item);
+        });
 
         // Get all actors that could be droids or vehicles
         const allActors = game.actors.filter(a => {
@@ -700,13 +706,18 @@ export class SWSEStore extends FormApplication {
             return;
         }
 
-        const item = game.items.get(itemId);
+        // Try to get from world items first, then from our cached map
+        let item = game.items.get(itemId);
+        if (!item) {
+            item = this.itemsById.get(itemId);
+        }
+
         if (!item) {
             ui.notifications.error("Item not found.");
             return;
         }
 
-        const baseCost = Number(item.system.cost) || 0;
+        const baseCost = Number(item.system?.cost) || 0;
         const finalCost = this._calculateFinalCost(baseCost);
 
         // Add to cart

@@ -326,13 +326,38 @@ export class SWSEActorSheetBase extends ActorSheet {
     const dataset = element.dataset;
 
     if (dataset.roll) {
-      const roll = new Roll(dataset.roll, this.actor.getRollData());
       const label = dataset.label || 'Roll';
 
-      roll.toMessage({
-        speaker: ChatMessage.getSpeaker({actor: this.actor}),
-        flavor: label
-      });
+      // Special handling for initiative rolls
+      if (label.toLowerCase().includes('initiative')) {
+        // Add actor to combat tracker if not already in combat
+        if (game.combat && !game.combat.combatants.find(c => c.actor?.id === this.actor.id)) {
+          await game.combat.createEmbeddedDocuments('Combatant', [{
+            actorId: this.actor.id,
+            sceneId: game.combat.scene.id,
+            tokenId: this.actor.token?.id
+          }]);
+        }
+
+        // Roll initiative
+        const tokens = this.actor.getActiveTokens();
+        if (tokens.length > 0 && game.combat) {
+          await game.combat.rollInitiative(tokens.map(t => t.id));
+        } else {
+          const roll = new Roll(dataset.roll, this.actor.getRollData());
+          roll.toMessage({
+            speaker: ChatMessage.getSpeaker({actor: this.actor}),
+            flavor: label
+          });
+        }
+      } else {
+        // Normal roll
+        const roll = new Roll(dataset.roll, this.actor.getRollData());
+        roll.toMessage({
+          speaker: ChatMessage.getSpeaker({actor: this.actor}),
+          flavor: label
+        });
+      }
     }
   }
 
@@ -447,7 +472,44 @@ export class SWSEActorSheetBase extends ActorSheet {
     if (this.actor.uuid === item.parent?.uuid) {
       return this._onSortItem(event, itemData);
     }
-    
+
     return this.actor.createEmbeddedDocuments('Item', [itemData]);
+  }
+
+  /**
+   * Handle creating a new item from a button click
+   */
+  async _onCreateItem(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const type = button.dataset.type;
+
+    if (!type) {
+      console.warn("CreateItem action requires data-type attribute");
+      return;
+    }
+
+    const itemData = {
+      name: `New ${type.capitalize()}`,
+      type: type
+    };
+
+    return this.actor.createEmbeddedDocuments('Item', [itemData]);
+  }
+
+  /**
+   * Handle setting the condition track
+   */
+  async _onSetConditionTrack(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const step = parseInt(button.dataset.step);
+
+    if (isNaN(step)) {
+      console.warn("SetConditionTrack action requires data-step attribute");
+      return;
+    }
+
+    return this.actor.update({'system.conditionTrack.current': step});
   }
 }

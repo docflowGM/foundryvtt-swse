@@ -9,47 +9,52 @@ export function calculateDefenses(actor) {
   const level = sys.level || 1;
   const penalty = actor.conditionPenalty || 0;
   const sizeMod = SIZE_AC_MODIFIERS[sys.size] || 0;
-  
+
   // Get equipped armor
   const armor = actor.items.find(i => i.type === 'armor' && i.system.equipped);
-  
+
   // Check for Armored Defense talents
-  const hasArmored = actor.items.some(i => 
+  const hasArmored = actor.items.some(i =>
     i.type === 'talent' && i.name === 'Armored Defense'
   );
-  const hasImproved = actor.items.some(i => 
+  const hasImproved = actor.items.some(i =>
     i.type === 'talent' && i.name === 'Improved Armored Defense'
   );
-  
+
+  // Get class bonuses (one-time per class, not per level)
+  const fortClassBonus = sys.defenses?.fortitude?.class || 0;
+  const refClassBonus = sys.defenses?.reflex?.class || 0;
+  const willClassBonus = sys.defenses?.will?.class || 0;
+
   // REFLEX DEFENSE
   sys.defenses.reflex.total = calculateReflex(
-    level, sys.abilities, armor, hasArmored, hasImproved, penalty, sizeMod
+    level, sys.abilities, armor, hasArmored, hasImproved, penalty, sizeMod, refClassBonus
   );
-  
+
   // FORTITUDE DEFENSE
   const isDroid = sys.isDroid || false;
   sys.defenses.fortitude.total = calculateFortitude(
-    level, sys.abilities, armor, penalty, sizeMod, isDroid
+    level, sys.abilities, armor, penalty, sizeMod, isDroid, fortClassBonus
   );
-  
+
   // WILL DEFENSE
   sys.defenses.will.total = calculateWill(
-    level, sys.abilities, penalty, sizeMod
+    level, sys.abilities, penalty, sizeMod, willClassBonus
   );
 }
 
-function calculateReflex(level, abilities, armor, hasArmored, hasImproved, penalty, sizeMod) {
+function calculateReflex(level, abilities, armor, hasArmored, hasImproved, penalty, sizeMod, classBonus = 0) {
   let base = 10;
   let abilMod = abilities.dex?.mod || 0;
-  
+
   if (armor) {
     const armorBonus = armor.system.defenseBonus || 0;
-    
+
     // Apply max dex restriction
     if (Number.isInteger(armor.system.maxDexBonus)) {
       abilMod = Math.min(abilMod, armor.system.maxDexBonus);
     }
-    
+
     // Armor vs Level calculation
     if (hasImproved) {
       base += Math.max(level + Math.floor(armorBonus / 2), armorBonus);
@@ -62,11 +67,11 @@ function calculateReflex(level, abilities, armor, hasArmored, hasImproved, penal
     // No armor = level bonus
     base += level;
   }
-  
-  return base + abilMod + penalty + sizeMod;
+
+  return base + abilMod + penalty + sizeMod + classBonus;
 }
 
-function calculateFortitude(level, abilities, armor, penalty, sizeMod, isDroid = false) {
+function calculateFortitude(level, abilities, armor, penalty, sizeMod, isDroid = false, classBonus = 0) {
   const base = 10 + level;
 
   // Droids use STR modifier for Fortitude Defense (they have no CON)
@@ -76,12 +81,12 @@ function calculateFortitude(level, abilities, armor, penalty, sizeMod, isDroid =
 
   const armorBonus = armor?.system.fortBonus || 0;
 
-  return base + abilityMod + armorBonus + penalty + sizeMod;
+  return base + abilityMod + armorBonus + penalty + sizeMod + classBonus;
 }
 
-function calculateWill(level, abilities, penalty, sizeMod) {
+function calculateWill(level, abilities, penalty, sizeMod, classBonus = 0) {
   const base = 10 + level;
   const wisMod = abilities.wis?.mod || 0;
-  
-  return base + wisMod + penalty + sizeMod;
+
+  return base + wisMod + penalty + sizeMod + classBonus;
 }
