@@ -12,7 +12,7 @@
 
 export class ActorValidationMigration {
 
-  static MIGRATION_VERSION = "1.1.119";
+  static MIGRATION_VERSION = "1.1.130";
   static MIGRATION_KEY = "actorValidationMigration";
 
   /**
@@ -81,130 +81,155 @@ export class ActorValidationMigration {
         // ============================================
 
         // Initiative
-        if (actor.system?.initiative !== undefined &&
-            !Number.isInteger(actor.system.initiative)) {
-          updates['system.initiative'] = Math.floor(Number(actor.system.initiative) || 0);
+        if (actor.system?.initiative === undefined || !Number.isInteger(actor.system.initiative)) {
+          const initValue = actor.system?.initiative;
+          updates['system.initiative'] = Math.floor(Number(initValue) || 0);
           needsUpdate = true;
-          console.log(`Fixing ${actor.name}: initiative to integer`);
+          console.log(`Fixing ${actor.name}: initiative to integer (was ${initValue})`);
         }
 
         // Speed (skip for vehicles as they use string speed values)
-        if (actor.type !== 'vehicle' &&
-            actor.system?.speed !== undefined &&
-            !Number.isInteger(actor.system.speed)) {
-          updates['system.speed'] = Math.floor(Number(actor.system.speed) || 6);
-          needsUpdate = true;
-          console.log(`Fixing ${actor.name}: speed to integer`);
+        if (actor.type !== 'vehicle') {
+          if (actor.system?.speed === undefined || !Number.isInteger(actor.system.speed)) {
+            const speedValue = actor.system?.speed;
+            updates['system.speed'] = Math.floor(Number(speedValue) || 6);
+            needsUpdate = true;
+            console.log(`Fixing ${actor.name}: speed to integer (was ${speedValue})`);
+          }
         }
 
         // Damage Threshold
-        if (actor.system?.damageThreshold !== undefined &&
-            !Number.isInteger(actor.system.damageThreshold)) {
-          updates['system.damageThreshold'] = Math.floor(Number(actor.system.damageThreshold) || 10);
+        if (actor.system?.damageThreshold === undefined || !Number.isInteger(actor.system.damageThreshold)) {
+          const dtValue = actor.system?.damageThreshold;
+          updates['system.damageThreshold'] = Math.floor(Number(dtValue) || 10);
           needsUpdate = true;
-          console.log(`Fixing ${actor.name}: damageThreshold to integer`);
+          console.log(`Fixing ${actor.name}: damageThreshold to integer (was ${dtValue})`);
         }
 
         // BAB
-        if (actor.system?.bab !== undefined &&
-            !Number.isInteger(actor.system.bab)) {
-          updates['system.bab'] = Math.floor(Number(actor.system.bab) || 0);
+        if (actor.system?.bab === undefined || !Number.isInteger(actor.system.bab)) {
+          const babValue = actor.system?.bab;
+          updates['system.bab'] = Math.floor(Number(babValue) || 0);
           needsUpdate = true;
-          console.log(`Fixing ${actor.name}: bab to integer`);
+          console.log(`Fixing ${actor.name}: bab to integer (was ${babValue})`);
         }
 
         // Base Attack
-        if (actor.system?.baseAttack !== undefined &&
-            !Number.isInteger(actor.system.baseAttack)) {
-          updates['system.baseAttack'] = Math.floor(Number(actor.system.baseAttack) || 0);
+        if (actor.system?.baseAttack === undefined || !Number.isInteger(actor.system.baseAttack)) {
+          const baseAttackValue = actor.system?.baseAttack;
+          updates['system.baseAttack'] = Math.floor(Number(baseAttackValue) || 0);
           needsUpdate = true;
-          console.log(`Fixing ${actor.name}: baseAttack to integer`);
+          console.log(`Fixing ${actor.name}: baseAttack to integer (was ${baseAttackValue})`);
         }
 
         // ============================================
         // Fix Defense Integer Fields
         // ============================================
 
-        if (actor.system?.defenses) {
+        // Helper to ensure integer
+        const ensureInt = (value, defaultValue = 0) => {
+          if (value === null || value === undefined || value === "") {
+            return defaultValue;
+          }
+          const num = Number(value);
+          return Number.isInteger(num) ? num : Math.floor(num) || defaultValue;
+        };
+
+        // Ensure defenses object exists
+        if (!actor.system?.defenses) {
+          console.log(`Fixing ${actor.name}: creating missing defenses structure`);
+          updates['system.defenses'] = {
+            reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+            fortitude: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+            will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 }
+          };
+          needsUpdate = true;
+        } else {
           const defenses = actor.system.defenses;
 
-          // Helper to ensure integer
-          const ensureInt = (value) => {
-            if (value === null || value === undefined || value === "") {
-              return 0;
-            }
-            const num = Number(value);
-            return Number.isInteger(num) ? num : Math.floor(num) || 0;
-          };
-
-          // Fix Reflex defense
-          if (defenses.reflex) {
-            if (!Number.isInteger(defenses.reflex.ability)) {
+          // Fix Reflex defense - create if missing
+          if (!defenses.reflex) {
+            console.log(`Fixing ${actor.name}: creating missing reflex defense`);
+            updates['system.defenses.reflex'] = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
+            needsUpdate = true;
+          } else {
+            // Fix individual fields
+            if (defenses.reflex.ability === undefined || !Number.isInteger(defenses.reflex.ability)) {
               updates['system.defenses.reflex.ability'] = ensureInt(defenses.reflex.ability);
               needsUpdate = true;
             }
-            if (!Number.isInteger(defenses.reflex.armor)) {
+            if (defenses.reflex.armor === undefined || !Number.isInteger(defenses.reflex.armor)) {
               updates['system.defenses.reflex.armor'] = ensureInt(defenses.reflex.armor);
               needsUpdate = true;
             }
-            if (!Number.isInteger(defenses.reflex.classBonus)) {
+            if (defenses.reflex.classBonus === undefined || !Number.isInteger(defenses.reflex.classBonus)) {
               updates['system.defenses.reflex.classBonus'] = ensureInt(defenses.reflex.classBonus);
               needsUpdate = true;
             }
-            if (!Number.isInteger(defenses.reflex.misc)) {
+            if (defenses.reflex.misc === undefined || !Number.isInteger(defenses.reflex.misc)) {
               updates['system.defenses.reflex.misc'] = ensureInt(defenses.reflex.misc);
               needsUpdate = true;
             }
-            if (!Number.isInteger(defenses.reflex.base)) {
-              updates['system.defenses.reflex.base'] = ensureInt(defenses.reflex.base) || 10;
+            if (defenses.reflex.base === undefined || !Number.isInteger(defenses.reflex.base)) {
+              updates['system.defenses.reflex.base'] = ensureInt(defenses.reflex.base, 10);
               needsUpdate = true;
             }
           }
 
-          // Fix Fortitude defense
-          if (defenses.fortitude) {
-            if (!Number.isInteger(defenses.fortitude.ability)) {
+          // Fix Fortitude defense - create if missing
+          if (!defenses.fortitude) {
+            console.log(`Fixing ${actor.name}: creating missing fortitude defense`);
+            updates['system.defenses.fortitude'] = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
+            needsUpdate = true;
+          } else {
+            // Fix individual fields
+            if (defenses.fortitude.ability === undefined || !Number.isInteger(defenses.fortitude.ability)) {
               updates['system.defenses.fortitude.ability'] = ensureInt(defenses.fortitude.ability);
               needsUpdate = true;
             }
-            if (!Number.isInteger(defenses.fortitude.armor)) {
+            if (defenses.fortitude.armor === undefined || !Number.isInteger(defenses.fortitude.armor)) {
               updates['system.defenses.fortitude.armor'] = ensureInt(defenses.fortitude.armor);
               needsUpdate = true;
             }
-            if (!Number.isInteger(defenses.fortitude.classBonus)) {
+            if (defenses.fortitude.classBonus === undefined || !Number.isInteger(defenses.fortitude.classBonus)) {
               updates['system.defenses.fortitude.classBonus'] = ensureInt(defenses.fortitude.classBonus);
               needsUpdate = true;
             }
-            if (!Number.isInteger(defenses.fortitude.misc)) {
+            if (defenses.fortitude.misc === undefined || !Number.isInteger(defenses.fortitude.misc)) {
               updates['system.defenses.fortitude.misc'] = ensureInt(defenses.fortitude.misc);
               needsUpdate = true;
             }
-            if (!Number.isInteger(defenses.fortitude.base)) {
-              updates['system.defenses.fortitude.base'] = ensureInt(defenses.fortitude.base) || 10;
+            if (defenses.fortitude.base === undefined || !Number.isInteger(defenses.fortitude.base)) {
+              updates['system.defenses.fortitude.base'] = ensureInt(defenses.fortitude.base, 10);
               needsUpdate = true;
             }
           }
 
-          // Fix Will defense
-          if (defenses.will) {
-            if (!Number.isInteger(defenses.will.ability)) {
+          // Fix Will defense - create if missing
+          if (!defenses.will) {
+            console.log(`Fixing ${actor.name}: creating missing will defense`);
+            updates['system.defenses.will'] = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
+            needsUpdate = true;
+          } else {
+            // Fix individual fields
+            if (defenses.will.ability === undefined || !Number.isInteger(defenses.will.ability)) {
               updates['system.defenses.will.ability'] = ensureInt(defenses.will.ability);
               needsUpdate = true;
             }
-            if (!Number.isInteger(defenses.will.armor)) {
+            if (defenses.will.armor === undefined || !Number.isInteger(defenses.will.armor)) {
               updates['system.defenses.will.armor'] = ensureInt(defenses.will.armor);
               needsUpdate = true;
             }
-            if (!Number.isInteger(defenses.will.classBonus)) {
+            if (defenses.will.classBonus === undefined || !Number.isInteger(defenses.will.classBonus)) {
               updates['system.defenses.will.classBonus'] = ensureInt(defenses.will.classBonus);
               needsUpdate = true;
             }
-            if (!Number.isInteger(defenses.will.misc)) {
+            if (defenses.will.misc === undefined || !Number.isInteger(defenses.will.misc)) {
               updates['system.defenses.will.misc'] = ensureInt(defenses.will.misc);
               needsUpdate = true;
             }
-            if (!Number.isInteger(defenses.will.base)) {
-              updates['system.defenses.will.base'] = ensureInt(defenses.will.base) || 10;
+            if (defenses.will.base === undefined || !Number.isInteger(defenses.will.base)) {
+              updates['system.defenses.will.base'] = ensureInt(defenses.will.base, 10);
               needsUpdate = true;
             }
           }

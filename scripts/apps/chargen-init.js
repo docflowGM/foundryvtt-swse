@@ -2,6 +2,12 @@ import CharacterGeneratorImproved from './chargen-improved.js';
 
 // Single hook to handle both create button interception and header button addition
 Hooks.on('renderActorDirectory', (app, html, data) => {
+    // Check if html exists and has elements
+    if (!html || !html[0]) {
+        console.warn('SWSE | renderActorDirectory hook received invalid html parameter');
+        return;
+    }
+
     // Intercept the create button click
     const createButton = html[0].querySelector('.create-entity, .document-create');
 

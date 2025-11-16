@@ -130,13 +130,59 @@ export class SWSELevelUpEnhanced extends FormApplication {
   }
 
   /**
-   * Check if the new level grants a bonus feat
-   * In SWSE, characters get a feat at every odd level (1, 3, 5, 7, 9, 11, 13, 15, 17, 19)
+   * Check if the new level grants a bonus feat from the selected class
+   * Checks the class's level_progression data for feat_choice features
    * @returns {boolean}
    */
   _getsBonusFeat() {
+    if (!this.selectedClass) return false;
+
     const newLevel = this.actor.system.level + 1;
-    return newLevel % 2 === 1; // Odd levels grant feats
+    const classLevel = this._getClassLevel(this.selectedClass.name) + 1;
+
+    // Check level_progression for this class level
+    const levelProgression = this.selectedClass.system.level_progression;
+    if (!levelProgression || !Array.isArray(levelProgression)) return false;
+
+    const levelData = levelProgression.find(lp => lp.level === classLevel);
+    if (!levelData || !levelData.features) return false;
+
+    // Check if this level grants a feat_choice feature
+    return levelData.features.some(f => f.type === 'feat_choice');
+  }
+
+  /**
+   * Check if the new level grants a talent from the selected class
+   * Checks the class's level_progression data for talent_choice features
+   * @returns {boolean}
+   */
+  _getsTalent() {
+    if (!this.selectedClass) return false;
+
+    const classLevel = this._getClassLevel(this.selectedClass.name) + 1;
+
+    // Check level_progression for this class level
+    const levelProgression = this.selectedClass.system.level_progression;
+    if (!levelProgression || !Array.isArray(levelProgression)) {
+      // Fallback: if no level_progression, check if class has talent trees
+      return (this.selectedClass.system.forceSensitive || this.selectedClass.system.talentTrees?.length > 0);
+    }
+
+    const levelData = levelProgression.find(lp => lp.level === classLevel);
+    if (!levelData || !levelData.features) return false;
+
+    // Check if this level grants a talent_choice feature
+    return levelData.features.some(f => f.type === 'talent_choice');
+  }
+
+  /**
+   * Get the current level in a specific class
+   * @param {string} className - Name of the class
+   * @returns {number} Current level in that class
+   */
+  _getClassLevel(className) {
+    const classItem = this.actor.items.find(i => i.type === 'class' && i.name === className);
+    return classItem ? (classItem.system.level || 0) : 0;
   }
 
   /**
@@ -190,15 +236,32 @@ export class SWSELevelUpEnhanced extends FormApplication {
       const allFeats = await featPack.getDocuments();
       let featObjects = allFeats.map(f => f.toObject());
 
-      // Filter by class bonus feats if a class is selected
+      // Filter by class bonus feats if a class is selected and this is a class bonus feat level
       if (this.selectedClass && this.selectedClass.name) {
         const className = this.selectedClass.name;
-        featObjects = featObjects.filter(f => {
-          // Check if feat is a bonus feat for this class
-          const bonusFeatFor = f.system?.bonus_feat_for || [];
-          return bonusFeatFor.includes(className);
-        });
-        console.log(`SWSE LevelUp | Filtered to ${featObjects.length} bonus feats for ${className}`);
+        const classLevel = this._getClassLevel(className) + 1;
+
+        // Check if this level grants a bonus feat specific to this class
+        const levelProgression = this.selectedClass.system.level_progression;
+        if (levelProgression && Array.isArray(levelProgression)) {
+          const levelData = levelProgression.find(lp => lp.level === classLevel);
+          if (levelData && levelData.features) {
+            // Find the feat_choice feature to see if it specifies a feat list
+            const featFeature = levelData.features.find(f => f.type === 'feat_choice');
+            if (featFeature && featFeature.list) {
+              // This class has a specific feat list (e.g., "jedi_feats", "noble_feats")
+              console.log(`SWSE LevelUp | Filtering feats by list: ${featFeature.list} for ${className}`);
+
+              // Filter to only feats that have this class in their bonus_feat_for array
+              featObjects = featObjects.filter(f => {
+                const bonusFeatFor = f.system?.bonus_feat_for || [];
+                return bonusFeatFor.includes(className) || bonusFeatFor.includes('all');
+              });
+
+              console.log(`SWSE LevelUp | Filtered to ${featObjects.length} bonus feats for ${className}`);
+            }
+          }
+        }
       }
 
       // Prepare pending data for prerequisite checking
@@ -411,6 +474,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
     const getsBonusFeat = this._getsBonusFeat();
 
     // Determine next step in order: multiclass bonus -> ability increase -> feat -> talent -> summary
+    const getsTalent = this._getsTalent();
+
     if (isMulticlassing && isBaseClass) {
       // Taking a new base class - offer multiclass bonus
       this.currentStep = 'multiclass-bonus';
@@ -418,13 +483,13 @@ export class SWSELevelUpEnhanced extends FormApplication {
       // This level grants ability score increases
       this.currentStep = 'ability-increase';
     } else if (getsBonusFeat) {
-      // This level grants a bonus feat
+      // This level grants a bonus feat from this class
       this.currentStep = 'feat';
-    } else if (classDoc.system.forceSensitive || classDoc.system.talentTrees?.length > 0) {
-      // Class has talents - go to talent selection
+    } else if (getsTalent) {
+      // This level grants a talent from this class
       this.currentStep = 'talent';
     } else {
-      // No talents - go to summary
+      // No special selections - go to summary
       this.currentStep = 'summary';
     }
 
@@ -956,7 +1021,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
   _onNextStep() {
     const getsAbilityIncrease = this._getsAbilityIncrease();
     const getsBonusFeat = this._getsBonusFeat();
-    const hasTalents = this.selectedClass?.system.forceSensitive || this.selectedClass?.system.talentTrees?.length > 0;
+    const getsTalent = this._getsTalent();
 
     // Determine next step dynamically based on what's applicable
     switch (this.currentStep) {
@@ -968,7 +1033,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
           this.currentStep = 'ability-increase';
         } else if (getsBonusFeat) {
           this.currentStep = 'feat';
-        } else if (hasTalents) {
+        } else if (getsTalent) {
           this.currentStep = 'talent';
         } else {
           this.currentStep = 'summary';
@@ -983,7 +1048,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
         }
         if (getsBonusFeat) {
           this.currentStep = 'feat';
-        } else if (hasTalents) {
+        } else if (getsTalent) {
           this.currentStep = 'talent';
         } else {
           this.currentStep = 'summary';
@@ -995,13 +1060,18 @@ export class SWSELevelUpEnhanced extends FormApplication {
           ui.notifications.warn("You must select a feat before continuing!");
           return;
         }
-        if (hasTalents) {
+        if (getsTalent) {
           this.currentStep = 'talent';
         } else {
           this.currentStep = 'summary';
         }
         break;
       case 'talent':
+        // Check if they selected a talent (if required)
+        if (!this.selectedTalent) {
+          ui.notifications.warn("You must select a talent before continuing!");
+          return;
+        }
         this.currentStep = 'summary';
         break;
     }
@@ -1012,10 +1082,10 @@ export class SWSELevelUpEnhanced extends FormApplication {
   _onPrevStep() {
     const getsAbilityIncrease = this._getsAbilityIncrease();
     const getsBonusFeat = this._getsBonusFeat();
+    const getsTalent = this._getsTalent();
     const characterClasses = this._getCharacterClasses();
     const isMulticlassing = Object.keys(characterClasses).length > 0 && !characterClasses[this.selectedClass?.name];
     const isBaseClass = this.selectedClass ? this._isBaseClass(this.selectedClass.name) : false;
-    const hasTalents = this.selectedClass?.system.forceSensitive || this.selectedClass?.system.talentTrees?.length > 0;
 
     // Go back one step dynamically
     switch (this.currentStep) {
@@ -1050,7 +1120,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
         }
         break;
       case 'summary':
-        if (hasTalents) {
+        if (getsTalent) {
           this.currentStep = 'talent';
         } else if (getsBonusFeat) {
           this.currentStep = 'feat';
@@ -1215,6 +1285,50 @@ export class SWSELevelUpEnhanced extends FormApplication {
   // COMPLETE LEVEL UP
   // ========================================
 
+  /**
+   * Apply class features for a specific level
+   * @param {Object} classDoc - The class document
+   * @param {number} classLevel - The level in this class
+   */
+  async _applyClassFeatures(classDoc, classLevel) {
+    const levelProgression = classDoc.system.level_progression;
+    if (!levelProgression || !Array.isArray(levelProgression)) return;
+
+    const levelData = levelProgression.find(lp => lp.level === classLevel);
+    if (!levelData || !levelData.features) return;
+
+    console.log(`SWSE LevelUp | Applying class features for ${classDoc.name} level ${classLevel}:`, levelData.features);
+
+    // Process each feature that's not a choice (talents and feats are already handled)
+    for (const feature of levelData.features) {
+      if (feature.type === 'proficiency' || feature.type === 'class_feature' || feature.type === 'feat_grant') {
+        console.log(`SWSE LevelUp | Granting class feature: ${feature.name}`);
+
+        // Create a feature item on the actor
+        const featureItem = {
+          name: feature.name,
+          type: "feat", // Use feat type for class features
+          img: "icons/svg/upgrade.svg",
+          system: {
+            description: `Class feature from ${classDoc.name} level ${classLevel}`,
+            source: `${classDoc.name} ${classLevel}`,
+            type: feature.type
+          }
+        };
+
+        // Check if this feature already exists
+        const existingFeature = this.actor.items.find(i =>
+          i.name === feature.name && i.system.source === featureItem.system.source
+        );
+
+        if (!existingFeature) {
+          await this.actor.createEmbeddedDocuments("Item", [featureItem]);
+          ui.notifications.info(`Gained class feature: ${feature.name}`);
+        }
+      }
+    }
+  }
+
   async _onCompleteLevelUp(event) {
     event.preventDefault();
 
@@ -1227,10 +1341,13 @@ export class SWSELevelUpEnhanced extends FormApplication {
       // Check if character already has this class
       const existingClass = this.actor.items.find(i => i.type === 'class' && i.name === this.selectedClass.name);
 
+      // Calculate what level in this class the character will be
+      const classLevel = existingClass ? (existingClass.system.level || 0) + 1 : 1;
+
       if (existingClass) {
         // Level up existing class
         await existingClass.update({
-          'system.level': (existingClass.system.level || 1) + 1
+          'system.level': classLevel
         });
       } else {
         // Create new class item with full class data
@@ -1360,6 +1477,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
         "system.hp.max": newHPMax,
         "system.hp.value": newHPValue
       });
+
+      // Apply class features for this level
+      await this._applyClassFeatures(this.selectedClass, classLevel);
 
       // Recalculate BAB and defense bonuses from all class items
       const totalBAB = this._calculateTotalBAB();
