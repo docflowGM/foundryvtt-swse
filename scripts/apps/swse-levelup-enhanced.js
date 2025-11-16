@@ -1103,36 +1103,58 @@ export class SWSELevelUpEnhanced extends FormApplication {
   /**
    * Calculate defense bonuses from all class items
    * In SWSE, class defense bonuses are applied ONCE per class, not per level
-   * Good defense = +2 class bonus, Poor defense = +0 class bonus
+   * Format: { reflex, fortitude, will }
    * @returns {{fortitude: number, reflex: number, will: number}}
    */
   _calculateDefenseBonuses() {
     const classItems = this.actor.items.filter(i => i.type === 'class');
     const bonuses = { fortitude: 0, reflex: 0, will: 0 };
 
-    // Defense bonuses by class (good = +2 once, poor = +0)
-    // These are ONE-TIME bonuses, not multiplied by level
+    // Defense bonuses by class (applied once per class, NOT multiplied by level)
+    // Format: Reflex/Fortitude/Will
     const defenseProgression = {
-      'Jedi': { fortitude: 2, reflex: 2, will: 2 },
-      'Noble': { fortitude: 0, reflex: 0, will: 2 },
-      'Scoundrel': { fortitude: 0, reflex: 2, will: 0 },
-      'Scout': { fortitude: 0, reflex: 2, will: 0 },
-      'Soldier': { fortitude: 2, reflex: 0, will: 0 },
+      // Base Classes
+      'Jedi': { reflex: 1, fortitude: 1, will: 1 },
+      'Noble': { reflex: 1, fortitude: 0, will: 2 },
+      'Scout': { reflex: 2, fortitude: 1, will: 0 },
+      'Soldier': { reflex: 1, fortitude: 2, will: 0 },
+      'Scoundrel': { reflex: 2, fortitude: 0, will: 1 },
 
-      // Prestige classes (one-time bonuses)
-      'Ace Pilot': { fortitude: 0, reflex: 2, will: 0 },
-      'Bounty Hunter': { fortitude: 2, reflex: 0, will: 0 },
-      'Crime Lord': { fortitude: 0, reflex: 0, will: 2 },
-      'Elite Trooper': { fortitude: 2, reflex: 0, will: 0 },
-      'Force Adept': { fortitude: 0, reflex: 0, will: 2 },
-      'Force Disciple': { fortitude: 0, reflex: 0, will: 2 },
-      'Gunslinger': { fortitude: 0, reflex: 2, will: 0 },
-      'Jedi Knight': { fortitude: 2, reflex: 2, will: 2 },
-      'Jedi Master': { fortitude: 2, reflex: 2, will: 2 },
-      'Officer': { fortitude: 0, reflex: 0, will: 2 },
-      'Sith Apprentice': { fortitude: 0, reflex: 0, will: 2 },
-      'Sith Lord': { fortitude: 2, reflex: 2, will: 2 },
-      'Imperial Knight': { fortitude: 2, reflex: 2, will: 2 }
+      // Prestige Classes - Core Rulebook
+      'Ace Pilot': { reflex: 4, fortitude: 2, will: 0 },
+      'Bounty Hunter': { reflex: 4, fortitude: 2, will: 0 },
+      'Crime Lord': { reflex: 2, fortitude: 0, will: 4 },
+      'Elite Trooper': { reflex: 2, fortitude: 4, will: 0 },
+      'Force Adept': { reflex: 2, fortitude: 2, will: 4 },
+      'Force Disciple': { reflex: 3, fortitude: 3, will: 6 },
+      'Gunslinger': { reflex: 4, fortitude: 0, will: 2 },
+      'Jedi Knight': { reflex: 2, fortitude: 2, will: 2 },
+      'Jedi Master': { reflex: 3, fortitude: 3, will: 3 },
+      'Officer': { reflex: 2, fortitude: 0, will: 4 },
+      'Sith Apprentice': { reflex: 2, fortitude: 2, will: 2 },
+      'Sith Lord': { reflex: 3, fortitude: 3, will: 3 },
+
+      // Additional Prestige Classes
+      'Corporate Agent': { reflex: 2, fortitude: 0, will: 4 },
+      'Gladiator': { reflex: 4, fortitude: 2, will: 0 },
+      'Melee Duelist': { reflex: 4, fortitude: 0, will: 2 },
+      'Enforcer': { reflex: 4, fortitude: 0, will: 2 },
+      'Independent Droid': { reflex: 2, fortitude: 0, will: 4 },
+      'Infiltrator': { reflex: 4, fortitude: 0, will: 2 },
+      'Master Privateer': { reflex: 2, fortitude: 0, will: 4 },
+      'Medic': { reflex: 0, fortitude: 4, will: 2 },
+      'Saboteur': { reflex: 2, fortitude: 0, will: 4 },
+      'Assassin': { reflex: 4, fortitude: 2, will: 0 },
+      'Charlatan': { reflex: 2, fortitude: 0, will: 4 },
+      'Outlaw': { reflex: 4, fortitude: 2, will: 0 },
+      'Droid Commander': { reflex: 2, fortitude: 2, will: 2 },
+      'Military Engineer': { reflex: 2, fortitude: 2, will: 2 },
+      'Vanguard': { reflex: 2, fortitude: 4, will: 0 },
+      'Imperial Knight': { reflex: 2, fortitude: 2, will: 2 },
+      'Shaper': { reflex: 0, fortitude: 2, will: 4 },
+      'Improviser': { reflex: 2, fortitude: 0, will: 4 },
+      'Pathfinder': { reflex: 2, fortitude: 4, will: 0 },
+      'Martial Arts Master': { reflex: 2, fortitude: 4, will: 0 }
     };
 
     for (const classItem of classItems) {
