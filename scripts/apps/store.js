@@ -20,6 +20,9 @@ export class SWSEStore extends FormApplication {
 
         // Track cart total for animations
         this.cartTotal = 0;
+
+        // Store items by ID for quick lookup
+        this.itemsById = new Map();
     }
 
     /**
@@ -536,6 +539,12 @@ export class SWSEStore extends FormApplication {
         // Combine world items and pack items
         const allItems = [...worldItems, ...packItems];
 
+        // Store items by ID for quick lookup
+        this.itemsById.clear();
+        allItems.forEach(item => {
+            this.itemsById.set(item.id, item);
+        });
+
         // Get all actors that could be droids or vehicles
         const allActors = game.actors.filter(a => {
             return (a.type === "droid" || a.type === "vehicle" || a.system?.isDroid)
@@ -697,7 +706,12 @@ export class SWSEStore extends FormApplication {
             return;
         }
 
-        const item = game.items.get(itemId);
+        // Try to get from world items first, then from our cached map
+        let item = game.items.get(itemId);
+        if (!item) {
+            item = this.itemsById.get(itemId);
+        }
+
         if (!item) {
             ui.notifications.error("Item not found.");
             return;

@@ -65,7 +65,7 @@ export default class CharacterGenerator extends Application {
         will: { base: 10, classBonus: 0, misc: 0, total: 10 }
       },
       bab: 0,
-      speed: { base: 6 },
+      speed: { base: 6, total: 6 },
       damageThresholdMisc: 0,
       credits: 1000  // Starting credits
     };
@@ -540,8 +540,13 @@ export default class CharacterGenerator extends Application {
     let html = '<div class="systems-grid">';
 
     for (const proc of DROID_SYSTEMS.processors) {
-      const cost = proc.costFormula(costFactor);
-      const weight = proc.weightFormula(costFactor);
+      // Handle both formula-based and flat cost/weight
+      const cost = typeof proc.costFormula === 'function'
+        ? proc.costFormula(costFactor)
+        : (proc.cost || 0);
+      const weight = typeof proc.weightFormula === 'function'
+        ? proc.weightFormula(costFactor)
+        : (proc.weight || 0);
       const isPurchased = this.characterData.droidSystems.processor?.id === proc.id;
       const isFree = proc.id === 'heuristic';
 
@@ -572,8 +577,13 @@ export default class CharacterGenerator extends Application {
     let html = '<div class="systems-grid">';
 
     for (const app of DROID_SYSTEMS.appendages) {
-      const cost = app.costFormula(costFactor);
-      const weight = app.weightFormula(costFactor);
+      // Handle both formula-based and flat cost/weight
+      const cost = typeof app.costFormula === 'function'
+        ? app.costFormula(costFactor)
+        : (app.cost || 0);
+      const weight = typeof app.weightFormula === 'function'
+        ? app.weightFormula(costFactor)
+        : (app.weight || 0);
       const purchaseCount = this.characterData.droidSystems.appendages.filter(a => a.id === app.id).length;
       const isFree = app.id === 'hand' && purchaseCount < 2;
 
@@ -613,8 +623,13 @@ export default class CharacterGenerator extends Application {
     let html = '<div class="systems-grid">';
 
     for (const item of items) {
-      const cost = item.costFormula(costFactor);
-      const weight = item.weightFormula(costFactor);
+      // Handle both formula-based and flat cost/weight
+      const cost = typeof item.costFormula === 'function'
+        ? item.costFormula(costFactor)
+        : (item.cost || 0);
+      const weight = typeof item.weightFormula === 'function'
+        ? item.weightFormula(costFactor)
+        : (item.weight || 0);
       const isPurchased = this.characterData.droidSystems.accessories.some(a => a.id === item.id);
 
       html += `
@@ -1192,7 +1207,7 @@ export default class CharacterGenerator extends Application {
             will: { base: 10, classBonus: 0, misc: 0, total: 10 }
           },
           bab: 0,
-          speed: droid.system.speed || { base: 6 },
+          speed: droid.system.speed || { base: 6, total: 6 },
           skills: droid.system.skills || {},
           damageThresholdMisc: 0
         }
@@ -1273,7 +1288,9 @@ export default class CharacterGenerator extends Application {
 
     // 2. Apply speed
     if (system.speed) {
-      this.characterData.speed.base = Number(system.speed);
+      const speed = Number(system.speed);
+      this.characterData.speed.base = speed;
+      this.characterData.speed.total = speed;
     }
 
     // 3. Store size
@@ -1573,6 +1590,11 @@ export default class CharacterGenerator extends Application {
     // Organic roll
     const rollOrganic = () => {
       const r = new Roll("24d6").evaluate({ async: false });
+      if (!r.dice || !r.dice[0] || !r.dice[0].results) {
+        ui.notifications.error("Failed to roll dice. Please try again.");
+        console.error("SWSE | Roll failed:", r);
+        return;
+      }
       const rolls = r.dice[0].results.map(x => x.result).sort((a, b) => b - a);
       const kept = rolls.slice(0, 18);
       
