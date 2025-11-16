@@ -340,6 +340,23 @@ Hooks.once("init", async function() {
   await preloadHandlebarsTemplates();
 
   // ============================================
+  // Register Handlebars Helpers
+  // ============================================
+
+  Handlebars.registerHelper('subtract', function(a, b) {
+    return Number(a) - Number(b);
+  });
+
+  Handlebars.registerHelper('uppercase', function(str) {
+    return str ? str.toUpperCase() : '';
+  });
+
+  Handlebars.registerHelper('formatBonus', function(num) {
+    const n = Number(num);
+    return n >= 0 ? `+${n}` : `${n}`;
+  });
+
+  // ============================================
   // Configure Dice
   // ============================================
   

@@ -27,7 +27,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
   constructor(actor, options = {}) {
     super(actor, options);
     this.actor = actor;
-    this.currentStep = 'class'; // class, multiclass-bonus, ability-increase, feat, talent, skills, summary
+
+    // For level 0 characters, start with species selection
+    const isLevel0 = (this.actor.system.level || 0) === 0;
+    this.currentStep = isLevel0 ? 'species' : 'class'; // species, attributes, class, multiclass-bonus, ability-increase, feat, talent, skills, summary
+
     this.selectedClass = null;
     this.selectedTalent = null;
     this.selectedFeats = [];
@@ -36,6 +40,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.hpGain = 0;
     this.talentData = null;
     this.featData = null;
+    this.selectedSpecies = null; // For level 0 characters
+    this.abilityScores = {}; // For level 0 characters
 
     // Mentor system - initially use base class mentor, will update when class is selected
     const level1Class = getLevel1Class(this.actor);
@@ -59,6 +65,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
     data.currentLevel = this.actor.system.level;
     data.newLevel = this.actor.system.level + 1;
     data.currentStep = this.currentStep;
+    data.isLevel0 = this.actor.system.level === 0;
+
+    // For level 0 characters, get available species
+    if (data.isLevel0) {
+      data.availableSpecies = await this._getAvailableSpecies();
+      data.selectedSpecies = this.selectedSpecies;
+      data.abilityScores = this.abilityScores;
+    }
 
     // Get available classes
     data.availableClasses = await this._getAvailableClasses();
@@ -107,6 +121,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
    * @returns {string}
    */
   _getMentorGuidanceForCurrentStep() {
+    // Special guidance for level 0 character creation steps
+    if (this.currentStep === 'species') {
+      return "Lets take a look at yer, What species are ye?";
+    }
+    if (this.currentStep === 'attributes') {
+      return "Lets see what kinda build we're working with.";
+    }
+
     const guidanceMap = {
       'class': 'class',
       'multiclass-bonus': 'multiclass',
@@ -198,6 +220,10 @@ export class SWSELevelUpEnhanced extends FormApplication {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Level 0 character creation steps
+    html.find('.select-species-btn').click(this._onSelectSpecies.bind(this));
+    html.find('.confirm-attributes-btn').click(this._onConfirmAttributes.bind(this));
+
     // Class selection
     html.find('.select-class-btn').click(this._onSelectClass.bind(this));
 
@@ -220,6 +246,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     // Final level up
     html.find('.complete-levelup').click(this._onCompleteLevelUp.bind(this));
+
+    // Bind ability score UI for level 0 attributes step
+    if (this.currentStep === 'attributes') {
+      this._bindAbilitiesUI(html[0]);
+    }
   }
 
   // ========================================
@@ -322,6 +353,29 @@ export class SWSELevelUpEnhanced extends FormApplication {
     }
 
     return availableClasses;
+  }
+
+  /**
+   * Get available species from the species compendium
+   * @returns {Array} - Array of species objects
+   */
+  async _getAvailableSpecies() {
+    const speciesPack = game.packs.get('swse.species');
+    if (!speciesPack) return [];
+
+    const allSpecies = await speciesPack.getDocuments();
+    const availableSpecies = [];
+
+    for (const speciesDoc of allSpecies) {
+      availableSpecies.push({
+        id: speciesDoc._id,
+        name: speciesDoc.name,
+        system: speciesDoc.system,
+        img: speciesDoc.img
+      });
+    }
+
+    return availableSpecies;
   }
 
   _isBaseClass(className) {
@@ -436,6 +490,279 @@ export class SWSELevelUpEnhanced extends FormApplication {
     });
 
     return classes;
+  }
+
+  // ========================================
+  // LEVEL 0 CHARACTER CREATION HANDLERS
+  // ========================================
+
+  /**
+   * Handle species selection for level 0 characters
+   * @param {Event} event - Click event
+   */
+  async _onSelectSpecies(event) {
+    event.preventDefault();
+    const speciesId = event.currentTarget.dataset.speciesId;
+    const speciesName = event.currentTarget.dataset.speciesName;
+
+    const speciesPack = game.packs.get('swse.species');
+    const speciesDoc = await speciesPack.getDocument(speciesId);
+
+    if (!speciesDoc) {
+      ui.notifications.error("Species not found!");
+      return;
+    }
+
+    this.selectedSpecies = speciesDoc;
+    console.log(`SWSE LevelUp | Selected species: ${speciesName}`, speciesDoc.system);
+
+    // Move to attributes step
+    this.currentStep = 'attributes';
+    ui.notifications.info(`Species selected: ${speciesName}`);
+    this.render();
+  }
+
+  /**
+   * Handle attributes confirmation for level 0 characters
+   * @param {Event} event - Click event
+   */
+  async _onConfirmAttributes(event) {
+    event.preventDefault();
+
+    // Gather ability scores from the form
+    const form = event.currentTarget.closest('section');
+    const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    this.abilityScores = {};
+
+    for (const ability of abilities) {
+      const input = form.querySelector(`[name="ability_${ability}"]`);
+      if (input) {
+        this.abilityScores[ability] = parseInt(input.value) || 10;
+      }
+    }
+
+    console.log(`SWSE LevelUp | Confirmed ability scores:`, this.abilityScores);
+
+    // Move to class selection step
+    this.currentStep = 'class';
+    ui.notifications.info("Ability scores confirmed");
+    this.render();
+  }
+
+  /**
+   * Bind the abilities UI for point buy, standard roll, and organic roll
+   * Adapted from chargen.js
+   * @param {HTMLElement} root - Root element
+   */
+  _bindAbilitiesUI(root) {
+    const doc = root || this.element[0];
+    const ablist = ["str", "dex", "con", "int", "wis", "cha"];
+
+    // Point buy system
+    let pool = 32;
+    const pointCosts = (from, to) => {
+      const costForIncrement = (v) => {
+        if (v < 12) return 1;
+        if (v < 14) return 2;
+        return 3;
+      };
+      let cost = 0;
+      for (let v = from; v < to; v++) cost += costForIncrement(v);
+      return cost;
+    };
+
+    const updatePointRemaining = () => {
+      const el = doc.querySelector("#point-remaining");
+      if (el) el.textContent = pool;
+    };
+
+    const initPointBuy = () => {
+      pool = 32;
+      ablist.forEach(a => {
+        const inp = doc.querySelector(`[name="ability_${a}"]`);
+        if (inp) inp.value = 8;
+        const plus = doc.querySelector(`[data-plus="${a}"]`);
+        const minus = doc.querySelector(`[data-minus="${a}"]`);
+        if (plus) plus.onclick = () => adjustAttribute(a, +1);
+        if (minus) minus.onclick = () => adjustAttribute(a, -1);
+      });
+      updatePointRemaining();
+      recalcPreview();
+    };
+
+    const adjustAttribute = (ab, delta) => {
+      const el = doc.querySelector(`[name="ability_${ab}"]`);
+      if (!el) return;
+
+      let cur = Number(el.value || 8);
+      const newVal = Math.max(8, Math.min(18, cur + delta));
+      const costNow = pointCosts(8, cur);
+      const costNew = pointCosts(8, newVal);
+      const deltaCost = costNew - costNow;
+
+      if (deltaCost > pool) {
+        ui.notifications.warn("Not enough point-buy points remaining.");
+        return;
+      }
+
+      pool -= deltaCost;
+      el.value = newVal;
+      updatePointRemaining();
+      recalcPreview();
+    };
+
+    // Standard array roll
+    const rollStandard = () => {
+      const results = [];
+      for (let i = 0; i < 6; i++) {
+        const r = new Roll("4d6kh3").evaluate({ async: false });
+        const total = r.total;
+        results.push({ total });
+      }
+
+      const container = doc.querySelector("#roll-results");
+      if (container) {
+        container.innerHTML = "";
+        results.forEach(res => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "assign-roll";
+          btn.textContent = `${res.total}`;
+          btn.dataset.value = res.total;
+          btn.onclick = () => assignRollToNext(res.total);
+          container.appendChild(btn);
+        });
+        ui.notifications.info("Standard rolls generated — click a result then click an ability to assign.");
+      }
+    };
+
+    const assignRollToNext = (val) => {
+      let target = doc.querySelector(".ability-input:focus");
+      if (!target) {
+        const inputs = ablist.map(a => doc.querySelector(`[name="ability_${a}"]`)).filter(Boolean);
+        inputs.sort((x, y) => Number(x.value) - Number(y.value));
+        target = inputs[0];
+      }
+      if (target) {
+        target.value = val;
+        recalcPreview();
+      }
+    };
+
+    // Organic roll
+    const rollOrganic = () => {
+      const r = new Roll("24d6").evaluate({ async: false });
+      if (!r.dice || !r.dice[0] || !r.dice[0].results) {
+        ui.notifications.error("Failed to roll dice. Please try again.");
+        console.error("SWSE | Roll failed:", r);
+        return;
+      }
+      const rolls = r.dice[0].results.map(x => x.result).sort((a, b) => b - a);
+      const kept = rolls.slice(0, 18);
+
+      const groups = [];
+      for (let i = 0; i < 6; i++) {
+        groups.push(kept.slice(i * 3, (i + 1) * 3));
+      }
+
+      const container = doc.querySelector("#organic-groups");
+      if (container) {
+        container.innerHTML = "";
+        groups.forEach((g, idx) => {
+          const div = document.createElement("div");
+          div.className = "organic-group";
+          const s = g.reduce((a, b) => a + b, 0);
+          div.textContent = `${g.join(", ")} = ${s}`;
+          div.dataset.sum = s;
+          div.onclick = () => selectOrganicGroup(div);
+          container.appendChild(div);
+        });
+        ui.notifications.info("Organic roll completed — click a group, then click an ability to assign.");
+      }
+      doc._selectedOrganic = null;
+    };
+
+    const selectOrganicGroup = (div) => {
+      doc.querySelectorAll(".organic-group").forEach(d => d.classList.remove("selected-group"));
+      div.classList.add("selected-group");
+      doc._selectedOrganic = Number(div.dataset.sum);
+
+      ablist.forEach(a => {
+        const input = doc.querySelector(`[name="ability_${a}"]`);
+        if (input) {
+          input.onclick = () => {
+            if (doc._selectedOrganic == null) return;
+            input.value = doc._selectedOrganic;
+            recalcPreview();
+            doc.querySelectorAll(".organic-group").forEach(d => d.classList.remove("selected-group"));
+            doc._selectedOrganic = null;
+          };
+        }
+      });
+    };
+
+    const recalcPreview = () => {
+      ablist.forEach(a => {
+        const inp = doc.querySelector(`[name="ability_${a}"]`);
+        const display = doc.querySelector(`#display_${a}`);
+        const base = Number(inp?.value || 10);
+        const total = base;
+        const mod = Math.floor((total - 10) / 2);
+
+        if (display) display.textContent = `Total: ${total} (Mod: ${mod >= 0 ? "+" : ""}${mod})`;
+      });
+    };
+
+    // Mode switching function
+    const switchMode = (modeName) => {
+      // Hide all mode divs
+      const modes = ['point-mode', 'standard-mode', 'organic-mode', 'free-mode'];
+      modes.forEach(mode => {
+        const modeDiv = doc.querySelector(`#${mode}`);
+        if (modeDiv) modeDiv.style.display = 'none';
+      });
+
+      // Show selected mode
+      const selectedMode = doc.querySelector(`#${modeName}`);
+      if (selectedMode) selectedMode.style.display = 'block';
+
+      // Update button states
+      const buttons = doc.querySelectorAll('.method-button');
+      buttons.forEach(btn => btn.classList.remove('active'));
+    };
+
+    // Wire buttons with mode switching
+    const stdBtn = doc.querySelector("#std-roll-btn");
+    if (stdBtn) {
+      stdBtn.onclick = () => {
+        switchMode('standard-mode');
+        stdBtn.classList.add('active');
+        rollStandard();
+      };
+    }
+
+    const orgBtn = doc.querySelector("#org-roll-btn");
+    if (orgBtn) {
+      orgBtn.onclick = () => {
+        switchMode('organic-mode');
+        orgBtn.classList.add('active');
+        rollOrganic();
+      };
+    }
+
+    const pbInit = doc.querySelector("#pb-init");
+    if (pbInit) {
+      pbInit.onclick = () => {
+        switchMode('point-mode');
+        pbInit.classList.add('active');
+        initPointBuy();
+      };
+    }
+
+    // Initialize
+    switchMode('point-mode');
+    if (pbInit) pbInit.classList.add('active');
+    initPointBuy();
   }
 
   async _onSelectClass(event) {

@@ -475,3 +475,214 @@
 .swse.dialog.custom-item-dialog .dialog-button.no:hover {
   background: rgba(100, 100, 100, 0.5);
 }
+
+/* ============================================
+   Skill Selection Grid Styles
+   ============================================ */
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.skill-item {
+  background: rgba(0, 20, 40, 0.4);
+  border: 1px solid #334;
+  border-radius: 6px;
+  padding: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.skill-item.class-skill {
+  border-color: #0af;
+  background: rgba(0, 170, 255, 0.1);
+}
+
+.skill-item.trained {
+  background: rgba(0, 200, 100, 0.15);
+  border-color: #0c8;
+}
+
+.skill-item:hover {
+  box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+}
+
+.skill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.skill-name {
+  font-weight: bold;
+  color: #9ed0ff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.class-skill-badge {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  background: #0af;
+  color: #000;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.skill-ability {
+  font-size: 0.85rem;
+  color: #778;
+  font-style: italic;
+}
+
+.skill-bonus {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.bonus-display {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+  margin-right: 0.5rem;
+}
+
+.bonus-display.trained-bonus {
+  color: #0c8;
+}
+
+.bonus-breakdown {
+  color: #889;
+  font-size: 0.75rem;
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.if-trained {
+  color: #0af;
+  font-size: 0.85rem;
+  display: block;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+.skill-actions {
+  margin-top: 0.75rem;
+}
+
+.train-skill-btn,
+.untrain-skill-btn {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.train-skill-btn {
+  background: #0af;
+  color: #000;
+  border: none;
+}
+
+.train-skill-btn:hover:not(:disabled) {
+  background: #0cf;
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.5);
+}
+
+.train-skill-btn:disabled {
+  background: #445;
+  color: #667;
+  cursor: not-allowed;
+}
+
+.untrain-skill-btn {
+  background: #444;
+  color: #ccc;
+  border: 1px solid #666;
+}
+
+.untrain-skill-btn:hover {
+  background: #555;
+  border-color: #888;
+}
+
+.reset-skills-btn {
+  padding: 0.5rem 1rem;
+  background: #844;
+  color: #fff;
+  border: 1px solid #a66;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset-skills-btn:hover {
+  background: #a55;
+  box-shadow: 0 0 8px rgba(200, 80, 80, 0.5);
+}
+
+.skills-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: rgba(0, 20, 40, 0.5);
+  border-radius: 6px;
+  border: 1px solid #334;
+}
+
+.skills-summary p {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #9ed0ff;
+}
+
+/* ============================================
+   Ability Score Method Selection
+   ============================================ */
+
+.ability-methods {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.method-button {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(180deg, #1a2a3a 0%, #0f1a28 100%);
+  color: #9ed0ff;
+  border: 2px solid #334455;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.method-button:hover {
+  background: linear-gradient(180deg, #2a3a4a 0%, #1f2a38 100%);
+  border-color: #0af;
+  box-shadow: 0 0 15px rgba(0, 170, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.method-button.active {
+  background: linear-gradient(180deg, #0a4a6a 0%, #053a5a 100%);
+  border-color: #0af;
+  box-shadow: 0 0 20px rgba(0, 170, 255, 0.5);
+  color: #fff;
+}
+
+.method-button i {
+  margin-right: 0.5rem;
+}

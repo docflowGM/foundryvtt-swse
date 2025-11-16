@@ -229,11 +229,36 @@ export default class CharacterGenerator extends Application {
     // Skills count for skills step
     context.characterData.trainedSkillsCount = Object.values(this.characterData.skills).filter(s => s.trained).length;
 
-    // Available skills for selection
-    context.availableSkills = this._getAvailableSkills().map(skill => ({
-      ...skill,
-      trained: this.characterData.skills[skill.key]?.trained || false
-    }));
+    // Get class skills for the selected class
+    const selectedClass = this.characterData.classes && this.characterData.classes.length > 0
+      ? this._packs.classes?.find(c => c.name === this.characterData.classes[0].name)
+      : null;
+    const classSkills = selectedClass?.system?.class_skills || [];
+
+    // Available skills for selection with bonuses
+    const halfLevel = Math.floor(this.characterData.level / 2);
+    context.availableSkills = this._getAvailableSkills().map(skill => {
+      const abilityMod = this.characterData.abilities[skill.ability]?.mod || 0;
+      const isTrained = this.characterData.skills[skill.key]?.trained || false;
+      const isClassSkill = classSkills.some(cs =>
+        cs.toLowerCase().includes(skill.name.toLowerCase()) ||
+        skill.name.toLowerCase().includes(cs.toLowerCase())
+      );
+
+      const baseBonus = halfLevel + abilityMod;
+      const currentBonus = baseBonus + (isTrained ? 5 : 0);
+      const trainedBonus = baseBonus + 5;
+
+      return {
+        ...skill,
+        trained: isTrained,
+        isClassSkill: isClassSkill,
+        currentBonus: currentBonus,
+        trainedBonus: trainedBonus,
+        abilityMod: abilityMod,
+        halfLevel: halfLevel
+      };
+    });
 
     return context;
   }
@@ -257,6 +282,9 @@ export default class CharacterGenerator extends Application {
     html.find('.remove-feat').click(this._onRemoveFeat.bind(this));
     html.find('.select-talent').click(this._onSelectTalent.bind(this));
     html.find('.skill-select').change(this._onSkillSelect.bind(this));
+    html.find('.train-skill-btn').click(this._onTrainSkill.bind(this));
+    html.find('.untrain-skill-btn').click(this._onUntrainSkill.bind(this));
+    html.find('.reset-skills-btn').click(this._onResetSkills.bind(this));
 
     // Droid builder/shop
     html.find('.shop-tab').click(this._onShopTabClick.bind(this));
@@ -1500,6 +1528,47 @@ export default class CharacterGenerator extends Application {
     await this.render();
   }
 
+  async _onTrainSkill(event) {
+    event.preventDefault();
+    const skillKey = event.currentTarget.dataset.skill;
+
+    // Initialize skill if not exists
+    if (!this.characterData.skills[skillKey]) {
+      this.characterData.skills[skillKey] = { trained: false };
+    }
+
+    // Train the skill
+    this.characterData.skills[skillKey].trained = true;
+    console.log(`CharGen | Trained skill: ${skillKey}`);
+    await this.render();
+  }
+
+  async _onUntrainSkill(event) {
+    event.preventDefault();
+    const skillKey = event.currentTarget.dataset.skill;
+
+    // Untrain the skill
+    if (this.characterData.skills[skillKey]) {
+      this.characterData.skills[skillKey].trained = false;
+      console.log(`CharGen | Untrained skill: ${skillKey}`);
+    }
+
+    await this.render();
+  }
+
+  async _onResetSkills(event) {
+    event.preventDefault();
+
+    // Reset all skills to untrained
+    for (const skillKey in this.characterData.skills) {
+      this.characterData.skills[skillKey].trained = false;
+    }
+
+    console.log("CharGen | Reset all skill selections");
+    ui.notifications.info("All skill selections have been reset.");
+    await this.render();
+  }
+
   _getFeatsNeeded() {
     const lvl = this.characterData.level || 1;
     return Math.ceil(lvl / 2);
@@ -1667,14 +1736,14 @@ export default class CharacterGenerator extends Application {
         const racial = Number(this.characterData.abilities[a].racial || 0);
         const total = base + racial + Number(this.characterData.abilities[a].temp || 0);
         const mod = Math.floor((total - 10) / 2);
-        
+
         this.characterData.abilities[a].base = base;
         this.characterData.abilities[a].total = total;
         this.characterData.abilities[a].mod = mod;
-        
+
         if (display) display.textContent = `Total: ${total} (Mod: ${mod >= 0 ? "+" : ""}${mod})`;
       });
-      
+
       // Update Second Wind preview
       const hpMax = Number(doc.querySelector('[name="hp_max"]')?.value || 1);
       const conTotal = this.characterData.abilities.con.total || 10;
@@ -1682,22 +1751,60 @@ export default class CharacterGenerator extends Application {
       const misc = Number(doc.querySelector('[name="sw_misc"]')?.value || 0);
       const heal = Math.max(Math.floor(hpMax / 4), conMod) + misc;
       this.characterData.secondWind.healing = heal;
-      
+
       const swPreview = doc.querySelector("#sw_heal_preview");
       if (swPreview) swPreview.textContent = heal;
     };
 
-    // Wire buttons
+    // Mode switching function
+    const switchMode = (modeName) => {
+      // Hide all mode divs
+      const modes = ['point-mode', 'standard-mode', 'organic-mode', 'free-mode'];
+      modes.forEach(mode => {
+        const modeDiv = doc.querySelector(`#${mode}`);
+        if (modeDiv) modeDiv.style.display = 'none';
+      });
+
+      // Show selected mode
+      const selectedMode = doc.querySelector(`#${modeName}`);
+      if (selectedMode) selectedMode.style.display = 'block';
+
+      // Update button states
+      const buttons = doc.querySelectorAll('.method-button');
+      buttons.forEach(btn => btn.classList.remove('active'));
+    };
+
+    // Wire buttons with mode switching
     const stdBtn = doc.querySelector("#std-roll-btn");
-    if (stdBtn) stdBtn.onclick = rollStandard;
-    
+    if (stdBtn) {
+      stdBtn.onclick = () => {
+        switchMode('standard-mode');
+        stdBtn.classList.add('active');
+        rollStandard();
+      };
+    }
+
     const orgBtn = doc.querySelector("#org-roll-btn");
-    if (orgBtn) orgBtn.onclick = rollOrganic;
-    
+    if (orgBtn) {
+      orgBtn.onclick = () => {
+        switchMode('organic-mode');
+        orgBtn.classList.add('active');
+        rollOrganic();
+      };
+    }
+
     const pbInit = doc.querySelector("#pb-init");
-    if (pbInit) pbInit.onclick = initPointBuy;
+    if (pbInit) {
+      pbInit.onclick = () => {
+        switchMode('point-mode');
+        pbInit.classList.add('active');
+        initPointBuy();
+      };
+    }
 
     // Initialize
+    switchMode('point-mode');
+    if (pbInit) pbInit.classList.add('active');
     initPointBuy();
   }
 
