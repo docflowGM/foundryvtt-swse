@@ -126,8 +126,12 @@ export class SWSEActorSheetBase extends ActorSheet {
     if (system.defenses) {
       for (const [key, defense] of Object.entries(system.defenses)) {
         if (defense && typeof defense === 'object') {
-          defense.value = toNumber(defense.value, 10);
-          defense.flatFooted = toNumber(defense.flatFooted, 10);
+          defense.total = toNumber(defense.total, 10);
+          defense.base = toNumber(defense.base, 10);
+          defense.armor = toNumber(defense.armor, 0);
+          defense.ability = toNumber(defense.ability, 0);
+          defense.classBonus = toNumber(defense.classBonus, 0);
+          defense.misc = toNumber(defense.misc, 0);
         }
       }
     }

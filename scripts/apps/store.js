@@ -511,15 +511,33 @@ export class SWSEStore extends FormApplication {
      * Get data for template rendering
      * @returns {Object} Template data
      */
-    getData() {
+    async getData() {
         const actor = this.object;
         const isGM = game.user.isGM;
 
         // Get all items from world items
-        const allItems = game.items.filter(i => {
+        const worldItems = game.items.filter(i => {
             const cost = i.system?.cost ?? i.system?.price ?? 0;
             return cost > 0;
         });
+
+        // Load items from compendium packs
+        const packItems = [];
+        const packNames = ['swse.weapons', 'swse.armor', 'swse.equipment'];
+        for (const packName of packNames) {
+            const pack = game.packs.get(packName);
+            if (pack) {
+                const documents = await pack.getDocuments();
+                const itemsWithCost = documents.filter(i => {
+                    const cost = i.system?.cost ?? i.system?.price ?? 0;
+                    return cost > 0;
+                });
+                packItems.push(...itemsWithCost);
+            }
+        }
+
+        // Combine world items and pack items
+        const allItems = [...worldItems, ...packItems];
 
         // Get all actors that could be droids or vehicles
         const allActors = game.actors.filter(a => {

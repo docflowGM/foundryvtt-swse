@@ -475,7 +475,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     if (feat) {
       this.selectedFeats = [feat];
       ui.notifications.info(`Selected feat: ${feat.name}`);
-      this._onNextStep();
+      await this.render();
     }
   }
 
@@ -485,7 +485,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     this.selectedSkills = [skillName];
     ui.notifications.info(`Selected trained skill: ${skillName}`);
-    this._onNextStep();
+    await this.render();
   }
 
   // ========================================

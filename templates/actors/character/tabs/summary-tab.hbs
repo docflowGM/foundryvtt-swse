@@ -19,11 +19,11 @@
  <div class="stat-block speed">
  <label>Speed</label>
  <div class="stat-value">
- {{system.movement.base}} squares
+ {{system.speed}} squares
  {{#if (lt system.conditionTrack.current 4)}}
  <span class="speed-normal"></span>
  {{else}}
- <span class="speed-reduced">(Half: {{divide system.movement.base 2}})</span>
+ <span class="speed-reduced">(Half: {{divide system.speed 2}})</span>
  {{/if}}
  </div>
  </div>
