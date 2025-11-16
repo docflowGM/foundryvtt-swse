@@ -165,7 +165,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
     const levelProgression = this.selectedClass.system.level_progression;
     if (!levelProgression || !Array.isArray(levelProgression)) {
       // Fallback: if no level_progression, check if class has talent trees
-      return (this.selectedClass.system.forceSensitive || this.selectedClass.system.talentTrees?.length > 0);
+      const trees = this.selectedClass.system.talent_trees || this.selectedClass.system.talentTrees;
+      return (this.selectedClass.system.forceSensitive || trees?.length > 0);
     }
 
     const levelData = levelProgression.find(lp => lp.level === classLevel);
@@ -304,16 +305,23 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     const allClasses = await classPack.getDocuments();
     const availableClasses = [];
+    const currentLevel = this.actor.system.level || 0;
 
     // Check prerequisites for each class
     for (const classDoc of allClasses) {
+      // At level 0 or 1, only base classes are available
+      const isBaseClass = this._isBaseClass(classDoc.name) || classDoc.system.base_class === true;
+      if (currentLevel <= 1 && !isBaseClass) {
+        continue; // Skip prestige classes at level 0-1
+      }
+
       if (this._meetsPrerequisites(classDoc)) {
         availableClasses.push({
           id: classDoc._id,
           name: classDoc.name,
           system: classDoc.system,
-          isBase: this._isBaseClass(classDoc.name),
-          isPrestige: !this._isBaseClass(classDoc.name)
+          isBase: isBaseClass,
+          isPrestige: !isBaseClass
         });
       }
     }
@@ -443,18 +451,25 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.selectedClass = classDoc;
     console.log(`SWSE LevelUp | Selected class: ${classDoc.name}`, classDoc.system);
 
-    // Update mentor for prestige classes
+    // Update mentor based on class type and character level
     const isPrestige = !this._isBaseClass(classDoc.name);
+    const currentLevel = this.actor.system.level || 0;
+
     if (isPrestige) {
       // For prestige classes, use the prestige class mentor
       this.mentor = getMentorForClass(classDoc.name);
       this.currentMentorClass = classDoc.name;
       console.log(`SWSE LevelUp | Switched to prestige class mentor: ${this.mentor.name}`);
+    } else if (currentLevel === 0 || currentLevel === 1) {
+      // For level 0->1 or level 1->2, use the selected base class mentor
+      this.mentor = getMentorForClass(classDoc.name);
+      this.currentMentorClass = classDoc.name;
+      console.log(`SWSE LevelUp | Switched to base class mentor: ${this.mentor.name}`);
     } else {
-      // For base classes, use the level 1 class mentor
+      // For higher levels, use the level 1 class mentor
       const level1Class = getLevel1Class(this.actor);
-      this.mentor = getMentorForClass(level1Class);
-      this.currentMentorClass = level1Class;
+      this.mentor = getMentorForClass(level1Class || classDoc.name);
+      this.currentMentorClass = level1Class || classDoc.name;
     }
 
     // Get appropriate greeting for the current class level
@@ -502,7 +517,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
   }
 
   async _calculateHPGain(classDoc) {
-    const hitDie = classDoc.system.hitDie || 6;
+    // Parse hit die from string like "1d10" to get the die size (10)
+    const hitDieString = classDoc.system.hit_die || classDoc.system.hitDie || "1d6";
+    const hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
     const conMod = this.actor.system.abilities.con?.mod || 0;
     const hpGeneration = game.settings.get("swse", "hpGeneration") || "average";
     const maxHPLevels = game.settings.get("swse", "maxHPLevels") || 1;
@@ -625,7 +642,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     if (talentTreeRestriction === "current") {
       // Only talent trees from the selected class
-      availableTrees = classDoc.system.talentTrees || [];
+      availableTrees = classDoc.system.talent_trees || classDoc.system.talentTrees || [];
     } else {
       // Talent trees from any class the character has levels in
       const characterClasses = this._getCharacterClasses();
@@ -635,15 +652,17 @@ export class SWSELevelUpEnhanced extends FormApplication {
         const classDoc = await classPack.index.find(c => c.name === className);
         if (classDoc) {
           const fullClass = await classPack.getDocument(classDoc._id);
-          if (fullClass.system.talentTrees) {
-            availableTrees.push(...fullClass.system.talentTrees);
+          const trees = fullClass.system.talent_trees || fullClass.system.talentTrees;
+          if (trees) {
+            availableTrees.push(...trees);
           }
         }
       }
 
       // Add current class trees
-      if (classDoc.system.talentTrees) {
-        availableTrees.push(...classDoc.system.talentTrees);
+      const trees = classDoc.system.talent_trees || classDoc.system.talentTrees;
+      if (trees) {
+        availableTrees.push(...trees);
       }
 
       // Remove duplicates
@@ -1364,7 +1383,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
           img: this.selectedClass.img,
           system: {
             level: 1,
-            hitDie: this.selectedClass.system.hitDie || 6,
+            hitDie: this.selectedClass.system.hit_die || this.selectedClass.system.hitDie || "1d6",
             babProgression: this.selectedClass.system.babProgression || 0.75,
             defenses: {
               fortitude: defenses.fortitude || 0,

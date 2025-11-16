@@ -60,12 +60,12 @@ export default class CharacterGenerator extends Application {
       destinyPoints: { value: 1 },
       secondWind: { uses: 1, max: 1, misc: 0, healing: 0 },
       defenses: {
-        fortitude: { base: 10, classBonus: 0, misc: 0, total: 10 },
-        reflex: { base: 10, classBonus: 0, misc: 0, total: 10 },
-        will: { base: 10, classBonus: 0, misc: 0, total: 10 }
+        fortitude: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+        reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+        will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 }
       },
       bab: 0,
-      speed: { base: 6, total: 6 },
+      speed: 6,
       damageThresholdMisc: 0,
       credits: 1000  // Starting credits
     };
@@ -1202,12 +1202,12 @@ export default class CharacterGenerator extends Application {
           hp: droid.system.hp || { value: 10, max: 10, temp: 0 },
           level: 1,
           defenses: droid.system.defenses || {
-            fortitude: { base: 10, classBonus: 0, misc: 0, total: 10 },
-            reflex: { base: 10, classBonus: 0, misc: 0, total: 10 },
-            will: { base: 10, classBonus: 0, misc: 0, total: 10 }
+            fortitude: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+            reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+            will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 }
           },
           bab: 0,
-          speed: droid.system.speed || { base: 6, total: 6 },
+          speed: droid.system.speed || 6,
           skills: droid.system.skills || {},
           damageThresholdMisc: 0
         }
@@ -1289,8 +1289,7 @@ export default class CharacterGenerator extends Application {
     // 2. Apply speed
     if (system.speed) {
       const speed = Number(system.speed);
-      this.characterData.speed.base = speed;
-      this.characterData.speed.total = speed;
+      this.characterData.speed = speed;
     }
 
     // 3. Store size
@@ -1310,7 +1309,7 @@ export default class CharacterGenerator extends Application {
 
     console.log(`CharGen | Applied species data for ${speciesDoc.name}:`, {
       abilities: abilityBonuses,
-      speed: this.characterData.speed.base,
+      speed: this.characterData.speed,
       size: this.characterData.size,
       special: this.characterData.specialAbilities,
       languages: this.characterData.languages,
@@ -1395,7 +1394,9 @@ export default class CharacterGenerator extends Application {
       this.characterData.bab = Number(classDoc.system.babProgression) || 0;
       
       // Hit Points (class HD + CON mod)
-      const hitDie = Number(classDoc.system.hitDie) || 6;
+      // Parse hit die from string like "1d10" to get the die size (10)
+      const hitDieString = classDoc.system.hit_die || classDoc.system.hitDie || "1d6";
+      const hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
       const conMod = this.characterData.abilities.con.mod || 0;
       this.characterData.hp.max = hitDie + conMod;
       this.characterData.hp.value = this.characterData.hp.max;
