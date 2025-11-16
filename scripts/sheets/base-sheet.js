@@ -326,13 +326,38 @@ export class SWSEActorSheetBase extends ActorSheet {
     const dataset = element.dataset;
 
     if (dataset.roll) {
-      const roll = new Roll(dataset.roll, this.actor.getRollData());
       const label = dataset.label || 'Roll';
 
-      roll.toMessage({
-        speaker: ChatMessage.getSpeaker({actor: this.actor}),
-        flavor: label
-      });
+      // Special handling for initiative rolls
+      if (label.toLowerCase().includes('initiative')) {
+        // Add actor to combat tracker if not already in combat
+        if (game.combat && !game.combat.combatants.find(c => c.actor?.id === this.actor.id)) {
+          await game.combat.createEmbeddedDocuments('Combatant', [{
+            actorId: this.actor.id,
+            sceneId: game.combat.scene.id,
+            tokenId: this.actor.token?.id
+          }]);
+        }
+
+        // Roll initiative
+        const tokens = this.actor.getActiveTokens();
+        if (tokens.length > 0 && game.combat) {
+          await game.combat.rollInitiative(tokens.map(t => t.id));
+        } else {
+          const roll = new Roll(dataset.roll, this.actor.getRollData());
+          roll.toMessage({
+            speaker: ChatMessage.getSpeaker({actor: this.actor}),
+            flavor: label
+          });
+        }
+      } else {
+        // Normal roll
+        const roll = new Roll(dataset.roll, this.actor.getRollData());
+        roll.toMessage({
+          speaker: ChatMessage.getSpeaker({actor: this.actor}),
+          flavor: label
+        });
+      }
     }
   }
 
