@@ -153,6 +153,10 @@ export default class CharacterGenerator extends Application {
     ];
   }
 
+  _getAvailableSkills() {
+    return this._skillsJson || this._getDefaultSkills();
+  }
+
   async getData() {
     const context = super.getData();
     if (!this._packs.species) await this._loadData();
@@ -1408,17 +1412,13 @@ export default class CharacterGenerator extends Application {
     event.preventDefault();
     const id = event.currentTarget.dataset.featid;
     const feat = this._packs.feats.find(f => f._id === id || f.name === id);
-    
+
     if (feat && !this.characterData.feats.find(f => f.name === feat.name)) {
       this.characterData.feats.push(feat);
     }
-    
-    const needed = this._getFeatsNeeded();
-    if (this.characterData.feats.length >= needed) {
-      await this._onNextStep(event);
-    } else {
-      await this.render();
-    }
+
+    // Re-render to show updated feat selection and enable Next button if requirement met
+    await this.render();
   }
 
   async _onSelectTalent(event) {
