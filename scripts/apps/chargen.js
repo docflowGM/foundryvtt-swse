@@ -201,8 +201,20 @@ export default class CharacterGenerator extends Application {
         selectedTalents: this.characterData.talents || []
       };
 
+      // Filter by class bonus feats if a class is selected
+      let featsToFilter = context.packs.feats;
+      if (this.characterData.classes && this.characterData.classes.length > 0) {
+        const selectedClass = this.characterData.classes[0];
+        const className = selectedClass.name || selectedClass;
+        featsToFilter = context.packs.feats.filter(f => {
+          const bonusFeatFor = f.system?.bonus_feat_for || [];
+          return bonusFeatFor.includes(className);
+        });
+        console.log(`CharGen | Filtered to ${featsToFilter.length} bonus feats for ${className}`);
+      }
+
       // Filter feats based on prerequisites
-      const filteredFeats = PrerequisiteValidator.filterQualifiedFeats(context.packs.feats, tempActor, pendingData);
+      const filteredFeats = PrerequisiteValidator.filterQualifiedFeats(featsToFilter, tempActor, pendingData);
       context.packs.feats = filteredFeats.filter(f => f.isQualified);
       context.packs.allFeats = filteredFeats; // Include all feats with qualification status
 

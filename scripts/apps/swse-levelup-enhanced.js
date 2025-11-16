@@ -188,7 +188,18 @@ export class SWSELevelUpEnhanced extends FormApplication {
       }
 
       const allFeats = await featPack.getDocuments();
-      const featObjects = allFeats.map(f => f.toObject());
+      let featObjects = allFeats.map(f => f.toObject());
+
+      // Filter by class bonus feats if a class is selected
+      if (this.selectedClass && this.selectedClass.name) {
+        const className = this.selectedClass.name;
+        featObjects = featObjects.filter(f => {
+          // Check if feat is a bonus feat for this class
+          const bonusFeatFor = f.system?.bonus_feat_for || [];
+          return bonusFeatFor.includes(className);
+        });
+        console.log(`SWSE LevelUp | Filtered to ${featObjects.length} bonus feats for ${className}`);
+      }
 
       // Prepare pending data for prerequisite checking
       const pendingData = {
@@ -1257,12 +1268,17 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Add selected talent if any
       if (this.selectedTalent) {
-        await this.actor.createEmbeddedDocuments("Item", [this.selectedTalent.toObject()]);
+        const talentObject = typeof this.selectedTalent.toObject === 'function'
+          ? this.selectedTalent.toObject()
+          : this.selectedTalent;
+        await this.actor.createEmbeddedDocuments("Item", [talentObject]);
       }
 
       // Add multiclass feats if any
       if (this.selectedFeats.length > 0) {
-        const featObjects = this.selectedFeats.map(f => f.toObject());
+        const featObjects = this.selectedFeats.map(f =>
+          typeof f.toObject === 'function' ? f.toObject() : f
+        );
         await this.actor.createEmbeddedDocuments("Item", featObjects);
       }
 

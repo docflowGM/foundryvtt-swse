@@ -517,8 +517,8 @@ export class SWSEStore extends FormApplication {
 
         // Get all items from world items
         const worldItems = game.items.filter(i => {
-            const cost = i.system?.cost ?? i.system?.price ?? 0;
-            return cost > 0;
+            // Include all items - cost filtering can be added as a setting later
+            return true;
         });
 
         // Load items from compendium packs
@@ -528,11 +528,8 @@ export class SWSEStore extends FormApplication {
             const pack = game.packs.get(packName);
             if (pack) {
                 const documents = await pack.getDocuments();
-                const itemsWithCost = documents.filter(i => {
-                    const cost = i.system?.cost ?? i.system?.price ?? 0;
-                    return cost > 0;
-                });
-                packItems.push(...itemsWithCost);
+                // Include all items from compendium - many items have cost "0" that need to be displayed
+                packItems.push(...documents);
             }
         }
 
