@@ -1061,6 +1061,62 @@ export class SWSELevelUpEnhanced extends FormApplication {
   // ========================================
 
   /**
+   * Get defense bonuses for a specific class
+   * @param {string} className - Name of the class
+   * @returns {{fortitude: number, reflex: number, will: number}} Defense bonuses
+   */
+  _getClassDefenseBonuses(className) {
+    // Defense bonuses by class (applied once per class, NOT multiplied by level)
+    // Format: Reflex/Fortitude/Will
+    const defenseProgression = {
+      // Base Classes
+      'Jedi': { reflex: 1, fortitude: 1, will: 1 },
+      'Noble': { reflex: 1, fortitude: 0, will: 2 },
+      'Scout': { reflex: 2, fortitude: 1, will: 0 },
+      'Soldier': { reflex: 1, fortitude: 2, will: 0 },
+      'Scoundrel': { reflex: 2, fortitude: 0, will: 1 },
+
+      // Prestige Classes - Core Rulebook
+      'Ace Pilot': { reflex: 4, fortitude: 2, will: 0 },
+      'Bounty Hunter': { reflex: 4, fortitude: 2, will: 0 },
+      'Crime Lord': { reflex: 2, fortitude: 0, will: 4 },
+      'Elite Trooper': { reflex: 2, fortitude: 4, will: 0 },
+      'Force Adept': { reflex: 2, fortitude: 2, will: 4 },
+      'Force Disciple': { reflex: 3, fortitude: 3, will: 6 },
+      'Gunslinger': { reflex: 4, fortitude: 0, will: 2 },
+      'Jedi Knight': { reflex: 2, fortitude: 2, will: 2 },
+      'Jedi Master': { reflex: 3, fortitude: 3, will: 3 },
+      'Officer': { reflex: 2, fortitude: 0, will: 4 },
+      'Sith Apprentice': { reflex: 2, fortitude: 2, will: 2 },
+      'Sith Lord': { reflex: 3, fortitude: 3, will: 3 },
+
+      // Additional Prestige Classes
+      'Corporate Agent': { reflex: 2, fortitude: 0, will: 4 },
+      'Gladiator': { reflex: 4, fortitude: 2, will: 0 },
+      'Melee Duelist': { reflex: 4, fortitude: 0, will: 2 },
+      'Enforcer': { reflex: 4, fortitude: 0, will: 2 },
+      'Independent Droid': { reflex: 2, fortitude: 0, will: 4 },
+      'Infiltrator': { reflex: 4, fortitude: 0, will: 2 },
+      'Master Privateer': { reflex: 2, fortitude: 0, will: 4 },
+      'Medic': { reflex: 0, fortitude: 4, will: 2 },
+      'Saboteur': { reflex: 2, fortitude: 0, will: 4 },
+      'Assassin': { reflex: 4, fortitude: 2, will: 0 },
+      'Charlatan': { reflex: 2, fortitude: 0, will: 4 },
+      'Outlaw': { reflex: 4, fortitude: 2, will: 0 },
+      'Droid Commander': { reflex: 2, fortitude: 2, will: 2 },
+      'Military Engineer': { reflex: 2, fortitude: 2, will: 2 },
+      'Vanguard': { reflex: 2, fortitude: 4, will: 0 },
+      'Imperial Knight': { reflex: 2, fortitude: 2, will: 2 },
+      'Shaper': { reflex: 0, fortitude: 2, will: 4 },
+      'Improviser': { reflex: 2, fortitude: 0, will: 4 },
+      'Pathfinder': { reflex: 2, fortitude: 4, will: 0 },
+      'Martial Arts Master': { reflex: 2, fortitude: 4, will: 0 }
+    };
+
+    return defenseProgression[className] || { reflex: 0, fortitude: 0, will: 0 };
+  }
+
+  /**
    * Calculate total BAB from all class items
    * @returns {number} Total BAB
    */
@@ -1110,73 +1166,34 @@ export class SWSELevelUpEnhanced extends FormApplication {
     const classItems = this.actor.items.filter(i => i.type === 'class');
     const bonuses = { fortitude: 0, reflex: 0, will: 0 };
 
-    // Defense bonuses by class (applied once per class, NOT multiplied by level)
-    // Format: Reflex/Fortitude/Will
-    const defenseProgression = {
-      // Base Classes
-      'Jedi': { reflex: 1, fortitude: 1, will: 1 },
-      'Noble': { reflex: 1, fortitude: 0, will: 2 },
-      'Scout': { reflex: 2, fortitude: 1, will: 0 },
-      'Soldier': { reflex: 1, fortitude: 2, will: 0 },
-      'Scoundrel': { reflex: 2, fortitude: 0, will: 1 },
-
-      // Prestige Classes - Core Rulebook
-      'Ace Pilot': { reflex: 4, fortitude: 2, will: 0 },
-      'Bounty Hunter': { reflex: 4, fortitude: 2, will: 0 },
-      'Crime Lord': { reflex: 2, fortitude: 0, will: 4 },
-      'Elite Trooper': { reflex: 2, fortitude: 4, will: 0 },
-      'Force Adept': { reflex: 2, fortitude: 2, will: 4 },
-      'Force Disciple': { reflex: 3, fortitude: 3, will: 6 },
-      'Gunslinger': { reflex: 4, fortitude: 0, will: 2 },
-      'Jedi Knight': { reflex: 2, fortitude: 2, will: 2 },
-      'Jedi Master': { reflex: 3, fortitude: 3, will: 3 },
-      'Officer': { reflex: 2, fortitude: 0, will: 4 },
-      'Sith Apprentice': { reflex: 2, fortitude: 2, will: 2 },
-      'Sith Lord': { reflex: 3, fortitude: 3, will: 3 },
-
-      // Additional Prestige Classes
-      'Corporate Agent': { reflex: 2, fortitude: 0, will: 4 },
-      'Gladiator': { reflex: 4, fortitude: 2, will: 0 },
-      'Melee Duelist': { reflex: 4, fortitude: 0, will: 2 },
-      'Enforcer': { reflex: 4, fortitude: 0, will: 2 },
-      'Independent Droid': { reflex: 2, fortitude: 0, will: 4 },
-      'Infiltrator': { reflex: 4, fortitude: 0, will: 2 },
-      'Master Privateer': { reflex: 2, fortitude: 0, will: 4 },
-      'Medic': { reflex: 0, fortitude: 4, will: 2 },
-      'Saboteur': { reflex: 2, fortitude: 0, will: 4 },
-      'Assassin': { reflex: 4, fortitude: 2, will: 0 },
-      'Charlatan': { reflex: 2, fortitude: 0, will: 4 },
-      'Outlaw': { reflex: 4, fortitude: 2, will: 0 },
-      'Droid Commander': { reflex: 2, fortitude: 2, will: 2 },
-      'Military Engineer': { reflex: 2, fortitude: 2, will: 2 },
-      'Vanguard': { reflex: 2, fortitude: 4, will: 0 },
-      'Imperial Knight': { reflex: 2, fortitude: 2, will: 2 },
-      'Shaper': { reflex: 0, fortitude: 2, will: 4 },
-      'Improviser': { reflex: 2, fortitude: 0, will: 4 },
-      'Pathfinder': { reflex: 2, fortitude: 4, will: 0 },
-      'Martial Arts Master': { reflex: 2, fortitude: 4, will: 0 }
-    };
-
     for (const classItem of classItems) {
       const className = classItem.name;
 
       // Check if class item has defenses specified (not multiplied by level!)
-      if (classItem.system.defenses) {
+      if (classItem.system.defenses &&
+          (classItem.system.defenses.fortitude || classItem.system.defenses.reflex || classItem.system.defenses.will)) {
         bonuses.fortitude += (classItem.system.defenses.fortitude || 0);
         bonuses.reflex += (classItem.system.defenses.reflex || 0);
         bonuses.will += (classItem.system.defenses.will || 0);
-        continue;
-      }
-
-      // Use known defense progressions (not multiplied by level!)
-      const progression = defenseProgression[className];
-      if (progression) {
+      } else {
+        // Use known defense progressions
+        const progression = this._getClassDefenseBonuses(className);
         bonuses.fortitude += progression.fortitude;
         bonuses.reflex += progression.reflex;
         bonuses.will += progression.will;
-      } else {
-        // Default: assume poor/poor/poor for unknown classes
-        console.warn(`SWSE LevelUp | Unknown defense progression for class ${className}, using defaults`);
+
+        // If defenses aren't set on the class item, update it to store them
+        if (classItem.system.defenses === undefined ||
+            (!classItem.system.defenses.fortitude && !classItem.system.defenses.reflex && !classItem.system.defenses.will)) {
+          console.log(`SWSE LevelUp | Updating ${className} with defense bonuses: Fort +${progression.fortitude}, Ref +${progression.reflex}, Will +${progression.will}`);
+          classItem.update({
+            'system.defenses': {
+              fortitude: progression.fortitude,
+              reflex: progression.reflex,
+              will: progression.will
+            }
+          });
+        }
       }
     }
 
@@ -1206,6 +1223,13 @@ export class SWSELevelUpEnhanced extends FormApplication {
         });
       } else {
         // Create new class item with full class data
+        // Get defense bonuses for this class
+        const defenses = this.selectedClass.system.defenses?.fortitude ||
+                        this.selectedClass.system.defenses?.reflex ||
+                        this.selectedClass.system.defenses?.will
+          ? this.selectedClass.system.defenses
+          : this._getClassDefenseBonuses(this.selectedClass.name);
+
         const classItem = {
           name: this.selectedClass.name,
           type: "class",
@@ -1215,9 +1239,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
             hitDie: this.selectedClass.system.hitDie || 6,
             babProgression: this.selectedClass.system.babProgression || 0.75,
             defenses: {
-              fortitude: this.selectedClass.system.defenses?.fortitude || 0,
-              reflex: this.selectedClass.system.defenses?.reflex || 0,
-              will: this.selectedClass.system.defenses?.will || 0
+              fortitude: defenses.fortitude || 0,
+              reflex: defenses.reflex || 0,
+              will: defenses.will || 0
             },
             description: this.selectedClass.system.description || '',
             classSkills: this.selectedClass.system.classSkills || [],
@@ -1225,6 +1249,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
             forceSensitive: this.selectedClass.system.forceSensitive || false
           }
         };
+
+        console.log(`SWSE LevelUp | Creating ${classItem.name} with defense bonuses: Fort +${classItem.system.defenses.fortitude}, Ref +${classItem.system.defenses.reflex}, Will +${classItem.system.defenses.will}`);
 
         await this.actor.createEmbeddedDocuments("Item", [classItem]);
       }
