@@ -441,12 +441,12 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
 
       // Crew positions
       crewPositions: new fields.SchemaField({
-        pilot: new fields.StringField({required: false, initial: null}),
-        copilot: new fields.StringField({required: false, initial: null}),
-        gunner: new fields.StringField({required: false, initial: null}),
-        engineer: new fields.StringField({required: false, initial: null}),
-        shields: new fields.StringField({required: false, initial: null}),
-        commander: new fields.StringField({required: false, initial: null})
+        pilot: new fields.StringField({required: false, nullable: true, initial: null}),
+        copilot: new fields.StringField({required: false, nullable: true, initial: null}),
+        gunner: new fields.StringField({required: false, nullable: true, initial: null}),
+        engineer: new fields.StringField({required: false, nullable: true, initial: null}),
+        shields: new fields.StringField({required: false, nullable: true, initial: null}),
+        commander: new fields.StringField({required: false, nullable: true, initial: null})
       }),
 
       // Crew notes

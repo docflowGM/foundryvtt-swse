@@ -179,8 +179,8 @@ export default class CharacterGenerator extends Application {
       { key: "5th-degree", name: "5th-Degree Droid", bonuses: "+4 STR, -4 INT, -4 CHA", description: "Labor and utility droids" }
     ];
 
-    // Filter classes for droids (no Jedi classes)
-    if (this.characterData.isDroid && context.packs.classes) {
+    // Filter classes for level 0 droids (no Jedi classes)
+    if (this.characterData.isDroid && this.characterData.level === 0 && context.packs.classes) {
       context.packs.classes = context.packs.classes.filter(c => {
         const className = (c.name || "").toLowerCase();
         return !className.includes("jedi");
