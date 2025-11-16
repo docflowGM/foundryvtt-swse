@@ -601,27 +601,50 @@ export class SWSEStore extends FormApplication {
         // Get equipment items and categorize them
         const equipmentItems = allItems.filter(i => i.type === "equipment" || i.type === "item");
 
-        // Categorize items
+        // Calculate final cost helper
+        const markup = Number(game.settings.get("swse", "storeMarkup")) || 0;
+        const discount = Number(game.settings.get("swse", "storeDiscount")) || 0;
+        const calculateFinalCost = (baseCost) => {
+            return Math.round(baseCost * (1 + markup / 100) * (1 - discount / 100));
+        };
+
+        // Add calculated final cost to each item
+        const addFinalCost = (item) => {
+            const baseCost = Number(item.system?.cost) || 0;
+            return {
+                ...item,
+                finalCost: calculateFinalCost(baseCost)
+            };
+        };
+
+        // Categorize items and add final costs
         const categories = {
-            weapons: allItems.filter(i => i.type === "weapon"),
-            armor: allItems.filter(i => i.type === "armor"),
-            grenades: equipmentItems.filter(i => categorizeEquipment(i) === "grenades"),
-            medical: equipmentItems.filter(i => categorizeEquipment(i) === "medical"),
-            tech: equipmentItems.filter(i => categorizeEquipment(i) === "tech"),
-            security: equipmentItems.filter(i => categorizeEquipment(i) === "security"),
-            survival: equipmentItems.filter(i => categorizeEquipment(i) === "survival"),
-            tools: equipmentItems.filter(i => categorizeEquipment(i) === "tools"),
-            equipment: equipmentItems.filter(i => categorizeEquipment(i) === "equipment"),
-            vehicles: allActors.filter(a => a.type === "vehicle" || a.system?.isVehicle),
-            droids: allActors.filter(a => a.type === "droid" || a.system?.isDroid)
+            weapons: allItems.filter(i => i.type === "weapon").map(addFinalCost),
+            armor: allItems.filter(i => i.type === "armor").map(addFinalCost),
+            grenades: equipmentItems.filter(i => categorizeEquipment(i) === "grenades").map(addFinalCost),
+            medical: equipmentItems.filter(i => categorizeEquipment(i) === "medical").map(addFinalCost),
+            tech: equipmentItems.filter(i => categorizeEquipment(i) === "tech").map(addFinalCost),
+            security: equipmentItems.filter(i => categorizeEquipment(i) === "security").map(addFinalCost),
+            survival: equipmentItems.filter(i => categorizeEquipment(i) === "survival").map(addFinalCost),
+            tools: equipmentItems.filter(i => categorizeEquipment(i) === "tools").map(addFinalCost),
+            equipment: equipmentItems.filter(i => categorizeEquipment(i) === "equipment").map(addFinalCost),
+            vehicles: allActors.filter(a => a.type === "vehicle" || a.system?.isVehicle).map(a => ({
+                ...a,
+                finalCost: calculateFinalCost(Number(a.system?.cost) || 0),
+                finalCostUsed: calculateFinalCost((Number(a.system?.cost) || 0) * 0.5)
+            })),
+            droids: allActors.filter(a => a.type === "droid" || a.system?.isDroid).map(a => ({
+                ...a,
+                finalCost: calculateFinalCost(Number(a.system?.cost) || 0)
+            }))
         };
 
         return {
             actor,
             categories,
             isGM,
-            markup: game.settings.get("swse", "storeMarkup") || 0,
-            discount: game.settings.get("swse", "storeDiscount") || 0,
+            markup,
+            discount,
             credits: actor.system?.credits || 0,
             rendarrImage: "systems/swse/assets/icons/rendarr.webp",
             rendarrWelcome: SWSEStore.getRandomDialogue('welcome')
