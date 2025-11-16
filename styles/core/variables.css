@@ -256,3 +256,25 @@
 @media (prefers-color-scheme: dark) {
   /* Can override root values here if needed */
 }
+
+/* ============================================================================
+   FOUNDRY SIDEBAR FIX - Override broken height restrictions
+   Fixes Foundry v13/The Forge bug where sidebar tabs have fixed heights
+   ============================================================================ */
+
+#sidebar .sidebar-tab {
+  height: auto !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+#sidebar .sidebar-tab.directory {
+  height: auto !important;
+  flex: 1 !important;
+}
+
+#sidebar .directory-list {
+  height: auto !important;
+  overflow-y: auto !important;
+}
