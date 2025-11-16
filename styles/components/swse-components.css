@@ -120,7 +120,8 @@
 }
 
 /* ──────────────────────────────── Buttons ─────────────────────────────── */
-button {
+.swse button,
+.swse-sheet button {
   background: linear-gradient(180deg, #00aaff 0%, #0077cc 100%);
   border: none;
   color: white;
@@ -130,12 +131,14 @@ button {
   transition: transform 0.1s ease, box-shadow 0.2s;
 }
 
-button:hover {
+.swse button:hover,
+.swse-sheet button:hover {
   transform: scale(1.05);
   box-shadow: 0 0 10px #00aaff;
 }
 
-button:active {
+.swse button:active,
+.swse-sheet button:active {
   transform: scale(0.98);
 }
 
