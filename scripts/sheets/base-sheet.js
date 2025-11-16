@@ -447,7 +447,44 @@ export class SWSEActorSheetBase extends ActorSheet {
     if (this.actor.uuid === item.parent?.uuid) {
       return this._onSortItem(event, itemData);
     }
-    
+
     return this.actor.createEmbeddedDocuments('Item', [itemData]);
+  }
+
+  /**
+   * Handle creating a new item from a button click
+   */
+  async _onCreateItem(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const type = button.dataset.type;
+
+    if (!type) {
+      console.warn("CreateItem action requires data-type attribute");
+      return;
+    }
+
+    const itemData = {
+      name: `New ${type.capitalize()}`,
+      type: type
+    };
+
+    return this.actor.createEmbeddedDocuments('Item', [itemData]);
+  }
+
+  /**
+   * Handle setting the condition track
+   */
+  async _onSetConditionTrack(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const step = parseInt(button.dataset.step);
+
+    if (isNaN(step)) {
+      console.warn("SetConditionTrack action requires data-step attribute");
+      return;
+    }
+
+    return this.actor.update({'system.conditionTrack.current': step});
   }
 }
