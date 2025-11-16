@@ -305,15 +305,10 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     const allClasses = await classPack.getDocuments();
     const availableClasses = [];
-    const currentLevel = this.actor.system.level || 0;
 
     // Check prerequisites for each class
     for (const classDoc of allClasses) {
-      // At level 0 or 1, only base classes are available
       const isBaseClass = this._isBaseClass(classDoc.name) || classDoc.system.base_class === true;
-      if (currentLevel <= 1 && !isBaseClass) {
-        continue; // Skip prestige classes at level 0-1
-      }
 
       if (this._meetsPrerequisites(classDoc)) {
         availableClasses.push({
@@ -377,45 +372,52 @@ export class SWSELevelUpEnhanced extends FormApplication {
   _getPrestigeClassPrerequisites(className) {
     const prerequisites = {
       // Core Rulebook Prestige Classes
-      "Ace Pilot": "Trained in Pilot, BAB +2",
-      "Bounty Hunter": "Trained in Gather Information, BAB +3",
-      "Crime Lord": "Trained in Deception, Trained in Persuasion",
-      "Elite Trooper": "Armor Proficiency (Light), Armor Proficiency (Medium), BAB +5",
-      "Force Adept": "Force Sensitive, Trained in Use the Force",
-      "Force Disciple": "Force Sensitive, Trained in Use the Force, BAB +1",
-      "Gunslinger": "Weapon Proficiency (Pistols), BAB +3",
-      "Jedi Knight": "Jedi 7, Force Sensitive, Trained in Use the Force, BAB +5",
-      "Jedi Master": "Jedi Knight 5, Force Sensitive, Trained in Use the Force, BAB +10",
-      "Officer": "Trained in Knowledge (Tactics), BAB +2",
-      "Sith Apprentice": "Force Sensitive, Trained in Use the Force, Dark Side Score 1",
-      "Sith Lord": "Sith Apprentice 5, Force Sensitive, BAB +7, Dark Side Score 5",
+      "Ace Pilot": "Character Level 7, Trained in Pilot, Vehicular Combat",
+      "Bounty Hunter": "Character Level 7, Trained in Survival, 2 Awareness Talents",
+      "Crime Lord": "Character Level 7, Trained in Deception, Trained in Persuasion, 1 Fortune/Lineage/Misfortune Talent",
+      "Elite Trooper": "BAB +7, Armor Proficiency (Medium), Martial Arts I, Point-Blank Shot or Flurry, 1 Armor Specialist/Commando/Mercenary/Weapon Specialist Talent",
+      "Force Adept": "Character Level 7, Trained in Use the Force, Force Sensitivity, 3 Force Talents",
+      "Force Disciple": "Character Level 12, Trained in Use the Force, Force Sensitivity, 2 Dark Side Devotee/Force Adept/Force Item Talents, Farseeing Power, 1 Force Technique",
+      "Gunslinger": "Character Level 7, Point-Blank Shot, Precise Shot, Quick Draw, Weapon Proficiency (Pistols)",
+      "Jedi Knight": "BAB +7, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), Member of The Jedi",
+      "Jedi Master": "Character Level 12, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), 1 Force Technique, Member of The Jedi",
+      "Officer": "Character Level 7, Trained in Knowledge (Tactics), 1 Leadership/Commando/Veteran Talent, Military/Paramilitary Organization",
+      "Sith Apprentice": "Character Level 7, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), Dark Side Score Equal to Wisdom, Member of The Sith",
+      "Sith Lord": "Character Level 12, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), 1 Force Technique, Dark Side Score Equal to Wisdom, Member of The Sith",
 
       // Knights of the Old Republic Campaign Guide
-      "Sith Assassin": "Force Sensitive, Trained in Stealth, Trained in Use the Force",
-      "Sith Marauder": "Force Sensitive, Trained in Use the Force, BAB +5",
-
-      // Legacy Era Campaign Guide
-      "Imperial Knight": "Force Sensitive, Trained in Use the Force, BAB +3",
-      "Sith Trooper": "Armor Proficiency (Light), Weapon Proficiency (Rifles), BAB +3",
+      "Corporate Agent": "Character Level 7, Trained in Gather Information, Trained in Knowledge (Bureaucracy), Skill Focus (Knowledge (Bureaucracy)), Employed by Major Corporation",
+      "Gladiator": "Character Level 7, BAB +7, Improved Damage Threshold, Weapon Proficiency (Advanced Melee Weapons)",
+      "Melee Duelist": "Character Level 7, BAB +7, Melee Defense, Rapid Strike, Weapon Focus (Melee Weapon)",
 
       // The Force Unleashed Campaign Guide
-      "Sith Acolyte": "Force Sensitive, Trained in Use the Force",
+      "Enforcer": "Character Level 7, Trained in Gather Information, Trained in Perception, 1 Survivor Talent, Law Enforcement Organization",
+      "Independent Droid": "Character Level 3, Trained in Use Computer, Heuristic Processor",
+      "Infiltrator": "Character Level 7, Trained in Perception, Trained in Stealth, Skill Focus (Stealth), 2 Camouflage/Spy Talents",
+      "Master Privateer": "Character Level 7, Trained in Deception, Trained in Pilot, Vehicular Combat, 2 Misfortune/Smuggling/Spacer Talents",
+      "Medic": "Character Level 7, Trained in Knowledge (Life Sciences), Trained in Treat Injury, Surgical Expertise",
+      "Saboteur": "Character Level 7, Trained in Deception, Trained in Mechanics, Trained in Use Computer",
 
       // Scum and Villainy
-      "Charlatan": "Trained in Deception, Trained in Persuasion",
-      "Enforcer": "BAB +2",
-      "Gambler": "Trained in Deception, Trained in Perception",
-      "Saboteur": "Trained in Mechanics, Trained in Stealth",
+      "Assassin": "Character Level 7, Trained in Stealth, Sniper, Dastardly Strike Talent",
+      "Charlatan": "Character Level 7, Trained in Deception, Trained in Persuasion, 1 Disgrace/Influence/Lineage Talent",
+      "Outlaw": "Character Level 7, Trained in Stealth, Trained in Survival, 1 Disgrace/Misfortune Talent, Wanted in at Least One System",
 
       // Clone Wars Campaign Guide
-      "Clone Commander": "Soldier 1, BAB +3",
-      "Jedi Padawan": "Jedi 1, Force Sensitive, Trained in Use the Force",
+      "Droid Commander": "Character Level 7, Trained in Knowledge (Tactics), Trained in Use Computer, 1 Leadership/Commando Talent, Must be a Droid",
+      "Military Engineer": "BAB +7, Trained in Mechanics, Trained in Use Computer",
+      "Vanguard": "Character Level 7, Trained in Perception, Trained in Stealth, 2 Camouflage/Commando Talents",
+
+      // Legacy Era Campaign Guide
+      "Imperial Knight": "BAB +7, Trained in Use the Force, Armor Proficiency (Medium), Force Sensitivity, Weapon Proficiency (Lightsabers), Sworn Defender of Fel Empire",
+      "Shaper": "Character Level 7, Yuuzhan Vong Species, Trained in Knowledge (Life Sciences), Trained in Treat Injury, Biotech Specialist",
 
       // Rebellion Era Campaign Guide
-      "Rebel Ace": "Trained in Pilot, BAB +2",
-      "Rebel Leader": "Trained in Persuasion, Character level 3rd",
+      "Improviser": "Character Level 7, Trained in Mechanics, Trained in Use Computer, Skill Focus (Mechanics)",
+      "Pathfinder": "Character Level 7, Trained in Perception, Trained in Survival, 2 Awareness/Camouflage/Survivor Talents",
 
-      // Add more prestige classes as needed
+      // Galaxy at War
+      "Martial Arts Master": "BAB +7, Martial Arts II, Melee Defense, 1 Martial Arts Feat, 1 Brawler/Survivor Talent"
     };
 
     return prerequisites[className] || null;
