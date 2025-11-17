@@ -194,36 +194,106 @@
 
 .vehicle-display-container {
     position: relative;
-    min-height: 400px;
-    background:
-        radial-gradient(ellipse at center, rgba(26, 40, 69, 0.7) 0%, rgba(15, 20, 35, 0.9) 100%),
-        url('../../assets/ui/vehicle-stats.png');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
+    min-height: 500px;
+    background: radial-gradient(ellipse at center, rgba(26, 40, 69, 0.7) 0%, rgba(15, 20, 35, 0.9) 100%);
     border: 1px solid #3a9dd6;
     border-radius: 8px;
     padding: 20px 15px;
     margin: 15px;
     box-shadow: 0 0 30px rgba(58, 157, 214, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+/* Vehicle Image - Center Display */
+.vehicle-image-schematic {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    max-width: 400px;
+    max-height: 350px;
+    width: 60%;
+    height: auto;
+    filter: drop-shadow(0 0 20px rgba(58, 157, 214, 0.6));
+}
+
+.vehicle-ship-image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    opacity: 0.85;
+}
+
+/* Schematic Grid Overlay */
+.schematic-grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        linear-gradient(0deg, transparent 24%, rgba(58, 157, 214, 0.05) 25%, transparent 26%),
+        linear-gradient(90deg, transparent 24%, rgba(58, 157, 214, 0.05) 25%, transparent 26%);
+    background-size: 50px 50px;
+    pointer-events: none;
+    border-radius: 8px;
 }
 
 .stat-displays {
     position: relative;
     width: 100%;
-    height: 400px;
+    height: 500px;
+    z-index: 5;
 }
 
 .stat-box {
     position: absolute;
     background: linear-gradient(135deg, rgba(26, 40, 69, 0.95) 0%, rgba(15, 25, 45, 0.95) 100%);
-    border: 1px solid #3a9dd6;
-    border-radius: 4px;
-    padding: 6px 12px;
-    min-width: 110px;
-    box-shadow: 0 0 15px rgba(58, 157, 214, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.5);
+    border: 2px solid #3a9dd6;
+    border-radius: 6px;
+    padding: 8px 14px;
+    min-width: 120px;
+    box-shadow: 0 0 20px rgba(58, 157, 214, 0.5),
+                inset 0 0 15px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(58, 157, 214, 0.2);
     z-index: 10;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+
+.stat-box:hover {
+    border-color: #5acdff;
+    box-shadow: 0 0 25px rgba(90, 205, 255, 0.7),
+                inset 0 0 15px rgba(0, 0, 0, 0.5),
+                0 0 50px rgba(90, 205, 255, 0.3);
+    transform: scale(1.05);
+}
+
+/* Add corner brackets for schematic effect */
+.stat-box::before,
+.stat-box::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border: 2px solid #5acdff;
+    pointer-events: none;
+}
+
+.stat-box::before {
+    top: -2px;
+    left: -2px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.stat-box::after {
+    bottom: -2px;
+    right: -2px;
+    border-left: none;
+    border-top: none;
 }
 
 .stat-label {
@@ -305,7 +375,19 @@
     background: linear-gradient(90deg, transparent 0%, #3a9dd6 50%, transparent 100%);
     height: 2px;
     pointer-events: none;
-    box-shadow: 0 0 5px rgba(58, 157, 214, 0.6);
+    box-shadow: 0 0 8px rgba(58, 157, 214, 0.8), 0 0 15px rgba(58, 157, 214, 0.4);
+    animation: pulse-line 3s ease-in-out infinite;
+}
+
+@keyframes pulse-line {
+    0%, 100% {
+        opacity: 0.7;
+        box-shadow: 0 0 8px rgba(58, 157, 214, 0.8), 0 0 15px rgba(58, 157, 214, 0.4);
+    }
+    50% {
+        opacity: 1;
+        box-shadow: 0 0 12px rgba(58, 157, 214, 1), 0 0 20px rgba(58, 157, 214, 0.6);
+    }
 }
 
 .line-hull {

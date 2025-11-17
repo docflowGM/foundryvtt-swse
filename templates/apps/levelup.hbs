@@ -47,11 +47,6 @@
       <div class="species-grid">
         {{#each availableSpecies}}
         <div class="species-card">
-          {{#if this.img}}
-          <div class="species-image">
-            <img src="{{this.img}}" alt="{{this.name}}" />
-          </div>
-          {{/if}}
           <h5>{{this.name}}</h5>
           <div class="species-bonuses">
             {{#if this.system.abilities}}

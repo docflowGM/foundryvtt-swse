@@ -144,59 +144,34 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       // Combat (with automatic integer coercion for backwards compatibility)
       bab: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       baseAttack: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       initiative: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       speed: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 6,
         min: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 6;
-          const num = Number(value);
-          return Number.isNaN(num) ? 6 : Math.floor(num);
-        }
+        integer: true
       }),
       damageThreshold: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 10,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 10;
-          const num = Number(value);
-          return Number.isNaN(num) ? 10 : Math.floor(num);
-        }
+        integer: true
       }),
 
       // Skills
@@ -286,69 +261,39 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
     return {
       base: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 10,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 10;
-          const num = Number(value);
-          return Number.isNaN(num) ? 10 : Math.floor(num);
-        }
+        integer: true
       }),
       armor: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       ability: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       classBonus: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       misc: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
+        integer: true
       }),
       total: new fields.NumberField({
         required: true,
-        nullable: true,
+        nullable: false,
         initial: 10,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 10;
-          const num = Number(value);
-          return Number.isNaN(num) ? 10 : Math.floor(num);
-        }
+        integer: true
       })
     };
   }
@@ -442,19 +387,25 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       return;
     }
 
+    // Get condition track penalty
+    const conditionPenalty = this.conditionTrack?.penalty || 0;
+
     // Reflex
     const reflexArmor = this.defenses.reflex.armor > 0 ? this.defenses.reflex.armor : level;
     this.defenses.reflex.total = 10 + reflexArmor + (this.abilities?.dex?.mod || 0) +
-                                  (this.defenses.reflex.classBonus || 0) + (this.defenses.reflex.misc || 0);
+                                  (this.defenses.reflex.classBonus || 0) +
+                                  (this.defenses.reflex.misc || 0) + conditionPenalty;
 
     // Fortitude
     const fortAbility = Math.max(this.abilities?.con?.mod || 0, this.abilities?.str?.mod || 0);
     this.defenses.fortitude.total = 10 + level + fortAbility +
-                                     (this.defenses.fortitude.classBonus || 0) + (this.defenses.fortitude.misc || 0);
+                                     (this.defenses.fortitude.classBonus || 0) +
+                                     (this.defenses.fortitude.misc || 0) + conditionPenalty;
 
     // Will
     this.defenses.will.total = 10 + level + (this.abilities?.wis?.mod || 0) +
-                                (this.defenses.will.classBonus || 0) + (this.defenses.will.misc || 0);
+                                (this.defenses.will.classBonus || 0) +
+                                (this.defenses.will.misc || 0) + conditionPenalty;
   }
 
   _calculateSkills() {
