@@ -266,6 +266,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       }
     }
 
+    // Calculate half level (for skills and other calculations)
+    const heroicLevel = this.level?.heroic || 1;
+    this.halfLevel = Math.floor(heroicLevel / 2);
+
     // Calculate Condition Track penalty
     // Official SWSE: Normal(0), -1(1), -2(2), -5(3), -10(4), Helpless(5)
     if (this.conditionTrack) {
@@ -277,14 +281,59 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Calculate multiclass BAB and defenses BEFORE calling parent
     this._calculateMulticlassStats();
 
-    // Call parent to calculate defenses, skills, etc.
-    super.prepareDerivedData();
+    // Call parent methods individually (skip parent's prepareDerivedData to avoid wrong level usage)
+    this._calculateAbilities();
+    this._applyConditionPenalties();
+    this._calculateDefenses(); // Use our overridden version
+    this._calculateBaseAttack();
+    this._calculateDamageThreshold();
+    this._calculateInitiative();
 
     // Calculate Force Points
     this._calculateForcePoints();
 
     // Override skill calculations with our static skill system
     this._prepareSkills();
+  }
+
+  /**
+   * Override parent's _calculateDefenses to use character level structure
+   * Characters have level.heroic instead of level as a number
+   */
+  _calculateDefenses() {
+    // Ensure defenses object exists
+    if (!this.defenses) {
+      console.warn('Character defenses not initialized, skipping defense calculations');
+      return;
+    }
+
+    const level = this.level?.heroic || 1;
+
+    // Ensure individual defense objects exist
+    if (!this.defenses.reflex || !this.defenses.fortitude || !this.defenses.will) {
+      console.warn('Character defense sub-objects not initialized, skipping defense calculations');
+      return;
+    }
+
+    // Get condition track penalty
+    const conditionPenalty = this.conditionTrack?.penalty || 0;
+
+    // Reflex Defense = 10 + armor bonus OR level (whichever is higher) + Dex mod + class bonus + misc + condition penalty
+    const reflexArmor = this.defenses.reflex.armor > 0 ? this.defenses.reflex.armor : level;
+    this.defenses.reflex.total = 10 + reflexArmor + (this.abilities?.dex?.mod || 0) +
+                                  (this.defenses.reflex.classBonus || 0) +
+                                  (this.defenses.reflex.misc || 0) + conditionPenalty;
+
+    // Fortitude Defense = 10 + level + Con or Str mod (whichever is higher) + class bonus + misc + condition penalty
+    const fortAbility = Math.max(this.abilities?.con?.mod || 0, this.abilities?.str?.mod || 0);
+    this.defenses.fortitude.total = 10 + level + fortAbility +
+                                     (this.defenses.fortitude.classBonus || 0) +
+                                     (this.defenses.fortitude.misc || 0) + conditionPenalty;
+
+    // Will Defense = 10 + level + Wis mod + class bonus + misc + condition penalty
+    this.defenses.will.total = 10 + level + (this.abilities?.wis?.mod || 0) +
+                                (this.defenses.will.classBonus || 0) +
+                                (this.defenses.will.misc || 0) + conditionPenalty;
   }
 
   /**
@@ -384,7 +433,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       use_the_force: { defaultAbility: 'cha', untrained: false }
     };
 
-    const halfLevel = Math.floor(this.level.heroic / 2);
+    // Use the already calculated halfLevel property
+    const halfLevel = this.halfLevel || 0;
 
     // Droids can only use these skills untrained (unless they have Heuristic Processor)
     const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
