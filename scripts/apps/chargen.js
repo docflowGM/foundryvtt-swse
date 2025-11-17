@@ -2092,6 +2092,7 @@ export default class CharacterGenerator extends Application {
     }
 
     const featureItems = [];
+    const weaponItems = [];
     console.log(`CharGen | Applying starting features for ${classDoc.name}`);
 
     // Apply starting_features array
@@ -2126,6 +2127,24 @@ export default class CharacterGenerator extends Application {
             continue;
           }
 
+          // Special handling for Lightsaber - grant actual weapon item
+          if (feature.name === 'Lightsaber' && feature.type === 'class_feature') {
+            console.log(`CharGen | Auto-granting Lightsaber weapon for Jedi`);
+
+            // Load lightsaber from weapons pack
+            const weaponsPack = game.packs.get("swse.weapons");
+            if (weaponsPack) {
+              const docs = await weaponsPack.getDocuments();
+              const lightsaber = docs.find(d => d.name === "Lightsaber");
+              if (lightsaber) {
+                weaponItems.push(lightsaber.toObject());
+              } else {
+                console.warn("CharGen | Lightsaber weapon not found in compendium");
+              }
+            }
+            continue; // Don't create a feat for this, we're giving the actual weapon
+          }
+
           // Apply proficiencies and class features
           if (feature.type === 'proficiency' || feature.type === 'class_feature') {
             console.log(`CharGen | Auto-applying level 1 feature: ${feature.name} (${feature.type})`);
@@ -2152,6 +2171,13 @@ export default class CharacterGenerator extends Application {
       console.log(`CharGen | Creating ${featureItems.length} class feature items`);
       await actor.createEmbeddedDocuments("Item", featureItems);
       ui.notifications.info(`Granted ${featureItems.length} class features from ${classDoc.name}`);
+    }
+
+    // Create weapon items
+    if (weaponItems.length > 0) {
+      console.log(`CharGen | Creating ${weaponItems.length} starting weapon items`);
+      await actor.createEmbeddedDocuments("Item", weaponItems);
+      ui.notifications.info(`Granted starting equipment: ${weaponItems.map(w => w.name).join(', ')}`);
     }
   }
 
