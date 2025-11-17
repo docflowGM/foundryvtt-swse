@@ -361,9 +361,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
    */
   async _getAvailableSpecies() {
     const speciesPack = game.packs.get('swse.species');
-    if (!speciesPack) return [];
+    if (!speciesPack) {
+      console.warn('SWSE LevelUp | Species compendium not found!');
+      return [];
+    }
 
     const allSpecies = await speciesPack.getDocuments();
+    console.log(`SWSE LevelUp | Loaded ${allSpecies.length} species from compendium`);
+
     const availableSpecies = [];
 
     for (const speciesDoc of allSpecies) {
@@ -373,6 +378,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
         system: speciesDoc.system,
         img: speciesDoc.img
       });
+      console.log(`SWSE LevelUp | Species: ${speciesDoc.name} (ID: ${speciesDoc._id})`);
+    }
+
+    if (availableSpecies.length === 0) {
+      console.warn('SWSE LevelUp | No species found in compendium!');
     }
 
     return availableSpecies;
@@ -505,11 +515,21 @@ export class SWSELevelUpEnhanced extends FormApplication {
     const speciesId = event.currentTarget.dataset.speciesId;
     const speciesName = event.currentTarget.dataset.speciesName;
 
+    console.log(`SWSE LevelUp | Attempting to select species: ${speciesName} (ID: ${speciesId})`);
+
     const speciesPack = game.packs.get('swse.species');
+    if (!speciesPack) {
+      console.error('SWSE LevelUp | Species compendium not found!');
+      ui.notifications.error("Species compendium not found! Please check that the swse.species compendium exists.");
+      return;
+    }
+
     const speciesDoc = await speciesPack.getDocument(speciesId);
 
     if (!speciesDoc) {
-      ui.notifications.error("Species not found!");
+      console.error(`SWSE LevelUp | Species not found with ID: ${speciesId}`);
+      console.log('SWSE LevelUp | Available species in pack:', await speciesPack.getDocuments());
+      ui.notifications.error(`Species "${speciesName}" not found! The species compendium may be empty or the ID is incorrect.`);
       return;
     }
 

@@ -923,4 +923,218 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 217, 102, 0.4);
 }
+
+/* Species Selection Styles */
+.species-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.species-card {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #0a74da;
+  border-radius: 8px;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.species-card:hover {
+  background: rgba(10, 116, 218, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(10, 116, 218, 0.3);
+}
+
+.species-card h5 {
+  margin: 0 0 0.5rem 0;
+  color: #00d9ff;
+  font-size: 1.1rem;
+}
+
+.species-bonuses {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.bonus-label {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 217, 255, 0.1);
+  border-radius: 4px;
+  color: #00d9ff;
+}
+
+/* Abilities Mode Styles */
+.ability-methods {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.method-button {
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #0a74da;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.95rem;
+}
+
+.method-button:hover {
+  background: rgba(10, 116, 218, 0.2);
+  transform: translateY(-2px);
+}
+
+.method-button.active {
+  background: rgba(10, 116, 218, 0.3);
+  border-color: #00d9ff;
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.4);
+}
+
+.ability-mode {
+  margin-bottom: 2rem;
+}
+
+.points-remaining {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(0, 217, 255, 0.1);
+  border: 2px solid #00d9ff;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.points-remaining strong {
+  color: #00d9ff;
+  font-size: 1.3rem;
+}
+
+.abilities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.ability-card {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #0a74da;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.ability-card label {
+  display: block;
+  color: #00d9ff;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.ability-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ability-btn {
+  width: 32px;
+  height: 32px;
+  background: rgba(10, 116, 218, 0.3);
+  border: 2px solid #0a74da;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ability-btn:hover {
+  background: rgba(10, 116, 218, 0.5);
+  border-color: #00d9ff;
+}
+
+.ability-input {
+  width: 60px;
+  padding: 0.5rem;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid #0a74da;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.ability-display {
+  color: #aaa;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.roll-results {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.assign-roll {
+  padding: 1rem 1.5rem;
+  background: rgba(0, 217, 102, 0.2);
+  border: 2px solid #00d966;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.assign-roll:hover {
+  background: rgba(0, 217, 102, 0.3);
+  transform: scale(1.1);
+}
+
+.organic-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.organic-group {
+  padding: 1rem;
+  background: rgba(255, 170, 0, 0.2);
+  border: 2px solid #ffa500;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.organic-group:hover {
+  background: rgba(255, 170, 0, 0.3);
+  transform: translateX(5px);
+}
+
+.organic-group.selected-group {
+  background: rgba(0, 217, 255, 0.3);
+  border-color: #00d9ff;
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+}
 </style>
