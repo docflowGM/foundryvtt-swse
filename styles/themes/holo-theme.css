@@ -69,12 +69,27 @@
   75% { opacity: 0.95; }
 }
 
-/* Data Readout Effect for Values */
-.ability-score,
-.defense-value,
-.stat-value,
-.attr-total,
-.defense-total-compact {
+/* Data Readout Effect for Values - SWSE sheets only */
+.swse.sheet .ability-score,
+.swse.sheet .defense-value,
+.swse.sheet .stat-value,
+.swse.sheet .attr-total,
+.swse.sheet .defense-total-compact,
+.swse-datapad-sheet .ability-score,
+.swse-datapad-sheet .defense-value,
+.swse-datapad-sheet .stat-value,
+.swse-datapad-sheet .attr-total,
+.swse-datapad-sheet .defense-total-compact,
+.swse.character-sheet .ability-score,
+.swse.character-sheet .defense-value,
+.swse.character-sheet .stat-value,
+.swse.character-sheet .attr-total,
+.swse.character-sheet .defense-total-compact,
+.holo-theme .ability-score,
+.holo-theme .defense-value,
+.holo-theme .stat-value,
+.holo-theme .attr-total,
+.holo-theme .defense-total-compact {
   animation: data-readout 0.5s ease-out;
 }
 
@@ -89,15 +104,27 @@
   }
 }
 
-/* Section Header Glow */
-.section-header,
-.section-header-black {
+/* Section Header Glow - SWSE sheets only */
+.swse.sheet .section-header,
+.swse.sheet .section-header-black,
+.swse-datapad-sheet .section-header,
+.swse-datapad-sheet .section-header-black,
+.swse.character-sheet .section-header,
+.swse.character-sheet .section-header-black,
+.holo-theme .section-header,
+.holo-theme .section-header-black {
   position: relative;
   overflow: hidden;
 }
 
-.section-header::before,
-.section-header-black::before {
+.swse.sheet .section-header::before,
+.swse.sheet .section-header-black::before,
+.swse-datapad-sheet .section-header::before,
+.swse-datapad-sheet .section-header-black::before,
+.swse.character-sheet .section-header::before,
+.swse.character-sheet .section-header-black::before,
+.holo-theme .section-header::before,
+.holo-theme .section-header-black::before {
   content: "";
   position: absolute;
   top: 0;
@@ -113,8 +140,11 @@
   50%, 100% { left: 100%; }
 }
 
-/* Status Indicators */
-.status-indicator {
+/* Status Indicators - SWSE sheets only */
+.swse.sheet .status-indicator,
+.swse-datapad-sheet .status-indicator,
+.swse.character-sheet .status-indicator,
+.holo-theme .status-indicator {
   display: inline-block;
   width: 6px;
   height: 6px;
@@ -122,17 +152,26 @@
   margin-right: 4px;
 }
 
-.status-indicator.active {
+.swse.sheet .status-indicator.active,
+.swse-datapad-sheet .status-indicator.active,
+.swse.character-sheet .status-indicator.active,
+.holo-theme .status-indicator.active {
   background: #00ff88;
   box-shadow: 0 0 5px rgba(0, 255, 136, 0.8);
 }
 
-.status-indicator.inactive {
+.swse.sheet .status-indicator.inactive,
+.swse-datapad-sheet .status-indicator.inactive,
+.swse.character-sheet .status-indicator.inactive,
+.holo-theme .status-indicator.inactive {
   background: #666;
   box-shadow: none;
 }
 
-.status-indicator.warning {
+.swse.sheet .status-indicator.warning,
+.swse-datapad-sheet .status-indicator.warning,
+.swse.character-sheet .status-indicator.warning,
+.holo-theme .status-indicator.warning {
   background: #ffaa00;
   box-shadow: 0 0 5px rgba(255, 170, 0, 0.8);
   animation: warning-blink 1s ease-in-out infinite;
@@ -143,7 +182,10 @@
   50% { opacity: 0.3; }
 }
 
-.status-indicator.danger {
+.swse.sheet .status-indicator.danger,
+.swse-datapad-sheet .status-indicator.danger,
+.swse.character-sheet .status-indicator.danger,
+.holo-theme .status-indicator.danger {
   background: #ff0000;
   box-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
   animation: danger-pulse 0.5s ease-in-out infinite;
@@ -160,14 +202,19 @@
    Improve dragging experience without forcing positions
    ============================================================================ */
 
-/* Make window header draggable (visual cue only) */
-.swse.sheet .window-header {
+/* Make window header draggable (visual cue only) - SWSE sheets only */
+.swse.sheet .window-header,
+.swse-datapad-sheet .window-header,
+.swse.character-sheet .window-header,
+.holo-theme .window-header {
   cursor: move;
   user-select: none;
 }
 
-/* Visual feedback when dragging */
+/* Visual feedback when dragging - SWSE sheets only */
 .swse.sheet.dragging,
-.app.window-app.dragging {
+.swse-datapad-sheet.dragging,
+.swse.character-sheet.dragging,
+.holo-theme.dragging {
   opacity: 0.8;
 }
