@@ -373,12 +373,12 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     for (const speciesDoc of allSpecies) {
       availableSpecies.push({
-        id: speciesDoc._id,
+        id: speciesDoc.id || speciesDoc._id,
         name: speciesDoc.name,
         system: speciesDoc.system,
         img: speciesDoc.img
       });
-      console.log(`SWSE LevelUp | Species: ${speciesDoc.name} (ID: ${speciesDoc._id})`);
+      console.log(`SWSE LevelUp | Species: ${speciesDoc.name} (ID: ${speciesDoc.id || speciesDoc._id})`);
     }
 
     if (availableSpecies.length === 0) {

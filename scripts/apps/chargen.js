@@ -292,8 +292,8 @@ export default class CharacterGenerator extends Application {
     html.find('.purchase-system').click(this._onPurchaseSystem.bind(this));
     html.find('.remove-system').click(this._onRemoveSystem.bind(this));
 
-    // Name input
-    html.find('input[name="character-name"]').change((ev) => {
+    // Name input - use 'input' event to capture changes in real-time
+    html.find('input[name="character-name"]').on('input change', (ev) => {
       this.characterData.name = ev.target.value;
     });
 
