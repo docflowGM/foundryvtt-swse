@@ -49,6 +49,15 @@ export function registerHouseruleSettings() {
     default: true
   });
 
+  game.settings.register("swse", "maxStartingCredits", {
+    name: "Maximum Starting Credits",
+    hint: "Characters take maximum starting credits instead of rolling (e.g., Noble gets 4800 instead of 3d4×400)",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   // ============================================
   // Droids
   // ============================================
