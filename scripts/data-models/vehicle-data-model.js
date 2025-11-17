@@ -352,7 +352,6 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       maneuver: new fields.StringField({required: false, initial: "+0"}),
 
       // Other vehicle properties
-      // Note: choices removed to allow clean function to run before validation
       size: new fields.StringField({
         required: false,
         initial: "colossal",
@@ -364,12 +363,6 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             return validSizes.includes(normalized) ? normalized : "colossal";
           }
           return "colossal";
-        },
-        validate: value => {
-          const validSizes = ['large', 'huge', 'gargantuan', 'colossal', 'colossal (frigate)', 'colossal (cruiser)', 'colossal (station)'];
-          if (value && !validSizes.includes(value)) {
-            console.warn(`SWSE | Invalid vehicle size "${value}" was auto-corrected to "colossal". Valid sizes are: ${validSizes.join(', ')}`);
-          }
         }
       }),
       crew: new fields.StringField({required: false, initial: "1"}),

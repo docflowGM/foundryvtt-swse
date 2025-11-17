@@ -118,7 +118,6 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       }),
 
       // Size (with automatic normalization for backwards compatibility)
-      // Note: choices removed to allow clean function to run before validation
       size: new fields.StringField({
         required: true,
         initial: "medium",
@@ -131,13 +130,6 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
             return validSizes.includes(normalized) ? normalized : "medium";
           }
           return "medium";
-        },
-        validate: value => {
-          // Validate after cleaning
-          const validSizes = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal', 'colossal2'];
-          if (!validSizes.includes(value)) {
-            console.warn(`SWSE | Invalid size value "${value}" was auto-corrected to "medium". Valid sizes are: ${validSizes.join(', ')}`);
-          }
         }
       }),
 
