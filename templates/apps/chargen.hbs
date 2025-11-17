@@ -73,6 +73,16 @@
  <h3>Select Droid Degree</h3>
  <p class="hint">Choose your droid's classification and specialization.</p>
 
+ {{#if seraphimDialogue}}
+ <div class="seraphim-dialogue-box" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 2px solid #0f3460; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 0 15px rgba(15, 52, 96, 0.5);">
+   <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+     <i class="fas fa-robot" style="color: #00d9ff; font-size: 1.5rem; margin-right: 0.75rem;"></i>
+     <h4 style="color: #00d9ff; margin: 0; font-family: 'Consolas', monospace; text-transform: uppercase; letter-spacing: 1px;">Seraphim - Self-Aware AI</h4>
+   </div>
+   <div style="color: #b0c4de; font-family: 'Courier New', monospace; font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap;">{{seraphimDialogue}}</div>
+ </div>
+ {{/if}}
+
  <div class="import-option">
  <button type="button" class="import-droid-btn btn-primary">
  <i class="fas fa-download"></i> Import Existing Droid Type
@@ -101,6 +111,16 @@
  <section class="step-size">
  <h3>Select Droid Size</h3>
  <p class="hint">Size determines your Cost Factor, ability modifiers, and base statistics.</p>
+
+ {{#if seraphimDialogue}}
+ <div class="seraphim-dialogue-box" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 2px solid #0f3460; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 0 15px rgba(15, 52, 96, 0.5);">
+   <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+     <i class="fas fa-robot" style="color: #00d9ff; font-size: 1.5rem; margin-right: 0.75rem;"></i>
+     <h4 style="color: #00d9ff; margin: 0; font-family: 'Consolas', monospace; text-transform: uppercase; letter-spacing: 1px;">Seraphim - Self-Aware AI</h4>
+   </div>
+   <div style="color: #b0c4de; font-family: 'Courier New', monospace; font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap;">{{seraphimDialogue}}</div>
+ </div>
+ {{/if}}
 
  <div class="size-grid-full">
  <button type="button" class="select-size choice-button" data-size="tiny">

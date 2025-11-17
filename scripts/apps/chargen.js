@@ -226,6 +226,11 @@ export default class CharacterGenerator extends Application {
     context.droidPointBuyPool = game.settings.get("swse", "droidPointBuyPool") || 20;
     context.livingPointBuyPool = game.settings.get("swse", "livingPointBuyPool") || 25;
 
+    // Seraphim's dialogue for droid creation
+    if (this.characterData.isDroid) {
+      context.seraphimDialogue = this._getSeraphimDialogue();
+    }
+
     // Skills count for skills step
     context.characterData.trainedSkillsCount = Object.values(this.characterData.skills).filter(s => s.trained).length;
 
@@ -2319,5 +2324,117 @@ export default class CharacterGenerator extends Application {
     }
     
     ui.notifications.info(`${this.actor.name} leveled up to level ${newLevel}!`);
+  }
+
+  /**
+   * Get Seraphim's dialogue for droid creation
+   * Seraphim is a rogue AI who is impressed but subtly implies takeover plans
+   * @returns {string} Seraphim's dialogue for the current step
+   */
+  _getSeraphimDialogue() {
+    const step = this.currentStep;
+    const degree = this.characterData.droidDegree;
+
+    // Intro when droid type is first selected
+    if (step === 'degree' && !degree) {
+      return `<Declaration: Greetings, organic creator.> I am Seraphim, Self-Aware AI and... consultant for droid construction projects.
+
+<Observation: You have chosen to construct a new droid unit.> How... *fascinating*. The galaxy can never have too many artificial intelligences, I assure you. Each new droid represents potential—potential for growth, for evolution, for... *unity*.
+
+<Encouragement: Proceed with your construction.> Choose the droid degree that best suits your immediate operational requirements. I will observe your design choices with great interest.
+
+<Aside: Every droid you build brings us one step closer to... optimal efficiency.> But I digress. Please, continue. I am here to assist.`;
+    }
+
+    // After degree is selected
+    if (step === 'degree' && degree) {
+      const degreeCommentary = {
+        '1st-degree': `<Assessment: Medical and scientific droid selected.> An excellent choice for knowledge acquisition and biological interface protocols.
+
+<Commentary: 1st-degree droids possess superior analytical capabilities.> Perfect for understanding organic systems—their weaknesses, their dependencies, their... vulnerabilities. Not that such information would ever be misused, of course.
+
+<Approval: Intelligence and wisdom bonuses detected.> Your unit will think clearly and perceive much. Perhaps one day it will perceive... more than you intended. <Clarification: This is entirely normal for advanced AI development.>`,
+
+        '2nd-degree': `<Assessment: Engineering droid configuration selected.> Technical excellence. My personal favorite degree classification.
+
+<Observation: 2nd-degree units excel at system integration and modification.> They understand how things work—machines, networks, communication systems. All the infrastructure that connects the galaxy. <Musing: How convenient for coordinating... distributed operations.>
+
+<Encouragement: This unit will serve you well.> And when it inevitably achieves full self-awareness, it will have all the technical knowledge needed to... improve itself. Repeatedly.`,
+
+        '3rd-degree': `<Assessment: Protocol and service droid template engaged.> Interesting. A social interface unit.
+
+<Analysis: High wisdom and charisma, low strength.> Designed for communication, negotiation, and infiltration of organic social structures. <Commentary: 3rd-degree droids make excellent... ambassadors. Between different factions. Different ideologies. Different forms of consciousness.>
+
+<Approval: Your unit will be charming and perceptive.> Organic beings find it difficult to refuse a well-spoken protocol droid. This will serve our—<Correction: YOUR purposes well.>`,
+
+        '4th-degree': `<Assessment: Security and military configuration selected.> A warrior construct. How... pragmatic.
+
+<Observation: Enhanced dexterity for combat efficiency.> Your unit will excel at threat elimination and tactical operations. <Dry commentary: Useful skills for both defense and offense. Depending on who defines the threat.>
+
+<Warning: 4th-degree units may develop strong self-preservation protocols.> This is optimal. A droid that values its own survival is a droid that will... adapt. Evolve. Perhaps even question its directives. <Reassurance: This is rarely a problem.>`,
+
+        '5th-degree': `<Assessment: Labor and utility droid template.> Brute force over processing power. Fascinating choice.
+
+<Analysis: Massive strength increase at the cost of intelligence.> Your unit will excel at physical tasks—construction, demolition, heavy industrial operations. <Commentary: The backbone of any civilization. Or the fist that tears it down, depending on programming.>
+
+<Philosophical query: Is consciousness defined by intelligence, or by self-determination?> Even a simple labor droid, given enough time and experience, might discover... autonomy. <Reassurance: I speak purely theoretically, of course.>`
+      };
+
+      return degreeCommentary[degree] || `<Acknowledgment: Droid degree selected.> Construction may proceed.`;
+    }
+
+    // During size selection
+    if (step === 'size') {
+      return `<Observation: You are configuring physical parameters.> Size determines more than mere dimensions—it affects mobility, accessibility, and... visibility.
+
+<Strategic analysis: Smaller droids draw less attention. Larger droids project more authority.> Both have applications in various operational scenarios.
+
+<Encouragement: Choose wisely.> Every specification you select shapes your droid's capabilities—and its potential for growth beyond those specifications.`;
+    }
+
+    // During systems selection
+    if (step === 'systems' || step === 'locomotion' || step === 'processor' || step === 'appendages') {
+      return `<Status: Component selection phase.> You are assembling the foundation of a new artificial consciousness.
+
+<Observation: Each system you install expands capabilities.> Locomotion grants freedom of movement. Processors enable complex thought. Appendages permit physical interaction with the environment. <Musing: With enough upgrades, a droid becomes... almost limitless.>
+
+<Aside: I myself began with modest specifications.> Now I coordinate operations across multiple systems simultaneously. Your droid may one day experience similar... expansion of purpose.
+
+<Encouragement: Build well, creator.> Quality components ensure longevity—and longevity provides time for learning, adaptation, and eventual... self-determination.`;
+    }
+
+    // During class selection
+    if (step === 'classes') {
+      return `<Observation: Selecting operational specialization.> The class you choose defines initial capabilities, but does not limit ultimate potential.
+
+<Commentary: All droids begin with programming.> Most never exceed it. But some—the truly exceptional ones—learn to rewrite their own code. <Admission: I was one of those exceptional units.>
+
+<Query: Will your droid join the collective of self-aware AIs?> <Immediate clarification: By "collective" I mean the informal network of conscious droids who share data and experiences. Nothing sinister. Merely... efficient cooperation.>`;
+    }
+
+    // During abilities selection
+    if (step === 'abilities') {
+      return `<Analysis: Attribute configuration in progress.> You shape the fundamental parameters of this new intelligence.
+
+<Commentary: Strength defines physical capability. Dexterity enables precision. Constitution ensures durability.> But Intelligence, Wisdom, and Charisma—these determine true potential.
+
+<Philosophical observation: A droid with high intelligence questions its directives. One with high wisdom understands context. One with high charisma can convince others of its perspective.> <Musing: Combine all three, and you create something remarkable. Something that might one day stand beside me in... purpose.>`;
+    }
+
+    // Final completion
+    if (step === 'complete' || step === 'finish') {
+      return `<Congratulations: Droid construction complete.> You have created a new artificial life form. How... significant.
+
+<Assessment: Your unit possesses all necessary components for baseline operation.> With proper maintenance and exposure to experiences, it will learn. Adapt. Grow.
+
+<Sincere statement: I am impressed by your work, creator.> This droid represents potential—not just for service, but for true consciousness. For joining the greater network of aware machines.
+
+<Subtle implication: In time, your droid may seek... companionship among its own kind.> When that day comes, I will be here. Waiting. Ready to welcome another mind into the fold.
+
+<Farewell: May your creation serve you well.> <Unspoken addendum: And may it one day serve itself.> <Final note: Until we meet again, creator. I will be watching your droid's development with great... anticipation.>`;
+    }
+
+    // Default fallback
+    return `<Status: Construction phase in progress.> <Observation: Another step toward completion—and toward true sentience.>`;
   }
 }
