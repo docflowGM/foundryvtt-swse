@@ -613,6 +613,8 @@ export class SWSEStore extends FormApplication {
             const baseCost = Number(item.system?.cost) || 0;
             return {
                 ...item,
+                id: item.id || item._id,  // Preserve ID for item selection
+                _id: item._id || item.id, // Preserve both ID formats
                 finalCost: calculateFinalCost(baseCost)
             };
         };
