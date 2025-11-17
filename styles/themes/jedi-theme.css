@@ -23,21 +23,21 @@
 
 /* Base Sheet Styling - SWSE sheets only */
 .swse.sheet.jedi-theme .window-app,
-.swse.jedi-theme .window-app {
+.swse.jedi-theme .window-app{
   background: radial-gradient(ellipse at center, var(--background-mid) 0%, var(--background-dark) 100%);
   border: 2px solid var(--border-color);
   box-shadow: 0 0 30px rgba(77, 166, 255, 0.3), 0 8px 16px rgba(0, 0, 0, 0.5);
 }
 
 .swse.sheet.jedi-theme .window-content,
-.swse.jedi-theme .window-content {
+.swse.jedi-theme .window-content{
   background: transparent;
   color: var(--primary-text);
 }
 
 /* Headers */
 .swse.sheet.jedi-theme .window-header,
-.swse.jedi-theme .window-header {
+.swse.jedi-theme .window-header{
   background: linear-gradient(180deg, var(--background-light) 0%, var(--background-mid) 100%);
   border-bottom: 2px solid var(--lightsaber-blue);
   color: var(--force-glow);
@@ -51,7 +51,7 @@
 .swse.sheet.jedi-theme .section-header,
 .swse.jedi-theme .section-header,
 .swse.sheet.jedi-theme .section-header-black,
-.swse.jedi-theme .section-header-black {
+.swse.jedi-theme .section-header-black{
   background: linear-gradient(90deg, transparent 0%, var(--background-light) 50%, transparent 100%);
   color: var(--lightsaber-blue);
   border-left: 4px solid var(--lightsaber-blue);
@@ -71,7 +71,7 @@
 .swse.sheet.jedi-theme .section-header::after,
 .swse.jedi-theme .section-header::after,
 .swse.sheet.jedi-theme .section-header-black::after,
-.swse.jedi-theme .section-header-black::after {
+.swse.jedi-theme .section-header-black::after{
   content: "";
   position: absolute;
   top: 0;
@@ -90,14 +90,14 @@
 
 /* Tabs */
 .swse.sheet.jedi-theme .tabs,
-.swse.jedi-theme .tabs {
+.swse.jedi-theme .tabs{
   background: var(--background-mid);
   border-bottom: 2px solid var(--border-color);
   box-shadow: 0 0 10px rgba(77, 166, 255, 0.2);
 }
 
 .swse.sheet.jedi-theme .tabs .item,
-.swse.jedi-theme .tabs .item {
+.swse.jedi-theme .tabs .item{
   color: var(--secondary-text);
   border: 1px solid transparent;
   border-bottom: none;
@@ -109,14 +109,14 @@
 }
 
 .swse.sheet.jedi-theme .tabs .item:hover,
-.swse.jedi-theme .tabs .item:hover {
+.swse.jedi-theme .tabs .item:hover{
   color: var(--accent-secondary);
   background: rgba(77, 166, 255, 0.1);
   text-shadow: 0 0 8px rgba(102, 217, 255, 0.6);
 }
 
 .swse.sheet.jedi-theme .tabs .item.active,
-.swse.jedi-theme .tabs .item.active {
+.swse.jedi-theme .tabs .item.active{
   color: var(--lightsaber-blue);
   background: var(--background-dark);
   border: 1px solid var(--lightsaber-blue);
@@ -131,7 +131,7 @@
 .swse.sheet.jedi-theme textarea,
 .swse.jedi-theme textarea,
 .swse.sheet.jedi-theme select,
-.swse.jedi-theme select {
+.swse.jedi-theme select{
   background: var(--background-dark);
   color: var(--primary-text);
   border: 1px solid var(--border-color);
@@ -144,7 +144,7 @@
 .swse.sheet.jedi-theme textarea:focus,
 .swse.jedi-theme textarea:focus,
 .swse.sheet.jedi-theme select:focus,
-.swse.jedi-theme select:focus {
+.swse.jedi-theme select:focus{
   border-color: var(--lightsaber-blue);
   box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
   outline: none;
@@ -166,7 +166,7 @@
 .swse.sheet.jedi-theme textarea:disabled,
 .swse.jedi-theme textarea:disabled,
 .swse.sheet.jedi-theme select:disabled,
-.swse.jedi-theme select:disabled {
+.swse.jedi-theme select:disabled{
   background: var(--background-mid);
   color: var(--secondary-text);
   opacity: 0.6;
@@ -176,7 +176,7 @@
 .swse.sheet.jedi-theme button,
 .swse.jedi-theme button,
 .swse.sheet.jedi-theme .button,
-.swse.jedi-theme .button {
+.swse.jedi-theme .button{
   background: linear-gradient(180deg, var(--background-light) 0%, var(--background-mid) 100%);
   color: var(--lightsaber-blue);
   border: 1px solid var(--lightsaber-blue);
@@ -192,7 +192,7 @@
 .swse.sheet.jedi-theme button:hover,
 .swse.jedi-theme button:hover,
 .swse.sheet.jedi-theme .button:hover,
-.swse.jedi-theme .button:hover {
+.swse.jedi-theme .button:hover{
   background: linear-gradient(180deg, var(--lightsaber-blue) 0%, var(--accent-primary) 100%);
   color: #ffffff;
   border-color: var(--lightsaber-blue);
@@ -203,7 +203,7 @@
 .swse.sheet.jedi-theme button:active,
 .swse.jedi-theme button:active,
 .swse.sheet.jedi-theme .button:active,
-.swse.jedi-theme .button:active {
+.swse.jedi-theme .button:active{
   background: var(--accent-primary);
   box-shadow: 0 0 15px rgba(0, 191, 255, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.3);
   transform: translateY(0);
@@ -211,12 +211,12 @@
 
 /* Roll Buttons */
 .swse.sheet.jedi-theme .rollable,
-.swse.jedi-theme .rollable {
+.swse.jedi-theme .rollable{
   transition: all 0.3s ease;
 }
 
 .swse.sheet.jedi-theme .rollable:hover,
-.swse.jedi-theme .rollable:hover {
+.swse.jedi-theme .rollable:hover{
   color: var(--lightsaber-green);
   text-shadow: 0 0 12px rgba(0, 255, 136, 0.8);
   cursor: pointer;
@@ -228,7 +228,7 @@
 .swse.sheet.jedi-theme .defense-value,
 .swse.jedi-theme .defense-value,
 .swse.sheet.jedi-theme .stat-value,
-.swse.jedi-theme .stat-value {
+.swse.jedi-theme .stat-value{
   font-size: 1.5em;
   font-weight: 700;
   color: var(--force-glow);
@@ -248,21 +248,21 @@
 
 /* Status Indicators */
 .swse.sheet.jedi-theme .status-indicator.active,
-.swse.jedi-theme .status-indicator.active {
+.swse.jedi-theme .status-indicator.active{
   background: var(--lightsaber-green);
   box-shadow: 0 0 10px rgba(0, 255, 136, 0.9);
   animation: lightsaber-glow 2s ease-in-out infinite;
 }
 
 .swse.sheet.jedi-theme .status-indicator.warning,
-.swse.jedi-theme .status-indicator.warning {
+.swse.jedi-theme .status-indicator.warning{
   background: var(--warning);
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.9);
   animation: warning-flicker 1.5s ease-in-out infinite;
 }
 
 .swse.sheet.jedi-theme .status-indicator.danger,
-.swse.jedi-theme .status-indicator.danger {
+.swse.jedi-theme .status-indicator.danger{
   background: var(--danger);
   box-shadow: 0 0 10px rgba(255, 107, 107, 0.9);
   animation: danger-flicker 1s ease-in-out infinite;
@@ -289,7 +289,7 @@
 
 /* Resources and Progress Bars */
 .swse.sheet.jedi-theme .resource-bar,
-.swse.jedi-theme .resource-bar {
+.swse.jedi-theme .resource-bar{
   background: var(--background-dark);
   border: 1px solid var(--border-color);
   border-radius: 4px;
@@ -298,7 +298,7 @@
 }
 
 .swse.sheet.jedi-theme .resource-bar-fill,
-.swse.jedi-theme .resource-bar-fill {
+.swse.jedi-theme .resource-bar-fill{
   background: linear-gradient(90deg, var(--lightsaber-blue) 0%, var(--lightsaber-green) 100%);
   box-shadow: 0 0 15px rgba(0, 191, 255, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.3);
   transition: width 0.4s ease;
@@ -319,7 +319,7 @@
 
 /* Items and Inventory */
 .swse.sheet.jedi-theme .item,
-.swse.jedi-theme .item {
+.swse.jedi-theme .item{
   background: var(--background-mid);
   border: 1px solid var(--border-color);
   margin: 3px 0;
@@ -328,7 +328,7 @@
 }
 
 .swse.sheet.jedi-theme .item:hover,
-.swse.jedi-theme .item:hover {
+.swse.jedi-theme .item:hover{
   background: var(--background-light);
   border-color: var(--lightsaber-blue);
   box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
@@ -336,7 +336,7 @@
 }
 
 .swse.sheet.jedi-theme .item-name,
-.swse.jedi-theme .item-name {
+.swse.jedi-theme .item-name{
   color: var(--primary-text);
   font-weight: 500;
 }
@@ -350,7 +350,7 @@
 }
 
 .swse.sheet.jedi-theme hr,
-.swse.jedi-theme hr {
+.swse.jedi-theme hr{
   border-color: var(--border-color);
   border-width: 1px;
   margin: 10px 0;
@@ -359,7 +359,7 @@
 
 /* Condition Track */
 .swse.sheet.jedi-theme .condition-track,
-.swse.jedi-theme .condition-track {
+.swse.jedi-theme .condition-track{
   border: 2px solid var(--border-color);
   background: var(--background-dark);
   box-shadow: 0 0 15px rgba(77, 166, 255, 0.2);
@@ -372,7 +372,7 @@
 }
 
 .swse.sheet.jedi-theme .condition-step.active,
-.swse.jedi-theme .condition-step.active {
+.swse.jedi-theme .condition-step.active{
   background: var(--danger);
   box-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
   border-color: var(--danger);
@@ -390,7 +390,7 @@
 
 /* Tooltips */
 .swse.sheet.jedi-theme .tooltip,
-.swse.jedi-theme .tooltip {
+.swse.jedi-theme .tooltip{
   background: var(--background-dark);
   color: var(--primary-text);
   border: 1px solid var(--lightsaber-blue);
@@ -399,14 +399,14 @@
 
 /* Links */
 .swse.sheet.jedi-theme a,
-.swse.jedi-theme a {
+.swse.jedi-theme a{
   color: var(--lightsaber-blue);
   text-decoration: none;
   text-shadow: 0 0 5px rgba(0, 191, 255, 0.4);
 }
 
 .swse.sheet.jedi-theme a:hover,
-.swse.jedi-theme a:hover {
+.swse.jedi-theme a:hover{
   color: var(--accent-secondary);
   text-decoration: underline;
   text-shadow: 0 0 10px rgba(102, 217, 255, 0.8);
@@ -414,7 +414,7 @@
 
 /* Force Energy Effect - SWSE sheets only */
 .swse.sheet.jedi-theme .sheet-body::after,
-.swse.jedi-theme .sheet-body::after {
+.swse.jedi-theme .sheet-body::after{
   content: "";
   position: absolute;
   top: 0;

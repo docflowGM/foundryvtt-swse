@@ -39,6 +39,7 @@
     "styles/apps/houserules.css",
     "styles/apps/store.css",
     "styles/canvas/canvas-ui.css",
+    "styles/themes/foundry-ui-protection.css",
     "styles/themes/holo-theme.css",
     "styles/themes/high-contrast-theme.css",
     "styles/themes/starship-theme.css",

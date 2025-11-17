@@ -3,7 +3,7 @@
 /* Tatooine desert aesthetic with earthy tones      */
 /* ──────────────────────────────────────────────── */
 
-.sand-people-theme {
+.swse.sheet.sand-people-theme, .swse.sand-people-theme{
   --primary-text: #2a1f15;
   --secondary-text: #5a4a3a;
   --background-dark: #e8d5b7;
@@ -22,21 +22,21 @@
 
 /* Base Sheet Styling */
 .swse.sheet.sand-people-theme .window-app,
-.swse.sand-people-theme .window-app {
+.swse.sand-people-theme .window-app{
   background: linear-gradient(135deg, var(--sand-light) 0%, var(--background-dark) 50%, var(--sand-dark) 100%);
   border: 3px solid var(--border-color);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), inset 0 0 60px rgba(210, 180, 140, 0.3);
 }
 
 .swse.sheet.sand-people-theme .window-content,
-.swse.sand-people-theme .window-content {
+.swse.sand-people-theme .window-content{
   background: transparent;
   color: var(--primary-text);
 }
 
 /* Headers */
 .swse.sheet.sand-people-theme .window-header,
-.swse.sand-people-theme .window-header {
+.swse.sand-people-theme .window-header{
   background: linear-gradient(180deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
   border-bottom: 3px solid var(--border-color);
   color: var(--sand-light);
@@ -50,7 +50,7 @@
 .swse.sheet.sand-people-theme .section-header,
 .swse.sheet.sand-people-theme .section-header-black,
 .swse.sand-people-theme .section-header,
-.swse.sand-people-theme .section-header-black {
+.swse.sand-people-theme .section-header-black{
   background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 50%, var(--accent-primary) 100%);
   color: var(--sand-light);
   border-top: 2px solid var(--border-color);
@@ -66,14 +66,14 @@
 
 /* Tabs */
 .swse.sheet.sand-people-theme .tabs,
-.swse.sand-people-theme .tabs {
+.swse.sand-people-theme .tabs{
   background: var(--background-mid);
   border-bottom: 2px solid var(--border-color);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .swse.sheet.sand-people-theme .tabs .item,
-.swse.sand-people-theme .tabs .item {
+.swse.sand-people-theme .tabs .item{
   color: var(--secondary-text);
   border: 2px solid transparent;
   border-bottom: none;
@@ -87,7 +87,7 @@
 }
 
 .swse.sheet.sand-people-theme .tabs .item:hover,
-.swse.sand-people-theme .tabs .item:hover {
+.swse.sand-people-theme .tabs .item:hover{
   color: var(--accent-primary);
   background: var(--sand-light);
   border-color: var(--border-color);
@@ -95,7 +95,7 @@
 }
 
 .swse.sheet.sand-people-theme .tabs .item.active,
-.swse.sand-people-theme .tabs .item.active {
+.swse.sand-people-theme .tabs .item.active{
   color: var(--accent-primary);
   background: var(--background-light);
   border: 2px solid var(--border-color);
@@ -109,7 +109,7 @@
 .swse.sheet.sand-people-theme select,
 .swse.sand-people-theme input,
 .swse.sand-people-theme textarea,
-.swse.sand-people-theme select {
+.swse.sand-people-theme select{
   background: var(--background-light);
   color: var(--primary-text);
   border: 2px solid var(--border-color);
@@ -123,7 +123,7 @@
 .swse.sheet.sand-people-theme select:focus,
 .swse.sand-people-theme input:focus,
 .swse.sand-people-theme textarea:focus,
-.swse.sand-people-theme select:focus {
+.swse.sand-people-theme select:focus{
   border-color: var(--accent-primary);
   box-shadow: 0 0 8px rgba(139, 69, 19, 0.4), inset 0 2px 3px rgba(0, 0, 0, 0.1);
   outline: none;
@@ -135,7 +135,7 @@
 .swse.sheet.sand-people-theme select:disabled,
 .swse.sand-people-theme input:disabled,
 .swse.sand-people-theme textarea:disabled,
-.swse.sand-people-theme select:disabled {
+.swse.sand-people-theme select:disabled{
   background: var(--background-mid);
   color: var(--secondary-text);
   opacity: 0.7;
@@ -145,7 +145,7 @@
 .swse.sheet.sand-people-theme button,
 .swse.sheet.sand-people-theme .button,
 .swse.sand-people-theme button,
-.swse.sand-people-theme .button {
+.swse.sand-people-theme .button{
   background: linear-gradient(180deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
   color: var(--sand-light);
   border: 2px solid var(--border-color);
@@ -161,7 +161,7 @@
 .swse.sheet.sand-people-theme button:hover,
 .swse.sheet.sand-people-theme .button:hover,
 .swse.sand-people-theme button:hover,
-.swse.sand-people-theme .button:hover {
+.swse.sand-people-theme .button:hover{
   background: linear-gradient(180deg, var(--tribal-orange) 0%, var(--accent-secondary) 100%);
   border-color: var(--tribal-orange);
   box-shadow: 0 0 12px rgba(210, 105, 30, 0.6), 0 3px 6px rgba(0, 0, 0, 0.3);
@@ -171,7 +171,7 @@
 .swse.sheet.sand-people-theme button:active,
 .swse.sheet.sand-people-theme .button:active,
 .swse.sand-people-theme button:active,
-.swse.sand-people-theme .button:active {
+.swse.sand-people-theme .button:active{
   background: var(--accent-primary);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
   transform: translateY(0);
@@ -179,12 +179,12 @@
 
 /* Roll Buttons */
 .swse.sheet.sand-people-theme .rollable,
-.swse.sand-people-theme .rollable {
+.swse.sand-people-theme .rollable{
   transition: all 0.2s ease;
 }
 
 .swse.sheet.sand-people-theme .rollable:hover,
-.swse.sand-people-theme .rollable:hover {
+.swse.sand-people-theme .rollable:hover{
   color: var(--accent-primary);
   text-shadow: 0 0 8px rgba(139, 69, 19, 0.6);
   cursor: pointer;
@@ -196,7 +196,7 @@
 .swse.sheet.sand-people-theme .stat-value,
 .swse.sand-people-theme .ability-score,
 .swse.sand-people-theme .defense-value,
-.swse.sand-people-theme .stat-value {
+.swse.sand-people-theme .stat-value{
   font-size: 1.5em;
   font-weight: 900;
   color: var(--accent-primary);
@@ -206,14 +206,14 @@
 
 /* Status Indicators */
 .swse.sheet.sand-people-theme .status-indicator.active,
-.swse.sand-people-theme .status-indicator.active {
+.swse.sand-people-theme .status-indicator.active{
   background: var(--success);
   box-shadow: 0 0 8px rgba(107, 142, 35, 0.8);
   border: 1px solid var(--primary-text);
 }
 
 .swse.sheet.sand-people-theme .status-indicator.warning,
-.swse.sand-people-theme .status-indicator.warning {
+.swse.sand-people-theme .status-indicator.warning{
   background: var(--warning);
   box-shadow: 0 0 8px rgba(205, 133, 63, 0.8);
   border: 1px solid var(--primary-text);
@@ -221,7 +221,7 @@
 }
 
 .swse.sheet.sand-people-theme .status-indicator.danger,
-.swse.sand-people-theme .status-indicator.danger {
+.swse.sand-people-theme .status-indicator.danger{
   background: var(--danger);
   box-shadow: 0 0 8px rgba(139, 58, 58, 0.8);
   border: 1px solid var(--primary-text);
@@ -240,7 +240,7 @@
 
 /* Resources and Progress Bars */
 .swse.sheet.sand-people-theme .resource-bar,
-.swse.sand-people-theme .resource-bar {
+.swse.sand-people-theme .resource-bar{
   background: var(--background-mid);
   border: 2px solid var(--border-color);
   border-radius: 3px;
@@ -249,7 +249,7 @@
 }
 
 .swse.sheet.sand-people-theme .resource-bar-fill,
-.swse.sand-people-theme .resource-bar-fill {
+.swse.sand-people-theme .resource-bar-fill{
   background: linear-gradient(90deg, var(--accent-primary) 0%, var(--tribal-orange) 100%);
   box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
   transition: width 0.3s ease;
@@ -257,7 +257,7 @@
 
 /* Items and Inventory */
 .swse.sheet.sand-people-theme .item,
-.swse.sand-people-theme .item {
+.swse.sand-people-theme .item{
   background: var(--background-light);
   border: 2px solid var(--border-color);
   margin: 3px 0;
@@ -267,7 +267,7 @@
 }
 
 .swse.sheet.sand-people-theme .item:hover,
-.swse.sand-people-theme .item:hover {
+.swse.sand-people-theme .item:hover{
   background: var(--sand-light);
   border-color: var(--accent-primary);
   box-shadow: 0 0 8px rgba(139, 69, 19, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -275,7 +275,7 @@
 }
 
 .swse.sheet.sand-people-theme .item-name,
-.swse.sand-people-theme .item-name {
+.swse.sand-people-theme .item-name{
   color: var(--primary-text);
   font-weight: 600;
 }
@@ -284,12 +284,12 @@
 .swse.sheet.sand-people-theme .grid,
 .swse.sheet.sand-people-theme .flexrow,
 .swse.sand-people-theme .grid,
-.swse.sand-people-theme .flexrow {
+.swse.sand-people-theme .flexrow{
   gap: 6px;
 }
 
 .swse.sheet.sand-people-theme hr,
-.swse.sand-people-theme hr {
+.swse.sand-people-theme hr{
   border-color: var(--border-color);
   border-width: 2px;
   border-style: solid;
@@ -298,21 +298,21 @@
 
 /* Condition Track */
 .swse.sheet.sand-people-theme .condition-track,
-.swse.sand-people-theme .condition-track {
+.swse.sand-people-theme .condition-track{
   border: 2px solid var(--border-color);
   background: var(--background-mid);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .swse.sheet.sand-people-theme .condition-step,
-.swse.sand-people-theme .condition-step {
+.swse.sand-people-theme .condition-step{
   border: 2px solid var(--border-color);
   transition: all 0.3s ease;
   font-weight: 700;
 }
 
 .swse.sheet.sand-people-theme .condition-step.active,
-.swse.sand-people-theme .condition-step.active {
+.swse.sand-people-theme .condition-step.active{
   background: var(--danger);
   box-shadow: 0 0 12px rgba(139, 58, 58, 0.8);
   border-color: var(--danger);
@@ -321,7 +321,7 @@
 
 /* Tooltips */
 .swse.sheet.sand-people-theme .tooltip,
-.swse.sand-people-theme .tooltip {
+.swse.sand-people-theme .tooltip{
   background: var(--accent-primary);
   color: var(--sand-light);
   border: 2px solid var(--border-color);
@@ -331,14 +331,14 @@
 
 /* Links */
 .swse.sheet.sand-people-theme a,
-.swse.sand-people-theme a {
+.swse.sand-people-theme a{
   color: var(--accent-primary);
   text-decoration: none;
   font-weight: 600;
 }
 
 .swse.sheet.sand-people-theme a:hover,
-.swse.sand-people-theme a:hover {
+.swse.sand-people-theme a:hover{
   color: var(--tribal-orange);
   text-decoration: underline;
   text-shadow: 0 0 4px rgba(210, 105, 30, 0.4);
@@ -346,7 +346,7 @@
 
 /* Texture Effect */
 .swse.sheet.sand-people-theme .sheet-body::before,
-.swse.sand-people-theme .sheet-body::before {
+.swse.sand-people-theme .sheet-body::before{
   content: "";
   position: absolute;
   top: 0;
