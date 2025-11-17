@@ -29,64 +29,39 @@
     </div>
   </div>
 
-  {{!-- Shop Navigation Tabs --}}
-  <nav class="shop-tabs">
-    <button type="button" class="shop-tab active" data-tab="weapons">
-      <i class="fas fa-crosshairs"></i>
-      <span class="tab-label">Weapons</span>
-    </button>
-    <button type="button" class="shop-tab" data-tab="armor">
-      <i class="fas fa-shield-alt"></i>
-      <span class="tab-label">Armor</span>
-    </button>
-    <button type="button" class="shop-tab" data-tab="grenades">
-      <i class="fas fa-bomb"></i>
-      <span class="tab-label">Grenades</span>
-    </button>
-    <button type="button" class="shop-tab" data-tab="medical">
-      <i class="fas fa-medkit"></i>
-      <span class="tab-label">Medical</span>
-    </button>
-    <button type="button" class="shop-tab" data-tab="tech">
-      <i class="fas fa-laptop"></i>
-      <span class="tab-label">Tech</span>
-    </button>
-    <button type="button" class="shop-tab" data-tab="tools">
-      <i class="fas fa-wrench"></i>
-      <span class="tab-label">Tools</span>
-    </button>
-    <button type="button" class="shop-tab" data-tab="survival">
-      <i class="fas fa-campground"></i>
-      <span class="tab-label">Survival</span>
-    </button>
-    <button type="button" class="shop-tab" data-tab="security">
-      <i class="fas fa-lock"></i>
-      <span class="tab-label">Security</span>
-    </button>
-    <button type="button" class="shop-tab" data-tab="equipment">
-      <i class="fas fa-toolbox"></i>
-      <span class="tab-label">Other</span>
-    </button>
-    <button type="button" class="shop-tab" data-tab="droids">
-      <i class="fas fa-robot"></i>
-      <span class="tab-label">Droids</span>
-    </button>
-    <button type="button" class="shop-tab" data-tab="vehicles">
-      <i class="fas fa-rocket"></i>
-      <span class="tab-label">Vehicles</span>
-    </button>
-    <button type="button" class="shop-tab cart-tab" data-tab="cart">
-      <i class="fas fa-shopping-cart"></i>
-      <span class="tab-label">Cart</span>
-      <span class="cart-count" id="cart-count">0</span>
-    </button>
-    {{#if isGM}}
-    <button type="button" class="shop-tab gm-tab" data-tab="gm">
-      <i class="fas fa-cog"></i>
-      <span class="tab-label">GM</span>
-    </button>
-    {{/if}}
-  </nav>
+  {{!-- Shop Navigation with Dropdown Filter --}}
+  <div class="shop-navigation">
+    <div class="shop-filter-container">
+      <label for="shop-category-filter">
+        <i class="fas fa-filter"></i> Category:
+      </label>
+      <select id="shop-category-filter" class="shop-category-select">
+        <option value="weapons" selected>Weapons</option>
+        <option value="armor">Armor</option>
+        <option value="grenades">Grenades</option>
+        <option value="medical">Medical</option>
+        <option value="tech">Tech</option>
+        <option value="tools">Tools</option>
+        <option value="survival">Survival</option>
+        <option value="security">Security</option>
+        <option value="equipment">Other Equipment</option>
+        <option value="droids">Droids</option>
+        <option value="vehicles">Vehicles</option>
+      </select>
+    </div>
+    <div class="shop-actions-bar">
+      <button type="button" class="view-cart-btn holo-btn" data-tab="cart">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Cart</span>
+        <span class="cart-count" id="cart-count">0</span>
+      </button>
+      {{#if isGM}}
+      <button type="button" class="gm-settings-btn holo-btn secondary" data-tab="gm">
+        <i class="fas fa-cog"></i> GM Settings
+      </button>
+      {{/if}}
+    </div>
+  </div>
 
   {{!-- Shop Body --}}
   <div class="shop-body">

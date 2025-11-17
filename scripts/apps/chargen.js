@@ -302,6 +302,11 @@ export default class CharacterGenerator extends Application {
       this.characterData.name = ev.target.value;
     });
 
+    // Level input
+    html.find('input[name="target-level"]').on('input change', (ev) => {
+      this.targetLevel = parseInt(ev.target.value) || 1;
+    });
+
     // Shop button
     html.find('.open-shop-btn').click(this._onOpenShop.bind(this));
 

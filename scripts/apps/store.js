@@ -545,11 +545,26 @@ export class SWSEStore extends FormApplication {
             this.itemsById.set(item.id, item);
         });
 
-        // Get all actors that could be droids or vehicles
-        const allActors = game.actors.filter(a => {
+        // Get all actors from world that could be droids or vehicles
+        const worldActors = game.actors.filter(a => {
             return (a.type === "droid" || a.type === "vehicle" || a.system?.isDroid)
                 && (a.system?.cost ?? 0) > 0;
         });
+
+        // Load vehicles and droids from compendium packs
+        const packActors = [];
+        const actorPackNames = ['swse.vehicles', 'swse.droids'];
+        for (const packName of actorPackNames) {
+            const pack = game.packs.get(packName);
+            if (pack) {
+                const documents = await pack.getDocuments();
+                // Include actors with cost > 0
+                packActors.push(...documents.filter(a => (a.system?.cost ?? 0) > 0));
+            }
+        }
+
+        // Combine world actors and pack actors
+        const allActors = [...worldActors, ...packActors];
 
         // Helper to categorize equipment by keywords
         const categorizeEquipment = (item) => {
@@ -656,8 +671,12 @@ export class SWSEStore extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
 
-        // Tab navigation
-        html.find(".shop-tab").click(this._onShopTabClick.bind(this));
+        // Category filter dropdown
+        html.find("#shop-category-filter").change(this._onCategoryFilterChange.bind(this));
+
+        // Cart and GM buttons
+        html.find(".view-cart-btn").click(this._onShopTabClick.bind(this));
+        html.find(".gm-settings-btn").click(this._onShopTabClick.bind(this));
 
         // Item purchasing
         html.find(".buy-item").click(this._onAddItemToCart.bind(this));
@@ -677,7 +696,27 @@ export class SWSEStore extends FormApplication {
     }
 
     /**
-     * Handle shop tab clicks
+     * Handle category filter dropdown change
+     * @param {Event} event - Change event
+     * @private
+     */
+    _onCategoryFilterChange(event) {
+        event.preventDefault();
+        const tabName = event.currentTarget.value;
+        const doc = this.element[0];
+
+        // Switch active panel
+        doc.querySelectorAll('.shop-panel').forEach(p => p.classList.remove('active'));
+        const panel = doc.querySelector(`[data-panel="${tabName}"]`);
+        if (panel) panel.classList.add('active');
+
+        // Update Rendarr's dialogue based on the category
+        const dialogue = SWSEStore.getRandomDialogue(tabName);
+        this._updateRendarrDialogue($(doc), dialogue);
+    }
+
+    /**
+     * Handle shop tab clicks (cart and GM buttons)
      * @param {Event} event - Click event
      * @private
      */
@@ -685,10 +724,6 @@ export class SWSEStore extends FormApplication {
         event.preventDefault();
         const tabName = event.currentTarget.dataset.tab;
         const doc = this.element[0];
-
-        // Switch active tab
-        doc.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
-        event.currentTarget.classList.add('active');
 
         // Switch active panel
         doc.querySelectorAll('.shop-panel').forEach(p => p.classList.remove('active'));
@@ -776,7 +811,17 @@ export class SWSEStore extends FormApplication {
             return;
         }
 
-        const droidTemplate = game.actors.get(actorId);
+        // Try to get from world actors first
+        let droidTemplate = game.actors.get(actorId);
+
+        // If not found in world, search compendiums
+        if (!droidTemplate) {
+            const pack = game.packs.get('swse.droids');
+            if (pack) {
+                droidTemplate = await pack.getDocument(actorId);
+            }
+        }
+
         if (!droidTemplate) {
             ui.notifications.error("Droid not found.");
             return;
@@ -841,7 +886,17 @@ export class SWSEStore extends FormApplication {
             return;
         }
 
-        const vehicleTemplate = game.actors.get(actorId);
+        // Try to get from world actors first
+        let vehicleTemplate = game.actors.get(actorId);
+
+        // If not found in world, search compendiums
+        if (!vehicleTemplate) {
+            const pack = game.packs.get('swse.vehicles');
+            if (pack) {
+                vehicleTemplate = await pack.getDocument(actorId);
+            }
+        }
+
         if (!vehicleTemplate) {
             ui.notifications.error("Vehicle not found.");
             return;
