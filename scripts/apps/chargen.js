@@ -1458,8 +1458,41 @@ export default class CharacterGenerator extends Application {
         this.characterData.forcePoints.value = this.characterData.forcePoints.max;
         this.characterData.forcePoints.die = "1d6";
       }
+
+      // Starting Credits
+      if (classDoc.system.starting_credits) {
+        const creditsString = classDoc.system.starting_credits;
+        // Parse format like "3d4 x 400"
+        const match = creditsString.match(/(\d+)d(\d+)\s*x\s*(\d+)/i);
+        if (match) {
+          const numDice = parseInt(match[1]);
+          const dieSize = parseInt(match[2]);
+          const multiplier = parseInt(match[3]);
+
+          // Check for house rule to take maximum credits
+          // Default to rolling dice
+          const takeMax = game.settings?.get("swse", "maxStartingCredits") || false;
+
+          let diceTotal;
+          if (takeMax) {
+            // Take maximum possible
+            diceTotal = numDice * dieSize;
+            console.log(`CharGen | Starting credits (max): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
+          } else {
+            // Roll dice
+            const roll = new Roll(`${numDice}d${dieSize}`);
+            roll.evaluate({async: false});
+            diceTotal = roll.total;
+            console.log(`CharGen | Starting credits (rolled): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
+          }
+
+          this.characterData.credits = diceTotal * multiplier;
+        } else {
+          console.warn(`CharGen | Could not parse starting_credits: ${creditsString}`);
+        }
+      }
     }
-    
+
     // Recalculate defenses
     this._recalcDefenses();
     
