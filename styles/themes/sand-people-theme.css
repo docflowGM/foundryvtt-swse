@@ -21,19 +21,22 @@
 }
 
 /* Base Sheet Styling */
-.sand-people-theme .window-app {
+.swse.sheet.sand-people-theme .window-app,
+.swse.sand-people-theme .window-app {
   background: linear-gradient(135deg, var(--sand-light) 0%, var(--background-dark) 50%, var(--sand-dark) 100%);
   border: 3px solid var(--border-color);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), inset 0 0 60px rgba(210, 180, 140, 0.3);
 }
 
-.sand-people-theme .window-content {
+.swse.sheet.sand-people-theme .window-content,
+.swse.sand-people-theme .window-content {
   background: transparent;
   color: var(--primary-text);
 }
 
 /* Headers */
-.sand-people-theme .window-header {
+.swse.sheet.sand-people-theme .window-header,
+.swse.sand-people-theme .window-header {
   background: linear-gradient(180deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
   border-bottom: 3px solid var(--border-color);
   color: var(--sand-light);
@@ -44,8 +47,10 @@
   box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.sand-people-theme .section-header,
-.sand-people-theme .section-header-black {
+.swse.sheet.sand-people-theme .section-header,
+.swse.sheet.sand-people-theme .section-header-black,
+.swse.sand-people-theme .section-header,
+.swse.sand-people-theme .section-header-black {
   background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 50%, var(--accent-primary) 100%);
   color: var(--sand-light);
   border-top: 2px solid var(--border-color);
@@ -60,13 +65,15 @@
 }
 
 /* Tabs */
-.sand-people-theme .tabs {
+.swse.sheet.sand-people-theme .tabs,
+.swse.sand-people-theme .tabs {
   background: var(--background-mid);
   border-bottom: 2px solid var(--border-color);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.sand-people-theme .tabs .item {
+.swse.sheet.sand-people-theme .tabs .item,
+.swse.sand-people-theme .tabs .item {
   color: var(--secondary-text);
   border: 2px solid transparent;
   border-bottom: none;
@@ -79,14 +86,16 @@
   margin: 0 2px;
 }
 
-.sand-people-theme .tabs .item:hover {
+.swse.sheet.sand-people-theme .tabs .item:hover,
+.swse.sand-people-theme .tabs .item:hover {
   color: var(--accent-primary);
   background: var(--sand-light);
   border-color: var(--border-color);
   box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.3);
 }
 
-.sand-people-theme .tabs .item.active {
+.swse.sheet.sand-people-theme .tabs .item.active,
+.swse.sand-people-theme .tabs .item.active {
   color: var(--accent-primary);
   background: var(--background-light);
   border: 2px solid var(--border-color);
@@ -95,9 +104,12 @@
 }
 
 /* Inputs */
-.sand-people-theme input,
-.sand-people-theme textarea,
-.sand-people-theme select {
+.swse.sheet.sand-people-theme input,
+.swse.sheet.sand-people-theme textarea,
+.swse.sheet.sand-people-theme select,
+.swse.sand-people-theme input,
+.swse.sand-people-theme textarea,
+.swse.sand-people-theme select {
   background: var(--background-light);
   color: var(--primary-text);
   border: 2px solid var(--border-color);
@@ -106,26 +118,34 @@
   box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.1);
 }
 
-.sand-people-theme input:focus,
-.sand-people-theme textarea:focus,
-.sand-people-theme select:focus {
+.swse.sheet.sand-people-theme input:focus,
+.swse.sheet.sand-people-theme textarea:focus,
+.swse.sheet.sand-people-theme select:focus,
+.swse.sand-people-theme input:focus,
+.swse.sand-people-theme textarea:focus,
+.swse.sand-people-theme select:focus {
   border-color: var(--accent-primary);
   box-shadow: 0 0 8px rgba(139, 69, 19, 0.4), inset 0 2px 3px rgba(0, 0, 0, 0.1);
   outline: none;
   background: var(--sand-light);
 }
 
-.sand-people-theme input:disabled,
-.sand-people-theme textarea:disabled,
-.sand-people-theme select:disabled {
+.swse.sheet.sand-people-theme input:disabled,
+.swse.sheet.sand-people-theme textarea:disabled,
+.swse.sheet.sand-people-theme select:disabled,
+.swse.sand-people-theme input:disabled,
+.swse.sand-people-theme textarea:disabled,
+.swse.sand-people-theme select:disabled {
   background: var(--background-mid);
   color: var(--secondary-text);
   opacity: 0.7;
 }
 
 /* Buttons */
-.sand-people-theme button,
-.sand-people-theme .button {
+.swse.sheet.sand-people-theme button,
+.swse.sheet.sand-people-theme .button,
+.swse.sand-people-theme button,
+.swse.sand-people-theme .button {
   background: linear-gradient(180deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
   color: var(--sand-light);
   border: 2px solid var(--border-color);
@@ -138,36 +158,45 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-.sand-people-theme button:hover,
-.sand-people-theme .button:hover {
+.swse.sheet.sand-people-theme button:hover,
+.swse.sheet.sand-people-theme .button:hover,
+.swse.sand-people-theme button:hover,
+.swse.sand-people-theme .button:hover {
   background: linear-gradient(180deg, var(--tribal-orange) 0%, var(--accent-secondary) 100%);
   border-color: var(--tribal-orange);
   box-shadow: 0 0 12px rgba(210, 105, 30, 0.6), 0 3px 6px rgba(0, 0, 0, 0.3);
   transform: translateY(-1px);
 }
 
-.sand-people-theme button:active,
-.sand-people-theme .button:active {
+.swse.sheet.sand-people-theme button:active,
+.swse.sheet.sand-people-theme .button:active,
+.swse.sand-people-theme button:active,
+.swse.sand-people-theme .button:active {
   background: var(--accent-primary);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
   transform: translateY(0);
 }
 
 /* Roll Buttons */
-.sand-people-theme .rollable {
+.swse.sheet.sand-people-theme .rollable,
+.swse.sand-people-theme .rollable {
   transition: all 0.2s ease;
 }
 
-.sand-people-theme .rollable:hover {
+.swse.sheet.sand-people-theme .rollable:hover,
+.swse.sand-people-theme .rollable:hover {
   color: var(--accent-primary);
   text-shadow: 0 0 8px rgba(139, 69, 19, 0.6);
   cursor: pointer;
 }
 
 /* Stats and Values */
-.sand-people-theme .ability-score,
-.sand-people-theme .defense-value,
-.sand-people-theme .stat-value {
+.swse.sheet.sand-people-theme .ability-score,
+.swse.sheet.sand-people-theme .defense-value,
+.swse.sheet.sand-people-theme .stat-value,
+.swse.sand-people-theme .ability-score,
+.swse.sand-people-theme .defense-value,
+.swse.sand-people-theme .stat-value {
   font-size: 1.5em;
   font-weight: 900;
   color: var(--accent-primary);
@@ -176,20 +205,23 @@
 }
 
 /* Status Indicators */
-.sand-people-theme .status-indicator.active {
+.swse.sheet.sand-people-theme .status-indicator.active,
+.swse.sand-people-theme .status-indicator.active {
   background: var(--success);
   box-shadow: 0 0 8px rgba(107, 142, 35, 0.8);
   border: 1px solid var(--primary-text);
 }
 
-.sand-people-theme .status-indicator.warning {
+.swse.sheet.sand-people-theme .status-indicator.warning,
+.swse.sand-people-theme .status-indicator.warning {
   background: var(--warning);
   box-shadow: 0 0 8px rgba(205, 133, 63, 0.8);
   border: 1px solid var(--primary-text);
   animation: desert-warning 2s ease-in-out infinite;
 }
 
-.sand-people-theme .status-indicator.danger {
+.swse.sheet.sand-people-theme .status-indicator.danger,
+.swse.sand-people-theme .status-indicator.danger {
   background: var(--danger);
   box-shadow: 0 0 8px rgba(139, 58, 58, 0.8);
   border: 1px solid var(--primary-text);
@@ -207,7 +239,8 @@
 }
 
 /* Resources and Progress Bars */
-.sand-people-theme .resource-bar {
+.swse.sheet.sand-people-theme .resource-bar,
+.swse.sand-people-theme .resource-bar {
   background: var(--background-mid);
   border: 2px solid var(--border-color);
   border-radius: 3px;
@@ -215,14 +248,16 @@
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.sand-people-theme .resource-bar-fill {
+.swse.sheet.sand-people-theme .resource-bar-fill,
+.swse.sand-people-theme .resource-bar-fill {
   background: linear-gradient(90deg, var(--accent-primary) 0%, var(--tribal-orange) 100%);
   box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
   transition: width 0.3s ease;
 }
 
 /* Items and Inventory */
-.sand-people-theme .item {
+.swse.sheet.sand-people-theme .item,
+.swse.sand-people-theme .item {
   background: var(--background-light);
   border: 2px solid var(--border-color);
   margin: 3px 0;
@@ -231,25 +266,30 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.sand-people-theme .item:hover {
+.swse.sheet.sand-people-theme .item:hover,
+.swse.sand-people-theme .item:hover {
   background: var(--sand-light);
   border-color: var(--accent-primary);
   box-shadow: 0 0 8px rgba(139, 69, 19, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
   transform: translateX(2px);
 }
 
-.sand-people-theme .item-name {
+.swse.sheet.sand-people-theme .item-name,
+.swse.sand-people-theme .item-name {
   color: var(--primary-text);
   font-weight: 600;
 }
 
 /* Grid and Lists */
-.sand-people-theme .grid,
-.sand-people-theme .flexrow {
+.swse.sheet.sand-people-theme .grid,
+.swse.sheet.sand-people-theme .flexrow,
+.swse.sand-people-theme .grid,
+.swse.sand-people-theme .flexrow {
   gap: 6px;
 }
 
-.sand-people-theme hr {
+.swse.sheet.sand-people-theme hr,
+.swse.sand-people-theme hr {
   border-color: var(--border-color);
   border-width: 2px;
   border-style: solid;
@@ -257,19 +297,22 @@
 }
 
 /* Condition Track */
-.sand-people-theme .condition-track {
+.swse.sheet.sand-people-theme .condition-track,
+.swse.sand-people-theme .condition-track {
   border: 2px solid var(--border-color);
   background: var(--background-mid);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.sand-people-theme .condition-step {
+.swse.sheet.sand-people-theme .condition-step,
+.swse.sand-people-theme .condition-step {
   border: 2px solid var(--border-color);
   transition: all 0.3s ease;
   font-weight: 700;
 }
 
-.sand-people-theme .condition-step.active {
+.swse.sheet.sand-people-theme .condition-step.active,
+.swse.sand-people-theme .condition-step.active {
   background: var(--danger);
   box-shadow: 0 0 12px rgba(139, 58, 58, 0.8);
   border-color: var(--danger);
@@ -277,7 +320,8 @@
 }
 
 /* Tooltips */
-.sand-people-theme .tooltip {
+.swse.sheet.sand-people-theme .tooltip,
+.swse.sand-people-theme .tooltip {
   background: var(--accent-primary);
   color: var(--sand-light);
   border: 2px solid var(--border-color);
@@ -286,20 +330,23 @@
 }
 
 /* Links */
-.sand-people-theme a {
+.swse.sheet.sand-people-theme a,
+.swse.sand-people-theme a {
   color: var(--accent-primary);
   text-decoration: none;
   font-weight: 600;
 }
 
-.sand-people-theme a:hover {
+.swse.sheet.sand-people-theme a:hover,
+.swse.sand-people-theme a:hover {
   color: var(--tribal-orange);
   text-decoration: underline;
   text-shadow: 0 0 4px rgba(210, 105, 30, 0.4);
 }
 
 /* Texture Effect */
-.sand-people-theme .sheet-body::before {
+.swse.sheet.sand-people-theme .sheet-body::before,
+.swse.sand-people-theme .sheet-body::before {
   content: "";
   position: absolute;
   top: 0;
