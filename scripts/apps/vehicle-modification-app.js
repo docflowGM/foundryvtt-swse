@@ -86,6 +86,9 @@ export class VehicleModificationApp extends Application {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Start selection button
+    html.find('.start-selection').click(this._onStartSelection.bind(this));
+
     // Stock ship selection
     html.find('.select-ship').click(this._onSelectShip.bind(this));
 
@@ -106,6 +109,12 @@ export class VehicleModificationApp extends Application {
 
     // Modification details
     html.find('.modification-item').click(this._onShowModificationDetails.bind(this));
+  }
+
+  async _onStartSelection(event) {
+    event.preventDefault();
+    this.currentStep = 'ship-selection';
+    await this.render();
   }
 
   /**
@@ -132,25 +141,15 @@ export class VehicleModificationApp extends Application {
   }
 
   _getIntroDialogue() {
-    return `*A hologram flickers to life, showing a disheveled human in a worn flight jacket*
+    return `"Marl Skindar, Republic Intelligence. I run vehicle requisitions. Well, that's what the official paperwork says, anyway. Let's just say I have... flexible accounting with certain Republic contacts.
 
-"Ah, another fool with too many Republic credits and not enough common sense. Marl Skindar, Republic Intelligence—and before you ask, yes, I DO judge every single credit you waste here.
-
-You want a starship? Of course you do. Because apparently spending the Republic's hard-earned credits on a glorified space coffin is how you plan to serve the galaxy. I've seen better financial decisions from Jawas at a landspeeder auction.
-
-Look, I've got connections with shipyards across the galaxy. Legal ones, mostly. Some of them are even registered, though honestly at the prices you're about to pay, you DESERVE to get ripped off.
-
-Pick your ship. I'll be over here, judging silently. Well, not THAT silently. You'll hear about it. Oh, you'll DEFINITELY hear about it."`;
+You want a ship? Fine. Pick one. I'll process the credits through proper channels. Mostly proper. The less you ask, the better."`;
   }
 
   _getShipSelectionDialogue() {
-    return `*Marl leans against a flickering holographic ship display, looking supremely unimpressed*
+    return `"Browse the catalog. The prices are... adjusted. Republic overhead, you understand. Some of these credits might find their way back through various contacts. Very proper. Very legal.
 
-"Take your time browsing with the Republic's money. Not like there's a war on or anything. Oh wait, there IS. Multiple wars. And here you are, shopping for starships like you're picking out curtains.
-
-Each ship here represents thousands of credits that could've gone to actual soldiers, medical supplies, or literally ANYTHING more useful than whatever disaster you're about to choose. But sure, live your dreams.
-
-Go ahead. Pick something expensive. I DARE you."`;
+Choose wisely. Every transaction gets logged. Eventually."`;
   }
 
   _getShipChoiceCommentary(shipName) {
