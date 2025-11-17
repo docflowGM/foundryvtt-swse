@@ -1,1 +1,5 @@
 REPO_STRUCTURE.txt
+
+# Theme fix utilities and backups
+fix_swse_themes.py
+styles/themes/backup_*/
