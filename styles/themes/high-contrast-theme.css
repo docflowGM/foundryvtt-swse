@@ -19,19 +19,22 @@
 }
 
 /* Base Sheet Styling */
-.high-contrast-theme .window-app {
+.swse.sheet.high-contrast-theme .window-app,
+.swse.high-contrast-theme .window-app {
   background: var(--background-dark);
   border: 3px solid var(--border-color);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
 }
 
-.high-contrast-theme .window-content {
+.swse.sheet.high-contrast-theme .window-content,
+.swse.high-contrast-theme .window-content {
   background: var(--background-dark);
   color: var(--primary-text);
 }
 
 /* Headers */
-.high-contrast-theme .window-header {
+.swse.sheet.high-contrast-theme .window-header,
+.swse.high-contrast-theme .window-header {
   background: var(--background-mid);
   border-bottom: 2px solid var(--border-color);
   color: var(--accent-primary);
@@ -39,8 +42,10 @@
   text-shadow: 0 0 5px var(--accent-primary);
 }
 
-.high-contrast-theme .section-header,
-.high-contrast-theme .section-header-black {
+.swse.sheet.high-contrast-theme .section-header,
+.swse.sheet.high-contrast-theme .section-header-black,
+.swse.high-contrast-theme .section-header,
+.swse.high-contrast-theme .section-header-black {
   background: var(--background-mid);
   color: var(--accent-primary);
   border: 2px solid var(--border-color);
@@ -51,23 +56,27 @@
 }
 
 /* Tabs */
-.high-contrast-theme .tabs {
+.swse.sheet.high-contrast-theme .tabs,
+.swse.high-contrast-theme .tabs {
   background: var(--background-mid);
   border-bottom: 2px solid var(--border-color);
 }
 
-.high-contrast-theme .tabs .item {
+.swse.sheet.high-contrast-theme .tabs .item,
+.swse.high-contrast-theme .tabs .item {
   color: var(--secondary-text);
   border: 2px solid transparent;
   font-weight: bold;
 }
 
-.high-contrast-theme .tabs .item:hover {
+.swse.sheet.high-contrast-theme .tabs .item:hover,
+.swse.high-contrast-theme .tabs .item:hover {
   color: var(--accent-primary);
   border-bottom: 2px solid var(--accent-primary);
 }
 
-.high-contrast-theme .tabs .item.active {
+.swse.sheet.high-contrast-theme .tabs .item.active,
+.swse.high-contrast-theme .tabs .item.active {
   color: var(--accent-primary);
   border: 2px solid var(--border-color);
   border-bottom: none;
@@ -75,34 +84,45 @@
 }
 
 /* Inputs */
-.high-contrast-theme input,
-.high-contrast-theme textarea,
-.high-contrast-theme select {
+.swse.sheet.high-contrast-theme input,
+.swse.sheet.high-contrast-theme textarea,
+.swse.sheet.high-contrast-theme select,
+.swse.high-contrast-theme input,
+.swse.high-contrast-theme textarea,
+.swse.high-contrast-theme select {
   background: var(--background-dark);
   color: var(--primary-text);
   border: 2px solid var(--border-color);
   font-weight: bold;
 }
 
-.high-contrast-theme input:focus,
-.high-contrast-theme textarea:focus,
-.high-contrast-theme select:focus {
+.swse.sheet.high-contrast-theme input:focus,
+.swse.sheet.high-contrast-theme textarea:focus,
+.swse.sheet.high-contrast-theme select:focus,
+.swse.high-contrast-theme input:focus,
+.swse.high-contrast-theme textarea:focus,
+.swse.high-contrast-theme select:focus {
   border-color: var(--accent-primary);
   box-shadow: 0 0 10px var(--accent-primary);
   outline: none;
 }
 
-.high-contrast-theme input:disabled,
-.high-contrast-theme textarea:disabled,
-.high-contrast-theme select:disabled {
+.swse.sheet.high-contrast-theme input:disabled,
+.swse.sheet.high-contrast-theme textarea:disabled,
+.swse.sheet.high-contrast-theme select:disabled,
+.swse.high-contrast-theme input:disabled,
+.swse.high-contrast-theme textarea:disabled,
+.swse.high-contrast-theme select:disabled {
   background: var(--background-mid);
   color: var(--secondary-text);
   opacity: 0.7;
 }
 
 /* Buttons */
-.high-contrast-theme button,
-.high-contrast-theme .button {
+.swse.sheet.high-contrast-theme button,
+.swse.sheet.high-contrast-theme .button,
+.swse.high-contrast-theme button,
+.swse.high-contrast-theme .button {
   background: var(--background-mid);
   color: var(--primary-text);
   border: 2px solid var(--border-color);
@@ -111,31 +131,39 @@
   padding: 5px 10px;
 }
 
-.high-contrast-theme button:hover,
-.high-contrast-theme .button:hover {
+.swse.sheet.high-contrast-theme button:hover,
+.swse.sheet.high-contrast-theme .button:hover,
+.swse.high-contrast-theme button:hover,
+.swse.high-contrast-theme .button:hover {
   background: var(--accent-primary);
   color: var(--background-dark);
   border-color: var(--accent-primary);
   box-shadow: 0 0 10px var(--accent-primary);
 }
 
-.high-contrast-theme button:active,
-.high-contrast-theme .button:active {
+.swse.sheet.high-contrast-theme button:active,
+.swse.sheet.high-contrast-theme .button:active,
+.swse.high-contrast-theme button:active,
+.swse.high-contrast-theme .button:active {
   background: var(--accent-secondary);
   border-color: var(--accent-secondary);
 }
 
 /* Roll Buttons */
-.high-contrast-theme .rollable:hover {
+.swse.sheet.high-contrast-theme .rollable:hover,
+.swse.high-contrast-theme .rollable:hover {
   color: var(--accent-primary);
   text-shadow: 0 0 10px var(--accent-primary);
   cursor: pointer;
 }
 
 /* Stats and Values */
-.high-contrast-theme .ability-score,
-.high-contrast-theme .defense-value,
-.high-contrast-theme .stat-value {
+.swse.sheet.high-contrast-theme .ability-score,
+.swse.sheet.high-contrast-theme .defense-value,
+.swse.sheet.high-contrast-theme .stat-value,
+.swse.high-contrast-theme .ability-score,
+.swse.high-contrast-theme .defense-value,
+.swse.high-contrast-theme .stat-value {
   font-size: 1.5em;
   font-weight: bold;
   color: var(--accent-secondary);
@@ -143,78 +171,93 @@
 }
 
 /* Status Indicators */
-.high-contrast-theme .status-indicator.active {
+.swse.sheet.high-contrast-theme .status-indicator.active,
+.swse.high-contrast-theme .status-indicator.active {
   background: var(--success);
   box-shadow: 0 0 10px var(--success);
 }
 
-.high-contrast-theme .status-indicator.warning {
+.swse.sheet.high-contrast-theme .status-indicator.warning,
+.swse.high-contrast-theme .status-indicator.warning {
   background: var(--warning);
   box-shadow: 0 0 10px var(--warning);
 }
 
-.high-contrast-theme .status-indicator.danger {
+.swse.sheet.high-contrast-theme .status-indicator.danger,
+.swse.high-contrast-theme .status-indicator.danger {
   background: var(--danger);
   box-shadow: 0 0 10px var(--danger);
 }
 
 /* Resources and Progress Bars */
-.high-contrast-theme .resource-bar {
+.swse.sheet.high-contrast-theme .resource-bar,
+.swse.high-contrast-theme .resource-bar {
   background: var(--background-mid);
   border: 2px solid var(--border-color);
 }
 
-.high-contrast-theme .resource-bar-fill {
+.swse.sheet.high-contrast-theme .resource-bar-fill,
+.swse.high-contrast-theme .resource-bar-fill {
   background: var(--success);
   box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.8);
 }
 
 /* Items and Inventory */
-.high-contrast-theme .item {
+.swse.sheet.high-contrast-theme .item,
+.swse.high-contrast-theme .item {
   background: var(--background-mid);
   border: 2px solid var(--border-color);
   margin: 2px 0;
   padding: 5px;
 }
 
-.high-contrast-theme .item:hover {
+.swse.sheet.high-contrast-theme .item:hover,
+.swse.high-contrast-theme .item:hover {
   background: var(--background-light);
   border-color: var(--accent-primary);
 }
 
-.high-contrast-theme .item-name {
+.swse.sheet.high-contrast-theme .item-name,
+.swse.high-contrast-theme .item-name {
   color: var(--primary-text);
   font-weight: bold;
 }
 
 /* Grid and Lists */
-.high-contrast-theme .grid,
-.high-contrast-theme .flexrow {
+.swse.sheet.high-contrast-theme .grid,
+.swse.sheet.high-contrast-theme .flexrow,
+.swse.high-contrast-theme .grid,
+.swse.high-contrast-theme .flexrow {
   gap: 5px;
 }
 
-.high-contrast-theme hr {
+.swse.sheet.high-contrast-theme hr,
+.swse.high-contrast-theme hr {
   border-color: var(--border-color);
   border-width: 2px;
 }
 
 /* Condition Track */
-.high-contrast-theme .condition-track {
+.swse.sheet.high-contrast-theme .condition-track,
+.swse.high-contrast-theme .condition-track {
   border: 2px solid var(--border-color);
 }
 
-.high-contrast-theme .condition-step {
+.swse.sheet.high-contrast-theme .condition-step,
+.swse.high-contrast-theme .condition-step {
   border: 2px solid var(--border-color);
   font-weight: bold;
 }
 
-.high-contrast-theme .condition-step.active {
+.swse.sheet.high-contrast-theme .condition-step.active,
+.swse.high-contrast-theme .condition-step.active {
   background: var(--danger);
   box-shadow: 0 0 10px var(--danger);
 }
 
 /* Tooltips */
-.high-contrast-theme .tooltip {
+.swse.sheet.high-contrast-theme .tooltip,
+.swse.high-contrast-theme .tooltip {
   background: var(--background-dark);
   color: var(--primary-text);
   border: 2px solid var(--border-color);
@@ -222,13 +265,15 @@
 }
 
 /* Links */
-.high-contrast-theme a {
+.swse.sheet.high-contrast-theme a,
+.swse.high-contrast-theme a {
   color: var(--accent-secondary);
   text-decoration: underline;
   font-weight: bold;
 }
 
-.high-contrast-theme a:hover {
+.swse.sheet.high-contrast-theme a:hover,
+.swse.high-contrast-theme a:hover {
   color: var(--accent-primary);
   text-shadow: 0 0 5px var(--accent-primary);
 }
