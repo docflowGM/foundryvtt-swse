@@ -162,17 +162,16 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     };
 
     // Calculate HP based on hitDie and CON modifier
-    const conMod = this.characterData.abilities.con.mod || 0;
     const hitDie = classSystem.hitDie || 6;
 
-    // Level 1 always gets max HP
+    // Level 1 always gets 5x hit die HP
     this.characterData.hp = {
-      value: hitDie + conMod,
-      max: hitDie + conMod,
+      value: hitDie * 5,
+      max: hitDie * 5,
       temp: 0
     };
 
-    console.log(`SWSE CharGen | HP: ${this.characterData.hp.max} (d${hitDie} + ${conMod} CON)`);
+    console.log(`SWSE CharGen | HP: ${this.characterData.hp.max} (${hitDie} * 5)`);
 
     // Auto-apply starting feats if any
     if (classSystem.startingFeatures) {

@@ -1430,12 +1430,11 @@ export default class CharacterGenerator extends Application {
       // Base Attack Bonus
       this.characterData.bab = Number(classDoc.system.babProgression) || 0;
       
-      // Hit Points (class HD + CON mod)
+      // Hit Points (5 times hit die at level 1)
       // Parse hit die from string like "1d10" to get the die size (10)
       const hitDieString = classDoc.system.hit_die || classDoc.system.hitDie || "1d6";
       const hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
-      const conMod = this.characterData.abilities.con.mod || 0;
-      this.characterData.hp.max = hitDie + conMod;
+      this.characterData.hp.max = hitDie * 5; // Level 1 HP is 5x hit die (e.g., d6=30, d8=40, d10=50)
       this.characterData.hp.value = this.characterData.hp.max;
       
       // Defense bonuses
@@ -2081,6 +2080,81 @@ export default class CharacterGenerator extends Application {
     }
   }
 
+  /**
+   * Apply starting class features to a newly created character
+   * @param {Actor} actor - The actor to apply features to
+   * @param {Object} classDoc - The class document from packs
+   */
+  async _applyStartingClassFeatures(actor, classDoc) {
+    if (!classDoc || !classDoc.system) {
+      console.warn("CharGen | No class document provided for feature application");
+      return;
+    }
+
+    const featureItems = [];
+    console.log(`CharGen | Applying starting features for ${classDoc.name}`);
+
+    // Apply starting_features array
+    if (classDoc.system.starting_features && Array.isArray(classDoc.system.starting_features)) {
+      for (const feature of classDoc.system.starting_features) {
+        console.log(`CharGen | Auto-applying starting feature: ${feature.name} (${feature.type})`);
+
+        const featureItem = {
+          name: feature.name,
+          type: "feat",
+          img: feature.img || "icons/svg/upgrade.svg",
+          system: {
+            description: feature.description || `Starting feature from ${classDoc.name}`,
+            source: `${classDoc.name} (Starting)`,
+            type: feature.type || "class_feature"
+          }
+        };
+
+        featureItems.push(featureItem);
+      }
+    }
+
+    // Apply level 1 features from level_progression
+    const levelProgression = classDoc.system.level_progression;
+    if (levelProgression && Array.isArray(levelProgression)) {
+      const level1Data = levelProgression.find(lp => lp.level === 1);
+
+      if (level1Data && level1Data.features) {
+        for (const feature of level1Data.features) {
+          // Skip talent_choice and feat_grant as these are handled via selection UI
+          if (feature.type === 'talent_choice' || feature.type === 'feat_grant') {
+            continue;
+          }
+
+          // Apply proficiencies and class features
+          if (feature.type === 'proficiency' || feature.type === 'class_feature') {
+            console.log(`CharGen | Auto-applying level 1 feature: ${feature.name} (${feature.type})`);
+
+            const featureItem = {
+              name: feature.name,
+              type: "feat",
+              img: feature.img || "icons/svg/upgrade.svg",
+              system: {
+                description: feature.description || `Class feature from ${classDoc.name} level 1`,
+                source: `${classDoc.name} 1`,
+                type: feature.type
+              }
+            };
+
+            featureItems.push(featureItem);
+          }
+        }
+      }
+    }
+
+    // Create all feature items at once
+    if (featureItems.length > 0) {
+      console.log(`CharGen | Creating ${featureItems.length} class feature items`);
+      await actor.createEmbeddedDocuments("Item", featureItems);
+      ui.notifications.info(`Granted ${featureItems.length} class features from ${classDoc.name}`);
+    }
+  }
+
   async _createActor() {
     // Build proper actor data structure matching SWSEActorSheet expectations
     const system = {
@@ -2106,20 +2180,20 @@ export default class CharacterGenerator extends Application {
       racialSkillBonuses: this.characterData.racialSkillBonuses || [],
       speciesSource: this.characterData.speciesSource || ""
     };
-    
+
     const actorData = {
       name: this.characterData.name || "Unnamed Character",
       type: "character",
       system: system,
-      prototypeToken: { 
+      prototypeToken: {
         name: this.characterData.name || "Unnamed Character",
         actorLink: true
       }
     };
-    
+
     try {
       const created = await Actor.create(actorData);
-      
+
       // Create embedded items (feats, talents, powers)
       const items = [];
       for (const f of (this.characterData.feats || [])) {
@@ -2131,17 +2205,26 @@ export default class CharacterGenerator extends Application {
       for (const p of (this.characterData.powers || [])) {
         items.push(p);
       }
-      
+
       if (items.length > 0) {
         await created.createEmbeddedDocuments("Item", items);
       }
-      
+
+      // Apply starting class features (weapon proficiencies, class features, etc.)
+      if (this.characterData.classes && this.characterData.classes.length > 0) {
+        const className = this.characterData.classes[0].name;
+        const classDoc = this._packs.classes.find(c => c.name === className || c._id === className);
+        if (classDoc) {
+          await this._applyStartingClassFeatures(created, classDoc);
+        }
+      }
+
       // Save character generation data to flags for reference
       await created.setFlag("swse", "chargenData", this.characterData);
-      
+
       // Open the character sheet
       created.sheet.render(true);
-      
+
       ui.notifications.info(`Character ${this.characterData.name} created successfully!`);
     } catch (err) {
       console.error("chargen: actor creation failed", err);
