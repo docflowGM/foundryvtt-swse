@@ -3,7 +3,7 @@
 /* Sleek Imperial Navy aesthetic with metallic UI   */
 /* ──────────────────────────────────────────────── */
 
-.starship-theme {
+.swse.sheet.starship-theme, .swse.starship-theme{
   --primary-text: #b8c5d0;
   --secondary-text: #8090a0;
   --background-dark: #0d1117;
@@ -21,21 +21,21 @@
 
 /* Base Sheet Styling */
 .swse.sheet.starship-theme .window-app,
-.swse.starship-theme .window-app {
+.swse.starship-theme .window-app{
   background: linear-gradient(135deg, var(--background-dark) 0%, var(--background-mid) 100%);
   border: 1px solid var(--border-color);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .swse.sheet.starship-theme .window-content,
-.swse.starship-theme .window-content {
+.swse.starship-theme .window-content{
   background: transparent;
   color: var(--primary-text);
 }
 
 /* Headers */
 .swse.sheet.starship-theme .window-header,
-.swse.starship-theme .window-header {
+.swse.starship-theme .window-header{
   background: linear-gradient(180deg, var(--background-light) 0%, var(--background-mid) 100%);
   border-bottom: 1px solid var(--border-color);
   color: var(--metal-shine);
@@ -48,7 +48,7 @@
 .swse.sheet.starship-theme .section-header,
 .swse.sheet.starship-theme .section-header-black,
 .swse.starship-theme .section-header,
-.swse.starship-theme .section-header-black {
+.swse.starship-theme .section-header-black{
   background: linear-gradient(90deg, var(--background-light) 0%, var(--background-mid) 100%);
   color: var(--accent-primary);
   border-left: 3px solid var(--accent-primary);
@@ -64,14 +64,14 @@
 
 /* Tabs */
 .swse.sheet.starship-theme .tabs,
-.swse.starship-theme .tabs {
+.swse.starship-theme .tabs{
   background: var(--background-mid);
   border-bottom: 1px solid var(--border-color);
   box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .swse.sheet.starship-theme .tabs .item,
-.swse.starship-theme .tabs .item {
+.swse.starship-theme .tabs .item{
   color: var(--secondary-text);
   border: 1px solid transparent;
   border-bottom: none;
@@ -83,13 +83,13 @@
 }
 
 .swse.sheet.starship-theme .tabs .item:hover,
-.swse.starship-theme .tabs .item:hover {
+.swse.starship-theme .tabs .item:hover{
   color: var(--accent-secondary);
   background: rgba(88, 166, 255, 0.1);
 }
 
 .swse.sheet.starship-theme .tabs .item.active,
-.swse.starship-theme .tabs .item.active {
+.swse.starship-theme .tabs .item.active{
   color: var(--accent-primary);
   background: var(--background-dark);
   border: 1px solid var(--border-color);
@@ -103,7 +103,7 @@
 .swse.sheet.starship-theme select,
 .swse.starship-theme input,
 .swse.starship-theme textarea,
-.swse.starship-theme select {
+.swse.starship-theme select{
   background: var(--background-dark);
   color: var(--primary-text);
   border: 1px solid var(--border-color);
@@ -116,7 +116,7 @@
 .swse.sheet.starship-theme select:focus,
 .swse.starship-theme input:focus,
 .swse.starship-theme textarea:focus,
-.swse.starship-theme select:focus {
+.swse.starship-theme select:focus{
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
   outline: none;
@@ -128,7 +128,7 @@
 .swse.sheet.starship-theme select:disabled,
 .swse.starship-theme input:disabled,
 .swse.starship-theme textarea:disabled,
-.swse.starship-theme select:disabled {
+.swse.starship-theme select:disabled{
   background: var(--background-mid);
   color: var(--secondary-text);
   opacity: 0.6;
@@ -138,7 +138,7 @@
 .swse.sheet.starship-theme button,
 .swse.sheet.starship-theme .button,
 .swse.starship-theme button,
-.swse.starship-theme .button {
+.swse.starship-theme .button{
   background: linear-gradient(180deg, var(--background-light) 0%, var(--background-mid) 100%);
   color: var(--primary-text);
   border: 1px solid var(--border-color);
@@ -153,7 +153,7 @@
 .swse.sheet.starship-theme button:hover,
 .swse.sheet.starship-theme .button:hover,
 .swse.starship-theme button:hover,
-.swse.starship-theme .button:hover {
+.swse.starship-theme .button:hover{
   background: linear-gradient(180deg, var(--accent-primary) 0%, #4a8cd8 100%);
   color: #ffffff;
   border-color: var(--accent-primary);
@@ -163,19 +163,19 @@
 .swse.sheet.starship-theme button:active,
 .swse.sheet.starship-theme .button:active,
 .swse.starship-theme button:active,
-.swse.starship-theme .button:active {
+.swse.starship-theme .button:active{
   background: var(--accent-primary);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Roll Buttons */
 .swse.sheet.starship-theme .rollable,
-.swse.starship-theme .rollable {
+.swse.starship-theme .rollable{
   transition: all 0.2s ease;
 }
 
 .swse.sheet.starship-theme .rollable:hover,
-.swse.starship-theme .rollable:hover {
+.swse.starship-theme .rollable:hover{
   color: var(--accent-secondary);
   text-shadow: 0 0 8px rgba(121, 192, 255, 0.6);
   cursor: pointer;
@@ -187,7 +187,7 @@
 .swse.sheet.starship-theme .stat-value,
 .swse.starship-theme .ability-score,
 .swse.starship-theme .defense-value,
-.swse.starship-theme .stat-value {
+.swse.starship-theme .stat-value{
   font-size: 1.4em;
   font-weight: 700;
   color: var(--metal-shine);
@@ -197,20 +197,20 @@
 
 /* Status Indicators */
 .swse.sheet.starship-theme .status-indicator.active,
-.swse.starship-theme .status-indicator.active {
+.swse.starship-theme .status-indicator.active{
   background: var(--success);
   box-shadow: 0 0 6px rgba(63, 185, 80, 0.8);
 }
 
 .swse.sheet.starship-theme .status-indicator.warning,
-.swse.starship-theme .status-indicator.warning {
+.swse.starship-theme .status-indicator.warning{
   background: var(--warning);
   box-shadow: 0 0 6px rgba(210, 153, 34, 0.8);
   animation: warning-pulse 2s ease-in-out infinite;
 }
 
 .swse.sheet.starship-theme .status-indicator.danger,
-.swse.starship-theme .status-indicator.danger {
+.swse.starship-theme .status-indicator.danger{
   background: var(--danger);
   box-shadow: 0 0 6px rgba(248, 81, 73, 0.8);
   animation: danger-pulse 1s ease-in-out infinite;
@@ -228,7 +228,7 @@
 
 /* Resources and Progress Bars */
 .swse.sheet.starship-theme .resource-bar,
-.swse.starship-theme .resource-bar {
+.swse.starship-theme .resource-bar{
   background: var(--background-dark);
   border: 1px solid var(--border-color);
   border-radius: 2px;
@@ -236,7 +236,7 @@
 }
 
 .swse.sheet.starship-theme .resource-bar-fill,
-.swse.starship-theme .resource-bar-fill {
+.swse.starship-theme .resource-bar-fill{
   background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
   box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
   transition: width 0.3s ease;
@@ -244,7 +244,7 @@
 
 /* Items and Inventory */
 .swse.sheet.starship-theme .item,
-.swse.starship-theme .item {
+.swse.starship-theme .item{
   background: var(--background-mid);
   border: 1px solid var(--border-color);
   margin: 2px 0;
@@ -253,14 +253,14 @@
 }
 
 .swse.sheet.starship-theme .item:hover,
-.swse.starship-theme .item:hover {
+.swse.starship-theme .item:hover{
   background: var(--background-light);
   border-color: var(--accent-primary);
   box-shadow: 0 0 8px rgba(88, 166, 255, 0.2);
 }
 
 .swse.sheet.starship-theme .item-name,
-.swse.starship-theme .item-name {
+.swse.starship-theme .item-name{
   color: var(--primary-text);
   font-weight: 500;
 }
@@ -269,12 +269,12 @@
 .swse.sheet.starship-theme .grid,
 .swse.sheet.starship-theme .flexrow,
 .swse.starship-theme .grid,
-.swse.starship-theme .flexrow {
+.swse.starship-theme .flexrow{
   gap: 4px;
 }
 
 .swse.sheet.starship-theme hr,
-.swse.starship-theme hr {
+.swse.starship-theme hr{
   border-color: var(--border-color);
   border-width: 1px;
   margin: 8px 0;
@@ -282,19 +282,19 @@
 
 /* Condition Track */
 .swse.sheet.starship-theme .condition-track,
-.swse.starship-theme .condition-track {
+.swse.starship-theme .condition-track{
   border: 1px solid var(--border-color);
   background: var(--background-dark);
 }
 
 .swse.sheet.starship-theme .condition-step,
-.swse.starship-theme .condition-step {
+.swse.starship-theme .condition-step{
   border: 1px solid var(--border-color);
   transition: all 0.2s ease;
 }
 
 .swse.sheet.starship-theme .condition-step.active,
-.swse.starship-theme .condition-step.active {
+.swse.starship-theme .condition-step.active{
   background: var(--imperial-red);
   box-shadow: 0 0 8px rgba(255, 68, 68, 0.6);
   border-color: var(--imperial-red);
@@ -302,7 +302,7 @@
 
 /* Tooltips */
 .swse.sheet.starship-theme .tooltip,
-.swse.starship-theme .tooltip {
+.swse.starship-theme .tooltip{
   background: var(--background-dark);
   color: var(--primary-text);
   border: 1px solid var(--border-color);
@@ -311,20 +311,20 @@
 
 /* Links */
 .swse.sheet.starship-theme a,
-.swse.starship-theme a {
+.swse.starship-theme a{
   color: var(--accent-primary);
   text-decoration: none;
 }
 
 .swse.sheet.starship-theme a:hover,
-.swse.starship-theme a:hover {
+.swse.starship-theme a:hover{
   color: var(--accent-secondary);
   text-decoration: underline;
 }
 
 /* Scan Lines Effect (subtle) */
 .swse.sheet.starship-theme .sheet-body::before,
-.swse.starship-theme .sheet-body::before {
+.swse.starship-theme .sheet-body::before{
   content: "";
   position: absolute;
   top: 0;

@@ -22,7 +22,7 @@
 
 /* Base Sheet Styling */
 .swse.sheet.high-republic-theme .window-app,
-.swse.high-republic-theme .window-app {
+.swse.high-republic-theme .window-app{
   background: linear-gradient(135deg, var(--background-light) 0%, var(--background-mid) 50%, var(--background-dark) 100%);
   border: 3px solid var(--accent-primary);
   box-shadow: 0 0 30px rgba(218, 165, 32, 0.5), 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -30,7 +30,7 @@
 }
 
 .swse.sheet.high-republic-theme .window-app::before,
-.swse.high-republic-theme .window-app::before {
+.swse.high-republic-theme .window-app::before{
   content: "";
   position: absolute;
   top: 0;
@@ -44,14 +44,14 @@
 }
 
 .swse.sheet.high-republic-theme .window-content,
-.swse.high-republic-theme .window-content {
+.swse.high-republic-theme .window-content{
   background: transparent;
   color: var(--primary-text);
 }
 
 /* Headers */
 .swse.sheet.high-republic-theme .window-header,
-.swse.high-republic-theme .window-header {
+.swse.high-republic-theme .window-header{
   background: linear-gradient(180deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
   border-bottom: 3px solid var(--gold-dark);
   color: #ffffff;
@@ -66,7 +66,7 @@
 .swse.sheet.high-republic-theme .section-header,
 .swse.sheet.high-republic-theme .section-header-black,
 .swse.high-republic-theme .section-header,
-.swse.high-republic-theme .section-header-black {
+.swse.high-republic-theme .section-header-black{
   background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 50%, var(--accent-primary) 100%);
   color: #ffffff;
   border-top: 2px solid var(--gold-dark);
@@ -85,7 +85,7 @@
 .swse.sheet.high-republic-theme .section-header::before,
 .swse.sheet.high-republic-theme .section-header-black::before,
 .swse.high-republic-theme .section-header::before,
-.swse.high-republic-theme .section-header-black::before {
+.swse.high-republic-theme .section-header-black::before{
   content: "✦";
   position: absolute;
   left: 5px;
@@ -97,7 +97,7 @@
 .swse.sheet.high-republic-theme .section-header::after,
 .swse.sheet.high-republic-theme .section-header-black::after,
 .swse.high-republic-theme .section-header::after,
-.swse.high-republic-theme .section-header-black::after {
+.swse.high-republic-theme .section-header-black::after{
   content: "✦";
   position: absolute;
   right: 5px;
@@ -108,14 +108,14 @@
 
 /* Tabs */
 .swse.sheet.high-republic-theme .tabs,
-.swse.high-republic-theme .tabs {
+.swse.high-republic-theme .tabs{
   background: linear-gradient(180deg, var(--background-mid) 0%, var(--background-dark) 100%);
   border-bottom: 3px solid var(--accent-primary);
   box-shadow: inset 0 -2px 4px rgba(218, 165, 32, 0.3);
 }
 
 .swse.sheet.high-republic-theme .tabs .item,
-.swse.high-republic-theme .tabs .item {
+.swse.high-republic-theme .tabs .item{
   color: var(--gold-dark);
   border: 2px solid transparent;
   border-bottom: none;
@@ -130,7 +130,7 @@
 }
 
 .swse.sheet.high-republic-theme .tabs .item:hover,
-.swse.high-republic-theme .tabs .item:hover {
+.swse.high-republic-theme .tabs .item:hover{
   color: var(--accent-primary);
   background: var(--background-light);
   border-color: var(--accent-secondary);
@@ -139,7 +139,7 @@
 }
 
 .swse.sheet.high-republic-theme .tabs .item.active,
-.swse.high-republic-theme .tabs .item.active {
+.swse.high-republic-theme .tabs .item.active{
   color: #ffffff;
   background: linear-gradient(180deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
   border: 2px solid var(--gold-dark);
@@ -154,7 +154,7 @@
 .swse.sheet.high-republic-theme select,
 .swse.high-republic-theme input,
 .swse.high-republic-theme textarea,
-.swse.high-republic-theme select {
+.swse.high-republic-theme select{
   background: var(--background-light);
   color: var(--primary-text);
   border: 2px solid var(--border-color);
@@ -168,7 +168,7 @@
 .swse.sheet.high-republic-theme select:focus,
 .swse.high-republic-theme input:focus,
 .swse.high-republic-theme textarea:focus,
-.swse.high-republic-theme select:focus {
+.swse.high-republic-theme select:focus{
   border-color: var(--accent-secondary);
   box-shadow: 0 0 12px rgba(255, 215, 0, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.1);
   outline: none;
@@ -180,7 +180,7 @@
 .swse.sheet.high-republic-theme select:disabled,
 .swse.high-republic-theme input:disabled,
 .swse.high-republic-theme textarea:disabled,
-.swse.high-republic-theme select:disabled {
+.swse.high-republic-theme select:disabled{
   background: var(--background-dark);
   color: var(--secondary-text);
   opacity: 0.7;
@@ -190,7 +190,7 @@
 .swse.sheet.high-republic-theme button,
 .swse.sheet.high-republic-theme .button,
 .swse.high-republic-theme button,
-.swse.high-republic-theme .button {
+.swse.high-republic-theme .button{
   background: linear-gradient(180deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
   color: #ffffff;
   border: 2px solid var(--gold-dark);
@@ -207,7 +207,7 @@
 .swse.sheet.high-republic-theme button:hover,
 .swse.sheet.high-republic-theme .button:hover,
 .swse.high-republic-theme button:hover,
-.swse.high-republic-theme .button:hover {
+.swse.high-republic-theme .button:hover{
   background: linear-gradient(180deg, var(--gold-bright) 0%, var(--accent-secondary) 100%);
   border-color: var(--gold-bright);
   box-shadow: 0 0 20px rgba(255, 223, 0, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -217,7 +217,7 @@
 .swse.sheet.high-republic-theme button:active,
 .swse.sheet.high-republic-theme .button:active,
 .swse.high-republic-theme button:active,
-.swse.high-republic-theme .button:active {
+.swse.high-republic-theme .button:active{
   background: var(--accent-primary);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
   transform: translateY(0);
@@ -225,12 +225,12 @@
 
 /* Roll Buttons */
 .swse.sheet.high-republic-theme .rollable,
-.swse.high-republic-theme .rollable {
+.swse.high-republic-theme .rollable{
   transition: all 0.3s ease;
 }
 
 .swse.sheet.high-republic-theme .rollable:hover,
-.swse.high-republic-theme .rollable:hover {
+.swse.high-republic-theme .rollable:hover{
   color: var(--accent-primary);
   text-shadow: 0 0 12px rgba(218, 165, 32, 0.8);
   cursor: pointer;
@@ -242,7 +242,7 @@
 .swse.sheet.high-republic-theme .stat-value,
 .swse.high-republic-theme .ability-score,
 .swse.high-republic-theme .defense-value,
-.swse.high-republic-theme .stat-value {
+.swse.high-republic-theme .stat-value{
   font-size: 1.6em;
   font-weight: 900;
   color: var(--accent-primary);
@@ -252,14 +252,14 @@
 
 /* Status Indicators */
 .swse.sheet.high-republic-theme .status-indicator.active,
-.swse.high-republic-theme .status-indicator.active {
+.swse.high-republic-theme .status-indicator.active{
   background: var(--success);
   box-shadow: 0 0 12px rgba(34, 139, 34, 0.9);
   border: 2px solid var(--gold-dark);
 }
 
 .swse.sheet.high-republic-theme .status-indicator.warning,
-.swse.high-republic-theme .status-indicator.warning {
+.swse.high-republic-theme .status-indicator.warning{
   background: var(--warning);
   box-shadow: 0 0 12px rgba(255, 140, 0, 0.9);
   border: 2px solid var(--gold-dark);
@@ -267,7 +267,7 @@
 }
 
 .swse.sheet.high-republic-theme .status-indicator.danger,
-.swse.high-republic-theme .status-indicator.danger {
+.swse.high-republic-theme .status-indicator.danger{
   background: var(--danger);
   box-shadow: 0 0 12px rgba(220, 20, 60, 0.9);
   border: 2px solid var(--gold-dark);
@@ -300,7 +300,7 @@
 
 /* Resources and Progress Bars */
 .swse.sheet.high-republic-theme .resource-bar,
-.swse.high-republic-theme .resource-bar {
+.swse.high-republic-theme .resource-bar{
   background: var(--background-dark);
   border: 2px solid var(--accent-primary);
   border-radius: 4px;
@@ -309,7 +309,7 @@
 }
 
 .swse.sheet.high-republic-theme .resource-bar-fill,
-.swse.high-republic-theme .resource-bar-fill {
+.swse.high-republic-theme .resource-bar-fill{
   background: linear-gradient(90deg, var(--accent-primary) 0%, var(--gold-bright) 50%, var(--accent-secondary) 100%);
   box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
   transition: width 0.4s ease;
@@ -330,7 +330,7 @@
 
 /* Items and Inventory */
 .swse.sheet.high-republic-theme .item,
-.swse.high-republic-theme .item {
+.swse.high-republic-theme .item{
   background: var(--background-light);
   border: 2px solid var(--accent-primary);
   margin: 4px 0;
@@ -340,7 +340,7 @@
 }
 
 .swse.sheet.high-republic-theme .item:hover,
-.swse.high-republic-theme .item:hover {
+.swse.high-republic-theme .item:hover{
   background: #ffffff;
   border-color: var(--accent-secondary);
   box-shadow: 0 0 16px rgba(255, 215, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -348,7 +348,7 @@
 }
 
 .swse.sheet.high-republic-theme .item-name,
-.swse.high-republic-theme .item-name {
+.swse.high-republic-theme .item-name{
   color: var(--primary-text);
   font-weight: 700;
   font-family: 'Georgia', 'Times New Roman', serif;
@@ -363,7 +363,7 @@
 }
 
 .swse.sheet.high-republic-theme hr,
-.swse.high-republic-theme hr {
+.swse.high-republic-theme hr{
   border-color: var(--accent-primary);
   border-width: 2px;
   border-style: solid;
@@ -373,7 +373,7 @@
 
 /* Condition Track */
 .swse.sheet.high-republic-theme .condition-track,
-.swse.high-republic-theme .condition-track {
+.swse.high-republic-theme .condition-track{
   border: 3px solid var(--accent-primary);
   background: var(--background-dark);
   box-shadow: 0 0 15px rgba(218, 165, 32, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.1);
@@ -388,7 +388,7 @@
 }
 
 .swse.sheet.high-republic-theme .condition-step.active,
-.swse.high-republic-theme .condition-step.active {
+.swse.high-republic-theme .condition-step.active{
   background: var(--danger);
   box-shadow: 0 0 20px rgba(220, 20, 60, 0.9);
   border-color: var(--gold-dark);
@@ -398,7 +398,7 @@
 
 /* Tooltips */
 .swse.sheet.high-republic-theme .tooltip,
-.swse.high-republic-theme .tooltip {
+.swse.high-republic-theme .tooltip{
   background: var(--accent-primary);
   color: #ffffff;
   border: 2px solid var(--gold-dark);
@@ -409,14 +409,14 @@
 
 /* Links */
 .swse.sheet.high-republic-theme a,
-.swse.high-republic-theme a {
+.swse.high-republic-theme a{
   color: var(--republic-blue);
   text-decoration: none;
   font-weight: 700;
 }
 
 .swse.sheet.high-republic-theme a:hover,
-.swse.high-republic-theme a:hover {
+.swse.high-republic-theme a:hover{
   color: var(--accent-primary);
   text-decoration: underline;
   text-shadow: 0 0 8px rgba(218, 165, 32, 0.6);
@@ -424,7 +424,7 @@
 
 /* Ornate Border Pattern */
 .swse.sheet.high-republic-theme .sheet-body::before,
-.swse.high-republic-theme .sheet-body::before {
+.swse.high-republic-theme .sheet-body::before{
   content: "";
   position: absolute;
   top: 5px;
@@ -439,7 +439,7 @@
 
 /* Decorative Corners */
 .swse.sheet.high-republic-theme .window-app::after,
-.swse.high-republic-theme .window-app::after {
+.swse.high-republic-theme .window-app::after{
   content: "✦ HIGH REPUBLIC ✦";
   position: absolute;
   top: 10px;
