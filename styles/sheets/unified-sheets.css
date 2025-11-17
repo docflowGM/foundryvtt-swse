@@ -261,6 +261,24 @@
   line-height: 1;
 }
 
+/* Enhanced select dropdown contrast */
+.swse-datapad-sheet select,
+.swse.character-sheet select,
+.holo-theme select {
+  background: rgba(0, 25, 45, 0.95);
+  border: 1px solid rgba(0, 170, 255, 0.5);
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.swse-datapad-sheet select:hover,
+.swse.character-sheet select:hover,
+.holo-theme select:hover {
+  background: rgba(0, 35, 65, 1);
+  border-color: rgba(0, 200, 255, 0.7);
+}
+
 .swse-datapad-sheet input:focus,
 .swse-datapad-sheet textarea:focus,
 .swse-datapad-sheet select:focus,
@@ -271,6 +289,13 @@
   box-shadow: 0 0 6px rgba(0, 198, 255, 0.6);
   outline: none;
   background: rgba(0, 40, 80, 0.6);
+}
+
+.swse-datapad-sheet select:focus,
+.swse.character-sheet select:focus,
+.holo-theme select:focus {
+  background: rgba(0, 50, 90, 1);
+  color: #ffffff;
 }
 
 .swse-datapad-sheet input::placeholder,

@@ -334,6 +334,19 @@ form.swse-datapad-sheet {
   width: 100%;
 }
 
+.swse select {
+  background: rgba(0, 20, 35, 0.85);
+  border: 1px solid rgba(0, 170, 204, 0.4);
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.swse select:hover {
+  background: rgba(0, 30, 50, 0.95);
+  border-color: rgba(0, 200, 255, 0.6);
+}
+
 .swse input:focus,
 .swse select:focus,
 .swse textarea:focus {
@@ -341,6 +354,11 @@ form.swse-datapad-sheet {
   border-color: var(--holo-cyan);
   outline: none;
   transform: translateZ(0);
+}
+
+.swse select:focus {
+  background: rgba(0, 40, 70, 1);
+  color: #ffffff;
 }
 
 .swse input[type="number"] {
@@ -646,12 +664,33 @@ form.swse-datapad-sheet {
   color: var(--muted);
 }
 
-.swse .defense-input-sm,
+.swse .defense-input-sm {
+  padding: 6px 4px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 12px;
+}
+
 .swse .defense-select-sm {
   padding: 6px 4px;
   border-radius: 6px;
   text-align: center;
   font-size: 12px;
+  background: rgba(0, 30, 50, 0.9);
+  border: 1px solid rgba(0, 170, 204, 0.5);
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.swse .defense-select-sm:hover {
+  background: rgba(0, 40, 70, 1);
+  border-color: rgba(0, 200, 255, 0.7);
+}
+
+.swse .defense-select-sm:focus {
+  background: rgba(0, 50, 85, 1);
+  border-color: var(--holo-cyan);
 }
 
 .swse .defense-notes {
@@ -733,16 +772,22 @@ form.swse-datapad-sheet {
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  background: rgba(0, 168, 204, 0.1);
-  border: 1px solid rgba(0, 168, 204, 0.3);
+  background: rgba(0, 30, 50, 0.9);
+  border: 1px solid rgba(0, 168, 204, 0.5);
   border-radius: 3px;
-  color: var(--holo-cyan);
+  color: #ffffff;
   cursor: pointer;
 }
 
 .swse .skill-ability select:hover {
-  background: rgba(0, 168, 204, 0.2);
-  border-color: rgba(0, 168, 204, 0.5);
+  background: rgba(0, 40, 70, 1);
+  border-color: rgba(0, 200, 255, 0.7);
+}
+
+.swse .skill-ability select:focus {
+  background: rgba(0, 50, 85, 1);
+  border-color: var(--holo-cyan);
+  color: #ffffff;
 }
 
 .swse .skill-ability .ability-mod {

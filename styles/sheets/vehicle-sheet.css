@@ -147,12 +147,30 @@
     transition: all 0.3s;
 }
 
+.vehicle-size-section select {
+    background: rgba(0, 20, 40, 0.9);
+    border: 1px solid #3a9dd6;
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.vehicle-size-section select:hover {
+    background: rgba(0, 30, 60, 1);
+    border-color: #5acdff;
+}
+
 .vehicle-name-section input:focus,
 .vehicle-type-section input:focus,
 .vehicle-size-section select:focus {
     border-color: #5acdff;
     box-shadow: 0 0 10px rgba(90, 205, 255, 0.5);
     outline: none;
+}
+
+.vehicle-size-section select:focus {
+    background: rgba(0, 40, 80, 1);
+    color: #ffffff;
 }
 
 .sheet-tabs {
