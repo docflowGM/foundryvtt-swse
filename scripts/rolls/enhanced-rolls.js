@@ -296,6 +296,156 @@ export class SWSERoll {
 
     return {roll, message, success};
   }
+
+  /**
+   * Roll a combat action check against a DC
+   * @param {Actor} actor - The actor performing the action
+   * @param {string} skillKey - The skill to roll (e.g., 'acrobatics', 'deception')
+   * @param {Object} actionData - The combat action data including name, DC, outcome
+   * @param {Object} options - Additional options
+   * @returns {Object} {roll, message, success}
+   */
+  static async rollCombatActionCheck(actor, skillKey, actionData, options = {}) {
+    const skill = actor.system.skills[skillKey];
+
+    if (!skill) {
+      ui.notifications.warn(`Skill ${skillKey} not found on actor`);
+      return;
+    }
+
+    // Check if skill requires training
+    if (skill.requiresTraining && !skill.trained) {
+      ui.notifications.warn(`${this._getSkillDisplayName(skillKey)} requires training to use`);
+      return;
+    }
+
+    const rollData = actor.getRollData();
+    const dc = actionData.dc?.value || 10;
+    const dcType = actionData.dc?.type || 'flat';
+
+    // Only roll for flat DCs - expressions and opposed checks are handled differently
+    if (dcType !== 'flat') {
+      ui.notifications.info(`${actionData.name} uses ${dcType} DC - see action description for details`);
+      return;
+    }
+
+    // Build formula
+    let formula = '1d20';
+    let parts = [];
+
+    // Add skill total (includes everything)
+    formula += ` + ${skill.total}`;
+
+    // Build breakdown
+    const halfLevel = Math.floor(actor.system.level / 2);
+    parts.push(`½ Level +${halfLevel}`);
+
+    if (skill.trained) {
+      parts.push('Trained +5');
+    }
+
+    if (skill.focus > 0) {
+      parts.push(`Focus +${skill.focus * 5}`);
+    }
+
+    const abilityMod = rollData[skill.ability];
+    parts.push(`${skill.ability.toUpperCase()} ${abilityMod >= 0 ? '+' : ''}${abilityMod}`);
+
+    if (rollData.conditionPenalty) {
+      parts.push(`Condition ${rollData.conditionPenalty}`);
+    }
+
+    const roll = new Roll(formula, rollData);
+    await roll.evaluate({async: true});
+
+    const success = roll.total >= dc;
+    const d20Result = roll.terms[0].results[0].result;
+
+    // Build message content
+    const messageContent = `
+      <div class="swse-combat-action-roll ${success ? 'success' : 'failure'}">
+        <div class="roll-header">
+          <h3><i class="fas fa-fist-raised"></i> ${actionData.name}</h3>
+          <div class="skill-name">${this._getSkillDisplayName(skillKey)} Check</div>
+        </div>
+        <div class="roll-result">
+          <h4 class="dice-total">${roll.total}</h4>
+          <div class="dc-target">DC ${dc}</div>
+          <div class="result ${success ? 'success' : 'failure'}">
+            ${success ? '✓ SUCCESS' : '✗ FAILURE'}
+          </div>
+        </div>
+        <div class="roll-breakdown">
+          <div class="dice-rolls">d20: ${d20Result}</div>
+          <div class="modifiers">${parts.join(', ')}</div>
+        </div>
+        ${success && actionData.outcome ? `
+          <div class="action-outcome">
+            <strong>Outcome:</strong> ${actionData.outcome}
+          </div>
+        ` : ''}
+        ${actionData.when ? `
+          <div class="action-condition">
+            <em>${actionData.when}</em>
+          </div>
+        ` : ''}
+        <div class="action-type">
+          <span class="badge ${actionData.actionType}">${actionData.actionType} action</span>
+        </div>
+      </div>
+    `;
+
+    const message = await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({actor: actor}),
+      content: messageContent,
+      roll: roll,
+      sound: CONFIG.sounds.dice,
+      flags: {
+        swse: {
+          type: 'combat-action-check',
+          actionName: actionData.name,
+          skillKey: skillKey,
+          dc: dc,
+          success: success
+        }
+      }
+    });
+
+    if (game.dice3d) {
+      await game.dice3d.showForRoll(roll, game.user, true);
+    }
+
+    return {roll, message, success};
+  }
+
+  /**
+   * Get display name for a skill key
+   */
+  static _getSkillDisplayName(skillKey) {
+    const skillNames = {
+      acrobatics: 'Acrobatics',
+      climb: 'Climb',
+      deception: 'Deception',
+      endurance: 'Endurance',
+      gatherInformation: 'Gather Information',
+      initiative: 'Initiative',
+      jump: 'Jump',
+      knowledge: 'Knowledge',
+      mechanics: 'Mechanics',
+      perception: 'Perception',
+      persuasion: 'Persuasion',
+      pilot: 'Pilot',
+      ride: 'Ride',
+      stealth: 'Stealth',
+      survival: 'Survival',
+      swim: 'Swim',
+      treatInjury: 'Treat Injury',
+      useComputer: 'Use Computer',
+      useTheForce: 'Use the Force'
+    };
+
+    return skillNames[skillKey] || skillKey.charAt(0).toUpperCase() + skillKey.slice(1);
+  }
 }
 
 // Make available globally for macros and modules

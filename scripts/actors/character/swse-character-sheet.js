@@ -8,10 +8,12 @@ import { SWSEStore } from '../../apps/store.js';
 import { SWSEActorSheetBase } from '../../sheets/base-sheet.js';
 import { CombatActionsMapper } from '../../utils/combat-actions-mapper.js';
 import { FeatActionsMapper } from '../../utils/feat-actions-mapper.js';
+import { SWSERoll } from '../../rolls/enhanced-rolls.js';
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
   static _forcePowerDescriptions = null;
+  static _combatActionsData = null;
 
   /**
    * Load Force power descriptions
@@ -26,6 +28,22 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     } catch (error) {
       console.error('SWSE | Failed to load Force power descriptions:', error);
       return null;
+    }
+  }
+
+  /**
+   * Load combat actions data
+   */
+  static async loadCombatActionsData() {
+    if (this._combatActionsData) return this._combatActionsData;
+
+    try {
+      const response = await fetch('systems/swse/data/combat-actions.json');
+      this._combatActionsData = await response.json();
+      return this._combatActionsData;
+    } catch (error) {
+      console.error('SWSE | Failed to load combat actions data:', error);
+      return [];
     }
   }
 
@@ -304,16 +322,62 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
   /**
-   * Post combat action to chat
+   * Post combat action to chat (with optional DC check roll)
    */
   async _onPostCombatAction(event) {
     event.preventDefault();
     const actionName = event.currentTarget.dataset.actionName;
 
-    // Find the action data from the rendered context
+    // Load combat actions data
+    const combatActionsData = await SWSECharacterSheet.loadCombatActionsData();
+    const actionData = combatActionsData.find(a => a.name === actionName);
+
+    if (!actionData) {
+      ui.notifications.warn(`Combat action ${actionName} not found`);
+      return;
+    }
+
+    // Check if this action has rollable skills with flat DCs
+    const rollableSkills = actionData.relatedSkills?.filter(rs =>
+      rs.dc && rs.dc.type === 'flat' && rs.skill && rs.skill !== 'Attack' && rs.skill !== 'Attack Roll'
+    ) || [];
+
+    // If no rollable skills, just post description to chat
+    if (rollableSkills.length === 0) {
+      await this._postCombatActionDescription(actionName, actionData);
+      return;
+    }
+
+    // If only one rollable skill, roll it directly
+    if (rollableSkills.length === 1) {
+      const skillData = rollableSkills[0];
+      const skillKey = this._getSkillKey(skillData.skill);
+
+      if (skillKey) {
+        await SWSERoll.rollCombatActionCheck(this.actor, skillKey, {
+          name: actionName,
+          actionType: actionData.action.type,
+          dc: skillData.dc,
+          outcome: skillData.outcome,
+          when: skillData.when
+        });
+      } else {
+        await this._postCombatActionDescription(actionName, actionData);
+      }
+      return;
+    }
+
+    // Multiple rollable skills - show selection dialog
+    await this._showSkillSelectionDialog(actionName, actionData, rollableSkills);
+  }
+
+  /**
+   * Post combat action description to chat (without rolling)
+   */
+  async _postCombatActionDescription(actionName, actionData) {
     const actionRow = $(event.currentTarget).closest('.combat-action-row');
-    const actionType = actionRow.data('actionType');
-    const notes = actionRow.find('.action-notes').text();
+    const actionType = actionData.action.type;
+    const notes = actionData.notes;
 
     // Check for active talent enhancements
     const activeEnhancements = this.actor.getFlag('swse', 'activeEnhancements') || {};
@@ -348,6 +412,122 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       content: content,
       type: CONST.CHAT_MESSAGE_TYPES.OTHER
     });
+  }
+
+  /**
+   * Show dialog to select which skill to roll
+   */
+  async _showSkillSelectionDialog(actionName, actionData, rollableSkills) {
+    const skillOptions = rollableSkills.map(rs => {
+      const displayName = SWSERoll._getSkillDisplayName(this._getSkillKey(rs.skill));
+      const dcText = rs.dc ? `DC ${rs.dc.value}` : '';
+      return `
+        <div class="skill-option">
+          <input type="radio" name="skill-choice" value="${rs.skill}" id="skill-${rs.skill.replace(/\s+/g, '-')}">
+          <label for="skill-${rs.skill.replace(/\s+/g, '-')}">
+            <strong>${displayName}</strong> ${dcText}
+            ${rs.when ? `<br><em>${rs.when}</em>` : ''}
+          </label>
+        </div>
+      `;
+    }).join('');
+
+    const content = `
+      <div class="combat-action-skill-selection">
+        <p>Select which skill to use for <strong>${actionName}</strong>:</p>
+        ${skillOptions}
+      </div>
+    `;
+
+    new Dialog({
+      title: `${actionName} - Select Skill`,
+      content: content,
+      buttons: {
+        roll: {
+          icon: '<i class="fas fa-dice-d20"></i>',
+          label: 'Roll Check',
+          callback: async (html) => {
+            const selectedSkill = html.find('input[name="skill-choice"]:checked').val();
+            if (!selectedSkill) {
+              ui.notifications.warn('Please select a skill');
+              return;
+            }
+
+            const skillData = rollableSkills.find(rs => rs.skill === selectedSkill);
+            const skillKey = this._getSkillKey(selectedSkill);
+
+            if (skillKey) {
+              await SWSERoll.rollCombatActionCheck(this.actor, skillKey, {
+                name: actionName,
+                actionType: actionData.action.type,
+                dc: skillData.dc,
+                outcome: skillData.outcome,
+                when: skillData.when
+              });
+            }
+          }
+        },
+        description: {
+          icon: '<i class="fas fa-comment"></i>',
+          label: 'Just Post Description',
+          callback: async () => {
+            await this._postCombatActionDescription(actionName, actionData);
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: 'Cancel'
+        }
+      },
+      default: 'roll'
+    }).render(true);
+  }
+
+  /**
+   * Convert skill name to skill key
+   */
+  _getSkillKey(skillName) {
+    const skillMap = {
+      'Acrobatics': 'acrobatics',
+      'Climb': 'climb',
+      'Deception': 'deception',
+      'Endurance': 'endurance',
+      'Gather Information': 'gatherInformation',
+      'Initiative': 'initiative',
+      'Jump': 'jump',
+      'Knowledge': 'knowledge',
+      'Mechanics': 'mechanics',
+      'Perception': 'perception',
+      'Persuasion': 'persuasion',
+      'Pilot': 'pilot',
+      'Ride': 'ride',
+      'Stealth': 'stealth',
+      'Survival': 'survival',
+      'Swim': 'swim',
+      'Treat Injury': 'treatInjury',
+      'Use Computer': 'useComputer',
+      'Use the Force': 'useTheForce'
+    };
+
+    // Try direct match
+    if (skillMap[skillName]) {
+      return skillMap[skillName];
+    }
+
+    // Try lowercase key lookup
+    const lowerName = skillName.toLowerCase();
+    for (const [key, value] of Object.entries(skillMap)) {
+      if (key.toLowerCase() === lowerName) {
+        return value;
+      }
+    }
+
+    // Special cases
+    if (skillName.toLowerCase().includes('any relevant skill')) {
+      return null; // Will need user to select
+    }
+
+    return null;
   }
 
   /**
