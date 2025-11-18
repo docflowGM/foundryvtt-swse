@@ -77,5 +77,15 @@ export function registerSystemSettings() {
     default: ""
   });
 
+  // Item validation migration tracking setting
+  game.settings.register("swse", "itemValidationMigration", {
+    name: "Item Validation Migration Version",
+    hint: "Tracks the version of the item validation migration that has been run",
+    scope: "world",
+    config: false,
+    type: String,
+    default: ""
+  });
+
   console.log("SWSE | Settings registered");
 }
