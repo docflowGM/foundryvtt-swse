@@ -22,7 +22,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
       resizable: true,
       tabs: [{ navSelector: '.tabs', contentSelector: '.tab-content', initial: 'class' }],
       submitOnChange: false,
-      closeOnSubmit: false
+      closeOnSubmit: false,
+      left: null,  // Allow Foundry to center
+      top: null    // Allow Foundry to center
     });
   }
 

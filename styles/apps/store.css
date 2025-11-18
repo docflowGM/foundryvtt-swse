@@ -722,6 +722,43 @@
 }
 
 /* ================================================
+   Dropdown/Select Styling
+   ================================================ */
+.shop-category-select,
+.shop-availability-select {
+  background: rgba(0, 25, 45, 0.95);
+  border: 1px solid rgba(0, 170, 255, 0.5);
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.shop-category-select:hover,
+.shop-availability-select:hover {
+  background: rgba(0, 35, 65, 1);
+  border-color: rgba(0, 200, 255, 0.7);
+  box-shadow: 0 0 8px rgba(0, 150, 255, 0.3);
+}
+
+.shop-category-select:focus,
+.shop-availability-select:focus {
+  outline: none;
+  border-color: rgba(0, 200, 255, 0.9);
+  box-shadow: 0 0 12px rgba(0, 150, 255, 0.5);
+}
+
+/* Dropdown options */
+.shop-category-select option,
+.shop-availability-select option {
+  background: rgba(0, 20, 40, 0.98);
+  color: #ffffff;
+  padding: 0.5rem;
+}
+
+/* ================================================
    Responsive Design
    ================================================ */
 @media (max-width: 768px) {

@@ -2,19 +2,16 @@
   <div class="vehicle-mod-container">
 
     {{!-- Marl Skindar Holographic Narrator --}}
-    <div class="marl-narrator-panel">
-      <div class="marl-hologram">
-        <div class="hologram-flicker"></div>
-        <img src="systems/swse/assets/mentors/skindar.webp" alt="Marl Skindar" class="marl-portrait"/>
+    <div class="holo-banner marl-narrator-panel">
+      <div class="shopkeeper-portrait">
+        <img src="systems/swse/assets/mentors/skindar.webp" alt="Marl Skindar"/>
       </div>
-      <div class="marl-dialogue">
-        <div class="dialogue-header">
-          <span class="speaker-name">MARL SKINDAR</span>
-          <span class="speaker-title">Republic Intelligence</span>
+      <div class="holo-content">
+        <div class="holo-speaker">
+          <i class="fas fa-user-secret"></i>
+          <span>MARL SKINDAR - REPUBLIC INTELLIGENCE</span>
         </div>
-        <div class="dialogue-text">
-          {{{marlDialogue}}}
-        </div>
+        <div class="holo-message">{{{marlDialogue}}}</div>
       </div>
     </div>
 

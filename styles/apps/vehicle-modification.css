@@ -1,0 +1,96 @@
+/* ================================================
+   Vehicle Modification App Styles
+   ================================================ */
+
+.vehicle-modification-app {
+  background: rgba(0, 10, 20, 0.95);
+  color: #e0e0e0;
+}
+
+/* ================================================
+   Holographic Banner (for Marl Skindar dialogue)
+   ================================================ */
+.holo-banner {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(0, 150, 255, 0.1), rgba(0, 100, 200, 0.05));
+  border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+  margin-bottom: 0.5rem;
+}
+
+.shopkeeper-portrait {
+  flex-shrink: 0;
+}
+
+.shopkeeper-portrait img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 150, 255, 0.5);
+  box-shadow: 0 0 10px rgba(0, 150, 255, 0.3);
+}
+
+.holo-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.holo-speaker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: bold;
+  color: #00aaff;
+  font-size: 0.9rem;
+}
+
+.holo-message {
+  font-style: italic;
+  color: #cce6ff;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* ================================================
+   Holographic Button Styling
+   ================================================ */
+.holo-btn {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, rgba(0, 150, 255, 0.4), rgba(0, 100, 200, 0.3));
+  border: 1px solid rgba(0, 150, 255, 0.5);
+  border-radius: 3px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.holo-btn:hover {
+  background: linear-gradient(135deg, rgba(0, 180, 255, 0.5), rgba(0, 130, 230, 0.4));
+  border-color: rgba(0, 180, 255, 0.7);
+  box-shadow: 0 0 10px rgba(0, 150, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.holo-btn:active {
+  transform: translateY(0);
+}
+
+.holo-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.holo-btn:disabled:hover {
+  background: linear-gradient(135deg, rgba(0, 150, 255, 0.4), rgba(0, 100, 200, 0.3));
+  box-shadow: none;
+}

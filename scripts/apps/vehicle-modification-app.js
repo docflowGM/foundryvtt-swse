@@ -29,7 +29,9 @@ export class VehicleModificationApp extends Application {
         navSelector: '.tabs',
         contentSelector: '.content',
         initial: 'selection'
-      }]
+      }],
+      left: null,  // Allow Foundry to center
+      top: null    // Allow Foundry to center
     });
   }
 
