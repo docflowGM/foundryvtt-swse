@@ -2693,3 +2693,173 @@ img[loading="lazy"] {
 .swse-force-power-use .force-special p {
   margin: 4px 0;
 }
+
+/* ============================================
+   Racial/Species Traits Section
+   ============================================ */
+
+.racial-traits {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(170, 0, 255, 0.08) 0%, rgba(0, 170, 255, 0.08) 100%);
+  border: 2px solid rgba(170, 0, 255, 0.3);
+  border-radius: 10px;
+}
+
+.racial-traits .section-header {
+  color: #cc88ff;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.racial-traits .section-header .source-tag {
+  font-size: 0.85rem;
+  color: #9ed0ff;
+  font-weight: normal;
+  opacity: 0.8;
+}
+
+.racial-traits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.75rem;
+}
+
+.trait-category {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid rgba(170, 0, 255, 0.2);
+}
+
+.trait-category h4 {
+  margin: 0 0 0.5rem 0;
+  color: #aa88ff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-bottom: 1px solid rgba(170, 0, 255, 0.2);
+  padding-bottom: 0.4rem;
+}
+
+.trait-category h4 i {
+  color: #cc88ff;
+  font-size: 0.9rem;
+}
+
+.trait-item {
+  color: #d0d0ff;
+  font-size: 0.9rem;
+  margin: 0.4rem 0;
+  padding: 0.3rem 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
+.trait-item strong {
+  color: #e0e0ff;
+  font-weight: 600;
+}
+
+/* Category-specific colors */
+.size-category {
+  border-color: rgba(170, 0, 255, 0.4);
+}
+
+.size-category h4 {
+  color: #cc88ff;
+}
+
+.size-modifier {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: #aa88ff;
+  font-style: italic;
+}
+
+.vision-category {
+  border-color: rgba(0, 200, 255, 0.4);
+}
+
+.vision-category h4 {
+  color: #00ccff;
+}
+
+.weapons-category {
+  border-color: rgba(255, 100, 100, 0.4);
+}
+
+.weapons-category h4 {
+  color: #ff8888;
+}
+
+.movement-category {
+  border-color: rgba(0, 255, 150, 0.4);
+}
+
+.movement-category h4 {
+  color: #00ff88;
+}
+
+.skills-category {
+  border-color: rgba(255, 200, 0, 0.4);
+}
+
+.skills-category h4 {
+  color: #ffcc00;
+}
+
+.special-category {
+  border-color: rgba(255, 170, 0, 0.4);
+}
+
+.special-category h4 {
+  color: #ffaa00;
+}
+
+.combat-category {
+  border-color: rgba(220, 20, 60, 0.4);
+}
+
+.combat-category h4 {
+  color: #ff4444;
+}
+
+.environmental-category,
+.social-category {
+  border-color: rgba(100, 220, 255, 0.4);
+}
+
+.environmental-category h4,
+.social-category h4 {
+  color: #66ddff;
+}
+
+.tech-category {
+  border-color: rgba(50, 255, 50, 0.4);
+}
+
+.tech-category h4 {
+  color: #44ff44;
+}
+
+.force-category {
+  border-color: rgba(0, 170, 255, 0.5);
+}
+
+.force-category h4 {
+  color: #00aaff;
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
+  .racial-traits-grid {
+    grid-template-columns: 1fr;
+  }
+}

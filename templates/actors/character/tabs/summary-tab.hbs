@@ -94,6 +94,160 @@
  </div>
  </section>
 
+ {{!-- Racial/Species Traits --}}
+ {{#unless system.isDroid}}
+ {{#if system.race}}
+ <section class="racial-traits">
+ <h3 class="section-header">
+ <i class="fas fa-dna"></i> Species Traits: {{system.race}}
+ {{#if system.speciesSource}}
+ <span class="source-tag">({{system.speciesSource}})</span>
+ {{/if}}
+ </h3>
+
+ <div class="racial-traits-grid">
+ {{!-- Size Information --}}
+ {{#if system.size}}
+ <div class="trait-category size-category">
+ <h4><i class="fas fa-ruler-combined"></i> Size</h4>
+ <div class="trait-item">
+ <strong>{{system.size}}</strong>
+ {{#if (eq system.size "Small")}}
+ <span class="size-modifier">+1 Reflex Defense, +5 Stealth</span>
+ {{else if (eq system.size "Large")}}
+ <span class="size-modifier">-1 Reflex Defense, -5 Stealth</span>
+ {{/if}}
+ </div>
+ </div>
+ {{/if}}
+
+ {{!-- Vision Traits --}}
+ {{#if system.visionTraits}}
+ {{#if (gt system.visionTraits.length 0)}}
+ <div class="trait-category vision-category">
+ <h4><i class="fas fa-eye"></i> Vision & Senses</h4>
+ {{#each system.visionTraits as |trait|}}
+ <div class="trait-item">{{trait}}</div>
+ {{/each}}
+ </div>
+ {{/if}}
+ {{/if}}
+
+ {{!-- Natural Weapons --}}
+ {{#if system.naturalWeapons}}
+ {{#if (gt system.naturalWeapons.length 0)}}
+ <div class="trait-category weapons-category">
+ <h4><i class="fas fa-paw"></i> Natural Weapons</h4>
+ {{#each system.naturalWeapons as |weapon|}}
+ <div class="trait-item">
+ <strong>{{weapon.name}}:</strong> {{weapon.damage}} {{weapon.type}}
+ </div>
+ {{/each}}
+ </div>
+ {{/if}}
+ {{/if}}
+
+ {{!-- Movement Traits --}}
+ {{#if system.movementTraits}}
+ {{#if (gt system.movementTraits.length 0)}}
+ <div class="trait-category movement-category">
+ <h4><i class="fas fa-running"></i> Movement</h4>
+ {{#each system.movementTraits as |trait|}}
+ <div class="trait-item">{{trait}}</div>
+ {{/each}}
+ </div>
+ {{/if}}
+ {{/if}}
+
+ {{!-- Skill Bonuses --}}
+ {{#if system.racialSkillBonuses}}
+ {{#if (gt system.racialSkillBonuses.length 0)}}
+ <div class="trait-category skills-category">
+ <h4><i class="fas fa-graduation-cap"></i> Skill Bonuses</h4>
+ {{#each system.racialSkillBonuses as |bonus|}}
+ <div class="trait-item">{{bonus}}</div>
+ {{/each}}
+ </div>
+ {{/if}}
+ {{/if}}
+
+ {{!-- Special Abilities --}}
+ {{#if system.specialAbilities}}
+ {{#if (gt system.specialAbilities.length 0)}}
+ <div class="trait-category special-category">
+ <h4><i class="fas fa-star"></i> Special Abilities</h4>
+ {{#each system.specialAbilities as |ability|}}
+ <div class="trait-item">{{ability}}</div>
+ {{/each}}
+ </div>
+ {{/if}}
+ {{/if}}
+
+ {{!-- Combat Traits --}}
+ {{#if system.combatTraits}}
+ {{#if (or (gt system.combatTraits.naturalArmor 0) (gt system.combatTraits.otherTraits.length 0))}}
+ <div class="trait-category combat-category">
+ <h4><i class="fas fa-shield-alt"></i> Combat Traits</h4>
+ {{#if (gt system.combatTraits.naturalArmor 0)}}
+ <div class="trait-item">Natural Armor: +{{system.combatTraits.naturalArmor}}</div>
+ {{/if}}
+ {{#each system.combatTraits.otherTraits as |trait|}}
+ <div class="trait-item">{{trait}}</div>
+ {{/each}}
+ </div>
+ {{/if}}
+ {{/if}}
+
+ {{!-- Environmental & Social Traits --}}
+ {{#if system.environmentalTraits}}
+ {{#if (gt system.environmentalTraits.length 0)}}
+ <div class="trait-category environmental-category">
+ <h4><i class="fas fa-temperature-high"></i> Environmental</h4>
+ {{#each system.environmentalTraits as |trait|}}
+ <div class="trait-item">{{trait}}</div>
+ {{/each}}
+ </div>
+ {{/if}}
+ {{/if}}
+
+ {{#if system.socialTraits}}
+ {{#if (gt system.socialTraits.length 0)}}
+ <div class="trait-category social-category">
+ <h4><i class="fas fa-comments"></i> Social</h4>
+ {{#each system.socialTraits as |trait|}}
+ <div class="trait-item">{{trait}}</div>
+ {{/each}}
+ </div>
+ {{/if}}
+ {{/if}}
+
+ {{!-- Tech & Force Traits --}}
+ {{#if system.techTraits}}
+ {{#if (gt system.techTraits.length 0)}}
+ <div class="trait-category tech-category">
+ <h4><i class="fas fa-microchip"></i> Technology</h4>
+ {{#each system.techTraits as |trait|}}
+ <div class="trait-item">{{trait}}</div>
+ {{/each}}
+ </div>
+ {{/if}}
+ {{/if}}
+
+ {{#if system.forceTraits}}
+ {{#if (gt system.forceTraits.length 0)}}
+ <div class="trait-category force-category">
+ <h4><i class="fas fa-hand-sparkles"></i> Force</h4>
+ {{#each system.forceTraits as |trait|}}
+ <div class="trait-item">{{trait}}</div>
+ {{/each}}
+ </div>
+ {{/if}}
+ {{/if}}
+ </div>
+ </section>
+ {{/if}}
+ {{/unless}}
+
  {{!-- Droid Immunities --}}
  {{#if system.isDroid}}
  <section class="droid-immunities">
