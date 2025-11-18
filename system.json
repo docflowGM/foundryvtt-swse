@@ -184,6 +184,27 @@
       "system": "swse"
     },
     {
+      "name": "forcetechniques",
+      "label": "SWSE.Compendium.ForceTechniques",
+      "path": "packs/forcetechniques.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "forcesecrets",
+      "label": "SWSE.Compendium.ForceSecrets",
+      "path": "packs/forcesecrets.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "lightsaberformpowers",
+      "label": "SWSE.Compendium.LightsaberFormPowers",
+      "path": "packs/lightsaberformpowers.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
       "name": "skills",
       "label": "SWSE.Compendium.Skills",
       "path": "packs/skills.db",

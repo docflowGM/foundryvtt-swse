@@ -1,0 +1,419 @@
+{
+  "description": "Force Techniques represent a deeper understanding of The Force and, like martial skills, usually come with years of practice. A few gifted or devoted Force-users learn to master them more quickly. In general, Force Techniques are only available to characters with levels in certain Force-using Prestige Classes (such as Force Adept, Jedi Knight, and Sith Apprentice).",
+  "notes": "Whenever you gain access to a new Force Technique, select it from the list below. Once selected, a Force Technique cannot be changed.",
+  "techniques": [
+    {
+      "name": "Force Point Recovery",
+      "source": "Core",
+      "description": "At the end of an encounter, you automatically recover 1 Force Point spent during the encounter.",
+      "prerequisites": []
+    },
+    {
+      "name": "Force Power Mastery",
+      "source": "Core",
+      "description": "Choose a single Force Power. You may Take 10 on Use the Force checks to activate this Force Power even when distracted or threatened.",
+      "special": "You may select this Force Technique multiple times; each time you select this Force Technique, it applies to a different Force Power.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Trance",
+      "source": "Core",
+      "description": "Each hour you remain in a Force Trance, you regain a number of Hit Points equal to 2 x your Character Level.",
+      "relatedPower": "Force Trance",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Move Light Object",
+      "source": "Core",
+      "description": "You may make a Use the Force check to Move Light Object as a Swift Action instead of a Move Action. Using the light object as a projectile weapon requires a Move Action (instead of a Standard Action).",
+      "relatedPower": "Move Light Object",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Sense Force",
+      "source": "Core",
+      "description": "You may use the Sense Force ability of the Use the Force Skill as a Move Action rather than a Full-Round Action.",
+      "relatedPower": "Sense Force",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Sense Surroundings",
+      "source": "Core",
+      "description": "You may use the Sense Surroundings application of the Use the Force Skill as a Free Action rather than a Swift Action.",
+      "relatedPower": "Sense Surroundings",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Telepathy",
+      "source": "Core",
+      "description": "Whenever you use the Telepathy ability of the Use the Force Skill, you can reroll your Use the Force check, keeping the better of the two results.",
+      "relatedPower": "Telepathy",
+      "prerequisites": []
+    },
+    {
+      "name": "Dominate Mind",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "When using Mind Trick, if you exceed your target's Will Defense by 10 or more points, you can choose what your target does with its Standard Action on its next turn.",
+      "relatedPower": "Mind Trick",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Energy Resistance",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "When you activate Energy Resistance, you can choose to have it affect one of your allies within 6 squares of you instead.",
+      "relatedPower": "Energy Resistance",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Slam",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "When you use the Force Slam Force Power, you can change the time it takes to activate to a Full-Round Action in order to target all targets within a 2-square radius originating in your square.",
+      "relatedPower": "Force Slam",
+      "special": "Additionally, you can spend a Force Point to increase the area to a 4-square radius Burst that originates from your square.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Stun",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "Your successful Force Stun also temporarily Immobilizes the target for one round.",
+      "relatedPower": "Force Stun",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Ionize",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "When you use the Ionize Force Power, you can spend a Force Point to have the target take full Ion damage (instead of halving the Ion damage after comparing it to the target's Damage Threshold, as normal).",
+      "relatedPower": "Ionize",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Kinetic Combat",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "You can wield up to three Weapons simultaneously using the Kinetic Combat Force Power, though moving and attacking with one of the Weapons is still a Standard Action.",
+      "relatedPower": "Kinetic Combat",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Resist Force",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "When you activate Resist Force, you can choose to have it affect one of your allies within 6 squares of you instead.",
+      "relatedPower": "Resist Force",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Valor",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "When you activate Valor, you gain the benefits of that Force Power as well.",
+      "relatedPower": "Valor",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Vital Transfer",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "You can use the Vital Transfer Force Power against a target within 6 squares, and within your line of sight.",
+      "relatedPower": "Vital Transfer",
+      "prerequisites": []
+    },
+    {
+      "name": "Language Absorption",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "You can use telepathy to forcibly learn a language from another creature. If the target is unwilling, you must succeed a Use the Force check against the target's Will Defense, as with the Telepathy aspect of the Use the Force Skill. You retain the ability to speak and understand this language for 24 hours.",
+      "relatedPower": "Telepathy",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Battle Strike",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "When you use the Battle Strike Force Power, you can apply the bonus to attack and damage rolls for all attacks made during a Full Attack Action.",
+      "relatedPower": "Battle Strike",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Dark Rage",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "When you use the Dark Rage Force Power, you ignore the restriction that prevents you from using Skills or performing tasks that require patience and concentration.",
+      "relatedPower": "Dark Rage",
+      "special": "Additionally, you can always activate Dark Rage in the Surprise Round, even if you are considered Surprised.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Disarm",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "When you use the Force Disarm Force Power, you can change the time it takes to activate it to a Full-Round Action; if you do so, your opponent does not gain the normal +10 bonus to Reflex Defense normally associated with Disarming.",
+      "relatedPower": "Force Disarm",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Thrust",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "When you use the Force Thrust Force Power, you can change the time it takes to activate it to a Full-Round Action and spend a Force Point in order to target all creatures in a 6-square cone that originates from your square.",
+      "relatedPower": "Force Thrust",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Grip",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "When you use the Force Grip Force Power, you can spend a Force Point as a Free Action to maintain the Force Grip for 1 additional round without the need to concentrate.",
+      "relatedPower": "Force Grip",
+      "special": "However, after this additional round you may not resume concentrating on the Force Grip.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Lightning",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "When you use the Force Lightning Force Power, you can choose to change the time it takes to activate to a Full-Round Action. If you do, your target must make a Strength check. If your Use the Force check result beats the target's Strength check, you push the target back 1 square plus 1 additional square for every 5 points by which you exceed the target's check result. If you push the target into a larger object, the target takes 1d6 points of damage.",
+      "relatedPower": "Force Lightning",
+      "special": "The target adds its Base Attack Bonus and size modifier to its Strength check: Colossal, +20; Gargantuan, +15; Huge, +10; Large, +5; Medium, +0; Small, -5; Tiny, -10; Diminutive, -15; Fine, -20. In addition, the target gets a +5 stability bonus if it has more than two legs or is otherwise exceptionally stable.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Mind Trick",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "When you use the Mind Trick Force Power, you can change the time it takes to activate it to a Full-Round Action in order to target all creatures in a 6-square Cone that originates from your square.",
+      "relatedPower": "Mind Trick",
+      "special": "Additionally, you can spend a Force Point to increase the area to a 12-square Cone that originates from your square.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Rebuke",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "When an ally within 12 squares and within line of sight of you is the target of a Force Power, you can use the Rebuke Force Power as though you were the target of that Force Power instead.",
+      "relatedPower": "Rebuke",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Repulse",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "When you use the Repulse Force Power, you can change the time it takes to activate it to a Full-Round Action in order to target all creatures in a 2-square radius Burst that originates from your square.",
+      "relatedPower": "Repulse",
+      "special": "Additionally, you can spend a Force Point to increase the area to a 4-square radius Burst that originates from your square.",
+      "prerequisites": []
+    },
+    {
+      "name": "Advanced Vital Transfer",
+      "source": "Clone Wars Campaign Guide",
+      "description": "When you use the Vital Transfer Force Power, you can spend a Destiny Point to fully heal the target of all damage and remove all of the target's debilitating Conditions.",
+      "relatedPower": "Vital Transfer",
+      "prerequisites": ["Improved Vital Transfer"]
+    },
+    {
+      "name": "Improved Cloak",
+      "source": "Clone Wars Campaign Guide",
+      "description": "You can maintain your Cloak Force Power as a Move Action instead of a Standard Action.",
+      "relatedPower": "Cloak",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Levitate",
+      "source": "Clone Wars Campaign Guide",
+      "description": "If you are moved into a pit or off another elevated surface involuntarily, such as being the target of a Force Thrust or Bantha Rush, you can spend a Force Point to activate the Levitate Force Power as a Reaction.",
+      "relatedPower": "Levitate",
+      "special": "If you do so, you end your forced movement in the last square before the edge of the precipice.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Malacia",
+      "source": "Clone Wars Campaign Guide",
+      "description": "You can maintain the Damage Threshold penalty of the Malacia Force Power as a Swift Action, instead of as a Standard Action.",
+      "relatedPower": "Malacia",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Phase",
+      "source": "Clone Wars Campaign Guide",
+      "description": "When you use the Phase Force Power, you can end a single Move Action inside an occupied square, but you must still end your turn in a legal, unoccupied square.",
+      "relatedPower": "Phase",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Rend",
+      "source": "Clone Wars Campaign Guide",
+      "description": "The range of your Rend Force Power increases to 12 squares. When using Rend on an object or creature, you can ignore the object's or creature's Damage Reduction.",
+      "relatedPower": "Rend",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Shatterpoint",
+      "source": "Clone Wars Campaign Guide",
+      "description": "When you move a target down the Condition Track with an attack benefiting from the Shatterpoint Force Power, you can spend a Force Point to make the target's Condition Persistent.",
+      "relatedPower": "Shatterpoint",
+      "special": "This Persistent Condition can only be removed if the target receives Surgery (for living beings) or Repairs (for Droids, objects, and Vehicles).",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Technometry",
+      "source": "Clone Wars Campaign Guide",
+      "description": "When you use the Technometry Force Power, you can change the time it takes to activate to a Full-Round Action and target all Droids in a 6-square Cone that originates from your square.",
+      "relatedPower": "Technometry",
+      "prerequisites": []
+    },
+    {
+      "name": "Detoxify Poison",
+      "source": "Legacy Era Campaign Guide",
+      "description": "You can use the Vital Transfer Force Power to treat a Poison affecting the target. Instead of the normal effects of the Vital Transfer Force Power, you can compare the result of your Use the Force check to the Poison's DC. If you equal or exceed the Poison's DC, you detoxify the Poison as per the use of the Treat Injury Skill.",
+      "relatedPower": "Vital Transfer",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Ballistakinesis",
+      "source": "Legacy Era Campaign Guide",
+      "description": "When you use Ballistakinesis, you may spend a Force Point to target a 3x3 square area instead of a 2x2 square area.",
+      "relatedPower": "Ballistakinesis",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Dark Transfer",
+      "source": "Legacy Era Campaign Guide",
+      "description": "When you use Dark Transfer, you may spend a Force Point to Revivify a creature that died since the end of your last turn. You must succeed on a DC 25 Use the Force check.",
+      "relatedPower": "Dark Transfer",
+      "special": "If the check succeeds, the target is unconscious instead of dead but does not heal any Hit Points from the use of Dark Transfer.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Detonate",
+      "source": "Legacy Era Campaign Guide",
+      "description": "When you use the Detonate Force Power, you also damage enemies near the targeted object. Compare the result of your Use the Force check to the Reflex Defense of all enemies within 2 squares of the object. If your check equals or exceeds the enemy's Reflex Defense, the enemy takes slashing damage equal to one-half the damage sustained by the object. This is an Area Attack.",
+      "relatedPower": "Detonate",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Enlighten",
+      "source": "Legacy Era Campaign Guide",
+      "description": "When you use the Enlighten Force Power, you may spend a Force Point to affect one additional ally.",
+      "relatedPower": "Enlighten",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Lightning Burst",
+      "source": "Legacy Era Campaign Guide",
+      "description": "When you use the Lightning Burst Force Power, also compare the result of your Use the Force check to each target's Fortitude Defense. If your check result equals or exceeds both a target's Reflex Defense and its Fortitude Defense, you push the target 1 square away from you and knock the target Prone. This movement does not provoke Attacks of Opportunity.",
+      "relatedPower": "Lightning Burst",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Obscure",
+      "source": "Legacy Era Campaign Guide",
+      "description": "When you use the Obscure Force Power, you may spend a Force Point to gain a +5 Force bonus on your Use the Force check.",
+      "relatedPower": "Obscure",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Shield",
+      "source": "Legacy Era Campaign Guide",
+      "description": "When you use the Force Shield Force Power, you can spend a Force Point to expand the radius of the Force Shield so that it protects you and all allies adjacent to you.",
+      "relatedPower": "Force Shield",
+      "special": "Alternatively, you can spend a Destiny Point to have the Force Shield protect a Vehicle you occupy, regardless of the Vehicle's size. If the Vehicle already has a Shield Rating, the SR of the Vehicle and the SR granted by this Force Power do not stack.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Stagger",
+      "source": "Legacy Era Campaign Guide",
+      "description": "When you use the Stagger Force Power, you may spend a Force Point to push your target 2 squares away from you, instead of just 1 square.",
+      "relatedPower": "Stagger",
+      "prerequisites": []
+    },
+    {
+      "name": "Cure Disease",
+      "source": "Jedi Academy Training Manual",
+      "description": "When you use the Vital Transfer Force Power, if your Use the Force check equals or exceeds the Treat Injury DC of a Disease currently ailing the target, you can spend a Force Point to cure that Disease.",
+      "relatedPower": "Vital Transfer",
+      "prerequisites": []
+    },
+    {
+      "name": "Extended Blind",
+      "source": "Jedi Academy Training Manual",
+      "description": "The base range of your Blind Force Power increases to 18 squares (instead of 12 squares).",
+      "relatedPower": "Blind",
+      "prerequisites": []
+    },
+    {
+      "name": "Extended Force Disarm",
+      "source": "Jedi Academy Training Manual",
+      "description": "The base range of your Force Disarm Force Power increases to 18 squares (instead of 12 squares).",
+      "relatedPower": "Force Disarm",
+      "prerequisites": []
+    },
+    {
+      "name": "Extended Force Grip",
+      "source": "Jedi Academy Training Manual",
+      "description": "The base range of your Force Grip Force Power increases to 18 squares (instead of 12 squares).",
+      "relatedPower": "Force Grip",
+      "prerequisites": []
+    },
+    {
+      "name": "Extended Force Thrust",
+      "source": "Jedi Academy Training Manual",
+      "description": "The base range of your Force Thrust Force Power increases to 18 squares (instead of 12 squares).",
+      "relatedPower": "Force Thrust",
+      "prerequisites": []
+    },
+    {
+      "name": "Extended Move Object",
+      "source": "Jedi Academy Training Manual",
+      "description": "The base range of your Move Object Force Power increases to 18 squares (instead of 12 squares).",
+      "relatedPower": "Move Object",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Convection",
+      "source": "Jedi Academy Training Manual",
+      "description": "When your target takes Fire damage from Convection, the Fire attacks the target's Fortitude Defense using your Base Attack Bonus instead of the normal +5 bonus.",
+      "relatedPower": "Convection",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Crucitorn",
+      "source": "Jedi Academy Training Manual",
+      "description": "If you use Crucitorn and the attack or Force Power still deals more damage than your Damage Threshold, you do not expend this use of Crucitorn, and it remains in your Force Power Suite.",
+      "relatedPower": "Crucitorn",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Cryokinesis",
+      "source": "Jedi Academy Training Manual",
+      "description": "You can use Cryokinesis on occupied Vehicles within range; however, the Vehicle only moves down the Condition Track if your Use the Force check also exceeds the Vehicle's Fortitude Defense.",
+      "relatedPower": "Cryokinesis",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Fold Space",
+      "source": "Jedi Academy Training Manual",
+      "description": "Whenever you use Fold Space, you can spend a Force Point to move the object anywhere within your line of sight.",
+      "relatedPower": "Fold Space",
+      "special": "Alternatively, you can spend a Destiny Point to move the object anywhere within the same star system.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Light",
+      "source": "Jedi Academy Training Manual",
+      "description": "You can spend a Force Point to cause your Force Light to blind those it harms; any creature that takes damage from Force Light grants Concealment to all other targets until the end of its next turn.",
+      "relatedPower": "Force Light",
+      "special": "You can spend a Destiny Point to change this to Total Concealment instead.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Storm",
+      "source": "Jedi Academy Training Manual",
+      "description": "You can spend a Force Point when you activate Force Storm to fill the storm with Force Lightning. When you activate the Force Storm, and again whenever you spend a Standard Action to maintain the Force Power, compare the results of your Use the Force check to the Reflex Defense of one target within the Force Storm's area. If the Use the Force check result equals or exceeds the target's Reflex Defense, the target takes 3d6 points of Force damage.",
+      "relatedPower": "Force Storm",
+      "special": "You can spend a Destiny Point to increase the damage to 6d6 points of Force damage.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Plant Surge",
+      "source": "Jedi Academy Training Manual",
+      "description": "You can spend a Force Point to have Plant Surge target all enemies in a 5x5 square area; at least one square must be within the Force Power's range.",
+      "relatedPower": "Plant Surge",
+      "special": "Alternatively, you can spend a Destiny Point to target all enemies in a 10x10 square area.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Thought Bomb",
+      "source": "Jedi Academy Training Manual",
+      "description": "You can spend a Force Point to have Thought Bomb target all enemies within 5 squares of you.",
+      "relatedPower": "Thought Bomb",
+      "special": "Alternatively, you can spend a Destiny Point to target all enemies within your line of sight.",
+      "prerequisites": []
+    }
+  ]
+}

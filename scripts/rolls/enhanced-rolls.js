@@ -239,14 +239,102 @@ export class SWSERoll {
   }
 
   /**
-   * Roll Use the Force check
+   * Roll Use the Force check with full flavor text and descriptions
    */
   static async rollUseTheForce(actor, power, options = {}) {
     const skill = actor.system.skills.useTheForce;
 
     if (!skill || !skill.trained) {
-      ui.notifications.warn(game.i18n.localize('SWSE.Notifications.Rolls.UseForceRequiresTraining'));
+      ui.notifications.warn('Use the Force requires training to use');
       return;
+    }
+
+    // Check if power is already spent
+    if (power.system.spent) {
+      ui.notifications.warn(`${power.name} has already been used. Rest or regain Force Powers to use it again.`);
+      return;
+    }
+
+    // Determine if this is a dark side or light side power
+    const isDarkSide = power.system.tags?.includes('dark-side') || power.system.discipline === 'dark-side';
+    const isLightSide = power.system.tags?.includes('light-side') || power.system.discipline === 'light-side';
+    const darkSideScore = actor.system.darkSideScore || 0;
+
+    // Check Force Point restrictions based on descriptors
+    const canUseForcePointOnCheck = !(isDarkSide || (isLightSide && darkSideScore >= 1));
+
+    // Check if power has optional Force Point enhancement
+    let spendForcePoint = false;
+    let forcePointUsed = false;
+
+    if (power.system.forcePointEffect && power.system.forcePointEffect.trim() !== '') {
+      // Show dialog asking if player wants to spend Force Point
+      const fpAvailable = actor.system.forcePoints?.value || 0;
+
+      if (fpAvailable > 0) {
+        spendForcePoint = await new Promise((resolve) => {
+          new Dialog({
+            title: `${power.name} - Force Point Enhancement`,
+            content: `
+              <div class="force-point-dialog">
+                <p><strong>Force Point Enhancement Available:</strong></p>
+                <div class="fp-effect">${power.system.forcePointEffect}</div>
+                <p style="margin-top: 1rem;"><strong>Force Points:</strong> ${fpAvailable}/${actor.system.forcePoints.max}</p>
+                <p>Spend 1 Force Point for this enhanced effect?</p>
+              </div>
+            `,
+            buttons: {
+              yes: {
+                icon: '<i class="fas fa-hand-sparkles"></i>',
+                label: 'Spend Force Point',
+                callback: () => resolve(true)
+              },
+              no: {
+                icon: '<i class="fas fa-times"></i>',
+                label: 'No, Use Normally',
+                callback: () => resolve(false)
+              }
+            },
+            default: 'yes',
+            close: () => resolve(false)
+          }).render(true);
+        });
+
+        if (spendForcePoint) {
+          await actor.spendForcePoint(`enhancing ${power.name}`);
+          forcePointUsed = true;
+        }
+      }
+    }
+
+    // Load Force power descriptions for flavor text
+    let descriptions = null;
+    try {
+      const response = await fetch('systems/swse/data/force-power-descriptions.json');
+      descriptions = await response.json();
+    } catch (error) {
+      console.warn('SWSE | Could not load Force power descriptions:', error);
+    }
+
+    // Get random intro and manifestation based on discipline
+    const discipline = power.system.discipline || 'telekinetic';
+    const powerName = power.name;
+
+    let intro = '';
+    let manifestation = '';
+
+    // Check if power has specific description
+    if (descriptions?.specific[powerName]) {
+      intro = descriptions.specific[powerName].description;
+      manifestation = descriptions.specific[powerName].manifestation;
+    } else if (descriptions?.disciplines[discipline]) {
+      // Use discipline-based description
+      const disciplineData = descriptions.disciplines[discipline];
+      const introOptions = disciplineData.intro || [];
+      const manifestOptions = disciplineData.manifestation || [];
+
+      intro = introOptions[Math.floor(Math.random() * introOptions.length)] || '';
+      manifestation = manifestOptions[Math.floor(Math.random() * manifestOptions.length)] || '';
     }
 
     const dc = power.system.useTheForce || 15;
@@ -256,25 +344,116 @@ export class SWSERoll {
     await roll.evaluate({async: true});
 
     const success = roll.total >= dc;
+    const d20Result = roll.terms[0].results[0].result;
+    const isNatural20 = d20Result === 20;
+
+    // Build DC chart display with achieved effects highlighted
+    let dcChartHtml = '';
+    let achievedEffects = [];
+    if (power.system.dcChart && power.system.dcChart.length > 0) {
+      dcChartHtml = '<div class="force-dc-chart"><strong>Use the Force DC Chart:</strong><ul>';
+
+      // Sort DCs to show them in order
+      const sortedDCs = [...power.system.dcChart].sort((a, b) => a.dc - b.dc);
+
+      for (const dcEntry of sortedDCs) {
+        const achieved = roll.total >= dcEntry.dc;
+        const cssClass = achieved ? 'dc-achieved' : 'dc-not-achieved';
+        const icon = achieved ? '✓' : '✗';
+
+        dcChartHtml += `<li class="${cssClass}"><strong>${icon} DC ${dcEntry.dc}:</strong> ${dcEntry.effect || dcEntry.description}</li>`;
+
+        if (achieved) {
+          achievedEffects.push({
+            dc: dcEntry.dc,
+            effect: dcEntry.effect || dcEntry.description
+          });
+        }
+      }
+      dcChartHtml += '</ul></div>';
+    }
+
+    // Build special/warning text
+    let specialHtml = '';
+    if (power.system.special) {
+      specialHtml = `<div class="force-special">${power.system.special}</div>`;
+    }
 
     const messageContent = `
-      <div class="swse-force-roll ${success ? 'success' : 'failure'}">
-        <div class="roll-header">
-          <img src="${power.img}" alt="${power.name}">
-          <h3>Use the Force: ${power.name}</h3>
-        </div>
-        <div class="roll-result">
-          <h4 class="dice-total">${roll.total}</h4>
-          <div class="dc-target">DC ${dc}</div>
-          <div class="result ${success ? 'success' : 'failure'}">
-            ${success ? '✓ SUCCESS' : '✗ FAILURE'}
-          </div>
-        </div>
-        ${success ? `
-          <div class="power-effect">
-            ${power.system.effect || ''}
+      <div class="swse-force-power-use ${isDarkSide ? 'dark-side-power' : ''} ${success ? 'success' : 'failure'}">
+        <h3><i class="fas fa-hand-sparkles"></i> ${actor.name} uses ${powerName}</h3>
+
+        ${intro ? `
+          <div class="force-intro">
+            <em>${actor.name} ${intro}</em>
           </div>
         ` : ''}
+
+        <div class="roll-section">
+          <div class="roll-header">
+            <h4>Use the Force Check</h4>
+          </div>
+          <div class="roll-result">
+            <div class="dice-rolls">d20: ${d20Result}</div>
+            <h4 class="dice-total">${roll.total}</h4>
+            <div class="dc-target">DC ${dc}</div>
+            <div class="result ${success ? 'success' : 'failure'}">
+              ${success ? '✓ SUCCESS' : '✗ FAILURE'}
+            </div>
+          </div>
+        </div>
+
+        ${success && manifestation ? `
+          <div class="force-manifestation">
+            ${manifestation}
+          </div>
+        ` : ''}
+
+        <div class="power-details">
+          <div class="power-stats">
+            <span class="power-level">Level ${power.system.powerLevel}</span>
+            <span class="power-discipline">${discipline}</span>
+            <span class="power-time">${power.system.time}</span>
+            ${isDarkSide ? '<span class="dark-side-tag"><i class="fas fa-skull"></i> Dark Side</span>' : ''}
+          </div>
+
+          <div class="power-range">
+            <strong>Range:</strong> ${power.system.range} | <strong>Target:</strong> ${power.system.target}
+          </div>
+
+          ${dcChartHtml}
+
+          ${achievedEffects.length > 0 ? `
+            <div class="achieved-effects">
+              <h4><i class="fas fa-check-circle"></i> Effects Achieved:</h4>
+              <ul>
+                ${achievedEffects.map(e => `<li><strong>DC ${e.dc}:</strong> ${e.effect}</li>`).join('')}
+              </ul>
+            </div>
+          ` : success ? `
+            <div class="power-effect">
+              ${power.system.effect}
+            </div>
+          ` : `
+            <div class="power-failed">
+              <em>The Force does not answer your call...</em>
+            </div>
+          `}
+
+          ${forcePointUsed ? `
+            <div class="force-point-enhanced">
+              <h4><i class="fas fa-hand-sparkles"></i> Force Point Enhancement</h4>
+              <div class="fp-enhanced-effect">
+                ${power.system.forcePointEffect}
+              </div>
+              <div class="fp-spent-notice">
+                <i class="fas fa-info-circle"></i> 1 Force Point spent
+              </div>
+            </div>
+          ` : ''}
+
+          ${specialHtml}
+        </div>
       </div>
     `;
 
@@ -282,11 +461,30 @@ export class SWSERoll {
       speaker: ChatMessage.getSpeaker({actor: actor}),
       content: messageContent,
       roll: roll,
-      sound: CONFIG.sounds.dice
+      sound: CONFIG.sounds.dice,
+      flags: {
+        swse: {
+          type: 'force-power',
+          powerId: power.id,
+          isDarkSide: isDarkSide,
+          success: success
+        }
+      }
     });
 
     if (game.dice3d) {
       await game.dice3d.showForRoll(roll, game.user, true);
+    }
+
+    // Mark power as spent (regardless of success/failure)
+    await power.update({'system.spent': true});
+    ui.notifications.info(`${power.name} has been used. Rest or regain Force Powers to use it again.`);
+
+    // Increase Dark Side Score if using [Dark Side] power
+    if (isDarkSide) {
+      const newDarkSideScore = (actor.system.darkSideScore || 0) + 1;
+      await actor.update({'system.darkSideScore': newDarkSideScore});
+      ui.notifications.warn(`Dark Side Score increased to ${newDarkSideScore}`);
     }
 
     // Apply Force Point cost if successful
@@ -294,7 +492,29 @@ export class SWSERoll {
       await actor.spendForcePoint(`activating ${power.name}`);
     }
 
-    return {roll, message, success};
+    // Check for natural 20 - regain all spent Force Powers
+    if (isNatural20) {
+      await this._regainAllForcePowers(actor);
+      ui.notifications.info(`<strong>Natural 20!</strong> All Force Powers have been regained!`);
+    }
+
+    return {roll, message, success, isNatural20};
+  }
+
+  /**
+   * Regain all spent Force Powers for an actor
+   * @private
+   */
+  static async _regainAllForcePowers(actor) {
+    const spentPowers = actor.items.filter(i =>
+      (i.type === 'forcepower' || i.type === 'force-power') && i.system.spent
+    );
+
+    for (const power of spentPowers) {
+      await power.update({'system.spent': false});
+    }
+
+    return spentPowers.length;
   }
 
   /**

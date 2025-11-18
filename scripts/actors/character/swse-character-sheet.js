@@ -600,7 +600,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
   /**
-   * Handle using a Force power
+   * Handle using a Force power - automatically rolls Use the Force
    */
   async _onUsePower(event) {
     event.preventDefault();
@@ -613,104 +613,67 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       return;
     }
 
-    // Load descriptions
-    const descriptions = await SWSECharacterSheet.loadForcePowerDescriptions();
+    // Use the unified rolling system
+    await SWSERoll.rollUseTheForce(this.actor, power);
+  }
 
-    // Get random intro and manifestation based on discipline
-    const discipline = power.system.discipline || 'telekinetic';
-    const powerName = power.name;
+  /**
+   * Handle spending Force Point to regain a specific power
+   */
+  async _onRegainForcePower(event) {
+    event.preventDefault();
+    const itemId = event.currentTarget.dataset.itemId;
+    const power = this.actor.items.get(itemId);
 
-    let intro = '';
-    let manifestation = '';
-
-    // Check if power has specific description
-    if (descriptions?.specific[powerName]) {
-      intro = descriptions.specific[powerName].description;
-      manifestation = descriptions.specific[powerName].manifestation;
-    } else {
-      // Use discipline-based description
-      const disciplineData = descriptions?.disciplines[discipline];
-      if (disciplineData) {
-        const introOptions = disciplineData.intro || [];
-        const manifestOptions = disciplineData.manifestation || [];
-
-        intro = introOptions[Math.floor(Math.random() * introOptions.length)];
-        manifestation = manifestOptions[Math.floor(Math.random() * manifestOptions.length)];
-      }
+    if (!power || !power.system.spent) {
+      ui.notifications.warn('This power has not been used yet');
+      return;
     }
 
-    // Determine if this is a dark side power
-    const isDarkSide = power.system.tags?.includes('dark-side') || discipline === 'dark-side';
-
-    // Build DC chart display
-    let dcChartHtml = '';
-    if (power.system.dcChart && power.system.dcChart.length > 0) {
-      dcChartHtml = '<div class="force-dc-chart"><strong>Use the Force DC:</strong><ul>';
-      for (const dc of power.system.dcChart) {
-        dcChartHtml += `<li><strong>DC ${dc.dc}:</strong> ${dc.effect || dc.description}</li>`;
-      }
-      dcChartHtml += '</ul></div>';
+    // Check Force Points
+    const fpAvailable = this.actor.system.forcePoints?.value || 0;
+    if (fpAvailable <= 0) {
+      ui.notifications.error('No Force Points available');
+      return;
     }
 
-    // Build special/warning text
-    let specialHtml = '';
-    if (power.system.special) {
-      specialHtml = `<div class="force-special">${power.system.special}</div>`;
+    // Spend Force Point
+    await this.actor.spendForcePoint(`regaining ${power.name}`);
+
+    // Regain the power
+    await power.update({'system.spent': false});
+
+    ui.notifications.info(`Spent 1 Force Point to regain ${power.name}`);
+  }
+
+  /**
+   * Handle resting to regain all Force Powers
+   */
+  async _onRestForce(event) {
+    event.preventDefault();
+
+    const spentPowers = this.actor.items.filter(i =>
+      (i.type === 'forcepower' || i.type === 'force-power') && i.system.spent
+    );
+
+    if (spentPowers.length === 0) {
+      ui.notifications.info('All Force Powers are already available');
+      return;
     }
 
-    // Create chat message
-    const content = `
-      <div class="swse-force-power-use ${isDarkSide ? 'dark-side-power' : ''}">
-        <h3><i class="fas fa-hand-sparkles"></i> ${this.actor.name} uses ${powerName}</h3>
-
-        <div class="force-intro">
-          <em>${this.actor.name} ${intro}</em>
-        </div>
-
-        <div class="force-manifestation">
-          ${manifestation}
-        </div>
-
-        <div class="power-details">
-          <div class="power-stats">
-            <span class="power-level">Level ${power.system.powerLevel}</span>
-            <span class="power-discipline">${discipline}</span>
-            <span class="power-time">${power.system.time}</span>
-            ${isDarkSide ? '<span class="dark-side-tag"><i class="fas fa-skull"></i> Dark Side</span>' : ''}
-          </div>
-
-          <div class="power-range">
-            <strong>Range:</strong> ${power.system.range} | <strong>Target:</strong> ${power.system.target}
-          </div>
-
-          ${dcChartHtml}
-
-          <div class="power-effect">
-            ${power.system.effect}
-          </div>
-
-          ${specialHtml}
-        </div>
-      </div>
-    `;
-
-    ChatMessage.create({
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      content: content,
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-      flags: {
-        swse: {
-          type: 'force-power',
-          powerId: itemId,
-          isDarkSide: isDarkSide
-        }
-      }
+    // Confirm rest
+    const confirmed = await Dialog.confirm({
+      title: 'Rest and Regain Force Powers',
+      content: `<p>Rest for 1 minute to regain all Force Powers?</p><p>${spentPowers.length} spent power(s) will be restored.</p>`
     });
 
-    // Optional: Post a roll prompt if power has DCs
-    if (power.system.dcChart && power.system.dcChart.length > 0) {
-      ui.notifications.info(`Roll Use the Force (DC ${power.system.useTheForce}+) to activate ${powerName}`);
+    if (!confirmed) return;
+
+    // Regain all powers
+    for (const power of spentPowers) {
+      await power.update({'system.spent': false});
     }
+
+    ui.notifications.info(`Rested and regained ${spentPowers.length} Force Power(s)`);
   }
 }

@@ -41,6 +41,7 @@ import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 
 import { SWSENotifications } from './scripts/utils/notifications.js';
 import { SWSELogger } from './scripts/utils/logger.js';
+import './scripts/utils/skill-use-filter.js';
 
 /* -------------------------------------------- */
 /*  Configuration                               */
@@ -58,6 +59,7 @@ import { ForceSuiteComponent } from './scripts/components/force-suite.js';
 import './scripts/migration/fix-defense-schema.js';
 import './scripts/migration/fix-actor-size.js';
 import './scripts/migration/actor-validation-migration.js';
+import './scripts/migration/populate-force-compendiums.js';
 
 /* -------------------------------------------- */
 /*  Combat Systems                              */

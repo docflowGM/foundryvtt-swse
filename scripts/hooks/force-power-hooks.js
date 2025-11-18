@@ -79,5 +79,31 @@ export function initializeForcePowerHooks() {
     await ForcePowerManager.handleAbilityIncrease(actor, oldAbilities, newAbilities);
   });
 
+  /**
+   * Hook into combat end to regain all Force Powers
+   */
+  Hooks.on('deleteCombat', async (combat, options, userId) => {
+    console.log('SWSE | Force Powers | Combat ended, regaining Force Powers for all combatants');
+
+    // Regain Force Powers for all actors who were in combat
+    for (const combatant of combat.combatants) {
+      if (!combatant.actor) continue;
+
+      const spentPowers = combatant.actor.items.filter(i =>
+        (i.type === 'forcepower' || i.type === 'force-power') && i.system.spent
+      );
+
+      if (spentPowers.length > 0) {
+        for (const power of spentPowers) {
+          await power.update({'system.spent': false});
+        }
+
+        if (combatant.actor.isOwner) {
+          ui.notifications.info(`Combat ended. ${combatant.actor.name} regained ${spentPowers.length} Force Power(s)`);
+        }
+      }
+    }
+  });
+
   console.log('SWSE | Force Power hooks initialized');
 }
