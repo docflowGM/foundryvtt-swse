@@ -237,14 +237,17 @@ export class ClassDataModel extends foundry.abstract.DataModel {
       }),
       fortSave: new fields.StringField({
         required: true,
+        initial: "slow",
         choices: ["slow", "fast"]
       }),
       refSave: new fields.StringField({
         required: true,
+        initial: "slow",
         choices: ["slow", "fast"]
       }),
       willSave: new fields.StringField({
         required: true,
+        initial: "slow",
         choices: ["slow", "fast"]
       }),
       classSkills: new fields.ArrayField(new fields.StringField()),

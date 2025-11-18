@@ -60,6 +60,7 @@ import { ForceSuiteComponent } from './scripts/components/force-suite.js';
 import './scripts/migration/fix-defense-schema.js';
 import './scripts/migration/fix-actor-size.js';
 import './scripts/migration/actor-validation-migration.js';
+import './scripts/migration/item-validation-migration.js';
 import './scripts/migration/populate-force-compendiums.js';
 
 /* -------------------------------------------- */
