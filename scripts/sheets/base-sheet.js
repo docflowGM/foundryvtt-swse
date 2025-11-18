@@ -13,6 +13,7 @@ export class SWSEActorSheetBase extends ActorSheet {
       classes: ['swse', 'sheet', 'actor'],
       width: 720,
       height: 680,
+      resizable: true,
       tabs: [{
         navSelector: '.sheet-tabs',
         contentSelector: '.sheet-body',

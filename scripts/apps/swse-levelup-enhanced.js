@@ -19,6 +19,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       template: 'systems/swse/templates/apps/levelup.hbs',
       width: 800,
       height: 600,
+      resizable: true,
       tabs: [{ navSelector: '.tabs', contentSelector: '.tab-content', initial: 'class' }],
       submitOnChange: false,
       closeOnSubmit: false
