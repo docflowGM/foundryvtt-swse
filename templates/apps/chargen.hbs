@@ -186,6 +186,20 @@
  <span class="bonus">{{this.system.abilities}}</span>
  </div>
  {{/if}}
+ {{#if this.system.skillBonuses}}
+ <div class="skill-bonuses">
+ {{#each this.system.skillBonuses}}
+ <span class="skill-bonus">{{this}}</span>
+ {{/each}}
+ </div>
+ {{/if}}
+ {{#if this.system.special}}
+ <div class="special-abilities">
+ {{#each this.system.special}}
+ <span class="special-ability">{{this}}</span>
+ {{/each}}
+ </div>
+ {{/if}}
  </button>
  {{/each}}
  </div>

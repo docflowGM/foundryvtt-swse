@@ -1366,8 +1366,9 @@ export default class CharacterGenerator extends Application {
     // 6. Store languages
     this.characterData.languages = system.languages || [];
 
-    // 7. Apply skill bonuses (store for later application)
+    // 7. Store and apply racial skill bonuses
     this.characterData.racialSkillBonuses = system.skillBonuses || [];
+    this._applyRacialSkillBonuses(system.skillBonuses || []);
 
     // 8. Store source
     this.characterData.speciesSource = system.source || "";
@@ -1380,6 +1381,68 @@ export default class CharacterGenerator extends Application {
       languages: this.characterData.languages,
       skillBonuses: this.characterData.racialSkillBonuses
     });
+  }
+
+  /**
+   * Parse and apply racial skill bonuses to character skills
+   * @param {Array<string>} bonuses - Array of skill bonus strings like ["+2 Perception", "+2 Stealth"]
+   */
+  _applyRacialSkillBonuses(bonuses) {
+    if (!bonuses || bonuses.length === 0) return;
+
+    // Skill name mapping from display names to skill keys
+    const skillNameMap = {
+      'acrobatics': 'acrobatics',
+      'climb': 'climb',
+      'deception': 'deception',
+      'endurance': 'endurance',
+      'gather information': 'gatherInformation',
+      'initiative': 'initiative',
+      'jump': 'jump',
+      'knowledge': 'knowledge', // Generic knowledge
+      'knowledge (galactic lore)': 'knowledge',
+      'knowledge (life sciences)': 'knowledge',
+      'mechanics': 'mechanics',
+      'perception': 'perception',
+      'persuasion': 'persuasion',
+      'pilot': 'pilot',
+      'stealth': 'stealth',
+      'survival': 'survival',
+      'swim': 'swim',
+      'treat injury': 'treatInjury',
+      'use computer': 'useComputer',
+      'use the force': 'useTheForce'
+    };
+
+    for (const bonusString of bonuses) {
+      // Parse bonus string like "+2 Perception" or "+2 Knowledge (Galactic Lore)"
+      const match = bonusString.match(/([+-]?\d+)\s+(.+)/i);
+      if (!match) continue;
+
+      const bonusValue = parseInt(match[1]);
+      const skillName = match[2].trim().toLowerCase();
+
+      // Find matching skill key
+      const skillKey = skillNameMap[skillName];
+      if (!skillKey) {
+        console.warn(`CharGen | Unknown skill name in racial bonus: ${skillName}`);
+        continue;
+      }
+
+      // Initialize skill if not exists
+      if (!this.characterData.skills[skillKey]) {
+        this.characterData.skills[skillKey] = {
+          trained: false,
+          focus: false,
+          misc: 0
+        };
+      }
+
+      // Apply racial bonus to misc field
+      this.characterData.skills[skillKey].misc = (this.characterData.skills[skillKey].misc || 0) + bonusValue;
+
+      console.log(`CharGen | Applied racial skill bonus: ${skillName} ${bonusValue >= 0 ? '+' : ''}${bonusValue}`);
+    }
   }
 
   /**
