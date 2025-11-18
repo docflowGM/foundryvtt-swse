@@ -1040,3 +1040,55 @@
   color: var(--color-text-secondary, #ccc);
   font-size: 0.9rem;
 }
+
+.swse-force-power-use .force-point-enhanced {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 193, 7, 0.1));
+  border: 2px solid #ffd700;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.swse-force-power-use .force-point-enhanced h4 {
+  margin: 0 0 0.75rem 0;
+  color: #ffd700;
+  font-size: 1rem;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
+
+.swse-force-power-use .fp-enhanced-effect {
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  color: var(--color-text-primary, #fff);
+  margin-bottom: 0.75rem;
+}
+
+.swse-force-power-use .fp-spent-notice {
+  padding: 0.5rem;
+  background: rgba(255, 215, 0, 0.2);
+  border-radius: 4px;
+  color: #ffd700;
+  font-size: 0.85rem;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Force Point Dialog Styling */
+.force-point-dialog {
+  padding: 0.5rem;
+}
+
+.force-point-dialog .fp-effect {
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+  background: rgba(255, 215, 0, 0.1);
+  border-left: 3px solid #ffd700;
+  border-radius: 4px;
+  color: var(--color-text-primary, #333);
+}
+
+.force-point-dialog p {
+  margin: 0.5rem 0;
+}

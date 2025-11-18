@@ -163,6 +163,12 @@ export class ForcePowerDataModel extends foundry.abstract.DataModel {
       // Maintainable powers can be sustained as a Swift action
       maintainable: new fields.BooleanField({initial: false, label: "Maintainable"}),
 
+      // Optional Force Point enhancement
+      forcePointEffect: new fields.HTMLField({label: "Force Point Enhancement", hint: "Additional effect if Force Point is spent"}),
+
+      // Automatic Force Point cost (power always requires FP)
+      forcePointCost: new fields.NumberField({initial: 0, min: 0, integer: true, label: "Force Point Cost"}),
+
       // Sourcebook reference
       sourcebook: new fields.StringField({initial: "", label: "Sourcebook"}),
       page: new fields.NumberField({required: false, integer: true, label: "Page Number"}),

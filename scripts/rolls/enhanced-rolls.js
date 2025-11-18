@@ -249,6 +249,50 @@ export class SWSERoll {
       return;
     }
 
+    // Check if power has optional Force Point enhancement
+    let spendForcePoint = false;
+    let forcePointUsed = false;
+
+    if (power.system.forcePointEffect && power.system.forcePointEffect.trim() !== '') {
+      // Show dialog asking if player wants to spend Force Point
+      const fpAvailable = actor.system.forcePoints?.value || 0;
+
+      if (fpAvailable > 0) {
+        spendForcePoint = await new Promise((resolve) => {
+          new Dialog({
+            title: `${power.name} - Force Point Enhancement`,
+            content: `
+              <div class="force-point-dialog">
+                <p><strong>Force Point Enhancement Available:</strong></p>
+                <div class="fp-effect">${power.system.forcePointEffect}</div>
+                <p style="margin-top: 1rem;"><strong>Force Points:</strong> ${fpAvailable}/${actor.system.forcePoints.max}</p>
+                <p>Spend 1 Force Point for this enhanced effect?</p>
+              </div>
+            `,
+            buttons: {
+              yes: {
+                icon: '<i class="fas fa-hand-sparkles"></i>',
+                label: 'Spend Force Point',
+                callback: () => resolve(true)
+              },
+              no: {
+                icon: '<i class="fas fa-times"></i>',
+                label: 'No, Use Normally',
+                callback: () => resolve(false)
+              }
+            },
+            default: 'yes',
+            close: () => resolve(false)
+          }).render(true);
+        });
+
+        if (spendForcePoint) {
+          await actor.spendForcePoint(`enhancing ${power.name}`);
+          forcePointUsed = true;
+        }
+      }
+    }
+
     // Load Force power descriptions for flavor text
     let descriptions = null;
     try {
@@ -383,6 +427,18 @@ export class SWSERoll {
               <em>The Force does not answer your call...</em>
             </div>
           `}
+
+          ${forcePointUsed ? `
+            <div class="force-point-enhanced">
+              <h4><i class="fas fa-hand-sparkles"></i> Force Point Enhancement</h4>
+              <div class="fp-enhanced-effect">
+                ${power.system.forcePointEffect}
+              </div>
+              <div class="fp-spent-notice">
+                <i class="fas fa-info-circle"></i> 1 Force Point spent
+              </div>
+            </div>
+          ` : ''}
 
           ${specialHtml}
         </div>
