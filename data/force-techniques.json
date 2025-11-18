@@ -315,98 +315,104 @@
     {
       "name": "Cure Disease",
       "source": "Jedi Academy Training Manual",
-      "description": "Allows you to cure diseases using the Force.",
+      "description": "When you use the Vital Transfer Force Power, if your Use the Force check equals or exceeds the Treat Injury DC of a Disease currently ailing the target, you can spend a Force Point to cure that Disease.",
+      "relatedPower": "Vital Transfer",
       "prerequisites": []
     },
     {
       "name": "Extended Blind",
       "source": "Jedi Academy Training Manual",
-      "description": "Extends the duration of Force Blind.",
+      "description": "The base range of your Blind Force Power increases to 18 squares (instead of 12 squares).",
       "relatedPower": "Blind",
       "prerequisites": []
     },
     {
       "name": "Extended Force Disarm",
       "source": "Jedi Academy Training Manual",
-      "description": "Extends the range of Force Disarm.",
+      "description": "The base range of your Force Disarm Force Power increases to 18 squares (instead of 12 squares).",
       "relatedPower": "Force Disarm",
       "prerequisites": []
     },
     {
       "name": "Extended Force Grip",
       "source": "Jedi Academy Training Manual",
-      "description": "Extends the duration and range of Force Grip.",
+      "description": "The base range of your Force Grip Force Power increases to 18 squares (instead of 12 squares).",
       "relatedPower": "Force Grip",
       "prerequisites": []
     },
     {
       "name": "Extended Force Thrust",
       "source": "Jedi Academy Training Manual",
-      "description": "Extends the range of Force Thrust.",
+      "description": "The base range of your Force Thrust Force Power increases to 18 squares (instead of 12 squares).",
       "relatedPower": "Force Thrust",
       "prerequisites": []
     },
     {
       "name": "Extended Move Object",
       "source": "Jedi Academy Training Manual",
-      "description": "Extends the range and capabilities of Move Object.",
+      "description": "The base range of your Move Object Force Power increases to 18 squares (instead of 12 squares).",
       "relatedPower": "Move Object",
       "prerequisites": []
     },
     {
       "name": "Improved Convection",
       "source": "Jedi Academy Training Manual",
-      "description": "Enhances your ability to manipulate heat through the Force.",
+      "description": "When your target takes Fire damage from Convection, the Fire attacks the target's Fortitude Defense using your Base Attack Bonus instead of the normal +5 bonus.",
       "relatedPower": "Convection",
       "prerequisites": []
     },
     {
       "name": "Improved Crucitorn",
       "source": "Jedi Academy Training Manual",
-      "description": "Enhances your ability to suppress pain and continue fighting.",
+      "description": "If you use Crucitorn and the attack or Force Power still deals more damage than your Damage Threshold, you do not expend this use of Crucitorn, and it remains in your Force Power Suite.",
       "relatedPower": "Crucitorn",
       "prerequisites": []
     },
     {
       "name": "Improved Cryokinesis",
       "source": "Jedi Academy Training Manual",
-      "description": "Enhances your ability to manipulate cold through the Force.",
+      "description": "You can use Cryokinesis on occupied Vehicles within range; however, the Vehicle only moves down the Condition Track if your Use the Force check also exceeds the Vehicle's Fortitude Defense.",
       "relatedPower": "Cryokinesis",
       "prerequisites": []
     },
     {
       "name": "Improved Fold Space",
       "source": "Jedi Academy Training Manual",
-      "description": "Enhances your ability to fold space and teleport.",
+      "description": "Whenever you use Fold Space, you can spend a Force Point to move the object anywhere within your line of sight.",
       "relatedPower": "Fold Space",
+      "special": "Alternatively, you can spend a Destiny Point to move the object anywhere within the same star system.",
       "prerequisites": []
     },
     {
       "name": "Improved Force Light",
       "source": "Jedi Academy Training Manual",
-      "description": "Enhances your ability to use Force Light against dark side effects.",
+      "description": "You can spend a Force Point to cause your Force Light to blind those it harms; any creature that takes damage from Force Light grants Concealment to all other targets until the end of its next turn.",
       "relatedPower": "Force Light",
+      "special": "You can spend a Destiny Point to change this to Total Concealment instead.",
       "prerequisites": []
     },
     {
       "name": "Improved Force Storm",
       "source": "Jedi Academy Training Manual",
-      "description": "Enhances your ability to create devastating Force Storms.",
+      "description": "You can spend a Force Point when you activate Force Storm to fill the storm with Force Lightning. When you activate the Force Storm, and again whenever you spend a Standard Action to maintain the Force Power, compare the results of your Use the Force check to the Reflex Defense of one target within the Force Storm's area. If the Use the Force check result equals or exceeds the target's Reflex Defense, the target takes 3d6 points of Force damage.",
       "relatedPower": "Force Storm",
+      "special": "You can spend a Destiny Point to increase the damage to 6d6 points of Force damage.",
       "prerequisites": []
     },
     {
       "name": "Improved Plant Surge",
       "source": "Jedi Academy Training Manual",
-      "description": "Enhances your ability to control and manipulate plant life.",
+      "description": "You can spend a Force Point to have Plant Surge target all enemies in a 5x5 square area; at least one square must be within the Force Power's range.",
       "relatedPower": "Plant Surge",
+      "special": "Alternatively, you can spend a Destiny Point to target all enemies in a 10x10 square area.",
       "prerequisites": []
     },
     {
       "name": "Improved Thought Bomb",
       "source": "Jedi Academy Training Manual",
-      "description": "Enhances your ability to create devastating Thought Bombs.",
+      "description": "You can spend a Force Point to have Thought Bomb target all enemies within 5 squares of you.",
       "relatedPower": "Thought Bomb",
+      "special": "Alternatively, you can spend a Destiny Point to target all enemies within your line of sight.",
       "prerequisites": []
     }
   ]
