@@ -2,14 +2,23 @@ import CharacterGeneratorImproved from './chargen-improved.js';
 
 // Single hook to handle both create button interception and header button addition
 Hooks.on('renderActorDirectory', (app, html, data) => {
-    // Check if html exists and has elements
-    if (!html || !html[0]) {
+    // Note: html is now an HTMLElement in Foundry v13+, not a jQuery object
+    // Check if html exists
+    if (!html) {
         console.warn('SWSE | renderActorDirectory hook received invalid html parameter');
         return;
     }
 
+    // Get the actual HTMLElement (html might be jQuery array or HTMLElement)
+    const element = html instanceof HTMLElement ? html : html[0];
+
+    if (!element) {
+        console.warn('SWSE | renderActorDirectory hook: could not get HTMLElement');
+        return;
+    }
+
     // Intercept the create button click
-    const createButton = html[0].querySelector('.create-entity, .document-create');
+    const createButton = element.querySelector('.create-entity, .document-create');
 
     if (createButton) {
         createButton.addEventListener('click', async (event) => {
@@ -53,7 +62,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
 
     // Add character generator button to header
     if (game.user.isGM) {
-        const header = html[0].querySelector('.directory-header');
+        const header = element.querySelector('.directory-header');
         if (header && !header.querySelector('.chargen-button')) {
             const button = document.createElement('button');
             button.className = 'chargen-button';
