@@ -684,10 +684,10 @@ export class SWSELevelUpEnhanced extends FormApplication {
     };
 
     // Standard array roll
-    const rollStandard = () => {
+    const rollStandard = async () => {
       const results = [];
       for (let i = 0; i < 6; i++) {
-        const r = new Roll("4d6kh3").evaluate({ async: false });
+        const r = await new Roll("4d6kh3").evaluate();
         const total = r.total;
         results.push({ total });
       }
@@ -722,8 +722,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
     };
 
     // Organic roll
-    const rollOrganic = () => {
-      const r = new Roll("24d6").evaluate({ async: false });
+    const rollOrganic = async () => {
+      const r = await new Roll("24d6").evaluate();
       if (!r.dice || !r.dice[0] || !r.dice[0].results) {
         ui.notifications.error("Failed to roll dice. Please try again.");
         console.error("SWSE | Roll failed:", r);

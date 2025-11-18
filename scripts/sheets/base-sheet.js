@@ -512,4 +512,25 @@ export class SWSEActorSheetBase extends ActorSheet {
 
     return this.actor.update({'system.conditionTrack.current': step});
   }
+
+  /**
+   * Improve condition track by one step
+   */
+  async _onImproveCondition(event) {
+    event.preventDefault();
+    const current = this.actor.system.conditionTrack?.current || 0;
+    const newStep = Math.max(0, current - 1);
+    return this.actor.update({'system.conditionTrack.current': newStep});
+  }
+
+  /**
+   * Worsen condition track by one step
+   */
+  async _onWorsenCondition(event) {
+    event.preventDefault();
+    const current = this.actor.system.conditionTrack?.current || 0;
+    const max = 5; // Maximum condition track steps (0-5)
+    const newStep = Math.min(max, current + 1);
+    return this.actor.update({'system.conditionTrack.current': newStep});
+  }
 }
