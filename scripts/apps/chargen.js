@@ -168,6 +168,11 @@ export default class CharacterGenerator extends Application {
     context.packs = foundry.utils.deepClone(this._packs);
     context.skillsJson = this._skillsJson || [];
 
+    // Sort species by source material (Core first, then alphabetically)
+    if (context.packs.species) {
+      context.packs.species = this._sortSpeciesBySource(context.packs.species);
+    }
+
     // Calculate half level for display
     context.halfLevel = Math.floor(this.characterData.level / 2);
 
@@ -348,6 +353,56 @@ export default class CharacterGenerator extends Application {
 
     steps.push("abilities", "class", "feats", "talents", "skills", "summary", "shop");
     return steps;
+  }
+
+  /**
+   * Sort species by source material, prioritizing Core Rulebook first
+   * @param {Array} species - Array of species documents
+   * @returns {Array} Sorted species array
+   */
+  _sortSpeciesBySource(species) {
+    if (!species || species.length === 0) return species;
+
+    // Define source priority order (Core first, then alphabetically)
+    const sourcePriority = {
+      "Core": 0,
+      "Core Rulebook": 0,
+      "Knights of the Old Republic": 1,
+      "KotOR": 1,
+      "KOTOR": 1,
+      "Clone Wars": 2,
+      "Rebellion Era": 3,
+      "Legacy Era": 4,
+      "The Force Unleashed": 5,
+      "Galaxy at War": 6,
+      "Unknown Regions": 7,
+      "Scum and Villainy": 8,
+      "Threats of the Galaxy": 9,
+      "Jedi Academy": 10
+    };
+
+    // Sort species
+    return species.sort((a, b) => {
+      const sourceA = a.system?.source || "Unknown";
+      const sourceB = b.system?.source || "Unknown";
+
+      // Get priority (default to 999 for unknown sources)
+      const priorityA = sourcePriority[sourceA] ?? 999;
+      const priorityB = sourcePriority[sourceB] ?? 999;
+
+      // First sort by source priority
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      // If same priority (or both unknown), sort by source name alphabetically
+      if (sourceA !== sourceB) {
+        return sourceA.localeCompare(sourceB);
+      }
+
+      // Within same source, sort by species name alphabetically
+      return (a.name || "").localeCompare(b.name || "");
+    });
   }
 
   async _onNextStep(event) {
