@@ -616,4 +616,64 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // Use the unified rolling system
     await SWSERoll.rollUseTheForce(this.actor, power);
   }
+
+  /**
+   * Handle spending Force Point to regain a specific power
+   */
+  async _onRegainForcePower(event) {
+    event.preventDefault();
+    const itemId = event.currentTarget.dataset.itemId;
+    const power = this.actor.items.get(itemId);
+
+    if (!power || !power.system.spent) {
+      ui.notifications.warn('This power has not been used yet');
+      return;
+    }
+
+    // Check Force Points
+    const fpAvailable = this.actor.system.forcePoints?.value || 0;
+    if (fpAvailable <= 0) {
+      ui.notifications.error('No Force Points available');
+      return;
+    }
+
+    // Spend Force Point
+    await this.actor.spendForcePoint(`regaining ${power.name}`);
+
+    // Regain the power
+    await power.update({'system.spent': false});
+
+    ui.notifications.info(`Spent 1 Force Point to regain ${power.name}`);
+  }
+
+  /**
+   * Handle resting to regain all Force Powers
+   */
+  async _onRestForce(event) {
+    event.preventDefault();
+
+    const spentPowers = this.actor.items.filter(i =>
+      (i.type === 'forcepower' || i.type === 'force-power') && i.system.spent
+    );
+
+    if (spentPowers.length === 0) {
+      ui.notifications.info('All Force Powers are already available');
+      return;
+    }
+
+    // Confirm rest
+    const confirmed = await Dialog.confirm({
+      title: 'Rest and Regain Force Powers',
+      content: `<p>Rest for 1 minute to regain all Force Powers?</p><p>${spentPowers.length} spent power(s) will be restored.</p>`
+    });
+
+    if (!confirmed) return;
+
+    // Regain all powers
+    for (const power of spentPowers) {
+      await power.update({'system.spent': false});
+    }
+
+    ui.notifications.info(`Rested and regained ${spentPowers.length} Force Power(s)`);
+  }
 }

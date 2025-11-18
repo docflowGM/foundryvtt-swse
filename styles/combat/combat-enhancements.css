@@ -1092,3 +1092,50 @@
 .force-point-dialog p {
   margin: 0.5rem 0;
 }
+
+/* ─────────────── Force Power Suite Spent/Available Status ─────────────── */
+.power-card.power-spent {
+  opacity: 0.5;
+  background: rgba(100, 100, 100, 0.2);
+  border: 1px solid rgba(100, 100, 100, 0.3);
+}
+
+.power-card.power-spent .power-name {
+  color: var(--color-text-dim, #888);
+}
+
+.power-card .spent-indicator {
+  color: #ff6b6b;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+
+.power-card .regain-power {
+  color: #ffd700;
+  transition: all 0.2s;
+}
+
+.power-card .regain-power:hover {
+  color: #ffed4e;
+  transform: rotate(180deg);
+}
+
+.force-action {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  margin: 0.25rem;
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(75, 0, 130, 0.1));
+  border: 1px solid rgba(138, 43, 226, 0.5);
+  border-radius: 4px;
+  color: var(--color-text-primary, #fff);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.force-action:hover {
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.4), rgba(75, 0, 130, 0.2));
+  box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+  transform: translateY(-2px);
+}

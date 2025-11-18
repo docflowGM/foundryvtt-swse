@@ -249,6 +249,20 @@ export class SWSERoll {
       return;
     }
 
+    // Check if power is already spent
+    if (power.system.spent) {
+      ui.notifications.warn(`${power.name} has already been used. Rest or regain Force Powers to use it again.`);
+      return;
+    }
+
+    // Determine if this is a dark side or light side power
+    const isDarkSide = power.system.tags?.includes('dark-side') || power.system.discipline === 'dark-side';
+    const isLightSide = power.system.tags?.includes('light-side') || power.system.discipline === 'light-side';
+    const darkSideScore = actor.system.darkSideScore || 0;
+
+    // Check Force Point restrictions based on descriptors
+    const canUseForcePointOnCheck = !(isDarkSide || (isLightSide && darkSideScore >= 1));
+
     // Check if power has optional Force Point enhancement
     let spendForcePoint = false;
     let forcePointUsed = false;
@@ -331,9 +345,7 @@ export class SWSERoll {
 
     const success = roll.total >= dc;
     const d20Result = roll.terms[0].results[0].result;
-
-    // Determine if this is a dark side power
-    const isDarkSide = power.system.tags?.includes('dark-side') || discipline === 'dark-side';
+    const isNatural20 = d20Result === 20;
 
     // Build DC chart display with achieved effects highlighted
     let dcChartHtml = '';
@@ -464,12 +476,45 @@ export class SWSERoll {
       await game.dice3d.showForRoll(roll, game.user, true);
     }
 
+    // Mark power as spent (regardless of success/failure)
+    await power.update({'system.spent': true});
+    ui.notifications.info(`${power.name} has been used. Rest or regain Force Powers to use it again.`);
+
+    // Increase Dark Side Score if using [Dark Side] power
+    if (isDarkSide) {
+      const newDarkSideScore = (actor.system.darkSideScore || 0) + 1;
+      await actor.update({'system.darkSideScore': newDarkSideScore});
+      ui.notifications.warn(`Dark Side Score increased to ${newDarkSideScore}`);
+    }
+
     // Apply Force Point cost if successful
     if (success && power.system.forcePointCost) {
       await actor.spendForcePoint(`activating ${power.name}`);
     }
 
-    return {roll, message, success};
+    // Check for natural 20 - regain all spent Force Powers
+    if (isNatural20) {
+      await this._regainAllForcePowers(actor);
+      ui.notifications.info(`<strong>Natural 20!</strong> All Force Powers have been regained!`);
+    }
+
+    return {roll, message, success, isNatural20};
+  }
+
+  /**
+   * Regain all spent Force Powers for an actor
+   * @private
+   */
+  static async _regainAllForcePowers(actor) {
+    const spentPowers = actor.items.filter(i =>
+      (i.type === 'forcepower' || i.type === 'force-power') && i.system.spent
+    );
+
+    for (const power of spentPowers) {
+      await power.update({'system.spent': false});
+    }
+
+    return spentPowers.length;
   }
 
   /**

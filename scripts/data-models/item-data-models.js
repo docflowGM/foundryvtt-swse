@@ -145,9 +145,10 @@ export class ForcePowerDataModel extends foundry.abstract.DataModel {
       special: new fields.HTMLField({label: "Special"}),
 
       // Descriptors (e.g., [Mind-Affecting], [Dark Side], [Telekinetic])
+      // NOTE: Use 'tags' field for descriptors - this field is deprecated
       descriptor: new fields.ArrayField(
         new fields.StringField(),
-        {label: "Descriptors"}
+        {label: "Descriptors (Deprecated - use tags)"}
       ),
 
       // DC Chart for powers with variable effects based on check result
@@ -174,13 +175,17 @@ export class ForcePowerDataModel extends foundry.abstract.DataModel {
       page: new fields.NumberField({required: false, integer: true, label: "Page Number"}),
 
       // Tags for categorization and filtering
+      // Use for Force Power descriptors: 'dark-side', 'light-side', 'mind-affecting', 'telekinetic', 'telepathic', 'vital'
       tags: new fields.ArrayField(
         new fields.StringField(),
-        {label: "Tags"}
+        {label: "Tags/Descriptors", hint: "e.g., dark-side, light-side, mind-affecting, telekinetic"}
       ),
 
       // Suite tracking
       inSuite: new fields.BooleanField({required: true, initial: false}),
+
+      // Track if power is currently spent (used and awaiting restoration)
+      spent: new fields.BooleanField({initial: false, label: "Power Spent"}),
 
       // Uses (for reloadable powers)
       uses: new fields.SchemaField({

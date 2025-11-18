@@ -40,6 +40,9 @@
  <button class="force-action" data-action="spendForcePoint" data-type="reduce-dark">
  <i class="fas fa-moon"></i> Reduce Dark Side
  </button>
+ <button class="force-action" data-action="restForce">
+ <i class="fas fa-bed"></i> Rest (Regain All)
+ </button>
  </div>
 
  <h3 class="section-header">Force Powers Suite</h3>
@@ -76,15 +79,21 @@
  <h4>Active Suite ({{activeSuite.length}}/{{system.forceSuite.max}})</h4>
  <div class="powers-list drop-zone suite-zone" data-zone="suite">
  {{#each activeSuite as |power|}}
- <div class="power-card in-suite" 
+ <div class="power-card in-suite {{#if power.system.spent}}power-spent{{/if}}"
  draggable="true"
  data-item-id="{{power._id}}">
  <img src="{{power.img}}" width="32" height="32" alt="{{power.name}}"/>
- <span class="power-name">{{power.name}}</span>
+ <span class="power-name">{{power.name}}{{#if power.system.spent}} <span class="spent-indicator">(SPENT)</span>{{/if}}</span>
  <div class="power-controls">
+ {{#if power.system.spent}}
+ <a class="regain-power" data-action="regainForcePower" data-item-id="{{power._id}}" title="Spend Force Point to regain">
+ <i class="fas fa-redo"></i>
+ </a>
+ {{else}}
  <a class="use-power" data-action="usePower" data-item-id="{{power._id}}">
  <i class="fas fa-hand-sparkles"></i>
  </a>
+ {{/if}}
  <a class="remove-from-suite" data-action="removeFromSuite" data-item-id="{{power._id}}">
  <i class="fas fa-arrow-left"></i>
  </a>
