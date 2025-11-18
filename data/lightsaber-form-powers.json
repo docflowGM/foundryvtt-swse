@@ -1,0 +1,286 @@
+{
+  "description": "Lightsaber Form Powers from Jedi Academy Training Manual",
+  "notes": "These Form Powers are tagged with the [Lightsaber Form] descriptor. You must be wielding an activated Lightsaber to use any Form Power. You cannot Rebuke a Lightsaber Form Power, with two exceptions: Draw Closer and Pushing Slash.",
+  "powers": [
+    {
+      "name": "Assured Strike",
+      "form": "Juyo",
+      "discipline": "Form VII: Juyo",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form"],
+      "description": "You trade power for accuracy.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Barrier of Blades",
+      "form": "Shien",
+      "discipline": "Form V: Shien",
+      "time": "Swift Action",
+      "tags": ["lightsaber-form"],
+      "description": "You whip your Lightsaber around you, creating a barrier through which blaster fire rarely penetrates.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Circle of Shelter",
+      "form": "Soresu",
+      "discipline": "Form III: Soresu",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form"],
+      "description": "You create a protected area around yourself, through which enemies have difficulty reaching you or your allies.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Contentious Opportunity",
+      "form": "Makashi",
+      "discipline": "Form II: Makashi",
+      "time": "Free Action",
+      "tags": ["lightsaber-form"],
+      "description": "You seize the moment when your opponent gives you an opening, darting in to strike.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Deflecting Slash",
+      "form": "Soresu",
+      "discipline": "Form III: Soresu",
+      "time": "Reaction",
+      "tags": ["lightsaber-form"],
+      "description": "You use the momentum from your effort to deflect a projectile to strike at an adjacent opponent.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Disarming Slash",
+      "form": "Shii-Cho",
+      "discipline": "Form I: Shii-Cho",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form"],
+      "description": "You strike at your opponent's weapon, attempting to rip it from their grasp.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Draw Closer",
+      "form": "Niman",
+      "discipline": "Form VI: Niman",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form", "telekinetic"],
+      "description": "You grab an opponent with The Force, drawing him or her into the path of your weapon.",
+      "canRebuke": true,
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Falling Avalanche",
+      "form": "Djem So",
+      "discipline": "Form V: Djem So",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form"],
+      "description": "You raise your Lightsaber above your head and then bring it crashing down on your opponent with incredible force.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Fluid Riposte",
+      "form": "Djem So",
+      "discipline": "Form V: Djem So",
+      "time": "Reaction",
+      "tags": ["lightsaber-form"],
+      "description": "You smoothly turn aside an opponent's melee attack, stepping in to deliver your own attack.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Hawk-Bat Swoop",
+      "form": "Ataru",
+      "discipline": "Form IV: Ataru",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form"],
+      "description": "You leap into action against your foe, striking with your Lightsaber before other enemies have a chance to react.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "High Ground Defense",
+      "form": "Sokan",
+      "discipline": "Sokan",
+      "time": "Swift Action",
+      "tags": ["lightsaber-form"],
+      "description": "You know how to take advantage of the terrain and gain a defensive advantage from it.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Makashi Riposte",
+      "form": "Makashi",
+      "discipline": "Form II: Makashi",
+      "time": "Reaction",
+      "tags": ["lightsaber-form"],
+      "description": "You are trained in a Makashi technique that allows you to slightly change the angle of an opponent's attack before striking with a decisive riposte of your own.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Pass the Blade",
+      "form": "Trakata",
+      "discipline": "Trakata",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form"],
+      "description": "You deactivate your Lightsaber as your opponent attempts to block it, reactivating it just after it passes by their blade.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Pushing Slash",
+      "form": "Niman",
+      "discipline": "Form VI: Niman",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form", "telekinetic"],
+      "description": "You strike at your target with your Lightsaber, then hurl them away from you with The Force.",
+      "canRebuke": true,
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Rising Whirlwind",
+      "form": "Jar'Kai",
+      "discipline": "Jar'Kai",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form"],
+      "description": "You swing your Lightsabers around your body, creating a brilliant whirlwind of deadly light.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Saber Swarm",
+      "form": "Ataru",
+      "discipline": "Form IV: Ataru",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form"],
+      "description": "You slash at your opponent rapidly, aiming many short strikes at the target's body.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Sarlacc Sweep",
+      "form": "Shii-Cho",
+      "discipline": "Form I: Shii-Cho",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form"],
+      "description": "You lash out at multiple enemies, striking them with a sweeping motion.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Shien Deflection",
+      "form": "Shien",
+      "discipline": "Form V: Shien",
+      "time": "Reaction",
+      "tags": ["lightsaber-form"],
+      "description": "You deflect an incoming attack and leap toward your attacker with fierce abandon.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Swift Flank",
+      "form": "Vaapad",
+      "discipline": "Form VII: Vaapad",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form"],
+      "description": "You leap over or dash around your opponent, striking before they have time to react.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Tempered Aggression",
+      "form": "Vaapad",
+      "discipline": "Form VII: Vaapad",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form", "dark-side"],
+      "description": "You throw yourself against an opponent, controlling your aggression to prevent it from getting the better of you.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Twin Strike",
+      "form": "Jar'Kai",
+      "discipline": "Jar'Kai",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form"],
+      "description": "You swing both of your Lightsabers in an arc toward the target, slamming them home with great force.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Unbalancing Block",
+      "form": "Trakata",
+      "discipline": "Trakata",
+      "time": "Reaction",
+      "tags": ["lightsaber-form"],
+      "description": "You catch an opponent's weapon on your blade before deactivating your blade momentarily, causing them to stumble.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Unhindered Charge",
+      "form": "Sokan",
+      "discipline": "Sokan",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form"],
+      "description": "You move quickly to your opponent, ignoring Difficult Terrain and obstacles.",
+      "source": "Jedi Academy Training Manual"
+    },
+    {
+      "name": "Vornskr's Ferocity",
+      "form": "Juyo",
+      "discipline": "Form VII: Juyo",
+      "time": "Standard Action",
+      "tags": ["lightsaber-form", "dark-side"],
+      "description": "You walk the thin line between darkness and light as you ferociously attack your foe.",
+      "source": "Jedi Academy Training Manual"
+    }
+  ],
+  "forms": {
+    "Shii-Cho": {
+      "name": "Form I: Shii-Cho",
+      "aka": "Determination Form",
+      "description": "The most ancient lightsaber form, emphasizing wide, sweeping strikes."
+    },
+    "Makashi": {
+      "name": "Form II: Makashi",
+      "aka": "Contention Form",
+      "description": "An elegant dueling form focused on precision and efficiency."
+    },
+    "Soresu": {
+      "name": "Form III: Soresu",
+      "aka": "Resilience Form",
+      "description": "The ultimate defensive form, emphasizing protection and deflection."
+    },
+    "Ataru": {
+      "name": "Form IV: Ataru",
+      "aka": "Aggression Form",
+      "description": "An acrobatic form using the Force to enhance physical prowess."
+    },
+    "Shien": {
+      "name": "Form V: Shien/Djem So",
+      "aka": "Perseverance Form",
+      "description": "An aggressive counter-attacking form (Shien for blasters, Djem So for blades)."
+    },
+    "Djem So": {
+      "name": "Form V: Djem So",
+      "aka": "Perseverance Form",
+      "description": "The blade-to-blade variant of Form V, emphasizing power and domination."
+    },
+    "Niman": {
+      "name": "Form VI: Niman",
+      "aka": "Moderation Form",
+      "description": "A balanced form integrating Force powers with lightsaber combat."
+    },
+    "Juyo": {
+      "name": "Form VII: Juyo",
+      "aka": "Ferocity Form",
+      "description": "An unpredictable and aggressive form bordering on the dark side."
+    },
+    "Vaapad": {
+      "name": "Form VII: Vaapad",
+      "aka": "Ferocity Form",
+      "description": "Mace Windu's variant of Juyo, channeling inner darkness while maintaining control."
+    },
+    "Jar'Kai": {
+      "name": "Jar'Kai",
+      "aka": "Dual-Blade Combat",
+      "description": "The art of wielding two lightsabers simultaneously."
+    },
+    "Sokan": {
+      "name": "Sokan",
+      "aka": "Terrain Form",
+      "description": "A movement-focused form using environment and terrain to advantage."
+    },
+    "Trakata": {
+      "name": "Trakata",
+      "aka": "Deception Form",
+      "description": "A controversial form using lightsaber activation/deactivation as a tactic."
+    }
+  }
+}
