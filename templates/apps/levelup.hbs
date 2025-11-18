@@ -389,19 +389,41 @@
         {{/if}}
       </p>
 
-      <div class="talent-tree-grid">
-        {{#each talentTrees}}
-        <button class="select-talent-tree choice-button" data-tree="{{this}}">
-          <i class="fas fa-tree"></i>
-          <span>{{this}}</span>
-        </button>
-        {{/each}}
+      <div class="talent-selection-intro">
+        <div class="talent-intro-card">
+          <div class="talent-intro-icon">
+            <i class="fas fa-project-diagram"></i>
+          </div>
+          <h4>Explore Talent Trees</h4>
+          <p>View an interactive visualization of available talent trees. Hover to preview, click to explore in detail.</p>
+          <button class="select-talent-tree btn-primary-large">
+            <i class="fas fa-search-plus"></i>
+            Browse Talent Trees
+          </button>
+        </div>
+
+        {{#if talentTrees}}
+        <div class="quick-tree-buttons">
+          <p class="quick-select-label">Or quickly select a tree:</p>
+          <div class="talent-tree-grid">
+            {{#each talentTrees}}
+            <button class="select-talent-tree choice-button" data-tree="{{this}}">
+              <i class="fas fa-tree"></i>
+              <span>{{this}}</span>
+            </button>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
       </div>
 
       <div class="selected-talent-display">
         {{#if selectedTalent}}
-        <h4>Selected: {{selectedTalent.name}}</h4>
-        <p>{{selectedTalent.system.benefit}}</p>
+        <div class="selected-talent-card">
+          <i class="fas fa-check-circle"></i>
+          <h4>Selected: {{selectedTalent.name}}</h4>
+          <p>{{selectedTalent.system.benefit}}</p>
+        </div>
         {{/if}}
       </div>
 
@@ -867,11 +889,80 @@
   margin-bottom: 0.5rem;
 }
 
+.talent-selection-intro {
+  margin-bottom: 2rem;
+}
+
+.talent-intro-card {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(10, 116, 218, 0.1) 100%);
+  border: 3px solid #00d9ff;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.talent-intro-icon {
+  font-size: 4rem;
+  color: #00d9ff;
+  margin-bottom: 1rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.talent-intro-card h4 {
+  color: #00d9ff;
+  font-size: 1.6rem;
+  margin: 0 0 1rem 0;
+}
+
+.talent-intro-card p {
+  color: #aaa;
+  margin: 0 0 1.5rem 0;
+  font-size: 1rem;
+}
+
+.btn-primary-large {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #0a74da 0%, #0056b3 100%);
+  border: 2px solid #00d9ff;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(10, 116, 218, 0.3);
+}
+
+.btn-primary-large:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 217, 255, 0.5);
+  border-color: #00ffff;
+}
+
+.quick-tree-buttons {
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px dashed #0a74da;
+}
+
+.quick-select-label {
+  text-align: center;
+  color: #aaa;
+  font-style: italic;
+  margin: 0 0 1rem 0;
+}
+
 .talent-tree-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 1rem;
-  margin-bottom: 2rem;
 }
 
 .selected-talent-display {
@@ -880,6 +971,32 @@
   border-radius: 6px;
   min-height: 80px;
   margin-bottom: 1.5rem;
+}
+
+.selected-talent-card {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(0, 217, 102, 0.2) 0%, rgba(0, 168, 74, 0.2) 100%);
+  border: 2px solid #00d966;
+  border-radius: 8px;
+  border-left-width: 5px;
+}
+
+.selected-talent-card i {
+  color: #00d966;
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+.selected-talent-card h4 {
+  color: #00d966;
+  margin: 0.5rem 0;
+  font-size: 1.3rem;
+}
+
+.selected-talent-card p {
+  margin: 0.5rem 0 0 0;
+  color: #e4e4e4;
+  line-height: 1.5;
 }
 
 .summary-grid {
