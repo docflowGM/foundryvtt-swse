@@ -5,200 +5,210 @@
     {
       "name": "Force Point Recovery",
       "source": "Core",
-      "description": "Core Force Technique for Force Point recovery.",
+      "description": "At the end of an encounter, you automatically recover 1 Force Point spent during the encounter.",
       "prerequisites": []
     },
     {
       "name": "Force Power Mastery",
       "source": "Core",
-      "description": "Core Force Technique for mastering Force Powers.",
+      "description": "Choose a single Force Power. You may Take 10 on Use the Force checks to activate this Force Power even when distracted or threatened.",
+      "special": "You may select this Force Technique multiple times; each time you select this Force Technique, it applies to a different Force Power.",
       "prerequisites": []
     },
     {
       "name": "Improved Force Trance",
       "source": "Core",
-      "description": "Enhances your ability to enter a Force Trance.",
+      "description": "Each hour you remain in a Force Trance, you regain a number of Hit Points equal to 2 x your Character Level.",
       "relatedPower": "Force Trance",
       "prerequisites": []
     },
     {
       "name": "Improved Move Light Object",
       "source": "Core",
-      "description": "Enhances your ability to move light objects with the Force.",
+      "description": "You may make a Use the Force check to Move Light Object as a Swift Action instead of a Move Action. Using the light object as a projectile weapon requires a Move Action (instead of a Standard Action).",
       "relatedPower": "Move Light Object",
       "prerequisites": []
     },
     {
       "name": "Improved Sense Force",
       "source": "Core",
-      "description": "Enhances your ability to sense the Force in your surroundings.",
+      "description": "You may use the Sense Force ability of the Use the Force Skill as a Move Action rather than a Full-Round Action.",
       "relatedPower": "Sense Force",
       "prerequisites": []
     },
     {
       "name": "Improved Sense Surroundings",
       "source": "Core",
-      "description": "Enhances your ability to sense your surroundings through the Force.",
+      "description": "You may use the Sense Surroundings application of the Use the Force Skill as a Free Action rather than a Swift Action.",
       "relatedPower": "Sense Surroundings",
       "prerequisites": []
     },
     {
       "name": "Improved Telepathy",
       "source": "Core",
-      "description": "Enhances your telepathic abilities through the Force.",
+      "description": "Whenever you use the Telepathy ability of the Use the Force Skill, you can reroll your Use the Force check, keeping the better of the two results.",
       "relatedPower": "Telepathy",
       "prerequisites": []
     },
     {
       "name": "Dominate Mind",
       "source": "Knights of the Old Republic Campaign Guide",
-      "description": "Allows you to dominate the minds of others through the Force.",
+      "description": "When using Mind Trick, if you exceed your target's Will Defense by 10 or more points, you can choose what your target does with its Standard Action on its next turn.",
+      "relatedPower": "Mind Trick",
       "prerequisites": []
     },
     {
       "name": "Improved Energy Resistance",
       "source": "Knights of the Old Republic Campaign Guide",
-      "description": "Enhances your resistance to energy attacks.",
+      "description": "When you activate Energy Resistance, you can choose to have it affect one of your allies within 6 squares of you instead.",
       "relatedPower": "Energy Resistance",
       "prerequisites": []
     },
     {
       "name": "Improved Force Slam",
       "source": "Knights of the Old Republic Campaign Guide",
-      "description": "Enhances your ability to slam opponents with the Force.",
+      "description": "When you use the Force Slam Force Power, you can change the time it takes to activate to a Full-Round Action in order to target all targets within a 2-square radius originating in your square.",
       "relatedPower": "Force Slam",
+      "special": "Additionally, you can spend a Force Point to increase the area to a 4-square radius Burst that originates from your square.",
       "prerequisites": []
     },
     {
       "name": "Improved Force Stun",
       "source": "Knights of the Old Republic Campaign Guide",
-      "description": "Enhances your ability to stun opponents with the Force.",
+      "description": "Your successful Force Stun also temporarily Immobilizes the target for one round.",
       "relatedPower": "Force Stun",
       "prerequisites": []
     },
     {
       "name": "Improved Ionize",
       "source": "Knights of the Old Republic Campaign Guide",
-      "description": "Enhances your ability to ionize and disable technology.",
+      "description": "When you use the Ionize Force Power, you can spend a Force Point to have the target take full Ion damage (instead of halving the Ion damage after comparing it to the target's Damage Threshold, as normal).",
       "relatedPower": "Ionize",
       "prerequisites": []
     },
     {
       "name": "Improved Kinetic Combat",
       "source": "Knights of the Old Republic Campaign Guide",
-      "description": "Enhances your kinetic combat abilities through the Force.",
+      "description": "You can wield up to three Weapons simultaneously using the Kinetic Combat Force Power, though moving and attacking with one of the Weapons is still a Standard Action.",
       "relatedPower": "Kinetic Combat",
       "prerequisites": []
     },
     {
       "name": "Improved Resist Force",
       "source": "Knights of the Old Republic Campaign Guide",
-      "description": "Enhances your resistance to Force Powers.",
+      "description": "When you activate Resist Force, you can choose to have it affect one of your allies within 6 squares of you instead.",
       "relatedPower": "Resist Force",
       "prerequisites": []
     },
     {
       "name": "Improved Valor",
       "source": "Knights of the Old Republic Campaign Guide",
-      "description": "Enhances your ability to inspire valor in allies.",
+      "description": "When you activate Valor, you gain the benefits of that Force Power as well.",
       "relatedPower": "Valor",
       "prerequisites": []
     },
     {
       "name": "Improved Vital Transfer",
       "source": "Knights of the Old Republic Campaign Guide",
-      "description": "Enhances your ability to transfer life force.",
+      "description": "You can use the Vital Transfer Force Power against a target within 6 squares, and within your line of sight.",
       "relatedPower": "Vital Transfer",
       "prerequisites": []
     },
     {
       "name": "Language Absorption",
       "source": "Knights of the Old Republic Campaign Guide",
-      "description": "Allows you to absorb and understand languages through the Force.",
+      "description": "You can use telepathy to forcibly learn a language from another creature. If the target is unwilling, you must succeed a Use the Force check against the target's Will Defense, as with the Telepathy aspect of the Use the Force Skill. You retain the ability to speak and understand this language for 24 hours.",
+      "relatedPower": "Telepathy",
       "prerequisites": []
     },
     {
       "name": "Improved Battle Strike",
       "source": "Force Unleashed Campaign Guide",
-      "description": "Enhances your battle strike capabilities.",
+      "description": "When you use the Battle Strike Force Power, you can apply the bonus to attack and damage rolls for all attacks made during a Full Attack Action.",
       "relatedPower": "Battle Strike",
       "prerequisites": []
     },
     {
       "name": "Improved Dark Rage",
       "source": "Force Unleashed Campaign Guide",
-      "description": "Enhances your dark rage abilities.",
+      "description": "When you use the Dark Rage Force Power, you ignore the restriction that prevents you from using Skills or performing tasks that require patience and concentration.",
       "relatedPower": "Dark Rage",
+      "special": "Additionally, you can always activate Dark Rage in the Surprise Round, even if you are considered Surprised.",
       "prerequisites": []
     },
     {
       "name": "Improved Force Disarm",
       "source": "Force Unleashed Campaign Guide",
-      "description": "Enhances your ability to disarm opponents with the Force.",
+      "description": "When you use the Force Disarm Force Power, you can change the time it takes to activate it to a Full-Round Action; if you do so, your opponent does not gain the normal +10 bonus to Reflex Defense normally associated with Disarming.",
       "relatedPower": "Force Disarm",
       "prerequisites": []
     },
     {
       "name": "Improved Force Thrust",
       "source": "Force Unleashed Campaign Guide",
-      "description": "Enhances your ability to thrust opponents with the Force.",
+      "description": "When you use the Force Thrust Force Power, you can change the time it takes to activate it to a Full-Round Action and spend a Force Point in order to target all creatures in a 6-square cone that originates from your square.",
       "relatedPower": "Force Thrust",
       "prerequisites": []
     },
     {
       "name": "Improved Force Grip",
       "source": "Force Unleashed Campaign Guide",
-      "description": "Enhances your ability to grip opponents with the Force.",
+      "description": "When you use the Force Grip Force Power, you can spend a Force Point as a Free Action to maintain the Force Grip for 1 additional round without the need to concentrate.",
       "relatedPower": "Force Grip",
+      "special": "However, after this additional round you may not resume concentrating on the Force Grip.",
       "prerequisites": []
     },
     {
       "name": "Improved Force Lightning",
       "source": "Force Unleashed Campaign Guide",
-      "description": "Enhances your Force Lightning abilities.",
+      "description": "When you use the Force Lightning Force Power, you can choose to change the time it takes to activate to a Full-Round Action. If you do, your target must make a Strength check. If your Use the Force check result beats the target's Strength check, you push the target back 1 square plus 1 additional square for every 5 points by which you exceed the target's check result. If you push the target into a larger object, the target takes 1d6 points of damage.",
       "relatedPower": "Force Lightning",
+      "special": "The target adds its Base Attack Bonus and size modifier to its Strength check: Colossal, +20; Gargantuan, +15; Huge, +10; Large, +5; Medium, +0; Small, -5; Tiny, -10; Diminutive, -15; Fine, -20. In addition, the target gets a +5 stability bonus if it has more than two legs or is otherwise exceptionally stable.",
       "prerequisites": []
     },
     {
       "name": "Improved Mind Trick",
       "source": "Force Unleashed Campaign Guide",
-      "description": "Enhances your ability to perform mind tricks.",
+      "description": "When you use the Mind Trick Force Power, you can change the time it takes to activate it to a Full-Round Action in order to target all creatures in a 6-square Cone that originates from your square.",
       "relatedPower": "Mind Trick",
+      "special": "Additionally, you can spend a Force Point to increase the area to a 12-square Cone that originates from your square.",
       "prerequisites": []
     },
     {
       "name": "Improved Rebuke",
       "source": "Force Unleashed Campaign Guide",
-      "description": "Enhances your ability to rebuke Force Powers.",
+      "description": "When an ally within 12 squares and within line of sight of you is the target of a Force Power, you can use the Rebuke Force Power as though you were the target of that Force Power instead.",
       "relatedPower": "Rebuke",
       "prerequisites": []
     },
     {
       "name": "Improved Repulse",
       "source": "Force Unleashed Campaign Guide",
-      "description": "Enhances your ability to repulse enemies with the Force.",
+      "description": "When you use the Repulse Force Power, you can change the time it takes to activate it to a Full-Round Action in order to target all creatures in a 2-square radius Burst that originates from your square.",
       "relatedPower": "Repulse",
+      "special": "Additionally, you can spend a Force Point to increase the area to a 4-square radius Burst that originates from your square.",
       "prerequisites": []
     },
     {
       "name": "Advanced Vital Transfer",
       "source": "Clone Wars Campaign Guide",
-      "description": "Advanced technique for transferring life force.",
+      "description": "When you use the Vital Transfer Force Power, you can spend a Destiny Point to fully heal the target of all damage and remove all of the target's debilitating Conditions.",
       "relatedPower": "Vital Transfer",
       "prerequisites": ["Improved Vital Transfer"]
     },
     {
       "name": "Improved Cloak",
       "source": "Clone Wars Campaign Guide",
-      "description": "Enhances your ability to cloak yourself in the Force.",
+      "description": "You can maintain your Cloak Force Power as a Move Action instead of a Standard Action.",
       "relatedPower": "Cloak",
       "prerequisites": []
     },
     {
       "name": "Improved Levitate",
       "source": "Clone Wars Campaign Guide",
-      "description": "Enhances your ability to levitate objects and beings.",
+      "description": "If you are moved into a pit or off another elevated surface involuntarily, such as being the target of a Force Thrust or Bantha Rush, you can spend a Force Point to activate the Levitate Force Power as a Reaction.",
       "relatedPower": "Levitate",
+      "special": "If you do so, you end your forced movement in the last square before the edge of the precipice.",
       "prerequisites": []
     },
     {

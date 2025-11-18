@@ -9,7 +9,7 @@
 
 export class PopulateForceCompendiumsMigration {
 
-  static MIGRATION_VERSION = "1.1.139";
+  static MIGRATION_VERSION = "1.1.141";
   static MIGRATION_KEY = "forceCompendiumsPopulation";
 
   /**
@@ -118,11 +118,26 @@ export class PopulateForceCompendiumsMigration {
     let created = 0;
     for (const technique of data.techniques) {
       try {
+        // Build description with all available fields
+        let description = `<p>${technique.description}</p>`;
+
+        if (technique.special) {
+          description += `<p><strong>Special:</strong> ${technique.special}</p>`;
+        }
+
+        if (technique.relatedPower) {
+          description += `<p><strong>Related Power:</strong> ${technique.relatedPower}</p>`;
+        }
+
+        if (technique.prerequisites && technique.prerequisites.length > 0) {
+          description += `<p><strong>Prerequisites:</strong> ${technique.prerequisites.join(', ')}</p>`;
+        }
+
         const itemData = {
           name: technique.name,
           type: 'feat',
           system: {
-            description: technique.description,
+            description: description,
             source: technique.source || '',
             tags: ['force-technique'],
             prerequisites: technique.prerequisites || [],
