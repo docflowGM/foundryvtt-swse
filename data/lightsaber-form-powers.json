@@ -7,8 +7,30 @@
       "form": "Juyo",
       "discipline": "Form VII: Juyo",
       "time": "Standard Action",
+      "target": "One enemy within reach",
       "tags": ["lightsaber-form"],
       "description": "You trade power for accuracy.",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Make a single melee attack with a Lightsaber against the target, rolling twice and keeping the higher result. However, you take a -5 penalty on your damage roll."
+        },
+        {
+          "dc": 20,
+          "effect": "Make a single melee attack with a Lightsaber against the target, rolling twice and keeping the higher result. However, you take a -2 penalty on your damage roll."
+        },
+        {
+          "dc": 25,
+          "effect": "Make a single melee attack with a Lightsaber against the target, rolling twice and keeping the higher result. However, you take a -1 penalty on your damage roll."
+        },
+        {
+          "dc": 30,
+          "effect": "Make a single melee attack with a Lightsaber against the target, rolling twice and keeping the higher result."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Juyo): If you have the Juyo Talent and miss with both attack rolls, this Form Power remains in your Force Power Suite instead of being spent as normal.",
+      "special": "You can spend a Force Point to roll your attack roll three times, keeping the highest result.",
+      "forcePointEffect": "Roll your attack roll three times, keeping the highest result.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -16,8 +38,13 @@
       "form": "Shien",
       "discipline": "Form V: Shien",
       "time": "Swift Action",
+      "target": "Self",
       "tags": ["lightsaber-form"],
       "description": "You whip your Lightsaber around you, creating a barrier through which blaster fire rarely penetrates.",
+      "effect": "Make a Use the Force check. Until the start of your next turn, you can use the results of the Use the Force check in place of your Reflex Defense against incoming non-Area Attack ranged attacks.",
+      "formBonus": "Lightsaber Form (Shien): If you have the Shien Talent, you can redirect (as per the Redirect Shot Talent) one blaster bolt that misses you while this Form Power is in effect.",
+      "special": "You can spend a Force Point to have this Form Power also apply to attacks from ranged weapons set to Autofire. If such an attack hits you while this Form Power is in effect, you take half damage; if it misses you, you take no damage.",
+      "forcePointEffect": "This Form Power also applies to attacks from ranged weapons set to Autofire. If such an attack hits you while this Form Power is in effect, you take half damage; if it misses you, you take no damage.",
       "source": "Jedi Academy Training Manual"
     },
     {
