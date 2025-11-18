@@ -168,6 +168,11 @@ export default class CharacterGenerator extends Application {
     context.packs = foundry.utils.deepClone(this._packs);
     context.skillsJson = this._skillsJson || [];
 
+    // Sort species by source material (Core first, then alphabetically)
+    if (context.packs.species) {
+      context.packs.species = this._sortSpeciesBySource(context.packs.species);
+    }
+
     // Calculate half level for display
     context.halfLevel = Math.floor(this.characterData.level / 2);
 
@@ -348,6 +353,56 @@ export default class CharacterGenerator extends Application {
 
     steps.push("abilities", "class", "feats", "talents", "skills", "summary", "shop");
     return steps;
+  }
+
+  /**
+   * Sort species by source material, prioritizing Core Rulebook first
+   * @param {Array} species - Array of species documents
+   * @returns {Array} Sorted species array
+   */
+  _sortSpeciesBySource(species) {
+    if (!species || species.length === 0) return species;
+
+    // Define source priority order (Core first, then alphabetically)
+    const sourcePriority = {
+      "Core": 0,
+      "Core Rulebook": 0,
+      "Knights of the Old Republic": 1,
+      "KotOR": 1,
+      "KOTOR": 1,
+      "Clone Wars": 2,
+      "Rebellion Era": 3,
+      "Legacy Era": 4,
+      "The Force Unleashed": 5,
+      "Galaxy at War": 6,
+      "Unknown Regions": 7,
+      "Scum and Villainy": 8,
+      "Threats of the Galaxy": 9,
+      "Jedi Academy": 10
+    };
+
+    // Sort species
+    return species.sort((a, b) => {
+      const sourceA = a.system?.source || "Unknown";
+      const sourceB = b.system?.source || "Unknown";
+
+      // Get priority (default to 999 for unknown sources)
+      const priorityA = sourcePriority[sourceA] ?? 999;
+      const priorityB = sourcePriority[sourceB] ?? 999;
+
+      // First sort by source priority
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      // If same priority (or both unknown), sort by source name alphabetically
+      if (sourceA !== sourceB) {
+        return sourceA.localeCompare(sourceB);
+      }
+
+      // Within same source, sort by species name alphabetically
+      return (a.name || "").localeCompare(b.name || "");
+    });
   }
 
   async _onNextStep(event) {
@@ -1292,14 +1347,32 @@ export default class CharacterGenerator extends Application {
     event.preventDefault();
     const speciesKey = event.currentTarget.dataset.species;
 
+    console.log(`CharGen | Attempting to select species: ${speciesKey}`);
+
     // Find the species document
-    if (!this._packs.species) await this._loadData();
+    if (!this._packs.species) {
+      console.log("CharGen | Species pack not loaded, loading now...");
+      await this._loadData();
+    }
+
+    console.log(`CharGen | Species pack contains ${this._packs.species?.length || 0} species`);
+
+    if (!this._packs.species || this._packs.species.length === 0) {
+      console.error("CharGen | Species pack is empty or failed to load!");
+      ui.notifications.error("Species data failed to load. Please refresh the page.");
+      return;
+    }
+
     const speciesDoc = this._packs.species.find(s => s.name === speciesKey || s._id === speciesKey);
 
     if (!speciesDoc) {
-      console.warn(`CharGen | Species not found: ${speciesKey}`);
+      console.error(`CharGen | Species not found: ${speciesKey}`);
+      console.log(`CharGen | Available species:`, this._packs.species.map(s => s.name));
+      ui.notifications.error(`Species "${speciesKey}" not found in database!`);
       return;
     }
+
+    console.log(`CharGen | Found species: ${speciesDoc.name}`, speciesDoc);
 
     this.characterData.species = speciesKey;
 
@@ -1331,8 +1404,9 @@ export default class CharacterGenerator extends Application {
       this.characterData.speed = speed;
     }
 
-    // 3. Store size
+    // 3. Store size and apply size modifiers
     this.characterData.size = system.size || "Medium";
+    this._applySizeModifiers(this.characterData.size);
 
     // 4. Store special abilities
     this.characterData.specialAbilities = system.special || [];
@@ -1348,8 +1422,9 @@ export default class CharacterGenerator extends Application {
     // 6. Store languages
     this.characterData.languages = system.languages || [];
 
-    // 7. Apply skill bonuses (store for later application)
+    // 7. Store and apply racial skill bonuses
     this.characterData.racialSkillBonuses = system.skillBonuses || [];
+    this._applyRacialSkillBonuses(system.skillBonuses || []);
 
     // 8. Store source
     this.characterData.speciesSource = system.source || "";
@@ -1362,6 +1437,106 @@ export default class CharacterGenerator extends Application {
       languages: this.characterData.languages,
       skillBonuses: this.characterData.racialSkillBonuses
     });
+  }
+
+  /**
+   * Parse and apply racial skill bonuses to character skills
+   * @param {Array<string>} bonuses - Array of skill bonus strings like ["+2 Perception", "+2 Stealth"]
+   */
+  _applyRacialSkillBonuses(bonuses) {
+    if (!bonuses || bonuses.length === 0) return;
+
+    // Skill name mapping from display names to skill keys
+    const skillNameMap = {
+      'acrobatics': 'acrobatics',
+      'climb': 'climb',
+      'deception': 'deception',
+      'endurance': 'endurance',
+      'gather information': 'gatherInformation',
+      'initiative': 'initiative',
+      'jump': 'jump',
+      'knowledge': 'knowledge', // Generic knowledge
+      'knowledge (galactic lore)': 'knowledge',
+      'knowledge (life sciences)': 'knowledge',
+      'mechanics': 'mechanics',
+      'perception': 'perception',
+      'persuasion': 'persuasion',
+      'pilot': 'pilot',
+      'stealth': 'stealth',
+      'survival': 'survival',
+      'swim': 'swim',
+      'treat injury': 'treatInjury',
+      'use computer': 'useComputer',
+      'use the force': 'useTheForce'
+    };
+
+    for (const bonusString of bonuses) {
+      // Parse bonus string like "+2 Perception" or "+2 Knowledge (Galactic Lore)"
+      const match = bonusString.match(/([+-]?\d+)\s+(.+)/i);
+      if (!match) continue;
+
+      const bonusValue = parseInt(match[1]);
+      const skillName = match[2].trim().toLowerCase();
+
+      // Find matching skill key
+      const skillKey = skillNameMap[skillName];
+      if (!skillKey) {
+        console.warn(`CharGen | Unknown skill name in racial bonus: ${skillName}`);
+        continue;
+      }
+
+      // Initialize skill if not exists
+      if (!this.characterData.skills[skillKey]) {
+        this.characterData.skills[skillKey] = {
+          trained: false,
+          focus: false,
+          misc: 0
+        };
+      }
+
+      // Apply racial bonus to misc field
+      this.characterData.skills[skillKey].misc = (this.characterData.skills[skillKey].misc || 0) + bonusValue;
+
+      console.log(`CharGen | Applied racial skill bonus: ${skillName} ${bonusValue >= 0 ? '+' : ''}${bonusValue}`);
+    }
+  }
+
+  /**
+   * Apply size modifiers to character defenses and skills
+   * @param {string} size - Character size (Small, Medium, Large, etc.)
+   */
+  _applySizeModifiers(size) {
+    // Size modifiers per SWSE rules
+    const sizeModifiers = {
+      "Fine": { reflex: 8, stealth: 16 },
+      "Diminutive": { reflex: 4, stealth: 12 },
+      "Tiny": { reflex: 2, stealth: 8 },
+      "Small": { reflex: 1, stealth: 5 },
+      "Medium": { reflex: 0, stealth: 0 },
+      "Large": { reflex: -1, stealth: -5 },
+      "Huge": { reflex: -2, stealth: -10 },
+      "Gargantuan": { reflex: -5, stealth: -12 },
+      "Colossal": { reflex: -10, stealth: -16 }
+    };
+
+    const modifiers = sizeModifiers[size] || sizeModifiers["Medium"];
+
+    // Apply Reflex Defense modifier
+    if (this.characterData.defenses && this.characterData.defenses.reflex) {
+      this.characterData.defenses.reflex.misc = (this.characterData.defenses.reflex.misc || 0) + modifiers.reflex;
+    }
+
+    // Apply Stealth skill modifier
+    if (!this.characterData.skills.stealth) {
+      this.characterData.skills.stealth = {
+        trained: false,
+        focus: false,
+        misc: 0
+      };
+    }
+    this.characterData.skills.stealth.misc = (this.characterData.skills.stealth.misc || 0) + modifiers.stealth;
+
+    console.log(`CharGen | Applied size modifiers for ${size}: Reflex ${modifiers.reflex >= 0 ? '+' : ''}${modifiers.reflex}, Stealth ${modifiers.stealth >= 0 ? '+' : ''}${modifiers.stealth}`);
   }
 
   /**

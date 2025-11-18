@@ -48,11 +48,30 @@
         {{#each availableSpecies}}
         <div class="species-card">
           <h5>{{this.name}}</h5>
+          {{#if this.system.size}}
+          <div class="species-size">
+            <span class="size-label">Size: {{this.system.size}}</span>
+          </div>
+          {{/if}}
           <div class="species-bonuses">
             {{#if this.system.abilities}}
             <span class="bonus-label">{{this.system.abilities}}</span>
             {{/if}}
           </div>
+          {{#if this.system.skillBonuses}}
+          <div class="skill-bonuses">
+            {{#each this.system.skillBonuses}}
+            <span class="skill-bonus">{{this}}</span>
+            {{/each}}
+          </div>
+          {{/if}}
+          {{#if this.system.special}}
+          <div class="special-abilities">
+            {{#each this.system.special}}
+            <span class="special-ability">{{this}}</span>
+            {{/each}}
+          </div>
+          {{/if}}
           <button class="select-species-btn btn-primary" data-species-id="{{this.id}}" data-species-name="{{this.name}}">
             <i class="fas fa-dna"></i> Select
           </button>

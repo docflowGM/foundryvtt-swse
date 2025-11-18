@@ -686,3 +686,112 @@
 .method-button i {
   margin-right: 0.5rem;
 }
+
+/* ============================================
+   Species Selection Display
+   ============================================ */
+
+.species-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.select-species {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(0, 30, 60, 0.8) 0%, rgba(0, 50, 100, 0.6) 100%);
+  border: 2px solid #0af;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.select-species:hover {
+  box-shadow: 0 0 20px rgba(0, 170, 255, 0.6);
+  transform: translateY(-3px);
+  border-color: #00ff88;
+}
+
+.select-species h4 {
+  margin: 0 0 0.75rem 0;
+  color: #00ff88;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.select-species .bonuses {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(0, 170, 255, 0.1);
+  border-radius: 4px;
+}
+
+.select-species .bonus {
+  display: block;
+  color: #9ed0ff;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.select-species .species-size {
+  margin-bottom: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  background: rgba(170, 0, 255, 0.1);
+  border-radius: 4px;
+  border-left: 3px solid #aa00ff;
+}
+
+.select-species .size-label {
+  display: block;
+  color: #cc88ff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.select-species .skill-bonuses {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(0, 255, 136, 0.1);
+  border-radius: 4px;
+}
+
+.select-species .skill-bonus {
+  display: block;
+  color: #00ff88;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.select-species .skill-bonus::before {
+  content: "⚡ ";
+  color: #0af;
+}
+
+.select-species .special-abilities {
+  padding: 0.5rem;
+  background: rgba(255, 200, 0, 0.1);
+  border-radius: 4px;
+  border-left: 3px solid #ffaa00;
+}
+
+.select-species .special-ability {
+  display: block;
+  color: #ffcc66;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+.select-species .special-ability::before {
+  content: "★ ";
+  color: #ffaa00;
+}

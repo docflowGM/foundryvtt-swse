@@ -385,7 +385,58 @@ export class SWSELevelUpEnhanced extends FormApplication {
       console.warn('SWSE LevelUp | No species found in compendium!');
     }
 
-    return availableSpecies;
+    // Sort by source material (Core first, then alphabetically)
+    return this._sortSpeciesBySource(availableSpecies);
+  }
+
+  /**
+   * Sort species by source material, prioritizing Core Rulebook first
+   * @param {Array} species - Array of species documents
+   * @returns {Array} Sorted species array
+   */
+  _sortSpeciesBySource(species) {
+    if (!species || species.length === 0) return species;
+
+    // Define source priority order (Core first, then alphabetically)
+    const sourcePriority = {
+      "Core": 0,
+      "Core Rulebook": 0,
+      "Knights of the Old Republic": 1,
+      "KotOR": 1,
+      "KOTOR": 1,
+      "Clone Wars": 2,
+      "Rebellion Era": 3,
+      "Legacy Era": 4,
+      "The Force Unleashed": 5,
+      "Galaxy at War": 6,
+      "Unknown Regions": 7,
+      "Scum and Villainy": 8,
+      "Threats of the Galaxy": 9,
+      "Jedi Academy": 10
+    };
+
+    // Sort species
+    return species.sort((a, b) => {
+      const sourceA = a.system?.source || "Unknown";
+      const sourceB = b.system?.source || "Unknown";
+
+      // Get priority (default to 999 for unknown sources)
+      const priorityA = sourcePriority[sourceA] ?? 999;
+      const priorityB = sourcePriority[sourceB] ?? 999;
+
+      // First sort by source priority
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      // If same priority (or both unknown), sort by source name alphabetically
+      if (sourceA !== sourceB) {
+        return sourceA.localeCompare(sourceB);
+      }
+
+      // Within same source, sort by species name alphabetically
+      return (a.name || "").localeCompare(b.name || "");
+    });
   }
 
   _isBaseClass(className) {

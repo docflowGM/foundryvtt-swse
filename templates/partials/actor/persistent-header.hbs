@@ -8,6 +8,10 @@
  <div class="character-level">
  <label>Level</label>
  <input name="system.level" type="number" value="{{system.level}}" min="1" max="20" data-dtype="Number" class="level-input"/>
+ <div class="half-level-display" title="Half Level (rounded down) - used for skills and other bonuses">
+ <span class="half-level-label">½ Level:</span>
+ <span class="half-level-value">{{floor (divide system.level 2)}}</span>
+ </div>
  <button class="level-up" title="Level Up Character">
  <i class="fas fa-level-up-alt"></i> Level Up
  </button>

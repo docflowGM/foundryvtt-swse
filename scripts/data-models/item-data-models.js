@@ -238,6 +238,7 @@ export class SpeciesDataModel extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
+      // Ability score modifiers
       abilityModifiers: new fields.SchemaField({
         str: new fields.NumberField({initial: 0, integer: true}),
         dex: new fields.NumberField({initial: 0, integer: true}),
@@ -246,15 +247,64 @@ export class SpeciesDataModel extends foundry.abstract.DataModel {
         wis: new fields.NumberField({initial: 0, integer: true}),
         cha: new fields.NumberField({initial: 0, integer: true})
       }),
+
+      // Legacy fields (kept for backward compatibility)
+      abilities: new fields.StringField({initial: "None"}), // String format: "+2 Dex, -2 Con"
+      skillBonuses: new fields.ArrayField(new fields.StringField()), // ["+2 Perception", "+2 Stealth"]
+      special: new fields.ArrayField(new fields.StringField()), // Special abilities array
+      source: new fields.StringField({initial: "Core"}), // Source book
+
+      // Physical traits
       size: new fields.StringField({
         required: true,
-        initial: "medium",
-        choices: ["fine", "diminutive", "tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"]
+        initial: "Medium",
+        choices: ["Fine", "Diminutive", "Tiny", "Small", "Medium", "Large", "Huge", "Gargantuan", "Colossal"]
       }),
       speed: new fields.NumberField({required: true, initial: 6, min: 0, integer: true}),
-      bonusFeats: new fields.ArrayField(new fields.StringField()),
+
+      // Vision and sensory traits
+      visionTraits: new fields.ArrayField(new fields.StringField()), // ["Low-Light Vision", "Darkvision", "Scent"]
+
+      // Natural weapons
+      naturalWeapons: new fields.ArrayField(new fields.SchemaField({
+        name: new fields.StringField(),
+        damage: new fields.StringField(),
+        type: new fields.StringField() // "slashing", "piercing", "bludgeoning"
+      })),
+
+      // Movement traits
+      movementTraits: new fields.ArrayField(new fields.StringField()), // ["Aquatic", "Amphibious", "Coil Movement"]
+
+      // Environmental adaptations
+      environmentalTraits: new fields.ArrayField(new fields.StringField()), // ["Cold Resistance", "Heat Resistance"]
+
+      // Combat traits
+      combatTraits: new fields.SchemaField({
+        naturalArmor: new fields.NumberField({initial: 0, integer: true}),
+        weaponProficiencies: new fields.ArrayField(new fields.StringField()),
+        otherTraits: new fields.ArrayField(new fields.StringField()) // ["Ferocity", "Rage"]
+      }),
+
+      // Tech and Force traits
+      techTraits: new fields.ArrayField(new fields.StringField()), // ["Primitive", "Biotech Affinity"]
+      forceTraits: new fields.ArrayField(new fields.StringField()), // ["Force Immunity", "Force Intuition"]
+
+      // Social and mental traits
+      socialTraits: new fields.ArrayField(new fields.StringField()), // ["Pheromones", "Psychometric Insight"]
+
+      // Bonus feats and skills
+      bonusFeats: new fields.NumberField({initial: 0, integer: true}),
+      bonusTrainedSkills: new fields.NumberField({initial: 0, integer: true}),
+
+      // Languages
+      languages: new fields.ArrayField(new fields.StringField()),
+
+      // General traits (HTML description)
       traits: new fields.HTMLField({label: "Species Traits"}),
-      languages: new fields.ArrayField(new fields.StringField())
+      description: new fields.HTMLField({label: "Description"}),
+
+      // Tags for filtering
+      tags: new fields.ArrayField(new fields.StringField())
     };
   }
 }
