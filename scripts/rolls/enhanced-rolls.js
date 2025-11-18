@@ -239,14 +239,44 @@ export class SWSERoll {
   }
 
   /**
-   * Roll Use the Force check
+   * Roll Use the Force check with full flavor text and descriptions
    */
   static async rollUseTheForce(actor, power, options = {}) {
     const skill = actor.system.skills.useTheForce;
 
     if (!skill || !skill.trained) {
-      ui.notifications.warn(game.i18n.localize('SWSE.Notifications.Rolls.UseForceRequiresTraining'));
+      ui.notifications.warn('Use the Force requires training to use');
       return;
+    }
+
+    // Load Force power descriptions for flavor text
+    let descriptions = null;
+    try {
+      const response = await fetch('systems/swse/data/force-power-descriptions.json');
+      descriptions = await response.json();
+    } catch (error) {
+      console.warn('SWSE | Could not load Force power descriptions:', error);
+    }
+
+    // Get random intro and manifestation based on discipline
+    const discipline = power.system.discipline || 'telekinetic';
+    const powerName = power.name;
+
+    let intro = '';
+    let manifestation = '';
+
+    // Check if power has specific description
+    if (descriptions?.specific[powerName]) {
+      intro = descriptions.specific[powerName].description;
+      manifestation = descriptions.specific[powerName].manifestation;
+    } else if (descriptions?.disciplines[discipline]) {
+      // Use discipline-based description
+      const disciplineData = descriptions.disciplines[discipline];
+      const introOptions = disciplineData.intro || [];
+      const manifestOptions = disciplineData.manifestation || [];
+
+      intro = introOptions[Math.floor(Math.random() * introOptions.length)] || '';
+      manifestation = manifestOptions[Math.floor(Math.random() * manifestOptions.length)] || '';
     }
 
     const dc = power.system.useTheForce || 15;
@@ -256,25 +286,106 @@ export class SWSERoll {
     await roll.evaluate({async: true});
 
     const success = roll.total >= dc;
+    const d20Result = roll.terms[0].results[0].result;
+
+    // Determine if this is a dark side power
+    const isDarkSide = power.system.tags?.includes('dark-side') || discipline === 'dark-side';
+
+    // Build DC chart display with achieved effects highlighted
+    let dcChartHtml = '';
+    let achievedEffects = [];
+    if (power.system.dcChart && power.system.dcChart.length > 0) {
+      dcChartHtml = '<div class="force-dc-chart"><strong>Use the Force DC Chart:</strong><ul>';
+
+      // Sort DCs to show them in order
+      const sortedDCs = [...power.system.dcChart].sort((a, b) => a.dc - b.dc);
+
+      for (const dcEntry of sortedDCs) {
+        const achieved = roll.total >= dcEntry.dc;
+        const cssClass = achieved ? 'dc-achieved' : 'dc-not-achieved';
+        const icon = achieved ? '✓' : '✗';
+
+        dcChartHtml += `<li class="${cssClass}"><strong>${icon} DC ${dcEntry.dc}:</strong> ${dcEntry.effect || dcEntry.description}</li>`;
+
+        if (achieved) {
+          achievedEffects.push({
+            dc: dcEntry.dc,
+            effect: dcEntry.effect || dcEntry.description
+          });
+        }
+      }
+      dcChartHtml += '</ul></div>';
+    }
+
+    // Build special/warning text
+    let specialHtml = '';
+    if (power.system.special) {
+      specialHtml = `<div class="force-special">${power.system.special}</div>`;
+    }
 
     const messageContent = `
-      <div class="swse-force-roll ${success ? 'success' : 'failure'}">
-        <div class="roll-header">
-          <img src="${power.img}" alt="${power.name}">
-          <h3>Use the Force: ${power.name}</h3>
-        </div>
-        <div class="roll-result">
-          <h4 class="dice-total">${roll.total}</h4>
-          <div class="dc-target">DC ${dc}</div>
-          <div class="result ${success ? 'success' : 'failure'}">
-            ${success ? '✓ SUCCESS' : '✗ FAILURE'}
-          </div>
-        </div>
-        ${success ? `
-          <div class="power-effect">
-            ${power.system.effect || ''}
+      <div class="swse-force-power-use ${isDarkSide ? 'dark-side-power' : ''} ${success ? 'success' : 'failure'}">
+        <h3><i class="fas fa-hand-sparkles"></i> ${actor.name} uses ${powerName}</h3>
+
+        ${intro ? `
+          <div class="force-intro">
+            <em>${actor.name} ${intro}</em>
           </div>
         ` : ''}
+
+        <div class="roll-section">
+          <div class="roll-header">
+            <h4>Use the Force Check</h4>
+          </div>
+          <div class="roll-result">
+            <div class="dice-rolls">d20: ${d20Result}</div>
+            <h4 class="dice-total">${roll.total}</h4>
+            <div class="dc-target">DC ${dc}</div>
+            <div class="result ${success ? 'success' : 'failure'}">
+              ${success ? '✓ SUCCESS' : '✗ FAILURE'}
+            </div>
+          </div>
+        </div>
+
+        ${success && manifestation ? `
+          <div class="force-manifestation">
+            ${manifestation}
+          </div>
+        ` : ''}
+
+        <div class="power-details">
+          <div class="power-stats">
+            <span class="power-level">Level ${power.system.powerLevel}</span>
+            <span class="power-discipline">${discipline}</span>
+            <span class="power-time">${power.system.time}</span>
+            ${isDarkSide ? '<span class="dark-side-tag"><i class="fas fa-skull"></i> Dark Side</span>' : ''}
+          </div>
+
+          <div class="power-range">
+            <strong>Range:</strong> ${power.system.range} | <strong>Target:</strong> ${power.system.target}
+          </div>
+
+          ${dcChartHtml}
+
+          ${achievedEffects.length > 0 ? `
+            <div class="achieved-effects">
+              <h4><i class="fas fa-check-circle"></i> Effects Achieved:</h4>
+              <ul>
+                ${achievedEffects.map(e => `<li><strong>DC ${e.dc}:</strong> ${e.effect}</li>`).join('')}
+              </ul>
+            </div>
+          ` : success ? `
+            <div class="power-effect">
+              ${power.system.effect}
+            </div>
+          ` : `
+            <div class="power-failed">
+              <em>The Force does not answer your call...</em>
+            </div>
+          `}
+
+          ${specialHtml}
+        </div>
       </div>
     `;
 
@@ -282,7 +393,15 @@ export class SWSERoll {
       speaker: ChatMessage.getSpeaker({actor: actor}),
       content: messageContent,
       roll: roll,
-      sound: CONFIG.sounds.dice
+      sound: CONFIG.sounds.dice,
+      flags: {
+        swse: {
+          type: 'force-power',
+          powerId: power.id,
+          isDarkSide: isDarkSide,
+          success: success
+        }
+      }
     });
 
     if (game.dice3d) {

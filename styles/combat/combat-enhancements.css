@@ -844,3 +844,199 @@
   color: var(--color-text-secondary, #aaa);
   font-size: 0.85rem;
 }
+
+/* ─────────────── Force Power Use Display ─────────────── */
+.swse-force-power-use {
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(20, 0, 40, 0.9), rgba(10, 0, 30, 0.8));
+  border: 1px solid rgba(138, 43, 226, 0.5);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  margin: 0.5rem 0;
+}
+
+.swse-force-power-use.dark-side-power {
+  border-color: rgba(220, 20, 60, 0.6);
+  background: linear-gradient(135deg, rgba(40, 0, 0, 0.9), rgba(30, 0, 10, 0.8));
+}
+
+.swse-force-power-use.success {
+  border-color: rgba(138, 226, 52, 0.6);
+}
+
+.swse-force-power-use.failure {
+  border-color: rgba(220, 53, 69, 0.6);
+}
+
+.swse-force-power-use h3 {
+  margin: 0 0 1rem 0;
+  color: #8a2be2;
+  font-size: 1.25rem;
+  border-bottom: 2px solid rgba(138, 43, 226, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.swse-force-power-use.dark-side-power h3 {
+  color: #dc143c;
+}
+
+.swse-force-power-use .force-intro {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: rgba(138, 43, 226, 0.1);
+  border-left: 3px solid rgba(138, 43, 226, 0.5);
+  border-radius: 4px;
+  font-style: italic;
+  color: var(--color-text-secondary, #ccc);
+}
+
+.swse-force-power-use .roll-section {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+}
+
+.swse-force-power-use .roll-section .roll-header h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-primary, #8a2be2);
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.swse-force-power-use .roll-result {
+  text-align: center;
+}
+
+.swse-force-power-use .force-manifestation {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(138, 226, 52, 0.1);
+  border-left: 3px solid rgba(138, 226, 52, 0.5);
+  border-radius: 4px;
+  color: var(--color-text-primary, #fff);
+}
+
+.swse-force-power-use .power-details {
+  margin-top: 1rem;
+}
+
+.swse-force-power-use .power-stats {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.swse-force-power-use .power-stats span {
+  padding: 0.25rem 0.5rem;
+  background: rgba(138, 43, 226, 0.2);
+  border: 1px solid rgba(138, 43, 226, 0.4);
+  border-radius: 3px;
+  font-size: 0.85rem;
+}
+
+.swse-force-power-use .dark-side-tag {
+  background: rgba(220, 20, 60, 0.3) !important;
+  border-color: rgba(220, 20, 60, 0.5) !important;
+  color: #dc143c !important;
+}
+
+.swse-force-power-use .power-range {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #aaa);
+}
+
+.swse-force-power-use .force-dc-chart {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.swse-force-power-use .force-dc-chart strong {
+  color: var(--color-primary, #8a2be2);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.swse-force-power-use .force-dc-chart ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+}
+
+.swse-force-power-use .force-dc-chart li {
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.swse-force-power-use .force-dc-chart li.dc-achieved {
+  background: rgba(0, 255, 136, 0.15);
+  border-left: 3px solid #00ff88;
+  color: #00ff88;
+}
+
+.swse-force-power-use .force-dc-chart li.dc-not-achieved {
+  background: rgba(100, 100, 100, 0.1);
+  border-left: 3px solid rgba(100, 100, 100, 0.3);
+  color: var(--color-text-dim, #888);
+  opacity: 0.6;
+}
+
+.swse-force-power-use .achieved-effects {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 255, 136, 0.1);
+  border: 2px solid #00ff88;
+  border-radius: 8px;
+}
+
+.swse-force-power-use .achieved-effects h4 {
+  margin: 0 0 0.75rem 0;
+  color: #00ff88;
+  font-size: 1rem;
+}
+
+.swse-force-power-use .achieved-effects ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.swse-force-power-use .achieved-effects li {
+  padding: 0.5rem 0;
+  color: var(--color-text-primary, #fff);
+}
+
+.swse-force-power-use .power-effect {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(138, 43, 226, 0.1);
+  border-radius: 4px;
+  color: var(--color-text-primary, #fff);
+}
+
+.swse-force-power-use .power-failed {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(220, 53, 69, 0.1);
+  border-left: 3px solid rgba(220, 53, 69, 0.5);
+  border-radius: 4px;
+  color: var(--color-text-secondary, #aaa);
+  font-style: italic;
+  text-align: center;
+}
+
+.swse-force-power-use .force-special {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: rgba(255, 193, 7, 0.1);
+  border-left: 3px solid #ffc107;
+  border-radius: 4px;
+  color: var(--color-text-secondary, #ccc);
+  font-size: 0.9rem;
+}
