@@ -764,6 +764,24 @@ function registerSystemSettings() {
     type: String,
     default: ""
   });
+
+  game.settings.register("swse", "itemValidationMigration", {
+    name: "Item Validation Migration Version",
+    hint: "Tracks the version of the item validation migration that has been run",
+    scope: "world",
+    config: false,
+    type: String,
+    default: ""
+  });
+
+  game.settings.register("swse", "forceCompendiumsPopulation", {
+    name: "Force Compendiums Population Version",
+    hint: "Tracks the version of the force compendiums population migration that has been run",
+    scope: "world",
+    config: false,
+    type: String,
+    default: ""
+  });
 }
 
 /* -------------------------------------------- */
