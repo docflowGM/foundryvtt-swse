@@ -462,51 +462,99 @@
     "effect": "Each +5 over DC reduces travel time; failure can inflict ship CT and damage penalties"
   },
   {
-    "application": "Breath Control (UtF trained)",
-    "DC": 15,
-    "time": "instant / sustained",
-    "effect": "Hold breath for 2× CON rounds before Endurance checks"
-  },
-  {
-    "application": "Force Trance (UtF trained)",
+    "application": "Force Trance (Use the Force, Trained Only)",
     "DC": 10,
-    "time": "full-round to enter; each hour gains HP = level; 4 hours heals fully",
-    "effect": "Extended rest benefits; reduces need for food/water/air"
+    "time": "full-round action to enter; swift action to exit",
+    "effect": "Enter Force Trance while remaining fully aware of surroundings. Each hour in trance regain HP equal to Character Level. After 4 consecutive hours emerge fully rested (as though rested for 8 hours). While in trance can go 10× as long without air, food, or water."
   },
   {
-    "application": "Place other in Force Trance",
-    "DC": 15,
-    "time": "full-round",
-    "effect": "Place willing adjacent target into trance; only force-user may end trance"
-  },
-  {
-    "application": "Move Light Object (UtF trained)",
+    "application": "Move Light Object (Use the Force, Trained Only)",
     "DC": 10,
     "time": "move action",
-    "effect": "Telekinetically move up to 5 kg 6 sq (move action)"
+    "effect": "Telekinetically lift and move an object (max 5 kg) within line of sight up to 6 squares in any direction. Cannot be used against Yuuzhan Vong Biotech (unless modified with standard technology)."
   },
   {
-    "application": "Move Light Object (hurl, standard)",
+    "application": "Move Light Object — Projectile (Use the Force, Trained Only)",
     "DC": 15,
-    "time": "standard",
-    "effect": "Hurl object vs Ref to deal 1d6; treat as ranged attack"
+    "time": "standard action",
+    "effect": "Use object as projectile weapon. Compare Use the Force check to target's Reflex Defense. Hit deals 1d6 bludgeoning damage. Treated as ranged attack for Talents/Feats. Object max 5 kg."
   },
   {
-    "application": "Search Your Feelings",
-    "DC": 15,
-    "time": "full-round",
-    "effect": "Determine short-term favorability of an action (next 10 minutes)"
+    "application": "Move Light Object — Catch Thrown Weapon (Use the Force, Trained Only)",
+    "DC": "equals attack roll of thrown weapon",
+    "time": "reaction (readied action)",
+    "effect": "Catch thrown weapon/grenade (max 5 kg) that lands within reach. Must ready action before thrown. Success: catch and immediately move up to 6 squares. Can use as projectile weapon. Explosives detonate at end of movement."
   },
   {
-    "application": "Sense Force (trained)",
+    "application": "Search Your Feelings (Use the Force)",
     "DC": 15,
-    "time": "full-round",
-    "effect": "Sense Force-users within wide ranges; opposed UtF can conceal presence; extra ranges for dark side/strong disturbances"
+    "time": "full-round action",
+    "effect": "Determine whether an action will yield favorable or unfavorable results in the immediate future (10 minutes or less). Does not account for long-term consequences. GM assesses immediate consequence based on known circumstances."
   },
   {
-    "application": "Sense Surroundings (trained, swift)",
+    "application": "Sense Force — Disturbances (Use the Force, Trained Only, Automatic)",
     "DC": 15,
-    "time": "swift",
-    "effect": "Ignore effects of cover and concealment for Perception checks until start of next turn (DC+5 vs total cover)"
+    "time": "full-round to determine distance/direction",
+    "effect": "Automatically sense disturbances: Dark Side location (1 km range), relative/companion in danger (10,000 light years), great disturbance like planet destruction (anywhere in galaxy). DC 15 check determines distance and direction."
+  },
+  {
+    "application": "Sense Force — Detect Force-users (Use the Force, Trained Only)",
+    "DC": 15,
+    "time": "full-round action",
+    "effect": "Actively sense Force-users within 100 km. Success reveals: number of Force-users, approximate distance/direction, whether you've met them. Targets can oppose with Use the Force to conceal presence. Can specify to sense only Dark Side Score 1+ Force-users."
+  },
+  {
+    "application": "Sense Force — Detect Yuuzhan Vong (Use the Force, Trained Only)",
+    "DC": 20,
+    "time": "standard action",
+    "effect": "Detect the hole in The Force created by Yuuzhan Vong. Success reveals number of Yuuzhan Vong within 1 kilometer of your location."
+  },
+  {
+    "application": "Sense Surroundings (Use the Force)",
+    "DC": 15,
+    "time": "swift action",
+    "effect": "Ignore effects of Cover and Concealment when making Perception checks to detect or observe targets until start of your next turn. DC increases by +5 against Total Cover."
+  },
+  {
+    "application": "Sense Surroundings — Yuuzhan Vong (Use the Force, Trained Only)",
+    "DC": 30,
+    "time": "swift action",
+    "effect": "Detect Yuuzhan Vong targets despite their disconnection from The Force. Effects identical to standard Sense Surroundings. Must be Trained."
+  },
+  {
+    "application": "Telepathy — Same Planet (Use the Force)",
+    "DC": 15,
+    "time": "standard action",
+    "effect": "Establish telepathic link with distant creature (Int 2+) to exchange emotions or single thought ('Go!', 'Help!', 'Danger!'). Unwilling target: check vs Will Defense or DC (whichever higher); failure = cannot attempt for 24h. Cannot use on Yuuzhan Vong."
+  },
+  {
+    "application": "Telepathy — Same System (Use the Force)",
+    "DC": 20,
+    "time": "standard action",
+    "effect": "As Telepathy, but target in same star system. Unwilling targets can resist as above."
+  },
+  {
+    "application": "Telepathy — Same Region/Quadrant (Use the Force)",
+    "DC": 25,
+    "time": "standard action",
+    "effect": "As Telepathy, but target in same galactic region/quadrant. Unwilling targets can resist as above."
+  },
+  {
+    "application": "Telepathy — Different Region/Quadrant (Use the Force)",
+    "DC": 30,
+    "time": "standard action",
+    "effect": "As Telepathy, but target in different galactic region/quadrant. Unwilling targets can resist as above."
+  },
+  {
+    "application": "Breath Control (Use the Force, Trained Only)",
+    "DC": 15,
+    "time": "maintained",
+    "effect": "Hold breath for number of rounds equal to 2× Constitution score before having to make Endurance checks to continue holding breath."
+  },
+  {
+    "application": "Place Other in Force Trance (Use the Force, Trained Only)",
+    "DC": 15,
+    "time": "full-round action",
+    "effect": "Place adjacent willing ally into Force Trance (deep coma, Helpless condition). Each hour target regains HP equal to Character Level. After 4 consecutive hours emerges fully rested. Target can go 10× as long without air/food/water. Only you can bring target out (swift action, adjacent). Unwilling targets cannot be placed in trance."
   }
 ]
