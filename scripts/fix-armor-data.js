@@ -381,6 +381,7 @@ const armorData = [
     cost: 5000,
     availability: 'Restricted',
     sourcebook: 'Galaxy at War',
+    speedPenalty: 2, // Special: Magnetic boot soles reduce speed by 2 squares (unusual for Light Armor)
     description: `<p>This Light Armor is employed by The Rebel Alliance during the Galactic Civil War. It provides decent protection for front-line troops during ship-boarding actions and house-to-house fighting, and even in Zero-Gravity, in Vacuum, or underwater.</p>
       <p><strong>Special:</strong> The Armor's sealed life-support system allows the wearer to survive for up to 24 hours in the Vacuum of space or otherwise hostile environments. The magnetic boot soles reduce the wearer's Speed by 2 squares. A small propulsion system on the backpack allows the wearer to reroll any failed Swim checks and maneuver without penalty in Zero-Gravity.</p>`
   },
@@ -425,6 +426,7 @@ const armorData = [
     cost: 4000,
     availability: 'Rare',
     sourcebook: 'Web Enhancements',
+    speedPenalty: 2, // Special: Reduces speed by 2 squares (unusual for Light Armor)
     description: `<p>Although not their intended purpose, Pressure Suits can protect a non-Skakoan from the harmful effects of Skako's dense, oxygen-poor atmosphere. All Pressure Suits incorporate a vocalizer that distorts the wearer's speech patterns, making it difficult to tell one suit-wearing Skakoan from another.</p>
       <p><strong>Special:</strong> Reduces the wearer's Speed by 2 Squares.</p>`
   },
@@ -945,8 +947,9 @@ const armorData = [
     cost: 12000,
     availability: 'Rare',
     sourcebook: 'Web Enhancements',
+    speedPenalty: 3, // Special: Extra -1 square penalty (total -3 instead of standard -2)
     description: `<p>Heavy-duty pressure suit designed for extreme atmospheric conditions.</p>
-      <p><strong>Special:</strong> Provides environmental protection. Reduces Speed by 2 squares.</p>`
+      <p><strong>Special:</strong> Provides environmental protection. Reduces the wearer's Speed by an additional 1 Square (for a total penalty of -3 to Speed).</p>`
   },
 
   // ENERGY SHIELDS - Knights of the Old Republic Campaign Guide
@@ -1055,7 +1058,7 @@ function generateArmorEntry(armor) {
       maxDexBonus: armor.maxDexBonus,
       armorCheckPenalty: props.checkPenalty,
       fortBonus: armor.fortBonus,
-      speedPenalty: props.speedPenalty,
+      speedPenalty: armor.speedPenalty !== undefined ? armor.speedPenalty : props.speedPenalty,
       weight: armor.weight,
       cost: armor.cost,
       equipped: false,
