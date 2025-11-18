@@ -7,11 +7,24 @@
 // Fix for Foundry v13/The Forge sidebar height bug
 // Override broken height restrictions on sidebar tabs
 #sidebar {
+  // Ensure sidebar itself has proper display and sizing
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+
   .sidebar-tab {
     height: auto !important;
     max-height: none !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
+    display: none !important; // Hidden by default
+
+    // Show active tab
+    &.active {
+      display: flex !important;
+      flex-direction: column !important;
+      flex: 1 !important;
+    }
 
     &.directory {
       height: auto !important;
@@ -21,8 +34,28 @@
 
   .directory-list {
     height: auto !important;
+    max-height: none !important;
     overflow-y: auto !important;
+    overflow-x: hidden !important;
+    flex: 1 !important;
   }
+
+  // Fix for directory header
+  .directory-header {
+    flex-shrink: 0 !important;
+  }
+
+  // Fix for sidebar tabs navigation
+  nav.tabs {
+    flex-shrink: 0 !important;
+  }
+}
+
+// Ensure UI containers don't interfere
+#ui-left {
+  display: flex !important;
+  flex-direction: column !important;
+  pointer-events: auto !important;
 }
 
 // Add any other Foundry-specific fixes here as needed
