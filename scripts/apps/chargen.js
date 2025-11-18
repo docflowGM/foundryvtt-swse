@@ -1292,14 +1292,32 @@ export default class CharacterGenerator extends Application {
     event.preventDefault();
     const speciesKey = event.currentTarget.dataset.species;
 
+    console.log(`CharGen | Attempting to select species: ${speciesKey}`);
+
     // Find the species document
-    if (!this._packs.species) await this._loadData();
+    if (!this._packs.species) {
+      console.log("CharGen | Species pack not loaded, loading now...");
+      await this._loadData();
+    }
+
+    console.log(`CharGen | Species pack contains ${this._packs.species?.length || 0} species`);
+
+    if (!this._packs.species || this._packs.species.length === 0) {
+      console.error("CharGen | Species pack is empty or failed to load!");
+      ui.notifications.error("Species data failed to load. Please refresh the page.");
+      return;
+    }
+
     const speciesDoc = this._packs.species.find(s => s.name === speciesKey || s._id === speciesKey);
 
     if (!speciesDoc) {
-      console.warn(`CharGen | Species not found: ${speciesKey}`);
+      console.error(`CharGen | Species not found: ${speciesKey}`);
+      console.log(`CharGen | Available species:`, this._packs.species.map(s => s.name));
+      ui.notifications.error(`Species "${speciesKey}" not found in database!`);
       return;
     }
+
+    console.log(`CharGen | Found species: ${speciesDoc.name}`, speciesDoc);
 
     this.characterData.species = speciesKey;
 
