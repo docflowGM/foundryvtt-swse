@@ -740,6 +740,23 @@
   font-weight: 500;
 }
 
+.select-species .species-size {
+  margin-bottom: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  background: rgba(170, 0, 255, 0.1);
+  border-radius: 4px;
+  border-left: 3px solid #aa00ff;
+}
+
+.select-species .size-label {
+  display: block;
+  color: #cc88ff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .select-species .skill-bonuses {
   margin-bottom: 0.5rem;
   padding: 0.5rem;

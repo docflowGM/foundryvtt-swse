@@ -1349,8 +1349,9 @@ export default class CharacterGenerator extends Application {
       this.characterData.speed = speed;
     }
 
-    // 3. Store size
+    // 3. Store size and apply size modifiers
     this.characterData.size = system.size || "Medium";
+    this._applySizeModifiers(this.characterData.size);
 
     // 4. Store special abilities
     this.characterData.specialAbilities = system.special || [];
@@ -1443,6 +1444,44 @@ export default class CharacterGenerator extends Application {
 
       console.log(`CharGen | Applied racial skill bonus: ${skillName} ${bonusValue >= 0 ? '+' : ''}${bonusValue}`);
     }
+  }
+
+  /**
+   * Apply size modifiers to character defenses and skills
+   * @param {string} size - Character size (Small, Medium, Large, etc.)
+   */
+  _applySizeModifiers(size) {
+    // Size modifiers per SWSE rules
+    const sizeModifiers = {
+      "Fine": { reflex: 8, stealth: 16 },
+      "Diminutive": { reflex: 4, stealth: 12 },
+      "Tiny": { reflex: 2, stealth: 8 },
+      "Small": { reflex: 1, stealth: 5 },
+      "Medium": { reflex: 0, stealth: 0 },
+      "Large": { reflex: -1, stealth: -5 },
+      "Huge": { reflex: -2, stealth: -10 },
+      "Gargantuan": { reflex: -5, stealth: -12 },
+      "Colossal": { reflex: -10, stealth: -16 }
+    };
+
+    const modifiers = sizeModifiers[size] || sizeModifiers["Medium"];
+
+    // Apply Reflex Defense modifier
+    if (this.characterData.defenses && this.characterData.defenses.reflex) {
+      this.characterData.defenses.reflex.misc = (this.characterData.defenses.reflex.misc || 0) + modifiers.reflex;
+    }
+
+    // Apply Stealth skill modifier
+    if (!this.characterData.skills.stealth) {
+      this.characterData.skills.stealth = {
+        trained: false,
+        focus: false,
+        misc: 0
+      };
+    }
+    this.characterData.skills.stealth.misc = (this.characterData.skills.stealth.misc || 0) + modifiers.stealth;
+
+    console.log(`CharGen | Applied size modifiers for ${size}: Reflex ${modifiers.reflex >= 0 ? '+' : ''}${modifiers.reflex}, Stealth ${modifiers.stealth >= 0 ? '+' : ''}${modifiers.stealth}`);
   }
 
   /**

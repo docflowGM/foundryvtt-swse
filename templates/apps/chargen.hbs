@@ -181,6 +181,11 @@
  {{#each packs.species}}
  <button type="button" class="select-species choice-button" data-species="{{this.name}}">
  <h4>{{this.name}}</h4>
+ {{#if this.system.size}}
+ <div class="species-size">
+ <span class="size-label">Size: {{this.system.size}}</span>
+ </div>
+ {{/if}}
  {{#if this.system.abilities}}
  <div class="bonuses">
  <span class="bonus">{{this.system.abilities}}</span>

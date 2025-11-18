@@ -48,6 +48,11 @@
         {{#each availableSpecies}}
         <div class="species-card">
           <h5>{{this.name}}</h5>
+          {{#if this.system.size}}
+          <div class="species-size">
+            <span class="size-label">Size: {{this.system.size}}</span>
+          </div>
+          {{/if}}
           <div class="species-bonuses">
             {{#if this.system.abilities}}
             <span class="bonus-label">{{this.system.abilities}}</span>
