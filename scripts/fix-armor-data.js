@@ -428,6 +428,94 @@ const armorData = [
     description: `<p>Although not their intended purpose, Pressure Suits can protect a non-Skakoan from the harmful effects of Skako's dense, oxygen-poor atmosphere. All Pressure Suits incorporate a vocalizer that distorts the wearer's speech patterns, making it difficult to tell one suit-wearing Skakoan from another.</p>
       <p><strong>Special:</strong> Reduces the wearer's Speed by 2 Squares.</p>`
   },
+
+  // ENERGY SHIELDS - Knights of the Old Republic Campaign Guide
+  // Note: Energy Shields are special - they provide Shield Rating (SR) instead of armor bonus
+  // They only protect against Energy damage and must be activated as a Swift Action
+  {
+    id: 'armor-energy-shield-sr5',
+    name: 'Energy Shield (SR 5)',
+    armorType: LIGHT,
+    defenseBonus: 0, // Energy shields don't provide armor bonus - they provide Shield Rating
+    fortBonus: 0,
+    maxDexBonus: 4,
+    weight: 1,
+    cost: 500,
+    availability: 'Standard',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Energy Shields project a thin layer of shielding over an individual character. This shield provides a Shield Rating of 5.</p>
+      <p><strong>Special:</strong> Must be activated as a Swift Action. Has 5 charges, can only be activated once per encounter. Only protects against Energy damage. Does not reduce speed. While activated, imposes armor check penalty but does not reduce speed like normal Light Armor.</p>`
+  },
+  {
+    id: 'armor-energy-shield-sr10',
+    name: 'Energy Shield (SR 10)',
+    armorType: LIGHT,
+    defenseBonus: 0,
+    fortBonus: 0,
+    maxDexBonus: 4,
+    weight: 1,
+    cost: 2000,
+    availability: 'Standard',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Energy Shields project a thin layer of shielding over an individual character. This shield provides a Shield Rating of 10.</p>
+      <p><strong>Special:</strong> Must be activated as a Swift Action. Has 5 charges, can only be activated once per encounter. Only protects against Energy damage. Does not reduce speed.</p>`
+  },
+  {
+    id: 'armor-energy-shield-sr15',
+    name: 'Energy Shield (SR 15)',
+    armorType: MEDIUM,
+    defenseBonus: 0,
+    fortBonus: 0,
+    maxDexBonus: 3,
+    weight: 1,
+    cost: 4500,
+    availability: 'Standard',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Energy Shields project a thin layer of shielding over an individual character. This shield provides a Shield Rating of 15.</p>
+      <p><strong>Special:</strong> Must be activated as a Swift Action. Has 5 charges, can only be activated once per encounter. Only protects against Energy damage. Does not reduce speed (unlike normal Medium Armor).</p>`
+  },
+  {
+    id: 'armor-energy-shield-sr20',
+    name: 'Energy Shield (SR 20)',
+    armorType: MEDIUM,
+    defenseBonus: 0,
+    fortBonus: 0,
+    maxDexBonus: 3,
+    weight: 1,
+    cost: 8000,
+    availability: 'Standard',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Energy Shields project a thin layer of shielding over an individual character. This shield provides a Shield Rating of 20.</p>
+      <p><strong>Special:</strong> Must be activated as a Swift Action. Has 5 charges, can only be activated once per encounter. Only protects against Energy damage. Does not reduce speed (unlike normal Medium Armor).</p>`
+  },
+  {
+    id: 'armor-energy-shield-sr25',
+    name: 'Energy Shield (SR 25)',
+    armorType: HEAVY,
+    defenseBonus: 0,
+    fortBonus: 0,
+    maxDexBonus: 2,
+    weight: 1,
+    cost: 12500,
+    availability: 'Standard',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Energy Shields project a thin layer of shielding over an individual character. This shield provides a Shield Rating of 25.</p>
+      <p><strong>Special:</strong> Must be activated as a Swift Action. Has 5 charges, can only be activated once per encounter. Only protects against Energy damage. Does not reduce speed (unlike normal Heavy Armor).</p>`
+  },
+  {
+    id: 'armor-energy-shield-sr30',
+    name: 'Energy Shield (SR 30)',
+    armorType: HEAVY,
+    defenseBonus: 0,
+    fortBonus: 0,
+    maxDexBonus: 2,
+    weight: 1,
+    cost: 18000,
+    availability: 'Standard',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Energy Shields project a thin layer of shielding over an individual character. This shield provides a Shield Rating of 30.</p>
+      <p><strong>Special:</strong> Must be activated as a Swift Action. Has 5 charges, can only be activated once per encounter. Only protects against Energy damage. Does not reduce speed (unlike normal Heavy Armor).</p>`
+  },
 ];
 
 /**
