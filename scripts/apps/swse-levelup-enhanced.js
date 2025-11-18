@@ -9,6 +9,7 @@
 
 import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from './mentor-dialogues.js';
 import { PrerequisiteValidator } from '../utils/prerequisite-validator.js';
+import { TalentTreeVisualizer } from './talent-tree-visualizer.js';
 
 export class SWSELevelUpEnhanced extends FormApplication {
 
@@ -1074,10 +1075,60 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
   async _onSelectTalentTree(event) {
     event.preventDefault();
-    const treeName = event.currentTarget.dataset.tree;
 
-    // Show visual talent tree dialog (reuse from chargen-narrative)
-    await this._showTalentTreeDialog(treeName);
+    // If clicking on a tree name directly (old behavior)
+    if (event.currentTarget.dataset.tree) {
+      const treeName = event.currentTarget.dataset.tree;
+      await this._showEnhancedTalentTree(treeName);
+      return;
+    }
+
+    // Show enhanced tree selection interface
+    await this._showEnhancedTreeSelection();
+  }
+
+  /**
+   * Show enhanced tree selection interface with hover previews
+   */
+  async _showEnhancedTreeSelection() {
+    // Load talent data if not already loaded
+    if (!this.talentData) {
+      const talentPack = game.packs.get('swse.talents');
+      if (talentPack) {
+        this.talentData = await talentPack.getDocuments();
+      }
+    }
+
+    // Get available talent trees
+    const talentTrees = await this._getTalentTrees(this.selectedClass);
+
+    // Show enhanced tree selection
+    await TalentTreeVisualizer.showTreeSelection(
+      talentTrees,
+      this.talentData,
+      this.actor,
+      (talent) => this._selectTalent(talent.name)
+    );
+  }
+
+  /**
+   * Show enhanced talent tree for a specific tree
+   */
+  async _showEnhancedTalentTree(treeName) {
+    // Load talent data if not already loaded
+    if (!this.talentData) {
+      const talentPack = game.packs.get('swse.talents');
+      if (talentPack) {
+        this.talentData = await talentPack.getDocuments();
+      }
+    }
+
+    await TalentTreeVisualizer.showEnhancedTalentTree(
+      treeName,
+      this.talentData,
+      this.actor,
+      (talent) => this._selectTalent(talent.name)
+    );
   }
 
   async _showTalentTreeDialog(treeName) {

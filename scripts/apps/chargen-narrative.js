@@ -6,6 +6,7 @@
 
 import CharacterGeneratorImproved from './chargen-improved.js';
 import { MENTORS } from './mentor-dialogues.js';
+import { TalentTreeVisualizer } from './talent-tree-visualizer.js';
 
 export default class CharacterGeneratorNarrative extends CharacterGeneratorImproved {
 
@@ -208,12 +209,66 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
 
   async _onSelectTalentTree(event) {
     event.preventDefault();
-    const treeName = event.currentTarget.dataset.tree;
 
-    this.selectedTalentTree = treeName;
+    // If clicking on a tree name directly (old behavior)
+    if (event.currentTarget.dataset.tree) {
+      const treeName = event.currentTarget.dataset.tree;
+      this.selectedTalentTree = treeName;
+      await this._showEnhancedTalentTree(treeName);
+      return;
+    }
 
-    // Build talent tree visualization
-    await this._showTalentTreeDialog(treeName);
+    // Show enhanced tree selection interface
+    await this._showEnhancedTreeSelection();
+  }
+
+  /**
+   * Show enhanced tree selection interface with hover previews
+   */
+  async _showEnhancedTreeSelection() {
+    // Load talent data if not already loaded
+    if (!this.talentData) {
+      await this._loadTalentData();
+    }
+
+    // Get available talent trees from selected class
+    const selectedClass = this.characterData.class;
+    const talentTrees = selectedClass?.system?.talentTrees || [];
+
+    // Create a temporary actor for visualization
+    const tempActorData = {
+      items: []
+    };
+
+    // Show enhanced tree selection
+    await TalentTreeVisualizer.showTreeSelection(
+      talentTrees,
+      this.talentData,
+      tempActorData,
+      (talent) => this._selectTalent(talent.name)
+    );
+  }
+
+  /**
+   * Show enhanced talent tree for a specific tree
+   */
+  async _showEnhancedTalentTree(treeName) {
+    // Load talent data if not already loaded
+    if (!this.talentData) {
+      await this._loadTalentData();
+    }
+
+    // Create a temporary actor for visualization
+    const tempActorData = {
+      items: []
+    };
+
+    await TalentTreeVisualizer.showEnhancedTalentTree(
+      treeName,
+      this.talentData,
+      tempActorData,
+      (talent) => this._selectTalent(talent.name)
+    );
   }
 
   async _showTalentTreeDialog(treeName) {
