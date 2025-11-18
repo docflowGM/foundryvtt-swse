@@ -1,0 +1,399 @@
+{
+  "description": "Force Techniques represent a deeper understanding of The Force and, like martial skills, usually come with years of practice. A few gifted or devoted Force-users learn to master them more quickly. In general, Force Techniques are only available to characters with levels in certain Force-using Prestige Classes (such as Force Adept, Jedi Knight, and Sith Apprentice).",
+  "notes": "Whenever you gain access to a new Force Technique, select it from the list below. Once selected, a Force Technique cannot be changed.",
+  "techniques": [
+    {
+      "name": "Force Point Recovery",
+      "source": "Core",
+      "description": "Core Force Technique for Force Point recovery.",
+      "prerequisites": []
+    },
+    {
+      "name": "Force Power Mastery",
+      "source": "Core",
+      "description": "Core Force Technique for mastering Force Powers.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Trance",
+      "source": "Core",
+      "description": "Enhances your ability to enter a Force Trance.",
+      "relatedPower": "Force Trance",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Move Light Object",
+      "source": "Core",
+      "description": "Enhances your ability to move light objects with the Force.",
+      "relatedPower": "Move Light Object",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Sense Force",
+      "source": "Core",
+      "description": "Enhances your ability to sense the Force in your surroundings.",
+      "relatedPower": "Sense Force",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Sense Surroundings",
+      "source": "Core",
+      "description": "Enhances your ability to sense your surroundings through the Force.",
+      "relatedPower": "Sense Surroundings",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Telepathy",
+      "source": "Core",
+      "description": "Enhances your telepathic abilities through the Force.",
+      "relatedPower": "Telepathy",
+      "prerequisites": []
+    },
+    {
+      "name": "Dominate Mind",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "Allows you to dominate the minds of others through the Force.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Energy Resistance",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "Enhances your resistance to energy attacks.",
+      "relatedPower": "Energy Resistance",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Slam",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "Enhances your ability to slam opponents with the Force.",
+      "relatedPower": "Force Slam",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Stun",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "Enhances your ability to stun opponents with the Force.",
+      "relatedPower": "Force Stun",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Ionize",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "Enhances your ability to ionize and disable technology.",
+      "relatedPower": "Ionize",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Kinetic Combat",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "Enhances your kinetic combat abilities through the Force.",
+      "relatedPower": "Kinetic Combat",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Resist Force",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "Enhances your resistance to Force Powers.",
+      "relatedPower": "Resist Force",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Valor",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "Enhances your ability to inspire valor in allies.",
+      "relatedPower": "Valor",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Vital Transfer",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "Enhances your ability to transfer life force.",
+      "relatedPower": "Vital Transfer",
+      "prerequisites": []
+    },
+    {
+      "name": "Language Absorption",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "description": "Allows you to absorb and understand languages through the Force.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Battle Strike",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "Enhances your battle strike capabilities.",
+      "relatedPower": "Battle Strike",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Dark Rage",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "Enhances your dark rage abilities.",
+      "relatedPower": "Dark Rage",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Disarm",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "Enhances your ability to disarm opponents with the Force.",
+      "relatedPower": "Force Disarm",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Thrust",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "Enhances your ability to thrust opponents with the Force.",
+      "relatedPower": "Force Thrust",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Grip",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "Enhances your ability to grip opponents with the Force.",
+      "relatedPower": "Force Grip",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Lightning",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "Enhances your Force Lightning abilities.",
+      "relatedPower": "Force Lightning",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Mind Trick",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "Enhances your ability to perform mind tricks.",
+      "relatedPower": "Mind Trick",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Rebuke",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "Enhances your ability to rebuke Force Powers.",
+      "relatedPower": "Rebuke",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Repulse",
+      "source": "Force Unleashed Campaign Guide",
+      "description": "Enhances your ability to repulse enemies with the Force.",
+      "relatedPower": "Repulse",
+      "prerequisites": []
+    },
+    {
+      "name": "Advanced Vital Transfer",
+      "source": "Clone Wars Campaign Guide",
+      "description": "Advanced technique for transferring life force.",
+      "relatedPower": "Vital Transfer",
+      "prerequisites": ["Improved Vital Transfer"]
+    },
+    {
+      "name": "Improved Cloak",
+      "source": "Clone Wars Campaign Guide",
+      "description": "Enhances your ability to cloak yourself in the Force.",
+      "relatedPower": "Cloak",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Levitate",
+      "source": "Clone Wars Campaign Guide",
+      "description": "Enhances your ability to levitate objects and beings.",
+      "relatedPower": "Levitate",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Malacia",
+      "source": "Clone Wars Campaign Guide",
+      "description": "Enhances your ability to induce nausea and disorientation.",
+      "relatedPower": "Malacia",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Phase",
+      "source": "Clone Wars Campaign Guide",
+      "description": "Enhances your ability to phase through objects.",
+      "relatedPower": "Phase",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Rend",
+      "source": "Clone Wars Campaign Guide",
+      "description": "Enhances your ability to rend targets with the Force.",
+      "relatedPower": "Rend",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Shatterpoint",
+      "source": "Clone Wars Campaign Guide",
+      "description": "Enhances your ability to perceive and exploit shatterpoints.",
+      "relatedPower": "Shatterpoint",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Technometry",
+      "source": "Clone Wars Campaign Guide",
+      "description": "Enhances your ability to interface with technology through the Force.",
+      "relatedPower": "Technometry",
+      "prerequisites": []
+    },
+    {
+      "name": "Detoxify Poison",
+      "source": "Legacy Era Campaign Guide",
+      "description": "Allows you to detoxify poisons using the Force.",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Ballistakinesis",
+      "source": "Legacy Era Campaign Guide",
+      "description": "Enhances your ability to hurl objects at high velocity.",
+      "relatedPower": "Ballistakinesis",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Dark Transfer",
+      "source": "Legacy Era Campaign Guide",
+      "description": "Enhances your ability to transfer dark side energy.",
+      "relatedPower": "Dark Transfer",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Detonate",
+      "source": "Legacy Era Campaign Guide",
+      "description": "Enhances your ability to detonate objects with the Force.",
+      "relatedPower": "Detonate",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Enlighten",
+      "source": "Legacy Era Campaign Guide",
+      "description": "Enhances your ability to enlighten and inspire.",
+      "relatedPower": "Enlighten",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Lightning Burst",
+      "source": "Legacy Era Campaign Guide",
+      "description": "Enhances your ability to unleash bursts of Force Lightning.",
+      "relatedPower": "Lightning Burst",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Obscure",
+      "source": "Legacy Era Campaign Guide",
+      "description": "Enhances your ability to obscure yourself in the Force.",
+      "relatedPower": "Obscure",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Shield",
+      "source": "Legacy Era Campaign Guide",
+      "description": "Enhances your ability to create Force shields.",
+      "relatedPower": "Force Shield",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Stagger",
+      "source": "Legacy Era Campaign Guide",
+      "description": "Enhances your ability to stagger opponents with the Force.",
+      "relatedPower": "Stagger",
+      "prerequisites": []
+    },
+    {
+      "name": "Cure Disease",
+      "source": "Jedi Academy Training Manual",
+      "description": "Allows you to cure diseases using the Force.",
+      "prerequisites": []
+    },
+    {
+      "name": "Extended Blind",
+      "source": "Jedi Academy Training Manual",
+      "description": "Extends the duration of Force Blind.",
+      "relatedPower": "Blind",
+      "prerequisites": []
+    },
+    {
+      "name": "Extended Force Disarm",
+      "source": "Jedi Academy Training Manual",
+      "description": "Extends the range of Force Disarm.",
+      "relatedPower": "Force Disarm",
+      "prerequisites": []
+    },
+    {
+      "name": "Extended Force Grip",
+      "source": "Jedi Academy Training Manual",
+      "description": "Extends the duration and range of Force Grip.",
+      "relatedPower": "Force Grip",
+      "prerequisites": []
+    },
+    {
+      "name": "Extended Force Thrust",
+      "source": "Jedi Academy Training Manual",
+      "description": "Extends the range of Force Thrust.",
+      "relatedPower": "Force Thrust",
+      "prerequisites": []
+    },
+    {
+      "name": "Extended Move Object",
+      "source": "Jedi Academy Training Manual",
+      "description": "Extends the range and capabilities of Move Object.",
+      "relatedPower": "Move Object",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Convection",
+      "source": "Jedi Academy Training Manual",
+      "description": "Enhances your ability to manipulate heat through the Force.",
+      "relatedPower": "Convection",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Crucitorn",
+      "source": "Jedi Academy Training Manual",
+      "description": "Enhances your ability to suppress pain and continue fighting.",
+      "relatedPower": "Crucitorn",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Cryokinesis",
+      "source": "Jedi Academy Training Manual",
+      "description": "Enhances your ability to manipulate cold through the Force.",
+      "relatedPower": "Cryokinesis",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Fold Space",
+      "source": "Jedi Academy Training Manual",
+      "description": "Enhances your ability to fold space and teleport.",
+      "relatedPower": "Fold Space",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Light",
+      "source": "Jedi Academy Training Manual",
+      "description": "Enhances your ability to use Force Light against dark side effects.",
+      "relatedPower": "Force Light",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Force Storm",
+      "source": "Jedi Academy Training Manual",
+      "description": "Enhances your ability to create devastating Force Storms.",
+      "relatedPower": "Force Storm",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Plant Surge",
+      "source": "Jedi Academy Training Manual",
+      "description": "Enhances your ability to control and manipulate plant life.",
+      "relatedPower": "Plant Surge",
+      "prerequisites": []
+    },
+    {
+      "name": "Improved Thought Bomb",
+      "source": "Jedi Academy Training Manual",
+      "description": "Enhances your ability to create devastating Thought Bombs.",
+      "relatedPower": "Thought Bomb",
+      "prerequisites": []
+    }
+  ]
+}

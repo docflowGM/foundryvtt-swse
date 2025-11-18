@@ -61,8 +61,31 @@
       "form": "Makashi",
       "discipline": "Form II: Makashi",
       "time": "Free Action",
+      "target": "One enemy within reach",
       "tags": ["lightsaber-form"],
       "description": "You seize the moment when your opponent gives you an opening, darting in to strike.",
+      "trigger": "When you make an Attack of Opportunity",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "You can make a single melee attack with a Lightsaber against the target, and you deal +1 die of damage with your attack if you hit."
+        },
+        {
+          "dc": 20,
+          "effect": "You can make a single melee attack with a Lightsaber against the target, and you deal +2 dice of damage with your attack if you hit."
+        },
+        {
+          "dc": 25,
+          "effect": "You can make a single melee attack with a Lightsaber against the target, and you deal +3 dice of damage with your attack if you hit."
+        },
+        {
+          "dc": 30,
+          "effect": "You can make a single melee attack with a Lightsaber against the target, and you deal +4 dice of damage with your attack if you hit."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Makashi): If you have the Makashi Talent, you gain a +2 Force bonus on Attacks of Opportunity against the target until the end of your next turn.",
+      "special": "You can spend a Force Point to reduce the target's speed by 2 squares (to a minimum of 1 square) until the start of your next turn.",
+      "forcePointEffect": "Reduce the target's speed by 2 squares (to a minimum of 1 square) until the start of your next turn.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -70,8 +93,14 @@
       "form": "Soresu",
       "discipline": "Form III: Soresu",
       "time": "Reaction",
+      "target": "Self, plus one enemy within reach",
       "tags": ["lightsaber-form"],
       "description": "You use the momentum from your effort to deflect a projectile to strike at an adjacent opponent.",
+      "trigger": "When you are the target of a ranged attack",
+      "effect": "Make a Use the Force check. Compare the result of your Use the Force check against the attack roll of the incoming ranged attack. If your Use the Force check equals or exceeds the incoming attack roll, the attack deals half damage on a hit. You can then immediately make a single melee attack with a Lightsaber against an adjacent target, gaining a bonus to your attack roll and damage roll based on the difference between your check and the attack roll:\n\n• +1 to +5: +1 bonus to attack and damage\n• +6 to +10: +2 bonus to attack and damage\n• +11 to +15: +3 bonus to attack and damage\n• +16 or more: +5 bonus to attack and damage",
+      "formBonus": "Lightsaber Form (Soresu): If you have the Soresu Talent, you can redirect the attack against an enemy within 6 squares and within line of sight instead of dealing half damage (as per the Redirect Shot Talent).",
+      "special": "You can spend a Force Point to take no damage from the incoming attack if your Use the Force check equals or exceeds the attack roll.",
+      "forcePointEffect": "Take no damage from the incoming attack if your Use the Force check equals or exceeds the attack roll.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -79,8 +108,30 @@
       "form": "Shii-Cho",
       "discipline": "Form I: Shii-Cho",
       "time": "Standard Action",
+      "target": "One enemy within reach",
       "tags": ["lightsaber-form"],
       "description": "You strike at your opponent's weapon, attempting to rip it from their grasp.",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "You make a single melee attack with a Lightsaber against the target. If the attack hits, compare the result of your Use the Force check to the target's Reflex Defense +5. If your Use the Force check equals or exceeds this number, your target is disarmed."
+        },
+        {
+          "dc": 20,
+          "effect": "You make a single melee attack with a Lightsaber against the target. If the attack hits, compare the result of your Use the Force check to the target's Reflex Defense +2. If your Use the Force check equals or exceeds this number, your target is disarmed."
+        },
+        {
+          "dc": 25,
+          "effect": "You make a single melee attack with a Lightsaber against the target. If the attack hits, compare the result of your Use the Force check to the target's Reflex Defense. If your Use the Force check equals or exceeds this number, your target is disarmed."
+        },
+        {
+          "dc": 30,
+          "effect": "You make a single melee attack with a Lightsaber against the target. If the attack hits, compare the result of your Use the Force check to the target's Reflex Defense -5. If your Use the Force check equals or exceeds this number, your target is disarmed."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Shii-Cho): If you have the Shii-Cho Talent, you can use this Form Power as a Reaction when an adjacent target makes a melee attack against you.",
+      "special": "You can spend a Force Point to damage the weapon (as per the Sunder Feat) if you successfully disarm the target.",
+      "forcePointEffect": "Damage the weapon (as per the Sunder Feat) if you successfully disarm the target.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -88,9 +139,31 @@
       "form": "Niman",
       "discipline": "Form VI: Niman",
       "time": "Standard Action",
+      "target": "One target within 6 squares and line of sight",
       "tags": ["lightsaber-form", "telekinetic"],
       "description": "You grab an opponent with The Force, drawing him or her into the path of your weapon.",
       "canRebuke": true,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "You can pull a Medium or smaller target adjacent to you, and then make a single melee attack with a Lightsaber against that target."
+        },
+        {
+          "dc": 20,
+          "effect": "You can pull a Large or smaller target adjacent to you, and then make a single melee attack with a Lightsaber against that target."
+        },
+        {
+          "dc": 25,
+          "effect": "You can pull a Huge or smaller target adjacent to you, and then make a single melee attack with a Lightsaber against that target."
+        },
+        {
+          "dc": 30,
+          "effect": "You can pull a Gargantuan or smaller target adjacent to you, and then make a single melee attack with a Lightsaber against that target."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Niman): If you have the Niman Talent, you can target a creature within 12 squares rather than 6 squares.",
+      "special": "You can spend a Force Point to have the target move adjacent to you in the square of your choice (if available). Otherwise, the target moves into the closest adjacent square.",
+      "forcePointEffect": "Have the target move adjacent to you in the square of your choice (if available). Otherwise, the target moves into the closest adjacent square.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -98,8 +171,30 @@
       "form": "Djem So",
       "discipline": "Form V: Djem So",
       "time": "Standard Action",
+      "target": "Self, plus one enemy within reach",
       "tags": ["lightsaber-form"],
       "description": "You raise your Lightsaber above your head and then bring it crashing down on your opponent with incredible force.",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "You can make a single melee attack with a Lightsaber against the target, provided that it is no more than one size category larger than you. If your attack does damage, you can push the target 1 square away from you, and then move into the space your enemy just vacated. Neither your movement nor the target's movement provoke Attacks of Opportunity. You cannot move a target that is Grabbed or Grappled."
+        },
+        {
+          "dc": 20,
+          "effect": "You can make a single melee attack with a Lightsaber against the target, provided that it is no more than one size category larger than you. If your attack does damage, you can push the target 2 squares away from you, and then move through spaces your target passed through to end adjacent to your target. Neither your movement nor the target's movement provoke Attacks of Opportunity. You cannot move a target that is Grabbed or Grappled."
+        },
+        {
+          "dc": 25,
+          "effect": "You can make a single melee attack with a Lightsaber against the target, provided that it is no more than one size category larger than you. If your attack does damage, you can push the target 3 squares away from you, and then move through spaces your target passed through to end adjacent to your target. Neither your movement nor the target's movement provoke Attacks of Opportunity. You cannot move a target that is Grabbed or Grappled."
+        },
+        {
+          "dc": 30,
+          "effect": "You can make a single melee attack with a Lightsaber against the target, provided that it is no more than one size category larger than you. If your attack does damage, you can push the target 4 squares away from you, and then move through spaces your target passed through to end adjacent to your target. Neither your movement nor the target's movement provoke Attacks of Opportunity. You cannot move a target that is Grabbed or Grappled."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Djem So): If you have the Djem So Talent, after successfully activating this Form Power, you gain one temporary Force Point which can only be used to activate the Djem So Talent. If this temporary Force Point is not used before the end of the encounter, it is lost.",
+      "special": "You can spend a Force Point to knock your opponent prone after its forced movement.",
+      "forcePointEffect": "Knock your opponent prone after its forced movement.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -107,8 +202,14 @@
       "form": "Djem So",
       "discipline": "Form V: Djem So",
       "time": "Reaction",
+      "target": "Self, plus one enemy within reach",
       "tags": ["lightsaber-form"],
       "description": "You smoothly turn aside an opponent's melee attack, stepping in to deliver your own attack.",
+      "trigger": "When an adjacent opponent makes a melee attack against you",
+      "effect": "Make a Use the Force check. Compare the result of your Use the Force check against the attack roll of the incoming attack. If your Use the Force check equals or exceeds the incoming attack roll, the attack deals half damage on a hit. You can then immediately move to any other square adjacent to your attacker and make a single melee attack with a Lightsaber against it. This movement does not provoke Attacks of Opportunity.",
+      "formBonus": "Lightsaber Form (Djem So): If you have the Djem So Talent, after successfully activating this Form Power, you gain one temporary Force Point which can only be used to activate the Djem So Talent. If this temporary Force Point is not used before the end of the encounter, it is lost.",
+      "special": "You can spend a Force Point to treat the attacker as Flat-Footed for purposes of your Lightsaber attack.",
+      "forcePointEffect": "Treat the attacker as Flat-Footed for purposes of your Lightsaber attack.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -116,8 +217,30 @@
       "form": "Ataru",
       "discipline": "Form IV: Ataru",
       "time": "Standard Action",
+      "target": "Self, plus one enemy within reach",
       "tags": ["lightsaber-form"],
       "description": "You leap into action against your foe, striking with your Lightsaber before other enemies have a chance to react.",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "You move up to 2 squares; this movement does not provoke Attacks of Opportunity. If you end your movement adjacent to a target, you can make a single melee attack with a Lightsaber against that target."
+        },
+        {
+          "dc": 20,
+          "effect": "You move up to 4 squares; this movement does not provoke Attacks of Opportunity. If you end your movement adjacent to a target, you can make a single melee attack with a Lightsaber against that target."
+        },
+        {
+          "dc": 25,
+          "effect": "You move up to 6 squares; this movement does not provoke Attacks of Opportunity. If you end your movement adjacent to a target, you can make a single melee attack with a Lightsaber against that target."
+        },
+        {
+          "dc": 30,
+          "effect": "You move up to 8 squares; this movement does not provoke Attacks of Opportunity. If you end your movement adjacent to a target, you can make a single melee attack with a Lightsaber against that target."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Ataru): If you have the Ataru Talent, you can also move up to 2 squares after you resolve your Lightsaber attack. This movement does not provoke Attacks of Opportunity.",
+      "special": "You can spend a Force Point to deal +2 dice of damage with your Lightsaber attack.",
+      "forcePointEffect": "Deal +2 dice of damage with your Lightsaber attack.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -125,8 +248,30 @@
       "form": "Sokan",
       "discipline": "Sokan",
       "time": "Swift Action",
+      "target": "Self",
       "tags": ["lightsaber-form"],
       "description": "You know how to take advantage of the terrain and gain a defensive advantage from it.",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Until the start of your next turn, if you are standing on a low object or in Difficult Terrain, any creature that moves adjacent to you provokes an Attack of Opportunity from you."
+        },
+        {
+          "dc": 20,
+          "effect": "Until the start of your next turn, if you are standing on a low object or in Difficult Terrain, any creature that moves adjacent to you provokes an Attack of Opportunity from you. Additionally, you gain a +1 Force bonus on Attacks of Opportunity (including this one) until the start of your next turn."
+        },
+        {
+          "dc": 25,
+          "effect": "Until the start of your next turn, if you are standing on a low object or in Difficult Terrain, any creature that moves adjacent to you provokes an Attack of Opportunity from you. Additionally, you gain a +2 Force bonus on Attacks of Opportunity (including this one) until the start of your next turn."
+        },
+        {
+          "dc": 30,
+          "effect": "Until the start of your next turn, if you are standing on a low object or in Difficult Terrain, any creature that moves adjacent to you provokes an Attack of Opportunity from you. Additionally, you gain a +5 Force bonus on Attacks of Opportunity (including this one) until the start of your next turn."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Sokan): If you have the Sokan Talent, you deal +1 die of damage on Attacks of Opportunity until the start of your next turn.",
+      "special": "You can spend a Force Point to move 1 square each time you make an Attack of Opportunity until the start of your next turn. This movement does not provoke Attacks of Opportunity.",
+      "forcePointEffect": "Move 1 square each time you make an Attack of Opportunity until the start of your next turn. This movement does not provoke Attacks of Opportunity.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -134,8 +279,14 @@
       "form": "Makashi",
       "discipline": "Form II: Makashi",
       "time": "Reaction",
+      "target": "Self, plus one enemy within reach",
       "tags": ["lightsaber-form"],
       "description": "You are trained in a Makashi technique that allows you to slightly change the angle of an opponent's attack before striking with a decisive riposte of your own.",
+      "trigger": "When an adjacent opponent makes a melee attack against you",
+      "effect": "Make a Use the Force check. Compare the results of your Use the Force check against the attack roll of the incoming attack. If your Use the Force check equals or exceeds the incoming attack roll, the attack deals half damage on a hit. Additionally, you can make a single melee attack with a Lightsaber against your target after the damage is resolved. You deal half damage to the target on a miss.",
+      "formBonus": "Lightsaber Form (Makashi): If you have the Makashi Talent, until the end of your next turn, the target provokes an Attack of Opportunity from you if it makes an attack and is within your reach.",
+      "special": "You can spend a Force Point to take no damage from the incoming attack if your check equals or exceeds the attack roll of the incoming attack.",
+      "forcePointEffect": "Take no damage from the incoming attack if your check equals or exceeds the attack roll of the incoming attack.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -143,8 +294,30 @@
       "form": "Trakata",
       "discipline": "Trakata",
       "time": "Standard Action",
+      "target": "Self, plus one enemy within reach",
       "tags": ["lightsaber-form"],
       "description": "You deactivate your Lightsaber as your opponent attempts to block it, reactivating it just after it passes by their blade.",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "You can make a single melee attack with a Lightsaber against the target. Your opponent takes a -2 penalty on Use the Force checks made to Block the attack. (This penalty also applies to the Primitive Block Talent)."
+        },
+        {
+          "dc": 20,
+          "effect": "You can make a single melee attack with a Lightsaber against the target. Your opponent takes a -5 penalty on Use the Force checks made to Block the attack. (This penalty also applies to the Primitive Block Talent)."
+        },
+        {
+          "dc": 25,
+          "effect": "You can make a single melee attack with a Lightsaber against the target. Your opponent takes a -10 penalty on Use the Force checks made to Block the attack. (This penalty also applies to the Primitive Block Talent)."
+        },
+        {
+          "dc": 30,
+          "effect": "You can make a single melee attack with a Lightsaber against the target. Your opponent cannot make Use the Force checks to Block the attack. (This also applies to the Primitive Block Talent)."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Trakata): If you have the Trakata Talent, you also ignore any deflection bonus the target has from the Lightsaber Defense Talent.",
+      "special": "You can spend a Force Point to deal +2d6 points of damage with your Lightsaber attack if it hits.",
+      "forcePointEffect": "Deal +2d6 points of damage with your Lightsaber attack if it hits.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -152,9 +325,31 @@
       "form": "Niman",
       "discipline": "Form VI: Niman",
       "time": "Standard Action",
+      "target": "One enemy within reach",
       "tags": ["lightsaber-form", "telekinetic"],
       "description": "You strike at your target with your Lightsaber, then hurl them away from you with The Force.",
       "canRebuke": true,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "You can make a single melee attack with a Lightsaber against the target. If the attack hits, in addition to dealing damage, compare the result of your Use the Force check with the target's Fortitude Defense. If your Use the Force check equals or exceeds the target's Fortitude Defense, you push the target 2 squares away from you. This movement does not provoke Attacks of Opportunity. You cannot move the target if it is Grabbed or Grappled."
+        },
+        {
+          "dc": 20,
+          "effect": "You can make a single melee attack with a Lightsaber against the target. If the attack hits, in addition to dealing damage, compare the result of your Use the Force check with the target's Fortitude Defense. If your Use the Force check equals or exceeds the target's Fortitude Defense, you push the target 3 squares away from you. This movement does not provoke Attacks of Opportunity. You cannot move the target if it is Grabbed or Grappled."
+        },
+        {
+          "dc": 25,
+          "effect": "You can make a single melee attack with a Lightsaber against the target. If the attack hits, in addition to dealing damage, compare the result of your Use the Force check with the target's Fortitude Defense. If your Use the Force check equals or exceeds the target's Fortitude Defense, you push the target 4 squares away from you. This movement does not provoke Attacks of Opportunity. You cannot move the target if it is Grabbed or Grappled."
+        },
+        {
+          "dc": 30,
+          "effect": "You can make a single melee attack with a Lightsaber against the target. If the attack hits, in addition to dealing damage, compare the result of your Use the Force check with the target's Fortitude Defense. If your Use the Force check equals or exceeds the target's Fortitude Defense, you push the target 5 squares away from you. This movement does not provoke Attacks of Opportunity. You cannot move the target if it is Grabbed or Grappled."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Niman): If you have the Niman Talent, you also compare the results of your Use the Force check to all other adjacent enemies; if your Use the Force result equals or exceeds an enemy's Fortitude Defense, it is pushed away 1 square. This is an Area Attack.",
+      "special": "You can spend a Force Point to knock the target prone at the end of its forced movement. (This applies only to the target of your Lightsaber attack).",
+      "forcePointEffect": "Knock the target prone at the end of its forced movement. (This applies only to the target of your Lightsaber attack).",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -162,8 +357,30 @@
       "form": "Jar'Kai",
       "discipline": "Jar'Kai",
       "time": "Standard Action",
+      "target": "Two enemies within reach",
       "tags": ["lightsaber-form"],
       "description": "You swing your Lightsabers around your body, creating a brilliant whirlwind of deadly light.",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "You can make two Lightsaber melee attacks, each against a different target. If both attacks hit, you gain 10 Bonus Hit Points. Damage is subtracted from Bonus Hit Points first, and any remaining Bonus Hit Points disappear at the end of the encounter."
+        },
+        {
+          "dc": 20,
+          "effect": "You can make two Lightsaber melee attacks, each against a different target. If both attacks hit, you gain 15 Bonus Hit Points. Damage is subtracted from Bonus Hit Points first, and any remaining Bonus Hit Points disappear at the end of the encounter."
+        },
+        {
+          "dc": 25,
+          "effect": "You can make two Lightsaber melee attacks, each against a different target. If both attacks hit, you gain 20 Bonus Hit Points. Damage is subtracted from Bonus Hit Points first, and any remaining Bonus Hit Points disappear at the end of the encounter."
+        },
+        {
+          "dc": 30,
+          "effect": "You can make two Lightsaber melee attacks, each against a different target. If both attacks hit, you gain 25 Bonus Hit Points. Damage is subtracted from Bonus Hit Points first, and any remaining Bonus Hit Points disappear at the end of the encounter."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Jar'Kai): If you have the Jar'Kai Talent, you can move up to 2 squares between the two attacks. This movement does not provoke Attacks of Opportunity.",
+      "special": "You must be wielding two Lightsabers to use this Form Power. You can spend a Force Point to deal +1d6 damage to each target you hit.",
+      "forcePointEffect": "Deal +1d6 damage to each target you hit.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -171,8 +388,30 @@
       "form": "Ataru",
       "discipline": "Form IV: Ataru",
       "time": "Standard Action",
+      "target": "One enemy within reach",
       "tags": ["lightsaber-form"],
       "description": "You slash at your opponent rapidly, aiming many short strikes at the target's body.",
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "You can make two Lightsaber melee attacks against a single target. Each of these attacks is made at a -5 penalty."
+        },
+        {
+          "dc": 25,
+          "effect": "You can make two Lightsaber melee attacks against a single target. Each of these attacks is made at a -2 penalty."
+        },
+        {
+          "dc": 30,
+          "effect": "You can make two Lightsaber melee attacks against a single target. Each of these attacks is made at a -1 penalty."
+        },
+        {
+          "dc": 35,
+          "effect": "You can make two Lightsaber melee attacks against a single target. You suffer no additional penalties for these attacks."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Ataru): If you have the Ataru Talent, your opponent takes a -5 penalty on all Use the Force checks made to block your attacks with the Block Talent or the Makashi Riposte Form Power.",
+      "special": "You can spend a Force Point to move up to 2 squares before or after you use this Form Power. This movement does not provoke Attacks of Opportunity.",
+      "forcePointEffect": "Move up to 2 squares before or after you use this Form Power. This movement does not provoke Attacks of Opportunity.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -180,8 +419,30 @@
       "form": "Shii-Cho",
       "discipline": "Form I: Shii-Cho",
       "time": "Standard Action",
+      "target": "One enemy within reach (the primary target), one other enemy within reach (the secondary target)",
       "tags": ["lightsaber-form"],
-      "description": "You lash out at multiple enemies, striking them with a sweeping motion.",
+      "description": "You lash out at multiple enemies, striking at them with a sweeping motion.",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "You can make a single melee attack with a Lightsaber against the primary target. The attack does normal damage to the primary target and 5 points of damage to the secondary target if the attack hits."
+        },
+        {
+          "dc": 20,
+          "effect": "You can make a single melee attack with a Lightsaber against the primary target. The attack does normal damage to the primary target and 5 +1d6 points of damage to the secondary target if the attack hits."
+        },
+        {
+          "dc": 25,
+          "effect": "You can make a single melee attack with a Lightsaber against the primary target. The attack does normal damage to the primary target and 5 +2d6 points of damage to the secondary target if the attack hits."
+        },
+        {
+          "dc": 30,
+          "effect": "You can make a single melee attack with a Lightsaber against the primary target. The attack does normal damage to the primary target and 5 +3d6 points of damage to the secondary target if the attack hits."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Shii-Cho): If you have the Shii-Cho Talent, you can use this Form Power in place of a melee attack at the end of a Charge. You gain the benefits of the Powerful Charge Feat on the initial attack only if you use this Form Power in that way.",
+      "special": "You can spend a Force Point to affect two secondary attacks, provided both enemies are within your reach and adjacent to the primary target of your Lightsaber attack.",
+      "forcePointEffect": "Affect two secondary attacks, provided both enemies are within your reach and adjacent to the primary target of your Lightsaber attack.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -189,8 +450,31 @@
       "form": "Shien",
       "discipline": "Form V: Shien",
       "time": "Reaction",
+      "target": "Self, plus one enemy within reach",
       "tags": ["lightsaber-form"],
       "description": "You deflect an incoming attack and leap toward your attacker with fierce abandon.",
+      "trigger": "When an enemy makes a non-Area Attack ranged attack against you",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Compare the result of your Use the Force check against the attack roll of the incoming attack. If your Use the Force check equals or exceeds the incoming attack roll, the attack does half damage on a hit. You can then move up to your Speed toward your attacker, and if you end your movement within reach of your attacker, you can make a single melee attack with a Lightsaber against that target."
+        },
+        {
+          "dc": 20,
+          "effect": "Compare the result of your Use the Force check against the attack roll of the incoming attack. If your Use the Force check equals or exceeds the incoming attack roll, the attack does half damage on a hit. You can then move up to your Speed, +2 squares, toward your attacker, and if you end your movement within reach of your attacker, you can make a single melee attack with a Lightsaber against that target."
+        },
+        {
+          "dc": 25,
+          "effect": "Compare the result of your Use the Force check against the attack roll of the incoming attack. If your Use the Force check equals or exceeds the incoming attack roll, the attack does half damage on a hit. You can then move up to your Speed, +4 squares, toward your attacker, and if you end your movement within reach of your attacker, you can make a single melee attack with a Lightsaber against that target."
+        },
+        {
+          "dc": 30,
+          "effect": "Compare the result of your Use the Force check against the attack roll of the incoming attack. If your Use the Force check equals or exceeds the incoming attack roll, the attack does half damage on a hit. You can then move up to your Speed, +6 squares, toward your attacker, and if you end your movement within reach of your attacker, you can make a single melee attack with a Lightsaber against that target."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Shien): If you have the Shien Talent, until the start of your next turn, you take no cumulative penalties on your Use the Force checks for multiple Deflect attempts.",
+      "special": "You can spend a Force Point to take no damage from the incoming attack if your check equals or exceeds the attack roll of the incoming attack.",
+      "forcePointEffect": "Take no damage from the incoming attack if your check equals or exceeds the attack roll of the incoming attack.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -198,8 +482,30 @@
       "form": "Vaapad",
       "discipline": "Form VII: Vaapad",
       "time": "Standard Action",
+      "target": "Self, plus one adjacent enemy",
       "tags": ["lightsaber-form"],
       "description": "You leap over or dash around your opponent, striking before they have time to react.",
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "You can move up to half your Speed; this movement does not provoke Attacks of Opportunity. You can then make a single melee attack with a Lightsaber against an adjacent target. If the space you occupy and the space you started in are spaces that Flank the opponent, the opponent is considered to be Flanked for your attack."
+        },
+        {
+          "dc": 25,
+          "effect": "You can move up to your Speed; this movement does not provoke Attacks of Opportunity. You can then make a single melee attack with a Lightsaber against an adjacent target. If the space you occupy and the space you started in are spaces that Flank the opponent, the opponent is considered to be Flanked for your attack."
+        },
+        {
+          "dc": 30,
+          "effect": "You can move up to your Speed, +2 squares; this movement does not provoke Attacks of Opportunity. You can then make a single melee attack with a Lightsaber against an adjacent target. If the space you occupy and the space you started in are spaces that Flank the opponent, the opponent is considered to be Flanked for your attack."
+        },
+        {
+          "dc": 35,
+          "effect": "You can move up to your Speed, +4 squares; this movement does not provoke Attacks of Opportunity. You can then make a single melee attack with a Lightsaber against an adjacent target. If the space you occupy and the space you started in are spaces that Flank the opponent, the opponent is considered to be Flanked for your attack."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Vaapad): If you have the Vaapad Talent, your target is considered Flat-Footed against you until the end of your turn.",
+      "special": "You can spend a Force Point to increase your movement by 2 squares.",
+      "forcePointEffect": "Increase your movement by 2 squares.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -207,8 +513,26 @@
       "form": "Vaapad",
       "discipline": "Form VII: Vaapad",
       "time": "Standard Action",
+      "target": "One enemy within reach",
       "tags": ["lightsaber-form", "dark-side"],
       "description": "You throw yourself against an opponent, controlling your aggression to prevent it from getting the better of you.",
+      "dcChart": [
+        {
+          "dc": 30,
+          "effect": "You can make a single melee attack with a Lightsaber against the target. If you beat the target's Reflex Defense by 10 or more, the attack is considered a Critical Hit."
+        },
+        {
+          "dc": 35,
+          "effect": "You can make a single melee attack with a Lightsaber against the target. If you beat the target's Reflex Defense by 5 or more, the attack is considered a Critical Hit."
+        },
+        {
+          "dc": 40,
+          "effect": "You can make a single melee attack with a Lightsaber against the target. If you beat the target's Reflex Defense by 2 or more, the attack is considered a Critical Hit."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Vaapad): If you have the Vaapad Talent, this Form Power does not have the [Dark Side] descriptor for you.",
+      "special": "You can spend a Force Point to deal +2 dice of damage with the attack if it hits. These additional dice of damage are added after damage is doubled, if it is a Critical Hit.",
+      "forcePointEffect": "Deal +2 dice of damage with the attack if it hits. These additional dice of damage are added after damage is doubled, if it is a Critical Hit.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -216,8 +540,26 @@
       "form": "Jar'Kai",
       "discipline": "Jar'Kai",
       "time": "Standard Action",
+      "target": "One enemy within reach",
       "tags": ["lightsaber-form"],
       "description": "You swing both of your Lightsabers in an arc toward the target, slamming them home with great force.",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "You make a single melee attack with a Lightsaber against your target. If this attack hits, add the base damage of your other Lightsaber to the damage roll."
+        },
+        {
+          "dc": 25,
+          "effect": "You make a single melee attack with a Lightsaber against your target, with a +1 Force bonus to the attack roll. If this attack hits, add the base damage of your other Lightsaber to the damage roll."
+        },
+        {
+          "dc": 30,
+          "effect": "You make a single melee attack with a Lightsaber against your target, with a +2 Force bonus to the attack roll. If this attack hits, add the base damage of your other Lightsaber to the damage roll."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Jar'Kai): If you have the Jar'Kai Talent, you triple your deflection bonus from the Lightsaber Defense Talent instead of doubling it until the end of your next turn.",
+      "special": "You must be wielding two Lightsabers to use this Form Power. You can spend a Force Point to add +1 die of damage to the damage from your Lightsaber attack.",
+      "forcePointEffect": "Add +1 die of damage to the damage from your Lightsaber attack.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -225,8 +567,14 @@
       "form": "Trakata",
       "discipline": "Trakata",
       "time": "Reaction",
+      "target": "Self",
       "tags": ["lightsaber-form"],
       "description": "You catch an opponent's weapon on your blade before deactivating your blade momentarily, causing them to stumble.",
+      "trigger": "When an adjacent enemy makes a melee attack against you",
+      "effect": "Make a Use the Force check. Compare the result of your Use the Force check against the attack roll of the incoming attack. If your Use the Force check equals or exceeds the incoming attack roll, the attack deals half damage on a hit. Additionally, if your Use the Force check equals or exceeds the target's Will Defense, the target is considered Flat-Footed until the end of your next turn.",
+      "formBonus": "Lightsaber Form (Trakata): If you have the Trakata Talent, you deal +2 dice of damage with the first attack you make on your next turn against your attacker.",
+      "special": "You can spend a Force Point to take no damage from the incoming attack if your check equals or exceeds the attack roll of the incoming attack.",
+      "forcePointEffect": "Take no damage from the incoming attack if your check equals or exceeds the attack roll of the incoming attack.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -234,8 +582,30 @@
       "form": "Sokan",
       "discipline": "Sokan",
       "time": "Standard Action",
+      "target": "Self, plus one enemy within reach",
       "tags": ["lightsaber-form"],
       "description": "You move quickly to your opponent, ignoring Difficult Terrain and obstacles.",
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "You can move up to your Speed towards an enemy, ignoring Difficult Terrain and low obstacles. If you end your movement within reach of your enemy, you can make a single melee attack with a Lightsaber against that target."
+        },
+        {
+          "dc": 20,
+          "effect": "You can move up to your Speed, +2 squares, towards an enemy, ignoring Difficult Terrain and low obstacles. If you end your movement within reach of your enemy, you can make a single melee attack with a Lightsaber against that target."
+        },
+        {
+          "dc": 25,
+          "effect": "You can move up to your Speed, +4 squares, towards an enemy, ignoring Difficult Terrain and low obstacles. If you end your movement within reach of your enemy, you can make a single melee attack with a Lightsaber against that target."
+        },
+        {
+          "dc": 30,
+          "effect": "You can move up to your Speed, +6 squares, towards an enemy, ignoring Difficult Terrain and low obstacles. If you end your movement within reach of your enemy, you can make a single melee attack with a Lightsaber against that target."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Sokan): If you have the Sokan Talent, you gain a +5 Force bonus to your Reflex Defense against Attacks of Opportunity made against you during this movement.",
+      "special": "You can spend a Force Point to move an additional 2 squares.",
+      "forcePointEffect": "Move an additional 2 squares.",
       "source": "Jedi Academy Training Manual"
     },
     {
@@ -243,8 +613,30 @@
       "form": "Juyo",
       "discipline": "Form VII: Juyo",
       "time": "Standard Action",
+      "target": "One enemy within reach",
       "tags": ["lightsaber-form", "dark-side"],
       "description": "You walk the thin line between darkness and light as you ferociously attack your foe.",
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "You make a single melee attack with a Lightsaber against the target, dealing +1 die of damage if you hit."
+        },
+        {
+          "dc": 25,
+          "effect": "You make a single melee attack with a Lightsaber against the target, dealing +2 dice of damage if you hit."
+        },
+        {
+          "dc": 30,
+          "effect": "You make a single melee attack with a Lightsaber against the target, dealing +3 dice of damage if you hit."
+        },
+        {
+          "dc": 35,
+          "effect": "You make a single melee attack with a Lightsaber against the target, dealing +4 dice of damage if you hit."
+        }
+      ],
+      "formBonus": "Lightsaber Form (Juyo): If you have the Juyo Talent, this Form Power does not have the [Dark Side] descriptor for you.",
+      "special": "You can spend a Force Point to use this Form Power at the end of a Charge.",
+      "forcePointEffect": "Use this Form Power at the end of a Charge.",
       "source": "Jedi Academy Training Manual"
     }
   ],
