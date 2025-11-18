@@ -9,7 +9,7 @@
 
 export class PopulateForceCompendiumsMigration {
 
-  static MIGRATION_VERSION = "1.1.137";
+  static MIGRATION_VERSION = "1.1.138";
   static MIGRATION_KEY = "forceCompendiumsPopulation";
 
   /**
@@ -173,11 +173,27 @@ export class PopulateForceCompendiumsMigration {
     let created = 0;
     for (const secret of data.secrets) {
       try {
+        // Build description with all available fields
+        let description = `<p><strong>Cost:</strong> ${secret.cost}</p>`;
+        description += `<p>${secret.description}</p>`;
+
+        if (secret.alternativeCost) {
+          description += `<p>${secret.alternativeCost}</p>`;
+        }
+
+        if (secret.special) {
+          description += `<p><strong>Special:</strong> ${secret.special}</p>`;
+        }
+
+        if (secret.prerequisites && secret.prerequisites.length > 0) {
+          description += `<p><strong>Prerequisites:</strong> ${secret.prerequisites.join(', ')}</p>`;
+        }
+
         const itemData = {
           name: secret.name,
           type: 'feat',
           system: {
-            description: `<p><strong>Cost:</strong> ${secret.cost}</p><p>${secret.description}</p>`,
+            description: description,
             source: secret.source || '',
             tags: ['force-secret'],
             prerequisites: secret.prerequisites || [],
