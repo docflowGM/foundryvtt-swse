@@ -638,3 +638,209 @@
 .swse-combat-action p {
   margin: 0.5rem 0;
 }
+
+/* ─────────────── Combat Action DC Check Rolls ─────────────── */
+.swse-combat-action-roll {
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(0, 20, 40, 0.9), rgba(0, 10, 20, 0.8));
+  border: 1px solid var(--color-primary, #00a8cc);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  margin: 0.5rem 0;
+}
+
+.swse-combat-action-roll.success {
+  border-color: #00ff88;
+  background: linear-gradient(135deg, rgba(0, 40, 20, 0.9), rgba(0, 20, 10, 0.8));
+}
+
+.swse-combat-action-roll.failure {
+  border-color: #ff6b6b;
+  background: linear-gradient(135deg, rgba(40, 0, 0, 0.9), rgba(20, 0, 0, 0.8));
+}
+
+.swse-combat-action-roll .roll-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-primary, #00a8cc);
+  text-align: center;
+}
+
+.swse-combat-action-roll .roll-header h3 {
+  margin: 0 0 0.25rem 0;
+  color: var(--color-accent, #00a8cc);
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.swse-combat-action-roll .skill-name {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #aaa);
+  font-style: italic;
+}
+
+.swse-combat-action-roll .roll-result {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.swse-combat-action-roll .dice-total {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--color-text-emphatic, #fff);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+  margin: 0.5rem 0;
+}
+
+.swse-combat-action-roll .dc-target {
+  font-size: 1.1rem;
+  color: var(--color-text-secondary, #aaa);
+  margin: 0.5rem 0;
+}
+
+.swse-combat-action-roll .result {
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin: 1rem auto;
+  display: inline-block;
+}
+
+.swse-combat-action-roll .result.success {
+  color: #00ff88;
+  background: rgba(0, 255, 136, 0.1);
+  border: 2px solid #00ff88;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+}
+
+.swse-combat-action-roll .result.failure {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  border: 2px solid #ff6b6b;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.6);
+}
+
+.swse-combat-action-roll .roll-breakdown {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #aaa);
+}
+
+.swse-combat-action-roll .dice-rolls {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.swse-combat-action-roll .modifiers {
+  font-size: 0.8rem;
+  color: var(--color-text-dim, #999);
+}
+
+.swse-combat-action-roll .action-outcome {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 255, 136, 0.1);
+  border-left: 3px solid #00ff88;
+  border-radius: 4px;
+}
+
+.swse-combat-action-roll .action-outcome strong {
+  color: #00ff88;
+}
+
+.swse-combat-action-roll .action-condition {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background: rgba(255, 193, 7, 0.1);
+  border-left: 3px solid #ffc107;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--color-text-secondary, #ccc);
+}
+
+.swse-combat-action-roll .action-type {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.swse-combat-action-roll .action-type .badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.swse-combat-action-roll .action-type .badge.swift {
+  background: rgba(255, 193, 7, 0.2);
+  border: 1px solid rgba(255, 193, 7, 0.5);
+  color: #ffc107;
+}
+
+.swse-combat-action-roll .action-type .badge.move {
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.5);
+  color: #4caf50;
+}
+
+.swse-combat-action-roll .action-type .badge.standard {
+  background: rgba(33, 150, 243, 0.2);
+  border: 1px solid rgba(33, 150, 243, 0.5);
+  color: #2196f3;
+}
+
+.swse-combat-action-roll .action-type .badge.full-round {
+  background: rgba(156, 39, 176, 0.2);
+  border: 1px solid rgba(156, 39, 176, 0.5);
+  color: #9c27b0;
+}
+
+/* ─────────────── Skill Selection Dialog ─────────────── */
+.combat-action-skill-selection {
+  padding: 0.5rem;
+}
+
+.combat-action-skill-selection p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.combat-action-skill-selection .skill-option {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(100, 100, 100, 0.5);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.combat-action-skill-selection .skill-option:hover {
+  background: rgba(0, 168, 204, 0.1);
+  border-color: var(--color-primary, #00a8cc);
+}
+
+.combat-action-skill-selection .skill-option input[type="radio"] {
+  margin-right: 0.5rem;
+}
+
+.combat-action-skill-selection .skill-option label {
+  cursor: pointer;
+  display: inline-block;
+  margin: 0;
+}
+
+.combat-action-skill-selection .skill-option label strong {
+  color: var(--color-primary, #00a8cc);
+  font-size: 1rem;
+}
+
+.combat-action-skill-selection .skill-option label em {
+  color: var(--color-text-secondary, #aaa);
+  font-size: 0.85rem;
+}
