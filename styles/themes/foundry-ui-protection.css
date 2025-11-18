@@ -4,8 +4,8 @@
    ============================================ */
 
 /* Protect Foundry's core UI elements from theme styles */
-#sidebar,
-#sidebar *,
+/* NOTE: We do NOT apply 'all: revert' to #sidebar because it breaks the sidebar completely
+   Instead, we protect it with more specific rules below */
 #controls,
 #controls *,
 #hotbar,
