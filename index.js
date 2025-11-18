@@ -41,6 +41,7 @@ import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 
 import { SWSENotifications } from './scripts/utils/notifications.js';
 import { SWSELogger } from './scripts/utils/logger.js';
+import './scripts/utils/skill-use-filter.js';
 
 /* -------------------------------------------- */
 /*  Configuration                               */
