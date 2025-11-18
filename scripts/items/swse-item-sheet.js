@@ -1,3 +1,5 @@
+import { SWSEUpgradeApp } from '../apps/upgrade-app.js';
+
 export class SWSEItemSheet extends ItemSheet {
 
   static get defaultOptions() {
@@ -22,5 +24,17 @@ export class SWSEItemSheet extends ItemSheet {
   activateListeners(html) {
     super.activateListeners(html);
     if (!this.isEditable) return;
+
+    // Open upgrade app
+    html.find(".open-upgrade-app").click(this._onOpenUpgradeApp.bind(this));
+  }
+
+  /**
+   * Handle opening the upgrade application
+   */
+  _onOpenUpgradeApp(event) {
+    event.preventDefault();
+    const upgradeApp = new SWSEUpgradeApp(this.item);
+    upgradeApp.render(true);
   }
 }

@@ -26,6 +26,7 @@ import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 
 import { SWSECharacterDataModel } from './scripts/data-models/character-data-model.js';
 import { SWSEVehicleDataModel } from './scripts/data-models/vehicle-data-model.js';
+import { WeaponDataModel, ArmorDataModel, FeatDataModel, TalentDataModel, ForcePowerDataModel, ClassDataModel, SpeciesDataModel } from './scripts/data-models/item-data-models.js';
 
 /* -------------------------------------------- */
 /*  Core Systems                                */
@@ -99,6 +100,9 @@ import './scripts/apps/chargen-init.js';
 // Store and Level Up apps
 import { SWSEStore } from './scripts/apps/store.js';
 import { SWSELevelUp } from './scripts/apps/swse-levelup.js';
+
+// Upgrade System
+import { SWSEUpgradeApp } from './scripts/apps/upgrade-app.js';
 
 // Vehicle Modification System
 import { VehicleModificationManager } from './scripts/apps/vehicle-modification-manager.js';
@@ -200,7 +204,8 @@ Hooks.once("init", async function() {
     apps: {
       Store: SWSEStore,
       LevelUp: SWSELevelUp,
-      VehicleModificationApp: VehicleModificationApp
+      VehicleModificationApp: VehicleModificationApp,
+      UpgradeApp: SWSEUpgradeApp
     },
 
     // Vehicle Modification System
@@ -243,6 +248,17 @@ Hooks.once("init", async function() {
     npc: SWSECharacterDataModel,
     droid: SWSECharacterDataModel,
     vehicle: SWSEVehicleDataModel
+  };
+
+  CONFIG.Item.dataModels = {
+    weapon: WeaponDataModel,
+    armor: ArmorDataModel,
+    feat: FeatDataModel,
+    talent: TalentDataModel,
+    forcepower: ForcePowerDataModel,
+    'force-power': ForcePowerDataModel,
+    class: ClassDataModel,
+    species: SpeciesDataModel
   };
 
   // ============================================

@@ -36,7 +36,17 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
         type: new fields.StringField({initial: "none"}),
         current: new fields.NumberField({initial: 0, min: 0, integer: true}),
         max: new fields.NumberField({initial: 0, min: 0, integer: true})
-      })
+      }),
+
+      // Upgrade system
+      upgradeSlots: new fields.NumberField({required: true, initial: 1, min: 0, integer: true, label: "Upgrade Slots"}),
+      installedUpgrades: new fields.ArrayField(new fields.SchemaField({
+        id: new fields.StringField({required: true}),
+        name: new fields.StringField({required: true}),
+        cost: new fields.NumberField({required: true, initial: 0, min: 0}),
+        slotsUsed: new fields.NumberField({required: true, initial: 1, min: 0, integer: true}),
+        description: new fields.HTMLField()
+      }))
     };
   }
 }
@@ -60,7 +70,18 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       weight: new fields.NumberField({required: true, initial: 1, min: 0}),
       cost: new fields.NumberField({required: true, initial: 0, min: 0}),
       equipped: new fields.BooleanField({required: true, initial: false}),
-      description: new fields.HTMLField({label: "Description"})
+      description: new fields.HTMLField({label: "Description"}),
+
+      // Upgrade system
+      // Note: Powered armor gets 2 slots, regular armor gets 1
+      upgradeSlots: new fields.NumberField({required: true, initial: 1, min: 0, integer: true, label: "Upgrade Slots"}),
+      installedUpgrades: new fields.ArrayField(new fields.SchemaField({
+        id: new fields.StringField({required: true}),
+        name: new fields.StringField({required: true}),
+        cost: new fields.NumberField({required: true, initial: 0, min: 0}),
+        slotsUsed: new fields.NumberField({required: true, initial: 1, min: 0, integer: true}),
+        description: new fields.HTMLField()
+      }))
     };
   }
 }

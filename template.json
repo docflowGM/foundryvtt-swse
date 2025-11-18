@@ -261,7 +261,9 @@
         "base"
       ],
       "weight": 0,
-      "cost": 0
+      "cost": 0,
+      "upgradeSlots": 1,
+      "installedUpgrades": []
     },
     "species": {
       "templates": [
