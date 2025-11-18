@@ -45,8 +45,23 @@
         <option value="survival">Survival</option>
         <option value="security">Security</option>
         <option value="equipment">Other Equipment</option>
+        <option value="services">Services</option>
         <option value="droids">Droids</option>
         <option value="vehicles">Vehicles</option>
+      </select>
+    </div>
+    <div class="shop-filter-container">
+      <label for="shop-availability-filter">
+        <i class="fas fa-shield-alt"></i> Availability:
+      </label>
+      <select id="shop-availability-filter" class="shop-availability-select">
+        <option value="all" selected>All Items</option>
+        <option value="Standard">Standard</option>
+        <option value="Licensed">Licensed</option>
+        <option value="Restricted">Restricted</option>
+        <option value="Military">Military</option>
+        <option value="Illegal">Illegal</option>
+        <option value="Rare">Rare</option>
       </select>
     </div>
     <div class="shop-actions-bar">
@@ -373,6 +388,42 @@
         <div class="empty-message">
           <i class="fas fa-box-open"></i>
           <p>No other equipment available in the database.</p>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Services Tab --}}
+    <div class="shop-panel" data-panel="services">
+      <div class="panel-header">
+        <h4><i class="fas fa-concierge-bell"></i> Services & Expenses</h4>
+        <p class="panel-desc">Lodging, meals, medical care, transportation, and more</p>
+      </div>
+      <div class="products-list services-list" id="services-list">
+        {{#each categories.services}}
+        <div class="service-category">
+          <h5 class="service-category-name"><i class="{{this.icon}}"></i> {{this.name}}</h5>
+          <div class="service-items">
+            {{#each this.items}}
+            <div class="product-item service-item" data-service="{{this.id}}">
+              <div class="product-info">
+                <h6 class="product-name">{{this.name}}</h6>
+                <div class="product-details">
+                  <span class="detail-desc">{{this.notes}}</span>
+                </div>
+              </div>
+              <div class="product-actions">
+                <div class="product-price">
+                  <span class="credits-icon">₢</span>
+                  <span class="price-amount">{{this.cost}}</span>
+                </div>
+                <button type="button" class="buy-service holo-btn" data-service="{{this.id}}" data-cost="{{this.cost}}" data-name="{{this.name}}">
+                  <i class="fas fa-shopping-cart"></i> Purchase
+                </button>
+              </div>
+            </div>
+            {{/each}}
+          </div>
         </div>
         {{/each}}
       </div>

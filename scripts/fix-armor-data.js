@@ -568,7 +568,8 @@ const armorData = [
     cost: 16300,
     availability: 'Military',
     sourcebook: 'Scum and Villainy',
-    description: `<p>A versatile personal armor system with good mobility and protection balance.</p>`
+    description: `<p>A versatile personal armor system with good mobility and protection balance. Designed by Corellian Engineering Corporation, this armor incorporates powered servos that assist with heavy lifting.</p>
+      <p><strong>Special:</strong> Grants a +2 Equipment bonus to Strength for the purpose of determining carrying capacity, lifting, and dragging heavy objects when worn by someone with the Armor Proficiency (Medium) feat.</p>`
   },
   {
     id: 'armor-av1s-scout-armor',
@@ -640,7 +641,8 @@ const armorData = [
     cost: 6000,
     availability: 'Military',
     sourcebook: 'Legacy Era Campaign Guide',
-    description: `<p>Specialized armor designed for combating Force users. Features integrated systems for tracking and engaging Jedi and Sith.</p>`
+    description: `<p>Specialized armor designed for combating Force users. Features integrated systems for tracking and engaging Jedi and Sith.</p>
+      <p><strong>Special:</strong> Grants a +5 Equipment bonus to Will Defense against Force Powers when worn by someone with the Armor Proficiency (Medium) feat.</p>`
   },
 
   // MEDIUM ARMOR - Jedi Academy Training Manual
@@ -712,8 +714,8 @@ const armorData = [
     cost: 30000,
     availability: 'Military',
     sourcebook: 'Galaxy at War',
-    description: `<p>Elite commando armor used by Republic special forces. Top-of-the-line protection for medium armor.</p>
-      <p><strong>Special:</strong> Exceptional protection for Medium Armor. Often includes integrated systems.</p>`
+    description: `<p>Elite commando armor used by Republic special forces. Top-of-the-line protection for medium armor. This sophisticated armor system is equipped with advanced sensor packages and medical systems.</p>
+      <p><strong>Special:</strong> Grants a +2 Equipment bonus to Perception checks and Low-Light Vision when worn by someone with the Armor Proficiency (Medium) feat. The integrated medical suite provides a +10 Equipment bonus to Treat Injury checks when used to stabilize or treat the wearer. If you are using the Armor Upgrades options from Scum and Villainy, Katarn-Class Commando Armor has two Upgrade Slots.</p>`
   },
   {
     id: 'armor-m110-stalker-armor',
@@ -873,8 +875,8 @@ const armorData = [
     cost: 15000,
     availability: 'Standard',
     sourcebook: 'Clone Wars Campaign Guide',
-    description: `<p>A sealed pod-like suit designed primarily for vacuum operations. Provides environmental protection with limited armor.</p>
-      <p><strong>Special:</strong> Complete vacuum and environmental protection. Limited combat value.</p>`
+    description: `<p>A sealed pod-like suit designed primarily for vacuum operations. Provides environmental protection with limited armor. The Vacuum Pod's powered exoskeleton assists with heavy lifting and manipulation tasks in zero gravity.</p>
+      <p><strong>Special:</strong> Complete vacuum and environmental protection. Grants a +4 Equipment bonus to Strength when worn by someone with the Armor Proficiency (Heavy) feat.</p>`
   },
 
   // HEAVY ARMOR - Legacy Era Campaign Guide
@@ -889,7 +891,8 @@ const armorData = [
     cost: 17000,
     availability: 'Military',
     sourcebook: 'Legacy Era Campaign Guide',
-    description: `<p>Advanced assault armor used by elite military units in the Legacy era.</p>`
+    description: `<p>Advanced assault armor used by elite military units in the Legacy era. This sophisticated powered armor includes servo-motors and hydraulic systems that enhance the wearer's physical strength.</p>
+      <p><strong>Special:</strong> Grants a +2 Equipment bonus to Strength when worn by someone with the Armor Proficiency (Heavy) feat. If you are using the Armor Upgrades options from Scum and Villainy, Venom Assault Armor has two Upgrade Slots.</p>`
   },
 
   // HEAVY ARMOR - Jedi Academy Training Manual

@@ -328,6 +328,33 @@ export class SWSEStore extends FormApplication {
                 "Vehicles! Your ticket to adventure! Maintenance sold separately!",
                 "Smart investment! Nothing beats having your own ride!"
             ],
+            services: [
+                "Services! The necessities of civilized life!",
+                "Ah, need room and board? Transportation? You've come to the right place!",
+                "Services! Because adventurers need to eat and sleep too!",
+                "I can arrange anything from a hot meal to a luxury suite!",
+                "Ah, the practical purchases! Smart thinking!",
+                "Services! Let me take care of the logistics while you focus on adventure!",
+                "Need transportation? Lodging? Medical care? I know people!",
+                "Ah, browsing the essentials! Can't save the galaxy on an empty stomach!",
+                "Services! The often-overlooked but always-needed expenses!",
+                "I've got contacts for everything! Best rates in the sector!",
+                "Ah, planning ahead! I like a customer who thinks long-term!",
+                "Services! From budget to luxury, I can arrange it all!",
+                "Need a place to stay? A ride across the system? Say the word!",
+                "Ah, the cost of living! Someone's got to pay for it!",
+                "Services! Making life easier, one credit at a time!",
+                "I work with the best providers in the system! Quality guaranteed!",
+                "Ah, need medical attention? Transportation? Consider it done!",
+                "Services! Because heroes need logistics support too!",
+                "From cantina meals to chartered transports, I've got you covered!",
+                "Ah, investing in comfort and convenience! Wise choice!",
+                "Services! The invisible foundation of every successful mission!",
+                "Need to rent a speeder? Book passage? I know the best deals!",
+                "Ah, the smart shopper plans for everything! Including expenses!",
+                "Services! Let professionals handle the details!",
+                "I've arranged everything from luxury suites to emergency medical care! Nothing surprises me!"
+            ],
             cart: [
                 "Ah, reviewing your selections! Take your time, no rush!",
                 "The cart! Where dreams become purchases!",
@@ -566,6 +593,11 @@ export class SWSEStore extends FormApplication {
         // Combine world actors and pack actors
         const allActors = [...worldActors, ...packActors];
 
+        // Store actors by ID for quick lookup (for availability filtering)
+        allActors.forEach(actor => {
+            this.itemsById.set(actor.id, actor);
+        });
+
         // Helper to categorize equipment by keywords
         const categorizeEquipment = (item) => {
             const name = item.name.toLowerCase();
@@ -653,7 +685,79 @@ export class SWSEStore extends FormApplication {
             droids: allActors.filter(a => a.type === "droid" || a.system?.isDroid).map(a => ({
                 ...a,
                 finalCost: calculateFinalCost(Number(a.system?.cost) || 0)
-            }))
+            })),
+            services: [
+                {
+                    name: "Dining",
+                    icon: "fas fa-utensils",
+                    items: [
+                        { id: "dining-budget", name: "Budget Meal", cost: 2, notes: "Simple rations or cheap cantina fare" },
+                        { id: "dining-average", name: "Average Meal", cost: 10, notes: "Standard restaurant or cantina meal" },
+                        { id: "dining-upscale", name: "Upscale Meal", cost: 50, notes: "Fine dining experience" },
+                        { id: "dining-luxurious", name: "Luxurious Meal", cost: 150, notes: "Premium culinary experience" }
+                    ]
+                },
+                {
+                    name: "Lodging",
+                    icon: "fas fa-bed",
+                    items: [
+                        { id: "lodging-budget", name: "Budget Lodging (per day)", cost: 20, notes: "Basic sleeping quarters" },
+                        { id: "lodging-average", name: "Average Lodging (per day)", cost: 50, notes: "Standard hotel room" },
+                        { id: "lodging-upscale", name: "Upscale Lodging (per day)", cost: 100, notes: "Comfortable accommodations" },
+                        { id: "lodging-luxurious", name: "Luxurious Lodging (per day)", cost: 200, notes: "Premium suite with amenities" }
+                    ]
+                },
+                {
+                    name: "Medical Care",
+                    icon: "fas fa-heartbeat",
+                    items: [
+                        { id: "medical-medpac", name: "Medpac Treatment", cost: 300, notes: "Professional medical attention" },
+                        { id: "medical-bacta", name: "Bacta Tank (per hour)", cost: 300, notes: "Advanced healing immersion" },
+                        { id: "medical-surgery", name: "Surgery (per hour)", cost: 500, notes: "Surgical procedures" },
+                        { id: "medical-longterm", name: "Long-term Care (per day)", cost: 300, notes: "Extended medical monitoring" },
+                        { id: "medical-disease", name: "Treat Disease (per day)", cost: 500, notes: "Disease treatment regimen" },
+                        { id: "medical-radiation", name: "Treat Radiation (per day)", cost: 1000, notes: "Radiation sickness treatment" },
+                        { id: "medical-poison", name: "Treat Poison (per hour)", cost: 100, notes: "Antitoxin and monitoring" }
+                    ]
+                },
+                {
+                    name: "Transportation",
+                    icon: "fas fa-shuttle-van",
+                    items: [
+                        { id: "transport-taxi", name: "Local Taxi", cost: 10, notes: "Short-distance local transport" },
+                        { id: "transport-steerage", name: "Passage: Steerage (up to 5 days)", cost: 500, notes: "Basic interplanetary travel" },
+                        { id: "transport-average", name: "Passage: Average (up to 5 days)", cost: 1000, notes: "Standard passenger transport" },
+                        { id: "transport-upscale", name: "Passage: Upscale (5 days)", cost: 2000, notes: "Comfortable travel accommodations" },
+                        { id: "transport-luxurious", name: "Passage: Luxurious (5 days)", cost: 5000, notes: "First-class travel experience" },
+                        { id: "transport-charter", name: "Chartered Space Transport (up to 5 days)", cost: 10000, notes: "Private vessel charter" }
+                    ]
+                },
+                {
+                    name: "Monthly Upkeep / Lifestyle",
+                    icon: "fas fa-home",
+                    items: [
+                        { id: "upkeep-selfsufficient", name: "Self-Sufficient", cost: 100, notes: "Minimal expenses, living off the land" },
+                        { id: "upkeep-impoverished", name: "Impoverished", cost: 200, notes: "Barely scraping by" },
+                        { id: "upkeep-struggling", name: "Struggling", cost: 500, notes: "Making ends meet with difficulty" },
+                        { id: "upkeep-average", name: "Average", cost: 1000, notes: "Standard middle-class lifestyle" },
+                        { id: "upkeep-comfortable", name: "Comfortable", cost: 2000, notes: "Above-average quality of life" },
+                        { id: "upkeep-wealthy", name: "Wealthy", cost: 5000, notes: "Affluent lifestyle" },
+                        { id: "upkeep-luxurious", name: "Luxurious", cost: 10000, notes: "Elite upper-class living" }
+                    ]
+                },
+                {
+                    name: "Vehicle Rental",
+                    icon: "fas fa-car",
+                    items: [
+                        { id: "rental-speederbike", name: "Speeder Bike (per day)", cost: 20, notes: "Fast personal transport" },
+                        { id: "rental-landspeeder", name: "Landspeeder: Average (per day)", cost: 50, notes: "Standard ground vehicle" },
+                        { id: "rental-landspeeder-luxury", name: "Landspeeder: Luxury (per day)", cost: 100, notes: "High-end ground vehicle" },
+                        { id: "rental-airspeeder", name: "Airspeeder (per day)", cost: 500, notes: "Flying vehicle rental" },
+                        { id: "rental-shuttle-interplanetary", name: "Shuttle: Interplanetary (per day)", cost: 1000, notes: "Short-range space transport" },
+                        { id: "rental-shuttle-interstellar", name: "Shuttle: Interstellar (per day)", cost: 2000, notes: "Long-range space transport" }
+                    ]
+                }
+            ]
         };
 
         return {
@@ -674,12 +778,18 @@ export class SWSEStore extends FormApplication {
         // Category filter dropdown
         html.find("#shop-category-filter").change(this._onCategoryFilterChange.bind(this));
 
+        // Availability filter dropdown
+        html.find("#shop-availability-filter").change(this._onAvailabilityFilterChange.bind(this));
+
         // Cart and GM buttons
         html.find(".view-cart-btn").click(this._onShopTabClick.bind(this));
         html.find(".gm-settings-btn").click(this._onShopTabClick.bind(this));
 
         // Item purchasing
         html.find(".buy-item").click(this._onAddItemToCart.bind(this));
+
+        // Service purchasing
+        html.find(".buy-service").click(this._onBuyService.bind(this));
 
         // Droid/Vehicle purchasing
         html.find(".buy-droid").click(this._onBuyDroid.bind(this));
@@ -713,6 +823,101 @@ export class SWSEStore extends FormApplication {
         // Update Rendarr's dialogue based on the category
         const dialogue = SWSEStore.getRandomDialogue(tabName);
         this._updateRendarrDialogue($(doc), dialogue);
+
+        // Apply availability filter to the new panel
+        const availabilityFilter = doc.querySelector("#shop-availability-filter")?.value || "all";
+        this._applyAvailabilityFilter(doc, availabilityFilter);
+    }
+
+    /**
+     * Handle availability filter dropdown change
+     * @param {Event} event - Change event
+     * @private
+     */
+    _onAvailabilityFilterChange(event) {
+        event.preventDefault();
+        const availabilityFilter = event.currentTarget.value;
+        const doc = this.element[0];
+
+        // Apply filter to all visible items in the active panel
+        this._applyAvailabilityFilter(doc, availabilityFilter);
+    }
+
+    /**
+     * Apply availability filter to currently visible items
+     * @param {HTMLElement} doc - The document element
+     * @param {string} filterValue - The availability filter value ("all", "Licensed", "Restricted", etc.)
+     * @private
+     */
+    _applyAvailabilityFilter(doc, filterValue) {
+        // Get the active panel
+        const activePanel = doc.querySelector('.shop-panel.active');
+        if (!activePanel) return;
+
+        // Get all product items in the active panel
+        const productItems = activePanel.querySelectorAll('.product-item');
+
+        productItems.forEach(item => {
+            // Get the item ID and look up its availability
+            const itemId = item.dataset.itemId || item.dataset.actorId;
+            if (!itemId) {
+                // If no ID, show the item by default
+                item.style.display = '';
+                return;
+            }
+
+            // Look up the item in our itemsById map
+            const itemData = this.itemsById.get(itemId);
+            if (!itemData) {
+                // Item not found in map, show it by default
+                item.style.display = '';
+                return;
+            }
+
+            // Get the availability from the item's system data
+            const availability = itemData.system?.availability || itemData.system?.sourcebook?.availability || '';
+
+            // Show or hide based on filter
+            if (filterValue === 'all') {
+                // Show all items
+                item.style.display = '';
+            } else {
+                // Check if the availability string contains the filter value
+                // Handle cases like "Military, Rare" or "Restricted, Rare"
+                const availabilityLower = availability.toLowerCase();
+                const filterLower = filterValue.toLowerCase();
+
+                if (availabilityLower.includes(filterLower)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            }
+        });
+
+        // If all items are hidden, show the empty message
+        const visibleItems = activePanel.querySelectorAll('.product-item[style=""]').length;
+        const emptyMessage = activePanel.querySelector('.empty-message');
+
+        if (visibleItems === 0 && !emptyMessage) {
+            // Create temporary empty message if all items are filtered out
+            const tempEmptyMessage = document.createElement('div');
+            tempEmptyMessage.className = 'empty-message temp-empty-message';
+            tempEmptyMessage.innerHTML = `
+                <i class="fas fa-filter"></i>
+                <p>No items match the selected availability filter.</p>
+            `;
+            const productsList = activePanel.querySelector('.products-list');
+            if (productsList) {
+                productsList.appendChild(tempEmptyMessage);
+            }
+        } else if (visibleItems > 0) {
+            // Remove temporary empty message if items are visible
+            const tempEmptyMessage = activePanel.querySelector('.temp-empty-message');
+            if (tempEmptyMessage) {
+                tempEmptyMessage.remove();
+            }
+        }
     }
 
     /**
@@ -795,6 +1000,46 @@ export class SWSEStore extends FormApplication {
         // Update Rendarr's dialogue
         const dialogue = SWSEStore.getRandomDialogue('purchase');
         this._updateRendarrDialogue(this.element, dialogue);
+    }
+
+    /**
+     * Purchase a service (immediate credit deduction)
+     * @param {Event} event - Click event
+     * @private
+     */
+    async _onBuyService(event) {
+        event.preventDefault();
+
+        const button = event.currentTarget;
+        const serviceName = button.dataset.name;
+        const serviceCost = Number(button.dataset.cost) || 0;
+
+        if (!serviceName) {
+            ui.notifications.warn("Invalid service selection.");
+            return;
+        }
+
+        const actor = this.object;
+        const currentCredits = Number(actor.system?.credits) || 0;
+
+        // Check if actor has enough credits
+        if (currentCredits < serviceCost) {
+            ui.notifications.error(`Insufficient credits! You need ${serviceCost} credits but only have ${currentCredits}.`);
+            return;
+        }
+
+        // Deduct credits immediately
+        const newCredits = currentCredits - serviceCost;
+        await actor.update({ "system.credits": newCredits });
+
+        ui.notifications.info(`${serviceName} purchased for ${serviceCost} credits.`);
+
+        // Update Rendarr's dialogue
+        const dialogue = SWSEStore.getRandomDialogue('purchase');
+        this._updateRendarrDialogue(this.element, dialogue);
+
+        // Re-render to update credit display
+        this.render(false);
     }
 
     /**
