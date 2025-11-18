@@ -470,7 +470,8 @@ const armorData = [
     cost: 10000,
     availability: 'Restricted',
     sourcebook: 'Core Rulebook',
-    description: `<p>A powered armor suit manufactured in the Corellian system. Features integrated systems that enhance the wearer's endurance.</p>`
+    description: `<p>This suit of body Armor contains an energized exoskeleton and a series of servomotors that boosts the wearer's physical strength. Used by professional soldiers, mercenaries, and bounty hunters, the Powersuit requires skill and training to be used effectively.</p>
+      <p><strong>Special:</strong> The Corellian Powersuit grants its wearer a +2 Equipment bonus to Strength, but only if the wearer has the Armor Proficiency (Medium) feat. If you are using the Armor Upgrades options from Scum and Villainy, the Corellian Powersuit has two Upgrade Slots.</p>`
   },
 
   // MEDIUM ARMOR - Knights of the Old Republic Campaign Guide
@@ -589,14 +590,14 @@ const armorData = [
     name: 'Camo Armor',
     armorType: MEDIUM,
     defenseBonus: 5,
-    fortBonus: -3,
+    fortBonus: -3, // Note: Negative bonus reflects reduced coverage for stealth
     maxDexBonus: 3,
     weight: 6,
     cost: 6000,
     availability: 'Restricted',
     sourcebook: 'Clone Wars Campaign Guide',
-    description: `<p>Lightweight armor with integrated camouflage systems. Trades some protective capability for stealth.</p>
-      <p><strong>Special:</strong> +5 bonus to Stealth checks in appropriate terrain. Note the negative Fortitude bonus reflects reduced coverage.</p>`
+    description: `<p>Camo Armor protects the wearer from discovery as well as injury. In addition to the usual hard metal plates woven on top of a fabric body suit, the armor is embedded with miniature photoreactive fibers that allow the suit to absorb light and change its color to match the wearer's surroundings.</p>
+      <p><strong>Special:</strong> When attempting to hide, the wearer gains a +10 Equipment bonus to Stealth checks, regardless of the terrain.</p>`
   },
 
   // MEDIUM ARMOR - Legacy Era Campaign Guide
@@ -611,8 +612,9 @@ const armorData = [
     cost: 1500,
     availability: 'Rare',
     sourcebook: 'Legacy Era Campaign Guide',
+    speedPenalty: 0, // Special: Does not hamper speed (unusual for Medium Armor)
     description: `<p>A gauntlet made from cortosis, a rare mineral that can resist lightsaber blades. Can be worn with other armor.</p>
-      <p><strong>Special:</strong> Can block lightsaber attacks without being destroyed. Can be worn in tandem with other armor.</p>`
+      <p><strong>Special:</strong> Can block lightsaber attacks without being destroyed. Can be worn in tandem with other armor. The Cortosis Gauntlet does not hamper its wearer's Speed.</p>`
   },
   {
     id: 'armor-imperial-knight-armor',
@@ -692,12 +694,12 @@ const armorData = [
     defenseBonus: 6,
     fortBonus: 2,
     maxDexBonus: 3,
-    weight: 12,
+    weight: 13,
     cost: 6000,
     availability: 'Licensed',
     sourcebook: 'Galaxy at War',
-    description: `<p>Scout armor with integrated camouflage systems. Better balanced than the lighter Camo Armor.</p>
-      <p><strong>Special:</strong> +2 bonus to Stealth checks in appropriate terrain.</p>`
+    description: `<p>Creshaldyne Industries Camo Scout Armor is worn by scouts, commandos, and other stealthy troops. It combines sound-dampening technology with the light-bending and light-absorption technology used in the Camouflage Poncho.</p>
+      <p><strong>Special:</strong> Camo Scout Armor provides a +5 Equipment bonus on all Stealth checks made by the wearer. If you are using the Armor Upgrades options from Scum and Villainy, Camo Scout Armor has the Shadowskin upgrade as well as one additional Upgrade Slot.</p>`
   },
   {
     id: 'armor-katarn-class-commando-armor',
@@ -739,8 +741,9 @@ const armorData = [
     cost: 7000,
     availability: 'Rare',
     sourcebook: 'Web Enhancements',
+    speedPenalty: 3, // Special: Extra -1 square penalty (total -3 instead of standard -2)
     description: `<p>Medium-weight pressure suit designed for Skakoans and those operating in extreme atmospheric conditions.</p>
-      <p><strong>Special:</strong> Provides environmental protection. Reduces Speed by 2 squares.</p>`
+      <p><strong>Special:</strong> Provides environmental protection. Reduces the wearer's Speed by an additional 1 square (for a total penalty of -3 to Speed).</p>`
   },
 
   // ===== HEAVY ARMOR =====
