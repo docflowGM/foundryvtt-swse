@@ -2863,3 +2863,97 @@ img[loading="lazy"] {
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================
+   HALF LEVEL DISPLAY
+   ========================= */
+
+.character-level {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.character-level label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--holo-cyan);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.character-level .level-input {
+  width: 60px;
+  padding: 4px 8px;
+  background: rgba(0, 170, 204, 0.1);
+  border: 1px solid rgba(0, 170, 204, 0.3);
+  color: var(--color-text-emphatic);
+  border-radius: 4px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.character-level .level-input:focus {
+  outline: none;
+  border-color: var(--holo-cyan);
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.4);
+}
+
+.half-level-display {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: rgba(0, 255, 136, 0.08);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.half-level-label {
+  color: var(--holo-green);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.half-level-value {
+  color: var(--color-text-emphatic);
+  font-weight: 700;
+  font-size: 13px;
+  min-width: 20px;
+  text-align: center;
+  padding: 2px 6px;
+  background: rgba(0, 255, 136, 0.15);
+  border-radius: 3px;
+}
+
+.character-level .level-up {
+  margin-top: 4px;
+  padding: 6px 12px;
+  background: linear-gradient(180deg, rgba(0, 168, 204, 0.2), rgba(0, 168, 204, 0.1));
+  border: 1px solid rgba(0, 168, 204, 0.4);
+  color: var(--holo-cyan);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--fast);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.character-level .level-up:hover {
+  background: linear-gradient(180deg, rgba(0, 168, 204, 0.3), rgba(0, 168, 204, 0.2));
+  border-color: var(--holo-cyan);
+  box-shadow: 0 0 12px rgba(0, 217, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.character-level .level-up i {
+  font-size: 12px;
+}
