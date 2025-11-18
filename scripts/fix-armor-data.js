@@ -429,6 +429,526 @@ const armorData = [
       <p><strong>Special:</strong> Reduces the wearer's Speed by 2 Squares.</p>`
   },
 
+  // ===== MEDIUM ARMOR =====
+  // MEDIUM ARMOR - Core Rulebook
+  {
+    id: 'armor-battle-armor',
+    name: 'Battle Armor',
+    armorType: MEDIUM,
+    defenseBonus: 8,
+    fortBonus: 2,
+    maxDexBonus: 2,
+    weight: 16,
+    cost: 7000,
+    availability: 'Military',
+    sourcebook: 'Core Rulebook',
+    description: `<p>The standard Medium Armor used by military forces across the galaxy. Provides excellent protection while maintaining reasonable mobility.</p>`
+  },
+  {
+    id: 'armor-ceremonial-armor',
+    name: 'Ceremonial Armor',
+    armorType: MEDIUM,
+    defenseBonus: 7,
+    fortBonus: 0,
+    maxDexBonus: 2,
+    weight: 13,
+    cost: 5000,
+    availability: 'Restricted',
+    sourcebook: 'Core Rulebook',
+    description: `<p>Ornate armor worn for ceremonial purposes by guards and honor units. While decorative, it still provides substantial protection.</p>`
+  },
+  {
+    id: 'armor-corellian-powersuit',
+    name: 'Corellian Powersuit',
+    armorType: MEDIUM,
+    defenseBonus: 7,
+    fortBonus: 3,
+    maxDexBonus: 3,
+    weight: 20,
+    cost: 10000,
+    availability: 'Restricted',
+    sourcebook: 'Core Rulebook',
+    description: `<p>A powered armor suit manufactured in the Corellian system. Features integrated systems that enhance the wearer's endurance.</p>`
+  },
+
+  // MEDIUM ARMOR - Knights of the Old Republic Campaign Guide
+  {
+    id: 'armor-mandalorian-battle-armor',
+    name: 'Mandalorian Battle Armor',
+    armorType: MEDIUM,
+    defenseBonus: 8,
+    fortBonus: 2,
+    maxDexBonus: 2,
+    weight: 18,
+    cost: 0,
+    availability: 'Rare',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Traditional Mandalorian battle armor used during the Mandalorian Wars. Provides excellent protection while allowing for combat mobility.</p>`
+  },
+  {
+    id: 'armor-mesh-armor',
+    name: 'Mesh Armor',
+    armorType: MEDIUM,
+    defenseBonus: 6,
+    fortBonus: 2,
+    maxDexBonus: 2,
+    weight: 13,
+    cost: 6000,
+    availability: 'Restricted',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Armor constructed from interwoven metallic mesh. Flexible yet protective.</p>`
+  },
+  {
+    id: 'armor-powered-battle-armor',
+    name: 'Powered Battle Armor',
+    armorType: MEDIUM,
+    defenseBonus: 7,
+    fortBonus: 2,
+    maxDexBonus: 2,
+    weight: 17,
+    cost: 11000,
+    availability: 'Military',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Military-grade powered armor with integrated systems. Can be upgraded with additional components.</p>
+      <p><strong>Special:</strong> Has 2 free Upgrade Slots for armor modifications.</p>`
+  },
+  {
+    id: 'armor-republic-combat-armor',
+    name: 'Republic Combat Armor',
+    armorType: MEDIUM,
+    defenseBonus: 6,
+    fortBonus: 2,
+    maxDexBonus: 2,
+    weight: 14,
+    cost: 0,
+    availability: 'Military',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Standard-issue Republic military armor. Reliable and effective in combat situations.</p>`
+  },
+  {
+    id: 'armor-weave-armor',
+    name: 'Weave Armor',
+    armorType: MEDIUM,
+    defenseBonus: 6,
+    fortBonus: 2,
+    maxDexBonus: 3,
+    weight: 15,
+    cost: 5000,
+    availability: 'Restricted',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Armor constructed from woven energy-resistant fibers. Lighter and more flexible than traditional plate armor.</p>`
+  },
+
+  // MEDIUM ARMOR - Scum and Villainy
+  {
+    id: 'armor-medium-beskargam',
+    name: "Medium Beskar'gam",
+    armorType: MEDIUM,
+    defenseBonus: 8,
+    fortBonus: 2,
+    maxDexBonus: 2,
+    weight: 17,
+    cost: 37000,
+    availability: 'Restricted, Rare',
+    sourcebook: 'Scum and Villainy',
+    description: `<p>Medium-weight Mandalorian armor made from true Beskar (Mandalorian Iron). Exceptionally rare and valuable.</p>
+      <p><strong>Special:</strong> A suit of Beskar'gam grants favorable circumstances on Persuasion checks made to Intimidate. If the wearer has DR, can apply its benefit against lightsaber attacks. Has two free Upgrade Slots.</p>`
+  },
+  {
+    id: 'armor-model-210-personal-armor',
+    name: 'Model 210 Personal Armor',
+    armorType: MEDIUM,
+    defenseBonus: 7,
+    fortBonus: 1,
+    maxDexBonus: 3,
+    weight: 17,
+    cost: 16300,
+    availability: 'Military',
+    sourcebook: 'Scum and Villainy',
+    description: `<p>A versatile personal armor system with good mobility and protection balance.</p>`
+  },
+  {
+    id: 'armor-av1s-scout-armor',
+    name: 'AV-1S Scout Armor',
+    armorType: MEDIUM,
+    defenseBonus: 7,
+    fortBonus: 2,
+    maxDexBonus: 2,
+    weight: 18,
+    cost: 15000,
+    availability: 'Military',
+    sourcebook: 'Scum and Villainy',
+    description: `<p>Military scout armor designed for reconnaissance and forward operations.</p>`
+  },
+
+  // MEDIUM ARMOR - Clone Wars Campaign Guide
+  {
+    id: 'armor-camo-armor',
+    name: 'Camo Armor',
+    armorType: MEDIUM,
+    defenseBonus: 5,
+    fortBonus: -3,
+    maxDexBonus: 3,
+    weight: 6,
+    cost: 6000,
+    availability: 'Restricted',
+    sourcebook: 'Clone Wars Campaign Guide',
+    description: `<p>Lightweight armor with integrated camouflage systems. Trades some protective capability for stealth.</p>
+      <p><strong>Special:</strong> +5 bonus to Stealth checks in appropriate terrain. Note the negative Fortitude bonus reflects reduced coverage.</p>`
+  },
+
+  // MEDIUM ARMOR - Legacy Era Campaign Guide
+  {
+    id: 'armor-cortosis-gauntlet',
+    name: 'Cortosis Gauntlet',
+    armorType: MEDIUM,
+    defenseBonus: 0,
+    fortBonus: -1,
+    maxDexBonus: null,
+    weight: 1,
+    cost: 1500,
+    availability: 'Rare',
+    sourcebook: 'Legacy Era Campaign Guide',
+    description: `<p>A gauntlet made from cortosis, a rare mineral that can resist lightsaber blades. Can be worn with other armor.</p>
+      <p><strong>Special:</strong> Can block lightsaber attacks without being destroyed. Can be worn in tandem with other armor.</p>`
+  },
+  {
+    id: 'armor-imperial-knight-armor',
+    name: 'Imperial Knight Armor',
+    armorType: MEDIUM,
+    defenseBonus: 8,
+    fortBonus: 2,
+    maxDexBonus: 3,
+    weight: 16,
+    cost: 7000,
+    availability: 'Rare',
+    sourcebook: 'Legacy Era Campaign Guide',
+    description: `<p>Distinctive armor worn by the Imperial Knights who serve the Fel Empire. Combines protection with Force-user mobility.</p>`
+  },
+  {
+    id: 'armor-knighthunter-armor',
+    name: 'Knighthunter Armor',
+    armorType: MEDIUM,
+    defenseBonus: 7,
+    fortBonus: 2,
+    maxDexBonus: 3,
+    weight: 13,
+    cost: 6000,
+    availability: 'Military',
+    sourcebook: 'Legacy Era Campaign Guide',
+    description: `<p>Specialized armor designed for combating Force users. Features integrated systems for tracking and engaging Jedi and Sith.</p>`
+  },
+
+  // MEDIUM ARMOR - Jedi Academy Training Manual
+  {
+    id: 'armor-dark-armor',
+    name: 'Dark Armor',
+    armorType: MEDIUM,
+    defenseBonus: 7,
+    fortBonus: 4,
+    maxDexBonus: 2,
+    weight: 16,
+    cost: 15000,
+    availability: 'Rare',
+    sourcebook: 'Jedi Academy Training Manual',
+    description: `<p>Medium-weight Dark Armor worn by Sith Lords. Each suit is unique and enhanced through Sith Alchemy.</p>
+      <p><strong>Special:</strong> Automatically comes with a single enhancement from the Sith Alchemy Specialist Talent.</p>`
+  },
+  {
+    id: 'armor-jedi-battle-armor',
+    name: 'Jedi Battle Armor',
+    armorType: MEDIUM,
+    defenseBonus: 5,
+    fortBonus: 5,
+    maxDexBonus: 3,
+    weight: 12,
+    cost: 6000,
+    availability: 'Rare',
+    sourcebook: 'Jedi Academy Training Manual',
+    description: `<p>Medium-weight Jedi Battle Armor designed for Force users who engage in heavy combat. Balances protection with Force connection.</p>`
+  },
+
+  // MEDIUM ARMOR - Galaxy at War
+  {
+    id: 'armor-biohazard-suit',
+    name: 'Biohazard Suit',
+    armorType: MEDIUM,
+    defenseBonus: 0,
+    fortBonus: 3,
+    maxDexBonus: 0,
+    weight: 9,
+    cost: 4000,
+    availability: 'Licensed',
+    sourcebook: 'Galaxy at War',
+    description: `<p>A sealed environmental suit designed to protect against biological and chemical hazards.</p>
+      <p><strong>Special:</strong> Provides complete protection against airborne toxins, diseases, and radiation. Sealed environment with life support.</p>`
+  },
+  {
+    id: 'armor-camo-scout-armor',
+    name: 'Camo Scout Armor',
+    armorType: MEDIUM,
+    defenseBonus: 6,
+    fortBonus: 2,
+    maxDexBonus: 3,
+    weight: 12,
+    cost: 6000,
+    availability: 'Licensed',
+    sourcebook: 'Galaxy at War',
+    description: `<p>Scout armor with integrated camouflage systems. Better balanced than the lighter Camo Armor.</p>
+      <p><strong>Special:</strong> +2 bonus to Stealth checks in appropriate terrain.</p>`
+  },
+  {
+    id: 'armor-katarn-class-commando-armor',
+    name: 'Katarn-Class Commando Armor',
+    armorType: MEDIUM,
+    defenseBonus: 9,
+    fortBonus: 4,
+    maxDexBonus: 1,
+    weight: 20,
+    cost: 30000,
+    availability: 'Military',
+    sourcebook: 'Galaxy at War',
+    description: `<p>Elite commando armor used by Republic special forces. Top-of-the-line protection for medium armor.</p>
+      <p><strong>Special:</strong> Exceptional protection for Medium Armor. Often includes integrated systems.</p>`
+  },
+  {
+    id: 'armor-m110-stalker-armor',
+    name: 'M1-10 Stalker Armor',
+    armorType: MEDIUM,
+    defenseBonus: 7,
+    fortBonus: 3,
+    maxDexBonus: null,
+    weight: 10,
+    cost: 7500,
+    availability: 'Licensed',
+    sourcebook: 'Galaxy at War',
+    description: `<p>Stealth-oriented armor designed for covert operations and reconnaissance.</p>`
+  },
+
+  // MEDIUM ARMOR - Web Enhancements
+  {
+    id: 'armor-medium-pressure-suit',
+    name: 'Medium Pressure Suit',
+    armorType: MEDIUM,
+    defenseBonus: 8,
+    fortBonus: 2,
+    maxDexBonus: 2,
+    weight: 16,
+    cost: 7000,
+    availability: 'Rare',
+    sourcebook: 'Web Enhancements',
+    description: `<p>Medium-weight pressure suit designed for Skakoans and those operating in extreme atmospheric conditions.</p>
+      <p><strong>Special:</strong> Provides environmental protection. Reduces Speed by 2 squares.</p>`
+  },
+
+  // ===== HEAVY ARMOR =====
+  // HEAVY ARMOR - Core Rulebook
+  {
+    id: 'armor-armored-space-suit',
+    name: 'Armored Space Suit',
+    armorType: HEAVY,
+    defenseBonus: 9,
+    fortBonus: 3,
+    maxDexBonus: 1,
+    weight: 35,
+    cost: 12000,
+    availability: 'Restricted',
+    sourcebook: 'Core Rulebook',
+    description: `<p>A heavy-duty spacesuit with integrated armor plating. Provides both environmental protection and combat defense.</p>
+      <p><strong>Special:</strong> Sealed life support system. Can survive in vacuum indefinitely with power.</p>`
+  },
+  {
+    id: 'armor-heavy-battle-armor',
+    name: 'Heavy Battle Armor',
+    armorType: HEAVY,
+    defenseBonus: 10,
+    fortBonus: 4,
+    maxDexBonus: 1,
+    weight: 30,
+    cost: 15000,
+    availability: 'Military',
+    sourcebook: 'Core Rulebook',
+    description: `<p>The standard Heavy Armor for military specialists and heavy infantry. Maximum protection for ground forces.</p>`
+  },
+
+  // HEAVY ARMOR - Knights of the Old Republic Campaign Guide
+  {
+    id: 'armor-heavy-powered-battle-armor',
+    name: 'Heavy Powered Battle Armor',
+    armorType: HEAVY,
+    defenseBonus: 9,
+    fortBonus: 4,
+    maxDexBonus: 1,
+    weight: 32,
+    cost: 19000,
+    availability: 'Military',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Heavily armored powered suit with integrated systems and upgrade capability.</p>
+      <p><strong>Special:</strong> Has 2 free Upgrade Slots for armor modifications.</p>`
+  },
+  {
+    id: 'armor-matrix-armor',
+    name: 'Matrix Armor',
+    armorType: HEAVY,
+    defenseBonus: 9,
+    fortBonus: 3,
+    maxDexBonus: 1,
+    weight: 25,
+    cost: 9000,
+    availability: 'Restricted',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Advanced heavy armor with a matrix of protective layers. Lighter than standard Heavy Battle Armor.</p>`
+  },
+  {
+    id: 'armor-neo-crusader-assault-armor',
+    name: 'Neo-Crusader Assault Armor',
+    armorType: HEAVY,
+    defenseBonus: 10,
+    fortBonus: 4,
+    maxDexBonus: 1,
+    weight: 65,
+    cost: 0,
+    availability: 'Military, Rare',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>The heaviest armor used by Mandalorian Neo-Crusaders. Extremely heavy but provides maximum protection.</p>
+      <p><strong>Special:</strong> Includes helmet with comlink and helmet package. Has 4 free Upgrade Slots.</p>`
+  },
+  {
+    id: 'armor-republic-heavy-armor',
+    name: 'Republic Heavy Armor',
+    armorType: HEAVY,
+    defenseBonus: 8,
+    fortBonus: 3,
+    maxDexBonus: 1,
+    weight: 26,
+    cost: 0,
+    availability: 'Military',
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    description: `<p>Standard heavy armor issued to Republic heavy infantry and assault troops.</p>`
+  },
+
+  // HEAVY ARMOR - Scum and Villainy
+  {
+    id: 'armor-av1c-combat-armor',
+    name: 'AV-1C Combat Armor',
+    armorType: HEAVY,
+    defenseBonus: 9,
+    fortBonus: 4,
+    maxDexBonus: 1,
+    weight: 25,
+    cost: 25000,
+    availability: 'Restricted, Rare',
+    sourcebook: 'Scum and Villainy',
+    description: `<p>Elite combat armor used by mercenaries and special forces. Expensive but highly effective.</p>`
+  },
+  {
+    id: 'armor-heavy-beskargam',
+    name: "Heavy Beskar'gam",
+    armorType: HEAVY,
+    defenseBonus: 10,
+    fortBonus: 4,
+    maxDexBonus: 1,
+    weight: 32,
+    cost: 45000,
+    availability: 'Restricted, Rare',
+    sourcebook: 'Scum and Villainy',
+    description: `<p>Heavy Mandalorian armor crafted from true Beskar. The pinnacle of Mandalorian armor smithing.</p>
+      <p><strong>Special:</strong> Grants favorable circumstances on Intimidate checks. DR applies against lightsabers. Has two free Upgrade Slots.</p>`
+  },
+
+  // HEAVY ARMOR - Clone Wars Campaign Guide
+  {
+    id: 'armor-vacuum-pod',
+    name: 'Vacuum Pod',
+    armorType: HEAVY,
+    defenseBonus: 4,
+    fortBonus: 1,
+    maxDexBonus: 0,
+    weight: 35,
+    cost: 15000,
+    availability: 'Standard',
+    sourcebook: 'Clone Wars Campaign Guide',
+    description: `<p>A sealed pod-like suit designed primarily for vacuum operations. Provides environmental protection with limited armor.</p>
+      <p><strong>Special:</strong> Complete vacuum and environmental protection. Limited combat value.</p>`
+  },
+
+  // HEAVY ARMOR - Legacy Era Campaign Guide
+  {
+    id: 'armor-venom-assault-armor',
+    name: 'Venom Assault Armor',
+    armorType: HEAVY,
+    defenseBonus: 10,
+    fortBonus: 4,
+    maxDexBonus: 1,
+    weight: 38,
+    cost: 17000,
+    availability: 'Military',
+    sourcebook: 'Legacy Era Campaign Guide',
+    description: `<p>Advanced assault armor used by elite military units in the Legacy era.</p>`
+  },
+
+  // HEAVY ARMOR - Jedi Academy Training Manual
+  {
+    id: 'armor-heavy-dark-armor',
+    name: 'Heavy Dark Armor',
+    armorType: HEAVY,
+    defenseBonus: 8,
+    fortBonus: 5,
+    maxDexBonus: 1,
+    weight: 30,
+    cost: 25000,
+    availability: 'Rare',
+    sourcebook: 'Jedi Academy Training Manual',
+    description: `<p>Heavy Dark Armor worn by powerful Sith Lords. Enhanced through Sith Alchemy to provide exceptional protection.</p>
+      <p><strong>Special:</strong> Automatically comes with a single enhancement from the Sith Alchemy Specialist Talent.</p>`
+  },
+  {
+    id: 'armor-orbalisk-armor',
+    name: 'Orbalisk Armor',
+    armorType: HEAVY,
+    defenseBonus: 10,
+    fortBonus: 2,
+    maxDexBonus: 1,
+    weight: 26,
+    cost: 0,
+    availability: 'Rare',
+    sourcebook: 'Jedi Academy Training Manual',
+    description: `<p>Living armor created from parasitic orbalisk creatures. Provides exceptional protection but has severe drawbacks.</p>
+      <p><strong>Special:</strong> Cannot be removed willingly. Feeds on dark side energy. Provides damage reduction but causes ongoing harm to wearer.</p>`
+  },
+
+  // HEAVY ARMOR - Rebellion Era Campaign Guide
+  {
+    id: 'armor-zero-gravity-stormtrooper-armor',
+    name: 'Zero-Gravity Stormtrooper Armor',
+    armorType: HEAVY,
+    defenseBonus: 9,
+    fortBonus: 3,
+    maxDexBonus: 0,
+    weight: 38,
+    cost: 21000,
+    availability: 'Military',
+    sourcebook: 'Rebellion Era Campaign Guide',
+    description: `<p>Specialized Stormtrooper armor designed for zero-gravity combat operations and space warfare.</p>
+      <p><strong>Special:</strong> Includes magnetic boots and maneuvering jets. Optimized for zero-G combat.</p>`
+  },
+
+  // HEAVY ARMOR - Web Enhancements
+  {
+    id: 'armor-heavy-pressure-suit',
+    name: 'Heavy Pressure Suit',
+    armorType: HEAVY,
+    defenseBonus: 9,
+    fortBonus: 3,
+    maxDexBonus: 1,
+    weight: 35,
+    cost: 12000,
+    availability: 'Rare',
+    sourcebook: 'Web Enhancements',
+    description: `<p>Heavy-duty pressure suit designed for extreme atmospheric conditions.</p>
+      <p><strong>Special:</strong> Provides environmental protection. Reduces Speed by 2 squares.</p>`
+  },
+
   // ENERGY SHIELDS - Knights of the Old Republic Campaign Guide
   // Note: Energy Shields are special - they provide Shield Rating (SR) instead of armor bonus
   // They only protect against Energy damage and must be activated as a Swift Action
