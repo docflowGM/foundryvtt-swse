@@ -185,12 +185,20 @@ export default class CharacterGenerator extends Application {
       { key: "5th-degree", name: "5th-Degree Droid", bonuses: "+4 STR, -4 INT, -4 CHA", description: "Labor and utility droids" }
     ];
 
-    // Filter classes for level 0 droids (no Jedi classes)
-    if (this.characterData.isDroid && this.characterData.level === 0 && context.packs.classes) {
+    // Filter to only show core SWSE classes
+    if (context.packs.classes) {
+      const coreClasses = ["Jedi", "Noble", "Scout", "Scoundrel", "Soldier"];
       context.packs.classes = context.packs.classes.filter(c => {
-        const className = (c.name || "").toLowerCase();
-        return !className.includes("jedi");
+        return coreClasses.includes(c.name);
       });
+
+      // Further filter for level 0 droids (no Jedi classes)
+      if (this.characterData.isDroid && this.characterData.level === 0) {
+        context.packs.classes = context.packs.classes.filter(c => {
+          const className = (c.name || "").toLowerCase();
+          return !className.includes("jedi");
+        });
+      }
     }
 
     // Filter feats based on prerequisites
@@ -1853,14 +1861,14 @@ export default class CharacterGenerator extends Application {
     };
 
     // Standard array roll
-    const rollStandard = () => {
+    const rollStandard = async () => {
       const results = [];
       for (let i = 0; i < 6; i++) {
-        const r = new Roll("4d6kh3").evaluate({ async: false });
+        const r = await new Roll("4d6kh3").evaluate();
         const total = r.total;
         results.push({ total });
       }
-      
+
       const container = doc.querySelector("#roll-results");
       if (container) {
         container.innerHTML = "";
@@ -1893,8 +1901,8 @@ export default class CharacterGenerator extends Application {
     };
 
     // Organic roll
-    const rollOrganic = () => {
-      const r = new Roll("24d6").evaluate({ async: false });
+    const rollOrganic = async () => {
+      const r = await new Roll("24d6").evaluate();
       if (!r.dice || !r.dice[0] || !r.dice[0].results) {
         ui.notifications.error("Failed to roll dice. Please try again.");
         console.error("SWSE | Roll failed:", r);
@@ -1902,12 +1910,12 @@ export default class CharacterGenerator extends Application {
       }
       const rolls = r.dice[0].results.map(x => x.result).sort((a, b) => b - a);
       const kept = rolls.slice(0, 18);
-      
+
       const groups = [];
       for (let i = 0; i < 6; i++) {
         groups.push(kept.slice(i * 3, (i + 1) * 3));
       }
-      
+
       const container = doc.querySelector("#organic-groups");
       if (container) {
         container.innerHTML = "";

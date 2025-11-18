@@ -133,8 +133,8 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     // Apply class data from database
     await this._applyClassData(classDoc);
 
-    // Move to next step
-    this._nextStep();
+    // Move to next step using parent's method
+    await this._onNextStep(event);
   }
 
   async _applyClassData(classDoc) {
