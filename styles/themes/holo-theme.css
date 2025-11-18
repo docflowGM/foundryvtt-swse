@@ -9,7 +9,8 @@
 /* Scan Line Effect */
 .swse-datapad-sheet .sheet-body::after,
 .swse.character-sheet .sheet-body::after,
-.holo-theme .sheet-body::after {
+.swse.sheet.holo-theme .sheet-body::after,
+.swse.holo-theme .sheet-body::after {
   content: "";
   position: absolute;
   top: 0;
@@ -35,9 +36,12 @@
 .swse.character-sheet input:focus,
 .swse.character-sheet textarea:focus,
 .swse.character-sheet select:focus,
-.holo-theme input:focus,
-.holo-theme textarea:focus,
-.holo-theme select:focus {
+.swse.sheet.holo-theme input:focus,
+.swse.sheet.holo-theme textarea:focus,
+.swse.sheet.holo-theme select:focus,
+.swse.holo-theme input:focus,
+.swse.holo-theme textarea:focus,
+.swse.holo-theme select:focus {
   animation: input-glow-pulse 2s ease-in-out infinite;
 }
 
@@ -85,11 +89,16 @@
 .swse.character-sheet .stat-value,
 .swse.character-sheet .attr-total,
 .swse.character-sheet .defense-total-compact,
-.holo-theme .ability-score,
-.holo-theme .defense-value,
-.holo-theme .stat-value,
-.holo-theme .attr-total,
-.holo-theme .defense-total-compact {
+.swse.sheet.holo-theme .ability-score,
+.swse.sheet.holo-theme .defense-value,
+.swse.sheet.holo-theme .stat-value,
+.swse.sheet.holo-theme .attr-total,
+.swse.sheet.holo-theme .defense-total-compact,
+.swse.holo-theme .ability-score,
+.swse.holo-theme .defense-value,
+.swse.holo-theme .stat-value,
+.swse.holo-theme .attr-total,
+.swse.holo-theme .defense-total-compact {
   animation: data-readout 0.5s ease-out;
 }
 
@@ -111,8 +120,10 @@
 .swse-datapad-sheet .section-header-black,
 .swse.character-sheet .section-header,
 .swse.character-sheet .section-header-black,
-.holo-theme .section-header,
-.holo-theme .section-header-black {
+.swse.sheet.holo-theme .section-header,
+.swse.sheet.holo-theme .section-header-black,
+.swse.holo-theme .section-header,
+.swse.holo-theme .section-header-black {
   position: relative;
   overflow: hidden;
 }
@@ -123,8 +134,10 @@
 .swse-datapad-sheet .section-header-black::before,
 .swse.character-sheet .section-header::before,
 .swse.character-sheet .section-header-black::before,
-.holo-theme .section-header::before,
-.holo-theme .section-header-black::before {
+.swse.sheet.holo-theme .section-header::before,
+.swse.sheet.holo-theme .section-header-black::before,
+.swse.holo-theme .section-header::before,
+.swse.holo-theme .section-header-black::before {
   content: "";
   position: absolute;
   top: 0;
@@ -144,7 +157,8 @@
 .swse.sheet .status-indicator,
 .swse-datapad-sheet .status-indicator,
 .swse.character-sheet .status-indicator,
-.holo-theme .status-indicator {
+.swse.sheet.holo-theme .status-indicator,
+.swse.holo-theme .status-indicator {
   display: inline-block;
   width: 6px;
   height: 6px;
@@ -155,7 +169,8 @@
 .swse.sheet .status-indicator.active,
 .swse-datapad-sheet .status-indicator.active,
 .swse.character-sheet .status-indicator.active,
-.holo-theme .status-indicator.active {
+.swse.sheet.holo-theme .status-indicator.active,
+.swse.holo-theme .status-indicator.active {
   background: #00ff88;
   box-shadow: 0 0 5px rgba(0, 255, 136, 0.8);
 }
@@ -163,7 +178,8 @@
 .swse.sheet .status-indicator.inactive,
 .swse-datapad-sheet .status-indicator.inactive,
 .swse.character-sheet .status-indicator.inactive,
-.holo-theme .status-indicator.inactive {
+.swse.sheet.holo-theme .status-indicator.inactive,
+.swse.holo-theme .status-indicator.inactive {
   background: #666;
   box-shadow: none;
 }
@@ -171,7 +187,8 @@
 .swse.sheet .status-indicator.warning,
 .swse-datapad-sheet .status-indicator.warning,
 .swse.character-sheet .status-indicator.warning,
-.holo-theme .status-indicator.warning {
+.swse.sheet.holo-theme .status-indicator.warning,
+.swse.holo-theme .status-indicator.warning {
   background: #ffaa00;
   box-shadow: 0 0 5px rgba(255, 170, 0, 0.8);
   animation: warning-blink 1s ease-in-out infinite;
@@ -185,7 +202,8 @@
 .swse.sheet .status-indicator.danger,
 .swse-datapad-sheet .status-indicator.danger,
 .swse.character-sheet .status-indicator.danger,
-.holo-theme .status-indicator.danger {
+.swse.sheet.holo-theme .status-indicator.danger,
+.swse.holo-theme .status-indicator.danger {
   background: #ff0000;
   box-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
   animation: danger-pulse 0.5s ease-in-out infinite;
@@ -206,7 +224,8 @@
 .swse.sheet .window-header,
 .swse-datapad-sheet .window-header,
 .swse.character-sheet .window-header,
-.holo-theme .window-header {
+.swse.sheet.holo-theme .window-header,
+.swse.holo-theme .window-header {
   cursor: move;
   user-select: none;
 }
@@ -215,6 +234,7 @@
 .swse.sheet.dragging,
 .swse-datapad-sheet.dragging,
 .swse.character-sheet.dragging,
-.holo-theme.dragging {
+.swse.sheet.holo-theme.dragging,
+.swse.holo-theme.dragging {
   opacity: 0.8;
 }
