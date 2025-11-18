@@ -38,6 +38,7 @@
     "styles/apps/chargen.css",
     "styles/apps/houserules.css",
     "styles/apps/store.css",
+    "styles/apps/upgrade-app.css",
     "styles/canvas/canvas-ui.css",
     "styles/themes/foundry-ui-protection.css",
     "styles/themes/holo-theme.css",

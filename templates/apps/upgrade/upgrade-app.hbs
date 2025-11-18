@@ -1,0 +1,115 @@
+<div class="swse-upgrade-app">
+    {{!-- Header with NPC --}}
+    <header class="upgrade-header">
+        <div class="npc-portrait">
+            <img src="{{npc.image}}" alt="{{npc.name}}" />
+            <div class="npc-info">
+                <h2>{{npc.name}}</h2>
+                <p class="npc-title">{{npc.title}}</p>
+            </div>
+        </div>
+        <div class="item-info">
+            <h3>{{item.name}}</h3>
+            <p class="item-type">{{system.armorType}} {{item.type}}</p>
+        </div>
+    </header>
+
+    {{!-- NPC Dialogue --}}
+    <div class="npc-dialogue">
+        <div class="dialogue-bubble welcome">
+            <p>{{welcomeMessage}}</p>
+        </div>
+        <div class="dialogue-bubble examining">
+            <p>{{examinMsg}}</p>
+        </div>
+    </div>
+
+    {{!-- Upgrade Slots Status --}}
+    <div class="upgrade-slots-status">
+        <h3>Upgrade Slots</h3>
+        <div class="slots-bar">
+            <div class="slots-used" style="width: {{multiply (divide usedSlots totalSlots) 100}}%">
+                <span>{{usedSlots}} / {{totalSlots}} Slots Used</span>
+            </div>
+        </div>
+        <p class="slots-available">
+            {{#if (gt availableSlots 0)}}
+                <span class="available">{{availableSlots}} slot(s) available</span>
+            {{else}}
+                <span class="full">No slots available</span>
+            {{/if}}
+        </p>
+    </div>
+
+    {{!-- Installed Upgrades --}}
+    <section class="installed-upgrades-section">
+        <h3>Installed Upgrades</h3>
+        {{#if installedUpgrades.length}}
+            <ul class="installed-upgrades-list">
+                {{#each installedUpgrades}}
+                <li class="installed-upgrade">
+                    <div class="upgrade-header">
+                        <h4>{{this.name}}</h4>
+                        <span class="slots-used">{{this.slotsUsed}} slot(s)</span>
+                    </div>
+                    <div class="upgrade-details">
+                        {{{this.description}}}
+                    </div>
+                    <div class="upgrade-actions">
+                        <button type="button" class="remove-upgrade" data-upgrade-index="{{@index}}">
+                            <i class="fas fa-times"></i> Remove
+                        </button>
+                    </div>
+                </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            <p class="no-upgrades">No upgrades installed</p>
+        {{/if}}
+    </section>
+
+    {{!-- Available Upgrades --}}
+    <section class="available-upgrades-section">
+        <h3>Available {{npc.upgradeType}}s</h3>
+        {{#if availableUpgrades.length}}
+            <ul class="available-upgrades-list">
+                {{#each availableUpgrades}}
+                <li class="available-upgrade">
+                    <div class="upgrade-header">
+                        <h4>{{this.name}}</h4>
+                        <div class="upgrade-meta">
+                            <span class="cost">{{this.calculatedCost}} credits</span>
+                            <span class="slots">{{this.slotsRequired}} slot(s)</span>
+                            <span class="availability {{lower this.availability}}">{{this.availability}}</span>
+                        </div>
+                    </div>
+                    <div class="upgrade-details">
+                        {{{this.description}}}
+                        {{#if this.notes}}
+                            <p class="notes"><em>{{this.notes}}</em></p>
+                        {{/if}}
+                    </div>
+                    <div class="upgrade-actions">
+                        <button type="button" class="install-upgrade"
+                                data-upgrade-id="{{this.id}}"
+                                data-upgrade-name="{{this.name}}"
+                                data-upgrade-cost="{{this.calculatedCost}}"
+                                data-slots-required="{{this.slotsRequired}}">
+                            <i class="fas fa-plus"></i> Install ({{this.calculatedCost}} credits)
+                        </button>
+                    </div>
+                </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            <p class="no-upgrades">No upgrades available for this item type</p>
+        {{/if}}
+    </section>
+
+    {{!-- Footer with Close Button --}}
+    <footer class="upgrade-footer">
+        <button type="button" class="close-btn">
+            <i class="fas fa-times"></i> Close
+        </button>
+    </footer>
+</div>

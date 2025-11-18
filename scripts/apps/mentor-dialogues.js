@@ -791,29 +791,29 @@ export const MENTORS = {
 
     Infiltrator: {
         name: "Delta",
-        title: "Master of Disguise",
-        description: "A shapeshifting spy who has infiltrated every major organization",
-        portrait: "systems/swse/assets/mentors/echo.webp",
+        title: "Argent Squad Sniper & Infiltration Expert",
+        description: "A cocky sniper from Argent Squad who grew up on the mean streets of Nar Shaddaa, with a New Yorker attitude",
+        portrait: "systems/swse/assets/icons/mentor.webp",
 
         levelGreetings: {
-            1: "You want to become anyone, go anywhere, learn every secret. I can teach you this. But first—who are you, really? Do you even remember anymore?",
-            2: "Your first successful infiltration. You became someone else and they believed it. That's the key—belief. Even you must believe the lie.",
-            3: "Multiple identities mastered. You're learning to walk, talk, and think like your targets. Soon, the disguise won't be a disguise at all.",
-            4: "You've infiltrated organizations I couldn't crack in my youth. Impressive. Or perhaps I taught you too well.",
-            5: "Halfway to complete mastery. You wear faces like others wear clothes. But remember—don't lose yourself in the disguises.",
-            6: "Impressive infiltration work. You've walked in Imperial halls, Hutt palaces, and Jedi temples. No one suspected a thing.",
-            7: "Multiple identities, multiple successful operations. You're becoming a ghost—everyone knows you, but no one knows you.",
-            8: "You've stolen secrets that nations would kill for. And they never saw you. Perfect infiltration.",
-            9: "Deep deception mastered. Almost there—you'll be a master infiltrator soon. Though I wonder—which version of you will graduate?",
-            10: "You are everyone and no one. A master infiltrator. Just... don't forget which face is really yours. I made that mistake once."
+            1: "Yo! So you wanna learn infiltration, yeah? Delta here - grew up on Nar Shaddaa, survived the mean streets, now I'm Argent Squad's top sniper and infiltration specialist, ya know? Let me show you how it's done!",
+            2: "Not bad! Your first successful infiltration! See, on Nar Shaddaa, you learn quick or you don't survive. You're learnin'. Keep it up, yeah?",
+            3: "Alright, alright! You're gettin' good at this! Multiple identities, slippin' in and out like a pro! Reminds me of my early days on the Smuggler's Moon, ya know?",
+            4: "Whoa! You infiltrated places I couldn't crack! Maybe you got more talent than I thought, yeah? Almost as good as me. Almost!",
+            5: "Halfway there, friend! You're wearin' disguises like I wear confidence - naturally! Back on Nar Shaddaa, we called this 'street smarts.' You got it, ya know?",
+            6: "Impressive work! You walked right into Imperial command and they didn't suspect nothin'! That's the kinda infiltration that makes Argent Squad proud, yeah?",
+            7: "You're a ghost now! Haha! I've seen you pull off ops that'd make Lead smile - and she don't smile easy, trust me! You're doin' great, ya know?",
+            8: "Look at you! Stealin' secrets like a pro! You move through high society and back alleys like you own 'em both. Nar Shaddaa would be proud!",
+            9: "Almost there, champ! You're one of the best infiltrators I've trained. And comin' from someone who grew up survivin' Hutt territory, that's sayin' somethin', ya know?",
+            10: "BAM! You're a master infiltrator now! You can be anyone, go anywhere, learn any secret! Go forth and make Argent Squad proud, yeah? And hey - don't forget where you learned it!"
         },
 
-        classGuidance: "Choose abilities that enhance deception and adaptability. Infiltrators are whoever they need to be.",
-        talentGuidance: "Social and stealth talents. You must convincingly be someone else, anywhere.",
-        abilityGuidance: "Charisma to deceive, Intelligence to learn, Wisdom to adapt. All three make perfect disguises.",
-        skillGuidance: "Deception, disguise, knowledge of cultures. Know your target identity inside and out.",
-        multiclassGuidance: "More skills for more identities. The more you can do, the more people you can become.",
-        hpGuidance: "Durability helps when covers get blown. And they will get blown sometimes."
+        classGuidance: "Pick what makes you sneakier and smoother, ya know? Infiltrators gotta blend in anywhere - cantinas, palaces, war zones, you name it!",
+        talentGuidance: "Social talents and stealth - that's your bread and butter! You need to talk the talk AND walk the walk, friend!",
+        abilityGuidance: "Charisma to charm, Intelligence to plan, Dexterity to move quick - that's how we do it in Argent Squad, yeah?",
+        skillGuidance: "Deception, stealth, knowledge of cultures - learn it all! On Nar Shaddaa, I learned every trick. You should too, ya know?",
+        multiclassGuidance: "Diversifyin'? Smart move! The more you can do, the better your cover. That's how you survive on the mean streets!",
+        hpGuidance: "Tougher now! Good! When your cover gets blown - and it will sometimes, trust me - you gotta be able to take a hit and keep movin', yeah?"
     },
 
     "Martial Arts Master": {
