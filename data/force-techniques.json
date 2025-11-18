@@ -250,62 +250,65 @@
     {
       "name": "Detoxify Poison",
       "source": "Legacy Era Campaign Guide",
-      "description": "Allows you to detoxify poisons using the Force.",
+      "description": "You can use the Vital Transfer Force Power to treat a Poison affecting the target. Instead of the normal effects of the Vital Transfer Force Power, you can compare the result of your Use the Force check to the Poison's DC. If you equal or exceed the Poison's DC, you detoxify the Poison as per the use of the Treat Injury Skill.",
+      "relatedPower": "Vital Transfer",
       "prerequisites": []
     },
     {
       "name": "Improved Ballistakinesis",
       "source": "Legacy Era Campaign Guide",
-      "description": "Enhances your ability to hurl objects at high velocity.",
+      "description": "When you use Ballistakinesis, you may spend a Force Point to target a 3x3 square area instead of a 2x2 square area.",
       "relatedPower": "Ballistakinesis",
       "prerequisites": []
     },
     {
       "name": "Improved Dark Transfer",
       "source": "Legacy Era Campaign Guide",
-      "description": "Enhances your ability to transfer dark side energy.",
+      "description": "When you use Dark Transfer, you may spend a Force Point to Revivify a creature that died since the end of your last turn. You must succeed on a DC 25 Use the Force check.",
       "relatedPower": "Dark Transfer",
+      "special": "If the check succeeds, the target is unconscious instead of dead but does not heal any Hit Points from the use of Dark Transfer.",
       "prerequisites": []
     },
     {
       "name": "Improved Detonate",
       "source": "Legacy Era Campaign Guide",
-      "description": "Enhances your ability to detonate objects with the Force.",
+      "description": "When you use the Detonate Force Power, you also damage enemies near the targeted object. Compare the result of your Use the Force check to the Reflex Defense of all enemies within 2 squares of the object. If your check equals or exceeds the enemy's Reflex Defense, the enemy takes slashing damage equal to one-half the damage sustained by the object. This is an Area Attack.",
       "relatedPower": "Detonate",
       "prerequisites": []
     },
     {
       "name": "Improved Enlighten",
       "source": "Legacy Era Campaign Guide",
-      "description": "Enhances your ability to enlighten and inspire.",
+      "description": "When you use the Enlighten Force Power, you may spend a Force Point to affect one additional ally.",
       "relatedPower": "Enlighten",
       "prerequisites": []
     },
     {
       "name": "Improved Lightning Burst",
       "source": "Legacy Era Campaign Guide",
-      "description": "Enhances your ability to unleash bursts of Force Lightning.",
+      "description": "When you use the Lightning Burst Force Power, also compare the result of your Use the Force check to each target's Fortitude Defense. If your check result equals or exceeds both a target's Reflex Defense and its Fortitude Defense, you push the target 1 square away from you and knock the target Prone. This movement does not provoke Attacks of Opportunity.",
       "relatedPower": "Lightning Burst",
       "prerequisites": []
     },
     {
       "name": "Improved Obscure",
       "source": "Legacy Era Campaign Guide",
-      "description": "Enhances your ability to obscure yourself in the Force.",
+      "description": "When you use the Obscure Force Power, you may spend a Force Point to gain a +5 Force bonus on your Use the Force check.",
       "relatedPower": "Obscure",
       "prerequisites": []
     },
     {
       "name": "Improved Force Shield",
       "source": "Legacy Era Campaign Guide",
-      "description": "Enhances your ability to create Force shields.",
+      "description": "When you use the Force Shield Force Power, you can spend a Force Point to expand the radius of the Force Shield so that it protects you and all allies adjacent to you.",
       "relatedPower": "Force Shield",
+      "special": "Alternatively, you can spend a Destiny Point to have the Force Shield protect a Vehicle you occupy, regardless of the Vehicle's size. If the Vehicle already has a Shield Rating, the SR of the Vehicle and the SR granted by this Force Power do not stack.",
       "prerequisites": []
     },
     {
       "name": "Improved Stagger",
       "source": "Legacy Era Campaign Guide",
-      "description": "Enhances your ability to stagger opponents with the Force.",
+      "description": "When you use the Stagger Force Power, you may spend a Force Point to push your target 2 squares away from you, instead of just 1 square.",
       "relatedPower": "Stagger",
       "prerequisites": []
     },

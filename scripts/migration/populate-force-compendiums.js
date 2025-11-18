@@ -9,7 +9,7 @@
 
 export class PopulateForceCompendiumsMigration {
 
-  static MIGRATION_VERSION = "1.1.142";
+  static MIGRATION_VERSION = "1.1.143";
   static MIGRATION_KEY = "forceCompendiumsPopulation";
 
   /**
