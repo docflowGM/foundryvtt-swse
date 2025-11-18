@@ -1,0 +1,39 @@
+// ============================================================================
+// SAND PEOPLE THEME
+// Desert/Tatooine-inspired aesthetic
+// ============================================================================
+
+[data-theme="sand-people"] {
+  --swse-primary: #8b4513;
+  --swse-secondary: #a0522d;
+  --swse-accent: #cd853f;
+
+  --swse-bg-dark: #e8d5b7;
+  --swse-bg-mid: #d4c4a8;
+  --swse-bg-light: #c9b99a;
+  --swse-bg-overlay: rgba(232, 213, 183, 0.9);
+  --swse-bg-hover: rgba(139, 69, 19, 0.15);
+
+  --swse-border-default: #8b7355;
+  --swse-border-active: #8b4513;
+  --swse-border-hover: #a0522d;
+  --swse-border-subtle: rgba(139, 115, 85, 0.3);
+
+  --swse-text-primary: #2a1f15;
+  --swse-text-secondary: #5d4e37;
+  --swse-text-light: #1a1410;
+  --swse-text-white: #0a0806;
+  --swse-text-muted: rgba(42, 31, 21, 0.6);
+
+  --swse-success: #6b8e23;
+  --swse-warning: #daa520;
+  --swse-danger: #8b0000;
+  --swse-info: #5f9ea0;
+
+  --swse-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.15);
+  --swse-shadow-base: 0 4px 8px rgba(0, 0, 0, 0.2);
+  --swse-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.25);
+  --swse-shadow-glow-cyan: none;
+  --swse-shadow-glow-blue: none;
+  --swse-shadow-glow-green: none;
+}

@@ -1,0 +1,31 @@
+// ============================================================================
+// HIGH CONTRAST THEME
+// Accessibility-focused theme with maximum contrast
+// ============================================================================
+
+// Import theme-specific tokens
+@import '../tokens/theme-high-contrast';
+
+.swse {
+  [data-theme="high-contrast"] & {
+    // High contrast specific overrides
+    // Ensure all text meets WCAG AAA contrast requirements
+
+    // Remove decorative shadows for clarity
+    box-shadow: none;
+
+    // Thicker borders for better visibility
+    input,
+    textarea,
+    select,
+    .btn {
+      border-width: var(--swse-border-width-thick);
+    }
+
+    // Remove subtle backgrounds
+    &::before,
+    &::after {
+      opacity: 0;
+    }
+  }
+}

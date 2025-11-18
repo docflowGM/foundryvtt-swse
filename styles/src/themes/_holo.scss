@@ -1,0 +1,20 @@
+// ============================================================================
+// HOLO THEME
+// Classic holographic blue aesthetic - Default theme
+// ============================================================================
+
+// Import theme-specific tokens
+@import '../tokens/theme-holo';
+
+// Theme-specific component overrides (if any)
+// The base theme uses default token values, so minimal overrides needed
+
+.swse {
+  // Theme-specific styles go here
+  // Example: special glow effects, unique borders, etc.
+
+  [data-theme="holo"] & {
+    // Holo-specific component overrides
+    // Most styles will use CSS custom properties from tokens
+  }
+}

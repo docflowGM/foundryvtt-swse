@@ -42,6 +42,7 @@ import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 
 import { SWSENotifications } from './scripts/utils/notifications.js';
 import { SWSELogger } from './scripts/utils/logger.js';
+import { ThemeLoader } from './scripts/theme-loader.js';
 import './scripts/utils/skill-use-filter.js';
 
 /* -------------------------------------------- */
@@ -472,11 +473,10 @@ Hooks.once("ready", async function() {
   }
 
   // ============================================
-  // Initialize Theme
+  // Initialize Theme System
   // ============================================
 
-  const currentTheme = game.settings.get('swse', 'sheetTheme');
-  applyTheme(currentTheme);
+  ThemeLoader.initialize();
 
   // ============================================
   // Initialize Combat Automation
@@ -735,7 +735,7 @@ function registerSystemSettings() {
     },
     default: "holo",
     onChange: value => {
-      applyTheme(value);
+      ThemeLoader.applyTheme(value);
     }
   });
 
@@ -790,40 +790,12 @@ function registerSystemSettings() {
 
 /**
  * Apply the selected theme to all sheets
+ * @deprecated Use ThemeLoader.applyTheme() instead
+ * Kept for backwards compatibility
  */
 function applyTheme(themeName) {
-  SWSELogger.log(`Applying theme: ${themeName}`);
-
-  // Remove all existing theme classes
-  const themes = ['holo-theme', 'high-contrast-theme', 'starship-theme', 'sand-people-theme', 'jedi-theme', 'high-republic-theme'];
-  const body = document.body;
-
-  themes.forEach(theme => {
-    body.classList.remove(theme);
-  });
-
-  // Add the new theme class
-  body.classList.add(`${themeName}-theme`);
-
-  // Store the theme preference
-  document.documentElement.setAttribute('data-theme', themeName);
-
-  // Re-render only SWSE sheets to apply the theme (optimize performance)
-  Object.values(ui.windows).forEach(app => {
-    // Only re-render sheets from this system
-    if (app.render && typeof app.render === 'function') {
-      const isSWSESheet = app instanceof SWSECharacterSheet ||
-                          app instanceof SWSEDroidSheet ||
-                          app instanceof SWSENPCSheet ||
-                          app instanceof SWSEVehicleSheet ||
-                          app instanceof SWSEItemSheet ||
-                          app.constructor?.name?.startsWith('SWSE');
-
-      if (isSWSESheet) {
-        app.render(false);
-      }
-    }
-  });
+  console.warn('[SWSE] applyTheme() is deprecated. Use ThemeLoader.applyTheme() instead.');
+  ThemeLoader.applyTheme(themeName);
 }
 
 /* -------------------------------------------- */

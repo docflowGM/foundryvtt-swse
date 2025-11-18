@@ -1,5 +1,11 @@
 REPO_STRUCTURE.txt
 
-# Theme fix utilities and backups
+# Node modules and build artifacts
+node_modules/
+
+# Old theme system backup
+old-theme-system-backup/
+
+# Theme fix utilities and backups (legacy)
 fix_swse_themes.py
 styles/themes/backup_*/

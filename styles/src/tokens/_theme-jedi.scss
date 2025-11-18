@@ -1,0 +1,31 @@
+// ============================================================================
+// JEDI THEME
+// Force/Jedi Order aesthetic with blue tones
+// ============================================================================
+
+[data-theme="jedi"] {
+  --swse-primary: #4da6ff;
+  --swse-secondary: #66d9ff;
+  --swse-accent: #00bfff;
+
+  --swse-bg-dark: #0a1628;
+  --swse-bg-mid: #132744;
+  --swse-bg-light: #1c3a5f;
+  --swse-bg-overlay: rgba(10, 22, 40, 0.85);
+  --swse-bg-hover: rgba(77, 166, 255, 0.15);
+
+  --swse-border-default: #2b5278;
+  --swse-border-active: #4da6ff;
+  --swse-border-hover: #66d9ff;
+  --swse-border-subtle: rgba(43, 82, 120, 0.4);
+
+  --swse-text-primary: #e8f4f8;
+  --swse-text-secondary: #a8d4e8;
+  --swse-text-light: #ffffff;
+  --swse-text-white: #ffffff;
+  --swse-text-muted: rgba(232, 244, 248, 0.6);
+
+  --swse-shadow-glow-cyan: 0 0 10px rgba(77, 166, 255, 0.5);
+  --swse-shadow-glow-blue: 0 0 20px rgba(0, 191, 255, 0.4);
+  --swse-shadow-glow-green: 0 0 10px rgba(102, 217, 255, 0.4);
+}

@@ -1,0 +1,28 @@
+// ============================================================================
+// JEDI THEME
+// Force/Jedi Order aesthetic with blue tones
+// ============================================================================
+
+// Import theme-specific tokens
+@import '../tokens/theme-jedi';
+
+.swse {
+  [data-theme="jedi"] & {
+    // Jedi-specific overrides
+    // Mystical, calm, force-themed
+
+    // Enhanced glow effects
+    .btn:hover,
+    input:focus,
+    select:focus {
+      box-shadow:
+        var(--swse-shadow-glow-cyan),
+        0 0 20px rgba(77, 166, 255, 0.3);
+    }
+
+    // Subtle background glow
+    .section-header {
+      text-shadow: 0 0 10px rgba(77, 166, 255, 0.5);
+    }
+  }
+}

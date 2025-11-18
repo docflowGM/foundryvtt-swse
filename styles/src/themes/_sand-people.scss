@@ -1,0 +1,33 @@
+// ============================================================================
+// SAND PEOPLE THEME
+// Desert/Tatooine-inspired aesthetic
+// ============================================================================
+
+// Import theme-specific tokens
+@import '../tokens/theme-sand-people';
+
+.swse {
+  [data-theme="sand-people"] & {
+    // Sand People specific overrides
+    // Warm, earthy tones with paper-like texture
+
+    // Subtle texture overlay
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+      );
+      pointer-events: none;
+      opacity: 0.3;
+    }
+  }
+}

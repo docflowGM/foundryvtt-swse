@@ -26,7 +26,7 @@
     "index.js"
   ],
   "styles": [
-    "styles/core/variables.css",
+    "styles/dist/swse-base.css",
     "styles/components/swse-components.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/unified-sheets.css",
@@ -39,14 +39,7 @@
     "styles/apps/houserules.css",
     "styles/apps/store.css",
     "styles/apps/upgrade-app.css",
-    "styles/canvas/canvas-ui.css",
-    "styles/themes/foundry-ui-protection.css",
-    "styles/themes/holo-theme.css",
-    "styles/themes/high-contrast-theme.css",
-    "styles/themes/starship-theme.css",
-    "styles/themes/sand-people-theme.css",
-    "styles/themes/jedi-theme.css",
-    "styles/themes/high-republic-theme.css"
+    "styles/canvas/canvas-ui.css"
   ],
   "languages": [
     {

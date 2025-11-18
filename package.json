@@ -1,0 +1,20 @@
+{
+  "name": "foundryvtt-swse",
+  "version": "1.1.141",
+  "description": "Star Wars Saga Edition system for Foundry VTT",
+  "private": true,
+  "scripts": {
+    "build:styles": "npm run build:base && npm run build:themes",
+    "build:base": "sass styles/src/main.scss styles/dist/swse-base.css --no-source-map && postcss styles/dist/swse-base.css --replace --use autoprefixer cssnano",
+    "build:themes": "node build-themes.js",
+    "watch:styles": "sass styles/src:styles/dist --watch --no-source-map",
+    "build": "npm run build:styles"
+  },
+  "devDependencies": {
+    "sass": "^1.69.5",
+    "postcss": "^8.4.32",
+    "postcss-cli": "^11.0.0",
+    "autoprefixer": "^10.4.16",
+    "cssnano": "^6.0.2"
+  }
+}
