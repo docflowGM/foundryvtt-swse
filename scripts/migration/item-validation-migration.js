@@ -251,7 +251,7 @@ Hooks.once('ready', async () => {
       await ItemValidationMigration.run();
     } catch (err) {
       console.error("SWSE | Item validation migration failed:", err);
-      ui.notifications.error("Item migration failed. Check console for details.");
+      ui.notifications.error(`Item migration failed: ${err.message || err}`, { permanent: true });
     }
   }
 });

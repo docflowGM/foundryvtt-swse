@@ -341,7 +341,7 @@ Hooks.once('ready', async () => {
       await PopulateForceCompendiumsMigration.run();
     } catch (err) {
       console.error("SWSE | Force compendiums population failed:", err);
-      ui.notifications.error("Force compendiums population failed. Check console for details.");
+      ui.notifications.error(`Force compendiums population failed: ${err.message || err}`, { permanent: true });
     }
   }
 });
