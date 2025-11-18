@@ -9,7 +9,7 @@
 
 export class PopulateForceCompendiumsMigration {
 
-  static MIGRATION_VERSION = "1.1.144";
+  static MIGRATION_VERSION = "1.1.145";
   static MIGRATION_KEY = "forceCompendiumsPopulation";
 
   /**
@@ -129,8 +129,14 @@ export class PopulateForceCompendiumsMigration {
           description += `<p><strong>Related Power:</strong> ${technique.relatedPower}</p>`;
         }
 
-        if (technique.prerequisites && technique.prerequisites.length > 0) {
-          description += `<p><strong>Prerequisites:</strong> ${technique.prerequisites.join(', ')}</p>`;
+        // Build prerequisites list: include manual prerequisites + related power
+        let allPrerequisites = [...(technique.prerequisites || [])];
+        if (technique.relatedPower) {
+          allPrerequisites.push(technique.relatedPower);
+        }
+
+        if (allPrerequisites.length > 0) {
+          description += `<p><strong>Prerequisites:</strong> ${allPrerequisites.join(', ')}</p>`;
         }
 
         const itemData = {
@@ -140,7 +146,7 @@ export class PopulateForceCompendiumsMigration {
             description: description,
             source: technique.source || '',
             tags: ['force-technique'],
-            prerequisites: technique.prerequisites || [],
+            prerequisites: allPrerequisites.join(', '),  // Store as comma-separated string for prerequisite validator
             relatedPower: technique.relatedPower || ''
           },
           img: 'systems/swse/assets/icons/force-technique.png'
