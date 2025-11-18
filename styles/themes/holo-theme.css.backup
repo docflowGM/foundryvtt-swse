@@ -195,20 +195,6 @@
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.2); }
 }
-/* ======================================================================
- * REMOVED: This rule directly styled Foundry's core UI classes
- * ======================================================================
- *
- * These Foundry classes are used by ALL windows (sidebar, settings, etc.)
- * Styling them directly breaks Foundry's UI layout.
- *
- * TO FIX: Apply these styles to .sheet-body or SWSE-specific classes:
- *   .swse.sheet.your-theme .sheet-body { ... }
- *   .swse.sheet.your-theme .section-header { ... }
- * ====================================================================== */
-
-/*
-
 
 
 /* ============================================================================
@@ -224,7 +210,6 @@
   cursor: move;
   user-select: none;
 }
-*/
 
 /* Visual feedback when dragging - SWSE sheets only */
 .swse.sheet.dragging,

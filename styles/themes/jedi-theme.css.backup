@@ -20,20 +20,6 @@
   --warning: #ffd700;
   --danger: #ff6b6b;
 }
-/* ======================================================================
- * REMOVED: This rule directly styled Foundry's core UI classes
- * ======================================================================
- *
- * These Foundry classes are used by ALL windows (sidebar, settings, etc.)
- * Styling them directly breaks Foundry's UI layout.
- *
- * TO FIX: Apply these styles to .sheet-body or SWSE-specific classes:
- *   .swse.sheet.your-theme .sheet-body { ... }
- *   .swse.sheet.your-theme .section-header { ... }
- * ====================================================================== */
-
-/*
-
 
 /* Base Sheet Styling - SWSE sheets only */
 .swse.sheet.jedi-theme .window-app,
@@ -42,42 +28,12 @@
   border: 2px solid var(--border-color);
   box-shadow: 0 0 30px rgba(77, 166, 255, 0.3), 0 8px 16px rgba(0, 0, 0, 0.5);
 }
-*/
-/* ======================================================================
- * REMOVED: This rule directly styled Foundry's core UI classes
- * ======================================================================
- *
- * These Foundry classes are used by ALL windows (sidebar, settings, etc.)
- * Styling them directly breaks Foundry's UI layout.
- *
- * TO FIX: Apply these styles to .sheet-body or SWSE-specific classes:
- *   .swse.sheet.your-theme .sheet-body { ... }
- *   .swse.sheet.your-theme .section-header { ... }
- * ====================================================================== */
-
-/*
-
 
 .swse.sheet.jedi-theme .window-content,
 .swse.jedi-theme .window-content{
   background: transparent;
   color: var(--primary-text);
 }
-*/
-/* ======================================================================
- * REMOVED: This rule directly styled Foundry's core UI classes
- * ======================================================================
- *
- * These Foundry classes are used by ALL windows (sidebar, settings, etc.)
- * Styling them directly breaks Foundry's UI layout.
- *
- * TO FIX: Apply these styles to .sheet-body or SWSE-specific classes:
- *   .swse.sheet.your-theme .sheet-body { ... }
- *   .swse.sheet.your-theme .section-header { ... }
- * ====================================================================== */
-
-/*
-
 
 /* Headers */
 .swse.sheet.jedi-theme .window-header,
@@ -91,7 +47,6 @@
   text-shadow: 0 0 10px rgba(77, 166, 255, 0.8);
   box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
 }
-*/
 
 .swse.sheet.jedi-theme .section-header,
 .swse.jedi-theme .section-header,

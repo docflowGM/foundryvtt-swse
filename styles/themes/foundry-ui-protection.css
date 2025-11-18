@@ -1,11 +1,17 @@
 /* ============================================
-   FOUNDRY UI PROTECTION FROM THEME BLEED
-   Ensures themes only affect SWSE sheets
+   FOUNDRY UI PROTECTION - IMPROVED VERSION
+   Ensures SWSE themes NEVER affect Foundry's core UI
+   
+   CRITICAL: This file MUST be loaded LAST in system.json
    ============================================ */
 
-/* Protect Foundry's core UI elements from theme styles */
-/* NOTE: We do NOT apply 'all: revert' to #sidebar because it breaks the sidebar completely
-   Instead, we protect it with more specific rules below */
+/* Protect all Foundry UI layers - most important fix */
+#ui-top,
+#ui-left, 
+#ui-right,
+#ui-bottom,
+#sidebar,
+#sidebar *,
 #controls,
 #controls *,
 #hotbar,
@@ -14,51 +20,69 @@
 #players *,
 #pause,
 #pause *,
-#ui-left,
-#ui-right,
-#ui-top,
-#ui-bottom {
-    /* Reset any theme styles that might affect these */
+#navigation,
+#navigation *,
+#context-menu,
+#context-menu * {
     all: revert !important;
 }
 
-/* Specifically protect sidebar functionality */
-#sidebar .sidebar-tab {
-    height: auto !important;
-    max-height: none !important;
-    overflow-y: auto !important;
-}
-
-/* Ensure themes only apply to SWSE sheets */
-.window-app:not(.swse),
-.app:not(.swse),
-.application:not(.swse) {
-    /* Don't let themes affect non-SWSE windows */
-    background: revert !important;
-    border: revert !important;
-    color: revert !important;
-}
-
-/* Fix z-index layering */
+/* Additional sidebar protection - critical for the "smooshed sidebar" issue */
 #sidebar {
-    z-index: 200 !important;
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 300px !important;
+    height: 100vh !important;
+    z-index: 100 !important;
+    transform: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Ensure non-SWSE windows use Foundry defaults */
+.window-app:not(.swse),
+.window-app:not(.swse) *,
+.app:not(.swse),
+.app:not(.swse) * {
+    all: revert !important;
+}
+
+/* Protect specific Foundry window elements even in SWSE windows */
+.swse.sheet .window-resizable-handle,
+.swse.sheet .close,
+.swse.sheet .header-button,
+.swse.sheet .window-control {
+    all: revert !important;
+}
+
+/* SWSE Theme Containment */
+.swse.sheet,
+.swse.window-app {
     position: relative !important;
+    contain: layout style !important;
+}
+
+/* Ensure proper z-index layering */
+#sidebar {
+    z-index: 100 !important;
 }
 
 .swse.sheet,
 .swse.window-app {
-    z-index: 100 !important;
+    z-index: 95 !important;
 }
 
-/* Ensure SWSE themes are properly contained */
-[class*="-theme"] {
-    /* Themes should not affect positioning of other elements */
-    position: relative;
-    contain: layout style;
+/* Sheet content wrapper protection */
+.swse.sheet .sheet-body {
+    position: relative !important;
+    contain: layout style !important;
 }
 
-/* Additional protection for specific problem areas */
-body > .window-app:not(.swse) {
-    /* Non-SWSE windows should use default Foundry styles */
+/* Canvas protection */
+#board,
+#board *,
+canvas {
     all: revert !important;
 }

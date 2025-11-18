@@ -17,20 +17,6 @@
   --danger: #FF0000;
   --info: #00FFFF;
 }
-/* ======================================================================
- * REMOVED: This rule directly styled Foundry's core UI classes
- * ======================================================================
- *
- * These Foundry classes are used by ALL windows (sidebar, settings, etc.)
- * Styling them directly breaks Foundry's UI layout.
- *
- * TO FIX: Apply these styles to .sheet-body or SWSE-specific classes:
- *   .swse.sheet.your-theme .sheet-body { ... }
- *   .swse.sheet.your-theme .section-header { ... }
- * ====================================================================== */
-
-/*
-
 
 /* Base Sheet Styling */
 .swse.sheet.high-contrast-theme .window-app,
@@ -39,42 +25,12 @@
   border: 3px solid var(--border-color);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
 }
-*/
-/* ======================================================================
- * REMOVED: This rule directly styled Foundry's core UI classes
- * ======================================================================
- *
- * These Foundry classes are used by ALL windows (sidebar, settings, etc.)
- * Styling them directly breaks Foundry's UI layout.
- *
- * TO FIX: Apply these styles to .sheet-body or SWSE-specific classes:
- *   .swse.sheet.your-theme .sheet-body { ... }
- *   .swse.sheet.your-theme .section-header { ... }
- * ====================================================================== */
-
-/*
-
 
 .swse.sheet.high-contrast-theme .window-content,
 .swse.high-contrast-theme .window-content{
   background: var(--background-dark);
   color: var(--primary-text);
 }
-*/
-/* ======================================================================
- * REMOVED: This rule directly styled Foundry's core UI classes
- * ======================================================================
- *
- * These Foundry classes are used by ALL windows (sidebar, settings, etc.)
- * Styling them directly breaks Foundry's UI layout.
- *
- * TO FIX: Apply these styles to .sheet-body or SWSE-specific classes:
- *   .swse.sheet.your-theme .sheet-body { ... }
- *   .swse.sheet.your-theme .section-header { ... }
- * ====================================================================== */
-
-/*
-
 
 /* Headers */
 .swse.sheet.high-contrast-theme .window-header,
@@ -85,7 +41,6 @@
   font-weight: bold;
   text-shadow: 0 0 5px var(--accent-primary);
 }
-*/
 
 .swse.sheet.high-contrast-theme .section-header,
 .swse.sheet.high-contrast-theme .section-header-black,
