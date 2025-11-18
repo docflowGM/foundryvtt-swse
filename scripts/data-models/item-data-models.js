@@ -255,6 +255,29 @@ export class ClassDataModel extends foundry.abstract.DataModel {
       reputation: new fields.NumberField({required: true, initial: 0, integer: true})
     };
   }
+
+  /**
+   * Migrate legacy data during document initialization
+   * Converts numeric BAB progression values to string choices
+   */
+  static migrateData(source) {
+    // Convert numeric babProgression to string
+    if (source.babProgression !== undefined) {
+      const bab = source.babProgression;
+      if (typeof bab === 'number' || (typeof bab === 'string' && !isNaN(Number(bab)))) {
+        const numValue = Number(bab);
+        if (numValue <= 0.5) {
+          source.babProgression = "slow";
+        } else if (numValue < 1) {
+          source.babProgression = "medium";
+        } else {
+          source.babProgression = "fast";
+        }
+      }
+    }
+
+    return super.migrateData(source);
+  }
 }
 
 // Species Data Model
