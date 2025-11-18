@@ -1,0 +1,30 @@
+// ============================================================================
+// STARSHIP THEME
+// Sleek spacecraft control panel aesthetic
+// ============================================================================
+
+[data-theme="starship"] {
+  --swse-primary: #58a6ff;
+  --swse-secondary: #79c0ff;
+  --swse-accent: #8cc4ff;
+
+  --swse-bg-dark: #0d1117;
+  --swse-bg-mid: #161b22;
+  --swse-bg-light: #21262d;
+  --swse-bg-overlay: rgba(13, 17, 23, 0.8);
+  --swse-bg-hover: rgba(88, 166, 255, 0.15);
+
+  --swse-border-default: #30363d;
+  --swse-border-active: #58a6ff;
+  --swse-border-hover: #79c0ff;
+  --swse-border-subtle: rgba(48, 54, 61, 0.5);
+
+  --swse-text-primary: #b8c5d0;
+  --swse-text-secondary: #8b949e;
+  --swse-text-light: #c9d1d9;
+  --swse-text-white: #ffffff;
+  --swse-text-muted: rgba(184, 197, 208, 0.6);
+
+  --swse-shadow-glow-cyan: 0 0 10px rgba(88, 166, 255, 0.4);
+  --swse-shadow-glow-blue: 0 0 20px rgba(121, 192, 255, 0.3);
+}

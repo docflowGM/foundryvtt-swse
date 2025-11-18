@@ -1,0 +1,39 @@
+// ============================================================================
+// HIGH REPUBLIC THEME
+// High Republic era with gold and light tones
+// ============================================================================
+
+[data-theme="high-republic"] {
+  --swse-primary: #daa520;
+  --swse-secondary: #ffd700;
+  --swse-accent: #f0e68c;
+
+  --swse-bg-dark: #f5f5dc;
+  --swse-bg-mid: #fffacd;
+  --swse-bg-light: #fafad2;
+  --swse-bg-overlay: rgba(245, 245, 220, 0.95);
+  --swse-bg-hover: rgba(218, 165, 32, 0.15);
+
+  --swse-border-default: #daa520;
+  --swse-border-active: #ffd700;
+  --swse-border-hover: #f0e68c;
+  --swse-border-subtle: rgba(218, 165, 32, 0.3);
+
+  --swse-text-primary: #2c2416;
+  --swse-text-secondary: #5d4e2a;
+  --swse-text-light: #1a1510;
+  --swse-text-white: #0d0c08;
+  --swse-text-muted: rgba(44, 36, 22, 0.6);
+
+  --swse-success: #6b8e23;
+  --swse-warning: #ff8c00;
+  --swse-danger: #8b0000;
+  --swse-info: #4682b4;
+
+  --swse-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --swse-shadow-base: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --swse-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+  --swse-shadow-glow-cyan: 0 0 10px rgba(218, 165, 32, 0.3);
+  --swse-shadow-glow-blue: 0 0 20px rgba(255, 215, 0, 0.2);
+  --swse-shadow-glow-green: 0 0 10px rgba(240, 230, 140, 0.3);
+}

@@ -1,0 +1,25 @@
+// ============================================================================
+// SWSE SYSTEM - MAIN STYLESHEET
+// Base styles loaded for all sheets - themes loaded separately
+// ============================================================================
+
+// 1. Design Tokens (CSS Custom Properties)
+@import 'tokens/base';
+
+// 2. Foundry VTT Fixes (not scoped - fixes Foundry bugs)
+@import 'base/foundry-fixes';
+
+// 3. Base Styles (scoped to .swse)
+@import 'base/reset';
+@import 'base/typography';
+
+// 4. Components (scoped to .swse)
+@import 'components/buttons';
+
+// 5. Sheet Styles (will be added as we migrate existing styles)
+// @import 'sheets/character-sheet';
+// @import 'sheets/vehicle-sheet';
+// etc.
+
+// Note: Theme-specific styles are compiled separately and loaded on-demand
+// See styles/src/themes/ for theme files

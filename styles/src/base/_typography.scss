@@ -1,0 +1,82 @@
+// ============================================================================
+// SWSE TYPOGRAPHY
+// Typography styles for SWSE sheets only
+// ============================================================================
+
+.swse {
+  // Headings
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--swse-font-primary);
+    font-weight: var(--swse-font-weight-bold);
+    line-height: var(--swse-line-height-tight);
+    color: var(--swse-text-primary);
+    margin-bottom: var(--swse-space-md);
+  }
+
+  h1 {
+    font-size: var(--swse-font-size-xxl);
+  }
+
+  h2 {
+    font-size: var(--swse-font-size-xl);
+  }
+
+  h3 {
+    font-size: var(--swse-font-size-lg);
+  }
+
+  h4 {
+    font-size: var(--swse-font-size-md);
+  }
+
+  h5, h6 {
+    font-size: var(--swse-font-size-base);
+  }
+
+  // Paragraphs
+  p {
+    margin-bottom: var(--swse-space-md);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // Strong and emphasis
+  strong, b {
+    font-weight: var(--swse-font-weight-bold);
+  }
+
+  em, i {
+    font-style: italic;
+  }
+
+  // Code
+  code, pre {
+    font-family: var(--swse-font-mono);
+    font-size: var(--swse-font-size-sm);
+  }
+
+  code {
+    padding: var(--swse-space-xs) var(--swse-space-sm);
+    background: var(--swse-bg-mid);
+    border-radius: var(--swse-border-radius-sm);
+  }
+
+  pre {
+    padding: var(--swse-space-md);
+    background: var(--swse-bg-dark);
+    border-radius: var(--swse-border-radius-base);
+    overflow-x: auto;
+
+    code {
+      padding: 0;
+      background: none;
+    }
+  }
+
+  // Small text
+  small {
+    font-size: var(--swse-font-size-xs);
+  }
+}

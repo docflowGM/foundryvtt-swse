@@ -1,0 +1,29 @@
+// ============================================================================
+// FOUNDRY VTT FIXES
+// System-agnostic Foundry bug fixes (NOT scoped to .swse)
+// These are necessary fixes for Foundry VTT issues
+// ============================================================================
+
+// Fix for Foundry v13/The Forge sidebar height bug
+// Override broken height restrictions on sidebar tabs
+#sidebar {
+  .sidebar-tab {
+    height: auto !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    &.directory {
+      height: auto !important;
+      flex: 1 !important;
+    }
+  }
+
+  .directory-list {
+    height: auto !important;
+    overflow-y: auto !important;
+  }
+}
+
+// Add any other Foundry-specific fixes here as needed
+// Keep this file minimal - only for fixing Foundry bugs

@@ -1,0 +1,32 @@
+// ============================================================================
+// HIGH CONTRAST THEME
+// Accessibility-focused theme with maximum contrast
+// ============================================================================
+
+[data-theme="high-contrast"] {
+  --swse-primary: #FFFF00;
+  --swse-secondary: #00FFFF;
+  --swse-accent: #FFFFFF;
+
+  --swse-bg-dark: #000000;
+  --swse-bg-mid: #1a1a1a;
+  --swse-bg-light: #2a2a2a;
+  --swse-bg-overlay: rgba(0, 0, 0, 0.9);
+  --swse-bg-hover: rgba(255, 255, 0, 0.2);
+
+  --swse-border-default: #FFFFFF;
+  --swse-border-active: #FFFF00;
+  --swse-border-hover: #00FFFF;
+  --swse-border-subtle: rgba(255, 255, 255, 0.3);
+
+  --swse-text-primary: #FFFFFF;
+  --swse-text-secondary: #FFFF00;
+  --swse-text-light: #FFFFFF;
+  --swse-text-white: #FFFFFF;
+  --swse-text-muted: rgba(255, 255, 255, 0.7);
+
+  --swse-success: #00FF00;
+  --swse-warning: #FFFF00;
+  --swse-danger: #FF0000;
+  --swse-info: #00FFFF;
+}

@@ -1,0 +1,100 @@
+// ============================================================================
+// BUTTONS
+// Button styles for SWSE sheets
+// ============================================================================
+
+.swse {
+  .btn,
+  button.sheet-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--swse-space-sm);
+
+    height: var(--swse-button-height-base);
+    padding: 0 var(--swse-space-md);
+
+    font-family: var(--swse-font-primary);
+    font-size: var(--swse-font-size-base);
+    font-weight: var(--swse-font-weight-medium);
+    text-align: center;
+
+    background: var(--swse-bg-mid);
+    color: var(--swse-text-primary);
+    border: var(--swse-border-width) solid var(--swse-border-default);
+    border-radius: var(--swse-border-radius-base);
+
+    cursor: pointer;
+    transition: all var(--swse-transition-base) var(--swse-ease-out);
+
+    &:hover:not(:disabled) {
+      background: var(--swse-bg-hover);
+      border-color: var(--swse-border-hover);
+      box-shadow: var(--swse-shadow-glow-cyan);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    // Button variants
+    &.primary {
+      background: var(--swse-primary);
+      border-color: var(--swse-primary);
+      color: var(--swse-bg-dark);
+
+      &:hover:not(:disabled) {
+        background: var(--swse-secondary);
+        border-color: var(--swse-secondary);
+      }
+    }
+
+    &.success {
+      background: var(--swse-success);
+      border-color: var(--swse-success);
+      color: var(--swse-bg-dark);
+
+      &:hover:not(:disabled) {
+        filter: brightness(1.1);
+      }
+    }
+
+    &.danger {
+      background: var(--swse-danger);
+      border-color: var(--swse-danger);
+      color: var(--swse-text-white);
+
+      &:hover:not(:disabled) {
+        filter: brightness(1.1);
+      }
+    }
+
+    &.warning {
+      background: var(--swse-warning);
+      border-color: var(--swse-warning);
+      color: var(--swse-bg-dark);
+
+      &:hover:not(:disabled) {
+        filter: brightness(1.1);
+      }
+    }
+
+    // Button sizes
+    &.sm {
+      height: var(--swse-button-height-sm);
+      padding: 0 var(--swse-space-sm);
+      font-size: var(--swse-font-size-sm);
+    }
+
+    &.lg {
+      height: var(--swse-button-height-lg);
+      padding: 0 var(--swse-space-lg);
+      font-size: var(--swse-font-size-lg);
+    }
+  }
+}

@@ -1,0 +1,111 @@
+// ============================================================================
+// SWSE BASE RESET & NORMALIZATION
+// Scoped resets for SWSE sheets only - NEVER affects Foundry core UI
+// ============================================================================
+
+// All SWSE styles are scoped to .swse class to prevent bleeding into Foundry UI
+.swse {
+  // Box sizing reset
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  // Typography reset
+  font-family: var(--swse-font-secondary);
+  font-size: var(--swse-font-size-base);
+  line-height: var(--swse-line-height-normal);
+  color: var(--swse-text-primary);
+
+  // Remove default margins and padding
+  h1, h2, h3, h4, h5, h6,
+  p, ul, ol, li {
+    margin: 0;
+    padding: 0;
+  }
+
+  // List style reset
+  ul, ol {
+    list-style: none;
+  }
+
+  // Link reset
+  a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  // Button reset
+  button {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+
+    &:focus {
+      outline: 2px solid var(--swse-border-active);
+      outline-offset: 2px;
+    }
+  }
+
+  // Input reset
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    background: none;
+    border: var(--swse-border-width) solid var(--swse-border-default);
+    padding: var(--swse-space-sm);
+    border-radius: var(--swse-border-radius-base);
+
+    &:focus {
+      outline: none;
+      border-color: var(--swse-border-active);
+      box-shadow: var(--swse-shadow-glow-cyan);
+    }
+
+    &::placeholder {
+      color: var(--swse-text-muted);
+    }
+  }
+
+  // Image reset
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  // Scrollbar styling for SWSE sheets only
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--swse-bg-dark);
+    border-radius: var(--swse-border-radius-sm);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--swse-border-default);
+    border-radius: var(--swse-border-radius-sm);
+
+    &:hover {
+      background: var(--swse-border-hover);
+    }
+  }
+}

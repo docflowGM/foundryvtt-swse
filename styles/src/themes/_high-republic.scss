@@ -1,0 +1,33 @@
+// ============================================================================
+// HIGH REPUBLIC THEME
+// High Republic era with gold and light tones
+// ============================================================================
+
+// Import theme-specific tokens
+@import '../tokens/theme-high-republic';
+
+.swse {
+  [data-theme="high-republic"] & {
+    // High Republic specific overrides
+    // Elegant, prestigious, gold accents
+
+    // Gold shimmer effect on headers
+    .section-header {
+      background: linear-gradient(
+        to right,
+        var(--swse-primary),
+        var(--swse-secondary),
+        var(--swse-primary)
+      );
+      background-clip: text;
+      -webkit-background-clip: text;
+    }
+
+    // Elegant borders
+    .panel,
+    .section {
+      border-top: 2px solid var(--swse-primary);
+      border-bottom: 2px solid var(--swse-secondary);
+    }
+  }
+}

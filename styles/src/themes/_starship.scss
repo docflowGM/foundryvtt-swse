@@ -1,0 +1,24 @@
+// ============================================================================
+// STARSHIP THEME
+// Sleek spacecraft control panel aesthetic
+// ============================================================================
+
+// Import theme-specific tokens
+@import '../tokens/theme-starship';
+
+.swse {
+  [data-theme="starship"] & {
+    // Starship-specific overrides
+    // Minimalist, clean interface
+
+    // Subtle panel effects
+    .panel,
+    .section {
+      background: linear-gradient(
+        to bottom,
+        var(--swse-bg-mid),
+        var(--swse-bg-dark)
+      );
+    }
+  }
+}
