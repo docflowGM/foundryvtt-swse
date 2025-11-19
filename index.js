@@ -353,6 +353,25 @@ Hooks.once("init", async function() {
     });
   }
 
+  // Helper to extract hit die size from string like "1d10" -> "10"
+  if (!Handlebars.helpers['extractHitDie']) {
+    Handlebars.registerHelper('extractHitDie', function(hitDieString) {
+      if (!hitDieString) return '6';
+      const match = String(hitDieString).match(/\d+d(\d+)/);
+      return match ? match[1] : hitDieString;
+    });
+  }
+
+  // Helper to format BAB progression
+  if (!Handlebars.helpers['formatBAB']) {
+    Handlebars.registerHelper('formatBAB', function(babProgression) {
+      const bab = Number(babProgression);
+      if (bab >= 1.0) return 'High (+1/level)';
+      if (bab >= 0.75) return 'Medium (+3/4)';
+      return 'Low (+1/2)';
+    });
+  }
+
   // ============================================
   // Preload Templates
   // ============================================
