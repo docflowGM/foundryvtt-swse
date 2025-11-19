@@ -842,3 +842,318 @@
   font-size: 0.95rem;
   line-height: 1.4;
 }
+
+/* ============================================
+   4d6 Drop Lowest Drag & Drop Styles
+   ============================================ */
+
+.roll-4d6-container {
+    padding: 16px;
+}
+
+.roll-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+    padding: 12px;
+    background: rgba(0, 20, 40, 0.3);
+    border-radius: 8px;
+    min-height: 80px;
+}
+
+.draggable-roll {
+    background: linear-gradient(135deg, #1a3050 0%, #0f1f35 100%);
+    border: 2px solid #0af;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: grab;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.draggable-roll:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 170, 255, 0.4);
+}
+
+.draggable-roll.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.draggable-roll.used {
+    opacity: 0.3;
+    pointer-events: none;
+    border-color: #666;
+}
+
+.dice-display {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.die-result {
+    background: #0af;
+    color: #0a0f1a;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.die-result.discarded {
+    background: #666;
+    opacity: 0.4;
+    text-decoration: line-through;
+}
+
+.roll-total {
+    font-size: 20px;
+    font-weight: bold;
+    color: #0af;
+}
+
+.ability-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.ability-slot {
+    background: rgba(0, 20, 40, 0.5);
+    border: 2px solid #1c4b8e;
+    border-radius: 8px;
+    padding: 12px;
+    transition: all 0.2s ease;
+}
+
+.ability-slot:hover {
+    border-color: #0af;
+}
+
+.ability-slot-header {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.ability-name {
+    font-weight: bold;
+    color: #0af;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.ability-drop-zone {
+    background: rgba(10, 31, 52, 0.8);
+    border: 2px dashed #0af;
+    border-radius: 6px;
+    padding: 20px;
+    text-align: center;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+
+.ability-drop-zone.drag-over {
+    background: rgba(0, 170, 255, 0.2);
+    border-color: #00ff88;
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
+}
+
+.drop-placeholder {
+    color: #6a9dcd;
+    font-size: 12px;
+}
+
+.dropped-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0af;
+}
+
+.ability-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11px;
+}
+
+.ability-breakdown span {
+    display: flex;
+    justify-content: space-between;
+}
+
+.base-value, .racial-value, .total-value, .modifier-value {
+    color: #9ed0ff;
+}
+
+.base-num, .total-num, .mod-num {
+    color: #0af;
+    font-weight: bold;
+}
+
+.racial-value {
+    color: #00ff88;
+}
+
+.ability-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* ============================================
+   Organic Roll Drag & Drop Styles
+   ============================================ */
+
+.organic-roll-container {
+    padding: 16px;
+}
+
+.dice-pool-section, .groups-section, .ability-assignment-section {
+    margin-bottom: 24px;
+}
+
+.organic-dice-pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+    background: rgba(0, 20, 40, 0.3);
+    border-radius: 8px;
+    min-height: 60px;
+}
+
+.organic-die {
+    background: linear-gradient(135deg, #0af 0%, #0088cc 100%);
+    color: #0a0f1a;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: grab;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.organic-die:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 170, 255, 0.5);
+}
+
+.organic-die.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.organic-die.used {
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+.organic-groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.dice-group {
+    background: rgba(0, 20, 40, 0.5);
+    border: 2px solid #1c4b8e;
+    border-radius: 8px;
+    padding: 12px;
+    transition: all 0.2s ease;
+}
+
+.dice-group.complete {
+    border-color: #00ff88;
+    cursor: grab;
+}
+
+.dice-group.assigned {
+    opacity: 0.5;
+    border-color: #666;
+}
+
+.dice-group.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.group-header {
+    text-align: center;
+    font-weight: bold;
+    color: #0af;
+    margin-bottom: 8px;
+    font-size: 12px;
+}
+
+.group-drop-zone {
+    background: rgba(10, 31, 52, 0.8);
+    border: 2px dashed #0af;
+    border-radius: 6px;
+    padding: 12px;
+    min-height: 80px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.group-drop-zone.drag-over {
+    background: rgba(0, 170, 255, 0.2);
+    border-color: #00ff88;
+}
+
+.group-placeholder {
+    color: #6a9dcd;
+    font-size: 11px;
+    text-align: center;
+    width: 100%;
+}
+
+.grouped-die {
+    background: #0af;
+    color: #0a0f1a;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.group-total {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #0af;
+}
+
+.hint {
+    color: #6a9dcd;
+    font-size: 12px;
+    text-align: center;
+    margin: 8px 0;
+}

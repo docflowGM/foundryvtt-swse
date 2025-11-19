@@ -1651,12 +1651,21 @@ export default class CharacterGenerator extends Application {
   async _onSelectClass(event) {
     event.preventDefault();
     const className = event.currentTarget.dataset.class;
-    
+
     // Find class document
     const classDoc = this._packs.classes.find(c => c.name === className || c._id === className);
-    
-    // Add class with level 1
+
+    if (!classDoc) {
+      console.error(`CharGen | Class not found: ${className}`);
+      ui.notifications.error(`Class "${className}" not found in compendium.`);
+      return;
+    }
+
+    // Clear any existing classes and add the selected one
+    this.characterData.classes = [];
     this.characterData.classes.push({ name: className, level: 1 });
+
+    console.log(`CharGen | Selected class: ${className}, classes array:`, this.characterData.classes);
     
     // Set class-based values
     if (classDoc && classDoc.system) {
@@ -1900,47 +1909,159 @@ export default class CharacterGenerator extends Application {
       recalcPreview();
     };
 
-    // Standard array roll
+    // Standard array roll (4d6 drop lowest) - IMPROVED WITH DRAG & DROP
     const rollStandard = async () => {
       const results = [];
       for (let i = 0; i < 6; i++) {
         const r = await new Roll("4d6kh3").evaluate();
-        const total = r.total;
-        results.push({ total });
+        const dice = r.dice[0].results.map(d => ({value: d.result, discarded: d.discarded}));
+        results.push({ total: r.total, dice });
       }
 
       const container = doc.querySelector("#roll-results");
-      if (container) {
-        container.innerHTML = "";
-        results.forEach(res => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "assign-roll";
-          btn.textContent = `${res.total}`;
-          btn.dataset.value = res.total;
-          btn.onclick = () => assignRollToNext(res.total);
-          container.appendChild(btn);
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="roll-4d6-container">
+          <h4>4d6 Drop Lowest Results</h4>
+          <p class="hint">Drag the totals below to the ability scores</p>
+          <div class="roll-results-grid" id="roll-pool"></div>
+          <div class="ability-slots-grid">
+            ${ablist.map(ab => {
+              const abilityName = ab.charAt(0).toUpperCase() + ab.slice(1);
+              const racial = this.characterData.abilities[ab].racial || 0;
+              return `
+                <div class="ability-slot" data-ability="${ab}">
+                  <div class="ability-slot-header">
+                    <span class="ability-name">${abilityName}</span>
+                  </div>
+                  <div class="ability-drop-zone" data-ability="${ab}">
+                    <span class="drop-placeholder">Drop here</span>
+                    <span class="dropped-value" style="display:none;"></span>
+                  </div>
+                  <div class="ability-breakdown">
+                    <span class="base-value">Base: <span class="base-num">--</span></span>
+                    ${racial !== 0 ? `<span class="racial-value">Racial: ${racial >= 0 ? '+' : ''}${racial}</span>` : ''}
+                    <span class="total-value">Total: <span class="total-num">--</span></span>
+                    <span class="modifier-value">Mod: <span class="mod-num">--</span></span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+          <div class="ability-actions">
+            <button type="button" class="btn btn-primary" id="confirm-4d6">Confirm</button>
+            <button type="button" class="btn btn-secondary" id="reset-4d6">Reset</button>
+          </div>
+        </div>
+      `;
+
+      // Add draggable roll results
+      const pool = container.querySelector("#roll-pool");
+      results.forEach((res, idx) => {
+        const rollDiv = document.createElement("div");
+        rollDiv.className = "draggable-roll";
+        rollDiv.draggable = true;
+        rollDiv.dataset.value = res.total;
+        rollDiv.dataset.index = idx;
+
+        const diceHtml = res.dice.map(d =>
+          `<span class="die-result ${d.discarded ? 'discarded' : ''}">${d.value}</span>`
+        ).join('');
+
+        rollDiv.innerHTML = `
+          <div class="dice-display">${diceHtml}</div>
+          <div class="roll-total">${res.total}</div>
+        `;
+
+        rollDiv.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', res.total);
+          e.dataTransfer.setData('index', idx);
+          rollDiv.classList.add('dragging');
         });
-        ui.notifications.info("Standard rolls generated — click a result then click an ability to assign.");
-      }
-    };
 
-    const assignRollToNext = (val) => {
-      let target = doc.querySelector(".ability-input:focus");
-      if (!target) {
-        const inputs = ablist.map(a => doc.querySelector(`[name="ability_${a}"]`)).filter(Boolean);
-        inputs.sort((x, y) => Number(x.value) - Number(y.value));
-        target = inputs[0];
-      }
-      if (target) {
-        const ability = target.name.replace("ability_", "");
-        target.value = val;
-        this.characterData.abilities[ability].base = val;
+        rollDiv.addEventListener('dragend', () => {
+          rollDiv.classList.remove('dragging');
+        });
+
+        pool.appendChild(rollDiv);
+      });
+
+      // Setup drop zones
+      container.querySelectorAll('.ability-drop-zone').forEach(zone => {
+        zone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          zone.classList.add('drag-over');
+        });
+
+        zone.addEventListener('dragleave', () => {
+          zone.classList.remove('drag-over');
+        });
+
+        zone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          zone.classList.remove('drag-over');
+
+          const value = parseInt(e.dataTransfer.getData('text/plain'));
+          const index = e.dataTransfer.getData('index');
+          const ability = zone.dataset.ability;
+          const dragged = pool.querySelector(`.draggable-roll[data-index="${index}"]`);
+
+          if (dragged && !dragged.classList.contains('used')) {
+            // Clear previous value in this slot
+            const prevValue = zone.querySelector('.dropped-value');
+            if (prevValue.textContent) {
+              const oldDragged = pool.querySelector(`.draggable-roll.used[data-value="${prevValue.textContent}"]`);
+              if (oldDragged) oldDragged.classList.remove('used');
+            }
+
+            // Set new value
+            zone.querySelector('.drop-placeholder').style.display = 'none';
+            zone.querySelector('.dropped-value').style.display = 'block';
+            zone.querySelector('.dropped-value').textContent = value;
+            dragged.classList.add('used');
+
+            // Update breakdown
+            const slot = zone.closest('.ability-slot');
+            const racial = this.characterData.abilities[ability].racial || 0;
+            const total = value + racial;
+            const mod = Math.floor((total - 10) / 2);
+
+            slot.querySelector('.base-num').textContent = value;
+            slot.querySelector('.total-num').textContent = total;
+            slot.querySelector('.mod-num').textContent = (mod >= 0 ? '+' : '') + mod;
+
+            // Store value
+            this.characterData.abilities[ability].base = value;
+            this.characterData.abilities[ability].total = total;
+            this.characterData.abilities[ability].mod = mod;
+          }
+        });
+      });
+
+      // Confirm button
+      container.querySelector('#confirm-4d6').onclick = () => {
+        const allAssigned = ablist.every(ab => {
+          const zone = container.querySelector(`.ability-drop-zone[data-ability="${ab}"]`);
+          return zone.querySelector('.dropped-value').textContent !== '';
+        });
+
+        if (!allAssigned) {
+          ui.notifications.warn("Please assign all ability scores before confirming.");
+          return;
+        }
+
         recalcPreview();
-      }
+        ui.notifications.info("Ability scores confirmed!");
+      };
+
+      // Reset button
+      container.querySelector('#reset-4d6').onclick = () => {
+        rollStandard();
+      };
     };
 
-    // Organic roll
+    // Organic roll - IMPROVED WITH DRAG & DROP
     const rollOrganic = async () => {
       const r = await new Roll("24d6").evaluate();
       if (!r.dice || !r.dice[0] || !r.dice[0].results) {
@@ -1948,49 +2069,231 @@ export default class CharacterGenerator extends Application {
         console.error("SWSE | Roll failed:", r);
         return;
       }
-      const rolls = r.dice[0].results.map(x => x.result).sort((a, b) => b - a);
-      const kept = rolls.slice(0, 18);
-
-      const groups = [];
-      for (let i = 0; i < 6; i++) {
-        groups.push(kept.slice(i * 3, (i + 1) * 3));
-      }
+      const allRolls = r.dice[0].results.map(x => x.result);
+      const kept = allRolls.sort((a, b) => b - a).slice(0, 18);
+      const discarded = allRolls.sort((a, b) => b - a).slice(18);
 
       const container = doc.querySelector("#organic-groups");
-      if (container) {
-        container.innerHTML = "";
-        groups.forEach((g, idx) => {
-          const div = document.createElement("div");
-          div.className = "organic-group";
-          const s = g.reduce((a, b) => a + b, 0);
-          div.textContent = `${g.join(", ")} = ${s}`;
-          div.dataset.sum = s;
-          div.onclick = () => selectOrganicGroup(div);
-          container.appendChild(div);
-        });
-        ui.notifications.info("Organic roll completed — click a group, then click an ability to assign.");
-      }
-      doc._selectedOrganic = null;
-    };
+      if (!container) return;
 
-    const selectOrganicGroup = (div) => {
-      doc.querySelectorAll(".organic-group").forEach(d => d.classList.remove("selected-group"));
-      div.classList.add("selected-group");
-      doc._selectedOrganic = Number(div.dataset.sum);
-      
-      ablist.forEach(a => {
-        const input = doc.querySelector(`[name="ability_${a}"]`);
-        if (input) {
-          input.onclick = () => {
-            if (doc._selectedOrganic == null) return;
-            input.value = doc._selectedOrganic;
-            this.characterData.abilities[a].base = doc._selectedOrganic;
-            recalcPreview();
-            doc.querySelectorAll(".organic-group").forEach(d => d.classList.remove("selected-group"));
-            doc._selectedOrganic = null;
-          };
-        }
+      container.innerHTML = `
+        <div class="organic-roll-container">
+          <h4>Organic Roll (24d6, keep 18 highest)</h4>
+          <p class="hint">Drag individual dice to form 6 groups of 3, then assign to abilities</p>
+
+          <div class="dice-pool-section">
+            <h5>Available Dice</h5>
+            <div class="organic-dice-pool" id="organic-dice-pool"></div>
+          </div>
+
+          <div class="groups-section">
+            <h5>Form 6 Groups (3 dice each)</h5>
+            <div class="organic-groups-grid">
+              ${[0,1,2,3,4,5].map(i => `
+                <div class="dice-group" data-group="${i}">
+                  <div class="group-header">Group ${i+1}</div>
+                  <div class="group-drop-zone" data-group="${i}">
+                    <span class="group-placeholder">Drop 3 dice here</span>
+                  </div>
+                  <div class="group-total">Total: <span>--</span></div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="ability-assignment-section">
+            <h5>Assign Groups to Abilities</h5>
+            <div class="ability-slots-grid">
+              ${ablist.map(ab => {
+                const abilityName = ab.charAt(0).toUpperCase() + ab.slice(1);
+                const racial = this.characterData.abilities[ab].racial || 0;
+                return `
+                  <div class="ability-slot" data-ability="${ab}">
+                    <div class="ability-slot-header">
+                      <span class="ability-name">${abilityName}</span>
+                    </div>
+                    <div class="ability-drop-zone" data-ability="${ab}">
+                      <span class="drop-placeholder">Drop group</span>
+                      <span class="dropped-value" style="display:none;"></span>
+                    </div>
+                    <div class="ability-breakdown">
+                      <span class="base-value">Base: <span class="base-num">--</span></span>
+                      ${racial !== 0 ? `<span class="racial-value">Racial: ${racial >= 0 ? '+' : ''}${racial}</span>` : ''}
+                      <span class="total-value">Total: <span class="total-num">--</span></span>
+                      <span class="modifier-value">Mod: <span class="mod-num">--</span></span>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <div class="ability-actions">
+            <button type="button" class="btn btn-primary" id="confirm-organic">Confirm</button>
+            <button type="button" class="btn btn-secondary" id="reset-organic">Reset</button>
+          </div>
+        </div>
+      `;
+
+      // Add draggable dice
+      const dicePool = container.querySelector("#organic-dice-pool");
+      kept.forEach((val, idx) => {
+        const die = document.createElement("div");
+        die.className = "organic-die";
+        die.draggable = true;
+        die.dataset.value = val;
+        die.dataset.index = idx;
+        die.textContent = val;
+
+        die.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('die-value', val);
+          e.dataTransfer.setData('die-index', idx);
+          die.classList.add('dragging');
+        });
+
+        die.addEventListener('dragend', () => {
+          die.classList.remove('dragging');
+        });
+
+        dicePool.appendChild(die);
       });
+
+      // Setup group drop zones
+      container.querySelectorAll('.group-drop-zone').forEach(zone => {
+        const groupIdx = zone.dataset.group;
+        zone._dice = [];
+
+        zone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          zone.classList.add('drag-over');
+        });
+
+        zone.addEventListener('dragleave', () => {
+          zone.classList.remove('drag-over');
+        });
+
+        zone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          zone.classList.remove('drag-over');
+
+          const value = parseInt(e.dataTransfer.getData('die-value'));
+          const index = e.dataTransfer.getData('die-index');
+          const die = dicePool.querySelector(`.organic-die[data-index="${index}"]`);
+
+          if (die && !die.classList.contains('used') && zone._dice.length < 3) {
+            die.classList.add('used');
+            zone._dice.push(value);
+
+            // Update display
+            zone.querySelector('.group-placeholder').style.display = zone._dice.length < 3 ? 'block' : 'none';
+
+            const diceDisplay = document.createElement('span');
+            diceDisplay.className = 'grouped-die';
+            diceDisplay.textContent = value;
+            zone.appendChild(diceDisplay);
+
+            // Update total
+            if (zone._dice.length === 3) {
+              const total = zone._dice.reduce((a, b) => a + b, 0);
+              zone.closest('.dice-group').querySelector('.group-total span').textContent = total;
+              zone.closest('.dice-group').dataset.total = total;
+              zone.closest('.dice-group').classList.add('complete');
+              zone.closest('.dice-group').draggable = true;
+
+              // Make complete group draggable
+              const groupDiv = zone.closest('.dice-group');
+              groupDiv.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('group-total', total);
+                e.dataTransfer.setData('group-index', groupIdx);
+                groupDiv.classList.add('dragging');
+              });
+
+              groupDiv.addEventListener('dragend', () => {
+                groupDiv.classList.remove('dragging');
+              });
+            }
+          }
+        });
+      });
+
+      // Setup ability drop zones
+      container.querySelectorAll('.ability-drop-zone').forEach(zone => {
+        zone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          zone.classList.add('drag-over');
+        });
+
+        zone.addEventListener('dragleave', () => {
+          zone.classList.remove('drag-over');
+        });
+
+        zone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          zone.classList.remove('drag-over');
+
+          const value = parseInt(e.dataTransfer.getData('group-total'));
+          const groupIndex = e.dataTransfer.getData('group-index');
+          const ability = zone.dataset.ability;
+          const groupDiv = container.querySelector(`.dice-group[data-group="${groupIndex}"]`);
+
+          if (groupDiv && groupDiv.classList.contains('complete') && !groupDiv.classList.contains('assigned')) {
+            // Clear previous value
+            const prevValue = zone.querySelector('.dropped-value');
+            if (prevValue.textContent) {
+              const oldGroup = container.querySelector(`.dice-group.assigned[data-total="${prevValue.textContent}"]`);
+              if (oldGroup) oldGroup.classList.remove('assigned');
+            }
+
+            // Set new value
+            zone.querySelector('.drop-placeholder').style.display = 'none';
+            zone.querySelector('.dropped-value').style.display = 'block';
+            zone.querySelector('.dropped-value').textContent = value;
+            groupDiv.classList.add('assigned');
+
+            // Update breakdown
+            const slot = zone.closest('.ability-slot');
+            const racial = this.characterData.abilities[ability].racial || 0;
+            const total = value + racial;
+            const mod = Math.floor((total - 10) / 2);
+
+            slot.querySelector('.base-num').textContent = value;
+            slot.querySelector('.total-num').textContent = total;
+            slot.querySelector('.mod-num').textContent = (mod >= 0 ? '+' : '') + mod;
+
+            // Store value
+            this.characterData.abilities[ability].base = value;
+            this.characterData.abilities[ability].total = total;
+            this.characterData.abilities[ability].mod = mod;
+          }
+        });
+      });
+
+      // Confirm button
+      container.querySelector('#confirm-organic').onclick = () => {
+        const allGroupsComplete = Array.from(container.querySelectorAll('.dice-group')).every(g => g.classList.contains('complete'));
+        const allAssigned = ablist.every(ab => {
+          const zone = container.querySelector(`.ability-drop-zone[data-ability="${ab}"]`);
+          return zone.querySelector('.dropped-value').textContent !== '';
+        });
+
+        if (!allGroupsComplete) {
+          ui.notifications.warn("Please complete all 6 dice groups first.");
+          return;
+        }
+
+        if (!allAssigned) {
+          ui.notifications.warn("Please assign all groups to ability scores.");
+          return;
+        }
+
+        recalcPreview();
+        ui.notifications.info("Ability scores confirmed!");
+      };
+
+      // Reset button
+      container.querySelector('#reset-organic').onclick = () => {
+        rollOrganic();
+      };
     };
 
     const recalcPreview = () => {
