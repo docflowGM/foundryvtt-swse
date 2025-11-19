@@ -11,6 +11,8 @@
   display: flex !important;
   flex-direction: column !important;
   height: 100% !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
 
   .sidebar-tab {
     height: auto !important;
@@ -18,17 +20,43 @@
     overflow-y: auto !important;
     overflow-x: hidden !important;
     display: none !important; // Hidden by default
+    padding-top: 0 !important;
+    margin-top: 0 !important;
 
     // Show active tab
     &.active {
       display: flex !important;
       flex-direction: column !important;
       flex: 1 !important;
+      min-height: 0 !important;
     }
 
     &.directory {
       height: auto !important;
       flex: 1 !important;
+      min-height: 0 !important;
+    }
+
+    // Specific fixes for chat tab
+    &#chat {
+      padding-top: 0 !important;
+
+      #chat-log {
+        flex: 1 !important;
+        min-height: 0 !important;
+        overflow-y: auto !important;
+        margin-top: 0 !important;
+        padding-top: 8px !important;
+      }
+
+      #chat-controls {
+        flex-shrink: 0 !important;
+        margin-bottom: 0 !important;
+      }
+
+      #chat-form {
+        flex-shrink: 0 !important;
+      }
     }
   }
 
@@ -38,16 +66,21 @@
     overflow-y: auto !important;
     overflow-x: hidden !important;
     flex: 1 !important;
+    min-height: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 8px !important;
   }
 
   // Fix for directory header
   .directory-header {
     flex-shrink: 0 !important;
+    margin-top: 0 !important;
   }
 
   // Fix for sidebar tabs navigation
   nav.tabs {
     flex-shrink: 0 !important;
+    margin-bottom: 0 !important;
   }
 }
 

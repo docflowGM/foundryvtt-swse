@@ -217,24 +217,25 @@ export default class CharacterGenerator extends Application {
         selectedTalents: this.characterData.talents || []
       };
 
-      // Filter by class bonus feats if a class is selected
-      let featsToFilter = context.packs.feats;
-      if (this.characterData.classes && this.characterData.classes.length > 0) {
-        const selectedClass = this.characterData.classes[0];
-        const className = selectedClass.name || selectedClass;
-        featsToFilter = context.packs.feats.filter(f => {
-          const bonusFeatFor = f.system?.bonus_feat_for || [];
-          return bonusFeatFor.includes(className);
-        });
-        console.log(`CharGen | Filtered to ${featsToFilter.length} bonus feats for ${className}`);
-      }
-
-      // Filter feats based on prerequisites
-      const filteredFeats = PrerequisiteValidator.filterQualifiedFeats(featsToFilter, tempActor, pendingData);
+      // Filter feats based on prerequisites (show all qualified feats, not just class bonus feats)
+      // Note: Class bonus feat filtering should only apply when selecting a bonus feat, not for general feat selection
+      const filteredFeats = PrerequisiteValidator.filterQualifiedFeats(context.packs.feats, tempActor, pendingData);
       context.packs.feats = filteredFeats.filter(f => f.isQualified);
       context.packs.allFeats = filteredFeats; // Include all feats with qualification status
 
       console.log(`CharGen | Filtered feats: ${context.packs.feats.length} qualified out of ${filteredFeats.length} total`);
+
+      // Store class bonus feats separately for when we need to show only those
+      if (this.characterData.classes && this.characterData.classes.length > 0) {
+        const selectedClass = this.characterData.classes[0];
+        const className = selectedClass.name || selectedClass;
+        const bonusFeats = context.packs.feats.filter(f => {
+          const bonusFeatFor = f.system?.bonus_feat_for || [];
+          return bonusFeatFor.includes(className);
+        });
+        context.packs.classBonusFeats = bonusFeats;
+        console.log(`CharGen | Available class bonus feats for ${className}: ${bonusFeats.length}`);
+      }
     }
 
     // Point buy pools
@@ -417,6 +418,14 @@ export default class CharacterGenerator extends Application {
 
   async _onNextStep(event) {
     event.preventDefault();
+
+    // Capture name from input before validation (in case the input event hasn't fired yet)
+    if (this.currentStep === "name") {
+      const nameInput = this.element.find('input[name="character-name"]')[0];
+      if (nameInput) {
+        this.characterData.name = nameInput.value;
+      }
+    }
 
     // Validate current step
     if (!this._validateCurrentStep()) {
