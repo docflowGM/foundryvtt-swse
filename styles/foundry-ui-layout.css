@@ -11,7 +11,7 @@
 
 /* Sidebar positioning */
 #sidebar {
-  right: 10px !important;
+  right: 3px !important;
   width: 280px !important;
   max-width: 280px !important;
 }
@@ -19,7 +19,7 @@
 /* Sidebar tabs - vertical column to left of chatbox */
 #sidebar-tabs {
   position: fixed !important;
-  right: 300px !important;
+  right: 293px !important;
   left: auto !important;
   top: 0 !important;
   flex-direction: column !important;
