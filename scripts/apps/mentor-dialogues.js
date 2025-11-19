@@ -204,7 +204,7 @@ export const MENTORS = {
             1: "You have been chosen to join the Imperial Knights. We serve the Emperor, not through fear, but through honor. The Force is neither light nor dark—it is a tool we wield with discipline.",
             2: "Your training progresses well. Remember, we are not Jedi. We do not seek mysticism. We seek order and justice through the Force.",
             3: "Balance is the key to our Order. You are learning to channel the Force without succumbing to passion or detachment. Continue.",
-            4: "Your mastery of both combat and the Force grows. The Empire depends on Knights like you.",
+            4: "Your mastery of both combat and the Force grows stronger. You serve the Emperor well.",
             5: "You have reached the midpoint of your training. The gray path is difficult—it requires constant vigilance against both light and dark.",
             6: "Your dedication honors the Imperial Knights. Few can walk the balanced path as you do.",
             7: "The Force serves you, not the other way around. This understanding separates us from both Jedi and Sith.",
