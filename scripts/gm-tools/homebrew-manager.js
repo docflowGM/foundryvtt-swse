@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * GM Homebrew Management
  * Central system for custom rules and options
@@ -118,7 +119,7 @@ export class SWSEHomebrewManager {
       ui.notifications.info('Homebrew content imported successfully');
     } catch (err) {
       ui.notifications.error('Failed to import homebrew content');
-      console.error(err);
+      SWSELogger.error(err);
     }
   }
 }

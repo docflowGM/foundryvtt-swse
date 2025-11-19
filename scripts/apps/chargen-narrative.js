@@ -1,4 +1,5 @@
 // ============================================
+import { SWSELogger } from '../utils/logger.js';
 // SWSE Character Generator - NARRATIVE ENHANCED
 // Personalized responses by Ol' Salty the Space Pirate
 // Talent tree visualization
@@ -199,10 +200,10 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
       if (talentPack) {
         const talents = await talentPack.getDocuments();
         this.talentData = talents;
-        console.log(`SWSE CharGen | Loaded ${talents.length} talents`);
+        SWSELogger.log(`SWSE CharGen | Loaded ${talents.length} talents`);
       }
     } catch (err) {
-      console.error('SWSE CharGen | Failed to load talents:', err);
+      SWSELogger.error('SWSE CharGen | Failed to load talents:', err);
       this.talentData = [];
     }
   }
@@ -573,7 +574,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     this.characterData.talents.push(talent);
     ui.notifications.info(`${talentName} added!`);
 
-    console.log(`SWSE CharGen | Selected talent: ${talentName}`);
+    SWSELogger.log(`SWSE CharGen | Selected talent: ${talentName}`);
   }
 
   // ========================================

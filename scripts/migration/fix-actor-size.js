@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Actor Size Migration
  * Fixes actor size values to be lowercase to match schema choices
@@ -9,7 +10,7 @@
 export class ActorSizeMigration {
 
   static async fixActorSize() {
-    console.log("SWSE | Starting actor size migration...");
+    SWSELogger.log("SWSE | Starting actor size migration...");
 
     let fixed = 0;
     let skipped = 0;
@@ -36,30 +37,30 @@ export class ActorSizeMigration {
 
         // Verify it's a valid size
         if (!validSizes.includes(newSize)) {
-          console.warn(`Skipping ${actor.name} - invalid size value: ${currentSize}`);
+          SWSELogger.warn(`Skipping ${actor.name} - invalid size value: ${currentSize}`);
           skipped++;
           continue;
         }
 
-        console.log(`Fixing ${actor.name}: "${currentSize}" -> "${newSize}"`);
+        SWSELogger.log(`Fixing ${actor.name}: "${currentSize}" -> "${newSize}"`);
 
         await actor.update({ 'system.size': newSize });
         fixed++;
 
       } catch (err) {
-        console.error(`Error fixing ${actor.name}:`, err);
+        SWSELogger.error(`Error fixing ${actor.name}:`, err);
         errors++;
       }
     }
 
-    console.log("=".repeat(60));
-    console.log("SWSE | Actor Size Migration Complete");
-    console.log(`✓ Fixed: ${fixed} actors`);
-    console.log(`○ Skipped: ${skipped} actors (already correct or no size)`);
+    SWSELogger.log("=".repeat(60));
+    SWSELogger.log("SWSE | Actor Size Migration Complete");
+    SWSELogger.log(`✓ Fixed: ${fixed} actors`);
+    SWSELogger.log(`○ Skipped: ${skipped} actors (already correct or no size)`);
     if (errors > 0) {
-      console.log(`✗ Errors: ${errors} actors`);
+      SWSELogger.log(`✗ Errors: ${errors} actors`);
     }
-    console.log("=".repeat(60));
+    SWSELogger.log("=".repeat(60));
 
     ui.notifications.info(`Actor size migration complete! Fixed ${fixed} actors.`);
   }
@@ -70,4 +71,4 @@ if (!game.swse) game.swse = {};
 if (!game.swse.migrations) game.swse.migrations = {};
 game.swse.migrations.fixActorSize = ActorSizeMigration.fixActorSize.bind(ActorSizeMigration);
 
-console.log("SWSE | Actor size migration script loaded. Run: await game.swse.migrations.fixActorSize()");
+SWSELogger.log("SWSE | Actor size migration script loaded. Run: await game.swse.migrations.fixActorSize()");

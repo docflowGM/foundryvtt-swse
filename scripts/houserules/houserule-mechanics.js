@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 import { HouserulesData, getFeintSkill, getSkillFocusBonus, canTakeForceSensitive, getForceTrainingAttribute, hasBlockDeflectCombined, hasDefaultWeaponFinesse, getRolePriorityOrder } from './houserules-data.js';
 /**
  * House Rules Mechanics
@@ -10,7 +11,7 @@ export class HouseruleMechanics {
    * Initialize house rule mechanics
    */
   static initialize() {
-    console.log("SWSE | Initializing house rule mechanics");
+    SWSELogger.log("SWSE | Initializing house rule mechanics");
     
     // Set up hooks for house rule mechanics
     this.setupCriticalHitVariants();
@@ -20,7 +21,7 @@ export class HouseruleMechanics {
     this.setupFeintSkill();
     this.setupSpaceCombatInitiative();
     
-    console.log("SWSE | House rule mechanics initialized");
+    SWSELogger.log("SWSE | House rule mechanics initialized");
   }
 
   /**

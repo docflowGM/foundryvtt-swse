@@ -1,4 +1,5 @@
 /**
+import { SWSELogger } from '../../utils/logger.js';
  * SWSE Character Sheet
  * FIXED VERSION - Event listeners match actual button classes
  */
@@ -6,9 +7,9 @@
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { SWSEStore } from '../../apps/store.js';
 import { SWSEActorSheetBase } from '../../sheets/base-sheet.js';
-import { CombatActionsMapper } from '../../utils/combat-actions-mapper.js';
+import { CombatActionsMapper } from '../../combat/utils/combat-actions-mapper.js';
 import { FeatActionsMapper } from '../../utils/feat-actions-mapper.js';
-import { SWSERoll } from '../../rolls/enhanced-rolls.js';
+import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
@@ -26,7 +27,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._forcePowerDescriptions = await response.json();
       return this._forcePowerDescriptions;
     } catch (error) {
-      console.error('SWSE | Failed to load Force power descriptions:', error);
+      SWSELogger.error('SWSE | Failed to load Force power descriptions:', error);
       return null;
     }
   }
@@ -42,7 +43,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._combatActionsData = await response.json();
       return this._combatActionsData;
     } catch (error) {
-      console.error('SWSE | Failed to load combat actions data:', error);
+      SWSELogger.error('SWSE | Failed to load combat actions data:', error);
       return [];
     }
   }
@@ -175,7 +176,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // Talent enhancement listeners
     html.find('.talent-enhancement-toggle').on('change', this._onToggleTalentEnhancement.bind(this));
 
-    console.log('SWSE | Character sheet listeners activated');
+    SWSELogger.log('SWSE | Character sheet listeners activated');
   }
 
   /**
@@ -183,7 +184,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
    */
   async _onLevelUp(event) {
     event.preventDefault();
-    console.log('SWSE | Level up clicked');
+    SWSELogger.log('SWSE | Level up clicked');
 
     // Use the enhanced version with visual talent trees and multi-classing
     await SWSELevelUp.openEnhanced(this.actor);
@@ -194,7 +195,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
    */
   async _onOpenCharGen(event) {
     event.preventDefault();
-    console.log('SWSE | Character generator clicked');
+    SWSELogger.log('SWSE | Character generator clicked');
 
     // Import and open the character generator
     try {
@@ -202,7 +203,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       const chargen = new CharacterGenerator(this.actor);
       chargen.render(true);
     } catch (err) {
-      console.error("SWSE | Failed to open character generator:", err);
+      SWSELogger.error("SWSE | Failed to open character generator:", err);
       ui.notifications.error("Failed to open the character generator. See console for details.");
     }
   }
@@ -212,7 +213,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
    */
   async _onOpenStore(event) {
     event.preventDefault();
-    console.log('SWSE | Store button clicked');
+    SWSELogger.log('SWSE | Store button clicked');
 
     // Create and render the store application
     const store = new SWSEStore(this.actor);

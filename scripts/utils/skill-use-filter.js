@@ -1,3 +1,4 @@
+import { SWSELogger } from './logger.js';
 /**
  * Skill Use Application Filtering and Rolling Utility
  * Handles filtering skill use applications based on character capabilities
@@ -283,4 +284,4 @@ Hooks.once('init', () => {
   game.swse.utils.SkillUseFilter = SkillUseFilter;
 });
 
-console.log('SWSE | Skill Use Filter utility loaded');
+SWSELogger.log('SWSE | Skill Use Filter utility loaded');

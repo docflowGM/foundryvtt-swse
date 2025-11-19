@@ -1,4 +1,5 @@
 // ============================================
+import { SWSELogger } from '../utils/logger.js';
 // FILE: scripts/chargen/chargen.js
 // Fixed to properly integrate with SWSEActorSheet
 // ============================================
@@ -115,7 +116,7 @@ export default class CharacterGenerator extends Application {
         const docs = await pack.getDocuments();
         this._packs[k] = docs.map(d => d.toObject());
       } catch (err) {
-        console.warn(`chargen: failed to load pack ${packName}:`, err);
+        SWSELogger.warn(`chargen: failed to load pack ${packName}:`, err);
         this._packs[k] = [];
       }
     }
@@ -129,7 +130,7 @@ export default class CharacterGenerator extends Application {
         this._skillsJson = this._getDefaultSkills();
       }
     } catch (e) {
-      console.warn("chargen: failed to load skills.json, using defaults", e);
+      SWSELogger.warn("chargen: failed to load skills.json, using defaults", e);
       this._skillsJson = this._getDefaultSkills();
     }
   }
@@ -223,7 +224,7 @@ export default class CharacterGenerator extends Application {
       context.packs.feats = filteredFeats.filter(f => f.isQualified);
       context.packs.allFeats = filteredFeats; // Include all feats with qualification status
 
-      console.log(`CharGen | Filtered feats: ${context.packs.feats.length} qualified out of ${filteredFeats.length} total`);
+      SWSELogger.log(`CharGen | Filtered feats: ${context.packs.feats.length} qualified out of ${filteredFeats.length} total`);
 
       // Store class bonus feats separately for when we need to show only those
       if (this.characterData.classes && this.characterData.classes.length > 0) {
@@ -234,7 +235,7 @@ export default class CharacterGenerator extends Application {
           return bonusFeatFor.includes(className);
         });
         context.packs.classBonusFeats = bonusFeats;
-        console.log(`CharGen | Available class bonus feats for ${className}: ${bonusFeats.length}`);
+        SWSELogger.log(`CharGen | Available class bonus feats for ${className}: ${bonusFeats.length}`);
       }
     }
 
@@ -512,7 +513,7 @@ export default class CharacterGenerator extends Application {
     const type = event.currentTarget.dataset.type;
     this.characterData.isDroid = (type === "droid");
 
-    console.log(`SWSE CharGen | Selected type: ${type} (isDroid: ${this.characterData.isDroid})`);
+    SWSELogger.log(`SWSE CharGen | Selected type: ${type} (isDroid: ${this.characterData.isDroid})`);
     await this._onNextStep(event);
   }
 
@@ -1304,7 +1305,7 @@ export default class CharacterGenerator extends Application {
   }
 
   async _importDroidType(droid) {
-    console.log(`SWSE CharGen | Importing droid type: ${droid.name}`, droid);
+    SWSELogger.log(`SWSE CharGen | Importing droid type: ${droid.name}`, droid);
 
     // Apply droid's ability scores
     if (droid.system && droid.system.abilities) {
@@ -1378,7 +1379,7 @@ export default class CharacterGenerator extends Application {
       // Ensure CON is 0 for droids
       actorData.system.abilities.con = { base: 0, racial: 0, temp: 0 };
 
-      console.log("SWSE CharGen | Creating imported droid actor with data:", actorData);
+      SWSELogger.log("SWSE CharGen | Creating imported droid actor with data:", actorData);
 
       const actor = await Actor.create(actorData);
 
@@ -1395,7 +1396,7 @@ export default class CharacterGenerator extends Application {
 
       return actor;
     } catch (err) {
-      console.error("SWSE CharGen | Error creating imported droid actor:", err);
+      SWSELogger.error("SWSE CharGen | Error creating imported droid actor:", err);
       return null;
     }
   }
@@ -1404,18 +1405,18 @@ export default class CharacterGenerator extends Application {
     event.preventDefault();
     const speciesKey = event.currentTarget.dataset.species;
 
-    console.log(`CharGen | Attempting to select species: ${speciesKey}`);
+    SWSELogger.log(`CharGen | Attempting to select species: ${speciesKey}`);
 
     // Find the species document
     if (!this._packs.species) {
-      console.log("CharGen | Species pack not loaded, loading now...");
+      SWSELogger.log("CharGen | Species pack not loaded, loading now...");
       await this._loadData();
     }
 
-    console.log(`CharGen | Species pack contains ${this._packs.species?.length || 0} species`);
+    SWSELogger.log(`CharGen | Species pack contains ${this._packs.species?.length || 0} species`);
 
     if (!this._packs.species || this._packs.species.length === 0) {
-      console.error("CharGen | Species pack is empty or failed to load!");
+      SWSELogger.error("CharGen | Species pack is empty or failed to load!");
       ui.notifications.error("Species data failed to load. Please refresh the page.");
       return;
     }
@@ -1423,13 +1424,13 @@ export default class CharacterGenerator extends Application {
     const speciesDoc = this._packs.species.find(s => s.name === speciesKey || s._id === speciesKey);
 
     if (!speciesDoc) {
-      console.error(`CharGen | Species not found: ${speciesKey}`);
-      console.log(`CharGen | Available species:`, this._packs.species.map(s => s.name));
+      SWSELogger.error(`CharGen | Species not found: ${speciesKey}`);
+      SWSELogger.log(`CharGen | Available species:`, this._packs.species.map(s => s.name));
       ui.notifications.error(`Species "${speciesKey}" not found in database!`);
       return;
     }
 
-    console.log(`CharGen | Found species: ${speciesDoc.name}`, speciesDoc);
+    SWSELogger.log(`CharGen | Found species: ${speciesDoc.name}`, speciesDoc);
 
     this.characterData.species = speciesKey;
 
@@ -1471,7 +1472,7 @@ export default class CharacterGenerator extends Application {
     // 5. Check for Human racial bonuses
     if (speciesDoc.name === "Human" || speciesDoc.name === "human") {
       this.characterData.featsRequired = 2; // Humans get bonus feat
-      console.log("CharGen | Human species: Bonus feat granted (2 feats required)");
+      SWSELogger.log("CharGen | Human species: Bonus feat granted (2 feats required)");
     } else {
       this.characterData.featsRequired = 1; // All other species get 1 feat
     }
@@ -1486,7 +1487,7 @@ export default class CharacterGenerator extends Application {
     // 8. Store source
     this.characterData.speciesSource = system.source || "";
 
-    console.log(`CharGen | Applied species data for ${speciesDoc.name}:`, {
+    SWSELogger.log(`CharGen | Applied species data for ${speciesDoc.name}:`, {
       abilities: abilityBonuses,
       speed: this.characterData.speed,
       size: this.characterData.size,
@@ -1538,7 +1539,7 @@ export default class CharacterGenerator extends Application {
       // Find matching skill key
       const skillKey = skillNameMap[skillName];
       if (!skillKey) {
-        console.warn(`CharGen | Unknown skill name in racial bonus: ${skillName}`);
+        SWSELogger.warn(`CharGen | Unknown skill name in racial bonus: ${skillName}`);
         continue;
       }
 
@@ -1554,7 +1555,7 @@ export default class CharacterGenerator extends Application {
       // Apply racial bonus to misc field
       this.characterData.skills[skillKey].misc = (this.characterData.skills[skillKey].misc || 0) + bonusValue;
 
-      console.log(`CharGen | Applied racial skill bonus: ${skillName} ${bonusValue >= 0 ? '+' : ''}${bonusValue}`);
+      SWSELogger.log(`CharGen | Applied racial skill bonus: ${skillName} ${bonusValue >= 0 ? '+' : ''}${bonusValue}`);
     }
   }
 
@@ -1593,7 +1594,7 @@ export default class CharacterGenerator extends Application {
     }
     this.characterData.skills.stealth.misc = (this.characterData.skills.stealth.misc || 0) + modifiers.stealth;
 
-    console.log(`CharGen | Applied size modifiers for ${size}: Reflex ${modifiers.reflex >= 0 ? '+' : ''}${modifiers.reflex}, Stealth ${modifiers.stealth >= 0 ? '+' : ''}${modifiers.stealth}`);
+    SWSELogger.log(`CharGen | Applied size modifiers for ${size}: Reflex ${modifiers.reflex >= 0 ? '+' : ''}${modifiers.reflex}, Stealth ${modifiers.stealth >= 0 ? '+' : ''}${modifiers.stealth}`);
   }
 
   /**
@@ -1665,7 +1666,7 @@ export default class CharacterGenerator extends Application {
     const classDoc = this._packs.classes.find(c => c.name === className || c._id === className);
 
     if (!classDoc) {
-      console.error(`CharGen | Class not found: ${className}`);
+      SWSELogger.error(`CharGen | Class not found: ${className}`);
       ui.notifications.error(`Class "${className}" not found in compendium.`);
       return;
     }
@@ -1674,7 +1675,7 @@ export default class CharacterGenerator extends Application {
     this.characterData.classes = [];
     this.characterData.classes.push({ name: className, level: 1 });
 
-    console.log(`CharGen | Selected class: ${className}, classes array:`, this.characterData.classes);
+    SWSELogger.log(`CharGen | Selected class: ${className}, classes array:`, this.characterData.classes);
     
     // Set class-based values
     if (classDoc && classDoc.system) {
@@ -1701,7 +1702,7 @@ export default class CharacterGenerator extends Application {
       const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
       this.characterData.trainedSkillsAllowed = Math.max(1, classSkills + intMod + humanBonus);
 
-      console.log(`CharGen | Skill trainings: ${classSkills} (class) + ${intMod} (INT) + ${humanBonus} (Human) = ${this.characterData.trainedSkillsAllowed}`);
+      SWSELogger.log(`CharGen | Skill trainings: ${classSkills} (class) + ${intMod} (INT) + ${humanBonus} (Human) = ${this.characterData.trainedSkillsAllowed}`);
       
       // Force Points (if Force-sensitive class)
       if (classDoc.system.forceSensitive) {
@@ -1728,18 +1729,18 @@ export default class CharacterGenerator extends Application {
           if (takeMax) {
             // Take maximum possible
             diceTotal = numDice * dieSize;
-            console.log(`CharGen | Starting credits (max): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
+            SWSELogger.log(`CharGen | Starting credits (max): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
           } else {
             // Roll dice
             const roll = new Roll(`${numDice}d${dieSize}`);
             roll.evaluate({async: false});
             diceTotal = roll.total;
-            console.log(`CharGen | Starting credits (rolled): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
+            SWSELogger.log(`CharGen | Starting credits (rolled): ${numDice}d${dieSize} = ${diceTotal}, × ${multiplier} = ${diceTotal * multiplier}`);
           }
 
           this.characterData.credits = diceTotal * multiplier;
         } else {
-          console.warn(`CharGen | Could not parse starting_credits: ${creditsString}`);
+          SWSELogger.warn(`CharGen | Could not parse starting_credits: ${creditsString}`);
         }
       }
     }
@@ -1822,7 +1823,7 @@ export default class CharacterGenerator extends Application {
 
     // Train the skill
     this.characterData.skills[skillKey].trained = true;
-    console.log(`CharGen | Trained skill: ${skillKey}`);
+    SWSELogger.log(`CharGen | Trained skill: ${skillKey}`);
     await this.render();
   }
 
@@ -1833,7 +1834,7 @@ export default class CharacterGenerator extends Application {
     // Untrain the skill
     if (this.characterData.skills[skillKey]) {
       this.characterData.skills[skillKey].trained = false;
-      console.log(`CharGen | Untrained skill: ${skillKey}`);
+      SWSELogger.log(`CharGen | Untrained skill: ${skillKey}`);
     }
 
     await this.render();
@@ -1847,7 +1848,7 @@ export default class CharacterGenerator extends Application {
       this.characterData.skills[skillKey].trained = false;
     }
 
-    console.log("CharGen | Reset all skill selections");
+    SWSELogger.log("CharGen | Reset all skill selections");
     ui.notifications.info("All skill selections have been reset.");
     await this.render();
   }
@@ -2075,7 +2076,7 @@ export default class CharacterGenerator extends Application {
       const r = await new Roll("24d6").evaluate();
       if (!r.dice || !r.dice[0] || !r.dice[0].results) {
         ui.notifications.error("Failed to roll dice. Please try again.");
-        console.error("SWSE | Roll failed:", r);
+        SWSELogger.error("SWSE | Roll failed:", r);
         return;
       }
       const allRolls = r.dice[0].results.map(x => x.result);
@@ -2653,7 +2654,7 @@ export default class CharacterGenerator extends Application {
       const store = new SWSEStore(this.actor);
       store.render(true);
     } catch (err) {
-      console.error("SWSE | Failed to open store:", err);
+      SWSELogger.error("SWSE | Failed to open store:", err);
       ui.notifications.error("Failed to open the shop. You can access it from your character sheet.");
     }
   }
@@ -2665,18 +2666,18 @@ export default class CharacterGenerator extends Application {
    */
   async _applyStartingClassFeatures(actor, classDoc) {
     if (!classDoc || !classDoc.system) {
-      console.warn("CharGen | No class document provided for feature application");
+      SWSELogger.warn("CharGen | No class document provided for feature application");
       return;
     }
 
     const featureItems = [];
     const weaponItems = [];
-    console.log(`CharGen | Applying starting features for ${classDoc.name}`);
+    SWSELogger.log(`CharGen | Applying starting features for ${classDoc.name}`);
 
     // Apply starting_features array
     if (classDoc.system.starting_features && Array.isArray(classDoc.system.starting_features)) {
       for (const feature of classDoc.system.starting_features) {
-        console.log(`CharGen | Auto-applying starting feature: ${feature.name} (${feature.type})`);
+        SWSELogger.log(`CharGen | Auto-applying starting feature: ${feature.name} (${feature.type})`);
 
         const featureItem = {
           name: feature.name,
@@ -2707,7 +2708,7 @@ export default class CharacterGenerator extends Application {
 
           // Special handling for Lightsaber - grant actual weapon item
           if (feature.name === 'Lightsaber' && feature.type === 'class_feature') {
-            console.log(`CharGen | Auto-granting Lightsaber weapon for Jedi`);
+            SWSELogger.log(`CharGen | Auto-granting Lightsaber weapon for Jedi`);
 
             // Load lightsaber from weapons pack
             const weaponsPack = game.packs.get("swse.weapons");
@@ -2717,7 +2718,7 @@ export default class CharacterGenerator extends Application {
               if (lightsaber) {
                 weaponItems.push(lightsaber.toObject());
               } else {
-                console.warn("CharGen | Lightsaber weapon not found in compendium");
+                SWSELogger.warn("CharGen | Lightsaber weapon not found in compendium");
               }
             }
             continue; // Don't create a feat for this, we're giving the actual weapon
@@ -2725,7 +2726,7 @@ export default class CharacterGenerator extends Application {
 
           // Apply proficiencies and class features
           if (feature.type === 'proficiency' || feature.type === 'class_feature') {
-            console.log(`CharGen | Auto-applying level 1 feature: ${feature.name} (${feature.type})`);
+            SWSELogger.log(`CharGen | Auto-applying level 1 feature: ${feature.name} (${feature.type})`);
 
             const featureItem = {
               name: feature.name,
@@ -2746,14 +2747,14 @@ export default class CharacterGenerator extends Application {
 
     // Create all feature items at once
     if (featureItems.length > 0) {
-      console.log(`CharGen | Creating ${featureItems.length} class feature items`);
+      SWSELogger.log(`CharGen | Creating ${featureItems.length} class feature items`);
       await actor.createEmbeddedDocuments("Item", featureItems);
       ui.notifications.info(`Granted ${featureItems.length} class features from ${classDoc.name}`);
     }
 
     // Create weapon items
     if (weaponItems.length > 0) {
-      console.log(`CharGen | Creating ${weaponItems.length} starting weapon items`);
+      SWSELogger.log(`CharGen | Creating ${weaponItems.length} starting weapon items`);
       await actor.createEmbeddedDocuments("Item", weaponItems);
       ui.notifications.info(`Granted starting equipment: ${weaponItems.map(w => w.name).join(', ')}`);
     }
@@ -2831,7 +2832,7 @@ export default class CharacterGenerator extends Application {
 
       ui.notifications.info(`Character ${this.characterData.name} created successfully!`);
     } catch (err) {
-      console.error("chargen: actor creation failed", err);
+      SWSELogger.error("chargen: actor creation failed", err);
       ui.notifications.error("Failed to create character. See console for details.");
     }
   }

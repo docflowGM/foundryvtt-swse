@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 import CharacterGeneratorImproved from './chargen-improved.js';
 
 // Single hook to handle both create button interception and header button addition
@@ -5,7 +6,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
     // Note: html is now an HTMLElement in Foundry v13+, not a jQuery object
     // Check if html exists
     if (!html) {
-        console.warn('SWSE | renderActorDirectory hook received invalid html parameter');
+        SWSELogger.warn('SWSE | renderActorDirectory hook received invalid html parameter');
         return;
     }
 
@@ -13,7 +14,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
     const element = html instanceof HTMLElement ? html : html[0];
 
     if (!element) {
-        console.warn('SWSE | renderActorDirectory hook: could not get HTMLElement');
+        SWSELogger.warn('SWSE | renderActorDirectory hook: could not get HTMLElement');
         return;
     }
 

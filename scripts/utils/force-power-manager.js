@@ -1,3 +1,4 @@
+import { SWSELogger } from './logger.js';
 /**
  * Force Power Management System
  * Handles Force Sensitivity, Force Training, and automatic power grants
@@ -84,14 +85,14 @@ export class ForcePowerManager {
       // Fallback to direct pack access
       const pack = game.packs.get('swse.forcepowers');
       if (!pack) {
-        console.warn('SWSE | Force powers compendium not found');
+        SWSELogger.warn('SWSE | Force powers compendium not found');
         return [];
       }
 
       const powers = await pack.getDocuments();
       return powers.map(p => p.toObject());
     } catch (error) {
-      console.error('SWSE | Error loading force powers:', error);
+      SWSELogger.error('SWSE | Error loading force powers:', error);
       return [];
     }
   }

@@ -1,9 +1,10 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Base Actor Sheet
  * Provides common functionality for all SWSE actor sheets
  */
 
-import { CombatActionsMapper } from '../utils/combat-actions-mapper.js';
+import { CombatActionsMapper } from '../combat/utils/combat-actions-mapper.js';
 import { CustomItemDialog } from '../apps/custom-item-dialog.js';
 
 export class SWSEActorSheetBase extends ActorSheet {
@@ -240,7 +241,7 @@ export class SWSEActorSheetBase extends ActorSheet {
     if (typeof handler === 'function') {
       return handler.call(this, event);
     } else {
-      console.warn(`No handler found for action: ${action}`);
+      SWSELogger.warn(`No handler found for action: ${action}`);
     }
   }
   
@@ -775,7 +776,7 @@ export class SWSEActorSheetBase extends ActorSheet {
     const type = button.dataset.type;
 
     if (!type) {
-      console.warn("CreateItem action requires data-type attribute");
+      SWSELogger.warn("CreateItem action requires data-type attribute");
       return;
     }
 
@@ -796,7 +797,7 @@ export class SWSEActorSheetBase extends ActorSheet {
     const step = parseInt(button.dataset.step);
 
     if (isNaN(step)) {
-      console.warn("SetConditionTrack action requires data-step attribute");
+      SWSELogger.warn("SetConditionTrack action requires data-step attribute");
       return;
     }
 

@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Force Power Hooks
  * Handles automatic force power grants when feats are added or abilities change
@@ -23,17 +24,17 @@ export function initializeForcePowerHooks() {
     const actor = item.parent;
     const featName = item.name.toLowerCase();
 
-    console.log(`SWSE | Force Powers | Feat added: ${item.name}`);
+    SWSELogger.log(`SWSE | Force Powers | Feat added: ${item.name}`);
 
     // Check for Force Sensitivity
     if (featName.includes('force sensitivity') || featName === 'force sensitive') {
-      console.log('SWSE | Force Powers | Detected Force Sensitivity feat');
+      SWSELogger.log('SWSE | Force Powers | Detected Force Sensitivity feat');
       await ForcePowerManager.handleForceSensitivity(actor);
     }
 
     // Check for Force Training
     if (featName.includes('force training')) {
-      console.log('SWSE | Force Powers | Detected Force Training feat');
+      SWSELogger.log('SWSE | Force Powers | Detected Force Training feat');
 
       // Check prerequisite
       if (!ForcePowerManager.hasForceSensitivity(actor)) {
@@ -74,7 +75,7 @@ export function initializeForcePowerHooks() {
     const oldAbilities = options.oldAbilities;
     const newAbilities = actor.system.abilities;
 
-    console.log('SWSE | Force Powers | Checking for ability modifier increase');
+    SWSELogger.log('SWSE | Force Powers | Checking for ability modifier increase');
 
     await ForcePowerManager.handleAbilityIncrease(actor, oldAbilities, newAbilities);
   });
@@ -83,7 +84,7 @@ export function initializeForcePowerHooks() {
    * Hook into combat end to regain all Force Powers
    */
   Hooks.on('deleteCombat', async (combat, options, userId) => {
-    console.log('SWSE | Force Powers | Combat ended, regaining Force Powers for all combatants');
+    SWSELogger.log('SWSE | Force Powers | Combat ended, regaining Force Powers for all combatants');
 
     // Regain Force Powers for all actors who were in combat
     for (const combatant of combat.combatants) {
@@ -105,5 +106,5 @@ export function initializeForcePowerHooks() {
     }
   });
 
-  console.log('SWSE | Force Power hooks initialized');
+  SWSELogger.log('SWSE | Force Power hooks initialized');
 }

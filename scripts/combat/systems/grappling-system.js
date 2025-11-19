@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Grappling System for SWSE
  * Implements the complete grappling subsystem including:
@@ -509,7 +510,7 @@ export class SWSEGrappling {
    * Initialize grappling system
    */
   static init() {
-    console.log('SWSE | Grappling system initialized');
+    SWSELogger.log('SWSE | Grappling system initialized');
   }
 }
 

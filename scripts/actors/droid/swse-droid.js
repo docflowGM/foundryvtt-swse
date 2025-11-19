@@ -1,4 +1,5 @@
 import { SWSECharacterSheet } from '../character/swse-character-sheet.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 // ============================================
 // FILE: module/actors/swse-droid.js
@@ -33,7 +34,7 @@ export class SWSEDroidSheet extends SWSECharacterSheet {
     if (!this.options.editable) return;
 
     // Add droid-specific listeners here
-    console.log("SWSE | Droid sheet listeners activated");
+    SWSELogger.log("SWSE | Droid sheet listeners activated");
   }
 
   // ============================================

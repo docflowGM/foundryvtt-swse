@@ -1,8 +1,9 @@
+import { SWSELogger } from './logger.js';
 /**
  * Macro functions for SWSE
  */
 export function registerMacroFunctions() {
-  console.log("SWSE | Registering macro functions...");
+  SWSELogger.log("SWSE | Registering macro functions...");
   
   game.swse.rollSkill = async function(actorId, skillKey) {
     const actor = game.actors.get(actorId);
@@ -17,5 +18,5 @@ export function registerMacroFunctions() {
     });
   };
   
-  console.log("SWSE | Macro functions registered");
+  SWSELogger.log("SWSE | Macro functions registered");
 }

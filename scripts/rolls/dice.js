@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 // ============================================
 // FILE: rolls/dice.js
 // Generic dice rolling using SWSE utils
@@ -22,7 +23,7 @@ export async function rollDice(formula, data = {}, label = "Roll") {
     return roll;
   } catch (err) {
     ui.notifications.error(game.i18n.format('SWSE.Notifications.Rolls.DiceRollFailed', {error: err.message}));
-    console.error(err);
+    SWSELogger.error(err);
     return null;
   }
 }

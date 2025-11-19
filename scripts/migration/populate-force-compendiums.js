@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Force Compendiums Population Migration
  *
@@ -33,17 +34,17 @@ export class PopulateForceCompendiumsMigration {
   static async run() {
     // Only GMs can run migrations
     if (!game.user.isGM) {
-      console.log("SWSE | Skipping Force compendiums population (not GM)");
+      SWSELogger.log("SWSE | Skipping Force compendiums population (not GM)");
       return;
     }
 
     // Check if migration needed
     if (!(await this.needsMigration())) {
-      console.log("SWSE | Force compendiums already populated");
+      SWSELogger.log("SWSE | Force compendiums already populated");
       return;
     }
 
-    console.log("SWSE | Starting Force compendiums population...");
+    SWSELogger.log("SWSE | Starting Force compendiums population...");
     ui.notifications.info("Populating Force compendiums, please wait...");
 
     let totalCreated = 0;
@@ -63,17 +64,17 @@ export class PopulateForceCompendiumsMigration {
       totalCreated += formPowersCreated;
 
     } catch (err) {
-      console.error("SWSE | Force compendiums population failed:", err);
+      SWSELogger.error("SWSE | Force compendiums population failed:", err);
       totalErrors++;
     }
 
-    console.log("=".repeat(60));
-    console.log("SWSE | Force Compendiums Population Complete");
-    console.log(`✓ Created: ${totalCreated} items`);
+    SWSELogger.log("=".repeat(60));
+    SWSELogger.log("SWSE | Force Compendiums Population Complete");
+    SWSELogger.log(`✓ Created: ${totalCreated} items`);
     if (totalErrors > 0) {
-      console.log(`✗ Errors: ${totalErrors}`);
+      SWSELogger.log(`✗ Errors: ${totalErrors}`);
     }
-    console.log("=".repeat(60));
+    SWSELogger.log("=".repeat(60));
 
     // Mark migration as complete
     await this.markComplete();
@@ -93,25 +94,25 @@ export class PopulateForceCompendiumsMigration {
   static async populateForceTechniques() {
     const pack = game.packs.get('swse.forcetechniques');
     if (!pack) {
-      console.error("SWSE | Force Techniques compendium not found");
+      SWSELogger.error("SWSE | Force Techniques compendium not found");
       return 0;
     }
 
     // Check if already populated
     const existingContent = await pack.getDocuments();
     if (existingContent.length > 0) {
-      console.log("SWSE | Force Techniques compendium already has content, skipping");
+      SWSELogger.log("SWSE | Force Techniques compendium already has content, skipping");
       return 0;
     }
 
-    console.log("SWSE | Loading Force Techniques from JSON...");
+    SWSELogger.log("SWSE | Loading Force Techniques from JSON...");
 
     let data;
     try {
       const response = await fetch('systems/swse/data/force-techniques.json');
       data = await response.json();
     } catch (err) {
-      console.error("SWSE | Failed to load force-techniques.json:", err);
+      SWSELogger.error("SWSE | Failed to load force-techniques.json:", err);
       return 0;
     }
 
@@ -155,11 +156,11 @@ export class PopulateForceCompendiumsMigration {
         await pack.createDocument(itemData);
         created++;
       } catch (err) {
-        console.error(`SWSE | Failed to create Force Technique: ${technique.name}`, err);
+        SWSELogger.error(`SWSE | Failed to create Force Technique: ${technique.name}`, err);
       }
     }
 
-    console.log(`SWSE | Created ${created} Force Techniques`);
+    SWSELogger.log(`SWSE | Created ${created} Force Techniques`);
     return created;
   }
 
@@ -169,25 +170,25 @@ export class PopulateForceCompendiumsMigration {
   static async populateForceSecrets() {
     const pack = game.packs.get('swse.forcesecrets');
     if (!pack) {
-      console.error("SWSE | Force Secrets compendium not found");
+      SWSELogger.error("SWSE | Force Secrets compendium not found");
       return 0;
     }
 
     // Check if already populated
     const existingContent = await pack.getDocuments();
     if (existingContent.length > 0) {
-      console.log("SWSE | Force Secrets compendium already has content, skipping");
+      SWSELogger.log("SWSE | Force Secrets compendium already has content, skipping");
       return 0;
     }
 
-    console.log("SWSE | Loading Force Secrets from JSON...");
+    SWSELogger.log("SWSE | Loading Force Secrets from JSON...");
 
     let data;
     try {
       const response = await fetch('systems/swse/data/force-secrets.json');
       data = await response.json();
     } catch (err) {
-      console.error("SWSE | Failed to load force-secrets.json:", err);
+      SWSELogger.error("SWSE | Failed to load force-secrets.json:", err);
       return 0;
     }
 
@@ -226,11 +227,11 @@ export class PopulateForceCompendiumsMigration {
         await pack.createDocument(itemData);
         created++;
       } catch (err) {
-        console.error(`SWSE | Failed to create Force Secret: ${secret.name}`, err);
+        SWSELogger.error(`SWSE | Failed to create Force Secret: ${secret.name}`, err);
       }
     }
 
-    console.log(`SWSE | Created ${created} Force Secrets`);
+    SWSELogger.log(`SWSE | Created ${created} Force Secrets`);
     return created;
   }
 
@@ -240,25 +241,25 @@ export class PopulateForceCompendiumsMigration {
   static async populateLightsaberFormPowers() {
     const pack = game.packs.get('swse.lightsaberformpowers');
     if (!pack) {
-      console.error("SWSE | Lightsaber Form Powers compendium not found");
+      SWSELogger.error("SWSE | Lightsaber Form Powers compendium not found");
       return 0;
     }
 
     // Check if already populated
     const existingContent = await pack.getDocuments();
     if (existingContent.length > 0) {
-      console.log("SWSE | Lightsaber Form Powers compendium already has content, skipping");
+      SWSELogger.log("SWSE | Lightsaber Form Powers compendium already has content, skipping");
       return 0;
     }
 
-    console.log("SWSE | Loading Lightsaber Form Powers from JSON...");
+    SWSELogger.log("SWSE | Loading Lightsaber Form Powers from JSON...");
 
     let data;
     try {
       const response = await fetch('systems/swse/data/lightsaber-form-powers.json');
       data = await response.json();
     } catch (err) {
-      console.error("SWSE | Failed to load lightsaber-form-powers.json:", err);
+      SWSELogger.error("SWSE | Failed to load lightsaber-form-powers.json:", err);
       return 0;
     }
 
@@ -318,11 +319,11 @@ export class PopulateForceCompendiumsMigration {
         await pack.createDocument(itemData);
         created++;
       } catch (err) {
-        console.error(`SWSE | Failed to create Lightsaber Form Power: ${power.name}`, err);
+        SWSELogger.error(`SWSE | Failed to create Lightsaber Form Power: ${power.name}`, err);
       }
     }
 
-    console.log(`SWSE | Created ${created} Lightsaber Form Powers`);
+    SWSELogger.log(`SWSE | Created ${created} Lightsaber Form Powers`);
     return created;
   }
 }
@@ -340,10 +341,10 @@ Hooks.once('ready', async () => {
     try {
       await PopulateForceCompendiumsMigration.run();
     } catch (err) {
-      console.error("SWSE | Force compendiums population failed:", err);
+      SWSELogger.error("SWSE | Force compendiums population failed:", err);
       ui.notifications.error(`Force compendiums population failed: ${err.message || err}`, { permanent: true });
     }
   }
 });
 
-console.log("SWSE | Force compendiums population script loaded. Manual run: await game.swse.migrations.populateForceCompendiums()");
+SWSELogger.log("SWSE | Force compendiums population script loaded. Manual run: await game.swse.migrations.populateForceCompendiums()");

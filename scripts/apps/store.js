@@ -3,6 +3,7 @@
  * Provides a holographic marketplace interface for buying and selling items
  */
 
+import { SWSELogger } from '../utils/logger.js';
 import CharacterGenerator from './chargen.js';
 import { VehicleModificationApp } from './vehicle-modification-app.js';
 
@@ -1206,7 +1207,7 @@ export class SWSEStore extends FormApplication {
             ui.notifications.info(`${droidTemplate.name} purchased! Check your actors list.`);
             this.render();
         } catch (err) {
-            console.error("SWSE Store | Droid purchase failed:", err);
+            SWSELogger.error("SWSE Store | Droid purchase failed:", err);
             ui.notifications.error("Failed to complete droid purchase.");
         }
     }
@@ -1287,7 +1288,7 @@ export class SWSEStore extends FormApplication {
             ui.notifications.info(`${vehicleTemplate.name} purchased! Check your actors list.`);
             this.render();
         } catch (err) {
-            console.error("SWSE Store | Vehicle purchase failed:", err);
+            SWSELogger.error("SWSE Store | Vehicle purchase failed:", err);
             ui.notifications.error("Failed to complete vehicle purchase.");
         }
     }
@@ -1332,7 +1333,7 @@ export class SWSEStore extends FormApplication {
 
             chargen.render(true);
         } catch (err) {
-            console.error("SWSE Store | Failed to launch droid builder:", err);
+            SWSELogger.error("SWSE Store | Failed to launch droid builder:", err);
             ui.notifications.error("Failed to open droid builder.");
         }
     }
@@ -1371,7 +1372,7 @@ export class SWSEStore extends FormApplication {
             // Launch vehicle modification app
             await VehicleModificationApp.open(this.actor);
         } catch (err) {
-            console.error("SWSE Store | Failed to launch starship builder:", err);
+            SWSELogger.error("SWSE Store | Failed to launch starship builder:", err);
             ui.notifications.error("Failed to open starship builder.");
         }
     }
@@ -1645,7 +1646,7 @@ export class SWSEStore extends FormApplication {
             // Wait for animation to complete before re-rendering
             setTimeout(() => this.render(), 700);
         } catch (err) {
-            console.error("SWSE Store | Checkout failed:", err);
+            SWSELogger.error("SWSE Store | Checkout failed:", err);
             ui.notifications.error("Failed to complete purchase.");
         }
     }
@@ -1684,7 +1685,7 @@ export class SWSEStore extends FormApplication {
             ui.notifications.info("Store settings updated.");
             this.render();
         } catch (err) {
-            console.error("SWSE Store | Failed to save settings:", err);
+            SWSELogger.error("SWSE Store | Failed to save settings:", err);
             ui.notifications.error("Failed to save store settings.");
         }
     }

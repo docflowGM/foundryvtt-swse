@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Vehicle Combat System for SWSE
  * Implements complete SWSE vehicle combat rules including:
@@ -1079,7 +1080,7 @@ export class SWSEVehicleCombat {
    * Initialize vehicle combat system
    */
   static init() {
-    console.log('SWSE | Vehicle Combat System initialized');
+    SWSELogger.log('SWSE | Vehicle Combat System initialized');
   }
 }
 

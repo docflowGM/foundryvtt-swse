@@ -4,6 +4,8 @@
  * Only loads the active theme to improve performance
  */
 
+import { SWSELogger } from './utils/logger.js';
+
 export class ThemeLoader {
   /**
    * Currently loaded theme stylesheet element
@@ -32,7 +34,7 @@ export class ThemeLoader {
   static async loadTheme(themeName) {
     // Validate theme name
     if (!this.themes.includes(themeName)) {
-      console.warn(`[SWSE Theme] Unknown theme: ${themeName}. Falling back to holo.`);
+      SWSELogger.warn(`[SWSE Theme] Unknown theme: ${themeName}. Falling back to holo.`);
       themeName = 'holo';
     }
 
@@ -55,12 +57,12 @@ export class ThemeLoader {
     // Load the stylesheet
     return new Promise((resolve, reject) => {
       link.onload = () => {
-        console.log(`[SWSE Theme] Loaded theme: ${themeName}`);
+        SWSELogger.log(`[SWSE Theme] Loaded theme: ${themeName}`);
         resolve();
       };
 
       link.onerror = () => {
-        console.error(`[SWSE Theme] Failed to load theme: ${themeName}`);
+        SWSELogger.error(`[SWSE Theme] Failed to load theme: ${themeName}`);
         reject(new Error(`Failed to load theme: ${themeName}`));
       };
 
@@ -84,7 +86,7 @@ export class ThemeLoader {
       this.rerenderSWSESheets();
 
     } catch (error) {
-      console.error('[SWSE Theme] Error applying theme:', error);
+      SWSELogger.error('[SWSE Theme] Error applying theme:', error);
       ui.notifications?.error?.(`Failed to apply theme: ${themeName}`);
     }
   }
@@ -110,7 +112,7 @@ export class ThemeLoader {
       }
     }
 
-    console.log(`[SWSE Theme] Re-rendered ${renderedCount} SWSE sheets`);
+    SWSELogger.log(`[SWSE Theme] Re-rendered ${renderedCount} SWSE sheets`);
   }
 
   /**
@@ -118,7 +120,7 @@ export class ThemeLoader {
    * Called during Foundry init hook
    */
   static initialize() {
-    console.log('[SWSE Theme] Theme loader initialized');
+    SWSELogger.log('[SWSE Theme] Theme loader initialized');
 
     // Load initial theme from settings
     Hooks.once('ready', () => {
@@ -134,6 +136,6 @@ export class ThemeLoader {
  * @deprecated Use ThemeLoader.applyTheme() instead
  */
 window.applyTheme = function(themeName) {
-  console.warn('[SWSE Theme] applyTheme() is deprecated. Use ThemeLoader.applyTheme() instead.');
+  SWSELogger.warn('[SWSE Theme] applyTheme() is deprecated. Use ThemeLoader.applyTheme() instead.');
   ThemeLoader.applyTheme(themeName);
 };

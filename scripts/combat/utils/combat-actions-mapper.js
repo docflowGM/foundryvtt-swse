@@ -1,3 +1,4 @@
+import { SWSELogger } from './logger.js';
 /**
  * Combat Actions Mapper
  * Maps combat actions and extra skill uses to skills for display on character sheets
@@ -35,9 +36,9 @@ export class CombatActionsMapper {
       this._talentEnhancementsData = await talentResponse.json();
 
       this._initialized = true;
-      console.log('SWSE | Combat Actions Mapper initialized (character & ship combat, talent enhancements)');
+      SWSELogger.log('SWSE | Combat Actions Mapper initialized (character & ship combat, talent enhancements)');
     } catch (error) {
-      console.error('SWSE | Failed to load combat actions data:', error);
+      SWSELogger.error('SWSE | Failed to load combat actions data:', error);
       this._combatActionsData = [];
       this._extraSkillUsesData = [];
       this._shipCombatActionsData = [];
@@ -52,7 +53,7 @@ export class CombatActionsMapper {
    */
   static getActionsForSkill(skillKey) {
     if (!this._initialized || !this._combatActionsData) {
-      console.warn('SWSE | Combat Actions Mapper not initialized');
+      SWSELogger.warn('SWSE | Combat Actions Mapper not initialized');
       return { combatActions: [], extraUses: [], hasActions: false };
     }
 
@@ -192,7 +193,7 @@ export class CombatActionsMapper {
    */
   static getActionsForCrewPosition(crewPosition) {
     if (!this._initialized || !this._shipCombatActionsData) {
-      console.warn('SWSE | Combat Actions Mapper not initialized');
+      SWSELogger.warn('SWSE | Combat Actions Mapper not initialized');
       return [];
     }
 
@@ -265,7 +266,7 @@ export class CombatActionsMapper {
    */
   static getEnhancementsForAction(actionKey, actor) {
     if (!this._initialized || !this._talentEnhancementsData) {
-      console.warn('SWSE | Talent enhancements data not loaded');
+      SWSELogger.warn('SWSE | Talent enhancements data not loaded');
       return [];
     }
 

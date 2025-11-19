@@ -1,6 +1,7 @@
 import { SWSECharacterSheet } from '../character/swse-character-sheet.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { SWSEVehicleHandler } from './swse-vehicle-handler.js';
-import { CombatActionsMapper } from '../../utils/combat-actions-mapper.js';
+import { CombatActionsMapper } from '../../combat/utils/combat-actions-mapper.js';
 
 export class SWSEVehicleSheet extends SWSECharacterSheet {
   static get defaultOptions() {
@@ -107,7 +108,7 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     try {
       data = JSON.parse(event.dataTransfer.getData('text/plain'));
     } catch (err) {
-      console.error('SWSE | Failed to parse drop data:', err);
+      SWSELogger.error('SWSE | Failed to parse drop data:', err);
       return false;
     }
     
@@ -115,11 +116,11 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     if (data.type === 'Item') {
       const item = await fromUuid(data.uuid);
       if (!item) {
-        console.warn('SWSE | Could not find dropped item');
+        SWSELogger.warn('SWSE | Could not find dropped item');
         return false;
       }
       
-      console.log('SWSE | Item dropped on vehicle:', item.name, item.type);
+      SWSELogger.log('SWSE | Item dropped on vehicle:', item.name, item.type);
       
       // Check if this is a weapon Item
       if (item.type === 'weapon') {
@@ -150,7 +151,7 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
    * Converts weapon Item to vehicle weapon format and adds to array
    */
   async _handleWeaponDrop(weaponItem) {
-    console.log('SWSE | Adding weapon to vehicle:', weaponItem.name);
+    SWSELogger.log('SWSE | Adding weapon to vehicle:', weaponItem.name);
     
     const weapons = [...(this.actor.system.weapons || [])];
     
@@ -250,7 +251,7 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
         }
       }
     } catch (error) {
-      console.warn('SWSE | Failed to assign crew member:', error.message);
+      SWSELogger.warn('SWSE | Failed to assign crew member:', error.message);
     }
   }
 

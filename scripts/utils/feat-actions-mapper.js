@@ -1,3 +1,4 @@
+import { SWSELogger } from './logger.js';
 /**
  * Feat Actions Mapper
  * Maps feat-granted combat actions to character abilities
@@ -132,7 +133,7 @@ export class FeatActionsMapper {
         try {
           value = eval(formula);
         } catch (e) {
-          console.warn(`SWSE | Failed to evaluate formula: ${formula}`, e);
+          SWSELogger.warn(`SWSE | Failed to evaluate formula: ${formula}`, e);
           value = 0;
         }
       }

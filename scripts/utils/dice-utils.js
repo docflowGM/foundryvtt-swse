@@ -1,3 +1,4 @@
+import { SWSELogger } from './logger.js';
 // ============================================
 // FILE: dice-utils.js
 // Merged dice rolling utilities for SWSE
@@ -34,7 +35,7 @@ export async function rollDice(formula, data = {}, label = "Roll") {
         return roll;
     } catch (err) {
         ui.notifications.error(`Dice roll failed: ${err.message}`);
-        console.error(err);
+        SWSELogger.error(err);
         return null;
     }
 }

@@ -1,4 +1,5 @@
 
+import { SWSELogger } from '../utils/logger.js';
 // Optimized data loader for SWSE
 const CACHE = {};
 const DATA_FILES = {
@@ -22,7 +23,7 @@ async function loadJson(filename) {
     const data = await response.json();
     return Array.isArray(data) ? data : Object.values(data);
   } catch (err) {
-    console.error(`SWSE | Error loading ${filename}:`, err);
+    SWSELogger.error(`SWSE | Error loading ${filename}:`, err);
     return null;
   }
 }

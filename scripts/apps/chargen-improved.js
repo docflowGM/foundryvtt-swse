@@ -1,4 +1,5 @@
 // ============================================
+import { SWSELogger } from '../utils/logger.js';
 // SWSE Character Generator - IMPROVED
 // Fully integrated with houserules and database
 // Multi-level support with automatic progression
@@ -64,7 +65,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   // ========================================
   _onLevelChange(event) {
     this.targetLevel = Math.max(1, Math.min(20, parseInt(event.target.value) || 1));
-    console.log(`SWSE CharGen | Target level set to ${this.targetLevel}`);
+    SWSELogger.log(`SWSE CharGen | Target level set to ${this.targetLevel}`);
   }
 
   // ========================================
@@ -128,7 +129,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     }
 
     this.characterData.class = classDoc;
-    console.log(`SWSE CharGen | Selected class: ${className}`, classDoc.system);
+    SWSELogger.log(`SWSE CharGen | Selected class: ${className}`, classDoc.system);
 
     // Apply class data from database
     await this._applyClassData(classDoc);
@@ -171,13 +172,13 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       temp: 0
     };
 
-    console.log(`SWSE CharGen | HP: ${this.characterData.hp.max} (${hitDie} * 5)`);
+    SWSELogger.log(`SWSE CharGen | HP: ${this.characterData.hp.max} (${hitDie} * 5)`);
 
     // Auto-apply starting feats if any
     if (classSystem.startingFeatures) {
       classSystem.startingFeatures.forEach(feature => {
         if (feature.type === 'proficiency' || feature.type === 'class_feature') {
-          console.log(`SWSE CharGen | Auto-applying: ${feature.name}`);
+          SWSELogger.log(`SWSE CharGen | Auto-applying: ${feature.name}`);
         }
       });
     }
@@ -202,7 +203,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     `;
 
     // Show tooltip (implementation varies based on your UI framework)
-    console.log(preview);
+    SWSELogger.log(preview);
   }
 
   _hideClassPreview() {
@@ -245,7 +246,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       actor.sheet.render(true);
 
     } catch (err) {
-      console.error("SWSE CharGen | Error creating character:", err);
+      SWSELogger.error("SWSE CharGen | Error creating character:", err);
       ui.notifications.error(`Character creation failed: ${err.message}`);
     }
   }
@@ -287,7 +288,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       }
     };
 
-    console.log("SWSE CharGen | Creating actor with data:", actorData);
+    SWSELogger.log("SWSE CharGen | Creating actor with data:", actorData);
 
     const actor = await Actor.create(actorData);
     return actor;
@@ -299,7 +300,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   async _addImportedDroidEquipment(actor, droid) {
     try {
       if (!droid.system || !droid.system.equipment) {
-        console.log("SWSE CharGen | No equipment found for imported droid");
+        SWSELogger.log("SWSE CharGen | No equipment found for imported droid");
         return;
       }
 
@@ -309,11 +310,11 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
       if (items.length > 0) {
         await actor.createEmbeddedDocuments("Item", items);
-        console.log(`SWSE CharGen | Added ${items.length} equipment items from imported droid`);
+        SWSELogger.log(`SWSE CharGen | Added ${items.length} equipment items from imported droid`);
         ui.notifications.info(`Added ${items.length} equipment items from droid template`);
       }
     } catch (err) {
-      console.error("SWSE CharGen | Error adding imported droid equipment:", err);
+      SWSELogger.error("SWSE CharGen | Error adding imported droid equipment:", err);
     }
   }
 
@@ -326,7 +327,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     // Auto-grant Weapon Finesse if houserule is enabled
     const weaponFinesseDefault = game.settings.get("swse", "weaponFinesseDefault");
     if (weaponFinesseDefault) {
-      console.log("SWSE CharGen | Auto-granting Weapon Finesse (houserule)");
+      SWSELogger.log("SWSE CharGen | Auto-granting Weapon Finesse (houserule)");
 
       // Find Weapon Finesse feat in compendium
       const featPack = game.packs.get('swse.feats');
@@ -344,7 +345,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     // Apply any other houserule bonuses here
     const blockDeflectTalents = game.settings.get("swse", "blockDeflectTalents");
     if (blockDeflectTalents === "combined") {
-      console.log("SWSE CharGen | Block/Deflect set to combined (houserule)");
+      SWSELogger.log("SWSE CharGen | Block/Deflect set to combined (houserule)");
     }
 
     if (Object.keys(updates).length > 0) {
@@ -369,7 +370,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   }
 
   async _performLevelUp(actor, newLevel) {
-    console.log(`SWSE CharGen | Leveling up to level ${newLevel}`);
+    SWSELogger.log(`SWSE CharGen | Leveling up to level ${newLevel}`);
 
     const classData = this.characterData.classData;
     const conMod = this.characterData.isDroid ? 0 : (this.characterData.abilities.con.mod || 0);
@@ -384,7 +385,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     if (newLevel <= maxHPLevels) {
       // Levels within maxHPLevels get maximum HP
       hpGain = hitDie + conMod;
-      console.log(`SWSE CharGen | Level ${newLevel} gets max HP: ${hpGain}`);
+      SWSELogger.log(`SWSE CharGen | Level ${newLevel} gets max HP: ${hpGain}`);
     } else {
       // Apply HP generation method
       switch (hpGeneration) {
@@ -405,7 +406,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
         default:
           hpGain = Math.floor(hitDie / 2) + 1 + conMod;
       }
-      console.log(`SWSE CharGen | Level ${newLevel} HP roll (${hpGeneration}): ${hpGain}`);
+      SWSELogger.log(`SWSE CharGen | Level ${newLevel} HP roll (${hpGeneration}): ${hpGain}`);
     }
 
     // Update actor
@@ -418,6 +419,6 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       "system.hp.value": newHP
     });
 
-    console.log(`SWSE CharGen | Level ${newLevel} complete. HP: ${currentHP} -> ${newHP}`);
+    SWSELogger.log(`SWSE CharGen | Level ${newLevel} complete. HP: ${currentHP} -> ${newHP}`);
   }
 }

@@ -1,8 +1,9 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Chat commands for SWSE
  */
 export function registerChatCommands() {
-  console.log("SWSE | Registering chat commands...");
+  SWSELogger.log("SWSE | Registering chat commands...");
   
   Hooks.on("chatMessage", (chatLog, message) => {
     const [command, ...args] = message.split(" ");
@@ -38,5 +39,5 @@ export function registerChatCommands() {
     return true;
   });
   
-  console.log("SWSE | Chat commands registered");
+  SWSELogger.log("SWSE | Chat commands registered");
 }

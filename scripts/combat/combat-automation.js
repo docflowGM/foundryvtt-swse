@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Combat Automation
  * Handles automatic damage threshold checks, condition track, etc.
@@ -41,7 +42,7 @@ export class SWSECombatAutomation {
     // Hook for combat end - cleanup
     Hooks.on('combatEnd', async (combat) => {
       // Log combat end
-      console.log('SWSE | Combat ended');
+      SWSELogger.log('SWSE | Combat ended');
     });
   }
 

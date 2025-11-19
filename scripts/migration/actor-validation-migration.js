@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Actor Validation Migration
  * Comprehensive migration to fix all actor validation errors
@@ -36,17 +37,17 @@ export class ActorValidationMigration {
   static async run() {
     // Only GMs can run migrations
     if (!game.user.isGM) {
-      console.log("SWSE | Skipping actor validation migration (not GM)");
+      SWSELogger.log("SWSE | Skipping actor validation migration (not GM)");
       return;
     }
 
     // Check if migration needed
     if (!(await this.needsMigration())) {
-      console.log("SWSE | Actor validation migration already complete");
+      SWSELogger.log("SWSE | Actor validation migration already complete");
       return;
     }
 
-    console.log("SWSE | Starting actor validation migration...");
+    SWSELogger.log("SWSE | Starting actor validation migration...");
     ui.notifications.info("Running actor data migration, please wait...");
 
     let fixed = 0;
@@ -72,7 +73,7 @@ export class ActorValidationMigration {
           if (validSizes.includes(newSize)) {
             updates['system.size'] = newSize;
             needsUpdate = true;
-            console.log(`Fixing ${actor.name}: size "${currentSize}" -> "${newSize}"`);
+            SWSELogger.log(`Fixing ${actor.name}: size "${currentSize}" -> "${newSize}"`);
           }
         }
 
@@ -85,7 +86,7 @@ export class ActorValidationMigration {
           const initValue = actor.system?.initiative;
           updates['system.initiative'] = Math.floor(Number(initValue) || 0);
           needsUpdate = true;
-          console.log(`Fixing ${actor.name}: initiative to integer (was ${initValue})`);
+          SWSELogger.log(`Fixing ${actor.name}: initiative to integer (was ${initValue})`);
         }
 
         // Speed (skip for vehicles as they use string speed values)
@@ -94,7 +95,7 @@ export class ActorValidationMigration {
             const speedValue = actor.system?.speed;
             updates['system.speed'] = Math.floor(Number(speedValue) || 6);
             needsUpdate = true;
-            console.log(`Fixing ${actor.name}: speed to integer (was ${speedValue})`);
+            SWSELogger.log(`Fixing ${actor.name}: speed to integer (was ${speedValue})`);
           }
         }
 
@@ -103,7 +104,7 @@ export class ActorValidationMigration {
           const dtValue = actor.system?.damageThreshold;
           updates['system.damageThreshold'] = Math.floor(Number(dtValue) || 10);
           needsUpdate = true;
-          console.log(`Fixing ${actor.name}: damageThreshold to integer (was ${dtValue})`);
+          SWSELogger.log(`Fixing ${actor.name}: damageThreshold to integer (was ${dtValue})`);
         }
 
         // BAB
@@ -111,7 +112,7 @@ export class ActorValidationMigration {
           const babValue = actor.system?.bab;
           updates['system.bab'] = Math.floor(Number(babValue) || 0);
           needsUpdate = true;
-          console.log(`Fixing ${actor.name}: bab to integer (was ${babValue})`);
+          SWSELogger.log(`Fixing ${actor.name}: bab to integer (was ${babValue})`);
         }
 
         // Base Attack
@@ -119,7 +120,7 @@ export class ActorValidationMigration {
           const baseAttackValue = actor.system?.baseAttack;
           updates['system.baseAttack'] = Math.floor(Number(baseAttackValue) || 0);
           needsUpdate = true;
-          console.log(`Fixing ${actor.name}: baseAttack to integer (was ${baseAttackValue})`);
+          SWSELogger.log(`Fixing ${actor.name}: baseAttack to integer (was ${baseAttackValue})`);
         }
 
         // ============================================
@@ -137,7 +138,7 @@ export class ActorValidationMigration {
 
         // Ensure defenses object exists
         if (!actor.system?.defenses) {
-          console.log(`Fixing ${actor.name}: creating missing defenses structure`);
+          SWSELogger.log(`Fixing ${actor.name}: creating missing defenses structure`);
           updates['system.defenses'] = {
             reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
             fortitude: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
@@ -149,7 +150,7 @@ export class ActorValidationMigration {
 
           // Fix Reflex defense - create if missing
           if (!defenses.reflex) {
-            console.log(`Fixing ${actor.name}: creating missing reflex defense`);
+            SWSELogger.log(`Fixing ${actor.name}: creating missing reflex defense`);
             updates['system.defenses.reflex'] = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
             needsUpdate = true;
           } else {
@@ -178,7 +179,7 @@ export class ActorValidationMigration {
 
           // Fix Fortitude defense - create if missing
           if (!defenses.fortitude) {
-            console.log(`Fixing ${actor.name}: creating missing fortitude defense`);
+            SWSELogger.log(`Fixing ${actor.name}: creating missing fortitude defense`);
             updates['system.defenses.fortitude'] = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
             needsUpdate = true;
           } else {
@@ -207,7 +208,7 @@ export class ActorValidationMigration {
 
           // Fix Will defense - create if missing
           if (!defenses.will) {
-            console.log(`Fixing ${actor.name}: creating missing will defense`);
+            SWSELogger.log(`Fixing ${actor.name}: creating missing will defense`);
             updates['system.defenses.will'] = { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 };
             needsUpdate = true;
           } else {
@@ -240,7 +241,7 @@ export class ActorValidationMigration {
         // ============================================
 
         if (needsUpdate) {
-          console.log(`Updating ${actor.name} with fixes:`, updates);
+          SWSELogger.log(`Updating ${actor.name} with fixes:`, updates);
           await actor.update(updates);
           fixed++;
         } else {
@@ -248,19 +249,19 @@ export class ActorValidationMigration {
         }
 
       } catch (err) {
-        console.error(`Error fixing ${actor.name}:`, err);
+        SWSELogger.error(`Error fixing ${actor.name}:`, err);
         errors++;
       }
     }
 
-    console.log("=".repeat(60));
-    console.log("SWSE | Actor Validation Migration Complete");
-    console.log(`✓ Fixed: ${fixed} actors`);
-    console.log(`○ Skipped: ${skipped} actors (already valid)`);
+    SWSELogger.log("=".repeat(60));
+    SWSELogger.log("SWSE | Actor Validation Migration Complete");
+    SWSELogger.log(`✓ Fixed: ${fixed} actors`);
+    SWSELogger.log(`○ Skipped: ${skipped} actors (already valid)`);
     if (errors > 0) {
-      console.log(`✗ Errors: ${errors} actors`);
+      SWSELogger.log(`✗ Errors: ${errors} actors`);
     }
-    console.log("=".repeat(60));
+    SWSELogger.log("=".repeat(60));
 
     // Mark migration as complete
     await this.markComplete();
@@ -288,10 +289,10 @@ Hooks.once('ready', async () => {
     try {
       await ActorValidationMigration.run();
     } catch (err) {
-      console.error("SWSE | Actor validation migration failed:", err);
+      SWSELogger.error("SWSE | Actor validation migration failed:", err);
       ui.notifications.error("Actor migration failed. Check console for details.");
     }
   }
 });
 
-console.log("SWSE | Actor validation migration script loaded. Manual run: await game.swse.migrations.fixActorValidation()");
+SWSELogger.log("SWSE | Actor validation migration script loaded. Manual run: await game.swse.migrations.fixActorValidation()");

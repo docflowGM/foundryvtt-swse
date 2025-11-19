@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Manages the canvas UI toolbar and tools for SWSE
  */
@@ -9,7 +10,7 @@ export class CanvasUIManager {
      * Initialize the canvas UI manager
      */
     static initialize() {
-        console.log("SWSE | Initializing Canvas UI Manager");
+        SWSELogger.log("SWSE | Initializing Canvas UI Manager");
 
         // Wait for canvas to be ready
         Hooks.on('canvasReady', () => {
@@ -41,7 +42,7 @@ export class CanvasUIManager {
         $('body').append(html);
         this.toolbar = $(`#${this.TOOLBAR_ID}`);
 
-        console.log("SWSE | Canvas toolbar rendered");
+        SWSELogger.log("SWSE | Canvas toolbar rendered");
     }
 
     /**
@@ -168,7 +169,7 @@ export class CanvasUIManager {
      * Handle toolbar actions
      */
     static async _handleAction(action, tool, event) {
-        console.log(`SWSE | Canvas UI Action: ${action}`, tool);
+        SWSELogger.log(`SWSE | Canvas UI Action: ${action}`, tool);
 
         switch(action) {
             case 'quickRoll':
@@ -199,7 +200,7 @@ export class CanvasUIManager {
                 await this._measureDistance();
                 break;
             default:
-                console.warn(`SWSE | Unknown canvas UI action: ${action}`);
+                SWSELogger.warn(`SWSE | Unknown canvas UI action: ${action}`);
         }
 
         // Close dropdown after action

@@ -69,11 +69,11 @@ import './scripts/migration/populate-force-compendiums.js';
 /* -------------------------------------------- */
 
 import { DamageSystem } from './scripts/combat/damage-system.js';
-import { SWSECombatAutomation } from './scripts/automation/combat-automation.js';
-import { CombatActionsMapper } from './scripts/utils/combat-actions-mapper.js';
-import { SWSECombat } from './scripts/combat/enhanced-combat-system.js';
-import { SWSEGrappling } from './scripts/combat/grappling-system.js';
-import { SWSEVehicleCombat } from './scripts/combat/vehicle-combat-system.js';
+import { SWSECombatAutomation } from './scripts/combat/combat-automation.js';
+import { CombatActionsMapper } from './scripts/combat/utils/combat-actions-mapper.js';
+import { SWSECombat } from './scripts/combat/systems/enhanced-combat-system.js';
+import { SWSEGrappling } from './scripts/combat/systems/grappling-system.js';
+import { SWSEVehicleCombat } from './scripts/combat/systems/vehicle-combat-system.js';
 
 /* -------------------------------------------- */
 /*  Force Powers                                */

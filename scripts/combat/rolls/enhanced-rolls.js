@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 import { DamageSystem } from '../combat/damage-system.js';
 
 /**
@@ -313,7 +314,7 @@ export class SWSERoll {
       const response = await fetch('systems/swse/data/force-power-descriptions.json');
       descriptions = await response.json();
     } catch (error) {
-      console.warn('SWSE | Could not load Force power descriptions:', error);
+      SWSELogger.warn('SWSE | Could not load Force power descriptions:', error);
     }
 
     // Get random intro and manifestation based on discipline

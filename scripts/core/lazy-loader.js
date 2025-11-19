@@ -1,4 +1,5 @@
 /**
+import { SWSELogger } from '../utils/logger.js';
  * Lazy Loading Manager
  * Defers loading of non-critical resources until needed
  */
@@ -39,7 +40,7 @@ export class LazyLoader {
   async loadTemplate(name) {
     const template = this._templates.get(name);
     if (!template) {
-      console.warn(`SWSE | Template not registered: ${name}`);
+      SWSELogger.warn(`SWSE | Template not registered: ${name}`);
       return false;
     }
 
@@ -52,7 +53,7 @@ export class LazyLoader {
       template.loaded = true;
       return true;
     } catch (error) {
-      console.error(`SWSE | Failed to load template ${name}:`, error);
+      SWSELogger.error(`SWSE | Failed to load template ${name}:`, error);
       return false;
     }
   }
@@ -105,7 +106,7 @@ export class LazyLoader {
   async loadModule(name) {
     const module = this._modules.get(name);
     if (!module) {
-      console.warn(`SWSE | Module not registered: ${name}`);
+      SWSELogger.warn(`SWSE | Module not registered: ${name}`);
       return null;
     }
 
@@ -118,7 +119,7 @@ export class LazyLoader {
       module.loaded = true;
       return module.instance;
     } catch (error) {
-      console.error(`SWSE | Failed to load module ${name}:`, error);
+      SWSELogger.error(`SWSE | Failed to load module ${name}:`, error);
       return null;
     }
   }
@@ -129,7 +130,7 @@ export class LazyLoader {
    */
   setupLazyImages() {
     if (!('IntersectionObserver' in window)) {
-      console.warn('SWSE | IntersectionObserver not supported, images will load immediately');
+      SWSELogger.warn('SWSE | IntersectionObserver not supported, images will load immediately');
       return;
     }
 
@@ -210,7 +211,7 @@ export class LazyLoader {
 
             loadedTabs.add(tabName);
           } catch (error) {
-            console.error(`SWSE | Failed to load tab ${tabName}:`, error);
+            SWSELogger.error(`SWSE | Failed to load tab ${tabName}:`, error);
             tabContent.html(originalContent);
           }
         }

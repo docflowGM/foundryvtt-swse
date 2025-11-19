@@ -1,4 +1,5 @@
 /**
+import { SWSELogger } from '../utils/logger.js';
  * Cache Manager
  * Provides intelligent caching for frequently accessed data
  * Reduces compendium lookups and improves performance
@@ -139,7 +140,7 @@ class Cache {
         this._data.delete(key);
         this._lruTimestamps.delete(key);
       } catch (error) {
-        console.error(`SWSE | Cache TTL cleanup error for key "${key}":`, error);
+        SWSELogger.error(`SWSE | Cache TTL cleanup error for key "${key}":`, error);
       }
     }, this.ttl);
 

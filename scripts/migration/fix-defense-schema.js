@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Defense Schema Migration
  * Fixes actor data to match the correct defense schema structure
@@ -9,7 +10,7 @@
 export class DefenseSchemaMigration {
   
   static async fixDefenseSchema() {
-    console.log("SWSE | Starting defense schema migration...");
+    SWSELogger.log("SWSE | Starting defense schema migration...");
     
     let fixed = 0;
     let skipped = 0;
@@ -25,7 +26,7 @@ export class DefenseSchemaMigration {
         
         // If defenses.reflex is a number instead of an object, fix it
         if (typeof defenses?.reflex === 'number') {
-          console.log(`Fixing ${actor.name} - defenses are numbers`);
+          SWSELogger.log(`Fixing ${actor.name} - defenses are numbers`);
           
           updates['system.defenses'] = {
             reflex: {
@@ -58,7 +59,7 @@ export class DefenseSchemaMigration {
         // If defenses are objects but missing required fields, add them
         else if (defenses?.reflex && typeof defenses.reflex === 'object') {
           if (!('armor' in defenses.reflex) || !('classBonus' in defenses.reflex)) {
-            console.log(`Fixing ${actor.name} - defenses missing fields`);
+            SWSELogger.log(`Fixing ${actor.name} - defenses missing fields`);
             
             updates['system.defenses.reflex.armor'] = defenses.reflex.armor ?? 0;
             updates['system.defenses.reflex.classBonus'] = defenses.reflex.classBonus ?? 0;
@@ -82,25 +83,25 @@ export class DefenseSchemaMigration {
         if (needsUpdate) {
           await actor.update(updates);
           fixed++;
-          console.log(`✓ Fixed ${actor.name}`);
+          SWSELogger.log(`✓ Fixed ${actor.name}`);
         } else {
           skipped++;
         }
         
       } catch (err) {
-        console.error(`Error fixing ${actor.name}:`, err);
+        SWSELogger.error(`Error fixing ${actor.name}:`, err);
         errors++;
       }
     }
     
-    console.log("=" .repeat(60));
-    console.log("SWSE | Defense Schema Migration Complete");
-    console.log(`✓ Fixed: ${fixed} actors`);
-    console.log(`○ Skipped: ${skipped} actors (already correct)`);
+    SWSELogger.log("=" .repeat(60));
+    SWSELogger.log("SWSE | Defense Schema Migration Complete");
+    SWSELogger.log(`✓ Fixed: ${fixed} actors`);
+    SWSELogger.log(`○ Skipped: ${skipped} actors (already correct)`);
     if (errors > 0) {
-      console.log(`✗ Errors: ${errors} actors`);
+      SWSELogger.log(`✗ Errors: ${errors} actors`);
     }
-    console.log("=" .repeat(60));
+    SWSELogger.log("=" .repeat(60));
     
     ui.notifications.info(`Defense schema migration complete! Fixed ${fixed} actors.`);
   }
@@ -111,4 +112,4 @@ if (!game.swse) game.swse = {};
 if (!game.swse.migrations) game.swse.migrations = {};
 game.swse.migrations.fixDefenseSchema = DefenseSchemaMigration.fixDefenseSchema.bind(DefenseSchemaMigration);
 
-console.log("SWSE | Defense migration script loaded. Run: await game.swse.migrations.fixDefenseSchema()");
+SWSELogger.log("SWSE | Defense migration script loaded. Run: await game.swse.migrations.fixDefenseSchema()");

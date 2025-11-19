@@ -1,10 +1,83 @@
+import { SWSELogger } from '../utils/logger.js';
 import { SWSEActorDataModel } from './actor-data-model.js';
 
 export class SWSECharacterDataModel extends SWSEActorDataModel {
 
+  /**
+   * Helper: Create an attribute schema (base, racial, enhancement, temp)
+   */
+  static _createAttributeSchema() {
+    const fields = foundry.data.fields;
+    return {
+      base: new fields.NumberField({required: true, initial: 10, integer: true}),
+      racial: new fields.NumberField({required: true, initial: 0, integer: true}),
+      enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
+      temp: new fields.NumberField({required: true, initial: 0, integer: true})
+    };
+  }
+
+  /**
+   * Helper: Create a skill schema
+   */
+  static _createSkillSchema(defaultAbility) {
+    const fields = foundry.data.fields;
+    return {
+      trained: new fields.BooleanField({required: true, initial: false}),
+      focused: new fields.BooleanField({required: true, initial: false}),
+      miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
+      selectedAbility: new fields.StringField({required: true, initial: defaultAbility})
+    };
+  }
+
+  /**
+   * Define all skills with their default abilities
+   */
+  static _getSkillDefinitions() {
+    return {
+      acrobatics: 'dex',
+      climb: 'str',
+      deception: 'cha',
+      endurance: 'con',
+      gather_information: 'cha',
+      initiative: 'dex',
+      jump: 'str',
+      knowledge_bureaucracy: 'int',
+      knowledge_galactic_lore: 'int',
+      knowledge_life_sciences: 'int',
+      knowledge_physical_sciences: 'int',
+      knowledge_social_sciences: 'int',
+      knowledge_tactics: 'int',
+      knowledge_technology: 'int',
+      mechanics: 'int',
+      perception: 'wis',
+      persuasion: 'cha',
+      pilot: 'dex',
+      ride: 'dex',
+      stealth: 'dex',
+      survival: 'wis',
+      swim: 'str',
+      treat_injury: 'wis',
+      use_computer: 'int',
+      use_the_force: 'cha'
+    };
+  }
+
   static defineSchema() {
     const fields = foundry.data.fields;
     const parentSchema = super.defineSchema();
+
+    // Build attributes schema from all ability scores
+    const attributeSchema = {};
+    for (const ability of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+      attributeSchema[ability] = new fields.SchemaField(this._createAttributeSchema());
+    }
+
+    // Build skills schema from skill definitions
+    const skillsSchema = {};
+    const skillDefinitions = this._getSkillDefinitions();
+    for (const [skillKey, defaultAbility] of Object.entries(skillDefinitions)) {
+      skillsSchema[skillKey] = new fields.SchemaField(this._createSkillSchema(defaultAbility));
+    }
 
     return {
       ...parentSchema, // Inherit all parent fields (size, defenses, abilities, etc.)
@@ -14,198 +87,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       droidDegree: new fields.StringField({required: false, initial: ""}),
 
       // Attributes (override parent abilities with enhanced attributes)
-      attributes: new fields.SchemaField({
-        str: new fields.SchemaField({
-          base: new fields.NumberField({required: true, initial: 10, integer: true}),
-          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-          enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
-          temp: new fields.NumberField({required: true, initial: 0, integer: true})
-        }),
-        dex: new fields.SchemaField({
-          base: new fields.NumberField({required: true, initial: 10, integer: true}),
-          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-          enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
-          temp: new fields.NumberField({required: true, initial: 0, integer: true})
-        }),
-        con: new fields.SchemaField({
-          base: new fields.NumberField({required: true, initial: 10, integer: true}),
-          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-          enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
-          temp: new fields.NumberField({required: true, initial: 0, integer: true})
-        }),
-        int: new fields.SchemaField({
-          base: new fields.NumberField({required: true, initial: 10, integer: true}),
-          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-          enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
-          temp: new fields.NumberField({required: true, initial: 0, integer: true})
-        }),
-        wis: new fields.SchemaField({
-          base: new fields.NumberField({required: true, initial: 10, integer: true}),
-          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-          enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
-          temp: new fields.NumberField({required: true, initial: 0, integer: true})
-        }),
-        cha: new fields.SchemaField({
-          base: new fields.NumberField({required: true, initial: 10, integer: true}),
-          racial: new fields.NumberField({required: true, initial: 0, integer: true}),
-          enhancement: new fields.NumberField({required: true, initial: 0, integer: true}),
-          temp: new fields.NumberField({required: true, initial: 0, integer: true})
-        })
-      }),
+      attributes: new fields.SchemaField(attributeSchema),
 
       // STATIC SKILLS - Always present
-      skills: new fields.SchemaField({
-        acrobatics: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'dex'})
-        }),
-        climb: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'str'})
-        }),
-        deception: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'cha'})
-        }),
-        endurance: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'con'})
-        }),
-        gather_information: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'cha'})
-        }),
-        initiative: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'dex'})
-        }),
-        jump: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'str'})
-        }),
-        knowledge_bureaucracy: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'int'})
-        }),
-        knowledge_galactic_lore: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'int'})
-        }),
-        knowledge_life_sciences: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'int'})
-        }),
-        knowledge_physical_sciences: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'int'})
-        }),
-        knowledge_social_sciences: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'int'})
-        }),
-        knowledge_tactics: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'int'})
-        }),
-        knowledge_technology: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'int'})
-        }),
-        mechanics: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'int'})
-        }),
-        perception: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'wis'})
-        }),
-        persuasion: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'cha'})
-        }),
-        pilot: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'dex'})
-        }),
-        ride: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'dex'})
-        }),
-        stealth: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'dex'})
-        }),
-        survival: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'wis'})
-        }),
-        swim: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'str'})
-        }),
-        treat_injury: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'wis'})
-        }),
-        use_computer: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'int'})
-        }),
-        use_the_force: new fields.SchemaField({
-          trained: new fields.BooleanField({required: true, initial: false}),
-          focused: new fields.BooleanField({required: true, initial: false}),
-          miscMod: new fields.NumberField({required: true, initial: 0, integer: true}),
-          selectedAbility: new fields.StringField({required: true, initial: 'cha'})
-        })
-      }),
+      skills: new fields.SchemaField(skillsSchema),
 
       // HP
       hp: new fields.SchemaField({
@@ -303,7 +188,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
   _calculateDefenses() {
     // Ensure defenses object exists
     if (!this.defenses) {
-      console.warn('Character defenses not initialized, skipping defense calculations');
+      SWSELogger.warn('Character defenses not initialized, skipping defense calculations');
       return;
     }
 
@@ -311,7 +196,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Ensure individual defense objects exist
     if (!this.defenses.reflex || !this.defenses.fortitude || !this.defenses.will) {
-      console.warn('Character defense sub-objects not initialized, skipping defense calculations');
+      SWSELogger.warn('Character defense sub-objects not initialized, skipping defense calculations');
       return;
     }
 

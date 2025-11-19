@@ -1,4 +1,5 @@
 import { SWSECharacterSheet } from '../character/swse-character-sheet.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 // ============================================
 // FILE: module/actors/swse-npc.js
@@ -33,7 +34,7 @@ export class SWSENPCSheet extends SWSECharacterSheet {
     if (!this.options.editable) return;
 
     // Add NPC-specific listeners here
-    console.log("SWSE | NPC sheet listeners activated");
+    SWSELogger.log("SWSE | NPC sheet listeners activated");
   }
 
   // ============================================

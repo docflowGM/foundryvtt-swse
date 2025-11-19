@@ -1,4 +1,5 @@
 /**
+import { SWSELogger } from '../utils/logger.js';
  * SWSE Enhanced Level Up System
  * - Multi-classing support with feat/skill choices
  * - Prestige class integration
@@ -286,7 +287,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
             const featFeature = levelData.features.find(f => f.type === 'feat_choice');
             if (featFeature && featFeature.list) {
               // This class has a specific feat list (e.g., "jedi_feats", "noble_feats")
-              console.log(`SWSE LevelUp | Filtering feats by list: ${featFeature.list} for ${className}`);
+              SWSELogger.log(`SWSE LevelUp | Filtering feats by list: ${featFeature.list} for ${className}`);
 
               // Filter to only feats that have this class in their bonus_feat_for array
               featObjects = featObjects.filter(f => {
@@ -294,7 +295,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
                 return bonusFeatFor.includes(className) || bonusFeatFor.includes('all');
               });
 
-              console.log(`SWSE LevelUp | Filtered to ${featObjects.length} bonus feats for ${className}`);
+              SWSELogger.log(`SWSE LevelUp | Filtered to ${featObjects.length} bonus feats for ${className}`);
             }
           }
         }
@@ -311,9 +312,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
       // Filter feats based on prerequisites
       this.featData = PrerequisiteValidator.filterQualifiedFeats(featObjects, this.actor, pendingData);
 
-      console.log(`SWSE LevelUp | Loaded ${this.featData.length} feats, ${this.featData.filter(f => f.isQualified).length} qualified`);
+      SWSELogger.log(`SWSE LevelUp | Loaded ${this.featData.length} feats, ${this.featData.filter(f => f.isQualified).length} qualified`);
     } catch (err) {
-      console.error("SWSE LevelUp | Failed to load feats:", err);
+      SWSELogger.error("SWSE LevelUp | Failed to load feats:", err);
       this.featData = [];
     }
   }
@@ -366,12 +367,12 @@ export class SWSELevelUpEnhanced extends FormApplication {
   async _getAvailableSpecies() {
     const speciesPack = game.packs.get('swse.species');
     if (!speciesPack) {
-      console.warn('SWSE LevelUp | Species compendium not found!');
+      SWSELogger.warn('SWSE LevelUp | Species compendium not found!');
       return [];
     }
 
     const allSpecies = await speciesPack.getDocuments();
-    console.log(`SWSE LevelUp | Loaded ${allSpecies.length} species from compendium`);
+    SWSELogger.log(`SWSE LevelUp | Loaded ${allSpecies.length} species from compendium`);
 
     const availableSpecies = [];
 
@@ -382,11 +383,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
         system: speciesDoc.system,
         img: speciesDoc.img
       });
-      console.log(`SWSE LevelUp | Species: ${speciesDoc.name} (ID: ${speciesDoc.id || speciesDoc._id})`);
+      SWSELogger.log(`SWSE LevelUp | Species: ${speciesDoc.name} (ID: ${speciesDoc.id || speciesDoc._id})`);
     }
 
     if (availableSpecies.length === 0) {
-      console.warn('SWSE LevelUp | No species found in compendium!');
+      SWSELogger.warn('SWSE LevelUp | No species found in compendium!');
     }
 
     // Sort by source material (Core first, then alphabetically)
@@ -570,11 +571,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
     const speciesId = event.currentTarget.dataset.speciesId;
     const speciesName = event.currentTarget.dataset.speciesName;
 
-    console.log(`SWSE LevelUp | Attempting to select species: ${speciesName} (ID: ${speciesId})`);
+    SWSELogger.log(`SWSE LevelUp | Attempting to select species: ${speciesName} (ID: ${speciesId})`);
 
     const speciesPack = game.packs.get('swse.species');
     if (!speciesPack) {
-      console.error('SWSE LevelUp | Species compendium not found!');
+      SWSELogger.error('SWSE LevelUp | Species compendium not found!');
       ui.notifications.error("Species compendium not found! Please check that the swse.species compendium exists.");
       return;
     }
@@ -584,20 +585,20 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     // If not found, try searching by name as a fallback
     if (!speciesDoc) {
-      console.warn(`SWSE LevelUp | Species not found with ID ${speciesId}, searching by name...`);
+      SWSELogger.warn(`SWSE LevelUp | Species not found with ID ${speciesId}, searching by name...`);
       const allSpecies = await speciesPack.getDocuments();
       speciesDoc = allSpecies.find(s => s.name === speciesName || s.id === speciesId || s._id === speciesId);
     }
 
     if (!speciesDoc) {
-      console.error(`SWSE LevelUp | Species not found with ID: ${speciesId} or name: ${speciesName}`);
-      console.log('SWSE LevelUp | Available species in pack:', await speciesPack.getDocuments());
+      SWSELogger.error(`SWSE LevelUp | Species not found with ID: ${speciesId} or name: ${speciesName}`);
+      SWSELogger.log('SWSE LevelUp | Available species in pack:', await speciesPack.getDocuments());
       ui.notifications.error(`Species "${speciesName}" not found! The species compendium may be empty or the ID is incorrect.`);
       return;
     }
 
     this.selectedSpecies = speciesDoc;
-    console.log(`SWSE LevelUp | Selected species: ${speciesName}`, speciesDoc.system);
+    SWSELogger.log(`SWSE LevelUp | Selected species: ${speciesName}`, speciesDoc.system);
 
     // Move to attributes step
     this.currentStep = 'attributes';
@@ -624,7 +625,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       }
     }
 
-    console.log(`SWSE LevelUp | Confirmed ability scores:`, this.abilityScores);
+    SWSELogger.log(`SWSE LevelUp | Confirmed ability scores:`, this.abilityScores);
 
     // Move to class selection step
     this.currentStep = 'class';
@@ -737,7 +738,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       const r = await new Roll("24d6").evaluate();
       if (!r.dice || !r.dice[0] || !r.dice[0].results) {
         ui.notifications.error("Failed to roll dice. Please try again.");
-        console.error("SWSE | Roll failed:", r);
+        SWSELogger.error("SWSE | Roll failed:", r);
         return;
       }
       const rolls = r.dice[0].results.map(x => x.result).sort((a, b) => b - a);
@@ -861,7 +862,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     }
 
     this.selectedClass = classDoc;
-    console.log(`SWSE LevelUp | Selected class: ${classDoc.name}`, classDoc.system);
+    SWSELogger.log(`SWSE LevelUp | Selected class: ${classDoc.name}`, classDoc.system);
 
     // Update mentor based on class type and character level
     const isPrestige = !this._isBaseClass(classDoc.name);
@@ -871,12 +872,12 @@ export class SWSELevelUpEnhanced extends FormApplication {
       // For prestige classes, use the prestige class mentor
       this.mentor = getMentorForClass(classDoc.name);
       this.currentMentorClass = classDoc.name;
-      console.log(`SWSE LevelUp | Switched to prestige class mentor: ${this.mentor.name}`);
+      SWSELogger.log(`SWSE LevelUp | Switched to prestige class mentor: ${this.mentor.name}`);
     } else if (currentLevel === 0 || currentLevel === 1) {
       // For level 0->1 or level 1->2, use the selected base class mentor
       this.mentor = getMentorForClass(classDoc.name);
       this.currentMentorClass = classDoc.name;
-      console.log(`SWSE LevelUp | Switched to base class mentor: ${this.mentor.name}`);
+      SWSELogger.log(`SWSE LevelUp | Switched to base class mentor: ${this.mentor.name}`);
     } else {
       // For higher levels, use the level 1 class mentor
       const level1Class = getLevel1Class(this.actor);
@@ -963,7 +964,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     }
 
     this.hpGain = Math.max(1, hpGain);
-    console.log(`SWSE LevelUp | HP gain: ${this.hpGain} (d${hitDie}, method: ${hpGeneration})`);
+    SWSELogger.log(`SWSE LevelUp | HP gain: ${this.hpGain} (d${hitDie}, method: ${hpGeneration})`);
   }
 
   // ========================================
@@ -1474,7 +1475,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     this.selectedTalent = talent;
     ui.notifications.info(`Selected talent: ${talentName}`);
-    console.log(`SWSE LevelUp | Selected talent: ${talentName}`);
+    SWSELogger.log(`SWSE LevelUp | Selected talent: ${talentName}`);
   }
 
   // ========================================
@@ -1482,14 +1483,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
   // ========================================
 
   async _applyPrestigeClassFeatures(classDoc) {
-    console.log(`SWSE LevelUp | Applying prestige class features for ${classDoc.name}`);
+    SWSELogger.log(`SWSE LevelUp | Applying prestige class features for ${classDoc.name}`);
 
     const startingFeatures = classDoc.system.startingFeatures || [];
 
     // Apply all level 1 features (except max HP which is handled separately)
     for (const feature of startingFeatures) {
       if (feature.type === 'proficiency' || feature.type === 'class_feature') {
-        console.log(`SWSE LevelUp | Auto-applying: ${feature.name}`);
+        SWSELogger.log(`SWSE LevelUp | Auto-applying: ${feature.name}`);
         // Features will be applied in _onCompleteLevelUp
       }
     }
@@ -1747,7 +1748,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
         // If defenses aren't set on the class item, update it to store them
         if (classItem.system.defenses === undefined ||
             (!classItem.system.defenses.fortitude && !classItem.system.defenses.reflex && !classItem.system.defenses.will)) {
-          console.log(`SWSE LevelUp | Updating ${className} with defense bonuses: Fort +${progression.fortitude}, Ref +${progression.reflex}, Will +${progression.will}`);
+          SWSELogger.log(`SWSE LevelUp | Updating ${className} with defense bonuses: Fort +${progression.fortitude}, Ref +${progression.reflex}, Will +${progression.will}`);
           classItem.update({
             'system.defenses': {
               fortitude: progression.fortitude,
@@ -1778,7 +1779,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     const levelData = levelProgression.find(lp => lp.level === classLevel);
     if (!levelData) return;
 
-    console.log(`SWSE LevelUp | Applying class features for ${classDoc.name} level ${classLevel}:`, levelData);
+    SWSELogger.log(`SWSE LevelUp | Applying class features for ${classDoc.name} level ${classLevel}:`, levelData);
 
     // Apply Force Points if specified
     if (levelData.force_points && levelData.force_points > 0) {
@@ -1792,7 +1793,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
         "system.forcePoints.value": newValue
       });
 
-      console.log(`SWSE LevelUp | Increased Force Points by ${levelData.force_points} (${currentMax} → ${newMax})`);
+      SWSELogger.log(`SWSE LevelUp | Increased Force Points by ${levelData.force_points} (${currentMax} → ${newMax})`);
       ui.notifications.info(`Force Points increased by ${levelData.force_points}!`);
     }
 
@@ -1800,7 +1801,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     if (levelData.features) {
       for (const feature of levelData.features) {
         if (feature.type === 'proficiency' || feature.type === 'class_feature' || feature.type === 'feat_grant') {
-          console.log(`SWSE LevelUp | Granting class feature: ${feature.name}`);
+          SWSELogger.log(`SWSE LevelUp | Granting class feature: ${feature.name}`);
 
           // Create a feature item on the actor
           const featureItem = {
@@ -1877,7 +1878,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
           }
         };
 
-        console.log(`SWSE LevelUp | Creating ${classItem.name} with defense bonuses: Fort +${classItem.system.defenses.fortitude}, Ref +${classItem.system.defenses.reflex}, Will +${classItem.system.defenses.will}`);
+        SWSELogger.log(`SWSE LevelUp | Creating ${classItem.name} with defense bonuses: Fort +${classItem.system.defenses.fortitude}, Ref +${classItem.system.defenses.reflex}, Will +${classItem.system.defenses.will}`);
 
         await this.actor.createEmbeddedDocuments("Item", [classItem]);
       }
@@ -1903,7 +1904,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       const getMilestoneFeat = [3, 6, 9, 12, 15, 18].includes(newLevel);
       if (getMilestoneFeat) {
         ui.notifications.info(`Level ${newLevel}! You gain a bonus general feat.`);
-        console.log(`SWSE LevelUp | Level ${newLevel} milestone - bonus general feat granted`);
+        SWSELogger.log(`SWSE LevelUp | Level ${newLevel} milestone - bonus general feat granted`);
       }
 
       // Update trained skills if selected
@@ -1927,7 +1928,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
             const currentBase = this.actor.system.abilities[ability].base || 10;
             const newBase = currentBase + increase;
             updates[`system.abilities.${ability}.base`] = newBase;
-            console.log(`SWSE LevelUp | Increasing ${ability} by +${increase} (${currentBase} → ${newBase})`);
+            SWSELogger.log(`SWSE LevelUp | Increasing ${ability} by +${increase} (${currentBase} → ${newBase})`);
 
             // Track if INT or CON increased
             if (ability === 'int') intIncreased = true;
@@ -1954,7 +1955,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // If INT modifier increased, grant additional trained skill
       if (intIncreased && newIntMod > oldIntMod) {
-        console.log(`SWSE LevelUp | INT modifier increased from ${oldIntMod} to ${newIntMod} - granting bonus skill`);
+        SWSELogger.log(`SWSE LevelUp | INT modifier increased from ${oldIntMod} to ${newIntMod} - granting bonus skill`);
         bonusSkillGranted = true;
         ui.notifications.info("Intelligence increased! You may train an additional skill.");
       }
@@ -1964,7 +1965,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
         const modIncrase = newConMod - oldConMod;
         retroactiveHPGain = newLevel * modIncrase;
         totalHPGain += retroactiveHPGain;
-        console.log(`SWSE LevelUp | CON modifier increased from ${oldConMod} to ${newConMod} - granting ${retroactiveHPGain} retroactive HP`);
+        SWSELogger.log(`SWSE LevelUp | CON modifier increased from ${oldConMod} to ${newConMod} - granting ${retroactiveHPGain} retroactive HP`);
         ui.notifications.info(`Constitution increased! You gain ${retroactiveHPGain} retroactive HP!`);
       }
 
@@ -1984,8 +1985,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
       const totalBAB = this._calculateTotalBAB();
       const defenseBonuses = this._calculateDefenseBonuses();
 
-      console.log(`SWSE LevelUp | Updating BAB to ${totalBAB}`);
-      console.log(`SWSE LevelUp | Updating defense bonuses: Fort +${defenseBonuses.fortitude}, Ref +${defenseBonuses.reflex}, Will +${defenseBonuses.will}`);
+      SWSELogger.log(`SWSE LevelUp | Updating BAB to ${totalBAB}`);
+      SWSELogger.log(`SWSE LevelUp | Updating defense bonuses: Fort +${defenseBonuses.fortitude}, Ref +${defenseBonuses.reflex}, Will +${defenseBonuses.will}`);
 
       await this.actor.update({
         "system.bab": totalBAB,
@@ -2050,7 +2051,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       this.actor.sheet.render(true);
 
     } catch (err) {
-      console.error("SWSE LevelUp | Error completing level up:", err);
+      SWSELogger.error("SWSE LevelUp | Error completing level up:", err);
       ui.notifications.error("Failed to complete level up. See console for details.");
     }
   }
