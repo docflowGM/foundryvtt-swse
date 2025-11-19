@@ -372,6 +372,17 @@ Hooks.once("init", async function() {
     });
   }
 
+  // Helper to strip HTML tags from text
+  if (!Handlebars.helpers['stripHTML']) {
+    Handlebars.registerHelper('stripHTML', function(htmlString) {
+      if (!htmlString) return '';
+      // Create a temporary div to parse HTML
+      const div = document.createElement('div');
+      div.innerHTML = htmlString;
+      return div.textContent || div.innerText || '';
+    });
+  }
+
   // ============================================
   // Preload Templates
   // ============================================
