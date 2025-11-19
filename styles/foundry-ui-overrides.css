@@ -3,6 +3,20 @@
    This file MUST be loaded last in system.json
    ============================================================================ */
 
+/* Ensure character sheets and app windows are never affected by UI overrides */
+.app.sheet,
+.app.window-app,
+.sheet {
+  padding: initial !important;
+  margin: initial !important;
+  height: auto !important;
+  max-height: none !important;
+  width: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+}
+
 /* SIDEBAR - Remove ALL top spacing */
 body #sidebar,
 body #sidebar.app,
