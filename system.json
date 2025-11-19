@@ -41,7 +41,8 @@
     "styles/apps/vehicle-modification.css",
     "styles/apps/upgrade-app.css",
     "styles/canvas/canvas-ui.css",
-    "styles/foundry-ui-overrides.css"
+    "styles/foundry-ui-overrides.css",
+    "styles/foundry-ui-layout.css"
   ],
   "languages": [
     {

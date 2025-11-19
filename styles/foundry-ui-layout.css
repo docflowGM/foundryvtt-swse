@@ -1,0 +1,52 @@
+/* ============================================================================
+   FOUNDRY UI LAYOUT - Custom positioning
+   ============================================================================ */
+
+/* Right side UI container */
+#ui-right {
+  left: auto !important;
+  right: 0 !important;
+  width: auto !important;
+}
+
+/* Sidebar positioning */
+#sidebar {
+  right: 3px !important;
+  width: 280px !important;
+  max-width: 280px !important;
+}
+
+/* Sidebar tabs - vertical column to left of chatbox */
+#sidebar-tabs {
+  position: fixed !important;
+  right: 293px !important;
+  left: auto !important;
+  top: 0 !important;
+  flex-direction: column !important;
+  width: auto !important;
+  flex-wrap: nowrap !important;
+}
+
+#sidebar-tabs menu {
+  flex-direction: column !important;
+  flex-wrap: nowrap !important;
+  width: auto !important;
+}
+
+#sidebar-tabs a {
+  width: 40px !important;
+  height: 40px !important;
+}
+
+/* Left toolbar - flush to left edge */
+#ui-left {
+  left: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+#controls {
+  left: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
