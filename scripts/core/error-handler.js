@@ -1,4 +1,5 @@
 /**
+import { SWSELogger } from '../utils/logger.js';
  * Error Handler
  * Provides graceful error handling and recovery mechanisms
  * Enhanced with detailed Foundry/Forge error logging
@@ -50,7 +51,7 @@ export class ErrorHandler {
       });
     });
 
-    console.log('SWSE | Error handler initialized with enhanced logging');
+    SWSELogger.log('SWSE | Error handler initialized with enhanced logging');
   }
 
   /**
@@ -181,65 +182,65 @@ export class ErrorHandler {
     // Always log errors, but format based on devMode
     console.group('%c🚨 SWSE ERROR DETECTED', 'color: red; font-weight: bold; font-size: 14px');
 
-    console.error('%cError Message:', 'color: orange; font-weight: bold');
-    console.error(error?.message || 'Unknown error');
+    SWSELogger.error('%cError Message:', 'color: orange; font-weight: bold');
+    SWSELogger.error(error?.message || 'Unknown error');
 
-    console.error('%cError Type:', 'color: orange; font-weight: bold');
-    console.error(error?.constructor?.name || 'Error');
+    SWSELogger.error('%cError Type:', 'color: orange; font-weight: bold');
+    SWSELogger.error(error?.constructor?.name || 'Error');
 
     if (context.source) {
-      console.error('%cSource:', 'color: orange; font-weight: bold');
-      console.error(context.source);
+      SWSELogger.error('%cSource:', 'color: orange; font-weight: bold');
+      SWSELogger.error(context.source);
     }
 
     if (context.location) {
-      console.error('%cLocation:', 'color: orange; font-weight: bold');
-      console.error(context.location);
+      SWSELogger.error('%cLocation:', 'color: orange; font-weight: bold');
+      SWSELogger.error(context.location);
     }
 
     if (context.filename) {
-      console.error('%cFile:', 'color: orange; font-weight: bold');
-      console.error(`${context.filename}:${context.lineno}:${context.colno}`);
+      SWSELogger.error('%cFile:', 'color: orange; font-weight: bold');
+      SWSELogger.error(`${context.filename}:${context.lineno}:${context.colno}`);
     }
 
     // Stack trace (always show)
     if (stack) {
-      console.error('%cStack Trace:', 'color: orange; font-weight: bold');
-      console.error(stack);
+      SWSELogger.error('%cStack Trace:', 'color: orange; font-weight: bold');
+      SWSELogger.error(stack);
     }
 
     // Detailed context (only in devMode)
     if (this._devMode) {
       console.group('%c📊 DETAILED CONTEXT', 'color: cyan; font-weight: bold');
 
-      console.log('%cFoundry Context:', 'color: cyan; font-weight: bold');
+      SWSELogger.log('%cFoundry Context:', 'color: cyan; font-weight: bold');
       console.table(foundryContext);
 
-      console.log('%cActive Modules:', 'color: cyan; font-weight: bold');
+      SWSELogger.log('%cActive Modules:', 'color: cyan; font-weight: bold');
       console.table(systemContext.activeModules);
 
-      console.log('%cPerformance:', 'color: cyan; font-weight: bold');
-      console.log(systemContext.performance);
+      SWSELogger.log('%cPerformance:', 'color: cyan; font-weight: bold');
+      SWSELogger.log(systemContext.performance);
 
       if (systemContext.cacheStats) {
-        console.log('%cCache Stats:', 'color: cyan; font-weight: bold');
-        console.log(systemContext.cacheStats);
+        SWSELogger.log('%cCache Stats:', 'color: cyan; font-weight: bold');
+        SWSELogger.log(systemContext.cacheStats);
       }
 
-      console.log('%cOpen Sheets:', 'color: cyan; font-weight: bold');
+      SWSELogger.log('%cOpen Sheets:', 'color: cyan; font-weight: bold');
       console.table(foundryContext.openSheets);
 
       if (context.data) {
-        console.log('%cAdditional Data:', 'color: cyan; font-weight: bold');
-        console.log(context.data);
+        SWSELogger.log('%cAdditional Data:', 'color: cyan; font-weight: bold');
+        SWSELogger.log(context.data);
       }
 
       console.groupEnd();
     }
 
-    console.log('%c💡 TIP:', 'color: yellow; font-weight: bold');
-    console.log('Enable Developer Mode in settings for more detailed error information');
-    console.log('Access error log: window.SWSE.errorHandler.getRecentErrors()');
+    SWSELogger.log('%c💡 TIP:', 'color: yellow; font-weight: bold');
+    SWSELogger.log('Enable Developer Mode in settings for more detailed error information');
+    SWSELogger.log('Access error log: window.SWSE.errorHandler.getRecentErrors()');
 
     console.groupEnd();
   }
@@ -286,7 +287,7 @@ export class ErrorHandler {
     );
 
     // Could trigger failsafe mode here
-    console.error('SWSE | Critical error detected:', errorInfo);
+    SWSELogger.error('SWSE | Critical error detected:', errorInfo);
   }
 
   /**
@@ -316,7 +317,7 @@ export class ErrorHandler {
         ui.notifications.info('Error recovered successfully');
         return true;
       } catch (recoveryError) {
-        console.error('SWSE | Recovery failed:', recoveryError);
+        SWSELogger.error('SWSE | Recovery failed:', recoveryError);
       }
     }
 
@@ -331,7 +332,7 @@ export class ErrorHandler {
   async _genericRecovery(error, context) {
     // Strategy 1: Clear caches if cache-related
     if (context.source?.includes('cache')) {
-      console.log('SWSE | Attempting cache clear recovery');
+      SWSELogger.log('SWSE | Attempting cache clear recovery');
       if (window.SWSE?.cacheManager) {
         window.SWSE.cacheManager.clear();
       }
@@ -340,7 +341,7 @@ export class ErrorHandler {
 
     // Strategy 2: Re-render if sheet-related
     if (context.location?.includes('sheet') || context.source?.includes('sheet')) {
-      console.log('SWSE | Attempting sheet re-render recovery');
+      SWSELogger.log('SWSE | Attempting sheet re-render recovery');
       // Could trigger sheet re-render here
       return true;
     }
@@ -409,7 +410,7 @@ export async function safeExecute(func, fallback = null, context = {}) {
     if (window.SWSE?.errorHandler) {
       window.SWSE.errorHandler.handleError(error, context);
     } else {
-      console.error('SWSE | Safe execution failed:', error);
+      SWSELogger.error('SWSE | Safe execution failed:', error);
     }
     return fallback;
   }
@@ -479,7 +480,7 @@ export function logError(error, context = {}) {
       manual: true
     });
   } else {
-    console.error('SWSE | Error (handler not ready):', errorObj, context);
+    SWSELogger.error('SWSE | Error (handler not ready):', errorObj, context);
   }
 }
 
@@ -494,7 +495,7 @@ export const errorCommands = {
    */
   recent: (count = 10) => {
     if (!window.SWSE?.errorHandler) {
-      console.warn('Error handler not initialized');
+      SWSELogger.warn('Error handler not initialized');
       return [];
     }
     const errors = window.SWSE.errorHandler.getRecentErrors(count);
@@ -513,11 +514,11 @@ export const errorCommands = {
    */
   stats: () => {
     if (!window.SWSE?.errorHandler) {
-      console.warn('Error handler not initialized');
+      SWSELogger.warn('Error handler not initialized');
       return {};
     }
     const stats = window.SWSE.errorHandler.getStats();
-    console.log('%c📊 ERROR STATISTICS', 'color: cyan; font-weight: bold; font-size: 14px');
+    SWSELogger.log('%c📊 ERROR STATISTICS', 'color: cyan; font-weight: bold; font-size: 14px');
     console.table(stats);
     return stats;
   },
@@ -527,11 +528,11 @@ export const errorCommands = {
    */
   clear: () => {
     if (!window.SWSE?.errorHandler) {
-      console.warn('Error handler not initialized');
+      SWSELogger.warn('Error handler not initialized');
       return;
     }
     window.SWSE.errorHandler.clearLog();
-    console.log('✅ Error log cleared');
+    SWSELogger.log('✅ Error log cleared');
   },
 
   /**
@@ -539,7 +540,7 @@ export const errorCommands = {
    */
   all: () => {
     if (!window.SWSE?.errorHandler) {
-      console.warn('Error handler not initialized');
+      SWSELogger.warn('Error handler not initialized');
       return [];
     }
     return window.SWSE.errorHandler.getErrorLog();
@@ -550,7 +551,7 @@ export const errorCommands = {
    */
   export: () => {
     if (!window.SWSE?.errorHandler) {
-      console.warn('Error handler not initialized');
+      SWSELogger.warn('Error handler not initialized');
       return;
     }
     const errors = window.SWSE.errorHandler.getErrorLog();
@@ -562,6 +563,6 @@ export const errorCommands = {
     a.download = `swse-errors-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    console.log('✅ Error log exported');
+    SWSELogger.log('✅ Error log exported');
   }
 };

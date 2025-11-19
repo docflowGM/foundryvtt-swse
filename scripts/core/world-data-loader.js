@@ -1,4 +1,5 @@
 // ============================================
+import { SWSELogger } from '../utils/logger.js';
 // FILE: scripts/world-data-loader.js
 // FIXED: Validates all data before importing
 // ============================================
@@ -12,25 +13,25 @@ export class WorldDataLoader {
     const dataLoaded = game.settings.get("swse", "dataLoaded");
     
     if (dataLoaded) {
-      console.log("SWSE | World data already loaded");
+      SWSELogger.log("SWSE | World data already loaded");
       return;
     }
     
-    console.log("SWSE | Loading world data for first time...");
+    SWSELogger.log("SWSE | Loading world data for first time...");
     
     // Disable auto-load to prevent errors from breaking the system
     // await this.loadAll();
     
-    console.log("SWSE | Auto-load is currently DISABLED");
-    console.log("SWSE | Use 'WorldDataLoader.loadAll()' in console to manually load data");
-    console.log("SWSE | Or enable auto-load after fixing JSON validation issues");
+    SWSELogger.log("SWSE | Auto-load is currently DISABLED");
+    SWSELogger.log("SWSE | Use 'WorldDataLoader.loadAll()' in console to manually load data");
+    SWSELogger.log("SWSE | Or enable auto-load after fixing JSON validation issues");
   }
   
   /**
    * Load all data from JSON files
    */
   static async loadAll() {
-    console.log("SWSE | Starting full data import...");
+    SWSELogger.log("SWSE | Starting full data import...");
     
     try {
       await this.loadClasses();
@@ -44,12 +45,12 @@ export class WorldDataLoader {
       // await this.loadNPCs();       // Disabled - needs type field
       
       await game.settings.set("swse", "dataLoaded", true);
-      console.log("SWSE | ✓ Data import complete!");
+      SWSELogger.log("SWSE | ✓ Data import complete!");
       
       ui.notifications.info("SWSE data loaded successfully!");
       
     } catch (error) {
-      console.error("SWSE | Data import failed:", error);
+      SWSELogger.error("SWSE | Data import failed:", error);
       ui.notifications.error("Failed to load SWSE data. Check console for details.");
     }
   }
@@ -99,7 +100,7 @@ export class WorldDataLoader {
     const errors = this.validateItem(itemData, itemType);
     
     if (errors.length > 0) {
-      console.warn(`SWSE | Skipping invalid ${itemType}:`, itemData.name || 'UNNAMED', errors);
+      SWSELogger.warn(`SWSE | Skipping invalid ${itemType}:`, itemData.name || 'UNNAMED', errors);
       return null;
     }
     
@@ -115,7 +116,7 @@ export class WorldDataLoader {
       
       return await Item.create(itemData);
     } catch (error) {
-      console.error(`SWSE | Failed to create ${itemType}:`, itemData.name, error);
+      SWSELogger.error(`SWSE | Failed to create ${itemType}:`, itemData.name, error);
       return null;
     }
   }
@@ -127,7 +128,7 @@ export class WorldDataLoader {
     const errors = this.validateActor(actorData, actorType);
     
     if (errors.length > 0) {
-      console.warn(`SWSE | Skipping invalid ${actorType}:`, actorData.name || 'UNNAMED', errors);
+      SWSELogger.warn(`SWSE | Skipping invalid ${actorType}:`, actorData.name || 'UNNAMED', errors);
       return null;
     }
     
@@ -143,7 +144,7 @@ export class WorldDataLoader {
       
       return await Actor.create(actorData);
     } catch (error) {
-      console.error(`SWSE | Failed to create ${actorType}:`, actorData.name, error);
+      SWSELogger.error(`SWSE | Failed to create ${actorType}:`, actorData.name, error);
       return null;
     }
   }
@@ -155,7 +156,7 @@ export class WorldDataLoader {
     try {
       const response = await fetch("systems/swse/data/classes.json");
       if (!response.ok) {
-        console.log("SWSE | classes.json not found - skipping");
+        SWSELogger.log("SWSE | classes.json not found - skipping");
         return;
       }
       
@@ -175,10 +176,10 @@ export class WorldDataLoader {
         else skipped++;
       }
       
-      console.log(`SWSE | Loaded ${loaded} classes (${skipped} skipped)`);
+      SWSELogger.log(`SWSE | Loaded ${loaded} classes (${skipped} skipped)`);
       
     } catch (error) {
-      console.warn("SWSE | Could not load classes:", error);
+      SWSELogger.warn("SWSE | Could not load classes:", error);
     }
   }
   
@@ -189,7 +190,7 @@ export class WorldDataLoader {
     try {
       const response = await fetch("systems/swse/data/feats.json");
       if (!response.ok) {
-        console.log("SWSE | feats.json not found - skipping");
+        SWSELogger.log("SWSE | feats.json not found - skipping");
         return;
       }
       
@@ -209,10 +210,10 @@ export class WorldDataLoader {
         else skipped++;
       }
       
-      console.log(`SWSE | Loaded ${loaded} feats (${skipped} skipped)`);
+      SWSELogger.log(`SWSE | Loaded ${loaded} feats (${skipped} skipped)`);
       
     } catch (error) {
-      console.warn("SWSE | Could not load feats:", error);
+      SWSELogger.warn("SWSE | Could not load feats:", error);
     }
   }
   
@@ -223,7 +224,7 @@ export class WorldDataLoader {
     try {
       const response = await fetch("systems/swse/data/talents.json");
       if (!response.ok) {
-        console.log("SWSE | talents.json not found - skipping");
+        SWSELogger.log("SWSE | talents.json not found - skipping");
         return;
       }
       
@@ -243,10 +244,10 @@ export class WorldDataLoader {
         else skipped++;
       }
       
-      console.log(`SWSE | Loaded ${loaded} talents (${skipped} skipped)`);
+      SWSELogger.log(`SWSE | Loaded ${loaded} talents (${skipped} skipped)`);
       
     } catch (error) {
-      console.warn("SWSE | Could not load talents:", error);
+      SWSELogger.warn("SWSE | Could not load talents:", error);
     }
   }
   
@@ -257,7 +258,7 @@ export class WorldDataLoader {
     try {
       const response = await fetch("systems/swse/data/forcepowers.json");
       if (!response.ok) {
-        console.log("SWSE | forcepowers.json not found - skipping");
+        SWSELogger.log("SWSE | forcepowers.json not found - skipping");
         return;
       }
       
@@ -277,10 +278,10 @@ export class WorldDataLoader {
         else skipped++;
       }
       
-      console.log(`SWSE | Loaded ${loaded} force powers (${skipped} skipped)`);
+      SWSELogger.log(`SWSE | Loaded ${loaded} force powers (${skipped} skipped)`);
       
     } catch (error) {
-      console.warn("SWSE | Could not load force powers:", error);
+      SWSELogger.warn("SWSE | Could not load force powers:", error);
     }
   }
   
@@ -291,7 +292,7 @@ export class WorldDataLoader {
     try {
       const response = await fetch("systems/swse/data/weapons.json");
       if (!response.ok) {
-        console.log("SWSE | weapons.json not found - skipping");
+        SWSELogger.log("SWSE | weapons.json not found - skipping");
         return;
       }
       
@@ -311,10 +312,10 @@ export class WorldDataLoader {
         else skipped++;
       }
       
-      console.log(`SWSE | Loaded ${loaded} weapons (${skipped} skipped)`);
+      SWSELogger.log(`SWSE | Loaded ${loaded} weapons (${skipped} skipped)`);
       
     } catch (error) {
-      console.warn("SWSE | Could not load weapons:", error);
+      SWSELogger.warn("SWSE | Could not load weapons:", error);
     }
   }
   
@@ -325,7 +326,7 @@ export class WorldDataLoader {
     try {
       const response = await fetch("systems/swse/data/armor.json");
       if (!response.ok) {
-        console.log("SWSE | armor.json not found - skipping");
+        SWSELogger.log("SWSE | armor.json not found - skipping");
         return;
       }
       
@@ -345,10 +346,10 @@ export class WorldDataLoader {
         else skipped++;
       }
       
-      console.log(`SWSE | Loaded ${loaded} armor (${skipped} skipped)`);
+      SWSELogger.log(`SWSE | Loaded ${loaded} armor (${skipped} skipped)`);
       
     } catch (error) {
-      console.warn("SWSE | Could not load armor:", error);
+      SWSELogger.warn("SWSE | Could not load armor:", error);
     }
   }
   
@@ -359,7 +360,7 @@ export class WorldDataLoader {
     try {
       const response = await fetch("systems/swse/data/equipment.json");
       if (!response.ok) {
-        console.log("SWSE | equipment.json not found - skipping");
+        SWSELogger.log("SWSE | equipment.json not found - skipping");
         return;
       }
       
@@ -379,10 +380,10 @@ export class WorldDataLoader {
         else skipped++;
       }
       
-      console.log(`SWSE | Loaded ${loaded} equipment (${skipped} skipped)`);
+      SWSELogger.log(`SWSE | Loaded ${loaded} equipment (${skipped} skipped)`);
       
     } catch (error) {
-      console.warn("SWSE | Could not load equipment:", error);
+      SWSELogger.warn("SWSE | Could not load equipment:", error);
     }
   }
   
@@ -394,7 +395,7 @@ export class WorldDataLoader {
     try {
       const response = await fetch("systems/swse/data/vehicles.json");
       if (!response.ok) {
-        console.log("SWSE | vehicles.json not found - skipping");
+        SWSELogger.log("SWSE | vehicles.json not found - skipping");
         return;
       }
       
@@ -415,10 +416,10 @@ export class WorldDataLoader {
         else skipped++;
       }
       
-      console.log(`SWSE | Loaded ${loaded} vehicles (${skipped} skipped)`);
+      SWSELogger.log(`SWSE | Loaded ${loaded} vehicles (${skipped} skipped)`);
       
     } catch (error) {
-      console.warn("SWSE | Could not load vehicles:", error);
+      SWSELogger.warn("SWSE | Could not load vehicles:", error);
     }
   }
   
@@ -430,7 +431,7 @@ export class WorldDataLoader {
     try {
       const response = await fetch("systems/swse/data/npc.json");
       if (!response.ok) {
-        console.log("SWSE | npc.json not found - skipping");
+        SWSELogger.log("SWSE | npc.json not found - skipping");
         return;
       }
       
@@ -451,10 +452,10 @@ export class WorldDataLoader {
         else skipped++;
       }
       
-      console.log(`SWSE | Loaded ${loaded} NPCs (${skipped} skipped)`);
+      SWSELogger.log(`SWSE | Loaded ${loaded} NPCs (${skipped} skipped)`);
       
     } catch (error) {
-      console.warn("SWSE | Could not load NPCs:", error);
+      SWSELogger.warn("SWSE | Could not load NPCs:", error);
     }
   }
   
@@ -470,7 +471,7 @@ export class WorldDataLoader {
     
     if (!confirm) return;
     
-    console.log("SWSE | Clearing all imported data...");
+    SWSELogger.log("SWSE | Clearing all imported data...");
     
     // Delete all world items
     const itemIds = game.items.map(i => i.id);
@@ -479,7 +480,7 @@ export class WorldDataLoader {
     // Reset the dataLoaded flag
     await game.settings.set("swse", "dataLoaded", false);
     
-    console.log("SWSE | All data cleared");
+    SWSELogger.log("SWSE | All data cleared");
     ui.notifications.info("SWSE data cleared. Reload to re-import.");
   }
 }

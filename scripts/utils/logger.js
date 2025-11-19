@@ -19,7 +19,7 @@ export class SWSELogger {
    */
   static log(...args) {
     if (this.isDebugMode()) {
-      console.log('SWSE |', ...args);
+      SWSELogger.log('SWSE |', ...args);
     }
   }
 
@@ -36,7 +36,7 @@ export class SWSELogger {
    * @param {...any} args - Arguments to log
    */
   static warn(...args) {
-    console.warn('SWSE |', ...args);
+    SWSELogger.warn('SWSE |', ...args);
   }
 
   /**
@@ -44,7 +44,7 @@ export class SWSELogger {
    * @param {...any} args - Arguments to log
    */
   static error(...args) {
-    console.error('SWSE |', ...args);
+    SWSELogger.error('SWSE |', ...args);
   }
 
   /**
@@ -67,7 +67,7 @@ export class SWSELogger {
    */
   static table(data, label = '') {
     if (this.isDebugMode()) {
-      if (label) console.log(`SWSE | ${label}`);
+      if (label) SWSELogger.log(`SWSE | ${label}`);
       console.table(data);
     }
   }
@@ -99,10 +99,10 @@ export class SWSELogger {
   static actor(actor) {
     if (this.isDebugMode()) {
       console.group(`SWSE | Actor: ${actor.name}`);
-      console.log('Type:', actor.type);
-      console.log('System Data:', actor.system);
-      console.log('Items:', actor.items.contents);
-      console.log('Effects:', actor.effects.contents);
+      SWSELogger.log('Type:', actor.type);
+      SWSELogger.log('System Data:', actor.system);
+      SWSELogger.log('Items:', actor.items.contents);
+      SWSELogger.log('Effects:', actor.effects.contents);
       console.groupEnd();
     }
   }
@@ -114,9 +114,9 @@ export class SWSELogger {
   static item(item) {
     if (this.isDebugMode()) {
       console.group(`SWSE | Item: ${item.name}`);
-      console.log('Type:', item.type);
-      console.log('System Data:', item.system);
-      console.log('Actor:', item.actor?.name || 'None');
+      SWSELogger.log('Type:', item.type);
+      SWSELogger.log('System Data:', item.system);
+      SWSELogger.log('Actor:', item.actor?.name || 'None');
       console.groupEnd();
     }
   }
@@ -129,9 +129,9 @@ export class SWSELogger {
   static roll(roll, label = 'Roll') {
     if (this.isDebugMode()) {
       console.group(`SWSE | ${label}`);
-      console.log('Formula:', roll.formula);
-      console.log('Total:', roll.total);
-      console.log('Terms:', roll.terms);
+      SWSELogger.log('Formula:', roll.formula);
+      SWSELogger.log('Total:', roll.total);
+      SWSELogger.log('Terms:', roll.terms);
       console.groupEnd();
     }
   }
@@ -144,7 +144,7 @@ export class SWSELogger {
    */
   static sheet(sheetType, event, data = null) {
     if (this.isDebugMode()) {
-      console.log(`SWSE | Sheet ${sheetType} | ${event}`, data || '');
+      SWSELogger.log(`SWSE | Sheet ${sheetType} | ${event}`, data || '');
     }
   }
 
@@ -155,7 +155,7 @@ export class SWSELogger {
    */
   static dragDrop(operation, data) {
     if (this.isDebugMode()) {
-      console.log(`SWSE | ${operation.toUpperCase()}`, data);
+      SWSELogger.log(`SWSE | ${operation.toUpperCase()}`, data);
     }
   }
 
@@ -166,9 +166,9 @@ export class SWSELogger {
    */
   static validation(modelType, errors) {
     if (errors) {
-      console.error(`SWSE | Validation Failed: ${modelType}`, errors);
+      SWSELogger.error(`SWSE | Validation Failed: ${modelType}`, errors);
     } else if (this.isDebugMode()) {
-      console.log(`SWSE | Validation Passed: ${modelType}`);
+      SWSELogger.log(`SWSE | Validation Passed: ${modelType}`);
     }
   }
 
@@ -179,7 +179,7 @@ export class SWSELogger {
    */
   static combat(event, data) {
     if (this.isDebugMode()) {
-      console.log(`SWSE | Combat | ${event}`, data);
+      SWSELogger.log(`SWSE | Combat | ${event}`, data);
     }
   }
 
@@ -191,7 +191,7 @@ export class SWSELogger {
    */
   static settingChanged(key, oldValue, newValue) {
     if (this.isDebugMode()) {
-      console.log(`SWSE | Setting Changed: ${key}`, {
+      SWSELogger.log(`SWSE | Setting Changed: ${key}`, {
         old: oldValue,
         new: newValue
       });

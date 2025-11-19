@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * SWSE Houserule Presets
  * Pre-configured houserule bundles
@@ -150,7 +151,7 @@ export async function applyPreset(presetName) {
     return;
   }
   
-  console.log(`SWSE | Applying houserule preset: ${presetName}`);
+  SWSELogger.log(`SWSE | Applying houserule preset: ${presetName}`);
   
   // Apply all settings
   for (const [key, value] of Object.entries(preset.settings)) {

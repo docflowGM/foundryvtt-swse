@@ -1,20 +1,21 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Combat automation for SWSE
  */
 export class SWSECombatIntegration {
   
   static init() {
-    console.log("SWSE | Initializing combat automation...");
+    SWSELogger.log("SWSE | Initializing combat automation...");
     
     Hooks.on("createCombat", this._onCombatStart.bind(this));
     Hooks.on("combatTurn", this._onCombatTurn.bind(this));
     
-    console.log("SWSE | Combat automation ready");
+    SWSELogger.log("SWSE | Combat automation ready");
   }
   
   static async _onCombatStart(combat) {
     if (!game.user.isGM) return;
-    console.log("SWSE | Combat started");
+    SWSELogger.log("SWSE | Combat started");
     
     for (const combatant of combat.combatants) {
       if (combatant.actor) {

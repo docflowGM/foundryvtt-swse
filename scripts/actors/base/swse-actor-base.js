@@ -1,4 +1,4 @@
-import { SWSERoll } from '../../rolls/enhanced-rolls.js';
+import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
 import { ForcePointsUtil } from '../../utils/force-points.js';
 
 export class SWSEActorBase extends Actor {

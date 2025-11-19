@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Migration Utilities
  * Converts old array-based storage to Item-based architecture
@@ -29,7 +30,7 @@ export class SWSEMigration {
    * Migrate a single actor
    */
   static async migrateActor(actor) {
-    console.log(`Migrating actor: ${actor.name}`);
+    SWSELogger.log(`Migrating actor: ${actor.name}`);
     
     const updates = [];
     let itemsCreated = 0;
@@ -99,7 +100,7 @@ export class SWSEMigration {
         'system.weapons': []
       });
       
-      console.log(`  Created ${itemsCreated} items for ${actor.name}`);
+      SWSELogger.log(`  Created ${itemsCreated} items for ${actor.name}`);
     }
     
     return itemsCreated;
@@ -132,10 +133,10 @@ export class SWSEMigration {
     
     if (issues.length === 0) {
       ui.notifications.info('✓ Migration verification passed!');
-      console.log('Migration verification passed!');
+      SWSELogger.log('Migration verification passed!');
     } else {
       ui.notifications.warn(`Found ${issues.length} migration issues - check console`);
-      console.warn('Migration issues found:', issues);
+      SWSELogger.warn('Migration issues found:', issues);
     }
     
     return issues;

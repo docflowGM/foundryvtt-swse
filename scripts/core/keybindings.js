@@ -1,8 +1,9 @@
 /**
+import { SWSELogger } from '../utils/logger.js';
  * Keybindings for SWSE
  */
 export function registerKeybindings() {
-  console.log("SWSE | Registering keybindings...");
+  SWSELogger.log("SWSE | Registering keybindings...");
 
   game.keybindings.register("swse", "openSheet", {
     name: "Open Character Sheet",
@@ -80,5 +81,5 @@ export function registerKeybindings() {
     }
   });
 
-  console.log("SWSE | Keybindings registered");
+  SWSELogger.log("SWSE | Keybindings registered");
 }

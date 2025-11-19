@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * Item Validation Migration
  * Fixes validation errors in class items
@@ -106,7 +107,7 @@ export class ItemValidationMigration {
       if (converted !== babProg) {
         updates['system.babProgression'] = converted;
         needsUpdate = true;
-        console.log(`  ${parentName ? parentName + ' > ' : ''}${itemName}: babProgression ${babProg} -> "${converted}"`);
+        SWSELogger.log(`  ${parentName ? parentName + ' > ' : ''}${itemName}: babProgression ${babProg} -> "${converted}"`);
       }
     }
 
@@ -116,19 +117,19 @@ export class ItemValidationMigration {
     if (!item.fortSave) {
       updates['system.fortSave'] = defaultSaves.fortSave;
       needsUpdate = true;
-      console.log(`  ${parentName ? parentName + ' > ' : ''}${itemName}: adding fortSave = "${defaultSaves.fortSave}"`);
+      SWSELogger.log(`  ${parentName ? parentName + ' > ' : ''}${itemName}: adding fortSave = "${defaultSaves.fortSave}"`);
     }
 
     if (!item.refSave) {
       updates['system.refSave'] = defaultSaves.refSave;
       needsUpdate = true;
-      console.log(`  ${parentName ? parentName + ' > ' : ''}${itemName}: adding refSave = "${defaultSaves.refSave}"`);
+      SWSELogger.log(`  ${parentName ? parentName + ' > ' : ''}${itemName}: adding refSave = "${defaultSaves.refSave}"`);
     }
 
     if (!item.willSave) {
       updates['system.willSave'] = defaultSaves.willSave;
       needsUpdate = true;
-      console.log(`  ${parentName ? parentName + ' > ' : ''}${itemName}: adding willSave = "${defaultSaves.willSave}"`);
+      SWSELogger.log(`  ${parentName ? parentName + ' > ' : ''}${itemName}: adding willSave = "${defaultSaves.willSave}"`);
     }
 
     return { updates, needsUpdate };
@@ -140,17 +141,17 @@ export class ItemValidationMigration {
   static async run() {
     // Only GMs can run migrations
     if (!game.user.isGM) {
-      console.log("SWSE | Skipping item validation migration (not GM)");
+      SWSELogger.log("SWSE | Skipping item validation migration (not GM)");
       return;
     }
 
     // Check if migration needed
     if (!(await this.needsMigration())) {
-      console.log("SWSE | Item validation migration already complete");
+      SWSELogger.log("SWSE | Item validation migration already complete");
       return;
     }
 
-    console.log("SWSE | Starting item validation migration...");
+    SWSELogger.log("SWSE | Starting item validation migration...");
     ui.notifications.info("Running item data migration, please wait...");
 
     let fixedItems = 0;
@@ -161,7 +162,7 @@ export class ItemValidationMigration {
     // ============================================
     // Fix standalone items in the world
     // ============================================
-    console.log("SWSE | Checking world items...");
+    SWSELogger.log("SWSE | Checking world items...");
     for (const item of game.items) {
       try {
         if (item.type !== 'class') {
@@ -179,7 +180,7 @@ export class ItemValidationMigration {
         }
 
       } catch (err) {
-        console.error(`Error fixing item ${item.name}:`, err);
+        SWSELogger.error(`Error fixing item ${item.name}:`, err);
         errors++;
       }
     }
@@ -187,7 +188,7 @@ export class ItemValidationMigration {
     // ============================================
     // Fix class items embedded in actors
     // ============================================
-    console.log("SWSE | Checking actor embedded items...");
+    SWSELogger.log("SWSE | Checking actor embedded items...");
     for (const actor of game.actors) {
       try {
         let actorNeedsUpdate = false;
@@ -208,20 +209,20 @@ export class ItemValidationMigration {
         }
 
       } catch (err) {
-        console.error(`Error fixing items in actor ${actor.name}:`, err);
+        SWSELogger.error(`Error fixing items in actor ${actor.name}:`, err);
         errors++;
       }
     }
 
-    console.log("=".repeat(60));
-    console.log("SWSE | Item Validation Migration Complete");
-    console.log(`✓ Fixed: ${fixedItems} world items`);
-    console.log(`✓ Fixed: ${fixedActors} actors with embedded class items`);
-    console.log(`○ Skipped: ${skipped} items (already valid or not class items)`);
+    SWSELogger.log("=".repeat(60));
+    SWSELogger.log("SWSE | Item Validation Migration Complete");
+    SWSELogger.log(`✓ Fixed: ${fixedItems} world items`);
+    SWSELogger.log(`✓ Fixed: ${fixedActors} actors with embedded class items`);
+    SWSELogger.log(`○ Skipped: ${skipped} items (already valid or not class items)`);
     if (errors > 0) {
-      console.log(`✗ Errors: ${errors} items`);
+      SWSELogger.log(`✗ Errors: ${errors} items`);
     }
-    console.log("=".repeat(60));
+    SWSELogger.log("=".repeat(60));
 
     // Mark migration as complete
     await this.markComplete();
@@ -250,10 +251,10 @@ Hooks.once('ready', async () => {
     try {
       await ItemValidationMigration.run();
     } catch (err) {
-      console.error("SWSE | Item validation migration failed:", err);
+      SWSELogger.error("SWSE | Item validation migration failed:", err);
       ui.notifications.error(`Item migration failed: ${err.message || err}`, { permanent: true });
     }
   }
 });
 
-console.log("SWSE | Item validation migration script loaded. Manual run: await game.swse.migrations.fixItemValidation()");
+SWSELogger.log("SWSE | Item validation migration script loaded. Manual run: await game.swse.migrations.fixItemValidation()");

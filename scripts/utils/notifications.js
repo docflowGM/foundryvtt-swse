@@ -1,3 +1,4 @@
+import { SWSELogger } from './logger.js';
 /**
  * SWSE Notifications Utility
  * Centralized notification system for consistent user feedback
@@ -10,7 +11,7 @@ export class SWSENotifications {
    * @param {Object} options - Additional notification options
    */
   static error(message, options = {}) {
-    console.error('SWSE | ERROR:', message);
+    SWSELogger.error('SWSE | ERROR:', message);
     const prefix = options.noPrefix ? '' : 'SWSE: ';
     ui.notifications.error(`${prefix}${message}`, {
       permanent: false,
@@ -24,7 +25,7 @@ export class SWSENotifications {
    * @param {Object} options - Additional notification options
    */
   static warn(message, options = {}) {
-    console.warn('SWSE | WARNING:', message);
+    SWSELogger.warn('SWSE | WARNING:', message);
     const prefix = options.noPrefix ? '' : 'SWSE: ';
     ui.notifications.warn(`${prefix}${message}`, {
       permanent: false,
@@ -38,7 +39,7 @@ export class SWSENotifications {
    * @param {Object} options - Additional notification options
    */
   static info(message, options = {}) {
-    console.log('SWSE | INFO:', message);
+    SWSELogger.log('SWSE | INFO:', message);
     const prefix = options.noPrefix ? '' : '';
     ui.notifications.info(`${prefix}${message}`, {
       permanent: false,
@@ -52,7 +53,7 @@ export class SWSENotifications {
    * @param {Object} options - Additional notification options
    */
   static success(message, options = {}) {
-    console.log('SWSE | SUCCESS:', message);
+    SWSELogger.log('SWSE | SUCCESS:', message);
     const prefix = options.noPrefix ? '' : '';
     ui.notifications.info(`${prefix}${message}`, {
       permanent: false,
@@ -82,7 +83,7 @@ export class SWSENotifications {
    * @param {Error} error - The error object
    */
   static operationFailed(operation, error) {
-    console.error('SWSE | Operation Failed:', operation, error);
+    SWSELogger.error('SWSE | Operation Failed:', operation, error);
     this.error(`Failed to ${operation}. Check console for details.`, { permanent: true });
   }
 

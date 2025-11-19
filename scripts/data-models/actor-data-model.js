@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
   static defineSchema() {
@@ -367,7 +368,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
   _calculateDefenses() {
     // Ensure defenses object exists
     if (!this.defenses) {
-      console.warn('Actor defenses not initialized, skipping defense calculations');
+      SWSELogger.warn('Actor defenses not initialized, skipping defense calculations');
       return;
     }
 
@@ -375,7 +376,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
     // Ensure individual defense objects exist
     if (!this.defenses.reflex || !this.defenses.fortitude || !this.defenses.will) {
-      console.warn('Actor defense sub-objects not initialized, skipping defense calculations');
+      SWSELogger.warn('Actor defense sub-objects not initialized, skipping defense calculations');
       return;
     }
 
@@ -430,7 +431,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
   _calculateDamageThreshold() {
     // Ensure defenses and fortitude are initialized
     if (!this.defenses || !this.defenses.fortitude) {
-      console.warn('Actor defenses not initialized, skipping damage threshold calculation');
+      SWSELogger.warn('Actor defenses not initialized, skipping damage threshold calculation');
       return;
     }
     this.damageThreshold = this.defenses.fortitude.total;

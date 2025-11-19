@@ -1,4 +1,5 @@
 /**
+import { SWSELogger } from '../utils/logger.js';
  * Optimized template loading with lazy loading support
  * Critical templates load immediately, others load on demand
  */
@@ -52,12 +53,12 @@ export async function preloadHandlebarsTemplates() {
     "systems/swse/templates/canvas-ui/toolbar.hbs"
   ];
 
-  console.log(`SWSE | Preloading ${criticalTemplates.length} critical templates...`);
+  SWSELogger.log(`SWSE | Preloading ${criticalTemplates.length} critical templates...`);
 
   try {
     // Load critical templates immediately
     await foundry.applications.handlebars.loadTemplates(criticalTemplates);
-    console.log(`SWSE | Critical templates loaded (${criticalTemplates.length})`);
+    SWSELogger.log(`SWSE | Critical templates loaded (${criticalTemplates.length})`);
 
     // Register lazy templates with lazy loader if available
     if (window.SWSE?.lazyLoader) {
@@ -65,18 +66,18 @@ export async function preloadHandlebarsTemplates() {
         const name = path.split('/').pop().replace('.hbs', '');
         window.SWSE.lazyLoader.registerTemplate(name, path);
       }
-      console.log(`SWSE | Registered ${lazyTemplates.length} templates for lazy loading`);
+      SWSELogger.log(`SWSE | Registered ${lazyTemplates.length} templates for lazy loading`);
     } else {
       // Fallback: load all templates in background
       setTimeout(async () => {
         await foundry.applications.handlebars.loadTemplates(lazyTemplates);
-        console.log(`SWSE | Background templates loaded (${lazyTemplates.length})`);
+        SWSELogger.log(`SWSE | Background templates loaded (${lazyTemplates.length})`);
       }, 1000);
     }
 
     return true;
   } catch (err) {
-    console.error("SWSE | Error loading templates:", err);
+    SWSELogger.error("SWSE | Error loading templates:", err);
     return false;
   }
 }

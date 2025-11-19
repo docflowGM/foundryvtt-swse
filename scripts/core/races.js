@@ -1,4 +1,5 @@
 // systems/swse/scripts/races.js
+import { SWSELogger } from '../utils/logger.js';
 
 export const SWSE_RACES = {
   aleena: { label: "Aleena", bonuses: { dex: 2, cha: -2 } },
@@ -80,7 +81,7 @@ export const SWSE_RACES = {
 export function applyRaceBonuses(baseAttributes, raceKey) {
   const race = SWSE_RACES[raceKey];
   if (!race) {
-    console.warn(`Race key "${raceKey}" not found. Returning base attributes.`);
+    SWSELogger.warn(`Race key "${raceKey}" not found. Returning base attributes.`);
     return { ...baseAttributes };
   }
 

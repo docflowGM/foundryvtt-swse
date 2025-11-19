@@ -1,8 +1,9 @@
 /**
+import { SWSELogger } from '../utils/logger.js';
  * System settings for SWSE
  */
 export function registerSystemSettings() {
-  console.log("SWSE | Registering settings...");
+  SWSELogger.log("SWSE | Registering settings...");
 
   game.settings.register("swse", "autoDamageThreshold", {
     name: "SWSE.Settings.AutoDamageThreshold.Name",
@@ -87,5 +88,5 @@ export function registerSystemSettings() {
     default: ""
   });
 
-  console.log("SWSE | Settings registered");
+  SWSELogger.log("SWSE | Settings registered");
 }

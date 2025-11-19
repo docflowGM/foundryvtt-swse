@@ -1,4 +1,5 @@
 /**
+import { SWSELogger } from '../utils/logger.js';
  * Vehicle Modification Manager
  * Handles loading, calculating, and managing starship modifications
  */
@@ -35,14 +36,14 @@ export class VehicleModificationManager {
       this._accessories = accessories;
 
       this._initialized = true;
-      console.log('SWSE | Vehicle Modification Manager initialized');
-      console.log(`  - ${stockShips.length} stock ships`);
-      console.log(`  - ${movement.length} movement systems`);
-      console.log(`  - ${defense.length} defense systems`);
-      console.log(`  - ${weapons.length} weapon systems`);
-      console.log(`  - ${accessories.length} accessories`);
+      SWSELogger.log('SWSE | Vehicle Modification Manager initialized');
+      SWSELogger.log(`  - ${stockShips.length} stock ships`);
+      SWSELogger.log(`  - ${movement.length} movement systems`);
+      SWSELogger.log(`  - ${defense.length} defense systems`);
+      SWSELogger.log(`  - ${weapons.length} weapon systems`);
+      SWSELogger.log(`  - ${accessories.length} accessories`);
     } catch (error) {
-      console.error('SWSE | Failed to load vehicle modification data:', error);
+      SWSELogger.error('SWSE | Failed to load vehicle modification data:', error);
       this._stockShips = [];
       this._movementSystems = [];
       this._defenseSystems = [];

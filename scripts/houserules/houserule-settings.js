@@ -1,3 +1,4 @@
+import { SWSELogger } from '../utils/logger.js';
 /**
  * House Rules Settings Registration
  * Registers all configurable house rule settings for the SWSE system
@@ -465,5 +466,5 @@ export function registerHouseruleSettings() {
     default: true
   });
 
-  console.log("SWSE | House rule settings registered");
+  SWSELogger.log("SWSE | House rule settings registered");
 }

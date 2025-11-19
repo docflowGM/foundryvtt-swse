@@ -1,6 +1,8 @@
 /**
  * SWSE Init — placeholder to satisfy Foundry system validation
  */
+import { SWSELogger } from '../utils/logger.js';
+
 Hooks.once("init", () => {
-  console.log("SWSE system initialized successfully.");
+  SWSELogger.log("SWSE system initialized successfully.");
 });

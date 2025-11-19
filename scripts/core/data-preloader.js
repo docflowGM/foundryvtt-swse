@@ -1,4 +1,5 @@
 /**
+import { SWSELogger } from '../utils/logger.js';
  * Data Preloader
  * Preloads and caches frequently accessed compendium data
  * Reduces load times and improves responsiveness
@@ -40,7 +41,7 @@ export class DataPreloader {
     try {
       // Preload priority items immediately
       if (verbose) {
-        console.log('SWSE | Preloading priority data...');
+        SWSELogger.log('SWSE | Preloading priority data...');
       }
 
       await timed('Priority data preload', async () => {
@@ -56,10 +57,10 @@ export class DataPreloader {
       this._loading = false;
 
       if (verbose) {
-        console.log('SWSE | Data preloading complete');
+        SWSELogger.log('SWSE | Data preloading complete');
       }
     } catch (error) {
-      console.error('SWSE | Data preloading failed:', error);
+      SWSELogger.error('SWSE | Data preloading failed:', error);
       this._loading = false;
     }
   }
@@ -72,14 +73,14 @@ export class DataPreloader {
     setTimeout(async () => {
       try {
         if (verbose) {
-          console.log('SWSE | Background preloading...');
+          SWSELogger.log('SWSE | Background preloading...');
         }
 
         for (const type of types) {
           try {
             await this._preloadType(type);
           } catch (error) {
-            console.warn(`SWSE | Failed to preload ${type}:`, error.message);
+            SWSELogger.warn(`SWSE | Failed to preload ${type}:`, error.message);
           }
 
           // Yield between types
@@ -87,10 +88,10 @@ export class DataPreloader {
         }
 
         if (verbose) {
-          console.log('SWSE | Background preloading complete');
+          SWSELogger.log('SWSE | Background preloading complete');
         }
       } catch (error) {
-        console.error('SWSE | Background preloading error:', error);
+        SWSELogger.error('SWSE | Background preloading error:', error);
       }
     }, 500);
   }
@@ -114,7 +115,7 @@ export class DataPreloader {
       case 'skills':
         return this._preloadSkills();
       default:
-        console.warn(`Unknown preload type: ${type}`);
+        SWSELogger.warn(`Unknown preload type: ${type}`);
     }
   }
 

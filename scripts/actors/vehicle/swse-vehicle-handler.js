@@ -1,4 +1,5 @@
 /**
+import { SWSELogger } from '../../utils/logger.js';
  * Vehicle-specific functionality
  * Handles applying vehicle templates to vehicle actors
  */
@@ -20,7 +21,7 @@ export class SWSEVehicleHandler {
       return false;
     }
 
-    console.log('SWSE | Applying vehicle template:', vehicleItem.name);
+    SWSELogger.log('SWSE | Applying vehicle template:', vehicleItem.name);
 
     const template = vehicleItem.system;
 

@@ -3,7 +3,7 @@
  * Run these tests to verify core functionality
  */
 
-import { calculateAbilities } from '../scripts/utils/calc-abilities.js';
+import { calculateAbilities } from './utils/calc-abilities.js';
 import { calculateAllDefenses } from '../scripts/rolls/defenses.js';
 import { TestUtils } from './test-utils.js';
 

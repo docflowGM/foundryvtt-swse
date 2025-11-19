@@ -1,4 +1,5 @@
 /**
+import { SWSELogger } from '../utils/logger.js';
  * SWSE Level Up System
  * Handles character leveling with class selection and HP rolls
  * Uses enhanced version for visual talent trees and multi-classing
@@ -91,7 +92,7 @@ export class SWSELevelUp {
                                     await SWSELevelUp.apply(actor, classId, hpChoice);
                                     resolve(true);
                                 } catch (err) {
-                                    console.error("SWSE Level Up | Error in callback:", err);
+                                    SWSELogger.error("SWSE Level Up | Error in callback:", err);
                                     ui.notifications.error("Failed to level up character.");
                                     resolve(false);
                                 }
@@ -107,7 +108,7 @@ export class SWSELevelUp {
                 }).render(true);
             });
         } catch (err) {
-            console.error("SWSE Level Up | Failed to open dialog:", err);
+            SWSELogger.error("SWSE Level Up | Failed to open dialog:", err);
             ui.notifications.error("Failed to open level up dialog.");
             return false;
         }
@@ -238,7 +239,7 @@ export class SWSELevelUp {
             actor.sheet.render(false);
             
         } catch (err) {
-            console.error("SWSE Level Up | Error applying level up:", err);
+            SWSELogger.error("SWSE Level Up | Error applying level up:", err);
             ui.notifications.error("Failed to apply level up. See console for details.");
             throw err;
         }

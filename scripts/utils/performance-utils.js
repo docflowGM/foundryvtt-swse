@@ -1,3 +1,4 @@
+import { SWSELogger } from './logger.js';
 /**
  * Performance Utilities
  * Debouncing, throttling, and other optimization helpers
@@ -153,12 +154,12 @@ export async function timed(label, func) {
     const result = await func();
     const duration = performance.now() - start;
 
-    console.log(`SWSE Performance | ${label}: ${duration.toFixed(2)}ms`);
+    SWSELogger.log(`SWSE Performance | ${label}: ${duration.toFixed(2)}ms`);
 
     return result;
   } catch (error) {
     const duration = performance.now() - start;
-    console.error(`SWSE Performance | ${label} failed after ${duration.toFixed(2)}ms:`, error);
+    SWSELogger.error(`SWSE Performance | ${label} failed after ${duration.toFixed(2)}ms:`, error);
     throw error;
   }
 }
@@ -293,7 +294,7 @@ export class PerformanceMonitor {
   end(label) {
     const start = this._metrics.get(label);
     if (!start) {
-      console.warn(`No start time for metric: ${label}`);
+      SWSELogger.warn(`No start time for metric: ${label}`);
       return 0;
     }
 
@@ -308,7 +309,7 @@ export class PerformanceMonitor {
     const result = func();
     const duration = this.end(label);
 
-    console.log(`SWSE | ${label}: ${duration.toFixed(2)}ms`);
+    SWSELogger.log(`SWSE | ${label}: ${duration.toFixed(2)}ms`);
 
     return result;
   }
@@ -318,7 +319,7 @@ export class PerformanceMonitor {
     const result = await func();
     const duration = this.end(label);
 
-    console.log(`SWSE | ${label}: ${duration.toFixed(2)}ms`);
+    SWSELogger.log(`SWSE | ${label}: ${duration.toFixed(2)}ms`);
 
     return result;
   }
