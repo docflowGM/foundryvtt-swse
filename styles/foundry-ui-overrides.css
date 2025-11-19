@@ -1,0 +1,86 @@
+/* ============================================================================
+   FOUNDRY UI OVERRIDES - MAXIMUM PRIORITY
+   This file MUST be loaded last in system.json
+   ============================================================================ */
+
+/* SIDEBAR - Remove ALL top spacing */
+body #sidebar,
+body #sidebar.app,
+body #sidebar.collapsed {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  top: 0 !important;
+}
+
+body #sidebar .sidebar-tab,
+body #sidebar .sidebar-tab[data-tab],
+body #sidebar .sidebar-tab.active,
+body #sidebar .sidebar-tab[data-tab="chat"],
+body #sidebar .sidebar-tab[data-tab="combat"],
+body #sidebar .sidebar-tab[data-tab="scenes"],
+body #sidebar .sidebar-tab[data-tab="actors"],
+body #sidebar .sidebar-tab[data-tab="items"],
+body #sidebar .sidebar-tab[data-tab="journal"],
+body #sidebar .sidebar-tab[data-tab="tables"],
+body #sidebar .sidebar-tab[data-tab="cards"],
+body #sidebar .sidebar-tab[data-tab="playlists"],
+body #sidebar .sidebar-tab[data-tab="compendium"],
+body #sidebar .sidebar-tab[data-tab="settings"] {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Chat specific */
+body #sidebar #chat-log,
+body #sidebar #chat-controls,
+body #sidebar #chat-form {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Directory lists */
+body #sidebar .directory-list,
+body #sidebar #combat-tracker,
+body #sidebar .directory-header {
+  margin-top: 0 !important;
+  padding-top: 4px !important;
+}
+
+/* LEFT TOOLBAR - Remove ALL edge spacing */
+body #ui-left,
+body #ui-left.app {
+  left: 0 !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+body #controls,
+body #controls.app,
+body #controls ol,
+body #controls ol.main-controls,
+body #controls ol.control-tools,
+body #controls ol.sub-controls {
+  left: 0 !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+  margin: 0 !important;
+}
+
+body #controls .scene-control,
+body #controls li.scene-control {
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* PREVENT CHAT FROM EXTENDING BELOW VIEWPORT */
+body #sidebar #chat-log {
+  max-height: calc(100vh - 120px) !important;
+  overflow-y: auto !important;
+}
+
+body #sidebar.app {
+  height: 100vh !important;
+  max-height: 100vh !important;
+}
