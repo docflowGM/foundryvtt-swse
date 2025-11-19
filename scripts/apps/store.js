@@ -668,10 +668,45 @@ export class SWSEStore extends FormApplication {
             };
         };
 
+        // Helper to sort weapons by type (Melee first, then Ranged)
+        const sortWeapons = (weapons) => {
+            return weapons.sort((a, b) => {
+                const aType = (a.system?.weaponType || a.system?.type || '').toLowerCase();
+                const bType = (b.system?.weaponType || b.system?.type || '').toLowerCase();
+
+                // Melee weapons first, then ranged
+                const aIsMelee = aType.includes('melee') || aType.includes('simple') || aType.includes('lightsaber');
+                const bIsMelee = bType.includes('melee') || bType.includes('simple') || bType.includes('lightsaber');
+
+                if (aIsMelee && !bIsMelee) return -1;
+                if (!aIsMelee && bIsMelee) return 1;
+
+                // Within same category, sort alphabetically
+                return a.name.localeCompare(b.name);
+            });
+        };
+
+        // Helper to sort armor by type (Light, Medium, Heavy)
+        const sortArmor = (armors) => {
+            const typeOrder = { 'light': 0, 'medium': 1, 'heavy': 2 };
+            return armors.sort((a, b) => {
+                const aType = (a.system?.armorType || a.system?.type || '').toLowerCase();
+                const bType = (b.system?.armorType || b.system?.type || '').toLowerCase();
+
+                const aOrder = typeOrder[aType] ?? 999;
+                const bOrder = typeOrder[bType] ?? 999;
+
+                if (aOrder !== bOrder) return aOrder - bOrder;
+
+                // Within same type, sort alphabetically
+                return a.name.localeCompare(b.name);
+            });
+        };
+
         // Categorize items and add final costs
         const categories = {
-            weapons: allItems.filter(i => i.type === "weapon").map(addFinalCost),
-            armor: allItems.filter(i => i.type === "armor").map(addFinalCost),
+            weapons: sortWeapons(allItems.filter(i => i.type === "weapon").map(addFinalCost)),
+            armor: sortArmor(allItems.filter(i => i.type === "armor").map(addFinalCost)),
             grenades: equipmentItems.filter(i => categorizeEquipment(i) === "grenades").map(addFinalCost),
             medical: equipmentItems.filter(i => categorizeEquipment(i) === "medical").map(addFinalCost),
             tech: equipmentItems.filter(i => categorizeEquipment(i) === "tech").map(addFinalCost),
@@ -782,6 +817,9 @@ export class SWSEStore extends FormApplication {
 
         // Availability filter dropdown
         html.find("#shop-availability-filter").change(this._onAvailabilityFilterChange.bind(this));
+
+        // Search input
+        html.find("#shop-search-input").on('input', this._onSearchInput.bind(this));
 
         // Cart and GM buttons
         html.find(".view-cart-btn").click(this._onShopTabClick.bind(this));
@@ -919,6 +957,62 @@ export class SWSEStore extends FormApplication {
             if (tempEmptyMessage) {
                 tempEmptyMessage.remove();
             }
+        }
+    }
+
+    /**
+     * Handle search input
+     * @param {Event} event - Input event
+     * @private
+     */
+    _onSearchInput(event) {
+        event.preventDefault();
+        const searchTerm = event.currentTarget.value.toLowerCase().trim();
+        const doc = this.element[0];
+
+        // Get the active panel
+        const activePanel = doc.querySelector('.shop-panel.active');
+        if (!activePanel) return;
+
+        // Get all product items in the active panel
+        const productItems = activePanel.querySelectorAll('.product-item');
+
+        productItems.forEach(item => {
+            // Get item name from the product-name element
+            const nameEl = item.querySelector('.product-name');
+            const itemName = nameEl ? nameEl.textContent.toLowerCase() : '';
+
+            // Get description if available
+            const descEl = item.querySelector('.detail-desc');
+            const itemDesc = descEl ? descEl.textContent.toLowerCase() : '';
+
+            // Check if search term matches name or description
+            if (searchTerm === '' || itemName.includes(searchTerm) || itemDesc.includes(searchTerm)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Show message if no items visible
+        const visibleItems = activePanel.querySelectorAll('.product-item[style=""]').length;
+        let searchEmptyMsg = activePanel.querySelector('.search-empty-message');
+
+        if (visibleItems === 0 && searchTerm !== '') {
+            if (!searchEmptyMsg) {
+                searchEmptyMsg = document.createElement('div');
+                searchEmptyMsg.className = 'empty-message search-empty-message';
+                searchEmptyMsg.innerHTML = `
+                    <i class="fas fa-search"></i>
+                    <p>No items found matching "${searchTerm}".</p>
+                `;
+                const productsList = activePanel.querySelector('.products-list');
+                if (productsList) {
+                    productsList.appendChild(searchEmptyMsg);
+                }
+            }
+        } else if (searchEmptyMsg) {
+            searchEmptyMsg.remove();
         }
     }
 

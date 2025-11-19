@@ -501,6 +501,31 @@ Hooks.once("ready", async function() {
   SWSELogger.log('Enhanced Combat System initialized');
 
   // ============================================
+  // Center SWSE Windows (left of sidebar)
+  // ============================================
+
+  Hooks.on('renderApplication', (app, html, data) => {
+    // Only reposition SWSE applications
+    if (!app.options.classes?.includes('swse')) return;
+
+    // Calculate position to center window left of sidebar
+    const sidebar = document.getElementById('sidebar');
+    const sidebarWidth = sidebar ? sidebar.offsetWidth : 300;
+    const windowWidth = app.position.width;
+    const windowHeight = app.position.height;
+
+    // Calculate center position (accounting for sidebar on right)
+    const availableWidth = window.innerWidth - sidebarWidth;
+    const left = Math.max(0, (availableWidth - windowWidth) / 2);
+    const top = Math.max(0, (window.innerHeight - windowHeight) / 2);
+
+    // Update position
+    app.setPosition({ left, top });
+  });
+
+  SWSELogger.log('Window positioning initialized');
+
+  // ============================================
   // Initialize Grappling System
   // ============================================
 
