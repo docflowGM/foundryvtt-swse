@@ -353,6 +353,36 @@ Hooks.once("init", async function() {
     });
   }
 
+  // Helper to extract hit die size from string like "1d10" -> "10"
+  if (!Handlebars.helpers['extractHitDie']) {
+    Handlebars.registerHelper('extractHitDie', function(hitDieString) {
+      if (!hitDieString) return '6';
+      const match = String(hitDieString).match(/\d+d(\d+)/);
+      return match ? match[1] : hitDieString;
+    });
+  }
+
+  // Helper to format BAB progression
+  if (!Handlebars.helpers['formatBAB']) {
+    Handlebars.registerHelper('formatBAB', function(babProgression) {
+      const bab = Number(babProgression);
+      if (bab >= 1.0) return 'High (+1/level)';
+      if (bab >= 0.75) return 'Medium (+3/4)';
+      return 'Low (+1/2)';
+    });
+  }
+
+  // Helper to strip HTML tags from text
+  if (!Handlebars.helpers['stripHTML']) {
+    Handlebars.registerHelper('stripHTML', function(htmlString) {
+      if (!htmlString) return '';
+      // Create a temporary div to parse HTML
+      const div = document.createElement('div');
+      div.innerHTML = htmlString;
+      return div.textContent || div.innerText || '';
+    });
+  }
+
   // ============================================
   // Preload Templates
   // ============================================
@@ -499,6 +529,31 @@ Hooks.once("ready", async function() {
   CanvasUIManager.initialize();
   console.log("SWSE | Canvas UI Tools initialized");
   SWSELogger.log('Enhanced Combat System initialized');
+
+  // ============================================
+  // Center SWSE Windows (left of sidebar)
+  // ============================================
+
+  Hooks.on('renderApplication', (app, html, data) => {
+    // Only reposition SWSE applications
+    if (!app.options.classes?.includes('swse')) return;
+
+    // Calculate position to center window left of sidebar
+    const sidebar = document.getElementById('sidebar');
+    const sidebarWidth = sidebar ? sidebar.offsetWidth : 300;
+    const windowWidth = app.position.width;
+    const windowHeight = app.position.height;
+
+    // Calculate center position (accounting for sidebar on right)
+    const availableWidth = window.innerWidth - sidebarWidth;
+    const left = Math.max(0, (availableWidth - windowWidth) / 2);
+    const top = Math.max(0, (window.innerHeight - windowHeight) / 2);
+
+    // Update position
+    app.setPosition({ left, top });
+  });
+
+  SWSELogger.log('Window positioning initialized');
 
   // ============================================
   // Initialize Grappling System

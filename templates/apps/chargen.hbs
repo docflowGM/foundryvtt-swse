@@ -538,8 +538,8 @@
  <h4>{{this.name}}</h4>
  {{#if this.system}}
  <div class="class-info">
- <span>Hit Die: d{{this.system.hitDie}}</span>
- <span>BAB: {{this.system.babProgression}}</span>
+ <span>Hit Die: d{{#if this.system.hit_die}}{{extractHitDie this.system.hit_die}}{{else}}{{extractHitDie this.system.hitDie}}{{/if}}</span>
+ <span>{{formatBAB this.system.babProgression}}</span>
  </div>
  {{/if}}
  </button>

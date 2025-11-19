@@ -363,6 +363,295 @@ export class SWSEActorSheetBase extends ActorSheet {
   }
 
   /**
+   * Handle roll attack - opens dialog with attack calculation
+   */
+  async _onRollAttack(event) {
+    event.preventDefault();
+    const itemId = event.currentTarget.dataset.itemId;
+    const weapon = this.actor.items.get(itemId);
+
+    if (!weapon) {
+      ui.notifications.error("Weapon not found!");
+      return;
+    }
+
+    await this._openAttackDamageDialog(weapon);
+  }
+
+  /**
+   * Handle roll damage - opens dialog with damage calculation
+   */
+  async _onRollDamage(event) {
+    event.preventDefault();
+    const itemId = event.currentTarget.dataset.itemId;
+    const weapon = this.actor.items.get(itemId);
+
+    if (!weapon) {
+      ui.notifications.error("Weapon not found!");
+      return;
+    }
+
+    await this._openAttackDamageDialog(weapon, true);  // damageOnly = true
+  }
+
+  /**
+   * Open attack/damage dialog with all modifiers
+   */
+  async _openAttackDamageDialog(weapon, damageOnly = false) {
+    const actor = this.actor;
+    const level = actor.system.level?.heroic || actor.system.level || 1;
+    const halfLevel = Math.floor(level / 2);
+    const bab = actor.system.bab || 0;
+
+    // Get ability modifiers
+    const abilities = {
+      str: actor.system.attributes?.str?.mod || 0,
+      dex: actor.system.attributes?.dex?.mod || 0,
+      con: actor.system.attributes?.con?.mod || 0,
+      int: actor.system.attributes?.int?.mod || 0,
+      wis: actor.system.attributes?.wis?.mod || 0,
+      cha: actor.system.attributes?.cha?.mod || 0
+    };
+
+    // Determine default ability (STR for melee, DEX for ranged)
+    const weaponType = weapon.system?.weaponType || weapon.system?.type || '';
+    const defaultAbility = weaponType.toLowerCase().includes('melee') ? 'str' : 'dex';
+
+    const content = `
+      <form class="attack-damage-dialog">
+        <h3>${weapon.name}</h3>
+
+        ${!damageOnly ? `
+        <div class="form-group">
+          <h4>Attack Roll Components</h4>
+          <div class="attack-breakdown">
+            <div class="component-row">
+              <label>Base (d20):</label>
+              <span>1d20</span>
+            </div>
+            <div class="component-row">
+              <label>BAB:</label>
+              <span>${bab >= 0 ? '+' : ''}${bab}</span>
+            </div>
+            <div class="component-row">
+              <label>Half Level:</label>
+              <span>+${halfLevel}</span>
+            </div>
+            <div class="component-row">
+              <label>Ability Modifier:</label>
+              <select name="attackAbility" id="attack-ability">
+                <option value="str" ${defaultAbility === 'str' ? 'selected' : ''}>STR (${abilities.str >= 0 ? '+' : ''}${abilities.str})</option>
+                <option value="dex" ${defaultAbility === 'dex' ? 'selected' : ''}>DEX (${abilities.dex >= 0 ? '+' : ''}${abilities.dex})</option>
+                <option value="con" >CON (${abilities.con >= 0 ? '+' : ''}${abilities.con})</option>
+                <option value="int">INT (${abilities.int >= 0 ? '+' : ''}${abilities.int})</option>
+                <option value="wis">WIS (${abilities.wis >= 0 ? '+' : ''}${abilities.wis})</option>
+                <option value="cha">CHA (${abilities.cha >= 0 ? '+' : ''}${abilities.cha})</option>
+              </select>
+            </div>
+            <div class="component-row">
+              <label>Misc Bonus:</label>
+              <input type="number" name="attackMisc" value="0" style="width: 60px;"/>
+            </div>
+            <div class="component-row total-row">
+              <label><strong>Total Attack Bonus:</strong></label>
+              <span id="attack-total">${bab + halfLevel + abilities[defaultAbility] >= 0 ? '+' : ''}${bab + halfLevel + abilities[defaultAbility]}</span>
+            </div>
+          </div>
+        </div>
+        ` : ''}
+
+        <div class="form-group">
+          <h4>Damage Roll Components</h4>
+          <div class="damage-breakdown">
+            <div class="component-row">
+              <label>Base Damage:</label>
+              <input type="text" name="baseDamage" value="${weapon.system?.damage || '1d6'}" style="width: 80px;"/>
+            </div>
+            <div class="component-row">
+              <label>Level Bonus:</label>
+              <span>+${level}</span>
+            </div>
+            <div class="component-row">
+              <label>Misc Bonus:</label>
+              <input type="number" name="damageMisc" value="0" style="width: 60px;"/>
+            </div>
+          </div>
+        </div>
+
+        <style>
+          .attack-damage-dialog {
+            padding: 10px;
+          }
+          .attack-damage-dialog h3 {
+            margin-top: 0;
+            color: #0af;
+            border-bottom: 2px solid #0af;
+            padding-bottom: 8px;
+          }
+          .attack-damage-dialog h4 {
+            color: #9ed0ff;
+            margin: 12px 0 8px 0;
+          }
+          .component-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(0, 170, 255, 0.2);
+          }
+          .component-row label {
+            font-weight: normal;
+            color: #9ed0ff;
+          }
+          .component-row span, .component-row select {
+            color: #0af;
+            font-weight: bold;
+          }
+          .total-row {
+            margin-top: 8px;
+            border-top: 2px solid #0af;
+            border-bottom: 2px solid #0af;
+            padding: 8px 0;
+          }
+          .total-row label {
+            font-size: 1.1em;
+          }
+          .total-row span {
+            font-size: 1.2em;
+          }
+        </style>
+      </form>
+    `;
+
+    // Show dialog
+    new Dialog({
+      title: `${weapon.name} - Attack & Damage`,
+      content: content,
+      buttons: {
+        roll: {
+          icon: '<i class="fas fa-dice-d20"></i>',
+          label: damageOnly ? "Roll Damage" : "Roll Attack & Damage",
+          callback: async (html) => {
+            const form = html[0].querySelector('form');
+            const attackAbility = form.querySelector('[name="attackAbility"]')?.value || defaultAbility;
+            const attackMisc = parseInt(form.querySelector('[name="attackMisc"]')?.value || 0);
+            const baseDamage = form.querySelector('[name="baseDamage"]')?.value || '1d6';
+            const damageMisc = parseInt(form.querySelector('[name="damageMisc"]')?.value || 0);
+
+            const abilityMod = abilities[attackAbility];
+            const attackBonus = bab + halfLevel + abilityMod + attackMisc;
+
+            // Roll attack
+            let attackRoll, damageRoll;
+            if (!damageOnly) {
+              attackRoll = await new Roll(`1d20 + ${attackBonus}`).evaluate();
+            }
+
+            // Roll damage
+            const damageFormula = `${baseDamage} + ${level} + ${damageMisc}`;
+            damageRoll = await new Roll(damageFormula).evaluate();
+
+            // Create chat message
+            let chatContent = `
+              <div class="swse-attack-card">
+                <h3>${weapon.name}</h3>
+                ${!damageOnly ? `
+                <div class="attack-roll">
+                  <h4>Attack Roll</h4>
+                  <div class="dice-roll">
+                    <div class="dice-result">${attackRoll.total}</div>
+                    <div class="dice-formula">
+                      1d20 (${attackRoll.dice[0].total}) + ${bab} (BAB) + ${halfLevel} (½ Level) + ${abilityMod} (${attackAbility.toUpperCase()}) ${attackMisc !== 0 ? `+ ${attackMisc} (Misc)` : ''}
+                    </div>
+                  </div>
+                </div>
+                ` : ''}
+                <div class="damage-roll">
+                  <h4>Damage Roll</h4>
+                  <div class="dice-roll">
+                    <div class="dice-result">${damageRoll.total}</div>
+                    <div class="dice-formula">
+                      ${baseDamage} + ${level} (Level) ${damageMisc !== 0 ? `+ ${damageMisc} (Misc)` : ''} = ${damageFormula}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <style>
+                .swse-attack-card {
+                  background: linear-gradient(135deg, #0a0f1a 0%, #0f1f35 100%);
+                  border: 2px solid #0af;
+                  border-radius: 8px;
+                  padding: 12px;
+                  color: #9ed0ff;
+                }
+                .swse-attack-card h3 {
+                  margin: 0 0 12px 0;
+                  color: #0af;
+                  border-bottom: 2px solid #0af;
+                  padding-bottom: 6px;
+                }
+                .swse-attack-card h4 {
+                  margin: 8px 0 4px 0;
+                  color: #9ed0ff;
+                  font-size: 14px;
+                }
+                .dice-roll {
+                  background: rgba(0, 20, 40, 0.5);
+                  border-radius: 4px;
+                  padding: 8px;
+                  margin: 4px 0;
+                }
+                .dice-result {
+                  font-size: 24px;
+                  font-weight: bold;
+                  color: #0af;
+                  text-align: center;
+                  margin-bottom: 4px;
+                }
+                .dice-formula {
+                  font-size: 11px;
+                  color: #6a9dcd;
+                  text-align: center;
+                }
+              </style>
+            `;
+
+            ChatMessage.create({
+              user: game.user.id,
+              speaker: ChatMessage.getSpeaker({actor: this.actor}),
+              content: chatContent,
+              sound: CONFIG.sounds.dice
+            });
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "roll",
+      render: (html) => {
+        // Update total when ability or misc changes
+        const updateTotal = () => {
+          const form = html[0].querySelector('form');
+          const attackAbility = form.querySelector('[name="attackAbility"]')?.value || defaultAbility;
+          const attackMisc = parseInt(form.querySelector('[name="attackMisc"]')?.value || 0);
+          const abilityMod = abilities[attackAbility];
+          const total = bab + halfLevel + abilityMod + attackMisc;
+
+          const totalSpan = html[0].querySelector('#attack-total');
+          if (totalSpan) {
+            totalSpan.textContent = `${total >= 0 ? '+' : ''}${total}`;
+          }
+        };
+
+        html.find('[name="attackAbility"]').on('change', updateTotal);
+        html.find('[name="attackMisc"]').on('input', updateTotal);
+      }
+    }).render(true);
+  }
+
+  /**
    * Handle skill actions toggle
    */
   _onSkillActionsToggle(event) {
