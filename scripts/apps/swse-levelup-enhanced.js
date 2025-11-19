@@ -579,10 +579,18 @@ export class SWSELevelUpEnhanced extends FormApplication {
       return;
     }
 
-    const speciesDoc = await speciesPack.getDocument(speciesId);
+    // Try to get the document using the ID
+    let speciesDoc = await speciesPack.getDocument(speciesId);
+
+    // If not found, try searching by name as a fallback
+    if (!speciesDoc) {
+      console.warn(`SWSE LevelUp | Species not found with ID ${speciesId}, searching by name...`);
+      const allSpecies = await speciesPack.getDocuments();
+      speciesDoc = allSpecies.find(s => s.name === speciesName || s.id === speciesId || s._id === speciesId);
+    }
 
     if (!speciesDoc) {
-      console.error(`SWSE LevelUp | Species not found with ID: ${speciesId}`);
+      console.error(`SWSE LevelUp | Species not found with ID: ${speciesId} or name: ${speciesName}`);
       console.log('SWSE LevelUp | Available species in pack:', await speciesPack.getDocuments());
       ui.notifications.error(`Species "${speciesName}" not found! The species compendium may be empty or the ID is incorrect.`);
       return;
