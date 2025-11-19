@@ -4,6 +4,11 @@
 // These are necessary fixes for Foundry VTT issues
 // ============================================================================
 
+// ============================================
+// ENHANCED SIDEBAR SPACE REMOVAL
+// More specific selectors to override Foundry core
+// ============================================
+
 // Fix for Foundry v13/The Forge sidebar height bug
 // Override broken height restrictions on sidebar tabs
 #sidebar {
@@ -14,7 +19,8 @@
   padding-top: 0 !important;
   margin-top: 0 !important;
 
-  .sidebar-tab {
+  // Remove ALL top spacing from sidebar tabs
+  .sidebar-tab[data-tab] {
     height: auto !important;
     max-height: none !important;
     overflow-y: auto !important;
@@ -46,7 +52,7 @@
         min-height: 0 !important;
         overflow-y: auto !important;
         margin-top: 0 !important;
-        padding-top: 8px !important;
+        padding-top: 0 !important;
       }
 
       #chat-controls {
@@ -60,7 +66,18 @@
     }
   }
 
-  .directory-list {
+  // Specific tab content areas - more explicit targeting
+  #chat-log,
+  .directory-list,
+  #combat-tracker,
+  #scenes .directory-list,
+  #actors .directory-list,
+  #items .directory-list,
+  #journal .directory-list,
+  #tables .directory-list,
+  #cards .directory-list,
+  #playlists .directory-list,
+  #compendium .directory-list {
     height: auto !important;
     max-height: none !important;
     overflow-y: auto !important;
@@ -68,12 +85,19 @@
     flex: 1 !important;
     min-height: 0 !important;
     margin-top: 0 !important;
-    padding-top: 8px !important;
+    padding-top: 0 !important;
   }
 
-  // Fix for directory header
-  .directory-header {
+  // Remove spacing from directory headers
+  .directory-header,
+  .directory-header.keep-collapsed {
     flex-shrink: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 4px !important;
+  }
+
+  // Ensure search filters don't add space
+  .directory-list .directory-header input[type="search"] {
     margin-top: 0 !important;
   }
 
@@ -84,11 +108,38 @@
   }
 }
 
-// Ensure UI containers don't interfere
+// ============================================
+// LEFT TOOLBAR - REMOVE EDGE SPACING
+// ============================================
+
 #ui-left {
   display: flex !important;
   flex-direction: column !important;
   pointer-events: auto !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+  left: 0 !important;
+}
+
+#controls {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  left: 0 !important;
+
+  .scene-control,
+  .control-tools {
+    margin-left: 0 !important;
+  }
+
+  // Remove any gaps in the control buttons themselves
+  ol.control-tools {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  .scene-control {
+    padding-left: 0 !important;
+  }
 }
 
 // Add any other Foundry-specific fixes here as needed
