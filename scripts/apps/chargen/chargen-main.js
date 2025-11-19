@@ -1,0 +1,608 @@
+// ============================================
+// Main CharacterGenerator class
+// Orchestrates all chargen functionality
+// ============================================
+
+import { SWSELogger } from '../../utils/logger.js';
+import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
+
+// Import all module functions
+import * as SharedModule from './chargen-shared.js';
+import * as DroidModule from './chargen-droid.js';
+import * as SpeciesModule from './chargen-species.js';
+import * as ClassModule from './chargen-class.js';
+import * as AbilitiesModule from './chargen-abilities.js';
+import * as SkillsModule from './chargen-skills.js';
+import * as FeatsTalentsModule from './chargen-feats-talents.js';
+
+export default class CharacterGenerator extends Application {
+  constructor(actor = null, options = {}) {
+    super(options);
+    this.actor = actor;
+    this.characterData = {
+      name: "",
+      isDroid: false,
+      droidDegree: "",
+      droidSize: "medium",
+      species: "",
+      size: "Medium",  // Character size (Small, Medium, Large)
+      specialAbilities: [],  // Racial special abilities
+      languages: [],  // Known languages
+      racialSkillBonuses: [],  // Racial skill bonuses (e.g., "+2 Perception")
+      speciesSource: "",  // Source book for species
+      importedDroidData: null,
+      preselectedSkills: [],
+      droidSystems: {
+        locomotion: null,
+        processor: { name: "Heuristic Processor", cost: 0, weight: 5 }, // Free
+        appendages: [
+          { name: "Hand", cost: 0, weight: 5 }, // Free
+          { name: "Hand", cost: 0, weight: 5 }  // Free
+        ],
+        accessories: [],
+        totalCost: 0,
+        totalWeight: 10
+      },
+      droidCredits: {
+        base: 1000,
+        class: 0,
+        spent: 0,
+        remaining: 1000
+      },
+      classes: [],
+      abilities: {
+        str: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
+        dex: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
+        con: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
+        int: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
+        wis: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
+        cha: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 }
+      },
+      skills: {},
+      feats: [],
+      featsRequired: 1, // Base 1, +1 for Human
+      talents: [],
+      powers: [],
+      level: 1,
+      hp: { value: 1, max: 1, temp: 0 },
+      forcePoints: { value: 0, max: 0, die: "1d6" },
+      destinyPoints: { value: 1 },
+      secondWind: { uses: 1, max: 1, misc: 0, healing: 0 },
+      defenses: {
+        fortitude: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+        reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
+        will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 }
+      },
+      bab: 0,
+      speed: 6,
+      damageThresholdMisc: 0,
+      credits: 1000  // Starting credits
+    };
+    this.currentStep = "name";
+    
+    // Caches for compendia
+    this._packs = {
+      species: null,
+      feats: null,
+      talents: null,
+      classes: null,
+      droids: null
+    };
+    this._skillsJson = null;
+  }
+
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      classes: ["swse", "chargen"],
+      template: "systems/swse/templates/apps/chargen.hbs",
+      width: 900,
+      height: 700,
+      title: "Character Generator",
+      resizable: true,
+      left: null,  // Allow Foundry to center
+      top: null    // Allow Foundry to center
+    });
+  }
+
+  async _loadData() {
+    const packNames = {
+      species: "swse.species",
+      feats: "swse.feats",
+      talents: "swse.talents",
+      classes: "swse.classes",
+      droids: "swse.droids"
+    };
+
+    for (const [k, packName] of Object.entries(packNames)) {
+      try {
+        const pack = game.packs.get(packName);
+        if (!pack) {
+          this._packs[k] = [];
+          continue;
+        }
+        const docs = await pack.getDocuments();
+        this._packs[k] = docs.map(d => d.toObject());
+      } catch (err) {
+        SWSELogger.warn(`chargen: failed to load pack ${packName}:`, err);
+        this._packs[k] = [];
+      }
+    }
+
+    // Load skills
+    try {
+      const resp = await fetch("systems/swse/data/skills.json");
+      if (resp.ok) {
+        this._skillsJson = await resp.json();
+      } else {
+        this._skillsJson = this._getDefaultSkills();
+      }
+    } catch (e) {
+      SWSELogger.warn("chargen: failed to load skills.json, using defaults", e);
+      this._skillsJson = this._getDefaultSkills();
+    }
+  }
+
+  async getData() {
+    const context = super.getData();
+    if (!this._packs.species) await this._loadData();
+
+    context.characterData = this.characterData;
+    context.currentStep = this.currentStep;
+    context.isLevelUp = !!this.actor;
+    context.packs = foundry.utils.deepClone(this._packs);
+    context.skillsJson = this._skillsJson || [];
+
+    // Sort species by source material (Core first, then alphabetically)
+    if (context.packs.species) {
+      context.packs.species = this._sortSpeciesBySource(context.packs.species);
+    }
+
+    // Calculate half level for display
+    context.halfLevel = Math.floor(this.characterData.level / 2);
+
+    // Droid degree data
+    context.droidDegrees = [
+      { key: "1st-degree", name: "1st-Degree Droid", bonuses: "+2 INT, +2 WIS, -2 STR", description: "Medical and scientific droids" },
+      { key: "2nd-degree", name: "2nd-Degree Droid", bonuses: "+2 INT, -2 CHA", description: "Engineering and technical droids" },
+      { key: "3rd-degree", name: "3rd-Degree Droid", bonuses: "+2 WIS, +2 CHA, -2 STR", description: "Protocol and service droids" },
+      { key: "4th-degree", name: "4th-Degree Droid", bonuses: "+2 DEX, -2 INT, -2 CHA", description: "Security and military droids" },
+      { key: "5th-degree", name: "5th-Degree Droid", bonuses: "+4 STR, -4 INT, -4 CHA", description: "Labor and utility droids" }
+    ];
+
+    // Filter to only show core SWSE classes
+    if (context.packs.classes) {
+      const coreClasses = ["Jedi", "Noble", "Scout", "Scoundrel", "Soldier"];
+      context.packs.classes = context.packs.classes.filter(c => {
+        return coreClasses.includes(c.name);
+      });
+
+      // Further filter for level 0 droids (no Jedi classes)
+      if (this.characterData.isDroid && this.characterData.level === 0) {
+        context.packs.classes = context.packs.classes.filter(c => {
+          const className = (c.name || "").toLowerCase();
+          return !className.includes("jedi");
+        });
+      }
+    }
+
+    // Filter feats based on prerequisites
+    if (context.packs.feats) {
+      // Create a temporary actor-like object for prerequisite checking during character generation
+      const tempActor = this.actor || this._createTempActorForValidation();
+
+      // Prepare pending data
+      const pendingData = {
+        selectedFeats: this.characterData.feats || [],
+        selectedClass: this.characterData.classes?.[0],
+        abilityIncreases: {},
+        selectedSkills: Object.keys(this.characterData.skills).filter(k => this.characterData.skills[k]?.trained),
+        selectedTalents: this.characterData.talents || []
+      };
+
+      // Filter feats based on prerequisites (show all qualified feats, not just class bonus feats)
+      const filteredFeats = PrerequisiteValidator.filterQualifiedFeats(context.packs.feats, tempActor, pendingData);
+      context.packs.feats = filteredFeats.filter(f => f.isQualified);
+      context.packs.allFeats = filteredFeats; // Include all feats with qualification status
+
+      SWSELogger.log(`CharGen | Filtered feats: ${context.packs.feats.length} qualified out of ${filteredFeats.length} total`);
+
+      // Store class bonus feats separately for when we need to show only those
+      if (this.characterData.classes && this.characterData.classes.length > 0) {
+        const selectedClass = this.characterData.classes[0];
+        const className = selectedClass.name || selectedClass;
+        const bonusFeats = context.packs.feats.filter(f => {
+          const bonusFeatFor = f.system?.bonus_feat_for || [];
+          return bonusFeatFor.includes(className);
+        });
+        context.packs.classBonusFeats = bonusFeats;
+        SWSELogger.log(`CharGen | Available class bonus feats for ${className}: ${bonusFeats.length}`);
+      }
+    }
+
+    // Point buy pools
+    context.droidPointBuyPool = game.settings.get("swse", "droidPointBuyPool") || 20;
+    context.livingPointBuyPool = game.settings.get("swse", "livingPointBuyPool") || 25;
+
+    // Seraphim's dialogue for droid creation
+    if (this.characterData.isDroid) {
+      context.seraphimDialogue = this._getSeraphimDialogue();
+    }
+
+    // Skills count for skills step
+    context.characterData.trainedSkillsCount = Object.values(this.characterData.skills).filter(s => s.trained).length;
+
+    // Get class skills for the selected class
+    const selectedClass = this.characterData.classes && this.characterData.classes.length > 0
+      ? this._packs.classes?.find(c => c.name === this.characterData.classes[0].name)
+      : null;
+    const classSkills = selectedClass?.system?.class_skills || [];
+
+    // Available skills for selection with bonuses
+    const halfLevel = Math.floor(this.characterData.level / 2);
+    context.availableSkills = this._getAvailableSkills().map(skill => {
+      const abilityMod = this.characterData.abilities[skill.ability]?.mod || 0;
+      const isTrained = this.characterData.skills[skill.key]?.trained || false;
+      const isClassSkill = classSkills.some(cs =>
+        cs.toLowerCase().includes(skill.name.toLowerCase()) ||
+        skill.name.toLowerCase().includes(cs.toLowerCase())
+      );
+
+      const baseBonus = halfLevel + abilityMod;
+      const currentBonus = baseBonus + (isTrained ? 5 : 0);
+      const trainedBonus = baseBonus + 5;
+
+      return {
+        ...skill,
+        trained: isTrained,
+        isClassSkill: isClassSkill,
+        currentBonus: currentBonus,
+        trainedBonus: trainedBonus,
+        abilityMod: abilityMod,
+        halfLevel: halfLevel
+      };
+    });
+
+    return context;
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    
+    // Navigation
+    html.find('.next-step').click(this._onNextStep.bind(this));
+    html.find('.prev-step').click(this._onPrevStep.bind(this));
+    html.find('.finish').click(this._onFinish.bind(this));
+
+    // Selections
+    html.find('.select-type').click(this._onSelectType.bind(this));
+    html.find('.select-degree').click(this._onSelectDegree.bind(this));
+    html.find('.select-size').click(this._onSelectSize.bind(this));
+    html.find('.import-droid-btn').click(this._onImportDroid.bind(this));
+    html.find('.select-species').click(this._onSelectSpecies.bind(this));
+    html.find('.select-class').click(this._onSelectClass.bind(this));
+    html.find('.select-feat').click(this._onSelectFeat.bind(this));
+    html.find('.remove-feat').click(this._onRemoveFeat.bind(this));
+    html.find('.select-talent').click(this._onSelectTalent.bind(this));
+    html.find('.skill-select').change(this._onSkillSelect.bind(this));
+    html.find('.train-skill-btn').click(this._onTrainSkill.bind(this));
+    html.find('.untrain-skill-btn').click(this._onUntrainSkill.bind(this));
+    html.find('.reset-skills-btn').click(this._onResetSkills.bind(this));
+
+    // Droid builder/shop
+    html.find('.shop-tab').click(this._onShopTabClick.bind(this));
+    html.find('.accessory-tab').click(this._onAccessoryTabClick.bind(this));
+    html.find('.purchase-system').click(this._onPurchaseSystem.bind(this));
+    html.find('.remove-system').click(this._onRemoveSystem.bind(this));
+
+    // Name input - use 'input' event to capture changes in real-time
+    html.find('input[name="character-name"]').on('input change', (ev) => {
+      this.characterData.name = ev.target.value;
+    });
+
+    // Level input
+    html.find('input[name="target-level"]').on('input change', (ev) => {
+      this.targetLevel = parseInt(ev.target.value) || 1;
+    });
+
+    // Shop button
+    html.find('.open-shop-btn').click(this._onOpenShop.bind(this));
+
+    // Abilities UI
+    if (this.currentStep === "abilities") {
+      this._bindAbilitiesUI(html[0]);
+    }
+
+    // Skills UI
+    if (this.currentStep === "skills") {
+      this._bindSkillsUI(html[0]);
+    }
+
+    // Droid Builder UI
+    if (this.currentStep === "droid-builder") {
+      this._populateDroidBuilder(html[0]);
+    }
+
+    // Class change
+    html.find('[name="class_select"]').change(async (ev) => {
+      await this._onClassChanged(ev, html[0]);
+    });
+  }
+
+  _getSteps() {
+    if (this.actor) {
+      return ["class", "feats", "talents", "skills", "summary"];
+    }
+
+    // Include type selection (living/droid) after name
+    const steps = ["name", "type"];
+
+    // If droid, show degree and size selection; if living, show species
+    if (this.characterData.isDroid) {
+      steps.push("degree", "size", "droid-builder");
+    } else {
+      steps.push("species");
+    }
+
+    steps.push("abilities", "class", "feats", "talents", "skills", "summary", "shop");
+    return steps;
+  }
+
+  async _onNextStep(event) {
+    event.preventDefault();
+
+    // Capture name from input before validation (in case the input event hasn't fired yet)
+    if (this.currentStep === "name") {
+      const nameInput = this.element.find('input[name="character-name"]')[0];
+      if (nameInput) {
+        this.characterData.name = nameInput.value;
+      }
+    }
+
+    // Validate current step
+    if (!this._validateCurrentStep()) {
+      return;
+    }
+
+    const steps = this._getSteps();
+    const idx = steps.indexOf(this.currentStep);
+    if (idx >= 0 && idx < steps.length - 1) {
+      const nextStep = steps[idx + 1];
+
+      // Create character when moving from summary to shop
+      if (this.currentStep === "summary" && nextStep === "shop") {
+        this._finalizeCharacter();
+        if (!this.actor) {
+          await this._createActor();
+        }
+      }
+
+      this.currentStep = nextStep;
+
+      // Auto-calculate derived values when moving forward
+      if (this.currentStep === "summary") {
+        this._finalizeCharacter();
+      }
+
+      await this.render();
+    }
+  }
+
+  async _onPrevStep(event) {
+    event.preventDefault();
+    const steps = this._getSteps();
+    const idx = steps.indexOf(this.currentStep);
+    if (idx > 0) {
+      this.currentStep = steps[idx - 1];
+      await this.render();
+    }
+  }
+
+  _validateCurrentStep() {
+    switch (this.currentStep) {
+      case "name":
+        if (!this.characterData.name || this.characterData.name.trim() === "") {
+          ui.notifications.warn("Please enter a character name.");
+          return false;
+        }
+        break;
+      case "type":
+        // Type is set by button click, isDroid will be true or false
+        break;
+      case "degree":
+        if (!this.characterData.droidDegree) {
+          ui.notifications.warn("Please select a droid degree.");
+          return false;
+        }
+        break;
+      case "size":
+        if (!this.characterData.droidSize) {
+          ui.notifications.warn("Please select a droid size.");
+          return false;
+        }
+        break;
+      case "droid-builder":
+        return this._validateDroidBuilder();
+      case "species":
+        if (!this.characterData.species) {
+          ui.notifications.warn("Please select a species.");
+          return false;
+        }
+        break;
+      case "class":
+        if (this.characterData.classes.length === 0) {
+          ui.notifications.warn("Please select a class.");
+          return false;
+        }
+        break;
+    }
+    return true;
+  }
+
+  _finalizeCharacter() {
+    // Final recalculations before character creation
+    this._recalcAbilities();
+    this._recalcDefenses();
+    
+    // Second Wind
+    const conMod = this.characterData.abilities.con.mod || 0;
+    const hpMax = this.characterData.hp.max;
+    this.characterData.secondWind.healing = Math.max(Math.floor(hpMax / 4), conMod) + 
+      (this.characterData.secondWind.misc || 0);
+    
+    // Damage Threshold = Fortitude Defense
+    this.characterData.damageThreshold = this.characterData.defenses.fortitude.total;
+  }
+
+  async _onFinish(event) {
+    event.preventDefault();
+
+    this._finalizeCharacter();
+
+    if (this.actor) {
+      await this._updateActor();
+    } else {
+      await this._createActor();
+    }
+
+    this.close();
+  }
+
+  async _onOpenShop(event) {
+    event.preventDefault();
+
+    // Ensure character has been created
+    if (!this.actor) {
+      this._finalizeCharacter();
+      await this._createActor();
+    }
+
+    // Import and open the store
+    try {
+      const { SWSEStore } = await import('../store.js');
+      const store = new SWSEStore(this.actor);
+      store.render(true);
+    } catch (err) {
+      SWSELogger.error("SWSE | Failed to open store:", err);
+      ui.notifications.error("Failed to open the shop. You can access it from your character sheet.");
+    }
+  }
+
+  async _createActor() {
+    // Build proper actor data structure matching SWSEActorSheet expectations
+    const system = {
+      level: this.characterData.level,
+      race: this.characterData.species,
+      size: this.characterData.size || "Medium",
+      abilities: this.characterData.abilities,
+      skills: this.characterData.skills,
+      hp: this.characterData.hp,
+      forcePoints: this.characterData.forcePoints,
+      destinyPoints: this.characterData.destinyPoints,
+      secondWind: this.characterData.secondWind,
+      defenses: this.characterData.defenses,
+      classes: this.characterData.classes,
+      bab: this.characterData.bab,
+      speed: this.characterData.speed,
+      damageThresholdMisc: this.characterData.damageThresholdMisc || 0,
+      credits: this.characterData.credits || 1000,
+      weapons: [],
+      // Species data
+      specialAbilities: this.characterData.specialAbilities || [],
+      languages: this.characterData.languages || [],
+      racialSkillBonuses: this.characterData.racialSkillBonuses || [],
+      speciesSource: this.characterData.speciesSource || ""
+    };
+
+    const actorData = {
+      name: this.characterData.name || "Unnamed Character",
+      type: "character",
+      system: system,
+      prototypeToken: {
+        name: this.characterData.name || "Unnamed Character",
+        actorLink: true
+      }
+    };
+
+    try {
+      const created = await Actor.create(actorData);
+
+      // Create embedded items (feats, talents, powers)
+      const items = [];
+      for (const f of (this.characterData.feats || [])) {
+        items.push(f);
+      }
+      for (const t of (this.characterData.talents || [])) {
+        items.push(t);
+      }
+      for (const p of (this.characterData.powers || [])) {
+        items.push(p);
+      }
+
+      if (items.length > 0) {
+        await created.createEmbeddedDocuments("Item", items);
+      }
+
+      // Apply starting class features (weapon proficiencies, class features, etc.)
+      if (this.characterData.classes && this.characterData.classes.length > 0) {
+        const className = this.characterData.classes[0].name;
+        const classDoc = this._packs.classes.find(c => c.name === className || c._id === className);
+        if (classDoc) {
+          await this._applyStartingClassFeatures(created, classDoc);
+        }
+      }
+
+      // Save character generation data to flags for reference
+      await created.setFlag("swse", "chargenData", this.characterData);
+
+      // Store the actor reference
+      this.actor = created;
+
+      // Open the character sheet
+      created.sheet.render(true);
+
+      ui.notifications.info(`Character ${this.characterData.name} created successfully!`);
+    } catch (err) {
+      SWSELogger.error("chargen: actor creation failed", err);
+      ui.notifications.error("Failed to create character. See console for details.");
+    }
+  }
+
+  async _updateActor() {
+    // Level-up: increment level and add new items
+    const newLevel = (this.actor.system.level || 1) + 1;
+    const updates = { "system.level": newLevel };
+    
+    // Recalculate HP for new level
+    const conMod = this.actor.system.abilities.con.mod || 0;
+    const classDoc = this._packs.classes.find(c => 
+      c.name === this.characterData.classes[0]?.name
+    );
+    const hitDie = classDoc?.system?.hitDie || 6;
+    const hpGain = Math.floor(hitDie / 2) + 1 + conMod;
+    updates["system.hp.max"] = this.actor.system.hp.max + hpGain;
+    updates["system.hp.value"] = this.actor.system.hp.value + hpGain;
+    
+    await this.actor.update(updates);
+    
+    // Add new feats/talents/powers
+    const items = [];
+    for (const f of (this.characterData.feats || [])) items.push(f);
+    for (const t of (this.characterData.talents || [])) items.push(t);
+    for (const p of (this.characterData.powers || [])) items.push(p);
+    
+    if (items.length > 0) {
+      await this.actor.createEmbeddedDocuments("Item", items);
+    }
+    
+    ui.notifications.info(`${this.actor.name} leveled up to level ${newLevel}!`);
+  }
+}
+
+// Mix in all module methods
+Object.assign(CharacterGenerator.prototype, SharedModule);
+Object.assign(CharacterGenerator.prototype, DroidModule);
+Object.assign(CharacterGenerator.prototype, SpeciesModule);
+Object.assign(CharacterGenerator.prototype, ClassModule);
+Object.assign(CharacterGenerator.prototype, AbilitiesModule);
+Object.assign(CharacterGenerator.prototype, SkillsModule);
+Object.assign(CharacterGenerator.prototype, FeatsTalentsModule);

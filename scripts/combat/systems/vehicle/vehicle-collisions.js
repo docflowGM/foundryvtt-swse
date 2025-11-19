@@ -1,0 +1,106 @@
+/**
+ * Collision mechanics for vehicles
+ * Handles vehicle collisions with objects, structures, and other vehicles
+ */
+
+import { getDefaultPilot, getPilotBonus, getVehicleDamageThreshold } from './vehicle-shared.js';
+import { calculateCollisionDamage } from './vehicle-calculations.js';
+
+/**
+ * Handle collision between vehicle and object
+ * @param {Actor} vehicle - The colliding vehicle
+ * @param {Object} object - The object being collided with (vehicle, structure, etc.)
+ * @param {Object} options - Additional options (allOutMovement, etc.)
+ * @param {Function} applyDamage - Damage application function from main combat system
+ * @returns {Promise<Object>} Collision result
+ */
+export async function handleCollision(vehicle, object, options = {}, applyDamage) {
+  const vehicleSize = vehicle.system.size || 'medium';
+  const objectSize = object.system?.size || object.size || 'medium';
+  const allOutMovement = options.allOutMovement || false;
+
+  // Calculate collision damage for both
+  const vehicleDamage = calculateCollisionDamage(object, objectSize);
+  const objectDamage = calculateCollisionDamage(vehicle, vehicleSize);
+
+  // Double damage if using all-out movement
+  const finalVehicleDamage = allOutMovement ? vehicleDamage * 2 : vehicleDamage;
+  const finalObjectDamage = allOutMovement ? objectDamage * 2 : objectDamage;
+
+  const result = {
+    vehicle,
+    object,
+    vehicleDamage: finalVehicleDamage,
+    objectDamage: finalObjectDamage,
+    allOutMovement
+  };
+
+  // Pilot can attempt to avoid collision (DC 15 Pilot check)
+  const pilot = getDefaultPilot(vehicle);
+  const pilotBonus = getPilotBonus(vehicle, pilot);
+  const avoidRoll = await new Roll(`1d20 + ${pilotBonus}`).evaluate({async: true});
+
+  result.avoidRoll = avoidRoll;
+  result.avoided = avoidRoll.total >= 15;
+
+  if (result.avoided) {
+    // Reduce or negate damage based on how well they rolled
+    const reduction = Math.min(100, (avoidRoll.total - 15) * 10); // 10% per point above DC
+    result.vehicleDamage = Math.floor(result.vehicleDamage * (1 - reduction / 100));
+    ui.notifications.info(`${vehicle.name}'s pilot reduces collision damage by ${reduction}%!`);
+  }
+
+  // Apply damage to vehicle (reduced by damage threshold if vehicle provides cover)
+  const vehicleCover = vehicle.system.cover || 'total';
+  if (vehicleCover !== 'none') {
+    const vehicleThreshold = getVehicleDamageThreshold(vehicle);
+    result.vehicleDamage = Math.max(0, result.vehicleDamage - vehicleThreshold);
+  }
+
+  if (result.vehicleDamage > 0) {
+    await applyDamage(vehicle, result.vehicleDamage);
+  }
+
+  // Apply damage to object if it's a vehicle
+  if (object.type === 'vehicle' && result.objectDamage > 0) {
+    await applyDamage(object, result.objectDamage);
+  }
+
+  // Create chat message
+  await createCollisionMessage(result);
+
+  return result;
+}
+
+/**
+ * Create collision chat message
+ * @param {Object} result - Collision result
+ * @private
+ */
+export async function createCollisionMessage(result) {
+  const { vehicle, object, vehicleDamage, objectDamage, avoided, avoidRoll } = result;
+
+  const content = `
+    <div class="swse-collision-roll">
+      <div class="collision-header">
+        <h3><i class="fas fa-car-crash"></i> Collision!</h3>
+      </div>
+      <div class="collision-info">
+        <strong>${vehicle.name}</strong> collides with <strong>${object.name}</strong>
+      </div>
+      <div class="avoid-roll">
+        <strong>Avoid Collision (DC 15):</strong> ${avoidRoll.total} ${avoided ? '✓' : '✗'}
+      </div>
+      <div class="collision-damage">
+        <div>${vehicle.name} takes <strong>${vehicleDamage}</strong> damage</div>
+        <div>${object.name} takes <strong>${objectDamage}</strong> damage</div>
+      </div>
+    </div>
+  `;
+
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({actor: vehicle}),
+    content,
+    type: CONST.CHAT_MESSAGE_TYPES.OTHER
+  });
+}
