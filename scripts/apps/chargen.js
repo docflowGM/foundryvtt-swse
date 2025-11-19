@@ -90,7 +90,9 @@ export default class CharacterGenerator extends Application {
       width: 900,
       height: 700,
       title: "Character Generator",
-      resizable: true
+      resizable: true,
+      left: null,  // Allow Foundry to center
+      top: null    // Allow Foundry to center
     });
   }
 
@@ -591,6 +593,30 @@ export default class CharacterGenerator extends Application {
     this.characterData.droidCredits.base = baseCredits;
     this.characterData.droidCredits.remaining = baseCredits - this.characterData.droidCredits.spent;
 
+    // Initialize default locomotion (Walking) if not already set
+    if (!this.characterData.droidSystems.locomotion) {
+      const walkingSystem = DROID_SYSTEMS.locomotion.find(l => l.id === "walking");
+      if (walkingSystem) {
+        const costFactor = this._getCostFactor();
+        const size = this.characterData.droidSize;
+        const speed = walkingSystem.speeds[size] || walkingSystem.speeds.medium;
+        const cost = walkingSystem.costFormula(speed, costFactor);
+        const weight = walkingSystem.weightFormula(costFactor);
+
+        this.characterData.droidSystems.locomotion = {
+          id: walkingSystem.id,
+          name: walkingSystem.name,
+          cost: cost,
+          weight: weight,
+          speed: speed
+        };
+
+        // Add to spent credits
+        this.characterData.droidCredits.spent += cost;
+        this.characterData.droidCredits.remaining = baseCredits - this.characterData.droidCredits.spent;
+      }
+    }
+
     // Update credits display
     this._updateDroidCreditsDisplay(doc);
 
@@ -812,9 +838,17 @@ export default class CharacterGenerator extends Application {
 
     // Find the system data
     let system;
+    let replacementCost = 0;  // Track if we're replacing an existing system
+
     if (category === 'locomotion') {
       system = DROID_SYSTEMS.locomotion.find(s => s.id === id);
       if (system) {
+        // If replacing existing locomotion, subtract old cost
+        if (this.characterData.droidSystems.locomotion) {
+          replacementCost = this.characterData.droidSystems.locomotion.cost;
+          this.characterData.droidCredits.spent -= replacementCost;
+        }
+
         const speed = button.dataset.speed;
         this.characterData.droidSystems.locomotion = {
           id: system.id,
@@ -827,6 +861,12 @@ export default class CharacterGenerator extends Application {
     } else if (category === 'processor') {
       system = DROID_SYSTEMS.processors.find(s => s.id === id);
       if (system) {
+        // If replacing existing processor, subtract old cost
+        if (this.characterData.droidSystems.processor) {
+          replacementCost = this.characterData.droidSystems.processor.cost;
+          this.characterData.droidCredits.spent -= replacementCost;
+        }
+
         this.characterData.droidSystems.processor = {
           id: system.id,
           name: system.name,

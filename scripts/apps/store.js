@@ -533,7 +533,9 @@ export class SWSEStore extends FormApplication {
             title: "Galactic Trade Exchange",
             resizable: true,
             closeOnSubmit: false,
-            classes: ["swse", "swse-store"]
+            classes: ["swse", "swse-store"],
+            left: null,  // Allow Foundry to center
+            top: null    // Allow Foundry to center
         });
     }
 
