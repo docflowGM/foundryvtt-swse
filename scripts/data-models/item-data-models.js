@@ -222,7 +222,7 @@ export class ClassDataModel extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
-      classLevel: new fields.NumberField({
+      level: new fields.NumberField({
         required: true,
         initial: 1,
         min: 1,
@@ -252,15 +252,47 @@ export class ClassDataModel extends foundry.abstract.DataModel {
       }),
       classSkills: new fields.ArrayField(new fields.StringField()),
       defenseBonus: new fields.NumberField({required: true, initial: 0, integer: true}),
-      reputation: new fields.NumberField({required: true, initial: 0, integer: true})
+      reputation: new fields.NumberField({required: true, initial: 0, integer: true}),
+
+      // Computed defenses object (populated in prepareDerivedData)
+      // This stores the per-level defense bonuses as numbers
+      defenses: new fields.SchemaField({
+        fortitude: new fields.NumberField({required: true, initial: 0}),
+        reflex: new fields.NumberField({required: true, initial: 0}),
+        will: new fields.NumberField({required: true, initial: 0})
+      })
     };
+  }
+
+  prepareDerivedData() {
+    // Convert save progression strings to numeric per-level bonuses
+    // SWSE Rules:
+    // - "slow" = 0 per level
+    // - "fast" = 2 per 3 levels (approximately 0.667 per level)
+
+    // For multiclass calculation, we store the per-level progression rate
+    // The character data model will multiply this by the class level
+    if (!this.defenses) {
+      this.defenses = { fortitude: 0, reflex: 0, will: 0 };
+    }
+
+    this.defenses.fortitude = this.fortSave === "fast" ? (2/3) : 0;
+    this.defenses.reflex = this.refSave === "fast" ? (2/3) : 0;
+    this.defenses.will = this.willSave === "fast" ? (2/3) : 0;
   }
 
   /**
    * Migrate legacy data during document initialization
    * Converts numeric BAB progression values to string choices
+   * Handles classLevel -> level field rename
    */
   static migrateData(source) {
+    // Migrate classLevel to level (backwards compatibility)
+    if (source.classLevel !== undefined && source.level === undefined) {
+      source.level = source.classLevel;
+      delete source.classLevel;
+    }
+
     // Convert numeric babProgression to string
     if (source.babProgression !== undefined) {
       const bab = source.babProgression;

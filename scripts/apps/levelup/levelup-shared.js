@@ -112,6 +112,23 @@ export function getClassDefenseBonuses(className) {
  * @param {Actor} actor - The actor
  * @returns {number} Total BAB
  */
+/**
+ * Convert BAB progression string to numeric multiplier
+ * @param {string|number} progression - "slow", "medium", "fast" or a number
+ * @returns {number} - Per-level BAB multiplier
+ */
+function convertBabProgression(progression) {
+  if (typeof progression === 'number') return progression;
+
+  const progressionMap = {
+    'slow': 0.5,
+    'medium': 0.75,
+    'fast': 1.0
+  };
+
+  return progressionMap[progression] || 0.75; // default to medium
+}
+
 export function calculateTotalBAB(actor) {
   const classItems = actor.items.filter(i => i.type === 'class');
   let totalBAB = 0;
@@ -131,7 +148,8 @@ export function calculateTotalBAB(actor) {
 
     // Fallback: Use babProgression if available
     if (classItem.system.babProgression) {
-      totalBAB += Math.floor(classLevel * classItem.system.babProgression);
+      const babMultiplier = convertBabProgression(classItem.system.babProgression);
+      totalBAB += Math.floor(classLevel * babMultiplier);
       continue;
     }
 

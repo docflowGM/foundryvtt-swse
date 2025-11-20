@@ -222,6 +222,23 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
   }
 
   /**
+   * Convert BAB progression string to numeric multiplier
+   * @param {string} progression - "slow", "medium", or "fast"
+   * @returns {number} - Per-level BAB multiplier
+   */
+  _convertBabProgression(progression) {
+    if (typeof progression === 'number') return progression;
+
+    const progressionMap = {
+      'slow': 0.5,
+      'medium': 0.75,
+      'fast': 1.0
+    };
+
+    return progressionMap[progression] || 0.75; // default to medium
+  }
+
+  /**
    * Calculate BAB and defenses for multiclassed characters
    * SWSE Rules:
    * - BAB is additive across all classes
@@ -259,18 +276,20 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       const classData = classItem.system;
 
       // BAB - Add from each class (SWSE multiclass rule)
-      const babProgression = Number(classData.babProgression) || 0.75;
+      // Convert string progression to numeric multiplier
+      const babProgression = this._convertBabProgression(classData.babProgression);
       const classBab = Math.floor(classLevel * babProgression);
       totalBAB += classBab;
 
       // Defenses - Track maximum for each (SWSE multiclass rule)
+      // The defenses object should now be populated by ClassDataModel.prepareDerivedData()
       const fortPerLevel = Number(classData.defenses?.fortitude) || 0;
       const refPerLevel = Number(classData.defenses?.reflex) || 0;
       const willPerLevel = Number(classData.defenses?.will) || 0;
 
-      const classFort = fortPerLevel * classLevel;
-      const classRef = refPerLevel * classLevel;
-      const classWill = willPerLevel * classLevel;
+      const classFort = Math.floor(fortPerLevel * classLevel);
+      const classRef = Math.floor(refPerLevel * classLevel);
+      const classWill = Math.floor(willPerLevel * classLevel);
 
       maxFortBonus = Math.max(maxFortBonus, classFort);
       maxRefBonus = Math.max(maxRefBonus, classRef);
@@ -283,9 +302,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Set defense class bonuses (these get added in parent's _calculateDefenses)
     if (this.defenses) {
-      this.defenses.fortitude.classBonus = maxFortBonus;
-      this.defenses.reflex.classBonus = maxRefBonus;
-      this.defenses.will.classBonus = maxWillBonus;
+      this.defenses.fortitude.classBonus = Math.floor(maxFortBonus);
+      this.defenses.reflex.classBonus = Math.floor(maxRefBonus);
+      this.defenses.will.classBonus = Math.floor(maxWillBonus);
     }
   }
 
