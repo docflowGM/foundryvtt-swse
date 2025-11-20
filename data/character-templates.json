@@ -1,0 +1,851 @@
+{
+  "templates": [
+    {
+      "id": "jedi_lightsaber_duelist",
+      "name": "Lightsaber Duelist",
+      "class": "Jedi",
+      "archetype": "Guardian Focus",
+      "description": "A nimble warrior specializing in lightsaber combat, using finesse and defensive techniques to overwhelm opponents.",
+      "icon": "systems/swse/icons/classes/jedi.svg",
+      "abilityScores": {
+        "str": 10,
+        "dex": 16,
+        "con": 12,
+        "int": 12,
+        "wis": 14,
+        "cha": 8
+      },
+      "species": "Mirialan",
+      "className": "Jedi",
+      "level": 1,
+      "feat": "Weapon Finesse",
+      "talent": "Block",
+      "talentTree": "Jedi Guardian",
+      "trainedSkills": [
+        "use_the_force",
+        "acrobatics",
+        "initiative",
+        "perception"
+      ],
+      "forcePowers": [
+        "Battle Strike",
+        "Surge"
+      ],
+      "startingEquipment": [
+        "Lightsaber",
+        "Jedi Robes",
+        "Utility Belt",
+        "Medpac (2)",
+        "Comlink",
+        "Glow Rod",
+        "Electrobinoculars"
+      ],
+      "credits": 600,
+      "notes": "Attack +7, Reflex Defense 19, HP 32. Block talent allows negating melee attacks with Use the Force check."
+    },
+    {
+      "id": "jedi_force_wizard",
+      "name": "Force Wizard",
+      "class": "Jedi",
+      "archetype": "Consular Focus",
+      "description": "A Force-focused character who relies on manipulation of the Force rather than lightsaber combat.",
+      "icon": "systems/swse/icons/classes/jedi.svg",
+      "abilityScores": {
+        "str": 8,
+        "dex": 12,
+        "con": 10,
+        "int": 12,
+        "wis": 16,
+        "cha": 14
+      },
+      "species": "Miraluka",
+      "className": "Jedi",
+      "level": 1,
+      "feat": "Skill Focus (Use the Force)",
+      "talent": "Force Focus",
+      "talentTree": "Jedi Consular",
+      "trainedSkills": [
+        "use_the_force",
+        "perception",
+        "knowledge_galactic_lore",
+        "initiative"
+      ],
+      "forcePowers": [
+        "Move Object",
+        "Mind Trick",
+        "Negate Energy",
+        "Surge"
+      ],
+      "startingEquipment": [
+        "Lightsaber",
+        "Jedi Robes",
+        "Comlink",
+        "Datapad",
+        "Medpac (2)",
+        "Electrobinoculars"
+      ],
+      "credits": 600,
+      "notes": "Use the Force +9, Will Defense 18, 4 Force Powers. Force Sight ability ignores concealment. Force Focus allows regaining spent Force Power."
+    },
+    {
+      "id": "jedi_tank_defender",
+      "name": "Tank/Defender",
+      "class": "Jedi",
+      "archetype": "Guardian Focus",
+      "description": "A durable frontline defender who can deflect attacks and protect allies.",
+      "icon": "systems/swse/icons/classes/jedi.svg",
+      "abilityScores": {
+        "str": 14,
+        "dex": 12,
+        "con": 16,
+        "int": 10,
+        "wis": 12,
+        "cha": 8
+      },
+      "species": "Zabrak",
+      "className": "Jedi",
+      "level": 1,
+      "feat": "Skill Focus (Use the Force)",
+      "talent": "Deflect",
+      "talentTree": "Jedi Guardian",
+      "trainedSkills": [
+        "use_the_force",
+        "endurance"
+      ],
+      "forcePowers": [
+        "Battle Strike",
+        "Negate Energy"
+      ],
+      "startingEquipment": [
+        "Lightsaber",
+        "Armored Flight Suit",
+        "Combat Gloves",
+        "Medpac (3)",
+        "Comlink",
+        "Utility Belt"
+      ],
+      "credits": 600,
+      "notes": "HP 35, Fort Defense 19, Use the Force +9 for Deflect checks. Zabrak CON bonus makes this an excellent tank."
+    },
+    {
+      "id": "jedi_dark_side_hunter",
+      "name": "Dark Side Hunter",
+      "class": "Jedi",
+      "archetype": "Sentinel Focus",
+      "description": "An investigative Jedi specializing in hunting down dark side users.",
+      "icon": "systems/swse/icons/classes/jedi.svg",
+      "abilityScores": {
+        "str": 10,
+        "dex": 14,
+        "con": 12,
+        "int": 12,
+        "wis": 16,
+        "cha": 12
+      },
+      "species": "Miraluka",
+      "className": "Jedi",
+      "level": 1,
+      "feat": "Skill Focus (Use the Force)",
+      "talent": "Dark Side Sense",
+      "talentTree": "Jedi Sentinel",
+      "trainedSkills": [
+        "use_the_force",
+        "perception",
+        "stealth",
+        "initiative"
+      ],
+      "forcePowers": [
+        "Sense Force",
+        "Battle Strike",
+        "Mind Trick",
+        "Negate Energy"
+      ],
+      "startingEquipment": [
+        "Lightsaber",
+        "Dark Robes",
+        "Electrobinoculars",
+        "Comlink (Secured)",
+        "Datapad",
+        "Medpac (2)",
+        "Binder Cuffs"
+      ],
+      "credits": 600,
+      "notes": "Use the Force +9, Will Defense 18. Force Sight ignores concealment. Dark Side Sense allows rerolls to detect dark siders."
+    },
+    {
+      "id": "noble_diplomat",
+      "name": "Diplomat/Face Character",
+      "class": "Noble",
+      "archetype": "Social Focus",
+      "description": "The ultimate social character, capable of talking their way through any situation.",
+      "icon": "systems/swse/icons/classes/noble.svg",
+      "abilityScores": {
+        "str": 8,
+        "dex": 12,
+        "con": 10,
+        "int": 14,
+        "wis": 12,
+        "cha": 16
+      },
+      "species": "Zeltron",
+      "className": "Noble",
+      "level": 1,
+      "feat": "Skill Focus (Persuasion)",
+      "talent": "Inspire Confidence",
+      "talentTree": "Inspiration",
+      "trainedSkills": [
+        "persuasion",
+        "deception",
+        "gather_information",
+        "perception",
+        "knowledge_galactic_lore",
+        "knowledge_social_sciences",
+        "use_computer",
+        "initiative"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Sporting Blaster Pistol",
+        "Formal Clothing",
+        "Comlink",
+        "Datapad"
+      ],
+      "credits": 1500,
+      "notes": "Persuasion +18 with Zeltron bonuses, Will Defense 16. Inspire Confidence grants +1 morale bonus to all allies."
+    },
+    {
+      "id": "noble_leader",
+      "name": "Inspirational Leader",
+      "class": "Noble",
+      "archetype": "Command Focus",
+      "description": "A tactical commander who coordinates allies and provides battlefield bonuses.",
+      "icon": "systems/swse/icons/classes/noble.svg",
+      "abilityScores": {
+        "str": 10,
+        "dex": 12,
+        "con": 14,
+        "int": 12,
+        "wis": 14,
+        "cha": 16
+      },
+      "species": "Human",
+      "className": "Noble",
+      "level": 1,
+      "feat": "Improved Defenses",
+      "talent": "Born Leader",
+      "talentTree": "Leadership",
+      "trainedSkills": [
+        "persuasion",
+        "initiative",
+        "perception",
+        "knowledge_tactics",
+        "gather_information",
+        "deception",
+        "treat_injury"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Heavy Blaster Pistol",
+        "Combat Jumpsuit",
+        "Comlink (Encrypted)",
+        "Macrobinoculars",
+        "Medpac"
+      ],
+      "credits": 1500,
+      "notes": "HP 20, Reflex 13, Will 17. Born Leader grants swift action +1 insight bonus to allies' attacks."
+    },
+    {
+      "id": "noble_manipulator",
+      "name": "Wealthy Manipulator",
+      "class": "Noble",
+      "archetype": "Resources Focus",
+      "description": "A scheming information broker with extensive resources and connections.",
+      "icon": "systems/swse/icons/classes/noble.svg",
+      "abilityScores": {
+        "str": 8,
+        "dex": 10,
+        "con": 12,
+        "int": 16,
+        "wis": 12,
+        "cha": 14
+      },
+      "species": "Bothan",
+      "className": "Noble",
+      "level": 1,
+      "feat": "Skill Training",
+      "talent": "Wealth",
+      "talentTree": "Lineage",
+      "trainedSkills": [
+        "gather_information",
+        "persuasion",
+        "deception",
+        "use_computer",
+        "knowledge_bureaucracy",
+        "knowledge_galactic_lore",
+        "knowledge_social_sciences",
+        "perception",
+        "initiative",
+        "mechanics"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Heavy Blaster Pistol",
+        "Holdout Blaster",
+        "Advanced Datapad",
+        "Comlink (Secured)",
+        "Surveillance Gear",
+        "Fake ID",
+        "Forged Documents",
+        "Encrypted Data Storage",
+        "Portable Scanner"
+      ],
+      "credits": 6500,
+      "notes": "10 trained skills, 6,500 starting credits with Wealth talent. Bothan bonuses to Gather Information."
+    },
+    {
+      "id": "noble_duelist",
+      "name": "Noble Duelist",
+      "class": "Noble",
+      "archetype": "Fencing Focus",
+      "description": "A social character with surprising melee combat effectiveness using finesse.",
+      "icon": "systems/swse/icons/classes/noble.svg",
+      "abilityScores": {
+        "str": 8,
+        "dex": 14,
+        "con": 12,
+        "int": 10,
+        "wis": 12,
+        "cha": 16
+      },
+      "species": "Zeltron",
+      "className": "Noble",
+      "level": 1,
+      "feat": "Weapon Focus (Light Melee)",
+      "talent": "Noble Fencing Style",
+      "talentTree": "Fencing",
+      "trainedSkills": [
+        "persuasion",
+        "deception",
+        "initiative",
+        "perception",
+        "gather_information",
+        "knowledge_galactic_lore"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Vibroblade",
+        "Blaster Pistol",
+        "Stylish Armor",
+        "Comlink",
+        "Datapad",
+        "Medpac"
+      ],
+      "credits": 1500,
+      "notes": "Melee attack +5 using CHA, 2d6 damage, HP 19. Noble Fencing Style allows using CHA for light melee attacks."
+    },
+    {
+      "id": "scoundrel_pistoleer",
+      "name": "Pistoleer",
+      "class": "Scoundrel",
+      "archetype": "Combat Sniper",
+      "description": "A precision shooter who deals devastating damage with sneak attacks.",
+      "icon": "systems/swse/icons/classes/scoundrel.svg",
+      "abilityScores": {
+        "str": 10,
+        "dex": 16,
+        "con": 12,
+        "int": 14,
+        "wis": 12,
+        "cha": 8
+      },
+      "species": "Human",
+      "className": "Scoundrel",
+      "level": 1,
+      "feat": "Precise Shot",
+      "talent": "Sneak Attack",
+      "talentTree": "Misfortune",
+      "trainedSkills": [
+        "stealth",
+        "perception",
+        "initiative",
+        "deception",
+        "mechanics",
+        "pilot",
+        "acrobatics"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Heavy Blaster Pistol",
+        "Blaster Pistol (Backup)",
+        "Combat Jumpsuit",
+        "Electrobinoculars",
+        "Utility Belt",
+        "Power Packs (4)",
+        "Comlink",
+        "Medpac"
+      ],
+      "credits": 1875,
+      "notes": "Attack +4, 3d8+3 damage (4d8+3 vs flat-footed), Reflex Defense 17. Precise Shot removes shooting into melee penalty."
+    },
+    {
+      "id": "scoundrel_skill_monkey",
+      "name": "Skill Monkey",
+      "class": "Scoundrel",
+      "archetype": "Social/Technical Specialist",
+      "description": "A versatile specialist covering social, technical, and infiltration roles.",
+      "icon": "systems/swse/icons/classes/scoundrel.svg",
+      "abilityScores": {
+        "str": 8,
+        "dex": 14,
+        "con": 10,
+        "int": 16,
+        "wis": 12,
+        "cha": 14
+      },
+      "species": "Bothan",
+      "className": "Scoundrel",
+      "level": 1,
+      "feat": "Skill Focus (Use Computer)",
+      "talent": "Knack",
+      "talentTree": "Fortune",
+      "trainedSkills": [
+        "use_computer",
+        "mechanics",
+        "deception",
+        "persuasion",
+        "stealth",
+        "gather_information",
+        "perception",
+        "initiative"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Blaster Pistol",
+        "Datapad",
+        "Security Kit",
+        "Comlink (Encrypted)",
+        "Electrobinoculars",
+        "Power Packs (2)",
+        "Medpac",
+        "Forgery Kit"
+      ],
+      "credits": 1875,
+      "notes": "Use Computer +10, 8 trained skills. Knack allows rerolling one skill check per day."
+    },
+    {
+      "id": "scoundrel_dirty_fighter",
+      "name": "Dirty Fighter",
+      "class": "Scoundrel",
+      "archetype": "Condition Track Abuser",
+      "description": "An aggressive combatant who pushes enemies down the condition track.",
+      "icon": "systems/swse/icons/classes/scoundrel.svg",
+      "abilityScores": {
+        "str": 10,
+        "dex": 16,
+        "con": 14,
+        "int": 12,
+        "wis": 12,
+        "cha": 8
+      },
+      "species": "Duros",
+      "className": "Scoundrel",
+      "level": 1,
+      "feat": "Weapon Finesse",
+      "talent": "Dastardly Strike",
+      "talentTree": "Misfortune",
+      "trainedSkills": [
+        "deception",
+        "stealth",
+        "initiative",
+        "acrobatics",
+        "perception",
+        "gather_information",
+        "pilot"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Heavy Blaster Pistol",
+        "Vibroknife",
+        "Combat Jumpsuit",
+        "Targeting Scope",
+        "Power Packs (3)",
+        "Binders",
+        "Medpac",
+        "Flash Goggles"
+      ],
+      "credits": 1875,
+      "notes": "Attack +5 with DEX 18. Dastardly Strike moves targets -1 condition track when denied DEX bonus."
+    },
+    {
+      "id": "scoundrel_gambler",
+      "name": "Fortune's Favorite",
+      "class": "Scoundrel",
+      "archetype": "Lucky Gambler",
+      "description": "A lucky gambler who uses Force Points strategically to turn the tide.",
+      "icon": "systems/swse/icons/classes/scoundrel.svg",
+      "abilityScores": {
+        "str": 8,
+        "dex": 14,
+        "con": 12,
+        "int": 12,
+        "wis": 10,
+        "cha": 16
+      },
+      "species": "Twi'lek",
+      "className": "Scoundrel",
+      "level": 1,
+      "feat": "Improved Defenses",
+      "talent": "Fool's Luck",
+      "talentTree": "Fortune",
+      "trainedSkills": [
+        "persuasion",
+        "deception",
+        "gather_information",
+        "perception",
+        "pilot",
+        "stealth"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Blaster Pistol",
+        "Holdout Blaster",
+        "Formal Clothing",
+        "Sabacc Deck",
+        "Comlink",
+        "Datapad",
+        "Power Packs (2)",
+        "Medpac (2)"
+      ],
+      "credits": 1875,
+      "notes": "Persuasion +9 (+14 with Fool's Luck). Fool's Luck spends Force Point for +1 attack OR +5 skills OR +1 defenses."
+    },
+    {
+      "id": "scout_sniper",
+      "name": "Sniper/Marksman",
+      "class": "Scout",
+      "archetype": "Long-range Focus",
+      "description": "A long-range precision shooter who operates from concealment.",
+      "icon": "systems/swse/icons/classes/scout.svg",
+      "abilityScores": {
+        "str": 8,
+        "dex": 16,
+        "con": 12,
+        "int": 14,
+        "wis": 12,
+        "cha": 10
+      },
+      "species": "Duros",
+      "className": "Scout",
+      "level": 1,
+      "feat": "Point-Blank Shot",
+      "talent": "Acute Senses",
+      "talentTree": "Awareness",
+      "trainedSkills": [
+        "perception",
+        "stealth",
+        "initiative",
+        "survival",
+        "mechanics",
+        "pilot",
+        "knowledge_tactics",
+        "endurance"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Blaster Rifle",
+        "Targeting Scope",
+        "Padded Flight Suit",
+        "Electrobinoculars",
+        "Medpac (2)",
+        "Comlink",
+        "Utility Belt"
+      ],
+      "credits": 1875,
+      "notes": "Attack +4, Reflex Defense 19, HP 34. Acute Senses allows rerolling Perception checks."
+    },
+    {
+      "id": "scout_skirmisher",
+      "name": "Mobile Skirmisher",
+      "class": "Scout",
+      "archetype": "Hit-and-Run Focus",
+      "description": "A mobile combatant specializing in hit-and-run tactics.",
+      "icon": "systems/swse/icons/classes/scout.svg",
+      "abilityScores": {
+        "str": 10,
+        "dex": 16,
+        "con": 14,
+        "int": 12,
+        "wis": 12,
+        "cha": 8
+      },
+      "species": "Human",
+      "className": "Scout",
+      "level": 1,
+      "feat": "Running Attack",
+      "talent": "Long Stride",
+      "talentTree": "Fringer",
+      "trainedSkills": [
+        "initiative",
+        "stealth",
+        "perception",
+        "endurance",
+        "pilot",
+        "acrobatics"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Blaster Carbine",
+        "Heavy Blaster Pistol",
+        "Combat Jumpsuit",
+        "Comlink",
+        "Glow Rod",
+        "Medpac",
+        "Utility Belt"
+      ],
+      "credits": 1875,
+      "notes": "8 squares movement, Running Attack allows moving and shooting. Excellent battlefield mobility."
+    },
+    {
+      "id": "scout_survivalist",
+      "name": "Survivalist/Tracker",
+      "class": "Scout",
+      "archetype": "Wilderness Focus",
+      "description": "A wilderness expert who excels at tracking and surviving harsh conditions.",
+      "icon": "systems/swse/icons/classes/scout.svg",
+      "abilityScores": {
+        "str": 12,
+        "dex": 14,
+        "con": 16,
+        "int": 12,
+        "wis": 14,
+        "cha": 8
+      },
+      "species": "Ithorian",
+      "className": "Scout",
+      "level": 1,
+      "feat": "Skill Focus (Survival)",
+      "talent": "Evasion",
+      "talentTree": "Survivor",
+      "trainedSkills": [
+        "survival",
+        "perception",
+        "endurance",
+        "stealth",
+        "knowledge_life_sciences",
+        "mechanics"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Blaster Rifle",
+        "Survival Kit",
+        "Medpac (3)",
+        "All-Temperature Cloak",
+        "Rations (1 week)",
+        "Glow Rod",
+        "Comlink",
+        "Knife",
+        "Utility Belt",
+        "Field Kit"
+      ],
+      "credits": 1875,
+      "notes": "Survival +12, HP 42, Fort Defense 15. Evasion grants half damage on area attacks (no damage on miss)."
+    },
+    {
+      "id": "scout_infiltrator",
+      "name": "Infiltrator/Spy",
+      "class": "Scout",
+      "archetype": "Stealth Focus",
+      "description": "A stealthy infiltrator specializing in reconnaissance and espionage.",
+      "icon": "systems/swse/icons/classes/scout.svg",
+      "abilityScores": {
+        "str": 8,
+        "dex": 16,
+        "con": 12,
+        "int": 14,
+        "wis": 12,
+        "cha": 10
+      },
+      "species": "Bothan",
+      "className": "Scout",
+      "level": 1,
+      "feat": "Skill Focus (Stealth)",
+      "talent": "Improved Stealth",
+      "talentTree": "Camouflage",
+      "trainedSkills": [
+        "stealth",
+        "perception",
+        "mechanics",
+        "use_computer",
+        "deception",
+        "initiative",
+        "endurance"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Hold-Out Blaster",
+        "Heavy Blaster Pistol",
+        "Black Body Glove",
+        "Security Kit",
+        "Comlink (Encrypted)",
+        "Electrobinoculars",
+        "Medpac"
+      ],
+      "credits": 1875,
+      "notes": "Stealth +18 at level 1. Improved Stealth reduces movement penalty from -10 to -5."
+    },
+    {
+      "id": "soldier_sharpshooter",
+      "name": "Sharpshooter",
+      "class": "Soldier",
+      "archetype": "Precision Marksman",
+      "description": "A precision marksman who manipulates the condition track with devastating attacks.",
+      "icon": "systems/swse/icons/classes/soldier.svg",
+      "abilityScores": {
+        "str": 12,
+        "dex": 16,
+        "con": 14,
+        "int": 12,
+        "wis": 10,
+        "cha": 8
+      },
+      "species": "Human",
+      "className": "Soldier",
+      "level": 1,
+      "feat": "Point-Blank Shot",
+      "talent": "Devastating Attack (Rifles)",
+      "talentTree": "Weapon Specialist",
+      "trainedSkills": [
+        "initiative",
+        "perception",
+        "knowledge_tactics",
+        "mechanics"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Blaster Rifle",
+        "Blast Vest & Helmet",
+        "Electrobinoculars",
+        "Comlink",
+        "Medpac",
+        "Power Packs (3)"
+      ],
+      "credits": 1875,
+      "notes": "Attack +5, 3d8+3 damage. Devastating Attack treats target DT as 5 points lower."
+    },
+    {
+      "id": "soldier_heavy_weapons",
+      "name": "Heavy Weapons Specialist",
+      "class": "Soldier",
+      "archetype": "Area Suppression",
+      "description": "A heavy weapons specialist focusing on area suppression and autofire.",
+      "icon": "systems/swse/icons/classes/soldier.svg",
+      "abilityScores": {
+        "str": 14,
+        "dex": 16,
+        "con": 14,
+        "int": 12,
+        "wis": 10,
+        "cha": 8
+      },
+      "species": "Human",
+      "className": "Soldier",
+      "level": 1,
+      "feat": "Weapon Proficiency (Heavy Weapons)",
+      "talent": "Devastating Attack (Heavy Weapons)",
+      "talentTree": "Weapon Specialist",
+      "trainedSkills": [
+        "initiative",
+        "perception",
+        "endurance",
+        "mechanics"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Heavy Blaster Rifle",
+        "Frag Grenades (3)",
+        "Combat Jumpsuit",
+        "Bandolier",
+        "Comlink",
+        "Medpac"
+      ],
+      "credits": 1875,
+      "notes": "3d10 damage with autofire capability. Excels at suppressing multiple enemies."
+    },
+    {
+      "id": "soldier_melee_warrior",
+      "name": "Melee Warrior",
+      "class": "Soldier",
+      "archetype": "Close Combat Specialist",
+      "description": "A powerful melee combatant dealing massive damage in close quarters.",
+      "icon": "systems/swse/icons/classes/soldier.svg",
+      "abilityScores": {
+        "str": 16,
+        "dex": 14,
+        "con": 14,
+        "int": 10,
+        "wis": 12,
+        "cha": 8
+      },
+      "species": "Wookiee",
+      "className": "Soldier",
+      "level": 1,
+      "feat": "Weapon Proficiency (Advanced Melee)",
+      "talent": "Devastating Attack (Advanced Melee)",
+      "talentTree": "Weapon Specialist",
+      "trainedSkills": [
+        "initiative",
+        "endurance",
+        "perception"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Vibro-Axe",
+        "Blaster Pistol",
+        "Battle Armor",
+        "Combat Gloves",
+        "Comlink",
+        "Medpac"
+      ],
+      "credits": 1875,
+      "notes": "Attack +6, 2d10+7 damage (with 2-handed STR bonus). HP 36. Wookiee STR bonus makes this devastating."
+    },
+    {
+      "id": "soldier_tank",
+      "name": "Armored Tank",
+      "class": "Soldier",
+      "archetype": "Defensive Specialist",
+      "description": "An armored defender designed to absorb massive amounts of damage.",
+      "icon": "systems/swse/icons/classes/soldier.svg",
+      "abilityScores": {
+        "str": 12,
+        "dex": 14,
+        "con": 16,
+        "int": 10,
+        "wis": 12,
+        "cha": 8
+      },
+      "species": "Gen'Dai",
+      "className": "Soldier",
+      "level": 1,
+      "feat": "Armor Proficiency (Heavy)",
+      "talent": "Devastating Attack (Rifles)",
+      "talentTree": "Weapon Specialist",
+      "trainedSkills": [
+        "endurance",
+        "perception",
+        "initiative"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Blaster Rifle",
+        "Battle Armor",
+        "Vibroblade",
+        "Medpac",
+        "Comlink",
+        "Power Packs"
+      ],
+      "credits": 1875,
+      "notes": "HP 40, Reflex 21, Fort 19. Gen'Dai damage threshold is doubled! Extremely durable frontline tank."
+    }
+  ]
+}

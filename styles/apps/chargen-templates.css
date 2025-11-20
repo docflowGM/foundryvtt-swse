@@ -1,0 +1,324 @@
+/* ============================================
+   Character Template Selection Styles
+   ============================================ */
+
+.template-selection-dialog {
+  font-family: "Roboto", sans-serif;
+}
+
+.template-selection {
+  padding: 1rem;
+  max-height: 650px;
+  overflow-y: auto;
+}
+
+.template-selection h2 {
+  margin: 0 0 0.5rem 0;
+  color: #f0f0f0;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.template-selection .hint-text {
+  text-align: center;
+  color: #aaa;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+/* Template Tabs */
+.template-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.template-tab {
+  padding: 0.75rem 1.5rem;
+  background: rgba(50, 50, 50, 0.8);
+  border: 2px solid #555;
+  color: #ccc;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+.template-tab:hover {
+  background: rgba(70, 70, 70, 0.9);
+  border-color: #777;
+  color: #fff;
+}
+
+.template-tab.active {
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  border-color: #4a90e2;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+}
+
+/* Template Content */
+.template-content {
+  margin-bottom: 1rem;
+}
+
+.template-tab-content {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Template Grid */
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Template Cards */
+.template-card {
+  background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.95));
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.template-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #4a90e2, #357abd);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.template-card:hover {
+  border-color: #4a90e2;
+  box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3);
+  transform: translateY(-2px);
+}
+
+.template-card:hover::before {
+  transform: scaleX(1);
+}
+
+.template-card.hover {
+  background: linear-gradient(135deg, rgba(40, 40, 40, 0.95), rgba(30, 30, 30, 0.95));
+}
+
+/* Template Header */
+.template-header {
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid #555;
+  padding-bottom: 0.5rem;
+}
+
+.template-header h3 {
+  margin: 0 0 0.25rem 0;
+  color: #4a90e2;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.template-archetype {
+  display: inline-block;
+  background: rgba(74, 144, 226, 0.2);
+  color: #4a90e2;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid #4a90e2;
+}
+
+/* Template Description */
+.template-description {
+  color: #ddd;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* Template Stats */
+.template-stats {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  border-left: 3px solid #4a90e2;
+}
+
+.template-stats .stat-row {
+  margin: 0.4rem 0;
+  font-size: 0.9rem;
+  color: #ccc;
+  line-height: 1.5;
+}
+
+.template-stats .stat-row strong {
+  color: #4a90e2;
+  display: inline-block;
+  min-width: 90px;
+}
+
+/* Template Notes */
+.template-notes {
+  background: rgba(74, 144, 226, 0.1);
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  border: 1px dashed #4a90e2;
+}
+
+.template-notes small {
+  color: #aaa;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* Template Select Button */
+.template-select-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.template-select-btn:hover {
+  background: linear-gradient(135deg, #357abd, #2868a6);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+  transform: translateY(-1px);
+}
+
+.template-select-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(74, 144, 226, 0.3);
+}
+
+.template-select-btn i {
+  font-size: 1.1rem;
+}
+
+/* Template Actions */
+.template-actions {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 2px solid #444;
+  text-align: center;
+}
+
+.custom-build-btn {
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #666, #555);
+  color: white;
+  border: 2px solid #777;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.custom-build-btn:hover {
+  background: linear-gradient(135deg, #777, #666);
+  border-color: #888;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.custom-build-btn:active {
+  transform: translateY(0);
+}
+
+.custom-build-btn i {
+  font-size: 1.2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .template-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .template-tabs {
+    flex-direction: column;
+  }
+
+  .template-tab {
+    width: 100%;
+  }
+}
+
+/* Scrollbar Styling */
+.template-selection::-webkit-scrollbar {
+  width: 10px;
+}
+
+.template-selection::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.template-selection::-webkit-scrollbar-thumb {
+  background: #4a90e2;
+  border-radius: 5px;
+}
+
+.template-selection::-webkit-scrollbar-thumb:hover {
+  background: #357abd;
+}
+
+/* Class Icons (if available) */
+.template-card[data-template-id*="jedi"] .template-header h3::before {
+  content: '⚔️ ';
+}
+
+.template-card[data-template-id*="noble"] .template-header h3::before {
+  content: '👑 ';
+}
+
+.template-card[data-template-id*="scoundrel"] .template-header h3::before {
+  content: '🎯 ';
+}
+
+.template-card[data-template-id*="scout"] .template-header h3::before {
+  content: '🔭 ';
+}
+
+.template-card[data-template-id*="soldier"] .template-header h3::before {
+  content: '🛡️ ';
+}

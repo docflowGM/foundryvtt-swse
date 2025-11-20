@@ -36,6 +36,7 @@
     "styles/combat/combat-enhancements.css",
     "styles/combat/vehicle-combat.css",
     "styles/apps/chargen.css",
+    "styles/apps/chargen-templates.css",
     "styles/apps/houserules.css",
     "styles/apps/store.css",
     "styles/apps/vehicle-modification.css",
