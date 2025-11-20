@@ -265,22 +265,23 @@ export class ClassDataModel extends foundry.abstract.DataModel {
   }
 
   prepareDerivedData() {
-    // Convert save progression strings to FLAT defense bonuses
-    // SWSE Rules:
+    // SWSE Rules for class defense bonuses:
     // - Defense bonuses are FLAT per class and do not scale with class level
-    // - "fast" save = +1 bonus (heroic classes) or +2 (prestige classes)
-    // - "slow" save = +0 bonus
+    // - Heroic classes typically have +1 for "fast" saves, +0 for "slow"
+    // - Prestige classes can have higher bonuses (+2, +3, or even +4)
     // - When multiclassing, use the HIGHEST bonus from any class, not additive
 
-    if (!this.defenses) {
-      this.defenses = { fortitude: 0, reflex: 0, will: 0 };
-    }
+    // NOTE: The defenses.fortitude/reflex/will values should be set directly in the class data
+    // or by migration scripts. We do NOT calculate them from fortSave/refSave/willSave strings
+    // because the mapping is not 1:1 (prestige classes can have +2, +3, +4 for "fast" saves).
 
-    // For now, use +1 for "fast" saves (typical for heroic classes)
-    // Prestige classes may override this with higher values
-    this.defenses.fortitude = this.fortSave === "fast" ? 1 : 0;
-    this.defenses.reflex = this.refSave === "fast" ? 1 : 0;
-    this.defenses.will = this.willSave === "fast" ? 1 : 0;
+    // Ensure defenses object exists with defaults if not already set
+    if (!this.defenses || typeof this.defenses.fortitude === 'undefined') {
+      // Only set defaults if defenses aren't already populated
+      if (!this.defenses) {
+        this.defenses = { fortitude: 0, reflex: 0, will: 0 };
+      }
+    }
   }
 
   /**
