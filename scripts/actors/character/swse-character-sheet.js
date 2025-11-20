@@ -376,7 +376,6 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
    * Post combat action description to chat (without rolling)
    */
   async _postCombatActionDescription(actionName, actionData) {
-    const actionRow = $(event.currentTarget).closest('.combat-action-row');
     const actionType = actionData.action.type;
     const notes = actionData.notes;
 
@@ -676,5 +675,386 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     }
 
     ui.notifications.info(`Rested and regained ${spentPowers.length} Force Power(s)`);
+  }
+
+  /**
+   * Handle adding a Force Power to the active suite
+   */
+  async _onAddToSuite(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const powerId = button.dataset.powerId || button.closest('[data-item-id]')?.dataset.itemId;
+
+    if (!powerId) {
+      ui.notifications.error('Power ID not found');
+      return;
+    }
+
+    const power = this.actor.items.get(powerId);
+    if (!power) {
+      ui.notifications.error('Force power not found');
+      return;
+    }
+
+    // Check suite capacity
+    const suitePowers = this.actor.items.filter(i =>
+      (i.type === 'forcepower' || i.type === 'force-power') && i.system.inSuite
+    );
+    const maxSuite = this.actor.system.forceSuite?.maxPowers || 6;
+
+    if (suitePowers.length >= maxSuite) {
+      ui.notifications.warn(`Force Suite is full! (${maxSuite} powers maximum)`);
+      return;
+    }
+
+    // Add to suite
+    await power.update({'system.inSuite': true});
+    ui.notifications.info(`Added ${power.name} to Force Suite`);
+  }
+
+  /**
+   * Handle removing a Force Power from the active suite
+   */
+  async _onRemoveFromSuite(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const powerId = button.dataset.powerId || button.closest('[data-item-id]')?.dataset.itemId;
+
+    if (!powerId) {
+      ui.notifications.error('Power ID not found');
+      return;
+    }
+
+    const power = this.actor.items.get(powerId);
+    if (!power) {
+      ui.notifications.error('Force power not found');
+      return;
+    }
+
+    // Remove from suite
+    await power.update({'system.inSuite': false});
+    ui.notifications.info(`Removed ${power.name} from Force Suite`);
+  }
+
+  /**
+   * Handle toggling talent tree visibility
+   */
+  async _onToggleTree(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const treeElement = button.closest('.talent-tree');
+    const treeContent = treeElement.querySelector('.tree-content');
+    const icon = button.querySelector('i');
+
+    if (treeContent.style.display === 'none') {
+      treeContent.style.display = 'block';
+      icon.classList.remove('fa-chevron-right');
+      icon.classList.add('fa-chevron-down');
+    } else {
+      treeContent.style.display = 'none';
+      icon.classList.remove('fa-chevron-down');
+      icon.classList.add('fa-chevron-right');
+    }
+  }
+
+  /**
+   * Handle selecting a talent from the tree
+   */
+  async _onSelectTalent(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const talentId = button.dataset.talentId;
+
+    if (!talentId) {
+      ui.notifications.error('Talent ID not found');
+      return;
+    }
+
+    const talent = this.actor.items.get(talentId);
+    if (!talent) {
+      ui.notifications.error('Talent not found');
+      return;
+    }
+
+    // Check if talent is locked
+    if (button.classList.contains('locked')) {
+      ui.notifications.warn('This talent is locked. Prerequisites must be met first.');
+      return;
+    }
+
+    // Check if already acquired
+    const isAcquired = button.classList.contains('acquired');
+
+    if (isAcquired) {
+      // Allow removal if configured
+      const confirmed = await Dialog.confirm({
+        title: `Remove ${talent.name}?`,
+        content: `<p>Do you want to remove this talent?</p><p><strong>Note:</strong> This may affect dependent talents.</p>`
+      });
+
+      if (confirmed) {
+        await talent.delete();
+        ui.notifications.info(`Removed ${talent.name}`);
+      }
+    } else {
+      // Add talent - open the talent sheet for review
+      await talent.sheet.render(true);
+    }
+  }
+
+  /**
+   * Handle viewing talent details
+   */
+  async _onViewTalent(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const talentId = button.dataset.talentId;
+
+    if (!talentId) {
+      ui.notifications.error('Talent ID not found');
+      return;
+    }
+
+    const talent = this.actor.items.get(talentId);
+    if (!talent) {
+      ui.notifications.error('Talent not found');
+      return;
+    }
+
+    // Open the talent sheet
+    await talent.sheet.render(true);
+  }
+
+  /**
+   * Handle picking or changing species
+   */
+  async _onPickSpecies(event) {
+    event.preventDefault();
+
+    // Import species selection functions from levelup
+    const { getAvailableSpecies, selectSpecies } = await import('../apps/levelup/levelup-class.js');
+
+    // Get available species
+    const availableSpecies = await getAvailableSpecies();
+    if (!availableSpecies || availableSpecies.length === 0) {
+      ui.notifications.error('No species found in compendium!');
+      return;
+    }
+
+    // Build HTML for species selection dialog
+    let dialogContent = `
+      <div class="species-picker-dialog">
+        <p class="hint-text">
+          <i class="fas fa-info-circle"></i>
+          ${this.actor.system.race ?
+            'Changing species will replace your current racial bonuses.' :
+            'Select a species to gain racial bonuses and abilities.'}
+        </p>
+        <div class="species-grid">
+    `;
+
+    for (const species of availableSpecies) {
+      const abilities = species.system.abilities || '';
+      const size = species.system.size || 'Medium';
+      const speed = species.system.speed || '6';
+
+      dialogContent += `
+        <div class="species-card" data-species-id="${species.id}" data-species-name="${species.name}">
+          <h4>${species.name}</h4>
+          ${species.system.source ? `<div class="species-source">${species.system.source}</div>` : ''}
+          <div class="species-details">
+            <div><strong>Size:</strong> ${size}</div>
+            <div><strong>Speed:</strong> ${speed} squares</div>
+            ${abilities ? `<div><strong>Abilities:</strong> ${abilities}</div>` : ''}
+            ${species.system.skillBonuses?.length ?
+              `<div><strong>Skills:</strong> ${species.system.skillBonuses.join(', ')}</div>` : ''}
+            ${species.system.bonusFeat ? '<div><i class="fas fa-star"></i> Bonus Feat</div>' : ''}
+            ${species.system.bonusSkill ? '<div><i class="fas fa-star"></i> Bonus Trained Skill</div>' : ''}
+          </div>
+          <button type="button" class="select-species-btn" data-species-id="${species.id}" data-species-name="${species.name}">
+            <i class="fas fa-check"></i> Select
+          </button>
+        </div>
+      `;
+    }
+
+    dialogContent += `
+        </div>
+      </div>
+      <style>
+        .species-picker-dialog { max-height: 600px; overflow-y: auto; }
+        .species-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
+        .species-card { border: 1px solid #666; padding: 1rem; border-radius: 4px; background: rgba(0,0,0,0.2); }
+        .species-card h4 { margin: 0 0 0.5rem 0; color: #f0f0f0; }
+        .species-source { font-size: 0.85em; color: #999; margin-bottom: 0.5rem; }
+        .species-details { font-size: 0.9em; margin: 0.5rem 0; }
+        .species-details div { margin: 0.25rem 0; }
+        .select-species-btn { width: 100%; margin-top: 0.5rem; }
+      </style>
+    `;
+
+    // Show dialog
+    new Dialog({
+      title: 'Select Species',
+      content: dialogContent,
+      buttons: {
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: 'Cancel'
+        }
+      },
+      default: 'cancel',
+      render: (html) => {
+        html.find('.select-species-btn').click(async (e) => {
+          const speciesId = e.currentTarget.dataset.speciesId;
+          const speciesName = e.currentTarget.dataset.speciesName;
+
+          // Get the species document
+          const speciesDoc = await selectSpecies(speciesId, speciesName);
+          if (!speciesDoc) {
+            ui.notifications.error('Failed to load species data');
+            return;
+          }
+
+          // Apply the species to the character
+          await this._applySpecies(speciesDoc);
+
+          // Close dialog
+          $(e.currentTarget).closest('.dialog').find('.window-close').click();
+        });
+      }
+    }, {
+      width: 800,
+      height: 700,
+      classes: ['swse', 'species-picker']
+    }).render(true);
+  }
+
+  /**
+   * Apply species to character, removing old species bonuses if applicable
+   */
+  async _applySpecies(speciesDoc) {
+    const oldRace = this.actor.system.race;
+    const newRace = speciesDoc.name;
+
+    SWSELogger.log(`SWSE | Applying species: ${newRace}${oldRace ? ` (replacing ${oldRace})` : ''}`);
+
+    // If changing species, remove old modifiers
+    if (oldRace && oldRace !== newRace) {
+      await this._removeOldSpeciesModifiers();
+    }
+
+    // Apply new species
+    const updateData = {
+      'system.race': newRace,
+      'system.speciesSource': speciesDoc.system.source || '',
+      'system.size': speciesDoc.system.size || 'Medium',
+      'system.speed': speciesDoc.system.speed || 6
+    };
+
+    // Apply ability modifiers
+    if (speciesDoc.system.abilityModifiers) {
+      for (const [ability, value] of Object.entries(speciesDoc.system.abilityModifiers)) {
+        if (value !== 0) {
+          updateData[`system.attributes.${ability}.racial`] = value;
+        }
+      }
+    }
+
+    // Apply species traits
+    if (speciesDoc.system.traits) {
+      updateData['system.specialTraits'] = speciesDoc.system.traits;
+    }
+
+    if (speciesDoc.system.visionTraits) {
+      updateData['system.visionTraits'] = speciesDoc.system.visionTraits;
+    }
+
+    if (speciesDoc.system.naturalWeapons) {
+      updateData['system.naturalWeapons'] = speciesDoc.system.naturalWeapons;
+    }
+
+    // Update actor
+    await this.actor.update(updateData);
+
+    ui.notifications.info(`Species changed to ${newRace}`);
+
+    // Handle human bonus feat and skill
+    if (newRace === 'Human' && speciesDoc.system.bonusFeat && speciesDoc.system.bonusSkill) {
+      await this._handleHumanBonus();
+    }
+
+    // Re-render the sheet
+    this.render();
+  }
+
+  /**
+   * Remove old species modifiers before applying new species
+   */
+  async _removeOldSpeciesModifiers() {
+    const updateData = {};
+
+    // Reset racial ability modifiers
+    const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    for (const ability of abilities) {
+      updateData[`system.attributes.${ability}.racial`] = 0;
+    }
+
+    // Clear species-specific data
+    updateData['system.specialTraits'] = [];
+    updateData['system.visionTraits'] = [];
+    updateData['system.naturalWeapons'] = [];
+
+    await this.actor.update(updateData);
+    SWSELogger.log('SWSE | Removed old species modifiers');
+  }
+
+  /**
+   * Handle human bonus feat and trained skill selection
+   */
+  async _handleHumanBonus() {
+    ui.notifications.info('As a Human, you gain a bonus feat and a bonus trained skill!');
+
+    // Import feat and skill selection
+    const { loadFeats } = await import('../apps/levelup/levelup-feats.js');
+
+    // Load all feats
+    const allFeats = await loadFeats(this.actor, null, {});
+
+    // Show feat selection dialog
+    const featDialog = await Dialog.confirm({
+      title: 'Human Bonus Feat',
+      content: `
+        <p>Select a bonus feat as a human:</p>
+        <select id="human-bonus-feat" style="width: 100%;">
+          ${allFeats.map(f => `<option value="${f.name}">${f.name}</option>`).join('')}
+        </select>
+      `,
+      yes: async (html) => {
+        const featName = html.find('#human-bonus-feat').val();
+        const feat = allFeats.find(f => f.name === featName);
+        if (feat) {
+          await this.actor.createEmbeddedDocuments('Item', [feat]);
+          ui.notifications.info(`Added bonus feat: ${featName}`);
+        }
+      }
+    });
+
+    // Show skill selection dialog
+    const skills = Object.keys(this.actor.system.skills || {});
+    const skillDialog = await Dialog.confirm({
+      title: 'Human Bonus Trained Skill',
+      content: `
+        <p>Select a bonus trained skill as a human:</p>
+        <select id="human-bonus-skill" style="width: 100%;">
+          ${skills.map(s => `<option value="${s}">${s.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>`).join('')}
+        </select>
+      `,
+      yes: async (html) => {
+        const skillKey = html.find('#human-bonus-skill').val();
+        await this.actor.update({[`system.skills.${skillKey}.trained`]: true});
+        ui.notifications.info(`Trained in ${skillKey.replace(/_/g, ' ')}`);
+      }
+    });
   }
 }

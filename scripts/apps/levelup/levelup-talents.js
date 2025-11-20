@@ -17,6 +17,14 @@ import { checkTalentPrerequisites } from './levelup-validation.js';
 export function getsTalent(selectedClass, actor) {
   if (!selectedClass) return false;
 
+  // Check house rule: talent every level
+  const talentEveryLevel = game.settings.get("swse", "talentEveryLevel");
+  if (talentEveryLevel) {
+    // Check if class has talent trees available
+    const trees = selectedClass.system.talent_trees || selectedClass.system.talentTrees;
+    return (selectedClass.system.forceSensitive || trees?.length > 0);
+  }
+
   const classLevel = getClassLevel(actor, selectedClass.name) + 1;
 
   // Check level_progression for this class level

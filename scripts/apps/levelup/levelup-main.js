@@ -96,6 +96,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.featData = null;
     this.selectedSpecies = null; // For level 0 characters
     this.abilityScores = {}; // For level 0 characters
+    this.freeBuild = false; // Free Build mode - skips validation
 
     // Mentor system - initially use base class mentor, will update when class is selected
     const level1Class = getLevel1Class(this.actor);
@@ -173,6 +174,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
       data.talentTrees = await getTalentTrees(this.selectedClass, this.actor);
     }
 
+    // Free Build mode flag
+    data.freeBuild = this.freeBuild;
+
     return data;
   }
 
@@ -228,6 +232,10 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Navigation
     html.find('.next-step').click(this._onNextStep.bind(this));
     html.find('.prev-step').click(this._onPrevStep.bind(this));
+    html.find('.skip-step').click(this._onSkipStep.bind(this));
+
+    // Free Build mode toggle
+    html.find('.free-build-toggle').change(this._onToggleFreeBuild.bind(this));
 
     // Final level up
     html.find('.complete-levelup').click(this._onCompleteLevelUp.bind(this));
@@ -547,10 +555,10 @@ export class SWSELevelUpEnhanced extends FormApplication {
         }
         break;
       case 'ability-increase':
-        // Check if they've allocated all 2 points
+        // Check if they've allocated all 2 points (unless in Free Build mode)
         const totalAllocated = Object.values(this.abilityIncreases).reduce((sum, val) => sum + val, 0);
-        if (totalAllocated < 2) {
-          ui.notifications.warn("You must allocate all 2 ability points before continuing!");
+        if (!this.freeBuild && totalAllocated < 2) {
+          ui.notifications.warn("You must allocate all 2 ability points before continuing! (Or enable Free Build mode to skip)");
           return;
         }
         if (getsBonusFt) {
@@ -562,9 +570,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
         }
         break;
       case 'feat':
-        // Check if they selected a feat
-        if (this.selectedFeats.length === 0) {
-          ui.notifications.warn("You must select a feat before continuing!");
+        // Check if they selected a feat (unless in Free Build mode)
+        if (!this.freeBuild && this.selectedFeats.length === 0) {
+          ui.notifications.warn("You must select a feat before continuing! (Or enable Free Build mode to skip)");
           return;
         }
         if (getsTal) {
@@ -574,9 +582,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
         }
         break;
       case 'talent':
-        // Check if they selected a talent (if required)
-        if (!this.selectedTalent) {
-          ui.notifications.warn("You must select a talent before continuing!");
+        // Check if they selected a talent (unless in Free Build mode)
+        if (!this.freeBuild && !this.selectedTalent) {
+          ui.notifications.warn("You must select a talent before continuing! (Or enable Free Build mode to skip)");
           return;
         }
         this.currentStep = 'summary';
@@ -643,6 +651,75 @@ export class SWSELevelUpEnhanced extends FormApplication {
     }
 
     this.render();
+  }
+
+  /**
+   * Skip current step - forces navigation to next step without validation
+   * Shows confirmation dialog first
+   */
+  async _onSkipStep(event) {
+    event.preventDefault();
+
+    const confirmed = await Dialog.confirm({
+      title: 'Skip This Step?',
+      content: `
+        <div class="skip-warning">
+          <p><i class="fas fa-exclamation-triangle"></i> <strong>Warning:</strong></p>
+          <p>You are about to skip this step without completing it.</p>
+          <p>You will be responsible for adding any missing selections later.</p>
+          <p>Continue?</p>
+        </div>
+      `
+    });
+
+    if (!confirmed) return;
+
+    // Temporarily enable freeBuild to skip validation
+    const wasFreeBuild = this.freeBuild;
+    this.freeBuild = true;
+    this._onNextStep();
+    this.freeBuild = wasFreeBuild;
+
+    ui.notifications.warn('Step skipped - remember to fill in missing requirements!');
+  }
+
+  /**
+   * Toggle Free Build mode
+   */
+  _onToggleFreeBuild(event) {
+    this.freeBuild = event.target.checked;
+
+    if (this.freeBuild) {
+      Dialog.confirm({
+        title: 'Enable Free Build Mode?',
+        content: `
+          <div class="free-build-warning">
+            <p><i class="fas fa-unlock-alt"></i> <strong>Free Build Mode</strong></p>
+            <p>This mode allows you to skip validation checks and build your character freely.</p>
+            <p><strong>You are responsible for:</strong></p>
+            <ul>
+              <li>Meeting all prerequisites</li>
+              <li>Following character creation rules</li>
+              <li>Adding missing selections later</li>
+            </ul>
+            <p>Enable Free Build Mode?</p>
+          </div>
+        `,
+        yes: () => {
+          this.freeBuild = true;
+          this.render();
+          ui.notifications.info('Free Build Mode enabled');
+        },
+        no: () => {
+          this.freeBuild = false;
+          event.target.checked = false;
+          ui.notifications.info('Free Build Mode disabled');
+        }
+      });
+    } else {
+      ui.notifications.info('Free Build Mode disabled');
+      this.render();
+    }
   }
 
   // ========================================

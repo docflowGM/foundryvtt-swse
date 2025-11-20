@@ -6,6 +6,13 @@
       <i class="fas fa-arrow-right"></i>
       <span>New Level: <strong>{{newLevel}}</strong></span>
     </div>
+    <div class="free-build-controls">
+      <label class="free-build-label">
+        <input type="checkbox" class="free-build-toggle" {{checked freeBuild}}>
+        <i class="fas fa-unlock-alt"></i> <strong>Free Build Mode</strong>
+        <span class="hint-text">Skip validation and build freely</span>
+      </label>
+    </div>
   </header>
 
   {{!-- MENTOR NARRATION PANEL --}}
@@ -327,6 +334,9 @@
         <button class="prev-step btn-secondary">
           <i class="fas fa-arrow-left"></i> Back
         </button>
+        <button class="skip-step btn-warning" title="Skip this step (you'll need to add missing selections later)">
+          <i class="fas fa-forward"></i> Skip
+        </button>
         <button class="next-step btn-primary">
           Continue <i class="fas fa-arrow-right"></i>
         </button>
@@ -369,6 +379,9 @@
       <div class="form-actions">
         <button class="prev-step btn-secondary">
           <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="skip-step btn-warning" title="Skip this step (you'll need to add missing selections later)">
+          <i class="fas fa-forward"></i> Skip
         </button>
         <button class="next-step btn-primary">
           Continue <i class="fas fa-arrow-right"></i>
@@ -430,6 +443,9 @@
       <div class="form-actions">
         <button class="prev-step btn-secondary">
           <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="skip-step btn-warning" title="Skip this step (you'll need to add missing selections later)">
+          <i class="fas fa-forward"></i> Skip
         </button>
         <button class="next-step btn-primary">
           Continue <i class="fas fa-arrow-right"></i>
