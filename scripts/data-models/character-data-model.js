@@ -242,7 +242,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
    * Calculate BAB and defenses for multiclassed characters
    * SWSE Rules:
    * - BAB is additive across all classes
-   * - Defenses take the highest bonus from any class for each defense type
+   * - Defense bonuses are FLAT per class and do NOT scale with class level
+   * - When multiclassing, use the HIGHEST defense bonus from any class (not additive)
    */
   _calculateMulticlassStats() {
     // Get actor instance to access items
@@ -263,10 +264,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       return;
     }
 
-    // Calculate total BAB (additive)
+    // Calculate total BAB (additive across all classes)
     let totalBAB = 0;
 
-    // Track highest defense bonuses
+    // Track highest FLAT defense bonuses (not additive, just take max)
     let maxFortBonus = 0;
     let maxRefBonus = 0;
     let maxWillBonus = 0;
@@ -275,21 +276,18 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       const classLevel = classItem.system.level || 1;
       const classData = classItem.system;
 
-      // BAB - Add from each class (SWSE multiclass rule)
+      // BAB - Add from each class (SWSE multiclass rule: additive)
       // Convert string progression to numeric multiplier
       const babProgression = this._convertBabProgression(classData.babProgression);
       const classBab = Math.floor(classLevel * babProgression);
       totalBAB += classBab;
 
-      // Defenses - Track maximum for each (SWSE multiclass rule)
-      // The defenses object should now be populated by ClassDataModel.prepareDerivedData()
-      const fortPerLevel = Number(classData.defenses?.fortitude) || 0;
-      const refPerLevel = Number(classData.defenses?.reflex) || 0;
-      const willPerLevel = Number(classData.defenses?.will) || 0;
-
-      const classFort = Math.floor(fortPerLevel * classLevel);
-      const classRef = Math.floor(refPerLevel * classLevel);
-      const classWill = Math.floor(willPerLevel * classLevel);
+      // Defenses - Track maximum FLAT bonus from any class (SWSE multiclass rule: highest wins)
+      // Defense bonuses do NOT scale with class level - they are flat per class
+      // Example: Jedi gives +1/+1/+1 at all levels, Jedi Knight gives +2/+2/+2 at all levels
+      const classFort = Number(classData.defenses?.fortitude) || 0;
+      const classRef = Number(classData.defenses?.reflex) || 0;
+      const classWill = Number(classData.defenses?.will) || 0;
 
       maxFortBonus = Math.max(maxFortBonus, classFort);
       maxRefBonus = Math.max(maxRefBonus, classRef);
@@ -302,9 +300,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Set defense class bonuses (these get added in parent's _calculateDefenses)
     if (this.defenses) {
-      this.defenses.fortitude.classBonus = Math.floor(maxFortBonus);
-      this.defenses.reflex.classBonus = Math.floor(maxRefBonus);
-      this.defenses.will.classBonus = Math.floor(maxWillBonus);
+      this.defenses.fortitude.classBonus = maxFortBonus;
+      this.defenses.reflex.classBonus = maxRefBonus;
+      this.defenses.will.classBonus = maxWillBonus;
     }
   }
 

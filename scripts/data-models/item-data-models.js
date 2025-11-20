@@ -265,20 +265,22 @@ export class ClassDataModel extends foundry.abstract.DataModel {
   }
 
   prepareDerivedData() {
-    // Convert save progression strings to numeric per-level bonuses
+    // Convert save progression strings to FLAT defense bonuses
     // SWSE Rules:
-    // - "slow" = 0 per level
-    // - "fast" = 2 per 3 levels (approximately 0.667 per level)
+    // - Defense bonuses are FLAT per class and do not scale with class level
+    // - "fast" save = +1 bonus (heroic classes) or +2 (prestige classes)
+    // - "slow" save = +0 bonus
+    // - When multiclassing, use the HIGHEST bonus from any class, not additive
 
-    // For multiclass calculation, we store the per-level progression rate
-    // The character data model will multiply this by the class level
     if (!this.defenses) {
       this.defenses = { fortitude: 0, reflex: 0, will: 0 };
     }
 
-    this.defenses.fortitude = this.fortSave === "fast" ? (2/3) : 0;
-    this.defenses.reflex = this.refSave === "fast" ? (2/3) : 0;
-    this.defenses.will = this.willSave === "fast" ? (2/3) : 0;
+    // For now, use +1 for "fast" saves (typical for heroic classes)
+    // Prestige classes may override this with higher values
+    this.defenses.fortitude = this.fortSave === "fast" ? 1 : 0;
+    this.defenses.reflex = this.refSave === "fast" ? 1 : 0;
+    this.defenses.will = this.willSave === "fast" ? 1 : 0;
   }
 
   /**
