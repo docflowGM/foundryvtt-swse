@@ -20,6 +20,15 @@
  DC
  {{#if dc.value}}
  {{dc.value}}
+ {{!-- Add roll button for flat DCs --}}
+ <button class="crew-skill-roll btn-mini"
+         data-position="{{../../../position}}"
+         data-skill="{{skill}}"
+         data-action-name="{{../name}}"
+         data-dc="{{dc.value}}"
+         title="Roll {{skill}} check">
+   <i class="fas fa-dice"></i> Roll
+ </button>
  {{else if dc.type}}
  {{dc.type}}
  {{else}}

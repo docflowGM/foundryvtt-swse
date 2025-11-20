@@ -432,14 +432,32 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         range: new fields.StringField({required: false, initial: ""})
       }), {initial: []}),
 
-      // Crew positions
+      // Crew positions - stores both name and UUID for each crew member
       crewPositions: new fields.SchemaField({
-        pilot: new fields.StringField({required: false, nullable: true, initial: null}),
-        copilot: new fields.StringField({required: false, nullable: true, initial: null}),
-        gunner: new fields.StringField({required: false, nullable: true, initial: null}),
-        engineer: new fields.StringField({required: false, nullable: true, initial: null}),
-        shields: new fields.StringField({required: false, nullable: true, initial: null}),
-        commander: new fields.StringField({required: false, nullable: true, initial: null})
+        pilot: new fields.SchemaField({
+          name: new fields.StringField({required: false, nullable: true, initial: null}),
+          uuid: new fields.StringField({required: false, nullable: true, initial: null})
+        }, {required: false, nullable: true, initial: null}),
+        copilot: new fields.SchemaField({
+          name: new fields.StringField({required: false, nullable: true, initial: null}),
+          uuid: new fields.StringField({required: false, nullable: true, initial: null})
+        }, {required: false, nullable: true, initial: null}),
+        gunner: new fields.SchemaField({
+          name: new fields.StringField({required: false, nullable: true, initial: null}),
+          uuid: new fields.StringField({required: false, nullable: true, initial: null})
+        }, {required: false, nullable: true, initial: null}),
+        engineer: new fields.SchemaField({
+          name: new fields.StringField({required: false, nullable: true, initial: null}),
+          uuid: new fields.StringField({required: false, nullable: true, initial: null})
+        }, {required: false, nullable: true, initial: null}),
+        shields: new fields.SchemaField({
+          name: new fields.StringField({required: false, nullable: true, initial: null}),
+          uuid: new fields.StringField({required: false, nullable: true, initial: null})
+        }, {required: false, nullable: true, initial: null}),
+        commander: new fields.SchemaField({
+          name: new fields.StringField({required: false, nullable: true, initial: null}),
+          uuid: new fields.StringField({required: false, nullable: true, initial: null})
+        }, {required: false, nullable: true, initial: null})
       }),
 
       // Crew notes

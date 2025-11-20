@@ -35,6 +35,20 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
         engineer: null, shields: null, commander: null
       };
     }
+
+    // Normalize crew positions for backwards compatibility
+    // Convert old string format to new object format
+    const positions = ['pilot', 'copilot', 'gunner', 'engineer', 'shields', 'commander'];
+    for (const pos of positions) {
+      const crewData = context.system.crewPositions[pos];
+      if (crewData && typeof crewData === 'string') {
+        // Old format - just a name string
+        context.system.crewPositions[pos] = {
+          name: crewData,
+          uuid: null
+        };
+      }
+    }
     if (!context.system.shields) context.system.shields = { value: 0, max: 0 };
     if (!context.system.hull) context.system.hull = { value: 0, max: 0 };
     if (!context.system.tags) context.system.tags = [];
@@ -66,6 +80,9 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     html.find('.weapon-roll').click(this._onRollWeapon.bind(this));
     html.find('.crew-slot').on('drop', this._onCrewDrop.bind(this));
     html.find('.crew-slot').on('click', this._onCrewClick.bind(this));
+
+    // Crew skill rolls
+    html.find('.crew-skill-roll').click(this._onCrewSkillRoll.bind(this));
 
     // Ship combat actions toggle
     html.find('.crew-actions-toggle').click(this._onCrewActionsToggle.bind(this));
@@ -247,7 +264,13 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
       if (data.type === 'Actor') {
         const actor = await fromUuid(data.uuid);
         if (actor) {
-          await this.actor.update({ [`system.crewPositions.${slot}`]: actor.name });
+          await this.actor.update({
+            [`system.crewPositions.${slot}`]: {
+              name: actor.name,
+              uuid: actor.uuid
+            }
+          });
+          ui.notifications.info(`${actor.name} assigned to ${slot} position`);
         }
       }
     } catch (error) {
@@ -260,14 +283,81 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     const slot = event.currentTarget.dataset.slot;
     const currentCrew = this.actor.system.crewPositions?.[slot];
     if (currentCrew) {
-      const confirm = await Dialog.confirm({
-        title: "Remove Crew Member",
-        content: `<p>Remove <strong>${currentCrew}</strong> from ${slot} position?</p>`
-      });
-      if (confirm) {
-        await this.actor.update({ [`system.crewPositions.${slot}`]: null });
+      // Handle both old string format and new object format for backwards compatibility
+      const crewName = typeof currentCrew === 'string' ? currentCrew : currentCrew?.name;
+      if (crewName) {
+        const confirm = await Dialog.confirm({
+          title: "Remove Crew Member",
+          content: `<p>Remove <strong>${crewName}</strong> from ${slot} position?</p>`
+        });
+        if (confirm) {
+          await this.actor.update({ [`system.crewPositions.${slot}`]: null });
+          ui.notifications.info(`Removed ${crewName} from ${slot} position`);
+        }
       }
     }
+  }
+
+  /**
+   * Map skill names from ship combat actions to actual skill keys
+   */
+  _mapSkillNameToKey(skillName) {
+    const skillMap = {
+      'Pilot': 'pilot',
+      'Mechanics': 'mechanics',
+      'Use Computer': 'use_computer',
+      'Perception': 'perception',
+      'Persuasion': 'persuasion',
+      'Knowledge (Tactics)': 'knowledge_tactics'
+    };
+    return skillMap[skillName] || skillName.toLowerCase().replace(/\s+/g, '_');
+  }
+
+  /**
+   * Roll a skill check for a crew member in a specific position
+   */
+  async _onCrewSkillRoll(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const position = button.dataset.position;
+    const skillName = button.dataset.skill;
+    const actionName = button.dataset.actionName;
+    const dc = button.dataset.dc ? parseInt(button.dataset.dc) : null;
+
+    // Map skill name to key
+    const skillKey = this._mapSkillNameToKey(skillName);
+
+    // Get crew member from position
+    const crewData = this.actor.system.crewPositions?.[position];
+    if (!crewData) {
+      ui.notifications.warn(`No crew member assigned to ${position} position`);
+      return;
+    }
+
+    // Get crew member UUID (handle backwards compatibility)
+    const crewUuid = typeof crewData === 'string' ? null : crewData.uuid;
+    if (!crewUuid) {
+      ui.notifications.error(`Crew member data is outdated. Please re-assign crew member to ${position} position.`);
+      return;
+    }
+
+    // Load crew member actor
+    const crewMember = await fromUuid(crewUuid);
+    if (!crewMember) {
+      ui.notifications.error(`Cannot find crew member actor`);
+      return;
+    }
+
+    // Import the roll handler
+    const { SWSERoll } = await import('../../combat/rolls/enhanced-rolls.js');
+
+    // Roll the skill check using crew member's skills
+    await SWSERoll.rollSkillCheck(crewMember, skillKey, {
+      dc: dc,
+      actionName: actionName,
+      vehicleName: this.actor.name,
+      positionName: position
+    });
   }
 
   // Stub methods to prevent errors from parent class
