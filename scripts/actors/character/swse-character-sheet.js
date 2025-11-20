@@ -376,7 +376,6 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
    * Post combat action description to chat (without rolling)
    */
   async _postCombatActionDescription(actionName, actionData) {
-    const actionRow = $(event.currentTarget).closest('.combat-action-row');
     const actionType = actionData.action.type;
     const notes = actionData.notes;
 
@@ -676,5 +675,153 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     }
 
     ui.notifications.info(`Rested and regained ${spentPowers.length} Force Power(s)`);
+  }
+
+  /**
+   * Handle adding a Force Power to the active suite
+   */
+  async _onAddToSuite(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const powerId = button.dataset.powerId || button.closest('[data-item-id]')?.dataset.itemId;
+
+    if (!powerId) {
+      ui.notifications.error('Power ID not found');
+      return;
+    }
+
+    const power = this.actor.items.get(powerId);
+    if (!power) {
+      ui.notifications.error('Force power not found');
+      return;
+    }
+
+    // Check suite capacity
+    const suitePowers = this.actor.items.filter(i =>
+      (i.type === 'forcepower' || i.type === 'force-power') && i.system.inSuite
+    );
+    const maxSuite = this.actor.system.forceSuite?.maxPowers || 6;
+
+    if (suitePowers.length >= maxSuite) {
+      ui.notifications.warn(`Force Suite is full! (${maxSuite} powers maximum)`);
+      return;
+    }
+
+    // Add to suite
+    await power.update({'system.inSuite': true});
+    ui.notifications.info(`Added ${power.name} to Force Suite`);
+  }
+
+  /**
+   * Handle removing a Force Power from the active suite
+   */
+  async _onRemoveFromSuite(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const powerId = button.dataset.powerId || button.closest('[data-item-id]')?.dataset.itemId;
+
+    if (!powerId) {
+      ui.notifications.error('Power ID not found');
+      return;
+    }
+
+    const power = this.actor.items.get(powerId);
+    if (!power) {
+      ui.notifications.error('Force power not found');
+      return;
+    }
+
+    // Remove from suite
+    await power.update({'system.inSuite': false});
+    ui.notifications.info(`Removed ${power.name} from Force Suite`);
+  }
+
+  /**
+   * Handle toggling talent tree visibility
+   */
+  async _onToggleTree(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const treeElement = button.closest('.talent-tree');
+    const treeContent = treeElement.querySelector('.tree-content');
+    const icon = button.querySelector('i');
+
+    if (treeContent.style.display === 'none') {
+      treeContent.style.display = 'block';
+      icon.classList.remove('fa-chevron-right');
+      icon.classList.add('fa-chevron-down');
+    } else {
+      treeContent.style.display = 'none';
+      icon.classList.remove('fa-chevron-down');
+      icon.classList.add('fa-chevron-right');
+    }
+  }
+
+  /**
+   * Handle selecting a talent from the tree
+   */
+  async _onSelectTalent(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const talentId = button.dataset.talentId;
+
+    if (!talentId) {
+      ui.notifications.error('Talent ID not found');
+      return;
+    }
+
+    const talent = this.actor.items.get(talentId);
+    if (!talent) {
+      ui.notifications.error('Talent not found');
+      return;
+    }
+
+    // Check if talent is locked
+    if (button.classList.contains('locked')) {
+      ui.notifications.warn('This talent is locked. Prerequisites must be met first.');
+      return;
+    }
+
+    // Check if already acquired
+    const isAcquired = button.classList.contains('acquired');
+
+    if (isAcquired) {
+      // Allow removal if configured
+      const confirmed = await Dialog.confirm({
+        title: `Remove ${talent.name}?`,
+        content: `<p>Do you want to remove this talent?</p><p><strong>Note:</strong> This may affect dependent talents.</p>`
+      });
+
+      if (confirmed) {
+        await talent.delete();
+        ui.notifications.info(`Removed ${talent.name}`);
+      }
+    } else {
+      // Add talent - open the talent sheet for review
+      await talent.sheet.render(true);
+    }
+  }
+
+  /**
+   * Handle viewing talent details
+   */
+  async _onViewTalent(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const talentId = button.dataset.talentId;
+
+    if (!talentId) {
+      ui.notifications.error('Talent ID not found');
+      return;
+    }
+
+    const talent = this.actor.items.get(talentId);
+    if (!talent) {
+      ui.notifications.error('Talent not found');
+      return;
+    }
+
+    // Open the talent sheet
+    await talent.sheet.render(true);
   }
 }
