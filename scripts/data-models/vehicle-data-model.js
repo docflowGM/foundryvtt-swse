@@ -350,8 +350,22 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       starshipSpeed: new fields.StringField({required: false, initial: "4 squares"}),
       maxVelocity: new fields.StringField({required: false, initial: "800 km/h"}),
       maneuver: new fields.StringField({required: false, initial: "+0"}),
+      initiative: new fields.StringField({required: false, initial: "+0"}),
+      baseAttackBonus: new fields.StringField({required: false, initial: "+0"}),
+      flatFooted: new fields.NumberField({
+        required: true,
+        nullable: true,
+        initial: 10,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 10;
+          const num = Number(value);
+          return Number.isNaN(num) ? 10 : Math.floor(num);
+        }
+      }),
 
       // Other vehicle properties
+      type: new fields.StringField({required: false, initial: ""}),
       size: new fields.StringField({
         required: false,
         initial: "colossal",
@@ -524,6 +538,9 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
     }
 
     this.reflexDefense = 10 + sizeModifier + reflexBonus + dexMod;
+
+    // Calculate Flat-Footed Defense (Reflex without DEX)
+    this.flatFooted = 10 + sizeModifier + reflexBonus;
 
     // Calculate Fortitude Defense
     // Formula: 10 + STR mod
