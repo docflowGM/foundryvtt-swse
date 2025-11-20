@@ -1,0 +1,295 @@
+================================================================================
+SWSE CHARACTER SHEET BUTTON FUNCTIONALITY ANALYSIS
+================================================================================
+
+Analysis Date: 2025-11-20
+Report Generated: Complete Audit of Character Sheet Templates and Handlers
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+This analysis examined:
+- 10 Handlebars template files (character sheet and partials)
+- 3 JavaScript class files (main sheet, base sheet, components)
+- 33 event handler methods across the class hierarchy
+- 24 different button types across 6 tabs
+
+FINDINGS:
+- 17 buttons fully functional (71%)
+- 5 buttons with missing handlers (21%)
+- 1 handler with critical bug (4%)
+- 1 component not integrated (4%)
+
+IMPACT: Force powers and talent system partially broken; combat actions have
+         technical debt but work; critical undefined variable bug in code path
+
+================================================================================
+CRITICAL ISSUES (Fix Immediately)
+================================================================================
+
+1. UNDEFINED VARIABLE REFERENCE - RUNTIMEERROR
+   File: /scripts/actors/character/swse-character-sheet.js
+   Line: 379
+   Method: _postCombatActionDescription()
+   Problem: References undefined 'event' variable
+   Impact: ReferenceError when dialog callback triggers
+   Fix: Remove unused line or pass event as parameter
+   
+2. MISSING FORCE SUITE HANDLERS
+   File: templates/actors/character/tabs/force-tab.hbs
+   Buttons: "Add to Suite", "Remove from Suite"
+   Problem: Templates define buttons but handlers not in character sheet
+   Impact: Cannot add/remove Force powers from active suite
+   Fix: Implement _onAddToSuite() and _onRemoveFromSuite() methods
+   Note: Alternative handlers exist in unused ForceSuiteComponent
+   
+3. MISSING TALENT TREE HANDLERS
+   File: templates/actors/character/tabs/talents-tab.hbs
+   Buttons: "Toggle Tree", "Select Talent", "View Talent"
+   Problem: All three handlers completely missing
+   Impact: Cannot interact with talent system from character sheet
+   Fix: Implement _onToggleTree(), _onSelectTalent(), _onViewTalent()
+
+================================================================================
+FILE LOCATIONS SUMMARY
+================================================================================
+
+TEMPLATES (10 files):
+- /templates/actors/character/character-sheet.hbs (main container)
+- /templates/partials/actor/persistent-header.hbs (header with buttons)
+- /templates/actors/character/tabs/summary-tab.hbs (rollable checks)
+- /templates/actors/character/tabs/combat-tab.hbs (weapons/armor/actions)
+- /templates/actors/character/tabs/force-tab.hbs (force powers)
+- /templates/actors/character/tabs/talents-tab.hbs (talent trees)
+- /templates/actors/character/tabs/inventory-tab.hbs (equipment)
+- /templates/actors/character/tabs/abilities-tab.hbs (ability scores)
+- /templates/actors/character/tabs/skills-tab.hbs (skill list)
+- /templates/partials/feat-actions-panel.hbs (feat actions)
+
+JAVASCRIPT (3 files):
+- /scripts/actors/character/swse-character-sheet.js (main sheet class)
+- /scripts/sheets/base-sheet.js (base class with common handlers)
+- /scripts/components/force-suite.js (unused component with handlers)
+
+================================================================================
+BUTTON STATUS BY TAB
+================================================================================
+
+PERSISTENT HEADER (3 buttons - 100% working)
+✓ Level Up button
+✓ Character Generator button
+✓ Open Store button
+
+SUMMARY TAB (5 buttons - 100% working)
+✓ Initiative roll
+✓ Ability checks
+✓ Skill checks
+✓ Weapon attacks
+✓ Weapon damage
+
+COMBAT TAB (18 buttons - 94% working)
+✓ Add/Edit/Delete weapons (6 buttons)
+✓ Add/Edit/Delete armor (6 buttons)
+✓ Add/Edit/Delete feats (6 buttons)
+✓ Combat action search filter
+✓ Action type filter
+✓ Talent enhancement toggle
+✓ Feat action toggle
+✓ Feat action slider
+✓ Feat action use
+⚠ Combat action post (confused with duplicate handler)
+
+FORCE TAB (14 buttons - 86% working)
+✓ Spend Force Point (3 variants)
+✓ Rest Force
+✓ Use Power
+✓ Regain Force Power
+✓ Add/Edit/Delete Force Secrets (6 buttons)
+✓ Add/Edit/Delete Force Techniques (6 buttons)
+❌ Add Power to Suite
+❌ Remove Power from Suite
+
+TALENTS TAB (4 buttons - 25% working)
+❌ Toggle Tree
+❌ Select Talent
+❌ View Talent
+✓ Create Custom Talent
+
+INVENTORY TAB (3 buttons - 100% working)
+✓ Add/Edit/Delete Equipment (3 buttons)
+
+================================================================================
+CLASS STRUCTURE
+================================================================================
+
+INHERITANCE HIERARCHY:
+ActorSheet (Foundry base class)
+└─ SWSEActorSheetBase (base-sheet.js - 827 lines)
+    └─ SWSECharacterSheet (swse-character-sheet.js - 680 lines)
+
+KEY METHODS IN SWSECharacterSheet:
+- getData() - Prepares context data (filters feats, organizes powers, etc)
+- activateListeners() - Wires up event handlers (line 154)
+- _onLevelUp() - Opens level up dialog
+- _onOpenCharGen() - Opens character generator
+- _onOpenStore() - Opens marketplace
+- _onFilterCombatActions() - Filters actions by search/type
+- _onPostCombatAction() - Posts combat action to chat
+- _onToggleFeatAction() - Toggles feat action state
+- _onUpdateVariableAction() - Updates slider values
+- _onUseFeatAction() - Posts feat action to chat
+- _onToggleTalentEnhancement() - Toggles enhancement checkboxes
+- _onUsePower() - Uses force power
+- _onRegainForcePower() - Regains force power
+- _onRestForce() - Rests to regain all powers
+
+KEY METHODS IN SWSEActorSheetBase:
+- _onAction() - Dispatches data-action handlers (dispatcher pattern)
+- _onItemControl() - Handles edit/delete/toggle item controls
+- _onCreateItem() - Creates new items
+- _onItemDelete() - Deletes items with confirmation
+- _onRoll() - Rolls dice and posts to chat
+- _onRollAttack() - Opens attack roll dialog
+- _onRollDamage() - Opens damage roll dialog
+- _onSpendForcePoint() - Force point special actions
+
+================================================================================
+EVENT BINDING PATTERNS USED
+================================================================================
+
+PATTERN 1: Direct jQuery Bindings (swse-character-sheet.js:160-177)
+- Used for character-specific actions
+- Examples: .level-up, .character-generator, .feat-action-toggle
+- Pros: Explicit, can use any event type (input, change, etc)
+- Cons: Not scalable, scattered throughout code
+
+PATTERN 2: Data-Action Dispatcher (base-sheet.js:210)
+- Used for generic actions via base class
+- Examples: data-action="createItem", data-action="usePower"
+- How: _onAction() dispatches to _onFoo() for data-action="foo"
+- Pros: Scalable, Foundry standard, centralized
+- Cons: Click events only, strict naming convention
+
+MIXED APPROACH ISSUES:
+- Some buttons defined with data-action but bound directly (e.g., combat actions)
+- Creates confusion about which pattern handles what
+- Some handlers never called due to precedence
+
+================================================================================
+RECOMMENDATIONS BY PRIORITY
+================================================================================
+
+PRIORITY 1: CRITICAL FIXES
+1. Fix line 379 undefined 'event' reference
+   - Remove the unused actionRow line
+   - Prevents ReferenceError crash
+
+2. Implement missing Force Suite handlers
+   - Add _onAddToSuite() and _onRemoveFromSuite()
+   - Or integrate ForceSuiteComponent.attachListeners()
+
+3. Implement missing Talent Tree handlers
+   - Add _onToggleTree(), _onSelectTalent(), _onViewTalent()
+   - Required for talent system to function
+
+PRIORITY 2: CODE QUALITY
+1. Remove dead code
+   - Delete _onRollCombatAction() (never called)
+
+2. Standardize event binding
+   - Use data-action dispatcher for all new buttons
+   - Gradually refactor direct jQuery bindings
+
+3. Integrate orphaned component
+   - ForceSuiteComponent should be called from activateListeners()
+
+PRIORITY 3: DOCUMENTATION
+1. Document all available button handlers
+2. Explain when to use direct vs data-action binding
+3. List required method naming conventions
+
+================================================================================
+IMPLEMENTATION CHECKLIST
+================================================================================
+
+BUGS TO FIX:
+[ ] Line 379 - Remove undefined 'event' reference
+
+MISSING HANDLERS TO IMPLEMENT:
+[ ] _onAddToSuite() - Add force power to suite
+[ ] _onRemoveFromSuite() - Remove force power from suite
+[ ] _onSelectTalent() - Select talent from tree
+[ ] _onToggleTree() - Expand/collapse talent tree
+[ ] _onViewTalent() - View talent details
+
+OPTIONAL REFACTORING:
+[ ] Remove _onRollCombatAction() (dead code)
+[ ] Standardize to data-action pattern
+[ ] Integrate ForceSuiteComponent
+[ ] Add comprehensive comments
+
+================================================================================
+DOCUMENTS GENERATED
+================================================================================
+
+1. CHARACTER_SHEET_ANALYSIS.md
+   - Complete overview with file locations and structure
+   - Button status summary
+   - High-level architecture
+   - Recommendations by priority
+
+2. BUTTON_HANDLER_MATRIX.md
+   - Detailed table of every button type
+   - Event binding pattern comparison
+   - Full code examples for missing handlers
+   - Implementation checklist
+
+3. CODE_ISSUES.md (in /tmp)
+   - Detailed code analysis with line numbers
+   - Full code examples
+   - Root cause analysis
+   - Solution options with code
+
+4. ANALYSIS_SUMMARY.txt (this file)
+   - Executive summary
+   - Quick reference guide
+   - Critical issues highlighted
+   - File locations and structure
+
+================================================================================
+QUICK REFERENCE
+================================================================================
+
+BROKEN BUTTONS:
+- Force Tab: Add to Suite, Remove from Suite (2 buttons)
+- Talents Tab: Toggle Tree, Select Talent, View Talent (3 buttons)
+
+CRITICAL BUG:
+- _postCombatActionDescription() references undefined 'event' variable
+
+WORKING FEATURES:
+- Level up dialog
+- Character generator
+- Store/marketplace
+- Combat actions posting
+- Feat actions (toggle, slider, use)
+- Force powers (use, regain, rest)
+- Force point spending (3 types)
+- Equipment management
+- Item management (edit, delete for all types)
+- Talent enhancement toggles
+- Combat action filtering
+
+NOT WORKING:
+- Managing force power suite (add/remove from active)
+- Talent tree interaction (expand/collapse)
+- Talent selection from sheet
+- Viewing talent details from sheet
+
+PARTIALLY WORKING:
+- Combat actions (works but has dead duplicate handler)
+
+================================================================================
+End of Analysis Summary
+================================================================================
