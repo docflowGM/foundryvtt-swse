@@ -112,6 +112,23 @@ export function getClassDefenseBonuses(className) {
  * @param {Actor} actor - The actor
  * @returns {number} Total BAB
  */
+/**
+ * Convert BAB progression string to numeric multiplier
+ * @param {string|number} progression - "slow", "medium", "fast" or a number
+ * @returns {number} - Per-level BAB multiplier
+ */
+function convertBabProgression(progression) {
+  if (typeof progression === 'number') return progression;
+
+  const progressionMap = {
+    'slow': 0.5,
+    'medium': 0.75,
+    'fast': 1.0
+  };
+
+  return progressionMap[progression] || 0.75; // default to medium
+}
+
 export function calculateTotalBAB(actor) {
   const classItems = actor.items.filter(i => i.type === 'class');
   let totalBAB = 0;
@@ -131,7 +148,8 @@ export function calculateTotalBAB(actor) {
 
     // Fallback: Use babProgression if available
     if (classItem.system.babProgression) {
-      totalBAB += Math.floor(classLevel * classItem.system.babProgression);
+      const babMultiplier = convertBabProgression(classItem.system.babProgression);
+      totalBAB += Math.floor(classLevel * babMultiplier);
       continue;
     }
 
@@ -150,7 +168,8 @@ export function calculateTotalBAB(actor) {
 
 /**
  * Calculate defense bonuses from all class items
- * In SWSE, class defense bonuses are applied ONCE per class, not per level
+ * In SWSE, class defense bonuses are FLAT per class and do NOT scale with class level
+ * When multiclassing, use the HIGHEST defense bonus from any class (not additive)
  * @param {Actor} actor - The actor
  * @returns {{fortitude: number, reflex: number, will: number}}
  */
@@ -161,18 +180,19 @@ export function calculateDefenseBonuses(actor) {
   for (const classItem of classItems) {
     const className = classItem.name;
 
-    // Check if class item has defenses specified (not multiplied by level!)
+    // Check if class item has defenses specified (FLAT bonuses, not per level!)
     if (classItem.system.defenses &&
         (classItem.system.defenses.fortitude || classItem.system.defenses.reflex || classItem.system.defenses.will)) {
-      bonuses.fortitude += (classItem.system.defenses.fortitude || 0);
-      bonuses.reflex += (classItem.system.defenses.reflex || 0);
-      bonuses.will += (classItem.system.defenses.will || 0);
+      // Take the MAXIMUM defense bonus from any class, not additive
+      bonuses.fortitude = Math.max(bonuses.fortitude, classItem.system.defenses.fortitude || 0);
+      bonuses.reflex = Math.max(bonuses.reflex, classItem.system.defenses.reflex || 0);
+      bonuses.will = Math.max(bonuses.will, classItem.system.defenses.will || 0);
     } else {
-      // Use known defense progressions
+      // Use known defense progressions (FLAT bonuses, take maximum)
       const progression = getClassDefenseBonuses(className);
-      bonuses.fortitude += progression.fortitude;
-      bonuses.reflex += progression.reflex;
-      bonuses.will += progression.will;
+      bonuses.fortitude = Math.max(bonuses.fortitude, progression.fortitude);
+      bonuses.reflex = Math.max(bonuses.reflex, progression.reflex);
+      bonuses.will = Math.max(bonuses.will, progression.will);
 
       // If defenses aren't set on the class item, update it to store them
       if (classItem.system.defenses === undefined ||

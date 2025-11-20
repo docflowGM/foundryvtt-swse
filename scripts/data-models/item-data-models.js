@@ -222,7 +222,7 @@ export class ClassDataModel extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
-      classLevel: new fields.NumberField({
+      level: new fields.NumberField({
         required: true,
         initial: 1,
         min: 1,
@@ -252,15 +252,50 @@ export class ClassDataModel extends foundry.abstract.DataModel {
       }),
       classSkills: new fields.ArrayField(new fields.StringField()),
       defenseBonus: new fields.NumberField({required: true, initial: 0, integer: true}),
-      reputation: new fields.NumberField({required: true, initial: 0, integer: true})
+      reputation: new fields.NumberField({required: true, initial: 0, integer: true}),
+
+      // Computed defenses object (populated in prepareDerivedData)
+      // This stores the per-level defense bonuses as numbers
+      defenses: new fields.SchemaField({
+        fortitude: new fields.NumberField({required: true, initial: 0}),
+        reflex: new fields.NumberField({required: true, initial: 0}),
+        will: new fields.NumberField({required: true, initial: 0})
+      })
     };
+  }
+
+  prepareDerivedData() {
+    // SWSE Rules for class defense bonuses:
+    // - Defense bonuses are FLAT per class and do not scale with class level
+    // - Heroic classes typically have +1 for "fast" saves, +0 for "slow"
+    // - Prestige classes can have higher bonuses (+2, +3, or even +4)
+    // - When multiclassing, use the HIGHEST bonus from any class, not additive
+
+    // NOTE: The defenses.fortitude/reflex/will values should be set directly in the class data
+    // or by migration scripts. We do NOT calculate them from fortSave/refSave/willSave strings
+    // because the mapping is not 1:1 (prestige classes can have +2, +3, +4 for "fast" saves).
+
+    // Ensure defenses object exists with defaults if not already set
+    if (!this.defenses || typeof this.defenses.fortitude === 'undefined') {
+      // Only set defaults if defenses aren't already populated
+      if (!this.defenses) {
+        this.defenses = { fortitude: 0, reflex: 0, will: 0 };
+      }
+    }
   }
 
   /**
    * Migrate legacy data during document initialization
    * Converts numeric BAB progression values to string choices
+   * Handles classLevel -> level field rename
    */
   static migrateData(source) {
+    // Migrate classLevel to level (backwards compatibility)
+    if (source.classLevel !== undefined && source.level === undefined) {
+      source.level = source.classLevel;
+      delete source.classLevel;
+    }
+
     // Convert numeric babProgression to string
     if (source.babProgression !== undefined) {
       const bab = source.babProgression;

@@ -222,10 +222,28 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
   }
 
   /**
+   * Convert BAB progression string to numeric multiplier
+   * @param {string} progression - "slow", "medium", or "fast"
+   * @returns {number} - Per-level BAB multiplier
+   */
+  _convertBabProgression(progression) {
+    if (typeof progression === 'number') return progression;
+
+    const progressionMap = {
+      'slow': 0.5,
+      'medium': 0.75,
+      'fast': 1.0
+    };
+
+    return progressionMap[progression] || 0.75; // default to medium
+  }
+
+  /**
    * Calculate BAB and defenses for multiclassed characters
    * SWSE Rules:
    * - BAB is additive across all classes
-   * - Defenses take the highest bonus from any class for each defense type
+   * - Defense bonuses are FLAT per class and do NOT scale with class level
+   * - When multiclassing, use the HIGHEST defense bonus from any class (not additive)
    */
   _calculateMulticlassStats() {
     // Get actor instance to access items
@@ -246,10 +264,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       return;
     }
 
-    // Calculate total BAB (additive)
+    // Calculate total BAB (additive across all classes)
     let totalBAB = 0;
 
-    // Track highest defense bonuses
+    // Track highest FLAT defense bonuses (not additive, just take max)
     let maxFortBonus = 0;
     let maxRefBonus = 0;
     let maxWillBonus = 0;
@@ -258,19 +276,18 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       const classLevel = classItem.system.level || 1;
       const classData = classItem.system;
 
-      // BAB - Add from each class (SWSE multiclass rule)
-      const babProgression = Number(classData.babProgression) || 0.75;
+      // BAB - Add from each class (SWSE multiclass rule: additive)
+      // Convert string progression to numeric multiplier
+      const babProgression = this._convertBabProgression(classData.babProgression);
       const classBab = Math.floor(classLevel * babProgression);
       totalBAB += classBab;
 
-      // Defenses - Track maximum for each (SWSE multiclass rule)
-      const fortPerLevel = Number(classData.defenses?.fortitude) || 0;
-      const refPerLevel = Number(classData.defenses?.reflex) || 0;
-      const willPerLevel = Number(classData.defenses?.will) || 0;
-
-      const classFort = fortPerLevel * classLevel;
-      const classRef = refPerLevel * classLevel;
-      const classWill = willPerLevel * classLevel;
+      // Defenses - Track maximum FLAT bonus from any class (SWSE multiclass rule: highest wins)
+      // Defense bonuses do NOT scale with class level - they are flat per class
+      // Example: Jedi gives +1/+1/+1 at all levels, Jedi Knight gives +2/+2/+2 at all levels
+      const classFort = Number(classData.defenses?.fortitude) || 0;
+      const classRef = Number(classData.defenses?.reflex) || 0;
+      const classWill = Number(classData.defenses?.will) || 0;
 
       maxFortBonus = Math.max(maxFortBonus, classFort);
       maxRefBonus = Math.max(maxRefBonus, classRef);
