@@ -7,7 +7,14 @@
  * - Force power attacks (Use the Force vs Defense)
  * - Critical hit confirmation and damage
  * - Automatic targeting and damage application
+ * - Range calculation and penalties
+ * - Cover and concealment detection
+ * - Flanking detection
+ * - Point Blank Shot, Precise Shot, and other combat options
+ * - Full Attack action support
  */
+
+import { getCoverBonus, getConcealmentMissChance, checkConcealmentHit, getFlankingBonus } from '../utils/combat-utils.js';
 
 export class SWSECombat {
 
@@ -25,8 +32,16 @@ export class SWSECombat {
       target = Array.from(game.user.targets)[0].actor;
     }
 
-    // Calculate attack bonus
-    const attackData = this._calculateAttackBonus(attacker, weapon);
+    // Get tokens for positioning
+    const attackerToken = attacker.getActiveTokens()[0];
+    const targetToken = target?.getActiveTokens()[0];
+
+    // Calculate attack bonus with all modifiers
+    const attackData = this._calculateAttackBonus(attacker, weapon, target, {
+      attackerToken,
+      targetToken,
+      ...options
+    });
 
     // Roll attack
     const roll = await new Roll(`1d20 + ${attackData.bonus}`).evaluate({async: true});
@@ -50,16 +65,24 @@ export class SWSECombat {
       d20: d20Result,
       bonus: attackData.bonus,
       breakdown: attackData.breakdown,
+      modifiers: attackData.modifiers,
       isNat1,
       isNat20,
       isCritThreat,
       hits: false,
-      critConfirmed: false
+      critConfirmed: false,
+      concealmentMiss: false
     };
 
     // Check if attack hits
     if (target) {
-      const reflexDefense = target.system.defenses?.reflex?.total || 10;
+      let reflexDefense = target.system.defenses?.reflex?.total || 10;
+
+      // Add cover bonus to defense
+      if (attackData.modifiers.coverBonus > 0) {
+        reflexDefense += attackData.modifiers.coverBonus;
+      }
+
       result.targetDefense = reflexDefense;
 
       // Natural 1 always misses, natural 20 always hits
@@ -71,8 +94,17 @@ export class SWSECombat {
         result.hits = roll.total >= reflexDefense;
       }
 
+      // Check concealment miss chance
+      if (result.hits && attackData.modifiers.concealmentChance > 0) {
+        const concealmentHit = checkConcealmentHit(attackData.modifiers.concealmentChance);
+        if (!concealmentHit) {
+          result.concealmentMiss = true;
+          result.hits = false;
+        }
+      }
+
       // Check critical confirmation if threat
-      if (isCritThreat && result.hits && !isNat1) {
+      if (isCritThreat && result.hits && !isNat1 && !result.concealmentMiss) {
         const confirmRoll = await new Roll(`1d20 + ${attackData.bonus}`).evaluate({async: true});
         result.critConfirmRoll = confirmRoll;
         result.critConfirmed = confirmRoll.total >= reflexDefense;
@@ -83,6 +115,85 @@ export class SWSECombat {
     await this._createAttackMessage(result);
 
     return result;
+  }
+
+  /**
+   * Roll Full Attack (multiple attacks with SWSE feat system)
+   * @param {Actor} attacker - The attacking actor
+   * @param {Item} weapon - The weapon being used
+   * @param {Actor} target - The target actor
+   * @param {Object} options - Additional options
+   * @returns {Promise<Object>} Full attack result
+   */
+  static async rollFullAttack(attacker, weapon, target = null, options = {}) {
+    // Check for Double Attack and Triple Attack feats
+    const weaponGroup = weapon.system?.weaponGroup || weapon.name.toLowerCase();
+
+    // Find Double Attack feat for this weapon
+    const doubleAttackFeat = attacker.items.find(i =>
+      i.type === 'feat' &&
+      i.name.toLowerCase().includes('double attack') &&
+      (i.system?.appliesTo?.toLowerCase().includes(weaponGroup) ||
+       i.system?.weaponGroup?.toLowerCase().includes(weaponGroup) ||
+       i.name.toLowerCase().includes(weaponGroup))
+    );
+
+    // Find Triple Attack feat for this weapon
+    const tripleAttackFeat = attacker.items.find(i =>
+      i.type === 'feat' &&
+      i.name.toLowerCase().includes('triple attack') &&
+      (i.system?.appliesTo?.toLowerCase().includes(weaponGroup) ||
+       i.system?.weaponGroup?.toLowerCase().includes(weaponGroup) ||
+       i.name.toLowerCase().includes(weaponGroup))
+    );
+
+    // Determine number of attacks and penalty
+    let numAttacks = 1; // Default: Full Attack action = 1 attack
+    let attackPenalty = 0;
+
+    if (tripleAttackFeat && doubleAttackFeat) {
+      // Triple Attack requires Double Attack
+      numAttacks = 3;
+      attackPenalty = -10; // -5 from Double Attack + -5 from Triple Attack
+    } else if (doubleAttackFeat) {
+      numAttacks = 2;
+      attackPenalty = -5;
+    }
+
+    // Notify if no multiple attack feats
+    if (numAttacks === 1) {
+      ui.notifications.info(`${attacker.name} has no Double Attack or Triple Attack feat for ${weapon.name}. Full Attack = 1 attack.`);
+    }
+
+    const results = [];
+
+    // Roll each attack with the penalty applied
+    for (let i = 0; i < numAttacks; i++) {
+      const attackOptions = {
+        ...options,
+        multipleAttackPenalty: attackPenalty,
+        attackNumber: i + 1,
+        totalAttacks: numAttacks,
+        isFullAttack: true
+      };
+
+      const attackResult = await this.rollAttack(attacker, weapon, target, attackOptions);
+      results.push(attackResult);
+
+      // Brief delay between attacks for visual clarity
+      if (i < numAttacks - 1) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    }
+
+    return {
+      attacks: results,
+      totalAttacks: numAttacks,
+      attackPenalty,
+      hasDoubleAttack: !!doubleAttackFeat,
+      hasTripleAttack: !!tripleAttackFeat,
+      isFullAttack: true
+    };
   }
 
   /**
@@ -143,11 +254,8 @@ export class SWSECombat {
     };
 
     // 1. Apply Shield Rating (SR) reduction
-    // SR reduces ALL damage from the attack
-    // SR only decreases by 5 if the attack damage exceeds the current SR
     const currentSR = target.system.shields?.rating || 0;
     if (currentSR > 0) {
-      // Shield Rating reduces damage up to its current value
       const shieldReduction = Math.min(remainingDamage, currentSR);
       result.shieldReduction = shieldReduction;
       remainingDamage -= shieldReduction;
@@ -184,6 +292,14 @@ export class SWSECombat {
     if (remainingDamage > 0) {
       result.hpDamage = remainingDamage;
       await target.applyDamage(remainingDamage, options);
+
+      // Update token HP bar
+      const tokens = target.getActiveTokens();
+      for (const token of tokens) {
+        await token.document.update({
+          'actorData.system.hp': target.system.hp
+        });
+      }
 
       // Check if damage exceeded threshold
       const threshold = target.system.damageThreshold || 10;
@@ -244,15 +360,16 @@ export class SWSECombat {
   }
 
   /**
-   * Calculate attack bonus
+   * Calculate attack bonus with all SWSE modifiers
    * @private
    */
-  static _calculateAttackBonus(attacker, weapon) {
+  static _calculateAttackBonus(attacker, weapon, target, options = {}) {
     const system = attacker.system;
     const weaponData = weapon.system;
+    const { attackerToken, targetToken, babOverride, fightingDefensively, totalDefense, multipleAttackPenalty } = options;
 
     // Base attack bonus
-    const bab = system.baseAttack || system.bab || 0;
+    const bab = babOverride !== undefined ? babOverride : (system.baseAttack || system.bab || 0);
 
     // Ability modifier
     const attackAbility = weaponData.attackAbility || 'str';
@@ -265,21 +382,99 @@ export class SWSECombat {
     };
     const sizeMod = sizeModifiers[system.size?.toLowerCase()] || 0;
 
-    // Range penalty (if ranged weapon beyond optimal range)
-    let rangePenalty = 0;
-    // TODO: Implement range calculation
-
-    // Miscellaneous modifiers
+    // Miscellaneous weapon modifiers
     const misc = weaponData.attackBonus || 0;
 
     // Condition penalty
-    const conditionPenalty = attacker.conditionPenalty || 0;
+    const conditionPenalty = Math.abs(attacker.conditionPenalty || 0);
 
     // Focus bonus
     const focusBonus = weaponData.focus ? 5 : 0;
 
+    // Calculate range-based modifiers
+    let rangePenalty = 0;
+    let pointBlankBonus = 0;
+    let distance = 0;
+    let rangeCategory = 'melee';
+
+    if (attackerToken && targetToken && canvas.grid) {
+      distance = canvas.grid.measureDistance(attackerToken, targetToken);
+      const squareSize = canvas.scene.grid.distance || 5; // Default 5 feet per square
+      const squares = Math.floor(distance / squareSize);
+
+      // Get weapon range bands (SWSE has 4 bands: Point-Blank, Short, Medium, Long)
+      const ranges = this._getWeaponRanges(weapon);
+
+      if (ranges) {
+        // Determine which range band the target is in
+        if (squares <= ranges.pointBlank) {
+          rangeCategory = 'point-blank';
+          rangePenalty = 0;
+
+          // Point Blank Shot feat applies within point-blank range
+          const hasPointBlankShotFeat = attacker.items.find(i =>
+            i.type === 'feat' && i.name.toLowerCase().includes('point blank shot')
+          );
+          const pointBlankShotDefault = game.settings.get('swse', 'pointBlankShotDefault');
+
+          if (hasPointBlankShotFeat || pointBlankShotDefault) {
+            pointBlankBonus = 1;
+          }
+        } else if (squares <= ranges.short) {
+          rangeCategory = 'short';
+          rangePenalty = -2;
+        } else if (squares <= ranges.medium) {
+          rangeCategory = 'medium';
+          rangePenalty = -5;
+        } else if (squares <= ranges.long) {
+          rangeCategory = 'long';
+          rangePenalty = -10;
+        } else {
+          rangeCategory = 'out-of-range';
+          rangePenalty = -20; // Beyond long range = extreme penalty
+        }
+      }
+    }
+
+    // Flanking bonus
+    let flankingBonus = 0;
+    if (attackerToken && targetToken && this._checkFlanking(attackerToken, targetToken)) {
+      flankingBonus = getFlankingBonus(true);
+    }
+
+    // Cover and concealment (target benefits)
+    let coverBonus = 0;
+    let concealmentChance = 0;
+    if (attackerToken && targetToken) {
+      const coverResult = this._checkCover(attackerToken, targetToken);
+      coverBonus = getCoverBonus(coverResult.coverType);
+      concealmentChance = getConcealmentMissChance(coverResult.concealmentType || 'none');
+    }
+
+    // Precise Shot (negates firing into melee penalty)
+    let firingIntoMeleePenalty = 0;
+    if (weaponData.ranged && targetToken && this._isTargetInMelee(targetToken)) {
+      const hasPreciseShot = attacker.items.find(i =>
+        i.type === 'feat' && i.name.toLowerCase().includes('precise shot')
+      );
+      if (!hasPreciseShot) {
+        firingIntoMeleePenalty = -5;
+      }
+    }
+
+    // Fighting Defensively (-5 to attacks, +2 to Reflex Defense)
+    const fightingDefensivelyPenalty = fightingDefensively ? -5 : 0;
+
+    // Total Defense (no attacks allowed, but included for completeness)
+    const totalDefensePenalty = totalDefense ? -100 : 0;
+
+    // Multiple Attack Penalty (from Double Attack / Triple Attack feats)
+    const multiAttackPenalty = multipleAttackPenalty || 0;
+
     // Total bonus
-    const bonus = bab + abilityMod + sizeMod + rangePenalty + misc + focusBonus - conditionPenalty;
+    const bonus = bab + abilityMod + sizeMod + rangePenalty + misc + focusBonus +
+                  pointBlankBonus + flankingBonus + firingIntoMeleePenalty +
+                  fightingDefensivelyPenalty + totalDefensePenalty + multiAttackPenalty - conditionPenalty;
 
     return {
       bonus,
@@ -290,7 +485,21 @@ export class SWSECombat {
         rangePenalty,
         misc,
         focusBonus,
+        pointBlankBonus,
+        flankingBonus,
+        firingIntoMeleePenalty,
+        fightingDefensivelyPenalty,
+        multipleAttackPenalty: multiAttackPenalty,
         conditionPenalty
+      },
+      modifiers: {
+        coverBonus,
+        concealmentChance,
+        distance,
+        rangeCategory,
+        isFlanking: flankingBonus > 0,
+        isPointBlank: pointBlankBonus > 0,
+        isFiringIntoMelee: firingIntoMeleePenalty !== 0
       }
     };
   }
@@ -320,7 +529,6 @@ export class SWSECombat {
     }
 
     // Half heroic level (rounded down)
-    // Official SWSE: All damage includes ½ heroic level
     const heroicLevel = system.heroicLevel || system.level || 1;
     const halfHeroicLevel = Math.floor(heroicLevel / 2);
 
@@ -339,8 +547,21 @@ export class SWSECombat {
     // Specialization bonus
     const specializationBonus = weaponData.specialization ? 2 : 0;
 
+    // Point Blank Shot bonus (if within point-blank range)
+    let pointBlankDamageBonus = 0;
+    if (options.isPointBlank) {
+      const hasPointBlankShotFeat = attacker.items.find(i =>
+        i.type === 'feat' && i.name.toLowerCase().includes('point blank shot')
+      );
+      const pointBlankShotDefault = game.settings.get('swse', 'pointBlankShotDefault');
+
+      if (hasPointBlankShotFeat || pointBlankShotDefault) {
+        pointBlankDamageBonus = 1;
+      }
+    }
+
     // Total modifier (includes half heroic level per official rules)
-    const totalMod = halfHeroicLevel + abilityMod + misc + specializationBonus;
+    const totalMod = halfHeroicLevel + abilityMod + misc + specializationBonus + pointBlankDamageBonus;
 
     // Build formula
     const formula = totalMod !== 0 ? `${baseDamage} + ${totalMod}` : baseDamage;
@@ -353,9 +574,210 @@ export class SWSECombat {
         abilityMod,
         misc,
         specializationBonus,
+        pointBlankDamageBonus,
         isCrit
       }
     };
+  }
+
+  /**
+   * Check if two tokens are flanking a target
+   * @private
+   */
+  static _checkFlanking(attackerToken, targetToken) {
+    // Get all tokens within 5 feet of target
+    const allies = canvas.tokens.placeables.filter(t =>
+      t.actor &&
+      t !== attackerToken &&
+      t.document.disposition === attackerToken.document.disposition &&
+      canvas.grid.measureDistance(t, targetToken) <= 5
+    );
+
+    if (allies.length === 0) return false;
+
+    // Check if any ally is on opposite side of target
+    const attackerPos = {
+      x: attackerToken.center.x,
+      y: attackerToken.center.y
+    };
+    const targetPos = {
+      x: targetToken.center.x,
+      y: targetToken.center.y
+    };
+
+    for (const ally of allies) {
+      const allyPos = {
+        x: ally.center.x,
+        y: ally.center.y
+      };
+
+      // Calculate angle between attacker and ally relative to target
+      const angleToAttacker = Math.atan2(attackerPos.y - targetPos.y, attackerPos.x - targetPos.x);
+      const angleToAlly = Math.atan2(allyPos.y - targetPos.y, allyPos.x - targetPos.x);
+
+      let angleDiff = Math.abs(angleToAttacker - angleToAlly);
+      if (angleDiff > Math.PI) angleDiff = 2 * Math.PI - angleDiff;
+
+      // Flanking if approximately opposite (within 45 degrees of 180)
+      if (angleDiff >= (Math.PI * 3/4) && angleDiff <= (Math.PI * 5/4)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Check if target is in melee with another creature
+   * @private
+   */
+  static _isTargetInMelee(targetToken) {
+    const adjacentEnemies = canvas.tokens.placeables.filter(t =>
+      t.actor &&
+      t !== targetToken &&
+      t.document.disposition !== targetToken.document.disposition &&
+      canvas.grid.measureDistance(t, targetToken) <= 5
+    );
+
+    return adjacentEnemies.length > 0;
+  }
+
+  /**
+   * Get weapon range bands based on weapon type
+   * @private
+   * @param {Item} weapon - The weapon
+   * @returns {Object|null} Range bands in squares or null if melee
+   */
+  static _getWeaponRanges(weapon) {
+    const weaponData = weapon.system;
+
+    let ranges = null;
+
+    // Check if weapon has custom ranges defined
+    if (weaponData.ranges) {
+      ranges = {
+        pointBlank: weaponData.ranges.pointBlank || weaponData.ranges.pointblank || 0,
+        short: weaponData.ranges.short || 0,
+        medium: weaponData.ranges.medium || 0,
+        long: weaponData.ranges.long || 0
+      };
+    } else {
+      // Determine weapon type and apply SWSE standard ranges
+      const weaponType = (weaponData.weaponType || weaponData.type || '').toLowerCase();
+      const weaponGroup = (weaponData.weaponGroup || '').toLowerCase();
+      const weaponName = weapon.name.toLowerCase();
+
+      // SWSE Range Categories (Core Rulebook p.150)
+      // All ranges in squares (1 square = 5 feet)
+
+      // Heavy Weapons: 0-50 / 51-100 / 101-250 / 251-500 squares
+      if (weaponType.includes('heavy') || weaponGroup.includes('heavy') ||
+          weaponName.includes('heavy repeating')) {
+        ranges = { pointBlank: 50, short: 100, medium: 250, long: 500 };
+      }
+      // Rifles: 0-30 / 31-60 / 61-150 / 151-300 squares
+      else if (weaponType.includes('rifle') || weaponGroup.includes('rifle') ||
+          weaponName.includes('rifle') || weaponName.includes('carbine') ||
+          weaponName.includes('sniper')) {
+        ranges = { pointBlank: 30, short: 60, medium: 150, long: 300 };
+      }
+      // Pistols: 0-20 / 21-40 / 41-60 / 61-80 squares
+      else if (weaponType.includes('pistol') || weaponGroup.includes('pistol') ||
+          weaponName.includes('pistol') || weaponName.includes('blaster pistol') ||
+          weaponName.includes('hold-out')) {
+        ranges = { pointBlank: 20, short: 40, medium: 60, long: 80 };
+      }
+      // Thrown Weapons: 0-6 / 7-8 / 9-10 / 11-12 squares
+      else if (weaponType.includes('thrown') || weaponGroup.includes('thrown') ||
+          weaponName.includes('grenade') || weaponName.includes('thermal detonator') ||
+          weaponName.includes('thrown')) {
+        ranges = { pointBlank: 6, short: 8, medium: 10, long: 12 };
+      }
+      // Simple Weapons (ranged): 0-20 / 21-40 / 41-60 / 61-80 squares
+      else if (weaponGroup.includes('simple') && (weaponData.ranged || weaponType.includes('ranged'))) {
+        ranges = { pointBlank: 20, short: 40, medium: 60, long: 80 };
+      }
+      // Bows/Crossbows (not standard SWSE but might be in game): same as simple ranged
+      else if (weaponName.includes('bow') || weaponName.includes('crossbow')) {
+        ranges = { pointBlank: 20, short: 40, medium: 60, long: 80 };
+      }
+      // Default: if marked as ranged but type unknown, use pistol ranges
+      else if (weaponData.ranged || weaponType.includes('ranged')) {
+        ranges = { pointBlank: 20, short: 40, medium: 60, long: 80 };
+      }
+    }
+
+    // Melee weapons have no range
+    if (!ranges) return null;
+
+    // Apply house rule range reduction multiplier
+    const rangeReduction = game.settings.get('swse', 'weaponRangeReduction');
+    let multiplier = 1.0;
+
+    switch (rangeReduction) {
+      case 'threequarter': // 75% reduction
+        multiplier = 0.25;
+        break;
+      case 'half': // 50% reduction
+        multiplier = 0.5;
+        break;
+      case 'quarter': // 25% reduction
+        multiplier = 0.75;
+        break;
+      case 'none': // No reduction (default)
+      default:
+        multiplier = 1.0;
+        break;
+    }
+
+    // Apply multiplier to all range bands and round to nearest square
+    return {
+      pointBlank: Math.round(ranges.pointBlank * multiplier),
+      short: Math.round(ranges.short * multiplier),
+      medium: Math.round(ranges.medium * multiplier),
+      long: Math.round(ranges.long * multiplier)
+    };
+  }
+
+  /**
+   * Check cover and concealment between attacker and target
+   * @private
+   */
+  static _checkCover(attackerToken, targetToken) {
+    // This is a simplified implementation
+    // A full implementation would use ray casting and check for obstacles
+
+    const result = {
+      coverType: 'none',
+      concealmentType: 'none'
+    };
+
+    // Check if there are any tokens between attacker and target
+    const ray = new Ray(attackerToken.center, targetToken.center);
+    const tokens = canvas.tokens.placeables;
+
+    for (const token of tokens) {
+      if (token === attackerToken || token === targetToken) continue;
+
+      // Check if token intersects the ray
+      const bounds = token.bounds;
+      const intersects = ray.intersectSegment([
+        {x: bounds.left, y: bounds.top},
+        {x: bounds.right, y: bounds.bottom}
+      ]);
+
+      if (intersects) {
+        // Token is blocking - determine if it's cover or concealment
+        // For now, assume it's partial cover
+        result.coverType = 'partial';
+        break;
+      }
+    }
+
+    // Check walls/terrain
+    // This would require integration with Foundry's wall system
+    // For now, return the basic result
+    return result;
   }
 
   /**
@@ -363,12 +785,15 @@ export class SWSECombat {
    * @private
    */
   static async _createAttackMessage(result) {
-    const { attacker, weapon, target, roll, total, hits, isCritThreat, critConfirmed, breakdown } = result;
+    const { attacker, weapon, target, roll, total, hits, isCritThreat, critConfirmed,
+            concealmentMiss, breakdown, modifiers } = result;
 
     let content = `
       <div class="swse-attack-roll">
         <div class="attack-header">
           <h3><i class="fas fa-sword"></i> ${weapon.name} Attack</h3>
+          ${modifiers.isPointBlank ? '<span class="badge">Point Blank</span>' : ''}
+          ${modifiers.isFlanking ? '<span class="badge">Flanking</span>' : ''}
         </div>
         <div class="dice-roll">
           <div class="dice-result">
@@ -382,21 +807,33 @@ export class SWSECombat {
           Ability ${breakdown.abilityMod >= 0 ? '+' : ''}${breakdown.abilityMod}
           ${breakdown.focusBonus ? `, Focus +${breakdown.focusBonus}` : ''}
           ${breakdown.sizeMod !== 0 ? `, Size ${breakdown.sizeMod >= 0 ? '+' : ''}${breakdown.sizeMod}` : ''}
+          ${breakdown.rangePenalty !== 0 ? `, Range ${breakdown.rangePenalty}` : ''}
+          ${breakdown.pointBlankBonus !== 0 ? `, Point Blank +${breakdown.pointBlankBonus}` : ''}
+          ${breakdown.flankingBonus !== 0 ? `, Flanking +${breakdown.flankingBonus}` : ''}
+          ${breakdown.firingIntoMeleePenalty !== 0 ? `, Firing into Melee ${breakdown.firingIntoMeleePenalty}` : ''}
+          ${breakdown.fightingDefensivelyPenalty !== 0 ? `, Fighting Defensively ${breakdown.fightingDefensivelyPenalty}` : ''}
+          ${breakdown.multipleAttackPenalty !== 0 ? `, Multiple Attacks ${breakdown.multipleAttackPenalty}` : ''}
           ${breakdown.conditionPenalty !== 0 ? `, Condition -${breakdown.conditionPenalty}` : ''}
+          ${modifiers.distance && modifiers.rangeCategory !== 'melee' ? `, ${Math.round(modifiers.distance)}ft (${modifiers.rangeCategory})` : ''}
         </div>
     `;
 
     if (target) {
+      const totalDefense = result.targetDefense + (modifiers.coverBonus || 0);
       content += `
         <div class="attack-result">
-          <strong>vs ${target.name}'s Reflex Defense (${result.targetDefense})</strong>
+          <strong>vs ${target.name}'s Reflex Defense (${totalDefense})</strong>
+          ${modifiers.coverBonus > 0 ? `<div class="cover-note">+${modifiers.coverBonus} Cover Bonus</div>` : ''}
+          ${modifiers.concealmentChance > 0 ? `<div class="concealment-note">${modifiers.concealmentChance}% Miss Chance</div>` : ''}
           <div class="result-text ${hits ? 'hit' : 'miss'}">
-            ${hits ? '<i class="fas fa-check-circle"></i> HIT!' : '<i class="fas fa-times-circle"></i> MISS!'}
+            ${concealmentMiss ? '<i class="fas fa-eye-slash"></i> MISS (Concealment)!' :
+              hits ? '<i class="fas fa-check-circle"></i> HIT!' :
+              '<i class="fas fa-times-circle"></i> MISS!'}
           </div>
         </div>
       `;
 
-      if (isCritThreat && hits) {
+      if (isCritThreat && hits && !concealmentMiss) {
         content += `
           <div class="crit-threat">
             <strong>⚠️ Critical Threat!</strong>
@@ -408,10 +845,10 @@ export class SWSECombat {
         `;
       }
 
-      if (hits) {
+      if (hits && !concealmentMiss) {
         content += `
           <div class="roll-damage-btn">
-            <button class="swse-btn" data-action="rollDamage" data-attacker-id="${attacker.id}" data-weapon-id="${weapon.id}" data-target-id="${target.id}" ${critConfirmed ? 'data-is-crit="true"' : ''}>
+            <button class="swse-btn" data-action="rollDamage" data-attacker-id="${attacker.id}" data-weapon-id="${weapon.id}" data-target-id="${target.id}" ${critConfirmed ? 'data-is-crit="true"' : ''} ${modifiers.isPointBlank ? 'data-is-point-blank="true"' : ''}>
               <i class="fas fa-dice-d20"></i> Roll Damage ${critConfirmed ? '(CRITICAL!)' : ''}
             </button>
           </div>
@@ -518,13 +955,14 @@ export class SWSECombat {
         const weaponId = button.dataset.weaponId;
         const targetId = button.dataset.targetId;
         const isCrit = button.dataset.isCrit === 'true';
+        const isPointBlank = button.dataset.isPointBlank === 'true';
 
         const attacker = game.actors.get(attackerId);
         const weapon = attacker.items.get(weaponId);
         const target = game.actors.get(targetId);
 
         if (attacker && weapon) {
-          await this.rollDamage(attacker, weapon, target, { isCrit });
+          await this.rollDamage(attacker, weapon, target, { isCrit, isPointBlank });
         }
       });
     });

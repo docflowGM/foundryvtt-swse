@@ -68,8 +68,12 @@ import './scripts/migration/populate-force-compendiums.js';
 /*  Combat Systems                              */
 /* -------------------------------------------- */
 
+import { SWSECombatDocument } from './scripts/combat/swse-combat.js';
+import { SWSECombatant } from './scripts/combat/swse-combatant.js';
 import { DamageSystem } from './scripts/combat/damage-system.js';
 import { SWSECombatAutomation } from './scripts/combat/combat-automation.js';
+import { SWSECombatIntegration } from './scripts/combat/combat-integration.js';
+import { SWSEActiveEffectsManager } from './scripts/combat/active-effects-manager.js';
 import { CombatActionsMapper } from './scripts/combat/utils/combat-actions-mapper.js';
 import { SWSECombat } from './scripts/combat/systems/enhanced-combat-system.js';
 import { SWSEGrappling } from './scripts/combat/systems/grappling-system.js';
@@ -237,9 +241,11 @@ Hooks.once("init", async function() {
   // ============================================
   // Configure Document Classes
   // ============================================
-  
+
   CONFIG.Actor.documentClass = SWSEActorBase;
   CONFIG.Item.documentClass = SWSEItemBase;
+  CONFIG.Combat.documentClass = SWSECombatDocument;
+  CONFIG.Combatant.documentClass = SWSECombatant;
 
   // ============================================
   // Register Data Models (Foundry V11+)
@@ -413,10 +419,12 @@ Hooks.once("init", async function() {
   CONFIG.Dice.terms["d"] = foundry.dice.terms.Die;
 
   // ============================================
-  // Initialize Combat Automation
+  // Initialize Combat Systems
   // ============================================
 
   SWSECombatAutomation.init();
+  SWSECombatIntegration.init();
+  SWSEActiveEffectsManager.init();
 
   // ============================================
   // Development Enhancements
