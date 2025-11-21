@@ -37,6 +37,12 @@ import { preloadHandlebarsTemplates } from './scripts/core/load-templates.js';
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
 
 /* -------------------------------------------- */
+/*  Hooks System                                */
+/* -------------------------------------------- */
+
+import { registerInitHooks } from './scripts/hooks/index.js';
+
+/* -------------------------------------------- */
 /*  Utilities                                   */
 /* -------------------------------------------- */
 
@@ -104,7 +110,7 @@ import { perfMonitor, debounce, throttle } from './scripts/utils/performance-uti
 import './scripts/apps/chargen-init.js';
 
 // Store and Level Up apps
-import { SWSEStore } from './scripts/apps/store.js';
+import { SWSEStore } from './scripts/apps/store/store-main.js';
 import { SWSELevelUp } from './scripts/apps/swse-levelup.js';
 
 // Upgrade System
@@ -519,10 +525,12 @@ Hooks.once("ready", async function() {
   // ============================================
   // Initialize Combat Automation
   // ============================================
+  // NOTE: Combat automation hooks are now registered through the centralized
+  // hooks system in scripts/hooks/combat-hooks.js
 
-  if (game.settings.get('swse', 'enableAutomation')) {
-    setupCombatAutomation();
-  }
+  // if (game.settings.get('swse', 'enableAutomation')) {
+  //   setupCombatAutomation();
+  // }
 
   // ============================================
   // Initialize Enhanced Combat System
@@ -580,10 +588,12 @@ Hooks.once("ready", async function() {
   // ============================================
   // Initialize Condition Recovery
   // ============================================
+  // NOTE: Condition recovery hooks are now registered through the centralized
+  // hooks system in scripts/hooks/combat-hooks.js
 
-  if (game.settings.get('swse', 'autoConditionRecovery')) {
-    setupConditionRecovery();
-  }
+  // if (game.settings.get('swse', 'autoConditionRecovery')) {
+  //   setupConditionRecovery();
+  // }
 
   // ============================================
   // Initialize House Rules
@@ -866,8 +876,11 @@ function applyTheme(themeName) {
 /* -------------------------------------------- */
 
 /**
- * Set up combat automation hooks
+ * DEPRECATED: Set up combat automation hooks
+ * This function has been replaced by the centralized hooks system
+ * See: scripts/hooks/combat-hooks.js
  */
+/*
 function setupCombatAutomation() {
   SWSELogger.log("Setting up combat automation");
 
@@ -889,10 +902,14 @@ function setupCombatAutomation() {
     }
   });
 }
+*/
 
 /**
- * Set up automatic condition recovery on combat turn
+ * DEPRECATED: Set up automatic condition recovery on combat turn
+ * This function has been replaced by the centralized hooks system
+ * See: scripts/hooks/combat-hooks.js
  */
+/*
 function setupConditionRecovery() {
   Hooks.on('combatTurn', async (combat, updateData, updateOptions) => {
     const combatant = combat.combatant;
@@ -937,6 +954,7 @@ function setupConditionRecovery() {
     }
   });
 }
+*/
 
 /* -------------------------------------------- */
 /*  Other Hooks                                 */
@@ -1133,3 +1151,10 @@ function enhanceValidationLogging() {
 /* -------------------------------------------- */
 // All global exports are now properly initialized in the 'ready' hook
 // at lines 490-517 to ensure window.SWSE exists before assignment.
+
+/* -------------------------------------------- */
+/*  Initialize Hook System                      */
+/* -------------------------------------------- */
+// Register all hooks through the centralized hook registry
+// This must be called at module level to register init/ready hooks
+registerInitHooks();

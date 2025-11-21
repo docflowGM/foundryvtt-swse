@@ -2,7 +2,7 @@
  * Skill Calculations
  */
 
-import { SKILL_ABILITY_MAP } from '../core/constants.js';
+import { SKILL_ABILITY_MAP } from '../../scripts/core/constants.js';
 
 export function calculateSkills(actor) {
   const sys = actor.system;

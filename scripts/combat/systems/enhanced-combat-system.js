@@ -1,17 +1,32 @@
 /**
  * Enhanced Combat System for SWSE
- * Implements full SWSE combat rules including:
+ *
+ * @class SWSECombat
+ * @description
+ * Implements full Star Wars Saga Edition combat rules including:
  * - Attack vs Reflex Defense automation
- * - Shield system (personal energy shields)
- * - Damage Reduction (DR)
+ * - Shield system (personal energy shields with SR)
+ * - Damage Reduction (DR) from armor
  * - Force power attacks (Use the Force vs Defense)
- * - Critical hit confirmation and damage
+ * - Critical hit confirmation and multiplied damage
  * - Automatic targeting and damage application
  * - Range calculation and penalties
  * - Cover and concealment detection
- * - Flanking detection
- * - Point Blank Shot, Precise Shot, and other combat options
- * - Full Attack action support
+ * - Flanking detection and bonuses
+ * - Point Blank Shot, Precise Shot, and other combat feat support
+ * - Full Attack action with Double/Triple Attack feats
+ *
+ * @example
+ * // Roll a standard attack
+ * const result = await SWSECombat.rollAttack(attacker, weapon, target);
+ *
+ * @example
+ * // Roll a full attack action
+ * const fullAttack = await SWSECombat.rollFullAttack(attacker, weapon, target);
+ *
+ * @example
+ * // Roll damage separately
+ * const damage = await SWSECombat.rollDamage(attacker, weapon, target, { isCrit: true });
  */
 
 import { getCoverBonus, getConcealmentMissChance, checkConcealmentHit, getFlankingBonus } from '../utils/combat-utils.js';
@@ -20,11 +35,51 @@ export class SWSECombat {
 
   /**
    * Roll attack against a target
+   *
    * @param {Actor} attacker - The attacking actor
-   * @param {Item} weapon - The weapon being used
-   * @param {Actor} target - The target actor (optional)
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} Attack result
+   * @param {Item} weapon - The weapon item being used for the attack
+   * @param {Actor} [target=null] - The target actor (auto-detected if not provided)
+   * @param {Object} [options={}] - Additional attack options
+   * @param {number} [options.multipleAttackPenalty=0] - Penalty from multiple attacks (Full Attack)
+   * @param {number} [options.attackNumber] - Which attack in a series (for Full Attack)
+   * @param {number} [options.totalAttacks] - Total attacks being made (for Full Attack)
+   * @param {boolean} [options.isFullAttack=false] - Whether this is part of a Full Attack action
+   * @param {number} [options.rangePenalty] - Manual range penalty override
+   * @param {boolean} [options.powerAttack=false] - Whether Power Attack is being used
+   * @param {number} [options.powerAttackPenalty=0] - Power Attack penalty amount
+   *
+   * @returns {Promise<Object>} Attack result containing:
+   * @returns {Actor} returns.attacker - The attacking actor
+   * @returns {Item} returns.weapon - The weapon used
+   * @returns {Actor} returns.target - The target actor
+   * @returns {Roll} returns.roll - The d20 attack roll
+   * @returns {number} returns.total - Total attack roll (d20 + modifiers)
+   * @returns {number} returns.d20 - The natural d20 result
+   * @returns {number} returns.bonus - Total attack bonus (without d20)
+   * @returns {string} returns.breakdown - Human-readable breakdown of bonuses
+   * @returns {Object} returns.modifiers - Detailed modifier values
+   * @returns {boolean} returns.isNat1 - Whether the d20 was a natural 1 (auto-miss)
+   * @returns {boolean} returns.isNat20 - Whether the d20 was a natural 20 (auto-hit)
+   * @returns {boolean} returns.isCritThreat - Whether this threatens a critical hit
+   * @returns {boolean} returns.hits - Whether the attack hit the target
+   * @returns {boolean} returns.critConfirmed - Whether critical was confirmed
+   * @returns {Roll} [returns.critConfirmRoll] - The critical confirmation roll (if applicable)
+   * @returns {boolean} returns.concealmentMiss - Whether concealment caused a miss
+   * @returns {number} [returns.targetDefense] - Target's Reflex Defense
+   *
+   * @example
+   * // Basic attack
+   * const result = await SWSECombat.rollAttack(myCharacter, blasterRifle);
+   * if (result.hits) {
+   *   await SWSECombat.rollDamage(myCharacter, blasterRifle, result.target);
+   * }
+   *
+   * @example
+   * // Attack with Power Attack
+   * const result = await SWSECombat.rollAttack(warrior, sword, enemy, {
+   *   powerAttack: true,
+   *   powerAttackPenalty: 5
+   * });
    */
   static async rollAttack(attacker, weapon, target = null, options = {}) {
     // Get target from canvas if not provided
@@ -118,12 +173,39 @@ export class SWSECombat {
   }
 
   /**
-   * Roll Full Attack (multiple attacks with SWSE feat system)
+   * Roll Full Attack action with multiple attacks
+   *
+   * @description
+   * Executes a Full Attack action according to SWSE rules. Number of attacks
+   * and penalties are determined by the character's Double Attack and Triple Attack feats:
+   * - No feats: 1 attack (standard Full Attack)
+   * - Double Attack: 2 attacks at -5 each
+   * - Double Attack + Triple Attack: 3 attacks at -10 each
+   *
    * @param {Actor} attacker - The attacking actor
-   * @param {Item} weapon - The weapon being used
-   * @param {Actor} target - The target actor
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} Full attack result
+   * @param {Item} weapon - The weapon being used for all attacks
+   * @param {Actor} [target=null] - The target actor (auto-detected if not provided)
+   * @param {Object} [options={}] - Additional options passed to each attack
+   *
+   * @returns {Promise<Object>} Full attack result containing:
+   * @returns {Array<Object>} returns.attacks - Array of individual attack results
+   * @returns {number} returns.totalAttacks - Total number of attacks made
+   * @returns {number} returns.attackPenalty - Penalty applied to each attack
+   * @returns {boolean} returns.hasDoubleAttack - Whether character has Double Attack feat
+   * @returns {boolean} returns.hasTripleAttack - Whether character has Triple Attack feat
+   * @returns {boolean} returns.isFullAttack - Always true for Full Attack actions
+   *
+   * @example
+   * // Full Attack with a character that has Double Attack (Rifles)
+   * const result = await SWSECombat.rollFullAttack(soldier, blasterRifle, enemy);
+   * // Result: 2 attacks at -5 each
+   * console.log(result.totalAttacks); // 2
+   * console.log(result.attackPenalty); // -5
+   *
+   * @example
+   * // Full Attack with no Double/Triple Attack feats
+   * const result = await SWSECombat.rollFullAttack(rookie, pistol, target);
+   * // Result: 1 attack at no penalty (standard Full Attack)
    */
   static async rollFullAttack(attacker, weapon, target = null, options = {}) {
     // Check for Double Attack and Triple Attack feats
@@ -197,12 +279,48 @@ export class SWSECombat {
   }
 
   /**
-   * Roll damage and apply to target
+   * Roll damage and optionally apply it to a target
+   *
+   * @description
+   * Rolls weapon damage including all modifiers (ability, feats, critical multipliers).
+   * If a target is provided, automatically applies damage accounting for Shield Rating
+   * and Damage Reduction.
+   *
    * @param {Actor} attacker - The attacking actor
    * @param {Item} weapon - The weapon being used
-   * @param {Actor} target - The target actor
-   * @param {Object} options - Additional options (isCrit, etc.)
-   * @returns {Promise<Object>} Damage result
+   * @param {Actor} [target=null] - The target actor (optional)
+   * @param {Object} [options={}] - Additional damage options
+   * @param {boolean} [options.isCrit=false] - Whether this is a critical hit (multiplies damage)
+   * @param {number} [options.critMultiplier] - Critical multiplier override (default from weapon)
+   * @param {number} [options.bonusDamage=0] - Additional flat damage bonus
+   * @param {string} [options.damageType] - Damage type override (energy, kinetic, etc.)
+   *
+   * @returns {Promise<Object>} Damage result containing:
+   * @returns {Actor} returns.attacker - The attacking actor
+   * @returns {Item} returns.weapon - The weapon used
+   * @returns {Actor} returns.target - The target actor (if provided)
+   * @returns {Roll} returns.roll - The damage roll
+   * @returns {number} returns.total - Total damage rolled
+   * @returns {string} returns.formula - Damage formula used
+   * @returns {string} returns.breakdown - Human-readable breakdown
+   * @returns {boolean} returns.isCrit - Whether this was a critical hit
+   * @returns {boolean} returns.applied - Whether damage was applied to a target
+   * @returns {Object} [returns.damageApplied] - Damage application details (if target provided)
+   *
+   * @example
+   * // Roll normal damage
+   * const damage = await SWSECombat.rollDamage(attacker, weapon, target);
+   *
+   * @example
+   * // Roll critical hit damage
+   * const critDamage = await SWSECombat.rollDamage(attacker, weapon, target, {
+   *   isCrit: true
+   * });
+   *
+   * @example
+   * // Roll damage without applying (for manual application)
+   * const damage = await SWSECombat.rollDamage(attacker, weapon, null);
+   * // Later: await SWSECombat.applyDamageToTarget(target, damage.total);
    */
   static async rollDamage(attacker, weapon, target = null, options = {}) {
     const damageData = this._calculateDamage(attacker, weapon, options);
@@ -236,11 +354,45 @@ export class SWSECombat {
   }
 
   /**
-   * Apply damage to a target (with Shield Rating and DR)
-   * @param {Actor} target - The target actor
-   * @param {number} damage - Raw damage amount
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} Damage application result
+   * Apply damage to a target with Shield Rating and Damage Reduction
+   *
+   * @description
+   * Applies damage according to SWSE rules:
+   * 1. Shield Rating (SR) absorbs damage first
+   *    - If damage > SR, shields lose 5 SR
+   *    - If damage <= SR, shields absorb without SR loss
+   * 2. Damage Reduction (DR) reduces remaining damage
+   * 3. Remaining damage applied to HP
+   * 4. Checks if Damage Threshold exceeded
+   *
+   * @param {Actor} target - The target actor receiving damage
+   * @param {number} damage - Raw damage amount before reductions
+   * @param {Object} [options={}] - Additional damage application options
+   * @param {boolean} [options.ignoreShields=false] - Whether to bypass Shield Rating
+   * @param {boolean} [options.ignoreDR=false] - Whether to bypass Damage Reduction
+   * @param {string} [options.damageType] - Type of damage (for specific resistances)
+   *
+   * @returns {Promise<Object>} Damage application result containing:
+   * @returns {number} returns.totalDamage - Original damage amount
+   * @returns {number} returns.shieldReduction - Damage absorbed by shields
+   * @returns {number} returns.shieldRatingLost - Shield Rating lost (0 or 5)
+   * @returns {number} returns.drReduced - Damage reduced by DR
+   * @returns {number} returns.hpDamage - Actual HP damage taken
+   * @returns {boolean} returns.thresholdExceeded - Whether Damage Threshold was exceeded
+   *
+   * @example
+   * // Apply 20 damage to a target with SR 10, DR 5
+   * const result = await SWSECombat.applyDamageToTarget(droid, 20);
+   * // Result: 10 absorbed by shields, SR reduced to 5
+   * //         Remaining 10 damage reduced by 5 DR
+   * //         5 HP damage actually taken
+   *
+   * @example
+   * // Apply massive damage that exceeds threshold
+   * const result = await SWSECombat.applyDamageToTarget(soldier, 50);
+   * if (result.thresholdExceeded) {
+   *   console.log("Target must make a damage threshold check!");
+   * }
    */
   static async applyDamageToTarget(target, damage, options = {}) {
     let remainingDamage = damage;
@@ -310,12 +462,52 @@ export class SWSECombat {
   }
 
   /**
-   * Roll Force power attack
-   * @param {Actor} attacker - The Force user
-   * @param {Item} power - The Force power
+   * Roll Force power attack using Use the Force skill
+   *
+   * @description
+   * Rolls a Use the Force check to attack with a Force power. The check is made
+   * against one of the target's three defenses (Reflex, Fortitude, or Will) as
+   * specified by the power.
+   *
+   * @param {Actor} attacker - The Force user making the attack
+   * @param {Item} power - The Force power being used
    * @param {Actor} target - The target actor
-   * @param {string} defenseType - Which defense to target (reflex, fortitude, will)
-   * @returns {Promise<Object>} Force power result
+   * @param {string} [defenseType='will'] - Which defense to target ('reflex', 'fortitude', or 'will')
+   *
+   * @returns {Promise<Object>} Force power result containing:
+   * @returns {Actor} returns.attacker - The Force user
+   * @returns {Item} returns.power - The Force power used
+   * @returns {Actor} returns.target - The target actor
+   * @returns {string} returns.defenseType - Defense being targeted
+   * @returns {Roll} returns.roll - The Use the Force check roll
+   * @returns {number} returns.total - Total check result
+   * @returns {number} returns.d20 - Natural d20 result
+   * @returns {number} returns.bonus - Use the Force skill bonus
+   * @returns {number} returns.targetDefense - Target's defense value
+   * @returns {boolean} returns.hits - Whether the power hit
+   * @returns {boolean} returns.isNat1 - Natural 1 (auto-miss)
+   * @returns {boolean} returns.isNat20 - Natural 20 (auto-hit)
+   *
+   * @example
+   * // Force Lightning targeting Reflex Defense
+   * const result = await SWSECombat.rollForcePowerAttack(
+   *   jedi,
+   *   forceLightning,
+   *   target,
+   *   'reflex'
+   * );
+   * if (result.hits) {
+   *   // Apply Force Lightning damage
+   * }
+   *
+   * @example
+   * // Force Grip targeting Fortitude Defense
+   * const result = await SWSECombat.rollForcePowerAttack(
+   *   sith,
+   *   forceGrip,
+   *   victim,
+   *   'fortitude'
+   * );
    */
   static async rollForcePowerAttack(attacker, power, target, defenseType = 'will') {
     // Calculate Use the Force bonus

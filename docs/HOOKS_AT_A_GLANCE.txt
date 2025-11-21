@@ -1,0 +1,302 @@
+================================================================================
+SWSE HOOK REGISTRY AT A GLANCE
+================================================================================
+
+CRITICAL ISSUES TO ADDRESS
+================================================================================
+
+[!!!] combatTurn Hook - 5+ handlers in UNKNOWN ORDER
+      Location: index.js, combat-integration.js, combat-automation.js, 
+                active-effects-manager.js, houserule-mechanics.js
+      Risk: Duplicate dialogs, race conditions, unpredictable execution
+      Action: Consolidate into single hook with runOrder
+
+[!!!] preUpdateActor Hook - 4 handlers in UNKNOWN ORDER  
+      Location: index.js, force-power-hooks.js, houserule-mechanics.js (2x)
+      Risk: Ability capture may not run first, wrong order of checks
+      Action: Enforce execution order, add error handling
+
+[!!!] Init Hook Duplication - 4+ Hooks.once('init')
+      Location: index.js, core/init.js, 3x migrations, logger.js
+      Risk: Wasted cycles, confusion about which init runs
+      Action: Consolidate to single init hook
+
+[!!!] deleteCombat Hook - 3 handlers in UNKNOWN ORDER
+      Location: SWSECombatIntegration, force-power-hooks, index.js (implied)
+      Risk: Cleanup and force power reset order unclear
+      Action: Consolidate into single hook
+
+
+HOOK REGISTRATION SUMMARY BY CATEGORY
+================================================================================
+
+INITIALIZATION (7 hooks)
+  once('init')     - 4+ registrations
+  once('ready')    - 3+ registrations
+  
+COMBAT LIFECYCLE (8 hooks) - HIGHEST RISK AREA
+  combatTurn       - 5+ registrations (CRITICAL)
+  createCombat     - 2 registrations
+  deleteCombat     - 3 registrations  
+  combatRound      - 2 registrations
+  combatStart      - 1 registration
+  combatEnd        - 1 registration
+  createCombatant  - 1 registration
+  deleteCombatant  - 1 registration
+
+ACTOR MANAGEMENT (3 hooks) - MEDIUM RISK
+  preUpdateActor   - 4+ registrations (each different purpose)
+  updateActor      - 3 registrations
+  preRollSkill     - 1 registration (in houserule-mechanics)
+
+FORCE POWERS (4 hooks)
+  createItem       - 1 registration (detects force feat)
+  updateActor      - 1 registration (part of broader issue)
+  preUpdateActor   - 1 registration (part of broader issue)
+  deleteCombat     - 1 registration (part of broader issue)
+
+CHAT & UI (7 hooks)
+  renderChatMessageHTML  - 2 registrations (DUPLICATE)
+  dropActorSheetData     - 1 registration
+  hotbarDrop             - 1 registration
+  chatMessage            - 1 registration
+  renderActorDirectory   - 1 registration
+  canvasReady            - 1 registration
+  canvasResize           - 1 registration
+
+HOUSERULES (5 hooks) - scattered registrations
+  preRollDamage       - 1 registration
+  preUpdateActor      - 2 registrations (part of issue)
+  combatTurn          - 1 registration (part of issue)
+  preCreateCombatant  - 1 registration
+
+OTHER (3+ hooks)
+  renderApplication   - 1 registration (position SWSE windows)
+  error               - 1 registration (error handler)
+  Multiple debug hooks - 3 registrations (in debug-character-sheet.js)
+
+
+FILES WITH HOOKS (25+ files)
+================================================================================
+
+CRITICAL FILES (most hooks, most scattered)
+  [10 hooks] /index.js
+  [6 hooks]  /scripts/combat/combat-integration.js
+  [5 hooks]  /scripts/houserules/houserule-mechanics.js
+  [4 hooks]  /scripts/hooks/force-power-hooks.js
+
+IMPORTANT FILES (multiple hooks)
+  [3 hooks]  /scripts/combat/combat-automation.js
+  [2 hooks]  /scripts/combat/active-effects-manager.js
+  [2 hooks]  /scripts/canvas-ui/canvas-ui-manager.js
+  [2 hooks]  /scripts/migration/actor-validation-migration.js
+  [2 hooks]  /scripts/migration/item-validation-migration.js
+  [2 hooks]  /scripts/migration/populate-force-compendiums.js
+
+MINOR FILES (single hooks)
+  [1 hook]   /scripts/core/init.js (duplicate?)
+  [1 hook]   /scripts/core/error-handler.js
+  [1 hook]   /scripts/theme-loader.js
+  [1 hook]   /scripts/utils/logger.js
+  [1 hook]   /scripts/utils/skill-use-filter.js
+  [1 hook]   /scripts/chat/chat-commands.js
+  [1 hook]   /scripts/config/skills.js
+  [1 hook]   /scripts/apps/chargen-init.js
+  [1 hook]   /scripts/houserules/houserules-config.js
+  [1 hook]   /scripts/combat/rolls/enhanced-rolls.js (duplicate?)
+  [1 hook]   /scripts/combat/systems/enhanced-combat-system.js
+  [3 hooks]  /debug-character-sheet.js (console debug script)
+
+
+SUGGESTED CENTRALIZED STRUCTURE
+================================================================================
+
+NEW DIRECTORY: scripts/hooks/
+├── hooks-registry.js       ← MAIN: Centralized registration
+├── combat-hooks.js         ← Move all combat hooks here
+├── actor-hooks.js          ← Move all actor update hooks here
+├── force-power-hooks.js    ← EXISTING (refactor for consistency)
+├── houserule-hooks.js      ← Group houserule hooks
+├── migration-hooks.js      ← Consolidate migration hooks
+└── ui-hooks.js             ← Group UI/canvas/chat hooks
+
+
+QUICK REFERENCE: EXECUTION DEPENDENCIES
+================================================================================
+
+Module Load → imports → CONFIG setup
+            → Hooks.once('init') [multiple]
+            → Hooks.on() registrations [scattered]
+            → World Ready
+            → Hooks.once('ready') [multiple]
+            → initializeForcePowerHooks()
+            → SWSECombatAutomation.init()
+            → SWSECombatIntegration.init()
+            → SWSEActiveEffectsManager.init()
+            → HouseruleMechanics.initialize()
+            → CanvasUIManager.initialize()
+            → [All systems now active]
+
+
+EXECUTION ORDER ISSUES (CURRENTLY UNDEFINED)
+================================================================================
+
+When combat starts:
+  1. createCombat hook fires → 2 handlers (which runs first?)
+  
+When combat turn starts:
+  1. combatTurn hook fires → 5+ handlers in unknown order
+     - Action economy reset
+     - Condition recovery prompt
+     - Active effects application
+     - Force power checks
+     - Space combat rules
+  [PROBLEM] Execution order undefined - can cause:
+    - Duplicate dialogs
+    - Actions consumed before recovery
+    - Effects applied at wrong time
+
+When actor updates (ability score change):
+  1. preUpdateActor hook fires → 4 handlers
+     - Capture old abilities (MUST RUN FIRST)
+     - Condition track cap check
+     - Death system check
+     - Condition penalty update
+  [PROBLEM] Capture may not run first → ability detection fails
+
+When combat ends:
+  1. deleteCombat hook fires → 3 handlers
+     - Combat cleanup
+     - Force power reset
+     - Various cleanup tasks
+
+
+RECOMMENDED IMMEDIATE ACTIONS
+================================================================================
+
+WEEK 1 - AUDIT & DOCUMENT
+  [ ] Read HOOK_ANALYSIS.md (this is the detailed version)
+  [ ] List all hooks in spreadsheet with: name, location, purpose, dependencies
+  [ ] Test actual execution order of combatTurn handlers
+  [ ] Identify which hooks MUST execute in specific order
+
+WEEK 2 - IDENTIFY DUPLICATES & CONFLICTS
+  [ ] Verify: Are index.js:897 and SWSECombatAutomation:16 the same dialog?
+  [ ] Verify: Do index.js:976 and enhanced-rolls.js:676 conflict?
+  [ ] Verify: Is core/init.js:6 actually needed?
+  [ ] Check: Are migrations really independent?
+
+WEEK 3 - DESIGN CENTRALIZATION
+  [ ] Create HooksRegistry.js design
+  [ ] Plan phased migration (by system)
+  [ ] Create runOrder system for execution guarantee
+  [ ] Document new pattern for contributors
+
+WEEK 4 - IMPLEMENT PHASE 1
+  [ ] Create HooksRegistry.js
+  [ ] Start with low-risk hooks (UI, chat)
+  [ ] Keep old code for safety
+  [ ] Test each change
+
+WEEK 5+ - COMPLETE MIGRATION
+  [ ] Combat hooks (highest priority)
+  [ ] Actor update hooks
+  [ ] Force power & migration hooks
+  [ ] Full test suite
+
+
+CONSOLE DEBUGGING (AFTER REFACTORING)
+================================================================================
+
+// See all registered hooks
+SWSE.hooks.list()
+
+// See execution order for a specific hook
+SWSE.hooks.info('combatTurn')
+
+// Trace execution (log each handler)
+SWSE.hooks.trace(true)
+Hooks.callAll('combatTurn', combat, {}, {})
+SWSE.hooks.trace(false)
+
+// Disable a hook temporarily
+SWSE.hooks.disable('combatTurn')
+
+// Check performance
+SWSE.hooks.profile('combatTurn')
+
+
+FILES REFERENCED IN ANALYSIS
+================================================================================
+
+Root Level:
+  /index.js                    - Main entry point, 10 hooks
+  /debug-character-sheet.js    - Debug console hooks
+
+Core System (scripts/core/):
+  init.js                      - Duplicate init hook
+  error-handler.js             - Global error hook
+  
+Combat (scripts/combat/):
+  combat-integration.js        - 6 combat lifecycle hooks
+  combat-automation.js         - 3 combat automation hooks
+  active-effects-manager.js    - 2 active effects hooks
+  systems/enhanced-combat-system.js - 1 hook
+  rolls/enhanced-rolls.js      - 1 chat hook (duplicate?)
+  
+Force & Items (scripts/hooks/ & scripts/):
+  hooks/force-power-hooks.js   - 4 force power hooks
+  
+House Rules (scripts/houserules/):
+  houserule-mechanics.js       - 5 houserule hooks
+  houserules-config.js         - 1 config hook
+  
+UI & Canvas (scripts/):
+  canvas-ui/canvas-ui-manager.js - 2 canvas hooks
+  theme-loader.js              - 1 theme hook
+  apps/chargen-init.js         - 1 chargen hook
+  
+Chat & Config (scripts/):
+  chat/chat-commands.js        - 1 chat hook
+  config/skills.js             - 1 config hook
+  utils/skill-use-filter.js    - 1 skill hook
+  utils/logger.js              - 1 logger hook
+  
+Migrations (scripts/migration/):
+  actor-validation-migration.js - 2 init/ready hooks
+  item-validation-migration.js  - 2 init/ready hooks
+  populate-force-compendiums.js - 2 init/ready hooks
+
+
+STATUS SUMMARY
+================================================================================
+
+Overall Assessment: NEEDS CENTRALIZATION
+
+Strengths:
+  + Most hooks have clear purpose
+  + Some systems well-organized (force-power-hooks.js)
+  + Migration system self-contained
+  
+Weaknesses:
+  - 48+ hooks across 25+ files
+  - Multiple registrations of same hook (5+ combatTurn)
+  - Scattered registration points
+  - Unknown execution order
+  - ~1100 lines in index.js
+  - Settings-based conditional registration
+  - Multiple init hooks (confusion about priority)
+  
+Risks:
+  - Race conditions in combat
+  - Duplicate dialogs/handlers
+  - Initialization order dependency bugs
+  - Hard to debug hook issues
+  
+Impact if Not Fixed:
+  - Subtle bugs hard to diagnose
+  - Adding new hooks becomes dangerous
+  - Performance issues from handler conflicts
+  - Onboarding difficulty for new developers
+
+================================================================================

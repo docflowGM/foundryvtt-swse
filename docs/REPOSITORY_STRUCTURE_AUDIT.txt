@@ -1,0 +1,686 @@
+FOUNDRYVTT SWSE SYSTEM - COMPREHENSIVE REPOSITORY AUDIT
+
+Project: Star Wars Saga Edition system for FoundryVTT
+Version: 1.1.151
+Module System: ES6 Modules
+Main Entry: index.js (1135 lines)
+Total JS Files: 132 (excluding node_modules)
+Total Lines in Scripts: ~34,000+
+
+================================================================================
+1. DIRECTORY STRUCTURE OVERVIEW
+================================================================================
+
+Root Level (13 MD documentation files)
+├── index.js (1135 lines) - Main entry point, orchestrates all imports
+├── system.json - FoundryVTT system manifest
+├── template.json - Data structure definitions
+├── package.json - Build dependencies (Sass, PostCSS)
+│
+├── assets/ - Images, icons, backgrounds
+├── data/ - JSON data files (skills, combat actions, force powers, etc.) - 287KB
+├── docs/ - Documentation directory
+├── helpers/ - Handlebars helper functions - 281 lines total
+├── lang/ - Localization files
+├── packs/ - FoundryVTT compendium packs
+│
+├── scripts/ (600KB total, 132 JS files)
+│   ├── apps/ (600KB) - Main applications
+│   │   ├── chargen/ - Character generation (modular subdir)
+│   │   ├── levelup/ - Level up system (modular subdir)
+│   │   ├── store/ - Equipment store system
+│   │   └── [loose files at apps root]
+│   ├── actors/ (92KB) - Actor sheet implementations
+│   ├── combat/ (192KB) - Combat systems and mechanics
+│   ├── core/ (79KB) - Core system functionality
+│   ├── components/ (30KB) - Reusable UI components
+│   ├── data/ (21KB) - Data loaders and processors
+│   ├── data-models/ (72KB) - Foundry data model definitions
+│   ├── houserules/ (57KB) - House rule system
+│   ├── items/ (15KB) - Item sheet implementation
+│   ├── migration/ (48KB) - Data migration scripts
+│   ├── rolls/ (27KB) - Dice rolling system
+│   ├── utils/ (100KB) - Utility functions
+│   ├── config/ (11KB) - Configuration files
+│   ├── drag-drop/ (12KB) - Drag & drop handlers
+│   ├── gm-tools/ (12KB) - GM utilities
+│   ├── hooks/ (8KB) - Foundry hooks
+│   ├── canvas-ui/ (17KB) - Canvas UI components
+│   ├── chat/ (5.5KB) - Chat system integration
+│   └── sheets/ (30KB) - Base sheet implementations
+│
+├── styles/ (458KB) - CSS styling
+│   ├── src/ - Source SCSS files
+│   ├── dist/ - Compiled CSS and themes
+│   ├── sheets/ - Sheet-specific styles
+│   ├── apps/ - App-specific styles
+│   ├── combat/ - Combat UI styles
+│   └── components/ - Component styles
+│
+├── templates/ (94KB) - Handlebars templates - 45 .hbs files
+│   ├── actors/ - Actor sheet templates
+│   ├── items/ - Item templates
+│   ├── apps/ - Application templates
+│   │   └── store/ - Store app (contains JS files!)
+│   ├── partials/ - Partial/fragment templates
+│   └── gm-tools/ - GM tool templates
+│
+├── tests/ (242 lines) - Test utilities and examples
+│   ├── example.test.js
+│   └── utils/ - Test helpers
+│
+└── tools/ - Build and utility scripts
+
+================================================================================
+2. ORGANIZATIONAL ISSUES IDENTIFIED
+================================================================================
+
+CRITICAL ISSUES:
+──────────────────────────────────────────────────────────────────────────────
+
+1. **MISPLACED LOGIC IN TEMPLATES DIRECTORY** (HIGH PRIORITY)
+   Location: /templates/apps/store/
+   Files:
+     - store.js (95 lines) - FormApplication subclass
+     - gm-settings.js (24 lines) - FormApplication subclass
+   
+   Problem: These files contain JavaScript logic (FormApplication classes) 
+            but are located in the templates directory structure. This violates
+            separation of concerns - templates should contain only .hbs files,
+            while logic should be in scripts/.
+   
+   Impact: Confusing for navigation, breaks logical file organization, may
+           cause import issues with relative paths
+   
+   Recommendation: Move to /scripts/apps/store/ alongside other store modules
+                  Update imports in index.js and store-main.js accordingly
+
+──────────────────────────────────────────────────────────────────────────────
+
+2. **CHARACTERGEN MODULE COMPLEXITY & MULTIPLE ENTRY POINTS**
+   Files involved:
+     - chargen.js (22 lines) - Re-export wrapper of chargen/chargen-main.js
+     - chargen-init.js (102 lines) - Initialization/hook registration
+     - chargen-improved.js (15KB) - Extended class wrapping chargen.js
+     - chargen-narrative.js (19KB) - Further extended class
+     - chargen-main.js (608 lines) - Base Application class
+     - chargen/chargen-*.js (8 modular files)
+   
+   Problems:
+     - chargen.js is redundant - just imports and re-exports chargen-main.js
+     - Three-level inheritance chain (Generator -> GeneratorImproved -> GeneratorNarrative)
+       is complex without clear purpose explanation
+     - chargen-init.js registers hooks at app level rather than in main class
+     - Multiple ways to access character generation (templates, generator, narrative)
+   
+   Total Size: ~3600 lines across ~13 files
+   
+   Recommendation:
+     - Eliminate chargen.js wrapper (update index.js to import from chargen-main)
+     - Document inheritance hierarchy or flatten it
+     - Consider consolidating initialization into chargen-main.js
+     - Create clear entry point documentation
+
+──────────────────────────────────────────────────────────────────────────────
+
+3. **VERY LARGE FILES NEEDING DECOMPOSITION**
+   
+   Top candidates for splitting:
+   
+   a) mentor-dialogues.js (1152 lines)
+      - Long hardcoded data structure with dialogue options
+      - Could separate data into data/mentor-dialogues.json
+      - Keep logic in much smaller file
+   
+   b) talent-tree-visualizer.js (1150 lines)
+      - Complex visualization logic mixed with data
+      - Could extract tree-building logic to utils
+      - Could extract rendering to separate component
+   
+   c) chargen-droid.js (1084 lines)
+      - Droid-specific character generation logic
+      - Could be split into:
+        - Systems selection (400+ lines)
+        - Locomotion selection (300+ lines)
+        - Common droid utilities
+   
+   d) swse-character-sheet.js (1060 lines)
+      - Complete actor sheet implementation
+      - Too large for single file
+      - Could extract tabs into separate modules
+   
+   e) enhanced-combat-system.js (973 lines)
+      - Core combat mechanics
+      - Could separate into:
+        - Attack resolution (300 lines)
+        - Damage calculation (200 lines)
+        - Modifier calculation (200+ lines)
+        - Utilities (remaining)
+   
+   e) levelup-main.js (915 lines)
+      - Main levelup dialog implementation
+      - Module structure exists (levelup-class.js, levelup-talents.js, etc.)
+      - Main file is orchestrator - consider if it's still too large
+   
+   f) houserule-settings.js (480 lines)
+      - Settings management for house rules
+      - Could separate UI from logic
+   
+   Impact: Maintenance burden, harder to debug, difficult to test individual
+           functionality
+
+──────────────────────────────────────────────────────────────────────────────
+
+4. **DUPLICATE/WRAPPER MODULES**
+   
+   Pattern: Many modules have thin wrapper files that just re-export
+   
+   Examples:
+     - chargen.js: exports chargen-main.js
+     - store.js: exports store/store-main.js
+   
+   Problem: Adds indirection without clear benefit, increases cognitive load
+            when navigating imports
+   
+   Recommendation: Remove wrapper files, import directly from main modules,
+                  or document why indirection layer is needed
+
+──────────────────────────────────────────────────────────────────────────────
+
+5. **ROOT LEVEL DOCUMENTATION FILES** (MODERATE PRIORITY)
+   
+   Files:
+     - ADVANCEMENT_DOCUMENTATION_INDEX.md
+     - ADVANCEMENT_FLOW_DIAGRAMS.md
+     - ADVANCEMENT_SECURITY_SUMMARY.md
+     - BUTTON_HANDLER_MATRIX.md
+     - CHARACTER_SHEET_ANALYSIS.md
+     - CODE_REVIEW_SUMMARY.md
+     - FIXES_SUMMARY.md
+     - IMPLEMENTATION_SUMMARY.md
+     - LEVELUP_CHARGEN_ANALYSIS.md
+     - REFACTORING_COMPLETE.md
+     - REPO_AUDIT_REPORT.md
+     - TALENT_TREE_ENHANCEMENT.md
+     - THEME-SYSTEM.md
+   
+   Problem: 13 markdown analysis files at repository root make it cluttered.
+            Files appear to be analysis/audit reports from development.
+            Uncertain if these are:
+            - Outdated documentation
+            - Still-relevant guides
+            - Development notes
+            - Part of official documentation
+   
+   Recommendation: Move to /docs directory and determine if each is still
+                  relevant. Consider consolidating into a single CHANGELOG
+                  or development guide.
+
+──────────────────────────────────────────────────────────────────────────────
+
+MODERATE ISSUES:
+──────────────────────────────────────────────────────────────────────────────
+
+6. **INDEX.JS TOO LARGE** (1135 lines)
+   
+   Problem: Main entry point has grown to 1135 lines because:
+            - Imports and configures all major systems
+            - Registers hooks
+            - Initializes configurations
+            - Creates global game.swse namespace
+   
+   While necessary, this makes the file hard to navigate.
+   
+   Recommendation:
+     - Add section markers/comments to break into logical blocks
+     - Could extract configuration into separate file
+     - Could extract initialization into hooks/init.js
+
+──────────────────────────────────────────────────────────────────────────────
+
+7. **SCATTERED HOOK REGISTRATIONS** (41 total hooks across 21 files)
+   
+   Files registering hooks:
+     - chargen-init.js
+     - canvas-ui/canvas-ui-manager.js
+     - chat/chat-commands.js
+     - combat/active-effects-manager.js
+     - combat/combat-automation.js
+     - combat/combat-integration.js
+     - combat/rolls/enhanced-rolls.js
+     - combat/systems/enhanced-combat-system.js
+     - components/combat-action-bar.js
+     - config/skills.js
+     - core/error-handler.js
+     - core/init.js
+     - hooks/force-power-hooks.js
+     - houserules/houserule-mechanics.js
+     - houserules/houserules-config.js
+     - migration/* (3 files)
+     - theme-loader.js
+     - utils/logger.js
+     - utils/skill-use-filter.js
+   
+   Problem: Hook registration is scattered across many files making it hard to:
+            - See what hooks are registered globally
+            - Understand initialization order
+            - Debug hook conflicts
+   
+   Recommendation: Consider creating a centralized hooks/registration.js file
+                  that imports and registers all hooks, or at least document
+                  the hook registration strategy clearly
+
+──────────────────────────────────────────────────────────────────────────────
+
+8. **COMBAT SYSTEM ORGANIZATION**
+   
+   Structure:
+     /scripts/combat/
+     ├── combat-automation.js
+     ├── combat-integration.js
+     ├── damage-system.js
+     ├── swse-combat.js
+     ├── swse-combatant.js
+     ├── active-effects-manager.js
+     ├── rolls/
+     │   ├── attacks.js
+     │   ├── enhanced-rolls.js (705 lines)
+     │   └── damage.js
+     ├── systems/
+     │   ├── enhanced-combat-system.js (973 lines)
+     │   ├── grappling-system.js (518 lines)
+     │   ├── vehicle-combat-system.js
+     │   └── vehicle/ (5 specialized files)
+     └── utils/
+         ├── combat-utils.js
+         └── combat-actions-mapper.js
+   
+   Problem: Two large monolithic system files (enhanced-combat-system.js,
+            grappling-system.js) alongside modular structure in rolls/ and
+            vehicle/ subdirectories. Inconsistent organization pattern.
+   
+   Recommendation: Apply vehicle/ modular approach to grappling and
+                  enhanced-combat. Break these into smaller, focused files
+
+──────────────────────────────────────────────────────────────────────────────
+
+9. **INCOMPLETE/MINIMAL TEST COVERAGE** (242 lines total)
+   
+   Tests exist for:
+     - calc-defenses.js (92 lines)
+     - calc-skills.js (39 lines)
+     - calc-abilities.js (18 lines)
+     - example.test.js (57 lines)
+   
+   Problem: Very limited test coverage. No tests for:
+            - Combat system
+            - Character generation
+            - Level up system
+            - Item/actor sheets
+            - Store system
+            - Houserules
+            - Force powers
+   
+   Recommendation: Expand test suite, particularly for:
+                  - Combat calculations
+                  - Character generation validation
+                  - Data model integrity
+
+──────────────────────────────────────────────────────────────────────────────
+
+MINOR ISSUES:
+──────────────────────────────────────────────────────────────────────────────
+
+10. **TODO COMMENTS IN CODE**
+    
+    Found in:
+      - levelup-force-powers.js: Filter by prerequisites
+      - mentor-dialogues.js: Add mentor portraits
+      - character-data-model.js: Check for Heuristic Processor feat
+    
+    Recommendation: Address open TODOs or document why they're blocked
+
+──────────────────────────────────────────────────────────────────────────────
+
+11. **DEBUG FILE AT ROOT**
+    
+    File: debug-character-sheet.js (16KB)
+    
+    Problem: Debug file present in root directory. Should be:
+             - Removed if no longer needed
+             - Moved to tools/ if still used
+             - Documented if critical for debugging
+    
+    Recommendation: Clarify purpose and relocate or remove
+
+──────────────────────────────────────────────────────────────────────────────
+
+12. **HANDLEBARS HELPER ORGANIZATION**
+    
+    Current: /helpers/handlebars/ with 9 specialized files:
+      - swse-helpers.js (47 lines)
+      - index.js (46 lines)
+      - skill-helpers.js (45 lines)
+      - math-helpers.js (41 lines)
+      - partials-auto.js (25 lines)
+      - array-helpers.js (25 lines)
+      - utility-helpers.js (20 lines)
+      - string-helpers.js (19 lines)
+      - comparison-helpers.js (13 lines)
+    
+    Status: Good organization by category
+    
+    Recommendation: Consider consolidating very small files (13-20 lines) or
+                   ensure clear documentation of each helper's purpose
+
+================================================================================
+3. MODULE STRUCTURE & ARCHITECTURE
+================================================================================
+
+Module System: ES6 Modules (import/export)
+Main Entry Point: index.js (orchestrates all imports)
+
+Code Organization:
+  - Well-separated concerns (actors, items, combat, apps, etc.)
+  - Modular subdirectories for complex systems (chargen/, levelup/, store/)
+  - Utility functions properly separated in /utils
+  - Configuration isolated in /config
+  - Migrations clearly separated and sequenced
+
+Import Pattern Analysis:
+  - 71 files use relative imports (./imports)
+  - Consistent path structure (import from './related-module.js')
+  - Some circular dependency risks (not deeply analyzed)
+
+Shared Code Patterns:
+  - Each major system has *-shared.js utility file (good!)
+  - chargen-shared.js, levelup-shared.js, store-shared.js, combat/vehicle-shared.js
+  - Pattern is consistent and facilitates code reuse
+
+Configuration Strategy:
+  - system.json: FoundryVTT system manifest (correct)
+  - template.json: Data structure definitions (correct)
+  - scripts/config/: Runtime configuration
+  - scripts/core/settings.js: Game settings management
+
+================================================================================
+4. ARCHITECTURE PATTERNS & BEST PRACTICES
+================================================================================
+
+GOOD PATTERNS:
+──────────────────────────────────────────────────────────────────────────────
+✓ Separation of concerns (actors, items, combat, apps clearly separated)
+✓ Modular subdirectories for complex systems
+✓ Shared utility files for each domain
+✓ Utility functions properly extracted and organized
+✓ Migration scripts clearly isolated
+✓ Helpers organized by category
+✓ Styles organized to match template structure
+✓ Configuration separated from logic
+✓ FormApplication subclasses in dedicated files
+✓ Data models properly defined per item/actor type
+✓ Templates and scripts directories properly separated
+
+PATTERNS NEEDING IMPROVEMENT:
+──────────────────────────────────────────────────────────────────────────────
+✗ Some very large monolithic files (900+ lines)
+✗ Multiple wrapper/re-export files adding indirection
+✗ JavaScript in templates directory
+✗ Hook registration scattered across many files
+✗ Large inheritance hierarchies without clear documentation
+✗ Inconsistent modularization in combat system
+✗ Root-level documentation files cluttering the directory
+
+================================================================================
+5. FILE SIZE ANALYSIS & RECOMMENDATIONS
+================================================================================
+
+Files > 600 lines (13 total):
+  1. mentor-dialogues.js (1152) - Data + UI mixed - SPLIT
+  2. talent-tree-visualizer.js (1150) - Complex visualization - SPLIT
+  3. chargen-droid.js (1084) - Droid character gen - SPLIT
+  4. swse-character-sheet.js (1060) - Actor sheet - SPLIT
+  5. enhanced-combat-system.js (973) - Core combat - SPLIT
+  6. levelup-main.js (915) - Level up dialog - REVIEW
+  7. base-sheet.js (827) - Base sheet class - ACCEPTABLE (base class)
+  8. enhanced-rolls.js (705) - Dice rolling - REVIEW
+  9. vehicle-modification-app.js (701) - Vehicle mods UI - CONSIDER
+  10. vehicle-data-model.js (620) - Data model - ACCEPTABLE (data heavy)
+  11. droid-systems.js (617) - Droid data - CONSIDER
+  12. chargen-main.js (608) - Main chargen - ACCEPTABLE (modular)
+  13. custom-item-dialog.js (606) - Item dialog - CONSIDER
+
+Priority for splitting:
+  1. mentor-dialogues.js (separate data from UI)
+  2. talent-tree-visualizer.js (extract visualization logic)
+  3. chargen-droid.js (split into logical sections)
+  4. enhanced-combat-system.js (split by functionality)
+
+Files < 50 lines (candidates for consolidation):
+  - comparison-helpers.js (13)
+  - string-helpers.js (19)
+  - utility-helpers.js (20)
+  - partials-auto.js (25)
+  - array-helpers.js (25)
+  
+  Recommendation: Small files are OK if they serve a clear purpose. Document
+                  or consider consolidating if purposes are too narrow.
+
+================================================================================
+6. CONFIGURATION & DATA ORGANIZATION
+================================================================================
+
+JSON Data Files (data/ directory - 287KB total):
+  - character-templates.json (26KB) - Pre-built character templates
+  - lightsaber-form-powers.json (46KB) - Force power definitions
+  - force-techniques.json (23KB) - Force technique definitions
+  - extraskilluses.json (21KB) - Skill expansion rules
+  - combat-actions.json (17KB) - Combat action definitions
+  - force-power-descriptions.json (13KB) - Force power descriptions
+  - force-secrets.json (9.4KB) - Force secrets
+  - feat-combat-actions.json (9.1KB) - Feat-specific actions
+  - ship-combat-actions.json (15KB) - Space combat actions
+  - stock-ships.json (5.3KB) - Pre-built ships
+  - talent-enhancements.json (4.5KB) - Talent enhancements
+  - skills.json (1.4KB) - Skill definitions
+  - mentor-template-dialogues.json (8.5KB) - NPC dialogue templates
+  - armor/ subdirectory with light, medium, heavy armor definitions
+
+Organization: Good - data separated from code, organized by category
+
+Recommendation: Consider grouping force-related files or documenting
+               the intended use case for each data file
+
+================================================================================
+7. STYLE & THEMING SYSTEM
+================================================================================
+
+Structure:
+  - Source SCSS in styles/src/ with modular partials
+  - Compiled CSS in styles/dist/
+  - 6 themed versions (Jedi, Starship, Sand People, Holo, High Republic, High Contrast)
+  - Separate CSS for sheets, apps, combat, components, canvas
+  - Theme system built via build-themes.js script
+
+Build Process:
+  - npm run build:styles - Compile Sass + PostCSS
+  - npm run build:themes - Generate theme variants
+  - npm run watch:styles - Watch for changes
+
+Status: Well-organized with good theme system
+Recommendation: Document build process in README
+
+================================================================================
+8. LANGUAGE & LOCALIZATION
+================================================================================
+
+Supported Languages (via lang/ directory):
+  - English (en.json)
+  - Spanish (es.json)
+  - French (fr.json)
+  - German (de.json)
+  - Russian (ru.json)
+
+Status: Good separation of localization
+
+Recommendation: Ensure all UI strings are properly localized
+
+================================================================================
+9. DEPENDENCY & IMPORT ANALYSIS
+================================================================================
+
+Entry Point Chain:
+  1. index.js (main entry) imports from:
+     - scripts/actors/* (5 actor sheet imports)
+     - scripts/items/* (2 item imports)
+     - scripts/data-models/* (7 data model imports)
+     - scripts/core/* (3 core system imports)
+     - helpers/handlebars/index.js
+     - scripts/config/skills.js
+     - scripts/components/* (2 component imports)
+     - scripts/combat/* (9 combat system imports)
+     - scripts/hooks/* (1 hook import)
+     - scripts/migration/* (5 migration files)
+     - scripts/apps/* (multiple app imports)
+     - scripts/drag-drop/* (1 import)
+     - scripts/chat/* (1 import)
+     - scripts/canvas-ui/* (1 import)
+     - scripts/houserules/* (3 imports)
+     - scripts/gm-tools/* (1 import)
+
+Total Imports in index.js: ~50+ named and default imports
+
+Status: Large number of imports, but necessary for system initialization
+Recommendation: Add detailed comments to index.js explaining import groupings
+
+Potential Issues:
+  - No obvious circular dependencies detected
+  - Some modules import from multiple levels up (../../utils)
+  - Relative import paths are consistent
+
+================================================================================
+10. UNUSED/ORPHANED FILE DETECTION
+================================================================================
+
+Questionable Files:
+  1. debug-character-sheet.js (16KB at root)
+     - Purpose unclear
+     - No imports found in other files
+     - Should be documented or removed
+
+  2. build-themes.js (1.3KB at root)
+     - Referenced in package.json build script
+     - Part of build process, not orphaned
+
+  3. Multiple analysis .md files
+     - Appear to be development documentation
+     - Should be organized or removed if outdated
+
+Recommendation: Audit debug-character-sheet.js and old documentation files
+
+================================================================================
+11. INITIALIZATION & HOOK ORDER
+================================================================================
+
+Initialization sequence (from index.js):
+  1. Imports all modules (establishes dependencies)
+  2. Defines CONFIG.SWSE
+  3. Hooks.once("init") - Main initialization
+  4. Sets CONFIG.Actor.documentClass, CONFIG.Item.documentClass
+  5. Registers data models
+  6. Unregisters core sheets
+  7. Registers actor sheets
+  8. [Other initialization continues...]
+
+Hook files scattered across codebase register additional hooks:
+  - chargen-init.js - Character creation UI
+  - force-power-hooks.js - Force power mechanics
+  - houserule-mechanics.js - Houserule application
+  - Various combat files - Combat automation
+
+Recommendation: Create hooks/registration.js to centralize hook management
+
+================================================================================
+12. SUMMARY OF FINDINGS
+================================================================================
+
+Strengths:
+  ✓ Clear separation of concerns in directory structure
+  ✓ Well-organized helpers and utilities
+  ✓ Good modularization patterns in complex systems (chargen, levelup, combat)
+  ✓ Consistent use of ES6 modules
+  ✓ Proper isolation of migrations and configurations
+  ✓ Good theming system
+  ✓ Clear template organization
+
+Weaknesses:
+  ✗ JavaScript logic in templates/apps/store/ (HIGH PRIORITY FIX)
+  ✗ Very large monolithic files (900-1150 lines) that need decomposition
+  ✗ Redundant wrapper/re-export files
+  ✗ Scattered hook registration across 21 files
+  ✗ Cluttered root directory with 13 documentation files
+  ✗ Minimal test coverage (242 lines total)
+  ✗ Complex inheritance hierarchies without documentation
+  ✗ Inconsistent modularization patterns in combat system
+  ✗ Large index.js file (1135 lines)
+
+Critical Organizational Issues (Priority Order):
+  1. Move JS files from templates/apps/store/ to scripts/apps/store/
+  2. Break apart very large files (900+ lines)
+  3. Remove or document redundant wrapper files
+  4. Consolidate root-level documentation files
+  5. Centralize hook registration
+  6. Expand test coverage
+  7. Document initialization and configuration strategy
+
+================================================================================
+
+FILE ORGANIZATION RECOMMENDATIONS:
+================================================================================
+
+HIGH PRIORITY CHANGES:
+────────────────────────────────────────────────────────────────────────────
+1. Relocate /templates/apps/store/store.js → /scripts/apps/store/store.js
+2. Relocate /templates/apps/store/gm-settings.js → /scripts/apps/store/gm-settings.js
+3. Delete chargen.js (redundant wrapper)
+4. Delete store.js (redundant wrapper)
+5. Update imports in index.js accordingly
+6. Move root .md documentation files to /docs directory
+7. Create centralized hook registration file
+
+MEDIUM PRIORITY CHANGES:
+────────────────────────────────────────────────────────────────────────────
+1. Split mentor-dialogues.js (1152 lines):
+   - Extract dialogue data to data/mentor-dialogues.json
+   - Keep UI/logic in scripts/apps/mentor-system.js
+   
+2. Split talent-tree-visualizer.js (1150 lines):
+   - Extract tree-building logic to scripts/utils/talent-tree-builder.js
+   - Extract rendering to scripts/components/talent-tree-component.js
+   - Keep main class at current location
+   
+3. Split chargen-droid.js (1084 lines):
+   - Extract droid systems to scripts/apps/chargen/chargen-droid-systems.js
+   - Extract droid locomotion to scripts/apps/chargen/chargen-droid-locomotion.js
+   - Keep orchestration in chargen-droid.js
+   
+4. Split enhanced-combat-system.js (973 lines):
+   - Extract attack resolution to scripts/combat/systems/attack-resolver.js
+   - Extract damage calculation to scripts/combat/systems/damage-calculator.js
+   - Keep main orchestration
+   
+5. Consolidate very small helper files (<25 lines):
+   - comparison-helpers.js + string-helpers.js → basic-helpers.js
+   - Or document why separate is better
+
+LOW PRIORITY CHANGES (NICE TO HAVE):
+────────────────────────────────────────────────────────────────────────────
+1. Add detailed comments to index.js dividing imports into logical sections
+2. Expand test coverage
+3. Create comprehensive architecture documentation
+4. Document hook registration strategy
+5. Document class inheritance hierarchies (especially chargen)
+6. Create developer guide for adding new features
+7. Audit and remove/document debug-character-sheet.js
+8. Apply vehicle/ modular structure to other combat systems
+

@@ -2,7 +2,7 @@
  * Defense Calculations
  */
 
-import { SIZE_AC_MODIFIERS } from '../core/constants.js';
+import { SIZE_AC_MODIFIERS } from '../../scripts/core/constants.js';
 
 export function calculateDefenses(actor) {
   const sys = actor.system;
