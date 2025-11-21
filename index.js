@@ -104,7 +104,7 @@ import { perfMonitor, debounce, throttle } from './scripts/utils/performance-uti
 import './scripts/apps/chargen-init.js';
 
 // Store and Level Up apps
-import { SWSEStore } from './scripts/apps/store.js';
+import { SWSEStore } from './scripts/apps/store/store-main.js';
 import { SWSELevelUp } from './scripts/apps/swse-levelup.js';
 
 // Upgrade System
