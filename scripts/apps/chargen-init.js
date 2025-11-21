@@ -1,5 +1,6 @@
 import { SWSELogger } from '../utils/logger.js';
 import CharacterGeneratorImproved from './chargen-improved.js';
+import { TemplateCharacterCreator } from './template-character-creator.js';
 
 // Single hook to handle both create button interception and header button addition
 Hooks.on('renderActorDirectory', (app, html, data) => {
@@ -33,12 +34,24 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                 new Dialog({
                     title: "Create New Actor",
                     content: `
-                        <p>Would you like to use the character generator?</p>
+                        <div style="padding: 1rem;">
+                            <p style="text-align: center; margin-bottom: 1rem;">Choose how you'd like to create your character:</p>
+                            <div style="background: rgba(74, 144, 226, 0.1); padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem; border-left: 3px solid #4a90e2;">
+                                <strong>New!</strong> Quick character templates available with pre-configured builds for all core classes.
+                            </div>
+                        </div>
                     `,
                     buttons: {
+                        template: {
+                            icon: '<i class="fas fa-star"></i>',
+                            label: "Use Character Template",
+                            callback: () => {
+                                TemplateCharacterCreator.create();
+                            }
+                        },
                         generator: {
                             icon: '<i class="fas fa-dice-d20"></i>',
-                            label: "Use Character Generator",
+                            label: "Custom Character Generator",
                             callback: () => {
                                 new CharacterGeneratorImproved().render(true);
                             }
@@ -55,19 +68,31 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                             }
                         }
                     },
-                    default: "generator"
+                    default: "template"
                 }).render(true);
             }
         });
     }
 
-    // Add character generator button to header
+    // Add character generator buttons to header
     if (game.user.isGM) {
         const header = element.querySelector('.directory-header');
         if (header && !header.querySelector('.chargen-button')) {
+            // Template button
+            const templateButton = document.createElement('button');
+            templateButton.className = 'chargen-button template-button';
+            templateButton.innerHTML = '<i class="fas fa-star"></i> Templates';
+            templateButton.title = 'Create character from template';
+            templateButton.addEventListener('click', () => {
+                TemplateCharacterCreator.create();
+            });
+            header.appendChild(templateButton);
+
+            // Character generator button
             const button = document.createElement('button');
             button.className = 'chargen-button';
-            button.innerHTML = '<i class="fas fa-hat-wizard"></i> Character Generator';
+            button.innerHTML = '<i class="fas fa-hat-wizard"></i> Generator';
+            button.title = 'Open custom character generator';
             button.addEventListener('click', () => {
                 new CharacterGeneratorImproved().render(true);
             });

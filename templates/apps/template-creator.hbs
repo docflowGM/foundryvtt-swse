@@ -1,0 +1,103 @@
+<div class="template-creator-container">
+  {{#unless selectedClass}}
+    <!-- Class Selection Screen -->
+    <div class="class-selection-screen">
+      <header class="creator-header">
+        <h1><i class="fas fa-star"></i> Choose Your Path</h1>
+        <p class="subtitle">Select a class to view character templates</p>
+      </header>
+
+      <div class="class-grid">
+        {{#each classes}}
+          <div class="class-choice-btn" data-class="{{name}}">
+            <div class="class-icon">
+              <i class="fas {{icon}}"></i>
+            </div>
+            <h3>{{name}}</h3>
+            <p class="class-desc">{{description}}</p>
+            <div class="select-overlay">
+              <span>Select {{name}}</span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+
+      <footer class="creator-footer">
+        <button class="custom-build-btn">
+          <i class="fas fa-user-edit"></i>
+          Custom Character Generator
+        </button>
+      </footer>
+    </div>
+  {{else}}
+    <!-- Template Card Selection Screen -->
+    <div class="template-selection-screen">
+      <header class="creator-header">
+        <button class="back-to-classes">
+          <i class="fas fa-arrow-left"></i> Back to Classes
+        </button>
+        <h1>{{selectedClass}} Templates</h1>
+        <p class="subtitle">Choose your archetype</p>
+      </header>
+
+      <div class="template-cards-container">
+        {{#each templates}}
+          <div class="template-card" data-template-id="{{id}}">
+            <div class="card-inner">
+              <!-- Card Front -->
+              <div class="card-front">
+                <div class="card-image" style="background-image: url('{{imagePath}}')">
+                  <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-content">
+                  <h2 class="card-title">{{name}}</h2>
+                  <p class="card-quote">"{{quote}}"</p>
+                </div>
+              </div>
+
+              <!-- Card Hover Details -->
+              <div class="card-hover-details">
+                <h3>{{name}}</h3>
+                <p class="archetype-label">{{archetype}}</p>
+                <p class="card-description">{{description}}</p>
+
+                <div class="card-stats">
+                  <div class="stat-item">
+                    <strong>Species:</strong> {{species}}
+                  </div>
+                  <div class="stat-item">
+                    <strong>Feat:</strong> {{feat}}
+                  </div>
+                  <div class="stat-item">
+                    <strong>Talent:</strong> {{talent}}
+                  </div>
+                  <div class="stat-item">
+                    <strong>Skills:</strong> {{trainedSkills.length}} trained
+                  </div>
+                  {{#if forcePowers}}
+                    {{#if (gt forcePowers.length 0)}}
+                      <div class="stat-item">
+                        <strong>Force Powers:</strong> {{forcePowers.length}}
+                      </div>
+                    {{/if}}
+                  {{/if}}
+                </div>
+
+                <div class="select-indicator">
+                  <i class="fas fa-hand-pointer"></i> Click to Select
+                </div>
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+
+      <footer class="creator-footer">
+        <button class="custom-build-btn">
+          <i class="fas fa-user-edit"></i>
+          Or Create Custom Character
+        </button>
+      </footer>
+    </div>
+  {{/unless}}
+</div>
