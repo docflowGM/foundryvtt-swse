@@ -53,7 +53,7 @@
       "description": "A Force-focused diplomat who relies on manipulation of the Force and wisdom rather than lightsaber combat.",
       "quote": "The Force flows through all things. Let it guide your path to peace.",
       "imagePath": "systems/swse/assets/templates/jedi_consular.webp",
-      "mentor": "kota",
+      "mentor": "miraj",
       "abilityScores": {
         "str": 8,
         "dex": 12,
@@ -99,7 +99,7 @@
       "description": "A durable frontline protector who can deflect attacks and shield allies from harm.",
       "quote": "I can't afford to lose this fight! There are people depending on me.",
       "imagePath": "systems/swse/assets/templates/jedi_defender.webp",
-      "mentor": "break",
+      "mentor": "breach",
       "abilityScores": {
         "str": 14,
         "dex": 12,
@@ -141,7 +141,7 @@
       "description": "An investigative shadow who hunts down dark side corruption with precision and stealth.",
       "quote": "Darkness cannot hide from those who seek the light.",
       "imagePath": "systems/swse/assets/templates/jedi_sentinel.webp",
-      "mentor": "tasia",
+      "mentor": "lead",
       "abilityScores": {
         "str": 10,
         "dex": 14,
@@ -188,7 +188,7 @@
       "description": "The ultimate social character, capable of talking their way through any situation with charm and persuasion.",
       "quote": "Words can open doors that even the strongest blade cannot.",
       "imagePath": "systems/swse/assets/templates/noble_diplomat.webp",
-      "mentor": "seraphim",
+      "mentor": "j0n1",
       "abilityScores": {
         "str": 8,
         "dex": 12,
@@ -274,7 +274,7 @@
       "description": "A wealthy manipulator with extensive resources, connections, and information networks.",
       "quote": "Information is the galaxy's most valuable currency, and I am very wealthy.",
       "imagePath": "systems/swse/assets/templates/noble_aristocrat.webp",
-      "mentor": "seraphim",
+      "mentor": "j0n1",
       "abilityScores": {
         "str": 8,
         "dex": 10,
@@ -367,7 +367,7 @@
       "description": "A precision shooter who deals devastating damage with sneak attacks from the shadows.",
       "quote": "They never see it coming. That's the whole point.",
       "imagePath": "systems/swse/assets/templates/scoundrel_pistoleer.webp",
-      "mentor": "kael",
+      "mentor": "salty",
       "abilityScores": {
         "str": 10,
         "dex": 16,
@@ -413,7 +413,7 @@
       "description": "A versatile specialist covering social, technical, and infiltration roles with expertise.",
       "quote": "Every problem has a solution. You just need the right skills.",
       "imagePath": "systems/swse/assets/templates/scoundrel_skill_monkey.webp",
-      "mentor": "tasia",
+      "mentor": "lead",
       "abilityScores": {
         "str": 8,
         "dex": 14,
@@ -460,7 +460,7 @@
       "description": "An aggressive street fighter who pushes enemies down the condition track with dirty tactics.",
       "quote": "No such thing as a fair fight when survival's on the line.",
       "imagePath": "systems/swse/assets/templates/scoundrel_knuckledragger.webp",
-      "mentor": "break",
+      "mentor": "breach",
       "abilityScores": {
         "str": 10,
         "dex": 16,
@@ -506,7 +506,7 @@
       "description": "A charming rogue who uses luck and Force Points strategically to turn the odds in their favor.",
       "quote": "Luck? I make my own luck, friend.",
       "imagePath": "systems/swse/assets/templates/scoundrel_outlaw.webp",
-      "mentor": "kael",
+      "mentor": "salty",
       "abilityScores": {
         "str": 8,
         "dex": 14,
@@ -551,7 +551,7 @@
       "description": "A long-range precision shooter who operates from concealment with deadly accuracy.",
       "quote": "One shot, one kill. That's all it takes.",
       "imagePath": "systems/swse/assets/templates/scout_sniper.webp",
-      "mentor": "kael",
+      "mentor": "salty",
       "abilityScores": {
         "str": 8,
         "dex": 16,
@@ -641,7 +641,7 @@
       "description": "A wilderness expert who excels at tracking and surviving the harshest conditions.",
       "quote": "The wilderness doesn't forgive mistakes. Neither do I.",
       "imagePath": "systems/swse/assets/templates/scout_survivalist.webp",
-      "mentor": "kota",
+      "mentor": "miraj",
       "abilityScores": {
         "str": 12,
         "dex": 14,
@@ -688,7 +688,7 @@
       "description": "A stealthy infiltrator specializing in reconnaissance and espionage operations.",
       "quote": "The best battles are the ones your enemy never knew you fought.",
       "imagePath": "systems/swse/assets/templates/scout_infiltrator.webp",
-      "mentor": "tasia",
+      "mentor": "lead",
       "abilityScores": {
         "str": 8,
         "dex": 16,
@@ -774,7 +774,7 @@
       "description": "A heavy weapons specialist focusing on area suppression and overwhelming firepower.",
       "quote": "More firepower solves most problems.",
       "imagePath": "systems/swse/assets/templates/soldier_gunner.webp",
-      "mentor": "break",
+      "mentor": "breach",
       "abilityScores": {
         "str": 14,
         "dex": 16,
@@ -815,7 +815,7 @@
       "description": "A powerful melee combatant dealing massive damage in close quarters combat.",
       "quote": "Let them feel the fury of my blade!",
       "imagePath": "systems/swse/assets/templates/soldier_brawler.webp",
-      "mentor": "break",
+      "mentor": "breach",
       "abilityScores": {
         "str": 16,
         "dex": 14,
@@ -855,7 +855,7 @@
       "description": "An armored defender designed to absorb massive amounts of damage and protect allies.",
       "quote": "Behind me, soldier. I'll handle this.",
       "imagePath": "systems/swse/assets/templates/soldier_tank.webp",
-      "mentor": "break",
+      "mentor": "breach",
       "abilityScores": {
         "str": 12,
         "dex": 14,
