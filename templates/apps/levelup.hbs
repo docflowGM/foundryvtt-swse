@@ -15,6 +15,44 @@
     </div>
   </header>
 
+  {{!-- PROGRESS INDICATOR --}}
+  <div class="progress-indicator">
+    <div class="progress-steps">
+      <div class="progress-step {{#if (eq currentStep 'class')}}active{{else if (stepCompleted 'class' currentStep)}}completed{{/if}}" data-step="class">
+        <div class="step-number">1</div>
+        <div class="step-label">Class</div>
+      </div>
+      {{#if showMulticlassBonus}}
+      <div class="progress-step {{#if (eq currentStep 'multiclass-bonus')}}active{{else if (stepCompleted 'multiclass-bonus' currentStep)}}completed{{/if}}" data-step="multiclass-bonus">
+        <div class="step-number">2</div>
+        <div class="step-label">Multiclass</div>
+      </div>
+      {{/if}}
+      {{#if getsAbilityIncrease}}
+      <div class="progress-step {{#if (eq currentStep 'ability-increase')}}active{{else if (stepCompleted 'ability-increase' currentStep)}}completed{{/if}}" data-step="ability-increase">
+        <div class="step-number">{{#if showMulticlassBonus}}3{{else}}2{{/if}}</div>
+        <div class="step-label">Abilities</div>
+      </div>
+      {{/if}}
+      {{#if getsBonusFeat}}
+      <div class="progress-step {{#if (eq currentStep 'feat')}}active{{else if (stepCompleted 'feat' currentStep)}}completed{{/if}}" data-step="feat">
+        <div class="step-number">•</div>
+        <div class="step-label">Feat</div>
+      </div>
+      {{/if}}
+      {{#if getsTalent}}
+      <div class="progress-step {{#if (eq currentStep 'talent')}}active{{else if (stepCompleted 'talent' currentStep)}}completed{{/if}}" data-step="talent">
+        <div class="step-number">•</div>
+        <div class="step-label">Talent</div>
+      </div>
+      {{/if}}
+      <div class="progress-step {{#if (eq currentStep 'summary')}}active{{/if}}" data-step="summary">
+        <div class="step-number">✓</div>
+        <div class="step-label">Summary</div>
+      </div>
+    </div>
+  </div>
+
   {{!-- MENTOR NARRATION PANEL --}}
   {{#if mentor}}
   <aside class="mentor-panel">

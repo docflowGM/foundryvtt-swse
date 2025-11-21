@@ -29,7 +29,8 @@ export async function getAvailableClasses(actor, pendingData) {
   for (const classDoc of allClasses) {
     const isBase = isBaseClass(classDoc.name) || classDoc.system.base_class === true;
 
-    if (meetsClassPrerequisites(classDoc, actor, pendingData)) {
+    // meetsClassPrerequisites is now async (loads from JSON)
+    if (await meetsClassPrerequisites(classDoc, actor, pendingData)) {
       availableClasses.push({
         id: classDoc._id,
         name: classDoc.name,

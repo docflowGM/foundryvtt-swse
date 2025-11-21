@@ -172,6 +172,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Free Build mode flag
     data.freeBuild = this.freeBuild;
 
+    // Progress indicator data
+    const currentClasses = getCharacterClasses(this.actor);
+    const isMulticlassing = this.selectedClass && Object.keys(currentClasses).length > 0 && !currentClasses[this.selectedClass.name];
+    const isBase = this.selectedClass && isBaseClass(this.selectedClass.name);
+
+    data.showMulticlassBonus = isMulticlassing && isBase;
+    data.getsTalent = this.selectedClass && getsTalent(this.selectedClass, this.actor);
+
     return data;
   }
 
