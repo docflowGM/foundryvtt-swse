@@ -118,7 +118,7 @@ export class SWSECombat {
   }
 
   /**
-   * Roll Full Attack (multiple attacks with penalties)
+   * Roll Full Attack (multiple attacks with SWSE feat system)
    * @param {Actor} attacker - The attacking actor
    * @param {Item} weapon - The weapon being used
    * @param {Actor} target - The target actor
@@ -126,28 +126,54 @@ export class SWSECombat {
    * @returns {Promise<Object>} Full attack result
    */
   static async rollFullAttack(attacker, weapon, target = null, options = {}) {
-    const bab = attacker.system.baseAttack || attacker.system.bab || 0;
+    // Check for Double Attack and Triple Attack feats
+    const weaponGroup = weapon.system?.weaponGroup || weapon.name.toLowerCase();
 
-    // Determine number of attacks based on BAB
-    const attacks = [];
-    let currentBAB = bab;
+    // Find Double Attack feat for this weapon
+    const doubleAttackFeat = attacker.items.find(i =>
+      i.type === 'feat' &&
+      i.name.toLowerCase().includes('double attack') &&
+      (i.system?.appliesTo?.toLowerCase().includes(weaponGroup) ||
+       i.system?.weaponGroup?.toLowerCase().includes(weaponGroup) ||
+       i.name.toLowerCase().includes(weaponGroup))
+    );
 
-    while (currentBAB > 0) {
-      attacks.push(currentBAB);
-      currentBAB -= 5;
+    // Find Triple Attack feat for this weapon
+    const tripleAttackFeat = attacker.items.find(i =>
+      i.type === 'feat' &&
+      i.name.toLowerCase().includes('triple attack') &&
+      (i.system?.appliesTo?.toLowerCase().includes(weaponGroup) ||
+       i.system?.weaponGroup?.toLowerCase().includes(weaponGroup) ||
+       i.name.toLowerCase().includes(weaponGroup))
+    );
+
+    // Determine number of attacks and penalty
+    let numAttacks = 1; // Default: Full Attack action = 1 attack
+    let attackPenalty = 0;
+
+    if (tripleAttackFeat && doubleAttackFeat) {
+      // Triple Attack requires Double Attack
+      numAttacks = 3;
+      attackPenalty = -10; // -5 from Double Attack + -5 from Triple Attack
+    } else if (doubleAttackFeat) {
+      numAttacks = 2;
+      attackPenalty = -5;
     }
 
-    // Minimum 1 attack
-    if (attacks.length === 0) attacks.push(0);
+    // Notify if no multiple attack feats
+    if (numAttacks === 1) {
+      ui.notifications.info(`${attacker.name} has no Double Attack or Triple Attack feat for ${weapon.name}. Full Attack = 1 attack.`);
+    }
 
     const results = [];
 
-    // Roll each attack
-    for (let i = 0; i < attacks.length; i++) {
+    // Roll each attack with the penalty applied
+    for (let i = 0; i < numAttacks; i++) {
       const attackOptions = {
         ...options,
-        babOverride: attacks[i],
+        multipleAttackPenalty: attackPenalty,
         attackNumber: i + 1,
+        totalAttacks: numAttacks,
         isFullAttack: true
       };
 
@@ -155,14 +181,17 @@ export class SWSECombat {
       results.push(attackResult);
 
       // Brief delay between attacks for visual clarity
-      if (i < attacks.length - 1) {
+      if (i < numAttacks - 1) {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
 
     return {
       attacks: results,
-      totalAttacks: attacks.length,
+      totalAttacks: numAttacks,
+      attackPenalty,
+      hasDoubleAttack: !!doubleAttackFeat,
+      hasTripleAttack: !!tripleAttackFeat,
       isFullAttack: true
     };
   }
@@ -337,9 +366,9 @@ export class SWSECombat {
   static _calculateAttackBonus(attacker, weapon, target, options = {}) {
     const system = attacker.system;
     const weaponData = weapon.system;
-    const { attackerToken, targetToken, babOverride, fightingDefensively, totalDefense } = options;
+    const { attackerToken, targetToken, babOverride, fightingDefensively, totalDefense, multipleAttackPenalty } = options;
 
-    // Base attack bonus (can be overridden for Full Attack)
+    // Base attack bonus
     const bab = babOverride !== undefined ? babOverride : (system.baseAttack || system.bab || 0);
 
     // Ability modifier
@@ -432,10 +461,13 @@ export class SWSECombat {
     // Total Defense (no attacks allowed, but included for completeness)
     const totalDefensePenalty = totalDefense ? -100 : 0;
 
+    // Multiple Attack Penalty (from Double Attack / Triple Attack feats)
+    const multiAttackPenalty = multipleAttackPenalty || 0;
+
     // Total bonus
     const bonus = bab + abilityMod + sizeMod + rangePenalty + misc + focusBonus +
                   pointBlankBonus + flankingBonus + firingIntoMeleePenalty +
-                  fightingDefensivelyPenalty + totalDefensePenalty - conditionPenalty;
+                  fightingDefensivelyPenalty + totalDefensePenalty + multiAttackPenalty - conditionPenalty;
 
     return {
       bonus,
@@ -450,6 +482,7 @@ export class SWSECombat {
         flankingBonus,
         firingIntoMeleePenalty,
         fightingDefensivelyPenalty,
+        multipleAttackPenalty: multiAttackPenalty,
         conditionPenalty
       },
       modifiers: {
@@ -660,6 +693,7 @@ export class SWSECombat {
           ${breakdown.flankingBonus !== 0 ? `, Flanking +${breakdown.flankingBonus}` : ''}
           ${breakdown.firingIntoMeleePenalty !== 0 ? `, Firing into Melee ${breakdown.firingIntoMeleePenalty}` : ''}
           ${breakdown.fightingDefensivelyPenalty !== 0 ? `, Fighting Defensively ${breakdown.fightingDefensivelyPenalty}` : ''}
+          ${breakdown.multipleAttackPenalty !== 0 ? `, Multiple Attacks ${breakdown.multipleAttackPenalty}` : ''}
           ${breakdown.conditionPenalty !== 0 ? `, Condition -${breakdown.conditionPenalty}` : ''}
           ${modifiers.distance ? `, Distance ${Math.round(modifiers.distance)}ft` : ''}
         </div>
