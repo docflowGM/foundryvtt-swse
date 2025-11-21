@@ -18,6 +18,8 @@ export async function loadFeats(actor, selectedClass, pendingData) {
   try {
     const featPack = game.packs.get('swse.feats');
     if (!featPack) {
+      SWSELogger.error("SWSE LevelUp | Feats compendium pack not found!");
+      ui.notifications.error("Failed to load feats compendium. Feats will not be available.");
       return [];
     }
 
@@ -60,6 +62,7 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     return filteredFeats;
   } catch (err) {
     SWSELogger.error("SWSE LevelUp | Failed to load feats:", err);
+    ui.notifications.error("Failed to load feats. Check the console for details.");
     return [];
   }
 }

@@ -7,25 +7,32 @@ import { SWSELogger } from '../../utils/logger.js';
 
 /**
  * Select a multiclass bonus skill
- * @param {string} skillName - The skill name
- * @returns {string} The selected skill name
+ * @param {string} skillKey - The skill key (e.g., "perception", "useTheForce")
+ * @param {string} skillName - The skill display name (optional, defaults to skillKey)
+ * @returns {Object} Object with key and name properties
  */
-export function selectMulticlassSkill(skillName) {
-  SWSELogger.log(`SWSE LevelUp | Selected multiclass skill: ${skillName}`);
-  return skillName;
+export function selectMulticlassSkill(skillKey, skillName = null) {
+  const skill = {
+    key: skillKey,
+    name: skillName || skillKey
+  };
+  SWSELogger.log(`SWSE LevelUp | Selected multiclass skill:`, skill);
+  return skill;
 }
 
 /**
  * Apply trained skills to actor
  * @param {Actor} actor - The actor
- * @param {Array} selectedSkills - Array of skill names to train
+ * @param {Array} selectedSkills - Array of skill objects {key, name} or skill key strings
  */
 export async function applyTrainedSkills(actor, selectedSkills) {
   if (!selectedSkills || selectedSkills.length === 0) return;
 
   const updates = {};
   selectedSkills.forEach(skill => {
-    updates[`system.skills.${skill}.trained`] = true;
+    // Support both object format {key, name} and string format (backward compatibility)
+    const skillKey = typeof skill === 'string' ? skill : skill.key;
+    updates[`system.skills.${skillKey}.trained`] = true;
   });
 
   await actor.update(updates);

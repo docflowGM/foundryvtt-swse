@@ -12,9 +12,20 @@ export async function _onSelectFeat(event) {
   const id = event.currentTarget.dataset.featid;
   const feat = this._packs.feats.find(f => f._id === id || f.name === id);
 
-  if (feat && !this.characterData.feats.find(f => f.name === feat.name)) {
-    this.characterData.feats.push(feat);
+  if (!feat) {
+    ui.notifications.warn("Feat not found!");
+    return;
   }
+
+  // Check for duplicates
+  const alreadySelected = this.characterData.feats.find(f => f.name === feat.name || f._id === feat._id);
+  if (alreadySelected) {
+    ui.notifications.warn(`You've already selected "${feat.name}"!`);
+    return;
+  }
+
+  this.characterData.feats.push(feat);
+  ui.notifications.info(`Selected feat: ${feat.name}`);
 
   // Re-render to show updated feat selection and enable Next button if requirement met
   await this.render();
@@ -38,9 +49,20 @@ export async function _onSelectTalent(event) {
   const id = event.currentTarget.dataset.talentid;
   const tal = this._packs.talents.find(t => t._id === id || t.name === id);
 
-  if (tal && !this.characterData.talents.find(t => t.name === tal.name)) {
-    this.characterData.talents.push(tal);
+  if (!tal) {
+    ui.notifications.warn("Talent not found!");
+    return;
   }
+
+  // Check for duplicates
+  const alreadySelected = this.characterData.talents.find(t => t.name === tal.name || t._id === tal._id);
+  if (alreadySelected) {
+    ui.notifications.warn(`You've already selected "${tal.name}"!`);
+    return;
+  }
+
+  this.characterData.talents.push(tal);
+  ui.notifications.info(`Selected talent: ${tal.name}`);
 
   await this._onNextStep(event);
 }

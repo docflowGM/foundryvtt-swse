@@ -16,7 +16,11 @@ import { meetsClassPrerequisites } from './levelup-validation.js';
  */
 export async function getAvailableClasses(actor, pendingData) {
   const classPack = game.packs.get('swse.classes');
-  if (!classPack) return [];
+  if (!classPack) {
+    SWSELogger.error("SWSE LevelUp | Classes compendium pack not found!");
+    ui.notifications.error("Failed to load classes compendium. Classes will not be available.");
+    return [];
+  }
 
   const allClasses = await classPack.getDocuments();
   const availableClasses = [];
@@ -47,7 +51,8 @@ export async function getAvailableClasses(actor, pendingData) {
 export async function getAvailableSpecies() {
   const speciesPack = game.packs.get('swse.species');
   if (!speciesPack) {
-    SWSELogger.warn('SWSE LevelUp | Species compendium not found!');
+    SWSELogger.error('SWSE LevelUp | Species compendium not found!');
+    ui.notifications.error("Failed to load species compendium. Species will not be available.");
     return [];
   }
 
