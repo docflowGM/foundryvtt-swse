@@ -1,4 +1,4 @@
-import { SWSELogger } from './logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 /**
  * Combat Actions Mapper
  * Maps combat actions and extra skill uses to skills for display on character sheets

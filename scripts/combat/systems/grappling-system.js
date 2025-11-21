@@ -1,4 +1,4 @@
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 /**
  * Grappling System for SWSE
  * Implements the complete grappling subsystem including:

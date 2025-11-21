@@ -1,5 +1,5 @@
-import { SWSELogger } from '../utils/logger.js';
-import { DamageSystem } from '../combat/damage-system.js';
+import { SWSELogger } from '../../utils/logger.js';
+import { DamageSystem } from '../damage-system.js';
 
 /**
  * Enhanced Roll System for SWSE

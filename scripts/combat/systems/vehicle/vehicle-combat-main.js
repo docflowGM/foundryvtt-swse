@@ -13,7 +13,7 @@
  * - Two combat scales (Character Scale vs Starship Scale)
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 import { getDefaultGunner, getDefaultPilot, getTargetReflexDefense, getVehicleDamageThreshold, CONDITION_TRACK_LABELS } from './vehicle-shared.js';
 import { calculateAttackBonus, calculateDamage } from './vehicle-calculations.js';
 import * as Dogfighting from './vehicle-dogfighting.js';
