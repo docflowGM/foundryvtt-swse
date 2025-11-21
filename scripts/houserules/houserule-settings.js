@@ -231,18 +231,19 @@ export function registerHouseruleSettings() {
     default: "swse"
   });
 
-  game.settings.register("swse", "weaponRangeMultiplier", {
-    name: "Weapon Range Multiplier",
-    hint: "Multiplier applied to all weapon ranges",
+  game.settings.register("swse", "weaponRangeReduction", {
+    name: "Weapon Range Reduction",
+    hint: "Reduce all weapon ranges by a percentage for closer combat",
     scope: "world",
     config: true,
-    type: Number,
-    default: 1.0,
-    range: {
-      min: 0.25,
-      max: 2.0,
-      step: 0.25
-    }
+    type: String,
+    choices: {
+      "none": "0% - Default Ranges",
+      "quarter": "25% - Reduced Ranges",
+      "half": "50% - Half Ranges",
+      "threequarter": "75% - Very Short Ranges"
+    },
+    default: "none"
   });
 
   // ============================================
@@ -364,6 +365,15 @@ export function registerHouseruleSettings() {
   game.settings.register("swse", "weaponFinesseDefault", {
     name: "Default Weapon Finesse",
     hint: "All characters automatically have Weapon Finesse",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register("swse", "pointBlankShotDefault", {
+    name: "Default Point Blank Shot",
+    hint: "All characters automatically have Point Blank Shot feat (+1 to attack and damage within weapon's point-blank range)",
     scope: "world",
     config: true,
     type: Boolean,

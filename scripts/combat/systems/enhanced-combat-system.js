@@ -412,10 +412,12 @@ export class SWSECombat {
           rangePenalty = 0;
 
           // Point Blank Shot feat applies within point-blank range
-          const hasPointBlankShot = attacker.items.find(i =>
+          const hasPointBlankShotFeat = attacker.items.find(i =>
             i.type === 'feat' && i.name.toLowerCase().includes('point blank shot')
           );
-          if (hasPointBlankShot) {
+          const pointBlankShotDefault = game.settings.get('swse', 'pointBlankShotDefault');
+
+          if (hasPointBlankShotFeat || pointBlankShotDefault) {
             pointBlankBonus = 1;
           }
         } else if (squares <= ranges.short) {
@@ -545,8 +547,21 @@ export class SWSECombat {
     // Specialization bonus
     const specializationBonus = weaponData.specialization ? 2 : 0;
 
+    // Point Blank Shot bonus (if within point-blank range)
+    let pointBlankDamageBonus = 0;
+    if (options.isPointBlank) {
+      const hasPointBlankShotFeat = attacker.items.find(i =>
+        i.type === 'feat' && i.name.toLowerCase().includes('point blank shot')
+      );
+      const pointBlankShotDefault = game.settings.get('swse', 'pointBlankShotDefault');
+
+      if (hasPointBlankShotFeat || pointBlankShotDefault) {
+        pointBlankDamageBonus = 1;
+      }
+    }
+
     // Total modifier (includes half heroic level per official rules)
-    const totalMod = halfHeroicLevel + abilityMod + misc + specializationBonus;
+    const totalMod = halfHeroicLevel + abilityMod + misc + specializationBonus + pointBlankDamageBonus;
 
     // Build formula
     const formula = totalMod !== 0 ? `${baseDamage} + ${totalMod}` : baseDamage;
@@ -559,6 +574,7 @@ export class SWSECombat {
         abilityMod,
         misc,
         specializationBonus,
+        pointBlankDamageBonus,
         isCrit
       }
     };
@@ -635,68 +651,92 @@ export class SWSECombat {
   static _getWeaponRanges(weapon) {
     const weaponData = weapon.system;
 
+    let ranges = null;
+
     // Check if weapon has custom ranges defined
     if (weaponData.ranges) {
-      return {
+      ranges = {
         pointBlank: weaponData.ranges.pointBlank || weaponData.ranges.pointblank || 0,
         short: weaponData.ranges.short || 0,
         medium: weaponData.ranges.medium || 0,
         long: weaponData.ranges.long || 0
       };
-    }
+    } else {
+      // Determine weapon type and apply SWSE standard ranges
+      const weaponType = (weaponData.weaponType || weaponData.type || '').toLowerCase();
+      const weaponGroup = (weaponData.weaponGroup || '').toLowerCase();
+      const weaponName = weapon.name.toLowerCase();
 
-    // Determine weapon type and apply SWSE standard ranges
-    const weaponType = (weaponData.weaponType || weaponData.type || '').toLowerCase();
-    const weaponGroup = (weaponData.weaponGroup || '').toLowerCase();
-    const weaponName = weapon.name.toLowerCase();
+      // SWSE Range Categories (Core Rulebook p.150)
+      // All ranges in squares (1 square = 5 feet)
 
-    // SWSE Range Categories (Core Rulebook p.150)
-    // All ranges in squares (1 square = 5 feet)
-
-    // Heavy Weapons: 0-50 / 51-100 / 101-250 / 251-500 squares
-    if (weaponType.includes('heavy') || weaponGroup.includes('heavy') ||
-        weaponName.includes('heavy repeating')) {
-      return { pointBlank: 50, short: 100, medium: 250, long: 500 };
-    }
-
-    // Rifles: 0-30 / 31-60 / 61-150 / 151-300 squares
-    if (weaponType.includes('rifle') || weaponGroup.includes('rifle') ||
-        weaponName.includes('rifle') || weaponName.includes('carbine') ||
-        weaponName.includes('sniper')) {
-      return { pointBlank: 30, short: 60, medium: 150, long: 300 };
-    }
-
-    // Pistols: 0-20 / 21-40 / 41-60 / 61-80 squares
-    if (weaponType.includes('pistol') || weaponGroup.includes('pistol') ||
-        weaponName.includes('pistol') || weaponName.includes('blaster pistol') ||
-        weaponName.includes('hold-out')) {
-      return { pointBlank: 20, short: 40, medium: 60, long: 80 };
-    }
-
-    // Thrown Weapons: 0-6 / 7-8 / 9-10 / 11-12 squares
-    if (weaponType.includes('thrown') || weaponGroup.includes('thrown') ||
-        weaponName.includes('grenade') || weaponName.includes('thermal detonator') ||
-        weaponName.includes('thrown')) {
-      return { pointBlank: 6, short: 8, medium: 10, long: 12 };
-    }
-
-    // Simple Weapons (ranged): 0-20 / 21-40 / 41-60 / 61-80 squares
-    if (weaponGroup.includes('simple') && (weaponData.ranged || weaponType.includes('ranged'))) {
-      return { pointBlank: 20, short: 40, medium: 60, long: 80 };
-    }
-
-    // Bows/Crossbows (not standard SWSE but might be in game): same as simple ranged
-    if (weaponName.includes('bow') || weaponName.includes('crossbow')) {
-      return { pointBlank: 20, short: 40, medium: 60, long: 80 };
-    }
-
-    // Default: if marked as ranged but type unknown, use pistol ranges
-    if (weaponData.ranged || weaponType.includes('ranged')) {
-      return { pointBlank: 20, short: 40, medium: 60, long: 80 };
+      // Heavy Weapons: 0-50 / 51-100 / 101-250 / 251-500 squares
+      if (weaponType.includes('heavy') || weaponGroup.includes('heavy') ||
+          weaponName.includes('heavy repeating')) {
+        ranges = { pointBlank: 50, short: 100, medium: 250, long: 500 };
+      }
+      // Rifles: 0-30 / 31-60 / 61-150 / 151-300 squares
+      else if (weaponType.includes('rifle') || weaponGroup.includes('rifle') ||
+          weaponName.includes('rifle') || weaponName.includes('carbine') ||
+          weaponName.includes('sniper')) {
+        ranges = { pointBlank: 30, short: 60, medium: 150, long: 300 };
+      }
+      // Pistols: 0-20 / 21-40 / 41-60 / 61-80 squares
+      else if (weaponType.includes('pistol') || weaponGroup.includes('pistol') ||
+          weaponName.includes('pistol') || weaponName.includes('blaster pistol') ||
+          weaponName.includes('hold-out')) {
+        ranges = { pointBlank: 20, short: 40, medium: 60, long: 80 };
+      }
+      // Thrown Weapons: 0-6 / 7-8 / 9-10 / 11-12 squares
+      else if (weaponType.includes('thrown') || weaponGroup.includes('thrown') ||
+          weaponName.includes('grenade') || weaponName.includes('thermal detonator') ||
+          weaponName.includes('thrown')) {
+        ranges = { pointBlank: 6, short: 8, medium: 10, long: 12 };
+      }
+      // Simple Weapons (ranged): 0-20 / 21-40 / 41-60 / 61-80 squares
+      else if (weaponGroup.includes('simple') && (weaponData.ranged || weaponType.includes('ranged'))) {
+        ranges = { pointBlank: 20, short: 40, medium: 60, long: 80 };
+      }
+      // Bows/Crossbows (not standard SWSE but might be in game): same as simple ranged
+      else if (weaponName.includes('bow') || weaponName.includes('crossbow')) {
+        ranges = { pointBlank: 20, short: 40, medium: 60, long: 80 };
+      }
+      // Default: if marked as ranged but type unknown, use pistol ranges
+      else if (weaponData.ranged || weaponType.includes('ranged')) {
+        ranges = { pointBlank: 20, short: 40, medium: 60, long: 80 };
+      }
     }
 
     // Melee weapons have no range
-    return null;
+    if (!ranges) return null;
+
+    // Apply house rule range reduction multiplier
+    const rangeReduction = game.settings.get('swse', 'weaponRangeReduction');
+    let multiplier = 1.0;
+
+    switch (rangeReduction) {
+      case 'threequarter': // 75% reduction
+        multiplier = 0.25;
+        break;
+      case 'half': // 50% reduction
+        multiplier = 0.5;
+        break;
+      case 'quarter': // 25% reduction
+        multiplier = 0.75;
+        break;
+      case 'none': // No reduction (default)
+      default:
+        multiplier = 1.0;
+        break;
+    }
+
+    // Apply multiplier to all range bands and round to nearest square
+    return {
+      pointBlank: Math.round(ranges.pointBlank * multiplier),
+      short: Math.round(ranges.short * multiplier),
+      medium: Math.round(ranges.medium * multiplier),
+      long: Math.round(ranges.long * multiplier)
+    };
   }
 
   /**
@@ -808,7 +848,7 @@ export class SWSECombat {
       if (hits && !concealmentMiss) {
         content += `
           <div class="roll-damage-btn">
-            <button class="swse-btn" data-action="rollDamage" data-attacker-id="${attacker.id}" data-weapon-id="${weapon.id}" data-target-id="${target.id}" ${critConfirmed ? 'data-is-crit="true"' : ''}>
+            <button class="swse-btn" data-action="rollDamage" data-attacker-id="${attacker.id}" data-weapon-id="${weapon.id}" data-target-id="${target.id}" ${critConfirmed ? 'data-is-crit="true"' : ''} ${modifiers.isPointBlank ? 'data-is-point-blank="true"' : ''}>
               <i class="fas fa-dice-d20"></i> Roll Damage ${critConfirmed ? '(CRITICAL!)' : ''}
             </button>
           </div>
@@ -915,13 +955,14 @@ export class SWSECombat {
         const weaponId = button.dataset.weaponId;
         const targetId = button.dataset.targetId;
         const isCrit = button.dataset.isCrit === 'true';
+        const isPointBlank = button.dataset.isPointBlank === 'true';
 
         const attacker = game.actors.get(attackerId);
         const weapon = attacker.items.get(weaponId);
         const target = game.actors.get(targetId);
 
         if (attacker && weapon) {
-          await this.rollDamage(attacker, weapon, target, { isCrit });
+          await this.rollDamage(attacker, weapon, target, { isCrit, isPointBlank });
         }
       });
     });
