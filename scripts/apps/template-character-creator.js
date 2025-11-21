@@ -1,30 +1,120 @@
 // ============================================
 // Template Character Creator
-// Standalone application for creating characters from templates
+// Class-first selection with playing card UI
 // ============================================
 
 import { SWSELogger } from '../utils/logger.js';
 import CharacterTemplates from './chargen/chargen-templates.js';
 
 /**
- * Creates a character directly from a template
+ * Creates a character from a template with class-first selection
  */
-export class TemplateCharacterCreator {
+export class TemplateCharacterCreator extends Application {
+
+  constructor(options = {}) {
+    super(options);
+    this.selectedClass = null;
+    this.mentorDialogues = null;
+  }
+
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      classes: ['swse', 'template-creator'],
+      template: 'systems/swse/templates/apps/template-creator.hbs',
+      width: 1000,
+      height: 700,
+      title: 'Character Template Creator',
+      resizable: true
+    });
+  }
+
+  async getData() {
+    const data = await super.getData();
+
+    // Load mentor dialogues
+    if (!this.mentorDialogues) {
+      await this.loadMentorDialogues();
+    }
+
+    data.selectedClass = this.selectedClass;
+
+    // Get templates for selected class
+    if (this.selectedClass) {
+      const allTemplates = await CharacterTemplates.getTemplates();
+      data.templates = allTemplates.filter(t => t.class === this.selectedClass);
+    }
+
+    // Get available classes
+    data.classes = [
+      { name: 'Jedi', icon: 'fa-jedi', description: 'Force-wielding guardians of peace and justice' },
+      { name: 'Noble', icon: 'fa-crown', description: 'Leaders, diplomats, and aristocrats of influence' },
+      { name: 'Scoundrel', icon: 'fa-mask', description: 'Rogues, smugglers, and fortune seekers' },
+      { name: 'Scout', icon: 'fa-binoculars', description: 'Explorers, trackers, and wilderness experts' },
+      { name: 'Soldier', icon: 'fa-shield-alt', description: 'Warriors, tacticians, and military specialists' }
+    ];
+
+    return data;
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    // Class selection
+    html.find('.class-choice-btn').click(this._onSelectClass.bind(this));
+
+    // Template card selection
+    html.find('.template-card').click(this._onSelectTemplate.bind(this));
+
+    // Back button
+    html.find('.back-to-classes').click(this._onBackToClasses.bind(this));
+
+    // Custom build button
+    html.find('.custom-build-btn').click(this._onCustomBuild.bind(this));
+  }
 
   /**
-   * Show template selection and create character
+   * Handle class selection
    */
-  static async create() {
-    // Show template selection dialog
-    CharacterTemplates.showTemplateDialog(async (templateId) => {
-      if (!templateId) {
-        // User chose custom build - open regular chargen
-        ui.notifications.info('Opening custom character generator...');
-        const CharacterGenerator = (await import('./chargen.js')).default;
-        const chargen = new CharacterGenerator();
-        chargen.render(true);
-        return;
-      }
+  async _onSelectClass(event) {
+    event.preventDefault();
+    const className = event.currentTarget.dataset.class;
+
+    SWSELogger.log(`SWSE | Selected class: ${className}`);
+    this.selectedClass = className;
+
+    // Re-render to show templates
+    this.render();
+  }
+
+  /**
+   * Handle going back to class selection
+   */
+  async _onBackToClasses(event) {
+    event.preventDefault();
+    this.selectedClass = null;
+    this.render();
+  }
+
+  /**
+   * Handle template selection
+   */
+  async _onSelectTemplate(event) {
+    event.preventDefault();
+    const templateId = event.currentTarget.dataset.templateId;
+
+    SWSELogger.log(`SWSE | Selected template: ${templateId}`);
+
+    // Get the template
+    const template = await CharacterTemplates.getTemplate(templateId);
+    if (!template) {
+      ui.notifications.error('Template not found');
+      return;
+    }
+
+    // Show mentor dialogue before creating character
+    await this.showMentorDialogue(template, async () => {
+      // Close this dialog
+      this.close();
 
       // Create character from template
       await this.createFromTemplate(templateId);
@@ -32,10 +122,116 @@ export class TemplateCharacterCreator {
   }
 
   /**
-   * Create a character from a template
-   * @param {string} templateId - The template ID
+   * Show mentor dialogue
    */
-  static async createFromTemplate(templateId) {
+  async showMentorDialogue(template, onConfirm) {
+    const mentorKey = template.mentor;
+    const templateKey = template.id;
+
+    const mentor = this.mentorDialogues?.mentors?.[mentorKey];
+    const dialogue = mentor?.dialogues?.[templateKey];
+
+    if (!mentor || !dialogue) {
+      // No mentor dialogue, just proceed
+      SWSELogger.warn(`SWSE | No mentor dialogue found for ${mentorKey}/${templateKey}`);
+      onConfirm();
+      return;
+    }
+
+    // Build dialogue content
+    const content = `
+      <div class="mentor-dialogue-container">
+        <div class="mentor-header">
+          <div class="mentor-avatar" style="background-image: url('${mentor.avatar}')"></div>
+          <div class="mentor-info">
+            <h2>${mentor.name}</h2>
+            <p class="mentor-title">${mentor.title}</p>
+          </div>
+        </div>
+
+        <div class="mentor-speech">
+          <div class="speech-bubble greeting">
+            <p>${dialogue.greeting}</p>
+          </div>
+          <div class="speech-bubble confirmation">
+            <p>${dialogue.confirmation}</p>
+          </div>
+        </div>
+
+        <div class="template-summary">
+          <h3>${template.name} - ${template.archetype}</h3>
+          <p class="template-quote"><em>"${template.quote}"</em></p>
+          <p>${template.description}</p>
+        </div>
+      </div>
+    `;
+
+    // Show dialog
+    new Dialog({
+      title: `${template.name} - ${mentor.name}`,
+      content: content,
+      buttons: {
+        confirm: {
+          icon: '<i class="fas fa-check"></i>',
+          label: 'Create Character',
+          callback: onConfirm
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: 'Go Back'
+        }
+      },
+      default: 'confirm'
+    }, {
+      width: 600,
+      height: 500,
+      classes: ['swse', 'mentor-dialogue']
+    }).render(true);
+  }
+
+  /**
+   * Handle custom build
+   */
+  async _onCustomBuild(event) {
+    event.preventDefault();
+
+    this.close();
+
+    // Open regular character generator
+    const CharacterGenerator = (await import('./chargen.js')).default;
+    const chargen = new CharacterGenerator();
+    chargen.render(true);
+  }
+
+  /**
+   * Load mentor dialogues
+   */
+  async loadMentorDialogues() {
+    try {
+      const response = await fetch('systems/swse/data/mentor-template-dialogues.json');
+      if (!response.ok) {
+        throw new Error(`Failed to load mentor dialogues: ${response.statusText}`);
+      }
+      this.mentorDialogues = await response.json();
+      SWSELogger.log('SWSE | Loaded mentor dialogues');
+    } catch (error) {
+      SWSELogger.error('SWSE | Failed to load mentor dialogues:', error);
+      this.mentorDialogues = { mentors: {} };
+    }
+  }
+
+  /**
+   * Static method to show the creator
+   */
+  static async create() {
+    const creator = new TemplateCharacterCreator();
+    creator.render(true);
+  }
+
+  /**
+   * Create a character from a template
+   */
+  async createFromTemplate(templateId) {
     const template = await CharacterTemplates.getTemplate(templateId);
 
     if (!template) {
@@ -77,7 +273,7 @@ export class TemplateCharacterCreator {
         abilityUpdates[`system.attributes.${ability}.base`] = value;
       }
 
-      // Apply species bonuses (this would need species data)
+      // Apply species bonuses
       await this._applySpeciesBonus(actor, template.species, abilityUpdates);
 
       // Update actor with abilities
@@ -108,7 +304,8 @@ export class TemplateCharacterCreator {
         archetype: template.archetype,
         description: template.description,
         notes: template.notes,
-        equipment: template.startingEquipment
+        equipment: template.startingEquipment,
+        quote: template.quote
       });
 
       // Open the character sheet
@@ -123,13 +320,16 @@ export class TemplateCharacterCreator {
             <h2 style="color: #4a90e2; margin-top: 0;">Character Successfully Created</h2>
             <p><strong>Template:</strong> ${template.name} (${template.class})</p>
             <p><strong>Archetype:</strong> ${template.archetype}</p>
+            <p class="template-quote" style="margin: 1rem 0; padding: 0.75rem; background: rgba(74, 144, 226, 0.1); border-left: 3px solid #4a90e2; font-style: italic;">
+              "${template.quote}"
+            </p>
             <p style="margin-top: 1rem;"><em>${template.description}</em></p>
 
             <h3 style="color: #4a90e2; margin-top: 1.5rem;">Starting Equipment</h3>
-            <p>${equipmentList}</p>
+            <p style="font-size: 0.9rem;">${equipmentList}</p>
 
             <div style="background: rgba(74, 144, 226, 0.1); padding: 0.75rem; border-radius: 4px; margin-top: 1rem; border-left: 3px solid #4a90e2;">
-              <strong>Note:</strong> ${template.notes}
+              <strong>Build Notes:</strong> ${template.notes}
             </div>
 
             <p style="margin-top: 1rem; color: #aaa; font-size: 0.9rem;">
@@ -139,6 +339,8 @@ export class TemplateCharacterCreator {
         `,
         label: 'Close',
         callback: () => {}
+      }, {
+        width: 600
       });
 
       SWSELogger.log(`SWSE | Character created successfully: ${name}`);
@@ -159,7 +361,7 @@ export class TemplateCharacterCreator {
         content: `
           <div style="padding: 1rem;">
             <p>Enter a name for your <strong>${templateName}</strong> character:</p>
-            <input type="text" id="character-name" name="character-name" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;" placeholder="Enter character name..." />
+            <input type="text" id="character-name" name="character-name" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; font-size: 1rem;" placeholder="Enter character name..." />
           </div>
         `,
         buttons: {

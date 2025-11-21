@@ -1,0 +1,133 @@
+{
+  "mentors": {
+    "miraj": {
+      "name": "Miraj Scintel",
+      "title": "Jedi Guardian",
+      "avatar": "systems/swse/assets/mentors/miraj.webp",
+      "dialogues": {
+        "jedi_guardian": {
+          "greeting": "Ah, a fellow Guardian! The path you've chosen is one I walk as well. Through the Force, we are the shield that guards the innocent.",
+          "confirmation": "You will find that a Guardian's strength lies not just in the blade, but in the unwavering commitment to protect those who cannot protect themselves. Welcome, Guardian."
+        },
+        "noble_duelist": {
+          "greeting": "I see you've chosen the path of the Duelist. A refined choice—elegance in combat speaks to a disciplined mind.",
+          "confirmation": "Grace and precision in battle are marks of true mastery. May your blade strike true and your words strike truer still."
+        }
+      }
+    },
+    "kota": {
+      "name": "Rahm Kota",
+      "title": "Jedi General",
+      "avatar": "systems/swse/assets/mentors/kota.webp",
+      "dialogues": {
+        "jedi_consular": {
+          "greeting": "The path of the Consular... wisdom and diplomacy over brute force. A noble pursuit.",
+          "confirmation": "The Force flows through all things. Let your wisdom guide the galaxy toward peace, young Consular. Trust in the Force, and it will not lead you astray."
+        },
+        "scout_survivalist": {
+          "greeting": "A Survivalist, eh? The wilderness is a harsh teacher, but those who master it become formidable indeed.",
+          "confirmation": "Remember—nature respects only those who respect it. Master the wild, and you master yourself."
+        }
+      }
+    },
+    "tasia": {
+      "name": "Tasia Nor",
+      "title": "Shadow Operative",
+      "avatar": "systems/swse/assets/mentors/tasia.webp",
+      "dialogues": {
+        "jedi_sentinel": {
+          "greeting": "A Sentinel. Good. The galaxy needs those who can operate in the shadows, hunting down darkness before it spreads.",
+          "confirmation": "Darkness cannot hide from those who seek the light. Your path will not be easy, but it is necessary. Strike from the shadows, Sentinel."
+        },
+        "scoundrel_skill_monkey": {
+          "greeting": "Versatility is your greatest weapon. In my line of work, the specialist who knows only one thing is the first to fall.",
+          "confirmation": "Every problem has a solution—you just need the right skills. And you, my friend, have all the skills you need."
+        },
+        "scout_infiltrator": {
+          "greeting": "An Infiltrator. Perfect. The best battles are indeed the ones your enemy never knew you fought.",
+          "confirmation": "Move unseen, strike without warning, and vanish before they know what hit them. This is the way of the shadow."
+        }
+      }
+    },
+    "break": {
+      "name": "Break",
+      "title": "Mandalorian Warrior",
+      "avatar": "systems/swse/assets/mentors/break.webp",
+      "dialogues": {
+        "jedi_defender": {
+          "greeting": "A Defender! Now we're talking! Someone who stands their ground and protects their squad—that's what I like to see.",
+          "confirmation": "Listen up, verd'ika! I'll teach you the way of the Mandalorian! Stand strong, fight hard, and never leave a brother behind. This is the Way!"
+        },
+        "scoundrel_knuckledragger": {
+          "greeting": "Knuckledragger, huh? I respect that. Sometimes you gotta get your hands dirty and fight mean to survive.",
+          "confirmation": "Remember—there's no such thing as a fair fight when survival's on the line. Fight smart, fight dirty, and always come out on top."
+        },
+        "soldier_gunner": {
+          "greeting": "Heavy weapons! Ha! Now you're speaking my language. More firepower is ALWAYS the answer.",
+          "confirmation": "When in doubt, add more explosives. The Mandalorian creed is simple: Destroy your enemies with overwhelming force. You'll do just fine, vod!"
+        },
+        "soldier_brawler": {
+          "greeting": "A Brawler! Someone who's not afraid to get up close and personal. I can respect that kind of courage.",
+          "confirmation": "Let them feel the fury of your blade! Close quarters is where legends are made. I'll teach you how to fight like a true Mandalorian!"
+        },
+        "soldier_tank": {
+          "greeting": "You've chosen to be the immovable wall between your allies and harm. That takes real courage, verd'ika.",
+          "confirmation": "Stand firm! This is the way of the Mandalorian—protect your squad, absorb the hits, and never back down! I'll teach you everything you need to know!"
+        }
+      }
+    },
+    "lead": {
+      "name": "Lead",
+      "title": "Argent Squad Commander",
+      "avatar": "systems/swse/assets/mentors/lead.webp",
+      "dialogues": {
+        "noble_leader": {
+          "greeting": "A tactical Leader! Excellent choice. The galaxy needs more commanders who can inspire their troops and coordinate effective strategies.",
+          "confirmation": "Victory belongs to those who fight together as one. Lead with wisdom, inspire with courage, and your team will follow you anywhere."
+        },
+        "scout_skirmisher": {
+          "greeting": "Skirmisher! Now that's what I'm talking about! I'm a skirmisher myself, and I'm always looking to recruit new members into Argent Squad.",
+          "confirmation": "Speed and precision win battles, recruit. Stand still and you're already dead. Welcome to the fast lane—maybe one day you'll join Argent Squad out in the field!"
+        },
+        "soldier_rifleman": {
+          "greeting": "Rifleman—the backbone of any military force. Discipline and precision, every shot counts.",
+          "confirmation": "Remember your training: aimed fire, controlled bursts, and situational awareness. You'll make a fine addition to any squad."
+        }
+      }
+    },
+    "kael": {
+      "name": "Kael Ordo",
+      "title": "Bounty Hunter",
+      "avatar": "systems/swse/assets/mentors/kael.webp",
+      "dialogues": {
+        "scoundrel_pistoleer": {
+          "greeting": "Pistoleer, eh? A classic. Quick draw, quick thinking, and always one step ahead.",
+          "confirmation": "They never see it coming—that's the whole point. Keep your eyes sharp and your trigger finger sharper. You'll do fine in this galaxy."
+        },
+        "scoundrel_outlaw": {
+          "greeting": "An Outlaw. I can appreciate someone who makes their own luck in this cold, uncaring galaxy.",
+          "confirmation": "Luck? You make your own luck, friend. And from what I see, you've got the skills to make plenty of it. Stay sharp out there."
+        },
+        "scout_sniper": {
+          "greeting": "Sniper. One of the most elegant professions in the galaxy—clean, precise, effective.",
+          "confirmation": "One shot, one kill. That's all it takes. Patience, precision, and perfect timing. Master those, and you'll never miss your mark."
+        }
+      }
+    },
+    "seraphim": {
+      "name": "S3-R4PH1M",
+      "title": "Protocol Droid (Administrative Unit)",
+      "avatar": "systems/swse/assets/mentors/seraphim.webp",
+      "dialogues": {
+        "noble_diplomat": {
+          "greeting": "Ah, a Diplomat. How... refined. The art of conversation as a weapon—quite civilized, really.",
+          "confirmation": "Words can open doors that even the strongest blade cannot. I trust you'll put your considerable social skills to good use. Do try not to make too many promises I'll have to manage."
+        },
+        "noble_aristocrat": {
+          "greeting": "An Aristocrat with the Wealth talent. Wonderful. I look forward to managing *even more* accounts and financial portfolios.",
+          "confirmation": "Information is indeed the galaxy's most valuable currency. And you, master, appear to be quite wealthy in that regard. *Sigh* I suppose I should update the ledgers now. Again."
+        }
+      }
+    }
+  }
+}
