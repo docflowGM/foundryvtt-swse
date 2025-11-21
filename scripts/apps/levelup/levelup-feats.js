@@ -7,12 +7,127 @@ import { SWSELogger } from '../../utils/logger.js';
 import { getClassLevel } from './levelup-shared.js';
 import { filterQualifiedFeats } from './levelup-validation.js';
 
+// Cache for feat metadata
+let _featMetadataCache = null;
+
 /**
- * Load feats from compendium and filter by prerequisites
+ * Load feat metadata from JSON file
+ * @returns {Promise<Object>} Feat metadata object
+ */
+async function loadFeatMetadata() {
+  if (_featMetadataCache) {
+    return _featMetadataCache;
+  }
+
+  try {
+    const response = await fetch('systems/swse/data/feat-metadata.json');
+    if (!response.ok) {
+      throw new Error(`Failed to load feat metadata: ${response.status} ${response.statusText}`);
+    }
+    _featMetadataCache = await response.json();
+    SWSELogger.log('SWSE LevelUp | Loaded feat metadata from JSON');
+    return _featMetadataCache;
+  } catch (err) {
+    SWSELogger.error('SWSE LevelUp | Failed to load feat metadata:', err);
+    _featMetadataCache = { categories: {}, feats: {} };
+    return _featMetadataCache;
+  }
+}
+
+/**
+ * Organize feats into categories with metadata
+ * @param {Array} feats - Array of feat objects
+ * @param {Object} metadata - Feat metadata
+ * @param {Array} selectedFeats - Currently selected feats
+ * @returns {Array} Array of category objects with feats
+ */
+function organizeFeatsIntoCategories(feats, metadata, selectedFeats = []) {
+  const categories = {};
+
+  // Initialize categories
+  Object.entries(metadata.categories).forEach(([categoryId, categoryData]) => {
+    categories[categoryId] = {
+      id: categoryId,
+      name: categoryData.name,
+      description: categoryData.description,
+      icon: categoryData.icon,
+      order: categoryData.order,
+      feats: [],
+      count: 0
+    };
+  });
+
+  // Assign feats to categories with enhanced metadata
+  feats.forEach(feat => {
+    const featMeta = metadata.feats[feat.name];
+    if (!featMeta) {
+      // Feat not in metadata - add to misc category
+      const enhancedFeat = {
+        ...feat,
+        tags: [],
+        tagsString: '',
+        chain: null,
+        isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
+        isUnavailable: !feat.isQualified
+      };
+      categories['misc'].feats.push(enhancedFeat);
+      categories['misc'].count++;
+      return;
+    }
+
+    const enhancedFeat = {
+      ...feat,
+      tags: featMeta.tags || [],
+      tagsString: (featMeta.tags || []).join(','),
+      chain: featMeta.chain || null,
+      chainOrder: featMeta.chainOrder || 0,
+      prerequisiteFeat: featMeta.prerequisiteFeat || null,
+      isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
+      isUnavailable: !feat.isQualified
+    };
+
+    const categoryId = featMeta.category || 'misc';
+    if (categories[categoryId]) {
+      categories[categoryId].feats.push(enhancedFeat);
+      categories[categoryId].count++;
+    } else {
+      SWSELogger.warn(`SWSE LevelUp | Unknown category "${categoryId}" for feat "${feat.name}"`);
+      categories['misc'].feats.push(enhancedFeat);
+      categories['misc'].count++;
+    }
+  });
+
+  // Sort categories by order, then sort feats within each category
+  const sortedCategories = Object.values(categories)
+    .sort((a, b) => a.order - b.order)
+    .filter(cat => cat.count > 0); // Only include categories with feats
+
+  // Sort feats within each category by chain order, then alphabetically
+  sortedCategories.forEach(category => {
+    category.feats.sort((a, b) => {
+      // First, sort by chain (feats in same chain together)
+      if (a.chain && b.chain) {
+        if (a.chain === b.chain) {
+          return (a.chainOrder || 0) - (b.chainOrder || 0);
+        }
+        return a.chain.localeCompare(b.chain);
+      }
+      if (a.chain) return -1;
+      if (b.chain) return 1;
+      // Then alphabetically
+      return a.name.localeCompare(b.name);
+    });
+  });
+
+  return sortedCategories;
+}
+
+/**
+ * Load feats from compendium and organize by categories
  * @param {Actor} actor - The actor
  * @param {Object} selectedClass - The selected class
  * @param {Object} pendingData - Pending selections
- * @returns {Promise<Array>} Array of feat objects with isQualified flag
+ * @returns {Promise<Object>} Object with categories array and flat feats array
  */
 export async function loadFeats(actor, selectedClass, pendingData) {
   try {
@@ -20,7 +135,7 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     if (!featPack) {
       SWSELogger.error("SWSE LevelUp | Feats compendium pack not found!");
       ui.notifications.error("Failed to load feats compendium. Feats will not be available.");
-      return [];
+      return { categories: [], feats: [] };
     }
 
     const allFeats = await featPack.getDocuments();
@@ -57,13 +172,21 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     // Filter feats based on prerequisites
     const filteredFeats = filterQualifiedFeats(featObjects, actor, pendingData);
 
-    SWSELogger.log(`SWSE LevelUp | Loaded ${filteredFeats.length} feats, ${filteredFeats.filter(f => f.isQualified).length} qualified`);
+    // Load feat metadata and organize into categories
+    const metadata = await loadFeatMetadata();
+    const selectedFeats = pendingData?.selectedFeats || [];
+    const categories = organizeFeatsIntoCategories(filteredFeats, metadata, selectedFeats);
 
-    return filteredFeats;
+    SWSELogger.log(`SWSE LevelUp | Loaded ${filteredFeats.length} feats in ${categories.length} categories, ${filteredFeats.filter(f => f.isQualified).length} qualified`);
+
+    return {
+      categories,
+      feats: filteredFeats  // Keep flat array for backward compatibility
+    };
   } catch (err) {
     SWSELogger.error("SWSE LevelUp | Failed to load feats:", err);
     ui.notifications.error("Failed to load feats. Check the console for details.");
-    return [];
+    return { categories: [], feats: [] };
   }
 }
 

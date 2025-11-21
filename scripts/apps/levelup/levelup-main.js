@@ -99,6 +99,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.hpGain = 0;
     this.talentData = null;
     this.featData = null;
+    this.activeTags = []; // Track active tag filters
     this.freeBuild = false; // Free Build mode - skips validation
 
     // Mentor system - initially use base class mentor, will update when class is selected
@@ -153,9 +154,10 @@ export class SWSELevelUpEnhanced extends FormApplication {
       // Load feats asynchronously if needed
       await this._loadFeats();
     }
-    // Only show feats the character qualifies for
-    data.availableFeats = (this.featData || []).filter(f => f.isQualified);
-    data.allFeats = this.featData || [];  // For debugging/info
+    // Pass categorized feats to template
+    data.featCategories = this.featData?.categories || [];
+    data.availableFeats = this.featData?.feats?.filter(f => f.isQualified) || [];
+    data.allFeats = this.featData?.feats || [];  // For debugging/info
     data.selectedFeats = this.selectedFeats;
 
     // Mentor data
@@ -230,6 +232,18 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     // Final level up
     html.find('.complete-levelup').click(this._onCompleteLevelUp.bind(this));
+
+    // Feat category toggle
+    html.find('.category-header').click(this._onToggleFeatCategory.bind(this));
+
+    // Feat search and filtering
+    html.find('.feat-search-input').on('input', this._onFeatSearch.bind(this));
+    html.find('.clear-search-btn').click(this._onClearSearch.bind(this));
+    html.find('.clear-filters-btn').click(this._onClearAllFilters.bind(this));
+    html.find('.show-unavailable-toggle').change(this._onToggleShowUnavailable.bind(this));
+
+    // Tag filtering
+    html.find('.feat-tag').click(this._onClickFeatTag.bind(this));
   }
 
   // ========================================
@@ -251,7 +265,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
     event.preventDefault();
     const featId = event.currentTarget.dataset.featId;
 
-    const feat = selectBonusFeat(featId, this.featData, this.selectedFeats);
+    const featData = this.featData?.feats || [];
+    const feat = selectBonusFeat(featId, featData, this.selectedFeats);
     if (!feat) return;
 
     // Check for duplicates - character already has this feat
@@ -277,6 +292,211 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.selectedFeats.push(feat);
     ui.notifications.info(`Selected feat: ${feat.name}`);
     await this.render();
+  }
+
+  // ========================================
+  // FEAT FILTERING AND SEARCH
+  // ========================================
+
+  _onToggleFeatCategory(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const categoryElement = $(event.currentTarget).closest('.feat-category');
+    const categoryFeats = categoryElement.find('.category-feats');
+
+    categoryElement.toggleClass('expanded');
+    categoryFeats.slideToggle(200);
+  }
+
+  _onFeatSearch(event) {
+    const searchTerm = event.target.value.toLowerCase().trim();
+    const html = $(this.element);
+    const clearBtn = html.find('.clear-search-btn');
+
+    // Show/hide clear button
+    clearBtn.toggle(searchTerm.length > 0);
+
+    // Get all feat cards
+    const featCards = html.find('.feat-card');
+
+    if (!searchTerm) {
+      // Show all feats if search is empty
+      featCards.show();
+      this._updateCategoryCounts(html);
+      return;
+    }
+
+    // Filter feats by name or tags
+    featCards.each((i, card) => {
+      const $card = $(card);
+      const featName = $card.data('feat-name')?.toLowerCase() || '';
+      const featTags = $card.data('feat-tags')?.toLowerCase() || '';
+
+      const matches = featName.includes(searchTerm) || featTags.includes(searchTerm);
+      $card.toggle(matches);
+    });
+
+    // Update category counts
+    this._updateCategoryCounts(html);
+
+    // Expand categories that have visible feats
+    html.find('.feat-category').each((i, category) => {
+      const $category = $(category);
+      const visibleFeats = $category.find('.feat-card:visible').length;
+      if (visibleFeats > 0 && searchTerm) {
+        $category.addClass('expanded');
+        $category.find('.category-feats').show();
+      }
+    });
+  }
+
+  _onClearSearch(event) {
+    event.preventDefault();
+    const html = $(this.element);
+    const searchInput = html.find('.feat-search-input');
+
+    searchInput.val('');
+    html.find('.clear-search-btn').hide();
+    html.find('.feat-card').show();
+
+    this._updateCategoryCounts(html);
+  }
+
+  _onClearAllFilters(event) {
+    event.preventDefault();
+    const html = $(this.element);
+
+    // Clear search
+    html.find('.feat-search-input').val('');
+    html.find('.clear-search-btn').hide();
+
+    // Clear active tags
+    this.activeTags = [];
+    html.find('.active-tag-filters').hide();
+    html.find('.active-tags-container').empty();
+
+    // Show all feats
+    html.find('.feat-card').show();
+
+    this._updateCategoryCounts(html);
+  }
+
+  _onToggleShowUnavailable(event) {
+    const html = $(this.element);
+    const showUnavailable = event.target.checked;
+
+    // CSS handles the visibility via the checkbox state
+    // Just need to update counts
+    this._updateCategoryCounts(html);
+  }
+
+  _onClickFeatTag(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const tag = $(event.currentTarget).data('tag');
+    if (!tag) return;
+
+    const html = $(this.element);
+
+    // Initialize active tags if needed
+    if (!this.activeTags) {
+      this.activeTags = [];
+    }
+
+    // Toggle tag
+    const tagIndex = this.activeTags.indexOf(tag);
+    if (tagIndex > -1) {
+      this.activeTags.splice(tagIndex, 1);
+    } else {
+      this.activeTags.push(tag);
+    }
+
+    // Update active tags display
+    this._updateActiveTagsDisplay(html);
+
+    // Filter feats by active tags
+    this._filterByActiveTags(html);
+  }
+
+  _updateActiveTagsDisplay(html) {
+    const activeFilters = html.find('.active-tag-filters');
+    const container = html.find('.active-tags-container');
+
+    if (!this.activeTags || this.activeTags.length === 0) {
+      activeFilters.hide();
+      container.empty();
+      return;
+    }
+
+    activeFilters.show();
+    container.empty();
+
+    this.activeTags.forEach(tag => {
+      const badge = $(`
+        <span class="active-tag-badge">
+          ${tag}
+          <i class="fas fa-times" data-remove-tag="${tag}"></i>
+        </span>
+      `);
+
+      badge.find('i').click((e) => {
+        e.preventDefault();
+        const tagToRemove = $(e.currentTarget).data('remove-tag');
+        const index = this.activeTags.indexOf(tagToRemove);
+        if (index > -1) {
+          this.activeTags.splice(index, 1);
+        }
+        this._updateActiveTagsDisplay(html);
+        this._filterByActiveTags(html);
+      });
+
+      container.append(badge);
+    });
+  }
+
+  _filterByActiveTags(html) {
+    if (!this.activeTags || this.activeTags.length === 0) {
+      // No active tags - show all feats
+      html.find('.feat-card').show();
+      this._updateCategoryCounts(html);
+      return;
+    }
+
+    // Filter feats: show only if they have ALL active tags
+    html.find('.feat-card').each((i, card) => {
+      const $card = $(card);
+      const featTags = ($card.data('feat-tags') || '').split(',').filter(t => t);
+
+      const hasAllTags = this.activeTags.every(activeTag =>
+        featTags.includes(activeTag)
+      );
+
+      $card.toggle(hasAllTags);
+    });
+
+    // Update category counts
+    this._updateCategoryCounts(html);
+
+    // Expand categories that have visible feats
+    html.find('.feat-category').each((i, category) => {
+      const $category = $(category);
+      const visibleFeats = $category.find('.feat-card:visible').length;
+      if (visibleFeats > 0) {
+        $category.addClass('expanded');
+        $category.find('.category-feats').show();
+      }
+    });
+  }
+
+  _updateCategoryCounts(html) {
+    html.find('.feat-category').each((i, category) => {
+      const $category = $(category);
+      const visibleCount = $category.find('.feat-card:visible').length;
+      const totalCount = $category.find('.feat-card').length;
+
+      $category.find('.count-badge').text(visibleCount === totalCount ? totalCount : `${visibleCount}/${totalCount}`);
+    });
   }
 
   // ========================================
