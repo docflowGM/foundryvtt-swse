@@ -1,0 +1,769 @@
+{
+  "categories": {
+    "combat-offense": {
+      "name": "Combat (Attack & Damage)",
+      "description": "Feats that improve your ability to hit enemies and deal damage",
+      "icon": "⚔️",
+      "order": 1
+    },
+    "combat-defense": {
+      "name": "Combat (Defense & Mobility)",
+      "description": "Feats that improve your defenses and battlefield movement",
+      "icon": "🛡️",
+      "order": 2
+    },
+    "force": {
+      "name": "Force",
+      "description": "Feats that enhance Force powers and Force-related abilities",
+      "icon": "✨",
+      "order": 3
+    },
+    "utility": {
+      "name": "Utility (Skills & Social)",
+      "description": "Feats that improve skills, social interactions, and versatility",
+      "icon": "🔧",
+      "order": 4
+    },
+    "recovery": {
+      "name": "Recovery (Survival & Resilience)",
+      "description": "Feats that improve survivability and saving throws",
+      "icon": "❤️",
+      "order": 5
+    },
+    "misc": {
+      "name": "Miscellaneous",
+      "description": "Special feats with unique effects",
+      "icon": "⭐",
+      "order": 6
+    }
+  },
+  "feats": {
+    "Weapon Focus": {
+      "category": "combat-offense",
+      "tags": ["weapon-mastery", "accuracy", "combat"],
+      "chain": "Weapon Focus Chain",
+      "chainOrder": 1
+    },
+    "Greater Weapon Focus": {
+      "category": "combat-offense",
+      "tags": ["weapon-mastery", "accuracy", "advanced"],
+      "chain": "Weapon Focus Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Weapon Focus"
+    },
+    "Weapon Specialization": {
+      "category": "combat-offense",
+      "tags": ["weapon-mastery", "damage", "combat"],
+      "chain": "Weapon Focus Chain",
+      "chainOrder": 3,
+      "prerequisiteFeat": "Weapon Focus"
+    },
+    "Greater Weapon Specialization": {
+      "category": "combat-offense",
+      "tags": ["weapon-mastery", "damage", "advanced"],
+      "chain": "Weapon Focus Chain",
+      "chainOrder": 4,
+      "prerequisiteFeat": "Weapon Specialization"
+    },
+    "Triple Crit": {
+      "category": "combat-offense",
+      "tags": ["critical", "damage", "combat"],
+      "chain": "Critical Hit Chain",
+      "chainOrder": 1
+    },
+    "Triple Crit Specialist": {
+      "category": "combat-offense",
+      "tags": ["critical", "damage", "advanced"],
+      "chain": "Critical Hit Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Triple Crit"
+    },
+    "Power Attack": {
+      "category": "combat-offense",
+      "tags": ["melee", "damage", "tradeoff"],
+      "chain": "Power Attack Chain",
+      "chainOrder": 1
+    },
+    "Hew": {
+      "category": "combat-offense",
+      "tags": ["melee", "penetration", "combat"],
+      "chain": "Power Attack Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Power Attack"
+    },
+    "Cleave": {
+      "category": "combat-offense",
+      "tags": ["melee", "multiattack", "combat"],
+      "chain": "Power Attack Chain",
+      "chainOrder": 3,
+      "prerequisiteFeat": "Power Attack"
+    },
+    "Bantha Rush": {
+      "category": "combat-offense",
+      "tags": ["melee", "maneuver", "combat"],
+      "chain": "Power Attack Chain",
+      "chainOrder": 4,
+      "prerequisiteFeat": "Power Attack"
+    },
+    "Two-Weapon Fighting": {
+      "category": "combat-offense",
+      "tags": ["dual-wield", "combat", "dexterity"],
+      "chain": "Two-Weapon Chain",
+      "chainOrder": 1
+    },
+    "Dual Weapon Mastery I": {
+      "category": "combat-offense",
+      "tags": ["dual-wield", "mastery", "combat"],
+      "chain": "Two-Weapon Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Two-Weapon Fighting"
+    },
+    "Dual Weapon Mastery II": {
+      "category": "combat-offense",
+      "tags": ["dual-wield", "mastery", "advanced"],
+      "chain": "Two-Weapon Chain",
+      "chainOrder": 3,
+      "prerequisiteFeat": "Dual Weapon Mastery I"
+    },
+    "Dual Weapon Mastery III": {
+      "category": "combat-offense",
+      "tags": ["dual-wield", "mastery", "expert"],
+      "chain": "Two-Weapon Chain",
+      "chainOrder": 4,
+      "prerequisiteFeat": "Dual Weapon Mastery II"
+    },
+    "Point Blank Shot": {
+      "category": "combat-offense",
+      "tags": ["ranged", "accuracy", "combat"],
+      "chain": "Ranged Attack Chain",
+      "chainOrder": 1
+    },
+    "Precise Shot": {
+      "category": "combat-offense",
+      "tags": ["ranged", "accuracy", "tactical"],
+      "chain": "Ranged Attack Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Point Blank Shot"
+    },
+    "Far Shot": {
+      "category": "combat-offense",
+      "tags": ["ranged", "range", "combat"],
+      "chain": "Ranged Attack Chain",
+      "chainOrder": 3,
+      "prerequisiteFeat": "Point Blank Shot"
+    },
+    "Deadeye": {
+      "category": "combat-offense",
+      "tags": ["ranged", "reroll", "combat"],
+      "chain": "Ranged Attack Chain",
+      "chainOrder": 4,
+      "prerequisiteFeat": "Point Blank Shot"
+    },
+    "Charging Fire": {
+      "category": "combat-offense",
+      "tags": ["ranged", "mobility", "combat"],
+      "chain": "Ranged Attack Chain",
+      "chainOrder": 5,
+      "prerequisiteFeat": "Point Blank Shot"
+    },
+    "Sniper": {
+      "category": "combat-offense",
+      "tags": ["ranged", "precision", "tactical"],
+      "chain": "Ranged Attack Chain",
+      "chainOrder": 6,
+      "prerequisiteFeat": "Point Blank Shot"
+    },
+    "Autofire Assault": {
+      "category": "combat-offense",
+      "tags": ["ranged", "autofire", "damage"],
+      "chain": "Ranged Attack Chain",
+      "chainOrder": 7,
+      "prerequisiteFeat": "Point Blank Shot"
+    },
+    "Friendly Fire Avoidance": {
+      "category": "combat-offense",
+      "tags": ["ranged", "autofire", "tactical"],
+      "chain": "Ranged Attack Chain",
+      "chainOrder": 8,
+      "prerequisiteFeat": "Point Blank Shot"
+    },
+    "Double Attack": {
+      "category": "combat-offense",
+      "tags": ["multiattack", "combat", "full-round"]
+    },
+    "Rapid Shot": {
+      "category": "combat-offense",
+      "tags": ["ranged", "multiattack", "combat"]
+    },
+    "Rapid Strike": {
+      "category": "combat-offense",
+      "tags": ["melee", "multiattack", "combat"]
+    },
+    "Disarm": {
+      "category": "combat-offense",
+      "tags": ["maneuver", "combat", "tactical"],
+      "chain": "Disarm Chain",
+      "chainOrder": 1
+    },
+    "Improved Disarm": {
+      "category": "combat-offense",
+      "tags": ["maneuver", "mastery", "tactical"],
+      "chain": "Disarm Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Disarm"
+    },
+    "Grapple": {
+      "category": "combat-offense",
+      "tags": ["maneuver", "combat", "control"],
+      "chain": "Grapple Chain",
+      "chainOrder": 1
+    },
+    "Improved Grapple": {
+      "category": "combat-offense",
+      "tags": ["maneuver", "mastery", "control"],
+      "chain": "Grapple Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Grapple"
+    },
+    "Pin": {
+      "category": "combat-offense",
+      "tags": ["maneuver", "control", "immobilize"],
+      "chain": "Grapple Chain",
+      "chainOrder": 3,
+      "prerequisiteFeat": "Grapple"
+    },
+    "Knock Prone": {
+      "category": "combat-offense",
+      "tags": ["maneuver", "combat", "tactical"],
+      "chain": "Knock Prone Chain",
+      "chainOrder": 1
+    },
+    "Improved Knock Prone": {
+      "category": "combat-offense",
+      "tags": ["maneuver", "mastery", "tactical"],
+      "chain": "Knock Prone Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Knock Prone"
+    },
+    "Stun": {
+      "category": "combat-offense",
+      "tags": ["maneuver", "combat", "nonlethal"],
+      "chain": "Stun Chain",
+      "chainOrder": 1
+    },
+    "Improved Stun": {
+      "category": "combat-offense",
+      "tags": ["maneuver", "mastery", "nonlethal"],
+      "chain": "Stun Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Stun"
+    },
+    "Acrobatic Strike": {
+      "category": "combat-offense",
+      "tags": ["mobility", "melee", "tactical"]
+    },
+    "Grappling Strike": {
+      "category": "combat-offense",
+      "tags": ["melee", "maneuver", "control"]
+    },
+    "Staggering Attack": {
+      "category": "combat-offense",
+      "tags": ["melee", "condition", "combat"]
+    },
+    "Stunning Strike": {
+      "category": "combat-offense",
+      "tags": ["melee", "condition", "combat"]
+    },
+    "Wounding Strike": {
+      "category": "combat-offense",
+      "tags": ["melee", "condition", "damage"]
+    },
+    "Assured Attack": {
+      "category": "combat-offense",
+      "tags": ["combat", "reroll", "accuracy"]
+    },
+    "Mighty Swing": {
+      "category": "combat-offense",
+      "tags": ["melee", "reroll", "combat"]
+    },
+    "Lucky Shot": {
+      "category": "combat-offense",
+      "tags": ["ranged", "reroll", "combat"]
+    },
+    "Savage Attack": {
+      "category": "combat-offense",
+      "tags": ["melee", "reroll", "damage"]
+    },
+    "Reckless Charge": {
+      "category": "combat-offense",
+      "tags": ["charge", "melee", "tradeoff"]
+    },
+    "Dodge": {
+      "category": "combat-defense",
+      "tags": ["defense", "reflex", "mobility"],
+      "chain": "Dodge Chain",
+      "chainOrder": 1
+    },
+    "Mobility": {
+      "category": "combat-defense",
+      "tags": ["defense", "mobility", "tactical"],
+      "chain": "Dodge Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Dodge"
+    },
+    "Spring Attack": {
+      "category": "combat-defense",
+      "tags": ["mobility", "melee", "tactical"],
+      "chain": "Dodge Chain",
+      "chainOrder": 3,
+      "prerequisiteFeat": "Mobility"
+    },
+    "Whirlwind Attack": {
+      "category": "combat-defense",
+      "tags": ["mobility", "multiattack", "area"],
+      "chain": "Dodge Chain",
+      "chainOrder": 4,
+      "prerequisiteFeat": "Spring Attack"
+    },
+    "Elusive Target": {
+      "category": "combat-defense",
+      "tags": ["defense", "redirect", "tactical"],
+      "chain": "Dodge Chain",
+      "chainOrder": 5,
+      "prerequisiteFeat": "Dodge"
+    },
+    "Burst of Speed": {
+      "category": "combat-defense",
+      "tags": ["mobility", "swift-action", "movement"]
+    },
+    "Mobile Fighting": {
+      "category": "combat-defense",
+      "tags": ["mobility", "defense", "tactical"]
+    },
+    "Hard Target": {
+      "category": "combat-defense",
+      "tags": ["mobility", "defense", "ranged"]
+    },
+    "Running Attack": {
+      "category": "combat-defense",
+      "tags": ["mobility", "attack", "tactical"]
+    },
+    "Melee Defense": {
+      "category": "combat-defense",
+      "tags": ["defense", "melee", "tradeoff"]
+    },
+    "Combat Reflexes": {
+      "category": "combat-defense",
+      "tags": ["defense", "reaction", "opportunity"]
+    },
+    "Harm's Way": {
+      "category": "combat-defense",
+      "tags": ["defense", "protection", "tactical"]
+    },
+    "Weapon Proficiency (Simple Weapons)": {
+      "category": "combat-defense",
+      "tags": ["proficiency", "basic", "combat"]
+    },
+    "Weapon Proficiency (Pistols)": {
+      "category": "combat-defense",
+      "tags": ["proficiency", "ranged", "combat"]
+    },
+    "Weapon Proficiency (Rifles)": {
+      "category": "combat-defense",
+      "tags": ["proficiency", "ranged", "combat"]
+    },
+    "Weapon Proficiency (Heavy Weapons)": {
+      "category": "combat-defense",
+      "tags": ["proficiency", "heavy", "combat"]
+    },
+    "Weapon Proficiency (Lightsabers)": {
+      "category": "combat-defense",
+      "tags": ["proficiency", "lightsaber", "force"]
+    },
+    "Advanced Melee Weapon Proficiency": {
+      "category": "combat-defense",
+      "tags": ["proficiency", "melee", "advanced"]
+    },
+    "Heavy Weapon Proficiency": {
+      "category": "combat-defense",
+      "tags": ["proficiency", "heavy", "combat"]
+    },
+    "Armor Proficiency (Light)": {
+      "category": "combat-defense",
+      "tags": ["proficiency", "armor", "defense"],
+      "chain": "Armor Proficiency Chain",
+      "chainOrder": 1
+    },
+    "Armor Proficiency (Medium)": {
+      "category": "combat-defense",
+      "tags": ["proficiency", "armor", "defense"],
+      "chain": "Armor Proficiency Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Armor Proficiency (Light)"
+    },
+    "Armor Proficiency (Heavy)": {
+      "category": "combat-defense",
+      "tags": ["proficiency", "armor", "defense"],
+      "chain": "Armor Proficiency Chain",
+      "chainOrder": 3,
+      "prerequisiteFeat": "Armor Proficiency (Medium)"
+    },
+    "Force Sensitivity": {
+      "category": "force",
+      "tags": ["force", "prerequisite", "core"],
+      "chain": "Core Force",
+      "chainOrder": 1
+    },
+    "Force Training": {
+      "category": "force",
+      "tags": ["force", "powers", "core"],
+      "chain": "Core Force",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Force Sensitivity"
+    },
+    "Force Boon": {
+      "category": "force",
+      "tags": ["force", "resource", "core"],
+      "chain": "Core Force",
+      "chainOrder": 3,
+      "prerequisiteFeat": "Force Sensitivity"
+    },
+    "Force Focus": {
+      "category": "force",
+      "tags": ["force", "power-boost", "specialization"]
+    },
+    "Block": {
+      "category": "force",
+      "tags": ["force", "defense", "melee"]
+    },
+    "Deflect": {
+      "category": "force",
+      "tags": ["force", "defense", "ranged"],
+      "chain": "Deflect Chain",
+      "chainOrder": 1
+    },
+    "Redirect Shot": {
+      "category": "force",
+      "tags": ["force", "defense", "counterattack"],
+      "chain": "Deflect Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Deflect"
+    },
+    "Saber Throw": {
+      "category": "force",
+      "tags": ["force", "lightsaber", "ranged"],
+      "chain": "Saber Throw Chain",
+      "chainOrder": 1
+    },
+    "Battle Strike": {
+      "category": "force",
+      "tags": ["force", "damage", "combat"]
+    },
+    "Force Grip": {
+      "category": "force",
+      "tags": ["force", "telekinesis", "control"],
+      "chain": "Force Grip Chain",
+      "chainOrder": 1
+    },
+    "Crush": {
+      "category": "force",
+      "tags": ["force", "damage", "advanced"],
+      "chain": "Force Grip Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Force Grip"
+    },
+    "Forceful Grip": {
+      "category": "force",
+      "tags": ["force", "power-boost", "mastery"],
+      "chain": "Force Grip Chain",
+      "chainOrder": 3,
+      "prerequisiteFeat": "Force Grip"
+    },
+    "Force Slam": {
+      "category": "force",
+      "tags": ["force", "telekinesis", "area"],
+      "chain": "Force Slam Chain",
+      "chainOrder": 1
+    },
+    "Forceful Blast": {
+      "category": "force",
+      "tags": ["force", "damage", "advanced"],
+      "chain": "Force Slam Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Force Slam"
+    },
+    "Forceful Slam": {
+      "category": "force",
+      "tags": ["force", "power-boost", "mastery"],
+      "chain": "Force Slam Chain",
+      "chainOrder": 3,
+      "prerequisiteFeat": "Force Slam"
+    },
+    "Force Stun": {
+      "category": "force",
+      "tags": ["force", "control", "nonlethal"],
+      "chain": "Force Stun Chain",
+      "chainOrder": 1
+    },
+    "Forceful Strike": {
+      "category": "force",
+      "tags": ["force", "condition", "advanced"],
+      "chain": "Force Stun Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Force Stun"
+    },
+    "Forceful Stun": {
+      "category": "force",
+      "tags": ["force", "power-boost", "mastery"],
+      "chain": "Force Stun Chain",
+      "chainOrder": 3,
+      "prerequisiteFeat": "Force Stun"
+    },
+    "Move Object": {
+      "category": "force",
+      "tags": ["force", "telekinesis", "utility"],
+      "chain": "Move Object Chain",
+      "chainOrder": 1
+    },
+    "Forceful Telekinesis": {
+      "category": "force",
+      "tags": ["force", "damage", "advanced"],
+      "chain": "Move Object Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Move Object"
+    },
+    "Forceful Throw": {
+      "category": "force",
+      "tags": ["force", "power-boost", "mastery"],
+      "chain": "Move Object Chain",
+      "chainOrder": 3,
+      "prerequisiteFeat": "Move Object"
+    },
+    "Battle Meditation": {
+      "category": "force",
+      "tags": ["force", "support", "tactical"]
+    },
+    "Forceful Vitality": {
+      "category": "force",
+      "tags": ["force", "endurance", "resilience"]
+    },
+    "Forceful Will": {
+      "category": "force",
+      "tags": ["force", "mental", "defense"]
+    },
+    "Forceful Recovery": {
+      "category": "force",
+      "tags": ["force", "recovery", "resilience"]
+    },
+    "Forceful Warrior": {
+      "category": "force",
+      "tags": ["force", "melee", "combat"]
+    },
+    "Forceful Weapon": {
+      "category": "force",
+      "tags": ["force", "power-boost", "combat"],
+      "prerequisiteFeat": "Battle Strike"
+    },
+    "Forceful Saber Throw": {
+      "category": "force",
+      "tags": ["force", "lightsaber", "mastery"],
+      "chain": "Saber Throw Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Saber Throw"
+    },
+    "Fast Surge": {
+      "category": "force",
+      "tags": ["force", "mobility", "swift-action"]
+    },
+    "Force Regimen Mastery": {
+      "category": "force",
+      "tags": ["force", "resource", "mastery"]
+    },
+    "Unstoppable Force": {
+      "category": "force",
+      "tags": ["force", "penetration", "power"]
+    },
+    "Intuitive Initiative": {
+      "category": "force",
+      "tags": ["force", "initiative", "tactical"]
+    },
+    "Keen Force Mind": {
+      "category": "force",
+      "tags": ["force", "mental", "power-boost"]
+    },
+    "Skill Focus": {
+      "category": "utility",
+      "tags": ["skill", "expertise", "specialization"]
+    },
+    "Skill Training": {
+      "category": "utility",
+      "tags": ["skill", "training", "versatility"]
+    },
+    "Educated": {
+      "category": "utility",
+      "tags": ["skill", "knowledge", "bonus"]
+    },
+    "Linguist": {
+      "category": "utility",
+      "tags": ["skill", "social", "languages"]
+    },
+    "Sharp-Eyed": {
+      "category": "utility",
+      "tags": ["skill", "perception", "awareness"]
+    },
+    "Fast Talk": {
+      "category": "utility",
+      "tags": ["social", "deception", "swift-action"]
+    },
+    "Intimidating Presence": {
+      "category": "utility",
+      "tags": ["social", "intimidate", "swift-action"]
+    },
+    "Trustworthy": {
+      "category": "utility",
+      "tags": ["social", "persuasion", "bonus"]
+    },
+    "Natural Leader": {
+      "category": "utility",
+      "tags": ["social", "leadership", "support"]
+    },
+    "Coordinated Attack": {
+      "category": "utility",
+      "tags": ["social", "teamwork", "combat"]
+    },
+    "Frightful Presence": {
+      "category": "utility",
+      "tags": ["social", "intimidate", "area"],
+      "chain": "Intimidation Chain",
+      "chainOrder": 1
+    },
+    "Frightening Presence": {
+      "category": "utility",
+      "tags": ["social", "intimidate", "advanced"],
+      "chain": "Intimidation Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Frightful Presence"
+    },
+    "Tech Specialist": {
+      "category": "utility",
+      "tags": ["technical", "mechanics", "modification"]
+    },
+    "Scavenger": {
+      "category": "utility",
+      "tags": ["technical", "mechanics", "utility"]
+    },
+    "Jack of All Trades": {
+      "category": "utility",
+      "tags": ["versatility", "skill", "utility"]
+    },
+    "Adaptable Talent": {
+      "category": "utility",
+      "tags": ["versatility", "talent", "temporary"]
+    },
+    "Resilient Talent": {
+      "category": "utility",
+      "tags": ["versatility", "talent", "temporary"]
+    },
+    "Toughness": {
+      "category": "recovery",
+      "tags": ["survival", "hit-points", "resilience"]
+    },
+    "Improved Damage Threshold": {
+      "category": "recovery",
+      "tags": ["survival", "threshold", "resilience"]
+    },
+    "Great Fortitude": {
+      "category": "recovery",
+      "tags": ["resilience", "fortitude", "defense"]
+    },
+    "Iron Will": {
+      "category": "recovery",
+      "tags": ["resilience", "will", "defense"]
+    },
+    "Lightning Reflexes": {
+      "category": "recovery",
+      "tags": ["resilience", "reflex", "defense"]
+    },
+    "Improved Defenses": {
+      "category": "recovery",
+      "tags": ["resilience", "defense", "all"]
+    },
+    "Conditioned": {
+      "category": "recovery",
+      "tags": ["resilience", "endurance", "reroll"]
+    },
+    "Headstrong": {
+      "category": "recovery",
+      "tags": ["resilience", "will", "fear"]
+    },
+    "Delay Damage": {
+      "category": "recovery",
+      "tags": ["survival", "tactical", "damage"]
+    },
+    "Indomitable Will": {
+      "category": "recovery",
+      "tags": ["resilience", "will", "mental"]
+    },
+    "Resilient Strength": {
+      "category": "recovery",
+      "tags": ["resilience", "fortitude", "strength"]
+    },
+    "Resilient Reflexes": {
+      "category": "recovery",
+      "tags": ["resilience", "reflex", "dexterity"]
+    },
+    "Resilient Will": {
+      "category": "recovery",
+      "tags": ["resilience", "will", "wisdom"]
+    },
+    "Quick Draw": {
+      "category": "misc",
+      "tags": ["utility", "weapon", "swift-action"]
+    },
+    "Weapon Finesse": {
+      "category": "misc",
+      "tags": ["combat", "dexterity", "finesse"],
+      "chain": "Finesse Chain",
+      "chainOrder": 1
+    },
+    "Noble Fencing Style": {
+      "category": "misc",
+      "tags": ["combat", "charisma", "style"],
+      "chain": "Finesse Chain",
+      "chainOrder": 2,
+      "prerequisiteFeat": "Weapon Finesse"
+    },
+    "Reactive Stealth": {
+      "category": "misc",
+      "tags": ["utility", "stealth", "reroll"]
+    },
+    "Reactive Awareness": {
+      "category": "misc",
+      "tags": ["utility", "perception", "reroll"]
+    },
+    "Surgical Precision": {
+      "category": "misc",
+      "tags": ["utility", "medical", "healing"]
+    },
+    "Mounted Combat": {
+      "category": "misc",
+      "tags": ["special", "mount", "defense"]
+    },
+    "Vehicular Combat": {
+      "category": "misc",
+      "tags": ["special", "vehicle", "defense"]
+    },
+    "Stealthy": {
+      "category": "misc",
+      "tags": ["utility", "stealth", "bonus"]
+    },
+    "Low Profile": {
+      "category": "misc",
+      "tags": ["utility", "stealth", "cover"]
+    },
+    "Desperate Gambit": {
+      "category": "misc",
+      "tags": ["special", "gamble", "dramatic"]
+    }
+  }
+}

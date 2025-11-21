@@ -45,24 +45,43 @@ export class PrerequisiteValidator {
    * @returns {Object} { valid: boolean, reasons: string[] }
    */
   static checkTalentPrerequisites(talent, actor, pendingData = {}) {
-    const prereqString = talent.system?.prerequisites || talent.system?.prereqassets || "";
+    let prereqData = talent.system?.prerequisites || talent.system?.prereqassets || "";
 
-    // If no prerequisites, talent is available
-    if (!prereqString || prereqString.trim() === "" || prereqString === "null") {
+    // Handle both array and string formats
+    let prereqTalentNames = [];
+    if (Array.isArray(prereqData)) {
+      // Array format from JSON data
+      prereqTalentNames = prereqData.map(p => String(p).trim()).filter(p => p);
+    } else if (typeof prereqData === 'string') {
+      // String format - check if empty
+      if (!prereqData || prereqData.trim() === "" || prereqData === "null") {
+        return { valid: true, reasons: [] };
+      }
+
+      // Split by comma, semicolon, or " and " (case insensitive)
+      // This handles various formats: "Talent1, Talent2" or "Talent1; Talent2" or "Talent1 and Talent2"
+      prereqTalentNames = prereqData
+        .split(/[,;]|(?:\s+and\s+)/i)
+        .map(p => p.trim())
+        .filter(p => p && p.toLowerCase() !== 'and');
+    } else {
+      // No prerequisites
+      return { valid: true, reasons: [] };
+    }
+
+    // If no prerequisites after parsing, talent is available
+    if (prereqTalentNames.length === 0) {
       return { valid: true, reasons: [] };
     }
 
     const reasons = [];
-
-    // Talent prerequisites are typically comma-separated talent names
-    const prereqTalentNames = prereqString.split(',').map(p => p.trim()).filter(p => p);
 
     // Get character's existing talents
     const characterTalents = actor.items.filter(i => i.type === 'talent').map(t => t.name);
 
     // Also check pending talents from character creation or level-up
     const pendingTalents = pendingData.selectedTalents || [];
-    const allTalents = [...characterTalents, ...pendingTalents.map(t => t.name)];
+    const allTalents = [...characterTalents, ...pendingTalents.map(t => t.name || t)];
 
     // Check each prerequisite talent
     for (const prereqName of prereqTalentNames) {

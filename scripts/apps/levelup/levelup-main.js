@@ -82,9 +82,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
     super(actor, options);
     this.actor = actor;
 
-    // For level 0 characters, start with species selection
-    const isLevel0 = (this.actor.system.level || 0) === 0;
-    this.currentStep = isLevel0 ? 'species' : 'class'; // species, attributes, class, multiclass-bonus, ability-increase, feat, talent, skills, summary
+    // Level up system is only for existing characters (level 1+)
+    // Use CharacterGenerator for creating new characters
+    if ((this.actor.system.level || 0) === 0) {
+      ui.notifications.error("Cannot level up a level 0 character. Use the Character Generator to create new characters.");
+      throw new Error("Level up requires an existing character with level >= 1");
+    }
+
+    this.currentStep = 'class'; // class, multiclass-bonus, ability-increase, feat, talent, skills, summary
 
     this.selectedClass = null;
     this.selectedTalent = null;
@@ -94,8 +99,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.hpGain = 0;
     this.talentData = null;
     this.featData = null;
-    this.selectedSpecies = null; // For level 0 characters
-    this.abilityScores = {}; // For level 0 characters
+    this.activeTags = []; // Track active tag filters
     this.freeBuild = false; // Free Build mode - skips validation
 
     // Mentor system - initially use base class mentor, will update when class is selected
@@ -120,14 +124,6 @@ export class SWSELevelUpEnhanced extends FormApplication {
     data.currentLevel = this.actor.system.level;
     data.newLevel = this.actor.system.level + 1;
     data.currentStep = this.currentStep;
-    data.isLevel0 = this.actor.system.level === 0;
-
-    // For level 0 characters, get available species
-    if (data.isLevel0) {
-      data.availableSpecies = await getAvailableSpecies();
-      data.selectedSpecies = this.selectedSpecies;
-      data.abilityScores = this.abilityScores;
-    }
 
     // Get available classes
     const pendingData = {
@@ -158,9 +154,10 @@ export class SWSELevelUpEnhanced extends FormApplication {
       // Load feats asynchronously if needed
       await this._loadFeats();
     }
-    // Only show feats the character qualifies for
-    data.availableFeats = (this.featData || []).filter(f => f.isQualified);
-    data.allFeats = this.featData || [];  // For debugging/info
+    // Pass categorized feats to template
+    data.featCategories = this.featData?.categories || [];
+    data.availableFeats = this.featData?.feats?.filter(f => f.isQualified) || [];
+    data.allFeats = this.featData?.feats || [];  // For debugging/info
     data.selectedFeats = this.selectedFeats;
 
     // Mentor data
@@ -177,6 +174,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Free Build mode flag
     data.freeBuild = this.freeBuild;
 
+    // Progress indicator data
+    const currentClasses = getCharacterClasses(this.actor);
+    const isMulticlassing = this.selectedClass && Object.keys(currentClasses).length > 0 && !currentClasses[this.selectedClass.name];
+    const isBase = this.selectedClass && isBaseClass(this.selectedClass.name);
+
+    data.showMulticlassBonus = isMulticlassing && isBase;
+    data.getsTalent = this.selectedClass && getsTalent(this.selectedClass, this.actor);
+
     return data;
   }
 
@@ -185,14 +190,6 @@ export class SWSELevelUpEnhanced extends FormApplication {
    * @returns {string}
    */
   _getMentorGuidanceForCurrentStep() {
-    // Special guidance for level 0 character creation steps
-    if (this.currentStep === 'species') {
-      return "Lets take a look at yer, What species are ye?";
-    }
-    if (this.currentStep === 'attributes') {
-      return "Lets see what kinda build we're working with.";
-    }
-
     const guidanceMap = {
       'class': 'class',
       'multiclass-bonus': 'multiclass',
@@ -208,10 +205,6 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
   activateListeners(html) {
     super.activateListeners(html);
-
-    // Level 0 character creation steps
-    html.find('.select-species-btn').click(this._onSelectSpecies.bind(this));
-    html.find('.confirm-attributes-btn').click(this._onConfirmAttributes.bind(this));
 
     // Class selection
     html.find('.select-class-btn').click(this._onSelectClass.bind(this));
@@ -240,10 +233,17 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Final level up
     html.find('.complete-levelup').click(this._onCompleteLevelUp.bind(this));
 
-    // Bind ability score UI for level 0 attributes step
-    if (this.currentStep === 'attributes') {
-      bindAbilitiesUI(html[0]);
-    }
+    // Feat category toggle
+    html.find('.category-header').click(this._onToggleFeatCategory.bind(this));
+
+    // Feat search and filtering
+    html.find('.feat-search-input').on('input', this._onFeatSearch.bind(this));
+    html.find('.clear-search-btn').click(this._onClearSearch.bind(this));
+    html.find('.clear-filters-btn').click(this._onClearAllFilters.bind(this));
+    html.find('.show-unavailable-toggle').change(this._onToggleShowUnavailable.bind(this));
+
+    // Tag filtering
+    html.find('.feat-tag').click(this._onClickFeatTag.bind(this));
   }
 
   // ========================================
@@ -265,63 +265,238 @@ export class SWSELevelUpEnhanced extends FormApplication {
     event.preventDefault();
     const featId = event.currentTarget.dataset.featId;
 
-    const feat = selectBonusFeat(featId, this.featData, this.selectedFeats);
-    if (feat) {
-      this.selectedFeats.push(feat);
-      ui.notifications.info(`Selected feat: ${feat.name}`);
-      await this.render();
+    const featData = this.featData?.feats || [];
+    const feat = selectBonusFeat(featId, featData, this.selectedFeats);
+    if (!feat) return;
+
+    // Check for duplicates - character already has this feat
+    const alreadyHas = this.actor.items.some(i =>
+      i.type === 'feat' && (i.name === feat.name || i._id === feat._id || i._id === featId)
+    );
+
+    // Check if already selected in this level-up session
+    const alreadySelected = this.selectedFeats.some(f =>
+      f.name === feat.name || f._id === feat._id || f._id === featId
+    );
+
+    if (alreadyHas) {
+      ui.notifications.warn(`You already have the feat "${feat.name}"!`);
+      return;
     }
+
+    if (alreadySelected) {
+      ui.notifications.warn(`You've already selected "${feat.name}" this level!`);
+      return;
+    }
+
+    this.selectedFeats.push(feat);
+    ui.notifications.info(`Selected feat: ${feat.name}`);
+    await this.render();
   }
 
   // ========================================
-  // LEVEL 0 CHARACTER CREATION HANDLERS
+  // FEAT FILTERING AND SEARCH
   // ========================================
 
-  /**
-   * Handle species selection for level 0 characters
-   * @param {Event} event - Click event
-   */
-  async _onSelectSpecies(event) {
+  _onToggleFeatCategory(event) {
     event.preventDefault();
-    const speciesId = event.currentTarget.dataset.speciesId;
-    const speciesName = event.currentTarget.dataset.speciesName;
+    event.stopPropagation();
+    const categoryElement = $(event.currentTarget).closest('.feat-category');
+    const categoryFeats = categoryElement.find('.category-feats');
 
-    const speciesDoc = await selectSpecies(speciesId, speciesName);
-    if (speciesDoc) {
-      this.selectedSpecies = speciesDoc;
-      ui.notifications.info(`Species selected: ${speciesName}`);
-
-      // Move to attributes step
-      this.currentStep = 'attributes';
-      this.render();
-    }
+    categoryElement.toggleClass('expanded');
+    categoryFeats.slideToggle(200);
   }
 
-  /**
-   * Handle attributes confirmation for level 0 characters
-   * @param {Event} event - Click event
-   */
-  async _onConfirmAttributes(event) {
-    event.preventDefault();
+  _onFeatSearch(event) {
+    const searchTerm = event.target.value.toLowerCase().trim();
+    const html = $(this.element);
+    const clearBtn = html.find('.clear-search-btn');
 
-    // Gather ability scores from the form
-    const form = event.currentTarget.closest('section');
-    const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-    this.abilityScores = {};
+    // Show/hide clear button
+    clearBtn.toggle(searchTerm.length > 0);
 
-    for (const ability of abilities) {
-      const input = form.querySelector(`[name="ability_${ability}"]`);
-      if (input) {
-        this.abilityScores[ability] = parseInt(input.value) || 10;
+    // Get all feat cards
+    const featCards = html.find('.feat-card');
+
+    if (!searchTerm) {
+      // Show all feats if search is empty
+      featCards.show();
+      this._updateCategoryCounts(html);
+      return;
+    }
+
+    // Filter feats by name or tags
+    featCards.each((i, card) => {
+      const $card = $(card);
+      const featName = $card.data('feat-name')?.toLowerCase() || '';
+      const featTags = $card.data('feat-tags')?.toLowerCase() || '';
+
+      const matches = featName.includes(searchTerm) || featTags.includes(searchTerm);
+      $card.toggle(matches);
+    });
+
+    // Update category counts
+    this._updateCategoryCounts(html);
+
+    // Expand categories that have visible feats
+    html.find('.feat-category').each((i, category) => {
+      const $category = $(category);
+      const visibleFeats = $category.find('.feat-card:visible').length;
+      if (visibleFeats > 0 && searchTerm) {
+        $category.addClass('expanded');
+        $category.find('.category-feats').show();
       }
+    });
+  }
+
+  _onClearSearch(event) {
+    event.preventDefault();
+    const html = $(this.element);
+    const searchInput = html.find('.feat-search-input');
+
+    searchInput.val('');
+    html.find('.clear-search-btn').hide();
+    html.find('.feat-card').show();
+
+    this._updateCategoryCounts(html);
+  }
+
+  _onClearAllFilters(event) {
+    event.preventDefault();
+    const html = $(this.element);
+
+    // Clear search
+    html.find('.feat-search-input').val('');
+    html.find('.clear-search-btn').hide();
+
+    // Clear active tags
+    this.activeTags = [];
+    html.find('.active-tag-filters').hide();
+    html.find('.active-tags-container').empty();
+
+    // Show all feats
+    html.find('.feat-card').show();
+
+    this._updateCategoryCounts(html);
+  }
+
+  _onToggleShowUnavailable(event) {
+    const html = $(this.element);
+    const showUnavailable = event.target.checked;
+
+    // CSS handles the visibility via the checkbox state
+    // Just need to update counts
+    this._updateCategoryCounts(html);
+  }
+
+  _onClickFeatTag(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const tag = $(event.currentTarget).data('tag');
+    if (!tag) return;
+
+    const html = $(this.element);
+
+    // Initialize active tags if needed
+    if (!this.activeTags) {
+      this.activeTags = [];
     }
 
-    SWSELogger.log(`SWSE LevelUp | Confirmed ability scores:`, this.abilityScores);
+    // Toggle tag
+    const tagIndex = this.activeTags.indexOf(tag);
+    if (tagIndex > -1) {
+      this.activeTags.splice(tagIndex, 1);
+    } else {
+      this.activeTags.push(tag);
+    }
 
-    // Move to class selection step
-    this.currentStep = 'class';
-    ui.notifications.info("Ability scores confirmed");
-    this.render();
+    // Update active tags display
+    this._updateActiveTagsDisplay(html);
+
+    // Filter feats by active tags
+    this._filterByActiveTags(html);
+  }
+
+  _updateActiveTagsDisplay(html) {
+    const activeFilters = html.find('.active-tag-filters');
+    const container = html.find('.active-tags-container');
+
+    if (!this.activeTags || this.activeTags.length === 0) {
+      activeFilters.hide();
+      container.empty();
+      return;
+    }
+
+    activeFilters.show();
+    container.empty();
+
+    this.activeTags.forEach(tag => {
+      const badge = $(`
+        <span class="active-tag-badge">
+          ${tag}
+          <i class="fas fa-times" data-remove-tag="${tag}"></i>
+        </span>
+      `);
+
+      badge.find('i').click((e) => {
+        e.preventDefault();
+        const tagToRemove = $(e.currentTarget).data('remove-tag');
+        const index = this.activeTags.indexOf(tagToRemove);
+        if (index > -1) {
+          this.activeTags.splice(index, 1);
+        }
+        this._updateActiveTagsDisplay(html);
+        this._filterByActiveTags(html);
+      });
+
+      container.append(badge);
+    });
+  }
+
+  _filterByActiveTags(html) {
+    if (!this.activeTags || this.activeTags.length === 0) {
+      // No active tags - show all feats
+      html.find('.feat-card').show();
+      this._updateCategoryCounts(html);
+      return;
+    }
+
+    // Filter feats: show only if they have ALL active tags
+    html.find('.feat-card').each((i, card) => {
+      const $card = $(card);
+      const featTags = ($card.data('feat-tags') || '').split(',').filter(t => t);
+
+      const hasAllTags = this.activeTags.every(activeTag =>
+        featTags.includes(activeTag)
+      );
+
+      $card.toggle(hasAllTags);
+    });
+
+    // Update category counts
+    this._updateCategoryCounts(html);
+
+    // Expand categories that have visible feats
+    html.find('.feat-category').each((i, category) => {
+      const $category = $(category);
+      const visibleFeats = $category.find('.feat-card:visible').length;
+      if (visibleFeats > 0) {
+        $category.addClass('expanded');
+        $category.find('.category-feats').show();
+      }
+    });
+  }
+
+  _updateCategoryCounts(html) {
+    html.find('.feat-category').each((i, category) => {
+      const $category = $(category);
+      const visibleCount = $category.find('.feat-card:visible').length;
+      const totalCount = $category.find('.feat-card').length;
+
+      $category.find('.count-badge').text(visibleCount === totalCount ? totalCount : `${visibleCount}/${totalCount}`);
+    });
   }
 
   // ========================================
@@ -392,18 +567,29 @@ export class SWSELevelUpEnhanced extends FormApplication {
     const featId = event.currentTarget.dataset.featId;
 
     const feat = await selectMulticlassFeat(featId);
-    if (feat) {
-      this.selectedFeats = [feat];
-      ui.notifications.info(`Selected feat: ${feat.name}`);
-      await this.render();
+    if (!feat) return;
+
+    // Check for duplicates - character already has this feat
+    const alreadyHas = this.actor.items.some(i =>
+      i.type === 'feat' && (i.name === feat.name || i._id === feat._id || i._id === featId)
+    );
+
+    if (alreadyHas) {
+      ui.notifications.warn(`You already have the feat "${feat.name}"!`);
+      return;
     }
+
+    this.selectedFeats = [feat];
+    ui.notifications.info(`Selected feat: ${feat.name}`);
+    await this.render();
   }
 
   async _onSelectMulticlassSkill(event) {
     event.preventDefault();
-    const skillName = event.currentTarget.dataset.skill;
+    const skillKey = event.currentTarget.dataset.skill;
+    const skillName = event.currentTarget.dataset.skillName || skillKey;
 
-    const skill = selectMulticlassSkill(skillName);
+    const skill = selectMulticlassSkill(skillKey, skillName);
     this.selectedSkills = [skill];
     ui.notifications.info(`Selected trained skill: ${skillName}`);
     await this.render();
@@ -413,7 +599,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
   // ABILITY SCORE INCREASES
   // ========================================
 
-  _onAbilityIncrease(event) {
+  async _onAbilityIncrease(event) {
     event.preventDefault();
     const ability = event.currentTarget.dataset.ability;
     const abilityIncreaseMethod = game.settings.get("swse", "abilityIncreaseMethod");
@@ -457,7 +643,13 @@ export class SWSELevelUpEnhanced extends FormApplication {
       ui.notifications.info(`+1 to ${ability.toUpperCase()} (Total increases: ${totalAllocated + 1}/2)`);
     }
 
-    this.render();
+    // Re-filter feats with new ability scores if feat data is loaded
+    // This ensures feats that require the increased ability score become available
+    if (this.featData) {
+      await this._loadFeats();
+    }
+
+    await this.render();
   }
 
   // ========================================
@@ -541,7 +733,22 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Determine next step dynamically based on what's applicable
     switch (this.currentStep) {
       case 'class':
-        this.currentStep = 'multiclass-bonus'; // This won't show if not multiclassing
+        // Check if multiclass bonus applies (only for multiclassing into a base class)
+        const currentClasses = getCharacterClasses(this.actor);
+        const isMulticlassing = this.selectedClass && Object.keys(currentClasses).length > 0 && !currentClasses[this.selectedClass.name];
+        const isBase = this.selectedClass && isBaseClass(this.selectedClass.name);
+
+        if (isMulticlassing && isBase) {
+          this.currentStep = 'multiclass-bonus';
+        } else if (getsAbilityIncr) {
+          this.currentStep = 'ability-increase';
+        } else if (getsBonusFt) {
+          this.currentStep = 'feat';
+        } else if (getsTal) {
+          this.currentStep = 'talent';
+        } else {
+          this.currentStep = 'summary';
+        }
         break;
       case 'multiclass-bonus':
         if (getsAbilityIncr) {
@@ -772,7 +979,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
       // Update trained skills if selected
       if (this.selectedSkills.length > 0) {
         this.selectedSkills.forEach(skill => {
-          updates[`system.skills.${skill}.trained`] = true;
+          // Support both object format {key, name} and string format (backward compatibility)
+          const skillKey = typeof skill === 'string' ? skill : skill.key;
+          updates[`system.skills.${skillKey}.trained`] = true;
         });
       }
 

@@ -113,19 +113,37 @@ export default class CharacterGenerator extends Application {
       droids: "swse.droids"
     };
 
+    let hasErrors = false;
+    const failedPacks = [];
+
     for (const [k, packName] of Object.entries(packNames)) {
       try {
         const pack = game.packs.get(packName);
         if (!pack) {
+          SWSELogger.error(`chargen: compendium pack "${packName}" not found!`);
           this._packs[k] = [];
+          hasErrors = true;
+          failedPacks.push(k);
           continue;
         }
         const docs = await pack.getDocuments();
         this._packs[k] = docs.map(d => d.toObject());
+        SWSELogger.log(`chargen: loaded ${docs.length} items from ${packName}`);
       } catch (err) {
-        SWSELogger.warn(`chargen: failed to load pack ${packName}:`, err);
+        SWSELogger.error(`chargen: failed to load pack ${packName}:`, err);
         this._packs[k] = [];
+        hasErrors = true;
+        failedPacks.push(k);
       }
+    }
+
+    // Notify user if any packs failed to load
+    if (hasErrors) {
+      const failedList = failedPacks.join(', ');
+      ui.notifications.error(
+        `Failed to load some compendium data: ${failedList}. Some options may be unavailable. Check the console for details.`,
+        { permanent: false }
+      );
     }
 
     // Load skills
@@ -133,12 +151,16 @@ export default class CharacterGenerator extends Application {
       const resp = await fetch("systems/swse/data/skills.json");
       if (resp.ok) {
         this._skillsJson = await resp.json();
+        SWSELogger.log("chargen: skills.json loaded successfully");
       } else {
+        SWSELogger.warn("chargen: failed to fetch skills.json, using defaults");
         this._skillsJson = this._getDefaultSkills();
+        ui.notifications.warn("Failed to load skills data. Using defaults.");
       }
     } catch (e) {
-      SWSELogger.warn("chargen: failed to load skills.json, using defaults", e);
+      SWSELogger.error("chargen: error loading skills.json:", e);
       this._skillsJson = this._getDefaultSkills();
+      ui.notifications.warn("Failed to load skills data. Using defaults.");
     }
   }
 
@@ -428,6 +450,51 @@ export default class CharacterGenerator extends Application {
           return false;
         }
         break;
+      case "abilities":
+        // Validate that ability scores are properly set
+        const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+        const allSet = abilities.every(ab => {
+          const base = this.characterData.abilities[ab]?.base;
+          return base !== undefined && base >= 8 && base <= 18;
+        });
+
+        if (!allSet) {
+          ui.notifications.warn("Please set all ability scores.");
+          return false;
+        }
+
+        // Validate point buy budget (rough check)
+        // Calculate points spent based on current ability scores
+        const pointCosts = (value) => {
+          let cost = 0;
+          for (let v = 8; v < value; v++) {
+            if (v < 12) cost += 1;
+            else if (v < 14) cost += 2;
+            else cost += 3;
+          }
+          return cost;
+        };
+
+        const totalSpent = abilities.reduce((sum, ab) => {
+          return sum + pointCosts(this.characterData.abilities[ab]?.base || 8);
+        }, 0);
+
+        // Get the correct point buy pool based on character type
+        const pointBuyPool = this.characterData.isDroid
+          ? (game.settings.get("swse", "droidPointBuyPool") || 20)
+          : (game.settings.get("swse", "livingPointBuyPool") || 25);
+
+        // Allow some flexibility (within 2 points of the budget)
+        if (totalSpent > pointBuyPool) {
+          ui.notifications.warn(`You've overspent your point buy budget! (${totalSpent}/${pointBuyPool} points)`);
+          return false;
+        }
+
+        if (totalSpent < pointBuyPool - 2) {
+          ui.notifications.warn(`You still have ${pointBuyPool - totalSpent} point buy points to spend. Use them all!`);
+          return false;
+        }
+        break;
       case "class":
         if (this.characterData.classes.length === 0) {
           ui.notifications.warn("Please select a class.");
@@ -489,9 +556,10 @@ export default class CharacterGenerator extends Application {
 
   async _createActor() {
     // Build proper actor data structure matching SWSEActorSheet expectations
+    // Note: The actor system uses 'race' as the property name for species data
     const system = {
       level: this.characterData.level,
-      race: this.characterData.species,
+      race: this.characterData.species,  // Map species → race for actor system
       size: this.characterData.size || "Medium",
       abilities: this.characterData.abilities,
       skills: this.characterData.skills,
@@ -504,7 +572,9 @@ export default class CharacterGenerator extends Application {
       bab: this.characterData.bab,
       speed: this.characterData.speed,
       damageThresholdMisc: this.characterData.damageThresholdMisc || 0,
-      credits: this.characterData.credits || 1000,
+      credits: this.characterData.isDroid
+        ? this.characterData.droidCredits.remaining
+        : (this.characterData.credits || 1000),
       weapons: [],
       // Species data
       specialAbilities: this.characterData.specialAbilities || [],
