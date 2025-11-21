@@ -1,6 +1,33 @@
 /**
- * SWSE Store Application - Main Class
- * Provides a holographic marketplace interface for buying and selling items
+ * SWSE Store Application
+ *
+ * @class SWSEStore
+ * @extends {FormApplication}
+ * @description
+ * Galactic Trade Exchange - A holographic marketplace interface for buying
+ * and selling items, droids, and vehicles in Star Wars Saga Edition.
+ *
+ * Features:
+ * - Browse equipment by category (Weapons, Armor, Gear, etc.)
+ * - Filter by availability (Common, Military, Restricted, Illegal, Rare)
+ * - Search functionality across all items
+ * - Shopping cart with drag-and-drop
+ * - Dynamic pricing with markup/discount based on Persuasion
+ * - Credit management and transaction history
+ * - Rendarr the merchant NPC with dialogue
+ * - Separate tabs for Items, Droids, and Vehicles
+ *
+ * @example
+ * // Open store for a character
+ * const store = new SWSEStore(actor);
+ * store.render(true);
+ *
+ * @example
+ * // Open store with GM options
+ * if (game.user.isGM) {
+ *   const store = new SWSEStore(actor, { isGM: true });
+ *   store.render(true);
+ * }
  */
 
 import { SWSELogger } from '../../utils/logger.js';
@@ -11,6 +38,12 @@ import { applyAvailabilityFilter, applySearchFilter, switchToPanel } from './sto
 import * as Checkout from './store-checkout.js';
 
 export class SWSEStore extends FormApplication {
+    /**
+     * Create a new Store application
+     *
+     * @param {Actor} actor - The actor doing the shopping
+     * @param {Object} [options={}] - Additional application options
+     */
     constructor(actor, options = {}) {
         super(actor, options);
         this.actor = actor;
@@ -29,6 +62,13 @@ export class SWSEStore extends FormApplication {
         this.itemsById = new Map();
     }
 
+    /**
+     * Default application options
+     *
+     * @static
+     * @returns {Object} Default options
+     * @override
+     */
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
             id: "swse-store",
@@ -45,8 +85,18 @@ export class SWSEStore extends FormApplication {
     }
 
     /**
-     * Get data for template rendering
-     * @returns {Object} Template data
+     * Prepare data for template rendering
+     *
+     * @returns {Promise<Object>} Template data containing:
+     * @returns {Actor} returns.actor - The shopping actor
+     * @returns {Array<Object>} returns.categories - Item categories with inventory
+     * @returns {boolean} returns.isGM - Whether current user is GM
+     * @returns {number} returns.markup - Store price markup percentage
+     * @returns {number} returns.discount - Store price discount percentage
+     * @returns {number} returns.credits - Actor's current credits
+     * @returns {string} returns.rendarrImage - Path to Rendarr's portrait
+     * @returns {string} returns.rendarrWelcome - Welcome dialogue from Rendarr
+     * @override
      */
     async getData() {
         const actor = this.object;

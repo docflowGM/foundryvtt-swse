@@ -1,11 +1,41 @@
 /**
-import { SWSELogger } from '../../utils/logger.js';
  * SWSE Character Sheet
- * FIXED VERSION - Event listeners match actual button classes
+ *
+ * @class SWSECharacterSheet
+ * @extends {SWSEActorSheetBase}
+ * @description
+ * Character sheet implementation for Star Wars Saga Edition player characters.
+ * Manages display and interaction for:
+ * - Character stats and defenses
+ * - Skills and ability scores
+ * - Feats, talents, and Force powers
+ * - Equipment and inventory
+ * - Combat actions and abilities
+ * - Level-up and character advancement
+ * - Force Suite management
+ * - Store/shopping interface
+ *
+ * Features multiple tabs for organized data presentation:
+ * - Summary: Key stats, defenses, conditions
+ * - Skills: All skills with modifiers
+ * - Combat: Weapons, attacks, combat actions
+ * - Features: Feats, talents, class features
+ * - Force: Force powers, Force Suite, Force points
+ * - Equipment: Inventory, armor, gear
+ *
+ * @example
+ * // Render character sheet
+ * const sheet = actor.sheet;
+ * sheet.render(true);
+ *
+ * @example
+ * // Open Level Up dialog from sheet
+ * // User clicks "Level Up" button on sheet
  */
 
+import { SWSELogger } from '../../utils/logger.js';
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
-import { SWSEStore } from '../../apps/store.js';
+import { SWSEStore } from '../../apps/store/store-main.js';
 import { SWSEActorSheetBase } from '../../sheets/base-sheet.js';
 import { CombatActionsMapper } from '../../combat/utils/combat-actions-mapper.js';
 import { FeatActionsMapper } from '../../utils/feat-actions-mapper.js';
@@ -17,7 +47,10 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   static _combatActionsData = null;
 
   /**
-   * Load Force power descriptions
+   * Load Force power descriptions from JSON data
+   *
+   * @static
+   * @returns {Promise<Object>} Force power descriptions data
    */
   static async loadForcePowerDescriptions() {
     if (this._forcePowerDescriptions) return this._forcePowerDescriptions;
@@ -33,7 +66,10 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
   /**
-   * Load combat actions data
+   * Load combat actions data from JSON file
+   *
+   * @static
+   * @returns {Promise<Array>} Combat actions data
    */
   static async loadCombatActionsData() {
     if (this._combatActionsData) return this._combatActionsData;
@@ -48,6 +84,13 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     }
   }
 
+  /**
+   * Default options for character sheet
+   *
+   * @static
+   * @returns {Object} Default sheet options
+   * @override
+   */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['swse', 'sheet', 'actor', 'character'],
@@ -62,6 +105,21 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     });
   }
 
+  /**
+   * Prepare character sheet data for rendering
+   *
+   * @returns {Promise<Object>} Sheet rendering context containing:
+   * @returns {Actor} returns.actor - The actor being displayed
+   * @returns {Object} returns.system - Actor's system data
+   * @returns {Array<Item>} returns.forceSecrets - Force Secret feats
+   * @returns {Array<Item>} returns.forceTechniques - Force Technique feats
+   * @returns {Array<Item>} returns.knownPowers - All known Force powers not in suite
+   * @returns {Array<Item>} returns.activeSuite - Force powers in active Force Suite
+   * @returns {string} returns.forceRerollDice - Force Point reroll die formula
+   * @returns {Array<Object>} returns.combatActions - Available combat actions
+   * @returns {Object} returns.featActions - Feat-based special actions
+   * @override
+   */
   async getData() {
     const context = await super.getData();
 
