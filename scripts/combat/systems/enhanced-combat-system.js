@@ -395,36 +395,41 @@ export class SWSECombat {
     let rangePenalty = 0;
     let pointBlankBonus = 0;
     let distance = 0;
+    let rangeCategory = 'melee';
 
     if (attackerToken && targetToken && canvas.grid) {
       distance = canvas.grid.measureDistance(attackerToken, targetToken);
       const squareSize = canvas.scene.grid.distance || 5; // Default 5 feet per square
       const squares = Math.floor(distance / squareSize);
 
-      // Point Blank Shot (+1 within 6 squares / 30 feet)
-      if (squares <= 6) {
-        // Check if attacker has Point Blank Shot feat
-        const hasPointBlankShot = attacker.items.find(i =>
-          i.type === 'feat' && i.name.toLowerCase().includes('point blank shot')
-        );
-        if (hasPointBlankShot) {
-          pointBlankBonus = 1;
-        }
-      }
+      // Get weapon range bands (SWSE has 4 bands: Point-Blank, Short, Medium, Long)
+      const ranges = this._getWeaponRanges(weapon);
 
-      // Range penalties for ranged weapons
-      if (weaponData.range) {
-        const ranges = weaponData.range;
-        const shortRange = ranges.short || 0;
-        const mediumRange = ranges.medium || shortRange * 2;
-        const longRange = ranges.long || shortRange * 4;
+      if (ranges) {
+        // Determine which range band the target is in
+        if (squares <= ranges.pointBlank) {
+          rangeCategory = 'point-blank';
+          rangePenalty = 0;
 
-        if (distance > shortRange && distance <= mediumRange) {
+          // Point Blank Shot feat applies within point-blank range
+          const hasPointBlankShot = attacker.items.find(i =>
+            i.type === 'feat' && i.name.toLowerCase().includes('point blank shot')
+          );
+          if (hasPointBlankShot) {
+            pointBlankBonus = 1;
+          }
+        } else if (squares <= ranges.short) {
+          rangeCategory = 'short';
           rangePenalty = -2;
-        } else if (distance > mediumRange && distance <= longRange) {
+        } else if (squares <= ranges.medium) {
+          rangeCategory = 'medium';
           rangePenalty = -5;
-        } else if (distance > longRange) {
+        } else if (squares <= ranges.long) {
+          rangeCategory = 'long';
           rangePenalty = -10;
+        } else {
+          rangeCategory = 'out-of-range';
+          rangePenalty = -20; // Beyond long range = extreme penalty
         }
       }
     }
@@ -489,6 +494,7 @@ export class SWSECombat {
         coverBonus,
         concealmentChance,
         distance,
+        rangeCategory,
         isFlanking: flankingBonus > 0,
         isPointBlank: pointBlankBonus > 0,
         isFiringIntoMelee: firingIntoMeleePenalty !== 0
@@ -621,6 +627,79 @@ export class SWSECombat {
   }
 
   /**
+   * Get weapon range bands based on weapon type
+   * @private
+   * @param {Item} weapon - The weapon
+   * @returns {Object|null} Range bands in squares or null if melee
+   */
+  static _getWeaponRanges(weapon) {
+    const weaponData = weapon.system;
+
+    // Check if weapon has custom ranges defined
+    if (weaponData.ranges) {
+      return {
+        pointBlank: weaponData.ranges.pointBlank || weaponData.ranges.pointblank || 0,
+        short: weaponData.ranges.short || 0,
+        medium: weaponData.ranges.medium || 0,
+        long: weaponData.ranges.long || 0
+      };
+    }
+
+    // Determine weapon type and apply SWSE standard ranges
+    const weaponType = (weaponData.weaponType || weaponData.type || '').toLowerCase();
+    const weaponGroup = (weaponData.weaponGroup || '').toLowerCase();
+    const weaponName = weapon.name.toLowerCase();
+
+    // SWSE Range Categories (Core Rulebook p.150)
+    // All ranges in squares (1 square = 5 feet)
+
+    // Heavy Weapons: 0-50 / 51-100 / 101-250 / 251-500 squares
+    if (weaponType.includes('heavy') || weaponGroup.includes('heavy') ||
+        weaponName.includes('heavy repeating')) {
+      return { pointBlank: 50, short: 100, medium: 250, long: 500 };
+    }
+
+    // Rifles: 0-30 / 31-60 / 61-150 / 151-300 squares
+    if (weaponType.includes('rifle') || weaponGroup.includes('rifle') ||
+        weaponName.includes('rifle') || weaponName.includes('carbine') ||
+        weaponName.includes('sniper')) {
+      return { pointBlank: 30, short: 60, medium: 150, long: 300 };
+    }
+
+    // Pistols: 0-20 / 21-40 / 41-60 / 61-80 squares
+    if (weaponType.includes('pistol') || weaponGroup.includes('pistol') ||
+        weaponName.includes('pistol') || weaponName.includes('blaster pistol') ||
+        weaponName.includes('hold-out')) {
+      return { pointBlank: 20, short: 40, medium: 60, long: 80 };
+    }
+
+    // Thrown Weapons: 0-6 / 7-8 / 9-10 / 11-12 squares
+    if (weaponType.includes('thrown') || weaponGroup.includes('thrown') ||
+        weaponName.includes('grenade') || weaponName.includes('thermal detonator') ||
+        weaponName.includes('thrown')) {
+      return { pointBlank: 6, short: 8, medium: 10, long: 12 };
+    }
+
+    // Simple Weapons (ranged): 0-20 / 21-40 / 41-60 / 61-80 squares
+    if (weaponGroup.includes('simple') && (weaponData.ranged || weaponType.includes('ranged'))) {
+      return { pointBlank: 20, short: 40, medium: 60, long: 80 };
+    }
+
+    // Bows/Crossbows (not standard SWSE but might be in game): same as simple ranged
+    if (weaponName.includes('bow') || weaponName.includes('crossbow')) {
+      return { pointBlank: 20, short: 40, medium: 60, long: 80 };
+    }
+
+    // Default: if marked as ranged but type unknown, use pistol ranges
+    if (weaponData.ranged || weaponType.includes('ranged')) {
+      return { pointBlank: 20, short: 40, medium: 60, long: 80 };
+    }
+
+    // Melee weapons have no range
+    return null;
+  }
+
+  /**
    * Check cover and concealment between attacker and target
    * @private
    */
@@ -695,7 +774,7 @@ export class SWSECombat {
           ${breakdown.fightingDefensivelyPenalty !== 0 ? `, Fighting Defensively ${breakdown.fightingDefensivelyPenalty}` : ''}
           ${breakdown.multipleAttackPenalty !== 0 ? `, Multiple Attacks ${breakdown.multipleAttackPenalty}` : ''}
           ${breakdown.conditionPenalty !== 0 ? `, Condition -${breakdown.conditionPenalty}` : ''}
-          ${modifiers.distance ? `, Distance ${Math.round(modifiers.distance)}ft` : ''}
+          ${modifiers.distance && modifiers.rangeCategory !== 'melee' ? `, ${Math.round(modifiers.distance)}ft (${modifiers.rangeCategory})` : ''}
         </div>
     `;
 
