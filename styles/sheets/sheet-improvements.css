@@ -218,11 +218,12 @@
   text-align: center;
   font-size: 1.5rem;
   font-weight: bold;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 20, 40, 0.7);
   border: 1px solid var(--color-border-light, #666);
-  color: var(--color-text-primary, #e0e0e0);
+  color: #ffffff;
   padding: 0.25rem;
   border-radius: 2px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .swse .resource-input:focus {
@@ -374,6 +375,9 @@
   text-align: center;
   font-size: 1rem;
   padding: 0.5rem;
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .swse .ability-inputs span {
@@ -454,6 +458,9 @@
   width: 4rem;
   text-align: center;
   padding: 0.5rem;
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .swse .defense-total {
@@ -592,6 +599,9 @@
   text-align: center;
   font-size: 1.25rem;
   padding: 0.5rem;
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 /* ─────────────── WEAPONS & ARMOR LISTS ─────────────── */
@@ -865,10 +875,12 @@
 .swse .detail-field select {
   width: 100%;
   padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 20, 40, 0.7);
   border: 1px solid var(--color-border, #555);
   border-radius: var(--border-radius, 4px);
-  color: var(--color-text-primary, #e0e0e0);
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .swse .editor-content {
