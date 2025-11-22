@@ -63,17 +63,17 @@ export function _bindAbilitiesUI(root) {
     };
 
     const updatePointRemaining = () => {
-      const el = doc.querySelector("#point-remaining");
+      const el = root.querySelector("#point-remaining");
       if (el) el.textContent = pool;
     };
 
     const initPointBuy = () => {
       pool = 32;
       ablist.forEach(a => {
-        const inp = doc.querySelector(`[name="ability_${a}"]`);
+        const inp = root.querySelector(`[name="ability_${a}"]`);
         if (inp) inp.value = 8;
-        const plus = doc.querySelector(`[data-plus="${a}"]`);
-        const minus = doc.querySelector(`[data-minus="${a}"]`);
+        const plus = root.querySelector(`[data-plus="${a}"]`);
+        const minus = root.querySelector(`[data-minus="${a}"]`);
         if (plus) plus.onclick = () => adjustAttribute(a, +1);
         if (minus) minus.onclick = () => adjustAttribute(a, -1);
       });
@@ -82,7 +82,7 @@ export function _bindAbilitiesUI(root) {
     };
 
     const adjustAttribute = (ab, delta) => {
-      const el = doc.querySelector(`[name="ability_${ab}"]`);
+      const el = root.querySelector(`[name="ability_${ab}"]`);
       if (!el) return;
       
       let cur = Number(el.value || 8);
@@ -112,7 +112,7 @@ export function _bindAbilitiesUI(root) {
         results.push({ total: r.total, dice });
       }
 
-      const container = doc.querySelector("#roll-results");
+      const container = root.querySelector("#roll-results");
       if (!container) return;
 
       container.innerHTML = `
@@ -267,7 +267,7 @@ export function _bindAbilitiesUI(root) {
       const kept = allRolls.sort((a, b) => b - a).slice(0, 18);
       const discarded = allRolls.sort((a, b) => b - a).slice(18);
 
-      const container = doc.querySelector("#organic-groups");
+      const container = root.querySelector("#organic-groups");
       if (!container) return;
 
       container.innerHTML = `
@@ -492,8 +492,8 @@ export function _bindAbilitiesUI(root) {
 
     const recalcPreview = () => {
       ablist.forEach(a => {
-        const inp = doc.querySelector(`[name="ability_${a}"]`);
-        const display = doc.querySelector(`#display_${a}`);
+        const inp = root.querySelector(`[name="ability_${a}"]`);
+        const display = root.querySelector(`#display_${a}`);
         const base = Number(inp?.value || 10);
         const racial = Number(this.characterData.abilities[a].racial || 0);
         const total = base + racial + Number(this.characterData.abilities[a].temp || 0);
@@ -507,14 +507,14 @@ export function _bindAbilitiesUI(root) {
       });
 
       // Update Second Wind preview
-      const hpMax = Number(doc.querySelector('[name="hp_max"]')?.value || 1);
+      const hpMax = Number(root.querySelector('[name="hp_max"]')?.value || 1);
       const conTotal = this.characterData.abilities.con.total || 10;
       const conMod = Math.floor((conTotal - 10) / 2);
-      const misc = Number(doc.querySelector('[name="sw_misc"]')?.value || 0);
+      const misc = Number(root.querySelector('[name="sw_misc"]')?.value || 0);
       const heal = Math.max(Math.floor(hpMax / 4), conMod) + misc;
       this.characterData.secondWind.healing = heal;
 
-      const swPreview = doc.querySelector("#sw_heal_preview");
+      const swPreview = root.querySelector("#sw_heal_preview");
       if (swPreview) swPreview.textContent = heal;
     };
 
@@ -523,21 +523,21 @@ export function _bindAbilitiesUI(root) {
       // Hide all mode divs
       const modes = ['point-mode', 'standard-mode', 'organic-mode', 'free-mode'];
       modes.forEach(mode => {
-        const modeDiv = doc.querySelector(`#${mode}`);
+        const modeDiv = root.querySelector(`#${mode}`);
         if (modeDiv) modeDiv.style.display = 'none';
       });
 
       // Show selected mode
-      const selectedMode = doc.querySelector(`#${modeName}`);
+      const selectedMode = root.querySelector(`#${modeName}`);
       if (selectedMode) selectedMode.style.display = 'block';
 
       // Update button states
-      const buttons = doc.querySelectorAll('.method-button');
+      const buttons = root.querySelectorAll('.method-button');
       buttons.forEach(btn => btn.classList.remove('active'));
     };
 
     // Wire buttons with mode switching
-    const stdBtn = doc.querySelector("#std-roll-btn");
+    const stdBtn = root.querySelector("#std-roll-btn");
     if (stdBtn) {
       stdBtn.onclick = () => {
         switchMode('standard-mode');
@@ -546,7 +546,7 @@ export function _bindAbilitiesUI(root) {
       };
     }
 
-    const orgBtn = doc.querySelector("#org-roll-btn");
+    const orgBtn = root.querySelector("#org-roll-btn");
     if (orgBtn) {
       orgBtn.onclick = () => {
         switchMode('organic-mode');
@@ -555,7 +555,7 @@ export function _bindAbilitiesUI(root) {
       };
     }
 
-    const pbInit = doc.querySelector("#pb-init");
+    const pbInit = root.querySelector("#pb-init");
     if (pbInit) {
       pbInit.onclick = () => {
         switchMode('point-mode');

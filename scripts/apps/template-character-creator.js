@@ -198,7 +198,7 @@ export class TemplateCharacterCreator extends Application {
     this.close();
 
     // Open regular character generator
-    const CharacterGenerator = (await import('./chargen.js')).default;
+    const CharacterGenerator = (await import('./chargen/chargen-main.js')).default;
     const chargen = new CharacterGenerator();
     chargen.render(true);
   }
@@ -241,7 +241,7 @@ export class TemplateCharacterCreator extends Application {
 
     try {
       // Ask for character name
-      const name = await this._promptCharacterName(template.name);
+      const name = await TemplateCharacterCreator._promptCharacterName(template.name);
       if (!name) return; // User cancelled
 
       SWSELogger.log(`SWSE | Creating character from template: ${template.name}`);
