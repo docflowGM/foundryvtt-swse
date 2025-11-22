@@ -321,6 +321,9 @@ export class TemplateCharacterCreator extends Application {
         await CharacterTemplates.applyTemplateForcePowers(actor, template.forcePowers);
       }
 
+      // Apply starting equipment
+      const equipmentResults = await this._applyEquipment(actor, template.startingEquipment);
+
       // Store template info
       await actor.setFlag('swse', 'appliedTemplate', {
         id: template.id,
@@ -360,7 +363,8 @@ export class TemplateCharacterCreator extends Application {
 
     if (remainingPoints <= 0) {
       // No additional skills to train, just show success
-      await this._showSuccessDialog(actor, template);
+      const equipmentResults = await actor.getFlag('swse', 'equipmentResults');
+      await this._showSuccessDialog(actor, template, equipmentResults);
       actor.sheet.render(true);
       return;
     }
@@ -388,7 +392,8 @@ export class TemplateCharacterCreator extends Application {
             }
 
             // Show success dialog
-            await this._showSuccessDialog(actor, template);
+            const equipmentResults = await actor.getFlag('swse', 'equipmentResults');
+            await this._showSuccessDialog(actor, template, equipmentResults);
 
             // Open character sheet
             actor.sheet.render(true);
@@ -486,8 +491,43 @@ export class TemplateCharacterCreator extends Application {
   /**
    * Show success dialog with equipment list
    */
-  async _showSuccessDialog(actor, template) {
-    const equipmentList = template.startingEquipment.join(', ');
+  async _showSuccessDialog(actor, template, equipmentResults) {
+    let equipmentHtml = '';
+
+    if (equipmentResults) {
+      if (equipmentResults.added.length > 0) {
+        equipmentHtml += `
+          <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(76, 175, 80, 0.1); border-left: 3px solid #4CAF50; border-radius: 4px;">
+            <strong style="color: #4CAF50;">✓ Equipment Added:</strong>
+            <ul style="margin: 0.5rem 0 0 1.5rem; font-size: 0.9rem;">
+              ${equipmentResults.added.map(item => `<li>${item}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
+      if (equipmentResults.notFound.length > 0) {
+        equipmentHtml += `
+          <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(255, 152, 0, 0.1); border-left: 3px solid #FF9800; border-radius: 4px;">
+            <strong style="color: #FF9800;">⚠ Equipment Not Found:</strong>
+            <ul style="margin: 0.5rem 0 0 1.5rem; font-size: 0.9rem;">
+              ${equipmentResults.notFound.map(item => `<li>${item}</li>`).join('')}
+            </ul>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; font-style: italic;">
+              These items could not be found in the compendia. Please add them manually.
+            </p>
+          </div>
+        `;
+      }
+    } else {
+      equipmentHtml = `
+        <div style="margin-top: 1rem;">
+          <h3 style="color: #4a90e2;">Starting Equipment</h3>
+          <p style="font-size: 0.9rem;">${template.startingEquipment.join(', ')}</p>
+        </div>
+      `;
+    }
+
     await Dialog.prompt({
         title: `${actor.name} Created!`,
         content: `
@@ -500,16 +540,11 @@ export class TemplateCharacterCreator extends Application {
             </p>
             <p style="margin-top: 1rem;"><em>${template.description}</em></p>
 
-            <h3 style="color: #4a90e2; margin-top: 1.5rem;">Starting Equipment</h3>
-            <p style="font-size: 0.9rem;">${equipmentList}</p>
+            ${equipmentHtml}
 
             <div style="background: rgba(74, 144, 226, 0.1); padding: 0.75rem; border-radius: 4px; margin-top: 1rem; border-left: 3px solid #4a90e2;">
               <strong>Build Notes:</strong> ${template.notes}
             </div>
-
-            <p style="margin-top: 1rem; color: #aaa; font-size: 0.9rem;">
-              <em>Equipment items have not been automatically added. Please add them manually from the inventory tab.</em>
-            </p>
           </div>
         `,
         label: 'Close',
@@ -694,6 +729,89 @@ export class TemplateCharacterCreator extends Application {
     } catch (error) {
       SWSELogger.error('SWSE | Failed to apply skills:', error);
     }
+  }
+
+  /**
+   * Apply starting equipment to the actor
+   * Searches compendia for equipment items and adds them
+   * @returns {Object} Results object with added and notFound arrays
+   */
+  async _applyEquipment(actor, equipmentList) {
+    if (!equipmentList || equipmentList.length === 0) {
+      return { added: [], notFound: [] };
+    }
+
+    const results = {
+      added: [],
+      notFound: []
+    };
+
+    // Define compendia to search
+    const compendiaPacks = [
+      'swse.equipment',
+      'swse.weapons',
+      'swse.armor',
+      'swse.armor_light',
+      'swse.armor_medium',
+      'swse.armor_heavy'
+    ];
+
+    try {
+      for (const equipmentName of equipmentList) {
+        let found = false;
+        const searchName = equipmentName.trim();
+
+        // Search through all compendia
+        for (const packName of compendiaPacks) {
+          const pack = game.packs.get(packName);
+          if (!pack) continue;
+
+          // Get pack index for faster searching
+          const index = await pack.getIndex();
+
+          // Try exact match first
+          let entry = index.find(i => i.name === searchName);
+
+          // If no exact match, try case-insensitive
+          if (!entry) {
+            entry = index.find(i => i.name.toLowerCase() === searchName.toLowerCase());
+          }
+
+          // If still no match, try partial match
+          if (!entry) {
+            entry = index.find(i => i.name.toLowerCase().includes(searchName.toLowerCase()));
+          }
+
+          if (entry) {
+            // Found the item, add it to the actor
+            const item = await pack.getDocument(entry._id);
+            const itemData = item.toObject();
+
+            await actor.createEmbeddedDocuments('Item', [itemData]);
+            results.added.push(entry.name);
+            found = true;
+            SWSELogger.log(`SWSE | Added equipment: ${entry.name}`);
+            break; // Stop searching once found
+          }
+        }
+
+        if (!found) {
+          results.notFound.push(searchName);
+          SWSELogger.warn(`SWSE | Equipment not found: ${searchName}`);
+        }
+      }
+
+      // Store results in actor flag for later retrieval
+      await actor.setFlag('swse', 'equipmentResults', results);
+
+      // Log summary
+      SWSELogger.log(`SWSE | Equipment application complete: ${results.added.length} added, ${results.notFound.length} not found`);
+
+    } catch (error) {
+      SWSELogger.error('SWSE | Failed to apply equipment:', error);
+    }
+
+    return results;
   }
 }
 
