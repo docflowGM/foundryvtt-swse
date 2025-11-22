@@ -18,7 +18,7 @@
             "base": 10,
             "misc": 0,
             "total": 10,
-            "ability": "con",
+            "ability": 0,
             "class": 0,
             "armorMastery": 0,
             "modifier": 0
@@ -27,7 +27,7 @@
             "base": 10,
             "misc": 0,
             "total": 10,
-            "ability": "dex",
+            "ability": 0,
             "class": 0,
             "armor": 0,
             "armorMastery": 0,
@@ -37,7 +37,7 @@
             "base": 10,
             "misc": 0,
             "total": 10,
-            "ability": "wis",
+            "ability": 0,
             "class": 0,
             "armorMastery": 0,
             "modifier": 0
@@ -92,10 +92,7 @@
         "race": "custom",
         "size": "medium",
         "conditionTrack": "normal",
-        "speed": {
-          "base": 6,
-          "total": 6
-        },
+        "speed": 6,
         "forcePoints": {
           "value": 5,
           "max": 5,
@@ -119,10 +116,7 @@
           "misc": 0,
           "healing": 0
         },
-        "initiative": {
-          "misc": 0,
-          "total": 0
-        },
+        "initiative": 0,
         "damageThreshold": 10,
         "damageThresholdMisc": 0,
         "shields": {

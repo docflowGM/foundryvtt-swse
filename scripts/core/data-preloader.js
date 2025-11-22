@@ -1,5 +1,6 @@
-/**
 import { SWSELogger } from '../utils/logger.js';
+
+/**
  * Data Preloader
  * Preloads and caches frequently accessed compendium data
  * Reduces load times and improves responsiveness
