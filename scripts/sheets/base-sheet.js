@@ -233,11 +233,16 @@ export class SWSEActorSheetBase extends ActorSheet {
     event.preventDefault();
     const button = event.currentTarget;
     const action = button.dataset.action;
-    
+
+    // Skip if this is an item-control action (handled by _onItemControl)
+    if (button.classList.contains('item-control')) {
+      return;
+    }
+
     // Dispatch to specific handler
     const handlerName = `_on${action.charAt(0).toUpperCase() + action.slice(1)}`;
     const handler = this[handlerName];
-    
+
     if (typeof handler === 'function') {
       return handler.call(this, event);
     } else {

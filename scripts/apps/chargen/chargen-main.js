@@ -374,7 +374,8 @@ export default class CharacterGenerator extends Application {
 
     // Capture name from input before validation (in case the input event hasn't fired yet)
     if (this.currentStep === "name") {
-      const nameInput = this.element.find('input[name="character-name"]')[0];
+      const form = event.currentTarget.closest('.chargen-app');
+      const nameInput = form?.querySelector('input[name="character-name"]');
       if (nameInput) {
         this.characterData.name = nameInput.value;
       }
