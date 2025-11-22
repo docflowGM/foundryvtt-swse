@@ -19,27 +19,27 @@ export function _recalcAbilities() {
  */
 export function _recalcDefenses() {
   const halfLevel = Math.floor(this.characterData.level / 2);
-  
+
   // Fortitude: 10 + level/2 + CON or STR (whichever is higher) + class bonus + misc
   const fortAbility = Math.max(
     this.characterData.abilities.con.mod || 0,
     this.characterData.abilities.str.mod || 0
   );
-  this.characterData.defenses.fortitude.total = 
-    10 + halfLevel + fortAbility + 
-    this.characterData.defenses.fortitude.classBonus + 
+  this.characterData.defenses.fortitude.total =
+    10 + halfLevel + fortAbility +
+    this.characterData.defenses.fortitude.classBonus +
     this.characterData.defenses.fortitude.misc;
-  
+
   // Reflex: 10 + level/2 + DEX + class bonus + misc
-  this.characterData.defenses.reflex.total = 
-    10 + halfLevel + (this.characterData.abilities.dex.mod || 0) + 
-    this.characterData.defenses.reflex.classBonus + 
+  this.characterData.defenses.reflex.total =
+    10 + halfLevel + (this.characterData.abilities.dex.mod || 0) +
+    this.characterData.defenses.reflex.classBonus +
     this.characterData.defenses.reflex.misc;
-  
+
   // Will: 10 + level/2 + WIS + class bonus + misc
-  this.characterData.defenses.will.total = 
-    10 + halfLevel + (this.characterData.abilities.wis.mod || 0) + 
-    this.characterData.defenses.will.classBonus + 
+  this.characterData.defenses.will.total =
+    10 + halfLevel + (this.characterData.abilities.wis.mod || 0) +
+    this.characterData.defenses.will.classBonus +
     this.characterData.defenses.will.misc;
 }
 
@@ -47,8 +47,12 @@ export function _recalcDefenses() {
  * Bind abilities UI with point buy, rolling, and organic systems
  */
 export function _bindAbilitiesUI(root) {
+    // Capture the CharacterGenerator instance context
+    const chargen = this;
     const ablist = ["str", "dex", "con", "int", "wis", "cha"];
-    
+
+    SWSELogger.log("SWSE | Binding abilities UI, root:", root);
+
     // Point buy system
     let pool = 32;
     const pointCosts = (from, to) => {
@@ -63,17 +67,17 @@ export function _bindAbilitiesUI(root) {
     };
 
     const updatePointRemaining = () => {
-      const el = doc.querySelector("#point-remaining");
+      const el = root.querySelector("#point-remaining");
       if (el) el.textContent = pool;
     };
 
     const initPointBuy = () => {
       pool = 32;
       ablist.forEach(a => {
-        const inp = doc.querySelector(`[name="ability_${a}"]`);
+        const inp = root.querySelector(`[name="ability_${a}"]`);
         if (inp) inp.value = 8;
-        const plus = doc.querySelector(`[data-plus="${a}"]`);
-        const minus = doc.querySelector(`[data-minus="${a}"]`);
+        const plus = root.querySelector(`[data-plus="${a}"]`);
+        const minus = root.querySelector(`[data-minus="${a}"]`);
         if (plus) plus.onclick = () => adjustAttribute(a, +1);
         if (minus) minus.onclick = () => adjustAttribute(a, -1);
       });
@@ -82,7 +86,7 @@ export function _bindAbilitiesUI(root) {
     };
 
     const adjustAttribute = (ab, delta) => {
-      const el = doc.querySelector(`[name="ability_${ab}"]`);
+      const el = root.querySelector(`[name="ability_${ab}"]`);
       if (!el) return;
       
       let cur = Number(el.value || 8);
@@ -98,7 +102,7 @@ export function _bindAbilitiesUI(root) {
       
       pool -= deltaCost;
       el.value = newVal;
-      this.characterData.abilities[ab].base = newVal;
+      chargen.characterData.abilities[ab].base = newVal;
       updatePointRemaining();
       recalcPreview();
     };
@@ -112,7 +116,7 @@ export function _bindAbilitiesUI(root) {
         results.push({ total: r.total, dice });
       }
 
-      const container = doc.querySelector("#roll-results");
+      const container = root.querySelector("#roll-results");
       if (!container) return;
 
       container.innerHTML = `
@@ -123,7 +127,7 @@ export function _bindAbilitiesUI(root) {
           <div class="ability-slots-grid">
             ${ablist.map(ab => {
               const abilityName = ab.charAt(0).toUpperCase() + ab.slice(1);
-              const racial = this.characterData.abilities[ab].racial || 0;
+              const racial = chargen.characterData.abilities[ab].racial || 0;
               return `
                 <div class="ability-slot" data-ability="${ab}">
                   <div class="ability-slot-header">
@@ -217,7 +221,7 @@ export function _bindAbilitiesUI(root) {
 
             // Update breakdown
             const slot = zone.closest('.ability-slot');
-            const racial = this.characterData.abilities[ability].racial || 0;
+            const racial = chargen.characterData.abilities[ability].racial || 0;
             const total = value + racial;
             const mod = Math.floor((total - 10) / 2);
 
@@ -226,9 +230,9 @@ export function _bindAbilitiesUI(root) {
             slot.querySelector('.mod-num').textContent = (mod >= 0 ? '+' : '') + mod;
 
             // Store value
-            this.characterData.abilities[ability].base = value;
-            this.characterData.abilities[ability].total = total;
-            this.characterData.abilities[ability].mod = mod;
+            chargen.characterData.abilities[ability].base = value;
+            chargen.characterData.abilities[ability].total = total;
+            chargen.characterData.abilities[ability].mod = mod;
           }
         });
       });
@@ -267,7 +271,7 @@ export function _bindAbilitiesUI(root) {
       const kept = allRolls.sort((a, b) => b - a).slice(0, 18);
       const discarded = allRolls.sort((a, b) => b - a).slice(18);
 
-      const container = doc.querySelector("#organic-groups");
+      const container = root.querySelector("#organic-groups");
       if (!container) return;
 
       container.innerHTML = `
@@ -300,7 +304,7 @@ export function _bindAbilitiesUI(root) {
             <div class="ability-slots-grid">
               ${ablist.map(ab => {
                 const abilityName = ab.charAt(0).toUpperCase() + ab.slice(1);
-                const racial = this.characterData.abilities[ab].racial || 0;
+                const racial = chargen.characterData.abilities[ab].racial || 0;
                 return `
                   <div class="ability-slot" data-ability="${ab}">
                     <div class="ability-slot-header">
@@ -446,7 +450,7 @@ export function _bindAbilitiesUI(root) {
 
             // Update breakdown
             const slot = zone.closest('.ability-slot');
-            const racial = this.characterData.abilities[ability].racial || 0;
+            const racial = chargen.characterData.abilities[ability].racial || 0;
             const total = value + racial;
             const mod = Math.floor((total - 10) / 2);
 
@@ -455,9 +459,9 @@ export function _bindAbilitiesUI(root) {
             slot.querySelector('.mod-num').textContent = (mod >= 0 ? '+' : '') + mod;
 
             // Store value
-            this.characterData.abilities[ability].base = value;
-            this.characterData.abilities[ability].total = total;
-            this.characterData.abilities[ability].mod = mod;
+            chargen.characterData.abilities[ability].base = value;
+            chargen.characterData.abilities[ability].total = total;
+            chargen.characterData.abilities[ability].mod = mod;
           }
         });
       });
@@ -492,29 +496,29 @@ export function _bindAbilitiesUI(root) {
 
     const recalcPreview = () => {
       ablist.forEach(a => {
-        const inp = doc.querySelector(`[name="ability_${a}"]`);
-        const display = doc.querySelector(`#display_${a}`);
+        const inp = root.querySelector(`[name="ability_${a}"]`);
+        const display = root.querySelector(`#display_${a}`);
         const base = Number(inp?.value || 10);
-        const racial = Number(this.characterData.abilities[a].racial || 0);
-        const total = base + racial + Number(this.characterData.abilities[a].temp || 0);
+        const racial = Number(chargen.characterData.abilities[a].racial || 0);
+        const total = base + racial + Number(chargen.characterData.abilities[a].temp || 0);
         const mod = Math.floor((total - 10) / 2);
 
-        this.characterData.abilities[a].base = base;
-        this.characterData.abilities[a].total = total;
-        this.characterData.abilities[a].mod = mod;
+        chargen.characterData.abilities[a].base = base;
+        chargen.characterData.abilities[a].total = total;
+        chargen.characterData.abilities[a].mod = mod;
 
         if (display) display.textContent = `Total: ${total} (Mod: ${mod >= 0 ? "+" : ""}${mod})`;
       });
 
       // Update Second Wind preview
-      const hpMax = Number(doc.querySelector('[name="hp_max"]')?.value || 1);
-      const conTotal = this.characterData.abilities.con.total || 10;
+      const hpMax = Number(root.querySelector('[name="hp_max"]')?.value || 1);
+      const conTotal = chargen.characterData.abilities.con.total || 10;
       const conMod = Math.floor((conTotal - 10) / 2);
-      const misc = Number(doc.querySelector('[name="sw_misc"]')?.value || 0);
+      const misc = Number(root.querySelector('[name="sw_misc"]')?.value || 0);
       const heal = Math.max(Math.floor(hpMax / 4), conMod) + misc;
-      this.characterData.secondWind.healing = heal;
+      chargen.characterData.secondWind.healing = heal;
 
-      const swPreview = doc.querySelector("#sw_heal_preview");
+      const swPreview = root.querySelector("#sw_heal_preview");
       if (swPreview) swPreview.textContent = heal;
     };
 
@@ -523,45 +527,57 @@ export function _bindAbilitiesUI(root) {
       // Hide all mode divs
       const modes = ['point-mode', 'standard-mode', 'organic-mode', 'free-mode'];
       modes.forEach(mode => {
-        const modeDiv = doc.querySelector(`#${mode}`);
+        const modeDiv = root.querySelector(`#${mode}`);
         if (modeDiv) modeDiv.style.display = 'none';
       });
 
       // Show selected mode
-      const selectedMode = doc.querySelector(`#${modeName}`);
+      const selectedMode = root.querySelector(`#${modeName}`);
       if (selectedMode) selectedMode.style.display = 'block';
 
       // Update button states
-      const buttons = doc.querySelectorAll('.method-button');
+      const buttons = root.querySelectorAll('.method-button');
       buttons.forEach(btn => btn.classList.remove('active'));
     };
 
     // Wire buttons with mode switching
-    const stdBtn = doc.querySelector("#std-roll-btn");
+    const stdBtn = root.querySelector("#std-roll-btn");
     if (stdBtn) {
+      SWSELogger.log("SWSE | Standard roll button found, attaching handler");
       stdBtn.onclick = () => {
+        SWSELogger.log("SWSE | Standard roll button clicked");
         switchMode('standard-mode');
         stdBtn.classList.add('active');
         rollStandard();
       };
+    } else {
+      SWSELogger.warn("SWSE | Standard roll button not found in DOM");
     }
 
-    const orgBtn = doc.querySelector("#org-roll-btn");
+    const orgBtn = root.querySelector("#org-roll-btn");
     if (orgBtn) {
+      SWSELogger.log("SWSE | Organic roll button found, attaching handler");
       orgBtn.onclick = () => {
+        SWSELogger.log("SWSE | Organic roll button clicked");
         switchMode('organic-mode');
         orgBtn.classList.add('active');
         rollOrganic();
       };
+    } else {
+      SWSELogger.warn("SWSE | Organic roll button not found in DOM");
     }
 
-    const pbInit = doc.querySelector("#pb-init");
+    const pbInit = root.querySelector("#pb-init");
     if (pbInit) {
+      SWSELogger.log("SWSE | Point buy button found, attaching handler");
       pbInit.onclick = () => {
+        SWSELogger.log("SWSE | Point buy button clicked");
         switchMode('point-mode');
         pbInit.classList.add('active');
         initPointBuy();
       };
+    } else {
+      SWSELogger.warn("SWSE | Point buy button not found in DOM");
     }
 
     // Initialize

@@ -74,7 +74,7 @@ export async function _onResetSkills(event) {
  */
 export function _bindSkillsUI(root) {
   const doc = root || this.element[0];
-  const skillsContainer = doc.querySelector("#skills-list");
+  const skillsContainer = root.querySelector("#skills-list");
   if (!skillsContainer) return;
 
   // Maximum trained skills based on class + INT + racial bonuses
@@ -90,7 +90,7 @@ export function _bindSkillsUI(root) {
 
   // Update counter display
   const updateCounter = () => {
-    const counter = doc.querySelector("#trained-counter");
+    const counter = root.querySelector("#trained-counter");
     if (counter) counter.textContent = `${trainedCount} / ${maxTrained}`;
   };
   updateCounter();

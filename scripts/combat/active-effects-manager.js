@@ -124,21 +124,47 @@ export class SWSEActiveEffectsManager {
   };
 
   /**
+   * Convert numeric condition step to condition key
+   * @param {number|string} step - The condition step (0-5) or key
+   * @returns {string} The condition key
+   * @private
+   */
+  static _getConditionKey(step) {
+    // If already a string key, return it
+    if (typeof step === 'string') return step;
+
+    // Map numeric steps to condition keys
+    const stepMap = {
+      0: 'normal',
+      1: '-1',
+      2: '-2',
+      3: '-5',
+      4: '-10',
+      5: 'helpless'
+    };
+
+    return stepMap[step] || 'normal';
+  }
+
+  /**
    * Apply condition track effect to an actor
    * @param {Actor} actor - The actor to apply the effect to
-   * @param {string} condition - The condition track level
+   * @param {string|number} condition - The condition track level (string key or numeric step)
    * @returns {Promise<void>}
    */
   static async applyConditionEffect(actor, condition) {
     // Remove any existing condition effects
     await this.removeConditionEffects(actor);
 
-    // Don't create effect for 'normal' condition
-    if (condition === 'normal') return;
+    // Convert numeric step to condition key if needed
+    const conditionKey = this._getConditionKey(condition);
 
-    const effectData = this.CONDITION_EFFECTS[condition];
+    // Don't create effect for 'normal' condition
+    if (conditionKey === 'normal') return;
+
+    const effectData = this.CONDITION_EFFECTS[conditionKey];
     if (!effectData) {
-      console.warn(`SWSE | Unknown condition: ${condition}`);
+      console.warn(`SWSE | Unknown condition: ${condition} (mapped to: ${conditionKey})`);
       return;
     }
 
@@ -150,7 +176,7 @@ export class SWSEActiveEffectsManager {
       changes: effectData.changes,
       flags: {
         swse: {
-          conditionTrack: condition
+          conditionTrack: conditionKey
         },
         ...effectData.flags
       },

@@ -257,7 +257,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     // Import and open the character generator
     try {
-      const CharacterGenerator = (await import('../../apps/chargen.js')).default;
+      const CharacterGenerator = (await import('../../apps/chargen/chargen-main.js')).default;
       const chargen = new CharacterGenerator(this.actor);
       chargen.render(true);
     } catch (err) {
@@ -890,7 +890,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     event.preventDefault();
 
     // Import species selection functions from levelup
-    const { getAvailableSpecies, selectSpecies } = await import('../apps/levelup/levelup-class.js');
+    const { getAvailableSpecies, selectSpecies } = await import('../../apps/levelup/levelup-class.js');
 
     // Get available species
     const availableSpecies = await getAvailableSpecies();

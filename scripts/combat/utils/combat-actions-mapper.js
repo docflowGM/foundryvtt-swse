@@ -11,6 +11,7 @@ export class CombatActionsMapper {
   static _shipCombatActionsData = null;
   static _talentEnhancementsData = null;
   static _initialized = false;
+  static _warnedNotInitialized = false;
 
   /**
    * Initialize by loading JSON data
@@ -53,7 +54,10 @@ export class CombatActionsMapper {
    */
   static getActionsForSkill(skillKey) {
     if (!this._initialized || !this._combatActionsData) {
-      SWSELogger.warn('SWSE | Combat Actions Mapper not initialized');
+      if (!this._warnedNotInitialized) {
+        SWSELogger.log('SWSE | Combat Actions Mapper not yet initialized (this is normal during startup)');
+        this._warnedNotInitialized = true;
+      }
       return { combatActions: [], extraUses: [], hasActions: false };
     }
 
