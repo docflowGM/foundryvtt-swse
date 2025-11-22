@@ -166,6 +166,13 @@ export class TemplateCharacterCreator extends Application {
           <p class="template-quote"><em>"${template.quote}"</em></p>
           <p>${template.description}</p>
         </div>
+
+        <div class="character-name-input" style="margin-top: 1rem; padding: 1rem; background: rgba(74, 144, 226, 0.1); border-radius: 4px;">
+          <label for="template-char-name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
+            What shall we call you?
+          </label>
+          <input type="text" id="template-char-name" name="template-char-name" placeholder="Enter your character's name..." style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;" value="${template.name}" />
+        </div>
       </div>
     `;
 
@@ -177,7 +184,20 @@ export class TemplateCharacterCreator extends Application {
         confirm: {
           icon: '<i class="fas fa-check"></i>',
           label: 'Create Character',
-          callback: onConfirm
+          callback: (html) => {
+            // Get character name from input field
+            const nameInput = html.find('#template-char-name');
+            const charName = nameInput.val()?.trim();
+
+            if (!charName) {
+              ui.notifications.warn('Please enter a character name');
+              return false;
+            }
+
+            // Store the name and call the original confirm callback
+            template.characterName = charName;
+            onConfirm();
+          }
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
@@ -245,9 +265,8 @@ export class TemplateCharacterCreator extends Application {
     }
 
     try {
-      // Ask for character name
-      const name = await TemplateCharacterCreator._promptCharacterName(template.name);
-      if (!name) return; // User cancelled
+      // Use name from dialogue (stored in template.characterName)
+      const name = template.characterName || template.name;
 
       SWSELogger.log(`SWSE | Creating character from template: ${template.name}`);
 
@@ -257,10 +276,11 @@ export class TemplateCharacterCreator extends Application {
         type: 'character',
         system: {
           level: {
-            heroic: template.level || 1
+            heroic: parseInt(template.level) || 1
           },
           race: template.species,
-          credits: template.credits || 1000
+          credits: parseInt(template.credits) || 1000,
+          speed: parseInt(template.speed) || 6  // Ensure speed is an integer
         }
       };
 
@@ -275,7 +295,7 @@ export class TemplateCharacterCreator extends Application {
       // Apply ability scores
       const abilityUpdates = {};
       for (const [ability, value] of Object.entries(template.abilityScores)) {
-        abilityUpdates[`system.attributes.${ability}.base`] = value;
+        abilityUpdates[`system.abilities.${ability}.base`] = parseInt(value) || 10;
       }
 
       // Apply species bonuses
