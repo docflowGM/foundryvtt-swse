@@ -257,7 +257,7 @@ export class SWSEActorSheetBase extends ActorSheet {
     event.preventDefault();
     const button = event.currentTarget;
     const action = button.dataset.action;
-    const li = button.closest('.item');
+    const li = button.closest('[data-item-id]');
     const item = this.actor.items.get(li?.dataset.itemId);
     
     switch(action) {
@@ -707,7 +707,7 @@ export class SWSEActorSheetBase extends ActorSheet {
    */
   async _onItemQuantity(event) {
     const input = event.currentTarget;
-    const li = input.closest('.item');
+    const li = input.closest('[data-item-id]');
     const item = this.actor.items.get(li?.dataset.itemId);
     const quantity = parseInt(input.value) || 0;
     
@@ -719,7 +719,7 @@ export class SWSEActorSheetBase extends ActorSheet {
    */
   async _onItemEquipped(event) {
     const checkbox = event.currentTarget;
-    const li = checkbox.closest('.item');
+    const li = checkbox.closest('[data-item-id]');
     const item = this.actor.items.get(li?.dataset.itemId);
     
     return item?.update({'system.equipped': checkbox.checked});
