@@ -279,6 +279,103 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
   /**
+   * Open species selection dialog
+   */
+  async _onPickSpecies(event) {
+    event.preventDefault();
+
+    // Get species compendium
+    const speciesPack = game.packs.get('swse.species');
+    if (!speciesPack) {
+      ui.notifications.error('Species compendium not found');
+      return;
+    }
+
+    // Load all species from compendium
+    const index = await speciesPack.getIndex();
+    const speciesList = index.map(entry => ({
+      id: entry._id,
+      name: entry.name,
+      img: entry.img || 'icons/svg/mystery-man.svg'
+    })).sort((a, b) => a.name.localeCompare(b.name));
+
+    // Build dialog content with search
+    const content = `
+      <div class="species-picker">
+        <div class="species-search-container">
+          <input type="text"
+                 id="species-search"
+                 placeholder="Search species..."
+                 autofocus
+                 style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px;"/>
+        </div>
+        <div class="species-list" style="max-height: 400px; overflow-y: auto;">
+          ${speciesList.map(species => `
+            <div class="species-item" data-species-id="${species.id}" style="display: flex; align-items: center; padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #ddd;">
+              <img src="${species.img}" style="width: 32px; height: 32px; margin-right: 0.75rem; border-radius: 4px;" alt="${species.name}"/>
+              <span class="species-name" style="flex: 1;">${species.name}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    // Show dialog
+    new Dialog({
+      title: this.actor.system.race ? 'Change Species' : 'Select Species',
+      content: content,
+      buttons: {
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: 'Cancel'
+        }
+      },
+      default: 'cancel',
+      render: (html) => {
+        const searchInput = html.find('#species-search');
+        const speciesItems = html.find('.species-item');
+
+        // Search filter
+        searchInput.on('input', function() {
+          const searchTerm = $(this).val().toLowerCase();
+          speciesItems.each(function() {
+            const speciesName = $(this).find('.species-name').text().toLowerCase();
+            $(this).toggle(speciesName.includes(searchTerm));
+          });
+        });
+
+        // Species selection
+        speciesItems.on('click', async (event) => {
+          const speciesId = $(event.currentTarget).data('species-id');
+          const species = await speciesPack.getDocument(speciesId);
+
+          if (species) {
+            // Use the drop handler to apply species
+            const { DropHandler } = await import('../../drag-drop/drop-handler.js');
+            await DropHandler.handleSpeciesDrop(this.actor, species);
+          }
+
+          // Close dialog
+          html.closest('.dialog').find('.dialog-button.cancel').click();
+        });
+
+        // Hover effect
+        speciesItems.hover(
+          function() { $(this).css('background-color', 'rgba(74, 144, 226, 0.1)'); },
+          function() { $(this).css('background-color', ''); }
+        );
+
+        // Focus search input
+        searchInput.focus();
+      }
+    }, {
+      width: 500,
+      height: 600,
+      classes: ['swse', 'species-picker-dialog']
+    }).render(true);
+  }
+
+  /**
    * Filter combat actions by search term and action type
    */
   _onFilterCombatActions(event) {
