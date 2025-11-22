@@ -5,7 +5,7 @@ import { SWSELogger } from '../utils/logger.js';
 // Multi-level support with automatic progression
 // ============================================
 
-import CharacterGenerator from './chargen.js';
+import CharacterGenerator from './chargen/chargen-main.js';
 
 export default class CharacterGeneratorImproved extends CharacterGenerator {
 

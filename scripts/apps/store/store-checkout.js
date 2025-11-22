@@ -4,7 +4,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
-import CharacterGenerator from '../chargen.js';
+import CharacterGenerator from '../chargen/chargen-main.js';
 import { VehicleModificationApp } from '../vehicle-modification-app.js';
 import { calculateFinalCost } from './store-pricing.js';
 import { getRandomDialogue } from './store-shared.js';
