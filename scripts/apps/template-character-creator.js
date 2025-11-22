@@ -166,6 +166,13 @@ export class TemplateCharacterCreator extends Application {
           <p class="template-quote"><em>"${template.quote}"</em></p>
           <p>${template.description}</p>
         </div>
+
+        <div class="character-name-input" style="margin-top: 1rem; padding: 1rem; background: rgba(74, 144, 226, 0.1); border-radius: 4px;">
+          <label for="template-char-name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
+            What shall we call you?
+          </label>
+          <input type="text" id="template-char-name" name="template-char-name" placeholder="Enter your character's name..." style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;" value="${template.name}" />
+        </div>
       </div>
     `;
 
@@ -177,7 +184,20 @@ export class TemplateCharacterCreator extends Application {
         confirm: {
           icon: '<i class="fas fa-check"></i>',
           label: 'Create Character',
-          callback: onConfirm
+          callback: (html) => {
+            // Get character name from input field
+            const nameInput = html.find('#template-char-name');
+            const charName = nameInput.val()?.trim();
+
+            if (!charName) {
+              ui.notifications.warn('Please enter a character name');
+              return false;
+            }
+
+            // Store the name and call the original confirm callback
+            template.characterName = charName;
+            onConfirm();
+          }
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
@@ -245,9 +265,8 @@ export class TemplateCharacterCreator extends Application {
     }
 
     try {
-      // Ask for character name
-      const name = await TemplateCharacterCreator._promptCharacterName(template.name);
-      if (!name) return; // User cancelled
+      // Use name from dialogue (stored in template.characterName)
+      const name = template.characterName || template.name;
 
       SWSELogger.log(`SWSE | Creating character from template: ${template.name}`);
 
@@ -257,10 +276,11 @@ export class TemplateCharacterCreator extends Application {
         type: 'character',
         system: {
           level: {
-            heroic: template.level || 1
+            heroic: parseInt(template.level) || 1
           },
           race: template.species,
-          credits: template.credits || 1000
+          credits: parseInt(template.credits) || 1000,
+          speed: parseInt(template.speed) || 6  // Ensure speed is an integer
         }
       };
 
@@ -275,7 +295,7 @@ export class TemplateCharacterCreator extends Application {
       // Apply ability scores
       const abilityUpdates = {};
       for (const [ability, value] of Object.entries(template.abilityScores)) {
-        abilityUpdates[`system.attributes.${ability}.base`] = value;
+        abilityUpdates[`system.abilities.${ability}.base`] = parseInt(value) || 10;
       }
 
       // Apply species bonuses
@@ -313,13 +333,163 @@ export class TemplateCharacterCreator extends Application {
         quote: template.quote
       });
 
-      // Open the character sheet
-      actor.sheet.render(true);
+      // Open skill training interface
+      await this._openSkillTraining(actor, template);
 
-      // Show success message with equipment list
-      const equipmentList = template.startingEquipment.join(', ');
-      await Dialog.prompt({
-        title: `${name} Created!`,
+    } catch (error) {
+      SWSELogger.error('SWSE | Failed to create character from template:', error);
+      ui.notifications.error(`Failed to create character: ${error.message}`);
+    }
+  }
+
+  /**
+   * Open skill training interface after template creation
+   */
+  async _openSkillTraining(actor, template) {
+    // Get class skills for this template's class
+    const classSkills = await this._getClassSkills(template.class);
+
+    // Calculate available skill points (Int mod + class bonus)
+    const intMod = Math.floor((actor.system.abilities.int.total - 10) / 2);
+    const classSkillPoints = this._getClassSkillPoints(template.class);
+    const totalSkillPoints = Math.max(1, intMod + classSkillPoints);
+
+    // Count already trained skills
+    const trainedCount = template.trainedSkills?.length || 0;
+    const remainingPoints = totalSkillPoints - trainedCount;
+
+    if (remainingPoints <= 0) {
+      // No additional skills to train, just show success
+      await this._showSuccessDialog(actor, template);
+      actor.sheet.render(true);
+      return;
+    }
+
+    // Build skill selection dialog
+    const content = await this._buildSkillSelectionContent(actor, classSkills, remainingPoints);
+
+    new Dialog({
+      title: `Train Skills - ${actor.name}`,
+      content: content,
+      buttons: {
+        confirm: {
+          icon: '<i class="fas fa-check"></i>',
+          label: 'Finish',
+          callback: async (html) => {
+            // Get selected skills
+            const selectedSkills = [];
+            html.find('input[type="checkbox"]:checked').each(function() {
+              selectedSkills.push($(this).val());
+            });
+
+            // Apply selected skills
+            if (selectedSkills.length > 0) {
+              await this._applySkills(actor, selectedSkills);
+            }
+
+            // Show success dialog
+            await this._showSuccessDialog(actor, template);
+
+            // Open character sheet
+            actor.sheet.render(true);
+          }
+        }
+      },
+      default: 'confirm',
+      render: (html) => {
+        // Add checkbox change handler to enforce point limit
+        const checkboxes = html.find('input[type="checkbox"]');
+        const pointsRemaining = html.find('#points-remaining');
+
+        checkboxes.on('change', function() {
+          const checked = html.find('input[type="checkbox"]:checked').length;
+          pointsRemaining.text(remainingPoints - checked);
+
+          // Disable unchecked boxes if at limit
+          if (checked >= remainingPoints) {
+            html.find('input[type="checkbox"]:not(:checked)').prop('disabled', true);
+          } else {
+            html.find('input[type="checkbox"]').prop('disabled', false);
+          }
+        });
+      }
+    }, {
+      width: 600,
+      height: 500,
+      classes: ['swse', 'skill-training-dialog']
+    }).render(true);
+  }
+
+  /**
+   * Build skill selection content
+   */
+  async _buildSkillSelectionContent(actor, classSkills, remainingPoints) {
+    const allSkills = {
+      acrobatics: 'Acrobatics',
+      climb: 'Climb',
+      deception: 'Deception',
+      endurance: 'Endurance',
+      gatherInformation: 'Gather Information',
+      initiative: 'Initiative',
+      jump: 'Jump',
+      knowledge_bureaucracy: 'Knowledge (Bureaucracy)',
+      knowledge_galactic_lore: 'Knowledge (Galactic Lore)',
+      knowledge_life_sciences: 'Knowledge (Life Sciences)',
+      knowledge_physical_sciences: 'Knowledge (Physical Sciences)',
+      knowledge_social_sciences: 'Knowledge (Social Sciences)',
+      knowledge_tactics: 'Knowledge (Tactics)',
+      knowledge_technology: 'Knowledge (Technology)',
+      mechanics: 'Mechanics',
+      perception: 'Perception',
+      persuasion: 'Persuasion',
+      pilot: 'Pilot',
+      ride: 'Ride',
+      stealth: 'Stealth',
+      survival: 'Survival',
+      swim: 'Swim',
+      treatInjury: 'Treat Injury',
+      useComputer: 'Use Computer',
+      useTheForce: 'Use the Force'
+    };
+
+    let html = `
+      <div class="skill-training-container">
+        <p><strong>Available Skill Points:</strong> <span id="points-remaining">${remainingPoints}</span></p>
+        <p class="hint">Select up to ${remainingPoints} additional skills to train. Class skills are marked with ⭐.</p>
+        <div class="skills-list" style="max-height: 300px; overflow-y: auto; padding: 0.5rem;">
+    `;
+
+    for (const [key, label] of Object.entries(allSkills)) {
+      const isClassSkill = classSkills.includes(key);
+      const isTrained = actor.system.skills[key]?.trained || false;
+
+      if (isTrained) continue; // Skip already trained skills
+
+      html += `
+        <div class="skill-item" style="padding: 0.5rem; border-bottom: 1px solid #ddd;">
+          <label style="display: flex; align-items: center; cursor: pointer;">
+            <input type="checkbox" value="${key}" style="margin-right: 0.5rem;" />
+            <span style="flex: 1;">${label} ${isClassSkill ? '⭐' : ''}</span>
+          </label>
+        </div>
+      `;
+    }
+
+    html += `
+        </div>
+      </div>
+    `;
+
+    return html;
+  }
+
+  /**
+   * Show success dialog with equipment list
+   */
+  async _showSuccessDialog(actor, template) {
+    const equipmentList = template.startingEquipment.join(', ');
+    await Dialog.prompt({
+        title: `${actor.name} Created!`,
         content: `
           <div style="padding: 1rem;">
             <h2 style="color: #4a90e2; margin-top: 0;">Character Successfully Created</h2>
@@ -469,6 +639,48 @@ export class TemplateCharacterCreator extends Application {
     } catch (error) {
       SWSELogger.error('SWSE | Failed to apply class:', error);
     }
+  }
+
+  /**
+   * Get class skills for a given class
+   */
+  async _getClassSkills(className) {
+    // All Knowledge skills for reference
+    const allKnowledgeSkills = [
+      'knowledge_bureaucracy',
+      'knowledge_galactic_lore',
+      'knowledge_life_sciences',
+      'knowledge_physical_sciences',
+      'knowledge_social_sciences',
+      'knowledge_tactics',
+      'knowledge_technology'
+    ];
+
+    const classSkillMap = {
+      'Jedi': ['acrobatics', 'endurance', 'initiative', 'jump', ...allKnowledgeSkills, 'mechanics', 'perception', 'pilot', 'useTheForce'],
+      'Noble': ['deception', 'gatherInformation', 'initiative', ...allKnowledgeSkills, 'perception', 'persuasion', 'pilot', 'ride', 'treatInjury', 'useComputer'],
+      'Scoundrel': ['acrobatics', 'deception', 'gatherInformation', 'initiative', ...allKnowledgeSkills, 'mechanics', 'perception', 'persuasion', 'pilot', 'stealth', 'useComputer'],
+      'Scout': ['climb', 'endurance', 'initiative', 'jump', ...allKnowledgeSkills, 'mechanics', 'perception', 'pilot', 'ride', 'stealth', 'survival', 'swim'],
+      'Soldier': ['climb', 'endurance', 'initiative', 'jump', 'knowledge_tactics', 'mechanics', 'perception', 'pilot', 'swim', 'treatInjury', 'useComputer'] // Only Knowledge (Tactics)
+    };
+
+    return classSkillMap[className] || [];
+  }
+
+  /**
+   * Get base skill training points for a given class (before Int modifier)
+   * These are the initial training points at character creation only
+   */
+  _getClassSkillPoints(className) {
+    const classSkillPointsMap = {
+      'Jedi': 2,
+      'Noble': 6,
+      'Scoundrel': 4,
+      'Scout': 5,
+      'Soldier': 3
+    };
+
+    return classSkillPointsMap[className] || 4;
   }
 
   /**

@@ -4,13 +4,18 @@
  */
 
 export class DropHandler {
-  
+
   static async handleItemDrop(actor, data) {
+    // Handle NPC Template drops (custom data type)
+    if (data.type === 'npc-template') {
+      return this.handleNPCTemplateDrop(actor, data);
+    }
+
     if (data.type !== 'Item') return;
-    
+
     const item = await Item.implementation.fromDropData(data);
     if (!item) return;
-    
+
     switch (item.type) {
       case 'species':
         return this.handleSpeciesDrop(actor, item);
@@ -29,6 +34,175 @@ export class DropHandler {
       default:
         return this.handleDefaultDrop(actor, item);
     }
+  }
+
+  static async handleNPCTemplateDrop(actor, data) {
+    // Apply NPC template to actor
+    // This replaces the actor's stats with the template data
+
+    if (actor.type !== 'npc') {
+      ui.notifications.warn('NPC templates can only be applied to NPC actors!');
+      return false;
+    }
+
+    const template = data.templateData;
+    if (!template) {
+      ui.notifications.error('Invalid NPC template data');
+      return false;
+    }
+
+    const confirm = await Dialog.confirm({
+      title: 'Apply NPC Template?',
+      content: `<p>This will replace <strong>${actor.name}</strong>'s stats with the <strong>${template.name}</strong> template.</p>
+                <p><strong>This cannot be undone!</strong></p>`
+    });
+
+    if (!confirm) return false;
+
+    // Build update object
+    const updates = {
+      'name': template.name
+    };
+
+    // Update abilities
+    if (template.abilities) {
+      for (const [key, value] of Object.entries(template.abilities)) {
+        updates[`system.abilities.${key}.base`] = value.base;
+        updates[`system.abilities.${key}.total`] = value.total;
+      }
+    }
+
+    // Update defenses
+    if (template.defenses) {
+      for (const [key, value] of Object.entries(template.defenses)) {
+        updates[`system.defenses.${key}.total`] = value.total;
+      }
+    }
+
+    // Update HP
+    if (template.hp) {
+      updates['system.hp.max'] = template.hp.max;
+      updates['system.hp.value'] = template.hp.value;
+    }
+
+    // Update other stats - ensure all numeric values are proper integers
+    if (template.level) updates['system.level'] = parseInt(template.level) || 1;
+    if (template.challengeLevel) updates['system.challengeLevel'] = parseInt(template.challengeLevel) || 1;
+    if (template.size) updates['system.size'] = template.size;
+    if (template.speed !== undefined) updates['system.speed'] = parseInt(template.speed) || 6;
+    if (template.bab !== undefined) updates['system.bab'] = parseInt(template.bab) || 0;
+    if (template.initiative !== undefined) updates['system.initiative'] = parseInt(template.initiative) || 0;
+    if (template.damageThreshold) updates['system.damageThreshold'] = parseInt(template.damageThreshold) || 10;
+    if (template.perception !== undefined) updates['system.perception'] = parseInt(template.perception) || 0;
+    if (template.senses) updates['system.senses'] = template.senses;
+
+    // Update condition track
+    if (template.conditionTrack) {
+      updates['system.conditionTrack'] = template.conditionTrack;
+    }
+
+    // Apply updates
+    await actor.update(updates);
+
+    // Create embedded items for feats, talents, etc.
+    // Try to find matching items in compendiums first
+    const itemsToCreate = [];
+
+    // Helper function to find item in compendiums
+    const findInCompendiums = async (itemName, itemType) => {
+      // Search all world and compendium items
+      const packs = game.packs.filter(p => p.documentName === 'Item');
+
+      for (const pack of packs) {
+        // Search by name (case-insensitive)
+        const index = await pack.getIndex();
+        const entry = index.find(i =>
+          i.name.toLowerCase() === itemName.toLowerCase() &&
+          (!itemType || i.type === itemType)
+        );
+
+        if (entry) {
+          const item = await pack.getDocument(entry._id);
+          return item ? item.toObject() : null;
+        }
+      }
+
+      // Also search world items
+      const worldItem = game.items.find(i =>
+        i.name.toLowerCase() === itemName.toLowerCase() &&
+        (!itemType || i.type === itemType)
+      );
+
+      return worldItem ? worldItem.toObject() : null;
+    };
+
+    // Add feats
+    if (template.feats && template.feats.length > 0) {
+      for (const featName of template.feats) {
+        const existingFeat = await findInCompendiums(featName, 'feat');
+        if (existingFeat) {
+          itemsToCreate.push(existingFeat);
+        } else {
+          // Create placeholder if not found
+          itemsToCreate.push({
+            name: featName,
+            type: 'feat',
+            system: { description: `From ${template.name} template (placeholder - not found in compendium)` }
+          });
+        }
+      }
+    }
+
+    // Add talents
+    if (template.talents && template.talents.length > 0) {
+      for (const talentName of template.talents) {
+        const existingTalent = await findInCompendiums(talentName, 'talent');
+        if (existingTalent) {
+          itemsToCreate.push(existingTalent);
+        } else {
+          // Create placeholder if not found
+          itemsToCreate.push({
+            name: talentName,
+            type: 'talent',
+            system: { description: `From ${template.name} template (placeholder - not found in compendium)` }
+          });
+        }
+      }
+    }
+
+    // Parse and add equipment from the equipment string
+    if (template.equipment) {
+      const equipmentItems = template.equipment.split(',').map(e => e.trim()).filter(e => e.length > 0);
+      for (const equipName of equipmentItems.slice(0, 10)) { // Limit to first 10 items
+        // Try to find equipment in compendiums
+        const existingEquip = await findInCompendiums(equipName, 'equipment');
+        if (existingEquip) {
+          itemsToCreate.push(existingEquip);
+        }
+        // Don't create placeholder equipment - just skip if not found
+      }
+    }
+
+    // Create all items at once
+    if (itemsToCreate.length > 0) {
+      await actor.createEmbeddedDocuments('Item', itemsToCreate);
+    }
+
+    // Add notes to biography if available
+    if (template.skillsText || template.equipment || template.abilitiesText) {
+      let bioNotes = '<h2>Template Notes</h2>';
+      if (template.skillsText) bioNotes += `<h3>Skills</h3><p>${template.skillsText}</p>`;
+      if (template.equipment) bioNotes += `<h3>Equipment</h3><p>${template.equipment}</p>`;
+      if (template.abilitiesText) bioNotes += `<h3>Special Abilities</h3><p>${template.abilitiesText}</p>`;
+      if (template.speciesTraits) bioNotes += `<h3>Species Traits</h3><p>${template.speciesTraits}</p>`;
+
+      await actor.update({
+        'system.biography': (actor.system.biography || '') + bioNotes
+      });
+    }
+
+    ui.notifications.info(`Applied ${template.name} template to ${actor.name}`);
+    return true;
   }
   
   static async handleSpeciesDrop(actor, species) {

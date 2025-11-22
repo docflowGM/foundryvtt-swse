@@ -1,0 +1,298 @@
+<div class="nonheroic-units-browser">
+  <div class="browser-header">
+    <h2>Nonheroic Units Browser</h2>
+    <p class="help-text">Search and drag units onto NPC character sheets, or import them to the NPC compendium</p>
+  </div>
+
+  <div class="browser-controls">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="unit-search" placeholder="Search by name or type..." value="{{searchTerm}}">
+    </div>
+
+    <div class="filter-box">
+      <label for="cl-filter">Challenge Level:</label>
+      <select id="cl-filter">
+        <option value="all" {{#if (eq challengeLevelFilter 'all')}}selected{{/if}}>All</option>
+        {{#each challengeLevels as |cl|}}
+          <option value="{{cl}}" {{#if (eq ../challengeLevelFilter cl)}}selected{{/if}}>CL {{cl}}</option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="result-count">
+      Showing {{filteredCount}} of {{totalUnits}} units
+    </div>
+  </div>
+
+  <div class="browser-actions">
+    <button type="button" id="import-all-btn" class="import-btn">
+      <i class="fas fa-file-import"></i> Bulk Import to Compendium
+    </button>
+  </div>
+
+  <div class="units-list">
+    {{#if units}}
+      {{#each units as |unit index|}}
+        <div class="unit-entry" data-index="{{index}}" draggable="true">
+          <div class="unit-info">
+            <h3 class="unit-name">{{unit.name}}</h3>
+            <div class="unit-stats">
+              {{#if unit.challengeLevel}}
+                <span class="stat-badge cl-badge">CL {{unit.challengeLevel}}</span>
+              {{/if}}
+              {{#if unit.size}}
+                <span class="stat-badge size-badge">{{unit.size}}</span>
+              {{/if}}
+              {{#if unit.speciesType}}
+                <span class="stat-badge type-badge">{{unit.speciesType}}</span>
+              {{/if}}
+              <span class="stat-badge hp-badge">HP {{unit.hp.max}}</span>
+            </div>
+            <div class="unit-defenses">
+              <span>Ref {{unit.defenses.reflex.total}}</span>
+              <span>Fort {{unit.defenses.fortitude.total}}</span>
+              <span>Will {{unit.defenses.will.total}}</span>
+            </div>
+          </div>
+          <div class="unit-actions">
+            <button type="button" class="import-unit-btn" title="Import to Compendium">
+              <i class="fas fa-download"></i>
+            </button>
+            <i class="fas fa-grip-vertical drag-handle" title="Drag onto NPC sheet"></i>
+          </div>
+        </div>
+      {{/each}}
+    {{else}}
+      <div class="no-results">
+        <p>No units found matching your search criteria.</p>
+      </div>
+    {{/if}}
+  </div>
+
+  <div class="browser-footer">
+    <p class="help-text">
+      <strong>Tip:</strong> Drag a unit directly onto an NPC character sheet to apply its stats instantly!
+    </p>
+  </div>
+</div>
+
+<style>
+.nonheroic-units-browser {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px;
+}
+
+.browser-header {
+  margin-bottom: 15px;
+}
+
+.browser-header h2 {
+  margin: 0 0 5px 0;
+}
+
+.browser-header .help-text {
+  margin: 0;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.browser-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+
+.search-box i {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 8px 10px 8px 35px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.filter-box {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.filter-box select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.result-count {
+  color: #666;
+  font-size: 0.9em;
+  margin-left: auto;
+}
+
+.browser-actions {
+  margin-bottom: 10px;
+}
+
+.import-btn {
+  padding: 8px 16px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.import-btn:hover {
+  background: #45a049;
+}
+
+.units-list {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  background: #f9f9f9;
+}
+
+.unit-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.unit-entry:hover {
+  border-color: #4CAF50;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.unit-entry[draggable="true"] {
+  cursor: grab;
+}
+
+.unit-entry:active {
+  cursor: grabbing;
+}
+
+.unit-info {
+  flex: 1;
+}
+
+.unit-name {
+  margin: 0 0 5px 0;
+  font-size: 1.1em;
+  color: #333;
+}
+
+.unit-stats {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+}
+
+.stat-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+.cl-badge {
+  background: #2196F3;
+  color: white;
+}
+
+.size-badge {
+  background: #FF9800;
+  color: white;
+}
+
+.type-badge {
+  background: #9C27B0;
+  color: white;
+}
+
+.hp-badge {
+  background: #F44336;
+  color: white;
+}
+
+.unit-defenses {
+  display: flex;
+  gap: 10px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.unit-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.import-unit-btn {
+  padding: 5px 10px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.import-unit-btn:hover {
+  background: #45a049;
+}
+
+.drag-handle {
+  color: #999;
+  font-size: 1.2em;
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+}
+
+.browser-footer {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.browser-footer .help-text {
+  margin: 0;
+  font-size: 0.9em;
+  color: #666;
+  text-align: center;
+}
+</style>
