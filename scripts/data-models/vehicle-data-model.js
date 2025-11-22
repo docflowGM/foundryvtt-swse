@@ -2,6 +2,41 @@ import { SWSEActorDataModel } from './actor-data-model.js';
 
 export class SWSEVehicleDataModel extends SWSEActorDataModel {
 
+  /**
+   * Override shimData to handle vehicle-specific field types
+   * Vehicles use strings for initiative and speed, not integers
+   */
+  static shimData(data, options) {
+    // Call parent shimData but skip it for now, we'll handle fields manually
+    const shimmed = super.shimData ? super.shimData.call(Object.getPrototypeOf(SWSEActorDataModel), data, options) : data;
+
+    // For vehicles, ensure initiative and speed are STRINGS, not integers
+    if (shimmed.initiative !== undefined && shimmed.initiative !== null) {
+      shimmed.initiative = String(shimmed.initiative);
+    }
+
+    if (shimmed.speed !== undefined && shimmed.speed !== null) {
+      shimmed.speed = String(shimmed.speed);
+    }
+
+    // Ensure attributes have integer values (vehicles still use attributes)
+    if (shimmed.attributes) {
+      for (const attrType of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+        if (shimmed.attributes[attrType]) {
+          const attr = shimmed.attributes[attrType];
+          for (const field of ['base', 'racial', 'temp']) {
+            if (attr[field] !== undefined && attr[field] !== null) {
+              const num = Number(attr[field]);
+              attr[field] = Number.isNaN(num) ? (field === 'base' ? 10 : 0) : Math.floor(num);
+            }
+          }
+        }
+      }
+    }
+
+    return shimmed;
+  }
+
   static defineSchema() {
     const fields = foundry.data.fields;
     const parentSchema = super.defineSchema();

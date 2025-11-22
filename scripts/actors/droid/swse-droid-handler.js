@@ -18,7 +18,7 @@ export class SWSEDroidHandler {
         cha: { base: chassis.cha || 10, racial: 0, temp: 0 }
       },
       'system.size': chassis.size || 'medium',
-      'system.speed.base': chassis.speed || 6,
+      'system.speed': parseInt(chassis.speed) || 6,
       'system.hp.max': chassis.hp || 10,
       'system.hp.value': chassis.hp || 10, // Set current HP to max
       'system.systemSlots': {

@@ -240,7 +240,7 @@ export class DropHandler {
       'system.abilities.wis.racial': abilityMods.wis || 0,
       'system.abilities.cha.racial': abilityMods.cha || 0,
       'system.size': species.system.size || 'medium',
-      'system.speed.base': species.system.speed || 6
+      'system.speed': parseInt(species.system.speed) || 6
     };
 
     await actor.update(updates);
@@ -303,9 +303,9 @@ export class DropHandler {
       'system.abilities.cha.base': chassis.system.abilities?.cha || 10,
       'system.hp.max': chassis.system.hp || 30,
       'system.hp.value': chassis.system.hp || 30,
-      'system.speed.base': chassis.system.speed || 6
+      'system.speed': parseInt(chassis.system.speed) || 6
     };
-    
+
     await actor.update(updates);
     
     ui.notifications.info(`Applied ${chassis.name} droid chassis to ${actor.name}`);
