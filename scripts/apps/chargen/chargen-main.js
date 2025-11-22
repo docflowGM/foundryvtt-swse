@@ -289,64 +289,67 @@ export default class CharacterGenerator extends Application {
 
   activateListeners(html) {
     super.activateListeners(html);
-    
+
+    // Ensure html is jQuery object for compatibility
+    const $html = html instanceof jQuery ? html : $(html);
+
     // Navigation
-    html.find('.next-step').click(this._onNextStep.bind(this));
-    html.find('.prev-step').click(this._onPrevStep.bind(this));
-    html.find('.finish').click(this._onFinish.bind(this));
+    $html.find('.next-step').click(this._onNextStep.bind(this));
+    $html.find('.prev-step').click(this._onPrevStep.bind(this));
+    $html.find('.finish').click(this._onFinish.bind(this));
 
     // Selections
-    html.find('.select-type').click(this._onSelectType.bind(this));
-    html.find('.select-degree').click(this._onSelectDegree.bind(this));
-    html.find('.select-size').click(this._onSelectSize.bind(this));
-    html.find('.import-droid-btn').click(this._onImportDroid.bind(this));
-    html.find('.select-species').click(this._onSelectSpecies.bind(this));
-    html.find('.select-class').click(this._onSelectClass.bind(this));
-    html.find('.select-feat').click(this._onSelectFeat.bind(this));
-    html.find('.remove-feat').click(this._onRemoveFeat.bind(this));
-    html.find('.select-talent').click(this._onSelectTalent.bind(this));
-    html.find('.skill-select').change(this._onSkillSelect.bind(this));
-    html.find('.train-skill-btn').click(this._onTrainSkill.bind(this));
-    html.find('.untrain-skill-btn').click(this._onUntrainSkill.bind(this));
-    html.find('.reset-skills-btn').click(this._onResetSkills.bind(this));
+    $html.find('.select-type').click(this._onSelectType.bind(this));
+    $html.find('.select-degree').click(this._onSelectDegree.bind(this));
+    $html.find('.select-size').click(this._onSelectSize.bind(this));
+    $html.find('.import-droid-btn').click(this._onImportDroid.bind(this));
+    $html.find('.select-species').click(this._onSelectSpecies.bind(this));
+    $html.find('.select-class').click(this._onSelectClass.bind(this));
+    $html.find('.select-feat').click(this._onSelectFeat.bind(this));
+    $html.find('.remove-feat').click(this._onRemoveFeat.bind(this));
+    $html.find('.select-talent').click(this._onSelectTalent.bind(this));
+    $html.find('.skill-select').change(this._onSkillSelect.bind(this));
+    $html.find('.train-skill-btn').click(this._onTrainSkill.bind(this));
+    $html.find('.untrain-skill-btn').click(this._onUntrainSkill.bind(this));
+    $html.find('.reset-skills-btn').click(this._onResetSkills.bind(this));
 
     // Droid builder/shop
-    html.find('.shop-tab').click(this._onShopTabClick.bind(this));
-    html.find('.accessory-tab').click(this._onAccessoryTabClick.bind(this));
-    html.find('.purchase-system').click(this._onPurchaseSystem.bind(this));
-    html.find('.remove-system').click(this._onRemoveSystem.bind(this));
+    $html.find('.shop-tab').click(this._onShopTabClick.bind(this));
+    $html.find('.accessory-tab').click(this._onAccessoryTabClick.bind(this));
+    $html.find('.purchase-system').click(this._onPurchaseSystem.bind(this));
+    $html.find('.remove-system').click(this._onRemoveSystem.bind(this));
 
     // Name input - use 'input' event to capture changes in real-time
-    html.find('input[name="character-name"]').on('input change', (ev) => {
+    $html.find('input[name="character-name"]').on('input change', (ev) => {
       this.characterData.name = ev.target.value;
     });
 
     // Level input
-    html.find('input[name="target-level"]').on('input change', (ev) => {
+    $html.find('input[name="target-level"]').on('input change', (ev) => {
       this.targetLevel = parseInt(ev.target.value) || 1;
     });
 
     // Shop button
-    html.find('.open-shop-btn').click(this._onOpenShop.bind(this));
+    $html.find('.open-shop-btn').click(this._onOpenShop.bind(this));
 
     // Abilities UI
     if (this.currentStep === "abilities") {
-      this._bindAbilitiesUI(html[0]);
+      this._bindAbilitiesUI($html[0]);
     }
 
     // Skills UI
     if (this.currentStep === "skills") {
-      this._bindSkillsUI(html[0]);
+      this._bindSkillsUI($html[0]);
     }
 
     // Droid Builder UI
     if (this.currentStep === "droid-builder") {
-      this._populateDroidBuilder(html[0]);
+      this._populateDroidBuilder($html[0]);
     }
 
     // Class change
-    html.find('[name="class_select"]').change(async (ev) => {
-      await this._onClassChanged(ev, html[0]);
+    $html.find('[name="class_select"]').change(async (ev) => {
+      await this._onClassChanged(ev, $html[0]);
     });
   }
 
