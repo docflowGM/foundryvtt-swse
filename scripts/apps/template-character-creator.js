@@ -640,25 +640,26 @@ export class TemplateCharacterCreator extends Application {
    */
   async _getClassSkills(className) {
     const classSkillMap = {
-      'Jedi': ['acrobatics', 'climb', 'endurance', 'initiative', 'jump', 'knowledge', 'perception', 'pilot', 'ride', 'stealth', 'swim', 'treatInjury', 'useTheForce'],
-      'Noble': ['deception', 'gatherInformation', 'knowledge', 'perception', 'persuasion', 'pilot', 'ride', 'treatInjury'],
-      'Scoundrel': ['acrobatics', 'climb', 'deception', 'gatherInformation', 'initiative', 'jump', 'mechanics', 'perception', 'pilot', 'stealth', 'useComputer'],
-      'Scout': ['acrobatics', 'climb', 'endurance', 'initiative', 'jump', 'knowledge', 'mechanics', 'perception', 'pilot', 'ride', 'stealth', 'survival', 'swim', 'treatInjury'],
-      'Soldier': ['acrobatics', 'climb', 'endurance', 'initiative', 'jump', 'mechanics', 'perception', 'pilot', 'ride', 'swim', 'treatInjury', 'useComputer']
+      'Jedi': ['acrobatics', 'endurance', 'initiative', 'jump', 'knowledge', 'mechanics', 'perception', 'pilot', 'useTheForce'],
+      'Noble': ['deception', 'gatherInformation', 'initiative', 'knowledge', 'perception', 'persuasion', 'pilot', 'ride', 'treatInjury', 'useComputer'],
+      'Scoundrel': ['acrobatics', 'deception', 'gatherInformation', 'initiative', 'knowledge', 'mechanics', 'perception', 'persuasion', 'pilot', 'stealth', 'useComputer'],
+      'Scout': ['climb', 'endurance', 'initiative', 'jump', 'knowledge', 'mechanics', 'perception', 'pilot', 'ride', 'stealth', 'survival', 'swim'],
+      'Soldier': ['climb', 'endurance', 'initiative', 'jump', 'knowledge', 'mechanics', 'perception', 'pilot', 'swim', 'treatInjury', 'useComputer']
     };
 
     return classSkillMap[className] || [];
   }
 
   /**
-   * Get skill points per level for a given class
+   * Get base skill training points for a given class (before Int modifier)
+   * These are the initial training points at character creation only
    */
   _getClassSkillPoints(className) {
     const classSkillPointsMap = {
-      'Jedi': 4,
-      'Noble': 4,
-      'Scoundrel': 6,
-      'Scout': 6,
+      'Jedi': 2,
+      'Noble': 6,
+      'Scoundrel': 4,
+      'Scout': 5,
       'Soldier': 3
     };
 
