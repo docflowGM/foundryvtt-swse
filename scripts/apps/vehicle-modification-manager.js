@@ -1,5 +1,6 @@
-/**
 import { SWSELogger } from '../utils/logger.js';
+
+/**
  * Vehicle Modification Manager
  * Handles loading, calculating, and managing starship modifications
  */
