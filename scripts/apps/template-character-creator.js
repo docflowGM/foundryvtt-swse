@@ -432,7 +432,13 @@ export class TemplateCharacterCreator extends Application {
       gatherInformation: 'Gather Information',
       initiative: 'Initiative',
       jump: 'Jump',
-      knowledge: 'Knowledge',
+      knowledge_bureaucracy: 'Knowledge (Bureaucracy)',
+      knowledge_galactic_lore: 'Knowledge (Galactic Lore)',
+      knowledge_life_sciences: 'Knowledge (Life Sciences)',
+      knowledge_physical_sciences: 'Knowledge (Physical Sciences)',
+      knowledge_social_sciences: 'Knowledge (Social Sciences)',
+      knowledge_tactics: 'Knowledge (Tactics)',
+      knowledge_technology: 'Knowledge (Technology)',
       mechanics: 'Mechanics',
       perception: 'Perception',
       persuasion: 'Persuasion',
@@ -639,12 +645,23 @@ export class TemplateCharacterCreator extends Application {
    * Get class skills for a given class
    */
   async _getClassSkills(className) {
+    // All Knowledge skills for reference
+    const allKnowledgeSkills = [
+      'knowledge_bureaucracy',
+      'knowledge_galactic_lore',
+      'knowledge_life_sciences',
+      'knowledge_physical_sciences',
+      'knowledge_social_sciences',
+      'knowledge_tactics',
+      'knowledge_technology'
+    ];
+
     const classSkillMap = {
-      'Jedi': ['acrobatics', 'endurance', 'initiative', 'jump', 'knowledge', 'mechanics', 'perception', 'pilot', 'useTheForce'],
-      'Noble': ['deception', 'gatherInformation', 'initiative', 'knowledge', 'perception', 'persuasion', 'pilot', 'ride', 'treatInjury', 'useComputer'],
-      'Scoundrel': ['acrobatics', 'deception', 'gatherInformation', 'initiative', 'knowledge', 'mechanics', 'perception', 'persuasion', 'pilot', 'stealth', 'useComputer'],
-      'Scout': ['climb', 'endurance', 'initiative', 'jump', 'knowledge', 'mechanics', 'perception', 'pilot', 'ride', 'stealth', 'survival', 'swim'],
-      'Soldier': ['climb', 'endurance', 'initiative', 'jump', 'knowledge', 'mechanics', 'perception', 'pilot', 'swim', 'treatInjury', 'useComputer']
+      'Jedi': ['acrobatics', 'endurance', 'initiative', 'jump', ...allKnowledgeSkills, 'mechanics', 'perception', 'pilot', 'useTheForce'],
+      'Noble': ['deception', 'gatherInformation', 'initiative', ...allKnowledgeSkills, 'perception', 'persuasion', 'pilot', 'ride', 'treatInjury', 'useComputer'],
+      'Scoundrel': ['acrobatics', 'deception', 'gatherInformation', 'initiative', ...allKnowledgeSkills, 'mechanics', 'perception', 'persuasion', 'pilot', 'stealth', 'useComputer'],
+      'Scout': ['climb', 'endurance', 'initiative', 'jump', ...allKnowledgeSkills, 'mechanics', 'perception', 'pilot', 'ride', 'stealth', 'survival', 'swim'],
+      'Soldier': ['climb', 'endurance', 'initiative', 'jump', 'knowledge_tactics', 'mechanics', 'perception', 'pilot', 'swim', 'treatInjury', 'useComputer'] // Only Knowledge (Tactics)
     };
 
     return classSkillMap[className] || [];
