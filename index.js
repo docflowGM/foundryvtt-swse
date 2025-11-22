@@ -50,6 +50,7 @@ import { SWSENotifications } from './scripts/utils/notifications.js';
 import { SWSELogger } from './scripts/utils/logger.js';
 import { ThemeLoader } from './scripts/theme-loader.js';
 import './scripts/utils/skill-use-filter.js';
+import { createItemMacro } from './scripts/macros/item-macro.js';
 
 /* -------------------------------------------- */
 /*  Configuration                               */
@@ -1040,44 +1041,6 @@ Hooks.on("hotbarDrop", (bar, data, slot) => {
     return false;
   }
 });
-
-/**
- * Create a macro from an item drop
- */
-async function createItemMacro(data, slot) {
-  if (!data.uuid) return;
-  
-  const item = await fromUuid(data.uuid);
-  if (!item) return;
-
-  // Create the macro command
-  const command = `
-    const item = await fromUuid("${data.uuid}");
-    if (item) {
-      if (item.actor) {
-        item.actor.useItem(item);
-      } else {
-        ui.notifications.warn("This item is not owned by an actor.");
-      }
-    }
-  `;
-
-  let macro = game.macros.find(m => 
-    (m.name === item.name) && (m.command === command)
-  );
-
-  if (!macro) {
-    macro = await Macro.create({
-      name: item.name,
-      type: "script",
-      img: item.img,
-      command: command,
-      flags: { "swse.itemMacro": true }
-    });
-  }
-
-  game.user.assignHotbarMacro(macro, slot);
-}
 
 /* -------------------------------------------- */
 /*  Utility Functions                           */
