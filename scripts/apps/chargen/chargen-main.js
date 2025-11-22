@@ -518,36 +518,39 @@ export default class CharacterGenerator extends Application {
           return false;
         }
 
-        // Validate point buy budget (rough check)
-        // Calculate points spent based on current ability scores
-        const pointCosts = (value) => {
-          let cost = 0;
-          for (let v = 8; v < value; v++) {
-            if (v < 12) cost += 1;
-            else if (v < 14) cost += 2;
-            else cost += 3;
+        // Only validate point buy budget if point buy method was used
+        if (this.characterData.abilityGenerationMethod === 'point-mode') {
+          // Validate point buy budget (rough check)
+          // Calculate points spent based on current ability scores
+          const pointCosts = (value) => {
+            let cost = 0;
+            for (let v = 8; v < value; v++) {
+              if (v < 12) cost += 1;
+              else if (v < 14) cost += 2;
+              else cost += 3;
+            }
+            return cost;
+          };
+
+          const totalSpent = abilities.reduce((sum, ab) => {
+            return sum + pointCosts(this.characterData.abilities[ab]?.base || 8);
+          }, 0);
+
+          // Get the correct point buy pool based on character type
+          const pointBuyPool = this.characterData.isDroid
+            ? (game.settings.get("swse", "droidPointBuyPool") || 20)
+            : (game.settings.get("swse", "livingPointBuyPool") || 25);
+
+          // Allow some flexibility (within 2 points of the budget)
+          if (totalSpent > pointBuyPool) {
+            ui.notifications.warn(`You've overspent your point buy budget! (${totalSpent}/${pointBuyPool} points)`);
+            return false;
           }
-          return cost;
-        };
 
-        const totalSpent = abilities.reduce((sum, ab) => {
-          return sum + pointCosts(this.characterData.abilities[ab]?.base || 8);
-        }, 0);
-
-        // Get the correct point buy pool based on character type
-        const pointBuyPool = this.characterData.isDroid
-          ? (game.settings.get("swse", "droidPointBuyPool") || 20)
-          : (game.settings.get("swse", "livingPointBuyPool") || 25);
-
-        // Allow some flexibility (within 2 points of the budget)
-        if (totalSpent > pointBuyPool) {
-          ui.notifications.warn(`You've overspent your point buy budget! (${totalSpent}/${pointBuyPool} points)`);
-          return false;
-        }
-
-        if (totalSpent < pointBuyPool - 2) {
-          ui.notifications.warn(`You still have ${pointBuyPool - totalSpent} point buy points to spend. Use them all!`);
-          return false;
+          if (totalSpent < pointBuyPool - 2) {
+            ui.notifications.warn(`You still have ${pointBuyPool - totalSpent} point buy points to spend. Use them all!`);
+            return false;
+          }
         }
         break;
       case "class":
