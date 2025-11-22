@@ -1,6 +1,67 @@
 import { SWSELogger } from '../utils/logger.js';
 export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
+  /**
+   * Migrate source data to ensure compatibility with current schema
+   * This runs before validation and ensures all fields have correct types
+   */
+  static shimData(data, options) {
+    const shimmed = super.shimData ? super.shimData(data, options) : data;
+
+    // Ensure defenses have integer ability values
+    if (shimmed.defenses) {
+      for (const defenseType of ['reflex', 'fortitude', 'will']) {
+        if (shimmed.defenses[defenseType]) {
+          const defense = shimmed.defenses[defenseType];
+
+          // Convert ability to integer
+          if (defense.ability !== undefined && defense.ability !== null) {
+            const num = Number(defense.ability);
+            defense.ability = Number.isNaN(num) ? 0 : Math.floor(num);
+          }
+
+          // Also ensure other defense fields are integers
+          for (const field of ['base', 'armor', 'classBonus', 'misc', 'total']) {
+            if (defense[field] !== undefined && defense[field] !== null) {
+              const num = Number(defense[field]);
+              defense[field] = Number.isNaN(num) ? (field === 'base' || field === 'total' ? 10 : 0) : Math.floor(num);
+            }
+          }
+        }
+      }
+    }
+
+    // Ensure initiative is an integer
+    if (shimmed.initiative !== undefined && shimmed.initiative !== null) {
+      const num = Number(shimmed.initiative);
+      shimmed.initiative = Number.isNaN(num) ? 0 : Math.floor(num);
+    }
+
+    // Ensure speed is an integer
+    if (shimmed.speed !== undefined && shimmed.speed !== null) {
+      const num = Number(shimmed.speed);
+      shimmed.speed = Number.isNaN(num) ? 6 : Math.floor(num);
+    }
+
+    // Ensure abilities have integer values
+    if (shimmed.abilities) {
+      for (const abilityType of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+        if (shimmed.abilities[abilityType]) {
+          const ability = shimmed.abilities[abilityType];
+
+          for (const field of ['base', 'racial', 'misc', 'total', 'mod']) {
+            if (ability[field] !== undefined && ability[field] !== null) {
+              const num = Number(ability[field]);
+              ability[field] = Number.isNaN(num) ? (field === 'base' || field === 'total' ? 10 : 0) : Math.floor(num);
+            }
+          }
+        }
+      }
+    }
+
+    return shimmed;
+  }
+
   static defineSchema() {
     const fields = foundry.data.fields;
 
