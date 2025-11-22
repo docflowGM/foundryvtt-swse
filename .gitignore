@@ -9,3 +9,4 @@ old-theme-system-backup/
 # Theme fix utilities and backups (legacy)
 fix_swse_themes.py
 styles/themes/backup_*/
+data/nonheroic_templates.json
