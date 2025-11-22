@@ -99,7 +99,7 @@
       "description": "A durable frontline protector who can deflect attacks and shield allies from harm.",
       "quote": "I can't afford to lose this fight! There are people depending on me.",
       "imagePath": "systems/swse/assets/templates/jedi_defender.webp",
-      "mentor": "breach",
+      "mentor": "miraj",
       "abilityScores": {
         "str": 14,
         "dex": 12,
@@ -141,7 +141,7 @@
       "description": "An investigative shadow who hunts down dark side corruption with precision and stealth.",
       "quote": "Darkness cannot hide from those who seek the light.",
       "imagePath": "systems/swse/assets/templates/jedi_sentinel.webp",
-      "mentor": "lead",
+      "mentor": "miraj",
       "abilityScores": {
         "str": 10,
         "dex": 14,
@@ -231,7 +231,7 @@
       "description": "A tactical commander who coordinates allies and inspires greatness on the battlefield.",
       "quote": "Victory belongs to those who fight together as one!",
       "imagePath": "systems/swse/assets/templates/noble_leader.webp",
-      "mentor": "lead",
+      "mentor": "j0n1",
       "abilityScores": {
         "str": 10,
         "dex": 12,
@@ -324,7 +324,7 @@
       "description": "A social character with surprising melee combat effectiveness using grace and finesse.",
       "quote": "Elegance in both word and blade—a true noble's art.",
       "imagePath": "systems/swse/assets/templates/noble_duelist.webp",
-      "mentor": "miraj",
+      "mentor": "j0n1",
       "abilityScores": {
         "str": 8,
         "dex": 14,
@@ -413,7 +413,7 @@
       "description": "A versatile specialist covering social, technical, and infiltration roles with expertise.",
       "quote": "Every problem has a solution. You just need the right skills.",
       "imagePath": "systems/swse/assets/templates/scoundrel_skill_monkey.webp",
-      "mentor": "lead",
+      "mentor": "salty",
       "abilityScores": {
         "str": 8,
         "dex": 14,
@@ -460,7 +460,7 @@
       "description": "An aggressive street fighter who pushes enemies down the condition track with dirty tactics.",
       "quote": "No such thing as a fair fight when survival's on the line.",
       "imagePath": "systems/swse/assets/templates/scoundrel_knuckledragger.webp",
-      "mentor": "breach",
+      "mentor": "salty",
       "abilityScores": {
         "str": 10,
         "dex": 16,
@@ -551,7 +551,7 @@
       "description": "A long-range precision shooter who operates from concealment with deadly accuracy.",
       "quote": "One shot, one kill. That's all it takes.",
       "imagePath": "systems/swse/assets/templates/scout_sniper.webp",
-      "mentor": "salty",
+      "mentor": "lead",
       "abilityScores": {
         "str": 8,
         "dex": 16,
@@ -641,7 +641,7 @@
       "description": "A wilderness expert who excels at tracking and surviving the harshest conditions.",
       "quote": "The wilderness doesn't forgive mistakes. Neither do I.",
       "imagePath": "systems/swse/assets/templates/scout_survivalist.webp",
-      "mentor": "miraj",
+      "mentor": "lead",
       "abilityScores": {
         "str": 12,
         "dex": 14,
@@ -733,7 +733,7 @@
       "description": "A precision marksman who manipulates the condition track with devastating attacks.",
       "quote": "Discipline and precision. Every shot matters.",
       "imagePath": "systems/swse/assets/templates/soldier_rifleman.webp",
-      "mentor": "lead",
+      "mentor": "breach",
       "abilityScores": {
         "str": 12,
         "dex": 16,
