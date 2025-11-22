@@ -623,7 +623,7 @@ export class TemplateCharacterCreator extends Application {
       if (speciesData.abilityModifiers) {
         for (const [ability, value] of Object.entries(speciesData.abilityModifiers)) {
           if (value !== 0) {
-            abilityUpdates[`system.attributes.${ability}.racial`] = value;
+            abilityUpdates[`system.abilities.${ability}.racial`] = value;
           }
         }
       }
