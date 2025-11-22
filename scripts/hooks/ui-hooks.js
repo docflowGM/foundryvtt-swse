@@ -48,27 +48,56 @@ export function registerUIHooks() {
 
 /**
  * Handle application rendering
- * Ensures applications don't render outside the visible viewport
+ * Positions windows on the left side of the screen and ensures they're within viewport
  *
  * @param {Application} app - The application being rendered
  * @param {jQuery} html - The HTML content
  * @param {Object} data - The rendering data
  */
 function handleRenderApplication(app, html, data) {
-    // Ensure application is within viewport bounds
+    // Skip positioning for sidebar and UI elements
+    if (app.id === 'sidebar' || app.id === 'ui-left' || app.id === 'ui-right') {
+        return;
+    }
+
     const position = app.position;
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
 
+    // Get sidebar width (default 280px + 40px for tabs)
+    const sidebarWidth = 320;
+    const leftMargin = 50; // Left margin from screen edge
+    const topMargin = 50;  // Top margin from screen edge
+
     let updated = false;
 
-    if (position.left + position.width > windowWidth) {
-        position.left = Math.max(0, windowWidth - position.width);
+    // Position on the left side if not explicitly positioned
+    // Only set position on first render (when left is null or default centered)
+    if (position.left === null || position.left > (windowWidth - sidebarWidth) / 2) {
+        position.left = leftMargin;
+        updated = true;
+    }
+
+    // Set top position if not set
+    if (position.top === null || position.top > windowHeight / 2) {
+        position.top = topMargin;
+        updated = true;
+    }
+
+    // Ensure application stays within viewport bounds
+    if (position.left + position.width > windowWidth - sidebarWidth) {
+        position.left = Math.max(leftMargin, windowWidth - sidebarWidth - position.width - 10);
         updated = true;
     }
 
     if (position.top + position.height > windowHeight) {
-        position.top = Math.max(0, windowHeight - position.height);
+        position.top = Math.max(topMargin, windowHeight - position.height - 10);
+        updated = true;
+    }
+
+    // Ensure minimum left position
+    if (position.left < leftMargin) {
+        position.left = leftMargin;
         updated = true;
     }
 

@@ -99,6 +99,7 @@ export default class CharacterGenerator extends Application {
       height: 700,
       title: "Character Generator",
       resizable: true,
+      scrollY: [".chargen-content", ".step-content", ".window-content"],
       left: null,  // Allow Foundry to center
       top: null    // Allow Foundry to center
     });

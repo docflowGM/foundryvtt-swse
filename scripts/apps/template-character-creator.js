@@ -400,7 +400,7 @@ export class TemplateCharacterCreator extends Application {
   /**
    * Apply species bonuses
    */
-  static async _applySpeciesBonus(actor, speciesName, abilityUpdates) {
+  async _applySpeciesBonus(actor, speciesName, abilityUpdates) {
     try {
       const speciesPack = game.packs.get('swse.species');
       if (!speciesPack) return;
@@ -441,7 +441,7 @@ export class TemplateCharacterCreator extends Application {
   /**
    * Apply class to actor
    */
-  static async _applyClass(actor, template) {
+  async _applyClass(actor, template) {
     try {
       const classPack = game.packs.get('swse.classes');
       if (!classPack) return;
@@ -469,7 +469,7 @@ export class TemplateCharacterCreator extends Application {
   /**
    * Apply trained skills
    */
-  static async _applySkills(actor, trainedSkills) {
+  async _applySkills(actor, trainedSkills) {
     if (!trainedSkills || trainedSkills.length === 0) return;
 
     try {

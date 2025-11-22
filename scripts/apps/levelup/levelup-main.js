@@ -70,6 +70,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       width: 800,
       height: 600,
       resizable: true,
+      scrollY: [".tab-content", ".window-content"],
       tabs: [{ navSelector: '.tabs', contentSelector: '.tab-content', initial: 'class' }],
       submitOnChange: false,
       closeOnSubmit: false,
