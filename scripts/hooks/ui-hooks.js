@@ -48,7 +48,8 @@ export function registerUIHooks() {
 
 /**
  * Handle application rendering
- * Positions windows on the left side of the screen and ensures they're within viewport
+ * Ensures windows stay on the left side of the screen without overlapping the sidebar
+ * Allows natural window stacking and cascading
  *
  * @param {Application} app - The application being rendered
  * @param {jQuery} html - The HTML content
@@ -68,36 +69,32 @@ function handleRenderApplication(app, html, data) {
     const sidebarWidth = 320;
     const leftMargin = 50; // Left margin from screen edge
     const topMargin = 50;  // Top margin from screen edge
+    const rightBoundary = windowWidth - sidebarWidth - 20; // Don't overlap sidebar
 
     let updated = false;
 
-    // Position on the left side if not explicitly positioned
-    // Only set position on first render (when left is null or default centered)
-    if (position.left === null || position.left > (windowWidth - sidebarWidth) / 2) {
+    // Only adjust if window would overlap the sidebar on the right
+    // Let Foundry handle natural positioning and cascading otherwise
+    if (position.left !== null && position.left + position.width > rightBoundary) {
+        position.left = Math.max(leftMargin, rightBoundary - position.width);
+        updated = true;
+    }
+
+    // Ensure window doesn't go off the left edge
+    if (position.left !== null && position.left < leftMargin) {
         position.left = leftMargin;
         updated = true;
     }
 
-    // Set top position if not set
-    if (position.top === null || position.top > windowHeight / 2) {
+    // Ensure window doesn't go off the top
+    if (position.top !== null && position.top < topMargin) {
         position.top = topMargin;
         updated = true;
     }
 
-    // Ensure application stays within viewport bounds
-    if (position.left + position.width > windowWidth - sidebarWidth) {
-        position.left = Math.max(leftMargin, windowWidth - sidebarWidth - position.width - 10);
-        updated = true;
-    }
-
-    if (position.top + position.height > windowHeight) {
+    // Ensure window doesn't go off the bottom
+    if (position.top !== null && position.top + position.height > windowHeight) {
         position.top = Math.max(topMargin, windowHeight - position.height - 10);
-        updated = true;
-    }
-
-    // Ensure minimum left position
-    if (position.left < leftMargin) {
-        position.left = leftMargin;
         updated = true;
     }
 
