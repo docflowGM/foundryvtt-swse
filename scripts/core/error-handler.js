@@ -1,9 +1,9 @@
 /**
-import { SWSELogger } from '../utils/logger.js';
  * Error Handler
  * Provides graceful error handling and recovery mechanisms
  * Enhanced with detailed Foundry/Forge error logging
  */
+import { SWSELogger } from '../utils/logger.js';
 
 export class ErrorHandler {
   constructor() {
@@ -182,65 +182,65 @@ export class ErrorHandler {
     // Always log errors, but format based on devMode
     console.group('%c🚨 SWSE ERROR DETECTED', 'color: red; font-weight: bold; font-size: 14px');
 
-    SWSELogger.error('%cError Message:', 'color: orange; font-weight: bold');
-    SWSELogger.error(error?.message || 'Unknown error');
+    console.error('%cError Message:', 'color: orange; font-weight: bold');
+    console.error('SWSE |', error?.message || 'Unknown error');
 
-    SWSELogger.error('%cError Type:', 'color: orange; font-weight: bold');
-    SWSELogger.error(error?.constructor?.name || 'Error');
+    console.error('%cError Type:', 'color: orange; font-weight: bold');
+    console.error('SWSE |', error?.constructor?.name || 'Error');
 
     if (context.source) {
-      SWSELogger.error('%cSource:', 'color: orange; font-weight: bold');
-      SWSELogger.error(context.source);
+      console.error('%cSource:', 'color: orange; font-weight: bold');
+      console.error('SWSE |', context.source);
     }
 
     if (context.location) {
-      SWSELogger.error('%cLocation:', 'color: orange; font-weight: bold');
-      SWSELogger.error(context.location);
+      console.error('%cLocation:', 'color: orange; font-weight: bold');
+      console.error('SWSE |', context.location);
     }
 
     if (context.filename) {
-      SWSELogger.error('%cFile:', 'color: orange; font-weight: bold');
-      SWSELogger.error(`${context.filename}:${context.lineno}:${context.colno}`);
+      console.error('%cFile:', 'color: orange; font-weight: bold');
+      console.error('SWSE |', `${context.filename}:${context.lineno}:${context.colno}`);
     }
 
     // Stack trace (always show)
     if (stack) {
-      SWSELogger.error('%cStack Trace:', 'color: orange; font-weight: bold');
-      SWSELogger.error(stack);
+      console.error('%cStack Trace:', 'color: orange; font-weight: bold');
+      console.error('SWSE |', stack);
     }
 
     // Detailed context (only in devMode)
     if (this._devMode) {
       console.group('%c📊 DETAILED CONTEXT', 'color: cyan; font-weight: bold');
 
-      SWSELogger.log('%cFoundry Context:', 'color: cyan; font-weight: bold');
+      console.log('%cFoundry Context:', 'color: cyan; font-weight: bold');
       console.table(foundryContext);
 
-      SWSELogger.log('%cActive Modules:', 'color: cyan; font-weight: bold');
+      console.log('%cActive Modules:', 'color: cyan; font-weight: bold');
       console.table(systemContext.activeModules);
 
-      SWSELogger.log('%cPerformance:', 'color: cyan; font-weight: bold');
-      SWSELogger.log(systemContext.performance);
+      console.log('%cPerformance:', 'color: cyan; font-weight: bold');
+      console.log('SWSE |', systemContext.performance);
 
       if (systemContext.cacheStats) {
-        SWSELogger.log('%cCache Stats:', 'color: cyan; font-weight: bold');
-        SWSELogger.log(systemContext.cacheStats);
+        console.log('%cCache Stats:', 'color: cyan; font-weight: bold');
+        console.log('SWSE |', systemContext.cacheStats);
       }
 
-      SWSELogger.log('%cOpen Sheets:', 'color: cyan; font-weight: bold');
+      console.log('%cOpen Sheets:', 'color: cyan; font-weight: bold');
       console.table(foundryContext.openSheets);
 
       if (context.data) {
-        SWSELogger.log('%cAdditional Data:', 'color: cyan; font-weight: bold');
-        SWSELogger.log(context.data);
+        console.log('%cAdditional Data:', 'color: cyan; font-weight: bold');
+        console.log('SWSE |', context.data);
       }
 
       console.groupEnd();
     }
 
-    SWSELogger.log('%c💡 TIP:', 'color: yellow; font-weight: bold');
-    SWSELogger.log('Enable Developer Mode in settings for more detailed error information');
-    SWSELogger.log('Access error log: window.SWSE.errorHandler.getRecentErrors()');
+    console.log('%c💡 TIP:', 'color: yellow; font-weight: bold');
+    console.log('SWSE | Enable Developer Mode in settings for more detailed error information');
+    console.log('SWSE | Access error log: window.SWSE.errorHandler.getRecentErrors()');
 
     console.groupEnd();
   }

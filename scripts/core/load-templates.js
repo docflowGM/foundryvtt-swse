@@ -1,8 +1,8 @@
 /**
-import { SWSELogger } from '../utils/logger.js';
  * Optimized template loading with lazy loading support
  * Critical templates load immediately, others load on demand
  */
+import { SWSELogger } from '../utils/logger.js';
 export async function preloadHandlebarsTemplates() {
   // ============================================
   // CRITICAL TEMPLATES - Load Immediately
