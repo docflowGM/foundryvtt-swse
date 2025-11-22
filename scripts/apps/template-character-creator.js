@@ -517,13 +517,6 @@ export class TemplateCharacterCreator extends Application {
       }, {
         width: 600
       });
-
-      SWSELogger.log(`SWSE | Character created successfully: ${name}`);
-
-    } catch (error) {
-      SWSELogger.error('SWSE | Failed to create character from template:', error);
-      ui.notifications.error('Failed to create character. See console for details.');
-    }
   }
 
   /**
