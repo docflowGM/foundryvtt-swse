@@ -7,8 +7,8 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
    * Vehicles use strings for initiative and speed, not integers
    */
   static shimData(data, options) {
-    // Call parent shimData but skip it for now, we'll handle fields manually
-    const shimmed = super.shimData ? super.shimData.call(Object.getPrototypeOf(SWSEActorDataModel), data, options) : data;
+    // Call parent shimData first to handle common fields
+    const shimmed = super.shimData(data, options);
 
     // For vehicles, ensure initiative and speed are STRINGS, not integers
     if (shimmed.initiative !== undefined && shimmed.initiative !== null) {
