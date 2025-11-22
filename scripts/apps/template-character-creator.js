@@ -111,20 +111,23 @@ export class TemplateCharacterCreator extends Application {
       return;
     }
 
+    // Close this window BEFORE showing mentor dialogue to prevent both appearing at once
+    this.close();
+
     // Show mentor dialogue before creating character
     await this.showMentorDialogue(template, async () => {
-      // Close this dialog
-      this.close();
-
       // Create character from template
       await this.createFromTemplate(templateId);
+    }, () => {
+      // If cancelled, reopen the template creator
+      this.render(true);
     });
   }
 
   /**
    * Show mentor dialogue
    */
-  async showMentorDialogue(template, onConfirm) {
+  async showMentorDialogue(template, onConfirm, onCancel) {
     const mentorKey = template.mentor;
     const templateKey = template.id;
 
@@ -178,10 +181,12 @@ export class TemplateCharacterCreator extends Application {
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
-          label: 'Go Back'
+          label: 'Go Back',
+          callback: onCancel || (() => {})
         }
       },
-      default: 'confirm'
+      default: 'confirm',
+      close: onCancel || (() => {})
     }, {
       width: 600,
       height: 500,
@@ -400,7 +405,7 @@ export class TemplateCharacterCreator extends Application {
   /**
    * Apply species bonuses
    */
-  static async _applySpeciesBonus(actor, speciesName, abilityUpdates) {
+  async _applySpeciesBonus(actor, speciesName, abilityUpdates) {
     try {
       const speciesPack = game.packs.get('swse.species');
       if (!speciesPack) return;
@@ -441,7 +446,7 @@ export class TemplateCharacterCreator extends Application {
   /**
    * Apply class to actor
    */
-  static async _applyClass(actor, template) {
+  async _applyClass(actor, template) {
     try {
       const classPack = game.packs.get('swse.classes');
       if (!classPack) return;
@@ -469,7 +474,7 @@ export class TemplateCharacterCreator extends Application {
   /**
    * Apply trained skills
    */
-  static async _applySkills(actor, trainedSkills) {
+  async _applySkills(actor, trainedSkills) {
     if (!trainedSkills || trainedSkills.length === 0) return;
 
     try {

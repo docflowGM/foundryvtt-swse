@@ -250,8 +250,8 @@
 .card-image {
   width: 100%;
   height: 300px;
-  background-size: cover;
-  background-position: center;
+  background-size: contain;
+  background-position: center top;
   background-repeat: no-repeat;
   background-color: #0a0a0a;
   position: relative;
@@ -394,6 +394,8 @@
 
 .mentor-dialogue-container {
   padding: 1.5rem;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+  min-height: 100%;
 }
 
 .mentor-header {

@@ -70,6 +70,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       width: 800,
       height: 600,
       resizable: true,
+      scrollY: [".tab-content", ".window-content"],
       tabs: [{ navSelector: '.tabs', contentSelector: '.tab-content', initial: 'class' }],
       submitOnChange: false,
       closeOnSubmit: false,
@@ -78,15 +79,57 @@ export class SWSELevelUpEnhanced extends FormApplication {
     });
   }
 
+  /**
+   * Detect if character is incomplete and determine which step to start at
+   * @param {Actor} actor - The actor to check
+   * @returns {string|null} The step to start at, or null if character is complete
+   * @private
+   */
+  _detectIncompleteCharacter(actor) {
+    const system = actor.system;
+
+    // Check if character is level 0 (brand new)
+    if ((system.level || 0) === 0) {
+      return 'name';
+    }
+
+    // Check if character has a name
+    if (!actor.name || actor.name.trim() === '' || actor.name === 'New Character') {
+      return 'name';
+    }
+
+    // Check if character has a class
+    const hasClass = actor.items.some(item => item.type === 'class');
+    if (!hasClass) {
+      // Check if they have a species first
+      const hasSpecies = system.species && system.species.trim() !== '';
+      if (!hasSpecies) {
+        return 'type'; // Start at type selection (living vs droid)
+      }
+      return 'class';
+    }
+
+    // If we get here, character has level >= 1, name, and class
+    // This is complete enough for level up
+    return null;
+  }
+
   constructor(actor, options = {}) {
     super(actor, options);
     this.actor = actor;
 
-    // Level up system is only for existing characters (level 1+)
-    // Use CharacterGenerator for creating new characters
-    if ((this.actor.system.level || 0) === 0) {
-      ui.notifications.error("Cannot level up a level 0 character. Use the Character Generator to create new characters.");
-      throw new Error("Level up requires an existing character with level >= 1");
+    // Check if character is incomplete and redirect to character generator
+    const incompleteStep = this._detectIncompleteCharacter(actor);
+    if (incompleteStep) {
+      ui.notifications.info("Character appears incomplete. Opening Character Generator to complete setup...");
+      // Import CharacterGenerator dynamically to avoid circular dependency
+      import('../chargen/chargen-main.js').then(module => {
+        const CharacterGenerator = module.default;
+        const chargen = new CharacterGenerator(actor);
+        chargen.currentStep = incompleteStep;
+        chargen.render(true);
+      });
+      throw new Error("Character incomplete - redirecting to character generator");
     }
 
     this.currentStep = 'class'; // class, multiclass-bonus, ability-increase, feat, talent, skills, summary

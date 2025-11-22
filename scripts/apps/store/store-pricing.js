@@ -16,13 +16,15 @@ export function calculateFinalCost(baseCost) {
 
 /**
  * Add calculated final cost to an item
- * @param {Object} item - Item object
+ * @param {Object} item - Item object or Document
  * @returns {Object} Item with finalCost property
  */
 export function addFinalCost(item) {
     const baseCost = Number(item.system?.cost) || 0;
+    // Convert Foundry Document to plain object if necessary
+    const plainItem = item.toObject ? item.toObject() : item;
     return {
-        ...item,
+        ...plainItem,
         id: item.id || item._id,  // Preserve ID for item selection
         _id: item._id || item.id, // Preserve both ID formats
         finalCost: calculateFinalCost(baseCost)
@@ -31,14 +33,18 @@ export function addFinalCost(item) {
 
 /**
  * Add calculated final cost to an actor (droid/vehicle) with used option
- * @param {Object} actor - Actor object
+ * @param {Object} actor - Actor object or Document
  * @param {boolean} includeUsed - Whether to calculate used price (50% of base)
  * @returns {Object} Actor with finalCost property (and finalCostUsed if includeUsed)
  */
 export function addActorFinalCost(actor, includeUsed = false) {
     const baseCost = Number(actor.system?.cost) || 0;
+    // Convert Foundry Document to plain object if necessary
+    const plainActor = actor.toObject ? actor.toObject() : actor;
     const result = {
-        ...actor,
+        ...plainActor,
+        id: actor.id || actor._id,  // Preserve ID for actor selection
+        _id: actor._id || actor.id, // Preserve both ID formats
         finalCost: calculateFinalCost(baseCost)
     };
 

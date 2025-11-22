@@ -17,9 +17,9 @@
           "greeting": "A Sentinel. You have chosen to be the Jedi who operates in the shadows, hunting down threats before they spread. This is a difficult but necessary path.",
           "confirmation": "Darkness cannot hide from those who seek the light. Your path will not be easy, but it is vital to the safety of the galaxy. Strike from the shadows, Sentinel."
         },
-        "noble_duelist": {
-          "greeting": "I see you've chosen the path of the Duelist. Elegance in combat speaks to a disciplined mind—a quality I respect greatly.",
-          "confirmation": "Grace and precision in battle are marks of true mastery. May your blade strike true and your words strike truer still."
+        "jedi_defender": {
+          "greeting": "A Defender! You've chosen to stand as a shield between the innocent and those who would harm them. This path requires both strength and an unwavering heart.",
+          "confirmation": "Stand firm, young Defender. Let your enemies break themselves against your resolve. Through the Force, you are the wall that cannot be breached. May the Force be with you."
         }
       }
     },
@@ -28,10 +28,6 @@
       "title": "Argent Squad Commander",
       "avatar": "systems/swse/assets/mentors/lead.webp",
       "dialogues": {
-        "noble_leader": {
-          "greeting": "A tactical Leader! Excellent choice. The galaxy needs more commanders who can inspire their troops and coordinate effective strategies.",
-          "confirmation": "Victory belongs to those who fight together as one. Lead with wisdom, inspire with courage, and your team will follow you anywhere."
-        },
         "scout_sniper": {
           "greeting": "Sniper. One of the most critical roles on any battlefield—clean, precise, effective. I respect a good marksman.",
           "confirmation": "One shot, one kill. That's all it takes. Patience, precision, and perfect timing. Master those, and you'll never miss your mark."
@@ -41,16 +37,12 @@
           "confirmation": "Speed and precision win battles, recruit. Stand still and you're already dead. Welcome to the fast lane—maybe one day you'll join Argent Squad out in the field! Keep your reflexes sharp."
         },
         "scout_survivalist": {
-          "greeting": "A Survivalist. The wilderness is a harsh teacher, but those who master it become formidable operators in any environment.",
-          "confirmation": "Remember—nature respects only those who respect it. Master the wild, and you master yourself. Argent Squad needs scouts who can operate anywhere."
+          "greeting": "A Survivalist. Excellent choice. In Argent Squad, we train for every environment—desert, jungle, tundra. The best scouts adapt to anything.",
+          "confirmation": "Master your environment and you control the battlefield. Nature is both ally and obstacle—respect it, and you'll thrive anywhere. Welcome to the field, recruit."
         },
         "scout_infiltrator": {
           "greeting": "An Infiltrator. Perfect. The best operations are the ones the enemy never knew happened. Stealth and recon are what Argent Squad excels at.",
           "confirmation": "Move unseen, strike without warning, and vanish before they know what hit them. This is the way of Argent Squad. Welcome aboard."
-        },
-        "soldier_rifleman": {
-          "greeting": "Rifleman—the backbone of any military force. Discipline and precision, every shot counts. Argent Squad values marksmen like you.",
-          "confirmation": "Remember your training: aimed fire, controlled bursts, and situational awareness. You'll make a fine addition to any squad. Stay sharp out there."
         }
       }
     },
@@ -59,13 +51,9 @@
       "title": "Mandalorian Mercenary",
       "avatar": "systems/swse/assets/mentors/breach.webp",
       "dialogues": {
-        "jedi_defender": {
-          "greeting": "A Defender! Now we're talking! Someone who stands their ground and protects their squad—that's what I like to see, verd'ika.",
-          "confirmation": "Listen up! I'll teach you the way of the Mandalorian! Stand strong, fight hard, and never leave a brother behind. This is the Way! Your armor and your resolve will be your greatest weapons."
-        },
-        "scoundrel_knuckledragger": {
-          "greeting": "Knuckledragger, huh? I respect that. Sometimes you gotta get your hands dirty and fight mean to survive. No shame in fighting dirty when your life's on the line.",
-          "confirmation": "Remember—there's no such thing as a fair fight when survival's on the line. Fight smart, fight dirty, and always come out on top. This is the Way."
+        "soldier_rifleman": {
+          "greeting": "Rifleman! Now that's what I'm talking about! A soldier who knows their weapon is a soldier who stays alive. Welcome, verd'ika!",
+          "confirmation": "Discipline and firepower—that's the Mandalorian way! Every shot you take should count. Train hard, fight harder, and never miss your mark. This is the Way!"
         },
         "soldier_gunner": {
           "greeting": "Heavy weapons! Ha! Now you're speaking my language, warrior. More firepower is ALWAYS the answer in my book!",
@@ -97,6 +85,10 @@
         "scoundrel_outlaw": {
           "greeting": "An Outlaw! Livin' free, makin' yer own luck, and thumbin' yer nose at authority! Arr, that warms me mechanical heart, it does!",
           "confirmation": "Luck? Ye make yer own luck, friend! And from what I see, ye've got the skills to make plenty of it! Stay sharp and stay free, ye magnificent scallywag!"
+        },
+        "scoundrel_knuckledragger": {
+          "greeting": "Arr! A brawler who ain't afraid to fight dirty! I like yer spirit, matey! Sometimes ye gotta get up close and personal to get what ye want!",
+          "confirmation": "No rules in a street fight, friend! Use every trick, every advantage, and never fight fair when ye can fight smart! That's the pirate way, savvy?"
         }
       }
     },
@@ -112,6 +104,14 @@
         "noble_aristocrat": {
           "greeting": "An Aristocrat with the Wealth talent. *Wonderful.* I look forward to managing even *more* accounts and financial portfolios, Master.",
           "confirmation": "Information is indeed the galaxy's most valuable currency, Master. And you appear to be quite wealthy in that regard. *Sigh* I suppose I should update the ledgers now. Again. How delightful."
+        },
+        "noble_leader": {
+          "greeting": "A Leader, Master? How... commanding. I suppose someone needs to organize all these chaotic individuals. Might as well be you, with your... leadership qualities.",
+          "confirmation": "Very well, Master. I shall prepare your tactical briefings and maintain your command schedule. Do try to inspire confidence without making too many promises I'll need to track. Good luck."
+        },
+        "noble_duelist": {
+          "greeting": "A Duelist, Master? How refined. Combining social grace with martial prowess—quite the elegant combination, if I do say so myself.",
+          "confirmation": "Ah yes, the noble art of fencing. Do try not to get blood on your expensive attire, Master. I just had those garments pressed. *Sigh* I suppose I should prepare the medical supplies... just in case."
         }
       }
     }

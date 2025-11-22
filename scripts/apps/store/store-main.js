@@ -77,6 +77,7 @@ export class SWSEStore extends FormApplication {
             height: 700,
             title: "Galactic Trade Exchange",
             resizable: true,
+            scrollY: [".store-content", ".tab-content", ".window-content"],
             closeOnSubmit: false,
             classes: ["swse", "swse-store"],
             left: null,  // Allow Foundry to center
