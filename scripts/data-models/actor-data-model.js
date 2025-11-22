@@ -149,7 +149,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       }),
       initiative: new fields.NumberField({
         required: true,
-        nullable: false,
+        nullable: true,
         initial: 0,
         integer: true,
         clean: value => {
@@ -160,7 +160,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       }),
       speed: new fields.NumberField({
         required: true,
-        nullable: false,
+        nullable: true,
         initial: 6,
         min: 0,
         integer: true,
@@ -286,7 +286,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       }),
       ability: new fields.NumberField({
         required: true,
-        nullable: false,
+        nullable: true,
         initial: 0,
         integer: true,
         clean: value => {

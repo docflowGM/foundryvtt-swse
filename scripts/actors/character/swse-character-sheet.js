@@ -1014,7 +1014,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     if (speciesDoc.system.abilityModifiers) {
       for (const [ability, value] of Object.entries(speciesDoc.system.abilityModifiers)) {
         if (value !== 0) {
-          updateData[`system.attributes.${ability}.racial`] = value;
+          updateData[`system.abilities.${ability}.racial`] = value;
         }
       }
     }
@@ -1055,7 +1055,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // Reset racial ability modifiers
     const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
     for (const ability of abilities) {
-      updateData[`system.attributes.${ability}.racial`] = 0;
+      updateData[`system.abilities.${ability}.racial`] = 0;
     }
 
     // Clear species-specific data
