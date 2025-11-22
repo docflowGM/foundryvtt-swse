@@ -79,7 +79,7 @@ export default class CharacterGenerator extends Application {
       credits: 1000  // Starting credits
     };
     this.currentStep = "name";
-    
+
     // Caches for compendia
     this._packs = {
       species: null,
@@ -89,6 +89,56 @@ export default class CharacterGenerator extends Application {
       droids: null
     };
     this._skillsJson = null;
+
+    // If an actor is provided, populate characterData from it
+    if (this.actor) {
+      this._loadFromActor(actor);
+    }
+  }
+
+  /**
+   * Load character data from an existing actor
+   * @param {Actor} actor - The actor to load from
+   * @private
+   */
+  _loadFromActor(actor) {
+    const system = actor.system;
+
+    // Load basic info
+    this.characterData.name = actor.name || "";
+    this.characterData.level = system.level || 0;
+
+    // Load species/droid status
+    if (system.species) {
+      this.characterData.species = system.species;
+      this.characterData.isDroid = false;
+    }
+    if (system.isDroid) {
+      this.characterData.isDroid = true;
+      this.characterData.droidDegree = system.droidDegree || "";
+      this.characterData.droidSize = system.size || "medium";
+    }
+
+    // Load abilities
+    if (system.abilities) {
+      for (const [key, value] of Object.entries(system.abilities)) {
+        if (this.characterData.abilities[key]) {
+          this.characterData.abilities[key].total = value.total || value.value || 10;
+          this.characterData.abilities[key].base = value.base || value.value || 10;
+        }
+      }
+    }
+
+    // Load classes
+    const classItems = actor.items.filter(item => item.type === 'class');
+    this.characterData.classes = classItems.map(cls => ({
+      name: cls.name,
+      level: cls.system.level || 1
+    }));
+
+    // Load existing items as references
+    this.characterData.feats = actor.items.filter(item => item.type === 'feat').map(f => f.name);
+    this.characterData.talents = actor.items.filter(item => item.type === 'talent').map(t => t.name);
   }
 
   static get defaultOptions() {
@@ -99,6 +149,7 @@ export default class CharacterGenerator extends Application {
       height: 700,
       title: "Character Generator",
       resizable: true,
+      scrollY: [".chargen-content", ".step-content", ".window-content"],
       left: null,  // Allow Foundry to center
       top: null    // Allow Foundry to center
     });
