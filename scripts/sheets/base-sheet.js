@@ -338,7 +338,7 @@ export class SWSEActorSheetBase extends ActorSheet {
       // Special handling for initiative rolls
       if (label.toLowerCase().includes('initiative')) {
         // Add actor to combat tracker if not already in combat
-        if (game.combat && !game.combat.combatants.find(c => c.actor?.id === this.actor.id)) {
+        if (game.combat && game.combat.scene && !game.combat.combatants.find(c => c.actor?.id === this.actor.id)) {
           await game.combat.createEmbeddedDocuments('Combatant', [{
             actorId: this.actor.id,
             sceneId: game.combat.scene.id,
