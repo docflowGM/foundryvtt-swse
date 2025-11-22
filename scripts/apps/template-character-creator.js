@@ -492,6 +492,53 @@ export class TemplateCharacterCreator extends Application {
    * Show success dialog with equipment list
    */
   async _showSuccessDialog(actor, template, equipmentResults) {
+    // Build trained skills section
+    let skillsHtml = '';
+    if (template.trainedSkills && template.trainedSkills.length > 0) {
+      const skillNames = template.trainedSkills.map(skillKey => {
+        // Convert skill keys to readable names
+        const skillNameMap = {
+          'acrobatics': 'Acrobatics',
+          'climb': 'Climb',
+          'deception': 'Deception',
+          'endurance': 'Endurance',
+          'gatherInformation': 'Gather Information',
+          'initiative': 'Initiative',
+          'jump': 'Jump',
+          'knowledge_bureaucracy': 'Knowledge (Bureaucracy)',
+          'knowledge_galactic_lore': 'Knowledge (Galactic Lore)',
+          'knowledge_life_sciences': 'Knowledge (Life Sciences)',
+          'knowledge_physical_sciences': 'Knowledge (Physical Sciences)',
+          'knowledge_social_sciences': 'Knowledge (Social Sciences)',
+          'knowledge_tactics': 'Knowledge (Tactics)',
+          'knowledge_technology': 'Knowledge (Technology)',
+          'mechanics': 'Mechanics',
+          'perception': 'Perception',
+          'persuasion': 'Persuasion',
+          'pilot': 'Pilot',
+          'ride': 'Ride',
+          'stealth': 'Stealth',
+          'survival': 'Survival',
+          'swim': 'Swim',
+          'treatInjury': 'Treat Injury',
+          'useComputer': 'Use Computer',
+          'useTheForce': 'Use the Force',
+          'use_the_force': 'Use the Force'
+        };
+        return skillNameMap[skillKey] || skillKey;
+      });
+
+      skillsHtml = `
+        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(156, 39, 176, 0.1); border-left: 3px solid #9C27B0; border-radius: 4px;">
+          <strong style="color: #9C27B0;">📚 Trained Skills:</strong>
+          <ul style="margin: 0.5rem 0 0 1.5rem; font-size: 0.9rem;">
+            ${skillNames.map(skill => `<li>${skill}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    // Build equipment section
     let equipmentHtml = '';
 
     if (equipmentResults) {
@@ -540,6 +587,7 @@ export class TemplateCharacterCreator extends Application {
             </p>
             <p style="margin-top: 1rem;"><em>${template.description}</em></p>
 
+            ${skillsHtml}
             ${equipmentHtml}
 
             <div style="background: rgba(74, 144, 226, 0.1); padding: 0.75rem; border-radius: 4px; margin-top: 1rem; border-left: 3px solid #4a90e2;">
