@@ -118,14 +118,12 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
    * Handles both vehicle templates and individual weapons
    */
   async _onDrop(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    
-    let data;
-    try {
-      data = JSON.parse(event.dataTransfer.getData('text/plain'));
-    } catch (err) {
-      SWSELogger.error('SWSE | Failed to parse drop data:', err);
+    // Use modern Foundry API to get drop data
+    const TextEditorImpl = foundry.applications?.ux?.TextEditor?.implementation || TextEditor;
+    const data = TextEditorImpl.getDragEventData(event);
+
+    if (!data) {
+      SWSELogger.warn('SWSE | No drop data received');
       return false;
     }
     
