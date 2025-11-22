@@ -309,12 +309,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
                  autofocus
                  style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px;"/>
         </div>
-        <div class="species-list" style="max-height: 400px; overflow-y: auto;">
+        <div class="species-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem; max-height: 450px; overflow-y: auto; padding: 0.5rem;">
           ${speciesList.map(species => `
-            <div class="species-item" data-species-id="${species.id}" style="display: flex; align-items: center; padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #ddd;">
-              <img src="${species.img}" style="width: 32px; height: 32px; margin-right: 0.75rem; border-radius: 4px;" alt="${species.name}"/>
-              <span class="species-name" style="flex: 1;">${species.name}</span>
-            </div>
+            <button type="button" class="species-item choice-button" data-species-id="${species.id}" style="padding: 0.75rem; border: 2px solid #999; border-radius: 4px; background: #f5f5f5; cursor: pointer; text-align: center; transition: all 0.2s;">
+              <h4 class="species-name" style="margin: 0; font-size: 0.95rem; font-weight: bold; color: #333;">${species.name}</h4>
+            </button>
           `).join('')}
         </div>
       </div>
@@ -361,15 +360,29 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
         // Hover effect
         speciesItems.hover(
-          function() { $(this).css('background-color', 'rgba(74, 144, 226, 0.1)'); },
-          function() { $(this).css('background-color', ''); }
+          function() {
+            $(this).css({
+              'background-color': 'rgba(74, 144, 226, 0.15)',
+              'border-color': '#4a90e2',
+              'transform': 'translateY(-2px)',
+              'box-shadow': '0 4px 8px rgba(0,0,0,0.15)'
+            });
+          },
+          function() {
+            $(this).css({
+              'background-color': '#f5f5f5',
+              'border-color': '#999',
+              'transform': 'translateY(0)',
+              'box-shadow': 'none'
+            });
+          }
         );
 
         // Focus search input
         searchInput.focus();
       }
     }, {
-      width: 500,
+      width: 700,
       height: 600,
       classes: ['swse', 'species-picker-dialog']
     }).render(true);
