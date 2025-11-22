@@ -598,7 +598,7 @@ export class TemplateCharacterCreator extends Application {
         abilityUpdates['system.size'] = speciesData.size;
       }
       if (speciesData.speed) {
-        abilityUpdates['system.speed.base'] = speciesData.speed;
+        abilityUpdates['system.speed'] = parseInt(speciesData.speed) || 6;
       }
 
     } catch (error) {
