@@ -7,7 +7,7 @@
  </div>
  <div class="character-level">
  <label>Level</label>
- <input name="system.level.heroic" type="number" value="{{system.level.heroic}}" min="1" max="20" data-dtype="Number" class="level-input"/>
+ <input name="system.level" type="number" value="{{system.level}}" min="1" max="20" data-dtype="Number" class="level-input"/>
  <div class="half-level-display" title="Half Level (rounded down) - used for skills and other bonuses">
  <span class="half-level-label">½ Level:</span>
  <span class="half-level-value">{{system.halfLevel}}</span>
@@ -41,7 +41,7 @@
  {{#if system.armor.equipped}}
  <span class="breakdown-item">10 + Armor {{system.armor.reflexBonus}}</span>
  {{else}}
- <span class="breakdown-item active">10 + Level {{system.level.heroic}}</span>
+ <span class="breakdown-item active">10 + Level {{system.level}}</span>
  {{/if}}
  <span class="breakdown-item">+ Dex {{numberFormat system.abilities.dex.mod sign=true}}</span>
  </div>
@@ -56,7 +56,7 @@
  {{system.defenses.fortitude.total}}
  </div>
  <div class="defense-breakdown">
- <span class="breakdown-item">10 + Level {{system.level.heroic}}</span>
+ <span class="breakdown-item">10 + Level {{system.level}}</span>
  {{#if system.isDroid}}
  <span class="breakdown-item">+ Str {{numberFormat system.abilities.str.mod sign=true}} <span class="droid-note">(Droid)</span></span>
  {{else}}
@@ -74,7 +74,7 @@
  {{system.defenses.will.total}}
  </div>
  <div class="defense-breakdown">
- <span class="breakdown-item">10 + Level {{system.level.heroic}}</span>
+ <span class="breakdown-item">10 + Level {{system.level}}</span>
  <span class="breakdown-item">+ Wis {{numberFormat system.abilities.wis.mod sign=true}}</span>
  </div>
  </div>
