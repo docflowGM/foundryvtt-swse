@@ -1,59 +1,122 @@
 /* ============================================================================
-   FOUNDRY UI LAYOUT - Custom positioning
-   ============================================================================ */
+FOUNDRY UI LAYOUT - Custom positioning & resizable windows
+============================================================================ */
 
-/* Right side UI container */
+/* -------------------------------
+Right Side UI Container
+------------------------------- */
 #ui-right {
-  left: auto !important;
-  right: 0 !important;
+left: auto;
+right: 0;
+top: 0;
+bottom: 0;
+width: 300px;           /* Adjust as needed */
+z-index: 1000;
 }
 
-/* Ensure character sheets and other app windows are not affected */
-.app.sheet,
-.app.window-app {
-  width: auto;
-  left: auto;
-  right: auto;
+/* -------------------------------
+Left Side UI Container
+------------------------------- */
+#ui-left {
+left: 0;
+top: 0;
+bottom: 0;
+width: 60px;            /* Adjust toolbar width */
+z-index: 1000;
 }
 
-/* Sidebar positioning */
+/* -------------------------------
+Sidebar
+------------------------------- */
 #sidebar {
-  right: 3px !important;
-  width: 280px !important;
-  max-width: 280px !important;
+right: 0;
+top: 0;
+bottom: 0;
+width: 278px; / reduced 2px to prevent overhang /
+max-width: 278px; / match width */
+z-index: 900;
 }
 
-/* Sidebar tabs - vertical column to left of chatbox */
+/* Sidebar tabs - vertical layout to the left of chatbox */
 #sidebar-tabs {
-  position: fixed !important;
-  right: 293px !important;
-  left: auto !important;
-  top: 0 !important;
-  flex-direction: column !important;
-  width: auto !important;
-  flex-wrap: nowrap !important;
+position: fixed;
+right: 291px; / reduced 2px to align with sidebar */
+top: 0;
+flex-direction: column;
+width: auto;
+flex-wrap: nowrap;
+z-index: 1001;
 }
 
 #sidebar-tabs menu {
-  flex-direction: column !important;
-  flex-wrap: nowrap !important;
-  width: auto !important;
+flex-direction: column;
+flex-wrap: nowrap;
+width: auto;
 }
 
 #sidebar-tabs a {
-  width: 40px !important;
-  height: 40px !important;
+width: 40px;
+height: 40px;
 }
 
-/* Left toolbar - flush to left edge */
-#ui-left {
-  left: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
+/* -------------------------------
+Windows & App Containers
+------------------------------- */
+.app.window-app,
+.app.sheet {
+min-width: 300px;       /* minimum width */
+min-height: 200px;      /* minimum height */
+max-width: 100%;        /* allow expansion to full width */
+max-height: 100%;       /* allow expansion to full height */
+resize: both;           /* allow resizing in both directions */
+overflow: auto;         /* scrollbars if content exceeds size */
+left: auto;             /* let Foundry handle default positioning */
+top: auto;
+right: auto;
+bottom: auto;
 }
 
-#controls {
-  left: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
+/* Ensure dragging works */
+.window-header {
+cursor: move;
+}
+
+/* -------------------------------
+Character Sheet / Level Input Fix
+------------------------------- */
+.character-level input[type="number"] {
+width: 80px;            /* bigger box for level */
+font-size: 1.5em;       /* easier to read */
+text-align: center;
+background-color: #222; /* dark background */
+color: #fff;            /* readable text */
+border: 2px solid #555;
+border-radius: 5px;
+padding: 3px 5px;
+}
+
+/* -------------------------------
+HP / Force / Resources Bars
+------------------------------- */
+.resource-bar input.resource-input {
+min-width: 50px;
+font-weight: bold;
+}
+
+.progress-bar {
+background-color: #333;
+border-radius: 5px;
+height: 12px;
+overflow: hidden;
+}
+
+.progress-fill {
+background-color: #0f0;
+height: 100%;
+width: 0%;
+}
+
+/* Optional: Reroll Dice Icon */
+.reroll-bonus i {
+cursor: pointer;
 }

@@ -816,18 +816,6 @@ form.swse-datapad-sheet {
   border-color: rgba(0, 255, 255, 0.9);
 }
 
-/* --- Big + Bold Stat Columns (Total → Misc) --- */
-.swse .skill-total,
-.swse .skill-half-level,
-.swse .skill-trained-bonus,
-.swse .skill-misc,
-.swse .skill-armor {
-  text-align: center;
-  font-size: 14px;
-  font-weight: 900;
-  padding: 4px;
-  color: #cfeffc;
-}
 
 .swse .skill-total {
   font-size: 16px;
@@ -2872,111 +2860,74 @@ img[loading="lazy"] {
     grid-template-columns: 1fr;
   }
 }
-
-/* =========================
-   HALF LEVEL DISPLAY
-   ========================= */
-
+/* -------------------------------
+Character Sheet / Level Input - Harmonized with Half-Level
+------------------------------- */
 .character-level {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: flex-start;
+display: flex;
+flex-direction: column;
+gap: 4px;
+align-items: flex-start;
 }
 
 .character-level label {
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--holo-cyan);
-  font-weight: 600;
-  letter-spacing: 0.5px;
+font-size: 11px;
+text-transform: uppercase;
+color: var(--holo-green);       /* match half-level label color */
+font-weight: 600;
+letter-spacing: 0.5px;
 }
 
-/* === UPGRADED LEVEL INPUT === */
+/* Level Input styled like half-level value */
 .character-level .level-input {
-  width: 80px;
-  padding: 6px 10px;
+width: 60px;                     /* slightly smaller to match half-level style */
+padding: 4px 6px;
+background: rgba(0, 255, 136, 0.15);   /* translucent green */
+border: 1px solid rgba(0, 255, 136, 0.2);
+border-radius: 4px;
+text-align: center;
 
-  background: rgba(0, 170, 204, 0.15);
-  border: 2px solid rgba(0, 220, 255, 0.55);
-  border-radius: 6px;
+font-size: 18px;                 /* smaller than neon, matches half-level */
+font-weight: 700;
+color: var(--holo-green);
+text-shadow: 0 0 6px var(--holo-green), 0 0 10px rgba(0, 255, 136, 0.5);
 
-  text-align: center;
-
-  /* BIG + BOLD + BRIGHT */
-  font-size: 32px;
-  font-weight: 900;
-
-  color: var(--holo-cyan);
-  -webkit-text-fill-color: var(--holo-cyan);
-
-  /* Neon glow */
-  text-shadow: 0 0 8px var(--holo-cyan), 0 0 15px rgba(0, 255, 255, 0.5);
-
-  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 }
 
 /* Focus effect */
 .character-level .level-input:focus {
-  outline: none;
-  border-color: var(--holo-cyan);
-  box-shadow: 0 0 12px rgba(0, 217, 255, 0.8);
-  transform: scale(1.05);
+outline: none;
+border-color: var(--holo-green);
+box-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+transform: scale(1.05);
 }
 
-.half-level-display {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  background: rgba(0, 255, 136, 0.08);
-  border: 1px solid rgba(0, 255, 136, 0.2);
-  border-radius: 4px;
-  font-size: 11px;
-}
-
-.half-level-label {
-  color: var(--holo-green);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.half-level-value {
-  color: var(--color-text-emphatic);
-  font-weight: 700;
-  font-size: 13px;
-  min-width: 20px;
-  text-align: center;
-  padding: 2px 6px;
-  background: rgba(0, 255, 136, 0.15);
-  border-radius: 3px;
-}
-
+/* Level Up Button */
 .character-level .level-up {
-  margin-top: 4px;
-  padding: 6px 12px;
-  background: linear-gradient(180deg, rgba(0, 168, 204, 0.2), rgba(0, 168, 204, 0.1));
-  border: 1px solid rgba(0, 168, 204, 0.4);
-  color: var(--holo-cyan);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all var(--fast);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+margin-top: 4px;
+padding: 6px 12px;
+background: linear-gradient(180deg, rgba(0, 255, 136, 0.2), rgba(0, 255, 136, 0.1));
+border: 1px solid rgba(0, 255, 136, 0.3);
+color: var(--holo-green);
+border-radius: 4px;
+cursor: pointer;
+font-size: 11px;
+font-weight: 600;
+text-transform: uppercase;
+display: flex;
+align-items: center;
+gap: 6px;
+transition: all 0.15s ease;
 }
 
 .character-level .level-up:hover {
-  background: linear-gradient(180deg, rgba(0, 168, 204, 0.3), rgba(0, 168, 204, 0.2));
-  border-color: var(--holo-cyan);
-  box-shadow: 0 0 12px rgba(0, 217, 255, 0.4);
-  transform: translateY(-2px);
+background: linear-gradient(180deg, rgba(0, 255, 136, 0.3), rgba(0, 255, 136, 0.2));
+box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+transform: translateY(-2px);
 }
 
 .character-level .level-up i {
-  font-size: 12px;
+font-size: 12px;
 }
+
