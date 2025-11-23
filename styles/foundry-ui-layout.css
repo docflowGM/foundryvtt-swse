@@ -10,7 +10,7 @@ left: auto;
 right: 0;
 top: 0;
 bottom: 0;
-width: 300px;           /* Adjust as needed */
+width: 300px;          /* Adjust as needed */
 z-index: 1000;
 }
 
@@ -21,7 +21,7 @@ Left Side UI Container
 left: 0;
 top: 0;
 bottom: 0;
-width: 60px;            /* Adjust toolbar width */
+width: 60px;           /* Toolbar width */
 z-index: 1000;
 }
 
@@ -32,19 +32,19 @@ Sidebar
 right: 0;
 top: 0;
 bottom: 0;
-width: 278px; / reduced 2px to prevent overhang /
-max-width: 278px; / match width */
-z-index: 900;
+width: 278px;          /* reduced 2px to prevent overhang */
+max-width: 278px;
+z-index: 950;          /* make sure it sits above right container but below tabs */
 }
 
 /* Sidebar tabs - vertical layout to the left of chatbox */
 #sidebar-tabs {
 position: fixed;
-right: 291px; / reduced 2px to align with sidebar */
+right: 291px;          /* spacing from sidebar */
 top: 0;
 flex-direction: column;
-width: auto;
 flex-wrap: nowrap;
+width: auto;
 z-index: 1001;
 }
 
@@ -64,39 +64,39 @@ Windows & App Containers
 ------------------------------- */
 .app.window-app,
 .app.sheet {
-min-width: 300px;       /* minimum width */
-min-height: 200px;      /* minimum height */
-max-width: 100%;        /* allow expansion to full width */
-max-height: 100%;       /* allow expansion to full height */
-resize: both;           /* allow resizing in both directions */
-overflow: auto;         /* scrollbars if content exceeds size */
-left: auto;             /* let Foundry handle default positioning */
+min-width: 300px;      /* minimum width */
+min-height: 200px;     /* minimum height */
+max-width: 100%;       /* allow expansion to full width */
+max-height: 100%;      /* allow expansion to full height */
+resize: both;          /* allow resizing in both directions */
+overflow: auto;        /* scrollbars if content exceeds size */
+left: auto;
 top: auto;
 right: auto;
 bottom: auto;
 }
 
-/* Ensure dragging works */
+/* Window headers are draggable */
 .window-header {
 cursor: move;
 }
 
 /* -------------------------------
-Character Sheet / Level Input Fix
+Character Level Input
 ------------------------------- */
 .character-level input[type="number"] {
-width: 80px;            /* bigger box for level */
-font-size: 1.5em;       /* easier to read */
+width: 80px;
+font-size: 1.5em;
 text-align: center;
-background-color: #222; /* dark background */
-color: #fff;            /* readable text */
+background-color: #222;
+color: #fff;
 border: 2px solid #555;
 border-radius: 5px;
 padding: 3px 5px;
 }
 
 /* -------------------------------
-HP / Force / Resources Bars
+HP / Force / Resource Bars
 ------------------------------- */
 .resource-bar input.resource-input {
 min-width: 50px;
