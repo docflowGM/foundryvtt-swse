@@ -10,23 +10,23 @@ const path = require('path');
 const classDefenseData = {
   'Jedi': {
     babProgression: 'fast',
-    defenses: { fortitude: 1, reflex: 1, will: 1 }
+    defenses: { reflex: 1, fortitude: 1, will: 1 }
   },
   'Noble': {
     babProgression: 'slow',
-    defenses: { fortitude: 0, reflex: 1, will: 1 }
+    defenses: { reflex: 1, fortitude: 0, will: 2 }
   },
   'Scoundrel': {
     babProgression: 'medium',
-    defenses: { fortitude: 0, reflex: 1, will: 0 }
+    defenses: { reflex: 2, fortitude: 0, will: 1 }
   },
   'Scout': {
     babProgression: 'medium',
-    defenses: { fortitude: 1, reflex: 1, will: 0 }
+    defenses: { reflex: 2, fortitude: 1, will: 0 }
   },
   'Soldier': {
     babProgression: 'fast',
-    defenses: { fortitude: 1, reflex: 0, will: 0 }
+    defenses: { reflex: 1, fortitude: 2, will: 0 }
   },
   // Prestige Classes
   'Ace Pilot': {
@@ -103,20 +103,21 @@ for (const line of lines) {
     const className = classItem.name;
 
     if (classDefenseData[className]) {
-      // Add BAB progression
-      if (!classItem.system.babProgression) {
-        classItem.system.babProgression = classDefenseData[className].babProgression;
-        console.log(`Added babProgression for ${className}: ${classDefenseData[className].babProgression}`);
+      // Add/Update BAB progression
+      const oldBab = classItem.system.babProgression;
+      classItem.system.babProgression = classDefenseData[className].babProgression;
+      if (oldBab !== classItem.system.babProgression) {
+        console.log(`Updated babProgression for ${className}: ${oldBab || 'none'} → ${classDefenseData[className].babProgression}`);
       }
 
-      // Add defense bonuses
-      if (!classItem.system.defenses) {
-        classItem.system.defenses = classDefenseData[className].defenses;
-        console.log(`Added defenses for ${className}:`, classDefenseData[className].defenses);
+      // Add/Update defense bonuses (always overwrite to fix any incorrect values)
+      const oldDefenses = classItem.system.defenses ? JSON.stringify(classItem.system.defenses) : 'none';
+      classItem.system.defenses = classDefenseData[className].defenses;
+      const newDefenses = JSON.stringify(classDefenseData[className].defenses);
+
+      if (oldDefenses !== newDefenses) {
+        console.log(`Updated defenses for ${className}:`, classDefenseData[className].defenses);
         updatedCount++;
-      } else {
-        // Update if exists but values are wrong
-        classItem.system.defenses = classDefenseData[className].defenses;
       }
     } else {
       console.warn(`⚠️  No defense data found for class: ${className}`);
