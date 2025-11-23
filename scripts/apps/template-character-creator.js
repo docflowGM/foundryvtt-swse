@@ -366,6 +366,7 @@ export class TemplateCharacterCreator extends Application {
       const equipmentResults = await actor.getFlag('swse', 'equipmentResults');
       await this._showSuccessDialog(actor, template, equipmentResults);
       actor.sheet.render(true);
+      this.close();  // Close the template builder
       return;
     }
 
@@ -397,6 +398,9 @@ export class TemplateCharacterCreator extends Application {
 
             // Open character sheet
             actor.sheet.render(true);
+
+            // Close the template builder
+            this.close();
           }
         }
       },
@@ -711,6 +715,15 @@ export class TemplateCharacterCreator extends Application {
 
       await actor.createEmbeddedDocuments('Item', [classData]);
       SWSELogger.log(`SWSE | Added class: ${template.className}`);
+
+      // Auto-check Force Sensitive if this is a Force-using class
+      const forceUsingClasses = ['Jedi', 'Sith', 'Force Adept', 'Force Disciple'];
+      if (forceUsingClasses.includes(template.className)) {
+        await actor.update({
+          'system.forceSensitive': true
+        });
+        SWSELogger.log(`SWSE | Auto-checked Force Sensitive for ${template.className}`);
+      }
 
     } catch (error) {
       SWSELogger.error('SWSE | Failed to apply class:', error);

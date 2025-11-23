@@ -54,7 +54,12 @@ export function _bindAbilitiesUI(root) {
     SWSELogger.log("SWSE | Binding abilities UI, root:", root);
 
     // Point buy system
-    let pool = 32;
+    // Get the correct point buy pool from settings
+    const pointBuyPool = chargen.characterData.isDroid
+      ? (game.settings.get("swse", "droidPointBuyPool") || 20)
+      : (game.settings.get("swse", "livingPointBuyPool") || 25);
+
+    let pool = pointBuyPool;
     const pointCosts = (from, to) => {
       const costForIncrement = (v) => {
         if (v < 12) return 1;
@@ -72,7 +77,7 @@ export function _bindAbilitiesUI(root) {
     };
 
     const initPointBuy = () => {
-      pool = 32;
+      pool = pointBuyPool;
       ablist.forEach(a => {
         const inp = root.querySelector(`[name="ability_${a}"]`);
         if (inp) inp.value = 8;
@@ -538,6 +543,9 @@ export function _bindAbilitiesUI(root) {
       // Update button states
       const buttons = root.querySelectorAll('.method-button');
       buttons.forEach(btn => btn.classList.remove('active'));
+
+      // Store the selected generation method
+      chargen.characterData.abilityGenerationMethod = modeName;
     };
 
     // Wire buttons with mode switching
