@@ -1,5 +1,5 @@
 Repository Structure Map
-Generated: 2025-11-21 22:23:43
+Generated: 2025-11-23 15:27:34
 ======================================================================
 
 foundryvtt-swse/
@@ -156,7 +156,10 @@ foundryvtt-swse/
 │   ├── force-secrets.json (9.4KB)
 │   ├── force-techniques.json (23.1KB)
 │   ├── lightsaber-form-powers.json (46.4KB)
-│   ├── mentor-template-dialogues.json (8.5KB)
+│   ├── mentor-template-dialogues.json (8.7KB)
+│   ├── nonheroic_templates.json (170.0KB)
+│   ├── nonheroic_units.json (1.2MB)
+│   ├── NONHEROIC_UNITS_README.md (3.5KB)
 │   ├── prestige-class-prerequisites.json (9.4KB)
 │   ├── ship-combat-actions.json (15.0KB)
 │   ├── skills.json (1.4KB)
@@ -228,7 +231,7 @@ foundryvtt-swse/
 │   ├── armor-medium.db (8.0KB)
 │   ├── armor.db (52.0KB)
 │   ├── attributes.db (2.9KB)
-│   ├── classes.db (64.5KB)
+│   ├── classes.db (67.1KB)
 │   ├── conditions.db (2.8KB)
 │   ├── droids.db (157.4KB)
 │   ├── equipment.db (69.3KB)
@@ -251,7 +254,7 @@ foundryvtt-swse/
 │   │   ├── base/
 │   │   │   └── swse-actor-base.js (8.5KB)
 │   │   ├── character/
-│   │   │   └── swse-character-sheet.js (36.6KB)
+│   │   │   └── swse-character-sheet.js (40.4KB)
 │   │   ├── droid/
 │   │   │   ├── swse-droid-handler.js (4.1KB)
 │   │   │   └── swse-droid.js (1.3KB)
@@ -262,20 +265,20 @@ foundryvtt-swse/
 │   │       └── swse-vehicle.js (12.5KB)
 │   ├── apps/
 │   │   ├── chargen/
-│   │   │   ├── chargen-abilities.js (22.7KB)
+│   │   │   ├── chargen-abilities.js (23.1KB)
 │   │   │   ├── chargen-class.js (9.0KB)
 │   │   │   ├── chargen-droid.js (40.2KB)
 │   │   │   ├── chargen-feats-talents.js (5.1KB)
-│   │   │   ├── chargen-main.js (24.5KB)
+│   │   │   ├── chargen-main.js (26.6KB)
 │   │   │   ├── chargen-shared.js (1.8KB)
 │   │   │   ├── chargen-skills.js (4.3KB)
 │   │   │   ├── chargen-species.js (10.2KB)
-│   │   │   └── chargen-templates.js (14.1KB)
+│   │   │   └── chargen-templates.js (16.3KB)
 │   │   ├── levelup/
 │   │   │   ├── levelup-class.js (19.5KB)
 │   │   │   ├── levelup-feats.js (8.7KB)
 │   │   │   ├── levelup-force-powers.js (1.3KB)
-│   │   │   ├── levelup-main.js (38.0KB)
+│   │   │   ├── levelup-main.js (39.4KB)
 │   │   │   ├── levelup-shared.js (10.1KB)
 │   │   │   ├── levelup-skills.js (2.0KB)
 │   │   │   ├── levelup-talents.js (14.4KB)
@@ -285,18 +288,19 @@ foundryvtt-swse/
 │   │   │   ├── store-checkout.js (14.8KB)
 │   │   │   ├── store-filters.js (6.2KB)
 │   │   │   ├── store-inventory.js (8.8KB)
-│   │   │   ├── store-main.js (19.0KB)
-│   │   │   ├── store-pricing.js (2.0KB)
+│   │   │   ├── store-main.js (19.1KB)
+│   │   │   ├── store-pricing.js (2.4KB)
 │   │   │   └── store-shared.js (34.0KB)
-│   │   ├── chargen-improved.js (14.9KB)
+│   │   ├── chargen-improved.js (15.3KB)
 │   │   ├── chargen-init.js (4.6KB)
 │   │   ├── chargen-narrative.js (19.4KB)
 │   │   ├── custom-item-dialog.js (21.1KB)
 │   │   ├── mentor-dialogues.js (95.7KB)
+│   │   ├── nonheroic-units-browser.js (8.9KB)
 │   │   ├── swse-levelup-enhanced.js (847.0B)
 │   │   ├── swse-levelup.js (10.3KB)
 │   │   ├── talent-tree-visualizer.js (32.4KB)
-│   │   ├── template-character-creator.js (14.9KB)
+│   │   ├── template-character-creator.js (29.2KB)
 │   │   ├── upgrade-app.js (20.5KB)
 │   │   ├── vehicle-modification-app.js (29.6KB)
 │   │   └── vehicle-modification-manager.js (11.4KB)
@@ -354,12 +358,12 @@ foundryvtt-swse/
 │   ├── data/
 │   │   └── droid-systems.js (16.7KB)
 │   ├── data-models/
-│   │   ├── actor-data-model.js (16.5KB)
+│   │   ├── actor-data-model.js (18.8KB)
 │   │   ├── character-data-model.js (16.0KB)
 │   │   ├── item-data-models.js (15.9KB)
-│   │   └── vehicle-data-model.js (22.1KB)
+│   │   └── vehicle-data-model.js (23.3KB)
 │   ├── drag-drop/
-│   │   └── drop-handler.js (8.1KB)
+│   │   └── drop-handler.js (14.5KB)
 │   ├── gm-tools/
 │   │   └── homebrew-manager.js (8.0KB)
 │   ├── hooks/
@@ -369,7 +373,7 @@ foundryvtt-swse/
 │   │   ├── hooks-registry.js (10.2KB)
 │   │   ├── index.js (662.0B)
 │   │   ├── init-hooks.js (1.7KB)
-│   │   └── ui-hooks.js (3.1KB)
+│   │   └── ui-hooks.js (4.2KB)
 │   ├── houserules/
 │   │   ├── houserule-mechanics.js (10.3KB)
 │   │   ├── houserule-menus.js (13.3KB)
@@ -417,10 +421,13 @@ foundryvtt-swse/
 │   │   ├── string-utils.js (3.7KB)
 │   │   ├── ui-utils.js (3.0KB)
 │   │   └── validation-utils.js (2.5KB)
+│   ├── handlebars-helpers.js (45.0B)
+│   ├── import-nonheroic-units-to-compendium.js (7.3KB)
+│   ├── sanitize-nonheroic-units.js (7.9KB)
 │   └── theme-loader.js (3.9KB)
 ├── styles/
 │   ├── apps/
-│   │   ├── chargen-templates.css (11.1KB)
+│   │   ├── chargen-templates.css (11.2KB)
 │   │   ├── chargen.css (22.8KB)
 │   │   ├── houserules.css (6.0KB)
 │   │   ├── store.css (15.9KB)
@@ -432,12 +439,13 @@ foundryvtt-swse/
 │   │   ├── combat-enhancements.css (27.1KB)
 │   │   └── vehicle-combat.css (7.9KB)
 │   ├── components/
-│   │   └── swse-components.css (13.4KB)
+│   │   ├── swse-components.css (13.4KB)
+│   │   └── swse-holo-extras.css (42.0B)
 │   ├── sheets/
-│   │   ├── character-sheet.css (60.9KB)
+│   │   ├── character-sheet.css (61.5KB)
 │   │   ├── improved-contrast.css (9.3KB)
-│   │   ├── sheet-improvements.css (23.1KB)
-│   │   ├── unified-sheets.css (31.3KB)
+│   │   ├── sheet-improvements.css (23.4KB)
+│   │   ├── unified-sheets.css (31.5KB)
 │   │   └── vehicle-sheet.css (19.9KB)
 │   ├── src/
 │   │   ├── base/
@@ -471,7 +479,7 @@ foundryvtt-swse/
 │   │   ├── sand-people-theme.css.backup (11.2KB)
 │   │   └── starship-theme.css.backup (10.0KB)
 │   ├── foundry-ui-layout.css (1.3KB)
-│   └── foundry-ui-overrides.css (2.7KB)
+│   └── foundry-ui-overrides.css (4.5KB)
 ├── templates/
 │   ├── actors/
 │   │   ├── character/
@@ -515,6 +523,7 @@ foundryvtt-swse/
 │   │   ├── chargen.hbs (31.1KB)
 │   │   ├── homebrew-manager.hbs (8.6KB)
 │   │   ├── levelup.hbs (43.9KB)
+│   │   ├── nonheroic-units-browser.hbs (6.0KB)
 │   │   ├── template-creator.hbs (3.6KB)
 │   │   └── vehicle-modification.hbs (6.4KB)
 │   ├── canvas-ui/
@@ -537,7 +546,7 @@ foundryvtt-swse/
 │       ├── README.md (906.0B)
 │       ├── ship-combat-actions-panel.hbs (1.4KB)
 │       ├── skill-row-static.hbs (4.5KB)
-│       ├── skill-row.hbs (708.0B)
+│       ├── skill-row.hbs (2.1KB)
 │       ├── skills-section.hbs (2.6KB)
 │       └── tab-navigation.hbs (381.0B)
 ├── tests/
@@ -557,6 +566,7 @@ foundryvtt-swse/
 │   ├── FEATS_TALENTS_MIGRATION_SUMMARY.md (7.7KB)
 │   ├── fix-armor-data.js (47.8KB)
 │   ├── fix-armor-schemas.js (6.1KB)
+│   ├── fix-class-defense-bab.js (4.3KB)
 │   ├── fix-class-schemas.js (3.4KB)
 │   ├── fix-class-trained-skills.js (1.8KB)
 │   ├── fix-db-schemas.js (7.1KB)
@@ -573,7 +583,7 @@ foundryvtt-swse/
 │   ├── update-species-bonuses.js (5.5KB)
 │   ├── update-species-comprehensive-traits.js (22.0KB)
 │   └── VEHICLE_MIGRATION_SUMMARY.md (9.5KB)
-├── .gitignore (219.0B)
+├── .gitignore (249.0B)
 ├── ANALYSIS_SUMMARY.txt (11.1KB)
 ├── build-themes.js (1.4KB)
 ├── CHARGEN_LEVELUP_REVIEW.md (39.6KB)
@@ -581,7 +591,7 @@ foundryvtt-swse/
 ├── index.js (35.4KB)
 ├── package-lock.json (73.8KB)
 ├── package.json (728.0B)
-├── REPO_STRUCTURE.txt (19.6KB)
+├── REPO_STRUCTURE.txt (27.2KB)
 ├── system.json (6.7KB)
 └── template.json (6.1KB)
 
@@ -590,15 +600,15 @@ Repository Statistics
 ======================================================================
 
 Total Directories: 87
-Total Files: 494
-Total Size: 24.1MB
+Total Files: 504
+Total Size: 25.6MB
 
 Files by Type:
-  JavaScript       170 files  (1.6MB)
+  JavaScript       175 files  (1.7MB)
   Images           124 files  (19.3MB)
-  Docs              50 files  (570.6KB)
-  Templates         47 files  (249.6KB)
-  Styles            35 files  (296.3KB)
+  Docs              51 files  (581.7KB)
+  Templates         48 files  (257.0KB)
+  Styles            36 files  (299.4KB)
   Other             34 files  (1.7MB)
-  Data              31 files  (472.6KB)
+  Data              33 files  (1.8MB)
   Python             3 files  (14.2KB)
