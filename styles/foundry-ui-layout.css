@@ -3,60 +3,61 @@ FOUNDRY UI LAYOUT - Custom positioning & resizable windows
 ============================================================================ */
 
 /* -------------------------------
-Right Side UI Container
+Right Side UI Container (FIXED)
 ------------------------------- */
 #ui-right {
-left: auto;
-right: 0;
-top: 0;
-bottom: 0;
-width: 300px;          /* Adjust as needed */
-z-index: 1000;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: auto;            /* Allow Foundry to control width */
+  z-index: 1000;
 }
 
 /* -------------------------------
 Left Side UI Container
 ------------------------------- */
 #ui-left {
-left: 0;
-top: 0;
-bottom: 0;
-width: 60px;           /* Toolbar width */
-z-index: 1000;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 60px;            /* Toolbar width */
+  z-index: 1000;
 }
 
 /* -------------------------------
-Sidebar
+Sidebar (FIXED)
 ------------------------------- */
 #sidebar {
-right: 0;
-top: 0;
-bottom: 0;
-width: 278px;          /* reduced 2px to prevent overhang */
-max-width: 278px;
-z-index: 950;          /* make sure it sits above right container but below tabs */
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 278px;
+  max-width: 278px;
+  z-index: 900;           /* Below tabs but above base UI */
 }
 
-/* Sidebar tabs - vertical layout to the left of chatbox */
+/* -------------------------------
+Sidebar Tabs - vertical layout (FIXED)
+------------------------------- */
 #sidebar-tabs {
-position: fixed;
-right: 291px;          /* spacing from sidebar */
-top: 0;
-flex-direction: column;
-flex-wrap: nowrap;
-width: auto;
-z-index: 1001;
+  position: fixed;
+  right: 291px;           /* space from sidebar */
+  top: 0;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: auto;
+  z-index: 1001;          /* Above sidebar */
 }
 
 #sidebar-tabs menu {
-flex-direction: column;
-flex-wrap: nowrap;
-width: auto;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: auto;
 }
 
 #sidebar-tabs a {
-width: 40px;
-height: 40px;
+  width: 40px;
+  height: 40px;
 }
 
 /* -------------------------------
@@ -64,59 +65,59 @@ Windows & App Containers
 ------------------------------- */
 .app.window-app,
 .app.sheet {
-min-width: 300px;      /* minimum width */
-min-height: 200px;     /* minimum height */
-max-width: 100%;       /* allow expansion to full width */
-max-height: 100%;      /* allow expansion to full height */
-resize: both;          /* allow resizing in both directions */
-overflow: auto;        /* scrollbars if content exceeds size */
-left: auto;
-top: auto;
-right: auto;
-bottom: auto;
+  min-width: 300px;
+  min-height: 200px;
+  max-width: 100%;
+  max-height: 100%;
+  resize: both;
+  overflow: auto;
+  left: auto;
+  top: auto;
+  right: auto;
+  bottom: auto;
 }
 
-/* Window headers are draggable */
+/* Make header draggable */
 .window-header {
-cursor: move;
+  cursor: move;
 }
 
 /* -------------------------------
 Character Level Input
 ------------------------------- */
 .character-level input[type="number"] {
-width: 80px;
-font-size: 1.5em;
-text-align: center;
-background-color: #222;
-color: #fff;
-border: 2px solid #555;
-border-radius: 5px;
-padding: 3px 5px;
+  width: 80px;
+  font-size: 1.5em;
+  text-align: center;
+  background-color: #222;
+  color: #fff;
+  border: 2px solid #555;
+  border-radius: 5px;
+  padding: 3px 5px;
 }
 
 /* -------------------------------
 HP / Force / Resource Bars
 ------------------------------- */
 .resource-bar input.resource-input {
-min-width: 50px;
-font-weight: bold;
+  min-width: 50px;
+  font-weight: bold;
 }
 
 .progress-bar {
-background-color: #333;
-border-radius: 5px;
-height: 12px;
-overflow: hidden;
+  background-color: #333;
+  border-radius: 5px;
+  height: 12px;
+  overflow: hidden;
 }
 
 .progress-fill {
-background-color: #0f0;
-height: 100%;
-width: 0%;
+  background-color: #0f0;
+  height: 100%;
+  width: 0%;
 }
 
 /* Optional: Reroll Dice Icon */
 .reroll-bonus i {
-cursor: pointer;
+  cursor: pointer;
 }
