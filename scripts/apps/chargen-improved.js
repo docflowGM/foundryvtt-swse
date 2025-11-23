@@ -129,16 +129,6 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     }
 
     this.characterData.class = classDoc;
-
-    // Also add to classes array for validation
-    if (!this.characterData.classes) {
-      this.characterData.classes = [];
-    }
-    // Only add if not already in the array
-    if (!this.characterData.classes.some(c => c.name === classDoc.name)) {
-      this.characterData.classes.push(classDoc);
-    }
-
     SWSELogger.log(`SWSE CharGen | Selected class: ${className}`, classDoc.system);
 
     // Apply class data from database

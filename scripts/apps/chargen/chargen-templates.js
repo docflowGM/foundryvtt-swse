@@ -328,70 +328,9 @@ export class CharacterTemplates {
       const feat = await featPack.getDocument(featEntry._id);
       await actor.createEmbeddedDocuments('Item', [feat.toObject()]);
       SWSELogger.log(`SWSE | Added template feat: ${featName}`);
-
-      // Handle Skill Focus feat - auto-check the skill's focused checkbox
-      if (featName.startsWith('Skill Focus')) {
-        const match = featName.match(/Skill Focus \(([^)]+)\)/);
-        if (match) {
-          const skillDisplayName = match[1].trim();
-          const skillKey = this._getSkillKeyFromDisplayName(skillDisplayName);
-
-          if (skillKey) {
-            await actor.update({
-              [`system.skills.${skillKey}.focused`]: true
-            });
-            SWSELogger.log(`SWSE | Auto-checked skill focus for: ${skillDisplayName}`);
-          }
-        }
-      }
-
-      // Handle Force Sensitivity feat - auto-check Force Sensitive
-      if (featName === 'Force Sensitivity') {
-        await actor.update({
-          'system.forceSensitive': true
-        });
-        SWSELogger.log('SWSE | Auto-checked Force Sensitive');
-      }
     } catch (error) {
       SWSELogger.error('SWSE | Failed to apply template feat:', error);
     }
-  }
-
-  /**
-   * Convert display skill name to system skill key
-   * @param {string} displayName - Display name like "Use the Force", "Perception", etc.
-   * @returns {string|null} - Skill key like "use_the_force", "perception", etc.
-   */
-  static _getSkillKeyFromDisplayName(displayName) {
-    const skillMap = {
-      'Acrobatics': 'acrobatics',
-      'Climb': 'climb',
-      'Deception': 'deception',
-      'Endurance': 'endurance',
-      'Gather Information': 'gather_information',
-      'Initiative': 'initiative',
-      'Jump': 'jump',
-      'Knowledge (Bureaucracy)': 'knowledge_bureaucracy',
-      'Knowledge (Galactic Lore)': 'knowledge_galactic_lore',
-      'Knowledge (Life Sciences)': 'knowledge_life_sciences',
-      'Knowledge (Physical Sciences)': 'knowledge_physical_sciences',
-      'Knowledge (Social Sciences)': 'knowledge_social_sciences',
-      'Knowledge (Tactics)': 'knowledge_tactics',
-      'Knowledge (Technology)': 'knowledge_technology',
-      'Mechanics': 'mechanics',
-      'Perception': 'perception',
-      'Persuasion': 'persuasion',
-      'Pilot': 'pilot',
-      'Ride': 'ride',
-      'Stealth': 'stealth',
-      'Survival': 'survival',
-      'Swim': 'swim',
-      'Treat Injury': 'treat_injury',
-      'Use Computer': 'use_computer',
-      'Use the Force': 'use_the_force'
-    };
-
-    return skillMap[displayName] || null;
   }
 
   /**
