@@ -5,8 +5,8 @@
       "name": "Guardian",
       "class": "Jedi",
       "archetype": "Guardian",
-      "description": "A nimble warrior specializing in lightsaber combat, using finesse and defensive techniques to overwhelm opponents.",
-      "quote": "Through the Force, I am the shield that guards the innocent.",
+      "description": "A nimble warrior specializing in lightsaber combat, using finesse and offensive techniques to overwhelm opponents.",
+      "quote": "I will protect the innocent with my blade.",
       "imagePath": "systems/swse/assets/templates/jedi_guardian.webp",
       "mentor": "miraj",
       "abilityScores": {
@@ -229,7 +229,7 @@
       "class": "Noble",
       "archetype": "Leader",
       "description": "A tactical commander who coordinates allies and inspires greatness on the battlefield.",
-      "quote": "Victory belongs to those who fight together as one!",
+      "quote": "The best leader is one who leads by example and inspires others to follow.",
       "imagePath": "systems/swse/assets/templates/noble_leader.webp",
       "mentor": "j0n1",
       "abilityScores": {
@@ -322,7 +322,7 @@
       "class": "Noble",
       "archetype": "Duelist",
       "description": "A social character with surprising melee combat effectiveness using grace and finesse.",
-      "quote": "Elegance in both word and blade—a true noble's art.",
+      "quote": "Which is sharper, my sword or my wit?",
       "imagePath": "systems/swse/assets/templates/noble_duelist.webp",
       "mentor": "j0n1",
       "abilityScores": {
@@ -365,7 +365,7 @@
       "class": "Scoundrel",
       "archetype": "Pistoleer",
       "description": "A precision shooter who deals devastating damage with sneak attacks from the shadows.",
-      "quote": "They never see it coming. That's the whole point.",
+      "quote": "I got a big blaster on my hip and I ain't afraid to use it.",
       "imagePath": "systems/swse/assets/templates/scoundrel_pistoleer.webp",
       "mentor": "salty",
       "abilityScores": {
@@ -458,7 +458,7 @@
       "class": "Scoundrel",
       "archetype": "Knuckledragger",
       "description": "An aggressive street fighter who pushes enemies down the condition track with dirty tactics.",
-      "quote": "No such thing as a fair fight when survival's on the line.",
+      "quote": "If you ain't cheatin', you ain't winnin'.",
       "imagePath": "systems/swse/assets/templates/scoundrel_knuckledragger.webp",
       "mentor": "salty",
       "abilityScores": {
@@ -504,7 +504,7 @@
       "class": "Scoundrel",
       "archetype": "Outlaw",
       "description": "A charming rogue who uses luck and Force Points strategically to turn the odds in their favor.",
-      "quote": "Luck? I make my own luck, friend.",
+      "quote": "Luck? I make my own luck, pal.",
       "imagePath": "systems/swse/assets/templates/scoundrel_outlaw.webp",
       "mentor": "salty",
       "abilityScores": {
@@ -595,7 +595,7 @@
       "class": "Scout",
       "archetype": "Skirmisher",
       "description": "A mobile combatant specializing in hit-and-run tactics and battlefield positioning.",
-      "quote": "Speed and precision win battles. Stand still and you're already dead.",
+      "quote": "Speed and precision are the key to victory. Stand still and you're already dead.",
       "imagePath": "systems/swse/assets/templates/scout_skirmisher.webp",
       "mentor": "lead",
       "abilityScores": {
