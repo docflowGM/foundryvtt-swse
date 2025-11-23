@@ -702,20 +702,31 @@ form.swse-datapad-sheet {
 /* =========================
    SKILLS SECTION
    ========================= */
-.swse .skills-grid-compact {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
+/* =========================
+   UPDATED SKILLS SECTION
+   DROP-IN REPLACEMENT
+   ========================= */
 
-.swse .skills-header {
+/* --- GRID LAYOUT (NEW: actions column at end) --- */
+.swse .skills-header,
+.swse .skill-row {
   display: grid;
-  grid-template-columns: 40px 45px 1.5fr 100px 35px 35px 50px;
+  grid-template-columns:
+      28px   /* Roll */
+      45px   /* Total */
+      1.5fr  /* Skill Name */
+      100px  /* Ability */
+      35px   /* Trained */
+      35px   /* Focus */
+      50px   /* Misc */
+      120px; /* Combat Actions moved here */
   gap: 4px;
   align-items: center;
   padding: 4px;
+}
+
+/* --- Header Styling --- */
+.swse .skills-header {
   background: linear-gradient(90deg, rgba(0, 168, 204, 0.2), rgba(0, 120, 160, 0.1));
   border-radius: 4px;
   margin-bottom: 2px;
@@ -736,12 +747,8 @@ form.swse-datapad-sheet {
   text-align: left;
 }
 
+/* --- Rows --- */
 .swse .skill-row {
-  display: grid;
-  grid-template-columns: 40px 45px 1.5fr 100px 35px 35px 50px;
-  gap: 4px;
-  align-items: center;
-  padding: 4px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.03));
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   transition: background var(--fast);
@@ -751,27 +758,25 @@ form.swse-datapad-sheet {
   background: rgba(0, 168, 204, 0.05);
 }
 
-.swse .skill-row:last-child {
-  border-bottom: none;
-}
-
+/* --- Skill Name --- */
 .swse .skill-name {
   font-weight: 700;
   color: var(--holo-cyan);
   font-size: 11px;
 }
 
+/* --- Ability Column (Drop-down + Mod) --- */
 .swse .skill-ability {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  font-size: 9px;
+  gap: 4px;
+  font-size: 10px;
 }
 
 .swse .skill-ability select {
   padding: 2px 4px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   background: rgba(0, 30, 50, 0.9);
@@ -779,58 +784,64 @@ form.swse-datapad-sheet {
   border-radius: 3px;
   color: #ffffff;
   cursor: pointer;
-}
-
-.swse .skill-ability select:hover {
-  background: rgba(0, 40, 70, 1);
-  border-color: rgba(0, 200, 255, 0.7);
-}
-
-.swse .skill-ability select:focus {
-  background: rgba(0, 50, 85, 1);
-  border-color: var(--holo-cyan);
-  color: #ffffff;
+  min-width: 42px;
 }
 
 .swse .skill-ability .ability-mod {
-  font-weight: 700;
+  font-weight: 900;
   color: var(--holo-green);
-  min-width: 25px;
+  min-width: 28px;
   text-align: center;
+  font-size: 13px;
 }
 
+/* --- Roll Button (New Narrow Style) --- */
+.swse .skill-roll-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 168, 204, 0.2);
+  border: 1px solid rgba(0, 200, 255, 0.5);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--holo-cyan);
+  font-size: 12px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.swse .skill-roll-btn:hover {
+  background: rgba(0, 200, 255, 0.3);
+  border-color: rgba(0, 255, 255, 0.9);
+}
+
+/* --- Big + Bold Stat Columns (Total → Misc) --- */
+.swse .skill-total,
 .swse .skill-half-level,
 .swse .skill-trained-bonus,
 .swse .skill-misc,
 .swse .skill-armor {
   text-align: center;
-  font-size: 11px;
+  font-size: 14px;
+  font-weight: 900;
+  padding: 4px;
   color: #cfeffc;
 }
 
 .swse .skill-total {
-  text-align: center;
-  font-weight: 900;
-  font-size: 12px;
+  font-size: 16px;
   color: var(--holo-green);
-  background: rgba(0, 255, 136, 0.05);
-  padding: 3px;
-  border-radius: 3px;
+  background: rgba(0, 255, 136, 0.12);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 4px;
 }
 
-.swse .skill-mod {
-  font-weight: bold;
-  color: var(--color-accent);
-}
-
-.swse .skill-focus-icon {
-  color: var(--color-warning);
-}
-
+/* --- Checkboxes & Inputs --- */
 .swse .skill-row input[type="number"] {
   width: 100%;
   padding: 3px;
-  font-size: 10px;
+  font-size: 11px;
   text-align: center;
 }
 
@@ -841,22 +852,18 @@ form.swse-datapad-sheet {
   display: block;
 }
 
-.swse .custom-skills-divider {
-  text-align: center;
-  padding: 8px;
-  margin: 8px 0;
-  color: var(--accent-warm);
-  font-weight: 900;
-  font-size: 11px;
-  background: rgba(255, 214, 107, 0.05);
-  border-top: 1px solid rgba(255, 214, 107, 0.15);
-  border-bottom: 1px solid rgba(255, 214, 107, 0.15);
+/* --- Combat Actions (now at end) --- */
+.swse .skill-actions select {
+  width: 100%;
+  padding: 4px 6px;
+  background: rgba(0, 30, 50, 0.9);
+  border: 1px solid rgba(0, 168, 204, 0.5);
+  color: #fff;
+  font-size: 10px;
+  border-radius: 3px;
+  cursor: pointer;
 }
 
-.swse .add-custom-skill-btn {
-  width: 100%;
-  margin-top: 8px;
-}
 
 /* =========================
    HP & RESOURCES
@@ -2885,23 +2892,36 @@ img[loading="lazy"] {
   letter-spacing: 0.5px;
 }
 
+/* === UPGRADED LEVEL INPUT === */
 .character-level .level-input {
-  width: 60px;
-  padding: 4px 8px;
-  background: rgba(0, 170, 204, 0.1);
-  border: 1px solid rgba(0, 170, 204, 0.3);
-  color: var(--color-text-emphatic, #ffffff) !important;
-  border-radius: 4px;
+  width: 80px;
+  padding: 6px 10px;
+
+  background: rgba(0, 170, 204, 0.15);
+  border: 2px solid rgba(0, 220, 255, 0.55);
+  border-radius: 6px;
+
   text-align: center;
-  font-size: 14px;
-  font-weight: 700;
-  -webkit-text-fill-color: var(--color-text-emphatic, #ffffff);
+
+  /* BIG + BOLD + BRIGHT */
+  font-size: 32px;
+  font-weight: 900;
+
+  color: var(--holo-cyan);
+  -webkit-text-fill-color: var(--holo-cyan);
+
+  /* Neon glow */
+  text-shadow: 0 0 8px var(--holo-cyan), 0 0 15px rgba(0, 255, 255, 0.5);
+
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 }
 
+/* Focus effect */
 .character-level .level-input:focus {
   outline: none;
   border-color: var(--holo-cyan);
-  box-shadow: 0 0 8px rgba(0, 217, 255, 0.4);
+  box-shadow: 0 0 12px rgba(0, 217, 255, 0.8);
+  transform: scale(1.05);
 }
 
 .half-level-display {
