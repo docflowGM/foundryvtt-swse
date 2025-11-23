@@ -1,0 +1,12 @@
+REPO_STRUCTURE.txt
+
+# Node modules and build artifacts
+node_modules/
+
+# Old theme system backup
+old-theme-system-backup/
+
+# Theme fix utilities and backups (legacy)
+fix_swse_themes.py
+styles/themes/backup_*/
+data/nonheroic_templates.json
