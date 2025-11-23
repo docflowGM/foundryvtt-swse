@@ -1,0 +1,1 @@
+// Added new Handlebars slice helper function
