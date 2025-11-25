@@ -406,6 +406,15 @@ export function registerHouseruleSettings() {
     default: "current"
   });
 
+  game.settings.register("swse", "talentEveryLevel", {
+    name: "Talent Every Level",
+    hint: "Characters gain a talent every level instead of every odd level",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   // ============================================
   // Multi-classing
   // ============================================
