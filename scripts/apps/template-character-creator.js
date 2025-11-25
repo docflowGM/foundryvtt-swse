@@ -275,9 +275,7 @@ export class TemplateCharacterCreator extends Application {
         name: name,
         type: 'character',
         system: {
-          level: {
-            heroic: parseInt(template.level) || 1
-          },
+          level: parseInt(template.level) || 1,
           race: template.species,
           credits: parseInt(template.credits) || 1000,
           speed: parseInt(template.speed) || 6  // Ensure speed is an integer

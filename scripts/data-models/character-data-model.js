@@ -108,9 +108,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       }),
 
       // Level
-      level: new fields.SchemaField({
-        heroic: new fields.NumberField({required: true, initial: 1, min: 1, max: 20, integer: true})
-      }),
+      level: new fields.NumberField({required: true, initial: 1, min: 1, max: 20, integer: true}),
 
       // Biography
       biography: new fields.StringField({required: false, initial: ""})
@@ -152,8 +150,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     }
 
     // Calculate half level (for skills and other calculations)
-    const heroicLevel = this.level?.heroic || 1;
-    this.halfLevel = Math.floor(heroicLevel / 2);
+    const level = this.level || 1;
+    this.halfLevel = Math.floor(level / 2);
 
     // Calculate Condition Track penalty
     // Official SWSE: Normal(0), -1(1), -2(2), -5(3), -10(4), Helpless(5)
@@ -182,8 +180,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
   }
 
   /**
-   * Override parent's _calculateDefenses to use character level structure
-   * Characters have level.heroic instead of level as a number
+   * Override parent's _calculateDefenses to use character level
    */
   _calculateDefenses() {
     // Ensure defenses object exists
@@ -192,7 +189,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       return;
     }
 
-    const level = this.level?.heroic || 1;
+    const level = this.level || 1;
 
     // Ensure individual defense objects exist
     if (!this.defenses.reflex || !this.defenses.fortitude || !this.defenses.will) {
@@ -390,7 +387,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.forcePoints = { value: 5, max: 5, die: "1d6" };
     }
 
-    const level = this.level?.heroic || 1;
+    const level = this.level || 1;
 
     // Check for daily Force Points optional rule
     const useDailyForcePoints = game.settings?.get('swse', 'dailyForcePoints') || false;

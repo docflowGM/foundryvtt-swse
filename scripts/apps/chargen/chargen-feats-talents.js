@@ -24,11 +24,117 @@ export async function _onSelectFeat(event) {
     return;
   }
 
-  this.characterData.feats.push(feat);
-  ui.notifications.info(`Selected feat: ${feat.name}`);
+  // Check if this is a Skill Focus feat
+  if (feat.name.toLowerCase().includes('skill focus')) {
+    await this._handleSkillFocusFeat(feat);
+  } else {
+    this.characterData.feats.push(feat);
+    ui.notifications.info(`Selected feat: ${feat.name}`);
+  }
 
   // Re-render to show updated feat selection and enable Next button if requirement met
   await this.render();
+}
+
+/**
+ * Handle Skill Focus feat selection in chargen
+ */
+export async function _handleSkillFocusFeat(feat) {
+  // Get trained skills
+  const trainedSkills = Object.entries(this.characterData.skills || {})
+    .filter(([key, skill]) => skill.trained)
+    .map(([key, skill]) => key);
+
+  if (trainedSkills.length === 0) {
+    ui.notifications.warn("You must train at least one skill before selecting Skill Focus. Please train a skill in the Skills step first.");
+    return;
+  }
+
+  // Build skill list for dialog
+  const skillNames = {
+    acrobatics: "Acrobatics",
+    climb: "Climb",
+    deception: "Deception",
+    endurance: "Endurance",
+    gatherInfo: "Gather Information",
+    initiative: "Initiative",
+    jump: "Jump",
+    mechanics: "Mechanics",
+    perception: "Perception",
+    persuasion: "Persuasion",
+    pilot: "Pilot",
+    stealth: "Stealth",
+    survival: "Survival",
+    swim: "Swim",
+    treatInjury: "Treat Injury",
+    useComputer: "Use Computer",
+    useTheForce: "Use the Force"
+  };
+
+  // Create options HTML
+  const skillOptions = trainedSkills
+    .map(key => `<option value="${key}">${skillNames[key] || key}</option>`)
+    .join('');
+
+  // Show dialog to select skill - use Promise to wait for selection
+  return new Promise((resolve) => {
+    new Dialog({
+      title: `${feat.name} - Select Skill`,
+      content: `
+        <div class="form-group">
+          <label>Choose a trained skill to focus:</label>
+          <select id="skill-focus-selection" style="width: 100%; padding: 5px;">
+            ${skillOptions}
+          </select>
+          <p class="hint-text" style="margin-top: 10px;">
+            <i class="fas fa-info-circle"></i>
+            Skill Focus grants a +5 bonus to the selected skill.
+          </p>
+        </div>
+      `,
+      buttons: {
+        select: {
+          icon: '<i class="fas fa-check"></i>',
+          label: "Select",
+          callback: (html) => {
+            const selectedSkill = html.find('#skill-focus-selection').val();
+
+            // Mark the skill as focused in character data
+            if (!this.characterData.skills[selectedSkill]) {
+              this.characterData.skills[selectedSkill] = { trained: true, focused: false };
+            }
+            this.characterData.skills[selectedSkill].focused = true;
+
+            // Update feat description to note which skill
+            const skillName = skillNames[selectedSkill] || selectedSkill;
+            const updatedFeat = {
+              ...feat,
+              system: {
+                ...feat.system,
+                description: `${feat.system.description || ''}\n\n<strong>Focused Skill:</strong> ${skillName}`
+              }
+            };
+
+            this.characterData.feats.push(updatedFeat);
+            ui.notifications.info(`${feat.name} applied to ${skillName}. You gain +5 to this skill.`);
+            resolve(true);
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel",
+          callback: () => {
+            ui.notifications.warn("Skill Focus feat cancelled.");
+            resolve(false);
+          }
+        }
+      },
+      default: "select",
+      close: () => resolve(false)
+    }, {
+      width: 400
+    }).render(true);
+  });
 }
 
 /**
@@ -37,7 +143,70 @@ export async function _onSelectFeat(event) {
 export async function _onRemoveFeat(event) {
   event.preventDefault();
   const id = event.currentTarget.dataset.featid;
+
+  // Find the feat being removed
+  const removedFeat = this.characterData.feats.find(f => f._id === id || f.name === id);
+
+  // If it's a Skill Focus feat, unfocus the skill
+  if (removedFeat && removedFeat.name.toLowerCase().includes('skill focus')) {
+    // Parse the focused skill from the description
+    const descMatch = removedFeat.system?.description?.match(/<strong>Focused Skill:<\/strong>\s*(.+?)(?:<|$)/);
+    if (descMatch) {
+      const focusedSkillName = descMatch[1].trim();
+
+      // Find the skill key by name
+      const skillNames = {
+        "Acrobatics": "acrobatics",
+        "Climb": "climb",
+        "Deception": "deception",
+        "Endurance": "endurance",
+        "Gather Information": "gatherInfo",
+        "Initiative": "initiative",
+        "Jump": "jump",
+        "Mechanics": "mechanics",
+        "Perception": "perception",
+        "Persuasion": "persuasion",
+        "Pilot": "pilot",
+        "Stealth": "stealth",
+        "Survival": "survival",
+        "Swim": "swim",
+        "Treat Injury": "treatInjury",
+        "Use Computer": "useComputer",
+        "Use the Force": "useTheForce"
+      };
+
+      const skillKey = skillNames[focusedSkillName];
+      if (skillKey && this.characterData.skills[skillKey]) {
+        this.characterData.skills[skillKey].focused = false;
+        ui.notifications.info(`Removed Skill Focus from ${focusedSkillName}`);
+      }
+    }
+  }
+
   this.characterData.feats = this.characterData.feats.filter(f => f._id !== id && f.name !== id);
+  await this.render();
+}
+
+/**
+ * Handle talent tree selection - shows talents within the selected tree
+ */
+export async function _onSelectTalentTree(event) {
+  event.preventDefault();
+  const treeName = event.currentTarget.dataset.tree;
+
+  this.selectedTalentTree = treeName;
+  SWSELogger.log(`CharGen | Selected talent tree: ${treeName}`);
+
+  // Re-render to show talents in this tree
+  await this.render();
+}
+
+/**
+ * Handle back from talent tree to tree list
+ */
+export async function _onBackToTalentTrees(event) {
+  event.preventDefault();
+  this.selectedTalentTree = null;
   await this.render();
 }
 
@@ -64,7 +233,28 @@ export async function _onSelectTalent(event) {
   this.characterData.talents.push(tal);
   ui.notifications.info(`Selected talent: ${tal.name}`);
 
+  // Clear selected tree and advance to next step
+  this.selectedTalentTree = null;
   await this._onNextStep(event);
+}
+
+/**
+ * Get available talent trees for the selected class
+ */
+export function _getAvailableTalentTrees() {
+  if (!this.characterData.classes || this.characterData.classes.length === 0) {
+    return [];
+  }
+
+  const selectedClass = this._packs.classes?.find(c => c.name === this.characterData.classes[0].name);
+  if (!selectedClass) {
+    return [];
+  }
+
+  const trees = selectedClass.system?.talent_trees || selectedClass.system?.talentTrees || [];
+  SWSELogger.log(`CharGen | Available talent trees for ${selectedClass.name}:`, trees);
+
+  return trees;
 }
 
 /**

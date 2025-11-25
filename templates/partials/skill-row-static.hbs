@@ -1,7 +1,7 @@
 {{!-- Static Skill Row - skill data may be undefined, provide defaults --}}
 <div class="skill-row-container" data-skill="{{key}}">
  <div class="skill-row flexrow" draggable="true">
- <div class="skill-roll">
+ <div class="skill-roll-btn">
  <button class="roll-skill rollable"
  data-skill="{{key}}"
  data-roll="1d20+@skills.{{key}}.total"
@@ -17,19 +17,10 @@
 
  <div class="skill-name">
  {{label}}
- {{#if @root.skillActions}}
- {{#with (lookup @root.skillActions key)}}
- {{#if hasActions}}
- <button type="button" class="skill-actions-toggle" data-skill="{{../key}}" title="Show available actions">
- <i class="fas fa-chevron-down"></i>
- </button>
- {{/if}}
- {{/with}}
- {{/if}}
  </div>
 
- <div class="skill-ability">
- <select name="system.skills.{{key}}.selectedAbility" title="Ability modifier for this skill">
+ <div class="skill-ability-select">
+ <select name="system.skills.{{key}}.selectedAbility" title="Ability modifier for this skill" class="ability-dropdown">
  <option value="str" {{#if skill}}{{#if (eq skill.selectedAbility 'str')}}selected{{/if}}{{else}}{{#if (eq defaultAbility 'str')}}selected{{/if}}{{/if}}>STR</option>
  <option value="dex" {{#if skill}}{{#if (eq skill.selectedAbility 'dex')}}selected{{/if}}{{else}}{{#if (eq defaultAbility 'dex')}}selected{{/if}}{{/if}}>DEX</option>
  {{#unless @root.system.isDroid}}
@@ -40,6 +31,10 @@
  <option value="cha" {{#if skill}}{{#if (eq skill.selectedAbility 'cha')}}selected{{/if}}{{else}}{{#if (eq defaultAbility 'cha')}}selected{{/if}}{{/if}}>CHA</option>
  </select>
  <span class="ability-mod">{{#if skill}}{{numberFormat skill.abilityMod decimals=0 sign=true}}{{else}}+0{{/if}}</span>
+ </div>
+
+ <div class="skill-half-level">
+ {{#if @root.system.halfLevel}}{{@root.system.halfLevel}}{{else}}0{{/if}}
  </div>
 
  <div class="skill-trained">
@@ -63,6 +58,18 @@
  data-dtype="Number"
  placeholder="0"
  title="Miscellaneous bonuses"/>
+ </div>
+
+ <div class="skill-actions">
+ {{#if @root.skillActions}}
+ {{#with (lookup @root.skillActions key)}}
+ {{#if hasActions}}
+ <button type="button" class="skill-actions-toggle" data-skill="{{../key}}" title="Show available actions">
+ <i class="fas fa-chevron-down"></i>
+ </button>
+ {{/if}}
+ {{/with}}
+ {{/if}}
  </div>
  </div>
 

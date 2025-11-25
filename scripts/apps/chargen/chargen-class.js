@@ -97,7 +97,8 @@ export async function _onSelectClass(event) {
   // Recalculate defenses
   this._recalcDefenses();
 
-  await this._onNextStep(event);
+  // Re-render to show the selected class and enable the Next button
+  await this.render();
 }
 
 /**
