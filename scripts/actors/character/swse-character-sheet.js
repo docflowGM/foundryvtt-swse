@@ -101,7 +101,56 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
         navSelector: '.sheet-tabs',
         contentSelector: '.sheet-body',
         initial: 'summary'
-      }]
+      }],
+      scrollY: ['.sheet-body', '.tab']
+    });
+  }
+
+  /**
+   * Override _render to save and restore scroll position
+   * @override
+   */
+  async _render(force, options) {
+    // Save scroll positions before render
+    this._saveScrollPositions();
+
+    // Call parent render
+    await super._render(force, options);
+
+    // Restore scroll positions after render
+    this._restoreScrollPositions();
+  }
+
+  /**
+   * Save scroll positions of scrollable elements
+   * @private
+   */
+  _saveScrollPositions() {
+    if (!this.element) return;
+
+    this._scrollPositions = {};
+    const scrollableElements = this.element.find('.sheet-body, .tab');
+
+    scrollableElements.each((i, el) => {
+      const key = el.classList.toString();
+      this._scrollPositions[key] = el.scrollTop;
+    });
+  }
+
+  /**
+   * Restore scroll positions after render
+   * @private
+   */
+  _restoreScrollPositions() {
+    if (!this.element || !this._scrollPositions) return;
+
+    const scrollableElements = this.element.find('.sheet-body, .tab');
+
+    scrollableElements.each((i, el) => {
+      const key = el.classList.toString();
+      if (this._scrollPositions[key] !== undefined) {
+        el.scrollTop = this._scrollPositions[key];
+      }
     });
   }
 
@@ -205,6 +254,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     }
 
     context.featActions = featActions;
+
+    // Check if character has completed character generation
+    // A character is considered "complete" if they have at least one class
+    const hasClasses = this.actor.items.some(i => i.type === 'class');
+    context.chargenComplete = hasClasses;
 
     return context;
   }
