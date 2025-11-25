@@ -533,9 +533,16 @@
  {{#if (eq currentStep "class")}}
  <section class="step-class">
  <h3>Choose Your Class</h3>
+ {{#if characterData.classes}}
+ {{#if (gt characterData.classes.length 0)}}
+ <div class="selected-class-display">
+ <h4>Selected Class: <strong>{{characterData.classes.[0].name}}</strong></h4>
+ </div>
+ {{/if}}
+ {{/if}}
  <div class="class-grid">
  {{#each packs.classes}}
- <button type="button" class="select-class choice-button" data-class="{{this.name}}">
+ <button type="button" class="select-class choice-button {{#if (eq this.name ../characterData.classes.[0].name)}}selected{{/if}}" data-class="{{this.name}}">
  <h4>{{this.name}}</h4>
  {{#if this.system}}
  <div class="class-info">
@@ -550,6 +557,11 @@
  <button type="button" class="prev-step btn-secondary">
  <i class="fas fa-arrow-left"></i> Previous
  </button>
+ {{#if (gt characterData.classes.length 0)}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{/if}}
  </div>
  </section>
  {{/if}}
@@ -644,48 +656,41 @@
  {{#if (eq currentStep "skills")}}
  <section class="step-skills">
  <h3>Select Trained Skills</h3>
- <p class="help-text">Select {{characterData.trainedSkillsAllowed}} trained skills. Training a skill grants +5 bonus. Class skills are highlighted.</p>
+ <p class="help-text">Select {{characterData.trainedSkillsAllowed}} class skills to train. Training grants +5 bonus.</p>
 
  <div class="skills-summary" style="margin-bottom: 1rem;">
- <p><strong>Skill Points Remaining: {{subtract characterData.trainedSkillsAllowed characterData.trainedSkillsCount}}</strong> / {{characterData.trainedSkillsAllowed}}</p>
+ <p><strong>Trained Skills: {{characterData.trainedSkillsCount}} / {{characterData.trainedSkillsAllowed}}</strong></p>
  <button type="button" class="reset-skills-btn btn-secondary" style="margin-left: 1rem;">
  <i class="fas fa-redo"></i> Reset All
  </button>
  </div>
 
- <div class="skills-grid">
+ <div class="skills-list-chargen">
  {{#each availableSkills}}
- <div class="skill-item {{#if this.isClassSkill}}class-skill{{/if}} {{#if this.trained}}trained{{/if}}">
- <div class="skill-header">
- <span class="skill-name">
- {{this.name}}
- {{#if this.isClassSkill}}<span class="class-skill-badge">Class</span>{{/if}}
- </span>
- <span class="skill-ability">({{uppercase this.ability}})</span>
+ {{#if this.isClassSkill}}
+ <div class="skill-row-chargen {{#if this.trained}}trained{{/if}}">
+ <div class="skill-checkbox">
+ <input type="checkbox"
+ class="skill-select"
+ data-skill="{{this.key}}"
+ {{checked this.trained}}
+ {{#if (and (not this.trained) (gte ../characterData.trainedSkillsCount ../characterData.trainedSkillsAllowed))}}disabled{{/if}}/>
  </div>
- <div class="skill-bonus">
- {{#if this.trained}}
- <span class="bonus-display trained-bonus">+{{this.currentBonus}}</span>
- <span class="bonus-breakdown">(½ level: {{this.halfLevel}} + {{uppercase this.ability}}: {{formatBonus this.abilityMod}} + trained: +5)</span>
- {{else}}
- <span class="bonus-display">+{{this.currentBonus}}</span>
- <span class="bonus-breakdown">(½ level: {{this.halfLevel}} + {{uppercase this.ability}}: {{formatBonus this.abilityMod}})</span>
- <span class="if-trained">→ If trained: +{{this.trainedBonus}}</span>
- {{/if}}
+ <div class="skill-name-col">
+ <strong>{{this.name}}</strong>
+ <span class="skill-ability-label">({{uppercase this.ability}})</span>
  </div>
- <div class="skill-actions">
+ <div class="skill-bonus-col">
  {{#if this.trained}}
- <button type="button" class="untrain-skill-btn btn-secondary" data-skill="{{this.key}}">
- <i class="fas fa-times"></i> Untrain
- </button>
+ <span class="current-bonus">+{{this.currentBonus}}</span>
+ <span class="bonus-breakdown">= ½lvl({{this.halfLevel}}) + {{uppercase this.ability}}({{formatBonus this.abilityMod}}) + trained(+5)</span>
  {{else}}
- <button type="button" class="train-skill-btn btn-primary" data-skill="{{this.key}}"
- {{#if (gte ../characterData.trainedSkillsCount ../characterData.trainedSkillsAllowed)}}disabled{{/if}}>
- <i class="fas fa-check"></i> Train
- </button>
+ <span class="current-bonus untrained">+{{this.currentBonus}}</span>
+ <span class="if-trained-preview">→ +{{this.trainedBonus}} if trained</span>
  {{/if}}
  </div>
  </div>
+ {{/if}}
  {{/each}}
  </div>
 
