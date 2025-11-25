@@ -142,5 +142,22 @@
  </button>
  </div>
  {{/unless}}
+
+ {{!-- Class Display --}}
+ <div class="class-selector">
+ <label class="class-label">
+ <i class="fas fa-hat-wizard"></i> Classes
+ </label>
+ <div class="class-value">
+ {{#if chargenComplete}}
+ <span class="class-display">{{classDisplay}}</span>
+ {{else}}
+ <span class="class-unselected">No classes</span>
+ {{/if}}
+ </div>
+ <button class="add-class-btn" type="button" title="Add a class">
+ <i class="fas fa-plus"></i> Add Class
+ </button>
+ </div>
  </div>
 </header>
