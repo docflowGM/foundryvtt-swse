@@ -267,11 +267,11 @@
         </div>
 
         {{!-- Prestige Classes Section --}}
-        {{#if (gte newLevel 7)}}
+        {{#if (or (gte newLevel 7) freeBuild)}}
         <div class="prestige-section">
           <button class="show-prestige-btn btn-prestige">
             <i class="fas fa-crown"></i> Explore Prestige Classes
-            <span class="prestige-hint">Advanced classes for experienced heroes</span>
+            <span class="prestige-hint">Advanced classes for experienced heroes{{#if freeBuild}} (Free Build){{/if}}</span>
           </button>
         </div>
         {{/if}}
