@@ -6,6 +6,82 @@
  <div class="step-indicator">Step: <strong>{{currentStep}}</strong></div>
  </header>
 
+ {{!-- Progress Flow Chart --}}
+ <div class="chargen-progress-flow">
+ <div class="progress-step {{#if (eq currentStep 'name')}}active{{/if}} {{#if characterData.name}}completed{{/if}}" data-step="name">
+ <div class="step-number">1</div>
+ <div class="step-label">Name</div>
+ </div>
+ <div class="progress-connector"></div>
+
+ <div class="progress-step {{#if (eq currentStep 'type')}}active{{/if}} {{#if characterData.isDroid}}completed{{else}}{{#if characterData.species}}completed{{/if}}{{/if}}" data-step="type">
+ <div class="step-number">2</div>
+ <div class="step-label">Type</div>
+ </div>
+ <div class="progress-connector"></div>
+
+ {{#if characterData.isDroid}}
+ <div class="progress-step {{#if (eq currentStep 'degree')}}active{{/if}} {{#if characterData.droidDegree}}completed{{/if}}" data-step="degree">
+ <div class="step-number">3</div>
+ <div class="step-label">Degree</div>
+ </div>
+ <div class="progress-connector"></div>
+
+ <div class="progress-step {{#if (eq currentStep 'size')}}active{{/if}} {{#if characterData.droidSize}}completed{{/if}}" data-step="size">
+ <div class="step-number">4</div>
+ <div class="step-label">Size</div>
+ </div>
+ <div class="progress-connector"></div>
+
+ <div class="progress-step {{#if (eq currentStep 'droid-builder')}}active{{/if}}" data-step="droid-builder">
+ <div class="step-number">5</div>
+ <div class="step-label">Systems</div>
+ </div>
+ <div class="progress-connector"></div>
+ {{else}}
+ <div class="progress-step {{#if (eq currentStep 'species')}}active{{/if}} {{#if characterData.species}}completed{{/if}}" data-step="species">
+ <div class="step-number">3</div>
+ <div class="step-label">Species</div>
+ </div>
+ <div class="progress-connector"></div>
+ {{/if}}
+
+ <div class="progress-step {{#if (eq currentStep 'abilities')}}active{{/if}}" data-step="abilities">
+ <div class="step-number">{{#if characterData.isDroid}}6{{else}}4{{/if}}</div>
+ <div class="step-label">Abilities</div>
+ </div>
+ <div class="progress-connector"></div>
+
+ <div class="progress-step {{#if (eq currentStep 'class')}}active{{/if}} {{#if (gt characterData.classes.length 0)}}completed{{/if}}" data-step="class">
+ <div class="step-number">{{#if characterData.isDroid}}7{{else}}5{{/if}}</div>
+ <div class="step-label">Class</div>
+ </div>
+ <div class="progress-connector"></div>
+
+ <div class="progress-step {{#if (eq currentStep 'feats')}}active{{/if}} {{#if (gte characterData.feats.length characterData.featsRequired)}}completed{{/if}}" data-step="feats">
+ <div class="step-number">{{#if characterData.isDroid}}8{{else}}6{{/if}}</div>
+ <div class="step-label">Feats</div>
+ </div>
+ <div class="progress-connector"></div>
+
+ <div class="progress-step {{#if (eq currentStep 'talents')}}active{{/if}} {{#if (gte characterData.talents.length 1)}}completed{{/if}}" data-step="talents">
+ <div class="step-number">{{#if characterData.isDroid}}9{{else}}7{{/if}}</div>
+ <div class="step-label">Talents</div>
+ </div>
+ <div class="progress-connector"></div>
+
+ <div class="progress-step {{#if (eq currentStep 'skills')}}active{{/if}}" data-step="skills">
+ <div class="step-number">{{#if characterData.isDroid}}10{{else}}8{{/if}}</div>
+ <div class="step-label">Skills</div>
+ </div>
+ <div class="progress-connector"></div>
+
+ <div class="progress-step {{#if (eq currentStep 'summary')}}active{{/if}}" data-step="summary">
+ <div class="step-number">{{#if characterData.isDroid}}11{{else}}9{{/if}}</div>
+ <div class="step-label">Summary</div>
+ </div>
+ </div>
+
  <main class="chargen-body">
  {{#if (eq currentStep "name")}}
  <section class="step-name">
@@ -571,6 +647,54 @@
  <h3>Select Starting Feat{{#if (gt characterData.featsRequired 1)}}s{{/if}}</h3>
  <p class="help-text">All characters gain 1 general feat at 1st level.{{#if (gt characterData.featsRequired 1)}} Humans gain 1 bonus feat.{{/if}}</p>
 
+ <div class="selected-feats-summary">
+ <h4>Selected Feats ({{characterData.feats.length}}/{{characterData.featsRequired}})</h4>
+ <div class="selected-feats-list">
+ {{#each characterData.feats}}
+ <div class="selected-feat-badge">
+ <span>{{this.name}}</span>
+ <button type="button" class="remove-feat" data-featid="{{this._id}}">×</button>
+ </div>
+ {{/each}}
+ </div>
+ </div>
+
+ {{#if featCategories}}
+ <div class="feats-categorized">
+ {{#each featCategoryList}}
+ {{#with (lookup ../featCategories @key)}}
+ {{#if (gt this.feats.length 0)}}
+ <div class="feat-category">
+ <h4 class="category-header">
+ <span class="category-icon">{{../icon}}</span>
+ {{../name}}
+ <span class="feat-count">({{this.feats.length}})</span>
+ </h4>
+ <p class="category-description">{{../description}}</p>
+ <div class="feats-grid">
+ {{#each this.feats}}
+ <div class="feat-card">
+ <button type="button" class="select-feat choice-button" data-featid="{{this._id}}">
+ <h5>{{this.name}}</h5>
+ {{#if this.system.description}}
+ <p class="feat-description">{{this.system.description}}</p>
+ {{/if}}
+ {{#if this.system.prerequisites}}
+ <p class="feat-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>
+ {{/if}}
+ {{#if this.metadata.chain}}
+ <span class="feat-chain-badge">{{this.metadata.chain}}</span>
+ {{/if}}
+ </button>
+ </div>
+ {{/each}}
+ </div>
+ </div>
+ {{/if}}
+ {{/with}}
+ {{/each}}
+ </div>
+ {{else}}
  <div class="feats-list">
  {{#each packs.feats}}
  <div class="feat-item">
@@ -586,16 +710,7 @@
  </div>
  {{/each}}
  </div>
-
- <div class="selected-feats">
- <h4>Selected Feats ({{characterData.feats.length}}/{{characterData.featsRequired}})</h4>
- {{#each characterData.feats}}
- <div class="selected-feat">
- <span>{{this.name}}</span>
- <button type="button" class="remove-feat" data-featid="{{this._id}}">×</button>
- </div>
- {{/each}}
- </div>
+ {{/if}}
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">

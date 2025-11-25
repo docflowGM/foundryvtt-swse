@@ -90,6 +90,7 @@ export default class CharacterGenerator extends Application {
       droids: null
     };
     this._skillsJson = null;
+    this._featMetadata = null;
 
     // If an actor is provided, populate characterData from it
     if (this.actor) {
@@ -214,6 +215,21 @@ export default class CharacterGenerator extends Application {
       this._skillsJson = this._getDefaultSkills();
       ui.notifications.warn("Failed to load skills data. Using defaults.");
     }
+
+    // Load feat metadata
+    try {
+      const resp = await fetch("systems/swse/data/feat-metadata.json");
+      if (resp.ok) {
+        this._featMetadata = await resp.json();
+        SWSELogger.log("chargen: feat-metadata.json loaded successfully");
+      } else {
+        SWSELogger.warn("chargen: failed to fetch feat-metadata.json");
+        this._featMetadata = null;
+      }
+    } catch (e) {
+      SWSELogger.error("chargen: error loading feat-metadata.json:", e);
+      this._featMetadata = null;
+    }
   }
 
   async getData() {
@@ -290,6 +306,12 @@ export default class CharacterGenerator extends Application {
         });
         context.packs.classBonusFeats = bonusFeats;
         SWSELogger.log(`CharGen | Available class bonus feats for ${className}: ${bonusFeats.length}`);
+      }
+
+      // Organize feats by category
+      if (this._featMetadata && this._featMetadata.categories) {
+        context.featCategories = this._organizeFeatsByCategory(context.packs.feats);
+        context.featCategoryList = Object.values(this._featMetadata.categories).sort((a, b) => a.order - b.order);
       }
     }
 
@@ -739,6 +761,52 @@ export default class CharacterGenerator extends Application {
     }
     
     ui.notifications.info(`${this.actor.name} leveled up to level ${newLevel}!`);
+  }
+
+  /**
+   * Organize feats by category using feat metadata
+   */
+  _organizeFeatsByCategory(feats) {
+    if (!this._featMetadata || !this._featMetadata.feats || !this._featMetadata.categories) {
+      return { uncategorized: feats };
+    }
+
+    const categorized = {};
+    const uncategorized = [];
+
+    // Initialize each category
+    for (const [catKey, catInfo] of Object.entries(this._featMetadata.categories)) {
+      categorized[catKey] = {
+        ...catInfo,
+        feats: []
+      };
+    }
+
+    // Organize feats
+    for (const feat of feats) {
+      const metadata = this._featMetadata.feats[feat.name];
+      if (metadata && metadata.category && categorized[metadata.category]) {
+        categorized[metadata.category].feats.push({
+          ...feat,
+          metadata: metadata
+        });
+      } else {
+        uncategorized.push(feat);
+      }
+    }
+
+    // Add uncategorized if any exist
+    if (uncategorized.length > 0) {
+      categorized.uncategorized = {
+        name: "Other Feats",
+        description: "Feats without a specific category",
+        icon: "📋",
+        order: 999,
+        feats: uncategorized
+      };
+    }
+
+    return categorized;
   }
 }
 
