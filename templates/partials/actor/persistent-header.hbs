@@ -120,5 +120,25 @@
  
  <div class="header-right flex0">
  {{> "systems/swse/templates/partials/ui/condition-track.hbs"}}
+
+ {{!-- Species Selection --}}
+ {{#unless system.isDroid}}
+ <div class="species-selector">
+ <label class="species-label">
+ <i class="fas fa-dna"></i> Species
+ </label>
+ <div class="species-value">
+ {{#if system.race}}
+ <span class="species-name">{{system.race}}</span>
+ {{else}}
+ <span class="species-unselected">Unselected</span>
+ {{/if}}
+ </div>
+ <button class="pick-species-btn" data-action="pickSpecies" type="button" title="{{#if system.race}}Change species{{else}}Select a species{{/if}}">
+ <i class="fas fa-{{#if system.race}}exchange-alt{{else}}plus{{/if}}"></i>
+ {{#if system.race}}Change{{else}}Select{{/if}}
+ </button>
+ </div>
+ {{/unless}}
  </div>
 </header>
