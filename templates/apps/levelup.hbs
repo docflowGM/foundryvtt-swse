@@ -228,8 +228,10 @@
     {{!-- STEP 1: CLASS SELECTION --}}
     {{#if (eq currentStep "class")}}
     <section class="step-class-selection">
-      <h3>Choose Your Class</h3>
-      <p class="hint">Select a class to add to your character. Base classes can be taken multiple times for multi-classing.</p>
+      <header class="creator-header">
+        <h1><i class="fas fa-star"></i> Choose Your Path</h1>
+        <p class="subtitle">Select a class to advance your character</p>
+      </header>
 
       <div class="current-classes">
         <h4>Current Classes:</h4>
@@ -240,44 +242,76 @@
         {{/each}}
       </div>
 
-      <div class="class-categories">
-        <h4>Base Classes</h4>
-        <div class="class-grid">
+      {{!-- Core Base Classes with beautiful UI --}}
+      <div class="class-selection-container">
+        <h4 class="class-category-title">Core Classes</h4>
+        <div class="class-grid-enhanced">
           {{#each availableClasses}}
-            {{#if this.isBase}}
-            <div class="class-card">
-              <h5>{{this.name}}</h5>
+            {{#if (and this.isBase (or (eq this.name "Jedi") (eq this.name "Noble") (eq this.name "Scout") (eq this.name "Scoundrel") (eq this.name "Soldier")))}}
+            <div class="class-choice-btn" data-class-id="{{this.id}}">
+              <div class="class-icon">
+                <i class="fas {{this.icon}}"></i>
+              </div>
+              <h3>{{this.name}}</h3>
+              <p class="class-desc">{{this.description}}</p>
               <div class="class-stats">
                 <span>Hit Die: d{{this.system.hitDie}}</span>
-                <span>BAB: +{{this.system.babProgression}}</span>
-                <span>Skills: {{this.system.trainedSkills}}</span>
+                <span>{{this.system.babProgression}}</span>
               </div>
-              <button class="select-class-btn btn-primary" data-class-id="{{this.id}}">
-                <i class="fas fa-user-plus"></i> Select
-              </button>
+              <div class="select-overlay">
+                <span>Select {{this.name}}</span>
+              </div>
             </div>
             {{/if}}
           {{/each}}
         </div>
 
-        <h4>Prestige Classes</h4>
-        <div class="class-grid">
-          {{#each availableClasses}}
-            {{#if this.isPrestige}}
-            <div class="class-card prestige">
-              <h5>{{this.name}}</h5>
-              <div class="class-stats">
-                <span>Hit Die: d{{this.system.hitDie}}</span>
-                <span>BAB: +{{this.system.babProgression}}</span>
-                <span class="prestige-label">Prestige</span>
-              </div>
-              <button class="select-class-btn btn-primary" data-class-id="{{this.id}}">
-                <i class="fas fa-star"></i> Select
-              </button>
-            </div>
-            {{/if}}
-          {{/each}}
+        {{!-- Prestige Classes Section --}}
+        {{#if (gte newLevel 7)}}
+        <div class="prestige-section">
+          <button class="show-prestige-btn btn-prestige">
+            <i class="fas fa-crown"></i> Explore Prestige Classes
+            <span class="prestige-hint">Advanced classes for experienced heroes</span>
+          </button>
         </div>
+        {{/if}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{!-- STEP 1B: PRESTIGE CLASS SELECTION --}}
+    {{#if (eq currentStep "prestige")}}
+    <section class="step-prestige-selection">
+      <header class="creator-header">
+        <h1><i class="fas fa-crown"></i> Prestige Classes</h1>
+        <p class="subtitle">Advanced classes for experienced heroes (Level 7+)</p>
+      </header>
+
+      <div class="class-grid-enhanced">
+        {{#each availableClasses}}
+          {{#if this.isPrestige}}
+          <div class="class-choice-btn prestige-class" data-class-id="{{this.id}}">
+            <div class="class-icon prestige-icon">
+              <i class="fas fa-star"></i>
+            </div>
+            <h3>{{this.name}}</h3>
+            <p class="class-desc">{{this.description}}</p>
+            <div class="class-stats">
+              <span>Hit Die: d{{this.system.hitDie}}</span>
+              <span>{{this.system.babProgression}}</span>
+            </div>
+            <div class="select-overlay prestige-overlay">
+              <span>Select {{this.name}}</span>
+            </div>
+          </div>
+          {{/if}}
+        {{/each}}
+      </div>
+
+      <div class="form-actions">
+        <button class="back-to-base-classes btn-secondary">
+          <i class="fas fa-arrow-left"></i> Back to Base Classes
+        </button>
       </div>
     </section>
     {{/if}}
@@ -1713,5 +1747,215 @@
   background: rgba(0, 217, 255, 0.3);
   border-color: #00d9ff;
   box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+}
+
+/* Enhanced Class Selection Styles (matching chargen) */
+.step-class-selection .creator-header,
+.step-prestige-selection .creator-header {
+  text-align: center;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, transparent 100%);
+  margin-bottom: 1.5rem;
+}
+
+.step-class-selection .creator-header h1,
+.step-prestige-selection .creator-header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  color: #4a90e2;
+  text-shadow: 0 0 15px rgba(74, 144, 226, 0.5);
+}
+
+.step-class-selection .creator-header .subtitle,
+.step-prestige-selection .creator-header .subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: #aaa;
+  font-style: italic;
+}
+
+.class-selection-container {
+  margin-top: 1.5rem;
+}
+
+.class-category-title {
+  text-align: center;
+  color: #00d9ff;
+  font-size: 1.3rem;
+  margin: 1.5rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(0, 217, 255, 0.3);
+}
+
+.class-grid-enhanced {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.class-choice-btn {
+  position: relative;
+  background: linear-gradient(135deg, rgba(30, 30, 40, 0.9), rgba(20, 20, 30, 0.9));
+  border: 3px solid #444;
+  border-radius: 12px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  overflow: hidden;
+}
+
+.class-choice-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #4a90e2, #357abd);
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+}
+
+.class-choice-btn:hover {
+  border-color: #4a90e2;
+  transform: translateY(-8px);
+  box-shadow: 0 10px 30px rgba(74, 144, 226, 0.4);
+}
+
+.class-choice-btn:hover::before {
+  transform: scaleX(1);
+}
+
+.class-choice-btn.prestige-class {
+  border-color: #ffd700;
+}
+
+.class-choice-btn.prestige-class:hover {
+  border-color: #ffd700;
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+}
+
+.class-choice-btn.prestige-class::before {
+  background: linear-gradient(90deg, #ffd700, #ffaa00);
+}
+
+.class-icon {
+  font-size: 4rem;
+  color: #4a90e2;
+  margin-bottom: 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.class-icon.prestige-icon {
+  color: #ffd700;
+}
+
+.class-choice-btn:hover .class-icon {
+  transform: scale(1.1);
+  text-shadow: 0 0 20px rgba(74, 144, 226, 0.8);
+}
+
+.class-choice-btn.prestige-class:hover .class-icon {
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+}
+
+.class-choice-btn h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.8rem;
+  color: #4a90e2;
+  text-align: center;
+  font-weight: bold;
+}
+
+.class-choice-btn.prestige-class h3 {
+  color: #ffd700;
+}
+
+.class-choice-btn .class-desc {
+  margin: 0 0 1rem 0;
+  color: #aaa;
+  text-align: center;
+  line-height: 1.5;
+  font-size: 0.95rem;
+  min-height: 2.85rem;
+}
+
+.class-choice-btn .class-stats {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(74, 144, 226, 0.3);
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+.class-choice-btn.prestige-class .class-stats {
+  border-top-color: rgba(255, 215, 0, 0.3);
+}
+
+.select-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  padding: 1rem;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.select-overlay.prestige-overlay {
+  background: linear-gradient(135deg, #ffd700, #ffaa00);
+}
+
+.class-choice-btn:hover .select-overlay {
+  transform: translateY(0);
+}
+
+/* Prestige Classes Button */
+.prestige-section {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.btn-prestige {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 3rem;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 170, 0, 0.2));
+  border: 3px solid #ffd700;
+  border-radius: 12px;
+  color: #ffd700;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.btn-prestige:hover {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 170, 0, 0.3));
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
+}
+
+.btn-prestige i {
+  font-size: 2.5rem;
+}
+
+.prestige-hint {
+  font-size: 0.85rem;
+  color: #ccc;
+  font-style: italic;
+  font-weight: normal;
 }
 </style>

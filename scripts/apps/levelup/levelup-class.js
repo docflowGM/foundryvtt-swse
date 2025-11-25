@@ -9,6 +9,22 @@ import { isBaseClass, getCharacterClasses, getClassDefenseBonuses, calculateHPGa
 import { meetsClassPrerequisites } from './levelup-validation.js';
 
 /**
+ * Get class metadata (icon and description)
+ * @param {string} className - The class name
+ * @returns {Object} Metadata with icon and description
+ */
+function getClassMetadata(className) {
+  const metadata = {
+    'Jedi': { icon: 'fa-jedi', description: 'Force-wielding guardians of peace and justice' },
+    'Noble': { icon: 'fa-crown', description: 'Leaders, diplomats, and aristocrats of influence' },
+    'Scoundrel': { icon: 'fa-mask', description: 'Rogues, smugglers, and fortune seekers' },
+    'Scout': { icon: 'fa-binoculars', description: 'Explorers, trackers, and wilderness experts' },
+    'Soldier': { icon: 'fa-shield-alt', description: 'Warriors, tacticians, and military specialists' }
+  };
+  return metadata[className] || { icon: 'fa-user', description: '' };
+}
+
+/**
  * Get available classes from the compendium
  * @param {Actor} actor - The actor
  * @param {Object} pendingData - Pending selections
@@ -31,13 +47,16 @@ export async function getAvailableClasses(actor, pendingData) {
 
     // meetsClassPrerequisites is now async (loads from JSON)
     if (await meetsClassPrerequisites(classDoc, actor, pendingData)) {
+      const metadata = getClassMetadata(classDoc.name);
       availableClasses.push({
         id: classDoc._id,
         name: classDoc.name,
         system: classDoc.system,
         img: classDoc.img,
         isBase: isBase,
-        isPrestige: !isBase
+        isPrestige: !isBase,
+        icon: metadata.icon,
+        description: metadata.description
       });
     }
   }
