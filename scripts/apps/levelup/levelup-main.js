@@ -249,8 +249,13 @@ export class SWSELevelUpEnhanced extends FormApplication {
   activateListeners(html) {
     super.activateListeners(html);
 
-    // Class selection
+    // Class selection (old and new styles)
     html.find('.select-class-btn').click(this._onSelectClass.bind(this));
+    html.find('.class-choice-btn').click(this._onSelectClass.bind(this));
+
+    // Prestige class navigation
+    html.find('.show-prestige-btn').click(this._onShowPrestigeClasses.bind(this));
+    html.find('.back-to-base-classes').click(this._onBackToBaseClasses.bind(this));
 
     // Multiclass bonus selection
     html.find('.select-feat-btn').click(this._onSelectMulticlassFeat.bind(this));
@@ -598,6 +603,24 @@ export class SWSELevelUpEnhanced extends FormApplication {
       await applyPrestigeClassFeatures(classDoc);
     }
 
+    this.render();
+  }
+
+  /**
+   * Navigate to prestige class selection screen
+   */
+  _onShowPrestigeClasses(event) {
+    event.preventDefault();
+    this.currentStep = 'prestige';
+    this.render();
+  }
+
+  /**
+   * Navigate back to base class selection screen
+   */
+  _onBackToBaseClasses(event) {
+    event.preventDefault();
+    this.currentStep = 'class';
     this.render();
   }
 

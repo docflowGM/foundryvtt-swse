@@ -271,6 +271,7 @@ class SWSEActor extends Actor {
   _calculateSkills() {
     const halfLevel = this.system.halfLevel;
     const abilities = this.system.abilities;
+    const conditionPenalty = this.system.conditionTrack?.penalty || 0;
 
     const abilityMap = {
       'strength': 'str',
@@ -285,13 +286,14 @@ class SWSEActor extends Actor {
       const abilityKey = abilityMap[skill.ability];
       const abilityMod = abilities[abilityKey]?.mod || 0;
 
-      skill.total = 
+      skill.total =
         abilityMod +
         halfLevel +
         (skill.trained ? 5 : 0) +
         (skill.focused ? 5 : 0) +
         (skill.armor || 0) +
-        (skill.misc || 0);
+        (skill.misc || 0) +
+        conditionPenalty;
 
       // Use the Force requires training
       if (skillKey === 'useTheForce' && !skill.trained) {

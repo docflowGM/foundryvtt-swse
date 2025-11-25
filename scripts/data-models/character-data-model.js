@@ -168,7 +168,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     this._calculateAbilities();
     this._applyConditionPenalties();
     this._calculateDefenses(); // Use our overridden version
-    this._calculateBaseAttack();
+    // NOTE: Do NOT call _calculateBaseAttack() here - BAB is already calculated by _calculateMulticlassStats()
     this._calculateDamageThreshold();
     this._calculateInitiative();
 

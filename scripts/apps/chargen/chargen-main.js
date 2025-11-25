@@ -261,7 +261,7 @@ export default class CharacterGenerator extends Application {
       { key: "5th-degree", name: "5th-Degree Droid", bonuses: "+4 STR, -4 INT, -4 CHA", description: "Labor and utility droids" }
     ];
 
-    // Filter to only show core SWSE classes
+    // Filter to only show core SWSE classes and add metadata
     if (context.packs.classes) {
       const coreClasses = ["Jedi", "Noble", "Scout", "Scoundrel", "Soldier"];
       context.packs.classes = context.packs.classes.filter(c => {
@@ -275,28 +275,55 @@ export default class CharacterGenerator extends Application {
           return !className.includes("jedi");
         });
       }
+
+      // Add icons and descriptions to classes
+      context.packs.classes = context.packs.classes.map(c => {
+        const classMetadata = this._getClassMetadata(c.name);
+        return {
+          ...c,
+          icon: classMetadata.icon,
+          description: classMetadata.description
+        };
+      });
     }
 
     // Filter feats based on prerequisites
     if (context.packs.feats) {
-      // Create a temporary actor-like object for prerequisite checking during character generation
-      const tempActor = this.actor || this._createTempActorForValidation();
+      // In Free Build mode or for level 1 characters, show all feats without strict filtering
+      if (this.freeBuild || this.characterData.level === 1) {
+        SWSELogger.log(`CharGen | Showing all feats (Free Build: ${this.freeBuild}, Level: ${this.characterData.level})`);
 
-      // Prepare pending data
-      const pendingData = {
-        selectedFeats: this.characterData.feats || [],
-        selectedClass: this.characterData.classes?.[0],
-        abilityIncreases: {},
-        selectedSkills: Object.keys(this.characterData.skills).filter(k => this.characterData.skills[k]?.trained),
-        selectedTalents: this.characterData.talents || []
-      };
+        // Still organize feats by category for better UX
+        if (this._featMetadata && this._featMetadata.categories) {
+          context.featCategories = this._organizeFeatsByCategory(context.packs.feats);
+          context.featCategoryList = Object.values(this._featMetadata.categories).sort((a, b) => a.order - b.order);
+        }
+      } else {
+        // Create a temporary actor-like object for prerequisite checking during character generation
+        const tempActor = this.actor || this._createTempActorForValidation();
 
-      // Filter feats based on prerequisites (show all qualified feats, not just class bonus feats)
-      const filteredFeats = PrerequisiteValidator.filterQualifiedFeats(context.packs.feats, tempActor, pendingData);
-      context.packs.feats = filteredFeats.filter(f => f.isQualified);
-      context.packs.allFeats = filteredFeats; // Include all feats with qualification status
+        // Prepare pending data
+        const pendingData = {
+          selectedFeats: this.characterData.feats || [],
+          selectedClass: this.characterData.classes?.[0],
+          abilityIncreases: {},
+          selectedSkills: Object.keys(this.characterData.skills).filter(k => this.characterData.skills[k]?.trained),
+          selectedTalents: this.characterData.talents || []
+        };
 
-      SWSELogger.log(`CharGen | Filtered feats: ${context.packs.feats.length} qualified out of ${filteredFeats.length} total`);
+        // Filter feats based on prerequisites (show all qualified feats, not just class bonus feats)
+        const filteredFeats = PrerequisiteValidator.filterQualifiedFeats(context.packs.feats, tempActor, pendingData);
+        context.packs.feats = filteredFeats.filter(f => f.isQualified);
+        context.packs.allFeats = filteredFeats; // Include all feats with qualification status
+
+        SWSELogger.log(`CharGen | Filtered feats: ${context.packs.feats.length} qualified out of ${filteredFeats.length} total`);
+
+        // Organize feats by category
+        if (this._featMetadata && this._featMetadata.categories) {
+          context.featCategories = this._organizeFeatsByCategory(context.packs.feats);
+          context.featCategoryList = Object.values(this._featMetadata.categories).sort((a, b) => a.order - b.order);
+        }
+      }
 
       // Store class bonus feats separately for when we need to show only those
       if (this.characterData.classes && this.characterData.classes.length > 0) {
@@ -308,12 +335,6 @@ export default class CharacterGenerator extends Application {
         });
         context.packs.classBonusFeats = bonusFeats;
         SWSELogger.log(`CharGen | Available class bonus feats for ${className}: ${bonusFeats.length}`);
-      }
-
-      // Organize feats by category
-      if (this._featMetadata && this._featMetadata.categories) {
-        context.featCategories = this._organizeFeatsByCategory(context.packs.feats);
-        context.featCategoryList = Object.values(this._featMetadata.categories).sort((a, b) => a.order - b.order);
       }
     }
 
@@ -388,6 +409,12 @@ export default class CharacterGenerator extends Application {
     // Navigation
     $html.find('.next-step').click(this._onNextStep.bind(this));
     $html.find('.prev-step').click(this._onPrevStep.bind(this));
+
+    // Progress step navigation (only in Free Build mode)
+    if (this.freeBuild) {
+      $html.find('.progress-step').addClass('clickable');
+      $html.find('.progress-step').click(this._onJumpToStep.bind(this));
+    }
     $html.find('.finish').click(this._onFinish.bind(this));
 
     // Selections
@@ -397,6 +424,7 @@ export default class CharacterGenerator extends Application {
     $html.find('.import-droid-btn').click(this._onImportDroid.bind(this));
     $html.find('.select-species').click(this._onSelectSpecies.bind(this));
     $html.find('.select-class').click(this._onSelectClass.bind(this));
+    $html.find('.class-choice-btn').click(this._onSelectClass.bind(this));
     $html.find('.select-feat').click(this._onSelectFeat.bind(this));
     $html.find('.remove-feat').click(this._onRemoveFeat.bind(this));
     $html.find('.select-talent-tree').click(this._onSelectTalentTree.bind(this));
@@ -515,6 +543,28 @@ export default class CharacterGenerator extends Application {
       this.currentStep = steps[idx - 1];
       await this.render();
     }
+  }
+
+  async _onJumpToStep(event) {
+    if (!this.freeBuild) {
+      ui.notifications.warn("Enable Free Build mode to jump between steps.");
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const targetStep = event.currentTarget.dataset.step;
+    const steps = this._getSteps();
+
+    if (!steps.includes(targetStep)) {
+      SWSELogger.warn(`CharGen | Invalid step: ${targetStep}`);
+      return;
+    }
+
+    SWSELogger.log(`CharGen | Jumping to step: ${targetStep}`);
+    this.currentStep = targetStep;
+    await this.render();
   }
 
   /**
@@ -812,6 +862,20 @@ export default class CharacterGenerator extends Application {
     }
     
     ui.notifications.info(`${this.actor.name} leveled up to level ${newLevel}!`);
+  }
+
+  /**
+   * Get class metadata (icon and description)
+   */
+  _getClassMetadata(className) {
+    const metadata = {
+      'Jedi': { icon: 'fa-jedi', description: 'Force-wielding guardians of peace and justice' },
+      'Noble': { icon: 'fa-crown', description: 'Leaders, diplomats, and aristocrats of influence' },
+      'Scoundrel': { icon: 'fa-mask', description: 'Rogues, smugglers, and fortune seekers' },
+      'Scout': { icon: 'fa-binoculars', description: 'Explorers, trackers, and wilderness experts' },
+      'Soldier': { icon: 'fa-shield-alt', description: 'Warriors, tacticians, and military specialists' }
+    };
+    return metadata[className] || { icon: 'fa-user', description: 'Unknown class' };
   }
 
   /**

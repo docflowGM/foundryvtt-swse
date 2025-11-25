@@ -23,10 +23,14 @@ export function addFinalCost(item) {
     const baseCost = Number(item.system?.cost) || 0;
     // Convert Foundry Document to plain object if necessary
     const plainItem = item.toObject ? item.toObject() : item;
+
+    // Ensure ID is properly preserved (check both id and _id)
+    const itemId = item.id || item._id || plainItem.id || plainItem._id;
+
     return {
         ...plainItem,
-        id: item.id || item._id,  // Preserve ID for item selection
-        _id: item._id || item.id, // Preserve both ID formats
+        id: itemId,  // Preserve ID for item selection
+        _id: itemId, // Preserve both ID formats
         finalCost: calculateFinalCost(baseCost)
     };
 }
@@ -41,10 +45,14 @@ export function addActorFinalCost(actor, includeUsed = false) {
     const baseCost = Number(actor.system?.cost) || 0;
     // Convert Foundry Document to plain object if necessary
     const plainActor = actor.toObject ? actor.toObject() : actor;
+
+    // Ensure ID is properly preserved (check both id and _id)
+    const actorId = actor.id || actor._id || plainActor.id || plainActor._id;
+
     const result = {
         ...plainActor,
-        id: actor.id || actor._id,  // Preserve ID for actor selection
-        _id: actor._id || actor.id, // Preserve both ID formats
+        id: actorId,  // Preserve ID for actor selection
+        _id: actorId, // Preserve both ID formats
         finalCost: calculateFinalCost(baseCost)
     };
 

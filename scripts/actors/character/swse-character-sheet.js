@@ -101,7 +101,56 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
         navSelector: '.sheet-tabs',
         contentSelector: '.sheet-body',
         initial: 'summary'
-      }]
+      }],
+      scrollY: ['.sheet-body', '.tab']
+    });
+  }
+
+  /**
+   * Override _render to save and restore scroll position
+   * @override
+   */
+  async _render(force, options) {
+    // Save scroll positions before render
+    this._saveScrollPositions();
+
+    // Call parent render
+    await super._render(force, options);
+
+    // Restore scroll positions after render
+    this._restoreScrollPositions();
+  }
+
+  /**
+   * Save scroll positions of scrollable elements
+   * @private
+   */
+  _saveScrollPositions() {
+    if (!this.element) return;
+
+    this._scrollPositions = {};
+    const scrollableElements = this.element.find('.sheet-body, .tab');
+
+    scrollableElements.each((i, el) => {
+      const key = el.classList.toString();
+      this._scrollPositions[key] = el.scrollTop;
+    });
+  }
+
+  /**
+   * Restore scroll positions after render
+   * @private
+   */
+  _restoreScrollPositions() {
+    if (!this.element || !this._scrollPositions) return;
+
+    const scrollableElements = this.element.find('.sheet-body, .tab');
+
+    scrollableElements.each((i, el) => {
+      const key = el.classList.toString();
+      if (this._scrollPositions[key] !== undefined) {
+        el.scrollTop = this._scrollPositions[key];
+      }
     });
   }
 
@@ -206,6 +255,20 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     context.featActions = featActions;
 
+    // Check if character has completed character generation
+    // A character is considered "complete" if they have at least one class
+    const classItems = this.actor.items.filter(i => i.type === 'class');
+    const hasClasses = classItems.length > 0;
+    context.chargenComplete = hasClasses;
+
+    // Prepare class display text (e.g., "Jedi 4 / Scoundrel 3 / Jedi Knight 1")
+    if (hasClasses) {
+      const classStrings = classItems.map(cls => `${cls.name} ${cls.system.level || 1}`);
+      context.classDisplay = classStrings.join(' / ');
+    } else {
+      context.classDisplay = 'No classes';
+    }
+
     return context;
   }
 
@@ -218,6 +281,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find('.level-up').click(this._onLevelUp.bind(this));
     html.find('.character-generator').click(this._onOpenCharGen.bind(this));
     html.find('.open-store').click(this._onOpenStore.bind(this));
+    html.find('.add-class-btn').click(this._onAddClass.bind(this));
 
     // Combat actions filter and search
     html.find('.combat-action-search').on('input', this._onFilterCombatActions.bind(this));
@@ -701,6 +765,277 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // Create and render the store application
     const store = new SWSEStore(this.actor);
     store.render(true);
+  }
+
+  /**
+   * Handle adding a new class to the character
+   */
+  async _onAddClass(event) {
+    event.preventDefault();
+    SWSELogger.log('SWSE | Add class button clicked');
+
+    // Show dialog asking whether to select from classes or create custom
+    new Dialog({
+      title: "Add Class",
+      content: `
+        <div style="padding: 1rem;">
+          <p style="text-align: center; margin-bottom: 1rem;">How would you like to add a class?</p>
+        </div>
+      `,
+      buttons: {
+        select: {
+          icon: '<i class="fas fa-list"></i>',
+          label: "Select from Classes",
+          callback: () => {
+            this._onSelectClass();
+          }
+        },
+        custom: {
+          icon: '<i class="fas fa-edit"></i>',
+          label: "Create Custom Class",
+          callback: () => {
+            this._onCreateCustomClass();
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "select"
+    }).render(true);
+  }
+
+  /**
+   * Open class selection dialog using levelup class selection UI
+   */
+  async _onSelectClass() {
+    try {
+      // Import class selection functions
+      const { getAvailableClasses } = await import('../../apps/levelup/levelup-class.js');
+
+      // Get available classes
+      const classes = await getAvailableClasses(this.actor, {});
+
+      if (!classes || classes.length === 0) {
+        ui.notifications.warn('No classes found in compendium!');
+        return;
+      }
+
+      // Separate base and prestige classes
+      const baseClasses = classes.filter(c => c.isBase);
+      const prestigeClasses = classes.filter(c => c.isPrestige);
+
+      // Build class selection dialog
+      const buildClassGrid = (classList) => {
+        return classList.map(cls => `
+          <div class="class-choice-btn" data-class-id="${cls.id}" data-class-name="${cls.name}">
+            <div class="class-icon">
+              <i class="fas ${cls.icon || 'fa-user'}"></i>
+            </div>
+            <h3 class="class-name">${cls.name}</h3>
+            <p class="class-description">${cls.description || ''}</p>
+            <div class="class-stats">
+              <span><strong>Hit Die:</strong> d${cls.system.hitDie || 6}</span>
+              <span><strong>BAB:</strong> ${cls.system.babProgression || 'Medium'}</span>
+            </div>
+          </div>
+        `).join('');
+      };
+
+      const content = `
+        <div class="class-selection-dialog">
+          <div class="class-type-tabs">
+            <button class="class-tab active" data-tab="base">Base Classes</button>
+            <button class="class-tab" data-tab="prestige">Prestige Classes</button>
+          </div>
+          <div class="class-tab-content active" data-tab="base">
+            <div class="class-grid">
+              ${buildClassGrid(baseClasses)}
+            </div>
+          </div>
+          <div class="class-tab-content" data-tab="prestige" style="display: none;">
+            <div class="class-grid">
+              ${buildClassGrid(prestigeClasses)}
+            </div>
+          </div>
+        </div>
+        <style>
+          .class-selection-dialog { max-height: 600px; overflow-y: auto; }
+          .class-type-tabs { display: flex; margin-bottom: 1rem; border-bottom: 2px solid #444; }
+          .class-tab { flex: 1; padding: 0.75rem; background: rgba(0,0,0,0.2); border: none; color: #ccc; cursor: pointer; transition: all 0.3s; }
+          .class-tab.active { background: rgba(74, 144, 226, 0.3); color: #fff; border-bottom: 3px solid #4a90e2; }
+          .class-tab:hover { background: rgba(74, 144, 226, 0.2); }
+          .class-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
+          .class-choice-btn {
+            position: relative;
+            background: linear-gradient(135deg, rgba(30, 30, 40, 0.9), rgba(20, 20, 30, 0.9));
+            border: 3px solid #444;
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            overflow: hidden;
+          }
+          .class-choice-btn:hover {
+            border-color: #4a90e2;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(74, 144, 226, 0.3);
+          }
+          .class-icon { font-size: 3rem; text-align: center; margin-bottom: 0.5rem; color: #4a90e2; }
+          .class-name { margin: 0.5rem 0; text-align: center; color: #f0f0f0; }
+          .class-description { font-size: 0.9rem; color: #ccc; text-align: center; margin: 0.5rem 0; min-height: 2.5rem; }
+          .class-stats { display: flex; justify-content: space-around; margin-top: 1rem; font-size: 0.85rem; color: #bbb; }
+        </style>
+      `;
+
+      // Show dialog
+      const dialog = new Dialog({
+        title: 'Select a Class',
+        content: content,
+        buttons: {
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: 'Cancel'
+          }
+        },
+        render: (html) => {
+          // Tab switching
+          html.find('.class-tab').click((e) => {
+            const tab = $(e.currentTarget).data('tab');
+            html.find('.class-tab').removeClass('active');
+            html.find('.class-tab-content').hide();
+            $(e.currentTarget).addClass('active');
+            html.find(`.class-tab-content[data-tab="${tab}"]`).show();
+          });
+
+          // Class selection
+          html.find('.class-choice-btn').click(async (e) => {
+            const classId = $(e.currentTarget).data('class-id');
+            const className = $(e.currentTarget).data('class-name');
+
+            // Close the dialog
+            dialog.close();
+
+            // Add the class to the actor
+            await this._addClassToActor(classId, className, 1);
+          });
+        }
+      }, {
+        width: 800,
+        height: 700,
+        classes: ['swse', 'class-selection-dialog']
+      });
+
+      dialog.render(true);
+
+    } catch (err) {
+      SWSELogger.error('SWSE | Failed to open class selection:', err);
+      ui.notifications.error('Failed to load class selection. See console for details.');
+    }
+  }
+
+  /**
+   * Open custom class creation dialog
+   */
+  async _onCreateCustomClass() {
+    new Dialog({
+      title: "Create Custom Class",
+      content: `
+        <form>
+          <div class="form-group">
+            <label>Class Name:</label>
+            <input type="text" id="custom-class-name" name="className" placeholder="Enter class name..." style="width: 100%; padding: 0.5rem; margin-top: 0.25rem;"/>
+          </div>
+          <div class="form-group" style="margin-top: 1rem;">
+            <label>Starting Level:</label>
+            <input type="number" id="custom-class-level" name="classLevel" value="1" min="1" max="20" style="width: 100%; padding: 0.5rem; margin-top: 0.25rem;"/>
+          </div>
+        </form>
+      `,
+      buttons: {
+        create: {
+          icon: '<i class="fas fa-check"></i>',
+          label: "Create",
+          callback: async (html) => {
+            const className = html.find('#custom-class-name').val().trim();
+            const classLevel = parseInt(html.find('#custom-class-level').val()) || 1;
+
+            if (!className) {
+              ui.notifications.warn('Please enter a class name!');
+              return;
+            }
+
+            await this._createCustomClassItem(className, classLevel);
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "create"
+    }).render(true);
+  }
+
+  /**
+   * Add a class from compendium to the actor
+   */
+  async _addClassToActor(classId, className, level = 1) {
+    try {
+      const classPack = game.packs.get('swse.classes');
+      if (!classPack) {
+        ui.notifications.error('Classes compendium not found!');
+        return;
+      }
+
+      const classDoc = await classPack.getDocument(classId);
+      if (!classDoc) {
+        ui.notifications.error(`Class "${className}" not found!`);
+        return;
+      }
+
+      const classData = classDoc.toObject();
+      classData.system.level = level;
+
+      await this.actor.createEmbeddedDocuments('Item', [classData]);
+      ui.notifications.info(`Added ${className} level ${level} to ${this.actor.name}`);
+
+      SWSELogger.log(`SWSE | Added class ${className} (level ${level}) to actor`);
+    } catch (err) {
+      SWSELogger.error('SWSE | Failed to add class:', err);
+      ui.notifications.error('Failed to add class. See console for details.');
+    }
+  }
+
+  /**
+   * Create a custom class item
+   */
+  async _createCustomClassItem(className, level = 1) {
+    try {
+      const classData = {
+        name: className,
+        type: 'class',
+        system: {
+          level: level,
+          hitDie: 6,
+          babProgression: 'medium',
+          defenses: {
+            fortitude: 0,
+            reflex: 0,
+            will: 0
+          }
+        }
+      };
+
+      await this.actor.createEmbeddedDocuments('Item', [classData]);
+      ui.notifications.info(`Created custom class ${className} level ${level} for ${this.actor.name}`);
+
+      SWSELogger.log(`SWSE | Created custom class ${className} (level ${level}) for actor`);
+    } catch (err) {
+      SWSELogger.error('SWSE | Failed to create custom class:', err);
+      ui.notifications.error('Failed to create custom class. See console for details.');
+    }
   }
 
   /**
