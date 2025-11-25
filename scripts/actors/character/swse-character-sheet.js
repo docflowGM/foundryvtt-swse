@@ -238,6 +238,431 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
   /**
+   * Override item creation to show selection dialog for feats and talents
+   */
+  async _onItemCreate(event) {
+    event.preventDefault();
+    const header = event.currentTarget;
+    const type = header.dataset.type;
+
+    // For feats and talents, show selection dialog
+    if (type === 'feat') {
+      await this._showFeatSelectionDialog();
+      return;
+    } else if (type === 'talent') {
+      await this._showTalentSelectionDialog();
+      return;
+    }
+
+    // For other item types, use default behavior
+    const itemData = {
+      name: game.i18n.format("DOCUMENT.New", {type: game.i18n.localize(`ITEM.Type${type.capitalize()}`)}),
+      type: type,
+      system: {}
+    };
+    await Item.create(itemData, {parent: this.actor});
+  }
+
+  /**
+   * Show feat selection dialog
+   */
+  async _showFeatSelectionDialog() {
+    new Dialog({
+      title: "Add Feat",
+      content: `
+        <div class="form-group">
+          <p>How would you like to add a feat?</p>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <label style="display: flex; align-items: center; cursor: pointer; padding: 10px; border: 1px solid #999; border-radius: 4px;">
+              <input type="radio" name="feat-choice" value="pick" checked style="margin-right: 10px;"/>
+              <div>
+                <strong>Pick from Feat List</strong>
+                <div style="font-size: 0.9em; color: #666; margin-top: 3px;">Select a feat from the compendium</div>
+              </div>
+            </label>
+            <label style="display: flex; align-items: center; cursor: pointer; padding: 10px; border: 1px solid #999; border-radius: 4px;">
+              <input type="radio" name="feat-choice" value="custom" style="margin-right: 10px;"/>
+              <div>
+                <strong>Create Custom Feat</strong>
+                <div style="font-size: 0.9em; color: #666; margin-top: 3px;">Create a custom feat with your own details</div>
+              </div>
+            </label>
+          </div>
+        </div>
+      `,
+      buttons: {
+        ok: {
+          icon: '<i class="fas fa-check"></i>',
+          label: "Continue",
+          callback: async (html) => {
+            const choice = html.find('input[name="feat-choice"]:checked').val();
+            if (choice === 'pick') {
+              await this._showFeatPicker();
+            } else {
+              await this._createCustomFeat();
+            }
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "ok"
+    }, {
+      width: 450
+    }).render(true);
+  }
+
+  /**
+   * Show talent selection dialog
+   */
+  async _showTalentSelectionDialog() {
+    new Dialog({
+      title: "Add Talent",
+      content: `
+        <div class="form-group">
+          <p>How would you like to add a talent?</p>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <label style="display: flex; align-items: center; cursor: pointer; padding: 10px; border: 1px solid #999; border-radius: 4px;">
+              <input type="radio" name="talent-choice" value="pick" checked style="margin-right: 10px;"/>
+              <div>
+                <strong>Pick from Talent List</strong>
+                <div style="font-size: 0.9em; color: #666; margin-top: 3px;">Select a talent from your class talent trees</div>
+              </div>
+            </label>
+            <label style="display: flex; align-items: center; cursor: pointer; padding: 10px; border: 1px solid #999; border-radius: 4px;">
+              <input type="radio" name="talent-choice" value="custom" style="margin-right: 10px;"/>
+              <div>
+                <strong>Create Custom Talent</strong>
+                <div style="font-size: 0.9em; color: #666; margin-top: 3px;">Create a custom talent with your own details</div>
+              </div>
+            </label>
+          </div>
+        </div>
+      `,
+      buttons: {
+        ok: {
+          icon: '<i class="fas fa-check"></i>',
+          label: "Continue",
+          callback: async (html) => {
+            const choice = html.find('input[name="talent-choice"]:checked').val();
+            if (choice === 'pick') {
+              await this._showTalentPicker();
+            } else {
+              await this._createCustomTalent();
+            }
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "ok"
+    }, {
+      width: 450
+    }).render(true);
+  }
+
+  /**
+   * Show feat picker dialog
+   */
+  async _showFeatPicker() {
+    // Load feats from compendium
+    const featPack = game.packs.get('swse.feats');
+    if (!featPack) {
+      ui.notifications.error('Feats compendium not found');
+      return;
+    }
+
+    const feats = await featPack.getDocuments();
+
+    // Load feat metadata for categorization
+    let featMetadata = null;
+    try {
+      const resp = await fetch("systems/swse/data/feat-metadata.json");
+      if (resp.ok) {
+        featMetadata = await resp.json();
+      }
+    } catch (err) {
+      SWSELogger.warn("Could not load feat metadata:", err);
+    }
+
+    // Organize feats by category if metadata is available
+    const categorized = {};
+    const uncategorized = [];
+
+    if (featMetadata && featMetadata.categories && featMetadata.feats) {
+      // Initialize categories
+      for (const [catKey, catInfo] of Object.entries(featMetadata.categories)) {
+        categorized[catKey] = {
+          ...catInfo,
+          feats: []
+        };
+      }
+
+      // Categorize feats
+      for (const feat of feats) {
+        const metadata = featMetadata.feats[feat.name];
+        if (metadata && metadata.category && categorized[metadata.category]) {
+          categorized[metadata.category].feats.push(feat);
+        } else {
+          uncategorized.push(feat);
+        }
+      }
+
+      // Add uncategorized
+      if (uncategorized.length > 0) {
+        categorized.uncategorized = {
+          name: "Other Feats",
+          icon: "📋",
+          order: 999,
+          feats: uncategorized
+        };
+      }
+    } else {
+      uncategorized.push(...feats);
+    }
+
+    // Build HTML content
+    let content = '<div class="feat-picker-dialog"><div class="feat-search"><input type="text" id="feat-search-input" placeholder="Search feats..." style="width: 100%; padding: 5px; margin-bottom: 10px;"/></div>';
+
+    if (Object.keys(categorized).length > 0) {
+      const sortedCategories = Object.entries(categorized)
+        .sort((a, b) => (a[1].order || 999) - (b[1].order || 999));
+
+      for (const [catKey, category] of sortedCategories) {
+        if (category.feats.length === 0) continue;
+
+        content += `
+          <div class="feat-category" data-category="${catKey}">
+            <h4 style="margin-top: 15px; border-bottom: 1px solid #999;">
+              <span>${category.icon || ''}</span> ${category.name} (${category.feats.length})
+            </h4>
+            <div class="feats-list-picker">
+        `;
+
+        for (const feat of category.feats) {
+          content += `
+            <div class="feat-option" data-feat-id="${feat.id}" style="padding: 8px; border: 1px solid #ccc; margin: 5px 0; cursor: pointer; border-radius: 4px;">
+              <strong>${feat.name}</strong>
+              ${feat.system.description ? `<div style="font-size: 0.9em; color: #666; margin-top: 3px;">${feat.system.description.substring(0, 150)}${feat.system.description.length > 150 ? '...' : ''}</div>` : ''}
+            </div>
+          `;
+        }
+
+        content += '</div></div>';
+      }
+    } else {
+      content += '<div class="feats-list-picker">';
+      for (const feat of uncategorized) {
+        content += `
+          <div class="feat-option" data-feat-id="${feat.id}" style="padding: 8px; border: 1px solid #ccc; margin: 5px 0; cursor: pointer; border-radius: 4px;">
+            <strong>${feat.name}</strong>
+            ${feat.system.description ? `<div style="font-size: 0.9em; color: #666; margin-top: 3px;">${feat.system.description.substring(0, 150)}${feat.system.description.length > 150 ? '...' : ''}</div>` : ''}
+          </div>
+        `;
+      }
+      content += '</div>';
+    }
+
+    content += '</div>';
+
+    const dialog = new Dialog({
+      title: "Select a Feat",
+      content: content,
+      buttons: {
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      render: (html) => {
+        // Add click handler for feat selection
+        html.find('.feat-option').click(async (event) => {
+          const featId = $(event.currentTarget).data('feat-id');
+          const selectedFeat = feats.find(f => f.id === featId);
+          if (selectedFeat) {
+            await this.actor.createEmbeddedDocuments('Item', [selectedFeat.toObject()]);
+            ui.notifications.info(`Added feat: ${selectedFeat.name}`);
+            dialog.close();
+          }
+        });
+
+        // Add search functionality
+        html.find('#feat-search-input').on('input', (event) => {
+          const searchTerm = $(event.currentTarget).val().toLowerCase();
+          html.find('.feat-option').each(function() {
+            const featText = $(this).text().toLowerCase();
+            $(this).toggle(featText.includes(searchTerm));
+          });
+
+          // Hide empty categories
+          html.find('.feat-category').each(function() {
+            const hasVisible = $(this).find('.feat-option:visible').length > 0;
+            $(this).toggle(hasVisible);
+          });
+        });
+      }
+    }, {
+      width: 600,
+      height: 700
+    });
+
+    dialog.render(true);
+  }
+
+  /**
+   * Show talent picker dialog
+   */
+  async _showTalentPicker() {
+    // Load talents from compendium
+    const talentPack = game.packs.get('swse.talents');
+    if (!talentPack) {
+      ui.notifications.error('Talents compendium not found');
+      return;
+    }
+
+    const allTalents = await talentPack.getDocuments();
+
+    // Get character's class talent trees
+    const classItems = this.actor.items.filter(i => i.type === 'class');
+    const availableTrees = new Set();
+
+    for (const classItem of classItems) {
+      const trees = classItem.system?.talent_trees || classItem.system?.talentTrees || [];
+      trees.forEach(tree => availableTrees.add(tree));
+    }
+
+    // Group talents by tree
+    const talentsByTree = {};
+    for (const talent of allTalents) {
+      const tree = talent.system?.talent_tree || talent.system?.tree || 'Other';
+      if (!talentsByTree[tree]) {
+        talentsByTree[tree] = [];
+      }
+      talentsByTree[tree].push(talent);
+    }
+
+    // Build HTML content
+    let content = '<div class="talent-picker-dialog"><div class="talent-search"><input type="text" id="talent-search-input" placeholder="Search talents..." style="width: 100%; padding: 5px; margin-bottom: 10px;"/></div>';
+
+    for (const [tree, talents] of Object.entries(talentsByTree)) {
+      const isAvailable = availableTrees.has(tree);
+      const style = !isAvailable ? 'opacity: 0.5;' : '';
+
+      content += `
+        <div class="talent-tree-group" data-tree="${tree}" style="${style}">
+          <h4 style="margin-top: 15px; border-bottom: 1px solid #999;">
+            ${tree} (${talents.length})${!isAvailable ? ' <em style="font-size: 0.9em; color: #999;">- Not available to your classes</em>' : ''}
+          </h4>
+          <div class="talents-list-picker">
+      `;
+
+      for (const talent of talents) {
+        content += `
+          <div class="talent-option ${!isAvailable ? 'unavailable' : ''}" data-talent-id="${talent.id}" ${!isAvailable ? 'data-unavailable="true"' : ''} style="padding: 8px; border: 1px solid #ccc; margin: 5px 0; cursor: pointer; border-radius: 4px;">
+            <strong>${talent.name}</strong>
+            ${talent.system.description ? `<div style="font-size: 0.9em; color: #666; margin-top: 3px;">${talent.system.description.substring(0, 150)}${talent.system.description.length > 150 ? '...' : ''}</div>` : ''}
+          </div>
+        `;
+      }
+
+      content += '</div></div>';
+    }
+
+    content += '</div>';
+
+    const dialog = new Dialog({
+      title: "Select a Talent",
+      content: content,
+      buttons: {
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      render: (html) => {
+        // Add click handler for talent selection
+        html.find('.talent-option').click(async (event) => {
+          const talentOption = $(event.currentTarget);
+
+          // Check if talent is unavailable
+          if (talentOption.data('unavailable')) {
+            ui.notifications.warn("This talent is not available to your current classes.");
+            return;
+          }
+
+          const talentId = talentOption.data('talent-id');
+          const selectedTalent = allTalents.find(t => t.id === talentId);
+          if (selectedTalent) {
+            await this.actor.createEmbeddedDocuments('Item', [selectedTalent.toObject()]);
+            ui.notifications.info(`Added talent: ${selectedTalent.name}`);
+            dialog.close();
+          }
+        });
+
+        // Add search functionality
+        html.find('#talent-search-input').on('input', (event) => {
+          const searchTerm = $(event.currentTarget).val().toLowerCase();
+          html.find('.talent-option').each(function() {
+            const talentText = $(this).text().toLowerCase();
+            $(this).toggle(talentText.includes(searchTerm));
+          });
+
+          // Hide empty trees
+          html.find('.talent-tree-group').each(function() {
+            const hasVisible = $(this).find('.talent-option:visible').length > 0;
+            $(this).toggle(hasVisible);
+          });
+        });
+      }
+    }, {
+      width: 600,
+      height: 700
+    });
+
+    dialog.render(true);
+  }
+
+  /**
+   * Create a custom feat
+   */
+  async _createCustomFeat() {
+    const itemData = {
+      name: "New Custom Feat",
+      type: "feat",
+      system: {
+        description: "",
+        prerequisites: ""
+      }
+    };
+    const items = await this.actor.createEmbeddedDocuments('Item', [itemData]);
+    if (items && items.length > 0) {
+      items[0].sheet.render(true);
+    }
+  }
+
+  /**
+   * Create a custom talent
+   */
+  async _createCustomTalent() {
+    const itemData = {
+      name: "New Custom Talent",
+      type: "talent",
+      system: {
+        description: "",
+        tree: "Custom"
+      }
+    };
+    const items = await this.actor.createEmbeddedDocuments('Item', [itemData]);
+    if (items && items.length > 0) {
+      items[0].sheet.render(true);
+    }
+  }
+
+  /**
    * Handle level up
    */
   async _onLevelUp(event) {
