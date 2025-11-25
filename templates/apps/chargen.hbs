@@ -4,6 +4,13 @@
  <header class="chargen-header">
  <h2>Star Wars Saga Edition Character Generator</h2>
  <div class="step-indicator">Step: <strong>{{currentStep}}</strong></div>
+ <div class="free-build-controls">
+ <label class="free-build-label">
+ <input type="checkbox" class="free-build-toggle" {{checked freeBuild}}>
+ <i class="fas fa-unlock-alt"></i> <strong>Free Build Mode</strong>
+ <span class="hint-text">Skip validation and build freely</span>
+ </label>
+ </div>
  </header>
 
  {{!-- Progress Flow Chart --}}

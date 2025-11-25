@@ -80,6 +80,7 @@ export default class CharacterGenerator extends Application {
     };
     this.currentStep = "name";
     this.selectedTalentTree = null;  // For two-step talent selection
+    this.freeBuild = false;  // Free build mode bypasses validation
 
     // Caches for compendia
     this._packs = {
@@ -239,6 +240,7 @@ export default class CharacterGenerator extends Application {
     context.characterData = this.characterData;
     context.currentStep = this.currentStep;
     context.isLevelUp = !!this.actor;
+    context.freeBuild = this.freeBuild;
     context.packs = foundry.utils.deepClone(this._packs);
     context.skillsJson = this._skillsJson || [];
 
@@ -380,6 +382,9 @@ export default class CharacterGenerator extends Application {
     // Ensure html is jQuery object for compatibility
     const $html = html instanceof jQuery ? html : $(html);
 
+    // Free Build toggle
+    $html.find('.free-build-toggle').change(this._onToggleFreeBuild.bind(this));
+
     // Navigation
     $html.find('.next-step').click(this._onNextStep.bind(this));
     $html.find('.prev-step').click(this._onPrevStep.bind(this));
@@ -512,7 +517,53 @@ export default class CharacterGenerator extends Application {
     }
   }
 
+  /**
+   * Toggle free build mode
+   */
+  async _onToggleFreeBuild(event) {
+    this.freeBuild = event.currentTarget.checked;
+
+    if (this.freeBuild) {
+      new Dialog({
+        title: "Free Build Mode",
+        content: `
+          <div class="form-group">
+            <p><i class="fas fa-unlock-alt"></i> <strong>Free Build Mode Enabled</strong></p>
+            <p>You can now:</p>
+            <ul style="margin-left: 20px;">
+              <li>Skip validation requirements</li>
+              <li>Select any feats or talents</li>
+              <li>Bypass prerequisite checks</li>
+              <li>Train any skills without class restrictions</li>
+              <li>Build your character freely</li>
+            </ul>
+            <p style="margin-top: 15px; color: #999;">
+              <em>Note: This is intended for experienced players or GMs who want quick character creation.</em>
+            </p>
+          </div>
+        `,
+        buttons: {
+          ok: {
+            icon: '<i class="fas fa-check"></i>',
+            label: "Continue"
+          }
+        },
+        default: "ok"
+      }, {
+        width: 400
+      }).render(true);
+    } else {
+      ui.notifications.info("Free Build Mode disabled. Validation rules will now apply.");
+    }
+
+    await this.render();
+  }
+
   _validateCurrentStep() {
+    // Skip validation if free build is enabled
+    if (this.freeBuild) {
+      return true;
+    }
     switch (this.currentStep) {
       case "name":
         if (!this.characterData.name || this.characterData.name.trim() === "") {
