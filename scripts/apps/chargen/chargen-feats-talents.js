@@ -42,6 +42,29 @@ export async function _onRemoveFeat(event) {
 }
 
 /**
+ * Handle talent tree selection - shows talents within the selected tree
+ */
+export async function _onSelectTalentTree(event) {
+  event.preventDefault();
+  const treeName = event.currentTarget.dataset.tree;
+
+  this.selectedTalentTree = treeName;
+  SWSELogger.log(`CharGen | Selected talent tree: ${treeName}`);
+
+  // Re-render to show talents in this tree
+  await this.render();
+}
+
+/**
+ * Handle back from talent tree to tree list
+ */
+export async function _onBackToTalentTrees(event) {
+  event.preventDefault();
+  this.selectedTalentTree = null;
+  await this.render();
+}
+
+/**
  * Handle talent selection
  */
 export async function _onSelectTalent(event) {
@@ -64,7 +87,28 @@ export async function _onSelectTalent(event) {
   this.characterData.talents.push(tal);
   ui.notifications.info(`Selected talent: ${tal.name}`);
 
+  // Clear selected tree and advance to next step
+  this.selectedTalentTree = null;
   await this._onNextStep(event);
+}
+
+/**
+ * Get available talent trees for the selected class
+ */
+export function _getAvailableTalentTrees() {
+  if (!this.characterData.classes || this.characterData.classes.length === 0) {
+    return [];
+  }
+
+  const selectedClass = this._packs.classes?.find(c => c.name === this.characterData.classes[0].name);
+  if (!selectedClass) {
+    return [];
+  }
+
+  const trees = selectedClass.system?.talent_trees || selectedClass.system?.talentTrees || [];
+  SWSELogger.log(`CharGen | Available talent trees for ${selectedClass.name}:`, trees);
+
+  return trees;
 }
 
 /**

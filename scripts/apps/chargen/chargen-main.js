@@ -79,6 +79,7 @@ export default class CharacterGenerator extends Application {
       credits: 1000  // Starting credits
     };
     this.currentStep = "name";
+    this.selectedTalentTree = null;  // For two-step talent selection
 
     // Caches for compendia
     this._packs = {
@@ -292,6 +293,19 @@ export default class CharacterGenerator extends Application {
       }
     }
 
+    // Talent trees and filtering
+    context.availableTalentTrees = this._getAvailableTalentTrees();
+    context.selectedTalentTree = this.selectedTalentTree;
+
+    // Filter talents by selected tree (if a tree is selected)
+    if (this.selectedTalentTree && context.packs.talents) {
+      context.packs.talentsInTree = context.packs.talents.filter(t => {
+        const talentTree = t.system?.talent_tree || t.system?.tree;
+        return talentTree === this.selectedTalentTree;
+      });
+      SWSELogger.log(`CharGen | Talents in tree ${this.selectedTalentTree}: ${context.packs.talentsInTree.length}`);
+    }
+
     // Point buy pools
     context.droidPointBuyPool = game.settings.get("swse", "droidPointBuyPool") || 20;
     context.livingPointBuyPool = game.settings.get("swse", "livingPointBuyPool") || 25;
@@ -358,6 +372,8 @@ export default class CharacterGenerator extends Application {
     $html.find('.select-class').click(this._onSelectClass.bind(this));
     $html.find('.select-feat').click(this._onSelectFeat.bind(this));
     $html.find('.remove-feat').click(this._onRemoveFeat.bind(this));
+    $html.find('.select-talent-tree').click(this._onSelectTalentTree.bind(this));
+    $html.find('.back-to-talent-trees').click(this._onBackToTalentTrees.bind(this));
     $html.find('.select-talent').click(this._onSelectTalent.bind(this));
     $html.find('.skill-select').change(this._onSkillSelect.bind(this));
     $html.find('.train-skill-btn').click(this._onTrainSkill.bind(this));

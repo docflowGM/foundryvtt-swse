@@ -612,44 +612,58 @@
 
  {{#if (eq currentStep "talents")}}
  <section class="step-talents">
- <h3>Select Starting Talent</h3>
- <p class="help-text">Select a talent from your class talent trees.</p>
+ {{#unless selectedTalentTree}}
+ {{!-- Step 1: Select Talent Tree --}}
+ <h3>Select a Talent Tree</h3>
+ <p class="help-text">Choose a talent tree from your class. Then select a talent from that tree.</p>
 
- <div class="talents-list">
- {{#each packs.talents}}
- <div class="talent-item">
- <button type="button" class="select-talent choice-button" data-talentid="{{this._id}}">
- <h4>{{this.name}}</h4>
- {{#if this.system.tree}}
- <p class="talent-tree"><strong>Tree:</strong> {{this.system.tree}}</p>
- {{/if}}
- {{#if this.system.description}}
- <p class="talent-description">{{this.system.description}}</p>
- {{/if}}
+ {{#if (gt availableTalentTrees.length 0)}}
+ <div class="talent-trees-grid">
+ {{#each availableTalentTrees}}
+ <button type="button" class="select-talent-tree choice-button" data-tree="{{this}}">
+ <h4>{{this}}</h4>
+ <p>Click to view talents in this tree</p>
  </button>
- </div>
  {{/each}}
  </div>
-
- <div class="selected-talents">
- <h4>Selected Talents ({{characterData.talents.length}}/1)</h4>
- {{#each characterData.talents}}
- <div class="selected-talent">
- <span>{{this.name}}</span>
+ {{else}}
+ <div class="no-talent-trees">
+ <p>No talent trees available for your selected class.</p>
  </div>
- {{/each}}
- </div>
+ {{/if}}
 
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
  <i class="fas fa-arrow-left"></i> Previous
  </button>
- {{#if (gte characterData.talents.length 1)}}
- <button type="button" class="next-step btn-primary">
- Next <i class="fas fa-arrow-right"></i>
- </button>
- {{/if}}
  </div>
+ {{else}}
+ {{!-- Step 2: Select Talent from Tree --}}
+ <h3>Select Talent from {{selectedTalentTree}}</h3>
+ <p class="help-text">Choose a talent from the {{selectedTalentTree}} tree.</p>
+
+ <div class="talents-list">
+ {{#each packs.talentsInTree}}
+ <div class="talent-item">
+ <button type="button" class="select-talent choice-button" data-talentid="{{this._id}}">
+ <h4>{{this.name}}</h4>
+ {{#if this.system.description}}
+ <p class="talent-description">{{this.system.description}}</p>
+ {{/if}}
+ {{#if this.system.prerequisites}}
+ <p class="talent-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>
+ {{/if}}
+ </button>
+ </div>
+ {{/each}}
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="back-to-talent-trees btn-secondary">
+ <i class="fas fa-arrow-left"></i> Back to Talent Trees
+ </button>
+ </div>
+ {{/unless}}
  </section>
  {{/if}}
 
