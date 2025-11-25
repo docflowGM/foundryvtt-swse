@@ -31,11 +31,11 @@ Sidebar (FIXED)
   right: 0;
   top: 0;
   bottom: 0;
-  width: 278px;
-  max-width: 278px;
-  z-index: 900;           /* Below tabs but above base UI */
+  width: 300px;              /* unified width */
+  margin-right: 20px;        /* spacing fix */
+  transition: all 0.2s ease; /* smooth resizing */
+  z-index: 900;              /* layering */
 }
-
 /* -------------------------------
 Sidebar Tabs - vertical layout (FIXED)
 ------------------------------- */
