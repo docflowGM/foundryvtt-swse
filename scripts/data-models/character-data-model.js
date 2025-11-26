@@ -472,7 +472,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       swim: { defaultAbility: 'str', untrained: true, armorPenalty: true },
       treat_injury: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
       use_computer: { defaultAbility: 'int', untrained: true, armorPenalty: false },
-      use_the_force: { defaultAbility: 'cha', untrained: false, armorPenalty: false }
+      use_the_force: { defaultAbility: 'cha', untrained: true, armorPenalty: false }
     };
 
     // Use the already calculated halfLevel property
