@@ -306,6 +306,10 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // Combat action click to post to chat
     html.find('.action-name.rollable').click(this._onPostCombatAction.bind(this));
 
+    // Attack and damage roll buttons
+    html.find('[data-action="rollAttack"]').click(this._onRollAttack.bind(this));
+    html.find('[data-action="rollDamage"]').click(this._onRollDamage.bind(this));
+
     // Feat action listeners
     html.find('.feat-action-toggle').click(this._onToggleFeatAction.bind(this));
     html.find('.feat-action-slider-input').on('input', this._onUpdateVariableAction.bind(this));

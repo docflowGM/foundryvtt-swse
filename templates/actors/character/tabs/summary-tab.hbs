@@ -47,29 +47,46 @@
  <div class="combat-column">
  {{!-- Quick Attacks --}}
  <div class="quick-attacks">
- <h4>Common Attacks</h4>
+ <h4><i class="fas fa-crosshairs"></i> Common Attacks</h4>
+ {{#if weapons}}
  <div class="attacks-list">
  {{#each weapons as |weapon|}}
  {{#if weapon.system.equipped}}
- <div class="attack-item flexrow">
+ <div class="attack-item flexrow" data-item-id="{{weapon._id}}">
  <img src="{{weapon.img}}" width="24" height="24" alt="{{weapon.name}}"/>
- <span class="attack-name rollable" 
- data-roll="1d20+@baseAttack+@abilities.{{weapon.system.attackAbility}}.mod"
- data-label="{{weapon.name}} Attack">
- {{weapon.name}}
- </span>
- <span class="attack-bonus">
- {{numberFormat (safeNumber weapon.system.attackBonus) sign=true}}
- </span>
- <span class="attack-damage rollable"
- data-roll="{{weapon.system.damage}}"
- data-label="{{weapon.name}} Damage">
+ <div class="attack-info flex2">
+ <div class="attack-name-row">
+ <span class="attack-name">{{weapon.name}}</span>
+ </div>
+ <div class="attack-rolls-row flexrow">
+ <button type="button"
+ class="attack-roll-btn rollable"
+ data-action="rollAttack"
+ data-item-id="{{weapon._id}}"
+ title="Roll Attack">
+ <i class="fas fa-dice-d20"></i>
+ Attack {{numberFormat (safeNumber weapon.system.attackBonus) sign=true}}
+ </button>
+ <button type="button"
+ class="damage-roll-btn rollable"
+ data-action="rollDamage"
+ data-item-id="{{weapon._id}}"
+ title="Roll Damage">
+ <i class="fas fa-burst"></i>
  {{weapon.system.damage}}
- </span>
+ </button>
+ </div>
+ </div>
  </div>
  {{/if}}
  {{/each}}
  </div>
+ {{else}}
+ <p class="hint-text">
+ <i class="fas fa-info-circle"></i>
+ No equipped weapons. Add weapons in the Combat tab.
+ </p>
+ {{/if}}
  </div>
  </div>
  </div>
