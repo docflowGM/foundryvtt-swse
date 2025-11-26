@@ -161,6 +161,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.conditionTrack.penalty = penalties[conditionStep] || 0;
     }
 
+    // Calculate armor effects (check penalty and speed reduction) BEFORE skills
+    this._calculateArmorEffects();
+
     // Calculate multiclass BAB and defenses BEFORE calling parent
     this._calculateMulticlassStats();
 
@@ -177,6 +180,74 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Override skill calculations with our static skill system
     this._prepareSkills();
+  }
+
+  /**
+   * Calculate armor check penalties and speed reduction from equipped armor
+   * SWSE Rules:
+   * - Armor check penalty applies to: Acrobatics, Climb, Endurance, Initiative, Jump, Stealth, Swim
+   * - Armor check penalty also applies to attack rolls when not proficient
+   * - Speed reduction: Medium armor -2 squares, Heavy armor -4 squares (if speed >= 6)
+   * - Proficiency: Light (-2), Medium (-5), Heavy (-10) penalty when not proficient
+   */
+  _calculateArmorEffects() {
+    const actor = this.parent;
+    const equippedArmor = actor?.items?.find(i => i.type === 'armor' && i.system.equipped);
+
+    // Initialize armor effects
+    this.armorCheckPenalty = 0;
+    this.effectiveSpeed = this.speed || 6;
+
+    if (!equippedArmor) {
+      return; // No armor equipped
+    }
+
+    const armorType = equippedArmor.system.armorType?.toLowerCase() || 'light';
+
+    // Check for armor proficiency
+    const armorProficiencies = actor?.items?.filter(i =>
+      (i.type === 'feat' || i.type === 'talent') &&
+      i.name.toLowerCase().includes('armor proficiency')
+    ) || [];
+
+    // Determine if character is proficient with this armor
+    let isProficient = false;
+    for (const prof of armorProficiencies) {
+      const profName = prof.name.toLowerCase();
+      if (profName.includes('light') && armorType === 'light') isProficient = true;
+      if (profName.includes('medium') && (armorType === 'light' || armorType === 'medium')) isProficient = true;
+      if (profName.includes('heavy')) isProficient = true; // Heavy includes all armor
+    }
+
+    // Calculate armor check penalty
+    if (isProficient) {
+      // Proficient: Use armor's base check penalty
+      this.armorCheckPenalty = equippedArmor.system.armorCheckPenalty || 0;
+    } else {
+      // Not proficient: Additional penalties based on armor type
+      const basePenalty = equippedArmor.system.armorCheckPenalty || 0;
+      const proficiencyPenalty = {
+        'light': -2,
+        'medium': -5,
+        'heavy': -10
+      }[armorType] || -2;
+      this.armorCheckPenalty = basePenalty + proficiencyPenalty;
+    }
+
+    // Calculate speed reduction
+    const baseSpeed = this.speed || 6;
+    let speedPenalty = equippedArmor.system.speedPenalty || 0;
+
+    // SWSE standard speed penalties if not specified in armor
+    if (speedPenalty === 0 && baseSpeed >= 6) {
+      if (armorType === 'medium') {
+        speedPenalty = 2;
+      } else if (armorType === 'heavy') {
+        speedPenalty = 4;
+      }
+    }
+
+    this.effectiveSpeed = Math.max(1, baseSpeed - speedPenalty);
   }
 
   /**
@@ -200,19 +271,82 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Get condition track penalty
     const conditionPenalty = this.conditionTrack?.penalty || 0;
 
-    // Reflex Defense = 10 + armor bonus OR level (whichever is higher) + Dex mod + class bonus + misc + condition penalty
-    const reflexArmor = this.defenses.reflex.armor > 0 ? this.defenses.reflex.armor : level;
-    this.defenses.reflex.total = 10 + reflexArmor + (this.abilities?.dex?.mod || 0) +
+    // Get equipped armor
+    const actor = this.parent;
+    const equippedArmor = actor?.items?.find(i => i.type === 'armor' && i.system.equipped);
+
+    // Check for Armored Defense talents
+    const hasArmoredDefense = actor?.items?.some(i =>
+      i.type === 'talent' && i.name === 'Armored Defense'
+    ) || false;
+    const hasImprovedArmoredDefense = actor?.items?.some(i =>
+      i.type === 'talent' && i.name === 'Improved Armored Defense'
+    ) || false;
+    const hasArmorMastery = actor?.items?.some(i =>
+      i.type === 'talent' && i.name === 'Armor Mastery'
+    ) || false;
+
+    // REFLEX DEFENSE
+    let reflexBase = 10;
+    let dexMod = this.abilities?.dex?.mod || 0;
+    let armorBonus = 0;
+
+    if (equippedArmor) {
+      // Get armor bonus (use defenseBonus or armorBonus field)
+      armorBonus = equippedArmor.system.defenseBonus || equippedArmor.system.armorBonus || 0;
+
+      // Apply max dex bonus restriction
+      let maxDex = equippedArmor.system.maxDexBonus;
+      if (maxDex !== null && maxDex !== undefined && Number.isInteger(maxDex)) {
+        // Armor Mastery talent increases max dex bonus by +1
+        if (hasArmorMastery) {
+          maxDex += 1;
+        }
+        dexMod = Math.min(dexMod, maxDex);
+      }
+
+      // Calculate reflex defense based on armor and talents
+      // SWSE Rules: Armor bonus REPLACES heroic level unless you have talents
+      if (hasImprovedArmoredDefense) {
+        // Reflex Defense = max(level + floor(armor/2), armor)
+        reflexBase += Math.max(level + Math.floor(armorBonus / 2), armorBonus);
+      } else if (hasArmoredDefense) {
+        // Reflex Defense = max(level, armor)
+        reflexBase += Math.max(level, armorBonus);
+      } else {
+        // No talent: Armor REPLACES heroic level
+        reflexBase += armorBonus;
+      }
+
+      // Store armor bonus for reference (used by character sheet)
+      this.defenses.reflex.armor = armorBonus;
+    } else {
+      // No armor equipped: use heroic level
+      reflexBase += level;
+      this.defenses.reflex.armor = 0;
+    }
+
+    this.defenses.reflex.total = reflexBase + dexMod +
                                   (this.defenses.reflex.classBonus || 0) +
                                   (this.defenses.reflex.misc || 0) + conditionPenalty;
 
-    // Fortitude Defense = 10 + level + Con or Str mod (whichever is higher) + class bonus + misc + condition penalty
-    const fortAbility = Math.max(this.abilities?.con?.mod || 0, this.abilities?.str?.mod || 0);
-    this.defenses.fortitude.total = 10 + level + fortAbility +
+    // FORTITUDE DEFENSE
+    // Droids use STR mod, organics use CON or STR (whichever is higher)
+    let fortAbility;
+    if (this.isDroid) {
+      fortAbility = this.abilities?.str?.mod || 0;
+    } else {
+      fortAbility = Math.max(this.abilities?.con?.mod || 0, this.abilities?.str?.mod || 0);
+    }
+
+    // Add equipment bonus from armor (always applied)
+    const armorFortBonus = equippedArmor?.system.fortBonus || 0;
+
+    this.defenses.fortitude.total = 10 + level + fortAbility + armorFortBonus +
                                      (this.defenses.fortitude.classBonus || 0) +
                                      (this.defenses.fortitude.misc || 0) + conditionPenalty;
 
-    // Will Defense = 10 + level + Wis mod + class bonus + misc + condition penalty
+    // WILL DEFENSE
     this.defenses.will.total = 10 + level + (this.abilities?.wis?.mod || 0) +
                                 (this.defenses.will.classBonus || 0) +
                                 (this.defenses.will.misc || 0) + conditionPenalty;
@@ -305,35 +439,38 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
   _prepareSkills() {
     const skillData = {
-      acrobatics: { defaultAbility: 'dex', untrained: true },
-      climb: { defaultAbility: 'str', untrained: true },
-      deception: { defaultAbility: 'cha', untrained: true },
-      endurance: { defaultAbility: 'con', untrained: true },
-      gather_information: { defaultAbility: 'cha', untrained: true },
-      initiative: { defaultAbility: 'dex', untrained: true },
-      jump: { defaultAbility: 'str', untrained: true },
-      knowledge_bureaucracy: { defaultAbility: 'int', untrained: false },
-      knowledge_galactic_lore: { defaultAbility: 'int', untrained: false },
-      knowledge_life_sciences: { defaultAbility: 'int', untrained: false },
-      knowledge_physical_sciences: { defaultAbility: 'int', untrained: false },
-      knowledge_social_sciences: { defaultAbility: 'int', untrained: false },
-      knowledge_tactics: { defaultAbility: 'int', untrained: false },
-      knowledge_technology: { defaultAbility: 'int', untrained: false },
-      mechanics: { defaultAbility: 'int', untrained: true },
-      perception: { defaultAbility: 'wis', untrained: true },
-      persuasion: { defaultAbility: 'cha', untrained: true },
-      pilot: { defaultAbility: 'dex', untrained: true },
-      ride: { defaultAbility: 'dex', untrained: true },
-      stealth: { defaultAbility: 'dex', untrained: true },
-      survival: { defaultAbility: 'wis', untrained: true },
-      swim: { defaultAbility: 'str', untrained: true },
-      treat_injury: { defaultAbility: 'wis', untrained: true },
-      use_computer: { defaultAbility: 'int', untrained: true },
-      use_the_force: { defaultAbility: 'cha', untrained: false }
+      acrobatics: { defaultAbility: 'dex', untrained: true, armorPenalty: true },
+      climb: { defaultAbility: 'str', untrained: true, armorPenalty: true },
+      deception: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
+      endurance: { defaultAbility: 'con', untrained: true, armorPenalty: true },
+      gather_information: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
+      initiative: { defaultAbility: 'dex', untrained: true, armorPenalty: true },
+      jump: { defaultAbility: 'str', untrained: true, armorPenalty: true },
+      knowledge_bureaucracy: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      knowledge_galactic_lore: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      knowledge_life_sciences: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      knowledge_physical_sciences: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      knowledge_social_sciences: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      knowledge_tactics: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      knowledge_technology: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      mechanics: { defaultAbility: 'int', untrained: true, armorPenalty: false },
+      perception: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
+      persuasion: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
+      pilot: { defaultAbility: 'dex', untrained: true, armorPenalty: false },
+      ride: { defaultAbility: 'dex', untrained: true, armorPenalty: false },
+      stealth: { defaultAbility: 'dex', untrained: true, armorPenalty: true },
+      survival: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
+      swim: { defaultAbility: 'str', untrained: true, armorPenalty: true },
+      treat_injury: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
+      use_computer: { defaultAbility: 'int', untrained: true, armorPenalty: false },
+      use_the_force: { defaultAbility: 'cha', untrained: false, armorPenalty: false }
     };
 
     // Use the already calculated halfLevel property
     const halfLevel = this.halfLevel || 0;
+
+    // Get armor check penalty (calculated in _calculateArmorEffects)
+    const armorCheckPenalty = this.armorCheckPenalty || 0;
 
     // Droids can only use these skills untrained (unless they have Heuristic Processor)
     const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
@@ -360,6 +497,11 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       // Add skill focus bonus (+5 if focused checkbox is checked)
       if (skill.focused) {
         total += 5;
+      }
+
+      // Apply armor check penalty if this skill is affected
+      if (data.armorPenalty && armorCheckPenalty !== 0) {
+        total += armorCheckPenalty; // Note: penalty is negative, so we add it
       }
 
       // Determine if skill can be used untrained
