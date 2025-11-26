@@ -296,7 +296,10 @@ export default class CharacterGenerator extends Application {
         // Still organize feats by category for better UX
         if (this._featMetadata && this._featMetadata.categories) {
           context.featCategories = this._organizeFeatsByCategory(context.packs.feats);
-          context.featCategoryList = Object.values(this._featMetadata.categories).sort((a, b) => a.order - b.order);
+          // Store category keys sorted by order
+          context.featCategoryList = Object.keys(this._featMetadata.categories)
+            .map(key => ({ key, ...this._featMetadata.categories[key] }))
+            .sort((a, b) => a.order - b.order);
         }
       } else {
         // Create a temporary actor-like object for prerequisite checking during character generation
@@ -321,7 +324,10 @@ export default class CharacterGenerator extends Application {
         // Organize feats by category
         if (this._featMetadata && this._featMetadata.categories) {
           context.featCategories = this._organizeFeatsByCategory(context.packs.feats);
-          context.featCategoryList = Object.values(this._featMetadata.categories).sort((a, b) => a.order - b.order);
+          // Store category keys sorted by order
+          context.featCategoryList = Object.keys(this._featMetadata.categories)
+            .map(key => ({ key, ...this._featMetadata.categories[key] }))
+            .sort((a, b) => a.order - b.order);
         }
       }
 

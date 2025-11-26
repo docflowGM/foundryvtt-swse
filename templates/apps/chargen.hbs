@@ -681,7 +681,7 @@
  {{#if featCategories}}
  <div class="feats-categorized">
  {{#each featCategoryList}}
- {{#with (lookup ../featCategories @key)}}
+ {{#with (lookup ../featCategories this.key)}}
  {{#if (gt this.feats.length 0)}}
  <div class="feat-category">
  <h4 class="category-header">
