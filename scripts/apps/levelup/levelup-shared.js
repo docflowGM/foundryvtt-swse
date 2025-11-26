@@ -238,9 +238,45 @@ export function getsMilestoneFeat(newLevel) {
  * @returns {number} HP to gain
  */
 export function calculateHPGain(classDoc, actor, newLevel) {
-  // Parse hit die from string like "1d10" to get the die size (10)
-  const hitDieString = classDoc.system.hit_die || classDoc.system.hitDie || "1d6";
-  const hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
+  // SWSE Official Hit Dice by Class
+  const classHitDice = {
+    // d10 classes
+    'Jedi': 10,
+    'Jedi Knight': 10,
+    'Jedi Master': 10,
+    'Soldier': 10,
+    'Sith Apprentice': 10,
+    'Sith Lord': 10,
+    // d8 classes
+    'Scout': 8,
+    'Beast Rider': 8,
+    'Bounty Hunter': 8,
+    'Elite Trooper': 8,
+    'Gunslinger': 8,
+    'Infiltrator': 8,
+    // d6 classes
+    'Noble': 6,
+    'Scoundrel': 6,
+    'Ace Pilot': 6,
+    'Crime Lord': 6,
+    'Droid Commander': 6,
+    'Force Adept': 6,
+    'Officer': 6,
+    'Saboteur': 6,
+    'Slicer': 6
+  };
+
+  // Get hit die - first check our mapping by class name, then fall back to class data
+  const className = classDoc.name;
+  let hitDie = classHitDice[className];
+
+  if (!hitDie) {
+    // Fallback: parse from class data
+    const hitDieString = classDoc.system.hit_die || classDoc.system.hitDie || "1d6";
+    hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
+    SWSELogger.warn(`SWSE LevelUp | Class "${className}" not in hit dice map, using ${hitDie} from class data`);
+  }
+
   const conMod = actor.system.abilities.con?.mod || 0;
   const hpGeneration = game.settings.get("swse", "hpGeneration") || "average";
   const maxHPLevels = game.settings.get("swse", "maxHPLevels") || 1;

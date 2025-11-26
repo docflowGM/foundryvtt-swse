@@ -283,6 +283,21 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find('.open-store').click(this._onOpenStore.bind(this));
     html.find('.add-class-btn').click(this._onAddClass.bind(this));
 
+    // Add Feat and Add Talent buttons
+    html.find('.add-feat').click(this._onItemCreate.bind(this));
+    html.find('.add-custom-talent').click(this._onItemCreate.bind(this));
+
+    // Prevent enter key from triggering unintended actions in text inputs
+    html.find('input[type="text"], input[type="number"], textarea').on('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        event.stopPropagation();
+        // Blur the input to commit the change
+        $(event.currentTarget).blur();
+        return false;
+      }
+    });
+
     // Combat actions filter and search
     html.find('.combat-action-search').on('input', this._onFilterCombatActions.bind(this));
     html.find('.action-type-filter').on('change', this._onFilterCombatActions.bind(this));
