@@ -96,22 +96,14 @@
 
  {{!-- Racial/Species Traits --}}
  {{#unless system.isDroid}}
+ {{#if system.race}}
  <section class="racial-traits">
  <h3 class="section-header">
- <i class="fas fa-dna"></i> Species
- {{#if system.race}}
- : {{system.race}}
+ <i class="fas fa-dna"></i> Racial Traits
  {{#if system.speciesSource}}
  <span class="source-tag">({{system.speciesSource}})</span>
  {{/if}}
- {{/if}}
- <button class="pick-species-btn" data-action="pickSpecies" title="{{#if system.race}}Change species{{else}}Select a species{{/if}}" type="button">
- <i class="fas fa-{{#if system.race}}exchange-alt{{else}}plus{{/if}}"></i>
- {{#if system.race}}Change Species{{else}}Pick a Species{{/if}}
- </button>
  </h3>
-
- {{#if system.race}}
 
  <div class="racial-traits-grid">
  {{!-- Size Information --}}
@@ -252,13 +244,8 @@
  {{/if}}
  {{/if}}
  </div>
- {{else}}
- <p class="hint-text">
- <i class="fas fa-info-circle"></i>
- Click "Pick a Species" above to select your character's species and gain racial bonuses.
- </p>
- {{/if}}
  </section>
+ {{/if}}
  {{/unless}}
 
  {{!-- Droid Immunities --}}
