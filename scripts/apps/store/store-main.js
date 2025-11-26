@@ -275,6 +275,7 @@ export class SWSEStore extends FormApplication {
         });
 
         this._updateCartCount();
+        this._updateCartDisplay(this.element[0]);
     }
 
     /**
