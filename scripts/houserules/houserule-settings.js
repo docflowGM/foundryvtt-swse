@@ -50,6 +50,15 @@ export function registerHouseruleSettings() {
     default: true
   });
 
+  game.settings.register("swse", "allowPlayersNonheroic", {
+    name: "Allow Players to Create Nonheroic Characters",
+    hint: "If enabled, players can access the NPC Generator to create nonheroic characters. By default, only GMs can create NPCs.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   game.settings.register("swse", "maxStartingCredits", {
     name: "Maximum Starting Credits",
     hint: "Characters take maximum starting credits instead of rolling (e.g., Noble gets 4800 instead of 3d4×400)",

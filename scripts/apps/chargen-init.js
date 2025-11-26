@@ -30,6 +30,53 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                 event.preventDefault();
                 event.stopPropagation();
 
+                // Check if user can create NPCs (GM or house rule enabled)
+                const isGM = game.user.isGM;
+                const allowPlayersNonheroic = game.settings.get("swse", "allowPlayersNonheroic");
+                const canCreateNPC = isGM || allowPlayersNonheroic;
+
+                // Build dialog buttons
+                const buttons = {
+                    template: {
+                        icon: '<i class="fas fa-star"></i>',
+                        label: "PC from Template",
+                        callback: () => {
+                            TemplateCharacterCreator.create();
+                        }
+                    },
+                    generator: {
+                        icon: '<i class="fas fa-dice-d20"></i>',
+                        label: "Custom PC Generator",
+                        callback: () => {
+                            new CharacterGeneratorImproved().render(true);
+                        }
+                    }
+                };
+
+                // Add NPC Generator button only if permitted
+                if (canCreateNPC) {
+                    buttons.npc = {
+                        icon: '<i class="fas fa-users"></i>',
+                        label: "NPC Generator",
+                        callback: () => {
+                            new CharacterGeneratorImproved(null, { actorType: "npc" }).render(true);
+                        }
+                    };
+                }
+
+                // Always allow manual creation
+                buttons.manual = {
+                    icon: '<i class="fas fa-user"></i>',
+                    label: "Create Manually",
+                    callback: () => {
+                        Actor.create({
+                            name: "New Character",
+                            type: "character",
+                            img: "systems/swse/assets/icons/default-character.png"
+                        });
+                    }
+                };
+
                 // Show dialog asking if they want to use character generator
                 new Dialog({
                     title: "Create New Actor",
@@ -41,40 +88,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                             </div>
                         </div>
                     `,
-                    buttons: {
-                        template: {
-                            icon: '<i class="fas fa-star"></i>',
-                            label: "PC from Template",
-                            callback: () => {
-                                TemplateCharacterCreator.create();
-                            }
-                        },
-                        generator: {
-                            icon: '<i class="fas fa-dice-d20"></i>',
-                            label: "Custom PC Generator",
-                            callback: () => {
-                                new CharacterGeneratorImproved().render(true);
-                            }
-                        },
-                        npc: {
-                            icon: '<i class="fas fa-users"></i>',
-                            label: "NPC Generator",
-                            callback: () => {
-                                new CharacterGeneratorImproved(null, { actorType: "npc" }).render(true);
-                            }
-                        },
-                        manual: {
-                            icon: '<i class="fas fa-user"></i>',
-                            label: "Create Manually",
-                            callback: () => {
-                                Actor.create({
-                                    name: "New Character",
-                                    type: "character",
-                                    img: "systems/swse/assets/icons/default-character.png"
-                                });
-                            }
-                        }
-                    },
+                    buttons: buttons,
                     default: "template"
                 }).render(true);
             }

@@ -50,9 +50,19 @@ export class TemplateCharacterCreator extends Application {
       { name: 'Noble', icon: 'fa-crown', description: 'Leaders, diplomats, and aristocrats of influence' },
       { name: 'Scoundrel', icon: 'fa-mask', description: 'Rogues, smugglers, and fortune seekers' },
       { name: 'Scout', icon: 'fa-binoculars', description: 'Explorers, trackers, and wilderness experts' },
-      { name: 'Soldier', icon: 'fa-shield-alt', description: 'Warriors, tacticians, and military specialists' },
-      { name: 'Nonheroic', icon: 'fa-users', description: 'Common citizens, workers, guards, and NPCs' }
+      { name: 'Soldier', icon: 'fa-shield-alt', description: 'Warriors, tacticians, and military specialists' }
     ];
+
+    // Add Nonheroic class only if user is GM or house rule allows it
+    const isGM = game.user.isGM;
+    const allowPlayersNonheroic = game.settings.get("swse", "allowPlayersNonheroic");
+    if (isGM || allowPlayersNonheroic) {
+      data.classes.push({
+        name: 'Nonheroic',
+        icon: 'fa-users',
+        description: 'Common citizens, workers, guards, and NPCs'
+      });
+    }
 
     return data;
   }
