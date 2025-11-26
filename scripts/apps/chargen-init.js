@@ -35,7 +35,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                     title: "Create New Actor",
                     content: `
                         <div style="padding: 1rem;">
-                            <p style="text-align: center; margin-bottom: 1rem;">Choose how you'd like to create your character:</p>
+                            <p style="text-align: center; margin-bottom: 1rem;">Choose what type of actor to create:</p>
                             <div style="background: rgba(74, 144, 226, 0.1); padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem; border-left: 3px solid #4a90e2;">
                                 <strong>New!</strong> Quick character templates available with pre-configured builds for all core classes.
                             </div>
@@ -44,16 +44,23 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                     buttons: {
                         template: {
                             icon: '<i class="fas fa-star"></i>',
-                            label: "Use Character Template",
+                            label: "PC from Template",
                             callback: () => {
                                 TemplateCharacterCreator.create();
                             }
                         },
                         generator: {
                             icon: '<i class="fas fa-dice-d20"></i>',
-                            label: "Custom Character Generator",
+                            label: "Custom PC Generator",
                             callback: () => {
                                 new CharacterGeneratorImproved().render(true);
+                            }
+                        },
+                        npc: {
+                            icon: '<i class="fas fa-users"></i>',
+                            label: "NPC Generator",
+                            callback: () => {
+                                new CharacterGeneratorImproved(null, { actorType: "npc" }).render(true);
                             }
                         },
                         manual: {
