@@ -68,9 +68,11 @@
                   <div class="stat-item">
                     <strong>Feat:</strong> {{feat}}
                   </div>
-                  <div class="stat-item">
-                    <strong>Talent:</strong> {{talent}}
-                  </div>
+                  {{#if talent}}
+                    <div class="stat-item">
+                      <strong>Talent:</strong> {{talent}}
+                    </div>
+                  {{/if}}
                   <div class="stat-item">
                     <strong>Skills:</strong> {{trainedSkills.length}} trained
                   </div>
