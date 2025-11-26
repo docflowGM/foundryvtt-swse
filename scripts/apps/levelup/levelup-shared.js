@@ -238,9 +238,64 @@ export function getsMilestoneFeat(newLevel) {
  * @returns {number} HP to gain
  */
 export function calculateHPGain(classDoc, actor, newLevel) {
-  // Parse hit die from string like "1d10" to get the die size (10)
-  const hitDieString = classDoc.system.hit_die || classDoc.system.hitDie || "1d6";
-  const hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
+  // SWSE Official Hit Dice by Class
+  const classHitDice = {
+    // d12 classes
+    'Elite Trooper': 12,
+    'Independent Droid': 12,
+    // d10 classes
+    'Assassin': 10,
+    'Bounty Hunter': 10,
+    'Droid Commander': 10, // Changed from d6
+    'Gladiator': 10,
+    'Imperial Knight': 10,
+    'Jedi': 10,
+    'Jedi Knight': 10,
+    'Jedi Master': 10,
+    'Master Privateer': 10,
+    'Martial Arts Master': 10,
+    'Pathfinder': 10,
+    'Sith Apprentice': 10,
+    'Sith Lord': 10,
+    'Soldier': 10,
+    'Vanguard': 10,
+    // d8 classes
+    'Ace Pilot': 8, // Changed from d6
+    'Beast Rider': 8,
+    'Charlatan': 8,
+    'Corporate Agent': 8,
+    'Crime Lord': 8, // Changed from d6
+    'Enforcer': 8,
+    'Force Adept': 8, // Changed from d6
+    'Force Disciple': 8,
+    'Gunslinger': 8,
+    'Improviser': 8,
+    'Infiltrator': 8,
+    'Medic': 8,
+    'Melee Duelist': 8,
+    'Military Engineer': 8,
+    'Officer': 8, // Changed from d6
+    'Outlaw': 8,
+    'Saboteur': 8, // Changed from d6
+    'Scout': 8,
+    'Shaper': 8,
+    // d6 classes
+    'Noble': 6,
+    'Scoundrel': 6,
+    'Slicer': 6
+  };
+
+  // Get hit die - first check our mapping by class name, then fall back to class data
+  const className = classDoc.name;
+  let hitDie = classHitDice[className];
+
+  if (!hitDie) {
+    // Fallback: parse from class data
+    const hitDieString = classDoc.system.hit_die || classDoc.system.hitDie || "1d6";
+    hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
+    SWSELogger.warn(`SWSE LevelUp | Class "${className}" not in hit dice map, using ${hitDie} from class data`);
+  }
+
   const conMod = actor.system.abilities.con?.mod || 0;
   const hpGeneration = game.settings.get("swse", "hpGeneration") || "average";
   const maxHPLevels = game.settings.get("swse", "maxHPLevels") || 1;

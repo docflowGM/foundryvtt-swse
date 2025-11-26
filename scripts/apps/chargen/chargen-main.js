@@ -152,6 +152,7 @@ export default class CharacterGenerator extends Application {
       height: 700,
       title: "Character Generator",
       resizable: true,
+      draggable: true,
       scrollY: [".chargen-content", ".step-content", ".window-content"],
       left: null,  // Allow Foundry to center
       top: null    // Allow Foundry to center
@@ -350,11 +351,23 @@ export default class CharacterGenerator extends Application {
 
     // Filter talents by selected tree (if a tree is selected)
     if (this.selectedTalentTree && context.packs.talents) {
+      const selectedTree = this.selectedTalentTree.toLowerCase().trim();
       context.packs.talentsInTree = context.packs.talents.filter(t => {
-        const talentTree = t.system?.talent_tree || t.system?.tree;
-        return talentTree === this.selectedTalentTree;
+        // Check multiple possible field names and formats
+        const talentTree = t.system?.tree || t.system?.talent_tree || t.system?.talentTree || '';
+        const talentName = t.name || '';
+
+        // Compare case-insensitive and trimmed
+        const treeMatch = talentTree.toLowerCase().trim() === selectedTree;
+
+        // Also check if talent name starts with tree name (e.g., "Lightsaber Combat - Deflect")
+        const nameMatch = talentName.toLowerCase().includes(selectedTree.replace(/\s+/g, '').toLowerCase());
+
+        return treeMatch || nameMatch;
       });
-      SWSELogger.log(`CharGen | Talents in tree ${this.selectedTalentTree}: ${context.packs.talentsInTree.length}`);
+      SWSELogger.log(`CharGen | Talents in tree "${this.selectedTalentTree}": ${context.packs.talentsInTree.length}`, context.packs.talentsInTree.map(t => t.name));
+    } else {
+      context.packs.talentsInTree = [];
     }
 
     // Point buy pools

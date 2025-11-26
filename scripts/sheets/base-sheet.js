@@ -337,25 +337,31 @@ export class SWSEActorSheetBase extends ActorSheet {
 
       // Special handling for initiative rolls
       if (label.toLowerCase().includes('initiative')) {
+        // Check if there's an active combat
+        if (!game.combat) {
+          ui.notifications.warn("No active combat encounter. Create a combat first.");
+          return;
+        }
+
         // Add actor to combat tracker if not already in combat
-        if (game.combat && game.combat.scene && !game.combat.combatants.find(c => c.actor?.id === this.actor.id)) {
+        const existingCombatant = game.combat.combatants.find(c => c.actor?.id === this.actor.id);
+
+        if (!existingCombatant) {
+          const tokens = this.actor.getActiveTokens();
+          const tokenId = tokens.length > 0 ? tokens[0].id : null;
+
           await game.combat.createEmbeddedDocuments('Combatant', [{
             actorId: this.actor.id,
             sceneId: game.combat.scene.id,
-            tokenId: this.actor.token?.id
+            tokenId: tokenId,
+            hidden: tokens.length === 0 // Hide combatant if no token on scene
           }]);
         }
 
-        // Roll initiative
-        const tokens = this.actor.getActiveTokens();
-        if (tokens.length > 0 && game.combat) {
-          await game.combat.rollInitiative(tokens.map(t => t.id));
-        } else {
-          const roll = new Roll(dataset.roll, this.actor.getRollData());
-          roll.toMessage({
-            speaker: ChatMessage.getSpeaker({actor: this.actor}),
-            flavor: label
-          });
+        // Roll initiative for all combatants of this actor
+        const combatants = game.combat.combatants.filter(c => c.actor?.id === this.actor.id);
+        if (combatants.length > 0) {
+          await game.combat.rollInitiative(combatants.map(c => c.id));
         }
       } else {
         // Normal roll

@@ -692,12 +692,9 @@
  <p class="category-description">{{../description}}</p>
  <div class="feats-grid">
  {{#each this.feats}}
- <div class="feat-card">
+ <div class="feat-card feat-with-tooltip" data-tooltip="{{this.system.description}}">
  <button type="button" class="select-feat choice-button" data-featid="{{this._id}}">
  <h5>{{this.name}}</h5>
- {{#if this.system.description}}
- <p class="feat-description">{{this.system.description}}</p>
- {{/if}}
  {{#if this.system.prerequisites}}
  <p class="feat-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>
  {{/if}}
@@ -716,12 +713,9 @@
  {{else}}
  <div class="feats-list">
  {{#each packs.feats}}
- <div class="feat-item">
+ <div class="feat-item feat-with-tooltip" data-tooltip="{{this.system.description}}">
  <button type="button" class="select-feat choice-button" data-featid="{{this._id}}">
  <h4>{{this.name}}</h4>
- {{#if this.system.description}}
- <p class="feat-description">{{this.system.description}}</p>
- {{/if}}
  {{#if this.system.prerequisites}}
  <p class="feat-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</p>
  {{/if}}
@@ -1419,6 +1413,62 @@
 
 .progress-step.clickable:hover .step-label {
  color: #4a90e2;
+}
+
+/* Tooltip styles for feat descriptions */
+.feat-with-tooltip {
+ position: relative;
+}
+
+.feat-with-tooltip::after {
+ content: attr(data-tooltip);
+ position: absolute;
+ bottom: 100%;
+ left: 50%;
+ transform: translateX(-50%) translateY(-8px);
+ background: rgba(0, 0, 0, 0.95);
+ color: #ffffff;
+ padding: 12px 16px;
+ border-radius: 6px;
+ font-size: 0.9rem;
+ line-height: 1.4;
+ white-space: normal;
+ max-width: 350px;
+ width: max-content;
+ border: 1px solid #00d9ff;
+ box-shadow: 0 4px 12px rgba(0, 217, 255, 0.3);
+ pointer-events: none;
+ opacity: 0;
+ visibility: hidden;
+ transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+ z-index: 1000;
+}
+
+.feat-with-tooltip:hover::after {
+ opacity: 1;
+ visibility: visible;
+ transform: translateX(-50%) translateY(-4px);
+}
+
+/* Tooltip arrow */
+.feat-with-tooltip::before {
+ content: '';
+ position: absolute;
+ bottom: 100%;
+ left: 50%;
+ transform: translateX(-50%) translateY(2px);
+ border: 6px solid transparent;
+ border-top-color: #00d9ff;
+ pointer-events: none;
+ opacity: 0;
+ visibility: hidden;
+ transition: opacity 0.3s, visibility 0.3s;
+ z-index: 1001;
+}
+
+.feat-with-tooltip:hover::before {
+ opacity: 1;
+ visibility: visible;
 }
 </style>
 

@@ -25,6 +25,7 @@ export class VehicleModificationApp extends Application {
       height: 700,
       title: "Starship Acquisition & Modification",
       resizable: true,
+      draggable: true,
       scrollY: [".content", ".tab-content", ".window-content"],
       tabs: [{
         navSelector: '.tabs',

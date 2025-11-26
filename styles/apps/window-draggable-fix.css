@@ -1,0 +1,80 @@
+/**
+ * Fix for making all SWSE windows draggable and resizable
+ * Ensures window headers are interactive and resize handles work
+ */
+
+/* Ensure all SWSE app window headers are draggable */
+.swse.app .window-header,
+.swse-store .window-header,
+.chargen .window-header,
+.levelup-dialog .window-header,
+.vehicle-modification-app .window-header {
+  cursor: move !important;
+  pointer-events: auto !important;
+  user-select: none !important;
+}
+
+/* Make sure window title is draggable */
+.swse.app .window-title,
+.swse-store .window-title,
+.chargen .window-title,
+.levelup-dialog .window-title,
+.vehicle-modification-app .window-title {
+  cursor: move !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure close button remains clickable */
+.swse.app .window-header .close,
+.swse-store .window-header .close,
+.chargen .window-header .close,
+.levelup-dialog .window-header .close,
+.vehicle-modification-app .window-header .close {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure resize handles are visible and functional */
+.swse.app.window-app.resizable,
+.swse-store.window-app.resizable,
+.chargen.window-app.resizable,
+.levelup-dialog.window-app.resizable,
+.vehicle-modification-app.window-app.resizable {
+  resize: both !important;
+}
+
+/* Make sure resize handle is visible */
+.swse.app .window-resizable-handle,
+.swse-store .window-resizable-handle,
+.chargen .window-resizable-handle,
+.levelup-dialog .window-resizable-handle,
+.vehicle-modification-app .window-resizable-handle {
+  display: block !important;
+  pointer-events: auto !important;
+  cursor: nwse-resize !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  width: 16px !important;
+  height: 16px !important;
+  background: linear-gradient(135deg, transparent 0%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 100%) !important;
+}
+
+/* Ensure header controls (minimize, close, etc.) are clickable */
+.swse.app .window-header a,
+.swse-store .window-header a,
+.chargen .window-header a,
+.levelup-dialog .window-header a,
+.vehicle-modification-app .window-header a {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* Fix for any element that might block dragging */
+.swse.app .window-header *:not(.close):not(a),
+.swse-store .window-header *:not(.close):not(a),
+.chargen .window-header *:not(.close):not(a),
+.levelup-dialog .window-header *:not(.close):not(a),
+.vehicle-modification-app .window-header *:not(.close):not(a) {
+  pointer-events: none !important;
+}
