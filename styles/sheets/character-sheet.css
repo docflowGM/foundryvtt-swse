@@ -2931,3 +2931,114 @@ transform: translateY(-2px);
 font-size: 12px;
 }
 
+/* =========================
+   EQUIPMENT & COMBAT TAB STYLES
+   ========================= */
+
+/* Equipped Items Visual Feedback */
+.weapon-row.equipped,
+.armor-row.equipped {
+  background: rgba(0, 217, 102, 0.08);
+  border-left: 3px solid var(--holo-green);
+  padding-left: 8px;
+}
+
+/* Weapon Equipped Toggle */
+.weapon-equipped-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.weapon-equipped-toggle input[type="checkbox"] {
+  margin: 0;
+}
+
+.weapon-equipped-toggle i {
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.weapon-equipped-toggle input[type="checkbox"]:checked + i {
+  color: var(--holo-green);
+}
+
+.weapon-equipped-toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Armor Section Styles */
+.armor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.armor-name {
+  font-weight: 600;
+  color: var(--color-text-emphatic);
+}
+
+.armor-stats {
+  display: flex;
+  gap: 12px;
+  font-size: 0.9em;
+  color: var(--muted);
+}
+
+.armor-stats i {
+  margin-right: 4px;
+  opacity: 0.7;
+}
+
+/* Armor Equipped Toggle */
+.armor-equipped-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.armor-equipped-toggle input[type="checkbox"] {
+  margin: 0;
+}
+
+.armor-equipped-toggle i {
+  font-size: 1.2em;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.armor-equipped-toggle .equipped-label {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.armor-equipped-toggle input[type="checkbox"]:checked + i {
+  color: var(--holo-green);
+}
+
+.armor-equipped-toggle input[type="checkbox"]:checked ~ .equipped-label {
+  color: var(--holo-green);
+}
+
+.armor-equipped-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(0, 217, 255, 0.3);
+}
+
+.armor-row.equipped .armor-equipped-toggle {
+  background: rgba(0, 217, 102, 0.15);
+  border-color: rgba(0, 217, 102, 0.3);
+}
