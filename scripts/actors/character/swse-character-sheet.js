@@ -786,15 +786,15 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
         select: {
           icon: '<i class="fas fa-list"></i>',
           label: "Select from Classes",
-          callback: () => {
-            this._onSelectClass();
+          callback: async () => {
+            await this._onSelectClass();
           }
         },
         custom: {
           icon: '<i class="fas fa-edit"></i>',
           label: "Create Custom Class",
-          callback: () => {
-            this._onCreateCustomClass();
+          callback: async () => {
+            await this._onCreateCustomClass();
           }
         },
         cancel: {

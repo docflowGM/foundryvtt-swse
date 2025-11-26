@@ -400,30 +400,52 @@ export class CharacterTemplates {
    * @param {string} talentName - The talent name to add
    */
   static async applyTemplateTalent(actor, talentName) {
-    if (!talentName) return;
+    if (!talentName) {
+      SWSELogger.log('SWSE | No talent specified in template, skipping');
+      return;
+    }
 
     try {
+      SWSELogger.log(`SWSE | Attempting to apply template talent: ${talentName}`);
+
       // Find talent in compendium
       const talentPack = game.packs.get('swse.talents');
       if (!talentPack) {
         SWSELogger.warn('SWSE | Talents compendium not found');
+        ui.notifications.warn('Talents compendium not found! Cannot add template talent.');
         return;
       }
 
       const index = await talentPack.getIndex();
-      const talentEntry = index.find(t => t.name === talentName);
+
+      // Try exact match first
+      let talentEntry = index.find(t => t.name === talentName);
+
+      // Try case-insensitive match if exact match fails
+      if (!talentEntry) {
+        talentEntry = index.find(t => t.name.toLowerCase() === talentName.toLowerCase());
+      }
 
       if (!talentEntry) {
-        SWSELogger.warn(`SWSE | Talent not found: ${talentName}`);
-        ui.notifications.warn(`Talent not found: ${talentName}. Please add manually.`);
+        SWSELogger.warn(`SWSE | Talent not found in compendium: ${talentName}`);
+        SWSELogger.log(`SWSE | Available talents: ${index.map(t => t.name).slice(0, 10).join(', ')}...`);
+        ui.notifications.warn(`Talent "${talentName}" not found in compendium. Please add manually.`);
         return;
       }
 
       const talent = await talentPack.getDocument(talentEntry._id);
+      if (!talent) {
+        SWSELogger.error(`SWSE | Failed to load talent document: ${talentName}`);
+        ui.notifications.error(`Failed to load talent "${talentName}". Please add manually.`);
+        return;
+      }
+
       await actor.createEmbeddedDocuments('Item', [talent.toObject()]);
-      SWSELogger.log(`SWSE | Added template talent: ${talentName}`);
+      SWSELogger.log(`SWSE | Successfully added template talent: ${talentName}`);
+      ui.notifications.info(`Added talent: ${talentName}`);
     } catch (error) {
       SWSELogger.error('SWSE | Failed to apply template talent:', error);
+      ui.notifications.error(`Failed to add talent "${talentName}": ${error.message}`);
     }
   }
 
