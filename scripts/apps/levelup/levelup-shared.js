@@ -240,29 +240,48 @@ export function getsMilestoneFeat(newLevel) {
 export function calculateHPGain(classDoc, actor, newLevel) {
   // SWSE Official Hit Dice by Class
   const classHitDice = {
+    // d12 classes
+    'Elite Trooper': 12,
+    'Independent Droid': 12,
     // d10 classes
+    'Assassin': 10,
+    'Bounty Hunter': 10,
+    'Droid Commander': 10, // Changed from d6
+    'Gladiator': 10,
+    'Imperial Knight': 10,
     'Jedi': 10,
     'Jedi Knight': 10,
     'Jedi Master': 10,
-    'Soldier': 10,
+    'Master Privateer': 10,
+    'Martial Arts Master': 10,
+    'Pathfinder': 10,
     'Sith Apprentice': 10,
     'Sith Lord': 10,
+    'Soldier': 10,
+    'Vanguard': 10,
     // d8 classes
-    'Scout': 8,
+    'Ace Pilot': 8, // Changed from d6
     'Beast Rider': 8,
-    'Bounty Hunter': 8,
-    'Elite Trooper': 8,
+    'Charlatan': 8,
+    'Corporate Agent': 8,
+    'Crime Lord': 8, // Changed from d6
+    'Enforcer': 8,
+    'Force Adept': 8, // Changed from d6
+    'Force Disciple': 8,
     'Gunslinger': 8,
+    'Improviser': 8,
     'Infiltrator': 8,
+    'Medic': 8,
+    'Melee Duelist': 8,
+    'Military Engineer': 8,
+    'Officer': 8, // Changed from d6
+    'Outlaw': 8,
+    'Saboteur': 8, // Changed from d6
+    'Scout': 8,
+    'Shaper': 8,
     // d6 classes
     'Noble': 6,
     'Scoundrel': 6,
-    'Ace Pilot': 6,
-    'Crime Lord': 6,
-    'Droid Commander': 6,
-    'Force Adept': 6,
-    'Officer': 6,
-    'Saboteur': 6,
     'Slicer': 6
   };
 
