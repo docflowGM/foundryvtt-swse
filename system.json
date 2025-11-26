@@ -43,7 +43,8 @@
     "styles/apps/upgrade-app.css",
     "styles/canvas/canvas-ui.css",
     "styles/foundry-ui-overrides.css",
-    "styles/foundry-ui-layout.css"
+    "styles/foundry-ui-layout.css",
+    "styles/apps/window-draggable-fix.css"
   ],
   "languages": [
     {
