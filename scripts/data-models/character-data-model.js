@@ -257,6 +257,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
   /**
    * Override parent's _calculateDefenses to use character level
+   * NONHEROIC RULE: Only HEROIC class levels add to defense
    */
   _calculateDefenses() {
     // Ensure defenses object exists
@@ -265,7 +266,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       return;
     }
 
-    const level = this.level || 1;
+    // Use heroicLevel for defense calculations (nonheroic levels don't add to defense)
+    // If heroicLevel isn't set yet (before _calculateMulticlassStats), fall back to total level
+    const level = this.heroicLevel !== undefined ? this.heroicLevel : (this.level || 1);
 
     // Ensure individual defense objects exist
     if (!this.defenses.reflex || !this.defenses.fortitude || !this.defenses.will) {
@@ -384,6 +387,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
    * - BAB is additive across all classes
    * - Defense bonuses are FLAT per class and do NOT scale with class level
    * - When multiclassing, use the HIGHEST defense bonus from any class (not additive)
+   * - NONHEROIC CHARACTERS: Nonheroic class levels do NOT add to defense (they don't add heroic level)
    */
   _calculateMulticlassStats() {
     // Get actor instance to access items
@@ -396,6 +400,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     if (classItems.length === 0) {
       // No classes, use defaults
       this.bab = 0;
+      this.heroicLevel = 0; // Track heroic level separately
+      this.nonheroicLevel = 0; // Track nonheroic level separately
       if (this.defenses) {
         this.defenses.fortitude.classBonus = 0;
         this.defenses.reflex.classBonus = 0;
@@ -407,6 +413,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Calculate total BAB (additive across all classes)
     let totalBAB = 0;
 
+    // Track heroic and nonheroic levels separately
+    let heroicLevel = 0;
+    let nonheroicLevel = 0;
+
     // Track highest FLAT defense bonuses (not additive, just take max)
     let maxFortBonus = 0;
     let maxRefBonus = 0;
@@ -415,12 +425,26 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     for (const classItem of classItems) {
       const classLevel = classItem.system.level || 1;
       const classData = classItem.system;
+      const isNonheroic = classData.isNonheroic || false;
 
-      // BAB - Add from each class (SWSE multiclass rule: additive)
-      // Convert string progression to numeric multiplier
-      const babProgression = this._convertBabProgression(classData.babProgression);
-      const classBab = Math.floor(classLevel * babProgression);
-      totalBAB += classBab;
+      // Track heroic vs nonheroic levels
+      if (isNonheroic) {
+        nonheroicLevel += classLevel;
+      } else {
+        heroicLevel += classLevel;
+      }
+
+      // BAB - Calculate based on class type
+      if (isNonheroic) {
+        // Nonheroic BAB table (custom progression)
+        const nonheroicBAB = this._getNonheroicBAB(classLevel);
+        totalBAB += nonheroicBAB;
+      } else {
+        // Heroic BAB - standard progression
+        const babProgression = this._convertBabProgression(classData.babProgression);
+        const classBab = Math.floor(classLevel * babProgression);
+        totalBAB += classBab;
+      }
 
       // Defenses - Track maximum FLAT bonus from any class (SWSE multiclass rule: highest wins)
       // Defense bonuses do NOT scale with class level - they are flat per class
@@ -437,6 +461,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Set calculated values
     this.bab = totalBAB;
     this.baseAttack = totalBAB; // For compatibility
+    this.heroicLevel = heroicLevel; // Store for defense calculations
+    this.nonheroicLevel = nonheroicLevel; // Store for reference
 
     // Set defense class bonuses (these get added in parent's _calculateDefenses)
     if (this.defenses) {
@@ -444,6 +470,38 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.defenses.reflex.classBonus = maxRefBonus;
       this.defenses.will.classBonus = maxWillBonus;
     }
+  }
+
+  /**
+   * Get BAB for nonheroic character at given level
+   * SWSE Nonheroic BAB Table:
+   * 1: +0, 2: +1, 3: +2, 4: +3, 5: +3, 6: +4, 7: +5, 8: +6, 9: +6, 10: +7
+   * 11: +8, 12: +9, 13: +9, 14: +10, 15: +11, 16: +12, 17: +12, 18: +13, 19: +14, 20: +15
+   */
+  _getNonheroicBAB(level) {
+    const nonheroicBABTable = [
+      0,  // Level 1
+      1,  // Level 2
+      2,  // Level 3
+      3,  // Level 4
+      3,  // Level 5
+      4,  // Level 6
+      5,  // Level 7
+      6,  // Level 8
+      6,  // Level 9
+      7,  // Level 10
+      8,  // Level 11
+      9,  // Level 12
+      9,  // Level 13
+      10, // Level 14
+      11, // Level 15
+      12, // Level 16
+      12, // Level 17
+      13, // Level 18
+      14, // Level 19
+      15  // Level 20
+    ];
+    return nonheroicBABTable[Math.min(level - 1, 19)] || 0;
   }
 
   _prepareSkills() {
@@ -535,36 +593,46 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
   _calculateForcePoints() {
     // Ensure forcePoints exists
     if (!this.forcePoints) {
-      this.forcePoints = { value: 5, max: 5, die: "1d6" };
+      this.forcePoints = { value: 0, max: 0, die: "1d6" };
     }
 
-    const level = this.level || 1;
+    // NONHEROIC RULE: Nonheroic characters do not gain Force Points
+    // Only use heroic level for Force Point calculation
+    const heroicLevel = this.heroicLevel !== undefined ? this.heroicLevel : (this.level || 1);
+
+    // If character has no heroic levels, they get no Force Points
+    if (heroicLevel === 0) {
+      this.forcePoints.max = 0;
+      this.forcePoints.value = Math.min(this.forcePoints.value, 0);
+      this.forcePoints.die = "1d6";
+      return;
+    }
 
     // Check for daily Force Points optional rule
     const useDailyForcePoints = game.settings?.get('swse', 'dailyForcePoints') || false;
 
     if (useDailyForcePoints) {
-      // Daily Force Points based on level ranges
+      // Daily Force Points based on heroic level ranges
       // 1-5: 1 FP, 6-10: 2 FP, 11-15: 3 FP, 16+: 4 FP
-      if (level >= 16) {
+      if (heroicLevel >= 16) {
         this.forcePoints.max = 4;
-      } else if (level >= 11) {
+      } else if (heroicLevel >= 11) {
         this.forcePoints.max = 3;
-      } else if (level >= 6) {
+      } else if (heroicLevel >= 6) {
         this.forcePoints.max = 2;
       } else {
         this.forcePoints.max = 1;
       }
     } else {
-      // Standard Force Points: 5 + half level (rounded down)
-      this.forcePoints.max = 5 + Math.floor(level / 2);
+      // Standard Force Points: 5 + half heroic level (rounded down)
+      this.forcePoints.max = 5 + Math.floor(heroicLevel / 2);
     }
 
-    // Calculate Force Point die based on level
+    // Calculate Force Point die based on heroic level
     // 1-7: 1d6, 8-14: 2d6 (take highest), 15+: 3d6 (take highest)
-    if (level >= 15) {
+    if (heroicLevel >= 15) {
       this.forcePoints.die = "3d6";
-    } else if (level >= 8) {
+    } else if (heroicLevel >= 8) {
       this.forcePoints.die = "2d6";
     } else {
       this.forcePoints.die = "1d6";

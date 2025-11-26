@@ -17,6 +17,9 @@ import { checkTalentPrerequisites } from './levelup-validation.js';
 export function getsTalent(selectedClass, actor) {
   if (!selectedClass) return false;
 
+  // NONHEROIC RULE: Nonheroic characters do not gain talents
+  if (selectedClass.system.isNonheroic) return false;
+
   // Check house rule: talent every level
   const talentEveryLevel = game.settings.get("swse", "talentEveryLevel");
   if (talentEveryLevel) {

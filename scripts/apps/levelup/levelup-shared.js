@@ -215,10 +215,28 @@ export function calculateDefenseBonuses(actor) {
 /**
  * Check if the new level grants an ability score increase
  * @param {number} newLevel - The new character level
+ * @param {boolean} isNonheroic - Whether this is a nonheroic class level
  * @returns {boolean}
  */
-export function getsAbilityIncrease(newLevel) {
+export function getsAbilityIncrease(newLevel, isNonheroic = false) {
+  // NONHEROIC RULE: Nonheroic characters get ability increases every 4 levels (same levels)
+  // But they only get to increase 1 ability score by 1 point (instead of 2 scores)
   return [4, 8, 12, 16, 20].includes(newLevel);
+}
+
+/**
+ * Get the number of ability score increases at this level
+ * @param {number} newLevel - The new character level
+ * @param {boolean} isNonheroic - Whether this is a nonheroic class level
+ * @returns {number} - Number of ability scores that can be increased (1 or 2)
+ */
+export function getAbilityIncreaseCount(newLevel, isNonheroic = false) {
+  if (![4, 8, 12, 16, 20].includes(newLevel)) {
+    return 0;
+  }
+
+  // NONHEROIC RULE: Nonheroic characters only get 1 ability score increase (instead of 2)
+  return isNonheroic ? 1 : 2;
 }
 
 /**
@@ -238,8 +256,11 @@ export function getsMilestoneFeat(newLevel) {
  * @returns {number} HP to gain
  */
 export function calculateHPGain(classDoc, actor, newLevel) {
-  // Parse hit die from string like "1d10" to get the die size (10)
-  const hitDieString = classDoc.system.hit_die || classDoc.system.hitDie || "1d6";
+  // Check if this is a nonheroic class
+  const isNonheroic = classDoc.system.isNonheroic || false;
+
+  // NONHEROIC RULE: Nonheroic characters gain 1d4 HP + CON per level
+  const hitDieString = isNonheroic ? "1d4" : (classDoc.system.hit_die || classDoc.system.hitDie || "1d6");
   const hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
   const conMod = actor.system.abilities.con?.mod || 0;
   const hpGeneration = game.settings.get("swse", "hpGeneration") || "average";
@@ -271,7 +292,7 @@ export function calculateHPGain(classDoc, actor, newLevel) {
   }
 
   const finalHPGain = Math.max(1, hpGain);
-  SWSELogger.log(`SWSE LevelUp | HP gain: ${finalHPGain} (d${hitDie}, method: ${hpGeneration})`);
+  SWSELogger.log(`SWSE LevelUp | HP gain: ${finalHPGain} (d${hitDie}${isNonheroic ? ' [nonheroic]' : ''}, method: ${hpGeneration})`);
 
   return finalHPGain;
 }
