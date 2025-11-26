@@ -42,6 +42,13 @@ export class SWSERoll {
       parts.push(`Condition ${rollData.conditionPenalty}`);
     }
 
+    // Armor check penalty (when wearing armor without proficiency)
+    const armorCheckPenalty = actor.system.armorCheckPenalty || 0;
+    if (armorCheckPenalty !== 0) {
+      formula += ` + ${armorCheckPenalty}`;
+      parts.push(`Armor Penalty ${armorCheckPenalty}`);
+    }
+
     // Create and evaluate the roll
     const roll = new Roll(formula, rollData);
     await roll.evaluate({async: true});

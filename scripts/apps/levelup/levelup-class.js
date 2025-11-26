@@ -165,14 +165,16 @@ export async function selectSpecies(speciesId, speciesName) {
     return null;
   }
 
-  // Try to get the document using the ID
-  let speciesDoc = await speciesPack.getDocument(speciesId);
+  // Try to get the document using the ID if provided
+  let speciesDoc = null;
+  if (speciesId && speciesId !== 'null' && speciesId !== 'undefined') {
+    speciesDoc = await speciesPack.getDocument(speciesId);
+  }
 
-  // If not found, try searching by name as a fallback
-  if (!speciesDoc) {
-    SWSELogger.warn(`SWSE LevelUp | Species not found with ID ${speciesId}, searching by name...`);
+  // If not found by ID, try searching by name as a fallback
+  if (!speciesDoc && speciesName) {
     const allSpecies = await speciesPack.getDocuments();
-    speciesDoc = allSpecies.find(s => s.name === speciesName || s.id === speciesId || s._id === speciesId);
+    speciesDoc = allSpecies.find(s => s.name === speciesName);
   }
 
   if (!speciesDoc) {

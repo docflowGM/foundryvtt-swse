@@ -44,5 +44,29 @@ export const swseHelpers = {
     return result;
   },
 
-  subtract: (a, b) => Number(a || 0) - Number(b || 0)
+  subtract: (a, b) => Number(a || 0) - Number(b || 0),
+
+  /**
+   * Check if a step has been completed in the level-up flow
+   * @param {string} step - The step to check
+   * @param {string} currentStep - The current active step
+   * @returns {boolean} True if the step has been completed
+   */
+  stepCompleted: (step, currentStep) => {
+    const stepOrder = [
+      'species',
+      'attributes',
+      'class',
+      'multiclass-bonus',
+      'ability-increase',
+      'feat',
+      'talent',
+      'summary'
+    ];
+
+    const stepIndex = stepOrder.indexOf(step);
+    const currentIndex = stepOrder.indexOf(currentStep);
+
+    return stepIndex !== -1 && currentIndex !== -1 && currentIndex > stepIndex;
+  }
 };

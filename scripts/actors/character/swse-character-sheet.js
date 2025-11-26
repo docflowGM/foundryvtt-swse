@@ -398,7 +398,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
             <label style="display: flex; align-items: center; cursor: pointer; padding: 10px; border: 1px solid #999; border-radius: 4px;">
               <input type="radio" name="talent-choice" value="custom" style="margin-right: 10px;"/>
               <div>
-                <strong>Create Custom Talent</strong>
+                <strong>Add Talent</strong>
                 <div style="font-size: 0.9em; color: #666; margin-top: 3px;">Create a custom talent with your own details</div>
               </div>
             </label>
@@ -786,15 +786,15 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
         select: {
           icon: '<i class="fas fa-list"></i>',
           label: "Select from Classes",
-          callback: () => {
-            this._onSelectClass();
+          callback: async () => {
+            await this._onSelectClass();
           }
         },
         custom: {
           icon: '<i class="fas fa-edit"></i>',
           label: "Create Custom Class",
-          callback: () => {
-            this._onCreateCustomClass();
+          callback: async () => {
+            await this._onCreateCustomClass();
           }
         },
         cancel: {
@@ -1080,7 +1080,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     `;
 
     // Show dialog
-    new Dialog({
+    const dialog = new Dialog({
       title: this.actor.system.race ? 'Change Species' : 'Select Species',
       content: content,
       buttons: {
@@ -1112,10 +1112,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
             // Use the drop handler to apply species
             const { DropHandler } = await import('../../drag-drop/drop-handler.js');
             await DropHandler.handleSpeciesDrop(this.actor, species);
-          }
 
-          // Close dialog
-          html.closest('.dialog').find('.dialog-button.cancel').click();
+            // Close dialog after successful selection
+            dialog.close();
+            ui.notifications.info(`Species changed to ${species.name}`);
+          }
         });
 
         // Hover effect
@@ -1822,7 +1823,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     `;
 
     // Show dialog
-    new Dialog({
+    const dialog = new Dialog({
       title: 'Select Species',
       content: dialogContent,
       buttons: {
@@ -1847,8 +1848,9 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
           // Apply the species to the character
           await this._applySpecies(speciesDoc);
 
-          // Close dialog
-          $(e.currentTarget).closest('.dialog').find('.window-close').click();
+          // Close dialog after successful selection
+          dialog.close();
+          ui.notifications.info(`Species changed to ${speciesDoc.name}`);
         });
       }
     }, {
