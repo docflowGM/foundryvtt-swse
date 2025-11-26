@@ -189,6 +189,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
    * - Armor check penalty also applies to attack rolls when not proficient
    * - Speed reduction: Medium armor -2 squares, Heavy armor -4 squares (if speed >= 6)
    * - Proficiency: Light (-2), Medium (-5), Heavy (-10) penalty when not proficient
+   * - When not proficient, you do NOT gain armor's equipment bonuses
    */
   _calculateArmorEffects() {
     const actor = this.parent;
@@ -197,6 +198,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Initialize armor effects
     this.armorCheckPenalty = 0;
     this.effectiveSpeed = this.speed || 6;
+    this.armorProficient = true; // Track proficiency status for other calculations
 
     if (!equippedArmor) {
       return; // No armor equipped
@@ -218,6 +220,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       if (profName.includes('medium') && (armorType === 'light' || armorType === 'medium')) isProficient = true;
       if (profName.includes('heavy')) isProficient = true; // Heavy includes all armor
     }
+
+    // Store proficiency status for use in defense calculations
+    this.armorProficient = isProficient;
 
     // Calculate armor check penalty
     if (isProficient) {
@@ -339,8 +344,12 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       fortAbility = Math.max(this.abilities?.con?.mod || 0, this.abilities?.str?.mod || 0);
     }
 
-    // Add equipment bonus from armor (always applied)
-    const armorFortBonus = equippedArmor?.system.fortBonus || 0;
+    // Add equipment bonus from armor (only if proficient)
+    // SWSE Rule: When not proficient with armor, you do NOT gain equipment bonuses
+    let armorFortBonus = 0;
+    if (equippedArmor && this.armorProficient) {
+      armorFortBonus = equippedArmor.system.fortBonus || 0;
+    }
 
     this.defenses.fortitude.total = 10 + level + fortAbility + armorFortBonus +
                                      (this.defenses.fortitude.classBonus || 0) +
