@@ -12,9 +12,9 @@
 .swse input[type="number"],
 .swse select,
 .swse textarea {
-  background: rgba(0, 0, 0, 0.4);
-  color: #e0e0e0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 13px;
@@ -24,10 +24,29 @@
 .swse input[type="number"]:focus,
 .swse select:focus,
 .swse textarea:focus {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   border-color: var(--holo-cyan, #00d9ff);
   box-shadow: 0 0 8px rgba(0, 217, 255, 0.4);
   outline: none;
+  color: #ffffff;
+}
+
+/* Placeholder text visibility */
+.swse input::placeholder,
+.swse textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  opacity: 1;
+}
+
+/* Disabled inputs - keep them visible but distinct */
+.swse input[type="text"]:disabled,
+.swse input[type="number"]:disabled,
+.swse select:disabled,
+.swse textarea:disabled {
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.1);
+  cursor: not-allowed;
 }
 
 /* Improved button visibility */
