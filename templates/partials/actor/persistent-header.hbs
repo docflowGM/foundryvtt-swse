@@ -159,5 +159,30 @@
  <i class="fas fa-plus"></i> Add Class
  </button>
  </div>
+
+ {{!-- Size Display --}}
+ <div class="character-attribute">
+ <label class="attribute-label">
+ <i class="fas fa-expand-arrows-alt"></i> Size
+ </label>
+ <div class="attribute-value">
+ <span>{{system.size}}</span>
+ </div>
+ </div>
+
+ {{!-- Force Sensitive Display --}}
+ {{#unless system.isDroid}}
+ <div class="character-attribute">
+ <label class="attribute-label">
+ <i class="fas fa-hand-sparkles"></i> Force Sensitive
+ </label>
+ <div class="attribute-value">
+ <input type="checkbox"
+ name="system.forceSensitive"
+ {{checked system.forceSensitive}}
+ title="Force Sensitive"/>
+ </div>
+ </div>
+ {{/unless}}
  </div>
 </header>
