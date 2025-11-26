@@ -515,6 +515,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
         total += armorCheckPenalty; // Note: penalty is negative, so we add it
       }
 
+      // Apply condition track penalty (affects all skills and rolls)
+      const conditionPenalty = this.conditionTrack?.penalty || 0;
+      total += conditionPenalty; // Note: penalty is negative, so we add it
+
       // Determine if skill can be used untrained
       let canUseUntrained = data.untrained;
 
