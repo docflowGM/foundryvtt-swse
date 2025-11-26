@@ -173,13 +173,15 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     this._calculateDefenses(); // Use our overridden version
     // NOTE: Do NOT call _calculateBaseAttack() here - BAB is already calculated by _calculateMulticlassStats()
     this._calculateDamageThreshold();
-    this._calculateInitiative();
 
     // Calculate Force Points
     this._calculateForcePoints();
 
     // Override skill calculations with our static skill system
     this._prepareSkills();
+
+    // Calculate initiative AFTER skills are prepared (initiative is a skill)
+    this._calculateInitiative();
   }
 
   /**
