@@ -667,6 +667,11 @@ export class TemplateCharacterCreator extends Application {
       }
 
       const species = await speciesPack.getDocument(speciesEntry._id);
+      if (!species) {
+        SWSELogger.warn(`SWSE | Failed to load species document for: ${speciesName}`);
+        return;
+      }
+
       const speciesData = species.system;
 
       // Apply ability modifiers
@@ -797,13 +802,12 @@ export class TemplateCharacterCreator extends Application {
    */
   async _applyEquipment(actor, equipmentList) {
     if (!equipmentList || equipmentList.length === 0) {
-      return { added: [], notFound: [], totalCost: 0 };
+      return { added: [], notFound: [] };
     }
 
     const results = {
       added: [],
-      notFound: [],
-      totalCost: 0
+      notFound: []
     };
 
     // Define compendia to search
@@ -847,14 +851,10 @@ export class TemplateCharacterCreator extends Application {
             const item = await pack.getDocument(entry._id);
             const itemData = item.toObject();
 
-            // Track the cost of this item
-            const itemCost = Number(item.system?.cost) || 0;
-            results.totalCost += itemCost;
-
             await actor.createEmbeddedDocuments('Item', [itemData]);
-            results.added.push({ name: entry.name, cost: itemCost });
+            results.added.push(entry.name);
             found = true;
-            SWSELogger.log(`SWSE | Added equipment: ${entry.name} (${itemCost} credits)`);
+            SWSELogger.log(`SWSE | Added equipment: ${entry.name}`);
             break; // Stop searching once found
           }
         }
@@ -865,19 +865,11 @@ export class TemplateCharacterCreator extends Application {
         }
       }
 
-      // Deduct equipment costs from starting credits
-      if (results.totalCost > 0) {
-        const currentCredits = actor.system.credits || 0;
-        const newCredits = Math.max(0, currentCredits - results.totalCost);
-        await actor.update({ 'system.credits': newCredits });
-        SWSELogger.log(`SWSE | Deducted ${results.totalCost} credits for equipment. Remaining: ${newCredits}`);
-      }
-
       // Store results in actor flag for later retrieval
       await actor.setFlag('swse', 'equipmentResults', results);
 
       // Log summary
-      SWSELogger.log(`SWSE | Equipment application complete: ${results.added.length} added, ${results.notFound.length} not found, ${results.totalCost} credits spent`);
+      SWSELogger.log(`SWSE | Equipment application complete: ${results.added.length} added, ${results.notFound.length} not found`);
 
     } catch (error) {
       SWSELogger.error('SWSE | Failed to apply equipment:', error);

@@ -220,7 +220,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
         }
       }),
       speed: new fields.NumberField({
-        required: true,
+        required: false,
         nullable: true,
         initial: 6,
         min: 0,
@@ -228,7 +228,16 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
         clean: value => {
           if (value === null || value === undefined || value === "") return 6;
           const num = Number(value);
-          return Number.isNaN(num) ? 6 : Math.floor(num);
+          if (Number.isNaN(num)) return 6;
+          // Ensure it's an integer
+          return Math.floor(num);
+        },
+        validate: value => {
+          // Allow null/undefined, they will be cleaned to 6
+          if (value === null || value === undefined) return true;
+          const num = Number(value);
+          // Accept any numeric value, clean will handle rounding
+          return !Number.isNaN(num);
         }
       }),
       damageThreshold: new fields.NumberField({

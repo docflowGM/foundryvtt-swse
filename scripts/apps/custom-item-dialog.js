@@ -386,7 +386,7 @@ export class CustomItemDialog {
   static async createTalent(actor) {
     return new Promise((resolve) => {
       const dialog = new Dialog({
-        title: "Create Custom Talent",
+        title: "Add Talent",
         content: `
           <form class="swse-custom-item-form">
             <div class="form-group">

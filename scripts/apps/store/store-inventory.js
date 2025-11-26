@@ -51,9 +51,21 @@ export async function loadInventoryData(itemsById) {
     for (const packName of actorPackNames) {
         const pack = game.packs.get(packName);
         if (pack) {
-            const documents = await pack.getDocuments();
-            // Include actors with cost > 0
-            packActors.push(...documents.filter(a => (a.system?.cost ?? 0) > 0));
+            try {
+                const documents = await pack.getDocuments();
+                // Include actors with cost > 0, filter out any with validation errors
+                const validActors = documents.filter(a => {
+                    try {
+                        return (a.system?.cost ?? 0) > 0;
+                    } catch (err) {
+                        console.warn(`SWSE | Skipping invalid actor in ${packName}:`, err.message);
+                        return false;
+                    }
+                });
+                packActors.push(...validActors);
+            } catch (err) {
+                console.warn(`SWSE | Failed to load actors from ${packName}:`, err.message);
+            }
         }
     }
 
