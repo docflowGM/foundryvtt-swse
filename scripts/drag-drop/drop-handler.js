@@ -3,6 +3,8 @@
  * Handles dropping Items onto Actors with automatic stat application
  */
 
+import { ProficiencySelectionDialog } from '../apps/proficiency-selection-dialog.js';
+
 export class DropHandler {
 
   static async handleItemDrop(actor, data) {
@@ -370,17 +372,31 @@ export class DropHandler {
     // - Check prerequisites
     // - Apply passive bonuses automatically
     // - Trigger recalculation
-    
+
+    // Check if this feat requires category selection (Weapon/Armor Proficiency, Weapon Focus, Weapon Specialization)
+    const result = await ProficiencySelectionDialog.handleFeatWithCategorySelection(actor, feat);
+
+    if (result === false) {
+      // User cancelled or feat already exists
+      return false;
+    }
+
+    if (result !== null) {
+      // Category selection was handled, feat was created
+      return true;
+    }
+
+    // No category selection needed, proceed with normal feat handling
     // Check if already has feat
-    const existingFeat = actor.items.find(i => 
+    const existingFeat = actor.items.find(i =>
       i.type === 'feat' && i.name === feat.name
     );
-    
+
     if (existingFeat) {
       ui.notifications.warn(`${actor.name} already has ${feat.name}`);
       return false;
     }
-    
+
     await actor.createEmbeddedDocuments('Item', [feat.toObject()]);
     ui.notifications.info(`${actor.name} gained feat: ${feat.name}`);
     return true;
