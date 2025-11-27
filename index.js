@@ -378,10 +378,24 @@ Hooks.once("init", async function() {
   // Helper to format BAB progression
   if (!Handlebars.helpers['formatBAB']) {
     Handlebars.registerHelper('formatBAB', function(babProgression) {
+      // Handle string inputs like "fast", "medium", "slow"
+      if (typeof babProgression === 'string') {
+        const prog = babProgression.toLowerCase();
+        if (prog === 'fast' || prog === 'high') return 'High (+1/level)';
+        if (prog === 'medium') return 'Medium (+3/4)';
+        if (prog === 'slow' || prog === 'low') return 'Low (+1/2)';
+      }
+
+      // Handle numeric inputs
       const bab = Number(babProgression);
-      if (bab >= 1.0) return 'High (+1/level)';
-      if (bab >= 0.75) return 'Medium (+3/4)';
-      return 'Low (+1/2)';
+      if (!isNaN(bab)) {
+        if (bab >= 1.0) return 'High (+1/level)';
+        if (bab >= 0.75) return 'Medium (+3/4)';
+        return 'Low (+1/2)';
+      }
+
+      // Fallback
+      return 'Unknown';
     });
   }
 

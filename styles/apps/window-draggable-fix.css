@@ -35,7 +35,13 @@
 .dialog .window-header .close,
 .dialog .window-header a,
 .app.window-app .window-header button,
-.dialog .window-header button {
+.dialog .window-header button,
+.app.window-app .window-header input,
+.dialog .window-header input,
+.app.window-app .window-header label,
+.dialog .window-header label,
+.app.window-app .window-header select,
+.dialog .window-header select {
   cursor: pointer !important;
   pointer-events: auto !important;
   user-select: none !important;
