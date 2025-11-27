@@ -451,6 +451,13 @@ export default class CharacterGenerator extends Application {
     // Ensure html is jQuery object for compatibility
     const $html = html instanceof jQuery ? html : $(html);
 
+    // Activate Foundry tooltips for feat descriptions
+    if (game.tooltip) {
+      game.tooltip.activate(html[0] || html, {
+        selector: '[data-tooltip]'
+      });
+    }
+
     // Free Build toggle
     $html.find('.free-build-toggle').change(this._onToggleFreeBuild.bind(this));
 
