@@ -173,13 +173,15 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     this._calculateDefenses(); // Use our overridden version
     // NOTE: Do NOT call _calculateBaseAttack() here - BAB is already calculated by _calculateMulticlassStats()
     this._calculateDamageThreshold();
-    this._calculateInitiative();
 
     // Calculate Force Points
     this._calculateForcePoints();
 
     // Override skill calculations with our static skill system
     this._prepareSkills();
+
+    // Calculate initiative AFTER skills are prepared (initiative is a skill)
+    this._calculateInitiative();
   }
 
   /**
@@ -530,7 +532,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       swim: { defaultAbility: 'str', untrained: true, armorPenalty: true },
       treat_injury: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
       use_computer: { defaultAbility: 'int', untrained: true, armorPenalty: false },
-      use_the_force: { defaultAbility: 'cha', untrained: false, armorPenalty: false }
+      use_the_force: { defaultAbility: 'cha', untrained: true, armorPenalty: false }
     };
 
     // Use the already calculated halfLevel property
@@ -570,6 +572,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       if (data.armorPenalty && armorCheckPenalty !== 0) {
         total += armorCheckPenalty; // Note: penalty is negative, so we add it
       }
+
+      // Apply condition track penalty (affects all skills and rolls)
+      const conditionPenalty = this.conditionTrack?.penalty || 0;
+      total += conditionPenalty; // Note: penalty is negative, so we add it
 
       // Determine if skill can be used untrained
       let canUseUntrained = data.untrained;

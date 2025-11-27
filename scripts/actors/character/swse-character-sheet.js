@@ -282,6 +282,22 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find('.character-generator').click(this._onOpenCharGen.bind(this));
     html.find('.open-store').click(this._onOpenStore.bind(this));
     html.find('.add-class-btn').click(this._onAddClass.bind(this));
+    html.find('.pick-species-btn').click(this._onPickSpecies.bind(this));
+
+    // Add Feat and Add Talent buttons
+    html.find('.add-feat').click(this._onItemCreate.bind(this));
+    html.find('.add-custom-talent').click(this._onItemCreate.bind(this));
+
+    // Prevent enter key from triggering unintended actions in text inputs
+    html.find('input[type="text"], input[type="number"], textarea').on('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        event.stopPropagation();
+        // Blur the input to commit the change
+        $(event.currentTarget).blur();
+        return false;
+      }
+    });
 
     // Combat actions filter and search
     html.find('.combat-action-search').on('input', this._onFilterCombatActions.bind(this));
@@ -289,6 +305,10 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     // Combat action click to post to chat
     html.find('.action-name.rollable').click(this._onPostCombatAction.bind(this));
+
+    // Attack and damage roll buttons
+    html.find('[data-action="rollAttack"]').click(this._onRollAttack.bind(this));
+    html.find('[data-action="rollDamage"]').click(this._onRollDamage.bind(this));
 
     // Feat action listeners
     html.find('.feat-action-toggle').click(this._onToggleFeatAction.bind(this));
@@ -1882,13 +1902,10 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       'system.speed': speciesDoc.system.speed || 6
     };
 
-    // Apply ability modifiers
-    if (speciesDoc.system.abilityModifiers) {
-      for (const [ability, value] of Object.entries(speciesDoc.system.abilityModifiers)) {
-        if (value !== 0) {
-          updateData[`system.abilities.${ability}.racial`] = value;
-        }
-      }
+    // Parse and apply ability modifiers from string format (e.g., "+2 Dex, -2 Con")
+    const abilityMods = this._parseAbilityString(speciesDoc.system.abilities || "None");
+    for (const [ability, value] of Object.entries(abilityMods)) {
+      updateData[`system.attributes.${ability}.racial`] = value;
     }
 
     // Apply species traits
@@ -1924,10 +1941,10 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   async _removeOldSpeciesModifiers() {
     const updateData = {};
 
-    // Reset racial ability modifiers
+    // Reset racial ability modifiers (use attributes, not abilities)
     const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
     for (const ability of abilities) {
-      updateData[`system.abilities.${ability}.racial`] = 0;
+      updateData[`system.attributes.${ability}.racial`] = 0;
     }
 
     // Clear species-specific data
@@ -1986,5 +2003,54 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
         ui.notifications.info(`Trained in ${skillKey.replace(/_/g, ' ')}`);
       }
     });
+  }
+
+  /**
+   * Parse ability string like "+2 Dex, -2 Con" or "+4 Str, +2 Con, -2 Int, -2 Cha"
+   * @param {string} abilityString - Ability modifier string
+   * @returns {Object} Map of ability keys to numeric bonuses
+   */
+  _parseAbilityString(abilityString) {
+    const bonuses = {
+      str: 0,
+      dex: 0,
+      con: 0,
+      int: 0,
+      wis: 0,
+      cha: 0
+    };
+
+    if (!abilityString || abilityString === "None" || abilityString === "none") {
+      return bonuses;
+    }
+
+    // Map of ability name variations to keys
+    const abilityMap = {
+      'str': 'str', 'strength': 'str',
+      'dex': 'dex', 'dexterity': 'dex',
+      'con': 'con', 'constitution': 'con',
+      'int': 'int', 'intelligence': 'int',
+      'wis': 'wis', 'wisdom': 'wis',
+      'cha': 'cha', 'charisma': 'cha'
+    };
+
+    // Split by comma and parse each part
+    const parts = abilityString.split(',').map(p => p.trim());
+
+    for (const part of parts) {
+      // Match patterns like "+2 Dex", "-2 Con", "+4 Str"
+      const match = part.match(/([+-]?\d+)\s*([a-zA-Z]+)/);
+      if (match) {
+        const value = parseInt(match[1]);
+        const abilityName = match[2].toLowerCase();
+        const abilityKey = abilityMap[abilityName];
+
+        if (abilityKey) {
+          bonuses[abilityKey] = value;
+        }
+      }
+    }
+
+    return bonuses;
   }
 }

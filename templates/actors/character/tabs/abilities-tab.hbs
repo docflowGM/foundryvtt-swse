@@ -2,7 +2,7 @@
  <h3 class="section-header">Ability Scores</h3>
 
  <div class="abilities-grid">
- {{#each system.abilities as |ability key|}}
+ {{#each system.attributes as |ability key|}}
  <div class="ability-row{{#if (and @root.system.isDroid (eq key 'con'))}} droid-no-con{{/if}}">
  <label class="ability-label">
  {{upper key}}
@@ -13,7 +13,7 @@
 
  <div class="ability-inputs flexrow">
  <input type="number"
- name="system.abilities.{{key}}.base"
+ name="system.attributes.{{key}}.base"
  value="{{ability.base}}"
  data-dtype="Number"
  placeholder="10"
@@ -23,7 +23,7 @@
  <span>+</span>
 
  <input type="number"
- name="system.abilities.{{key}}.racial"
+ name="system.attributes.{{key}}.racial"
  value="{{ability.racial}}"
  data-dtype="Number"
  placeholder="0"
@@ -33,11 +33,11 @@
  <span>+</span>
 
  <input type="number"
- name="system.abilities.{{key}}.misc"
- value="{{ability.misc}}"
+ name="system.attributes.{{key}}.enhancement"
+ value="{{ability.enhancement}}"
  data-dtype="Number"
  placeholder="0"
- title="Miscellaneous"
+ title="Enhancement Bonus"
  {{#if (and @root.system.isDroid (eq key 'con'))}}disabled{{/if}}/>
 
  <span>=</span>
@@ -48,7 +48,7 @@
  </div>
 
  <div class="ability-mod rollable"
- data-roll="1d20+@abilities.{{key}}.mod"
+ data-roll="1d20+@attributes.{{key}}.mod"
  data-label="{{upper key}} Check">
  {{#if (and @root.system.isDroid (eq key 'con'))}}—{{else}}{{numberFormat ability.mod sign=true}}{{/if}}
  </div>

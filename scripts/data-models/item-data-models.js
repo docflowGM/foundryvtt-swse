@@ -12,7 +12,7 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
       damageType: new fields.StringField({
         required: true,
         initial: "energy",
-        choices: ["energy", "kinetic", "ion"],
+        choices: ["energy", "kinetic", "ion", "explosive", "sonic"],
         label: "Damage Type"
       }),
       attackBonus: new fields.NumberField({required: true, initial: 0, integer: true}),

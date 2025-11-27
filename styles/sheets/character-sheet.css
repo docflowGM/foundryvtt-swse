@@ -2931,3 +2931,438 @@ transform: translateY(-2px);
 font-size: 12px;
 }
 
+/* =========================
+   EQUIPMENT & COMBAT TAB STYLES
+   ========================= */
+
+/* Equipped Items Visual Feedback */
+.weapon-row.equipped,
+.armor-row.equipped {
+  background: rgba(0, 217, 102, 0.08);
+  border-left: 3px solid var(--holo-green);
+  padding-left: 8px;
+}
+
+/* Weapon Equipped Toggle */
+.weapon-equipped-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.weapon-equipped-toggle input[type="checkbox"] {
+  margin: 0;
+}
+
+.weapon-equipped-toggle i {
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.weapon-equipped-toggle input[type="checkbox"]:checked + i {
+  color: var(--holo-green);
+}
+
+.weapon-equipped-toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Armor Section Styles */
+.armor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.armor-name {
+  font-weight: 600;
+  color: var(--color-text-emphatic);
+}
+
+.armor-stats {
+  display: flex;
+  gap: 12px;
+  font-size: 0.9em;
+  color: var(--muted);
+}
+
+.armor-stats i {
+  margin-right: 4px;
+  opacity: 0.7;
+}
+
+/* Armor Equipped Toggle */
+.armor-equipped-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.armor-equipped-toggle input[type="checkbox"] {
+  margin: 0;
+}
+
+.armor-equipped-toggle i {
+  font-size: 1.2em;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.armor-equipped-toggle .equipped-label {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.armor-equipped-toggle input[type="checkbox"]:checked + i {
+  color: var(--holo-green);
+}
+
+.armor-equipped-toggle input[type="checkbox"]:checked ~ .equipped-label {
+  color: var(--holo-green);
+}
+
+.armor-equipped-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(0, 217, 255, 0.3);
+}
+
+.armor-row.equipped .armor-equipped-toggle {
+  background: rgba(0, 217, 102, 0.15);
+  border-color: rgba(0, 217, 102, 0.3);
+}
+
+/* =========================
+   SKILL USE ROLLABLE STYLES
+   ========================= */
+.swse .skill-actions-panel {
+  background: rgba(0, 30, 50, 0.5);
+  border: 1px solid rgba(0, 168, 204, 0.3);
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 8px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.swse .actions-category {
+  margin-bottom: 16px;
+}
+
+.swse .actions-category:last-child {
+  margin-bottom: 0;
+}
+
+.swse .actions-category h4 {
+  color: var(--holo-cyan);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 10px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(0, 168, 204, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse .actions-category h4 i {
+  font-size: 14px;
+}
+
+.swse .actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse .skill-use-rollable {
+  padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.05));
+  border: 1px solid rgba(0, 168, 204, 0.15);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.swse .skill-use-rollable:hover {
+  background: rgba(0, 168, 204, 0.12);
+  border-color: rgba(0, 168, 204, 0.4);
+  transform: translateX(3px);
+  box-shadow: 0 2px 8px rgba(0, 168, 204, 0.2);
+}
+
+.swse .skill-use-rollable:active {
+  transform: translateX(2px) scale(0.99);
+  box-shadow: 0 1px 4px rgba(0, 168, 204, 0.3);
+}
+
+.swse .skill-use-rollable .action-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.swse .skill-use-rollable .action-name {
+  color: var(--holo-cyan);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.swse .skill-use-rollable .action-name i {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.swse .skill-use-rollable:hover .action-name i {
+  opacity: 1;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.swse .skill-use-rollable .action-type {
+  font-size: 10px;
+  padding: 2px 6px;
+  background: rgba(0, 168, 204, 0.2);
+  border: 1px solid rgba(0, 168, 204, 0.3);
+  border-radius: 3px;
+  color: var(--holo-cyan);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.swse .skill-use-rollable .action-cost {
+  font-size: 10px;
+  padding: 2px 6px;
+  background: rgba(255, 215, 0, 0.15);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 3px;
+  color: #ffd700;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.swse .skill-use-rollable .action-dc {
+  font-size: 11px;
+  color: #ff9966;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.swse .skill-use-rollable .action-dc i {
+  color: #ff9966;
+  font-size: 11px;
+}
+
+.swse .skill-use-rollable .action-when,
+.swse .skill-use-rollable .action-outcome,
+.swse .skill-use-rollable .action-notes {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+.swse .skill-use-rollable .action-when em,
+.swse .skill-use-rollable .action-outcome em {
+  font-style: normal;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Skill actions toggle button */
+.swse .skill-actions-toggle {
+  background: transparent;
+  border: none;
+  color: rgba(0, 168, 204, 0.6);
+  cursor: pointer;
+  padding: 2px 6px;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.swse .skill-actions-toggle:hover {
+  color: var(--holo-cyan);
+  transform: scale(1.1);
+}
+
+.swse .skill-actions-toggle i {
+  transition: transform 0.2s ease;
+}
+
+/* Chat message styles for skill rolls */
+.swse-skill-roll,
+.swse-skill-use-roll,
+.swse-skill-use-narrative {
+  background: linear-gradient(180deg, rgba(0, 30, 50, 0.9), rgba(0, 15, 25, 0.9));
+  border: 2px solid rgba(0, 168, 204, 0.5);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.swse-skill-roll .roll-header,
+.swse-skill-use-roll .roll-header {
+  border-bottom: 1px solid rgba(0, 168, 204, 0.3);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.swse-skill-roll h3,
+.swse-skill-use-roll h3,
+.swse-skill-use-narrative h3 {
+  color: var(--holo-cyan, #00d9ff);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swse-skill-roll .skill-name,
+.swse-skill-use-roll .skill-name {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.swse-skill-roll .roll-result,
+.swse-skill-use-roll .roll-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0;
+}
+
+.swse-skill-roll .dice-total,
+.swse-skill-use-roll .dice-total {
+  font-size: 32px;
+  font-weight: 900;
+  color: #00d9ff;
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.6);
+  margin: 0;
+}
+
+.swse-skill-use-roll .dc-target {
+  font-size: 14px;
+  color: #ff9966;
+  font-weight: 600;
+}
+
+.swse-skill-use-roll .result {
+  font-size: 16px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.swse-skill-use-roll .result.success {
+  color: #00ff88;
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid rgba(0, 255, 136, 0.4);
+}
+
+.swse-skill-use-roll .result.failure {
+  color: #ff6666;
+  background: rgba(255, 102, 102, 0.15);
+  border: 1px solid rgba(255, 102, 102, 0.4);
+}
+
+.swse-skill-roll .roll-breakdown,
+.swse-skill-use-roll .roll-breakdown {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.swse-skill-roll .dice-rolls,
+.swse-skill-use-roll .dice-rolls {
+  color: #ffd700;
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.swse-skill-roll .modifiers,
+.swse-skill-use-roll .modifiers {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.swse-skill-use-roll .action-outcome,
+.swse-skill-use-roll .action-condition {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 168, 204, 0.2);
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.swse-skill-use-narrative {
+  background: linear-gradient(180deg, rgba(50, 30, 0, 0.9), rgba(30, 15, 0, 0.9));
+  border-color: rgba(255, 215, 0, 0.5);
+}
+
+.swse-skill-use-narrative h3 {
+  color: #ffd700;
+}
+
+.swse-skill-use-narrative .narrative-content {
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+.swse-skill-use-narrative .narrative-content p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  margin: 0 0 8px 0;
+}
+
+.swse-skill-use-narrative .narrative-effect,
+.swse-skill-use-narrative .narrative-dc,
+.swse-skill-use-narrative .narrative-when {
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid rgba(255, 215, 0, 0.5);
+  border-radius: 3px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}

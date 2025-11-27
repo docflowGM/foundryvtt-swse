@@ -111,12 +111,10 @@
  {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="use_computer" label="Use Computer" defaultAbility="int"}}
  {{/with}}
 
- {{#if @root.system.forceSensitive}}
  {{#unless @root.system.isDroid}}
  {{#with system.skills.use_the_force as |skill|}}
  {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="use_the_force" label="Use the Force" defaultAbility="cha"}}
  {{/with}}
  {{/unless}}
- {{/if}}
  </div>
 </div>

@@ -77,6 +77,7 @@ export class SWSEStore extends FormApplication {
             height: 700,
             title: "Galactic Trade Exchange",
             resizable: true,
+            draggable: true,
             scrollY: [".store-content", ".tab-content", ".window-content"],
             closeOnSubmit: false,
             classes: ["swse", "swse-store"],
@@ -275,6 +276,7 @@ export class SWSEStore extends FormApplication {
         });
 
         this._updateCartCount();
+        this._updateCartDisplay(this.element[0]);
     }
 
     /**

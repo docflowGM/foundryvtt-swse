@@ -218,6 +218,9 @@ export class SWSEActorSheetBase extends ActorSheet {
     // Skill actions toggle
     html.on('click', '.skill-actions-toggle', this._onSkillActionsToggle.bind(this));
 
+    // Skill use rollable
+    html.on('click', '.skill-use-rollable', this._onRollSkillUse.bind(this));
+
     // Editable elements (if owner)
     if (this.isEditable) {
       // Item quantity/equipped changes
@@ -337,26 +340,35 @@ export class SWSEActorSheetBase extends ActorSheet {
 
       // Special handling for initiative rolls
       if (label.toLowerCase().includes('initiative')) {
+        // Check if there's an active combat
+        if (!game.combat) {
+          ui.notifications.warn("No active combat encounter. Create a combat first.");
+          return;
+        }
+
         // Add actor to combat tracker if not already in combat
-        if (game.combat && game.combat.scene && !game.combat.combatants.find(c => c.actor?.id === this.actor.id)) {
+        const existingCombatant = game.combat.combatants.find(c => c.actor?.id === this.actor.id);
+
+        if (!existingCombatant) {
+          const tokens = this.actor.getActiveTokens();
+          const tokenId = tokens.length > 0 ? tokens[0].id : null;
+
           await game.combat.createEmbeddedDocuments('Combatant', [{
             actorId: this.actor.id,
             sceneId: game.combat.scene.id,
-            tokenId: this.actor.token?.id
+            tokenId: tokenId,
+            hidden: tokens.length === 0 // Hide combatant if no token on scene
           }]);
         }
 
-        // Roll initiative
-        const tokens = this.actor.getActiveTokens();
-        if (tokens.length > 0 && game.combat) {
-          await game.combat.rollInitiative(tokens.map(t => t.id));
-        } else {
-          const roll = new Roll(dataset.roll, this.actor.getRollData());
-          roll.toMessage({
-            speaker: ChatMessage.getSpeaker({actor: this.actor}),
-            flavor: label
-          });
+        // Roll initiative for all combatants of this actor
+        const combatants = game.combat.combatants.filter(c => c.actor?.id === this.actor.id);
+        if (combatants.length > 0) {
+          await game.combat.rollInitiative(combatants.map(c => c.id));
         }
+      } else if (dataset.skill) {
+        // Skill roll - open dialog
+        await this._openSkillRollDialog(dataset.skill, label);
       } else {
         // Normal roll
         const roll = new Roll(dataset.roll, this.actor.getRollData());
@@ -679,6 +691,356 @@ export class SWSEActorSheetBase extends ActorSheet {
         icon.classList.toggle('fa-chevron-down', !isHidden);
         icon.classList.toggle('fa-chevron-up', isHidden);
       }
+    }
+  }
+
+  /**
+   * Open skill roll dialog with customizable modifiers
+   */
+  async _openSkillRollDialog(skillKey, skillLabel) {
+    const actor = this.actor;
+    const skill = actor.system.skills?.[skillKey];
+
+    if (!skill) {
+      ui.notifications.error(`Skill ${skillKey} not found on ${actor.name}`);
+      return;
+    }
+
+    const level = actor.system.level?.heroic || actor.system.level || 1;
+    const halfLevel = Math.floor(level / 2);
+
+    // Get ability modifiers
+    const abilities = {
+      str: actor.system.attributes?.str?.mod || 0,
+      dex: actor.system.attributes?.dex?.mod || 0,
+      con: actor.system.attributes?.con?.mod || 0,
+      int: actor.system.attributes?.int?.mod || 0,
+      wis: actor.system.attributes?.wis?.mod || 0,
+      cha: actor.system.attributes?.cha?.mod || 0
+    };
+
+    const selectedAbility = skill.selectedAbility || skill.ability || 'cha';
+    const abilityMod = abilities[selectedAbility] || 0;
+    const trained = skill.trained ? 5 : 0;
+    const focused = skill.focused ? 5 : 0;
+    const miscMod = skill.miscMod || 0;
+    const armorPenalty = skill.armorPenalty || 0;
+    const conditionPenalty = actor.system.conditionPenalty || 0;
+
+    // Build dialog content
+    const content = `
+      <form class="skill-roll-dialog">
+        <div class="form-group">
+          <label>Skill: <strong>${skillLabel}</strong></label>
+        </div>
+        <div class="form-group">
+          <label>Ability:</label>
+          <select name="skillAbility" style="width: 100%;">
+            <option value="str" ${selectedAbility === 'str' ? 'selected' : ''}>STR (${abilities.str >= 0 ? '+' : ''}${abilities.str})</option>
+            <option value="dex" ${selectedAbility === 'dex' ? 'selected' : ''}>DEX (${abilities.dex >= 0 ? '+' : ''}${abilities.dex})</option>
+            ${actor.system.isDroid ? '' : `<option value="con" ${selectedAbility === 'con' ? 'selected' : ''}>CON (${abilities.con >= 0 ? '+' : ''}${abilities.con})</option>`}
+            <option value="int" ${selectedAbility === 'int' ? 'selected' : ''}>INT (${abilities.int >= 0 ? '+' : ''}${abilities.int})</option>
+            <option value="wis" ${selectedAbility === 'wis' ? 'selected' : ''}>WIS (${abilities.wis >= 0 ? '+' : ''}${abilities.wis})</option>
+            <option value="cha" ${selectedAbility === 'cha' ? 'selected' : ''}>CHA (${abilities.cha >= 0 ? '+' : ''}${abilities.cha})</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>½ Level:</label>
+          <input type="number" name="halfLevel" value="${halfLevel}" style="width: 100%;"/>
+        </div>
+        <div class="form-group">
+          <label>Trained Bonus:</label>
+          <input type="number" name="trained" value="${trained}" style="width: 100%;"/>
+        </div>
+        <div class="form-group">
+          <label>Skill Focus Bonus:</label>
+          <input type="number" name="focused" value="${focused}" style="width: 100%;"/>
+        </div>
+        <div class="form-group">
+          <label>Misc Modifier:</label>
+          <input type="number" name="miscMod" value="${miscMod}" style="width: 100%;"/>
+        </div>
+        <div class="form-group">
+          <label>Armor Penalty:</label>
+          <input type="number" name="armorPenalty" value="${armorPenalty}" style="width: 100%;"/>
+        </div>
+        <div class="form-group">
+          <label>Condition Penalty:</label>
+          <input type="number" name="conditionPenalty" value="${conditionPenalty}" style="width: 100%;"/>
+        </div>
+        <div class="form-group">
+          <label>Situational Modifier:</label>
+          <input type="number" name="situational" value="0" style="width: 100%;"/>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label>Total Modifier: <span id="skill-total" style="font-weight: bold; font-size: 1.2em;">${skill.total >= 0 ? '+' : ''}${skill.total}</span></label>
+        </div>
+      </form>
+    `;
+
+    new Dialog({
+      title: `Roll ${skillLabel}`,
+      content: content,
+      buttons: {
+        roll: {
+          icon: '<i class="fas fa-dice-d20"></i>',
+          label: "Roll",
+          callback: async (html) => {
+            const form = html[0].querySelector('form');
+            const formAbility = form.querySelector('[name="skillAbility"]').value;
+            const formHalfLevel = parseInt(form.querySelector('[name="halfLevel"]').value || 0);
+            const formTrained = parseInt(form.querySelector('[name="trained"]').value || 0);
+            const formFocused = parseInt(form.querySelector('[name="focused"]').value || 0);
+            const formMisc = parseInt(form.querySelector('[name="miscMod"]').value || 0);
+            const formArmor = parseInt(form.querySelector('[name="armorPenalty"]').value || 0);
+            const formCondition = parseInt(form.querySelector('[name="conditionPenalty"]').value || 0);
+            const formSituational = parseInt(form.querySelector('[name="situational"]').value || 0);
+
+            const abilityValue = abilities[formAbility] || 0;
+            const total = formHalfLevel + abilityValue + formTrained + formFocused + formMisc + formArmor + formCondition + formSituational;
+
+            const roll = new Roll(`1d20 + ${total}`);
+            await roll.evaluate({async: true});
+
+            // Build breakdown
+            const parts = [];
+            parts.push(`½ Level +${formHalfLevel}`);
+            parts.push(`${formAbility.toUpperCase()} ${abilityValue >= 0 ? '+' : ''}${abilityValue}`);
+            if (formTrained > 0) parts.push(`Trained +${formTrained}`);
+            if (formFocused > 0) parts.push(`Focus +${formFocused}`);
+            if (formMisc !== 0) parts.push(`Misc ${formMisc >= 0 ? '+' : ''}${formMisc}`);
+            if (formArmor !== 0) parts.push(`Armor ${formArmor >= 0 ? '+' : ''}${formArmor}`);
+            if (formCondition !== 0) parts.push(`Condition ${formCondition >= 0 ? '+' : ''}${formCondition}`);
+            if (formSituational !== 0) parts.push(`Situational ${formSituational >= 0 ? '+' : ''}${formSituational}`);
+
+            const messageContent = `
+              <div class="swse-skill-roll">
+                <div class="roll-header">
+                  <h3><i class="fas fa-dice-d20"></i> ${skillLabel}</h3>
+                </div>
+                <div class="roll-result">
+                  <h4 class="dice-total">${roll.total}</h4>
+                </div>
+                <div class="roll-breakdown">
+                  <div class="modifiers">${parts.join(', ')}</div>
+                </div>
+              </div>
+            `;
+
+            await ChatMessage.create({
+              speaker: ChatMessage.getSpeaker({actor: actor}),
+              content: messageContent,
+              roll: roll,
+              sound: CONFIG.sounds.dice
+            });
+
+            if (game.dice3d) {
+              await game.dice3d.showForRoll(roll, game.user, true);
+            }
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "roll",
+      render: (html) => {
+        // Update total when values change
+        const updateTotal = () => {
+          const form = html[0].querySelector('form');
+          const formAbility = form.querySelector('[name="skillAbility"]').value;
+          const formHalfLevel = parseInt(form.querySelector('[name="halfLevel"]').value || 0);
+          const formTrained = parseInt(form.querySelector('[name="trained"]').value || 0);
+          const formFocused = parseInt(form.querySelector('[name="focused"]').value || 0);
+          const formMisc = parseInt(form.querySelector('[name="miscMod"]').value || 0);
+          const formArmor = parseInt(form.querySelector('[name="armorPenalty"]').value || 0);
+          const formCondition = parseInt(form.querySelector('[name="conditionPenalty"]').value || 0);
+          const formSituational = parseInt(form.querySelector('[name="situational"]').value || 0);
+
+          const abilityValue = abilities[formAbility] || 0;
+          const total = formHalfLevel + abilityValue + formTrained + formFocused + formMisc + formArmor + formCondition + formSituational;
+
+          const totalSpan = html[0].querySelector('#skill-total');
+          if (totalSpan) {
+            totalSpan.textContent = `${total >= 0 ? '+' : ''}${total}`;
+          }
+        };
+
+        html.find('select, input').on('change input', updateTotal);
+      }
+    }, {
+      width: 400
+    }).render(true);
+  }
+
+  /**
+   * Handle skill use roll
+   */
+  async _onRollSkillUse(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const element = event.currentTarget;
+    const skillKey = element.dataset.skill;
+    const actionName = element.dataset.actionName;
+    const dc = element.dataset.dc;
+    const dcType = element.dataset.dcType;
+    const outcome = element.dataset.outcome;
+    const whenCondition = element.dataset.when;
+    const effect = element.dataset.effect;
+
+    if (!skillKey) {
+      ui.notifications.error('Skill not found for this action');
+      return;
+    }
+
+    const actor = this.actor;
+    const skill = actor.system.skills?.[skillKey];
+
+    if (!skill) {
+      ui.notifications.error(`Skill ${skillKey} not found on ${actor.name}`);
+      return;
+    }
+
+    // Get skill label
+    const skillLabels = {
+      acrobatics: 'Acrobatics',
+      climb: 'Climb',
+      deception: 'Deception',
+      endurance: 'Endurance',
+      gatherInformation: 'Gather Information',
+      initiative: 'Initiative',
+      jump: 'Jump',
+      knowledge: 'Knowledge',
+      mechanics: 'Mechanics',
+      perception: 'Perception',
+      persuasion: 'Persuasion',
+      pilot: 'Pilot',
+      ride: 'Ride',
+      stealth: 'Stealth',
+      survival: 'Survival',
+      swim: 'Swim',
+      treatInjury: 'Treat Injury',
+      useComputer: 'Use Computer',
+      useTheForce: 'Use the Force'
+    };
+
+    const skillLabel = skillLabels[skillKey] || skillKey;
+
+    // If there's a DC and it's a number, roll against it
+    if (dc && !isNaN(dc)) {
+      const dcValue = parseInt(dc);
+
+      // Perform the roll
+      const formula = `1d20 + ${skill.total}`;
+      const roll = new Roll(formula);
+      await roll.evaluate({async: true});
+
+      const success = roll.total >= dcValue;
+      const d20Result = roll.terms[0].results[0].result;
+
+      // Build breakdown
+      const level = actor.system.level?.heroic || actor.system.level || 1;
+      const halfLevel = Math.floor(level / 2);
+      const abilities = {
+        str: actor.system.attributes?.str?.mod || 0,
+        dex: actor.system.attributes?.dex?.mod || 0,
+        con: actor.system.attributes?.con?.mod || 0,
+        int: actor.system.attributes?.int?.mod || 0,
+        wis: actor.system.attributes?.wis?.mod || 0,
+        cha: actor.system.attributes?.cha?.mod || 0
+      };
+      const selectedAbility = skill.selectedAbility || skill.ability || 'cha';
+      const abilityMod = abilities[selectedAbility] || 0;
+
+      const parts = [];
+      parts.push(`½ Level +${halfLevel}`);
+      parts.push(`${selectedAbility.toUpperCase()} ${abilityMod >= 0 ? '+' : ''}${abilityMod}`);
+      if (skill.trained) parts.push('Trained +5');
+      if (skill.focused) parts.push('Focus +5');
+      if (skill.miscMod) parts.push(`Misc ${skill.miscMod >= 0 ? '+' : ''}${skill.miscMod}`);
+      if (skill.armorPenalty) parts.push(`Armor ${skill.armorPenalty >= 0 ? '+' : ''}${skill.armorPenalty}`);
+      if (actor.system.conditionPenalty) parts.push(`Condition ${actor.system.conditionPenalty >= 0 ? '+' : ''}${actor.system.conditionPenalty}`);
+
+      // Build message content
+      const messageContent = `
+        <div class="swse-skill-use-roll ${success ? 'success' : 'failure'}">
+          <div class="roll-header">
+            <h3><i class="fas fa-dice-d20"></i> ${actionName}</h3>
+            <div class="skill-name">${skillLabel} Check</div>
+          </div>
+          <div class="roll-result">
+            <h4 class="dice-total">${roll.total}</h4>
+            <div class="dc-target">DC ${dcValue}</div>
+            <div class="result ${success ? 'success' : 'failure'}">
+              ${success ? '✓ SUCCESS' : '✗ FAILURE'}
+            </div>
+          </div>
+          <div class="roll-breakdown">
+            <div class="dice-rolls">d20: ${d20Result}</div>
+            <div class="modifiers">${parts.join(', ')}</div>
+          </div>
+          ${success && (outcome || effect) ? `
+            <div class="action-outcome">
+              <strong>Effect:</strong> ${outcome || effect}
+            </div>
+          ` : ''}
+          ${whenCondition ? `
+            <div class="action-condition">
+              <em>${whenCondition}</em>
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({actor: actor}),
+        content: messageContent,
+        roll: roll,
+        sound: CONFIG.sounds.dice,
+        flags: {
+          swse: {
+            type: 'skill-use-check',
+            actionName: actionName,
+            skillKey: skillKey,
+            dc: dcValue,
+            success: success
+          }
+        }
+      });
+
+      if (game.dice3d) {
+        await game.dice3d.showForRoll(roll, game.user, true);
+      }
+    } else {
+      // No DC or non-numeric DC - output narrative
+      const messageContent = `
+        <div class="swse-skill-use-narrative">
+          <div class="narrative-header">
+            <h3><i class="fas fa-book"></i> ${actionName}</h3>
+          </div>
+          <div class="narrative-content">
+            <p><strong>${actor.name}</strong> is ${actionName.toLowerCase()}.</p>
+            ${effect ? `<div class="narrative-effect"><em>${effect}</em></div>` : ''}
+            ${dc ? `<div class="narrative-dc"><strong>DC:</strong> ${dc}</div>` : ''}
+            ${whenCondition ? `<div class="narrative-when"><em>${whenCondition}</em></div>` : ''}
+          </div>
+        </div>
+      `;
+
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({actor: actor}),
+        content: messageContent,
+        flags: {
+          swse: {
+            type: 'skill-use-narrative',
+            actionName: actionName,
+            skillKey: skillKey
+          }
+        }
+      });
     }
   }
 

@@ -75,11 +75,12 @@
  <div class="weapon-col-attack">Attack</div>
  <div class="weapon-col-damage">Damage</div>
  <div class="weapon-col-crit">Critical</div>
+ <div class="weapon-col-equipped">Equipped</div>
  <div class="weapon-col-controls"></div>
  </div>
 
  {{#each weapons as |weapon|}}
- <div class="weapon-row flexrow" data-item-id="{{weapon._id}}">
+ <div class="weapon-row flexrow {{#if weapon.system.equipped}}equipped{{/if}}" data-item-id="{{weapon._id}}">
  <div class="weapon-name">
  <img src="{{weapon.img}}" width="24" height="24" alt="{{weapon.name}}"/>
  {{weapon.name}}
@@ -101,6 +102,13 @@
  {{weapon.system.critical}}
  </div>
 
+ <label class="weapon-equipped-toggle">
+ <input type="checkbox"
+ name="items.{{weapon._id}}.system.equipped"
+ {{checked weapon.system.equipped}}/>
+ <i class="fas fa-hand-holding"></i>
+ </label>
+
  <div class="weapon-controls flexrow">
  <a class="item-control item-edit" data-action="edit" title="Edit">
  <i class="fas fa-edit"></i>
@@ -121,16 +129,21 @@
 
  <div class="armor-section">
  {{#each armor as |item|}}
- <div class="armor-row flexrow" data-item-id="{{item._id}}">
+ <div class="armor-row flexrow {{#if item.system.equipped}}equipped{{/if}}" data-item-id="{{item._id}}">
  <img src="{{item.img}}" width="24" height="24" alt="{{item.name}}"/>
+ <div class="armor-info flex2">
  <span class="armor-name">{{item.name}}</span>
- <span class="armor-bonus">Reflex: +{{item.system.defenseBonus}}</span>
- <span class="armor-max-dex">Max Dex: +{{item.system.maxDexBonus}}</span>
- <label>
+ <div class="armor-stats">
+ <span class="armor-bonus"><i class="fas fa-shield-alt"></i> Reflex: +{{item.system.defenseBonus}}</span>
+ <span class="armor-max-dex"><i class="fas fa-running"></i> Max Dex: +{{item.system.maxDexBonus}}</span>
+ </div>
+ </div>
+ <label class="armor-equipped-toggle" title="{{#if item.system.equipped}}Equipped - providing defense bonus{{else}}Not equipped{{/if}}">
  <input type="checkbox"
  name="items.{{item._id}}.system.equipped"
  {{checked item.system.equipped}}/>
- Equipped
+ <i class="fas fa-user-shield"></i>
+ <span class="equipped-label">{{#if item.system.equipped}}Equipped{{else}}Equip{{/if}}</span>
  </label>
  <div class="item-controls flexrow">
  <a class="item-control item-edit" data-action="edit" title="Edit">

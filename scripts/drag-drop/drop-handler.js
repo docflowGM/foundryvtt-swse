@@ -213,7 +213,7 @@ export class DropHandler {
     // - Size
     // - Speed
     // - Special abilities/features
-    
+
     // Check if actor already has a species
     const existingSpecies = actor.items.find(i => i.type === 'species');
     if (existingSpecies) {
@@ -232,23 +232,74 @@ export class DropHandler {
 
     await actor.createEmbeddedDocuments('Item', [species.toObject()]);
 
-    // Apply racial bonuses
-    const abilityMods = species.system.abilityMods || species.system.bonuses || {};
+    // Parse racial ability bonuses from string format (e.g., "+2 Dex, -2 Con")
+    const abilityMods = this._parseAbilityString(species.system.abilities || "None");
+
     const updates = {
-      'system.abilities.str.racial': abilityMods.str || 0,
-      'system.abilities.dex.racial': abilityMods.dex || 0,
-      'system.abilities.con.racial': abilityMods.con || 0,
-      'system.abilities.int.racial': abilityMods.int || 0,
-      'system.abilities.wis.racial': abilityMods.wis || 0,
-      'system.abilities.cha.racial': abilityMods.cha || 0,
-      'system.size': species.system.size || 'medium',
-      'system.speed': parseInt(species.system.speed) || 6
+      'system.attributes.str.racial': abilityMods.str || 0,
+      'system.attributes.dex.racial': abilityMods.dex || 0,
+      'system.attributes.con.racial': abilityMods.con || 0,
+      'system.attributes.int.racial': abilityMods.int || 0,
+      'system.attributes.wis.racial': abilityMods.wis || 0,
+      'system.attributes.cha.racial': abilityMods.cha || 0,
+      'system.size': species.system.size || 'Medium',
+      'system.speed': parseInt(species.system.speed) || 6,
+      'system.race': species.name  // Store species name for display
     };
 
     await actor.update(updates);
 
     ui.notifications.info(game.i18n.format('SWSE.Notifications.Items.SpeciesApplied', {species: species.name, actor: actor.name}));
     return true;
+  }
+
+  /**
+   * Parse ability string like "+2 Dex, -2 Con" or "+4 Str, +2 Con, -2 Int, -2 Cha"
+   * @param {string} abilityString - Ability modifier string
+   * @returns {Object} Map of ability keys to numeric bonuses
+   */
+  static _parseAbilityString(abilityString) {
+    const bonuses = {
+      str: 0,
+      dex: 0,
+      con: 0,
+      int: 0,
+      wis: 0,
+      cha: 0
+    };
+
+    if (!abilityString || abilityString === "None" || abilityString === "none") {
+      return bonuses;
+    }
+
+    // Map of ability name variations to keys
+    const abilityMap = {
+      'str': 'str', 'strength': 'str',
+      'dex': 'dex', 'dexterity': 'dex',
+      'con': 'con', 'constitution': 'con',
+      'int': 'int', 'intelligence': 'int',
+      'wis': 'wis', 'wisdom': 'wis',
+      'cha': 'cha', 'charisma': 'cha'
+    };
+
+    // Split by comma and parse each part
+    const parts = abilityString.split(',').map(p => p.trim());
+
+    for (const part of parts) {
+      // Match patterns like "+2 Dex", "-2 Con", "+4 Str"
+      const match = part.match(/([+-]?\d+)\s*([a-zA-Z]+)/);
+      if (match) {
+        const value = parseInt(match[1]);
+        const abilityName = match[2].toLowerCase();
+        const abilityKey = abilityMap[abilityName];
+
+        if (abilityKey) {
+          bonuses[abilityKey] = value;
+        }
+      }
+    }
+
+    return bonuses;
   }
   
   static async handleClassDrop(actor, classItem) {
