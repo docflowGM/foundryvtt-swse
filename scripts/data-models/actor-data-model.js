@@ -43,6 +43,52 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       shimmed.speed = Number.isNaN(num) ? 6 : Math.floor(num);
     }
 
+    // Ensure level is an integer
+    if (shimmed.level !== undefined && shimmed.level !== null) {
+      const num = Number(shimmed.level);
+      shimmed.level = Number.isNaN(num) ? 1 : Math.floor(num);
+    }
+
+    // Ensure experience is an integer
+    if (shimmed.experience !== undefined && shimmed.experience !== null) {
+      const num = Number(shimmed.experience);
+      shimmed.experience = Number.isNaN(num) ? 0 : Math.floor(num);
+    }
+
+    // Ensure hp values are integers
+    if (shimmed.hp) {
+      if (shimmed.hp.value !== undefined && shimmed.hp.value !== null) {
+        const num = Number(shimmed.hp.value);
+        shimmed.hp.value = Number.isNaN(num) ? 1 : Math.floor(num);
+      }
+      if (shimmed.hp.max !== undefined && shimmed.hp.max !== null) {
+        const num = Number(shimmed.hp.max);
+        shimmed.hp.max = Number.isNaN(num) ? 1 : Math.floor(num);
+      }
+      if (shimmed.hp.temp !== undefined && shimmed.hp.temp !== null) {
+        const num = Number(shimmed.hp.temp);
+        shimmed.hp.temp = Number.isNaN(num) ? 0 : Math.floor(num);
+      }
+    }
+
+    // Ensure credits is an integer
+    if (shimmed.credits !== undefined && shimmed.credits !== null) {
+      const num = Number(shimmed.credits);
+      shimmed.credits = Number.isNaN(num) ? 0 : Math.floor(num);
+    }
+
+    // Ensure condition track values are integers
+    if (shimmed.conditionTrack) {
+      if (shimmed.conditionTrack.current !== undefined && shimmed.conditionTrack.current !== null) {
+        const num = Number(shimmed.conditionTrack.current);
+        shimmed.conditionTrack.current = Number.isNaN(num) ? 0 : Math.floor(num);
+      }
+      if (shimmed.conditionTrack.penalty !== undefined && shimmed.conditionTrack.penalty !== null) {
+        const num = Number(shimmed.conditionTrack.penalty);
+        shimmed.conditionTrack.penalty = Number.isNaN(num) ? 0 : Math.floor(num);
+      }
+    }
+
     // Ensure abilities have integer values
     if (shimmed.abilities) {
       for (const abilityType of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
