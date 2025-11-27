@@ -84,9 +84,9 @@
  <h4><i class="fas fa-fist-raised"></i> Combat Actions</h4>
  <div class="actions-list">
  {{#each combatActions}}
- <div class="action-item">
+ <div class="action-item skill-use-rollable" data-skill="{{../key}}" data-action-name="{{name}}" data-dc="{{dc.value}}" data-dc-type="{{dc.type}}" data-action-type="{{actionType}}" data-outcome="{{outcome}}" data-when="{{when}}">
  <div class="action-header">
- <strong class="action-name">{{name}}</strong>
+ <strong class="action-name"><i class="fas fa-dice-d20"></i> {{name}}</strong>
  <span class="action-type">{{actionType}}</span>
  {{#if cost}}
  <span class="action-cost">Cost: {{cost}}</span>
@@ -125,9 +125,9 @@
  <h4><i class="fas fa-book"></i> Other Uses</h4>
  <div class="actions-list">
  {{#each extraUses}}
- <div class="action-item">
+ <div class="action-item skill-use-rollable" data-skill="{{../key}}" data-action-name="{{name}}" data-dc="{{dc}}" data-effect="{{effect}}">
  <div class="action-header">
- <strong class="action-name">{{name}}</strong>
+ <strong class="action-name"><i class="fas fa-dice-d20"></i> {{name}}</strong>
  {{#if time}}
  <span class="action-type">{{time}}</span>
  {{/if}}
