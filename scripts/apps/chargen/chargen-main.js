@@ -19,6 +19,7 @@ export default class CharacterGenerator extends Application {
   constructor(actor = null, options = {}) {
     super(options);
     this.actor = actor;
+    this.actorType = options.actorType || "character"; // "character" for PCs, "npc" for NPCs
     this.characterData = {
       name: "",
       isDroid: false,
@@ -290,8 +291,36 @@ export default class CharacterGenerator extends Application {
 
     // Filter feats based on prerequisites
     if (context.packs.feats) {
+      // NONHEROIC RULE: Filter to restricted feat list for NPCs
+      if (this.actorType === "npc") {
+        const nonheroicFeats = [
+          "Armor Proficiency (Light)",
+          "Armor Proficiency (Medium)",
+          "Skill Focus",
+          "Skill Training",
+          "Weapon Proficiency (Advanced Melee Weapons)",
+          "Weapon Proficiency (Heavy Weapons)",
+          "Weapon Proficiency (Pistols)",
+          "Weapon Proficiency (Rifles)",
+          "Weapon Proficiency (Simple Weapons)"
+        ];
+
+        context.packs.feats = context.packs.feats.filter(f => {
+          return nonheroicFeats.some(allowed => f.name.includes(allowed));
+        });
+
+        SWSELogger.log(`CharGen | NPC mode: Filtered to ${context.packs.feats.length} nonheroic feats`);
+
+        // Organize by category
+        if (this._featMetadata && this._featMetadata.categories) {
+          context.featCategories = this._organizeFeatsByCategory(context.packs.feats);
+          context.featCategoryList = Object.keys(this._featMetadata.categories)
+            .map(key => ({ key, ...this._featMetadata.categories[key] }))
+            .sort((a, b) => a.order - b.order);
+        }
+      }
       // In Free Build mode or for level 1 characters, show all feats without strict filtering
-      if (this.freeBuild || this.characterData.level === 1) {
+      else if (this.freeBuild || this.characterData.level === 1) {
         SWSELogger.log(`CharGen | Showing all feats (Free Build: ${this.freeBuild}, Level: ${this.characterData.level})`);
 
         // Still organize feats by category for better UX
@@ -509,7 +538,13 @@ export default class CharacterGenerator extends Application {
       steps.push("species");
     }
 
-    steps.push("abilities", "class", "feats", "talents", "skills", "summary", "shop");
+    // NPC workflow: skip class and talents, go straight to abilities/feats/skills
+    if (this.actorType === "npc") {
+      steps.push("abilities", "feats", "skills", "summary");
+    } else {
+      // PC workflow: normal flow with class and talents
+      steps.push("abilities", "class", "feats", "talents", "skills", "summary", "shop");
+    }
     return steps;
   }
 
@@ -799,9 +834,14 @@ export default class CharacterGenerator extends Application {
       speciesSource: this.characterData.speciesSource || ""
     };
 
+    // For NPCs, auto-create a Nonheroic class
+    if (this.actorType === "npc" && (!this.characterData.classes || this.characterData.classes.length === 0)) {
+      this.characterData.classes = [{ name: "Nonheroic", level: 1 }];
+    }
+
     const actorData = {
       name: this.characterData.name || "Unnamed Character",
-      type: "character",
+      type: this.actorType, // Use the actorType passed in constructor
       system: system,
       prototypeToken: {
         name: this.characterData.name || "Unnamed Character",
@@ -824,12 +864,45 @@ export default class CharacterGenerator extends Application {
         items.push(p);
       }
 
+      // For NPCs, create a Nonheroic class item
+      if (this.actorType === "npc") {
+        const nonheroicClass = {
+          name: "Nonheroic",
+          type: "class",
+          system: {
+            level: 1,
+            hitDie: "1d4",
+            babProgression: "medium", // Will be overridden by nonheroic BAB table
+            isNonheroic: true,
+            defenses: {
+              fortitude: 0,
+              reflex: 0,
+              will: 0
+            },
+            classSkills: [
+              "acrobatics", "climb", "deception", "endurance",
+              "gather_information", "initiative", "jump",
+              "knowledge_bureaucracy", "knowledge_galactic_lore",
+              "knowledge_life_sciences", "knowledge_physical_sciences",
+              "knowledge_social_sciences", "knowledge_tactics",
+              "knowledge_technology", "mechanics", "perception",
+              "persuasion", "pilot", "ride", "stealth", "survival",
+              "swim", "treat_injury", "use_computer"
+            ],
+            forceSensitive: false,
+            talent_trees: []
+          }
+        };
+        items.push(nonheroicClass);
+      }
+
       if (items.length > 0) {
         await created.createEmbeddedDocuments("Item", items);
       }
 
       // Apply starting class features (weapon proficiencies, class features, etc.)
-      if (this.characterData.classes && this.characterData.classes.length > 0) {
+      // Skip for NPCs since they don't have class features
+      if (this.actorType !== "npc" && this.characterData.classes && this.characterData.classes.length > 0) {
         const className = this.characterData.classes[0].name;
         const classDoc = this._packs.classes.find(c => c.name === className || c._id === className);
         if (classDoc) {

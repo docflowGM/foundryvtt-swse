@@ -254,6 +254,10 @@ export class ClassDataModel extends foundry.abstract.DataModel {
       defenseBonus: new fields.NumberField({required: true, initial: 0, integer: true}),
       reputation: new fields.NumberField({required: true, initial: 0, integer: true}),
 
+      // Nonheroic flag - true for nonheroic classes
+      // Nonheroic characters follow special rules (no talents, different BAB, 1d4 HP, etc.)
+      isNonheroic: new fields.BooleanField({required: true, initial: false}),
+
       // Computed defenses object (populated in prepareDerivedData)
       // This stores the per-level defense bonuses as numbers
       defenses: new fields.SchemaField({
