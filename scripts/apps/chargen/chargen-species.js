@@ -75,12 +75,19 @@ export function _applySpeciesData(speciesDoc) {
   // 4. Store special abilities
   this.characterData.specialAbilities = system.special || [];
 
-  // 5. Check for Human racial bonuses
-  if (speciesDoc.name === "Human" || speciesDoc.name === "human") {
-    this.characterData.featsRequired = 2; // Humans get bonus feat
-    SWSELogger.log("CharGen | Human species: Bonus feat granted (2 feats required)");
+  // 5. Check for Human racial bonuses and NPC status
+  const isNPC = this.actorType === "npc";
+  const isHuman = speciesDoc.name === "Human" || speciesDoc.name === "human";
+
+  if (isNPC) {
+    // NONHEROIC RULE: Nonheroic characters get 3 starting feats
+    // Non-human nonheroic characters get 2 feats (remove 1 for no human bonus)
+    this.characterData.featsRequired = isHuman ? 3 : 2;
+    SWSELogger.log(`CharGen | NPC (${isHuman ? 'Human' : 'Non-human'}): ${this.characterData.featsRequired} starting feats`);
   } else {
-    this.characterData.featsRequired = 1; // All other species get 1 feat
+    // PCs: Humans get 2 feats, all other species get 1
+    this.characterData.featsRequired = isHuman ? 2 : 1;
+    SWSELogger.log(`CharGen | PC (${isHuman ? 'Human' : 'Non-human'}): ${this.characterData.featsRequired} feats`);
   }
 
   // 6. Store languages

@@ -215,10 +215,28 @@ export function calculateDefenseBonuses(actor) {
 /**
  * Check if the new level grants an ability score increase
  * @param {number} newLevel - The new character level
+ * @param {boolean} isNonheroic - Whether this is a nonheroic class level
  * @returns {boolean}
  */
-export function getsAbilityIncrease(newLevel) {
+export function getsAbilityIncrease(newLevel, isNonheroic = false) {
+  // NONHEROIC RULE: Nonheroic characters get ability increases every 4 levels (same levels)
+  // But they only get to increase 1 ability score by 1 point (instead of 2 scores)
   return [4, 8, 12, 16, 20].includes(newLevel);
+}
+
+/**
+ * Get the number of ability score increases at this level
+ * @param {number} newLevel - The new character level
+ * @param {boolean} isNonheroic - Whether this is a nonheroic class level
+ * @returns {number} - Number of ability scores that can be increased (1 or 2)
+ */
+export function getAbilityIncreaseCount(newLevel, isNonheroic = false) {
+  if (![4, 8, 12, 16, 20].includes(newLevel)) {
+    return 0;
+  }
+
+  // NONHEROIC RULE: Nonheroic characters only get 1 ability score increase (instead of 2)
+  return isNonheroic ? 1 : 2;
 }
 
 /**
@@ -238,64 +256,73 @@ export function getsMilestoneFeat(newLevel) {
  * @returns {number} HP to gain
  */
 export function calculateHPGain(classDoc, actor, newLevel) {
-  // SWSE Official Hit Dice by Class
-  const classHitDice = {
-    // d12 classes
-    'Elite Trooper': 12,
-    'Independent Droid': 12,
-    // d10 classes
-    'Assassin': 10,
-    'Bounty Hunter': 10,
-    'Droid Commander': 10, // Changed from d6
-    'Gladiator': 10,
-    'Imperial Knight': 10,
-    'Jedi': 10,
-    'Jedi Knight': 10,
-    'Jedi Master': 10,
-    'Master Privateer': 10,
-    'Martial Arts Master': 10,
-    'Pathfinder': 10,
-    'Sith Apprentice': 10,
-    'Sith Lord': 10,
-    'Soldier': 10,
-    'Vanguard': 10,
-    // d8 classes
-    'Ace Pilot': 8, // Changed from d6
-    'Beast Rider': 8,
-    'Charlatan': 8,
-    'Corporate Agent': 8,
-    'Crime Lord': 8, // Changed from d6
-    'Enforcer': 8,
-    'Force Adept': 8, // Changed from d6
-    'Force Disciple': 8,
-    'Gunslinger': 8,
-    'Improviser': 8,
-    'Infiltrator': 8,
-    'Medic': 8,
-    'Melee Duelist': 8,
-    'Military Engineer': 8,
-    'Officer': 8, // Changed from d6
-    'Outlaw': 8,
-    'Saboteur': 8, // Changed from d6
-    'Scout': 8,
-    'Shaper': 8,
-    // d6 classes
-    'Noble': 6,
-    'Scoundrel': 6,
-    'Slicer': 6
-  };
+  // Check if this is a nonheroic class
+  const isNonheroic = classDoc.system.isNonheroic || false;
 
-  // Get hit die - first check our mapping by class name, then fall back to class data
-  const className = classDoc.name;
-  let hitDie = classHitDice[className];
+  let hitDie;
 
-  if (!hitDie) {
-    // Fallback: parse from class data
-    const hitDieString = classDoc.system.hit_die || classDoc.system.hitDie || "1d6";
-    hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
-    SWSELogger.warn(`SWSE LevelUp | Class "${className}" not in hit dice map, using ${hitDie} from class data`);
+  // NONHEROIC RULE: Nonheroic characters gain 1d4 HP + CON per level
+  if (isNonheroic) {
+    hitDie = 4;
+  } else {
+    // SWSE Official Hit Dice by Class
+    const classHitDice = {
+      // d12 classes
+      'Elite Trooper': 12,
+      'Independent Droid': 12,
+      // d10 classes
+      'Assassin': 10,
+      'Bounty Hunter': 10,
+      'Droid Commander': 10, // Changed from d6
+      'Gladiator': 10,
+      'Imperial Knight': 10,
+      'Jedi': 10,
+      'Jedi Knight': 10,
+      'Jedi Master': 10,
+      'Master Privateer': 10,
+      'Martial Arts Master': 10,
+      'Pathfinder': 10,
+      'Sith Apprentice': 10,
+      'Sith Lord': 10,
+      'Soldier': 10,
+      'Vanguard': 10,
+      // d8 classes
+      'Ace Pilot': 8, // Changed from d6
+      'Beast Rider': 8,
+      'Charlatan': 8,
+      'Corporate Agent': 8,
+      'Crime Lord': 8, // Changed from d6
+      'Enforcer': 8,
+      'Force Adept': 8, // Changed from d6
+      'Force Disciple': 8,
+      'Gunslinger': 8,
+      'Improviser': 8,
+      'Infiltrator': 8,
+      'Medic': 8,
+      'Melee Duelist': 8,
+      'Military Engineer': 8,
+      'Officer': 8, // Changed from d6
+      'Outlaw': 8,
+      'Saboteur': 8, // Changed from d6
+      'Scout': 8,
+      'Shaper': 8,
+      // d6 classes
+      'Noble': 6,
+      'Scoundrel': 6,
+      'Slicer': 6
+    };
+
+    // Get hit die - first check our mapping by class name, then fall back to class data
+    const className = classDoc.name;
+    hitDie = classHitDice[className];
+
+    if (!hitDie) {
+      // Fallback: parse from class data
+      const hitDieString = classDoc.system.hit_die || classDoc.system.hitDie || "1d6";
+      hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
+      SWSELogger.warn(`SWSE LevelUp | Class "${className}" not in hit dice map, using ${hitDie} from class data`);
+    }
   }
-
   const conMod = actor.system.abilities.con?.mod || 0;
   const hpGeneration = game.settings.get("swse", "hpGeneration") || "average";
   const maxHPLevels = game.settings.get("swse", "maxHPLevels") || 1;
@@ -326,7 +353,7 @@ export function calculateHPGain(classDoc, actor, newLevel) {
   }
 
   const finalHPGain = Math.max(1, hpGain);
-  SWSELogger.log(`SWSE LevelUp | HP gain: ${finalHPGain} (d${hitDie}, method: ${hpGeneration})`);
+  SWSELogger.log(`SWSE LevelUp | HP gain: ${finalHPGain} (d${hitDie}${isNonheroic ? ' [nonheroic]' : ''}, method: ${hpGeneration})`);
 
   return finalHPGain;
 }

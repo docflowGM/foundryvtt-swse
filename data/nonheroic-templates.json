@@ -1,0 +1,210 @@
+{
+  "templates": [
+    {
+      "id": "nonheroic_worker",
+      "name": "Worker",
+      "class": "Nonheroic",
+      "archetype": "Worker",
+      "description": "A skilled laborer, mechanic, or technician. Workers are the backbone of galactic civilization, maintaining infrastructure and repairing equipment.",
+      "quote": "Honest work, honest pay. That's all I need.",
+      "imagePath": "systems/swse/assets/templates/nonheroic_worker.webp",
+      "abilityScores": {
+        "str": 12,
+        "dex": 10,
+        "con": 13,
+        "int": 12,
+        "wis": 11,
+        "cha": 8
+      },
+      "species": "Human",
+      "className": null,
+      "isNonheroic": true,
+      "level": 1,
+      "startingFeats": [
+        "Skill Training (Mechanics)",
+        "Skill Training (Use Computer)",
+        "Skill Focus (Mechanics)"
+      ],
+      "trainedSkills": [
+        "mechanics",
+        "use_computer"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Tool Kit",
+        "Utility Belt",
+        "Work Coveralls",
+        "Comlink",
+        "Datapad",
+        "Fusion Lantern"
+      ],
+      "credits": 500,
+      "notes": "Mechanics +10, HP ~7 (1d4+1). Workers make excellent technicians and support personnel. Can multiclass into Scout or Scoundrel for advancement."
+    },
+    {
+      "id": "nonheroic_trooper",
+      "name": "Trooper",
+      "class": "Nonheroic",
+      "archetype": "Trooper",
+      "description": "A baseline soldier, guard, or militia member. Troopers have basic military training but lack the experience and skill of true heroes.",
+      "quote": "Following orders. That's what keeps the galaxy running.",
+      "imagePath": "systems/swse/assets/templates/nonheroic_trooper.webp",
+      "abilityScores": {
+        "str": 13,
+        "dex": 12,
+        "con": 12,
+        "int": 10,
+        "wis": 11,
+        "cha": 8
+      },
+      "species": "Human",
+      "className": null,
+      "isNonheroic": true,
+      "level": 1,
+      "startingFeats": [
+        "Armor Proficiency (Light)",
+        "Weapon Proficiency (Rifles)",
+        "Weapon Proficiency (Pistols)"
+      ],
+      "trainedSkills": [
+        "perception",
+        "initiative"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Blaster Rifle",
+        "Blaster Pistol",
+        "Blast Vest & Helmet",
+        "Comlink",
+        "Utility Belt with Medpac",
+        "Power Packs (2)"
+      ],
+      "credits": 300,
+      "notes": "Attack +1, Reflex 11, HP ~7 (1d4+1). Standard military trooper. Multiclass into Soldier for advancement to elite status."
+    },
+    {
+      "id": "nonheroic_criminal",
+      "name": "Criminal",
+      "class": "Nonheroic",
+      "archetype": "Criminal",
+      "description": "A petty thug, gang member, or street criminal. Criminals live on the edge of society, relying on intimidation and violence.",
+      "quote": "Credits or your life. Your choice.",
+      "imagePath": "systems/swse/assets/templates/nonheroic_criminal.webp",
+      "abilityScores": {
+        "str": 12,
+        "dex": 13,
+        "con": 11,
+        "int": 10,
+        "wis": 9,
+        "cha": 11
+      },
+      "species": "Human",
+      "className": null,
+      "isNonheroic": true,
+      "level": 1,
+      "startingFeats": [
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Simple Weapons)",
+        "Skill Training (Deception)"
+      ],
+      "trainedSkills": [
+        "deception",
+        "stealth"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Blaster Pistol",
+        "Knife",
+        "Street Clothes",
+        "Comlink",
+        "Binder Cuffs"
+      ],
+      "credits": 200,
+      "notes": "Attack +1, Deception +7, HP ~6 (1d4+0). Street criminals and thugs. Multiclass into Scoundrel to become a professional outlaw."
+    },
+    {
+      "id": "nonheroic_merchant",
+      "name": "Merchant",
+      "class": "Nonheroic",
+      "archetype": "Merchant",
+      "description": "A trader, shopkeeper, or business professional. Merchants know the value of everything and have connections throughout the commercial sector.",
+      "quote": "Everything has a price, my friend. Let's negotiate.",
+      "imagePath": "systems/swse/assets/templates/nonheroic_merchant.webp",
+      "abilityScores": {
+        "str": 8,
+        "dex": 10,
+        "con": 10,
+        "int": 13,
+        "wis": 12,
+        "cha": 13
+      },
+      "species": "Human",
+      "className": null,
+      "isNonheroic": true,
+      "level": 1,
+      "startingFeats": [
+        "Skill Training (Persuasion)",
+        "Skill Training (Gather Information)",
+        "Skill Focus (Persuasion)"
+      ],
+      "trainedSkills": [
+        "persuasion",
+        "gather_information",
+        "use_computer"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Hold-Out Blaster",
+        "Business Attire",
+        "Datapad",
+        "Comlink",
+        "Credit Chip",
+        "Portable Scanner"
+      ],
+      "credits": 1000,
+      "notes": "Persuasion +10, Gather Information +7, HP ~6 (1d4+0). Merchants excel at social interactions. Multiclass into Noble for true influence."
+    },
+    {
+      "id": "nonheroic_police",
+      "name": "Police Officer",
+      "class": "Nonheroic",
+      "archetype": "Police",
+      "description": "A law enforcement officer, security guard, or constable. Police maintain order and enforce laws in civilized systems.",
+      "quote": "By the authority of the law, stand down!",
+      "imagePath": "systems/swse/assets/templates/nonheroic_police.webp",
+      "abilityScores": {
+        "str": 12,
+        "dex": 11,
+        "con": 13,
+        "int": 11,
+        "wis": 12,
+        "cha": 10
+      },
+      "species": "Human",
+      "className": null,
+      "isNonheroic": true,
+      "level": 1,
+      "startingFeats": [
+        "Armor Proficiency (Light)",
+        "Weapon Proficiency (Pistols)",
+        "Skill Training (Perception)"
+      ],
+      "trainedSkills": [
+        "perception",
+        "gather_information"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Stun Baton",
+        "Blaster Pistol",
+        "Padded Armor",
+        "Comlink",
+        "Binder Cuffs",
+        "Medpac",
+        "Badge & Credentials"
+      ],
+      "credits": 400,
+      "notes": "Perception +8, Reflex 11, HP ~7 (1d4+1). Local law enforcement. Multiclass into Soldier or Noble for advancement."
+    }
+  ]
+}
