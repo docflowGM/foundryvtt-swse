@@ -1,0 +1,19 @@
+{
+  "speciesSourcePriority": [
+    "Core",
+    "Core Rulebook",
+    "Knights of the Old Republic",
+    "KotOR",
+    "KOTOR",
+    "Clone Wars",
+    "Rebellion Era",
+    "Legacy Era",
+    "The Force Unleashed",
+    "Galaxy at War",
+    "Unknown Regions",
+    "Scum and Villainy",
+    "Threats of the Galaxy",
+    "Jedi Academy"
+  ],
+  "description": "Configuration file for character generation system. Species sources are sorted by the order defined in speciesSourcePriority, with lower index values appearing first. Unknown sources will appear last, sorted alphabetically."
+}

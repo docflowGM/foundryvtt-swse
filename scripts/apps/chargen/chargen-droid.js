@@ -557,7 +557,27 @@ export function _recalculateDroidTotals() {
 export function _updateDroidCreditsDisplay(doc) {
   // Update base credits
   const baseEl = doc.querySelector('.base-credits');
-  if (baseEl) baseEl.textContent = this.characterData.droidCredits.base.toLocaleString();
+  if (baseEl) {
+    baseEl.textContent = this.characterData.droidCredits.base.toLocaleString();
+
+    // Add note about pending class credits if class not yet selected
+    const hasClass = this.characterData.classes && this.characterData.classes.length > 0;
+    if (!hasClass) {
+      // Check if there's already a note element
+      let noteEl = baseEl.parentElement.querySelector('.pending-credits-note');
+      if (!noteEl) {
+        noteEl = document.createElement('div');
+        noteEl.className = 'pending-credits-note';
+        noteEl.style.cssText = 'font-size: 0.85em; color: #9ed0ff; margin-top: 3px; font-style: italic;';
+        baseEl.parentElement.appendChild(noteEl);
+      }
+      noteEl.textContent = '+ class starting credits (selected later)';
+    } else {
+      // Remove note if class has been selected
+      const noteEl = baseEl.parentElement.querySelector('.pending-credits-note');
+      if (noteEl) noteEl.remove();
+    }
+  }
 
   // Update spent credits
   const spentEl = doc.querySelector('.spent-credits');

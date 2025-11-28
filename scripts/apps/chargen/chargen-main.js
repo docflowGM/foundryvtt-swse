@@ -8,6 +8,7 @@ import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 
 // Import all module functions
 import * as SharedModule from './chargen-shared.js';
+import { ChargenDataCache } from './chargen-shared.js';
 import * as DroidModule from './chargen-droid.js';
 import * as SpeciesModule from './chargen-species.js';
 import * as ClassModule from './chargen-class.js';
@@ -161,52 +162,25 @@ export default class CharacterGenerator extends Application {
   }
 
   async _loadData() {
-    // Show loading notification
-    const loadingNotif = ui.notifications.info(
+    // Show loading notification (only if cache is empty)
+    const showLoading = !ChargenDataCache.isCached();
+    const loadingNotif = showLoading ? ui.notifications.info(
       "Loading character generation data...",
       { permanent: true }
-    );
+    ) : null;
 
     try {
-      const packNames = {
-        species: "swse.species",
-        feats: "swse.feats",
-        talents: "swse.talents",
-        classes: "swse.classes",
-        droids: "swse.droids"
-      };
+      // Use cached data if available, otherwise load
+      const cachedPacks = await ChargenDataCache.getData();
+      this._packs = foundry.utils.deepClone(cachedPacks);
 
-      // Define which packs are critical for chargen to function
+      // Validate critical packs
       const criticalPacks = ['species', 'classes', 'feats'];
-
-      let hasErrors = false;
-      const failedPacks = [];
       const missingCriticalPacks = [];
 
-      for (const [k, packName] of Object.entries(packNames)) {
-        try {
-          const pack = game.packs.get(packName);
-          if (!pack) {
-            SWSELogger.error(`chargen: compendium pack "${packName}" not found!`);
-            this._packs[k] = [];
-            hasErrors = true;
-            failedPacks.push(k);
-            if (criticalPacks.includes(k)) {
-              missingCriticalPacks.push(packName);
-            }
-            continue;
-          }
-          const docs = await pack.getDocuments();
-          this._packs[k] = docs.map(d => d.toObject());
-          SWSELogger.log(`chargen: loaded ${docs.length} items from ${packName}`);
-        } catch (err) {
-          SWSELogger.error(`chargen: failed to load pack ${packName}:`, err);
-          this._packs[k] = [];
-          hasErrors = true;
-          failedPacks.push(k);
-          if (criticalPacks.includes(k)) {
-            missingCriticalPacks.push(packName);
-          }
+      for (const key of criticalPacks) {
+        if (!this._packs[key] || this._packs[key].length === 0) {
+          missingCriticalPacks.push(`swse.${key}`);
         }
       }
 
@@ -220,15 +194,6 @@ export default class CharacterGenerator extends Application {
         SWSELogger.error(`chargen: blocking due to missing critical packs: ${missingList}`);
         this.close();
         return false;
-      }
-
-      // Notify user if any non-critical packs failed to load
-      if (hasErrors && missingCriticalPacks.length === 0) {
-        const failedList = failedPacks.join(', ');
-        ui.notifications.warn(
-          `Failed to load some compendium data: ${failedList}. Some options may be unavailable. Check the console for details.`,
-          { permanent: false }
-        );
       }
 
       // Load skills
@@ -681,38 +646,46 @@ export default class CharacterGenerator extends Application {
    * Toggle free build mode
    */
   async _onToggleFreeBuild(event) {
-    this.freeBuild = event.currentTarget.checked;
+    const checkbox = event.currentTarget;
+    const wantsToEnable = checkbox.checked;
 
-    if (this.freeBuild) {
-      new Dialog({
-        title: "Free Build Mode",
+    // If enabling, ask for confirmation first
+    if (wantsToEnable && !this.freeBuild) {
+      const confirmed = await Dialog.confirm({
+        title: "Enable Free Build Mode?",
         content: `
-          <div class="form-group">
-            <p><i class="fas fa-unlock-alt"></i> <strong>Free Build Mode Enabled</strong></p>
-            <p>You can now:</p>
-            <ul style="margin-left: 20px;">
-              <li>Skip validation requirements</li>
-              <li>Select any feats or talents</li>
-              <li>Bypass prerequisite checks</li>
-              <li>Train any skills without class restrictions</li>
-              <li>Build your character freely</li>
+          <div style="margin-bottom: 10px;">
+            <p><i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i> <strong>Enable Free Build Mode?</strong></p>
+            <p>Free Build Mode removes all validation and restrictions.</p>
+            <p style="margin-top: 10px;">You will be able to:</p>
+            <ul style="margin-left: 20px; margin-top: 5px;">
+              <li>✓ Skip validation requirements</li>
+              <li>✓ Select any feats or talents (ignore prerequisites)</li>
+              <li>✓ Train any skills without class restrictions</li>
+              <li>✓ Jump between steps freely</li>
+              <li>✓ Set any ability scores</li>
             </ul>
-            <p style="margin-top: 15px; color: #999;">
-              <em>Note: This is intended for experienced players or GMs who want quick character creation.</em>
+            <p style="margin-top: 15px; padding: 10px; background: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b;">
+              <strong>Warning:</strong> This is intended for experienced users who understand SWSE rules.
+              Characters created in Free Build mode may not follow standard rules.
             </p>
           </div>
         `,
-        buttons: {
-          ok: {
-            icon: '<i class="fas fa-check"></i>',
-            label: "Continue"
-          }
-        },
-        default: "ok"
-      }, {
-        width: 400
-      }).render(true);
-    } else {
+        defaultYes: false
+      });
+
+      if (!confirmed) {
+        // User cancelled, uncheck the checkbox
+        checkbox.checked = false;
+        return;
+      }
+
+      // User confirmed, enable free build
+      this.freeBuild = true;
+      ui.notifications.info("Free Build Mode enabled. All restrictions removed.");
+    } else if (!wantsToEnable && this.freeBuild) {
+      // Disabling free build mode
+      this.freeBuild = false;
       ui.notifications.info("Free Build Mode disabled. Validation rules will now apply.");
     }
 
