@@ -45,12 +45,12 @@ export function applyAvailabilityFilter(doc, filterValue, itemsById) {
             // Show all items
             item.style.display = '';
         } else {
-            // Check if the availability string contains the filter value
+            // Normalize both values for case-insensitive, whitespace-tolerant comparison
             // Handle cases like "Military, Rare" or "Restricted, Rare"
-            const availabilityLower = availability.toLowerCase();
-            const filterLower = filterValue.toLowerCase();
+            const availabilityNormalized = availability.toLowerCase().trim();
+            const filterNormalized = filterValue.toLowerCase().trim();
 
-            if (availabilityLower.includes(filterLower)) {
+            if (availabilityNormalized.includes(filterNormalized)) {
                 item.style.display = '';
             } else {
                 item.style.display = 'none';
@@ -157,4 +157,96 @@ export function switchToPanel(doc, tabName, itemsById, updateDialogueCallback) {
     // Apply availability filter to the new panel
     const availabilityFilter = doc.querySelector("#shop-availability-filter")?.value || "all";
     applyAvailabilityFilter(doc, availabilityFilter, itemsById);
+}
+
+/**
+ * Apply sorting to currently visible items
+ * @param {HTMLElement} doc - The document element
+ * @param {string} sortValue - The sort option ("name-asc", "name-desc", "price-asc", "price-desc", "damage-desc", "availability")
+ * @param {Map} itemsById - Map of items by ID for lookup
+ */
+export function applySorting(doc, sortValue, itemsById) {
+    // Get the active panel
+    const activePanel = doc.querySelector('.shop-panel.active');
+    if (!activePanel) return;
+
+    // Get all product lists in the active panel (there may be multiple for weapon subcategories)
+    const productsLists = activePanel.querySelectorAll('.products-list');
+
+    productsLists.forEach(productsList => {
+        // Get all product items in this list
+        const productItems = Array.from(productsList.querySelectorAll('.product-item'));
+        if (productItems.length === 0) return;
+
+        // Sort the items based on the sort value
+        productItems.sort((a, b) => {
+            const aId = a.dataset.itemId || a.dataset.actorId;
+            const bId = b.dataset.itemId || b.dataset.actorId;
+
+            const aData = itemsById.get(aId);
+            const bData = itemsById.get(bId);
+
+            switch (sortValue) {
+                case 'name-asc':
+                    const aName = a.querySelector('.product-name')?.textContent || '';
+                    const bName = b.querySelector('.product-name')?.textContent || '';
+                    return aName.localeCompare(bName);
+
+                case 'name-desc':
+                    const aNameDesc = a.querySelector('.product-name')?.textContent || '';
+                    const bNameDesc = b.querySelector('.product-name')?.textContent || '';
+                    return bNameDesc.localeCompare(aNameDesc);
+
+                case 'price-asc':
+                    const aPrice = aData?.finalCost || 0;
+                    const bPrice = bData?.finalCost || 0;
+                    return aPrice - bPrice;
+
+                case 'price-desc':
+                    const aPriceDesc = aData?.finalCost || 0;
+                    const bPriceDesc = bData?.finalCost || 0;
+                    return bPriceDesc - aPriceDesc;
+
+                case 'damage-desc':
+                    // Parse damage values (e.g., "3d6", "2d8+1")
+                    const aDamage = parseDamage(aData?.system?.damage || '');
+                    const bDamage = parseDamage(bData?.system?.damage || '');
+                    return bDamage - aDamage;
+
+                case 'availability':
+                    const aAvail = aData?.system?.availability || '';
+                    const bAvail = bData?.system?.availability || '';
+                    const availOrder = ['Standard', 'Licensed', 'Restricted', 'Military', 'Illegal', 'Rare'];
+                    const aIndex = availOrder.findIndex(a => aAvail.includes(a));
+                    const bIndex = availOrder.findIndex(b => bAvail.includes(b));
+                    return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+
+                default:
+                    return 0;
+            }
+        });
+
+        // Reorder the DOM elements
+        productItems.forEach(item => productsList.appendChild(item));
+    });
+}
+
+/**
+ * Parse damage string to numeric value for sorting
+ * @param {string} damageStr - Damage string (e.g., "3d6", "2d8+1")
+ * @returns {number} Approximate damage value
+ */
+function parseDamage(damageStr) {
+    if (!damageStr) return 0;
+
+    // Extract dice notation (e.g., "3d6+2" -> 3, 6, 2)
+    const match = damageStr.match(/(\d+)d(\d+)([+-]\d+)?/);
+    if (!match) return 0;
+
+    const numDice = parseInt(match[1], 10);
+    const diceSize = parseInt(match[2], 10);
+    const modifier = match[3] ? parseInt(match[3], 10) : 0;
+
+    // Calculate average damage: (numDice * (diceSize + 1) / 2) + modifier
+    return (numDice * (diceSize + 1) / 2) + modifier;
 }

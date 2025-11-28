@@ -457,6 +457,48 @@ export function getRandomDialogue(context) {
 }
 
 /**
+ * Get personalized Rendarr greeting based on purchase history
+ * @param {Actor} actor - The actor
+ * @returns {string} Personalized greeting
+ */
+export function getPersonalizedGreeting(actor) {
+    // Get purchase history from actor flags
+    const history = actor.getFlag('swse', 'purchaseHistory') || [];
+
+    // Calculate total credits spent
+    const totalSpent = history.reduce((sum, purchase) => {
+        return sum + (purchase.total || 0);
+    }, 0);
+
+    // Determine greeting based on spending
+    if (totalSpent > 50000) {
+        const vipGreetings = [
+            "Ah, my most valued customer returns! What rare treasures may I find for you today?",
+            "Welcome back, old friend! Your patronage has been most generous. Let me show you my finest wares.",
+            "A pleasure to see you again! For a customer of your caliber, I have some special items set aside...",
+            "Greetings, esteemed benefactor! Your credits have funded many expeditions. What can I procure for you today?"
+        ];
+        return vipGreetings[Math.floor(Math.random() * vipGreetings.length)];
+    } else if (totalSpent > 10000) {
+        const regularGreetings = [
+            "Welcome back, friend! Your credits are always welcome here.",
+            "Ah, a returning customer! I trust my wares have served you well?",
+            "Good to see you again! Browse at your leisure, and let me know if anything catches your eye.",
+            "Welcome! I've been acquiring some new inventory since your last visit."
+        ];
+        return regularGreetings[Math.floor(Math.random() * regularGreetings.length)];
+    } else {
+        const newCustomerGreetings = [
+            "Welcome to my humble establishment. How may I assist you?",
+            "Greetings, traveler! Feel free to browse my collection.",
+            "Welcome! I've goods from across the galaxy. Take a look around.",
+            "Ah, a new face! Welcome to Rendarr's Emporium. What brings you to my shop today?"
+        ];
+        return newCustomerGreetings[Math.floor(Math.random() * newCustomerGreetings.length)];
+    }
+}
+
+/**
  * Helper to categorize equipment by keywords
  * @param {Object} item - Item to categorize
  * @returns {string} Category name
@@ -511,21 +553,23 @@ export function categorizeEquipment(item) {
  * Helper to sort and categorize weapons by category and subcategory
  * Returns object with melee and ranged categories, each with subcategories
  * @param {Array} weapons - Array of weapons
- * @returns {Object} Categorized weapons {melee: {simple: [], advanced: [], exotic: []}, ranged: {simple: [], pistols: [], rifles: [], heavy: [], exotic: []}}
+ * @returns {Object} Categorized weapons {melee: {simple: [], advanced: [], lightsaber: [], exotic: []}, ranged: {simple: [], pistol: [], rifle: [], heavy: [], exotic: [], grenade: []}}
  */
 export function sortWeapons(weapons) {
     const categorized = {
         melee: {
             simple: [],
             advanced: [],
+            lightsaber: [],
             exotic: []
         },
         ranged: {
             simple: [],
-            pistols: [],
-            rifles: [],
+            pistol: [],
+            rifle: [],
             heavy: [],
-            exotic: []
+            exotic: [],
+            grenade: []
         }
     };
 
@@ -536,10 +580,20 @@ export function sortWeapons(weapons) {
         if (category === 'melee') {
             if (categorized.melee[subcategory]) {
                 categorized.melee[subcategory].push(weapon);
+            } else {
+                console.warn(
+                    `SWSE Store | Weapon "${weapon.name}" has invalid melee subcategory: "${subcategory}". ` +
+                    `Expected one of: simple, advanced, lightsaber, exotic. Weapon will not appear in store.`
+                );
             }
         } else {
             if (categorized.ranged[subcategory]) {
                 categorized.ranged[subcategory].push(weapon);
+            } else {
+                console.warn(
+                    `SWSE Store | Weapon "${weapon.name}" has invalid ranged subcategory: "${subcategory}". ` +
+                    `Expected one of: simple, pistol, rifle, heavy, exotic, grenade. Weapon will not appear in store.`
+                );
             }
         }
     }
@@ -573,4 +627,37 @@ export function sortArmor(armors) {
         // Within same type, sort alphabetically
         return a.name.localeCompare(b.name);
     });
+}
+
+/**
+ * Determine rarity class based on availability
+ * @param {string} availability - Item availability
+ * @returns {string|null} Rarity class name or null if not rare
+ */
+export function getRarityClass(availability) {
+    if (!availability) return null;
+
+    const normalized = availability.toLowerCase().trim();
+
+    if (normalized.includes('rare')) return 'rare';
+    if (normalized.includes('illegal')) return 'illegal';
+    if (normalized.includes('military')) return 'military';
+    if (normalized.includes('restricted')) return 'restricted';
+
+    return null;
+}
+
+/**
+ * Get display label for rarity
+ * @param {string} rarityClass - Rarity class
+ * @returns {string} Display label
+ */
+export function getRarityLabel(rarityClass) {
+    const labels = {
+        'rare': 'Rare',
+        'illegal': 'Illegal',
+        'military': 'Military',
+        'restricted': 'Restricted'
+    };
+    return labels[rarityClass] || '';
 }

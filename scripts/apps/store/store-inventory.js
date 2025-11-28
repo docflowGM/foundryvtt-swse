@@ -5,6 +5,7 @@
 
 import { categorizeEquipment, sortWeapons, sortArmor } from './store-shared.js';
 import { addFinalCost, addActorFinalCost } from './store-pricing.js';
+import { STORE_PACKS } from './store-constants.js';
 
 /**
  * Load and prepare all store inventory data
@@ -20,7 +21,7 @@ export async function loadInventoryData(itemsById) {
 
     // Load items from compendium packs
     const packItems = [];
-    const packNames = ['swse.weapons', 'swse.armor', 'swse.equipment'];
+    const packNames = [STORE_PACKS.WEAPONS, STORE_PACKS.ARMOR, STORE_PACKS.EQUIPMENT];
     for (const packName of packNames) {
         const pack = game.packs.get(packName);
         if (pack) {
@@ -56,7 +57,7 @@ export async function loadInventoryData(itemsById) {
 
     // Load vehicles and droids from compendium packs
     const packActors = [];
-    const actorPackNames = ['swse.vehicles', 'swse.droids'];
+    const actorPackNames = [STORE_PACKS.VEHICLES, STORE_PACKS.DROIDS];
     for (const packName of actorPackNames) {
         const pack = game.packs.get(packName);
         if (pack) {
