@@ -28,6 +28,17 @@ export async function addItemToCart(store, itemId, updateDialogueCallback) {
         item = store.itemsById.get(itemId);
     }
 
+    // If still not found, search by both id and _id properties
+    // This handles cases where Documents are indexed by runtime id but template uses _id
+    if (!item) {
+        for (const [key, value] of store.itemsById.entries()) {
+            if (value.id === itemId || value._id === itemId) {
+                item = value;
+                break;
+            }
+        }
+    }
+
     if (!item) {
         // Check if this is a fallback ID (generated for items without proper IDs)
         if (itemId.startsWith('fallback-')) {
@@ -35,7 +46,10 @@ export async function addItemToCart(store, itemId, updateDialogueCallback) {
             console.error(`SWSE Store | Item with fallback ID cannot be purchased: ${itemId}`);
         } else {
             ui.notifications.error(`Item not found: ${itemId}`);
-            console.error(`SWSE Store | Item ID not found in world or store cache: ${itemId}`);
+            console.error(`SWSE Store | Item ID not found in world or store cache: ${itemId}`, {
+                itemId,
+                itemsByIdKeys: Array.from(store.itemsById.keys()).slice(0, 10)
+            });
         }
         return;
     }
@@ -337,6 +351,7 @@ export async function createCustomStarship(actor, closeCallback) {
  * @param {Object} cart - Shopping cart object
  * @param {string} type - Type of item ("item", "droid", "vehicle")
  * @param {number} index - Index in cart array
+ * @deprecated Use removeFromCartById instead
  */
 export function removeFromCart(cart, type, index) {
     if (type === "item") {
@@ -345,6 +360,31 @@ export function removeFromCart(cart, type, index) {
         cart.droids.splice(index, 1);
     } else if (type === "vehicle") {
         cart.vehicles.splice(index, 1);
+    }
+}
+
+/**
+ * Remove item from cart by ID
+ * @param {Object} cart - Shopping cart object
+ * @param {string} type - Type of item ("item", "droid", "vehicle")
+ * @param {string} itemId - ID of the item to remove
+ */
+export function removeFromCartById(cart, type, itemId) {
+    if (type === "item") {
+        const index = cart.items.findIndex(item => item.id === itemId);
+        if (index !== -1) {
+            cart.items.splice(index, 1);
+        }
+    } else if (type === "droid") {
+        const index = cart.droids.findIndex(droid => droid.id === itemId);
+        if (index !== -1) {
+            cart.droids.splice(index, 1);
+        }
+    } else if (type === "vehicle") {
+        const index = cart.vehicles.findIndex(vehicle => vehicle.id === itemId);
+        if (index !== -1) {
+            cart.vehicles.splice(index, 1);
+        }
     }
 }
 
@@ -405,6 +445,9 @@ export async function checkout(store, animateNumberCallback) {
 
     if (!confirmed) return;
 
+    // Track if credits were deducted for rollback
+    let creditsDeducted = false;
+
     try {
         // Animate credits countdown in wallet display
         const walletCreditsEl = store.element[0].querySelector('.remaining-credits');
@@ -412,18 +455,26 @@ export async function checkout(store, animateNumberCallback) {
             animateNumberCallback(walletCreditsEl, credits, credits - total, 600);
         }
 
-        // Deduct credits
+        // Deduct credits FIRST and track it
         await actor.update({ "system.credits": credits - total });
+        creditsDeducted = true;
 
         // Add regular items to actor
-        const itemsToCreate = store.cart.items.map(cartItem => cartItem.item.toObject());
+        // Handle both Foundry Documents and plain objects
+        const itemsToCreate = store.cart.items.map(cartItem => {
+            const item = cartItem.item;
+            // If it's a Foundry Document, convert to plain object
+            // If it's already a plain object, use it as-is
+            return item.toObject ? item.toObject() : item;
+        });
         if (itemsToCreate.length > 0) {
             await actor.createEmbeddedDocuments("Item", itemsToCreate);
         }
 
         // Create droid actors
         for (const droid of store.cart.droids) {
-            const droidData = droid.actor.toObject();
+            // Handle both Documents and plain objects
+            const droidData = droid.actor.toObject ? droid.actor.toObject() : droid.actor;
             droidData.name = `${droid.name} (${actor.name}'s)`;
             droidData.ownership = {
                 default: 0,
@@ -434,7 +485,8 @@ export async function checkout(store, animateNumberCallback) {
 
         // Create vehicle actors
         for (const vehicle of store.cart.vehicles) {
-            const vehicleData = vehicle.actor.toObject();
+            // Handle both Documents and plain objects
+            const vehicleData = vehicle.actor.toObject ? vehicle.actor.toObject() : vehicle.actor;
             vehicleData.name = `${vehicle.condition === "used" ? "(Used) " : ""}${vehicle.name}`;
             vehicleData.ownership = {
                 default: 0,
@@ -456,6 +508,22 @@ export async function checkout(store, animateNumberCallback) {
         setTimeout(() => store.render(), 700);
     } catch (err) {
         SWSELogger.error("SWSE Store | Checkout failed:", err);
-        ui.notifications.error("Failed to complete purchase.");
+
+        // Rollback: Refund credits if they were deducted
+        if (creditsDeducted) {
+            try {
+                await actor.update({ "system.credits": credits });
+                ui.notifications.error("Purchase failed! Credits have been refunded.");
+                SWSELogger.info("SWSE Store | Credits refunded after failed checkout");
+            } catch (refundErr) {
+                SWSELogger.error("SWSE Store | Failed to refund credits:", refundErr);
+                ui.notifications.error("Purchase failed and credit refund failed! Please contact GM to restore credits.");
+            }
+        } else {
+            ui.notifications.error("Purchase failed before credits were deducted.");
+        }
+
+        // Re-render to show correct credit amount
+        store.render();
     }
 }

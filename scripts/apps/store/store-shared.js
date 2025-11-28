@@ -538,10 +538,20 @@ export function sortWeapons(weapons) {
         if (category === 'melee') {
             if (categorized.melee[subcategory]) {
                 categorized.melee[subcategory].push(weapon);
+            } else {
+                console.warn(
+                    `SWSE Store | Weapon "${weapon.name}" has invalid melee subcategory: "${subcategory}". ` +
+                    `Expected one of: simple, advanced, lightsaber, exotic. Weapon will not appear in store.`
+                );
             }
         } else {
             if (categorized.ranged[subcategory]) {
                 categorized.ranged[subcategory].push(weapon);
+            } else {
+                console.warn(
+                    `SWSE Store | Weapon "${weapon.name}" has invalid ranged subcategory: "${subcategory}". ` +
+                    `Expected one of: simple, pistol, rifle, heavy, exotic, grenade. Weapon will not appear in store.`
+                );
             }
         }
     }

@@ -38,7 +38,7 @@
       <select id="shop-category-filter" class="shop-category-select">
         <option value="weapons" selected>Weapons</option>
         <option value="armor">Armor</option>
-        <option value="grenades">Grenades</option>
+        <option value="grenades">Explosives & Demolitions</option>
         <option value="medical">Medical</option>
         <option value="tech">Tech</option>
         <option value="tools">Tools</option>
@@ -363,6 +363,14 @@
           {{/each}}
           {{/if}}
         </div>
+
+        {{!-- Empty state if no weapons exist --}}
+        {{#unless (or categories.weapons.melee.simple.length categories.weapons.melee.advanced.length categories.weapons.melee.lightsaber.length categories.weapons.melee.exotic.length categories.weapons.ranged.simple.length categories.weapons.ranged.pistol.length categories.weapons.ranged.rifle.length categories.weapons.ranged.heavy.length categories.weapons.ranged.grenade.length categories.weapons.ranged.exotic.length)}}
+        <div class="empty-message">
+          <i class="fas fa-box-open"></i>
+          <p>No weapons available in the database.</p>
+        </div>
+        {{/unless}}
       </div>
     </div>
 
@@ -403,11 +411,11 @@
       </div>
     </div>
 
-    {{!-- Grenades Tab --}}
+    {{!-- Explosives & Demolitions Tab --}}
     <div class="shop-panel" data-panel="grenades">
       <div class="panel-header">
-        <h4><i class="fas fa-bomb"></i> Grenades & Explosives</h4>
-        <p class="panel-desc">Grenades, mines, and explosive devices</p>
+        <h4><i class="fas fa-bomb"></i> Explosives & Demolitions</h4>
+        <p class="panel-desc">Explosive charges, detonators, timers, and demolition equipment</p>
       </div>
       <div class="products-list" id="grenades-list">
         {{#each categories.grenades}}

@@ -240,7 +240,15 @@ export class SWSEStore extends FormApplication {
         const searchTerm = event.currentTarget.value.toLowerCase().trim();
         const doc = this.element[0];
 
-        applySearchFilter(doc, searchTerm);
+        // Clear existing debounce timer
+        if (this._searchDebounceTimer) {
+            clearTimeout(this._searchDebounceTimer);
+        }
+
+        // Debounce search by 300ms
+        this._searchDebounceTimer = setTimeout(() => {
+            applySearchFilter(doc, searchTerm);
+        }, 300);
     }
 
     /**
@@ -392,7 +400,7 @@ export class SWSEStore extends FormApplication {
                     <div class="item-price">
                         <span class="price-amount">${item.cost.toLocaleString()} cr</span>
                     </div>
-                    <button type="button" class="remove-from-cart" data-type="item" data-index="${this.cart.items.indexOf(item)}">
+                    <button type="button" class="remove-from-cart" data-type="item" data-item-id="${item.id}">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
@@ -413,7 +421,7 @@ export class SWSEStore extends FormApplication {
                     <div class="item-price">
                         <span class="price-amount">${droid.cost.toLocaleString()} cr</span>
                     </div>
-                    <button type="button" class="remove-from-cart" data-type="droid" data-index="${this.cart.droids.indexOf(droid)}">
+                    <button type="button" class="remove-from-cart" data-type="droid" data-item-id="${droid.id}">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
@@ -434,7 +442,7 @@ export class SWSEStore extends FormApplication {
                     <div class="item-price">
                         <span class="price-amount">${vehicle.cost.toLocaleString()} cr</span>
                     </div>
-                    <button type="button" class="remove-from-cart" data-type="vehicle" data-index="${this.cart.vehicles.indexOf(vehicle)}">
+                    <button type="button" class="remove-from-cart" data-type="vehicle" data-item-id="${vehicle.id}">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
@@ -490,9 +498,9 @@ export class SWSEStore extends FormApplication {
         event.preventDefault();
 
         const type = event.currentTarget.dataset.type;
-        const index = parseInt(event.currentTarget.dataset.index);
+        const itemId = event.currentTarget.dataset.itemId;
 
-        Checkout.removeFromCart(this.cart, type, index);
+        Checkout.removeFromCartById(this.cart, type, itemId);
 
         const doc = this.element[0];
         this._updateCartDisplay(doc);
@@ -541,8 +549,23 @@ export class SWSEStore extends FormApplication {
         }
 
         try {
-            const markup = parseInt(this.element.find("input[name='markup']").val()) || 0;
-            const discount = parseInt(this.element.find("input[name='discount']").val()) || 0;
+            const markupInput = this.element.find("input[name='markup']").val();
+            const discountInput = this.element.find("input[name='discount']").val();
+
+            // Convert to numbers with strict validation
+            const markup = Number(markupInput);
+            const discount = Number(discountInput);
+
+            // Validate that inputs are valid numbers
+            if (isNaN(markup)) {
+                ui.notifications.warn("Markup must be a valid number.");
+                return;
+            }
+
+            if (isNaN(discount)) {
+                ui.notifications.warn("Discount must be a valid number.");
+                return;
+            }
 
             // Validate ranges
             if (markup < -100 || markup > 1000) {
