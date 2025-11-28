@@ -310,12 +310,12 @@
  <div class="abilities-row flexrow">
  {{#each system.abilities as |ability key|}}
  <div class="ability-quick flex0">
- <label class="rollable" 
+ <label class="rollable"
  data-roll="1d20+@abilities.{{key}}.mod"
  data-label="{{ability.label}}">
  {{ability.label}}
  </label>
- <div class="ability-score">{{ability.value}}</div>
+ <div class="ability-score">{{ability.total}}</div>
  <div class="ability-mod rollable"
  data-roll="1d20+{{safeNumber ability.mod}}">
  {{numberFormat (safeNumber ability.mod) decimals=0 sign=true}}
@@ -324,29 +324,5 @@
  {{/each}}
  </div>
  </section>
- 
- {{!-- Trained Skills Quick Access --}}
- <section class="skills-quick">
- <h3 class="section-header">Trained Skills</h3>
- <div class="trained-skills-list">
- {{#each system.skills as |skill key|}}
- {{#if skill.trained}}
- <div class="skill-quick flexrow">
- <span class="skill-name rollable"
- data-roll="1d20+@skills.{{key}}.mod"
- data-label="{{skill.label}}">
- {{skill.label}}
- </span>
- <span class="skill-mod">
- {{numberFormat (safeNumber skill.mod) sign=true}}
- </span>
- {{#if skill.focus}}
- <i class="fas fa-star skill-focus-icon" title="Skill Focus"></i>
- {{/if}}
- </div>
- {{/if}}
- {{/each}}
- </div>
- </section>
- 
+
 </div>

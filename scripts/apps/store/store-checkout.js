@@ -17,7 +17,8 @@ import { getRandomDialogue } from './store-shared.js';
  */
 export async function addItemToCart(store, itemId, updateDialogueCallback) {
     if (!itemId) {
-        ui.notifications.warn("Invalid item selection.");
+        ui.notifications.warn("Invalid item selection. The item may be missing an ID.");
+        console.error("SWSE Store | addItemToCart called with empty itemId");
         return;
     }
 
@@ -28,7 +29,14 @@ export async function addItemToCart(store, itemId, updateDialogueCallback) {
     }
 
     if (!item) {
-        ui.notifications.error("Item not found.");
+        // Check if this is a fallback ID (generated for items without proper IDs)
+        if (itemId.startsWith('fallback-')) {
+            ui.notifications.error("This item has an invalid ID and cannot be purchased. Please contact the GM.");
+            console.error(`SWSE Store | Item with fallback ID cannot be purchased: ${itemId}`);
+        } else {
+            ui.notifications.error(`Item not found: ${itemId}`);
+            console.error(`SWSE Store | Item ID not found in world or store cache: ${itemId}`);
+        }
         return;
     }
 

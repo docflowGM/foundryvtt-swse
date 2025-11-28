@@ -35,3 +35,36 @@ export function _getDefaultSkills() {
 export function _getAvailableSkills() {
   return this._skillsJson || this._getDefaultSkills();
 }
+
+/**
+ * Get available talent trees based on character's selected classes
+ * @returns {Array} Array of talent tree names
+ */
+export function _getAvailableTalentTrees() {
+  // If no classes selected, return empty array
+  if (!this.characterData.classes || this.characterData.classes.length === 0) {
+    return [];
+  }
+
+  // If classes compendium isn't loaded, return empty array
+  if (!this._packs.classes || this._packs.classes.length === 0) {
+    return [];
+  }
+
+  // Collect talent trees from all selected classes
+  const talentTrees = new Set();
+
+  for (const charClass of this.characterData.classes) {
+    const classData = this._packs.classes.find(c => c.name === charClass.name);
+
+    if (classData && classData.system && classData.system.talent_trees) {
+      // Add all talent trees from this class
+      for (const tree of classData.system.talent_trees) {
+        talentTrees.add(tree);
+      }
+    }
+  }
+
+  // Convert Set to Array and return sorted
+  return Array.from(talentTrees).sort();
+}

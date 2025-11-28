@@ -798,3 +798,49 @@
     flex-direction: column;
   }
 }
+
+/* ================================================
+   Weapon Category & Subcategory Headers
+   ================================================ */
+.weapon-category {
+  margin-bottom: 2rem;
+}
+
+.category-header {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: rgba(0, 170, 255, 0.9);
+  margin: 1.5rem 0 1rem 0;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(90deg, rgba(0, 150, 255, 0.2), transparent);
+  border-left: 4px solid rgba(0, 170, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.category-header i {
+  font-size: 1.3rem;
+  color: rgba(0, 200, 255, 1);
+}
+
+.subcategory-header {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(150, 200, 255, 0.9);
+  margin: 1.25rem 0 0.75rem 0;
+  padding: 0.4rem 0.75rem;
+  background: rgba(0, 100, 200, 0.1);
+  border-left: 3px solid rgba(100, 180, 255, 0.5);
+  text-transform: capitalize;
+}
+
+.weapon-category:first-child .category-header {
+  margin-top: 0;
+}
+
+.subcategory-header:first-of-type {
+  margin-top: 0.5rem;
+}

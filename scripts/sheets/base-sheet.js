@@ -352,10 +352,16 @@ export class SWSEActorSheetBase extends ActorSheet {
         if (!existingCombatant) {
           const tokens = this.actor.getActiveTokens();
           const tokenId = tokens.length > 0 ? tokens[0].id : null;
+          const sceneId = game.combat.scene?.id || game.scenes.current?.id || null;
+
+          if (!sceneId) {
+            ui.notifications.warn("No active scene found for combat tracking.");
+            return;
+          }
 
           await game.combat.createEmbeddedDocuments('Combatant', [{
             actorId: this.actor.id,
-            sceneId: game.combat.scene.id,
+            sceneId: sceneId,
             tokenId: tokenId,
             hidden: tokens.length === 0 // Hide combatant if no token on scene
           }]);

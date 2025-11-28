@@ -107,7 +107,11 @@ export class CustomItemDialog {
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
-        width: 500
+        width: 500,
+        left: null,  // Let Foundry center the dialog
+        top: null,   // Let Foundry center the dialog
+        draggable: true,
+        resizable: false
       });
 
       dialog.render(true);
@@ -215,7 +219,11 @@ export class CustomItemDialog {
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
-        width: 500
+        width: 500,
+        left: null,  // Let Foundry center the dialog
+        top: null,   // Let Foundry center the dialog
+        draggable: true,
+        resizable: false
       });
 
       dialog.render(true);
@@ -299,7 +307,11 @@ export class CustomItemDialog {
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
-        width: 500
+        width: 500,
+        left: null,  // Let Foundry center the dialog
+        top: null,   // Let Foundry center the dialog
+        draggable: true,
+        resizable: false
       });
 
       dialog.render(true);
@@ -371,7 +383,11 @@ export class CustomItemDialog {
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
-        width: 500
+        width: 500,
+        left: null,  // Let Foundry center the dialog
+        top: null,   // Let Foundry center the dialog
+        draggable: true,
+        resizable: false
       });
 
       dialog.render(true);
@@ -449,7 +465,11 @@ export class CustomItemDialog {
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
-        width: 500
+        width: 500,
+        left: null,  // Let Foundry center the dialog
+        top: null,   // Let Foundry center the dialog
+        draggable: true,
+        resizable: false
       });
 
       dialog.render(true);
@@ -570,7 +590,11 @@ export class CustomItemDialog {
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
-        width: 500
+        width: 500,
+        left: null,  // Let Foundry center the dialog
+        top: null,   // Let Foundry center the dialog
+        draggable: true,
+        resizable: false
       });
 
       dialog.render(true);

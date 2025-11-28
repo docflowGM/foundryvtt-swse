@@ -36,6 +36,7 @@ import { getStoreMarkup, getStoreDiscount } from './store-pricing.js';
 import { loadInventoryData } from './store-inventory.js';
 import { applyAvailabilityFilter, applySearchFilter, switchToPanel } from './store-filters.js';
 import * as Checkout from './store-checkout.js';
+import { scanForInvalidIds, fixInvalidIds, diagnoseIds } from './store-id-fixer.js';
 
 export class SWSEStore extends FormApplication {
     /**
@@ -563,5 +564,36 @@ export class SWSEStore extends FormApplication {
             SWSELogger.error("SWSE Store | Failed to save settings:", err);
             ui.notifications.error("Failed to save store settings.");
         }
+    }
+
+    /**
+     * Static diagnostic utilities for debugging ID issues
+     */
+
+    /**
+     * Scan all store items and actors for invalid IDs
+     * Usage: await SWSEStore.diagnoseIds()
+     * @static
+     */
+    static async diagnoseIds() {
+        return await diagnoseIds();
+    }
+
+    /**
+     * Scan for invalid IDs and return detailed report
+     * Usage: const report = await SWSEStore.scanForInvalidIds()
+     * @static
+     */
+    static async scanForInvalidIds() {
+        return await scanForInvalidIds();
+    }
+
+    /**
+     * Attempt to fix items/actors with missing IDs (GM only)
+     * Usage: const report = await SWSEStore.scanForInvalidIds(); await SWSEStore.fixInvalidIds(report)
+     * @static
+     */
+    static async fixInvalidIds(report) {
+        return await fixInvalidIds(report);
     }
 }

@@ -34,6 +34,18 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       }
     }
 
+    // Ensure cost fields are integers
+    if (shimmed.cost) {
+      if (shimmed.cost.new !== undefined && shimmed.cost.new !== null) {
+        const num = Number(shimmed.cost.new);
+        shimmed.cost.new = Number.isNaN(num) ? 0 : Math.floor(num);
+      }
+      if (shimmed.cost.used !== undefined && shimmed.cost.used !== null) {
+        const num = Number(shimmed.cost.used);
+        shimmed.cost.used = Number.isNaN(num) ? 0 : Math.floor(num);
+      }
+    }
+
     return shimmed;
   }
 

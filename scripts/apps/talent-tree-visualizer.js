@@ -3,6 +3,8 @@
  * Provides an interactive, animated talent tree selection and visualization system
  */
 
+import { PrerequisiteValidator } from '../utils/prerequisite-validator.js';
+
 export class TalentTreeVisualizer {
 
   /**
@@ -235,7 +237,7 @@ export class TalentTreeVisualizer {
    */
   static async showEnhancedTalentTree(treeName, talentData, actor, onSelectTalent) {
     // Filter talents for this tree
-    const talents = talentData.filter(t =>
+    let talents = talentData.filter(t =>
       t.system?.talent_tree === treeName || t.name.includes(treeName)
     );
 
@@ -243,6 +245,9 @@ export class TalentTreeVisualizer {
       ui.notifications.warn(`No talents found for ${treeName}`);
       return;
     }
+
+    // Filter talents based on prerequisites - add isQualified property
+    talents = PrerequisiteValidator.filterQualifiedTalents(talents, actor, {});
 
     // Get owned talents
     const ownedTalents = new Set(
@@ -427,9 +432,10 @@ export class TalentTreeVisualizer {
       const isOwned = ownedTalents.has(talentName);
       const isGrouped = groupDeflectBlock && (talentName === 'Block' || talentName === 'Deflect');
       const hasPrereq = node.prereqs.length > 0;
+      const isUnavailable = !talent.isQualified && !isOwned; // Don't mark owned talents as unavailable
 
       html += `
-        <div class="talent-node ${isOwned ? 'owned-talent' : ''} ${isGrouped ? 'grouped-talent' : ''}"
+        <div class="talent-node ${isOwned ? 'owned-talent' : ''} ${isGrouped ? 'grouped-talent' : ''} ${isUnavailable ? 'unavailable' : ''}"
              style="left: ${pos.x}%; top: ${pos.y}px;"
              data-talent-name="${talentName}"
              title="${talent.system?.benefit || 'No description'}">
@@ -537,6 +543,16 @@ export class TalentTreeVisualizer {
       const node = talentGraph[talentName];
 
       if (!node) return;
+
+      // Check if talent is unavailable
+      if ($(this).hasClass('unavailable')) {
+        const prereqReasons = node.talent.prerequisiteReasons || [];
+        const message = prereqReasons.length > 0
+          ? `Cannot select ${talentName}:\n${prereqReasons.join('\n')}`
+          : `${talentName} is not available (prerequisites not met)`;
+        ui.notifications.warn(message);
+        return;
+      }
 
       // Check if already owned
       if (ownedTalents.has(talentName)) {
@@ -1004,6 +1020,25 @@ export class TalentTreeVisualizer {
 
         .owned-talent .talent-label {
           color: #00d966;
+        }
+
+        /* Unavailable talent styles */
+        .talent-node.unavailable {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+
+        .talent-node.unavailable .talent-icon-wrapper {
+          border-color: #555;
+          box-shadow: none;
+        }
+
+        .talent-node.unavailable .talent-label {
+          color: #888;
+        }
+
+        .talent-node.unavailable:hover {
+          transform: none;
         }
 
         .owned-badge {
