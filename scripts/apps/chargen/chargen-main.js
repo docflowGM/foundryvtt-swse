@@ -161,99 +161,114 @@ export default class CharacterGenerator extends Application {
   }
 
   async _loadData() {
-    const packNames = {
-      species: "swse.species",
-      feats: "swse.feats",
-      talents: "swse.talents",
-      classes: "swse.classes",
-      droids: "swse.droids"
-    };
+    // Show loading notification
+    const loadingNotif = ui.notifications.info(
+      "Loading character generation data...",
+      { permanent: true }
+    );
 
-    // Define which packs are critical for chargen to function
-    const criticalPacks = ['species', 'classes', 'feats'];
+    try {
+      const packNames = {
+        species: "swse.species",
+        feats: "swse.feats",
+        talents: "swse.talents",
+        classes: "swse.classes",
+        droids: "swse.droids"
+      };
 
-    let hasErrors = false;
-    const failedPacks = [];
-    const missingCriticalPacks = [];
+      // Define which packs are critical for chargen to function
+      const criticalPacks = ['species', 'classes', 'feats'];
 
-    for (const [k, packName] of Object.entries(packNames)) {
-      try {
-        const pack = game.packs.get(packName);
-        if (!pack) {
-          SWSELogger.error(`chargen: compendium pack "${packName}" not found!`);
+      let hasErrors = false;
+      const failedPacks = [];
+      const missingCriticalPacks = [];
+
+      for (const [k, packName] of Object.entries(packNames)) {
+        try {
+          const pack = game.packs.get(packName);
+          if (!pack) {
+            SWSELogger.error(`chargen: compendium pack "${packName}" not found!`);
+            this._packs[k] = [];
+            hasErrors = true;
+            failedPacks.push(k);
+            if (criticalPacks.includes(k)) {
+              missingCriticalPacks.push(packName);
+            }
+            continue;
+          }
+          const docs = await pack.getDocuments();
+          this._packs[k] = docs.map(d => d.toObject());
+          SWSELogger.log(`chargen: loaded ${docs.length} items from ${packName}`);
+        } catch (err) {
+          SWSELogger.error(`chargen: failed to load pack ${packName}:`, err);
           this._packs[k] = [];
           hasErrors = true;
           failedPacks.push(k);
           if (criticalPacks.includes(k)) {
             missingCriticalPacks.push(packName);
           }
-          continue;
-        }
-        const docs = await pack.getDocuments();
-        this._packs[k] = docs.map(d => d.toObject());
-        SWSELogger.log(`chargen: loaded ${docs.length} items from ${packName}`);
-      } catch (err) {
-        SWSELogger.error(`chargen: failed to load pack ${packName}:`, err);
-        this._packs[k] = [];
-        hasErrors = true;
-        failedPacks.push(k);
-        if (criticalPacks.includes(k)) {
-          missingCriticalPacks.push(packName);
         }
       }
-    }
 
-    // Block chargen if critical packs are missing
-    if (missingCriticalPacks.length > 0) {
-      const missingList = missingCriticalPacks.join(', ');
-      ui.notifications.error(
-        `Character generation cannot continue. Missing critical compendium packs: ${missingList}. Please ensure all SWSE compendium packs are properly installed.`,
-        { permanent: true }
-      );
-      SWSELogger.error(`chargen: blocking due to missing critical packs: ${missingList}`);
-      this.close();
-      return false;
-    }
+      // Block chargen if critical packs are missing
+      if (missingCriticalPacks.length > 0) {
+        const missingList = missingCriticalPacks.join(', ');
+        ui.notifications.error(
+          `Character generation cannot continue. Missing critical compendium packs: ${missingList}. Please ensure all SWSE compendium packs are properly installed.`,
+          { permanent: true }
+        );
+        SWSELogger.error(`chargen: blocking due to missing critical packs: ${missingList}`);
+        this.close();
+        return false;
+      }
 
-    // Notify user if any non-critical packs failed to load
-    if (hasErrors && missingCriticalPacks.length === 0) {
-      const failedList = failedPacks.join(', ');
-      ui.notifications.warn(
-        `Failed to load some compendium data: ${failedList}. Some options may be unavailable. Check the console for details.`,
-        { permanent: false }
-      );
-    }
+      // Notify user if any non-critical packs failed to load
+      if (hasErrors && missingCriticalPacks.length === 0) {
+        const failedList = failedPacks.join(', ');
+        ui.notifications.warn(
+          `Failed to load some compendium data: ${failedList}. Some options may be unavailable. Check the console for details.`,
+          { permanent: false }
+        );
+      }
 
-    // Load skills
-    try {
-      const resp = await fetch("systems/swse/data/skills.json");
-      if (resp.ok) {
-        this._skillsJson = await resp.json();
-        SWSELogger.log("chargen: skills.json loaded successfully");
-      } else {
-        SWSELogger.warn("chargen: failed to fetch skills.json, using defaults");
+      // Load skills
+      try {
+        const resp = await fetch("systems/swse/data/skills.json");
+        if (resp.ok) {
+          this._skillsJson = await resp.json();
+          SWSELogger.log("chargen: skills.json loaded successfully");
+        } else {
+          SWSELogger.warn("chargen: failed to fetch skills.json, using defaults");
+          this._skillsJson = this._getDefaultSkills();
+          ui.notifications.warn("Failed to load skills data. Using defaults.");
+        }
+      } catch (e) {
+        SWSELogger.error("chargen: error loading skills.json:", e);
         this._skillsJson = this._getDefaultSkills();
         ui.notifications.warn("Failed to load skills data. Using defaults.");
       }
-    } catch (e) {
-      SWSELogger.error("chargen: error loading skills.json:", e);
-      this._skillsJson = this._getDefaultSkills();
-      ui.notifications.warn("Failed to load skills data. Using defaults.");
-    }
 
-    // Load feat metadata
-    try {
-      const resp = await fetch("systems/swse/data/feat-metadata.json");
-      if (resp.ok) {
-        this._featMetadata = await resp.json();
-        SWSELogger.log("chargen: feat-metadata.json loaded successfully");
-      } else {
-        SWSELogger.warn("chargen: failed to fetch feat-metadata.json");
+      // Load feat metadata
+      try {
+        const resp = await fetch("systems/swse/data/feat-metadata.json");
+        if (resp.ok) {
+          this._featMetadata = await resp.json();
+          SWSELogger.log("chargen: feat-metadata.json loaded successfully");
+        } else {
+          SWSELogger.warn("chargen: failed to fetch feat-metadata.json");
+          this._featMetadata = null;
+        }
+      } catch (e) {
+        SWSELogger.error("chargen: error loading feat-metadata.json:", e);
         this._featMetadata = null;
       }
-    } catch (e) {
-      SWSELogger.error("chargen: error loading feat-metadata.json:", e);
-      this._featMetadata = null;
+
+      return true;
+    } finally {
+      // Clear loading notification
+      if (loadingNotif) {
+        loadingNotif.remove();
+      }
     }
   }
 

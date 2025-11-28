@@ -63,8 +63,44 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   // ========================================
   // LEVEL SELECTION
   // ========================================
-  _onLevelChange(event) {
-    this.targetLevel = Math.max(1, Math.min(20, parseInt(event.target.value) || 1));
+  async _onLevelChange(event) {
+    const newLevel = Math.max(1, Math.min(20, parseInt(event.target.value) || 1));
+
+    // Warn user about multi-level limitations
+    if (newLevel > 1 && this.targetLevel === 1) {
+      const confirmed = await Dialog.confirm({
+        title: "Multi-Level Character Creation",
+        content: `
+          <div style="margin-bottom: 10px;">
+            <p><strong>Creating a level ${newLevel} character</strong></p>
+            <p>Multi-level creation will automatically apply:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+              <li>✓ Hit Points (based on houserule settings)</li>
+              <li>✓ Level-based progression</li>
+            </ul>
+            <p style="margin-top: 10px;"><strong>You will NOT be able to select:</strong></p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+              <li>✗ Feats for bonus feat levels</li>
+              <li>✗ Talents for each level</li>
+              <li>✗ Skill training choices</li>
+              <li>✗ Ability score increases (levels 4, 8, 12, 16, 20)</li>
+            </ul>
+            <p style="margin-top: 15px; color: #999; font-size: 0.9em;">
+              <em>Tip: For full customization, create at level 1 and use the level-up system.</em>
+            </p>
+          </div>
+        `,
+        defaultYes: false
+      });
+
+      if (!confirmed) {
+        // Reset the select element back to current level
+        event.target.value = this.targetLevel;
+        return;
+      }
+    }
+
+    this.targetLevel = newLevel;
     SWSELogger.log(`SWSE CharGen | Target level set to ${this.targetLevel}`);
   }
 
