@@ -27,6 +27,19 @@ export function addFinalCost(item) {
     // Ensure ID is properly preserved (check both id and _id)
     const itemId = item.id || item._id || plainItem.id || plainItem._id;
 
+    // Log warning if no ID found
+    if (!itemId) {
+        console.warn(`SWSE Store | Item missing ID: ${item.name || 'Unknown Item'}`, item);
+        // Generate a fallback ID from the item name to prevent undefined IDs
+        const fallbackId = `fallback-${(item.name || 'unknown').toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
+        return {
+            ...plainItem,
+            id: fallbackId,
+            _id: fallbackId,
+            finalCost: calculateFinalCost(baseCost)
+        };
+    }
+
     return {
         ...plainItem,
         id: itemId,  // Preserve ID for item selection
@@ -48,6 +61,25 @@ export function addActorFinalCost(actor, includeUsed = false) {
 
     // Ensure ID is properly preserved (check both id and _id)
     const actorId = actor.id || actor._id || plainActor.id || plainActor._id;
+
+    // Log warning if no ID found
+    if (!actorId) {
+        console.warn(`SWSE Store | Actor missing ID: ${actor.name || 'Unknown Actor'}`, actor);
+        // Generate a fallback ID from the actor name to prevent undefined IDs
+        const fallbackId = `fallback-${(actor.name || 'unknown').toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
+        const result = {
+            ...plainActor,
+            id: fallbackId,
+            _id: fallbackId,
+            finalCost: calculateFinalCost(baseCost)
+        };
+
+        if (includeUsed) {
+            result.finalCostUsed = calculateFinalCost(baseCost * 0.5);
+        }
+
+        return result;
+    }
 
     const result = {
         ...plainActor,

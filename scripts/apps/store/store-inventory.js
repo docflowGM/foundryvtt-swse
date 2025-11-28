@@ -33,9 +33,18 @@ export async function loadInventoryData(itemsById) {
     // Combine world items and pack items
     const allItems = [...worldItems, ...packItems];
 
+    // Filter out items without valid IDs
+    const validItems = allItems.filter(item => {
+        const hasValidId = !!(item.id || item._id);
+        if (!hasValidId) {
+            console.warn(`SWSE Store | Excluding item without ID: ${item.name || 'Unknown'}`);
+        }
+        return hasValidId;
+    });
+
     // Store items by ID for quick lookup
     itemsById.clear();
-    allItems.forEach(item => {
+    validItems.forEach(item => {
         itemsById.set(item.id, item);
     });
 
@@ -72,18 +81,27 @@ export async function loadInventoryData(itemsById) {
     // Combine world actors and pack actors
     const allActors = [...worldActors, ...packActors];
 
+    // Filter out actors without valid IDs
+    const validActors = allActors.filter(actor => {
+        const hasValidId = !!(actor.id || actor._id);
+        if (!hasValidId) {
+            console.warn(`SWSE Store | Excluding actor without ID: ${actor.name || 'Unknown'}`);
+        }
+        return hasValidId;
+    });
+
     // Store actors by ID for quick lookup (for availability filtering)
-    allActors.forEach(actor => {
+    validActors.forEach(actor => {
         itemsById.set(actor.id, actor);
     });
 
     // Get equipment items and categorize them
-    const equipmentItems = allItems.filter(i => i.type === "equipment" || i.type === "item");
+    const equipmentItems = validItems.filter(i => i.type === "equipment" || i.type === "item");
 
     // Categorize items and add final costs
     const categories = {
-        weapons: sortWeapons(allItems.filter(i => i.type === "weapon").map(addFinalCost)),
-        armor: sortArmor(allItems.filter(i => i.type === "armor").map(addFinalCost)),
+        weapons: sortWeapons(validItems.filter(i => i.type === "weapon").map(addFinalCost)),
+        armor: sortArmor(validItems.filter(i => i.type === "armor").map(addFinalCost)),
         grenades: equipmentItems.filter(i => categorizeEquipment(i) === "grenades").map(addFinalCost),
         medical: equipmentItems.filter(i => categorizeEquipment(i) === "medical").map(addFinalCost),
         tech: equipmentItems.filter(i => categorizeEquipment(i) === "tech").map(addFinalCost),
@@ -91,8 +109,8 @@ export async function loadInventoryData(itemsById) {
         survival: equipmentItems.filter(i => categorizeEquipment(i) === "survival").map(addFinalCost),
         tools: equipmentItems.filter(i => categorizeEquipment(i) === "tools").map(addFinalCost),
         equipment: equipmentItems.filter(i => categorizeEquipment(i) === "equipment").map(addFinalCost),
-        vehicles: allActors.filter(a => a.type === "vehicle" || a.system?.isVehicle).map(a => addActorFinalCost(a, true)),
-        droids: allActors.filter(a => a.type === "droid" || a.system?.isDroid).map(a => addActorFinalCost(a, false)),
+        vehicles: validActors.filter(a => a.type === "vehicle" || a.system?.isVehicle).map(a => addActorFinalCost(a, true)),
+        droids: validActors.filter(a => a.type === "droid" || a.system?.isDroid).map(a => addActorFinalCost(a, false)),
         services: getServicesData()
     };
 
