@@ -94,33 +94,223 @@
         <p class="panel-desc">Blasters, vibroblades, and more</p>
       </div>
       <div class="products-list" id="weapons-list">
-        {{#each categories.weapons}}
-        <div class="product-item" data-item-id="{{this.id}}">
-          <div class="product-info">
-            <h5 class="product-name">{{this.name}}</h5>
-            <div class="product-details">
-              {{#if this.system.damage}}
-              <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
-              {{/if}}
-              <span class="detail-desc">{{truncate this.system.description 120}}</span>
+        {{!-- Melee Weapons --}}
+        <div class="weapon-category">
+          <h5 class="category-header"><i class="fas fa-sword"></i> Melee Weapons</h5>
+
+          {{#if categories.weapons.melee.simple.length}}
+          <h6 class="subcategory-header">Simple Melee Weapons</h6>
+          {{#each categories.weapons.melee.simple}}
+          <div class="product-item" data-item-id="{{this.id}}">
+            <div class="product-info">
+              <h5 class="product-name">{{this.name}}</h5>
+              <div class="product-details">
+                {{#if this.system.damage}}
+                <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
+                {{/if}}
+                <span class="detail-desc">{{truncate this.system.description 120}}</span>
+              </div>
+            </div>
+            <div class="product-actions">
+              <div class="product-price">
+                <span class="credits-icon">₢</span>
+                <span class="price-amount">{{this.finalCost}}</span>
+              </div>
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
             </div>
           </div>
-          <div class="product-actions">
-            <div class="product-price">
-              <span class="credits-icon">₢</span>
-              <span class="price-amount">{{this.finalCost}}</span>
+          {{/each}}
+          {{/if}}
+
+          {{#if categories.weapons.melee.advanced.length}}
+          <h6 class="subcategory-header">Advanced Melee Weapons</h6>
+          {{#each categories.weapons.melee.advanced}}
+          <div class="product-item" data-item-id="{{this.id}}">
+            <div class="product-info">
+              <h5 class="product-name">{{this.name}}</h5>
+              <div class="product-details">
+                {{#if this.system.damage}}
+                <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
+                {{/if}}
+                <span class="detail-desc">{{truncate this.system.description 120}}</span>
+              </div>
             </div>
-            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-              <i class="fas fa-cart-plus"></i> Add to Cart
-            </button>
+            <div class="product-actions">
+              <div class="product-price">
+                <span class="credits-icon">₢</span>
+                <span class="price-amount">{{this.finalCost}}</span>
+              </div>
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
           </div>
+          {{/each}}
+          {{/if}}
+
+          {{#if categories.weapons.melee.exotic.length}}
+          <h6 class="subcategory-header">Exotic Melee Weapons</h6>
+          {{#each categories.weapons.melee.exotic}}
+          <div class="product-item" data-item-id="{{this.id}}">
+            <div class="product-info">
+              <h5 class="product-name">{{this.name}}</h5>
+              <div class="product-details">
+                {{#if this.system.damage}}
+                <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
+                {{/if}}
+                <span class="detail-desc">{{truncate this.system.description 120}}</span>
+              </div>
+            </div>
+            <div class="product-actions">
+              <div class="product-price">
+                <span class="credits-icon">₢</span>
+                <span class="price-amount">{{this.finalCost}}</span>
+              </div>
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+          {{/each}}
+          {{/if}}
         </div>
-        {{else}}
-        <div class="empty-message">
-          <i class="fas fa-box-open"></i>
-          <p>No weapons available in the database.</p>
+
+        {{!-- Ranged Weapons --}}
+        <div class="weapon-category">
+          <h5 class="category-header"><i class="fas fa-crosshairs"></i> Ranged Weapons</h5>
+
+          {{#if categories.weapons.ranged.simple.length}}
+          <h6 class="subcategory-header">Grenades & Explosives</h6>
+          {{#each categories.weapons.ranged.simple}}
+          <div class="product-item" data-item-id="{{this.id}}">
+            <div class="product-info">
+              <h5 class="product-name">{{this.name}}</h5>
+              <div class="product-details">
+                {{#if this.system.damage}}
+                <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
+                {{/if}}
+                <span class="detail-desc">{{truncate this.system.description 120}}</span>
+              </div>
+            </div>
+            <div class="product-actions">
+              <div class="product-price">
+                <span class="credits-icon">₢</span>
+                <span class="price-amount">{{this.finalCost}}</span>
+              </div>
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+          {{/each}}
+          {{/if}}
+
+          {{#if categories.weapons.ranged.pistols.length}}
+          <h6 class="subcategory-header">Pistols</h6>
+          {{#each categories.weapons.ranged.pistols}}
+          <div class="product-item" data-item-id="{{this.id}}">
+            <div class="product-info">
+              <h5 class="product-name">{{this.name}}</h5>
+              <div class="product-details">
+                {{#if this.system.damage}}
+                <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
+                {{/if}}
+                <span class="detail-desc">{{truncate this.system.description 120}}</span>
+              </div>
+            </div>
+            <div class="product-actions">
+              <div class="product-price">
+                <span class="credits-icon">₢</span>
+                <span class="price-amount">{{this.finalCost}}</span>
+              </div>
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+          {{/each}}
+          {{/if}}
+
+          {{#if categories.weapons.ranged.rifles.length}}
+          <h6 class="subcategory-header">Rifles & Carbines</h6>
+          {{#each categories.weapons.ranged.rifles}}
+          <div class="product-item" data-item-id="{{this.id}}">
+            <div class="product-info">
+              <h5 class="product-name">{{this.name}}</h5>
+              <div class="product-details">
+                {{#if this.system.damage}}
+                <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
+                {{/if}}
+                <span class="detail-desc">{{truncate this.system.description 120}}</span>
+              </div>
+            </div>
+            <div class="product-actions">
+              <div class="product-price">
+                <span class="credits-icon">₢</span>
+                <span class="price-amount">{{this.finalCost}}</span>
+              </div>
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+          {{/each}}
+          {{/if}}
+
+          {{#if categories.weapons.ranged.heavy.length}}
+          <h6 class="subcategory-header">Heavy Weapons</h6>
+          {{#each categories.weapons.ranged.heavy}}
+          <div class="product-item" data-item-id="{{this.id}}">
+            <div class="product-info">
+              <h5 class="product-name">{{this.name}}</h5>
+              <div class="product-details">
+                {{#if this.system.damage}}
+                <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
+                {{/if}}
+                <span class="detail-desc">{{truncate this.system.description 120}}</span>
+              </div>
+            </div>
+            <div class="product-actions">
+              <div class="product-price">
+                <span class="credits-icon">₢</span>
+                <span class="price-amount">{{this.finalCost}}</span>
+              </div>
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+          {{/each}}
+          {{/if}}
+
+          {{#if categories.weapons.ranged.exotic.length}}
+          <h6 class="subcategory-header">Exotic Ranged Weapons</h6>
+          {{#each categories.weapons.ranged.exotic}}
+          <div class="product-item" data-item-id="{{this.id}}">
+            <div class="product-info">
+              <h5 class="product-name">{{this.name}}</h5>
+              <div class="product-details">
+                {{#if this.system.damage}}
+                <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
+                {{/if}}
+                <span class="detail-desc">{{truncate this.system.description 120}}</span>
+              </div>
+            </div>
+            <div class="product-actions">
+              <div class="product-price">
+                <span class="credits-icon">₢</span>
+                <span class="price-amount">{{this.finalCost}}</span>
+              </div>
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+          {{/each}}
+          {{/if}}
         </div>
-        {{/each}}
       </div>
     </div>
 

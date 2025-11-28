@@ -508,25 +508,50 @@ export function categorizeEquipment(item) {
 }
 
 /**
- * Helper to sort weapons by type (Melee first, then Ranged)
+ * Helper to sort and categorize weapons by category and subcategory
+ * Returns object with melee and ranged categories, each with subcategories
  * @param {Array} weapons - Array of weapons
- * @returns {Array} Sorted weapons
+ * @returns {Object} Categorized weapons {melee: {simple: [], advanced: [], exotic: []}, ranged: {simple: [], pistols: [], rifles: [], heavy: [], exotic: []}}
  */
 export function sortWeapons(weapons) {
-    return weapons.sort((a, b) => {
-        const aType = (a.system?.weaponType || a.system?.type || '').toLowerCase();
-        const bType = (b.system?.weaponType || b.system?.type || '').toLowerCase();
+    const categorized = {
+        melee: {
+            simple: [],
+            advanced: [],
+            exotic: []
+        },
+        ranged: {
+            simple: [],
+            pistols: [],
+            rifles: [],
+            heavy: [],
+            exotic: []
+        }
+    };
 
-        // Melee weapons first, then ranged
-        const aIsMelee = aType.includes('melee') || aType.includes('simple') || aType.includes('lightsaber');
-        const bIsMelee = bType.includes('melee') || bType.includes('simple') || bType.includes('lightsaber');
+    for (const weapon of weapons) {
+        const category = weapon.system?.weaponCategory || 'ranged';
+        const subcategory = weapon.system?.subcategory || 'other';
 
-        if (aIsMelee && !bIsMelee) return -1;
-        if (!aIsMelee && bIsMelee) return 1;
+        if (category === 'melee') {
+            if (categorized.melee[subcategory]) {
+                categorized.melee[subcategory].push(weapon);
+            }
+        } else {
+            if (categorized.ranged[subcategory]) {
+                categorized.ranged[subcategory].push(weapon);
+            }
+        }
+    }
 
-        // Within same category, sort alphabetically
-        return a.name.localeCompare(b.name);
-    });
+    // Sort each subcategory alphabetically
+    for (const category in categorized) {
+        for (const subcategory in categorized[category]) {
+            categorized[category][subcategory].sort((a, b) => a.name.localeCompare(b.name));
+        }
+    }
+
+    return categorized;
 }
 
 /**
