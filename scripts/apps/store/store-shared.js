@@ -511,21 +511,23 @@ export function categorizeEquipment(item) {
  * Helper to sort and categorize weapons by category and subcategory
  * Returns object with melee and ranged categories, each with subcategories
  * @param {Array} weapons - Array of weapons
- * @returns {Object} Categorized weapons {melee: {simple: [], advanced: [], exotic: []}, ranged: {simple: [], pistols: [], rifles: [], heavy: [], exotic: []}}
+ * @returns {Object} Categorized weapons {melee: {simple: [], advanced: [], lightsaber: [], exotic: []}, ranged: {simple: [], pistol: [], rifle: [], heavy: [], exotic: [], grenade: []}}
  */
 export function sortWeapons(weapons) {
     const categorized = {
         melee: {
             simple: [],
             advanced: [],
+            lightsaber: [],
             exotic: []
         },
         ranged: {
             simple: [],
-            pistols: [],
-            rifles: [],
+            pistol: [],
+            rifle: [],
             heavy: [],
-            exotic: []
+            exotic: [],
+            grenade: []
         }
     };
 

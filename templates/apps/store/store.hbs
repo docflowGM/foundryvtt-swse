@@ -150,6 +150,32 @@
           {{/each}}
           {{/if}}
 
+          {{#if categories.weapons.melee.lightsaber.length}}
+          <h6 class="subcategory-header">Lightsabers</h6>
+          {{#each categories.weapons.melee.lightsaber}}
+          <div class="product-item" data-item-id="{{this.id}}">
+            <div class="product-info">
+              <h5 class="product-name">{{this.name}}</h5>
+              <div class="product-details">
+                {{#if this.system.damage}}
+                <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
+                {{/if}}
+                <span class="detail-desc">{{truncate this.system.description 120}}</span>
+              </div>
+            </div>
+            <div class="product-actions">
+              <div class="product-price">
+                <span class="credits-icon">₢</span>
+                <span class="price-amount">{{this.finalCost}}</span>
+              </div>
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+          {{/each}}
+          {{/if}}
+
           {{#if categories.weapons.melee.exotic.length}}
           <h6 class="subcategory-header">Exotic Melee Weapons</h6>
           {{#each categories.weapons.melee.exotic}}
@@ -182,7 +208,7 @@
           <h5 class="category-header"><i class="fas fa-crosshairs"></i> Ranged Weapons</h5>
 
           {{#if categories.weapons.ranged.simple.length}}
-          <h6 class="subcategory-header">Grenades & Explosives</h6>
+          <h6 class="subcategory-header">Simple Ranged Weapons</h6>
           {{#each categories.weapons.ranged.simple}}
           <div class="product-item" data-item-id="{{this.id}}">
             <div class="product-info">
@@ -207,9 +233,9 @@
           {{/each}}
           {{/if}}
 
-          {{#if categories.weapons.ranged.pistols.length}}
+          {{#if categories.weapons.ranged.pistol.length}}
           <h6 class="subcategory-header">Pistols</h6>
-          {{#each categories.weapons.ranged.pistols}}
+          {{#each categories.weapons.ranged.pistol}}
           <div class="product-item" data-item-id="{{this.id}}">
             <div class="product-info">
               <h5 class="product-name">{{this.name}}</h5>
@@ -233,9 +259,9 @@
           {{/each}}
           {{/if}}
 
-          {{#if categories.weapons.ranged.rifles.length}}
+          {{#if categories.weapons.ranged.rifle.length}}
           <h6 class="subcategory-header">Rifles & Carbines</h6>
-          {{#each categories.weapons.ranged.rifles}}
+          {{#each categories.weapons.ranged.rifle}}
           <div class="product-item" data-item-id="{{this.id}}">
             <div class="product-info">
               <h5 class="product-name">{{this.name}}</h5>
@@ -262,6 +288,32 @@
           {{#if categories.weapons.ranged.heavy.length}}
           <h6 class="subcategory-header">Heavy Weapons</h6>
           {{#each categories.weapons.ranged.heavy}}
+          <div class="product-item" data-item-id="{{this.id}}">
+            <div class="product-info">
+              <h5 class="product-name">{{this.name}}</h5>
+              <div class="product-details">
+                {{#if this.system.damage}}
+                <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
+                {{/if}}
+                <span class="detail-desc">{{truncate this.system.description 120}}</span>
+              </div>
+            </div>
+            <div class="product-actions">
+              <div class="product-price">
+                <span class="credits-icon">₢</span>
+                <span class="price-amount">{{this.finalCost}}</span>
+              </div>
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+          {{/each}}
+          {{/if}}
+
+          {{#if categories.weapons.ranged.grenade.length}}
+          <h6 class="subcategory-header">Grenades & Explosives</h6>
+          {{#each categories.weapons.ranged.grenade}}
           <div class="product-item" data-item-id="{{this.id}}">
             <div class="product-info">
               <h5 class="product-name">{{this.name}}</h5>
