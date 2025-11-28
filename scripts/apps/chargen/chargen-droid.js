@@ -771,7 +771,13 @@ export function _validateDroidBuilder() {
 export async function _onImportDroid(event) {
   event.preventDefault();
 
-  if (!this._packs.droids) await this._loadData();
+  if (!this._packs.droids) {
+    const loaded = await this._loadData();
+    if (loaded === false) {
+      // Critical packs missing, chargen will close
+      return;
+    }
+  }
 
   // Create a search dialog
   const droidList = this._packs.droids.map(d => ({

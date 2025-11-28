@@ -16,7 +16,11 @@ export async function _onSelectSpecies(event) {
   // Find the species document
   if (!this._packs.species) {
     SWSELogger.log("CharGen | Species pack not loaded, loading now...");
-    await this._loadData();
+    const loaded = await this._loadData();
+    if (loaded === false) {
+      // Critical packs missing, chargen will close
+      return;
+    }
   }
 
   SWSELogger.log(`CharGen | Species pack contains ${this._packs.species?.length || 0} species`);
@@ -265,7 +269,13 @@ export function _parseAbilityString(abilityString) {
  * @returns {Object} Map of ability keys to numeric bonuses
  */
 export async function _getRacialBonuses(speciesName) {
-  if (!this._packs.species) await this._loadData();
+  if (!this._packs.species) {
+    const loaded = await this._loadData();
+    if (loaded === false) {
+      // Critical packs missing, return empty bonuses
+      return {};
+    }
+  }
   const found = this._packs.species.find(s => s.name === speciesName || s._id === speciesName);
 
   if (!found || !found.system) {

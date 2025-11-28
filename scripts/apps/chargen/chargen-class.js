@@ -105,7 +105,11 @@ export async function _onSelectClass(event) {
  * Handle class change (for level-up scenarios)
  */
 export async function _onClassChanged(event, htmlRoot, initial = false) {
-  await this._loadData();
+  const loaded = await this._loadData();
+  if (loaded === false) {
+    // Critical packs missing, chargen will close
+    return;
+  }
   const classNode = (htmlRoot || this.element[0]).querySelector('[name="class_select"]');
   if (!classNode) return;
 
