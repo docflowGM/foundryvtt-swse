@@ -45,12 +45,12 @@ export function applyAvailabilityFilter(doc, filterValue, itemsById) {
             // Show all items
             item.style.display = '';
         } else {
-            // Check if the availability string contains the filter value
+            // Normalize both values for case-insensitive, whitespace-tolerant comparison
             // Handle cases like "Military, Rare" or "Restricted, Rare"
-            const availabilityLower = availability.toLowerCase();
-            const filterLower = filterValue.toLowerCase();
+            const availabilityNormalized = availability.toLowerCase().trim();
+            const filterNormalized = filterValue.toLowerCase().trim();
 
-            if (availabilityLower.includes(filterLower)) {
+            if (availabilityNormalized.includes(filterNormalized)) {
                 item.style.display = '';
             } else {
                 item.style.display = 'none';

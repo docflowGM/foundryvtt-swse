@@ -105,19 +105,52 @@ export class SWSEStore extends FormApplication {
         const actor = this.object;
         const isGM = game.user.isGM;
 
-        // Load all inventory data
-        const categories = await loadInventoryData(this.itemsById);
+        // Show loading notification for large inventories
+        const loadingNotification = ui.notifications.info("Loading store inventory...", { permanent: true });
 
-        return {
-            actor,
-            categories,
-            isGM,
-            markup: getStoreMarkup(),
-            discount: getStoreDiscount(),
-            credits: actor.system?.credits || 0,
-            rendarrImage: "systems/swse/assets/icons/rendarr.webp",
-            rendarrWelcome: getRandomDialogue('welcome')
-        };
+        try {
+            // Load all inventory data
+            const categories = await loadInventoryData(this.itemsById);
+
+            // Close loading notification
+            if (loadingNotification) {
+                loadingNotification.close();
+            }
+
+            return {
+                actor,
+                categories,
+                isGM,
+                markup: getStoreMarkup(),
+                discount: getStoreDiscount(),
+                credits: actor.system?.credits || 0,
+                rendarrImage: "systems/swse/assets/icons/rendarr.webp",
+                rendarrWelcome: getRandomDialogue('welcome')
+            };
+        } catch (err) {
+            // Close loading notification on error
+            if (loadingNotification) {
+                loadingNotification.close();
+            }
+            throw err;
+        }
+    }
+
+    /**
+     * Clean up resources when store is closed
+     * @override
+     */
+    async close(options) {
+        // Clear itemsById map to prevent memory leaks
+        this.itemsById.clear();
+
+        // Clear search debounce timer
+        if (this._searchDebounceTimer) {
+            clearTimeout(this._searchDebounceTimer);
+            this._searchDebounceTimer = null;
+        }
+
+        return super.close(options);
     }
 
     activateListeners(html) {
