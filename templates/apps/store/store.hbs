@@ -35,7 +35,7 @@
       <label for="shop-category-filter">
         <i class="fas fa-filter"></i> Category:
       </label>
-      <select id="shop-category-filter" class="shop-category-select">
+      <select id="shop-category-filter" class="shop-category-select" aria-label="Filter by category">
         <option value="weapons" selected>Weapons</option>
         <option value="armor">Armor</option>
         <option value="grenades">Explosives & Demolitions</option>
@@ -54,7 +54,7 @@
       <label for="shop-availability-filter">
         <i class="fas fa-shield-alt"></i> Availability:
       </label>
-      <select id="shop-availability-filter" class="shop-availability-select">
+      <select id="shop-availability-filter" class="shop-availability-select" aria-label="Filter by availability">
         <option value="all" selected>All Items</option>
         <option value="Standard">Standard</option>
         <option value="Licensed">Licensed</option>
@@ -65,10 +65,23 @@
       </select>
     </div>
     <div class="shop-filter-container">
+      <label for="shop-sort-select">
+        <i class="fas fa-sort"></i> Sort:
+      </label>
+      <select id="shop-sort-select" class="shop-sort-select" aria-label="Sort items by">
+        <option value="name-asc" selected>Name (A-Z)</option>
+        <option value="name-desc">Name (Z-A)</option>
+        <option value="price-asc">Price (Low to High)</option>
+        <option value="price-desc">Price (High to Low)</option>
+        <option value="damage-desc">Damage (High to Low)</option>
+        <option value="availability">Availability</option>
+      </select>
+    </div>
+    <div class="shop-filter-container">
       <label for="shop-search-input">
         <i class="fas fa-search"></i> Search:
       </label>
-      <input type="text" id="shop-search-input" class="shop-search-input" placeholder="Type to search..."/>
+      <input type="text" id="shop-search-input" class="shop-search-input" placeholder="Type to search..." aria-label="Search store items by name or description"/>
     </div>
     <div class="shop-actions-bar">
       <button type="button" class="view-cart-btn holo-btn" data-tab="cart">
@@ -108,6 +121,11 @@
                 {{#if this.system.damage}}
                 <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
                 {{/if}}
+                {{#if this.rarityClass}}
+                <span class="rarity-badge rarity-{{this.rarityClass}}">
+                  <i class="fas fa-star"></i> {{this.rarityLabel}}
+                </span>
+                {{/if}}
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
@@ -116,8 +134,8 @@
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
               </div>
-              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-                <i class="fas fa-cart-plus"></i> Add to Cart
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+                <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
               </button>
             </div>
           </div>
@@ -134,6 +152,11 @@
                 {{#if this.system.damage}}
                 <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
                 {{/if}}
+                {{#if this.rarityClass}}
+                <span class="rarity-badge rarity-{{this.rarityClass}}">
+                  <i class="fas fa-star"></i> {{this.rarityLabel}}
+                </span>
+                {{/if}}
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
@@ -142,8 +165,8 @@
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
               </div>
-              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-                <i class="fas fa-cart-plus"></i> Add to Cart
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+                <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
               </button>
             </div>
           </div>
@@ -160,6 +183,11 @@
                 {{#if this.system.damage}}
                 <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
                 {{/if}}
+                {{#if this.rarityClass}}
+                <span class="rarity-badge rarity-{{this.rarityClass}}">
+                  <i class="fas fa-star"></i> {{this.rarityLabel}}
+                </span>
+                {{/if}}
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
@@ -168,8 +196,8 @@
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
               </div>
-              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-                <i class="fas fa-cart-plus"></i> Add to Cart
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+                <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
               </button>
             </div>
           </div>
@@ -186,6 +214,11 @@
                 {{#if this.system.damage}}
                 <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
                 {{/if}}
+                {{#if this.rarityClass}}
+                <span class="rarity-badge rarity-{{this.rarityClass}}">
+                  <i class="fas fa-star"></i> {{this.rarityLabel}}
+                </span>
+                {{/if}}
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
@@ -194,8 +227,8 @@
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
               </div>
-              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-                <i class="fas fa-cart-plus"></i> Add to Cart
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+                <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
               </button>
             </div>
           </div>
@@ -217,6 +250,11 @@
                 {{#if this.system.damage}}
                 <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
                 {{/if}}
+                {{#if this.rarityClass}}
+                <span class="rarity-badge rarity-{{this.rarityClass}}">
+                  <i class="fas fa-star"></i> {{this.rarityLabel}}
+                </span>
+                {{/if}}
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
@@ -225,8 +263,8 @@
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
               </div>
-              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-                <i class="fas fa-cart-plus"></i> Add to Cart
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+                <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
               </button>
             </div>
           </div>
@@ -243,6 +281,11 @@
                 {{#if this.system.damage}}
                 <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
                 {{/if}}
+                {{#if this.rarityClass}}
+                <span class="rarity-badge rarity-{{this.rarityClass}}">
+                  <i class="fas fa-star"></i> {{this.rarityLabel}}
+                </span>
+                {{/if}}
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
@@ -251,8 +294,8 @@
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
               </div>
-              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-                <i class="fas fa-cart-plus"></i> Add to Cart
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+                <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
               </button>
             </div>
           </div>
@@ -269,6 +312,11 @@
                 {{#if this.system.damage}}
                 <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
                 {{/if}}
+                {{#if this.rarityClass}}
+                <span class="rarity-badge rarity-{{this.rarityClass}}">
+                  <i class="fas fa-star"></i> {{this.rarityLabel}}
+                </span>
+                {{/if}}
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
@@ -277,8 +325,8 @@
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
               </div>
-              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-                <i class="fas fa-cart-plus"></i> Add to Cart
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+                <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
               </button>
             </div>
           </div>
@@ -295,6 +343,11 @@
                 {{#if this.system.damage}}
                 <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
                 {{/if}}
+                {{#if this.rarityClass}}
+                <span class="rarity-badge rarity-{{this.rarityClass}}">
+                  <i class="fas fa-star"></i> {{this.rarityLabel}}
+                </span>
+                {{/if}}
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
@@ -303,8 +356,8 @@
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
               </div>
-              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-                <i class="fas fa-cart-plus"></i> Add to Cart
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+                <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
               </button>
             </div>
           </div>
@@ -321,6 +374,11 @@
                 {{#if this.system.damage}}
                 <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
                 {{/if}}
+                {{#if this.rarityClass}}
+                <span class="rarity-badge rarity-{{this.rarityClass}}">
+                  <i class="fas fa-star"></i> {{this.rarityLabel}}
+                </span>
+                {{/if}}
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
@@ -329,8 +387,8 @@
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
               </div>
-              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-                <i class="fas fa-cart-plus"></i> Add to Cart
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+                <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
               </button>
             </div>
           </div>
@@ -347,6 +405,11 @@
                 {{#if this.system.damage}}
                 <span class="detail-item"><i class="fas fa-bolt"></i> {{this.system.damage}}</span>
                 {{/if}}
+                {{#if this.rarityClass}}
+                <span class="rarity-badge rarity-{{this.rarityClass}}">
+                  <i class="fas fa-star"></i> {{this.rarityLabel}}
+                </span>
+                {{/if}}
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
@@ -355,8 +418,8 @@
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
               </div>
-              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-                <i class="fas fa-cart-plus"></i> Add to Cart
+              <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+                <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
               </button>
             </div>
           </div>
@@ -389,6 +452,11 @@
               {{#if this.system.reflexBonus}}
               <span class="detail-item"><i class="fas fa-shield-alt"></i> +{{this.system.reflexBonus}} Reflex</span>
               {{/if}}
+              {{#if this.rarityClass}}
+              <span class="rarity-badge rarity-{{this.rarityClass}}">
+                <i class="fas fa-star"></i> {{this.rarityLabel}}
+              </span>
+              {{/if}}
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
@@ -397,8 +465,8 @@
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
             </div>
-            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-              <i class="fas fa-cart-plus"></i> Add to Cart
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+              <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -423,6 +491,11 @@
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
+              {{#if this.rarityClass}}
+              <span class="rarity-badge rarity-{{this.rarityClass}}">
+                <i class="fas fa-star"></i> {{this.rarityLabel}}
+              </span>
+              {{/if}}
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
@@ -431,8 +504,8 @@
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
             </div>
-            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-              <i class="fas fa-cart-plus"></i> Add to Cart
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+              <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -457,6 +530,11 @@
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
+              {{#if this.rarityClass}}
+              <span class="rarity-badge rarity-{{this.rarityClass}}">
+                <i class="fas fa-star"></i> {{this.rarityLabel}}
+              </span>
+              {{/if}}
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
@@ -465,8 +543,8 @@
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
             </div>
-            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-              <i class="fas fa-cart-plus"></i> Add to Cart
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+              <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -491,6 +569,11 @@
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
+              {{#if this.rarityClass}}
+              <span class="rarity-badge rarity-{{this.rarityClass}}">
+                <i class="fas fa-star"></i> {{this.rarityLabel}}
+              </span>
+              {{/if}}
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
@@ -499,8 +582,8 @@
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
             </div>
-            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-              <i class="fas fa-cart-plus"></i> Add to Cart
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+              <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -525,6 +608,11 @@
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
+              {{#if this.rarityClass}}
+              <span class="rarity-badge rarity-{{this.rarityClass}}">
+                <i class="fas fa-star"></i> {{this.rarityLabel}}
+              </span>
+              {{/if}}
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
@@ -533,8 +621,8 @@
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
             </div>
-            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-              <i class="fas fa-cart-plus"></i> Add to Cart
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+              <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -559,6 +647,11 @@
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
+              {{#if this.rarityClass}}
+              <span class="rarity-badge rarity-{{this.rarityClass}}">
+                <i class="fas fa-star"></i> {{this.rarityLabel}}
+              </span>
+              {{/if}}
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
@@ -567,8 +660,8 @@
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
             </div>
-            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-              <i class="fas fa-cart-plus"></i> Add to Cart
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+              <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -593,6 +686,11 @@
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
+              {{#if this.rarityClass}}
+              <span class="rarity-badge rarity-{{this.rarityClass}}">
+                <i class="fas fa-star"></i> {{this.rarityLabel}}
+              </span>
+              {{/if}}
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
@@ -601,8 +699,8 @@
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
             </div>
-            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-              <i class="fas fa-cart-plus"></i> Add to Cart
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+              <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -627,6 +725,11 @@
           <div class="product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
+              {{#if this.rarityClass}}
+              <span class="rarity-badge rarity-{{this.rarityClass}}">
+                <i class="fas fa-star"></i> {{this.rarityLabel}}
+              </span>
+              {{/if}}
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
@@ -635,8 +738,8 @@
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
             </div>
-            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}">
-              <i class="fas fa-cart-plus"></i> Add to Cart
+            <button type="button" class="buy-item holo-btn" data-item-id="{{this.id}}" aria-label="Add {{this.name}} to cart">
+              <i class="fas fa-cart-plus" aria-hidden="true"></i> Add to Cart
             </button>
           </div>
         </div>

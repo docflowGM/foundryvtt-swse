@@ -31,10 +31,10 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
-import { getRandomDialogue } from './store-shared.js';
+import { getRandomDialogue, getPersonalizedGreeting } from './store-shared.js';
 import { getStoreMarkup, getStoreDiscount } from './store-pricing.js';
 import { loadInventoryData } from './store-inventory.js';
-import { applyAvailabilityFilter, applySearchFilter, switchToPanel } from './store-filters.js';
+import { applyAvailabilityFilter, applySearchFilter, switchToPanel, applySorting } from './store-filters.js';
 import * as Checkout from './store-checkout.js';
 import { scanForInvalidIds, fixInvalidIds, diagnoseIds } from './store-id-fixer.js';
 
@@ -125,7 +125,7 @@ export class SWSEStore extends FormApplication {
                 discount: getStoreDiscount(),
                 credits: actor.system?.credits || 0,
                 rendarrImage: "systems/swse/assets/icons/rendarr.webp",
-                rendarrWelcome: getRandomDialogue('welcome')
+                rendarrWelcome: getPersonalizedGreeting(actor)
             };
         } catch (err) {
             // Close loading notification on error
@@ -161,6 +161,9 @@ export class SWSEStore extends FormApplication {
 
         // Availability filter dropdown
         html.find("#shop-availability-filter").change(this._onAvailabilityFilterChange.bind(this));
+
+        // Sort dropdown
+        html.find("#shop-sort-select").change(this._onSortChange.bind(this));
 
         // Search input
         html.find("#shop-search-input").on('input', this._onSearchInput.bind(this));
@@ -261,6 +264,20 @@ export class SWSEStore extends FormApplication {
 
         // Apply filter to all visible items in the active panel
         applyAvailabilityFilter(doc, availabilityFilter, this.itemsById);
+    }
+
+    /**
+     * Handle sort dropdown change
+     * @param {Event} event - Change event
+     * @private
+     */
+    _onSortChange(event) {
+        event.preventDefault();
+        const sortValue = event.currentTarget.value;
+        const doc = this.element[0];
+
+        // Apply sorting to all items in the active panel
+        applySorting(doc, sortValue, this.itemsById);
     }
 
     /**
@@ -401,6 +418,10 @@ export class SWSEStore extends FormApplication {
 
         const totalCount = this.cart.items.length + this.cart.droids.length + this.cart.vehicles.length;
         cartCountEl.textContent = totalCount;
+
+        // Animate cart count badge
+        cartCountEl.classList.add('bounce');
+        setTimeout(() => cartCountEl.classList.remove('bounce'), 400);
     }
 
     /**

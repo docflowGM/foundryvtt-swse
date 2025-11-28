@@ -3,6 +3,8 @@
  * Handles price calculations, discounts, and markups
  */
 
+import { getRarityClass, getRarityLabel } from './store-shared.js';
+
 /**
  * Calculate final cost with markup/discount
  * @param {number} baseCost - Base cost of item
@@ -40,11 +42,17 @@ export function addFinalCost(item) {
         };
     }
 
+    // Determine rarity based on availability
+    const availability = item.system?.availability || plainItem.system?.availability;
+    const rarityClass = getRarityClass(availability);
+
     return {
         ...plainItem,
         id: itemId,  // Preserve ID for item selection
         _id: itemId, // Preserve both ID formats
-        finalCost: calculateFinalCost(baseCost)
+        finalCost: calculateFinalCost(baseCost),
+        rarityClass: rarityClass,
+        rarityLabel: rarityClass ? getRarityLabel(rarityClass) : null
     };
 }
 

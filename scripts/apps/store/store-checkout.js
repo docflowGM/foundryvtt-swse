@@ -500,6 +500,9 @@ export async function checkout(store, animateNumberCallback) {
 
         ui.notifications.info(`Purchase complete! Spent ${total.toLocaleString()} credits.`);
 
+        // Log purchase to history
+        await logPurchaseToHistory(actor, store.cart, total);
+
         // Clear cart
         clearCart(store.cart);
         store.cartTotal = 0;
@@ -525,5 +528,49 @@ export async function checkout(store, animateNumberCallback) {
 
         // Re-render to show correct credit amount
         store.render();
+    }
+}
+
+/**
+ * Log purchase to actor's purchase history
+ * @param {Actor} actor - The actor making the purchase
+ * @param {Object} cart - The shopping cart
+ * @param {number} total - Total credits spent
+ */
+async function logPurchaseToHistory(actor, cart, total) {
+    try {
+        // Get existing purchase history
+        const history = actor.getFlag('swse', 'purchaseHistory') || [];
+
+        // Create purchase record
+        const purchase = {
+            timestamp: Date.now(),
+            items: cart.items.map(i => ({
+                id: i.id || i.item?.id || i.item?._id,
+                name: i.name || i.item?.name,
+                cost: i.cost || i.item?.finalCost || 0
+            })),
+            droids: cart.droids.map(d => ({
+                id: d.id || d.actor?.id || d.actor?._id,
+                name: d.name || d.actor?.name,
+                cost: d.cost || 0
+            })),
+            vehicles: cart.vehicles.map(v => ({
+                id: v.id || v.actor?.id || v.actor?._id,
+                name: v.name || v.actor?.name,
+                cost: v.cost || 0,
+                condition: v.condition || 'new'
+            })),
+            total: total
+        };
+
+        // Add to history and save
+        history.push(purchase);
+        await actor.setFlag('swse', 'purchaseHistory', history);
+
+        SWSELogger.log("SWSE Store | Purchase logged to history:", purchase);
+    } catch (err) {
+        SWSELogger.error("SWSE Store | Failed to log purchase to history:", err);
+        // Don't throw error - this is non-critical
     }
 }
