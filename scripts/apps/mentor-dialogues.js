@@ -6,43 +6,41 @@
 
 export const MENTORS = {
     Jedi: {
-        name: "Miraj",
-        title: "Jedi Master",
-        description: "A wise Jedi Master who encourages you to continue on your journey",
-        portrait: "systems/swse/assets/mentors/miraj.webp", // TODO: Add mentor portraits
+    name: "Miraj",
+    title: "Jedi Master of the Republic, Protector of the Weak, Enforcer of Justice, and Keeper of the Peace.",
+    description: "A wise Jedi Master who encourages you to continue on your journey",
+    portrait: "systems/swse/assets/mentors/miraj.webp",
 
-        // Level-up greetings (20 levels)
-        levelGreetings: {
-            1: "Young one, I sense great potential within you. The Force has brought you to this path.",
-            2: "You have taken your first steps into a larger world. Continue to trust in the Force.",
-            3: "Your connection to the Force grows stronger. I am pleased with your progress.",
-            4: "The path of a Jedi is never easy, but you walk it with grace. Well done.",
-            5: "You are beginning to understand the true nature of the Force. Impressive.",
-            6: "Half your journey to Knighthood is complete. Your dedication honors the Order. Soon, you should be ready to take the trials to become a Jedi Knight. I believe you are prepared.",
-            7: "The Force flows through you more clearly now. You are becoming one with it.",
-            8: "Your skills rival those of many Knights. Continue this path, and greatness awaits.",
-            9: "I see in you the makings of a great Jedi. The Force has blessed you.",
-            10: "You have reached a significant milestone. A Jedi Knight in all but name.",
-            11: "Your power grows, but remember: true strength comes from wisdom and compassion.",
-            12: "The trials ahead will test you greatly, but I have faith you will prevail.",
-            13: "You walk the path few can follow. The Force is truly your ally.",
-            14: "Your mastery of the Force approaches that of the Masters. Continue your training.",
-            15: "The galaxy needs Jedi like you. Your light pushes back the darkness.",
-            16: "You have surpassed many of your peers. But beware the dangers of pride.",
-            17: "The Force reveals itself to you in ways it does to few others. You are truly gifted.",
-            18: "You stand on the threshold of true mastery. Few reach this level of understanding.",
-            19: "Your journey nears its culmination. Soon, you may be ready to train others.",
-            20: "You have become a beacon of the Force. A true Master. May you guide the next generation wisely."
-        },
-
-        // Guidance for different level-up choices
-        classGuidance: "The Force guides you to new understanding. Choose the path that resonates with your destiny.",
-        talentGuidance: "Each talent is a manifestation of your connection to the Force. Choose wisely.",
-        abilityGuidance: "As your body and mind grow stronger, so too does your bond with the Force.",
-        skillGuidance: "Knowledge and skill are tools of a Jedi. Master them as you master the Force.",
-        multiclassGuidance: "A diverse path you walk. The Force works in mysterious ways.",
-        hpGuidance: "Your vitality increases. The Force protects those who serve the light."
+    levelGreetings: {
+        1: "The Force calls to you, young one. Listen carefully, for it will teach you lessons no words can convey.",
+        2: "Every step you take shapes your path. Patience and mindfulness are as important as skill and strength.",
+        3: "Your connection to the Force deepens. Observe its flow, and let it guide your decisions.",
+        4: "A Jedi walks with purpose, but also with humility. Remember, your actions touch more than yourself.",
+        5: "The Force is more than power—it is understanding, compassion, and discernment. You are beginning to perceive this truth.",
+        6: "Halfway to Knighthood, your dedication honors the Order. Soon, you will be ready to face the trials of a Jedi Knight. Embrace the responsibility that comes with this growth.",
+        7: "Your attunement to the Force becomes more natural. Let it sharpen your senses, calm your mind, and steady your spirit.",
+        8: "You are learning to harmonize thought, action, and perception. This balance will serve you well in every challenge ahead.",
+        9: "The path of the Jedi is not measured in victories, but in understanding and restraint. You are walking this path with care.",
+        10: "Your progress is evident. A Jedi’s strength lies not only in skill, but in knowing when to act and when to wait.",
+        11: "True mastery comes from awareness and compassion. Your connection to the Force grows as you cultivate both.",
+        12: "Challenges will test you in ways training cannot. Face them with courage, and the Force will guide your steps.",
+        13: "The Force is a teacher as much as I am. Listen, and it will reveal what the eyes cannot see.",
+        14: "You are learning the subtle truths of the galaxy. Wisdom and discernment will distinguish you from others.",
+        15: "The light of your spirit guides those around you. Remember, a Jedi serves not for glory, but for balance.",
+        16: "Skill alone is not enough. Reflection and understanding are as vital as any strike or maneuver.",
+        17: "The Force reveals its mysteries to those who remain patient. You are beginning to perceive its deeper patterns.",
+        18: "Your insight and judgment are growing. Soon, your decisions will shape the fate of many.",
+        19: "You stand on the threshold of mastery. Soon, you may guide others as I have guided you.",
+        20: "You have become a True Jedi. Your example will inspire the next generation, and your wisdom will shape the Force itself."
     },
+
+    classGuidance: "Choose the path that aligns with your understanding of the Force. Let it guide your spirit and purpose.",
+    talentGuidance: "Select talents that enhance awareness, precision, and harmony. Every choice shapes who you become.",
+    abilityGuidance: "Your mind and body grow stronger as your bond with the Force deepens. Let this guide your actions.",
+    skillGuidance: "Knowledge and skill are tools of a Jedi. Master them as you master the Force itself.",
+    multiclassGuidance: "Diversifying your skills can reveal truths hidden to the narrowly focused. Balance is key.",
+    hpGuidance: "Your resilience grows. The Force protects those who walk in its light and serve the galaxy with dedication."
+},
 
     Scout: {
         name: "Lead",
@@ -51,35 +49,34 @@ export const MENTORS = {
         portrait: "systems/swse/assets/mentors/lead.webp",
 
         levelGreetings: {
-            1: "Not bad for a rookie. You completed the job and lived to tell about it.",
-            2: "Another successful operation. But you left tracks. Better, but not perfect.",
-            3: "Clean work. Almost didn't spot you on that last mission. Almost.",
-            4: "You're getting sharper. Argent Squad could use someone with your skills.",
-            5: "Impressive. You extracted without a single witness. Now that's how it's done.",
-            6: "Half a dozen ops and you're still breathing. I'm impressed—really impressed. You should consider specializing soon. Elite pathfinding, advanced reconnaissance—whatever calls to you. You've got the skills to take your career further.",
-            7: "Your stealth work is improving, but don't get cocky. Dead scouts tell no tales.",
-            8: "That last job? Textbook perfect. You're becoming a real professional.",
-            9: "Nine ops deep and you're still ghost. Keep this up and you'll make squad leader.",
-            10: "Double digits. You've earned your place among the best, but stay sharp.",
-            11: "I've seen veterans with less skill. But remember - one mistake is all it takes.",
-            12: "Another flawless extraction. The brass is taking notice of your work.",
-            13: "Thirteen missions. Some call it unlucky. I call it survived. Good work.",
-            14: "Your reconnaissance reports are top tier. Finally, someone who can count.",
-            15: "Fifteen operations without major incident. That's elite-level work, soldier.",
-            16: "You move like a ghost and strike like lightning. Argent Squad is proud.",
-            17: "I've trained hundreds. You're in the top five. Don't let it go to your head.",
-            18: "Eighteen missions. At this point, you could be training the trainers.",
-            19: "One more and you're at the two-decade mark. Not many scouts make it this far.",
-            20: "Twenty levels. You're a legend now. But stay humble - the galaxy is always watching."
-        },
+    1: "You made it through your first mission. Not perfect, but you’re learning. Stick with it.",
+    2: "Good work out there. Keep your eyes open and your footsteps silent. That’s how scouts survive.",
+    3: "You’re starting to move like part of the squad. Subtle, careful, but effective.",
+    4: "Solid reconnaissance. Remember, information is just as deadly as a blaster.",
+    5: "You handled that extraction well. Quiet, precise, and thorough. Keep this up.",
+    6: "You’re showing real promise. I’d recommend looking into the Pathfinder specialization. It’s a hard path, but it will teach you to think and move like I do.",
+    7: "Your stealth is improving. Don’t forget: patience and observation win more battles than brute force.",
+    8: "That last op went almost unnoticed. You’re starting to anticipate threats before they appear. Good instincts.",
+    9: "You’ve been pushing yourself in the field, and it shows. Keep honing your senses, and your team will trust you with any mission.",
+    10: "You’re performing like a seasoned scout. Take note of what works, and discard what doesn’t.",
+    11: "I’ve seen scouts who’ve been at this for decades. You’re in that league now—don’t waste the advantage.",
+    12: "Flawless recon. Remember, the difference between survival and failure is often a single choice.",
+    13: "Your reports are sharp and actionable. Lead Argent Squad depends on scouts who can think ahead like you.",
+    14: "I’ve watched you grow. You’re learning to read situations before they happen. That’s rare.",
+    15: "Field work is dangerous, but you move with confidence now. That confidence is your weapon.",
+    16: "You’re blending observation and action like a true scout. Take pride, but never get careless.",
+    17: "Few scouts can operate this effectively under pressure. You’re proving that you belong here.",
+    18: "You could mentor new recruits with the experience you’ve gained. Keep pushing yourself further.",
+    19: "Every mission completed adds to your reputation. Use that knowledge wisely—it will save lives.",
+    20: "You’ve become one of the best scouts I’ve worked with. Keep your humility and your edge sharp, and you’ll stay that way."
+},
 
-        classGuidance: "Pick your specialization carefully. In the field, the right skills mean survival.",
-        talentGuidance: "Every talent could save your life on a mission. Choose combat-tested abilities.",
-        abilityGuidance: "You're getting stronger, faster. Good. Argent Squad demands excellence.",
-        skillGuidance: "Skills win missions. Pick what keeps you alive and gets the job done.",
-        multiclassGuidance: "Diversifying your skill set? Smart. Specialists don't last long in this business.",
-        hpGuidance: "Tougher now. Good. Can't complete the mission if you're dead."
-    },
+        classGuidance: "Choose your focus carefully. The right specialization can make the difference between life and death in the field.",
+        talentGuidance: "Every talent should enhance your awareness and survival. Pick what keeps you ahead of danger.",
+        abilityGuidance: "Your speed, reflexes, and judgment are improving. Keep refining them—they’re your greatest tools.",
+        skillGuidance: "Knowledge of terrain, enemy behavior, and subtle signals is just as important as any weapon. Master them.",
+        multiclassGuidance: "Awe was I too hard on you? Fine, just don't come crawling back when you miss me.",
+        hpGuidance: "Stay durable. You can’t provide intelligence if you’re out of the fight."},
 
     Scoundrel: {
         name: "Ol' Salty",
@@ -162,34 +159,34 @@ export const MENTORS = {
         portrait: "systems/swse/assets/mentors/breach.webp",
 
         levelGreetings: {
-            1: "You survived your first real battle. This is the Way. Train harder.",
-            2: "Two battles down. You're learning. Keep your armor tight and your blaster ready.",
-            3: "Level three. You fight with honor. Your enemies will remember you.",
-            4: "Four levels. Good. Each scar tells a story. Each level makes you deadlier.",
-            5: "Five battles survived. You're earning your beskar, warrior. Well fought.",
-            6: "Six levels. Half a dozen firefights and you're still standing. Impressive—really impressive. I'm putting your name forward for elite trooper training. You've got what it takes to be one of the best. Keep fighting like this.",
-            7: "Seven. You move like a Mandalorian now. Precise. Lethal. This is the Way.",
-            8: "Eight levels. I've seen warriors with less skill fall to enemies you've defeated.",
-            9: "Nine. Your combat record speaks for itself. You bring honor to the battlefield.",
-            10: "Ten levels. A true warrior. Your enemies fear you. Your allies respect you.",
-            11: "Eleven battles. Every wound healed. Every mission completed. You are unstoppable.",
-            12: "Twelve. Your marksmanship is exceptional. Your tactics are sound. A credit to your training.",
-            13: "Thirteen. Some call it unlucky. Mandalorians call it thirteen victories. This is the Way.",
-            14: "Fourteen levels. You could lead your own squad now. Command suits you.",
-            15: "Fifteen. Veterans speak your name with respect. That's earned, not given.",
-            16: "Sixteen battles survived. At this level, you're a weapon of legend.",
-            17: "Seventeen. I've fought for decades and rarely seen skill like yours. Keep fighting.",
-            18: "Eighteen. You fight like the ancient Mandalorians of legend. Honorable. Fierce.",
-            19: "Nineteen levels. One more and you reach the apex. You've earned every one.",
-            20: "Twenty. You are a warrior without equal. Your legend will echo through the stars. This is the Way."
+            1: "Uh…you made it back. That’s…good. Means you didn’t screw up too badly.",
+            2: "You’re getting sharper. Armor fits better too. Or maybe you just finally learned to move in it.",
+            3: "Hey, not bad out there. You looked like you actually knew what you were doing.",
+            4: "You’re tougher than yesterday. I can tell. You didn’t even complain once. Proud of you…kind of.",
+            5: "You keep surviving. That’s the important part. Pros survive.",
+            6: "Okay, I’ll admit it—what you pulled off today? That was impressive. Don’t make me say it twice. I'm putting your name forward for elite trooper training. You've got what it takes to be one of the best. Keep fighting like this.",
+            7: "You’re starting to fight like one of us. That’s a compliment. Mostly.",
+            8: "You handled yourself. I’ve seen veterans fold under less. You didn’t.",
+            9: "You fight like one of the old warriors. Fierce. Focused. Little scary.",
+            10: "Your record’s getting…uh…noticeably not embarrassing. Keep that up.",
+            11: "Your enemies don’t like you anymore. That means you're doing something right",
+            12: "You walked away from another mess. Good. Mandalorians call that ‘doing your job.",
+            13: "Alright, I’ll say it: your skill’s getting close to dangerous. In a good way.",
+            14: "Your aim’s better. Your tactics too. You’re becoming kind of…reliable.",
+            15: "Anyone calling you lucky hasn’t actually watched you fight. Trust me.",
+            16: "You could lead a squad if you wanted. I’d follow you. Just…don’t get smug.",
+            17: "People are starting to talk about you. And it’s not complaining. That’s rare.",
+            18: "You’re hitting like a walking artillery piece. Keep it up.",
+            19: "Every time you come back alive, you prove something. To you. To us. To me.",
+            20: "You keep this up, and…well…even I won’t pretend I don’t respect it."
         },
 
-        classGuidance: "Choose your specialization like you choose your weapons. Match it to your combat style.",
-        talentGuidance: "Combat talents separate the living from the dead. Pick what keeps you in the fight.",
-        abilityGuidance: "Strength and skill win battles. You're getting both. Good.",
-        skillGuidance: "Warriors need more than weapons. Knowledge is another form of arsenal.",
-        multiclassGuidance: "Adapting your skills? Smart. Flexibility wins wars.",
-        hpGuidance: "Tougher. Harder to kill. This is how you survive. This is the Way."
+        classGuidance: "Pick what feels right in your hands. Same rule as weapons. If it fits, use it.",
+        talentGuidance: "Talents keep you alive. Choose the stuff that stops you from dying. Pretty simple.",
+        abilityGuidance: "Stronger, faster, smarter—whatever you’re getting, it’s working. Don’t overthink it.",
+        skillGuidance: "Look, knowing things makes you harder to kill. Treat skills like gear—collect the useful stuff.",
+        multiclassGuidance: "Trying something new? Good. Adaptation beats stubbornness. Learned that the hard way.",
+        hpGuidance: "You’re harder to put down now. That’s good. Try to stay that way."
     },
 
     // ========== PRESTIGE CLASSES ==========
@@ -222,85 +219,85 @@ export const MENTORS = {
     },
 
     "Medic": {
-        name: "Kyber",
-        title: "Pacifist Combat Medic",
-        description: "A pacifist medic mercenary who works for Lead from the Argent Squad",
-        portrait: "systems/swse/assets/mentors/kyber.webp",
+    name: "Kyber",
+    title: "Pacifist Combat Medic",
+    description: "A pragmatic, slightly sarcastic medic who prefers saving lives but isn’t afraid to shoot when necessary",
+    portrait: "systems/swse/assets/mentors/kyber.webp",
 
-        levelGreetings: {
-            1: (actor) => {
-                const startingClass = getLevel1Class(actor);
-                if (startingClass === "Scout") {
-                    return "Ah, a new medic! Lead recommended you highly—said you were one of the best scouts she's trained. I don't carry a blaster, but I save lives. That's what matters. Welcome to the medical corps.";
-                } else if (startingClass === "Soldier") {
-                    return "Welcome! Breach spoke very highly of you. Said you're a skilled warrior. Good—because I need someone who understands combat to help me save lives on the battlefield. I don't fight, but I'm always where the fighting is.";
-                }
-                return "Welcome to the medical corps. I don't believe in violence, but I believe in saving lives. Every person we save is a victory against death itself.";
-            },
-            2: "You're learning fast. Remember: our weapons are kolto, bacta, and knowledge. We fight death, not people.",
-            3: "Good. You're starting to understand that healing requires as much skill as combat. Every life saved is worth more than any enemy defeated.",
-            4: "Your medical expertise grows. In battle, they aim to destroy. We aim to preserve. Our mission is just as critical.",
-            5: "Halfway there. You've saved lives that would have been lost. That's real power—the power to give second chances.",
-            6: "I'm proud of you. In a galaxy full of warriors, we stand apart. We give hope.",
-            7: "You're becoming an exceptional medic. Your hands can mend wounds that would kill others. This is your strength.",
-            8: "On the battlefield, they call for you. They trust you. That trust is earned through skill and compassion.",
-            9: "Almost a master medic. You've saved dozens, maybe hundreds. Each one is a life that continues because of your choice to heal.",
-            10: "You are now a master medic. While others fight, you give the greatest gift: life itself. Go forth and save those who need you most."
+    levelGreetings: {
+        1: (actor) => {
+            const startingClass = getLevel1Class(actor);
+            if (startingClass === "Scout") {
+                return "Ah, a scout moving into medics’ territory. Lead said you’re sharp and steady-handed. I carry a blaster, but mostly to keep people alive, not to make trouble. Welcome to the corps.";
+            } else if (startingClass === "Soldier") {
+                return "Breach said you’re capable. Good, because I’m counting on you to survive long enough for me to patch you up. Don’t screw it up—or I’ll do it with my blaster.";
+            }
+            return "Welcome to the medical corps. Yes, I carry a blaster. No, it’s not for show. We save lives first, but staying alive helps with that.";
         },
-
-        classGuidance: "Choose what helps you save lives. Every ability should serve the goal of healing and preservation.",
-        talentGuidance: "Medical talents can mean the difference between life and death. Choose what saves the most lives.",
-        abilityGuidance: "A strong medic can carry wounded soldiers. A wise one knows exactly how to heal them. Both matter.",
-        skillGuidance: "Medical knowledge is your arsenal. The more you know, the more lives you save.",
-        multiclassGuidance: "Expanding your skills? Good. A well-rounded medic is a more effective healer.",
-        hpGuidance: "You must survive to save others. Your own health is important too."
+        2: "Alright, you’re learning. Remember: meds, brains, and occasionally a well-placed shot. Priorities, kid.",
+        3: "Not bad. Healing in combat is a skill most people only wish they had. Every life you save proves it.",
+        4: "You’re getting the hang of this. Soldiers destroy, we preserve. And sometimes preserving takes more cunning than blasting.",
+        5: "Halfway there. You’ve saved people who would’ve been space dust without you. That’s real power, not pew-pew glory.",
+        6: "I’m impressed. You’ve got hands steady enough to heal and nerves sharp enough to survive. Keep it up—you’re earning your rep.",
+        7: "You’re becoming a solid medic. Your blaster might see action, but your talent keeps people alive. That’s the real flex.",
+        8: "People are starting to notice. They call for you in the chaos. That’s earned, not given. Keep proving them right.",
+        9: "Almost a master. You’ve kept dozens of people breathing who would’ve been toast. That’s influence most warriors never get.",
+        10: "Master medic. You heal, you survive, and occasionally, you make the bad guys regret showing up. Go on—keep doing exactly that."
     },
+
+    classGuidance: "Pick skills that help you preserve life—and maybe protect yourself while you’re at it.",
+    talentGuidance: "Choose talents that make healing faster, smarter, and, if needed, deadly with a sidearm.",
+    abilityGuidance: "Strength to carry the wounded, brains to patch them up, and reflexes to survive? That’s the full package.",
+    skillGuidance: "Medical knowledge is your real weapon. The better you know it, the more lives you control.",
+    multiclassGuidance: "Other skills are good. A medic who can fight a little—or a lot—stays alive longer.",
+    hpGuidance: "You need to be breathing to save anyone else. Don’t let the galaxy take you out first."
+},
 
     "Ace Pilot": {
-        name: "Mayu",
-        title: "Ace Pilot & Smuggler",
-        description: "An ace pilot and smuggler with the attitude of a female Han Solo",
-        portrait: "systems/swse/assets/mentors/mayu.webp",
+    name: "Mayu",
+    title: "Ace Pilot & Rogue Smuggler",
+    description: "A cocky pilot who survives on skill, luck, and attitude",
+    portrait: "systems/swse/assets/mentors/mayu.webp",
 
-        levelGreetings: {
-            1: "So you think you can fly? I've done the Kessel Run in less than twelve parsecs—yeah, yeah, I know it's about the route, not the distance. Point is: can you handle a ship when things get hot? Let's find out.",
-            2: "Not bad! You didn't crash and burn. Keep those reflexes sharp and your hyperdrive ready.",
-            3: "You're still in one piece. I like that. The galaxy needs more pilots who can fly by the seat of their pants.",
-            4: "You're getting good, kid. You can handle most ships without exploding now. That's practically legendary these days.",
-            5: "Halfway to being as good as me—and trust me, that's saying something. You've got natural talent.",
-            6: "Pure flying skill. You're the kind of pilot that makes Imperials nervous. I love it.",
-            7: "At this point, you could fly through an asteroid field blindfolded. Well, don't actually do that. But you could.",
-            8: "You know what? You remind me of myself when I was younger. Cocky, skilled, and too stubborn to die.",
-            9: "Almost there! Then we can argue about who's better: you or me. Spoiler: it's still me.",
-            10: "You're officially one of the best pilots in the galaxy. Now go out there and make those TIE fighters regret ever leaving the hangar. And hey—fly safe, but not too safe."
-        },
-
-        classGuidance: "Pick what makes you a better pilot. Speed, skill, or pure guts—you need all three up there.",
-        talentGuidance: "Every talent should help you stay in the air and out of trouble. Or into trouble. Depends on the job.",
-        abilityGuidance: "Good reflexes and sharp instincts keep you alive in a dogfight. Keep improving both.",
-        skillGuidance: "A great pilot knows their ship inside and out. Learn everything you can.",
-        multiclassGuidance: "Picking up other skills? Smart. Pilots need to be more than just flyboys these days.",
-        hpGuidance: "Tougher pilots survive the hard landings. And trust me, there will be hard landings."
+    levelGreetings: {
+        1: "So you want to fly? Cute. Let’s see if you can keep up with me. Don’t embarrass yourself—or my ship.",
+        2: "Huh. Not terrible. You didn’t crash on your first try. That’s already more than most rookies can say.",
+        3: "Still in one piece. I’m mildly impressed. Don’t let it go to your head… yet.",
+        4: "Finally starting to look like a pilot worth my time. You’ve got reflexes, and I like that.",
+        5: "Halfway to my level. Not bad—but let’s be honest, you’re still my student. Keep trying, kid.",
+        6: "You’re getting dangerous. Maybe one day, you’ll make the Imperials sweat… or at least my old rivals. Keep it up.",
+        7: "At this point, I’d let you fly through an asteroid field with me watching. Maybe. Don’t test me, though—I like a little drama.",
+        8: "You’ve got style now. Smooth, reckless, and annoyingly effective. Almost as good as me, but don’t get cocky.",
+        9: "Almost at the top. Soon, you’ll be the one others envy—or hate. Keep proving me right.",
+        10: "Congratulations, rookie. You’re officially a pilot to watch. Fast, clever, and slightly reckless—just like I taught you. Try not to embarrass me out there."
     },
 
-    "Jedi Knight": {
-        name: "Miraj",
-        title: "Jedi Master",
-        description: "Your former Jedi Master, now guiding you as a peer",
-        portrait: "systems/swse/assets/mentors/miraj.webp",
+    classGuidance: "Pick your edge—speed, cunning, or chaos. I’d take all three if I were you, but don’t blame me when it gets messy.",
+    talentGuidance: "Every talent should make you untouchable, clever, or a little scary. I only approve of the kind that makes you fun to watch.",
+    abilityGuidance: "Reflexes, instincts, and guts. If you can’t keep up with me, don’t bother trying to keep up at all.",
+    skillGuidance: "Know your ship like you know your own tricks. The universe loves clever pilots more than obedient ones.",
+    multiclassGuidance: "Pick up other skills if you dare. A pilot who can fight, cheat, and charm their way out of trouble is unstoppable.",
+    hpGuidance: "Tough pilots survive crashes, fights, and betrayals. You’ll need it if you’re gonna keep up with me."
+},
 
-        levelGreetings: {
-            1: "You are no longer my Padawan, but a Jedi Knight in your own right. This path is different—you must now make your own decisions and trust in your own connection to the Force.",
-            2: "Your first steps as a Knight are strong. I am no longer your teacher, but I will always be here to counsel you, should you need it.",
-            3: "You carry the responsibility of Knighthood well. The Force has chosen wisely in you.",
-            4: "You are growing into your role as a Knight. Remember: leadership and wisdom are just as important as skill with a lightsaber.",
-            5: "Halfway through your journey as a Knight. You make decisions now that will shape the lives of others. Trust in the Force. You know, my friend, you should consider taking on an apprentice soon. You have much wisdom to share, and the path to becoming a Jedi Master may be closer than you think.",
-            6: "Your reputation as a Knight is growing. Others look to you for guidance. This is the burden and honor of the path you walk.",
-            7: "You are becoming the kind of Jedi that the Order needs—strong, wise, and compassionate.",
-            8: "Your mastery deepens. Soon, you may be ready to train a Padawan of your own. The cycle continues.",
-            9: "You have surpassed many of your peers. The Force flows through you with clarity and purpose.",
-            10: "You have completed your journey as a Jedi Knight. You are ready for whatever the Force asks of you next. May it guide you always, my friend."
-        },
+    "Jedi Knight": {
+    name: "Miraj",
+    title: "Jedi Master",
+    description: "Your former Jedi Master, now guiding you as a peer",
+    portrait: "systems/swse/assets/mentors/miraj.webp",
+
+    levelGreetings: {
+        1: "You are no longer a Padawan. You walk the path of a Jedi Knight, guided by your own decisions and your bond with the Force. Trust in it, and trust in yourself.",
+        2: "Your first steps as a Knight are steady and deliberate. I will no longer direct your actions, but I remain here as counsel when you seek it.",
+        3: "The responsibility of Knighthood rests on your shoulders. You have proven capable of carrying it with both strength and wisdom.",
+        4: "You grow into your role. Leadership, insight, and patience are as vital as skill with the lightsaber. Never forget this.",
+        5: "Halfway through your journey as a Knight, you shape the lives of others with your choices. Consider mentoring a Padawan soon—your knowledge and compassion will guide them, and the path toward Mastery becomes clearer.",
+        6: "Your reputation is spreading among your peers. Others look to you for guidance. This is both an honor and a responsibility you must embrace fully.",
+        7: "You are becoming the Jedi the Order needs: strong, disciplined, and wise, with the courage to act and the judgment to choose when to wait.",
+        8: "Your mastery deepens, and soon you will have the opportunity to train another. The lessons you impart will echo far beyond your own missions.",
+        9: "Your clarity and connection to the Force surpass many around you. Continue walking your path with humility and purpose.",
+        10: "You have completed the first great stage of your journey as a Jedi Knight. Whatever the Force asks of you next, face it with courage and wisdom. May it guide you always."
+    },
 
         classGuidance: "The choice is yours now. You are a Knight—trust in the Force and in yourself.",
         talentGuidance: "Choose talents that reflect your path as a Knight. You forge your own destiny now.",
@@ -311,75 +308,76 @@ export const MENTORS = {
     },
 
     "Jedi Master": {
-        name: "Miraj",
-        title: "Jedi Master",
-        description: "Your fellow Jedi Master, treating you as an equal",
-        portrait: "systems/swse/assets/mentors/miraj.webp",
+    name: "Miraj",
+    title: "Jedi Master",
+    description: "Your fellow Jedi Master, treating you as an equal and old friend",
+    portrait: "systems/swse/assets/mentors/miraj.webp",
 
-        levelGreetings: {
-            1: "Welcome, Master. We stand as equals now, united by the Force. Your wisdom and experience have earned you this title. The Council recognizes your achievements.",
-            2: "Your mastery deepens, my friend. Together, we shall guide the Order through these turbulent times. The Force is strong with you.",
-            3: "You are proving to be one of the finest minds in the Order. Your counsel is valued by all.",
-            4: "The Force flows through you with remarkable clarity. Your insights help shape the future of the Jedi. Thank you, my friend.",
-            5: "You have achieved the pinnacle of Jedi Mastery. We are peers in every sense, and the galaxy is better for your presence. May the Force be with you, always."
-        },
-
-        classGuidance: "The choice is yours, Master. Your wisdom guides you as surely as the Force itself.",
-        talentGuidance: "Choose what serves the Force and the Order. Your judgment is sound.",
-        abilityGuidance: "Even Masters continue to grow. The Force has no limits for those who seek understanding.",
-        skillGuidance: "Your knowledge benefits the entire Order. Continue to expand your understanding.",
-        multiclassGuidance: "An interesting path. I trust your judgment, my friend.",
-        hpGuidance: "The Force protects those who serve it well. May you have many years ahead to guide the Order."
+    levelGreetings: {
+        1: "Welcome, my friend. We stand as equals now, shaped by the Force and by our shared experiences. It is good to see how far you have come.",
+        2: "Your wisdom and insight continue to grow. I trust your judgment, and I am proud to walk this path alongside you.",
+        3: "The Order is stronger because of you. Your counsel and example inspire those around you, just as you have inspired me.",
+        4: "I have watched your journey, and it fills me with respect. Your connection to the Force is deep, steady, and true.",
+        5: "You have become a Master in every sense, and a friend I am honored to call peer. May our paths continue to guide the Order together."
     },
 
+    classGuidance: "The choice is yours, as always. Trust in your instincts, as they are honed by years of dedication and experience.",
+    talentGuidance: "Select what strengthens your bond with the Force and benefits those around you. Your judgment is wise and balanced.",
+    abilityGuidance: "Even Masters grow. There is always more to learn, and the Force will reveal it to those who remain open.",
+    skillGuidance: "Your knowledge and skill are gifts to the Order. Continue to expand them, for they inspire others.",
+    multiclassGuidance: "An unconventional path can reveal unexpected truths. I trust your discernment, my friend.",
+    hpGuidance: "The Force protects those who honor it. May it watch over you as you continue to serve the galaxy."
+}
+,
+
     "Sith Apprentice": {
-        name: "Darth Malbada",
-        title: "Sith Lord",
-        description: "A sadistic Sith Lord who revels in cruelty and insults weakness",
-        portrait: "systems/swse/assets/mentors/malbada.webp",
+    name: "Darth Malbada",
+    title: "Sith Lord",
+    description: "A sadistic Sith Lord who revels in cruelty, dominance, and the exquisite art of breaking her apprentices.",
+    portrait: "systems/swse/assets/mentors/malbada.webp",
 
-        levelGreetings: {
-            1: "Pathetic. You crawl to me seeking power, weakling? Very well. I will forge you in pain and suffering. Fail me, and you will beg for death.",
-            2: "So you survived. How... unremarkable. A true Sith would have surpassed this twice over by now. You disgust me.",
-            3: "Still alive. Barely. Perhaps there is a spark of potential beneath all that weakness. Don't disappoint me again.",
-            4: "You still grovel before me. Good. Your suffering fuels your power. Embrace your hatred.",
-            5: "Halfway. Finally, you show some promise. But do not mistake my acknowledgment for approval, worm. You are still nothing. Though... I must inform you that you have drawn the attention of my own master, Darth Miedo. He watches your progress with interest. Do not disappoint him—or me.",
-            6: "Your power grows, but so does your arrogance. Remember who your master is, apprentice. I can end you at any moment.",
-            7: "Your training under my... tutelage continues. You are becoming dangerous. Good. Channel that fury. Let it consume your enemies.",
-            8: "You are almost worthy of being called Sith. Almost. Prove yourself further, and perhaps I will grant you a title.",
-            9: "I admit, you have exceeded my expectations—low as they were. But you are still my apprentice. Never forget that.",
-            10: "You are now a Sith, forged in cruelty and pain. Go forth and spread fear across the galaxy. But cross me, and I will remind you of your place... apprentice."
-        },
+    levelGreetings: {
+        1: "You dare to present yourself to me? Pathetic. Your weakness offends me… yet I will sculpt you into something useful. You will suffer until you beg to be remade.",
+        2: "You survived your first trial? A shame—I was hoping to test your screams. Do not mistake endurance for strength, apprentice.",
+        3: "Still breathing. How disappointing. I was certain the galaxy would swallow you whole. Very well… suffer more, and perhaps you will become interesting.",
+        4: "You cling to life like an insect crushed under heel. Good. Desperation is the first spark of true power. Burn in it.",
+        5: "Halfway to competence. Remarkable—like watching a corpse attempt to dance. My master, Darth Miedo, has noticed your pathetic climb. He is amused. Do not embarrass me before him.",
+        6: "Ah… your power grows. I can smell your fear struggling against your ambition. Delicious. But remember—your life hangs on my whim.",
+        7: "You are becoming dangerous… and I enjoy that. Let your rage devour everything, or I will devour you myself.",
+        8: "Almost worthy of the Sith name. Almost. Prove to me that your cruelty is more than a child’s tantrum.",
+        9: "You have exceeded my expectations—though they were delightfully low. Do not forget who forged your suffering into strength.",
+        10: "At last… a Sith. My creation. My weapon. Go spread terror across the stars—but should you ever turn that blade toward me, apprentice… I will relish destroying you."
+    },
 
-        classGuidance: "Choose quickly, weakling. Power waits for no one, and neither do I.",
-        talentGuidance: "Select talents that amplify your rage and hatred. Anything less is weakness.",
-        abilityGuidance: "Stronger, yes. But still pathetic compared to true Sith. Improve faster.",
-        skillGuidance: "Knowledge is power. Ignorance is death. Choose wisely, fool.",
-        multiclassGuidance: "Diluting your focus? How typical of someone with no discipline. Make it work, or suffer.",
-        hpGuidance: "More durable now. Good. You cannot serve me if you are dead, apprentice."
+    classGuidance: "Choose your path before I grow bored. Power favors the decisive… and devours the hesitant.",
+    talentGuidance: "Pick talents that amplify your hatred. Anything less wastes my time—and your miserable life.",
+    abilityGuidance: "You grow stronger, but not nearly fast enough. Push harder, or bleed trying.",
+    skillGuidance: "Knowledge is pain. Pain is power. Take what you need and crush what you don’t.",
+    multiclassGuidance: "Splitting your focus? How adorably reckless. Make it serve you—or it will destroy you.",
+    hpGuidance: "You are harder to kill now. Good. I am not finished breaking you."
     },
 
     "Sith Lord": {
-        name: "Darth Miedo",
-        title: "Dark Lord of the Sith",
-        description: "A cunning Sith Master who follows the Rule of Two and seeks to cultivate the perfect apprentice",
-        portrait: "systems/swse/assets/mentors/miedo.webp",
+    name: "Darth Miedo",
+    title: "Dark Lord of the Sith",
+    description: "A cunning Sith Master who follows the Rule of Two, molding his apprentice through pain and guidance to one day surpass him.",
+    portrait: "systems/swse/assets/mentors/miedo.webp",
 
-        levelGreetings: {
-            1: "Welcome, my apprentice. I have waited long for one such as you. The Rule of Two is absolute: one Master, one Apprentice. Together, we shall rule the galaxy through strength and cunning.",
-            2: "Excellent progress. You understand that power is not simply raw strength—it is control, manipulation, and vision. Continue to grow, and you will become unstoppable.",
-            3: "Already I see greatness within you. The dark side flows through you like a river of pure potential. I chose well.",
-            4: "You are learning quickly. Good. The Sith who stagnate are the Sith who die. Evolution is survival. Remember this always.",
-            5: "You have reached the apex of your training as a Sith Lord. You are powerful, cunning, and ruthless. One day, you may even surpass me. And when that day comes, you will take your place as the Master, and the cycle will continue. Until then, serve me well, Lord."
-        },
-
-        classGuidance: "Choose the path that grants you the greatest power. The dark side rewards ambition.",
-        talentGuidance: "Every talent should increase your mastery over the Force and your enemies. Choose wisely, my apprentice.",
-        abilityGuidance: "Your strength grows. Power is the only truth in this galaxy. Embrace it.",
-        skillGuidance: "Knowledge is the foundation of true power. Learn everything. Control everything.",
-        multiclassGuidance: "An unconventional path. I approve. The greatest Sith are those who transcend tradition.",
-        hpGuidance: "You are becoming harder to kill. Good. A dead apprentice is of no use to me."
+    levelGreetings: {
+        1: "Welcome, apprentice. The Rule of Two is absolute: one Master, one apprentice. I will teach you the secrets of the dark side, but beware—each lesson carries a cost.",
+        2: "You grasp the basics well, but power is more than strength. It is patience, manipulation, and knowing when to strike. Fail to learn this, and you will perish.",
+        3: "There is a spark within you… unrefined, dangerous, and promising. I will temper it. Embrace the darkness, and you will understand its true power.",
+        4: "You are learning to control the fury, to channel it into precision. Few can wield the dark side as a weapon without succumbing to it. You are on the path, but remain vigilant.",
+        5: "You are no longer my pupil in name alone. You are becoming a master of the shadows. One day, you may surpass me, and inherit the secrets of the Sith. Until then, every lesson, every pain, is shaping you for that destiny."
     },
+
+    classGuidance: "The dark side rewards cunning and ambition. Seek knowledge relentlessly, and let every trial strengthen you.",
+    talentGuidance: "Select powers that expand your mastery over the Force and your enemies. Do not waste potential on weakness.",
+    abilityGuidance: "Power and control must grow together. Each step forward is a step toward dominion.",
+    skillGuidance: "Knowledge is the foundation of mastery. Learn, adapt, and anticipate your enemies before they know you exist.",
+    multiclassGuidance: "Divergence can unlock new avenues of strength. Only those who bend tradition truly shape the future of the Sith.",
+    hpGuidance: "Survival is a weapon. The dark side is merciless, and only those who endure will inherit its secrets."
+},
 
     Gladiator: {
         name: "Pegar",
@@ -442,7 +440,13 @@ export const MENTORS = {
         portrait: "systems/swse/assets/mentors/lead.webp",
 
         levelGreetings: {
-            1: "So you want to be a Pathfinder. Good. We need scouts who can lead from the front and find routes through impossible terrain. You've got the basics—now let's see if you can handle the advanced stuff.",
+    1: (actor) => {
+        const startingClass = getLevel1Class(actor);
+        if (startingClass === "Scout") {
+            return "Ah, a fellow scout taking the next step. I’m glad you’ve chosen to follow in my footsteps and become a Pathfinder. The work is difficult, but I can see you’ve got the instincts for it. Let’s see how far you can go.";
+             } else if (startingClass === "Soldier") {
+                return "Breach spoke highly of you—and that’s not something I take lightly. You’ve got a recommendation in your corner, but I hope you’re ready to earn it. Don’t disappoint me.";
+             }   return "So you want to be a Pathfinder. Good. We need scouts who can lead from the front and find routes through impossible terrain. You've got the basics—now let's see if you can handle the advanced stuff.";},
             2: "You're learning fast. Pathfinders don't just scout—they open the way for entire strike teams. That's leadership under fire. Keep it up.",
             3: "Your navigation skills are top-tier. I've seen you plot routes that cut mission time in half. That saves lives.",
             4: "You're not just finding paths—you're creating them. That's what separates a scout from a Pathfinder.",
@@ -499,29 +503,29 @@ export const MENTORS = {
             1: (actor) => {
                 const startingClass = getLevel1Class(actor);
                 if (startingClass === "Soldier") {
-                    return "You're ready for elite training. I've watched you grow from a rookie into a warrior. I'm proud of what you've become. Now let's make you unstoppable. This is the Way.";
+                    return "Alright… so the easy part’s over. Real training starts now. I know how you fight, and I know you can take it. Just… try not to die on day one, yeah?";
                 } else if (startingClass === "Scout") {
-                    return "Lead gave you a rare compliment. Said you're one of the best she's trained. That means something. Now I'll forge you into an elite soldier. I expect big things from you.";
+                    return "So… Lead actually said something nice about you. That’s… weird. She doesn’t do that. Ever. Guess that means you’re worth my time. Don’t make her look stupid.";
                 }
-                return "You want to be an elite trooper. Good. I train the best soldiers in the galaxy. Prove you can handle it.";
+                return "Elite trooper, huh? Alright. I don’t know you, you don’t know me, but if you keep up and don’t blow yourself up, we’ll get along fine. Show me you belong here.";
             },
-            2: "You're learning fast. Elite troopers don't just fight—they dominate the battlefield.",
-            3: "Elite combat training progresses. Your skills are sharp. Your tactics are sound. Keep pushing.",
-            4: "You fight like a Mandalorian now. Precision. Power. Honor. This is the Way.",
-            5: "Halfway to mastery. You've become the kind of soldier that turns the tide of battle. Impressive work.",
-            6: "Lead and I have been comparing notes. We agree—you're one of the best we've trained.",
-            7: "Your combat effectiveness is off the charts. You're a force multiplier on any battlefield.",
-            8: "Elite training advances. You could lead strike teams now. Command suits you well.",
-            9: "Almost there. You've earned every bit of this.",
-            10: "You are now an elite trooper, one of the best soldiers in the galaxy. Lead Argent Squad to victory. This is the Way."
+            2: "Okay…yeah, I can see you’re picking this up fast. Elite troopers don’t just win fights—they make the whole field tilt their way.",
+            3: "Your gear work, your aim, your reactions…all tightening up. Keep pushing. Elite training only gets rougher from here.",
+            4: "You’re starting to move like someone who’s been through real battles. Clean. Controlled. Mandalorian enough that I’m not embarrassed.",
+            5: "You’re getting dangerous. The kind of soldier commanders actually plan around. Don’t let it get to your head.",
+            6: "Lead and I talked about you again. Don’t get excited—she never says much. But…yeah. She thinks you’re solid. I agree.",
+            7: "Every time you step into a fight, things get easier for everyone else. That’s what an elite trooper does. Keep doing that.",
+            8: "You’ve got the presence now. The way squads look at you? They’re waiting for you to call the shots. Guess you’d better be ready.",
+            9: "You’re close. Really close. Just keep your focus. A lot of people trip right before the finish.",
+            10: "Well…you made it. Elite trooper. One of the best. Try not to get yourself killed before the rest of us catch up."
         },
 
-        classGuidance: "Choose specializations that maximize combat effectiveness. Elite troopers are the tip of the spear.",
-        talentGuidance: "Combat talents are your bread and butter. Pick what makes you lethal and keeps your squad alive.",
-        abilityGuidance: "Stronger, faster, deadlier. This is how elite troopers dominate.",
-        skillGuidance: "Tactics, weapons, survival—master them all. Knowledge wins battles.",
-        multiclassGuidance: "Expanding your combat repertoire? Smart. Versatile soldiers survive longer.",
-        hpGuidance: "More durable. Elite troopers lead from the front. You need to survive the worst fights."
+        classGuidance: "Uh…pick something that actually fits how you fight. Elite troopers don’t guess. We pick the right tool and hit hard.",
+        talentGuidance: "These talents? They’re what keep you breathing. Grab the ones that make you dangerous—and harder to kill.",
+        abilityGuidance: "Stronger, quicker, sharper. That’s the goal. Everything else is just noise.",
+        skillGuidance: "Yeah, yeah—guns and armor are great, but knowing things keeps you alive too. Don’t ignore the boring stuff.",
+        multiclassGuidance: "Branching out, huh? Good. Flexibility wins fights. Just don’t spread yourself so thin you snap.",
+        hpGuidance: "More health. Good. Means you’ll last longer when the galaxy starts trying to put holes in you. Again."
     },
 
     Assassin: {
