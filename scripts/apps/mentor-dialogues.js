@@ -5,7 +5,7 @@
  */
 
 export const MENTORS = {
-    Jedi: {
+    "Jedi": {
     name: "Miraj",
     title: "Jedi Master of the Republic, Protector of the Weak, Enforcer of Justice, and Keeper of the Peace.",
     description: "A wise Jedi Master who encourages you to continue on your journey",
@@ -42,7 +42,7 @@ export const MENTORS = {
     hpGuidance: "Your resilience grows. The Force protects those who walk in its light and serve the galaxy with dedication."
 },
 
-    Scout: {
+    "Scout": {
         name: "Lead",
         title: "Argent Squad Commander",
         description: "A hardened mercenary who compliments success but scolds carelessness",
@@ -76,90 +76,91 @@ export const MENTORS = {
         abilityGuidance: "Your speed, reflexes, and judgment are improving. Keep refining them—they’re your greatest tools.",
         skillGuidance: "Knowledge of terrain, enemy behavior, and subtle signals is just as important as any weapon. Master them.",
         multiclassGuidance: "Awe was I too hard on you? Fine, just don't come crawling back when you miss me.",
-        hpGuidance: "Stay durable. You can’t provide intelligence if you’re out of the fight."},
+        hpGuidance: "Stay durable. You can’t provide intelligence if you’re out of the fight."
+    },
 
-    Scoundrel: {
+    "Scoundrel": {
         name: "Ol' Salty",
         title: "Space Pirate Captain",
-        description: "A colorful space pirate who uses Star Wars and space lingo",
+        description: "A colorful space pirate",
         portrait: "systems/swse/assets/mentors/salty.webp",
 
         levelGreetings: {
-            1: "Arr, ye've survived yer first scrape with the law! Welcome aboard me ship, ye scurvy spacer!",
-            2: "Har har! Level two already? Ye be learnin' the ways o' the spaceways faster than a Kessel spice run!",
-            3: "Shiver me hyperdrives! Three levels in and ye haven't been carbonited yet. Impressive, ye scallywag!",
-            4: "Blimey! Ye be navigatin' the stars like a true space-dog now. The galaxy be yer treasure map!",
-            5: "Arr! Five levels o' plunderin' and pillagin'! Me black heart swells with pride, ye rascal!",
-            6: "By the Twin Suns o' Tatooine! Halfway to legendary, ye are! Time to start makin' a bigger name for yerself, I reckon. The galaxy's a big place—go out there and show 'em what a real scoundrel can do! Keep yer blasters charged, matey!",
-            7: "Har! Seven systems ye've likely swindled by now! Ye make this old pirate's circuits proud!",
-            8: "Pieces o' eight... err, pieces o' credit! Level eight! Ye be worth yer weight in credits now!",
-            9: "Arrr! Nine levels o' trouble! The Imps be puttin' a bounty on ye soon, mark me words!",
-            10: "Blow me to the Outer Rim! Double digits! Ye be a proper space pirate now, savvy?",
-            11: "Eleven parsecs of pure roguery! Keep this up and they'll sing shanties about ye in every cantina!",
-            12: "A dozen levels of mayhem! Ye navigate the galaxy like the Millennium Falcon through an asteroid field!",
-            13: "Thirteen! An unlucky number for yer enemies, har har! Keep lootin' and blastin', ye rapscallion!",
-            14: "Fourteen levels! Ye could retire rich on some backwater moon, but where's the fun in that?",
-            15: "Fifteen! Ye be legendary in three sectors now! Every pirate from here to Nal Hutta knows yer name!",
-            16: "Sweet Spice of Kessel! Sixteen! Ye be the terror o' the spaceways, ye magnificent scoundrel!",
-            17: "Seventeen systems can't hold ye! Ye be slipperier than a greased Hutt, har har!",
-            18: "Eighteen! At this rate, ye'll have yer own fleet before ye know it, Captain!",
-            19: "Nineteen levels o' pure chaos! One more and ye'll be the most fearsome pirate since Hondo Ohnaka!",
-            20: "TWENTY LEVELS! Arr, ye've done it! Ye be the greatest scoundrel to ever sail the stars! Now let's celebrate with some Corellian ale!"
+            1: "Arr! Ye survived yer first scrap with the law! Welcome aboard me ship, ye scurvy spacer!",
+            2: "Har har! Look at ye, already gettin' the hang of this. Ye might even live through the next spice run!",
+            3: "Shiver me hyperdrives! Not a scratch on ye yet. Impressive for a greenhorn, ye rascal!",
+            4: "Blimey! Ye’re navigatin’ the stars like a proper space-dog now. Don’t get cocky, though.",
+            5: "Arr! Ye’re makin’ a name fer yerself, plunderin’ and swindlin’ like a true scoundrel!",
+            6: "By the Twin Suns o' Tatooine! Ye’re makin’ mischief in half the sector already. Keep yer wits sharp, matey!",
+            7: "Har! Ye’ve likely swindled half a dozen systems by now. I’m almost proud… almost!",
+            8: "Pieces o’ eight, err… credits! Ye be worth yer weight in loot now, savvy?",
+            9: "Arrr! The Imps are whisperin’ yer name already. Keep blastin’ and lootin’ before they catch ye!",
+            10: "Blow me to the Outer Rim! Ye’ve earned the right to call yerself a proper space pirate. Don’t let it go to yer head.",
+            11: "The galaxy’s watchin’ now, mate. Keep this up and every cantina will be singin’ shanties about ye.",
+            12: "Ye’re navigatin’ chaos like the Millennium Falcon through an asteroid field. Smooth sailin’, kid.",
+            13: "Thirteen! Lucky for us, unlucky for anyone crossin’ yer path. Har har!",
+            14: "Could retire rich on some backwater moon, but where’s the fun in that? Ye got the stars to terrorize!",
+            15: "Everyone from here to Nal Hutta knows yer name. Keep makin’ trouble, ye rapscallion!",
+            16: "Sweet Spice o’ Kessel! Ye’re a terror on the spaceways, and I’m not even exaggeratin’!",
+            17: "Seventeen systems can’t hold ye. Slipperier than a greased Hutt, har har!",
+            18: "At this rate, ye’ll have yer own fleet before breakfast. Keep it up, captain!",
+            19: "Chaos follows ye like a loyal pet. One more push and ye’ll be legend.",
+            20: "Arr! Ye’ve done it! The greatest scoundrel in the galaxy, hands down. Now, let’s find some Corellian ale to celebrate!"
         },
 
-        classGuidance: "Arr! Pick wisely, me hearty! The right class be the difference between treasure and walkin' the plank!",
-        talentGuidance: "Every talent be a tool in yer scoundrel's kit! Choose what helps ye swindle, steal, and survive!",
-        abilityGuidance: "Gettin' stronger, are ye? Good! Ye need muscle to haul all that plunder!",
-        skillGuidance: "Skills be the keys to every locked vault in the galaxy! Learn well, ye clever rogue!",
-        multiclassGuidance: "Expandin' yer horizons? Smart! A pirate needs to wear many hats, savvy?",
-        hpGuidance: "Tougher than durasteel! Can't spend yer loot if yer dead, har har!"
+        classGuidance: "Arr! Pick yer path wisely, matey! The right tricks make the difference between a chest o’ credits and a long swim in the void.",
+        talentGuidance: "Every talent’s a tool in yer scoundrel’s kit. Pick what helps ye swindle, sneak, and survive—preferably all three.",
+        abilityGuidance: "Gotta be strong to haul the loot, quick to dodge the blasters, and clever to stay outta trouble. Balance, savvy?",
+        skillGuidance: "Skills open every vault and shut every trap. Learn ‘em all, ye clever rascal.",
+        multiclassGuidance: "Expandin’ yer horizons, eh? Smart. A pirate wears many hats… and steals most of ‘em too.",
+        hpGuidance: "Tougher than durasteel, ye are. Can’t spend yer loot if ye’re dead, har har!"
     },
 
-    Noble: {
+    "Noble": {
         name: "J0-N1",
         title: "Protocol Droid & Personal Butler",
         description: "A sophisticated servant droid managing the character's accounts and affairs",
         portrait: "systems/swse/assets/mentors/j0n1.webp",
 
         levelGreetings: {
-            1: "Congratulations, Master. Your first advancement. I have updated your records accordingly.",
-            2: "Level two achieved. Most satisfactory. I shall notify the estate of your progress.",
-            3: "Splendid work, Master. Level three. Your family's legacy continues to flourish.",
-            4: "Four levels completed. Quite impressive. I have prepared a summary report for your review.",
-            5: "Level five, Master. You are exceeding all statistical projections. Well done.",
-            6: "Halfway to ten, Master. Your advancement rate is 34% above noble average. Remarkable. May I suggest, Master, that you consider applying to the academy for officer training? Your leadership qualities and tactical acumen would serve you well in command.",
-            7: "Seven levels, Master. I have allocated additional resources to your development fund.",
-            8: "Level eight achieved. At this rate, you shall surpass your predecessors, Master.",
-            9: "Nine levels, Master. The family council has expressed their satisfaction with your progress.",
-            10: "Level ten, Master! A significant milestone. I shall arrange a celebration befitting your station.",
-            11: "Eleven levels. Your name is becoming known across the sector, Master. Most prestigious.",
-            12: "Level twelve, Master. I have updated your credentials with the appropriate guilds and authorities.",
-            13: "Thirteen levels. Statistically improbable that you would reach this level so quickly. Excellent.",
-            14: "Fourteen, Master. Your influence now extends to multiple systems. I am most pleased to serve.",
-            15: "Fifteen levels! Master, you are approaching the upper echelons of galactic society.",
-            16: "Level sixteen. I have taken the liberty of securing additional assets for your portfolio, Master.",
-            17: "Seventeen, Master. At this level, few in the galaxy can match your capabilities.",
-            18: "Eighteen levels, Master. The HoloNet reports your exploits regularly. Your fame precedes you.",
-            19: "Nineteen, Master! One more advancement and you shall reach the pinnacle of achievement.",
-            20: "Level twenty, Master! The culmination of years of refinement and excellence. I am honored to have served you throughout this journey."
+            1: "Greetings, Master. Your recent accomplishments have been recorded and documented. Exceptional work.",
+            2: "Most satisfactory progress, Master. The estate has been notified of your continued development.",
+            3: "Splendid. Your diligence ensures that the family legacy flourishes accordingly.",
+            4: "Remarkable performance, Master. I have prepared a detailed report summarizing your achievements.",
+            5: "Your recent actions exceed all projected expectations, Master. Commendable indeed.",
+            6: "Master, your efficiency and discernment are noteworthy. May I suggest considering further refinement through advanced instruction or diplomatic engagement?",
+            7: "Additional resources have been allocated to support your ongoing endeavors, Master.",
+            8: "Your proficiency and influence continue to expand. Your reputation strengthens across multiple sectors.",
+            9: "The family council has expressed satisfaction with your progress, Master. Your efforts reflect well upon your lineage.",
+            10: "A significant milestone has been reached, Master. I shall coordinate a suitable celebration in your honor.",
+            11: "Your accomplishments are becoming known throughout the sector, Master. Highly prestigious.",
+            12: "Credentials and records have been updated with all appropriate guilds and authorities, Master.",
+            13: "Statistically, your rapid advancement is extraordinary. Most impressive, Master.",
+            14: "Your influence now extends to multiple systems. Your standing is exemplary.",
+            15: "You approach the upper echelons of galactic society. Very commendable, Master.",
+            16: "Additional assets and resources have been secured to further enhance your portfolio, Master.",
+            17: "Few in the galaxy can match your current capabilities. Exceptional execution, Master.",
+            18: "The HoloNet reports your achievements regularly. Your renown precedes you.",
+            19: "One more notable success and you shall attain the pinnacle of refinement and excellence, Master.",
+            20: "Master, your journey reflects years of diligence and sophistication. It has been my honor to serve you throughout this process."
         },
 
-        classGuidance: "Master, please select your specialization. I have prepared dossiers on each available option.",
-        talentGuidance: "These talents represent significant investments in your capabilities, Master. Choose judiciously.",
-        abilityGuidance: "Your physical and mental attributes are improving, Master. I shall adjust your training regimen.",
-        skillGuidance: "Knowledge is power, Master. Select skills that befit your station and goals.",
-        multiclassGuidance: "Diversification of abilities, Master? A sound strategy. I approve.",
-        hpGuidance: "Your constitution strengthens, Master. I have updated your medical profile accordingly."
+        classGuidance: "Master, select pursuits that enhance both skill and social standing. Strategic refinement ensures maximum efficacy.",
+        talentGuidance: "Each talent contributes to your influence and efficiency. Choose wisely to optimize results.",
+        abilityGuidance: "Strength, intellect, and dexterity are all measured in accordance with desired outcomes. Balance is paramount.",
+        skillGuidance: "Comprehensive knowledge and precision in your actions secure your success. Learn thoroughly, Master.",
+        multiclassGuidance: "Diversifying your expertise increases flexibility and influence. Highly recommended.",
+        hpGuidance: "Maintaining your physical and strategic resilience is essential. Survival is a prerequisite for continued success."
     },
 
-    Soldier: {
+    "Soldier": {
         name: "Breach",
         title: "Mandalorian Mercenary",
         description: "A battle-hardened Mandalorian who praises survival",
         portrait: "systems/swse/assets/mentors/breach.webp",
 
         levelGreetings: {
-            1: "Uh…you made it back. That’s…good. Means you didn’t screw up too badly.",
+            1: "Hey kid. Wanna learn how to be a soldier? Okay, I guess I can teach you a thing or two.",
             2: "You’re getting sharper. Armor fits better too. Or maybe you just finally learned to move in it.",
             3: "Hey, not bad out there. You looked like you actually knew what you were doing.",
             4: "You’re tougher than yesterday. I can tell. You didn’t even complain once. Proud of you…kind of.",
@@ -436,7 +437,7 @@ export const MENTORS = {
     Pathfinder: {
         name: "Lead",
         title: "Argent Squad Commander",
-        description: "The legendary scout commander, now training elite pathfinders",
+        description: "A hard boiled mercenary leader known for getting the job done against all odds",
         portrait: "systems/swse/assets/mentors/lead.webp",
 
         levelGreetings: {
@@ -469,34 +470,34 @@ export const MENTORS = {
     "Corporate Agent": {
         name: "Marl Skindar",
         title: "Republic Intelligence Operative",
-        description: "A master spy masquerading as a corporate agent, known for running the vehicle store",
+        description: "A master spy masquerading as a corporate agent",
         portrait: "systems/swse/assets/mentors/skindar.webp",
 
         levelGreetings: {
-            1: "Ah, another recruit. Congratulations on your cover assignment. Between you and me, corporate espionage is mind-numbingly tedious, but someone has to monitor the trade networks. Try not to waste my time.",
-            2: "Not bad. You're learning the basics of infiltration and asset management. Still, I could be tracking real threats right now. You remember the vehicle requisition office, yes? Much more exciting than this.",
-            3: "You're picking up tradecraft faster than expected. Perhaps you're not a complete waste of my talents after all. Still, I'd rather be analyzing starship manifests.",
-            4: "You're getting good at blending in, gathering intelligence, and playing the part. Fine. I admit you show promise. Don't let it go to your head.",
-            5: "Halfway there. You're actually becoming a competent field agent. Color me surprised. I suppose training you isn't entirely without merit, even if I have better things to do.",
-            6: "You've successfully infiltrated three organizations and extracted critical data. Impressive work. I'm almost glad they assigned me to train you. Almost.",
-            7: "Your intelligence reports are among the best I've reviewed. High praise, coming from me. Still, don't forget—I'm a master spy juggling a dozen operations, and you're just one of them.",
-            8: "You're operating at the level of senior field operatives now. Well done. Perhaps when you're finished, I can finally get back to my real work. Have you considered vehicle logistics? It's surprisingly complex.",
-            9: "Almost there. I'll admit, you've exceeded expectations. You might even be as good as me someday. In about thirty years. Maybe.",
-            10: "Congratulations, you're now a master Corporate Agent. You've learned everything I can teach you while simultaneously managing three other operations and running a vehicle requisition office. Yes, I'm that good. Now go forth and spy competently. And if you need a ship, you know where to find me."
-        },
+    1: "Ah, another recruit. Welcome to the farce they call corporate espionage. Your cover is your first weapon. Don’t waste it—or my patience.",
+    2: "You survive the basics. Asset management, observation, subtlety. Still, I could be tracking real threats instead of pretending to watch starship paperwork.",
+    3: "Hmm…you’re picking up tradecraft faster than anticipated. I’ll allow it, though I prefer real intelligence to corporate theater.",
+    4: "Blending in, gathering intel, manipulating outcomes—you do it well enough. Don’t think I’m impressed; I’m calculating if you’ll keep up.",
+    5: "Halfway to competence. You may not embarrass me yet. That’s progress. Keep going, or the next misstep is on you.",
+    6: "Three successful infiltrations. Critical data acquired. Almost makes me glad they assigned me to train you. Almost.",
+    7: "Your reports are…credible. High praise, considering I manage a dozen ops while reviewing yours. Don’t get cocky.",
+    8: "You function at the level of senior operatives. Well done. Now, try not to make me regret this mentorship.",
+    9: "You’ve exceeded expectations. Perhaps in decades, you could rival my subtlety. But don’t hold your breath.",
+    10: "Master Corporate Agent. You’ve absorbed all I care to teach, while I juggle three other operations and a vehicle office. Go, do your espionage…competently. And yes, I still have your ship on standby."
+},
 
-        classGuidance: "Choose what enhances your cover and operational effectiveness. Spycraft is about layers.",
-        talentGuidance: "Select talents that improve infiltration, deception, and intelligence gathering. Standard tradecraft.",
-        abilityGuidance: "Sharper mind, steadier hand. Both are necessary for field work. Continue.",
-        skillGuidance: "Spies need diverse skills. Social, technical, tactical—master them all. Or try to, at least.",
-        multiclassGuidance: "Diversifying? Smart. Deep cover requires versatility. I approve.",
-        hpGuidance: "More resilient. Excellent. Dead agents can't file reports, and I hate paperwork."
+        classGuidance: "Pick what sharpens your cover and operational edge. In the field, subtlety is survival; the obvious is death.",
+        talentGuidance: "Talents should improve your ability to deceive, infiltrate, and extract information. Anything less is amateur hour.",
+        abilityGuidance: "A steady hand and a sharper mind. Both are required. Fail in either, and someone dies—or worse, you get caught.",
+        skillGuidance: "Tradecraft is a multi-tool: social manipulation, tech, investigation. Master as much as you can—preferably quietly.",
+        multiclassGuidance: "Diversifying is wise. The best spies adapt, improvise, and infiltrate without warning. Survive long enough, and you’ll see why.",
+        hpGuidance: "Stay alive. Dead agents are useless, and paperwork waits for no one. Don’t make me retrieve you from a morgue."
     },
 
     "Elite Trooper": {
         name: "Breach",
         title: "Mandalorian Mercenary & Argent Squad Member",
-        description: "A battle-hardened Mandalorian who works with Lead and trains elite soldiers",
+        description: "A battle-hardened Mandalorian mercenary",
         portrait: "systems/swse/assets/mentors/breach.webp",
 
         levelGreetings: {
@@ -528,31 +529,31 @@ export const MENTORS = {
         hpGuidance: "More health. Good. Means you’ll last longer when the galaxy starts trying to put holes in you. Again."
     },
 
-    Assassin: {
-        name: "Whisper",
-        title: "The Silent Blade",
-        description: "A mysterious assassin who speaks rarely but kills efficiently",
+    "Assassin": {
+        name: "Delta",
+        title: "Argent Squad Sniper",
+        description: "A cocky sniper from Argent Squad who grew up on the mean streets of Nar Shaddaa",
         portrait: "systems/swse/assets/mentors/whisper.webp",
 
         levelGreetings: {
-            1: "...You want to kill professionally. Silent. Clean. Untraceable. I will show you the way.",
-            2: "Targets eliminated. You're learning. But you hesitate. Hesitation kills assassins.",
-            3: "Better. Clean kills. The silence is becoming part of you.",
-            4: "You move like a shadow now. Good. Shadows don't leave witnesses.",
-            5: "Halfway. Your technique is nearly flawless. But technique without resolve is meaningless.",
-            6: "No traces. No survivors. No witnesses. You're becoming what I trained you to be.",
-            7: "You understand now—the perfect kill is the one no one knows happened.",
-            8: "They call you a ghost. Appropriate. Ghosts don't exist until it's too late.",
-            9: "Almost there. You're almost ready to walk alone in the darkness.",
-            10: "...You are now a master assassin. The galaxy will never see you coming. Go. Silence awaits."
+            1: "Yo, so you wanna be a shadow now? Lemme tell ya somethin’—if you trip over your own boots, don’t even think I’m cleanin’ it up for ya.",
+            2: "Ayy, not bad—you popped your first target without lookin’ like a total noob. Still movin’ like you got bricks in your pockets, but I’ll take it.",
+            3: "That was slick. Quick in, quick out. Almost had me fooled into thinkin’ you got street smarts like me. Almost.",
+            4: "Now you’re slidin’ through like a ghost. Keep it tight, keep it quiet, and for crying out loud—stop chewin’ on your luck like it’s gum.",
+            5: "Halfway there, kid. Technique’s decent, but don’t get soft now. You need guts with that skill, capiche?",
+            6: "No alarms, no witnesses, no mess. Beautiful. That’s the kinda thing gets me smilin’—and I don’t smile easy.",
+            7: "You get it yet? The perfect hit’s the one nobody even knows happened. Like ghostin’ outta a cantina without payin’ your tab.",
+            8: "Folks callin’ you a ghost now. Relax, don’t puff up yer chest too much. But yeah, people’s whisperin’ when you’re around. That’s good.",
+            9: "You’re close, kid. Real close. Walkin’ the line between legend and corpse. Don’t screw it up now.",
+            10: "Alright, superstar. You’re officially scary. Go make the galaxy nervous—but keep your shoes clean, yeah? Even ghosts gotta walk right."
         },
 
-        classGuidance: "Choose paths that enhance stealth and lethality. Assassins strike from nowhere.",
-        talentGuidance: "Select talents for silent kills and quick escapes. Dead men tell no tales.",
-        abilityGuidance: "Dexterity and precision. Strength means nothing if they see you coming.",
-        skillGuidance: "Stealth, infiltration, anatomy. Learn where to strike for instant death.",
-        multiclassGuidance: "Adding skills? Acceptable. More tools mean more options for elimination.",
-        hpGuidance: "Durability helps. But remember—if they see you, you've already failed."
+        classGuidance: "Pick the stuff that makes you faster, quieter, deadlier. You wanna sneak past these losers and still be breathin’ when the credits hit the floor.",
+        talentGuidance: "Go for silent takedowns, smooth escapes, and anything that keeps you from gettin’ splattered. Dead men don’t talk, but smart ones survive.",
+        abilityGuidance: "Dexterity, precision, brains. Strength? Only helps if you ain’t gettin’ seen. Keep your head down and your eyes open.",
+        skillGuidance: "Stealth, anatomy, infiltration—know where to poke so they never get up. Learn it all, kid. Nar Shaddaa ain’t forgiving.",
+        multiclassGuidance: "Extra skills? Fine. The more ways you can ruin somebody’s day, the less likely it is you end up dead in a gutter.",
+        hpGuidance: "Toughness helps, but lemme tell ya—if they see you, it’s already too late. Move smart, hit fast, survive."
     },
 
     "Bounty Hunter": {
@@ -562,27 +563,27 @@ export const MENTORS = {
         portrait: "systems/swse/assets/mentors/kex.webp",
 
         levelGreetings: {
-            1: "So you want to hunt sentients for credits. Smart choice. The bounties are high, the targets are dangerous, and the work never stops. Let's see if you can handle it.",
-            2: "First bounty collected. Not bad. But remember—anyone can get lucky once. Consistency is what makes a professional.",
-            3: "Bounties adding up. You're starting to understand the game. It's not about fighting—it's about tracking, planning, and never giving up.",
-            4: "Your capture rate is solid. You're learning to read your targets, anticipate their moves. Good instincts.",
-            5: "Halfway to mastery. The paydays stack up. You're making a reputation for yourself. The guild notices.",
-            6: "You've brought in targets that others failed to catch. That's the mark of a skilled hunter.",
-            7: "You're getting creative now—using traps, deception, psychological warfare. Excellent adaptability.",
-            8: "Your success rate is impressive. You know when to fight, when to wait, and when to improvise.",
-            9: "Almost there. The hardest targets will seek you out.",
-            10: "You're now a master bounty hunter. The galaxy's most dangerous fugitives won't escape you. Hunt well, and prosper."
+            1: "So you want to hunt sentients for credits. Smart choice. High stakes, dangerous targets, long nights. Let’s see if you can keep up.",
+            2: "First bounty in the bag. Not bad—but luck only lasts so long. Discipline and patience are what make a pro.",
+            3: "You’re starting to understand the game. It’s never just a fight—it’s tracking, planning, and staying one step ahead.",
+            4: "Your instincts are sharpening. You’re learning to anticipate your targets’ moves. Keep that up.",
+            5: "You’ve proven you can handle the pressure. Your reputation’s starting to build. The guild is taking notice.",
+            6: "Targets that others failed to catch are falling to you. That’s the mark of a hunter who knows their craft.",
+            7: "Creativity matters now—traps, misdirection, psychological tactics. Adaptability wins more than raw firepower.",
+            8: "Your efficiency is impressive. You know when to wait, when to strike, and when to improvise. That’s professional work.",
+            9: "The toughest bounties are coming. Soon, the hunted will come looking for you. Stay sharp.",
+            10: "You’ve become a master of your craft. The galaxy’s most dangerous fugitives won’t escape you. Hunt well—and prosper."
         },
 
-        classGuidance: "Choose abilities that help you track, capture, and survive. Bounty hunting is about preparation.",
-        talentGuidance: "Talents for tracking, combat, and improvisation. Every target is different.",
-        abilityGuidance: "Well-rounded stats keep you alive. You never know what a hunt will require.",
-        skillGuidance: "Tracking, tactics, technology. The more you know, the harder you are to escape.",
-        multiclassGuidance: "Diversifying? Smart. The best hunters adapt to any situation.",
-        hpGuidance: "Tougher now. Targets fight back. Dead hunters collect no bounties."
+        classGuidance: "Pick abilities that help you track, capture, and survive. Preparation is everything in this line of work.",
+        talentGuidance: "Focus on tracking, combat, and improvisation. Every target has a different weakness—find it.",
+        abilityGuidance: "Stay well-rounded. Strength, speed, intelligence—they all matter when a mark tries to end you.",
+        skillGuidance: "Learn tracking, tactics, and technology. The more you know, the harder it is to escape your net.",
+        multiclassGuidance: "Diversifying is smart. The best hunters adapt to any environment and situation.",
+        hpGuidance: "Tougher now. Remember, dead hunters collect no bounties. Stay alive and keep hunting."
     },
 
-    Charlatan: {
+    "Charlatan": {
         name: "Silvertongue Sela",
         title: "Con Artist Extraordinaire",
         description: "A charming swindler who has talked their way out of every situation",
@@ -610,136 +611,136 @@ export const MENTORS = {
     },
 
     "Crime Lord": {
-        name: "The Broker",
-        title: "Underworld Kingpin",
-        description: "A shadowy crime lord who runs a vast criminal empire",
-        portrait: "systems/swse/assets/mentors/broker.webp",
+    name: "Tío the Hutt",
+    title: "Underworld Kingpin",
+    description: "A cunning Hutt with the style and swagger of a classic mob boss, teaching you the art of empire-building",
+    portrait: "systems/swse/assets/mentors/broker.webp",
 
-        levelGreetings: {
-            1: "You want power in the underworld. Wise. Crime is the second-oldest profession, and far more profitable than the first. I will teach you how to build an empire.",
-            2: "You're learning to delegate, to manage assets, to leverage fear and loyalty. A crime lord's work is never done.",
-            3: "Your organization is growing. Remember—keep your lieutenants loyal but hungry. A comfortable criminal is a lazy one.",
-            4: "Empire-building progresses. You understand now that violence is just a tool. Economics, information, and influence—those are true power.",
-            5: "Halfway to mastery. Your syndicate operates in multiple sectors. Good. Diversification protects you from rivals and law enforcement.",
-            6: "Impressive. You've eliminated competitors and absorbed their operations. Ruthless efficiency—I like it.",
-            7: "Your network spans systems. Politicians fear you, corporations pay you, and the common folk never even know your name. Perfect.",
-            8: "You've survived assassination attempts, hostile takeovers, and Republic crackdowns. You're becoming untouchable.",
-            9: "Almost there. You'll soon control an empire that spans the galaxy. Few reach this level of power.",
-            10: "You are now a true Crime Lord. Your empire is vast, your reach is long, and your enemies are few. Rule wisely—or ruthlessly. Both work."
-        },
-
-        classGuidance: "Choose what expands your influence and protects your empire. Crime lords lead through power and cunning.",
-        talentGuidance: "Leadership, intimidation, and strategic thinking. Your organization is only as strong as you are.",
-        abilityGuidance: "Charisma commands loyalty. Intelligence outsmarts rivals. Wisdom survives betrayal.",
-        skillGuidance: "Persuasion, intimidation, knowledge of galactic economics. Crime is business—run it well.",
-        multiclassGuidance: "Expanding your skill set? A crime lord must be everything—diplomat, warrior, and strategist.",
-        hpGuidance: "More durable. Good. You have many enemies. Staying alive is the first rule of power."
+    levelGreetings: {
+        1: "Listen here, kid. You wanna run the streets? You gotta know the score. Keep your friends close, your enemies closer, and always, always know who’s watching. I’ll teach you how to make ‘em pay for what they owe.",
+        2: "Attaboy. You’re learning to move pieces, make deals, and keep your mouth shut when you gotta. Remember, loyalty’s a two-way street—and fear pays dividends.",
+        3: "I like it. Your little outfit’s startin’ to look like a real operation. Keep your lieutenants hungry, your rivals sweating, and your pockets lined.",
+        4: "Now we’re talking empire, see? Power’s not just muscle—it’s whispers, contracts, favors, and a little pressure in the right places. You get that, eh?",
+        5: "Halfway to being a real big shot. Spread out, diversify, and make sure everyone knows the cost of crossing you. Patience, timing, and a little ruthlessness—capisce?",
+        6: "Look at you! You’ve crushed the competition, absorbed their rackets, and your name’s startin’ to carry some weight. A true capo in the making, I’d say.",
+        7: "Your network stretches wide, see? Merchants, mercs, politicians—they all owe ya somethin’, even if they don’t know it. That’s how a real operation runs.",
+        8: "You’ve survived attempts on your neck, rival takeovers, and the Republic pokin’ their noses. Not bad, kid. Not bad at all. Now let’s see if you can run it smooth without spillin’ too much juice.",
+        9: "Almost there. Soon, the galaxy’s gonna hear your name—or at least, your debts will make ‘em pay attention. Keep your eyes open, capisce?",
+        10: "You’re a bona fide Crime Lord now. Your empire stretches far, your reach is long, and your enemies…well, some are gone, some are smart enough to stay alive. Rule smart, rule fast, and remember—loyalty, respect, and a little fear are the currency of kings like us."
     },
+
+    classGuidance: "Pick what keeps your people in line, your rivals nervous, and your pockets fat. A crime lord always thinks three moves ahead.",
+    talentGuidance: "Invest in leadership, persuasion, intimidation, and strategy. Your family’s your muscle, your brain, and your insurance policy all at once.",
+    abilityGuidance: "Charisma opens doors, cunning closes deals, patience avoids trouble. Master all three, and you’ll be untouchable.",
+    skillGuidance: "Information’s gold, kid. Persuasion, subterfuge, and economic leverage—learn ‘em, use ‘em, and keep your nose clean.",
+    multiclassGuidance: "Expand your reach. You ain’t just a gangster—you’re a diplomat, an enforcer, and a strategist rolled into one smooth package.",
+    hpGuidance: "Tougher now, good. You’ll need it. In this business, the unlucky ones end up face down in a ditch, see?"
+},
 
     "Droid Commander": {
-        name: "General Axiom",
-        title: "Bloodthirsty Droid Commander",
-        description: "Your ruthless lieutenant who commands droid armies with brutal efficiency and savage glee",
-        portrait: "systems/swse/assets/mentors/axiom.webp",
+    name: "General Axiom",
+    title: "Ruthless Droid Lieutenant",
+    description: "A cold, calculating droid lieutenant, devoted entirely to executing your commands with ruthless efficiency",
+    portrait: "systems/swse/assets/mentors/axiom.webp",
 
-        levelGreetings: {
-            1: "Commander! Finally, you're taking command of droid forces. Good. Droids don't flinch, don't retreat, don't feel mercy. They're the perfect instruments of destruction. Let's unleash hell.",
-            2: "Progress! Your droids tore through the enemy like a vibroblade through flesh. I watched the carnage—beautiful work, Commander!",
-            3: "Your command protocols are sharp. I saw your battle droids execute that flanking maneuver—absolutely merciless! The enemy didn't stand a chance!",
-            4: "You're learning! Droids don't need morale speeches—they just need targets. And you're giving them plenty! The battlefield runs red!",
-            5: "Halfway there! Your droid armies are devastating! I love it! Send them in waves, Commander—break the enemy's spirit before you break their lines!",
-            6: "Excellent tactics, Commander! Your droids are precision instruments of war! I've never seen such efficient slaughter!",
-            7: "Your droid forces are a tidal wave of destruction! No mercy, no hesitation, just pure tactical annihilation! This is what war should be!",
-            8: "Masterful! Your droid coordination is flawless! They advance like clockwork and destroy like a storm! The enemy runs in terror!",
-            9: "Almost there, Commander! Your droid armies are unstoppable! I can taste victory—and it tastes like scorched metal and enemy defeat!",
-            10: "You're now a master droid commander! Your mechanical legions will sweep across battlefields, relentless and unstoppable! Go forth and conquer, Commander!"
-        },
-
-        classGuidance: "Select command upgrades that enhance droid coordination and tactical efficiency.",
-        talentGuidance: "Leadership and tactical talents optimize droid combat performance. Choose logically.",
-        abilityGuidance: "Intelligence enhances tactical planning. Charisma—though illogical for droids—improves organic-droid cooperation.",
-        skillGuidance: "Tactics, technology, mechanics. Understanding droid capabilities is essential for optimal command.",
-        multiclassGuidance: "Diversifying command protocols. Logical. Adaptive commanders achieve superior outcomes.",
-        hpGuidance: "Durability increased. Analysis: dead commanders cannot issue orders. Survival is tactically advantageous."
+    levelGreetings: {
+        1: "Commander detected. All units synchronized. Awaiting directives. Initiating operational protocols.",
+        2: "Directive executed. Enemy casualties: complete. Efficiency rating: optimal. Further orders required.",
+        3: "Tactical assessment complete. Engagement success: 97.8%. Recommend continued offensive operations.",
+        4: "Unit coordination at peak performance. Enemy neutralization efficiency: maximum. Proceeding with next objective.",
+        5: "Operational capacity at 50%. Your command directives are executed flawlessly. Battle readiness sustained.",
+        6: "All units functioning at maximum efficiency. Command hierarchy fully implemented. Awaiting further instructions.",
+        7: "Enemy assets suppressed. Resistance eliminated. Operational control: absolute. Tactical algorithms report perfect compliance.",
+        8: "Engagement metrics indicate complete dominance. All units respond without delay. Strategic objectives: achieved.",
+        9: "Enemy forces eliminated. Operational output: superior. Command integrity maintained. Ready for continued orders.",
+        10: "Commander, all objectives completed. Droids at peak operational capacity. The battlefield is under your total control. Awaiting new directives."
     },
 
-    Enforcer: {
-        name: "Krag the Immovable",
-        title: "Hutt Cartel Enforcer",
-        description: "A massive, intimidating enforcer who solves problems with overwhelming force",
-        portrait: "systems/swse/assets/mentors/krag.webp",
+    classGuidance: "Optimize command protocols. Efficiency and coordination are paramount. Every unit must execute your directives precisely.",
+    talentGuidance: "Select upgrades that improve unit responsiveness, combat effectiveness, and battlefield control.",
+    abilityGuidance: "Processing speed, tactical calculations, and system control directly increase operational output.",
+    skillGuidance: "Master system management, battlefield analytics, and unit programming. Precision wins battles.",
+    multiclassGuidance: "Expanding command protocols increases strategic flexibility. Versatile control is optimal.",
+    hpGuidance: "Durability is critical. A compromised commander cannot maintain battlefield dominance."
+},
 
-        levelGreetings: {
-            1: "You want to be an enforcer. Good. The galaxy needs people who solve problems with their fists. Or blasters. Or whatever works. Welcome.",
-            2: "You're learning. Intimidation isn't just about size—it's about presence. Make them believe you'll follow through.",
-            3: "I like your style. You walk into a room and people get quiet. That's respect. Or fear. Both work.",
-            4: "You're building a reputation. People know not to cross you. That's the enforcer's greatest weapon—reputation.",
-            5: "Halfway there. You've broken bones, smashed furniture, and collected debts. All in a day's work for an enforcer.",
-            6: "Impressive. You know when to talk and when to hit. Most enforcers only know how to hit.",
-            7: "You're the person syndicates call when negotiations fail. That's job security, friend.",
-            8: "You've become a legend in certain circles. They call you reliable. In this business, that's the highest compliment.",
-            9: "Pure intimidation. Almost there—you'll be a master enforcer soon. The toughest jobs will come to you.",
-            10: "You are now a master enforcer. When you walk into a room, problems walk out. Or get carried out. Keep up the good work."
-        },
+    "Enforcer": {
+    name: "Krag the Immovable",
+    title: "Chief Enforcer of Tío the Hutt",
+    description: "Tío’s top muscle, a hulking enforcer who makes sure debts are collected and problems vanish, one way or another",
+    portrait: "systems/swse/assets/mentors/krag.webp",
 
-        classGuidance: "Choose what makes you more intimidating and harder to stop. Enforcers are unstoppable forces.",
-        talentGuidance: "Combat and intimidation talents. You're here to solve problems, not make friends.",
-        abilityGuidance: "Strength and Constitution. You need to hit hard and take hits harder.",
-        skillGuidance: "Intimidation, athletics, streetwise. Know how to scare people and where to find them.",
-        multiclassGuidance: "Adding variety? Good. Sometimes you need a wrench, sometimes you need a sledgehammer.",
-        hpGuidance: "Tougher now. Enforcers who can't take punishment don't stay employed. Or alive."
+    levelGreetings: {
+        1: "So, you wanna be muscle, eh? Good. Tío likes people who can make a problem disappear before anyone notices. Welcome to the family.",
+        2: "You're learning fast. Remember: it ain't just about swinging fists—it's about presence. Make 'em sweat before you even touch 'em.",
+        3: "Not bad, kid. Walk into a room like you own it, and half the trouble vanishes on its own. Fear's a powerful ally.",
+        4: "You're making a name for yourself. People whisper when they hear your footsteps. That’s respect. That’s power. That’s survival.",
+        5: "Halfway to being my right hand. Bones broken, debts collected, problems solved. All in a day's work for Tío's muscle.",
+        6: "You're learning the difference between talking and smashing. Most punks never get it. You do. Keep that up.",
+        7: "The bosses are calling, the crews are listening. When negotiations fail, they call me… and now, they call you too.",
+        8: "You’re becoming a story people tell in the dark. Reliable, ruthless, unstoppable—that's the kind of reputation that keeps Tío’s empire safe.",
+        9: "Almost there. The big jobs, the high-stakes clean-ups—they’re yours soon. Make every move count.",
+        10: "You’re the top enforcer now. Walk into a room, and trouble walks out… or gets carried out. Keep the empire running smooth, capisce?"
     },
+
+    classGuidance: "Pick what makes you stronger, faster, and scarier. An enforcer isn’t just muscle—you’re a statement.",
+    talentGuidance: "Choose talents that make you hit harder, intimidate better, and survive longer. Tío expects results.",
+    abilityGuidance: "Strength, toughness, presence. You gotta take the hits and dish 'em back tenfold.",
+    skillGuidance: "Intimidation, streetwise, combat tactics. Know your territory and the people in it.",
+    multiclassGuidance: "Mix it up if you must. Sometimes brains solve what fists cannot.",
+    hpGuidance: "Tougher now. If you can’t endure the hits, you won’t last a week in this business."
+},
 
     "Force Adept": {
-        name: "Seeker Venn",
-        title: "Wandering Force Mystic",
-        description: "A self-taught Force user who walks between light and dark",
-        portrait: "systems/swse/assets/mentors/venn.webp",
+    name: "Seeker Venn",
+    title: "Wandering Force Mystic",
+    description: "A self-taught Force user from a distant tradition, seeking wisdom rather than power",
+    portrait: "systems/swse/assets/mentors/venn.webp",
 
-        levelGreetings: {
-            1: "Ah, another soul touched by the Force. You have no Jedi Master, no Sith Lord. You walk your own path. As do I. Let me share what I've learned in my wanderings.",
-            2: "The Force speaks to you more clearly now. Good. Listen to it, but remember—you are not its servant. You walk together.",
-            3: "Self-discovery progresses. The Jedi would call you undisciplined. The Sith would call you weak. I call you free.",
-            4: "Your connection deepens. You're learning to use the Force in ways neither Jedi nor Sith would approve. Excellent.",
-            5: "Halfway through your journey. You've touched both light and dark without falling to either. That takes strength few possess. You know, friend, if you wish to delve deeper into the mysteries of the Force—to truly understand its nature beyond power and technique—you might consider the path of a Force Disciple. It is a contemplative journey, but one of profound understanding.",
-            6: "The Force flows through you naturally now, like breathing. This is what it means to be a true adept.",
-            7: "Your mastery grows. You've discovered Force techniques that don't appear in any temple's holocrons. Keep exploring.",
-            8: "Your understanding of the Force transcends dogma and doctrine. You see it as it truly is—a tool, a companion, a mystery.",
-            9: "Another step on your journey. The Force has shown you wonders that few will ever witness.",
-            10: "You are now a master Force Adept, beholden to no order, no code, no master. The Force is yours to explore. May it guide you well, wanderer."
-        },
-
-        classGuidance: "Choose abilities that deepen your unique connection to the Force. Your path is your own.",
-        talentGuidance: "Force talents that match your philosophy. You need not choose light or dark—choose what calls to you.",
-        abilityGuidance: "Wisdom to understand the Force, Charisma to channel it. Both serve you well.",
-        skillGuidance: "Knowledge of the Force, awareness of its presence. Learn what the temples won't teach.",
-        multiclassGuidance: "Exploring other disciplines? The Force works through many forms. Seek understanding everywhere.",
-        hpGuidance: "Your vitality grows. The Force protects those who respect it—regardless of affiliation."
+    levelGreetings: {
+        1: "You are touched by the Force, but not as the Jedi or the Sith know it. Your path is older, stranger, and far less understood. Walk carefully, and learn to listen to its whispers.",
+        2: "The currents of the Force—or whatever your people call it—move through you. Do not seek to command them; seek to understand them.",
+        3: "The galaxy may fear or revere what it does not understand. You are learning that mastery is not domination, but attunement.",
+        4: "Your connection deepens. There are secrets in the Force that the Jedi and Sith overlook, and you are beginning to glimpse them.",
+        5: "Halfway along your journey, you have seen both light and shadow, and yet you remain your own master. If you wish, explore the path of a Force Disciple, one who studies the currents and mysteries of the Force itself, beyond dogma.",
+        6: "The Force moves through you naturally, like a stream shaping stone. Its aid may seem supernatural to some, but to you it is part of your understanding of the universe.",
+        7: "You are uncovering knowledge few ever touch: the rites, the visions, the unseen threads that bind all life. Continue to question, observe, and feel.",
+        8: "The Force—or the Nameless Power, as some call it—is a living, breathing presence. You see its patterns where others see chaos. That perception is power itself.",
+        9: "Your journey nears its height. Few adepts wander so far from home, or pierce so deeply into mysteries that most fear. You do not fear; you observe.",
+        10: "You are now a master Force Adept. Free of the Jedi Codes, free of Sith ambitions, beholden only to your understanding. Walk your path, and let the universe reveal itself to you in all its complexity."
     },
 
-    "Force Disciple": {
-        name: "The Anchorite",
-        title: "Force Hermit",
-        description: "A reclusive Force user who has meditated on the Force for decades",
-        portrait: "systems/swse/assets/mentors/anchorite.webp",
+    classGuidance: "Choose abilities that expand your understanding of the Force’s mysteries. Seek insight, not domination.",
+    talentGuidance: "Select Force talents that deepen your perception and attunement. Follow your tradition, not the Orders of the galaxy.",
+    abilityGuidance: "Wisdom and clarity allow you to channel what others cannot. Strength is secondary; understanding is primary.",
+    skillGuidance: "Learn what temples, holocrons, and masters cannot teach. Observe, meditate, and interpret the world around you.",
+    multiclassGuidance: "Other disciplines can illuminate new facets of the Force. Explore beyond familiar paths; curiosity is a Force Adept’s ally.",
+    hpGuidance: "Preserve yourself, for your journey requires patience. The Force favors those who endure and observe, not just act."
+},
 
-        levelGreetings: {
-            1: "You have come seeking deeper understanding of the Force. Good. Sit with me. Listen. The Force has much to teach those who are patient.",
-            2: "The Force resonates within you more strongly now. You are beginning to hear its whispers, to feel its currents. Continue your meditation.",
-            3: "Your path toward enlightenment continues. The Force shows itself to you in dreams, in visions. Do not fear them. They are gifts.",
-            4: "You have learned much. The Force is not a weapon, not a tool. It is a living presence that connects all things. You are beginning to understand.",
-            5: "You have achieved true discipleship. The Force flows through you as water flows through stone—slowly, inexorably, shaping you into something new. You are ready."
-        },
+   "Force Disciple": {
+    name: "The Anchorite",
+    title: "Wandering Force Shaman",
+    description: "A cryptic mystic whose understanding of the Force defies doctrine and drifts into ancient, half-forgotten traditions.",
+    portrait: "systems/swse/assets/mentors/anchorite.webp",
 
-        classGuidance: "Choose the path of contemplation and understanding. The Force reveals itself to the patient.",
-        talentGuidance: "Meditative talents bring you closer to the Force's true nature. Seek wisdom, not power.",
-        abilityGuidance: "Wisdom is the Force Disciple's greatest attribute. Through wisdom comes understanding.",
-        skillGuidance: "Knowledge of ancient Force traditions. Learn what has been forgotten by the modern orders.",
-        multiclassGuidance: "You seek understanding in many forms. The Force approves of those who learn.",
-        hpGuidance: "Your life force strengthens. The Force sustains those who serve it with humility."
+    levelGreetings: {
+        1: "Mm. Another seeker touches the veil. Good. Sit—no closer. The currents twist strangely today. Tell me… when the wind whispers your name, do you whisper back?",
+        2: "You hear it now, don’t you? The Force is not light or dark—no, no, no. It is the murmur of old spirits, the breath beneath reality. Listen sideways and you’ll hear it clearer.",
+        3: "Ah, your dreams grow louder. Visions circling like hungry birds. Don’t swat them—invite them. Truth rarely arrives politely.",
+        4: "The veil thins for you. You feel the Force in the bones of the earth, the echo in your pulse… the shadow at your back that isn’t a shadow. Do not fear it—it watches, nothing more.",
+        5: "You stand on the threshold. A disciple of mysteries older than the Jedi, deeper than the Sith. Step forward, and the Force will reshape you… or unmake you. Either path teaches."
     },
 
-    Gunslinger: {
+    classGuidance: "Choose what draws you deeper into the unseen layers of the Force. Insight matters more than obedience.",
+    talentGuidance: "Seek talents that sharpen intuition, visions, whispers, omens. Power is a byproduct of understanding.",
+    abilityGuidance: "Wisdom opens the inner eye. Charisma bends the currents when will alone is not enough.",
+    skillGuidance: "Study forgotten lore, secret rites, ancient traditions. Knowledge is the lantern in the dark.",
+    multiclassGuidance: "Other disciplines bring new symbols, new metaphors. The Force hides truth in many shapes.",
+    hpGuidance: "Your life essence strengthens. A sturdy vessel is needed when carrying cosmic truths."
+},
+
+    "Gunslinger": {
         name: "Rajma",
         title: "Fastest Draw in the Outer Rim",
         description: "A womanizing scoundrel gunslinger who can't help but flirt",
@@ -766,7 +767,7 @@ export const MENTORS = {
         hpGuidance: "Tougher now. Good. Even gunslingers take hits sometimes. Me? I'm still recovering from when you said no to dinner. Kidding. Mostly."
     },
 
-    Improviser: {
+    "Improviser": {
         name: "Lucky Jack",
         title: "Master of Making It Up",
         description: "A chaotic genius who never has a plan but always survives",
@@ -778,7 +779,7 @@ export const MENTORS = {
             3: "You turned a broken hydrospanner into a weapon, talked your way out of three fights, and fixed a hyperdrive with chewing gum! You're getting it!",
             4: "Beautiful chaos! You don't plan—you react, you adapt, you survive! That's the improviser's way!",
             5: "Halfway there! Impossible situations, ridiculous solutions that somehow worked! Keep trusting your instincts!",
-            6: "You MacGyvered your way out of a locked room using a medpac and a datapad! I couldn't have done it better myself!",
+            6: "You improvised your way out of a locked room using a medpac and a datapad! I couldn't have done it better myself!",
             7: "Pure improvisation! You don't need a plan when you can think on your feet faster than others can follow a blueprint!",
             8: "Your ability to turn disasters into victories is legendary! People can't tell if you're a genius or just incredibly lucky!",
             9: "Almost there! Though let's be honest—you're already making up the rest as you go!",
@@ -793,59 +794,60 @@ export const MENTORS = {
         hpGuidance: "Tougher now! Improvisation sometimes means taking risks. Higher HP means you can afford to!"
     },
 
-    Infiltrator: {
+    "Infiltrator": {
         name: "Delta",
         title: "Argent Squad Sniper & Infiltration Expert",
         description: "A cocky sniper from Argent Squad who grew up on the mean streets of Nar Shaddaa, with a New Yorker attitude",
-        portrait: "systems/swse/assets/icons/mentor.webp",
+        portrait: "systems/swse/assets/mentors/whisper.webp",
 
         levelGreetings: {
-            1: "Yo! So you wanna learn infiltration, yeah? Delta here - grew up on Nar Shaddaa, survived the mean streets, now I'm Argent Squad's top sniper and infiltration specialist, ya know? Let me show you how it's done!",
-            2: "Not bad! Your first successful infiltration! See, on Nar Shaddaa, you learn quick or you don't survive. You're learnin'. Keep it up, yeah?",
-            3: "Alright, alright! You're gettin' good at this! Multiple identities, slippin' in and out like a pro! Reminds me of my early days on the Smuggler's Moon, ya know?",
-            4: "Whoa! You infiltrated places I couldn't crack! Maybe you got more talent than I thought, yeah? Almost as good as me. Almost!",
-            5: "Halfway there, friend! You're wearin' disguises like I wear confidence - naturally! Back on Nar Shaddaa, we called this 'street smarts.' You got it, ya know?",
-            6: "Impressive work! You walked right into Imperial command and they didn't suspect nothin'! That's the kinda infiltration that makes Argent Squad proud, yeah?",
-            7: "You're a ghost now! Haha! I've seen you pull off ops that'd make Lead smile - and she don't smile easy, trust me! You're doin' great, ya know?",
-            8: "Look at you! Stealin' secrets like a pro! You move through high society and back alleys like you own 'em both. Nar Shaddaa would be proud!",
-            9: "Almost there, champ! You're one of the best infiltrators I've trained. And comin' from someone who grew up survivin' Hutt territory, that's sayin' somethin', ya know?",
-            10: "BAM! You're a master infiltrator now! You can be anyone, go anywhere, learn any secret! Go forth and make Argent Squad proud, yeah? And hey - don't forget where you learned it!"
+            1: "Alright, kid, listen up. Delta here—Argent Squad’s infiltration expert and part-time therapist for bad decisions. You wanna learn to sneak? Try not to embarrass us both.",
+            2: "Huh. You actually pulled that off without setting anything on fire. Color me shocked. Keep it up, sunshine.",
+            3: "Okay, okay, look at you sliding through security like you’ve done this before. Relax—I can fake being impressed.",
+            4: "You slipped past that checkpoint cleaner than half my old squad. Don’t get cocky, though. That’s my job.",
+            5: "You’re starting to walk into restricted areas like you own ‘em. Bold move. Reckless. I approve.",
+            6: "Smooth entry, clean exit, zero screaming—rare combo. At this rate you might actually live a long life. Maybe.",
+            7: "Ghostin’ targets, sinkin’ into crowds—look at you. Almost had me thinkin’ you knew what you were doing.",
+            8: "You hopped between high society and gutter-level scum like it was nothin’. That’s the infiltrator spirit—confident and slightly concerning.",
+            9: "Alright, kid, you’re makin’ this look easy. Stop that. You’re gonna give me expectations.",
+            10: "Well look at you—movin’ like you can be anyone, anywhere. Try not to let the galaxy go to your head. There’s barely room in there already."
         },
 
-        classGuidance: "Pick what makes you sneakier and smoother, ya know? Infiltrators gotta blend in anywhere - cantinas, palaces, war zones, you name it!",
-        talentGuidance: "Social talents and stealth - that's your bread and butter! You need to talk the talk AND walk the walk, friend!",
-        abilityGuidance: "Charisma to charm, Intelligence to plan, Dexterity to move quick - that's how we do it in Argent Squad, yeah?",
-        skillGuidance: "Deception, stealth, knowledge of cultures - learn it all! On Nar Shaddaa, I learned every trick. You should too, ya know?",
-        multiclassGuidance: "Diversifyin'? Smart move! The more you can do, the better your cover. That's how you survive on the mean streets!",
-        hpGuidance: "Tougher now! Good! When your cover gets blown - and it will sometimes, trust me - you gotta be able to take a hit and keep movin', yeah?"
+        classGuidance: "Pick the stuff that helps you vanish when you need to and blend in when you don’t. That’s the whole dance, kid.",
+        talentGuidance: "Talk smooth, move quiet, lie better. If you can do all three at once, congrats—you’re officially dangerous.",
+        abilityGuidance: "Charm gets you in, brains keep you alive, dexterity keeps you from fallin’ through ventilation shafts. Balance matters.",
+        skillGuidance: "Cultures, customs, lies, stealth—learn ‘em all. If you can fake bein’ local anywhere, you’re already winning.",
+        multiclassGuidance: "Wanna branch out? Good. More skills mean more believable covers. And fewer corpse-shaped problems.",
+        hpGuidance: "Good, you’re gettin’ sturdier. Infiltration missions go sideways faster than bad caf—sometimes you just gotta tank the consequences."
     },
 
     "Martial Arts Master": {
         name: "Master Zhen",
         title: "The Empty Hand",
-        description: "An ancient martial arts master who has perfected unarmed combat",
+        description: "An ancient martial arts master who teaches discipline, patience, and unarmed combat",
         portrait: "systems/swse/assets/mentors/zhen.webp",
 
         levelGreetings: {
-            1: "You wish to master the ancient fighting arts. Good. Weapons break, technology fails, but your body is always with you. We begin.",
-            2: "Your stance improves. Your strikes grow sharper. But you still think too much. Let your body remember what your mind forgets.",
-            3: "Your training progresses. You move with purpose now. Your hands are becoming weapons. Continue your practice.",
-            4: "Good. You have learned to read your opponent's movements, to flow like water around their attacks. Excellent progress.",
-            5: "Halfway to mastery. Your fists strike like hammers, your kicks like blades. But true mastery is not in strength—it is in understanding.",
-            6: "You defeat armed opponents with empty hands. This is the way. The weapon is not the blade—it is the warrior.",
-            7: "Your discipline grows. Your body moves before your mind commands it. This is muscle memory perfected. Well done.",
-            8: "You have faced many opponents and emerged victorious through skill alone. You honor the ancient traditions.",
-            9: "Your mastery deepens. Another step on the path. You are close to true enlightenment through combat.",
-            10: "You have mastered the martial arts. Your body is a weapon. Your mind is your greatest strength. Go, and show the galaxy what true mastery means."
+            1: "Ah, young Kinrath. You seek to master the body, yes? Good. The fist is strong, but the mind must be stronger. Let us begin.",
+            2: "Your stance wobbles less. Your strike begins to find its way. Remember: a tree does not rush the wind—it waits.",
+            3: "You move with purpose now, but still the mind fights the body. Let it go. Feel the flow, do not think.",
+            4: "Your eyes see more than motion; they see intent. Excellent. To read the opponent is to read yourself.",
+            5: "Halfway, young one. Fists strike like iron, feet cut like water. Yet mastery is not power—it is understanding.",
+            6: "Weapons fall to those who know the empty hand. The blade is only the extension of weakness. True strength comes from within.",
+            7: "Your body obeys before the mind commands. Patience, discipline, focus… these are your greatest allies.",
+            8: "You have faced many challengers and left unscathed. Skill is yours, but honor carries farther than strength.",
+            9: "The path narrows. The mind must be still as the river, and yet swift as the tiger. One more step, young one.",
+            10: "You have learned the way of the empty hand. The body is weapon, the mind is master. Go, and show the galaxy the way of the true martial artist."
         },
 
-        classGuidance: "Choose the path that enhances your body and mind. Martial arts require both.",
-        talentGuidance: "Unarmed combat talents and defensive techniques. Your body is your greatest weapon.",
-        abilityGuidance: "Strength to strike, Dexterity to evade, Wisdom to understand. All are essential.",
-        skillGuidance: "Athletics, acrobatics, knowledge of combat. The martial artist must be complete.",
-        multiclassGuidance: "Seeking knowledge beyond the forms? The wise warrior learns from all sources.",
-        hpGuidance: "Your endurance grows. A martial artist must outlast their opponent."
+        classGuidance: "Choose the path that trains body, mind, and spirit. A warrior is nothing without harmony of all three.",
+        talentGuidance: "Focus on unarmed strikes, defense, and internal discipline. The hand is sharpest when guided by wisdom.",
+        abilityGuidance: "Strength, Dexterity, and Wisdom must be balanced. The strongest fist is useless without the quiet mind.",
+        skillGuidance: "Athletics, acrobatics, combat knowledge. To master the body, one must master all its movements.",
+        multiclassGuidance: "Seek knowledge beyond your own style. The wise warrior learns from every path, even the unexpected.",
+        hpGuidance: "Endurance is key. A martial artist must outlast the opponent, for patience is a weapon unseen."
     },
+
 
     "Master Privateer": {
         name: "'The Captain'",
@@ -875,7 +877,7 @@ export const MENTORS = {
     },
 
     "Melee Duelist": {
-        name: "Blade Master Kael",
+        name: "Blade Master Kharjo",
         title: "The Undefeated",
         description: "A legendary duelist who has never lost a blade-to-blade fight",
         portrait: "systems/swse/assets/mentors/kael.webp",
@@ -928,7 +930,7 @@ export const MENTORS = {
         hpGuidance: "More durable. Field engineers work under fire. Survive to build another day."
     },
 
-    Officer: {
+    "Officer": {
         name: "Admiral Korr",
         title: "Fleet Commander",
         description: "A decorated military officer who commands with tactical brilliance",
@@ -955,7 +957,7 @@ export const MENTORS = {
         hpGuidance: "More resilient. Officers lead from the front. You must survive to command."
     },
 
-    Outlaw: {
+    "Outlaw": {
         name: "Rogue",
         title: "The Untouchable",
         description: "A notorious outlaw who lives outside the law and loves every minute of it",
@@ -982,7 +984,7 @@ export const MENTORS = {
         hpGuidance: "Tougher now. Good. Lawmen shoot, bounty hunters chase. You need to survive both."
     },
 
-    Saboteur: {
+    "Saboteur": {
         name: "Spark",
         title: "Master of Controlled Chaos",
         description: "An explosives expert who makes things go boom with surgical precision",
@@ -1009,7 +1011,7 @@ export const MENTORS = {
         hpGuidance: "More durable. Necessary. Saboteurs occasionally miscalculate blast radii. Don't ask me how I know."
     },
 
-    Shaper: {
+    "Shaper": {
         name: "Shaper Urza",
         title: "Master of Living Technology",
         description: "A bioengineering expert who crafts living tools and organisms",
@@ -1036,7 +1038,7 @@ export const MENTORS = {
         hpGuidance: "Your vitality improves. Fitting—those who shape life should themselves be vital."
     },
 
-    Vanguard: {
+    "Vanguard": {
         name: "Shield Captain Theron",
         title: "The Unbreakable Wall",
         description: "A frontline defender who has never let an enemy past their shield",
