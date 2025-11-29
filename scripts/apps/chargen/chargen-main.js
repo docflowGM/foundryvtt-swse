@@ -8,6 +8,7 @@ import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 
 // Import all module functions
 import * as SharedModule from './chargen-shared.js';
+import { ChargenDataCache } from './chargen-shared.js';
 import * as DroidModule from './chargen-droid.js';
 import * as SpeciesModule from './chargen-species.js';
 import * as ClassModule from './chargen-class.js';
@@ -161,83 +162,90 @@ export default class CharacterGenerator extends Application {
   }
 
   async _loadData() {
-    const packNames = {
-      species: "swse.species",
-      feats: "swse.feats",
-      talents: "swse.talents",
-      classes: "swse.classes",
-      droids: "swse.droids"
-    };
+    // Show loading notification (only if cache is empty)
+    const showLoading = !ChargenDataCache.isCached();
+    const loadingNotif = showLoading ? ui.notifications.info(
+      "Loading character generation data...",
+      { permanent: true }
+    ) : null;
 
-    let hasErrors = false;
-    const failedPacks = [];
-
-    for (const [k, packName] of Object.entries(packNames)) {
-      try {
-        const pack = game.packs.get(packName);
-        if (!pack) {
-          SWSELogger.error(`chargen: compendium pack "${packName}" not found!`);
-          this._packs[k] = [];
-          hasErrors = true;
-          failedPacks.push(k);
-          continue;
-        }
-        const docs = await pack.getDocuments();
-        this._packs[k] = docs.map(d => d.toObject());
-        SWSELogger.log(`chargen: loaded ${docs.length} items from ${packName}`);
-      } catch (err) {
-        SWSELogger.error(`chargen: failed to load pack ${packName}:`, err);
-        this._packs[k] = [];
-        hasErrors = true;
-        failedPacks.push(k);
-      }
-    }
-
-    // Notify user if any packs failed to load
-    if (hasErrors) {
-      const failedList = failedPacks.join(', ');
-      ui.notifications.error(
-        `Failed to load some compendium data: ${failedList}. Some options may be unavailable. Check the console for details.`,
-        { permanent: false }
-      );
-    }
-
-    // Load skills
     try {
-      const resp = await fetch("systems/swse/data/skills.json");
-      if (resp.ok) {
-        this._skillsJson = await resp.json();
-        SWSELogger.log("chargen: skills.json loaded successfully");
-      } else {
-        SWSELogger.warn("chargen: failed to fetch skills.json, using defaults");
+      // Use cached data if available, otherwise load
+      const cachedPacks = await ChargenDataCache.getData();
+      this._packs = foundry.utils.deepClone(cachedPacks);
+
+      // Validate critical packs
+      const criticalPacks = ['species', 'classes', 'feats'];
+      const missingCriticalPacks = [];
+
+      for (const key of criticalPacks) {
+        if (!this._packs[key] || this._packs[key].length === 0) {
+          missingCriticalPacks.push(`swse.${key}`);
+        }
+      }
+
+      // Block chargen if critical packs are missing
+      if (missingCriticalPacks.length > 0) {
+        const missingList = missingCriticalPacks.join(', ');
+        ui.notifications.error(
+          `Character generation cannot continue. Missing critical compendium packs: ${missingList}. Please ensure all SWSE compendium packs are properly installed.`,
+          { permanent: true }
+        );
+        SWSELogger.error(`chargen: blocking due to missing critical packs: ${missingList}`);
+        this.close();
+        return false;
+      }
+
+      // Load skills
+      try {
+        const resp = await fetch("systems/swse/data/skills.json");
+        if (resp.ok) {
+          this._skillsJson = await resp.json();
+          SWSELogger.log("chargen: skills.json loaded successfully");
+        } else {
+          SWSELogger.warn("chargen: failed to fetch skills.json, using defaults");
+          this._skillsJson = this._getDefaultSkills();
+          ui.notifications.warn("Failed to load skills data. Using defaults.");
+        }
+      } catch (e) {
+        SWSELogger.error("chargen: error loading skills.json:", e);
         this._skillsJson = this._getDefaultSkills();
         ui.notifications.warn("Failed to load skills data. Using defaults.");
       }
-    } catch (e) {
-      SWSELogger.error("chargen: error loading skills.json:", e);
-      this._skillsJson = this._getDefaultSkills();
-      ui.notifications.warn("Failed to load skills data. Using defaults.");
-    }
 
-    // Load feat metadata
-    try {
-      const resp = await fetch("systems/swse/data/feat-metadata.json");
-      if (resp.ok) {
-        this._featMetadata = await resp.json();
-        SWSELogger.log("chargen: feat-metadata.json loaded successfully");
-      } else {
-        SWSELogger.warn("chargen: failed to fetch feat-metadata.json");
+      // Load feat metadata
+      try {
+        const resp = await fetch("systems/swse/data/feat-metadata.json");
+        if (resp.ok) {
+          this._featMetadata = await resp.json();
+          SWSELogger.log("chargen: feat-metadata.json loaded successfully");
+        } else {
+          SWSELogger.warn("chargen: failed to fetch feat-metadata.json");
+          this._featMetadata = null;
+        }
+      } catch (e) {
+        SWSELogger.error("chargen: error loading feat-metadata.json:", e);
         this._featMetadata = null;
       }
-    } catch (e) {
-      SWSELogger.error("chargen: error loading feat-metadata.json:", e);
-      this._featMetadata = null;
+
+      return true;
+    } finally {
+      // Clear loading notification
+      if (loadingNotif) {
+        loadingNotif.remove();
+      }
     }
   }
 
   async getData() {
     const context = super.getData();
-    if (!this._packs.species) await this._loadData();
+    if (!this._packs.species) {
+      const loaded = await this._loadData();
+      if (loaded === false) {
+        // Critical packs missing, chargen will close
+        return context;
+      }
+    }
 
     context.characterData = this.characterData;
     context.currentStep = this.currentStep;
@@ -545,12 +553,13 @@ export default class CharacterGenerator extends Application {
       steps.push("species");
     }
 
-    // NPC workflow: skip class and talents, go straight to abilities/feats/skills
+    // NPC workflow: skip class and talents, go straight to abilities/skills/feats
     if (this.actorType === "npc") {
-      steps.push("abilities", "feats", "skills", "summary");
+      steps.push("abilities", "skills", "feats", "summary");
     } else {
       // PC workflow: normal flow with class and talents
-      steps.push("abilities", "class", "feats", "talents", "skills", "summary", "shop");
+      // Note: skills before feats to allow Skill Focus validation
+      steps.push("abilities", "class", "skills", "feats", "talents", "summary", "shop");
     }
     return steps;
   }
@@ -581,6 +590,11 @@ export default class CharacterGenerator extends Application {
       if (this.currentStep === "summary" && nextStep === "shop") {
         this._finalizeCharacter();
         if (!this.actor) {
+          // Validate before creating
+          const isValid = await this._validateFinalCharacter();
+          if (!isValid) {
+            return; // Don't proceed to shop if validation fails
+          }
           await this._createActor();
         }
       }
@@ -632,38 +646,46 @@ export default class CharacterGenerator extends Application {
    * Toggle free build mode
    */
   async _onToggleFreeBuild(event) {
-    this.freeBuild = event.currentTarget.checked;
+    const checkbox = event.currentTarget;
+    const wantsToEnable = checkbox.checked;
 
-    if (this.freeBuild) {
-      new Dialog({
-        title: "Free Build Mode",
+    // If enabling, ask for confirmation first
+    if (wantsToEnable && !this.freeBuild) {
+      const confirmed = await Dialog.confirm({
+        title: "Enable Free Build Mode?",
         content: `
-          <div class="form-group">
-            <p><i class="fas fa-unlock-alt"></i> <strong>Free Build Mode Enabled</strong></p>
-            <p>You can now:</p>
-            <ul style="margin-left: 20px;">
-              <li>Skip validation requirements</li>
-              <li>Select any feats or talents</li>
-              <li>Bypass prerequisite checks</li>
-              <li>Train any skills without class restrictions</li>
-              <li>Build your character freely</li>
+          <div style="margin-bottom: 10px;">
+            <p><i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i> <strong>Enable Free Build Mode?</strong></p>
+            <p>Free Build Mode removes all validation and restrictions.</p>
+            <p style="margin-top: 10px;">You will be able to:</p>
+            <ul style="margin-left: 20px; margin-top: 5px;">
+              <li>✓ Skip validation requirements</li>
+              <li>✓ Select any feats or talents (ignore prerequisites)</li>
+              <li>✓ Train any skills without class restrictions</li>
+              <li>✓ Jump between steps freely</li>
+              <li>✓ Set any ability scores</li>
             </ul>
-            <p style="margin-top: 15px; color: #999;">
-              <em>Note: This is intended for experienced players or GMs who want quick character creation.</em>
+            <p style="margin-top: 15px; padding: 10px; background: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b;">
+              <strong>Warning:</strong> This is intended for experienced users who understand SWSE rules.
+              Characters created in Free Build mode may not follow standard rules.
             </p>
           </div>
         `,
-        buttons: {
-          ok: {
-            icon: '<i class="fas fa-check"></i>',
-            label: "Continue"
-          }
-        },
-        default: "ok"
-      }, {
-        width: 400
-      }).render(true);
-    } else {
+        defaultYes: false
+      });
+
+      if (!confirmed) {
+        // User cancelled, uncheck the checkbox
+        checkbox.checked = false;
+        return;
+      }
+
+      // User confirmed, enable free build
+      this.freeBuild = true;
+      ui.notifications.info("Free Build Mode enabled. All restrictions removed.");
+    } else if (!wantsToEnable && this.freeBuild) {
+      // Disabling free build mode
+      this.freeBuild = false;
       ui.notifications.info("Free Build Mode disabled. Validation rules will now apply.");
     }
 
@@ -763,6 +785,69 @@ export default class CharacterGenerator extends Application {
     return true;
   }
 
+  /**
+   * Validate final character data before creation
+   * This runs EVEN in free build mode to prevent broken characters
+   * @returns {Promise<boolean>} True if valid, false otherwise
+   */
+  async _validateFinalCharacter() {
+    const errors = [];
+
+    // Always required: Character name
+    if (!this.characterData.name || this.characterData.name.trim() === '') {
+      errors.push("Character must have a name");
+    }
+
+    // Droid-specific minimum validation
+    if (this.characterData.isDroid) {
+      if (!this.characterData.droidSystems?.locomotion) {
+        errors.push("Droids must have a locomotion system");
+      }
+      if (!this.characterData.droidSystems?.processor) {
+        errors.push("Droids must have a processor");
+      }
+      if (!this.characterData.droidDegree) {
+        errors.push("Droids must have a degree selected");
+      }
+    }
+
+    // Living beings need a species
+    if (!this.characterData.isDroid && !this.characterData.species) {
+      errors.push("Living characters must have a species");
+    }
+
+    // Class required for all characters
+    if (!this.characterData.classes || this.characterData.classes.length === 0) {
+      errors.push("Character must have at least one class");
+    }
+
+    // Show errors
+    if (errors.length > 0) {
+      if (!this.freeBuild) {
+        // In normal mode, just show the errors and block
+        ui.notifications.error(`Validation errors:\n${errors.join('\n')}`);
+        return false;
+      } else {
+        // In free build mode, show a confirmation dialog
+        const confirmed = await Dialog.confirm({
+          title: "Validation Warnings",
+          content: `
+            <p><strong>The following issues were found:</strong></p>
+            <ul>
+              ${errors.map(e => `<li>${e}</li>`).join('')}
+            </ul>
+            <p>Creating a character with these issues may cause problems.</p>
+            <p><strong>Continue anyway?</strong></p>
+          `,
+          defaultYes: false
+        });
+        return confirmed;
+      }
+    }
+
+    return true;
+  }
+
   _finalizeCharacter() {
     // Final recalculations before character creation
     this._recalcAbilities();
@@ -783,6 +868,12 @@ export default class CharacterGenerator extends Application {
 
     this._finalizeCharacter();
 
+    // Perform minimal validation even in free build mode
+    const isValid = await this._validateFinalCharacter();
+    if (!isValid) {
+      return; // Don't proceed if validation fails
+    }
+
     if (this.actor) {
       await this._updateActor();
     } else {
@@ -798,6 +889,13 @@ export default class CharacterGenerator extends Application {
     // Ensure character has been created
     if (!this.actor) {
       this._finalizeCharacter();
+
+      // Validate before creating
+      const isValid = await this._validateFinalCharacter();
+      if (!isValid) {
+        return; // Don't open shop if validation fails
+      }
+
       await this._createActor();
     }
 
@@ -856,8 +954,14 @@ export default class CharacterGenerator extends Application {
       }
     };
 
+    let created = null;
     try {
-      const created = await Actor.create(actorData);
+      // Create the actor
+      created = await Actor.create(actorData);
+
+      if (!created) {
+        throw new Error("Actor creation returned null or undefined");
+      }
 
       // Create embedded items (feats, talents, powers)
       const items = [];
@@ -903,8 +1007,18 @@ export default class CharacterGenerator extends Application {
         items.push(nonheroicClass);
       }
 
+      // Create embedded documents with error handling
       if (items.length > 0) {
-        await created.createEmbeddedDocuments("Item", items);
+        try {
+          const createdItems = await created.createEmbeddedDocuments("Item", items);
+          if (!createdItems || createdItems.length !== items.length) {
+            throw new Error(`Item creation mismatch: expected ${items.length}, got ${createdItems?.length || 0}`);
+          }
+        } catch (itemError) {
+          // Rollback: delete the actor if item creation fails
+          await created.delete();
+          throw new Error(`Failed to create character items: ${itemError.message}`);
+        }
       }
 
       // Apply starting class features (weapon proficiencies, class features, etc.)
@@ -913,12 +1027,29 @@ export default class CharacterGenerator extends Application {
         const className = this.characterData.classes[0].name;
         const classDoc = this._packs.classes.find(c => c.name === className || c._id === className);
         if (classDoc) {
-          await this._applyStartingClassFeatures(created, classDoc);
+          try {
+            await this._applyStartingClassFeatures(created, classDoc);
+          } catch (featureError) {
+            SWSELogger.warn("Failed to apply starting class features:", featureError);
+            ui.notifications.warn("Character created, but some class features may be missing. Check your character sheet.");
+            // Don't rollback here - character is usable without starting features
+          }
         }
       }
 
       // Save character generation data to flags for reference
-      await created.setFlag("swse", "chargenData", this.characterData);
+      try {
+        await created.setFlag("swse", "chargenData", this.characterData);
+      } catch (flagError) {
+        SWSELogger.warn("Failed to save chargen data to flags:", flagError);
+        // Non-critical error, continue
+      }
+
+      // Verify the actor has the expected structure
+      if (!created.system || !created.name) {
+        await created.delete();
+        throw new Error("Created actor has invalid structure");
+      }
 
       // Store the actor reference
       this.actor = created;
@@ -929,7 +1060,17 @@ export default class CharacterGenerator extends Application {
       ui.notifications.info(`Character ${this.characterData.name} created successfully!`);
     } catch (err) {
       SWSELogger.error("chargen: actor creation failed", err);
-      ui.notifications.error("Failed to create character. See console for details.");
+      ui.notifications.error(`Failed to create character: ${err.message}. See console for details.`);
+
+      // Ensure we clean up if something went wrong and actor exists
+      if (created && !this.actor) {
+        try {
+          await created.delete();
+          SWSELogger.log("Rolled back partial actor creation");
+        } catch (deleteError) {
+          SWSELogger.error("Failed to rollback actor creation:", deleteError);
+        }
+      }
     }
   }
 

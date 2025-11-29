@@ -2,6 +2,106 @@
 // Shared utilities and constants for CharGen
 // ============================================
 
+import { SWSELogger } from '../../utils/logger.js';
+
+/**
+ * Singleton cache for compendium data
+ * Prevents reloading compendia for each new chargen instance
+ */
+export class ChargenDataCache {
+  static _instance = null;
+  static _data = null;
+  static _loadPromise = null;
+
+  /**
+   * Get cached compendium data or load it
+   * @returns {Promise<Object>} Cached compendium data
+   */
+  static async getData() {
+    // Return cached data if available
+    if (this._data) {
+      SWSELogger.log('ChargenDataCache | Using cached data');
+      return this._data;
+    }
+
+    // If already loading, wait for that promise
+    if (this._loadPromise) {
+      SWSELogger.log('ChargenDataCache | Waiting for existing load...');
+      return this._loadPromise;
+    }
+
+    // Start loading
+    SWSELogger.log('ChargenDataCache | Loading compendium data...');
+    this._loadPromise = this._loadCompendia();
+
+    try {
+      this._data = await this._loadPromise;
+      return this._data;
+    } finally {
+      this._loadPromise = null;
+    }
+  }
+
+  /**
+   * Load compendium data
+   * @private
+   */
+  static async _loadCompendia() {
+    const packNames = {
+      species: "swse.species",
+      feats: "swse.feats",
+      talents: "swse.talents",
+      classes: "swse.classes",
+      droids: "swse.droids"
+    };
+
+    const packs = {};
+    const errors = [];
+
+    for (const [key, packName] of Object.entries(packNames)) {
+      try {
+        const pack = game.packs.get(packName);
+        if (!pack) {
+          SWSELogger.error(`ChargenDataCache | Pack not found: ${packName}`);
+          packs[key] = [];
+          errors.push(key);
+          continue;
+        }
+        const docs = await pack.getDocuments();
+        packs[key] = docs.map(d => d.toObject());
+        SWSELogger.log(`ChargenDataCache | Loaded ${docs.length} items from ${packName}`);
+      } catch (err) {
+        SWSELogger.error(`ChargenDataCache | Failed to load ${packName}:`, err);
+        packs[key] = [];
+        errors.push(key);
+      }
+    }
+
+    if (errors.length > 0) {
+      SWSELogger.warn(`ChargenDataCache | Failed to load: ${errors.join(', ')}`);
+    }
+
+    return packs;
+  }
+
+  /**
+   * Invalidate cache (force reload on next access)
+   */
+  static invalidate() {
+    SWSELogger.log('ChargenDataCache | Cache invalidated');
+    this._data = null;
+    this._loadPromise = null;
+  }
+
+  /**
+   * Check if cache is populated
+   * @returns {boolean}
+   */
+  static isCached() {
+    return this._data !== null;
+  }
+}
+
 /**
  * Get default skills list
  * @returns {Array} Array of skill objects

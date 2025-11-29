@@ -16,7 +16,11 @@ export async function _onSelectSpecies(event) {
   // Find the species document
   if (!this._packs.species) {
     SWSELogger.log("CharGen | Species pack not loaded, loading now...");
-    await this._loadData();
+    const loaded = await this._loadData();
+    if (loaded === false) {
+      // Critical packs missing, chargen will close
+      return;
+    }
   }
 
   SWSELogger.log(`CharGen | Species pack contains ${this._packs.species?.length || 0} species`);
@@ -265,7 +269,13 @@ export function _parseAbilityString(abilityString) {
  * @returns {Object} Map of ability keys to numeric bonuses
  */
 export async function _getRacialBonuses(speciesName) {
-  if (!this._packs.species) await this._loadData();
+  if (!this._packs.species) {
+    const loaded = await this._loadData();
+    if (loaded === false) {
+      // Critical packs missing, return empty bonuses
+      return {};
+    }
+  }
   const found = this._packs.species.find(s => s.name === speciesName || s._id === speciesName);
 
   if (!found || !found.system) {
@@ -276,6 +286,44 @@ export async function _getRacialBonuses(speciesName) {
   return this._parseAbilityString(found.system.abilities || "None");
 }
 
+// Cache for chargen config
+let _chargenConfig = null;
+
+/**
+ * Load chargen configuration from JSON file
+ * @returns {Promise<Object>} Configuration object
+ */
+async function _loadChargenConfig() {
+  if (_chargenConfig) return _chargenConfig;
+
+  try {
+    const response = await fetch('systems/swse/data/chargen-config.json');
+    if (response.ok) {
+      _chargenConfig = await response.json();
+      SWSELogger.log('CharGen | Loaded chargen configuration');
+      return _chargenConfig;
+    } else {
+      SWSELogger.warn('CharGen | Failed to load chargen-config.json, using defaults');
+    }
+  } catch (error) {
+    SWSELogger.error('CharGen | Error loading chargen-config.json:', error);
+  }
+
+  // Fallback to default config
+  _chargenConfig = {
+    speciesSourcePriority: [
+      "Core", "Core Rulebook",
+      "Knights of the Old Republic", "KotOR", "KOTOR",
+      "Clone Wars", "Rebellion Era", "Legacy Era",
+      "The Force Unleashed", "Galaxy at War",
+      "Unknown Regions", "Scum and Villainy",
+      "Threats of the Galaxy", "Jedi Academy"
+    ]
+  };
+
+  return _chargenConfig;
+}
+
 /**
  * Sort species by source material, prioritizing Core Rulebook first
  * @param {Array} species - Array of species documents
@@ -284,23 +332,16 @@ export async function _getRacialBonuses(speciesName) {
 export function _sortSpeciesBySource(species) {
   if (!species || species.length === 0) return species;
 
-  // Define source priority order (Core first, then alphabetically)
-  const sourcePriority = {
-    "Core": 0,
-    "Core Rulebook": 0,
-    "Knights of the Old Republic": 1,
-    "KotOR": 1,
-    "KOTOR": 1,
-    "Clone Wars": 2,
-    "Rebellion Era": 3,
-    "Legacy Era": 4,
-    "The Force Unleashed": 5,
-    "Galaxy at War": 6,
-    "Unknown Regions": 7,
-    "Scum and Villainy": 8,
-    "Threats of the Galaxy": 9,
-    "Jedi Academy": 10
+  // Load config synchronously from cache (should be pre-loaded)
+  const config = _chargenConfig || {
+    speciesSourcePriority: ["Core", "Core Rulebook"]
   };
+
+  // Build source priority map from config
+  const sourcePriority = {};
+  config.speciesSourcePriority.forEach((source, index) => {
+    sourcePriority[source] = index;
+  });
 
   // Sort species
   return species.sort((a, b) => {
@@ -325,3 +366,6 @@ export function _sortSpeciesBySource(species) {
     return (a.name || "").localeCompare(b.name || "");
   });
 }
+
+// Pre-load config on module load
+_loadChargenConfig();

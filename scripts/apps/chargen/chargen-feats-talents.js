@@ -17,11 +17,22 @@ export async function _onSelectFeat(event) {
     return;
   }
 
-  // Check for duplicates
+  // Check for duplicates in characterData
   const alreadySelected = this.characterData.feats.find(f => f.name === feat.name || f._id === feat._id);
   if (alreadySelected) {
     ui.notifications.warn(`You've already selected "${feat.name}"!`);
     return;
+  }
+
+  // If leveling up, also check existing actor items
+  if (this.actor) {
+    const existsOnActor = this.actor.items.some(item =>
+      item.type === 'feat' && (item.name === feat.name || item.id === feat._id)
+    );
+    if (existsOnActor) {
+      ui.notifications.warn(`"${feat.name}" is already on your character sheet!`);
+      return;
+    }
   }
 
   // Check if this is a Skill Focus feat
@@ -223,11 +234,22 @@ export async function _onSelectTalent(event) {
     return;
   }
 
-  // Check for duplicates
+  // Check for duplicates in characterData
   const alreadySelected = this.characterData.talents.find(t => t.name === tal.name || t._id === tal._id);
   if (alreadySelected) {
     ui.notifications.warn(`You've already selected "${tal.name}"!`);
     return;
+  }
+
+  // If leveling up, also check existing actor items
+  if (this.actor) {
+    const existsOnActor = this.actor.items.some(item =>
+      item.type === 'talent' && (item.name === tal.name || item.id === tal._id)
+    );
+    if (existsOnActor) {
+      ui.notifications.warn(`"${tal.name}" is already on your character sheet!`);
+      return;
+    }
   }
 
   this.characterData.talents.push(tal);
