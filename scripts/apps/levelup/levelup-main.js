@@ -164,9 +164,16 @@ export class SWSELevelUpEnhanced extends FormApplication {
   async getData() {
     const data = await super.getData();
 
-    data.actor = this.actor;
-    data.currentLevel = this.actor.system.level;
-    data.newLevel = this.actor.system.level + 1;
+    // Use this.object (managed by FormApplication) to ensure fresh actor data
+    // Force a data preparation to ensure abilities are up-to-date
+    const actor = this.object;
+    if (actor && typeof actor.prepareData === 'function') {
+      actor.prepareData();
+    }
+
+    data.actor = actor;
+    data.currentLevel = actor.system.level;
+    data.newLevel = actor.system.level + 1;
     data.currentStep = this.currentStep;
 
     // Get available classes
@@ -191,6 +198,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
     data.abilityIncreaseMethod = game.settings.get("swse", "abilityIncreaseMethod") || "flexible";
     data.getsAbilityIncrease = getsAbilityIncrease(data.newLevel);
     data.abilityIncreases = this.abilityIncreases;
+
+    // Debug logging for ability scores
+    if (data.getsAbilityIncrease) {
+      SWSELogger.log("SWSE LevelUp | Current ability scores:", actor.system.abilities);
+    }
 
     // Feat selection
     data.getsBonusFeat = getsBonusFeat(this.selectedClass, this.actor);
