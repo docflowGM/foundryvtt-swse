@@ -5,6 +5,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
+import { getTalentTreeName } from './chargen-property-accessor.js';
 
 // Import all module functions
 import * as SharedModule from './chargen-shared.js';
@@ -390,8 +391,8 @@ export default class CharacterGenerator extends Application {
     if (this.selectedTalentTree && context.packs.talents) {
       const selectedTree = this.selectedTalentTree.toLowerCase().trim();
       context.packs.talentsInTree = context.packs.talents.filter(t => {
-        // Check multiple possible field names and formats
-        const talentTree = t.system?.tree || t.system?.talent_tree || t.system?.talentTree || '';
+        // Use property accessor to get talent tree name
+        const talentTree = getTalentTreeName(t);
         const talentName = t.name || '';
 
         // Compare case-insensitive and trimmed

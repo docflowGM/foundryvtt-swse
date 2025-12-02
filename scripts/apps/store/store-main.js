@@ -105,17 +105,12 @@ export class SWSEStore extends FormApplication {
         const actor = this.object;
         const isGM = game.user.isGM;
 
-        // Show loading notification for large inventories
-        const loadingNotification = ui.notifications.info("Loading store inventory...", { permanent: true });
+        // Show loading notification for large inventories (will auto-dismiss)
+        ui.notifications.info("Loading store inventory...");
 
         try {
             // Load all inventory data
             const categories = await loadInventoryData(this.itemsById);
-
-            // Close loading notification
-            if (loadingNotification) {
-                loadingNotification.close();
-            }
 
             return {
                 actor,
@@ -128,10 +123,8 @@ export class SWSEStore extends FormApplication {
                 rendarrWelcome: getPersonalizedGreeting(actor)
             };
         } catch (err) {
-            // Close loading notification on error
-            if (loadingNotification) {
-                loadingNotification.close();
-            }
+            SWSELogger.error("SWSE Store | Failed to load store data:", err);
+            ui.notifications.error("Failed to load store inventory.");
             throw err;
         }
     }
