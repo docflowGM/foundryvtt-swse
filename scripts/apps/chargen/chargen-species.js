@@ -13,6 +13,28 @@ export async function _onSelectSpecies(event) {
 
   SWSELogger.log(`CharGen | Attempting to select species: ${speciesKey}`);
 
+  // If changing species after initial selection, confirm with user
+  if (this.characterData.species && this.characterData.species !== speciesKey) {
+    const confirmed = await Dialog.confirm({
+      title: "Change Species?",
+      content: `
+        <p>Changing your species will reset:</p>
+        <ul>
+          <li>Ability score bonuses</li>
+          <li>Size modifiers</li>
+          <li>Speed and special abilities</li>
+          <li>Languages and racial skill bonuses</li>
+        </ul>
+        <p>Continue with this change?</p>
+      `,
+      defaultYes: false
+    });
+    if (!confirmed) return;
+
+    // Clear previous species data
+    this._clearSpeciesData();
+  }
+
   // Find the species document
   if (!this._packs.species) {
     SWSELogger.log("CharGen | Species pack not loaded, loading now...");
@@ -284,6 +306,27 @@ export async function _getRacialBonuses(speciesName) {
 
   // Parse the abilities string to get bonuses
   return this._parseAbilityString(found.system.abilities || "None");
+}
+
+/**
+ * Clear previous species data when changing species
+ */
+export function _clearSpeciesData() {
+  // Reset racial ability bonuses
+  for (const ability of Object.keys(this.characterData.abilities)) {
+    if (this.characterData.abilities[ability]) {
+      this.characterData.abilities[ability].racial = 0;
+    }
+  }
+
+  // Reset other species-specific data
+  this.characterData.size = "Medium";
+  this.characterData.speed = 6;
+  this.characterData.specialAbilities = [];
+  this.characterData.languages = [];
+
+  // Clear size modifiers
+  this._applySizeModifiers("Medium");
 }
 
 // Cache for chargen config

@@ -18,6 +18,15 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     this.narratorPersonality = 'salty'; // Ol' Salty's unique personality
     this.selectedTalentTree = null;
     this.talentData = null;
+
+    // Track shown dialogues to avoid repetition
+    this.narrativeState = {
+      shownComments: {
+        name: new Set(),
+        talents: new Set(),
+        skills: new Set()
+      }
+    };
   }
 
   async getData() {
@@ -70,7 +79,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
       "Arr! First things first - what name will echo through the spaceways when ye plunder and pillage?"
     ];
 
-    return comments[Math.floor(Math.random() * comments.length)];
+    return this._getUniqueComment('name', comments);
   }
 
   _getAbilitiesComment() {
@@ -133,7 +142,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
       "Choose yer talents wisely, matey! They're yer secret weapons in the battle for survival!",
       "Arr! These talents are like tools in a smuggler's kit - pick the best for the job!"
     ];
-    return comments[Math.floor(Math.random() * comments.length)];
+    return this._getUniqueComment('talents', comments);
   }
 
   _getSkillsComment() {
@@ -143,7 +152,32 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
       "Skills are what separate the professional pirates from the dead ones, har har!",
       "Arr! Ye need skills to survive in the galaxy - piloting, shooting, sweet-talking, the works!"
     ];
-    return comments[Math.floor(Math.random() * comments.length)];
+    return this._getUniqueComment('skills', comments);
+  }
+
+  /**
+   * Get a unique comment that hasn't been shown before
+   * @param {string} category - Category of comments (name, talents, skills)
+   * @param {Array} comments - Array of possible comments
+   * @returns {string} Selected comment
+   */
+  _getUniqueComment(category, comments) {
+    const shown = this.narrativeState.shownComments[category];
+
+    // Filter out already-shown comments
+    const available = comments.filter(c => !shown.has(c));
+
+    // If all shown, reset and use all comments
+    if (available.length === 0) {
+      shown.clear();
+      return comments[Math.floor(Math.random() * comments.length)];
+    }
+
+    // Pick random from available
+    const selected = available[Math.floor(Math.random() * available.length)];
+    shown.add(selected);
+
+    return selected;
   }
 
   _getSummaryComment() {

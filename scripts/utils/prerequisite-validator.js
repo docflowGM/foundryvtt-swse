@@ -131,18 +131,37 @@ export class PrerequisiteValidator {
   /**
    * Parse a prerequisite string into structured prerequisite objects
    * @param {string} prereqString - Raw prerequisite string
-   * @returns {Array} Array of prerequisite objects
+   * @returns {Array} Array of prerequisite objects with logic operators
    */
   static _parsePrerequisites(prereqString) {
     const prereqs = [];
 
-    // Split by common delimiters (comma, semicolon, "and", "or")
-    const parts = prereqString.split(/[,;]|(?:\s+and\s+)|(?:\s+or\s+)/i).map(p => p.trim()).filter(p => p);
+    // Check if string contains OR logic
+    const hasOr = /\s+or\s+/i.test(prereqString);
 
-    for (const part of parts) {
-      const prereq = this._parsePrerequisitePart(part);
-      if (prereq) {
-        prereqs.push(prereq);
+    if (hasOr) {
+      // Split by OR first to handle OR groups
+      const orGroups = prereqString.split(/\s+or\s+/i).map(p => p.trim()).filter(p => p);
+
+      // Each OR group might have multiple AND conditions
+      const parsedGroups = orGroups.map(group => {
+        const andParts = group.split(/[,;]|(?:\s+and\s+)/i).map(p => p.trim()).filter(p => p);
+        return andParts.map(part => this._parsePrerequisitePart(part)).filter(p => p);
+      });
+
+      return [{
+        type: 'or_group',
+        groups: parsedGroups
+      }];
+    } else {
+      // Standard AND logic (split by comma, semicolon, or "and")
+      const parts = prereqString.split(/[,;]|(?:\s+and\s+)/i).map(p => p.trim()).filter(p => p);
+
+      for (const part of parts) {
+        const prereq = this._parsePrerequisitePart(part);
+        if (prereq) {
+          prereqs.push(prereq);
+        }
       }
     }
 
@@ -214,6 +233,17 @@ export class PrerequisiteValidator {
       }
     }
 
+    // Skill rank pattern: "Stealth 5 ranks", "Use the Force 10 ranks", "Mechanics 1 rank"
+    const skillRankPattern = /^(.+?)\s+(\d+)\s+ranks?$/i;
+    const skillRankMatch = part.match(skillRankPattern);
+    if (skillRankMatch) {
+      return {
+        type: 'skill_rank',
+        skillName: skillRankMatch[1].trim(),
+        ranks: parseInt(skillRankMatch[2])
+      };
+    }
+
     // Skill training pattern: "Trained in Use the Force", "Trained in Mechanics"
     const skillPattern = /trained\s+in\s+(.+)/i;
     const skillMatch = part.match(skillPattern);
@@ -247,6 +277,9 @@ export class PrerequisiteValidator {
    */
   static _checkSinglePrerequisite(prereq, actor, pendingData = {}) {
     switch (prereq.type) {
+      case 'or_group':
+        return this._checkOrGroupPrereq(prereq, actor, pendingData);
+
       case 'ability':
         return this._checkAbilityPrereq(prereq, actor, pendingData);
 
@@ -262,6 +295,9 @@ export class PrerequisiteValidator {
       case 'skill':
         return this._checkSkillPrereq(prereq, actor, pendingData);
 
+      case 'skill_rank':
+        return this._checkSkillRankPrereq(prereq, actor, pendingData);
+
       case 'force_sensitive':
         return this._checkForceSensitivePrereq(prereq, actor, pendingData);
 
@@ -272,6 +308,42 @@ export class PrerequisiteValidator {
         // Unknown prerequisite type, assume valid
         return { valid: true };
     }
+  }
+
+  static _checkOrGroupPrereq(prereq, actor, pendingData) {
+    // At least ONE group must be completely satisfied
+    // Each group is an array of AND conditions
+    const validGroups = [];
+    const failedGroups = [];
+
+    for (const group of prereq.groups) {
+      const groupResults = group.map(p => this._checkSinglePrerequisite(p, actor, pendingData));
+      const allValid = groupResults.every(r => r.valid);
+
+      if (allValid) {
+        validGroups.push(group);
+      } else {
+        const failures = groupResults.filter(r => !r.valid).map(r => r.reason);
+        failedGroups.push(failures);
+      }
+    }
+
+    if (validGroups.length > 0) {
+      return { valid: true };
+    }
+
+    // Build helpful error message showing all OR options
+    const groupDescriptions = prereq.groups.map((group, i) => {
+      if (group.length === 1) {
+        return failedGroups[i][0] || 'Unknown requirement';
+      }
+      return failedGroups[i].join(' AND ');
+    });
+
+    return {
+      valid: false,
+      reason: `Requires one of: (${groupDescriptions.join(') OR (')})`
+    };
   }
 
   static _checkAbilityPrereq(prereq, actor, pendingData) {
@@ -372,6 +444,50 @@ export class PrerequisiteValidator {
       return {
         valid: false,
         reason: `Requires training in ${prereq.skillName}`
+      };
+    }
+    return { valid: true };
+  }
+
+  static _checkSkillRankPrereq(prereq, actor, pendingData) {
+    // Convert skill name to skill key
+    const skillMap = {
+      'acrobatics': 'acrobatics',
+      'climb': 'climb',
+      'deception': 'deception',
+      'endurance': 'endurance',
+      'gather information': 'gatherInformation',
+      'initiative': 'initiative',
+      'jump': 'jump',
+      'knowledge': 'knowledge',
+      'mechanics': 'mechanics',
+      'perception': 'perception',
+      'persuasion': 'persuasion',
+      'pilot': 'pilot',
+      'ride': 'ride',
+      'stealth': 'stealth',
+      'survival': 'survival',
+      'swim': 'swim',
+      'treat injury': 'treatInjury',
+      'use computer': 'useComputer',
+      'use the force': 'useTheForce'
+    };
+
+    const skillKey = skillMap[prereq.skillName.toLowerCase()];
+    if (!skillKey) {
+      // Unknown skill, assume valid (can't validate)
+      return { valid: true };
+    }
+
+    // Get current skill ranks from actor
+    const currentRanks = actor.system.skills[skillKey]?.ranks || 0;
+    const pendingRanks = pendingData.skillRanks?.[skillKey] || 0;
+    const totalRanks = currentRanks + pendingRanks;
+
+    if (totalRanks < prereq.ranks) {
+      return {
+        valid: false,
+        reason: `Requires ${prereq.ranks} ranks in ${prereq.skillName} (you have ${totalRanks})`
       };
     }
     return { valid: true };

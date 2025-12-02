@@ -1163,6 +1163,34 @@ export default class CharacterGenerator extends Application {
 
     return categorized;
   }
+
+  /**
+   * Get default skills list when skills.json fails to load
+   * @returns {Array} Array of default skill objects
+   */
+  _getDefaultSkills() {
+    return [
+      { key: "acrobatics", name: "Acrobatics", ability: "dex", trained: false, armorCheck: true },
+      { key: "climb", name: "Climb", ability: "str", trained: false, armorCheck: true },
+      { key: "deception", name: "Deception", ability: "cha", trained: false },
+      { key: "endurance", name: "Endurance", ability: "con", trained: false, armorCheck: true },
+      { key: "gatherInformation", name: "Gather Information", ability: "cha", trained: false },
+      { key: "initiative", name: "Initiative", ability: "dex", trained: false },
+      { key: "jump", name: "Jump", ability: "str", trained: false, armorCheck: true },
+      { key: "knowledge", name: "Knowledge", ability: "int", trained: true },
+      { key: "mechanics", name: "Mechanics", ability: "int", trained: true },
+      { key: "perception", name: "Perception", ability: "wis", trained: false },
+      { key: "persuasion", name: "Persuasion", ability: "cha", trained: false },
+      { key: "pilot", name: "Pilot", ability: "dex", trained: false },
+      { key: "ride", name: "Ride", ability: "dex", trained: false },
+      { key: "stealth", name: "Stealth", ability: "dex", trained: false, armorCheck: true },
+      { key: "survival", name: "Survival", ability: "wis", trained: false },
+      { key: "swim", name: "Swim", ability: "str", trained: false, armorCheck: true },
+      { key: "treatInjury", name: "Treat Injury", ability: "wis", trained: false },
+      { key: "useComputer", name: "Use Computer", ability: "int", trained: true },
+      { key: "useTheForce", name: "Use the Force", ability: "cha", trained: true }
+    ];
+  }
 }
 
 // Mix in all module methods
