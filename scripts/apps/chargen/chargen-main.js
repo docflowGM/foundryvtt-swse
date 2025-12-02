@@ -914,12 +914,52 @@ export default class CharacterGenerator extends Application {
   async _createActor() {
     // Build proper actor data structure matching SWSEActorSheet expectations
     // Note: The actor system uses 'race' as the property name for species data
+    // IMPORTANT: CharacterDataModel uses 'attributes' not 'abilities'
+    // Convert abilities → attributes to match DataModel schema
+    const attributes = {};
+    for (const [key, ability] of Object.entries(this.characterData.abilities)) {
+      attributes[key] = {
+        base: ability.base || 10,
+        racial: ability.racial || 0,
+        enhancement: 0, // No enhancements at character creation
+        temp: ability.temp || 0
+      };
+    }
+
+    // Normalize skill keys to match DataModel schema (snake_case)
+    const skills = {};
+    const skillKeyMap = {
+      'gatherInformation': 'gather_information',
+      'treatInjury': 'treat_injury',
+      'useComputer': 'use_computer',
+      'useTheForce': 'use_the_force',
+      'knowledgeBureaucracy': 'knowledge_bureaucracy',
+      'knowledgeGalacticLore': 'knowledge_galactic_lore',
+      'knowledgeLifeSciences': 'knowledge_life_sciences',
+      'knowledgePhysicalSciences': 'knowledge_physical_sciences',
+      'knowledgeSocialSciences': 'knowledge_social_sciences',
+      'knowledgeTactics': 'knowledge_tactics',
+      'knowledgeTechnology': 'knowledge_technology'
+    };
+
+    for (const [key, skill] of Object.entries(this.characterData.skills || {})) {
+      const normalizedKey = skillKeyMap[key] || key;
+      skills[normalizedKey] = {
+        trained: skill.trained || false,
+        focused: skill.focused || false,
+        miscMod: skill.misc || 0,
+        selectedAbility: skill.selectedAbility || this._getDefaultAbilityForSkill(normalizedKey)
+      };
+    }
+
     const system = {
       level: this.characterData.level,
       race: this.characterData.species,  // Map species → race for actor system
-      size: this.characterData.size || "Medium",
-      abilities: this.characterData.abilities,
-      skills: this.characterData.skills,
+      size: this.characterData.size || "medium", // Lowercase for DataModel schema
+      isDroid: this.characterData.isDroid || false, // DataModel requires this field
+      droidDegree: this.characterData.droidDegree || "", // DataModel field for droids
+      attributes: attributes, // Use attributes instead of abilities
+      skills: skills, // Normalized skills with DataModel structure
       hp: this.characterData.hp,
       forcePoints: this.characterData.forcePoints,
       forceSensitive: this.characterData.forceSensitive || false, // Persist force sensitivity flag
@@ -966,15 +1006,16 @@ export default class CharacterGenerator extends Application {
       }
 
       // Create embedded items (feats, talents, powers)
+      // DEFENSIVE CLONE: Ensure fresh copies for actor creation
       const items = [];
       for (const f of (this.characterData.feats || [])) {
-        items.push(f);
+        items.push(foundry.utils.deepClone(f));
       }
       for (const t of (this.characterData.talents || [])) {
-        items.push(t);
+        items.push(foundry.utils.deepClone(t));
       }
       for (const p of (this.characterData.powers || [])) {
-        items.push(p);
+        items.push(foundry.utils.deepClone(p));
       }
 
       // For NPCs, create a Nonheroic class item
@@ -1164,6 +1205,42 @@ export default class CharacterGenerator extends Application {
     }
 
     return categorized;
+  }
+
+  /**
+   * Get default ability for a skill key (snake_case format)
+   * @param {string} skillKey - The skill key in snake_case
+   * @returns {string} The default ability key
+   */
+  _getDefaultAbilityForSkill(skillKey) {
+    const abilityMap = {
+      acrobatics: 'dex',
+      climb: 'str',
+      deception: 'cha',
+      endurance: 'con',
+      gather_information: 'cha',
+      initiative: 'dex',
+      jump: 'str',
+      knowledge_bureaucracy: 'int',
+      knowledge_galactic_lore: 'int',
+      knowledge_life_sciences: 'int',
+      knowledge_physical_sciences: 'int',
+      knowledge_social_sciences: 'int',
+      knowledge_tactics: 'int',
+      knowledge_technology: 'int',
+      mechanics: 'int',
+      perception: 'wis',
+      persuasion: 'cha',
+      pilot: 'dex',
+      ride: 'dex',
+      stealth: 'dex',
+      survival: 'wis',
+      swim: 'str',
+      treat_injury: 'wis',
+      use_computer: 'int',
+      use_the_force: 'cha'
+    };
+    return abilityMap[skillKey] || 'int';
   }
 
   /**

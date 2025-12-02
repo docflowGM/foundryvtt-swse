@@ -38,9 +38,11 @@ export async function _onSelectFeat(event) {
 
   // Check if this is a Skill Focus feat
   if (feat.name.toLowerCase().includes('skill focus')) {
-    await this._handleSkillFocusFeat(feat);
+    // Clone before passing to handler (handler will further modify it)
+    await this._handleSkillFocusFeat(foundry.utils.deepClone(feat));
   } else {
-    this.characterData.feats.push(feat);
+    // DEFENSIVE CLONE: Prevent mutation of cached compendium data
+    this.characterData.feats.push(foundry.utils.deepClone(feat));
     ui.notifications.info(`Selected feat: ${feat.name}`);
   }
 
@@ -253,7 +255,8 @@ export async function _onSelectTalent(event) {
     }
   }
 
-  this.characterData.talents.push(tal);
+  // DEFENSIVE CLONE: Prevent mutation of cached compendium data
+  this.characterData.talents.push(foundry.utils.deepClone(tal));
   ui.notifications.info(`Selected talent: ${tal.name}`);
 
   // Clear selected tree and advance to next step
