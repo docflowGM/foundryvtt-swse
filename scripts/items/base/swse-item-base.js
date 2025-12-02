@@ -3,6 +3,8 @@
  * Extends Foundry's Item class with SWSE-specific functionality
  */
 
+import { getWeaponRangeInfo } from './weapon-ranges.js';
+
 export class SWSEItemBase extends Item {
   
   /**
@@ -37,7 +39,20 @@ export class SWSEItemBase extends Item {
    */
   _prepareWeaponData() {
     const data = this.system;
-    
+
+    // Get weapon range information based on weapon type
+    const rangeInfo = getWeaponRangeInfo(this);
+
+    // Store range brackets for use in combat
+    data.rangeInfo = rangeInfo;
+
+    // If range is just a simple string (like "Melee" or a single number),
+    // replace it with the formatted range string
+    if (rangeInfo.type !== 'melee' && rangeInfo.brackets) {
+      data.rangeFormatted = rangeInfo.rangeString;
+      data.rangeBrackets = rangeInfo.brackets;
+    }
+
     // Apply weapon range multiplier from houserules
     if (game.settings && game.settings.get) {
       const multiplier = game.settings.get('swse', 'weaponRangeMultiplier') || 1.0;
