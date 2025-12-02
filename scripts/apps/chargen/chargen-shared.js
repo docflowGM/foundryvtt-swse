@@ -3,6 +3,7 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
+import { getTalentTrees } from './chargen-property-accessor.js';
 
 /**
  * Singleton cache for compendium data
@@ -152,19 +153,20 @@ export function _getAvailableTalentTrees() {
   }
 
   // Collect talent trees from all selected classes
-  const talentTrees = new Set();
+  const talentTreesSet = new Set();
 
   for (const charClass of this.characterData.classes) {
     const classData = this._packs.classes.find(c => c.name === charClass.name);
 
-    if (classData && classData.system && classData.system.talent_trees) {
-      // Add all talent trees from this class
-      for (const tree of classData.system.talent_trees) {
-        talentTrees.add(tree);
+    if (classData) {
+      // Use property accessor to get talent trees
+      const trees = getTalentTrees(classData);
+      for (const tree of trees) {
+        talentTreesSet.add(tree);
       }
     }
   }
 
   // Convert Set to Array and return sorted
-  return Array.from(talentTrees).sort();
+  return Array.from(talentTreesSet).sort();
 }

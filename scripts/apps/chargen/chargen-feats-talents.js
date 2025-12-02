@@ -3,6 +3,7 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
+import { getTalentTrees, getTalentTreeName } from './chargen-property-accessor.js';
 
 /**
  * Handle feat selection
@@ -273,7 +274,7 @@ export function _getAvailableTalentTrees() {
     return [];
   }
 
-  const trees = selectedClass.system?.talent_trees || selectedClass.system?.talentTrees || [];
+  const trees = getTalentTrees(selectedClass);
   SWSELogger.log(`CharGen | Available talent trees for ${selectedClass.name}:`, trees);
 
   return trees;

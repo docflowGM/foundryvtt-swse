@@ -3,6 +3,13 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
+import {
+  getClassProperty,
+  getHitDie,
+  getTrainedSkills,
+  getTalentTrees,
+  validateClassDocument
+} from './chargen-property-accessor.js';
 
 /**
  * Handle class selection
@@ -50,15 +57,21 @@ export async function _onSelectClass(event) {
 
   SWSELogger.log(`CharGen | Selected class: ${className}, classes array length: ${this.characterData.classes.length}`, this.characterData.classes);
 
+  // Validate class document has required properties
+  const validation = validateClassDocument(classDoc);
+  if (!validation.valid) {
+    SWSELogger.error(`CharGen | Class document missing required properties:`, validation.missing);
+    ui.notifications.error(`Class "${className}" is missing required data: ${validation.missing.join(', ')}`);
+    return;
+  }
+
   // Set class-based values
   if (classDoc && classDoc.system) {
     // Base Attack Bonus
-    this.characterData.bab = Number(classDoc.system.babProgression) || 0;
+    this.characterData.bab = Number(getClassProperty(classDoc, 'babProgression', 0));
 
     // Hit Points (5 times hit die at level 1)
-    // Parse hit die from string like "1d10" to get the die size (10)
-    const hitDieString = classDoc.system.hit_die || classDoc.system.hitDie || "1d6";
-    const hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
+    const hitDie = getHitDie(classDoc);
     this.characterData.hp.max = hitDie * 5; // Level 1 HP is 5x hit die (e.g., d6=30, d8=40, d10=50)
     this.characterData.hp.value = this.characterData.hp.max;
 
@@ -70,7 +83,7 @@ export async function _onSelectClass(event) {
     }
 
     // Trained skills available (class base + INT modifier, minimum 1)
-    const classSkills = Number(classDoc.system.trained_skills || classDoc.system.trainedSkills) || 0;
+    const classSkills = getTrainedSkills(classDoc);
     const intMod = this.characterData.abilities.int.mod || 0;
     const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
     this.characterData.trainedSkillsAllowed = Math.max(1, classSkills + intMod + humanBonus);
@@ -86,8 +99,8 @@ export async function _onSelectClass(event) {
     }
 
     // Starting Credits
-    if (classDoc.system.starting_credits) {
-      const creditsString = classDoc.system.starting_credits;
+    const creditsString = getClassProperty(classDoc, 'startingCredits');
+    if (creditsString) {
       // Parse format like "3d4 x 400"
       const match = creditsString.match(/(\d+)d(\d+)\s*x\s*(\d+)/i);
       if (match) {
@@ -145,7 +158,7 @@ export async function _onClassChanged(event, htmlRoot, initial = false) {
   const classDoc = this._packs.classes.find(c => c.name === cls || c._id === cls);
 
   // Calculate skill trainings (class base + INT modifier, minimum 1)
-  const classSkills = classDoc && classDoc.system ? Number(classDoc.system.trained_skills || classDoc.system.trainedSkills || 0) : 0;
+  const classSkills = classDoc ? getTrainedSkills(classDoc) : 0;
   const intMod = this.characterData.abilities.int.mod || 0;
   const humanBonus = (this.characterData.species === "Human" || this.characterData.species === "human") ? 1 : 0;
   this.characterData.trainedSkillsAllowed = Math.max(1, classSkills + intMod + humanBonus);
