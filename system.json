@@ -44,7 +44,8 @@
     "styles/canvas/canvas-ui.css",
     "styles/foundry-ui-overrides.css",
     "styles/foundry-ui-layout.css",
-    "styles/apps/window-draggable-fix.css"
+    "styles/apps/window-draggable-fix.css",
+    "styles/apps/forge-body-fix.css"
   ],
   "languages": [
     {
