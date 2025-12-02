@@ -204,8 +204,8 @@ function sanitizeNPCEntry(rawEntry) {
 
 // Main execution
 function main() {
-  const inputFile = path.join(__dirname, '../data/nonheroic_units.json');
-  const outputFile = path.join(__dirname, '../data/nonheroic_units_sanitized.json');
+  const inputFile = path.join(__dirname, '..', '..', 'data', 'nonheroic', 'nonheroic_units.json');
+  const outputFile = path.join(__dirname, '..', '..', 'data', 'nonheroic', 'nonheroic_units_sanitized.json');
 
   console.log('Reading nonheroic_units.json...');
 

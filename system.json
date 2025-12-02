@@ -26,7 +26,7 @@
     "index.js"
   ],
   "styles": [
-    "styles/dist/swse-base.css",
+    "styles/core/swse-base.css",
     "styles/components/swse-components.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/unified-sheets.css",
@@ -35,17 +35,17 @@
     "styles/sheets/sheet-improvements.css",
     "styles/combat/combat-enhancements.css",
     "styles/combat/vehicle-combat.css",
-    "styles/apps/chargen.css",
-    "styles/apps/chargen-templates.css",
+    "styles/apps/chargen/chargen.css",
+    "styles/apps/chargen/chargen-templates.css",
     "styles/apps/houserules.css",
     "styles/apps/store.css",
     "styles/apps/vehicle-modification.css",
     "styles/apps/upgrade-app.css",
     "styles/canvas/canvas-ui.css",
-    "styles/foundry-ui-overrides.css",
-    "styles/foundry-ui-layout.css",
-    "styles/apps/window-draggable-fix.css",
-    "styles/apps/forge-body-fix.css"
+    "styles/foundry/foundry-ui-overrides.css",
+    "styles/foundry/foundry-ui-layout.css",
+    "styles/foundry/window-draggable-fix.css",
+    "styles/foundry/forge-body-fix.css"
   ],
   "languages": [
     {
