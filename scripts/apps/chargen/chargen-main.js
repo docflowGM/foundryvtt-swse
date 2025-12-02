@@ -921,6 +921,7 @@ export default class CharacterGenerator extends Application {
       skills: this.characterData.skills,
       hp: this.characterData.hp,
       forcePoints: this.characterData.forcePoints,
+      forceSensitive: this.characterData.forceSensitive || false, // Persist force sensitivity flag
       destinyPoints: this.characterData.destinyPoints,
       secondWind: this.characterData.secondWind,
       defenses: this.characterData.defenses,

@@ -308,6 +308,82 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
           const num = Number(value);
           return Number.isNaN(num) ? 0 : Math.floor(num);
         }
+      }),
+
+      // Species/Race Information
+      race: new fields.StringField({
+        required: false,
+        initial: "",
+        blank: true
+      }),
+      speciesSource: new fields.StringField({
+        required: false,
+        initial: "",
+        blank: true
+      }),
+
+      // Force Sensitivity
+      forceSensitive: new fields.BooleanField({
+        required: true,
+        initial: false
+      }),
+      forcePoints: new fields.SchemaField({
+        value: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 0,
+          min: 0,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
+        }),
+        max: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 0,
+          min: 0,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 0;
+            const num = Number(value);
+            return Number.isNaN(num) ? 0 : Math.floor(num);
+          }
+        }),
+        die: new fields.StringField({
+          required: true,
+          initial: "1d6"
+        })
+      }),
+
+      // Destiny Points
+      destinyPoints: new fields.SchemaField({
+        value: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 1;
+            const num = Number(value);
+            return Number.isNaN(num) ? 1 : Math.floor(num);
+          }
+        }),
+        max: new fields.NumberField({
+          required: true,
+          nullable: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          clean: value => {
+            if (value === null || value === undefined || value === "") return 1;
+            const num = Number(value);
+            return Number.isNaN(num) ? 1 : Math.floor(num);
+          }
+        })
       })
     };
   }

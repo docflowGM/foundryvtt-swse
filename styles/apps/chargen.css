@@ -1157,3 +1157,22 @@
     text-align: center;
     margin: 8px 0;
 }
+
+/* Numeric value glow effects */
+.stat-value {
+    color: #4a90e2;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+}
+
+.stat-modifier {
+    color: #6ab0f5;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(106, 176, 245, 0.4);
+}
+
+.credits-value {
+    color: #f5a623;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(245, 166, 35, 0.5);
+}

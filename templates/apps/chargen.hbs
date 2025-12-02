@@ -861,7 +861,7 @@
  <dt>Species:</dt>
  <dd>{{characterData.species}}</dd>
  <dt>Level:</dt>
- <dd>{{characterData.level}}</dd>
+ <dd><span class="stat-value">{{characterData.level}}</span></dd>
  </dl>
  </div>
  
@@ -870,7 +870,7 @@
  <dl>
  {{#each characterData.abilities}}
  <dt>{{@key}}:</dt>
- <dd>{{this.total}} ({{#if (gte this.mod 0)}}+{{/if}}{{this.mod}})</dd>
+ <dd><span class="stat-value">{{this.total}}</span> (<span class="stat-modifier">{{#if (gte this.mod 0)}}+{{/if}}{{this.mod}}</span>)</dd>
  {{/each}}
  </dl>
  </div>
