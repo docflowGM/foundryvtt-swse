@@ -11,6 +11,30 @@ export async function _onSelectClass(event) {
   event.preventDefault();
   const className = event.currentTarget.dataset.class;
 
+  // If changing class after initial selection, confirm with user
+  if (this.characterData.classes && this.characterData.classes.length > 0) {
+    const currentClass = this.characterData.classes[0].name;
+    if (currentClass !== className) {
+      const confirmed = await Dialog.confirm({
+        title: "Change Class?",
+        content: `
+          <p>Changing your class will reset:</p>
+          <ul>
+            <li>Base Attack Bonus (BAB)</li>
+            <li>Hit Points</li>
+            <li>Defense bonuses (Fort/Ref/Will)</li>
+            <li>Trained skills available</li>
+            <li>Starting credits</li>
+            <li>Force points (if applicable)</li>
+          </ul>
+          <p>Continue with this change?</p>
+        `,
+        defaultYes: false
+      });
+      if (!confirmed) return;
+    }
+  }
+
   // Find class document
   const classDoc = this._packs.classes.find(c => c.name === className || c._id === className);
 
