@@ -16,10 +16,10 @@ const themes = [
   'high-republic'
 ];
 
-const themesDir = path.join(__dirname, 'styles', 'src', 'themes');
-const distDir = path.join(__dirname, 'styles', 'dist');
+const themesDir = path.join(__dirname, '..', '..', 'styles', 'src', 'themes');
+const distDir = path.join(__dirname, '..', '..', 'styles', 'themes');
 
-// Ensure dist directory exists
+// Ensure themes directory exists
 if (!fs.existsSync(distDir)) {
   fs.mkdirSync(distDir, { recursive: true });
 }

@@ -1,0 +1,34 @@
+/**
+ * FIX FOR FORGE VTT BODY CSS OVERRIDE ISSUE
+ *
+ * Problem: The Forge VTT hosting service injects CSS via forgevtt-module.css that applies:
+ *   - position: fixed
+ *   - display: flex
+ *   - overflow: hidden
+ * to the body element, which breaks Foundry VTT's window dragging and positioning system.
+ *
+ * This file overrides those problematic styles to restore proper Foundry window behavior.
+ *
+ * MUST BE LOADED LAST in system.json to ensure it overrides Forge's injected CSS.
+ */
+
+/* Fix for body element - restore default Foundry behavior */
+body,
+body.game {
+  position: static !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+/* Ensure the main UI container can render windows properly */
+#ui-middle {
+  position: relative !important;
+}
+
+/* Ensure application windows can be positioned correctly */
+.app.window-app,
+.app.sheet,
+.dialog {
+  /* Foundry expects these to be absolutely positioned */
+  position: absolute !important;
+}

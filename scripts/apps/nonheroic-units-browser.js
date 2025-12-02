@@ -30,7 +30,7 @@ export class NonheroicUnitsBrowser extends Application {
     // Load units data if not already loaded
     if (this.units.length === 0) {
       try {
-        const response = await fetch('systems/swse/data/nonheroic_units.json');
+        const response = await fetch('systems/swse/data/nonheroic/nonheroic_units.json');
         this.units = await response.json();
         this.filteredUnits = [...this.units];
       } catch (error) {

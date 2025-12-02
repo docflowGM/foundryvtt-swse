@@ -5,9 +5,9 @@
   "private": true,
   "scripts": {
     "build:styles": "npm run build:base && npm run build:themes",
-    "build:base": "sass styles/src/main.scss styles/dist/swse-base.css --no-source-map && postcss styles/dist/swse-base.css --replace --use autoprefixer cssnano",
-    "build:themes": "node build-themes.js",
-    "watch:styles": "sass styles/src:styles/dist --watch --no-source-map",
+    "build:base": "sass styles/src/main.scss styles/core/swse-base.css --no-source-map && postcss styles/core/swse-base.css --replace --use autoprefixer cssnano",
+    "build:themes": "node scripts/build/build-themes.js",
+    "watch:styles": "sass styles/src:styles/core --watch --no-source-map",
     "build": "npm run build:styles"
   },
   "devDependencies": {
