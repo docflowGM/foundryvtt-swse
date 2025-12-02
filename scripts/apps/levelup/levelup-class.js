@@ -204,6 +204,35 @@ export async function selectClass(classId, actor, context) {
     return null;
   }
 
+  // Check if multiclassing (choosing a different class than current classes)
+  const currentClasses = getCharacterClasses(actor);
+  const classNames = Object.keys(currentClasses);
+  const isMulticlassing = classNames.length > 0 && !classNames.includes(classDoc.name);
+
+  // If multiclassing and not already confirmed, show confirmation dialog
+  if (isMulticlassing && context.selectedClass?.name !== classDoc.name) {
+    const confirmed = await Dialog.confirm({
+      title: "Multiclass Confirmation",
+      content: `
+        <p>You are about to multiclass into <strong>${classDoc.name}</strong>.</p>
+        <p><strong>Current class(es):</strong> ${classNames.join(', ')}</p>
+        <p><strong>Multiclassing considerations:</strong></p>
+        <ul>
+          <li>You may need to meet prestige class prerequisites</li>
+          <li>Your class features will progress separately</li>
+          <li>You may gain additional skills or feats based on settings</li>
+        </ul>
+        <p>Continue with multiclassing?</p>
+      `,
+      defaultYes: false
+    });
+
+    if (!confirmed) {
+      SWSELogger.log(`SWSE LevelUp | Multiclass to ${classDoc.name} cancelled by user`);
+      return null;
+    }
+  }
+
   SWSELogger.log(`SWSE LevelUp | Selected class: ${classDoc.name}`, classDoc.system);
 
   // Update mentor based on class type and character level

@@ -1003,6 +1003,12 @@ export class SWSELevelUpEnhanced extends FormApplication {
   async _onCompleteLevelUp(event) {
     event.preventDefault();
 
+    // Validation before attempting level up
+    if (!this.selectedClass) {
+      ui.notifications.error("You must select a class before completing level up.");
+      return;
+    }
+
     try {
       // If this is level 1, save the starting class for mentor system
       if (this.actor.system.level === 1) {
@@ -1011,21 +1017,41 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Create or update class item
       const classLevel = await createOrUpdateClassItem(this.selectedClass, this.actor);
+      if (!classLevel) {
+        throw new Error("Failed to create or update class item");
+      }
+      SWSELogger.log(`SWSE LevelUp | Class item created/updated to level ${classLevel}`);
 
       // Add selected talent if any
       if (this.selectedTalent) {
-        const talentObject = typeof this.selectedTalent.toObject === 'function'
-          ? this.selectedTalent.toObject()
-          : this.selectedTalent;
-        await this.actor.createEmbeddedDocuments("Item", [talentObject]);
+        try {
+          const talentObject = typeof this.selectedTalent.toObject === 'function'
+            ? this.selectedTalent.toObject()
+            : this.selectedTalent;
+          const createdTalent = await this.actor.createEmbeddedDocuments("Item", [talentObject]);
+          if (!createdTalent || createdTalent.length === 0) {
+            throw new Error(`Failed to add talent: ${this.selectedTalent.name}`);
+          }
+          SWSELogger.log(`SWSE LevelUp | Added talent: ${this.selectedTalent.name}`);
+        } catch (talentError) {
+          throw new Error(`Failed to add talent: ${talentError.message}`);
+        }
       }
 
       // Add multiclass feats if any
       if (this.selectedFeats.length > 0) {
-        const featObjects = this.selectedFeats.map(f =>
-          typeof f.toObject === 'function' ? f.toObject() : f
-        );
-        await this.actor.createEmbeddedDocuments("Item", featObjects);
+        try {
+          const featObjects = this.selectedFeats.map(f =>
+            typeof f.toObject === 'function' ? f.toObject() : f
+          );
+          const createdFeats = await this.actor.createEmbeddedDocuments("Item", featObjects);
+          if (!createdFeats || createdFeats.length !== this.selectedFeats.length) {
+            throw new Error(`Feat creation mismatch: expected ${this.selectedFeats.length}, got ${createdFeats?.length || 0}`);
+          }
+          SWSELogger.log(`SWSE LevelUp | Added ${createdFeats.length} feat(s)`);
+        } catch (featError) {
+          throw new Error(`Failed to add feats: ${featError.message}`);
+        }
       }
 
       // Check for milestone feat at levels 3, 6, 9, 12, 15, 18
@@ -1181,7 +1207,31 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     } catch (err) {
       SWSELogger.error("SWSE LevelUp | Error completing level up:", err);
-      ui.notifications.error("Failed to complete level up. See console for details.");
+
+      // Provide specific error message based on error type
+      let errorMessage = "Failed to complete level up";
+      if (err.message) {
+        // Extract meaningful error messages
+        if (err.message.includes("talent")) {
+          errorMessage = `Talent Error: ${err.message}`;
+        } else if (err.message.includes("feat")) {
+          errorMessage = `Feat Error: ${err.message}`;
+        } else if (err.message.includes("class")) {
+          errorMessage = `Class Error: ${err.message}`;
+        } else if (err.message.includes("skill")) {
+          errorMessage = `Skill Error: ${err.message}`;
+        } else if (err.message.includes("ability")) {
+          errorMessage = `Ability Score Error: ${err.message}`;
+        } else {
+          errorMessage = `${errorMessage}: ${err.message}`;
+        }
+      }
+
+      ui.notifications.error(errorMessage, { permanent: true });
+      ui.notifications.warn("Your character may be in an inconsistent state. Please check your character sheet and contact the GM if needed.");
+
+      // Re-render to show current state
+      this.render();
     }
   }
 
