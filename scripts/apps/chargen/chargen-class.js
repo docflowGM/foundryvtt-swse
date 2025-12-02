@@ -48,7 +48,7 @@ export async function _onSelectClass(event) {
   this.characterData.classes = [];
   this.characterData.classes.push({ name: className, level: 1 });
 
-  SWSELogger.log(`CharGen | Selected class: ${className}, classes array:`, this.characterData.classes);
+  SWSELogger.log(`CharGen | Selected class: ${className}, classes array length: ${this.characterData.classes.length}`, this.characterData.classes);
 
   // Set class-based values
   if (classDoc && classDoc.system) {
@@ -79,6 +79,7 @@ export async function _onSelectClass(event) {
 
     // Force Points (if Force-sensitive class)
     if (classDoc.system.forceSensitive) {
+      this.characterData.forceSensitive = true; // Set force sensitivity flag
       this.characterData.forcePoints.max = 5 + Math.floor(this.characterData.level / 2);
       this.characterData.forcePoints.value = this.characterData.forcePoints.max;
       this.characterData.forcePoints.die = "1d6";
@@ -122,7 +123,10 @@ export async function _onSelectClass(event) {
   this._recalcDefenses();
 
   // Re-render to show the selected class and enable the Next button
-  await this.render();
+  // Force a complete re-render to ensure the Next button appears
+  await this.render(true);
+
+  SWSELogger.log(`CharGen | Class selection complete, Next button should now be visible`);
 }
 
 /**
