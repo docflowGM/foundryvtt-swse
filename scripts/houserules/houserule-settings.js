@@ -404,13 +404,14 @@ export function registerHouseruleSettings() {
 
   game.settings.register("swse", "talentTreeRestriction", {
     name: "Talent Tree Access",
-    hint: "Which talent trees can players choose from when leveling up",
+    hint: "Which talent trees can players choose from when leveling up. 'Unrestricted' allows selecting from any talent tree (free build mode).",
     scope: "world",
     config: true,
     type: String,
     choices: {
       "current": "Current Class Only",
-      "all": "Any Class With Levels"
+      "all": "Any Class With Levels",
+      "unrestricted": "Unrestricted (Free Build)"
     },
     default: "current"
   });

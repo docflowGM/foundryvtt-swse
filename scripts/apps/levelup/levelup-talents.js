@@ -55,7 +55,21 @@ export async function getTalentTrees(selectedClass, actor) {
   const talentTreeRestriction = game.settings.get("swse", "talentTreeRestriction");
   let availableTrees = [];
 
-  if (talentTreeRestriction === "current") {
+  if (talentTreeRestriction === "unrestricted") {
+    // Free build mode: all talent trees from all talents
+    const talentPack = game.packs.get('swse.talents');
+    if (talentPack) {
+      const allTalents = await talentPack.getDocuments();
+      const treeSet = new Set();
+      allTalents.forEach(talent => {
+        const tree = talent.system?.talent_tree || talent.system?.tree;
+        if (tree) {
+          treeSet.add(tree);
+        }
+      });
+      availableTrees = Array.from(treeSet);
+    }
+  } else if (talentTreeRestriction === "current") {
     // Only talent trees from the selected class
     availableTrees = selectedClass.system.talent_trees || selectedClass.system.talentTrees || [];
   } else {
