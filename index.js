@@ -4,24 +4,36 @@
 // ============================================
 
 /* -------------------------------------------- */
-/*  Actor Classes and Sheets                    */
+/*  Utilities & Core Infrastructure             */
+/*  (Load first - needed by everything)         */
+/* -------------------------------------------- */
+
+import { SWSELogger } from './scripts/utils/logger.js';
+import { SWSENotifications } from './scripts/utils/notifications.js';
+import { errorHandler, errorCommands, logError } from './scripts/core/error-handler.js';
+import { perfMonitor, debounce, throttle } from './scripts/utils/performance-utils.js';
+import { cacheManager } from './scripts/core/cache-manager.js';
+import { dataPreloader } from './scripts/core/data-preloader.js';
+import { lazyLoader } from './scripts/core/lazy-loader.js';
+
+/* -------------------------------------------- */
+/*  Configuration                               */
+/*  (Data structures used throughout)           */
+/* -------------------------------------------- */
+
+import { SWSE_SKILLS, getSkillConfig, getSkillsArray } from './scripts/config/skills.js';
+
+/* -------------------------------------------- */
+/*  Core Document Classes                       */
+/*  (Needed for CONFIG assignment)              */
 /* -------------------------------------------- */
 
 import { SWSEActorBase } from './scripts/actors/base/swse-actor-base.js';
-import { SWSECharacterSheet } from './scripts/actors/character/swse-character-sheet.js';
-import { SWSEDroidSheet } from './scripts/actors/droid/swse-droid.js';
-import { SWSENPCSheet } from './scripts/actors/npc/swse-npc.js';
-import { SWSEVehicleSheet } from './scripts/actors/vehicle/swse-vehicle.js';
-
-/* -------------------------------------------- */
-/*  Item Classes and Sheets                     */
-/* -------------------------------------------- */
-
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
-import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 
 /* -------------------------------------------- */
 /*  Data Models                                 */
+/*  (Required for Foundry V11+)                 */
 /* -------------------------------------------- */
 
 import { SWSECharacterDataModel } from './scripts/data-models/character-data-model.js';
@@ -29,41 +41,46 @@ import { SWSEVehicleDataModel } from './scripts/data-models/vehicle-data-model.j
 import { WeaponDataModel, ArmorDataModel, FeatDataModel, TalentDataModel, ForcePowerDataModel, ClassDataModel, SpeciesDataModel } from './scripts/data-models/item-data-models.js';
 
 /* -------------------------------------------- */
+/*  Combat Documents                            */
+/*  (Needed for CONFIG.Combat assignment)       */
+/* -------------------------------------------- */
+
+import { SWSECombatDocument } from './scripts/combat/swse-combat.js';
+import { SWSECombatant } from './scripts/combat/swse-combatant.js';
+
+/* -------------------------------------------- */
+/*  Actor Sheets                                */
+/*  (Needed for sheet registration)             */
+/* -------------------------------------------- */
+
+import { SWSECharacterSheet } from './scripts/actors/character/swse-character-sheet.js';
+import { SWSEDroidSheet } from './scripts/actors/droid/swse-droid.js';
+import { SWSENPCSheet } from './scripts/actors/npc/swse-npc.js';
+import { SWSEVehicleSheet } from './scripts/actors/vehicle/swse-vehicle.js';
+
+/* -------------------------------------------- */
+/*  Item Sheets                                 */
+/*  (Needed for sheet registration)             */
+/* -------------------------------------------- */
+
+import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
+
+/* -------------------------------------------- */
 /*  Core Systems                                */
+/*  (Foundational features)                     */
 /* -------------------------------------------- */
 
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
 import { preloadHandlebarsTemplates } from './scripts/core/load-templates.js';
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
-
-/* -------------------------------------------- */
-/*  Hooks System                                */
-/* -------------------------------------------- */
-
-import { registerInitHooks } from './scripts/hooks/index.js';
-
-/* -------------------------------------------- */
-/*  Utilities                                   */
-/* -------------------------------------------- */
-
-import { SWSENotifications } from './scripts/utils/notifications.js';
-import { SWSELogger } from './scripts/utils/logger.js';
 import { ThemeLoader } from './scripts/theme-loader.js';
-import './scripts/utils/skill-use-filter.js';
 import { createItemMacro } from './scripts/macros/item-macro.js';
+import './scripts/utils/skill-use-filter.js';
 
 /* -------------------------------------------- */
-/*  Configuration                               */
+/*  Migration Scripts                           */
+/*  (Side-effect imports for data migrations)   */
 /* -------------------------------------------- */
-
-import { SWSE_SKILLS, getSkillConfig, getSkillsArray } from './scripts/config/skills.js';
-
-/* -------------------------------------------- */
-/*  Components                                  */
-/* -------------------------------------------- */
-
-import { ConditionTrackComponent } from './scripts/components/condition-track.js';
-import { ForceSuiteComponent } from './scripts/components/force-suite.js';
 
 import './scripts/migration/fix-defense-schema.js';
 import './scripts/migration/fix-actor-size.js';
@@ -73,10 +90,9 @@ import './scripts/migration/populate-force-compendiums.js';
 
 /* -------------------------------------------- */
 /*  Combat Systems                              */
+/*  (Core combat mechanics)                     */
 /* -------------------------------------------- */
 
-import { SWSECombatDocument } from './scripts/combat/swse-combat.js';
-import { SWSECombatant } from './scripts/combat/swse-combatant.js';
 import { DamageSystem } from './scripts/combat/damage-system.js';
 import { SWSECombatAutomation } from './scripts/combat/combat-automation.js';
 import { SWSECombatIntegration } from './scripts/combat/combat-integration.js';
@@ -88,30 +104,32 @@ import { SWSEVehicleCombat } from './scripts/combat/systems/vehicle-combat-syste
 
 /* -------------------------------------------- */
 /*  Force Powers                                */
+/*  (Force-related mechanics)                   */
 /* -------------------------------------------- */
 
 import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
 import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
 
 /* -------------------------------------------- */
-/*  Performance & Optimization                  */
+/*  Components                                  */
+/*  (Reusable UI components)                    */
 /* -------------------------------------------- */
 
-import { cacheManager } from './scripts/core/cache-manager.js';
-import { dataPreloader } from './scripts/core/data-preloader.js';
-import { errorHandler, errorCommands, logError } from './scripts/core/error-handler.js';
-import { lazyLoader } from './scripts/core/lazy-loader.js';
-import { perfMonitor, debounce, throttle } from './scripts/utils/performance-utils.js';
+import { ConditionTrackComponent } from './scripts/components/condition-track.js';
+import { ForceSuiteComponent } from './scripts/components/force-suite.js';
 
 /* -------------------------------------------- */
 /*  Applications                                */
+/*  (UI Applications and Dialogs)               */
 /* -------------------------------------------- */
 
-// Character Generator is initialized via its init file
+// Character Generator (side-effect import)
 import './scripts/apps/chargen-init.js';
 
-// Store and Level Up apps
+// Store System
 import { SWSEStore } from './scripts/apps/store/store-main.js';
+
+// Level Up System
 import { SWSELevelUp } from './scripts/apps/swse-levelup.js';
 
 // Upgrade System
@@ -122,31 +140,30 @@ import { VehicleModificationManager } from './scripts/apps/vehicle-modification-
 import { VehicleModificationApp } from './scripts/apps/vehicle-modification-app.js';
 
 /* -------------------------------------------- */
-/*  Drag & Drop                                 */
-/* -------------------------------------------- */
-
-import { DropHandler } from './scripts/drag-drop/drop-handler.js';
-
-/* -------------------------------------------- */
-/*  Chat                                        */
-/* -------------------------------------------- */
-
-import './scripts/chat/chat-commands.js';
-
-/* -------------------------------------------- */
-/*  Canvas UI                                   */
-/* -------------------------------------------- */
-
-import { CanvasUIManager } from './scripts/canvas-ui/canvas-ui-manager.js';
-
-/* -------------------------------------------- */
 /*  House Rules & GM Tools                      */
+/*  (Customization and GM utilities)            */
 /* -------------------------------------------- */
 
 import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
 import { HouseruleMechanics } from './scripts/houserules/houserule-mechanics.js';
 import { HouserulesConfig } from './scripts/houserules/houserules-config.js';
 import { SWSEHomebrewManager } from './scripts/gm-tools/homebrew-manager.js';
+
+/* -------------------------------------------- */
+/*  Integration Systems                         */
+/*  (Features that tie everything together)     */
+/* -------------------------------------------- */
+
+import { CanvasUIManager } from './scripts/canvas-ui/canvas-ui-manager.js';
+import { DropHandler } from './scripts/drag-drop/drop-handler.js';
+import './scripts/chat/chat-commands.js';
+
+/* -------------------------------------------- */
+/*  Hooks System                                */
+/*  (MUST BE LAST - registers init/ready hooks) */
+/* -------------------------------------------- */
+
+import { registerInitHooks } from './scripts/hooks/index.js';
 
 /* -------------------------------------------- */
 /*  System Configuration                        */
@@ -166,7 +183,7 @@ CONFIG.SWSE = SWSE;
 
 Hooks.once("init", async function() {
   console.log("SWSE | Initializing Star Wars Saga Edition System");
-  
+
   // ============================================
   // Create Global Namespace
   // ============================================
@@ -257,7 +274,7 @@ Hooks.once("init", async function() {
   // ============================================
   // Register Data Models (Foundry V11+)
   // ============================================
-  
+
   CONFIG.Actor.dataModels = {
     character: SWSECharacterDataModel,
     npc: SWSECharacterDataModel,
@@ -286,7 +303,7 @@ Hooks.once("init", async function() {
   // ============================================
   // Register Actor Sheets
   // ============================================
-  
+
   Actors.registerSheet("swse", SWSECharacterSheet, {
     types: ["character"],
     makeDefault: true,
@@ -324,7 +341,7 @@ Hooks.once("init", async function() {
   // ============================================
   // Register System Settings
   // ============================================
-  
+
   registerSystemSettings();
   registerHouseruleSettings();
   SWSEHomebrewManager.registerSettings();
@@ -333,7 +350,7 @@ Hooks.once("init", async function() {
   // ============================================
   // Register Handlebars Helpers
   // ============================================
-  
+
   // Register Handlebars helpers
   registerHandlebarsHelpers();
 
@@ -413,7 +430,7 @@ Hooks.once("init", async function() {
   // ============================================
   // Preload Templates
   // ============================================
-  
+
   await preloadHandlebarsTemplates();
 
   // ============================================
@@ -436,7 +453,7 @@ Hooks.once("init", async function() {
   // ============================================
   // Configure Dice
   // ============================================
-  
+
   CONFIG.Dice.terms["d"] = foundry.dice.terms.Die;
 
   // ============================================
@@ -666,11 +683,11 @@ Hooks.once("ready", async function() {
  * Register all core system settings
  */
 function registerSystemSettings() {
-  
+
   // ============================================
   // Data Management
   // ============================================
-  
+
   game.settings.register("swse", "dataLoaded", {
     name: "Data Loaded",
     scope: "world",
@@ -689,7 +706,7 @@ function registerSystemSettings() {
   // ============================================
   // Combat Automation
   // ============================================
-  
+
   game.settings.register('swse', 'enableAutomation', {
     name: 'SWSE.Settings.EnableAutomation.Name',
     hint: 'SWSE.Settings.EnableAutomation.Hint',
@@ -720,7 +737,7 @@ function registerSystemSettings() {
   // ============================================
   // Weapon Settings
   // ============================================
-  
+
   game.settings.register('swse', 'weaponRangeMultiplier', {
     name: 'SWSE.Settings.WeaponRangeMultiplier.Name',
     hint: 'SWSE.Settings.WeaponRangeMultiplier.Hint',
@@ -1009,7 +1026,7 @@ Hooks.on('preUpdateActor', function(actor, changes, options, userId) {
 Hooks.on("renderChatMessageHTML", (message, html, data) => {
     // Note: html is now an HTMLElement, wrap in $() for jQuery: $(html).find(...)
 
-  
+
   // Apply damage button
   $(html).find('.apply-damage').click(async ev => {
     ev.preventDefault();

@@ -3,7 +3,7 @@
  * Extends Foundry's Item class with SWSE-specific functionality
  */
 
-import { getWeaponRangeInfo } from './weapon-ranges.js';
+import { getWeaponRangeInfo } from '../weapon-ranges.js';
 
 export class SWSEItemBase extends Item {
   
