@@ -117,16 +117,14 @@ export class ThemeLoader {
 
   /**
    * Initialize theme system
-   * Called during Foundry init hook
+   * Called during Foundry ready hook
    */
   static initialize() {
     SWSELogger.log('[SWSE Theme] Theme loader initialized');
 
     // Load initial theme from settings
-    Hooks.once('ready', () => {
-      const themeName = game.settings.get('swse', 'sheetTheme') || 'holo';
-      this.applyTheme(themeName);
-    });
+    const themeName = game.settings.get('swse', 'sheetTheme') || 'holo';
+    this.applyTheme(themeName);
   }
 }
 
