@@ -921,10 +921,27 @@
         "Flight Suit",
         "Comlink, Short-Range",
         "Datapad, Standard",
-        "Fusion Lantern"
+        "Fusion Lantern",
+        "Power Recharger",
+        "Medpac",
+        "Medpac",
+        "Medpac",
+        "Glow Rod",
+        "Ration Pack",
+        "Ration Pack",
+        "Audiorecorder",
+        "Energy Cell",
+        "Energy Cell",
+        "Energy Cell",
+        "Power Pack",
+        "Power Pack",
+        "Power Pack",
+        "Blank Datacards (10)",
+        "Blank Datacards (10)",
+        "Tool Kit"
       ],
       "credits": 500,
-      "notes": "Mechanics +10, HP ~7 (1d4+1). 3 starting feats: Skill Training (Mechanics), Skill Training (Use Computer), Skill Focus (Mechanics). Workers make excellent technicians and support personnel."
+      "notes": "Mechanics +10, HP ~7 (1d4+1). 3 starting feats: Skill Training (Mechanics), Skill Training (Use Computer), Skill Focus (Mechanics). Workers make excellent technicians and support personnel. Extra 820 credits in equipment for field work."
     },
     {
       "id": "nonheroic_trooper",
@@ -960,10 +977,24 @@
         "Blast Helmet and Vest",
         "Comlink, Short-Range",
         "Utility Belt (Standard)",
-        "Power Pack"
+        "Power Pack",
+        "Frag Grenade",
+        "Stun Grenade",
+        "Medpac",
+        "Medpac",
+        "Power Pack",
+        "Power Pack",
+        "Power Pack",
+        "Power Pack",
+        "Glow Rod",
+        "Glow Rod",
+        "Ration Pack",
+        "Ration Pack",
+        "Audiorecorder",
+        "Binder Cuffs"
       ],
       "credits": 300,
-      "notes": "Attack +1, Reflex 11, HP ~7 (1d4+1). 3 starting feats: Armor Proficiency (Light), Weapon Proficiency (Rifles), Weapon Proficiency (Pistols). Standard military trooper."
+      "notes": "Attack +1, Reflex 11, HP ~7 (1d4+1). 3 starting feats: Armor Proficiency (Light), Weapon Proficiency (Rifles), Weapon Proficiency (Pistols). Standard military trooper. Extra 755 credits in military equipment."
     },
     {
       "id": "nonheroic_criminal",
@@ -998,10 +1029,11 @@
         "Vibrodagger",
         "Flight Suit",
         "Comlink, Short-Range",
-        "Binder Cuffs"
+        "Binder Cuffs",
+        "Security Kit"
       ],
       "credits": 200,
-      "notes": "Attack +1, Deception +7, HP ~6 (1d4+0). 3 starting feats: Weapon Proficiency (Pistols), Weapon Proficiency (Simple Weapons), Skill Training (Deception). Street criminals and thugs."
+      "notes": "Attack +1, Deception +7, HP ~6 (1d4+0). 3 starting feats: Weapon Proficiency (Pistols), Weapon Proficiency (Simple Weapons), Skill Training (Deception). Street criminals and thugs. Extra 750 credits in illicit equipment."
     },
     {
       "id": "nonheroic_merchant",
@@ -1038,10 +1070,23 @@
         "Datapad, Standard",
         "Comlink, Short-Range",
         "Credit Chip",
-        "Bioscanner"
+        "Bioscanner",
+        "Holorecorder",
+        "Audiorecorder",
+        "Blank Datacards (10)",
+        "Blank Datacards (10)",
+        "Credit Chip",
+        "Medpac",
+        "Medpac",
+        "Power Pack",
+        "Power Pack",
+        "Glow Rod",
+        "Ration Pack",
+        "Ration Pack",
+        "Comlink, Long-Range"
       ],
       "credits": 1000,
-      "notes": "Persuasion +10, Gather Information +7, HP ~6 (1d4+0). 3 starting feats: Skill Training (Persuasion), Skill Training (Gather Information), Skill Focus (Persuasion). Merchants excel at social interactions."
+      "notes": "Persuasion +10, Gather Information +7, HP ~6 (1d4+0). 3 starting feats: Skill Training (Persuasion), Skill Training (Gather Information), Skill Focus (Persuasion). Merchants excel at social interactions. Extra 765 credits in business equipment."
     },
     {
       "id": "nonheroic_police",
@@ -1078,10 +1123,23 @@
         "Comlink, Short-Range",
         "Binder Cuffs",
         "Medpac",
-        "Code Cylinder"
+        "Code Cylinder",
+        "Holorecorder",
+        "Audiorecorder",
+        "Binder Cuffs",
+        "Binder Cuffs",
+        "Medpac",
+        "Medpac",
+        "Power Pack",
+        "Power Pack",
+        "Power Pack",
+        "Glow Rod",
+        "Glow Rod",
+        "Ration Pack",
+        "Comlink, Long-Range"
       ],
       "credits": 400,
-      "notes": "Perception +8, Reflex 11, HP ~7 (1d4+1). 3 starting feats: Armor Proficiency (Light), Weapon Proficiency (Pistols), Skill Training (Perception). Local law enforcement."
+      "notes": "Perception +8, Reflex 11, HP ~7 (1d4+1). 3 starting feats: Armor Proficiency (Light), Weapon Proficiency (Pistols), Skill Training (Perception). Local law enforcement. Extra 775 credits in law enforcement equipment."
     }
   ]
 }
