@@ -46,7 +46,9 @@ export async function loadInventoryData(itemsById) {
     // Store items by ID for quick lookup
     itemsById.clear();
     validItems.forEach(item => {
-        itemsById.set(item.id, item);
+        // Use item.id if available, otherwise fall back to item._id
+        const itemId = item.id || item._id;
+        itemsById.set(itemId, item);
     });
 
     // Get all actors from world that could be droids or vehicles
@@ -93,7 +95,9 @@ export async function loadInventoryData(itemsById) {
 
     // Store actors by ID for quick lookup (for availability filtering)
     validActors.forEach(actor => {
-        itemsById.set(actor.id, actor);
+        // Use actor.id if available, otherwise fall back to actor._id
+        const actorId = actor.id || actor._id;
+        itemsById.set(actorId, actor);
     });
 
     // Get equipment items and categorize them
