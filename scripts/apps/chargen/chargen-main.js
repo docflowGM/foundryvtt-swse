@@ -1018,6 +1018,46 @@ export default class CharacterGenerator extends Application {
         items.push(foundry.utils.deepClone(p));
       }
 
+      // Create class items for player characters (matching level-up behavior)
+      // This ensures talent trees and other class data are available on the character sheet
+      if (this.actorType !== "npc" && this.characterData.classes) {
+        for (const classData of this.characterData.classes) {
+          const classDoc = this._packs.classes.find(c => c.name === classData.name);
+          if (classDoc) {
+            // Get defenses from class doc or use defaults
+            const defenses = classDoc.system.defenses?.fortitude !== undefined ||
+                            classDoc.system.defenses?.reflex !== undefined ||
+                            classDoc.system.defenses?.will !== undefined
+              ? classDoc.system.defenses
+              : { fortitude: 0, reflex: 0, will: 0 };
+
+            const classItem = {
+              name: classDoc.name,
+              type: "class",
+              img: classDoc.img,
+              system: {
+                level: classData.level || 1,
+                hitDie: classDoc.system.hit_die || classDoc.system.hitDie || "1d6",
+                babProgression: classDoc.system.babProgression || 0.75,
+                defenses: {
+                  fortitude: defenses.fortitude || 0,
+                  reflex: defenses.reflex || 0,
+                  will: defenses.will || 0
+                },
+                description: classDoc.system.description || '',
+                classSkills: classDoc.system.class_skills || classDoc.system.classSkills || [],
+                // Support both property name variants for talent trees
+                talentTrees: classDoc.system.talent_trees || classDoc.system.talentTrees || [],
+                talent_trees: classDoc.system.talent_trees || classDoc.system.talentTrees || [],
+                forceSensitive: classDoc.system.forceSensitive || false
+              }
+            };
+            items.push(classItem);
+            SWSELogger.log(`CharGen | Created class item for ${classDoc.name} with talent trees:`, classItem.system.talentTrees);
+          }
+        }
+      }
+
       // For NPCs, create a Nonheroic class item
       if (this.actorType === "npc") {
         const nonheroicClass = {
