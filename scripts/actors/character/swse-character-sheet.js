@@ -610,6 +610,10 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     const allTalents = await talentPack.getDocuments();
 
+    // Check talent tree restriction setting
+    const talentTreeRestriction = game.settings.get("swse", "talentTreeRestriction");
+    const isUnrestricted = talentTreeRestriction === "unrestricted";
+
     // Get character's class talent trees
     const classItems = this.actor.items.filter(i => i.type === 'class');
     const availableTrees = new Set();
@@ -633,20 +637,21 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     let content = '<div class="talent-picker-dialog"><div class="talent-search"><input type="text" id="talent-search-input" placeholder="Search talents..." style="width: 100%; padding: 5px; margin-bottom: 10px;"/></div>';
 
     for (const [tree, talents] of Object.entries(talentsByTree)) {
-      const isAvailable = availableTrees.has(tree);
-      const style = !isAvailable ? 'opacity: 0.5;' : '';
+      const isAvailable = isUnrestricted || availableTrees.has(tree);
+      // Hide unavailable trees unless in unrestricted mode
+      const style = !isAvailable ? 'display: none;' : '';
 
       content += `
-        <div class="talent-tree-group" data-tree="${tree}" style="${style}">
+        <div class="talent-tree-group" data-tree="${tree}" data-available="${isAvailable}" style="${style}">
           <h4 style="margin-top: 15px; border-bottom: 1px solid #999;">
-            ${tree} (${talents.length})${!isAvailable ? ' <em style="font-size: 0.9em; color: #999;">- Not available to your classes</em>' : ''}
+            ${tree} (${talents.length})
           </h4>
           <div class="talents-list-picker">
       `;
 
       for (const talent of talents) {
         content += `
-          <div class="talent-option ${!isAvailable ? 'unavailable' : ''}" data-talent-id="${talent.id}" ${!isAvailable ? 'data-unavailable="true"' : ''} style="padding: 8px; border: 1px solid #ccc; margin: 5px 0; cursor: pointer; border-radius: 4px;">
+          <div class="talent-option" data-talent-id="${talent.id}" style="padding: 8px; border: 1px solid #ccc; margin: 5px 0; cursor: pointer; border-radius: 4px;">
             <strong>${talent.name}</strong>
             ${talent.system.description ? `<div style="font-size: 0.9em; color: #666; margin-top: 3px;">${talent.system.description.substring(0, 150)}${talent.system.description.length > 150 ? '...' : ''}</div>` : ''}
           </div>
@@ -671,13 +676,6 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
         // Add click handler for talent selection
         html.find('.talent-option').click(async (event) => {
           const talentOption = $(event.currentTarget);
-
-          // Check if talent is unavailable
-          if (talentOption.data('unavailable')) {
-            ui.notifications.warn("This talent is not available to your current classes.");
-            return;
-          }
-
           const talentId = talentOption.data('talent-id');
           const selectedTalent = allTalents.find(t => t.id === talentId);
           if (selectedTalent) {
@@ -695,10 +693,14 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
             $(this).toggle(talentText.includes(searchTerm));
           });
 
-          // Hide empty trees
+          // Hide empty trees (respect data-available attribute for non-search hiding)
           html.find('.talent-tree-group').each(function() {
-            const hasVisible = $(this).find('.talent-option:visible').length > 0;
-            $(this).toggle(hasVisible);
+            const $tree = $(this);
+            const isAvailable = $tree.data('available');
+            const hasVisibleTalents = $tree.find('.talent-option:visible').length > 0;
+            // Show tree if: it has visible talents AND (is available OR searching)
+            const shouldShow = hasVisibleTalents && (isAvailable || searchTerm.length > 0);
+            $tree.toggle(shouldShow);
           });
         });
       }

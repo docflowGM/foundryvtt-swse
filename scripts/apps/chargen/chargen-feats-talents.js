@@ -268,6 +268,26 @@ export async function _onSelectTalent(event) {
  * Get available talent trees for the selected class
  */
 export function _getAvailableTalentTrees() {
+  // Check for unrestricted mode (free build)
+  const talentTreeRestriction = game.settings.get("swse", "talentTreeRestriction");
+
+  if (talentTreeRestriction === "unrestricted") {
+    // Free build mode: return all talent trees from all talents
+    const allTrees = new Set();
+    if (this._packs.talents) {
+      this._packs.talents.forEach(talent => {
+        const tree = talent.system?.talent_tree || talent.system?.tree;
+        if (tree) {
+          allTrees.add(tree);
+        }
+      });
+    }
+    const trees = Array.from(allTrees);
+    SWSELogger.log(`CharGen | Available talent trees (unrestricted mode):`, trees);
+    return trees;
+  }
+
+  // Class-restricted mode
   if (!this.characterData.classes || this.characterData.classes.length === 0) {
     return [];
   }
