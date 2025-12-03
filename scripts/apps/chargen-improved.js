@@ -6,6 +6,7 @@ import { SWSELogger } from '../utils/logger.js';
 // ============================================
 
 import CharacterGenerator from './chargen/chargen-main.js';
+import { getClassProperty, getHitDie, getTrainedSkills, getTalentTrees } from './chargen/chargen-property-accessor.js';
 
 export default class CharacterGeneratorImproved extends CharacterGenerator {
 
@@ -187,18 +188,18 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   async _applyClassData(classDoc) {
     const classSystem = classDoc.system;
 
-    // Store class information
+    // Store class information using property accessor for consistent naming
     this.characterData.classData = {
       name: classDoc.name,
-      hitDie: classSystem.hitDie || 6,
-      babProgression: classSystem.babProgression || 0,
-      trainedSkills: classSystem.trainedSkills || 2,
-      classSkills: classSystem.classSkills || [],
-      talentTrees: classSystem.talentTrees || [],
+      hitDie: getHitDie(classDoc),
+      babProgression: getClassProperty(classDoc, 'babProgression', 0),
+      trainedSkills: getTrainedSkills(classDoc),
+      classSkills: getClassProperty(classDoc, 'classSkills', []),
+      talentTrees: getTalentTrees(classDoc),
       forceSensitive: classSystem.forceSensitive || false,
       forcePoints: classSystem.forcePointProgression || 0,
       defenses: classSystem.defenseProgression || { fortitude: 0, reflex: 0, will: 0 },
-      startingFeatures: classSystem.startingFeatures || []
+      startingFeatures: getClassProperty(classDoc, 'startingFeatures', [])
     };
 
     // Apply defense bonuses
@@ -209,7 +210,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     };
 
     // Calculate HP based on hitDie and CON modifier
-    const hitDie = classSystem.hitDie || 6;
+    const hitDie = getHitDie(classDoc);
 
     // Level 1 always gets 5x hit die HP
     this.characterData.hp = {
@@ -236,15 +237,22 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
     if (!classDoc) return;
 
+    const hitDie = getHitDie(classDoc);
+    const babProgression = getClassProperty(classDoc, 'babProgression', 0);
+    const trainedSkills = getTrainedSkills(classDoc);
+    const forceSensitive = classDoc.system.forceSensitive || false;
+    const forcePointProgression = classDoc.system.forcePointProgression || 0;
+    const defenseProgression = classDoc.system.defenseProgression || { fortitude: 0, reflex: 0, will: 0 };
+
     const preview = `
       <div class="class-preview-tooltip">
         <h4>${classDoc.name}</h4>
-        <p><strong>Hit Die:</strong> d${classDoc.system.hitDie || 6}</p>
-        <p><strong>BAB:</strong> +${classDoc.system.babProgression || 0}</p>
-        <p><strong>Trained Skills:</strong> ${classDoc.system.trainedSkills || 2}</p>
-        <p><strong>Force Sensitive:</strong> ${classDoc.system.forceSensitive ? 'Yes' : 'No'}</p>
-        ${classDoc.system.forceSensitive ? `<p><strong>Force Points:</strong> ${classDoc.system.forcePointProgression || 0}</p>` : ''}
-        <p><strong>Defenses:</strong> Fort ${classDoc.system.defenseProgression?.fortitude || 0} / Ref ${classDoc.system.defenseProgression?.reflex || 0} / Will ${classDoc.system.defenseProgression?.will || 0}</p>
+        <p><strong>Hit Die:</strong> d${hitDie}</p>
+        <p><strong>BAB:</strong> +${babProgression}</p>
+        <p><strong>Trained Skills:</strong> ${trainedSkills}</p>
+        <p><strong>Force Sensitive:</strong> ${forceSensitive ? 'Yes' : 'No'}</p>
+        ${forceSensitive ? `<p><strong>Force Points:</strong> ${forcePointProgression}</p>` : ''}
+        <p><strong>Defenses:</strong> Fort ${defenseProgression.fortitude} / Ref ${defenseProgression.reflex} / Will ${defenseProgression.will}</p>
       </div>
     `;
 
