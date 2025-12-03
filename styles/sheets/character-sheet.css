@@ -3366,3 +3366,236 @@ font-size: 12px;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.8);
 }
+
+/* ============================================ */
+/* Force Points Header Controls */
+/* ============================================ */
+
+.force-point-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.force-point-controls .reroll-bonus {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+  flex: 1;
+}
+
+.force-point-controls .dice-type-select {
+  width: 60px;
+  padding: 2px 4px;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 168, 204, 0.4);
+  color: #fff;
+  border-radius: 3px;
+}
+
+.force-point-controls .roll-force-point {
+  padding: 4px 8px;
+  background: linear-gradient(180deg, rgba(0, 168, 204, 0.5), rgba(0, 100, 120, 0.5));
+  border: 1px solid rgba(0, 168, 204, 0.6);
+  border-radius: 3px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.force-point-controls .roll-force-point:hover {
+  background: linear-gradient(180deg, rgba(0, 168, 204, 0.7), rgba(0, 120, 140, 0.7));
+  box-shadow: 0 0 8px rgba(0, 168, 204, 0.5);
+}
+
+.resource-max-input {
+  width: 40px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 168, 204, 0.4);
+  color: #fff;
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+
+/* ============================================ */
+/* Dark Side Score Tracker */
+/* ============================================ */
+
+.dark-side-tracker-container {
+  margin: 15px 0 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 168, 204, 0.3);
+  border-radius: 6px;
+}
+
+.dark-side-tracker .tracker-label {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 10px;
+}
+
+.dark-side-tracker .dark-side-value {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.dark-side-tracker .dark-side-max {
+  color: #aaa;
+}
+
+.dark-side-segments {
+  display: flex;
+  gap: 3px;
+  margin: 10px 0;
+  min-height: 24px;
+}
+
+.dark-side-segment {
+  flex: 1;
+  height: 24px;
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+  opacity: 0.3;
+  position: relative;
+}
+
+.dark-side-segment:hover {
+  opacity: 0.8;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.dark-side-segment.active {
+  opacity: 1;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6) inset;
+}
+
+.dark-side-segment.active::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  background: linear-gradient(180deg, 
+    rgba(255, 255, 255, 0.2), 
+    rgba(0, 0, 0, 0.2));
+  border-radius: 1px;
+}
+
+.dark-side-description {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.dark-side-description .light-side {
+  color: #6bb6ff;
+}
+
+.dark-side-description .lightly-corrupted {
+  color: #a0a0ff;
+}
+
+.dark-side-description .moderately-corrupted {
+  color: #c080ff;
+}
+
+.dark-side-description .heavily-corrupted {
+  color: #ff6b6b;
+}
+
+.dark-side-description .corrupted {
+  color: #8b0000;
+  font-weight: bold;
+}
+
+/* ============================================ */
+/* Force Point Roll Chat Message */
+/* ============================================ */
+
+.swse.force-point-roll {
+  background: linear-gradient(180deg, rgba(0, 50, 80, 0.9), rgba(0, 30, 50, 0.9));
+  border: 2px solid rgba(0, 168, 204, 0.6);
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.swse.force-point-roll h3 {
+  margin: 0 0 10px 0;
+  color: #00a8cc;
+  font-size: 16px;
+}
+
+.swse.force-point-roll .dice-roll {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  border-radius: 4px;
+  margin: 8px 0;
+}
+
+.swse.force-point-roll .dice-formula {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 6px;
+}
+
+.swse.force-point-roll .dice-tooltip {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.swse.force-point-roll .dice-tooltip .die {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 168, 204, 0.4);
+  border: 2px solid rgba(0, 168, 204, 0.6);
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.swse.force-point-roll .dice-tooltip .die.max {
+  background: rgba(0, 200, 100, 0.4);
+  border-color: rgba(0, 255, 128, 0.8);
+  box-shadow: 0 0 8px rgba(0, 255, 128, 0.4);
+}
+
+.swse.force-point-roll .dice-total {
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 6px;
+}
+
+.swse.force-point-roll .dice-total strong {
+  color: #00ff80;
+  font-size: 18px;
+}
+
+.swse.force-point-roll .force-point-remaining {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 168, 204, 0.3);
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+

@@ -367,6 +367,30 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  game.settings.register("swse", "darkSideMaxMultiplier", {
+    name: "Dark Side Maximum Multiplier",
+    hint: "Maximum Dark Side Score = Wisdom × Multiplier (default is 1× Wisdom)",
+    scope: "world",
+    config: true,
+    type: Number,
+    choices: {
+      1: "1× Wisdom (Standard)",
+      2: "2× Wisdom",
+      3: "3× Wisdom",
+      5: "5× Wisdom"
+    },
+    default: 1
+  });
+
+  game.settings.register("swse", "darkSidePowerIncreaseScore", {
+    name: "Dark Side Powers Auto-Increase Score",
+    hint: "Automatically increase Dark Side Score by 1 when using a Force Power with the [Dark Side] descriptor",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   // ============================================
   // Combat Feats
   // ============================================

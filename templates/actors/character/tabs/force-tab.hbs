@@ -5,13 +5,18 @@
  <div class="force-points-display">
  <label>Force Points</label>
  <div class="resource-bar flexrow">
- <input type="number" 
+ <input type="number"
  name="system.forcePoints.value"
  value="{{system.forcePoints.value}}"
  data-dtype="Number"
  class="force-current"/>
  <span>/</span>
- <span class="force-max">{{system.forcePoints.max}}</span>
+ <input type="number"
+ name="system.forcePoints.max"
+ value="{{system.forcePoints.max}}"
+ data-dtype="Number"
+ class="force-max-input"
+ title="Maximum Force Points (editable)"/>
  </div>
  </div>
 
@@ -20,9 +25,17 @@
  <div class="reroll-dice">{{forceRerollDice}}</div>
  </div>
 
+ <div class="force-dice-type">
+ <label>Dice Type</label>
+ <select name="system.forcePoints.diceType" class="dice-type-select">
+ <option value="d6" {{#if (eq system.forcePoints.diceType "d6")}}selected{{/if}}>d6</option>
+ <option value="d8" {{#if (eq system.forcePoints.diceType "d8")}}selected{{/if}}>d8</option>
+ </select>
+ </div>
+
  <div class="dark-side">
  <label>Dark Side Score</label>
- <input type="number" 
+ <input type="number"
  name="system.darkSideScore"
  value="{{system.darkSideScore}}"
  data-dtype="Number"

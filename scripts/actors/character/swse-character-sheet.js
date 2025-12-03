@@ -190,9 +190,62 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     context.knownPowers = allForcePowers.filter(p => !forceSuite.powers?.includes(p.id));
     context.activeSuite = allForcePowers.filter(p => forceSuite.powers?.includes(p.id));
 
-    // Force reroll dice calculation
-    const forcePointDie = this.actor.system.forcePoints?.die || '1d6';
-    context.forceRerollDice = forcePointDie;
+    // Force reroll dice calculation based on level and dice type
+    const level = this.actor.system.level || 1;
+    const diceType = this.actor.system.forcePoints?.diceType || 'd6';
+    let numDice = 1;
+    if (level >= 15) {
+      numDice = 3;
+    } else if (level >= 8) {
+      numDice = 2;
+    }
+    context.forceRerollDice = `${numDice}${diceType} (take highest)`;
+
+    // Dark Side Score tracker data
+    const wisdomScore = this.actor.system.abilities?.wis?.total || 10;
+    const darkSideMultiplier = game.settings.get('swse', 'darkSideMaxMultiplier') || 1;
+    const darkSideMax = wisdomScore * darkSideMultiplier;
+    const currentDarkSide = this.actor.system.darkSideScore || 0;
+
+    context.darkSideMax = darkSideMax;
+    context.darkSideSegments = [];
+
+    // Generate color gradient from blue (0) to dark red (max)
+    for (let i = 1; i <= darkSideMax; i++) {
+      const ratio = (i - 1) / (darkSideMax - 1);
+
+      // Color gradient: Blue (0,100,255) -> Purple -> Red -> Dark Red (139,0,0)
+      let r, g, b;
+      if (ratio < 0.33) {
+        // Blue to Purple
+        const localRatio = ratio / 0.33;
+        r = Math.round(0 + localRatio * 128);
+        g = Math.round(100 - localRatio * 100);
+        b = Math.round(255 - localRatio * 127);
+      } else if (ratio < 0.67) {
+        // Purple to Red
+        const localRatio = (ratio - 0.33) / 0.34;
+        r = Math.round(128 + localRatio * 127);
+        g = Math.round(0);
+        b = Math.round(128 - localRatio * 128);
+      } else {
+        // Red to Dark Red
+        const localRatio = (ratio - 0.67) / 0.33;
+        r = Math.round(255 - localRatio * 116);
+        g = Math.round(0);
+        b = Math.round(0);
+      }
+
+      const color = `rgb(${r}, ${g}, ${b})`;
+      const colorLevel = Math.floor(ratio * 10); // 0-10 for CSS classes
+
+      context.darkSideSegments.push({
+        index: i,
+        color: color,
+        colorLevel: colorLevel,
+        active: i <= currentDarkSide
+      });
+    }
 
     // Get combat actions from CombatActionsMapper
     // Get all combat actions as a flat list for the combat tab
@@ -317,6 +370,12 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     // Talent enhancement listeners
     html.find('.talent-enhancement-toggle').on('change', this._onToggleTalentEnhancement.bind(this));
+
+    // Force point roll button
+    html.find('.roll-force-point').click(this._onRollForcePoint.bind(this));
+
+    // Dark side tracker segment clicks
+    html.find('.dark-side-segment').click(this._onDarkSideSegmentClick.bind(this));
 
     SWSELogger.log('SWSE | Character sheet listeners activated');
   }
@@ -2054,5 +2113,102 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     }
 
     return bonuses;
+  }
+
+  /**
+   * Handle rolling a Force Point
+   */
+  async _onRollForcePoint(event) {
+    event.preventDefault();
+
+    const currentFP = this.actor.system.forcePoints?.value || 0;
+    if (currentFP <= 0) {
+      ui.notifications.warn('You have no Force Points remaining!');
+      return;
+    }
+
+    // Get dice configuration
+    const level = this.actor.system.level || 1;
+    const diceType = this.actor.system.forcePoints?.diceType || 'd6';
+    let numDice = 1;
+    if (level >= 15) {
+      numDice = 3;
+    } else if (level >= 8) {
+      numDice = 2;
+    }
+
+    // Roll the dice
+    const roll = await new Roll(`${numDice}${diceType}`).evaluate({async: true});
+
+    // For multiple dice, take the highest
+    let bonus = 0;
+    if (numDice > 1 && roll.dice[0]) {
+      bonus = Math.max(...roll.dice[0].results.map(r => r.result));
+    } else {
+      bonus = roll.total;
+    }
+
+    // Spend the Force Point
+    await this.actor.update({'system.forcePoints.value': currentFP - 1});
+
+    // Create chat message
+    const messageContent = `
+      <div class="swse force-point-roll">
+        <h3><i class="fas fa-hand-sparkles"></i> Force Point Rolled</h3>
+        <div class="dice-roll">
+          <div class="dice-formula">${numDice}${diceType}</div>
+          <div class="dice-tooltip">
+            ${roll.dice[0].results.map((r, i) =>
+              `<span class="die ${diceType} ${r.result === bonus && numDice > 1 ? 'max' : ''}">${r.result}</span>`
+            ).join(' ')}
+          </div>
+          ${numDice > 1 ? `<div class="dice-total">Highest: <strong>+${bonus}</strong></div>` : `<div class="dice-total">Result: <strong>+${bonus}</strong></div>`}
+        </div>
+        <div class="force-point-remaining">
+          Force Points Remaining: ${currentFP - 1}/${this.actor.system.forcePoints.max}
+        </div>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({actor: this.actor}),
+      content: messageContent,
+      roll: roll,
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      sound: CONFIG.sounds.dice
+    });
+
+    // Dice So Nice integration
+    if (game.dice3d) {
+      await game.dice3d.showForRoll(roll, game.user, true);
+    }
+  }
+
+  /**
+   * Handle clicking a dark side tracker segment
+   */
+  async _onDarkSideSegmentClick(event) {
+    event.preventDefault();
+
+    const segment = parseInt(event.currentTarget.dataset.segment);
+    const currentDarkSide = this.actor.system.darkSideScore || 0;
+
+    // Toggle: if clicking the current value, set to segment - 1 (decrease)
+    // Otherwise, set to the clicked segment
+    let newValue;
+    if (segment === currentDarkSide) {
+      newValue = Math.max(0, segment - 1);
+    } else {
+      newValue = segment;
+    }
+
+    await this.actor.update({'system.darkSideScore': newValue});
+
+    // Show notification
+    if (newValue > currentDarkSide) {
+      ui.notifications.warn(`Dark Side Score increased to ${newValue}`);
+    } else if (newValue < currentDarkSide) {
+      ui.notifications.info(`Dark Side Score decreased to ${newValue}`);
+    }
   }
 }

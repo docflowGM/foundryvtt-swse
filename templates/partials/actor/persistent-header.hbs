@@ -100,23 +100,36 @@
  </div>
  </div>
  
- {{#if system.forceSensitive}}
  <div class="resource force-points flex1">
  <label>Force Points</label>
  <div class="resource-content flexrow">
- <input type="text" 
- name="system.forcePoints.value" 
- value="{{system.forcePoints.value}}" 
+ <input type="text"
+ name="system.forcePoints.value"
+ value="{{system.forcePoints.value}}"
  data-dtype="Number"
- class="resource-input"/>
+ class="resource-input"
+ title="Current Force Points"/>
  <span class="separator">/</span>
- <span class="resource-max">{{system.forcePoints.max}}</span>
+ <input type="text"
+ name="system.forcePoints.max"
+ value="{{system.forcePoints.max}}"
+ data-dtype="Number"
+ class="resource-max-input"
+ title="Maximum Force Points (editable)"/>
  </div>
+ <div class="force-point-controls flexrow">
  <div class="reroll-bonus">
- <i class="fas fa-dice"></i> Reroll: {{forceRerollDice}}
+ <i class="fas fa-dice"></i> {{forceRerollDice}}
+ </div>
+ <select name="system.forcePoints.diceType" class="dice-type-select" title="Dice Type (d6 standard, d8 for Strong in the Force)">
+ <option value="d6" {{#if (eq system.forcePoints.diceType "d6")}}selected{{/if}}>d6</option>
+ <option value="d8" {{#if (eq system.forcePoints.diceType "d8")}}selected{{/if}}>d8</option>
+ </select>
+ <button class="roll-force-point" title="Roll Force Point (consumes 1 Force Point)">
+ <i class="fas fa-dice-d6"></i>
+ </button>
  </div>
  </div>
- {{/if}}
  </div>
  </div>
  
