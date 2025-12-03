@@ -7,6 +7,7 @@ import { SWSELogger } from '../../utils/logger.js';
 import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } from '../mentor-dialogues.js';
 import { isBaseClass, getCharacterClasses, getClassDefenseBonuses, calculateHPGain } from './levelup-shared.js';
 import { meetsClassPrerequisites } from './levelup-validation.js';
+import { getClassProperty } from '../chargen/chargen-property-accessor.js';
 
 /**
  * Get class metadata (icon and description)
@@ -271,7 +272,7 @@ export async function selectClass(classId, actor, context) {
 export async function applyPrestigeClassFeatures(classDoc) {
   SWSELogger.log(`SWSE LevelUp | Applying prestige class features for ${classDoc.name}`);
 
-  const startingFeatures = classDoc.system.startingFeatures || [];
+  const startingFeatures = getClassProperty(classDoc, 'startingFeatures', []);
 
   // Apply all level 1 features (except max HP which is handled separately)
   for (const feature of startingFeatures) {
@@ -289,7 +290,7 @@ export async function applyPrestigeClassFeatures(classDoc) {
  * @param {Actor} actor - The actor
  */
 export async function applyClassFeatures(classDoc, classLevel, actor) {
-  const levelProgression = classDoc.system.level_progression;
+  const levelProgression = getClassProperty(classDoc, 'levelProgression', null);
   if (!levelProgression || !Array.isArray(levelProgression)) return;
 
   const levelData = levelProgression.find(lp => lp.level === classLevel);
@@ -378,16 +379,16 @@ export async function createOrUpdateClassItem(classDoc, actor) {
       img: classDoc.img,
       system: {
         level: 1,
-        hitDie: classDoc.system.hit_die || classDoc.system.hitDie || "1d6",
-        babProgression: classDoc.system.babProgression || 0.75,
+        hitDie: getClassProperty(classDoc, 'hitDie', '1d6'),
+        babProgression: getClassProperty(classDoc, 'babProgression', 0.75),
         defenses: {
           fortitude: defenses.fortitude || 0,
           reflex: defenses.reflex || 0,
           will: defenses.will || 0
         },
         description: classDoc.system.description || '',
-        classSkills: classDoc.system.classSkills || [],
-        talentTrees: classDoc.system.talentTrees || [],
+        classSkills: getClassProperty(classDoc, 'classSkills', []),
+        talentTrees: getClassProperty(classDoc, 'talentTrees', []),
         forceSensitive: classDoc.system.forceSensitive || false
       }
     };

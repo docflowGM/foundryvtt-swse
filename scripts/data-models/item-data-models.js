@@ -264,11 +264,68 @@ export class ClassDataModel extends foundry.abstract.DataModel {
         fortitude: new fields.NumberField({required: true, initial: 0}),
         reflex: new fields.NumberField({required: true, initial: 0}),
         will: new fields.NumberField({required: true, initial: 0})
-      })
+      }),
+
+      // Talent trees available to this class
+      talentTrees: new fields.ArrayField(new fields.StringField(), {label: "Talent Trees"}),
+
+      // Level-by-level progression data
+      levelProgression: new fields.ArrayField(
+        new fields.SchemaField({
+          level: new fields.NumberField({required: true, integer: true, min: 1, max: 20}),
+          bab: new fields.NumberField({integer: true}),
+          fort: new fields.NumberField({integer: true}),
+          ref: new fields.NumberField({integer: true}),
+          will: new fields.NumberField({integer: true}),
+          defense_bonus: new fields.NumberField({integer: true}),
+          reputation: new fields.NumberField({integer: true}),
+          force_points: new fields.NumberField({integer: true, min: 0}),
+          features: new fields.ArrayField(new fields.SchemaField({
+            name: new fields.StringField({required: true}),
+            type: new fields.StringField(), // 'feat', 'talent', 'class_feature', 'proficiency', 'feat_grant'
+            description: new fields.StringField()
+          }))
+        }),
+        {label: "Level Progression"}
+      ),
+
+      // Starting features granted at level 1
+      startingFeatures: new fields.ArrayField(
+        new fields.SchemaField({
+          name: new fields.StringField({required: true}),
+          type: new fields.StringField(), // 'proficiency', 'class_feature', 'feat_grant'
+          description: new fields.StringField()
+        }),
+        {label: "Starting Features"}
+      ),
+
+      // Number of trained skills at level 1
+      trainedSkills: new fields.NumberField({integer: true, min: 0, label: "Trained Skills"})
     };
   }
 
   prepareDerivedData() {
+    // Normalize snake_case property names to camelCase for consistency
+    // This handles compendium data that may use snake_case naming
+    const propertyMappings = {
+      'hit_die': 'hitDie',
+      'bab_progression': 'babProgression',
+      'class_skills': 'classSkills',
+      'talent_trees': 'talentTrees',
+      'trained_skills': 'trainedSkills',
+      'level_progression': 'levelProgression',
+      'starting_features': 'startingFeatures',
+      'defense_progression': 'defenseProgression',
+      'force_point_progression': 'forcePointProgression'
+    };
+
+    // Copy snake_case properties to camelCase if they exist and camelCase doesn't
+    for (const [snakeCase, camelCase] of Object.entries(propertyMappings)) {
+      if (this[snakeCase] !== undefined && this[camelCase] === undefined) {
+        this[camelCase] = this[snakeCase];
+      }
+    }
+
     // SWSE Rules for class defense bonuses:
     // - Defense bonuses are FLAT per class and do not scale with class level
     // - Heroic classes typically have +1 for "fast" saves, +0 for "slow"
