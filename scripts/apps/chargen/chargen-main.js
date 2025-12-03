@@ -457,6 +457,11 @@ export default class CharacterGenerator extends Application {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // DEVELOPMENT: Validate template bindings in debug mode
+    if (game.settings?.get('swse', 'devMode')) {
+      this._validateTemplateBindings(html);
+    }
+
     // Ensure html is jQuery object for compatibility
     const $html = html instanceof jQuery ? html : $(html);
 
@@ -469,6 +474,9 @@ export default class CharacterGenerator extends Application {
 
     // Free Build toggle
     $html.find('.free-build-toggle').change(this._onToggleFreeBuild.bind(this));
+
+    // Refresh Data button (development feature)
+    $html.find('.refresh-chargen-data').click(this._onRefreshData.bind(this));
 
     // Navigation
     $html.find('.next-step').click(this._onNextStep.bind(this));
@@ -907,7 +915,13 @@ export default class CharacterGenerator extends Application {
       store.render(true);
     } catch (err) {
       SWSELogger.error("SWSE | Failed to open store:", err);
-      ui.notifications.error("Failed to open the shop. You can access it from your character sheet.");
+      let message = "Failed to open the shop. ";
+      if (err.message?.includes("not found") || err.message?.includes("Cannot find")) {
+        message += "The store module may not be installed correctly.";
+      } else {
+        message += "You can access it from your character sheet after creation.";
+      }
+      ui.notifications.warn(message);
     }
   }
 
@@ -1103,7 +1117,29 @@ export default class CharacterGenerator extends Application {
       ui.notifications.info(`Character ${this.characterData.name} created successfully!`);
     } catch (err) {
       SWSELogger.error("chargen: actor creation failed", err);
-      ui.notifications.error(`Failed to create character: ${err.message}. See console for details.`);
+
+      // Provide user-friendly error message based on error type
+      let userMessage = "Failed to create character. ";
+      if (err.name === "DataModelValidationError") {
+        userMessage += "Some character data failed validation. ";
+        if (err.failures && err.failures.length > 0) {
+          const firstFailure = err.failures[0];
+          userMessage += `Issue with field: ${firstFailure.path}`;
+          if (game.settings?.get('swse', 'devMode')) {
+            userMessage += ` (Expected: ${firstFailure.failure?.expected || 'N/A'})`;
+          }
+        }
+      } else if (err.message?.includes("permission")) {
+        userMessage += "You don't have permission to create actors. Contact your GM.";
+      } else if (err.message?.includes("compendium")) {
+        userMessage += "Failed to load compendium data. Try using the 'Refresh Data' button.";
+      } else if (err.message?.includes("network") || err.message?.includes("timeout")) {
+        userMessage += "Network issue. Please try again.";
+      } else {
+        userMessage += `${err.message}. Check the console (F12) for details.`;
+      }
+
+      ui.notifications.error(userMessage, { permanent: true, console: false });
 
       // Ensure we clean up if something went wrong and actor exists
       if (created && !this.actor) {
@@ -1269,6 +1305,64 @@ export default class CharacterGenerator extends Application {
       { key: "useComputer", name: "Use Computer", ability: "int", trained: true },
       { key: "useTheForce", name: "Use the Force", ability: "cha", trained: true }
     ];
+  }
+
+  /**
+   * Refresh compendium data cache
+   * Useful when new compendia are imported or items are updated
+   */
+  async _onRefreshData(event) {
+    event?.preventDefault();
+
+    ui.notifications.info("Refreshing CharGen data...");
+
+    try {
+      // Invalidate cache
+      ChargenDataCache.invalidate();
+
+      // Reload data
+      await this._loadData();
+
+      // Re-render to show fresh data
+      await this.render();
+
+      ui.notifications.info("CharGen data refreshed successfully!");
+      SWSELogger.log("CharGen | Data cache refreshed manually");
+    } catch (err) {
+      SWSELogger.error("CharGen | Failed to refresh data:", err);
+      ui.notifications.error("Failed to refresh CharGen data. Check console for details.");
+    }
+  }
+
+  /**
+   * DEVELOPMENT MODE: Validate template form bindings match character data
+   * Warns about mismatched field names that would silently fail to update
+   * @param {jQuery|HTMLElement} html - The rendered template HTML
+   */
+  _validateTemplateBindings(html) {
+    const $html = html instanceof jQuery ? html : $(html);
+    const inputs = $html.find('[name^="character"]');
+
+    let warnings = 0;
+    inputs.each((i, el) => {
+      const fieldName = el.name.replace('character-', '').replace(/_/g, '.');
+
+      // Skip known special cases that don't map directly
+      const skipFields = ['level', 'name', 'class'];
+      if (skipFields.includes(fieldName)) return;
+
+      // Check if path exists in characterData
+      if (!foundry.utils.hasProperty(this.characterData, fieldName)) {
+        console.warn(`[CharGen Template] Field "${el.name}" has no corresponding data path: character Data.${fieldName}`);
+        warnings++;
+      }
+    });
+
+    if (warnings > 0) {
+      SWSELogger.warn(`CharGen template has ${warnings} unmatched form field(s). Check console for details.`);
+    } else {
+      SWSELogger.log('CharGen template validation: All form bindings match character data ✓');
+    }
   }
 }
 

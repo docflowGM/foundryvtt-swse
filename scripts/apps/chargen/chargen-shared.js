@@ -64,16 +64,17 @@ export class ChargenDataCache {
         const pack = game.packs.get(packName);
         if (!pack) {
           SWSELogger.error(`ChargenDataCache | Pack not found: ${packName}`);
-          packs[key] = [];
+          packs[key] = Object.freeze([]);
           errors.push(key);
           continue;
         }
         const docs = await pack.getDocuments();
-        packs[key] = docs.map(d => d.toObject());
-        SWSELogger.log(`ChargenDataCache | Loaded ${docs.length} items from ${packName}`);
+        // DEFENSIVE: Freeze each document object to prevent accidental mutation
+        packs[key] = Object.freeze(docs.map(d => Object.freeze(d.toObject())));
+        SWSELogger.log(`ChargenDataCache | Loaded ${docs.length} frozen items from ${packName}`);
       } catch (err) {
         SWSELogger.error(`ChargenDataCache | Failed to load ${packName}:`, err);
-        packs[key] = [];
+        packs[key] = Object.freeze([]);
         errors.push(key);
       }
     }
@@ -82,7 +83,8 @@ export class ChargenDataCache {
       SWSELogger.warn(`ChargenDataCache | Failed to load: ${errors.join(', ')}`);
     }
 
-    return packs;
+    // Freeze the entire packs object to prevent top-level mutations
+    return Object.freeze(packs);
   }
 
   /**

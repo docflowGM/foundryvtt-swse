@@ -1002,6 +1002,33 @@ Hooks.on("dropActorSheetData", async (actor, sheet, data) => {
 });
 
 /**
+ * Invalidate CharGen cache when compendiums are updated
+ * Ensures CharGen always shows the latest data
+ */
+Hooks.on('updateCompendium', (pack, data, options, userId) => {
+  // Only invalidate for SWSE system compendiums
+  if (pack.metadata?.system === 'swse') {
+    // Import ChargenDataCache dynamically to avoid circular dependencies
+    import('./scripts/apps/chargen/chargen-shared.js').then(({ ChargenDataCache }) => {
+      ChargenDataCache.invalidate();
+      SWSELogger.log(`CharGen cache invalidated due to update in: ${pack.metadata.label}`);
+    });
+  }
+});
+
+/**
+ * Invalidate CharGen cache when new compendia are added
+ */
+Hooks.on('createCompendium', (pack, options, userId) => {
+  if (pack.metadata?.system === 'swse') {
+    import('./scripts/apps/chargen/chargen-shared.js').then(({ ChargenDataCache }) => {
+      ChargenDataCache.invalidate();
+      SWSELogger.log(`CharGen cache invalidated due to new compendium: ${pack.metadata.label}`);
+    });
+  }
+});
+
+/**
  * Handle condition track changes
  */
 Hooks.on('preUpdateActor', function(actor, changes, options, userId) {
