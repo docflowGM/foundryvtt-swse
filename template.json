@@ -96,7 +96,8 @@
         "forcePoints": {
           "value": 5,
           "max": 5,
-          "die": "1d6"
+          "die": "1d6",
+          "diceType": "d6"
         },
         "destinyPoints": {
           "value": 1,

@@ -15,9 +15,9 @@ export class ForcePointsUtil {
   static async rollForcePoint(actor, options = {}) {
     const { reason = 'boost', useDarkSide = false } = options;
 
-    // Get Force Point die based on level
-    const forcePointDie = actor.system.forcePoints?.die || '1d6';
-    const level = actor.system.level?.heroic || 1;
+    // Get Force Point dice configuration based on level and dice type
+    const diceType = actor.system.forcePoints?.diceType || 'd6';
+    const level = actor.system.level?.heroic || actor.system.level || 1;
 
     // Determine number of dice to roll
     let numDice = 1;
@@ -27,8 +27,8 @@ export class ForcePointsUtil {
       numDice = 2;
     }
 
-    // Roll the dice
-    const roll = await new Roll(`${numDice}d6`).evaluate();
+    // Roll the dice with the selected dice type
+    const roll = await new Roll(`${numDice}${diceType}`).evaluate();
 
     // For multiple dice, take the highest
     let bonus = 0;
@@ -42,7 +42,7 @@ export class ForcePointsUtil {
     let darkSideBonus = 0;
     let darkSideUsed = false;
     if (useDarkSide) {
-      const darkSideRoll = await new Roll('1d6').evaluate();
+      const darkSideRoll = await new Roll(`1${diceType}`).evaluate();
       darkSideBonus = darkSideRoll.total;
       darkSideUsed = true;
     }
@@ -101,6 +101,15 @@ export class ForcePointsUtil {
    */
   static async showForcePointDialog(actor, reason = 'boost') {
     const canDarkSide = this.canUseDarkSide(actor);
+    const diceType = actor.system.forcePoints?.diceType || 'd6';
+    const level = actor.system.level?.heroic || actor.system.level || 1;
+    let numDice = 1;
+    if (level >= 15) {
+      numDice = 3;
+    } else if (level >= 8) {
+      numDice = 2;
+    }
+    const diceDesc = numDice > 1 ? `${numDice}${diceType} (take highest)` : `${numDice}${diceType}`;
 
     return new Promise((resolve) => {
       const dialog = new Dialog({
@@ -109,13 +118,13 @@ export class ForcePointsUtil {
           <form>
             <div class="form-group">
               <label>Spend a Force Point for ${reason}?</label>
-              <p>You will roll ${actor.system.forcePoints?.die || '1d6'} and add the ${actor.system.level?.heroic >= 8 ? 'highest result' : 'result'} to your roll.</p>
+              <p>You will roll ${diceDesc} and add the ${numDice > 1 ? 'highest result' : 'result'} to your roll.</p>
             </div>
             ${canDarkSide ? `
               <div class="form-group">
                 <label>
                   <input type="checkbox" name="useDarkSide"/>
-                  Call upon the Dark Side (+1d6, increases Dark Side Score by 1)
+                  Call upon the Dark Side (+1${diceType}, increases Dark Side Score by 1)
                 </label>
               </div>
             ` : ''}

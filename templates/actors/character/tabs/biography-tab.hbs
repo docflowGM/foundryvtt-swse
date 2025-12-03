@@ -33,6 +33,39 @@
  </div>
  </div>
 
+ <h3 class="section-header">Dark Side Corruption</h3>
+
+ <div class="dark-side-tracker-container">
+ <div class="dark-side-tracker">
+ <label class="tracker-label">
+ Dark Side Score: <span class="dark-side-value">{{system.darkSideScore}}</span> / <span class="dark-side-max">{{darkSideMax}}</span>
+ </label>
+ <div class="dark-side-segments" data-max-segments="{{darkSideMax}}">
+ {{#each darkSideSegments}}
+ <div class="dark-side-segment {{#if this.active}}active{{/if}}"
+ data-segment="{{this.index}}"
+ data-color-level="{{this.colorLevel}}"
+ style="background-color: {{this.color}};"
+ title="Click to set Dark Side Score to {{this.index}}">
+ </div>
+ {{/each}}
+ </div>
+ <div class="dark-side-description">
+ {{#if (gte system.darkSideScore darkSideMax)}}
+ <span class="corrupted"><i class="fas fa-skull"></i> Fully Corrupted by the Dark Side</span>
+ {{else if (gte system.darkSideScore (mult darkSideMax 0.75))}}
+ <span class="heavily-corrupted"><i class="fas fa-exclamation-triangle"></i> Heavily Corrupted</span>
+ {{else if (gte system.darkSideScore (mult darkSideMax 0.5))}}
+ <span class="moderately-corrupted"><i class="fas fa-moon"></i> Moderately Corrupted</span>
+ {{else if (gt system.darkSideScore 0)}}
+ <span class="lightly-corrupted"><i class="fas fa-adjust"></i> Touched by the Dark Side</span>
+ {{else}}
+ <span class="light-side"><i class="fas fa-sun"></i> Pure in the Force</span>
+ {{/if}}
+ </div>
+ </div>
+ </div>
+
  <h3 class="section-header">Biography</h3>
 
  <div class="editor-content">

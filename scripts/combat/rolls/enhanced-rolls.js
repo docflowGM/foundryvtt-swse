@@ -1,5 +1,6 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { DamageSystem } from '../damage-system.js';
+import { ForcePointsUtil } from '../../utils/force-points.js';
 
 /**
  * Enhanced Roll System for SWSE
@@ -9,10 +10,122 @@ import { DamageSystem } from '../damage-system.js';
 export class SWSERoll {
 
   /**
+   * Prompt user to spend Force Point and return bonus if used
+   * @param {Actor} actor - The actor rolling
+   * @param {string} reason - Reason for the roll (e.g., "attack roll", "skill check")
+   * @returns {Promise<number>} Force Point bonus (0 if not used)
+   */
+  static async promptForcePointUse(actor, reason = 'this roll') {
+    // Check if actor has force points
+    const currentFP = actor.system.forcePoints?.value || 0;
+    if (currentFP <= 0) {
+      return 0;
+    }
+
+    // Show dialog
+    const result = await new Promise((resolve) => {
+      const diceType = actor.system.forcePoints?.diceType || 'd6';
+      const level = actor.system.level || 1;
+      let numDice = 1;
+      if (level >= 15) {
+        numDice = 3;
+      } else if (level >= 8) {
+        numDice = 2;
+      }
+      const diceDesc = numDice > 1 ? `${numDice}${diceType} (take highest)` : `${numDice}${diceType}`;
+
+      const dialog = new Dialog({
+        title: 'Use Force Point?',
+        content: `
+          <form>
+            <div class="form-group">
+              <label>Do you want to spend a Force Point on ${reason}?</label>
+              <p>You will roll ${diceDesc} and add the ${numDice > 1 ? 'highest result' : 'result'} to your roll.</p>
+              <p><strong>Force Points:</strong> ${currentFP}/${actor.system.forcePoints.max}</p>
+            </div>
+          </form>
+        `,
+        buttons: {
+          yes: {
+            icon: '<i class="fas fa-dice"></i>',
+            label: 'Use Force Point',
+            callback: () => resolve(true)
+          },
+          no: {
+            icon: '<i class="fas fa-times"></i>',
+            label: 'No',
+            callback: () => resolve(false)
+          }
+        },
+        default: 'no',
+        close: () => resolve(false)
+      });
+      dialog.render(true);
+    });
+
+    if (!result) {
+      return 0;
+    }
+
+    // Roll force point
+    const diceType = actor.system.forcePoints?.diceType || 'd6';
+    const level = actor.system.level || 1;
+    let numDice = 1;
+    if (level >= 15) {
+      numDice = 3;
+    } else if (level >= 8) {
+      numDice = 2;
+    }
+
+    const roll = await new Roll(`${numDice}${diceType}`).evaluate({async: true});
+
+    // Take highest
+    let bonus = 0;
+    if (numDice > 1 && roll.dice[0]) {
+      bonus = Math.max(...roll.dice[0].results.map(r => r.result));
+    } else {
+      bonus = roll.total;
+    }
+
+    // Spend the force point
+    await actor.update({'system.forcePoints.value': currentFP - 1});
+
+    // Show roll in chat
+    const messageContent = `
+      <div class="swse force-point-roll">
+        <h3><i class="fas fa-hand-sparkles"></i> Force Point Used</h3>
+        <div class="dice-roll">
+          <div class="dice-formula">${numDice}${diceType}</div>
+          <div class="dice-tooltip">
+            ${roll.dice[0].results.map((r) =>
+              `<span class="die ${diceType} ${r.result === bonus && numDice > 1 ? 'max' : ''}">${r.result}</span>`
+            ).join(' ')}
+          </div>
+          ${numDice > 1 ? `<div class="dice-total">Highest: <strong>+${bonus}</strong></div>` : `<div class="dice-total">Result: <strong>+${bonus}</strong></div>`}
+        </div>
+        <div class="force-point-remaining">
+          FP Remaining: ${currentFP - 1}/${actor.system.forcePoints.max}
+        </div>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({actor}),
+      content: messageContent,
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER
+    });
+
+    return bonus;
+  }
+
+  /**
    * Roll an attack with a weapon
    * This automatically includes BAB, ability mod, condition penalties, etc.
    */
   static async rollAttack(actor, weapon, options = {}) {
+    // Prompt for Force Point use
+    const forcePointBonus = await this.promptForcePointUse(actor, 'attack roll');
+
     const rollData = actor.getRollData();
 
     // Build the formula step by step so we can see what's happening
@@ -47,6 +160,12 @@ export class SWSERoll {
     if (armorCheckPenalty !== 0) {
       formula += ` + ${armorCheckPenalty}`;
       parts.push(`Armor Penalty ${armorCheckPenalty}`);
+    }
+
+    // Force Point bonus
+    if (forcePointBonus > 0) {
+      formula += ` + ${forcePointBonus}`;
+      parts.push(`Force Point +${forcePointBonus}`);
     }
 
     // Create and evaluate the roll
@@ -174,6 +293,10 @@ export class SWSERoll {
       return;
     }
 
+    // Prompt for Force Point use
+    const skillName = skill.label || skillKey;
+    const forcePointBonus = await this.promptForcePointUse(actor, `${skillName} check`);
+
     const rollData = actor.getRollData();
 
     // Build formula
@@ -197,6 +320,12 @@ export class SWSERoll {
 
     if (rollData.conditionPenalty) {
       parts.push(`Condition ${rollData.conditionPenalty}`);
+    }
+
+    // Force Point bonus
+    if (forcePointBonus > 0) {
+      formula += ` + ${forcePointBonus}`;
+      parts.push(`Force Point +${forcePointBonus}`);
     }
 
     const roll = new Roll(formula, rollData);
