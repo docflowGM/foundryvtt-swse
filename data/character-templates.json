@@ -35,13 +35,12 @@
       ],
       "startingEquipment": [
         "Lightsaber",
-        "Flight Suit",
         "Utility Belt (Standard)",
         "Medpac",
         "Comlink, Short-Range",
         "Glow Rod"
       ],
-      "credits": -1035,
+      "credits": -35,
       "notes": "Attack +7, Reflex Defense 19, HP 32. Block talent allows negating melee attacks with Use the Force check."
     },
     {
@@ -81,12 +80,11 @@
       ],
       "startingEquipment": [
         "Lightsaber",
-        "Flight Suit",
         "Comlink, Short-Range",
         "Datapad, Standard",
         "Medpac"
       ],
-      "credits": -1525,
+      "credits": -525,
       "notes": "Use the Force +9, Will Defense 18, 4 Force Powers. Force Sight ability ignores concealment. Force Focus allows regaining spent Force Power."
     },
     {
@@ -122,12 +120,10 @@
       ],
       "startingEquipment": [
         "Lightsaber",
-        "Flight Suit",
-        "Combat Jumpsuit",
         "Medpac",
         "Comlink, Short-Range"
       ],
-      "credits": -2025,
+      "credits": 475,
       "notes": "HP 35, Fort Defense 19, Use the Force +9 for Deflect checks. Zabrak CON bonus makes this an excellent tank."
     },
     {
@@ -167,13 +163,12 @@
       ],
       "startingEquipment": [
         "Lightsaber",
-        "Flight Suit",
         "Comlink, Short-Range",
         "Datapad, Standard",
         "Medpac",
         "Binder Cuffs"
       ],
-      "credits": -1575,
+      "credits": -575,
       "notes": "Use the Force +9, Will Defense 18. Force Sight ignores concealment. Dark Side Sense allows rerolls to detect dark siders."
     },
     {
@@ -212,10 +207,9 @@
       "forcePowers": [],
       "startingEquipment": [
         "Sporting Blaster Pistol",
-        "Flight Suit",
         "Comlink, Short-Range"
       ],
-      "credits": 175,
+      "credits": 1175,
       "notes": "Persuasion +18 with Zeltron bonuses, Will Defense 16. Inspire Confidence grants +1 morale bonus to all allies."
     },
     {
@@ -253,11 +247,10 @@
       "forcePowers": [],
       "startingEquipment": [
         "Heavy Blaster Pistol",
-        "Flight Suit",
         "Comlink, Short-Range",
         "Medpac"
       ],
-      "credits": -375,
+      "credits": 625,
       "notes": "HP 20, Reflex 13, Will 17. Born Leader grants swift action +1 insight bonus to allies' attacks."
     },
     {
@@ -343,10 +336,9 @@
       "startingEquipment": [
         "Vibroblade",
         "Blaster Pistol",
-        "Shadowsuit",
         "Comlink, Short-Range"
       ],
-      "credits": -125,
+      "credits": 475,
       "notes": "Melee attack +5 using CHA, 2d6 damage, HP 19. Noble Fencing Style allows using CHA for light melee attacks."
     },
     {
@@ -385,13 +377,12 @@
       "startingEquipment": [
         "Heavy Blaster Pistol",
         "Blaster Pistol",
-        "Flight Suit",
         "Utility Belt (Standard)",
         "Power Pack",
         "Comlink, Short-Range",
         "Medpac"
       ],
-      "credits": -1025,
+      "credits": -25,
       "notes": "Attack +4, 3d8+3 damage (4d8+3 vs flat-footed), Reflex Defense 17. Precise Shot removes shooting into melee penalty."
     },
     {
@@ -475,13 +466,12 @@
       "startingEquipment": [
         "Heavy Blaster Pistol",
         "Vibrodagger",
-        "Flight Suit",
         "Targeting Scope, Standard",
         "Power Pack",
         "Binder Cuffs",
         "Medpac"
       ],
-      "credits": -400,
+      "credits": 600,
       "notes": "Attack +5 with DEX 18. Dastardly Strike moves targets -1 condition track when denied DEX bonus."
     },
     {
@@ -519,14 +509,13 @@
       "startingEquipment": [
         "Blaster Pistol",
         "Hold-out Blaster",
-        "Flight Suit",
         "Blank Datacards (10)",
         "Comlink, Short-Range",
         "Datapad, Standard",
         "Power Pack",
         "Medpac"
       ],
-      "credits": -1035,
+      "credits": -35,
       "notes": "Persuasion +9 (+14 with Fool's Luck). Fool's Luck spends Force Point for +1 attack OR +5 skills OR +1 defenses."
     },
     {
@@ -565,13 +554,13 @@
       "forcePowers": [],
       "startingEquipment": [
         "Blaster Rifle",
-        "Flight Suit",
+        "Thinsuit",
         "Electrobinoculars",
         "Medpac",
         "Comlink, Short-Range",
         "Utility Belt (Standard)"
       ],
-      "credits": -1750,
+      "credits": -1650,
       "notes": "Attack +4, Reflex Defense 19, HP 34. Acute Senses allows rerolling Perception checks."
     },
     {
@@ -609,12 +598,11 @@
       "startingEquipment": [
         "Blaster Carbine",
         "Heavy Blaster Pistol",
-        "Flight Suit",
         "Comlink, Short-Range",
         "Glow Rod",
         "Medpac"
       ],
-      "credits": -910,
+      "credits": 90,
       "notes": "8 squares movement, Running Attack allows moving and shooting. Excellent battlefield mobility."
     },
     {
@@ -778,12 +766,12 @@
       "forcePowers": [],
       "startingEquipment": [
         "Heavy Blaster Rifle",
-        "Flight Suit",
+        "Blast Helmet and Vest",
         "Bandolier",
         "Comlink, Short-Range",
         "Medpac"
       ],
-      "credits": -850,
+      "credits": -350,
       "notes": "3d10 damage with autofire capability. Excels at suppressing multiple enemies."
     },
     {
@@ -817,12 +805,12 @@
       "forcePowers": [],
       "startingEquipment": [
         "Vibroblade",
-        "Combat Jumpsuit",
+        "Blast Helmet and Vest",
         "Combat Jumpsuit",
         "Comlink, Short-Range",
         "Medpac"
       ],
-      "credits": -1750,
+      "credits": -750,
       "notes": "Attack +6, 2d10+7 damage (with 2-handed STR bonus). HP 36. Wookiee STR bonus makes this devastating."
     },
     {
@@ -856,12 +844,12 @@
       "forcePowers": [],
       "startingEquipment": [
         "Blaster Rifle",
-        "Combat Jumpsuit",
+        "Blast Helmet and Vest",
         "Medpac",
         "Comlink, Short-Range",
         "Power Pack"
       ],
-      "credits": -775,
+      "credits": 225,
       "notes": "HP 40, Reflex 21, Fort 19. Gen'Dai damage threshold is doubled! Extremely durable frontline tank."
     },
     {
@@ -894,11 +882,10 @@
       "forcePowers": [],
       "startingEquipment": [
         "Tool Kit",
-        "Flight Suit",
         "Comlink, Short-Range",
         "Medpac"
       ],
-      "credits": -875,
+      "credits": 125,
       "notes": "Mechanics +10, HP ~7 (1d4+1). 3 starting feats: Skill Training (Mechanics), Skill Training (Use Computer), Skill Focus (Mechanics). Workers make excellent technicians and support personnel. Extra 820 credits in equipment for field work."
     },
     {
@@ -971,10 +958,9 @@
       "startingEquipment": [
         "Blaster Pistol",
         "Vibrodagger",
-        "Flight Suit",
         "Comlink, Short-Range"
       ],
-      "credits": -1575,
+      "credits": -575,
       "notes": "Attack +1, Deception +7, HP ~6 (1d4+0). 3 starting feats: Weapon Proficiency (Pistols), Weapon Proficiency (Simple Weapons), Skill Training (Deception). Street criminals and thugs. Extra 750 credits in illicit equipment."
     },
     {
@@ -1008,11 +994,10 @@
       "forcePowers": [],
       "startingEquipment": [
         "Hold-out Blaster",
-        "Flight Suit",
         "Datapad, Standard",
         "Comlink, Short-Range"
       ],
-      "credits": -1275,
+      "credits": -275,
       "notes": "Persuasion +10, Gather Information +7, HP ~6 (1d4+0). 3 starting feats: Skill Training (Persuasion), Skill Training (Gather Information), Skill Focus (Persuasion). Merchants excel at social interactions. Extra 765 credits in business equipment."
     },
     {
@@ -1046,13 +1031,13 @@
       "startingEquipment": [
         "Stun Baton",
         "Blaster Pistol",
-        "Flight Suit",
+        "Blast Helmet and Vest",
         "Comlink, Short-Range",
         "Binder Cuffs",
         "Medpac",
         "Code Cylinder"
       ],
-      "credits": -2025,
+      "credits": -1525,
       "notes": "Perception +8, Reflex 11, HP ~7 (1d4+1). 3 starting feats: Armor Proficiency (Light), Weapon Proficiency (Pistols), Skill Training (Perception). Local law enforcement. Extra 775 credits in law enforcement equipment."
     }
   ]
