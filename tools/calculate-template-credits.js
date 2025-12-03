@@ -63,7 +63,13 @@ const startingCreditsByClass = {
   'Scoundrel': 1875,
   'Scout': 1875,
   'Soldier': 1875,
-  'Nonheroic': null  // Varies by template
+  'Nonheroic': {
+    'Worker': 500,
+    'Trooper': 300,
+    'Criminal': 200,
+    'Merchant': 1000,
+    'Police Officer': 400
+  }
 };
 
 // Load templates
@@ -83,8 +89,15 @@ templates.templates.forEach(template => {
     return;
   }
 
-  // Get starting credits
-  let startingCredits = template.credits;
+  // Get starting credits by class (use proper starting values, not current negative values)
+  let startingCredits;
+  if (template.class === 'Nonheroic') {
+    startingCredits = startingCreditsByClass.Nonheroic[template.name];
+  } else if (template.name === 'Aristocrat') {
+    startingCredits = 6500; // Wealth talent
+  } else {
+    startingCredits = startingCreditsByClass[template.class];
+  }
 
   // Calculate equipment cost
   let equipmentCost = 0;
