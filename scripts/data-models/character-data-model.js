@@ -108,7 +108,18 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       }),
 
       // Level
-      level: new fields.NumberField({required: true, initial: 1, min: 1, max: 20, integer: true}),
+      level: new fields.NumberField({
+        required: true,
+        initial: 1,
+        min: 1,
+        max: 20,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 1;
+          const num = Number(value);
+          return Number.isNaN(num) ? 1 : Math.floor(num);
+        }
+      }),
 
       // Biography
       biography: new fields.StringField({required: false, initial: ""})

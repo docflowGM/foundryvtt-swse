@@ -1,13 +1,12 @@
 /* ==========================================
    Forge VTT & Foundry V13 UI Layout Fixes
    ==========================================
-   - Reset Forge global styles
-   - Restore Foundry core UI layout
-   - Ensure windows draggable/resizable/centered
-   - Fix narrow/mobile layout
+   - Minimal CSS overrides to fix Forge VTT issues
+   - Restore Foundry default UI behavior
+   - Fix window dragging and positioning
 */
 
-/* Reset Forge global body styles */
+/* Reset Forge global body styles that break Foundry layout */
 html, body {
   position: static !important;
   display: block !important;
@@ -26,66 +25,24 @@ html, body {
   height: 100% !important;
 }
 
-/* Position left toolbar (canvas controls) */
-#controls {
-  position: absolute !important;
-  top: 0 !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  /* width adjusts to content */
-  z-index: 1000 !important;
-}
-
-/* Position sidebar (directory tabs) */
-#sidebar {
-  position: absolute !important;
-  top: 0 !important;
-  bottom: 0 !important;
-  left: 60px !important;  /* offset to the right of controls */
-  right: 0 !important;
-  z-index: 1000 !important;
-}
-
-/* Ensure sidebar tabs fill the available space */
-#sidebar .tabs {
-  height: 100% !important;
-}
-
-/* Position chat log and input above the hotbar */
-#chat {
-  position: absolute !important;
-  left: 0 !important;
-  bottom: 60px !important;  /* above hotbar (approx hotbar height) */
-  z-index: 1000 !important;
-}
-#chat .chat-log {
-  overflow-y: auto !important;
-}
-
-/* Position hotbar at bottom */
-#hotbar {
-  position: absolute !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  z-index: 1000 !important;
-}
-
-/* Restore window functionality: draggable headers, resizable edges */
+/* Restore window functionality: draggable headers, resizable edges, proper centering */
 .window-app, .dialog {
   position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  z-index: 2000 !important;
+  z-index: 100 !important;
 }
+
+.window-app.minimized {
+  z-index: 90 !important;
+}
+
 .window-header {
   cursor: move !important;
-  width: 100% !important;
 }
+
 .window-resizable-handle {
   display: block !important;
 }
+
 .window-app .window-content {
   overflow: auto !important;
 }
@@ -93,14 +50,13 @@ html, body {
 /* Ensure context menus appear on top */
 .context-menu {
   position: fixed !important;
-  z-index: 3000 !important;
+  z-index: 10000 !important;
 }
 
 /* Mobile / narrow-screen adjustments */
 @media (max-width: 600px) {
   .window-app {
     width: 90% !important;
-    left: 5% !important;
-    transform: none !important;
+    max-width: 90vw !important;
   }
 }

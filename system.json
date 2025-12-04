@@ -41,8 +41,7 @@
     "styles/apps/store.css",
     "styles/apps/vehicle-modification.css",
     "styles/apps/upgrade-app.css",
-    "styles/canvas/canvas-ui.css",
-    "styles/foundry/swse-ui-fix.css"
+    "styles/canvas/canvas-ui.css"
   ],
   "languages": [
     {
