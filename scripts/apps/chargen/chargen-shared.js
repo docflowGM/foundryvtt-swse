@@ -53,7 +53,8 @@ export class ChargenDataCache {
       feats: "swse.feats",
       talents: "swse.talents",
       classes: "swse.classes",
-      droids: "swse.droids"
+      droids: "swse.droids",
+      forcePowers: "swse.force-powers"
     };
 
     const packs = {};

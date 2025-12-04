@@ -77,14 +77,22 @@
  </div>
  <div class="progress-connector"></div>
 
- <div class="progress-step {{#if (eq currentStep 'skills')}}active{{/if}}" data-step="skills">
+ {{#if characterData.forceSensitive}}
+ <div class="progress-step {{#if (eq currentStep 'force-powers')}}active{{/if}} {{#if (gte characterData.powers.length characterData.forcePowersRequired)}}completed{{/if}}" data-step="force-powers">
  <div class="step-number">{{#if characterData.isDroid}}10{{else}}8{{/if}}</div>
+ <div class="step-label">Force Powers</div>
+ </div>
+ <div class="progress-connector"></div>
+ {{/if}}
+
+ <div class="progress-step {{#if (eq currentStep 'skills')}}active{{/if}}" data-step="skills">
+ <div class="step-number">{{#if characterData.isDroid}}{{#if characterData.forceSensitive}}11{{else}}10{{/if}}{{else}}{{#if characterData.forceSensitive}}9{{else}}8{{/if}}{{/if}}</div>
  <div class="step-label">Skills</div>
  </div>
  <div class="progress-connector"></div>
 
  <div class="progress-step {{#if (eq currentStep 'summary')}}active{{/if}}" data-step="summary">
- <div class="step-number">{{#if characterData.isDroid}}11{{else}}9{{/if}}</div>
+ <div class="step-number">{{#if characterData.isDroid}}{{#if characterData.forceSensitive}}12{{else}}11{{/if}}{{else}}{{#if characterData.forceSensitive}}10{{else}}9{{/if}}{{/if}}</div>
  <div class="step-label">Summary</div>
  </div>
  </div>
@@ -792,6 +800,58 @@
  </button>
  </div>
  {{/unless}}
+ </section>
+ {{/if}}
+
+ {{#if (eq currentStep "force-powers")}}
+ <section class="step-force-powers">
+ <h3>Select Force Power{{#if (gt characterData.forcePowersRequired 1)}}s{{/if}}</h3>
+ <p class="help-text">
+ {{#if (eq characterData.forcePowersRequired 1)}}
+ Force Sensitivity grants you 1 force power.
+ {{else}}
+ Select {{characterData.forcePowersRequired}} force power(s) from your Force Sensitivity and Force Training feats.
+ {{/if}}
+ </p>
+
+ <div class="selected-powers-summary">
+ <h4>Selected Force Powers ({{characterData.powers.length}}/{{characterData.forcePowersRequired}})</h4>
+ <div class="selected-powers-list">
+ {{#each characterData.powers}}
+ <div class="selected-power-badge">
+ <span>{{this.name}}</span>
+ <button type="button" class="remove-power" data-powerid="{{this._id}}">×</button>
+ </div>
+ {{/each}}
+ </div>
+ </div>
+
+ <div class="force-powers-list">
+ {{#each availableForcePowers}}
+ <div class="power-item power-with-tooltip" data-tooltip="{{this.system.description}}">
+ <button type="button" class="select-power choice-button" data-powerid="{{this._id}}">
+ <h4>{{this.name}}</h4>
+ {{#if this.system.powerLevel}}
+ <p class="power-level"><strong>Power Level:</strong> {{this.system.powerLevel}}</p>
+ {{/if}}
+ {{#if this.system.prerequisites}}
+ <p class="power-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>
+ {{/if}}
+ </button>
+ </div>
+ {{/each}}
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ {{#if (gte characterData.powers.length characterData.forcePowersRequired)}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{/if}}
+ </div>
  </section>
  {{/if}}
 
