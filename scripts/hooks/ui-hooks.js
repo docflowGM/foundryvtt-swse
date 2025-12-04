@@ -65,8 +65,21 @@ function handleRenderApplication(app, html, data) {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
 
-    // Get sidebar width (default 280px + 40px for tabs)
-    const sidebarWidth = 320;
+    // Dynamically get sidebar width (Forge may have different dimensions)
+    let sidebarWidth = 320; // Default fallback
+    try {
+        const sidebarElement = document.getElementById('sidebar');
+        if (sidebarElement && !sidebarElement.classList.contains('collapsed')) {
+            // Get actual sidebar width including tabs
+            sidebarWidth = sidebarElement.offsetWidth;
+        } else if (sidebarElement && sidebarElement.classList.contains('collapsed')) {
+            // Collapsed sidebar is much smaller
+            sidebarWidth = 40; // Just the tab width
+        }
+    } catch (e) {
+        console.warn('SWSE | Could not detect sidebar width, using default:', e);
+    }
+
     const leftMargin = 50; // Left margin from screen edge
     const topMargin = 50;  // Top margin from screen edge
     const rightBoundary = windowWidth - sidebarWidth - 20; // Don't overlap sidebar
