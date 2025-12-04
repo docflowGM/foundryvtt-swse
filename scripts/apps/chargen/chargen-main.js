@@ -15,6 +15,7 @@ import * as SpeciesModule from './chargen-species.js';
 import * as ClassModule from './chargen-class.js';
 import * as AbilitiesModule from './chargen-abilities.js';
 import * as SkillsModule from './chargen-skills.js';
+import * as LanguagesModule from './chargen-languages.js';
 import * as FeatsTalentsModule from './chargen-feats-talents.js';
 
 export default class CharacterGenerator extends Application {
@@ -451,6 +452,17 @@ export default class CharacterGenerator extends Application {
       };
     });
 
+    // Language data for languages step
+    if (this.currentStep === 'languages') {
+      // Initialize languages if not already done
+      if (!this.characterData.languageData) {
+        await this._initializeLanguages();
+      }
+
+      // Get available languages organized by category
+      context.languageCategories = await this._getAvailableLanguages();
+    }
+
     return context;
   }
 
@@ -499,6 +511,11 @@ export default class CharacterGenerator extends Application {
     $html.find('.untrain-skill-btn').click(this._onUntrainSkill.bind(this));
     $html.find('.reset-skills-btn').click(this._onResetSkills.bind(this));
 
+    // Language selection
+    $html.find('.select-language').click(this._onSelectLanguage.bind(this));
+    $html.find('.remove-language').click(this._onRemoveLanguage.bind(this));
+    $html.find('.reset-languages-btn').click(this._onResetLanguages.bind(this));
+
     // Droid builder/shop
     $html.find('.shop-tab').click(this._onShopTabClick.bind(this));
     $html.find('.accessory-tab').click(this._onAccessoryTabClick.bind(this));
@@ -541,7 +558,7 @@ export default class CharacterGenerator extends Application {
 
   _getSteps() {
     if (this.actor) {
-      return ["class", "feats", "talents", "skills", "summary"];
+      return ["class", "feats", "talents", "skills", "languages", "summary"];
     }
 
     // Include type selection (living/droid) after name
@@ -554,13 +571,13 @@ export default class CharacterGenerator extends Application {
       steps.push("species");
     }
 
-    // NPC workflow: skip class and talents, go straight to abilities/skills/feats
+    // NPC workflow: skip class and talents, go straight to abilities/skills/languages/feats
     if (this.actorType === "npc") {
-      steps.push("abilities", "skills", "feats", "summary");
+      steps.push("abilities", "skills", "languages", "feats", "summary");
     } else {
       // PC workflow: normal flow with class and talents
-      // Note: skills before feats to allow Skill Focus validation
-      steps.push("abilities", "class", "skills", "feats", "talents", "summary", "shop");
+      // Note: skills before languages, languages before feats
+      steps.push("abilities", "class", "skills", "languages", "feats", "talents", "summary", "shop");
     }
     return steps;
   }
@@ -1379,4 +1396,5 @@ Object.assign(CharacterGenerator.prototype, SpeciesModule);
 Object.assign(CharacterGenerator.prototype, ClassModule);
 Object.assign(CharacterGenerator.prototype, AbilitiesModule);
 Object.assign(CharacterGenerator.prototype, SkillsModule);
+Object.assign(CharacterGenerator.prototype, LanguagesModule);
 Object.assign(CharacterGenerator.prototype, FeatsTalentsModule);

@@ -65,26 +65,32 @@
  </div>
  <div class="progress-connector"></div>
 
- <div class="progress-step {{#if (eq currentStep 'feats')}}active{{/if}} {{#if (gte characterData.feats.length characterData.featsRequired)}}completed{{/if}}" data-step="feats">
+ <div class="progress-step {{#if (eq currentStep 'skills')}}active{{/if}}" data-step="skills">
  <div class="step-number">{{#if characterData.isDroid}}8{{else}}6{{/if}}</div>
+ <div class="step-label">Skills</div>
+ </div>
+ <div class="progress-connector"></div>
+
+ <div class="progress-step {{#if (eq currentStep 'languages')}}active{{/if}}" data-step="languages">
+ <div class="step-number">{{#if characterData.isDroid}}9{{else}}7{{/if}}</div>
+ <div class="step-label">Languages</div>
+ </div>
+ <div class="progress-connector"></div>
+
+ <div class="progress-step {{#if (eq currentStep 'feats')}}active{{/if}} {{#if (gte characterData.feats.length characterData.featsRequired)}}completed{{/if}}" data-step="feats">
+ <div class="step-number">{{#if characterData.isDroid}}10{{else}}8{{/if}}</div>
  <div class="step-label">Feats</div>
  </div>
  <div class="progress-connector"></div>
 
  <div class="progress-step {{#if (eq currentStep 'talents')}}active{{/if}} {{#if (gte characterData.talents.length 1)}}completed{{/if}}" data-step="talents">
- <div class="step-number">{{#if characterData.isDroid}}9{{else}}7{{/if}}</div>
+ <div class="step-number">{{#if characterData.isDroid}}11{{else}}9{{/if}}</div>
  <div class="step-label">Talents</div>
  </div>
  <div class="progress-connector"></div>
 
- <div class="progress-step {{#if (eq currentStep 'skills')}}active{{/if}}" data-step="skills">
- <div class="step-number">{{#if characterData.isDroid}}10{{else}}8{{/if}}</div>
- <div class="step-label">Skills</div>
- </div>
- <div class="progress-connector"></div>
-
  <div class="progress-step {{#if (eq currentStep 'summary')}}active{{/if}}" data-step="summary">
- <div class="step-number">{{#if characterData.isDroid}}11{{else}}9{{/if}}</div>
+ <div class="step-number">{{#if characterData.isDroid}}12{{else}}10{{/if}}</div>
  <div class="step-label">Summary</div>
  </div>
  </div>
@@ -845,6 +851,103 @@
  Next <i class="fas fa-arrow-right"></i>
  </button>
  {{/if}}
+ </div>
+ </section>
+ {{/if}}
+
+ {{#if (eq currentStep "languages")}}
+ <section class="step-languages">
+ <h3>Select Languages</h3>
+ <p class="help-text">Choose additional languages your character knows based on Intelligence.</p>
+
+ <div class="languages-summary" style="margin-bottom: 1rem;">
+ {{#if characterData.languageData}}
+ <div class="language-info-box">
+ <h4><i class="fas fa-info-circle"></i> Language Selection Info</h4>
+ <div class="language-stats">
+ <div class="stat-item">
+ <span class="stat-label">Granted Languages:</span>
+ <span class="stat-value">{{characterData.languageData.granted.length}}</span>
+ </div>
+ <div class="stat-item">
+ <span class="stat-label">Additional Languages (INT mod):</span>
+ <span class="stat-value">{{characterData.languageData.additional}}</span>
+ </div>
+ <div class="stat-item">
+ <span class="stat-label">Selected:</span>
+ <span class="stat-value">{{characterData.languages.length}} / {{add characterData.languageData.granted.length characterData.languageData.additional}}</span>
+ </div>
+ </div>
+ {{#if (gt characterData.languageData.understands.length 0)}}
+ <div class="understands-note">
+ <i class="fas fa-ear-listen"></i> <strong>Note:</strong> You understand {{#each characterData.languageData.understands}}{{this}}{{#unless @last}}, {{/unless}}{{/each}} but cannot speak it.
+ </div>
+ {{/if}}
+ </div>
+ {{/if}}
+ <button type="button" class="reset-languages-btn btn-secondary" style="margin-left: 1rem;">
+ <i class="fas fa-redo"></i> Reset to Granted
+ </button>
+ </div>
+
+ {{!-- Selected Languages --}}
+ <div class="selected-languages-section" style="margin-bottom: 2rem;">
+ <h4><i class="fas fa-check-circle"></i> Your Languages</h4>
+ <div class="selected-languages-list">
+ {{#each characterData.languages}}
+ <div class="language-tag {{#if (contains ../characterData.languageData.granted this)}}granted{{else}}selected{{/if}}">
+ <span class="language-name">{{this}}</span>
+ {{#if (contains ../characterData.languageData.granted this)}}
+ <span class="granted-badge"><i class="fas fa-gift"></i> Granted</span>
+ {{else}}
+ <button type="button" class="remove-language" data-language="{{this}}">
+ <i class="fas fa-times"></i>
+ </button>
+ {{/if}}
+ </div>
+ {{/each}}
+ {{#unless characterData.languages.length}}
+ <p class="no-languages">No languages selected yet.</p>
+ {{/unless}}
+ </div>
+ </div>
+
+ {{!-- Available Languages to Choose --}}
+ {{#if languageCategories}}
+ <div class="available-languages-section">
+ <h4><i class="fas fa-globe"></i> Available Languages</h4>
+ {{#each languageCategories}}
+ <div class="language-category">
+ <h5 class="category-name">{{this.name}}</h5>
+ {{#if this.description}}
+ <p class="category-description">{{this.description}}</p>
+ {{/if}}
+ <div class="languages-grid">
+ {{#each this.languages}}
+ <button
+ type="button"
+ class="select-language choice-button-small {{#if (contains ../../characterData.languages this)}}disabled{{/if}}"
+ data-language="{{this}}"
+ {{#if (contains ../../characterData.languages this)}}disabled{{/if}}>
+ {{this}}
+ {{#if (contains ../../characterData.languages this)}}
+ <i class="fas fa-check"></i>
+ {{/if}}
+ </button>
+ {{/each}}
+ </div>
+ </div>
+ {{/each}}
+ </div>
+ {{/if}}
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
  </div>
  </section>
  {{/if}}
