@@ -48,8 +48,8 @@ export function registerUIHooks() {
 
 /**
  * Handle application rendering
- * Ensures windows stay on the left side of the screen without overlapping the sidebar
- * Allows natural window stacking and cascading
+ * Centers windows in the viewport on initial render, avoiding sidebar overlap
+ * Allows natural window stacking and cascading for subsequent renders
  *
  * @param {Application} app - The application being rendered
  * @param {jQuery} html - The HTML content
@@ -73,29 +73,51 @@ function handleRenderApplication(app, html, data) {
 
     let updated = false;
 
-    // Only adjust if window would overlap the sidebar on the right
-    // Let Foundry handle natural positioning and cascading otherwise
-    if (position.left !== null && position.left + position.width > rightBoundary) {
-        position.left = Math.max(leftMargin, rightBoundary - position.width);
-        updated = true;
-    }
+    // Check if this is the first render (Foundry uses default positioning)
+    // Center the window in the available space (excluding sidebar)
+    const isInitialRender = position.left === null ||
+                           position.left === undefined ||
+                           (position.left > rightBoundary - 100); // Likely defaulted to right edge
 
-    // Ensure window doesn't go off the left edge
-    if (position.left !== null && position.left < leftMargin) {
-        position.left = leftMargin;
-        updated = true;
-    }
+    if (isInitialRender) {
+        // Calculate available width (excluding sidebar)
+        const availableWidth = rightBoundary - leftMargin;
 
-    // Ensure window doesn't go off the top
-    if (position.top !== null && position.top < topMargin) {
-        position.top = topMargin;
-        updated = true;
-    }
+        // Center horizontally in available space
+        position.left = leftMargin + (availableWidth - position.width) / 2;
 
-    // Ensure window doesn't go off the bottom
-    if (position.top !== null && position.top + position.height > windowHeight) {
-        position.top = Math.max(topMargin, windowHeight - position.height - 10);
+        // Center vertically
+        position.top = (windowHeight - position.height) / 2;
+
+        // Ensure minimum margins
+        position.left = Math.max(leftMargin, position.left);
+        position.top = Math.max(topMargin, position.top);
+
         updated = true;
+    } else {
+        // For already-positioned windows, only adjust if they overlap the sidebar
+        if (position.left + position.width > rightBoundary) {
+            position.left = Math.max(leftMargin, rightBoundary - position.width);
+            updated = true;
+        }
+
+        // Ensure window doesn't go off the left edge
+        if (position.left < leftMargin) {
+            position.left = leftMargin;
+            updated = true;
+        }
+
+        // Ensure window doesn't go off the top
+        if (position.top < topMargin) {
+            position.top = topMargin;
+            updated = true;
+        }
+
+        // Ensure window doesn't go off the bottom
+        if (position.top + position.height > windowHeight) {
+            position.top = Math.max(topMargin, windowHeight - position.height - 10);
+            updated = true;
+        }
     }
 
     if (updated) {
