@@ -1,11 +1,71 @@
 /* ==========================================
-   Forge VTT & Foundry V13 UI Layout Fixes
+   SWSE UI Fix - Foundry V13 Compatible
    ==========================================
-   - Minimal CSS overrides to fix Forge VTT issues
+   Fixes layout issues without conflicting with core positioning
+   - Forge VTT compatibility fixes
    - Restore Foundry default UI behavior
    - Fix window dragging and positioning
+   - Prevent windows from rendering off-screen
 */
 
+/* Wrap all fixes in the system layer for V13 CSS cascade layer compatibility */
+@layer system {
+
+/* ============================================
+   CSS CUSTOM PROPERTIES (Safe to define)
+   ============================================ */
+:root {
+    --swse-primary: #ffd700;
+    --swse-background: rgba(0, 0, 0, 0.8);
+    --swse-border: rgba(255, 215, 0, 0.3);
+
+    /* Reference Foundry's variables where possible */
+    --swse-sidebar-width: var(--sidebar-width, 300px);
+    --swse-nav-height: var(--navigation-height, 32px);
+    --swse-controls-width: 80px;
+}
+
+/* ============================================
+   RESET PROBLEMATIC POSITIONING
+   Remove any rules that offset core UI elements
+   ============================================ */
+#ui-top,
+#ui-left,
+#ui-right,
+#sidebar,
+#controls,
+#navigation {
+    /* Reset positioning to Foundry defaults */
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+}
+
+/* Ensure sidebar stays at top with no gap */
+#sidebar {
+    top: 0 !important;
+    right: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Ensure controls stay at left edge with no offset */
+#controls {
+    left: 0 !important;
+    margin-left: 0 !important;
+    top: calc(var(--swse-nav-height) + 10px);
+}
+
+/* Ensure navigation bar stays at top */
+#navigation {
+    top: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* ============================================
+   FORGE VTT BODY/HTML RESETS
+   ============================================ */
 /* Reset Forge global body styles that break Foundry layout */
 html, body {
   position: static !important;
@@ -14,6 +74,7 @@ html, body {
   height: 100% !important;
   width: 100% !important;
   margin: 0 !important;
+  transform: none !important;
 }
 
 /* Ensure game board (canvas) fills screen */
@@ -25,10 +86,18 @@ html, body {
   height: 100% !important;
 }
 
+/* ============================================
+   WINDOW POSITIONING CONSTRAINTS
+   ============================================ */
 /* Restore window functionality: draggable headers, resizable edges, proper centering */
 .window-app, .dialog {
   position: absolute !important;
   z-index: 100 !important;
+  /* Don't override position properties - let JS handle it */
+  transform: none !important;
+  /* Constrain maximum dimensions to prevent off-screen rendering */
+  max-width: calc(100vw - var(--swse-sidebar-width) - var(--swse-controls-width) - 40px) !important;
+  max-height: calc(100vh - var(--swse-nav-height) - 60px) !important;
 }
 
 .window-app.minimized {
@@ -47,12 +116,25 @@ html, body {
   overflow: auto !important;
 }
 
+/* Ensure SWSE-specific windows stay in bounds */
+.window-app.swse {
+    /* System styling - avoid position overrides */
+    background: var(--swse-background);
+    border: 1px solid var(--swse-border);
+}
+
+/* ============================================
+   CONTEXT MENUS
+   ============================================ */
 /* Ensure context menus appear on top */
 .context-menu {
   position: fixed !important;
   z-index: 10000 !important;
 }
 
+/* ============================================
+   MOBILE / RESPONSIVE
+   ============================================ */
 /* Mobile / narrow-screen adjustments */
 @media (max-width: 600px) {
   .window-app {
@@ -60,3 +142,5 @@ html, body {
     max-width: 90vw !important;
   }
 }
+
+} /* End @layer system */
