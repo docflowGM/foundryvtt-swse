@@ -678,14 +678,14 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     const availableTrees = new Set();
 
     for (const classItem of classItems) {
-      const trees = classItem.system?.talent_trees || classItem.system?.talentTrees || [];
+      const trees = classItem.system?.talentTrees || [];
       trees.forEach(tree => availableTrees.add(tree));
     }
 
     // Group talents by tree
     const talentsByTree = {};
     for (const talent of allTalents) {
-      const tree = talent.system?.talent_tree || talent.system?.tree || 'Other';
+      const tree = talent.system?.tree || 'Other';
       if (!talentsByTree[tree]) {
         talentsByTree[tree] = [];
       }

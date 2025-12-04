@@ -375,7 +375,7 @@ export default class CharacterGenerator extends Application {
         const selectedClass = this.characterData.classes[0];
         const className = selectedClass.name || selectedClass;
         const bonusFeats = context.packs.feats.filter(f => {
-          const bonusFeatFor = f.system?.bonus_feat_for || [];
+          const bonusFeatFor = f.system?.bonusFeatFor || [];
           return bonusFeatFor.includes(className);
         });
         context.packs.classBonusFeats = bonusFeats;
@@ -1067,7 +1067,7 @@ export default class CharacterGenerator extends Application {
               "swim", "treatInjury", "useComputer"
             ],
             forceSensitive: false,
-            talent_trees: []
+            talentTrees: []
           }
         };
         items.push(nonheroicClass);

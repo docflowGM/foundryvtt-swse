@@ -158,9 +158,9 @@ export async function loadFeats(actor, selectedClass, pendingData) {
             // This class has a specific feat list (e.g., "jedi_feats", "noble_feats")
             SWSELogger.log(`SWSE LevelUp | Filtering feats by list: ${featFeature.list} for ${className}`);
 
-            // Filter to only feats that have this class in their bonus_feat_for array
+            // Filter to only feats that have this class in their bonusFeatFor array
             featObjects = featObjects.filter(f => {
-              const bonusFeatFor = f.system?.bonus_feat_for || [];
+              const bonusFeatFor = f.system?.bonusFeatFor || [];
               return bonusFeatFor.includes(className) || bonusFeatFor.includes('all');
             });
 

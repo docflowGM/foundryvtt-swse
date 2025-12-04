@@ -307,7 +307,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   }
 
   async _showTalentTreeDialog(treeName) {
-    const talents = this.talentData.filter(t => t.system?.talent_tree === treeName || t.name.includes(treeName));
+    const talents = this.talentData.filter(t => t.system?.tree === treeName || t.name.includes(treeName));
 
     if (talents.length === 0) {
       ui.notifications.warn(`No talents found for ${treeName}`);

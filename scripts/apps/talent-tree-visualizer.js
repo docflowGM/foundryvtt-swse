@@ -55,7 +55,7 @@ export class TalentTreeVisualizer {
     const talentsByTree = {};
 
     talentData.forEach(talent => {
-      const treeName = talent.system?.talent_tree;
+      const treeName = talent.system?.tree;
       if (treeName) {
         if (!talentsByTree[treeName]) {
           talentsByTree[treeName] = [];
@@ -238,7 +238,7 @@ export class TalentTreeVisualizer {
   static async showEnhancedTalentTree(treeName, talentData, actor, onSelectTalent) {
     // Filter talents for this tree
     let talents = talentData.filter(t =>
-      t.system?.talent_tree === treeName || t.name.includes(treeName)
+      t.system?.tree === treeName || t.name.includes(treeName)
     );
 
     if (talents.length === 0) {

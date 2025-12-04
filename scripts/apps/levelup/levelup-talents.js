@@ -63,7 +63,7 @@ export async function getTalentTrees(selectedClass, actor) {
       const allTalents = await talentPack.getDocuments();
       const treeSet = new Set();
       allTalents.forEach(talent => {
-        const tree = talent.system?.talent_tree || talent.system?.tree;
+        const tree = talent.system?.tree;
         if (tree) {
           treeSet.add(tree);
         }
@@ -158,7 +158,7 @@ export async function showEnhancedTalentTree(treeName, talentData, actor, select
  */
 export async function showTalentTreeDialog(treeName, talentData, actor, selectCallback) {
   const talents = talentData.filter(t =>
-    t.system?.talent_tree === treeName || t.name.includes(treeName)
+    t.system?.tree === treeName || t.name.includes(treeName)
   );
 
   if (talents.length === 0) {
