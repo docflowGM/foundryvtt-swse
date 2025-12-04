@@ -40,9 +40,10 @@ async function loadFeatMetadata() {
  * @param {Array} feats - Array of feat objects
  * @param {Object} metadata - Feat metadata
  * @param {Array} selectedFeats - Currently selected feats
+ * @param {Actor} actor - The actor (optional, for checking owned feats)
  * @returns {Array} Array of category objects with feats
  */
-function organizeFeatsIntoCategories(feats, metadata, selectedFeats = []) {
+function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor = null) {
   const categories = {};
 
   // Initialize categories
@@ -58,9 +59,14 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = []) {
     };
   });
 
+  // Check if actor owns this feat
+  const ownedFeats = actor ? actor.items.filter(i => i.type === 'feat').map(f => f.name) : [];
+
   // Assign feats to categories with enhanced metadata
   feats.forEach(feat => {
     const featMeta = metadata.feats[feat.name];
+    const isOwned = ownedFeats.includes(feat.name);
+
     if (!featMeta) {
       // Feat not in metadata - add to misc category
       const enhancedFeat = {
@@ -69,7 +75,8 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = []) {
         tagsString: '',
         chain: null,
         isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
-        isUnavailable: !feat.isQualified
+        isUnavailable: !feat.isQualified,
+        isOwned: isOwned
       };
       categories['misc'].feats.push(enhancedFeat);
       categories['misc'].count++;
@@ -84,7 +91,8 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = []) {
       chainOrder: featMeta.chainOrder || 0,
       prerequisiteFeat: featMeta.prerequisiteFeat || null,
       isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
-      isUnavailable: !feat.isQualified
+      isUnavailable: !feat.isQualified,
+      isOwned: isOwned
     };
 
     const categoryId = featMeta.category || 'misc';
@@ -201,7 +209,7 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     // Load feat metadata and organize into categories
     const metadata = await loadFeatMetadata();
     const selectedFeats = pendingData?.selectedFeats || [];
-    const categories = organizeFeatsIntoCategories(filteredFeats, metadata, selectedFeats);
+    const categories = organizeFeatsIntoCategories(filteredFeats, metadata, selectedFeats, actor);
 
     SWSELogger.log(`SWSE LevelUp | Loaded ${filteredFeats.length} feats in ${categories.length} categories, ${filteredFeats.filter(f => f.isQualified).length} qualified`);
 
