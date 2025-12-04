@@ -1,62 +1,42 @@
 import { SWSELogger } from '../utils/logger.js';
+import SWSEApplication from '../apps/base/swse-application.js';
+import SWSEDialogHelper from '../helpers/swse-dialog-helper.js';
+
 /**
- * Manages the canvas UI toolbar and tools for SWSE
+ * Canvas Toolbar Application
+ * Renders as a non-popout UI element on the canvas
  */
-export class CanvasUIManager {
-    static TOOLBAR_ID = 'swse-canvas-toolbar';
-    static toolbar = null;
-
-    /**
-     * Initialize the canvas UI manager
-     */
-    static initialize() {
-        SWSELogger.log("SWSE | Initializing Canvas UI Manager");
-
-        // Wait for canvas to be ready
-        Hooks.on('canvasReady', () => {
-            this.renderToolbar();
-        });
-
-        // Re-render on window resize
-        Hooks.on('canvasResize', () => {
-            this.renderToolbar();
-        });
-
-        // Setup event listeners
-        this._setupEventListeners();
+class SWSECanvasToolbar extends SWSEApplication {
+    constructor(options = {}) {
+        super(options);
+        this.tools = this._getToolbarData().tools;
     }
 
-    /**
-     * Render the toolbar on the canvas
-     */
-    static async renderToolbar() {
-        // Remove existing toolbar if present
-        this.removeToolbar();
-
-        // Render new toolbar
-        const template = 'systems/swse/templates/canvas-ui/toolbar.hbs';
-        const data = this._getToolbarData();
-        const html = await renderTemplate(template, data);
-
-        // Append to body
-        $('body').append(html);
-        this.toolbar = $(`#${this.TOOLBAR_ID}`);
-
-        SWSELogger.log("SWSE | Canvas toolbar rendered");
-    }
-
-    /**
-     * Remove the toolbar from the canvas
-     */
-    static removeToolbar() {
-        $(`#${this.TOOLBAR_ID}`).remove();
-        this.toolbar = null;
+    static get defaultOptions() {
+        return foundry.utils.mergeObject(super.defaultOptions, {
+            id: 'swse-canvas-toolbar',
+            template: 'systems/swse/templates/canvas-ui/toolbar.hbs',
+            popOut: false,  // Don't make it a window
+            classes: ['swse', 'swse-canvas-toolbar'],
+            minimizable: false,
+            resizable: false,
+            // Don't use standard window positioning for non-popout
+            left: null,
+            top: null
+        });
     }
 
     /**
      * Get data for the toolbar template
      */
-    static _getToolbarData() {
+    getData(options = {}) {
+        return this._getToolbarData();
+    }
+
+    /**
+     * Get toolbar configuration data
+     */
+    _getToolbarData() {
         return {
             tools: [
                 {
@@ -126,49 +106,78 @@ export class CanvasUIManager {
     }
 
     /**
-     * Setup event listeners for toolbar actions
+     * Activate event listeners - scoped to this element only
      */
-    static _setupEventListeners() {
-        // Delegate click events
-        $(document).on('click', '#swse-canvas-toolbar [data-action]', async (event) => {
-            event.preventDefault();
-            const action = $(event.currentTarget).data('action');
-            const tool = $(event.currentTarget).data('tool');
+    activateListeners(html) {
+        super.activateListeners(html);
 
-            await this._handleAction(action, tool, event);
-        });
+        // Delegate click events (scoped to toolbar, not document)
+        html.on('click', '[data-action]', this._onToolbarAction.bind(this));
 
         // Handle dropdown toggles
-        $(document).on('click', '.swse-tool.dropdown > button', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            const dropdown = $(event.currentTarget).closest('.swse-tool.dropdown');
-
-            // Close other dropdowns
-            $('.swse-tool.dropdown').not(dropdown).removeClass('open');
-
-            // Toggle this dropdown
-            dropdown.toggleClass('open');
-        });
-
-        // Close dropdowns when clicking outside
-        $(document).on('click', (event) => {
-            if (!$(event.target).closest('.swse-tool.dropdown').length) {
-                $('.swse-tool.dropdown').removeClass('open');
-            }
-        });
+        html.on('click', '.swse-tool.dropdown > button', this._onDropdownToggle.bind(this));
 
         // Handle toolbar collapse
-        $(document).on('click', '#swse-toolbar-collapse', (event) => {
-            event.preventDefault();
-            $(`#${this.TOOLBAR_ID}`).toggleClass('collapsed');
+        html.on('click', '#swse-toolbar-collapse', this._onToolbarCollapse.bind(this));
+
+        // Close dropdowns when clicking outside (use document, but check scope)
+        $(document).on('click.swse-toolbar', (event) => {
+            if (!$(event.target).closest('.swse-tool.dropdown').length) {
+                html.find('.swse-tool.dropdown').removeClass('open');
+            }
         });
+    }
+
+    /**
+     * Clean up event listeners on close
+     */
+    close(options = {}) {
+        $(document).off('click.swse-toolbar');
+        return super.close(options);
+    }
+
+    /**
+     * Handle dropdown toggle
+     */
+    _onDropdownToggle(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const dropdown = $(event.currentTarget).closest('.swse-tool.dropdown');
+        const html = this.element;
+
+        // Close other dropdowns
+        html.find('.swse-tool.dropdown').not(dropdown).removeClass('open');
+
+        // Toggle this dropdown
+        dropdown.toggleClass('open');
+    }
+
+    /**
+     * Handle toolbar collapse
+     */
+    _onToolbarCollapse(event) {
+        event.preventDefault();
+        this.element.toggleClass('collapsed');
+    }
+
+    /**
+     * Handle toolbar action clicks
+     */
+    async _onToolbarAction(event) {
+        event.preventDefault();
+        const action = $(event.currentTarget).data('action');
+        const tool = $(event.currentTarget).data('tool');
+
+        await this._handleAction(action, tool, event);
+
+        // Close dropdown after action
+        this.element.find('.swse-tool.dropdown').removeClass('open');
     }
 
     /**
      * Handle toolbar actions
      */
-    static async _handleAction(action, tool, event) {
+    async _handleAction(action, tool, event) {
         SWSELogger.log(`SWSE | Canvas UI Action: ${action}`, tool);
 
         switch(action) {
@@ -202,15 +211,12 @@ export class CanvasUIManager {
             default:
                 SWSELogger.warn(`SWSE | Unknown canvas UI action: ${action}`);
         }
-
-        // Close dropdown after action
-        $('.swse-tool.dropdown').removeClass('open');
     }
 
     /**
-     * Quick roll dialog
+     * Quick roll dialog with proper positioning
      */
-    static async _quickRoll() {
+    async _quickRoll() {
         const content = `
             <form>
                 <div class="form-group">
@@ -228,7 +234,7 @@ export class CanvasUIManager {
             </form>
         `;
 
-        new Dialog({
+        await SWSEDialogHelper.show({
             title: "Quick Roll",
             content: content,
             buttons: {
@@ -258,14 +264,15 @@ export class CanvasUIManager {
                     label: "Cancel"
                 }
             },
-            default: "roll"
-        }).render(true);
+            default: "roll",
+            options: { width: 400 }
+        });
     }
 
     /**
      * Execute a chat command
      */
-    static async _executeChatCommand(event) {
+    async _executeChatCommand(event) {
         const command = $(event.currentTarget).data('command');
         if (!command) return;
 
@@ -278,12 +285,12 @@ export class CanvasUIManager {
     /**
      * Apply condition to selected tokens
      */
-    static async _applyCondition(event) {
+    async _applyCondition(event) {
         const conditionValue = parseInt($(event.currentTarget).data('condition'));
         const conditionLabel = $(event.currentTarget).text().trim();
 
-        const controlled = canvas.tokens.controlled;
-        if (controlled.length === 0) {
+        const controlled = canvas?.tokens?.controlled;
+        if (!controlled || controlled.length === 0) {
             ui.notifications.warn("No tokens selected");
             return;
         }
@@ -312,8 +319,8 @@ export class CanvasUIManager {
     /**
      * Select tokens based on criteria
      */
-    static async _selectTokens(type) {
-        if (!canvas.ready) return;
+    async _selectTokens(type) {
+        if (!canvas?.ready) return;
 
         let tokens = [];
 
@@ -352,9 +359,9 @@ export class CanvasUIManager {
     /**
      * Rest selected tokens
      */
-    static async _rest() {
-        const controlled = canvas.tokens.controlled;
-        if (controlled.length === 0) {
+    async _rest() {
+        const controlled = canvas?.tokens?.controlled;
+        if (!controlled || controlled.length === 0) {
             ui.notifications.warn("No tokens selected");
             return;
         }
@@ -367,9 +374,6 @@ export class CanvasUIManager {
             await actor.update({
                 'system.condition': 0
             });
-
-            // Restore all uses if the system tracks that
-            // This would depend on your specific implementation
 
             ChatMessage.create({
                 speaker: ChatMessage.getSpeaker({ token }),
@@ -385,11 +389,67 @@ export class CanvasUIManager {
     /**
      * Activate distance measurement tool
      */
-    static async _measureDistance() {
-        if (!canvas.ready) return;
+    async _measureDistance() {
+        if (!canvas?.ready) return;
 
         // Activate the ruler tool
         canvas.controls.ruler.activate();
         ui.notifications.info("Distance measurement tool activated. Click and drag to measure.");
+    }
+}
+
+/**
+ * Manages the canvas UI toolbar and tools for SWSE
+ */
+export class CanvasUIManager {
+    static toolbar = null;
+
+    /**
+     * Initialize the canvas UI manager
+     */
+    static initialize() {
+        SWSELogger.log("SWSE | Initializing Canvas UI Manager");
+
+        // Check if we should render the toolbar (allow disabling for Forge if needed)
+        const forgeActive = game.modules?.get('forgevtt')?.active;
+        if (forgeActive) {
+            SWSELogger.log("SWSE | Forge detected - Canvas UI may have compatibility adjustments");
+            // Don't disable by default, but log it for debugging
+            // In the future, you could add a setting to disable on Forge if needed
+        }
+
+        // Wait for canvas to be ready
+        Hooks.on('canvasReady', () => {
+            this.renderToolbar();
+        });
+
+        // Re-render on window resize
+        Hooks.on('canvasResize', () => {
+            this.renderToolbar();
+        });
+    }
+
+    /**
+     * Render the toolbar on the canvas
+     */
+    static async renderToolbar() {
+        // Remove existing toolbar if present
+        this.removeToolbar();
+
+        // Create and render new toolbar
+        this.toolbar = new SWSECanvasToolbar();
+        this.toolbar.render(true);
+
+        SWSELogger.log("SWSE | Canvas toolbar rendered");
+    }
+
+    /**
+     * Remove the toolbar from the canvas
+     */
+    static removeToolbar() {
+        if (this.toolbar) {
+            this.toolbar.close();
+            this.toolbar = null;
+        }
     }
 }

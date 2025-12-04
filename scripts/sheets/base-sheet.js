@@ -672,6 +672,10 @@ export class SWSEActorSheetBase extends ActorSheet {
         html.find('[name="attackAbility"]').on('change', updateTotal);
         html.find('[name="attackMisc"]').on('input', updateTotal);
       }
+    }, {
+      left: null,
+      top: null,
+      width: 500
     }).render(true);
   }
 
@@ -877,6 +881,8 @@ export class SWSEActorSheetBase extends ActorSheet {
         html.find('select, input').on('change input', updateTotal);
       }
     }, {
+      left: null,
+      top: null,
       width: 400
     }).render(true);
   }
