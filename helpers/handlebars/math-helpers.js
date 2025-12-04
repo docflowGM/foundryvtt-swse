@@ -2,6 +2,7 @@ export const mathHelpers = {
   add: (a, b) => Number(a || 0) + Number(b || 0),
   subtract: (a, b) => Number(a || 0) - Number(b || 0),
   multiply: (a, b) => Number(a || 0) * Number(b || 0),
+  mult: (a, b) => Number(a || 0) * Number(b || 0), // Alias for multiply
   divide: (a, b) => {
     const divisor = Number(b);
     return divisor !== 0 ? Number(a || 0) / divisor : 0;
