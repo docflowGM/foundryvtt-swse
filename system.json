@@ -27,6 +27,7 @@
   ],
   "styles": [
     "styles/core/swse-base.css",
+    "styles/foundry/swse-ui-fix.css",
     "styles/components/swse-components.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/unified-sheets.css",

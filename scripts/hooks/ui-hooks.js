@@ -21,12 +21,62 @@ import { createItemMacro } from '../macros/item-macro.js';
 export function registerUIHooks() {
     SWSELogger.log("Registering UI hooks");
 
-    // Application rendering
+    // Application V1 rendering (legacy support)
     HooksRegistry.register('renderApplication', handleRenderApplication, {
         id: 'render-application',
         priority: 0,
         description: 'Adjust application window positions',
         category: 'ui'
+    });
+
+    HooksRegistry.register('renderFormApplication', handleRenderApplication, {
+        id: 'render-form-application',
+        priority: 0,
+        description: 'Adjust form application window positions',
+        category: 'ui'
+    });
+
+    HooksRegistry.register('renderDocumentSheet', handleRenderApplication, {
+        id: 'render-document-sheet',
+        priority: 0,
+        description: 'Adjust document sheet window positions',
+        category: 'ui'
+    });
+
+    // Application V2 rendering (Foundry V13+)
+    HooksRegistry.register('renderApplicationV2', handleRenderApplication, {
+        id: 'render-application-v2',
+        priority: 0,
+        description: 'Adjust V2 application window positions',
+        category: 'ui'
+    });
+
+    HooksRegistry.register('renderDocumentSheetV2', handleRenderApplication, {
+        id: 'render-document-sheet-v2',
+        priority: 0,
+        description: 'Adjust V2 document sheet window positions',
+        category: 'ui'
+    });
+
+    // Sidebar state change
+    HooksRegistry.register('collapseSidebar', handleSidebarCollapse, {
+        id: 'collapse-sidebar',
+        priority: 0,
+        description: 'Reposition windows when sidebar collapses',
+        category: 'ui'
+    });
+
+    // Window resize handler
+    let resizeTimeout;
+    window.addEventListener("resize", () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            for (const app of Object.values(ui.windows)) {
+                if (app.rendered && app.options?.popOut) {
+                    handleRenderApplication(app, app.element, {});
+                }
+            }
+        }, 100);
     });
 
     // Chat message rendering
@@ -44,97 +94,91 @@ export function registerUIHooks() {
         description: 'Create macros from hotbar drops',
         category: 'ui'
     });
+
+    SWSELogger.log("SWSE | UI hooks initialized");
+}
+
+/**
+ * Calculate available viewport space accounting for UI elements
+ * @returns {Object} Boundaries object with min/max coordinates
+ */
+function getViewportBounds() {
+    const sidebar = document.getElementById("sidebar");
+    const controls = document.getElementById("controls");
+    const navigation = document.getElementById("navigation");
+    const hotbar = document.getElementById("hotbar");
+
+    const sidebarCollapsed = sidebar?.classList.contains("collapsed");
+
+    return {
+        minX: (controls?.offsetWidth || 80) + 10,
+        minY: (navigation?.offsetHeight || 32) + 10,
+        maxX: window.innerWidth - (sidebarCollapsed ? 40 : (sidebar?.offsetWidth || 300)) - 10,
+        maxY: window.innerHeight - (hotbar?.offsetHeight || 52) - 10,
+        sidebarWidth: sidebarCollapsed ? 40 : (sidebar?.offsetWidth || 300),
+        controlsWidth: controls?.offsetWidth || 80
+    };
+}
+
+/**
+ * Constrain a position to viewport bounds
+ * @param {Object} position - Current position {left, top, width, height}
+ * @param {Object} bounds - Viewport bounds from getViewportBounds()
+ * @returns {Object} Constrained position
+ */
+function constrainPosition(position, bounds) {
+    const width = position.width || 400;
+    const height = position.height || 300;
+
+    return {
+        left: Math.max(bounds.minX, Math.min(position.left || bounds.minX, bounds.maxX - width)),
+        top: Math.max(bounds.minY, Math.min(position.top || bounds.minY, bounds.maxY - Math.min(height, 100))),
+        width: Math.min(width, bounds.maxX - bounds.minX),
+        height: position.height
+    };
 }
 
 /**
  * Handle application rendering
- * Centers windows in the viewport on initial render, avoiding sidebar overlap
- * Allows natural window stacking and cascading for subsequent renders
+ * Constrains windows to viewport, preventing off-screen rendering
+ * Compatible with Foundry V13 ApplicationV2
  *
  * @param {Application} app - The application being rendered
  * @param {jQuery} html - The HTML content
  * @param {Object} data - The rendering data
  */
 function handleRenderApplication(app, html, data) {
-    // Skip positioning for sidebar and UI elements
-    if (app.id === 'sidebar' || app.id === 'ui-left' || app.id === 'ui-right') {
-        return;
+    // Only process pop-out windows
+    if (!app.options?.popOut && !app.options?.window?.frame) return;
+
+    // Skip certain application types that handle their own positioning
+    const skipClasses = ['Sidebar', 'Hotbar', 'SceneNavigation', 'MainMenu'];
+    if (skipClasses.some(cls => app.constructor.name.includes(cls))) return;
+
+    const bounds = getViewportBounds();
+    const currentPos = app.position || {};
+
+    // Check if current position is out of bounds
+    const isOutOfBounds =
+        currentPos.left < bounds.minX ||
+        currentPos.left > bounds.maxX - (currentPos.width || 400) ||
+        currentPos.top < bounds.minY;
+
+    if (isOutOfBounds) {
+        const constrainedPos = constrainPosition(currentPos, bounds);
+        app.setPosition(constrainedPos);
     }
+}
 
-    const position = app.position;
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-
-    // Dynamically get sidebar width (Forge may have different dimensions)
-    let sidebarWidth = 320; // Default fallback
-    try {
-        const sidebarElement = document.getElementById('sidebar');
-        if (sidebarElement && !sidebarElement.classList.contains('collapsed')) {
-            // Get actual sidebar width including tabs
-            sidebarWidth = sidebarElement.offsetWidth;
-        } else if (sidebarElement && sidebarElement.classList.contains('collapsed')) {
-            // Collapsed sidebar is much smaller
-            sidebarWidth = 40; // Just the tab width
+/**
+ * Handle sidebar collapse/expand - reposition affected windows
+ */
+function handleSidebarCollapse() {
+    // Re-check all open windows when sidebar state changes
+    for (const app of Object.values(ui.windows)) {
+        if (app.rendered && app.options?.popOut) {
+            handleRenderApplication(app, app.element, {});
         }
-    } catch (e) {
-        console.warn('SWSE | Could not detect sidebar width, using default:', e);
-    }
-
-    const leftMargin = 50; // Left margin from screen edge
-    const topMargin = 50;  // Top margin from screen edge
-    const rightBoundary = windowWidth - sidebarWidth - 20; // Don't overlap sidebar
-
-    let updated = false;
-
-    // Check if this is the first render (Foundry uses default positioning)
-    // Center the window in the available space (excluding sidebar)
-    const isInitialRender = position.left === null ||
-                           position.left === undefined ||
-                           (position.left > rightBoundary - 100); // Likely defaulted to right edge
-
-    if (isInitialRender) {
-        // Calculate available width (excluding sidebar)
-        const availableWidth = rightBoundary - leftMargin;
-
-        // Center horizontally in available space
-        position.left = leftMargin + (availableWidth - position.width) / 2;
-
-        // Center vertically
-        position.top = (windowHeight - position.height) / 2;
-
-        // Ensure minimum margins
-        position.left = Math.max(leftMargin, position.left);
-        position.top = Math.max(topMargin, position.top);
-
-        updated = true;
-    } else {
-        // For already-positioned windows, only adjust if they overlap the sidebar
-        if (position.left + position.width > rightBoundary) {
-            position.left = Math.max(leftMargin, rightBoundary - position.width);
-            updated = true;
-        }
-
-        // Ensure window doesn't go off the left edge
-        if (position.left < leftMargin) {
-            position.left = leftMargin;
-            updated = true;
-        }
-
-        // Ensure window doesn't go off the top
-        if (position.top < topMargin) {
-            position.top = topMargin;
-            updated = true;
-        }
-
-        // Ensure window doesn't go off the bottom
-        if (position.top + position.height > windowHeight) {
-            position.top = Math.max(topMargin, windowHeight - position.height - 10);
-            updated = true;
-        }
-    }
-
-    if (updated) {
-        app.setPosition(position);
     }
 }
 
