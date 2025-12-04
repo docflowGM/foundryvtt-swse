@@ -62,10 +62,31 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
   // Check if actor owns this feat
   const ownedFeats = actor ? actor.items.filter(i => i.type === 'feat').map(f => f.name) : [];
 
+  // List of feats that can be taken multiple times
+  const repeatableFeats = [
+    'Extra Second Wind',
+    'Extra Rage',
+    'Skill Training',
+    'Linguist',
+    'Exotic Weapon Proficiency',
+    'Weapon Proficiency (Advanced Melee Weapons)',
+    'Weapon Proficiency (Heavy Weapons)',
+    'Weapon Proficiency (Pistols)',
+    'Weapon Proficiency (Rifles)',
+    'Weapon Proficiency (Simple Weapons)',
+    'Weapon Focus',
+    'Double Attack',
+    'Triple Attack',
+    'Triple Crit',
+    'Force Training',
+    'Force Regimen Mastery'
+  ];
+
   // Assign feats to categories with enhanced metadata
   feats.forEach(feat => {
     const featMeta = metadata.feats[feat.name];
     const isOwned = ownedFeats.includes(feat.name);
+    const isRepeatable = repeatableFeats.some(rf => feat.name.includes(rf) || rf.includes(feat.name));
 
     if (!featMeta) {
       // Feat not in metadata - add to misc category
@@ -76,7 +97,8 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
         chain: null,
         isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
         isUnavailable: !feat.isQualified,
-        isOwned: isOwned
+        isOwned: isOwned,
+        isRepeatable: isRepeatable
       };
       categories['misc'].feats.push(enhancedFeat);
       categories['misc'].count++;
@@ -92,7 +114,8 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
       prerequisiteFeat: featMeta.prerequisiteFeat || null,
       isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
       isUnavailable: !feat.isQualified,
-      isOwned: isOwned
+      isOwned: isOwned,
+      isRepeatable: isRepeatable
     };
 
     const categoryId = featMeta.category || 'misc';
