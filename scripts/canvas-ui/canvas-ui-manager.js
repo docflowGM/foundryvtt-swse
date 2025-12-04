@@ -410,12 +410,17 @@ export class CanvasUIManager {
     static initialize() {
         SWSELogger.log("SWSE | Initializing Canvas UI Manager");
 
-        // Check if we should render the toolbar (allow disabling for Forge if needed)
+        // Check if we should render the toolbar (disabled on Forge by default)
         const forgeActive = game.modules?.get('forgevtt')?.active;
         if (forgeActive) {
-            SWSELogger.log("SWSE | Forge detected - Canvas UI may have compatibility adjustments");
-            // Don't disable by default, but log it for debugging
-            // In the future, you could add a setting to disable on Forge if needed
+            SWSELogger.log("SWSE | Forge detected - Canvas UI toolbar disabled to prevent conflicts");
+            SWSELogger.log("SWSE | Enable 'Show Canvas Toolbar on Forge' setting if you want the SWSE toolbar");
+
+            // Check if there's a setting to override (for future use)
+            const forceEnable = game.settings?.get?.("swse", "canvasToolbarOnForge");
+            if (!forceEnable) {
+                return; // Don't initialize on Forge unless explicitly enabled
+            }
         }
 
         // Wait for canvas to be ready
