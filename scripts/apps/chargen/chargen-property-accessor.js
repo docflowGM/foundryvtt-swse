@@ -23,21 +23,21 @@ const PROPERTY_MAPPINGS = {
   levelProgression: ['level_progression', 'levelProgression'],
   classSkills: ['class_skills', 'classSkills'],
 
-  // Talent properties
-  talentTree: ['talent_tree', 'talentTree', 'tree'],
+  // Talent properties (tree is the standard property name in TalentDataModel)
+  tree: ['tree', 'talent_tree', 'talentTree'],
 
-  // Skill properties (normalize to snake_case for consistency with Foundry actor data)
-  gather_information: ['gatherInfo', 'gatherInformation', 'gather_information', 'gather-information'],
-  treat_injury: ['treatInjury', 'treat_injury', 'treat-injury'],
-  use_computer: ['useComputer', 'use_computer', 'use-computer'],
-  use_the_force: ['useTheForce', 'use_the_force', 'use-the-force'],
-  knowledge_bureaucracy: ['knowledgeBureaucracy', 'knowledge_bureaucracy'],
-  knowledge_galactic_lore: ['knowledgeGalacticLore', 'knowledge_galactic_lore'],
-  knowledge_life_sciences: ['knowledgeLifeSciences', 'knowledge_life_sciences'],
-  knowledge_physical_sciences: ['knowledgePhysicalSciences', 'knowledge_physical_sciences'],
-  knowledge_social_sciences: ['knowledgeSocialSciences', 'knowledge_social_sciences'],
-  knowledge_tactics: ['knowledgeTactics', 'knowledge_tactics'],
-  knowledge_technology: ['knowledgeTechnology', 'knowledge_technology']
+  // Skill properties (normalized to camelCase per data model)
+  gatherInformation: ['gatherInformation', 'gather_information', 'gatherInfo', 'gather-information'],
+  treatInjury: ['treatInjury', 'treat_injury', 'treat-injury'],
+  useComputer: ['useComputer', 'use_computer', 'use-computer'],
+  useTheForce: ['useTheForce', 'use_the_force', 'use-the-force'],
+  knowledgeBureaucracy: ['knowledgeBureaucracy', 'knowledge_bureaucracy'],
+  knowledgeGalacticLore: ['knowledgeGalacticLore', 'knowledge_galactic_lore'],
+  knowledgeLifeSciences: ['knowledgeLifeSciences', 'knowledge_life_sciences'],
+  knowledgePhysicalSciences: ['knowledgePhysicalSciences', 'knowledge_physical_sciences'],
+  knowledgeSocialSciences: ['knowledgeSocialSciences', 'knowledge_social_sciences'],
+  knowledgeTactics: ['knowledgeTactics', 'knowledge_tactics'],
+  knowledgeTechnology: ['knowledgeTechnology', 'knowledge_technology']
 };
 
 /**

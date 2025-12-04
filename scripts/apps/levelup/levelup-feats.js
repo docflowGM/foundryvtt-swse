@@ -6,6 +6,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { getClassLevel } from './levelup-shared.js';
 import { filterQualifiedFeats } from './levelup-validation.js';
+import { getClassProperty } from '../chargen/chargen-property-accessor.js';
 
 // Cache for feat metadata
 let _featMetadataCache = null;
@@ -147,7 +148,7 @@ export async function loadFeats(actor, selectedClass, pendingData) {
       const classLevel = getClassLevel(actor, className) + 1;
 
       // Check if this level grants a bonus feat specific to this class
-      const levelProgression = selectedClass.system.level_progression;
+      const levelProgression = getClassProperty(selectedClass, 'levelProgression', []);
       if (levelProgression && Array.isArray(levelProgression)) {
         const levelData = levelProgression.find(lp => lp.level === classLevel);
         if (levelData && levelData.features) {
@@ -157,9 +158,9 @@ export async function loadFeats(actor, selectedClass, pendingData) {
             // This class has a specific feat list (e.g., "jedi_feats", "noble_feats")
             SWSELogger.log(`SWSE LevelUp | Filtering feats by list: ${featFeature.list} for ${className}`);
 
-            // Filter to only feats that have this class in their bonus_feat_for array
+            // Filter to only feats that have this class in their bonusFeatFor array
             featObjects = featObjects.filter(f => {
-              const bonusFeatFor = f.system?.bonus_feat_for || [];
+              const bonusFeatFor = f.system?.bonusFeatFor || [];
               return bonusFeatFor.includes(className) || bonusFeatFor.includes('all');
             });
 
@@ -202,7 +203,7 @@ export function getsBonusFeat(selectedClass, actor) {
   const classLevel = getClassLevel(actor, selectedClass.name) + 1;
 
   // Check level_progression for this class level
-  const levelProgression = selectedClass.system.level_progression;
+  const levelProgression = getClassProperty(selectedClass, 'levelProgression', []);
   if (!levelProgression || !Array.isArray(levelProgression)) return false;
 
   const levelData = levelProgression.find(lp => lp.level === classLevel);

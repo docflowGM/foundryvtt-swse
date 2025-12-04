@@ -79,7 +79,7 @@ export async function getAvailableClasses(actor, pendingData) {
 
   // Check prerequisites for each class
   for (const classDoc of allClasses) {
-    const isBase = isBaseClass(classDoc.name) || classDoc.system.base_class === true;
+    const isBase = isBaseClass(classDoc.name) || classDoc.system.baseClass === true;
 
     // meetsClassPrerequisites is now async (loads from JSON)
     if (await meetsClassPrerequisites(classDoc, actor, pendingData)) {
@@ -334,19 +334,19 @@ export async function applyClassFeatures(classDoc, classLevel, actor) {
   SWSELogger.log(`SWSE LevelUp | Applying class features for ${classDoc.name} level ${classLevel}:`, levelData);
 
   // Apply Force Points if specified
-  if (levelData.force_points && levelData.force_points > 0) {
+  if (levelData.forcePoints && levelData.forcePoints > 0) {
     const currentMax = actor.system.forcePoints?.max || 5;
-    const newMax = currentMax + levelData.force_points;
+    const newMax = currentMax + levelData.forcePoints;
     const currentValue = actor.system.forcePoints?.value || 5;
-    const newValue = currentValue + levelData.force_points;
+    const newValue = currentValue + levelData.forcePoints;
 
     await actor.update({
       "system.forcePoints.max": newMax,
       "system.forcePoints.value": newValue
     });
 
-    SWSELogger.log(`SWSE LevelUp | Increased Force Points by ${levelData.force_points} (${currentMax} → ${newMax})`);
-    ui.notifications.info(`Force Points increased by ${levelData.force_points}!`);
+    SWSELogger.log(`SWSE LevelUp | Increased Force Points by ${levelData.forcePoints} (${currentMax} → ${newMax})`);
+    ui.notifications.info(`Force Points increased by ${levelData.forcePoints}!`);
   }
 
   // Process each feature that's not a choice (talents and feats are already handled)

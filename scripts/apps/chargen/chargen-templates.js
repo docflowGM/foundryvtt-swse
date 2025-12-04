@@ -415,16 +415,16 @@ export class CharacterTemplates {
       'Climb': 'climb',
       'Deception': 'deception',
       'Endurance': 'endurance',
-      'Gather Information': 'gather_information',
+      'Gather Information': 'gatherInformation',
       'Initiative': 'initiative',
       'Jump': 'jump',
-      'Knowledge (Bureaucracy)': 'knowledge_bureaucracy',
-      'Knowledge (Galactic Lore)': 'knowledge_galactic_lore',
-      'Knowledge (Life Sciences)': 'knowledge_life_sciences',
-      'Knowledge (Physical Sciences)': 'knowledge_physical_sciences',
-      'Knowledge (Social Sciences)': 'knowledge_social_sciences',
-      'Knowledge (Tactics)': 'knowledge_tactics',
-      'Knowledge (Technology)': 'knowledge_technology',
+      'Knowledge (Bureaucracy)': 'knowledgeBureaucracy',
+      'Knowledge (Galactic Lore)': 'knowledgeGalacticLore',
+      'Knowledge (Life Sciences)': 'knowledgeLifeSciences',
+      'Knowledge (Physical Sciences)': 'knowledgePhysicalSciences',
+      'Knowledge (Social Sciences)': 'knowledgeSocialSciences',
+      'Knowledge (Tactics)': 'knowledgeTactics',
+      'Knowledge (Technology)': 'knowledgeTechnology',
       'Mechanics': 'mechanics',
       'Perception': 'perception',
       'Persuasion': 'persuasion',
@@ -433,9 +433,9 @@ export class CharacterTemplates {
       'Stealth': 'stealth',
       'Survival': 'survival',
       'Swim': 'swim',
-      'Treat Injury': 'treat_injury',
-      'Use Computer': 'use_computer',
-      'Use the Force': 'use_the_force'
+      'Treat Injury': 'treatInjury',
+      'Use Computer': 'useComputer',
+      'Use the Force': 'useTheForce'
     };
 
     return skillMap[displayName] || null;

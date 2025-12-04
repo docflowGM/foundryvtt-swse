@@ -5,7 +5,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
-import { getTalentTreeName } from './chargen-property-accessor.js';
+import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from './chargen-property-accessor.js';
 
 // Import all module functions
 import * as SharedModule from './chargen-shared.js';
@@ -375,7 +375,7 @@ export default class CharacterGenerator extends Application {
         const selectedClass = this.characterData.classes[0];
         const className = selectedClass.name || selectedClass;
         const bonusFeats = context.packs.feats.filter(f => {
-          const bonusFeatFor = f.system?.bonus_feat_for || [];
+          const bonusFeatFor = f.system?.bonusFeatFor || [];
           return bonusFeatFor.includes(className);
         });
         context.packs.classBonusFeats = bonusFeats;
@@ -424,7 +424,7 @@ export default class CharacterGenerator extends Application {
     const selectedClass = this.characterData.classes && this.characterData.classes.length > 0
       ? this._packs.classes?.find(c => c.name === this.characterData.classes[0].name)
       : null;
-    const classSkills = selectedClass?.system?.class_skills || [];
+    const classSkills = selectedClass ? getClassProperty(selectedClass, 'classSkills', []) : [];
 
     // Available skills for selection with bonuses
     const halfLevel = Math.floor(this.characterData.level / 2);
@@ -926,29 +926,14 @@ export default class CharacterGenerator extends Application {
       };
     }
 
-    // Normalize skill keys to match DataModel schema (snake_case)
+    // Build skills object (using camelCase keys)
     const skills = {};
-    const skillKeyMap = {
-      'gatherInformation': 'gather_information',
-      'treatInjury': 'treat_injury',
-      'useComputer': 'use_computer',
-      'useTheForce': 'use_the_force',
-      'knowledgeBureaucracy': 'knowledge_bureaucracy',
-      'knowledgeGalacticLore': 'knowledge_galactic_lore',
-      'knowledgeLifeSciences': 'knowledge_life_sciences',
-      'knowledgePhysicalSciences': 'knowledge_physical_sciences',
-      'knowledgeSocialSciences': 'knowledge_social_sciences',
-      'knowledgeTactics': 'knowledge_tactics',
-      'knowledgeTechnology': 'knowledge_technology'
-    };
-
     for (const [key, skill] of Object.entries(this.characterData.skills || {})) {
-      const normalizedKey = skillKeyMap[key] || key;
-      skills[normalizedKey] = {
+      skills[key] = {
         trained: skill.trained || false,
         focused: skill.focused || false,
         miscMod: skill.misc || 0,
-        selectedAbility: skill.selectedAbility || this._getDefaultAbilityForSkill(normalizedKey)
+        selectedAbility: skill.selectedAbility || this._getDefaultAbilityForSkill(key)
       };
     }
 
@@ -1037,18 +1022,16 @@ export default class CharacterGenerator extends Application {
               img: classDoc.img,
               system: {
                 level: classData.level || 1,
-                hitDie: classDoc.system.hit_die || classDoc.system.hitDie || "1d6",
-                babProgression: classDoc.system.babProgression || 0.75,
+                hitDie: getHitDie(classDoc),
+                babProgression: getClassProperty(classDoc, 'babProgression', 0.75),
                 defenses: {
                   fortitude: defenses.fortitude || 0,
                   reflex: defenses.reflex || 0,
                   will: defenses.will || 0
                 },
                 description: classDoc.system.description || '',
-                classSkills: classDoc.system.class_skills || classDoc.system.classSkills || [],
-                // Support both property name variants for talent trees
-                talentTrees: classDoc.system.talent_trees || classDoc.system.talentTrees || [],
-                talent_trees: classDoc.system.talent_trees || classDoc.system.talentTrees || [],
+                classSkills: getClassProperty(classDoc, 'classSkills', []),
+                talentTrees: getTalentTrees(classDoc),
                 forceSensitive: classDoc.system.forceSensitive || false
               }
             };
@@ -1075,16 +1058,16 @@ export default class CharacterGenerator extends Application {
             },
             classSkills: [
               "acrobatics", "climb", "deception", "endurance",
-              "gather_information", "initiative", "jump",
-              "knowledge_bureaucracy", "knowledge_galactic_lore",
-              "knowledge_life_sciences", "knowledge_physical_sciences",
-              "knowledge_social_sciences", "knowledge_tactics",
-              "knowledge_technology", "mechanics", "perception",
+              "gatherInformation", "initiative", "jump",
+              "knowledgeBureaucracy", "knowledgeGalacticLore",
+              "knowledgeLifeSciences", "knowledgePhysicalSciences",
+              "knowledgeSocialSciences", "knowledgeTactics",
+              "knowledgeTechnology", "mechanics", "perception",
               "persuasion", "pilot", "ride", "stealth", "survival",
-              "swim", "treat_injury", "use_computer"
+              "swim", "treatInjury", "useComputer"
             ],
             forceSensitive: false,
-            talent_trees: []
+            talentTrees: []
           }
         };
         items.push(nonheroicClass);
@@ -1293,16 +1276,16 @@ export default class CharacterGenerator extends Application {
       climb: 'str',
       deception: 'cha',
       endurance: 'con',
-      gather_information: 'cha',
+      gatherInformation: 'cha',
       initiative: 'dex',
       jump: 'str',
-      knowledge_bureaucracy: 'int',
-      knowledge_galactic_lore: 'int',
-      knowledge_life_sciences: 'int',
-      knowledge_physical_sciences: 'int',
-      knowledge_social_sciences: 'int',
-      knowledge_tactics: 'int',
-      knowledge_technology: 'int',
+      knowledgeBureaucracy: 'int',
+      knowledgeGalacticLore: 'int',
+      knowledgeLifeSciences: 'int',
+      knowledgePhysicalSciences: 'int',
+      knowledgeSocialSciences: 'int',
+      knowledgeTactics: 'int',
+      knowledgeTechnology: 'int',
       mechanics: 'int',
       perception: 'wis',
       persuasion: 'cha',
@@ -1311,9 +1294,9 @@ export default class CharacterGenerator extends Application {
       stealth: 'dex',
       survival: 'wis',
       swim: 'str',
-      treat_injury: 'wis',
-      use_computer: 'int',
-      use_the_force: 'cha'
+      treatInjury: 'wis',
+      useComputer: 'int',
+      useTheForce: 'cha'
     };
     return abilityMap[skillKey] || 'int';
   }

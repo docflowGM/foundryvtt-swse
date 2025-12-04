@@ -276,7 +276,7 @@ export function _getAvailableTalentTrees() {
     const allTrees = new Set();
     if (this._packs.talents) {
       this._packs.talents.forEach(talent => {
-        const tree = talent.system?.talent_tree || talent.system?.tree;
+        const tree = talent.system?.tree;
         if (tree) {
           allTrees.add(tree);
         }

@@ -38,16 +38,16 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       climb: 'str',
       deception: 'cha',
       endurance: 'con',
-      gather_information: 'cha',
+      gatherInformation: 'cha',
       initiative: 'dex',
       jump: 'str',
-      knowledge_bureaucracy: 'int',
-      knowledge_galactic_lore: 'int',
-      knowledge_life_sciences: 'int',
-      knowledge_physical_sciences: 'int',
-      knowledge_social_sciences: 'int',
-      knowledge_tactics: 'int',
-      knowledge_technology: 'int',
+      knowledgeBureaucracy: 'int',
+      knowledgeGalacticLore: 'int',
+      knowledgeLifeSciences: 'int',
+      knowledgePhysicalSciences: 'int',
+      knowledgeSocialSciences: 'int',
+      knowledgeTactics: 'int',
+      knowledgeTechnology: 'int',
       mechanics: 'int',
       perception: 'wis',
       persuasion: 'cha',
@@ -56,9 +56,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       stealth: 'dex',
       survival: 'wis',
       swim: 'str',
-      treat_injury: 'wis',
-      use_computer: 'int',
-      use_the_force: 'cha'
+      treatInjury: 'wis',
+      useComputer: 'int',
+      useTheForce: 'cha'
     };
   }
 

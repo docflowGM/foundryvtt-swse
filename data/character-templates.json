@@ -24,7 +24,7 @@
       "talent": "Block",
       "talentTree": "Jedi Guardian",
       "trainedSkills": [
-        "use_the_force",
+        "useTheForce",
         "acrobatics",
         "initiative",
         "perception"
@@ -66,9 +66,9 @@
       "talent": "Force Focus",
       "talentTree": "Jedi Consular",
       "trainedSkills": [
-        "use_the_force",
+        "useTheForce",
         "perception",
-        "knowledge_galactic_lore",
+        "knowledgeGalacticLore",
         "initiative"
       ],
       "forcePowers": [
@@ -108,7 +108,7 @@
       "talent": "Deflect",
       "talentTree": "Jedi Guardian",
       "trainedSkills": [
-        "use_the_force",
+        "useTheForce",
         "endurance"
       ],
       "forcePowers": [
@@ -147,7 +147,7 @@
       "talent": "Dark Side Sense",
       "talentTree": "Jedi Sentinel",
       "trainedSkills": [
-        "use_the_force",
+        "useTheForce",
         "perception",
         "stealth",
         "initiative"
@@ -192,11 +192,11 @@
       "trainedSkills": [
         "persuasion",
         "deception",
-        "gather_information",
+        "gatherInformation",
         "perception",
-        "knowledge_galactic_lore",
-        "knowledge_social_sciences",
-        "use_computer",
+        "knowledgeGalacticLore",
+        "knowledgeSocialSciences",
+        "useComputer",
         "initiative"
       ],
       "forcePowers": [],
@@ -234,10 +234,10 @@
         "persuasion",
         "initiative",
         "perception",
-        "knowledge_tactics",
-        "gather_information",
+        "knowledgeTactics",
+        "gatherInformation",
         "deception",
-        "treat_injury"
+        "treatInjury"
       ],
       "forcePowers": [],
       "startingEquipment": [
@@ -272,13 +272,13 @@
       "talent": "Wealth",
       "talentTree": "Lineage",
       "trainedSkills": [
-        "gather_information",
+        "gatherInformation",
         "persuasion",
         "deception",
-        "use_computer",
-        "knowledge_bureaucracy",
-        "knowledge_galactic_lore",
-        "knowledge_social_sciences",
+        "useComputer",
+        "knowledgeBureaucracy",
+        "knowledgeGalacticLore",
+        "knowledgeSocialSciences",
         "perception",
         "initiative",
         "mechanics"
@@ -324,7 +324,7 @@
         "deception",
         "initiative",
         "perception",
-        "gather_information",
+        "gatherInformation",
         "knowledge_galactic_lore"
       ],
       "forcePowers": [],
@@ -404,12 +404,12 @@
       "talent": "Knack",
       "talentTree": "Fortune",
       "trainedSkills": [
-        "use_computer",
+        "useComputer",
         "mechanics",
         "deception",
         "persuasion",
         "stealth",
-        "gather_information",
+        "gatherInformation",
         "perception",
         "initiative"
       ],
@@ -453,7 +453,7 @@
         "initiative",
         "acrobatics",
         "perception",
-        "gather_information",
+        "gatherInformation",
         "pilot"
       ],
       "forcePowers": [],
@@ -494,7 +494,7 @@
       "trainedSkills": [
         "persuasion",
         "deception",
-        "gather_information",
+        "gatherInformation",
         "perception",
         "pilot",
         "stealth"
@@ -542,7 +542,7 @@
         "survival",
         "mechanics",
         "pilot",
-        "knowledge_tactics",
+        "knowledgeTactics",
         "endurance"
       ],
       "forcePowers": [],
@@ -627,7 +627,7 @@
         "perception",
         "endurance",
         "stealth",
-        "knowledge_life_sciences",
+        "knowledgeLifeSciences",
         "mechanics"
       ],
       "forcePowers": [],
@@ -671,7 +671,7 @@
         "stealth",
         "perception",
         "mechanics",
-        "use_computer",
+        "useComputer",
         "deception",
         "initiative",
         "endurance"
@@ -714,7 +714,7 @@
       "trainedSkills": [
         "initiative",
         "perception",
-        "knowledge_tactics",
+        "knowledgeTactics",
         "mechanics"
       ],
       "forcePowers": [],
@@ -982,7 +982,7 @@
       "talentTree": null,
       "trainedSkills": [
         "persuasion",
-        "gather_information",
+        "gatherInformation",
         "use_computer"
       ],
       "forcePowers": [],

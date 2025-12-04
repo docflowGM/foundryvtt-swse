@@ -100,7 +100,13 @@ export class FeatDataModel extends foundry.abstract.DataModel {
       benefit: new fields.HTMLField({label: "Benefit"}),
       special: new fields.HTMLField({label: "Special"}),
       normalText: new fields.HTMLField({label: "Normal"}),
-      
+
+      // Bonus feat specification - which classes can take this as a bonus feat
+      bonusFeatFor: new fields.ArrayField(
+        new fields.StringField(),
+        {label: "Bonus Feat For Classes"}
+      ),
+
       // Tracking
       uses: new fields.SchemaField({
         current: new fields.NumberField({initial: 0, min: 0, integer: true}),
@@ -258,6 +264,12 @@ export class ClassDataModel extends foundry.abstract.DataModel {
       // Nonheroic characters follow special rules (no talents, different BAB, 1d4 HP, etc.)
       isNonheroic: new fields.BooleanField({required: true, initial: false}),
 
+      // Base class flag - true for base/heroic classes (Jedi, Noble, Scout, Scoundrel, Soldier)
+      baseClass: new fields.BooleanField({initial: false}),
+
+      // Force sensitive flag - true if class grants Force powers
+      forceSensitive: new fields.BooleanField({initial: false}),
+
       // Computed defenses object (populated in prepareDerivedData)
       // This stores the per-level defense bonuses as numbers
       defenses: new fields.SchemaField({
@@ -277,9 +289,9 @@ export class ClassDataModel extends foundry.abstract.DataModel {
           fort: new fields.NumberField({integer: true}),
           ref: new fields.NumberField({integer: true}),
           will: new fields.NumberField({integer: true}),
-          defense_bonus: new fields.NumberField({integer: true}),
+          defenseBonus: new fields.NumberField({integer: true}),
           reputation: new fields.NumberField({integer: true}),
-          force_points: new fields.NumberField({integer: true, min: 0}),
+          forcePoints: new fields.NumberField({integer: true, min: 0}),
           features: new fields.ArrayField(new fields.SchemaField({
             name: new fields.StringField({required: true}),
             type: new fields.StringField(), // 'feat', 'talent', 'class_feature', 'proficiency', 'feat_grant'
