@@ -256,6 +256,14 @@ export default class CharacterGenerator extends Application {
     context.packs = foundry.utils.deepClone(this._packs);
     context.skillsJson = this._skillsJson || [];
 
+    // Helper function for chevron navigation
+    const steps = this._getSteps();
+    const currentIndex = steps.indexOf(this.currentStep);
+    context.stepIsPrevious = (step) => {
+      const stepIndex = steps.indexOf(step);
+      return stepIndex >= 0 && stepIndex < currentIndex;
+    };
+
     // Sort species by source material (Core first, then alphabetically)
     if (context.packs.species) {
       context.packs.species = this._sortSpeciesBySource(context.packs.species);
@@ -486,11 +494,8 @@ export default class CharacterGenerator extends Application {
     $html.find('.next-step').click(this._onNextStep.bind(this));
     $html.find('.prev-step').click(this._onPrevStep.bind(this));
 
-    // Progress step navigation (only in Free Build mode)
-    if (this.freeBuild) {
-      $html.find('.progress-step').addClass('clickable');
-      $html.find('.progress-step').click(this._onJumpToStep.bind(this));
-    }
+    // Chevron step navigation (clickable for previous steps or in Free Build mode)
+    $html.find('.chevron-step.clickable').click(this._onJumpToStep.bind(this));
     $html.find('.finish').click(this._onFinish.bind(this));
 
     // Selections
@@ -602,7 +607,21 @@ export default class CharacterGenerator extends Application {
     const steps = this._getSteps();
     const idx = steps.indexOf(this.currentStep);
     if (idx >= 0 && idx < steps.length - 1) {
-      const nextStep = steps[idx + 1];
+      let nextStep = steps[idx + 1];
+
+      // Auto-skip languages step if no additional languages to select
+      if (nextStep === "languages") {
+        await this._initializeLanguages();
+        const languageData = this.characterData.languageData;
+        if (languageData && languageData.additional <= 0) {
+          // Skip languages step - move to next step
+          SWSELogger.log("CharGen | Auto-skipping languages step (no additional languages to select)");
+          const languagesIdx = steps.indexOf("languages");
+          if (languagesIdx >= 0 && languagesIdx < steps.length - 1) {
+            nextStep = steps[languagesIdx + 1];
+          }
+        }
+      }
 
       // Create character when moving from summary to shop
       if (this.currentStep === "summary" && nextStep === "shop") {
@@ -639,11 +658,6 @@ export default class CharacterGenerator extends Application {
   }
 
   async _onJumpToStep(event) {
-    if (!this.freeBuild) {
-      ui.notifications.warn("Enable Free Build mode to jump between steps.");
-      return;
-    }
-
     event.preventDefault();
     event.stopPropagation();
 
@@ -652,6 +666,15 @@ export default class CharacterGenerator extends Application {
 
     if (!steps.includes(targetStep)) {
       SWSELogger.warn(`CharGen | Invalid step: ${targetStep}`);
+      return;
+    }
+
+    // Check if step is clickable (previous or free build mode)
+    const currentIndex = steps.indexOf(this.currentStep);
+    const targetIndex = steps.indexOf(targetStep);
+
+    if (!this.freeBuild && targetIndex > currentIndex) {
+      ui.notifications.warn("You cannot jump forward to future steps.");
       return;
     }
 

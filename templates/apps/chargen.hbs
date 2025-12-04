@@ -13,85 +13,60 @@
  </div>
  </header>
 
- {{!-- Progress Flow Chart --}}
- <div class="chargen-progress-flow">
- <div class="progress-step {{#if (eq currentStep 'name')}}active{{/if}} {{#if characterData.name}}completed{{/if}}" data-step="name">
- <div class="step-number">1</div>
- <div class="step-label">Name</div>
+ {{!-- Chevron Progress Indicator --}}
+ <div class="chargen-progress-chevron">
+ <div class="chevron-step {{#if (eq currentStep 'name')}}active{{/if}} {{#if characterData.name}}completed{{/if}} {{#if (or (eq currentStep 'name') freeBuild)}}clickable{{/if}}" data-step="name">
+ <span class="chevron-label">Name</span>
  </div>
- <div class="progress-connector"></div>
 
- <div class="progress-step {{#if (eq currentStep 'type')}}active{{/if}} {{#if characterData.isDroid}}completed{{else}}{{#if characterData.species}}completed{{/if}}{{/if}}" data-step="type">
- <div class="step-number">2</div>
- <div class="step-label">Type</div>
+ <div class="chevron-step {{#if (eq currentStep 'type')}}active{{/if}} {{#if (or characterData.isDroid characterData.species)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'type') freeBuild)}}clickable{{/if}}" data-step="type">
+ <span class="chevron-label">Type</span>
  </div>
- <div class="progress-connector"></div>
 
  {{#if characterData.isDroid}}
- <div class="progress-step {{#if (eq currentStep 'degree')}}active{{/if}} {{#if characterData.droidDegree}}completed{{/if}}" data-step="degree">
- <div class="step-number">3</div>
- <div class="step-label">Degree</div>
+ <div class="chevron-step {{#if (eq currentStep 'degree')}}active{{/if}} {{#if characterData.droidDegree}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'degree') freeBuild)}}clickable{{/if}}" data-step="degree">
+ <span class="chevron-label">Degree</span>
  </div>
- <div class="progress-connector"></div>
 
- <div class="progress-step {{#if (eq currentStep 'size')}}active{{/if}} {{#if characterData.droidSize}}completed{{/if}}" data-step="size">
- <div class="step-number">4</div>
- <div class="step-label">Size</div>
+ <div class="chevron-step {{#if (eq currentStep 'size')}}active{{/if}} {{#if characterData.droidSize}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'size') freeBuild)}}clickable{{/if}}" data-step="size">
+ <span class="chevron-label">Size</span>
  </div>
- <div class="progress-connector"></div>
 
- <div class="progress-step {{#if (eq currentStep 'droid-builder')}}active{{/if}}" data-step="droid-builder">
- <div class="step-number">5</div>
- <div class="step-label">Systems</div>
+ <div class="chevron-step {{#if (eq currentStep 'droid-builder')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'droid-builder') freeBuild)}}clickable{{/if}}" data-step="droid-builder">
+ <span class="chevron-label">Systems</span>
  </div>
- <div class="progress-connector"></div>
  {{else}}
- <div class="progress-step {{#if (eq currentStep 'species')}}active{{/if}} {{#if characterData.species}}completed{{/if}}" data-step="species">
- <div class="step-number">3</div>
- <div class="step-label">Species</div>
+ <div class="chevron-step {{#if (eq currentStep 'species')}}active{{/if}} {{#if characterData.species}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'species') freeBuild)}}clickable{{/if}}" data-step="species">
+ <span class="chevron-label">Species</span>
  </div>
- <div class="progress-connector"></div>
  {{/if}}
 
- <div class="progress-step {{#if (eq currentStep 'abilities')}}active{{/if}}" data-step="abilities">
- <div class="step-number">{{#if characterData.isDroid}}6{{else}}4{{/if}}</div>
- <div class="step-label">Abilities</div>
+ <div class="chevron-step {{#if (eq currentStep 'abilities')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'abilities') freeBuild)}}clickable{{/if}}" data-step="abilities">
+ <span class="chevron-label">Abilities</span>
  </div>
- <div class="progress-connector"></div>
 
- <div class="progress-step {{#if (eq currentStep 'class')}}active{{/if}} {{#if (gt characterData.classes.length 0)}}completed{{/if}}" data-step="class">
- <div class="step-number">{{#if characterData.isDroid}}7{{else}}5{{/if}}</div>
- <div class="step-label">Class</div>
+ <div class="chevron-step {{#if (eq currentStep 'class')}}active{{/if}} {{#if (gt characterData.classes.length 0)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'class') freeBuild)}}clickable{{/if}}" data-step="class">
+ <span class="chevron-label">Class</span>
  </div>
- <div class="progress-connector"></div>
 
- <div class="progress-step {{#if (eq currentStep 'skills')}}active{{/if}}" data-step="skills">
- <div class="step-number">{{#if characterData.isDroid}}8{{else}}6{{/if}}</div>
- <div class="step-label">Skills</div>
+ <div class="chevron-step {{#if (eq currentStep 'skills')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'skills') freeBuild)}}clickable{{/if}}" data-step="skills">
+ <span class="chevron-label">Skills</span>
  </div>
- <div class="progress-connector"></div>
 
- <div class="progress-step {{#if (eq currentStep 'languages')}}active{{/if}}" data-step="languages">
- <div class="step-number">{{#if characterData.isDroid}}9{{else}}7{{/if}}</div>
- <div class="step-label">Languages</div>
+ <div class="chevron-step {{#if (eq currentStep 'languages')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'languages') freeBuild)}}clickable{{/if}}" data-step="languages">
+ <span class="chevron-label">Languages</span>
  </div>
- <div class="progress-connector"></div>
 
- <div class="progress-step {{#if (eq currentStep 'feats')}}active{{/if}} {{#if (gte characterData.feats.length characterData.featsRequired)}}completed{{/if}}" data-step="feats">
- <div class="step-number">{{#if characterData.isDroid}}10{{else}}8{{/if}}</div>
- <div class="step-label">Feats</div>
+ <div class="chevron-step {{#if (eq currentStep 'feats')}}active{{/if}} {{#if (gte characterData.feats.length characterData.featsRequired)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'feats') freeBuild)}}clickable{{/if}}" data-step="feats">
+ <span class="chevron-label">Feats</span>
  </div>
- <div class="progress-connector"></div>
 
- <div class="progress-step {{#if (eq currentStep 'talents')}}active{{/if}} {{#if (gte characterData.talents.length 1)}}completed{{/if}}" data-step="talents">
- <div class="step-number">{{#if characterData.isDroid}}11{{else}}9{{/if}}</div>
- <div class="step-label">Talents</div>
+ <div class="chevron-step {{#if (eq currentStep 'talents')}}active{{/if}} {{#if (gte characterData.talents.length 1)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'talents') freeBuild)}}clickable{{/if}}" data-step="talents">
+ <span class="chevron-label">Talents</span>
  </div>
- <div class="progress-connector"></div>
 
- <div class="progress-step {{#if (eq currentStep 'summary')}}active{{/if}}" data-step="summary">
- <div class="step-number">{{#if characterData.isDroid}}12{{else}}10{{/if}}</div>
- <div class="step-label">Summary</div>
+ <div class="chevron-step {{#if (eq currentStep 'summary')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'summary') freeBuild)}}clickable{{/if}}" data-step="summary">
+ <span class="chevron-label">Summary</span>
  </div>
  </div>
 
@@ -860,85 +835,114 @@
  <h3>Select Languages</h3>
  <p class="help-text">Choose additional languages your character knows based on Intelligence.</p>
 
- <div class="languages-summary" style="margin-bottom: 1rem;">
  {{#if characterData.languageData}}
- <div class="language-info-box">
- <h4><i class="fas fa-info-circle"></i> Language Selection Info</h4>
- <div class="language-stats">
- <div class="stat-item">
- <span class="stat-label">Granted Languages:</span>
- <span class="stat-value">{{characterData.languageData.granted.length}}</span>
+ {{!-- Language Counter --}}
+ <div class="language-counter-box">
+ {{#if (gt characterData.languageData.additional 0)}}
+ <div class="counter-display">
+ <i class="fas fa-language"></i>
+ <span class="counter-text">Languages Remaining:</span>
+ <span class="counter-value">{{subtract (add characterData.languageData.granted.length characterData.languageData.additional) characterData.languages.length}}</span>
+ /
+ <span class="counter-total">{{characterData.languageData.additional}}</span>
  </div>
- <div class="stat-item">
- <span class="stat-label">Additional Languages (INT mod):</span>
- <span class="stat-value">{{characterData.languageData.additional}}</span>
- </div>
- <div class="stat-item">
- <span class="stat-label">Selected:</span>
- <span class="stat-value">{{characterData.languages.length}} / {{add characterData.languageData.granted.length characterData.languageData.additional}}</span>
- </div>
- </div>
- {{#if (gt characterData.languageData.understands.length 0)}}
- <div class="understands-note">
- <i class="fas fa-ear-listen"></i> <strong>Note:</strong> You understand {{#each characterData.languageData.understands}}{{this}}{{#unless @last}}, {{/unless}}{{/each}} but cannot speak it.
+ {{else}}
+ <div class="no-additional-languages">
+ <i class="fas fa-info-circle"></i>
+ <span>You have no additional languages to select (Intelligence modifier: {{characterData.languageData.additional}})</span>
  </div>
  {{/if}}
- </div>
- {{/if}}
- <button type="button" class="reset-languages-btn btn-secondary" style="margin-left: 1rem;">
- <i class="fas fa-redo"></i> Reset to Granted
- </button>
  </div>
 
- {{!-- Selected Languages --}}
- <div class="selected-languages-section" style="margin-bottom: 2rem;">
- <h4><i class="fas fa-check-circle"></i> Your Languages</h4>
- <div class="selected-languages-list">
- {{#each characterData.languages}}
- <div class="language-tag {{#if (contains ../characterData.languageData.granted this)}}granted{{else}}selected{{/if}}">
+ {{!-- Automatic/Granted Languages Section --}}
+ <div class="granted-languages-section">
+ <h4><i class="fas fa-gift"></i> Automatic Languages</h4>
+ <p class="section-description">These languages are automatically granted by your species.</p>
+ <div class="granted-languages-list">
+ {{#each characterData.languageData.granted}}
+ <div class="language-item granted">
+ <i class="fas fa-check-circle"></i>
  <span class="language-name">{{this}}</span>
- {{#if (contains ../characterData.languageData.granted this)}}
- <span class="granted-badge"><i class="fas fa-gift"></i> Granted</span>
- {{else}}
- <button type="button" class="remove-language" data-language="{{this}}">
- <i class="fas fa-times"></i>
- </button>
- {{/if}}
+ <span class="language-badge">Granted</span>
  </div>
  {{/each}}
- {{#unless characterData.languages.length}}
- <p class="no-languages">No languages selected yet.</p>
- {{/unless}}
  </div>
+ {{#if (gt characterData.languageData.understands.length 0)}}
+ <div class="understands-languages">
+ <p><i class="fas fa-ear-listen"></i> <strong>Understands Only:</strong> {{#each characterData.languageData.understands}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p>
+ </div>
+ {{/if}}
+ </div>
+
+ {{!-- Selected Additional Languages --}}
+ {{#if (gt characterData.languageData.additional 0)}}
+ <div class="selected-additional-languages-section">
+ <h4><i class="fas fa-star"></i> Selected Additional Languages</h4>
+ {{#each characterData.languages}}
+ {{#unless (contains ../characterData.languageData.granted this)}}
+ <div class="language-item selected">
+ <i class="fas fa-check-circle"></i>
+ <span class="language-name">{{this}}</span>
+ <button type="button" class="remove-language" data-language="{{this}}" title="Remove language">
+ <i class="fas fa-times"></i>
+ </button>
+ </div>
+ {{/unless}}
+ {{/each}}
+ {{#if (eq (subtract characterData.languages.length characterData.languageData.granted.length) 0)}}
+ <p class="no-selection-yet">No additional languages selected yet.</p>
+ {{/if}}
  </div>
 
  {{!-- Available Languages to Choose --}}
- {{#if languageCategories}}
  <div class="available-languages-section">
  <h4><i class="fas fa-globe"></i> Available Languages</h4>
- {{#each languageCategories}}
+
+ {{!-- Widely Used Languages First --}}
+ {{#if languageCategories.widelyUsed}}
  <div class="language-category">
- <h5 class="category-name">{{this.name}}</h5>
- {{#if this.description}}
- <p class="category-description">{{this.description}}</p>
- {{/if}}
+ <h5 class="category-name">
+ <i class="fas fa-star"></i> {{languageCategories.widelyUsed.name}}
+ </h5>
+ <p class="category-description">{{languageCategories.widelyUsed.description}}</p>
  <div class="languages-grid">
- {{#each this.languages}}
+ {{#each languageCategories.widelyUsed.languages}}
+ {{#unless (contains ../../characterData.languages this)}}
  <button
  type="button"
- class="select-language choice-button-small {{#if (contains ../../characterData.languages this)}}disabled{{/if}}"
- data-language="{{this}}"
- {{#if (contains ../../characterData.languages this)}}disabled{{/if}}>
+ class="select-language language-button"
+ data-language="{{this}}">
  {{this}}
- {{#if (contains ../../characterData.languages this)}}
- <i class="fas fa-check"></i>
- {{/if}}
  </button>
+ {{/unless}}
  {{/each}}
  </div>
  </div>
+ {{/if}}
+
+ {{!-- Local/Trade Languages Second --}}
+ {{#if languageCategories.localTrade}}
+ <div class="language-category">
+ <h5 class="category-name">
+ <i class="fas fa-map-marked-alt"></i> {{languageCategories.localTrade.name}}
+ </h5>
+ <p class="category-description">{{languageCategories.localTrade.description}}</p>
+ <div class="languages-grid">
+ {{#each languageCategories.localTrade.languages}}
+ {{#unless (contains ../../characterData.languages this)}}
+ <button
+ type="button"
+ class="select-language language-button"
+ data-language="{{this}}">
+ {{this}}
+ </button>
+ {{/unless}}
  {{/each}}
  </div>
+ </div>
+ {{/if}}
+ </div>
+ {{/if}}
  {{/if}}
 
  <div class="form-actions">
@@ -954,37 +958,152 @@
 
  {{#if (eq currentStep "summary")}}
  <section class="step-summary">
- <h3>Character Summary</h3>
+ <h3><i class="fas fa-scroll"></i> Character Summary</h3>
+ <p class="summary-intro">Review your character before finalizing. Click "Create Character" to proceed to equipment shopping.</p>
+
  <div class="summary-grid">
- <div class="summary-section">
- <h4>Basic Information</h4>
- <dl>
+ {{!-- Basic Information --}}
+ <div class="summary-card">
+ <h4><i class="fas fa-user"></i> Basic Information</h4>
+ <dl class="summary-list">
  <dt>Name:</dt>
- <dd>{{characterData.name}}</dd>
+ <dd><strong>{{characterData.name}}</strong></dd>
+ {{#if characterData.isDroid}}
+ <dt>Type:</dt>
+ <dd>Droid ({{characterData.droidDegree}})</dd>
+ {{else}}
  <dt>Species:</dt>
  <dd>{{characterData.species}}</dd>
+ {{/if}}
+ <dt>Size:</dt>
+ <dd>{{characterData.size}}</dd>
  <dt>Level:</dt>
- <dd><span class="stat-value">{{characterData.level}}</span></dd>
+ <dd>{{characterData.level}}</dd>
  </dl>
  </div>
- 
- <div class="summary-section">
- <h4>Ability Scores</h4>
- <dl>
- {{#each characterData.abilities}}
- <dt>{{@key}}:</dt>
- <dd><span class="stat-value">{{this.total}}</span> (<span class="stat-modifier">{{#if (gte this.mod 0)}}+{{/if}}{{this.mod}}</span>)</dd>
+
+ {{!-- Classes --}}
+ <div class="summary-card">
+ <h4><i class="fas fa-graduation-cap"></i> Classes</h4>
+ <ul class="summary-list-items">
+ {{#each characterData.classes}}
+ <li><strong>{{this.name}}</strong> (Level {{this.level}})</li>
  {{/each}}
+ </ul>
+ </div>
+
+ {{!-- Ability Scores --}}
+ <div class="summary-card">
+ <h4><i class="fas fa-chart-line"></i> Ability Scores</h4>
+ <div class="abilities-grid">
+ {{#each characterData.abilities}}
+ <div class="ability-box">
+ <span class="ability-label">{{uppercase @key}}</span>
+ <span class="ability-score">{{this.total}}</span>
+ <span class="ability-modifier">{{#if (gte this.mod 0)}}+{{/if}}{{this.mod}}</span>
+ </div>
+ {{/each}}
+ </div>
+ </div>
+
+ {{!-- Languages --}}
+ {{#if characterData.languages}}
+ <div class="summary-card">
+ <h4><i class="fas fa-language"></i> Languages</h4>
+ <div class="language-chips">
+ {{#each characterData.languages}}
+ <span class="language-chip">{{this}}</span>
+ {{/each}}
+ </div>
+ </div>
+ {{/if}}
+
+ {{!-- Trained Skills --}}
+ <div class="summary-card">
+ <h4><i class="fas fa-tools"></i> Trained Skills</h4>
+ <ul class="summary-list-items">
+ {{#each characterData.skills}}
+ {{#if this.trained}}
+ <li>{{@key}}</li>
+ {{/if}}
+ {{/each}}
+ {{#unless characterData.trainedSkillsCount}}
+ <li class="no-items">No skills trained yet</li>
+ {{/unless}}
+ </ul>
+ </div>
+
+ {{!-- Feats --}}
+ <div class="summary-card">
+ <h4><i class="fas fa-award"></i> Feats ({{characterData.feats.length}})</h4>
+ <ul class="summary-list-items">
+ {{#each characterData.feats}}
+ <li>{{this.name}}</li>
+ {{/each}}
+ {{#unless characterData.feats.length}}
+ <li class="no-items">No feats selected yet</li>
+ {{/unless}}
+ </ul>
+ </div>
+
+ {{!-- Talents --}}
+ {{#if characterData.talents}}
+ <div class="summary-card">
+ <h4><i class="fas fa-star"></i> Talents ({{characterData.talents.length}})</h4>
+ <ul class="summary-list-items">
+ {{#each characterData.talents}}
+ <li>{{this.name}}</li>
+ {{/each}}
+ {{#unless characterData.talents.length}}
+ <li class="no-items">No talents selected yet</li>
+ {{/unless}}
+ </ul>
+ </div>
+ {{/if}}
+
+ {{!-- Defense Stats --}}
+ <div class="summary-card">
+ <h4><i class="fas fa-shield-alt"></i> Defenses</h4>
+ <dl class="summary-list">
+ <dt>Fortitude:</dt>
+ <dd>{{characterData.defenses.fortitude.total}}</dd>
+ <dt>Reflex:</dt>
+ <dd>{{characterData.defenses.reflex.total}}</dd>
+ <dt>Will:</dt>
+ <dd>{{characterData.defenses.will.total}}</dd>
+ </dl>
+ </div>
+
+ {{!-- Combat Stats --}}
+ <div class="summary-card">
+ <h4><i class="fas fa-crosshairs"></i> Combat Stats</h4>
+ <dl class="summary-list">
+ <dt>Hit Points:</dt>
+ <dd>{{characterData.hp.max}}</dd>
+ <dt>Base Attack Bonus:</dt>
+ <dd>+{{characterData.bab}}</dd>
+ <dt>Speed:</dt>
+ <dd>{{characterData.speed}} squares</dd>
+ <dt>Damage Threshold:</dt>
+ <dd>{{characterData.damageThreshold}}</dd>
  </dl>
  </div>
  </div>
- 
+
+ <div class="summary-confirmation">
+ <div class="confirmation-box">
+ <i class="fas fa-check-circle"></i>
+ <p><strong>Ready to create your character?</strong></p>
+ <p>Once created, you'll be able to shop for equipment with your starting {{characterData.credits}} credits.</p>
+ </div>
+ </div>
+
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
  <i class="fas fa-arrow-left"></i> Previous
  </button>
  <button type="button" class="next-step btn-primary">
- <i class="fas fa-arrow-right"></i> Next: Shopping
+ <i class="fas fa-check"></i> Create Character & Shop
  </button>
  </div>
  </section>
@@ -1572,6 +1691,454 @@
 .feat-with-tooltip:hover::before {
  opacity: 1;
  visibility: visible;
+}
+
+/* ===========================
+   CHEVRON PROGRESS INDICATOR
+   =========================== */
+.chargen-progress-chevron {
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ padding: 1rem 0.5rem;
+ background: rgba(0, 0, 0, 0.2);
+ border-bottom: 2px solid rgba(10, 116, 218, 0.3);
+ overflow-x: auto;
+ gap: 0;
+}
+
+.chevron-step {
+ position: relative;
+ flex: 0 0 auto;
+ min-width: 120px;
+ height: 50px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background: #2a2a3e;
+ color: #888;
+ font-size: 0.85rem;
+ font-weight: 600;
+ text-transform: uppercase;
+ letter-spacing: 0.5px;
+ padding: 0 25px 0 15px;
+ margin-right: -15px;
+ clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%, 15px 50%);
+ transition: all 0.3s ease;
+ border: 1px solid rgba(255, 255, 255, 0.1);
+ z-index: 1;
+}
+
+.chevron-step:first-child {
+ clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%);
+ padding-left: 15px;
+}
+
+.chevron-step.active {
+ background: linear-gradient(135deg, #0a74da 0%, #0d5ba6 100%);
+ color: #ffffff;
+ z-index: 3;
+ border-color: #00d9ff;
+ box-shadow: 0 0 15px rgba(10, 116, 218, 0.5);
+}
+
+.chevron-step.completed {
+ background: #1a5080;
+ color: #b3d9ff;
+ border-color: rgba(10, 116, 218, 0.5);
+}
+
+.chevron-step.clickable {
+ cursor: pointer;
+}
+
+.chevron-step.clickable:hover {
+ background: #3a4a5e;
+ color: #ffffff;
+ transform: scale(1.05);
+ z-index: 4;
+}
+
+.chevron-step.active.clickable:hover {
+ background: linear-gradient(135deg, #0d88ff 0%, #0a6ec0 100%);
+}
+
+.chevron-label {
+ position: relative;
+ z-index: 2;
+ white-space: nowrap;
+}
+
+/* ===========================
+   LANGUAGE SELECTION STYLES
+   =========================== */
+.language-counter-box {
+ background: linear-gradient(135deg, rgba(10, 116, 218, 0.15) 0%, rgba(13, 91, 166, 0.15) 100%);
+ border: 2px solid #0a74da;
+ border-radius: 8px;
+ padding: 1.5rem;
+ margin-bottom: 2rem;
+ text-align: center;
+}
+
+.counter-display {
+ font-size: 1.5rem;
+ font-weight: bold;
+ color: #00d9ff;
+}
+
+.counter-display i {
+ margin-right: 0.5rem;
+}
+
+.counter-value {
+ color: #ff6b6b;
+ font-size: 2rem;
+ margin: 0 0.5rem;
+}
+
+.counter-total {
+ color: #00d9ff;
+ font-size: 2rem;
+}
+
+.no-additional-languages {
+ color: #aaa;
+ font-size: 1rem;
+}
+
+.granted-languages-section,
+.selected-additional-languages-section {
+ background: rgba(0, 0, 0, 0.2);
+ border-radius: 8px;
+ padding: 1.5rem;
+ margin-bottom: 2rem;
+}
+
+.granted-languages-section h4,
+.selected-additional-languages-section h4 {
+ color: #0a74da;
+ margin-bottom: 1rem;
+ font-size: 1.2rem;
+}
+
+.section-description {
+ color: #aaa;
+ font-size: 0.9rem;
+ margin-bottom: 1rem;
+}
+
+.granted-languages-list,
+.selected-additional-languages-list {
+ display: flex;
+ flex-wrap: wrap;
+ gap: 0.75rem;
+}
+
+.language-item {
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+ background: rgba(10, 116, 218, 0.2);
+ border: 2px solid #0a74da;
+ border-radius: 6px;
+ padding: 0.75rem 1rem;
+ font-size: 1rem;
+ font-weight: 600;
+ transition: all 0.3s ease;
+}
+
+.language-item.granted {
+ background: rgba(76, 175, 80, 0.2);
+ border-color: #4caf50;
+}
+
+.language-item.granted i {
+ color: #4caf50;
+}
+
+.language-item.selected {
+ background: rgba(0, 217, 255, 0.2);
+ border-color: #00d9ff;
+}
+
+.language-item.selected i {
+ color: #00d9ff;
+}
+
+.language-name {
+ flex: 1;
+}
+
+.language-badge {
+ background: rgba(76, 175, 80, 0.3);
+ padding: 0.25rem 0.5rem;
+ border-radius: 4px;
+ font-size: 0.75rem;
+ color: #4caf50;
+}
+
+.remove-language {
+ background: rgba(255, 107, 107, 0.2);
+ border: none;
+ border-radius: 4px;
+ padding: 0.25rem 0.5rem;
+ cursor: pointer;
+ color: #ff6b6b;
+ transition: all 0.2s ease;
+}
+
+.remove-language:hover {
+ background: rgba(255, 107, 107, 0.4);
+ color: #ffffff;
+}
+
+.no-selection-yet {
+ color: #888;
+ font-style: italic;
+ padding: 1rem;
+ text-align: center;
+}
+
+.understands-languages {
+ margin-top: 1rem;
+ padding: 1rem;
+ background: rgba(255, 193, 7, 0.1);
+ border-left: 3px solid #ffc107;
+ border-radius: 4px;
+}
+
+.understands-languages i {
+ color: #ffc107;
+ margin-right: 0.5rem;
+}
+
+.available-languages-section {
+ margin-top: 2rem;
+}
+
+.available-languages-section h4 {
+ color: #0a74da;
+ margin-bottom: 1.5rem;
+ font-size: 1.3rem;
+}
+
+.language-category {
+ margin-bottom: 2.5rem;
+}
+
+.category-name {
+ color: #00d9ff;
+ font-size: 1.1rem;
+ margin-bottom: 0.5rem;
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+}
+
+.category-description {
+ color: #aaa;
+ font-size: 0.9rem;
+ margin-bottom: 1rem;
+ font-style: italic;
+}
+
+.languages-grid {
+ display: grid;
+ grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+ gap: 0.75rem;
+}
+
+.language-button {
+ background: rgba(42, 42, 62, 0.8);
+ border: 2px solid rgba(10, 116, 218, 0.5);
+ border-radius: 6px;
+ padding: 0.75rem 1rem;
+ color: #e4e4e4;
+ font-size: 0.9rem;
+ font-weight: 500;
+ cursor: pointer;
+ transition: all 0.3s ease;
+ text-align: center;
+}
+
+.language-button:hover {
+ background: rgba(10, 116, 218, 0.3);
+ border-color: #0a74da;
+ color: #ffffff;
+ transform: translateY(-2px);
+ box-shadow: 0 4px 8px rgba(10, 116, 218, 0.3);
+}
+
+.language-button:active {
+ transform: translateY(0);
+}
+
+/* ===========================
+   ENHANCED SUMMARY PAGE
+   =========================== */
+.step-summary {
+ max-width: 1200px;
+ margin: 0 auto;
+}
+
+.summary-intro {
+ text-align: center;
+ color: #aaa;
+ font-size: 1.1rem;
+ margin-bottom: 2rem;
+}
+
+.summary-grid {
+ display: grid;
+ grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+ gap: 1.5rem;
+ margin-bottom: 2rem;
+}
+
+.summary-card {
+ background: rgba(0, 0, 0, 0.3);
+ border: 2px solid rgba(10, 116, 218, 0.3);
+ border-radius: 8px;
+ padding: 1.5rem;
+ transition: all 0.3s ease;
+}
+
+.summary-card:hover {
+ border-color: #0a74da;
+ box-shadow: 0 4px 12px rgba(10, 116, 218, 0.2);
+}
+
+.summary-card h4 {
+ color: #0a74da;
+ font-size: 1.2rem;
+ margin-bottom: 1rem;
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+ border-bottom: 2px solid rgba(10, 116, 218, 0.3);
+ padding-bottom: 0.5rem;
+}
+
+.summary-list {
+ display: grid;
+ grid-template-columns: auto 1fr;
+ gap: 0.5rem 1rem;
+ align-items: center;
+}
+
+.summary-list dt {
+ color: #aaa;
+ font-weight: 600;
+}
+
+.summary-list dd {
+ color: #e4e4e4;
+ margin: 0;
+}
+
+.summary-list-items {
+ list-style: none;
+ padding: 0;
+ margin: 0;
+}
+
+.summary-list-items li {
+ padding: 0.5rem 0;
+ border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summary-list-items li:last-child {
+ border-bottom: none;
+}
+
+.summary-list-items .no-items {
+ color: #888;
+ font-style: italic;
+}
+
+.abilities-grid {
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ gap: 1rem;
+}
+
+.ability-box {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ background: rgba(10, 116, 218, 0.1);
+ border: 2px solid rgba(10, 116, 218, 0.3);
+ border-radius: 8px;
+ padding: 1rem;
+ text-align: center;
+}
+
+.ability-label {
+ font-size: 0.8rem;
+ color: #aaa;
+ font-weight: 700;
+ text-transform: uppercase;
+ letter-spacing: 1px;
+}
+
+.ability-score {
+ font-size: 2rem;
+ font-weight: bold;
+ color: #00d9ff;
+ margin: 0.25rem 0;
+}
+
+.ability-modifier {
+ font-size: 1rem;
+ color: #4caf50;
+ font-weight: 600;
+}
+
+.language-chips {
+ display: flex;
+ flex-wrap: wrap;
+ gap: 0.5rem;
+}
+
+.language-chip {
+ background: rgba(10, 116, 218, 0.2);
+ border: 1px solid #0a74da;
+ border-radius: 20px;
+ padding: 0.5rem 1rem;
+ font-size: 0.9rem;
+ color: #00d9ff;
+}
+
+.summary-confirmation {
+ background: linear-gradient(135deg, rgba(76, 175, 80, 0.15) 0%, rgba(56, 142, 60, 0.15) 100%);
+ border: 2px solid #4caf50;
+ border-radius: 8px;
+ padding: 2rem;
+ text-align: center;
+ margin-bottom: 2rem;
+}
+
+.confirmation-box {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: 1rem;
+}
+
+.confirmation-box i {
+ font-size: 3rem;
+ color: #4caf50;
+}
+
+.confirmation-box p {
+ margin: 0;
+ font-size: 1.1rem;
+}
+
+.confirmation-box strong {
+ color: #4caf50;
+ font-size: 1.3rem;
 }
 </style>
 
