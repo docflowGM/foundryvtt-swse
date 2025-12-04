@@ -31,8 +31,8 @@
  {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="endurance" label="Endurance" defaultAbility="con"}}
  {{/with}}
 
- {{#with system.skills.gather_information as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="gather_information" label="Gather Information" defaultAbility="cha"}}
+ {{#with system.skills.gatherInformation as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="gatherInformation" label="Gather Information" defaultAbility="cha"}}
  {{/with}}
 
  {{#with system.skills.initiative as |skill|}}
@@ -43,32 +43,32 @@
  {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="jump" label="Jump" defaultAbility="str"}}
  {{/with}}
 
- {{#with system.skills.knowledge_bureaucracy as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_bureaucracy" label="Knowledge (Bureaucracy)" defaultAbility="int"}}
+ {{#with system.skills.knowledgeBureaucracy as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledgeBureaucracy" label="Knowledge (Bureaucracy)" defaultAbility="int"}}
  {{/with}}
 
- {{#with system.skills.knowledge_galactic_lore as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_galactic_lore" label="Knowledge (Galactic Lore)" defaultAbility="int"}}
+ {{#with system.skills.knowledgeGalacticLore as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledgeGalacticLore" label="Knowledge (Galactic Lore)" defaultAbility="int"}}
  {{/with}}
 
- {{#with system.skills.knowledge_life_sciences as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_life_sciences" label="Knowledge (Life Sciences)" defaultAbility="int"}}
+ {{#with system.skills.knowledgeLifeSciences as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledgeLifeSciences" label="Knowledge (Life Sciences)" defaultAbility="int"}}
  {{/with}}
 
- {{#with system.skills.knowledge_physical_sciences as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_physical_sciences" label="Knowledge (Physical Sciences)" defaultAbility="int"}}
+ {{#with system.skills.knowledgePhysicalSciences as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledgePhysicalSciences" label="Knowledge (Physical Sciences)" defaultAbility="int"}}
  {{/with}}
 
- {{#with system.skills.knowledge_social_sciences as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_social_sciences" label="Knowledge (Social Sciences)" defaultAbility="int"}}
+ {{#with system.skills.knowledgeSocialSciences as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledgeSocialSciences" label="Knowledge (Social Sciences)" defaultAbility="int"}}
  {{/with}}
 
- {{#with system.skills.knowledge_tactics as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_tactics" label="Knowledge (Tactics)" defaultAbility="int"}}
+ {{#with system.skills.knowledgeTactics as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledgeTactics" label="Knowledge (Tactics)" defaultAbility="int"}}
  {{/with}}
 
- {{#with system.skills.knowledge_technology as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledge_technology" label="Knowledge (Technology)" defaultAbility="int"}}
+ {{#with system.skills.knowledgeTechnology as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="knowledgeTechnology" label="Knowledge (Technology)" defaultAbility="int"}}
  {{/with}}
 
  {{#with system.skills.mechanics as |skill|}}
@@ -103,17 +103,17 @@
  {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="swim" label="Swim" defaultAbility="str"}}
  {{/with}}
 
- {{#with system.skills.treat_injury as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="treat_injury" label="Treat Injury" defaultAbility="wis"}}
+ {{#with system.skills.treatInjury as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="treatInjury" label="Treat Injury" defaultAbility="wis"}}
  {{/with}}
 
- {{#with system.skills.use_computer as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="use_computer" label="Use Computer" defaultAbility="int"}}
+ {{#with system.skills.useComputer as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="useComputer" label="Use Computer" defaultAbility="int"}}
  {{/with}}
 
  {{#unless @root.system.isDroid}}
- {{#with system.skills.use_the_force as |skill|}}
- {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="use_the_force" label="Use the Force" defaultAbility="cha"}}
+ {{#with system.skills.useTheForce as |skill|}}
+ {{> "systems/swse/templates/partials/skill-row-static.hbs" skill=skill key="useTheForce" label="Use the Force" defaultAbility="cha"}}
  {{/with}}
  {{/unless}}
  </div>

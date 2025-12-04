@@ -7,6 +7,7 @@ import { SWSELogger } from '../../utils/logger.js';
 import { TalentTreeVisualizer } from '../talent-tree-visualizer.js';
 import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
 import { checkTalentPrerequisites } from './levelup-validation.js';
+import { getClassProperty, getTalentTrees } from '../chargen/chargen-property-accessor.js';
 
 /**
  * Check if the new level grants a talent from the selected class
@@ -24,17 +25,17 @@ export function getsTalent(selectedClass, actor) {
   const talentEveryLevel = game.settings.get("swse", "talentEveryLevel");
   if (talentEveryLevel) {
     // Check if class has talent trees available
-    const trees = selectedClass.system.talent_trees || selectedClass.system.talentTrees;
+    const trees = getTalentTrees(selectedClass);
     return (selectedClass.system.forceSensitive || trees?.length > 0);
   }
 
   const classLevel = getClassLevel(actor, selectedClass.name) + 1;
 
   // Check level_progression for this class level
-  const levelProgression = selectedClass.system.level_progression;
+  const levelProgression = getClassProperty(selectedClass, 'levelProgression', []);
   if (!levelProgression || !Array.isArray(levelProgression)) {
     // Fallback: if no level_progression, check if class has talent trees
-    const trees = selectedClass.system.talent_trees || selectedClass.system.talentTrees;
+    const trees = getTalentTrees(selectedClass);
     return (selectedClass.system.forceSensitive || trees?.length > 0);
   }
 
@@ -71,7 +72,7 @@ export async function getTalentTrees(selectedClass, actor) {
     }
   } else if (talentTreeRestriction === "current") {
     // Only talent trees from the selected class
-    availableTrees = selectedClass.system.talent_trees || selectedClass.system.talentTrees || [];
+    availableTrees = getTalentTrees(selectedClass);
   } else {
     // Talent trees from any class the character has levels in
     const characterClasses = getCharacterClasses(actor);
@@ -81,16 +82,16 @@ export async function getTalentTrees(selectedClass, actor) {
       const classDoc = await classPack.index.find(c => c.name === className);
       if (classDoc) {
         const fullClass = await classPack.getDocument(classDoc._id);
-        const trees = fullClass.system.talent_trees || fullClass.system.talentTrees;
-        if (trees) {
+        const trees = getTalentTrees(fullClass);
+        if (trees && trees.length > 0) {
           availableTrees.push(...trees);
         }
       }
     }
 
     // Add current class trees
-    const trees = selectedClass.system.talent_trees || selectedClass.system.talentTrees;
-    if (trees) {
+    const trees = getTalentTrees(selectedClass);
+    if (trees && trees.length > 0) {
       availableTrees.push(...trees);
     }
 

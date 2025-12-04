@@ -182,8 +182,9 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
   SWSELogger.log(`CharGen | Applying starting features for ${classDoc.name}`);
 
   // Apply starting_features array
-  if (classDoc.system.starting_features && Array.isArray(classDoc.system.starting_features)) {
-    for (const feature of classDoc.system.starting_features) {
+  const startingFeatures = getClassProperty(classDoc, 'startingFeatures', []);
+  if (startingFeatures && Array.isArray(startingFeatures)) {
+    for (const feature of startingFeatures) {
       SWSELogger.log(`CharGen | Auto-applying starting feature: ${feature.name} (${feature.type})`);
 
       const featureItem = {
@@ -202,7 +203,7 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
   }
 
   // Apply level 1 features from level_progression
-  const levelProgression = classDoc.system.level_progression;
+  const levelProgression = getClassProperty(classDoc, 'levelProgression', []);
   if (levelProgression && Array.isArray(levelProgression)) {
     const level1Data = levelProgression.find(lp => lp.level === 1);
 

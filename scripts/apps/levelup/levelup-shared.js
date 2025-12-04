@@ -4,6 +4,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { getClassProperty } from '../chargen/chargen-property-accessor.js';
 
 /**
  * List of base classes in SWSE
@@ -138,8 +139,9 @@ export function calculateTotalBAB(actor) {
     const className = classItem.name;
 
     // Check if class has level_progression data with BAB
-    if (classItem.system.level_progression && Array.isArray(classItem.system.level_progression)) {
-      const levelData = classItem.system.level_progression.find(lp => lp.level === classLevel);
+    const levelProgression = getClassProperty(classItem, 'levelProgression', []);
+    if (levelProgression && Array.isArray(levelProgression)) {
+      const levelData = levelProgression.find(lp => lp.level === classLevel);
       if (levelData && typeof levelData.bab === 'number') {
         totalBAB += levelData.bab;
         continue;
@@ -318,7 +320,7 @@ export function calculateHPGain(classDoc, actor, newLevel) {
 
     if (!hitDie) {
       // Fallback: parse from class data
-      const hitDieString = classDoc.system.hit_die || classDoc.system.hitDie || "1d6";
+      const hitDieString = getClassProperty(classDoc, 'hitDie', '1d6');
       hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
       SWSELogger.warn(`SWSE LevelUp | Class "${className}" not in hit dice map, using ${hitDie} from class data`);
     }
