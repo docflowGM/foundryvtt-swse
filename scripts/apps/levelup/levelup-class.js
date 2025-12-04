@@ -258,7 +258,7 @@ export async function selectClass(classId, actor, context) {
   }
 
   // Get appropriate greeting for the current class level
-  // Note: currentClasses already declared above in this function
+  currentClasses = getCharacterClasses(actor);
   const classLevel = (currentClasses[classDoc.name] || 0) + 1;
   context.mentorGreeting = getMentorGreeting(context.mentor, classLevel, actor);
 
