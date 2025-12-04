@@ -520,6 +520,7 @@ export default class CharacterGenerator extends Application {
     $html.find('.select-language').click(this._onSelectLanguage.bind(this));
     $html.find('.remove-language').click(this._onRemoveLanguage.bind(this));
     $html.find('.reset-languages-btn').click(this._onResetLanguages.bind(this));
+    $html.find('.add-custom-language-btn').click(this._onAddCustomLanguage.bind(this));
 
     // Droid builder/shop
     $html.find('.shop-tab').click(this._onShopTabClick.bind(this));

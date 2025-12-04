@@ -941,6 +941,14 @@
  </div>
  </div>
  {{/if}}
+
+ {{!-- Add Custom Language Button --}}
+ <div class="custom-language-section">
+ <button type="button" class="add-custom-language-btn btn-custom">
+ <i class="fas fa-plus-circle"></i> Add Custom Language
+ </button>
+ <p class="custom-language-hint">Create your own language for homebrew campaigns or unique backgrounds</p>
+ </div>
  </div>
  {{/if}}
  {{/if}}
@@ -2139,6 +2147,54 @@
 .confirmation-box strong {
  color: #4caf50;
  font-size: 1.3rem;
+}
+
+/* ===========================
+   CUSTOM LANGUAGE SECTION
+   =========================== */
+.custom-language-section {
+ margin-top: 2rem;
+ padding: 2rem;
+ background: linear-gradient(135deg, rgba(156, 39, 176, 0.1) 0%, rgba(123, 31, 162, 0.1) 100%);
+ border: 2px dashed rgba(156, 39, 176, 0.5);
+ border-radius: 8px;
+ text-align: center;
+}
+
+.add-custom-language-btn {
+ background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+ border: 2px solid #ba68c8;
+ border-radius: 8px;
+ padding: 1rem 2rem;
+ color: #ffffff;
+ font-size: 1rem;
+ font-weight: 600;
+ cursor: pointer;
+ transition: all 0.3s ease;
+ display: inline-flex;
+ align-items: center;
+ gap: 0.5rem;
+}
+
+.add-custom-language-btn:hover {
+ background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%);
+ transform: translateY(-2px);
+ box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+}
+
+.add-custom-language-btn:active {
+ transform: translateY(0);
+}
+
+.add-custom-language-btn i {
+ font-size: 1.2rem;
+}
+
+.custom-language-hint {
+ margin-top: 0.75rem;
+ color: #ba68c8;
+ font-size: 0.9rem;
+ font-style: italic;
 }
 </style>
 

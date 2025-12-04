@@ -219,3 +219,70 @@ export async function _onResetLanguages(event) {
   ui.notifications.info("Language selections have been reset to granted languages.");
   await this.render();
 }
+
+/**
+ * Handle add custom language button
+ */
+export async function _onAddCustomLanguage(event) {
+  event.preventDefault();
+
+  // Get language data to check limits
+  const languageData = this.characterData.languageData;
+  const grantedCount = languageData?.granted?.length || 0;
+  const additionalAllowed = languageData?.additional || 0;
+  const currentAdditional = this.characterData.languages.length - grantedCount;
+
+  // Check if can select more languages
+  if (currentAdditional >= additionalAllowed) {
+    ui.notifications.warn(`You can only select ${additionalAllowed} additional language${additionalAllowed !== 1 ? 's' : ''} (based on INT modifier).`);
+    return;
+  }
+
+  // Show dialog to enter custom language name
+  const customLanguage = await Dialog.prompt({
+    title: "Add Custom Language",
+    content: `
+      <div style="margin-bottom: 1rem;">
+        <p>Enter the name of your custom language:</p>
+        <p style="font-size: 0.9rem; color: #888; margin-top: 0.5rem;">
+          This is useful for homebrew campaigns or unique character backgrounds.
+        </p>
+      </div>
+      <div class="form-group">
+        <label for="custom-language-input">Language Name:</label>
+        <input
+          id="custom-language-input"
+          name="customLanguage"
+          type="text"
+          placeholder="e.g., Ancient Sith, Clan Dialect..."
+          autofocus
+          style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;"
+        />
+      </div>
+    `,
+    callback: (html) => {
+      const input = html.find('input[name="customLanguage"]');
+      return input.val()?.trim();
+    },
+    rejectClose: false,
+    options: { width: 400 }
+  });
+
+  // Check if user entered a language name
+  if (!customLanguage) {
+    return; // User cancelled or entered nothing
+  }
+
+  // Check if language already exists
+  if (this.characterData.languages.includes(customLanguage)) {
+    ui.notifications.warn(`${customLanguage} is already in your language list.`);
+    return;
+  }
+
+  // Add the custom language
+  this.characterData.languages.push(customLanguage);
+  SWSELogger.log(`CharGen | Added custom language: ${customLanguage}`);
+  ui.notifications.info(`Added custom language: ${customLanguage}`);
+
+  await this.render();
+}
