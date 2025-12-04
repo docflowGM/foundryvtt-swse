@@ -1192,11 +1192,46 @@ export default class CharacterGenerator extends Application {
    */
   _getClassMetadata(className) {
     const metadata = {
+      // Base Classes
       'Jedi': { icon: 'fa-jedi', description: 'Force-wielding guardians of peace and justice' },
       'Noble': { icon: 'fa-crown', description: 'Leaders, diplomats, and aristocrats of influence' },
       'Scoundrel': { icon: 'fa-mask', description: 'Rogues, smugglers, and fortune seekers' },
       'Scout': { icon: 'fa-binoculars', description: 'Explorers, trackers, and wilderness experts' },
-      'Soldier': { icon: 'fa-shield-alt', description: 'Warriors, tacticians, and military specialists' }
+      'Soldier': { icon: 'fa-shield-alt', description: 'Warriors, tacticians, and military specialists' },
+
+      // Prestige Classes
+      'Ace Pilot': { icon: 'fa-fighter-jet', description: 'Elite pilots who master vehicle combat' },
+      'Assassin': { icon: 'fa-crosshairs', description: 'Deadly killers who strike from the shadows' },
+      'Bounty Hunter': { icon: 'fa-bullseye', description: 'Trackers who hunt targets for profit' },
+      'Charlatan': { icon: 'fa-theater-masks', description: 'Masters of deception and disguise' },
+      'Corporate Agent': { icon: 'fa-briefcase', description: 'Operatives working for corporate interests' },
+      'Crime Lord': { icon: 'fa-chess-king', description: 'Leaders of criminal organizations' },
+      'Droid Commander': { icon: 'fa-robot', description: 'Tacticians who lead and coordinate droids' },
+      'Elite Trooper': { icon: 'fa-user-shield', description: 'Elite military specialists and commandos' },
+      'Enforcer': { icon: 'fa-gavel', description: 'Intimidating agents who enforce their will' },
+      'Force Adept': { icon: 'fa-hand-sparkles', description: 'Force users without formal Jedi training' },
+      'Force Disciple': { icon: 'fa-book-open', description: 'Students devoted to studying the Force' },
+      'Gladiator': { icon: 'fa-shield', description: 'Arena fighters who excel in melee combat' },
+      'Gunslinger': { icon: 'fa-gun', description: 'Quick-draw experts with ranged weapons' },
+      'Imperial Knight': { icon: 'fa-chess-knight', description: 'Force-wielding servants of the Empire' },
+      'Improviser': { icon: 'fa-tools', description: 'Resourceful experts who adapt to any situation' },
+      'Independent Droid': { icon: 'fa-battery-full', description: 'Self-aware droids with independent thinking' },
+      'Infiltrator': { icon: 'fa-user-ninja', description: 'Stealth experts who infiltrate enemy territory' },
+      'Jedi Knight': { icon: 'fa-jedi', description: 'Experienced Jedi who have proven their worth' },
+      'Jedi Master': { icon: 'fa-star', description: 'Elite Jedi who have achieved mastery of the Force' },
+      'Martial Arts Master': { icon: 'fa-fist-raised', description: 'Unarmed combat specialists and fighters' },
+      'Master Privateer': { icon: 'fa-ship', description: 'Legendary spacers and ship captains' },
+      'Medic': { icon: 'fa-medkit', description: 'Healers skilled in medicine and first aid' },
+      'Melee Duelist': { icon: 'fa-skull-crossbones', description: 'Masters of one-on-one melee combat' },
+      'Military Engineer': { icon: 'fa-hard-hat', description: 'Combat engineers and demolitions experts' },
+      'Officer': { icon: 'fa-medal', description: 'Military leaders and tactical commanders' },
+      'Outlaw': { icon: 'fa-ban', description: 'Criminals who live outside the law' },
+      'Pathfinder': { icon: 'fa-compass', description: 'Expert guides and wilderness scouts' },
+      'Saboteur': { icon: 'fa-bomb', description: 'Specialists in sabotage and demolitions' },
+      'Shaper': { icon: 'fa-cube', description: 'Biotechnologists who manipulate living organisms' },
+      'Sith Apprentice': { icon: 'fa-user-secret', description: 'Dark side Force users in training' },
+      'Sith Lord': { icon: 'fa-skull', description: 'Masters of the dark side of the Force' },
+      'Vanguard': { icon: 'fa-flag', description: 'Front-line warriors who lead the charge' }
     };
     return metadata[className] || { icon: 'fa-user', description: 'Unknown class' };
   }
