@@ -68,6 +68,15 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  game.settings.register("swse", "characterCreation", {
+    name: "Character Creation Settings",
+    hint: "Consolidated character creation settings",
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {}
+  });
+
   // ============================================
   // Droids
   // ============================================
@@ -255,6 +264,29 @@ export function registerHouseruleSettings() {
     default: "none"
   });
 
+  game.settings.register("swse", "weaponRangeMultiplier", {
+    name: "Weapon Range Multiplier",
+    hint: "Multiplier for all weapon ranges",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 1.0,
+    range: {
+      min: 0.25,
+      max: 2.0,
+      step: 0.25
+    }
+  });
+
+  game.settings.register("swse", "armoredDefenseForAll", {
+    name: "Armored Defense for All",
+    hint: "All characters can add armor bonus to Reflex Defense regardless of armor proficiency",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   // ============================================
   // Second Wind
   // ============================================
@@ -391,6 +423,32 @@ export function registerHouseruleSettings() {
     default: true
   });
 
+  game.settings.register("swse", "forcePointRecovery", {
+    name: "Force Point Recovery",
+    hint: "When Force Points are recovered",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "level": "On Level Up Only (Standard)",
+      "extended": "After Extended Rest",
+      "session": "Each Session"
+    },
+    default: "level"
+  });
+
+  game.settings.register("swse", "darkSideTemptation", {
+    name: "Dark Side Temptation",
+    hint: "Rules for Dark Side temptation and redemption",
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {
+      enabled: true,
+      automatic: false
+    }
+  });
+
   // ============================================
   // Combat Feats
   // ============================================
@@ -447,6 +505,36 @@ export function registerHouseruleSettings() {
     config: true,
     type: Boolean,
     default: false
+  });
+
+  game.settings.register("swse", "crossClassSkillTraining", {
+    name: "Cross-Class Skill Training",
+    hint: "Allow training in skills that are not class skills",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  game.settings.register("swse", "retrainingEnabled", {
+    name: "Retraining Enabled",
+    hint: "Allow characters to retrain feats, skills, and talents",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register("swse", "skillFocusRestriction", {
+    name: "Skill Focus Restriction",
+    hint: "Restrictions on the Skill Focus feat",
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {
+      useTheForce: 0,
+      scaling: "normal"
+    }
   });
 
   // ============================================
@@ -517,6 +605,19 @@ export function registerHouseruleSettings() {
     config: true,
     type: Boolean,
     default: true
+  });
+
+  // ============================================
+  // Houserule Presets
+  // ============================================
+
+  game.settings.register("swse", "houserulePreset", {
+    name: "Active Houserule Preset",
+    hint: "The currently active houserule preset configuration",
+    scope: "world",
+    config: false,
+    type: String,
+    default: "standard"
   });
 
   SWSELogger.log("SWSE | House rule settings registered");
