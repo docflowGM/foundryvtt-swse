@@ -40,9 +40,10 @@ async function loadFeatMetadata() {
  * @param {Array} feats - Array of feat objects
  * @param {Object} metadata - Feat metadata
  * @param {Array} selectedFeats - Currently selected feats
+ * @param {Actor} actor - The actor (optional, for checking owned feats)
  * @returns {Array} Array of category objects with feats
  */
-function organizeFeatsIntoCategories(feats, metadata, selectedFeats = []) {
+function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor = null) {
   const categories = {};
 
   // Initialize categories
@@ -58,9 +59,35 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = []) {
     };
   });
 
+  // Check if actor owns this feat
+  const ownedFeats = actor ? actor.items.filter(i => i.type === 'feat').map(f => f.name) : [];
+
+  // List of feats that can be taken multiple times
+  const repeatableFeats = [
+    'Extra Second Wind',
+    'Extra Rage',
+    'Skill Training',
+    'Linguist',
+    'Exotic Weapon Proficiency',
+    'Weapon Proficiency (Advanced Melee Weapons)',
+    'Weapon Proficiency (Heavy Weapons)',
+    'Weapon Proficiency (Pistols)',
+    'Weapon Proficiency (Rifles)',
+    'Weapon Proficiency (Simple Weapons)',
+    'Weapon Focus',
+    'Double Attack',
+    'Triple Attack',
+    'Triple Crit',
+    'Force Training',
+    'Force Regimen Mastery'
+  ];
+
   // Assign feats to categories with enhanced metadata
   feats.forEach(feat => {
     const featMeta = metadata.feats[feat.name];
+    const isOwned = ownedFeats.includes(feat.name);
+    const isRepeatable = repeatableFeats.some(rf => feat.name.includes(rf) || rf.includes(feat.name));
+
     if (!featMeta) {
       // Feat not in metadata - add to misc category
       const enhancedFeat = {
@@ -69,7 +96,9 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = []) {
         tagsString: '',
         chain: null,
         isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
-        isUnavailable: !feat.isQualified
+        isUnavailable: !feat.isQualified,
+        isOwned: isOwned,
+        isRepeatable: isRepeatable
       };
       categories['misc'].feats.push(enhancedFeat);
       categories['misc'].count++;
@@ -84,7 +113,9 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = []) {
       chainOrder: featMeta.chainOrder || 0,
       prerequisiteFeat: featMeta.prerequisiteFeat || null,
       isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
-      isUnavailable: !feat.isQualified
+      isUnavailable: !feat.isQualified,
+      isOwned: isOwned,
+      isRepeatable: isRepeatable
     };
 
     const categoryId = featMeta.category || 'misc';
@@ -103,8 +134,9 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = []) {
     .sort((a, b) => a.order - b.order)
     .filter(cat => cat.count > 0); // Only include categories with feats
 
-  // Sort feats within each category by chain order, then alphabetically
+  // Sort feats within each category and organize chains hierarchically
   sortedCategories.forEach(category => {
+    // First, sort all feats by chain and order
     category.feats.sort((a, b) => {
       // First, sort by chain (feats in same chain together)
       if (a.chain && b.chain) {
@@ -117,6 +149,30 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = []) {
       if (b.chain) return 1;
       // Then alphabetically
       return a.name.localeCompare(b.name);
+    });
+
+    // Add hierarchical indent level based on prerequisite chain
+    category.feats.forEach(feat => {
+      if (!feat.chain) {
+        feat.indentLevel = 0;
+        return;
+      }
+
+      // Calculate indent level by counting prerequisite depth
+      let indentLevel = 0;
+      let currentPrereq = feat.prerequisiteFeat;
+
+      // Walk up the prerequisite chain to determine depth
+      while (currentPrereq) {
+        indentLevel++;
+        const prereqFeat = category.feats.find(f => f.name === currentPrereq);
+        currentPrereq = prereqFeat?.prerequisiteFeat;
+
+        // Safety check to prevent infinite loops
+        if (indentLevel > 10) break;
+      }
+
+      feat.indentLevel = indentLevel;
     });
   });
 
@@ -158,9 +214,9 @@ export async function loadFeats(actor, selectedClass, pendingData) {
             // This class has a specific feat list (e.g., "jedi_feats", "noble_feats")
             SWSELogger.log(`SWSE LevelUp | Filtering feats by list: ${featFeature.list} for ${className}`);
 
-            // Filter to only feats that have this class in their bonusFeatFor array
+            // Filter to only feats that have this class in their bonus_feat_for array
             featObjects = featObjects.filter(f => {
-              const bonusFeatFor = f.system?.bonusFeatFor || [];
+              const bonusFeatFor = f.system?.bonus_feat_for || [];
               return bonusFeatFor.includes(className) || bonusFeatFor.includes('all');
             });
 
@@ -176,7 +232,7 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     // Load feat metadata and organize into categories
     const metadata = await loadFeatMetadata();
     const selectedFeats = pendingData?.selectedFeats || [];
-    const categories = organizeFeatsIntoCategories(filteredFeats, metadata, selectedFeats);
+    const categories = organizeFeatsIntoCategories(filteredFeats, metadata, selectedFeats, actor);
 
     SWSELogger.log(`SWSE LevelUp | Loaded ${filteredFeats.length} feats in ${categories.length} categories, ${filteredFeats.filter(f => f.isQualified).length} qualified`);
 

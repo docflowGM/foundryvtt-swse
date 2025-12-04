@@ -471,12 +471,19 @@
           <div class="category-feats" style="display: none;">
             <div class="feat-selection-grid" data-category-grid="{{this.id}}">
               {{#each this.feats}}
-              <div class="feat-card feat-with-tooltip {{#if this.isSelected}}selected{{/if}} {{#if this.isUnavailable}}unavailable{{/if}}"
+              <div class="feat-card feat-with-tooltip {{#if this.isSelected}}selected{{/if}} {{#if this.isUnavailable}}unavailable{{/if}} {{#if this.isOwned}}{{#unless this.isRepeatable}}owned{{/unless}}{{/if}} {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}}"
                    data-feat-id="{{this._id}}"
                    data-feat-name="{{this.name}}"
                    data-feat-tags="{{this.tagsString}}"
                    data-feat-category="{{../this.id}}"
+                   data-indent-level="{{this.indentLevel}}"
+                   data-is-repeatable="{{this.isRepeatable}}"
                    data-tooltip="{{this.system.benefit}}">
+                {{#if this.isOwned}}
+                <div class="feat-owned-badge {{#if this.isRepeatable}}repeatable{{/if}}">
+                  <i class="fas fa-check-circle"></i> {{#if this.isRepeatable}}Owned (Repeatable){{else}}Owned{{/if}}
+                </div>
+                {{/if}}
                 <h4>{{this.name}}</h4>
 
                 {{#if this.chain}}
@@ -501,8 +508,9 @@
 
                 <button class="select-bonus-feat choice-button"
                         data-feat-id="{{this._id}}"
-                        {{#if this.isUnavailable}}disabled title="Prerequisites not met"{{/if}}>
-                  <i class="fas fa-star"></i> {{#if this.isUnavailable}}Unavailable{{else}}Select{{/if}}
+                        {{#if this.isUnavailable}}disabled title="Prerequisites not met"{{/if}}
+                        {{#if this.isOwned}}{{#unless this.isRepeatable}}disabled title="Already owned"{{/unless}}{{/if}}>
+                  <i class="fas {{#if this.isOwned}}fa-check-circle{{else}}fa-star{{/if}}"></i> {{#if this.isOwned}}{{#if this.isRepeatable}}Select Again{{else}}Owned{{/if}}{{else if this.isUnavailable}}Unavailable{{else}}Select{{/if}}
                 </button>
               </div>
               {{/each}}
@@ -1262,9 +1270,107 @@
   box-shadow: none;
 }
 
+.feat-card.owned {
+  opacity: 0.7;
+  border-color: #00d966;
+  background: rgba(0, 217, 102, 0.05);
+}
+
+.feat-card.owned:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 217, 102, 0.2);
+}
+
+.feat-owned-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 217, 102, 0.2);
+  border: 1px solid #00d966;
+  border-radius: 4px;
+  color: #00d966;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.feat-owned-badge i {
+  font-size: 0.85rem;
+}
+
+.feat-owned-badge.repeatable {
+  background: rgba(255, 193, 7, 0.2);
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
 .show-unavailable-toggle:checked ~ .feat-categories-container .feat-card.unavailable {
   opacity: 0.6;
   pointer-events: auto;
+}
+
+/* Feat chain indentation - hierarchical levels */
+.feat-card.feat-indent-1 {
+  margin-left: 2rem;
+  border-left: 3px solid rgba(255, 193, 7, 0.3);
+  position: relative;
+}
+
+.feat-card.feat-indent-1::before {
+  content: "└─";
+  position: absolute;
+  left: -1.5rem;
+  top: 1rem;
+  color: rgba(255, 193, 7, 0.5);
+  font-weight: bold;
+}
+
+.feat-card.feat-indent-2 {
+  margin-left: 4rem;
+  border-left: 3px solid rgba(255, 193, 7, 0.3);
+  position: relative;
+}
+
+.feat-card.feat-indent-2::before {
+  content: "└──";
+  position: absolute;
+  left: -2rem;
+  top: 1rem;
+  color: rgba(255, 193, 7, 0.5);
+  font-weight: bold;
+}
+
+.feat-card.feat-indent-3 {
+  margin-left: 6rem;
+  border-left: 3px solid rgba(255, 193, 7, 0.3);
+  position: relative;
+}
+
+.feat-card.feat-indent-3::before {
+  content: "└───";
+  position: absolute;
+  left: -2.5rem;
+  top: 1rem;
+  color: rgba(255, 193, 7, 0.5);
+  font-weight: bold;
+}
+
+.feat-card.feat-indent-4 {
+  margin-left: 8rem;
+  border-left: 3px solid rgba(255, 193, 7, 0.3);
+  position: relative;
+}
+
+.feat-card.feat-indent-4::before {
+  content: "└────";
+  position: absolute;
+  left: -3rem;
+  top: 1rem;
+  color: rgba(255, 193, 7, 0.5);
+  font-weight: bold;
 }
 
 .feat-card h4 {

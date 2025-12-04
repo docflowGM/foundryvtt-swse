@@ -375,7 +375,7 @@ export default class CharacterGenerator extends Application {
         const selectedClass = this.characterData.classes[0];
         const className = selectedClass.name || selectedClass;
         const bonusFeats = context.packs.feats.filter(f => {
-          const bonusFeatFor = f.system?.bonusFeatFor || [];
+          const bonusFeatFor = f.system?.bonus_feat_for || [];
           return bonusFeatFor.includes(className);
         });
         context.packs.classBonusFeats = bonusFeats;
@@ -1244,11 +1244,53 @@ export default class CharacterGenerator extends Application {
       if (metadata && metadata.category && categorized[metadata.category]) {
         categorized[metadata.category].feats.push({
           ...feat,
-          metadata: metadata
+          metadata: metadata,
+          chain: metadata.chain,
+          chainOrder: metadata.chainOrder,
+          prerequisiteFeat: metadata.prerequisiteFeat
         });
       } else {
         uncategorized.push(feat);
       }
+    }
+
+    // Sort feats within each category and calculate indent levels
+    for (const category of Object.values(categorized)) {
+      if (!category.feats) continue;
+
+      // Sort by chain and chain order
+      category.feats.sort((a, b) => {
+        if (a.chain && b.chain) {
+          if (a.chain === b.chain) {
+            return (a.chainOrder || 0) - (b.chainOrder || 0);
+          }
+          return a.chain.localeCompare(b.chain);
+        }
+        if (a.chain) return -1;
+        if (b.chain) return 1;
+        return a.name.localeCompare(b.name);
+      });
+
+      // Calculate indent levels
+      category.feats.forEach(feat => {
+        if (!feat.chain) {
+          feat.indentLevel = 0;
+          return;
+        }
+
+        let indentLevel = 0;
+        let currentPrereq = feat.prerequisiteFeat;
+
+        while (currentPrereq) {
+          indentLevel++;
+          const prereqFeat = category.feats.find(f => f.name === currentPrereq);
+          currentPrereq = prereqFeat?.prerequisiteFeat;
+
+          if (indentLevel > 10) break;
+        }
+
+        feat.indentLevel = indentLevel;
+      });
     }
 
     // Add uncategorized if any exist

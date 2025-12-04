@@ -4,6 +4,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { getTalentTrees, getTalentTreeName } from './chargen-property-accessor.js';
+import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 
 /**
  * Handle feat selection
@@ -32,6 +33,24 @@ export async function _onSelectFeat(event) {
     );
     if (existsOnActor) {
       ui.notifications.warn(`"${feat.name}" is already on your character sheet!`);
+      return;
+    }
+  }
+
+  // Check prerequisites (unless in Free Build mode)
+  if (!this.freeBuild) {
+    const tempActor = this.actor || this._createTempActorForValidation();
+    const pendingData = {
+      selectedFeats: this.characterData.feats || [],
+      selectedClass: this.characterData.classes?.[0],
+      abilityIncreases: {},
+      selectedSkills: Object.keys(this.characterData.skills || {}).filter(k => this.characterData.skills[k]?.trained),
+      selectedTalents: this.characterData.talents || []
+    };
+
+    const prereqCheck = PrerequisiteValidator.checkFeatPrerequisites(feat, tempActor, pendingData);
+    if (!prereqCheck.valid) {
+      ui.notifications.warn(`Cannot select "${feat.name}": ${prereqCheck.reasons.join(', ')}`);
       return;
     }
   }
