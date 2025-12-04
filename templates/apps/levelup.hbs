@@ -471,11 +471,12 @@
           <div class="category-feats" style="display: none;">
             <div class="feat-selection-grid" data-category-grid="{{this.id}}">
               {{#each this.feats}}
-              <div class="feat-card feat-with-tooltip {{#if this.isSelected}}selected{{/if}} {{#if this.isUnavailable}}unavailable{{/if}}"
+              <div class="feat-card feat-with-tooltip {{#if this.isSelected}}selected{{/if}} {{#if this.isUnavailable}}unavailable{{/if}} {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}}"
                    data-feat-id="{{this._id}}"
                    data-feat-name="{{this.name}}"
                    data-feat-tags="{{this.tagsString}}"
                    data-feat-category="{{../this.id}}"
+                   data-indent-level="{{this.indentLevel}}"
                    data-tooltip="{{this.system.benefit}}">
                 <h4>{{this.name}}</h4>
 
@@ -1265,6 +1266,67 @@
 .show-unavailable-toggle:checked ~ .feat-categories-container .feat-card.unavailable {
   opacity: 0.6;
   pointer-events: auto;
+}
+
+/* Feat chain indentation - hierarchical levels */
+.feat-card.feat-indent-1 {
+  margin-left: 2rem;
+  border-left: 3px solid rgba(255, 193, 7, 0.3);
+  position: relative;
+}
+
+.feat-card.feat-indent-1::before {
+  content: "└─";
+  position: absolute;
+  left: -1.5rem;
+  top: 1rem;
+  color: rgba(255, 193, 7, 0.5);
+  font-weight: bold;
+}
+
+.feat-card.feat-indent-2 {
+  margin-left: 4rem;
+  border-left: 3px solid rgba(255, 193, 7, 0.3);
+  position: relative;
+}
+
+.feat-card.feat-indent-2::before {
+  content: "└──";
+  position: absolute;
+  left: -2rem;
+  top: 1rem;
+  color: rgba(255, 193, 7, 0.5);
+  font-weight: bold;
+}
+
+.feat-card.feat-indent-3 {
+  margin-left: 6rem;
+  border-left: 3px solid rgba(255, 193, 7, 0.3);
+  position: relative;
+}
+
+.feat-card.feat-indent-3::before {
+  content: "└───";
+  position: absolute;
+  left: -2.5rem;
+  top: 1rem;
+  color: rgba(255, 193, 7, 0.5);
+  font-weight: bold;
+}
+
+.feat-card.feat-indent-4 {
+  margin-left: 8rem;
+  border-left: 3px solid rgba(255, 193, 7, 0.3);
+  position: relative;
+}
+
+.feat-card.feat-indent-4::before {
+  content: "└────";
+  position: absolute;
+  left: -3rem;
+  top: 1rem;
+  color: rgba(255, 193, 7, 0.5);
+  font-weight: bold;
 }
 
 .feat-card h4 {

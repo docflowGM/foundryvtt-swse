@@ -103,8 +103,9 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = []) {
     .sort((a, b) => a.order - b.order)
     .filter(cat => cat.count > 0); // Only include categories with feats
 
-  // Sort feats within each category by chain order, then alphabetically
+  // Sort feats within each category and organize chains hierarchically
   sortedCategories.forEach(category => {
+    // First, sort all feats by chain and order
     category.feats.sort((a, b) => {
       // First, sort by chain (feats in same chain together)
       if (a.chain && b.chain) {
@@ -117,6 +118,30 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = []) {
       if (b.chain) return 1;
       // Then alphabetically
       return a.name.localeCompare(b.name);
+    });
+
+    // Add hierarchical indent level based on prerequisite chain
+    category.feats.forEach(feat => {
+      if (!feat.chain) {
+        feat.indentLevel = 0;
+        return;
+      }
+
+      // Calculate indent level by counting prerequisite depth
+      let indentLevel = 0;
+      let currentPrereq = feat.prerequisiteFeat;
+
+      // Walk up the prerequisite chain to determine depth
+      while (currentPrereq) {
+        indentLevel++;
+        const prereqFeat = category.feats.find(f => f.name === currentPrereq);
+        currentPrereq = prereqFeat?.prerequisiteFeat;
+
+        // Safety check to prevent infinite loops
+        if (indentLevel > 10) break;
+      }
+
+      feat.indentLevel = indentLevel;
     });
   });
 
@@ -158,9 +183,9 @@ export async function loadFeats(actor, selectedClass, pendingData) {
             // This class has a specific feat list (e.g., "jedi_feats", "noble_feats")
             SWSELogger.log(`SWSE LevelUp | Filtering feats by list: ${featFeature.list} for ${className}`);
 
-            // Filter to only feats that have this class in their bonusFeatFor array
+            // Filter to only feats that have this class in their bonus_feat_for array
             featObjects = featObjects.filter(f => {
-              const bonusFeatFor = f.system?.bonusFeatFor || [];
+              const bonusFeatFor = f.system?.bonus_feat_for || [];
               return bonusFeatFor.includes(className) || bonusFeatFor.includes('all');
             });
 

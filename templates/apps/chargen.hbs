@@ -692,7 +692,7 @@
  <p class="category-description">{{../description}}</p>
  <div class="feats-grid">
  {{#each this.feats}}
- <div class="feat-card feat-with-tooltip" data-tooltip="{{this.system.benefit}}">
+ <div class="feat-card feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}">
  <button type="button" class="select-feat choice-button" data-featid="{{this._id}}">
  <h5>{{this.name}}</h5>
  {{#if this.system.prerequisites}}
@@ -713,7 +713,7 @@
  {{else}}
  <div class="feats-list">
  {{#each packs.feats}}
- <div class="feat-item feat-with-tooltip" data-tooltip="{{this.system.benefit}}">
+ <div class="feat-item feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}">
  <button type="button" class="select-feat choice-button" data-featid="{{this._id}}">
  <h4>{{this.name}}</h4>
  {{#if this.system.prerequisites}}
