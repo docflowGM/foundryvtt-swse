@@ -330,7 +330,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     const feat = selectBonusFeat(featId, featData, this.selectedFeats);
     if (!feat) return;
 
-    // Check for duplicates - character already has this feat
+    // Check for duplicates - character already has this feat (allow for repeatable feats)
     const alreadyHas = this.actor.items.some(i =>
       i.type === 'feat' && (i.name === feat.name || i._id === feat._id || i._id === featId)
     );
@@ -340,19 +340,226 @@ export class SWSELevelUpEnhanced extends FormApplication {
       f.name === feat.name || f._id === feat._id || f._id === featId
     );
 
-    if (alreadyHas) {
+    // List of repeatable feats
+    const repeatableFeats = [
+      'Extra Second Wind', 'Extra Rage', 'Skill Training', 'Linguist',
+      'Exotic Weapon Proficiency', 'Weapon Proficiency', 'Weapon Focus',
+      'Double Attack', 'Triple Attack', 'Triple Crit',
+      'Force Training', 'Force Regimen Mastery'
+    ];
+    const isRepeatable = repeatableFeats.some(rf => feat.name.includes(rf) || rf.includes(feat.name));
+
+    if (alreadyHas && !isRepeatable) {
       ui.notifications.warn(`You already have the feat "${feat.name}"!`);
       return;
     }
 
-    if (alreadySelected) {
+    if (alreadySelected && !isRepeatable) {
       ui.notifications.warn(`You've already selected "${feat.name}" this level!`);
       return;
     }
 
-    this.selectedFeats.push(feat);
-    ui.notifications.info(`Selected feat: ${feat.name}`);
+    // Check if this feat requires a dialog for selection
+    if (feat.name.includes('Force Training')) {
+      await this._handleForceTrainingFeat(feat);
+    } else if (feat.name === 'Skill Training') {
+      // Only show dialog if feat is exactly "Skill Training" (not already specified)
+      await this._handleSkillTrainingFeat(feat);
+    } else if ((feat.name === 'Weapon Proficiency' || feat.name === 'Exotic Weapon Proficiency' || feat.name === 'Weapon Focus') ||
+               (feat.name.includes('Weapon Proficiency') && !feat.name.includes('(')) ||
+               (feat.name.includes('Weapon Focus') && !feat.name.includes('(')) ||
+               (feat.name.includes('Exotic Weapon Proficiency') && !feat.name.includes('('))) {
+      // Only show dialog if weapon type is not already specified in parentheses
+      await this._handleWeaponChoiceFeat(feat);
+    } else {
+      // Standard feat selection (including feats with specific weapons already chosen)
+      this.selectedFeats.push(feat);
+      ui.notifications.info(`Selected feat: ${feat.name}`);
+    }
+
     await this.render();
+  }
+
+  // ========================================
+  // FEAT SELECTION DIALOGS
+  // ========================================
+
+  async _handleForceTrainingFeat(feat) {
+    // Force Training opens the force power selection interface
+    // For now, just add the feat - the force power selection happens separately
+    this.selectedFeats.push(feat);
+    ui.notifications.info(`Selected feat: ${feat.name}. You will select Force powers separately.`);
+  }
+
+  async _handleSkillTrainingFeat(feat) {
+    // Get all skills
+    const skills = [
+      { key: 'acrobatics', name: 'Acrobatics' },
+      { key: 'climb', name: 'Climb' },
+      { key: 'deception', name: 'Deception' },
+      { key: 'endurance', name: 'Endurance' },
+      { key: 'gatherInformation', name: 'Gather Information' },
+      { key: 'initiative', name: 'Initiative' },
+      { key: 'jump', name: 'Jump' },
+      { key: 'mechanics', name: 'Mechanics' },
+      { key: 'perception', name: 'Perception' },
+      { key: 'persuasion', name: 'Persuasion' },
+      { key: 'pilot', name: 'Pilot' },
+      { key: 'ride', name: 'Ride' },
+      { key: 'stealth', name: 'Stealth' },
+      { key: 'survival', name: 'Survival' },
+      { key: 'swim', name: 'Swim' },
+      { key: 'treatInjury', name: 'Treat Injury' },
+      { key: 'useComputer', name: 'Use Computer' },
+      { key: 'useTheForce', name: 'Use the Force' }
+    ];
+
+    // Get currently trained skills to show as already selected
+    const trainedSkills = Object.keys(this.actor.system.skills || {})
+      .filter(key => this.actor.system.skills[key]?.trained);
+
+    // Create options HTML
+    const skillOptions = skills.map(skill => {
+      const isTrained = trainedSkills.includes(skill.key);
+      return `<option value="${skill.key}" ${isTrained ? 'disabled' : ''}>${skill.name}${isTrained ? ' ✓ (already trained)' : ''}</option>`;
+    }).join('');
+
+    return new Promise((resolve) => {
+      new Dialog({
+        title: `${feat.name} - Select Skill`,
+        content: `
+          <div class="form-group">
+            <label>Choose a skill to gain training in:</label>
+            <select id="skill-training-selection" style="width: 100%; padding: 5px;">
+              ${skillOptions}
+            </select>
+            <p class="hint-text" style="margin-top: 10px;">
+              <i class="fas fa-info-circle"></i>
+              You gain training in this skill, making it a class skill and allowing you to use it untrained.
+            </p>
+          </div>
+        `,
+        buttons: {
+          select: {
+            icon: '<i class="fas fa-check"></i>',
+            label: "Select",
+            callback: (html) => {
+              const selectedSkill = html.find('#skill-training-selection').val();
+              const skillName = skills.find(s => s.key === selectedSkill)?.name || selectedSkill;
+
+              // Create a modified feat with the skill choice noted
+              const modifiedFeat = foundry.utils.deepClone(feat);
+              modifiedFeat.system.benefit = `${feat.system.benefit}\n\n<strong>Selected Skill:</strong> ${skillName}`;
+              modifiedFeat.name = `${feat.name} (${skillName})`;
+
+              this.selectedFeats.push(modifiedFeat);
+              ui.notifications.info(`Selected ${feat.name} for ${skillName}`);
+              resolve(true);
+            }
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: "Cancel",
+            callback: () => {
+              ui.notifications.warn("Skill Training feat cancelled.");
+              resolve(false);
+            }
+          }
+        },
+        default: "select"
+      }, { width: 400 }).render(true);
+    });
+  }
+
+  async _handleWeaponChoiceFeat(feat) {
+    // Define weapon groups and options
+    let weaponOptions = [];
+    let title = '';
+    let description = '';
+
+    if (feat.name.includes('Weapon Proficiency')) {
+      title = `${feat.name} - Select Weapon Group`;
+      description = 'Choose a weapon group to gain proficiency with:';
+      weaponOptions = [
+        { value: 'simple', label: 'Simple Weapons' },
+        { value: 'pistols', label: 'Pistols' },
+        { value: 'rifles', label: 'Rifles' },
+        { value: 'heavy', label: 'Heavy Weapons' },
+        { value: 'advanced_melee', label: 'Advanced Melee Weapons' }
+      ];
+    } else if (feat.name.includes('Exotic Weapon Proficiency')) {
+      title = `${feat.name} - Select Exotic Weapon`;
+      description = 'Choose an exotic weapon to gain proficiency with:';
+      weaponOptions = [
+        { value: 'lightwhip', label: 'Lightwhip' },
+        { value: 'net', label: 'Net' },
+        { value: 'bolas', label: 'Bolas' },
+        { value: 'shockwhip', label: 'Shockwhip' },
+        { value: 'lightsaber', label: 'Lightsaber' },
+        { value: 'double_lightsaber', label: 'Double-Bladed Lightsaber' }
+      ];
+    } else if (feat.name.includes('Weapon Focus')) {
+      title = `${feat.name} - Select Weapon Group`;
+      description = 'Choose a weapon group or exotic weapon to focus on:';
+      weaponOptions = [
+        { value: 'pistols', label: 'Pistols' },
+        { value: 'rifles', label: 'Rifles' },
+        { value: 'heavy', label: 'Heavy Weapons' },
+        { value: 'simple', label: 'Simple Weapons' },
+        { value: 'advanced_melee', label: 'Advanced Melee Weapons' },
+        { value: 'lightsabers', label: 'Lightsabers' }
+      ];
+    }
+
+    const optionsHTML = weaponOptions.map(opt =>
+      `<option value="${opt.value}">${opt.label}</option>`
+    ).join('');
+
+    return new Promise((resolve) => {
+      new Dialog({
+        title: title,
+        content: `
+          <div class="form-group">
+            <label>${description}</label>
+            <select id="weapon-choice-selection" style="width: 100%; padding: 5px;">
+              ${optionsHTML}
+            </select>
+            <p class="hint-text" style="margin-top: 10px;">
+              <i class="fas fa-info-circle"></i>
+              ${feat.system.benefit || ''}
+            </p>
+          </div>
+        `,
+        buttons: {
+          select: {
+            icon: '<i class="fas fa-check"></i>',
+            label: "Select",
+            callback: (html) => {
+              const selectedWeapon = html.find('#weapon-choice-selection').val();
+              const weaponLabel = weaponOptions.find(w => w.value === selectedWeapon)?.label || selectedWeapon;
+
+              // Create a modified feat with the weapon choice noted
+              const modifiedFeat = foundry.utils.deepClone(feat);
+              modifiedFeat.system.benefit = `${feat.system.benefit}\n\n<strong>Selected Weapon:</strong> ${weaponLabel}`;
+              modifiedFeat.name = `${feat.name} (${weaponLabel})`;
+
+              this.selectedFeats.push(modifiedFeat);
+              ui.notifications.info(`Selected ${feat.name} for ${weaponLabel}`);
+              resolve(true);
+            }
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: "Cancel",
+            callback: () => {
+              ui.notifications.warn("Feat selection cancelled.");
+              resolve(false);
+            }
+          }
+        },
+        default: "select"
+      }, { width: 400 }).render(true);
+    });
   }
 
   // ========================================
