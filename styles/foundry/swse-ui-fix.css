@@ -28,76 +28,31 @@
 /* ============================================
    RESET PROBLEMATIC POSITIONING
    Remove any rules that offset core UI elements
+   Only apply minimal resets - let Foundry/Forge handle positioning
    ============================================ */
-#ui-top,
-#ui-left,
-#ui-right,
-#sidebar,
-#controls,
-#navigation {
-    /* Reset positioning to Foundry defaults */
-    margin: 0 !important;
-    padding: 0 !important;
-    transform: none !important;
-}
 
-/* Ensure sidebar stays at top with no gap */
-#sidebar {
-    top: 0 !important;
-    right: 0 !important;
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
+/* DO NOT override core UI positioning with !important */
+/* Foundry and Forge handle their own positioning */
 
-/* Ensure controls stay at left edge with no offset */
-#controls {
-    left: 0 !important;
-    margin-left: 0 !important;
-    top: calc(var(--swse-nav-height) + 10px);
-}
-
-/* Ensure navigation bar stays at top */
-#navigation {
-    top: 0 !important;
-    margin-top: 0 !important;
-    padding-top: 0 !important;
+/* Only ensure no unexpected transforms are applied by our system */
+.swse {
+    transform: none;
 }
 
 /* ============================================
    FORGE VTT BODY/HTML RESETS
    ============================================ */
-/* Reset Forge global body styles that break Foundry layout */
-html, body {
-  position: static !important;
-  display: block !important;
-  overflow: visible !important;
-  height: 100% !important;
-  width: 100% !important;
-  margin: 0 !important;
-  transform: none !important;
-}
-
-/* Ensure game board (canvas) fills screen */
-#board {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-}
+/* REMOVED: These aggressive resets were conflicting with Forge's UI */
+/* Let Foundry and Forge handle their own layout */
 
 /* ============================================
    WINDOW POSITIONING CONSTRAINTS
    ============================================ */
 /* Restore window functionality: draggable headers, resizable edges, proper centering */
 .window-app, .dialog {
-  position: absolute !important;
-  z-index: 100 !important;
-  /* Don't override position properties - let JS handle it */
-  transform: none !important;
-  /* Constrain maximum dimensions to prevent off-screen rendering */
-  max-width: calc(100vw - var(--swse-sidebar-width) - var(--swse-controls-width) - 40px) !important;
-  max-height: calc(100vh - var(--swse-nav-height) - 60px) !important;
+  /* Only apply minimal constraints - let Foundry handle positioning */
+  position: absolute;
+  /* Don't override z-index, max-width, or max-height - Foundry handles these */
 }
 
 .window-app.minimized {

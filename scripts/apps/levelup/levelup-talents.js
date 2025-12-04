@@ -52,7 +52,7 @@ export function getsTalent(selectedClass, actor) {
  * @param {Actor} actor - The actor
  * @returns {Promise<Array>} Available talent trees
  */
-export async function getTalentTrees(selectedClass, actor) {
+export async function getAvailableTalentTrees(selectedClass, actor) {
   const talentTreeRestriction = game.settings.get("swse", "talentTreeRestriction");
   let availableTrees = [];
 
@@ -122,7 +122,7 @@ export async function loadTalentData() {
  */
 export async function showEnhancedTreeSelection(selectedClass, actor, talentData, selectCallback) {
   // Get available talent trees
-  const talentTrees = await getTalentTrees(selectedClass, actor);
+  const talentTrees = await getAvailableTalentTrees(selectedClass, actor);
 
   // Show enhanced tree selection
   await TalentTreeVisualizer.showTreeSelection(

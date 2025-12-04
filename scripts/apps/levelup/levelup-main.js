@@ -46,7 +46,7 @@ import {
 // Import talent module functions
 import {
   getsTalent,
-  getTalentTrees,
+  getAvailableTalentTrees,
   loadTalentData,
   showEnhancedTreeSelection,
   showEnhancedTalentTree,
@@ -224,7 +224,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // If class selected, get talent trees
     if (this.selectedClass) {
       data.selectedClass = this.selectedClass;
-      data.talentTrees = await getTalentTrees(this.selectedClass, this.actor);
+      data.talentTrees = await getAvailableTalentTrees(this.selectedClass, this.actor);
     }
 
     // Free Build mode flag

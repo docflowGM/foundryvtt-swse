@@ -17,6 +17,7 @@ import * as AbilitiesModule from './chargen-abilities.js';
 import * as SkillsModule from './chargen-skills.js';
 import * as LanguagesModule from './chargen-languages.js';
 import * as FeatsTalentsModule from './chargen-feats-talents.js';
+import * as ForcePowersModule from './chargen-force-powers.js';
 
 export default class CharacterGenerator extends Application {
   constructor(actor = null, options = {}) {
@@ -67,6 +68,7 @@ export default class CharacterGenerator extends Application {
       featsRequired: 1, // Base 1, +1 for Human
       talents: [],
       powers: [],
+      forcePowersRequired: 0, // Calculated based on Force Sensitivity and Force Training feats
       level: 1,
       hp: { value: 1, max: 1, temp: 0 },
       forcePoints: { value: 0, max: 0, die: "1d6" },
@@ -92,7 +94,8 @@ export default class CharacterGenerator extends Application {
       feats: null,
       talents: null,
       classes: null,
-      droids: null
+      droids: null,
+      forcePowers: null
     };
     this._skillsJson = null;
     this._featMetadata = null;
@@ -417,6 +420,11 @@ export default class CharacterGenerator extends Application {
       context.packs.talentsInTree = [];
     }
 
+    // Force powers
+    context.characterData.forcePowersRequired = this._getForcePowersNeeded();
+    context.availableForcePowers = await this._getAvailableForcePowers();
+    SWSELogger.log(`CharGen | Force powers required: ${context.characterData.forcePowersRequired}, available: ${context.availableForcePowers.length}`);
+
     // Point buy pools
     context.droidPointBuyPool = game.settings.get("swse", "droidPointBuyPool") || 20;
     context.livingPointBuyPool = game.settings.get("swse", "livingPointBuyPool") || 25;
@@ -511,6 +519,8 @@ export default class CharacterGenerator extends Application {
     $html.find('.select-talent-tree').click(this._onSelectTalentTree.bind(this));
     $html.find('.back-to-talent-trees').click(this._onBackToTalentTrees.bind(this));
     $html.find('.select-talent').click(this._onSelectTalent.bind(this));
+    $html.find('.select-power').click(this._onSelectForcePower.bind(this));
+    $html.find('.remove-power').click(this._onRemoveForcePower.bind(this));
     $html.find('.skill-select').change(this._onSkillSelect.bind(this));
     $html.find('.train-skill-btn').click(this._onTrainSkill.bind(this));
     $html.find('.untrain-skill-btn').click(this._onUntrainSkill.bind(this));
@@ -582,8 +592,15 @@ export default class CharacterGenerator extends Application {
       steps.push("abilities", "skills", "languages", "feats", "summary");
     } else {
       // PC workflow: normal flow with class and talents
-      // Note: skills before languages, languages before feats
-      steps.push("abilities", "class", "skills", "languages", "feats", "talents", "summary", "shop");
+      // Note: skills before feats to allow Skill Focus validation
+      steps.push("abilities", "class", "skills", "feats", "talents");
+
+      // Add force powers step if character is Force-sensitive
+      if (this.characterData.forceSensitive && this._getForcePowersNeeded() > 0) {
+        steps.push("force-powers");
+      }
+
+      steps.push("summary", "shop");
     }
     return steps;
   }
@@ -1422,3 +1439,4 @@ Object.assign(CharacterGenerator.prototype, AbilitiesModule);
 Object.assign(CharacterGenerator.prototype, SkillsModule);
 Object.assign(CharacterGenerator.prototype, LanguagesModule);
 Object.assign(CharacterGenerator.prototype, FeatsTalentsModule);
+Object.assign(CharacterGenerator.prototype, ForcePowersModule);
