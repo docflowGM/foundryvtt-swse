@@ -224,5 +224,109 @@
   "Aleena": {
     "languages": ["Aleena", "Basic"],
     "canSpeakAll": true
+  },
+  "Anomid": {
+    "languages": ["Anomid", "Basic"],
+    "canSpeakAll": true
+  },
+  "Barabel": {
+    "languages": ["Barabel", "Basic"],
+    "canSpeakAll": true
+  },
+  "Besalisk": {
+    "languages": ["Besalisk", "Basic"],
+    "canSpeakAll": true
+  },
+  "Chiss": {
+    "languages": ["Cheunh", "Basic"],
+    "canSpeakAll": true
+  },
+  "Devaronian": {
+    "languages": ["Devaronese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Iktotchi": {
+    "languages": ["Iktotchese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Klatooinian": {
+    "languages": ["Klatooinian", "Basic"],
+    "canSpeakAll": true
+  },
+  "Kubaz": {
+    "languages": ["Kubaz", "Basic"],
+    "canSpeakAll": true
+  },
+  "Muun": {
+    "languages": ["Muun", "Basic"],
+    "canSpeakAll": true
+  },
+  "Nikto": {
+    "languages": ["Nikto", "Basic"],
+    "canSpeakAll": true
+  },
+  "Ortolan": {
+    "languages": ["Ortolan", "Basic"],
+    "canSpeakAll": true
+  },
+  "Pau'an": {
+    "languages": ["Utapese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Quermian": {
+    "languages": ["Quermian", "Basic"],
+    "canSpeakAll": true
+  },
+  "Vurk": {
+    "languages": ["Vurk", "Basic"],
+    "canSpeakAll": true
+  },
+  "Weequay": {
+    "languages": ["Weequay", "Basic"],
+    "canSpeakAll": true
+  },
+  "Zeltron": {
+    "languages": ["Zeltron", "Basic"],
+    "canSpeakAll": true
+  },
+  "Anzati": {
+    "languages": ["Anzati", "Basic"],
+    "canSpeakAll": true
+  },
+  "Chevin": {
+    "languages": ["Chevin", "Basic"],
+    "canSpeakAll": true
+  },
+  "Defel": {
+    "languages": ["Defel", "Basic"],
+    "canSpeakAll": true
+  },
+  "Firrerreo": {
+    "languages": ["Firrerreo", "Basic"],
+    "canSpeakAll": true
+  },
+  "Givin": {
+    "languages": ["Givin", "Basic"],
+    "canSpeakAll": true
+  },
+  "Kiffar": {
+    "languages": ["Kiffar", "Basic"],
+    "canSpeakAll": true
+  },
+  "Omwati": {
+    "languages": ["Omwati", "Basic"],
+    "canSpeakAll": true
+  },
+  "Shi'ido": {
+    "languages": ["Shi'ido", "Basic"],
+    "canSpeakAll": true
+  },
+  "Vratix": {
+    "languages": ["Vratix", "Basic"],
+    "canSpeakAll": true
+  },
+  "Yevetha": {
+    "languages": ["Yevethan", "Basic"],
+    "canSpeakAll": true
   }
 }
