@@ -42,10 +42,7 @@
     "styles/apps/vehicle-modification.css",
     "styles/apps/upgrade-app.css",
     "styles/canvas/canvas-ui.css",
-    "styles/foundry/foundry-ui-overrides.css",
-    "styles/foundry/foundry-ui-layout.css",
-    "styles/foundry/window-draggable-fix.css",
-    "styles/foundry/forge-body-fix.css"
+    "styles/foundry/swse-ui-fix.css"
   ],
   "languages": [
     {
