@@ -1,477 +1,124 @@
-<div class="swse-sheet">
-<form class="{{cssClass}} flexcol vehicle-sheet" autocomplete="off">
- {{!-- Holographic Frame Header --}}
- <div class="holo-frame-top">
- <img class="sw-logo" src="systems/swse/assets/ui/swse-logo.png" alt="Star Wars Saga Edition"/>
- </div>
+import { SheetV2 } from "@foundry/applications/sheets";
+import { TabsV2 } from "@foundry/applications/api";
 
- {{!-- Header Section --}}
- <header class="sheet-header vehicle-header window-app-header">
- <div class="header-row window-app-drag-handle">
- <div class="vehicle-name-section">
- <label>Vehicle Name:</label>
- <input name="name" type="text" value="{{actor.name}}" placeholder="Enter Vehicle Name"/>
- </div>
- <div class="vehicle-type-section">
- <label>Type:</label>
- <input name="system.type" type="text" value="{{system.type}}" placeholder="Starfighter, Speeder, etc."/>
- </div>
- <div class="vehicle-size-section">
- <label>Size:</label>
- <select name="system.size" data-dtype="String">
- <option value="large" {{#if (eq system.size "large")}}selected{{/if}}>Large</option>
- <option value="huge" {{#if (eq system.size "huge")}}selected{{/if}}>Huge</option>
- <option value="gargantuan" {{#if (eq system.size "gargantuan")}}selected{{/if}}>Gargantuan</option>
- <option value="colossal" {{#if (eq system.size "colossal")}}selected{{/if}}>Colossal</option>
- <option value="colossal (frigate)" {{#if (eq system.size "colossal (frigate)")}}selected{{/if}}>Colossal (Frigate)</option>
- <option value="colossal (cruiser)" {{#if (eq system.size "colossal (cruiser)")}}selected{{/if}}>Colossal (Cruiser)</option>
- <option value="colossal (station)" {{#if (eq system.size "colossal (station)")}}selected{{/if}}>Colossal (Station)</option>
- </select>
- </div>
- </div>
- </header>
+export default class SwseVehicleSheet extends SheetV2 {
 
- {{!-- Navigation Tabs --}}
- <nav class="sheet-tabs tabs" data-group="primary">
- <a class="item active" data-tab="main">Main Stats</a>
- <a class="item" data-tab="combat">Combat</a>
- <a class="item" data-tab="crew">Crew & Systems</a>
- <a class="item" data-tab="cargo">Cargo & Details</a>
- </nav>
+    /** -----------------------------------------
+     *  Which actor types does this sheet apply to?
+     * ----------------------------------------- */
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            id: "swse-vehicle-sheet",
+            classes: ["swse", "sheet", "vehicle-sheet"],
+            window: {
+                title: "Vehicle Sheet"
+            },
+            position: {
+                width: 900,
+                height: 900
+            }
+        });
+    }
 
- {{!-- Main Content --}}
- <section class="sheet-body">
- 
- {{!-- MAIN STATS TAB --}}
- <div class="tab active" data-group="primary" data-tab="main">
- <div class="vehicle-display-container">
+    /** -----------------------------------------
+     *  Template Path
+     * ----------------------------------------- */
+    static get template() {
+        return "systems/swse/templates/actors/vehicle/vehicle-sheet.hbs";
+    }
 
- {{!-- Ship Diagram Background with Stats Overlay --}}
- <div class="ship-diagram-background">
- <div class="schematic-grid-overlay"></div>
- </div>
+    /** -----------------------------------------
+     *  Activate Sheet
+     * ----------------------------------------- */
+    async _render(...args) {
+        await super._render(...args);
 
- {{!-- Stats Around the Vehicle with connector lines --}}
- <div class="stat-displays">
- 
- {{!-- Hull/HP (Top) --}}
- <div class="stat-box stat-hull" style="top: 10%; left: 50%; transform: translateX(-50%);">
- <div class="stat-label">HULL POINTS</div>
- <div class="stat-value-group">
- <input type="number" name="system.hull.value" value="{{system.hull.value}}" data-dtype="Number" class="stat-input"/> 
- <span class="stat-separator">/</span>
- <input type="number" name="system.hull.max" value="{{system.hull.max}}" data-dtype="Number" class="stat-input"/>
- </div>
- <div class="connector-line line-hull"></div>
- </div>
+        // Bind TabsV2 after DOM is ready
+        const html = this.element[0];
+        this._tabs = new TabsV2(html.querySelector(".sheet-tabs"), {
+            group: "primary",
+            initial: "main"
+        });
+    }
 
- {{!-- Speed (Top Right) --}}
- <div class="stat-box stat-speed" style="top: 15%; right: 10%;">
- <div class="stat-label">SPEED</div>
- <div class="stat-value">
- <input type="text" name="system.speed" value="{{system.speed}}" placeholder="12 squares"/>
- </div>
- <div class="connector-line line-speed"></div>
- </div>
+    /** -----------------------------------------
+     *  Event Listeners
+     * ----------------------------------------- */
+    activateListeners(html) {
+        super.activateListeners(html);
 
- {{!-- Shields (Right) --}}
- <div class="stat-box stat-shields" style="top: 40%; right: 8%;">
- <div class="stat-label">SHIELDS</div>
- <div class="stat-value-group">
- <input type="number" name="system.shields.value" value="{{system.shields.value}}" data-dtype="Number" class="stat-input" placeholder="0"/> 
- <span class="stat-separator">/</span>
- <input type="number" name="system.shields.max" value="{{system.shields.max}}" data-dtype="Number" class="stat-input" placeholder="0"/>
- </div>
- <div class="connector-line line-shields"></div>
- </div>
+        // Add weapon
+        html[0].querySelector(".weapon-add")?.addEventListener("click", this._onWeaponAdd.bind(this));
 
- {{!-- Hyperdrive (Bottom Right) --}}
- <div class="stat-box stat-hyperdrive" style="bottom: 20%; right: 12%;">
- <div class="stat-label">HYPERDRIVE</div>
- <div class="stat-value">
- <input type="text" name="system.hyperdrive_class" value="{{system.hyperdrive_class}}" placeholder="x1.0" style="width: 60px;"/>
- </div>
- <div class="stat-sublabel">Backup:</div>
- <div class="stat-value">
- <input type="text" name="system.backup_class" value="{{system.backup_class}}" placeholder="x12" style="width: 60px;"/>
- </div>
- <div class="connector-line line-hyperdrive"></div>
- </div>
+        // Remove weapon
+        html[0].querySelectorAll(".weapon-remove")?.forEach(btn => {
+            btn.addEventListener("click", ev => this._onWeaponRemove(ev));
+        });
 
- {{!-- Weapons (Bottom) --}}
- <div class="stat-box stat-weapons" style="bottom: 10%; left: 50%; transform: translateX(-50%);">
- <div class="stat-label">WEAPONS</div>
- <div class="stat-value">
- {{#if system.weapons}}
- <span class="weapon-count">{{system.weapons.length}} Mounted</span>
- {{else}}
- <span class="weapon-count">0 Mounted</span>
- {{/if}}
- </div>
- <div class="connector-line line-weapons"></div>
- </div>
+        // Toggle crew action dropdowns
+        html[0].querySelectorAll(".crew-actions-toggle")?.forEach(btn => {
+            btn.addEventListener("click", ev => this._onToggleCrewActions(ev));
+        });
 
- {{!-- Cargo (Bottom Left) --}}
- <div class="stat-box stat-cargo" style="bottom: 20%; left: 12%;">
- <div class="stat-label">CARGO</div>
- <div class="stat-value">
- <input type="text" name="system.cargo_capacity" value="{{system.cargo_capacity}}" placeholder="100 kg"/>
- </div>
- <div class="connector-line line-cargo"></div>
- </div>
+        // Auto-process tags
+        html[0].querySelector(".tags-input")?.addEventListener("change", this._onTagInput.bind(this));
+    }
 
- {{!-- Crew (Left) --}}
- <div class="stat-box stat-crew" style="top: 40%; left: 8%;">
- <div class="stat-label">CREW</div>
- <div class="stat-value">
- <input type="text" name="system.crew" value="{{system.crew}}" placeholder="1 (Skilled)"/>
- </div>
- <div class="stat-sublabel">Passengers:</div>
- <div class="stat-value">
- <input type="text" name="system.passengers" value="{{system.passengers}}" placeholder="6" style="width: 80px;"/>
- </div>
- <div class="connector-line line-crew"></div>
- </div>
+    /* ============================================================
+     *  WEAPON MANAGEMENT
+     * ============================================================ */
 
- {{!-- Consumables (Top Left) --}}
- <div class="stat-box stat-consumables" style="top: 15%; left: 10%;">
- <div class="stat-label">CONSUMABLES</div>
- <div class="stat-value">
- <input type="text" name="system.consumables" value="{{system.consumables}}" placeholder="2 months"/>
- </div>
- <div class="connector-line line-consumables"></div>
- </div>
+    async _onWeaponAdd(ev) {
+        ev.preventDefault();
 
- {{!-- Reflex Defense (Center Right) --}}
- <div class="stat-box stat-reflex" style="top: 50%; right: 5%; transform: translateY(-50%);">
- <div class="stat-label">REFLEX DEF</div>
- <div class="stat-value-large">
- {{system.reflexDefense}}
- </div>
- <div class="connector-line line-reflex"></div>
- </div>
+        const weapons = foundry.utils.duplicate(this.actor.system.weapons ?? []);
+        weapons.push({
+            name: "",
+            arc: "",
+            bonus: "",
+            damage: "",
+            range: ""
+        });
 
- </div>
- </div>
+        return this.actor.update({ "system.weapons": weapons });
+    }
 
- {{!-- Attributes & Quick Stats Bar --}}
- <div class="attributes-quick-stats">
- {{!-- Attributes Section --}}
- <div class="attributes-section">
- <h4 class="section-header">Attributes</h4>
- <div class="attributes-grid">
- <div class="attribute-item">
- <label>STR</label>
- <input type="number" name="system.attributes.str.base" value="{{system.attributes.str.base}}" data-dtype="Number" class="attr-input"/>
- <span class="attr-mod">{{formatModifier system.attributes.str.mod}}</span>
- </div>
- <div class="attribute-item">
- <label>DEX</label>
- <input type="number" name="system.attributes.dex.base" value="{{system.attributes.dex.base}}" data-dtype="Number" class="attr-input"/>
- <span class="attr-mod">{{formatModifier system.attributes.dex.mod}}</span>
- </div>
- <div class="attribute-item">
- <label>INT</label>
- <input type="number" name="system.attributes.int.base" value="{{system.attributes.int.base}}" data-dtype="Number" class="attr-input"/>
- <span class="attr-mod">{{formatModifier system.attributes.int.mod}}</span>
- </div>
- <div class="attribute-item">
- <label>WIS</label>
- <input type="number" name="system.attributes.wis.base" value="{{system.attributes.wis.base}}" data-dtype="Number" class="attr-input"/>
- <span class="attr-mod">{{formatModifier system.attributes.wis.mod}}</span>
- </div>
- <div class="attribute-item">
- <label>CHA</label>
- <input type="number" name="system.attributes.cha.base" value="{{system.attributes.cha.base}}" data-dtype="Number" class="attr-input"/>
- <span class="attr-mod">{{formatModifier system.attributes.cha.mod}}</span>
- </div>
- </div>
- </div>
+    async _onWeaponRemove(ev) {
+        ev.preventDefault();
 
- {{!-- Quick Stats --}}
- <div class="quick-stats-bar">
- <div class="quick-stat">
- <label>Cost (New):</label>
- <input type="number" name="system.cost.new" value="{{system.cost.new}}" data-dtype="Number" placeholder="150000"/>
- <span class="credits-label">cr</span>
- </div>
- <div class="quick-stat">
- <label>Cost (Used):</label>
- <input type="number" name="system.cost.used" value="{{system.cost.used}}" data-dtype="Number" placeholder="75000"/>
- <span class="credits-label">cr</span>
- </div>
- </div>
- </div>
- </div>
+        const index = Number(ev.currentTarget.dataset.index);
+        const weapons = foundry.utils.duplicate(this.actor.system.weapons ?? []);
 
- {{!-- COMBAT TAB --}}
- <div class="tab" data-group="primary" data-tab="combat">
- <div class="combat-section">
- 
- {{!-- Defense Stats --}}
- <div class="defense-stats-grid">
- <div class="defense-stat">
- <label>Reflex Defense:</label>
- <input type="number" name="system.reflexDefense" value="{{system.reflexDefense}}" data-dtype="Number" placeholder="19"/>
- </div>
- <div class="defense-stat">
- <label>Flat-Footed:</label>
- <input type="number" name="system.flatFooted" value="{{system.flatFooted}}" data-dtype="Number" placeholder="16"/>
- </div>
- <div class="defense-stat">
- <label>Fortitude Defense:</label>
- <input type="number" name="system.fortitudeDefense" value="{{system.fortitudeDefense}}" data-dtype="Number" placeholder="22"/>
- </div>
- <div class="defense-stat">
- <label>Damage Threshold:</label>
- <input type="number" name="system.damageThreshold" value="{{system.damageThreshold}}" data-dtype="Number" placeholder="32"/>
- </div>
- <div class="defense-stat">
- <label>Damage Reduction:</label>
- <input type="number" name="system.damageReduction" value="{{system.damageReduction}}" data-dtype="Number" placeholder="10"/>
- </div>
- <div class="defense-stat">
- <label>Initiative:</label>
- <input type="text" name="system.initiative" value="{{system.initiative}}" placeholder="+4"/>
- </div>
- </div>
+        if (index >= 0) {
+            weapons.splice(index, 1);
+            return this.actor.update({ "system.weapons": weapons });
+        }
+    }
 
- {{!-- Maneuver & Attack --}}
- <div class="combat-modifiers">
- <div class="combat-modifier">
- <label>Maneuver:</label>
- <input type="text" name="system.maneuver" value="{{system.maneuver}}" placeholder="+4"/>
- </div>
- <div class="combat-modifier">
- <label>Base Attack Bonus:</label>
- <input type="text" name="system.baseAttackBonus" value="{{system.baseAttackBonus}}" placeholder="+6"/>
- </div>
- </div>
+    /* ============================================================
+     *  CREW ACTION DROPDOWNS
+     * ============================================================ */
 
- {{!-- Weapons List --}}
- <div class="weapons-section">
- <h3>Weapons Systems</h3>
- <div class="weapons-header">
- <span class="weapon-col-name">Weapon</span>
- <span class="weapon-col-arc">Arc</span>
- <span class="weapon-col-bonus">Attack</span>
- <span class="weapon-col-damage">Damage</span>
- <span class="weapon-col-range">Range</span>
- <span class="weapon-col-actions">Actions</span>
- </div>
- <div class="weapons-list">
- {{#each system.weapons as |weapon idx|}}
- <div class="weapon-item">
- <input type="text" name="system.weapons.{{idx}}.name" value="{{weapon.name}}" placeholder="Laser Cannon" class="weapon-name"/>
- <input type="text" name="system.weapons.{{idx}}.arc" value="{{weapon.arc}}" placeholder="Forward" class="weapon-arc"/>
- <input type="text" name="system.weapons.{{idx}}.bonus" value="{{weapon.bonus}}" placeholder="+10" class="weapon-bonus"/>
- <input type="text" name="system.weapons.{{idx}}.damage" value="{{weapon.damage}}" placeholder="5d10x2" class="weapon-damage"/>
- <input type="text" name="system.weapons.{{idx}}.range" value="{{weapon.range}}" placeholder="Close" class="weapon-range"/>
- <button type="button" class="weapon-remove" data-index="{{idx}}" title="Remove Weapon">
- <i class="fas fa-trash"></i>
- </button>
- </div>
- {{/each}}
- </div>
- <button type="button" class="weapon-add">
- <i class="fas fa-plus"></i> Add Weapon
- </button>
- </div>
+    _onToggleCrewActions(ev) {
+        const btn = ev.currentTarget;
+        const pos = btn.dataset.position;
 
- {{!-- Sensors --}}
- <div class="sensors-section">
- <label>Sensors:</label>
- <textarea name="system.senses" rows="2">{{system.senses}}</textarea>
- </div>
- </div>
- </div>
+        const panel = this.element[0].querySelector(`.actions-panel[data-position="${pos}"]`);
+        if (panel) {
+            panel.classList.toggle("open");
+        }
+    }
 
- {{!-- CREW & SYSTEMS TAB --}}
- <div class="tab" data-group="primary" data-tab="crew">
- <div class="crew-section">
- <h3>Crew Positions & Combat Actions</h3>
+    /* ============================================================
+     *  TAG INPUT HANDLING
+     * ============================================================ */
 
- <div class="crew-positions-grid">
- {{!-- Pilot --}}
- <div class="crew-position">
- <div class="crew-position-header">
- <label>Pilot:</label>
- {{#if @root.shipActions.pilot.hasActions}}
- <button type="button" class="crew-actions-toggle" data-position="pilot" title="Show available actions">
- <i class="fas fa-chevron-down"></i>
- </button>
- {{/if}}
- </div>
- <div class="crew-slot" data-slot="pilot">
- {{#if system.crewPositions.pilot.name}}
- <span class="crew-member">{{system.crewPositions.pilot.name}}</span>
- {{else}}
- <span class="crew-empty">Unassigned</span>
- {{/if}}
- </div>
- {{#if @root.shipActions.pilot.hasActions}}
- {{> "systems/swse/templates/partials/ship-combat-actions-panel.hbs" actions=@root.shipActions.pilot.actions position="pilot"}}
- {{/if}}
- </div>
+    async _onTagInput(ev) {
+        const input = ev.currentTarget.value;
+        const tags = input.split(",").map(t => t.trim()).filter(t => t.length > 0);
 
- {{!-- Co-Pilot --}}
- <div class="crew-position">
- <div class="crew-position-header">
- <label>Co-Pilot:</label>
- {{#if @root.shipActions.copilot.hasActions}}
- <button type="button" class="crew-actions-toggle" data-position="copilot" title="Show available actions">
- <i class="fas fa-chevron-down"></i>
- </button>
- {{/if}}
- </div>
- <div class="crew-slot" data-slot="copilot">
- {{#if system.crewPositions.copilot.name}}
- <span class="crew-member">{{system.crewPositions.copilot.name}}</span>
- {{else}}
- <span class="crew-empty">Unassigned</span>
- {{/if}}
- </div>
- {{#if @root.shipActions.copilot.hasActions}}
- {{> "systems/swse/templates/partials/ship-combat-actions-panel.hbs" actions=@root.shipActions.copilot.actions position="copilot"}}
- {{/if}}
- </div>
+        await this.actor.update({ "system.tags": tags });
+        ev.currentTarget.value = "";
+    }
 
- {{!-- Gunner --}}
- <div class="crew-position">
- <div class="crew-position-header">
- <label>Gunner(s):</label>
- {{#if @root.shipActions.gunner.hasActions}}
- <button type="button" class="crew-actions-toggle" data-position="gunner" title="Show available actions">
- <i class="fas fa-chevron-down"></i>
- </button>
- {{/if}}
- </div>
- <div class="crew-slot" data-slot="gunner">
- {{#if system.crewPositions.gunner.name}}
- <span class="crew-member">{{system.crewPositions.gunner.name}}</span>
- {{else}}
- <span class="crew-empty">Unassigned</span>
- {{/if}}
- </div>
- {{#if @root.shipActions.gunner.hasActions}}
- {{> "systems/swse/templates/partials/ship-combat-actions-panel.hbs" actions=@root.shipActions.gunner.actions position="gunner"}}
- {{/if}}
- </div>
-
- {{!-- Engineer --}}
- <div class="crew-position">
- <div class="crew-position-header">
- <label>Engineer:</label>
- {{#if @root.shipActions.engineer.hasActions}}
- <button type="button" class="crew-actions-toggle" data-position="engineer" title="Show available actions">
- <i class="fas fa-chevron-down"></i>
- </button>
- {{/if}}
- </div>
- <div class="crew-slot" data-slot="engineer">
- {{#if system.crewPositions.engineer.name}}
- <span class="crew-member">{{system.crewPositions.engineer.name}}</span>
- {{else}}
- <span class="crew-empty">Unassigned</span>
- {{/if}}
- </div>
- {{#if @root.shipActions.engineer.hasActions}}
- {{> "systems/swse/templates/partials/ship-combat-actions-panel.hbs" actions=@root.shipActions.engineer.actions position="engineer"}}
- {{/if}}
- </div>
-
- {{!-- Shields --}}
- <div class="crew-position">
- <div class="crew-position-header">
- <label>Shields:</label>
- {{#if @root.shipActions.shields.hasActions}}
- <button type="button" class="crew-actions-toggle" data-position="shields" title="Show available actions">
- <i class="fas fa-chevron-down"></i>
- </button>
- {{/if}}
- </div>
- <div class="crew-slot" data-slot="shields">
- {{#if system.crewPositions.shields.name}}
- <span class="crew-member">{{system.crewPositions.shields.name}}</span>
- {{else}}
- <span class="crew-empty">Unassigned</span>
- {{/if}}
- </div>
- {{#if @root.shipActions.shields.hasActions}}
- {{> "systems/swse/templates/partials/ship-combat-actions-panel.hbs" actions=@root.shipActions.shields.actions position="shields"}}
- {{/if}}
- </div>
-
- {{!-- Commander --}}
- <div class="crew-position">
- <div class="crew-position-header">
- <label>Commander:</label>
- {{#if @root.shipActions.commander.hasActions}}
- <button type="button" class="crew-actions-toggle" data-position="commander" title="Show available actions">
- <i class="fas fa-chevron-down"></i>
- </button>
- {{/if}}
- </div>
- <div class="crew-slot" data-slot="commander">
- {{#if system.crewPositions.commander.name}}
- <span class="crew-member">{{system.crewPositions.commander.name}}</span>
- {{else}}
- <span class="crew-empty">Unassigned</span>
- {{/if}}
- </div>
- {{#if @root.shipActions.commander.hasActions}}
- {{> "systems/swse/templates/partials/ship-combat-actions-panel.hbs" actions=@root.shipActions.commander.actions position="commander"}}
- {{/if}}
- </div>
- </div>
-
- <div class="crew-notes">
- <label>Crew Notes:</label>
- <textarea name="system.crewNotes" rows="3" placeholder="Additional crew information...">{{system.crewNotes}}</textarea>
- </div>
- </div>
- </div>
-
- {{!-- CARGO & DETAILS TAB --}}
- <div class="tab" data-group="primary" data-tab="cargo">
- <div class="details-section">
- 
- <div class="carried-craft">
- <label>Carried Craft:</label>
- <textarea name="system.carried_craft" rows="2" placeholder="2 Starfighters, 1 Shuttle...">{{system.carried_craft}}</textarea>
- </div>
-
- <div class="tags-section">
- <label>Tags:</label>
- <div class="tags-list">
- {{#each system.tags as |tag|}}
- <span class="tag-item">{{tag}}</span>
- {{/each}}
- </div>
- <input type="text" name="system.tagsInput" placeholder="Add tags (comma-separated)" class="tags-input"/>
- </div>
-
- <div class="reference-section">
- <div class="reference-item">
- <label>Sourcebook:</label>
- <input type="text" name="system.sourcebook" value="{{system.sourcebook}}" placeholder="Core Rulebook"/>
- </div>
- <div class="reference-item">
- <label>Page:</label>
- <input type="number" name="system.page" value="{{system.page}}" data-dtype="Number" placeholder="242"/>
- </div>
- </div>
-
- <div class="description-section">
- <label>Description:</label>
- <textarea name="system.description" rows="8" placeholder="Vehicle description and history...">{{system.description}}</textarea>
- </div>
- </div>
- </div>
-
- </section>
-
- {{!-- Footer --}}
- <div class="holo-frame-bottom"></div>
-</form>
-</div><!-- swse-sheet -->
+}
