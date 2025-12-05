@@ -442,6 +442,49 @@ export const BackgroundsModule = {
   },
 
   /**
+   * Handle random background button click
+   * @param {Event} event - Click event
+   */
+  async _onRandomBackground(event) {
+    event.preventDefault();
+
+    const allowedCount = this._getAllowedBackgroundCount();
+    const backgrounds = await this._loadBackgrounds();
+
+    // Randomly select a category
+    const categories = ['events', 'occupations', 'planets'];
+    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+
+    // Get backgrounds for that category
+    const categoryBackgrounds = randomCategory === 'events' ? backgrounds.events :
+                                 randomCategory === 'occupations' ? backgrounds.occupations :
+                                 [...backgrounds.planets_core, ...(this.characterData.allowHomebrewPlanets ? backgrounds.planets_homebrew : [])];
+
+    if (!categoryBackgrounds || categoryBackgrounds.length === 0) {
+      ui.notifications.warn(`No backgrounds available in category: ${randomCategory}`);
+      return;
+    }
+
+    // Randomly select a background
+    const randomIndex = Math.floor(Math.random() * categoryBackgrounds.length);
+    const randomBackground = categoryBackgrounds[randomIndex];
+
+    SWSELogger.log(`chargen: Randomly selected background: ${randomBackground.name} from category ${randomCategory}`);
+
+    // Set the background
+    this.characterData.background = randomBackground;
+    this.characterData.backgroundCategory = randomCategory;
+
+    // Show skill selection dialog
+    if (randomBackground.skillChoiceCount > 0) {
+      await this._showBackgroundSkillSelection(randomBackground);
+    } else {
+      ui.notifications.info(`Random background selected: ${randomBackground.name}`);
+      await this.render();
+    }
+  },
+
+  /**
    * Render background cards for the selected category
    * @param {HTMLElement} container - The container element
    */

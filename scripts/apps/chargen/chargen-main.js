@@ -443,13 +443,20 @@ export default class CharacterGenerator extends Application {
 
     // Available skills for selection with bonuses
     const halfLevel = Math.floor(this.characterData.level / 2);
+    // Get background class skills
+    const backgroundClassSkills = this._getBackgroundClassSkills ? this._getBackgroundClassSkills() : [];
+
     context.availableSkills = this._getAvailableSkills().map(skill => {
       const abilityMod = this.characterData.abilities[skill.ability]?.mod || 0;
       const isTrained = this.characterData.skills[skill.key]?.trained || false;
-      const isClassSkill = classSkills.some(cs =>
+
+      // Check if skill is a class skill from class OR background
+      const isClassSkillFromClass = classSkills.some(cs =>
         cs.toLowerCase().includes(skill.name.toLowerCase()) ||
         skill.name.toLowerCase().includes(cs.toLowerCase())
       );
+      const isClassSkillFromBackground = backgroundClassSkills.includes(skill.key);
+      const isClassSkill = isClassSkillFromClass || isClassSkillFromBackground;
 
       const baseBonus = halfLevel + abilityMod;
       const currentBonus = baseBonus + (isTrained ? 5 : 0);
@@ -459,6 +466,7 @@ export default class CharacterGenerator extends Application {
         ...skill,
         trained: isTrained,
         isClassSkill: isClassSkill,
+        isBackgroundSkill: isClassSkillFromBackground, // Mark skills that came from background
         currentBonus: currentBonus,
         trainedBonus: trainedBonus,
         abilityMod: abilityMod,
@@ -521,6 +529,7 @@ export default class CharacterGenerator extends Application {
     $html.find('.select-background').click(this._onSelectBackground.bind(this));
     $html.find('.change-background-btn').click(this._onChangeBackground.bind(this));
     $html.find('.allow-homebrew-toggle').change(this._onToggleHomebrewPlanets.bind(this));
+    $html.find('.random-background-btn').click(this._onRandomBackground.bind(this));
 
     // Droid builder/shop
     $html.find('.shop-tab').click(this._onShopTabClick.bind(this));

@@ -597,6 +597,16 @@
  </div>
  {{/if}}
 
+ {{!-- Random Background Button --}}
+ {{#unless characterData.background}}
+ <div class="random-background-container">
+ <button type="button" class="random-background-btn btn-secondary">
+ <i class="fas fa-dice"></i> Random Background
+ </button>
+ <span class="hint-text">Let fate choose your character's past</span>
+ </div>
+ {{/unless}}
+
  {{!-- Background Cards Display --}}
  <div class="background-cards-container">
  {{#if characterData.background}}
