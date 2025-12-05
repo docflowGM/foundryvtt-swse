@@ -1,15 +1,3 @@
-/*
-  swse-canvas-toolbar.js
-  Complete rewrite of the SWSE Canvas Toolbar to avoid Forge scaling/css conflicts.
-  - Does NOT extend Foundry Application to avoid canvas scaling issues in Forge.
-  - Renders a fixed-position HUD element appended to document.body (not inside the canvas wrapper).
-  - Uses scoped CSS to avoid global style collisions.
-  - Avoids global jQuery document listeners; uses namespaced window listeners cleaned on close.
-  - Provides compatibility fallbacks for chat input selectors and token id differences across Foundry versions.
-
-  Install: Replace the previous toolbar file with this module file in your system, then reload Foundry/Forge.
-*/
-
 import { SWSELogger } from '../utils/logger.js';
 import SWSEDialogHelper from '../helpers/swse-dialog-helper.js';
 
