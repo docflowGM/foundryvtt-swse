@@ -1,51 +1,143 @@
-<div class="swse-sheet">
-<form class="{{cssClass}} swse-character-sheet" autocomplete="off">
+// File: systems/swse/module/actors/sheets/swse-character-sheet.js
 
- {{!-- Persistent Header --}}
- {{> "systems/swse/templates/partials/actor/persistent-header.hbs"}}
+export default class SWSECharacterSheet extends ActorSheetV2 {
+  
+  /** @inheritdoc */
+  static DEFAULT_OPTIONS = {
+    ...super.DEFAULT_OPTIONS,
+    id: "swse-character-sheet",
+    classes: ["swse", "sheet", "actor", "character"],
+    window: {
+      title: "Character Sheet",
+      width: 780,
+      height: "auto"
+    },
+    actions: {
+      // Tab switching is handled automatically, but we register for clarity
+      switchTab: this.onSwitchTab,
+      setSheetTheme: this.onSetTheme,
+      createItem: this.onCreateItem,
+      editItem: this.onEditItem,
+      deleteItem: this.onDeleteItem,
+      rollCheck: this.onRollCheck
+    }
+  };
 
- {{!-- Navigation Tabs --}}
- <nav class="sheet-tabs tabs" data-group="primary">
- <a class="item active" data-tab="summary">Summary</a>
- <a class="item" data-tab="abilities">Abilities</a>
- <a class="item" data-tab="skills">Skills</a>
- <a class="item" data-tab="combat">Combat</a>
- {{#if system.forceSensitive}}
- <a class="item" data-tab="force">Force</a>
- {{/if}}
- <a class="item" data-tab="talents">Talents</a>
- <a class="item" data-tab="inventory">Inventory</a>
- <a class="item" data-tab="biography">Biography</a>
- </nav>
+  /* -------------------------------------------- */
 
- {{!-- Sheet Body --}}
- <section class="sheet-body">
- {{!-- Summary Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/summary-tab.hbs"}}
+  /** @inheritdoc */
+  static PARTS = {
+    header: {
+      id: "header",
+      template: "systems/swse/templates/partials/actor/persistent-header.hbs"
+    },
+    body: {
+      id: "body",
+      template: "systems/swse/templates/actors/character/character-sheet.hbs"
+    }
+  };
 
- {{!-- Abilities Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/abilities-tab.hbs"}}
+  /* -------------------------------------------- */
 
- {{!-- Skills Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/skills-tab.hbs"}}
+  /**
+   * Prepare sheet context (replaces getData in V1)
+   */
+  async _prepareContext(options) {
+    const actor = this.actor;
+    const systemData = actor.system;
 
- {{!-- Combat Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/combat-tab.hbs"}}
+    return {
+      actor,
+      system: systemData,
+      items: actor.items.contents,
+      sheetTheme: actor.getFlag("swse", "sheetTheme") ?? "theme-default",
+      editable: this.isEditable
+    };
+  }
 
- {{!-- Force Tab --}}
- {{#if system.forceSensitive}}
- {{> "systems/swse/templates/actors/character/tabs/force-tab.hbs"}}
- {{/if}}
+  /* -------------------------------------------- */
+  /*  ACTION HANDLERS                              */
+  /* -------------------------------------------- */
 
- {{!-- Talents Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/talents-tab.hbs"}}
+  /**
+   * Switch tab (AppV2)
+   */
+  static onSwitchTab(event, sheet) {
+    const tab = event.target.dataset.tab;
+    sheet.tabGroup.switch(tab);
+  }
 
- {{!-- Inventory Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/inventory-tab.hbs"}}
+  /**
+   * Set sheet theme
+   */
+  static async onSetTheme(event, sheet) {
+    const theme = event.target.value;
+    await sheet.actor.setFlag("swse", "sheetTheme", theme);
+    sheet.render(true);
+  }
 
- {{!-- Biography Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/biography-tab.hbs"}}
- </section>
+  /**
+   * Create a new item from a sheet action
+   */
+  static async onCreateItem(event, sheet) {
+    event.preventDefault();
+    const type = event.target.dataset.type ?? "feat";
 
-</form>
-</div>
+    return await Item.create({
+      name: `New ${type}`,
+      type,
+      system: {},
+      folder: null,
+      ownership: { default: 3 },
+      parent: sheet.actor
+    });
+  }
+
+  /**
+   * Edit an embedded item
+   */
+  static onEditItem(event, sheet) {
+    const itemId = event.target.closest("[data-item-id]")?.dataset.itemId;
+    if (!itemId) return;
+    const item = sheet.actor.items.get(itemId);
+    if (item) item.sheet.render(true);
+  }
+
+  /**
+   * Delete an item from inventory/talents/etc.
+   */
+  static async onDeleteItem(event, sheet) {
+    const itemId = event.target.closest("[data-item-id]")?.dataset.itemId;
+    if (!itemId) return;
+
+    await sheet.actor.deleteEmbeddedDocuments("Item", [itemId]);
+  }
+
+  /**
+   * Generic roll handler (skills, attacks, checks, etc.)
+   */
+  static async onRollCheck(event, sheet) {
+    const rollType = event.target.dataset.roll;
+    if (!rollType) return;
+
+    const actor = sheet.actor;
+    const formula = actor.system.rolls?.[rollType] ?? "1d20";
+
+    const roll = await new Roll(formula, actor.getRollData()).roll();
+    roll.toMessage({ speaker: actor });
+  }
+
+  /* -------------------------------------------- */
+  /*  SHEET INIT                                  */
+  /* -------------------------------------------- */
+
+  /** @inheritdoc */
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    // Tooltip example (optional)
+    html.querySelectorAll("[data-tooltip]").forEach(el => {
+      el.addEventListener("mouseenter", () => ui.tooltip.activate(el));
+    });
+  }
+}
