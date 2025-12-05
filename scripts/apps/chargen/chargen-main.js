@@ -516,6 +516,12 @@ export default class CharacterGenerator extends Application {
     $html.find('.untrain-skill-btn').click(this._onUntrainSkill.bind(this));
     $html.find('.reset-skills-btn').click(this._onResetSkills.bind(this));
 
+    // Background selections
+    $html.find('.background-category-tab').click(this._onBackgroundCategoryTabClick.bind(this));
+    $html.find('.select-background').click(this._onSelectBackground.bind(this));
+    $html.find('.change-background-btn').click(this._onChangeBackground.bind(this));
+    $html.find('.allow-homebrew-toggle').change(this._onToggleHomebrewPlanets.bind(this));
+
     // Droid builder/shop
     $html.find('.shop-tab').click(this._onShopTabClick.bind(this));
     $html.find('.accessory-tab').click(this._onAccessoryTabClick.bind(this));
@@ -554,6 +560,20 @@ export default class CharacterGenerator extends Application {
     $html.find('[name="class_select"]').change(async (ev) => {
       await this._onClassChanged(ev, $html[0]);
     });
+
+    // Background step - render cards if on background step
+    if (this.currentStep === "background") {
+      const bgContainer = $html.find('#background-selection-grid')[0];
+      if (bgContainer && !this.characterData.background) {
+        this._renderBackgroundCards(bgContainer);
+      }
+
+      // Update narrator comment
+      if (!this.characterData.backgroundNarratorComment) {
+        const category = this.characterData.backgroundCategory || 'events';
+        this.characterData.backgroundNarratorComment = this._getBackgroundNarratorComment(category);
+      }
+    }
   }
 
   _getSteps() {
@@ -569,6 +589,15 @@ export default class CharacterGenerator extends Application {
       steps.push("degree", "size", "droid-builder");
     } else {
       steps.push("species");
+    }
+
+    // Add background step if enabled in houserules (check if setting exists, default to true)
+    const backgroundsEnabled = game.settings.settings.has("swse.enableBackgrounds")
+      ? game.settings.get("swse", "enableBackgrounds")
+      : true;
+
+    if (backgroundsEnabled) {
+      steps.push("background");
     }
 
     // NPC workflow: skip class and talents, go straight to abilities/skills/feats
@@ -1400,6 +1429,7 @@ export default class CharacterGenerator extends Application {
 Object.assign(CharacterGenerator.prototype, SharedModule);
 Object.assign(CharacterGenerator.prototype, DroidModule);
 Object.assign(CharacterGenerator.prototype, SpeciesModule);
+Object.assign(CharacterGenerator.prototype, BackgroundsModule);
 Object.assign(CharacterGenerator.prototype, ClassModule);
 Object.assign(CharacterGenerator.prototype, AbilitiesModule);
 Object.assign(CharacterGenerator.prototype, SkillsModule);

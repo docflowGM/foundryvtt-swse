@@ -189,7 +189,7 @@ export const BackgroundsModule = {
           <div class="background-skill-dialog">
             <p class="background-description">${background.narrativeDescription}</p>
             ${skillOptionsHTML}
-            <p class="hint-text">These skills will be added to your class skill list.</p>
+            <p class="hint-text"><strong>Important:</strong> These skills will be added to your class skill list. You can train them later in the Skills step.</p>
           </div>
         `,
         buttons: {
@@ -204,7 +204,7 @@ export const BackgroundsModule = {
                 return false;
               }
 
-              // Store selected skills
+              // Store selected skills (will be added to class skills, NOT trained yet)
               const selectedSkills = [];
               selected.each(function() {
                 const skillKey = $(this).val();
@@ -221,7 +221,7 @@ export const BackgroundsModule = {
                 }
               }
 
-              // Apply occupation bonuses immediately (untrained skill bonuses)
+              // Store occupation bonuses for later application (untrained skill bonuses)
               if (background.category === 'occupation') {
                 this._applyOccupationBonuses(background);
               }
@@ -335,14 +335,164 @@ export const BackgroundsModule = {
   },
 
   /**
-   * Check if a skill is from background (to prevent double-training)
+   * Get background class skills
+   * @returns {Array<string>} Array of skill keys from background
+   */
+  _getBackgroundClassSkills() {
+    if (!this.characterData.backgroundSkills) return [];
+    return this.characterData.backgroundSkills.map(s => s.key);
+  },
+
+  /**
+   * Check if a skill is from background
    * @param {string} skillKey - The skill key to check
    * @returns {boolean} True if skill is from background
    */
   _isSkillFromBackground(skillKey) {
     if (!this.characterData.backgroundSkills) return false;
-
     return this.characterData.backgroundSkills.some(s => s.key === skillKey);
+  },
+
+  /**
+   * Check for skill overlaps between background and class
+   * Show dialog to let player change their background skill choice if overlap exists
+   * @param {Object} selectedClass - The selected class
+   */
+  async _checkBackgroundSkillOverlap(selectedClass) {
+    if (!this.characterData.background || !this.characterData.backgroundSkills) return;
+
+    const classSkills = getClassProperty(selectedClass, 'classSkills', []);
+    const backgroundSkills = this.characterData.backgroundSkills;
+
+    // Find overlapping skills
+    const overlaps = [];
+    for (const bgSkill of backgroundSkills) {
+      const isClassSkill = classSkills.some(cs =>
+        cs.toLowerCase().includes(bgSkill.display.toLowerCase()) ||
+        bgSkill.display.toLowerCase().includes(cs.toLowerCase())
+      );
+      if (isClassSkill) {
+        overlaps.push(bgSkill);
+      }
+    }
+
+    if (overlaps.length === 0) return;
+
+    // Show dialog to let player change their selection
+    const overlappingNames = overlaps.map(s => s.display).join(', ');
+
+    const changeSelection = await Dialog.confirm({
+      title: "Background Skill Overlap",
+      content: `
+        <div class="background-overlap-dialog">
+          <p><i class="fas fa-exclamation-triangle"></i> <strong>Skill Overlap Detected</strong></p>
+          <p>Your background selection includes the following skill(s) that are already class skills for ${selectedClass.name}:</p>
+          <ul>
+            ${overlaps.map(s => `<li><strong>${s.display}</strong></li>`).join('')}
+          </ul>
+          <p>Would you like to change your background skill selection to avoid wasting this choice?</p>
+        </div>
+      `,
+      defaultYes: true
+    });
+
+    if (changeSelection) {
+      // Re-show background skill selection
+      await this._showBackgroundSkillSelection(this.characterData.background);
+    }
+  },
+
+  /**
+   * Check if backgrounds are enabled in houserules
+   * @returns {boolean} True if backgrounds are enabled
+   */
+  _areBackgroundsEnabled() {
+    return game.settings.get("swse", "enableBackgrounds") !== false;
+  },
+
+  /**
+   * Get number of allowed background selections from houserules
+   * @returns {number} Number of backgrounds player can select (1, 2, or 3)
+   */
+  _getAllowedBackgroundCount() {
+    return game.settings.get("swse", "backgroundSelectionCount") || 1;
+  },
+
+  /**
+   * Handle "Change Background" button click
+   * @param {Event} event - Click event
+   */
+  async _onChangeBackground(event) {
+    event.preventDefault();
+
+    // Clear current background
+    this.characterData.background = null;
+    this.characterData.backgroundSkills = [];
+
+    await this.render();
+  },
+
+  /**
+   * Handle homebrew planets toggle
+   * @param {Event} event - Change event
+   */
+  async _onToggleHomebrewPlanets(event) {
+    this.characterData.allowHomebrewPlanets = event.currentTarget.checked;
+    await this.render();
+  },
+
+  /**
+   * Render background cards for the selected category
+   * @param {HTMLElement} container - The container element
+   */
+  async _renderBackgroundCards(container) {
+    if (!container) return;
+
+    const category = this.characterData.backgroundCategory || 'events';
+    const includeHomebrew = category === 'planets' && this.characterData.allowHomebrewPlanets;
+
+    const backgrounds = await this._getBackgroundsByCategory(category, includeHomebrew);
+
+    if (!backgrounds || backgrounds.length === 0) {
+      container.innerHTML = '<p class="no-backgrounds">No backgrounds available for this category.</p>';
+      return;
+    }
+
+    // Build HTML for background cards
+    let html = '';
+    for (const background of backgrounds) {
+      const isHomebrew = background.homebrew ? 'homebrew-background' : '';
+      html += `
+        <div class="background-card ${isHomebrew}" data-background-id="${background.id}">
+          <div class="background-card-header">
+            <span class="background-icon">${background.icon}</span>
+            <h4>${background.name}</h4>
+            ${background.homebrew ? '<span class="homebrew-badge">Homebrew</span>' : ''}
+          </div>
+          <div class="background-card-body">
+            <p class="background-narrative">${background.narrativeDescription}</p>
+            <div class="background-benefits-preview">
+              <strong>Benefits:</strong>
+              <ul>
+                ${background.specialAbility ? `<li>${background.specialAbility}</li>` : ''}
+                ${background.skillChoiceCount ? `<li>Choose ${background.skillChoiceCount} skill${background.skillChoiceCount > 1 ? 's' : ''} to add to class skills</li>` : ''}
+                ${background.bonusLanguage ? `<li>Language: ${background.bonusLanguage}</li>` : ''}
+              </ul>
+            </div>
+          </div>
+          <button type="button" class="select-background btn-primary" data-background-id="${background.id}">
+            <i class="fas fa-check"></i> Select
+          </button>
+        </div>
+      `;
+    }
+
+    container.innerHTML = html;
+
+    // Re-bind click handlers for the new buttons
+    container.querySelectorAll('.select-background').forEach(btn => {
+      btn.addEventListener('click', this._onSelectBackground.bind(this));
+    });
   },
 
   /**
