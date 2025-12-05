@@ -1025,7 +1025,11 @@ export default class CharacterGenerator extends Application {
       specialAbilities: this.characterData.specialAbilities || [],
       languages: this.characterData.languages || [],
       racialSkillBonuses: this.characterData.racialSkillBonuses || [],
-      speciesSource: this.characterData.speciesSource || ""
+      speciesSource: this.characterData.speciesSource || "",
+      // Background data for biography tab
+      event: this.characterData.background && this.characterData.background.category === 'event' ? this.characterData.background.name : "",
+      profession: this.characterData.background && this.characterData.background.category === 'occupation' ? this.characterData.background.name : "",
+      planetOfOrigin: this.characterData.background && this.characterData.background.category === 'planet' ? this.characterData.background.name : ""
     };
 
     // For NPCs, auto-create a Nonheroic class
@@ -1162,6 +1166,17 @@ export default class CharacterGenerator extends Application {
             ui.notifications.warn("Character created, but some class features may be missing. Check your character sheet.");
             // Don't rollback here - character is usable without starting features
           }
+        }
+      }
+
+      // Apply background (Event abilities, Occupation bonuses, etc.)
+      if (this.characterData.background) {
+        try {
+          await this._applyBackgroundToActor(created);
+        } catch (backgroundError) {
+          SWSELogger.warn("Failed to apply background features:", backgroundError);
+          ui.notifications.warn("Character created, but background features may not have been applied correctly.");
+          // Non-critical error, continue
         }
       }
 
