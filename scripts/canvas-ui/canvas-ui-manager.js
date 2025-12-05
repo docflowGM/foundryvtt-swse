@@ -468,3 +468,16 @@ export class CanvasUIManager {
     }
   }
 }
+
+// --- Fail-safe Chatbox Clamp ---
+Hooks.on('renderChatLog', () => {
+  const fixChatbox = () => {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+    const chat = sidebar.querySelector('#chat');
+    if (!chat) return;
+    chat.style.marginTop = '0px';
+    chat.style.paddingTop = '0px';
+  };
+  setInterval(fixChatbox, 500);
+});
