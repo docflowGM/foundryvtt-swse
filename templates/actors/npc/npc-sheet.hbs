@@ -1,51 +1,110 @@
-<div class="swse-sheet">
-<form class="{{cssClass}} swse-character-sheet swse-npc-sheet" autocomplete="off">
+/**
+ * SWSE NPC Sheet (AppV2)
+ * Modernized for Foundry VTT V12+
+ */
+export default class SWSE_NPC_Sheet extends ActorSheet {
+  
+  /** Which template to use */
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      classes: ["swse", "sheet", "actor", "swse-npc-sheet"],
+      width: 900,
+      height: 900,
+      resizable: true,
+      tabs: [
+        {
+          navSelector: ".sheet-tabs",
+          contentSelector: ".sheet-body",
+          initial: "summary"
+        }
+      ]
+    });
+  }
 
- {{!-- Persistent Header --}}
- {{> "systems/swse/templates/partials/actor/persistent-header.hbs"}}
+  /** The Handlebars template path */
+  get template() {
+    return "systems/swse/templates/actors/npc/npc-sheet.hbs";
+  }
 
- {{!-- Navigation Tabs --}}
- <nav class="sheet-tabs tabs" data-group="primary">
- <a class="item active" data-tab="summary">Summary</a>
- <a class="item" data-tab="abilities">Abilities</a>
- <a class="item" data-tab="skills">Skills</a>
- <a class="item" data-tab="combat">Combat</a>
- {{#if system.forceSensitive}}
- <a class="item" data-tab="force">Force</a>
- {{/if}}
- <a class="item" data-tab="talents">Talents</a>
- <a class="item" data-tab="inventory">Inventory</a>
- <a class="item" data-tab="biography">Biography</a>
- </nav>
+  /** Inject additional data into sheet */
+  async getData() {
+    const context = await super.getData();
 
- {{!-- Sheet Body --}}
- <section class="sheet-body">
- {{!-- Summary Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/summary-tab.hbs"}}
+    context.system = context.actor.system;
+    context.flags = context.actor.flags;
+    context.isNPC = true;
 
- {{!-- Abilities Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/abilities-tab.hbs"}}
+    // Flags for conditional display
+    context.hasForce = context.system.forceSensitive ?? false;
 
- {{!-- Skills Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/skills-tab.hbs"}}
+    return context;
+  }
 
- {{!-- Combat Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/combat-tab.hbs"}}
+  /** Activate sheet listeners */
+  activateListeners(html) {
+    super.activateListeners(html);
 
- {{!-- Force Tab --}}
- {{#if system.forceSensitive}}
- {{> "systems/swse/templates/actors/character/tabs/force-tab.hbs"}}
- {{/if}}
+    // Disabled editing if actor is not owned
+    if (!this.isEditable) return;
 
- {{!-- Talents Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/talents-tab.hbs"}}
+    // General Editable Fields
+    html.find("[data-edit]").on("change", this._onFieldChange.bind(this));
 
- {{!-- Inventory Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/inventory-tab.hbs"}}
+    // Expand / collapse inventory sections
+    html.find(".inventory-header").click(this._toggleInventorySection);
 
- {{!-- Biography Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/biography-tab.hbs"}}
- </section>
+    // Drag and drop item creation
+    this._activateItemHandlers(html);
 
-</form>
-</div>
+    // Auto-focus on first input when sheet loads
+    html.find("input:first").focus();
+  }
+
+  /** Generic handler for any input with data-edit */
+  async _onFieldChange(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+
+    const field = element.dataset.edit;
+    const value = element.type === "checkbox" ? element.checked : element.value;
+
+    return this.actor.update({ [field]: value });
+  }
+
+  /** Inventory and Item Controls */
+  _activateItemHandlers(html) {
+
+    // Add item
+    html.find(".item-create").click(ev => {
+      const type = ev.currentTarget.dataset.type;
+      this.actor.createEmbeddedDocuments("Item", [{ name: `New ${type}`, type }]);
+    });
+
+    // Edit item
+    html.find(".item-edit").click(ev => {
+      const itemId = ev.currentTarget.closest(".item").dataset.itemId;
+      this.actor.items.get(itemId).sheet.render(true);
+    });
+
+    // Delete item
+    html.find(".item-delete").click(ev => {
+      const itemId = ev.currentTarget.closest(".item").dataset.itemId;
+      this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+    });
+  }
+
+  /** Inventory section toggle */
+  _toggleInventorySection(event) {
+    const section = $(event.currentTarget).next(".inventory-content");
+    section.slideToggle(200);
+  }
+
+  /** Support Foundry's drag-and-drop Items */
+  async _onDropItem(event, data) {
+    const item = await Item.implementation.fromDropData(data);
+    if (!item) return;
+
+    // Prevent duplicate items
+    return this.actor.createEmbeddedDocuments("Item", [item]);
+  }
+}
