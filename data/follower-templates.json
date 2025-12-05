@@ -1,0 +1,47 @@
+{
+  "aggressive": {
+    "name": "Aggressive Follower",
+    "description": "Aggressive Followers are focused on attacks and deleting enemy resources. They are somewhat tougher than other Followers because they put themselves in harm's way more often and are more likely to attack an enemy target.",
+    "abilityChoices": ["str", "con"],
+    "abilityBonus": 2,
+    "defenseBonus": {
+      "fortitude": 2
+    },
+    "feats": ["Weapon Proficiency (Pistols)"],
+    "trainedSkills": ["Endurance"],
+    "babProgression": [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+      11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+    ]
+  },
+  "defensive": {
+    "name": "Defensive Follower",
+    "description": "Defensive Followers specialize in protecting themselves from damage and, similarly, holding a defensive position. These Followers make excellent support fighters, laying down suppression fire or helping to hold a corridor against an invading force.",
+    "abilityChoices": ["dex", "wis"],
+    "abilityBonus": 2,
+    "defenseBonus": {
+      "reflex": 2
+    },
+    "feats": ["Armor Proficiency (Light)"],
+    "trainedSkills": ["Endurance"],
+    "babProgression": [
+      0, 1, 2, 3, 3, 4, 5, 6, 6, 7,
+      8, 9, 9, 10, 11, 12, 12, 13, 14, 15
+    ]
+  },
+  "utility": {
+    "name": "Utility Follower",
+    "description": "Utility Followers are typically skilled in several areas, allowing them to contribute to a variety of situations where Skill Checks are called for. These Followers might be demolitions experts, slicers, saboteurs, or any number of other professions that rely on Skills to excel.",
+    "abilityChoices": ["int", "cha"],
+    "abilityBonus": 2,
+    "defenseBonus": {
+      "will": 2
+    },
+    "featChoices": ["Armor Proficiency (Light)", "Weapon Proficiency (Pistols)"],
+    "skillChoice": true,
+    "babProgression": [
+      0, 1, 2, 3, 3, 4, 5, 6, 6, 7,
+      8, 9, 9, 10, 11, 12, 12, 13, 14, 15
+    ]
+  }
+}
