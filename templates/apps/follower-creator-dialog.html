@@ -1,0 +1,189 @@
+<form class="follower-creator-form">
+    <div class="form-group">
+        <h2>{{template.name}}</h2>
+        <p class="follower-description">{{template.description}}</p>
+    </div>
+
+    <div class="form-group">
+        <label for="name">Follower Name:</label>
+        <input type="text" name="name" id="name" placeholder="Enter follower name" value="{{owner.name}}'s Follower" />
+    </div>
+
+    <div class="form-group">
+        <label for="species">Species:</label>
+        <select name="species" id="species" required>
+            <option value="">Select Species...</option>
+            {{#each speciesList}}
+            <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+        </select>
+    </div>
+
+    {{#if template.abilityChoices}}
+    <div class="form-group">
+        <label for="abilityChoice">Ability Score Bonus (+{{template.abilityBonus}}):</label>
+        <select name="abilityChoice" id="abilityChoice" required>
+            {{#each template.abilityChoices}}
+            <option value="{{this}}">{{upper this}}</option>
+            {{/each}}
+        </select>
+        <p class="hint">Choose which ability score receives a +{{../template.abilityBonus}} bonus.</p>
+    </div>
+    {{/if}}
+
+    {{#if template.featChoices}}
+    <div class="form-group">
+        <label for="featChoice">Feat Choice:</label>
+        <select name="featChoice" id="featChoice" required>
+            {{#each template.featChoices}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+        </select>
+        <p class="hint">Choose a feat for your follower.</p>
+    </div>
+    {{/if}}
+
+    {{#if template.skillChoice}}
+    <div class="form-group">
+        <label for="skillChoice">Trained Skill:</label>
+        <select name="skillChoice" id="skillChoice" required>
+            <option value="">Select Skill...</option>
+            <option value="Acrobatics">Acrobatics</option>
+            <option value="Climb">Climb</option>
+            <option value="Deception">Deception</option>
+            <option value="Endurance">Endurance</option>
+            <option value="Gather Information">Gather Information</option>
+            <option value="Initiative">Initiative</option>
+            <option value="Jump">Jump</option>
+            <option value="Knowledge (Bureaucracy)">Knowledge (Bureaucracy)</option>
+            <option value="Knowledge (Galactic Lore)">Knowledge (Galactic Lore)</option>
+            <option value="Knowledge (Life Sciences)">Knowledge (Life Sciences)</option>
+            <option value="Knowledge (Physical Sciences)">Knowledge (Physical Sciences)</option>
+            <option value="Knowledge (Social Sciences)">Knowledge (Social Sciences)</option>
+            <option value="Knowledge (Tactics)">Knowledge (Tactics)</option>
+            <option value="Knowledge (Technology)">Knowledge (Technology)</option>
+            <option value="Mechanics">Mechanics</option>
+            <option value="Perception">Perception</option>
+            <option value="Persuasion">Persuasion</option>
+            <option value="Pilot">Pilot</option>
+            <option value="Ride">Ride</option>
+            <option value="Stealth">Stealth</option>
+            <option value="Survival">Survival</option>
+            <option value="Swim">Swim</option>
+            <option value="Treat Injury">Treat Injury</option>
+            <option value="Use Computer">Use Computer</option>
+        </select>
+        <p class="hint">Choose one skill for your follower to be trained in (except Use the Force).</p>
+    </div>
+    {{/if}}
+
+    <div class="human-bonus-section form-group" style="display: none;">
+        <label for="humanBonus">Human Bonus (Choose from another template):</label>
+        <select name="humanBonus" id="humanBonus">
+            <option value="">None</option>
+            {{#unless (eq templateType "aggressive")}}
+            <option value="aggressive:defense">Aggressive: +2 Fortitude Defense</option>
+            <option value="aggressive:ability">Aggressive: +2 to STR or CON</option>
+            <option value="aggressive:feat">Aggressive: Weapon Proficiency (Pistols)</option>
+            <option value="aggressive:skill">Aggressive: Skill Training (Endurance)</option>
+            {{/unless}}
+            {{#unless (eq templateType "defensive")}}
+            <option value="defensive:defense">Defensive: +2 Reflex Defense</option>
+            <option value="defensive:ability">Defensive: +2 to DEX or WIS</option>
+            <option value="defensive:feat">Defensive: Armor Proficiency (Light)</option>
+            <option value="defensive:skill">Defensive: Skill Training (Endurance)</option>
+            {{/unless}}
+            {{#unless (eq templateType "utility")}}
+            <option value="utility:defense">Utility: +2 Will Defense</option>
+            <option value="utility:ability">Utility: +2 to INT or CHA</option>
+            {{/unless}}
+        </select>
+        <p class="hint">Humans can choose one bonus from a different follower template.</p>
+    </div>
+
+    <div class="form-group follower-stats-summary">
+        <h3>Follower Statistics Summary</h3>
+        <ul>
+            <li><strong>Level:</strong> {{owner.system.level}}</li>
+            <li><strong>Hit Points:</strong> {{add owner.system.level 10}}</li>
+            <li><strong>Defense Bonuses:</strong>
+                {{#if template.defenseBonus.fortitude}}+{{template.defenseBonus.fortitude}} Fortitude{{/if}}
+                {{#if template.defenseBonus.reflex}}+{{template.defenseBonus.reflex}} Reflex{{/if}}
+                {{#if template.defenseBonus.will}}+{{template.defenseBonus.will}} Will{{/if}}
+            </li>
+            <li><strong>Template Features:</strong>
+                {{#if template.feats}}
+                    {{#each template.feats}}
+                        {{this}}{{#unless @last}}, {{/unless}}
+                    {{/each}}
+                {{/if}}
+                {{#if template.trainedSkills}}
+                    {{#each template.trainedSkills}}
+                        {{this}} (Trained){{#unless @last}}, {{/unless}}
+                    {{/each}}
+                {{/if}}
+            </li>
+        </ul>
+    </div>
+</form>
+
+<style>
+.follower-creator-form {
+    padding: 10px;
+}
+
+.follower-description {
+    font-style: italic;
+    margin-bottom: 15px;
+    color: #666;
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.hint {
+    font-size: 0.9em;
+    color: #666;
+    font-style: italic;
+    margin-top: 3px;
+}
+
+.follower-stats-summary {
+    background: #e8f4f8;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.follower-stats-summary h3 {
+    margin-top: 0;
+    color: #2c5f7c;
+}
+
+.follower-stats-summary ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.follower-stats-summary li {
+    margin: 5px 0;
+}
+</style>

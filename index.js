@@ -110,6 +110,9 @@ import { SWSEVehicleCombat } from './scripts/combat/systems/vehicle-combat-syste
 import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
 import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
 
+// Follower System
+import { initializeFollowerHooks } from './scripts/hooks/follower-hooks.js';
+
 /* -------------------------------------------- */
 /*  Components                                  */
 /*  (Reusable UI components)                    */
@@ -138,6 +141,10 @@ import { SWSEUpgradeApp } from './scripts/apps/upgrade-app.js';
 // Vehicle Modification System
 import { VehicleModificationManager } from './scripts/apps/vehicle-modification-manager.js';
 import { VehicleModificationApp } from './scripts/apps/vehicle-modification-app.js';
+
+// Follower System
+import { FollowerCreator } from './scripts/apps/follower-creator.js';
+import { FollowerManager } from './scripts/apps/follower-manager.js';
 
 /* -------------------------------------------- */
 /*  House Rules & GM Tools                      */
@@ -235,7 +242,9 @@ Hooks.once("init", async function() {
       Store: SWSEStore,
       LevelUp: SWSELevelUp,
       VehicleModificationApp: VehicleModificationApp,
-      UpgradeApp: SWSEUpgradeApp
+      UpgradeApp: SWSEUpgradeApp,
+      FollowerCreator: FollowerCreator,
+      FollowerManager: FollowerManager
     },
 
     // Vehicle Modification System
@@ -519,6 +528,12 @@ Hooks.once("ready", async function() {
   // ============================================
 
   initializeForcePowerHooks();
+
+  // ============================================
+  // Initialize Follower System Hooks
+  // ============================================
+
+  initializeFollowerHooks();
 
   // ============================================
   // Setup Lazy Loading
