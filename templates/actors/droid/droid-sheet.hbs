@@ -1,43 +1,60 @@
-<div class="swse-sheet">
-<form class="{{cssClass}} swse-character-sheet swse-droid-sheet" autocomplete="off">
+<div class="{{classList}} {{sheetTheme}}">
+<form class="swse-character-sheet swse-droid-sheet" autocomplete="off">
 
- {{!-- Persistent Header --}}
- {{> "systems/swse/templates/partials/actor/persistent-header.hbs"}}
+  {{!-- Persistent Header --}}
+  {{> "systems/swse/templates/partials/actor/persistent-header.hbs"}}
 
- {{!-- Navigation Tabs --}}
- <nav class="sheet-tabs tabs" data-group="primary">
- <a class="item active" data-tab="summary">Summary</a>
- <a class="item" data-tab="abilities">Abilities</a>
- <a class="item" data-tab="skills">Skills</a>
- <a class="item" data-tab="combat">Combat</a>
- <a class="item" data-tab="talents">Talents</a>
- <a class="item" data-tab="inventory">Inventory</a>
- <a class="item" data-tab="biography">Biography</a>
- </nav>
+  {{!-- Navigation Tabs --}}
+  <nav class="swse-tabs" data-group="primary" data-action="switchTab">
+    <button type="button" data-tab="summary">Summary</button>
+    <button type="button" data-tab="abilities">Abilities</button>
+    <button type="button" data-tab="skills">Skills</button>
+    <button type="button" data-tab="combat">Combat</button>
+    <button type="button" data-tab="talents">Talents</button>
+    <button type="button" data-tab="inventory">Inventory</button>
+    <button type="button" data-tab="biography">Biography</button>
+  </nav>
 
- {{!-- Sheet Body --}}
- <section class="sheet-body">
- {{!-- Summary Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/summary-tab.hbs"}}
+  <article class="app-v2-body">
+  <section class="sheet-body">
 
- {{!-- Abilities Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/abilities-tab.hbs"}}
+    {{!-- Summary Tab --}}
+    <section data-tab="summary">
+      {{> "systems/swse/templates/actors/character/tabs/summary-tab.hbs"}}
+    </section>
 
- {{!-- Skills Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/skills-tab.hbs"}}
+    {{!-- Abilities Tab --}}
+    <section data-tab="abilities">
+      {{> "systems/swse/templates/actors/character/tabs/abilities-tab.hbs"}}
+    </section>
 
- {{!-- Combat Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/combat-tab.hbs"}}
+    {{!-- Skills Tab --}}
+    <section data-tab="skills">
+      {{> "systems/swse/templates/actors/character/tabs/skills-tab.hbs"}}
+    </section>
 
- {{!-- Talents Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/talents-tab.hbs"}}
+    {{!-- Combat Tab --}}
+    <section data-tab="combat">
+      {{> "systems/swse/templates/actors/character/tabs/combat-tab.hbs"}}
+    </section>
 
- {{!-- Inventory Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/inventory-tab.hbs"}}
+    {{!-- Talents Tab --}}
+    <section data-tab="talents">
+      {{> "systems/swse/templates/actors/character/tabs/talents-tab.hbs"}}
+    </section>
 
- {{!-- Biography Tab --}}
- {{> "systems/swse/templates/actors/character/tabs/biography-tab.hbs"}}
- </section>
+    {{!-- Inventory Tab --}}
+    <section data-tab="inventory">
+      {{> "systems/swse/templates/actors/character/tabs/inventory-tab.hbs"}}
+    </section>
+
+    {{!-- Biography Tab --}}
+    <section data-tab="biography">
+      {{> "systems/swse/templates/actors/character/tabs/biography-tab.hbs"}}
+    </section>
+
+  </section>
+  </article>
 
 </form>
 </div>
