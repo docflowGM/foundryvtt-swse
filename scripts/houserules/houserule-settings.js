@@ -78,6 +78,33 @@ export function registerHouseruleSettings() {
   });
 
   // ============================================
+  // Backgrounds (Rebellion Era Campaign Guide)
+  // ============================================
+
+  game.settings.register("swse", "enableBackgrounds", {
+    name: "Enable Backgrounds System",
+    hint: "Allow players to select backgrounds (Events, Occupations, or Planets of Origin) during character creation. This is an alternative to the Destiny system.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  game.settings.register("swse", "backgroundSelectionCount", {
+    name: "Number of Background Selections",
+    hint: "How many backgrounds can players choose? (1 = Event OR Occupation OR Planet, 2 = any two, 3 = all three)",
+    scope: "world",
+    config: true,
+    type: Number,
+    choices: {
+      1: "1 Background (Standard)",
+      2: "2 Backgrounds",
+      3: "3 Backgrounds (All)"
+    },
+    default: 1
+  });
+
+  // ============================================
   // Droids
   // ============================================
 

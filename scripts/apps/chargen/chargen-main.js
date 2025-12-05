@@ -12,6 +12,7 @@ import * as SharedModule from './chargen-shared.js';
 import { ChargenDataCache } from './chargen-shared.js';
 import * as DroidModule from './chargen-droid.js';
 import * as SpeciesModule from './chargen-species.js';
+import * as BackgroundsModule from './chargen-backgrounds.js';
 import * as ClassModule from './chargen-class.js';
 import * as AbilitiesModule from './chargen-abilities.js';
 import * as SkillsModule from './chargen-skills.js';
@@ -34,6 +35,12 @@ export default class CharacterGenerator extends Application {
       languages: [],  // Known languages
       racialSkillBonuses: [],  // Racial skill bonuses (e.g., "+2 Perception")
       speciesSource: "",  // Source book for species
+      background: null,  // Selected background (Event, Occupation, or Planet)
+      backgroundCategory: "events",  // Current background category tab
+      backgroundSkills: [],  // Skills selected from background
+      backgroundNarratorComment: "",  // Ol' Salty's comment for current category
+      allowHomebrewPlanets: false,  // Toggle for homebrew planets
+      occupationBonus: null,  // Occupation untrained skill bonuses
       importedDroidData: null,
       preselectedSkills: [],
       droidSystems: {
@@ -436,13 +443,20 @@ export default class CharacterGenerator extends Application {
 
     // Available skills for selection with bonuses
     const halfLevel = Math.floor(this.characterData.level / 2);
+    // Get background class skills
+    const backgroundClassSkills = this._getBackgroundClassSkills ? this._getBackgroundClassSkills() : [];
+
     context.availableSkills = this._getAvailableSkills().map(skill => {
       const abilityMod = this.characterData.abilities[skill.ability]?.mod || 0;
       const isTrained = this.characterData.skills[skill.key]?.trained || false;
-      const isClassSkill = classSkills.some(cs =>
+
+      // Check if skill is a class skill from class OR background
+      const isClassSkillFromClass = classSkills.some(cs =>
         cs.toLowerCase().includes(skill.name.toLowerCase()) ||
         skill.name.toLowerCase().includes(cs.toLowerCase())
       );
+      const isClassSkillFromBackground = backgroundClassSkills.includes(skill.key);
+      const isClassSkill = isClassSkillFromClass || isClassSkillFromBackground;
 
       const baseBonus = halfLevel + abilityMod;
       const currentBonus = baseBonus + (isTrained ? 5 : 0);
@@ -452,6 +466,7 @@ export default class CharacterGenerator extends Application {
         ...skill,
         trained: isTrained,
         isClassSkill: isClassSkill,
+        isBackgroundSkill: isClassSkillFromBackground, // Mark skills that came from background
         currentBonus: currentBonus,
         trainedBonus: trainedBonus,
         abilityMod: abilityMod,
@@ -509,6 +524,13 @@ export default class CharacterGenerator extends Application {
     $html.find('.untrain-skill-btn').click(this._onUntrainSkill.bind(this));
     $html.find('.reset-skills-btn').click(this._onResetSkills.bind(this));
 
+    // Background selections
+    $html.find('.background-category-tab').click(this._onBackgroundCategoryTabClick.bind(this));
+    $html.find('.select-background').click(this._onSelectBackground.bind(this));
+    $html.find('.change-background-btn').click(this._onChangeBackground.bind(this));
+    $html.find('.allow-homebrew-toggle').change(this._onToggleHomebrewPlanets.bind(this));
+    $html.find('.random-background-btn').click(this._onRandomBackground.bind(this));
+
     // Droid builder/shop
     $html.find('.shop-tab').click(this._onShopTabClick.bind(this));
     $html.find('.accessory-tab').click(this._onAccessoryTabClick.bind(this));
@@ -547,6 +569,20 @@ export default class CharacterGenerator extends Application {
     $html.find('[name="class_select"]').change(async (ev) => {
       await this._onClassChanged(ev, $html[0]);
     });
+
+    // Background step - render cards if on background step
+    if (this.currentStep === "background") {
+      const bgContainer = $html.find('#background-selection-grid')[0];
+      if (bgContainer && !this.characterData.background) {
+        this._renderBackgroundCards(bgContainer);
+      }
+
+      // Update narrator comment
+      if (!this.characterData.backgroundNarratorComment) {
+        const category = this.characterData.backgroundCategory || 'events';
+        this.characterData.backgroundNarratorComment = this._getBackgroundNarratorComment(category);
+      }
+    }
   }
 
   _getSteps() {
@@ -562,6 +598,15 @@ export default class CharacterGenerator extends Application {
       steps.push("degree", "size", "droid-builder");
     } else {
       steps.push("species");
+    }
+
+    // Add background step if enabled in houserules (check if setting exists, default to true)
+    const backgroundsEnabled = game.settings.settings.has("swse.enableBackgrounds")
+      ? game.settings.get("swse", "enableBackgrounds")
+      : true;
+
+    if (backgroundsEnabled) {
+      steps.push("background");
     }
 
     // NPC workflow: skip class and talents, go straight to abilities/skills/feats
@@ -980,7 +1025,11 @@ export default class CharacterGenerator extends Application {
       specialAbilities: this.characterData.specialAbilities || [],
       languages: this.characterData.languages || [],
       racialSkillBonuses: this.characterData.racialSkillBonuses || [],
-      speciesSource: this.characterData.speciesSource || ""
+      speciesSource: this.characterData.speciesSource || "",
+      // Background data for biography tab
+      event: this.characterData.background && this.characterData.background.category === 'event' ? this.characterData.background.name : "",
+      profession: this.characterData.background && this.characterData.background.category === 'occupation' ? this.characterData.background.name : "",
+      planetOfOrigin: this.characterData.background && this.characterData.background.category === 'planet' ? this.characterData.background.name : ""
     };
 
     // For NPCs, auto-create a Nonheroic class
@@ -1117,6 +1166,17 @@ export default class CharacterGenerator extends Application {
             ui.notifications.warn("Character created, but some class features may be missing. Check your character sheet.");
             // Don't rollback here - character is usable without starting features
           }
+        }
+      }
+
+      // Apply background (Event abilities, Occupation bonuses, etc.)
+      if (this.characterData.background) {
+        try {
+          await this._applyBackgroundToActor(created);
+        } catch (backgroundError) {
+          SWSELogger.warn("Failed to apply background features:", backgroundError);
+          ui.notifications.warn("Character created, but background features may not have been applied correctly.");
+          // Non-critical error, continue
         }
       }
 
@@ -1393,6 +1453,7 @@ export default class CharacterGenerator extends Application {
 Object.assign(CharacterGenerator.prototype, SharedModule);
 Object.assign(CharacterGenerator.prototype, DroidModule);
 Object.assign(CharacterGenerator.prototype, SpeciesModule);
+Object.assign(CharacterGenerator.prototype, BackgroundsModule);
 Object.assign(CharacterGenerator.prototype, ClassModule);
 Object.assign(CharacterGenerator.prototype, AbilitiesModule);
 Object.assign(CharacterGenerator.prototype, SkillsModule);
