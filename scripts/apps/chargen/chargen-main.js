@@ -12,6 +12,7 @@ import * as SharedModule from './chargen-shared.js';
 import { ChargenDataCache } from './chargen-shared.js';
 import * as DroidModule from './chargen-droid.js';
 import * as SpeciesModule from './chargen-species.js';
+import * as BackgroundsModule from './chargen-backgrounds.js';
 import * as ClassModule from './chargen-class.js';
 import * as AbilitiesModule from './chargen-abilities.js';
 import * as SkillsModule from './chargen-skills.js';
@@ -34,6 +35,12 @@ export default class CharacterGenerator extends Application {
       languages: [],  // Known languages
       racialSkillBonuses: [],  // Racial skill bonuses (e.g., "+2 Perception")
       speciesSource: "",  // Source book for species
+      background: null,  // Selected background (Event, Occupation, or Planet)
+      backgroundCategory: "events",  // Current background category tab
+      backgroundSkills: [],  // Skills selected from background
+      backgroundNarratorComment: "",  // Ol' Salty's comment for current category
+      allowHomebrewPlanets: false,  // Toggle for homebrew planets
+      occupationBonus: null,  // Occupation untrained skill bonuses
       importedDroidData: null,
       preselectedSkills: [],
       droidSystems: {

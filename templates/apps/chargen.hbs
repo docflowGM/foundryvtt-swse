@@ -53,46 +53,52 @@
  <div class="progress-connector"></div>
  {{/if}}
 
- <div class="progress-step {{#if (eq currentStep 'abilities')}}active{{/if}}" data-step="abilities">
+ <div class="progress-step {{#if (eq currentStep 'background')}}active{{/if}} {{#if characterData.background}}completed{{/if}}" data-step="background">
  <div class="step-number">{{#if characterData.isDroid}}6{{else}}4{{/if}}</div>
+ <div class="step-label">Background</div>
+ </div>
+ <div class="progress-connector"></div>
+
+ <div class="progress-step {{#if (eq currentStep 'abilities')}}active{{/if}}" data-step="abilities">
+ <div class="step-number">{{#if characterData.isDroid}}7{{else}}5{{/if}}</div>
  <div class="step-label">Abilities</div>
  </div>
  <div class="progress-connector"></div>
 
  <div class="progress-step {{#if (eq currentStep 'class')}}active{{/if}} {{#if (gt characterData.classes.length 0)}}completed{{/if}}" data-step="class">
- <div class="step-number">{{#if characterData.isDroid}}7{{else}}5{{/if}}</div>
+ <div class="step-number">{{#if characterData.isDroid}}8{{else}}6{{/if}}</div>
  <div class="step-label">Class</div>
  </div>
  <div class="progress-connector"></div>
 
  <div class="progress-step {{#if (eq currentStep 'feats')}}active{{/if}} {{#if (gte characterData.feats.length characterData.featsRequired)}}completed{{/if}}" data-step="feats">
- <div class="step-number">{{#if characterData.isDroid}}8{{else}}6{{/if}}</div>
+ <div class="step-number">{{#if characterData.isDroid}}9{{else}}7{{/if}}</div>
  <div class="step-label">Feats</div>
  </div>
  <div class="progress-connector"></div>
 
  <div class="progress-step {{#if (eq currentStep 'talents')}}active{{/if}} {{#if (gte characterData.talents.length 1)}}completed{{/if}}" data-step="talents">
- <div class="step-number">{{#if characterData.isDroid}}9{{else}}7{{/if}}</div>
+ <div class="step-number">{{#if characterData.isDroid}}10{{else}}8{{/if}}</div>
  <div class="step-label">Talents</div>
  </div>
  <div class="progress-connector"></div>
 
  {{#if characterData.forceSensitive}}
  <div class="progress-step {{#if (eq currentStep 'force-powers')}}active{{/if}} {{#if (gte characterData.powers.length characterData.forcePowersRequired)}}completed{{/if}}" data-step="force-powers">
- <div class="step-number">{{#if characterData.isDroid}}10{{else}}8{{/if}}</div>
+ <div class="step-number">{{#if characterData.isDroid}}11{{else}}9{{/if}}</div>
  <div class="step-label">Force Powers</div>
  </div>
  <div class="progress-connector"></div>
  {{/if}}
 
  <div class="progress-step {{#if (eq currentStep 'skills')}}active{{/if}}" data-step="skills">
- <div class="step-number">{{#if characterData.isDroid}}{{#if characterData.forceSensitive}}11{{else}}10{{/if}}{{else}}{{#if characterData.forceSensitive}}9{{else}}8{{/if}}{{/if}}</div>
+ <div class="step-number">{{#if characterData.isDroid}}{{#if characterData.forceSensitive}}12{{else}}11{{/if}}{{else}}{{#if characterData.forceSensitive}}10{{else}}9{{/if}}{{/if}}</div>
  <div class="step-label">Skills</div>
  </div>
  <div class="progress-connector"></div>
 
  <div class="progress-step {{#if (eq currentStep 'summary')}}active{{/if}}" data-step="summary">
- <div class="step-number">{{#if characterData.isDroid}}{{#if characterData.forceSensitive}}12{{else}}11{{/if}}{{else}}{{#if characterData.forceSensitive}}10{{else}}9{{/if}}{{/if}}</div>
+ <div class="step-number">{{#if characterData.isDroid}}{{#if characterData.forceSensitive}}13{{else}}12{{/if}}{{else}}{{#if characterData.forceSensitive}}11{{else}}10{{/if}}{{/if}}</div>
  <div class="step-label">Summary</div>
  </div>
  </div>
@@ -543,6 +549,102 @@
  <button type="button" class="next-step btn-primary" id="droid-builder-next">
  Next <i class="fas fa-arrow-right"></i>
  </button>
+ </div>
+ </section>
+ {{/if}}
+
+ {{#if (eq currentStep "background")}}
+ <section class="step-background">
+ <h3>Choose Your Background</h3>
+ <p class="hint">Your background represents a defining aspect of your past. Choose ONE from Events, Occupations, or Planets.</p>
+
+ {{!-- Ol' Salty's Commentary --}}
+ {{#if characterData.backgroundNarratorComment}}
+ <div class="narrator-comment background-narrator">
+ <div class="narrator-avatar">
+ <img src="systems/swse/assets/mentors/salty.webp" alt="Ol' Salty" />
+ </div>
+ <div class="narrator-speech-bubble">
+ <p><strong>Ol' Salty:</strong> {{characterData.backgroundNarratorComment}}</p>
+ </div>
+ </div>
+ {{/if}}
+
+ {{!-- Category Tabs --}}
+ <div class="background-category-tabs">
+ <button type="button" class="background-category-tab {{#if (eq characterData.backgroundCategory 'events')}}active{{else}}{{#unless characterData.backgroundCategory}}active{{/unless}}{{/if}}" data-category="events">
+ <i class="fas fa-bolt"></i>
+ <span>Defining Events</span>
+ </button>
+ <button type="button" class="background-category-tab {{#if (eq characterData.backgroundCategory 'occupations')}}active{{/if}}" data-category="occupations">
+ <i class="fas fa-briefcase"></i>
+ <span>Past Occupations</span>
+ </button>
+ <button type="button" class="background-category-tab {{#if (eq characterData.backgroundCategory 'planets')}}active{{/if}}" data-category="planets">
+ <i class="fas fa-globe"></i>
+ <span>Planet of Origin</span>
+ </button>
+ </div>
+
+ {{!-- Homebrew Toggle for Planets --}}
+ {{#if (eq characterData.backgroundCategory 'planets')}}
+ <div class="homebrew-toggle-container">
+ <label class="homebrew-toggle-label">
+ <input type="checkbox" class="allow-homebrew-toggle" {{checked characterData.allowHomebrewPlanets}}>
+ <i class="fas fa-flask"></i> <strong>Allow Homebrew Planets</strong>
+ <span class="hint-text">Include additional planet options beyond core rulebook</span>
+ </label>
+ </div>
+ {{/if}}
+
+ {{!-- Background Cards Display --}}
+ <div class="background-cards-container">
+ {{#if characterData.background}}
+ {{!-- Selected Background Display --}}
+ <div class="selected-background-display">
+ <div class="selected-background-header">
+ <h4>✓ Selected: {{characterData.background.name}}</h4>
+ <span class="background-icon-large">{{characterData.background.icon}}</span>
+ </div>
+ <div class="selected-background-details">
+ <p class="background-narrative">{{characterData.background.narrativeDescription}}</p>
+ <div class="background-benefits">
+ <strong>Benefits:</strong>
+ <ul>
+ {{#if characterData.background.specialAbility}}
+ <li><strong>Special:</strong> {{characterData.background.specialAbility}}</li>
+ {{/if}}
+ {{#if characterData.backgroundSkills}}
+ <li><strong>Class Skills Added:</strong> {{#each characterData.backgroundSkills}}{{this.display}}{{#unless @last}}, {{/unless}}{{/each}}</li>
+ {{/if}}
+ {{#if characterData.background.bonusLanguage}}
+ <li><strong>Language:</strong> {{characterData.background.bonusLanguage}}</li>
+ {{/if}}
+ </ul>
+ </div>
+ <button type="button" class="change-background-btn btn-secondary">
+ <i class="fas fa-undo"></i> Change Background
+ </button>
+ </div>
+ </div>
+ {{else}}
+ {{!-- Background Selection Grid --}}
+ <div class="background-selection-grid" id="background-selection-grid">
+ {{!-- Cards will be populated by JavaScript based on selected category --}}
+ <p class="loading-backgrounds">Loading backgrounds...</p>
+ </div>
+ {{/if}}
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ {{#if characterData.background}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{/if}}
  </div>
  </section>
  {{/if}}
