@@ -1,7 +1,8 @@
+// Canvas UI Manager - consolidated, Forge-safe, and robust
 import { SWSELogger } from '../utils/logger.js';
 import SWSEDialogHelper from '../helpers/swse-dialog-helper.js';
 
-const STYLE_ID = 'swse-canvas-toolbar-style';
+const STYLE_ID = 'swse-canvas-toolbar-style-v2';
 
 class SWSECanvasToolbar {
   constructor(options = {}) {
@@ -15,44 +16,47 @@ class SWSECanvasToolbar {
     this._openDropdown = null;
     this._onWindowPointerDown = this._onWindowPointerDown.bind(this);
     this._onWindowResize = this._onWindowResize.bind(this);
+    this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
   }
 
   /* Public lifecycle */
   render() {
-    // If already rendered, re-render contents
     if (this._container) {
       this._renderContents();
       return;
     }
 
-    // Inject styles once
     this._injectStyles();
 
-    // Create container appended to body so it's NOT inside the canvas transform.
     this._container = document.createElement('div');
     this._container.className = 'swse-canvas-toolbar hud swse-canvas-toolbar--fixed';
     this._container.setAttribute('data-swse-toolbar', 'true');
+
     Object.assign(this._container.style, {
       position: 'fixed',
       zIndex: 2000,
       width: `${this.options.width}px`,
       bottom: this.options.position.bottom,
-      left: this.options.position.left
+      left: this.options.position.left,
+      pointerEvents: 'auto'
     });
 
     document.body.appendChild(this._container);
 
     this._renderContents();
 
-    // Bind global listeners (namespaced)
-    window.addEventListener('pointerdown', this._onWindowPointerDown);
+    window.addEventListener('pointerdown', this._onWindowPointerDown, { capture: true });
     window.addEventListener('resize', this._onWindowResize);
+    document.addEventListener('keydown', this._onDocumentKeyDown);
+    // Keep toolbar safely inside the viewport initially
+    this._keepInViewport();
   }
 
   close() {
     if (!this._container) return;
-    window.removeEventListener('pointerdown', this._onWindowPointerDown);
+    window.removeEventListener('pointerdown', this._onWindowPointerDown, { capture: true });
     window.removeEventListener('resize', this._onWindowResize);
+    document.removeEventListener('keydown', this._onDocumentKeyDown);
     this._container.remove();
     this._container = null;
     this._openDropdown = null;
@@ -60,18 +64,96 @@ class SWSECanvasToolbar {
 
   _injectStyles() {
     if (document.getElementById(STYLE_ID)) return;
+
+    // Consolidated CSS for UI fixes and toolbar - safe, namespaced and minimal overrides
     const css = `
-.swse-canvas-toolbar--fixed.swse-canvas-toolbar {\n  font-family: var(--font-family);\n  background: rgba(22,22,22,0.88);\n  color: #eee;\n  border-radius: 10px;\n  padding: 6px;\n  box-shadow: 0 6px 18px rgba(0,0,0,0.6);\n  --swse-button-size: 36px;\n}\n.swse-canvas-toolbar .swse-toolbar-row {\n  display: flex;\n  gap: 6px;\n  align-items: center;\n}\n.swse-canvas-toolbar .swse-tool {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: var(--swse-button-size);\n  height: var(--swse-button-size);\n  border-radius: 6px;\n  background: rgba(255,255,255,0.04);\n  cursor: pointer;\n  user-select: none;\n}
-.swse-canvas-toolbar .swse-tool:active{ transform: translateY(1px); }
-.swse-canvas-toolbar .swse-tool .fa { pointer-events: none; }
-.swse-canvas-toolbar .swse-tool.dropdown { position: relative; }
-.swse-canvas-toolbar .swse-tool.dropdown .dropdown-panel {\n  position: absolute;\n  left: 0;\n  top: calc(var(--swse-button-size) + 8px);\n  min-width: 200px;\n  max-height: 320px;\n  overflow: auto;\n  background: rgba(12,12,12,0.96);\n  border-radius: 8px;\n  box-shadow: 0 8px 24px rgba(0,0,0,0.6);\n  padding: 6px;\n  display: none;\n  z-index: 2100;\n}
-.swse-canvas-toolbar .swse-tool.dropdown.open .dropdown-panel { display: block; }
-.swse-canvas-toolbar .dropdown-item {\n  padding: 6px 10px;\n  border-radius: 6px;\n  cursor: pointer;\n}\n.swse-canvas-toolbar .dropdown-item:hover { background: rgba(255,255,255,0.03); }
-.swse-canvas-toolbar .swse-toolbar-spacer { flex: 1; }
-.swse-canvas-toolbar .swse-collapse { position: absolute; right: 8px; top: 6px; font-size: 12px; opacity: 0.7; cursor: pointer; }
-.swse-canvas-toolbar .swse-label { margin-left: 8px; font-size: 12px; opacity: 0.9; }
-`; 
+/* SWSE consolidated UI fixes + toolbar (namespaced) */
+@layer swse-system {
+  :root {
+    --swse-primary: #ffd700;
+    --swse-background: rgba(0,0,0,0.8);
+    --swse-border: rgba(255,215,0,0.22);
+    --swse-sidebar-width: var(--sidebar-width, 300px);
+    --swse-nav-height: var(--navigation-height, 32px);
+    --swse-controls-width: 80px;
+  }
+
+  /* Minimal safe resets for system elements only */
+  .swse { transform: none !important; }
+
+  /* Keep context menus on top */
+  .context-menu { position: fixed !important; z-index: 10000 !important; }
+
+  /* Window helpers - don't override Foundry core layout, just make draggable headers usable */
+  .window-app.swse { background: var(--swse-background); border: 1px solid var(--swse-border); }
+  .window-app .window-header { cursor: move; }
+  .window-app .window-content { overflow: auto; }
+
+  /* Toolbar styling (component-specific) */
+  .swse-canvas-toolbar--fixed.swse-canvas-toolbar {
+    font-family: var(--font-family, Signika, sans-serif);
+    background: rgba(22,22,22,0.88);
+    color: #eee;
+    border-radius: 10px;
+    padding: 6px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    --swse-button-size: 36px;
+  }
+  .swse-canvas-toolbar .swse-toolbar-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .swse-canvas-toolbar .swse-tool {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--swse-button-size);
+    height: var(--swse-button-size);
+    border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    cursor: pointer;
+    user-select: none;
+  }
+  .swse-canvas-toolbar .swse-tool:active{ transform: translateY(1px); }
+  .swse-canvas-toolbar .swse-tool .fa { pointer-events: none; }
+  .swse-canvas-toolbar .swse-tool.dropdown { position: relative; }
+  .swse-canvas-toolbar .swse-tool.dropdown .dropdown-panel {
+    position: absolute;
+    left: 0;
+    top: calc(var(--swse-button-size) + 8px);
+    min-width: 200px;
+    max-height: 320px;
+    overflow: auto;
+    background: rgba(12,12,12,0.96);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    padding: 6px;
+    display: none;
+    z-index: 2100;
+  }
+  .swse-canvas-toolbar .swse-tool.dropdown.open .dropdown-panel { display: block; }
+  .swse-canvas-toolbar .dropdown-item {
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .swse-canvas-toolbar .dropdown-item:hover { background: rgba(255,255,255,0.03); }
+  .swse-canvas-toolbar .swse-toolbar-spacer { flex: 1; }
+  .swse-canvas-toolbar .swse-collapse { position: absolute; right: 8px; top: 6px; font-size: 12px; opacity: 0.7; cursor: pointer; }
+  .swse-canvas-toolbar .swse-label { margin-left: 8px; font-size: 12px; opacity: 0.9; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .swse-canvas-toolbar { right: 5px; }
+    .swse-canvas-toolbar .swse-tool { min-height: 40px; }
+  }
+}
+
+/* Ensure the toolbar does not block pointer-events globally */
+.swse-canvas-toolbar { pointer-events: auto; }
+`;
+
     const style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent = css;
@@ -81,7 +163,6 @@ class SWSECanvasToolbar {
   _renderContents() {
     if (!this._container) return;
 
-    // Build DOM using simple DOM APIs (no external template dependency)
     this._container.innerHTML = '';
 
     const row = document.createElement('div');
@@ -96,17 +177,14 @@ class SWSECanvasToolbar {
 
       if (tool.type === 'dropdown') el.classList.add('dropdown');
 
-      // Icon
       const icon = document.createElement('i');
       icon.className = tool.icon || 'fas fa-question';
       el.appendChild(icon);
 
-      // For dropdowns, attach a panel
       if (tool.type === 'dropdown') {
         const panel = document.createElement('div');
         panel.className = 'dropdown-panel';
 
-        // Build dropdown contents depending on tool config
         if (tool.commands) {
           for (const cmd of tool.commands) {
             const item = document.createElement('div');
@@ -141,15 +219,12 @@ class SWSECanvasToolbar {
 
         el.appendChild(panel);
 
-        // Add a caret label for clarity
         const label = document.createElement('span');
         label.className = 'swse-label';
         label.textContent = tool.title || '';
         el.appendChild(label);
       } else {
-        // Non-dropdown button
         el.setAttribute('data-action', tool.action);
-        // Optional label for larger buttons
         if (tool.title && tool.type !== 'button-compact') {
           const label = document.createElement('span');
           label.className = 'swse-label';
@@ -158,13 +233,10 @@ class SWSECanvasToolbar {
         }
       }
 
-      // Attach basic click handler
       el.addEventListener('click', (ev) => this._onToolClick(ev, tool));
-
       row.appendChild(el);
     }
 
-    // Collapse control
     const collapse = document.createElement('div');
     collapse.className = 'swse-collapse';
     collapse.title = 'Collapse toolbar';
@@ -172,12 +244,12 @@ class SWSECanvasToolbar {
     collapse.addEventListener('click', (e) => {
       e.stopPropagation();
       this._container.classList.toggle('collapsed');
-      // Maintain minimal width when collapsed
       if (this._container.classList.contains('collapsed')) {
         this._container.style.width = '48px';
       } else {
         this._container.style.width = `${this.options.width}px`;
       }
+      this._keepInViewport();
     });
 
     this._container.appendChild(row);
@@ -187,7 +259,6 @@ class SWSECanvasToolbar {
   /* Event routing */
   _onToolClick(event, tool) {
     event.stopPropagation();
-    // If this was a dropdown root, toggle
     const el = event.currentTarget;
     if (el.classList.contains('dropdown')) {
       const isOpen = el.classList.contains('open');
@@ -204,7 +275,6 @@ class SWSECanvasToolbar {
   }
 
   _onWindowPointerDown(ev) {
-    // Close dropdowns if click outside the toolbar
     if (!this._container) return;
     if (!this._container.contains(ev.target)) {
       this._closeAllDropdowns();
@@ -212,15 +282,12 @@ class SWSECanvasToolbar {
   }
 
   _onWindowResize() {
-    // Keep toolbar inside the viewport
-    if (!this._container) return;
-    const rect = this._container.getBoundingClientRect();
-    const pad = 8;
-    let left = rect.left;
-    let bottom = rect.bottom;
-    if (rect.right > window.innerWidth - pad) left = window.innerWidth - rect.width - pad;
-    if (rect.left < pad) left = pad;
-    this._container.style.left = `${Math.max(left, pad)}px`;
+    this._keepInViewport();
+  }
+
+  _onDocumentKeyDown(ev) {
+    // close dropdowns on Escape
+    if (ev.key === 'Escape') this._closeAllDropdowns();
   }
 
   _closeAllDropdowns() {
@@ -230,7 +297,17 @@ class SWSECanvasToolbar {
     this._openDropdown = null;
   }
 
-  /* Toolbar behavior */
+  _keepInViewport() {
+    if (!this._container) return;
+    const rect = this._container.getBoundingClientRect();
+    const pad = 8;
+    let left = rect.left;
+    let bottom = rect.bottom;
+    if (rect.right > window.innerWidth - pad) left = Math.max(pad, window.innerWidth - rect.width - pad);
+    if (rect.left < pad) left = pad;
+    this._container.style.left = `${Math.max(left, pad)}px`;
+  }
+
   async _handleAction(action, tool, event) {
     SWSELogger.log(`SWSE | Canvas UI Action: ${action}`, tool?.id);
 
@@ -255,7 +332,6 @@ class SWSECanvasToolbar {
     }
   }
 
-  /* Tool implementations */
   async _quickRoll() {
     const content = `
       <form>
@@ -299,12 +375,10 @@ class SWSECanvasToolbar {
   }
 
   async _executeChatCommand(event) {
-    // The dropdown item attaches data-command
     const trigger = event.target.closest('[data-command]');
     const command = trigger?.getAttribute('data-command');
     if (!command) return;
 
-    // Try to find the chat input in multiple places
     const selectors = ['#chat-message', 'textarea.chat-input', 'input#chat-message'];
     let chatInput = null;
     for (const s of selectors) {
@@ -315,16 +389,13 @@ class SWSECanvasToolbar {
     if (chatInput) {
       chatInput.value = command;
       chatInput.focus();
-      // Trigger Foundry's chat input update if present
       chatInput.dispatchEvent(new Event('input', { bubbles: true }));
       return;
     }
 
-    // Fallback: create a ChatMessage with the command as content (only when it is not a slash command)
     if (!command.startsWith('/')) {
       ChatMessage.create({ content: command });
     } else {
-      // If it's a slash command and there's no chat input element, show a notification
       ui.notifications.warn('Chat input not available to paste the command.');
     }
   }
@@ -393,12 +464,10 @@ class SWSECanvasToolbar {
 
   async _measureDistance() {
     if (!canvas?.ready) return;
-    // Foundry Ruler activation: ensure controls exist
     if (canvas.controls?.ruler) {
       canvas.controls.ruler.activate();
       ui.notifications.info('Distance measurement tool activated. Click and drag to measure.');
     } else if (canvas.controls) {
-      // Fallback: attempt to set active tool to ruler via controls API
       try {
         canvas.controls.activeControl = 'ruler';
         ui.notifications.info('Distance measurement tool activated. Click and drag to measure.');
@@ -409,7 +478,6 @@ class SWSECanvasToolbar {
     }
   }
 
-  /* Toolbar data copied & ported (same structure as original but safe) */
   _getToolbarData() {
     return {
       tools: [
@@ -430,34 +498,60 @@ export class CanvasUIManager {
   static initialize() {
     SWSELogger.log('SWSE | Initializing Canvas UI Manager (Forge-safe)');
 
-    // Respect Forge: allow enabling via setting; default to enabled for maximum compatibility
-    const forgeActive = game.modules?.get('forgevtt')?.active;
-    const forceEnable = game.settings?.get?.('swse', 'canvasToolbarOnForge');
-    if (forgeActive && !forceEnable) {
-      SWSELogger.log('SWSE | Forge detected - using Forge-safe toolbar placement (app-style)');
-      // We still initialize; the toolbar is appended to document.body and is safe for Forge.
+    // Ensure the canvasToolbarOnForge setting exists (guard against missing registration)
+    let forgeSetting = true;
+    try {
+      // If setting is registered, read it; otherwise default to true.
+      if (game.settings && game.settings.get) {
+        forgeSetting = game.settings.get('swse', 'canvasToolbarOnForge');
+      }
+    } catch (err) {
+      // Setting missing or access error - register a client fallback if possible
+      try {
+        game.settings.register('swse', 'canvasToolbarOnForge', {
+          name: 'SWSE.Settings.CanvasToolbarOnForge.Name',
+          hint: 'SWSE.Settings.CanvasToolbarOnForge.Hint',
+          scope: 'client',
+          config: true,
+          type: Boolean,
+          default: true
+        });
+        forgeSetting = game.settings.get('swse', 'canvasToolbarOnForge');
+      } catch (e) {
+        // Can't register here (permission or duplicate) - just assume true and continue
+        SWSELogger.warn("SWSE | Could not verify or register 'canvasToolbarOnForge' setting, using default=true.", e);
+        forgeSetting = true;
+      }
     }
 
+    // Initialize when canvas is ready; safe rendering on resize too
     Hooks.on('canvasReady', () => this.renderToolbar());
     Hooks.on('canvasResize', () => this.renderToolbar());
+
+    // Also render when the scene becomes active (keep toolbar present on scene change)
+    Hooks.on('renderScene', () => this.renderToolbar());
   }
 
   static renderToolbar() {
-    this.removeToolbar();
-    this.toolbar = new SWSECanvasToolbar();
-    this.toolbar.render();
-    SWSELogger.log('SWSE | Canvas toolbar rendered (new implementation)');
+    try {
+      this.removeToolbar();
+      this.toolbar = new SWSECanvasToolbar();
+      this.toolbar.render();
+      SWSELogger.log('SWSE | Canvas toolbar rendered (new implementation)');
+    } catch (err) {
+      SWSELogger.error('SWSE | Failed to render canvas toolbar', err);
+    }
   }
 
   static removeToolbar() {
     if (this.toolbar) {
-      this.toolbar.close();
+      try { this.toolbar.close(); } catch (e) { /* ignore */ }
       this.toolbar = null;
     }
   }
 }
 
-// --- Fail-safe Chatbox Clamp ---
+/* Fail-safe Chatbox Clamp (kept minimal) */
 Hooks.on('renderChatLog', () => {
   const fixChatbox = () => {
     const sidebar = document.getElementById('sidebar');
@@ -467,5 +561,7 @@ Hooks.on('renderChatLog', () => {
     chat.style.marginTop = '0px';
     chat.style.paddingTop = '0px';
   };
-  setInterval(fixChatbox, 500);
+  // Run once after render and again shortly after to counter timing quirks.
+  setTimeout(fixChatbox, 200);
+  setTimeout(fixChatbox, 800);
 });
