@@ -496,6 +496,430 @@ export class CanvasUIManager {
   static toolbar = null;
 
   static initialize() {
+        // AUTO-GENERATED: merged UI CSS injected by script
+        const EXISTING = document.getElementById('swse-merged-ui-style');
+        if (!EXISTING) {
+            const style = document.createElement('style');
+            style.id = 'swse-merged-ui-style';
+            style.textContent = `/* From styles/canvas/canvas-ui.css */
+/* SWSE Canvas UI Toolbar */
+#swse-canvas-toolbar {
+    z-index: 100;
+    pointer-events: none;
+}
+
+#swse-canvas-toolbar .toolbar-container {
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid var(--color-border-dark-primary, #444);
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    min-width: 60px;
+    transition: all 0.3s ease;
+}
+
+#swse-canvas-toolbar.collapsed .toolbar-container {
+}
+
+#swse-canvas-toolbar .toolbar-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 4px;
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+#swse-canvas-toolbar .toolbar-header i {
+    font-size: 16px;
+}
+
+#swse-canvas-toolbar .toolbar-tools {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 0;
+}
+
+#swse-canvas-toolbar .swse-tool {
+}
+
+#swse-canvas-toolbar .swse-tool button {
+    width: 100%;
+    min-height: 44px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 8px;
+    transition: all 0.2s ease;
+    font-size: 11px;
+}
+
+#swse-canvas-toolbar .swse-tool button:hover {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: rgba(255, 215, 0, 0.5);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+#swse-canvas-toolbar .swse-tool button:active {
+    background: rgba(255, 215, 0, 0.3);
+}
+
+#swse-canvas-toolbar .swse-tool button i {
+    font-size: 18px;
+    line-height: 1;
+}
+
+#swse-canvas-toolbar .swse-tool .tool-label {
+    font-size: 9px;
+    text-align: center;
+    line-height: 1.2;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Dropdown styles */
+#swse-canvas-toolbar .swse-tool.dropdown {
+}
+
+#swse-canvas-toolbar .swse-tool.dropdown .dropdown-arrow {
+    font-size: 10px;
+    transition: transform 0.2s ease;
+}
+
+#swse-canvas-toolbar .swse-tool.dropdown.open .dropdown-arrow {
+}
+
+#swse-canvas-toolbar .dropdown-menu {
+    display: none;
+    background: rgba(0, 0, 0, 0.95);
+    border: 1px solid rgba(255, 215, 0, 0.5);
+    border-radius: 6px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    min-width: 180px;
+    max-width: 250px;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+#swse-canvas-toolbar .swse-tool.dropdown.open .dropdown-menu {
+    display: block;
+    animation: slideInRight 0.2s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#swse-canvas-toolbar .dropdown-item {
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #fff;
+    font-size: 12px;
+}
+
+#swse-canvas-toolbar .dropdown-item:last-child {
+}
+
+#swse-canvas-toolbar .dropdown-item:hover {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: rgba(255, 215, 0, 0.3);
+}
+
+#swse-canvas-toolbar .dropdown-item span {
+    display: block;
+}
+
+/* Toolbar toggle button */
+#swse-canvas-toolbar .toolbar-toggle {
+}
+
+#swse-canvas-toolbar .toolbar-toggle button {
+    width: 100%;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#swse-canvas-toolbar .toolbar-toggle button:hover {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: rgba(255, 215, 0, 0.5);
+}
+
+#swse-canvas-toolbar.collapsed .toolbar-toggle button i {
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    #swse-canvas-toolbar {
+    }
+
+    #swse-canvas-toolbar .toolbar-container {
+        min-width: 50px;
+        padding: 6px;
+    }
+
+    #swse-canvas-toolbar .swse-tool button {
+        min-height: 40px;
+        padding: 5px 6px;
+    }
+
+    #swse-canvas-toolbar .swse-tool button i {
+        font-size: 16px;
+    }
+
+    #swse-canvas-toolbar .swse-tool .tool-label {
+        font-size: 8px;
+    }
+
+    #swse-canvas-toolbar .dropdown-menu {
+        min-width: 150px;
+    }
+}
+
+/* Animation for initial load */
+@keyframes toolbarFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#swse-canvas-toolbar {
+    animation: toolbarFadeIn 0.3s ease;
+}
+
+/* Quick roll dialog styling */
+.swse-chat-card {
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+
+.swse-chat-card strong {
+    color: var(--color-text-dark-primary, #000);
+}
+
+/* From styles/foundry/swse-ui-fix.css */
+/* ==========================================
+   SWSE UI Fix - Foundry V13 Compatible
+   ==========================================
+   Fixes layout issues without conflicting with core positioning
+   - Forge VTT compatibility fixes
+   - Restore Foundry default UI behavior
+   - Fix window dragging and positioning
+   - Prevent windows from rendering off-screen
+*/
+
+/* Wrap all fixes in the system layer for V13 CSS cascade layer compatibility */
+@layer system {
+
+/* ============================================
+   CSS CUSTOM PROPERTIES (Safe to define)
+   ============================================ */
+:root {
+    --swse-primary: #ffd700;
+    --swse-background: rgba(0, 0, 0, 0.8);
+    --swse-border: rgba(255, 215, 0, 0.3);
+
+    /* Reference Foundry's variables where possible */
+    --swse-sidebar-width: var(--sidebar-width, 300px);
+    --swse-nav-height: var(--navigation-height, 32px);
+    --swse-controls-width: 80px;
+}
+
+/* ============================================
+   RESET PROBLEMATIC POSITIONING
+   Remove any rules that offset core UI elements
+   Only apply minimal resets - let Foundry/Forge handle positioning
+   ============================================ */
+
+/* Foundry and Forge handle their own positioning */
+
+/* Only ensure no unexpected transforms are applied by our system */
+.swse {
+}
+
+/* ============================================
+   FORGE VTT BODY/HTML RESETS
+   ============================================ */
+/* REMOVED: These aggressive resets were conflicting with Forge's UI */
+/* Let Foundry and Forge handle their own layout */
+
+/* ============================================
+   WINDOW POSITIONING CONSTRAINTS
+   ============================================ */
+/* Restore window functionality: draggable headers, resizable edges, proper centering */
+.window-app, .dialog {
+  /* Only apply minimal constraints - let Foundry handle positioning */
+  /* Don't override z-index, max-width, or max-height - Foundry handles these */
+}
+
+.window-app.minimized {
+}
+
+.window-header {
+}
+
+.window-resizable-handle {
+}
+
+.window-app .window-content {
+}
+
+/* Ensure SWSE-specific windows stay in bounds */
+.window-app.swse {
+    /* System styling - avoid position overrides */
+    background: var(--swse-background);
+    border: 1px solid var(--swse-border);
+}
+
+/* ============================================
+   CONTEXT MENUS
+   ============================================ */
+/* Ensure context menus appear on top */
+.context-menu {
+}
+
+/* ============================================
+   MOBILE / RESPONSIVE
+   ============================================ */
+/* Mobile / narrow-screen adjustments */
+@media (max-width: 600px) {
+  .window-app {
+  }
+}
+
+} /* End @layer system */
+
+/* From styles/src/base/_foundry-fixes.scss */
+// ============================================================================
+// FOUNDRY VTT FIXES
+// System-agnostic Foundry bug fixes (NOT scoped to .swse)
+// These are necessary fixes for Foundry VTT issues
+// ============================================================================
+
+// ============================================
+// ENHANCED SIDEBAR SPACE REMOVAL
+// More specific selectors to override Foundry core
+// ============================================
+
+// Fix for Foundry v13/The Forge sidebar height bug
+// Override broken height restrictions on sidebar tabs
+#sidebar {
+  // Ensure sidebar itself has proper display and sizing
+
+  // Remove ALL top spacing from sidebar tabs
+  .sidebar-tab[data-tab] {
+
+    // Show active tab
+    &.active {
+    }
+
+    &.directory {
+    }
+
+    // Specific fixes for chat tab
+    &#chat {
+
+      #chat-log {
+      }
+
+      #chat-controls {
+      }
+
+      #chat-form {
+      }
+    }
+  }
+
+  // Specific tab content areas - more explicit targeting
+  #chat-log,
+  .directory-list,
+  #combat-tracker,
+  #scenes .directory-list,
+  #actors .directory-list,
+  #items .directory-list,
+  #journal .directory-list,
+  #tables .directory-list,
+  #cards .directory-list,
+  #playlists .directory-list,
+  #compendium .directory-list {
+  }
+
+  // Remove spacing from directory headers
+  .directory-header,
+  .directory-header.keep-collapsed {
+  }
+
+  // Ensure search filters don't add space
+  .directory-list .directory-header input[type="search"] {
+  }
+
+  // Fix for sidebar tabs navigation
+  nav.tabs {
+  }
+}
+
+// ============================================
+// LEFT TOOLBAR - REMOVE EDGE SPACING
+// ============================================
+
+#ui-left {
+}
+
+#controls {
+
+  .scene-control,
+  .control-tools {
+  }
+
+  // Remove any gaps in the control buttons themselves
+  ol.control-tools {
+  }
+
+  .scene-control {
+  }
+}
+
+// Add any other Foundry-specific fixes here as needed
+// Keep this file minimal - only for fixing Foundry bugs`;
+            document.head.appendChild(style);
+        }
+    
     SWSELogger.log('SWSE | Initializing Canvas UI Manager (Forge-safe)');
 
     // Ensure the canvasToolbarOnForge setting exists (guard against missing registration)
