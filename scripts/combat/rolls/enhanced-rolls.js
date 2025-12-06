@@ -9,6 +9,11 @@ import { ForcePointsUtil } from '../../utils/force-points.js';
  */
 export class SWSERoll {
 
+    static getSelectedActor() {
+        return canvas.tokens.controlled[0]?.actor;
+    }
+
+
   /**
    * Prompt user to spend Force Point and return bonus if used
    * @param {Actor} actor - The actor rolling

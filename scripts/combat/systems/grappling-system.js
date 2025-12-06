@@ -11,6 +11,11 @@ import { SWSELogger } from '../../utils/logger.js';
 
 export class SWSEGrappling {
 
+    static getSelectedActor() {
+        return canvas.tokens.controlled[0]?.actor;
+    }
+
+
   /**
    * Initiate a Grab attack
    * @param {Actor} attacker - The grappling actor

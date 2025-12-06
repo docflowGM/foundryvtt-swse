@@ -6,6 +6,11 @@ import { SWSELogger } from '../utils/logger.js';
 
 export class SWSECombatAutomation {
 
+    static getSelectedActor() {
+        return canvas.tokens.controlled[0]?.actor;
+    }
+
+
   static init() {
     // Register combat hooks
     this._registerHooks();

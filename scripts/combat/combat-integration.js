@@ -7,6 +7,11 @@ import { SWSEActiveEffectsManager } from './active-effects-manager.js';
  */
 export class SWSECombatIntegration {
 
+    static getSelectedActor() {
+        return canvas.tokens.controlled[0]?.actor;
+    }
+
+
   static init() {
     SWSELogger.log("SWSE | Initializing combat integration...");
 

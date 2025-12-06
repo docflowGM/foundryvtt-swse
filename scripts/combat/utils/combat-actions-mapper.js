@@ -6,6 +6,11 @@ import { SWSELogger } from '../../utils/logger.js';
 
 export class CombatActionsMapper {
 
+    static getSelectedActor() {
+        return canvas.tokens.controlled[0]?.actor;
+    }
+
+
   static _combatActionsData = null;
   static _extraSkillUsesData = null;
   static _shipCombatActionsData = null;

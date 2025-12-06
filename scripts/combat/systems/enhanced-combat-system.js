@@ -33,6 +33,11 @@ import { getCoverBonus, getConcealmentMissChance, checkConcealmentHit, getFlanki
 
 export class SWSECombat {
 
+    static getSelectedActor() {
+        return canvas.tokens.controlled[0]?.actor;
+    }
+
+
   /**
    * Roll attack against a target
    *
@@ -443,7 +448,7 @@ export class SWSECombat {
     // 3. Apply remaining damage to HP
     if (remainingDamage > 0) {
       result.hpDamage = remainingDamage;
-      await target.applyDamage(remainingDamage, options);
+      try {await target.applyDamage(remainingDamage, options);} catch(err) { console.error(err); ui.notifications.error('Damage/Healing failed.'); }
 
       // Update token HP bar
       const tokens = target.getActiveTokens();

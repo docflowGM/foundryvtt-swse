@@ -5,6 +5,11 @@
 
 export class SWSEActiveEffectsManager {
 
+    static getSelectedActor() {
+        return canvas.tokens.controlled[0]?.actor;
+    }
+
+
   /**
    * Condition Track effect configurations
    */
