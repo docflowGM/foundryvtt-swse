@@ -1,19 +1,18 @@
 /**
- * store-main.js
+ * store-main.js (robust version with droid & vehicle grouping)
  *
- * Hardened SWSE Store Application.
- * - Uses store-shared.js helpers to avoid crashes from malformed compendium entries.
- * - Safe rendering wrappers around item loops.
- * - Minimal, drop-in replacement for the existing store-main.js
+ * - Loads configured packs (weapons, armor, equipment, droids, vehicles)
+ * - Normalizes and groups droids & vehicles by category keys already present in compendiums
+ * - Exposes `groupedItems` for templates to render category headers and lists
  *
- * Save as scripts/apps/store/store-main.js (replace the old file)
+ * Requires exports from store-shared.js:
+ *   getCostDisplay, getCostValue, safeString, safeImg, safeSystem, tryRender, isValidItemForStore
  */
 
 import { STORE_PACKS } from "./store-constants.js";
 import {
-  normalizeNumber,
-  getCostValue,
   getCostDisplay,
+  getCostValue,
   safeString,
   safeImg,
   safeSystem,
@@ -21,18 +20,20 @@ import {
   isValidItemForStore,
 } from "./store-shared.js";
 
-/**
- * SWSEStore - simplified, robust version
- * This is intentionally focused on safety and display; keep business logic (discounts, checkout) separate.
- */
 export class SWSEStore extends FormApplication {
   constructor(options = {}) {
     super({}, options);
-    // map of id -> raw item data
     this.itemsById = new Map();
-    // array of loaded items
     this.items = [];
-    // simple state
+    this.groupedItems = {
+      weapons: new Map(),
+      armor: new Map(),
+      equipment: new Map(),
+      droids: new Map(),
+      vehicles: new Map(),
+      other: new Map()
+    };
+    this._loadedPacks = new Set();
     this._loaded = false;
   }
 
@@ -41,7 +42,7 @@ export class SWSEStore extends FormApplication {
       id: "swse-store",
       classes: ["swse", "store"],
       template: "modules/swse/templates/store/store.html",
-      width: 900,
+      width: 1000,
       height: "auto",
     });
   }
@@ -50,115 +51,256 @@ export class SWSEStore extends FormApplication {
     return game.i18n ? game.i18n.localize("SWSE.Store.Title") : "SWSE Store";
   }
 
-  /**
-   * Initialize: load the configured packs.
-   */
+  // Public init entry
   async _initialize() {
     if (this._loaded) return;
     this._loaded = true;
     this.render(false);
     await this._loadAllPacks();
+    this._buildItemArraysAndGroups();
     this.render(true);
   }
 
-  /**
-   * Load all configured packs (weapons, armor, equipment, vehicles, droids)
-   * Uses STORE_PACKS constant from store-constants.js
-   */
+  // Load all packs we care about
   async _loadAllPacks() {
-    const packsToLoad = [];
-    if (STORE_PACKS?.WEAPONS) packsToLoad.push(STORE_PACKS.WEAPONS);
-    if (STORE_PACKS?.ARMOR) packsToLoad.push(STORE_PACKS.ARMOR);
-    if (STORE_PACKS?.EQUIPMENT) packsToLoad.push(STORE_PACKS.EQUIPMENT);
-    if (STORE_PACKS?.DROIDS) packsToLoad.push(STORE_PACKS.DROIDS);
-    if (STORE_PACKS?.VEHICLES) packsToLoad.push(STORE_PACKS.VEHICLES);
+    const packs = new Set();
+    if (STORE_PACKS?.WEAPONS) packs.add(STORE_PACKS.WEAPONS);
+    if (STORE_PACKS?.ARMOR) packs.add(STORE_PACKS.ARMOR);
+    if (STORE_PACKS?.EQUIPMENT) packs.add(STORE_PACKS.EQUIPMENT);
+    if (STORE_PACKS?.DROIDS) packs.add(STORE_PACKS.DROIDS);
+    if (STORE_PACKS?.VEHICLES) packs.add(STORE_PACKS.VEHICLES);
 
-    const unique = [...new Set(packsToLoad)];
-
-    for (const packName of unique) {
-      await this._loadPackSafe(packName);
-    }
-
-    // After loading, create an array and sort
-    this.items = Array.from(this.itemsById.values()).filter(isValidItemForStore);
-    // default alphabetic sort by name
-    this.items.sort((a, b) => (safeString(a.name).localeCompare(safeString(b.name))));
+    const packList = Array.from(packs);
+    // load in parallel but catch each pack error individually
+    await Promise.all(packList.map((p) => this._loadPackSafe(p)));
   }
 
-  /**
-   * Safe pack loader: wraps compendium access in try/catch
-   */
+  // Safe pack loader
   async _loadPackSafe(packName) {
-    if (!packName) return;
+    if (!packName || this._loadedPacks.has(packName)) return;
     try {
       const pack = game.packs.get(packName);
       if (!pack) {
         console.warn(`SWSE Store — pack not found: ${packName}`);
         return;
       }
-      // Load all docs (safe)
       const docs = await pack.getDocuments();
       for (const doc of docs) {
-        // Ensure doc is object-like (older compendiums are JSON lines and may already be plain objects)
-        const item = doc?.toObject ? doc.toObject() : doc;
+        const item = (doc?.toObject) ? doc.toObject() : doc;
         if (!isValidItemForStore(item)) continue;
-        // store by id (fallback to name-based unique key if id missing)
-        const id = item._id ?? item.id ?? `pack-${packName}-${safeString(item.name)}`;
+        const id = item._id ?? item.id ?? `${packName}-${safeString(item.name)}`;
         this.itemsById.set(id, item);
       }
+      this._loadedPacks.add(packName);
     } catch (err) {
-      console.error("SWSE Store — error loading pack", packName, err);
+      console.error(`SWSE Store — error loading pack ${packName}`, err);
     }
   }
 
-  /**
-   * Render the store template with safe data.
-   * This method prepares a minimal context that the template expects.
-   */
-  getData() {
-    // Prepare minimal, safe item data for the template
-    const viewItems = this.items.map((item) =>
-      tryRender(() => this._prepareItemForView(item), "getData")
-    ).filter(x => x !== null);
-
-    return {
-      title: this.title,
-      itemCount: viewItems.length,
-      items: viewItems,
-      loading: !this._loaded,
-    };
+  // After loading, create arrays and grouped maps
+  _buildItemArraysAndGroups() {
+    this.items = Array.from(this.itemsById.values());
+    // Build generic item view objects and place into grouped maps
+    this._clearGroups();
+    for (const raw of this.items) {
+      tryRender(() => {
+        const view = this._prepareItemForView(raw);
+        // decide main bucket
+        const bucket = this._determineBucket(view);
+        this._addToGroup(bucket, view);
+      }, "buildGroups");
+    }
+    // Sort groups
+    this._sortAllGroups();
   }
 
-  /**
-   * Turn a raw item into a safe, view-friendly object.
-   */
+  _clearGroups() {
+    for (const k of Object.keys(this.groupedItems)) {
+      this.groupedItems[k] = new Map();
+    }
+  }
+
+  // Create a lightweight, safe object for templates
   _prepareItemForView(item) {
     const sys = safeSystem(item) ?? {};
     const name = safeString(item.name ?? sys.name ?? "Unnamed Item");
     const img = safeImg(item);
     const costText = getCostDisplay(item);
-    const costValue = getCostValue(item); // may be null
+    const costValue = getCostValue(item); // null if non-numeric
+    const type = (item.type ?? sys.type ?? "").toString().toLowerCase();
 
-    // common fields used for rendering and filters
+    // canonical category detection (checks several fields)
+    const canonicalCategory = this._canonicalCategory(sys, item, type);
+
     return {
-      _id: item._id ?? item.id ?? `${name}-${Math.random().toString(36).slice(2, 9)}`,
+      _id: item._id ?? item.id ?? `${name}-${Math.random().toString(36).slice(2,9)}`,
       name,
       img,
       costText,
       costValue,
-      type: safeString(item.type ?? sys.type ?? "item"),
-      system: sys,
       raw: item,
+      system: sys,
+      type,
+      category: canonicalCategory,
+      // expose useful quick lookup fields for filters
+      availability: safeString(sys.availability ?? sys.avail ?? "", "").toLowerCase(),
     };
   }
 
-  /**
-   * Example: a safe item renderer for a list element.
-   * If you use templating (Handlebars), you can rely on the getData() output and do minimal work.
-   */
+  // Decide which bucket the item should go into
+  _determineBucket(viewObj) {
+    // vehicles & droids should go in their own buckets
+    if (viewObj.type === "actor" || viewObj.raw?.type === "actor") {
+      // pack metadata may determine actor type (vehicles pack uses Actor types often)
+      const implementationHints = (viewObj.system?.actorType || viewObj.system?.vehicleType || "").toString().toLowerCase();
+      if (implementationHints.includes("vehicle")) return "vehicles";
+      if (implementationHints.includes("droid")) return "droids";
+    }
+
+    // Some packs mark them with explicit 'vehicle' type or 'droid' tag
+    const t = viewObj.type;
+    if (t === "vehicle" || viewObj.raw?.type === "vehicle") return "vehicles";
+    if (t === "droid" || viewObj.raw?.type === "droid") return "droids";
+
+    // If category suggests vehicle/droid
+    const cat = (viewObj.category || "").toLowerCase();
+    if (cat.includes("droid")) return "droids";
+    if (cat.includes("vehicle") || cat.includes("speeder") || cat.includes("starship") || cat.includes("ship")) return "vehicles";
+
+    // otherwise put by type or general equipment
+    if (t === "weapon") return "weapons";
+    if (t === "armor") return "armor";
+    if (t === "equipment") return "equipment";
+
+    return "other";
+  }
+
+  // Robust canonicalization of category (looks through many fields, normalizes text)
+  _canonicalCategory(sys, item, detectedType) {
+    // Candidate fields in order of precedence:
+    const candidates = [
+      sys.category,
+      sys.subcategory,
+      sys.vehicleCategory,
+      sys.droidCategory,
+      sys.type,
+      sys.manufacturer,
+      item.type,
+      item.category,
+      (item.flags?.swse?.category ?? null)
+    ];
+
+    for (const c of candidates) {
+      if (!c) continue;
+      const s = String(c).trim();
+      if (s.length === 0) continue;
+      // normalize small cases
+      const normalized = this._normalizeCategoryString(s);
+      if (normalized) return normalized;
+    }
+
+    // fallback: try to infer from name (useful if compendium lacks category)
+    const name = safeString(item.name ?? "", "");
+    if (name) {
+      const inferred = this._inferCategoryFromName(name);
+      if (inferred) return inferred;
+    }
+
+    // final fallback by type
+    return detectedType || "misc";
+  }
+
+  _normalizeCategoryString(s) {
+    // unify hyphens/underscores/spaces, lowercase, convert synonyms to canonical form
+    const cleaned = s.replace(/[_\-]+/g, " ").trim();
+    const low = cleaned.toLowerCase();
+
+    // synonyms map (extend as needed)
+    const synonyms = {
+      "swoop": "Swoops/Speeders",
+      "speeder": "Swoops/Speeders",
+      "repulsor": "Repulsorlifts",
+      "starship": "Starships",
+      "frigate": "Starships",
+      "capital ship": "Capital Ships",
+      "protocol": "Droid - Protocol",
+      "astromech": "Droid - Astromech",
+      "utility": "Droid - Utility",
+      "combat": "Droid - Combat"
+    };
+
+    for (const key in synonyms) {
+      if (low.includes(key)) return synonyms[key];
+    }
+
+    // Capitalize words for display
+    return cleaned.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  }
+
+  _inferCategoryFromName(name) {
+    const low = name.toLowerCase();
+    if (low.includes("speeder") || low.includes("swoop")) return "Swoops/Speeders";
+    if (low.includes("starfighter") || low.includes("starship") || low.includes("frigate")) return "Starships";
+    if (low.includes("droid") || low.includes("astromech")) {
+      if (low.includes("protocol")) return "Droid - Protocol";
+      if (low.includes("astromech")) return "Droid - Astromech";
+      return "Droid - Utility";
+    }
+    return null;
+  }
+
+  // Add view item into group map under its category
+  _addToGroup(bucket, view) {
+    const groupMap = this.groupedItems[bucket] || this.groupedItems.other;
+    const cat = view.category || "Uncategorized";
+    if (!groupMap.has(cat)) groupMap.set(cat, []);
+    groupMap.get(cat).push(view);
+  }
+
+  // Sort groups and their content
+  _sortAllGroups() {
+    for (const [bucketName, map] of Object.entries(this.groupedItems)) {
+      // Sort items within each category: by cost (if numeric) then name
+      for (const [cat, arr] of map.entries()) {
+        arr.sort((a, b) => {
+          // numeric first (nulls go to end)
+          const an = (a.costValue !== null && a.costValue !== undefined) ? a.costValue : Infinity;
+          const bn = (b.costValue !== null && b.costValue !== undefined) ? b.costValue : Infinity;
+          if (an !== bn) return an - bn;
+          return a.name.localeCompare(b.name);
+        });
+        map.set(cat, arr);
+      }
+      // Optionally reorder map keys (we'll create a new map with sorted keys)
+      const sortedKeys = Array.from(map.keys()).sort((a,b) => a.localeCompare(b));
+      const newMap = new Map();
+      for (const k of sortedKeys) newMap.set(k, map.get(k));
+      this.groupedItems[bucketName] = newMap;
+    }
+  }
+
+  // Template data
+  getData() {
+    // For templates, we convert Maps -> arrays for easy iteration in Handlebars
+    const groupsForTemplate = {};
+    for (const [bucket, map] of Object.entries(this.groupedItems)) {
+      groupsForTemplate[bucket] = Array.from(map.entries()).map(([category, items]) => ({
+        category,
+        items,
+        count: items.length
+      }));
+    }
+
+    return {
+      title: this.title,
+      loading: !this._loaded,
+      itemCount: this.items.length,
+      groups: groupsForTemplate
+    };
+  }
+
   activateListeners(html) {
     super.activateListeners(html);
-    // Example: clicking a .buy-button uses data-id
     html.find(".buy-button").on("click", (ev) => {
       const id = ev.currentTarget.dataset.id;
       if (!id) return;
@@ -173,13 +315,8 @@ export class SWSEStore extends FormApplication {
     });
   }
 
-  /**
-   * Example buy flow (placeholder). Your existing checkout logic can be reused; this just demonstrates safety.
-   */
   async _onBuyItem(item) {
-    // safe info
     const view = this._prepareItemForView(item);
-    // Show a confirmation dialog that includes a safe cost display
     const content = `<p>Purchase ${escapeHTML(view.name)} for <strong>${escapeHTML(view.costText)}</strong>?</p>`;
     const confirmed = await new Promise((resolve) => {
       new Dialog({
@@ -192,17 +329,12 @@ export class SWSEStore extends FormApplication {
         default: "yes",
       }).render(true);
     });
-
     if (!confirmed) return;
-
-    // Here you would integrate with your player credits system.
-    // For now, just show a notification.
     ui.notifications.info(`Purchased ${view.name} for ${view.costText}`);
   }
 
-  // Keep compatibility with existing code that calls render(true/false)
-  async render(force = false, options = {}) {
-    // Ensure initialization happened
+  // Ensure initialization before render
+  async render(force=false, options={}) {
     if (!this._loaded) {
       await this._initialize();
     }
@@ -211,9 +343,8 @@ export class SWSEStore extends FormApplication {
 }
 
 /* ---------------------------
- * Small helpers used above
- * ---------------------------
- */
+ * Small helpers
+ * --------------------------- */
 
 function escapeHTML(str) {
   if (str === undefined || str === null) return "";
