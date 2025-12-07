@@ -2,7 +2,7 @@
   "id": "swse",
   "title": "Star Wars Saga Edition",
   "description": "Complete Star Wars Saga Edition implementation for FoundryVTT with automated character sheets, combat mechanics, Force powers, vehicles, and comprehensive game rules.",
-  "version": "1.1.200",
+  "version": "1.1.201",
   "compatibility": {
     "minimum": "11",
     "verified": "13",
@@ -21,12 +21,10 @@
   "changelog": "https://github.com/docflowGM/foundryvtt-swse/blob/main/CHANGELOG.md",
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://github.com/docflowGM/foundryvtt-swse/releases/latest/download/system.json",
-  "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.1.200/swse.zip",
-
+  "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.1.201/swse.zip",
   "esmodules": [
     "index.js"
   ],
-
   "styles": [
     "styles/core/swse-base.css",
     "styles/components/swse-components.css",
@@ -43,8 +41,7 @@
     "styles/apps/store.css",
     "styles/apps/vehicle-modification.css",
     "styles/apps/upgrade-app.css"
-    ],
-
+  ],
   "languages": [
     {
       "lang": "en",
@@ -72,26 +69,20 @@
       "path": "lang/ru.json"
     }
   ],
-
   "relationships": {
     "systems": [],
     "requires": []
   },
-
   "socket": true,
   "initiative": "1d20 + @abilities.dex.mod + @initiative.misc",
-
   "grid": {
     "distance": 1.5,
     "units": "m",
     "type": 1
   },
-
   "primaryTokenAttribute": "hp",
   "secondaryTokenAttribute": "defenses.reflex",
-
   "background": "assets/backgrounds/swse-bg.webp",
-
   "media": [
     {
       "type": "cover",
@@ -102,7 +93,6 @@
       "url": "assets/ui/title-logo.png"
     }
   ],
-
   "packs": [
     {
       "name": "classes",
