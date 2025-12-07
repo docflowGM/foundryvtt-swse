@@ -43,9 +43,7 @@
     "styles/apps/store.css",
     "styles/apps/vehicle-modification.css",
     "styles/apps/upgrade-app.css"
-    /* REMOVED: styles/foundry/swse-ui-fix.css */
-    /* REMOVED: styles/canvas/canvas-ui.css */
-  ],
+    ],
 
   "languages": [
     {
