@@ -546,7 +546,8 @@ Hooks.once("ready", async function() {
   SWSELogger.log('Enhanced Combat System initialized');
 
   // Center SWSE Windows (left of sidebar)
-  Hooks.on('renderApplication', (app, html, data) => {
+  /* COMMENTED BY fix_ui_js.py - disabled-hook START
+Hooks.on('renderApplication', (app, html, data) => {
     if (!app.options.classes?.includes('swse')) return;
     const sidebar = document.getElementById('sidebar');
     const sidebarWidth = sidebar ? sidebar.offsetWidth : 300;
@@ -555,8 +556,11 @@ Hooks.once("ready", async function() {
     const availableWidth = window.innerWidth - sidebarWidth;
     const left = Math.max(0, (availableWidth - windowWidth) / 2);
     const top = Math.max(0, (window.innerHeight - windowHeight) / 2);
-    try { app.setPosition({ left, top }); } catch (e) { /* ignore */ }
+    /* COMMENTED BY fix_ui_js.py - disabled-app-setposition START
+try { app.setPosition({ left, top }); } catch (e) { /* ignore */ }
+COMMENTED BY fix_ui_js.py - disabled-app-setposition END */
   });
+COMMENTED BY fix_ui_js.py - disabled-hook END */
 
   SWSELogger.log('Window positioning initialized');
 

@@ -40,9 +40,11 @@ export default class SWSEFormApplication extends FormApplication {
     render(force = false, options = {}) {
         // Ensure position options are set for Forge compatibility
         if (!this.options.left && this.options.left !== 0) {
+/* COMMENTED BY fix_ui_js.py */
             this.options.left = null;
         }
         if (!this.options.top && this.options.top !== 0) {
+/* COMMENTED BY fix_ui_js.py */
             this.options.top = null;
         }
 
