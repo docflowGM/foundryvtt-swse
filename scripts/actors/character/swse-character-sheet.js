@@ -2,6 +2,8 @@ import { DDEngine } from '../../framework/dd-engine.js';
 import { ThemeEngine } from '../../themes/theme-engine.js';
 import { swseLogger } from '../../utils/logger.js';
 import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { FollowerEngine } from '../../engine/follower-engine.js';
+
 /**
  * SWSE Character Sheet
  *
@@ -356,6 +358,14 @@ activateListeners(html) {
     this._applySheetTheme();
 
     super.activateListeners(html);
+    // Assets tab handlers
+    html.find(".open-follower").click(this._onOpenFollower.bind(this));
+    html.find(".dismiss-follower").click(this._onDismissFollower.bind(this));
+    html.find(".open-droid").click(this._onOpenDroid.bind(this));
+    html.find(".remove-droid").click(this._onRemoveDroid.bind(this));
+    html.find(".open-vehicle").click(this._onOpenVehicle.bind(this));
+    html.find(".remove-vehicle").click(this._onRemoveVehicle.bind(this));
+
 
     if (!this.options.editable) return;
 
@@ -2333,4 +2343,3 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newValue
       return super._onDrop(event);
     }
   }
-

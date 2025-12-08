@@ -1,0 +1,74 @@
+{{!-- assets-panel.hbs --}}
+
+<section class="assets-panel swse-panel">
+  <h2>Assets</h2>
+
+  <div class="assets-section followers">
+    <h3>Followers</h3>
+    {{#if system.followers}}
+      <div class="assets-list">
+        {{#each system.followers}}
+          <div class="asset-row" data-id="{{this._id}}">
+            <div class="asset-left">
+              <i class="fas fa-user-friends"></i>
+              <span class="asset-title">{{this.name}} <small class="muted">({{this.followerType}})</small></span>
+              <div class="asset-meta">Level: {{this.level}} • Species: {{this.species}}</div>
+            </div>
+            <div class="asset-actions">
+              <button class="open-follower" data-id="{{this._id}}">Open</button>
+              <button class="dismiss-follower" data-id="{{this._id}}">Dismiss</button>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="muted">No followers assigned.</div>
+    {{/if}}
+  </div>
+
+  <div class="assets-section droids">
+    <h3>Droids</h3>
+    {{#if system.droids}}
+      <div class="assets-list">
+        {{#each system.droids}}
+          <div class="asset-row" data-id="{{this._id}}">
+            <div class="asset-left">
+              <i class="fas fa-robot"></i>
+              <span class="asset-title">{{this.name}}</span>
+              <div class="asset-meta">Model: {{this.model}}</div>
+            </div>
+            <div class="asset-actions">
+              <button class="open-droid" data-id="{{this._id}}">Open</button>
+              {{#if ../isOwner}}<button class="remove-droid" data-id="{{this._id}}">Remove</button>{{/if}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="muted">No droids owned.</div>
+    {{/if}}
+  </div>
+
+  <div class="assets-section vehicles">
+    <h3>Vehicles</h3>
+    {{#if system.vehicles}}
+      <div class="assets-list">
+        {{#each system.vehicles}}
+          <div class="asset-row" data-id="{{this._id}}">
+            <div class="asset-left">
+              <i class="fas fa-space-shuttle"></i>
+              <span class="asset-title">{{this.name}}</span>
+              <div class="asset-meta">Class: {{this.vehicleClass}}</div>
+            </div>
+            <div class="asset-actions">
+              <button class="open-vehicle" data-id="{{this._id}}">Open</button>
+              {{#if ../isOwner}}<button class="remove-vehicle" data-id="{{this._id}}">Remove</button>{{/if}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="muted">No vehicles owned.</div>
+    {{/if}}
+  </div>
+</section>

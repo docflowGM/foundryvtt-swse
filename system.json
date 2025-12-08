@@ -42,7 +42,8 @@
     "styles/apps/vehicle-modification.css",
     "styles/apps/upgrade-app.css",
     "styles/sheets/themes/holo-default.css",
-    "styles/sheets/themes/high-contrast.css"
+    "styles/sheets/themes/high-contrast.css",
+    "styles/components/assets-tab.css"
   ],
   "languages": [
     {
