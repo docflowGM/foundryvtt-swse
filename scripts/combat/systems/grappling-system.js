@@ -1,4 +1,5 @@
 import { SWSELogger } from '../../utils/logger.js';
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Grappling System for SWSE
  * Implements the complete grappling subsystem including:
@@ -323,7 +324,11 @@ export class SWSEGrappling {
   static async _addCondition(actor, condition) {
     const conditions = actor.system.conditions || [];
     conditions.push(condition);
-    await actor.update({'system.conditions': conditions});
+    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.conditions': conditions});
+actor.update({'system.conditions': conditions});
+/* ORIGINAL: actor.update({'system.conditions': conditions}); */
+
   }
 
   /**
@@ -333,7 +338,11 @@ export class SWSEGrappling {
   static async _removeCondition(actor, conditionId) {
     const conditions = actor.system.conditions || [];
     const filtered = conditions.filter(c => c.id !== conditionId);
-    await actor.update({'system.conditions': filtered});
+    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.conditions': filtered});
+actor.update({'system.conditions': filtered});
+/* ORIGINAL: actor.update({'system.conditions': filtered}); */
+
   }
 
   /**

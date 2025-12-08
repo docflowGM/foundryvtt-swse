@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 // ============================================
 import { SWSELogger } from '../utils/logger.js';
 // SWSE Character Generator - IMPROVED
@@ -403,7 +404,10 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     }
 
     if (Object.keys(updates).length > 0) {
-      await actor.update(updates);
+// AUTO-CONVERT: confidence=0.00
+// TODO: manual migration required. Original: await actor.update(updates);
+// (no heuristic applied)
+/* ORIGINAL (for review): await actor.update(updates); */
     }
   }
 
@@ -467,11 +471,30 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     const currentHP = actor.system.hp.max || 0;
     const newHP = currentHP + hpGain;
 
-    await actor.update({
+// AUTO-CONVERT: confidence=0.00
+// TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
+// (no heuristic applied)
+/* ORIGINAL (for review): await actor.update({ */
       "system.level": newLevel,
       "system.hp.max": newHP,
       "system.hp.value": newHP
     });
+actor.update({
+// (no heuristic applied)
+/* ORIGINAL (for review): await actor.update({ */
+      "system.level": newLevel,
+      "system.hp.max": newHP,
+      "system.hp.value": newHP
+    });
+/* ORIGINAL: actor.update({
+// (no heuristic applied)
+/* ORIGINAL (for review): await actor.update({ */
+      "system.level": newLevel,
+      "system.hp.max": newHP,
+      "system.hp.value": newHP
+    }); */
+
 
     SWSELogger.log(`SWSE CharGen | Level ${newLevel} complete. HP: ${currentHP} -> ${newHP}`);
   }

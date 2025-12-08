@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Condition Track UI Component
  * This creates the visual condition track that's central to SWSE combat.
@@ -66,7 +67,11 @@ export class ConditionTrackComponent {
     // Click on step to set position
     html.find('[data-action="setCondition"]').click(async (event) => {
       const step = parseInt(event.currentTarget.dataset.step);
-      await actor.update({'system.conditionTrack.current': step});
+      await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.conditionTrack.current': step});
+actor.update({'system.conditionTrack.current': step});
+/* ORIGINAL: actor.update({'system.conditionTrack.current': step}); */
+
     });
 
     // Improve button
@@ -81,7 +86,11 @@ export class ConditionTrackComponent {
 
     // Persistent checkbox
     html.find('[name="system.conditionTrack.persistent"]').change(async (event) => {
-      await actor.update({'system.conditionTrack.persistent': event.target.checked});
+      await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.conditionTrack.persistent': event.target.checked});
+actor.update({'system.conditionTrack.persistent': event.target.checked});
+/* ORIGINAL: actor.update({'system.conditionTrack.persistent': event.target.checked}); */
+
     });
   }
 }

@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Droid-specific functionality
  */
@@ -96,9 +97,17 @@ export class SWSEDroidHandler {
 
     // Add item and update slot usage
     await actor.createEmbeddedDocuments('Item', [systemItem.toObject()]);
-    await actor.update({
+    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
       'system.systemSlots.used': slots.used + slotsRequired
     });
+actor.update({
+      'system.systemSlots.used': slots.used + slotsRequired
+    });
+/* ORIGINAL: actor.update({
+      'system.systemSlots.used': slots.used + slotsRequired
+    }); */
+
 
     ui.notifications.info(`Installed ${systemItem.name} (uses ${slotsRequired} slot(s))`);
     return true;
@@ -112,9 +121,17 @@ export class SWSEDroidHandler {
     const slotsRequired = systemItem.system.slotsRequired || 1;
 
     await actor.deleteEmbeddedDocuments('Item', [systemItem.id]);
-    await actor.update({
+    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
       'system.systemSlots.used': Math.max(0, slots.used - slotsRequired)
     });
+actor.update({
+      'system.systemSlots.used': Math.max(0, slots.used - slotsRequired)
+    });
+/* ORIGINAL: actor.update({
+      'system.systemSlots.used': Math.max(0, slots.used - slotsRequired)
+    }); */
+
 
     ui.notifications.info(`Uninstalled ${systemItem.name} (freed ${slotsRequired} slot(s))`);
     return true;

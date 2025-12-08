@@ -1,4 +1,5 @@
 import { SWSELogger } from '../utils/logger.js';
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Actor Size Migration
  * Fixes actor size values to be lowercase to match schema choices
@@ -44,7 +45,11 @@ export class ActorSizeMigration {
 
         SWSELogger.log(`Fixing ${actor.name}: "${currentSize}" -> "${newSize}"`);
 
-        await actor.update({ 'system.size': newSize });
+        await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({ 'system.size': newSize });
+actor.update({ 'system.size': newSize });
+/* ORIGINAL: actor.update({ 'system.size': newSize }); */
+
         fixed++;
 
       } catch (err) {

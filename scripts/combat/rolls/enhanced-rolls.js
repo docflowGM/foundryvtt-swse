@@ -1,6 +1,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { DamageSystem } from '../damage-system.js';
 import { ForcePointsUtil } from '../../utils/force-points.js';
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 
 /**
  * Enhanced Roll System for SWSE
@@ -93,7 +94,11 @@ export class SWSERoll {
     }
 
     // Spend the force point
-    await actor.update({'system.forcePoints.value': currentFP - 1});
+    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.forcePoints.value': currentFP - 1});
+actor.update({'system.forcePoints.value': currentFP - 1});
+/* ORIGINAL: actor.update({'system.forcePoints.value': currentFP - 1}); */
+
 
     // Show roll in chat
     const messageContent = `
@@ -625,7 +630,11 @@ export class SWSERoll {
     // Increase Dark Side Score if using [Dark Side] power
     if (isDarkSide) {
       const newDarkSideScore = (actor.system.darkSideScore || 0) + 1;
-      await actor.update({'system.darkSideScore': newDarkSideScore});
+      await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.darkSideScore': newDarkSideScore});
+actor.update({'system.darkSideScore': newDarkSideScore});
+/* ORIGINAL: actor.update({'system.darkSideScore': newDarkSideScore}); */
+
       ui.notifications.warn(`Dark Side Score increased to ${newDarkSideScore}`);
     }
 

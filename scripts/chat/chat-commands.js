@@ -1,4 +1,5 @@
 import { SWSELogger } from '../utils/logger.js';
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Chat commands for SWSE
  */
@@ -30,7 +31,11 @@ export function registerChatCommands() {
             token.actor.system.hp.value + amount,
             token.actor.system.hp.max
           );
-          token.actor.update({ 'system.hp.value': newHP });
+          token.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({ 'system.hp.value': newHP });
+actor.update({ 'system.hp.value': newHP });
+/* ORIGINAL: actor.update({ 'system.hp.value': newHP }); */
+
         }
       }
       return false;

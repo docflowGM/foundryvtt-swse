@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Damage Application System
  * Handles damage, healing, and condition track automation
@@ -190,7 +191,11 @@ export class DamageSystem {
             label: 'Apply',
             callback: async html => {
               const condition = html.find('[name="condition"]').val();
-              await targetActor.update({'system.conditionTrack': condition});
+              await target// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: Actor.update({'system.conditionTrack': condition});
+Actor.update({'system.conditionTrack': condition});
+/* ORIGINAL: Actor.update({'system.conditionTrack': condition}); */
+
               resolve(condition);
             }
           },

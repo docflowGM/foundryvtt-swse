@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Combat Action Quick Bar Component
  * Provides quick access to common combat actions
@@ -365,10 +366,20 @@ export class CombatActionBar {
     const maxHP = actor.system.hp.max;
     const newHP = Math.min(currentHP + healAmount, maxHP);
 
-    await actor.update({
+    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
       'system.hp.value': newHP,
       'system.secondWind.uses': actor.system.secondWind.uses - 1
     });
+actor.update({
+      'system.hp.value': newHP,
+      'system.secondWind.uses': actor.system.secondWind.uses - 1
+    });
+/* ORIGINAL: actor.update({
+      'system.hp.value': newHP,
+      'system.secondWind.uses': actor.system.secondWind.uses - 1
+    }); */
+
 
     ChatMessage.create({
       speaker: ChatMessage.getSpeaker({actor}),

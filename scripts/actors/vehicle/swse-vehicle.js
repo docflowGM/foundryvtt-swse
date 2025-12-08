@@ -2,6 +2,7 @@ import { SWSECharacterSheet } from '../character/swse-character-sheet.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { SWSEVehicleHandler } from './swse-vehicle-handler.js';
 import { CombatActionsMapper } from '../../combat/utils/combat-actions-mapper.js';
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 
 export class SWSEVehicleSheet extends SWSECharacterSheet {
   static get defaultOptions() {
@@ -182,7 +183,11 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     // Add to weapons array
     weapons.push(vehicleWeapon);
     
-    await this.actor.update({ 'system.weapons': weapons });
+    await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({ 'system.weapons': weapons });
+actor.update({ 'system.weapons': weapons });
+/* ORIGINAL: actor.update({ 'system.weapons': weapons }); */
+
     
     ui.notifications.info(`${weaponItem.name} added to vehicle weapons`);
     return true;
@@ -206,7 +211,11 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
       damage: "0d0", 
       range: "Close" 
     });
-    await this.actor.update({ "system.weapons": weapons });
+    await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({ "system.weapons": weapons });
+actor.update({ "system.weapons": weapons });
+/* ORIGINAL: actor.update({ "system.weapons": weapons }); */
+
   }
 
   async _onRemoveWeapon(event) {
@@ -215,7 +224,11 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     const weapons = [...(this.actor.system.weapons || [])];
     if (index >= 0 && index < weapons.length) {
       weapons.splice(index, 1);
-      await this.actor.update({ "system.weapons": weapons });
+      await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({ "system.weapons": weapons });
+actor.update({ "system.weapons": weapons });
+/* ORIGINAL: actor.update({ "system.weapons": weapons }); */
+
     }
   }
 
@@ -262,12 +275,26 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
       if (data.type === 'Actor') {
         const actor = await fromUuid(data.uuid);
         if (actor) {
-          await this.actor.update({
+          await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
             [`system.crewPositions.${slot}`]: {
               name: actor.name,
               uuid: actor.uuid
             }
           });
+actor.update({
+            [`system.crewPositions.${slot}`]: {
+              name: actor.name,
+              uuid: actor.uuid
+            }
+          });
+/* ORIGINAL: actor.update({
+            [`system.crewPositions.${slot}`]: {
+              name: actor.name,
+              uuid: actor.uuid
+            }
+          }); */
+
           ui.notifications.info(`${actor.name} assigned to ${slot} position`);
         }
       }
@@ -289,7 +316,11 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
           content: `<p>Remove <strong>${crewName}</strong> from ${slot} position?</p>`
         });
         if (confirm) {
-          await this.actor.update({ [`system.crewPositions.${slot}`]: null });
+          await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({ [`system.crewPositions.${slot}`]: null });
+actor.update({ [`system.crewPositions.${slot}`]: null });
+/* ORIGINAL: actor.update({ [`system.crewPositions.${slot}`]: null }); */
+
           ui.notifications.info(`Removed ${crewName} from ${slot} position`);
         }
       }

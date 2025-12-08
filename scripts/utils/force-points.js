@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Force Points utility functions for rolling and spending Force Points
  */
@@ -69,7 +70,11 @@ export class ForcePointsUtil {
     // Increase Dark Side Score if using Dark Side
     if (darkSideUsed) {
       const currentDarkSide = actor.system.darkSideScore || 0;
-      await actor.update({'system.darkSideScore': currentDarkSide + 1});
+      await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.darkSideScore': currentDarkSide + 1});
+actor.update({'system.darkSideScore': currentDarkSide + 1});
+/* ORIGINAL: actor.update({'system.darkSideScore': currentDarkSide + 1}); */
+
     }
 
     return totalBonus;
@@ -210,7 +215,11 @@ export class ForcePointsUtil {
     if (!spent) return false;
 
     // Reduce Dark Side Score
-    await actor.update({'system.darkSideScore': currentDarkSide - 1});
+    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.darkSideScore': currentDarkSide - 1});
+actor.update({'system.darkSideScore': currentDarkSide - 1});
+/* ORIGINAL: actor.update({'system.darkSideScore': currentDarkSide - 1}); */
+
 
     ui.notifications.info(`Dark Side Score reduced to ${currentDarkSide - 1}`);
     return true;
@@ -227,10 +236,20 @@ export class ForcePointsUtil {
     if (!spent) return false;
 
     // Set HP to 0 and set condition track to helpless but alive
-    await actor.update({
+    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
       'system.hp.value': 0,
       'system.conditionTrack.current': Math.min(4, actor.system.conditionTrack.current)
     });
+actor.update({
+      'system.hp.value': 0,
+      'system.conditionTrack.current': Math.min(4, actor.system.conditionTrack.current)
+    });
+/* ORIGINAL: actor.update({
+      'system.hp.value': 0,
+      'system.conditionTrack.current': Math.min(4, actor.system.conditionTrack.current)
+    }); */
+
 
     ChatMessage.create({
       speaker: ChatMessage.getSpeaker({actor}),

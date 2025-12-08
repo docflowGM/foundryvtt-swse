@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
 import { SWSELogger } from '../utils/logger.js';
  * SWSE Level Up System
@@ -182,11 +183,23 @@ export class SWSELevelUp {
             const newHPMax = actor.system.hp.max + hpGain;
             const newHPValue = actor.system.hp.value + hpGain;
             
-            await actor.update({
+            await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
                 "system.level": newLevel,
                 "system.hp.max": newHPMax,
                 "system.hp.value": newHPValue
             });
+actor.update({
+                "system.level": newLevel,
+                "system.hp.max": newHPMax,
+                "system.hp.value": newHPValue
+            });
+/* ORIGINAL: actor.update({
+                "system.level": newLevel,
+                "system.hp.max": newHPMax,
+                "system.hp.value": newHPValue
+            }); */
+
 
             // Get mentor for narration
             // Check if this is a prestige class
@@ -208,8 +221,13 @@ export class SWSELevelUp {
             }
 
             // If this is level 1, save the starting class
-            if (actor.system.level === 1) {
+            if (// AUTO-CONVERT actor.system.* assignment -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.system.level === 1) {
                 await setLevel1Class(actor, className);
+// (no heuristic applied)
+/* ORIGINAL: actor.system.level === 1) {
+                await setLevel1Class(actor, className); */
+
             }
 
             // Create chat message summarizing level up with mentor narration
