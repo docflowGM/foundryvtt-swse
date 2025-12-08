@@ -50,11 +50,11 @@ packPaths.forEach(packPath => {
   });
 });
 
-console.log('='.repeat(80));
-console.log('COMPENDIUM ANALYSIS');
-console.log('='.repeat(80));
-console.log(`Total items in compendia: ${compendiumItems.size}`);
-console.log(`Total unique items in templates: ${templateEquipment.size}\n`);
+swseLogger.log('='.repeat(80));
+swseLogger.log('COMPENDIUM ANALYSIS');
+swseLogger.log('='.repeat(80));
+swseLogger.log(`Total items in compendia: ${compendiumItems.size}`);
+swseLogger.log(`Total unique items in templates: ${templateEquipment.size}\n`);
 
 // Function to calculate string similarity (Levenshtein distance)
 function similarity(s1, s2) {
@@ -138,38 +138,38 @@ Array.from(templateEquipment).sort().forEach(templateItem => {
   }
 });
 
-console.log('\n' + '='.repeat(80));
-console.log('EXACT MATCHES');
-console.log('='.repeat(80));
-console.log(`Found ${exactMatches.length} exact matches\n`);
+swseLogger.log('\n' + '='.repeat(80));
+swseLogger.log('EXACT MATCHES');
+swseLogger.log('='.repeat(80));
+swseLogger.log(`Found ${exactMatches.length} exact matches\n`);
 
-console.log('\n' + '='.repeat(80));
-console.log('FUZZY MATCHES (Items that need updating)');
-console.log('='.repeat(80));
-console.log(`Found ${fuzzyMatches.length} fuzzy matches\n`);
+swseLogger.log('\n' + '='.repeat(80));
+swseLogger.log('FUZZY MATCHES (Items that need updating)');
+swseLogger.log('='.repeat(80));
+swseLogger.log(`Found ${fuzzyMatches.length} fuzzy matches\n`);
 
 fuzzyMatches.forEach(match => {
-  console.log(`❌ Template: "${match.template}"`);
-  console.log(`✓  Suggested: "${match.compendium}" (${(match.similarity * 100).toFixed(0)}% match)`);
+  swseLogger.log(`❌ Template: "${match.template}"`);
+  swseLogger.log(`✓  Suggested: "${match.compendium}" (${(match.similarity * 100).toFixed(0)}% match)`);
   if (match.alternatives && match.alternatives.length > 0) {
-    console.log(`   Alternatives: ${match.alternatives.join(', ')}`);
+    swseLogger.log(`   Alternatives: ${match.alternatives.join(', ')}`);
   }
-  console.log('');
+  swseLogger.log('');
 });
 
-console.log('\n' + '='.repeat(80));
-console.log('NOT FOUND (Items missing from compendia)');
-console.log('='.repeat(80));
-console.log(`Found ${notFound.length} items with no match\n`);
+swseLogger.log('\n' + '='.repeat(80));
+swseLogger.log('NOT FOUND (Items missing from compendia)');
+swseLogger.log('='.repeat(80));
+swseLogger.log(`Found ${notFound.length} items with no match\n`);
 
 notFound.forEach(item => {
-  console.log(`❌ ${item}`);
+  swseLogger.log(`❌ ${item}`);
 });
 
-console.log('\n' + '='.repeat(80));
-console.log('SUMMARY');
-console.log('='.repeat(80));
-console.log(`✓ Exact matches: ${exactMatches.length}`);
-console.log(`⚠ Needs updating: ${fuzzyMatches.length}`);
-console.log(`❌ Missing: ${notFound.length}`);
-console.log(`Total: ${templateEquipment.size}`);
+swseLogger.log('\n' + '='.repeat(80));
+swseLogger.log('SUMMARY');
+swseLogger.log('='.repeat(80));
+swseLogger.log(`✓ Exact matches: ${exactMatches.length}`);
+swseLogger.log(`⚠ Needs updating: ${fuzzyMatches.length}`);
+swseLogger.log(`❌ Missing: ${notFound.length}`);
+swseLogger.log(`Total: ${templateEquipment.size}`);

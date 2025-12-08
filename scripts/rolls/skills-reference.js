@@ -354,7 +354,7 @@ class SWSEActor extends Actor {
     }
 
     const modifier = this.getSkillModifier(skillKey, options);
-    const roll = await new Roll(`1d20 + ${modifier}`).evaluate({ async: true });
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${modifier}`).evaluate({ async: true });
 
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: this }),

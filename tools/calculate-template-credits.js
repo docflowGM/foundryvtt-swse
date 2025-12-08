@@ -76,16 +76,16 @@ const startingCreditsByClass = {
 const templatesPath = path.join(__dirname, '..', 'data', 'character-templates.json');
 const templates = JSON.parse(fs.readFileSync(templatesPath, 'utf8'));
 
-console.log('='.repeat(80));
-console.log('TEMPLATE EQUIPMENT COST CALCULATION');
-console.log('='.repeat(80));
-console.log('');
+swseLogger.log('='.repeat(80));
+swseLogger.log('TEMPLATE EQUIPMENT COST CALCULATION');
+swseLogger.log('='.repeat(80));
+swseLogger.log('');
 
 const updates = [];
 
 templates.templates.forEach(template => {
   if (!template.startingEquipment || template.startingEquipment.length === 0) {
-    console.log(`${template.name} (${template.class}): No equipment`);
+    swseLogger.log(`${template.name} (${template.class}): No equipment`);
     return;
   }
 
@@ -111,7 +111,7 @@ templates.templates.forEach(template => {
 
     const cost = itemCosts[itemName];
     if (cost === undefined) {
-      console.warn(`  WARNING: Unknown item cost for "${itemName}"`);
+      swseLogger.warn(`  WARNING: Unknown item cost for "${itemName}"`);
     } else {
       equipmentCost += cost;
     }
@@ -119,11 +119,11 @@ templates.templates.forEach(template => {
 
   const remainingCredits = startingCredits - equipmentCost;
 
-  console.log(`${template.name} (${template.class}):`);
-  console.log(`  Starting: ${startingCredits} credits`);
-  console.log(`  Equipment: -${equipmentCost} credits`);
-  console.log(`  Remaining: ${remainingCredits} credits`);
-  console.log('');
+  swseLogger.log(`${template.name} (${template.class}):`);
+  swseLogger.log(`  Starting: ${startingCredits} credits`);
+  swseLogger.log(`  Equipment: -${equipmentCost} credits`);
+  swseLogger.log(`  Remaining: ${remainingCredits} credits`);
+  swseLogger.log('');
 
   updates.push({
     id: template.id,
@@ -139,8 +139,8 @@ templates.templates.forEach(template => {
 // Save updated templates
 fs.writeFileSync(templatesPath, JSON.stringify(templates, null, 2), 'utf8');
 
-console.log('='.repeat(80));
-console.log('SUMMARY');
-console.log('='.repeat(80));
-console.log(`Updated ${updates.length} templates with remaining credits`);
-console.log(`File saved: ${templatesPath}`);
+swseLogger.log('='.repeat(80));
+swseLogger.log('SUMMARY');
+swseLogger.log('='.repeat(80));
+swseLogger.log(`Updated ${updates.length} templates with remaining credits`);
+swseLogger.log(`File saved: ${templatesPath}`);

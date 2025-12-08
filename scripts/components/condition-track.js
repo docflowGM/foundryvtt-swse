@@ -68,9 +68,9 @@ export class ConditionTrackComponent {
     html.find('[data-action="setCondition"]').click(async (event) => {
       const step = parseInt(event.currentTarget.dataset.step);
       await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({'system.conditionTrack.current': step});
-actor.update({'system.conditionTrack.current': step});
-/* ORIGINAL: actor.update({'system.conditionTrack.current': step}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': step});
+globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': step});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': step}); */
 
     });
 
@@ -87,9 +87,9 @@ actor.update({'system.conditionTrack.current': step});
     // Persistent checkbox
     html.find('[name="system.conditionTrack.persistent"]').change(async (event) => {
       await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({'system.conditionTrack.persistent': event.target.checked});
-actor.update({'system.conditionTrack.persistent': event.target.checked});
-/* ORIGINAL: actor.update({'system.conditionTrack.persistent': event.target.checked}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.persistent': event.target.checked});
+globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.persistent': event.target.checked});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.persistent': event.target.checked}); */
 
     });
   }

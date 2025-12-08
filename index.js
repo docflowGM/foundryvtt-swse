@@ -35,6 +35,19 @@ import { SWSEVehicleDataModel } from './scripts/data-models/vehicle-data-model.j
 import {
 
 // SWSE: auto-registered house-rule settings
+
+// SWSE: injected core engines
+import { swseLogger } from './scripts/utils/logger.js';
+import { RollEngine } from './scripts/engine/roll-engine.js';
+import { ActorEngine } from './scripts/actors/engine/actor-engine.js';
+import { DDEngine } from './scripts/framework/dd-engine.js';
+import { ThemeEngine } from './scripts/themes/theme-engine.js';
+import { HouseRules } from './scripts/houserules/houserules-engine.js';
+import { ProgressionEngine } from './scripts/progression/progression-engine.js';
+import { RulesEngine } from './scripts/rules/rules-engine.js';
+import { Upkeep } from './scripts/automation/upkeep.js';
+
+
 try {
   if (!game.settings?.register) {
     // not ready yet; registration will happen in ready hook
@@ -61,7 +74,7 @@ try {
       });
     }
   }
-} catch(e) { console.warn('SWSE | settings registration guard failed', e); }
+} catch(e) { swseLogger.warn('SWSE | settings registration guard failed', e); }
 
     WeaponDataModel,
     ArmorDataModel,
@@ -189,9 +202,9 @@ function enhanceValidationLogging() {
             } catch (err) {
                 if (err.name === "DataModelValidationError") {
                     console.group(`⚠️ SWSE ${DocumentClass.name} Validation Error`);
-                    console.error(`Document:`, this.name || "Unnamed");
-                    console.error(`Type:`, this.type);
-                    console.error(`ID:`, this.id || "No ID");
+                    swseLogger.error(`Document:`, this.name || "Unnamed");
+                    swseLogger.error(`Type:`, this.type);
+                    swseLogger.error(`ID:`, this.id || "No ID");
                     console.group(`Data Object:`);
                     console.dir(data, { depth: 3 });
                     console.groupEnd();
@@ -199,17 +212,17 @@ function enhanceValidationLogging() {
                         console.group(`Validation Failures (${err.failures.length}):`);
                         err.failures.forEach((f, index) => {
                             console.group(`${index + 1}. Field: ${f.path}`);
-                            console.error(`Message:`, f.failure?.message || f.failure);
-                            console.error(`Actual Value:`, f.value);
-                            console.error(`Expected:`, f.failure?.expected || 'N/A');
+                            swseLogger.error(`Message:`, f.failure?.message || f.failure);
+                            swseLogger.error(`Actual Value:`, f.value);
+                            swseLogger.error(`Expected:`, f.failure?.expected || 'N/A');
                             console.groupEnd();
                         });
                         console.groupEnd();
                     }
-                    if (err.message) console.error(`Error Message:`, err.message);
+                    if (err.message) swseLogger.error(`Error Message:`, err.message);
                     if (game.settings?.get('swse', 'devMode')) {
                         console.group(`Stack Trace:`);
-                        console.error(err.stack);
+                        swseLogger.error(err.stack);
                         console.groupEnd();
                     }
                     console.groupEnd();
@@ -229,7 +242,7 @@ function enhanceValidationLogging() {
 // System Initialization
 // ---------------------------
 Hooks.once("init", async function () {
-    console.log("SWSE | Initializing Star Wars Saga Edition System");
+    swseLogger.log("SWSE | Initializing Star Wars Saga Edition System");
 
     // System Settings
     registerSystemSettings();
@@ -336,14 +349,14 @@ Hooks.once("init", async function () {
     // Dice Configuration
     CONFIG.Dice.terms["d"] = foundry.dice.terms.Die;
 
-    console.log("SWSE | System Initialized Successfully");
+    swseLogger.log("SWSE | System Initialized Successfully");
 });
 
 // ---------------------------
 // System Ready Hook
 // ---------------------------
 Hooks.once("ready", async function () {
-    console.log("SWSE | System Ready");
+    swseLogger.log("SWSE | System Ready");
 
     errorHandler.initialize();
 
@@ -376,9 +389,9 @@ Hooks.once("ready", async function () {
 
     try {
         CanvasUIManager.initialize();
-        console.log("SWSE | Canvas UI Tools initialized");
+        swseLogger.log("SWSE | Canvas UI Tools initialized");
     } catch (err) {
-        console.warn("SWSE | CanvasUIManager.initialize() failed:", err);
+        swseLogger.warn("SWSE | CanvasUIManager.initialize() failed:", err);
         SWSELogger.warn("CanvasUIManager initialization failed", err);
     }
 
@@ -398,7 +411,7 @@ Hooks.once("ready", async function () {
         ...game.swse
     });
 
-    console.log("SWSE | Enhanced System Fully Loaded");
+    swseLogger.log("SWSE | Enhanced System Fully Loaded");
 });
 
 // ---------------------------
@@ -413,13 +426,41 @@ function registerSystemSettings() {
 // SWSE: auto-init hooks
 try {
   Hooks.once('ready', () => {
+
+  // SWSE: expose engines globally for wiring convenience
+  try {
+    globalThis.SWSE = {
+      ActorEngine: typeof ActorEngine !== 'undefined' ? ActorEngine : undefined,
+      RollEngine: typeof RollEngine !== 'undefined' ? RollEngine : undefined,
+      DDEngine: typeof DDEngine !== 'undefined' ? DDEngine : undefined,
+      ThemeEngine: typeof ThemeEngine !== 'undefined' ? ThemeEngine : undefined,
+      RulesEngine: typeof RulesEngine !== 'undefined' ? RulesEngine : undefined,
+      Upkeep: typeof Upkeep !== 'undefined' ? Upkeep : undefined,
+      ProgressionEngine: typeof ProgressionEngine !== 'undefined' ? ProgressionEngine : undefined
+    };
+    console.log('SWSE | Global engine registry attached to globalThis.SWSE');
+  } catch(e) {
+    console.warn('SWSE | Failed to attach global registry', e);
+  }
+
     try {
       RulesEngine.init?.();
       Upkeep.init?.();
       // No need to init RollManager, it's static helper only, but we log it
-      console.log('SWSE | RollManager available');
+      swseLogger.log('SWSE | RollManager available');
     } catch (e) {
-      console.warn('SWSE | failed to init SWSE subsystems', e);
+      swseLogger.warn('SWSE | failed to init SWSE subsystems', e);
     }
   });
-} catch(e) { console.warn('SWSE | auto-init guard failed', e); }
+} catch(e) { swseLogger.warn('SWSE | auto-init guard failed', e); }
+
+// SWSE: engines init
+Hooks.once('ready', () => {
+  try {
+    swseLogger.info('SWSE | Initializing core engines');
+    RulesEngine?.init?.();
+    Upkeep?.init?.();
+    // Inform availability
+    swseLogger.log('SWSE | Core engines injected and available');
+  } catch(e) { swseLogger.error('SWSE | Core engine init failed', e); }
+});

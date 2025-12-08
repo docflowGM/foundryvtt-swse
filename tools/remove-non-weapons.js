@@ -33,10 +33,10 @@ const startingCredits = {
 const templatesPath = path.join(__dirname, '..', 'data', 'character-templates.json');
 const templates = JSON.parse(fs.readFileSync(templatesPath, 'utf8'));
 
-console.log('='.repeat(80));
-console.log('REMOVING NON-WEAPONS FROM OVER-BUDGET TEMPLATES');
-console.log('='.repeat(80));
-console.log('');
+swseLogger.log('='.repeat(80));
+swseLogger.log('REMOVING NON-WEAPONS FROM OVER-BUDGET TEMPLATES');
+swseLogger.log('='.repeat(80));
+swseLogger.log('');
 
 const changes = [];
 
@@ -86,12 +86,12 @@ templates.templates.forEach(template => {
 
 fs.writeFileSync(templatesPath, JSON.stringify(templates, null, 2), 'utf8');
 
-console.log('Non-weapon items removed:');
+swseLogger.log('Non-weapon items removed:');
 changes.forEach(c => {
-  console.log(`\n${c.template} (needed ${c.needed}, saved ${c.saved}):`);
-  c.removed.forEach(item => console.log(`  - ${item} (${itemCosts[item]})`));
+  swseLogger.log(`\n${c.template} (needed ${c.needed}, saved ${c.saved}):`);
+  c.removed.forEach(item => swseLogger.log(`  - ${item} (${itemCosts[item]})`));
 });
 
-console.log('\n' + '='.repeat(80));
-console.log(`Modified ${changes.length} templates`);
-console.log('Run calculate-template-credits.js for final budget status');
+swseLogger.log('\n' + '='.repeat(80));
+swseLogger.log(`Modified ${changes.length} templates`);
+swseLogger.log('Run calculate-template-credits.js for final budget status');

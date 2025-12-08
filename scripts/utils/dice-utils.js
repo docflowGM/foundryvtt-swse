@@ -25,7 +25,7 @@ async function evaluateRoll(roll, options = {}) {
  */
 export async function rollDice(formula, data = {}, label = "Roll") {
     try {
-        const roll = await new Roll(formula, data).evaluate({async: true});
+        const roll = await globalThis.SWSE.RollEngine.safeRoll(formula, data).evaluate({async: true});
         
         await roll.toMessage({
             speaker: ChatMessage.getSpeaker(),
@@ -59,7 +59,7 @@ export async function d20(modifier = 0, label = "d20") {
  */
 export async function rollAttack(baseAttack, modifiers = [], rollData = {}) {
     const totalMod = modifiers.reduce((sum, mod) => sum + mod, baseAttack);
-    const roll = new Roll("1d20 + @total", { ...rollData, total: totalMod });
+    const roll = globalThis.SWSE.RollEngine.safeRoll("1d20 + @total", { ...rollData, total: totalMod });
     return await evaluateRoll(roll, {
         speaker: ChatMessage.getSpeaker(),
         flavor: "Attack Roll"
@@ -74,7 +74,7 @@ export async function rollAttack(baseAttack, modifiers = [], rollData = {}) {
  * @returns {Promise<Roll>} The evaluated roll
  */
 export async function rollDamage(damageDice, modifier = 0, rollData = {}) {
-    const roll = new Roll(`${damageDice} + @mod`, { ...rollData, mod: modifier });
+    const roll = globalThis.SWSE.RollEngine.safeRoll(`${damageDice} + @mod`, { ...rollData, mod: modifier });
     return await evaluateRoll(roll, {
         speaker: ChatMessage.getSpeaker(),
         flavor: "Damage"
@@ -88,7 +88,7 @@ export async function rollDamage(damageDice, modifier = 0, rollData = {}) {
  * @returns {Promise<Roll>} The evaluated roll
  */
 export async function rollInitiative(initiativeBonus = 0, rollData = {}) {
-    const roll = new Roll("1d20 + @init", { ...rollData, init: initiativeBonus });
+    const roll = globalThis.SWSE.RollEngine.safeRoll("1d20 + @init", { ...rollData, init: initiativeBonus });
     return await evaluateRoll(roll, {
         speaker: ChatMessage.getSpeaker(),
         flavor: "Initiative"
@@ -102,7 +102,7 @@ export async function rollInitiative(initiativeBonus = 0, rollData = {}) {
  * @returns {Promise<Roll>} The evaluated roll
  */
 export async function rollSkillCheck(skillModifier = 0, rollData = {}) {
-    const roll = new Roll("1d20 + @skill", { ...rollData, skill: skillModifier });
+    const roll = globalThis.SWSE.RollEngine.safeRoll("1d20 + @skill", { ...rollData, skill: skillModifier });
     return await evaluateRoll(roll, {
         speaker: ChatMessage.getSpeaker(),
         flavor: "Skill Check"
@@ -126,8 +126,8 @@ export function isCriticalThreat(rollResult, criticalRange = 20) {
  * @returns {Promise<Roll>} The higher roll
  */
 export async function rollWithAdvantage(formula, label = "Roll with Advantage") {
-    const roll1 = await new Roll(formula).evaluate({async: true});
-    const roll2 = await new Roll(formula).evaluate({async: true});
+    const roll1 = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({async: true});
+    const roll2 = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({async: true});
     
     const higherRoll = roll1.total >= roll2.total ? roll1 : roll2;
     
@@ -146,8 +146,8 @@ export async function rollWithAdvantage(formula, label = "Roll with Advantage") 
  * @returns {Promise<Roll>} The lower roll
  */
 export async function rollWithDisadvantage(formula, label = "Roll with Disadvantage") {
-    const roll1 = await new Roll(formula).evaluate({async: true});
-    const roll2 = await new Roll(formula).evaluate({async: true});
+    const roll1 = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({async: true});
+    const roll2 = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({async: true});
     
     const lowerRoll = roll1.total <= roll2.total ? roll1 : roll2;
     

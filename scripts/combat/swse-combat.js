@@ -39,7 +39,7 @@ export class SWSECombatDocument extends Combat {
 
       // Get the initiative formula
       const rollFormula = formula || this._getInitiativeFormula(combatant);
-      const roll = await new Roll(rollFormula).evaluate({async: true});
+      const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula).evaluate({async: true});
 
       updates.push({_id: id, initiative: roll.total});
 
@@ -115,7 +115,7 @@ export class SWSECombatDocument extends Combat {
       for (const combatant of this.combatants) {
         if (combatant.actor) {
           await combatant.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
             'system.secondWind.uses': 1,
             'system.actionEconomy': {
               swift: true,
@@ -125,7 +125,7 @@ export class SWSECombatDocument extends Combat {
               reaction: true
             }
           });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
             'system.secondWind.uses': 1,
             'system.actionEconomy': {
               swift: true,
@@ -135,7 +135,7 @@ actor.update({
               reaction: true
             }
           });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
             'system.secondWind.uses': 1,
             'system.actionEconomy': {
               swift: true,
@@ -164,7 +164,7 @@ actor.update({
     const combatant = this.combatant;
     if (combatant?.actor && game.user.isGM) {
       await combatant.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.actionEconomy': {
           swift: true,
           move: true,
@@ -173,7 +173,7 @@ actor.update({
           reaction: true
         }
       });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.actionEconomy': {
           swift: true,
           move: true,
@@ -182,7 +182,7 @@ actor.update({
           reaction: true
         }
       });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.actionEconomy': {
           swift: true,
           move: true,
@@ -206,7 +206,7 @@ actor.update({
 
     // Log round progression
     if (game.user.isGM) {
-      console.log(`SWSE | Combat Round ${this.round}`);
+      swseLogger.log(`SWSE | Combat Round ${this.round}`);
     }
 
     return result;

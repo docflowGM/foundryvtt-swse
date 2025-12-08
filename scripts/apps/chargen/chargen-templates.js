@@ -387,19 +387,19 @@ export class CharacterTemplates {
           if (skillKey) {
 // AUTO-CONVERT: confidence=0.00
 // TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
-/* ORIGINAL (for review): await actor.update({ */
+/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
               [`system.skills.${skillKey}.focused`]: true
             });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
-/* ORIGINAL (for review): await actor.update({ */
+/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
               [`system.skills.${skillKey}.focused`]: true
             });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
-/* ORIGINAL (for review): await actor.update({ */
+/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
               [`system.skills.${skillKey}.focused`]: true
             }); */
 
@@ -412,19 +412,19 @@ actor.update({
       if (featName === 'Force Sensitivity') {
 // AUTO-CONVERT: confidence=0.00
 // TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
-/* ORIGINAL (for review): await actor.update({ */
+/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
           'system.forceSensitive': true
         });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
-/* ORIGINAL (for review): await actor.update({ */
+/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
           'system.forceSensitive': true
         });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
-/* ORIGINAL (for review): await actor.update({ */
+/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
           'system.forceSensitive': true
         }); */
 

@@ -105,7 +105,7 @@ export class DropHandler {
     }
 
     // Apply updates
-    await actor.update(updates);
+    await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
 
     // Create embedded items for feats, talents, etc.
     // Try to find matching items in compendiums first
@@ -200,13 +200,13 @@ export class DropHandler {
       if (template.speciesTraits) bioNotes += `<h3>Species Traits</h3><p>${template.speciesTraits}</p>`;
 
       await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.biography': (actor.system.biography || '') + bioNotes
       });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.biography': (actor.system.biography || '') + bioNotes
       });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.biography': (actor.system.biography || '') + bioNotes
       }); */
 
@@ -256,7 +256,7 @@ actor.update({
       'system.race': species.name  // Store species name for display
     };
 
-    await actor.update(updates);
+    await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
 
     ui.notifications.info(game.i18n.format('SWSE.Notifications.Items.SpeciesApplied', {species: species.name, actor: actor.name}));
     return true;
@@ -368,7 +368,7 @@ actor.update({
       'system.speed': parseInt(chassis.system.speed) || 6
     };
 
-    await actor.update(updates);
+    await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
     
     ui.notifications.info(`Applied ${chassis.name} droid chassis to ${actor.name}`);
     return true;
@@ -396,19 +396,19 @@ actor.update({
     if (!confirm) return false;
     
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.vehicleType': template.system.vehicleType || 'starfighter',
       'system.shields': template.system.shields || 0,
       'system.hull': template.system.hull || 0,
       'system.speed': template.system.speed || 0
     });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.vehicleType': template.system.vehicleType || 'starfighter',
       'system.shields': template.system.shields || 0,
       'system.hull': template.system.hull || 0,
       'system.speed': template.system.speed || 0
     });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.vehicleType': template.system.vehicleType || 'starfighter',
       'system.shields': template.system.shields || 0,
       'system.hull': template.system.hull || 0,

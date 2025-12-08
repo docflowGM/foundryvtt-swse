@@ -346,21 +346,21 @@ function migrateFeat(feat) {
  * Main migration function
  */
 async function migrateFeats() {
-  console.log('📜 Starting Feats migration...\n');
+  swseLogger.log('📜 Starting Feats migration...\n');
 
   // 1. Backup
-  console.log('📦 Creating backup...');
+  swseLogger.log('📦 Creating backup...');
   fs.copyFileSync(FEATS_DB_PATH, BACKUP_PATH);
-  console.log(`✅ Backup created: ${BACKUP_PATH}\n`);
+  swseLogger.log(`✅ Backup created: ${BACKUP_PATH}\n`);
 
   // 2. Read feats
-  console.log('📖 Reading feats.db...');
+  swseLogger.log('📖 Reading feats.db...');
   const content = fs.readFileSync(FEATS_DB_PATH, 'utf8');
   const lines = content.trim().split('\n');
-  console.log(`✅ Found ${lines.length} feats\n`);
+  swseLogger.log(`✅ Found ${lines.length} feats\n`);
 
   // 3. Migrate
-  console.log('🔄 Migrating feats...');
+  swseLogger.log('🔄 Migrating feats...');
   const migratedFeats = [];
   let automatedCount = 0;
 
@@ -372,29 +372,29 @@ async function migrateFeats() {
 
       if (migrated.effects && migrated.effects.length > 0) {
         automatedCount++;
-        console.log(`  ⚡ ${feat.name} (${migrated.effects.length} effect${migrated.effects.length > 1 ? 's' : ''})`);
+        swseLogger.log(`  ⚡ ${feat.name} (${migrated.effects.length} effect${migrated.effects.length > 1 ? 's' : ''})`);
       }
     } catch (error) {
-      console.error(`❌ Error migrating feat:`, error.message);
+      swseLogger.error(`❌ Error migrating feat:`, error.message);
     }
   }
 
-  console.log(`\n✅ Migration complete: ${automatedCount} feats with automated effects\n`);
+  swseLogger.log(`\n✅ Migration complete: ${automatedCount} feats with automated effects\n`);
 
   // 4. Write
-  console.log('💾 Writing migrated data...');
+  swseLogger.log('💾 Writing migrated data...');
   const output = migratedFeats.map(f => JSON.stringify(f)).join('\n') + '\n';
   fs.writeFileSync(FEATS_DB_PATH, output, 'utf8');
-  console.log(`✅ Wrote ${migratedFeats.length} feats\n`);
+  swseLogger.log(`✅ Wrote ${migratedFeats.length} feats\n`);
 
   // 5. Report
-  console.log('📊 Migration Report:');
-  console.log('═══════════════════════════════════════');
-  console.log(`Total feats: ${lines.length}`);
-  console.log(`Feats with automated effects: ${automatedCount}`);
-  console.log(`Feats without automation: ${lines.length - automatedCount}`);
-  console.log(`Backup location: ${BACKUP_PATH}`);
-  console.log('═══════════════════════════════════════\n');
+  swseLogger.log('📊 Migration Report:');
+  swseLogger.log('═══════════════════════════════════════');
+  swseLogger.log(`Total feats: ${lines.length}`);
+  swseLogger.log(`Feats with automated effects: ${automatedCount}`);
+  swseLogger.log(`Feats without automation: ${lines.length - automatedCount}`);
+  swseLogger.log(`Backup location: ${BACKUP_PATH}`);
+  swseLogger.log('═══════════════════════════════════════\n');
 
   // 6. Feat type breakdown
   const typeBreakdown = {};
@@ -402,24 +402,24 @@ async function migrateFeats() {
     typeBreakdown[f.system.featType] = (typeBreakdown[f.system.featType] || 0) + 1;
   });
 
-  console.log('📋 Feat Types:');
+  swseLogger.log('📋 Feat Types:');
   Object.entries(typeBreakdown).sort((a, b) => b[1] - a[1]).forEach(([type, count]) => {
-    console.log(`  ${type}: ${count}`);
+    swseLogger.log(`  ${type}: ${count}`);
   });
-  console.log();
+  swseLogger.log();
 
   // 7. Sample
   const sampleFeat = migratedFeats.find(f => f.effects && f.effects.length > 0);
   if (sampleFeat) {
-    console.log('🔍 Sample Automated Feat:');
-    console.log(JSON.stringify(sampleFeat, null, 2).substring(0, 1000) + '...\n');
+    swseLogger.log('🔍 Sample Automated Feat:');
+    swseLogger.log(JSON.stringify(sampleFeat, null, 2).substring(0, 1000) + '...\n');
   }
 
-  console.log('✨ Feats migration complete!\n');
+  swseLogger.log('✨ Feats migration complete!\n');
 }
 
 // Run migration
 migrateFeats().catch(error => {
-  console.error('❌ Migration failed:', error);
+  swseLogger.error('❌ Migration failed:', error);
   process.exit(1);
 });

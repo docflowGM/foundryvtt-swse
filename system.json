@@ -40,7 +40,9 @@
     "styles/apps/houserules.css",
     "styles/apps/store.css",
     "styles/apps/vehicle-modification.css",
-    "styles/apps/upgrade-app.css"
+    "styles/apps/upgrade-app.css",
+    "styles/sheets/themes/holo-default.css",
+    "styles/sheets/themes/high-contrast.css"
   ],
   "languages": [
     {
@@ -50,12 +52,12 @@
     },
     {
       "lang": "es",
-      "name": "Español",
+      "name": "Espa\u00f1ol",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Français",
+      "name": "Fran\u00e7ais",
       "path": "lang/fr.json"
     },
     {
@@ -65,7 +67,7 @@
     },
     {
       "lang": "ru",
-      "name": "Русский",
+      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
       "path": "lang/ru.json"
     }
   ],

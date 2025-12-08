@@ -58,7 +58,7 @@ export default class SWSEFormApplication extends FormApplication {
      */
     _log(message, data = null) {
         if (game.settings.get('swse', 'debugMode')) {
-            console.log(`[SWSE FormApplication: ${this.constructor.name}] ${message}`, data || '');
+            swseLogger.log(`[SWSE FormApplication: ${this.constructor.name}] ${message}`, data || '');
         }
     }
 

@@ -59,7 +59,7 @@ export class TemplateEngine {
     if (options.background) base.background = options.background;
 
     // Persist canonical progression object
-    await actor.update({ "system.progression": base });
+    await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression": base });
     try {
       // If template grants force powers, open selector (template id known as templateId)
       if (typeof ForcePowerEngine !== 'undefined') {
@@ -69,14 +69,14 @@ export class TemplateEngine {
           await ForcePowerEngine.handleForcePowerTriggers(actor, { templateApplied: suggestId });
         }
       }
-    } catch(e) { console.warn('ForcePowerEngine template trigger failed', e); }
+    } catch(e) { swseLogger.warn('ForcePowerEngine template trigger failed', e); }
 
 
     // Hook for additional system-specific behavior (optional)
     try {
       Hooks.callAll("swse.templateApplied", actor, templateId, tpl, options);
     } catch (e) {
-      console.warn("TemplateEngine: hook swse.templateApplied threw:", e);
+      swseLogger.warn("TemplateEngine: hook swse.templateApplied threw:", e);
     }
   }
 }

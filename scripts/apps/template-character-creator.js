@@ -312,7 +312,7 @@ export class TemplateCharacterCreator extends Application {
       await this._applySpeciesBonus(actor, template.species, abilityUpdates);
 
       // Update actor with abilities
-      await actor.update(abilityUpdates);
+      await globalThis.SWSE.ActorEngine.updateActor(actor, abilityUpdates);
 
       // Apply class
       await this._applyClass(actor, template);
@@ -735,13 +735,13 @@ export class TemplateCharacterCreator extends Application {
       const forceUsingClasses = ['Jedi', 'Sith', 'Force Adept', 'Force Disciple'];
       if (forceUsingClasses.includes(template.className)) {
         await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSensitive': true
         });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSensitive': true
         });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSensitive': true
         }); */
 
@@ -807,7 +807,7 @@ actor.update({
         updates[`system.skills.${skillKey}.trained`] = true;
       });
 
-      await actor.update(updates);
+      await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
       SWSELogger.log(`SWSE | Trained ${trainedSkills.length} skills`);
 
     } catch (error) {

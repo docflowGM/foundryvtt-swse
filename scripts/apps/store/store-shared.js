@@ -71,7 +71,7 @@ export function safeSystem(item) {
 }
 
 export function tryRender(fn, context="store") {
-  try { return fn(); } catch(err) { console.error(`SWSE Store (${context}) — render error:`, err); return null; }
+  try { return fn(); } catch(err) { swseLogger.error(`SWSE Store (${context}) — render error:`, err); return null; }
 }
 
 export function isValidItemForStore(item) {

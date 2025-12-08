@@ -35,7 +35,7 @@ export async function applyTrainedSkills(actor, selectedSkills) {
     updates[`system.skills.${skillKey}.trained`] = true;
   });
 
-  await actor.update(updates);
+  await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
   SWSELogger.log(`SWSE LevelUp | Applied trained skills:`, selectedSkills);
 }
 

@@ -21,20 +21,20 @@ templates.templates.forEach(template => {
   }
 });
 
-console.log('='.repeat(80));
-console.log('EQUIPMENT ITEMS IN TEMPLATES');
-console.log('='.repeat(80));
-console.log(`Total unique items: ${allEquipment.size}\n`);
+swseLogger.log('='.repeat(80));
+swseLogger.log('EQUIPMENT ITEMS IN TEMPLATES');
+swseLogger.log('='.repeat(80));
+swseLogger.log(`Total unique items: ${allEquipment.size}\n`);
 
 // Sort and display
 const sortedEquipment = Array.from(allEquipment).sort();
 sortedEquipment.forEach((item, index) => {
-  console.log(`${(index + 1).toString().padStart(3)}. ${item}`);
+  swseLogger.log(`${(index + 1).toString().padStart(3)}. ${item}`);
 });
 
-console.log('\n' + '='.repeat(80));
-console.log('Templates requiring these items:');
-console.log('='.repeat(80));
+swseLogger.log('\n' + '='.repeat(80));
+swseLogger.log('Templates requiring these items:');
+swseLogger.log('='.repeat(80));
 
 // Show which templates use which items
 sortedEquipment.forEach(equipName => {
@@ -43,7 +43,7 @@ sortedEquipment.forEach(equipName => {
     .map(t => `${t.name} (${t.class})`);
 
   if (templatesUsingItem.length > 0) {
-    console.log(`\n${equipName}:`);
-    templatesUsingItem.forEach(t => console.log(`  - ${t}`));
+    swseLogger.log(`\n${equipName}:`);
+    templatesUsingItem.forEach(t => swseLogger.log(`  - ${t}`));
   }
 });

@@ -96,17 +96,17 @@ export class SWSEMigration {
       
       // Clear old arrays
       await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.feats': [],
         'system.talents': [],
         'system.weapons': []
       });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.feats': [],
         'system.talents': [],
         'system.weapons': []
       });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.feats': [],
         'system.talents': [],
         'system.weapons': []

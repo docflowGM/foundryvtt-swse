@@ -12,7 +12,7 @@ import { utilityHelpers } from './utility-helpers.js';
  */
 export function registerHandlebarsHelpers() {
   Handlebars.registerHelper(skillHelpers);
-  console.log("SWSE | Registering Handlebars helpers...");
+  swseLogger.log("SWSE | Registering Handlebars helpers...");
 
   const allHelpers = {
     ...stringHelpers,
@@ -27,13 +27,13 @@ export function registerHandlebarsHelpers() {
 
   for (const [name, fn] of Object.entries(allHelpers)) {
     if (typeof fn !== 'function') {
-      console.warn(`SWSE | Helper '${name}' is not a function, skipping`);
+      swseLogger.warn(`SWSE | Helper '${name}' is not a function, skipping`);
       skipped++;
       continue;
     }
 
     if (Handlebars.helpers[name]) {
-      console.warn(`SWSE | Helper '${name}' already registered, skipping`);
+      swseLogger.warn(`SWSE | Helper '${name}' already registered, skipping`);
       skipped++;
       continue;
     }
@@ -42,5 +42,5 @@ export function registerHandlebarsHelpers() {
     registered++;
   }
 
-  console.log(`SWSE | Registered ${registered} helpers${skipped ? `, skipped ${skipped}` : ''}`);
+  swseLogger.log(`SWSE | Registered ${registered} helpers${skipped ? `, skipped ${skipped}` : ''}`);
 }

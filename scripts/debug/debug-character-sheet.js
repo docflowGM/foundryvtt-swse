@@ -11,13 +11,13 @@
  */
 
 (function() {
-  console.log('%c=== SWSE Character Sheet Debugger Loaded ===', 'color: #00ff00; font-size: 16px; font-weight: bold');
+  swseLogger.log('%c=== SWSE Character Sheet Debugger Loaded ===', 'color: #00ff00; font-size: 16px; font-weight: bold');
 
   const DEBUG_PREFIX = '[SWSE DEBUG]';
-  const debugLog = (...args) => console.log(`%c${DEBUG_PREFIX}`, 'color: #00aaff; font-weight: bold', ...args);
-  const debugError = (...args) => console.error(`%c${DEBUG_PREFIX}`, 'color: #ff0000; font-weight: bold', ...args);
-  const debugWarn = (...args) => console.warn(`%c${DEBUG_PREFIX}`, 'color: #ffaa00; font-weight: bold', ...args);
-  const debugSuccess = (...args) => console.log(`%c${DEBUG_PREFIX}`, 'color: #00ff00; font-weight: bold', '✓', ...args);
+  const debugLog = (...args) => swseLogger.log(`%c${DEBUG_PREFIX}`, 'color: #00aaff; font-weight: bold', ...args);
+  const debugError = (...args) => swseLogger.error(`%c${DEBUG_PREFIX}`, 'color: #ff0000; font-weight: bold', ...args);
+  const debugWarn = (...args) => swseLogger.warn(`%c${DEBUG_PREFIX}`, 'color: #ffaa00; font-weight: bold', ...args);
+  const debugSuccess = (...args) => swseLogger.log(`%c${DEBUG_PREFIX}`, 'color: #00ff00; font-weight: bold', '✓', ...args);
 
   // ============================================
   // Diagnostic Information
@@ -279,7 +279,7 @@
       }
     } catch (err) {
       debugError('  getData() threw error:', err);
-      console.error(err.stack);
+      swseLogger.error(err.stack);
     }
   });
 
@@ -322,9 +322,9 @@
     // Get current stats
     stats() {
       console.group('SWSE Debug Statistics');
-      console.log('Render Attempts:', renderAttempts);
-      console.log('Successful Renders:', successfulRenders);
-      console.log('Failed Renders:', failedRenders);
+      swseLogger.log('Render Attempts:', renderAttempts);
+      swseLogger.log('Successful Renders:', successfulRenders);
+      swseLogger.log('Failed Renders:', failedRenders);
       console.groupEnd();
     },
 
@@ -349,7 +349,7 @@
         debugSuccess('Sheet render called successfully');
       } catch (err) {
         debugError('Failed to render sheet:', err);
-        console.error(err.stack);
+        swseLogger.error(err.stack);
       }
     },
 
@@ -360,10 +360,10 @@
 
       console.group(`Found ${characters.length} characters`);
       characters.forEach((char, i) => {
-        console.log(`${i + 1}. ${char.name} (${char.id})`);
-        console.log('   Sheet Class:', char.sheet?.constructor.name || 'No sheet');
-        console.log('   Level:', char.system?.level || 'Unknown');
-        console.log('   HP:', char.system?.hp || 'Unknown');
+        swseLogger.log(`${i + 1}. ${char.name} (${char.id})`);
+        swseLogger.log('   Sheet Class:', char.sheet?.constructor.name || 'No sheet');
+        swseLogger.log('   Level:', char.system?.level || 'Unknown');
+        swseLogger.log('   HP:', char.system?.hp || 'Unknown');
       });
       console.groupEnd();
     },
@@ -378,14 +378,14 @@
       }
 
       console.group(`Inspecting: ${actor.name}`);
-      console.log('ID:', actor.id);
-      console.log('Type:', actor.type);
-      console.log('Sheet:', actor.sheet?.constructor.name);
-      console.log('Sheet Rendered:', actor.sheet?.rendered);
-      console.log('Sheet Element:', actor.sheet?.element);
-      console.log('System Data:', actor.system);
-      console.log('Items:', actor.items.size, 'items');
-      console.log('Effects:', actor.effects.size, 'effects');
+      swseLogger.log('ID:', actor.id);
+      swseLogger.log('Type:', actor.type);
+      swseLogger.log('Sheet:', actor.sheet?.constructor.name);
+      swseLogger.log('Sheet Rendered:', actor.sheet?.rendered);
+      swseLogger.log('Sheet Element:', actor.sheet?.element);
+      swseLogger.log('System Data:', actor.system);
+      swseLogger.log('Items:', actor.items.size, 'items');
+      swseLogger.log('Effects:', actor.effects.size, 'effects');
       console.groupEnd();
 
       return actor;
@@ -443,16 +443,16 @@
     // Full diagnostic report
     fullDiagnostic() {
       console.clear();
-      console.log('%c=== FULL SWSE DIAGNOSTIC REPORT ===', 'color: #00ff00; font-size: 18px; font-weight: bold');
-      console.log('');
+      swseLogger.log('%c=== FULL SWSE DIAGNOSTIC REPORT ===', 'color: #00ff00; font-size: 18px; font-weight: bold');
+      swseLogger.log('');
 
       this.checkHooks();
       this.checkAll();
       this.stats();
       this.checkSyntaxError();
 
-      console.log('');
-      console.log('%c=== END OF DIAGNOSTIC REPORT ===', 'color: #00ff00; font-size: 18px; font-weight: bold');
+      swseLogger.log('');
+      swseLogger.log('%c=== END OF DIAGNOSTIC REPORT ===', 'color: #00ff00; font-size: 18px; font-weight: bold');
     },
 
     // Export diagnostic data
@@ -481,8 +481,8 @@
         errors: []
       };
 
-      console.log('Diagnostic Data:');
-      console.log(JSON.stringify(diagnostic, null, 2));
+      swseLogger.log('Diagnostic Data:');
+      swseLogger.log(JSON.stringify(diagnostic, null, 2));
 
       return diagnostic;
     }
@@ -492,26 +492,26 @@
   // Auto-run diagnostics
   // ============================================
 
-  console.log('');
-  console.log('%c=== Running Auto-Diagnostics ===', 'color: #ffaa00; font-size: 14px; font-weight: bold');
-  console.log('');
+  swseLogger.log('');
+  swseLogger.log('%c=== Running Auto-Diagnostics ===', 'color: #ffaa00; font-size: 14px; font-weight: bold');
+  swseLogger.log('');
 
   SWSE_DEBUG.checkAll();
   SWSE_DEBUG.stats();
 
-  console.log('');
-  console.log('%c=== Debug Functions Available ===', 'color: #00ff00; font-size: 14px; font-weight: bold');
-  console.log('SWSE_DEBUG.stats()              - Show rendering statistics');
-  console.log('SWSE_DEBUG.testCharacterSheet() - Test opening a character sheet');
-  console.log('SWSE_DEBUG.checkAll()           - Check all characters');
-  console.log('SWSE_DEBUG.inspect(name/id)     - Inspect specific actor');
-  console.log('SWSE_DEBUG.refreshSheets()      - Force refresh all open sheets');
-  console.log('SWSE_DEBUG.checkSyntaxError()   - Check for syntax errors in levelup module');
-  console.log('SWSE_DEBUG.checkHooks()         - Check Foundry hook registrations');
-  console.log('SWSE_DEBUG.fullDiagnostic()     - Run complete diagnostic report');
-  console.log('SWSE_DEBUG.exportDiagnostic()   - Export diagnostic data as JSON');
-  console.log('');
-  console.log('%cNow try opening a character sheet and watch the console!', 'color: #00aaff; font-size: 12px');
-  console.log('%cIf you see errors about "SWSECharacterSheet not defined", you need to RELOAD the page after fixing the syntax error!', 'color: #ff0000; font-size: 12px; font-weight: bold');
+  swseLogger.log('');
+  swseLogger.log('%c=== Debug Functions Available ===', 'color: #00ff00; font-size: 14px; font-weight: bold');
+  swseLogger.log('SWSE_DEBUG.stats()              - Show rendering statistics');
+  swseLogger.log('SWSE_DEBUG.testCharacterSheet() - Test opening a character sheet');
+  swseLogger.log('SWSE_DEBUG.checkAll()           - Check all characters');
+  swseLogger.log('SWSE_DEBUG.inspect(name/id)     - Inspect specific actor');
+  swseLogger.log('SWSE_DEBUG.refreshSheets()      - Force refresh all open sheets');
+  swseLogger.log('SWSE_DEBUG.checkSyntaxError()   - Check for syntax errors in levelup module');
+  swseLogger.log('SWSE_DEBUG.checkHooks()         - Check Foundry hook registrations');
+  swseLogger.log('SWSE_DEBUG.fullDiagnostic()     - Run complete diagnostic report');
+  swseLogger.log('SWSE_DEBUG.exportDiagnostic()   - Export diagnostic data as JSON');
+  swseLogger.log('');
+  swseLogger.log('%cNow try opening a character sheet and watch the console!', 'color: #00aaff; font-size: 12px');
+  swseLogger.log('%cIf you see errors about "SWSECharacterSheet not defined", you need to RELOAD the page after fixing the syntax error!', 'color: #ff0000; font-size: 12px; font-weight: bold');
 
 })();

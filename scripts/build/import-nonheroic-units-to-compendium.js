@@ -44,7 +44,7 @@
       // Check if NPC already exists in compendium
       const existing = npcPack.index.find(i => i.name === template.name);
       if (existing) {
-        console.log(`Skipping ${template.name} - already exists`);
+        swseLogger.log(`Skipping ${template.name} - already exists`);
         skipped++;
         continue;
       }
@@ -170,20 +170,20 @@
 
       // Log progress every 50 imports
       if (imported % 50 === 0) {
-        console.log(`Progress: ${imported} imported, ${skipped} skipped, ${errors} errors`);
+        swseLogger.log(`Progress: ${imported} imported, ${skipped} skipped, ${errors} errors`);
       }
 
     } catch (error) {
-      console.error(`Error importing ${template.name}:`, error);
+      swseLogger.error(`Error importing ${template.name}:`, error);
       errors++;
     }
   }
 
   ui.notifications.info(`Import complete! ${imported} imported, ${skipped} skipped, ${errors} errors.`);
-  console.log(`=== Import Summary ===`);
-  console.log(`Imported: ${imported}`);
-  console.log(`Skipped: ${skipped}`);
-  console.log(`Errors: ${errors}`);
+  swseLogger.log(`=== Import Summary ===`);
+  swseLogger.log(`Imported: ${imported}`);
+  swseLogger.log(`Skipped: ${skipped}`);
+  swseLogger.log(`Errors: ${errors}`);
 
   // Helper function to build biography
   function buildBiography(template) {

@@ -10,7 +10,7 @@ export function registerMacroFunctions() {
     if (!actor) return;
     
     const skill = actor.system.skills[skillKey];
-    const roll = await new Roll(`1d20 + ${skill.total}`).evaluate({async: true});
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${skill.total}`).evaluate({async: true});
     
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({actor}),

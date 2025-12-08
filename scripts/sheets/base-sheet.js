@@ -378,7 +378,7 @@ export class SWSEActorSheetBase extends ActorSheet {
         await this._openSkillRollDialog(dataset.skill, label);
       } else {
         // Normal roll
-        const roll = new Roll(dataset.roll, this.actor.getRollData());
+        const roll = globalThis.SWSE.RollEngine.safeRoll(dataset.roll, this.actor.getRollData());
         roll.toMessage({
           speaker: ChatMessage.getSpeaker({actor: this.actor}),
           flavor: label
@@ -569,12 +569,12 @@ export class SWSEActorSheetBase extends ActorSheet {
             // Roll attack
             let attackRoll, damageRoll;
             if (!damageOnly) {
-              attackRoll = await new Roll(`1d20 + ${attackBonus}`).evaluate();
+              attackRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackBonus}`).evaluate();
             }
 
             // Roll damage
             const damageFormula = `${baseDamage} + ${level} + ${damageMisc}`;
-            damageRoll = await new Roll(damageFormula).evaluate();
+            damageRoll = await globalThis.SWSE.RollEngine.safeRoll(damageFormula).evaluate();
 
             // Create chat message
             let chatContent = `
@@ -811,7 +811,7 @@ export class SWSEActorSheetBase extends ActorSheet {
             const abilityValue = abilities[formAbility] || 0;
             const total = formHalfLevel + abilityValue + formTrained + formFocused + formMisc + formArmor + formCondition + formSituational;
 
-            const roll = new Roll(`1d20 + ${total}`);
+            const roll = globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${total}`);
             await roll.evaluate({async: true});
 
             // Build breakdown
@@ -948,7 +948,7 @@ export class SWSEActorSheetBase extends ActorSheet {
 
       // Perform the roll
       const formula = `1d20 + ${skill.total}`;
-      const roll = new Roll(formula);
+      const roll = globalThis.SWSE.RollEngine.safeRoll(formula);
       await roll.evaluate({async: true});
 
       const success = roll.total >= dcValue;
@@ -1182,9 +1182,9 @@ export class SWSEActorSheetBase extends ActorSheet {
     }
 
     return this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({'system.conditionTrack.current': step});
-actor.update({'system.conditionTrack.current': step});
-/* ORIGINAL: actor.update({'system.conditionTrack.current': step}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': step});
+globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': step});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': step}); */
 
   }
 
@@ -1196,9 +1196,9 @@ actor.update({'system.conditionTrack.current': step});
     const current = this.actor.system.conditionTrack?.current || 0;
     const newStep = Math.max(0, current - 1);
     return this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({'system.conditionTrack.current': newStep});
-actor.update({'system.conditionTrack.current': newStep});
-/* ORIGINAL: actor.update({'system.conditionTrack.current': newStep}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': newStep});
+globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': newStep});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': newStep}); */
 
   }
 
@@ -1211,9 +1211,9 @@ actor.update({'system.conditionTrack.current': newStep});
     const max = 5; // Maximum condition track steps (0-5)
     const newStep = Math.min(max, current + 1);
     return this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({'system.conditionTrack.current': newStep});
-actor.update({'system.conditionTrack.current': newStep});
-/* ORIGINAL: actor.update({'system.conditionTrack.current': newStep}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': newStep});
+globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': newStep});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': newStep}); */
 
   }
 }

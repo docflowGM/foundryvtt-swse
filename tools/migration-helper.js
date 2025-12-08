@@ -4,7 +4,7 @@
 // ============================================
 
 (async function migrateItemTypes() {
-  console.log("SWSE | Starting item type migration...");
+  swseLogger.log("SWSE | Starting item type migration...");
   
   const migrations = {
     // Add any type migrations you need here
@@ -22,22 +22,22 @@
       if (migrations[oldType]) {
         const newType = migrations[oldType];
         await item.update({ type: newType });
-        console.log(`Migrated ${item.name}: ${oldType} -> ${newType}`);
+        swseLogger.log(`Migrated ${item.name}: ${oldType} -> ${newType}`);
         updated++;
       }
       
       // Validate the item can load
       if (!item.type) {
-        console.error(`Item ${item.name} has no type!`);
+        swseLogger.error(`Item ${item.name} has no type!`);
         errors++;
       }
       
     } catch (err) {
-      console.error(`Error migrating ${item.name}:`, err);
+      swseLogger.error(`Error migrating ${item.name}:`, err);
       errors++;
     }
   }
   
-  console.log(`SWSE | Migration complete: ${updated} updated, ${errors} errors`);
+  swseLogger.log(`SWSE | Migration complete: ${updated} updated, ${errors} errors`);
   ui.notifications.info(`Migration complete: ${updated} updated, ${errors} errors`);
 })();

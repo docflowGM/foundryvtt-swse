@@ -26,7 +26,7 @@ export async function rollSave(actor, type) {
   
   const totalBonus = defenseBonus + abilityMod + halfLvl;
   
-  const roll = await new Roll(`1d20 + ${totalBonus}`).evaluate({async: true});
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${totalBonus}`).evaluate({async: true});
   
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({actor}),

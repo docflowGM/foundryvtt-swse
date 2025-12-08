@@ -4,11 +4,11 @@
 export class RollManager {
   static async safeRoll(formula, data = {}, options = {}) {
     try {
-      const roll = new Roll(formula, data);
+      const roll = globalThis.SWSE.RollEngine.safeRoll(formula, data);
       await roll.evaluate({async: true});
       return roll;
     } catch (err) {
-      console.error('SWSE | Roll failed:', formula, err);
+      swseLogger.error('SWSE | Roll failed:', formula, err);
       ui.notifications?.error?.('A roll failed — see console for details.');
       return null;
     }
@@ -27,7 +27,7 @@ export class RollManager {
       }, chatData, { inplace: false });
       return ChatMessage.create(messageData);
     } catch (err) {
-      console.error('SWSE | rollToChat failed', err);
+      swseLogger.error('SWSE | rollToChat failed', err);
       return null;
     }
   }

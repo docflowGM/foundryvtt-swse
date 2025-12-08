@@ -83,7 +83,7 @@ export class SWSERoll {
       numDice = 2;
     }
 
-    const roll = await new Roll(`${numDice}${diceType}`).evaluate({async: true});
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`${numDice}${diceType}`).evaluate({async: true});
 
     // Take highest
     let bonus = 0;
@@ -95,9 +95,9 @@ export class SWSERoll {
 
     // Spend the force point
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({'system.forcePoints.value': currentFP - 1});
-actor.update({'system.forcePoints.value': currentFP - 1});
-/* ORIGINAL: actor.update({'system.forcePoints.value': currentFP - 1}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': currentFP - 1});
+globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': currentFP - 1});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': currentFP - 1}); */
 
 
     // Show roll in chat
@@ -179,7 +179,7 @@ actor.update({'system.forcePoints.value': currentFP - 1});
     }
 
     // Create and evaluate the roll
-    const roll = new Roll(formula, rollData);
+    const roll = globalThis.SWSE.RollEngine.safeRoll(formula, rollData);
     await roll.evaluate({async: true});
 
     // Check for critical threat
@@ -254,7 +254,7 @@ actor.update({'system.forcePoints.value': currentFP - 1});
       parts.push('CRITICAL!');
     }
 
-    const roll = new Roll(formula, rollData);
+    const roll = globalThis.SWSE.RollEngine.safeRoll(formula, rollData);
     await roll.evaluate({async: true});
 
     const messageContent = `
@@ -338,7 +338,7 @@ actor.update({'system.forcePoints.value': currentFP - 1});
       parts.push(`Force Point +${forcePointBonus}`);
     }
 
-    const roll = new Roll(formula, rollData);
+    const roll = globalThis.SWSE.RollEngine.safeRoll(formula, rollData);
     await roll.evaluate({async: true});
 
     // Skill check results can be compared to DCs
@@ -487,7 +487,7 @@ actor.update({'system.forcePoints.value': currentFP - 1});
     const dc = power.system.useTheForce || 15;
     const rollData = actor.getRollData();
 
-    const roll = new Roll(`1d20 + ${skill.total}`, rollData);
+    const roll = globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${skill.total}`, rollData);
     await roll.evaluate({async: true});
 
     const success = roll.total >= dc;
@@ -631,9 +631,9 @@ actor.update({'system.forcePoints.value': currentFP - 1});
     if (isDarkSide) {
       const newDarkSideScore = (actor.system.darkSideScore || 0) + 1;
       await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({'system.darkSideScore': newDarkSideScore});
-actor.update({'system.darkSideScore': newDarkSideScore});
-/* ORIGINAL: actor.update({'system.darkSideScore': newDarkSideScore}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newDarkSideScore});
+globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newDarkSideScore});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newDarkSideScore}); */
 
       ui.notifications.warn(`Dark Side Score increased to ${newDarkSideScore}`);
     }
@@ -726,7 +726,7 @@ actor.update({'system.darkSideScore': newDarkSideScore});
       parts.push(`Condition ${rollData.conditionPenalty}`);
     }
 
-    const roll = new Roll(formula, rollData);
+    const roll = globalThis.SWSE.RollEngine.safeRoll(formula, rollData);
     await roll.evaluate({async: true});
 
     const success = roll.total >= dc;

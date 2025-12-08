@@ -22,10 +22,10 @@ const itemCosts = {
 const templatesPath = path.join(__dirname, '..', 'data', 'character-templates.json');
 const templates = JSON.parse(fs.readFileSync(templatesPath, 'utf8'));
 
-console.log('='.repeat(80));
-console.log('REDUCING TEMPLATE EQUIPMENT TO FIT BUDGETS');
-console.log('='.repeat(80));
-console.log('');
+swseLogger.log('='.repeat(80));
+swseLogger.log('REDUCING TEMPLATE EQUIPMENT TO FIT BUDGETS');
+swseLogger.log('='.repeat(80));
+swseLogger.log('');
 
 const changes = [];
 
@@ -200,14 +200,14 @@ templates.templates.forEach(template => {
 // Save updated templates
 fs.writeFileSync(templatesPath, JSON.stringify(templates, null, 2), 'utf8');
 
-console.log('Changes made:');
+swseLogger.log('Changes made:');
 changes.forEach(change => {
-  console.log(`${change.template}: ${change.change}`);
+  swseLogger.log(`${change.template}: ${change.change}`);
 });
 
-console.log('');
-console.log('='.repeat(80));
-console.log(`Modified ${changes.length} items across templates`);
-console.log(`File saved: ${templatesPath}`);
-console.log('');
-console.log('Run calculate-template-credits.js to see new budget status');
+swseLogger.log('');
+swseLogger.log('='.repeat(80));
+swseLogger.log(`Modified ${changes.length} items across templates`);
+swseLogger.log(`File saved: ${templatesPath}`);
+swseLogger.log('');
+swseLogger.log('Run calculate-template-credits.js to see new budget status');

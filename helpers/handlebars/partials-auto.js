@@ -17,9 +17,9 @@ export function registerSWSEPartials() {
     const tpl = foundry.templates.get(path);
     if (tpl) {
       Handlebars.registerPartial(name, tpl);
-      console.log(`SWSE | Registered partial: ${name}`);
+      swseLogger.log(`SWSE | Registered partial: ${name}`);
     } else {
-      console.warn(`SWSE | Missing partial template: ${path}`);
+      swseLogger.warn(`SWSE | Missing partial template: ${path}`);
     }
   }
 }

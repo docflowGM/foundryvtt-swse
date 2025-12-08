@@ -167,7 +167,7 @@ const TALENT_TREE_TO_CLASS = {
 const talentsDbPath = path.join(__dirname, '../packs/talents.db');
 const dbLines = fs.readFileSync(talentsDbPath, 'utf-8').split('\n').filter(line => line.trim());
 
-console.log(`Processing ${dbLines.length} talents...\n`);
+swseLogger.log(`Processing ${dbLines.length} talents...\n`);
 
 let updated = 0;
 let notFound = new Set();
@@ -178,7 +178,7 @@ const updatedLines = dbLines.map(line => {
     const talentTree = entry.system?.talent_tree;
 
     if (!talentTree) {
-      console.warn(`⚠ ${entry.name}: No talent_tree field`);
+      swseLogger.warn(`⚠ ${entry.name}: No talent_tree field`);
       return line;
     }
 
@@ -193,12 +193,12 @@ const updatedLines = dbLines.map(line => {
     if (entry.system.class !== className) {
       entry.system.class = className;
       updated++;
-      console.log(`✓ ${entry.name}: ${talentTree} → ${className}`);
+      swseLogger.log(`✓ ${entry.name}: ${talentTree} → ${className}`);
     }
 
     return JSON.stringify(entry);
   } catch (err) {
-    console.error(`Error processing line: ${err.message}`);
+    swseLogger.error(`Error processing line: ${err.message}`);
     return line;
   }
 });
@@ -206,9 +206,9 @@ const updatedLines = dbLines.map(line => {
 // Write updated data
 fs.writeFileSync(talentsDbPath, updatedLines.join('\n') + '\n', 'utf-8');
 
-console.log(`\n✅ Updated ${updated} talents with class field`);
+swseLogger.log(`\n✅ Updated ${updated} talents with class field`);
 
 if (notFound.size > 0) {
-  console.log(`\n⚠ Warning: ${notFound.size} talent trees not found in mapping:`);
-  notFound.forEach(tree => console.log(`  - ${tree}`));
+  swseLogger.log(`\n⚠ Warning: ${notFound.size} talent trees not found in mapping:`);
+  notFound.forEach(tree => swseLogger.log(`  - ${tree}`));
 }

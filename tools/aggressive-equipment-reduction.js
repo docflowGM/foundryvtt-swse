@@ -9,10 +9,10 @@ const path = require('path');
 const templatesPath = path.join(__dirname, '..', 'data', 'character-templates.json');
 const templates = JSON.parse(fs.readFileSync(templatesPath, 'utf8'));
 
-console.log('='.repeat(80));
-console.log('AGGRESSIVE EQUIPMENT REDUCTION');
-console.log('='.repeat(80));
-console.log('');
+swseLogger.log('='.repeat(80));
+swseLogger.log('AGGRESSIVE EQUIPMENT REDUCTION');
+swseLogger.log('='.repeat(80));
+swseLogger.log('');
 
 const changes = [];
 
@@ -167,14 +167,14 @@ templates.templates.forEach(template => {
 // Save updated templates
 fs.writeFileSync(templatesPath, JSON.stringify(templates, null, 2), 'utf8');
 
-console.log('Aggressive changes made:');
+swseLogger.log('Aggressive changes made:');
 changes.forEach(change => {
-  console.log(`${change.template}: ${change.change}`);
+  swseLogger.log(`${change.template}: ${change.change}`);
 });
 
-console.log('');
-console.log('='.repeat(80));
-console.log(`Modified ${changes.length} items across templates`);
-console.log(`File saved: ${templatesPath}`);
-console.log('');
-console.log('Run calculate-template-credits.js to see new budget status');
+swseLogger.log('');
+swseLogger.log('='.repeat(80));
+swseLogger.log(`Modified ${changes.length} items across templates`);
+swseLogger.log(`File saved: ${templatesPath}`);
+swseLogger.log('');
+swseLogger.log('Run calculate-template-credits.js to see new budget status');

@@ -343,21 +343,21 @@ export async function applyClassFeatures(classDoc, classLevel, actor) {
 
 // AUTO-CONVERT: confidence=0.00
 // TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
-/* ORIGINAL (for review): await actor.update({ */
+/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
       "system.forcePoints.max": newMax,
       "system.forcePoints.value": newValue
     });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
-/* ORIGINAL (for review): await actor.update({ */
+/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
       "system.forcePoints.max": newMax,
       "system.forcePoints.value": newValue
     });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
-/* ORIGINAL (for review): await actor.update({ */
+/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
       "system.forcePoints.max": newMax,
       "system.forcePoints.value": newValue
     }); */
@@ -520,7 +520,7 @@ export function bindAbilitiesUI(root) {
   const rollStandard = async () => {
     const results = [];
     for (let i = 0; i < 6; i++) {
-      const r = await new Roll("4d6kh3").evaluate();
+      const r = await globalThis.SWSE.RollEngine.safeRoll("4d6kh3").evaluate();
       const total = r.total;
       results.push({ total });
     }
@@ -556,7 +556,7 @@ export function bindAbilitiesUI(root) {
 
   // Organic roll
   const rollOrganic = async () => {
-    const r = await new Roll("24d6").evaluate();
+    const r = await globalThis.SWSE.RollEngine.safeRoll("24d6").evaluate();
     if (!r.dice || !r.dice[0] || !r.dice[0].results) {
       ui.notifications.error("Failed to roll dice. Please try again.");
       SWSELogger.error("SWSE | Roll failed:", r);

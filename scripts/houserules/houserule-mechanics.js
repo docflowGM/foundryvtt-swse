@@ -151,14 +151,14 @@ export class HouseruleMechanics {
           break;
           
         case 'average_minimum':
-          const roll = await new Roll(`1d${hitDie}`).evaluate({async: true});
+          const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d${hitDie}`).evaluate({async: true});
           const average = Math.floor(hitDie / 2) + 1;
           hp = Math.max(roll.total, average) + conMod;
           break;
           
         case 'roll':
         default:
-          const rollResult = await new Roll(`1d${hitDie}`).evaluate({async: true});
+          const rollResult = await globalThis.SWSE.RollEngine.safeRoll(`1d${hitDie}`).evaluate({async: true});
           hp = rollResult.total + conMod;
           break;
       }
@@ -210,7 +210,7 @@ export class HouseruleMechanics {
       case 'exploding':
         // Exploding dice on critical
         const explodingFormula = baseRoll.formula.replace(/d(\d+)/g, 'd$1x');
-        const explodingRoll = await new Roll(explodingFormula).evaluate({async: true});
+        const explodingRoll = await globalThis.SWSE.RollEngine.safeRoll(explodingFormula).evaluate({async: true});
         return explodingRoll.total;
         
       case 'trackonly':

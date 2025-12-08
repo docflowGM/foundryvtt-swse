@@ -20,7 +20,7 @@ const correctSkills = {
 const classesDbPath = path.join(__dirname, '../packs/classes.db');
 const dbLines = fs.readFileSync(classesDbPath, 'utf-8').split('\n').filter(line => line.trim());
 
-console.log(`Found ${dbLines.length} class entries in classes.db\n`);
+swseLogger.log(`Found ${dbLines.length} class entries in classes.db\n`);
 
 // Process each class entry
 let updated = 0;
@@ -35,17 +35,17 @@ const updatedLines = dbLines.map(line => {
       const correctValue = correctSkills[className];
 
       if (currentSkills !== correctValue) {
-        console.log(`✓ Updating ${className}: ${currentSkills} -> ${correctValue} trained skills`);
+        swseLogger.log(`✓ Updating ${className}: ${currentSkills} -> ${correctValue} trained skills`);
         entry.system.trained_skills = correctValue;
         updated++;
       } else {
-        console.log(`✓ ${className}: Already correct (${correctValue} trained skills)`);
+        swseLogger.log(`✓ ${className}: Already correct (${correctValue} trained skills)`);
       }
     }
 
     return JSON.stringify(entry);
   } catch (err) {
-    console.error(`Error processing line: ${err.message}`);
+    swseLogger.error(`Error processing line: ${err.message}`);
     return line;
   }
 });
@@ -53,5 +53,5 @@ const updatedLines = dbLines.map(line => {
 // Write updated data
 fs.writeFileSync(classesDbPath, updatedLines.join('\n') + '\n', 'utf-8');
 
-console.log(`\n✅ Updated ${updated} class trained_skills values`);
-console.log(`📝 Classes database has been updated with correct skill values`);
+swseLogger.log(`\n✅ Updated ${updated} class trained_skills values`);
+swseLogger.log(`📝 Classes database has been updated with correct skill values`);

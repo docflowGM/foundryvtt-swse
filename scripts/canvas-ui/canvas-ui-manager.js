@@ -363,7 +363,7 @@ class SWSECanvasToolbar {
             const modifier = parseInt(html.find('[name="modifier"]').val()) || 0;
             const label = html.find('[name="label"]').val() || 'Quick Roll';
             const rollFormula = modifier !== 0 ? `${formula} + ${modifier}` : formula;
-            const roll = new Roll(rollFormula);
+            const roll = globalThis.SWSE.RollEngine.safeRoll(rollFormula);
             await roll.evaluate({async: true});
             await roll.toMessage({ speaker: ChatMessage.getSpeaker(), flavor: label });
           }
@@ -417,19 +417,19 @@ class SWSECanvasToolbar {
       if (!actor) continue;
 // AUTO-CONVERT: confidence=0.00
 // TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ 'system.condition': conditionValue });
-actor.update({ 'system.condition': conditionValue });
-/* ORIGINAL: actor.update({ 'system.condition': conditionValue }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue });
+globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue }); */
 
 await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ 'system.condition': conditionValue });
-actor.update({ 'system.condition': conditionValue });
-/* ORIGINAL: actor.update({ 'system.condition': conditionValue }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue });
+globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue }); */
 
 /* ORIGINAL (for review): await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ 'system.condition': conditionValue });
-actor.update({ 'system.condition': conditionValue });
-/* ORIGINAL: actor.update({ 'system.condition': conditionValue }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue });
+globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue }); */
  */
       ChatMessage.create({ speaker: ChatMessage.getSpeaker({ token }), content: `<div class="swse-chat-card"><strong>${token.name}</strong> condition set to <strong>${conditionLabel}</strong></div>` });
     }
@@ -473,19 +473,19 @@ actor.update({ 'system.condition': conditionValue });
       if (!actor) continue;
 // AUTO-CONVERT: confidence=0.00
 // TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ 'system.condition': 0 });
-actor.update({ 'system.condition': 0 });
-/* ORIGINAL: actor.update({ 'system.condition': 0 }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 });
+globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 }); */
 
 await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ 'system.condition': 0 });
-actor.update({ 'system.condition': 0 });
-/* ORIGINAL: actor.update({ 'system.condition': 0 }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 });
+globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 }); */
 
 /* ORIGINAL (for review): await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ 'system.condition': 0 });
-actor.update({ 'system.condition': 0 });
-/* ORIGINAL: actor.update({ 'system.condition': 0 }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 });
+globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 }); */
  */
       ChatMessage.create({ speaker: ChatMessage.getSpeaker({ token }), content: `<div class="swse-chat-card"><strong>${token.name}</strong> has rested and recovered</div>` });
     }

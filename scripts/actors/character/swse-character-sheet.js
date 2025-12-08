@@ -1,3 +1,6 @@
+import { DDEngine } from '../../framework/dd-engine.js';
+import { ThemeEngine } from '../../themes/theme-engine.js';
+import { swseLogger } from '../../utils/logger.js';
 import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * SWSE Character Sheet
@@ -335,7 +338,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this.element.removeClass((index, css) => (css.match(/swse-theme-[^\s]+/g) || []).join(' '));
       this.element.addClass(`swse-theme-${theme}`);
     } catch (e) {
-      console.warn('SWSE | applySheetTheme failed', e);
+      swseLogger.warn('SWSE | applySheetTheme failed', e);
     }
   }
 activateListeners(html) {
@@ -346,7 +349,7 @@ activateListeners(html) {
         await this.actor.setFlag('swse','sheetTheme', theme);
         this._applySheetTheme();
       } catch (e) {
-        console.error('SWSE | failed to set sheet theme', e);
+        swseLogger.error('SWSE | failed to set sheet theme', e);
       }
     });
 
@@ -2009,7 +2012,7 @@ activateListeners(html) {
     }
 
     // Update actor
-    await this.actor.update(updateData);
+    await globalThis.SWSE.ActorEngine.updateActor(this.actor, updateData);
 
     ui.notifications.info(`Species changed to ${newRace}`);
 
@@ -2039,7 +2042,7 @@ activateListeners(html) {
     updateData['system.visionTraits'] = [];
     updateData['system.naturalWeapons'] = [];
 
-    await this.actor.update(updateData);
+    await globalThis.SWSE.ActorEngine.updateActor(this.actor, updateData);
     SWSELogger.log('SWSE | Removed old species modifiers');
   }
 
@@ -2087,9 +2090,9 @@ activateListeners(html) {
       yes: async (html) => {
         const skillKey = html.find('#human-bonus-skill').val();
         await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({[`system.skills.${skillKey}.trained`]: true});
-actor.update({[`system.skills.${skillKey}.trained`]: true});
-/* ORIGINAL: actor.update({[`system.skills.${skillKey}.trained`]: true}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {[`system.skills.${skillKey}.trained`]: true});
+globalThis.SWSE.ActorEngine.updateActor(actor, {[`system.skills.${skillKey}.trained`]: true});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {[`system.skills.${skillKey}.trained`]: true}); */
 
         ui.notifications.info(`Trained in ${skillKey.replace(/_/g, ' ')}`);
       }
@@ -2168,7 +2171,7 @@ actor.update({[`system.skills.${skillKey}.trained`]: true});
     }
 
     // Roll the dice
-    const roll = await new Roll(`${numDice}${diceType}`).evaluate({async: true});
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`${numDice}${diceType}`).evaluate({async: true});
 
     // For multiple dice, take the highest
     let bonus = 0;
@@ -2180,9 +2183,9 @@ actor.update({[`system.skills.${skillKey}.trained`]: true});
 
     // Spend the Force Point
     await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({'system.forcePoints.value': currentFP - 1});
-actor.update({'system.forcePoints.value': currentFP - 1});
-/* ORIGINAL: actor.update({'system.forcePoints.value': currentFP - 1}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': currentFP - 1});
+globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': currentFP - 1});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': currentFP - 1}); */
 
 
     // Create chat message
@@ -2237,9 +2240,9 @@ actor.update({'system.forcePoints.value': currentFP - 1});
     }
 
     await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({'system.darkSideScore': newValue});
-actor.update({'system.darkSideScore': newValue});
-/* ORIGINAL: actor.update({'system.darkSideScore': newValue}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newValue});
+globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newValue});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newValue}); */
 
 
     // Show notification
@@ -2299,7 +2302,7 @@ actor.update({'system.darkSideScore': newValue});
             const val = foundry.utils.getProperty(itemData, iKey);
             if (typeof val !== 'undefined') foundry.utils.setProperty(update, aKey, val);
           }
-          if (Object.keys(update).length) await this.actor.update(update);
+          if (Object.keys(update).length) await globalThis.SWSE.ActorEngine.updateActor(this.actor, update);
         }
         // Apply as Active Effect if configured
         if (applyAsEffect) {
@@ -2326,7 +2329,7 @@ actor.update({'system.darkSideScore': newValue});
       }
       return;
     } catch (err) {
-      console.error('SWSE | _onDrop error', err);
+      swseLogger.error('SWSE | _onDrop error', err);
       return super._onDrop(event);
     }
   }

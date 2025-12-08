@@ -12,7 +12,7 @@ import { ProgressionEngine } from "./scripts/progression/engine/progression-engi
  */
 export async function rollDamage(actor, weapon) {
   const dmg = weapon.system?.damage || "1d6";
-  const roll = await new Roll(dmg).evaluate({async: true});
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(dmg).evaluate({async: true});
   
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({actor}),
@@ -34,7 +34,7 @@ export async function rollDamageWithMod(actor, formula, modifier = 0, label = "D
   const utils = game.swse.utils;
   const fullFormula = `${formula} + ${modifier}`;
   
-  const roll = await new Roll(fullFormula).evaluate({async: true});
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(fullFormula).evaluate({async: true});
   
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({actor}),
@@ -58,9 +58,9 @@ export async function applyDamage(token, damage) {
   const newHP = Math.max(0, currentHP - damage);
   
   await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({"system.hp.value": newHP});
-actor.update({"system.hp.value": newHP});
-/* ORIGINAL: actor.update({"system.hp.value": newHP}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {"system.hp.value": newHP});
+globalThis.SWSE.ActorEngine.updateActor(actor, {"system.hp.value": newHP});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {"system.hp.value": newHP}); */
 
   
   ui.notifications.info(`${actor.name} takes ${damage} damage!`);

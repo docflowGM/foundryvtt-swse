@@ -56,7 +56,7 @@ export default class SWSEApplication extends Application {
      */
     _log(message, data = null) {
         if (game.settings.get('swse', 'debugMode')) {
-            console.log(`[SWSE Application: ${this.constructor.name}] ${message}`, data || '');
+            swseLogger.log(`[SWSE Application: ${this.constructor.name}] ${message}`, data || '');
         }
     }
 }

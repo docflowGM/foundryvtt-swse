@@ -21,7 +21,7 @@ export async function rollSkill(actor, skillKey) {
   // Get skill modifier (use actor's method if available)
   const mod = actor.getSkillMod ? actor.getSkillMod(skill) : calculateSkillMod(actor, skill);
   
-  const roll = await new Roll(`1d20 + ${mod}`).evaluate({async: true});
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${mod}`).evaluate({async: true});
   
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({actor}),

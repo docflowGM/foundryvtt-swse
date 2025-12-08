@@ -31,7 +31,7 @@ export function addFinalCost(item) {
 
     // Log warning if no ID found
     if (!itemId) {
-        console.warn(`SWSE Store | Item missing ID: ${item.name || 'Unknown Item'}`, item);
+        swseLogger.warn(`SWSE Store | Item missing ID: ${item.name || 'Unknown Item'}`, item);
         // Generate a fallback ID from the item name to prevent undefined IDs
         const fallbackId = `fallback-${(item.name || 'unknown').toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
         return {
@@ -72,7 +72,7 @@ export function addActorFinalCost(actor, includeUsed = false) {
 
     // Log warning if no ID found
     if (!actorId) {
-        console.warn(`SWSE Store | Actor missing ID: ${actor.name || 'Unknown Actor'}`, actor);
+        swseLogger.warn(`SWSE Store | Actor missing ID: ${actor.name || 'Unknown Actor'}`, actor);
         // Generate a fallback ID from the actor name to prevent undefined IDs
         const fallbackId = `fallback-${(actor.name || 'unknown').toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
         const result = {

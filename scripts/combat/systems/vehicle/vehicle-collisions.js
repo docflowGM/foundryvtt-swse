@@ -38,7 +38,7 @@ export async function handleCollision(vehicle, object, options = {}, applyDamage
   // Pilot can attempt to avoid collision (DC 15 Pilot check)
   const pilot = getDefaultPilot(vehicle);
   const pilotBonus = getPilotBonus(vehicle, pilot);
-  const avoidRoll = await new Roll(`1d20 + ${pilotBonus}`).evaluate({async: true});
+  const avoidRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${pilotBonus}`).evaluate({async: true});
 
   result.avoidRoll = avoidRoll;
   result.avoided = avoidRoll.total >= 15;

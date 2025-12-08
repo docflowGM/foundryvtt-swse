@@ -26,8 +26,8 @@ export async function initiateDogfight(initiator, target, options = {}) {
   const initiatorBonus = getPilotBonus(initiator, initiatorPilot) - 5;
   const targetBonus = getPilotBonus(target, targetPilot);
 
-  const initiatorRoll = await new Roll(`1d20 + ${initiatorBonus}`).evaluate({async: true});
-  const targetRoll = await new Roll(`1d20 + ${targetBonus}`).evaluate({async: true});
+  const initiatorRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${initiatorBonus}`).evaluate({async: true});
+  const targetRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${targetBonus}`).evaluate({async: true});
 
   const result = {
     initiator,
@@ -73,8 +73,8 @@ export async function attackInDogfight(attacker, defender, weapon, rollAttack) {
   const attackerBonus = getPilotBonus(attacker, attackerPilot);
   const defenderBonus = getPilotBonus(defender, defenderPilot);
 
-  const attackerRoll = await new Roll(`1d20 + ${attackerBonus}`).evaluate({async: true});
-  const defenderRoll = await new Roll(`1d20 + ${defenderBonus}`).evaluate({async: true});
+  const attackerRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackerBonus}`).evaluate({async: true});
+  const defenderRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${defenderBonus}`).evaluate({async: true});
 
   const success = attackerRoll.total > defenderRoll.total;
 
@@ -113,8 +113,8 @@ export async function disengageFromDogfight(vehicle, opponent) {
   const vehicleBonus = getPilotBonus(vehicle, vehiclePilot);
   const opponentBonus = getPilotBonus(opponent, opponentPilot);
 
-  const vehicleRoll = await new Roll(`1d20 + ${vehicleBonus}`).evaluate({async: true});
-  const opponentRoll = await new Roll(`1d20 + ${opponentBonus}`).evaluate({async: true});
+  const vehicleRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${vehicleBonus}`).evaluate({async: true});
+  const opponentRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${opponentBonus}`).evaluate({async: true});
 
   const success = vehicleRoll.total > opponentRoll.total;
 

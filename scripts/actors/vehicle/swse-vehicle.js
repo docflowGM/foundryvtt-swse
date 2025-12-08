@@ -184,9 +184,9 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     weapons.push(vehicleWeapon);
     
     await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ 'system.weapons': weapons });
-actor.update({ 'system.weapons': weapons });
-/* ORIGINAL: actor.update({ 'system.weapons': weapons }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.weapons': weapons });
+globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.weapons': weapons });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.weapons': weapons }); */
 
     
     ui.notifications.info(`${weaponItem.name} added to vehicle weapons`);
@@ -212,9 +212,9 @@ actor.update({ 'system.weapons': weapons });
       range: "Close" 
     });
     await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.weapons": weapons });
-actor.update({ "system.weapons": weapons });
-/* ORIGINAL: actor.update({ "system.weapons": weapons }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.weapons": weapons });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.weapons": weapons });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.weapons": weapons }); */
 
   }
 
@@ -225,9 +225,9 @@ actor.update({ "system.weapons": weapons });
     if (index >= 0 && index < weapons.length) {
       weapons.splice(index, 1);
       await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.weapons": weapons });
-actor.update({ "system.weapons": weapons });
-/* ORIGINAL: actor.update({ "system.weapons": weapons }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.weapons": weapons });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.weapons": weapons });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.weapons": weapons }); */
 
     }
   }
@@ -240,7 +240,7 @@ actor.update({ "system.weapons": weapons });
     if (!weapon) return;
     
     // Roll attack
-    const attackRoll = new Roll(`1d20${weapon.bonus}`, this.actor.getRollData());
+    const attackRoll = globalThis.SWSE.RollEngine.safeRoll(`1d20${weapon.bonus}`, this.actor.getRollData());
     await attackRoll.evaluate({async: true});
     
     await attackRoll.toMessage({
@@ -256,7 +256,7 @@ actor.update({ "system.weapons": weapons });
     });
     
     if (hit) {
-      const damageRoll = new Roll(weapon.damage, this.actor.getRollData());
+      const damageRoll = globalThis.SWSE.RollEngine.safeRoll(weapon.damage, this.actor.getRollData());
       await damageRoll.evaluate({async: true});
       
       await damageRoll.toMessage({
@@ -276,19 +276,19 @@ actor.update({ "system.weapons": weapons });
         const actor = await fromUuid(data.uuid);
         if (actor) {
           await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
             [`system.crewPositions.${slot}`]: {
               name: actor.name,
               uuid: actor.uuid
             }
           });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
             [`system.crewPositions.${slot}`]: {
               name: actor.name,
               uuid: actor.uuid
             }
           });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
             [`system.crewPositions.${slot}`]: {
               name: actor.name,
               uuid: actor.uuid
@@ -317,9 +317,9 @@ actor.update({
         });
         if (confirm) {
           await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ [`system.crewPositions.${slot}`]: null });
-actor.update({ [`system.crewPositions.${slot}`]: null });
-/* ORIGINAL: actor.update({ [`system.crewPositions.${slot}`]: null }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { [`system.crewPositions.${slot}`]: null });
+globalThis.SWSE.ActorEngine.updateActor(actor, { [`system.crewPositions.${slot}`]: null });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { [`system.crewPositions.${slot}`]: null }); */
 
           ui.notifications.info(`Removed ${crewName} from ${slot} position`);
         }

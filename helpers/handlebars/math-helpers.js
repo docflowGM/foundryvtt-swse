@@ -26,7 +26,7 @@ export const mathHelpers = {
     
     // Return '0' for non-numeric values instead of crashing
     if (isNaN(num) || !isFinite(num)) {
-      console.warn('SWSE | numberFormat: Non-numeric value received:', value);
+      swseLogger.warn('SWSE | numberFormat: Non-numeric value received:', value);
       return '0';
     }
     

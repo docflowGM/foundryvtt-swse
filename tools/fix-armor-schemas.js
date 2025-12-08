@@ -86,7 +86,7 @@ function fixArmorDB(armorType) {
   const fileName = `armor-${armorType}.db`;
   const filePath = path.join(__dirname, '..', 'packs', fileName);
 
-  console.log(`\nFixing ${fileName}...`);
+  swseLogger.log(`\nFixing ${fileName}...`);
 
   const content = fs.readFileSync(filePath, 'utf-8');
   const lines = content.trim().split('\n');
@@ -98,7 +98,7 @@ function fixArmorDB(armorType) {
     let refData = findArmorData(entry.name);
 
     if (!refData) {
-      console.warn(`  Warning: No reference data found for "${entry.name}", using defaults`);
+      swseLogger.warn(`  Warning: No reference data found for "${entry.name}", using defaults`);
       // Use defaults if no reference found
       refData = {
         armor_bonus: armorType === 'light' ? 3 : armorType === 'medium' ? 7 : 9,
@@ -150,7 +150,7 @@ function fixArmorDB(armorType) {
   });
 
   fs.writeFileSync(filePath, fixedLines.join('\n') + '\n', 'utf-8');
-  console.log(`  ✓ Fixed ${fixedLines.length} ${armorType} armor entries`);
+  swseLogger.log(`  ✓ Fixed ${fixedLines.length} ${armorType} armor entries`);
 }
 
 // Run all fixes
@@ -158,14 +158,14 @@ try {
   fixArmorDB('light');
   fixArmorDB('medium');
   fixArmorDB('heavy');
-  console.log('\n✅ All armor .db files have been fixed!');
-  console.log('\nArmor entries now include:');
-  console.log('  - Proper armor bonus to Reflex Defense');
-  console.log('  - Maximum Dexterity Bonus');
-  console.log('  - Armor Check Penalty');
-  console.log('  - Speed Penalty');
-  console.log('  - Weight and Cost');
+  swseLogger.log('\n✅ All armor .db files have been fixed!');
+  swseLogger.log('\nArmor entries now include:');
+  swseLogger.log('  - Proper armor bonus to Reflex Defense');
+  swseLogger.log('  - Maximum Dexterity Bonus');
+  swseLogger.log('  - Armor Check Penalty');
+  swseLogger.log('  - Speed Penalty');
+  swseLogger.log('  - Weight and Cost');
 } catch (error) {
-  console.error('❌ Error during migration:', error);
+  swseLogger.error('❌ Error during migration:', error);
   process.exit(1);
 }

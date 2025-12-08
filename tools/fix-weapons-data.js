@@ -918,7 +918,7 @@ function rebuildWeaponsPack() {
   // Write to file
   fs.writeFileSync(packPath, ndjson + '\n', 'utf8');
 
-  console.log(`✓ Successfully rebuilt weapons.db with ${entries.length} weapon entries`);
+  swseLogger.log(`✓ Successfully rebuilt weapons.db with ${entries.length} weapon entries`);
 
   // Count by category
   const categories = {
@@ -932,20 +932,20 @@ function rebuildWeaponsPack() {
     grenades: entries.filter(e => e.name.includes('Grenade') || e.name.includes('Detonator')).length
   };
 
-  console.log(`  - Pistols: ${categories.pistols}`);
-  console.log(`  - Rifles/Carbines: ${categories.rifles}`);
-  console.log(`  - Heavy Weapons: ${categories.heavy}`);
-  console.log(`  - Launchers: ${categories.launchers}`);
-  console.log(`  - Melee Weapons: ${categories.melee}`);
-  console.log(`  - Lightsabers: ${categories.lightsabers}`);
-  console.log(`  - Exotic Weapons: ${categories.exotic}`);
-  console.log(`  - Grenades/Explosives: ${categories.grenades}`);
+  swseLogger.log(`  - Pistols: ${categories.pistols}`);
+  swseLogger.log(`  - Rifles/Carbines: ${categories.rifles}`);
+  swseLogger.log(`  - Heavy Weapons: ${categories.heavy}`);
+  swseLogger.log(`  - Launchers: ${categories.launchers}`);
+  swseLogger.log(`  - Melee Weapons: ${categories.melee}`);
+  swseLogger.log(`  - Lightsabers: ${categories.lightsabers}`);
+  swseLogger.log(`  - Exotic Weapons: ${categories.exotic}`);
+  swseLogger.log(`  - Grenades/Explosives: ${categories.grenades}`);
 }
 
 // Run the script
 try {
   rebuildWeaponsPack();
 } catch (error) {
-  console.error('Error rebuilding weapons pack:', error);
+  swseLogger.error('Error rebuilding weapons pack:', error);
   process.exit(1);
 }

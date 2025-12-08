@@ -414,9 +414,9 @@ export class SWSEUpgradeApp extends FormApplication {
 
         // Deduct credits
         await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.credits": currentCredits - upgradeCost });
-actor.update({ "system.credits": currentCredits - upgradeCost });
-/* ORIGINAL: actor.update({ "system.credits": currentCredits - upgradeCost }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": currentCredits - upgradeCost });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": currentCredits - upgradeCost });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": currentCredits - upgradeCost }); */
 
 
         // Add upgrade to item

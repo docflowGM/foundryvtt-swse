@@ -367,15 +367,15 @@ export class CombatActionBar {
     const newHP = Math.min(currentHP + healAmount, maxHP);
 
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.hp.value': newHP,
       'system.secondWind.uses': actor.system.secondWind.uses - 1
     });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.hp.value': newHP,
       'system.secondWind.uses': actor.system.secondWind.uses - 1
     });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.hp.value': newHP,
       'system.secondWind.uses': actor.system.secondWind.uses - 1
     }); */

@@ -104,7 +104,7 @@ export class SWSECombat {
     });
 
     // Roll attack
-    const roll = await new Roll(`1d20 + ${attackData.bonus}`).evaluate({async: true});
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackData.bonus}`).evaluate({async: true});
     const d20Result = roll.terms[0].results[0].result;
 
     // Determine if it's a natural 1 or 20
@@ -165,7 +165,7 @@ export class SWSECombat {
 
       // Check critical confirmation if threat
       if (isCritThreat && result.hits && !isNat1 && !result.concealmentMiss) {
-        const confirmRoll = await new Roll(`1d20 + ${attackData.bonus}`).evaluate({async: true});
+        const confirmRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackData.bonus}`).evaluate({async: true});
         result.critConfirmRoll = confirmRoll;
         result.critConfirmed = confirmRoll.total >= reflexDefense;
       }
@@ -204,8 +204,8 @@ export class SWSECombat {
    * // Full Attack with a character that has Double Attack (Rifles)
    * const result = await SWSECombat.rollFullAttack(soldier, blasterRifle, enemy);
    * // Result: 2 attacks at -5 each
-   * console.log(result.totalAttacks); // 2
-   * console.log(result.attackPenalty); // -5
+   * swseLogger.log(result.totalAttacks); // 2
+   * swseLogger.log(result.attackPenalty); // -5
    *
    * @example
    * // Full Attack with no Double/Triple Attack feats
@@ -331,7 +331,7 @@ export class SWSECombat {
     const damageData = this._calculateDamage(attacker, weapon, options);
 
     // Roll damage
-    const roll = await new Roll(damageData.formula).evaluate({async: true});
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(damageData.formula).evaluate({async: true});
 
     const result = {
       attacker,
@@ -396,7 +396,7 @@ export class SWSECombat {
    * // Apply massive damage that exceeds threshold
    * const result = await SWSECombat.applyDamageToTarget(soldier, 50);
    * if (result.thresholdExceeded) {
-   *   console.log("Target must make a damage threshold check!");
+   *   swseLogger.log("Target must make a damage threshold check!");
    * }
    */
   static async applyDamageToTarget(target, damage, options = {}) {
@@ -448,7 +448,7 @@ export class SWSECombat {
     // 3. Apply remaining damage to HP
     if (remainingDamage > 0) {
       result.hpDamage = remainingDamage;
-      try {await target.applyDamage(remainingDamage, options);} catch(err) { console.error(err); ui.notifications.error('Damage/Healing failed.'); }
+      try {await target.applyDamage(remainingDamage, options);} catch(err) { swseLogger.error(err); ui.notifications.error('Damage/Healing failed.'); }
 
       // Update token HP bar
       const tokens = target.getActiveTokens();
@@ -520,7 +520,7 @@ export class SWSECombat {
     const utfBonus = utf.total || 0;
 
     // Roll Use the Force check
-    const roll = await new Roll(`1d20 + ${utfBonus}`).evaluate({async: true});
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${utfBonus}`).evaluate({async: true});
     const d20Result = roll.terms[0].results[0].result;
 
     // Get target's defense

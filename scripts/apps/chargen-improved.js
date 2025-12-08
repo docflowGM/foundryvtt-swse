@@ -405,9 +405,9 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
     if (Object.keys(updates).length > 0) {
 // AUTO-CONVERT: confidence=0.00
-// TODO: manual migration required. Original: await actor.update(updates);
+// TODO: manual migration required. Original: await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
 // (no heuristic applied)
-/* ORIGINAL (for review): await actor.update(updates); */
+/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, updates); */
     }
   }
 
@@ -473,23 +473,23 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
 // AUTO-CONVERT: confidence=0.00
 // TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
-/* ORIGINAL (for review): await actor.update({ */
+/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
       "system.level": newLevel,
       "system.hp.max": newHP,
       "system.hp.value": newHP
     });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
-/* ORIGINAL (for review): await actor.update({ */
+/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
       "system.level": newLevel,
       "system.hp.max": newHP,
       "system.hp.value": newHP
     });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
-/* ORIGINAL (for review): await actor.update({ */
+/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
       "system.level": newLevel,
       "system.hp.max": newHP,
       "system.hp.value": newHP

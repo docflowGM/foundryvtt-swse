@@ -119,7 +119,7 @@ export class SWSEVehicleHandler {
       'system.page': template.page || null
     };
 
-    await actor.update(updates);
+    await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
 
     ui.notifications.info(`${vehicleItem.name} applied to ${actor.name}`);
     return true;

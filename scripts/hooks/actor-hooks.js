@@ -177,7 +177,7 @@ async function handleItemCreate(item, options, userId) {
                     const updateData = {
                         [`system.skills.${selectedSkill}.focused`]: true
                     };
-                    await actor.update(updateData);
+                    await globalThis.SWSE.ActorEngine.updateActor(actor, updateData);
 
                     // Update the feat description to note which skill
                     const skillName = skillNames[selectedSkill] || selectedSkill;
@@ -273,13 +273,13 @@ async function handleItemDelete(item, options, userId) {
         const skillKey = skillNames[focusedSkillName];
         if (skillKey && actor.system.skills[skillKey]) {
             await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
                 [`system.skills.${skillKey}.focused`]: false
             });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
                 [`system.skills.${skillKey}.focused`]: false
             });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
                 [`system.skills.${skillKey}.focused`]: false
             }); */
 

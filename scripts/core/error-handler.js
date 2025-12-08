@@ -182,65 +182,65 @@ export class ErrorHandler {
     // Always log errors, but format based on devMode
     console.group('%c🚨 SWSE ERROR DETECTED', 'color: red; font-weight: bold; font-size: 14px');
 
-    console.error('%cError Message:', 'color: orange; font-weight: bold');
-    console.error('SWSE |', error?.message || 'Unknown error');
+    swseLogger.error('%cError Message:', 'color: orange; font-weight: bold');
+    swseLogger.error('SWSE |', error?.message || 'Unknown error');
 
-    console.error('%cError Type:', 'color: orange; font-weight: bold');
-    console.error('SWSE |', error?.constructor?.name || 'Error');
+    swseLogger.error('%cError Type:', 'color: orange; font-weight: bold');
+    swseLogger.error('SWSE |', error?.constructor?.name || 'Error');
 
     if (context.source) {
-      console.error('%cSource:', 'color: orange; font-weight: bold');
-      console.error('SWSE |', context.source);
+      swseLogger.error('%cSource:', 'color: orange; font-weight: bold');
+      swseLogger.error('SWSE |', context.source);
     }
 
     if (context.location) {
-      console.error('%cLocation:', 'color: orange; font-weight: bold');
-      console.error('SWSE |', context.location);
+      swseLogger.error('%cLocation:', 'color: orange; font-weight: bold');
+      swseLogger.error('SWSE |', context.location);
     }
 
     if (context.filename) {
-      console.error('%cFile:', 'color: orange; font-weight: bold');
-      console.error('SWSE |', `${context.filename}:${context.lineno}:${context.colno}`);
+      swseLogger.error('%cFile:', 'color: orange; font-weight: bold');
+      swseLogger.error('SWSE |', `${context.filename}:${context.lineno}:${context.colno}`);
     }
 
     // Stack trace (always show)
     if (stack) {
-      console.error('%cStack Trace:', 'color: orange; font-weight: bold');
-      console.error('SWSE |', stack);
+      swseLogger.error('%cStack Trace:', 'color: orange; font-weight: bold');
+      swseLogger.error('SWSE |', stack);
     }
 
     // Detailed context (only in devMode)
     if (this._devMode) {
       console.group('%c📊 DETAILED CONTEXT', 'color: cyan; font-weight: bold');
 
-      console.log('%cFoundry Context:', 'color: cyan; font-weight: bold');
+      swseLogger.log('%cFoundry Context:', 'color: cyan; font-weight: bold');
       console.table(foundryContext);
 
-      console.log('%cActive Modules:', 'color: cyan; font-weight: bold');
+      swseLogger.log('%cActive Modules:', 'color: cyan; font-weight: bold');
       console.table(systemContext.activeModules);
 
-      console.log('%cPerformance:', 'color: cyan; font-weight: bold');
-      console.log('SWSE |', systemContext.performance);
+      swseLogger.log('%cPerformance:', 'color: cyan; font-weight: bold');
+      swseLogger.log('SWSE |', systemContext.performance);
 
       if (systemContext.cacheStats) {
-        console.log('%cCache Stats:', 'color: cyan; font-weight: bold');
-        console.log('SWSE |', systemContext.cacheStats);
+        swseLogger.log('%cCache Stats:', 'color: cyan; font-weight: bold');
+        swseLogger.log('SWSE |', systemContext.cacheStats);
       }
 
-      console.log('%cOpen Sheets:', 'color: cyan; font-weight: bold');
+      swseLogger.log('%cOpen Sheets:', 'color: cyan; font-weight: bold');
       console.table(foundryContext.openSheets);
 
       if (context.data) {
-        console.log('%cAdditional Data:', 'color: cyan; font-weight: bold');
-        console.log('SWSE |', context.data);
+        swseLogger.log('%cAdditional Data:', 'color: cyan; font-weight: bold');
+        swseLogger.log('SWSE |', context.data);
       }
 
       console.groupEnd();
     }
 
-    console.log('%c💡 TIP:', 'color: yellow; font-weight: bold');
-    console.log('SWSE | Enable Developer Mode in settings for more detailed error information');
-    console.log('SWSE | Access error log: window.SWSE.errorHandler.getRecentErrors()');
+    swseLogger.log('%c💡 TIP:', 'color: yellow; font-weight: bold');
+    swseLogger.log('SWSE | Enable Developer Mode in settings for more detailed error information');
+    swseLogger.log('SWSE | Access error log: window.SWSE.errorHandler.getRecentErrors()');
 
     console.groupEnd();
   }

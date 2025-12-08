@@ -788,7 +788,7 @@ try {
       species.system.bonusTrainedSkills = traits.bonusTrainedSkills;
 
       updatedCount++;
-      console.log(`✓ Updated comprehensive traits: ${speciesName}`);
+      swseLogger.log(`✓ Updated comprehensive traits: ${speciesName}`);
     }
 
     updated.push(JSON.stringify(species));
@@ -796,9 +796,9 @@ try {
 
   // Write back to file
   fs.writeFileSync(dbPath, updated.join('\n') + '\n', 'utf-8');
-  console.log(`\n✓ Successfully updated comprehensive traits for ${updatedCount} species!`);
+  swseLogger.log(`\n✓ Successfully updated comprehensive traits for ${updatedCount} species!`);
 
 } catch (err) {
-  console.error('Error updating species database:', err);
+  swseLogger.error('Error updating species database:', err);
   process.exit(1);
 }

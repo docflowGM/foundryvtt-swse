@@ -65,7 +65,7 @@ export class ForcePowerEngine {
       if (!pack) return [];
       return pack.getDocuments ? pack.getDocuments() : pack.index.map(e => e);
     } catch (e) {
-      console.warn("ForcePowerEngine: failed to collect powers from compendium", e);
+      swseLogger.warn("ForcePowerEngine: failed to collect powers from compendium", e);
       return [];
     }
   }
@@ -100,7 +100,7 @@ export class ForcePowerEngine {
         await actor.createEmbeddedDocuments("Item", toCreate);
       }
     } catch (e) {
-      console.error("ForcePowerEngine.applySelected error", e);
+      swseLogger.error("ForcePowerEngine.applySelected error", e);
     }
   }
 }

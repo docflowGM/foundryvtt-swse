@@ -85,11 +85,11 @@ const classDefenseData = {
 
 const dbPath = path.join(__dirname, '..', 'packs', 'classes.db');
 
-console.log('Reading classes.db...');
+swseLogger.log('Reading classes.db...');
 const content = fs.readFileSync(dbPath, 'utf8');
 const lines = content.split('\n').filter(line => line.trim());
 
-console.log(`Found ${lines.length} class entries`);
+swseLogger.log(`Found ${lines.length} class entries`);
 
 const updatedLines = [];
 let updatedCount = 0;
@@ -106,20 +106,20 @@ for (const line of lines) {
       // Add BAB progression
       if (!classItem.system.babProgression) {
         classItem.system.babProgression = classDefenseData[className].babProgression;
-        console.log(`Added babProgression for ${className}: ${classDefenseData[className].babProgression}`);
+        swseLogger.log(`Added babProgression for ${className}: ${classDefenseData[className].babProgression}`);
       }
 
       // Add defense bonuses
       if (!classItem.system.defenses) {
         classItem.system.defenses = classDefenseData[className].defenses;
-        console.log(`Added defenses for ${className}:`, classDefenseData[className].defenses);
+        swseLogger.log(`Added defenses for ${className}:`, classDefenseData[className].defenses);
         updatedCount++;
       } else {
         // Update if exists but values are wrong
         classItem.system.defenses = classDefenseData[className].defenses;
       }
     } else {
-      console.warn(`⚠️  No defense data found for class: ${className}`);
+      swseLogger.warn(`⚠️  No defense data found for class: ${className}`);
       // Set defaults for unknown classes
       if (!classItem.system.babProgression) {
         classItem.system.babProgression = 'medium';
@@ -132,16 +132,16 @@ for (const line of lines) {
 
     updatedLines.push(JSON.stringify(classItem));
   } catch (error) {
-    console.error('Error parsing line:', error.message);
+    swseLogger.error('Error parsing line:', error.message);
     updatedLines.push(line); // Keep original line if parsing fails
   }
 }
 
 // Write back to file
-console.log('\nWriting updated classes.db...');
+swseLogger.log('\nWriting updated classes.db...');
 fs.writeFileSync(dbPath, updatedLines.join('\n') + '\n', 'utf8');
 
-console.log(`\n✅ Done!`);
-console.log(`   Updated: ${updatedCount} classes`);
-console.log(`   Not found in reference data: ${notFoundCount} classes`);
-console.log(`   Total: ${lines.length} classes`);
+swseLogger.log(`\n✅ Done!`);
+swseLogger.log(`   Updated: ${updatedCount} classes`);
+swseLogger.log(`   Not found in reference data: ${notFoundCount} classes`);
+swseLogger.log(`   Total: ${lines.length} classes`);

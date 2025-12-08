@@ -13,7 +13,7 @@ import { SWSELogger } from '../utils/logger.js';
  */
 export async function rollDice(formula, data = {}, label = "Roll") {
   try {
-    const roll = await new Roll(formula, data).evaluate({async: true});
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(formula, data).evaluate({async: true});
 
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker(),
@@ -35,8 +35,8 @@ export async function rollDice(formula, data = {}, label = "Roll") {
  * @returns {Promise<Roll>} The higher roll
  */
 export async function rollWithAdvantage(formula, label = "Roll with Advantage") {
-  const roll1 = await new Roll(formula).evaluate({async: true});
-  const roll2 = await new Roll(formula).evaluate({async: true});
+  const roll1 = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({async: true});
+  const roll2 = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({async: true});
   
   const higherRoll = roll1.total >= roll2.total ? roll1 : roll2;
   
@@ -55,8 +55,8 @@ export async function rollWithAdvantage(formula, label = "Roll with Advantage") 
  * @returns {Promise<Roll>} The lower roll
  */
 export async function rollWithDisadvantage(formula, label = "Roll with Disadvantage") {
-  const roll1 = await new Roll(formula).evaluate({async: true});
-  const roll2 = await new Roll(formula).evaluate({async: true});
+  const roll1 = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({async: true});
+  const roll2 = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({async: true});
   
   const lowerRoll = roll1.total <= roll2.total ? roll1 : roll2;
   

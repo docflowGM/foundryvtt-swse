@@ -729,7 +729,7 @@ function populateForcePower(power) {
   const powerData = FORCE_POWER_DATA[power.name];
 
   if (!powerData) {
-    console.log(`⚠️  No data for ${power.name} - keeping as-is`);
+    swseLogger.log(`⚠️  No data for ${power.name} - keeping as-is`);
     return power;
   }
 
@@ -769,21 +769,21 @@ function populateForcePower(power) {
  * Main migration function
  */
 async function populateForcePowers() {
-  console.log('🔮 Starting Force Powers population...\n');
+  swseLogger.log('🔮 Starting Force Powers population...\n');
 
   // 1. Backup original file
-  console.log('📦 Creating backup...');
+  swseLogger.log('📦 Creating backup...');
   fs.copyFileSync(FORCE_POWERS_DB_PATH, BACKUP_PATH);
-  console.log(`✅ Backup created: ${BACKUP_PATH}\n`);
+  swseLogger.log(`✅ Backup created: ${BACKUP_PATH}\n`);
 
   // 2. Read all powers
-  console.log('📖 Reading forcepowers.db...');
+  swseLogger.log('📖 Reading forcepowers.db...');
   const content = fs.readFileSync(FORCE_POWERS_DB_PATH, 'utf8');
   const lines = content.trim().split('\n');
-  console.log(`✅ Found ${lines.length} force powers\n`);
+  swseLogger.log(`✅ Found ${lines.length} force powers\n`);
 
   // 3. Parse and populate each power
-  console.log('🔄 Populating force powers...');
+  swseLogger.log('🔄 Populating force powers...');
   const populatedPowers = [];
   let successCount = 0;
   let skippedCount = 0;
@@ -796,55 +796,55 @@ async function populateForcePowers() {
 
       if (FORCE_POWER_DATA[power.name]) {
         successCount++;
-        console.log(`  ✓ ${power.name}`);
+        swseLogger.log(`  ✓ ${power.name}`);
       } else {
         skippedCount++;
-        console.log(`  ⊘ ${power.name} (no data)`);
+        swseLogger.log(`  ⊘ ${power.name} (no data)`);
       }
     } catch (error) {
-      console.error(`❌ Error processing power:`, error.message);
+      swseLogger.error(`❌ Error processing power:`, error.message);
     }
   }
 
-  console.log(`\n✅ Population complete: ${successCount} populated, ${skippedCount} skipped\n`);
+  swseLogger.log(`\n✅ Population complete: ${successCount} populated, ${skippedCount} skipped\n`);
 
   // 4. Write populated data back to file
-  console.log('💾 Writing populated data...');
+  swseLogger.log('💾 Writing populated data...');
   const output = populatedPowers.map(p => JSON.stringify(p)).join('\n') + '\n';
   fs.writeFileSync(FORCE_POWERS_DB_PATH, output, 'utf8');
-  console.log(`✅ Wrote ${populatedPowers.length} powers to ${FORCE_POWERS_DB_PATH}\n`);
+  swseLogger.log(`✅ Wrote ${populatedPowers.length} powers to ${FORCE_POWERS_DB_PATH}\n`);
 
   // 5. Generate report
-  console.log('📊 Population Report:');
-  console.log('═══════════════════════════════════════');
-  console.log(`Total powers: ${lines.length}`);
-  console.log(`Successfully populated: ${successCount}`);
-  console.log(`Skipped (no data): ${skippedCount}`);
-  console.log(`Backup location: ${BACKUP_PATH}`);
-  console.log('═══════════════════════════════════════\n');
+  swseLogger.log('📊 Population Report:');
+  swseLogger.log('═══════════════════════════════════════');
+  swseLogger.log(`Total powers: ${lines.length}`);
+  swseLogger.log(`Successfully populated: ${successCount}`);
+  swseLogger.log(`Skipped (no data): ${skippedCount}`);
+  swseLogger.log(`Backup location: ${BACKUP_PATH}`);
+  swseLogger.log('═══════════════════════════════════════\n');
 
   // 6. DC Chart statistics
   const powersWithDC = populatedPowers.filter(p => p.system.dcChart && p.system.dcChart.length > 0);
-  console.log('🎲 DC Chart Statistics:');
-  console.log(`Powers with DC charts: ${powersWithDC.length}`);
-  console.log('Powers:');
+  swseLogger.log('🎲 DC Chart Statistics:');
+  swseLogger.log(`Powers with DC charts: ${powersWithDC.length}`);
+  swseLogger.log('Powers:');
   powersWithDC.forEach(p => {
-    console.log(`  - ${p.name} (${p.system.dcChart.length} tiers)`);
+    swseLogger.log(`  - ${p.name} (${p.system.dcChart.length} tiers)`);
   });
-  console.log();
+  swseLogger.log();
 
   // 7. Sample populated power
   const samplePower = populatedPowers.find(p => p.name === "Force Lightning");
   if (samplePower) {
-    console.log('🔍 Sample: Force Lightning');
-    console.log(JSON.stringify(samplePower, null, 2).substring(0, 1500) + '...\n');
+    swseLogger.log('🔍 Sample: Force Lightning');
+    swseLogger.log(JSON.stringify(samplePower, null, 2).substring(0, 1500) + '...\n');
   }
 
-  console.log('✨ Force Powers population complete!\n');
+  swseLogger.log('✨ Force Powers population complete!\n');
 }
 
 // Run population
 populateForcePowers().catch(error => {
-  console.error('❌ Population failed:', error);
+  swseLogger.error('❌ Population failed:', error);
   process.exit(1);
 });

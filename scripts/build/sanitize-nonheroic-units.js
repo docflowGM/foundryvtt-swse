@@ -207,13 +207,13 @@ function main() {
   const inputFile = path.join(__dirname, '..', '..', 'data', 'nonheroic', 'nonheroic_units.json');
   const outputFile = path.join(__dirname, '..', '..', 'data', 'nonheroic', 'nonheroic_units_sanitized.json');
 
-  console.log('Reading nonheroic_units.json...');
+  swseLogger.log('Reading nonheroic_units.json...');
 
   // Read file line by line (JSONL format)
   const rawData = fs.readFileSync(inputFile, 'utf8');
   const lines = rawData.trim().split('\n');
 
-  console.log(`Found ${lines.length} entries`);
+  swseLogger.log(`Found ${lines.length} entries`);
 
   const sanitizedEntries = [];
   let skipped = 0;
@@ -242,19 +242,19 @@ function main() {
       sanitizedEntries.push(sanitized);
 
     } catch (error) {
-      console.error(`Error parsing line ${index + 1}:`, error.message);
+      swseLogger.error(`Error parsing line ${index + 1}:`, error.message);
       skipped++;
     }
   });
 
-  console.log(`Sanitized ${sanitizedEntries.length} entries`);
-  console.log(`Skipped ${skipped} invalid/empty entries`);
+  swseLogger.log(`Sanitized ${sanitizedEntries.length} entries`);
+  swseLogger.log(`Skipped ${skipped} invalid/empty entries`);
 
   // Write output as proper JSON array
   fs.writeFileSync(outputFile, JSON.stringify(sanitizedEntries, null, 2), 'utf8');
 
-  console.log(`\nSanitized data written to: ${outputFile}`);
-  console.log(`File size reduced from ${(rawData.length / 1024).toFixed(2)} KB to ${(JSON.stringify(sanitizedEntries).length / 1024).toFixed(2)} KB`);
+  swseLogger.log(`\nSanitized data written to: ${outputFile}`);
+  swseLogger.log(`File size reduced from ${(rawData.length / 1024).toFixed(2)} KB to ${(JSON.stringify(sanitizedEntries).length / 1024).toFixed(2)} KB`);
 }
 
 // Run the script

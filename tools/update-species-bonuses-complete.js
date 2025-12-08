@@ -251,7 +251,7 @@ try {
       species.system.skillBonuses = speciesData[speciesName].skillBonuses;
       species.system.special = speciesData[speciesName].special;
       updatedCount++;
-      console.log(`✓ Updated: ${speciesName}`);
+      swseLogger.log(`✓ Updated: ${speciesName}`);
     } else {
       notFound.push(speciesName);
     }
@@ -261,14 +261,14 @@ try {
 
   // Write back to file
   fs.writeFileSync(dbPath, updated.join('\n') + '\n', 'utf-8');
-  console.log(`\n✓ Successfully updated ${updatedCount} species!`);
+  swseLogger.log(`\n✓ Successfully updated ${updatedCount} species!`);
 
   if (notFound.length > 0) {
-    console.log(`\n⚠ Species without updated data (${notFound.length}):`);
-    notFound.forEach(name => console.log(`  - ${name}`));
+    swseLogger.log(`\n⚠ Species without updated data (${notFound.length}):`);
+    notFound.forEach(name => swseLogger.log(`  - ${name}`));
   }
 
 } catch (err) {
-  console.error('Error updating species database:', err);
+  swseLogger.error('Error updating species database:', err);
   process.exit(1);
 }

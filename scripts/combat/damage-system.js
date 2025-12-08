@@ -86,7 +86,7 @@ export class DamageSystem {
               const checkThreshold = html.find('[name="threshold"]').is(':checked');
               const ignoreTemp = html.find('[name="ignoreTemp"]').is(':checked');
 
-              try {await targetActor.applyDamage(amount, {checkThreshold, ignoreTemp});} catch(err) { console.error(err); ui.notifications.error('Damage/Healing failed.'); }
+              try {await targetActor.applyDamage(amount, {checkThreshold, ignoreTemp});} catch(err) { swseLogger.error(err); ui.notifications.error('Damage/Healing failed.'); }
               resolve(amount);
             }
           },
@@ -139,7 +139,7 @@ export class DamageSystem {
             label: label,
             callback: async html => {
               const amount = Math.max(0, parseInt(html.find('[name="amount"]').val()) || 0);
-              try {await targetActor.applyHealing(amount, { isRepair: isDroid });} catch(err) { console.error(err); ui.notifications.error('Damage/Healing failed.'); }
+              try {await targetActor.applyHealing(amount, { isRepair: isDroid });} catch(err) { swseLogger.error(err); ui.notifications.error('Damage/Healing failed.'); }
               resolve(amount);
             }
           },

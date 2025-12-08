@@ -54,7 +54,7 @@ export async function missileSecondAttack(vehicle, missileState, rollDamage) {
   const { weapon, target, attackBonus } = missileState;
 
   // Roll with -5 penalty
-  const roll = await new Roll(`1d20 + ${attackBonus - 5}`).evaluate({async: true});
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackBonus - 5}`).evaluate({async: true});
 
   const targetReflex = getTargetReflexDefense(target);
   const hits = roll.total >= targetReflex;
@@ -138,7 +138,7 @@ export async function fireWeaponBattery(vehicle, weapons, target, options = {}, 
         const weaponDamage = weapons[0].damage || '1d10';
         const match = weaponDamage.match(/(\d+)d(\d+)/);
         if (match) {
-          const extraDiceRoll = await new Roll(`${result.extraHits}d${match[2]}`).evaluate({async: true});
+          const extraDiceRoll = await globalThis.SWSE.RollEngine.safeRoll(`${result.extraHits}d${match[2]}`).evaluate({async: true});
           const extraDamage = extraDiceRoll.total * (weapons[0].multiplier || 2);
           result.totalDamage += extraDamage;
           ui.notifications.info(`Battery scores ${result.extraHits} additional hits! +${extraDamage} damage!`);

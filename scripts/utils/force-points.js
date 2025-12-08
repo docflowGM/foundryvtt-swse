@@ -29,7 +29,7 @@ export class ForcePointsUtil {
     }
 
     // Roll the dice with the selected dice type
-    const roll = await new Roll(`${numDice}${diceType}`).evaluate();
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`${numDice}${diceType}`).evaluate();
 
     // For multiple dice, take the highest
     let bonus = 0;
@@ -43,7 +43,7 @@ export class ForcePointsUtil {
     let darkSideBonus = 0;
     let darkSideUsed = false;
     if (useDarkSide) {
-      const darkSideRoll = await new Roll(`1${diceType}`).evaluate();
+      const darkSideRoll = await globalThis.SWSE.RollEngine.safeRoll(`1${diceType}`).evaluate();
       darkSideBonus = darkSideRoll.total;
       darkSideUsed = true;
     }
@@ -71,9 +71,9 @@ export class ForcePointsUtil {
     if (darkSideUsed) {
       const currentDarkSide = actor.system.darkSideScore || 0;
       await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({'system.darkSideScore': currentDarkSide + 1});
-actor.update({'system.darkSideScore': currentDarkSide + 1});
-/* ORIGINAL: actor.update({'system.darkSideScore': currentDarkSide + 1}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide + 1});
+globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide + 1});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide + 1}); */
 
     }
 
@@ -216,9 +216,9 @@ actor.update({'system.darkSideScore': currentDarkSide + 1});
 
     // Reduce Dark Side Score
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({'system.darkSideScore': currentDarkSide - 1});
-actor.update({'system.darkSideScore': currentDarkSide - 1});
-/* ORIGINAL: actor.update({'system.darkSideScore': currentDarkSide - 1}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide - 1});
+globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide - 1});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide - 1}); */
 
 
     ui.notifications.info(`Dark Side Score reduced to ${currentDarkSide - 1}`);
@@ -237,15 +237,15 @@ actor.update({'system.darkSideScore': currentDarkSide - 1});
 
     // Set HP to 0 and set condition track to helpless but alive
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.hp.value': 0,
       'system.conditionTrack.current': Math.min(4, actor.system.conditionTrack.current)
     });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.hp.value': 0,
       'system.conditionTrack.current': Math.min(4, actor.system.conditionTrack.current)
     });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.hp.value': 0,
       'system.conditionTrack.current': Math.min(4, actor.system.conditionTrack.current)
     }); */

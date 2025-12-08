@@ -39,7 +39,7 @@ export class SWSEVehicleCombat {
     const attackData = calculateAttackBonus(vehicle, weapon, gunner, range);
 
     // Roll attack
-    const roll = await new Roll(`1d20 + ${attackData.bonus}`).evaluate({async: true});
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackData.bonus}`).evaluate({async: true});
     const d20Result = roll.terms[0].results[0].result;
 
     // Determine if it's a natural 1 or 20
@@ -101,7 +101,7 @@ export class SWSEVehicleCombat {
     const damageData = calculateDamage(vehicle, weapon, pilot, isCrit);
 
     // Roll base damage
-    const baseRoll = await new Roll(damageData.baseDamage).evaluate({async: true});
+    const baseRoll = await globalThis.SWSE.RollEngine.safeRoll(damageData.baseDamage).evaluate({async: true});
 
     // Add modifiers before multiplying
     const modifiedDamage = baseRoll.total + damageData.modifier;

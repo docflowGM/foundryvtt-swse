@@ -1326,7 +1326,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       updates["system.level"] = newLevel;
 
       // Apply updates first so we can calculate new modifiers
-      await this.actor.update(updates);
+      await globalThis.SWSE.ActorEngine.updateActor(this.actor, updates);
 
       // Now check if modifiers actually increased
       const newIntMod = this.actor.system.abilities.int?.mod || 0;
@@ -1354,15 +1354,15 @@ export class SWSELevelUpEnhanced extends FormApplication {
       const newHPValue = this.actor.system.hp.value + totalHPGain;
 
       await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
         "system.hp.max": newHPMax,
         "system.hp.value": newHPValue
       });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
         "system.hp.max": newHPMax,
         "system.hp.value": newHPValue
       });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
         "system.hp.max": newHPMax,
         "system.hp.value": newHPValue
       }); */
@@ -1379,19 +1379,19 @@ actor.update({
       SWSELogger.log(`SWSE LevelUp | Updating defense bonuses: Fort +${defenseBonuses.fortitude}, Ref +${defenseBonuses.reflex}, Will +${defenseBonuses.will}`);
 
       await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
         "system.bab": totalBAB,
         "system.defenses.fortitude.classBonus": defenseBonuses.fortitude,
         "system.defenses.reflex.classBonus": defenseBonuses.reflex,
         "system.defenses.will.classBonus": defenseBonuses.will
       });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
         "system.bab": totalBAB,
         "system.defenses.fortitude.classBonus": defenseBonuses.fortitude,
         "system.defenses.reflex.classBonus": defenseBonuses.reflex,
         "system.defenses.will.classBonus": defenseBonuses.will
       });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
         "system.bab": totalBAB,
         "system.defenses.fortitude.classBonus": defenseBonuses.fortitude,
         "system.defenses.reflex.classBonus": defenseBonuses.reflex,

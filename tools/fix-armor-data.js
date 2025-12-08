@@ -1098,16 +1098,16 @@ function rebuildArmorPack() {
   // Write to file
   fs.writeFileSync(packPath, ndjson + '\n', 'utf8');
 
-  console.log(`✓ Successfully rebuilt armor.db with ${entries.length} armor entries`);
-  console.log(`  - Light armor: ${entries.filter(e => e.system.armorType === 'light').length}`);
-  console.log(`  - Medium armor: ${entries.filter(e => e.system.armorType === 'medium').length}`);
-  console.log(`  - Heavy armor: ${entries.filter(e => e.system.armorType === 'heavy').length}`);
+  swseLogger.log(`✓ Successfully rebuilt armor.db with ${entries.length} armor entries`);
+  swseLogger.log(`  - Light armor: ${entries.filter(e => e.system.armorType === 'light').length}`);
+  swseLogger.log(`  - Medium armor: ${entries.filter(e => e.system.armorType === 'medium').length}`);
+  swseLogger.log(`  - Heavy armor: ${entries.filter(e => e.system.armorType === 'heavy').length}`);
 }
 
 // Run the script
 try {
   rebuildArmorPack();
 } catch (error) {
-  console.error('Error rebuilding armor pack:', error);
+  swseLogger.error('Error rebuilding armor pack:', error);
   process.exit(1);
 }

@@ -39,7 +39,7 @@ export class SWSEGrappling {
     const attackBonus = bab + strMod + sizeMod + misc + penalty;
 
     // Roll attack vs Reflex Defense
-    const roll = await new Roll(`1d20 + ${attackBonus}`).evaluate({async: true});
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackBonus}`).evaluate({async: true});
     const reflexDefense = target.system.defenses?.reflex?.total || 10;
 
     const result = {
@@ -80,8 +80,8 @@ export class SWSEGrappling {
     const defenderBonus = this._calculateGrappleBonus(defender);
 
     // Roll opposed checks
-    const attackerRoll = await new Roll(`1d20 + ${attackerBonus}`).evaluate({async: true});
-    const defenderRoll = await new Roll(`1d20 + ${defenderBonus}`).evaluate({async: true});
+    const attackerRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackerBonus}`).evaluate({async: true});
+    const defenderRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${defenderBonus}`).evaluate({async: true});
 
     const result = {
       attacker,
@@ -325,9 +325,9 @@ export class SWSEGrappling {
     const conditions = actor.system.conditions || [];
     conditions.push(condition);
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({'system.conditions': conditions});
-actor.update({'system.conditions': conditions});
-/* ORIGINAL: actor.update({'system.conditions': conditions}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': conditions});
+globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': conditions});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': conditions}); */
 
   }
 
@@ -339,9 +339,9 @@ actor.update({'system.conditions': conditions});
     const conditions = actor.system.conditions || [];
     const filtered = conditions.filter(c => c.id !== conditionId);
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({'system.conditions': filtered});
-actor.update({'system.conditions': filtered});
-/* ORIGINAL: actor.update({'system.conditions': filtered}); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': filtered});
+globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': filtered});
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': filtered}); */
 
   }
 

@@ -111,7 +111,7 @@ export function calculateCollisionDamage(object, size) {
   const strMod = object.system?.attributes?.str?.mod || 0;
 
   const dice = COLLISION_DAMAGE_DICE[sizeStr] || '1d6';
-  const roll = new Roll(`${dice} + ${strMod}`);
+  const roll = globalThis.SWSE.RollEngine.safeRoll(`${dice} + ${strMod}`);
   roll.evaluate({async: false});
 
   return roll.total;

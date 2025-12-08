@@ -32,9 +32,9 @@ export function registerChatCommands() {
             token.actor.system.hp.max
           );
           token.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ 'system.hp.value': newHP });
-actor.update({ 'system.hp.value': newHP });
-/* ORIGINAL: actor.update({ 'system.hp.value': newHP }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.hp.value': newHP });
+globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.hp.value': newHP });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.hp.value': newHP }); */
 
         }
       }

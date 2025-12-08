@@ -14,7 +14,7 @@ export const utilityHelpers = {
     }
   },
   log: (...args) => {
-    console.log('SWSE Template:', ...args.slice(0, -1));
+    swseLogger.log('SWSE Template:', ...args.slice(0, -1));
     return '';
   }
 };

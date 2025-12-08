@@ -175,12 +175,12 @@ export function displayReport(report) {
     console.group(`%c SWSE Store ID Diagnostic Report - ${report.timestamp}`, 'color: #4fc3f7; font-weight: bold; font-size: 14px');
 
     if (report.items.length === 0 && report.actors.length === 0) {
-        console.log('%c✓ All items and actors have valid IDs', 'color: #4caf50; font-weight: bold');
+        swseLogger.log('%c✓ All items and actors have valid IDs', 'color: #4caf50; font-weight: bold');
     } else {
         if (report.items.length > 0) {
             console.group(`%c⚠ Found ${report.items.length} item(s) with invalid IDs`, 'color: #ff9800; font-weight: bold');
             for (const item of report.items) {
-                console.log(`  • ${item.name} (${item.type}) from ${item.source}`);
+                swseLogger.log(`  • ${item.name} (${item.type}) from ${item.source}`);
             }
             console.groupEnd();
         }
@@ -188,12 +188,12 @@ export function displayReport(report) {
         if (report.actors.length > 0) {
             console.group(`%c⚠ Found ${report.actors.length} actor(s) with invalid IDs`, 'color: #ff9800; font-weight: bold');
             for (const actor of report.actors) {
-                console.log(`  • ${actor.name} (${actor.type}) from ${actor.source}`);
+                swseLogger.log(`  • ${actor.name} (${actor.type}) from ${actor.source}`);
             }
             console.groupEnd();
         }
 
-        console.log('%cRun `await SWSEStore.fixInvalidIds(report)` to attempt automatic repair (GM only)', 'color: #2196f3; font-style: italic');
+        swseLogger.log('%cRun `await SWSEStore.fixInvalidIds(report)` to attempt automatic repair (GM only)', 'color: #2196f3; font-style: italic');
     }
 
     console.groupEnd();

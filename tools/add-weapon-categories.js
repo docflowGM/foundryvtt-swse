@@ -111,7 +111,7 @@ function getSubcategory(weapon, weaponCategory, proficiency) {
 const data = fs.readFileSync(WEAPONS_DB, 'utf8');
 const lines = data.split('\n').filter(line => line.trim());
 
-console.log(`Processing ${lines.length} weapons...`);
+swseLogger.log(`Processing ${lines.length} weapons...`);
 
 const updatedLines = lines.map(line => {
     try {
@@ -125,11 +125,11 @@ const updatedLines = lines.map(line => {
         weapon.system.proficiency = proficiency;
         weapon.system.subcategory = subcategory;
 
-        console.log(`  ${weapon.name.padEnd(35)} | ${weaponCategory.padEnd(7)} | ${proficiency.padEnd(20)} | ${subcategory}`);
+        swseLogger.log(`  ${weapon.name.padEnd(35)} | ${weaponCategory.padEnd(7)} | ${proficiency.padEnd(20)} | ${subcategory}`);
 
         return JSON.stringify(weapon);
     } catch (err) {
-        console.error('Error processing line:', err.message);
+        swseLogger.error('Error processing line:', err.message);
         return line;
     }
 });
@@ -137,7 +137,7 @@ const updatedLines = lines.map(line => {
 // Write back to database
 fs.writeFileSync(WEAPONS_DB, updatedLines.join('\n') + '\n', 'utf8');
 
-console.log('\n✓ Successfully updated weapons.db with category and proficiency data');
+swseLogger.log('\n✓ Successfully updated weapons.db with category and proficiency data');
 
 // Summary
 const summary = {
@@ -158,14 +158,14 @@ updatedLines.forEach(line => {
     } catch (err) {}
 });
 
-console.log('\nSummary:');
-console.log('  Melee Weapons:');
-console.log(`    - Simple: ${summary.melee.simple}`);
-console.log(`    - Advanced: ${summary.melee.advanced}`);
-console.log(`    - Exotic: ${summary.melee.exotic}`);
-console.log('  Ranged Weapons:');
-console.log(`    - Simple (Grenades): ${summary.ranged.simple}`);
-console.log(`    - Pistols: ${summary.ranged.pistols}`);
-console.log(`    - Rifles: ${summary.ranged.rifles}`);
-console.log(`    - Heavy: ${summary.ranged.heavy}`);
-console.log(`    - Exotic: ${summary.ranged.exotic}`);
+swseLogger.log('\nSummary:');
+swseLogger.log('  Melee Weapons:');
+swseLogger.log(`    - Simple: ${summary.melee.simple}`);
+swseLogger.log(`    - Advanced: ${summary.melee.advanced}`);
+swseLogger.log(`    - Exotic: ${summary.melee.exotic}`);
+swseLogger.log('  Ranged Weapons:');
+swseLogger.log(`    - Simple (Grenades): ${summary.ranged.simple}`);
+swseLogger.log(`    - Pistols: ${summary.ranged.pistols}`);
+swseLogger.log(`    - Rifles: ${summary.ranged.rifles}`);
+swseLogger.log(`    - Heavy: ${summary.ranged.heavy}`);
+swseLogger.log(`    - Exotic: ${summary.ranged.exotic}`);

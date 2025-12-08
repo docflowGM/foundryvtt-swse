@@ -54,7 +54,7 @@ const getBaseDroidActor = () => ({
 });
 
 function fixDroidsDB() {
-  console.log('Fixing droids.db...');
+  swseLogger.log('Fixing droids.db...');
   const filePath = path.join(__dirname, '..', 'packs', 'droids.db');
   const content = fs.readFileSync(filePath, 'utf-8');
   const lines = content.trim().split('\n');
@@ -94,11 +94,11 @@ function fixDroidsDB() {
   });
 
   fs.writeFileSync(filePath, fixedLines.join('\n') + '\n', 'utf-8');
-  console.log(`Fixed ${fixedLines.length} droid entries`);
+  swseLogger.log(`Fixed ${fixedLines.length} droid entries`);
 }
 
 function fixEquipmentDB() {
-  console.log('Fixing equipment.db...');
+  swseLogger.log('Fixing equipment.db...');
   const filePath = path.join(__dirname, '..', 'packs', 'equipment.db');
   const content = fs.readFileSync(filePath, 'utf-8');
   const lines = content.trim().split('\n');
@@ -163,11 +163,11 @@ function fixEquipmentDB() {
   });
 
   fs.writeFileSync(filePath, fixedLines.join('\n') + '\n', 'utf-8');
-  console.log(`Fixed ${fixedLines.length} equipment entries`);
+  swseLogger.log(`Fixed ${fixedLines.length} equipment entries`);
 }
 
 function verifyVehiclesDB() {
-  console.log('Verifying vehicles.db...');
+  swseLogger.log('Verifying vehicles.db...');
   const filePath = path.join(__dirname, '..', 'packs', 'vehicles.db');
   const content = fs.readFileSync(filePath, 'utf-8');
   const lines = content.trim().split('\n');
@@ -196,9 +196,9 @@ function verifyVehiclesDB() {
 
   if (needsFix) {
     fs.writeFileSync(filePath, fixedLines.join('\n') + '\n', 'utf-8');
-    console.log(`Fixed ${lines.length} vehicle entries`);
+    swseLogger.log(`Fixed ${lines.length} vehicle entries`);
   } else {
-    console.log(`Vehicles DB is already correct (${lines.length} entries)`);
+    swseLogger.log(`Vehicles DB is already correct (${lines.length} entries)`);
   }
 }
 
@@ -207,8 +207,8 @@ try {
   fixDroidsDB();
   fixEquipmentDB();
   verifyVehiclesDB();
-  console.log('\n✅ All .db files have been fixed!');
+  swseLogger.log('\n✅ All .db files have been fixed!');
 } catch (error) {
-  console.error('❌ Error during migration:', error);
+  swseLogger.error('❌ Error during migration:', error);
   process.exit(1);
 }

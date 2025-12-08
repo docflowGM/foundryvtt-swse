@@ -17,7 +17,7 @@ export async function rollInitiative(actor) {
   
   const totalBonus = dexMod + initiativeBonus;
   
-  const roll = await new Roll(`1d20 + ${totalBonus}`).evaluate({async: true});
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${totalBonus}`).evaluate({async: true});
   
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({actor}),

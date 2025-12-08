@@ -13,8 +13,8 @@ const classesData = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/cla
 const classesDbPath = path.join(__dirname, '../packs/classes.db');
 const dbLines = fs.readFileSync(classesDbPath, 'utf-8').split('\n').filter(line => line.trim());
 
-console.log(`Found ${dbLines.length} class entries in classes.db`);
-console.log(`Found ${classesData.length} classes in reference data`);
+swseLogger.log(`Found ${dbLines.length} class entries in classes.db`);
+swseLogger.log(`Found ${classesData.length} classes in reference data`);
 
 // Create a lookup map from classes.json
 const classesMap = {};
@@ -54,7 +54,7 @@ const updatedLines = dbLines.map(line => {
     const classData = classesMap[entry.name];
 
     if (!classData) {
-      console.warn(`No reference data found for class: ${entry.name}`);
+      swseLogger.warn(`No reference data found for class: ${entry.name}`);
       return line;
     }
 
@@ -79,11 +79,11 @@ const updatedLines = dbLines.map(line => {
     };
 
     updated++;
-    console.log(`✓ Updated ${entry.name}: HD=${entry.system.hitDie}, BAB=${entry.system.babProgression}, Skills=${entry.system.trainedSkills}, Force=${entry.system.forceSensitive}`);
+    swseLogger.log(`✓ Updated ${entry.name}: HD=${entry.system.hitDie}, BAB=${entry.system.babProgression}, Skills=${entry.system.trainedSkills}, Force=${entry.system.forceSensitive}`);
 
     return JSON.stringify(entry);
   } catch (err) {
-    console.error(`Error processing line: ${err.message}`);
+    swseLogger.error(`Error processing line: ${err.message}`);
     return line;
   }
 });
@@ -91,5 +91,5 @@ const updatedLines = dbLines.map(line => {
 // Write updated data
 fs.writeFileSync(classesDbPath, updatedLines.join('\n') + '\n', 'utf-8');
 
-console.log(`\n✅ Updated ${updated} class entries`);
-console.log(`📝 Classes database has been fixed with proper schema`);
+swseLogger.log(`\n✅ Updated ${updated} class entries`);
+swseLogger.log(`📝 Classes database has been fixed with proper schema`);

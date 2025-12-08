@@ -19,7 +19,7 @@ import { getRandomDialogue } from './store-shared.js';
 export async function addItemToCart(store, itemId, updateDialogueCallback) {
     if (!itemId) {
         ui.notifications.warn("Invalid item selection. The item may be missing an ID.");
-        console.error("SWSE Store | addItemToCart called with empty itemId");
+        swseLogger.error("SWSE Store | addItemToCart called with empty itemId");
         return;
     }
 
@@ -44,10 +44,10 @@ export async function addItemToCart(store, itemId, updateDialogueCallback) {
         // Check if this is a fallback ID (generated for items without proper IDs)
         if (itemId.startsWith('fallback-')) {
             ui.notifications.error("This item has an invalid ID and cannot be purchased. Please contact the GM.");
-            console.error(`SWSE Store | Item with fallback ID cannot be purchased: ${itemId}`);
+            swseLogger.error(`SWSE Store | Item with fallback ID cannot be purchased: ${itemId}`);
         } else {
             ui.notifications.error(`Item not found: ${itemId}`);
-            console.error(`SWSE Store | Item ID not found in world or store cache: ${itemId}`, {
+            swseLogger.error(`SWSE Store | Item ID not found in world or store cache: ${itemId}`, {
                 itemId,
                 itemsByIdKeys: Array.from(store.itemsById.keys()).slice(0, 10)
             });
@@ -101,9 +101,9 @@ export async function buyService(actor, serviceName, serviceCost, updateDialogue
     // Deduct credits immediately
     const newCredits = currentCredits - serviceCost;
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.credits": newCredits });
-actor.update({ "system.credits": newCredits });
-/* ORIGINAL: actor.update({ "system.credits": newCredits }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": newCredits });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": newCredits });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": newCredits }); */
 
 
     ui.notifications.info(`${serviceName} purchased for ${serviceCost} credits.`);
@@ -171,9 +171,9 @@ export async function buyDroid(store, actorId) {
     try {
         // Deduct credits
         await store.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.credits": credits - finalCost });
-actor.update({ "system.credits": credits - finalCost });
-/* ORIGINAL: actor.update({ "system.credits": credits - finalCost }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost }); */
 
 
         // Create droid actor with player ownership
@@ -247,9 +247,9 @@ export async function buyVehicle(store, actorId, condition) {
     try {
         // Deduct credits
         await store.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.credits": credits - finalCost });
-actor.update({ "system.credits": credits - finalCost });
-/* ORIGINAL: actor.update({ "system.credits": credits - finalCost }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost }); */
 
 
         // Create vehicle actor with player ownership
@@ -470,9 +470,9 @@ export async function checkout(store, animateNumberCallback) {
 
         // Deduct credits FIRST and track it
         await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.credits": credits - total });
-actor.update({ "system.credits": credits - total });
-/* ORIGINAL: actor.update({ "system.credits": credits - total }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - total });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - total });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - total }); */
 
         creditsDeducted = true;
 
@@ -533,9 +533,9 @@ actor.update({ "system.credits": credits - total });
         if (creditsDeducted) {
             try {
                 await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.credits": credits });
-actor.update({ "system.credits": credits });
-/* ORIGINAL: actor.update({ "system.credits": credits }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits }); */
 
                 ui.notifications.error("Purchase failed! Credits have been refunded.");
                 SWSELogger.info("SWSE Store | Credits refunded after failed checkout");

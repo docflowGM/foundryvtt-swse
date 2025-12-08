@@ -29,7 +29,7 @@ export class ActorProgressionUpdater {
     updates["flags.swse.appliedTalents"] = prog.talents || [];
 
     if (Object.keys(updates).length) {
-      await actor.update(updates);
+      await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
     }
   }
 }

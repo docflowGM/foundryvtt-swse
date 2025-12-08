@@ -1257,7 +1257,7 @@ export default class CharacterGenerator extends Application {
     updates["system.hp.max"] = this.actor.system.hp.max + hpGain;
     updates["system.hp.value"] = this.actor.system.hp.value + hpGain;
     
-    await this.actor.update(updates);
+    await globalThis.SWSE.ActorEngine.updateActor(this.actor, updates);
     
     // Add new feats/talents/powers
     const items = [];

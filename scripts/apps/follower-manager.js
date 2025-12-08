@@ -119,7 +119,7 @@ export class FollowerManager {
         const featEntry = featIndex.find(f => f.name === featName);
 
         if (!featEntry) {
-            console.warn(`Feat not found: ${featName}`);
+            swseLogger.warn(`Feat not found: ${featName}`);
             return;
         }
 

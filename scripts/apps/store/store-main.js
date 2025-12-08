@@ -64,7 +64,7 @@ export class SWSEStore extends FormApplication {
     if (!packName || this._loadedPacks.has(packName)) return;
     try {
       const pack = game.packs.get(packName);
-      if (!pack) { console.warn("SWSE Store — pack not found:", packName); return; }
+      if (!pack) { swseLogger.warn("SWSE Store — pack not found:", packName); return; }
       const docs = await pack.getDocuments();
       for (const doc of docs){
         const item = (doc?.toObject) ? doc.toObject() : doc;
@@ -74,7 +74,7 @@ export class SWSEStore extends FormApplication {
       }
       this._loadedPacks.add(packName);
     } catch (err) {
-      console.error("SWSE Store — error loading pack", packName, err);
+      swseLogger.error("SWSE Store — error loading pack", packName, err);
     }
   }
 
@@ -189,7 +189,7 @@ export class SWSEStore extends FormApplication {
       if (!id) return;
       const item = this.itemsById.get(id);
       if (!item) return ui.notifications.error("Item not found");
-      try { this._onBuyItem(item); } catch (err) { console.error("SWSE Store — buy handler error", err); ui.notifications.error("Purchase failed (see console)."); }
+      try { this._onBuyItem(item); } catch (err) { swseLogger.error("SWSE Store — buy handler error", err); ui.notifications.error("Purchase failed (see console)."); }
     });
   }
 

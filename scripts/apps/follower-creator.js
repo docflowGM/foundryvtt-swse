@@ -338,7 +338,7 @@ export class FollowerCreator {
             const featData = featDoc.toObject();
             await follower.createEmbeddedDocuments('Item', [featData]);
         } else {
-            console.warn(`Feat not found: ${featName}`);
+            swseLogger.warn(`Feat not found: ${featName}`);
         }
     }
 

@@ -34,7 +34,7 @@ export class NonheroicUnitsBrowser extends Application {
         this.units = await response.json();
         this.filteredUnits = [...this.units];
       } catch (error) {
-        console.error('Failed to load nonheroic units:', error);
+        swseLogger.error('Failed to load nonheroic units:', error);
         this.units = [];
         this.filteredUnits = [];
       }
@@ -239,7 +239,7 @@ export class NonheroicUnitsBrowser extends Application {
       // TODO: Add feats, talents, equipment as embedded items
 
     } catch (error) {
-      console.error(`Error importing ${unit.name}:`, error);
+      swseLogger.error(`Error importing ${unit.name}:`, error);
       ui.notifications.error(`Failed to import ${unit.name}`);
     }
   }

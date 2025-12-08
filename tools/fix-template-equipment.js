@@ -103,20 +103,20 @@ templates.templates.forEach(template => {
 const outputPath = templatesPath;
 fs.writeFileSync(outputPath, JSON.stringify(templates, null, 2), 'utf8');
 
-console.log('='.repeat(80));
-console.log('TEMPLATE EQUIPMENT FIXES APPLIED');
-console.log('='.repeat(80));
-console.log(`Total changes: ${changesCount}\n`);
+swseLogger.log('='.repeat(80));
+swseLogger.log('TEMPLATE EQUIPMENT FIXES APPLIED');
+swseLogger.log('='.repeat(80));
+swseLogger.log(`Total changes: ${changesCount}\n`);
 
 if (changesLog.length > 0) {
-  console.log('Changes made:\n');
+  swseLogger.log('Changes made:\n');
   changesLog.forEach(change => {
-    console.log(`${change.template} (${change.class}):`);
-    console.log(`  ❌ "${change.from}"`);
-    console.log(`  ✓  "${change.to}"\n`);
+    swseLogger.log(`${change.template} (${change.class}):`);
+    swseLogger.log(`  ❌ "${change.from}"`);
+    swseLogger.log(`  ✓  "${change.to}"\n`);
   });
 }
 
-console.log('='.repeat(80));
-console.log(`✓ Templates updated successfully at: ${outputPath}`);
-console.log('='.repeat(80));
+swseLogger.log('='.repeat(80));
+swseLogger.log(`✓ Templates updated successfully at: ${outputPath}`);
+swseLogger.log('='.repeat(80));

@@ -657,21 +657,21 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
 
     // Save configuration to actor
     await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.vehicle': {
         stockShip: this.stockShip,
         modifications: this.modifications,
         totalCost: VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip)
       }
     });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.vehicle': {
         stockShip: this.stockShip,
         modifications: this.modifications,
         totalCost: VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip)
       }
     });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.vehicle': {
         stockShip: this.stockShip,
         modifications: this.modifications,

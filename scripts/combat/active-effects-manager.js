@@ -169,7 +169,7 @@ export class SWSEActiveEffectsManager {
 
     const effectData = this.CONDITION_EFFECTS[conditionKey];
     if (!effectData) {
-      console.warn(`SWSE | Unknown condition: ${condition} (mapped to: ${conditionKey})`);
+      swseLogger.warn(`SWSE | Unknown condition: ${condition} (mapped to: ${conditionKey})`);
       return;
     }
 
@@ -236,7 +236,7 @@ export class SWSEActiveEffectsManager {
   static async applyCombatActionEffect(actor, actionType) {
     const effectData = this.COMBAT_ACTION_EFFECTS[actionType];
     if (!effectData) {
-      console.warn(`SWSE | Unknown combat action: ${actionType}`);
+      swseLogger.warn(`SWSE | Unknown combat action: ${actionType}`);
       return;
     }
 
@@ -306,7 +306,7 @@ export class SWSEActiveEffectsManager {
    * Initialize the Active Effects Manager
    */
   static init() {
-    console.log('SWSE | Initializing Active Effects Manager');
+    swseLogger.log('SWSE | Initializing Active Effects Manager');
 
     // Register custom status effects
     this._registerStatusEffects();
@@ -335,7 +335,7 @@ export class SWSEActiveEffectsManager {
       }
     });
 
-    console.log('SWSE | Active Effects Manager ready');
+    swseLogger.log('SWSE | Active Effects Manager ready');
   }
 
   /**

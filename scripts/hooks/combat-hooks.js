@@ -136,7 +136,7 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
     // Make recovery check
     const endurance = actor.system.skills?.endurance;
     const bonus = endurance?.total || 0;
-    const roll = await new Roll(`1d20 + ${bonus}`).evaluate({ async: true });
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${bonus}`).evaluate({ async: true });
 
     await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
@@ -145,13 +145,13 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
 
     if (roll.total >= 10) {
         await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
             'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
         });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
             'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
         });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
             'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
         }); */
 

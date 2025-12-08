@@ -38,7 +38,7 @@ export async function loadInventoryData(itemsById) {
     const validItems = allItems.filter(item => {
         const hasValidId = !!(item.id || item._id);
         if (!hasValidId) {
-            console.warn(`SWSE Store | Excluding item without ID: ${item.name || 'Unknown'}`);
+            swseLogger.warn(`SWSE Store | Excluding item without ID: ${item.name || 'Unknown'}`);
         }
         return hasValidId;
     });
@@ -70,13 +70,13 @@ export async function loadInventoryData(itemsById) {
                     try {
                         return (a.system?.cost ?? 0) > 0;
                     } catch (err) {
-                        console.warn(`SWSE | Skipping invalid actor in ${packName}:`, err.message);
+                        swseLogger.warn(`SWSE | Skipping invalid actor in ${packName}:`, err.message);
                         return false;
                     }
                 });
                 packActors.push(...validActors);
             } catch (err) {
-                console.warn(`SWSE | Failed to load actors from ${packName}:`, err.message);
+                swseLogger.warn(`SWSE | Failed to load actors from ${packName}:`, err.message);
             }
         }
     }
@@ -88,7 +88,7 @@ export async function loadInventoryData(itemsById) {
     const validActors = allActors.filter(actor => {
         const hasValidId = !!(actor.id || actor._id);
         if (!hasValidId) {
-            console.warn(`SWSE Store | Excluding actor without ID: ${actor.name || 'Unknown'}`);
+            swseLogger.warn(`SWSE Store | Excluding actor without ID: ${actor.name || 'Unknown'}`);
         }
         return hasValidId;
     });

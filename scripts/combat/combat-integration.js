@@ -175,7 +175,7 @@ export class SWSECombatIntegration {
       updates['system.forcePoints.value'] = maxForcePoints;
     }
 
-    await actor.update(updates);
+    await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
   }
 
   /**
@@ -195,7 +195,7 @@ export class SWSECombatIntegration {
 
     // Reset action economy
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.actionEconomy': {
         swift: true,
         move: true,
@@ -204,7 +204,7 @@ export class SWSECombatIntegration {
         reaction: true
       }
     });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.actionEconomy': {
         swift: true,
         move: true,
@@ -213,7 +213,7 @@ actor.update({
         reaction: true
       }
     });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.actionEconomy': {
         swift: true,
         move: true,
@@ -257,7 +257,7 @@ actor.update({
 
     // Roll Endurance check
     const endurance = actor.system.skills?.endurance?.total || 0;
-    const roll = await new Roll(`1d20 + ${endurance}`).evaluate({async: true});
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${endurance}`).evaluate({async: true});
 
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({actor}),
@@ -274,9 +274,9 @@ actor.update({
       if (currentIndex > 0) {
         const newCondition = tracks[currentIndex - 1];
         await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ 'system.conditionTrack.current': newCondition });
-actor.update({ 'system.conditionTrack.current': newCondition });
-/* ORIGINAL: actor.update({ 'system.conditionTrack.current': newCondition }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.conditionTrack.current': newCondition });
+globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.conditionTrack.current': newCondition });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.conditionTrack.current': newCondition }); */
 
 
         ui.notifications.info(`${actor.name} recovered! Condition improved from ${condition} to ${newCondition}`);

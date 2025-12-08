@@ -445,13 +445,13 @@ try {
       const weapon = JSON.parse(line);
       existingNames.add(weapon.name);
     } catch (e) {
-      console.error('Error parsing existing weapon:', e.message);
+      swseLogger.error('Error parsing existing weapon:', e.message);
     }
   });
 
-  console.log(`Found ${existingNames.size} existing weapons`);
+  swseLogger.log(`Found ${existingNames.size} existing weapons`);
 } catch (error) {
-  console.log('No existing weapons database found, creating new one');
+  swseLogger.log('No existing weapons database found, creating new one');
 }
 
 // Combine all new weapons
@@ -464,15 +464,15 @@ const allNewWeapons = [
   ...HEAVY_WEAPONS
 ];
 
-console.log(`\nProcessing ${allNewWeapons.length} weapons...`);
+swseLogger.log(`\nProcessing ${allNewWeapons.length} weapons...`);
 
 // Filter out weapons that already exist
 const weaponsToAdd = allNewWeapons.filter(weapon => !existingNames.has(weapon.name));
 
-console.log(`Found ${weaponsToAdd.length} new weapons to add\n`);
+swseLogger.log(`Found ${weaponsToAdd.length} new weapons to add\n`);
 
 if (weaponsToAdd.length === 0) {
-  console.log('No new weapons to add. All weapons already exist in database.');
+  swseLogger.log('No new weapons to add. All weapons already exist in database.');
   process.exit(0);
 }
 
@@ -487,19 +487,19 @@ const newContent = newWeaponLines.join('\n') + '\n';
 
 try {
   fs.appendFileSync(dbPath, newContent, 'utf-8');
-  console.log(`✓ Successfully added ${weaponsToAdd.length} weapons to database`);
-  console.log(`\nTotal weapons in database: ${existingNames.size + weaponsToAdd.length}`);
+  swseLogger.log(`✓ Successfully added ${weaponsToAdd.length} weapons to database`);
+  swseLogger.log(`\nTotal weapons in database: ${existingNames.size + weaponsToAdd.length}`);
 
   // Show sample of added weapons
-  console.log('\nSample of added weapons:');
+  swseLogger.log('\nSample of added weapons:');
   weaponsToAdd.slice(0, 10).forEach(w => {
-    console.log(`  - ${w.name} (${w.weaponType})`);
+    swseLogger.log(`  - ${w.name} (${w.weaponType})`);
   });
 
   if (weaponsToAdd.length > 10) {
-    console.log(`  ... and ${weaponsToAdd.length - 10} more`);
+    swseLogger.log(`  ... and ${weaponsToAdd.length - 10} more`);
   }
 } catch (error) {
-  console.error('Error writing to database:', error.message);
+  swseLogger.error('Error writing to database:', error.message);
   process.exit(1);
 }

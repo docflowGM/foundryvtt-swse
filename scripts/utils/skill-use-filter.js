@@ -221,7 +221,7 @@ export class SkillUseFilter {
     if (options.situational) modifier += options.situational;
 
     // Create and evaluate the roll
-    const roll = await new Roll(`1d20 + ${modifier}`).evaluate({async: true});
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${modifier}`).evaluate({async: true});
 
     // Prepare flavor text
     const dc = skillUse.DC || 'varies';

@@ -1613,7 +1613,7 @@ function rebuildEquipmentPack() {
   // Write to file
   fs.writeFileSync(packPath, ndjson + '\n', 'utf8');
 
-  console.log(`✓ Successfully rebuilt equipment.db with ${entries.length} equipment entries`);
+  swseLogger.log(`✓ Successfully rebuilt equipment.db with ${entries.length} equipment entries`);
 
   // Count by category
   const categoryCounts = {};
@@ -1621,9 +1621,9 @@ function rebuildEquipmentPack() {
     categoryCounts[item.category] = (categoryCounts[item.category] || 0) + 1;
   });
 
-  console.log('\nEquipment by category:');
+  swseLogger.log('\nEquipment by category:');
   Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]).forEach(([category, count]) => {
-    console.log(`  - ${category}: ${count}`);
+    swseLogger.log(`  - ${category}: ${count}`);
   });
 }
 
@@ -1631,6 +1631,6 @@ function rebuildEquipmentPack() {
 try {
   rebuildEquipmentPack();
 } catch (error) {
-  console.error('Error rebuilding equipment pack:', error);
+  swseLogger.error('Error rebuilding equipment pack:', error);
   process.exit(1);
 }

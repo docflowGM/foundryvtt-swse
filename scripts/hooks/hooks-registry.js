@@ -54,7 +54,7 @@ export class HooksRegistry {
         } = options;
 
         if (this.#registered.has(id)) {
-            console.warn(`[HooksRegistry] Hook ID '${id}' already registered. Overwriting.`);
+            swseLogger.warn(`[HooksRegistry] Hook ID '${id}' already registered. Overwriting.`);
         }
 
         const registration = {
@@ -72,7 +72,7 @@ export class HooksRegistry {
 
         this.#registered.set(id, registration);
 
-        console.log(`[HooksRegistry] Registered ${hookName} (${id}, priority: ${priority}) - ${description}`);
+        swseLogger.log(`[HooksRegistry] Registered ${hookName} (${id}, priority: ${priority}) - ${description}`);
 
         // If hooks have already been activated, activate this one immediately
         if (this.#activated && enabled) {
@@ -90,7 +90,7 @@ export class HooksRegistry {
      */
     static activateAll() {
         if (this.#activated) {
-            console.warn('[HooksRegistry] Hooks already activated. Skipping duplicate activation.');
+            swseLogger.warn('[HooksRegistry] Hooks already activated. Skipping duplicate activation.');
             return 0;
         }
 
@@ -101,7 +101,7 @@ export class HooksRegistry {
         // Sort by priority (lower numbers first)
         toActivate.sort((a, b) => a.priority - b.priority);
 
-        console.log(`[HooksRegistry] Activating ${toActivate.length} hooks...`);
+        swseLogger.log(`[HooksRegistry] Activating ${toActivate.length} hooks...`);
 
         let activated = 0;
         for (const registration of toActivate) {
@@ -111,7 +111,7 @@ export class HooksRegistry {
 
         this.#activated = true;
 
-        console.log(`[HooksRegistry] Successfully activated ${activated} hooks`);
+        swseLogger.log(`[HooksRegistry] Successfully activated ${activated} hooks`);
 
         return activated;
     }
@@ -127,12 +127,12 @@ export class HooksRegistry {
             registration.registered = true;
             registration.activatedAt = new Date();
 
-            console.log(
+            swseLogger.log(
                 `[HooksRegistry] ✓ Activated ${registration.hookName} ` +
                 `(${registration.id}, priority: ${registration.priority})`
             );
         } catch (error) {
-            console.error(
+            swseLogger.error(
                 `[HooksRegistry] ✗ Failed to activate ${registration.hookName} (${registration.id})`,
                 error
             );
@@ -148,7 +148,7 @@ export class HooksRegistry {
     static enable(id) {
         const registration = this.#registered.get(id);
         if (!registration) {
-            console.warn(`[HooksRegistry] Hook ID '${id}' not found`);
+            swseLogger.warn(`[HooksRegistry] Hook ID '${id}' not found`);
             return false;
         }
 
@@ -171,12 +171,12 @@ export class HooksRegistry {
     static disable(id) {
         const registration = this.#registered.get(id);
         if (!registration) {
-            console.warn(`[HooksRegistry] Hook ID '${id}' not found`);
+            swseLogger.warn(`[HooksRegistry] Hook ID '${id}' not found`);
             return false;
         }
 
         registration.enabled = false;
-        console.log(`[HooksRegistry] Disabled ${registration.hookName} (${id})`);
+        swseLogger.log(`[HooksRegistry] Disabled ${registration.hookName} (${id})`);
 
         return true;
     }
@@ -279,7 +279,7 @@ export class HooksRegistry {
     static clear() {
         this.#registered.clear();
         this.#activated = false;
-        console.log('[HooksRegistry] All registrations cleared');
+        swseLogger.log('[HooksRegistry] All registrations cleared');
     }
 
     /**

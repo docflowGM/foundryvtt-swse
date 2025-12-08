@@ -332,19 +332,19 @@ export class ForcePowerManager {
       // Initialize force suite if not already set
       if (!actor.system.forceSuite) {
         await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSuite': {
             max: 0,
             powers: []
           }
         });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSuite': {
             max: 0,
             powers: []
           }
         });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSuite': {
             max: 0,
             powers: []
@@ -378,13 +378,13 @@ actor.update({
     // Update force suite maximum
     const newMax = this.calculateForceSuiteSize(actor);
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.forceSuite.max': newMax
     });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.forceSuite.max': newMax
     });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.forceSuite.max': newMax
     }); */
 
@@ -430,13 +430,13 @@ actor.update({
         // Update force suite maximum
         const newMax = this.calculateForceSuiteSize(actor);
         await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSuite.max': newMax
         });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSuite.max': newMax
         });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSuite.max': newMax
         }); */
 

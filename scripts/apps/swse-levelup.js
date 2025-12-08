@@ -152,7 +152,7 @@ export class SWSELevelUp {
                     
                 case "roll":
                 default:
-                    const roll = await new Roll(`1d${hitDie}`).evaluate({ async: true });
+                    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d${hitDie}`).evaluate({ async: true });
                     hpGain = roll.total + conMod;
                     rollMessage = `Rolled ${roll.total} on d${hitDie} + ${conMod} (CON) = ${hpGain} HP`;
                     
@@ -184,17 +184,17 @@ export class SWSELevelUp {
             const newHPValue = actor.system.hp.value + hpGain;
             
             await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
                 "system.level": newLevel,
                 "system.hp.max": newHPMax,
                 "system.hp.value": newHPValue
             });
-actor.update({
+globalThis.SWSE.ActorEngine.updateActor(actor, {
                 "system.level": newLevel,
                 "system.hp.max": newHPMax,
                 "system.hp.value": newHPValue
             });
-/* ORIGINAL: actor.update({
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
                 "system.level": newLevel,
                 "system.hp.max": newHPMax,
                 "system.hp.value": newHPValue

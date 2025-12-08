@@ -57,7 +57,7 @@ const correctHitDice = {
 const classesDbPath = path.join(__dirname, '../packs/classes.db');
 const dbLines = fs.readFileSync(classesDbPath, 'utf-8').split('\n').filter(line => line.trim());
 
-console.log(`Found ${dbLines.length} class entries in classes.db\n`);
+swseLogger.log(`Found ${dbLines.length} class entries in classes.db\n`);
 
 // Process each class entry
 let updated = 0;
@@ -72,7 +72,7 @@ const updatedLines = dbLines.map(line => {
       const correctHitDie = correctHitDice[className];
 
       if (currentHitDie !== correctHitDie) {
-        console.log(`✓ Updating ${className}: ${currentHitDie} -> ${correctHitDie}`);
+        swseLogger.log(`✓ Updating ${className}: ${currentHitDie} -> ${correctHitDie}`);
         entry.system.hit_die = correctHitDie;
         updated++;
       }
@@ -80,7 +80,7 @@ const updatedLines = dbLines.map(line => {
 
     return JSON.stringify(entry);
   } catch (err) {
-    console.error(`Error processing line: ${err.message}`);
+    swseLogger.error(`Error processing line: ${err.message}`);
     return line;
   }
 });
@@ -88,5 +88,5 @@ const updatedLines = dbLines.map(line => {
 // Write updated data
 fs.writeFileSync(classesDbPath, updatedLines.join('\n') + '\n', 'utf-8');
 
-console.log(`\n✅ Updated ${updated} class hit dice`);
-console.log(`📝 Classes database has been updated with correct hit dice values`);
+swseLogger.log(`\n✅ Updated ${updated} class hit dice`);
+swseLogger.log(`📝 Classes database has been updated with correct hit dice values`);

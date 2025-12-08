@@ -29,7 +29,7 @@ export async function rollAttack(actor, weapon) {
   );
   
   // Roll the attack
-  const roll = await new Roll(`1d20 + ${attackBonus}`).evaluate({async: true});
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackBonus}`).evaluate({async: true});
   
   // Send to chat
   await roll.toMessage({
@@ -82,7 +82,7 @@ export async function rollDamage(actor, weapon) {
   );
   
   // Roll damage
-  const roll = await new Roll(damageCalc.formula).evaluate({async: true});
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(damageCalc.formula).evaluate({async: true});
   
   // Send to chat
   await roll.toMessage({

@@ -374,21 +374,21 @@ function migrateVehicle(vehicle) {
  * Main migration function
  */
 async function migrateVehiclesDB() {
-  console.log('🚀 Starting vehicles.db migration...\n');
+  swseLogger.log('🚀 Starting vehicles.db migration...\n');
 
   // 1. Backup original file
-  console.log('📦 Creating backup...');
+  swseLogger.log('📦 Creating backup...');
   fs.copyFileSync(VEHICLES_DB_PATH, BACKUP_PATH);
-  console.log(`✅ Backup created: ${BACKUP_PATH}\n`);
+  swseLogger.log(`✅ Backup created: ${BACKUP_PATH}\n`);
 
   // 2. Read all vehicles
-  console.log('📖 Reading vehicles.db...');
+  swseLogger.log('📖 Reading vehicles.db...');
   const content = fs.readFileSync(VEHICLES_DB_PATH, 'utf8');
   const lines = content.trim().split('\n');
-  console.log(`✅ Found ${lines.length} vehicles\n`);
+  swseLogger.log(`✅ Found ${lines.length} vehicles\n`);
 
   // 3. Parse and migrate each vehicle
-  console.log('🔄 Migrating vehicles...');
+  swseLogger.log('🔄 Migrating vehicles...');
   const migratedVehicles = [];
   let successCount = 0;
   let errorCount = 0;
@@ -402,42 +402,42 @@ async function migrateVehiclesDB() {
 
       // Log progress every 50 vehicles
       if ((i + 1) % 50 === 0) {
-        console.log(`  Processed ${i + 1}/${lines.length} vehicles...`);
+        swseLogger.log(`  Processed ${i + 1}/${lines.length} vehicles...`);
       }
     } catch (error) {
-      console.error(`❌ Error migrating vehicle on line ${i + 1}:`, error.message);
+      swseLogger.error(`❌ Error migrating vehicle on line ${i + 1}:`, error.message);
       errorCount++;
     }
   }
 
-  console.log(`✅ Migration complete: ${successCount} success, ${errorCount} errors\n`);
+  swseLogger.log(`✅ Migration complete: ${successCount} success, ${errorCount} errors\n`);
 
   // 4. Write migrated data back to file
-  console.log('💾 Writing migrated data...');
+  swseLogger.log('💾 Writing migrated data...');
   const output = migratedVehicles.map(v => JSON.stringify(v)).join('\n') + '\n';
   fs.writeFileSync(VEHICLES_DB_PATH, output, 'utf8');
-  console.log(`✅ Wrote ${migratedVehicles.length} vehicles to ${VEHICLES_DB_PATH}\n`);
+  swseLogger.log(`✅ Wrote ${migratedVehicles.length} vehicles to ${VEHICLES_DB_PATH}\n`);
 
   // 5. Generate migration report
-  console.log('📊 Migration Report:');
-  console.log('═══════════════════════════════════════');
-  console.log(`Total vehicles: ${lines.length}`);
-  console.log(`Successfully migrated: ${successCount}`);
-  console.log(`Errors: ${errorCount}`);
-  console.log(`Backup location: ${BACKUP_PATH}`);
-  console.log('═══════════════════════════════════════\n');
+  swseLogger.log('📊 Migration Report:');
+  swseLogger.log('═══════════════════════════════════════');
+  swseLogger.log(`Total vehicles: ${lines.length}`);
+  swseLogger.log(`Successfully migrated: ${successCount}`);
+  swseLogger.log(`Errors: ${errorCount}`);
+  swseLogger.log(`Backup location: ${BACKUP_PATH}`);
+  swseLogger.log('═══════════════════════════════════════\n');
 
   // 6. Sample the first migrated vehicle for verification
   if (migratedVehicles.length > 0) {
-    console.log('🔍 Sample migrated vehicle:');
-    console.log(JSON.stringify(migratedVehicles[0], null, 2).substring(0, 1500) + '...\n');
+    swseLogger.log('🔍 Sample migrated vehicle:');
+    swseLogger.log(JSON.stringify(migratedVehicles[0], null, 2).substring(0, 1500) + '...\n');
   }
 
-  console.log('✨ Migration complete! Your vehicles.db is now ready for import.\n');
+  swseLogger.log('✨ Migration complete! Your vehicles.db is now ready for import.\n');
 }
 
 // Run migration
 migrateVehiclesDB().catch(error => {
-  console.error('❌ Migration failed:', error);
+  swseLogger.error('❌ Migration failed:', error);
   process.exit(1);
 });

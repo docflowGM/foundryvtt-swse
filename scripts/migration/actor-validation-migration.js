@@ -242,7 +242,7 @@ export class ActorValidationMigration {
 
         if (needsUpdate) {
           SWSELogger.log(`Updating ${actor.name} with fixes:`, updates);
-          await actor.update(updates);
+          await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
           fixed++;
         } else {
           skipped++;

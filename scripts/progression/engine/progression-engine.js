@@ -45,7 +45,7 @@ export class ProgressionEngine {
       if (typeof ForcePowerEngine !== 'undefined') {
         await ForcePowerEngine.handleForcePowerTriggers(actor, actor._swseLastProgressionUpdate || {});
       }
-    } catch(e) { console.warn('ForcePowerEngine trigger failed', e); }
+    } catch(e) { swseLogger.warn('ForcePowerEngine trigger failed', e); }
 
     } finally {
       await this.releaseLock(actor);
@@ -62,7 +62,7 @@ export class ProgressionEngine {
       if (typeof ForcePowerEngine !== 'undefined') {
         await ForcePowerEngine.handleForcePowerTriggers(actor, actor._swseLastProgressionUpdate || {});
       }
-    } catch(e) { console.warn('ForcePowerEngine trigger failed', e); }
+    } catch(e) { swseLogger.warn('ForcePowerEngine trigger failed', e); }
 
     } finally {
       await this.releaseLock(actor);
@@ -79,7 +79,7 @@ export class ProgressionEngine {
       if (typeof ForcePowerEngine !== 'undefined') {
         await ForcePowerEngine.handleForcePowerTriggers(actor, actor._swseLastProgressionUpdate || {});
       }
-    } catch(e) { console.warn('ForcePowerEngine trigger failed', e); }
+    } catch(e) { swseLogger.warn('ForcePowerEngine trigger failed', e); }
 
     } finally {
       await this.releaseLock(actor);
@@ -94,9 +94,9 @@ export class ProgressionEngine {
     const rules = PROGRESSION_RULES.species || {};
     if (!rules[speciesId]) throw new Error(`Unknown species: ${speciesId}`);
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.progression.species": speciesId });
-actor.update({ "system.progression.species": speciesId });
-/* ORIGINAL: actor.update({ "system.progression.species": speciesId }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.species": speciesId });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.species": speciesId });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.species": speciesId }); */
 
   }
 
@@ -104,18 +104,18 @@ actor.update({ "system.progression.species": speciesId });
     const rules = PROGRESSION_RULES.backgrounds || {};
     if (!rules[backgroundId]) throw new Error(`Unknown background: ${backgroundId}`);
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.progression.background": backgroundId });
-actor.update({ "system.progression.background": backgroundId });
-/* ORIGINAL: actor.update({ "system.progression.background": backgroundId }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.background": backgroundId });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.background": backgroundId });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.background": backgroundId }); */
 
   }
 
   static async _applyAbilities(actor, { method, values } = {}) {
     // values: { str, dex, con, int, wis, cha }
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.progression.abilities": values || {} });
-actor.update({ "system.progression.abilities": values || {} });
-/* ORIGINAL: actor.update({ "system.progression.abilities": values || {} }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.abilities": values || {} });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.abilities": values || {} });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.abilities": values || {} }); */
 
   }
 
@@ -124,9 +124,9 @@ actor.update({ "system.progression.abilities": values || {} });
     const classLevels = Array.from(progression.classLevels || []);
     classLevels.push({ class: payload.classId, level: 1, choices: payload.choices || {} });
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.progression.classLevels": classLevels });
-actor.update({ "system.progression.classLevels": classLevels });
-/* ORIGINAL: actor.update({ "system.progression.classLevels": classLevels }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.classLevels": classLevels });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.classLevels": classLevels });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.classLevels": classLevels }); */
 
   }
 
@@ -135,17 +135,17 @@ actor.update({ "system.progression.classLevels": classLevels });
     const classLevels = Array.from(progression.classLevels || []);
     classLevels.push({ class: classId, level, selections });
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.progression.classLevels": classLevels });
-actor.update({ "system.progression.classLevels": classLevels });
-/* ORIGINAL: actor.update({ "system.progression.classLevels": classLevels }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.classLevels": classLevels });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.classLevels": classLevels });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.classLevels": classLevels }); */
 
   }
 
   static async _applySkills(actor, payload) {
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.progression.skills": payload.skills || [] });
-actor.update({ "system.progression.skills": payload.skills || [] });
-/* ORIGINAL: actor.update({ "system.progression.skills": payload.skills || [] }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.skills": payload.skills || [] });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.skills": payload.skills || [] });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.skills": payload.skills || [] }); */
 
   }
 
@@ -153,9 +153,9 @@ actor.update({ "system.progression.skills": payload.skills || [] });
     const progression = actor.system.progression || {};
     const feats = Array.from(new Set([...(progression.feats||[]), ...featIds]));
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.progression.feats": feats });
-actor.update({ "system.progression.feats": feats });
-/* ORIGINAL: actor.update({ "system.progression.feats": feats }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.feats": feats });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.feats": feats });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.feats": feats }); */
 
   }
 
@@ -163,9 +163,9 @@ actor.update({ "system.progression.feats": feats });
     const progression = actor.system.progression || {};
     const talents = Array.from(new Set([...(progression.talents||[]), ...talentIds]));
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.update({ "system.progression.talents": talents });
-actor.update({ "system.progression.talents": talents });
-/* ORIGINAL: actor.update({ "system.progression.talents": talents }); */
+// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.talents": talents });
+globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.talents": talents });
+/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.talents": talents }); */
 
   }
 
