@@ -1,5 +1,5 @@
 import { SWSELogger } from '../utils/logger.js';
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 /**
  * Base Actor Sheet
  * Provides common functionality for all SWSE actor sheets

@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../../progression/engine/progression-engine.js";
 // ============================================
 // Character Generation Templates Module
 // Loads and applies pre-configured character templates

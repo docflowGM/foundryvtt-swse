@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 /**
  * Custom Combatant Document for SWSE
  * Extends Foundry's Combatant class to implement SWSE-specific features

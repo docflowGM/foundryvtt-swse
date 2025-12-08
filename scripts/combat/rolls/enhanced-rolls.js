@@ -1,7 +1,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { DamageSystem } from '../damage-system.js';
 import { ForcePointsUtil } from '../../utils/force-points.js';
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../../progression/engine/progression-engine.js";
 
 /**
  * Enhanced Roll System for SWSE

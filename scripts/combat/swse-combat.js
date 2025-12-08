@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 /**
  * Custom Combat Document for SWSE
  * Extends Foundry's Combat class to implement SWSE-specific combat rules

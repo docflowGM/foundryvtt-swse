@@ -1,5 +1,5 @@
 import { SWSELogger } from '../utils/logger.js';
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 /**
  * Chat commands for SWSE
  */

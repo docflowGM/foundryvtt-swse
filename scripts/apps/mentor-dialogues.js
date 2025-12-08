@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 /**
  * SWSE Mentor Dialogue System
  * Provides personalized level-up narration based on character's level 1 class

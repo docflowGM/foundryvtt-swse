@@ -1,6 +1,6 @@
 import { SWSELogger } from '../utils/logger.js';
 import { SWSEActiveEffectsManager } from './active-effects-manager.js';
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 
 /**
  * Combat automation and integration for SWSE

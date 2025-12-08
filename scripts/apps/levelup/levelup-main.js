@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../../progression/engine/progression-engine.js";
 /**
  * SWSE Enhanced Level Up System - Main Application
  * Main orchestration class that coordinates all level-up modules

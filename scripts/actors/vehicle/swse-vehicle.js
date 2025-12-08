@@ -2,7 +2,7 @@ import { SWSECharacterSheet } from '../character/swse-character-sheet.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { SWSEVehicleHandler } from './swse-vehicle-handler.js';
 import { CombatActionsMapper } from '../../combat/utils/combat-actions-mapper.js';
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../../progression/engine/progression-engine.js";
 
 export class SWSEVehicleSheet extends SWSECharacterSheet {
   static get defaultOptions() {

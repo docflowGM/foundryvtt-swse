@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 // Canvas UI Manager - consolidated, Forge-safe, and robust
 import { SWSELogger } from '../utils/logger.js';
 import SWSEDialogHelper from '../helpers/swse-dialog-helper.js';

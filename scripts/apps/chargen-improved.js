@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 // ============================================
 import { SWSELogger } from '../utils/logger.js';
 // SWSE Character Generator - IMPROVED

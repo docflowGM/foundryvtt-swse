@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "./progression-engine.js";
 import { ForcePowerEngine } from "./force-power-engine.js";
 /**
  * SWSE Progression Engine - single source for chargen, level-up and templates.

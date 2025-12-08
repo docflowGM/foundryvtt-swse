@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../../progression/engine/progression-engine.js";
 /**
  * Purchase and checkout functionality for SWSE Store
  * Handles item purchases, cart management, and checkout

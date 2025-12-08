@@ -1,5 +1,5 @@
 import { SWSELogger } from '../utils/logger.js';
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 /**
  * Migration Utilities
  * Converts old array-based storage to Item-based architecture

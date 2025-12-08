@@ -1,5 +1,5 @@
 import { SWSELogger } from '../utils/logger.js';
-import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 /**
  * Actor Size Migration
  * Fixes actor size values to be lowercase to match schema choices
