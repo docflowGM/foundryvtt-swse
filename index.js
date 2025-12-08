@@ -3,7 +3,7 @@
 // Foundry VTT | Star Wars Saga Edition
 // ============================================
 
-import "./scripts/progression/engine/progression-engine.js";
+import "./scripts/progression-engine.js";
 
 // ---------------------------
 // Utilities & Core Infrastructure
