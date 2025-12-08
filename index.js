@@ -3,12 +3,12 @@
 // Foundry VTT | Star Wars Saga Edition
 // ============================================
 
-import "./scripts/progression-engine.js";
+import "./scripts/progression/progression-engine.js";
 
 // ---------------------------
 // Utilities & Core Infrastructure
 // ---------------------------
-import { SWSELogger } from './scripts/utils/logger.js';
+import { SWSELogger, swseLogger } from './scripts/utils/logger.js';
 import { SWSENotifications } from './scripts/utils/notifications.js';
 import { errorHandler, errorCommands, logError } from './scripts/core/error-handler.js';
 import { perfMonitor, debounce, throttle } from './scripts/utils/performance-utils.js';
@@ -32,50 +32,11 @@ import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
 // ---------------------------
 import { SWSECharacterDataModel } from './scripts/data-models/character-data-model.js';
 import { SWSEVehicleDataModel } from './scripts/data-models/vehicle-data-model.js';
+
+// ---------------------------
+// Item Data Models
+// ---------------------------
 import {
-
-// SWSE: auto-registered house-rule settings
-
-// SWSE: injected core engines
-import { swseLogger } from './scripts/utils/logger.js';
-import { RollEngine } from './scripts/engine/roll-engine.js';
-import { ActorEngine } from './scripts/actors/engine/actor-engine.js';
-import { DDEngine } from './scripts/framework/dd-engine.js';
-import { ThemeEngine } from './scripts/themes/theme-engine.js';
-import { HouseRules } from './scripts/houserules/houserules-engine.js';
-import { ProgressionEngine } from './scripts/progression/progression-engine.js';
-import { RulesEngine } from './scripts/rules/rules-engine.js';
-import { Upkeep } from './scripts/automation/upkeep.js';
-
-
-try {
-  if (!game.settings?.register) {
-    // not ready yet; registration will happen in ready hook
-  } else {
-    // Idempotent registration guard
-    if (!game.settings.settings.has('swse.useCustomCritical')) {
-      game.settings.register('swse', 'useCustomCritical', {
-        name: 'SWSE.Settings.UseCustomCritical.Name',
-        hint: 'SWSE.Settings.UseCustomCritical.Hint',
-        scope: 'world',
-        config: true,
-        default: false,
-        type: Boolean
-      });
-    }
-    if (!game.settings.settings.has('swse.applyItemsAsEffects')) {
-      game.settings.register('swse', 'applyItemsAsEffects', {
-        name: 'SWSE.Settings.ApplyItemsAsEffects.Name',
-        hint: 'SWSE.Settings.ApplyItemsAsEffects.Hint',
-        scope: 'world',
-        config: true,
-        default: true,
-        type: Boolean
-      });
-    }
-  }
-} catch(e) { swseLogger.warn('SWSE | settings registration guard failed', e); }
-
     WeaponDataModel,
     ArmorDataModel,
     FeatDataModel,
@@ -421,46 +382,3 @@ function registerSystemSettings() {
     // [Full settings registration as in your original index.js...]
 }
 
-
-
-// SWSE: auto-init hooks
-try {
-  Hooks.once('ready', () => {
-
-  // SWSE: expose engines globally for wiring convenience
-  try {
-    globalThis.SWSE = {
-      ActorEngine: typeof ActorEngine !== 'undefined' ? ActorEngine : undefined,
-      RollEngine: typeof RollEngine !== 'undefined' ? RollEngine : undefined,
-      DDEngine: typeof DDEngine !== 'undefined' ? DDEngine : undefined,
-      ThemeEngine: typeof ThemeEngine !== 'undefined' ? ThemeEngine : undefined,
-      RulesEngine: typeof RulesEngine !== 'undefined' ? RulesEngine : undefined,
-      Upkeep: typeof Upkeep !== 'undefined' ? Upkeep : undefined,
-      ProgressionEngine: typeof ProgressionEngine !== 'undefined' ? ProgressionEngine : undefined
-    };
-    console.log('SWSE | Global engine registry attached to globalThis.SWSE');
-  } catch(e) {
-    console.warn('SWSE | Failed to attach global registry', e);
-  }
-
-    try {
-      RulesEngine.init?.();
-      Upkeep.init?.();
-      // No need to init RollManager, it's static helper only, but we log it
-      swseLogger.log('SWSE | RollManager available');
-    } catch (e) {
-      swseLogger.warn('SWSE | failed to init SWSE subsystems', e);
-    }
-  });
-} catch(e) { swseLogger.warn('SWSE | auto-init guard failed', e); }
-
-// SWSE: engines init
-Hooks.once('ready', () => {
-  try {
-    swseLogger.info('SWSE | Initializing core engines');
-    RulesEngine?.init?.();
-    Upkeep?.init?.();
-    // Inform availability
-    swseLogger.log('SWSE | Core engines injected and available');
-  } catch(e) { swseLogger.error('SWSE | Core engine init failed', e); }
-});
