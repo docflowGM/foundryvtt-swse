@@ -1,9 +1,15 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Damage Application System
  * Handles damage, healing, and condition track automation
  */
 
 export class DamageSystem {
+
+    static getSelectedActor() {
+        return canvas.tokens.controlled[0]?.actor;
+    }
+
   
   /**
    * Apply damage to token(s)
@@ -76,11 +82,11 @@ export class DamageSystem {
             icon: '<i class="fas fa-heart-broken"></i>',
             label: game.i18n.localize('SWSE.Dialogs.ApplyDamage.Button'),
             callback: async html => {
-              const amount = parseInt(html.find('[name="amount"]').val()) || 0;
+              const amount = Math.max(0, parseInt(html.find('[name="amount"]').val()) || 0);
               const checkThreshold = html.find('[name="threshold"]').is(':checked');
               const ignoreTemp = html.find('[name="ignoreTemp"]').is(':checked');
 
-              await targetActor.applyDamage(amount, {checkThreshold, ignoreTemp});
+              try {await targetActor.applyDamage(amount, {checkThreshold, ignoreTemp});} catch(err) { console.error(err); ui.notifications.error('Damage/Healing failed.'); }
               resolve(amount);
             }
           },
@@ -132,8 +138,8 @@ export class DamageSystem {
             icon: `<i class="fas ${icon}"></i>`,
             label: label,
             callback: async html => {
-              const amount = parseInt(html.find('[name="amount"]').val()) || 0;
-              await targetActor.applyHealing(amount, { isRepair: isDroid });
+              const amount = Math.max(0, parseInt(html.find('[name="amount"]').val()) || 0);
+              try {await targetActor.applyHealing(amount, { isRepair: isDroid });} catch(err) { console.error(err); ui.notifications.error('Damage/Healing failed.'); }
               resolve(amount);
             }
           },
@@ -185,7 +191,11 @@ export class DamageSystem {
             label: 'Apply',
             callback: async html => {
               const condition = html.find('[name="condition"]').val();
-              await targetActor.update({'system.conditionTrack': condition});
+              await target// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: Actor.update({'system.conditionTrack': condition});
+Actor.update({'system.conditionTrack': condition});
+/* ORIGINAL: Actor.update({'system.conditionTrack': condition}); */
+
               resolve(condition);
             }
           },

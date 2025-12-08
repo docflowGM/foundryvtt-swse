@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Centralized Drag-Drop Handler for SWSE
  * Handles dropping Items onto Actors with automatic stat application
@@ -198,9 +199,17 @@ export class DropHandler {
       if (template.abilitiesText) bioNotes += `<h3>Special Abilities</h3><p>${template.abilitiesText}</p>`;
       if (template.speciesTraits) bioNotes += `<h3>Species Traits</h3><p>${template.speciesTraits}</p>`;
 
-      await actor.update({
+      await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
         'system.biography': (actor.system.biography || '') + bioNotes
       });
+actor.update({
+        'system.biography': (actor.system.biography || '') + bioNotes
+      });
+/* ORIGINAL: actor.update({
+        'system.biography': (actor.system.biography || '') + bioNotes
+      }); */
+
     }
 
     ui.notifications.info(`Applied ${template.name} template to ${actor.name}`);
@@ -386,12 +395,26 @@ export class DropHandler {
     
     if (!confirm) return false;
     
-    await actor.update({
+    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
       'system.vehicleType': template.system.vehicleType || 'starfighter',
       'system.shields': template.system.shields || 0,
       'system.hull': template.system.hull || 0,
       'system.speed': template.system.speed || 0
     });
+actor.update({
+      'system.vehicleType': template.system.vehicleType || 'starfighter',
+      'system.shields': template.system.shields || 0,
+      'system.hull': template.system.hull || 0,
+      'system.speed': template.system.speed || 0
+    });
+/* ORIGINAL: actor.update({
+      'system.vehicleType': template.system.vehicleType || 'starfighter',
+      'system.shields': template.system.shields || 0,
+      'system.hull': template.system.hull || 0,
+      'system.speed': template.system.speed || 0
+    }); */
+
     
     ui.notifications.info(`Applied ${template.name} vehicle template to ${actor.name}`);
     return true;

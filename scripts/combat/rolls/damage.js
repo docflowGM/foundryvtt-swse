@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 // ============================================
 // FILE: rolls/damage.js
 // Damage roll handling using SWSE utils
@@ -56,7 +57,11 @@ export async function applyDamage(token, damage) {
   const currentHP = actor.system.hp?.value || 0;
   const newHP = Math.max(0, currentHP - damage);
   
-  await actor.update({"system.hp.value": newHP});
+  await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({"system.hp.value": newHP});
+actor.update({"system.hp.value": newHP});
+/* ORIGINAL: actor.update({"system.hp.value": newHP}); */
+
   
   ui.notifications.info(`${actor.name} takes ${damage} damage!`);
   

@@ -1,0 +1,88 @@
+/* vehicle-sheet.css - centered ship with callouts */
+.vehicle-sheet {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  box-sizing: border-box;
+  background: linear-gradient(180deg,#0f2845 0%, #1a4d7a 100%);
+  color: #e6f7ff;
+  border-radius: 8px;
+}
+
+/* center container holds image and callouts */
+.vehicle-center {
+  position: relative;
+  width: 920px;
+  max-width: 92vw;
+  height: 520px;
+  display: block;
+  margin: 8px;
+}
+
+/* image box */
+.v-image {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 720px;
+  max-width: 78%;
+  height: 420px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(180deg,#152b45,#0b1a2b);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+.v-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* callout boxes (surround image) */
+.callout {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 170px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 8px;
+  border-radius: 6px;
+  color: #eaf9ff;
+  font-family: Inter, Arial, sans-serif;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+/* use inline css var --top and --left */
+.callout { top: var(--top,50%); left: var(--left,50%); }
+
+/* label and value */
+.callout .label { font-size: 12px; opacity: 0.9; }
+.callout .value { font-size: 16px; font-weight: 700; margin-top:6px; }
+
+/* draw a thin, sleek line from center of callout to image center */
+.callout::before {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 48px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.0));
+  right: -22px;
+  top: 50%;
+  transform-origin: center;
+  transform: rotate(0deg);
+  opacity: 0.9;
+}
+
+/* instead of rotating pseudo-element, we use an overlayed svg line drawn from the callout center to image center in a future enhancement.
+   For now the visual is a short brush from the callout pointing inward. Adjust with --top/--left and optional per-callout css. */
+
+@media (max-width: 1000px) {
+  .vehicle-center { width: 100%; height: auto; }
+  .v-image { width: 100%; height: 52vw; }
+  .callout { width: 46%; }
+}

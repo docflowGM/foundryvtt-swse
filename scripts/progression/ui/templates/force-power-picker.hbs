@@ -1,0 +1,23 @@
+<div class="force-picker-root">
+  <div class="force-picker-header">
+    <h2>Select Force Powers</h2>
+    <p>Select up to {{limit}} powers.</p>
+  </div>
+
+  <div class="force-grid">
+    {{#each powers}}
+    <div class="power-card {{#if selected}}selected{{/if}}" data-id="{{id}}">
+      <img src="{{img}}" alt="{{name}}">
+      <div class="power-meta">
+        <div class="power-name">{{name}}</div>
+        <div class="power-desc">{{description}}</div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+  <div class="force-picker-footer">
+    <button type="button" class="cancel">Cancel</button>
+    <button type="button" class="confirm">Confirm ({{current}} / {{limit}})</button>
+  </div>
+</div>

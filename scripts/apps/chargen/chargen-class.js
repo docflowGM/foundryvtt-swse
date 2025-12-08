@@ -135,6 +135,11 @@ export async function _onSelectClass(event) {
   // Recalculate defenses
   this._recalcDefenses();
 
+  // Check for background skill overlap (if backgrounds are enabled and selected)
+  if (this.characterData.background && this.characterData.backgroundSkills && this.characterData.backgroundSkills.length > 0) {
+    await this._checkBackgroundSkillOverlap(classDoc);
+  }
+
   // Re-render to show the selected class and enable the Next button
   // Force a complete re-render to ensure the Next button appears
   await this.render(true);

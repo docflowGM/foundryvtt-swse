@@ -2,21 +2,14 @@
  * UI Helper Utilities for SWSE
  */
 
-/**
- * Show a notification to the user
- * @param {string} message - Message to display
- * @param {string} type - Notification type: "info", "warning", "error"
- */
+/* ---------------------- Notifications ---------------------- */
+
 export function notify(message, type = "info") {
     ui.notifications[type](message);
 }
 
-/**
- * Confirm dialog with user
- * @param {string} title - Dialog title
- * @param {string} content - Dialog content
- * @returns {Promise<boolean>} User's choice
- */
+/* ---------------------- Confirm Dialog ---------------------- */
+
 export async function confirm(title, content) {
     return await Dialog.confirm({
         title,
@@ -27,14 +20,11 @@ export async function confirm(title, content) {
     });
 }
 
-/**
- * Prompt user for input
- * @param {string} title - Dialog title
- * @param {string} label - Input label
- * @param {string} defaultValue - Default input value
- * @returns {Promise<string|null>} User input or null if cancelled
- */
+/* ---------------------- Prompt Input Dialog ---------------------- */
+
 export async function prompt(title, label, defaultValue = "") {
+    const safeDefault = foundry.utils.escapeHTML(defaultValue);
+
     return new Promise((resolve) => {
         new Dialog({
             title,
@@ -42,7 +32,7 @@ export async function prompt(title, label, defaultValue = "") {
                 <form>
                     <div class="form-group">
                         <label>${label}</label>
-                        <input type="text" name="input" value="${defaultValue}" autofocus />
+                        <input type="text" name="input" value="${safeDefault}" autofocus />
                     </div>
                 </form>
             `,
@@ -50,8 +40,7 @@ export async function prompt(title, label, defaultValue = "") {
                 ok: {
                     label: "OK",
                     callback: (html) => {
-                        const input = html.find('[name="input"]').val();
-                        resolve(input);
+                        resolve(html.find('[name="input"]').val());
                     }
                 },
                 cancel: {
@@ -65,45 +54,37 @@ export async function prompt(title, label, defaultValue = "") {
     });
 }
 
-/**
- * Create a custom dialog
- * @param {string} title - Dialog title
- * @param {string} content - Dialog HTML content
- * @param {object} buttons - Dialog buttons configuration
- * @returns {Promise} Dialog promise
- */
+/* ---------------------- Generic Custom Dialog ---------------------- */
+
 export async function createDialog(title, content, buttons) {
     return new Promise((resolve) => {
-        new Dialog({
+        const dlg = new Dialog({
             title,
             content,
             buttons,
-            default: "ok",
+            default: Object.keys(buttons)[0],
             close: () => resolve(null)
-        }).render(true);
+        });
+        dlg.render(true);
     });
 }
 
-/**
- * Highlight element temporarily
- * @param {HTMLElement} element - Element to highlight
- * @param {number} duration - Duration in ms
- * @param {string} className - CSS class to add
- */
+/* ---------------------- Element Highlight ---------------------- */
+
 export function highlightElement(element, duration = 1000, className = "highlight") {
+    if (!element) return;
     element.classList.add(className);
     setTimeout(() => {
-        element.classList.remove(className);
+        if (element) element.classList.remove(className);
     }, duration);
 }
 
-/**
- * Scroll element into view smoothly
- * @param {HTMLElement} element - Element to scroll to
- */
+/* ---------------------- Scroll to Element ---------------------- */
+
 export function scrollToElement(element) {
-    element.scrollIntoView({ 
-        behavior: "smooth", 
-        block: "nearest" 
+    if (!element) return;
+    element.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
     });
 }

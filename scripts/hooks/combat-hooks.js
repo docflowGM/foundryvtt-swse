@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Combat Lifecycle Hooks
  * All combat-related hook handlers consolidated here
@@ -143,9 +144,17 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
     });
 
     if (roll.total >= 10) {
-        await actor.update({
+        await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
             'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
         });
+actor.update({
+            'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
+        });
+/* ORIGINAL: actor.update({
+            'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
+        }); */
+
         ui.notifications.info(
             game.i18n.format('SWSE.Notifications.Condition.RecoverySuccess', { name: actor.name })
         );

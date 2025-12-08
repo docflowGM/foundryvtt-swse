@@ -322,6 +322,26 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
         blank: true
       }),
 
+      // Background Information (Rebellion Era Campaign Guide)
+      event: new fields.StringField({
+        required: false,
+        initial: "",
+        blank: true,
+        label: "Event Background"
+      }),
+      profession: new fields.StringField({
+        required: false,
+        initial: "",
+        blank: true,
+        label: "Profession Background"
+      }),
+      planetOfOrigin: new fields.StringField({
+        required: false,
+        initial: "",
+        blank: true,
+        label: "Planet of Origin"
+      }),
+
       // Force Sensitivity
       forceSensitive: new fields.BooleanField({
         required: true,

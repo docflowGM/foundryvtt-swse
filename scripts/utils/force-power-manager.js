@@ -1,4 +1,5 @@
 import { SWSELogger } from './logger.js';
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Force Power Management System
  * Handles Force Sensitivity, Force Training, and automatic power grants
@@ -330,12 +331,26 @@ export class ForcePowerManager {
 
       // Initialize force suite if not already set
       if (!actor.system.forceSuite) {
-        await actor.update({
+        await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
           'system.forceSuite': {
             max: 0,
             powers: []
           }
         });
+actor.update({
+          'system.forceSuite': {
+            max: 0,
+            powers: []
+          }
+        });
+/* ORIGINAL: actor.update({
+          'system.forceSuite': {
+            max: 0,
+            powers: []
+          }
+        }); */
+
       }
     }
   }
@@ -362,9 +377,17 @@ export class ForcePowerManager {
 
     // Update force suite maximum
     const newMax = this.calculateForceSuiteSize(actor);
-    await actor.update({
+    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
       'system.forceSuite.max': newMax
     });
+actor.update({
+      'system.forceSuite.max': newMax
+    });
+/* ORIGINAL: actor.update({
+      'system.forceSuite.max': newMax
+    }); */
+
   }
 
   /**
@@ -406,9 +429,17 @@ export class ForcePowerManager {
 
         // Update force suite maximum
         const newMax = this.calculateForceSuiteSize(actor);
-        await actor.update({
+        await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
           'system.forceSuite.max': newMax
         });
+actor.update({
+          'system.forceSuite.max': newMax
+        });
+/* ORIGINAL: actor.update({
+          'system.forceSuite.max': newMax
+        }); */
+
       }
     }
   }

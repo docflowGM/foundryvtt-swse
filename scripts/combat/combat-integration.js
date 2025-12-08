@@ -1,11 +1,17 @@
 import { SWSELogger } from '../utils/logger.js';
 import { SWSEActiveEffectsManager } from './active-effects-manager.js';
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 
 /**
  * Combat automation and integration for SWSE
  * Handles combat start, turn progression, and condition recovery
  */
 export class SWSECombatIntegration {
+
+    static getSelectedActor() {
+        return canvas.tokens.controlled[0]?.actor;
+    }
+
 
   static init() {
     SWSELogger.log("SWSE | Initializing combat integration...");
@@ -188,7 +194,8 @@ export class SWSECombatIntegration {
     }
 
     // Reset action economy
-    await actor.update({
+    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
       'system.actionEconomy': {
         swift: true,
         move: true,
@@ -197,6 +204,25 @@ export class SWSECombatIntegration {
         reaction: true
       }
     });
+actor.update({
+      'system.actionEconomy': {
+        swift: true,
+        move: true,
+        standard: true,
+        fullRound: true,
+        reaction: true
+      }
+    });
+/* ORIGINAL: actor.update({
+      'system.actionEconomy': {
+        swift: true,
+        move: true,
+        standard: true,
+        fullRound: true,
+        reaction: true
+      }
+    }); */
+
   }
 
   /**
@@ -247,7 +273,11 @@ export class SWSECombatIntegration {
       const currentIndex = tracks.indexOf(condition);
       if (currentIndex > 0) {
         const newCondition = tracks[currentIndex - 1];
-        await actor.update({ 'system.conditionTrack.current': newCondition });
+        await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({ 'system.conditionTrack.current': newCondition });
+actor.update({ 'system.conditionTrack.current': newCondition });
+/* ORIGINAL: actor.update({ 'system.conditionTrack.current': newCondition }); */
+
 
         ui.notifications.info(`${actor.name} recovered! Condition improved from ${condition} to ${newCondition}`);
 

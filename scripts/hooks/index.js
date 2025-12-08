@@ -8,7 +8,7 @@
  * All hooks are registered through the HooksRegistry with priority control.
  *
  * Usage:
- *   import { registerInitHooks } from './scripts/hooks/index.js';
+ *   import { registerInitHooks } from '../../index.js';
  *   registerInitHooks();
  */
 

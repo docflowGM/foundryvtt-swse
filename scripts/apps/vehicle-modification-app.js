@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Vehicle Modification Application
  * Interactive starship builder with Marl Skindar, Republic Spy narrator
@@ -655,13 +656,29 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
     if (!confirmed) return;
 
     // Save configuration to actor
-    await this.actor.update({
+    await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
       'system.vehicle': {
         stockShip: this.stockShip,
         modifications: this.modifications,
         totalCost: VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip)
       }
     });
+actor.update({
+      'system.vehicle': {
+        stockShip: this.stockShip,
+        modifications: this.modifications,
+        totalCost: VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip)
+      }
+    });
+/* ORIGINAL: actor.update({
+      'system.vehicle': {
+        stockShip: this.stockShip,
+        modifications: this.modifications,
+        totalCost: VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip)
+      }
+    }); */
+
 
     ui.notifications.info(`Starship configuration saved to ${this.actor.name}!`);
     this.close();

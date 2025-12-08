@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * SWSE Mentor Dialogue System
  * Provides personalized level-up narration based on character's level 1 class
@@ -1128,8 +1129,13 @@ export function getLevel1Class(actor) {
     const classItems = actor.items.filter(i => i.type === 'class');
 
     // If actor is level 1, any class they have is their starting class
-    if (actor.system.level === 1 && classItems.length > 0) {
+    if (// AUTO-CONVERT actor.system.* assignment -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.system.level === 1 && classItems.length > 0) {
         return classItems[0].name;
+// (no heuristic applied)
+/* ORIGINAL: actor.system.level === 1 && classItems.length > 0) {
+        return classItems[0].name; */
+
     }
 
     // For higher levels, try to find their first/starting class

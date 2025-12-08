@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * SWSE Enhanced Level Up System - Main Application
  * Main orchestration class that coordinates all level-up modules
@@ -1230,8 +1231,13 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     try {
       // If this is level 1, save the starting class for mentor system
-      if (this.actor.system.level === 1) {
+      if (this.// AUTO-CONVERT actor.system.* assignment -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.system.level === 1) {
         await setLevel1Class(this.actor, this.selectedClass.name);
+// (no heuristic applied)
+/* ORIGINAL: actor.system.level === 1) {
+        await setLevel1Class(this.actor, this.selectedClass.name); */
+
       }
 
       // Create or update class item
@@ -1347,10 +1353,20 @@ export class SWSELevelUpEnhanced extends FormApplication {
       const newHPMax = this.actor.system.hp.max + totalHPGain;
       const newHPValue = this.actor.system.hp.value + totalHPGain;
 
-      await this.actor.update({
+      await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
         "system.hp.max": newHPMax,
         "system.hp.value": newHPValue
       });
+actor.update({
+        "system.hp.max": newHPMax,
+        "system.hp.value": newHPValue
+      });
+/* ORIGINAL: actor.update({
+        "system.hp.max": newHPMax,
+        "system.hp.value": newHPValue
+      }); */
+
 
       // Apply class features for this level
       await applyClassFeatures(this.selectedClass, classLevel, this.actor);
@@ -1362,12 +1378,26 @@ export class SWSELevelUpEnhanced extends FormApplication {
       SWSELogger.log(`SWSE LevelUp | Updating BAB to ${totalBAB}`);
       SWSELogger.log(`SWSE LevelUp | Updating defense bonuses: Fort +${defenseBonuses.fortitude}, Ref +${defenseBonuses.reflex}, Will +${defenseBonuses.will}`);
 
-      await this.actor.update({
+      await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
         "system.bab": totalBAB,
         "system.defenses.fortitude.classBonus": defenseBonuses.fortitude,
         "system.defenses.reflex.classBonus": defenseBonuses.reflex,
         "system.defenses.will.classBonus": defenseBonuses.will
       });
+actor.update({
+        "system.bab": totalBAB,
+        "system.defenses.fortitude.classBonus": defenseBonuses.fortitude,
+        "system.defenses.reflex.classBonus": defenseBonuses.reflex,
+        "system.defenses.will.classBonus": defenseBonuses.will
+      });
+/* ORIGINAL: actor.update({
+        "system.bab": totalBAB,
+        "system.defenses.fortitude.classBonus": defenseBonuses.fortitude,
+        "system.defenses.reflex.classBonus": defenseBonuses.reflex,
+        "system.defenses.will.classBonus": defenseBonuses.will
+      }); */
+
 
       // Build ability increases text
       let abilityText = '';

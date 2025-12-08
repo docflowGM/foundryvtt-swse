@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Custom Combat Document for SWSE
  * Extends Foundry's Combat class to implement SWSE-specific combat rules
@@ -113,7 +114,8 @@ export class SWSECombatDocument extends Combat {
     if (game.user.isGM) {
       for (const combatant of this.combatants) {
         if (combatant.actor) {
-          await combatant.actor.update({
+          await combatant.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
             'system.secondWind.uses': 1,
             'system.actionEconomy': {
               swift: true,
@@ -123,6 +125,27 @@ export class SWSECombatDocument extends Combat {
               reaction: true
             }
           });
+actor.update({
+            'system.secondWind.uses': 1,
+            'system.actionEconomy': {
+              swift: true,
+              move: true,
+              standard: true,
+              fullRound: true,
+              reaction: true
+            }
+          });
+/* ORIGINAL: actor.update({
+            'system.secondWind.uses': 1,
+            'system.actionEconomy': {
+              swift: true,
+              move: true,
+              standard: true,
+              fullRound: true,
+              reaction: true
+            }
+          }); */
+
         }
       }
     }
@@ -140,7 +163,8 @@ export class SWSECombatDocument extends Combat {
     // Reset action economy for the new combatant
     const combatant = this.combatant;
     if (combatant?.actor && game.user.isGM) {
-      await combatant.actor.update({
+      await combatant.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
         'system.actionEconomy': {
           swift: true,
           move: true,
@@ -149,6 +173,25 @@ export class SWSECombatDocument extends Combat {
           reaction: true
         }
       });
+actor.update({
+        'system.actionEconomy': {
+          swift: true,
+          move: true,
+          standard: true,
+          fullRound: true,
+          reaction: true
+        }
+      });
+/* ORIGINAL: actor.update({
+        'system.actionEconomy': {
+          swift: true,
+          move: true,
+          standard: true,
+          fullRound: true,
+          reaction: true
+        }
+      }); */
+
     }
 
     return result;

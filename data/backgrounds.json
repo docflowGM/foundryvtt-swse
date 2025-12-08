@@ -1,0 +1,1247 @@
+{
+  "events": [
+    {
+      "id": "bankrupt",
+      "name": "Bankrupt",
+      "category": "event",
+      "icon": "💸",
+      "narrativeDescription": "You lost everything. Credits, possessions, dignity. But you survived, and learned to thrive with nothing.",
+      "specialAbility": "Use Survival skill to sustain yourself in urban or civilized environments",
+      "relevantSkills": ["Deception", "Gather Information", "Survival"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "special_ability",
+        "description": "As a result of being nearly impoverished, you can use the Survival Skill to sustain yourself in urban or civilized environments."
+      }
+    },
+    {
+      "id": "conspiracy",
+      "name": "Conspiracy",
+      "category": "event",
+      "icon": "🕵️",
+      "narrativeDescription": "You uncovered a dark secret. Someone powerful wanted you silenced. You survived, but you'll never stop looking over your shoulder.",
+      "specialAbility": "Reroll Perception checks to Sense Deception or Sense Influence (keep better result)",
+      "relevantSkills": ["Deception", "Stealth", "Use Computer"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "special_ability",
+        "description": "You can reroll any Perception check made to Sense Deception or Sense Influence, keeping the better result."
+      }
+    },
+    {
+      "id": "crippled",
+      "name": "Crippled",
+      "category": "event",
+      "icon": "🦿",
+      "narrativeDescription": "An injury changed you forever. Your body bears the scars, but your spirit remains unbroken.",
+      "specialAbility": "Your Damage Threshold ignores Condition Track penalties to Fortitude Defense",
+      "relevantSkills": ["Endurance", "Mechanics", "Treat Injury"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "special_ability",
+        "description": "When your Fortitude Defense is reduced as a result of moving down the Condition Track, your Damage Threshold remains the same, as if you had no debilitating Conditions."
+      }
+    },
+    {
+      "id": "disgraced",
+      "name": "Disgraced",
+      "category": "event",
+      "icon": "😔",
+      "narrativeDescription": "Your name was dragged through the mud. Scandal ruined you. Now you wear masks, both literal and figurative.",
+      "specialAbility": "Creating Deceptive Appearance for yourself is one step simpler",
+      "relevantSkills": ["Deception", "Gather Information", "Stealth"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "special_ability",
+        "description": "You treat any attempt to create a Deceptive Appearance for yourself as one step simpler."
+      }
+    },
+    {
+      "id": "enslaved",
+      "name": "Enslaved",
+      "category": "event",
+      "icon": "⛓️",
+      "narrativeDescription": "You wore chains once. The memory burns. Now you fight for freedom—yours and others'.",
+      "specialAbility": "+2 competence bonus to Grapple checks",
+      "relevantSkills": ["Climb", "Endurance", "Jump"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "bonus",
+        "target": "grapple",
+        "value": 2,
+        "description": "You gain a +2 competence bonus to Grapple checks."
+      }
+    },
+    {
+      "id": "exiled",
+      "name": "Exiled",
+      "category": "event",
+      "icon": "🚀",
+      "narrativeDescription": "You were cast out. Banished from your home, you learned to navigate the stars and find your way in the galaxy.",
+      "specialAbility": "Plot hyperspace course in half the time (30 seconds/5 rounds). Gain Skill Focus (Knowledge [Galactic Lore])",
+      "relevantSkills": ["Gather Information", "Knowledge (Galactic Lore)", "Survival"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "special_ability",
+        "description": "You can plot a safe course for Hyperspace travel in half the time it normally takes (you can plot a course in 30 seconds, or 5 rounds). You gain Skill Focus (Knowledge [Galactic Lore]).",
+        "grantsFeat": "Skill Focus (Knowledge [Galactic Lore])"
+      }
+    },
+    {
+      "id": "imprisoned",
+      "name": "Imprisoned",
+      "category": "event",
+      "icon": "🔒",
+      "narrativeDescription": "You did time. Prison taught you who to talk to, how to get what you need, and how to escape when necessary.",
+      "specialAbility": "Obtain Black Market goods in half the time (minimum 1 day)",
+      "relevantSkills": ["Acrobatics", "Gather Information", "Stealth"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "special_ability",
+        "description": "You can obtain Black Market goods in half the time it usually takes to obtain (minimum 1 day)."
+      }
+    },
+    {
+      "id": "marooned",
+      "name": "Marooned",
+      "category": "event",
+      "icon": "🏝️",
+      "narrativeDescription": "Stranded. Alone. You survived on a barren world with nothing but your wits and will to live.",
+      "specialAbility": "No penalty to Treat Injury checks to administer First Aid to yourself (or Mechanics for Droids)",
+      "relevantSkills": ["Ride", "Survival", "Swim"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "special_ability",
+        "description": "You take no penalty to Treat Injury checks made to administer First Aid to yourself (or to Mechanics checks made to Repair yourself, if you are a Droid)."
+      }
+    },
+    {
+      "id": "orphaned",
+      "name": "Orphaned",
+      "category": "event",
+      "icon": "👤",
+      "narrativeDescription": "You grew up alone. No family, no inheritance. Just you against the galaxy. It made you adaptable.",
+      "specialAbility": "When spending Force Point on untrained skill check, add extra +1d6",
+      "relevantSkills": ["Gather Information", "Survival", "Treat Injury"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "special_ability",
+        "description": "When you spend a Force Point to add to a Skill Check in an Untrained Skill, add an extra +1d6 to the Skill Check."
+      }
+    },
+    {
+      "id": "scarred",
+      "name": "Scarred",
+      "category": "event",
+      "icon": "💀",
+      "narrativeDescription": "Your body bears the marks of survival. One look and others know—you've been through hell and came out the other side.",
+      "specialAbility": "Always have Favorable Circumstances when using Persuasion to Intimidate",
+      "relevantSkills": ["Deception", "Persuasion", "Treat Injury"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "special_ability",
+        "description": "When you make a Persuasion check to Intimidate a creature, you always have Favorable Circumstances."
+      }
+    },
+    {
+      "id": "widowed",
+      "name": "Widowed",
+      "category": "event",
+      "icon": "💔",
+      "narrativeDescription": "You loved and lost. The pain taught you patience, the kind that comes from searching for answers that may never come.",
+      "specialAbility": "Can Take 20 on Gather Information (takes 20x as long)",
+      "relevantSkills": ["Gather Information", "Knowledge (Galactic Lore)", "Use Computer"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "special_ability",
+        "description": "You can Take 20 on Gather Information checks, but it takes 20 times as long as normal to gain the information."
+      }
+    }
+  ],
+  "occupations": [
+    {
+      "id": "academic",
+      "name": "Academic",
+      "category": "occupation",
+      "icon": "🎓",
+      "narrativeDescription": "You dedicated your life to learning. Libraries, universities, research. Knowledge is your weapon.",
+      "specialAbility": "+2 competence bonus to untrained skill checks with relevant skills",
+      "relevantSkills": ["Knowledge (Any)", "Persuasion", "Use Computer"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "untrained_bonus",
+        "skills": ["Knowledge (Any)", "Persuasion", "Use Computer"],
+        "value": 2,
+        "description": "You gain a +2 competence bonus to Untrained Skill Checks with Knowledge (Any), Persuasion, and Use Computer."
+      }
+    },
+    {
+      "id": "celebrity",
+      "name": "Celebrity",
+      "category": "occupation",
+      "icon": "⭐",
+      "narrativeDescription": "You were famous. Holonet broadcasts, adoring fans, wealth. Whether you miss it or fled from it, everyone knows your face.",
+      "specialAbility": "+2 competence bonus to untrained skill checks with relevant skills",
+      "relevantSkills": ["Deception", "Gather Information", "Persuasion"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "untrained_bonus",
+        "skills": ["Deception", "Gather Information", "Persuasion"],
+        "value": 2,
+        "description": "You gain a +2 competence bonus to Untrained Skill Checks with Deception, Gather Information, and Persuasion."
+      }
+    },
+    {
+      "id": "criminal",
+      "name": "Criminal",
+      "category": "occupation",
+      "icon": "🔫",
+      "narrativeDescription": "You know the underworld. The black markets, the safe houses, the codes. The law wanted you. Maybe it still does.",
+      "specialAbility": "+2 competence bonus to untrained skill checks with relevant skills",
+      "relevantSkills": ["Deception", "Gather Information", "Stealth"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "untrained_bonus",
+        "skills": ["Deception", "Gather Information", "Stealth"],
+        "value": 2,
+        "description": "You gain a +2 competence bonus to Untrained Skill Checks with Deception, Gather Information, and Stealth."
+      }
+    },
+    {
+      "id": "executive",
+      "name": "Executive",
+      "category": "occupation",
+      "icon": "💼",
+      "narrativeDescription": "You climbed the corporate ladder. Boardrooms, power plays, bottom lines. You know how to lead and how to win.",
+      "specialAbility": "+2 competence bonus to untrained skill checks with relevant skills",
+      "relevantSkills": ["Initiative", "Persuasion", "Use Computer"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "untrained_bonus",
+        "skills": ["Initiative", "Persuasion", "Use Computer"],
+        "value": 2,
+        "description": "You gain a +2 competence bonus to Untrained Skill Checks with Initiative, Persuasion, and Use Computer."
+      }
+    },
+    {
+      "id": "labor",
+      "name": "Labor",
+      "category": "occupation",
+      "icon": "🔨",
+      "narrativeDescription": "You toiled. Mines, construction, cargo hauling. Your body is your tool, hardened by years of backbreaking work.",
+      "specialAbility": "+2 competence bonus to untrained skill checks with relevant skills",
+      "relevantSkills": ["Climb", "Endurance", "Jump"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "untrained_bonus",
+        "skills": ["Climb", "Endurance", "Jump"],
+        "value": 2,
+        "description": "You gain a +2 competence bonus to Untrained Skill Checks with Climb, Endurance, and Jump."
+      }
+    },
+    {
+      "id": "law_enforcement",
+      "name": "Law Enforcement",
+      "category": "occupation",
+      "icon": "👮",
+      "narrativeDescription": "You wore a badge. Served the law. Chased criminals through back alleys and bureaucratic red tape.",
+      "specialAbility": "+2 competence bonus to untrained skill checks with relevant skills",
+      "relevantSkills": ["Acrobatics", "Gather Information", "Knowledge (Bureaucracy)"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "untrained_bonus",
+        "skills": ["Acrobatics", "Gather Information", "Knowledge (Bureaucracy)"],
+        "value": 2,
+        "description": "You gain a +2 competence bonus to Untrained Skill Checks with Acrobatics, Gather Information, and Knowledge (Bureaucracy)."
+      }
+    },
+    {
+      "id": "medical",
+      "name": "Medical",
+      "category": "occupation",
+      "icon": "⚕️",
+      "narrativeDescription": "You healed the sick and wounded. Hospitals, battlefield triage, research labs. Life and death were your constant companions.",
+      "specialAbility": "+2 competence bonus to untrained skill checks with relevant skills",
+      "relevantSkills": ["Knowledge (Life Sciences)", "Treat Injury", "Use Computer"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "untrained_bonus",
+        "skills": ["Knowledge (Life Sciences)", "Treat Injury", "Use Computer"],
+        "value": 2,
+        "description": "You gain a +2 competence bonus to Untrained Skill Checks with Knowledge (Life Sciences), Treat Injury, and Use Computer."
+      }
+    },
+    {
+      "id": "military",
+      "name": "Military",
+      "category": "occupation",
+      "icon": "🎖️",
+      "narrativeDescription": "You served. Followed orders. Saw combat. The discipline, the brotherhood, the horror—it shaped you.",
+      "specialAbility": "+2 competence bonus to untrained skill checks with relevant skills",
+      "relevantSkills": ["Endurance", "Ride", "Treat Injury"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "untrained_bonus",
+        "skills": ["Endurance", "Ride", "Treat Injury"],
+        "value": 2,
+        "description": "You gain a +2 competence bonus to Untrained Skill Checks with Endurance, Ride, and Treat Injury."
+      }
+    },
+    {
+      "id": "pilot",
+      "name": "Pilot",
+      "category": "occupation",
+      "icon": "✈️",
+      "narrativeDescription": "The cockpit is your home. The stars are your highway. Freedom means having thrust under your boots.",
+      "specialAbility": "+2 competence bonus to untrained skill checks with relevant skills",
+      "relevantSkills": ["Knowledge (Galactic Lore)", "Mechanics", "Use Computer"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "untrained_bonus",
+        "skills": ["Knowledge (Galactic Lore)", "Mechanics", "Use Computer"],
+        "value": 2,
+        "description": "You gain a +2 competence bonus to Untrained Skill Checks with Knowledge (Galactic Lore), Mechanics, and Use Computer."
+      }
+    },
+    {
+      "id": "politics",
+      "name": "Politics",
+      "category": "occupation",
+      "icon": "🏛️",
+      "narrativeDescription": "You navigated the corridors of power. Diplomacy, negotiation, manipulation. Words are your weapons.",
+      "specialAbility": "+2 competence bonus to untrained skill checks with relevant skills",
+      "relevantSkills": ["Deception", "Gather Information", "Persuasion"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "untrained_bonus",
+        "skills": ["Deception", "Gather Information", "Persuasion"],
+        "value": 2,
+        "description": "You gain a +2 competence bonus to Untrained Skill Checks with Deception, Gather Information, and Persuasion."
+      }
+    },
+    {
+      "id": "technology",
+      "name": "Technology",
+      "category": "occupation",
+      "icon": "🔧",
+      "narrativeDescription": "You understand machines. Code, circuits, engines. While others see technology, you see solutions.",
+      "specialAbility": "+2 competence bonus to untrained skill checks with relevant skills",
+      "relevantSkills": ["Knowledge (Technology)", "Mechanics", "Use Computer"],
+      "skillChoiceCount": 1,
+      "mechanicalEffect": {
+        "type": "untrained_bonus",
+        "skills": ["Knowledge (Technology)", "Mechanics", "Use Computer"],
+        "value": 2,
+        "description": "You gain a +2 competence bonus to Untrained Skill Checks with Knowledge (Technology), Mechanics, and Use Computer."
+      }
+    }
+  ],
+  "planets_core": [
+    {
+      "id": "alderaan",
+      "name": "Alderaan Origin",
+      "category": "planet",
+      "icon": "🌍",
+      "narrativeDescription": "You grew up on the jewel of the Core Worlds. Art, culture, diplomacy. You carry Alderaan's legacy.",
+      "relevantSkills": ["Knowledge (Any)", "Persuasion", "Treat Injury"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "High Galactic",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain High Galactic language."
+      }
+    },
+    {
+      "id": "bakura",
+      "name": "Bakura Origin",
+      "category": "planet",
+      "icon": "🌾",
+      "narrativeDescription": "Bakura—a frontier world of technology and tradition, far from the Core's politics.",
+      "relevantSkills": ["Mechanics", "Treat Injury", "Use Computer"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "High Galactic",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain High Galactic language."
+      }
+    },
+    {
+      "id": "bespin",
+      "name": "Bespin Origin",
+      "category": "planet",
+      "icon": "☁️",
+      "narrativeDescription": "You were raised among the clouds. Mining colonies, floating cities, endless skies.",
+      "relevantSkills": ["Deception", "Knowledge (Bureaucracy)", "Persuasion"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Bocce",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Bocce language."
+      }
+    },
+    {
+      "id": "bothawui",
+      "name": "Bothawui Origin",
+      "category": "planet",
+      "icon": "🕸️",
+      "narrativeDescription": "Bothawui taught you the value of information. Spies, networks, secrets—the currency of survival.",
+      "relevantSkills": ["Deception", "Gather Information", "Persuasion"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Bothese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Bothese language."
+      }
+    },
+    {
+      "id": "cerea",
+      "name": "Cerea Origin",
+      "category": "planet",
+      "icon": "🌲",
+      "narrativeDescription": "Cerea's forests and traditions shaped you. Balance, harmony with nature, quiet strength.",
+      "relevantSkills": ["Acrobatics", "Knowledge (Life Sciences)", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Cerean",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Cerean language."
+      }
+    },
+    {
+      "id": "corellia",
+      "name": "Corellia Origin",
+      "category": "planet",
+      "icon": "🚀",
+      "narrativeDescription": "Corellia breeds pilots, smugglers, and rogues. Independence is in your blood.",
+      "relevantSkills": ["Initiative", "Knowledge (Technology)", "Mechanics"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Old Corellian",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Old Corellian language."
+      }
+    },
+    {
+      "id": "coruscant",
+      "name": "Coruscant Origin",
+      "category": "planet",
+      "icon": "🏙️",
+      "narrativeDescription": "The city-world shaped you. Billions of beings, endless politics, and secrets in every shadow.",
+      "relevantSkills": ["Gather Information", "Knowledge (Bureaucracy)", "Knowledge (Galactic Lore)"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "High Galactic",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain High Galactic language."
+      }
+    },
+    {
+      "id": "dorin",
+      "name": "Dorin Origin",
+      "category": "planet",
+      "icon": "🌫️",
+      "narrativeDescription": "Dorin's harsh atmosphere forged your endurance. You learned to survive where others would suffocate.",
+      "relevantSkills": ["Endurance", "Survival", "Treat Injury"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Kel Dor",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Kel Dor language."
+      }
+    },
+    {
+      "id": "duro",
+      "name": "Duro Origin",
+      "category": "planet",
+      "icon": "🛸",
+      "narrativeDescription": "Duro, birthplace of star travel. Technology and exploration are your heritage.",
+      "relevantSkills": ["Knowledge (Technology)", "Mechanics", "Use Computer"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Durese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Durese language."
+      }
+    },
+    {
+      "id": "fondor",
+      "name": "Fondor Origin",
+      "category": "planet",
+      "icon": "⚙️",
+      "narrativeDescription": "Fondor's shipyards raised you among the machinery of war. You understand starships like few others.",
+      "relevantSkills": ["Knowledge (Technology)", "Mechanics", "Use Computer"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Bocce",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Bocce language."
+      }
+    },
+    {
+      "id": "gamorr",
+      "name": "Gamorr Origin",
+      "category": "planet",
+      "icon": "⚔️",
+      "narrativeDescription": "Gamorr's brutal culture hardened you. Strength, survival, and fierce loyalty.",
+      "relevantSkills": ["Climb", "Endurance", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Gamorrean",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Gamorrean language."
+      }
+    },
+    {
+      "id": "iridonia",
+      "name": "Iridonia Origin",
+      "category": "planet",
+      "icon": "🔥",
+      "narrativeDescription": "Iridonia's harsh world breeds warriors. You learned discipline, endurance, and the will to overcome.",
+      "relevantSkills": ["Acrobatics", "Endurance", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Zabrak",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Zabrak language."
+      }
+    },
+    {
+      "id": "ithor",
+      "name": "Ithor Origin",
+      "category": "planet",
+      "icon": "🌿",
+      "narrativeDescription": "Ithor's floating cities above untouched jungles taught you reverence for life and nature's balance.",
+      "relevantSkills": ["Knowledge (Life Sciences)", "Persuasion", "Treat Injury"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Ithorese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Ithorese language."
+      }
+    },
+    {
+      "id": "kashyyyk",
+      "name": "Kashyyyk Origin",
+      "category": "planet",
+      "icon": "🌳",
+      "narrativeDescription": "You were raised among the wroshyr trees of Kashyyyk. Honor, strength, and loyalty define you.",
+      "relevantSkills": ["Climb", "Persuasion", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Shyriiwook",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Shyriiwook language."
+      }
+    },
+    {
+      "id": "mon_calamari",
+      "name": "Mon Calamari Origin",
+      "category": "planet",
+      "icon": "🌊",
+      "narrativeDescription": "Mon Calamari's oceans and shipyards shaped you. Engineering brilliance and aquatic grace.",
+      "relevantSkills": ["Mechanics", "Persuasion", "Swim"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Mon Calamarian or Quarrenese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Mon Calamarian or Quarrenese language."
+      }
+    },
+    {
+      "id": "naboo",
+      "name": "Naboo Origin",
+      "category": "planet",
+      "icon": "🏛️",
+      "narrativeDescription": "Naboo's beauty and culture taught you diplomacy and grace. You walk between worlds—city and swamp, human and Gungan.",
+      "relevantSkills": ["Ride", "Persuasion", "Swim"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Gunganese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Gunganese language."
+      }
+    },
+    {
+      "id": "nar_shaddaa",
+      "name": "Nar Shaddaa Origin",
+      "category": "planet",
+      "icon": "🌃",
+      "narrativeDescription": "The Smuggler's Moon taught you hard lessons. Trust no one. Watch your back. Opportunity hides in the shadows.",
+      "relevantSkills": ["Deception", "Gather Information", "Stealth"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Huttese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Huttese language."
+      }
+    },
+    {
+      "id": "rodia",
+      "name": "Rodia Origin",
+      "category": "planet",
+      "icon": "🦎",
+      "narrativeDescription": "Rodia's jungles and bounty hunter culture made you a survivor. Hunt or be hunted.",
+      "relevantSkills": ["Climb", "Stealth", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Rodese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Rodese language."
+      }
+    },
+    {
+      "id": "ryloth",
+      "name": "Ryloth Origin",
+      "category": "planet",
+      "icon": "🌗",
+      "narrativeDescription": "Ryloth's twilight world taught you adaptability. Light and dark, heat and cold, freedom and oppression.",
+      "relevantSkills": ["Deception", "Persuasion", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Ryl",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Ryl language."
+      }
+    },
+    {
+      "id": "socorro",
+      "name": "Socorro Origin",
+      "category": "planet",
+      "icon": "🏜️",
+      "narrativeDescription": "Socorro's deserts and pirate culture made you tough. Survival means knowing when to fight and when to run.",
+      "relevantSkills": ["Deception", "Stealth", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Socorran",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Socorran language."
+      }
+    },
+    {
+      "id": "sullust",
+      "name": "Sullust Origin",
+      "category": "planet",
+      "icon": "🌋",
+      "narrativeDescription": "Sullust's volcanic tunnels and tech industry shaped you. Navigation, engineering, and underground resilience.",
+      "relevantSkills": ["Climb", "Mechanics", "Stealth"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Sullustese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Sullustese language."
+      }
+    },
+    {
+      "id": "taris",
+      "name": "Taris Origin",
+      "category": "planet",
+      "icon": "🏚️",
+      "narrativeDescription": "Taris—once great, now fallen. You learned to navigate ruins, gangs, and the struggle for survival in a broken world.",
+      "relevantSkills": ["Deception", "Mechanics", "Stealth"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Sy Bisti",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Sy Bisti language."
+      }
+    },
+    {
+      "id": "tatooine",
+      "name": "Tatooine Origin",
+      "category": "planet",
+      "icon": "🌅",
+      "narrativeDescription": "Twin suns. Endless sand. You learned that water is life, and survival means being tougher than the desert.",
+      "relevantSkills": ["Endurance", "Ride", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Jawa Trade Language",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Jawa Trade Language."
+      }
+    },
+    {
+      "id": "trandosha",
+      "name": "Trandosha Origin",
+      "category": "planet",
+      "icon": "🦖",
+      "narrativeDescription": "Trandosha's hunting culture forged you. Strength, endurance, and the thrill of the hunt.",
+      "relevantSkills": ["Endurance", "Persuasion", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Dosh",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Dosh language."
+      }
+    }
+  ],
+  "planets_homebrew": [
+    {
+      "id": "adamastor",
+      "name": "Adamastor Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🌊",
+      "narrativeDescription": "Adamastor's oceans taught you technology, medicine, and aquatic survival.",
+      "relevantSkills": ["Knowledge (Technology)", "Swim", "Treat Injury"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Selkath",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Selkath language."
+      }
+    },
+    {
+      "id": "adumar",
+      "name": "Adumar Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🎯",
+      "narrativeDescription": "Adumar's honor-bound warrior culture and manufacturing prowess shaped your technical and social skills.",
+      "relevantSkills": ["Knowledge (Technology)", "Mechanics", "Persuasion"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Bocce",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Bocce language."
+      }
+    },
+    {
+      "id": "ajan_kloss",
+      "name": "Ajan Kloss Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🌴",
+      "narrativeDescription": "Ajan Kloss's dense jungles and hidden Resistance bases taught you wilderness survival and agility.",
+      "relevantSkills": ["Climb", "Jump", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Bocce",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Bocce language."
+      }
+    },
+    {
+      "id": "alpheridies",
+      "name": "Alpheridies Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "👁️",
+      "narrativeDescription": "Alpheridies, homeworld of the Miraluka. You learned to see beyond sight.",
+      "relevantSkills": ["Climb", "Knowledge (Galactic Lore)", "Knowledge (Life Sciences)"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Miralukese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Miralukese language."
+      }
+    },
+    {
+      "id": "altiria_anarris",
+      "name": "Altiria/Anarris Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "💧",
+      "narrativeDescription": "The twin ocean worlds taught you science, diplomacy, and aquatic mastery.",
+      "relevantSkills": ["Knowledge (Physical Sciences)", "Persuasion", "Swim"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Altirish or Anarrese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Altirish or Anarrese language."
+      }
+    },
+    {
+      "id": "alzoc_iii",
+      "name": "Alzoc III Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "❄️",
+      "narrativeDescription": "Alzoc III's frozen wastes taught you to repair, ride, and heal in the harshest conditions.",
+      "relevantSkills": ["Mechanics", "Ride", "Treat Injury"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Talz",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Talz language."
+      }
+    },
+    {
+      "id": "anaxes",
+      "name": "Anaxes Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "⚓",
+      "narrativeDescription": "Anaxes, fortress world and naval academy. Military discipline and technological prowess.",
+      "relevantSkills": ["Knowledge (Technology)", "Mechanics", "Ride"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "High Galactic",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain High Galactic language."
+      }
+    },
+    {
+      "id": "cathar",
+      "name": "Cathar Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🐱",
+      "narrativeDescription": "Cathar's proud warriors taught you stealth, survival, and the hunter's instinct.",
+      "relevantSkills": ["Climb", "Stealth", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Catharese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Catharese language."
+      }
+    },
+    {
+      "id": "charros_iv",
+      "name": "Charros IV Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🔬",
+      "narrativeDescription": "Charros IV's Xi Char droid engineers taught you precision, mechanics, and keen perception.",
+      "relevantSkills": ["Knowledge (Technology)", "Mechanics", "Perception"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Xi Char",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Xi Char language."
+      }
+    },
+    {
+      "id": "clakdor_vii",
+      "name": "Clak'dor VII Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🎵",
+      "narrativeDescription": "Clak'dor VII, homeworld of the Bith. Music, science, and technology in harmony.",
+      "relevantSkills": ["Knowledge (Physical Sciences)", "Mechanics", "Persuasion"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Bith",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Bith language."
+      }
+    },
+    {
+      "id": "commenor",
+      "name": "Commenor Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🏪",
+      "narrativeDescription": "Commenor's trade routes taught you negotiation, technology, and mechanical expertise.",
+      "relevantSkills": ["Knowledge (Technology)", "Mechanics", "Persuasion"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Bocce",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Bocce language."
+      }
+    },
+    {
+      "id": "csilla",
+      "name": "Csilla Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🧊",
+      "narrativeDescription": "Csilla's frozen wastes and Chiss society taught you endurance, information gathering, and sociology.",
+      "relevantSkills": ["Endurance", "Gather Information", "Knowledge (Social Sciences)"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Cheunh",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Cheunh language."
+      }
+    },
+    {
+      "id": "dathomir",
+      "name": "Dathomir Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🌙",
+      "narrativeDescription": "Dathomir's witches and rancors taught you agility, beast-riding, and survival in a dark world.",
+      "relevantSkills": ["Acrobatics", "Ride", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Paecian",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Paecian language."
+      }
+    },
+    {
+      "id": "dromund_kaas",
+      "name": "Dromund Kaas Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "⚡",
+      "narrativeDescription": "Dromund Kaas, ancient Sith capital. Deception, bureaucracy, and dark history.",
+      "relevantSkills": ["Deception", "Knowledge (Bureaucracy)", "Knowledge (Galactic Lore)"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "High Galactic",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain High Galactic language."
+      }
+    },
+    {
+      "id": "ebruchi_fleet",
+      "name": "Ebruchi Fleet Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🚢",
+      "narrativeDescription": "Raised among the nomadic Ebruchi fleet. Deception, mechanics, and persuasion are your tools.",
+      "relevantSkills": ["Deception", "Mechanics", "Persuasion"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Ebruchese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Ebruchese language."
+      }
+    },
+    {
+      "id": "empress_teta",
+      "name": "Empress Teta Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "👑",
+      "narrativeDescription": "Empress Teta's ancient cities and dark history taught you to climb, gather information, and know the galaxy's secrets.",
+      "relevantSkills": ["Climb", "Gather Information", "Knowledge (Galactic Lore)"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "High Galactic",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain High Galactic language."
+      }
+    },
+    {
+      "id": "hoth",
+      "name": "Hoth Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🥶",
+      "narrativeDescription": "Hoth's frozen wasteland made you tough. Endurance, beast-riding, and survival.",
+      "relevantSkills": ["Endurance", "Ride", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Skel",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Skel language."
+      }
+    },
+    {
+      "id": "kalee",
+      "name": "Kalee Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "💀",
+      "narrativeDescription": "Kalee's warrior culture forged you. Climb, endure, survive.",
+      "relevantSkills": ["Climb", "Endurance", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Kaleesh",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Kaleesh language."
+      }
+    },
+    {
+      "id": "kamino",
+      "name": "Kamino Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🌧️",
+      "narrativeDescription": "Kamino's cloning facilities taught you life sciences, technology, and healing.",
+      "relevantSkills": ["Knowledge (Life Sciences)", "Knowledge (Technology)", "Treat Injury"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Kaminoan",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Kaminoan language."
+      }
+    },
+    {
+      "id": "klatooine",
+      "name": "Klatooine Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🏜️",
+      "narrativeDescription": "Klatooine's deserts and Hutt servitude taught you endurance, riding, and survival.",
+      "relevantSkills": ["Endurance", "Ride", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Huttese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Huttese language."
+      }
+    },
+    {
+      "id": "korriban",
+      "name": "Korriban Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🩸",
+      "narrativeDescription": "Korriban, cradle of the Sith. Deception, ancient knowledge, and harsh survival.",
+      "relevantSkills": ["Deception", "Knowledge (Galactic Lore)", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Sith",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Sith language."
+      }
+    },
+    {
+      "id": "kuat",
+      "name": "Kuat Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🏭",
+      "narrativeDescription": "Kuat's massive shipyards taught you technology, mechanics, and computer systems.",
+      "relevantSkills": ["Knowledge (Technology)", "Mechanics", "Use Computer"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "High Galactic",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain High Galactic language."
+      }
+    },
+    {
+      "id": "malastare",
+      "name": "Malastare Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🏎️",
+      "narrativeDescription": "Malastare's podracing culture and diverse population taught you physical prowess.",
+      "relevantSkills": ["Climb", "Endurance", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Dug or Gran",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Dug or Gran language."
+      }
+    },
+    {
+      "id": "manaan",
+      "name": "Manaan Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🏥",
+      "narrativeDescription": "Manaan's ocean world and kolto production taught you bureaucracy, swimming, and medicine.",
+      "relevantSkills": ["Knowledge (Bureaucracy)", "Swim", "Treat Injury"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Selkath",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Selkath language."
+      }
+    },
+    {
+      "id": "mustafar",
+      "name": "Mustafar Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🌋",
+      "narrativeDescription": "Mustafar's lava flows and mining operations taught you agility, beast-riding, and survival in hell.",
+      "relevantSkills": ["Acrobatics", "Ride", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Mustafarian",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Mustafarian language."
+      }
+    },
+    {
+      "id": "muunilinst",
+      "name": "Muunilinst Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "💰",
+      "narrativeDescription": "Muunilinst's banking clans taught you bureaucracy, technology, and computer systems.",
+      "relevantSkills": ["Knowledge (Bureaucracy)", "Knowledge (Technology)", "Use Computer"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Muun or Ancient Muun",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Muun or Ancient Muun language."
+      }
+    },
+    {
+      "id": "mygeeto",
+      "name": "Mygeeto Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "💎",
+      "narrativeDescription": "Mygeeto's crystal mines taught you climbing, physical sciences, and survival.",
+      "relevantSkills": ["Climb", "Knowledge (Physical Sciences)", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Muun, Ancient Muun, or Lurmese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Muun, Ancient Muun, or Lurmese language."
+      }
+    },
+    {
+      "id": "onderon",
+      "name": "Onderon Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🏰",
+      "narrativeDescription": "Onderon's walled cities and beast-riders taught you climbing, riding, and survival.",
+      "relevantSkills": ["Climb", "Ride", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Onderonian",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Onderonian language."
+      }
+    },
+    {
+      "id": "ord_mantell",
+      "name": "Ord Mantell Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🎰",
+      "narrativeDescription": "Ord Mantell's junkyards and criminal underworld taught you climbing, information gathering, and galactic lore.",
+      "relevantSkills": ["Climb", "Gather Information", "Knowledge (Galactic Lore)"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Bocce",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Bocce language."
+      }
+    },
+    {
+      "id": "skako",
+      "name": "Skako Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🤖",
+      "narrativeDescription": "Skako's Techno Union facilities taught you technology, mechanics, and computer systems.",
+      "relevantSkills": ["Knowledge (Technology)", "Mechanics", "Use Computer"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Skakoform and Skakoverbal",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Skakoform and Skakoverbal language."
+      }
+    },
+    {
+      "id": "starkiller_base",
+      "name": "Starkiller Base Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "❌",
+      "narrativeDescription": "Raised on a weapon disguised as a planet. Cold efficiency, science, and technology.",
+      "relevantSkills": ["Knowledge (Physical Sciences)", "Knowledge (Technology)", "Mechanics"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Military Sign",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Military Sign language."
+      }
+    },
+    {
+      "id": "utapau",
+      "name": "Utapau Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🕳️",
+      "narrativeDescription": "Utapau's sinkholes and beast-riders taught you climbing, bureaucracy, and riding.",
+      "relevantSkills": ["Climb", "Knowledge (Bureaucracy)", "Ride"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Utapese",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Utapese language."
+      }
+    },
+    {
+      "id": "xagobah",
+      "name": "Xagobah Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🦋",
+      "narrativeDescription": "Xagobah's fungal forests taught you climbing, life sciences, and survival.",
+      "relevantSkills": ["Climb", "Knowledge (Life Sciences)", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Xamstan",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Xamstan language."
+      }
+    },
+    {
+      "id": "yavin_4",
+      "name": "Yavin 4 Origin",
+      "category": "planet",
+      "homebrew": true,
+      "icon": "🗿",
+      "narrativeDescription": "Yavin 4's jungles and Massassi temples taught you climbing, stealth, and survival.",
+      "relevantSkills": ["Climb", "Stealth", "Survival"],
+      "skillChoiceCount": 2,
+      "bonusLanguage": "Bocce or Sith",
+      "mechanicalEffect": {
+        "type": "class_skills",
+        "count": 2,
+        "description": "Add two skills from the relevant list to your class skills and gain Bocce or Sith language."
+      }
+    }
+  ]
+}

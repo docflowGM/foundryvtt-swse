@@ -1,4 +1,5 @@
 import { SWSELogger } from '../utils/logger.js';
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Base Actor Sheet
  * Provides common functionality for all SWSE actor sheets
@@ -1180,7 +1181,11 @@ export class SWSEActorSheetBase extends ActorSheet {
       return;
     }
 
-    return this.actor.update({'system.conditionTrack.current': step});
+    return this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.conditionTrack.current': step});
+actor.update({'system.conditionTrack.current': step});
+/* ORIGINAL: actor.update({'system.conditionTrack.current': step}); */
+
   }
 
   /**
@@ -1190,7 +1195,11 @@ export class SWSEActorSheetBase extends ActorSheet {
     event.preventDefault();
     const current = this.actor.system.conditionTrack?.current || 0;
     const newStep = Math.max(0, current - 1);
-    return this.actor.update({'system.conditionTrack.current': newStep});
+    return this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.conditionTrack.current': newStep});
+actor.update({'system.conditionTrack.current': newStep});
+/* ORIGINAL: actor.update({'system.conditionTrack.current': newStep}); */
+
   }
 
   /**
@@ -1201,6 +1210,10 @@ export class SWSEActorSheetBase extends ActorSheet {
     const current = this.actor.system.conditionTrack?.current || 0;
     const max = 5; // Maximum condition track steps (0-5)
     const newStep = Math.min(max, current + 1);
-    return this.actor.update({'system.conditionTrack.current': newStep});
+    return this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.conditionTrack.current': newStep});
+actor.update({'system.conditionTrack.current': newStep});
+/* ORIGINAL: actor.update({'system.conditionTrack.current': newStep}); */
+
   }
 }

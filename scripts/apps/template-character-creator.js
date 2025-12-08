@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 // ============================================
 // Template Character Creator
 // Class-first selection with playing card UI
@@ -733,9 +734,17 @@ export class TemplateCharacterCreator extends Application {
       // Auto-check Force Sensitive if this is a Force-using class
       const forceUsingClasses = ['Jedi', 'Sith', 'Force Adept', 'Force Disciple'];
       if (forceUsingClasses.includes(template.className)) {
-        await actor.update({
+        await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
           'system.forceSensitive': true
         });
+actor.update({
+          'system.forceSensitive': true
+        });
+/* ORIGINAL: actor.update({
+          'system.forceSensitive': true
+        }); */
+
         SWSELogger.log(`SWSE | Auto-checked Force Sensitive for ${template.className}`);
       }
 

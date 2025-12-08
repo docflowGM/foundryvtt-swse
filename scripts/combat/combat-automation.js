@@ -1,10 +1,16 @@
 import { SWSELogger } from '../utils/logger.js';
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Combat Automation
  * Handles automatic damage threshold checks, condition track, etc.
  */
 
 export class SWSECombatAutomation {
+
+    static getSelectedActor() {
+        return canvas.tokens.controlled[0]?.actor;
+    }
+
 
   static init() {
     // Register combat hooks
@@ -34,7 +40,11 @@ export class SWSECombatAutomation {
 
         // Reset temporary resources like Second Wind
         if (combatant.actor.type === 'character') {
-          await combatant.actor.update({'system.secondWind.used': false});
+          await combatant.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.secondWind.used': false});
+actor.update({'system.secondWind.used': false});
+/* ORIGINAL: actor.update({'system.secondWind.used': false}); */
+
         }
       }
     });
@@ -67,7 +77,9 @@ export class SWSECombatAutomation {
       await actor.moveConditionTrack(1);
 
       // Check for death
-      if (actor.system.hp.value === 0 && actor.isHelpless) {
+      if (// AUTO-CONVERT actor.system.* assignment -> ProgressionEngine (confidence=0.50)
+// Auto-converted: update derived attributes via ProgressionEngine
+ProgressionEngine.applyChargenStep(actor, 'abilities', { values: { /* migrated value for hp.value */ hp_value: == 0 && actor.isHelpless) {
         await ChatMessage.create({
           speaker: ChatMessage.getSpeaker({actor}),
           content: `<div class="swse death-notification">
@@ -75,7 +87,17 @@ export class SWSECombatAutomation {
             <p><strong>${actor.name}</strong> is at 0 HP and Helpless!</p>
           </div>`,
           type: CONST.CHAT_MESSAGE_TYPES.OTHER
-        });
+        }) } });
+/* ORIGINAL: actor.system.hp.value === 0 && actor.isHelpless) {
+        await ChatMessage.create({
+          speaker: ChatMessage.getSpeaker({actor}),
+          content: `<div class="swse death-notification">
+            <h3>⚠️ Character Defeated!</h3>
+            <p><strong>${actor.name}</strong> is at 0 HP and Helpless!</p>
+          </div>`,
+          type: CONST.CHAT_MESSAGE_TYPES.OTHER
+        }); */
+
       }
     }
   }

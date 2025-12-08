@@ -1,4 +1,5 @@
 import { SWSELogger } from '../utils/logger.js';
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Migration Utilities
  * Converts old array-based storage to Item-based architecture
@@ -94,11 +95,23 @@ export class SWSEMigration {
       itemsCreated = updates.length;
       
       // Clear old arrays
-      await actor.update({
+      await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
         'system.feats': [],
         'system.talents': [],
         'system.weapons': []
       });
+actor.update({
+        'system.feats': [],
+        'system.talents': [],
+        'system.weapons': []
+      });
+/* ORIGINAL: actor.update({
+        'system.feats': [],
+        'system.talents': [],
+        'system.weapons': []
+      }); */
+
       
       SWSELogger.log(`  Created ${itemsCreated} items for ${actor.name}`);
     }

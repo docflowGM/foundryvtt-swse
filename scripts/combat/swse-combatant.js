@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Custom Combatant Document for SWSE
  * Extends Foundry's Combatant class to implement SWSE-specific features
@@ -105,7 +106,8 @@ export class SWSECombatant extends Combatant {
     const actor = this.actor;
     if (!actor) return;
 
-    await actor.update({
+    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
       'system.actionEconomy': {
         swift: true,
         move: true,
@@ -114,6 +116,25 @@ export class SWSECombatant extends Combatant {
         reaction: true
       }
     });
+actor.update({
+      'system.actionEconomy': {
+        swift: true,
+        move: true,
+        standard: true,
+        fullRound: true,
+        reaction: true
+      }
+    });
+/* ORIGINAL: actor.update({
+      'system.actionEconomy': {
+        swift: true,
+        move: true,
+        standard: true,
+        fullRound: true,
+        reaction: true
+      }
+    }); */
+
   }
 
   /**

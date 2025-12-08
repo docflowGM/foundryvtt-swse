@@ -1,0 +1,727 @@
+[
+  {
+    "file": "scripts\\actors\\character\\swse-character-sheet.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({[`system.skills.${skillKey}.trained`]: true});",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({'system.forcePoints.value': currentFP - 1});",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({'system.darkSideScore': newValue});",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\actors\\droid\\swse-droid-handler.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n      'system.systemSlots.used': slots.used + slotsRequired\n    });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({\n      'system.systemSlots.used': Math.max(0, slots.used - slotsRequired)\n    });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\actors\\vehicle\\swse-vehicle.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({ 'system.weapons': weapons });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.weapons\": weapons });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.weapons\": weapons });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({\n            [`system.crewPositions.${slot}`]: {\n              name: actor.name,\n              uuid: actor.uuid\n            }\n          });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ [`system.crewPositions.${slot}`]: null });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\apps\\chargen-improved.js",
+    "changes": [
+      [
+        "todo-converted",
+        "await actor.update(updates);",
+        0.0
+      ],
+      [
+        "todo-converted",
+        "await actor.update({",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({\n// (no heuristic applied)\n/* ORIGINAL (for review): await actor.update({ */\n      \"system.level\": newLevel,\n      \"system.hp.max\": newHP,\n      \"system.hp.value\": newHP\n    });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\apps\\mentor-dialogues.js",
+    "changes": [
+      [
+        "actor-system-assign-converted",
+        "actor.system.level === 1 && classItems.length > 0) {\n        return classItems[0].name;",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\apps\\swse-levelup.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n                \"system.level\": newLevel,\n                \"system.hp.max\": newHPMax,\n                \"system.hp.value\": newHPValue\n            });",
+        0.0
+      ],
+      [
+        "actor-system-assign-converted",
+        "actor.system.level === 1) {\n                await setLevel1Class(actor, className);",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\apps\\template-character-creator.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n          'system.forceSensitive': true\n        });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\apps\\upgrade-app.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.credits\": currentCredits - upgradeCost });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\apps\\vehicle-modification-app.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n      'system.vehicle': {\n        stockShip: this.stockShip,\n        modifications: this.modifications,\n        totalCost: VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip)\n      }\n    });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\apps\\chargen\\chargen-templates.js",
+    "changes": [
+      [
+        "todo-converted",
+        "await actor.update({",
+        0.0
+      ],
+      [
+        "todo-converted",
+        "await actor.update({",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({\n// (no heuristic applied)\n/* ORIGINAL (for review): await actor.update({ */\n              [`system.skills.${skillKey}.focused`]: true\n            });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({\n// (no heuristic applied)\n/* ORIGINAL (for review): await actor.update({ */\n          'system.forceSensitive': true\n        });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\apps\\levelup\\levelup-class.js",
+    "changes": [
+      [
+        "todo-converted",
+        "await actor.update({",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({\n// (no heuristic applied)\n/* ORIGINAL (for review): await actor.update({ */\n      \"system.forcePoints.max\": newMax,\n      \"system.forcePoints.value\": newValue\n    });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\apps\\levelup\\levelup-main.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n        \"system.hp.max\": newHPMax,\n        \"system.hp.value\": newHPValue\n      });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({\n        \"system.bab\": totalBAB,\n        \"system.defenses.fortitude.classBonus\": defenseBonuses.fortitude,\n        \"system.defenses.reflex.classBonus\": defenseBonuses.reflex,\n        \"system.defenses.will.classBonus\": defenseBonuses.will\n      });",
+        0.0
+      ],
+      [
+        "actor-system-assign-converted",
+        "actor.system.level === 1) {\n        await setLevel1Class(this.actor, this.selectedClass.name);",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\apps\\store\\store-checkout.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.credits\": newCredits });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.credits\": credits - finalCost });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.credits\": credits - finalCost });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.credits\": credits - total });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.credits\": credits });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\canvas-ui\\canvas-ui-manager.js",
+    "changes": [
+      [
+        "todo-converted",
+        "await actor.update({ 'system.condition': conditionValue });",
+        0.0
+      ],
+      [
+        "todo-converted",
+        "await actor.update({ 'system.condition': 0 });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ 'system.condition': conditionValue });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ 'system.condition': conditionValue });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ 'system.condition': conditionValue });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ 'system.condition': 0 });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ 'system.condition': 0 });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ 'system.condition': 0 });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\chat\\chat-commands.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({ 'system.hp.value': newHP });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\combat\\combat-automation.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({'system.secondWind.used': false});",
+        0.0
+      ],
+      [
+        "actor-system-assign-converted",
+        "actor.system.hp.value === 0 && actor.isHelpless) {\n        await ChatMessage.create({\n          speaker: ChatMessage.getSpeaker({actor}),\n          content: `<div class=\"swse death-notification\">\n            <h3>\u26a0\ufe0f Character Defeated!</h3>\n            <p><strong>${actor.name}</strong> is at 0 HP and Helpless!</p>\n          </div>`,\n          type: CONST.CHAT_MESSAGE_TYPES.OTHER\n        });",
+        0.5
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\combat\\combat-integration.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n      'system.actionEconomy': {\n        swift: true,\n        move: true,\n        standard: true,\n        fullRound: true,\n        reaction: true\n      }\n    });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ 'system.conditionTrack.current': newCondition });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\combat\\damage-system.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "Actor.update({'system.conditionTrack': condition});",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\combat\\swse-combat.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n            'system.secondWind.uses': 1,\n            'system.actionEconomy': {\n              swift: true,\n              move: true,\n              standard: true,\n              fullRound: true,\n              reaction: true\n            }\n          });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({\n        'system.actionEconomy': {\n          swift: true,\n          move: true,\n          standard: true,\n          fullRound: true,\n          reaction: true\n        }\n      });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\combat\\swse-combatant.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n      'system.actionEconomy': {\n        swift: true,\n        move: true,\n        standard: true,\n        fullRound: true,\n        reaction: true\n      }\n    });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\combat\\rolls\\damage.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\"system.hp.value\": newHP});",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\combat\\rolls\\enhanced-rolls.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({'system.forcePoints.value': currentFP - 1});",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({'system.darkSideScore': newDarkSideScore});",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\combat\\systems\\grappling-system.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({'system.conditions': conditions});",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({'system.conditions': filtered});",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\components\\combat-action-bar.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n      'system.hp.value': newHP,\n      'system.secondWind.uses': actor.system.secondWind.uses - 1\n    });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\components\\condition-track.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({'system.conditionTrack.current': step});",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({'system.conditionTrack.persistent': event.target.checked});",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\drag-drop\\drop-handler.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n        'system.biography': (actor.system.biography || '') + bioNotes\n      });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({\n      'system.vehicleType': template.system.vehicleType || 'starfighter',\n      'system.shields': template.system.shields || 0,\n      'system.hull': template.system.hull || 0,\n      'system.speed': template.system.speed || 0\n    });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\hooks\\actor-hooks.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n                [`system.skills.${skillKey}.focused`]: false\n            });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\hooks\\combat-hooks.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n            'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)\n        });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\migration\\array-to-items.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n        'system.feats': [],\n        'system.talents': [],\n        'system.weapons': []\n      });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\migration\\fix-actor-size.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({ 'system.size': newSize });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\progression\\engine\\progression-engine.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.progression.species\": speciesId });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.progression.background\": backgroundId });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.progression.abilities\": values || {} });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.progression.classLevels\": classLevels });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.progression.classLevels\": classLevels });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.progression.skills\": payload.skills || [] });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.progression.feats\": feats });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.progression.talents\": talents });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\progression\\engine\\template-engine.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({ \"system.progression\": base });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\sheets\\base-sheet.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({'system.conditionTrack.current': step});",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({'system.conditionTrack.current': newStep});",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({'system.conditionTrack.current': newStep});",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\utils\\force-points.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({'system.darkSideScore': currentDarkSide + 1});",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({'system.darkSideScore': currentDarkSide - 1});",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({\n      'system.hp.value': 0,\n      'system.conditionTrack.current': Math.min(4, actor.system.conditionTrack.current)\n    });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  },
+  {
+    "file": "scripts\\utils\\force-power-manager.js",
+    "changes": [
+      [
+        "actor-update-converted",
+        "actor.update({\n          'system.forceSuite': {\n            max: 0,\n            powers: []\n          }\n        });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({\n      'system.forceSuite.max': newMax\n    });",
+        0.0
+      ],
+      [
+        "actor-update-converted",
+        "actor.update({\n          'system.forceSuite.max': newMax\n        });",
+        0.0
+      ],
+      [
+        "import-inserted",
+        "import { ProgressionEngine } from \"./scripts/progression/engine/progression-engine.js\";"
+      ]
+    ]
+  }
+]

@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Actor Lifecycle Hooks
  * All actor-related hook handlers consolidated here
@@ -271,9 +272,17 @@ async function handleItemDelete(item, options, userId) {
 
         const skillKey = skillNames[focusedSkillName];
         if (skillKey && actor.system.skills[skillKey]) {
-            await actor.update({
+            await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
                 [`system.skills.${skillKey}.focused`]: false
             });
+actor.update({
+                [`system.skills.${skillKey}.focused`]: false
+            });
+/* ORIGINAL: actor.update({
+                [`system.skills.${skillKey}.focused`]: false
+            }); */
+
             ui.notifications.info(`Removed Skill Focus from ${focusedSkillName}`);
         }
     }

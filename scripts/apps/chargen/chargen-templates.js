@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 // ============================================
 // Character Generation Templates Module
 // Loads and applies pre-configured character templates
@@ -384,9 +385,24 @@ export class CharacterTemplates {
           const skillKey = this._getSkillKeyFromDisplayName(skillDisplayName);
 
           if (skillKey) {
-            await actor.update({
+// AUTO-CONVERT: confidence=0.00
+// TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
+// (no heuristic applied)
+/* ORIGINAL (for review): await actor.update({ */
               [`system.skills.${skillKey}.focused`]: true
             });
+actor.update({
+// (no heuristic applied)
+/* ORIGINAL (for review): await actor.update({ */
+              [`system.skills.${skillKey}.focused`]: true
+            });
+/* ORIGINAL: actor.update({
+// (no heuristic applied)
+/* ORIGINAL (for review): await actor.update({ */
+              [`system.skills.${skillKey}.focused`]: true
+            }); */
+
             SWSELogger.log(`SWSE | Auto-checked skill focus for: ${skillDisplayName}`);
           }
         }
@@ -394,9 +410,24 @@ export class CharacterTemplates {
 
       // Handle Force Sensitivity feat - auto-check Force Sensitive
       if (featName === 'Force Sensitivity') {
-        await actor.update({
+// AUTO-CONVERT: confidence=0.00
+// TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
+// (no heuristic applied)
+/* ORIGINAL (for review): await actor.update({ */
           'system.forceSensitive': true
         });
+actor.update({
+// (no heuristic applied)
+/* ORIGINAL (for review): await actor.update({ */
+          'system.forceSensitive': true
+        });
+/* ORIGINAL: actor.update({
+// (no heuristic applied)
+/* ORIGINAL (for review): await actor.update({ */
+          'system.forceSensitive': true
+        }); */
+
         SWSELogger.log('SWSE | Auto-checked Force Sensitive');
       }
     } catch (error) {

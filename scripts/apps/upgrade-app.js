@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * SWSE Item Upgrade Application
  * Provides interactive upgrade management for weapons, armor, and equipment
@@ -412,7 +413,11 @@ export class SWSEUpgradeApp extends FormApplication {
         }
 
         // Deduct credits
-        await actor.update({ "system.credits": currentCredits - upgradeCost });
+        await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({ "system.credits": currentCredits - upgradeCost });
+actor.update({ "system.credits": currentCredits - upgradeCost });
+/* ORIGINAL: actor.update({ "system.credits": currentCredits - upgradeCost }); */
+
 
         // Add upgrade to item
         const newUpgrade = {

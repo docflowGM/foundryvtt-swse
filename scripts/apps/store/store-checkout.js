@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Purchase and checkout functionality for SWSE Store
  * Handles item purchases, cart management, and checkout
@@ -99,7 +100,11 @@ export async function buyService(actor, serviceName, serviceCost, updateDialogue
 
     // Deduct credits immediately
     const newCredits = currentCredits - serviceCost;
-    await actor.update({ "system.credits": newCredits });
+    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({ "system.credits": newCredits });
+actor.update({ "system.credits": newCredits });
+/* ORIGINAL: actor.update({ "system.credits": newCredits }); */
+
 
     ui.notifications.info(`${serviceName} purchased for ${serviceCost} credits.`);
 
@@ -165,7 +170,11 @@ export async function buyDroid(store, actorId) {
 
     try {
         // Deduct credits
-        await store.actor.update({ "system.credits": credits - finalCost });
+        await store.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({ "system.credits": credits - finalCost });
+actor.update({ "system.credits": credits - finalCost });
+/* ORIGINAL: actor.update({ "system.credits": credits - finalCost }); */
+
 
         // Create droid actor with player ownership
         const droidData = droidTemplate.toObject();
@@ -237,7 +246,11 @@ export async function buyVehicle(store, actorId, condition) {
 
     try {
         // Deduct credits
-        await store.actor.update({ "system.credits": credits - finalCost });
+        await store.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({ "system.credits": credits - finalCost });
+actor.update({ "system.credits": credits - finalCost });
+/* ORIGINAL: actor.update({ "system.credits": credits - finalCost }); */
+
 
         // Create vehicle actor with player ownership
         const vehicleData = vehicleTemplate.toObject();
@@ -456,7 +469,11 @@ export async function checkout(store, animateNumberCallback) {
         }
 
         // Deduct credits FIRST and track it
-        await actor.update({ "system.credits": credits - total });
+        await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({ "system.credits": credits - total });
+actor.update({ "system.credits": credits - total });
+/* ORIGINAL: actor.update({ "system.credits": credits - total }); */
+
         creditsDeducted = true;
 
         // Add regular items to actor
@@ -515,7 +532,11 @@ export async function checkout(store, animateNumberCallback) {
         // Rollback: Refund credits if they were deducted
         if (creditsDeducted) {
             try {
-                await actor.update({ "system.credits": credits });
+                await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({ "system.credits": credits });
+actor.update({ "system.credits": credits });
+/* ORIGINAL: actor.update({ "system.credits": credits }); */
+
                 ui.notifications.error("Purchase failed! Credits have been refunded.");
                 SWSELogger.info("SWSE Store | Credits refunded after failed checkout");
             } catch (refundErr) {

@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * SWSE Character Sheet
  *
@@ -2060,7 +2061,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       `,
       yes: async (html) => {
         const skillKey = html.find('#human-bonus-skill').val();
-        await this.actor.update({[`system.skills.${skillKey}.trained`]: true});
+        await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({[`system.skills.${skillKey}.trained`]: true});
+actor.update({[`system.skills.${skillKey}.trained`]: true});
+/* ORIGINAL: actor.update({[`system.skills.${skillKey}.trained`]: true}); */
+
         ui.notifications.info(`Trained in ${skillKey.replace(/_/g, ' ')}`);
       }
     });
@@ -2149,7 +2154,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     }
 
     // Spend the Force Point
-    await this.actor.update({'system.forcePoints.value': currentFP - 1});
+    await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.forcePoints.value': currentFP - 1});
+actor.update({'system.forcePoints.value': currentFP - 1});
+/* ORIGINAL: actor.update({'system.forcePoints.value': currentFP - 1}); */
+
 
     // Create chat message
     const messageContent = `
@@ -2202,7 +2211,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       newValue = segment;
     }
 
-    await this.actor.update({'system.darkSideScore': newValue});
+    await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({'system.darkSideScore': newValue});
+actor.update({'system.darkSideScore': newValue});
+/* ORIGINAL: actor.update({'system.darkSideScore': newValue}); */
+
 
     // Show notification
     if (newValue > currentDarkSide) {

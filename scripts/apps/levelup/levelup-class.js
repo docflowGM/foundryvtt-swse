@@ -1,3 +1,4 @@
+import { ProgressionEngine } from "./scripts/progression/engine/progression-engine.js";
 /**
  * Class selection and species handling for SWSE Level Up system
  * Includes level 0 character creation (species, attributes)
@@ -340,10 +341,27 @@ export async function applyClassFeatures(classDoc, classLevel, actor) {
     const currentValue = actor.system.forcePoints?.value || 5;
     const newValue = currentValue + levelData.forcePoints;
 
-    await actor.update({
+// AUTO-CONVERT: confidence=0.00
+// TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+// TODO: manual migration required. Original: actor.update({
+// (no heuristic applied)
+/* ORIGINAL (for review): await actor.update({ */
       "system.forcePoints.max": newMax,
       "system.forcePoints.value": newValue
     });
+actor.update({
+// (no heuristic applied)
+/* ORIGINAL (for review): await actor.update({ */
+      "system.forcePoints.max": newMax,
+      "system.forcePoints.value": newValue
+    });
+/* ORIGINAL: actor.update({
+// (no heuristic applied)
+/* ORIGINAL (for review): await actor.update({ */
+      "system.forcePoints.max": newMax,
+      "system.forcePoints.value": newValue
+    }); */
+
 
     SWSELogger.log(`SWSE LevelUp | Increased Force Points by ${levelData.forcePoints} (${currentMax} → ${newMax})`);
     ui.notifications.info(`Force Points increased by ${levelData.forcePoints}!`);
