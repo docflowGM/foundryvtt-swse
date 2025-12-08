@@ -33,6 +33,36 @@ import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
 import { SWSECharacterDataModel } from './scripts/data-models/character-data-model.js';
 import { SWSEVehicleDataModel } from './scripts/data-models/vehicle-data-model.js';
 import {
+
+// SWSE: auto-registered house-rule settings
+try {
+  if (!game.settings?.register) {
+    // not ready yet; registration will happen in ready hook
+  } else {
+    // Idempotent registration guard
+    if (!game.settings.settings.has('swse.useCustomCritical')) {
+      game.settings.register('swse', 'useCustomCritical', {
+        name: 'SWSE.Settings.UseCustomCritical.Name',
+        hint: 'SWSE.Settings.UseCustomCritical.Hint',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean
+      });
+    }
+    if (!game.settings.settings.has('swse.applyItemsAsEffects')) {
+      game.settings.register('swse', 'applyItemsAsEffects', {
+        name: 'SWSE.Settings.ApplyItemsAsEffects.Name',
+        hint: 'SWSE.Settings.ApplyItemsAsEffects.Hint',
+        scope: 'world',
+        config: true,
+        default: true,
+        type: Boolean
+      });
+    }
+  }
+} catch(e) { console.warn('SWSE | settings registration guard failed', e); }
+
     WeaponDataModel,
     ArmorDataModel,
     FeatDataModel,
@@ -378,3 +408,18 @@ function registerSystemSettings() {
     // [Full settings registration as in your original index.js...]
 }
 
+
+
+// SWSE: auto-init hooks
+try {
+  Hooks.once('ready', () => {
+    try {
+      RulesEngine.init?.();
+      Upkeep.init?.();
+      // No need to init RollManager, it's static helper only, but we log it
+      console.log('SWSE | RollManager available');
+    } catch (e) {
+      console.warn('SWSE | failed to init SWSE subsystems', e);
+    }
+  });
+} catch(e) { console.warn('SWSE | auto-init guard failed', e); }

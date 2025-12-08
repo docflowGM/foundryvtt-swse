@@ -326,7 +326,32 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     return context;
   }
 
-  activateListeners(html) {
+  
+  // SWSE helper: apply theme class to sheet root based on actor flag
+  _applySheetTheme() {
+    try {
+      const theme = this.actor?.getFlag?.('swse','sheetTheme') || 'holo-default';
+      // remove any existing swse-theme-*
+      this.element.removeClass((index, css) => (css.match(/swse-theme-[^\s]+/g) || []).join(' '));
+      this.element.addClass(`swse-theme-${theme}`);
+    } catch (e) {
+      console.warn('SWSE | applySheetTheme failed', e);
+    }
+  }
+activateListeners(html) {
+    // Per-sheet theme selector (element with class .swse-theme-select should exist in template)
+    html.find('.swse-theme-select').on('change', async (ev) => {
+      const theme = ev.target.value;
+      try {
+        await this.actor.setFlag('swse','sheetTheme', theme);
+        this._applySheetTheme();
+      } catch (e) {
+        console.error('SWSE | failed to set sheet theme', e);
+      }
+    });
+
+    this._applySheetTheme();
+
     super.activateListeners(html);
 
     if (!this.options.editable) return;
@@ -2225,3 +2250,84 @@ actor.update({'system.darkSideScore': newValue});
     }
   }
 }
+
+
+  /** Handle compendium drops and create items on actor. Also optionally copy stats and create Active Effects. */
+  async _onDrop(event) {
+    event.preventDefault();
+    try {
+      const dataText = event.dataTransfer?.getData('text/plain');
+      if (!dataText) return super._onDrop(event);
+      let data = null;
+      try { data = JSON.parse(dataText); } catch(e) { /* not json */ }
+      // Known compendium drop formats:
+      // {type: "Item", pack: "<package>", id: "<id>"} OR legacy compendium drop embedding
+      if (!data && event.dataTransfer?.types.includes("text/html")) {
+        // fallback parse
+        const html = event.dataTransfer.getData('text/html');
+        try {
+          const m = html.match(/data-pack="([^"]+)"\s+data-id="([^"]+)"/);
+          if (m) data = { pack: m[1], id: m[2], type: 'Item' };
+        } catch(e) { }
+      }
+      if (!data || !data.pack || !data.id) return super._onDrop(event);
+
+      const packKey = data.pack;
+      const pack = game.packs.get(packKey);
+      if (!pack) return ui.notifications.error(`Cannot find compendium pack ${packKey}`);
+      const doc = await pack.getDocument(data.id);
+      if (!doc) return ui.notifications.error('Compendium document not found');
+
+      const itemData = doc.toObject();
+      // If item with same name exists, skip creation (or optionally create a duplicate)
+      const existing = this.actor.items.find(i => i.name === itemData.name && i.type === itemData.type);
+      if (existing) {
+        ui.notifications.info(`${itemData.name} already present on actor`);
+      } else {
+        const created = await this.actor.createEmbeddedDocuments('Item', [ itemData ]);
+        // Optionally map stats from item to actor core fields
+        const applyAsEffect = game.settings?.get?.('swse','applyItemsAsEffects') ?? true;
+        // Example mapping for droids/vehicles: copy hp, armor, speed
+        if (itemData.type === 'droid' || itemData.type === 'vehicle') {
+          const statMap = {
+            'system.hp.max': 'system.hp.max',
+            'system.armor.value': 'system.armor.value',
+            'system.speed': 'system.speed'
+          };
+          const update = {};
+          for (const [iKey, aKey] of Object.entries(statMap)) {
+            const val = foundry.utils.getProperty(itemData, iKey);
+            if (typeof val !== 'undefined') foundry.utils.setProperty(update, aKey, val);
+          }
+          if (Object.keys(update).length) await this.actor.update(update);
+        }
+        // Apply as Active Effect if configured
+        if (applyAsEffect) {
+          // build a simple effect using a couple of mapped values; customizable
+          const changes = [];
+          if (itemData.system?.hp?.max) {
+            changes.push({ key: 'system.hp.max', mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: itemData.system.hp.max });
+          }
+          if (itemData.system?.armor?.value) {
+            changes.push({ key: 'system.armor.value', mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: itemData.system.armor.value });
+          }
+          if (changes.length) {
+            const eff = {
+              label: `From ${itemData.name}`,
+              icon: itemData.img || 'icons/svg/item-bag.svg',
+              changes,
+              origin: `Actor.${this.actor.id}.Item.${created[0]?.id || created[0]?._id}`,
+              duration: {},
+              flags: { swse: { fromItem: true } }
+            };
+            await this.actor.createEmbeddedDocuments('ActiveEffect', [ eff ]);
+          }
+        }
+      }
+      return;
+    } catch (err) {
+      console.error('SWSE | _onDrop error', err);
+      return super._onDrop(event);
+    }
+  }
+
