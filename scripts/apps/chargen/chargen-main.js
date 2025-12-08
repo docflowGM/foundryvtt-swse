@@ -16,6 +16,7 @@ import * as BackgroundsModule from './chargen-backgrounds.js';
 import * as ClassModule from './chargen-class.js';
 import * as AbilitiesModule from './chargen-abilities.js';
 import * as SkillsModule from './chargen-skills.js';
+import * as LanguagesModule from './chargen-languages.js';
 import * as FeatsTalentsModule from './chargen-feats-talents.js';
 import * as ForcePowersModule from './chargen-force-powers.js';
 
@@ -265,6 +266,14 @@ export default class CharacterGenerator extends Application {
     context.packs = foundry.utils.deepClone(this._packs);
     context.skillsJson = this._skillsJson || [];
 
+    // Helper function for chevron navigation
+    const steps = this._getSteps();
+    const currentIndex = steps.indexOf(this.currentStep);
+    context.stepIsPrevious = (step) => {
+      const stepIndex = steps.indexOf(step);
+      return stepIndex >= 0 && stepIndex < currentIndex;
+    };
+
     // Sort species by source material (Core first, then alphabetically)
     if (context.packs.species) {
       context.packs.species = this._sortSpeciesBySource(context.packs.species);
@@ -474,6 +483,17 @@ export default class CharacterGenerator extends Application {
       };
     });
 
+    // Language data for languages step
+    if (this.currentStep === 'languages') {
+      // Initialize languages if not already done
+      if (!this.characterData.languageData) {
+        await this._initializeLanguages();
+      }
+
+      // Get available languages organized by category
+      context.languageCategories = await this._getAvailableLanguages();
+    }
+
     return context;
   }
 
@@ -497,11 +517,8 @@ export default class CharacterGenerator extends Application {
     $html.find('.next-step').click(this._onNextStep.bind(this));
     $html.find('.prev-step').click(this._onPrevStep.bind(this));
 
-    // Progress step navigation (only in Free Build mode)
-    if (this.freeBuild) {
-      $html.find('.progress-step').addClass('clickable');
-      $html.find('.progress-step').click(this._onJumpToStep.bind(this));
-    }
+    // Chevron step navigation (clickable for previous steps or in Free Build mode)
+    $html.find('.chevron-step.clickable').click(this._onJumpToStep.bind(this));
     $html.find('.finish').click(this._onFinish.bind(this));
 
     // Selections
@@ -524,12 +541,11 @@ export default class CharacterGenerator extends Application {
     $html.find('.untrain-skill-btn').click(this._onUntrainSkill.bind(this));
     $html.find('.reset-skills-btn').click(this._onResetSkills.bind(this));
 
-    // Background selections
-    $html.find('.background-category-tab').click(this._onBackgroundCategoryTabClick.bind(this));
-    $html.find('.select-background').click(this._onSelectBackground.bind(this));
-    $html.find('.change-background-btn').click(this._onChangeBackground.bind(this));
-    $html.find('.allow-homebrew-toggle').change(this._onToggleHomebrewPlanets.bind(this));
-    $html.find('.random-background-btn').click(this._onRandomBackground.bind(this));
+    // Language selection
+    $html.find('.select-language').click(this._onSelectLanguage.bind(this));
+    $html.find('.remove-language').click(this._onRemoveLanguage.bind(this));
+    $html.find('.reset-languages-btn').click(this._onResetLanguages.bind(this));
+    $html.find('.add-custom-language-btn').click(this._onAddCustomLanguage.bind(this));
 
     // Droid builder/shop
     $html.find('.shop-tab').click(this._onShopTabClick.bind(this));
@@ -587,7 +603,7 @@ export default class CharacterGenerator extends Application {
 
   _getSteps() {
     if (this.actor) {
-      return ["class", "feats", "talents", "skills", "summary"];
+      return ["class", "feats", "talents", "skills", "languages", "summary"];
     }
 
     // Include type selection (living/droid) after name
@@ -600,18 +616,9 @@ export default class CharacterGenerator extends Application {
       steps.push("species");
     }
 
-    // Add background step if enabled in houserules (check if setting exists, default to true)
-    const backgroundsEnabled = game.settings.settings.has("swse.enableBackgrounds")
-      ? game.settings.get("swse", "enableBackgrounds")
-      : true;
-
-    if (backgroundsEnabled) {
-      steps.push("background");
-    }
-
-    // NPC workflow: skip class and talents, go straight to abilities/skills/feats
+    // NPC workflow: skip class and talents, go straight to abilities/skills/languages/feats
     if (this.actorType === "npc") {
-      steps.push("abilities", "skills", "feats", "summary");
+      steps.push("abilities", "skills", "languages", "feats", "summary");
     } else {
       // PC workflow: normal flow with class and talents
       // Note: skills before feats to allow Skill Focus validation
@@ -647,7 +654,21 @@ export default class CharacterGenerator extends Application {
     const steps = this._getSteps();
     const idx = steps.indexOf(this.currentStep);
     if (idx >= 0 && idx < steps.length - 1) {
-      const nextStep = steps[idx + 1];
+      let nextStep = steps[idx + 1];
+
+      // Auto-skip languages step if no additional languages to select
+      if (nextStep === "languages") {
+        await this._initializeLanguages();
+        const languageData = this.characterData.languageData;
+        if (languageData && languageData.additional <= 0) {
+          // Skip languages step - move to next step
+          SWSELogger.log("CharGen | Auto-skipping languages step (no additional languages to select)");
+          const languagesIdx = steps.indexOf("languages");
+          if (languagesIdx >= 0 && languagesIdx < steps.length - 1) {
+            nextStep = steps[languagesIdx + 1];
+          }
+        }
+      }
 
       // Create character when moving from summary to shop
       if (this.currentStep === "summary" && nextStep === "shop") {
@@ -684,11 +705,6 @@ export default class CharacterGenerator extends Application {
   }
 
   async _onJumpToStep(event) {
-    if (!this.freeBuild) {
-      ui.notifications.warn("Enable Free Build mode to jump between steps.");
-      return;
-    }
-
     event.preventDefault();
     event.stopPropagation();
 
@@ -697,6 +713,15 @@ export default class CharacterGenerator extends Application {
 
     if (!steps.includes(targetStep)) {
       SWSELogger.warn(`CharGen | Invalid step: ${targetStep}`);
+      return;
+    }
+
+    // Check if step is clickable (previous or free build mode)
+    const currentIndex = steps.indexOf(this.currentStep);
+    const targetIndex = steps.indexOf(targetStep);
+
+    if (!this.freeBuild && targetIndex > currentIndex) {
+      ui.notifications.warn("You cannot jump forward to future steps.");
       return;
     }
 
@@ -1457,5 +1482,6 @@ Object.assign(CharacterGenerator.prototype, BackgroundsModule);
 Object.assign(CharacterGenerator.prototype, ClassModule);
 Object.assign(CharacterGenerator.prototype, AbilitiesModule);
 Object.assign(CharacterGenerator.prototype, SkillsModule);
+Object.assign(CharacterGenerator.prototype, LanguagesModule);
 Object.assign(CharacterGenerator.prototype, FeatsTalentsModule);
 Object.assign(CharacterGenerator.prototype, ForcePowersModule);

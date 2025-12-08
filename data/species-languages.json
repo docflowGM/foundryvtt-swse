@@ -1,0 +1,332 @@
+{
+  "Human": {
+    "languages": ["Basic"],
+    "canSpeakAll": true
+  },
+  "Aqualish": {
+    "languages": ["Aqualish", "Basic"],
+    "canSpeakAll": true
+  },
+  "Bothan": {
+    "languages": ["Bothese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Cerean": {
+    "languages": ["Cerean", "Basic"],
+    "canSpeakAll": true
+  },
+  "Duros": {
+    "languages": ["Durese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Ewok": {
+    "languages": ["Ewokese"],
+    "canSpeakAll": false,
+    "note": "Does not get Basic for free"
+  },
+  "Gamorrean": {
+    "languages": ["Gamorrean"],
+    "understands": ["Basic"],
+    "canSpeakAll": false,
+    "note": "Understands but cannot speak Basic"
+  },
+  "Gungan": {
+    "languages": ["Gunganese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Hutt": {
+    "languages": ["Huttese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Ithorian": {
+    "languages": ["Ithorese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Kel Dor": {
+    "languages": ["Kel Dor", "Basic"],
+    "canSpeakAll": true
+  },
+  "Mon Calamari": {
+    "languages": ["Mon Calamarian", "Basic"],
+    "canSpeakAll": true
+  },
+  "Quarren": {
+    "languages": ["Quarrenese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Rodian": {
+    "languages": ["Rodese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Sullustan": {
+    "languages": ["Sullustese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Trandoshan": {
+    "languages": ["Dosh", "Basic"],
+    "canSpeakAll": true
+  },
+  "Twi'lek": {
+    "languages": ["Ryl", "Basic"],
+    "canSpeakAll": true
+  },
+  "Wookiee": {
+    "languages": ["Shyriiwook", "Basic"],
+    "canSpeakAll": true
+  },
+  "Zabrak": {
+    "languages": ["Zabrak", "Basic"],
+    "canSpeakAll": true
+  },
+  "Chistori": {
+    "languages": ["Chistorian", "Basic"],
+    "canSpeakAll": true
+  },
+  "Mantellian Savrip": {
+    "languages": ["Savrip"],
+    "canSpeakAll": false,
+    "note": "Does not get Basic for free"
+  },
+  "Utai": {
+    "languages": ["Utapese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Arkanian": {
+    "languages": ["Arkanian", "Basic"],
+    "canSpeakAll": true
+  },
+  "Arkanian Offshoot": {
+    "languages": ["Arkanian", "Basic"],
+    "canSpeakAll": true
+  },
+  "Cathar": {
+    "languages": ["Catharese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Draethos": {
+    "languages": ["Draethos", "Basic"],
+    "canSpeakAll": true
+  },
+  "Feeorin": {
+    "languages": ["Feeorin", "Basic"],
+    "canSpeakAll": true
+  },
+  "Khil": {
+    "languages": ["Khilese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Kissai": {
+    "languages": ["Sith", "Basic"],
+    "canSpeakAll": true
+  },
+  "Massassi": {
+    "languages": ["Sith"],
+    "canSpeakAll": false,
+    "note": "Does not get Basic for free"
+  },
+  "Miraluka": {
+    "languages": ["Miralukese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Rakata": {
+    "languages": ["Rakata", "Basic"],
+    "canSpeakAll": true
+  },
+  "Selkath": {
+    "languages": ["Selkath", "Basic"],
+    "canSpeakAll": true
+  },
+  "Snivvian": {
+    "languages": ["Snivvian", "Basic"],
+    "canSpeakAll": true
+  },
+  "Felucian": {
+    "languages": ["Felucianese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Gran": {
+    "languages": ["Gran", "Basic"],
+    "canSpeakAll": true
+  },
+  "Noghri": {
+    "languages": ["Honoghran", "Basic"],
+    "canSpeakAll": true
+  },
+  "Nosaurian": {
+    "languages": ["Nosaurian", "Basic"],
+    "canSpeakAll": true
+  },
+  "Talz": {
+    "languages": ["Talz", "Basic"],
+    "canSpeakAll": true
+  },
+  "Togorian": {
+    "languages": ["Togorian", "Basic"],
+    "canSpeakAll": true
+  },
+  "Togruta": {
+    "languages": ["Togruti", "Basic"],
+    "canSpeakAll": true
+  },
+  "Whiphid": {
+    "languages": ["Whiphid", "Basic"],
+    "canSpeakAll": true
+  },
+  "Yarkora": {
+    "languages": ["Yarkora", "Basic"],
+    "canSpeakAll": true
+  },
+  "Balosar": {
+    "languages": ["Balosar", "Basic"],
+    "canSpeakAll": true
+  },
+  "Blood Carver": {
+    "languages": ["Batorese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Clawdite": {
+    "languages": ["Clawdite", "Zolanese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Falleen": {
+    "languages": ["Falleen", "Basic"],
+    "canSpeakAll": true
+  },
+  "Gand": {
+    "languages": ["Gand"],
+    "canSpeakAll": false,
+    "note": "Does not get Basic for free"
+  },
+  "Houk": {
+    "languages": ["Houkese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Jawa": {
+    "languages": ["Jawa Trade Language", "Basic"],
+    "canSpeakAll": true
+  },
+  "Ryn": {
+    "languages": ["Ryn", "Basic"],
+    "canSpeakAll": true
+  },
+  "Toydarian": {
+    "languages": ["Toydarian", "Basic"],
+    "canSpeakAll": true
+  },
+  "Ubese": {
+    "languages": ["Ubeninal", "Basic"],
+    "canSpeakAll": true
+  },
+  "Wroonian": {
+    "languages": ["Wroonian", "Basic"],
+    "canSpeakAll": true
+  },
+  "Aleena": {
+    "languages": ["Aleena", "Basic"],
+    "canSpeakAll": true
+  },
+  "Anomid": {
+    "languages": ["Anomid", "Basic"],
+    "canSpeakAll": true
+  },
+  "Barabel": {
+    "languages": ["Barabel", "Basic"],
+    "canSpeakAll": true
+  },
+  "Besalisk": {
+    "languages": ["Besalisk", "Basic"],
+    "canSpeakAll": true
+  },
+  "Chiss": {
+    "languages": ["Cheunh", "Basic"],
+    "canSpeakAll": true
+  },
+  "Devaronian": {
+    "languages": ["Devaronese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Iktotchi": {
+    "languages": ["Iktotchese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Klatooinian": {
+    "languages": ["Klatooinian", "Basic"],
+    "canSpeakAll": true
+  },
+  "Kubaz": {
+    "languages": ["Kubaz", "Basic"],
+    "canSpeakAll": true
+  },
+  "Muun": {
+    "languages": ["Muun", "Basic"],
+    "canSpeakAll": true
+  },
+  "Nikto": {
+    "languages": ["Nikto", "Basic"],
+    "canSpeakAll": true
+  },
+  "Ortolan": {
+    "languages": ["Ortolan", "Basic"],
+    "canSpeakAll": true
+  },
+  "Pau'an": {
+    "languages": ["Utapese", "Basic"],
+    "canSpeakAll": true
+  },
+  "Quermian": {
+    "languages": ["Quermian", "Basic"],
+    "canSpeakAll": true
+  },
+  "Vurk": {
+    "languages": ["Vurk", "Basic"],
+    "canSpeakAll": true
+  },
+  "Weequay": {
+    "languages": ["Weequay", "Basic"],
+    "canSpeakAll": true
+  },
+  "Zeltron": {
+    "languages": ["Zeltron", "Basic"],
+    "canSpeakAll": true
+  },
+  "Anzati": {
+    "languages": ["Anzati", "Basic"],
+    "canSpeakAll": true
+  },
+  "Chevin": {
+    "languages": ["Chevin", "Basic"],
+    "canSpeakAll": true
+  },
+  "Defel": {
+    "languages": ["Defel", "Basic"],
+    "canSpeakAll": true
+  },
+  "Firrerreo": {
+    "languages": ["Firrerreo", "Basic"],
+    "canSpeakAll": true
+  },
+  "Givin": {
+    "languages": ["Givin", "Basic"],
+    "canSpeakAll": true
+  },
+  "Kiffar": {
+    "languages": ["Kiffar", "Basic"],
+    "canSpeakAll": true
+  },
+  "Omwati": {
+    "languages": ["Omwati", "Basic"],
+    "canSpeakAll": true
+  },
+  "Shi'ido": {
+    "languages": ["Shi'ido", "Basic"],
+    "canSpeakAll": true
+  },
+  "Vratix": {
+    "languages": ["Vratix", "Basic"],
+    "canSpeakAll": true
+  },
+  "Yevetha": {
+    "languages": ["Yevethan", "Basic"],
+    "canSpeakAll": true
+  }
+}
