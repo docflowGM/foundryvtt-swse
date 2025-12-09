@@ -1,0 +1,37 @@
+{{!-- Fancy SWSE Progression Sidebar --}}
+<aside class="swse-prog-sidebar" role="navigation" aria-label="Progression Steps" data-swse-prog>
+  <div class="swse-prog-header">
+    <div class="swse-prog-brand">
+      <div class="swse-prog-logo" title="SWSE Progression"></div>
+      <div class="swse-prog-title">Progression</div>
+    </div>
+
+    <div class="swse-prog-bar" aria-hidden="true">
+      <div class="swse-prog-bar-fill" style="width: {{progress}}%;"></div>
+    </div>
+  </div>
+
+  <div class="swse-prog-steps" data-steps role="list">
+    {{#each steps}}
+      <div class="swse-prog-step {{#if current}}current{{/if}} {{#if completed}}completed{{/if}} {{#if locked}}locked{{/if}}"
+           data-step-id="{{id}}" tabindex="0" role="listitem" aria-pressed="{{current}}" aria-selected="{{current}}">
+        <div class="swse-prog-step-icon" data-icon="{{icon}}">
+          {{#if icon}}<i class="{{icon}}"></i>{{else}}
+            <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /></svg>
+          {{/if}}
+        </div>
+        <div class="swse-prog-step-info">
+          <div class="swse-prog-step-label">{{label}}</div>
+          <div class="swse-prog-step-sub">{{subtitle}}</div>
+        </div>
+        <div class="swse-prog-step-state" aria-hidden="true">
+          {{#if completed}}<span class="tick">✔</span>{{else if locked}}<span class="padlock">🔒</span>{{/if}}
+        </div>
+      </div>
+    {{/each}}
+  </div>
+
+  <div class="swse-prog-footer">
+    <button class="btn-collapse" title="Toggle sidebar" aria-label="Toggle sidebar">☰</button>
+  </div>
+</aside>

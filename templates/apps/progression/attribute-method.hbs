@@ -1,0 +1,26 @@
+{{!-- Attribute method selection cards --}}
+<div class="swse-attribute-methods" role="region" aria-label="Attribute Methods">
+  <h2>{{title}}</h2>
+  <div class="swse-attribute-cards">
+    <div class="swse-attribute-card" data-method="pointbuy" tabindex="0" role="button">
+      <div class="card-icon">PB</div>
+      <div class="card-title">Point Buy</div>
+      <div class="card-desc">Allocate points (e.g. 28) to build your stats.</div>
+      <button class="btn-select" data-method="pointbuy">Select</button>
+    </div>
+
+    <div class="swse-attribute-card" data-method="standard" tabindex="0" role="button">
+      <div class="card-icon">STD</div>
+      <div class="card-title">Standard (4d6 drop lowest)</div>
+      <div class="card-desc">Roll 6 × (4d6 drop lowest). Drag values onto stats.</div>
+      <button class="btn-select" data-method="standard">Select</button>
+    </div>
+
+    <div class="swse-attribute-card" data-method="organic" tabindex="0" role="button">
+      <div class="card-icon">ORG</div>
+      <div class="card-title">Organic (21d6 drop lowest 3)</div>
+      <div class="card-desc">Roll 21d6, drop lowest 3, chunk into 6×3 → 6 scores.</div>
+      <button class="btn-select" data-method="organic">Select</button>
+    </div>
+  </div>
+</div>

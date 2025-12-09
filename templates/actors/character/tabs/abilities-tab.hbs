@@ -1,5 +1,10 @@
 <div class="tab abilities-tab" data-group="primary" data-tab="abilities">
- <h3 class="section-header">Ability Scores</h3>
+ <div class="section-header-with-button">
+  <h3 class="section-header">Ability Scores</h3>
+  <button class="roll-attributes-btn" type="button" title="Roll for attributes using the progression system">
+   <i class="fas fa-dice-d20"></i> Roll for Attributes
+  </button>
+ </div>
 
  <div class="abilities-grid">
  {{#each system.attributes as |ability key|}}

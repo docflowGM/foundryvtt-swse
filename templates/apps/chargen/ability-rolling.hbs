@@ -1,0 +1,27 @@
+{{!-- Ability Rolling UI (shared for Standard & Organic) --}}
+<div class="swse-chargen-ability-rolling" role="application" aria-label="Ability Rolling">
+  <div class="toolbar" role="toolbar" aria-label="Rolling controls">
+    <button class="btn-reroll-all">REROLL ALL</button>
+    <button class="btn-undo" disabled>UNDO</button>
+    <button class="btn-confirm" disabled>CONFIRM</button>
+  </div>
+
+  <div class="dice-pool" role="list" aria-label="Dice Pool">
+    {{#each pool}}
+      <div class="die-card" draggable="true" data-die-id="{{id}}" title="{{tooltip}}">
+        <div class="die-value">{{value}}</div>
+        <div class="die-meta">{{origin}}</div>
+        <button class="die-menu" data-die-id="{{id}}">⋮</button>
+      </div>
+    {{/each}}
+  </div>
+
+  <div class="assignments" role="region" aria-label="Ability Assignments">
+    {{#each stats}}
+      <div class="stat-box" data-stat="{{this.key}}">
+        <div class="stat-label">{{this.label}}</div>
+        <div class="assigned-slot" data-stat="{{this.key}}"></div>
+      </div>
+    {{/each}}
+  </div>
+</div>
