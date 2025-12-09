@@ -5,6 +5,7 @@
 
 import "./scripts/progression/progression-engine.js";
 import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engine/progression.js';
+import { SWSELanguageModule } from './scripts/progression/modules/language-module.js';
 
 // ---------------------------
 // Utilities & Core Infrastructure
@@ -414,6 +415,9 @@ Hooks.once("ready", async function () {
     initializeForcePowerHooks();
     initializeFollowerHooks();
     initializeProgressionHooks();
+
+    // Initialize language progression module
+    SWSELanguageModule.init();
 
     lazyLoader.setupLazyImages();
     SWSELogger.log('Lazy image loading initialized');

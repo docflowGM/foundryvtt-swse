@@ -229,18 +229,10 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentD
     if (!spent) return false;
 
     // Set HP to 0 and set condition track to helpless but alive
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+    await globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.hp.value': 0,
       'system.conditionTrack.current': Math.min(4, actor.system.conditionTrack.current)
     });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.hp.value': 0,
-      'system.conditionTrack.current': Math.min(4, actor.system.conditionTrack.current)
-    });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.hp.value': 0,
-      'system.conditionTrack.current': Math.min(4, actor.system.conditionTrack.current)
-    }); */
 
 
     ChatMessage.create({
