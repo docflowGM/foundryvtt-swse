@@ -9,6 +9,7 @@
  */
 
 import { swseLogger } from '../../utils/logger.js';
+import { SWSELanguageModule } from '../modules/language-module.js';
 
 export class AttributeIncreaseHandler {
   /**
@@ -94,6 +95,18 @@ export class AttributeIncreaseHandler {
     currentPending.languages = (currentPending.languages || 0) + languagesToGain;
 
     await actor.setFlag('swse', 'pendingAttributeGains', currentPending);
+
+    // Add language choice tokens via language module
+    if (SWSELanguageModule && languagesToGain > 0) {
+      const langs = SWSELanguageModule._normalizeLanguages(actor.system.languages || []);
+      for (let i = 0; i < languagesToGain; i++) {
+        langs.push(SWSELanguageModule.CHOICE_TOKEN);
+      }
+      const deduped = SWSELanguageModule._dedupe(langs);
+      await actor.update({ "system.languages": deduped }).catch(e => {
+        swseLogger.warn("SWSE | Failed to add language choice tokens:", e);
+      });
+    }
 
     // Emit hook for UI to handle selections
     Hooks.call('swse:intelligenceIncreased', {

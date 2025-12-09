@@ -1222,6 +1222,13 @@ export default class CharacterGenerator extends Application {
       // Store the actor reference
       this.actor = created;
 
+      // Emit chargen completion hook for modules to handle
+      Hooks.call('swse:progression:completed', {
+        actor: created,
+        mode: 'chargen',
+        level: this.characterData.level || 1
+      });
+
       // Open the character sheet
       created.sheet.render(true);
 

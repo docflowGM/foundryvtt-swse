@@ -6,29 +6,32 @@
  */
 export class SWSELanguageModule {
   static NAME = "swse-language-module";
-  static init(progressEngine) {
+  static init() {
     if (this._initialized) return;
     this._initialized = true;
-    this.engine = progressEngine;
     console.log("SWSE | Language Module initializing…");
-    if (progressEngine && typeof progressEngine.on === "function") {
-      progressEngine.on("chargen", async (payload) => {
-        try { await SWSELanguageModule.handleChargen(payload); } catch (e) { console.warn(e); }
-      });
-      progressEngine.on("level-up", async (payload) => {
-        try { await SWSELanguageModule.handleLevelUp(payload); } catch (e) { console.warn(e); }
-      });
-    } else {
-      Hooks.on("swse:chargen", async (payload) => {
-        try { await SWSELanguageModule.handleChargen(payload); } catch (e) { console.warn(e); }
-      });
-      Hooks.on("swse:levelup", async (payload) => {
-        try { await SWSELanguageModule.handleLevelUp(payload); } catch (e) { console.warn(e); }
-      });
-    }
+
+    // Listen for progression completion events
+    Hooks.on("swse:progression:completed", async (payload) => {
+      try {
+        const { actor, mode, level } = payload || {};
+        if (!actor) return;
+
+        if (mode === "chargen") {
+          await SWSELanguageModule.handleChargen(payload);
+        } else if (mode === "levelup") {
+          await SWSELanguageModule.handleLevelUp(payload);
+        }
+      } catch (e) {
+        console.warn("SWSE | Language Module progression handler error:", e);
+      }
+    });
+
+    // Listen for actor updates to handle feat/skill changes
     Hooks.on("updateActor", async (actor, diff) => {
       try { await SWSELanguageModule.onActorUpdate(actor, diff); } catch (e) { /* swallow */ }
     });
+
     console.log("SWSE | Language Module initialized");
   }
   static async handleChargen(payload) {
@@ -45,17 +48,20 @@ export class SWSELanguageModule {
     });
   }
   static async handleLevelUp(payload) {
+    // Note: Languages on level-up are granted through AttributeIncreaseHandler
+    // when Intelligence modifier increases (levels 4, 8, 12, 16, 20 typically).
+    // This method is kept for future extensions or to sync language state.
     const actor = payload?.actor ?? payload;
-    const level = payload?.level ?? (payload?.actor?.system?.details?.level) ?? undefined;
     if (!actor) return;
-    const intMod = SWSELanguageModule._getIntMod(actor);
-    const actorLevel = typeof level === "number" ? level : actor.system?.details?.level ?? 0;
-    if (actorLevel > 0 && actorLevel % 5 === 0 && intMod > 0) {
-      const langs = SWSELanguageModule._normalizeLanguages(actor.system.languages || []);
-      langs.push(SWSELanguageModule.CHOICE_TOKEN);
-      const deduped = SWSELanguageModule._dedupe(langs);
+
+    // Ensure actor's language list is properly formatted and deduplicated
+    const langs = SWSELanguageModule._normalizeLanguages(actor.system.languages || []);
+    const deduped = SWSELanguageModule._dedupe(langs);
+
+    // Only update if there are differences
+    if (JSON.stringify(langs) !== JSON.stringify(deduped)) {
       await actor.update({ "system.languages": deduped }).catch(e => {
-        console.warn("SWSE | Language module: failed to apply level-up language.", e);
+        console.warn("SWSE | Language module: failed to sync languages on level-up.", e);
       });
     }
   }
