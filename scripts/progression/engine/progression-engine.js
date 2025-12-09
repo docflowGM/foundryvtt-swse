@@ -93,56 +93,48 @@ export class ProgressionEngine {
   static async _applySpecies(actor, { speciesId } = {}) {
     const rules = PROGRESSION_RULES.species || {};
     if (!rules[speciesId]) throw new Error(`Unknown species: ${speciesId}`);
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.species": speciesId });
+    await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.species": speciesId });
   }
 
   static async _applyBackground(actor, { backgroundId } = {}) {
     const rules = PROGRESSION_RULES.backgrounds || {};
     if (!rules[backgroundId]) throw new Error(`Unknown background: ${backgroundId}`);
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.background": backgroundId });
+    await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.background": backgroundId });
   }
 
   static async _applyAbilities(actor, { method, values } = {}) {
     // values: { str, dex, con, int, wis, cha }
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.abilities": values || {} });
+    await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.abilities": values || {} });
   }
 
   static async _applyClass(actor, payload) {
     const progression = actor.system.progression || {};
     const classLevels = Array.from(progression.classLevels || []);
     classLevels.push({ class: payload.classId, level: 1, choices: payload.choices || {} });
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.classLevels": classLevels });
+    await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.classLevels": classLevels });
   }
 
   static async _applyClassLevel(actor, { classId, level, selections }) {
     const progression = actor.system.progression || {};
     const classLevels = Array.from(progression.classLevels || []);
     classLevels.push({ class: classId, level, selections });
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.classLevels": classLevels });
+    await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.classLevels": classLevels });
   }
 
   static async _applySkills(actor, payload) {
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.skills": payload.skills || [] });
+    await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.skills": payload.skills || [] });
   }
 
   static async _applyFeats(actor, { featIds = [] } = {}) {
     const progression = actor.system.progression || {};
     const feats = Array.from(new Set([...(progression.feats||[]), ...featIds]));
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.feats": feats });
+    await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.feats": feats });
   }
 
   static async _applyTalents(actor, { talentIds = [] } = {}) {
     const progression = actor.system.progression || {};
     const talents = Array.from(new Set([...(progression.talents||[]), ...talentIds]));
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.talents": talents });
+    await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.progression.talents": talents });
   }
 
   static getAvailableOptions(actor, stepId) {

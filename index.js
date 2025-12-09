@@ -4,6 +4,7 @@
 // ============================================
 
 import "./scripts/progression/progression-engine.js";
+import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engine/progression.js';
 
 // ---------------------------
 // Utilities & Core Infrastructure
@@ -29,6 +30,9 @@ import { SWSEActorBase } from './scripts/actors/base/swse-actor-base.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
 import { ActorEngine } from './scripts/actors/engine/actor-engine.js';
 import { applyActorUpdateAtomic, batchActorUpdates, safeActorUpdate, prepareUpdatePayload, validateActorFields } from './scripts/utils/actor-utils.js';
+import { sanitizeHTML, sanitizeChatMessage, canUserModifyActor, canUserModifyItem, withPermissionCheck, withGMCheck, escapeHTML, validateUserInput } from './scripts/utils/security-utils.js';
+import { hookMonitor, monitoredHook, debouncedHook, throttledHook, safeHook, hookPerformanceCommands } from './scripts/utils/hook-performance.js';
+import { compendiumLoader, compendiumCommands } from './scripts/utils/compendium-loader.js';
 
 // ---------------------------
 // Data Models
@@ -271,6 +275,7 @@ Hooks.once("init", async function () {
         SWSEVehicleSheet,
         SWSEItemSheet,
         ActorEngine,
+        ProgressionEngine: SWSEProgressionEngine,
         DamageSystem,
         CombatAutomation: SWSECombatAutomation,
         Combat: SWSECombat,
@@ -309,7 +314,21 @@ Hooks.once("init", async function () {
             batchActorUpdates,
             safeActorUpdate,
             prepareUpdatePayload,
-            validateActorFields
+            validateActorFields,
+            sanitizeHTML,
+            sanitizeChatMessage,
+            canUserModifyActor,
+            canUserModifyItem,
+            withPermissionCheck,
+            withGMCheck,
+            escapeHTML,
+            validateUserInput,
+            hookMonitor,
+            monitoredHook,
+            debouncedHook,
+            throttledHook,
+            safeHook,
+            compendiumLoader
         }
     };
 
@@ -394,6 +413,7 @@ Hooks.once("ready", async function () {
 
     initializeForcePowerHooks();
     initializeFollowerHooks();
+    initializeProgressionHooks();
 
     lazyLoader.setupLazyImages();
     SWSELogger.log('Lazy image loading initialized');
@@ -429,11 +449,23 @@ Hooks.once("ready", async function () {
         throttle,
         logError,
         errors: errorCommands,
+        hooks: hookPerformanceCommands,
+        compendium: compendiumCommands,
         applyActorUpdateAtomic,
         batchActorUpdates,
         safeActorUpdate,
         prepareUpdatePayload,
         validateActorFields,
+        sanitizeHTML,
+        sanitizeChatMessage,
+        canUserModifyActor,
+        canUserModifyItem,
+        withPermissionCheck,
+        withGMCheck,
+        escapeHTML,
+        validateUserInput,
+        hookMonitor,
+        compendiumLoader,
         ...game.swse
     });
 
