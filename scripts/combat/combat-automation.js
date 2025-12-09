@@ -41,10 +41,7 @@ export class SWSECombatAutomation {
         // Reset temporary resources like Second Wind
         if (combatant.actor.type === 'character') {
           await combatant.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.secondWind.used': false});
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.secondWind.used': false});
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.secondWind.used': false}); */
-
         }
       }
     });

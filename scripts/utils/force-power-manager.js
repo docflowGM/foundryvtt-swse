@@ -332,7 +332,6 @@ export class ForcePowerManager {
       // Initialize force suite if not already set
       if (!actor.system.forceSuite) {
         await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSuite': {
             max: 0,
             powers: []
@@ -378,7 +377,6 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
     // Update force suite maximum
     const newMax = this.calculateForceSuiteSize(actor);
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.forceSuite.max': newMax
     });
 globalThis.SWSE.ActorEngine.updateActor(actor, {
@@ -430,7 +428,6 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
         // Update force suite maximum
         const newMax = this.calculateForceSuiteSize(actor);
         await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSuite.max': newMax
         });
 globalThis.SWSE.ActorEngine.updateActor(actor, {

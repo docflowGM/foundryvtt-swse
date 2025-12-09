@@ -2230,10 +2230,7 @@ activateListeners(html) {
       yes: async (html) => {
         const skillKey = html.find('#human-bonus-skill').val();
         await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {[`system.skills.${skillKey}.trained`]: true});
 globalThis.SWSE.ActorEngine.updateActor(actor, {[`system.skills.${skillKey}.trained`]: true});
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {[`system.skills.${skillKey}.trained`]: true}); */
-
         ui.notifications.info(`Trained in ${skillKey.replace(/_/g, ' ')}`);
       }
     });
@@ -2323,11 +2320,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {[`system.skills.${skillKey}.trai
 
     // Spend the Force Point
     await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': currentFP - 1});
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': currentFP - 1});
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': currentFP - 1}); */
-
-
     // Create chat message
     const messageContent = `
       <div class="swse force-point-roll">
@@ -2380,11 +2373,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': curr
     }
 
     await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newValue});
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newValue});
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newValue}); */
-
-
     // Show notification
     if (newValue > currentDarkSide) {
       ui.notifications.warn(`Dark Side Score increased to ${newValue}`);

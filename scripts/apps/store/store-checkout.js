@@ -101,11 +101,7 @@ export async function buyService(actor, serviceName, serviceCost, updateDialogue
     // Deduct credits immediately
     const newCredits = currentCredits - serviceCost;
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": newCredits });
 globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": newCredits });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": newCredits }); */
-
-
     ui.notifications.info(`${serviceName} purchased for ${serviceCost} credits.`);
 
     // Update Rendarr's dialogue
@@ -171,11 +167,7 @@ export async function buyDroid(store, actorId) {
     try {
         // Deduct credits
         await store.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost });
 globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost }); */
-
-
         // Create droid actor with player ownership
         const droidData = droidTemplate.toObject();
         droidData.name = `${droidTemplate.name} (${store.actor.name}'s)`;
@@ -247,11 +239,7 @@ export async function buyVehicle(store, actorId, condition) {
     try {
         // Deduct credits
         await store.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost });
 globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost }); */
-
-
         // Create vehicle actor with player ownership
         const vehicleData = vehicleTemplate.toObject();
         vehicleData.name = `${condition === "used" ? "(Used) " : ""}${vehicleTemplate.name}`;
@@ -470,10 +458,7 @@ export async function checkout(store, animateNumberCallback) {
 
         // Deduct credits FIRST and track it
         await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - total });
 globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - total });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - total }); */
-
         creditsDeducted = true;
 
         // Add regular items to actor
@@ -533,10 +518,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - tot
         if (creditsDeducted) {
             try {
                 await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits });
 globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits }); */
-
                 ui.notifications.error("Purchase failed! Credits have been refunded.");
                 SWSELogger.info("SWSE Store | Credits refunded after failed checkout");
             } catch (refundErr) {

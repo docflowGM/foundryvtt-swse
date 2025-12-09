@@ -145,7 +145,6 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
 
     if (roll.total >= 10) {
         await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
             'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
         });
 globalThis.SWSE.ActorEngine.updateActor(actor, {

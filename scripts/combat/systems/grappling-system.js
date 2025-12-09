@@ -325,10 +325,7 @@ export class SWSEGrappling {
     const conditions = actor.system.conditions || [];
     conditions.push(condition);
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': conditions});
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': conditions});
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': conditions}); */
-
   }
 
   /**
@@ -339,10 +336,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': conditions}
     const conditions = actor.system.conditions || [];
     const filtered = conditions.filter(c => c.id !== conditionId);
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': filtered});
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': filtered});
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': filtered}); */
-
   }
 
   /**

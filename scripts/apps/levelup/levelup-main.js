@@ -1232,7 +1232,6 @@ export class SWSELevelUpEnhanced extends FormApplication {
     try {
       // If this is level 1, save the starting class for mentor system
       if (this.// AUTO-CONVERT actor.system.* assignment -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: actor.system.level === 1) {
         await setLevel1Class(this.actor, this.selectedClass.name);
 // (no heuristic applied)
 /* ORIGINAL: actor.system.level === 1) {
@@ -1354,7 +1353,6 @@ export class SWSELevelUpEnhanced extends FormApplication {
       const newHPValue = this.actor.system.hp.value + totalHPGain;
 
       await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
         "system.hp.max": newHPMax,
         "system.hp.value": newHPValue
       });
@@ -1379,7 +1377,6 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
       SWSELogger.log(`SWSE LevelUp | Updating defense bonuses: Fort +${defenseBonuses.fortitude}, Ref +${defenseBonuses.reflex}, Will +${defenseBonuses.will}`);
 
       await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
         "system.bab": totalBAB,
         "system.defenses.fortitude.classBonus": defenseBonuses.fortitude,
         "system.defenses.reflex.classBonus": defenseBonuses.reflex,

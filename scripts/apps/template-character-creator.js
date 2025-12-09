@@ -735,7 +735,6 @@ export class TemplateCharacterCreator extends Application {
       const forceUsingClasses = ['Jedi', 'Sith', 'Force Adept', 'Force Disciple'];
       if (forceUsingClasses.includes(template.className)) {
         await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSensitive': true
         });
 globalThis.SWSE.ActorEngine.updateActor(actor, {
