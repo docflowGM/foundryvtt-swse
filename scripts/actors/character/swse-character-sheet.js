@@ -375,6 +375,7 @@ activateListeners(html) {
     html.find('.open-store').click(this._onOpenStore.bind(this));
     html.find('.add-class-btn').click(this._onAddClass.bind(this));
     html.find('.pick-species-btn').click(this._onPickSpecies.bind(this));
+    html.find('.roll-attributes-btn').click(this._onRollAttributes.bind(this));
 
     // Add Feat and Add Talent buttons
     html.find('.add-feat').click(this._onItemCreate.bind(this));
@@ -885,6 +886,135 @@ activateListeners(html) {
     // Create and render the store application
     const store = new SWSEStore(this.actor);
     store.render(true);
+  }
+
+  /**
+   * Handle rolling for attributes
+   */
+  async _onRollAttributes(event) {
+    event.preventDefault();
+    SWSELogger.log('SWSE | Roll attributes button clicked');
+
+    try {
+      // Import the AbilityRollingController
+      const { AbilityRollingController } = await import('./../../apps/chargen/ability-rolling.js');
+
+      // Create a dialog to select rolling method
+      new Dialog({
+        title: "Roll for Attributes",
+        content: `
+          <div style="padding: 1rem;">
+            <p style="text-align: center; margin-bottom: 1rem;">Choose your attribute rolling method:</p>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <label style="display: flex; align-items: center; padding: 0.5rem; border: 1px solid #999; border-radius: 4px; cursor: pointer;">
+                <input type="radio" name="roll-method" value="standard" checked style="margin-right: 0.5rem;"/>
+                <strong>Standard (4d6 drop lowest)</strong> - Roll 6 sets of 4d6, drop the lowest die from each set
+              </label>
+              <label style="display: flex; align-items: center; padding: 0.5rem; border: 1px solid #999; border-radius: 4px; cursor: pointer;">
+                <input type="radio" name="roll-method" value="organic" style="margin-right: 0.5rem;"/>
+                <strong>Organic (21d6 drop lowest 3)</strong> - Roll 21d6, drop the 3 lowest overall, group remaining into 6 sets
+              </label>
+            </div>
+          </div>
+        `,
+        buttons: {
+          roll: {
+            icon: '<i class="fas fa-dice"></i>',
+            label: "Roll Attributes",
+            callback: async (html) => {
+              const method = html.find('input[name="roll-method"]:checked').val();
+              await this._openAttributeRoller(method);
+            }
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: "Cancel"
+          }
+        },
+        default: "roll"
+      }).render(true);
+    } catch (error) {
+      SWSELogger.error('SWSE | Failed to open attribute roller:', error);
+      ui.notifications.error("Failed to open the attribute roller. See console for details.");
+    }
+  }
+
+  /**
+   * Open the attribute roller application
+   */
+  async _openAttributeRoller(method = 'standard') {
+    try {
+      const { AbilityRollingController } = await import('./../../apps/chargen/ability-rolling.js');
+
+      // Create a dialog to hold the ability roller
+      const dialog = new Dialog({
+        title: `Roll Attributes - ${method === 'standard' ? 'Standard (4d6 drop lowest)' : 'Organic (21d6 drop lowest 3)'}`,
+        content: `
+          <div class="swse-chargen-ability-rolling" role="application" aria-label="Ability Rolling">
+            <div class="toolbar" role="toolbar" aria-label="Rolling controls">
+              <button class="btn-reroll-all">REROLL ALL</button>
+              <button class="btn-undo" disabled>UNDO</button>
+              <button class="btn-confirm" disabled>CONFIRM</button>
+            </div>
+
+            <div class="dice-pool" role="list" aria-label="Dice Pool"></div>
+
+            <div class="assignments" role="region" aria-label="Ability Assignments">
+              <div class="stat-box" data-stat="STR">
+                <div class="stat-label">STR</div>
+                <div class="assigned-slot" data-stat="STR"></div>
+              </div>
+              <div class="stat-box" data-stat="DEX">
+                <div class="stat-label">DEX</div>
+                <div class="assigned-slot" data-stat="DEX"></div>
+              </div>
+              <div class="stat-box" data-stat="CON">
+                <div class="stat-label">CON</div>
+                <div class="assigned-slot" data-stat="CON"></div>
+              </div>
+              <div class="stat-box" data-stat="INT">
+                <div class="stat-label">INT</div>
+                <div class="assigned-slot" data-stat="INT"></div>
+              </div>
+              <div class="stat-box" data-stat="WIS">
+                <div class="stat-label">WIS</div>
+                <div class="assigned-slot" data-stat="WIS"></div>
+              </div>
+              <div class="stat-box" data-stat="CHA">
+                <div class="stat-label">CHA</div>
+                <div class="assigned-slot" data-stat="CHA"></div>
+              </div>
+            </div>
+          </div>
+        `,
+        render: (html) => {
+          const root = html.find('.swse-chargen-ability-rolling')[0];
+          if (root) {
+            // Initialize the ability rolling controller
+            const controller = new AbilityRollingController(this.actor, root, { method });
+
+            // Store controller reference for cleanup
+            dialog._abilityController = controller;
+          }
+        },
+        close: () => {
+          // Cleanup if needed
+          if (dialog._abilityController) {
+            delete dialog._abilityController;
+          }
+        },
+        buttons: {}
+      }, {
+        width: 700,
+        height: 600,
+        classes: ['swse-ability-rolling-dialog']
+      });
+
+      dialog.render(true);
+    } catch (error) {
+      SWSELogger.error('SWSE | Failed to create attribute roller:', error);
+      ui.notifications.error("Failed to create the attribute roller. See console for details.");
+    }
   }
 
   /**

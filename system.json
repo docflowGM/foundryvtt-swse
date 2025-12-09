@@ -43,7 +43,9 @@
     "styles/apps/upgrade-app.css",
     "styles/sheets/themes/holo-default.css",
     "styles/sheets/themes/high-contrast.css",
-    "styles/components/assets-tab.css"
+    "styles/components/assets-tab.css",
+    "styles/progression/sidebar.css",
+    "styles/progression/ability-rolling.css"
   ],
   "languages": [
     {

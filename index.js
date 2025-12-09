@@ -372,6 +372,68 @@ Hooks.once("ready", async function () {
         ...game.swse
     });
 
+    // ============================================
+    // SWSE Progression UI Bootstrap
+    // ============================================
+    try {
+        // Preload progression templates
+        await loadTemplates([
+            'templates/apps/progression/sidebar.hbs',
+            'templates/apps/progression/attribute-method.hbs',
+            'templates/apps/chargen/ability-rolling.hbs'
+        ]).catch(() => {});
+
+        // Import sidebar controller (if present)
+        import('./scripts/apps/progression/sidebar.js').then(mod => {
+            // Attach if template already present
+            try {
+                if (!window.SWSE_PROG_SIDEBAR && document.querySelector('.swse-prog-sidebar')) {
+                    window.SWSE_PROG_SIDEBAR = new mod.SWSEProgressionSidebar();
+                    swseLogger.log('SWSE | Progression sidebar attached');
+                }
+            } catch(e) { swseLogger.warn('SWSE | Sidebar init error', e); }
+        }).catch(e => swseLogger.warn('SWSE | Sidebar import failed', e));
+
+        // Install attribute selector hook listener
+        Hooks.on('swse:attribute-method:selected', (method) => {
+            Hooks.call('swse:attribute-method:apply', method);
+        });
+
+        // Expose the ability rolling controller for apps to instantiate
+        import('./scripts/apps/chargen/ability-rolling.js').then(mod => {
+            window.SWSE_AbilityRolling = mod.AbilityRollingController;
+            swseLogger.log('SWSE | Ability rolling controller available');
+        }).catch(e => swseLogger.warn('SWSE | ability-rolling import failed', e));
+
+        // Load engine integration helpers (non-blocking)
+        import('./scripts/apps/progression/engine-autoload.js').catch(e => swseLogger.warn('SWSE | engine-autoload import failed', e));
+        import('./scripts/apps/progression/engine-helper.js').catch(e => swseLogger.warn('SWSE | engine-helper import failed', e));
+
+        // Auto-close progression/chargen windows when progression completes
+        Hooks.on('swse:progression:completed', ({ actor, level, mode } = {}) => {
+            try {
+                for (const appId in ui.windows) {
+                    const app = ui.windows[appId];
+                    if (!app) continue;
+                    const name = app.constructor?.name || '';
+                    const title = (app?.title || '').toString();
+                    const likelyProgression = name.toLowerCase().includes('progress') || name.toLowerCase().includes('chargen') ||
+                                             /progression|chargen|level up|character creation/i.test(title);
+                    if (likelyProgression && typeof app.close === 'function') {
+                        try { app.close(); } catch(_) {}
+                    }
+                }
+                if (window.SWSE_PROG_SIDEBAR && typeof window.SWSE_PROG_SIDEBAR.disconnect === 'function') {
+                    try { window.SWSE_PROG_SIDEBAR.disconnect(); } catch(_) {}
+                }
+            } catch(e) { swseLogger.warn('SWSE | auto-close handler failed', e); }
+        });
+
+        swseLogger.log('SWSE | Progression UI system bootstrapped');
+    } catch(e) {
+        swseLogger.warn('SWSE | Progression bootstrap error', e);
+    }
+
     swseLogger.log("SWSE | Enhanced System Fully Loaded");
 });
 
