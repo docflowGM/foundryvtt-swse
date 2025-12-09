@@ -98,7 +98,6 @@ export class SWSEDroidHandler {
     // Add item and update slot usage
     await actor.createEmbeddedDocuments('Item', [systemItem.toObject()]);
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.systemSlots.used': slots.used + slotsRequired
     });
 globalThis.SWSE.ActorEngine.updateActor(actor, {
@@ -122,7 +121,6 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
 
     await actor.deleteEmbeddedDocuments('Item', [systemItem.id]);
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.systemSlots.used': Math.max(0, slots.used - slotsRequired)
     });
 globalThis.SWSE.ActorEngine.updateActor(actor, {

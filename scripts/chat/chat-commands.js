@@ -32,10 +32,7 @@ export function registerChatCommands() {
             token.actor.system.hp.max
           );
           token.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.hp.value': newHP });
 globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.hp.value': newHP });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.hp.value': newHP }); */
-
         }
       }
       return false;

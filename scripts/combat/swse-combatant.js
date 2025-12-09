@@ -107,7 +107,6 @@ export class SWSECombatant extends Combatant {
     if (!actor) return;
 
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.actionEconomy': {
         swift: true,
         move: true,

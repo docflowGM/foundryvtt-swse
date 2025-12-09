@@ -95,11 +95,7 @@ export class SWSERoll {
 
     // Spend the force point
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': currentFP - 1});
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': currentFP - 1});
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': currentFP - 1}); */
-
-
     // Show roll in chat
     const messageContent = `
       <div class="swse force-point-roll">
@@ -631,10 +627,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': curr
     if (isDarkSide) {
       const newDarkSideScore = (actor.system.darkSideScore || 0) + 1;
       await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newDarkSideScore});
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newDarkSideScore});
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newDarkSideScore}); */
-
       ui.notifications.warn(`Dark Side Score increased to ${newDarkSideScore}`);
     }
 

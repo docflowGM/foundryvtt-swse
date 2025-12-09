@@ -386,8 +386,6 @@ export class CharacterTemplates {
 
           if (skillKey) {
 // AUTO-CONVERT: confidence=0.00
-// TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
 /* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
               [`system.skills.${skillKey}.focused`]: true
@@ -411,8 +409,6 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
       // Handle Force Sensitivity feat - auto-check Force Sensitive
       if (featName === 'Force Sensitivity') {
 // AUTO-CONVERT: confidence=0.00
-// TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
 /* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
           'system.forceSensitive': true

@@ -115,7 +115,6 @@ export class SWSECombatDocument extends Combat {
       for (const combatant of this.combatants) {
         if (combatant.actor) {
           await combatant.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
             'system.secondWind.uses': 1,
             'system.actionEconomy': {
               swift: true,
@@ -164,7 +163,6 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
     const combatant = this.combatant;
     if (combatant?.actor && game.user.isGM) {
       await combatant.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.actionEconomy': {
           swift: true,
           move: true,

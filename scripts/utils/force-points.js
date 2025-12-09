@@ -71,10 +71,7 @@ export class ForcePointsUtil {
     if (darkSideUsed) {
       const currentDarkSide = actor.system.darkSideScore || 0;
       await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide + 1});
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide + 1});
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide + 1}); */
-
     }
 
     return totalBonus;
@@ -216,11 +213,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentD
 
     // Reduce Dark Side Score
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide - 1});
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide - 1});
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide - 1}); */
-
-
     ui.notifications.info(`Dark Side Score reduced to ${currentDarkSide - 1}`);
     return true;
   }
@@ -237,7 +230,6 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentD
 
     // Set HP to 0 and set condition track to helpless but alive
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.hp.value': 0,
       'system.conditionTrack.current': Math.min(4, actor.system.conditionTrack.current)
     });

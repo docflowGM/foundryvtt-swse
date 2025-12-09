@@ -46,10 +46,7 @@ export class ActorSizeMigration {
         SWSELogger.log(`Fixing ${actor.name}: "${currentSize}" -> "${newSize}"`);
 
         await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.size': newSize });
 globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.size': newSize });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.size': newSize }); */
-
         fixed++;
 
       } catch (err) {

@@ -3,7 +3,7 @@
  * Provides graceful error handling and recovery mechanisms
  * Enhanced with detailed Foundry/Forge error logging
  */
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger, swseLogger } from '../utils/logger.js';
 
 export class ErrorHandler {
   constructor() {

@@ -342,8 +342,6 @@ export async function applyClassFeatures(classDoc, classLevel, actor) {
     const newValue = currentValue + levelData.forcePoints;
 
 // AUTO-CONVERT: confidence=0.00
-// TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
 /* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
       "system.forcePoints.max": newMax,

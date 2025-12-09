@@ -1182,10 +1182,7 @@ export class SWSEActorSheetBase extends ActorSheet {
     }
 
     return this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': step});
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': step});
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': step}); */
-
   }
 
   /**
@@ -1196,10 +1193,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current':
     const current = this.actor.system.conditionTrack?.current || 0;
     const newStep = Math.max(0, current - 1);
     return this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': newStep});
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': newStep});
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': newStep}); */
-
   }
 
   /**
@@ -1211,9 +1205,6 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current':
     const max = 5; // Maximum condition track steps (0-5)
     const newStep = Math.min(max, current + 1);
     return this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': newStep});
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': newStep});
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': newStep}); */
-
   }
 }

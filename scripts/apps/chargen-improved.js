@@ -405,7 +405,6 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
     if (Object.keys(updates).length > 0) {
 // AUTO-CONVERT: confidence=0.00
-// TODO: manual migration required. Original: await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
 // (no heuristic applied)
 /* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, updates); */
     }
@@ -472,8 +471,6 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     const newHP = currentHP + hpGain;
 
 // AUTO-CONVERT: confidence=0.00
-// TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
 /* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
       "system.level": newLevel,

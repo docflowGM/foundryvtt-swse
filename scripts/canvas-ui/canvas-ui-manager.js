@@ -416,20 +416,11 @@ class SWSECanvasToolbar {
       const actor = token.actor;
       if (!actor) continue;
 // AUTO-CONVERT: confidence=0.00
-// TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue });
 globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue }); */
-
 await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue });
 globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue }); */
-
 /* ORIGINAL (for review): await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue });
 globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionValue }); */
  */
       ChatMessage.create({ speaker: ChatMessage.getSpeaker({ token }), content: `<div class="swse-chat-card"><strong>${token.name}</strong> condition set to <strong>${conditionLabel}</strong></div>` });
     }
@@ -472,20 +463,11 @@ globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': conditionVa
       const actor = token.actor;
       if (!actor) continue;
 // AUTO-CONVERT: confidence=0.00
-// TODO: manual migration required. Original: await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 });
 globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 }); */
-
 await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 });
 globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 }); */
-
 /* ORIGINAL (for review): await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 });
 globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.condition': 0 }); */
  */
       ChatMessage.create({ speaker: ChatMessage.getSpeaker({ token }), content: `<div class="swse-chat-card"><strong>${token.name}</strong> has rested and recovered</div>` });
     }

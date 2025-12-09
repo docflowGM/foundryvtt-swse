@@ -200,7 +200,6 @@ export class DropHandler {
       if (template.speciesTraits) bioNotes += `<h3>Species Traits</h3><p>${template.speciesTraits}</p>`;
 
       await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.biography': (actor.system.biography || '') + bioNotes
       });
 globalThis.SWSE.ActorEngine.updateActor(actor, {
@@ -396,7 +395,6 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
     if (!confirm) return false;
     
     await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-// TODO: manual migration required. Original: globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.vehicleType': template.system.vehicleType || 'starfighter',
       'system.shields': template.system.shields || 0,
       'system.hull': template.system.hull || 0,

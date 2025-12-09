@@ -4,6 +4,7 @@
 // ============================================
 
 import "./scripts/progression/progression-engine.js";
+import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engine/progression.js';
 
 // ---------------------------
 // Utilities & Core Infrastructure
@@ -27,6 +28,11 @@ import { registerSystemSettings } from './scripts/core/settings.js';
 // ---------------------------
 import { SWSEActorBase } from './scripts/actors/base/swse-actor-base.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
+import { ActorEngine } from './scripts/actors/engine/actor-engine.js';
+import { applyActorUpdateAtomic, batchActorUpdates, safeActorUpdate, prepareUpdatePayload, validateActorFields } from './scripts/utils/actor-utils.js';
+import { sanitizeHTML, sanitizeChatMessage, canUserModifyActor, canUserModifyItem, withPermissionCheck, withGMCheck, escapeHTML, validateUserInput } from './scripts/utils/security-utils.js';
+import { hookMonitor, monitoredHook, debouncedHook, throttledHook, safeHook, hookPerformanceCommands } from './scripts/utils/hook-performance.js';
+import { compendiumLoader, compendiumCommands } from './scripts/utils/compendium-loader.js';
 
 // ---------------------------
 // Data Models
@@ -155,6 +161,50 @@ CONFIG.SWSE = SWSE;
 // ---------------------------
 // Utility Functions
 // ---------------------------
+
+/**
+ * Checks Foundry VTT version compatibility and warns if outside tested range.
+ * @returns {boolean} True if compatible, false if incompatible
+ */
+function checkFoundryCompatibility() {
+    const currentVersion = game.version || game.data.version;
+    const systemData = game.system || game.data.system;
+    const compatibility = systemData.compatibility || systemData.data?.compatibility;
+
+    if (!compatibility) {
+        swseLogger.warn("SWSE | Unable to determine compatibility settings");
+        return true;
+    }
+
+    const minVersion = compatibility.minimum;
+    const maxVersion = compatibility.maximum;
+    const verifiedVersion = compatibility.verified;
+
+    // Parse versions for comparison
+    const current = parseInt(currentVersion.split('.')[0]);
+    const min = parseInt(minVersion);
+    const max = parseInt(maxVersion);
+
+    swseLogger.log(`SWSE | Foundry Version: ${currentVersion} | Tested Range: ${minVersion}-${maxVersion}`);
+
+    if (current < min) {
+        const message = `SWSE system requires Foundry VTT version ${minVersion} or higher. Current version: ${currentVersion}. The system may not function correctly.`;
+        ui.notifications?.error(message, { permanent: true });
+        swseLogger.error(message);
+        return false;
+    }
+
+    if (current > max) {
+        const message = `SWSE system has been tested up to Foundry VTT version ${maxVersion}. Current version: ${currentVersion}. Some features may not work as expected.`;
+        ui.notifications?.warn(message, { permanent: false });
+        swseLogger.warn(message);
+        return true; // Warning only, not a blocker
+    }
+
+    swseLogger.log(`SWSE | Foundry version ${currentVersion} is compatible`);
+    return true;
+}
+
 function enhanceValidationLogging() {
     [Actor, Item].forEach(DocumentClass => {
         const original = DocumentClass.prototype.validate;
@@ -206,6 +256,9 @@ function enhanceValidationLogging() {
 Hooks.once("init", async function () {
     swseLogger.log("SWSE | Initializing Star Wars Saga Edition System");
 
+    // Check Foundry Version Compatibility
+    checkFoundryCompatibility();
+
     // System Settings
     registerSystemSettings();
 
@@ -221,6 +274,8 @@ Hooks.once("init", async function () {
         SWSENPCSheet,
         SWSEVehicleSheet,
         SWSEItemSheet,
+        ActorEngine,
+        ProgressionEngine: SWSEProgressionEngine,
         DamageSystem,
         CombatAutomation: SWSECombatAutomation,
         Combat: SWSECombat,
@@ -252,7 +307,29 @@ Hooks.once("init", async function () {
         errorHandler,
         lazyLoader,
         perfMonitor,
-        utils: { debounce, throttle }
+        utils: {
+            debounce,
+            throttle,
+            applyActorUpdateAtomic,
+            batchActorUpdates,
+            safeActorUpdate,
+            prepareUpdatePayload,
+            validateActorFields,
+            sanitizeHTML,
+            sanitizeChatMessage,
+            canUserModifyActor,
+            canUserModifyItem,
+            withPermissionCheck,
+            withGMCheck,
+            escapeHTML,
+            validateUserInput,
+            hookMonitor,
+            monitoredHook,
+            debouncedHook,
+            throttledHook,
+            safeHook,
+            compendiumLoader
+        }
     };
 
     // Lazy Loader Early
@@ -336,6 +413,7 @@ Hooks.once("ready", async function () {
 
     initializeForcePowerHooks();
     initializeFollowerHooks();
+    initializeProgressionHooks();
 
     lazyLoader.setupLazyImages();
     SWSELogger.log('Lazy image loading initialized');
@@ -358,6 +436,7 @@ Hooks.once("ready", async function () {
     }
 
     Object.assign(window.SWSE, {
+        ActorEngine,
         cacheManager,
         dataPreloader,
         errorHandler,
@@ -370,6 +449,23 @@ Hooks.once("ready", async function () {
         throttle,
         logError,
         errors: errorCommands,
+        hooks: hookPerformanceCommands,
+        compendium: compendiumCommands,
+        applyActorUpdateAtomic,
+        batchActorUpdates,
+        safeActorUpdate,
+        prepareUpdatePayload,
+        validateActorFields,
+        sanitizeHTML,
+        sanitizeChatMessage,
+        canUserModifyActor,
+        canUserModifyItem,
+        withPermissionCheck,
+        withGMCheck,
+        escapeHTML,
+        validateUserInput,
+        hookMonitor,
+        compendiumLoader,
         ...game.swse
     });
 
