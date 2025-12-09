@@ -1,3 +1,4 @@
+import { swseLogger } from '../../scripts/utils/logger.js';
 import { skillHelpers } from './skill-helpers.js';
 import { stringHelpers } from './string-helpers.js';
 import { mathHelpers } from './math-helpers.js';

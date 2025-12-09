@@ -20,6 +20,7 @@ import { lazyLoader } from './scripts/core/lazy-loader.js';
 // Configuration
 // ---------------------------
 import { SWSE_SKILLS, getSkillConfig, getSkillsArray } from './scripts/config/skills.js';
+import { registerSystemSettings } from './scripts/core/settings.js';
 
 // ---------------------------
 // Core Document Classes
@@ -436,11 +437,3 @@ Hooks.once("ready", async function () {
 
     swseLogger.log("SWSE | Enhanced System Fully Loaded");
 });
-
-// ---------------------------
-// System Settings Registration
-// ---------------------------
-function registerSystemSettings() {
-    // [Full settings registration as in your original index.js...]
-}
-

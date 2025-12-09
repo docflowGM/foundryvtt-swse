@@ -1,5 +1,6 @@
-/**
 import { SWSELogger } from '../utils/logger.js';
+
+/**
  * System settings for SWSE
  */
 export function registerSystemSettings() {
