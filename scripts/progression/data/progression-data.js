@@ -31,7 +31,7 @@ export const PROGRESSION_RULES = {
       languages: ["Binary"],
       tags: ["construct"],
       immunities: ["poison", "disease"],
-      abilityMods: { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 } // Determined by chassis
+      abilityMods: { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 }
     },
     Wookiee: {
       name: "Wookiee",
@@ -41,7 +41,7 @@ export const PROGRESSION_RULES = {
       abilityMods: { str: 2, dex: 0, con: 0, int: 0, wis: 0, cha: 0 },
       bonusFeat: false
     },
-    Twi'lek: {
+    "Twi'lek": {
       name: "Twi'lek",
       size: "medium",
       speed: 6,
@@ -58,8 +58,9 @@ export const PROGRESSION_RULES = {
       bonusFeat: false
     }
   },
+
   backgrounds: {
-    "Spacer": {
+    Spacer: {
       name: "Spacer",
       trainedSkills: ["Pilot", "Use Computer"]
     },
@@ -76,12 +77,13 @@ export const PROGRESSION_RULES = {
       trainedSkills: ["Stealth", "Deception"]
     }
   },
+
   classes: {
     Soldier: {
       name: "Soldier",
       hitDie: 10,
       skillPoints: 3,
-      baseAttackBonus: "high", // +1 per level
+      baseAttackBonus: "high",
       classSkills: [
         "Climb", "Endurance", "Initiative", "Jump", "Knowledge (Tactics)",
         "Mechanics", "Perception", "Pilot", "Ride", "Survival", "Swim"
@@ -100,11 +102,12 @@ export const PROGRESSION_RULES = {
         will: 0
       }
     },
+
     Jedi: {
       name: "Jedi",
       hitDie: 10,
       skillPoints: 2,
-      baseAttackBonus: "high", // +1 per level (fast progression)
+      baseAttackBonus: "high",
       classSkills: [
         "Acrobatics", "Climb", "Endurance", "Initiative", "Jump",
         "Knowledge (Galactic Lore)", "Perception", "Persuasion", "Pilot",
@@ -123,14 +126,16 @@ export const PROGRESSION_RULES = {
       },
       forceSensitive: true
     },
+
     Noble: {
       name: "Noble",
       hitDie: 6,
       skillPoints: 6,
-      baseAttackBonus: "low", // +0.5 per level (slow progression)
+      baseAttackBonus: "low",
       classSkills: [
-        "Deception", "Gather Information", "Initiative", "Knowledge (Bureaucracy)",
-        "Knowledge (Galactic Lore)", "Perception", "Persuasion", "Pilot", "Ride"
+        "Deception", "Gather Information", "Initiative",
+        "Knowledge (Bureaucracy)", "Knowledge (Galactic Lore)",
+        "Perception", "Persuasion", "Pilot", "Ride"
       ],
       startingFeats: [
         "Linguist",
@@ -144,11 +149,12 @@ export const PROGRESSION_RULES = {
         will: 2
       }
     },
+
     Scout: {
       name: "Scout",
       hitDie: 8,
       skillPoints: 4,
-      baseAttackBonus: "medium", // +0.75 per level
+      baseAttackBonus: "medium",
       classSkills: [
         "Acrobatics", "Climb", "Endurance", "Initiative", "Jump",
         "Knowledge (Galactic Lore)", "Knowledge (Life Sciences)", "Knowledge (Physical Sciences)",
@@ -167,11 +173,12 @@ export const PROGRESSION_RULES = {
         will: 0
       }
     },
+
     Scoundrel: {
       name: "Scoundrel",
       hitDie: 6,
       skillPoints: 5,
-      baseAttackBonus: "medium", // +0.75 per level
+      baseAttackBonus: "medium",
       classSkills: [
         "Acrobatics", "Climb", "Deception", "Gather Information", "Initiative",
         "Jump", "Knowledge (Galactic Lore)", "Mechanics", "Perception",
@@ -190,8 +197,9 @@ export const PROGRESSION_RULES = {
       }
     }
   },
+
   templates: {
-    "gunslinger_outlaw": {
+    gunslinger_outlaw: {
       name: "Gunslinger (Outlaw)",
       species: null,
       background: "Spacer",
@@ -206,18 +214,14 @@ export const PROGRESSION_RULES = {
 };
 
 /**
- * Helper function to calculate base attack bonus
- * ALWAYS loads from compendium to get actual BAB values from level_progression.
- * Sums the BAB values from each class level.
- * E.g., 6 levels Jedi (BAB 1+1+1+1+1+1=6) + 2 levels Jedi Knight (BAB 1+1=2) = 8 total
+ * Calculate total Base Attack Bonus from class levels.
  */
 export async function calculateBAB(classLevels) {
-  const { getClassData } = await import('../utils/class-data-loader.js');
+  const { getClassData } = await import("../utils/class-data-loader.js");
 
   let totalBAB = 0;
 
   for (const classLevel of classLevels) {
-    // Always load from compendium (source of truth)
     const classData = await getClassData(classLevel.class);
 
     if (!classData) {
@@ -225,15 +229,12 @@ export async function calculateBAB(classLevels) {
       continue;
     }
 
-    // Get BAB from level progression
     const rawData = classData._raw;
     const levelProgression = rawData?.level_progression || [];
     const levelsInClass = classLevel.level || 1;
 
-    // Get BAB from the final level taken in this class
-    // The BAB in level_progression is cumulative (e.g., level 6 Jedi = +6 total from Jedi)
     if (levelsInClass > 0 && levelsInClass <= levelProgression.length) {
-      const finalLevelData = levelProgression[levelsInClass - 1]; // Array is 0-indexed
+      const finalLevelData = levelProgression[levelsInClass - 1];
       totalBAB += finalLevelData.bab || 0;
     }
   }
@@ -242,22 +243,15 @@ export async function calculateBAB(classLevels) {
 }
 
 /**
- * Helper function to calculate save bonus
- * ALWAYS loads from compendium (source of truth).
- * Returns the HIGHEST flat defense bonus from all classes taken.
- * Defense bonuses are constant per class and don't scale with level.
- * E.g., Jedi always gives Fort +1, Ref +1, Will +1 regardless of levels.
+ * Calculate the highest save bonus a character gets from their classes.
  */
 export async function calculateSaveBonus(classLevels, saveType) {
-  const { getClassData } = await import('../utils/class-data-loader.js');
+  const { getClassData } = await import("../utils/class-data-loader.js");
 
   let maxBonus = 0;
-
-  // Get unique class names
   const uniqueClasses = new Set(classLevels.map(cl => cl.class));
 
   for (const className of uniqueClasses) {
-    // Always load from compendium (source of truth)
     const classData = await getClassData(className);
 
     if (!classData) {
@@ -265,34 +259,32 @@ export async function calculateSaveBonus(classLevels, saveType) {
       continue;
     }
 
-    // Map saveType to defense key
-    const saveKey = saveType === 'fort' ? 'fortitude' : saveType === 'ref' ? 'reflex' : 'will';
+    const saveKey =
+      saveType === "fort" ? "fortitude" :
+      saveType === "ref" ? "reflex" :
+      "will";
 
-    // Get flat defense bonus from class
     const classBonus = classData.defenses?.[saveKey] || 0;
-
-    // Take the highest bonus across all classes
     maxBonus = Math.max(maxBonus, classBonus);
   }
 
   return maxBonus;
 }
 
-
-/* --- Force power data (added by install_force_power_unified.py) --- */
+/* --- Force Power Data --- */
 export const FORCE_POWER_DATA = {
   feats: {
     "Force Training": { grants: 1 }
   },
   classes: {
-    "Jedi": {
-      "1": { "powers": 0 },
-      "3": { "powers": 1 },
-      "7": { "powers": 1 },
-      "11": { "powers": 1 }
+    Jedi: {
+      1: { powers: 0 },
+      3: { powers: 1 },
+      7: { powers: 1 },
+      11: { powers: 1 }
     }
   },
   templates: {
-    // Add template-specific power grants here, e.g. "jedi_padawan": { powers: 2 }
+    // Add template-specific power grants here
   }
 };
