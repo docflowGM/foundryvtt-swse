@@ -114,9 +114,9 @@ export class ActorProgressionUpdater {
 
       const hitDie = classData.hitDie || 6;
 
-      // First level ever: max HP
+      // First level ever: 3x max HP (heroic level 1 rule)
       if (isFirstLevel) {
-        maxHP += hitDie + conMod;
+        maxHP += (hitDie * 3) + conMod;
         isFirstLevel = false;
       } else {
         // All other levels: average HP (half die + 1)
