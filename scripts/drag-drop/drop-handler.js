@@ -317,19 +317,26 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
     // - Update BAB progression
     // - Update defense bonuses
     // - Add class skills
-    
+
+    // Check prerequisites for prestige classes
+    const validation = PrerequisiteValidator.checkClassPrerequisites(classItem, actor);
+    if (!validation.qualified) {
+      ui.notifications.error(`${actor.name} does not meet prerequisites for ${classItem.name}: ${validation.reason || 'Unknown reason'}`);
+      return false;
+    }
+
     // Check if this class already exists
-    const existingClass = actor.items.find(i => 
+    const existingClass = actor.items.find(i =>
       i.type === 'class' && i.name === classItem.name
     );
-    
+
     if (existingClass) {
       ui.notifications.warn(game.i18n.format('SWSE.Notifications.Items.AlreadyHasClass', {actor: actor.name, class: classItem.name}));
       return false;
     }
-    
+
     await actor.createEmbeddedDocuments('Item', [classItem.toObject()]);
-    
+
     ui.notifications.info(`Added ${classItem.name} class to ${actor.name}`);
     return true;
   }
@@ -424,17 +431,24 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
     // - Check prerequisites
     // - Add to Force Powers list
     // - Optionally add to active suite
-    
+
+    // Check if Force Sensitive
+    const isForceSensitive = PrerequisiteValidator._isForceSensitive(actor);
+    if (!isForceSensitive) {
+      ui.notifications.error(`${actor.name} cannot learn Force powers: Not Force Sensitive`);
+      return false;
+    }
+
     // Check if already known
-    const existingPower = actor.items.find(i => 
+    const existingPower = actor.items.find(i =>
       i.type === 'forcepower' && i.name === power.name
     );
-    
+
     if (existingPower) {
       ui.notifications.warn(`${actor.name} already knows ${power.name}`);
       return false;
     }
-    
+
     await actor.createEmbeddedDocuments('Item', [power.toObject()]);
     ui.notifications.info(`${actor.name} learned ${power.name}`);
     return true;
