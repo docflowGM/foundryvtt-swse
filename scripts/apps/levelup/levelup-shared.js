@@ -55,57 +55,20 @@ export function getCharacterClasses(actor) {
  * Get defense bonuses for a specific class
  * In SWSE, class defense bonuses are applied ONCE per class, not per level
  * @param {string} className - Name of the class
- * @returns {{fortitude: number, reflex: number, will: number}} Defense bonuses
+ * @returns {Promise<{fortitude: number, reflex: number, will: number}>} Defense bonuses
  */
-export function getClassDefenseBonuses(className) {
-  // Defense bonuses by class (applied once per class, NOT multiplied by level)
-  // Format: Reflex/Fortitude/Will
-  const defenseProgression = {
-    // Base Classes
-    'Jedi': { reflex: 1, fortitude: 1, will: 1 },
-    'Noble': { reflex: 1, fortitude: 0, will: 2 },
-    'Scout': { reflex: 2, fortitude: 1, will: 0 },
-    'Soldier': { reflex: 1, fortitude: 2, will: 0 },
-    'Scoundrel': { reflex: 2, fortitude: 0, will: 1 },
+export async function getClassDefenseBonuses(className) {
+  // Try to load from compendium first
+  const { getClassData } = await import('../../progression/utils/class-data-loader.js');
+  const classData = await getClassData(className);
 
-    // Prestige Classes - Core Rulebook
-    'Ace Pilot': { reflex: 4, fortitude: 2, will: 0 },
-    'Bounty Hunter': { reflex: 4, fortitude: 2, will: 0 },
-    'Crime Lord': { reflex: 2, fortitude: 0, will: 4 },
-    'Elite Trooper': { reflex: 2, fortitude: 4, will: 0 },
-    'Force Adept': { reflex: 2, fortitude: 2, will: 4 },
-    'Force Disciple': { reflex: 3, fortitude: 3, will: 6 },
-    'Gunslinger': { reflex: 4, fortitude: 0, will: 2 },
-    'Jedi Knight': { reflex: 2, fortitude: 2, will: 2 },
-    'Jedi Master': { reflex: 3, fortitude: 3, will: 3 },
-    'Officer': { reflex: 2, fortitude: 0, will: 4 },
-    'Sith Apprentice': { reflex: 2, fortitude: 2, will: 2 },
-    'Sith Lord': { reflex: 3, fortitude: 3, will: 3 },
+  if (classData && classData.defenses) {
+    return classData.defenses;
+  }
 
-    // Additional Prestige Classes
-    'Corporate Agent': { reflex: 2, fortitude: 0, will: 4 },
-    'Gladiator': { reflex: 4, fortitude: 2, will: 0 },
-    'Melee Duelist': { reflex: 4, fortitude: 0, will: 2 },
-    'Enforcer': { reflex: 4, fortitude: 0, will: 2 },
-    'Independent Droid': { reflex: 2, fortitude: 0, will: 4 },
-    'Infiltrator': { reflex: 4, fortitude: 0, will: 2 },
-    'Master Privateer': { reflex: 2, fortitude: 0, will: 4 },
-    'Medic': { reflex: 0, fortitude: 4, will: 2 },
-    'Saboteur': { reflex: 2, fortitude: 0, will: 4 },
-    'Assassin': { reflex: 4, fortitude: 2, will: 0 },
-    'Charlatan': { reflex: 2, fortitude: 0, will: 4 },
-    'Outlaw': { reflex: 4, fortitude: 2, will: 0 },
-    'Droid Commander': { reflex: 2, fortitude: 2, will: 2 },
-    'Military Engineer': { reflex: 2, fortitude: 2, will: 2 },
-    'Vanguard': { reflex: 2, fortitude: 4, will: 0 },
-    'Imperial Knight': { reflex: 2, fortitude: 2, will: 2 },
-    'Shaper': { reflex: 0, fortitude: 2, will: 4 },
-    'Improviser': { reflex: 2, fortitude: 0, will: 4 },
-    'Pathfinder': { reflex: 2, fortitude: 4, will: 0 },
-    'Martial Arts Master': { reflex: 2, fortitude: 4, will: 0 }
-  };
-
-  return defenseProgression[className] || { reflex: 0, fortitude: 0, will: 0 };
+  // Fallback to default if class not found
+  SWSELogger.warn(`getClassDefenseBonuses: Class "${className}" not found in compendium, using defaults`);
+  return { reflex: 0, fortitude: 0, will: 0 };
 }
 
 /**
@@ -173,9 +136,9 @@ export function calculateTotalBAB(actor) {
  * In SWSE, class defense bonuses are FLAT per class and do NOT scale with class level
  * When multiclassing, use the HIGHEST defense bonus from any class (not additive)
  * @param {Actor} actor - The actor
- * @returns {{fortitude: number, reflex: number, will: number}}
+ * @returns {Promise<{fortitude: number, reflex: number, will: number}>}
  */
-export function calculateDefenseBonuses(actor) {
+export async function calculateDefenseBonuses(actor) {
   const classItems = actor.items.filter(i => i.type === 'class');
   const bonuses = { fortitude: 0, reflex: 0, will: 0 };
 
@@ -190,8 +153,8 @@ export function calculateDefenseBonuses(actor) {
       bonuses.reflex = Math.max(bonuses.reflex, classItem.system.defenses.reflex || 0);
       bonuses.will = Math.max(bonuses.will, classItem.system.defenses.will || 0);
     } else {
-      // Use known defense progressions (FLAT bonuses, take maximum)
-      const progression = getClassDefenseBonuses(className);
+      // Load from compendium (FLAT bonuses, take maximum)
+      const progression = await getClassDefenseBonuses(className);
       bonuses.fortitude = Math.max(bonuses.fortitude, progression.fortitude);
       bonuses.reflex = Math.max(bonuses.reflex, progression.reflex);
       bonuses.will = Math.max(bonuses.will, progression.will);
