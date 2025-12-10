@@ -1363,7 +1363,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Recalculate BAB and defense bonuses from all class items
       const totalBAB = calculateTotalBAB(this.actor);
-      const defenseBonuses = calculateDefenseBonuses(this.actor);
+      const defenseBonuses = await calculateDefenseBonuses(this.actor);
 
       SWSELogger.log(`SWSE LevelUp | Updating BAB to ${totalBAB}`);
       SWSELogger.log(`SWSE LevelUp | Updating defense bonuses: Fort +${defenseBonuses.fortitude}, Ref +${defenseBonuses.reflex}, Will +${defenseBonuses.will}`);

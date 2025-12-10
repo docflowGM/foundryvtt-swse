@@ -3,18 +3,84 @@
  * Unified Force Power engine for SWSE progression.
  * - Detects triggers (feats, class levels, templates) and opens the picker.
  * - Applies selected powers to the actor as Item documents.
+ *
+ * COMPENDIUM MIGRATION NOTES:
+ * To move force power grants from hardcoded data to compendiums:
+ *
+ * For Feats (swse.feats):
+ *   Add field: system.forcePowerGrants: number
+ *   Example: "Force Training" should have system.forcePowerGrants: 1
+ *
+ * For Classes (swse.classes):
+ *   Add field to level_progression entries: force_power_grants: number
+ *   Example: Jedi level 3 should have level_progression[2].force_power_grants: 1
+ *
+ * The engine will prefer compendium data but fallback to progression-data.js
  */
 
 import { FORCE_POWER_DATA } from "../data/progression-data.js";
 import { ForcePowerPicker } from "../ui/force-power-picker.js";
 
 export class ForcePowerEngine {
-  static _countFromFeat(featName) {
+  /**
+   * Check feat for force power grants
+   * Looks in compendium first, falls back to hardcoded data
+   * @param {string} featName - Name of the feat
+   * @param {Actor} actor - The actor (to find feat document)
+   * @returns {Promise<number>} Number of powers granted
+   */
+  static async _countFromFeat(featName, actor) {
+    // Try to find feat document on actor or in compendium
+    let featDoc = actor?.items.find(i => i.type === 'feat' && i.name === featName);
+
+    if (!featDoc) {
+      try {
+        const pack = game.packs.get('swse.feats');
+        if (pack) {
+          const index = pack.index.find(e => e.name === featName);
+          if (index) {
+            featDoc = await pack.getDocument(index._id);
+          }
+        }
+      } catch (e) {
+        console.warn(`ForcePowerEngine: Failed to load feat "${featName}" from compendium`, e);
+      }
+    }
+
+    // Check for structured field in compendium
+    if (featDoc?.system?.forcePowerGrants) {
+      return featDoc.system.forcePowerGrants;
+    }
+
+    // Fallback to hardcoded data
     const f = FORCE_POWER_DATA.feats[featName];
     return f ? (f.grants || 0) : 0;
   }
 
-  static _countFromClassLevel(className, level) {
+  /**
+   * Check class level for force power grants
+   * Looks in compendium first, falls back to hardcoded data
+   * @param {string} className - Name of the class
+   * @param {number} level - Class level
+   * @returns {Promise<number>} Number of powers granted
+   */
+  static async _countFromClassLevel(className, level) {
+    // Try to load class from compendium
+    try {
+      const { getClassData } = await import('../utils/class-data-loader.js');
+      const classData = await getClassData(className);
+
+      if (classData?._raw?.level_progression) {
+        const levelData = classData._raw.level_progression.find(lp => lp.level === level);
+        if (levelData?.force_power_grants) {
+          return levelData.force_power_grants;
+        }
+      }
+    } catch (e) {
+      console.warn(`ForcePowerEngine: Failed to load class "${className}" from compendium`, e);
+    }
+
+    // Fallback to hardcoded data
     const c = FORCE_POWER_DATA.classes[className];
     if (!c) return 0;
     const L = String(level);
@@ -39,13 +105,13 @@ export class ForcePowerEngine {
 
     if (updateSummary.featsAdded && Array.isArray(updateSummary.featsAdded)) {
       for (const ft of updateSummary.featsAdded) {
-        selectable += this._countFromFeat(ft);
+        selectable += await this._countFromFeat(ft, actor);
       }
     }
 
     if (updateSummary.classLevelsAdded && Array.isArray(updateSummary.classLevelsAdded)) {
       for (const cl of updateSummary.classLevelsAdded) {
-        selectable += this._countFromClassLevel(cl.class, cl.level);
+        selectable += await this._countFromClassLevel(cl.class, cl.level);
       }
     }
 

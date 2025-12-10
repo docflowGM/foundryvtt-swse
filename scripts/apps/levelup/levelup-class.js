@@ -417,12 +417,15 @@ export async function createOrUpdateClassItem(classDoc, actor) {
     });
   } else {
     // Create new class item with full class data
-    // Get defense bonuses for this class
-    const defenses = classDoc.system.defenses?.fortitude ||
-                    classDoc.system.defenses?.reflex ||
-                    classDoc.system.defenses?.will
-      ? classDoc.system.defenses
-      : getClassDefenseBonuses(classDoc.name);
+    // Get defense bonuses for this class - prefer compendium data
+    let defenses;
+    if (classDoc.system.defenses?.fortitude ||
+        classDoc.system.defenses?.reflex ||
+        classDoc.system.defenses?.will) {
+      defenses = classDoc.system.defenses;
+    } else {
+      defenses = await getClassDefenseBonuses(classDoc.name);
+    }
 
     const classItem = {
       name: classDoc.name,
