@@ -341,25 +341,10 @@ export async function applyClassFeatures(classDoc, classLevel, actor) {
     const currentValue = actor.system.forcePoints?.value || 5;
     const newValue = currentValue + levelData.forcePoints;
 
-// AUTO-CONVERT: confidence=0.00
-// (no heuristic applied)
-/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
+    await globalThis.SWSE.ActorEngine.updateActor(actor, {
       "system.forcePoints.max": newMax,
       "system.forcePoints.value": newValue
     });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-// (no heuristic applied)
-/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
-      "system.forcePoints.max": newMax,
-      "system.forcePoints.value": newValue
-    });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-// (no heuristic applied)
-/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
-      "system.forcePoints.max": newMax,
-      "system.forcePoints.value": newValue
-
-
 
     SWSELogger.log(`SWSE LevelUp | Increased Force Points by ${levelData.forcePoints} (${currentMax} → ${newMax})`);
     ui.notifications.info(`Force Points increased by ${levelData.forcePoints}!`);

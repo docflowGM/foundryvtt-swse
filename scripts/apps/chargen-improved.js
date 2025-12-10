@@ -404,9 +404,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     }
 
     if (Object.keys(updates).length > 0) {
-// AUTO-CONVERT: confidence=0.00
-// (no heuristic applied)
-/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, updates); */
+      await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
     }
   }
 
@@ -470,28 +468,11 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     const currentHP = actor.system.hp.max || 0;
     const newHP = currentHP + hpGain;
 
-// AUTO-CONVERT: confidence=0.00
-// (no heuristic applied)
-/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
+    await globalThis.SWSE.ActorEngine.updateActor(actor, {
       "system.level": newLevel,
       "system.hp.max": newHP,
       "system.hp.value": newHP
     });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-// (no heuristic applied)
-/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
-      "system.level": newLevel,
-      "system.hp.max": newHP,
-      "system.hp.value": newHP
-    });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-// (no heuristic applied)
-/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
-      "system.level": newLevel,
-      "system.hp.max": newHP,
-      "system.hp.value": newHP
-
-
 
     SWSELogger.log(`SWSE CharGen | Level ${newLevel} complete. HP: ${currentHP} -> ${newHP}`);
   }
