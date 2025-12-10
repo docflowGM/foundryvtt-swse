@@ -116,19 +116,51 @@ function _normalizeClassData(doc) {
   const refSave = (defenses.reflex >= 2) ? "high" : "low";
   const willSave = (defenses.will >= 2) ? "high" : "low";
 
+  // Parse level progression to extract features by level
+  const levelProgression = system.level_progression || [];
+  const featuresByLevel = {};
+
+  for (const levelData of levelProgression) {
+    const level = levelData.level;
+    const features = levelData.features || [];
+
+    featuresByLevel[level] = {
+      features: features,
+      bonusFeats: features.filter(f => f.type === 'feat_choice' || f.name?.includes('Bonus Feat')).length,
+      talents: features.filter(f => f.type === 'talent_choice').length,
+      forcePoints: levelData.force_points
+    };
+  }
+
+  // Extract starting feats from level 1 or starting_features
+  const startingFeatures = system.starting_features || [];
+  const level1Features = levelProgression.find(l => l.level === 1)?.features || [];
+  const startingFeats = [];
+
+  // Look for automatic feats (not choices) in starting features and level 1
+  for (const feature of [...startingFeatures, ...level1Features]) {
+    // Skip feat_choice and talent_choice - those are selections, not automatic grants
+    if (feature.type !== 'feat_choice' && feature.type !== 'talent_choice') {
+      if (feature.type === 'feat' || feature.name?.includes('Proficiency') || feature.name?.includes('Sensitivity')) {
+        startingFeats.push(feature.name);
+      }
+    }
+  }
+
   return {
     name: doc.name,
     hitDie: hitDie,
     skillPoints: skillPoints,
     baseAttackBonus: baseAttackBonus,
     classSkills: system.class_skills || [],
-    startingFeats: [], // Starting feats are handled separately
+    startingFeats: startingFeats,
     talentTrees: system.talent_trees || [],
     fortSave: fortSave,
     refSave: refSave,
     willSave: willSave,
     forceSensitive: system.forceSensitive || false,
     prestigeClass: !system.base_class,
+    levelProgression: featuresByLevel, // Parsed level progression
     _raw: system // Keep raw data for reference
   };
 }

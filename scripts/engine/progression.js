@@ -511,7 +511,15 @@ export class SWSEProgressionEngine {
   async _action_confirmClass(payload) {
     const { classId } = payload;
     const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
-    const classData = PROGRESSION_RULES.classes[classId];
+    const { getClassData } = await import('../progression/utils/class-data-loader.js');
+
+    // Try hardcoded data first (faster for core classes)
+    let classData = PROGRESSION_RULES.classes[classId];
+
+    // If not found, try loading from compendium (prestige classes)
+    if (!classData) {
+      classData = await getClassData(classId);
+    }
 
     if (!classData) {
       throw new Error(`Unknown class: ${classId}`);
@@ -529,17 +537,24 @@ export class SWSEProgressionEngine {
       skillPoints: (classData.skillPoints + (this.actor.system.abilities.int?.mod || 0)) * 4
     });
 
-    // Calculate starting feat budget
-    const speciesData = PROGRESSION_RULES.species[progression.species];
-    let featBudget = 1; // Everyone gets 1 feat at level 1
-    if (speciesData?.bonusFeat) featBudget++; // Humans get +1
+    // Calculate starting feat budget (only at character creation, not level-up)
+    let featBudget = progression.featBudget || 0;
 
-    // Store class starting feats (proficiencies) separately - these are automatic
-    const startingFeats = classData.startingFeats || [];
+    // Only set feat budget if this is first class (character creation)
+    if (classLevels.length === 1) {
+      const speciesData = PROGRESSION_RULES.species[progression.species];
+      featBudget = 1; // Everyone gets 1 feat at level 1
+      if (speciesData?.bonusFeat) featBudget++; // Humans get +1
+    }
+
+    // Accumulate starting feats from all classes (each class grants its own)
+    const existingStartingFeats = progression.startingFeats || [];
+    const classStartingFeats = classData.startingFeats || [];
+    const allStartingFeats = Array.from(new Set([...existingStartingFeats, ...classStartingFeats]));
 
     await applyActorUpdateAtomic(this.actor, {
       "system.progression.classLevels": classLevels,
-      "system.progression.startingFeats": startingFeats,
+      "system.progression.startingFeats": allStartingFeats,
       "system.progression.featBudget": featBudget
     });
 
