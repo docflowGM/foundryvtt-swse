@@ -6,7 +6,7 @@ import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 export function registerChatCommands() {
   SWSELogger.log("SWSE | Registering chat commands...");
   
-  Hooks.on("chatMessage", (chatLog, message) => {
+  Hooks.on("chatMessage", async (chatLog, message) => {
     const [command, ...args] = message.split(" ");
     
     if (command === "/damage") {
