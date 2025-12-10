@@ -182,9 +182,8 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     
     // Add to weapons array
     weapons.push(vehicleWeapon);
-    
-    await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.weapons': weapons });
+
+    await globalThis.SWSE.ActorEngine.updateActor(this.actor, { 'system.weapons': weapons });
     ui.notifications.info(`${weaponItem.name} added to vehicle weapons`);
     return true;
   }
@@ -200,15 +199,14 @@ globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.weapons': weapons });
   async _onAddWeapon(event) {
     event.preventDefault();
     const weapons = this.actor.system.weapons || [];
-    weapons.push({ 
-      name: "New Weapon", 
-      arc: "Forward", 
-      bonus: "+0", 
-      damage: "0d0", 
-      range: "Close" 
+    weapons.push({
+      name: "New Weapon",
+      arc: "Forward",
+      bonus: "+0",
+      damage: "0d0",
+      range: "Close"
     });
-    await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.weapons": weapons });
+    await globalThis.SWSE.ActorEngine.updateActor(this.actor, { "system.weapons": weapons });
   }
 
   async _onRemoveWeapon(event) {
@@ -217,8 +215,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, { "system.weapons": weapons });
     const weapons = [...(this.actor.system.weapons || [])];
     if (index >= 0 && index < weapons.length) {
       weapons.splice(index, 1);
-      await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.weapons": weapons });
+      await globalThis.SWSE.ActorEngine.updateActor(this.actor, { "system.weapons": weapons });
     }
   }
 
@@ -265,25 +262,12 @@ globalThis.SWSE.ActorEngine.updateActor(actor, { "system.weapons": weapons });
       if (data.type === 'Actor') {
         const actor = await fromUuid(data.uuid);
         if (actor) {
-          await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+          await globalThis.SWSE.ActorEngine.updateActor(this.actor, {
             [`system.crewPositions.${slot}`]: {
               name: actor.name,
               uuid: actor.uuid
             }
           });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-            [`system.crewPositions.${slot}`]: {
-              name: actor.name,
-              uuid: actor.uuid
-            }
-          });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-            [`system.crewPositions.${slot}`]: {
-              name: actor.name,
-              uuid: actor.uuid
-            }
-          }); */
-
           ui.notifications.info(`${actor.name} assigned to ${slot} position`);
         }
       }
@@ -305,8 +289,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
           content: `<p>Remove <strong>${crewName}</strong> from ${slot} position?</p>`
         });
         if (confirm) {
-          await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { [`system.crewPositions.${slot}`]: null });
+          await globalThis.SWSE.ActorEngine.updateActor(this.actor, { [`system.crewPositions.${slot}`]: null });
           ui.notifications.info(`Removed ${crewName} from ${slot} position`);
         }
       }
