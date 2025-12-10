@@ -656,27 +656,13 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
     if (!confirmed) return;
 
     // Save configuration to actor
-    await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+    await globalThis.SWSE.ActorEngine.updateActor(this.actor, {
       'system.vehicle': {
         stockShip: this.stockShip,
         modifications: this.modifications,
         totalCost: VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip)
       }
     });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.vehicle': {
-        stockShip: this.stockShip,
-        modifications: this.modifications,
-        totalCost: VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip)
-      }
-    });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.vehicle': {
-        stockShip: this.stockShip,
-        modifications: this.modifications,
-        totalCost: VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip)
-      }
-    }); */
 
 
     ui.notifications.info(`Starship configuration saved to ${this.actor.name}!`);

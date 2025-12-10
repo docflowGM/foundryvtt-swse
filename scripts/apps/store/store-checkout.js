@@ -166,8 +166,7 @@ export async function buyDroid(store, actorId) {
 
     try {
         // Deduct credits
-        await store.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost });
+        await globalThis.SWSE.ActorEngine.updateActor(store.actor, { "system.credits": credits - finalCost });
         // Create droid actor with player ownership
         const droidData = droidTemplate.toObject();
         droidData.name = `${droidTemplate.name} (${store.actor.name}'s)`;
@@ -238,8 +237,7 @@ export async function buyVehicle(store, actorId, condition) {
 
     try {
         // Deduct credits
-        await store.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - finalCost });
+        await globalThis.SWSE.ActorEngine.updateActor(store.actor, { "system.credits": credits - finalCost });
         // Create vehicle actor with player ownership
         const vehicleData = vehicleTemplate.toObject();
         vehicleData.name = `${condition === "used" ? "(Used) " : ""}${vehicleTemplate.name}`;

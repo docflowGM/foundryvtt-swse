@@ -1352,18 +1352,10 @@ export class SWSELevelUpEnhanced extends FormApplication {
       const newHPMax = this.actor.system.hp.max + totalHPGain;
       const newHPValue = this.actor.system.hp.value + totalHPGain;
 
-      await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+      await globalThis.SWSE.ActorEngine.updateActor(this.actor, {
         "system.hp.max": newHPMax,
         "system.hp.value": newHPValue
       });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-        "system.hp.max": newHPMax,
-        "system.hp.value": newHPValue
-      });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-        "system.hp.max": newHPMax,
-        "system.hp.value": newHPValue
-      }); */
 
 
       // Apply class features for this level
@@ -1376,24 +1368,12 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
       SWSELogger.log(`SWSE LevelUp | Updating BAB to ${totalBAB}`);
       SWSELogger.log(`SWSE LevelUp | Updating defense bonuses: Fort +${defenseBonuses.fortitude}, Ref +${defenseBonuses.reflex}, Will +${defenseBonuses.will}`);
 
-      await this.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+      await globalThis.SWSE.ActorEngine.updateActor(this.actor, {
         "system.bab": totalBAB,
         "system.defenses.fortitude.classBonus": defenseBonuses.fortitude,
         "system.defenses.reflex.classBonus": defenseBonuses.reflex,
         "system.defenses.will.classBonus": defenseBonuses.will
       });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-        "system.bab": totalBAB,
-        "system.defenses.fortitude.classBonus": defenseBonuses.fortitude,
-        "system.defenses.reflex.classBonus": defenseBonuses.reflex,
-        "system.defenses.will.classBonus": defenseBonuses.will
-      });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-        "system.bab": totalBAB,
-        "system.defenses.fortitude.classBonus": defenseBonuses.fortitude,
-        "system.defenses.reflex.classBonus": defenseBonuses.reflex,
-        "system.defenses.will.classBonus": defenseBonuses.will
-      }); */
 
 
       // Build ability increases text

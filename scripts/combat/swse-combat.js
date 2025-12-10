@@ -114,7 +114,7 @@ export class SWSECombatDocument extends Combat {
     if (game.user.isGM) {
       for (const combatant of this.combatants) {
         if (combatant.actor) {
-          await combatant.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+          await globalThis.SWSE.ActorEngine.updateActor(combatant.actor, {
             'system.secondWind.uses': 1,
             'system.actionEconomy': {
               swift: true,
@@ -124,27 +124,6 @@ export class SWSECombatDocument extends Combat {
               reaction: true
             }
           });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-            'system.secondWind.uses': 1,
-            'system.actionEconomy': {
-              swift: true,
-              move: true,
-              standard: true,
-              fullRound: true,
-              reaction: true
-            }
-          });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-            'system.secondWind.uses': 1,
-            'system.actionEconomy': {
-              swift: true,
-              move: true,
-              standard: true,
-              fullRound: true,
-              reaction: true
-            }
-          }); */
-
         }
       }
     }
@@ -162,7 +141,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
     // Reset action economy for the new combatant
     const combatant = this.combatant;
     if (combatant?.actor && game.user.isGM) {
-      await combatant.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+      await globalThis.SWSE.ActorEngine.updateActor(combatant.actor, {
         'system.actionEconomy': {
           swift: true,
           move: true,
@@ -171,25 +150,6 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
           reaction: true
         }
       });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-        'system.actionEconomy': {
-          swift: true,
-          move: true,
-          standard: true,
-          fullRound: true,
-          reaction: true
-        }
-      });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-        'system.actionEconomy': {
-          swift: true,
-          move: true,
-          standard: true,
-          fullRound: true,
-          reaction: true
-        }
-      }); */
-
     }
 
     return result;

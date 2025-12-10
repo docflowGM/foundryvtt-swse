@@ -40,8 +40,7 @@ export class SWSECombatAutomation {
 
         // Reset temporary resources like Second Wind
         if (combatant.actor.type === 'character') {
-          await combatant.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, {'system.secondWind.used': false});
+          await globalThis.SWSE.ActorEngine.updateActor(combatant.actor, {'system.secondWind.used': false});
         }
       }
     });
@@ -74,9 +73,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.secondWind.used': false}
       await actor.moveConditionTrack(1);
 
       // Check for death
-      if (// AUTO-CONVERT actor.system.* assignment -> ProgressionEngine (confidence=0.50)
-// Auto-converted: update derived attributes via ProgressionEngine
-ProgressionEngine.applyChargenStep(actor, 'abilities', { values: { /* migrated value for hp.value */ hp_value: == 0 && actor.isHelpless) {
+      if (actor.system.hp.value === 0 && actor.isHelpless) {
         await ChatMessage.create({
           speaker: ChatMessage.getSpeaker({actor}),
           content: `<div class="swse death-notification">
@@ -84,17 +81,7 @@ ProgressionEngine.applyChargenStep(actor, 'abilities', { values: { /* migrated v
             <p><strong>${actor.name}</strong> is at 0 HP and Helpless!</p>
           </div>`,
           type: CONST.CHAT_MESSAGE_TYPES.OTHER
-        }) } });
-/* ORIGINAL: actor.system.hp.value === 0 && actor.isHelpless) {
-        await ChatMessage.create({
-          speaker: ChatMessage.getSpeaker({actor}),
-          content: `<div class="swse death-notification">
-            <h3>⚠️ Character Defeated!</h3>
-            <p><strong>${actor.name}</strong> is at 0 HP and Helpless!</p>
-          </div>`,
-          type: CONST.CHAT_MESSAGE_TYPES.OTHER
-        }); */
-
+        });
       }
     }
   }
