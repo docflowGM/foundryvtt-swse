@@ -274,7 +274,7 @@
     log("\nVALIDATION:");
     const validations = [
       { name: "Level", actual: actor.system.level, expected: 1, pass: actor.system.level === 1 },
-      { name: "HP", actual: actor.system.hp?.max, expected: 11, pass: actor.system.hp?.max === 11 }, // 10 (HD) + 1 (CON)
+      { name: "HP", actual: actor.system.hp?.max, expected: 31, pass: actor.system.hp?.max === 31 }, // 30 (3×d10) + 1 (CON)
       { name: "BAB", actual: actor.system.bab, expected: 1, pass: actor.system.bab === 1 },
       { name: "STR (with racial)", actual: actor.system.abilities.str?.total, expected: 16, pass: actor.system.abilities.str?.total === 16 }, // 14 base + 2 racial
       { name: "Items created", actual: actor.items.size, expected: ">= 7", pass: actor.items.size >= 7 }, // 5 starting feats + 2 chosen feats

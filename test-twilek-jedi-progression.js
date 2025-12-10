@@ -532,16 +532,16 @@
     log("\n--- EXPECTED VALUES VALIDATION ---");
 
     // Calculate expected BAB
-    // 6 levels Jedi (medium BAB = 3/4): 6 * 0.75 = 4.5 → 4 (floored)
-    // 2 levels Jedi Knight (high BAB = 1/1): 2 * 1 = 2
-    // Total expected: 4 + 2 = 6
-    const expectedBAB = 6;
+    // 6 levels Jedi (fast progression, +1 per level): 6 BAB
+    // 2 levels Jedi Knight (fast progression, +1 per level): 2 BAB
+    // Total expected: 6 + 2 = 8
+    const expectedBAB = 8;
     const actualBAB = actor.system.bab || 0;
 
     if (actualBAB !== expectedBAB) {
       logIssue(
         "BAB Calculation Error",
-        `Expected BAB ${expectedBAB} (6 Jedi levels = +4, 2 Jedi Knight = +2), but got ${actualBAB}`,
+        `Expected BAB ${expectedBAB} (6 Jedi levels = +6, 2 Jedi Knight = +2), but got ${actualBAB}`,
         "high"
       );
     } else {
@@ -549,12 +549,11 @@
     }
 
     // Calculate expected HP
-    // Level 1 Jedi: 6 (max)
-    // Levels 2-6 Jedi: 5 * 4 (average) = 20
-    // Levels 7-8 Jedi Knight: 2 * 6 (average d10) = 12
-    // CON bonus: 12 CON = +1, * 8 levels = +8
-    // Total expected: 6 + 20 + 12 + 8 = 46
-    const expectedHP = 46;
+    // Level 1 Jedi: 30 (3×10 max) + 1 (CON) = 31
+    // Levels 2-6 Jedi: 5 × (6 average + 1 CON) = 35
+    // Levels 7-8 Jedi Knight: 2 × (6 average d10 + 1 CON) = 14
+    // Total expected: 31 + 35 + 14 = 80
+    const expectedHP = 80;
     const actualHP = actor.system.hp?.max || 0;
 
     if (actualHP !== expectedHP) {
