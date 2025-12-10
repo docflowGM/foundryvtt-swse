@@ -431,6 +431,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
     // - Check prerequisites
     // - Add to Force Powers list
     // - Optionally add to active suite
+    // Note: Force powers can be taken multiple times (grants additional uses per encounter)
 
     // Check if Force Sensitive
     const isForceSensitive = PrerequisiteValidator._isForceSensitive(actor);
@@ -439,18 +440,18 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
       return false;
     }
 
-    // Check if already known
-    const existingPower = actor.items.find(i =>
+    // Allow duplicates - taking a power multiple times grants additional uses
+    const existingCount = actor.items.filter(i =>
       i.type === 'forcepower' && i.name === power.name
-    );
-
-    if (existingPower) {
-      ui.notifications.warn(`${actor.name} already knows ${power.name}`);
-      return false;
-    }
+    ).length;
 
     await actor.createEmbeddedDocuments('Item', [power.toObject()]);
-    ui.notifications.info(`${actor.name} learned ${power.name}`);
+
+    if (existingCount > 0) {
+      ui.notifications.info(`${actor.name} gained an additional use of ${power.name} (now has ${existingCount + 1} uses)`);
+    } else {
+      ui.notifications.info(`${actor.name} learned ${power.name}`);
+    }
     return true;
   }
   
@@ -481,18 +482,32 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
     }
 
     // No category selection needed, proceed with normal feat handling
-    // Check if already has feat
+    // List of feats that can be taken multiple times
+    const repeatableFeats = [
+      'Extra Second Wind', 'Extra Rage', 'Skill Training', 'Linguist',
+      'Exotic Weapon Proficiency', 'Weapon Proficiency', 'Weapon Focus',
+      'Double Attack', 'Triple Attack', 'Triple Crit',
+      'Force Training', 'Force Regimen Mastery'
+    ];
+    const isRepeatable = repeatableFeats.some(rf => feat.name.includes(rf) || rf.includes(feat.name));
+
+    // Check if already has feat (only block if not repeatable)
     const existingFeat = actor.items.find(i =>
       i.type === 'feat' && i.name === feat.name
     );
 
-    if (existingFeat) {
+    if (existingFeat && !isRepeatable) {
       ui.notifications.warn(`${actor.name} already has ${feat.name}`);
       return false;
     }
 
     await actor.createEmbeddedDocuments('Item', [feat.toObject()]);
-    ui.notifications.info(`${actor.name} gained feat: ${feat.name}`);
+
+    if (existingFeat) {
+      ui.notifications.info(`${actor.name} gained ${feat.name} again`);
+    } else {
+      ui.notifications.info(`${actor.name} gained feat: ${feat.name}`);
+    }
     return true;
   }
   
