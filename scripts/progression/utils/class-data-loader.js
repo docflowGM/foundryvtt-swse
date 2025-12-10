@@ -104,17 +104,14 @@ function _normalizeClassData(doc) {
     baseAttackBonus = "medium";
   }
 
-  // Get save progressions from defenses
-  const defenses = system.defenses || {};
-
-  // SWSE uses a simplified system: defenses are listed as numbers
-  // Fort/Ref/Will defenses in the compendium represent the bonus per 2 levels
-  // High saves: +2/2 levels (0, 1, 1, 2, 2, 3, 3, 4...)
-  // Low saves: +0/3 levels (0, 0, 0, 1, 1, 1, 2, 2, 2...)
-
-  const fortSave = (defenses.fortitude >= 2) ? "high" : "low";
-  const refSave = (defenses.reflex >= 2) ? "high" : "low";
-  const willSave = (defenses.will >= 2) ? "high" : "low";
+  // Get flat defense bonuses from compendium
+  // These are STATIC values that don't scale with level
+  // E.g., Jedi always gives Fort +1, Ref +1, Will +1 regardless of level count
+  const defenses = {
+    fortitude: system.defenses?.fortitude || 0,
+    reflex: system.defenses?.reflex || 0,
+    will: system.defenses?.will || 0
+  };
 
   // Parse level progression to extract features by level
   const levelProgression = system.level_progression || [];
@@ -155,9 +152,7 @@ function _normalizeClassData(doc) {
     classSkills: system.class_skills || [],
     startingFeats: startingFeats,
     talentTrees: system.talent_trees || [],
-    fortSave: fortSave,
-    refSave: refSave,
-    willSave: willSave,
+    defenses: defenses, // Flat defense bonuses (fortitude, reflex, will)
     forceSensitive: system.forceSensitive || false,
     prestigeClass: !system.base_class,
     levelProgression: featuresByLevel, // Parsed level progression

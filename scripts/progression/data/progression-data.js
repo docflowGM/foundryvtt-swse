@@ -80,7 +80,7 @@ export const PROGRESSION_RULES = {
     Soldier: {
       name: "Soldier",
       hitDie: 10,
-      skillPoints: 5,
+      skillPoints: 3,
       baseAttackBonus: "high", // +1 per level
       classSkills: [
         "Climb", "Endurance", "Initiative", "Jump", "Knowledge (Tactics)",
@@ -94,15 +94,17 @@ export const PROGRESSION_RULES = {
         "Weapon Proficiency (Simple)"
       ],
       talentTrees: ["Armored Defense", "Melee Smash", "Sharpshooter", "Weapon Specialization"],
-      fortSave: "high",
-      refSave: "low",
-      willSave: "low"
+      defenses: {
+        fortitude: 2,
+        reflex: 1,
+        will: 0
+      }
     },
     Jedi: {
       name: "Jedi",
       hitDie: 10,
-      skillPoints: 4,
-      baseAttackBonus: "medium", // +3/4 per level
+      skillPoints: 2,
+      baseAttackBonus: "high", // +1 per level (fast progression)
       classSkills: [
         "Acrobatics", "Climb", "Endurance", "Initiative", "Jump",
         "Knowledge (Galactic Lore)", "Perception", "Persuasion", "Pilot",
@@ -114,16 +116,18 @@ export const PROGRESSION_RULES = {
         "Weapon Proficiency (Simple)"
       ],
       talentTrees: ["Jedi Mind Tricks", "Lightsaber Combat", "Telekinetic Savant"],
-      fortSave: "low",
-      refSave: "high",
-      willSave: "high",
+      defenses: {
+        fortitude: 1,
+        reflex: 1,
+        will: 1
+      },
       forceSensitive: true
     },
     Noble: {
       name: "Noble",
       hitDie: 6,
       skillPoints: 6,
-      baseAttackBonus: "medium",
+      baseAttackBonus: "low", // +0.5 per level (slow progression)
       classSkills: [
         "Deception", "Gather Information", "Initiative", "Knowledge (Bureaucracy)",
         "Knowledge (Galactic Lore)", "Perception", "Persuasion", "Pilot", "Ride"
@@ -134,15 +138,17 @@ export const PROGRESSION_RULES = {
         "Weapon Proficiency (Simple)"
       ],
       talentTrees: ["Born Leader", "Inspire Confidence", "Presence", "Wealth"],
-      fortSave: "low",
-      refSave: "low",
-      willSave: "high"
+      defenses: {
+        fortitude: 0,
+        reflex: 1,
+        will: 2
+      }
     },
     Scout: {
       name: "Scout",
       hitDie: 8,
-      skillPoints: 8,
-      baseAttackBonus: "medium",
+      skillPoints: 4,
+      baseAttackBonus: "medium", // +0.75 per level
       classSkills: [
         "Acrobatics", "Climb", "Endurance", "Initiative", "Jump",
         "Knowledge (Galactic Lore)", "Knowledge (Life Sciences)", "Knowledge (Physical Sciences)",
@@ -155,15 +161,17 @@ export const PROGRESSION_RULES = {
         "Weapon Proficiency (Simple)"
       ],
       talentTrees: ["Camouflage", "Expert Tracker", "Reconnaissance", "Snipers"],
-      fortSave: "high",
-      refSave: "high",
-      willSave: "low"
+      defenses: {
+        fortitude: 1,
+        reflex: 2,
+        will: 0
+      }
     },
     Scoundrel: {
       name: "Scoundrel",
       hitDie: 6,
-      skillPoints: 8,
-      baseAttackBonus: "medium",
+      skillPoints: 5,
+      baseAttackBonus: "medium", // +0.75 per level
       classSkills: [
         "Acrobatics", "Climb", "Deception", "Gather Information", "Initiative",
         "Jump", "Knowledge (Galactic Lore)", "Mechanics", "Perception",
@@ -175,9 +183,11 @@ export const PROGRESSION_RULES = {
         "Weapon Proficiency (Simple)"
       ],
       talentTrees: ["Fortune", "Gunslinger", "Misfortune", "Skulduggery"],
-      fortSave: "low",
-      refSave: "high",
-      willSave: "low"
+      defenses: {
+        fortitude: 0,
+        reflex: 2,
+        will: 1
+      }
     }
   },
   templates: {
@@ -197,70 +207,74 @@ export const PROGRESSION_RULES = {
 
 /**
  * Helper function to calculate base attack bonus
- * Now supports loading from compendium for prestige classes
+ * ALWAYS loads from compendium to get actual BAB values from level_progression.
+ * Sums the BAB values from each class level.
+ * E.g., 6 levels Jedi (BAB 1+1+1+1+1+1=6) + 2 levels Jedi Knight (BAB 1+1=2) = 8 total
  */
 export async function calculateBAB(classLevels) {
   const { getClassData } = await import('../utils/class-data-loader.js');
 
-  let bab = 0;
-  for (const classLevel of classLevels) {
-    // Try hardcoded data first (faster for core classes)
-    let classData = PROGRESSION_RULES.classes[classLevel.class];
+  let totalBAB = 0;
 
-    // If not found, try loading from compendium (prestige classes)
-    if (!classData) {
-      classData = await getClassData(classLevel.class);
-    }
+  for (const classLevel of classLevels) {
+    // Always load from compendium (source of truth)
+    const classData = await getClassData(classLevel.class);
 
     if (!classData) {
       console.warn(`BAB calculation: Unknown class "${classLevel.class}", skipping`);
       continue;
     }
 
-    const levels = classLevel.level || 1;
-    if (classData.baseAttackBonus === "high") {
-      bab += levels;
-    } else if (classData.baseAttackBonus === "medium") {
-      bab += Math.floor(levels * 0.75);
-    } else {
-      bab += Math.floor(levels * 0.5);
+    // Get BAB from level progression
+    const rawData = classData._raw;
+    const levelProgression = rawData?.level_progression || [];
+    const levelsInClass = classLevel.level || 1;
+
+    // Sum BAB from each level taken in this class
+    for (let i = 0; i < levelsInClass && i < levelProgression.length; i++) {
+      const levelData = levelProgression[i];
+      totalBAB += levelData.bab || 0;
     }
   }
-  return bab;
+
+  return totalBAB;
 }
 
 /**
  * Helper function to calculate save bonus
- * Now supports loading from compendium for prestige classes
+ * ALWAYS loads from compendium (source of truth).
+ * Returns the HIGHEST flat defense bonus from all classes taken.
+ * Defense bonuses are constant per class and don't scale with level.
+ * E.g., Jedi always gives Fort +1, Ref +1, Will +1 regardless of levels.
  */
 export async function calculateSaveBonus(classLevels, saveType) {
   const { getClassData } = await import('../utils/class-data-loader.js');
 
-  let bonus = 0;
-  for (const classLevel of classLevels) {
-    // Try hardcoded data first (faster for core classes)
-    let classData = PROGRESSION_RULES.classes[classLevel.class];
+  let maxBonus = 0;
 
-    // If not found, try loading from compendium (prestige classes)
-    if (!classData) {
-      classData = await getClassData(classLevel.class);
-    }
+  // Get unique class names
+  const uniqueClasses = new Set(classLevels.map(cl => cl.class));
+
+  for (const className of uniqueClasses) {
+    // Always load from compendium (source of truth)
+    const classData = await getClassData(className);
 
     if (!classData) {
-      console.warn(`Save calculation: Unknown class "${classLevel.class}", skipping`);
+      console.warn(`Save calculation: Unknown class "${className}", skipping`);
       continue;
     }
 
-    const levels = classLevel.level || 1;
-    const saveProgression = classData[`${saveType}Save`];
+    // Map saveType to defense key
+    const saveKey = saveType === 'fort' ? 'fortitude' : saveType === 'ref' ? 'reflex' : 'will';
 
-    if (saveProgression === "high") {
-      bonus += Math.floor(levels / 2) + 2;
-    } else {
-      bonus += Math.floor(levels / 3);
-    }
+    // Get flat defense bonus from class
+    const classBonus = classData.defenses?.[saveKey] || 0;
+
+    // Take the highest bonus across all classes
+    maxBonus = Math.max(maxBonus, classBonus);
   }
-  return bonus;
+
+  return maxBonus;
 }
 
 

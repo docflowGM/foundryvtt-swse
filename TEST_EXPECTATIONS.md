@@ -117,15 +117,16 @@ HP: 80
   - Levels 7-8: 2 × (6 avg + 1 CON) = 14
   - Total: 31 + 35 + 14 = 80
 
-BAB: +6
-  - Jedi (medium): 6 × 0.75 = 4.5 → 4
-  - Jedi Knight (high): 2 × 1.0 = 2
-  - Total: 4 + 2 = 6
+BAB: +8
+  - Jedi (fast): 6 × 1.0 = 6
+  - Jedi Knight (fast): 2 × 1.0 = 2
+  - Total: 6 + 2 = 8
 
 Defenses:
   - Fortitude: 21 (10 + 8 level + 2 class + 1 CON)
-  - Reflex: 26 (10 + 8 level + 5 class + 3 DEX)
-  - Will: 27 (10 + 8 level + 5 class + 4 WIS)
+  - Reflex: 23 (10 + 8 level + 2 class + 3 DEX)
+  - Will: 24 (10 + 8 level + 2 class + 4 WIS)
+  - Class bonuses are STATIC: max(Jedi 1/1/1, Jedi Knight 2/2/2) = 2/2/2
 
 Abilities:
   - WIS: 19 (15 base + 2 racial + 4 from levels = 21... wait)
