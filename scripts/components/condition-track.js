@@ -67,8 +67,7 @@ export class ConditionTrackComponent {
     // Click on step to set position
     html.find('[data-action="setCondition"]').click(async (event) => {
       const step = parseInt(event.currentTarget.dataset.step);
-      await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': step});
+      await globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current': step});
     });
 
     // Improve button
@@ -83,8 +82,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.current':
 
     // Persistent checkbox
     html.find('[name="system.conditionTrack.persistent"]').change(async (event) => {
-      await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.persistent': event.target.checked});
+      await globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditionTrack.persistent': event.target.checked});
     });
   }
 }

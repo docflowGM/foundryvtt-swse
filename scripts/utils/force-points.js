@@ -70,7 +70,6 @@ export class ForcePointsUtil {
     // Increase Dark Side Score if using Dark Side
     if (darkSideUsed) {
       const currentDarkSide = actor.system.darkSideScore || 0;
-      await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide + 1});
     }
 
@@ -212,7 +211,6 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentD
     if (!spent) return false;
 
     // Reduce Dark Side Score
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide - 1});
     ui.notifications.info(`Dark Side Score reduced to ${currentDarkSide - 1}`);
     return true;

@@ -182,8 +182,6 @@ export class SWSELevelUp {
             const newLevel = actor.system.level + 1;
             const newHPMax = actor.system.hp.max + hpGain;
             const newHPValue = actor.system.hp.value + hpGain;
-            
-            await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
                 "system.level": newLevel,
                 "system.hp.max": newHPMax,
                 "system.hp.value": newHPValue
@@ -193,11 +191,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
                 "system.hp.max": newHPMax,
                 "system.hp.value": newHPValue
             });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-                "system.level": newLevel,
-                "system.hp.max": newHPMax,
-                "system.hp.value": newHPValue
-            }); */
+
 
 
             // Get mentor for narration
@@ -223,8 +217,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
             if (// AUTO-CONVERT actor.system.* assignment -> ProgressionEngine (confidence=0.00)
                 await setLevel1Class(actor, className);
 // (no heuristic applied)
-/* ORIGINAL: actor.system.level === 1) {
-                await setLevel1Class(actor, className); */
+
 
             }
 

@@ -100,7 +100,6 @@ export async function buyService(actor, serviceName, serviceCost, updateDialogue
 
     // Deduct credits immediately
     const newCredits = currentCredits - serviceCost;
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
 globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": newCredits });
     ui.notifications.info(`${serviceName} purchased for ${serviceCost} credits.`);
 
@@ -455,7 +454,6 @@ export async function checkout(store, animateNumberCallback) {
         }
 
         // Deduct credits FIRST and track it
-        await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
 globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - total });
         creditsDeducted = true;
 
@@ -515,7 +513,6 @@ globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - tot
         // Rollback: Refund credits if they were deducted
         if (creditsDeducted) {
             try {
-                await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
 globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits });
                 ui.notifications.error("Purchase failed! Credits have been refunded.");
                 SWSELogger.info("SWSE Store | Credits refunded after failed checkout");

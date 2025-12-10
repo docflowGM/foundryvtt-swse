@@ -56,8 +56,6 @@ export async function applyDamage(token, damage) {
   
   const currentHP = actor.system.hp?.value || 0;
   const newHP = Math.max(0, currentHP - damage);
-  
-  await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
 globalThis.SWSE.ActorEngine.updateActor(actor, {"system.hp.value": newHP});
   ui.notifications.info(`${actor.name} takes ${damage} damage!`);
   

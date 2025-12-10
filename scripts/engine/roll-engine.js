@@ -4,7 +4,7 @@ import { swseLogger } from "../utils/logger.js";
 export const RollEngine = {
   async safeRoll(formula, data = {}, options = {}) {
     try {
-      const roll = globalThis.SWSE.RollEngine.safeRoll(formula, data);
+      const roll = new Roll(formula, data);
       await roll.evaluate({async: true});
       return roll;
     } catch (err) {

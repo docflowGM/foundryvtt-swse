@@ -95,7 +95,6 @@ export class SWSEMigration {
       itemsCreated = updates.length;
       
       // Clear old arrays
-      await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
         'system.feats': [],
         'system.talents': [],
         'system.weapons': []
@@ -105,11 +104,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.talents': [],
         'system.weapons': []
       });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-        'system.feats': [],
-        'system.talents': [],
-        'system.weapons': []
-      }); */
+
 
       
       SWSELogger.log(`  Created ${itemsCreated} items for ${actor.name}`);

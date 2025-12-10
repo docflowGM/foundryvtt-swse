@@ -1231,12 +1231,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     try {
       // If this is level 1, save the starting class for mentor system
-      if (this.// AUTO-CONVERT actor.system.* assignment -> ProgressionEngine (confidence=0.00)
+      if (this.actor.system.level === 1) {
         await setLevel1Class(this.actor, this.selectedClass.name);
-// (no heuristic applied)
-/* ORIGINAL: actor.system.level === 1) {
-        await setLevel1Class(this.actor, this.selectedClass.name); */
-
       }
 
       // Create or update class item

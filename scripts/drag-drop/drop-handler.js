@@ -199,16 +199,9 @@ export class DropHandler {
       if (template.abilitiesText) bioNotes += `<h3>Special Abilities</h3><p>${template.abilitiesText}</p>`;
       if (template.speciesTraits) bioNotes += `<h3>Species Traits</h3><p>${template.speciesTraits}</p>`;
 
-      await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+      await globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.biography': (actor.system.biography || '') + bioNotes
       });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-        'system.biography': (actor.system.biography || '') + bioNotes
-      });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-        'system.biography': (actor.system.biography || '') + bioNotes
-      }); */
-
     }
 
     ui.notifications.info(`Applied ${template.name} template to ${actor.name}`);
@@ -393,27 +386,14 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
     });
     
     if (!confirm) return false;
-    
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-      'system.vehicleType': template.system.vehicleType || 'starfighter',
-      'system.shields': template.system.shields || 0,
-      'system.hull': template.system.hull || 0,
-      'system.speed': template.system.speed || 0
-    });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.vehicleType': template.system.vehicleType || 'starfighter',
-      'system.shields': template.system.shields || 0,
-      'system.hull': template.system.hull || 0,
-      'system.speed': template.system.speed || 0
-    });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.vehicleType': template.system.vehicleType || 'starfighter',
-      'system.shields': template.system.shields || 0,
-      'system.hull': template.system.hull || 0,
-      'system.speed': template.system.speed || 0
-    }); */
 
-    
+    await globalThis.SWSE.ActorEngine.updateActor(actor, {
+      'system.vehicleType': template.system.vehicleType || 'starfighter',
+      'system.shields': template.system.shields || 0,
+      'system.hull': template.system.hull || 0,
+      'system.speed': template.system.speed || 0
+    });
+
     ui.notifications.info(`Applied ${template.name} vehicle template to ${actor.name}`);
     return true;
   }

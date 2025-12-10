@@ -194,7 +194,7 @@ export class SWSECombatIntegration {
     }
 
     // Reset action economy
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+    await globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.actionEconomy': {
         swift: true,
         move: true,
@@ -203,25 +203,6 @@ export class SWSECombatIntegration {
         reaction: true
       }
     });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.actionEconomy': {
-        swift: true,
-        move: true,
-        standard: true,
-        fullRound: true,
-        reaction: true
-      }
-    });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.actionEconomy': {
-        swift: true,
-        move: true,
-        standard: true,
-        fullRound: true,
-        reaction: true
-      }
-    }); */
-
   }
 
   /**
@@ -272,8 +253,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
       const currentIndex = tracks.indexOf(condition);
       if (currentIndex > 0) {
         const newCondition = tracks[currentIndex - 1];
-        await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.conditionTrack.current': newCondition });
+        await globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.conditionTrack.current': newCondition });
         ui.notifications.info(`${actor.name} recovered! Condition improved from ${condition} to ${newCondition}`);
 
         // Apply the new condition effect
