@@ -358,7 +358,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
 /* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
       "system.forcePoints.max": newMax,
       "system.forcePoints.value": newValue
-    }); */
+
 
 
     SWSELogger.log(`SWSE LevelUp | Increased Force Points by ${levelData.forcePoints} (${currentMax} → ${newMax})`);

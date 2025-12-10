@@ -94,7 +94,6 @@ export class SWSERoll {
     }
 
     // Spend the force point
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': currentFP - 1});
     // Show roll in chat
     const messageContent = `
@@ -626,7 +625,6 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': curr
     // Increase Dark Side Score if using [Dark Side] power
     if (isDarkSide) {
       const newDarkSideScore = (actor.system.darkSideScore || 0) + 1;
-      await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
 globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': newDarkSideScore});
       ui.notifications.warn(`Dark Side Score increased to ${newDarkSideScore}`);
     }

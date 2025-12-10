@@ -366,18 +366,10 @@ export class CombatActionBar {
     const maxHP = actor.system.hp.max;
     const newHP = Math.min(currentHP + healAmount, maxHP);
 
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
+    await globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.hp.value': newHP,
       'system.secondWind.uses': actor.system.secondWind.uses - 1
-    });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.hp.value': newHP,
-      'system.secondWind.uses': actor.system.secondWind.uses - 1
-    });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.hp.value': newHP,
-      'system.secondWind.uses': actor.system.secondWind.uses - 1
-    }); */
+
 
 
     ChatMessage.create({

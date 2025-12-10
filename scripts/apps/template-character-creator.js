@@ -734,15 +734,12 @@ export class TemplateCharacterCreator extends Application {
       // Auto-check Force Sensitive if this is a Force-using class
       const forceUsingClasses = ['Jedi', 'Sith', 'Force Adept', 'Force Disciple'];
       if (forceUsingClasses.includes(template.className)) {
-        await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
           'system.forceSensitive': true
         });
 globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSensitive': true
         });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-          'system.forceSensitive': true
-        }); */
+
 
         SWSELogger.log(`SWSE | Auto-checked Force Sensitive for ${template.className}`);
       }

@@ -30,6 +30,7 @@ import { registerSystemSettings } from './scripts/core/settings.js';
 import { SWSEActorBase } from './scripts/actors/base/swse-actor-base.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
 import { ActorEngine } from './scripts/actors/engine/actor-engine.js';
+import { RollEngine } from './scripts/engine/roll-engine.js';
 import { applyActorUpdateAtomic, batchActorUpdates, safeActorUpdate, prepareUpdatePayload, validateActorFields } from './scripts/utils/actor-utils.js';
 import { sanitizeHTML, sanitizeChatMessage, canUserModifyActor, canUserModifyItem, withPermissionCheck, withGMCheck, escapeHTML, validateUserInput } from './scripts/utils/security-utils.js';
 import { hookMonitor, monitoredHook, debouncedHook, throttledHook, safeHook, hookPerformanceCommands } from './scripts/utils/hook-performance.js';
@@ -333,8 +334,14 @@ Hooks.once("init", async function () {
         }
     };
 
-    // Lazy Loader Early
-    window.SWSE = { lazyLoader, perfMonitor };
+    // Initialize SWSE Global Namespace
+    globalThis.SWSE = {
+        ActorEngine,
+        RollEngine,
+        lazyLoader,
+        perfMonitor
+    };
+    window.SWSE = globalThis.SWSE;
 
     // Document Classes
     CONFIG.Actor.documentClass = SWSEActorBase;
@@ -426,7 +433,10 @@ Hooks.once("ready", async function () {
 
     ThemeLoader.initialize();
 
+    // Initialize combat systems
     SWSECombat.init();
+    SWSECombatIntegration.init();
+    SWSEActiveEffectsManager.init();
     SWSEGrappling.init();
     SWSEVehicleCombat.init();
     HouseruleMechanics.initialize();

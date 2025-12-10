@@ -144,15 +144,12 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
     });
 
     if (roll.total >= 10) {
-        await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
             'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
         });
 globalThis.SWSE.ActorEngine.updateActor(actor, {
             'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
         });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-            'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
-        }); */
+
 
         ui.notifications.info(
             game.i18n.format('SWSE.Notifications.Condition.RecoverySuccess', { name: actor.name })

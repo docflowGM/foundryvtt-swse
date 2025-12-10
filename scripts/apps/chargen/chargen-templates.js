@@ -399,7 +399,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
 /* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
               [`system.skills.${skillKey}.focused`]: true
-            }); */
+
 
             SWSELogger.log(`SWSE | Auto-checked skill focus for: ${skillDisplayName}`);
           }
@@ -422,7 +422,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
 // (no heuristic applied)
 /* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
           'system.forceSensitive': true
-        }); */
+
 
         SWSELogger.log('SWSE | Auto-checked Force Sensitive');
       }
