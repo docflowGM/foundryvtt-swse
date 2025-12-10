@@ -272,12 +272,9 @@ async function handleItemDelete(item, options, userId) {
 
         const skillKey = skillNames[focusedSkillName];
         if (skillKey && actor.system.skills[skillKey]) {
+            globalThis.SWSE.ActorEngine.updateActor(actor, {
                 [`system.skills.${skillKey}.focused`]: false
             });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-                [`system.skills.${skillKey}.focused`]: false
-            });
-
 
             ui.notifications.info(`Removed Skill Focus from ${focusedSkillName}`);
         }
