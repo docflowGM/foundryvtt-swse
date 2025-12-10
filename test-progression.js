@@ -99,14 +99,22 @@
     })));
 
     // Step 4: Apply Species
-    log("\nSTEP 4: Selecting Species (Human)");
+    log("\nSTEP 4: Selecting Species (Human with +2 STR)");
     try {
-      await engine.doAction("confirmSpecies", { speciesId: "Human" });
+      await engine.doAction("confirmSpecies", {
+        speciesId: "Human",
+        abilityChoice: "str" // Humans get +2 to any ability
+      });
       log("✓ Species selection successful");
       log("Engine state after species:", {
         completedSteps: engine.completedSteps,
         currentStep: engine.current,
         data: engine.data
+      });
+      log("Actor racial ability mods:", {
+        str: actor.system.abilities.str.racial,
+        dex: actor.system.abilities.dex.racial,
+        con: actor.system.abilities.con.racial
       });
     } catch (error) {
       logError("Species selection failed", error);
@@ -171,7 +179,15 @@
     // Step 8: Allocate Skills
     log("\nSTEP 8: Allocating Skills");
     try {
-      const skills = ["Pilot", "Mechanics", "Perception", "Initiative"];
+      // Soldier gets (5 + INT mod) * 4 skill points = (5 + 0) * 4 = 20 points at level 1
+      // Allocate 4 ranks each in 5 different skills = 20 points
+      const skills = [
+        { key: "Pilot", ranks: 4 },
+        { key: "Mechanics", ranks: 4 },
+        { key: "Perception", ranks: 4 },
+        { key: "Initiative", ranks: 4 },
+        { key: "Endurance", ranks: 4 }
+      ];
 
       await engine.doAction("confirmSkills", { skills });
       log("✓ Skills allocated successfully");
@@ -188,7 +204,9 @@
     // Step 9: Select Feats
     log("\nSTEP 9: Selecting Feats");
     try {
-      const feats = ["Weapon Proficiency (Pistols)", "Armor Proficiency (Light)"];
+      // Humans get 2 feats at level 1 (1 + 1 bonus)
+      // Soldier class already grants weapon/armor proficiencies automatically
+      const feats = ["Weapon Focus (Rifles)", "Toughness"];
 
       await engine.doAction("confirmFeats", { featIds: feats });
       log("✓ Feats selected successfully");
@@ -197,7 +215,8 @@
         currentStep: engine.current,
         data: engine.data
       });
-      log("Actor feats:", actor.system.progression.feats);
+      log("Actor feats (chosen):", actor.system.progression.feats);
+      log("Actor feats (starting/automatic):", actor.system.progression.startingFeats);
     } catch (error) {
       logError("Feat selection failed", error);
     }
@@ -205,7 +224,8 @@
     // Step 10: Select Talents
     log("\nSTEP 10: Selecting Talents");
     try {
-      const talents = ["Quick Draw"];
+      // All classes get 1 talent at level 1
+      const talents = ["Armored Defense"];
 
       await engine.doAction("confirmTalents", { talentIds: talents });
       log("✓ Talents selected successfully");
@@ -238,11 +258,37 @@
     log("Final actor state:", {
       name: actor.name,
       level: actor.system.level,
+      race: actor.system.race,
+      size: actor.system.size,
+      speed: actor.system.speed,
       progression: actor.system.progression,
       abilities: actor.system.abilities,
-      hp: actor.system.attributes?.hp,
-      defenses: actor.system.defenses
+      hp: actor.system.hp,
+      bab: actor.system.bab,
+      defenses: actor.system.defenses,
+      languages: actor.system.languages,
+      items: actor.items.map(i => ({ name: i.name, type: i.type }))
     });
+
+    // Validate expected values
+    log("\nVALIDATION:");
+    const validations = [
+      { name: "Level", actual: actor.system.level, expected: 1, pass: actor.system.level === 1 },
+      { name: "HP", actual: actor.system.hp?.max, expected: 11, pass: actor.system.hp?.max === 11 }, // 10 (HD) + 1 (CON)
+      { name: "BAB", actual: actor.system.bab, expected: 1, pass: actor.system.bab === 1 },
+      { name: "STR (with racial)", actual: actor.system.abilities.str?.total, expected: 16, pass: actor.system.abilities.str?.total === 16 }, // 14 base + 2 racial
+      { name: "Items created", actual: actor.items.size, expected: ">= 7", pass: actor.items.size >= 7 }, // 5 starting feats + 2 chosen feats
+      { name: "Species set", actual: actor.system.race, expected: "Human", pass: actor.system.race === "Human" }
+    ];
+
+    let passedValidations = 0;
+    for (const val of validations) {
+      const status = val.pass ? "✓ PASS" : "✗ FAIL";
+      log(`  ${status}: ${val.name} = ${val.actual} (expected ${val.expected})`);
+      if (val.pass) passedValidations++;
+    }
+
+    log(`\nValidation Summary: ${passedValidations}/${validations.length} checks passed`);
 
     // Step 13: Check for hooks being called
     log("\nSTEP 13: Verifying Hook System");
