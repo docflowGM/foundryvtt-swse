@@ -511,7 +511,18 @@ export class SWSEProgressionEngine {
   async _action_confirmClass(payload) {
     const { classId } = payload;
     const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
-    const classData = PROGRESSION_RULES.classes[classId];
+    const { getClassData } = await import('../progression/utils/class-data-loader.js');
+
+    // Try hardcoded data first (faster for core classes)
+    let classData = PROGRESSION_RULES.classes[classId];
+
+    // If not found, or if hardcoded data lacks levelProgression, load from compendium
+    if (!classData || !classData.levelProgression) {
+      const compendiumData = await getClassData(classId);
+      if (compendiumData) {
+        classData = compendiumData;
+      }
+    }
 
     if (!classData) {
       throw new Error(`Unknown class: ${classId}`);
@@ -519,28 +530,70 @@ export class SWSEProgressionEngine {
 
     const progression = this.actor.system.progression || {};
     const classLevels = Array.from(progression.classLevels || []);
-    const level = 1;
+
+    // Determine which level of THIS CLASS is being taken
+    // Count how many levels of this specific class the character already has
+    const existingLevelsInClass = classLevels.filter(cl => cl.class === classId).length;
+    const levelInClass = existingLevelsInClass + 1;
 
     // Add class level entry
     classLevels.push({
       class: classId,
-      level: level,
+      level: levelInClass,
       choices: {},
       skillPoints: (classData.skillPoints + (this.actor.system.abilities.int?.mod || 0)) * 4
     });
 
-    // Calculate starting feat budget
-    const speciesData = PROGRESSION_RULES.species[progression.species];
-    let featBudget = 1; // Everyone gets 1 feat at level 1
-    if (speciesData?.bonusFeat) featBudget++; // Humans get +1
+    // Get level-specific features from compendium
+    const levelFeatures = classData.levelProgression?.[levelInClass] || {
+      features: [],
+      bonusFeats: 0,
+      talents: 0,
+      forcePoints: 0
+    };
 
-    // Store class starting feats (proficiencies) separately - these are automatic
-    const startingFeats = classData.startingFeats || [];
+    swseLogger.log(
+      `Progression: Taking ${classId} level ${levelInClass}. ` +
+      `Grants: ${levelFeatures.bonusFeats} bonus feats, ${levelFeatures.talents} talents, ` +
+      `${levelFeatures.forcePoints || 0} force points`
+    );
+
+    // Calculate feat budget based on what THIS SPECIFIC LEVEL grants
+    let featBudget = progression.featBudget || 0;
+
+    // First character level: everyone gets 1 feat, plus species bonus
+    if (classLevels.length === 1) {
+      const speciesData = PROGRESSION_RULES.species[progression.species];
+      featBudget = 1; // Everyone gets 1 feat at level 1
+      if (speciesData?.bonusFeat) featBudget++; // Humans get +1
+    }
+
+    // Add bonus feats from this class level
+    if (levelFeatures.bonusFeats > 0) {
+      featBudget += levelFeatures.bonusFeats;
+    }
+
+    // Calculate talent budget based on what THIS SPECIFIC LEVEL grants
+    let talentBudget = progression.talentBudget || 0;
+    if (levelFeatures.talents > 0) {
+      talentBudget += levelFeatures.talents;
+    }
+
+    // Accumulate starting feats from all classes (level 1 of each class grants automatic feats)
+    const existingStartingFeats = progression.startingFeats || [];
+    const classStartingFeats = (levelInClass === 1) ? (classData.startingFeats || []) : [];
+    const allStartingFeats = Array.from(new Set([...existingStartingFeats, ...classStartingFeats]));
+
+    swseLogger.log(
+      `Progression: New budgets - Feat budget: ${featBudget}, Talent budget: ${talentBudget}, ` +
+      `Starting feats: [${allStartingFeats.join(', ')}]`
+    );
 
     await applyActorUpdateAtomic(this.actor, {
       "system.progression.classLevels": classLevels,
-      "system.progression.startingFeats": startingFeats,
-      "system.progression.featBudget": featBudget
+      "system.progression.startingFeats": allStartingFeats,
+      "system.progression.featBudget": featBudget,
+      "system.progression.talentBudget": talentBudget
     });
 
     this.data.class = classId;
@@ -550,49 +603,63 @@ export class SWSEProgressionEngine {
   async _action_confirmSkills(payload) {
     const { skills } = payload;
     const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
+    const { getClassData } = await import('../progression/utils/class-data-loader.js');
 
     // Validate skill structure
     if (!Array.isArray(skills)) {
       throw new Error("Skills must be an array");
     }
 
-    // Calculate available skill points
+    // Calculate available skill TRAININGS (not points!)
+    // SWSE uses trainings: you pick N skills to be "trained" (+5 bonus)
+    // No ranks, no points per level - just trainings at character creation
     const classLevels = this.actor.system.progression?.classLevels || [];
     if (classLevels.length === 0) {
-      throw new Error("Must select a class before allocating skills");
+      throw new Error("Must select a class before selecting skills");
     }
 
+    // Get class data (try hardcoded first, then compendium)
     const firstClass = classLevels[0];
-    const classData = PROGRESSION_RULES.classes[firstClass.class];
+    let classData = PROGRESSION_RULES.classes[firstClass.class];
+    if (!classData) {
+      classData = await getClassData(firstClass.class);
+    }
+
+    if (!classData) {
+      throw new Error(`Unknown class: ${firstClass.class}`);
+    }
+
     const intMod = this.actor.system.abilities.int?.mod || 0;
-    const availablePoints = (classData.skillPoints + intMod) * 4;
+    const progression = this.actor.system.progression || {};
 
-    // Calculate spent points
-    let spentPoints = 0;
-    for (const skill of skills) {
-      if (typeof skill === 'string') {
-        spentPoints++; // Assume 1 rank if just a string
-      } else if (skill.ranks) {
-        spentPoints += skill.ranks;
-      }
+    // Available trainings = class base + INT modifier
+    // (Background trainings are automatic and don't count against this)
+    const availableTrainings = classData.skillPoints + intMod;
+
+    // Count background trainings (already applied, don't count against budget)
+    const backgroundTrainings = progression.backgroundTrainedSkills || [];
+
+    // Count selected trainings (exclude background skills)
+    const selectedSkills = skills.map(s => typeof s === 'string' ? s : (s.key || s.name));
+    const nonBackgroundSelections = selectedSkills.filter(
+      skill => !backgroundTrainings.includes(skill)
+    );
+
+    if (nonBackgroundSelections.length > availableTrainings) {
+      throw new Error(
+        `Too many skill trainings selected: ${nonBackgroundSelections.length}/${availableTrainings} ` +
+        `(${backgroundTrainings.length} background trainings are automatic)`
+      );
     }
 
-    if (spentPoints > availablePoints) {
-      throw new Error(`Too many skill points allocated: ${spentPoints}/${availablePoints}`);
-    }
-
-    // Normalize skill structure to { key, ranks }
-    const normalizedSkills = skills.map(s => {
-      if (typeof s === 'string') {
-        return { key: s, ranks: 1 };
-      }
-      return { key: s.key || s.name, ranks: s.ranks || 1 };
-    });
+    // Normalize to simple array of skill names (trained skills)
+    // No ranks - just a list of trained skills
+    const trainedSkills = selectedSkills.map(s => typeof s === 'string' ? s : (s.key || s.name));
 
     await applyActorUpdateAtomic(this.actor, {
-      "system.progression.skills": normalizedSkills
+      "system.progression.trainedSkills": trainedSkills
     });
-    this.data.skills = normalizedSkills;
+    this.data.skills = trainedSkills;
     await this.completeStep("skills");
   }
 
@@ -623,14 +690,22 @@ export class SWSEProgressionEngine {
     const { talentIds } = payload;
     const progression = this.actor.system.progression || {};
 
-    // At level 1, all classes get 1 talent
-    const talentBudget = 1;
+    // Get talent budget from progression (set by _action_confirmClass based on level features)
+    const talentBudget = progression.talentBudget || 0;
     const currentTalents = progression.talents || [];
 
-    if (currentTalents.length + talentIds.length > talentBudget) {
-      throw new Error(`Too many talents selected: ${currentTalents.length + talentIds.length}/${talentBudget}`);
+    // Count how many NEW talents are being selected (not already in the list)
+    const newTalents = talentIds.filter(id => !currentTalents.includes(id));
+    const talentsAfterSelection = currentTalents.length + newTalents.length;
+
+    if (talentsAfterSelection > talentBudget) {
+      throw new Error(
+        `Too many talents selected: ${talentsAfterSelection}/${talentBudget} ` +
+        `(${currentTalents.length} already selected, trying to add ${newTalents.length})`
+      );
     }
 
+    // Merge and deduplicate
     const talents = Array.from(new Set([...currentTalents, ...talentIds]));
 
     await applyActorUpdateAtomic(this.actor, {

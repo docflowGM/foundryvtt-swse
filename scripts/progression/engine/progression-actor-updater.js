@@ -15,14 +15,14 @@ export class ActorProgressionUpdater {
     try {
       // Calculate total level
       const classLevels = prog.classLevels || [];
-      const totalLevel = classLevels.reduce((sum, cl) => sum + (cl.level || 0), 0);
+      const totalLevel = classLevels.length; // Each entry is one level
 
       if (totalLevel > 0) {
         updates["system.level"] = totalLevel;
       }
 
       // Calculate HP from class levels
-      const hp = this._calculateHP(actor, classLevels);
+      const hp = await this._calculateHP(actor, classLevels);
       if (hp.max > 0) {
         updates["system.hp.max"] = hp.max;
         // Only update current HP if it's 0 (new character)
@@ -31,12 +31,12 @@ export class ActorProgressionUpdater {
         }
       }
 
-      // Calculate Base Attack Bonus
-      const bab = calculateBAB(classLevels);
+      // Calculate Base Attack Bonus (now async)
+      const bab = await calculateBAB(classLevels);
       updates["system.bab"] = bab;
 
-      // Calculate defenses
-      const defenses = this._calculateDefenses(actor, classLevels);
+      // Calculate defenses (now async)
+      const defenses = await this._calculateDefenses(actor, classLevels);
       if (defenses.fortitude) {
         updates["system.defenses.fortitude.class"] = defenses.fortitude.class;
         updates["system.defenses.fortitude.ability"] = defenses.fortitude.ability;
@@ -68,10 +68,11 @@ export class ActorProgressionUpdater {
         }
       }
 
-      // Keep applied feats/talents as flags for tracking
+      // Keep applied feats/talents/skills as flags for tracking
       updates["flags.swse.appliedFeats"] = prog.feats || [];
       updates["flags.swse.appliedTalents"] = prog.talents || [];
-      updates["flags.swse.progressionSkills"] = prog.skills || [];
+      // Skills are TRAININGS (not ranks) - just a list of trained skill names
+      updates["flags.swse.trainedSkills"] = prog.trainedSkills || [];
 
       // Apply updates if any
       if (Object.keys(updates).length > 0) {
@@ -87,30 +88,40 @@ export class ActorProgressionUpdater {
 
   /**
    * Calculate max HP from class levels
+   * Now supports prestige classes from compendium
    * @private
    */
-  static _calculateHP(actor, classLevels) {
+  static async _calculateHP(actor, classLevels) {
+    const { getClassData } = await import('../utils/class-data-loader.js');
+
     let maxHP = 0;
     const conMod = actor.system.abilities?.con?.mod || 0;
+    let isFirstLevel = true;
 
-    for (let i = 0; i < classLevels.length; i++) {
-      const classLevel = classLevels[i];
-      const classData = PROGRESSION_RULES.classes[classLevel.class];
-      if (!classData) continue;
+    for (const classLevel of classLevels) {
+      // Try hardcoded data first (faster for core classes)
+      let classData = PROGRESSION_RULES.classes[classLevel.class];
+
+      // If not found, try loading from compendium (prestige classes)
+      if (!classData) {
+        classData = await getClassData(classLevel.class);
+      }
+
+      if (!classData) {
+        swseLogger.warn(`HP calculation: Unknown class "${classLevel.class}", skipping`);
+        continue;
+      }
 
       const hitDie = classData.hitDie || 6;
-      const levels = classLevel.level || 1;
 
-      // First level of first class: max HP
-      if (i === 0) {
+      // First level ever: max HP
+      if (isFirstLevel) {
         maxHP += hitDie + conMod;
-        // Additional levels in this class
-        if (levels > 1) {
-          maxHP += (levels - 1) * (Math.floor(hitDie / 2) + 1 + conMod);
-        }
+        isFirstLevel = false;
       } else {
-        // Multiclass: average HP for all levels
-        maxHP += levels * (Math.floor(hitDie / 2) + 1 + conMod);
+        // All other levels: average HP (half die + 1)
+        const avgRoll = Math.floor(hitDie / 2) + 1;
+        maxHP += avgRoll + conMod;
       }
     }
 
@@ -122,9 +133,11 @@ export class ActorProgressionUpdater {
 
   /**
    * Calculate defense bonuses from classes
+   * Fixed: Uses HIGHEST class bonus, not sum
+   * Formula: 10 + heroic level + highest class bonus + ability mod
    * @private
    */
-  static _calculateDefenses(actor, classLevels) {
+  static async _calculateDefenses(actor, classLevels) {
     const abilities = actor.system.abilities || {};
 
     // Get ability modifiers
@@ -133,10 +146,10 @@ export class ActorProgressionUpdater {
     const conMod = abilities.con?.mod || 0;
     const wisMod = abilities.wis?.mod || 0;
 
-    // Calculate class bonuses for each save
-    const fortBonus = calculateSaveBonus(classLevels, 'fort');
-    const refBonus = calculateSaveBonus(classLevels, 'ref');
-    const willBonus = calculateSaveBonus(classLevels, 'will');
+    // Calculate class bonuses for each save (now async)
+    const fortBonus = await calculateSaveBonus(classLevels, 'fort');
+    const refBonus = await calculateSaveBonus(classLevels, 'ref');
+    const willBonus = await calculateSaveBonus(classLevels, 'will');
 
     // Fortitude uses STR or CON (whichever is higher)
     const fortAbility = Math.max(strMod, conMod);

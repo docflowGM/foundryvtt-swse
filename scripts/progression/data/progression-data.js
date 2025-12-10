@@ -197,14 +197,27 @@ export const PROGRESSION_RULES = {
 
 /**
  * Helper function to calculate base attack bonus
+ * Now supports loading from compendium for prestige classes
  */
-export function calculateBAB(classLevels) {
+export async function calculateBAB(classLevels) {
+  const { getClassData } = await import('../utils/class-data-loader.js');
+
   let bab = 0;
   for (const classLevel of classLevels) {
-    const classData = PROGRESSION_RULES.classes[classLevel.class];
-    if (!classData) continue;
+    // Try hardcoded data first (faster for core classes)
+    let classData = PROGRESSION_RULES.classes[classLevel.class];
 
-    const levels = classLevel.level;
+    // If not found, try loading from compendium (prestige classes)
+    if (!classData) {
+      classData = await getClassData(classLevel.class);
+    }
+
+    if (!classData) {
+      console.warn(`BAB calculation: Unknown class "${classLevel.class}", skipping`);
+      continue;
+    }
+
+    const levels = classLevel.level || 1;
     if (classData.baseAttackBonus === "high") {
       bab += levels;
     } else if (classData.baseAttackBonus === "medium") {
@@ -218,14 +231,27 @@ export function calculateBAB(classLevels) {
 
 /**
  * Helper function to calculate save bonus
+ * Now supports loading from compendium for prestige classes
  */
-export function calculateSaveBonus(classLevels, saveType) {
+export async function calculateSaveBonus(classLevels, saveType) {
+  const { getClassData } = await import('../utils/class-data-loader.js');
+
   let bonus = 0;
   for (const classLevel of classLevels) {
-    const classData = PROGRESSION_RULES.classes[classLevel.class];
-    if (!classData) continue;
+    // Try hardcoded data first (faster for core classes)
+    let classData = PROGRESSION_RULES.classes[classLevel.class];
 
-    const levels = classLevel.level;
+    // If not found, try loading from compendium (prestige classes)
+    if (!classData) {
+      classData = await getClassData(classLevel.class);
+    }
+
+    if (!classData) {
+      console.warn(`Save calculation: Unknown class "${classLevel.class}", skipping`);
+      continue;
+    }
+
+    const levels = classLevel.level || 1;
     const saveProgression = classData[`${saveType}Save`];
 
     if (saveProgression === "high") {
