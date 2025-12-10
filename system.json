@@ -212,6 +212,20 @@
       "system": "swse"
     },
     {
+      "name": "languages",
+      "label": "SWSE.Compendium.Languages",
+      "path": "packs/languages.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
+      "name": "backgrounds",
+      "label": "SWSE.Compendium.Backgrounds",
+      "path": "packs/backgrounds.db",
+      "type": "Item",
+      "system": "swse"
+    },
+    {
       "name": "extraskilluses",
       "label": "SWSE.Compendium.ExtraSkillUses",
       "path": "packs/extraskilluses.db",

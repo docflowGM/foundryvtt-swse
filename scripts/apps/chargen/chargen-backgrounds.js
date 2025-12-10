@@ -20,6 +20,54 @@ export const BackgroundsModule = {
     if (this._backgrounds) return this._backgrounds;
 
     try {
+      // Try to load from compendium first
+      const pack = game?.packs?.get('swse.backgrounds');
+      if (pack) {
+        const docs = await pack.getDocuments();
+
+        if (docs.length > 0) {
+          // Organize backgrounds by category
+          const events = [];
+          const occupations = [];
+          const planets_core = [];
+          const planets_homebrew = [];
+
+          for (const doc of docs) {
+            const bg = {
+              id: doc.id,
+              name: doc.name,
+              category: doc.system.category,
+              narrativeDescription: doc.system.narrativeDescription || '',
+              specialAbility: doc.system.specialAbility || '',
+              relevantSkills: doc.system.relevantSkills || [],
+              skillChoiceCount: doc.system.skillChoiceCount || 1,
+              mechanicalEffect: doc.system.mechanicalEffect || {},
+              region: doc.system.region || '',
+              terrain: doc.system.terrain || ''
+            };
+
+            if (bg.category === 'event') {
+              events.push(bg);
+            } else if (bg.category === 'occupation') {
+              occupations.push(bg);
+            } else if (bg.category === 'planet') {
+              planets_core.push(bg);
+            } else if (bg.category === 'planet-homebrew') {
+              planets_homebrew.push(bg);
+            }
+          }
+
+          this._backgrounds = { events, occupations, planets_core, planets_homebrew };
+          SWSELogger.log(`chargen: Loaded ${docs.length} backgrounds from compendium`);
+          return this._backgrounds;
+        }
+      }
+    } catch (e) {
+      SWSELogger.warn("chargen: Failed to load from compendium, falling back to JSON", e);
+    }
+
+    // Fallback to JSON
+    try {
       const resp = await fetch("systems/swse/data/backgrounds.json");
       if (!resp.ok) {
         throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);

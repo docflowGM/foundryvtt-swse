@@ -98,13 +98,55 @@ export async function _getStartingLanguages() {
 
 /**
  * Get all available languages organized by category
+ * Loads from swse.languages compendium with fallback to JSON
  * @returns {Promise<Object>} Languages organized by category
  */
 export async function _getAvailableLanguages() {
+  try {
+    // Try to load from compendium first
+    const pack = game?.packs?.get('swse.languages');
+    if (pack) {
+      const docs = await pack.getDocuments();
+
+      if (docs.length > 0) {
+        // Organize languages by category
+        const widelyUsed = [];
+        const localTrade = [];
+
+        for (const doc of docs) {
+          const category = doc.system.category || 'local-trade';
+          if (category === 'widely-used') {
+            widelyUsed.push(doc.name);
+          } else {
+            localTrade.push(doc.name);
+          }
+        }
+
+        SWSELogger.log(`chargen: Loaded ${docs.length} languages from compendium`);
+
+        return {
+          widelyUsed: {
+            name: "Widely Used Languages",
+            description: "Common languages spoken throughout the galaxy",
+            languages: widelyUsed.sort()
+          },
+          localTrade: {
+            name: "Local/Trade Languages",
+            description: "Regional languages and trade tongues",
+            languages: localTrade.sort()
+          }
+        };
+      }
+    }
+  } catch (e) {
+    SWSELogger.warn("chargen: Failed to load languages from compendium, falling back to JSON", e);
+  }
+
+  // Fallback to JSON
   const languagesData = await _loadLanguagesData.call(this);
 
   if (!languagesData) {
-    // Fallback to a basic list
+    // Final fallback to a basic list
     return {
       widelyUsed: {
         name: "Widely Used Languages",
