@@ -550,49 +550,63 @@ export class SWSEProgressionEngine {
   async _action_confirmSkills(payload) {
     const { skills } = payload;
     const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
+    const { getClassData } = await import('../progression/utils/class-data-loader.js');
 
     // Validate skill structure
     if (!Array.isArray(skills)) {
       throw new Error("Skills must be an array");
     }
 
-    // Calculate available skill points
+    // Calculate available skill TRAININGS (not points!)
+    // SWSE uses trainings: you pick N skills to be "trained" (+5 bonus)
+    // No ranks, no points per level - just trainings at character creation
     const classLevels = this.actor.system.progression?.classLevels || [];
     if (classLevels.length === 0) {
-      throw new Error("Must select a class before allocating skills");
+      throw new Error("Must select a class before selecting skills");
     }
 
+    // Get class data (try hardcoded first, then compendium)
     const firstClass = classLevels[0];
-    const classData = PROGRESSION_RULES.classes[firstClass.class];
+    let classData = PROGRESSION_RULES.classes[firstClass.class];
+    if (!classData) {
+      classData = await getClassData(firstClass.class);
+    }
+
+    if (!classData) {
+      throw new Error(`Unknown class: ${firstClass.class}`);
+    }
+
     const intMod = this.actor.system.abilities.int?.mod || 0;
-    const availablePoints = (classData.skillPoints + intMod) * 4;
+    const progression = this.actor.system.progression || {};
 
-    // Calculate spent points
-    let spentPoints = 0;
-    for (const skill of skills) {
-      if (typeof skill === 'string') {
-        spentPoints++; // Assume 1 rank if just a string
-      } else if (skill.ranks) {
-        spentPoints += skill.ranks;
-      }
+    // Available trainings = class base + INT modifier
+    // (Background trainings are automatic and don't count against this)
+    const availableTrainings = classData.skillPoints + intMod;
+
+    // Count background trainings (already applied, don't count against budget)
+    const backgroundTrainings = progression.backgroundTrainedSkills || [];
+
+    // Count selected trainings (exclude background skills)
+    const selectedSkills = skills.map(s => typeof s === 'string' ? s : (s.key || s.name));
+    const nonBackgroundSelections = selectedSkills.filter(
+      skill => !backgroundTrainings.includes(skill)
+    );
+
+    if (nonBackgroundSelections.length > availableTrainings) {
+      throw new Error(
+        `Too many skill trainings selected: ${nonBackgroundSelections.length}/${availableTrainings} ` +
+        `(${backgroundTrainings.length} background trainings are automatic)`
+      );
     }
 
-    if (spentPoints > availablePoints) {
-      throw new Error(`Too many skill points allocated: ${spentPoints}/${availablePoints}`);
-    }
-
-    // Normalize skill structure to { key, ranks }
-    const normalizedSkills = skills.map(s => {
-      if (typeof s === 'string') {
-        return { key: s, ranks: 1 };
-      }
-      return { key: s.key || s.name, ranks: s.ranks || 1 };
-    });
+    // Normalize to simple array of skill names (trained skills)
+    // No ranks - just a list of trained skills
+    const trainedSkills = selectedSkills.map(s => typeof s === 'string' ? s : (s.key || s.name));
 
     await applyActorUpdateAtomic(this.actor, {
-      "system.progression.skills": normalizedSkills
+      "system.progression.trainedSkills": trainedSkills
     });
-    this.data.skills = normalizedSkills;
+    this.data.skills = trainedSkills;
     await this.completeStep("skills");
   }
 

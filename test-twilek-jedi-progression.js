@@ -173,19 +173,23 @@
     }
 
     // Step 7: Allocate Skills
-    log("\nSTEP 7: Allocating Skills");
+    log("\nSTEP 7: Selecting Skill Trainings");
+    log("SWSE uses TRAININGS (not ranks): Pick skills to be 'trained' for +5 bonus");
     try {
-      // Jedi gets (4 + INT mod) * 4 skill points = (4 + 0) * 4 = 16 points at level 1
+      // Jedi gets 4 + INT mod = 4 + 0 = 4 TRAININGS at character creation
+      // Background (Outer Rim Colonist) gives 2 automatic trainings
+      // Select 4 class trainings:
       const skills = [
-        { key: "Acrobatics", ranks: 4 },
-        { key: "Perception", ranks: 4 },
-        { key: "Use the Force", ranks: 4 },
-        { key: "Initiative", ranks: 4 }
+        "Acrobatics",
+        "Perception",
+        "Use the Force",
+        "Initiative"
       ];
 
       await engine.doAction("confirmSkills", { skills });
-      log("✓ Skills allocated successfully");
-      log("Actor skills:", actor.system.progression.skills);
+      log("✓ Skill trainings selected successfully");
+      log("Trained skills:", actor.system.progression.trainedSkills);
+      log("Background trainings:", actor.system.progression.backgroundTrainedSkills);
     } catch (error) {
       logError("Skill allocation failed", error);
     }
@@ -258,16 +262,10 @@
         await lvlEngine.doAction("rollHP", { roll: "average", value: hpValue });
         log(`✓ HP rolled: ${hpValue}`);
 
-        // Allocate skills - Jedi gets 4 + INT mod per level = 4 points
-        const skillPoints = 4;
-        const skills = [
-          { key: "Use the Force", ranks: 1 },
-          { key: "Perception", ranks: 1 },
-          { key: "Acrobatics", ranks: 1 },
-          { key: "Initiative", ranks: 1 }
-        ];
-        await lvlEngine.doAction("confirmSkills", { skills: skills.slice(0, skillPoints) });
-        log(`✓ Skills allocated: ${skillPoints} points`);
+        // Skills: No new trainings at level-up (SWSE only grants trainings at chargen)
+        // Just skip the skills step
+        await lvlEngine.completeStep("skills");
+        log(`✓ Skills step completed (no new trainings at level-up)`);
 
         // Feats (every 3 levels: 3, 6, 9, etc.)
         if (targetLevel % 3 === 0) {
@@ -384,17 +382,10 @@
         await lvlEngine.doAction("rollHP", { roll: "average", value: hpValue });
         log(`✓ HP rolled: ${hpValue}`);
 
-        // Allocate skills - Need to check Jedi Knight skill points
-        // Assuming similar to Jedi (4 base points)
-        const skillPoints = 4;
-        const skills = [
-          { key: "Use the Force", ranks: 1 },
-          { key: "Perception", ranks: 1 },
-          { key: "Acrobatics", ranks: 1 },
-          { key: "Initiative", ranks: 1 }
-        ];
-        await lvlEngine.doAction("confirmSkills", { skills: skills.slice(0, skillPoints) });
-        log(`✓ Skills allocated: ${skillPoints} points`);
+        // Skills: No new trainings at level-up (SWSE only grants trainings at chargen)
+        // Just skip the skills step
+        await lvlEngine.completeStep("skills");
+        log(`✓ Skills step completed (no new trainings at level-up)`);
 
         // Feats (every 3 levels overall: 3, 6, 9)
         if (targetLevel % 3 === 0) {

@@ -68,10 +68,11 @@ export class ActorProgressionUpdater {
         }
       }
 
-      // Keep applied feats/talents as flags for tracking
+      // Keep applied feats/talents/skills as flags for tracking
       updates["flags.swse.appliedFeats"] = prog.feats || [];
       updates["flags.swse.appliedTalents"] = prog.talents || [];
-      updates["flags.swse.progressionSkills"] = prog.skills || [];
+      // Skills are TRAININGS (not ranks) - just a list of trained skill names
+      updates["flags.swse.trainedSkills"] = prog.trainedSkills || [];
 
       // Apply updates if any
       if (Object.keys(updates).length > 0) {
