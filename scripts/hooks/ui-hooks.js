@@ -60,7 +60,7 @@ export function registerUIHooks() {
 
     // Sidebar state change
     /* COMMENTED BY fix_ui_js.py - disabled-hook START
-HooksRegistry.register('collapseSidebar', handleSidebarCollapse, {
+    HooksRegistry.register('collapseSidebar', handleSidebarCollapse, {
         id: 'collapse-sidebar',
         priority: 0,
         description: 'Reposition windows when sidebar collapses',
@@ -72,16 +72,16 @@ HooksRegistry.register('collapseSidebar', handleSidebarCollapse, {
     window.addEventListener("resize", () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            /* COMMENTED BY fix_ui_js.py - disabled-uiwindows-loop START
-for (const app of Object.values(ui.windows)) {
-                if (app.rendered && app.options?.popOut) {
-                    handleRenderApplication(app, app.element, {});
-                }
-            }
-COMMENTED BY fix_ui_js.py - disabled-uiwindows-loop END */
+            // COMMENTED BY fix_ui_js.py - disabled-uiwindows-loop START
+            // for (const app of Object.values(ui.windows)) {
+            //     if (app.rendered && app.options?.popOut) {
+            //         handleRenderApplication(app, app.element, {});
+            //     }
+            // }
+            // COMMENTED BY fix_ui_js.py - disabled-uiwindows-loop END
         }, 100);
     });
-COMMENTED BY fix_ui_js.py - disabled-hook END */
+    COMMENTED BY fix_ui_js.py - disabled-hook END */
 
     // Chat message rendering
     HooksRegistry.register('renderChatMessageHTML', handleRenderChatMessage, {
@@ -181,14 +181,15 @@ function handleRenderApplication(app, html, data) {
 /* COMMENTED BY fix_ui_js.py - disabled-hook START
 function handleSidebarCollapse() {
     // Re-check all open windows when sidebar state changes
-    /* COMMENTED BY fix_ui_js.py - disabled-uiwindows-loop START
-for (const app of Object.values(ui.windows)) {
-        if (app.rendered && app.options?.popOut) {
-            handleRenderApplication(app, app.element, {});
-        }
-    }
-COMMENTED BY fix_ui_js.py - disabled-uiwindows-loop END */
+    // COMMENTED BY fix_ui_js.py - disabled-uiwindows-loop START
+    // for (const app of Object.values(ui.windows)) {
+    //     if (app.rendered && app.options?.popOut) {
+    //         handleRenderApplication(app, app.element, {});
+    //     }
+    // }
+    // COMMENTED BY fix_ui_js.py - disabled-uiwindows-loop END
 }
+COMMENTED BY fix_ui_js.py - disabled-hook END */
 
 /**
  * Handle chat message rendering
@@ -215,7 +216,6 @@ function handleRenderChatMessage(message, html, data) {
 async function handleHotbarDrop(bar, data, slot) {
     if (data.type === "Item") {
         await createItemMacro(data, slot);
-COMMENTED BY fix_ui_js.py - disabled-hook END */
         return false;
     }
 }
