@@ -5,6 +5,7 @@ import { ProgressionEngine } from "../progression/engine/progression-engine.js";
  */
 
 import { ProficiencySelectionDialog } from '../apps/proficiency-selection-dialog.js';
+import { PrerequisiteValidator } from '../utils/prerequisite-validator.js';
 
 export class DropHandler {
 
@@ -445,6 +446,13 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
     // - Apply passive bonuses automatically
     // - Trigger recalculation
 
+    // Check prerequisites
+    const validation = PrerequisiteValidator.checkFeatPrerequisites(feat, actor);
+    if (!validation.qualified) {
+      ui.notifications.error(`${actor.name} does not meet prerequisites for ${feat.name}: ${validation.reason || 'Unknown reason'}`);
+      return false;
+    }
+
     // Check if this feat requires category selection (Weapon/Armor Proficiency, Weapon Focus, Weapon Specialization)
     const result = await ProficiencySelectionDialog.handleFeatWithCategorySelection(actor, feat);
 
@@ -479,17 +487,24 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
     // - Check tree prerequisites
     // - Validate class access
     // - Apply bonuses
-    
+
+    // Check prerequisites
+    const validation = PrerequisiteValidator.checkTalentPrerequisites(talent, actor);
+    if (!validation.qualified) {
+      ui.notifications.error(`${actor.name} does not meet prerequisites for ${talent.name}: ${validation.reason || 'Unknown reason'}`);
+      return false;
+    }
+
     // Check if already has talent
-    const existingTalent = actor.items.find(i => 
+    const existingTalent = actor.items.find(i =>
       i.type === 'talent' && i.name === talent.name
     );
-    
+
     if (existingTalent) {
       ui.notifications.warn(`${actor.name} already has ${talent.name}`);
       return false;
     }
-    
+
     await actor.createEmbeddedDocuments('Item', [talent.toObject()]);
     ui.notifications.info(`${actor.name} gained talent: ${talent.name}`);
     return true;
