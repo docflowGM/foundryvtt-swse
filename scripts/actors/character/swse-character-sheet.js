@@ -2,7 +2,6 @@ import { DDEngine } from '../../framework/dd-engine.js';
 import { ThemeEngine } from '../../themes/theme-engine.js';
 import { swseLogger } from '../../utils/logger.js';
 import { ProgressionEngine } from "../../progression/engine/progression-engine.js";
-import { FollowerEngine } from '../../engine/follower-engine.js';
 
 /**
  * SWSE Character Sheet
