@@ -324,7 +324,7 @@ export class SWSEGrappling {
   static async _addCondition(actor, condition) {
     const conditions = actor.system.conditions || [];
     conditions.push(condition);
-globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': conditions});
+    await globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': conditions});
   }
 
   /**
@@ -334,7 +334,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': conditions}
   static async _removeCondition(actor, conditionId) {
     const conditions = actor.system.conditions || [];
     const filtered = conditions.filter(c => c.id !== conditionId);
-globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': filtered});
+    await globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': filtered});
   }
 
   /**

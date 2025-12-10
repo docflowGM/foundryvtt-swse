@@ -53,11 +53,11 @@ export async function rollDamageWithMod(actor, formula, modifier = 0, label = "D
 export async function applyDamage(token, damage) {
   const actor = token.actor;
   if (!actor) return null;
-  
+
   const currentHP = actor.system.hp?.value || 0;
   const newHP = Math.max(0, currentHP - damage);
-globalThis.SWSE.ActorEngine.updateActor(actor, {"system.hp.value": newHP});
+  await globalThis.SWSE.ActorEngine.updateActor(actor, {"system.hp.value": newHP});
   ui.notifications.info(`${actor.name} takes ${damage} damage!`);
-  
+
   return actor;
 }

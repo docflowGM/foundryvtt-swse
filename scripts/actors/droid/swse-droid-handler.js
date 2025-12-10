@@ -97,9 +97,7 @@ export class SWSEDroidHandler {
 
     // Add item and update slot usage
     await actor.createEmbeddedDocuments('Item', [systemItem.toObject()]);
-      'system.systemSlots.used': slots.used + slotsRequired
-    });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
+    await globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.systemSlots.used': slots.used + slotsRequired
     });
 
@@ -117,9 +115,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
     const slotsRequired = systemItem.system.slotsRequired || 1;
 
     await actor.deleteEmbeddedDocuments('Item', [systemItem.id]);
-      'system.systemSlots.used': Math.max(0, slots.used - slotsRequired)
-    });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
+    await globalThis.SWSE.ActorEngine.updateActor(actor, {
       'system.systemSlots.used': Math.max(0, slots.used - slotsRequired)
     });
 
