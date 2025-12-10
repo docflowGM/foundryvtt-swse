@@ -58,12 +58,14 @@ export class ActorProgressionUpdater {
           if (speciesData.size) updates["system.size"] = speciesData.size;
           if (speciesData.speed !== undefined) updates["system.speed"] = speciesData.speed;
 
-          // Mark force sensitivity
-          if (classLevels.some(cl => {
-            const classData = PROGRESSION_RULES.classes[cl.class];
-            return classData?.forceSensitive;
-          })) {
-            updates["system.forceSensitive"] = true;
+          // Mark force sensitivity (check via compendium)
+          const { getClassData } = await import('../utils/class-data-loader.js');
+          for (const cl of classLevels) {
+            const classData = await getClassData(cl.class);
+            if (classData?.forceSensitive) {
+              updates["system.forceSensitive"] = true;
+              break;
+            }
           }
         }
       }
@@ -99,13 +101,8 @@ export class ActorProgressionUpdater {
     let isFirstLevel = true;
 
     for (const classLevel of classLevels) {
-      // Try hardcoded data first (faster for core classes)
-      let classData = PROGRESSION_RULES.classes[classLevel.class];
-
-      // If not found, try loading from compendium (prestige classes)
-      if (!classData) {
-        classData = await getClassData(classLevel.class);
-      }
+      // Always load from compendium (single source of truth)
+      const classData = await getClassData(classLevel.class);
 
       if (!classData) {
         swseLogger.warn(`HP calculation: Unknown class "${classLevel.class}", skipping`);

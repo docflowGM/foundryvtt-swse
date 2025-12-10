@@ -513,16 +513,8 @@ export class SWSEProgressionEngine {
     const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
     const { getClassData } = await import('../progression/utils/class-data-loader.js');
 
-    // Try hardcoded data first (faster for core classes)
-    let classData = PROGRESSION_RULES.classes[classId];
-
-    // If not found, or if hardcoded data lacks levelProgression, load from compendium
-    if (!classData || !classData.levelProgression) {
-      const compendiumData = await getClassData(classId);
-      if (compendiumData) {
-        classData = compendiumData;
-      }
-    }
+    // Always load from compendium (single source of truth)
+    const classData = await getClassData(classId);
 
     if (!classData) {
       throw new Error(`Unknown class: ${classId}`);
@@ -618,12 +610,9 @@ export class SWSEProgressionEngine {
       throw new Error("Must select a class before selecting skills");
     }
 
-    // Get class data (try hardcoded first, then compendium)
+    // Get class data from compendium (single source of truth)
     const firstClass = classLevels[0];
-    let classData = PROGRESSION_RULES.classes[firstClass.class];
-    if (!classData) {
-      classData = await getClassData(firstClass.class);
-    }
+    const classData = await getClassData(firstClass.class);
 
     if (!classData) {
       throw new Error(`Unknown class: ${firstClass.class}`);
