@@ -230,10 +230,11 @@ export async function calculateBAB(classLevels) {
     const levelProgression = rawData?.level_progression || [];
     const levelsInClass = classLevel.level || 1;
 
-    // Sum BAB from each level taken in this class
-    for (let i = 0; i < levelsInClass && i < levelProgression.length; i++) {
-      const levelData = levelProgression[i];
-      totalBAB += levelData.bab || 0;
+    // Get BAB from the final level taken in this class
+    // The BAB in level_progression is cumulative (e.g., level 6 Jedi = +6 total from Jedi)
+    if (levelsInClass > 0 && levelsInClass <= levelProgression.length) {
+      const finalLevelData = levelProgression[levelsInClass - 1]; // Array is 0-indexed
+      totalBAB += finalLevelData.bab || 0;
     }
   }
 
