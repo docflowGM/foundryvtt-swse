@@ -549,11 +549,11 @@
     }
 
     // Calculate expected HP
-    // Level 1 Jedi: 18 (3×6 max) + 1 (CON) = 19
-    // Levels 2-6 Jedi: 5 × (4 average + 1 CON) = 25
+    // Level 1 Jedi: 30 (3×10 max) + 1 (CON) = 31
+    // Levels 2-6 Jedi: 5 × (6 average + 1 CON) = 35
     // Levels 7-8 Jedi Knight: 2 × (6 average d10 + 1 CON) = 14
-    // Total expected: 19 + 25 + 14 = 58
-    const expectedHP = 58;
+    // Total expected: 31 + 35 + 14 = 80
+    const expectedHP = 80;
     const actualHP = actor.system.hp?.max || 0;
 
     if (actualHP !== expectedHP) {

@@ -100,7 +100,7 @@ export const PROGRESSION_RULES = {
     },
     Jedi: {
       name: "Jedi",
-      hitDie: 6,
+      hitDie: 10,
       skillPoints: 4,
       baseAttackBonus: "medium", // +3/4 per level
       classSkills: [

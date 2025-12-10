@@ -111,11 +111,11 @@ Progression: New budgets - Feat budget: 3, Talent budget: 2, Starting feats: [..
 
 ```
 Level: 8
-HP: 58
-  - Level 1: 18 (3×6 max d6) + 1 (CON) = 19
-  - Levels 2-6: 5 × (4 avg + 1 CON) = 25
+HP: 80
+  - Level 1: 30 (3×10 max d10) + 1 (CON) = 31
+  - Levels 2-6: 5 × (6 avg + 1 CON) = 35
   - Levels 7-8: 2 × (6 avg + 1 CON) = 14
-  - Total: 19 + 25 + 14 = 58
+  - Total: 31 + 35 + 14 = 80
 
 BAB: +6
   - Jedi (medium): 6 × 0.75 = 4.5 → 4
