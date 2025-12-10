@@ -5,6 +5,18 @@
  * taking Jedi levels 1-6, then Jedi Knight levels 7-8.
  * It monitors and logs all issues encountered during the progression.
  *
+ * Expected Feat/Talent Progression (with level-based feature granting):
+ * - Level 1: 1 feat (base), 1 talent (Jedi level 1)
+ * - Level 2: +1 bonus feat (Jedi level 2 grants bonus feat)
+ * - Level 3: +1 heroic feat (every 3 levels), +1 talent (Jedi level 3)
+ * - Level 4: +1 bonus feat (Jedi level 4 grants bonus feat), +2 WIS (every 4 levels)
+ * - Level 5: +1 talent (Jedi level 5)
+ * - Level 6: +1 heroic feat + 1 bonus feat (Jedi level 6 grants bonus feat)
+ * - Level 7: +1 talent (Jedi Knight level 1)
+ * - Level 8: +2 WIS (every 4 levels)
+ *
+ * Total at level 8: 6 feats, 4 talents, WIS +4
+ *
  * Usage: Run this in FoundryVTT's console or as a macro
  */
 
@@ -267,17 +279,25 @@
         await lvlEngine.completeStep("skills");
         log(`✓ Skills step completed (no new trainings at level-up)`);
 
-        // Feats (every 3 levels: 3, 6, 9, etc.)
-        if (targetLevel % 3 === 0) {
+        // Feats:
+        // - Heroic progression: Every 3 levels (3, 6, 9, etc.)
+        // - Jedi bonus feats: Even levels (2, 4, 6)
+        const heroicFeat = (targetLevel % 3 === 0);
+        const bonusFeat = (targetLevel % 2 === 0) && (targetLevel >= 2) && (targetLevel <= 6);
+
+        if (heroicFeat || bonusFeat) {
           const featChoices = {
-            3: ["Force Training"],
-            6: ["Skill Focus (Use the Force)"],
-            9: ["Force Training"]
+            2: ["Weapon Finesse"],  // Bonus feat from Jedi level 2
+            3: ["Force Training"],  // Heroic feat
+            4: ["Dodge"],           // Bonus feat from Jedi level 4
+            6: ["Skill Focus (Use the Force)", "Mobility"]  // Both heroic and bonus feat
           };
           const feats = featChoices[targetLevel] || [];
           if (feats.length > 0) {
             await lvlEngine.doAction("confirmFeats", { featIds: feats });
-            log(`✓ Feats selected: ${feats.join(", ")}`);
+            log(`✓ Feats selected: ${feats.join(", ")} (heroic: ${heroicFeat}, bonus: ${bonusFeat})`);
+          } else {
+            await lvlEngine.completeStep("feats");
           }
         } else {
           // Skip feats step
@@ -314,12 +334,16 @@
         await lvlEngine.finalize();
         log(`✓ Level ${targetLevel} finalized`);
 
-        // Log current state
+        // Log current state with budgets
         log(`Character state at level ${targetLevel}:`, {
           level: actor.system.level,
           classLevels: actor.system.progression.classLevels,
           hp: actor.system.hp?.max,
-          bab: actor.system.bab
+          bab: actor.system.bab,
+          featBudget: actor.system.progression.featBudget,
+          talentBudget: actor.system.progression.talentBudget,
+          featsSelected: (actor.system.progression.feats || []).length,
+          talentsSelected: (actor.system.progression.talents || []).length
         });
 
       } catch (error) {
@@ -387,22 +411,49 @@
         await lvlEngine.completeStep("skills");
         log(`✓ Skills step completed (no new trainings at level-up)`);
 
-        // Feats (every 3 levels overall: 3, 6, 9)
-        if (targetLevel % 3 === 0) {
-          const feats = ["Improved Defenses"];
-          await lvlEngine.doAction("confirmFeats", { featIds: feats });
-          log(`✓ Feats selected: ${feats.join(", ")}`);
+        // Feats (heroic progression: every 3 levels overall: 3, 6, 9)
+        // Jedi Knight bonus feats are defined in compendium and will set the budget
+        const featBudget = actor.system.progression.featBudget || 0;
+        const currentFeats = (actor.system.progression.feats || []).length;
+        const hasFeatsToSelect = currentFeats < featBudget;
+
+        if (hasFeatsToSelect) {
+          const featChoices = {
+            9: ["Improved Defenses"]  // Level 9 heroic feat (not in this test)
+          };
+          const feats = featChoices[targetLevel] || [];
+          if (feats.length > 0) {
+            await lvlEngine.doAction("confirmFeats", { featIds: feats });
+            log(`✓ Feats selected: ${feats.join(", ")} (budget: ${featBudget}, selected: ${currentFeats + feats.length})`);
+          } else {
+            await lvlEngine.completeStep("feats");
+            log(`✓ Feats step completed (budget: ${featBudget}, but no feats defined for level ${targetLevel} in test)`);
+          }
         } else {
           await lvlEngine.completeStep("feats");
+          log(`✓ Feats step completed (no new feats, budget: ${featBudget}, selected: ${currentFeats})`);
         }
 
-        // Talents (every odd level: 7, 9, 11)
-        if (targetLevel % 2 === 1) {
-          const talents = ["Soresu"];
-          await lvlEngine.doAction("confirmTalents", { talentIds: talents });
-          log(`✓ Talents selected: ${talents.join(", ")}`);
+        // Talents (Jedi Knight grants talents based on compendium level progression)
+        const talentBudget = actor.system.progression.talentBudget || 0;
+        const currentTalents = (actor.system.progression.talents || []).length;
+        const hasTalentsToSelect = currentTalents < talentBudget;
+
+        if (hasTalentsToSelect) {
+          const talentChoices = {
+            7: ["Soresu"]  // Jedi Knight level 1 grants talent
+          };
+          const talents = talentChoices[targetLevel] || [];
+          if (talents.length > 0) {
+            await lvlEngine.doAction("confirmTalents", { talentIds: talents });
+            log(`✓ Talents selected: ${talents.join(", ")} (budget: ${talentBudget}, selected: ${currentTalents + talents.length})`);
+          } else {
+            await lvlEngine.completeStep("talents");
+            log(`✓ Talents step completed (budget: ${talentBudget}, but no talents defined for level ${targetLevel} in test)`);
+          }
         } else {
           await lvlEngine.completeStep("talents");
+          log(`✓ Talents step completed (no new talents, budget: ${talentBudget}, selected: ${currentTalents})`);
         }
 
         // Ability increase (every 4 levels: 4, 8, 12)
@@ -417,12 +468,16 @@
         await lvlEngine.finalize();
         log(`✓ Level ${targetLevel} finalized`);
 
-        // Log current state
+        // Log current state with budgets
         log(`Character state at level ${targetLevel}:`, {
           level: actor.system.level,
           classLevels: actor.system.progression.classLevels,
           hp: actor.system.hp?.max,
           bab: actor.system.bab,
+          featBudget: actor.system.progression.featBudget,
+          talentBudget: actor.system.progression.talentBudget,
+          featsSelected: (actor.system.progression.feats || []).length,
+          talentsSelected: (actor.system.progression.talents || []).length,
           defenses: actor.system.defenses
         });
 
