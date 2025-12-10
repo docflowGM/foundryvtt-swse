@@ -1,5 +1,5 @@
 import { SWSELogger } from './logger.js';
-import { ProgressionEngine } from "../progression/engine/progression-engine.js";
+
 /**
  * Force Power Management System
  * Handles Force Sensitivity, Force Training, and automatic power grants

@@ -7,6 +7,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
    * Helper: Create an attribute schema (base, racial, enhancement, temp)
    */
   static _createAttributeSchema() {
+    if (!foundry?.data?.fields) {
+      throw new Error('Foundry data fields not available - system initialization error');
+    }
     const fields = foundry.data.fields;
     return {
       base: new fields.NumberField({required: true, initial: 10, integer: true}),
@@ -20,6 +23,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
    * Helper: Create a skill schema
    */
   static _createSkillSchema(defaultAbility) {
+    if (!foundry?.data?.fields) {
+      throw new Error('Foundry data fields not available - system initialization error');
+    }
     const fields = foundry.data.fields;
     return {
       trained: new fields.BooleanField({required: true, initial: false}),
@@ -63,6 +69,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
   }
 
   static defineSchema() {
+    if (!foundry?.data?.fields) {
+      throw new Error('Foundry data fields not available - system initialization error');
+    }
     const fields = foundry.data.fields;
     const parentSchema = super.defineSchema();
 
