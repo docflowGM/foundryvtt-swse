@@ -332,10 +332,28 @@ export class SWSEProgressionEngine {
    */
   async finalize() {
     try {
-      // Apply all changes
+      // Save progression state
       await this.saveStateToActor();
 
-      // Emit completion event
+      // Apply derived stats (HP, defenses, BAB, etc.)
+      const { ActorProgressionUpdater } = await import('../progression/engine/progression-actor-updater.js');
+      await ActorProgressionUpdater.finalize(this.actor);
+
+      // Create feat/talent/skill items from progression data
+      await this._createProgressionItems();
+
+      // Trigger force powers (if applicable)
+      try {
+        const { ForcePowerEngine } = await import('../progression/engine/force-power-engine.js');
+        await ForcePowerEngine.handleForcePowerTriggers(this.actor, {
+          level: this.actor.system.level,
+          mode: this.mode
+        });
+      } catch (e) {
+        swseLogger.warn('ForcePowerEngine trigger failed (may not be available)', e);
+      }
+
+      // Emit completion event (triggers language module, etc.)
       Hooks.call('swse:progression:completed', {
         actor: this.actor,
         mode: this.mode,
@@ -355,23 +373,110 @@ export class SWSEProgressionEngine {
     }
   }
 
+  /**
+   * Create Item documents from progression data
+   * @private
+   */
+  async _createProgressionItems() {
+    const prog = this.actor.system.progression || {};
+    const itemsToCreate = [];
+
+    // Get starting feats (automatic proficiencies from class)
+    const startingFeats = prog.startingFeats || [];
+    const chosenFeats = prog.feats || [];
+    const allFeats = [...startingFeats, ...chosenFeats];
+
+    // Create feat items (if they don't already exist)
+    for (const featName of allFeats) {
+      const existing = this.actor.items.find(i => i.type === 'feat' && i.name === featName);
+      if (!existing) {
+        itemsToCreate.push({
+          name: featName,
+          type: 'feat',
+          system: {
+            description: `Granted by progression`,
+            source: this.mode === 'chargen' ? 'Starting Feat' : 'Level Up'
+          }
+        });
+      }
+    }
+
+    // Create talent items
+    const talents = prog.talents || [];
+    for (const talentName of talents) {
+      const existing = this.actor.items.find(i => i.type === 'talent' && i.name === talentName);
+      if (!existing) {
+        itemsToCreate.push({
+          name: talentName,
+          type: 'talent',
+          system: {
+            description: `Granted by progression`,
+            source: 'Class Talent'
+          }
+        });
+      }
+    }
+
+    // Create items if any
+    if (itemsToCreate.length > 0) {
+      await this.actor.createEmbeddedDocuments('Item', itemsToCreate);
+      swseLogger.log(`Created ${itemsToCreate.length} items from progression`);
+    }
+  }
+
   /* ========================
    * ACTION HANDLERS
    * ======================== */
 
   async _action_confirmSpecies(payload) {
-    const { speciesId } = payload;
-    await applyActorUpdateAtomic(this.actor, {
+    const { speciesId, abilityChoice } = payload;
+    const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
+    const speciesData = PROGRESSION_RULES.species[speciesId];
+
+    if (!speciesData) {
+      throw new Error(`Unknown species: ${speciesId}`);
+    }
+
+    const updates = {
       "system.progression.species": speciesId
-    });
+    };
+
+    // Apply species ability modifiers
+    if (speciesData.abilityMods) {
+      for (const [ability, mod] of Object.entries(speciesData.abilityMods)) {
+        if (mod !== 0) {
+          updates[`system.abilities.${ability}.racial`] = mod;
+        }
+      }
+    }
+
+    // Handle human ability choice (+2 to any one ability)
+    if (speciesData.abilityChoice && abilityChoice) {
+      updates[`system.abilities.${abilityChoice}.racial`] = 2;
+      updates["system.progression.speciesAbilityChoice"] = abilityChoice;
+    }
+
+    // Apply size and speed
+    if (speciesData.size) updates["system.size"] = speciesData.size;
+    if (speciesData.speed !== undefined) updates["system.speed"] = speciesData.speed;
+
+    await applyActorUpdateAtomic(this.actor, updates);
     this.data.species = speciesId;
     await this.completeStep("species");
   }
 
   async _action_confirmBackground(payload) {
     const { backgroundId } = payload;
+    const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
+    const backgroundData = PROGRESSION_RULES.backgrounds[backgroundId];
+
+    if (!backgroundData) {
+      throw new Error(`Unknown background: ${backgroundId}`);
+    }
+
     await applyActorUpdateAtomic(this.actor, {
-      "system.progression.background": backgroundId
+      "system.progression.background": backgroundId,
+      "system.progression.backgroundTrainedSkills": backgroundData.trainedSkills || []
     });
     this.data.background = backgroundId;
     await this.completeStep("background");
@@ -379,39 +484,133 @@ export class SWSEProgressionEngine {
 
   async _action_confirmAbilities(payload) {
     const { method, values } = payload;
-    await applyActorUpdateAtomic(this.actor, {
-      "system.abilities": values
-    });
+
+    // Validate point buy if using that method
+    if (method === "pointBuy") {
+      const cost = this._calculatePointBuyCost(values);
+      if (cost > 25) {
+        throw new Error(`Point buy exceeded 25 points (spent ${cost})`);
+      }
+    }
+
+    const updates = {
+      "system.progression.abilityMethod": method
+    };
+
+    // Update base ability scores
+    for (const [ability, data] of Object.entries(values)) {
+      const value = data.value || data;
+      updates[`system.abilities.${ability}.base`] = value;
+    }
+
+    await applyActorUpdateAtomic(this.actor, updates);
     this.data.abilities = { method, values };
     await this.completeStep("attributes");
   }
 
   async _action_confirmClass(payload) {
     const { classId } = payload;
+    const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
+    const classData = PROGRESSION_RULES.classes[classId];
+
+    if (!classData) {
+      throw new Error(`Unknown class: ${classId}`);
+    }
+
     const progression = this.actor.system.progression || {};
     const classLevels = Array.from(progression.classLevels || []);
-    classLevels.push({ class: classId, level: 1, choices: {} });
+    const level = 1;
+
+    // Add class level entry
+    classLevels.push({
+      class: classId,
+      level: level,
+      choices: {},
+      skillPoints: (classData.skillPoints + (this.actor.system.abilities.int?.mod || 0)) * 4
+    });
+
+    // Calculate starting feat budget
+    const speciesData = PROGRESSION_RULES.species[progression.species];
+    let featBudget = 1; // Everyone gets 1 feat at level 1
+    if (speciesData?.bonusFeat) featBudget++; // Humans get +1
+
+    // Store class starting feats (proficiencies) separately - these are automatic
+    const startingFeats = classData.startingFeats || [];
 
     await applyActorUpdateAtomic(this.actor, {
-      "system.progression.classLevels": classLevels
+      "system.progression.classLevels": classLevels,
+      "system.progression.startingFeats": startingFeats,
+      "system.progression.featBudget": featBudget
     });
+
     this.data.class = classId;
     await this.completeStep("class");
   }
 
   async _action_confirmSkills(payload) {
     const { skills } = payload;
-    await applyActorUpdateAtomic(this.actor, {
-      "system.progression.skills": skills
+    const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
+
+    // Validate skill structure
+    if (!Array.isArray(skills)) {
+      throw new Error("Skills must be an array");
+    }
+
+    // Calculate available skill points
+    const classLevels = this.actor.system.progression?.classLevels || [];
+    if (classLevels.length === 0) {
+      throw new Error("Must select a class before allocating skills");
+    }
+
+    const firstClass = classLevels[0];
+    const classData = PROGRESSION_RULES.classes[firstClass.class];
+    const intMod = this.actor.system.abilities.int?.mod || 0;
+    const availablePoints = (classData.skillPoints + intMod) * 4;
+
+    // Calculate spent points
+    let spentPoints = 0;
+    for (const skill of skills) {
+      if (typeof skill === 'string') {
+        spentPoints++; // Assume 1 rank if just a string
+      } else if (skill.ranks) {
+        spentPoints += skill.ranks;
+      }
+    }
+
+    if (spentPoints > availablePoints) {
+      throw new Error(`Too many skill points allocated: ${spentPoints}/${availablePoints}`);
+    }
+
+    // Normalize skill structure to { key, ranks }
+    const normalizedSkills = skills.map(s => {
+      if (typeof s === 'string') {
+        return { key: s, ranks: 1 };
+      }
+      return { key: s.key || s.name, ranks: s.ranks || 1 };
     });
-    this.data.skills = skills;
+
+    await applyActorUpdateAtomic(this.actor, {
+      "system.progression.skills": normalizedSkills
+    });
+    this.data.skills = normalizedSkills;
     await this.completeStep("skills");
   }
 
   async _action_confirmFeats(payload) {
     const { featIds } = payload;
+
+    // Get feat budget from progression
+    const featBudget = this.actor.system.progression?.featBudget || 0;
     const progression = this.actor.system.progression || {};
-    const feats = Array.from(new Set([...(progression.feats || []), ...featIds]));
+    const currentFeats = progression.feats || [];
+
+    // Validate feat budget (don't count starting feats)
+    if (currentFeats.length + featIds.length > featBudget) {
+      throw new Error(`Too many feats selected: ${currentFeats.length + featIds.length}/${featBudget}`);
+    }
+
+    // Merge and deduplicate
+    const feats = Array.from(new Set([...currentFeats, ...featIds]));
 
     await applyActorUpdateAtomic(this.actor, {
       "system.progression.feats": feats
@@ -423,7 +622,16 @@ export class SWSEProgressionEngine {
   async _action_confirmTalents(payload) {
     const { talentIds } = payload;
     const progression = this.actor.system.progression || {};
-    const talents = Array.from(new Set([...(progression.talents || []), ...talentIds]));
+
+    // At level 1, all classes get 1 talent
+    const talentBudget = 1;
+    const currentTalents = progression.talents || [];
+
+    if (currentTalents.length + talentIds.length > talentBudget) {
+      throw new Error(`Too many talents selected: ${currentTalents.length + talentIds.length}/${talentBudget}`);
+    }
+
+    const talents = Array.from(new Set([...currentTalents, ...talentIds]));
 
     await applyActorUpdateAtomic(this.actor, {
       "system.progression.talents": talents
@@ -440,13 +648,39 @@ export class SWSEProgressionEngine {
 
   async _action_increaseAbility(payload) {
     const { ability } = payload;
-    const currentValue = this.actor.system.abilities?.[ability]?.value || 10;
+    const currentBase = this.actor.system.abilities?.[ability]?.base || 10;
 
     await applyActorUpdateAtomic(this.actor, {
-      [`system.abilities.${ability}.value`]: currentValue + 1
+      [`system.abilities.${ability}.base`]: currentBase + 1
     });
     this.data.abilityIncrease = ability;
     await this.completeStep("abilities");
+  }
+
+  /* ========================
+   * HELPER METHODS
+   * ======================== */
+
+  /**
+   * Calculate point buy cost for ability scores
+   * @private
+   */
+  _calculatePointBuyCost(abilities) {
+    const costs = {
+      8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5,
+      14: 6, 15: 8, 16: 10, 17: 13, 18: 16
+    };
+
+    let totalCost = 0;
+    for (const [ability, data] of Object.entries(abilities)) {
+      const value = data.value || data;
+      if (value < 8 || value > 18) {
+        throw new Error(`Invalid ability score: ${ability}=${value} (must be 8-18)`);
+      }
+      totalCost += costs[value] || 0;
+    }
+
+    return totalCost;
   }
 }
 
