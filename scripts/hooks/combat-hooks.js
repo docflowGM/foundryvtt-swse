@@ -144,9 +144,7 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
     });
 
     if (roll.total >= 10) {
-            'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
-        });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
+        globalThis.SWSE.ActorEngine.updateActor(actor, {
             'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
         });
 
