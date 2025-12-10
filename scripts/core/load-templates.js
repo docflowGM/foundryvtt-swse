@@ -3,6 +3,10 @@
  * Critical templates load immediately, others load on demand
  */
 import { SWSELogger } from '../utils/logger.js';
+
+// Track background template loading
+let _backgroundTemplatePromise = null;
+
 export async function preloadHandlebarsTemplates() {
   // ============================================
   // CRITICAL TEMPLATES - Load Immediately
@@ -68,17 +72,35 @@ export async function preloadHandlebarsTemplates() {
       }
       SWSELogger.log(`SWSE | Registered ${lazyTemplates.length} templates for lazy loading`);
     } else {
-      // Fallback: load all templates in background
-      setTimeout(async () => {
-        await foundry.applications.handlebars.loadTemplates(lazyTemplates);
-        SWSELogger.log(`SWSE | Background templates loaded (${lazyTemplates.length})`);
-      }, 1000);
+      // Fallback: load all templates in background with promise tracking
+      _backgroundTemplatePromise = new Promise((resolve) => {
+        setTimeout(async () => {
+          try {
+            await foundry.applications.handlebars.loadTemplates(lazyTemplates);
+            SWSELogger.log(`SWSE | Background templates loaded (${lazyTemplates.length})`);
+            resolve();
+          } catch (error) {
+            SWSELogger.error('SWSE | Error loading background templates:', error);
+            resolve(); // Resolve anyway to prevent hanging
+          }
+        }, 1000);
+      });
     }
 
     return true;
   } catch (err) {
     SWSELogger.error("SWSE | Error loading templates:", err);
     return false;
+  }
+}
+
+/**
+ * Wait for background templates to finish loading
+ * @returns {Promise<void>}
+ */
+export async function waitForBackgroundTemplates() {
+  if (_backgroundTemplatePromise) {
+    await _backgroundTemplatePromise;
   }
 }
 

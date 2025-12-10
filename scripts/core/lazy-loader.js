@@ -1,10 +1,10 @@
-/**
 import { SWSELogger } from '../utils/logger.js';
+import { lazy } from '../utils/performance-utils.js';
+
+/**
  * Lazy Loading Manager
  * Defers loading of non-critical resources until needed
  */
-
-import { lazy } from '../utils/performance-utils.js';
 
 export class LazyLoader {
   constructor() {

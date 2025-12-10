@@ -13,6 +13,8 @@ export class DataPreloader {
   constructor() {
     this._loaded = false;
     this._loading = false;
+    this._backgroundLoading = false;
+    this._backgroundPromise = null;
 
     // Create caches with appropriate TTLs
     this._classesCache = getCache('classes', { ttl: 600000, maxSize: 50 }); // 10 min
@@ -70,31 +72,44 @@ export class DataPreloader {
    * Preload background data without blocking
    * @private
    */
-  async _preloadBackground(types, verbose) {
-    setTimeout(async () => {
-      try {
-        if (verbose) {
-          SWSELogger.log('SWSE | Background preloading...');
-        }
+  _preloadBackground(types, verbose) {
+    // Prevent concurrent background loading
+    if (this._backgroundLoading) {
+      return this._backgroundPromise;
+    }
 
-        for (const type of types) {
-          try {
-            await this._preloadType(type);
-          } catch (error) {
-            SWSELogger.warn(`SWSE | Failed to preload ${type}:`, error.message);
+    this._backgroundLoading = true;
+    this._backgroundPromise = new Promise((resolve) => {
+      setTimeout(async () => {
+        try {
+          if (verbose) {
+            SWSELogger.log('SWSE | Background preloading...');
           }
 
-          // Yield between types
-          await new Promise(resolve => setTimeout(resolve, 100));
-        }
+          for (const type of types) {
+            try {
+              await this._preloadType(type);
+            } catch (error) {
+              SWSELogger.warn(`SWSE | Failed to preload ${type}:`, error.message);
+            }
 
-        if (verbose) {
-          SWSELogger.log('SWSE | Background preloading complete');
+            // Yield between types
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+
+          if (verbose) {
+            SWSELogger.log('SWSE | Background preloading complete');
+          }
+        } catch (error) {
+          SWSELogger.error('SWSE | Background preloading error:', error);
+        } finally {
+          this._backgroundLoading = false;
+          resolve();
         }
-      } catch (error) {
-        SWSELogger.error('SWSE | Background preloading error:', error);
-      }
-    }, 500);
+      }, 500);
+    });
+
+    return this._backgroundPromise;
   }
 
   /**
@@ -348,6 +363,23 @@ export class DataPreloader {
    */
   isLoaded() {
     return this._loaded;
+  }
+
+  /**
+   * Wait for all preloading (including background) to complete
+   * @returns {Promise<void>}
+   */
+  async waitForAll() {
+    if (this._backgroundPromise) {
+      await this._backgroundPromise;
+    }
+  }
+
+  /**
+   * Check if background loading is in progress
+   */
+  isBackgroundLoading() {
+    return this._backgroundLoading;
   }
 }
 

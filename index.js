@@ -334,7 +334,22 @@ Hooks.once("init", async function () {
         }
     };
 
-    // Initialize SWSE Global Namespace
+    // ============================================
+    // SWSE Global Namespace Initialization (Phase 1 - Init Hook)
+    // ============================================
+    // IMPORTANT: This is the FIRST initialization of window.SWSE during the 'init' hook.
+    // Only core utilities that are needed immediately are added here.
+    //
+    // TIMING NOTICE:
+    // - Phase 1 (Init Hook): Basic utilities (ActorEngine, RollEngine, lazyLoader, perfMonitor)
+    // - Phase 2 (Ready Hook): Full API surface with managers and utilities (see line ~452)
+    //
+    // WARNING: Code running between 'init' and 'ready' hooks will NOT have access to:
+    // - cacheManager, dataPreloader, ForcePowerManager, CombatActionsMapper, etc.
+    //
+    // If you need to access window.SWSE properties, ensure your code runs in or after
+    // the 'ready' hook, or check for property existence before use.
+    // ============================================
     globalThis.SWSE = {
         ActorEngine,
         RollEngine,
@@ -449,6 +464,27 @@ Hooks.once("ready", async function () {
         SWSELogger.warn("CanvasUIManager initialization failed", err);
     }
 
+    // ============================================
+    // SWSE Global Namespace Initialization (Phase 2 - Ready Hook)
+    // ============================================
+    // IMPORTANT: This is the SECOND initialization of window.SWSE during the 'ready' hook.
+    // This extends the namespace created in the 'init' hook with the full API surface.
+    //
+    // TIMING NOTICE:
+    // - This happens AFTER Phase 1 (init hook) has already set up basic utilities
+    // - All properties below are NOW available for use by other code in 'ready' or later hooks
+    // - Any code that ran between 'init' and 'ready' would NOT have had these properties
+    //
+    // SAFE ACCESS PATTERN:
+    //   Hooks.once('ready', () => {
+    //     // Safe: window.SWSE is fully initialized here
+    //     window.SWSE.dataPreloader.preload();
+    //   });
+    //
+    // UNSAFE ACCESS PATTERN:
+    //   // Unsafe if run between init and ready:
+    //   window.SWSE.dataPreloader.preload(); // May be undefined!
+    // ============================================
     Object.assign(window.SWSE, {
         ActorEngine,
         cacheManager,
@@ -494,16 +530,36 @@ Hooks.once("ready", async function () {
             'templates/apps/chargen/ability-rolling.hbs'
         ]).catch(() => {});
 
+        // Dynamic module loading registry - tracks status of lazy-loaded modules
+        const moduleRegistry = {
+            sidebar: { loaded: false, error: null, promise: null },
+            abilityRolling: { loaded: false, error: null, promise: null },
+            engineAutoload: { loaded: false, error: null, promise: null },
+            engineHelper: { loaded: false, error: null, promise: null }
+        };
+
+        // Store registry globally for debugging
+        window.SWSE_MODULE_REGISTRY = moduleRegistry;
+
         // Import sidebar controller (if present)
-        import('./scripts/apps/progression/sidebar.js').then(mod => {
-            // Attach if template already present
-            try {
-                if (!window.SWSE_PROG_SIDEBAR && document.querySelector('.swse-prog-sidebar')) {
-                    window.SWSE_PROG_SIDEBAR = new mod.SWSEProgressionSidebar();
-                    swseLogger.log('SWSE | Progression sidebar attached');
+        moduleRegistry.sidebar.promise = import('./scripts/apps/progression/sidebar.js')
+            .then(mod => {
+                // Attach if template already present
+                try {
+                    if (!window.SWSE_PROG_SIDEBAR && document.querySelector('.swse-prog-sidebar')) {
+                        window.SWSE_PROG_SIDEBAR = new mod.SWSEProgressionSidebar();
+                        swseLogger.log('SWSE | Progression sidebar attached');
+                    }
+                    moduleRegistry.sidebar.loaded = true;
+                } catch(e) {
+                    moduleRegistry.sidebar.error = e;
+                    swseLogger.warn('SWSE | Sidebar initialization error:', e.message, e);
                 }
-            } catch(e) { swseLogger.warn('SWSE | Sidebar init error', e); }
-        }).catch(e => swseLogger.warn('SWSE | Sidebar import failed', e));
+            })
+            .catch(e => {
+                moduleRegistry.sidebar.error = e;
+                swseLogger.warn('SWSE | Sidebar import failed from ./scripts/apps/progression/sidebar.js:', e.message, e);
+            });
 
         // Install attribute selector hook listener
         Hooks.on('swse:attribute-method:selected', (method) => {
@@ -511,14 +567,35 @@ Hooks.once("ready", async function () {
         });
 
         // Expose the ability rolling controller for apps to instantiate
-        import('./scripts/apps/chargen/ability-rolling.js').then(mod => {
-            window.SWSE_AbilityRolling = mod.AbilityRollingController;
-            swseLogger.log('SWSE | Ability rolling controller available');
-        }).catch(e => swseLogger.warn('SWSE | ability-rolling import failed', e));
+        moduleRegistry.abilityRolling.promise = import('./scripts/apps/chargen/ability-rolling.js')
+            .then(mod => {
+                window.SWSE_AbilityRolling = mod.AbilityRollingController;
+                moduleRegistry.abilityRolling.loaded = true;
+                swseLogger.log('SWSE | Ability rolling controller available');
+            })
+            .catch(e => {
+                moduleRegistry.abilityRolling.error = e;
+                swseLogger.warn('SWSE | Ability rolling import failed from ./scripts/apps/chargen/ability-rolling.js:', e.message, e);
+            });
 
         // Load engine integration helpers (non-blocking)
-        import('./scripts/apps/progression/engine-autoload.js').catch(e => swseLogger.warn('SWSE | engine-autoload import failed', e));
-        import('./scripts/apps/progression/engine-helper.js').catch(e => swseLogger.warn('SWSE | engine-helper import failed', e));
+        moduleRegistry.engineAutoload.promise = import('./scripts/apps/progression/engine-autoload.js')
+            .then(() => {
+                moduleRegistry.engineAutoload.loaded = true;
+            })
+            .catch(e => {
+                moduleRegistry.engineAutoload.error = e;
+                swseLogger.warn('SWSE | Engine autoload import failed from ./scripts/apps/progression/engine-autoload.js:', e.message, e);
+            });
+
+        moduleRegistry.engineHelper.promise = import('./scripts/apps/progression/engine-helper.js')
+            .then(() => {
+                moduleRegistry.engineHelper.loaded = true;
+            })
+            .catch(e => {
+                moduleRegistry.engineHelper.error = e;
+                swseLogger.warn('SWSE | Engine helper import failed from ./scripts/apps/progression/engine-helper.js:', e.message, e);
+            });
 
         // Auto-close progression/chargen windows when progression completes
         Hooks.on('swse:progression:completed', ({ actor, level, mode } = {}) => {

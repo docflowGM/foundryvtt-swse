@@ -27,10 +27,32 @@ async function loadSkillsFromCompendium() {
     const cache = new Map();
 
     try {
-      const pack = game?.packs?.get('swse.skills');
-      if (pack) {
-        const docs = await pack.getDocuments();
+      // Safety checks for game initialization
+      if (!game?.packs) {
+        console.warn('SWSE Skills: game.packs not available yet, using fallback');
+        skillsCache = cache;
+        loadingPromise = null;
+        return cache;
+      }
 
+      const pack = game.packs.get('swse.skills');
+      if (!pack) {
+        console.warn('SWSE Skills: swse.skills compendium not found, using fallback');
+        skillsCache = cache;
+        loadingPromise = null;
+        return cache;
+      }
+
+      // Ensure pack is indexed before getting documents
+      if (!pack.indexed) {
+        await pack.getIndex();
+      }
+
+      const docs = await pack.getDocuments();
+
+      if (!docs || docs.length === 0) {
+        console.warn('SWSE Skills: No skills found in compendium, using fallback');
+      } else {
         for (const doc of docs) {
           // Convert skill name to key format (e.g., "Acrobatics" -> "acrobatics")
           const key = doc.name.toLowerCase().replace(/\s+/g, '-');

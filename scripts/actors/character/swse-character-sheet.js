@@ -2378,8 +2378,6 @@ activateListeners(html) {
       ui.notifications.info(`Dark Side Score decreased to ${newValue}`);
     }
   }
-}
-
 
   /** Handle compendium drops and create items on actor. Also optionally copy stats and create Active Effects. */
   async _onDrop(event) {
@@ -2459,3 +2457,4 @@ activateListeners(html) {
       return super._onDrop(event);
     }
   }
+}
