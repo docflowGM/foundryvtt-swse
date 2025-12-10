@@ -516,9 +516,12 @@ export class SWSEProgressionEngine {
     // Try hardcoded data first (faster for core classes)
     let classData = PROGRESSION_RULES.classes[classId];
 
-    // If not found, try loading from compendium (prestige classes)
-    if (!classData) {
-      classData = await getClassData(classId);
+    // If not found, or if hardcoded data lacks levelProgression, load from compendium
+    if (!classData || !classData.levelProgression) {
+      const compendiumData = await getClassData(classId);
+      if (compendiumData) {
+        classData = compendiumData;
+      }
     }
 
     if (!classData) {
@@ -527,35 +530,70 @@ export class SWSEProgressionEngine {
 
     const progression = this.actor.system.progression || {};
     const classLevels = Array.from(progression.classLevels || []);
-    const level = 1;
+
+    // Determine which level of THIS CLASS is being taken
+    // Count how many levels of this specific class the character already has
+    const existingLevelsInClass = classLevels.filter(cl => cl.class === classId).length;
+    const levelInClass = existingLevelsInClass + 1;
 
     // Add class level entry
     classLevels.push({
       class: classId,
-      level: level,
+      level: levelInClass,
       choices: {},
       skillPoints: (classData.skillPoints + (this.actor.system.abilities.int?.mod || 0)) * 4
     });
 
-    // Calculate starting feat budget (only at character creation, not level-up)
+    // Get level-specific features from compendium
+    const levelFeatures = classData.levelProgression?.[levelInClass] || {
+      features: [],
+      bonusFeats: 0,
+      talents: 0,
+      forcePoints: 0
+    };
+
+    swseLogger.log(
+      `Progression: Taking ${classId} level ${levelInClass}. ` +
+      `Grants: ${levelFeatures.bonusFeats} bonus feats, ${levelFeatures.talents} talents, ` +
+      `${levelFeatures.forcePoints || 0} force points`
+    );
+
+    // Calculate feat budget based on what THIS SPECIFIC LEVEL grants
     let featBudget = progression.featBudget || 0;
 
-    // Only set feat budget if this is first class (character creation)
+    // First character level: everyone gets 1 feat, plus species bonus
     if (classLevels.length === 1) {
       const speciesData = PROGRESSION_RULES.species[progression.species];
       featBudget = 1; // Everyone gets 1 feat at level 1
       if (speciesData?.bonusFeat) featBudget++; // Humans get +1
     }
 
-    // Accumulate starting feats from all classes (each class grants its own)
+    // Add bonus feats from this class level
+    if (levelFeatures.bonusFeats > 0) {
+      featBudget += levelFeatures.bonusFeats;
+    }
+
+    // Calculate talent budget based on what THIS SPECIFIC LEVEL grants
+    let talentBudget = progression.talentBudget || 0;
+    if (levelFeatures.talents > 0) {
+      talentBudget += levelFeatures.talents;
+    }
+
+    // Accumulate starting feats from all classes (level 1 of each class grants automatic feats)
     const existingStartingFeats = progression.startingFeats || [];
-    const classStartingFeats = classData.startingFeats || [];
+    const classStartingFeats = (levelInClass === 1) ? (classData.startingFeats || []) : [];
     const allStartingFeats = Array.from(new Set([...existingStartingFeats, ...classStartingFeats]));
+
+    swseLogger.log(
+      `Progression: New budgets - Feat budget: ${featBudget}, Talent budget: ${talentBudget}, ` +
+      `Starting feats: [${allStartingFeats.join(', ')}]`
+    );
 
     await applyActorUpdateAtomic(this.actor, {
       "system.progression.classLevels": classLevels,
       "system.progression.startingFeats": allStartingFeats,
-      "system.progression.featBudget": featBudget
+      "system.progression.featBudget": featBudget,
+      "system.progression.talentBudget": talentBudget
     });
 
     this.data.class = classId;
@@ -652,14 +690,22 @@ export class SWSEProgressionEngine {
     const { talentIds } = payload;
     const progression = this.actor.system.progression || {};
 
-    // At level 1, all classes get 1 talent
-    const talentBudget = 1;
+    // Get talent budget from progression (set by _action_confirmClass based on level features)
+    const talentBudget = progression.talentBudget || 0;
     const currentTalents = progression.talents || [];
 
-    if (currentTalents.length + talentIds.length > talentBudget) {
-      throw new Error(`Too many talents selected: ${currentTalents.length + talentIds.length}/${talentBudget}`);
+    // Count how many NEW talents are being selected (not already in the list)
+    const newTalents = talentIds.filter(id => !currentTalents.includes(id));
+    const talentsAfterSelection = currentTalents.length + newTalents.length;
+
+    if (talentsAfterSelection > talentBudget) {
+      throw new Error(
+        `Too many talents selected: ${talentsAfterSelection}/${talentBudget} ` +
+        `(${currentTalents.length} already selected, trying to add ${newTalents.length})`
+      );
     }
 
+    // Merge and deduplicate
     const talents = Array.from(new Set([...currentTalents, ...talentIds]));
 
     await applyActorUpdateAtomic(this.actor, {
