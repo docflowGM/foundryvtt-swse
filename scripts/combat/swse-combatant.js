@@ -1,4 +1,5 @@
 import { ProgressionEngine } from "../progression/engine/progression-engine.js";
+
 /**
  * Custom Combatant Document for SWSE
  * Extends Foundry's Combatant class to implement SWSE-specific features
@@ -26,22 +27,22 @@ export class SWSECombatant extends Combatant {
 
     // Check condition track
     const condition = actor.system.conditionTrack?.current;
-    if (condition === 'helpless' || condition === 'unconscious' || condition === 'dead') {
+    if (condition === "helpless" || condition === "unconscious" || condition === "dead") {
       return false;
     }
 
-    // Check for other debilitating effects
-    // This can be expanded with Active Effects integration
+    // Other debilitating effects could be added here
     return true;
   }
 
   /**
-   * Get the current action economy state
+   * Get current action economy
    * @type {object}
    */
   get actionEconomy() {
     const actor = this.actor;
     if (!actor) return {};
+
     return actor.system.actionEconomy || {
       swift: true,
       move: true,
@@ -52,8 +53,8 @@ export class SWSECombatant extends Combatant {
   }
 
   /**
-   * Check if combatant has a specific action available
-   * @param {string} actionType - Type of action (swift, move, standard, fullRound, reaction)
+   * Check if the combatant has a specific action available
+   * @param {string} actionType
    * @returns {boolean}
    */
   hasAction(actionType) {
@@ -61,8 +62,8 @@ export class SWSECombatant extends Combatant {
   }
 
   /**
-   * Use an action (mark it as consumed)
-   * @param {string} actionType - Type of action to consume
+   * Mark an action as used
+   * @param {string} actionType
    * @returns {Promise<void>}
    */
   async useAction(actionType) {
@@ -71,9 +72,9 @@ export class SWSECombatant extends Combatant {
 
     const updates = {};
 
-    // Full round action consumes all actions except reactions
-    if (actionType === 'fullRound') {
-      updates['system.actionEconomy'] = {
+    // Full-round action consumes everything except reactions
+    if (actionType === "fullRound") {
+      updates["system.actionEconomy"] = {
         swift: false,
         move: false,
         standard: false,
@@ -81,17 +82,17 @@ export class SWSECombatant extends Combatant {
         reaction: this.actionEconomy.reaction
       };
     }
-    // Standard action also consumes move action
-    else if (actionType === 'standard') {
+    // Standard consumes move + standard + disables full-round
+    else if (actionType === "standard") {
       updates[`system.actionEconomy.${actionType}`] = false;
-      updates['system.actionEconomy.move'] = false;
-      updates['system.actionEconomy.fullRound'] = false;
+      updates["system.actionEconomy.move"] = false;
+      updates["system.actionEconomy.fullRound"] = false;
     }
-    // Other actions
+    // Move or swift? They remove full-round too
     else {
       updates[`system.actionEconomy.${actionType}`] = false;
-      if (actionType === 'move' || actionType === 'swift') {
-        updates['system.actionEconomy.fullRound'] = false;
+      if (actionType === "move" || actionType === "swift") {
+        updates["system.actionEconomy.fullRound"] = false;
       }
     }
 
@@ -106,8 +107,8 @@ export class SWSECombatant extends Combatant {
     const actor = this.actor;
     if (!actor) return;
 
-    await // AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-      'system.actionEconomy': {
+    await globalThis.SWSE.ActorEngine.updateActor(actor, {
+      "system.actionEconomy": {
         swift: true,
         move: true,
         standard: true,
@@ -115,59 +116,35 @@ export class SWSECombatant extends Combatant {
         reaction: true
       }
     });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.actionEconomy': {
-        swift: true,
-        move: true,
-        standard: true,
-        fullRound: true,
-        reaction: true
-      }
-    });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.actionEconomy': {
-        swift: true,
-        move: true,
-        standard: true,
-        fullRound: true,
-        reaction: true
-      }
-    }); */
-
   }
 
   /**
-   * Prepare derived data for the combatant
-   * @override
+   * Prepare derived combatant data
    */
   prepareDerivedData() {
     super.prepareDerivedData();
 
-    // Add any SWSE-specific derived data here
     const actor = this.actor;
     if (actor) {
-      // Store initiative bonus for easy access
       this._initiativeBonus = actor.system.initiative || 0;
     }
   }
 
   /**
-   * Get resource value for the combat tracker display
-   * This is used for displaying additional info in the combat tracker
-   * @override
+   * Get resource data displayed in the combat tracker
    */
   getResourceData() {
     const data = super.getResourceData();
     const actor = this.actor;
 
     if (actor) {
-      // Add condition track to the display
+      // Show condition track state
       const condition = actor.system.conditionTrack?.current;
-      if (condition && condition !== 'normal') {
+      if (condition && condition !== "normal") {
         data.condition = condition;
       }
 
-      // Add action economy indicators
+      // Show action economy indicators
       data.actions = this.actionEconomy;
     }
 
