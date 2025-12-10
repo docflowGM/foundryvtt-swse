@@ -191,8 +191,7 @@ export class DamageSystem {
             label: 'Apply',
             callback: async html => {
               const condition = html.find('[name="condition"]').val();
-              await target// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-Actor.update({'system.conditionTrack': condition});
+              await globalThis.SWSE.ActorEngine.updateActor(target, {'system.conditionTrack': condition});
               resolve(condition);
             }
           },

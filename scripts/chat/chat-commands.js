@@ -31,8 +31,7 @@ export function registerChatCommands() {
             token.actor.system.hp.value + amount,
             token.actor.system.hp.max
           );
-          token.// AUTO-CONVERT actor.update -> ProgressionEngine (confidence=0.00)
-globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.hp.value': newHP });
+          await globalThis.SWSE.ActorEngine.updateActor(token.actor, { 'system.hp.value': newHP });
         }
       }
       return false;

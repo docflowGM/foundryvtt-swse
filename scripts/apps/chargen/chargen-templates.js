@@ -385,21 +385,9 @@ export class CharacterTemplates {
           const skillKey = this._getSkillKeyFromDisplayName(skillDisplayName);
 
           if (skillKey) {
-// AUTO-CONVERT: confidence=0.00
-// (no heuristic applied)
-/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
+            await globalThis.SWSE.ActorEngine.updateActor(actor, {
               [`system.skills.${skillKey}.focused`]: true
             });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-// (no heuristic applied)
-/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
-              [`system.skills.${skillKey}.focused`]: true
-            });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-// (no heuristic applied)
-/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
-              [`system.skills.${skillKey}.focused`]: true
-
 
             SWSELogger.log(`SWSE | Auto-checked skill focus for: ${skillDisplayName}`);
           }
@@ -408,21 +396,9 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
 
       // Handle Force Sensitivity feat - auto-check Force Sensitive
       if (featName === 'Force Sensitivity') {
-// AUTO-CONVERT: confidence=0.00
-// (no heuristic applied)
-/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
+        await globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSensitive': true
         });
-globalThis.SWSE.ActorEngine.updateActor(actor, {
-// (no heuristic applied)
-/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
-          'system.forceSensitive': true
-        });
-/* ORIGINAL: globalThis.SWSE.ActorEngine.updateActor(actor, {
-// (no heuristic applied)
-/* ORIGINAL (for review): await globalThis.SWSE.ActorEngine.updateActor(actor, { */
-          'system.forceSensitive': true
-
 
         SWSELogger.log('SWSE | Auto-checked Force Sensitive');
       }
