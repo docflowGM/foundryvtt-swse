@@ -519,7 +519,7 @@ export class CharacterTemplates {
     if (!powerNames || powerNames.length === 0) return;
 
     try {
-      const powerPack = game.packs.get('foundryvtt-swse.force-powers') || game.packs.get('foundryvtt-swse.forcepowers');
+      const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
       if (!powerPack) {
         SWSELogger.warn('SWSE | Force powers compendium not found');
         return;

@@ -20,7 +20,7 @@ class CompendiumLoader {
 
   /**
    * Load a compendium with caching
-   * @param {string} packName - Compendium pack name (e.g., 'swse.classes')
+   * @param {string} packName - Compendium pack name (e.g., 'foundryvtt-swse.classes')
    * @param {Object} options - Loading options
    * @returns {Promise<Array>} Compendium documents
    */

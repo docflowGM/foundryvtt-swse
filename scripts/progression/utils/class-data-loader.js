@@ -40,7 +40,7 @@ export async function loadClassData() {
 }
 
 /**
- * Load class data from swse.classes compendium
+ * Load class data from foundryvtt-swse.classes compendium
  * @private
  */
 async function _loadFromCompendium() {
