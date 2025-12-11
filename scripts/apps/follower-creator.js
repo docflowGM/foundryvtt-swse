@@ -8,7 +8,7 @@ export class FollowerCreator {
      * @returns {Promise<Object>} Follower template data
      */
     static async getFollowerTemplates() {
-        const response = await fetch('systems/swse/data/follower-templates.json');
+        const response = await fetch('systems/foundryvtt-swse/data/follower-templates.json');
         return await response.json();
     }
 
@@ -63,7 +63,7 @@ export class FollowerCreator {
             grantingTalent
         };
 
-        const html = await renderTemplate('systems/swse/templates/apps/follower-creator-dialog.html', dialogData);
+        const html = await renderTemplate('systems/foundryvtt-swse/templates/apps/follower-creator-dialog.html', dialogData);
 
         return new Promise((resolve) => {
             new Dialog({

@@ -16,7 +16,7 @@ export class NonheroicUnitsBrowser extends Application {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'nonheroic-units-browser',
       title: 'Nonheroic Units Browser',
-      template: 'systems/swse/templates/apps/nonheroic-units-browser.hbs',
+      template: 'systems/foundryvtt-swse/templates/apps/nonheroic-units-browser.hbs',
       classes: ['swse', 'nonheroic-browser'],
       width: 800,
       height: 700,
@@ -30,7 +30,7 @@ export class NonheroicUnitsBrowser extends Application {
     // Load units data if not already loaded
     if (this.units.length === 0) {
       try {
-        const response = await fetch('systems/swse/data/nonheroic/nonheroic_units.json');
+        const response = await fetch('systems/foundryvtt-swse/data/nonheroic/nonheroic_units.json');
         this.units = await response.json();
         this.filteredUnits = [...this.units];
       } catch (error) {

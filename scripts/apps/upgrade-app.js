@@ -24,7 +24,7 @@ export class SWSEUpgradeApp extends FormApplication {
                 return {
                     name: 'Delta',
                     title: 'Weapons Specialist',
-                    image: 'systems/swse/assets/icons/mentor.webp',
+                    image: 'systems/foundryvtt-swse/assets/icons/mentor.webp',
                     upgradeType: 'Weapon Upgrade',
                     personality: 'cocky',
                     accent: 'new-yorker'
@@ -33,7 +33,7 @@ export class SWSEUpgradeApp extends FormApplication {
                 return {
                     name: 'Breach',
                     title: 'Armor Technician',
-                    image: 'systems/swse/assets/icons/breach.webp',
+                    image: 'systems/foundryvtt-swse/assets/icons/breach.webp',
                     upgradeType: 'Armor Upgrade',
                     personality: 'professional',
                     accent: 'standard'
@@ -43,7 +43,7 @@ export class SWSEUpgradeApp extends FormApplication {
                 return {
                     name: 'Rendarr',
                     title: 'Equipment Merchant',
-                    image: 'systems/swse/assets/icons/rendarr.webp',
+                    image: 'systems/foundryvtt-swse/assets/icons/rendarr.webp',
                     upgradeType: 'Universal Upgrade',
                     personality: 'friendly',
                     accent: 'merchant'
@@ -243,7 +243,7 @@ export class SWSEUpgradeApp extends FormApplication {
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
             id: "swse-upgrade-app",
-            template: "systems/swse/templates/apps/upgrade/upgrade-app.hbs",
+            template: "systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs",
             width: 700,
             height: 600,
             title: "Item Upgrades",

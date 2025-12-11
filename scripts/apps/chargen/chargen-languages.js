@@ -14,7 +14,7 @@ async function _loadLanguagesData() {
   }
 
   try {
-    const resp = await fetch("systems/swse/data/languages.json");
+    const resp = await fetch("systems/foundryvtt-swse/data/languages.json");
     if (resp.ok) {
       this._languagesJson = await resp.json();
       SWSELogger.log("chargen: languages.json loaded successfully");
@@ -39,7 +39,7 @@ async function _loadSpeciesLanguagesData() {
   }
 
   try {
-    const resp = await fetch("systems/swse/data/species-languages.json");
+    const resp = await fetch("systems/foundryvtt-swse/data/species-languages.json");
     if (resp.ok) {
       this._speciesLanguagesJson = await resp.json();
       SWSELogger.log("chargen: species-languages.json loaded successfully");

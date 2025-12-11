@@ -5,7 +5,7 @@ export class MaintenanceApp extends Application {
     return mergeObject(super.defaultOptions, {
       id: "swse-maintenance",
       classes: ["swse", "swse-maintenance"],
-      template: "systems/swse/templates/apps/maintenance.hbs",
+      template: "systems/foundryvtt-swse/templates/apps/maintenance.hbs",
       width: 600,
       height: 400,
       title: "SWSE Maintenance"

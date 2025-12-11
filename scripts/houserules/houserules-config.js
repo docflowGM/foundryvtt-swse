@@ -17,7 +17,7 @@ export class HouserulesConfig extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "swse-houserules-config",
       title: "SWSE House Rules Configuration",
-      template: "systems/swse/templates/apps/houserules/houserules-config.hbs",
+      template: "systems/foundryvtt-swse/templates/apps/houserules/houserules-config.hbs",
       width: 700,
       height: 600,
       resizable: true

@@ -69,6 +69,30 @@ export function registerSystemSettings() {
     default: false
   });
 
+  // Theme Settings
+  game.settings.register("swse", "sheetTheme", {
+    name: 'Sheet Theme',
+    hint: 'Select the visual theme for character sheets and UI elements',
+    scope: "client",
+    config: true,
+    type: String,
+    choices: {
+      "holo": "Default (Holo)",
+      "high-contrast": "High Contrast",
+      "starship": "Starship",
+      "sand-people": "Sand People",
+      "jedi": "Jedi",
+      "high-republic": "High Republic"
+    },
+    default: "holo",
+    onChange: async (value) => {
+      if (game.ready) {
+        const { ThemeLoader } = await import('../theme-loader.js');
+        ThemeLoader.applyTheme(value);
+      }
+    }
+  });
+
   // Migration tracking setting (hidden from config UI)
   game.settings.register("swse", "actorValidationMigration", {
     name: "Actor Validation Migration Version",

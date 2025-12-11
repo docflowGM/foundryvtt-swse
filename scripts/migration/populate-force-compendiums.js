@@ -109,7 +109,7 @@ export class PopulateForceCompendiumsMigration {
 
     let data;
     try {
-      const response = await fetch('systems/swse/data/force-techniques.json');
+      const response = await fetch('systems/foundryvtt-swse/data/force-techniques.json');
       data = await response.json();
     } catch (err) {
       SWSELogger.error("SWSE | Failed to load force-techniques.json:", err);
@@ -150,7 +150,7 @@ export class PopulateForceCompendiumsMigration {
             prerequisites: allPrerequisites.join(', '),  // Store as comma-separated string for prerequisite validator
             relatedPower: technique.relatedPower || ''
           },
-          img: 'systems/swse/assets/icons/force-technique.png'
+          img: 'systems/foundryvtt-swse/assets/icons/force-technique.png'
         };
 
         await pack.createDocument(itemData);
@@ -185,7 +185,7 @@ export class PopulateForceCompendiumsMigration {
 
     let data;
     try {
-      const response = await fetch('systems/swse/data/force-secrets.json');
+      const response = await fetch('systems/foundryvtt-swse/data/force-secrets.json');
       data = await response.json();
     } catch (err) {
       SWSELogger.error("SWSE | Failed to load force-secrets.json:", err);
@@ -221,7 +221,7 @@ export class PopulateForceCompendiumsMigration {
             prerequisites: secret.prerequisites || [],
             cost: secret.cost
           },
-          img: 'systems/swse/assets/icons/force-secret.png'
+          img: 'systems/foundryvtt-swse/assets/icons/force-secret.png'
         };
 
         await pack.createDocument(itemData);
@@ -256,7 +256,7 @@ export class PopulateForceCompendiumsMigration {
 
     let data;
     try {
-      const response = await fetch('systems/swse/data/lightsaber-form-powers.json');
+      const response = await fetch('systems/foundryvtt-swse/data/lightsaber-form-powers.json');
       data = await response.json();
     } catch (err) {
       SWSELogger.error("SWSE | Failed to load lightsaber-form-powers.json:", err);
@@ -313,7 +313,7 @@ export class PopulateForceCompendiumsMigration {
             discipline: power.discipline || '',
             canRebuke: power.canRebuke || false
           },
-          img: 'systems/swse/assets/icons/lightsaber-form-power.png'
+          img: 'systems/foundryvtt-swse/assets/icons/lightsaber-form-power.png'
         };
 
         await pack.createDocument(itemData);

@@ -21,7 +21,7 @@ async function loadFeatMetadata() {
   }
 
   try {
-    const response = await fetch('systems/swse/data/feat-metadata.json');
+    const response = await fetch('systems/foundryvtt-swse/data/feat-metadata.json');
     if (!response.ok) {
       throw new Error(`Failed to load feat metadata: ${response.status} ${response.statusText}`);
     }

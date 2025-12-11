@@ -16,7 +16,7 @@ export class CharacterTemplates {
     if (this._templates) return this._templates;
 
     try {
-      const response = await fetch('systems/swse/data/character-templates.json');
+      const response = await fetch('systems/foundryvtt-swse/data/character-templates.json');
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }

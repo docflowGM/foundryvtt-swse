@@ -20,7 +20,7 @@ async function loadPrestigeClassPrerequisites() {
   }
 
   try {
-    const response = await fetch('systems/swse/data/prestige-class-prerequisites.json');
+    const response = await fetch('systems/foundryvtt-swse/data/prestige-class-prerequisites.json');
     if (!response.ok) {
       throw new Error(`Failed to load prerequisites: ${response.status} ${response.statusText}`);
     }

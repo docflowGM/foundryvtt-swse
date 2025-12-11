@@ -16,7 +16,7 @@ const DATA_FILES = {
 };
 
 async function loadJson(filename) {
-  const url = `systems/swse/data/${filename}`;
+  const url = `systems/foundryvtt-swse/data/${filename}`;
   try {
     const response = await fetch(url);
     if (!response.ok) return null;

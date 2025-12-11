@@ -23,11 +23,11 @@ export class VehicleModificationManager {
     try {
       // Load all modification data
       const [stockShips, movement, defense, weapons, accessories] = await Promise.all([
-        fetch('systems/swse/data/stock-ships.json').then(r => r.json()),
-        fetch('systems/swse/data/vehicle-modifications/movement-systems.json').then(r => r.json()),
-        fetch('systems/swse/data/vehicle-modifications/defense-systems.json').then(r => r.json()),
-        fetch('systems/swse/data/vehicle-modifications/weapon-systems.json').then(r => r.json()),
-        fetch('systems/swse/data/vehicle-modifications/accessories.json').then(r => r.json())
+        fetch('systems/foundryvtt-swse/data/stock-ships.json').then(r => r.json()),
+        fetch('systems/foundryvtt-swse/data/vehicle-modifications/movement-systems.json').then(r => r.json()),
+        fetch('systems/foundryvtt-swse/data/vehicle-modifications/defense-systems.json').then(r => r.json()),
+        fetch('systems/foundryvtt-swse/data/vehicle-modifications/weapon-systems.json').then(r => r.json()),
+        fetch('systems/foundryvtt-swse/data/vehicle-modifications/accessories.json').then(r => r.json())
       ]);
 
       this._stockShips = stockShips;

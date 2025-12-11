@@ -340,7 +340,7 @@ async function _loadChargenConfig() {
   if (_chargenConfig) return _chargenConfig;
 
   try {
-    const response = await fetch('systems/swse/data/chargen-config.json');
+    const response = await fetch('systems/foundryvtt-swse/data/chargen-config.json');
     if (response.ok) {
       _chargenConfig = await response.json();
       SWSELogger.log('CharGen | Loaded chargen configuration');

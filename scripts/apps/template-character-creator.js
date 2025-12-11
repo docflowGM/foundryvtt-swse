@@ -21,7 +21,7 @@ export class TemplateCharacterCreator extends Application {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['swse', 'template-creator'],
-      template: 'systems/swse/templates/apps/template-creator.hbs',
+      template: 'systems/foundryvtt-swse/templates/apps/template-creator.hbs',
       width: 1000,
       height: 700,
       title: 'Character Template Creator',
@@ -245,7 +245,7 @@ export class TemplateCharacterCreator extends Application {
    */
   async loadMentorDialogues() {
     try {
-      const response = await fetch('systems/swse/data/mentor-template-dialogues.json');
+      const response = await fetch('systems/foundryvtt-swse/data/mentor-template-dialogues.json');
       if (!response.ok) {
         throw new Error(`Failed to load mentor dialogues: ${response.statusText}`);
       }

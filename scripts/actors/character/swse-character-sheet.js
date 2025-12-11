@@ -61,7 +61,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     if (this._forcePowerDescriptions) return this._forcePowerDescriptions;
 
     try {
-      const response = await fetch('systems/swse/data/force-power-descriptions.json');
+      const response = await fetch('systems/foundryvtt-swse/data/force-power-descriptions.json');
       this._forcePowerDescriptions = await response.json();
       return this._forcePowerDescriptions;
     } catch (error) {
@@ -80,7 +80,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     if (this._combatActionsData) return this._combatActionsData;
 
     try {
-      const response = await fetch('systems/swse/data/combat-actions.json');
+      const response = await fetch('systems/foundryvtt-swse/data/combat-actions.json');
       this._combatActionsData = await response.json();
       return this._combatActionsData;
     } catch (error) {
@@ -99,7 +99,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['swse', 'sheet', 'actor', 'character'],
-      template: 'systems/swse/templates/actors/character/character-sheet.hbs',
+      template: 'systems/foundryvtt-swse/templates/actors/character/character-sheet.hbs',
       width: 800,
       height: 900,
       tabs: [{
@@ -563,7 +563,7 @@ activateListeners(html) {
     // Load feat metadata for categorization
     let featMetadata = null;
     try {
-      const resp = await fetch("systems/swse/data/feat-metadata.json");
+      const resp = await fetch("systems/foundryvtt-swse/data/feat-metadata.json");
       if (resp.ok) {
         featMetadata = await resp.json();
       }
