@@ -1,4 +1,5 @@
 import { ProgressionEngine } from "../progression/engine/progression-engine.js";
+import { swseLogger } from "../utils/logger.js";
 /**
  * Damage Application System
  * Handles damage, healing, and condition track automation

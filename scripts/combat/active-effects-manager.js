@@ -2,6 +2,7 @@
  * Active Effects Manager for SWSE
  * Manages condition track effects, buffs, debuffs, and other Active Effects
  */
+import { swseLogger } from '../utils/logger.js';
 
 export class SWSEActiveEffectsManager {
 
