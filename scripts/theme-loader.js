@@ -123,7 +123,7 @@ export class ThemeLoader {
     SWSELogger.log('[SWSE Theme] Theme loader initialized');
 
     // Load initial theme from settings
-    const themeName = game.settings.get('swse', 'sheetTheme') || 'holo';
+    const themeName = game.settings.get('foundryvtt-swse', 'sheetTheme') || 'holo';
     this.applyTheme(themeName);
   }
 }

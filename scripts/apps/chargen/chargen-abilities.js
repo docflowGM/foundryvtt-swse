@@ -56,8 +56,8 @@ export function _bindAbilitiesUI(root) {
     // Point buy system
     // Get the correct point buy pool from settings
     const pointBuyPool = chargen.characterData.isDroid
-      ? (game.settings.get("swse", "droidPointBuyPool") || 20)
-      : (game.settings.get("swse", "livingPointBuyPool") || 25);
+      ? (game.settings.get('foundryvtt-swse', "droidPointBuyPool") || 20)
+      : (game.settings.get('foundryvtt-swse', "livingPointBuyPool") || 25);
 
     let pool = pointBuyPool;
     const pointCosts = (from, to) => {

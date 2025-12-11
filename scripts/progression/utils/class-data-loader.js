@@ -47,7 +47,7 @@ async function _loadFromCompendium() {
   const cache = new Map();
 
   try {
-    const pack = game.packs.get('swse.classes');
+    const pack = game.packs.get('foundryvtt-swse.classes');
 
     if (!pack) {
       swseLogger.error('Class Data Loader: swse.classes compendium not found');

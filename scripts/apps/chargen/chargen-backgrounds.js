@@ -456,7 +456,7 @@ export const BackgroundsModule = {
    * @returns {boolean} True if backgrounds are enabled
    */
   _areBackgroundsEnabled() {
-    return game.settings.get("swse", "enableBackgrounds") !== false;
+    return game.settings.get('foundryvtt-swse', "enableBackgrounds") !== false;
   },
 
   /**
@@ -464,7 +464,7 @@ export const BackgroundsModule = {
    * @returns {number} Number of backgrounds player can select (1, 2, or 3)
    */
   _getAllowedBackgroundCount() {
-    return game.settings.get("swse", "backgroundSelectionCount") || 1;
+    return game.settings.get('foundryvtt-swse', "backgroundSelectionCount") || 1;
   },
 
   /**
@@ -665,7 +665,7 @@ export const BackgroundsModule = {
   async _addExiledSkillFocus(actor) {
     try {
       // Try to find Skill Focus in the feats compendium
-      const featsPack = game.packs.get('swse.feats');
+      const featsPack = game.packs.get('foundryvtt-swse.feats');
       if (!featsPack) {
         SWSELogger.warn('chargen: Feats compendium not found, cannot add Skill Focus for Exiled');
         return;

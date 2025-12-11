@@ -56,7 +56,7 @@ export class TemplateCharacterCreator extends Application {
 
     // Add Nonheroic class only if user is GM or house rule allows it
     const isGM = game.user.isGM;
-    const allowPlayersNonheroic = game.settings.get("swse", "allowPlayersNonheroic");
+    const allowPlayersNonheroic = game.settings.get('foundryvtt-swse', "allowPlayersNonheroic");
     if (isGM || allowPlayersNonheroic) {
       data.classes.push({
         name: 'Nonheroic',
@@ -667,7 +667,7 @@ export class TemplateCharacterCreator extends Application {
    */
   async _applySpeciesBonus(actor, speciesName, abilityUpdates) {
     try {
-      const speciesPack = game.packs.get('swse.species');
+      const speciesPack = game.packs.get('foundryvtt-swse.species');
       if (!speciesPack) return;
 
       const index = await speciesPack.getIndex();
@@ -713,7 +713,7 @@ export class TemplateCharacterCreator extends Application {
    */
   async _applyClass(actor, template) {
     try {
-      const classPack = game.packs.get('swse.classes');
+      const classPack = game.packs.get('foundryvtt-swse.classes');
       if (!classPack) return;
 
       const index = await classPack.getIndex();

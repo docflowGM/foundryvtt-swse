@@ -208,7 +208,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     // Dark Side Score tracker data
     const wisdomScore = this.actor.system.abilities?.wis?.total || 10;
-    const darkSideMultiplier = game.settings.get('swse', 'darkSideMaxMultiplier') || 1;
+    const darkSideMultiplier = game.settings.get('foundryvtt-swse', 'darkSideMaxMultiplier') || 1;
     const darkSideMax = wisdomScore * darkSideMultiplier;
     const currentDarkSide = this.actor.system.darkSideScore || 0;
 
@@ -552,7 +552,7 @@ activateListeners(html) {
    */
   async _showFeatPicker() {
     // Load feats from compendium
-    const featPack = game.packs.get('swse.feats');
+    const featPack = game.packs.get('foundryvtt-swse.feats');
     if (!featPack) {
       ui.notifications.error('Feats compendium not found');
       return;
@@ -700,7 +700,7 @@ activateListeners(html) {
    */
   async _showTalentPicker() {
     // Load talents from compendium
-    const talentPack = game.packs.get('swse.talents');
+    const talentPack = game.packs.get('foundryvtt-swse.talents');
     if (!talentPack) {
       ui.notifications.error('Talents compendium not found');
       return;
@@ -709,7 +709,7 @@ activateListeners(html) {
     const allTalents = await talentPack.getDocuments();
 
     // Check talent tree restriction setting
-    const talentTreeRestriction = game.settings.get("swse", "talentTreeRestriction");
+    const talentTreeRestriction = game.settings.get('foundryvtt-swse', "talentTreeRestriction");
     const isUnrestricted = talentTreeRestriction === "unrestricted";
 
     // Get character's class talent trees
@@ -1232,7 +1232,7 @@ activateListeners(html) {
    */
   async _addClassToActor(classId, className, level = 1) {
     try {
-      const classPack = game.packs.get('swse.classes');
+      const classPack = game.packs.get('foundryvtt-swse.classes');
       if (!classPack) {
         ui.notifications.error('Classes compendium not found!');
         return;
@@ -1294,7 +1294,7 @@ activateListeners(html) {
     event.preventDefault();
 
     // Get species compendium
-    const speciesPack = game.packs.get('swse.species');
+    const speciesPack = game.packs.get('foundryvtt-swse.species');
     if (!speciesPack) {
       ui.notifications.error('Species compendium not found');
       return;

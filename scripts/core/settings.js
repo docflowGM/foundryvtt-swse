@@ -6,7 +6,7 @@ import { SWSELogger } from '../utils/logger.js';
 export function registerSystemSettings() {
   SWSELogger.log("SWSE | Registering settings...");
 
-  game.settings.register("swse", "autoDamageThreshold", {
+  game.settings.register('foundryvtt-swse', "autoDamageThreshold", {
     name: "SWSE.Settings.AutoDamageThreshold.Name",
     hint: "SWSE.Settings.AutoDamageThreshold.Hint",
     scope: "world",
@@ -15,7 +15,7 @@ export function registerSystemSettings() {
     default: true
   });
 
-  game.settings.register("swse", "autoConditionRecovery", {
+  game.settings.register('foundryvtt-swse', "autoConditionRecovery", {
     name: "SWSE.Settings.AutoConditionRecovery.Name",
     hint: "SWSE.Settings.AutoConditionRecovery.Hint",
     scope: "world",
@@ -24,7 +24,7 @@ export function registerSystemSettings() {
     default: true
   });
 
-  game.settings.register("swse", "resetResourcesOnCombat", {
+  game.settings.register('foundryvtt-swse', "resetResourcesOnCombat", {
     name: "SWSE.Settings.ResetResourcesOnCombat.Name",
     hint: "SWSE.Settings.ResetResourcesOnCombat.Hint",
     scope: "world",
@@ -33,7 +33,7 @@ export function registerSystemSettings() {
     default: false
   });
 
-  game.settings.register("swse", "welcomeShown", {
+  game.settings.register('foundryvtt-swse', "welcomeShown", {
     name: "SWSE.Settings.WelcomeShown.Name",
     hint: "SWSE.Settings.WelcomeShown.Hint",
     scope: "world",
@@ -42,7 +42,7 @@ export function registerSystemSettings() {
     default: false
   });
 
-  game.settings.register("swse", "devMode", {
+  game.settings.register('foundryvtt-swse', "devMode", {
     name: "SWSE.Settings.DevMode.Name",
     hint: "SWSE.Settings.DevMode.Hint",
     scope: "client",
@@ -51,7 +51,7 @@ export function registerSystemSettings() {
     default: false
   });
 
-  game.settings.register("swse", "dailyForcePoints", {
+  game.settings.register('foundryvtt-swse', "dailyForcePoints", {
     name: "SWSE.Settings.DailyForcePoints.Name",
     hint: "SWSE.Settings.DailyForcePoints.Hint",
     scope: "world",
@@ -60,7 +60,7 @@ export function registerSystemSettings() {
     default: false
   });
 
-  game.settings.register("swse", "darkSideTemptation", {
+  game.settings.register('foundryvtt-swse', "darkSideTemptation", {
     name: "SWSE.Settings.DarkSideTemptation.Name",
     hint: "SWSE.Settings.DarkSideTemptation.Hint",
     scope: "world",
@@ -70,7 +70,7 @@ export function registerSystemSettings() {
   });
 
   // Theme Settings
-  game.settings.register("swse", "sheetTheme", {
+  game.settings.register('foundryvtt-swse', "sheetTheme", {
     name: 'Sheet Theme',
     hint: 'Select the visual theme for character sheets and UI elements',
     scope: "client",
@@ -94,7 +94,7 @@ export function registerSystemSettings() {
   });
 
   // Migration tracking setting (hidden from config UI)
-  game.settings.register("swse", "actorValidationMigration", {
+  game.settings.register('foundryvtt-swse', "actorValidationMigration", {
     name: "Actor Validation Migration Version",
     hint: "Tracks the version of the actor validation migration that has been run",
     scope: "world",
@@ -104,7 +104,7 @@ export function registerSystemSettings() {
   });
 
   // Item validation migration tracking setting
-  game.settings.register("swse", "itemValidationMigration", {
+  game.settings.register('foundryvtt-swse', "itemValidationMigration", {
     name: "Item Validation Migration Version",
     hint: "Tracks the version of the item validation migration that has been run",
     scope: "world",
@@ -114,7 +114,7 @@ export function registerSystemSettings() {
   });
 
   // Force compendiums population migration tracking
-  game.settings.register("swse", "forceCompendiumsPopulation", {
+  game.settings.register('foundryvtt-swse', "forceCompendiumsPopulation", {
     name: "Force Compendiums Population Version",
     hint: "Tracks the version of the force compendiums population migration that has been run",
     scope: "world",
@@ -124,7 +124,7 @@ export function registerSystemSettings() {
   });
 
   // World data loader tracking
-  game.settings.register("swse", "dataLoaded", {
+  game.settings.register('foundryvtt-swse', "dataLoaded", {
     name: "World Data Loaded",
     hint: "Tracks whether world data has been loaded",
     scope: "world",

@@ -32,7 +32,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
 
                 // Check if user can create NPCs (GM or house rule enabled)
                 const isGM = game.user.isGM;
-                const allowPlayersNonheroic = game.settings.get("swse", "allowPlayersNonheroic");
+                const allowPlayersNonheroic = game.settings.get('foundryvtt-swse', "allowPlayersNonheroic");
                 const canCreateNPC = isGM || allowPlayersNonheroic;
 
                 // Build dialog buttons

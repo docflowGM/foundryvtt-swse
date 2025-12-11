@@ -433,8 +433,8 @@ export default class CharacterGenerator extends Application {
     SWSELogger.log(`CharGen | Force powers required: ${context.characterData.forcePowersRequired}, available: ${context.availableForcePowers.length}`);
 
     // Point buy pools
-    context.droidPointBuyPool = game.settings.get("swse", "droidPointBuyPool") || 20;
-    context.livingPointBuyPool = game.settings.get("swse", "livingPointBuyPool") || 25;
+    context.droidPointBuyPool = game.settings.get('foundryvtt-swse', "droidPointBuyPool") || 20;
+    context.livingPointBuyPool = game.settings.get('foundryvtt-swse', "livingPointBuyPool") || 25;
 
     // Seraphim's dialogue for droid creation
     if (this.characterData.isDroid) {
@@ -848,8 +848,8 @@ export default class CharacterGenerator extends Application {
 
           // Get the correct point buy pool based on character type
           const pointBuyPool = this.characterData.isDroid
-            ? (game.settings.get("swse", "droidPointBuyPool") || 20)
-            : (game.settings.get("swse", "livingPointBuyPool") || 25);
+            ? (game.settings.get('foundryvtt-swse', "droidPointBuyPool") || 20)
+            : (game.settings.get('foundryvtt-swse', "livingPointBuyPool") || 25);
 
           // Allow some flexibility (within 2 points of the budget)
           if (totalSpent > pointBuyPool) {

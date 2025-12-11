@@ -115,7 +115,7 @@ export function _populateDroidBuilder(root) {
   if (!doc) return;
 
   // Get house rule settings for credits
-  const baseCredits = game.settings.get("swse", "droidConstructionCredits") || 1000;
+  const baseCredits = game.settings.get('foundryvtt-swse', "droidConstructionCredits") || 1000;
   this.characterData.droidCredits.base = baseCredits;
   this.characterData.droidCredits.remaining = baseCredits - this.characterData.droidCredits.spent;
 

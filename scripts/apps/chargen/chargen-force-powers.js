@@ -122,7 +122,7 @@ export function _getForcePowersNeeded() {
 
   if (forceTrainingFeats.length > 0) {
     // Get the force ability modifier (WIS or CHA based on game setting)
-    const forceAbility = game.settings.get('swse', 'forceTrainingAttribute') || 'wisdom';
+    const forceAbility = game.settings.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
     const abilityKey = forceAbility === 'charisma' ? 'cha' : 'wis';
     const modifier = this.characterData.abilities[abilityKey]?.mod || 0;
 

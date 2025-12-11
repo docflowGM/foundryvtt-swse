@@ -57,7 +57,7 @@ export default class SWSEFormApplication extends FormApplication {
      * @param {*} data - Optional data to log
      */
     _log(message, data = null) {
-        if (game.settings.get('swse', 'debugMode')) {
+        if (game.settings.get('foundryvtt-swse', 'debugMode')) {
             swseLogger.log(`[SWSE FormApplication: ${this.constructor.name}] ${message}`, data || '');
         }
     }

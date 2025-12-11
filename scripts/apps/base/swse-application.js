@@ -55,7 +55,7 @@ export default class SWSEApplication extends Application {
      * @param {*} data - Optional data to log
      */
     _log(message, data = null) {
-        if (game.settings.get('swse', 'debugMode')) {
+        if (game.settings.get('foundryvtt-swse', 'debugMode')) {
             swseLogger.log(`[SWSE Application: ${this.constructor.name}] ${message}`, data || '');
         }
     }

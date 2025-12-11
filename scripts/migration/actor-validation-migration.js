@@ -20,7 +20,7 @@ export class ActorValidationMigration {
    * Check if migration has been run for current version
    */
   static async needsMigration() {
-    const lastVersion = game.settings.get('swse', this.MIGRATION_KEY);
+    const lastVersion = game.settings.get('foundryvtt-swse', this.MIGRATION_KEY);
     return lastVersion !== this.MIGRATION_VERSION;
   }
 
@@ -28,7 +28,7 @@ export class ActorValidationMigration {
    * Mark migration as complete
    */
   static async markComplete() {
-    await game.settings.set('swse', this.MIGRATION_KEY, this.MIGRATION_VERSION);
+    await game.settings.set('foundryvtt-swse', this.MIGRATION_KEY, this.MIGRATION_VERSION);
   }
 
   /**

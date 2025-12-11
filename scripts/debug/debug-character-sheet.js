@@ -29,7 +29,7 @@
   debugLog('Foundry VTT Version:', game.version);
 
   // Check if SWSE system is loaded
-  if (game.system.id === 'swse') {
+  if (game.system.id === 'foundryvtt-swse') {
     debugSuccess('SWSE System is active');
   } else {
     debugError('SWSE System is NOT active! Current system:', game.system.id);
@@ -113,7 +113,7 @@
     let settingsFound = 0;
     houseruleSettings.forEach(setting => {
       try {
-        const value = game.settings.get('swse', setting);
+        const value = game.settings.get('foundryvtt-swse', setting);
         debugSuccess(`Setting '${setting}' = ${value}`);
         settingsFound++;
       } catch (err) {

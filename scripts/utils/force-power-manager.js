@@ -13,7 +13,7 @@ export class ForcePowerManager {
    * @returns {number} The modifier (WIS or CHA based on houserule)
    */
   static getForceAbilityModifier(actor) {
-    const attribute = game.settings.get('swse', 'forceTrainingAttribute') || 'wisdom';
+    const attribute = game.settings.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
 
     if (attribute === 'charisma') {
       return actor.system.abilities.cha?.mod || 0;
@@ -75,7 +75,7 @@ export class ForcePowerManager {
         const cachedIndex = cache.get('_index');
 
         if (cachedIndex) {
-          const pack = game.packs.get('swse.forcepowers');
+          const pack = game.packs.get('foundryvtt-swse.forcepowers');
           if (!pack) return [];
 
           const powers = await pack.getDocuments();
@@ -84,7 +84,7 @@ export class ForcePowerManager {
       }
 
       // Fallback to direct pack access
-      const pack = game.packs.get('swse.forcepowers');
+      const pack = game.packs.get('foundryvtt-swse.forcepowers');
       if (!pack) {
         SWSELogger.warn('SWSE | Force powers compendium not found');
         return [];
@@ -378,7 +378,7 @@ export class ForcePowerManager {
    * @returns {Promise<void>}
    */
   static async handleAbilityIncrease(actor, oldAbilities, newAbilities) {
-    const attribute = game.settings.get('swse', 'forceTrainingAttribute') || 'wisdom';
+    const attribute = game.settings.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
     const abilityKey = attribute === 'charisma' ? 'cha' : 'wis';
 
     const oldMod = Math.floor((oldAbilities[abilityKey]?.total || 10) - 10) / 2;

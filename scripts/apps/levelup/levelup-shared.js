@@ -289,8 +289,8 @@ export function calculateHPGain(classDoc, actor, newLevel) {
     }
   }
   const conMod = actor.system.abilities.con?.mod || 0;
-  const hpGeneration = game.settings.get("swse", "hpGeneration") || "average";
-  const maxHPLevels = game.settings.get("swse", "maxHPLevels") || 1;
+  const hpGeneration = game.settings.get('foundryvtt-swse', "hpGeneration") || "average";
+  const maxHPLevels = game.settings.get('foundryvtt-swse', "maxHPLevels") || 1;
 
   let hpGain = 0;
 

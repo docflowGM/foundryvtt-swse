@@ -19,7 +19,7 @@ export class SWSEHomebrewManager {
   }
 
   static registerSettings() {
-    game.settings.register('swse', 'allowHomebrew', {
+    game.settings.register('foundryvtt-swse', 'allowHomebrew', {
       name: 'Allow Homebrew Content',
       hint: 'Enable GM to create custom content',
       scope: 'world',
@@ -28,7 +28,7 @@ export class SWSEHomebrewManager {
       default: false
     });
 
-    game.settings.register('swse', 'homebrewContent', {
+    game.settings.register('foundryvtt-swse', 'homebrewContent', {
       name: 'Homebrew Content',
       hint: 'Stored homebrew items',
       scope: 'world',
@@ -43,7 +43,7 @@ export class SWSEHomebrewManager {
       }
     });
 
-    game.settings.register('swse', 'houseRules', {
+    game.settings.register('foundryvtt-swse', 'houseRules', {
       name: 'House Rules',
       hint: 'Custom rule modifications',
       scope: 'world',
@@ -54,40 +54,40 @@ export class SWSEHomebrewManager {
   }
 
   static async createCustomFeat(data) {
-    const homebrew = game.settings.get('swse', 'homebrewContent');
+    const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
     homebrew.feats.push({
       id: foundry.utils.randomID(),
       ...data,
       isHomebrew: true
     });
-    await game.settings.set('swse', 'homebrewContent', homebrew);
+    await game.settings.set('foundryvtt-swse', 'homebrewContent', homebrew);
     ui.notifications.info(`Created homebrew feat: ${data.name}`);
   }
 
   static async createCustomTalent(data) {
-    const homebrew = game.settings.get('swse', 'homebrewContent');
+    const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
     homebrew.talents.push({
       id: foundry.utils.randomID(),
       ...data,
       isHomebrew: true
     });
-    await game.settings.set('swse', 'homebrewContent', homebrew);
+    await game.settings.set('foundryvtt-swse', 'homebrewContent', homebrew);
     ui.notifications.info(`Created homebrew talent: ${data.name}`);
   }
 
   static async createCustomForcePower(data) {
-    const homebrew = game.settings.get('swse', 'homebrewContent');
+    const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
     homebrew.forcePowers.push({
       id: foundry.utils.randomID(),
       ...data,
       isHomebrew: true
     });
-    await game.settings.set('swse', 'homebrewContent', homebrew);
+    await game.settings.set('foundryvtt-swse', 'homebrewContent', homebrew);
     ui.notifications.info(`Created homebrew Force power: ${data.name}`);
   }
 
   static async exportHomebrew() {
-    const homebrew = game.settings.get('swse', 'homebrewContent');
+    const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
     const json = JSON.stringify(homebrew, null, 2);
 
     const blob = new Blob([json], {type: 'application/json'});
@@ -106,7 +106,7 @@ export class SWSEHomebrewManager {
       const text = await file.text();
       const imported = JSON.parse(text);
 
-      const current = game.settings.get('swse', 'homebrewContent');
+      const current = game.settings.get('foundryvtt-swse', 'homebrewContent');
       const merged = {
         feats: [...current.feats, ...(imported.feats || [])],
         talents: [...current.talents, ...(imported.talents || [])],
@@ -115,7 +115,7 @@ export class SWSEHomebrewManager {
         classes: [...current.classes, ...(imported.classes || [])]
       };
 
-      await game.settings.set('swse', 'homebrewContent', merged);
+      await game.settings.set('foundryvtt-swse', 'homebrewContent', merged);
       ui.notifications.info('Homebrew content imported successfully');
     } catch (err) {
       ui.notifications.error('Failed to import homebrew content');
@@ -142,10 +142,10 @@ class HomebrewManagerApp extends FormApplication {
   }
 
   getData() {
-    const homebrew = game.settings.get('swse', 'homebrewContent');
+    const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
     return {
       homebrew,
-      allowHomebrew: game.settings.get('swse', 'allowHomebrew')
+      allowHomebrew: game.settings.get('foundryvtt-swse', 'allowHomebrew')
     };
   }
 
@@ -235,9 +235,9 @@ class HomebrewManagerApp extends FormApplication {
 
     if (!confirmed) return;
 
-    const homebrew = game.settings.get('swse', 'homebrewContent');
+    const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
     homebrew[type] = homebrew[type].filter(item => item.id !== id);
-    await game.settings.set('swse', 'homebrewContent', homebrew);
+    await game.settings.set('foundryvtt-swse', 'homebrewContent', homebrew);
     this.render();
   }
 
