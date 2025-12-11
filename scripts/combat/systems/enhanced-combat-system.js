@@ -612,7 +612,7 @@ export class SWSECombat {
           const hasPointBlankShotFeat = attacker.items.find(i =>
             i.type === 'feat' && i.name.toLowerCase().includes('point blank shot')
           );
-          const pointBlankShotDefault = game.settings.get('swse', 'pointBlankShotDefault');
+          const pointBlankShotDefault = game.settings.get('foundryvtt-swse', 'pointBlankShotDefault');
 
           if (hasPointBlankShotFeat || pointBlankShotDefault) {
             pointBlankBonus = 1;
@@ -750,7 +750,7 @@ export class SWSECombat {
       const hasPointBlankShotFeat = attacker.items.find(i =>
         i.type === 'feat' && i.name.toLowerCase().includes('point blank shot')
       );
-      const pointBlankShotDefault = game.settings.get('swse', 'pointBlankShotDefault');
+      const pointBlankShotDefault = game.settings.get('foundryvtt-swse', 'pointBlankShotDefault');
 
       if (hasPointBlankShotFeat || pointBlankShotDefault) {
         pointBlankDamageBonus = 1;
@@ -908,7 +908,7 @@ export class SWSECombat {
     if (!ranges) return null;
 
     // Apply house rule range reduction multiplier
-    const rangeReduction = game.settings.get('swse', 'weaponRangeReduction');
+    const rangeReduction = game.settings.get('foundryvtt-swse', 'weaponRangeReduction');
     let multiplier = 1.0;
 
     switch (rangeReduction) {

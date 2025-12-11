@@ -231,7 +231,7 @@ export const HouserulesData = {
  * Get feint skill based on houserule setting
  */
 export function getFeintSkill() {
-  const setting = game.settings.get('swse', 'feintSkill');
+  const setting = game.settings.get('foundryvtt-swse', 'feintSkill');
   return setting === 'persuasion' ? 'persuasion' : 'deception';
 }
 
@@ -239,13 +239,13 @@ export function getFeintSkill() {
  * Get Skill Focus bonus based on variant and level
  */
 export function getSkillFocusBonus(level) {
-  const variant = game.settings.get('swse', 'skillFocusVariant');
+  const variant = game.settings.get('foundryvtt-swse', 'skillFocusVariant');
   
   switch (variant) {
     case 'scaled':
       return Math.min(5, Math.floor(level / 2));
     case 'delayed':
-      const activationLevel = game.settings.get('swse', 'skillFocusActivationLevel') || 7;
+      const activationLevel = game.settings.get('foundryvtt-swse', 'skillFocusActivationLevel') || 7;
       return level >= activationLevel ? 5 : 0;
     case 'normal':
     default:
@@ -257,7 +257,7 @@ export function getSkillFocusBonus(level) {
  * Check if Force Sensitive is restricted
  */
 export function canTakeForceSensitive(actor) {
-  const restricted = game.settings.get('swse', 'forceSensitiveJediOnly');
+  const restricted = game.settings.get('foundryvtt-swse', 'forceSensitiveJediOnly');
   
   if (!restricted) return true;
   
@@ -272,7 +272,7 @@ export function canTakeForceSensitive(actor) {
  * Get Force Training attribute
  */
 export function getForceTrainingAttribute() {
-  const setting = game.settings.get('swse', 'forceTrainingAttribute');
+  const setting = game.settings.get('foundryvtt-swse', 'forceTrainingAttribute');
   return setting === 'charisma' ? 'cha' : 'wis';
 }
 
@@ -280,20 +280,20 @@ export function getForceTrainingAttribute() {
  * Check if Block and Deflect are combined
  */
 export function hasBlockDeflectCombined() {
-  return game.settings.get('swse', 'blockDeflectTalents') === 'combined';
+  return game.settings.get('foundryvtt-swse', 'blockDeflectTalents') === 'combined';
 }
 
 /**
  * Check if character has default Weapon Finesse
  */
 export function hasDefaultWeaponFinesse() {
-  return game.settings.get('swse', 'weaponFinesseDefault');
+  return game.settings.get('foundryvtt-swse', 'weaponFinesseDefault');
 }
 
 /**
  * Get space combat role priority order
  */
 export function getRolePriorityOrder() {
-  return game.settings.get('swse', 'initiativeRolePriority') || 
+  return game.settings.get('foundryvtt-swse', 'initiativeRolePriority') || 
     ['pilot', 'shields', 'weapons', 'engineering', 'other'];
 }

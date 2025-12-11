@@ -19,7 +19,7 @@ export class CharacterCreationMenu extends FormApplication {
   }
   
   getData() {
-    const data = game.settings.get("swse", "characterCreation");
+    const data = game.settings.get('foundryvtt-swse', "characterCreation");
     return {
       ...data,
       isGM: game.user.isGM
@@ -27,7 +27,7 @@ export class CharacterCreationMenu extends FormApplication {
   }
   
   async _updateObject(event, formData) {
-    await game.settings.set("swse", "characterCreation", formData);
+    await game.settings.set('foundryvtt-swse', "characterCreation", formData);
     ui.notifications.info("Character creation rules updated");
   }
 }
@@ -49,19 +49,19 @@ export class AdvancementMenu extends FormApplication {
   
   getData() {
     return {
-      talentEveryLevel: game.settings.get("swse", "talentEveryLevel"),
-      crossClassSkillTraining: game.settings.get("swse", "crossClassSkillTraining"),
-      retrainingEnabled: game.settings.get("swse", "retrainingEnabled"),
-      skillFocusRestriction: game.settings.get("swse", "skillFocusRestriction"),
+      talentEveryLevel: game.settings.get('foundryvtt-swse', "talentEveryLevel"),
+      crossClassSkillTraining: game.settings.get('foundryvtt-swse', "crossClassSkillTraining"),
+      retrainingEnabled: game.settings.get('foundryvtt-swse', "retrainingEnabled"),
+      skillFocusRestriction: game.settings.get('foundryvtt-swse', "skillFocusRestriction"),
       isGM: game.user.isGM
     };
   }
   
   async _updateObject(event, formData) {
-    await game.settings.set("swse", "talentEveryLevel", formData.talentEveryLevel);
-    await game.settings.set("swse", "crossClassSkillTraining", formData.crossClassSkillTraining);
-    await game.settings.set("swse", "retrainingEnabled", formData.retrainingEnabled);
-    await game.settings.set("swse", "skillFocusRestriction", {
+    await game.settings.set('foundryvtt-swse', "talentEveryLevel", formData.talentEveryLevel);
+    await game.settings.set('foundryvtt-swse', "crossClassSkillTraining", formData.crossClassSkillTraining);
+    await game.settings.set('foundryvtt-swse', "retrainingEnabled", formData.retrainingEnabled);
+    await game.settings.set('foundryvtt-swse', "skillFocusRestriction", {
       useTheForce: Number(formData["skillFocusRestriction.useTheForce"]),
       scaling: formData["skillFocusRestriction.scaling"]
     });
@@ -85,15 +85,15 @@ export class CombatMenu extends FormApplication {
   }
   
   getData() {
-    const deathSystem = game.settings.get("swse", "deathSystem");
+    const deathSystem = game.settings.get('foundryvtt-swse', "deathSystem");
     return {
       deathSystem: deathSystem,
-      secondWindImproved: game.settings.get("swse", "secondWindImproved"),
-      armoredDefenseForAll: game.settings.get("swse", "armoredDefenseForAll"),
-      weaponRangeMultiplier: game.settings.get("swse", "weaponRangeMultiplier"),
-      diagonalMovement: game.settings.get("swse", "diagonalMovement"),
-      conditionTrackCap: game.settings.get("swse", "conditionTrackCap"),
-      criticalHitVariant: game.settings.get("swse", "criticalHitVariant"),
+      secondWindImproved: game.settings.get('foundryvtt-swse', "secondWindImproved"),
+      armoredDefenseForAll: game.settings.get('foundryvtt-swse', "armoredDefenseForAll"),
+      weaponRangeMultiplier: game.settings.get('foundryvtt-swse', "weaponRangeMultiplier"),
+      diagonalMovement: game.settings.get('foundryvtt-swse', "diagonalMovement"),
+      conditionTrackCap: game.settings.get('foundryvtt-swse', "conditionTrackCap"),
+      criticalHitVariant: game.settings.get('foundryvtt-swse', "criticalHitVariant"),
       isGM: game.user.isGM
     };
   }
@@ -110,13 +110,13 @@ export class CombatMenu extends FormApplication {
       massiveDamageThreshold: formData["deathSystem.massiveDamageThreshold"]
     };
     
-    await game.settings.set("swse", "deathSystem", deathSystem);
-    await game.settings.set("swse", "secondWindImproved", formData.secondWindImproved);
-    await game.settings.set("swse", "armoredDefenseForAll", formData.armoredDefenseForAll);
-    await game.settings.set("swse", "weaponRangeMultiplier", Number(formData.weaponRangeMultiplier));
-    await game.settings.set("swse", "diagonalMovement", formData.diagonalMovement);
-    await game.settings.set("swse", "conditionTrackCap", Number(formData.conditionTrackCap));
-    await game.settings.set("swse", "criticalHitVariant", formData.criticalHitVariant);
+    await game.settings.set('foundryvtt-swse', "deathSystem", deathSystem);
+    await game.settings.set('foundryvtt-swse', "secondWindImproved", formData.secondWindImproved);
+    await game.settings.set('foundryvtt-swse', "armoredDefenseForAll", formData.armoredDefenseForAll);
+    await game.settings.set('foundryvtt-swse', "weaponRangeMultiplier", Number(formData.weaponRangeMultiplier));
+    await game.settings.set('foundryvtt-swse', "diagonalMovement", formData.diagonalMovement);
+    await game.settings.set('foundryvtt-swse', "conditionTrackCap", Number(formData.conditionTrackCap));
+    await game.settings.set('foundryvtt-swse', "criticalHitVariant", formData.criticalHitVariant);
     
     ui.notifications.info("Combat rules updated");
   }
@@ -138,15 +138,15 @@ export class ForceMenu extends FormApplication {
   
   getData() {
     return {
-      forcePointRecovery: game.settings.get("swse", "forcePointRecovery"),
-      darkSideTemptation: game.settings.get("swse", "darkSideTemptation"),
+      forcePointRecovery: game.settings.get('foundryvtt-swse', "forcePointRecovery"),
+      darkSideTemptation: game.settings.get('foundryvtt-swse', "darkSideTemptation"),
       isGM: game.user.isGM
     };
   }
   
   async _updateObject(event, formData) {
-    await game.settings.set("swse", "forcePointRecovery", formData.forcePointRecovery);
-    await game.settings.set("swse", "darkSideTemptation", formData.darkSideTemptation);
+    await game.settings.set('foundryvtt-swse', "forcePointRecovery", formData.forcePointRecovery);
+    await game.settings.set('foundryvtt-swse', "darkSideTemptation", formData.darkSideTemptation);
     ui.notifications.info("Force & Destiny rules updated");
   }
 }
@@ -167,7 +167,7 @@ export class PresetsMenu extends FormApplication {
   
   getData() {
     return {
-      currentPreset: game.settings.get("swse", "houserulePreset"),
+      currentPreset: game.settings.get('foundryvtt-swse', "houserulePreset"),
       isGM: game.user.isGM
     };
   }
@@ -194,13 +194,13 @@ export class PresetsMenu extends FormApplication {
     const presets = await import('./houserule-presets.js');
     await presets.applyPreset(preset);
     
-    await game.settings.set("swse", "houserulePreset", preset);
+    await game.settings.set('foundryvtt-swse', "houserulePreset", preset);
     ui.notifications.info(`Applied ${preset} preset`);
     this.render();
   }
   
   async _onExportSettings(event) {
-    const settings = game.settings.get("swse", "characterCreation");
+    const settings = game.settings.get('foundryvtt-swse', "characterCreation");
     const blob = new Blob([JSON.stringify(settings, null, 2)], {type: 'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -234,7 +234,7 @@ export class PresetsMenu extends FormApplication {
             
             // Apply all settings
             for (const [key, value] of Object.entries(settings)) {
-              await game.settings.set("swse", key, value);
+              await game.settings.set('foundryvtt-swse', key, value);
             }
             
             ui.notifications.info("Settings imported successfully");
@@ -273,18 +273,18 @@ export class SkillsFeatsMenu extends FormApplication {
   
   getData() {
     return {
-      feintSkill: game.settings.get("swse", "feintSkill"),
-      skillFocusVariant: game.settings.get("swse", "skillFocusVariant"),
-      skillFocusActivationLevel: game.settings.get("swse", "skillFocusActivationLevel"),
+      feintSkill: game.settings.get('foundryvtt-swse', "feintSkill"),
+      skillFocusVariant: game.settings.get('foundryvtt-swse', "skillFocusVariant"),
+      skillFocusActivationLevel: game.settings.get('foundryvtt-swse', "skillFocusActivationLevel"),
       isGM: game.user.isGM
     };
   }
   
   async _updateObject(event, formData) {
-    await game.settings.set("swse", "feintSkill", formData.feintSkill);
-    await game.settings.set("swse", "skillFocusVariant", formData.skillFocusVariant);
+    await game.settings.set('foundryvtt-swse', "feintSkill", formData.feintSkill);
+    await game.settings.set('foundryvtt-swse', "skillFocusVariant", formData.skillFocusVariant);
     if (formData.skillFocusActivationLevel) {
-      await game.settings.set("swse", "skillFocusActivationLevel", Number(formData.skillFocusActivationLevel));
+      await game.settings.set('foundryvtt-swse', "skillFocusActivationLevel", Number(formData.skillFocusActivationLevel));
     }
     ui.notifications.info("Skills & Feats rules updated");
   }
@@ -307,9 +307,9 @@ export class SpaceCombatMenu extends FormApplication {
   
   getData() {
     return {
-      spaceInitiativeSystem: game.settings.get("swse", "spaceInitiativeSystem"),
-      initiativeRolePriority: game.settings.get("swse", "initiativeRolePriority"),
-      weaponsOperatorsRollInit: game.settings.get("swse", "weaponsOperatorsRollInit"),
+      spaceInitiativeSystem: game.settings.get('foundryvtt-swse', "spaceInitiativeSystem"),
+      initiativeRolePriority: game.settings.get('foundryvtt-swse', "initiativeRolePriority"),
+      weaponsOperatorsRollInit: game.settings.get('foundryvtt-swse', "weaponsOperatorsRollInit"),
       isGM: game.user.isGM
     };
   }
@@ -368,14 +368,14 @@ export class SpaceCombatMenu extends FormApplication {
   }
   
   async _updateObject(event, formData) {
-    await game.settings.set("swse", "spaceInitiativeSystem", formData.spaceInitiativeSystem);
-    await game.settings.set("swse", "weaponsOperatorsRollInit", formData.weaponsOperatorsRollInit);
+    await game.settings.set('foundryvtt-swse', "spaceInitiativeSystem", formData.spaceInitiativeSystem);
+    await game.settings.set('foundryvtt-swse', "weaponsOperatorsRollInit", formData.weaponsOperatorsRollInit);
     
     // Get role priority from list order
     const list = this.element.find('.role-priority-list')[0];
     if (list) {
       const roles = Array.from(list.querySelectorAll('li')).map(li => li.dataset.role);
-      await game.settings.set("swse", "initiativeRolePriority", roles);
+      await game.settings.set('foundryvtt-swse', "initiativeRolePriority", roles);
     }
     
     ui.notifications.info("Space Combat rules updated");

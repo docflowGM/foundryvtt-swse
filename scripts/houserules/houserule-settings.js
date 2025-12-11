@@ -10,7 +10,7 @@ export function registerHouseruleSettings() {
   // Character Creation
   // ============================================
   
-  game.settings.register("swse", "abilityScoreMethod", {
+  game.settings.register('foundryvtt-swse', "abilityScoreMethod", {
     name: "Ability Score Generation Method",
     hint: "How players generate ability scores during character creation",
     scope: "world",
@@ -27,7 +27,7 @@ export function registerHouseruleSettings() {
     default: "4d6drop"
   });
 
-  game.settings.register("swse", "pointBuyPool", {
+  game.settings.register('foundryvtt-swse', "pointBuyPool", {
     name: "Point Buy Pool",
     hint: "Total points available for point buy system",
     scope: "world",
@@ -41,7 +41,7 @@ export function registerHouseruleSettings() {
     }
   });
 
-  game.settings.register("swse", "allowAbilityReroll", {
+  game.settings.register('foundryvtt-swse', "allowAbilityReroll", {
     name: "Allow Ability Score Rerolls",
     hint: "Allow players to reroll if their total modifiers are too low",
     scope: "world",
@@ -50,7 +50,7 @@ export function registerHouseruleSettings() {
     default: true
   });
 
-  game.settings.register("swse", "allowPlayersNonheroic", {
+  game.settings.register('foundryvtt-swse', "allowPlayersNonheroic", {
     name: "Allow Players to Create Nonheroic Characters",
     hint: "If enabled, players can access the NPC Generator to create nonheroic characters. By default, only GMs can create NPCs.",
     scope: "world",
@@ -59,7 +59,7 @@ export function registerHouseruleSettings() {
     default: false
   });
 
-  game.settings.register("swse", "maxStartingCredits", {
+  game.settings.register('foundryvtt-swse', "maxStartingCredits", {
     name: "Maximum Starting Credits",
     hint: "Characters take maximum starting credits instead of rolling (e.g., Noble gets 4800 instead of 3d4×400)",
     scope: "world",
@@ -68,7 +68,7 @@ export function registerHouseruleSettings() {
     default: false
   });
 
-  game.settings.register("swse", "characterCreation", {
+  game.settings.register('foundryvtt-swse', "characterCreation", {
     name: "Character Creation Settings",
     hint: "Consolidated character creation settings",
     scope: "world",
@@ -81,7 +81,7 @@ export function registerHouseruleSettings() {
   // Backgrounds (Rebellion Era Campaign Guide)
   // ============================================
 
-  game.settings.register("swse", "enableBackgrounds", {
+  game.settings.register('foundryvtt-swse', "enableBackgrounds", {
     name: "Enable Backgrounds System",
     hint: "Allow players to select backgrounds (Events, Occupations, or Planets of Origin) during character creation. This is an alternative to the Destiny system.",
     scope: "world",
@@ -90,7 +90,7 @@ export function registerHouseruleSettings() {
     default: true
   });
 
-  game.settings.register("swse", "backgroundSelectionCount", {
+  game.settings.register('foundryvtt-swse', "backgroundSelectionCount", {
     name: "Number of Background Selections",
     hint: "How many backgrounds can players choose? (1 = Event OR Occupation OR Planet, 2 = any two, 3 = all three)",
     scope: "world",
@@ -108,7 +108,7 @@ export function registerHouseruleSettings() {
   // Droids
   // ============================================
 
-  game.settings.register("swse", "droidPointBuyPool", {
+  game.settings.register('foundryvtt-swse', "droidPointBuyPool", {
     name: "Droid Point Buy Pool",
     hint: "Total points available for droid characters using point buy (only shown if Point Buy is selected)",
     scope: "world",
@@ -122,7 +122,7 @@ export function registerHouseruleSettings() {
     }
   });
 
-  game.settings.register("swse", "livingPointBuyPool", {
+  game.settings.register('foundryvtt-swse', "livingPointBuyPool", {
     name: "Living Point Buy Pool",
     hint: "Total points available for living characters using point buy (only shown if Point Buy is selected)",
     scope: "world",
@@ -136,7 +136,7 @@ export function registerHouseruleSettings() {
     }
   });
 
-  game.settings.register("swse", "droidConstructionCredits", {
+  game.settings.register('foundryvtt-swse', "droidConstructionCredits", {
     name: "Droid Construction Credits",
     hint: "Base credits available for custom droid construction (before class credits)",
     scope: "world",
@@ -150,7 +150,7 @@ export function registerHouseruleSettings() {
     }
   });
 
-  game.settings.register("swse", "standardDroidModelLimit", {
+  game.settings.register('foundryvtt-swse', "standardDroidModelLimit", {
     name: "Standard Droid Model Credit Limit",
     hint: "Maximum total cost for standard droid models (including modifications)",
     scope: "world",
@@ -168,7 +168,7 @@ export function registerHouseruleSettings() {
   // Hit Points
   // ============================================
   
-  game.settings.register("swse", "hpGeneration", {
+  game.settings.register('foundryvtt-swse', "hpGeneration", {
     name: "HP Generation Method",
     hint: "How HP is calculated when leveling up",
     scope: "world",
@@ -183,7 +183,7 @@ export function registerHouseruleSettings() {
     default: "average"
   });
 
-  game.settings.register("swse", "maxHPLevels", {
+  game.settings.register('foundryvtt-swse', "maxHPLevels", {
     name: "Levels with Maximum HP",
     hint: "Number of levels that automatically get max HP (usually 1st level)",
     scope: "world",
@@ -201,7 +201,7 @@ export function registerHouseruleSettings() {
   // Death & Dying
   // ============================================
   
-  game.settings.register("swse", "deathSystem", {
+  game.settings.register('foundryvtt-swse', "deathSystem", {
     name: "Death System",
     hint: "How character death is determined",
     scope: "world",
@@ -215,7 +215,7 @@ export function registerHouseruleSettings() {
     default: "standard"
   });
 
-  game.settings.register("swse", "deathSaveDC", {
+  game.settings.register('foundryvtt-swse', "deathSaveDC", {
     name: "Death Save DC",
     hint: "DC for death saves (if using three strikes system)",
     scope: "world",
@@ -233,7 +233,7 @@ export function registerHouseruleSettings() {
   // Combat
   // ============================================
   
-  game.settings.register("swse", "conditionTrackCap", {
+  game.settings.register('foundryvtt-swse', "conditionTrackCap", {
     name: "Condition Track Damage Cap",
     hint: "Maximum condition track moves from a single hit (0 = unlimited)",
     scope: "world",
@@ -247,7 +247,7 @@ export function registerHouseruleSettings() {
     }
   });
 
-  game.settings.register("swse", "criticalHitVariant", {
+  game.settings.register('foundryvtt-swse', "criticalHitVariant", {
     name: "Critical Hit Variant",
     hint: "How critical hits are calculated",
     scope: "world",
@@ -262,7 +262,7 @@ export function registerHouseruleSettings() {
     default: "standard"
   });
 
-  game.settings.register("swse", "diagonalMovement", {
+  game.settings.register('foundryvtt-swse', "diagonalMovement", {
     name: "Diagonal Movement Cost",
     hint: "How diagonal movement is calculated",
     scope: "world",
@@ -276,7 +276,7 @@ export function registerHouseruleSettings() {
     default: "swse"
   });
 
-  game.settings.register("swse", "weaponRangeReduction", {
+  game.settings.register('foundryvtt-swse', "weaponRangeReduction", {
     name: "Weapon Range Reduction",
     hint: "Reduce all weapon ranges by a percentage for closer combat",
     scope: "world",
@@ -291,7 +291,7 @@ export function registerHouseruleSettings() {
     default: "none"
   });
 
-  game.settings.register("swse", "weaponRangeMultiplier", {
+  game.settings.register('foundryvtt-swse', "weaponRangeMultiplier", {
     name: "Weapon Range Multiplier",
     hint: "Multiplier for all weapon ranges",
     scope: "world",
@@ -305,7 +305,7 @@ export function registerHouseruleSettings() {
     }
   });
 
-  game.settings.register("swse", "armoredDefenseForAll", {
+  game.settings.register('foundryvtt-swse', "armoredDefenseForAll", {
     name: "Armored Defense for All",
     hint: "All characters can add armor bonus to Reflex Defense regardless of armor proficiency",
     scope: "world",
@@ -318,7 +318,7 @@ export function registerHouseruleSettings() {
   // Second Wind
   // ============================================
   
-  game.settings.register("swse", "secondWindImproved", {
+  game.settings.register('foundryvtt-swse', "secondWindImproved", {
     name: "Improved Second Wind",
     hint: "Second Wind also improves condition track by one step",
     scope: "world",
@@ -327,7 +327,7 @@ export function registerHouseruleSettings() {
     default: false
   });
 
-  game.settings.register("swse", "secondWindRecovery", {
+  game.settings.register('foundryvtt-swse', "secondWindRecovery", {
     name: "Second Wind Recovery",
     hint: "When Second Wind uses are recovered",
     scope: "world",
@@ -346,7 +346,7 @@ export function registerHouseruleSettings() {
   // Skills & Feats
   // ============================================
   
-  game.settings.register("swse", "feintSkill", {
+  game.settings.register('foundryvtt-swse', "feintSkill", {
     name: "Feint Skill",
     hint: "Which skill is used for feinting against Will Defense",
     scope: "world",
@@ -359,7 +359,7 @@ export function registerHouseruleSettings() {
     default: "deception"
   });
 
-  game.settings.register("swse", "skillFocusVariant", {
+  game.settings.register('foundryvtt-swse', "skillFocusVariant", {
     name: "Skill Focus Variant",
     hint: "How the Skill Focus feat works",
     scope: "world",
@@ -373,7 +373,7 @@ export function registerHouseruleSettings() {
     default: "normal"
   });
 
-  game.settings.register("swse", "skillFocusActivationLevel", {
+  game.settings.register('foundryvtt-swse', "skillFocusActivationLevel", {
     name: "Skill Focus Activation Level",
     hint: "Level at which delayed Skill Focus activates",
     scope: "world",
@@ -391,7 +391,7 @@ export function registerHouseruleSettings() {
   // Force Powers
   // ============================================
   
-  game.settings.register("swse", "forceTrainingAttribute", {
+  game.settings.register('foundryvtt-swse', "forceTrainingAttribute", {
     name: "Force Training Attribute",
     hint: "Which ability score governs Force Training",
     scope: "world",
@@ -404,7 +404,7 @@ export function registerHouseruleSettings() {
     default: "wisdom"
   });
 
-  game.settings.register("swse", "blockDeflectTalents", {
+  game.settings.register('foundryvtt-swse', "blockDeflectTalents", {
     name: "Block/Deflect Talents",
     hint: "Whether Block and Deflect are separate or combined",
     scope: "world",
@@ -417,7 +417,7 @@ export function registerHouseruleSettings() {
     default: "separate"
   });
 
-  game.settings.register("swse", "forceSensitiveJediOnly", {
+  game.settings.register('foundryvtt-swse', "forceSensitiveJediOnly", {
     name: "Force Sensitive Restriction",
     hint: "Restrict Force Sensitive feat to Jedi classes only",
     scope: "world",
@@ -426,7 +426,7 @@ export function registerHouseruleSettings() {
     default: false
   });
 
-  game.settings.register("swse", "darkSideMaxMultiplier", {
+  game.settings.register('foundryvtt-swse', "darkSideMaxMultiplier", {
     name: "Dark Side Maximum Multiplier",
     hint: "Maximum Dark Side Score = Wisdom × Multiplier (default is 1× Wisdom)",
     scope: "world",
@@ -441,7 +441,7 @@ export function registerHouseruleSettings() {
     default: 1
   });
 
-  game.settings.register("swse", "darkSidePowerIncreaseScore", {
+  game.settings.register('foundryvtt-swse', "darkSidePowerIncreaseScore", {
     name: "Dark Side Powers Auto-Increase Score",
     hint: "Automatically increase Dark Side Score by 1 when using a Force Power with the [Dark Side] descriptor",
     scope: "world",
@@ -450,7 +450,7 @@ export function registerHouseruleSettings() {
     default: true
   });
 
-  game.settings.register("swse", "forcePointRecovery", {
+  game.settings.register('foundryvtt-swse', "forcePointRecovery", {
     name: "Force Point Recovery",
     hint: "When Force Points are recovered",
     scope: "world",
@@ -464,7 +464,7 @@ export function registerHouseruleSettings() {
     default: "level"
   });
 
-  game.settings.register("swse", "darkSideTemptation", {
+  game.settings.register('foundryvtt-swse', "darkSideTemptation", {
     name: "Dark Side Temptation",
     hint: "Rules for Dark Side temptation and redemption",
     scope: "world",
@@ -480,7 +480,7 @@ export function registerHouseruleSettings() {
   // Combat Feats
   // ============================================
 
-  game.settings.register("swse", "weaponFinesseDefault", {
+  game.settings.register('foundryvtt-swse', "weaponFinesseDefault", {
     name: "Default Weapon Finesse",
     hint: "All characters automatically have Weapon Finesse",
     scope: "world",
@@ -489,7 +489,7 @@ export function registerHouseruleSettings() {
     default: false
   });
 
-  game.settings.register("swse", "pointBlankShotDefault", {
+  game.settings.register('foundryvtt-swse', "pointBlankShotDefault", {
     name: "Default Point Blank Shot",
     hint: "All characters automatically have Point Blank Shot feat (+1 to attack and damage within weapon's point-blank range)",
     scope: "world",
@@ -502,7 +502,7 @@ export function registerHouseruleSettings() {
   // Talents
   // ============================================
 
-  game.settings.register("swse", "groupDeflectBlock", {
+  game.settings.register('foundryvtt-swse', "groupDeflectBlock", {
     name: "Group Deflect and Block Talents",
     hint: "Display Deflect and Block as a grouped talent in character generator and talent trees",
     scope: "world",
@@ -511,7 +511,7 @@ export function registerHouseruleSettings() {
     default: false
   });
 
-  game.settings.register("swse", "talentTreeRestriction", {
+  game.settings.register('foundryvtt-swse', "talentTreeRestriction", {
     name: "Talent Tree Access",
     hint: "Which talent trees can players choose from when leveling up. 'Unrestricted' allows selecting from any talent tree (free build mode).",
     scope: "world",
@@ -525,7 +525,7 @@ export function registerHouseruleSettings() {
     default: "current"
   });
 
-  game.settings.register("swse", "talentEveryLevel", {
+  game.settings.register('foundryvtt-swse', "talentEveryLevel", {
     name: "Talent Every Level",
     hint: "Characters gain a talent every level instead of every odd level",
     scope: "world",
@@ -534,7 +534,7 @@ export function registerHouseruleSettings() {
     default: false
   });
 
-  game.settings.register("swse", "crossClassSkillTraining", {
+  game.settings.register('foundryvtt-swse', "crossClassSkillTraining", {
     name: "Cross-Class Skill Training",
     hint: "Allow training in skills that are not class skills",
     scope: "world",
@@ -543,7 +543,7 @@ export function registerHouseruleSettings() {
     default: true
   });
 
-  game.settings.register("swse", "retrainingEnabled", {
+  game.settings.register('foundryvtt-swse', "retrainingEnabled", {
     name: "Retraining Enabled",
     hint: "Allow characters to retrain feats, skills, and talents",
     scope: "world",
@@ -552,7 +552,7 @@ export function registerHouseruleSettings() {
     default: false
   });
 
-  game.settings.register("swse", "skillFocusRestriction", {
+  game.settings.register('foundryvtt-swse', "skillFocusRestriction", {
     name: "Skill Focus Restriction",
     hint: "Restrictions on the Skill Focus feat",
     scope: "world",
@@ -568,7 +568,7 @@ export function registerHouseruleSettings() {
   // Multi-classing
   // ============================================
 
-  game.settings.register("swse", "multiclassBonusChoice", {
+  game.settings.register('foundryvtt-swse', "multiclassBonusChoice", {
     name: "Multi-class Bonus Choice",
     hint: "What bonus players get when taking a second base class (players can always choose feat OR skill)",
     scope: "world",
@@ -586,7 +586,7 @@ export function registerHouseruleSettings() {
   // Ability Score Increases
   // ============================================
 
-  game.settings.register("swse", "abilityIncreaseMethod", {
+  game.settings.register('foundryvtt-swse', "abilityIncreaseMethod", {
     name: "Ability Score Increase Method",
     hint: "How players can allocate ability increases at levels 4, 8, 12, 16, 20",
     scope: "world",
@@ -603,7 +603,7 @@ export function registerHouseruleSettings() {
   // Space Combat
   // ============================================
   
-  game.settings.register("swse", "spaceInitiativeSystem", {
+  game.settings.register('foundryvtt-swse', "spaceInitiativeSystem", {
     name: "Space Combat Initiative System",
     hint: "How initiative works in space combat",
     scope: "world",
@@ -616,7 +616,7 @@ export function registerHouseruleSettings() {
     default: "individual"
   });
 
-  game.settings.register("swse", "initiativeRolePriority", {
+  game.settings.register('foundryvtt-swse', "initiativeRolePriority", {
     name: "Initiative Role Priority",
     hint: "Order of crew actions in ship-based initiative",
     scope: "world",
@@ -625,7 +625,7 @@ export function registerHouseruleSettings() {
     default: ["pilot", "shields", "weapons", "engineering", "other"]
   });
 
-  game.settings.register("swse", "weaponsOperatorsRollInit", {
+  game.settings.register('foundryvtt-swse', "weaponsOperatorsRollInit", {
     name: "Weapons Operators Roll Initiative",
     hint: "Multiple weapons operators roll to determine order among themselves",
     scope: "world",
@@ -638,7 +638,7 @@ export function registerHouseruleSettings() {
   // Houserule Presets
   // ============================================
 
-  game.settings.register("swse", "houserulePreset", {
+  game.settings.register('foundryvtt-swse', "houserulePreset", {
     name: "Active Houserule Preset",
     hint: "The currently active houserule preset configuration",
     scope: "world",

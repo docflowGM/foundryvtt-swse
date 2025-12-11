@@ -31,7 +31,7 @@ export class HouseruleMechanics {
     Hooks.on('preRollDamage', (actor, item, options) => {
       if (!options.critical) return;
       
-      const variant = game.settings.get('swse', 'criticalHitVariant');
+      const variant = game.settings.get('foundryvtt-swse', 'criticalHitVariant');
       
       switch (variant) {
         case 'maxplus':
@@ -54,7 +54,7 @@ export class HouseruleMechanics {
    */
   static setupConditionTrackLimits() {
     Hooks.on('preUpdateActor', (actor, changes, options, userId) => {
-      const cap = game.settings.get('swse', 'conditionTrackCap');
+      const cap = game.settings.get('foundryvtt-swse', 'conditionTrackCap');
       
       if (cap === 0) return; // No cap
       
@@ -76,7 +76,7 @@ export class HouseruleMechanics {
    */
   static setupDiagonalMovement() {
     // This would hook into token movement if needed
-    const movementType = game.settings.get('swse', 'diagonalMovement');
+    const movementType = game.settings.get('foundryvtt-swse', 'diagonalMovement');
     
     // Store for reference by movement calculations
     CONFIG.SWSE.diagonalMovement = movementType;
@@ -89,7 +89,7 @@ export class HouseruleMechanics {
     Hooks.on('preUpdateActor', (actor, changes, options, userId) => {
       if (changes.system?.hp?.value === undefined) return;
       
-      const deathSystem = game.settings.get('swse', 'deathSystem');
+      const deathSystem = game.settings.get('foundryvtt-swse', 'deathSystem');
       const newHP = changes.system.hp.value;
       
       if (newHP > 0) return; // Not at risk of death
@@ -130,8 +130,8 @@ export class HouseruleMechanics {
    * Apply HP generation rules
    */
   static async generateHP(actor, classItem, level) {
-    const method = game.settings.get('swse', 'hpGeneration');
-    const maxLevels = game.settings.get('swse', 'maxHPLevels');
+    const method = game.settings.get('foundryvtt-swse', 'hpGeneration');
+    const maxLevels = game.settings.get('foundryvtt-swse', 'maxHPLevels');
     const hitDie = classItem.system.hitDie || 6;
     const conMod = actor.system.abilities.con.mod || 0;
     
@@ -172,7 +172,7 @@ export class HouseruleMechanics {
    * Apply weapon range multiplier
    */
   static getModifiedRange(baseRange) {
-    const multiplier = game.settings.get('swse', 'weaponRangeMultiplier');
+    const multiplier = game.settings.get('foundryvtt-swse', 'weaponRangeMultiplier');
     return Math.round(baseRange * multiplier);
   }
 
@@ -180,14 +180,14 @@ export class HouseruleMechanics {
    * Check if Second Wind improves condition track
    */
   static isSecondWindImproved() {
-    return game.settings.get('swse', 'secondWindImproved');
+    return game.settings.get('foundryvtt-swse', 'secondWindImproved');
   }
 
   /**
    * Get Second Wind recovery timing
    */
   static getSecondWindRecovery() {
-    return game.settings.get('swse', 'secondWindRecovery');
+    return game.settings.get('foundryvtt-swse', 'secondWindRecovery');
   }
 
   /**
@@ -230,7 +230,7 @@ export class HouseruleMechanics {
   static setupFeintSkill() {
     Hooks.on('preRollSkill', (actor, skillName, options) => {
       if (skillName === 'feint') {
-        const feintSkill = game.settings.get('swse', 'feintSkill');
+        const feintSkill = game.settings.get('foundryvtt-swse', 'feintSkill');
         if (feintSkill === 'persuasion') {
           options.useSkill = 'persuasion';
         }
@@ -242,7 +242,7 @@ export class HouseruleMechanics {
    * Calculate Skill Focus bonus based on variant
    */
   static getSkillFocusBonus(actor, skillName) {
-    const variant = game.settings.get('swse', 'skillFocusVariant');
+    const variant = game.settings.get('foundryvtt-swse', 'skillFocusVariant');
     const level = actor.system.level || 1;
     
     switch (variant) {
@@ -250,7 +250,7 @@ export class HouseruleMechanics {
         return Math.min(5, Math.floor(level / 2));
       
       case 'delayed':
-        const activationLevel = game.settings.get('swse', 'skillFocusActivationLevel');
+        const activationLevel = game.settings.get('foundryvtt-swse', 'skillFocusActivationLevel');
         return level >= activationLevel ? 5 : 0;
       
       case 'normal':
@@ -263,35 +263,35 @@ export class HouseruleMechanics {
    * Get Force Training attribute
    */
   static getForceTrainingAttribute() {
-    return game.settings.get('swse', 'forceTrainingAttribute');
+    return game.settings.get('foundryvtt-swse', 'forceTrainingAttribute');
   }
 
   /**
    * Check if Block and Deflect are combined
    */
   static isBlockDeflectCombined() {
-    return game.settings.get('swse', 'blockDeflectTalents') === 'combined';
+    return game.settings.get('foundryvtt-swse', 'blockDeflectTalents') === 'combined';
   }
 
   /**
    * Check if Force Sensitive is restricted to Jedi
    */
   static isForceSensitiveRestricted() {
-    return game.settings.get('swse', 'forceSensitiveJediOnly');
+    return game.settings.get('foundryvtt-swse', 'forceSensitiveJediOnly');
   }
 
   /**
    * Check if Weapon Finesse is default
    */
   static hasDefaultWeaponFinesse(actor) {
-    return game.settings.get('swse', 'weaponFinesseDefault');
+    return game.settings.get('foundryvtt-swse', 'weaponFinesseDefault');
   }
 
   /**
    * Apply space combat initiative system
    */
   static setupSpaceCombatInitiative() {
-    const system = game.settings.get('swse', 'spaceInitiativeSystem');
+    const system = game.settings.get('foundryvtt-swse', 'spaceInitiativeSystem');
     
     if (system === 'shipBased') {
       Hooks.on('preCreateCombatant', (combatant, data, options, userId) => {
@@ -307,7 +307,7 @@ export class HouseruleMechanics {
       
       Hooks.on('combatTurn', (combat, updateData, options) => {
         // Handle role priority order
-        const rolePriority = game.settings.get('swse', 'initiativeRolePriority');
+        const rolePriority = game.settings.get('foundryvtt-swse', 'initiativeRolePriority');
         // Implementation would depend on how crew roles are stored
       });
     }
@@ -317,7 +317,7 @@ export class HouseruleMechanics {
    * Get space combat role priority
    */
   static getInitiativeRolePriority() {
-    return game.settings.get('swse', 'initiativeRolePriority');
+    return game.settings.get('foundryvtt-swse', 'initiativeRolePriority');
   }
 
 

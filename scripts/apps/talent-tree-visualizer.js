@@ -331,7 +331,7 @@ export class TalentTreeVisualizer {
    * Generate enhanced tree HTML with central node
    */
   static _generateEnhancedTreeHtml(treeName, talentGraph, ownedTalents) {
-    const groupDeflectBlock = game.settings.get("swse", "groupDeflectBlock") || false;
+    const groupDeflectBlock = game.settings.get('foundryvtt-swse', "groupDeflectBlock") || false;
 
     let html = `
       <div class="talent-tree-enhanced-container">

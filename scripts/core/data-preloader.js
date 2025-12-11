@@ -140,7 +140,7 @@ export class DataPreloader {
    * @private
    */
   async _preloadClasses() {
-    const pack = game.packs.get('swse.classes');
+    const pack = game.packs.get('foundryvtt-swse.classes');
     if (!pack) return;
 
     const index = await pack.getIndex();
@@ -160,7 +160,7 @@ export class DataPreloader {
    * @private
    */
   async _preloadFeats() {
-    const pack = game.packs.get('swse.feats');
+    const pack = game.packs.get('foundryvtt-swse.feats');
     if (!pack) return;
 
     const index = await pack.getIndex();
@@ -179,7 +179,7 @@ export class DataPreloader {
    * @private
    */
   async _preloadTalents() {
-    const pack = game.packs.get('swse.talents');
+    const pack = game.packs.get('foundryvtt-swse.talents');
     if (!pack) return;
 
     const index = await pack.getIndex();
@@ -202,7 +202,7 @@ export class DataPreloader {
    * @private
    */
   async _preloadForcePowers() {
-    const pack = game.packs.get('swse.forcepowers');
+    const pack = game.packs.get('foundryvtt-swse.forcepowers');
     if (!pack) return;
 
     const index = await pack.getIndex();
@@ -221,7 +221,7 @@ export class DataPreloader {
    * @private
    */
   async _preloadSpecies() {
-    const pack = game.packs.get('swse.species');
+    const pack = game.packs.get('foundryvtt-swse.species');
     if (!pack) return;
 
     const index = await pack.getIndex();
@@ -240,7 +240,7 @@ export class DataPreloader {
    * @private
    */
   async _preloadSkills() {
-    const pack = game.packs.get('swse.skills');
+    const pack = game.packs.get('foundryvtt-swse.skills');
     if (!pack) return;
 
     const index = await pack.getIndex();
@@ -299,7 +299,7 @@ export class DataPreloader {
     }
 
     // Fallback to pack lookup
-    const pack = game.packs.get('swse.talents');
+    const pack = game.packs.get('foundryvtt-swse.talents');
     if (!pack) return [];
 
     const index = await pack.getIndex();

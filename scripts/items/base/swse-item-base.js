@@ -55,7 +55,7 @@ export class SWSEItemBase extends Item {
 
     // Apply weapon range multiplier from houserules
     if (game.settings && game.settings.get) {
-      const multiplier = game.settings.get('swse', 'weaponRangeMultiplier') || 1.0;
+      const multiplier = game.settings.get('foundryvtt-swse', 'weaponRangeMultiplier') || 1.0;
       if (data.range?.value) {
         data.range.modified = Math.round(data.range.value * multiplier);
       }

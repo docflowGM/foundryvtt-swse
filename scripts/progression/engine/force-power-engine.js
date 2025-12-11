@@ -35,7 +35,7 @@ export class ForcePowerEngine {
 
     if (!featDoc) {
       try {
-        const pack = game.packs.get('swse.feats');
+        const pack = game.packs.get('foundryvtt-swse.feats');
         if (pack) {
           const index = pack.index.find(e => e.name === featName);
           if (index) {
@@ -127,7 +127,7 @@ export class ForcePowerEngine {
   static collectAvailablePowers(actor) {
     // Attempt to find a compendium called swse.forcepowers and return its content.
     try {
-      const pack = game.packs.get("swse.forcepowers");
+      const pack = game.packs.get('foundryvtt-swse.forcepowers");
       if (!pack) return [];
       return pack.getDocuments ? pack.getDocuments() : pack.index.map(e => e);
     } catch (e) {

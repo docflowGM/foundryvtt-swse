@@ -83,7 +83,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentD
    */
   static canUseDarkSide(actor) {
     // Check if Dark Side Temptation is enabled
-    const darkSideEnabled = game.settings.get('swse', 'darkSideTemptationMechanic');
+    const darkSideEnabled = game.settings.get('foundryvtt-swse', 'darkSideTemptationMechanic');
     if (!darkSideEnabled) return false;
 
     // Check if Dark Side Score <= half Wisdom

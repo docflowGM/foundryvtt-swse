@@ -22,7 +22,7 @@ export function getsTalent(selectedClass, actor) {
   if (selectedClass.system.isNonheroic) return false;
 
   // Check house rule: talent every level
-  const talentEveryLevel = game.settings.get("swse", "talentEveryLevel");
+  const talentEveryLevel = game.settings.get('foundryvtt-swse', "talentEveryLevel");
   if (talentEveryLevel) {
     // Check if class has talent trees available
     const trees = getTalentTrees(selectedClass);
@@ -53,12 +53,12 @@ export function getsTalent(selectedClass, actor) {
  * @returns {Promise<Array>} Available talent trees
  */
 export async function getAvailableTalentTrees(selectedClass, actor) {
-  const talentTreeRestriction = game.settings.get("swse", "talentTreeRestriction");
+  const talentTreeRestriction = game.settings.get('foundryvtt-swse', "talentTreeRestriction");
   let availableTrees = [];
 
   if (talentTreeRestriction === "unrestricted") {
     // Free build mode: all talent trees from all talents
-    const talentPack = game.packs.get('swse.talents');
+    const talentPack = game.packs.get('foundryvtt-swse.talents');
     if (talentPack) {
       const allTalents = await talentPack.getDocuments();
       const treeSet = new Set();
@@ -76,7 +76,7 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
   } else {
     // Talent trees from any class the character has levels in
     const characterClasses = getCharacterClasses(actor);
-    const classPack = game.packs.get('swse.classes');
+    const classPack = game.packs.get('foundryvtt-swse.classes');
 
     for (const className of Object.keys(characterClasses)) {
       const classDoc = await classPack.index.find(c => c.name === className);
@@ -107,7 +107,7 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
  * @returns {Promise<Array>} Array of talent documents
  */
 export async function loadTalentData() {
-  const talentPack = game.packs.get('swse.talents');
+  const talentPack = game.packs.get('foundryvtt-swse.talents');
   if (!talentPack) return [];
 
   return await talentPack.getDocuments();
@@ -257,7 +257,7 @@ function buildTalentGraph(talents) {
  * @returns {string} HTML string
  */
 function generateTalentTreeHtml(treeName, talentGraph) {
-  const groupDeflectBlock = game.settings.get("swse", "groupDeflectBlock") || false;
+  const groupDeflectBlock = game.settings.get('foundryvtt-swse', "groupDeflectBlock") || false;
 
   let html = `
     <div class="talent-tree-container">

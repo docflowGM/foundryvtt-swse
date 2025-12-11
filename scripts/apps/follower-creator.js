@@ -51,7 +51,7 @@ export class FollowerCreator {
      */
     static async _showFollowerCreationDialog(owner, template, templateType, grantingTalent) {
         // Get available species
-        const speciesPack = game.packs.get('swse.species');
+        const speciesPack = game.packs.get('foundryvtt-swse.species');
         const speciesIndex = await speciesPack.getIndex();
         const speciesList = speciesIndex.map(s => ({ id: s._id, name: s.name })).sort((a, b) => a.name.localeCompare(b.name));
 
@@ -126,7 +126,7 @@ export class FollowerCreator {
         const followerLevel = ownerLevel; // Followers are same level as owner
 
         // Get species data
-        const speciesPack = game.packs.get('swse.species');
+        const speciesPack = game.packs.get('foundryvtt-swse.species');
         const speciesDoc = await speciesPack.getDocument(followerData.species);
 
         // Calculate base abilities (all start at 10)
@@ -329,7 +329,7 @@ export class FollowerCreator {
      * @private
      */
     static async _addFeatByName(follower, featName) {
-        const featsPack = game.packs.get('swse.feats');
+        const featsPack = game.packs.get('foundryvtt-swse.feats');
         const featIndex = await featsPack.getIndex({ fields: ['name'] });
         const featEntry = featIndex.find(f => f.name === featName);
 

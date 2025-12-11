@@ -190,13 +190,13 @@ export class SWSELevelUpEnhanced extends FormApplication {
     data.characterClasses = getCharacterClasses(this.actor);
 
     // Multi-class bonus choice from houserules
-    data.multiclassBonusChoice = game.settings.get("swse", "multiclassBonusChoice");
+    data.multiclassBonusChoice = game.settings.get('foundryvtt-swse', "multiclassBonusChoice");
 
     // Talent tree restriction from houserules
-    data.talentTreeRestriction = game.settings.get("swse", "talentTreeRestriction");
+    data.talentTreeRestriction = game.settings.get('foundryvtt-swse', "talentTreeRestriction");
 
     // Ability increase settings
-    data.abilityIncreaseMethod = game.settings.get("swse", "abilityIncreaseMethod") || "flexible";
+    data.abilityIncreaseMethod = game.settings.get('foundryvtt-swse', "abilityIncreaseMethod") || "flexible";
     data.getsAbilityIncrease = getsAbilityIncrease(data.newLevel);
     data.abilityIncreases = this.abilityIncreases;
 
@@ -889,7 +889,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
   async _onAbilityIncrease(event) {
     event.preventDefault();
     const ability = event.currentTarget.dataset.ability;
-    const abilityIncreaseMethod = game.settings.get("swse", "abilityIncreaseMethod");
+    const abilityIncreaseMethod = game.settings.get('foundryvtt-swse', "abilityIncreaseMethod");
 
     if (!this.abilityIncreases[ability]) {
       this.abilityIncreases[ability] = 0;

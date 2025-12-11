@@ -23,8 +23,8 @@ export function registerCombatHooks() {
     SWSELogger.log("Registering combat hooks");
 
     // Check if automation is enabled
-    const automationEnabled = game.settings.get('swse', 'enableAutomation');
-    const conditionRecoveryEnabled = game.settings.get('swse', 'autoConditionRecovery');
+    const automationEnabled = game.settings.get('foundryvtt-swse', 'enableAutomation');
+    const conditionRecoveryEnabled = game.settings.get('foundryvtt-swse', 'autoConditionRecovery');
 
     // Combat creation
     HooksRegistry.register('createCombat', handleCombatCreate, {

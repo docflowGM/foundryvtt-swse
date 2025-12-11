@@ -159,14 +159,14 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {
       actors: game.actors.map(a => a.toObject())
     };
     
-    await game.settings.register('swse', 'migrationBackup', {
+    await game.settings.register('foundryvtt-swse', 'migrationBackup', {
       scope: 'world',
       config: false,
       type: String,
       default: '{}'
     });
     
-    await game.settings.set('swse', 'migrationBackup', JSON.stringify(backup));
+    await game.settings.set('foundryvtt-swse', 'migrationBackup', JSON.stringify(backup));
     ui.notifications.info('Backup created successfully');
   }
 }

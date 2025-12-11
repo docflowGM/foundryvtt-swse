@@ -230,7 +230,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   async _loadTalentData() {
     try {
       // Load talents from compendium
-      const talentPack = game.packs.get('swse.talents');
+      const talentPack = game.packs.get('foundryvtt-swse.talents');
       if (talentPack) {
         const talents = await talentPack.getDocuments();
         this.talentData = talents;
@@ -390,7 +390,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
 
   _generateTalentTreeHtml(treeName, talentGraph) {
     // Check if deflect/block should be grouped (houserule)
-    const groupDeflectBlock = game.settings.get("swse", "groupDeflectBlock") || false;
+    const groupDeflectBlock = game.settings.get('foundryvtt-swse', "groupDeflectBlock") || false;
 
     let html = `
       <div class="talent-tree-container">

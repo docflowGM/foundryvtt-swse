@@ -10,7 +10,7 @@ export class WorldDataLoader {
    * Auto-load data on world startup (if not already loaded)
    */
   static async autoLoad() {
-    const dataLoaded = game.settings.get("swse", "dataLoaded");
+    const dataLoaded = game.settings.get('foundryvtt-swse', "dataLoaded");
     
     if (dataLoaded) {
       SWSELogger.log("SWSE | World data already loaded");
@@ -44,7 +44,7 @@ export class WorldDataLoader {
       // await this.loadVehicles();  // Disabled - needs type field
       // await this.loadNPCs();       // Disabled - needs type field
       
-      await game.settings.set("swse", "dataLoaded", true);
+      await game.settings.set('foundryvtt-swse', "dataLoaded", true);
       SWSELogger.log("SWSE | ✓ Data import complete!");
       
       ui.notifications.info("SWSE data loaded successfully!");
@@ -478,7 +478,7 @@ export class WorldDataLoader {
     await Item.deleteDocuments(itemIds);
     
     // Reset the dataLoaded flag
-    await game.settings.set("swse", "dataLoaded", false);
+    await game.settings.set('foundryvtt-swse', "dataLoaded", false);
     
     SWSELogger.log("SWSE | All data cleared");
     ui.notifications.info("SWSE data cleared. Reload to re-import.");

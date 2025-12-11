@@ -35,7 +35,7 @@ async function loadSkillsFromCompendium() {
         return cache;
       }
 
-      const pack = game.packs.get('swse.skills');
+      const pack = game.packs.get('foundryvtt-swse.skills');
       if (!pack) {
         console.warn('SWSE Skills: swse.skills compendium not found, using fallback');
         skillsCache = cache;

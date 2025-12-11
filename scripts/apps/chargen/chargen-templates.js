@@ -358,7 +358,7 @@ export class CharacterTemplates {
 
     try {
       // Find feat in compendium
-      const featPack = game.packs.get('swse.feats');
+      const featPack = game.packs.get('foundryvtt-swse.feats');
       if (!featPack) {
         SWSELogger.warn('SWSE | Feats compendium not found');
         return;
@@ -465,7 +465,7 @@ export class CharacterTemplates {
       SWSELogger.log(`SWSE | Attempting to apply template talent: ${talentName}`);
 
       // Find talent in compendium
-      const talentPack = game.packs.get('swse.talents');
+      const talentPack = game.packs.get('foundryvtt-swse.talents');
       if (!talentPack) {
         SWSELogger.warn('SWSE | Talents compendium not found');
         ui.notifications.warn('Talents compendium not found! Cannot add template talent.');
@@ -519,7 +519,7 @@ export class CharacterTemplates {
     if (!powerNames || powerNames.length === 0) return;
 
     try {
-      const powerPack = game.packs.get('swse.force-powers') || game.packs.get('swse.forcepowers');
+      const powerPack = game.packs.get('foundryvtt-swse.force-powers') || game.packs.get('foundryvtt-swse.forcepowers');
       if (!powerPack) {
         SWSELogger.warn('SWSE | Force powers compendium not found');
         return;

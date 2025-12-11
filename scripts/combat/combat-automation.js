@@ -33,7 +33,7 @@ export class SWSECombatAutomation {
 
     // Hook for combat start - optionally reset resources
     Hooks.on('combatStart', async (combat) => {
-      if (!game.settings.get('swse', 'resetResourcesOnCombat')) return;
+      if (!game.settings.get('foundryvtt-swse', 'resetResourcesOnCombat')) return;
 
       for (const combatant of combat.combatants) {
         if (!combatant.actor) continue;

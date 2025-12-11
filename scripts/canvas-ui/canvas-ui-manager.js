@@ -928,12 +928,12 @@ export class CanvasUIManager {
     try {
       // If setting is registered, read it; otherwise default to true.
       if (game.settings && game.settings.get) {
-        forgeSetting = game.settings.get('swse', 'canvasToolbarOnForge');
+        forgeSetting = game.settings.get('foundryvtt-swse', 'canvasToolbarOnForge');
       }
     } catch (err) {
       // Setting missing or access error - register a client fallback if possible
       try {
-        game.settings.register('swse', 'canvasToolbarOnForge', {
+        game.settings.register('foundryvtt-swse', 'canvasToolbarOnForge', {
           name: 'SWSE.Settings.CanvasToolbarOnForge.Name',
           hint: 'SWSE.Settings.CanvasToolbarOnForge.Hint',
           scope: 'client',
@@ -941,7 +941,7 @@ export class CanvasUIManager {
           type: Boolean,
           default: true
         });
-        forgeSetting = game.settings.get('swse', 'canvasToolbarOnForge');
+        forgeSetting = game.settings.get('foundryvtt-swse', 'canvasToolbarOnForge');
       } catch (e) {
         // Can't register here (permission or duplicate) - just assume true and continue
         SWSELogger.warn("SWSE | Could not verify or register 'canvasToolbarOnForge' setting, using default=true.", e);

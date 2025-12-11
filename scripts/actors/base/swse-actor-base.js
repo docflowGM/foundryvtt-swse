@@ -146,7 +146,7 @@ export class SWSEActorBase extends Actor {
     await this.update({'system.secondWind.used': true});
     
     // Check for improved Second Wind houserule
-    if (game.settings.get("swse", "secondWindImproved")) {
+    if (game.settings.get('foundryvtt-swse', "secondWindImproved")) {
       await this.moveConditionTrack(-1);
       ChatMessage.create({
         speaker: ChatMessage.getSpeaker({actor: this}),

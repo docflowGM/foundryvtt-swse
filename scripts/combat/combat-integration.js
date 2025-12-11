@@ -88,7 +88,7 @@ export class SWSECombatIntegration {
     SWSELogger.log(`SWSE | Combat round ${round}`);
 
     // Optional: Announce new round
-    if (game.settings.get('swse', 'announceRounds') !== false) {
+    if (game.settings.get('foundryvtt-swse', 'announceRounds') !== false) {
       ChatMessage.create({
         content: `<div class="swse-round-start">
           <h3><i class="fas fa-circle-notch"></i> Round ${round}</h3>
@@ -117,7 +117,7 @@ export class SWSECombatIntegration {
     await this._checkConditionRecovery(combatant);
 
     // Announce turn (if setting enabled)
-    if (game.settings.get('swse', 'announceTurns') !== false) {
+    if (game.settings.get('foundryvtt-swse', 'announceTurns') !== false) {
       ChatMessage.create({
         content: `<div class="swse-turn-start">
           <h3>${actor.name}'s Turn</h3>
@@ -170,7 +170,7 @@ export class SWSECombatIntegration {
     };
 
     // Reset Force Points if setting enabled
-    if (game.settings.get('swse', 'resetForcePointsOnCombat') === true) {
+    if (game.settings.get('foundryvtt-swse', 'resetForcePointsOnCombat') === true) {
       const maxForcePoints = actor.system.forcePoints?.max || 0;
       updates['system.forcePoints.value'] = maxForcePoints;
     }
@@ -219,7 +219,7 @@ export class SWSECombatIntegration {
     }
 
     // Check if auto-recovery is enabled
-    const autoRecovery = game.settings.get('swse', 'autoConditionRecovery');
+    const autoRecovery = game.settings.get('foundryvtt-swse', 'autoConditionRecovery');
     if (!autoRecovery) return;
 
     // Only prompt for player characters or if GM

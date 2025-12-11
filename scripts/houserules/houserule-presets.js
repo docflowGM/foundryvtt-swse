@@ -155,7 +155,7 @@ export async function applyPreset(presetName) {
   
   // Apply all settings
   for (const [key, value] of Object.entries(preset.settings)) {
-    await game.settings.set("swse", key, value);
+    await game.settings.set('foundryvtt-swse', key, value);
   }
   
   ui.notifications.info(`Applied ${preset.name} preset`);
@@ -182,7 +182,7 @@ export function exportSettings() {
   ];
   
   for (const key of keys) {
-    settings[key] = game.settings.get("swse", key);
+    settings[key] = game.settings.get('foundryvtt-swse', key);
   }
   
   return settings;

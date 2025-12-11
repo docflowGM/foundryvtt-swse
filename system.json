@@ -21,7 +21,7 @@
   "changelog": "https://github.com/docflowGM/foundryvtt-swse/blob/main/CHANGELOG.md",
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://github.com/docflowGM/foundryvtt-swse/releases/latest/download/system.json",
-  "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.1.211/swse.zip",
+  "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.1.211/foundryvtt-swse.zip",
   "esmodules": [
     "index.js"
   ],
@@ -104,175 +104,175 @@
       "label": "SWSE.Compendium.Classes",
       "path": "packs/classes.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "talents",
       "label": "SWSE.Compendium.Talents",
       "path": "packs/talents.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "talent_trees",
       "label": "SWSE.Compendium.TalentTrees",
       "path": "packs/talent_trees.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "feats",
       "label": "SWSE.Compendium.Feats",
       "path": "packs/feats.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "species",
       "label": "SWSE.Compendium.Species",
       "path": "packs/species.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "equipment",
       "label": "SWSE.Compendium.Equipment",
       "path": "packs/equipment.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "weapons",
       "label": "SWSE.Compendium.Weapons",
       "path": "packs/weapons.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "armor",
       "label": "SWSE.Compendium.Armor",
       "path": "packs/armor.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "armor_light",
       "label": "SWSE.Compendium.ArmorLight",
       "path": "packs/armor-light.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "armor_medium",
       "label": "SWSE.Compendium.ArmorMedium",
       "path": "packs/armor-medium.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "armor_heavy",
       "label": "SWSE.Compendium.ArmorHeavy",
       "path": "packs/armor-heavy.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "forcepowers",
       "label": "SWSE.Compendium.ForcePowers",
       "path": "packs/forcepowers.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "forcetechniques",
       "label": "SWSE.Compendium.ForceTechniques",
       "path": "packs/forcetechniques.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "forcesecrets",
       "label": "SWSE.Compendium.ForceSecrets",
       "path": "packs/forcesecrets.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "lightsaberformpowers",
       "label": "SWSE.Compendium.LightsaberFormPowers",
       "path": "packs/lightsaberformpowers.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "skills",
       "label": "SWSE.Compendium.Skills",
       "path": "packs/skills.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "languages",
       "label": "SWSE.Compendium.Languages",
       "path": "packs/languages.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "backgrounds",
       "label": "SWSE.Compendium.Backgrounds",
       "path": "packs/backgrounds.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "extraskilluses",
       "label": "SWSE.Compendium.ExtraSkillUses",
       "path": "packs/extraskilluses.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "conditions",
       "label": "SWSE.Compendium.Conditions",
       "path": "packs/conditions.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "special_combat_condition",
       "label": "SWSE.Compendium.SpecialCombatConditions",
       "path": "packs/special-combat-condition.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "attributes",
       "label": "SWSE.Compendium.Attributes",
       "path": "packs/attributes.db",
       "type": "Item",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "vehicles",
       "label": "SWSE.Compendium.Vehicles",
       "path": "packs/vehicles.db",
       "type": "Actor",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "droids",
       "label": "SWSE.Compendium.Droids",
       "path": "packs/droids.db",
       "type": "Actor",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     },
     {
       "name": "npc",
       "label": "SWSE.Compendium.NPCs",
       "path": "packs/npc.db",
       "type": "Actor",
-      "system": "swse"
+      "system": "foundryvtt-swse"
     }
   ]
 }

@@ -302,7 +302,7 @@ export async function _onSelectTalent(event) {
  */
 export function _getAvailableTalentTrees() {
   // Check for unrestricted mode (free build)
-  const talentTreeRestriction = game.settings.get("swse", "talentTreeRestriction");
+  const talentTreeRestriction = game.settings.get('foundryvtt-swse', "talentTreeRestriction");
 
   if (talentTreeRestriction === "unrestricted") {
     // Free build mode: return all talent trees from all talents

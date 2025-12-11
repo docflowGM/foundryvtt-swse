@@ -7,7 +7,7 @@ export const HouseRules = {
     try {
       // Example: critical rule
       if (!game.settings?.settings.has('swse.useCustomCritical')) {
-        game.settings.register('swse', 'useCustomCritical', {
+        game.settings.register('foundryvtt-swse', 'useCustomCritical', {
           name: 'Use custom crit rules',
           hint: 'Enable custom critical hit handling',
           scope: 'world',
@@ -23,7 +23,7 @@ export const HouseRules = {
 
     // Hook points (example)
     Hooks.on('preCreateChatMessage', async (doc, options, userId) => {
-      if (!game.settings.get('swse','useCustomCritical')) return;
+      if (!game.settings.get('foundryvtt-swse','useCustomCritical')) return;
       // Custom intercept would go here
     });
   }
