@@ -525,9 +525,9 @@ Hooks.once("ready", async function () {
     try {
         // Preload progression templates
         await loadTemplates([
-            'templates/apps/progression/sidebar.hbs',
-            'templates/apps/progression/attribute-method.hbs',
-            'templates/apps/chargen/ability-rolling.hbs'
+            'systems/foundryvtt-swse/templates/apps/progression/sidebar.hbs',
+            'systems/foundryvtt-swse/templates/apps/progression/attribute-method.hbs',
+            'systems/foundryvtt-swse/templates/apps/chargen/ability-rolling.hbs'
         ]).catch(() => {});
 
         // Dynamic module loading registry - tracks status of lazy-loaded modules
