@@ -299,7 +299,7 @@ Hooks.once("init", async function () {
             Store: SWSEStore,
             LevelUp: SWSELevelUp,
             VehicleModificationApp,
-            UpgradeApp,
+            UpgradeApp: SWSEUpgradeApp,
             FollowerCreator,
             FollowerManager
         },

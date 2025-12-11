@@ -89,5 +89,25 @@ export function registerSystemSettings() {
     default: ""
   });
 
+  // Force compendiums population migration tracking
+  game.settings.register("swse", "forceCompendiumsPopulation", {
+    name: "Force Compendiums Population Version",
+    hint: "Tracks the version of the force compendiums population migration that has been run",
+    scope: "world",
+    config: false,
+    type: String,
+    default: ""
+  });
+
+  // World data loader tracking
+  game.settings.register("swse", "dataLoaded", {
+    name: "World Data Loaded",
+    hint: "Tracks whether world data has been loaded",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+
   SWSELogger.log("SWSE | Settings registered");
 }
