@@ -1,8 +1,8 @@
 // scripts/utils/logger.js
-export const swseLogger = {
+export const SWSELogger = {
   _prefix() { return `SWSE`; },
-  info(...args) { try { swseLogger.info(this._prefix(), ...args); } catch(e) {} },
-  warn(...args) { try { swseLogger.warn(this._prefix(), ...args); } catch(e) {} },
-  error(...args) { try { swseLogger.error(this._prefix(), ...args); } catch(e) {} },
-  log(...args) { try { swseLogger.log(this._prefix(), ...args); } catch(e) {} }
+  info(...args) { try { console.info(this._prefix(), ...args); } catch(e) {} },
+  warn(...args) { try { console.warn(this._prefix(), ...args); } catch(e) {} },
+  error(...args) { try { console.error(this._prefix(), ...args); } catch(e) {} },
+  log(...args) { try { console.log(this._prefix(), ...args); } catch(e) {} }
 };
