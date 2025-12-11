@@ -28,6 +28,8 @@ export async function loadInventoryData(itemsById) {
             const documents = await pack.getDocuments();
             // Include all items from compendium - many items have cost "0" that need to be displayed
             packItems.push(...documents);
+        } else {
+            swseLogger.warn(`SWSE Store | Compendium pack not found: ${packName}`);
         }
     }
 
@@ -78,6 +80,8 @@ export async function loadInventoryData(itemsById) {
             } catch (err) {
                 swseLogger.warn(`SWSE | Failed to load actors from ${packName}:`, err.message);
             }
+        } else {
+            swseLogger.warn(`SWSE Store | Compendium pack not found: ${packName}`);
         }
     }
 

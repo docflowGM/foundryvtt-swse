@@ -100,7 +100,7 @@ export async function buyService(actor, serviceName, serviceCost, updateDialogue
 
     // Deduct credits immediately
     const newCredits = currentCredits - serviceCost;
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": newCredits });
+    await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": newCredits });
     ui.notifications.info(`${serviceName} purchased for ${serviceCost} credits.`);
 
     // Update Rendarr's dialogue
@@ -345,23 +345,6 @@ export async function createCustomStarship(actor, closeCallback) {
 }
 
 /**
- * Remove item from cart
- * @param {Object} cart - Shopping cart object
- * @param {string} type - Type of item ("item", "droid", "vehicle")
- * @param {number} index - Index in cart array
- * @deprecated Use removeFromCartById instead
- */
-export function removeFromCart(cart, type, index) {
-    if (type === "item") {
-        cart.items.splice(index, 1);
-    } else if (type === "droid") {
-        cart.droids.splice(index, 1);
-    } else if (type === "vehicle") {
-        cart.vehicles.splice(index, 1);
-    }
-}
-
-/**
  * Remove item from cart by ID
  * @param {Object} cart - Shopping cart object
  * @param {string} type - Type of item ("item", "droid", "vehicle")
@@ -454,7 +437,7 @@ export async function checkout(store, animateNumberCallback) {
         }
 
         // Deduct credits FIRST and track it
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - total });
+        await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - total });
         creditsDeducted = true;
 
         // Add regular items to actor
@@ -513,7 +496,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits - tot
         // Rollback: Refund credits if they were deducted
         if (creditsDeducted) {
             try {
-globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits });
+                await globalThis.SWSE.ActorEngine.updateActor(actor, { "system.credits": credits });
                 ui.notifications.error("Purchase failed! Credits have been refunded.");
                 SWSELogger.info("SWSE Store | Credits refunded after failed checkout");
             } catch (refundErr) {

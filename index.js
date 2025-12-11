@@ -258,14 +258,30 @@ function enhanceValidationLogging() {
 Hooks.once("init", async function () {
     swseLogger.log("SWSE | Initializing Star Wars Saga Edition System");
 
+    // Track initialization errors
+    const initErrors = [];
+
+    // Helper to safely execute initialization steps
+    const safeInit = async (stepName, fn) => {
+        try {
+            await fn();
+            swseLogger.log(`SWSE | ✓ ${stepName}`);
+        } catch (err) {
+            const errorMsg = `Failed to initialize ${stepName}: ${err.message}`;
+            swseLogger.error(errorMsg, err);
+            initErrors.push({ step: stepName, error: err });
+            ui.notifications?.error(`SWSE Init Error: ${stepName} - ${err.message}`);
+        }
+    };
+
     // Check Foundry Version Compatibility
-    checkFoundryCompatibility();
+    await safeInit("Version Compatibility Check", () => checkFoundryCompatibility());
 
     // System Settings
-    registerSystemSettings();
+    await safeInit("System Settings", () => registerSystemSettings());
 
     // Register Hooks
-    registerInitHooks();
+    await safeInit("Hook Registration", () => registerInitHooks());
 
     // Create Global Namespace
     game.swse = {
@@ -397,21 +413,35 @@ Hooks.once("init", async function () {
         label: "SWSE.SheetLabels.Item"
     });
 
-    registerHouseruleSettings();
-    SWSEHomebrewManager.registerSettings();
-    SWSEHomebrewManager.init();
+    await safeInit("Houserule Settings", () => registerHouseruleSettings());
+    await safeInit("Homebrew Manager Settings", () => SWSEHomebrewManager.registerSettings());
+    await safeInit("Homebrew Manager Init", () => SWSEHomebrewManager.init());
 
     // Handlebars
-    registerHandlebarsHelpers();
-    await preloadHandlebarsTemplates();
+    await safeInit("Handlebars Helpers", () => registerHandlebarsHelpers());
+    await safeInit("Handlebars Templates", () => preloadHandlebarsTemplates());
 
     // Validation Enhancements
-    enhanceValidationLogging();
+    await safeInit("Validation Logging", () => enhanceValidationLogging());
 
     // Dice Configuration
-    CONFIG.Dice.terms["d"] = foundry.dice.terms.Die;
+    await safeInit("Dice Configuration", () => {
+        CONFIG.Dice.terms["d"] = foundry.dice.terms.Die;
+    });
 
-    swseLogger.log("SWSE | System Initialized Successfully");
+    // Report initialization results
+    if (initErrors.length === 0) {
+        swseLogger.log("SWSE | System Initialized Successfully - All components loaded");
+    } else {
+        swseLogger.warn(`SWSE | System Initialized with ${initErrors.length} error(s):`);
+        initErrors.forEach(({step, error}) => {
+            swseLogger.error(`  ✗ ${step}: ${error.message}`);
+        });
+        ui.notifications?.warn(
+            `SWSE System initialized with ${initErrors.length} error(s). Check console for details.`,
+            { permanent: true }
+        );
+    }
 });
 
 // ---------------------------
