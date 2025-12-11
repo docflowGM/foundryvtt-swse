@@ -6,3 +6,6 @@ export const SWSELogger = {
   error(...args) { try { console.error(this._prefix(), ...args); } catch(e) {} },
   log(...args) { try { console.log(this._prefix(), ...args); } catch(e) {} }
 };
+
+// Export lowercase alias for backward compatibility
+export const swseLogger = SWSELogger;
