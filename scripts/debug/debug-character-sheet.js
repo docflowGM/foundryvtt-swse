@@ -410,7 +410,7 @@
       debugLog('Checking for newLevel syntax error...');
       try {
         // Try to import the levelup module
-        import('/systems/swse/scripts/apps/swse-levelup-enhanced.js')
+        import('/systems/foundryvtt-swse/scripts/apps/swse-levelup-enhanced.js')
           .then(() => {
             debugSuccess('swse-levelup-enhanced.js loaded without syntax errors');
           })

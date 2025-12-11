@@ -154,7 +154,7 @@ export class WorldDataLoader {
    */
   static async loadClasses() {
     try {
-      const response = await fetch("systems/swse/data/classes.json");
+      const response = await fetch("systems/foundryvtt-swse/data/classes.json");
       if (!response.ok) {
         SWSELogger.log("SWSE | classes.json not found - skipping");
         return;
@@ -188,7 +188,7 @@ export class WorldDataLoader {
    */
   static async loadFeats() {
     try {
-      const response = await fetch("systems/swse/data/feats.json");
+      const response = await fetch("systems/foundryvtt-swse/data/feats.json");
       if (!response.ok) {
         SWSELogger.log("SWSE | feats.json not found - skipping");
         return;
@@ -222,7 +222,7 @@ export class WorldDataLoader {
    */
   static async loadTalents() {
     try {
-      const response = await fetch("systems/swse/data/talents.json");
+      const response = await fetch("systems/foundryvtt-swse/data/talents.json");
       if (!response.ok) {
         SWSELogger.log("SWSE | talents.json not found - skipping");
         return;
@@ -256,7 +256,7 @@ export class WorldDataLoader {
    */
   static async loadForcePowers() {
     try {
-      const response = await fetch("systems/swse/data/forcepowers.json");
+      const response = await fetch("systems/foundryvtt-swse/data/forcepowers.json");
       if (!response.ok) {
         SWSELogger.log("SWSE | forcepowers.json not found - skipping");
         return;
@@ -290,7 +290,7 @@ export class WorldDataLoader {
    */
   static async loadWeapons() {
     try {
-      const response = await fetch("systems/swse/data/weapons.json");
+      const response = await fetch("systems/foundryvtt-swse/data/weapons.json");
       if (!response.ok) {
         SWSELogger.log("SWSE | weapons.json not found - skipping");
         return;
@@ -324,7 +324,7 @@ export class WorldDataLoader {
    */
   static async loadArmor() {
     try {
-      const response = await fetch("systems/swse/data/armor.json");
+      const response = await fetch("systems/foundryvtt-swse/data/armor.json");
       if (!response.ok) {
         SWSELogger.log("SWSE | armor.json not found - skipping");
         return;
@@ -358,7 +358,7 @@ export class WorldDataLoader {
    */
   static async loadEquipment() {
     try {
-      const response = await fetch("systems/swse/data/equipment.json");
+      const response = await fetch("systems/foundryvtt-swse/data/equipment.json");
       if (!response.ok) {
         SWSELogger.log("SWSE | equipment.json not found - skipping");
         return;
@@ -393,7 +393,7 @@ export class WorldDataLoader {
    */
   static async loadVehicles() {
     try {
-      const response = await fetch("systems/swse/data/vehicles.json");
+      const response = await fetch("systems/foundryvtt-swse/data/vehicles.json");
       if (!response.ok) {
         SWSELogger.log("SWSE | vehicles.json not found - skipping");
         return;
@@ -429,7 +429,7 @@ export class WorldDataLoader {
    */
   static async loadNPCs() {
     try {
-      const response = await fetch("systems/swse/data/npc.json");
+      const response = await fetch("systems/foundryvtt-swse/data/npc.json");
       if (!response.ok) {
         SWSELogger.log("SWSE | npc.json not found - skipping");
         return;

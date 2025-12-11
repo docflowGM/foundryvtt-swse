@@ -16,12 +16,12 @@ export class SWSEActiveEffectsManager {
   static CONDITION_EFFECTS = {
     'normal': {
       name: 'Normal',
-      icon: 'systems/swse/icons/conditions/normal.svg',
+      icon: 'systems/foundryvtt-swse/icons/conditions/normal.svg',
       changes: []
     },
     '-1': {
       name: 'Injured (-1)',
-      icon: 'systems/swse/icons/conditions/injured-1.svg',
+      icon: 'systems/foundryvtt-swse/icons/conditions/injured-1.svg',
       changes: [
         { key: 'system.conditionPenalty', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -1 }
       ],
@@ -33,7 +33,7 @@ export class SWSEActiveEffectsManager {
     },
     '-2': {
       name: 'Wounded (-2)',
-      icon: 'systems/swse/icons/conditions/injured-2.svg',
+      icon: 'systems/foundryvtt-swse/icons/conditions/injured-2.svg',
       changes: [
         { key: 'system.conditionPenalty', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -2 }
       ],
@@ -45,7 +45,7 @@ export class SWSEActiveEffectsManager {
     },
     '-5': {
       name: 'Severely Wounded (-5)',
-      icon: 'systems/swse/icons/conditions/injured-5.svg',
+      icon: 'systems/foundryvtt-swse/icons/conditions/injured-5.svg',
       changes: [
         { key: 'system.conditionPenalty', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -5 }
       ],
@@ -57,7 +57,7 @@ export class SWSEActiveEffectsManager {
     },
     '-10': {
       name: 'Critical (-10)',
-      icon: 'systems/swse/icons/conditions/injured-10.svg',
+      icon: 'systems/foundryvtt-swse/icons/conditions/injured-10.svg',
       changes: [
         { key: 'system.conditionPenalty', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -10 }
       ],
@@ -69,7 +69,7 @@ export class SWSEActiveEffectsManager {
     },
     'helpless': {
       name: 'Helpless',
-      icon: 'systems/swse/icons/conditions/helpless.svg',
+      icon: 'systems/foundryvtt-swse/icons/conditions/helpless.svg',
       changes: [
         { key: 'system.conditionPenalty', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -10 },
         { key: 'system.defenses.reflex.bonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -10 }

@@ -12,7 +12,7 @@ export class SWSEItemSheet extends ItemSheet {
   }
 
   get template() {
-    return "systems/swse/templates/items/base/item-sheet.hbs";
+    return "systems/foundryvtt-swse/templates/items/base/item-sheet.hbs";
   }
 
   getData() {

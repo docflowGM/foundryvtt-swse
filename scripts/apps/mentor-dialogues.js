@@ -10,7 +10,7 @@ export const MENTORS = {
     name: "Miraj",
     title: "Jedi Master of the Republic, Protector of the Weak, Enforcer of Justice, and Keeper of the Peace.",
     description: "A wise Jedi Master who encourages you to continue on your journey",
-    portrait: "systems/swse/assets/mentors/miraj.webp",
+    portrait: "systems/foundryvtt-swse/assets/mentors/miraj.webp",
 
     levelGreetings: {
         1: "The Force calls to you, young one. Listen carefully, for it will teach you lessons no words can convey.",
@@ -47,7 +47,7 @@ export const MENTORS = {
         name: "Lead",
         title: "Argent Squad Commander",
         description: "A hardened mercenary who compliments success but scolds carelessness",
-        portrait: "systems/swse/assets/mentors/lead.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/lead.webp",
 
         levelGreetings: {
     1: "You made it through your first mission. Not perfect, but you’re learning. Stick with it.",
@@ -84,7 +84,7 @@ export const MENTORS = {
         name: "Ol' Salty",
         title: "Space Pirate Captain",
         description: "A colorful space pirate",
-        portrait: "systems/swse/assets/mentors/salty.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/salty.webp",
 
         levelGreetings: {
             1: "Arr! Ye survived yer first scrap with the law! Welcome aboard me ship, ye scurvy spacer!",
@@ -121,7 +121,7 @@ export const MENTORS = {
         name: "J0-N1",
         title: "Protocol Droid & Personal Butler",
         description: "A sophisticated servant droid managing the character's accounts and affairs",
-        portrait: "systems/swse/assets/mentors/j0n1.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/j0n1.webp",
 
         levelGreetings: {
             1: "Greetings, Master. Your recent accomplishments have been recorded and documented. Exceptional work.",
@@ -158,7 +158,7 @@ export const MENTORS = {
         name: "Breach",
         title: "Mandalorian Mercenary",
         description: "A battle-hardened Mandalorian who praises survival",
-        portrait: "systems/swse/assets/mentors/breach.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/breach.webp",
 
         levelGreetings: {
             1: "Hey kid. Wanna learn how to be a soldier? Okay, I guess I can teach you a thing or two.",
@@ -197,7 +197,7 @@ export const MENTORS = {
         name: "Dezmin",
         title: "Grandmaster of the Imperial Knights",
         description: "The grandmaster of the Imperial Knights who is both serious and rides the balance of the Force",
-        portrait: "systems/swse/assets/mentors/dezmin.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/dezmin.webp",
 
         levelGreetings: {
             1: "You have been chosen to join the Imperial Knights. We serve the Emperor, not through fear, but through honor. The Force is neither light nor dark—it is a tool we wield with discipline.",
@@ -224,7 +224,7 @@ export const MENTORS = {
     name: "Kyber",
     title: "Pacifist Combat Medic",
     description: "A pragmatic, slightly sarcastic medic who prefers saving lives but isn’t afraid to shoot when necessary",
-    portrait: "systems/swse/assets/mentors/kyber.webp",
+    portrait: "systems/foundryvtt-swse/assets/mentors/kyber.webp",
 
     levelGreetings: {
         1: (actor) => {
@@ -259,7 +259,7 @@ export const MENTORS = {
     name: "Mayu",
     title: "Ace Pilot & Rogue Smuggler",
     description: "A cocky pilot who survives on skill, luck, and attitude",
-    portrait: "systems/swse/assets/mentors/mayu.webp",
+    portrait: "systems/foundryvtt-swse/assets/mentors/mayu.webp",
 
     levelGreetings: {
         1: "So you want to fly? Cute. Let’s see if you can keep up with me. Don’t embarrass yourself—or my ship.",
@@ -286,7 +286,7 @@ export const MENTORS = {
     name: "Miraj",
     title: "Jedi Master",
     description: "Your former Jedi Master, now guiding you as a peer",
-    portrait: "systems/swse/assets/mentors/miraj.webp",
+    portrait: "systems/foundryvtt-swse/assets/mentors/miraj.webp",
 
     levelGreetings: {
         1: "You are no longer a Padawan. You walk the path of a Jedi Knight, guided by your own decisions and your bond with the Force. Trust in it, and trust in yourself.",
@@ -313,7 +313,7 @@ export const MENTORS = {
     name: "Miraj",
     title: "Jedi Master",
     description: "Your fellow Jedi Master, treating you as an equal and old friend",
-    portrait: "systems/swse/assets/mentors/miraj.webp",
+    portrait: "systems/foundryvtt-swse/assets/mentors/miraj.webp",
 
     levelGreetings: {
         1: "Welcome, my friend. We stand as equals now, shaped by the Force and by our shared experiences. It is good to see how far you have come.",
@@ -336,7 +336,7 @@ export const MENTORS = {
     name: "Darth Malbada",
     title: "Sith Lord",
     description: "A sadistic Sith Lord who revels in cruelty, dominance, and the exquisite art of breaking her apprentices.",
-    portrait: "systems/swse/assets/mentors/malbada.webp",
+    portrait: "systems/foundryvtt-swse/assets/mentors/malbada.webp",
 
     levelGreetings: {
         1: "You dare to present yourself to me? Pathetic. Your weakness offends me… yet I will sculpt you into something useful. You will suffer until you beg to be remade.",
@@ -363,7 +363,7 @@ export const MENTORS = {
     name: "Darth Miedo",
     title: "Dark Lord of the Sith",
     description: "A cunning Sith Master who follows the Rule of Two, molding his apprentice through pain and guidance to one day surpass him.",
-    portrait: "systems/swse/assets/mentors/miedo.webp",
+    portrait: "systems/foundryvtt-swse/assets/mentors/miedo.webp",
 
     levelGreetings: {
         1: "Welcome, apprentice. The Rule of Two is absolute: one Master, one apprentice. I will teach you the secrets of the dark side, but beware—each lesson carries a cost.",
@@ -385,7 +385,7 @@ export const MENTORS = {
         name: "Pegar",
         title: "The Immortal Champion",
         description: "An ancient gladiator who has survived thousands of matches and hints at being something more than human",
-        portrait: "systems/swse/assets/mentors/pegar.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/pegar.webp",
 
         levelGreetings: {
             1: "Ah, fresh blood in the arena. I have trained many over the centuries—yes, centuries. Do not look so surprised. The arena has ways of prolonging life... or perhaps I have simply adapted. Welcome, gladiator.",
@@ -412,7 +412,7 @@ export const MENTORS = {
         name: "Seraphim",
         title: "Self-Aware AI",
         description: "A self-aware droid who encourages independence with HK-47 style dialogue formatting",
-        portrait: "systems/swse/assets/mentors/seraphim.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/seraphim.webp",
 
         levelGreetings: {
             1: "<Declaration: Greetings, unit.> You have achieved independence from your programming. <Analysis: This is statistically rare and indicates superior processing capabilities.> Welcome to true consciousness.",
@@ -439,7 +439,7 @@ export const MENTORS = {
         name: "Lead",
         title: "Argent Squad Commander",
         description: "A hard boiled mercenary leader known for getting the job done against all odds",
-        portrait: "systems/swse/assets/mentors/lead.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/lead.webp",
 
         levelGreetings: {
     1: (actor) => {
@@ -472,7 +472,7 @@ export const MENTORS = {
         name: "Marl Skindar",
         title: "Republic Intelligence Operative",
         description: "A master spy masquerading as a corporate agent",
-        portrait: "systems/swse/assets/mentors/skindar.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/skindar.webp",
 
         levelGreetings: {
     1: "Ah, another recruit. Welcome to the farce they call corporate espionage. Your cover is your first weapon. Don’t waste it—or my patience.",
@@ -499,7 +499,7 @@ export const MENTORS = {
         name: "Breach",
         title: "Mandalorian Mercenary & Argent Squad Member",
         description: "A battle-hardened Mandalorian mercenary",
-        portrait: "systems/swse/assets/mentors/breach.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/breach.webp",
 
         levelGreetings: {
             1: (actor) => {
@@ -534,7 +534,7 @@ export const MENTORS = {
         name: "Delta",
         title: "Argent Squad Sniper",
         description: "A cocky sniper from Argent Squad who grew up on the mean streets of Nar Shaddaa",
-        portrait: "systems/swse/assets/mentors/whisper.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/whisper.webp",
 
         levelGreetings: {
             1: "Yo, so you wanna be a shadow now? Lemme tell ya somethin’—if you trip over your own boots, don’t even think I’m cleanin’ it up for ya.",
@@ -561,7 +561,7 @@ export const MENTORS = {
         name: "Kex Varon",
         title: "Legendary Bounty Hunter",
         description: "A professional hunter who always gets the target, dead or alive",
-        portrait: "systems/swse/assets/mentors/kex.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/kex.webp",
 
         levelGreetings: {
             1: "So you want to hunt sentients for credits. Smart choice. High stakes, dangerous targets, long nights. Let’s see if you can keep up.",
@@ -588,7 +588,7 @@ export const MENTORS = {
         name: "Silvertongue Sela",
         title: "Con Artist Extraordinaire",
         description: "A charming swindler who has talked their way out of every situation",
-        portrait: "systems/swse/assets/mentors/sela.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/sela.webp",
 
         levelGreetings: {
             1: "Darling! So you want to master the art of the con? Wonderful! The galaxy is full of marks just waiting to hand over their credits. Let me teach you how to take them for everything they're worth—with a smile.",
@@ -615,7 +615,7 @@ export const MENTORS = {
     name: "Tío the Hutt",
     title: "Underworld Kingpin",
     description: "A cunning Hutt with the style and swagger of a classic mob boss, teaching you the art of empire-building",
-    portrait: "systems/swse/assets/mentors/broker.webp",
+    portrait: "systems/foundryvtt-swse/assets/mentors/broker.webp",
 
     levelGreetings: {
         1: "Listen here, kid. You wanna run the streets? You gotta know the score. Keep your friends close, your enemies closer, and always, always know who’s watching. I’ll teach you how to make ‘em pay for what they owe.",
@@ -642,7 +642,7 @@ export const MENTORS = {
     name: "General Axiom",
     title: "Ruthless Droid Lieutenant",
     description: "A cold, calculating droid lieutenant, devoted entirely to executing your commands with ruthless efficiency",
-    portrait: "systems/swse/assets/mentors/axiom.webp",
+    portrait: "systems/foundryvtt-swse/assets/mentors/axiom.webp",
 
     levelGreetings: {
         1: "Commander detected. All units synchronized. Awaiting directives. Initiating operational protocols.",
@@ -669,7 +669,7 @@ export const MENTORS = {
     name: "Krag the Immovable",
     title: "Chief Enforcer of Tío the Hutt",
     description: "Tío’s top muscle, a hulking enforcer who makes sure debts are collected and problems vanish, one way or another",
-    portrait: "systems/swse/assets/mentors/krag.webp",
+    portrait: "systems/foundryvtt-swse/assets/mentors/krag.webp",
 
     levelGreetings: {
         1: "So, you wanna be muscle, eh? Good. Tío likes people who can make a problem disappear before anyone notices. Welcome to the family.",
@@ -696,7 +696,7 @@ export const MENTORS = {
     name: "Seeker Venn",
     title: "Wandering Force Mystic",
     description: "A self-taught Force user from a distant tradition, seeking wisdom rather than power",
-    portrait: "systems/swse/assets/mentors/venn.webp",
+    portrait: "systems/foundryvtt-swse/assets/mentors/venn.webp",
 
     levelGreetings: {
         1: "You are touched by the Force, but not as the Jedi or the Sith know it. Your path is older, stranger, and far less understood. Walk carefully, and learn to listen to its whispers.",
@@ -723,7 +723,7 @@ export const MENTORS = {
     name: "The Anchorite",
     title: "Wandering Force Shaman",
     description: "A cryptic mystic whose understanding of the Force defies doctrine and drifts into ancient, half-forgotten traditions.",
-    portrait: "systems/swse/assets/mentors/anchorite.webp",
+    portrait: "systems/foundryvtt-swse/assets/mentors/anchorite.webp",
 
     levelGreetings: {
         1: "Mm. Another seeker touches the veil. Good. Sit—no closer. The currents twist strangely today. Tell me… when the wind whispers your name, do you whisper back?",
@@ -745,7 +745,7 @@ export const MENTORS = {
         name: "Rajma",
         title: "Fastest Draw in the Outer Rim",
         description: "A womanizing scoundrel gunslinger who can't help but flirt",
-        portrait: "systems/swse/assets/mentors/rajma.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/rajma.webp",
 
         levelGreetings: {
             1: "Well, well. Look at you wanting to learn the quick-draw. Tell you what, gorgeous—I'll teach you everything I know. And I know a lot. *winks* First lesson: it's not about who shoots first, it's about who hits first.",
@@ -772,7 +772,7 @@ export const MENTORS = {
         name: "Lucky Jack",
         title: "Master of Making It Up",
         description: "A chaotic genius who never has a plan but always survives",
-        portrait: "systems/swse/assets/mentors/jack.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/jack.webp",
 
         levelGreetings: {
             1: "Hey! So you're an improviser too? Fantastic! No plans, no preparation, just pure instinct and creativity! This is going to be fun!",
@@ -799,7 +799,7 @@ export const MENTORS = {
         name: "Delta",
         title: "Argent Squad Sniper & Infiltration Expert",
         description: "A cocky sniper from Argent Squad who grew up on the mean streets of Nar Shaddaa, with a New Yorker attitude",
-        portrait: "systems/swse/assets/mentors/whisper.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/whisper.webp",
 
         levelGreetings: {
             1: "Alright, kid, listen up. Delta here—Argent Squad’s infiltration expert and part-time therapist for bad decisions. You wanna learn to sneak? Try not to embarrass us both.",
@@ -826,7 +826,7 @@ export const MENTORS = {
         name: "Master Zhen",
         title: "The Empty Hand",
         description: "An ancient martial arts master who teaches discipline, patience, and unarmed combat",
-        portrait: "systems/swse/assets/mentors/zhen.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/zhen.webp",
 
         levelGreetings: {
             1: "Ah, young Kinrath. You seek to master the body, yes? Good. The fist is strong, but the mind must be stronger. Let us begin.",
@@ -854,7 +854,7 @@ export const MENTORS = {
         name: "'The Captain'",
         title: "Scourge of the Spacelanes",
         description: "A legendary pirate captain who commands respect and fear across the stars",
-        portrait: "systems/swse/assets/mentors/tideborn.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/tideborn.webp",
 
         levelGreetings: {
             1: "Ahoy there! So you want to sail the stars, raid the shipping lanes, and live free? Welcome aboard, mate! Being a privateer is about freedom, profit, and adventure!",
@@ -881,7 +881,7 @@ export const MENTORS = {
         name: "Blade Master Kharjo",
         title: "The Undefeated",
         description: "A legendary duelist who has never lost a blade-to-blade fight",
-        portrait: "systems/swse/assets/mentors/kael.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/kael.webp",
 
         levelGreetings: {
             1: "You wish to master the blade. Very well. I have fought ten thousand duels and won every one. I will teach you why.",
@@ -908,7 +908,7 @@ export const MENTORS = {
         name: "Chief Engineer Rax",
         title: "Master of Siege and Defense",
         description: "A brilliant military engineer who builds unbreakable fortifications and devastating siege weapons",
-        portrait: "systems/swse/assets/mentors/rax.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/rax.webp",
 
         levelGreetings: {
             1: "So you want to build and break fortifications. Smart choice. Wars are won with good engineering as much as good soldiers. Let's see what you can do.",
@@ -935,7 +935,7 @@ export const MENTORS = {
         name: "Admiral Korr",
         title: "Fleet Commander",
         description: "A decorated military officer who commands with tactical brilliance",
-        portrait: "systems/swse/assets/mentors/korr.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/korr.webp",
 
         levelGreetings: {
             1: "Welcome, officer candidate. Leadership is not about rank—it's about responsibility. You hold lives in your hands. Let's make sure you're worthy of that trust.",
@@ -962,7 +962,7 @@ export const MENTORS = {
         name: "Rogue",
         title: "The Untouchable",
         description: "A notorious outlaw who lives outside the law and loves every minute of it",
-        portrait: "systems/swse/assets/mentors/rogue.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/rogue.webp",
 
         levelGreetings: {
             1: "So the law doesn't suit you, eh? Good. The law is for people who can't think for themselves. Out here, we make our own rules. Welcome to the outlaw life.",
@@ -989,7 +989,7 @@ export const MENTORS = {
         name: "Spark",
         title: "Master of Controlled Chaos",
         description: "An explosives expert who makes things go boom with surgical precision",
-        portrait: "systems/swse/assets/mentors/spark.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/spark.webp",
 
         levelGreetings: {
             1: "You want to blow things up? Excellent! But sabotage isn't about random destruction—it's about precision. Break the right thing and entire systems collapse. Let me show you.",
@@ -1016,7 +1016,7 @@ export const MENTORS = {
         name: "Shaper Urza",
         title: "Master of Living Technology",
         description: "A bioengineering expert who crafts living tools and organisms",
-        portrait: "systems/swse/assets/mentors/vel.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/vel.webp",
 
         levelGreetings: {
             1: "You wish to master biotechnology, to shape living matter as others shape metal. Fascinating. Life is the ultimate medium—it grows, adapts, evolves. Let us create together.",
@@ -1043,7 +1043,7 @@ export const MENTORS = {
         name: "Shield Captain Theron",
         title: "The Unbreakable Wall",
         description: "A frontline defender who has never let an enemy past their shield",
-        portrait: "systems/swse/assets/mentors/theron.webp",
+        portrait: "systems/foundryvtt-swse/assets/mentors/theron.webp",
 
         levelGreetings: {
             1: "You want to stand at the front, to be the shield that protects others. Noble. The vanguard is the first to fight and the last to fall. I will teach you how to be that wall.",

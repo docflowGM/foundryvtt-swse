@@ -3,7 +3,7 @@
     "miraj": {
       "name": "Miraj",
       "title": "Jedi Master",
-      "avatar": "systems/swse/assets/mentors/miraj.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/miraj.webp",
       "dialogues": {
         "jedi_guardian": {
           "greeting": "Ah, a fellow Guardian! I myself walk this path. Through the Force, we are the shield that guards the innocent. It brings me great joy to see another choose this noble calling.",
@@ -26,7 +26,7 @@
     "lead": {
       "name": "Lead",
       "title": "Argent Squad Commander",
-      "avatar": "systems/swse/assets/mentors/lead.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/lead.webp",
       "dialogues": {
         "scout_sniper": {
           "greeting": "Sniper. One of the most critical roles on any battlefield—clean, precise, effective. I respect a good marksman.",
@@ -49,7 +49,7 @@
     "breach": {
       "name": "Breach",
       "title": "Mandalorian Mercenary",
-      "avatar": "systems/swse/assets/mentors/breach.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/breach.webp",
       "dialogues": {
         "soldier_rifleman": {
           "greeting": "Rifleman! Now that's what I'm talking about! A soldier who knows their weapon is a soldier who stays alive. Welcome, verd'ika!",
@@ -72,7 +72,7 @@
     "salty": {
       "name": "Ol' Salty",
       "title": "Space Pirate Captain",
-      "avatar": "systems/swse/assets/mentors/salty.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/salty.webp",
       "dialogues": {
         "scoundrel_pistoleer": {
           "greeting": "Arr! A Pistoleer, ye say? Quick draw, quick thinking, and always one step ahead of the law! That's the scoundrel's way, savvy?",
@@ -95,7 +95,7 @@
     "j0n1": {
       "name": "J0-N1",
       "title": "Protocol Droid & Personal Butler",
-      "avatar": "systems/swse/assets/mentors/j0n1.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/j0n1.webp",
       "dialogues": {
         "noble_diplomat": {
           "greeting": "Ah, a Diplomat, Master. How... refined. The art of conversation as a weapon—quite civilized, really. I shall prepare your schedule for diplomatic engagements.",

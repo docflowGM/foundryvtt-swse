@@ -16,7 +16,7 @@
 
 (async function importNonheroicUnits() {
   // Load the JSON data
-  const response = await fetch('systems/swse/data/nonheroic/nonheroic_units.json');
+  const response = await fetch('systems/foundryvtt-swse/data/nonheroic/nonheroic_units.json');
   const nonheroicUnits = await response.json();
 
   // Get the NPC compendium

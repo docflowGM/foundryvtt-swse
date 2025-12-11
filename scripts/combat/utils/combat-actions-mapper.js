@@ -26,19 +26,19 @@ export class CombatActionsMapper {
 
     try {
       // Load combat actions
-      const combatResponse = await fetch('systems/swse/data/combat-actions.json');
+      const combatResponse = await fetch('systems/foundryvtt-swse/data/combat-actions.json');
       this._combatActionsData = await combatResponse.json();
 
       // Load extra skill uses
-      const skillResponse = await fetch('systems/swse/data/extraskilluses.json');
+      const skillResponse = await fetch('systems/foundryvtt-swse/data/extraskilluses.json');
       this._extraSkillUsesData = await skillResponse.json();
 
       // Load ship combat actions
-      const shipResponse = await fetch('systems/swse/data/ship-combat-actions.json');
+      const shipResponse = await fetch('systems/foundryvtt-swse/data/ship-combat-actions.json');
       this._shipCombatActionsData = await shipResponse.json();
 
       // Load talent enhancements
-      const talentResponse = await fetch('systems/swse/data/talent-enhancements.json');
+      const talentResponse = await fetch('systems/foundryvtt-swse/data/talent-enhancements.json');
       this._talentEnhancementsData = await talentResponse.json();
 
       this._initialized = true;

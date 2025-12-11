@@ -68,7 +68,7 @@ export const BackgroundsModule = {
 
     // Fallback to JSON
     try {
-      const resp = await fetch("systems/swse/data/backgrounds.json");
+      const resp = await fetch("systems/foundryvtt-swse/data/backgrounds.json");
       if (!resp.ok) {
         throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
       }

@@ -161,7 +161,7 @@ export default class CharacterGenerator extends Application {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "chargen"],
-      template: "systems/swse/templates/apps/chargen.hbs",
+      template: "systems/foundryvtt-swse/templates/apps/chargen.hbs",
       width: 900,
       height: 700,
       title: "Character Generator",
@@ -210,7 +210,7 @@ export default class CharacterGenerator extends Application {
 
       // Load skills
       try {
-        const resp = await fetch("systems/swse/data/skills.json");
+        const resp = await fetch("systems/foundryvtt-swse/data/skills.json");
         if (resp.ok) {
           this._skillsJson = await resp.json();
           SWSELogger.log("chargen: skills.json loaded successfully");
@@ -227,7 +227,7 @@ export default class CharacterGenerator extends Application {
 
       // Load feat metadata
       try {
-        const resp = await fetch("systems/swse/data/feat-metadata.json");
+        const resp = await fetch("systems/foundryvtt-swse/data/feat-metadata.json");
         if (resp.ok) {
           this._featMetadata = await resp.json();
           SWSELogger.log("chargen: feat-metadata.json loaded successfully");

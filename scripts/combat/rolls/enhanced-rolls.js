@@ -452,7 +452,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.forcePoints.value': curr
     // Load Force power descriptions for flavor text
     let descriptions = null;
     try {
-      const response = await fetch('systems/swse/data/force-power-descriptions.json');
+      const response = await fetch('systems/foundryvtt-swse/data/force-power-descriptions.json');
       descriptions = await response.json();
     } catch (error) {
       SWSELogger.warn('SWSE | Could not load Force power descriptions:', error);

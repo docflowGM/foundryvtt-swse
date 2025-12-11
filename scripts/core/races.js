@@ -1,4 +1,4 @@
-// systems/swse/scripts/races.js
+// systems/foundryvtt-swse/scripts/races.js
 import { SWSELogger } from '../utils/logger.js';
 
 export const SWSE_RACES = {

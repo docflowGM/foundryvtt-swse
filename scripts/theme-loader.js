@@ -51,7 +51,7 @@ export class ThemeLoader {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.type = 'text/css';
-    link.href = `systems/swse/styles/themes/swse-theme-${themeName}.css`;
+    link.href = `systems/foundryvtt-swse/styles/themes/swse-theme-${themeName}.css`;
     link.id = 'swse-theme-stylesheet';
 
     // Load the stylesheet

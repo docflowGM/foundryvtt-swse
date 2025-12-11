@@ -132,7 +132,7 @@ class HomebrewManagerApp extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'homebrew-manager',
       title: 'SWSE Homebrew Manager',
-      template: 'systems/swse/templates/apps/homebrew-manager.hbs',
+      template: 'systems/foundryvtt-swse/templates/apps/homebrew-manager.hbs',
       width: 720,
       height: 600,
       tabs: [{navSelector: '.tabs', contentSelector: '.content', initial: 'feats'}],

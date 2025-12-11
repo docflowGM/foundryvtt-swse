@@ -11,7 +11,7 @@ export class CharacterCreationMenu extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "swse-character-creation-menu",
       title: "Character Creation Rules",
-      template: "systems/swse/templates/apps/houserules/character-creation.hbs",
+      template: "systems/foundryvtt-swse/templates/apps/houserules/character-creation.hbs",
       width: 600,
       height: "auto",
       tabs: [{navSelector: ".tabs", contentSelector: ".content", initial: "abilities"}]
@@ -40,7 +40,7 @@ export class AdvancementMenu extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "swse-advancement-menu",
       title: "Advancement Rules",
-      template: "systems/swse/templates/apps/houserules/advancement.hbs",
+      template: "systems/foundryvtt-swse/templates/apps/houserules/advancement.hbs",
       width: 600,
       height: "auto",
       tabs: [{navSelector: ".tabs", contentSelector: ".content", initial: "levelup"}]
@@ -77,7 +77,7 @@ export class CombatMenu extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "swse-combat-menu",
       title: "Combat Rules",
-      template: "systems/swse/templates/apps/houserules/combat.hbs",
+      template: "systems/foundryvtt-swse/templates/apps/houserules/combat.hbs",
       width: 600,
       height: "auto",
       tabs: [{navSelector: ".tabs", contentSelector: ".content", initial: "damage"}]
@@ -130,7 +130,7 @@ export class ForceMenu extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "swse-force-menu",
       title: "Force & Destiny Rules",
-      template: "systems/swse/templates/apps/houserules/force.hbs",
+      template: "systems/foundryvtt-swse/templates/apps/houserules/force.hbs",
       width: 600,
       height: "auto"
     });
@@ -159,7 +159,7 @@ export class PresetsMenu extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "swse-presets-menu",
       title: "Houserule Presets",
-      template: "systems/swse/templates/apps/houserules/presets.hbs",
+      template: "systems/foundryvtt-swse/templates/apps/houserules/presets.hbs",
       width: 500,
       height: "auto"
     });
@@ -264,7 +264,7 @@ export class SkillsFeatsMenu extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "swse-skills-feats-menu",
       title: "Skills & Feats Rules",
-      template: "systems/swse/templates/apps/houserules/skills-feats.hbs",
+      template: "systems/foundryvtt-swse/templates/apps/houserules/skills-feats.hbs",
       width: 600,
       height: "auto",
       tabs: [{navSelector: ".tabs", contentSelector: ".content", initial: "skills"}]
@@ -298,7 +298,7 @@ export class SpaceCombatMenu extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "swse-space-combat-menu",
       title: "Space Combat Rules",
-      template: "systems/swse/templates/apps/houserules/space-combat.hbs",
+      template: "systems/foundryvtt-swse/templates/apps/houserules/space-combat.hbs",
       width: 600,
       height: "auto",
       tabs: [{navSelector: ".tabs", contentSelector: ".content", initial: "initiative"}]

@@ -7,7 +7,7 @@
       "archetype": "Guardian",
       "description": "A nimble warrior specializing in lightsaber combat, using finesse and defensive techniques to overwhelm opponents.",
       "quote": "Through the Force, I am the shield that guards the innocent.",
-      "imagePath": "systems/swse/assets/templates/jedi_guardian.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_guardian.webp",
       "mentor": "miraj",
       "abilityScores": {
         "str": 10,
@@ -49,7 +49,7 @@
       "archetype": "Consular",
       "description": "A Force-focused diplomat who relies on manipulation of the Force and wisdom rather than lightsaber combat.",
       "quote": "The Force flows through all things. Let it guide your path to peace.",
-      "imagePath": "systems/swse/assets/templates/jedi_consular.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_consular.webp",
       "mentor": "miraj",
       "abilityScores": {
         "str": 8,
@@ -91,7 +91,7 @@
       "archetype": "Jedi Defender",
       "description": "A durable frontline protector who can deflect attacks and shield allies from harm.",
       "quote": "I can't afford to lose this fight! There are people depending on me.",
-      "imagePath": "systems/swse/assets/templates/jedi_defender.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_defender.webp",
       "mentor": "miraj",
       "abilityScores": {
         "str": 14,
@@ -130,7 +130,7 @@
       "archetype": "Sentinel",
       "description": "An investigative shadow who hunts down dark side corruption with precision and stealth.",
       "quote": "Darkness cannot hide from those who seek the light.",
-      "imagePath": "systems/swse/assets/templates/jedi_sentinel.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_sentinel.webp",
       "mentor": "miraj",
       "abilityScores": {
         "str": 10,
@@ -173,7 +173,7 @@
       "archetype": "Diplomat",
       "description": "The ultimate social character, capable of talking their way through any situation with charm and persuasion.",
       "quote": "Words can open doors that even the strongest blade cannot.",
-      "imagePath": "systems/swse/assets/templates/noble_diplomat.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/noble_diplomat.webp",
       "mentor": "j0n1",
       "abilityScores": {
         "str": 8,
@@ -214,7 +214,7 @@
       "archetype": "Leader",
       "description": "A tactical commander who coordinates allies and inspires greatness on the battlefield.",
       "quote": "Victory belongs to those who fight together as one!",
-      "imagePath": "systems/swse/assets/templates/noble_leader.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/noble_leader.webp",
       "mentor": "j0n1",
       "abilityScores": {
         "str": 10,
@@ -255,7 +255,7 @@
       "archetype": "Aristocrat",
       "description": "A wealthy manipulator with extensive resources, connections, and information networks.",
       "quote": "Information is the galaxy's most valuable currency, and I am very wealthy.",
-      "imagePath": "systems/swse/assets/templates/noble_aristocrat.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/noble_aristocrat.webp",
       "mentor": "j0n1",
       "abilityScores": {
         "str": 8,
@@ -303,7 +303,7 @@
       "archetype": "Duelist",
       "description": "A social character with surprising melee combat effectiveness using grace and finesse.",
       "quote": "Elegance in both word and blade—a true noble's art.",
-      "imagePath": "systems/swse/assets/templates/noble_duelist.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/noble_duelist.webp",
       "mentor": "j0n1",
       "abilityScores": {
         "str": 8,
@@ -343,7 +343,7 @@
       "archetype": "Pistoleer",
       "description": "A precision shooter who deals devastating damage with sneak attacks from the shadows.",
       "quote": "They never see it coming. That's the whole point.",
-      "imagePath": "systems/swse/assets/templates/scoundrel_pistoleer.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_pistoleer.webp",
       "mentor": "salty",
       "abilityScores": {
         "str": 10,
@@ -387,7 +387,7 @@
       "archetype": "Skill Monkey",
       "description": "A versatile specialist covering social, technical, and infiltration roles with expertise.",
       "quote": "Every problem has a solution. You just need the right skills.",
-      "imagePath": "systems/swse/assets/templates/scoundrel_skill_monkey.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_skill_monkey.webp",
       "mentor": "salty",
       "abilityScores": {
         "str": 8,
@@ -431,7 +431,7 @@
       "archetype": "Knuckledragger",
       "description": "An aggressive street fighter who pushes enemies down the condition track with dirty tactics.",
       "quote": "No such thing as a fair fight when survival's on the line.",
-      "imagePath": "systems/swse/assets/templates/scoundrel_knuckledragger.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_knuckledragger.webp",
       "mentor": "salty",
       "abilityScores": {
         "str": 10,
@@ -475,7 +475,7 @@
       "archetype": "Outlaw",
       "description": "A charming rogue who uses luck and Force Points strategically to turn the odds in their favor.",
       "quote": "Luck? I make my own luck, friend.",
-      "imagePath": "systems/swse/assets/templates/scoundrel_outlaw.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_outlaw.webp",
       "mentor": "salty",
       "abilityScores": {
         "str": 8,
@@ -519,7 +519,7 @@
       "archetype": "Sniper",
       "description": "A long-range precision shooter who operates from concealment with deadly accuracy.",
       "quote": "One shot, one kill. That's all it takes.",
-      "imagePath": "systems/swse/assets/templates/scout_sniper.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_sniper.webp",
       "mentor": "lead",
       "abilityScores": {
         "str": 8,
@@ -564,7 +564,7 @@
       "archetype": "Skirmisher",
       "description": "A mobile combatant specializing in hit-and-run tactics and battlefield positioning.",
       "quote": "Speed and precision win battles. Stand still and you're already dead.",
-      "imagePath": "systems/swse/assets/templates/scout_skirmisher.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_skirmisher.webp",
       "mentor": "lead",
       "abilityScores": {
         "str": 10,
@@ -606,7 +606,7 @@
       "archetype": "Survivalist",
       "description": "A wilderness expert who excels at tracking and surviving the harshest conditions.",
       "quote": "The wilderness doesn't forgive mistakes. Neither do I.",
-      "imagePath": "systems/swse/assets/templates/scout_survivalist.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_survivalist.webp",
       "mentor": "lead",
       "abilityScores": {
         "str": 12,
@@ -651,7 +651,7 @@
       "archetype": "Infiltrator",
       "description": "A stealthy infiltrator specializing in reconnaissance and espionage operations.",
       "quote": "The best battles are the ones your enemy never knew you fought.",
-      "imagePath": "systems/swse/assets/templates/scout_infiltrator.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_infiltrator.webp",
       "mentor": "lead",
       "abilityScores": {
         "str": 8,
@@ -695,7 +695,7 @@
       "archetype": "Rifleman",
       "description": "A precision marksman who manipulates the condition track with devastating attacks.",
       "quote": "Discipline and precision. Every shot matters.",
-      "imagePath": "systems/swse/assets/templates/soldier_rifleman.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_rifleman.webp",
       "mentor": "breach",
       "abilityScores": {
         "str": 12,
@@ -735,7 +735,7 @@
       "archetype": "Gunner",
       "description": "A heavy weapons specialist focusing on area suppression and overwhelming firepower.",
       "quote": "More firepower solves most problems.",
-      "imagePath": "systems/swse/assets/templates/soldier_gunner.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_gunner.webp",
       "mentor": "breach",
       "abilityScores": {
         "str": 14,
@@ -775,7 +775,7 @@
       "archetype": "Brawler",
       "description": "A powerful melee combatant dealing massive damage in close quarters combat.",
       "quote": "Let them feel the fury of my blade!",
-      "imagePath": "systems/swse/assets/templates/soldier_brawler.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_brawler.webp",
       "mentor": "breach",
       "abilityScores": {
         "str": 16,
@@ -814,7 +814,7 @@
       "archetype": "Tank",
       "description": "An armored defender designed to absorb massive amounts of damage and protect allies.",
       "quote": "Behind me, soldier. I'll handle this.",
-      "imagePath": "systems/swse/assets/templates/soldier_tank.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_tank.webp",
       "mentor": "breach",
       "abilityScores": {
         "str": 12,
@@ -853,7 +853,7 @@
       "archetype": "Worker",
       "description": "A skilled laborer, mechanic, or technician. Workers are the backbone of galactic civilization, maintaining infrastructure and repairing equipment.",
       "quote": "Honest work, honest pay. That's all I need.",
-      "imagePath": "systems/swse/assets/templates/nonheroic_worker.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/nonheroic_worker.webp",
       "mentor": null,
       "abilityScores": {
         "str": 12,
@@ -889,7 +889,7 @@
       "archetype": "Trooper",
       "description": "A baseline soldier, guard, or militia member. Troopers have basic military training but lack the experience and skill of true heroes.",
       "quote": "Following orders. That's what keeps the galaxy running.",
-      "imagePath": "systems/swse/assets/templates/nonheroic_trooper.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/nonheroic_trooper.webp",
       "mentor": null,
       "abilityScores": {
         "str": 13,
@@ -928,7 +928,7 @@
       "archetype": "Criminal",
       "description": "A petty thug, gang member, or street criminal. Criminals live on the edge of society, relying on intimidation and violence.",
       "quote": "Credits or your life. Your choice.",
-      "imagePath": "systems/swse/assets/templates/nonheroic_criminal.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/nonheroic_criminal.webp",
       "mentor": null,
       "abilityScores": {
         "str": 12,
@@ -964,7 +964,7 @@
       "archetype": "Merchant",
       "description": "A trader, shopkeeper, or business professional. Merchants know the value of everything and have connections throughout the commercial sector.",
       "quote": "Everything has a price, my friend. Let's negotiate.",
-      "imagePath": "systems/swse/assets/templates/nonheroic_merchant.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/nonheroic_merchant.webp",
       "mentor": null,
       "abilityScores": {
         "str": 8,
@@ -1000,7 +1000,7 @@
       "archetype": "Police",
       "description": "A law enforcement officer, security guard, or constable. Police maintain order and enforce laws in civilized systems.",
       "quote": "By the authority of the law, stand down!",
-      "imagePath": "systems/swse/assets/templates/nonheroic_police.webp",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/nonheroic_police.webp",
       "mentor": null,
       "abilityScores": {
         "str": 12,
