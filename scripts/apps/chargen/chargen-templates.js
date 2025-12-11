@@ -365,6 +365,12 @@ export class CharacterTemplates {
       }
 
       const index = await featPack.getIndex();
+      if (!index) {
+        SWSELogger.error('SWSE | Failed to get feats compendium index');
+        ui.notifications.error('Failed to load feats data. Please refresh and try again.');
+        return;
+      }
+
       const featEntry = index.find(f => f.name === featName);
 
       if (!featEntry) {
@@ -467,6 +473,11 @@ export class CharacterTemplates {
       }
 
       const index = await talentPack.getIndex();
+      if (!index) {
+        SWSELogger.error('SWSE | Failed to get talents compendium index');
+        ui.notifications.error('Failed to load talents data. Please refresh and try again.');
+        return;
+      }
 
       // Try exact match first
       let talentEntry = index.find(t => t.name === talentName);
@@ -515,6 +526,12 @@ export class CharacterTemplates {
       }
 
       const index = await powerPack.getIndex();
+      if (!index) {
+        SWSELogger.error('SWSE | Failed to get force powers compendium index');
+        ui.notifications.error('Failed to load force powers data. Please refresh and try again.');
+        return;
+      }
+
       const powersToAdd = [];
 
       for (const powerName of powerNames) {

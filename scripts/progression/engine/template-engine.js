@@ -1,5 +1,6 @@
 import { PROGRESSION_RULES } from "../data/progression-data.js";
 import { ForcePowerEngine } from "../engine/force-power-engine.js";
+import { swseLogger } from "../../utils/logger.js";
 
 /**
  * TemplateEngine.applyTemplate(actor, templateId, options)
