@@ -258,35 +258,35 @@ export class DataPreloader {
    * Get cached class by ID or name
    */
   async getClass(idOrName) {
-    return this._getCached(this._classesCache, 'swse.classes', idOrName);
+    return this._getCached(this._classesCache, 'foundryvtt-swse.classes', idOrName);
   }
 
   /**
    * Get cached feat by ID or name
    */
   async getFeat(idOrName) {
-    return this._getCached(this._featsCache, 'swse.feats', idOrName);
+    return this._getCached(this._featsCache, 'foundryvtt-swse.feats', idOrName);
   }
 
   /**
    * Get cached talent by ID or name
    */
   async getTalent(idOrName) {
-    return this._getCached(this._talentsCache, 'swse.talents', idOrName);
+    return this._getCached(this._talentsCache, 'foundryvtt-swse.talents', idOrName);
   }
 
   /**
    * Get cached force power by ID or name
    */
   async getForcePower(idOrName) {
-    return this._getCached(this._forcePowersCache, 'swse.forcepowers', idOrName);
+    return this._getCached(this._forcePowersCache, 'foundryvtt-swse.forcepowers', idOrName);
   }
 
   /**
    * Get cached species by ID or name
    */
   async getSpecies(idOrName) {
-    return this._getCached(this._speciesCache, 'swse.species', idOrName);
+    return this._getCached(this._speciesCache, 'foundryvtt-swse.species', idOrName);
   }
 
   /**

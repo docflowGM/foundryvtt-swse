@@ -50,7 +50,9 @@ async function _loadFromCompendium() {
     const pack = game.packs.get('foundryvtt-swse.classes');
 
     if (!pack) {
-      swseLogger.error('Class Data Loader: swse.classes compendium not found');
+      const errorMsg = 'Class Data Loader: foundryvtt-swse.classes compendium not found. Progression will not work correctly!';
+      swseLogger.error(errorMsg);
+      ui.notifications?.error(errorMsg);
       return cache;
     }
 
@@ -117,29 +119,49 @@ function _normalizeClassData(doc) {
   const levelProgression = system.level_progression || [];
   const featuresByLevel = {};
 
-  for (const levelData of levelProgression) {
-    const level = levelData.level;
-    const features = levelData.features || [];
+  // Validate that levelProgression is an array
+  if (!Array.isArray(levelProgression)) {
+    swseLogger.warn(`Class Data Loader: level_progression is not an array for ${doc.name}`);
+  } else {
+    for (const levelData of levelProgression) {
+      if (!levelData || typeof levelData !== 'object') {
+        swseLogger.warn(`Class Data Loader: Invalid level data in ${doc.name}`);
+        continue;
+      }
 
-    featuresByLevel[level] = {
-      features: features,
-      bonusFeats: features.filter(f => f.type === 'feat_choice' || f.name?.includes('Bonus Feat')).length,
-      talents: features.filter(f => f.type === 'talent_choice').length,
-      forcePoints: levelData.force_points
-    };
+      const level = levelData.level;
+      const features = Array.isArray(levelData.features) ? levelData.features : [];
+
+      // Validate features array before filtering
+      const validFeatures = features.filter(f => f && typeof f === 'object');
+      if (validFeatures.length !== features.length) {
+        swseLogger.warn(`Class Data Loader: Invalid features found in ${doc.name} level ${level}`);
+      }
+
+      featuresByLevel[level] = {
+        features: validFeatures,
+        bonusFeats: validFeatures.filter(f => f.type === 'feat_choice' || f.name?.includes('Bonus Feat')).length,
+        talents: validFeatures.filter(f => f.type === 'talent_choice').length,
+        forcePoints: levelData.force_points || 0
+      };
+    }
   }
 
   // Extract starting feats from level 1 or starting_features
-  const startingFeatures = system.starting_features || [];
-  const level1Features = levelProgression.find(l => l.level === 1)?.features || [];
+  const startingFeatures = Array.isArray(system.starting_features) ? system.starting_features : [];
+  const level1Data = Array.isArray(levelProgression) ? levelProgression.find(l => l && l.level === 1) : null;
+  const level1Features = Array.isArray(level1Data?.features) ? level1Data.features : [];
   const startingFeats = [];
 
   // Look for automatic feats (not choices) in starting features and level 1
-  for (const feature of [...startingFeatures, ...level1Features]) {
+  const allStartingFeatures = [...startingFeatures, ...level1Features].filter(f => f && typeof f === 'object');
+  for (const feature of allStartingFeatures) {
     // Skip feat_choice and talent_choice - those are selections, not automatic grants
     if (feature.type !== 'feat_choice' && feature.type !== 'talent_choice') {
       if (feature.type === 'feat' || feature.name?.includes('Proficiency') || feature.name?.includes('Sensitivity')) {
-        startingFeats.push(feature.name);
+        if (feature.name) {
+          startingFeats.push(feature.name);
+        }
       }
     }
   }
