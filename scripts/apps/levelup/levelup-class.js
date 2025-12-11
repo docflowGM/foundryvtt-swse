@@ -198,7 +198,7 @@ export async function selectSpecies(speciesId, speciesName) {
   const speciesPack = game.packs.get('foundryvtt-swse.species');
   if (!speciesPack) {
     SWSELogger.error('SWSE LevelUp | Species compendium not found!');
-    ui.notifications.error("Species compendium not found! Please check that the swse.species compendium exists.");
+    ui.notifications.error("Species compendium not found! Please check that the foundryvtt-swse.species compendium exists.");
     return null;
   }
 

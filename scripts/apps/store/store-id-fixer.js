@@ -29,7 +29,7 @@ export async function scanForInvalidIds() {
     }
 
     // Scan compendium packs for items
-    const packNames = ['swse.weapons', 'swse.armor', 'swse.equipment'];
+    const packNames = ['foundryvtt-swse.weapons', 'foundryvtt-swse.armor', 'foundryvtt-swse.equipment'];
     for (const packName of packNames) {
         const pack = game.packs.get(packName);
         if (pack) {
@@ -60,7 +60,7 @@ export async function scanForInvalidIds() {
     }
 
     // Scan compendium packs for actors
-    const actorPackNames = ['swse.vehicles', 'swse.droids'];
+    const actorPackNames = ['foundryvtt-swse.vehicles', 'foundryvtt-swse.droids'];
     for (const packName of actorPackNames) {
         const pack = game.packs.get(packName);
         if (pack) {

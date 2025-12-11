@@ -37,6 +37,9 @@ export class ForcePowerEngine {
       try {
         const pack = game.packs.get('foundryvtt-swse.feats');
         if (pack) {
+          if (!pack.indexed) {
+            await pack.getIndex();
+          }
           const index = pack.index.find(e => e.name === featName);
           if (index) {
             featDoc = await pack.getDocument(index._id);
@@ -124,12 +127,15 @@ export class ForcePowerEngine {
     }
   }
 
-  static collectAvailablePowers(actor) {
-    // Attempt to find a compendium called swse.forcepowers and return its content.
+  static async collectAvailablePowers(actor) {
+    // Attempt to find a compendium called foundryvtt-swse.forcepowers and return its content.
     try {
-      const pack = game.packs.get('foundryvtt-swse.forcepowers");
+      const pack = game.packs.get('foundryvtt-swse.forcepowers');
       if (!pack) return [];
-      return pack.getDocuments ? pack.getDocuments() : pack.index.map(e => e);
+      if (!pack.indexed) {
+        await pack.getIndex();
+      }
+      return pack.getDocuments ? await pack.getDocuments() : pack.index.map(e => e);
     } catch (e) {
       swseLogger.warn("ForcePowerEngine: failed to collect powers from compendium", e);
       return [];

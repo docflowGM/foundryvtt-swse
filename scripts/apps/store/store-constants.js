@@ -7,11 +7,11 @@
  * Compendium pack names used by the store
  */
 export const STORE_PACKS = {
-    WEAPONS: 'swse.weapons',
-    ARMOR: 'swse.armor',
-    EQUIPMENT: 'swse.equipment',
-    DROIDS: 'swse.droids',
-    VEHICLES: 'swse.vehicles'
+    WEAPONS: 'foundryvtt-swse.weapons',
+    ARMOR: 'foundryvtt-swse.armor',
+    EQUIPMENT: 'foundryvtt-swse.equipment',
+    DROIDS: 'foundryvtt-swse.droids',
+    VEHICLES: 'foundryvtt-swse.vehicles'
 };
 
 /**
