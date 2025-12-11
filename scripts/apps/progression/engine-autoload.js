@@ -12,9 +12,9 @@
 (async function () {
   try {
     await loadTemplates([
-      'templates/apps/progression/sidebar.hbs',
-      'templates/apps/progression/attribute-method.hbs',
-      'templates/apps/chargen/ability-rolling.hbs'
+      'systems/foundryvtt-swse/templates/apps/progression/sidebar.hbs',
+      'systems/foundryvtt-swse/templates/apps/progression/attribute-method.hbs',
+      'systems/foundryvtt-swse/templates/apps/chargen/ability-rolling.hbs'
     ]);
   } catch(e) { console.warn("SWSE | engine-autoload: template preload failed", e); }
 
@@ -25,7 +25,7 @@
         try {
           const steps = (typeof engine.getSteps === 'function') ? engine.getSteps() : (engine.steps || []);
           const progress = (Array.isArray(steps) && steps.length) ? Math.round((steps.filter(s=>s.completed).length / steps.length)*100) : 0;
-          const html = await renderTemplate('templates/apps/progression/sidebar.hbs', { steps, progress });
+          const html = await renderTemplate('systems/foundryvtt-swse/templates/apps/progression/sidebar.hbs', { steps, progress });
           const wrapper = document.createElement('div');
           wrapper.innerHTML = html;
           document.body.appendChild(wrapper.firstElementChild);
