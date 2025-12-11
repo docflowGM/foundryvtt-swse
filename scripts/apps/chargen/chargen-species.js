@@ -298,6 +298,12 @@ export async function _getRacialBonuses(speciesName) {
       return {};
     }
   }
+
+  if (!this._packs.species || this._packs.species.length === 0) {
+    SWSELogger.error("CharGen | Species pack is empty in _getRacialBonuses");
+    return {};
+  }
+
   const found = this._packs.species.find(s => s.name === speciesName || s._id === speciesName);
 
   if (!found || !found.system) {

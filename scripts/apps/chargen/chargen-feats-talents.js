@@ -12,6 +12,13 @@ import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 export async function _onSelectFeat(event) {
   event.preventDefault();
   const id = event.currentTarget.dataset.featid;
+
+  if (!this._packs.feats || this._packs.feats.length === 0) {
+    ui.notifications.error("Feats data not loaded!");
+    SWSELogger.error("CharGen | Feats pack is null or empty");
+    return;
+  }
+
   const feat = this._packs.feats.find(f => f._id === id || f.name === id);
 
   if (!feat) {
@@ -249,6 +256,13 @@ export async function _onBackToTalentTrees(event) {
 export async function _onSelectTalent(event) {
   event.preventDefault();
   const id = event.currentTarget.dataset.talentid;
+
+  if (!this._packs.talents || this._packs.talents.length === 0) {
+    ui.notifications.error("Talents data not loaded!");
+    SWSELogger.error("CharGen | Talents pack is null or empty");
+    return;
+  }
+
   const tal = this._packs.talents.find(t => t._id === id || t.name === id);
 
   if (!tal) {

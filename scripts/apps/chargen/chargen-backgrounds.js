@@ -4,6 +4,7 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
+import { getClassProperty } from './chargen-property-accessor.js';
 
 /**
  * Background selection module for character generation

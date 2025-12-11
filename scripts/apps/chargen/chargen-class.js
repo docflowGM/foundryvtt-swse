@@ -233,6 +233,9 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
             } else {
               SWSELogger.warn("CharGen | Lightsaber weapon not found in compendium");
             }
+          } else {
+            SWSELogger.error("CharGen | Weapons compendium (swse.weapons) not found");
+            ui.notifications.warn("Weapons compendium not found. Cannot grant starting lightsaber.");
           }
           continue; // Don't create a feat for this, we're giving the actual weapon
         }

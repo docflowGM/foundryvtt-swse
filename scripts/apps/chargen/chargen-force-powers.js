@@ -11,6 +11,13 @@ import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 export async function _onSelectForcePower(event) {
   event.preventDefault();
   const id = event.currentTarget.dataset.powerid;
+
+  if (!this._packs.forcePowers || this._packs.forcePowers.length === 0) {
+    ui.notifications.error("Force Powers data not loaded!");
+    SWSELogger.error("CharGen | Force Powers pack is null or empty");
+    return;
+  }
+
   const power = this._packs.forcePowers.find(p => p._id === id || p.name === id);
 
   if (!power) {
