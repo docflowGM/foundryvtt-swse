@@ -92,6 +92,66 @@
  </div>
  </section>
 
+ {{!-- Character Progression Summary --}}
+ <section class="progression-summary">
+   <h3 class="section-header">
+     <i class="fas fa-chart-line"></i> Character Progression
+   </h3>
+
+   {{#if progression}}
+   <div class="progression-grid grid grid-3col">
+     <div class="progression-card feats-card">
+       <div class="card-header">
+         <i class="fas fa-star"></i>
+         <span>Heroic Feats</span>
+       </div>
+       <div class="card-value {{#if (gte progression.feats.selected progression.feats.total)}}complete{{/if}}">
+         {{progression.feats.display}}
+       </div>
+       <div class="card-footer">
+         {{#if progression.feats.starting}}
+           <span class="note">+{{progression.feats.starting}} starting</span>
+         {{/if}}
+       </div>
+     </div>
+
+     <div class="progression-card talents-card">
+       <div class="card-header">
+         <i class="fas fa-gem"></i>
+         <span>Talents</span>
+       </div>
+       <div class="card-value {{#if (gte progression.talents.selected progression.talents.total)}}complete{{/if}}">
+         {{progression.talents.display}}
+       </div>
+       <div class="card-footer">
+         {{#if (lt progression.talents.selected progression.talents.total)}}
+           <span class="note">{{subtract progression.talents.total progression.talents.selected}} available</span>
+         {{else}}
+           <span class="note">All selected</span>
+         {{/if}}
+       </div>
+     </div>
+
+     <div class="progression-card skills-card">
+       <div class="card-header">
+         <i class="fas fa-graduation-cap"></i>
+         <span>Skill Points</span>
+       </div>
+       <div class="card-value {{#if (gte progression.skillPoints.spent progression.skillPoints.total)}}complete{{/if}}">
+         {{progression.skillPoints.display}}
+       </div>
+       <div class="card-footer">
+         {{#if (gt progression.skillPoints.remaining 0)}}
+           <span class="note remaining">{{progression.skillPoints.remaining}} unspent</span>
+         {{else}}
+           <span class="note">All allocated</span>
+         {{/if}}
+       </div>
+     </div>
+   </div>
+   {{/if}}
+ </section>
+
  {{!-- Character Traits --}}
  <section class="character-traits">
  <h3 class="section-header">Character Traits</h3>

@@ -327,6 +327,83 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       context.classDisplay = 'No classes';
     }
 
+    // =================================================================
+    // PROGRESSION STATE TRACKING
+    // =================================================================
+    const level = this.actor.system.level || 1;
+    const selectedFeats = this.actor.items.filter(i => i.type === 'feat');
+
+    // Base feat progression: 1 at level 1, then every 3 levels
+    let totalFeatsAvailable = 1 + Math.floor(level / 3);
+
+    // Add human bonus feat
+    const species = this.actor.system.species || '';
+    const isHuman = species.toLowerCase().includes('human');
+    if (isHuman && level >= 1) {
+      totalFeatsAvailable += 1;
+    }
+
+    // Count starting feats (class proficiencies, auto-granted)
+    const startingFeatsCount = selectedFeats.filter(f =>
+      f.system?.source === 'class' ||
+      f.name?.includes('Proficiency') ||
+      f.name?.includes('Weapon Focus')
+    ).length;
+
+    // Calculate talent progression
+    const classesWithTalents = classItems;
+    let totalTalentsAvailable = 0;
+
+    for (const cls of classesWithTalents) {
+      const classLevel = cls.system.level || 1;
+      // Talents at odd levels: 1, 3, 5, 7, 9, etc.
+      totalTalentsAvailable += Math.ceil(classLevel / 2);
+    }
+
+    const selectedTalents = this.actor.items.filter(i => i.type === 'talent');
+
+    // Calculate skill points
+    const intMod = this.actor.system.abilities?.int?.mod || 0;
+    let totalSkillPoints = 0;
+
+    for (const cls of classItems) {
+      const classLevel = cls.system.level || 1;
+      const classSkillPoints = cls.system.trainedSkills || 4;
+
+      // First level: (class SP + INT) × 4, then per level
+      if (classLevel >= 1) {
+        totalSkillPoints += (classSkillPoints + intMod) * 4;
+        if (classLevel > 1) {
+          totalSkillPoints += (classSkillPoints + intMod) * (classLevel - 1);
+        }
+      }
+    }
+
+    // Count trained skills
+    const trainedSkills = Object.values(this.actor.system.skills || {})
+      .filter(skill => skill.trained).length;
+
+    // Add progression data to context
+    context.progression = {
+      feats: {
+        selected: Math.max(0, selectedFeats.length - startingFeatsCount),
+        total: totalFeatsAvailable,
+        starting: startingFeatsCount,
+        display: `${Math.max(0, selectedFeats.length - startingFeatsCount)}/${totalFeatsAvailable}`
+      },
+      talents: {
+        selected: selectedTalents.length,
+        total: totalTalentsAvailable,
+        display: `${selectedTalents.length}/${totalTalentsAvailable}`
+      },
+      skillPoints: {
+        spent: trainedSkills,
+        total: totalSkillPoints,
+        remaining: Math.max(0, totalSkillPoints - trainedSkills),
+        display: `${trainedSkills}/${totalSkillPoints}`
+      }
+    };
+
     return context;
   }
 

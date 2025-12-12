@@ -3599,3 +3599,80 @@ font-size: 12px;
   color: rgba(255, 255, 255, 0.8);
 }
 
+
+/* =========================
+   PROGRESSION TRACKER
+   ========================= */
+.swse .progression-summary {
+  margin: 16px 0;
+}
+
+.swse .progression-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.swse .progression-card {
+  background: rgba(0, 20, 40, 0.5);
+  border: 1px solid rgba(0, 170, 204, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.swse .progression-card:hover {
+  border-color: rgba(0, 170, 204, 0.6);
+  box-shadow: 0 4px 12px rgba(0, 170, 204, 0.2);
+  transform: translateY(-2px);
+}
+
+.swse .progression-card .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 8px;
+}
+
+.swse .progression-card .card-header i {
+  color: rgba(0, 170, 204, 0.8);
+}
+
+.swse .progression-card .card-value {
+  font-size: 24px;
+  font-weight: 900;
+  color: rgba(0, 217, 255, 0.9);
+  margin: 8px 0;
+}
+
+.swse .progression-card .card-value.complete {
+  color: rgba(0, 255, 128, 0.9);
+}
+
+.swse .progression-card .card-footer {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  min-height: 16px;
+}
+
+.swse .progression-card .card-footer .note.remaining {
+  color: rgba(255, 180, 0, 0.9);
+  font-weight: 600;
+}
+
+/* Theme adjustments */
+.swse.sheet.character [data-theme="holo"] .progression-card {
+  background: rgba(0, 217, 255, 0.05);
+  border-color: rgba(0, 217, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 217, 255, 0.1);
+}
+
+.swse.sheet.character [data-theme="holo"] .progression-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 217, 255, 0.3);
+}
