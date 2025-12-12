@@ -44,7 +44,7 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
 
   try {
     // Log the update for debugging
-    if (game.settings?.get('swse', 'devMode')) {
+    if (game.settings?.get('foundryvtt-swse', 'devMode')) {
       swseLogger.debug('Applying atomic actor update:', {
         actor: actor.name,
         actorId: actor.id,

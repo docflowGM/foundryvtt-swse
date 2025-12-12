@@ -306,7 +306,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     const equippedArmor = actor?.items?.find(i => i.type === 'armor' && i.system.equipped);
 
     // Check for Armored Defense talents
-    const hasArmoredDefense = actor?.items?.some(i =>
+    const talentArmoredDefense = actor?.items?.some(i =>
       i.type === 'talent' && i.name === 'Armored Defense'
     ) || false;
     const hasImprovedArmoredDefense = actor?.items?.some(i =>
@@ -315,6 +315,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     const hasArmorMastery = actor?.items?.some(i =>
       i.type === 'talent' && i.name === 'Armor Mastery'
     ) || false;
+
+    // Check for armoredDefenseForAll house rule - all characters get Armored Defense benefit
+    const armoredDefenseForAll = game.settings?.get('foundryvtt-swse', 'armoredDefenseForAll') || false;
+    const hasArmoredDefense = talentArmoredDefense || armoredDefenseForAll;
 
     // REFLEX DEFENSE
     let reflexBase = 10;
@@ -527,21 +531,22 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
   }
 
   _prepareSkills() {
+    // Use camelCase keys to match the schema definition in _getSkillDefinitions()
     const skillData = {
       acrobatics: { defaultAbility: 'dex', untrained: true, armorPenalty: true },
       climb: { defaultAbility: 'str', untrained: true, armorPenalty: true },
       deception: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
       endurance: { defaultAbility: 'con', untrained: true, armorPenalty: true },
-      gather_information: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
+      gatherInformation: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
       initiative: { defaultAbility: 'dex', untrained: true, armorPenalty: true },
       jump: { defaultAbility: 'str', untrained: true, armorPenalty: true },
-      knowledge_bureaucracy: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-      knowledge_galactic_lore: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-      knowledge_life_sciences: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-      knowledge_physical_sciences: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-      knowledge_social_sciences: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-      knowledge_tactics: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-      knowledge_technology: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      knowledgeBureaucracy: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      knowledgeGalacticLore: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      knowledgeLifeSciences: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      knowledgePhysicalSciences: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      knowledgeSocialSciences: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      knowledgeTactics: { defaultAbility: 'int', untrained: false, armorPenalty: false },
+      knowledgeTechnology: { defaultAbility: 'int', untrained: false, armorPenalty: false },
       mechanics: { defaultAbility: 'int', untrained: true, armorPenalty: false },
       perception: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
       persuasion: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
@@ -550,9 +555,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       stealth: { defaultAbility: 'dex', untrained: true, armorPenalty: true },
       survival: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
       swim: { defaultAbility: 'str', untrained: true, armorPenalty: true },
-      treat_injury: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
-      use_computer: { defaultAbility: 'int', untrained: true, armorPenalty: false },
-      use_the_force: { defaultAbility: 'cha', untrained: true, armorPenalty: false }
+      treatInjury: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
+      useComputer: { defaultAbility: 'int', untrained: true, armorPenalty: false },
+      useTheForce: { defaultAbility: 'cha', untrained: true, armorPenalty: false }
     };
 
     // Use the already calculated halfLevel property
@@ -563,6 +568,13 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Droids can only use these skills untrained (unless they have Heuristic Processor)
     const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
+
+    // Get occupation bonus from background (applies +2 to untrained checks for specific skills)
+    // This is accessed via actor flags, so we need to check if parent exists
+    let occupationBonus = null;
+    if (this.parent?.flags?.swse?.occupationBonus) {
+      occupationBonus = this.parent.flags.swse.occupationBonus;
+    }
 
     for (const [skillKey, skill] of Object.entries(this.skills)) {
       const data = skillData[skillKey];
@@ -586,6 +598,15 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       // Add skill focus bonus (+5 if focused checkbox is checked)
       if (skill.focused) {
         total += 5;
+      }
+
+      // Apply occupation bonus from background (only to untrained checks)
+      // Occupation bonus gives +2 to specific skills when making untrained checks
+      if (!skill.trained && occupationBonus?.skills?.includes(skillKey)) {
+        total += occupationBonus.value || 2;
+        skill.hasOccupationBonus = true;
+      } else {
+        skill.hasOccupationBonus = false;
       }
 
       // Apply armor check penalty if this skill is affected
@@ -635,7 +656,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     }
 
     // Check for daily Force Points optional rule
-    const useDailyForcePoints = game.settings?.get('swse', 'dailyForcePoints') || false;
+    const useDailyForcePoints = game.settings?.get('foundryvtt-swse', 'dailyForcePoints') || false;
 
     if (useDailyForcePoints) {
       // Daily Force Points based on heroic level ranges

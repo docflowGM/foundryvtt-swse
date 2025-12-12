@@ -52,6 +52,14 @@ export function registerActorHooks() {
         description: 'Handle special item deletion like Skill Focus feat',
         category: 'actor'
     });
+
+    // Handle INT increase skill selection
+    HooksRegistry.register('swse:intelligenceIncreased', handleIntelligenceIncrease, {
+        id: 'int-increase-handler',
+        priority: 0,
+        description: 'Show skill selection dialog when INT modifier increases',
+        category: 'actor'
+    });
 }
 
 /**
@@ -279,4 +287,141 @@ async function handleItemDelete(item, options, userId) {
             ui.notifications.info(`Removed Skill Focus from ${focusedSkillName}`);
         }
     }
+}
+
+/**
+ * Handle INT modifier increase
+ * Shows skill selection dialog for bonus trained skills
+ *
+ * @param {Object} data - Event data from swse:intelligenceIncreased hook
+ * @param {Actor} data.actor - The actor whose INT increased
+ * @param {number} data.skillsToGain - Number of skills to train
+ * @param {number} data.languagesToGain - Number of languages to add
+ */
+async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain }) {
+    // Only process if there are skills to select
+    if (skillsToGain <= 0) return;
+
+    // Only process for the owning user
+    if (!actor.isOwner) return;
+
+    SWSELogger.log(`SWSE | INT increase: Showing skill selection for ${actor.name} (${skillsToGain} skills)`);
+
+    // Get all available skills that aren't already trained
+    const skillNames = {
+        acrobatics: "Acrobatics",
+        climb: "Climb",
+        deception: "Deception",
+        endurance: "Endurance",
+        gatherInformation: "Gather Information",
+        initiative: "Initiative",
+        jump: "Jump",
+        knowledgeBureaucracy: "Knowledge (Bureaucracy)",
+        knowledgeGalacticLore: "Knowledge (Galactic Lore)",
+        knowledgeLifeSciences: "Knowledge (Life Sciences)",
+        knowledgePhysicalSciences: "Knowledge (Physical Sciences)",
+        knowledgeSocialSciences: "Knowledge (Social Sciences)",
+        knowledgeTactics: "Knowledge (Tactics)",
+        knowledgeTechnology: "Knowledge (Technology)",
+        mechanics: "Mechanics",
+        perception: "Perception",
+        persuasion: "Persuasion",
+        pilot: "Pilot",
+        ride: "Ride",
+        stealth: "Stealth",
+        survival: "Survival",
+        swim: "Swim",
+        treatInjury: "Treat Injury",
+        useComputer: "Use Computer",
+        useTheForce: "Use the Force"
+    };
+
+    // Filter to untrained skills only
+    const untrainedSkills = {};
+    for (const [key, name] of Object.entries(skillNames)) {
+        const skill = actor.system.skills?.[key];
+        if (!skill?.trained) {
+            untrainedSkills[key] = name;
+        }
+    }
+
+    if (Object.keys(untrainedSkills).length === 0) {
+        ui.notifications.info("All skills are already trained! No additional skills to select.");
+        // Clear pending gains
+        const { AttributeIncreaseHandler } = await import('../progression/engine/attribute-increase-handler.js');
+        await AttributeIncreaseHandler.clearPendingGains(actor, 'trainedSkills');
+        return;
+    }
+
+    // Create checkboxes for skill selection
+    const skillCheckboxes = Object.entries(untrainedSkills)
+        .map(([key, name]) => `
+            <label class="skill-checkbox-label" style="display: block; margin: 4px 0;">
+                <input type="checkbox" name="skill-selection" value="${key}">
+                <span>${name}</span>
+            </label>
+        `)
+        .join('');
+
+    // Show dialog for skill selection
+    new Dialog({
+        title: `Intelligence Increase - Select ${skillsToGain} Skill${skillsToGain > 1 ? 's' : ''} to Train`,
+        content: `
+            <div class="int-increase-skill-dialog">
+                <p><strong>Your Intelligence modifier has increased!</strong></p>
+                <p>Select ${skillsToGain} skill${skillsToGain > 1 ? 's' : ''} to become trained in:</p>
+                <div class="skill-selection-container" style="max-height: 300px; overflow-y: auto; margin: 10px 0; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                    ${skillCheckboxes}
+                </div>
+                <p class="hint-text"><i class="fas fa-info-circle"></i> Trained skills gain a +5 bonus to checks.</p>
+            </div>
+        `,
+        buttons: {
+            confirm: {
+                icon: '<i class="fas fa-check"></i>',
+                label: "Confirm Selection",
+                callback: async (html) => {
+                    const selected = html.find('input[name="skill-selection"]:checked');
+
+                    if (selected.length !== skillsToGain) {
+                        ui.notifications.warn(`Please select exactly ${skillsToGain} skill${skillsToGain > 1 ? 's' : ''}.`);
+                        return false;
+                    }
+
+                    // Apply training to selected skills
+                    const updates = {};
+                    const trainedNames = [];
+
+                    selected.each(function() {
+                        const skillKey = $(this).val();
+                        updates[`system.skills.${skillKey}.trained`] = true;
+                        trainedNames.push(skillNames[skillKey] || skillKey);
+                    });
+
+                    await actor.update(updates);
+
+                    // Clear pending gains
+                    const { AttributeIncreaseHandler } = await import('../progression/engine/attribute-increase-handler.js');
+                    await AttributeIncreaseHandler.clearPendingGains(actor, 'trainedSkills');
+
+                    ui.notifications.info(`Trained in: ${trainedNames.join(', ')}`);
+                }
+            }
+        },
+        default: "confirm",
+        render: (html) => {
+            // Limit checkbox selection to skillsToGain
+            html.find('input[name="skill-selection"]').change(function() {
+                const checked = html.find('input[name="skill-selection"]:checked');
+                if (checked.length >= skillsToGain) {
+                    html.find('input[name="skill-selection"]:not(:checked)').prop('disabled', true);
+                } else {
+                    html.find('input[name="skill-selection"]').prop('disabled', false);
+                }
+            });
+        }
+    }, {
+        width: 400,
+        classes: ['swse', 'int-increase-dialog']
+    }).render(true);
 }

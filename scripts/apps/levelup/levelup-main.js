@@ -992,12 +992,18 @@ export class SWSELevelUpEnhanced extends FormApplication {
   }
 
   _selectTalent(talentName) {
+    // Include actor's existing talents in pendingData for prerequisite checking
+    const existingTalents = this.actor.items
+      .filter(i => i.type === 'talent')
+      .map(t => ({ name: t.name, _id: t.id }));
+    const pendingTalents = this.selectedTalent ? [this.selectedTalent] : [];
+
     const pendingData = {
       selectedFeats: this.selectedFeats,
       selectedClass: this.selectedClass,
       abilityIncreases: this.abilityIncreases,
       selectedSkills: this.selectedSkills,
-      selectedTalents: this.selectedTalent ? [this.selectedTalent] : []
+      selectedTalents: [...existingTalents, ...pendingTalents]
     };
 
     const talent = selectTalent(talentName, this.talentData, this.actor, pendingData);

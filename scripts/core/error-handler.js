@@ -19,7 +19,7 @@ export class ErrorHandler {
    */
   initialize() {
     // Get devMode setting
-    this._devMode = game.settings?.get('swse', 'devMode') ?? false;
+    this._devMode = game.settings?.get('foundryvtt-swse', 'devMode') ?? false;
 
     // Hook into Foundry's error handling
     if (typeof Hooks !== 'undefined') {
@@ -174,7 +174,7 @@ export class ErrorHandler {
     }
 
     // Update devMode from settings
-    this._devMode = game.settings?.get('swse', 'devMode') ?? this._devMode;
+    this._devMode = game.settings?.get('foundryvtt-swse', 'devMode') ?? this._devMode;
 
     // Console logging with enhanced details
     const { error, context, foundryContext, systemContext, stack } = errorInfo;

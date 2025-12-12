@@ -20,6 +20,7 @@
 
 import { FORCE_POWER_DATA } from "../data/progression-data.js";
 import { ForcePowerPicker } from "../ui/force-power-picker.js";
+import { swseLogger } from "../../utils/logger.js";
 
 export class ForcePowerEngine {
   /**
