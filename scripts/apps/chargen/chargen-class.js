@@ -67,12 +67,16 @@ export async function _onSelectClass(event) {
 
   // Set class-based values
   if (classDoc && classDoc.system) {
-    // Base Attack Bonus
-    this.characterData.bab = Number(getClassProperty(classDoc, 'babProgression', 0));
+    // Base Attack Bonus - calculate actual BAB for level 1 based on progression type
+    const babProgression = getClassProperty(classDoc, 'babProgression', 'medium');
+    const babMultipliers = { 'fast': 1.0, 'high': 1.0, 'medium': 0.75, 'slow': 0.5, 'low': 0.5 };
+    const multiplier = babMultipliers[babProgression] || 0.75;
+    this.characterData.bab = Math.floor(1 * multiplier); // Level 1 BAB
 
-    // Hit Points (5 times hit die at level 1)
+    // Hit Points (3 times hit die + CON mod at level 1 per SWSE rules)
     const hitDie = getHitDie(classDoc);
-    this.characterData.hp.max = hitDie * 5; // Level 1 HP is 5x hit die (e.g., d6=30, d8=40, d10=50)
+    const conMod = this.characterData.abilities?.con?.mod || 0;
+    this.characterData.hp.max = (hitDie * 3) + conMod; // Level 1 HP is 3x hit die + CON mod (SWSE heroic rule)
     this.characterData.hp.value = this.characterData.hp.max;
 
     // Defense bonuses
@@ -110,7 +114,7 @@ export async function _onSelectClass(event) {
 
         // Check for house rule to take maximum credits
         // Default to rolling dice
-        const takeMax = game.settings?.get("swse", "maxStartingCredits") || false;
+        const takeMax = game.settings?.get("foundryvtt-swse", "maxStartingCredits") || false;
 
         let diceTotal;
         if (takeMax) {
@@ -224,7 +228,7 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
           SWSELogger.log(`CharGen | Auto-granting Lightsaber weapon for Jedi`);
 
           // Load lightsaber from weapons pack
-          const weaponsPack = game.packs.get('foundryvtt-swse.weapons");
+          const weaponsPack = game.packs.get('foundryvtt-swse.weapons');
           if (weaponsPack) {
             const docs = await weaponsPack.getDocuments();
             const lightsaber = docs.find(d => d.name === "Lightsaber");

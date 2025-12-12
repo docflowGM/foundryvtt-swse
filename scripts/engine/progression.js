@@ -345,10 +345,30 @@ export class SWSEProgressionEngine {
       // Trigger force powers (if applicable)
       try {
         const { ForcePowerEngine } = await import('../progression/engine/force-power-engine.js');
-        await ForcePowerEngine.handleForcePowerTriggers(this.actor, {
+        const progression = this.actor.system.progression || {};
+
+        // Build proper updateSummary for force power triggers
+        const updateSummary = {
           level: this.actor.system.level,
           mode: this.mode
-        });
+        };
+
+        // Add class levels from progression (for class-based force power grants)
+        if (progression.classLevels && progression.classLevels.length > 0) {
+          // Get the most recently added class level
+          const latestClassLevel = progression.classLevels[progression.classLevels.length - 1];
+          updateSummary.classLevelsAdded = [{
+            class: latestClassLevel.class,
+            level: latestClassLevel.level
+          }];
+        }
+
+        // Add feats from progression (for feat-based force power grants like Force Training)
+        if (progression.feats && progression.feats.length > 0) {
+          updateSummary.featsAdded = [...progression.feats];
+        }
+
+        await ForcePowerEngine.handleForcePowerTriggers(this.actor, updateSummary);
       } catch (e) {
         swseLogger.warn('ForcePowerEngine trigger failed (may not be available)', e);
       }
@@ -488,8 +508,17 @@ export class SWSEProgressionEngine {
     // Validate point buy if using that method
     if (method === "pointBuy") {
       const cost = this._calculatePointBuyCost(values);
-      if (cost > 25) {
-        throw new Error(`Point buy exceeded 25 points (spent ${cost})`);
+      // Get point buy pool from house rules (default 25 for living, 20 for droids)
+      const isDroid = this.actor.system?.isDroid || this.data.species === 'Droid';
+      let pointBuyPool;
+      if (isDroid) {
+        pointBuyPool = game.settings?.get('foundryvtt-swse', 'droidPointBuyPool') ?? 20;
+      } else {
+        pointBuyPool = game.settings?.get('foundryvtt-swse', 'livingPointBuyPool') ??
+                       game.settings?.get('foundryvtt-swse', 'pointBuyPool') ?? 25;
+      }
+      if (cost > pointBuyPool) {
+        throw new Error(`Point buy exceeded ${pointBuyPool} points (spent ${cost})`);
       }
     }
 
@@ -537,11 +566,22 @@ export class SWSEProgressionEngine {
     const levelInClass = existingLevelsInClass + 1;
 
     // Add class level entry
+    // SWSE skill trainings: At character creation, you get (class trainings + INT mod + Human bonus) skills to train
+    // At level-up, you don't get new trainings (except from feats like Skill Training or INT increases)
+    const intMod = this.actor.system.abilities?.int?.mod || 0;
+    const isFirstCharacterLevel = classLevels.length === 0;
+    const species = progression.species || '';
+    const humanBonus = (species === 'Human' || species === 'human') ? 1 : 0;
+
+    // Calculate skill trainings for this class level entry
+    // Only the first character level grants skill trainings (no 4x multiplier - that's D&D 3.5e)
+    const skillTrainings = isFirstCharacterLevel ? (classData.skillPoints + intMod + humanBonus) : 0;
+
     classLevels.push({
       class: classId,
       level: levelInClass,
       choices: {},
-      skillPoints: (classData.skillPoints + (this.actor.system.abilities.int?.mod || 0)) * 4
+      skillPoints: skillTrainings
     });
 
     // Get level-specific features from compendium

@@ -22,7 +22,7 @@ export const BackgroundsModule = {
 
     try {
       // Try to load from compendium first
-      const pack = game?.packs?.get('swse.backgrounds');
+      const pack = game?.packs?.get('foundryvtt-swse.backgrounds');
       if (pack) {
         const docs = await pack.getDocuments();
 
