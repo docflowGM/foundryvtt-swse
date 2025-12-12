@@ -45,6 +45,7 @@ import { SWSEActorSheetBase } from '../../sheets/base-sheet.js';
 import { CombatActionsMapper } from '../../combat/utils/combat-actions-mapper.js';
 import { FeatActionsMapper } from '../../utils/feat-actions-mapper.js';
 import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
+import { ForcePointsUtil } from '../../utils/force-points.js';
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
@@ -415,6 +416,9 @@ activateListeners(html) {
 
     // Dark side tracker segment clicks
     html.find('.dark-side-segment').click(this._onDarkSideSegmentClick.bind(this));
+
+    // Talent tree filter buttons
+    html.find('.filter-btn').click(this._onFilterTalents.bind(this));
 
     SWSELogger.log('SWSE | Character sheet listeners activated');
   }
@@ -1505,6 +1509,7 @@ activateListeners(html) {
    */
   async _onPostCombatAction(event) {
     event.preventDefault();
+    event.stopPropagation(); // Prevent base sheet _onRoll from also firing
     const actionName = event.currentTarget.dataset.actionName;
 
     // Load combat actions data
@@ -1822,6 +1827,69 @@ activateListeners(html) {
     await power.update({'system.spent': false});
 
     ui.notifications.info(`Spent 1 Force Point to regain ${power.name}`);
+  }
+
+  /**
+   * Handle spending Force Point for various actions (reroll, avoid death, reduce dark side)
+   */
+  async _onSpendForcePoint(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const spendType = button.dataset.type;
+
+    // Check Force Points available
+    const fpAvailable = this.actor.system.forcePoints?.value || 0;
+    if (fpAvailable <= 0) {
+      ui.notifications.error('No Force Points available');
+      return;
+    }
+
+    switch (spendType) {
+      case 'reroll':
+        // Show Force Point dialog and roll
+        const result = await ForcePointsUtil.showForcePointDialog(this.actor, 'rerolling a d20');
+        if (result?.confirmed) {
+          // Spend the Force Point first
+          await this.actor.spendForcePoint('reroll bonus');
+          // Roll the Force Point dice
+          await ForcePointsUtil.rollForcePoint(this.actor, {
+            reason: 'reroll bonus',
+            useDarkSide: result.useDarkSide
+          });
+        }
+        break;
+
+      case 'avoid-death':
+        // Confirm spending Force Point to avoid death
+        const avoidConfirmed = await Dialog.confirm({
+          title: 'Avoid Death',
+          content: `<p>Spend a Force Point to avoid death?</p><p>You will fall unconscious at 0 HP instead of dying.</p><p><strong>Force Points:</strong> ${fpAvailable}</p>`
+        });
+        if (avoidConfirmed) {
+          await ForcePointsUtil.avoidDeath(this.actor);
+        }
+        break;
+
+      case 'reduce-dark':
+        // Check if Dark Side Score > 0
+        const darkSide = this.actor.system.darkSideScore || 0;
+        if (darkSide <= 0) {
+          ui.notifications.info('Your Dark Side Score is already 0');
+          return;
+        }
+        // Confirm spending Force Point to reduce Dark Side
+        const reduceConfirmed = await Dialog.confirm({
+          title: 'Reduce Dark Side Score',
+          content: `<p>Spend a Force Point to reduce your Dark Side Score by 1?</p><p><strong>Current Dark Side Score:</strong> ${darkSide}</p><p><strong>Force Points:</strong> ${fpAvailable}</p>`
+        });
+        if (reduceConfirmed) {
+          await ForcePointsUtil.reduceDarkSide(this.actor);
+        }
+        break;
+
+      default:
+        SWSELogger.warn(`Unknown Force Point spend type: ${spendType}`);
+    }
   }
 
   /**
@@ -2375,6 +2443,33 @@ activateListeners(html) {
       ui.notifications.warn(`Dark Side Score increased to ${newValue}`);
     } else if (newValue < currentDarkSide) {
       ui.notifications.info(`Dark Side Score decreased to ${newValue}`);
+    }
+  }
+
+  /**
+   * Handle talent tree filter button clicks
+   * Shows/hides talent trees based on selected filter
+   */
+  _onFilterTalents(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const filter = button.dataset.filter;
+    const html = $(this.element);
+
+    // Update active button state
+    html.find('.filter-btn').removeClass('active');
+    $(button).addClass('active');
+
+    // Get all talent trees
+    const trees = html.find('.talent-tree');
+
+    if (filter === 'all') {
+      // Show all trees
+      trees.show();
+    } else {
+      // Hide all, then show matching ones
+      trees.hide();
+      trees.filter(`[data-tree-id="${filter}"]`).show();
     }
   }
 

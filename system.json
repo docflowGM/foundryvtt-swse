@@ -27,6 +27,7 @@
   ],
   "styles": [
     "styles/core/swse-base.css",
+    "styles/core/canvas-ui-fixes.css",
     "styles/components/swse-components.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/unified-sheets.css",
