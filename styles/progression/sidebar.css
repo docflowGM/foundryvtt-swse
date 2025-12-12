@@ -2,15 +2,15 @@
 .swse-prog-sidebar {
   width: 260px;
   background: linear-gradient(180deg, rgba(12,18,30,0.95), rgba(10,14,22,0.9));
-  color: #d9e8ff;
-  border-right: 1px solid rgba(255,255,255,0.03);
+  color: var(--swse-text-primary, #d9e8ff);
+  border-right: 1px solid var(--swse-border-subtle, rgba(255,255,255,0.03));
   padding: 12px;
   box-shadow: 0 8px 24px rgba(1,6,20,0.6);
-  font-family: "Starjedi", "Starjhol", system-ui, sans-serif;
+  font-family: var(--swse-font-primary, "Starjedi"), "Starjhol", system-ui, sans-serif;
   position: fixed;
   left: 0;
-  top: 60px;
-  bottom: 20px;
+  top: 0;
+  bottom: 0;
   z-index: 200;
   overflow-y: auto;
   transition: width 0.25s ease;
