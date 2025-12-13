@@ -68,141 +68,132 @@ export class ForcePowerEngine {
   }
 
   /**
-   * Check class level for force power grants
-   * Looks in compendium first, falls back to hardcoded data
-   * @param {string} className - Name of the class
-   * @param {number} level - Class level
-   * @returns {Promise<number>} Number of powers granted
-   */
-  static async _countFromClassLevel(className, level) {
-    // Try to load class from compendium
-    try {
-      const { getClassData } = await import('../utils/class-data-loader.js');
-      const classData = await getClassData(className);
+ * Check class level for force power grants
+ * Looks in compendium first, falls back to hardcoded data
+ * @param {string} className - Name of the class
+ * @param {number} level - Class level
+ * @returns {Promise<number>} Number of powers granted
+ */
+static async _countFromClassLevel(className, level) {
+  try {
+    const { getClassData } = await import('../utils/class-data-loader.js');
+    const classData = await getClassData(className);
 
-      if (classData?._raw?.level_progression) {
-        const levelData = classData._raw.level_progression.find(lp => lp.level === level);
-        if (levelData?.force_power_grants) {
-          return levelData.force_power_grants;
-        }
+    if (classData?._raw?.level_progression) {
+      const levelData = classData._raw.level_progression.find(lp => lp.level === level);
+      if (levelData?.force_power_grants) {
+        return levelData.force_power_grants;
       }
-    } catch (e) {
-      console.warn(`ForcePowerEngine: Failed to load class "${className}" from compendium`, e);
     }
-
-    // Fallback to hardcoded data
-    const c = FORCE_POWER_DATA.classes[className];
-    if (!c) return 0;
-    const L = String(level);
-    return (c[L] && c[L].powers) ? c[L].powers : 0;
+  } catch (e) {
+    console.warn(`ForcePowerEngine: Failed to load class "${className}" from compendium`, e);
   }
 
-  static _countFromTemplate(templateId) {
-    const t = FORCE_POWER_DATA.templates[templateId];
-    return t ? (t.powers || 0) : 0;
-  }
+  const c = FORCE_POWER_DATA.classes[className];
+  if (!c) return 0;
+  const L = String(level);
+  return (c[L] && c[L].powers) ? c[L].powers : 0;
+}
 
-  /**
-   * updateSummary is a lightweight object describing what's been added:
-   * {
-   *   featsAdded: ["Force Training"],
-   *   classLevelsAdded: [ { class: "Jedi", level: 1 } ],
-   *   templateApplied: "jedi_padawan"
-   * }
-   */
-  static async handleForcePowerTriggers(actor, updateSummary = {}) {
-    let selectable = 0;
+static _countFromTemplate(templateId) {
+  const t = FORCE_POWER_DATA.templates[templateId];
+  return t ? (t.powers || 0) : 0;
+}
 
-    if (updateSummary.featsAdded && Array.isArray(updateSummary.featsAdded)) {
-      for (const ft of updateSummary.featsAdded) {
-        selectable += await this._countFromFeat(ft, actor);
-      }
-    }
+/**
+ * updateSummary is a lightweight object describing what's been added
+ */
+static async handleForcePowerTriggers(actor, updateSummary = {}) {
+  let selectable = 0;
 
-    if (updateSummary.classLevelsAdded && Array.isArray(updateSummary.classLevelsAdded)) {
-      for (const cl of updateSummary.classLevelsAdded) {
-        selectable += await this._countFromClassLevel(cl.class, cl.level);
-      }
-    }
-
-    if (updateSummary.templateApplied && typeof updateSummary.templateApplied === 'string') {
-      selectable += this._countFromTemplate(updateSummary.templateApplied);
-    }
-
-    if (selectable > 0) {
-      await this.openPicker(actor, selectable);
+  if (Array.isArray(updateSummary.featsAdded)) {
+    for (const ft of updateSummary.featsAdded) {
+      selectable += await this._countFromFeat(ft, actor);
     }
   }
 
-  static async collectAvailablePowers(actor) {
-    // Attempt to find a compendium called foundryvtt-swse.forcepowers and return its content.
-    try {
-      const pack = game.packs.get('foundryvtt-swse.forcepowers');
+  if (Array.isArray(updateSummary.classLevelsAdded)) {
+    for (const cl of updateSummary.classLevelsAdded) {
+      selectable += await this._countFromClassLevel(cl.class, cl.level);
+    }
+  }
 
-      if (!pack) {
-        const errorMsg = 'Force Power Engine: foundryvtt-swse.forcepowers compendium not found!';
-        swseLogger.error(errorMsg);
-        ui.notifications?.error(`${errorMsg} Force powers will not be available. Please ensure the SWSE system is properly installed.`);
-        return [];
-      }
+  if (typeof updateSummary.templateApplied === 'string') {
+    selectable += this._countFromTemplate(updateSummary.templateApplied);
+  }
 
-      if (!pack.indexed) {
-        await pack.getIndex();
-      }
+  if (selectable > 0) {
+    await this.openPicker(actor, selectable);
+  }
+}
 
-      const docs = pack.getDocuments ? await pack.getDocuments() : pack.index.map(e => e);
+static async collectAvailablePowers(actor) {
+  try {
+    const pack = game.packs.get('foundryvtt-swse.forcepowers');
 
-      if (!docs || docs.length === 0) {
-        const warnMsg = 'Force Power Engine: Force powers compendium is empty or inaccessible.';
-        swseLogger.warn(warnMsg);
-        ui.notifications?.warn(warnMsg);
-        return [];
-      }
-
-      swseLogger.log(`Force Power Engine: Loaded ${docs.length} force powers from compendium`);
-      return docs;
-
-    } catch (e) {
-      swseLogger.error("ForcePowerEngine: Failed to collect powers from compendium", e);
-      ui.notifications?.error('Failed to load force powers. Check console for details.');
+    if (!pack) {
+      swseLogger.error('Force Power Engine: foundryvtt-swse.forcepowers compendium not found!');
       return [];
     }
-  }
 
-  static async openPicker(actor, count) {
-    // collect powers (documents or index entries)
-    const available = await this.collectAvailablePowers(actor);
-    // Filter heuristic: keep all for now (UI will show legality)
-    const docs = available;
-    const selected = await ForcePowerPicker.select(docs, count);
-    if (selected && selected.length) {
-      await this.applySelected(actor, selected = []) {
+    if (!pack.indexed) {
+      await pack.getIndex();
+    }
+
+    const docs = pack.getDocuments
+      ? await pack.getDocuments()
+      : pack.index.map(e => e);
+
+    return docs ?? [];
+  } catch (e) {
+    swseLogger.error("ForcePowerEngine: Failed to collect powers from compendium", e);
+    return [];
+  }
+}
+
+static async openPicker(actor, count) {
+  const available = await this.collectAvailablePowers(actor);
+  const selected = await ForcePowerPicker.select(available, count);
+
+  if (selected && selected.length) {
+    await this.applySelected(actor, selected);
+  }
+}
+
+static async applySelected(actor, selectedItems = []) {
   const existing = new Set(
     actor.items
       .filter(i => i.type === 'power' || i.type === 'forcePower')
       .map(i => i.name.toLowerCase())
   );
 
-  selected = selected.filter(p => !existing.has(p.name.toLowerCase()));
-    // selectedItems are Document or index entries - create Item docs on actor
-    try {
-      const toCreate = [];
-      for (const it of selectedItems) {
-        // if it's a Document (has toObject), prefer that
-        if (typeof it.toObject === 'function') {
-          toCreate.push(it.toObject());
-        } else if (it.document) {
-          toCreate.push(it.document.toObject());
-        } else {
-          // fallback: create minimal Item data with name and img
-          toCreate.push({ name: it.name || "Force Power", type: "force", img: it.img || "icons/svg/mystery-man.svg", system: it.system || {} });
-        }
+  const filtered = selectedItems.filter(
+    p => p?.name && !existing.has(p.name.toLowerCase())
+  );
+
+  try {
+    const toCreate = [];
+
+    for (const it of filtered) {
+      if (typeof it.toObject === 'function') {
+        toCreate.push(it.toObject());
+      } else if (it.document) {
+        toCreate.push(it.document.toObject());
+      } else {
+        toCreate.push({
+          name: it.name || "Force Power",
+          type: "forcePower",
+          img: it.img || "icons/svg/mystery-man.svg",
+          system: it.system || {}
+        });
       }
-      if (toCreate.length) {
-        await actor.createEmbeddedDocuments("Item", toCreate);
-      }
-    } catch (e) {
-      swseLogger.error("ForcePowerEngine.applySelected error", e);
     }
+
+    if (toCreate.length) {
+      await actor.createEmbeddedDocuments("Item", toCreate);
+    }
+  } catch (e) {
+    swseLogger.error("ForcePowerEngine.applySelected error", e);
   }
+}
 }
