@@ -176,14 +176,11 @@ export class ForcePowerEngine {
     const docs = available;
     const selected = await ForcePowerPicker.select(docs, count);
     if (selected && selected.length) {
-      await this.applySelected(actor, selected = []) {
-  const existing = new Set(
-    actor.items
-      .filter(i => i.type === 'power' || i.type === 'forcePower')
-      .map(i => i.name.toLowerCase())
-  );
+      await this.applySelected(actor, selected);
+    }
+  }
 
-  selected = selected.filter(p => !existing.has(p.name.toLowerCase()));
+  static async applySelected(actor, selectedItems) {
     // selectedItems are Document or index entries - create Item docs on actor
     try {
       const toCreate = [];

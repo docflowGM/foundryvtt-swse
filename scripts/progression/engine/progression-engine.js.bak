@@ -161,10 +161,10 @@ export class ProgressionEngine {
   static async _triggerForcePowers(actor) {
     try {
       if (typeof ForcePowerEngine !== 'undefined') {
-        await const _summary = summary || {};
-actor._swseLastProgressionUpdate = _summary;
-await actor.setFlag('swse', 'lastProgressionUpdate', _summary);
-ForcePowerEngine.handleForcePowerTriggers(actor, _summary);
+        await ForcePowerEngine.handleForcePowerTriggers(
+          actor,
+          actor._swseLastProgressionUpdate || {}
+        );
       }
     } catch(e) {
       swseLogger.warn('ForcePowerEngine trigger failed', e);
