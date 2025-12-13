@@ -37,7 +37,13 @@ export class ForcePowerEngine {
     if (!featDoc) {
       try {
         const pack = game.packs.get('foundryvtt-swse.feats');
-        if (pack) {
+        if (!pack) {
+          // Only warn once per session
+          if (!ForcePowerEngine._featPackWarnShown) {
+            swseLogger.warn('ForcePowerEngine: foundryvtt-swse.feats compendium not found. Feat-based force power grants may not work.');
+            ForcePowerEngine._featPackWarnShown = true;
+          }
+        } else {
           if (!pack.indexed) {
             await pack.getIndex();
           }
@@ -47,7 +53,7 @@ export class ForcePowerEngine {
           }
         }
       } catch (e) {
-        console.warn(`ForcePowerEngine: Failed to load feat "${featName}" from compendium`, e);
+        swseLogger.warn(`ForcePowerEngine: Failed to load feat "${featName}" from compendium`, e);
       }
     }
 
@@ -132,13 +138,33 @@ export class ForcePowerEngine {
     // Attempt to find a compendium called foundryvtt-swse.forcepowers and return its content.
     try {
       const pack = game.packs.get('foundryvtt-swse.forcepowers');
-      if (!pack) return [];
+
+      if (!pack) {
+        const errorMsg = 'Force Power Engine: foundryvtt-swse.forcepowers compendium not found!';
+        swseLogger.error(errorMsg);
+        ui.notifications?.error(`${errorMsg} Force powers will not be available. Please ensure the SWSE system is properly installed.`);
+        return [];
+      }
+
       if (!pack.indexed) {
         await pack.getIndex();
       }
-      return pack.getDocuments ? await pack.getDocuments() : pack.index.map(e => e);
+
+      const docs = pack.getDocuments ? await pack.getDocuments() : pack.index.map(e => e);
+
+      if (!docs || docs.length === 0) {
+        const warnMsg = 'Force Power Engine: Force powers compendium is empty or inaccessible.';
+        swseLogger.warn(warnMsg);
+        ui.notifications?.warn(warnMsg);
+        return [];
+      }
+
+      swseLogger.log(`Force Power Engine: Loaded ${docs.length} force powers from compendium`);
+      return docs;
+
     } catch (e) {
-      swseLogger.warn("ForcePowerEngine: failed to collect powers from compendium", e);
+      swseLogger.error("ForcePowerEngine: Failed to collect powers from compendium", e);
+      ui.notifications?.error('Failed to load force powers. Check console for details.');
       return [];
     }
   }
