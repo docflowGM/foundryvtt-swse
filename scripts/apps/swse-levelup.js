@@ -1,18 +1,22 @@
-import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 /**
-import { SWSELogger } from '../utils/logger.js';
  * SWSE Level Up System
  * Handles character leveling with class selection and HP rolls
  * Uses enhanced version for visual talent trees and multi-classing
+ *
+ * NOTE: This module is maintained for backwards compatibility.
+ * The enhanced level-up system (SWSELevelUpEnhanced) should be used for all
+ * level-up operations. The old open() and apply() methods are deprecated
+ * and will redirect to the enhanced system.
  */
 
+import { SWSELogger, swseLogger } from '../utils/logger.js';
 import { getClasses } from "../core/swse-data.js";
 import { SWSELevelUpEnhanced } from "./swse-levelup-enhanced.js";
 import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } from './mentor-dialogues.js';
 
 export class SWSELevelUp {
     /**
-     * Open enhanced level up dialog
+     * Open enhanced level up dialog (RECOMMENDED)
      * @param {Actor} actor - The actor to level up
      * @returns {Promise<boolean>} True if leveled up, false if cancelled
      */
@@ -22,106 +26,46 @@ export class SWSELevelUp {
             return false;
         }
 
-        const levelUpDialog = new SWSELevelUpEnhanced(actor);
-        levelUpDialog.render(true);
-        return true;
-    }
-
-    /**
-     * Open level up dialog for an actor
-     * @param {Actor} actor - The actor to level up
-     * @returns {Promise<boolean>} True if leveled up, false if cancelled
-     */
-    static async open(actor) {
-        if (!actor) {
-            ui.notifications.error("No actor provided for level up.");
-            return false;
-        }
-        
         try {
-            const classes = await getClasses();
-            
-            if (!classes || classes.length === 0) {
-                ui.notifications.error("No classes available for level up.");
+            const levelUpDialog = new SWSELevelUpEnhanced(actor);
+            levelUpDialog.render(true);
+            return true;
+        } catch (err) {
+            // If the enhanced dialog fails (e.g., incomplete character redirect),
+            // the error is expected and handled internally
+            if (err.message?.includes("redirecting to character generator")) {
                 return false;
             }
-            
-            const classOptions = classes.map(c => 
-                `<option value="${c.name}">${c.name}</option>`
-            ).join("");
-
-            const dialogContent = `
-                <form>
-                    <div class="form-group">
-                        <label>Choose Class</label>
-                        <select name="classId" required>${classOptions}</select>
-                    </div>
-                    <div class="form-group">
-                        <label>HP Method</label>
-                        <select name="hpChoice">
-                            <option value="roll">Roll (1d[HD])</option>
-                            <option value="average">Take Average (HD/2 + 1)</option>
-                            <option value="max">Max (HD)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Current Level: <strong>${actor.system.level}</strong></label>
-                        <label>New Level: <strong>${actor.system.level + 1}</strong></label>
-                    </div>
-                </form>
-            `;
-
-            return new Promise(resolve => {
-                new Dialog({
-                    title: `Level Up ${actor.name}`,
-                    content: dialogContent,
-                    buttons: {
-                        ok: {
-                            icon: '<i class="fas fa-level-up-alt"></i>',
-                            label: "Level Up",
-                            callback: async html => {
-                                try {
-                                    const classId = html.find("[name=classId]").val();
-                                    const hpChoice = html.find("[name=hpChoice]").val();
-                                    
-                                    if (!classId) {
-                                        ui.notifications.warn("Please select a class.");
-                                        resolve(false);
-                                        return;
-                                    }
-                                    
-                                    await SWSELevelUp.apply(actor, classId, hpChoice);
-                                    resolve(true);
-                                } catch (err) {
-                                    SWSELogger.error("SWSE Level Up | Error in callback:", err);
-                                    ui.notifications.error("Failed to level up character.");
-                                    resolve(false);
-                                }
-                            }
-                        },
-                        cancel: {
-                            icon: '<i class="fas fa-times"></i>',
-                            label: "Cancel",
-                            callback: () => resolve(false)
-                        }
-                    },
-                    default: "ok"
-                }).render(true);
-            });
-        } catch (err) {
-            SWSELogger.error("SWSE Level Up | Failed to open dialog:", err);
+            swseLogger.error("SWSE Level Up | Error opening enhanced dialog:", err);
             ui.notifications.error("Failed to open level up dialog.");
             return false;
         }
     }
 
     /**
+     * Open level up dialog for an actor
+     * @deprecated Use openEnhanced() instead - this method redirects to the enhanced dialog
+     * @param {Actor} actor - The actor to level up
+     * @returns {Promise<boolean>} True if leveled up, false if cancelled
+     */
+    static async open(actor) {
+        swseLogger.warn("SWSE Level Up | SWSELevelUp.open() is deprecated. Redirecting to enhanced dialog.");
+        ui.notifications.info("Using enhanced level-up dialog for better experience.");
+        return this.openEnhanced(actor);
+    }
+
+    /**
      * Apply level up to an actor
+     * @deprecated This method bypasses the progression engine and should not be used.
+     * Use openEnhanced() for a complete level-up experience with feat/talent/skill selection.
+     * This method is retained for backwards compatibility but logs a deprecation warning.
      * @param {Actor} actor - The actor to level up
      * @param {string} className - Name of the class to add
      * @param {string} hpChoice - HP calculation method ('roll', 'average', or 'max')
      */
     static async apply(actor, className, hpChoice = "average") {
+        swseLogger.warn("SWSE Level Up | SWSELevelUp.apply() is deprecated and bypasses feat/talent/skill selection. Consider using openEnhanced() instead.");
+
         try {
             const classes = await getClasses();
             const classData = classes.find(c => c.name === className);

@@ -1,6 +1,17 @@
 /**
  * Follower Creator - Handles creation and management of follower characters
+ *
+ * Followers have special rules that differ from standard character creation:
+ * - HP = 10 + owner level (not class hit die)
+ * - BAB from template progression tables
+ * - Defenses = 10 + ability mod + owner level
+ *
+ * This module uses shared progression utilities for item creation (species, feats, skills)
+ * but maintains follower-specific stat calculations.
  */
+
+import { swseLogger } from '../utils/logger.js';
+
 export class FollowerCreator {
 
     /**
@@ -41,6 +52,19 @@ export class FollowerCreator {
         // Link follower to owner
         await this._linkFollowerToOwner(owner, follower, grantingTalent);
 
+        // Fire completion hook for consistency with main progression system
+        try {
+            Hooks.callAll('swse:progression:completed', {
+                actor: follower,
+                mode: 'follower',
+                level: follower.system.level,
+                owner: owner.id,
+                template: templateType
+            });
+        } catch (e) {
+            swseLogger.warn('FollowerCreator: Completion hook threw:', e);
+        }
+
         ui.notifications.info(`Follower "${follower.name}" created successfully!`);
         return follower;
     }
@@ -52,6 +76,11 @@ export class FollowerCreator {
     static async _showFollowerCreationDialog(owner, template, templateType, grantingTalent) {
         // Get available species
         const speciesPack = game.packs.get('foundryvtt-swse.species');
+        if (!speciesPack) {
+            ui.notifications.error('Species compendium not found! Cannot create follower.');
+            return null;
+        }
+
         const speciesIndex = await speciesPack.getIndex();
         const speciesList = speciesIndex.map(s => ({ id: s._id, name: s.name })).sort((a, b) => a.name.localeCompare(b.name));
 
@@ -119,6 +148,7 @@ export class FollowerCreator {
 
     /**
      * Build follower actor with all stats and features
+     * Uses progression-style data storage for consistency
      * @private
      */
     static async _buildFollowerActor(owner, template, followerData, grantingTalent) {
@@ -144,17 +174,28 @@ export class FollowerCreator {
             abilities[followerData.abilityChoice].base += template.abilityBonus;
         }
 
-        // Calculate defenses (10 + ability mod + owner level)
+        // Calculate defenses (10 + ability mod + owner level) - FOLLOWER SPECIFIC
         const defenses = await this._calculateFollowerDefenses(abilities, ownerLevel, template);
 
-        // Calculate HP (10 + owner level)
+        // Calculate HP (10 + owner level) - FOLLOWER SPECIFIC
         const hp = {
             max: 10 + ownerLevel,
             value: 10 + ownerLevel
         };
 
-        // Get BAB from template
+        // Get BAB from template - FOLLOWER SPECIFIC
         const bab = template.babProgression[Math.min(followerLevel - 1, 19)] || 0;
+
+        // Build progression data for consistency with main system
+        const progressionData = {
+            species: speciesDoc?.name || null,
+            classLevels: [], // Followers don't have normal class levels
+            feats: [],
+            talents: [],
+            trainedSkills: [],
+            isFollower: true,
+            followerTemplate: template.name
+        };
 
         // Create actor data
         const actorData = {
@@ -170,7 +211,8 @@ export class FollowerCreator {
                 baseAttackBonus: bab,
                 attributes: {
                     damageThreshold: 0 // Will be calculated on prepare
-                }
+                },
+                progression: progressionData
             },
             flags: {
                 swse: {
@@ -186,16 +228,20 @@ export class FollowerCreator {
         // Create the actor
         const follower = await Actor.create(actorData);
 
-        // Apply species
+        // Apply species (creates species item)
         if (speciesDoc) {
             await this._applySpecies(follower, speciesDoc, followerData);
+            // Update progression data
+            progressionData.species = speciesDoc.name;
         }
 
-        // Apply template feats
-        await this._applyTemplateFeats(follower, template, followerData);
+        // Apply template feats (creates feat items)
+        const appliedFeats = await this._applyTemplateFeats(follower, template, followerData);
+        progressionData.feats = appliedFeats;
 
         // Apply template skills
-        await this._applyTemplateSkills(follower, template, followerData);
+        const appliedSkills = await this._applyTemplateSkills(follower, template, followerData);
+        progressionData.trainedSkills = appliedSkills;
 
         // Apply talent-specific bonuses
         if (grantingTalent) {
@@ -205,11 +251,18 @@ export class FollowerCreator {
         // Apply template defense bonuses
         await this._applyDefenseBonuses(follower, template);
 
+        // Update progression data on actor
+        await follower.update({
+            'system.progression': progressionData
+        });
+
+        swseLogger.log(`FollowerCreator: Created follower "${follower.name}" for ${owner.name}`);
+
         return follower;
     }
 
     /**
-     * Calculate follower defenses
+     * Calculate follower defenses - FOLLOWER SPECIFIC FORMULA
      * @private
      */
     static async _calculateFollowerDefenses(abilities, ownerLevel, template) {
@@ -306,71 +359,108 @@ export class FollowerCreator {
     /**
      * Apply feats from template
      * @private
+     * @returns {Array<string>} Names of applied feats
      */
     static async _applyTemplateFeats(follower, template, followerData) {
+        const appliedFeats = [];
+
         // All followers get Weapon Proficiency (Simple Weapons)
-        await this._addFeatByName(follower, 'Weapon Proficiency (Simple Weapons)');
+        const baseFeat = 'Weapon Proficiency (Simple Weapons)';
+        if (await this._addFeatByName(follower, baseFeat)) {
+            appliedFeats.push(baseFeat);
+        }
 
         // Add template-specific feats
         if (template.feats) {
             for (const featName of template.feats) {
-                await this._addFeatByName(follower, featName);
+                if (await this._addFeatByName(follower, featName)) {
+                    appliedFeats.push(featName);
+                }
             }
         }
 
         // Handle feat choices (e.g., Utility template)
         if (template.featChoices && followerData.featChoice) {
-            await this._addFeatByName(follower, followerData.featChoice);
+            if (await this._addFeatByName(follower, followerData.featChoice)) {
+                appliedFeats.push(followerData.featChoice);
+            }
         }
+
+        return appliedFeats;
     }
 
     /**
      * Add a feat to follower by name
      * @private
+     * @returns {boolean} True if feat was added successfully
      */
     static async _addFeatByName(follower, featName) {
         const featsPack = game.packs.get('foundryvtt-swse.feats');
-        const featIndex = await featsPack.getIndex({ fields: ['name'] });
-        const featEntry = featIndex.find(f => f.name === featName);
+        if (!featsPack) {
+            swseLogger.warn('FollowerCreator: Feats compendium not found');
+            return false;
+        }
 
-        if (featEntry) {
-            const featDoc = await featsPack.getDocument(featEntry._id);
-            const featData = featDoc.toObject();
-            await follower.createEmbeddedDocuments('Item', [featData]);
-        } else {
-            swseLogger.warn(`Feat not found: ${featName}`);
+        try {
+            const featIndex = await featsPack.getIndex({ fields: ['name'] });
+            const featEntry = featIndex.find(f => f.name === featName);
+
+            if (featEntry) {
+                const featDoc = await featsPack.getDocument(featEntry._id);
+                const featData = featDoc.toObject();
+                await follower.createEmbeddedDocuments('Item', [featData]);
+                return true;
+            } else {
+                swseLogger.warn(`FollowerCreator: Feat not found: ${featName}`);
+                return false;
+            }
+        } catch (e) {
+            swseLogger.warn(`FollowerCreator: Error adding feat "${featName}":`, e);
+            return false;
         }
     }
 
     /**
      * Apply skills from template
      * @private
+     * @returns {Array<string>} Names of trained skills
      */
     static async _applyTemplateSkills(follower, template, followerData) {
+        const trainedSkills = [];
+
         // Apply trained skills from template
         if (template.trainedSkills) {
             for (const skillName of template.trainedSkills) {
-                await this._trainSkill(follower, skillName);
+                if (await this._trainSkill(follower, skillName)) {
+                    trainedSkills.push(skillName);
+                }
             }
         }
 
         // Handle skill choice (e.g., Utility template)
         if (template.skillChoice && followerData.skillChoice) {
-            await this._trainSkill(follower, followerData.skillChoice);
+            if (await this._trainSkill(follower, followerData.skillChoice)) {
+                trainedSkills.push(followerData.skillChoice);
+            }
         }
+
+        return trainedSkills;
     }
 
     /**
      * Train a skill for follower
      * @private
+     * @returns {boolean} True if skill was trained successfully
      */
     static async _trainSkill(follower, skillName) {
         const skillKey = this._getSkillKey(skillName);
-        if (skillKey && follower.system.skills[skillKey]) {
+        if (skillKey && follower.system.skills?.[skillKey]) {
             await follower.update({
                 [`system.skills.${skillKey}.trained`]: true
             });
+            return true;
         }
+        return false;
     }
 
     /**
@@ -506,4 +596,55 @@ export class FollowerCreator {
             await follower.delete();
         }
     }
+
+    /**
+     * Update follower when owner levels up
+     * Called from level-up hooks to sync follower stats
+     * @param {Actor} owner - The owner actor
+     */
+    static async updateFollowersForLevelUp(owner) {
+        const followers = this.getFollowers(owner);
+        const ownerLevel = owner.system.level || 1;
+
+        for (const follower of followers) {
+            if (!follower.system.isFollower) continue;
+
+            // Get follower's template for BAB progression
+            const templateType = follower.flags?.swse?.follower?.templateType;
+            const templates = await this.getFollowerTemplates();
+            const template = templates[templateType];
+
+            if (!template) {
+                swseLogger.warn(`FollowerCreator: Unknown template "${templateType}" for follower ${follower.name}`);
+                continue;
+            }
+
+            // Update follower stats based on owner's new level
+            const newBAB = template.babProgression[Math.min(ownerLevel - 1, 19)] || 0;
+            const newHP = 10 + ownerLevel;
+
+            // Recalculate defenses
+            const abilities = follower.system.abilities;
+            const getMod = (ability) => Math.floor(((abilities[ability]?.base || 10) - 10) / 2);
+
+            await follower.update({
+                'system.level': ownerLevel,
+                'system.baseAttackBonus': newBAB,
+                'system.hp.max': newHP,
+                'system.hp.value': Math.min(follower.system.hp.value, newHP),
+                'system.defenses.fortitude.base': 10 + Math.max(getMod('str'), getMod('con')) + ownerLevel,
+                'system.defenses.reflex.base': 10 + getMod('dex') + ownerLevel,
+                'system.defenses.will.base': 10 + getMod('wis') + ownerLevel
+            });
+
+            swseLogger.log(`FollowerCreator: Updated follower "${follower.name}" to level ${ownerLevel}`);
+        }
+    }
 }
+
+// Register hook to update followers when owner levels up
+Hooks.on('swse:progression:completed', async (data) => {
+    if (data.mode === 'levelup' && data.actor) {
+        await FollowerCreator.updateFollowersForLevelUp(data.actor);
+    }
+});

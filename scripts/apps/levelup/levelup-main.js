@@ -1,4 +1,3 @@
-import { ProgressionEngine } from "../../progression/engine/progression-engine.js";
 /**
  * SWSE Enhanced Level Up System - Main Application
  * Main orchestration class that coordinates all level-up modules
@@ -7,9 +6,14 @@ import { ProgressionEngine } from "../../progression/engine/progression-engine.j
  * - Visual talent tree selection
  * - Class prerequisite checking
  * - Mentor-based narration system
+ *
+ * NOTE: This system now uses SWSEProgressionEngine as the single source of truth
+ * for all progression data. All selections are tracked through the engine and
+ * applied via engine.finalize() at completion.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSEProgressionEngine } from '../../engine/progression.js';
+import { SWSELogger, swseLogger } from '../../utils/logger.js';
 import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from '../mentor-dialogues.js';
 
 // Import shared utilities
@@ -146,6 +150,12 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.featData = null;
     this.activeTags = []; // Track active tag filters
     this.freeBuild = false; // Free Build mode - skips validation
+
+    // Initialize progression engine in levelup mode
+    // This is the single source of truth for all progression data
+    this.progressionEngine = new SWSEProgressionEngine(actor, 'levelup');
+    this.progressionEngine.loadStateFromActor();
+    swseLogger.log('SWSE LevelUp | Initialized progression engine in levelup mode');
 
     // Mentor system - initially use base class mentor, will update when class is selected
     const level1Class = getLevel1Class(this.actor);
@@ -1236,147 +1246,131 @@ export class SWSELevelUpEnhanced extends FormApplication {
     }
 
     try {
+      const newLevel = this.actor.system.level + 1;
+
       // If this is level 1, save the starting class for mentor system
       if (this.actor.system.level === 1) {
         await setLevel1Class(this.actor, this.selectedClass.name);
       }
 
-      // Create or update class item
-      const classLevel = await createOrUpdateClassItem(this.selectedClass, this.actor);
-      if (!classLevel) {
-        throw new Error("Failed to create or update class item");
-      }
-      SWSELogger.log(`SWSE LevelUp | Class item created/updated to level ${classLevel}`);
+      // ========================================
+      // STEP 1: Sync selections to progression engine
+      // ========================================
+      swseLogger.log('SWSE LevelUp | Syncing selections to progression engine');
 
-      // Add selected talent if any
-      if (this.selectedTalent) {
-        try {
-          const talentObject = typeof this.selectedTalent.toObject === 'function'
-            ? this.selectedTalent.toObject()
-            : this.selectedTalent;
-          const createdTalent = await this.actor.createEmbeddedDocuments("Item", [talentObject]);
-          if (!createdTalent || createdTalent.length === 0) {
-            throw new Error(`Failed to add talent: ${this.selectedTalent.name}`);
+      // Confirm class selection through the progression engine
+      await this.progressionEngine.doAction('confirmClass', {
+        classId: this.selectedClass.name,
+        skipPrerequisites: this.freeBuild
+      });
+
+      // Add ability score increases if any (at levels 4, 8, 12, 16, 20)
+      if (Object.keys(this.abilityIncreases).length > 0) {
+        const abilityUpdates = {};
+        for (const [ability, increase] of Object.entries(this.abilityIncreases)) {
+          if (increase > 0) {
+            abilityUpdates[ability] = increase;
           }
-          SWSELogger.log(`SWSE LevelUp | Added talent: ${this.selectedTalent.name}`);
-        } catch (talentError) {
-          throw new Error(`Failed to add talent: ${talentError.message}`);
+        }
+        if (Object.keys(abilityUpdates).length > 0) {
+          await this.progressionEngine.doAction('confirmAbilities', {
+            increases: abilityUpdates
+          });
         }
       }
 
-      // Add multiclass feats if any
+      // Add feats to progression if any
       if (this.selectedFeats.length > 0) {
-        try {
-          const featObjects = this.selectedFeats.map(f =>
-            typeof f.toObject === 'function' ? f.toObject() : f
-          );
-          const createdFeats = await this.actor.createEmbeddedDocuments("Item", featObjects);
-          if (!createdFeats || createdFeats.length !== this.selectedFeats.length) {
-            throw new Error(`Feat creation mismatch: expected ${this.selectedFeats.length}, got ${createdFeats?.length || 0}`);
-          }
-          SWSELogger.log(`SWSE LevelUp | Added ${createdFeats.length} feat(s)`);
-        } catch (featError) {
-          throw new Error(`Failed to add feats: ${featError.message}`);
-        }
-      }
-
-      // Check for milestone feat at levels 3, 6, 9, 12, 15, 18
-      const newLevel = this.actor.system.level + 1;
-      const getMilestoneFt = getsMilestoneFeat(newLevel);
-      if (getMilestoneFt) {
-        ui.notifications.info(`Level ${newLevel}! You gain a bonus general feat.`);
-        SWSELogger.log(`SWSE LevelUp | Level ${newLevel} milestone - bonus general feat granted`);
-      }
-
-      // Store old modifiers before applying ability increases
-      const oldIntMod = this.actor.system.abilities.int?.mod || 0;
-      const oldConMod = this.actor.system.abilities.con?.mod || 0;
-
-      // Apply ability score increases and trained skills
-      const updates = {};
-
-      // Update trained skills if selected
-      if (this.selectedSkills.length > 0) {
-        this.selectedSkills.forEach(skill => {
-          // Support both object format {key, name} and string format (backward compatibility)
-          const skillKey = typeof skill === 'string' ? skill : skill.key;
-          updates[`system.skills.${skillKey}.trained`] = true;
+        const featNames = this.selectedFeats.map(f => f.name);
+        await this.progressionEngine.doAction('confirmFeats', {
+          featIds: featNames
         });
       }
 
-      // Apply ability score increases if any
-      let intIncreased = false;
-      let conIncreased = false;
-      if (Object.keys(this.abilityIncreases).length > 0) {
-        for (const [ability, increase] of Object.entries(this.abilityIncreases)) {
-          if (increase > 0) {
-            const currentBase = this.actor.system.abilities[ability].base || 10;
-            const newBase = currentBase + increase;
-            updates[`system.abilities.${ability}.base`] = newBase;
-            SWSELogger.log(`SWSE LevelUp | Increasing ${ability} by +${increase} (${currentBase} → ${newBase})`);
+      // Add talent to progression if any
+      if (this.selectedTalent) {
+        await this.progressionEngine.doAction('confirmTalents', {
+          talentIds: [this.selectedTalent.name]
+        });
+      }
 
-            // Track if INT or CON increased
-            if (ability === 'int') intIncreased = true;
-            if (ability === 'con') conIncreased = true;
-          }
+      // Add trained skills to progression if any (from multiclass bonus)
+      if (this.selectedSkills.length > 0) {
+        const skillNames = this.selectedSkills.map(s =>
+          typeof s === 'string' ? s : (s.key || s.name)
+        );
+        // Update the progression data directly for multiclass skills
+        // since these are bonus trainings, not the normal skill selection
+        const currentSkills = this.actor.system.progression?.trainedSkills || [];
+        const allSkills = [...new Set([...currentSkills, ...skillNames])];
+        await this.progressionEngine.doAction('confirmSkills', {
+          skills: allSkills
+        });
+      }
+
+      // ========================================
+      // STEP 2: Finalize through progression engine
+      // ========================================
+      swseLogger.log('SWSE LevelUp | Finalizing through progression engine');
+
+      // The progression engine handles:
+      // - Updating level, HP, BAB, defenses
+      // - Creating class/feat/talent items
+      // - Triggering force power grants
+      // - Updating force sensitivity
+      // - Emitting completion hooks (language module, etc.)
+      const success = await this.progressionEngine.finalize();
+
+      if (!success) {
+        throw new Error('Progression engine finalization failed');
+      }
+
+      // ========================================
+      // STEP 3: Additional level-up specific handling
+      // ========================================
+
+      // Check for milestone feat at levels 3, 6, 9, 12, 15, 18
+      const getMilestoneFt = getsMilestoneFeat(newLevel);
+      if (getMilestoneFt) {
+        ui.notifications.info(`Level ${newLevel}! You gain a bonus general feat.`);
+        swseLogger.log(`SWSE LevelUp | Level ${newLevel} milestone - bonus general feat granted`);
+      }
+
+      // Handle CON modifier retroactive HP
+      // Note: This is level-up specific since chargen starts fresh
+      const conMod = this.actor.system.abilities?.con?.mod || 0;
+      let retroactiveHPGain = 0;
+      if (this.abilityIncreases.con && this.abilityIncreases.con > 0) {
+        // Check if the increase pushed us to a new modifier tier
+        const oldConBase = (this.actor.system.abilities?.con?.base || 10) - this.abilityIncreases.con;
+        const oldConMod = Math.floor((oldConBase - 10) / 2);
+        if (conMod > oldConMod) {
+          const modIncrease = conMod - oldConMod;
+          retroactiveHPGain = newLevel * modIncrease;
+          // Apply retroactive HP
+          const currentHP = this.actor.system.hp.max || 0;
+          await this.actor.update({
+            "system.hp.max": currentHP + retroactiveHPGain,
+            "system.hp.value": (this.actor.system.hp.value || 0) + retroactiveHPGain
+          });
+          swseLogger.log(`SWSE LevelUp | CON modifier increased - granting ${retroactiveHPGain} retroactive HP`);
+          ui.notifications.info(`Constitution increased! You gain ${retroactiveHPGain} retroactive HP!`);
         }
       }
 
-      // Update actor level and HP
-      let totalHPGain = this.hpGain;
-      updates["system.level"] = newLevel;
-
-      // Apply updates first so we can calculate new modifiers
-      await globalThis.SWSE.ActorEngine.updateActor(this.actor, updates);
-
-      // Now check if modifiers actually increased
-      const newIntMod = this.actor.system.abilities.int?.mod || 0;
-      const newConMod = this.actor.system.abilities.con?.mod || 0;
-
-      let bonusSkillGranted = false;
-      let retroactiveHPGain = 0;
-
-      // If INT modifier increased, grant additional trained skill
-      if (intIncreased) {
-        bonusSkillGranted = checkIntModifierIncrease(this.actor, oldIntMod, newIntMod, newLevel);
+      // Handle INT modifier bonus skill notification
+      if (this.abilityIncreases.int && this.abilityIncreases.int > 0) {
+        const oldIntBase = (this.actor.system.abilities?.int?.base || 10) - this.abilityIncreases.int;
+        const oldIntMod = Math.floor((oldIntBase - 10) / 2);
+        const newIntMod = this.actor.system.abilities?.int?.mod || 0;
+        if (newIntMod > oldIntMod) {
+          ui.notifications.info(`Intelligence increased! You may train 1 additional skill.`);
+        }
       }
 
-      // If CON modifier increased, grant retroactive HP
-      if (conIncreased && newConMod > oldConMod) {
-        const modIncrease = newConMod - oldConMod;
-        retroactiveHPGain = newLevel * modIncrease;
-        totalHPGain += retroactiveHPGain;
-        SWSELogger.log(`SWSE LevelUp | CON modifier increased from ${oldConMod} to ${newConMod} - granting ${retroactiveHPGain} retroactive HP`);
-        ui.notifications.info(`Constitution increased! You gain ${retroactiveHPGain} retroactive HP!`);
-      }
-
-      // Update HP with any retroactive gains
-      const newHPMax = this.actor.system.hp.max + totalHPGain;
-      const newHPValue = this.actor.system.hp.value + totalHPGain;
-
-      await globalThis.SWSE.ActorEngine.updateActor(this.actor, {
-        "system.hp.max": newHPMax,
-        "system.hp.value": newHPValue
-      });
-
-
-      // Apply class features for this level
-      await applyClassFeatures(this.selectedClass, classLevel, this.actor);
-
-      // Recalculate BAB and defense bonuses from all class items
-      const totalBAB = calculateTotalBAB(this.actor);
-      const defenseBonuses = await calculateDefenseBonuses(this.actor);
-
-      SWSELogger.log(`SWSE LevelUp | Updating BAB to ${totalBAB}`);
-      SWSELogger.log(`SWSE LevelUp | Updating defense bonuses: Fort +${defenseBonuses.fortitude}, Ref +${defenseBonuses.reflex}, Will +${defenseBonuses.will}`);
-
-      await globalThis.SWSE.ActorEngine.updateActor(this.actor, {
-        "system.bab": totalBAB,
-        "system.defenses.fortitude.classBonus": defenseBonuses.fortitude,
-        "system.defenses.reflex.classBonus": defenseBonuses.reflex,
-        "system.defenses.will.classBonus": defenseBonuses.will
-      });
-
+      // ========================================
+      // STEP 4: Create chat message
+      // ========================================
 
       // Build ability increases text
       let abilityText = '';
@@ -1387,10 +1381,6 @@ export class SWSELevelUpEnhanced extends FormApplication {
           .join(', ');
         abilityText = `<p><strong>Ability Increases:</strong> ${increases}</p>`;
 
-        // Add bonus messages
-        if (bonusSkillGranted) {
-          abilityText += `<p><em>INT modifier increased! May train 1 additional skill.</em></p>`;
-        }
         if (retroactiveHPGain > 0) {
           abilityText += `<p><em>CON modifier increased! Gained ${retroactiveHPGain} retroactive HP.</em></p>`;
         }
@@ -1401,6 +1391,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
       if (retroactiveHPGain > 0) {
         hpGainText += ` (+ ${retroactiveHPGain} from CON increase)`;
       }
+
+      const newHPMax = this.actor.system.hp.max;
 
       // Create chat message with mentor narration
       const chatContent = `
@@ -1434,7 +1426,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       this.actor.sheet.render(true);
 
     } catch (err) {
-      SWSELogger.error("SWSE LevelUp | Error completing level up:", err);
+      swseLogger.error("SWSE LevelUp | Error completing level up:", err);
 
       // Provide specific error message based on error type
       let errorMessage = "Failed to complete level up";
@@ -1450,6 +1442,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
           errorMessage = `Skill Error: ${err.message}`;
         } else if (err.message.includes("ability")) {
           errorMessage = `Ability Score Error: ${err.message}`;
+        } else if (err.message.includes("prerequisite") || err.message.includes("requires")) {
+          errorMessage = `Prerequisite Error: ${err.message}`;
         } else {
           errorMessage = `${errorMessage}: ${err.message}`;
         }

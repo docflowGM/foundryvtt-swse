@@ -45,29 +45,54 @@ export async function loadClassData() {
  */
 async function _loadFromCompendium() {
   const cache = new Map();
+  const errors = [];
 
   try {
     const pack = game.packs.get('foundryvtt-swse.classes');
 
     if (!pack) {
-      const errorMsg = 'Class Data Loader: foundryvtt-swse.classes compendium not found. Progression will not work correctly!';
+      const errorMsg = 'Class Data Loader: foundryvtt-swse.classes compendium not found!';
       swseLogger.error(errorMsg);
-      ui.notifications?.error(errorMsg);
+      ui.notifications?.error(`${errorMsg} Character progression features will not work correctly. Please ensure the SWSE system is properly installed.`, { permanent: true });
       return cache;
     }
 
     const docs = await pack.getDocuments();
+
+    if (!docs || docs.length === 0) {
+      const errorMsg = 'Class Data Loader: Classes compendium is empty!';
+      swseLogger.error(errorMsg);
+      ui.notifications?.error(`${errorMsg} No classes available for character creation.`, { permanent: true });
+      return cache;
+    }
+
     swseLogger.log(`Class Data Loader: Loaded ${docs.length} classes from compendium`);
 
     for (const doc of docs) {
-      const classData = _normalizeClassData(doc);
-      cache.set(doc.name, classData);
+      try {
+        const classData = _normalizeClassData(doc);
+        cache.set(doc.name, classData);
+      } catch (normalizeErr) {
+        errors.push({ class: doc.name, error: normalizeErr.message });
+        swseLogger.warn(`Class Data Loader: Failed to normalize class "${doc.name}": ${normalizeErr.message}`);
+      }
     }
 
     swseLogger.log(`Class Data Loader: Normalized ${cache.size} classes`, Array.from(cache.keys()));
 
+    // Report normalization errors if any occurred
+    if (errors.length > 0) {
+      swseLogger.warn(`Class Data Loader: ${errors.length} class(es) had normalization issues:`, errors);
+      if (errors.length <= 3) {
+        ui.notifications?.warn(`Some classes may not work correctly: ${errors.map(e => e.class).join(', ')}`);
+      } else {
+        ui.notifications?.warn(`${errors.length} classes had loading issues. Check console for details.`);
+      }
+    }
+
   } catch (err) {
     swseLogger.error('Class Data Loader: Failed to load classes from compendium', err);
+    ui.notifications?.error('Failed to load class data. Character progression may not work correctly.', { permanent: true });
   }
 
   return cache;
@@ -166,6 +191,42 @@ function _normalizeClassData(doc) {
     }
   }
 
+  // Detect force sensitivity from multiple sources
+  // 1. Explicit forceSensitive flag in system data
+  // 2. Starting feats that include "Force Sensitivity"
+  // 3. Class name contains force-related keywords
+  // 4. Talent trees include force-related trees
+  const forceKeywords = ['force', 'jedi', 'sith', 'dark side', 'light side'];
+  const hasForceKeywordInName = forceKeywords.some(keyword => doc.name.toLowerCase().includes(keyword));
+  const hasForceStartingFeat = startingFeats.some(f => f.toLowerCase().includes('force sensitivity'));
+  const hasForceTalentTree = (system.talent_trees || []).some(tree =>
+    forceKeywords.some(keyword => tree.toLowerCase().includes(keyword))
+  );
+
+  const forceSensitive = system.forceSensitive === true ||
+                         system.force_sensitive === true ||
+                         hasForceStartingFeat ||
+                         (hasForceKeywordInName && (hasForceTalentTree || hasForceStartingFeat));
+
+  // Detect prestige class status from multiple sources
+  // 1. Explicit base_class flag (if false or missing, it's prestige)
+  // 2. Explicit prestige_class flag
+  // 3. Required level > 1 in prerequisites
+  const hasPrestigeFlag = system.prestige_class === true || system.prestigeClass === true;
+  const hasBaseClassFlag = system.base_class === true || system.baseClass === true;
+  const coreClasses = ['Soldier', 'Jedi', 'Noble', 'Scout', 'Scoundrel'];
+  const isCoreClass = coreClasses.includes(doc.name);
+
+  // If it's a core class, it's definitely not prestige
+  // Otherwise, check flags - prestige if explicitly flagged or if not marked as base class
+  const prestigeClass = !isCoreClass && (hasPrestigeFlag || !hasBaseClassFlag);
+
+  // Validate talent trees exist
+  const talentTrees = system.talent_trees || [];
+  if (talentTrees.length === 0 && !prestigeClass) {
+    swseLogger.warn(`Class Data Loader: Class "${doc.name}" has no talent trees defined`);
+  }
+
   return {
     name: doc.name,
     hitDie: hitDie,
@@ -173,10 +234,10 @@ function _normalizeClassData(doc) {
     baseAttackBonus: baseAttackBonus,
     classSkills: system.class_skills || [],
     startingFeats: startingFeats,
-    talentTrees: system.talent_trees || [],
+    talentTrees: talentTrees,
     defenses: defenses, // Flat defense bonuses (fortitude, reflex, will)
-    forceSensitive: system.forceSensitive || false,
-    prestigeClass: !system.base_class,
+    forceSensitive: forceSensitive,
+    prestigeClass: prestigeClass,
     levelProgression: featuresByLevel, // Parsed level progression
     _raw: system // Keep raw data for reference
   };

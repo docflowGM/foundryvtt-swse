@@ -302,6 +302,15 @@ export class SWSEProgressionEngine {
     this.mode = data.mode || this.mode;
     this.data = data.data || {};
 
+    // For levelup mode, store the previous state so we can track what's new
+    // This prevents double-granting force powers on subsequent finalize calls
+    if (this.mode === 'levelup') {
+      const progression = this.actor.system.progression || {};
+      this.data._previousClassLevels = [...(progression.classLevels || [])];
+      this.data._previousFeats = [...(progression.feats || [])];
+      this.data._previousTalents = [...(progression.talents || [])];
+    }
+
     swseLogger.log(`Loaded progression state:`, { completedSteps: this.completedSteps, current: this.current });
   }
 
@@ -353,19 +362,44 @@ export class SWSEProgressionEngine {
           mode: this.mode
         };
 
-        // Add class levels from progression (for class-based force power grants)
+        // Add ALL class levels from progression (for class-based force power grants)
+        // This ensures multiclass characters get force powers from all their force classes
         if (progression.classLevels && progression.classLevels.length > 0) {
-          // Get the most recently added class level
-          const latestClassLevel = progression.classLevels[progression.classLevels.length - 1];
-          updateSummary.classLevelsAdded = [{
-            class: latestClassLevel.class,
-            level: latestClassLevel.level
-          }];
+          // For chargen mode, include all class levels since they're all new
+          // For levelup mode, we track which class levels are new in this session
+          if (this.mode === 'chargen') {
+            // All class levels are new during character generation
+            updateSummary.classLevelsAdded = progression.classLevels.map(cl => ({
+              class: cl.class,
+              level: cl.level
+            }));
+          } else {
+            // For levelup, check which class levels were added in this session
+            // We compare against the stored state before this session started
+            const previousClassLevels = this.data._previousClassLevels || [];
+            const newClassLevels = progression.classLevels.slice(previousClassLevels.length);
+            updateSummary.classLevelsAdded = newClassLevels.map(cl => ({
+              class: cl.class,
+              level: cl.level
+            }));
+          }
         }
 
-        // Add feats from progression (for feat-based force power grants like Force Training)
-        if (progression.feats && progression.feats.length > 0) {
-          updateSummary.featsAdded = [...progression.feats];
+        // Add ONLY newly selected feats (not all feats from progression)
+        // This prevents double-granting force powers on subsequent finalize calls
+        if (this.mode === 'chargen') {
+          // For chargen, all feats are new
+          if (progression.feats && progression.feats.length > 0) {
+            updateSummary.featsAdded = [...progression.feats];
+          }
+        } else {
+          // For levelup, only include feats selected in this session
+          const previousFeats = this.data._previousFeats || [];
+          const currentFeats = progression.feats || [];
+          const newFeats = currentFeats.filter(f => !previousFeats.includes(f));
+          if (newFeats.length > 0) {
+            updateSummary.featsAdded = newFeats;
+          }
         }
 
         await ForcePowerEngine.handleForcePowerTriggers(this.actor, updateSummary);
@@ -374,11 +408,27 @@ export class SWSEProgressionEngine {
       }
 
       // Emit completion event (triggers language module, etc.)
-      Hooks.call('swse:progression:completed', {
-        actor: this.actor,
-        mode: this.mode,
-        level: this.actor.system.level
-      });
+      // Use callAll to ensure all handlers run, and wrap in try-catch for safety
+      try {
+        const hookData = {
+          actor: this.actor,
+          mode: this.mode,
+          level: this.actor.system.level
+        };
+
+        // Call the hook and wait for any async handlers
+        // Note: Hooks.callAll is synchronous, but handlers can be async
+        // We emit the hook and give time for async handlers to complete
+        Hooks.callAll('swse:progression:completed', hookData);
+
+        // Allow async handlers (like language module) time to complete
+        // This is a compromise since Hooks don't natively support async await
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+      } catch (hookError) {
+        swseLogger.warn('Error in progression completion hooks:', hookError);
+        // Don't throw - hooks failing shouldn't prevent progression completion
+      }
 
       swseLogger.log(`Progression finalized for ${this.actor.name}`);
 
@@ -503,8 +553,38 @@ export class SWSEProgressionEngine {
   }
 
   async _action_confirmAbilities(payload) {
-    const { method, values } = payload;
+    const { method, values, increases } = payload;
 
+    const updates = {};
+
+    // Handle level-up ability increases (at levels 4, 8, 12, 16, 20)
+    if (increases) {
+      // Validate total increases (should be 2 points total)
+      const totalIncreases = Object.values(increases).reduce((sum, val) => sum + val, 0);
+      if (totalIncreases > 2) {
+        throw new Error(`Too many ability increases: ${totalIncreases}/2`);
+      }
+
+      // Apply increases to existing base scores
+      for (const [ability, increase] of Object.entries(increases)) {
+        if (increase > 0) {
+          const currentBase = this.actor.system.abilities?.[ability]?.base || 10;
+          const newBase = currentBase + increase;
+          updates[`system.abilities.${ability}.base`] = newBase;
+          swseLogger.log(`Progression: Increasing ${ability} by +${increase} (${currentBase} → ${newBase})`);
+        }
+      }
+
+      // Track ability increases in progression data
+      updates["system.progression.abilityIncreases"] = increases;
+
+      await applyActorUpdateAtomic(this.actor, updates);
+      this.data.abilityIncreases = increases;
+      // Don't complete a step for level-up ability increases
+      return;
+    }
+
+    // Handle chargen ability score setting (point buy, roll, etc.)
     // Validate point buy if using that method
     if (method === "pointBuy") {
       const cost = this._calculatePointBuyCost(values);
@@ -522,9 +602,7 @@ export class SWSEProgressionEngine {
       }
     }
 
-    const updates = {
-      "system.progression.abilityMethod": method
-    };
+    updates["system.progression.abilityMethod"] = method;
 
     // Update base ability scores
     for (const [ability, data] of Object.entries(values)) {
@@ -538,8 +616,8 @@ export class SWSEProgressionEngine {
   }
 
   async _action_confirmClass(payload) {
-    const { classId } = payload;
-    const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
+    const { classId, skipPrerequisites = false } = payload;
+    const { PROGRESSION_RULES, REQUIRED_PRESTIGE_LEVEL } = await import('../progression/data/progression-data.js');
     const { getClassData } = await import('../progression/utils/class-data-loader.js');
 
     // Try hardcoded data first (faster for core classes)
@@ -555,6 +633,69 @@ export class SWSEProgressionEngine {
 
     if (!classData) {
       throw new Error(`Unknown class: ${classId}`);
+    }
+
+    // Prerequisite validation (can be skipped for free build mode)
+    if (!skipPrerequisites) {
+      const progression = this.actor.system.progression || {};
+      const classLevels = progression.classLevels || [];
+      const currentLevel = classLevels.length;
+
+      // Check prestige class prerequisites
+      if (classData.prestigeClass) {
+        // Prestige classes require minimum level (default 7)
+        const requiredLevel = REQUIRED_PRESTIGE_LEVEL || 7;
+        if (currentLevel < requiredLevel) {
+          throw new Error(`Prestige class "${classId}" requires character level ${requiredLevel}. Current level: ${currentLevel}`);
+        }
+
+        // Check for additional prerequisites from compendium
+        if (classData._raw?.prerequisites) {
+          const prereqs = classData._raw.prerequisites;
+
+          // Check BAB prerequisite
+          if (prereqs.bab) {
+            const { calculateBAB } = await import('../progression/data/progression-data.js');
+            const currentBAB = await calculateBAB(classLevels);
+            if (currentBAB < prereqs.bab) {
+              throw new Error(`Prestige class "${classId}" requires BAB +${prereqs.bab}. Current BAB: +${currentBAB}`);
+            }
+          }
+
+          // Check trained skills prerequisite
+          if (prereqs.trainedSkills && Array.isArray(prereqs.trainedSkills)) {
+            const trainedSkills = progression.trainedSkills || [];
+            const missingSkills = prereqs.trainedSkills.filter(s => !trainedSkills.includes(s));
+            if (missingSkills.length > 0) {
+              throw new Error(`Prestige class "${classId}" requires trained skills: ${missingSkills.join(', ')}`);
+            }
+          }
+
+          // Check required feats prerequisite
+          if (prereqs.feats && Array.isArray(prereqs.feats)) {
+            const allFeats = [...(progression.feats || []), ...(progression.startingFeats || [])];
+            const missingFeats = prereqs.feats.filter(f => !allFeats.some(pf => pf.toLowerCase() === f.toLowerCase()));
+            if (missingFeats.length > 0) {
+              throw new Error(`Prestige class "${classId}" requires feats: ${missingFeats.join(', ')}`);
+            }
+          }
+
+          // Check force sensitivity prerequisite
+          if (prereqs.forceSensitive === true) {
+            const hasForceSensitivity = (progression.startingFeats || []).some(f =>
+              f.toLowerCase().includes('force sensitivity')
+            );
+            const isForceSensitiveClass = classLevels.some(cl => {
+              const clData = PROGRESSION_RULES.classes[cl.class];
+              return clData?.forceSensitive;
+            });
+
+            if (!hasForceSensitivity && !isForceSensitiveClass) {
+              throw new Error(`Prestige class "${classId}" requires Force Sensitivity`);
+            }
+          }
+        }
+      }
     }
 
     const progression = this.actor.system.progression || {};
@@ -622,7 +763,23 @@ export class SWSEProgressionEngine {
     // Accumulate starting feats from all classes (level 1 of each class grants automatic feats)
     const existingStartingFeats = progression.startingFeats || [];
     const classStartingFeats = (levelInClass === 1) ? (classData.startingFeats || []) : [];
-    const allStartingFeats = Array.from(new Set([...existingStartingFeats, ...classStartingFeats]));
+
+    // Deduplicate starting feats with case-insensitive comparison
+    // Normalize feat names by trimming whitespace
+    const normalizedExisting = existingStartingFeats.map(f => f.trim());
+    const normalizedNew = classStartingFeats.map(f => f.trim());
+
+    // Use case-insensitive Set-like deduplication
+    const featMap = new Map();
+    for (const feat of normalizedExisting) {
+      featMap.set(feat.toLowerCase(), feat);
+    }
+    for (const feat of normalizedNew) {
+      if (!featMap.has(feat.toLowerCase())) {
+        featMap.set(feat.toLowerCase(), feat);
+      }
+    }
+    const allStartingFeats = Array.from(featMap.values());
 
     swseLogger.log(
       `Progression: New budgets - Feat budget: ${featBudget}, Talent budget: ${talentBudget}, ` +
@@ -660,6 +817,10 @@ export class SWSEProgressionEngine {
 
     // Get class data (try hardcoded first, then compendium)
     const firstClass = classLevels[0];
+    if (!firstClass || !firstClass.class) {
+      throw new Error("Invalid class level data");
+    }
+
     let classData = PROGRESSION_RULES.classes[firstClass.class];
     if (!classData) {
       classData = await getClassData(firstClass.class);
@@ -669,18 +830,30 @@ export class SWSEProgressionEngine {
       throw new Error(`Unknown class: ${firstClass.class}`);
     }
 
-    const intMod = this.actor.system.abilities.int?.mod || 0;
+    // Ensure skillPoints is a valid number
+    const skillPoints = typeof classData.skillPoints === 'number' ? classData.skillPoints : 4;
+    const intMod = this.actor.system.abilities?.int?.mod || 0;
     const progression = this.actor.system.progression || {};
 
-    // Available trainings = class base + INT modifier
+    // Available trainings = class base + INT modifier (minimum 1)
     // (Background trainings are automatic and don't count against this)
-    const availableTrainings = classData.skillPoints + intMod;
+    const availableTrainings = Math.max(1, skillPoints + intMod);
 
     // Count background trainings (already applied, don't count against budget)
-    const backgroundTrainings = progression.backgroundTrainedSkills || [];
+    const backgroundTrainings = Array.isArray(progression.backgroundTrainedSkills)
+      ? progression.backgroundTrainedSkills
+      : [];
+
+    // Normalize skills to strings and filter out invalid entries
+    const selectedSkills = skills
+      .map(s => {
+        if (typeof s === 'string') return s;
+        if (s && typeof s === 'object') return s.key || s.name || null;
+        return null;
+      })
+      .filter(s => s !== null && typeof s === 'string' && s.trim() !== '');
 
     // Count selected trainings (exclude background skills)
-    const selectedSkills = skills.map(s => typeof s === 'string' ? s : (s.key || s.name));
     const nonBackgroundSelections = selectedSkills.filter(
       skill => !backgroundTrainings.includes(skill)
     );
@@ -692,9 +865,8 @@ export class SWSEProgressionEngine {
       );
     }
 
-    // Normalize to simple array of skill names (trained skills)
-    // No ranks - just a list of trained skills
-    const trainedSkills = selectedSkills.map(s => typeof s === 'string' ? s : (s.key || s.name));
+    // Store trained skills (deduplicated)
+    const trainedSkills = [...new Set(selectedSkills)];
 
     await applyActorUpdateAtomic(this.actor, {
       "system.progression.trainedSkills": trainedSkills

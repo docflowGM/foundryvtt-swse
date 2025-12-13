@@ -57,15 +57,40 @@ export class ActorProgressionUpdater {
           updates["system.race"] = prog.species;
           if (speciesData.size) updates["system.size"] = speciesData.size;
           if (speciesData.speed !== undefined) updates["system.speed"] = speciesData.speed;
-
-          // Mark force sensitivity
-          if (classLevels.some(cl => {
-            const classData = PROGRESSION_RULES.classes[cl.class];
-            return classData?.forceSensitive;
-          })) {
-            updates["system.forceSensitive"] = true;
-          }
         }
+      }
+
+      // Mark force sensitivity - check both hardcoded and compendium classes
+      const { getClassData } = await import('../utils/class-data-loader.js');
+      let isForceSensitive = false;
+
+      for (const cl of classLevels) {
+        // First check hardcoded data
+        const hardcodedClass = PROGRESSION_RULES.classes[cl.class];
+        if (hardcodedClass?.forceSensitive) {
+          isForceSensitive = true;
+          break;
+        }
+
+        // If not in hardcoded data, check compendium
+        const compendiumClass = await getClassData(cl.class);
+        if (compendiumClass?.forceSensitive) {
+          isForceSensitive = true;
+          break;
+        }
+      }
+
+      // Also check if character has Force Sensitivity feat
+      const hasForceTrainingFeat = (prog.feats || []).some(f =>
+        f.toLowerCase().includes('force sensitivity') ||
+        f.toLowerCase().includes('force training')
+      );
+      const hasForceStartingFeat = (prog.startingFeats || []).some(f =>
+        f.toLowerCase().includes('force sensitivity')
+      );
+
+      if (isForceSensitive || hasForceTrainingFeat || hasForceStartingFeat) {
+        updates["system.forceSensitive"] = true;
       }
 
       // Keep applied feats/talents/skills as flags for tracking
@@ -76,7 +101,16 @@ export class ActorProgressionUpdater {
 
       // Apply updates if any
       if (Object.keys(updates).length > 0) {
-        await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
+        // Use ActorEngine if available, otherwise fall back to direct actor update
+        if (globalThis.SWSE?.ActorEngine?.updateActor) {
+          await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
+        } else if (window.SWSE?.ActorEngine?.updateActor) {
+          await window.SWSE.ActorEngine.updateActor(actor, updates);
+        } else {
+          // Fallback: direct actor update if engine is not available
+          swseLogger.warn('ActorProgressionUpdater: ActorEngine not available, using direct update');
+          await actor.update(updates);
+        }
         swseLogger.log(`ActorProgressionUpdater: Applied ${Object.keys(updates).length} updates to ${actor.name}`);
       }
 
