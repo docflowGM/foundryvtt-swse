@@ -553,8 +553,38 @@ export class SWSEProgressionEngine {
   }
 
   async _action_confirmAbilities(payload) {
-    const { method, values } = payload;
+    const { method, values, increases } = payload;
 
+    const updates = {};
+
+    // Handle level-up ability increases (at levels 4, 8, 12, 16, 20)
+    if (increases) {
+      // Validate total increases (should be 2 points total)
+      const totalIncreases = Object.values(increases).reduce((sum, val) => sum + val, 0);
+      if (totalIncreases > 2) {
+        throw new Error(`Too many ability increases: ${totalIncreases}/2`);
+      }
+
+      // Apply increases to existing base scores
+      for (const [ability, increase] of Object.entries(increases)) {
+        if (increase > 0) {
+          const currentBase = this.actor.system.abilities?.[ability]?.base || 10;
+          const newBase = currentBase + increase;
+          updates[`system.abilities.${ability}.base`] = newBase;
+          swseLogger.log(`Progression: Increasing ${ability} by +${increase} (${currentBase} → ${newBase})`);
+        }
+      }
+
+      // Track ability increases in progression data
+      updates["system.progression.abilityIncreases"] = increases;
+
+      await applyActorUpdateAtomic(this.actor, updates);
+      this.data.abilityIncreases = increases;
+      // Don't complete a step for level-up ability increases
+      return;
+    }
+
+    // Handle chargen ability score setting (point buy, roll, etc.)
     // Validate point buy if using that method
     if (method === "pointBuy") {
       const cost = this._calculatePointBuyCost(values);
@@ -572,9 +602,7 @@ export class SWSEProgressionEngine {
       }
     }
 
-    const updates = {
-      "system.progression.abilityMethod": method
-    };
+    updates["system.progression.abilityMethod"] = method;
 
     // Update base ability scores
     for (const [ability, data] of Object.entries(values)) {
