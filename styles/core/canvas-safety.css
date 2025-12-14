@@ -1,0 +1,12 @@
+/* Enforce canvas safety */
+
+.swse .app,
+.swse .window-app {
+  position: relative !important;
+  z-index: 20 !important;
+}
+
+#controls,
+#ui-top {
+  z-index: 100 !important;
+}

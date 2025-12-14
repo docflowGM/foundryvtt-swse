@@ -3,7 +3,6 @@
 // Foundry VTT | Star Wars Saga Edition
 // ============================================
 
-import "./scripts/progression/progression-engine.js";
 import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engine/progression.js';
 import { SWSELanguageModule } from './scripts/progression/modules/language-module.js';
 
