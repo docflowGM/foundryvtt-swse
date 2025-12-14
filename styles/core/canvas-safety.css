@@ -10,3 +10,37 @@
 #ui-top {
   z-index: 100 !important;
 }
+
+
+/* --- Sidebar Chat Layout Fix (AUTO-GENERATED) --- */
+
+#sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+#sidebar-tabs {
+  flex: 0 0 auto;
+}
+
+#sidebar-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#chat {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#chat-log {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* --- End Sidebar Chat Layout Fix --- */
