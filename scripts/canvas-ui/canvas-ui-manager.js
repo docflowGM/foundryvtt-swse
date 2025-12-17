@@ -13,4 +13,3 @@ export class CanvasUIManager {
     return this.init();
   }
 }
-

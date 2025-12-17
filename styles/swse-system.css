@@ -1,0 +1,1173 @@
+/* ============================================================================
+ * SWSE SYSTEM - MASTER STYLESHEET (WITH ALL THEMES)
+ * Foundry VTT v13 Compatible | Single-File Architecture
+ *
+ * VERSION: 2.0.0
+ * UPDATED: 2024-12-16
+ *
+ * CONTENTS:
+ * 1. CSS Custom Properties (Base Design Tokens)
+ * 2. Theme Variants (Holo, Jedi, Starship, Sand People, High Republic, High Contrast)
+ * 3. Base Application Styles
+ * 4. Form Controls
+ * 5. Buttons
+ * 6. Sheet Tabs
+ * 7. Tables & Lists
+ * 8. Character Sheet
+ * 9. Vehicle Sheet
+ * 10. Dialogs & Modals
+ * 11. Theme-Specific Enhancements
+ * 12. Canvas Toolbar
+ * 13. Progression Sidebar
+ * 14. Chat Messages
+ * 15. Utility Classes
+ * 16. Responsive & Accessibility
+ * ============================================================================ */
+
+/* ============================================================================
+ * SECTION 1: BASE DESIGN TOKENS (Default/Holo Theme)
+ * ============================================================================ */
+
+:root {
+  /* ─── Primary Brand Colors ─── */
+  --swse-primary: #9ed0ff;
+  --swse-secondary: #00aaff;
+  --swse-accent: #00d9ff;
+
+  /* ─── Background Colors ─── */
+  --swse-bg-dark: #0a0f1a;
+  --swse-bg-mid: #0f1420;
+  --swse-bg-light: #1a2030;
+  --swse-bg-overlay: rgba(0, 20, 40, 0.5);
+  --swse-bg-hover: rgba(0, 170, 255, 0.15);
+
+  /* ─── Border Colors ─── */
+  --swse-border-default: #1c4b8e;
+  --swse-border-active: #00baff;
+  --swse-border-hover: #00aaff;
+  --swse-border-subtle: rgba(0, 170, 255, 0.2);
+
+  /* ─── Text Colors ─── */
+  --swse-text-primary: #9ed0ff;
+  --swse-text-secondary: #6a9dcd;
+  --swse-text-light: #b5daff;
+  --swse-text-white: #ffffff;
+  --swse-text-muted: rgba(181, 218, 255, 0.5);
+
+  /* ─── Semantic Colors ─── */
+  --swse-success: #00ff88;
+  --swse-warning: #ffaa00;
+  --swse-danger: #ff6b6b;
+  --swse-info: #00c6ff;
+
+  /* ─── Shadows & Glows ─── */
+  --swse-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --swse-shadow-base: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --swse-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.4);
+  --swse-shadow-glow: 0 0 10px rgba(0, 170, 255, 0.4);
+  --swse-shadow-glow-intense: 0 0 20px rgba(0, 255, 255, 0.3);
+
+  /* ─── Spacing Scale ─── */
+  --swse-space-xs: 2px;
+  --swse-space-sm: 4px;
+  --swse-space-md: 8px;
+  --swse-space-lg: 16px;
+  --swse-space-xl: 24px;
+
+  /* ─── Typography ─── */
+  --swse-font-primary: "Orbitron", "Roboto", sans-serif;
+  --swse-font-secondary: "Roboto", sans-serif;
+  --swse-font-size-xs: 10px;
+  --swse-font-size-sm: 11px;
+  --swse-font-size-base: 12px;
+  --swse-font-size-md: 13px;
+  --swse-font-size-lg: 14px;
+  --swse-font-size-xl: 16px;
+  --swse-font-size-xxl: 20px;
+
+  /* ─── Borders & Radius ─── */
+  --swse-border-width: 1px;
+  --swse-border-width-thick: 2px;
+  --swse-border-radius-sm: 2px;
+  --swse-border-radius-base: 4px;
+  --swse-border-radius-md: 6px;
+  --swse-border-radius-lg: 8px;
+
+  /* ─── Component Sizes ─── */
+  --swse-input-height: 24px;
+  --swse-button-height: 28px;
+  --swse-button-height-sm: 22px;
+  --swse-button-height-lg: 34px;
+
+  /* ─── Transitions ─── */
+  --swse-transition-fast: 0.15s ease;
+  --swse-transition-base: 0.2s ease;
+  --swse-transition-slow: 0.3s ease;
+
+  /* ─── Theme-Specific (can be overridden) ─── */
+  --swse-theme-overlay-opacity: 0.5;
+  --swse-theme-grid-color: rgba(0, 180, 255, 0.03);
+  --swse-theme-scanline: 1;
+}
+
+/* ============================================================================
+ * SECTION 2: THEME VARIANTS
+ * Each theme overrides the CSS custom properties
+ * ============================================================================ */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * HOLO THEME (Default) - Classic holographic blue
+ * ───────────────────────────────────────────────────────────────────────────── */
+[data-theme="holo"] {
+  --swse-primary: #9ed0ff;
+  --swse-secondary: #00aaff;
+  --swse-accent: #00d9ff;
+  --swse-bg-dark: #0a0f1a;
+  --swse-bg-mid: #0f1420;
+  --swse-bg-light: #1a2030;
+  --swse-bg-overlay: rgba(0, 20, 40, 0.5);
+  --swse-bg-hover: rgba(0, 170, 255, 0.15);
+  --swse-border-default: #1c4b8e;
+  --swse-border-active: #00baff;
+  --swse-border-hover: #00aaff;
+  --swse-border-subtle: rgba(0, 170, 255, 0.2);
+  --swse-text-primary: #9ed0ff;
+  --swse-text-secondary: #6a9dcd;
+  --swse-text-light: #b5daff;
+  --swse-text-muted: rgba(181, 218, 255, 0.5);
+  --swse-shadow-glow: 0 0 10px rgba(0, 170, 255, 0.4);
+  --swse-shadow-glow-intense: 0 0 20px rgba(0, 255, 255, 0.3);
+  --swse-theme-grid-color: rgba(0, 180, 255, 0.03);
+  --swse-theme-scanline: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * JEDI THEME - Force/Jedi Order aesthetic
+ * ───────────────────────────────────────────────────────────────────────────── */
+[data-theme="jedi"] {
+  --swse-primary: #4da6ff;
+  --swse-secondary: #66d9ff;
+  --swse-accent: #00bfff;
+  --swse-bg-dark: #0a1628;
+  --swse-bg-mid: #132744;
+  --swse-bg-light: #1c3a5f;
+  --swse-bg-overlay: rgba(10, 22, 40, 0.85);
+  --swse-bg-hover: rgba(77, 166, 255, 0.15);
+  --swse-border-default: #2b5278;
+  --swse-border-active: #4da6ff;
+  --swse-border-hover: #66d9ff;
+  --swse-border-subtle: rgba(43, 82, 120, 0.4);
+  --swse-text-primary: #e8f4f8;
+  --swse-text-secondary: #a8d4e8;
+  --swse-text-light: #ffffff;
+  --swse-text-muted: rgba(232, 244, 248, 0.6);
+  --swse-shadow-glow: 0 0 10px rgba(77, 166, 255, 0.5);
+  --swse-shadow-glow-intense: 0 0 20px rgba(0, 191, 255, 0.4);
+  --swse-theme-grid-color: rgba(77, 166, 255, 0.02);
+  --swse-theme-scanline: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * SITH THEME - Dark side aesthetic with red accents
+ * ───────────────────────────────────────────────────────────────────────────── */
+[data-theme="sith"] {
+  --swse-primary: #ff4444;
+  --swse-secondary: #ff6666;
+  --swse-accent: #ff8888;
+  --swse-bg-dark: #0d0a0a;
+  --swse-bg-mid: #1a1212;
+  --swse-bg-light: #2a1a1a;
+  --swse-bg-overlay: rgba(20, 10, 10, 0.85);
+  --swse-bg-hover: rgba(255, 68, 68, 0.15);
+  --swse-border-default: #5c2828;
+  --swse-border-active: #ff4444;
+  --swse-border-hover: #ff6666;
+  --swse-border-subtle: rgba(255, 68, 68, 0.2);
+  --swse-text-primary: #ffcccc;
+  --swse-text-secondary: #cc9999;
+  --swse-text-light: #ffffff;
+  --swse-text-muted: rgba(255, 204, 204, 0.5);
+  --swse-success: #88ff88;
+  --swse-warning: #ffaa00;
+  --swse-danger: #ff4444;
+  --swse-info: #ff8888;
+  --swse-shadow-glow: 0 0 10px rgba(255, 68, 68, 0.4);
+  --swse-shadow-glow-intense: 0 0 20px rgba(255, 68, 68, 0.5);
+  --swse-theme-grid-color: rgba(255, 68, 68, 0.02);
+  --swse-theme-scanline: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * STARSHIP THEME - Sleek spacecraft control panel
+ * ───────────────────────────────────────────────────────────────────────────── */
+[data-theme="starship"] {
+  --swse-primary: #58a6ff;
+  --swse-secondary: #79c0ff;
+  --swse-accent: #8cc4ff;
+  --swse-bg-dark: #0d1117;
+  --swse-bg-mid: #161b22;
+  --swse-bg-light: #21262d;
+  --swse-bg-overlay: rgba(13, 17, 23, 0.8);
+  --swse-bg-hover: rgba(88, 166, 255, 0.15);
+  --swse-border-default: #30363d;
+  --swse-border-active: #58a6ff;
+  --swse-border-hover: #79c0ff;
+  --swse-border-subtle: rgba(48, 54, 61, 0.5);
+  --swse-text-primary: #c9d1d9;
+  --swse-text-secondary: #8b949e;
+  --swse-text-light: #f0f6fc;
+  --swse-text-muted: rgba(184, 197, 208, 0.6);
+  --swse-shadow-glow: 0 0 10px rgba(88, 166, 255, 0.4);
+  --swse-shadow-glow-intense: 0 0 20px rgba(121, 192, 255, 0.3);
+  --swse-theme-grid-color: rgba(88, 166, 255, 0.015);
+  --swse-theme-scanline: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * SAND PEOPLE THEME - Desert/Tatooine aesthetic
+ * ───────────────────────────────────────────────────────────────────────────── */
+[data-theme="sand-people"] {
+  --swse-primary: #8b4513;
+  --swse-secondary: #a0522d;
+  --swse-accent: #cd853f;
+  --swse-bg-dark: #e8d5b7;
+  --swse-bg-mid: #d4c4a8;
+  --swse-bg-light: #c9b99a;
+  --swse-bg-overlay: rgba(232, 213, 183, 0.9);
+  --swse-bg-hover: rgba(139, 69, 19, 0.15);
+  --swse-border-default: #8b7355;
+  --swse-border-active: #8b4513;
+  --swse-border-hover: #a0522d;
+  --swse-border-subtle: rgba(139, 115, 85, 0.3);
+  --swse-text-primary: #2a1f15;
+  --swse-text-secondary: #5d4e37;
+  --swse-text-light: #1a1410;
+  --swse-text-white: #0a0806;
+  --swse-text-muted: rgba(42, 31, 21, 0.6);
+  --swse-success: #6b8e23;
+  --swse-warning: #daa520;
+  --swse-danger: #8b0000;
+  --swse-info: #5f9ea0;
+  --swse-shadow-glow: none;
+  --swse-shadow-glow-intense: none;
+  --swse-theme-grid-color: transparent;
+  --swse-theme-scanline: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * HIGH REPUBLIC THEME - Gold and light tones
+ * ───────────────────────────────────────────────────────────────────────────── */
+[data-theme="high-republic"] {
+  --swse-primary: #daa520;
+  --swse-secondary: #ffd700;
+  --swse-accent: #f0e68c;
+  --swse-bg-dark: #f5f5dc;
+  --swse-bg-mid: #fffacd;
+  --swse-bg-light: #fafad2;
+  --swse-bg-overlay: rgba(245, 245, 220, 0.95);
+  --swse-bg-hover: rgba(218, 165, 32, 0.15);
+  --swse-border-default: #daa520;
+  --swse-border-active: #ffd700;
+  --swse-border-hover: #f0e68c;
+  --swse-border-subtle: rgba(218, 165, 32, 0.3);
+  --swse-text-primary: #2c2416;
+  --swse-text-secondary: #5d4e2a;
+  --swse-text-light: #1a1510;
+  --swse-text-white: #0d0c08;
+  --swse-text-muted: rgba(44, 36, 22, 0.6);
+  --swse-success: #6b8e23;
+  --swse-warning: #ff8c00;
+  --swse-danger: #8b0000;
+  --swse-info: #4682b4;
+  --swse-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --swse-shadow-base: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --swse-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+  --swse-shadow-glow: 0 0 10px rgba(218, 165, 32, 0.3);
+  --swse-shadow-glow-intense: 0 0 20px rgba(255, 215, 0, 0.2);
+  --swse-theme-grid-color: transparent;
+  --swse-theme-scanline: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * HIGH CONTRAST THEME - Accessibility focused
+ * ───────────────────────────────────────────────────────────────────────────── */
+[data-theme="high-contrast"] {
+  --swse-primary: #ffff00;
+  --swse-secondary: #00ffff;
+  --swse-accent: #ffffff;
+  --swse-bg-dark: #000000;
+  --swse-bg-mid: #1a1a1a;
+  --swse-bg-light: #2a2a2a;
+  --swse-bg-overlay: rgba(0, 0, 0, 0.9);
+  --swse-bg-hover: rgba(255, 255, 0, 0.2);
+  --swse-border-default: #ffffff;
+  --swse-border-active: #ffff00;
+  --swse-border-hover: #00ffff;
+  --swse-border-subtle: rgba(255, 255, 255, 0.3);
+  --swse-border-width: 2px;
+  --swse-text-primary: #ffffff;
+  --swse-text-secondary: #ffff00;
+  --swse-text-light: #ffffff;
+  --swse-text-muted: rgba(255, 255, 255, 0.7);
+  --swse-success: #00ff00;
+  --swse-warning: #ffff00;
+  --swse-danger: #ff0000;
+  --swse-info: #00ffff;
+  --swse-shadow-glow: none;
+  --swse-shadow-glow-intense: none;
+  --swse-theme-grid-color: transparent;
+  --swse-theme-scanline: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * MANDALORIAN THEME - Beskar steel aesthetic
+ * ───────────────────────────────────────────────────────────────────────────── */
+[data-theme="mandalorian"] {
+  --swse-primary: #a0a0a0;
+  --swse-secondary: #c0c0c0;
+  --swse-accent: #e0e0e0;
+  --swse-bg-dark: #1a1a1a;
+  --swse-bg-mid: #252525;
+  --swse-bg-light: #333333;
+  --swse-bg-overlay: rgba(26, 26, 26, 0.9);
+  --swse-bg-hover: rgba(160, 160, 160, 0.15);
+  --swse-border-default: #4a4a4a;
+  --swse-border-active: #a0a0a0;
+  --swse-border-hover: #c0c0c0;
+  --swse-border-subtle: rgba(160, 160, 160, 0.2);
+  --swse-text-primary: #e0e0e0;
+  --swse-text-secondary: #a0a0a0;
+  --swse-text-light: #ffffff;
+  --swse-text-muted: rgba(224, 224, 224, 0.5);
+  --swse-success: #4caf50;
+  --swse-warning: #ff9800;
+  --swse-danger: #f44336;
+  --swse-info: #2196f3;
+  --swse-shadow-glow: 0 0 8px rgba(160, 160, 160, 0.3);
+  --swse-shadow-glow-intense: 0 0 15px rgba(192, 192, 192, 0.3);
+  --swse-theme-grid-color: rgba(160, 160, 160, 0.02);
+  --swse-theme-scanline: 0;
+}
+
+/* ============================================================================
+ * SECTION 3: BASE APPLICATION STYLES
+ * All scoped to .application.swse
+ * ============================================================================ */
+
+/* ─── Window Chrome ─── */
+.application.swse {
+  font-family: var(--swse-font-secondary);
+  font-size: var(--swse-font-size-base);
+  color: var(--swse-text-primary);
+}
+
+.application.swse .window-header {
+  background: linear-gradient(180deg, var(--swse-bg-light) 0%, var(--swse-bg-dark) 100%);
+  border-bottom: 1px solid var(--swse-border-default);
+}
+
+.application.swse .window-title {
+  font-family: var(--swse-font-primary);
+  color: var(--swse-text-primary);
+  text-shadow: var(--swse-shadow-glow);
+}
+
+.application.swse .window-content {
+  background: var(--swse-bg-dark);
+  color: var(--swse-text-primary);
+  padding: var(--swse-space-md);
+}
+
+/* Scrollbars */
+.application.swse .window-content::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.application.swse .window-content::-webkit-scrollbar-track {
+  background: var(--swse-bg-dark);
+  border-radius: var(--swse-border-radius-sm);
+}
+
+.application.swse .window-content::-webkit-scrollbar-thumb {
+  background: var(--swse-border-default);
+  border-radius: var(--swse-border-radius-sm);
+}
+
+.application.swse .window-content::-webkit-scrollbar-thumb:hover {
+  background: var(--swse-border-hover);
+}
+
+/* ─── Typography ─── */
+.application.swse h1,
+.application.swse h2,
+.application.swse h3,
+.application.swse h4 {
+  font-family: var(--swse-font-primary);
+  color: var(--swse-text-primary);
+  margin: 0 0 var(--swse-space-md) 0;
+  line-height: 1.2;
+}
+
+.application.swse h1 { font-size: var(--swse-font-size-xxl); }
+.application.swse h2 { font-size: var(--swse-font-size-xl); }
+.application.swse h3 { font-size: var(--swse-font-size-lg); }
+.application.swse h4 { font-size: var(--swse-font-size-md); }
+
+.application.swse p {
+  margin: 0 0 var(--swse-space-md) 0;
+}
+
+.application.swse a {
+  color: var(--swse-secondary);
+  text-decoration: none;
+}
+
+.application.swse a:hover {
+  color: var(--swse-accent);
+  text-decoration: underline;
+}
+
+/* ============================================================================
+ * SECTION 4: FORM CONTROLS
+ * ============================================================================ */
+
+.application.swse input[type="text"],
+.application.swse input[type="number"],
+.application.swse input[type="password"],
+.application.swse input[type="search"],
+.application.swse select,
+.application.swse textarea {
+  background: var(--swse-bg-mid);
+  border: var(--swse-border-width) solid var(--swse-border-default);
+  border-radius: var(--swse-border-radius-base);
+  color: var(--swse-text-primary);
+  font-family: inherit;
+  font-size: inherit;
+  padding: var(--swse-space-sm) var(--swse-space-md);
+  height: var(--swse-input-height);
+  transition: border-color var(--swse-transition-fast), box-shadow var(--swse-transition-fast);
+}
+
+.application.swse input:focus,
+.application.swse select:focus,
+.application.swse textarea:focus {
+  outline: none;
+  border-color: var(--swse-border-active);
+  box-shadow: var(--swse-shadow-glow);
+}
+
+.application.swse input::placeholder,
+.application.swse textarea::placeholder {
+  color: var(--swse-text-muted);
+}
+
+.application.swse input[type="checkbox"],
+.application.swse input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--swse-secondary);
+}
+
+.application.swse textarea {
+  height: auto;
+  min-height: 60px;
+  resize: vertical;
+}
+
+.application.swse label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: var(--swse-space-xs);
+  color: var(--swse-text-secondary);
+}
+
+.application.swse .form-group {
+  margin-bottom: var(--swse-space-md);
+}
+
+/* ============================================================================
+ * SECTION 5: BUTTONS
+ * ============================================================================ */
+
+.application.swse button,
+.application.swse .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--swse-space-sm);
+  height: var(--swse-button-height);
+  padding: 0 var(--swse-space-lg);
+  font-family: var(--swse-font-primary);
+  font-size: var(--swse-font-size-sm);
+  font-weight: 500;
+  color: var(--swse-text-white);
+  background: linear-gradient(180deg, var(--swse-secondary) 0%, var(--swse-primary) 100%);
+  border: none;
+  border-radius: var(--swse-border-radius-md);
+  cursor: pointer;
+  transition: transform var(--swse-transition-fast), box-shadow var(--swse-transition-fast);
+}
+
+.application.swse button:hover,
+.application.swse .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--swse-shadow-glow);
+}
+
+.application.swse button:active,
+.application.swse .btn:active {
+  transform: translateY(1px);
+}
+
+.application.swse button:disabled,
+.application.swse .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Button Variants */
+.application.swse button.secondary,
+.application.swse .btn.secondary {
+  background: var(--swse-bg-mid);
+  border: var(--swse-border-width) solid var(--swse-border-default);
+  color: var(--swse-text-primary);
+}
+
+.application.swse button.danger,
+.application.swse .btn.danger {
+  background: linear-gradient(180deg, var(--swse-danger) 0%, #aa4444 100%);
+}
+
+.application.swse button.success,
+.application.swse .btn.success {
+  background: linear-gradient(180deg, var(--swse-success) 0%, #00aa66 100%);
+  color: var(--swse-bg-dark);
+}
+
+/* Button Sizes */
+.application.swse button.sm,
+.application.swse .btn.sm {
+  height: var(--swse-button-height-sm);
+  padding: 0 var(--swse-space-md);
+  font-size: var(--swse-font-size-xs);
+}
+
+.application.swse button.lg,
+.application.swse .btn.lg {
+  height: var(--swse-button-height-lg);
+  padding: 0 var(--swse-space-xl);
+  font-size: var(--swse-font-size-md);
+}
+
+/* ============================================================================
+ * SECTION 6: SHEET TABS
+ * ============================================================================ */
+
+.application.swse .sheet-tabs {
+  display: flex;
+  gap: var(--swse-space-xs);
+  border-bottom: 1px solid var(--swse-border-default);
+  margin-bottom: var(--swse-space-md);
+  padding-bottom: var(--swse-space-sm);
+}
+
+.application.swse .sheet-tabs .item {
+  padding: var(--swse-space-sm) var(--swse-space-md);
+  color: var(--swse-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--swse-border-radius-base) var(--swse-border-radius-base) 0 0;
+  cursor: pointer;
+  font-family: var(--swse-font-primary);
+  font-size: var(--swse-font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color var(--swse-transition-fast), background var(--swse-transition-fast);
+}
+
+.application.swse .sheet-tabs .item:hover {
+  color: var(--swse-text-primary);
+  background: var(--swse-bg-hover);
+}
+
+.application.swse .sheet-tabs .item.active {
+  color: var(--swse-text-white);
+  background: var(--swse-secondary);
+  box-shadow: var(--swse-shadow-glow);
+}
+
+/* ============================================================================
+ * SECTION 7: TABLES & LISTS
+ * ============================================================================ */
+
+.application.swse table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.application.swse th,
+.application.swse td {
+  padding: var(--swse-space-sm) var(--swse-space-md);
+  text-align: left;
+  border-bottom: 1px solid var(--swse-border-subtle);
+}
+
+.application.swse th {
+  font-family: var(--swse-font-primary);
+  font-size: var(--swse-font-size-sm);
+  color: var(--swse-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.application.swse tr:hover td {
+  background: var(--swse-bg-hover);
+}
+
+.application.swse .item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.application.swse .item-list .item {
+  display: flex;
+  align-items: center;
+  gap: var(--swse-space-md);
+  padding: var(--swse-space-sm) var(--swse-space-md);
+  border-bottom: 1px solid var(--swse-border-subtle);
+  transition: background var(--swse-transition-fast);
+}
+
+.application.swse .item-list .item:hover {
+  background: var(--swse-bg-hover);
+}
+
+.application.swse .item-list .item-image {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--swse-border-radius-sm);
+  object-fit: cover;
+}
+
+.application.swse .item-list .item-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+/* ============================================================================
+ * SECTION 8: CHARACTER SHEET
+ * ============================================================================ */
+
+.application.swse.sheet.actor .sheet-header {
+  display: flex;
+  gap: var(--swse-space-lg);
+  padding-bottom: var(--swse-space-md);
+  border-bottom: 1px solid var(--swse-border-default);
+  margin-bottom: var(--swse-space-md);
+}
+
+.application.swse.sheet.actor .profile-img {
+  width: 100px;
+  height: 100px;
+  border-radius: var(--swse-border-radius-md);
+  border: 2px solid var(--swse-border-default);
+  object-fit: cover;
+}
+
+.application.swse.sheet.actor .header-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--swse-space-sm);
+}
+
+.application.swse.sheet.actor .char-name {
+  font-family: var(--swse-font-primary);
+  font-size: var(--swse-font-size-xxl);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--swse-border-subtle);
+  color: var(--swse-text-primary);
+  padding: var(--swse-space-xs) 0;
+  height: auto;
+}
+
+.application.swse.sheet.actor .char-name:focus {
+  border-color: var(--swse-border-active);
+  outline: none;
+}
+
+/* Attributes Grid */
+.application.swse .attributes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: var(--swse-space-md);
+}
+
+.application.swse .attribute {
+  text-align: center;
+  padding: var(--swse-space-md);
+  background: var(--swse-bg-mid);
+  border: 1px solid var(--swse-border-default);
+  border-radius: var(--swse-border-radius-md);
+}
+
+.application.swse .attribute .attr-label {
+  font-family: var(--swse-font-primary);
+  font-size: var(--swse-font-size-xs);
+  color: var(--swse-text-secondary);
+  text-transform: uppercase;
+  margin-bottom: var(--swse-space-xs);
+}
+
+.application.swse .attribute .attr-value {
+  font-family: var(--swse-font-primary);
+  font-size: var(--swse-font-size-xl);
+  color: var(--swse-text-primary);
+}
+
+.application.swse .attribute .attr-mod {
+  font-size: var(--swse-font-size-sm);
+  color: var(--swse-secondary);
+}
+
+/* ============================================================================
+ * SECTION 9: VEHICLE SHEET
+ * ============================================================================ */
+
+.application.swse.vehicle-sheet .sheet-header {
+  display: flex;
+  align-items: center;
+  gap: var(--swse-space-md);
+  padding: var(--swse-space-sm) var(--swse-space-md);
+  background: var(--swse-bg-mid);
+  border-bottom: 1px solid var(--swse-border-default);
+}
+
+.application.swse.vehicle-sheet .vehicle-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--swse-space-md);
+  padding: var(--swse-space-md);
+}
+
+/* ============================================================================
+ * SECTION 10: DIALOGS & MODALS
+ * ============================================================================ */
+
+.application.swse.dialog .dialog-content {
+  padding: var(--swse-space-lg);
+}
+
+.application.swse.dialog .dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--swse-space-md);
+  padding: var(--swse-space-md);
+  border-top: 1px solid var(--swse-border-default);
+  background: var(--swse-bg-mid);
+}
+
+/* Level-up Dialog */
+.application.swse.swse-levelup .scroll-table {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--swse-border-default);
+  border-radius: var(--swse-border-radius-base);
+  margin-bottom: var(--swse-space-md);
+}
+
+.application.swse.swse-levelup .filter-controls {
+  display: flex;
+  gap: var(--swse-space-md);
+  margin-bottom: var(--swse-space-md);
+}
+
+/* ============================================================================
+ * SECTION 11: THEME-SPECIFIC VISUAL ENHANCEMENTS
+ * ============================================================================ */
+
+/* ─── Holographic Grid Overlay (for themes with scanlines) ─── */
+.application.swse::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(90deg, var(--swse-theme-grid-color) 1px, transparent 1px),
+    linear-gradient(0deg, var(--swse-theme-grid-color) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+  opacity: calc(var(--swse-theme-scanline) * 0.5);
+  z-index: 0;
+  border-radius: inherit;
+}
+
+/* Ensure content is above grid */
+.application.swse .window-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Holo Pulse Animation (active tabs) ─── */
+@keyframes swse-holo-pulse {
+  0%, 100% {
+    box-shadow: var(--swse-shadow-glow);
+  }
+  50% {
+    box-shadow: var(--swse-shadow-glow-intense);
+  }
+}
+
+[data-theme="holo"] .application.swse .sheet-tabs .item.active,
+[data-theme="jedi"] .application.swse .sheet-tabs .item.active,
+[data-theme="sith"] .application.swse .sheet-tabs .item.active {
+  animation: swse-holo-pulse 3s ease-in-out infinite;
+}
+
+/* ─── Boot-up Flicker Animation ─── */
+@keyframes swse-boot-flicker {
+  0% { opacity: 0; filter: brightness(0.5); }
+  15% { opacity: 1; filter: brightness(1.2); }
+  30% { opacity: 0.8; filter: brightness(0.9); }
+  50% { opacity: 1; filter: brightness(1); }
+  100% { opacity: 1; filter: brightness(1); }
+}
+
+[data-theme="holo"] .application.swse,
+[data-theme="jedi"] .application.swse,
+[data-theme="sith"] .application.swse,
+[data-theme="starship"] .application.swse {
+  animation: swse-boot-flicker 0.6s ease-out;
+}
+
+/* ─── High Republic Gold Shimmer ─── */
+[data-theme="high-republic"] .application.swse .window-title,
+[data-theme="high-republic"] .application.swse h1,
+[data-theme="high-republic"] .application.swse h2 {
+  background: linear-gradient(90deg, var(--swse-primary), var(--swse-secondary), var(--swse-primary));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ─── Sand People Texture ─── */
+[data-theme="sand-people"] .application.swse::before {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  opacity: 0.3;
+}
+
+/* ─── High Contrast Enhancements ─── */
+[data-theme="high-contrast"] .application.swse {
+  border: var(--swse-border-width-thick) solid var(--swse-border-default);
+}
+
+[data-theme="high-contrast"] .application.swse::before {
+  display: none;
+}
+
+/* ============================================================================
+ * SECTION 12: CANVAS TOOLBAR
+ * Custom element - doesn't affect Foundry core UI
+ * ============================================================================ */
+
+.swse-canvas-toolbar {
+  position: fixed;
+  z-index: 70;
+  pointer-events: auto;
+  font-family: var(--font-family, Signika, sans-serif);
+  background: rgba(18, 18, 22, 0.94);
+  color: #eee;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  padding: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+}
+
+.swse-canvas-toolbar .swse-toolbar-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.swse-canvas-toolbar .swse-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.swse-canvas-toolbar .swse-tool:hover {
+  background: rgba(255, 215, 0, 0.15);
+  border-color: rgba(255, 215, 0, 0.3);
+}
+
+.swse-canvas-toolbar .swse-tool:active {
+  transform: translateY(1px);
+}
+
+.swse-canvas-toolbar .swse-tool i {
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.swse-canvas-toolbar .swse-tool .swse-label {
+  margin-left: 6px;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+/* Toolbar Dropdowns */
+.swse-canvas-toolbar .swse-tool.dropdown {
+  position: relative;
+}
+
+.swse-canvas-toolbar .swse-tool.dropdown .dropdown-panel {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 8px);
+  min-width: 180px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: rgba(12, 12, 16, 0.98);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  padding: 6px;
+  display: none;
+  z-index: 80;
+}
+
+.swse-canvas-toolbar .swse-tool.dropdown.open .dropdown-panel {
+  display: block;
+}
+
+.swse-canvas-toolbar .dropdown-item {
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.15s ease;
+}
+
+.swse-canvas-toolbar .dropdown-item:hover {
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.swse-canvas-toolbar .swse-collapse {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  font-size: 10px;
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.swse-canvas-toolbar.collapsed {
+  width: 48px;
+}
+
+.swse-canvas-toolbar.collapsed .swse-label {
+  display: none;
+}
+
+/* ============================================================================
+ * SECTION 13: PROGRESSION SIDEBAR
+ * Custom UI element - NOT Foundry's #sidebar
+ * ============================================================================ */
+
+.swse-progression-sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, rgba(12, 18, 30, 0.95), rgba(10, 14, 22, 0.92));
+  color: var(--swse-text-primary);
+  border-right: 1px solid var(--swse-border-subtle);
+  padding: 12px;
+  box-shadow: 0 8px 24px rgba(1, 6, 20, 0.6);
+  font-family: var(--swse-font-primary);
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 60;
+  overflow-y: auto;
+  transition: width 0.25s ease;
+}
+
+.swse-progression-sidebar.collapsed {
+  width: 72px;
+}
+
+.swse-progression-sidebar .prog-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-progression-sidebar .prog-step {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.swse-progression-sidebar .prog-step:hover {
+  transform: translateX(4px);
+  background: var(--swse-bg-hover);
+}
+
+.swse-progression-sidebar .prog-step.current {
+  background: linear-gradient(90deg, rgba(3, 160, 255, 0.08), transparent);
+  border-left: 3px solid var(--swse-accent);
+}
+
+.swse-progression-sidebar .prog-step.completed {
+  opacity: 0.7;
+}
+
+.swse-progression-sidebar .prog-step.locked {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ============================================================================
+ * SECTION 14: CHAT MESSAGES
+ * ============================================================================ */
+
+.swse-chat-card {
+  padding: 10px;
+  background: rgba(0, 20, 40, 0.3);
+  border: 1px solid var(--swse-border-subtle);
+  border-radius: var(--swse-border-radius-md);
+  margin: 4px 0;
+}
+
+.swse-chat-card .card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--swse-space-sm);
+  margin-bottom: var(--swse-space-sm);
+  padding-bottom: var(--swse-space-sm);
+  border-bottom: 1px solid var(--swse-border-subtle);
+}
+
+.swse-chat-card .roll-result {
+  font-family: var(--swse-font-primary);
+  font-size: var(--swse-font-size-lg);
+  color: var(--swse-accent);
+  text-align: center;
+  padding: var(--swse-space-md);
+}
+
+/* ============================================================================
+ * SECTION 15: UTILITY CLASSES
+ * ============================================================================ */
+
+/* Spacing */
+.application.swse .mt-0 { margin-top: 0; }
+.application.swse .mt-sm { margin-top: var(--swse-space-sm); }
+.application.swse .mt-md { margin-top: var(--swse-space-md); }
+.application.swse .mb-0 { margin-bottom: 0; }
+.application.swse .mb-sm { margin-bottom: var(--swse-space-sm); }
+.application.swse .mb-md { margin-bottom: var(--swse-space-md); }
+.application.swse .p-sm { padding: var(--swse-space-sm); }
+.application.swse .p-md { padding: var(--swse-space-md); }
+
+/* Text */
+.application.swse .text-center { text-align: center; }
+.application.swse .text-muted { color: var(--swse-text-muted); }
+.application.swse .text-success { color: var(--swse-success); }
+.application.swse .text-warning { color: var(--swse-warning); }
+.application.swse .text-danger { color: var(--swse-danger); }
+
+/* Display */
+.application.swse .hidden { display: none; }
+.application.swse .flex { display: flex; }
+.application.swse .flex-col { flex-direction: column; }
+.application.swse .flex-1 { flex: 1; }
+.application.swse .items-center { align-items: center; }
+.application.swse .gap-sm { gap: var(--swse-space-sm); }
+.application.swse .gap-md { gap: var(--swse-space-md); }
+
+/* Grid */
+.application.swse .grid { display: grid; }
+.application.swse .grid-2 { grid-template-columns: repeat(2, 1fr); }
+.application.swse .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+/* ============================================================================
+ * SECTION 16: RESPONSIVE & ACCESSIBILITY
+ * ============================================================================ */
+
+@media (max-width: 768px) {
+  .application.swse .attributes-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .swse-canvas-toolbar {
+    padding: 6px;
+  }
+
+  .swse-canvas-toolbar .swse-tool {
+    min-width: 40px;
+    height: 40px;
+  }
+
+  .swse-progression-sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .application.swse .attributes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .application.swse.sheet.actor .sheet-header {
+    flex-direction: column;
+  }
+
+  .application.swse.sheet.actor .profile-img {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .application.swse,
+  .application.swse *,
+  .swse-canvas-toolbar,
+  .swse-canvas-toolbar * {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
+}
+
+/* ============================================================================
+ * END OF SWSE MASTER STYLESHEET
+ * ============================================================================ */

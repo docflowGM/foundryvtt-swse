@@ -26,27 +26,7 @@
     "index.js"
   ],
   "styles": [
-    "styles/core/swse-base.css",
-    "styles/core/canvas-ui-fixes.css",
-    "styles/components/swse-components.css",
-    "styles/sheets/character-sheet.css",
-    "styles/sheets/unified-sheets.css",
-    "styles/sheets/vehicle-sheet.css",
-    "styles/sheets/improved-contrast.css",
-    "styles/sheets/sheet-improvements.css",
-    "styles/combat/combat-enhancements.css",
-    "styles/combat/vehicle-combat.css",
-    "styles/apps/chargen/chargen.css",
-    "styles/apps/chargen/chargen-templates.css",
-    "styles/apps/houserules.css",
-    "styles/apps/store.css",
-    "styles/apps/vehicle-modification.css",
-    "styles/apps/upgrade-app.css",
-    "styles/sheets/themes/holo-default.css",
-    "styles/sheets/themes/high-contrast.css",
-    "styles/components/assets-tab.css",
-    "styles/progression/sidebar.css",
-    "styles/progression/ability-rolling.css"
+    "styles/swse-system.css"
   ],
   "languages": [
     {
@@ -56,12 +36,12 @@
     },
     {
       "lang": "es",
-      "name": "Espa\u00f1ol",
+      "name": "Español",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Fran\u00e7ais",
+      "name": "Français",
       "path": "lang/fr.json"
     },
     {
@@ -71,7 +51,7 @@
     },
     {
       "lang": "ru",
-      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "name": "Русский",
       "path": "lang/ru.json"
     }
   ],
