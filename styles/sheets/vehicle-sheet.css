@@ -172,7 +172,7 @@
     color: var(--swse-text-white);
 }
 
-.sheet-tabs {
+.vehicle-sheet .sheet-tabs {
     background: var(--swse-bg-mid);
     border-bottom: 1px solid var(--swse-secondary);
     display: flex;
@@ -182,7 +182,7 @@
     z-index: 100;
 }
 
-.sheet-tabs .item {
+.vehicle-sheet .sheet-tabs .item {
     flex: 1;
     padding: 4px 20px;
     background: var(--swse-bg-overlay);
@@ -198,12 +198,12 @@
     text-align: center;
 }
 
-.sheet-tabs .item:hover {
+.vehicle-sheet .sheet-tabs .item:hover {
     background: var(--swse-bg-hover);
     color: var(--swse-secondary);
 }
 
-.sheet-tabs .item.active {
+.vehicle-sheet .sheet-tabs .item.active {
     background: linear-gradient(180deg, var(--swse-secondary) 0%, var(--swse-border-default) 100%);
     color: var(--swse-text-white);
     box-shadow: inset 0 -3px 10px rgba(0, 0, 0, 0.3);
