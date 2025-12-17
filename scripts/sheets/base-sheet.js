@@ -250,7 +250,11 @@ export class SWSEActorSheetBase extends ActorSheet {
     if (typeof handler === 'function') {
       return handler.call(this, event);
     } else {
-      SWSELogger.warn(`No handler found for action: ${action}`);
+      
+    if (action === "create" || action === "createItem") {
+        return this._onItemCreate(event);
+    }
+SWSELogger.warn(`No handler found for action: ${action}`);
     }
   }
   

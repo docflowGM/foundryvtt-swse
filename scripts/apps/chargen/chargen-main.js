@@ -78,7 +78,7 @@ export default class CharacterGenerator extends Application {
       forcePowersRequired: 0, // Calculated based on Force Sensitivity and Force Training feats
       level: 1,
       hp: { value: 1, max: 1, temp: 0 },
-      forcePoints: { value: 0, max: 0, die: "1d6" },
+      forcePoints: { value: 5, max: 5, die: "1d6" },
       destinyPoints: { value: 1 },
       secondWind: { uses: 1, max: 1, misc: 0, healing: 0 },
       defenses: {
@@ -249,253 +249,43 @@ export default class CharacterGenerator extends Application {
     }
   }
 
+  
+  
+  
   async getData() {
-    const context = super.getData();
-    if (!this._packs.species) {
-      const loaded = await this._loadData();
-      if (loaded === false) {
-        // Critical packs missing, chargen will close
-        return context;
+
+    // Load backgrounds from PROGRESSION_RULES
+    if (!this.backgrounds) {
+      try {
+        await this._loadBackgroundsFromProgression();
+      } catch (err) {
+        console.error("Failed to load backgrounds:", err);
+        this.backgrounds = [];
       }
+    }
+
+    const context = super.getData();
+
+    if (!this._packs.species) {
+      const ok = await this._loadData();
+      if (!ok) return context;
     }
 
     context.characterData = this.characterData;
+    context.backgrounds = this.backgrounds || [];
     context.currentStep = this.currentStep;
-    context.isLevelUp = !!this.actor;
     context.freeBuild = this.freeBuild;
+    context.isLevelUp = !!this.actor;
+
     context.packs = foundry.utils.deepClone(this._packs);
     context.skillsJson = this._skillsJson || [];
 
-    // Helper function for chevron navigation
-    const steps = this._getSteps();
-    const currentIndex = steps.indexOf(this.currentStep);
-    context.stepIsPrevious = (step) => {
-      const stepIndex = steps.indexOf(step);
-      return stepIndex >= 0 && stepIndex < currentIndex;
-    };
-
-    // Sort species by source material (Core first, then alphabetically)
-    if (context.packs.species) {
-      context.packs.species = this._sortSpeciesBySource(context.packs.species);
-    }
-
-    // Calculate half level for display
-    context.halfLevel = Math.floor(this.characterData.level / 2);
-
-    // Droid degree data
-    context.droidDegrees = [
-      { key: "1st-degree", name: "1st-Degree Droid", bonuses: "+2 INT, +2 WIS, -2 STR", description: "Medical and scientific droids" },
-      { key: "2nd-degree", name: "2nd-Degree Droid", bonuses: "+2 INT, -2 CHA", description: "Engineering and technical droids" },
-      { key: "3rd-degree", name: "3rd-Degree Droid", bonuses: "+2 WIS, +2 CHA, -2 STR", description: "Protocol and service droids" },
-      { key: "4th-degree", name: "4th-Degree Droid", bonuses: "+2 DEX, -2 INT, -2 CHA", description: "Security and military droids" },
-      { key: "5th-degree", name: "5th-Degree Droid", bonuses: "+4 STR, -4 INT, -4 CHA", description: "Labor and utility droids" }
-    ];
-
-    // Filter to only show core SWSE classes and add metadata
-    if (context.packs.classes) {
-      const coreClasses = ["Jedi", "Noble", "Scout", "Scoundrel", "Soldier"];
-      context.packs.classes = context.packs.classes.filter(c => {
-        return coreClasses.includes(c.name);
-      });
-
-      // Further filter for level 0 droids (no Jedi classes)
-      if (this.characterData.isDroid && this.characterData.level === 0) {
-        context.packs.classes = context.packs.classes.filter(c => {
-          const className = (c.name || "").toLowerCase();
-          return !className.includes("jedi");
-        });
-      }
-
-      // Add icons and descriptions to classes
-      context.packs.classes = context.packs.classes.map(c => {
-        const classMetadata = this._getClassMetadata(c.name);
-        return {
-          ...c,
-          icon: classMetadata.icon,
-          description: classMetadata.description
-        };
-      });
-    }
-
-    // Filter feats based on prerequisites
-    if (context.packs.feats) {
-      // NONHEROIC RULE: Filter to restricted feat list for NPCs
-      if (this.actorType === "npc") {
-        const nonheroicFeats = [
-          "Armor Proficiency (Light)",
-          "Armor Proficiency (Medium)",
-          "Skill Focus",
-          "Skill Training",
-          "Weapon Proficiency (Advanced Melee Weapons)",
-          "Weapon Proficiency (Heavy Weapons)",
-          "Weapon Proficiency (Pistols)",
-          "Weapon Proficiency (Rifles)",
-          "Weapon Proficiency (Simple Weapons)"
-        ];
-
-        context.packs.feats = context.packs.feats.filter(f => {
-          return nonheroicFeats.some(allowed => f.name.includes(allowed));
-        });
-
-        SWSELogger.log(`CharGen | NPC mode: Filtered to ${context.packs.feats.length} nonheroic feats`);
-
-        // Organize by category
-        if (this._featMetadata && this._featMetadata.categories) {
-          context.featCategories = this._organizeFeatsByCategory(context.packs.feats);
-          context.featCategoryList = Object.keys(this._featMetadata.categories)
-            .map(key => ({ key, ...this._featMetadata.categories[key] }))
-            .sort((a, b) => a.order - b.order);
-        }
-      }
-      // In Free Build mode or for level 1 characters, show all feats without strict filtering
-      else if (this.freeBuild || this.characterData.level === 1) {
-        SWSELogger.log(`CharGen | Showing all feats (Free Build: ${this.freeBuild}, Level: ${this.characterData.level})`);
-
-        // Still organize feats by category for better UX
-        if (this._featMetadata && this._featMetadata.categories) {
-          context.featCategories = this._organizeFeatsByCategory(context.packs.feats);
-          // Store category keys sorted by order
-          context.featCategoryList = Object.keys(this._featMetadata.categories)
-            .map(key => ({ key, ...this._featMetadata.categories[key] }))
-            .sort((a, b) => a.order - b.order);
-        }
-      } else {
-        // Create a temporary actor-like object for prerequisite checking during character generation
-        const tempActor = this.actor || this._createTempActorForValidation();
-
-        // Prepare pending data
-        const pendingData = {
-          selectedFeats: this.characterData.feats || [],
-          selectedClass: this.characterData.classes?.[0],
-          abilityIncreases: {},
-          selectedSkills: Object.keys(this.characterData.skills).filter(k => this.characterData.skills[k]?.trained),
-          selectedTalents: this.characterData.talents || []
-        };
-
-        // Filter feats based on prerequisites (show all qualified feats, not just class bonus feats)
-        const filteredFeats = PrerequisiteValidator.filterQualifiedFeats(context.packs.feats, tempActor, pendingData);
-        context.packs.feats = filteredFeats.filter(f => f.isQualified);
-        context.packs.allFeats = filteredFeats; // Include all feats with qualification status
-
-        SWSELogger.log(`CharGen | Filtered feats: ${context.packs.feats.length} qualified out of ${filteredFeats.length} total`);
-
-        // Organize feats by category
-        if (this._featMetadata && this._featMetadata.categories) {
-          context.featCategories = this._organizeFeatsByCategory(context.packs.feats);
-          // Store category keys sorted by order
-          context.featCategoryList = Object.keys(this._featMetadata.categories)
-            .map(key => ({ key, ...this._featMetadata.categories[key] }))
-            .sort((a, b) => a.order - b.order);
-        }
-      }
-
-      // Store class bonus feats separately for when we need to show only those
-      if (this.characterData.classes && this.characterData.classes.length > 0) {
-        const selectedClass = this.characterData.classes[0];
-        const className = selectedClass.name || selectedClass;
-        const bonusFeats = context.packs.feats.filter(f => {
-          const bonusFeatFor = f.system?.bonus_feat_for || [];
-          return bonusFeatFor.includes(className);
-        });
-        context.packs.classBonusFeats = bonusFeats;
-        SWSELogger.log(`CharGen | Available class bonus feats for ${className}: ${bonusFeats.length}`);
-      }
-    }
-
-    // Talent trees and filtering
-    context.availableTalentTrees = this._getAvailableTalentTrees();
-    context.selectedTalentTree = this.selectedTalentTree;
-
-    // Filter talents by selected tree (if a tree is selected)
-    if (this.selectedTalentTree && context.packs.talents) {
-      const selectedTree = this.selectedTalentTree.toLowerCase().trim();
-      context.packs.talentsInTree = context.packs.talents.filter(t => {
-        // Use property accessor to get talent tree name
-        const talentTree = getTalentTreeName(t);
-        const talentName = t.name || '';
-
-        // Compare case-insensitive and trimmed
-        const treeMatch = talentTree.toLowerCase().trim() === selectedTree;
-
-        // Also check if talent name starts with tree name (e.g., "Lightsaber Combat - Deflect")
-        const nameMatch = talentName.toLowerCase().includes(selectedTree.replace(/\s+/g, '').toLowerCase());
-
-        return treeMatch || nameMatch;
-      });
-      SWSELogger.log(`CharGen | Talents in tree "${this.selectedTalentTree}": ${context.packs.talentsInTree.length}`, context.packs.talentsInTree.map(t => t.name));
-    } else {
-      context.packs.talentsInTree = [];
-    }
-
-    // Force powers
-    context.characterData.forcePowersRequired = this._getForcePowersNeeded();
-    context.availableForcePowers = await this._getAvailableForcePowers();
-    SWSELogger.log(`CharGen | Force powers required: ${context.characterData.forcePowersRequired}, available: ${context.availableForcePowers.length}`);
-
-    // Point buy pools
-    context.droidPointBuyPool = game.settings.get('foundryvtt-swse', "droidPointBuyPool") || 20;
-    context.livingPointBuyPool = game.settings.get('foundryvtt-swse', "livingPointBuyPool") || 25;
-
-    // Seraphim's dialogue for droid creation
-    if (this.characterData.isDroid) {
-      context.seraphimDialogue = this._getSeraphimDialogue();
-    }
-
-    // Skills count for skills step
-    context.characterData.trainedSkillsCount = Object.values(this.characterData.skills).filter(s => s.trained).length;
-
-    // Get class skills for the selected class
-    const selectedClass = this.characterData.classes && this.characterData.classes.length > 0
-      ? this._packs.classes?.find(c => c.name === this.characterData.classes[0].name)
-      : null;
-    const classSkills = selectedClass ? getClassProperty(selectedClass, 'classSkills', []) : [];
-
-    // Available skills for selection with bonuses
-    const halfLevel = Math.floor(this.characterData.level / 2);
-    // Get background class skills
-    const backgroundClassSkills = this._getBackgroundClassSkills ? this._getBackgroundClassSkills() : [];
-
-    context.availableSkills = this._getAvailableSkills().map(skill => {
-      const abilityMod = this.characterData.abilities[skill.ability]?.mod || 0;
-      const isTrained = this.characterData.skills[skill.key]?.trained || false;
-
-      // Check if skill is a class skill from class OR background
-      const isClassSkillFromClass = classSkills.some(cs =>
-        cs.toLowerCase().includes(skill.name.toLowerCase()) ||
-        skill.name.toLowerCase().includes(cs.toLowerCase())
-      );
-      const isClassSkillFromBackground = backgroundClassSkills.includes(skill.key);
-      const isClassSkill = isClassSkillFromClass || isClassSkillFromBackground;
-
-      const baseBonus = halfLevel + abilityMod;
-      const currentBonus = baseBonus + (isTrained ? 5 : 0);
-      const trainedBonus = baseBonus + 5;
-
-      return {
-        ...skill,
-        trained: isTrained,
-        isClassSkill: isClassSkill,
-        isBackgroundSkill: isClassSkillFromBackground, // Mark skills that came from background
-        currentBonus: currentBonus,
-        trainedBonus: trainedBonus,
-        abilityMod: abilityMod,
-        halfLevel: halfLevel
-      };
-    });
-
-    // Language data for languages step
-    if (this.currentStep === 'languages') {
-      // Initialize languages if not already done
-      if (!this.characterData.languageData) {
-        await this._initializeLanguages();
-      }
-
-      // Get available languages organized by category
-      context.languageCategories = await this._getAvailableLanguages();
-    }
-
     return context;
   }
+
+
+
+
 
   activateListeners(html) {
     super.activateListeners(html);
@@ -622,7 +412,7 @@ export default class CharacterGenerator extends Application {
     } else {
       // PC workflow: normal flow with class and talents
       // Note: skills before feats to allow Skill Focus validation
-      steps.push("abilities", "class", "skills", "feats", "talents");
+      steps.push("abilities", "class", "background", "skills", "feats", "talents");
 
       // Add force powers step if character is Force-sensitive
       if (this.characterData.forceSensitive && this._getForcePowersNeeded() > 0) {

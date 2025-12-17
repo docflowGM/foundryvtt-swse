@@ -48,6 +48,92 @@ import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
 import { ForcePointsUtil } from '../../utils/force-points.js';
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
+  /**
+   * Assets tab handlers
+   * Followers / Droids / Vehicles
+   */
+
+  async _onOpenFollower(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const followerId = button.dataset.id || $(button).closest('.asset-row').data('id');
+    if (!followerId) return;
+
+    const follower = game.actors?.get(followerId);
+    if (!follower) {
+      ui.notifications?.warn?.(`Follower with id ${followerId} not found`);
+      return;
+    }
+
+    return follower.sheet?.render(true);
+  }
+
+  async _onDismissFollower(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const followerId = button.dataset.id || $(button).closest('.asset-row').data('id');
+    if (!followerId) return;
+
+    const followers = this.actor.system?.followers || [];
+    const updated = followers.filter(f => f._id !== followerId);
+
+    await this.actor.update({ "system.followers": updated });
+  }
+
+  async _onOpenDroid(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const droidId = button.dataset.id || $(button).closest('.asset-row').data('id');
+    if (!droidId) return;
+
+    const item = this.actor.items?.get(droidId);
+    if (!item) {
+      ui.notifications?.warn?.(`Droid item with id ${droidId} not found on actor`);
+      return;
+    }
+
+    return item.sheet?.render(true);
+  }
+
+  async _onRemoveDroid(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const droidId = button.dataset.id || $(button).closest('.asset-row').data('id');
+    if (!droidId) return;
+
+    const droids = this.actor.system?.droids || [];
+    const updated = droids.filter(d => d._id !== droidId);
+
+    await this.actor.update({ "system.droids": updated });
+  }
+
+  async _onOpenVehicle(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const vehicleId = button.dataset.id || $(button).closest('.asset-row').data('id');
+    if (!vehicleId) return;
+
+    const item = this.actor.items?.get(vehicleId);
+    if (!item) {
+      ui.notifications?.warn?.(`Vehicle item with id ${vehicleId} not found on actor`);
+      return;
+    }
+
+    return item.sheet?.render(true);
+  }
+
+  async _onRemoveVehicle(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const vehicleId = button.dataset.id || $(button).closest('.asset-row').data('id');
+    if (!vehicleId) return;
+
+    const vehicles = this.actor.system?.vehicles || [];
+    const updated = vehicles.filter(v => v._id !== vehicleId);
+
+    await this.actor.update({ "system.vehicles": updated });
+  }
+
 
   static _forcePowerDescriptions = null;
   static _combatActionsData = null;
@@ -191,7 +277,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     // Organize force powers
     const allForcePowers = this.actor.items.filter(i => i.type === 'forcepower' || i.type === 'force-power');
-    const forceSuite = this.actor.system.forceSuite || { powers: [], max: 0 };
+    const forceSuite = this.actor.system.forceSuite || { powers: [], max: 6 };
 
     context.knownPowers = allForcePowers.filter(p => !forceSuite.powers?.includes(p.id));
     context.activeSuite = allForcePowers.filter(p => forceSuite.powers?.includes(p.id));

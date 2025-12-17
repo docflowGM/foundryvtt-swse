@@ -56,12 +56,12 @@
     },
     {
       "lang": "es",
-      "name": "Español",
+      "name": "Espa\u00f1ol",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Français",
+      "name": "Fran\u00e7ais",
       "path": "lang/fr.json"
     },
     {
@@ -71,7 +71,7 @@
     },
     {
       "lang": "ru",
-      "name": "Русский",
+      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
       "path": "lang/ru.json"
     }
   ],
@@ -275,5 +275,25 @@
       "type": "Actor",
       "system": "foundryvtt-swse"
     }
-  ]
+  ],
+  "settings": {
+    "foundryvtt-swse.actorValidationMigration": {
+      "scope": "world",
+      "config": false,
+      "type": "Boolean",
+      "default": false
+    },
+    "foundryvtt-swse.itemValidationMigration": {
+      "scope": "world",
+      "config": false,
+      "type": "Boolean",
+      "default": false
+    },
+    "foundryvtt-swse.forceCompendiumsPopulation": {
+      "scope": "world",
+      "config": false,
+      "type": "Boolean",
+      "default": false
+    }
+  }
 }

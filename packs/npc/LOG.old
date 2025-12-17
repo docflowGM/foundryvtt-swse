@@ -1,0 +1,5 @@
+2025/12/13-18:14:15.633 8370 Delete type=3 #1
+2025/12/15-19:50:20.961 4da8 Level-0 table #5: started
+2025/12/15-19:50:20.970 4da8 Level-0 table #5: 109908 bytes OK
+2025/12/15-19:50:20.972 4da8 Delete type=0 #3
+2025/12/15-19:50:20.977 4da8 Manual compaction at level-0 from '!actors!npc-0-lt_utility_droid' @ 72057594037927935 : 1 .. '!actors!null' @ 0 : 0; will stop at (end)

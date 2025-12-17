@@ -74,25 +74,38 @@ export class AbilityRollingController {
     return { id: `d${this._nextId++}`, value, tooltip, origin, locked:false };
   }
 
-  async _rollFormula(formula) {
+    async _rollFormula(formula) {
     try {
       if (typeof Roll === 'function') {
-        const roll = await new Roll(formula).roll({ async: false });
+        const roll = new Roll(formula);
+        // Foundry V10+ prefers evaluate/evaluateSync over roll({async:false})
+        if (typeof roll.evaluateSync === "function") {
+          roll.evaluateSync();
+        } else if (typeof roll.evaluate === "function") {
+          await roll.evaluate({ async: true });
+        } else if (typeof roll.roll === "function") {
+          await roll.roll();
+        }
         return roll;
       }
-    } catch(e){
+    } catch (e) {
       console.warn('Roll API not available or failed:', e);
     }
     const results = [];
     const match = formula.match(/(\d+)d(\d+)/);
     if (match) {
-      const n = parseInt(match[1],10);
-      const s = parseInt(match[2],10);
-      for (let i=0;i<n;i++) results.push(Math.ceil(Math.random()*s));
-      return { dice: [{ results: results.map(r => ({ result: r })) }], results, total: results.reduce((a,b)=>a+b,0) };
+      const n = parseInt(match[1], 10);
+      const s = parseInt(match[2], 10);
+      for (let i = 0; i < n; i++) results.push(Math.ceil(Math.random() * s));
+      return {
+        dice: [{ results: results.map(r => ({ result: r })) }],
+        results,
+        total: results.reduce((a, b) => a + b, 0)
+      };
     }
-    return { dice:[], results:[], total:0 };
+    return { dice: [], results: [], total: 0 };
   }
+
 
   _bindUI(){
     if (!this.root) return;

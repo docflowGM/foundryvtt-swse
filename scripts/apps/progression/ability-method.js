@@ -6,7 +6,7 @@ export class SWSEAbilityMethod {
   static async mount(containerSelector = '.swse-chargen') {
     const container = document.querySelector(containerSelector) ?? document.body;
     try {
-      await loadTemplates(['systems/foundryvtt-swse/templates/apps/progression/attribute-method.hbs']);
+      await foundry.applications.handlebars.loadTemplates(['systems/foundryvtt-swse/templates/apps/progression/attribute-method.hbs']);
       const html = await renderTemplate('systems/foundryvtt-swse/templates/apps/progression/attribute-method.hbs', { title: "Choose attribute method" });
       const wrapper = document.createElement('div');
       wrapper.className = 'swse-attribute-method-wrapper';

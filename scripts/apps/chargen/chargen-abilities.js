@@ -116,7 +116,7 @@ export function _bindAbilitiesUI(root) {
     const rollStandard = async () => {
       const results = [];
       for (let i = 0; i < 6; i++) {
-        const r = await globalThis.SWSE.RollEngine.safeRoll("4d6kh3").evaluate();
+        const r = await globalThis.SWSE.RollEngine.safeRoll("4d6kh3");
         const dice = r.dice[0].results.map(d => ({value: d.result, discarded: d.discarded}));
         results.push({ total: r.total, dice });
       }
@@ -266,7 +266,7 @@ export function _bindAbilitiesUI(root) {
 
     // Organic roll - IMPROVED WITH DRAG & DROP
     const rollOrganic = async () => {
-      const r = await globalThis.SWSE.RollEngine.safeRoll("24d6").evaluate();
+      const r = await globalThis.SWSE.RollEngine.safeRoll("24d6");
       if (!r.dice || !r.dice[0] || !r.dice[0].results) {
         ui.notifications.error("Failed to roll dice. Please try again.");
         SWSELogger.error("SWSE | Roll failed:", r);
