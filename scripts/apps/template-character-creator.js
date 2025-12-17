@@ -826,12 +826,12 @@ export class TemplateCharacterCreator extends Application {
 
     // Define compendia to search
     const compendiaPacks = [
-      'swse.equipment',
-      'swse.weapons',
-      'swse.armor',
-      'swse.armor_light',
-      'swse.armor_medium',
-      'swse.armor_heavy'
+      'foundryvtt-swse.equipment',
+      'foundryvtt-swse.weapons',
+      'foundryvtt-swse.armor',
+      'foundryvtt-swse.armor_light',
+      'foundryvtt-swse.armor_medium',
+      'foundryvtt-swse.armor_heavy'
     ];
 
     try {

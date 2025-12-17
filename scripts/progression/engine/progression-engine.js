@@ -151,25 +151,28 @@ export class ProgressionEngine {
   }
 
   /* -------------------------
-     Private helper methods
-     ------------------------- */
+   Private helper methods
+   ------------------------- */
 
-  /**
-   * Trigger force power updates
-   * @private
-   */
-  static async _triggerForcePowers(actor) {
-    try {
-      if (typeof ForcePowerEngine !== 'undefined') {
-        await const _summary = summary || {};
-actor._swseLastProgressionUpdate = _summary;
-await actor.setFlag('swse', 'lastProgressionUpdate', _summary);
-ForcePowerEngine.handleForcePowerTriggers(actor, _summary);
-      }
-    } catch(e) {
-      swseLogger.warn('ForcePowerEngine trigger failed', e);
-    }
+/**
+ * Trigger force power updates
+ * @private
+ */
+static async _triggerForcePowers(actor) {
+  try {
+    if (typeof ForcePowerEngine === "undefined") return;
+
+    const summary = {};
+
+    actor._swseLastProgressionUpdate = summary;
+    await actor.setFlag("swse", "lastProgressionUpdate", summary);
+
+    ForcePowerEngine.handleForcePowerTriggers(actor, summary);
+  } catch (e) {
+    swseLogger.warn("ForcePowerEngine trigger failed", e);
   }
+}
+
 
   /**
    * Legacy step application (fallback)

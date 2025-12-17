@@ -1,3 +1,4 @@
+import { swseLogger } from '../../scripts/utils/logger.js';
 /**
  * Utility helpers for Handlebars
  * NO GAME LOGIC - only display helpers

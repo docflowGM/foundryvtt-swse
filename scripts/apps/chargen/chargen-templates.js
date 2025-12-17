@@ -371,7 +371,13 @@ export class CharacterTemplates {
         return;
       }
 
-      const featEntry = index.find(f => f.name === featName);
+      let featEntry = index.find(f => f.name === featName);
+
+      // Fallback: handle variants like "Skill Focus (Use the Force)"
+      if (!featEntry && featName.includes('(')) {
+        const baseName = featName.split('(')[0].trim();
+        featEntry = index.find(f => f.name === baseName);
+      }
 
       if (!featEntry) {
         SWSELogger.warn(`SWSE | Feat not found: ${featName}`);

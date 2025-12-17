@@ -3,7 +3,6 @@
 // Foundry VTT | Star Wars Saga Edition
 // ============================================
 
-import "./scripts/progression/progression-engine.js";
 import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engine/progression.js';
 import { SWSELanguageModule } from './scripts/progression/modules/language-module.js';
 
@@ -554,7 +553,7 @@ Hooks.once("ready", async function () {
     // ============================================
     try {
         // Preload progression templates
-        await loadTemplates([
+        await foundry.applications.handlebars.loadTemplates([
             'systems/foundryvtt-swse/templates/apps/progression/sidebar.hbs',
             'systems/foundryvtt-swse/templates/apps/progression/attribute-method.hbs',
             'systems/foundryvtt-swse/templates/apps/chargen/ability-rolling.hbs'

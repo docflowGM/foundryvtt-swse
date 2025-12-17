@@ -1,3 +1,4 @@
+import { swseLogger } from '../../scripts/utils/logger.js';
 
 // Auto-generated partial loader for Foundry V12+
 export function registerSWSEPartials() {

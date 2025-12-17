@@ -242,7 +242,7 @@ export async function selectClass(classId, actor, context) {
   }
 
   // Check if multiclassing (choosing a different class than current classes)
-  const currentClasses = getCharacterClasses(actor);
+  let currentClasses = getCharacterClasses(actor);
   const classNames = Object.keys(currentClasses);
   const isMulticlassing = classNames.length > 0 && !classNames.includes(classDoc.name);
 

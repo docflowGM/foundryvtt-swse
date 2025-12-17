@@ -133,30 +133,42 @@ export class SWSEProgressionEngine {
   }
 
   /**
-   * Get normalized steps
-   * @returns {Array} Normalized step array
-   */
-  getSteps() {
-    const base = this.mode === "chargen" ? this.chargenSteps : this.levelUpSteps;
-    return this.normalizeSteps(base);
-  }
+ * Get normalized steps
+ * @returns {Array} Normalized step array
+ */
+getSteps() {
+  const base = this.mode === "chargen"
+    ? this.chargenSteps
+    : this.levelUpSteps;
 
-  /**
-   * Normalize step schema
-   * @param {Array} steps - Raw steps
-   * @returns {Array} Normalized steps
-   */
-  normalizeSteps(steps) {
-    return steps.map((s, i) => ({
-      id: s.id ?? `step-${i}`,
-      label: s.label ?? "",
-      subtitle: s.subtitle ?? "",
-      icon: s.icon ?? "glyph-generic",
-      locked: !this._isStepAvailable(s.id),
-      completed: this._isStepCompleted(s.id),
-      current: s.id === this.current
-    }));
-  }
+  return this.normalizeSteps(base);
+}
+
+/**
+ * Expose normalized steps as a property.
+ * Required because the constructor references this.steps[0].
+ */
+get steps() {
+  return this.getSteps();
+}
+
+/**
+ * Normalize step schema
+ * @param {Array} steps - Raw steps
+ * @returns {Array} Normalized steps
+ */
+normalizeSteps(steps) {
+  return steps.map((s, i) => ({
+    id: s.id ?? `step-${i}`,
+    label: s.label ?? "",
+    subtitle: s.subtitle ?? "",
+    icon: s.icon ?? "glyph-generic",
+    locked: !this._isStepAvailable(s.id),
+    completed: this._isStepCompleted(s.id),
+    current: s.id === this.current
+  }));
+}
+
 
   /**
    * Check if step is available

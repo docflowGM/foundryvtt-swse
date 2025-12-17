@@ -2,6 +2,42 @@ import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
 import { ForcePointsUtil } from '../../utils/force-points.js';
 
 export class SWSEActorBase extends Actor {
+  /**
+   * Backwards-compatible flag helpers.
+   * Accept legacy scope "swse" but store/read under the system id "foundryvtt-swse".
+   */
+  getFlag(scope, key) {
+    if (scope === "swse") {
+      // Prefer the proper system id scope
+      const value = super.getFlag("foundryvtt-swse", key);
+      if (value !== undefined) return value;
+
+      // Fallback: read any legacy data stored directly under flags.swse
+      const legacyFlags = this.flags?.swse;
+      if (!legacyFlags) return undefined;
+
+      if (typeof foundry !== "undefined" && foundry.utils?.getProperty) {
+        return foundry.utils.getProperty(legacyFlags, key);
+      }
+
+      return key.split(".").reduce(
+        (obj, k) => (obj && obj[k] !== undefined ? obj[k] : undefined),
+        legacyFlags
+      );
+    }
+    return super.getFlag(scope, key);
+  }
+
+  async setFlag(scope, key, value) {
+    if (scope === "swse") scope = "foundryvtt-swse";
+    return super.setFlag(scope, key, value);
+  }
+
+  async unsetFlag(scope, key) {
+    if (scope === "swse") scope = "foundryvtt-swse";
+    return super.unsetFlag(scope, key);
+  }
+
 
   prepareDerivedData() {
     super.prepareDerivedData();

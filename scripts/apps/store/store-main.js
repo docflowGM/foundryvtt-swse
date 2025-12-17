@@ -28,7 +28,7 @@ export class SWSEStore extends FormApplication {
     return mergeObject(super.defaultOptions, {
       id: "swse-store",
       classes: ["swse", "store"],
-      template: "modules/swse/templates/store/store.html",
+      template: "systems/foundryvtt-swse/templates/apps/store/store.html",
       width: 980,
       height: "auto",
     });

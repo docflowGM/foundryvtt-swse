@@ -70,3 +70,31 @@ export const swseHelpers = {
     return stepIndex !== -1 && currentIndex !== -1 && currentIndex > stepIndex;
   }
 };
+
+swseHelpers.extractHitDie = (value) => {
+  if (value == null) return "";
+  const str = String(value);
+  const match = str.match(/d(\d+)/i);
+  if (match) return match[1];
+  const fallback = str.match(/(\d+)/);
+  return fallback ? fallback[1] : str;
+};
+
+
+
+swseHelpers.formatBAB = (bab) => {
+  if (bab == null) return "";
+  // If it's an array or similar, normalize and join.
+  if (Array.isArray(bab)) {
+    const parts = bab
+      .map(v => Number(v))
+      .filter(v => !Number.isNaN(v))
+      .sort((a, b) => b - a); // highest to lowest, typical BAB display
+    if (!parts.length) return "";
+    return parts.map(v => (v >= 0 ? `+${v}` : `${v}`)).join("/");
+  }
+  const num = Number(bab);
+  if (Number.isNaN(num)) return String(bab);
+  return num >= 0 ? `+${num}` : `${num}`;
+};
+

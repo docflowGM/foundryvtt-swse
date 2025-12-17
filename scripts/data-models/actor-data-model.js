@@ -217,7 +217,6 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
         nullable: true,
         initial: 0,
         min: 0,
-        integer: true,
         clean: value => {
           if (value === null || value === undefined || value === "") return 0;
           const num = Number(value);
@@ -265,25 +264,37 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
           return Number.isNaN(num) ? 0 : Math.floor(num);
         }
       }),
+      
       speed: new fields.NumberField({
         required: false,
         nullable: true,
         initial: 6,
         min: 0,
-        integer: true,
+        /**
+         * Accept legacy string speeds like "6 Squares ( Hovering )"
+         * and coerce everything to a non-negative integer number of squares.
+         */
         clean: value => {
           if (value === null || value === undefined || value === "") return 6;
+
+          // Strings like "6 Squares ( Hovering )"
+          if (typeof value === "string") {
+            const match = value.match(/\d+/);
+            if (match) return parseInt(match[0], 10);
+          }
+
           const num = Number(value);
           if (Number.isNaN(num)) return 6;
-          // Ensure it's an integer
-          return Math.floor(num);
+          return Math.max(0, Math.floor(num));
         },
+        /**
+         * Final guard: allow null/undefined, otherwise require a finite integer >= 0.
+         */
         validate: value => {
-          // Allow null/undefined, they will be cleaned to 6
-          if (value === null || value === undefined) return true;
+          if (value === null || value === undefined || value === "") return true;
           const num = Number(value);
-          // Accept any numeric value, clean will handle rounding
-          return !Number.isNaN(num);
+          if (!Number.isFinite(num)) return false;
+          return num >= 0 && Number.isInteger(num);
         }
       }),
       damageThreshold: new fields.NumberField({
@@ -353,7 +364,6 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
           nullable: true,
           initial: 0,
           min: 0,
-          integer: true,
           clean: value => {
             if (value === null || value === undefined || value === "") return 0;
             const num = Number(value);
@@ -365,7 +375,6 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
           nullable: true,
           initial: 0,
           min: 0,
-          integer: true,
           clean: value => {
             if (value === null || value === undefined || value === "") return 0;
             const num = Number(value);

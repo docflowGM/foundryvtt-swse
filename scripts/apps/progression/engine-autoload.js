@@ -11,7 +11,7 @@
  */
 (async function () {
   try {
-    await loadTemplates([
+    await foundry.applications.handlebars.loadTemplates([
       'systems/foundryvtt-swse/templates/apps/progression/sidebar.hbs',
       'systems/foundryvtt-swse/templates/apps/progression/attribute-method.hbs',
       'systems/foundryvtt-swse/templates/apps/chargen/ability-rolling.hbs'
