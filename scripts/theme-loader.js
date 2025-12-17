@@ -19,12 +19,17 @@ export class ThemeLoader {
    */
   static themes = [
     'holo',
-    'high-contrast',
-    'starship',
-    'sand-people',
-    'jedi',
-    'high-republic'
+    'high-contrast'
   ];
+
+  /**
+   * Map theme names to their actual CSS filenames
+   * @type {Object<string, string>}
+   */
+  static themeFileMapping = {
+    'holo': 'holo-default',
+    'high-contrast': 'high-contrast'
+  };
 
   /**
    * Load a theme CSS file
@@ -38,38 +43,12 @@ export class ThemeLoader {
       themeName = 'holo';
     }
 
-    // Remove existing theme stylesheet if present
-    if (this.currentThemeLink) {
-      this.currentThemeLink.remove();
-      this.currentThemeLink = null;
-    }
-
     // Set data-theme attribute on document element
+    // All theme styles are now in swse-system.css using [data-theme] selectors
     document.documentElement.setAttribute('data-theme', themeName);
 
-    // Create new link element for theme stylesheet
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.type = 'text/css';
-    link.href = `systems/foundryvtt-swse/styles/themes/swse-theme-${themeName}.css`;
-    link.id = 'swse-theme-stylesheet';
-
-    // Load the stylesheet
-    return new Promise((resolve, reject) => {
-      link.onload = () => {
-        SWSELogger.log(`[SWSE Theme] Loaded theme: ${themeName}`);
-        resolve();
-      };
-
-      link.onerror = () => {
-        SWSELogger.error(`[SWSE Theme] Failed to load theme: ${themeName}`);
-        reject(new Error(`Failed to load theme: ${themeName}`));
-      };
-
-      // Append to head
-      document.head.appendChild(link);
-      this.currentThemeLink = link;
-    });
+    SWSELogger.log(`[SWSE Theme] Applied theme: ${themeName}`);
+    return Promise.resolve();
   }
 
   /**
