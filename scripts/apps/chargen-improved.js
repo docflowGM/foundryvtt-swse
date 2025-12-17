@@ -385,7 +385,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       SWSELogger.log("SWSE CharGen | Auto-granting Weapon Finesse (houserule)");
 
       // Find Weapon Finesse feat in compendium
-      const featPack = game.packs.get('foundryvtt-swse.feats');
+      const featPack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
       if (featPack) {
         const feats = await featPack.getDocuments();
         const weaponFinesse = feats.find(f => f.name === "Weapon Finesse");

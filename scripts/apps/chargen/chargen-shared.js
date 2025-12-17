@@ -49,12 +49,12 @@ export class ChargenDataCache {
    */
   static async _loadCompendia() {
     const packNames = {
-      species: "foundryvtt-swse.species",
-      feats: "foundryvtt-swse.feats",
-      talents: "foundryvtt-swse.talents",
-      classes: "foundryvtt-swse.classes",
-      droids: "foundryvtt-swse.droids",
-      forcePowers: "foundryvtt-swse.forcepowers"
+      species: "foundryvtt-foundryvtt-swse.species",
+      feats: "foundryvtt-foundryvtt-swse.feats",
+      talents: "foundryvtt-foundryvtt-swse.talents",
+      classes: "foundryvtt-foundryvtt-swse.classes",
+      droids: "foundryvtt-foundryvtt-swse.droids",
+      forcePowers: "foundryvtt-foundryvtt-swse.forcepowers"
     };
 
     const packs = {};

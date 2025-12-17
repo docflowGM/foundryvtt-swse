@@ -9,7 +9,7 @@ import { SWSELogger } from '../../utils/logger.js';
 export class SWSENPCSheet extends SWSECharacterSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "sheet", "actor", "npc"],
+      classes: ["swse", "sheet", "actor", "npc", "swse-app"],
       template: "systems/foundryvtt-swse/templates/actors/npc/npc-sheet.hbs",
       width: 800,
       height: 720,

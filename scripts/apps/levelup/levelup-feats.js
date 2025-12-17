@@ -188,7 +188,7 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
  */
 export async function loadFeats(actor, selectedClass, pendingData) {
   try {
-    const featPack = game.packs.get('foundryvtt-swse.feats');
+    const featPack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
     if (!featPack) {
       SWSELogger.error("SWSE LevelUp | Feats compendium pack not found!");
       ui.notifications.error("Failed to load feats compendium. Feats will not be available.");
@@ -290,7 +290,7 @@ export function selectBonusFeat(featId, featData, selectedFeats) {
  * @returns {Promise<Object|null>} The selected feat or null
  */
 export async function selectMulticlassFeat(featId) {
-  const featPack = game.packs.get('foundryvtt-swse.feats');
+  const featPack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
   const feat = await featPack.getDocument(featId);
   return feat || null;
 }

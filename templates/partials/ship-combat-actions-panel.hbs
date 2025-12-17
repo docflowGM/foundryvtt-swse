@@ -1,5 +1,5 @@
 {{!-- Ship Combat Actions Panel for Crew Positions --}}
-<div class="crew-actions-panel" style="display: none;" data-position="{{position}}">
+<div class="crew-actions-panel"  data-position="{{position}}">
  <div class="ship-actions-list">
  {{#each actions}}
  <div class="ship-action-item">
@@ -15,7 +15,7 @@
  {{#each relatedSkills}}
  {{#if dc}}
  <div class="ship-action-dc">
- <i class="fas fa-dice-d20"></i>
+ <i class="fas fa-dice-d20" aria-hidden="true"></i>
  <strong>{{skill}}:</strong>
  DC
  {{#if dc.value}}
@@ -27,7 +27,7 @@
          data-action-name="{{../name}}"
          data-dc="{{dc.value}}"
          title="Roll {{skill}} check">
-   <i class="fas fa-dice"></i> Roll
+   <i class="fas fa-dice" aria-hidden="true"></i> Roll
  </button>
  {{else if dc.type}}
  {{dc.type}}

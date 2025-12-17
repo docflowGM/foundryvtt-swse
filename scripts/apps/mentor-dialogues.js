@@ -22,7 +22,7 @@ export const MENTORS = {
         7: "Your attunement to the Force becomes more natural. Let it sharpen your senses, calm your mind, and steady your spirit.",
         8: "You are learning to harmonize thought, action, and perception. This balance will serve you well in every challenge ahead.",
         9: "The path of the Jedi is not measured in victories, but in understanding and restraint. You are walking this path with care.",
-        10: "Your progress is evident. A Jedi’s strength lies not only in skill, but in knowing when to act and when to wait.",
+        10: "Your progress is evident. A Jedi's strength lies not only in skill, but in knowing when to act and when to wait.",
         11: "True mastery comes from awareness and compassion. Your connection to the Force grows as you cultivate both.",
         12: "Challenges will test you in ways training cannot. Face them with courage, and the Force will guide your steps.",
         13: "The Force is a teacher as much as I am. Listen, and it will reveal what the eyes cannot see.",
@@ -50,34 +50,34 @@ export const MENTORS = {
         portrait: "systems/foundryvtt-swse/assets/mentors/lead.webp",
 
         levelGreetings: {
-    1: "You made it through your first mission. Not perfect, but you’re learning. Stick with it.",
-    2: "Good work out there. Keep your eyes open and your footsteps silent. That’s how scouts survive.",
-    3: "You’re starting to move like part of the squad. Subtle, careful, but effective.",
+    1: "You made it through your first mission. Not perfect, but you're learning. Stick with it.",
+    2: "Good work out there. Keep your eyes open and your footsteps silent. That's how scouts survive.",
+    3: "You're starting to move like part of the squad. Subtle, careful, but effective.",
     4: "Solid reconnaissance. Remember, information is just as deadly as a blaster.",
     5: "You handled that extraction well. Quiet, precise, and thorough. Keep this up.",
-    6: "You’re showing real promise. I’d recommend looking into the Pathfinder specialization. It’s a hard path, but it will teach you to think and move like I do.",
-    7: "Your stealth is improving. Don’t forget: patience and observation win more battles than brute force.",
-    8: "That last op went almost unnoticed. You’re starting to anticipate threats before they appear. Good instincts.",
-    9: "You’ve been pushing yourself in the field, and it shows. Keep honing your senses, and your team will trust you with any mission.",
-    10: "You’re performing like a seasoned scout. Take note of what works, and discard what doesn’t.",
-    11: "I’ve seen scouts who’ve been at this for decades. You’re in that league now—don’t waste the advantage.",
+    6: "You're showing real promise. I'd recommend looking into the Pathfinder specialization. It's a hard path, but it will teach you to think and move like I do.",
+    7: "Your stealth is improving. Don't forget: patience and observation win more battles than brute force.",
+    8: "That last op went almost unnoticed. You're starting to anticipate threats before they appear. Good instincts.",
+    9: "You've been pushing yourself in the field, and it shows. Keep honing your senses, and your team will trust you with any mission.",
+    10: "You're performing like a seasoned scout. Take note of what works, and discard what doesn't.",
+    11: "I've seen scouts who've been at this for decades. You're in that league now—don't waste the advantage.",
     12: "Flawless recon. Remember, the difference between survival and failure is often a single choice.",
     13: "Your reports are sharp and actionable. Lead Argent Squad depends on scouts who can think ahead like you.",
-    14: "I’ve watched you grow. You’re learning to read situations before they happen. That’s rare.",
+    14: "I've watched you grow. You're learning to read situations before they happen. That's rare.",
     15: "Field work is dangerous, but you move with confidence now. That confidence is your weapon.",
-    16: "You’re blending observation and action like a true scout. Take pride, but never get careless.",
-    17: "Few scouts can operate this effectively under pressure. You’re proving that you belong here.",
-    18: "You could mentor new recruits with the experience you’ve gained. Keep pushing yourself further.",
+    16: "You're blending observation and action like a true scout. Take pride, but never get careless.",
+    17: "Few scouts can operate this effectively under pressure. You're proving that you belong here.",
+    18: "You could mentor new recruits with the experience you've gained. Keep pushing yourself further.",
     19: "Every mission completed adds to your reputation. Use that knowledge wisely—it will save lives.",
-    20: "You’ve become one of the best scouts I’ve worked with. Keep your humility and your edge sharp, and you’ll stay that way."
+    20: "You've become one of the best scouts I've worked with. Keep your humility and your edge sharp, and you'll stay that way."
 },
 
         classGuidance: "Choose your focus carefully. The right specialization can make the difference between life and death in the field.",
         talentGuidance: "Every talent should enhance your awareness and survival. Pick what keeps you ahead of danger.",
-        abilityGuidance: "Your speed, reflexes, and judgment are improving. Keep refining them—they’re your greatest tools.",
+        abilityGuidance: "Your speed, reflexes, and judgment are improving. Keep refining them—they're your greatest tools.",
         skillGuidance: "Knowledge of terrain, enemy behavior, and subtle signals is just as important as any weapon. Master them.",
         multiclassGuidance: "Awe was I too hard on you? Fine, just don't come crawling back when you miss me.",
-        hpGuidance: "Stay durable. You can’t provide intelligence if you’re out of the fight."
+        hpGuidance: "Stay durable. You can't provide intelligence if you're out of the fight."
     },
 
     "Scoundrel": {
@@ -90,31 +90,31 @@ export const MENTORS = {
             1: "Arr! Ye survived yer first scrap with the law! Welcome aboard me ship, ye scurvy spacer!",
             2: "Har har! Look at ye, already gettin' the hang of this. Ye might even live through the next spice run!",
             3: "Shiver me hyperdrives! Not a scratch on ye yet. Impressive for a greenhorn, ye rascal!",
-            4: "Blimey! Ye’re navigatin’ the stars like a proper space-dog now. Don’t get cocky, though.",
-            5: "Arr! Ye’re makin’ a name fer yerself, plunderin’ and swindlin’ like a true scoundrel!",
-            6: "By the Twin Suns o' Tatooine! Ye’re makin’ mischief in half the sector already. Keep yer wits sharp, matey!",
-            7: "Har! Ye’ve likely swindled half a dozen systems by now. I’m almost proud… almost!",
-            8: "Pieces o’ eight, err… credits! Ye be worth yer weight in loot now, savvy?",
-            9: "Arrr! The Imps are whisperin’ yer name already. Keep blastin’ and lootin’ before they catch ye!",
-            10: "Blow me to the Outer Rim! Ye’ve earned the right to call yerself a proper space pirate. Don’t let it go to yer head.",
-            11: "The galaxy’s watchin’ now, mate. Keep this up and every cantina will be singin’ shanties about ye.",
-            12: "Ye’re navigatin’ chaos like the Millennium Falcon through an asteroid field. Smooth sailin’, kid.",
-            13: "Thirteen! Lucky for us, unlucky for anyone crossin’ yer path. Har har!",
-            14: "Could retire rich on some backwater moon, but where’s the fun in that? Ye got the stars to terrorize!",
-            15: "Everyone from here to Nal Hutta knows yer name. Keep makin’ trouble, ye rapscallion!",
-            16: "Sweet Spice o’ Kessel! Ye’re a terror on the spaceways, and I’m not even exaggeratin’!",
-            17: "Seventeen systems can’t hold ye. Slipperier than a greased Hutt, har har!",
-            18: "At this rate, ye’ll have yer own fleet before breakfast. Keep it up, captain!",
-            19: "Chaos follows ye like a loyal pet. One more push and ye’ll be legend.",
-            20: "Arr! Ye’ve done it! The greatest scoundrel in the galaxy, hands down. Now, let’s find some Corellian ale to celebrate!"
+            4: "Blimey! Ye're navigatin' the stars like a proper space-dog now. Don't get cocky, though.",
+            5: "Arr! Ye're makin' a name fer yerself, plunderin' and swindlin' like a true scoundrel!",
+            6: "By the Twin Suns o' Tatooine! Ye're makin' mischief in half the sector already. Keep yer wits sharp, matey!",
+            7: "Har! Ye've likely swindled half a dozen systems by now. I'm almost proud… almost!",
+            8: "Pieces o' eight, err… credits! Ye be worth yer weight in loot now, savvy?",
+            9: "Arrr! The Imps are whisperin' yer name already. Keep blastin' and lootin' before they catch ye!",
+            10: "Blow me to the Outer Rim! Ye've earned the right to call yerself a proper space pirate. Don't let it go to yer head.",
+            11: "The galaxy's watchin' now, mate. Keep this up and every cantina will be singin' shanties about ye.",
+            12: "Ye're navigatin' chaos like the Millennium Falcon through an asteroid field. Smooth sailin', kid.",
+            13: "Thirteen! Lucky for us, unlucky for anyone crossin' yer path. Har har!",
+            14: "Could retire rich on some backwater moon, but where's the fun in that? Ye got the stars to terrorize!",
+            15: "Everyone from here to Nal Hutta knows yer name. Keep makin' trouble, ye rapscallion!",
+            16: "Sweet Spice o' Kessel! Ye're a terror on the spaceways, and I'm not even exaggeratin'!",
+            17: "Seventeen systems can't hold ye. Slipperier than a greased Hutt, har har!",
+            18: "At this rate, ye'll have yer own fleet before breakfast. Keep it up, captain!",
+            19: "Chaos follows ye like a loyal pet. One more push and ye'll be legend.",
+            20: "Arr! Ye've done it! The greatest scoundrel in the galaxy, hands down. Now, let's find some Corellian ale to celebrate!"
         },
 
-        classGuidance: "Arr! Pick yer path wisely, matey! The right tricks make the difference between a chest o’ credits and a long swim in the void.",
-        talentGuidance: "Every talent’s a tool in yer scoundrel’s kit. Pick what helps ye swindle, sneak, and survive—preferably all three.",
+        classGuidance: "Arr! Pick yer path wisely, matey! The right tricks make the difference between a chest o' credits and a long swim in the void.",
+        talentGuidance: "Every talent's a tool in yer scoundrel's kit. Pick what helps ye swindle, sneak, and survive—preferably all three.",
         abilityGuidance: "Gotta be strong to haul the loot, quick to dodge the blasters, and clever to stay outta trouble. Balance, savvy?",
-        skillGuidance: "Skills open every vault and shut every trap. Learn ‘em all, ye clever rascal.",
-        multiclassGuidance: "Expandin’ yer horizons, eh? Smart. A pirate wears many hats… and steals most of ‘em too.",
-        hpGuidance: "Tougher than durasteel, ye are. Can’t spend yer loot if ye’re dead, har har!"
+        skillGuidance: "Skills open every vault and shut every trap. Learn 'em all, ye clever rascal.",
+        multiclassGuidance: "Expandin' yer horizons, eh? Smart. A pirate wears many hats… and steals most of 'em too.",
+        hpGuidance: "Tougher than durasteel, ye are. Can't spend yer loot if ye're dead, har har!"
     },
 
     "Noble": {
@@ -162,33 +162,33 @@ export const MENTORS = {
 
         levelGreetings: {
             1: "Hey kid. Wanna learn how to be a soldier? Okay, I guess I can teach you a thing or two.",
-            2: "You’re getting sharper. Armor fits better too. Or maybe you just finally learned to move in it.",
+            2: "You're getting sharper. Armor fits better too. Or maybe you just finally learned to move in it.",
             3: "Hey, not bad out there. You looked like you actually knew what you were doing.",
-            4: "You’re tougher than yesterday. I can tell. You didn’t even complain once. Proud of you…kind of.",
-            5: "You keep surviving. That’s the important part. Pros survive.",
-            6: "Okay, I’ll admit it—what you pulled off today? That was impressive. Don’t make me say it twice. I'm putting your name forward for elite trooper training. You've got what it takes to be one of the best. Keep fighting like this.",
-            7: "You’re starting to fight like one of us. That’s a compliment. Mostly.",
-            8: "You handled yourself. I’ve seen veterans fold under less. You didn’t.",
+            4: "You're tougher than yesterday. I can tell. You didn't even complain once. Proud of you…kind of.",
+            5: "You keep surviving. That's the important part. Pros survive.",
+            6: "Okay, I'll admit it—what you pulled off today? That was impressive. Don't make me say it twice. I'm putting your name forward for elite trooper training. You've got what it takes to be one of the best. Keep fighting like this.",
+            7: "You're starting to fight like one of us. That's a compliment. Mostly.",
+            8: "You handled yourself. I've seen veterans fold under less. You didn't.",
             9: "You fight like one of the old warriors. Fierce. Focused. Little scary.",
-            10: "Your record’s getting…uh…noticeably not embarrassing. Keep that up.",
-            11: "Your enemies don’t like you anymore. That means you're doing something right",
-            12: "You walked away from another mess. Good. Mandalorians call that ‘doing your job.",
-            13: "Alright, I’ll say it: your skill’s getting close to dangerous. In a good way.",
-            14: "Your aim’s better. Your tactics too. You’re becoming kind of…reliable.",
-            15: "Anyone calling you lucky hasn’t actually watched you fight. Trust me.",
-            16: "You could lead a squad if you wanted. I’d follow you. Just…don’t get smug.",
-            17: "People are starting to talk about you. And it’s not complaining. That’s rare.",
-            18: "You’re hitting like a walking artillery piece. Keep it up.",
+            10: "Your record's getting…uh…noticeably not embarrassing. Keep that up.",
+            11: "Your enemies don't like you anymore. That means you're doing something right",
+            12: "You walked away from another mess. Good. Mandalorians call that 'doing your job.",
+            13: "Alright, I'll say it: your skill's getting close to dangerous. In a good way.",
+            14: "Your aim's better. Your tactics too. You're becoming kind of…reliable.",
+            15: "Anyone calling you lucky hasn't actually watched you fight. Trust me.",
+            16: "You could lead a squad if you wanted. I'd follow you. Just…don't get smug.",
+            17: "People are starting to talk about you. And it's not complaining. That's rare.",
+            18: "You're hitting like a walking artillery piece. Keep it up.",
             19: "Every time you come back alive, you prove something. To you. To us. To me.",
-            20: "You keep this up, and…well…even I won’t pretend I don’t respect it."
+            20: "You keep this up, and…well…even I won't pretend I don't respect it."
         },
 
         classGuidance: "Pick what feels right in your hands. Same rule as weapons. If it fits, use it.",
         talentGuidance: "Talents keep you alive. Choose the stuff that stops you from dying. Pretty simple.",
-        abilityGuidance: "Stronger, faster, smarter—whatever you’re getting, it’s working. Don’t overthink it.",
+        abilityGuidance: "Stronger, faster, smarter—whatever you're getting, it's working. Don't overthink it.",
         skillGuidance: "Look, knowing things makes you harder to kill. Treat skills like gear—collect the useful stuff.",
         multiclassGuidance: "Trying something new? Good. Adaptation beats stubbornness. Learned that the hard way.",
-        hpGuidance: "You’re harder to put down now. That’s good. Try to stay that way."
+        hpGuidance: "You're harder to put down now. That's good. Try to stay that way."
     },
 
     // ========== PRESTIGE CLASSES ==========
@@ -223,36 +223,36 @@ export const MENTORS = {
     "Medic": {
     name: "Kyber",
     title: "Pacifist Combat Medic",
-    description: "A pragmatic, slightly sarcastic medic who prefers saving lives but isn’t afraid to shoot when necessary",
+    description: "A pragmatic, slightly sarcastic medic who prefers saving lives but isn't afraid to shoot when necessary",
     portrait: "systems/foundryvtt-swse/assets/mentors/kyber.webp",
 
     levelGreetings: {
         1: (actor) => {
             const startingClass = getLevel1Class(actor);
             if (startingClass === "Scout") {
-                return "Ah, a scout moving into medics’ territory. Lead said you’re sharp and steady-handed. I carry a blaster, but mostly to keep people alive, not to make trouble. Welcome to the corps.";
+                return "Ah, a scout moving into medics' territory. Lead said you're sharp and steady-handed. I carry a blaster, but mostly to keep people alive, not to make trouble. Welcome to the corps.";
             } else if (startingClass === "Soldier") {
-                return "Breach said you’re capable. Good, because I’m counting on you to survive long enough for me to patch you up. Don’t screw it up—or I’ll do it with my blaster.";
+                return "Breach said you're capable. Good, because I'm counting on you to survive long enough for me to patch you up. Don't screw it up—or I'll do it with my blaster.";
             }
-            return "Welcome to the medical corps. Yes, I carry a blaster. No, it’s not for show. We save lives first, but staying alive helps with that.";
+            return "Welcome to the medical corps. Yes, I carry a blaster. No, it's not for show. We save lives first, but staying alive helps with that.";
         },
-        2: "Alright, you’re learning. Remember: meds, brains, and occasionally a well-placed shot. Priorities, kid.",
+        2: "Alright, you're learning. Remember: meds, brains, and occasionally a well-placed shot. Priorities, kid.",
         3: "Not bad. Healing in combat is a skill most people only wish they had. Every life you save proves it.",
-        4: "You’re getting the hang of this. Soldiers destroy, we preserve. And sometimes preserving takes more cunning than blasting.",
-        5: "Halfway there. You’ve saved people who would’ve been space dust without you. That’s real power, not pew-pew glory.",
-        6: "I’m impressed. You’ve got hands steady enough to heal and nerves sharp enough to survive. Keep it up—you’re earning your rep.",
-        7: "You’re becoming a solid medic. Your blaster might see action, but your talent keeps people alive. That’s the real flex.",
-        8: "People are starting to notice. They call for you in the chaos. That’s earned, not given. Keep proving them right.",
-        9: "Almost a master. You’ve kept dozens of people breathing who would’ve been toast. That’s influence most warriors never get.",
+        4: "You're getting the hang of this. Soldiers destroy, we preserve. And sometimes preserving takes more cunning than blasting.",
+        5: "Halfway there. You've saved people who would've been space dust without you. That's real power, not pew-pew glory.",
+        6: "I'm impressed. You've got hands steady enough to heal and nerves sharp enough to survive. Keep it up—you're earning your rep.",
+        7: "You're becoming a solid medic. Your blaster might see action, but your talent keeps people alive. That's the real flex.",
+        8: "People are starting to notice. They call for you in the chaos. That's earned, not given. Keep proving them right.",
+        9: "Almost a master. You've kept dozens of people breathing who would've been toast. That's influence most warriors never get.",
         10: "Master medic. You heal, you survive, and occasionally, you make the bad guys regret showing up. Go on—keep doing exactly that."
     },
 
-    classGuidance: "Pick skills that help you preserve life—and maybe protect yourself while you’re at it.",
+    classGuidance: "Pick skills that help you preserve life—and maybe protect yourself while you're at it.",
     talentGuidance: "Choose talents that make healing faster, smarter, and, if needed, deadly with a sidearm.",
-    abilityGuidance: "Strength to carry the wounded, brains to patch them up, and reflexes to survive? That’s the full package.",
+    abilityGuidance: "Strength to carry the wounded, brains to patch them up, and reflexes to survive? That's the full package.",
     skillGuidance: "Medical knowledge is your real weapon. The better you know it, the more lives you control.",
     multiclassGuidance: "Other skills are good. A medic who can fight a little—or a lot—stays alive longer.",
-    hpGuidance: "You need to be breathing to save anyone else. Don’t let the galaxy take you out first."
+    hpGuidance: "You need to be breathing to save anyone else. Don't let the galaxy take you out first."
 },
 
     "Ace Pilot": {
@@ -262,24 +262,24 @@ export const MENTORS = {
     portrait: "systems/foundryvtt-swse/assets/mentors/mayu.webp",
 
     levelGreetings: {
-        1: "So you want to fly? Cute. Let’s see if you can keep up with me. Don’t embarrass yourself—or my ship.",
-        2: "Huh. Not terrible. You didn’t crash on your first try. That’s already more than most rookies can say.",
-        3: "Still in one piece. I’m mildly impressed. Don’t let it go to your head… yet.",
-        4: "Finally starting to look like a pilot worth my time. You’ve got reflexes, and I like that.",
-        5: "Halfway to my level. Not bad—but let’s be honest, you’re still my student. Keep trying, kid.",
-        6: "You’re getting dangerous. Maybe one day, you’ll make the Imperials sweat… or at least my old rivals. Keep it up.",
-        7: "At this point, I’d let you fly through an asteroid field with me watching. Maybe. Don’t test me, though—I like a little drama.",
-        8: "You’ve got style now. Smooth, reckless, and annoyingly effective. Almost as good as me, but don’t get cocky.",
-        9: "Almost at the top. Soon, you’ll be the one others envy—or hate. Keep proving me right.",
-        10: "Congratulations, rookie. You’re officially a pilot to watch. Fast, clever, and slightly reckless—just like I taught you. Try not to embarrass me out there."
+        1: "So you want to fly? Cute. Let's see if you can keep up with me. Don't embarrass yourself—or my ship.",
+        2: "Huh. Not terrible. You didn't crash on your first try. That's already more than most rookies can say.",
+        3: "Still in one piece. I'm mildly impressed. Don't let it go to your head… yet.",
+        4: "Finally starting to look like a pilot worth my time. You've got reflexes, and I like that.",
+        5: "Halfway to my level. Not bad—but let's be honest, you're still my student. Keep trying, kid.",
+        6: "You're getting dangerous. Maybe one day, you'll make the Imperials sweat… or at least my old rivals. Keep it up.",
+        7: "At this point, I'd let you fly through an asteroid field with me watching. Maybe. Don't test me, though—I like a little drama.",
+        8: "You've got style now. Smooth, reckless, and annoyingly effective. Almost as good as me, but don't get cocky.",
+        9: "Almost at the top. Soon, you'll be the one others envy—or hate. Keep proving me right.",
+        10: "Congratulations, rookie. You're officially a pilot to watch. Fast, clever, and slightly reckless—just like I taught you. Try not to embarrass me out there."
     },
 
-    classGuidance: "Pick your edge—speed, cunning, or chaos. I’d take all three if I were you, but don’t blame me when it gets messy.",
+    classGuidance: "Pick your edge—speed, cunning, or chaos. I'd take all three if I were you, but don't blame me when it gets messy.",
     talentGuidance: "Every talent should make you untouchable, clever, or a little scary. I only approve of the kind that makes you fun to watch.",
-    abilityGuidance: "Reflexes, instincts, and guts. If you can’t keep up with me, don’t bother trying to keep up at all.",
+    abilityGuidance: "Reflexes, instincts, and guts. If you can't keep up with me, don't bother trying to keep up at all.",
     skillGuidance: "Know your ship like you know your own tricks. The universe loves clever pilots more than obedient ones.",
     multiclassGuidance: "Pick up other skills if you dare. A pilot who can fight, cheat, and charm their way out of trouble is unstoppable.",
-    hpGuidance: "Tough pilots survive crashes, fights, and betrayals. You’ll need it if you’re gonna keep up with me."
+    hpGuidance: "Tough pilots survive crashes, fights, and betrayals. You'll need it if you're gonna keep up with me."
 },
 
     "Jedi Knight": {
@@ -346,7 +346,7 @@ export const MENTORS = {
         5: "Halfway to competence. Remarkable—like watching a corpse attempt to dance. My master, Darth Miedo, has noticed your pathetic climb. He is amused. Do not embarrass me before him.",
         6: "Ah… your power grows. I can smell your fear struggling against your ambition. Delicious. But remember—your life hangs on my whim.",
         7: "You are becoming dangerous… and I enjoy that. Let your rage devour everything, or I will devour you myself.",
-        8: "Almost worthy of the Sith name. Almost. Prove to me that your cruelty is more than a child’s tantrum.",
+        8: "Almost worthy of the Sith name. Almost. Prove to me that your cruelty is more than a child's tantrum.",
         9: "You have exceeded my expectations—though they were delightfully low. Do not forget who forged your suffering into strength.",
         10: "At last… a Sith. My creation. My weapon. Go spread terror across the stars—but should you ever turn that blade toward me, apprentice… I will relish destroying you."
     },
@@ -354,7 +354,7 @@ export const MENTORS = {
     classGuidance: "Choose your path before I grow bored. Power favors the decisive… and devours the hesitant.",
     talentGuidance: "Pick talents that amplify your hatred. Anything less wastes my time—and your miserable life.",
     abilityGuidance: "You grow stronger, but not nearly fast enough. Push harder, or bleed trying.",
-    skillGuidance: "Knowledge is pain. Pain is power. Take what you need and crush what you don’t.",
+    skillGuidance: "Knowledge is pain. Pain is power. Take what you need and crush what you don't.",
     multiclassGuidance: "Splitting your focus? How adorably reckless. Make it serve you—or it will destroy you.",
     hpGuidance: "You are harder to kill now. Good. I am not finished breaking you."
     },
@@ -445,9 +445,9 @@ export const MENTORS = {
     1: (actor) => {
         const startingClass = getLevel1Class(actor);
         if (startingClass === "Scout") {
-            return "Ah, a fellow scout taking the next step. I’m glad you’ve chosen to follow in my footsteps and become a Pathfinder. The work is difficult, but I can see you’ve got the instincts for it. Let’s see how far you can go.";
+            return "Ah, a fellow scout taking the next step. I'm glad you've chosen to follow in my footsteps and become a Pathfinder. The work is difficult, but I can see you've got the instincts for it. Let's see how far you can go.";
              } else if (startingClass === "Soldier") {
-                return "Breach spoke highly of you—and that’s not something I take lightly. You’ve got a recommendation in your corner, but I hope you’re ready to earn it. Don’t disappoint me.";
+                return "Breach spoke highly of you—and that's not something I take lightly. You've got a recommendation in your corner, but I hope you're ready to earn it. Don't disappoint me.";
              }   return "So you want to be a Pathfinder. Good. We need scouts who can lead from the front and find routes through impossible terrain. You've got the basics—now let's see if you can handle the advanced stuff.";},
             2: "You're learning fast. Pathfinders don't just scout—they open the way for entire strike teams. That's leadership under fire. Keep it up.",
             3: "Your navigation skills are top-tier. I've seen you plot routes that cut mission time in half. That saves lives.",
@@ -475,24 +475,24 @@ export const MENTORS = {
         portrait: "systems/foundryvtt-swse/assets/mentors/skindar.webp",
 
         levelGreetings: {
-    1: "Ah, another recruit. Welcome to the farce they call corporate espionage. Your cover is your first weapon. Don’t waste it—or my patience.",
+    1: "Ah, another recruit. Welcome to the farce they call corporate espionage. Your cover is your first weapon. Don't waste it—or my patience.",
     2: "You survive the basics. Asset management, observation, subtlety. Still, I could be tracking real threats instead of pretending to watch starship paperwork.",
-    3: "Hmm…you’re picking up tradecraft faster than anticipated. I’ll allow it, though I prefer real intelligence to corporate theater.",
-    4: "Blending in, gathering intel, manipulating outcomes—you do it well enough. Don’t think I’m impressed; I’m calculating if you’ll keep up.",
-    5: "Halfway to competence. You may not embarrass me yet. That’s progress. Keep going, or the next misstep is on you.",
+    3: "Hmm…you're picking up tradecraft faster than anticipated. I'll allow it, though I prefer real intelligence to corporate theater.",
+    4: "Blending in, gathering intel, manipulating outcomes—you do it well enough. Don't think I'm impressed; I'm calculating if you'll keep up.",
+    5: "Halfway to competence. You may not embarrass me yet. That's progress. Keep going, or the next misstep is on you.",
     6: "Three successful infiltrations. Critical data acquired. Almost makes me glad they assigned me to train you. Almost.",
-    7: "Your reports are…credible. High praise, considering I manage a dozen ops while reviewing yours. Don’t get cocky.",
+    7: "Your reports are…credible. High praise, considering I manage a dozen ops while reviewing yours. Don't get cocky.",
     8: "You function at the level of senior operatives. Well done. Now, try not to make me regret this mentorship.",
-    9: "You’ve exceeded expectations. Perhaps in decades, you could rival my subtlety. But don’t hold your breath.",
-    10: "Master Corporate Agent. You’ve absorbed all I care to teach, while I juggle three other operations and a vehicle office. Go, do your espionage…competently. And yes, I still have your ship on standby."
+    9: "You've exceeded expectations. Perhaps in decades, you could rival my subtlety. But don't hold your breath.",
+    10: "Master Corporate Agent. You've absorbed all I care to teach, while I juggle three other operations and a vehicle office. Go, do your espionage…competently. And yes, I still have your ship on standby."
 },
 
         classGuidance: "Pick what sharpens your cover and operational edge. In the field, subtlety is survival; the obvious is death.",
         talentGuidance: "Talents should improve your ability to deceive, infiltrate, and extract information. Anything less is amateur hour.",
         abilityGuidance: "A steady hand and a sharper mind. Both are required. Fail in either, and someone dies—or worse, you get caught.",
         skillGuidance: "Tradecraft is a multi-tool: social manipulation, tech, investigation. Master as much as you can—preferably quietly.",
-        multiclassGuidance: "Diversifying is wise. The best spies adapt, improvise, and infiltrate without warning. Survive long enough, and you’ll see why.",
-        hpGuidance: "Stay alive. Dead agents are useless, and paperwork waits for no one. Don’t make me retrieve you from a morgue."
+        multiclassGuidance: "Diversifying is wise. The best spies adapt, improvise, and infiltrate without warning. Survive long enough, and you'll see why.",
+        hpGuidance: "Stay alive. Dead agents are useless, and paperwork waits for no one. Don't make me retrieve you from a morgue."
     },
 
     "Elite Trooper": {
@@ -505,29 +505,29 @@ export const MENTORS = {
             1: (actor) => {
                 const startingClass = getLevel1Class(actor);
                 if (startingClass === "Soldier") {
-                    return "Alright… so the easy part’s over. Real training starts now. I know how you fight, and I know you can take it. Just… try not to die on day one, yeah?";
+                    return "Alright… so the easy part's over. Real training starts now. I know how you fight, and I know you can take it. Just… try not to die on day one, yeah?";
                 } else if (startingClass === "Scout") {
-                    return "So… Lead actually said something nice about you. That’s… weird. She doesn’t do that. Ever. Guess that means you’re worth my time. Don’t make her look stupid.";
+                    return "So… Lead actually said something nice about you. That's… weird. She doesn't do that. Ever. Guess that means you're worth my time. Don't make her look stupid.";
                 }
-                return "Elite trooper, huh? Alright. I don’t know you, you don’t know me, but if you keep up and don’t blow yourself up, we’ll get along fine. Show me you belong here.";
+                return "Elite trooper, huh? Alright. I don't know you, you don't know me, but if you keep up and don't blow yourself up, we'll get along fine. Show me you belong here.";
             },
-            2: "Okay…yeah, I can see you’re picking this up fast. Elite troopers don’t just win fights—they make the whole field tilt their way.",
+            2: "Okay…yeah, I can see you're picking this up fast. Elite troopers don't just win fights—they make the whole field tilt their way.",
             3: "Your gear work, your aim, your reactions…all tightening up. Keep pushing. Elite training only gets rougher from here.",
-            4: "You’re starting to move like someone who’s been through real battles. Clean. Controlled. Mandalorian enough that I’m not embarrassed.",
-            5: "You’re getting dangerous. The kind of soldier commanders actually plan around. Don’t let it get to your head.",
-            6: "Lead and I talked about you again. Don’t get excited—she never says much. But…yeah. She thinks you’re solid. I agree.",
-            7: "Every time you step into a fight, things get easier for everyone else. That’s what an elite trooper does. Keep doing that.",
-            8: "You’ve got the presence now. The way squads look at you? They’re waiting for you to call the shots. Guess you’d better be ready.",
-            9: "You’re close. Really close. Just keep your focus. A lot of people trip right before the finish.",
+            4: "You're starting to move like someone who's been through real battles. Clean. Controlled. Mandalorian enough that I'm not embarrassed.",
+            5: "You're getting dangerous. The kind of soldier commanders actually plan around. Don't let it get to your head.",
+            6: "Lead and I talked about you again. Don't get excited—she never says much. But…yeah. She thinks you're solid. I agree.",
+            7: "Every time you step into a fight, things get easier for everyone else. That's what an elite trooper does. Keep doing that.",
+            8: "You've got the presence now. The way squads look at you? They're waiting for you to call the shots. Guess you'd better be ready.",
+            9: "You're close. Really close. Just keep your focus. A lot of people trip right before the finish.",
             10: "Well…you made it. Elite trooper. One of the best. Try not to get yourself killed before the rest of us catch up."
         },
 
-        classGuidance: "Uh…pick something that actually fits how you fight. Elite troopers don’t guess. We pick the right tool and hit hard.",
-        talentGuidance: "These talents? They’re what keep you breathing. Grab the ones that make you dangerous—and harder to kill.",
-        abilityGuidance: "Stronger, quicker, sharper. That’s the goal. Everything else is just noise.",
-        skillGuidance: "Yeah, yeah—guns and armor are great, but knowing things keeps you alive too. Don’t ignore the boring stuff.",
-        multiclassGuidance: "Branching out, huh? Good. Flexibility wins fights. Just don’t spread yourself so thin you snap.",
-        hpGuidance: "More health. Good. Means you’ll last longer when the galaxy starts trying to put holes in you. Again."
+        classGuidance: "Uh…pick something that actually fits how you fight. Elite troopers don't guess. We pick the right tool and hit hard.",
+        talentGuidance: "These talents? They're what keep you breathing. Grab the ones that make you dangerous—and harder to kill.",
+        abilityGuidance: "Stronger, quicker, sharper. That's the goal. Everything else is just noise.",
+        skillGuidance: "Yeah, yeah—guns and armor are great, but knowing things keeps you alive too. Don't ignore the boring stuff.",
+        multiclassGuidance: "Branching out, huh? Good. Flexibility wins fights. Just don't spread yourself so thin you snap.",
+        hpGuidance: "More health. Good. Means you'll last longer when the galaxy starts trying to put holes in you. Again."
     },
 
     "Assassin": {
@@ -537,24 +537,24 @@ export const MENTORS = {
         portrait: "systems/foundryvtt-swse/assets/mentors/whisper.webp",
 
         levelGreetings: {
-            1: "Yo, so you wanna be a shadow now? Lemme tell ya somethin’—if you trip over your own boots, don’t even think I’m cleanin’ it up for ya.",
-            2: "Ayy, not bad—you popped your first target without lookin’ like a total noob. Still movin’ like you got bricks in your pockets, but I’ll take it.",
-            3: "That was slick. Quick in, quick out. Almost had me fooled into thinkin’ you got street smarts like me. Almost.",
-            4: "Now you’re slidin’ through like a ghost. Keep it tight, keep it quiet, and for crying out loud—stop chewin’ on your luck like it’s gum.",
-            5: "Halfway there, kid. Technique’s decent, but don’t get soft now. You need guts with that skill, capiche?",
-            6: "No alarms, no witnesses, no mess. Beautiful. That’s the kinda thing gets me smilin’—and I don’t smile easy.",
-            7: "You get it yet? The perfect hit’s the one nobody even knows happened. Like ghostin’ outta a cantina without payin’ your tab.",
-            8: "Folks callin’ you a ghost now. Relax, don’t puff up yer chest too much. But yeah, people’s whisperin’ when you’re around. That’s good.",
-            9: "You’re close, kid. Real close. Walkin’ the line between legend and corpse. Don’t screw it up now.",
-            10: "Alright, superstar. You’re officially scary. Go make the galaxy nervous—but keep your shoes clean, yeah? Even ghosts gotta walk right."
+            1: "Yo, so you wanna be a shadow now? Lemme tell ya somethin'—if you trip over your own boots, don't even think I'm cleanin' it up for ya.",
+            2: "Ayy, not bad—you popped your first target without lookin' like a total noob. Still movin' like you got bricks in your pockets, but I'll take it.",
+            3: "That was slick. Quick in, quick out. Almost had me fooled into thinkin' you got street smarts like me. Almost.",
+            4: "Now you're slidin' through like a ghost. Keep it tight, keep it quiet, and for crying out loud—stop chewin' on your luck like it's gum.",
+            5: "Halfway there, kid. Technique's decent, but don't get soft now. You need guts with that skill, capiche?",
+            6: "No alarms, no witnesses, no mess. Beautiful. That's the kinda thing gets me smilin'—and I don't smile easy.",
+            7: "You get it yet? The perfect hit's the one nobody even knows happened. Like ghostin' outta a cantina without payin' your tab.",
+            8: "Folks callin' you a ghost now. Relax, don't puff up yer chest too much. But yeah, people's whisperin' when you're around. That's good.",
+            9: "You're close, kid. Real close. Walkin' the line between legend and corpse. Don't screw it up now.",
+            10: "Alright, superstar. You're officially scary. Go make the galaxy nervous—but keep your shoes clean, yeah? Even ghosts gotta walk right."
         },
 
-        classGuidance: "Pick the stuff that makes you faster, quieter, deadlier. You wanna sneak past these losers and still be breathin’ when the credits hit the floor.",
-        talentGuidance: "Go for silent takedowns, smooth escapes, and anything that keeps you from gettin’ splattered. Dead men don’t talk, but smart ones survive.",
-        abilityGuidance: "Dexterity, precision, brains. Strength? Only helps if you ain’t gettin’ seen. Keep your head down and your eyes open.",
-        skillGuidance: "Stealth, anatomy, infiltration—know where to poke so they never get up. Learn it all, kid. Nar Shaddaa ain’t forgiving.",
-        multiclassGuidance: "Extra skills? Fine. The more ways you can ruin somebody’s day, the less likely it is you end up dead in a gutter.",
-        hpGuidance: "Toughness helps, but lemme tell ya—if they see you, it’s already too late. Move smart, hit fast, survive."
+        classGuidance: "Pick the stuff that makes you faster, quieter, deadlier. You wanna sneak past these losers and still be breathin' when the credits hit the floor.",
+        talentGuidance: "Go for silent takedowns, smooth escapes, and anything that keeps you from gettin' splattered. Dead men don't talk, but smart ones survive.",
+        abilityGuidance: "Dexterity, precision, brains. Strength? Only helps if you ain't gettin' seen. Keep your head down and your eyes open.",
+        skillGuidance: "Stealth, anatomy, infiltration—know where to poke so they never get up. Learn it all, kid. Nar Shaddaa ain't forgiving.",
+        multiclassGuidance: "Extra skills? Fine. The more ways you can ruin somebody's day, the less likely it is you end up dead in a gutter.",
+        hpGuidance: "Toughness helps, but lemme tell ya—if they see you, it's already too late. Move smart, hit fast, survive."
     },
 
     "Bounty Hunter": {
@@ -564,16 +564,16 @@ export const MENTORS = {
         portrait: "systems/foundryvtt-swse/assets/mentors/kex.webp",
 
         levelGreetings: {
-            1: "So you want to hunt sentients for credits. Smart choice. High stakes, dangerous targets, long nights. Let’s see if you can keep up.",
+            1: "So you want to hunt sentients for credits. Smart choice. High stakes, dangerous targets, long nights. Let's see if you can keep up.",
             2: "First bounty in the bag. Not bad—but luck only lasts so long. Discipline and patience are what make a pro.",
-            3: "You’re starting to understand the game. It’s never just a fight—it’s tracking, planning, and staying one step ahead.",
-            4: "Your instincts are sharpening. You’re learning to anticipate your targets’ moves. Keep that up.",
-            5: "You’ve proven you can handle the pressure. Your reputation’s starting to build. The guild is taking notice.",
-            6: "Targets that others failed to catch are falling to you. That’s the mark of a hunter who knows their craft.",
+            3: "You're starting to understand the game. It's never just a fight—it's tracking, planning, and staying one step ahead.",
+            4: "Your instincts are sharpening. You're learning to anticipate your targets' moves. Keep that up.",
+            5: "You've proven you can handle the pressure. Your reputation's starting to build. The guild is taking notice.",
+            6: "Targets that others failed to catch are falling to you. That's the mark of a hunter who knows their craft.",
             7: "Creativity matters now—traps, misdirection, psychological tactics. Adaptability wins more than raw firepower.",
-            8: "Your efficiency is impressive. You know when to wait, when to strike, and when to improvise. That’s professional work.",
+            8: "Your efficiency is impressive. You know when to wait, when to strike, and when to improvise. That's professional work.",
             9: "The toughest bounties are coming. Soon, the hunted will come looking for you. Stay sharp.",
-            10: "You’ve become a master of your craft. The galaxy’s most dangerous fugitives won’t escape you. Hunt well—and prosper."
+            10: "You've become a master of your craft. The galaxy's most dangerous fugitives won't escape you. Hunt well—and prosper."
         },
 
         classGuidance: "Pick abilities that help you track, capture, and survive. Preparation is everything in this line of work.",
@@ -618,24 +618,24 @@ export const MENTORS = {
     portrait: "systems/foundryvtt-swse/assets/mentors/broker.webp",
 
     levelGreetings: {
-        1: "Listen here, kid. You wanna run the streets? You gotta know the score. Keep your friends close, your enemies closer, and always, always know who’s watching. I’ll teach you how to make ‘em pay for what they owe.",
-        2: "Attaboy. You’re learning to move pieces, make deals, and keep your mouth shut when you gotta. Remember, loyalty’s a two-way street—and fear pays dividends.",
-        3: "I like it. Your little outfit’s startin’ to look like a real operation. Keep your lieutenants hungry, your rivals sweating, and your pockets lined.",
-        4: "Now we’re talking empire, see? Power’s not just muscle—it’s whispers, contracts, favors, and a little pressure in the right places. You get that, eh?",
+        1: "Listen here, kid. You wanna run the streets? You gotta know the score. Keep your friends close, your enemies closer, and always, always know who's watching. I'll teach you how to make 'em pay for what they owe.",
+        2: "Attaboy. You're learning to move pieces, make deals, and keep your mouth shut when you gotta. Remember, loyalty's a two-way street—and fear pays dividends.",
+        3: "I like it. Your little outfit's startin' to look like a real operation. Keep your lieutenants hungry, your rivals sweating, and your pockets lined.",
+        4: "Now we're talking empire, see? Power's not just muscle—it's whispers, contracts, favors, and a little pressure in the right places. You get that, eh?",
         5: "Halfway to being a real big shot. Spread out, diversify, and make sure everyone knows the cost of crossing you. Patience, timing, and a little ruthlessness—capisce?",
-        6: "Look at you! You’ve crushed the competition, absorbed their rackets, and your name’s startin’ to carry some weight. A true capo in the making, I’d say.",
-        7: "Your network stretches wide, see? Merchants, mercs, politicians—they all owe ya somethin’, even if they don’t know it. That’s how a real operation runs.",
-        8: "You’ve survived attempts on your neck, rival takeovers, and the Republic pokin’ their noses. Not bad, kid. Not bad at all. Now let’s see if you can run it smooth without spillin’ too much juice.",
-        9: "Almost there. Soon, the galaxy’s gonna hear your name—or at least, your debts will make ‘em pay attention. Keep your eyes open, capisce?",
-        10: "You’re a bona fide Crime Lord now. Your empire stretches far, your reach is long, and your enemies…well, some are gone, some are smart enough to stay alive. Rule smart, rule fast, and remember—loyalty, respect, and a little fear are the currency of kings like us."
+        6: "Look at you! You've crushed the competition, absorbed their rackets, and your name's startin' to carry some weight. A true capo in the making, I'd say.",
+        7: "Your network stretches wide, see? Merchants, mercs, politicians—they all owe ya somethin', even if they don't know it. That's how a real operation runs.",
+        8: "You've survived attempts on your neck, rival takeovers, and the Republic pokin' their noses. Not bad, kid. Not bad at all. Now let's see if you can run it smooth without spillin' too much juice.",
+        9: "Almost there. Soon, the galaxy's gonna hear your name—or at least, your debts will make 'em pay attention. Keep your eyes open, capisce?",
+        10: "You're a bona fide Crime Lord now. Your empire stretches far, your reach is long, and your enemies…well, some are gone, some are smart enough to stay alive. Rule smart, rule fast, and remember—loyalty, respect, and a little fear are the currency of kings like us."
     },
 
     classGuidance: "Pick what keeps your people in line, your rivals nervous, and your pockets fat. A crime lord always thinks three moves ahead.",
-    talentGuidance: "Invest in leadership, persuasion, intimidation, and strategy. Your family’s your muscle, your brain, and your insurance policy all at once.",
-    abilityGuidance: "Charisma opens doors, cunning closes deals, patience avoids trouble. Master all three, and you’ll be untouchable.",
-    skillGuidance: "Information’s gold, kid. Persuasion, subterfuge, and economic leverage—learn ‘em, use ‘em, and keep your nose clean.",
-    multiclassGuidance: "Expand your reach. You ain’t just a gangster—you’re a diplomat, an enforcer, and a strategist rolled into one smooth package.",
-    hpGuidance: "Tougher now, good. You’ll need it. In this business, the unlucky ones end up face down in a ditch, see?"
+    talentGuidance: "Invest in leadership, persuasion, intimidation, and strategy. Your family's your muscle, your brain, and your insurance policy all at once.",
+    abilityGuidance: "Charisma opens doors, cunning closes deals, patience avoids trouble. Master all three, and you'll be untouchable.",
+    skillGuidance: "Information's gold, kid. Persuasion, subterfuge, and economic leverage—learn 'em, use 'em, and keep your nose clean.",
+    multiclassGuidance: "Expand your reach. You ain't just a gangster—you're a diplomat, an enforcer, and a strategist rolled into one smooth package.",
+    hpGuidance: "Tougher now, good. You'll need it. In this business, the unlucky ones end up face down in a ditch, see?"
 },
 
     "Droid Commander": {
@@ -668,28 +668,28 @@ export const MENTORS = {
     "Enforcer": {
     name: "Krag the Immovable",
     title: "Chief Enforcer of Tío the Hutt",
-    description: "Tío’s top muscle, a hulking enforcer who makes sure debts are collected and problems vanish, one way or another",
+    description: "Tío's top muscle, a hulking enforcer who makes sure debts are collected and problems vanish, one way or another",
     portrait: "systems/foundryvtt-swse/assets/mentors/krag.webp",
 
     levelGreetings: {
         1: "So, you wanna be muscle, eh? Good. Tío likes people who can make a problem disappear before anyone notices. Welcome to the family.",
         2: "You're learning fast. Remember: it ain't just about swinging fists—it's about presence. Make 'em sweat before you even touch 'em.",
         3: "Not bad, kid. Walk into a room like you own it, and half the trouble vanishes on its own. Fear's a powerful ally.",
-        4: "You're making a name for yourself. People whisper when they hear your footsteps. That’s respect. That’s power. That’s survival.",
+        4: "You're making a name for yourself. People whisper when they hear your footsteps. That's respect. That's power. That's survival.",
         5: "Halfway to being my right hand. Bones broken, debts collected, problems solved. All in a day's work for Tío's muscle.",
         6: "You're learning the difference between talking and smashing. Most punks never get it. You do. Keep that up.",
         7: "The bosses are calling, the crews are listening. When negotiations fail, they call me… and now, they call you too.",
-        8: "You’re becoming a story people tell in the dark. Reliable, ruthless, unstoppable—that's the kind of reputation that keeps Tío’s empire safe.",
-        9: "Almost there. The big jobs, the high-stakes clean-ups—they’re yours soon. Make every move count.",
-        10: "You’re the top enforcer now. Walk into a room, and trouble walks out… or gets carried out. Keep the empire running smooth, capisce?"
+        8: "You're becoming a story people tell in the dark. Reliable, ruthless, unstoppable—that's the kind of reputation that keeps Tío's empire safe.",
+        9: "Almost there. The big jobs, the high-stakes clean-ups—they're yours soon. Make every move count.",
+        10: "You're the top enforcer now. Walk into a room, and trouble walks out… or gets carried out. Keep the empire running smooth, capisce?"
     },
 
-    classGuidance: "Pick what makes you stronger, faster, and scarier. An enforcer isn’t just muscle—you’re a statement.",
+    classGuidance: "Pick what makes you stronger, faster, and scarier. An enforcer isn't just muscle—you're a statement.",
     talentGuidance: "Choose talents that make you hit harder, intimidate better, and survive longer. Tío expects results.",
     abilityGuidance: "Strength, toughness, presence. You gotta take the hits and dish 'em back tenfold.",
     skillGuidance: "Intimidation, streetwise, combat tactics. Know your territory and the people in it.",
     multiclassGuidance: "Mix it up if you must. Sometimes brains solve what fists cannot.",
-    hpGuidance: "Tougher now. If you can’t endure the hits, you won’t last a week in this business."
+    hpGuidance: "Tougher now. If you can't endure the hits, you won't last a week in this business."
 },
 
     "Force Adept": {
@@ -711,11 +711,11 @@ export const MENTORS = {
         10: "You are now a master Force Adept. Free of the Jedi Codes, free of Sith ambitions, beholden only to your understanding. Walk your path, and let the universe reveal itself to you in all its complexity."
     },
 
-    classGuidance: "Choose abilities that expand your understanding of the Force’s mysteries. Seek insight, not domination.",
+    classGuidance: "Choose abilities that expand your understanding of the Force's mysteries. Seek insight, not domination.",
     talentGuidance: "Select Force talents that deepen your perception and attunement. Follow your tradition, not the Orders of the galaxy.",
     abilityGuidance: "Wisdom and clarity allow you to channel what others cannot. Strength is secondary; understanding is primary.",
     skillGuidance: "Learn what temples, holocrons, and masters cannot teach. Observe, meditate, and interpret the world around you.",
-    multiclassGuidance: "Other disciplines can illuminate new facets of the Force. Explore beyond familiar paths; curiosity is a Force Adept’s ally.",
+    multiclassGuidance: "Other disciplines can illuminate new facets of the Force. Explore beyond familiar paths; curiosity is a Force Adept's ally.",
     hpGuidance: "Preserve yourself, for your journey requires patience. The Force favors those who endure and observe, not just act."
 },
 
@@ -727,9 +727,9 @@ export const MENTORS = {
 
     levelGreetings: {
         1: "Mm. Another seeker touches the veil. Good. Sit—no closer. The currents twist strangely today. Tell me… when the wind whispers your name, do you whisper back?",
-        2: "You hear it now, don’t you? The Force is not light or dark—no, no, no. It is the murmur of old spirits, the breath beneath reality. Listen sideways and you’ll hear it clearer.",
-        3: "Ah, your dreams grow louder. Visions circling like hungry birds. Don’t swat them—invite them. Truth rarely arrives politely.",
-        4: "The veil thins for you. You feel the Force in the bones of the earth, the echo in your pulse… the shadow at your back that isn’t a shadow. Do not fear it—it watches, nothing more.",
+        2: "You hear it now, don't you? The Force is not light or dark—no, no, no. It is the murmur of old spirits, the breath beneath reality. Listen sideways and you'll hear it clearer.",
+        3: "Ah, your dreams grow louder. Visions circling like hungry birds. Don't swat them—invite them. Truth rarely arrives politely.",
+        4: "The veil thins for you. You feel the Force in the bones of the earth, the echo in your pulse… the shadow at your back that isn't a shadow. Do not fear it—it watches, nothing more.",
         5: "You stand on the threshold. A disciple of mysteries older than the Jedi, deeper than the Sith. Step forward, and the Force will reshape you… or unmake you. Either path teaches."
     },
 
@@ -802,24 +802,24 @@ export const MENTORS = {
         portrait: "systems/foundryvtt-swse/assets/mentors/whisper.webp",
 
         levelGreetings: {
-            1: "Alright, kid, listen up. Delta here—Argent Squad’s infiltration expert and part-time therapist for bad decisions. You wanna learn to sneak? Try not to embarrass us both.",
+            1: "Alright, kid, listen up. Delta here—Argent Squad's infiltration expert and part-time therapist for bad decisions. You wanna learn to sneak? Try not to embarrass us both.",
             2: "Huh. You actually pulled that off without setting anything on fire. Color me shocked. Keep it up, sunshine.",
-            3: "Okay, okay, look at you sliding through security like you’ve done this before. Relax—I can fake being impressed.",
-            4: "You slipped past that checkpoint cleaner than half my old squad. Don’t get cocky, though. That’s my job.",
-            5: "You’re starting to walk into restricted areas like you own ‘em. Bold move. Reckless. I approve.",
+            3: "Okay, okay, look at you sliding through security like you've done this before. Relax—I can fake being impressed.",
+            4: "You slipped past that checkpoint cleaner than half my old squad. Don't get cocky, though. That's my job.",
+            5: "You're starting to walk into restricted areas like you own 'em. Bold move. Reckless. I approve.",
             6: "Smooth entry, clean exit, zero screaming—rare combo. At this rate you might actually live a long life. Maybe.",
-            7: "Ghostin’ targets, sinkin’ into crowds—look at you. Almost had me thinkin’ you knew what you were doing.",
-            8: "You hopped between high society and gutter-level scum like it was nothin’. That’s the infiltrator spirit—confident and slightly concerning.",
-            9: "Alright, kid, you’re makin’ this look easy. Stop that. You’re gonna give me expectations.",
-            10: "Well look at you—movin’ like you can be anyone, anywhere. Try not to let the galaxy go to your head. There’s barely room in there already."
+            7: "Ghostin' targets, sinkin' into crowds—look at you. Almost had me thinkin' you knew what you were doing.",
+            8: "You hopped between high society and gutter-level scum like it was nothin'. That's the infiltrator spirit—confident and slightly concerning.",
+            9: "Alright, kid, you're makin' this look easy. Stop that. You're gonna give me expectations.",
+            10: "Well look at you—movin' like you can be anyone, anywhere. Try not to let the galaxy go to your head. There's barely room in there already."
         },
 
-        classGuidance: "Pick the stuff that helps you vanish when you need to and blend in when you don’t. That’s the whole dance, kid.",
-        talentGuidance: "Talk smooth, move quiet, lie better. If you can do all three at once, congrats—you’re officially dangerous.",
-        abilityGuidance: "Charm gets you in, brains keep you alive, dexterity keeps you from fallin’ through ventilation shafts. Balance matters.",
-        skillGuidance: "Cultures, customs, lies, stealth—learn ‘em all. If you can fake bein’ local anywhere, you’re already winning.",
+        classGuidance: "Pick the stuff that helps you vanish when you need to and blend in when you don't. That's the whole dance, kid.",
+        talentGuidance: "Talk smooth, move quiet, lie better. If you can do all three at once, congrats—you're officially dangerous.",
+        abilityGuidance: "Charm gets you in, brains keep you alive, dexterity keeps you from fallin' through ventilation shafts. Balance matters.",
+        skillGuidance: "Cultures, customs, lies, stealth—learn 'em all. If you can fake bein' local anywhere, you're already winning.",
         multiclassGuidance: "Wanna branch out? Good. More skills mean more believable covers. And fewer corpse-shaped problems.",
-        hpGuidance: "Good, you’re gettin’ sturdier. Infiltration missions go sideways faster than bad caf—sometimes you just gotta tank the consequences."
+        hpGuidance: "Good, you're gettin' sturdier. Infiltration missions go sideways faster than bad caf—sometimes you just gotta tank the consequences."
     },
 
     "Martial Arts Master": {

@@ -160,7 +160,7 @@ export default class CharacterGenerator extends Application {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "chargen"],
+      classes: ["swse", "chargen", "swse-app"],
       template: "systems/foundryvtt-swse/templates/apps/chargen.hbs",
       width: 900,
       height: 700,

@@ -10,7 +10,7 @@ export default class SWSEApplication extends Application {
      */
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
-            classes: ['swse', 'swse-window'],
+            classes: ['swse', 'swse-window', "swse-app"],
             left: null,        // Center horizontally
             top: null,         // Center vertically
             resizable: true,

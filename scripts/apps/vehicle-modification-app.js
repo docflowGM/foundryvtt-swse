@@ -20,7 +20,7 @@ export class VehicleModificationApp extends Application {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['swse', 'vehicle-modification-app'],
+      classes: ['swse', 'vehicle-modification-app', "swse-app"],
       template: 'systems/foundryvtt-swse/templates/apps/vehicle-modification.hbs',
       width: 900,
       height: 700,

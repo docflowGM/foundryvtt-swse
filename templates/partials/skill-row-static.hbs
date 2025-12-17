@@ -2,12 +2,12 @@
 <div class="skill-row-container" data-skill="{{key}}">
  <div class="skill-row flexrow" draggable="true">
  <div class="skill-roll-btn">
- <button class="roll-skill rollable"
+ <button class="roll-skill skill-use-rollable"
  data-skill="{{key}}"
  data-roll="1d20+@skills.{{key}}.total"
  data-label="{{label}}"
  title="Roll {{label}}">
- <i class="fas fa-dice-d20"></i>
+ <i class="fas fa-dice-d20" aria-hidden="true"></i>
  </button>
  </div>
 
@@ -62,31 +62,31 @@
 
  <div class="skill-actions">
  {{#if @root.skillActions}}
- {{#with (lookup @root.skillActions key)}}
+ {{#let (lookup @root.skillActions key)}}
  {{#if hasActions}}
  <button type="button" class="skill-actions-toggle" data-skill="{{../key}}" title="Show available actions">
- <i class="fas fa-chevron-down"></i>
+ <i class="fas fa-chevron-down" aria-hidden="true"></i>
  </button>
  {{/if}}
- {{/with}}
+ {{/let}}
  {{/if}}
  </div>
  </div>
 
  {{!-- Expandable Combat Actions Section --}}
  {{#if @root.skillActions}}
- {{#with (lookup @root.skillActions key)}}
+ {{#let (lookup @root.skillActions key)}}
  {{#if hasActions}}
- <div class="skill-actions-panel" style="display: none;" data-skill="{{../key}}">
+ <div class="skill-actions-panel"  data-skill="{{../key}}">
 
  {{#if combatActions}}
  <div class="actions-category">
- <h4><i class="fas fa-fist-raised"></i> Combat Actions</h4>
+ <h4><i class="fas fa-fist-raised" aria-hidden="true"></i> Combat Actions</h4>
  <div class="actions-list">
  {{#each combatActions}}
- <div class="action-item skill-use-rollable" data-skill="{{../../key}}" data-action-name="{{name}}" data-dc="{{dc.value}}" data-dc-type="{{dc.type}}" data-action-type="{{actionType}}" data-outcome="{{outcome}}" data-when="{{when}}">
+ <div class="action-item skill-use-skill-use-rollable" data-skill="{{../../key}}" data-action-name="{{name}}" data-dc="{{dc.value}}" data-dc-type="{{dc.type}}" data-action-type="{{actionType}}" data-outcome="{{outcome}}" data-when="{{when}}">
  <div class="action-header">
- <strong class="action-name"><i class="fas fa-dice-d20"></i> {{name}}</strong>
+ <strong class="action-name"><i class="fas fa-dice-d20" aria-hidden="true"></i> {{name}}</strong>
  <span class="action-type">{{actionType}}</span>
  {{#if cost}}
  <span class="action-cost">Cost: {{cost}}</span>
@@ -94,7 +94,7 @@
  </div>
  {{#if dc}}
  <div class="action-dc">
- <i class="fas fa-dice-d20"></i>
+ <i class="fas fa-dice-d20" aria-hidden="true"></i>
  DC:
  {{#if dc.value}}
  {{dc.value}}
@@ -122,19 +122,19 @@
 
  {{#if extraUses}}
  <div class="actions-category">
- <h4><i class="fas fa-book"></i> Other Uses</h4>
+ <h4><i class="fas fa-book" aria-hidden="true"></i> Other Uses</h4>
  <div class="actions-list">
  {{#each extraUses}}
- <div class="action-item skill-use-rollable" data-skill="{{../../key}}" data-action-name="{{name}}" data-dc="{{dc}}" data-effect="{{effect}}">
+ <div class="action-item skill-use-skill-use-rollable" data-skill="{{../../key}}" data-action-name="{{name}}" data-dc="{{dc}}" data-effect="{{effect}}">
  <div class="action-header">
- <strong class="action-name"><i class="fas fa-dice-d20"></i> {{name}}</strong>
+ <strong class="action-name"><i class="fas fa-dice-d20" aria-hidden="true"></i> {{name}}</strong>
  {{#if time}}
  <span class="action-type">{{time}}</span>
  {{/if}}
  </div>
  {{#if dc}}
  <div class="action-dc">
- <i class="fas fa-dice-d20"></i>
+ <i class="fas fa-dice-d20" aria-hidden="true"></i>
  DC: {{dc}}
  </div>
  {{/if}}
@@ -149,6 +149,6 @@
 
  </div>
  {{/if}}
- {{/with}}
+ {{/let}}
  {{/if}}
 </div>

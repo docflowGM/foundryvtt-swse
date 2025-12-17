@@ -64,7 +64,7 @@ export const SWSE_RACES = {
   togorian: { label: "Togorian", bonuses: { str: 4, int: -2, wis: -2 } },
   toydarian: { label: "Toydarian", bonuses: { wis: 2, str: -2 } },
   trandoshan: { label: "Trandoshan", bonuses: { str: 2, dex: -2 } },
-  twilek: { label: "Twi’lek", bonuses: { cha: 2, con: -2 } },
+  twilek: { label: "Twi'lek", bonuses: { cha: 2, con: -2 } },
   ubese: { label: "Ubese", bonuses: { dex: 2, con: -2 } },
   utai: { label: "Utai", bonuses: { con: 2, cha: -2 } },
   vurk: { label: "Vurk", bonuses: { con: 2, cha: 2, dex: -2 } },

@@ -7,7 +7,7 @@ import { ProgressionEngine } from "../../progression/engine/progression-engine.j
 export class SWSEVehicleSheet extends SWSECharacterSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "sheet", "actor", "vehicle"],
+      classes: ["swse", "sheet", "actor", "vehicle", "swse-app"],
       template: "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-sheet.hbs",
       width: 750,
       height: 700,

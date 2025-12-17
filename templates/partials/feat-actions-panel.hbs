@@ -1,6 +1,6 @@
 {{!-- Feat Actions Panel - Shows feat-granted combat actions --}}
 <div class="feat-actions-panel">
-  <h4><i class="fas fa-star"></i> Feat Actions</h4>
+  <h4><i class="fas fa-star" aria-hidden="true"></i> Feat Actions</h4>
 
   {{#if featActions}}
     {{!-- Toggleable Actions --}}
@@ -11,8 +11,8 @@
           {{#each featActions.toggleable}}
             <div class="feat-action-item {{#if toggled}}active{{/if}}">
               <div class="feat-action-header">
-                <button class="feat-action-toggle" data-action-key="{{key}}" title="Toggle {{name}}">
-                  <i class="fas {{#if toggled}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i>
+                <button class="feat-action-toggle" data-action-key="{{key}}" data-action-key="{{key}}" data-action-key="{{key}}" title="Toggle {{name}}">
+                  <i class="fas {{#if toggled}}fa-toggle-on{{else}}fa-toggle-off{{/if}}" aria-hidden="true"></i>
                 </button>
                 <strong>{{name}}</strong>
                 <span class="action-type-badge {{actionType}}">{{actionType}}</span>
@@ -48,8 +48,8 @@
                   </label>
                   <input
                     type="range"
-                    id="{{key}}-slider"
-                    class="feat-action-slider-input"
+                    data-id="{{key}}-slider"
+                    class="feat-action-slider-input" data-action-key="{{key}}"
                     data-action-key="{{key}}"
                     min="{{variableOptions.min}}"
                     max="{{variableOptions.max}}"
@@ -79,8 +79,8 @@
                 <strong>{{name}}</strong>
                 <span class="action-type-badge {{actionType}}">{{actionType}}</span>
                 {{#if trigger}}
-                  <button class="feat-action-use" data-action-key="{{key}}" title="Use {{name}}">
-                    <i class="fas fa-play-circle"></i>
+                  <button class="feat-action-use" data-action-key="{{key}}" data-action-key="{{key}}" data-action-key="{{key}}" title="Use {{name}}">
+                    <i class="fas fa-play-circle" aria-hidden="true"></i>
                   </button>
                 {{/if}}
               </div>
@@ -106,7 +106,7 @@
           {{#each featActions.passive}}
             <div class="feat-action-item passive">
               <div class="feat-action-header">
-                <i class="fas fa-circle-notch"></i>
+                <i class="fas fa-circle-notch" aria-hidden="true"></i>
                 <strong>{{name}}</strong>
               </div>
               <div class="feat-action-description">{{description}}</div>

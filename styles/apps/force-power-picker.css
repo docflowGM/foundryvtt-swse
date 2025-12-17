@@ -1,10 +1,10 @@
-.swse.force-power-picker .force-picker-root {
+.swse-app.force-power-picker .force-picker-root {
   background: linear-gradient(180deg, rgba(10,12,20,0.95), rgba(6,8,12,0.95));
   padding: 12px;
   color: #e6eef8;
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
-.swse.force-power-picker .force-grid {
+.swse-app.force-power-picker .force-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 10px;
@@ -12,7 +12,7 @@
   overflow-y: auto;
   padding: 8px 0;
 }
-.swse.force-power-picker .power-card {
+.swse-app.force-power-picker .power-card {
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.04);
   padding: 8px;
@@ -23,17 +23,17 @@
   align-items: center;
   transition: box-shadow .15s ease, transform .12s ease;
 }
-.swse.force-power-picker .power-card img {
+.swse-app.force-power-picker .power-card img {
   width: 64px;
   height: 64px;
   border-radius: 4px;
   object-fit: cover;
 }
-.swse.force-power-picker .power-card.selected {
+.swse-app.force-power-picker .power-card.selected {
   box-shadow: 0 6px 24px rgba(66,165,255,0.14);
   border-color: rgba(66,165,255,0.6);
   transform: translateY(-3px);
 }
-.swse.force-power-picker .power-meta { flex: 1; }
-.swse.force-power-picker .power-name { font-weight: 600; margin-bottom: 4px; }
-.swse.force-power-picker .force-picker-footer { display:flex; justify-content:space-between; padding-top:8px; }
+.swse-app.force-power-picker .power-meta { flex: 1; }
+.swse-app.force-power-picker .power-name { font-weight: 600; margin-bottom: 4px; }
+.swse-app.force-power-picker .force-picker-footer { display:flex; justify-content:space-between; padding-top:8px; }

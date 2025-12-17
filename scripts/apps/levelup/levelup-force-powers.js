@@ -32,7 +32,7 @@ export function canLearnForcePowers(actor) {
  * @returns {Promise<Array>} Available force powers with qualification info
  */
 export async function getAvailableForcePowers(actor, pendingData = {}) {
-  const forcePowerPack = game.packs.get('foundryvtt-swse.forcepowers');
+  const forcePowerPack = game.packs.get('foundryvtt-foundryvtt-swse.forcepowers');
   if (!forcePowerPack) {
     SWSELogger.warn('SWSE LevelUp | Force powers compendium not found');
     return [];
@@ -95,7 +95,7 @@ export async function getAvailableForcePowers(actor, pendingData = {}) {
  * @returns {Promise<Object|null>} The selected force power or null
  */
 export async function selectForcePower(powerId) {
-  const forcePowerPack = game.packs.get('foundryvtt-swse.forcepowers');
+  const forcePowerPack = game.packs.get('foundryvtt-foundryvtt-swse.forcepowers');
   if (!forcePowerPack) return null;
 
   const power = await forcePowerPack.getDocument(powerId);

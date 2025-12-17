@@ -249,7 +249,7 @@ export class SWSEUpgradeApp extends FormApplication {
             title: "Item Upgrades",
             resizable: true,
             closeOnSubmit: false,
-            classes: ["swse", "swse-upgrade-app"]
+            classes: ["swse", "swse-upgrade-app", "swse-app"]
         });
     }
 
@@ -293,7 +293,7 @@ export class SWSEUpgradeApp extends FormApplication {
         const worldUpgrades = game.items.filter(i => i.type === 'equipment');
 
         // Load from compendium
-        const pack = game.packs.get('foundryvtt-swse.equipment');
+        const pack = game.packs.get('foundryvtt-foundryvtt-swse.equipment');
         let compendiumUpgrades = [];
         if (pack) {
             compendiumUpgrades = await pack.getDocuments();
@@ -401,7 +401,7 @@ export class SWSEUpgradeApp extends FormApplication {
         // Find the upgrade item
         let upgradeItem = game.items.get(upgradeId);
         if (!upgradeItem) {
-            const pack = game.packs.get('foundryvtt-swse.equipment');
+            const pack = game.packs.get('foundryvtt-foundryvtt-swse.equipment');
             if (pack) {
                 upgradeItem = await pack.getDocument(upgradeId);
             }

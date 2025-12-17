@@ -20,7 +20,7 @@
   const nonheroicUnits = await response.json();
 
   // Get the NPC compendium
-  const npcPack = game.packs.get('foundryvtt-swse.npc');
+  const npcPack = game.packs.get('foundryvtt-foundryvtt-swse.npc');
 
   if (!npcPack) {
     ui.notifications.error('NPC compendium not found!');
@@ -121,7 +121,7 @@
       if (template.feats && template.feats.length > 0) {
         for (const featName of template.feats) {
           // Try to find feat in compendium
-          const featPack = game.packs.get('foundryvtt-swse.feats');
+          const featPack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
           const featIndex = featPack ? await featPack.getIndex() : null;
           const featEntry = featIndex ? featIndex.find(i => i.name.toLowerCase() === featName.toLowerCase()) : null;
 
@@ -143,7 +143,7 @@
       if (template.talents && template.talents.length > 0) {
         for (const talentName of template.talents) {
           // Try to find talent in compendium
-          const talentPack = game.packs.get('foundryvtt-swse.talents');
+          const talentPack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
           const talentIndex = talentPack ? await talentPack.getIndex() : null;
           const talentEntry = talentIndex ? talentIndex.find(i => i.name.toLowerCase() === talentName.toLowerCase()) : null;
 

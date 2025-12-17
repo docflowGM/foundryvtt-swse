@@ -228,7 +228,7 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
           SWSELogger.log(`CharGen | Auto-granting Lightsaber weapon for Jedi`);
 
           // Load lightsaber from weapons pack
-          const weaponsPack = game.packs.get('foundryvtt-swse.weapons');
+          const weaponsPack = game.packs.get('foundryvtt-foundryvtt-swse.weapons');
           if (weaponsPack) {
             const docs = await weaponsPack.getDocuments();
             const lightsaber = docs.find(d => d.name === "Lightsaber");
@@ -238,7 +238,7 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
               SWSELogger.warn("CharGen | Lightsaber weapon not found in compendium");
             }
           } else {
-            SWSELogger.error("CharGen | Weapons compendium (swse.weapons) not found");
+            SWSELogger.error("CharGen | Weapons compendium (foundryvtt-swse.weapons) not found");
             ui.notifications.warn("Weapons compendium not found. Cannot grant starting lightsaber.");
           }
           continue; // Don't create a feat for this, we're giving the actual weapon

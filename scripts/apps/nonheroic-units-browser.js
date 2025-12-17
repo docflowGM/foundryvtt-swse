@@ -17,7 +17,7 @@ export class NonheroicUnitsBrowser extends Application {
       id: 'nonheroic-units-browser',
       title: 'Nonheroic Units Browser',
       template: 'systems/foundryvtt-swse/templates/apps/nonheroic-units-browser.hbs',
-      classes: ['swse', 'nonheroic-browser'],
+      classes: ['swse', 'nonheroic-browser', "swse-app"],
       width: 800,
       height: 700,
       resizable: true,
@@ -194,7 +194,7 @@ export class NonheroicUnitsBrowser extends Application {
   }
 
   async _importUnitToCompendium(unit) {
-    const npcPack = game.packs.get('foundryvtt-swse.npc');
+    const npcPack = game.packs.get('foundryvtt-foundryvtt-swse.npc');
 
     if (!npcPack) {
       ui.notifications.error('NPC compendium not found!');

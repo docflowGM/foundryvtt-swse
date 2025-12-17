@@ -1,83 +1,101 @@
 <div class="condition-track">
- <label class="track-label">Condition Track</label>
+  <label class="track-label">Condition Track</label>
 
- <div class="track-visual flexrow">
- <div class="track-step normal {{#if (eq system.conditionTrack.current 0)}}active{{/if}}"
- data-step="0"
- data-action="setConditionTrack"
- title="Normal">
- <div class="step-label">Normal</div>
- </div>
+  <div class="track-visual flexrow">
 
- <div class="track-step {{#if (eq system.conditionTrack.current 1)}}active{{/if}}"
- data-step="1"
- data-action="setConditionTrack"
- title="-1 to all d20 rolls">
- <div class="step-label">-1</div>
- <div class="step-penalty">-1</div>
- </div>
+    {{!-- Step 0 --}}
+    <div class="track-step normal {{#if (eq system.conditionTrack.current 0)}}active{{/if}}"
+         data-step="0"
+         role="button" tabindex="0"
+         title="Normal">
+      <div class="step-label">Normal</div>
+    </div>
 
- <div class="track-step {{#if (eq system.conditionTrack.current 2)}}active{{/if}}"
- data-step="2"
- data-action="setConditionTrack"
- title="-2 to all d20 rolls">
- <div class="step-label">-2</div>
- <div class="step-penalty">-2</div>
- </div>
+    {{!-- Step 1 --}}
+    <div class="track-step {{#if (eq system.conditionTrack.current 1)}}active{{/if}}"
+         data-step="1"
+         role="button" tabindex="0"
+         title="-1 to all d20 rolls">
+      <div class="step-label">-1</div>
+      <div class="step-penalty">-1</div>
+    </div>
 
- <div class="track-step {{#if (eq system.conditionTrack.current 3)}}active{{/if}}"
- data-step="3"
- data-action="setConditionTrack"
- title="-5 to all d20 rolls">
- <div class="step-label">-5</div>
- <div class="step-penalty">-5</div>
- </div>
+    {{!-- Step 2 --}}
+    <div class="track-step {{#if (eq system.conditionTrack.current 2)}}active{{/if}}"
+         data-step="2"
+         role="button" tabindex="0"
+         title="-2 to all d20 rolls">
+      <div class="step-label">-2</div>
+      <div class="step-penalty">-2</div>
+    </div>
 
- <div class="track-step {{#if (eq system.conditionTrack.current 4)}}active{{/if}}"
- data-step="4"
- data-action="setConditionTrack"
- title="-10 to all d20 rolls, half speed">
- <div class="step-label">-10</div>
- <div class="step-penalty">-10</div>
- </div>
+    {{!-- Step 3 --}}
+    <div class="track-step {{#if (eq system.conditionTrack.current 3)}}active{{/if}}"
+         data-step="3"
+         role="button" tabindex="0"
+         title="-5 to all d20 rolls">
+      <div class="step-label">-5</div>
+      <div class="step-penalty">-5</div>
+    </div>
 
- <div class="track-step helpless {{#if (eq system.conditionTrack.current 5)}}active{{/if}}"
- data-step="5"
- data-action="setConditionTrack"
- title="Helpless">
- <div class="step-label">Helpless</div>
- </div>
- </div>
+    {{!-- Step 4 --}}
+    <div class="track-step {{#if (eq system.conditionTrack.current 4)}}active{{/if}}"
+         data-step="4"
+         role="button" tabindex="0"
+         title="-10 to all d20 rolls, half speed">
+      <div class="step-label">-10</div>
+      <div class="step-penalty">-10</div>
+    </div>
 
- <div class="track-controls flexrow">
- <button class="track-button improve" 
- data-action="improveCondition" 
- type="button"
- title="Recover one step">
- <i class="fas fa-arrow-up"></i>
- Recover
- </button>
+    {{!-- Step 5 --}}
+    <div class="track-step helpless {{#if (eq system.conditionTrack.current 5)}}active{{/if}}"
+         data-step="5"
+         role="button" tabindex="0"
+         title="Helpless">
+      <div class="step-label">Helpless</div>
+    </div>
 
- <label class="persistent-checkbox" title="Prevents recovery">
- <input type="checkbox" 
- name="system.conditionTrack.persistent"
- {{checked system.conditionTrack.persistent}}/>
- <span>Persistent</span>
- </label>
+  </div>
 
- <button class="track-button worsen" 
- data-action="worsenCondition" 
- type="button"
- title="Worsen one step">
- <i class="fas fa-arrow-down"></i>
- Damage
- </button>
- </div>
+  <div class="track-controls flexrow">
 
- {{#if (gt system.conditionTrack.penalty 0)}}
- <div class="penalty-warning">
- <i class="fas fa-exclamation-triangle"></i>
- <span>{{system.conditionTrack.penalty}} penalty to all d20 rolls</span>
- </div>
- {{/if}}
+    {{!-- Improve Condition Button --}}
+    <button class="track-button improve"
+            type="button"
+            role="button"
+            tabindex="0"
+            aria-label="Recover one step"
+            title="Recover one step">
+      <i class="fas fa-arrow-up" aria-hidden="true"></i>
+      Recover
+    </button>
+
+    {{!-- Persistent Checkbox --}}
+    <label class="persistent-checkbox"
+           title="Prevents recovery"
+           aria-label="Persistent condition">
+      <input type="checkbox"
+             name="system.conditionTrack.persistent"
+             {{checked system.conditionTrack.persistent}}/>
+      <span>Persistent</span>
+    </label>
+
+    {{!-- Worsen Condition Button --}}
+    <button class="track-button worsen"
+            type="button"
+            role="button"
+            tabindex="0"
+            aria-label="Worsen one step"
+            title="Worsen one step">
+      <i class="fas fa-arrow-down" aria-hidden="true"></i>
+      Damage
+    </button>
+  </div>
+
+  {{#if (gt system.conditionTrack.penalty 0)}}
+  <div class="penalty-warning">
+    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+    <span>{{system.conditionTrack.penalty}} penalty to all d20 rolls</span>
+  </div>
+  {{/if}}
 </div>

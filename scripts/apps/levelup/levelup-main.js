@@ -70,7 +70,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['swse', 'levelup-dialog'],
+      classes: ['swse', 'levelup-dialog', "swse-app"],
       template: 'systems/foundryvtt-swse/templates/apps/levelup.hbs',
       width: 800,
       height: 600,

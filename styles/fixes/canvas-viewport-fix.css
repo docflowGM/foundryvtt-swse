@@ -1,0 +1,21 @@
+
+/* ================================================================
+   OVERRIDE FIX — Prevent High Contrast theme from collapsing viewport
+   ================================================================ */
+
+html, body {
+    height: 100% !important;
+    min-height: 100% !important;
+    display: block !important;
+    overflow: visible !important;
+}
+
+/* Prevent any layout collapse on Foundry root */
+#board,
+#ui-top,
+#ui-bottom,
+#ui-left,
+#ui-right {
+    min-height: 100% !important;
+    display: block !important;
+}

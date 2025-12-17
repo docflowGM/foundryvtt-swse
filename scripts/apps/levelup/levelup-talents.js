@@ -58,7 +58,7 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
 
   if (talentTreeRestriction === "unrestricted") {
     // Free build mode: all talent trees from all talents
-    const talentPack = game.packs.get('foundryvtt-swse.talents');
+    const talentPack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
     if (talentPack) {
       const allTalents = await talentPack.getDocuments();
       const treeSet = new Set();
@@ -76,7 +76,7 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
   } else {
     // Talent trees from any class the character has levels in
     const characterClasses = getCharacterClasses(actor);
-    const classPack = game.packs.get('foundryvtt-swse.classes');
+    const classPack = game.packs.get('foundryvtt-foundryvtt-swse.classes');
 
     for (const className of Object.keys(characterClasses)) {
       const classDoc = await classPack.index.find(c => c.name === className);
@@ -107,7 +107,7 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
  * @returns {Promise<Array>} Array of talent documents
  */
 export async function loadTalentData() {
-  const talentPack = game.packs.get('foundryvtt-swse.talents');
+  const talentPack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
   if (!talentPack) return [];
 
   return await talentPack.getDocuments();

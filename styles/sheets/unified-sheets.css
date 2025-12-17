@@ -1,1575 +1,300 @@
-/* ============================================
-   SWSE Character Sheet - ULTRA COMPACT Layout
-   Direct copy/paste into unified-sheets.css
-   ============================================ */
+/* ============================================================================
+   SWSE Unified Sheet — STRICT SANDBOX VERSION
+   This stylesheet is FULLY namespaced and cannot break Foundry UI or canvas.
+   - All selectors are scoped under .swse-app
+   - No root-level overrides (.game, .app, body, html)
+   - No global flex/grid class bleed
+   ============================================================================ */
 
-/* ─────────────── Global Reset & Compact Base ─────────────── */
-.swse-datapad-sheet,
-.swse.character-sheet,
-.holo-theme {
+/* ============================================================================
+   1. ROOT SHEET CONTAINERS
+   ============================================================================ */
+
+.swse-app .swse-sheet,
+.swse-app .swse-sheet-holo,
+.swse-app .swse-sheet-datapad {
   position: relative;
-  overflow-y: auto;
   background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
   color: #9ed0ff;
-  border: 1px solid #1c4b8e;
-  border-radius: 6px;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 20, 40, 0.8);
   font-family: "Orbitron", "Roboto", sans-serif;
-  font-size: 10px;
-  max-height: 95vh;
+  box-shadow: 0 0 20px rgba(0,255,255,0.3), inset 0 0 10px rgba(0,20,40,0.8);
+  border-radius: 6px;
+  border: 1px solid #1c4b8e;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
-/* ─────────────── Holographic Effects ─────────────── */
-.swse-datapad-sheet::before,
-.swse.character-sheet::before,
-.holo-theme::before {
+/* Prevent holo theme from attaching to <body> */
+body.swse-app-theme-holo .swse-app .swse-sheet-holo {
+  /* theme effects apply ONLY inside SWSE sheets */
+  background: radial-gradient(circle at center, #0a0f1a 20%, #05121f 80%);
+}
+
+/* ============================================================================
+   2. HOLOGRAPHIC GRID OVERLAY (SAFE)
+   ============================================================================ */
+
+.swse-app .swse-sheet-holo::before {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  inset: 0;
   background-image:
-    linear-gradient(90deg, rgba(0, 180, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(0, 180, 255, 0.08) 1px, transparent 1px);
+    linear-gradient(90deg, rgba(0,180,255,0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0,180,255,0.08) 1px, transparent 1px);
   background-size: 30px 30px;
-  pointer-events: none;
-  mix-blend-mode: screen;
   opacity: 0.2;
-  animation: holo-grid-move 20s linear infinite;
-  z-index: 0;
+  pointer-events: none;
+  animation: swse-holo-grid 20s linear infinite;
 }
 
-@keyframes holo-grid-move {
+@keyframes swse-holo-grid {
   from { background-position: 0 0; }
   to { background-position: 200px 200px; }
 }
 
-.swse-datapad-sheet::after,
-.swse.character-sheet::after,
-.holo-theme::after {
+.swse-app .swse-sheet-holo::after {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(circle at center, rgba(0,255,255,0.03) 0%, transparent 70%);
-  mix-blend-mode: screen;
-  animation: holo-wave 12s ease-in-out infinite;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0,255,255,0.04), transparent 70%);
   opacity: 0.15;
   pointer-events: none;
-  z-index: 1;
+  animation: swse-holo-wave 12s ease-in-out infinite;
 }
 
-@keyframes holo-wave {
+@keyframes swse-holo-wave {
   0%, 100% { transform: scale(1); opacity: 0.1; }
   50% { transform: scale(1.03); opacity: 0.2; }
 }
 
-/* ─────────────── Content Layer ─────────────── */
-.swse-datapad-sheet form,
-.swse-datapad-sheet .sheet-body,
-.swse-datapad-sheet .datapad-main-grid,
-.swse.character-sheet form,
-.swse.character-sheet .sheet-body {
-  position: relative;
-  z-index: 5;
-}
+/* ============================================================================
+   3. SHEET HEADER
+   ============================================================================ */
 
-/* ─────────────── ULTRA COMPACT HEADER ─────────────── */
-.datapad-header,
-.sheet-header {
-  background: linear-gradient(135deg, rgba(26, 77, 122, 0.9), rgba(44, 95, 141, 0.9));
-  border-bottom: 1px solid #0af;
-  padding: 4px 6px;
-  min-height: auto;
-  box-shadow: 0 2px 15px rgba(0, 170, 255, 0.3);
-  flex-shrink: 0;
-}
-
-.header-left {
+.swse-app .swse-sheet-header {
+  background: linear-gradient(135deg, rgba(26,77,122,0.9), rgba(44,95,141,0.9));
+  padding: 6px;
   display: flex;
-  gap: 8px;
-  flex: 1;
-}
-
-.header-center {
-  display: flex;
+  gap: 6px;
   align-items: center;
-  justify-content: center;
+  border-bottom: 1px solid #00aaff;
 }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-/* Logo - Much Smaller */
-.sw-logo {
-  max-width: 80px;
-  height: auto;
-  opacity: 0.8;
-}
-
-/* Portrait - DRAMATICALLY SMALLER */
-.character-portrait {
-  width: 60px;
-  height: 80px;
-  object-fit: cover;
+.swse-app .swse-portrait {
+  width: 70px;
+  height: 90px;
   border: 1px solid #0af;
   border-radius: 4px;
-  box-shadow: 0 0 10px rgba(0, 170, 255, 0.4);
-}
-
-/* ─────────────── COMPACT TAB BUTTONS ─────────────── */
-.header-tabs {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 80px;
-}
-
-.header-tab {
-  padding: 3px 8px;
-  cursor: pointer;
-  color: #9ed0ff;
-  text-transform: uppercase;
-  font-size: 9px;
-  font-weight: bold;
-  transition: all 0.2s ease;
-  border: 1px solid rgba(0, 170, 255, 0.3);
-  background: rgba(0, 20, 40, 0.5);
-  text-align: center;
-  border-radius: 3px;
-}
-
-.header-tab:hover {
-  color: #fff;
-  background: rgba(0, 170, 255, 0.2);
-}
-
-.header-tab.active {
-  color: #fff;
-  border-color: #00e6ff;
-  background: rgba(0, 170, 255, 0.4);
-  box-shadow: 0 0 8px rgba(0, 170, 255, 0.5);
-}
-
-/* ─────────────── COMPACT BASIC FIELDS ─────────────── */
-.basic-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  flex: 1;
-}
-
-.field-trio,
-.field-row-2 {
-  display: flex;
-  gap: 4px;
-}
-
-.field-sm,
-.field-md {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.basic-fields label {
-  font-size: 7px;
-  text-transform: uppercase;
-  color: #0af;
-  font-weight: bold;
-  letter-spacing: 0.3px;
-  margin-bottom: 1px;
-}
-
-.basic-fields input,
-.basic-fields select {
-  width: 100%;
-  padding: 2px 4px;
-  font-size: 9px;
-  height: 18px;
-}
-
-.readonly,
-.half-level-display {
-  background: rgba(0, 20, 40, 0.6);
-  border: 1px solid rgba(0, 170, 255, 0.4);
-  padding: 2px 4px;
-  font-size: 9px;
-  text-align: center;
-  color: #00ff88;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ─────────────── SCROLLABLE BODY ─────────────── */
-.sheet-body,
-.datapad-main-grid {
-  overflow-y: auto;
-  overflow-x: hidden;
-  flex: 1;
-  padding: 6px;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-/* Custom Scrollbar - Thinner */
-.sheet-body::-webkit-scrollbar,
-.datapad-main-grid::-webkit-scrollbar {
-  width: 6px;
-}
-
-.sheet-body::-webkit-scrollbar-track,
-.datapad-main-grid::-webkit-scrollbar-track {
-  background: rgba(0, 20, 40, 0.6);
-  border-radius: 3px;
-}
-
-.sheet-body::-webkit-scrollbar-thumb,
-.datapad-main-grid::-webkit-scrollbar-thumb {
-  background: #0077bb;
-  border-radius: 3px;
-  box-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
-}
-
-.sheet-body::-webkit-scrollbar-thumb:hover,
-.datapad-main-grid::-webkit-scrollbar-thumb:hover {
-  background: #00cfff;
-}
-
-/* ─────────────── ULTRA COMPACT INPUTS ─────────────── */
-.swse-datapad-sheet input,
-.swse-datapad-sheet textarea,
-.swse-datapad-sheet select,
-.swse.character-sheet input,
-.swse.character-sheet textarea,
-.swse.character-sheet select,
-.holo-theme input,
-.holo-theme textarea,
-.holo-theme select {
-  background: rgba(0, 20, 40, 0.7);
-  color: #ffffff;
-  border: 1px solid #0af;
-  border-radius: 2px;
-  padding: 2px 4px;
-  transition: all 0.2s ease;
-  font-size: 9px;
-  font-family: inherit;
-  height: 20px;
-  line-height: 1;
-  font-weight: 600;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-}
-
-/* Enhanced select dropdown contrast */
-.swse-datapad-sheet select,
-.swse.character-sheet select,
-.holo-theme select {
-  background: rgba(0, 25, 45, 0.95);
-  border: 1px solid rgba(0, 170, 255, 0.5);
-  color: #ffffff;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.swse-datapad-sheet select:hover,
-.swse.character-sheet select:hover,
-.holo-theme select:hover {
-  background: rgba(0, 35, 65, 1);
-  border-color: rgba(0, 200, 255, 0.7);
-}
-
-.swse-datapad-sheet input:focus,
-.swse-datapad-sheet textarea:focus,
-.swse-datapad-sheet select:focus,
-.swse.character-sheet input:focus,
-.swse.character-sheet textarea:focus,
-.swse.character-sheet select:focus {
-  border-color: #00c6ff;
-  box-shadow: 0 0 6px rgba(0, 198, 255, 0.6);
-  outline: none;
-  background: rgba(0, 40, 80, 0.8);
-  color: #ffffff;
-}
-
-.swse-datapad-sheet select:focus,
-.swse.character-sheet select:focus,
-.holo-theme select:focus {
-  background: rgba(0, 50, 90, 1);
-  color: #ffffff;
-}
-
-.swse-datapad-sheet input::placeholder,
-.swse.character-sheet input::placeholder,
-.swse-datapad-sheet textarea::placeholder,
-.swse.character-sheet textarea::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 8px;
-  font-weight: 400;
-}
-
-.swse-datapad-sheet input[type="checkbox"],
-.swse.character-sheet input[type="checkbox"] {
-  width: 12px;
-  height: 12px;
-  margin: 0 2px 0 0;
-}
-
-.swse-datapad-sheet textarea,
-.swse.character-sheet textarea {
-  height: auto;
-  min-height: 18px;
-  resize: vertical;
-}
-
-/* ─────────────── COMPACT SECTIONS ─────────────── */
-.datapad-section {
-  background: rgba(0, 20, 40, 0.5);
-  border: 1px solid rgba(0, 170, 255, 0.3);
-  border-radius: 3px;
-  padding: 4px;
-  margin-bottom: 4px;
-}
-
-.section-header-black {
-  color: #00c6ff;
-  font-size: 9px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 3px;
-  padding-bottom: 2px;
-  border-bottom: 1px solid rgba(0, 170, 255, 0.4);
-  text-shadow: 0 0 5px rgba(0, 170, 255, 0.6);
-}
-
-/* ─────────────── COMPACT ATTRIBUTES ─────────────── */
-.attributes-grid-improved {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3px;
-  margin-bottom: 6px;
-}
-
-.attribute-row-improved {
-  background: rgba(0, 20, 40, 0.6);
-  border: 1px solid rgba(0, 170, 255, 0.3);
-  border-radius: 3px;
-  padding: 3px;
-  display: grid;
-  grid-template-columns: 40px 1fr auto auto;
-  gap: 4px;
-  align-items: center;
-  transition: all 0.2s;
-}
-
-.attribute-row-improved:hover {
-  border-color: #0af;
-  box-shadow: 0 0 8px rgba(0, 170, 255, 0.3);
-}
-
-.attr-label {
-  font-size: 8px;
-  text-transform: uppercase;
-  color: #0af;
-  font-weight: bold;
-  letter-spacing: 0.3px;
-}
-
-.attr-breakdown {
-  display: flex;
-  gap: 3px;
-  align-items: center;
-}
-
-.attr-field {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 35px;
-}
-
-.attr-field label {
-  font-size: 6px;
-  text-transform: uppercase;
-  color: #6a9dcd;
-  text-align: center;
-}
-
-.attr-input-sm {
-  width: 100%;
-  text-align: center;
-  font-size: 9px;
-  padding: 1px 2px;
-  height: 18px;
-}
-
-.attr-total {
-  font-size: 12px;
-  font-weight: bold;
-  color: #00ff88;
-  text-shadow: 0 0 5px rgba(0, 255, 136, 0.6);
-  text-align: center;
-  min-width: 25px;
-}
-
-.attr-mod {
-  font-size: 14px;
-  font-weight: bold;
-  color: #00ffff;
-  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
-  min-width: 30px;
-  text-align: center;
-}
-
-.roll-btn {
-  width: 20px;
-  height: 20px;
-  padding: 2px;
-  font-size: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ─────────────── COMPACT DEFENSE TABLE ─────────────── */
-.defense-table {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.defense-table-header {
-  display: grid;
-  grid-template-columns: 60px 40px 20px 35px 60px 40px 50px 40px;
-  gap: 3px;
-  font-size: 7px;
-  text-transform: uppercase;
-  color: #0af;
-  font-weight: bold;
-  padding: 2px;
-  background: rgba(0, 170, 255, 0.1);
-  border-radius: 2px;
-}
-
-.defense-table-row {
-  display: grid;
-  grid-template-columns: 60px 40px 20px 35px 60px 40px 50px 40px;
-  gap: 3px;
-  padding: 2px;
-  background: rgba(0, 20, 40, 0.4);
-  border: 1px solid rgba(0, 170, 255, 0.2);
-  border-radius: 2px;
-  align-items: center;
-}
-
-.defense-label-compact {
-  font-size: 8px;
-  text-transform: uppercase;
-  color: #0af;
-  font-weight: bold;
-}
-
-.defense-total-compact {
-  font-size: 14px;
-  font-weight: bold;
-  color: #00ff88;
-  text-shadow: 0 0 5px rgba(0, 255, 136, 0.6);
-  text-align: center;
-}
-
-.defense-equals,
-.defense-base {
-  font-size: 8px;
-  color: #9ed0ff;
-  text-align: center;
-}
-
-.defense-input-sm {
-  width: 100%;
-  text-align: center;
-  font-size: 8px;
-  padding: 1px 2px;
-  height: 18px;
-}
-
-.defense-select-sm {
-  width: 100%;
-  font-size: 7px;
-  padding: 1px 2px;
-  height: 18px;
-}
-
-.defense-notes {
-  margin-top: 4px;
-}
-
-.defense-notes label {
-  font-size: 7px;
-  text-transform: uppercase;
-  color: #0af;
-  margin-bottom: 2px;
-  display: block;
-}
-
-.defense-notes input {
-  width: 100%;
-  font-size: 8px;
-  height: 18px;
-}
-
-/* ─────────────── COMPACT ARMOR ─────────────── */
-.armor-main-row {
-  display: flex;
-  gap: 3px;
-  margin-bottom: 3px;
-}
-
-.armor-field-wide {
-  flex: 2;
-}
-
-.armor-field-sm {
-  flex: 1;
-}
-
-.armor-field-wide label,
-.armor-field-sm label {
-  font-size: 7px;
-  text-transform: uppercase;
-  color: #0af;
-  margin-bottom: 1px;
-  display: block;
-}
-
-.armor-field-wide input,
-.armor-field-sm input {
-  font-size: 8px;
-  height: 18px;
-}
-
-.armor-checkboxes-row {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  margin-bottom: 3px;
-  align-items: center;
-}
-
-.armor-checkbox-group,
-.armor-select-group {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.armor-checkbox-group label,
-.armor-select-group label {
-  font-size: 7px;
-  color: #9ed0ff;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.armor-select-group select {
-  font-size: 7px;
-  padding: 1px 2px;
-  height: 18px;
-}
-
-.armor-notes {
-  margin-top: 3px;
-}
-
-.armor-notes label {
-  font-size: 7px;
-  text-transform: uppercase;
-  color: #0af;
-  margin-bottom: 1px;
-  display: block;
-}
-
-.armor-notes input {
-  font-size: 8px;
-  height: 18px;
-}
-
-/* ─────────────── ULTRA COMPACT SKILLS ─────────────── */
-.skills-grid-compact {
-  max-height: 200px;
-  overflow-y: auto;
-  padding-right: 2px;
-}
-
-.skills-header {
-  display: grid;
-  grid-template-columns: 100px 35px 30px 30px 30px 35px 35px 40px 25px;
-  gap: 2px;
-  font-size: 7px;
-  text-transform: uppercase;
-  color: #0af;
-  font-weight: bold;
-  padding: 2px;
-  background: rgba(0, 170, 255, 0.1);
-  border-radius: 2px;
-  margin-bottom: 2px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.skill-row {
-  display: grid;
-  grid-template-columns: 100px 35px 30px 30px 30px 35px 35px 40px 25px;
-  gap: 2px;
-  align-items: center;
-  padding: 2px;
-  border-bottom: 1px solid rgba(0, 170, 255, 0.15);
-  transition: all 0.2s;
-  font-size: 8px;
-}
-
-.skill-row:hover {
-  background: rgba(0, 170, 255, 0.15);
-}
-
-.skill-name {
-  color: #9ed0ff;
-  font-weight: 500;
-  font-size: 8px;
-}
-
-.skill-ability {
-  font-size: 7px;
-  color: #6a9dcd;
-  text-transform: uppercase;
-  text-align: center;
-}
-
-.skill-half-level {
-  font-size: 8px;
-  color: #9ed0ff;
-  text-align: center;
-}
-
-.skill-total {
-  text-align: center;
-  font-weight: bold;
-  color: #00ff88;
-  text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
-  font-size: 9px;
-}
-
-.skill-row input[type="checkbox"] {
-  margin: 0;
-  justify-self: center;
-}
-
-.skill-row input[type="number"],
-.skill-input {
-  width: 100%;
-  text-align: center;
-  padding: 1px 2px;
-  font-size: 8px;
-  height: 18px;
-}
-
-.roll-btn-sm {
-  width: 20px;
-  height: 18px;
-  padding: 0;
-  font-size: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ─────────────── COMPACT HP & VITALS ─────────────── */
-.hp-grid {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 4px;
-}
-
-.hp-field {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.hp-field label {
-  font-size: 7px;
-  text-transform: uppercase;
-  color: #0af;
-}
-
-.hp-field input {
-  text-align: center;
-  font-size: 11px;
-  font-weight: bold;
-  height: 22px;
-}
-
-.threshold-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.threshold-row {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.threshold-row label {
-  font-size: 8px;
-  text-transform: uppercase;
-  color: #0af;
-  min-width: 70px;
-}
-
-.threshold-formula-compact {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  flex: 1;
-}
-
-.formula-text-sm {
-  font-size: 7px;
-  color: #9ed0ff;
-}
-
-.formula-input-sm {
-  width: 35px;
-  text-align: center;
-  font-size: 8px;
-  height: 18px;
-}
-
-.threshold-total {
-  font-size: 12px;
-  font-weight: bold;
-  color: #00ff88;
-  text-shadow: 0 0 5px rgba(0, 255, 136, 0.6);
-  min-width: 30px;
-  text-align: center;
-}
-
-/* ─────────────── COMPACT CONDITION TRACK ─────────────── */
-.condition-buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2px;
-}
-
-.condition-btn {
-  padding: 3px;
-  font-size: 8px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.condition-btn.active {
-  background: #00aaff;
-  color: #fff;
-  border-color: #00ffff;
-  box-shadow: 0 0 8px rgba(0, 170, 255, 0.6);
-}
-
-/* ─────────────── BOTTOM TABS ─────────────── */
-.bottom-tabs-header {
-  display: flex;
-  border-bottom: 1px solid #0af;
-  background: rgba(0, 20, 40, 0.6);
-  margin-bottom: 4px;
-}
-
-.bottom-tab {
-  flex: 1;
-  padding: 3px 6px;
-  cursor: pointer;
-  color: #9ed0ff;
-  text-transform: uppercase;
-  font-size: 8px;
-  font-weight: bold;
-  transition: all 0.2s ease;
-  border: none;
-  background: transparent;
-  text-align: center;
-}
-
-.bottom-tab:hover {
-  color: #fff;
-  background: rgba(0, 170, 255, 0.1);
-}
-
-.bottom-tab.active {
-  color: #fff;
-  border-bottom: 2px solid #00e6ff;
-  background: rgba(0, 170, 255, 0.15);
-}
-
-.bottom-tabs-content {
-  min-height: 18px;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.bottom-tab-content {
-  display: none;
-}
-
-.bottom-tab-content.active {
-  display: block;
-}
-
-/* ─────────────── COMPACT EQUIPMENT/FEATS/TALENTS ─────────────── */
-.equipment-list,
-.feat-list,
-.talent-list,
-.power-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.equipment-item,
-.feat-item,
-.talent-item,
-.force-power-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 4px;
-  background: rgba(0, 20, 40, 0.4);
-  border: 1px solid rgba(0, 170, 255, 0.2);
-  border-radius: 2px;
-  transition: all 0.2s;
-  font-size: 8px;
-}
-
-.equipment-item:hover,
-.feat-item:hover,
-.talent-item:hover,
-.force-power-item:hover {
-  background: rgba(0, 170, 255, 0.15);
-  border-color: #0af;
-}
-
-.item-icon {
-  width: 16px;
-  height: 16px;
   object-fit: cover;
-  border-radius: 2px;
+  box-shadow: 0 0 12px rgba(0,170,255,0.4);
 }
 
-.item-name,
-.feat-name,
-.talent-name,
-.power-name {
+.swse-app .swse-header-title {
   flex: 1;
-  color: #9ed0ff;
-  font-size: 8px;
-}
-
-.item-qty {
-  font-size: 7px;
-  color: #6a9dcd;
-}
-
-.item-btn-sm {
-  width: 16px;
-  height: 16px;
-  padding: 0;
-  font-size: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.add-equipment-btn,
-.add-feat-btn,
-.add-talent-btn,
-.add-power-btn {
-  margin-top: 4px;
-  width: 100%;
-  padding: 3px;
-  font-size: 8px;
-  height: 24px;
-}
-
-/* ─────────────── COMPACT COMBAT STATS ─────────────── */
-.combat-stat-row {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 4px;
-}
-
-.combat-stat-row label {
-  font-size: 8px;
-  text-transform: uppercase;
-  color: #0af;
-  flex: 1;
-}
-
-.combat-stat-row input {
-  width: 50px;
-  text-align: center;
-  font-size: 10px;
-  font-weight: bold;
-  height: 22px;
-}
-
-.initiative-display {
-  font-size: 14px;
-  font-weight: bold;
-  color: #00ff88;
-  text-shadow: 0 0 5px rgba(0, 255, 136, 0.6);
-  min-width: 40px;
-  text-align: center;
-}
-
-/* ─────────────── COMPACT FORCE & DESTINY ─────────────── */
-.force-grid {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.force-field {
+.swse-app .swse-header-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
-.force-field label {
-  font-size: 7px;
-  text-transform: uppercase;
-  color: #0af;
-}
-
-.force-field input {
-  text-align: center;
+/* header tab buttons */
+.swse-app .swse-header-tab {
+  padding: 3px 8px;
+  background: rgba(0,20,40,0.5);
+  border: 1px solid rgba(0,170,255,0.3);
   font-size: 10px;
-  height: 22px;
-}
-
-/* ─────────────── BUTTONS ─────────────── */
-.swse-datapad-sheet button,
-.swse.character-sheet button,
-.holo-btn {
-  background: linear-gradient(90deg, #002f6c, #003f8f);
-  border: 1px solid #00baff;
-  color: #b5daff;
-  border-radius: 3px;
-  padding: 3px 6px;
-  transition: all 0.2s;
+  text-transform: uppercase;
   cursor: pointer;
-  text-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
-  font-size: 8px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  height: auto;
-  line-height: 1;
+  border-radius: 3px;
 }
 
-.swse-datapad-sheet button:hover,
-.swse.character-sheet button:hover,
-.holo-btn:hover {
-  background: #00aaff;
-  color: #fff;
-  box-shadow: 0 0 10px rgba(0, 207, 255, 0.8);
-  transform: translateY(-1px);
+.swse-app .swse-header-tab.active {
+  background: rgba(0,170,255,0.4);
+  border-color: #00e6ff;
+  color: white;
 }
 
-.swse-datapad-sheet button:active,
-.swse.character-sheet button:active {
-  transform: translateY(0);
+/* ============================================================================
+   4. BODY / MAIN GRID
+   ============================================================================ */
+
+.swse-app .swse-sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px;
+  background: rgba(0,0,0,0.25);
 }
 
-/* ─────────────── GRID LAYOUT ─────────────── */
-.datapad-main-grid {
+/* unified 3-column layout */
+.swse-app .swse-grid-main {
   display: grid;
   grid-template-columns: 1fr 1fr 0.8fr;
   gap: 6px;
-  padding: 6px;
 }
 
-.left-column,
-.center-column,
-.right-column {
+.swse-app .swse-column {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
-/* ─────────────── RESPONSIVE ─────────────── */
+/* responsive collapses */
 @media (max-width: 1400px) {
-  .datapad-main-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-  
-  .right-column {
-    grid-column: 1 / -1;
-  }
+  .swse-app .swse-grid-main { grid-template-columns: 1fr 1fr; }
+  .swse-app .swse-column-right { grid-column: 1 / -1; }
 }
 
 @media (max-width: 900px) {
-  .datapad-main-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .character-portrait {
-    width: 50px;
-    height: 65px;
-  }
+  .swse-app .swse-grid-main { grid-template-columns: 1fr; }
 }
 
-/* ─────────────── UTILITY CLASSES ─────────────── */
-.text-center { text-align: center; }
-.font-bold { font-weight: bold; }
-.mb-0 { margin-bottom: 0; }
-.mb-1 { margin-bottom: 2px; }
-.mb-2 { margin-bottom: 4px; }
-.p-0 { padding: 0; }
-.p-1 { padding: 2px; }
+/* ============================================================================
+   5. COMPACT FIELDS, LABELS, INPUTS
+   ============================================================================ */
 
-/* ============================================
-   SKILL ACTIONS PANELS
-   Combat actions and extra skill uses display
-   ============================================ */
-
-/* Skill row container */
-.skill-row-container {
-  position: relative;
-  margin-bottom: 2px;
-}
-
-/* Skill actions toggle button */
-.skill-actions-toggle {
-  background: transparent;
-  border: none;
-  color: #00b8ff;
-  cursor: pointer;
-  padding: 0 4px;
-  margin-left: 4px;
-  font-size: 10px;
-  transition: all 0.2s ease;
-}
-
-.skill-actions-toggle:hover {
-  color: #00ffff;
-  text-shadow: 0 0 8px #00ffff;
-}
-
-.skill-actions-toggle i {
-  transition: transform 0.2s ease;
-}
-
-/* Actions panel */
-.skill-actions-panel {
-  background: rgba(0, 20, 40, 0.9);
-  border: 1px solid #1c4b8e;
-  border-radius: 4px;
-  padding: 8px;
-  margin: 4px 0 6px 0;
-  box-shadow: inset 0 0 10px rgba(0, 100, 180, 0.3);
-  animation: panel-slide-down 0.2s ease-out;
-}
-
-@keyframes panel-slide-down {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Actions category */
-.actions-category {
-  margin-bottom: 10px;
-}
-
-.actions-category:last-child {
-  margin-bottom: 0;
-}
-
-.actions-category h4 {
-  color: #00b8ff;
-  font-size: 11px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin: 0 0 6px 0;
-  padding-bottom: 3px;
-  border-bottom: 1px solid rgba(0, 184, 255, 0.3);
-  text-shadow: 0 0 5px rgba(0, 184, 255, 0.5);
-}
-
-.actions-category h4 i {
-  margin-right: 5px;
-  font-size: 10px;
-}
-
-/* Actions list */
-.actions-list {
+.swse-app .swse-field-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2px;
 }
 
-/* Individual action item */
-.action-item {
-  background: rgba(0, 40, 80, 0.5);
-  border: 1px solid rgba(0, 140, 200, 0.4);
-  border-radius: 3px;
-  padding: 6px 8px;
-  transition: all 0.2s ease;
-}
-
-.action-item:hover {
-  background: rgba(0, 60, 120, 0.6);
-  border-color: rgba(0, 184, 255, 0.6);
-  box-shadow: 0 0 8px rgba(0, 184, 255, 0.3);
-}
-
-/* Action header */
-.action-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 4px;
-}
-
-.action-name {
-  color: #9ed0ff;
+.swse-app .swse-field-label {
   font-size: 10px;
-  font-weight: bold;
-}
-
-.action-type {
-  background: rgba(0, 100, 180, 0.5);
-  color: #00ffff;
-  font-size: 8px;
-  padding: 2px 6px;
-  border-radius: 2px;
+  color: #0af;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border: 1px solid rgba(0, 184, 255, 0.4);
 }
 
-.action-cost {
-  background: rgba(180, 100, 0, 0.5);
-  color: #ffaa00;
-  font-size: 8px;
-  padding: 2px 6px;
+.swse-app .swse-input,
+.swse-app .swse-select {
+  background: rgba(0,20,40,0.7);
+  border: 1px solid #0af;
   border-radius: 2px;
-  text-transform: uppercase;
-  border: 1px solid rgba(255, 170, 0, 0.4);
+  padding: 2px 4px;
+  font-size: 10px;
+  color: white;
 }
 
-/* Action details */
-.action-dc,
-.action-when,
-.action-outcome,
-.action-notes {
-  font-size: 9px;
-  line-height: 1.3;
-  margin-top: 3px;
-  color: #b0d5ff;
-}
+/* ============================================================================
+   6. ULTRA COMPACT ATTRIBUTES
+   ============================================================================ */
 
-.action-dc {
-  color: #ffaa00;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
+.swse-app .swse-attribute-row {
+  display: grid;
+  grid-template-columns: 50px 1fr 40px 40px;
   gap: 4px;
-}
-
-.action-dc i {
-  font-size: 8px;
-  color: #00b8ff;
-}
-
-.action-when {
-  color: #9ed0ff;
-  font-style: italic;
-}
-
-.action-outcome {
-  color: #80ff80;
-}
-
-.action-notes {
-  color: #aaa;
-  font-size: 8px;
-  margin-top: 4px;
-  padding-top: 4px;
-  border-top: 1px solid rgba(0, 100, 180, 0.3);
-}
-
-/* Skill name with toggle button */
-.skill-name {
-  display: flex;
-  align-items: center;
-}
-
-
-/* ============================================
-   SHIP COMBAT ACTIONS PANELS
-   Combat actions for vehicle/ship crew positions
-   ============================================ */
-
-/* Crew position header with toggle */
-.crew-position-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 4px;
-}
-
-.crew-position-header label {
-  margin: 0;
-}
-
-/* Crew actions toggle button */
-.crew-actions-toggle {
-  background: transparent;
-  border: none;
-  color: #00b8ff;
-  cursor: pointer;
-  padding: 2px 6px;
-  font-size: 10px;
-  transition: all 0.2s ease;
-  margin-left: auto;
-}
-
-.crew-actions-toggle:hover {
-  color: #00ffff;
-  text-shadow: 0 0 8px #00ffff;
-}
-
-.crew-actions-toggle i {
-  transition: transform 0.2s ease;
-}
-
-/* Crew position styling */
-.crew-position {
-  position: relative;
-  margin-bottom: 6px;
-}
-
-/* Crew actions panel */
-.crew-actions-panel {
-  background: rgba(0, 20, 40, 0.9);
-  border: 1px solid #1c4b8e;
-  border-radius: 4px;
-  padding: 8px;
-  margin-top: 6px;
-  box-shadow: inset 0 0 10px rgba(0, 100, 180, 0.3);
-  animation: panel-slide-down 0.2s ease-out;
-}
-
-/* Ship actions list */
-.ship-actions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* Individual ship action item */
-.ship-action-item {
-  background: rgba(0, 40, 80, 0.5);
-  border: 1px solid rgba(0, 140, 200, 0.4);
+  padding: 4px;
+  background: rgba(0,20,40,0.5);
+  border: 1px solid rgba(0,170,255,0.3);
   border-radius: 3px;
-  padding: 6px 8px;
-  transition: all 0.2s ease;
 }
 
-.ship-action-item:hover {
-  background: rgba(0, 60, 120, 0.6);
-  border-color: rgba(0, 184, 255, 0.6);
-  box-shadow: 0 0 8px rgba(0, 184, 255, 0.3);
-}
-
-/* Ship action header */
-.ship-action-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 4px;
-}
-
-.ship-action-name {
-  color: #9ed0ff;
+.swse-app .swse-attr-label {
   font-size: 10px;
-  font-weight: bold;
-}
-
-.ship-action-type {
-  background: rgba(0, 100, 180, 0.5);
-  color: #00ffff;
-  font-size: 8px;
-  padding: 2px 6px;
-  border-radius: 2px;
+  color: #0af;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border: 1px solid rgba(0, 184, 255, 0.4);
 }
 
-.ship-action-cost {
-  background: rgba(180, 100, 0, 0.5);
-  color: #ffaa00;
-  font-size: 8px;
-  padding: 2px 6px;
-  border-radius: 2px;
-  text-transform: uppercase;
-  border: 1px solid rgba(255, 170, 0, 0.4);
-}
-
-/* Ship action details */
-.ship-action-dc,
-.ship-action-when,
-.ship-action-outcome,
-.ship-action-notes {
-  font-size: 9px;
-  line-height: 1.3;
-  margin-top: 3px;
-  color: #b0d5ff;
-}
-
-.ship-action-dc {
-  color: #ffaa00;
+.swse-app .swse-attr-mod {
+  font-size: 12px;
   font-weight: bold;
-  display: flex;
-  align-items: flex-start;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-.ship-action-dc i {
-  font-size: 8px;
-  color: #00b8ff;
-  margin-top: 2px;
-}
-
-.ship-action-when {
-  color: #9ed0ff;
-  font-style: italic;
-}
-
-.ship-action-outcome {
-  color: #80ff80;
-}
-
-.ship-action-notes {
-  color: #aaa;
-  font-size: 8px;
-  margin-top: 4px;
-  padding-top: 4px;
-  border-top: 1px solid rgba(0, 100, 180, 0.3);
-}
-
-/* Crew slot enhancements for drag & drop */
-.crew-slot {
-  min-height: 28px;
-  padding: 4px 8px;
-  background: rgba(0, 20, 40, 0.6);
-  border: 1px solid rgba(0, 140, 200, 0.4);
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.crew-slot:hover {
-  background: rgba(0, 40, 80, 0.7);
-  border-color: rgba(0, 184, 255, 0.6);
-}
-
-.crew-member {
-  color: #9ed0ff;
-  font-weight: bold;
-  font-size: 10px;
-}
-
-.crew-empty {
-  color: #666;
-  font-style: italic;
-  font-size: 9px;
-}
-
-/* ─────────────── Character Traits Section ─────────────── */
-.character-traits {
-  margin: 8px 0;
-  padding: 8px;
-  background: rgba(0, 20, 40, 0.5);
-  border: 1px solid rgba(0, 140, 200, 0.3);
-  border-radius: 4px;
-}
-
-.traits-grid {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.trait-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.trait-toggle .checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  padding: 6px 10px;
-  background: rgba(0, 40, 80, 0.4);
-  border: 1px solid rgba(0, 140, 200, 0.4);
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.trait-toggle .checkbox-label:hover {
-  background: rgba(0, 60, 100, 0.6);
-  border-color: rgba(0, 184, 255, 0.6);
-  box-shadow: 0 0 8px rgba(0, 184, 255, 0.3);
-}
-
-.trait-toggle input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  accent-color: #0af;
-}
-
-.trait-toggle .fa-hand-sparkles {
-  color: #00d4ff;
-  font-size: 14px;
-}
-
-.trait-toggle span {
-  color: #9ed0ff;
-  font-size: 11px;
-  font-weight: bold;
-}
-
-/* ─────────────── Force Secrets & Techniques ─────────────── */
-.force-secrets-section,
-.force-techniques-section {
-  margin: 12px 0;
-  padding: 8px;
-  background: rgba(0, 20, 40, 0.5);
-  border: 1px solid rgba(0, 140, 200, 0.3);
-  border-radius: 4px;
-}
-
-.secrets-list,
-.techniques-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 8px;
-}
-
-.secret-item,
-.technique-item {
-  background: rgba(0, 40, 80, 0.5);
-  border: 1px solid rgba(0, 140, 200, 0.4);
-  border-radius: 3px;
-  padding: 6px 8px;
-  transition: all 0.2s ease;
-}
-
-.secret-item:hover,
-.technique-item:hover {
-  background: rgba(0, 60, 100, 0.6);
-  border-color: rgba(0, 184, 255, 0.6);
-  box-shadow: 0 0 8px rgba(0, 184, 255, 0.3);
-}
-
-.secret-header,
-.technique-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.secret-name,
-.technique-name {
-  flex: 1;
-  color: #9ed0ff;
-  font-weight: bold;
-  font-size: 11px;
-}
-
-.secret-description,
-.technique-description {
-  margin-top: 6px;
-  padding-top: 6px;
-  border-top: 1px solid rgba(0, 100, 180, 0.3);
-  color: #aaa;
-  font-size: 9px;
-  line-height: 1.4;
-}
-
-.empty-list {
-  color: #666;
-  font-style: italic;
-  font-size: 9px;
+  color: #00ffff;
   text-align: center;
-  padding: 12px;
-  margin: 0;
 }
 
-.add-secret,
-.add-technique {
-  width: 100%;
-  padding: 6px 10px;
-  background: rgba(0, 100, 180, 0.3);
-  border: 1px solid rgba(0, 140, 200, 0.5);
+/* ============================================================================
+   7. COMPACT DEFENSE TABLE
+   ============================================================================ */
+
+.swse-app .swse-defense-table {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.swse-app .swse-defense-row {
+  display: grid;
+  grid-template-columns: 60px 40px 25px 40px 50px 40px 55px 40px;
+  background: rgba(0,20,40,0.4);
   border-radius: 3px;
-  color: #00d4ff;
-  font-size: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  padding: 3px;
+  font-size: 9px;
+}
+
+/* ============================================================================
+   8. SKILLS (COMPACT MODE)
+   ============================================================================ */
+
+.swse-app .swse-skills-container {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.swse-app .swse-skill-row-compact {
+  display: grid;
+  grid-template-columns: 100px 35px 30px 30px 30px 35px 35px 40px 25px;
+  font-size: 9px;
+  padding: 3px;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid rgba(0,170,255,0.15);
+}
+
+.swse-app .swse-skill-row-compact:hover {
+  background: rgba(0,170,255,0.12);
+}
+
+/* ============================================================================
+   9. FEATS / INVENTORY / POWERS
+   ============================================================================ */
+
+.swse-app .swse-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.swse-app .swse-list-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
+  gap: 4px;
+  padding: 3px;
+  background: rgba(0,20,40,0.4);
+  border: 1px solid rgba(0,170,255,0.3);
+  border-radius: 3px;
+  font-size: 9px;
 }
 
-.add-secret:hover,
-.add-technique:hover {
-  background: rgba(0, 140, 200, 0.5);
-  border-color: rgba(0, 184, 255, 0.8);
-  box-shadow: 0 0 10px rgba(0, 184, 255, 0.4);
-  color: #fff;
+.swse-app .swse-list-item:hover {
+  background: rgba(0,170,255,0.15);
+  border-color: #0af;
 }
 
-.add-secret i,
-.add-technique i {
+/* ============================================================================
+   10. BUTTONS
+   ============================================================================ */
+
+.swse-app .swse-btn {
+  padding: 4px 8px;
+  background: linear-gradient(90deg,#002f6c,#003f8f);
+  border: 1px solid #00baff;
+  color: #b5daff;
+  border-radius: 3px;
+  cursor: pointer;
   font-size: 10px;
+  text-transform: uppercase;
 }
 
+.swse-app .swse-btn:hover {
+  background: #00aaff;
+  color: white;
+}
+
+/* ============================================================================
+   END SAFE VERSION
+   ============================================================================ */

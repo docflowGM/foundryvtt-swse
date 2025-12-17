@@ -7,11 +7,11 @@
  * COMPENDIUM MIGRATION NOTES:
  * To move force power grants from hardcoded data to compendiums:
  *
- * For Feats (swse.feats):
+ * For Feats (foundryvtt-swse.feats):
  *   Add field: system.forcePowerGrants: number
  *   Example: "Force Training" should have system.forcePowerGrants: 1
  *
- * For Classes (swse.classes):
+ * For Classes (foundryvtt-swse.classes):
  *   Add field to level_progression entries: force_power_grants: number
  *   Example: Jedi level 3 should have level_progression[2].force_power_grants: 1
  *
@@ -36,11 +36,11 @@ export class ForcePowerEngine {
 
     if (!featDoc) {
       try {
-        const pack = game.packs.get('foundryvtt-swse.feats');
+        const pack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
         if (!pack) {
           // Only warn once per session
           if (!ForcePowerEngine._featPackWarnShown) {
-            swseLogger.warn('ForcePowerEngine: foundryvtt-swse.feats compendium not found. Feat-based force power grants may not work.');
+            swseLogger.warn('ForcePowerEngine: foundryvtt-foundryvtt-swse.feats compendium not found. Feat-based force power grants may not work.');
             ForcePowerEngine._featPackWarnShown = true;
           }
         } else {
@@ -129,10 +129,10 @@ static async handleForcePowerTriggers(actor, updateSummary = {}) {
 
 static async collectAvailablePowers(actor) {
   try {
-    const pack = game.packs.get('foundryvtt-swse.forcepowers');
+    const pack = game.packs.get('foundryvtt-foundryvtt-swse.forcepowers');
 
     if (!pack) {
-      swseLogger.error('Force Power Engine: foundryvtt-swse.forcepowers compendium not found!');
+      swseLogger.error('Force Power Engine: foundryvtt-foundryvtt-swse.forcepowers compendium not found!');
       return [];
     }
 

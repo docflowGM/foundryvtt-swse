@@ -1,3 +1,62 @@
+
+/* ============================================
+   SWSE DEBUG MODE — GLOBAL HARD ERROR TRAPS
+   ============================================ */
+
+console.log("%cSWSE DEBUG MODE ENABLED", "color:#0ff; font-size:20px;");
+
+/* HARD ERROR */
+window.addEventListener("error", (event) => {
+  console.group("%c🔥 HARD ERROR DETECTED", "color:red; font-size:16px;");
+  console.error("Message:", event.message);
+  console.error("Source:", event.filename + ":" + event.lineno);
+  console.error("Error Object:", event.error);
+  console.error("Stack:", event.error?.stack);
+  console.groupEnd();
+});
+
+/* UNHANDLED PROMISE REJECTIONS */
+window.addEventListener("unhandledrejection", (event) => {
+  console.group("%c🔥 UNHANDLED PROMISE REJECTION", "color:orange; font-size:16px;");
+  console.error("Reason:", event.reason);
+  console.error("Stack:", event.reason?.stack);
+  console.groupEnd();
+});
+
+/* IMPORT WRAPPER */
+if (!globalThis.__swse_import_wrapped__) {
+  globalThis.__swse_import_wrapped__ = true;
+  const realImport = globalThis.import;
+  globalThis.import = async function(path) {
+    try {
+      return await realImport(path);
+    } catch (err) {
+      console.group("%c💥 ES MODULE IMPORT FAILED", "color:red; font-size:18px;");
+      console.error("Import Path:", path);
+      console.error("Message:", err.message);
+      console.error("Stack:", err.stack);
+      console.groupEnd();
+      throw err;
+    }
+  };
+}
+
+/* CHECK FOR BACKUP FILES THAT WILL BREAK THE SYSTEM */
+setTimeout(() => {
+  const BAD_PATTERNS = [/\.bak$/, /\.backup/i, /\.old$/, /\.tmp$/];
+  const scripts = Array.from(document.querySelectorAll("script")).map(s => s.src);
+  for (const s of scripts) {
+    if (BAD_PATTERNS.some(p => p.test(s))) {
+      console.group("%c⚠️ WARNING: BACKUP JS FILE LOADED!", "color:yellow; font-size:16px;");
+      console.error("This backup or temp JS is being executed:", s);
+      console.error("This WILL break SWSE initialization.");
+      console.groupEnd();
+    }
+  }
+}, 2000);
+/* ============================================ */
+
+
 // ============================================
 // SWSE System - Main Entry Point
 // Foundry VTT | Star Wars Saga Edition
@@ -652,4 +711,16 @@ Hooks.once("ready", async function () {
     }
 
     swseLogger.log("SWSE | Enhanced System Fully Loaded");
+});
+
+// SWSE CANVAS REPAIR — Forces canvas visible after any hide.
+// =============================================================
+Hooks.on("canvasReady", () => {
+    const board = document.querySelector("#board");
+    if (board) {
+        board.style.display = "block";
+        board.style.visibility = "visible";
+        board.style.opacity = "1";
+        board.style.height = "";
+    }
 });

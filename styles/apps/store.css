@@ -5,7 +5,7 @@
 /* ================================================
    Store Container
    ================================================ */
-.swse-store {
+.swse-app-store {
   display: flex;
   flex-direction: column;
   height: 100%;

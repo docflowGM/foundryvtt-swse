@@ -1,16 +1,57 @@
 <div class="ability-block">
- {{#each abilities as |ability key|}}
- <div class="ability flexrow">
- <label class="ability-name" for="ability-{{key}}-base">{{upper key}}</label>
- <div class="ability-score">
- <input id="ability-{{key}}-base" type="number" name="system.abilities.{{key}}.base" value="{{ability.base}}" data-dtype="Number" autocomplete="off"/>
- </div>
- <div class="ability-total">
- <span>{{ability.total}}</span>
- </div>
- <div class="ability-mod">
- <span class="ability-mod-value">{{numberFormat (safeNumber ability.mod) decimals=0 sign=true}}</span>
- </div>
- </div>
- {{/each}}
+  {{#each abilities as |ability key|}}
+  <div class="ability flexrow">
+
+    {{!-- Ability Label --}}
+    <label class="ability-name"
+           for="ability-{{key}}-base"
+           title="Modifier: {{numberFormat ability.mod sign=true}}">
+      {{upper key}}
+    </label>
+
+    {{!-- Editable Base Score + +/- buttons --}}
+    <div class="ability-score-control flexrow">
+      <button type="button" class="ability-dec" data-ability="{{key}}" role="button" tabindex="0">-</button>
+
+      <input id="ability-{{key}}-base"
+             data-id="ability-{{key}}-base"
+             type="number"
+             name="system.abilities.{{key}}.base"
+             value="{{ability.base}}"
+             data-dtype="Number"
+             inputmode="numeric"
+             role="spinbutton"
+             autocomplete="off" />
+
+      <button type="button" class="ability-inc" data-ability="{{key}}" role="button" tabindex="0">+</button>
+    </div>
+
+    {{!-- Total Score with breakdown tooltip --}}
+    <div class="ability-total"
+         title="Base: {{ability.base}}
+Racial: {{ability.racial}}
+Enhancement: {{ability.enhancement}}
+Misc: {{ability.misc}}
+Total: {{ability.total}}">
+      <span>{{ability.total}}</span>
+    </div>
+
+    {{!-- Modifier with color coding --}}
+    <div class="ability-mod">
+      <span class="ability-mod-value mod-{{#if (gt ability.mod 0)}}positive{{else if (lt ability.mod 0)}}negative{{else}}neutral{{/if}}"
+            aria-label="Modifier {{ability.mod}}">
+        {{numberFormat (safeNumber ability.mod) decimals=0 sign=true}}
+      </span>
+    </div>
+
+    {{!-- Ability Check Roll --}}
+    <button class="ability-roll"
+            data-ability="{{key}}"
+            title="Roll {{upper key}} Check"
+            role="button" tabindex="0">
+      <i class="fas fa-dice-d20" aria-hidden="true"></i>
+    </button>
+
+  </div>
+  {{/each}}
 </div>

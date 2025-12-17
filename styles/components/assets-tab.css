@@ -1,4 +1,4 @@
-.assets-panel.swse-panel { padding: 0.6rem; }
+.assets-panel.swse-app-panel { padding: 0.6rem; }
 .assets-panel .assets-section { margin-bottom: 0.8rem; border-radius: 6px; padding: 0.5rem; background: rgba(255,255,255,0.02); }
 .assets-panel .asset-row { display:flex; align-items:center; justify-content:space-between; padding:0.35rem 0.5rem; border-bottom:1px solid rgba(255,255,255,0.02); }
 .assets-panel .asset-left { display:flex; flex-direction:column; }

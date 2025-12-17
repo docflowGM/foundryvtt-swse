@@ -40,7 +40,7 @@ export async function loadClassData() {
 }
 
 /**
- * Load class data from foundryvtt-swse.classes compendium
+ * Load class data from foundryvtt-foundryvtt-swse.classes compendium
  * @private
  */
 async function _loadFromCompendium() {
@@ -48,10 +48,10 @@ async function _loadFromCompendium() {
   const errors = [];
 
   try {
-    const pack = game.packs.get('foundryvtt-swse.classes');
+    const pack = game.packs.get('foundryvtt-foundryvtt-swse.classes');
 
     if (!pack) {
-      const errorMsg = 'Class Data Loader: foundryvtt-swse.classes compendium not found!';
+      const errorMsg = 'Class Data Loader: foundryvtt-foundryvtt-swse.classes compendium not found!';
       swseLogger.error(errorMsg);
       ui.notifications?.error(`${errorMsg} Character progression features will not work correctly. Please ensure the SWSE system is properly installed.`, { permanent: true });
       return cache;

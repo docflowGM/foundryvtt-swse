@@ -9,7 +9,7 @@ import { SWSELogger } from '../../utils/logger.js';
 export class SWSEDroidSheet extends SWSECharacterSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "sheet", "actor", "droid"],
+      classes: ["swse", "sheet", "actor", "droid", "swse-app"],
       template: "systems/foundryvtt-swse/templates/actors/droid/droid-sheet.hbs",
       width: 800,
       height: 720,

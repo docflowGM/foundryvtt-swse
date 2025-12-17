@@ -1,11 +1,11 @@
 /* styles/sheets/themes/holo-default.css */
-.swse-theme-holo-default .sheet {
+.swse-app-theme-holo-default .sheet {
   --swse-bg: rgba(10,14,18,0.6);
   --swse-panel-bg: rgba(18,22,28,0.45);
   --swse-accent: rgba(38,160,255,0.85);
   font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
 }
-.swse-theme-holo-default .sheet-body {
+.swse-app-theme-holo-default .sheet-body {
   backdrop-filter: blur(6px);
   color: #dfefff;
 }

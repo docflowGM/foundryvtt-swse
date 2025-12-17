@@ -1,15 +1,15 @@
-2025/12/17-02:24:33.697 77b4 Recovering log #11
-2025/12/17-02:24:33.702 77b4 Delete type=0 #11
-2025/12/17-02:24:33.702 77b4 Delete type=3 #8
-2025/12/17-02:30:18.690 20f4 Level-0 table #18: started
-2025/12/17-02:30:18.694 20f4 Level-0 table #18: 26529 bytes OK
-2025/12/17-02:30:18.697 20f4 Delete type=0 #16
-2025/12/17-02:30:18.703 20f4 Manual compaction at level-0 from '!items!null' @ 72057594037927935 : 1 .. '!items!species-zeltron' @ 0 : 0; will stop at (end)
-2025/12/17-02:30:18.703 20f4 Manual compaction at level-1 from '!items!null' @ 72057594037927935 : 1 .. '!items!species-zeltron' @ 0 : 0; will stop at '!items!null' @ 441 : 1
-2025/12/17-02:30:18.703 20f4 Compacting 1@1 + 1@2 files
-2025/12/17-02:30:18.709 20f4 Generated table #19@1: 111 keys, 20627 bytes
-2025/12/17-02:30:18.709 20f4 Compacted 1@1 + 1@2 files => 20627 bytes
-2025/12/17-02:30:18.711 20f4 compacted to: files[ 0 0 1 0 0 0 0 ]
-2025/12/17-02:30:18.711 20f4 Delete type=2 #14
-2025/12/17-02:30:18.711 20f4 Delete type=2 #18
-2025/12/17-02:30:18.715 20f4 Manual compaction at level-1 from '!items!null' @ 441 : 1 .. '!items!species-zeltron' @ 0 : 0; will stop at (end)
+2025/12/17-02:43:47.090 8030 Recovering log #25
+2025/12/17-02:43:47.096 8030 Delete type=0 #25
+2025/12/17-02:43:47.096 8030 Delete type=3 #22
+2025/12/17-02:53:42.448 3db0 Level-0 table #32: started
+2025/12/17-02:53:42.452 3db0 Level-0 table #32: 26528 bytes OK
+2025/12/17-02:53:42.454 3db0 Delete type=0 #30
+2025/12/17-02:53:42.475 3db0 Manual compaction at level-0 from '!items!null' @ 72057594037927935 : 1 .. '!items!species-zeltron' @ 0 : 0; will stop at (end)
+2025/12/17-02:53:42.475 3db0 Manual compaction at level-1 from '!items!null' @ 72057594037927935 : 1 .. '!items!species-zeltron' @ 0 : 0; will stop at '!items!null' @ 771 : 1
+2025/12/17-02:53:42.475 3db0 Compacting 1@1 + 1@2 files
+2025/12/17-02:53:42.480 3db0 Generated table #33@1: 111 keys, 20629 bytes
+2025/12/17-02:53:42.480 3db0 Compacted 1@1 + 1@2 files => 20629 bytes
+2025/12/17-02:53:42.482 3db0 compacted to: files[ 0 0 1 0 0 0 0 ]
+2025/12/17-02:53:42.482 3db0 Delete type=2 #28
+2025/12/17-02:53:42.482 3db0 Delete type=2 #32
+2025/12/17-02:53:42.499 3db0 Manual compaction at level-1 from '!items!null' @ 771 : 1 .. '!items!species-zeltron' @ 0 : 0; will stop at (end)

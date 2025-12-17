@@ -98,13 +98,13 @@ export async function _getStartingLanguages() {
 
 /**
  * Get all available languages organized by category
- * Loads from swse.languages compendium with fallback to JSON
+ * Loads from foundryvtt-swse.languages compendium with fallback to JSON
  * @returns {Promise<Object>} Languages organized by category
  */
 export async function _getAvailableLanguages() {
   try {
     // Try to load from compendium first
-    const pack = game?.packs?.get('swse.languages');
+    const pack = game?.packs?.get('foundryvtt-swse.languages');
     if (pack) {
       const docs = await pack.getDocuments();
 

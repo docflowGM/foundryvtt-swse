@@ -131,7 +131,7 @@ export async function buyDroid(store, actorId) {
 
     // If not found in world, search compendiums
     if (!droidTemplate) {
-        const pack = game.packs.get('foundryvtt-swse.droids');
+        const pack = game.packs.get('foundryvtt-foundryvtt-swse.droids');
         if (pack) {
             droidTemplate = await pack.getDocument(actorId);
         }
@@ -201,7 +201,7 @@ export async function buyVehicle(store, actorId, condition) {
 
     // If not found in world, search compendiums
     if (!vehicleTemplate) {
-        const pack = game.packs.get('foundryvtt-swse.vehicles');
+        const pack = game.packs.get('foundryvtt-foundryvtt-swse.vehicles');
         if (pack) {
             vehicleTemplate = await pack.getDocument(actorId);
         }

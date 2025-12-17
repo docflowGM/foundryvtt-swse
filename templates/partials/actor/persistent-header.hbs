@@ -1,201 +1,236 @@
 {{!-- Persistent Header with Critical Resources --}}
 <header class="window-header sheet-header flexrow">
- <div class="window-app-drag-handle header-left flex0">
- <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="100" height="100"/>
- <div class="character-name">
- <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
- </div>
- <div class="character-level">
- <label>Level</label>
- <input name="system.level" type="number" value="{{system.level}}" min="1" max="20" data-dtype="Number" class="level-input"/>
- <div class="half-level-display" title="Half Level (rounded down) - used for skills and other bonuses">
- <span class="half-level-label">½ Level:</span>
- <span class="half-level-value">{{system.halfLevel}}</span>
- </div>
- <button class="level-up" title="Level Up Character">
- <i class="fas fa-level-up-alt"></i> Level Up
- </button>
- </div>
- <div class="character-actions">
- {{#unless chargenComplete}}
- <button class="character-generator" title="Character Generator">
- <i class="fas fa-user-plus"></i> Chargen
- </button>
- {{/unless}}
- <button class="open-store" title="Open Marketplace">
- <i class="fas fa-store"></i> Shop
- </button>
- </div>
- </div>
- 
- <div class="header-center flex2">
- {{!-- Three Defenses --}}
- <div class="defenses grid grid-3col">
- <div class="defense reflex-defense">
- <label class="defense-label">Reflex Defense</label>
- <div class="defense-value rollable" 
- data-roll="1d20" 
- data-label="Reflex Defense"
- title="Click to roll vs. Reflex">
- {{system.defenses.reflex.total}}
- </div>
- <div class="defense-breakdown">
- {{#if system.armor.equipped}}
- <span class="breakdown-item">10 + Armor {{system.armor.reflexBonus}}</span>
- {{else}}
- <span class="breakdown-item active">10 + Level {{system.level}}</span>
- {{/if}}
- <span class="breakdown-item">+ Dex {{numberFormat system.abilities.dex.mod sign=true}}</span>
- </div>
- </div>
- 
- <div class="defense fortitude-defense">
- <label class="defense-label">Fortitude Defense</label>
- <div class="defense-value rollable"
- data-roll="1d20"
- data-label="Fortitude Defense"
- title="Click to roll vs. Fortitude">
- {{system.defenses.fortitude.total}}
- </div>
- <div class="defense-breakdown">
- <span class="breakdown-item">10 + Level {{system.level}}</span>
- {{#if system.isDroid}}
- <span class="breakdown-item">+ Str {{numberFormat system.abilities.str.mod sign=true}} <span class="droid-note">(Droid)</span></span>
- {{else}}
- <span class="breakdown-item">+ Con {{numberFormat system.abilities.con.mod sign=true}}</span>
- {{/if}}
- </div>
- </div>
- 
- <div class="defense will-defense">
- <label class="defense-label">Will Defense</label>
- <div class="defense-value rollable" 
- data-roll="1d20" 
- data-label="Will Defense"
- title="Click to roll vs. Will">
- {{system.defenses.will.total}}
- </div>
- <div class="defense-breakdown">
- <span class="breakdown-item">10 + Level {{system.level}}</span>
- <span class="breakdown-item">+ Wis {{numberFormat system.abilities.wis.mod sign=true}}</span>
- </div>
- </div>
- </div>
- 
- {{!-- Resources: HP and Force Points --}}
- <div class="resources flexrow">
- <div class="resource hp flex1">
- <label>Hit Points</label>
- <div class="resource-bar flexrow">
- <input type="text" 
- name="system.hp.value" 
- value="{{system.hp.value}}" 
- data-dtype="Number"
- class="resource-input"/>
- <span class="separator">/</span>
- <span class="resource-max">{{system.hp.max}}</span>
- </div>
- <div class="progress-bar">
- <div class="progress-fill" style="width: {{hpPercentage}}%"></div>
- </div>
- </div>
- 
- <div class="resource force-points flex1">
- <label>Force Points</label>
- <div class="resource-content flexrow">
- <input type="text"
- name="system.forcePoints.value"
- value="{{system.forcePoints.value}}"
- data-dtype="Number"
- class="resource-input"
- title="Current Force Points"/>
- <span class="separator">/</span>
- <input type="text"
- name="system.forcePoints.max"
- value="{{system.forcePoints.max}}"
- data-dtype="Number"
- class="resource-max-input"
- title="Maximum Force Points (editable)"/>
- </div>
- <div class="force-point-controls flexrow">
- <div class="reroll-bonus">
- <i class="fas fa-dice"></i> {{forceRerollDice}}
- </div>
- <select name="system.forcePoints.diceType" class="dice-type-select" title="Dice Type (d6 standard, d8 for Strong in the Force)">
- <option value="d6" {{#if (eq system.forcePoints.diceType "d6")}}selected{{/if}}>d6</option>
- <option value="d8" {{#if (eq system.forcePoints.diceType "d8")}}selected{{/if}}>d8</option>
- </select>
- <button class="roll-force-point" title="Roll Force Point (consumes 1 Force Point)">
- <i class="fas fa-dice-d6"></i>
- </button>
- </div>
- </div>
- </div>
- </div>
- 
- <div class="header-right flex0">
- {{> "systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs"}}
+  <div class="window-app-drag-handle header-left flex0">
 
- {{!-- Species Selection --}}
- {{#unless system.isDroid}}
- <div class="species-selector">
- <label class="species-label">
- <i class="fas fa-dna"></i> Species
- </label>
- <div class="species-value">
- {{#if system.race}}
- <span class="species-name">{{system.race}}</span>
- {{else}}
- <span class="species-unselected">Unselected</span>
- {{/if}}
- </div>
- <button class="pick-species-btn" data-action="pickSpecies" type="button" title="{{#if system.race}}Change species{{else}}Select a species{{/if}}">
- <i class="fas fa-{{#if system.race}}exchange-alt{{else}}plus{{/if}}"></i>
- {{#if system.race}}Change{{else}}Select{{/if}}
- </button>
- </div>
- {{/unless}}
+    {{!-- Profile Image + Name --}}
+    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="100" height="100"/>
 
- {{!-- Class Display --}}
- <div class="class-selector">
- <label class="class-label">
- <i class="fas fa-hat-wizard"></i> Classes
- </label>
- <div class="class-value">
- {{#if chargenComplete}}
- <span class="class-display">{{classDisplay}}</span>
- {{else}}
- <span class="class-unselected">No classes</span>
- {{/if}}
- </div>
- <button class="add-class-btn" type="button" title="Add a class">
- <i class="fas fa-plus"></i> Add Class
- </button>
- </div>
+    <div class="character-name">
+      <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
+    </div>
 
- {{!-- Size Display --}}
- <div class="character-attribute">
- <label class="attribute-label">
- <i class="fas fa-expand-arrows-alt"></i> Size
- </label>
- <div class="attribute-value">
- <span>{{system.size}}</span>
- </div>
- </div>
+    {{!-- Level & Half-Level --}}
+    <div class="character-level">
+      <label>Level</label>
+      <input name="system.level" type="number" value="{{system.level}}" min="1" max="20" data-dtype="Number" class="level-input"/>
 
- {{!-- Force Sensitive Display --}}
- {{#unless system.isDroid}}
- <div class="character-attribute">
- <label class="attribute-label">
- <i class="fas fa-hand-sparkles"></i> Force Sensitive
- </label>
- <div class="attribute-value">
- <input type="checkbox"
- name="system.forceSensitive"
- {{checked system.forceSensitive}}
- title="Force Sensitive"/>
- </div>
- </div>
- {{/unless}}
- </div>
+      <div class="half-level-display" title="Half Level (rounded down) - used for skills and other bonuses">
+        <span class="half-level-label">½ Level:</span>
+        <span class="half-level-value">{{system.halfLevel}}</span>
+      </div>
+
+      <button class="level-up" title="Level Up Character" role="button" tabindex="0">
+        <i class="fas fa-level-up-alt" aria-hidden="true"></i> Level Up
+      </button>
+    </div>
+
+    {{!-- Top-level Character Tools --}}
+    <div class="character-actions">
+      {{#unless chargenComplete}}
+      <button class="character-generator" title="Character Generator" role="button" tabindex="0">
+        <i class="fas fa-user-plus" aria-hidden="true"></i> Chargen
+      </button>
+      {{/unless}}
+
+      <button class="open-store" title="Open Marketplace" role="button" tabindex="0">
+        <i class="fas fa-store" aria-hidden="true"></i> Shop
+      </button>
+    </div>
+  </div>
+
+  <div class="header-center flex2">
+
+    {{!-- Defenses Grid --}}
+    <div class="defenses grid grid-3col">
+
+      {{!-- Reflex --}}
+      <div class="defense reflex-defense">
+        <label class="defense-label">Reflex Defense</label>
+        <div class="defense-value rollable" 
+             data-roll="1d20" 
+             data-label="Reflex Defense"
+             role="button" tabindex="0"
+             title="Click to roll vs. Reflex">
+          {{system.defenses.reflex.total}}
+        </div>
+
+        <div class="defense-breakdown">
+          {{#if system.armor.equipped}}
+          <span class="breakdown-item">10 + Armor {{system.armor.reflexBonus}}</span>
+          {{else}}
+          <span class="breakdown-item active">10 + Level {{system.level}}</span>
+          {{/if}}
+          <span class="breakdown-item">+ Dex {{numberFormat system.abilities.dex.mod sign=true}}</span>
+        </div>
+      </div>
+
+      {{!-- Fortitude --}}
+      <div class="defense fortitude-defense">
+        <label class="defense-label">Fortitude Defense</label>
+        <div class="defense-value rollable"
+             data-roll="1d20"
+             data-label="Fortitude Defense"
+             role="button" tabindex="0"
+             title="Click to roll vs. Fortitude">
+          {{system.defenses.fortitude.total}}
+        </div>
+
+        <div class="defense-breakdown">
+          <span class="breakdown-item">10 + Level {{system.level}}</span>
+          {{#if system.isDroid}}
+          <span class="breakdown-item">+ Str {{numberFormat system.abilities.str.mod sign=true}} <span class="droid-note">(Droid)</span></span>
+          {{else}}
+          <span class="breakdown-item">+ Con {{numberFormat system.abilities.con.mod sign=true}}</span>
+          {{/if}}
+        </div>
+      </div>
+
+      {{!-- Will --}}
+      <div class="defense will-defense">
+        <label class="defense-label">Will Defense</label>
+        <div class="defense-value rollable" 
+             data-roll="1d20"
+             data-label="Will Defense"
+             role="button" tabindex="0"
+             title="Click to roll vs. Will">
+          {{system.defenses.will.total}}
+        </div>
+
+        <div class="defense-breakdown">
+          <span class="breakdown-item">10 + Level {{system.level}}</span>
+          <span class="breakdown-item">+ Wis {{numberFormat system.abilities.wis.mod sign=true}}</span>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Resources: HP & Force Points --}}
+    <div class="resources flexrow">
+
+      {{!-- HP --}}
+      <div class="resource hp flex1">
+        <label>Hit Points</label>
+        <div class="resource-bar flexrow">
+          <input type="text" 
+                 name="system.hp.value" 
+                 value="{{system.hp.value}}" 
+                 data-dtype="Number"
+                 class="resource-input"/>
+          <span class="separator">/</span>
+          <span class="resource-max">{{system.hp.max}}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: {{hpPercentage}}%"></div>
+        </div>
+      </div>
+
+      {{!-- Force Points --}}
+      <div class="resource force-points flex1">
+        <label>Force Points</label>
+
+        <div class="resource-content flexrow">
+          <input type="text"
+                 name="system.forcePoints.value"
+                 value="{{system.forcePoints.value}}"
+                 data-dtype="Number"
+                 class="resource-input"
+                 title="Current Force Points"/>
+
+          <span class="separator">/</span>
+
+          <input type="text"
+                 name="system.forcePoints.max"
+                 value="{{system.forcePoints.max}}"
+                 data-dtype="Number"
+                 class="resource-max-input"
+                 title="Maximum Force Points (editable)"/>
+        </div>
+
+        <div class="force-point-controls flexrow">
+          <div class="reroll-bonus">
+            <i class="fas fa-dice" aria-hidden="true"></i> {{forceRerollDice}}
+          </div>
+
+          <select name="system.forcePoints.diceType"
+                  class="dice-type-select"
+                  title="Dice Type">
+            <option value="d6" {{#if (eq system.forcePoints.diceType "d6")}}selected{{/if}}>d6</option>
+            <option value="d8" {{#if (eq system.forcePoints.diceType "d8")}}selected{{/if}}>d8</option>
+          </select>
+
+          <button class="roll-force-point" title="Roll Force Point" role="button" tabindex="0">
+            <i class="fas fa-dice-d6" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="header-right flex0">
+
+    {{> "systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs"}}
+
+    {{!-- Species --}}
+    {{#unless system.isDroid}}
+    <div class="species-selector">
+      <label class="species-label">
+        <i class="fas fa-dna" aria-hidden="true"></i> Species
+      </label>
+      <div class="species-value">
+        {{#if system.race}}
+        <span class="species-name">{{system.race}}</span>
+        {{else}}
+        <span class="species-unselected">Unselected</span>
+        {{/if}}
+      </div>
+
+      <button class="pick-species-btn" type="button" title="{{#if system.race}}Change species{{else}}Select a species{{/if}}" role="button" tabindex="0">
+        <i class="fas fa-{{#if system.race}}exchange-alt{{else}}plus{{/if}}" aria-hidden="true"></i>
+        {{#if system.race}}Change{{else}}Select{{/if}}
+      </button>
+    </div>
+    {{/unless}}
+
+    {{!-- Class Display --}}
+    <div class="class-selector">
+      <label class="class-label">
+        <i class="fas fa-hat-wizard" aria-hidden="true"></i> Classes
+      </label>
+      <div class="class-value">
+        {{#if chargenComplete}}
+        <span class="class-display">{{classDisplay}}</span>
+        {{else}}
+        <span class="class-unselected">No classes</span>
+        {{/if}}
+      </div>
+      <button class="add-class-btn" type="button" role="button" tabindex="0" title="Add a class">
+        <i class="fas fa-plus" aria-hidden="true"></i> Add Class
+      </button>
+    </div>
+
+    {{!-- Size --}}
+    <div class="character-attribute">
+      <label class="attribute-label">
+        <i class="fas fa-expand-arrows-alt" aria-hidden="true"></i> Size
+      </label>
+      <div class="attribute-value">
+        <span>{{system.size}}</span>
+      </div>
+    </div>
+
+    {{!-- Force Sensitive --}}
+    {{#unless system.isDroid}}
+    <div class="character-attribute">
+      <label class="attribute-label">
+        <i class="fas fa-hand-sparkles" aria-hidden="true"></i> Force Sensitive
+      </label>
+      <div class="attribute-value">
+        <input type="checkbox"
+               name="system.forceSensitive"
+               {{checked system.forceSensitive}}
+               title="Force Sensitive"/>
+      </div>
+    </div>
+    {{/unless}}
+  </div>
 </header>

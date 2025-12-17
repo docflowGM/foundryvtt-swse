@@ -1,20 +1,20 @@
 /* Enforce canvas safety */
 
-.swse .app,
-.swse .window-app {
+.swse-app .app,
+.swse-app .window-app {
   position: relative !important;
   z-index: 20 !important;
 }
 
-#controls,
-#ui-top {
+.swse-app-ui #controls,
+.swse-app-ui #ui-top {
   z-index: 100 !important;
 }
 
 
 /* --- Sidebar Chat Layout Fix (AUTO-GENERATED) --- */
 
-#sidebar {
+.swse-app-ui #sidebar {
   display: flex;
   flex-direction: column;
 }

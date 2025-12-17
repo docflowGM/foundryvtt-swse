@@ -8,10 +8,10 @@
    ========================= */
 
 /* Better text contrast for readability */
-.swse input[type="text"],
-.swse input[type="number"],
-.swse select,
-.swse textarea {
+.swse-app input[type="text"],
+.swse-app input[type="number"],
+.swse-app select,
+.swse-app textarea {
   background: rgba(0, 0, 0, 0.6);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -20,10 +20,10 @@
   font-size: 13px;
 }
 
-.swse input[type="text"]:focus,
-.swse input[type="number"]:focus,
-.swse select:focus,
-.swse textarea:focus {
+.swse-app input[type="text"]:focus,
+.swse-app input[type="number"]:focus,
+.swse-app select:focus,
+.swse-app textarea:focus {
   background: rgba(0, 0, 0, 0.7);
   border-color: var(--holo-cyan, #00d9ff);
   box-shadow: 0 0 8px rgba(0, 217, 255, 0.4);
@@ -32,17 +32,17 @@
 }
 
 /* Placeholder text visibility */
-.swse input::placeholder,
-.swse textarea::placeholder {
+.swse-app input::placeholder,
+.swse-app textarea::placeholder {
   color: rgba(255, 255, 255, 0.4);
   opacity: 1;
 }
 
 /* Disabled inputs - keep them visible but distinct */
-.swse input[type="text"]:disabled,
-.swse input[type="number"]:disabled,
-.swse select:disabled,
-.swse textarea:disabled {
+.swse-app input[type="text"]:disabled,
+.swse-app input[type="number"]:disabled,
+.swse-app select:disabled,
+.swse-app textarea:disabled {
   background: rgba(0, 0, 0, 0.3);
   color: rgba(255, 255, 255, 0.5);
   border-color: rgba(255, 255, 255, 0.1);
@@ -50,9 +50,9 @@
 }
 
 /* Improved button visibility */
-.swse button,
-.swse .button,
-.swse button[type="button"] {
+.swse-app button,
+.swse-app .button,
+.swse-app button[type="button"] {
   background: linear-gradient(135deg, rgba(0, 168, 204, 0.3), rgba(0, 217, 255, 0.2));
   color: #e0e0e0;
   border: 1px solid rgba(0, 217, 255, 0.5);
@@ -67,26 +67,26 @@
   gap: 6px;
 }
 
-.swse button:hover,
-.swse .button:hover {
+.swse-app button:hover,
+.swse-app .button:hover {
   background: linear-gradient(135deg, rgba(0, 168, 204, 0.5), rgba(0, 217, 255, 0.3));
   border-color: var(--holo-cyan, #00d9ff);
   box-shadow: 0 0 12px rgba(0, 217, 255, 0.5);
   transform: translateY(-1px);
 }
 
-.swse button:active {
+.swse-app button:active {
   transform: translateY(0);
   box-shadow: 0 0 8px rgba(0, 217, 255, 0.3);
 }
 
-.swse button i {
+.swse-app button i {
   font-size: 14px;
 }
 
 /* Section headers with better visibility */
-.swse .section-header,
-.swse h3.section-header {
+.swse-app .section-header,
+.swse-app h3.section-header {
   color: #00d9ff;
   text-transform: uppercase;
   font-size: 14px;
@@ -100,8 +100,8 @@
 }
 
 /* Rollable elements - make them obvious */
-.swse .rollable,
-.swse [data-roll] {
+.swse-app .rollable,
+.swse-app [data-roll] {
   cursor: pointer;
   transition: all 0.2s ease;
   padding: 2px 6px;
@@ -110,8 +110,8 @@
   border: 1px solid transparent;
 }
 
-.swse .rollable:hover,
-.swse [data-roll]:hover {
+.swse-app .rollable:hover,
+.swse-app [data-roll]:hover {
   background: rgba(0, 217, 255, 0.2);
   border-color: rgba(0, 217, 255, 0.5);
   box-shadow: 0 0 10px rgba(0, 217, 255, 0.4);
@@ -119,7 +119,7 @@
 }
 
 /* Tab navigation improvements */
-.swse .sheet-tabs {
+.swse-app .sheet-tabs {
   border-bottom: 2px solid rgba(0, 217, 255, 0.3);
   margin-bottom: 12px;
   display: flex;
@@ -127,7 +127,7 @@
   flex-wrap: wrap;
 }
 
-.swse .sheet-tabs .item {
+.swse-app .sheet-tabs .item {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #9fb6c9;
@@ -141,13 +141,13 @@
   letter-spacing: 0.5px;
 }
 
-.swse .sheet-tabs .item:hover {
+.swse-app .sheet-tabs .item:hover {
   background: rgba(0, 217, 255, 0.1);
   border-color: rgba(0, 217, 255, 0.3);
   color: #e0e0e0;
 }
 
-.swse .sheet-tabs .item.active {
+.swse-app .sheet-tabs .item.active {
   background: linear-gradient(180deg, rgba(0, 217, 255, 0.3), rgba(0, 217, 255, 0.1));
   border-color: var(--holo-cyan, #00d9ff);
   color: #ffffff;
@@ -159,11 +159,11 @@
    ========================= */
 
 /* Weapons, armor, equipment rows */
-.swse .weapon-row,
-.swse .armor-row,
-.swse .item-row,
-.swse .feat-row,
-.swse .skill-row {
+.swse-app .weapon-row,
+.swse-app .armor-row,
+.swse-app .item-row,
+.swse-app .feat-row,
+.swse-app .skill-row {
   padding: 8px;
   margin: 4px 0;
   background: rgba(0, 0, 0, 0.2);
@@ -175,23 +175,23 @@
   gap: 8px;
 }
 
-.swse .weapon-row:hover,
-.swse .armor-row:hover,
-.swse .item-row:hover,
-.swse .feat-row:hover,
-.swse .skill-row:hover {
+.swse-app .weapon-row:hover,
+.swse-app .armor-row:hover,
+.swse-app .item-row:hover,
+.swse-app .feat-row:hover,
+.swse-app .skill-row:hover {
   background: rgba(0, 217, 255, 0.05);
   border-color: rgba(0, 217, 255, 0.3);
 }
 
 /* Item controls */
-.swse .item-controls {
+.swse-app .item-controls {
   display: flex;
   gap: 6px;
   margin-left: auto;
 }
 
-.swse .item-control {
+.swse-app .item-control {
   color: #9fb6c9;
   cursor: pointer;
   padding: 4px 6px;
@@ -200,12 +200,12 @@
   font-size: 14px;
 }
 
-.swse .item-control:hover {
+.swse-app .item-control:hover {
   color: #00d9ff;
   background: rgba(0, 217, 255, 0.1);
 }
 
-.swse .item-control.delete:hover {
+.swse-app .item-control.delete:hover {
   color: #ff6b6b;
   background: rgba(255, 107, 107, 0.1);
 }
@@ -214,7 +214,7 @@
    SKILLS TAB IMPROVEMENTS
    ========================= */
 
-.swse .skills-header {
+.swse-app .skills-header {
   background: rgba(0, 217, 255, 0.1);
   padding: 6px 8px;
   border-radius: 4px;
@@ -226,16 +226,16 @@
   border: 1px solid rgba(0, 217, 255, 0.2);
 }
 
-.swse .skills-header > div {
+.swse-app .skills-header > div {
   text-align: center;
 }
 
-.swse .skill-row.trained {
+.swse-app .skill-row.trained {
   background: rgba(0, 255, 136, 0.05);
   border-left: 3px solid var(--success, #00ff88);
 }
 
-.swse .skill-total {
+.swse-app .skill-total {
   font-weight: 700;
   color: #00ff88;
   font-size: 14px;
@@ -247,27 +247,27 @@
    COMBAT TAB IMPROVEMENTS
    ========================= */
 
-.swse .weapons-header,
-.swse .armor-section {
+.swse-app .weapons-header,
+.swse-app .armor-section {
   margin-top: 12px;
 }
 
-.swse .weapon-col-name,
-.swse .weapon-name {
+.swse-app .weapon-col-name,
+.swse-app .weapon-name {
   flex: 2;
   font-weight: 500;
 }
 
-.swse .weapon-attack,
-.swse .weapon-damage {
+.swse-app .weapon-attack,
+.swse-app .weapon-damage {
   font-weight: 600;
   color: #ffd66b;
   min-width: 60px;
   text-align: center;
 }
 
-.swse .armor-bonus,
-.swse .armor-max-dex {
+.swse-app .armor-bonus,
+.swse-app .armor-max-dex {
   font-weight: 600;
   color: #00d9ff;
   margin: 0 8px;
@@ -277,15 +277,15 @@
    DEFENSE VALUES
    ========================= */
 
-.swse .defense-value,
-.swse .stat-value {
+.swse-app .defense-value,
+.swse-app .stat-value {
   font-size: 24px;
   font-weight: 700;
   color: #ffffff;
   text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
 }
 
-.swse .defense-breakdown {
+.swse-app .defense-breakdown {
   font-size: 10px;
   color: #9fb6c9;
   margin-top: 4px;
@@ -295,7 +295,7 @@
    RESOURCE BARS (HP, FORCE)
    ========================= */
 
-.swse .resource-bar {
+.swse-app .resource-bar {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -305,7 +305,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.swse .resource-input {
+.swse-app .resource-input {
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #ffffff;
@@ -317,13 +317,13 @@
   border-radius: 4px;
 }
 
-.swse .resource-max {
+.swse-app .resource-max {
   font-size: 16px;
   font-weight: 600;
   color: #9fb6c9;
 }
 
-.swse .separator {
+.swse-app .separator {
   color: #9fb6c9;
   font-size: 16px;
 }
@@ -332,7 +332,7 @@
    INVENTORY TAB
    ========================= */
 
-.swse .credits-input {
+.swse-app .credits-input {
   background: rgba(255, 215, 0, 0.1);
   border: 2px solid rgba(255, 215, 0, 0.3);
   color: #ffd700;
@@ -343,7 +343,7 @@
   width: 150px;
 }
 
-.swse .credits-input:focus {
+.swse-app .credits-input:focus {
   border-color: #ffd700;
   box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
 }
@@ -352,20 +352,20 @@
    FORCE TAB
    ========================= */
 
-.swse .force-action {
+.swse-app .force-action {
   background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(75, 0, 130, 0.2));
   border-color: rgba(138, 43, 226, 0.5);
   flex: 1;
   justify-content: center;
 }
 
-.swse .force-action:hover {
+.swse-app .force-action:hover {
   background: linear-gradient(135deg, rgba(138, 43, 226, 0.5), rgba(75, 0, 130, 0.3));
   border-color: #8a2be2;
   box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
 }
 
-.swse .power-card {
+.swse-app .power-card {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(138, 43, 226, 0.3);
   padding: 8px;
@@ -377,7 +377,7 @@
   transition: all 0.2s ease;
 }
 
-.swse .power-card:hover {
+.swse-app .power-card:hover {
   background: rgba(138, 43, 226, 0.1);
   border-color: rgba(138, 43, 226, 0.6);
   box-shadow: 0 0 10px rgba(138, 43, 226, 0.4);
@@ -387,28 +387,28 @@
    RESPONSIVE & UTILITY
    ========================= */
 
-.swse .flexrow {
+.swse-app .flexrow {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 8px;
 }
 
-.swse .flexcol {
+.swse-app .flexcol {
   display: flex;
   flex-direction: column;
 }
 
-.swse .grid {
+.swse-app .grid {
   display: grid;
   gap: 8px;
 }
 
-.swse .grid-2col {
+.swse-app .grid-2col {
   grid-template-columns: 1fr 1fr;
 }
 
-.swse .grid-3col {
+.swse-app .grid-3col {
   grid-template-columns: 1fr 1fr 1fr;
 }
 
@@ -416,22 +416,22 @@
    SCROLLBARS
    ========================= */
 
-.swse ::-webkit-scrollbar {
+.swse-app ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-.swse ::-webkit-scrollbar-track {
+.swse-app ::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.3);
   border-radius: 4px;
 }
 
-.swse ::-webkit-scrollbar-thumb {
+.swse-app ::-webkit-scrollbar-thumb {
   background: rgba(0, 217, 255, 0.3);
   border-radius: 4px;
 }
 
-.swse ::-webkit-scrollbar-thumb:hover {
+.swse-app ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 217, 255, 0.5);
 }
 
@@ -440,26 +440,26 @@
    ========================= */
 
 @media print {
-  .swse button,
-  .swse .item-control,
-  .swse .sheet-tabs {
+  .swse-app button,
+  .swse-app .item-control,
+  .swse-app .sheet-tabs {
     display: none;
   }
 }
 
 /* High contrast mode */
 @media (prefers-contrast: high) {
-  .swse {
+  .swse-app {
     border: 2px solid #00d9ff;
   }
 
-  .swse input,
-  .swse select,
-  .swse textarea {
+  .swse-app input,
+  .swse-app select,
+  .swse-app textarea {
     border-width: 2px;
   }
 
-  .swse .rollable {
+  .swse-app .rollable {
     border: 2px solid currentColor;
   }
 }

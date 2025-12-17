@@ -92,7 +92,7 @@ export class PopulateForceCompendiumsMigration {
    * Populate Force Techniques compendium
    */
   static async populateForceTechniques() {
-    const pack = game.packs.get('foundryvtt-swse.forcetechniques');
+    const pack = game.packs.get('foundryvtt-foundryvtt-swse.forcetechniques');
     if (!pack) {
       SWSELogger.error("SWSE | Force Techniques compendium not found");
       return 0;
@@ -168,7 +168,7 @@ export class PopulateForceCompendiumsMigration {
    * Populate Force Secrets compendium
    */
   static async populateForceSecrets() {
-    const pack = game.packs.get('foundryvtt-swse.forcesecrets');
+    const pack = game.packs.get('foundryvtt-foundryvtt-swse.forcesecrets');
     if (!pack) {
       SWSELogger.error("SWSE | Force Secrets compendium not found");
       return 0;
@@ -239,7 +239,7 @@ export class PopulateForceCompendiumsMigration {
    * Populate Lightsaber Form Powers compendium
    */
   static async populateLightsaberFormPowers() {
-    const pack = game.packs.get('foundryvtt-swse.lightsaberformpowers');
+    const pack = game.packs.get('foundryvtt-foundryvtt-swse.lightsaberformpowers');
     if (!pack) {
       SWSELogger.error("SWSE | Lightsaber Form Powers compendium not found");
       return 0;

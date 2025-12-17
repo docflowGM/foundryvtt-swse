@@ -20,7 +20,7 @@ export class TemplateCharacterCreator extends Application {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['swse', 'template-creator'],
+      classes: ['swse', 'template-creator', "swse-app"],
       template: 'systems/foundryvtt-swse/templates/apps/template-creator.hbs',
       width: 1000,
       height: 700,
@@ -667,7 +667,7 @@ export class TemplateCharacterCreator extends Application {
    */
   async _applySpeciesBonus(actor, speciesName, abilityUpdates) {
     try {
-      const speciesPack = game.packs.get('foundryvtt-swse.species');
+      const speciesPack = game.packs.get('foundryvtt-foundryvtt-swse.species');
       if (!speciesPack) return;
 
       const index = await speciesPack.getIndex();
@@ -713,7 +713,7 @@ export class TemplateCharacterCreator extends Application {
    */
   async _applyClass(actor, template) {
     try {
-      const classPack = game.packs.get('foundryvtt-swse.classes');
+      const classPack = game.packs.get('foundryvtt-foundryvtt-swse.classes');
       if (!classPack) return;
 
       const index = await classPack.getIndex();
@@ -826,12 +826,12 @@ export class TemplateCharacterCreator extends Application {
 
     // Define compendia to search
     const compendiaPacks = [
-      'foundryvtt-swse.equipment',
-      'foundryvtt-swse.weapons',
-      'foundryvtt-swse.armor',
-      'foundryvtt-swse.armor_light',
-      'foundryvtt-swse.armor_medium',
-      'foundryvtt-swse.armor_heavy'
+      'foundryvtt-foundryvtt-swse.equipment',
+      'foundryvtt-foundryvtt-swse.weapons',
+      'foundryvtt-foundryvtt-swse.armor',
+      'foundryvtt-foundryvtt-swse.armor_light',
+      'foundryvtt-foundryvtt-swse.armor_medium',
+      'foundryvtt-foundryvtt-swse.armor_heavy'
     ];
 
     try {

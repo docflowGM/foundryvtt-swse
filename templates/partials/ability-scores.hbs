@@ -1,16 +1,101 @@
-{{!-- Ability Scores Component --}}
-{{#each system.abilities as |ability key|}}
-<div class="ability-score-row">
- <div class="ability-label">{{upper key}}</div>
- <div class="ability-inputs">
- <input name="system.abilities.{{key}}.base" type="number" value="{{ability.base}}" data-dtype="Number" placeholder="Base" title="Base Score"/>
- <span>+</span>
- <input name="system.abilities.{{key}}.racial" type="number" value="{{ability.racial}}" data-dtype="Number" placeholder="0" title="Racial Bonus"/>
- <span>+</span>
- <input name="system.abilities.{{key}}.modifier" type="number" value="{{ability.modifier}}" data-dtype="Number" placeholder="0" title="Modifier"/>
- <span>=</span>
- <div class="ability-total">{{ability.total}}</div>
- </div>
- <div class="ability-modifier">{{ability.mod}}</div>
+{{!-- Premium Ability Scores Component --}}
+<div class="ability-score-block">
+
+  {{#each system.abilities as |ability key|}}
+  <div class="ability-score-row flexrow">
+
+    {{!-- Ability Label --}}
+    <label class="ability-label"
+           for="ability-{{key}}-base"
+           title="{{upper key}} Ability Score">
+      {{upper key}}
+    </label>
+
+    {{!-- Editable inputs with +/- controls --}}
+    <div class="ability-inputs flexrow">
+
+      <div class="ability-input-group">
+        <button type="button"
+                class="ability-dec"
+                data-ability="{{key}}"
+                title="Decrease Base Score"
+                role="button" tabindex="0">−</button>
+
+        <input id="ability-{{key}}-base"
+               name="system.abilities.{{key}}.base"
+               type="number"
+               value="{{ability.base}}"
+               data-dtype="Number"
+               inputmode="numeric"
+               role="spinbutton"
+               autocomplete="off"
+               class="ability-input"
+               placeholder="Base"
+               title="Base Score"/>
+
+        <button type="button"
+                class="ability-inc"
+                data-ability="{{key}}"
+                title="Increase Base Score"
+                role="button" tabindex="0">+</button>
+      </div>
+
+      <span class="math-op">+</span>
+
+      <input name="system.abilities.{{key}}.racial"
+             type="number"
+             value="{{ability.racial}}"
+             data-dtype="Number"
+             inputmode="numeric"
+             role="spinbutton"
+             class="ability-input"
+             placeholder="Racial"
+             title="Racial Bonus"/>
+
+      <span class="math-op">+</span>
+
+      <input name="system.abilities.{{key}}.misc"
+             type="number"
+             value="{{ability.misc}}"
+             data-dtype="Number"
+             inputmode="numeric"
+             role="spinbutton"
+             class="ability-input"
+             placeholder="Misc"
+             title="Misc Modifier"/>
+
+      <span class="math-op equals">=</span>
+
+      {{!-- Ability Total w/ tooltip breakdown --}}
+      <div class="ability-total"
+           title="Base: {{ability.base}}
+Racial: {{ability.racial}}
+Misc: {{ability.misc}}
+Total: {{ability.total}}">
+        {{ability.total}}
+      </div>
+
+    </div>
+
+    {{!-- Ability Modifier: color-coded and with an ability roll button --}}
+    <div class="ability-modifier-block flexrow">
+
+      <div class="ability-modifier mod-{{#if (gt ability.mod 0)}}positive{{else if (lt ability.mod 0)}}negative{{else}}neutral{{/if}}"
+           aria-label="Modifier {{ability.mod}}">
+        {{numberFormat ability.mod decimals=0 sign=true}}
+      </div>
+
+      <button class="ability-roll"
+              data-ability="{{key}}"
+              title="Roll {{upper key}} Check"
+              role="button"
+              tabindex="0">
+        <i class="fas fa-dice-d20" aria-hidden="true"></i>
+      </button>
+
+    </div>
+
+  </div>
+  {{/each}}
+
 </div>
-{{/each}}
