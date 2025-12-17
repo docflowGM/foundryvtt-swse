@@ -1,5 +1,15 @@
-2025/12/13-18:14:14.918 3424 Delete type=3 #1
-2025/12/15-19:50:20.727 4da8 Level-0 table #5: started
-2025/12/15-19:50:20.737 4da8 Level-0 table #5: 86642 bytes OK
-2025/12/15-19:50:20.739 4da8 Delete type=0 #3
-2025/12/15-19:50:20.745 4da8 Manual compaction at level-0 from '!items!null' @ 72057594037927935 : 1 .. '!items!weapon-zeltron-neural-whip' @ 0 : 0; will stop at (end)
+2025/12/17-02:24:33.719 5878 Recovering log #11
+2025/12/17-02:24:33.724 5878 Delete type=0 #11
+2025/12/17-02:24:33.724 5878 Delete type=3 #8
+2025/12/17-02:30:18.715 20f4 Level-0 table #18: started
+2025/12/17-02:30:18.722 20f4 Level-0 table #18: 47083 bytes OK
+2025/12/17-02:30:18.725 20f4 Delete type=0 #16
+2025/12/17-02:30:18.735 20f4 Manual compaction at level-0 from '!items!null' @ 72057594037927935 : 1 .. '!items!weapon-zeltron-neural-whip' @ 0 : 0; will stop at (end)
+2025/12/17-02:30:18.736 20f4 Manual compaction at level-1 from '!items!null' @ 72057594037927935 : 1 .. '!items!weapon-zeltron-neural-whip' @ 0 : 0; will stop at '!items!null' @ 681 : 1
+2025/12/17-02:30:18.736 20f4 Compacting 1@1 + 1@2 files
+2025/12/17-02:30:18.741 20f4 Generated table #19@1: 171 keys, 40961 bytes
+2025/12/17-02:30:18.741 20f4 Compacted 1@1 + 1@2 files => 40961 bytes
+2025/12/17-02:30:18.743 20f4 compacted to: files[ 0 0 1 0 0 0 0 ]
+2025/12/17-02:30:18.744 20f4 Delete type=2 #14
+2025/12/17-02:30:18.744 20f4 Delete type=2 #18
+2025/12/17-02:30:18.755 20f4 Manual compaction at level-1 from '!items!null' @ 681 : 1 .. '!items!weapon-zeltron-neural-whip' @ 0 : 0; will stop at (end)

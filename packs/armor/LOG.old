@@ -1,5 +1,15 @@
-2025/12/13-18:14:14.963 3424 Delete type=3 #1
-2025/12/15-19:50:20.761 4da8 Level-0 table #5: started
-2025/12/15-19:50:20.769 4da8 Level-0 table #5: 56318 bytes OK
-2025/12/15-19:50:20.771 4da8 Delete type=0 #3
-2025/12/15-19:50:20.784 4da8 Manual compaction at level-0 from '!items!armor-armored-flight-suit' @ 72057594037927935 : 1 .. '!items!null' @ 0 : 0; will stop at (end)
+2025/12/17-02:24:33.729 77b4 Recovering log #11
+2025/12/17-02:24:33.734 77b4 Delete type=0 #11
+2025/12/17-02:24:33.734 77b4 Delete type=3 #8
+2025/12/17-02:30:18.756 20f4 Level-0 table #18: started
+2025/12/17-02:30:18.766 20f4 Level-0 table #18: 30589 bytes OK
+2025/12/17-02:30:18.768 20f4 Delete type=0 #16
+2025/12/17-02:30:18.775 20f4 Manual compaction at level-0 from '!items!armor-armored-flight-suit' @ 72057594037927935 : 1 .. '!items!null' @ 0 : 0; will stop at (end)
+2025/12/17-02:30:18.775 20f4 Manual compaction at level-1 from '!items!armor-armored-flight-suit' @ 72057594037927935 : 1 .. '!items!null' @ 0 : 0; will stop at '!items!null' @ 281 : 1
+2025/12/17-02:30:18.775 20f4 Compacting 1@1 + 1@2 files
+2025/12/17-02:30:18.780 20f4 Generated table #19@1: 71 keys, 27259 bytes
+2025/12/17-02:30:18.780 20f4 Compacted 1@1 + 1@2 files => 27259 bytes
+2025/12/17-02:30:18.782 20f4 compacted to: files[ 0 0 1 0 0 0 0 ]
+2025/12/17-02:30:18.782 20f4 Delete type=2 #14
+2025/12/17-02:30:18.782 20f4 Delete type=2 #18
+2025/12/17-02:30:18.788 20f4 Manual compaction at level-1 from '!items!null' @ 281 : 1 .. '!items!null' @ 0 : 0; will stop at (end)

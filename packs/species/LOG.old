@@ -1,5 +1,15 @@
-2025/12/13-18:14:14.835 25e8 Delete type=3 #1
-2025/12/15-19:50:20.702 4da8 Level-0 table #5: started
-2025/12/15-19:50:20.713 4da8 Level-0 table #5: 46446 bytes OK
-2025/12/15-19:50:20.715 4da8 Delete type=0 #3
-2025/12/15-19:50:20.745 4da8 Manual compaction at level-0 from '!items!null' @ 72057594037927935 : 1 .. '!items!species-zeltron' @ 0 : 0; will stop at (end)
+2025/12/17-02:24:33.697 77b4 Recovering log #11
+2025/12/17-02:24:33.702 77b4 Delete type=0 #11
+2025/12/17-02:24:33.702 77b4 Delete type=3 #8
+2025/12/17-02:30:18.690 20f4 Level-0 table #18: started
+2025/12/17-02:30:18.694 20f4 Level-0 table #18: 26529 bytes OK
+2025/12/17-02:30:18.697 20f4 Delete type=0 #16
+2025/12/17-02:30:18.703 20f4 Manual compaction at level-0 from '!items!null' @ 72057594037927935 : 1 .. '!items!species-zeltron' @ 0 : 0; will stop at (end)
+2025/12/17-02:30:18.703 20f4 Manual compaction at level-1 from '!items!null' @ 72057594037927935 : 1 .. '!items!species-zeltron' @ 0 : 0; will stop at '!items!null' @ 441 : 1
+2025/12/17-02:30:18.703 20f4 Compacting 1@1 + 1@2 files
+2025/12/17-02:30:18.709 20f4 Generated table #19@1: 111 keys, 20627 bytes
+2025/12/17-02:30:18.709 20f4 Compacted 1@1 + 1@2 files => 20627 bytes
+2025/12/17-02:30:18.711 20f4 compacted to: files[ 0 0 1 0 0 0 0 ]
+2025/12/17-02:30:18.711 20f4 Delete type=2 #14
+2025/12/17-02:30:18.711 20f4 Delete type=2 #18
+2025/12/17-02:30:18.715 20f4 Manual compaction at level-1 from '!items!null' @ 441 : 1 .. '!items!species-zeltron' @ 0 : 0; will stop at (end)
