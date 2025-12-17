@@ -255,5 +255,25 @@
       "type": "Actor",
       "system": "foundryvtt-swse"
     }
-  ]
+  ],
+  "settings": {
+    "foundryvtt-swse.actorValidationMigration": {
+      "scope": "world",
+      "config": false,
+      "type": "Boolean",
+      "default": false
+    },
+    "foundryvtt-swse.itemValidationMigration": {
+      "scope": "world",
+      "config": false,
+      "type": "Boolean",
+      "default": false
+    },
+    "foundryvtt-swse.forceCompendiumsPopulation": {
+      "scope": "world",
+      "config": false,
+      "type": "Boolean",
+      "default": false
+    }
+  }
 }
