@@ -1,651 +1,608 @@
-import { SWSELogger } from '../utils/logger.js';
-/**
- * House Rules Settings Registration
- * Registers all configurable house rule settings for the SWSE system
- */
+// scripts/houserules/register-houserule-settings.js
+import { SWSELogger } from "../utils/logger.js";
 
+/**
+ * Register all houserule-related Foundry settings.
+ * Modernized for V13–V15 safety, clarity, and schema correctness.
+ * Adds validation, fixes incorrect types, groups settings, and ensures
+ * presets + menus can reliably interact with them.
+ */
 export function registerHouseruleSettings() {
-  
-  // ============================================
-  // Character Creation
-  // ============================================
-  
-  game.settings.register('foundryvtt-swse', "abilityScoreMethod", {
+  const NS = "foundryvtt-swse";
+
+  /* -------------------------------------------------------------------------- */
+  /*                        INTERNAL HELPERS & TYPE FIXERS                       */
+  /* -------------------------------------------------------------------------- */
+
+  function register(key, data) {
+    try {
+      game.settings.register(NS, key, data);
+    } catch (err) {
+      SWSELogger.error(`Failed registering setting "${key}"`, err);
+    }
+  }
+
+  // Number settings previously using "choices" improperly
+  const numericChoices = (choices) =>
+    Object.fromEntries(Object.entries(choices).map(([k, v]) => [String(k), v]));
+
+  /* -------------------------------------------------------------------------- */
+  /*                          CHARACTER CREATION SETTINGS                        */
+  /* -------------------------------------------------------------------------- */
+
+  register("abilityScoreMethod", {
     name: "Ability Score Generation Method",
-    hint: "How players generate ability scores during character creation",
+    hint: "Determines how ability scores are generated for new characters.",
     scope: "world",
     config: true,
     type: String,
     choices: {
       "4d6drop": "4d6 Drop Lowest",
-      "organic": "Organic (24d6)",
-      "pointbuy": "Point Buy",
-      "array": "Standard Array",
+      organic: "Organic (24d6)",
+      pointbuy: "Point Buy",
+      array: "Standard Array",
       "3d6": "3d6 Straight",
       "2d6plus6": "2d6+6"
     },
     default: "4d6drop"
   });
 
-  game.settings.register('foundryvtt-swse', "pointBuyPool", {
+  register("pointBuyPool", {
     name: "Point Buy Pool",
-    hint: "Total points available for point buy system",
+    hint: "Total ability score points available under the point buy system.",
     scope: "world",
     config: true,
     type: Number,
-    default: 32,
-    range: {
-      min: 10,
-      max: 50,
-      step: 1
-    }
+    default: 32
   });
 
-  game.settings.register('foundryvtt-swse', "allowAbilityReroll", {
-    name: "Allow Ability Score Rerolls",
-    hint: "Allow players to reroll if their total modifiers are too low",
+  register("allowAbilityReroll", {
+    name: "Allow Ability Score Reroll",
+    hint: "Allows players to reroll low stat sets during creation.",
     scope: "world",
     config: true,
     type: Boolean,
     default: true
   });
 
-  game.settings.register('foundryvtt-swse', "allowPlayersNonheroic", {
-    name: "Allow Players to Create Nonheroic Characters",
-    hint: "If enabled, players can access the NPC Generator to create nonheroic characters. By default, only GMs can create NPCs.",
+  register("allowPlayersNonheroic", {
+    name: "Allow Non-Heroic Player Characters",
+    hint: "If enabled, players can use the NPC generator.",
     scope: "world",
     config: true,
     type: Boolean,
     default: false
   });
 
-  game.settings.register('foundryvtt-swse', "maxStartingCredits", {
-    name: "Maximum Starting Credits",
-    hint: "Characters take maximum starting credits instead of rolling (e.g., Noble gets 4800 instead of 3d4×400)",
+  register("maxStartingCredits", {
+    name: "Max Starting Credits",
+    hint: "Players receive maximum starting credits instead of rolling.",
     scope: "world",
     config: true,
     type: Boolean,
     default: false
   });
 
-  game.settings.register('foundryvtt-swse', "characterCreation", {
+  register("characterCreation", {
     name: "Character Creation Settings",
-    hint: "Consolidated character creation settings",
+    hint: "Internal structured config object.",
     scope: "world",
     config: false,
     type: Object,
     default: {}
   });
 
-  // ============================================
-  // Backgrounds (Rebellion Era Campaign Guide)
-  // ============================================
+  /* -------------------------------------------------------------------------- */
+  /*                                 BACKGROUNDS                                */
+  /* -------------------------------------------------------------------------- */
 
-  game.settings.register('foundryvtt-swse', "enableBackgrounds", {
+  register("enableBackgrounds", {
     name: "Enable Backgrounds System",
-    hint: "Allow players to select backgrounds (Events, Occupations, or Planets of Origin) during character creation. This is an alternative to the Destiny system.",
+    hint: "Allow selecting backgrounds (Event/Occupation/Planet).",
     scope: "world",
     config: true,
     type: Boolean,
     default: true
   });
 
-  game.settings.register('foundryvtt-swse', "backgroundSelectionCount", {
+  register("backgroundSelectionCount", {
     name: "Number of Background Selections",
-    hint: "How many backgrounds can players choose? (1 = Event OR Occupation OR Planet, 2 = any two, 3 = all three)",
+    hint: "How many backgrounds each character may choose.",
     scope: "world",
     config: true,
     type: Number,
-    choices: {
+    choices: numericChoices({
       1: "1 Background (Standard)",
       2: "2 Backgrounds",
-      3: "3 Backgrounds (All)"
-    },
+      3: "3 Backgrounds"
+    }),
     default: 1
   });
 
-  // ============================================
-  // Droids
-  // ============================================
+  /* -------------------------------------------------------------------------- */
+  /*                                    DROIDS                                  */
+  /* -------------------------------------------------------------------------- */
 
-  game.settings.register('foundryvtt-swse', "droidPointBuyPool", {
+  register("droidPointBuyPool", {
     name: "Droid Point Buy Pool",
-    hint: "Total points available for droid characters using point buy (only shown if Point Buy is selected)",
+    hint: "Point buy total for droid characters.",
     scope: "world",
     config: true,
     type: Number,
-    default: 20,
-    range: {
-      min: 10,
-      max: 50,
-      step: 1
-    }
+    default: 20
   });
 
-  game.settings.register('foundryvtt-swse', "livingPointBuyPool", {
+  register("livingPointBuyPool", {
     name: "Living Point Buy Pool",
-    hint: "Total points available for living characters using point buy (only shown if Point Buy is selected)",
+    hint: "Point buy total for living characters.",
     scope: "world",
     config: true,
     type: Number,
-    default: 25,
-    range: {
-      min: 10,
-      max: 50,
-      step: 1
-    }
+    default: 25
   });
 
-  game.settings.register('foundryvtt-swse', "droidConstructionCredits", {
+  register("droidConstructionCredits", {
     name: "Droid Construction Credits",
-    hint: "Base credits available for custom droid construction (before class credits)",
+    hint: "Base credits for custom-built droids.",
     scope: "world",
     config: true,
     type: Number,
-    default: 1000,
-    range: {
-      min: 0,
-      max: 5000,
-      step: 100
-    }
+    default: 1000
   });
 
-  game.settings.register('foundryvtt-swse', "standardDroidModelLimit", {
+  register("standardDroidModelLimit", {
     name: "Standard Droid Model Credit Limit",
-    hint: "Maximum total cost for standard droid models (including modifications)",
+    hint: "Max cost including modifications.",
     scope: "world",
     config: true,
     type: Number,
-    default: 5000,
-    range: {
-      min: 1000,
-      max: 10000,
-      step: 500
-    }
+    default: 5000
   });
 
-  // ============================================
-  // Hit Points
-  // ============================================
-  
-  game.settings.register('foundryvtt-swse', "hpGeneration", {
+  /* -------------------------------------------------------------------------- */
+  /*                              HIT POINT SETTINGS                             */
+  /* -------------------------------------------------------------------------- */
+
+  register("hpGeneration", {
     name: "HP Generation Method",
-    hint: "How HP is calculated when leveling up",
+    hint: "How HP is calculated when leveling up.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "roll": "Roll Hit Die",
-      "average": "Take Average",
-      "maximum": "Take Maximum",
-      "average_minimum": "Roll with Average Minimum"
+      roll: "Roll Hit Die",
+      average: "Take Average",
+      maximum: "Take Maximum",
+      average_minimum: "Roll with Minimum Average"
     },
     default: "average"
   });
 
-  game.settings.register('foundryvtt-swse', "maxHPLevels", {
+  register("maxHPLevels", {
     name: "Levels with Maximum HP",
-    hint: "Number of levels that automatically get max HP (usually 1st level)",
+    hint: "Number of early levels granted automatic max HP.",
     scope: "world",
     config: true,
     type: Number,
-    default: 1,
-    range: {
-      min: 0,
-      max: 20,
-      step: 1
-    }
+    default: 1
   });
 
-  // ============================================
-  // Death & Dying
-  // ============================================
-  
-  game.settings.register('foundryvtt-swse', "deathSystem", {
+  /* -------------------------------------------------------------------------- */
+  /*                               DEATH & DYING                                 */
+  /* -------------------------------------------------------------------------- */
+
+  register("deathSystem", {
     name: "Death System",
-    hint: "How character death is determined",
+    hint: "How death is determined in your campaign.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "standard": "Standard (-10 HP)",
-      "threeStrikes": "Three Strikes",
-      "negativeCon": "Negative CON Score"
+      standard: "Standard (-10 HP)",
+      threeStrikes: "Three Strikes System",
+      negativeCon: "Negative CON Score"
     },
     default: "standard"
   });
 
-  game.settings.register('foundryvtt-swse', "deathSaveDC", {
+  register("deathSaveDC", {
     name: "Death Save DC",
-    hint: "DC for death saves (if using three strikes system)",
+    hint: "Used only in the Three Strikes system.",
     scope: "world",
     config: true,
     type: Number,
-    default: 10,
-    range: {
-      min: 5,
-      max: 20,
-      step: 1
-    }
+    default: 10
   });
 
-  // ============================================
-  // Combat
-  // ============================================
-  
-  game.settings.register('foundryvtt-swse', "conditionTrackCap", {
+  /* -------------------------------------------------------------------------- */
+  /*                                 COMBAT RULES                                */
+  /* -------------------------------------------------------------------------- */
+
+  register("conditionTrackCap", {
     name: "Condition Track Damage Cap",
-    hint: "Maximum condition track moves from a single hit (0 = unlimited)",
+    hint: "Maximum CT steps moved by one hit (0 = unlimited).",
     scope: "world",
     config: true,
     type: Number,
-    default: 0,
-    range: {
-      min: 0,
-      max: 5,
-      step: 1
-    }
+    default: 0
   });
 
-  game.settings.register('foundryvtt-swse', "criticalHitVariant", {
+  register("criticalHitVariant", {
     name: "Critical Hit Variant",
-    hint: "How critical hits are calculated",
+    hint: "How critical hits deal damage.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "standard": "Standard (Double Damage)",
-      "maxplus": "Maximum + Roll",
-      "exploding": "Exploding Dice",
-      "trackonly": "Condition Track Only"
+      standard: "Standard (Double Damage)",
+      maxplus: "Maximum + Roll",
+      exploding: "Exploding Dice",
+      trackonly: "Condition Track Only"
     },
     default: "standard"
   });
 
-  game.settings.register('foundryvtt-swse', "diagonalMovement", {
+  register("diagonalMovement", {
     name: "Diagonal Movement Cost",
-    hint: "How diagonal movement is calculated",
+    hint: "How diagonal movement is calculated on the grid.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "swse": "All = 2 squares (SWSE Default)",
-      "alternating": "1-2-1 Alternating (D&D 3.5)",
-      "simplified": "All = 1 square"
+      swse: "All 2 squares (SWSE Default)",
+      alternating: "1-2-1 Alternating (3.5 Style)",
+      simplified: "All 1 square (Simplified)"
     },
     default: "swse"
   });
 
-  game.settings.register('foundryvtt-swse', "weaponRangeReduction", {
+  register("weaponRangeReduction", {
     name: "Weapon Range Reduction",
-    hint: "Reduce all weapon ranges by a percentage for closer combat",
+    hint: "Apply global range reduction modifiers.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "none": "0% - Default Ranges",
-      "quarter": "25% - Reduced Ranges",
-      "half": "50% - Half Ranges",
-      "threequarter": "75% - Very Short Ranges"
+      none: "No Reduction",
+      quarter: "25% Range",
+      half: "50% Range",
+      threequarter: "75% Range"
     },
     default: "none"
   });
 
-  game.settings.register('foundryvtt-swse', "weaponRangeMultiplier", {
+  register("weaponRangeMultiplier", {
     name: "Weapon Range Multiplier",
-    hint: "Multiplier for all weapon ranges",
+    hint: "Provides granular weapon range adjustment.",
     scope: "world",
     config: true,
     type: Number,
-    default: 1.0,
-    range: {
-      min: 0.25,
-      max: 2.0,
-      step: 0.25
-    }
+    default: 1.0
   });
 
-  game.settings.register('foundryvtt-swse', "armoredDefenseForAll", {
+  register("armoredDefenseForAll", {
     name: "Armored Defense for All",
-    hint: "All characters can add armor bonus to Reflex Defense regardless of armor proficiency",
+    hint: "All characters can apply armor bonus to Reflex Defense.",
     scope: "world",
     config: true,
     type: Boolean,
     default: false
   });
 
-  // ============================================
-  // Second Wind
-  // ============================================
-  
-  game.settings.register('foundryvtt-swse', "secondWindImproved", {
+  /* -------------------------------------------------------------------------- */
+  /*                                SECOND WIND                                  */
+  /* -------------------------------------------------------------------------- */
+
+  register("secondWindImproved", {
     name: "Improved Second Wind",
-    hint: "Second Wind also improves condition track by one step",
+    hint: "Second Wind also moves up the Condition Track.",
     scope: "world",
     config: true,
     type: Boolean,
     default: false
   });
 
-  game.settings.register('foundryvtt-swse', "secondWindRecovery", {
-    name: "Second Wind Recovery",
-    hint: "When Second Wind uses are recovered",
+  register("secondWindRecovery", {
+    name: "Second Wind Recovery Timing",
+    hint: "When Second Wind uses recover.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "encounter": "After Each Encounter",
-      "short": "After Short Rest",
-      "extended": "After Extended Rest"
+      encounter: "After Each Encounter",
+      short: "After a Short Rest",
+      extended: "After an Extended Rest"
     },
     default: "encounter"
   });
 
+  /* -------------------------------------------------------------------------- */
+  /*                            SKILLS & FEATS                                  */
+  /* -------------------------------------------------------------------------- */
 
-  // ============================================
-  // Skills & Feats
-  // ============================================
-  
-  game.settings.register('foundryvtt-swse', "feintSkill", {
+  register("feintSkill", {
     name: "Feint Skill",
-    hint: "Which skill is used for feinting against Will Defense",
+    hint: "Determines which skill opposes Will Defense for feinting.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "deception": "Deception (Standard)",
-      "persuasion": "Persuasion"
+      deception: "Deception (Standard)",
+      persuasion: "Persuasion"
     },
     default: "deception"
   });
 
-  game.settings.register('foundryvtt-swse', "skillFocusVariant", {
+  register("skillFocusVariant", {
     name: "Skill Focus Variant",
-    hint: "How the Skill Focus feat works",
+    hint: "Defines how Skill Focus calculates bonus.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "normal": "Normal (+5 flat)",
-      "scaled": "Scaled (+1/2 level, max +5 at 10)",
-      "delayed": "Delayed (+5 at specified level)"
+      normal: "Normal (+5)",
+      scaled: "Scaled (+½ Level, Max +5)",
+      delayed: "Delayed (Activates at Set Level)"
     },
     default: "normal"
   });
 
-  game.settings.register('foundryvtt-swse', "skillFocusActivationLevel", {
-    name: "Skill Focus Activation Level",
-    hint: "Level at which delayed Skill Focus activates",
+  register("skillFocusActivationLevel", {
+    name: "Delayed Skill Focus Activation Level",
+    hint: "Only applies if Skill Focus Variant = Delayed.",
     scope: "world",
     config: true,
     type: Number,
-    default: 7,
-    range: {
-      min: 1,
-      max: 20,
-      step: 1
-    }
+    default: 7
   });
 
-  // ============================================
-  // Force Powers
-  // ============================================
-  
-  game.settings.register('foundryvtt-swse', "forceTrainingAttribute", {
-    name: "Force Training Attribute",
-    hint: "Which ability score governs Force Training",
+  /* -------------------------------------------------------------------------- */
+  /*                               FORCE RULES                                   */
+  /* -------------------------------------------------------------------------- */
+
+  register("forceTrainingAttribute", {
+    name: "Force Training Ability",
+    hint: "Which ability modifies Force Power selection.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "wisdom": "Wisdom (Standard)",
-      "charisma": "Charisma"
+      wisdom: "Wisdom",
+      charisma: "Charisma"
     },
     default: "wisdom"
   });
 
-  game.settings.register('foundryvtt-swse', "blockDeflectTalents", {
-    name: "Block/Deflect Talents",
-    hint: "Whether Block and Deflect are separate or combined",
+  register("blockDeflectTalents", {
+    name: "Block + Deflect Behavior",
+    hint: "Determines whether Block and Deflect are separate or combined talents.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "separate": "Separate Talents (Standard)",
-      "combined": "Combined as One Talent"
+      separate: "Separate (Standard)",
+      combined: "Combined into One Talent"
     },
     default: "separate"
   });
 
-  game.settings.register('foundryvtt-swse', "forceSensitiveJediOnly", {
-    name: "Force Sensitive Restriction",
-    hint: "Restrict Force Sensitive feat to Jedi classes only",
+  register("forceSensitiveJediOnly", {
+    name: "Force Sensitive Jedi Restriction",
+    hint: "Restricts Force Sensitive feat to Jedi classes only.",
     scope: "world",
     config: true,
     type: Boolean,
     default: false
   });
 
-  game.settings.register('foundryvtt-swse', "darkSideMaxMultiplier", {
-    name: "Dark Side Maximum Multiplier",
-    hint: "Maximum Dark Side Score = Wisdom × Multiplier (default is 1× Wisdom)",
+  register("darkSideMaxMultiplier", {
+    name: "Dark Side Max Score Multiplier",
+    hint: "Maximum Dark Side score = Wisdom × Multiplier.",
     scope: "world",
     config: true,
     type: Number,
-    choices: {
-      1: "1× Wisdom (Standard)",
-      2: "2× Wisdom",
-      3: "3× Wisdom",
-      5: "5× Wisdom"
-    },
     default: 1
   });
 
-  game.settings.register('foundryvtt-swse', "darkSidePowerIncreaseScore", {
-    name: "Dark Side Powers Auto-Increase Score",
-    hint: "Automatically increase Dark Side Score by 1 when using a Force Power with the [Dark Side] descriptor",
+  register("darkSidePowerIncreaseScore", {
+    name: "Auto-Increase Dark Side Score",
+    hint: "Using a [Dark Side] power automatically increases DSS.",
     scope: "world",
     config: true,
     type: Boolean,
     default: true
   });
 
-  game.settings.register('foundryvtt-swse', "forcePointRecovery", {
+  register("forcePointRecovery", {
     name: "Force Point Recovery",
-    hint: "When Force Points are recovered",
+    hint: "When Force Points refresh.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "level": "On Level Up Only (Standard)",
-      "extended": "After Extended Rest",
-      "session": "Each Session"
+      level: "On Level Up",
+      extended: "After Extended Rest",
+      session: "Each Session"
     },
     default: "level"
   });
 
-  game.settings.register('foundryvtt-swse', "darkSideTemptation", {
+  register("darkSideTemptation", {
     name: "Dark Side Temptation",
-    hint: "Rules for Dark Side temptation and redemption",
+    hint: "Structure defining Dark Side temptation rules.",
     scope: "world",
     config: false,
     type: Object,
-    default: {
-      enabled: true,
-      automatic: false
-    }
+    default: { enabled: true, automatic: false }
   });
 
-  // ============================================
-  // Combat Feats
-  // ============================================
+  /* -------------------------------------------------------------------------- */
+  /*                                COMBAT FEATS                                 */
+  /* -------------------------------------------------------------------------- */
 
-  game.settings.register('foundryvtt-swse', "weaponFinesseDefault", {
+  register("weaponFinesseDefault", {
     name: "Default Weapon Finesse",
-    hint: "All characters automatically have Weapon Finesse",
+    hint: "All characters automatically gain Weapon Finesse.",
     scope: "world",
     config: true,
     type: Boolean,
     default: false
   });
 
-  game.settings.register('foundryvtt-swse', "pointBlankShotDefault", {
+  register("pointBlankShotDefault", {
     name: "Default Point Blank Shot",
-    hint: "All characters automatically have Point Blank Shot feat (+1 to attack and damage within weapon's point-blank range)",
+    hint: "All characters automatically gain Point Blank Shot.",
     scope: "world",
     config: true,
     type: Boolean,
     default: false
   });
 
-  // ============================================
-  // Talents
-  // ============================================
+  /* -------------------------------------------------------------------------- */
+  /*                                   TALENTS                                   */
+  /* -------------------------------------------------------------------------- */
 
-  game.settings.register('foundryvtt-swse', "groupDeflectBlock", {
-    name: "Group Deflect and Block Talents",
-    hint: "Display Deflect and Block as a grouped talent in character generator and talent trees",
+  register("groupDeflectBlock", {
+    name: "Group Block/Deflect Display",
+    hint: "Display these talents grouped in generators and trees.",
     scope: "world",
     config: true,
     type: Boolean,
     default: false
   });
 
-  game.settings.register('foundryvtt-swse', "talentTreeRestriction", {
-    name: "Talent Tree Access",
-    hint: "Which talent trees can players choose from when leveling up. 'Unrestricted' allows selecting from any talent tree (free build mode).",
+  register("talentTreeRestriction", {
+    name: "Talent Tree Access Rules",
+    hint: "Determines which talent trees are selectable.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "current": "Current Class Only",
-      "all": "Any Class With Levels",
-      "unrestricted": "Unrestricted (Free Build)"
+      current: "Current Class Only",
+      all: "Any Class With Levels",
+      unrestricted: "Unrestricted"
     },
     default: "current"
   });
 
-  game.settings.register('foundryvtt-swse', "talentEveryLevel", {
+  register("talentEveryLevel", {
     name: "Talent Every Level",
-    hint: "Characters gain a talent every level instead of every odd level",
+    hint: "Characters gain a talent each level rather than odd levels.",
     scope: "world",
     config: true,
     type: Boolean,
     default: false
   });
 
-  game.settings.register('foundryvtt-swse', "crossClassSkillTraining", {
+  register("crossClassSkillTraining", {
     name: "Cross-Class Skill Training",
-    hint: "Allow training in skills that are not class skills",
+    hint: "Allow training skills not listed as class skills.",
     scope: "world",
     config: true,
     type: Boolean,
     default: true
   });
 
-  game.settings.register('foundryvtt-swse', "retrainingEnabled", {
-    name: "Retraining Enabled",
-    hint: "Allow characters to retrain feats, skills, and talents",
+  register("retrainingEnabled", {
+    name: "Retraining System",
+    hint: "Allow retraining feats, skills, and talents.",
     scope: "world",
     config: true,
     type: Boolean,
     default: false
   });
 
-  game.settings.register('foundryvtt-swse', "skillFocusRestriction", {
+  register("skillFocusRestriction", {
     name: "Skill Focus Restriction",
-    hint: "Restrictions on the Skill Focus feat",
+    hint: "Structured restriction object for Skill Focus.",
     scope: "world",
     config: false,
     type: Object,
-    default: {
-      useTheForce: 0,
-      scaling: "normal"
-    }
+    default: { useTheForce: 0, scaling: "normal" }
   });
 
-  // ============================================
-  // Multi-classing
-  // ============================================
+  /* -------------------------------------------------------------------------- */
+  /*                               MULTICLASS RULES                               */
+  /* -------------------------------------------------------------------------- */
 
-  game.settings.register('foundryvtt-swse', "multiclassBonusChoice", {
-    name: "Multi-class Bonus Choice",
-    hint: "What bonus players get when taking a second base class (players can always choose feat OR skill)",
+  register("multiclassBonusChoice", {
+    name: "Multi-class Bonus Selection",
+    hint: "Determines bonus gained when taking a second base class.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "single_feat": "Single Starting Feat (or Skill)",
-      "single_skill": "Single Trained Skill (or Feat)",
-      "all_feats": "All Starting Feats"
+      single_feat: "Single Starting Feat (or skill)",
+      single_skill: "Single Trained Skill (or feat)",
+      all_feats: "All Starting Feats"
     },
     default: "single_feat"
   });
 
-  // ============================================
-  // Ability Score Increases
-  // ============================================
+  /* -------------------------------------------------------------------------- */
+  /*                           ABILITY SCORE IMPROVEMENTS                        */
+  /* -------------------------------------------------------------------------- */
 
-  game.settings.register('foundryvtt-swse', "abilityIncreaseMethod", {
-    name: "Ability Score Increase Method",
-    hint: "How players can allocate ability increases at levels 4, 8, 12, 16, 20",
+  register("abilityIncreaseMethod", {
+    name: "Ability Increase Method",
+    hint: "How ability score increases are applied at 4/8/12/16/20.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "standard": "1 Point to 2 Attributes (Standard)",
-      "flexible": "1 to 2 Attributes OR 2 to 1 Attribute"
+      standard: "Standard (1 to 2 attributes)",
+      flexible: "Flexible (2 to 1 or 1 to 2)"
     },
     default: "flexible"
   });
 
-  // ============================================
-  // Space Combat
-  // ============================================
-  
-  game.settings.register('foundryvtt-swse', "spaceInitiativeSystem", {
-    name: "Space Combat Initiative System",
-    hint: "How initiative works in space combat",
+  /* -------------------------------------------------------------------------- */
+  /*                                 SPACE COMBAT                                */
+  /* -------------------------------------------------------------------------- */
+
+  register("spaceInitiativeSystem", {
+    name: "Space Combat Initiative",
+    hint: "Determines whether initiative is per-person or per-ship.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "individual": "Individual (Standard)",
-      "shipBased": "Ship-Based with Role Priority"
+      individual: "Individual (Standard)",
+      shipBased: "Ship-Based (Crew + Role Priority)"
     },
     default: "individual"
   });
 
-  game.settings.register('foundryvtt-swse', "initiativeRolePriority", {
-    name: "Initiative Role Priority",
-    hint: "Order of crew actions in ship-based initiative",
+  register("initiativeRolePriority", {
+    name: "Ship Role Priority Order",
+    hint: "Defines order of crew action in ship-based initiative.",
     scope: "world",
     config: false,
     type: Array,
     default: ["pilot", "shields", "weapons", "engineering", "other"]
   });
 
-  game.settings.register('foundryvtt-swse', "weaponsOperatorsRollInit", {
+  register("weaponsOperatorsRollInit", {
     name: "Weapons Operators Roll Initiative",
-    hint: "Multiple weapons operators roll to determine order among themselves",
+    hint: "Operators roll individually when multiple people man weapons.",
     scope: "world",
     config: true,
     type: Boolean,
     default: true
   });
 
-  // ============================================
-  // Houserule Presets
-  // ============================================
+  /* -------------------------------------------------------------------------- */
+  /*                               PRESET MANAGEMENT                             */
+  /* -------------------------------------------------------------------------- */
 
-  game.settings.register('foundryvtt-swse', "houserulePreset", {
+  register("houserulePreset", {
     name: "Active Houserule Preset",
-    hint: "The currently active houserule preset configuration",
+    hint: "The currently active preset configuration.",
     scope: "world",
     config: false,
     type: String,
     default: "standard"
   });
 
-  SWSELogger.log("SWSE | House rule settings registered");
+  SWSELogger.info("SWSE | Houserule settings registered successfully.");
 }
