@@ -1,266 +1,218 @@
-import { SWSELogger } from '../utils/logger.js';
-import { SWSEActiveEffectsManager } from './active-effects-manager.js';
-import { ProgressionEngine } from "../progression/engine/progression-engine.js";
+import { SWSELogger } from "../utils/logger.js";
+import { SWSEActiveEffectsManager } from "./active-effects-manager.js";
 
 /**
- * Combat automation and integration for SWSE
- * Handles combat start, turn progression, and condition recovery
+ * SWSE Combat Integration (v13+)
+ * - RAW Condition Track behavior with UI-assisted "Recover Action"
+ * - Turn-start prompts only when appropriate
+ * - Skip turn / skip encounter / never show again options
+ * - Handles Second Wind availability
+ * - Fully compatible with SWSEActorBase + new Active Effects engine
  */
 export class SWSECombatIntegration {
 
-    static getSelectedActor() {
-        return canvas.tokens.controlled[0]?.actor;
-    }
-
-
   static init() {
-    SWSELogger.log("SWSE | Initializing combat integration...");
+    SWSELogger.log("SWSE | Initializing combat integration…");
 
-    // Combat lifecycle hooks
     Hooks.on("createCombat", this._onCombatStart.bind(this));
     Hooks.on("deleteCombat", this._onCombatEnd.bind(this));
     Hooks.on("combatRound", this._onCombatRound.bind(this));
     Hooks.on("combatTurn", this._onCombatTurn.bind(this));
 
-    // Combatant hooks
-    Hooks.on("createCombatant", this._onCombatantAdd.bind(this));
-    Hooks.on("deleteCombatant", this._onCombatantRemove.bind(this));
-
-    SWSELogger.log("SWSE | Combat integration ready");
+    SWSELogger.log("SWSE | Combat integration ready.");
   }
 
-  /**
-   * Handle combat start
-   */
-  static async _onCombatStart(combat, options, userId) {
+  /* -------------------------------------------------------------------------- */
+  /* COMBAT START                                                               */
+  /* -------------------------------------------------------------------------- */
+
+  static async _onCombatStart(combat) {
     if (!game.user.isGM) return;
 
-    SWSELogger.log(`SWSE | Combat "${combat.id}" started`);
+    SWSELogger.log(`SWSE | Combat '${combat.id}' started.`);
 
-    // Reset resources for all combatants
-    for (const combatant of combat.combatants) {
-      if (combatant.actor) {
-        await this._resetCombatantResources(combatant.actor);
-      }
+    // Reset encounter-only CT prompt opt-outs
+    for (const c of combat.combatants) {
+      await c.setFlag("foundryvtt-swse", "skipCtPromptsEncounter", false);
     }
 
-    // Send notification
+    // Message
     ChatMessage.create({
       content: `<div class="swse-combat-start">
         <h2><i class="fas fa-swords"></i> Combat Started!</h2>
         <p>Roll initiative!</p>
       </div>`,
-      speaker: { alias: 'System' }
+      speaker: { alias: "System" }
     });
   }
 
-  /**
-   * Handle combat end
-   */
-  static async _onCombatEnd(combat, options, userId) {
+  /* -------------------------------------------------------------------------- */
+  /* COMBAT END                                                                 */
+  /* -------------------------------------------------------------------------- */
+
+  static async _onCombatEnd(combat) {
     if (!game.user.isGM) return;
 
-    SWSELogger.log(`SWSE | Combat "${combat.id}" ended`);
+    SWSELogger.log(`SWSE | Combat '${combat.id}' ended.`);
 
-    // Clean up combat-specific effects
-    for (const combatant of combat.combatants) {
-      if (combatant.actor) {
-        await this._cleanupCombatEffects(combatant.actor);
-      }
-    }
-
-    // Send notification
     ChatMessage.create({
       content: `<div class="swse-combat-end">
         <h2><i class="fas fa-flag-checkered"></i> Combat Ended</h2>
       </div>`,
-      speaker: { alias: 'System' }
+      speaker: { alias: "System" }
     });
   }
 
-  /**
-   * Handle combat round progression
-   */
-  static async _onCombatRound(combat, updateData, updateOptions) {
+  /* -------------------------------------------------------------------------- */
+  /* NEW ROUND                                                                  */
+  /* -------------------------------------------------------------------------- */
+
+  static async _onCombatRound(combat) {
     if (!game.user.isGM) return;
 
-    const round = updateData.round;
-    SWSELogger.log(`SWSE | Combat round ${round}`);
+    const round = combat.round;
+    SWSELogger.log(`SWSE | Round ${round}`);
 
-    // Optional: Announce new round
-    if (game.settings.get('foundryvtt-swse', 'announceRounds') !== false) {
+    if (game.settings.get("foundryvtt-swse", "announceRounds")) {
       ChatMessage.create({
         content: `<div class="swse-round-start">
           <h3><i class="fas fa-circle-notch"></i> Round ${round}</h3>
         </div>`,
-        speaker: { alias: 'System' }
+        speaker: { alias: "System" }
       });
     }
   }
 
-  /**
-   * Handle combat turn changes
-   */
-  static async _onCombatTurn(combat, updateData, updateOptions) {
-    const combatant = combat.combatant;
-    if (!combatant?.actor) return;
+  /* -------------------------------------------------------------------------- */
+  /* TURN START                                                                 */
+  /* -------------------------------------------------------------------------- */
 
-    const actor = combatant.actor;
-    SWSELogger.log(`SWSE | Turn: ${actor.name}`);
+  static async _onCombatTurn(combat) {
+    const c = combat.combatant;
+    const actor = c?.actor;
+    if (!actor) return;
 
-    // Reset action economy for the new turn
-    if (game.user.isGM) {
-      await combatant.resetActions();
-    }
+    SWSELogger.log(`SWSE | Turn Start: ${actor.name}`);
 
-    // Check for condition recovery
-    await this._checkConditionRecovery(combatant);
-
-    // Announce turn (if setting enabled)
-    if (game.settings.get('foundryvtt-swse', 'announceTurns') !== false) {
+    // GM turn announcements
+    if (game.settings.get("foundryvtt-swse", "announceTurns")) {
       ChatMessage.create({
-        content: `<div class="swse-turn-start">
-          <h3>${actor.name}'s Turn</h3>
-        </div>`,
-        speaker: { alias: 'System' }
+        content: `<div class="swse-turn-start"><h3>${actor.name}'s Turn</h3></div>`,
+        speaker: { alias: "System" }
       });
     }
-  }
 
-  /**
-   * Handle combatant added to combat
-   */
-  static async _onCombatantAdd(combatant, options, userId) {
-    if (!game.user.isGM) return;
+    // Only prompt for PCs (owned by players)
+    const isPlayerOwned = actor.hasPlayerOwner;
+    if (!isPlayerOwned && !game.user.isGM) return;
 
-    SWSELogger.log(`SWSE | ${combatant.name} added to combat`);
+    // Check if CT > 0
+    const ct = actor.system.conditionTrack.current ?? 0;
+    if (ct === 0) return;
 
-    if (combatant.actor) {
-      await this._resetCombatantResources(combatant.actor);
-    }
-  }
-
-  /**
-   * Handle combatant removed from combat
-   */
-  static async _onCombatantRemove(combatant, options, userId) {
-    if (!game.user.isGM) return;
-
-    SWSELogger.log(`SWSE | ${combatant.name} removed from combat`);
-
-    if (combatant.actor) {
-      await this._cleanupCombatEffects(combatant.actor);
-    }
-  }
-
-  /**
-   * Reset combatant resources at combat start
-   * @private
-   */
-  static async _resetCombatantResources(actor) {
-    const updates = {
-      'system.secondWind.uses': 1,
-      'system.actionEconomy': {
-        swift: true,
-        move: true,
-        standard: true,
-        fullRound: true,
-        reaction: true
-      }
-    };
-
-    // Reset Force Points if setting enabled
-    if (game.settings.get('foundryvtt-swse', 'resetForcePointsOnCombat') === true) {
-      const maxForcePoints = actor.system.forcePoints?.max || 0;
-      updates['system.forcePoints.value'] = maxForcePoints;
-    }
-
-    await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
-  }
-
-  /**
-   * Clean up combat-specific effects
-   * @private
-   */
-  static async _cleanupCombatEffects(actor) {
-    // Remove turn-based effects
-    const tempEffects = actor.effects.filter(e =>
-      e.flags?.swse?.combatAction || e.duration?.turns
-    );
-
-    if (tempEffects.length > 0) {
-      const ids = tempEffects.map(e => e.id);
-      await actor.deleteEmbeddedDocuments('ActiveEffect', ids);
-    }
-
-    // Reset action economy
-    await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.actionEconomy': {
-        swift: true,
-        move: true,
-        standard: true,
-        fullRound: true,
-        reaction: true
-      }
-    });
-  }
-
-  /**
-   * Check for automatic condition recovery
-   * @private
-   */
-  static async _checkConditionRecovery(combatant) {
-    const actor = combatant.actor;
-    const condition = actor.system.conditionTrack?.current;
-
-    // Only offer recovery if injured
-    if (!condition || condition === 'normal' || condition === 'helpless') {
+    // Check persistent condition
+    const persistent = actor.system.conditionTrack.persistent === true;
+    if (persistent) {
+      ui.notifications.warn(`${actor.name} has a Persistent Condition and cannot Recover naturally.`);
       return;
     }
 
-    // Check if auto-recovery is enabled
-    const autoRecovery = game.settings.get('foundryvtt-swse', 'autoConditionRecovery');
-    if (!autoRecovery) return;
+    // Skip prompt if user opted out for this actor permanently
+    const skipForever = await actor.getFlag("foundryvtt-swse", "skipCtPromptsForever");
+    if (skipForever) return;
 
-    // Only prompt for player characters or if GM
-    if (!actor.hasPlayerOwner && !game.user.isGM) return;
+    // Skip prompt if user opted out for this encounter
+    const skipEncounter = await c.getFlag("foundryvtt-swse", "skipCtPromptsEncounter");
+    if (skipEncounter) return;
 
-    // Prompt for recovery
-    const confirmed = await Dialog.confirm({
-      title: "Condition Recovery",
-      content: `<p>${actor.name} can attempt condition recovery (DC 15 Endurance check)</p>
-                <p>Current condition: <strong>${condition}</strong></p>`,
-      defaultYes: false
-    });
+    // Check if the actor has any Second Wind uses left
+    const canSecondWind =
+      actor.type === "character" &&
+      actor.system.secondWind &&
+      actor.system.secondWind.used === false;
 
-    if (!confirmed) return;
-
-    // Roll Endurance check
-    const endurance = actor.system.skills?.endurance?.total || 0;
-    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${endurance}`).evaluate({async: true});
-
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({actor}),
-      flavor: `<div class="swse-condition-recovery">
-        <h3>Condition Recovery (DC 15)</h3>
-        <p>Endurance Check: ${roll.total}</p>
-      </div>`
-    });
-
-    // Check success
-    if (roll.total >= 15) {
-      const tracks = ['normal', '-1', '-2', '-5', '-10', 'helpless'];
-      const currentIndex = tracks.indexOf(condition);
-      if (currentIndex > 0) {
-        const newCondition = tracks[currentIndex - 1];
-        await globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.conditionTrack.current': newCondition });
-        ui.notifications.info(`${actor.name} recovered! Condition improved from ${condition} to ${newCondition}`);
-
-        // Apply the new condition effect
-        await SWSEActiveEffectsManager.applyConditionEffect(actor, newCondition);
+    // Build options list dynamically
+    const buttons = {
+      recover: {
+        icon: '<i class="fas fa-heart"></i>',
+        label: "Recover (3 Swift Actions)",
+        callback: async () => {
+          await actor.moveConditionTrack(-1);
+          ChatMessage.create({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            content: `<strong>${actor.name}</strong> spends 3 swift actions to Recover and improves 1 step on the Condition Track.`
+          });
+        }
+      },
+      skip: {
+        icon: '<i class="fas fa-times"></i>',
+        label: "Skip",
+        callback: () => {
+          this._promptSkipOptions(actor, c);
+        }
       }
-    } else {
-      ui.notifications.warn(`${actor.name} failed to recover from ${condition}`);
+    };
+
+    if (canSecondWind) {
+      buttons.secondWind = {
+        icon: '<i class="fas fa-wind"></i>',
+        label: "Use Second Wind",
+        callback: async () => await actor.useSecondWind()
+      };
     }
+
+    // CT labels
+    const ctLabels = ["Normal", "-1", "-2", "-5", "-10", "Helpless"];
+
+    new Dialog({
+      title: `${actor.name} — Condition Recovery`,
+      content: `
+        <div class="swse condition-recovery">
+          <p><strong>${actor.name}</strong> may Recover from the Condition Track.</p>
+          <p>Current Condition: <strong>${ctLabels[ct]}</strong></p>
+        </div>
+      `,
+      buttons,
+      default: "recover"
+    }).render(true);
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* SKIP OPTIONS POPUP                                                         */
+  /* -------------------------------------------------------------------------- */
+
+  static async _promptSkipOptions(actor, combatant) {
+    return new Dialog({
+      title: "Skip Condition Recovery",
+      content: `
+        <p>Choose how long to skip Condition Track recovery prompts:</p>
+      `,
+      buttons: {
+        skipTurn: {
+          icon: '<i class="fas fa-angle-right"></i>',
+          label: "Skip This Turn Only",
+          callback: () => {
+            ui.notifications.info("Skipping recovery for this turn.");
+          }
+        },
+        skipEncounter: {
+          icon: '<i class="fas fa-flag"></i>',
+          label: "Skip For This Encounter",
+          callback: async () => {
+            await combatant.setFlag("foundryvtt-swse", "skipCtPromptsEncounter", true);
+            ui.notifications.info("Skipping CT prompts for the rest of this encounter.");
+          }
+        },
+        skipForever: {
+          icon: '<i class="fas fa-ban"></i>',
+          label: "Never Show Again",
+          callback: async () => {
+            await actor.setFlag("foundryvtt-swse", "skipCtPromptsForever", true);
+            ui.notifications.info(`${actor.name} will never show CT recovery prompts again.`);
+          }
+        }
+      },
+      default: "skipTurn"
+    }).render(true);
   }
 }
