@@ -1,14 +1,20 @@
+// ============================================
+// FILE: module/actors/swse-droid.js
+// Modernized Droid Actor Sheet (FVTT v13+ compatible)
+// ============================================
+
 import { SWSECharacterSheet } from '../character/swse-character-sheet.js';
 import { SWSELogger } from '../../utils/logger.js';
 
-// ============================================
-// FILE: module/actors/swse-droid.js
-// Droid actor sheet
-// ============================================
-
 export class SWSEDroidSheet extends SWSECharacterSheet {
+
+  // --------------------------------------------
+  // Default Options (v13+ safe)
+  // --------------------------------------------
   static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+    const options = super.defaultOptions;
+
+    return foundry.utils.mergeObject(options, {
       classes: ["swse", "sheet", "actor", "droid", "swse-app"],
       template: "systems/foundryvtt-swse/templates/actors/droid/droid-sheet.hbs",
       width: 800,
@@ -17,39 +23,58 @@ export class SWSEDroidSheet extends SWSECharacterSheet {
         navSelector: '.sheet-tabs',
         contentSelector: '.sheet-body',
         initial: 'main'
-      }]
+      }],
+      // Ensures proper scroll behavior in modern Foundry
+      scrollY: [".sheet-body"]
     });
   }
 
-  getData() {
-    const context = super.getData();
-    // Add droid-specific data here
+  // --------------------------------------------
+  // Data Preparation
+  // --------------------------------------------
+  async getData(options = {}) {
+    const context = await super.getData(options);
+
+    // Use modern flag scope "foundryvtt-swse"
+    context.viewMode = this.actor.getFlag("foundryvtt-swse", "viewMode") || "operational";
+
+    // Add any droid-specific computed values here
+    context.system.isDroid = true;
+
     return context;
   }
 
+  // --------------------------------------------
+  // Activate UI Listeners (v13+ safe)
+  // --------------------------------------------
   activateListeners(html) {
     super.activateListeners(html);
 
-    // Only add listeners if not read-only
-    if (!this.options.editable) return;
+    if (!this.isEditable) return;
 
-    // Droid Mode Toggle (Operational <-> Blueprint)
-    html.find("[data-toggle-mode]").click(async (ev) => {
-      ev.preventDefault();
-      const actor = this.actor;
-      const current = actor.getFlag("swse", "viewMode") || "operational";
+    // Toggle between Operational Mode ↔ Blueprint Mode
+    html.find("[data-toggle-mode]").on("click", async (event) => {
+      event.preventDefault();
+
+      const flagScope = "foundryvtt-swse";
+      const current = this.actor.getFlag(flagScope, "viewMode") || "operational";
       const next = current === "operational" ? "blueprint" : "operational";
 
-      await actor.setFlag("swse", "viewMode", next);
+      await this.actor.setFlag(flagScope, "viewMode", next);
+
+      // Re-render but don't close and reopen the sheet
       this.render(false);
     });
 
     SWSELogger.log("SWSE | Droid sheet listeners activated");
   }
 
-  // ============================================
-  // INHERITED METHOD STUBS
-  // These prevent errors when parent tries to call them
-  // ============================================
+  // --------------------------------------------
+  // Safe no-op method stubs (prevent parent errors)
+  // --------------------------------------------
+  /** If parent sheet expects hooks like updateSummary() */
+  updateSummary() { /* no-op */ }
 
+  /** If parent calls special rendering steps */
+  prepareItems() { /* no-op */ }
 }
