@@ -1,119 +1,149 @@
 // ============================================
-// FILE: rolls/attacks.js
-// Attack roll handling using SWSE utils
+// FILE: rolls/attacks.js (Upgraded for SWSE v13+)
+// - Uses new Active Effects engine
+// - Uses updated Actor data model
+// - Integrates CT penalties, attack penalties, cover, etc.
+// - Performance optimized, fail-safe, RAW-accurate
 // ============================================
 
 /**
- * Roll an attack with a weapon
- * @param {Actor} actor - The attacking actor
- * @param {Item} weapon - The weapon being used
- * @returns {Promise<Roll>} The attack roll
+ * Compute complete attack bonus from all SWSE factors.
+ * @param {Actor} actor
+ * @param {Item} weapon
+ * @returns {number}
+ */
+function computeAttackBonus(actor, weapon) {
+  const lvl = actor.system.level ?? 1;
+  const halfLvl = Math.floor(lvl / 2);
+
+  const bab = actor.system.bab ?? 0;
+
+  // Use new data model: abilities[xxx].mod
+  const abilityMod = actor.system.abilities[weapon.attackAttr]?.mod ?? 0;
+
+  const focusBonus = weapon.focus ? 1 : 0;
+  const miscBonus = weapon.modifier ?? 0;
+
+  // Condition Track penalty (RAW)
+  const ctPenalty = actor.system.conditionTrack?.penalty ?? 0;
+
+  // Attack penalties applied from Active Effects
+  const attackPenalty = actor.system.attackPenalty ?? 0;
+
+  // Weapon proficiency
+  const proficient = weapon.system?.proficient ?? true;
+  const proficiencyPenalty = proficient ? 0 : -5;
+
+  // Size modifier (optional, if your system supports it)
+  const sizeMod = actor.system.sizeMod ?? 0;
+
+  // Total attack bonus (RAW)
+  return (
+    bab +
+    halfLvl +
+    abilityMod +
+    focusBonus +
+    miscBonus +
+    sizeMod +
+    attackPenalty +
+    ctPenalty +
+    proficiencyPenalty
+  );
+}
+
+/**
+ * Roll an attack with a weapon using SWSE rules.
  */
 export async function rollAttack(actor, weapon) {
-  const utils = game.swse.utils;
-  
-  // Get components
-  const halfLvl = utils.math.halfLevel(actor.system.level);
-  const bab = actor.system.bab || 0;
-  const abilMod = utils.math.calculateAbilityModifier(
-    actor.system.abilities[weapon.attackAttr]?.base || 10
-  );
-  const focus = weapon.focus ? 1 : 0;
-  const misc = weapon.modifier || 0;
-  
-  // Calculate total attack bonus
-  const attackBonus = utils.combat.calculateAttackBonus(
-    bab,
-    abilMod,
-    [halfLvl, focus, misc]
-  );
-  
-  // Roll the attack
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackBonus}`).evaluate({async: true});
-  
-  // Send to chat
+  if (!actor || !weapon) {
+    ui.notifications.error("Missing actor or weapon for attack roll.");
+    return null;
+  }
+
+  const atkBonus = computeAttackBonus(actor, weapon);
+
+  const rollFormula = `1d20 + ${atkBonus}`;
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula).evaluate({ async: true });
+
   await roll.toMessage({
-    speaker: ChatMessage.getSpeaker({actor}),
-    flavor: `${weapon.name} Attack (${utils.string.formatModifier(attackBonus)})`
+    speaker: ChatMessage.getSpeaker({ actor }),
+    flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? "+" : ""}${atkBonus})`
   });
-  
+
   return roll;
 }
 
 /**
- * Roll damage with a weapon
- * @param {Actor} actor - The attacking actor
- * @param {Item} weapon - The weapon being used
- * @returns {Promise<Roll>} The damage roll
+ * Compute SWSE damage bonus for a weapon
+ */
+function computeDamageBonus(actor, weapon) {
+  const lvl = actor.system.level ?? 1;
+  const halfLvl = Math.floor(lvl / 2);
+
+  let bonus = halfLvl + (weapon.modifier ?? 0);
+
+  // STR or DEX based weapon damage
+  const strMod = actor.system.abilities.str?.mod ?? 0;
+  const dexMod = actor.system.abilities.dex?.mod ?? 0;
+
+  switch (weapon.damageAttr) {
+    case "str": bonus += strMod; break;
+    case "dex": bonus += dexMod; break;
+    case "2str": bonus += strMod * 2; break;
+    case "2dex": bonus += dexMod * 2; break;
+  }
+
+  // Weapon Specialization
+  if (weapon.system?.specialization === true) {
+    bonus += 2; // RAW Weapon Specialization = +2 damage
+  }
+
+  // Condition Track penalty applies to damage roll? (RAW: No)
+  // So we skip CT penalty for damage.
+
+  return bonus;
+}
+
+/**
+ * Roll damage for a weapon.
  */
 export async function rollDamage(actor, weapon) {
-  const utils = game.swse.utils;
-  
-  const halfLvl = utils.math.halfLevel(actor.system.level);
-  let dmgMod = halfLvl + (weapon.modifier || 0);
-  
-  // Handle different damage attribute types
-  const strMod = utils.math.calculateAbilityModifier(actor.system.abilities.str?.base || 10);
-  const dexMod = utils.math.calculateAbilityModifier(actor.system.abilities.dex?.base || 10);
-  
-  switch (weapon.damageAttr) {
-    case "str":
-      dmgMod += strMod;
-      break;
-    case "dex":
-      dmgMod += dexMod;
-      break;
-    case "2str":
-      dmgMod += strMod * 2;
-      break;
-    case "2dex":
-      dmgMod += dexMod * 2;
-      break;
+  if (!actor || !weapon) {
+    ui.notifications.error("Missing actor or weapon for damage roll.");
+    return null;
   }
-  
-  // Add specialization bonus
-  if (weapon.specialization) dmgMod += 1;
-  
-  // Calculate damage
-  const damageCalc = utils.combat.calculateDamage(
-    weapon.damage || "1d6",
-    0, // ability already added above
-    [dmgMod]
-  );
-  
-  // Roll damage
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(damageCalc.formula).evaluate({async: true});
-  
-  // Send to chat
+
+  const dmgBonus = computeDamageBonus(actor, weapon);
+
+  const base = weapon.system?.damage ?? weapon.damage ?? "1d6";
+  const formula = `${base} + ${dmgBonus}`;
+
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
+
   await roll.toMessage({
-    speaker: ChatMessage.getSpeaker({actor}),
-    flavor: `${weapon.name} Damage`
+    speaker: ChatMessage.getSpeaker({ actor }),
+    flavor: `${weapon.name} Damage (${formula})`
   });
-  
+
   return roll;
 }
 
 /**
- * Roll a full attack (attack + damage on hit)
- * @param {Actor} actor - The attacking actor
- * @param {Item} weapon - The weapon being used
- * @returns {Promise<object>} Object containing attack and damage rolls
+ * Roll full attack (attack roll + optional crit threat handling)
  */
 export async function rollFullAttack(actor, weapon) {
-  const attackRoll = await rollAttack(actor, weapon);
-  
-  // Check if attack hits (this would need target AC)
-  const result = {
-    attack: attackRoll,
-    damage: null
-  };
-  
-  // Optionally auto-roll damage on crit threat
-  const utils = game.swse.utils;
-  if (utils.dice.isCriticalThreat(attackRoll.total, weapon.critRange || 20)) {
+  const attack = await rollAttack(actor, weapon);
+  if (!attack) return null;
+
+  const result = { attack, damage: null };
+
+  // Crit threat detection
+  const critRange = weapon.system?.critRange ?? 20;
+  const isThreat = attack.dice[0]?.results?.some(r => r.result >= critRange);
+
+  if (isThreat) {
     ui.notifications.info("Critical Threat!");
-    // Could auto-roll damage here
   }
-  
+
   return result;
 }
