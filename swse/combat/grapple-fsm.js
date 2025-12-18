@@ -1,5 +1,5 @@
 /**
- * Grapple State Machine
+ * Grapple FSM – state transitions only
  * AUTO-GENERATED
  */
 
@@ -11,14 +11,20 @@ export const GrappleStates = {
 };
 
 export class GrappleFSM {
-  static transition(state, action) {
-    const table = {
-      none: { attemptGrab: "grabbed" },
-      grabbed: { opposedCheck: "grappled" },
-      grappled: { pin: "pinned", escape: "none" },
-      pinned: { escape: "grappled" }
-    };
+  static transitions = {
+    none: { attemptGrab: "grabbed" },
+    grabbed: { succeedOpposed: "grappled", failOpposed: "none" },
+    grappled: { pin: "pinned", escape: "none" },
+    pinned: { escape: "grappled" }
+  };
 
-    return table[state]?.[action] ?? state;
+  static next(state, action) {
+    return this.transitions[state]?.[action] ?? state;
   }
 }
+
+Hooks.once("init", () => {
+  CONFIG.SWSE = CONFIG.SWSE ?? {};
+  CONFIG.SWSE.GrappleFSM = GrappleFSM;
+  CONFIG.SWSE.GrappleStates = GrappleStates;
+});
