@@ -1,11 +1,45 @@
 /**
- * SWSE Houserule Configuration Menus
- * FormApplication classes for complex houserule configuration
+ * SWSE Houserule Configuration Menus (Upgraded)
+ * Modernizes all FormApplication classes for Foundry VTT V13–V15 compatibility
+ * Includes safety, sanitation, error handling, and maintainability improvements.
  */
 
-// ==========================================
-// CHARACTER CREATION MENU
-// ==========================================
+const NAMESPACE = "foundryvtt-swse";
+
+/* -------------------------------------------------------------------------- */
+/*                              UTILITY HELPERS                               */
+/* -------------------------------------------------------------------------- */
+
+function safeGet(setting) {
+  try {
+    return game.settings.get(NAMESPACE, setting);
+  } catch (err) {
+    console.error(`SWSE Houserules | Failed to read setting "${setting}"`, err);
+    return null;
+  }
+}
+
+function safeSet(setting, value) {
+  try {
+    return game.settings.set(NAMESPACE, setting, value);
+  } catch (err) {
+    console.error(`SWSE Houserules | Failed to save setting "${setting}"`, err);
+  }
+}
+
+function _bool(v) {
+  return v === true || v === "true" || v === "on" || v === "1";
+}
+
+function _num(v) {
+  const n = Number(v);
+  return isNaN(n) ? 0 : n;
+}
+
+/* ========================================================================== */
+/*                         CHARACTER CREATION MENU                             */
+/* ========================================================================== */
+
 export class CharacterCreationMenu extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -14,27 +48,27 @@ export class CharacterCreationMenu extends FormApplication {
       template: "systems/foundryvtt-swse/templates/apps/houserules/character-creation.hbs",
       width: 600,
       height: "auto",
-      tabs: [{navSelector: ".tabs", contentSelector: ".content", initial: "abilities"}]
+      tabs: [{ navSelector: ".tabs", contentSelector: ".content", initial: "abilities" }]
     });
   }
-  
+
   getData() {
-    const data = game.settings.get('foundryvtt-swse', "characterCreation");
     return {
-      ...data,
+      ...safeGet("characterCreation"),
       isGM: game.user.isGM
     };
   }
-  
+
   async _updateObject(event, formData) {
-    await game.settings.set('foundryvtt-swse', "characterCreation", formData);
+    await safeSet("characterCreation", formData);
     ui.notifications.info("Character creation rules updated");
   }
 }
 
-// ==========================================
-// ADVANCEMENT MENU
-// ==========================================
+/* ========================================================================== */
+/*                              ADVANCEMENT MENU                               */
+/* ========================================================================== */
+
 export class AdvancementMenu extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -43,35 +77,39 @@ export class AdvancementMenu extends FormApplication {
       template: "systems/foundryvtt-swse/templates/apps/houserules/advancement.hbs",
       width: 600,
       height: "auto",
-      tabs: [{navSelector: ".tabs", contentSelector: ".content", initial: "levelup"}]
+      tabs: [{ navSelector: ".tabs", contentSelector: ".content", initial: "levelup" }]
     });
   }
-  
+
   getData() {
     return {
-      talentEveryLevel: game.settings.get('foundryvtt-swse', "talentEveryLevel"),
-      crossClassSkillTraining: game.settings.get('foundryvtt-swse', "crossClassSkillTraining"),
-      retrainingEnabled: game.settings.get('foundryvtt-swse', "retrainingEnabled"),
-      skillFocusRestriction: game.settings.get('foundryvtt-swse', "skillFocusRestriction"),
+      talentEveryLevel: safeGet("talentEveryLevel"),
+      crossClassSkillTraining: safeGet("crossClassSkillTraining"),
+      retrainingEnabled: safeGet("retrainingEnabled"),
+      skillFocusRestriction: safeGet("skillFocusRestriction"),
       isGM: game.user.isGM
     };
   }
-  
+
   async _updateObject(event, formData) {
-    await game.settings.set('foundryvtt-swse', "talentEveryLevel", formData.talentEveryLevel);
-    await game.settings.set('foundryvtt-swse', "crossClassSkillTraining", formData.crossClassSkillTraining);
-    await game.settings.set('foundryvtt-swse', "retrainingEnabled", formData.retrainingEnabled);
-    await game.settings.set('foundryvtt-swse', "skillFocusRestriction", {
-      useTheForce: Number(formData["skillFocusRestriction.useTheForce"]),
+    await safeSet("talentEveryLevel", _bool(formData.talentEveryLevel));
+    await safeSet("crossClassSkillTraining", _bool(formData.crossClassSkillTraining));
+    await safeSet("retrainingEnabled", _bool(formData.retrainingEnabled));
+
+    const restriction = {
+      useTheForce: _num(formData["skillFocusRestriction.useTheForce"]),
       scaling: formData["skillFocusRestriction.scaling"]
-    });
+    };
+
+    await safeSet("skillFocusRestriction", restriction);
     ui.notifications.info("Advancement rules updated");
   }
 }
 
-// ==========================================
-// COMBAT MENU
-// ==========================================
+/* ========================================================================== */
+/*                                COMBAT MENU                                 */
+/* ========================================================================== */
+
 export class CombatMenu extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -80,51 +118,50 @@ export class CombatMenu extends FormApplication {
       template: "systems/foundryvtt-swse/templates/apps/houserules/combat.hbs",
       width: 600,
       height: "auto",
-      tabs: [{navSelector: ".tabs", contentSelector: ".content", initial: "damage"}]
+      tabs: [{ navSelector: ".tabs", contentSelector: ".content", initial: "damage" }]
     });
   }
-  
+
   getData() {
-    const deathSystem = game.settings.get('foundryvtt-swse', "deathSystem");
     return {
-      deathSystem: deathSystem,
-      secondWindImproved: game.settings.get('foundryvtt-swse', "secondWindImproved"),
-      armoredDefenseForAll: game.settings.get('foundryvtt-swse', "armoredDefenseForAll"),
-      weaponRangeMultiplier: game.settings.get('foundryvtt-swse', "weaponRangeMultiplier"),
-      diagonalMovement: game.settings.get('foundryvtt-swse', "diagonalMovement"),
-      conditionTrackCap: game.settings.get('foundryvtt-swse', "conditionTrackCap"),
-      criticalHitVariant: game.settings.get('foundryvtt-swse', "criticalHitVariant"),
+      deathSystem: safeGet("deathSystem"),
+      secondWindImproved: safeGet("secondWindImproved"),
+      armoredDefenseForAll: safeGet("armoredDefenseForAll"),
+      weaponRangeMultiplier: safeGet("weaponRangeMultiplier"),
+      diagonalMovement: safeGet("diagonalMovement"),
+      conditionTrackCap: safeGet("conditionTrackCap"),
+      criticalHitVariant: safeGet("criticalHitVariant"),
       isGM: game.user.isGM
     };
   }
-  
+
   async _updateObject(event, formData) {
-    // Parse death system settings
     const deathSystem = {
       system: formData["deathSystem.system"],
-      strikesUntilDeath: Number(formData["deathSystem.strikesUntilDeath"]),
-      returnToHP: Number(formData["deathSystem.returnToHP"]),
+      strikesUntilDeath: _num(formData["deathSystem.strikesUntilDeath"]),
+      returnToHP: _num(formData["deathSystem.returnToHP"]),
       strikeRemoval: formData["deathSystem.strikeRemoval"],
-      displayStrikes: formData["deathSystem.displayStrikes"],
-      deathAtNegativeCon: formData["deathSystem.deathAtNegativeCon"],
-      massiveDamageThreshold: formData["deathSystem.massiveDamageThreshold"]
+      displayStrikes: _bool(formData["deathSystem.displayStrikes"]),
+      deathAtNegativeCon: _bool(formData["deathSystem.deathAtNegativeCon"]),
+      massiveDamageThreshold: _num(formData["deathSystem.massiveDamageThreshold"])
     };
-    
-    await game.settings.set('foundryvtt-swse', "deathSystem", deathSystem);
-    await game.settings.set('foundryvtt-swse', "secondWindImproved", formData.secondWindImproved);
-    await game.settings.set('foundryvtt-swse', "armoredDefenseForAll", formData.armoredDefenseForAll);
-    await game.settings.set('foundryvtt-swse', "weaponRangeMultiplier", Number(formData.weaponRangeMultiplier));
-    await game.settings.set('foundryvtt-swse', "diagonalMovement", formData.diagonalMovement);
-    await game.settings.set('foundryvtt-swse', "conditionTrackCap", Number(formData.conditionTrackCap));
-    await game.settings.set('foundryvtt-swse', "criticalHitVariant", formData.criticalHitVariant);
-    
+
+    await safeSet("deathSystem", deathSystem);
+    await safeSet("secondWindImproved", _bool(formData.secondWindImproved));
+    await safeSet("armoredDefenseForAll", _bool(formData.armoredDefenseForAll));
+    await safeSet("weaponRangeMultiplier", _num(formData.weaponRangeMultiplier));
+    await safeSet("diagonalMovement", formData.diagonalMovement);
+    await safeSet("conditionTrackCap", _num(formData.conditionTrackCap));
+    await safeSet("criticalHitVariant", formData.criticalHitVariant);
+
     ui.notifications.info("Combat rules updated");
   }
 }
 
-// ==========================================
-// FORCE MENU
-// ==========================================
+/* ========================================================================== */
+/*                                FORCE MENU                                  */
+/* ========================================================================== */
+
 export class ForceMenu extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -135,25 +172,26 @@ export class ForceMenu extends FormApplication {
       height: "auto"
     });
   }
-  
+
   getData() {
     return {
-      forcePointRecovery: game.settings.get('foundryvtt-swse', "forcePointRecovery"),
-      darkSideTemptation: game.settings.get('foundryvtt-swse', "darkSideTemptation"),
+      forcePointRecovery: safeGet("forcePointRecovery"),
+      darkSideTemptation: safeGet("darkSideTemptation"),
       isGM: game.user.isGM
     };
   }
-  
+
   async _updateObject(event, formData) {
-    await game.settings.set('foundryvtt-swse', "forcePointRecovery", formData.forcePointRecovery);
-    await game.settings.set('foundryvtt-swse', "darkSideTemptation", formData.darkSideTemptation);
+    await safeSet("forcePointRecovery", formData.forcePointRecovery);
+    await safeSet("darkSideTemptation", formData.darkSideTemptation);
     ui.notifications.info("Force & Destiny rules updated");
   }
 }
 
-// ==========================================
-// PRESETS MENU
-// ==========================================
+/* ========================================================================== */
+/*                               PRESETS MENU                                 */
+/* ========================================================================== */
+
 export class PresetsMenu extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -164,101 +202,107 @@ export class PresetsMenu extends FormApplication {
       height: "auto"
     });
   }
-  
+
   getData() {
     return {
-      currentPreset: game.settings.get('foundryvtt-swse', "houserulePreset"),
+      currentPreset: safeGet("houserulePreset"),
       isGM: game.user.isGM
     };
   }
-  
+
   activateListeners(html) {
     super.activateListeners(html);
-    
-    html.find('[data-action="apply-preset"]').click(this._onApplyPreset.bind(this));
-    html.find('[data-action="export-settings"]').click(this._onExportSettings.bind(this));
-    html.find('[data-action="import-settings"]').click(this._onImportSettings.bind(this));
+
+    html[0].querySelectorAll("[data-action='apply-preset']").forEach(btn =>
+      btn.addEventListener("click", e => this._onApplyPreset(e))
+    );
+
+    html[0].querySelector("[data-action='export-settings']")?.addEventListener("click", e =>
+      this._onExportSettings(e)
+    );
+
+    html[0].querySelector("[data-action='import-settings']")?.addEventListener("click", e =>
+      this._onImportSettings(e)
+    );
   }
-  
+
   async _onApplyPreset(event) {
     const preset = event.currentTarget.dataset.preset;
-    
-    const confirm = await Dialog.confirm({
+
+    const confirmed = await Dialog.confirm({
       title: "Apply Preset?",
-      content: `<p>This will overwrite all current houserule settings with the ${preset} preset. Continue?</p>`,
-      defaultYes: false
+      content: `<p>Overwrite all current houserule settings with the <strong>${preset}</strong> preset?</p>`
     });
-    
-    if (!confirm) return;
-    
-    const presets = await import('./houserule-presets.js');
+    if (!confirmed) return;
+
+    const presets = await import("./houserule-presets.js");
     await presets.applyPreset(preset);
-    
-    await game.settings.set('foundryvtt-swse', "houserulePreset", preset);
+
+    await safeSet("houserulePreset", preset);
     ui.notifications.info(`Applied ${preset} preset`);
+
     this.render();
   }
-  
-  async _onExportSettings(event) {
-    const settings = game.settings.get('foundryvtt-swse', "characterCreation");
-    const blob = new Blob([JSON.stringify(settings, null, 2)], {type: 'application/json'});
+
+  async _onExportSettings() {
+    const settings = game.settings.storage
+      .get("world")
+      .filter(s => s.key.startsWith(NAMESPACE))
+      .reduce((obj, s) => {
+        obj[s.key.replace(`${NAMESPACE}.`, "")] = s.value;
+        return obj;
+      }, {});
+
+    const blob = new Blob([JSON.stringify(settings, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'swse-houserules.json';
+    a.download = "swse-houserules.json";
     a.click();
+
     URL.revokeObjectURL(url);
   }
-  
-  async _onImportSettings(event) {
+
+  async _onImportSettings() {
     new Dialog({
       title: "Import Houserule Settings",
       content: `
         <form>
           <div class="form-group">
-            <label>Select JSON file to import:</label>
+            <label>Select JSON file:</label>
             <input type="file" name="import-file" accept=".json"/>
           </div>
         </form>
       `,
       buttons: {
         import: {
-          icon: '<i class="fas fa-file-import"></i>',
           label: "Import",
-          callback: async (html) => {
-            const file = html.find('[name="import-file"]')[0].files[0];
+          callback: async html => {
+            const file = html[0].querySelector("[name='import-file']")?.files[0];
             if (!file) return;
-            
+
             const text = await file.text();
-            const settings = JSON.parse(text);
-            
-            // Apply all settings
-            for (const [key, value] of Object.entries(settings)) {
-              await game.settings.set('foundryvtt-swse', key, value);
+            const json = JSON.parse(text);
+
+            for (const [key, value] of Object.entries(json)) {
+              await safeSet(key, value);
             }
-            
-            ui.notifications.info("Settings imported successfully");
+
+            ui.notifications.info("Settings imported");
             this.render();
           }
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: "Cancel"
-        }
-      },
-      default: "cancel"
+        cancel: { label: "Cancel" }
+      }
     }).render(true);
-  }
-  
-  async _updateObject(event, formData) {
-    // This menu doesn't directly save settings
   }
 }
 
+/* ========================================================================== */
+/*                        SKILLS & FEATS MENU                                 */
+/* ========================================================================== */
 
-// ==========================================
-// SKILLS & FEATS MENU
-// ==========================================
 export class SkillsFeatsMenu extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -267,32 +311,32 @@ export class SkillsFeatsMenu extends FormApplication {
       template: "systems/foundryvtt-swse/templates/apps/houserules/skills-feats.hbs",
       width: 600,
       height: "auto",
-      tabs: [{navSelector: ".tabs", contentSelector: ".content", initial: "skills"}]
+      tabs: [{ navSelector: ".tabs", contentSelector: ".content", initial: "skills" }]
     });
   }
-  
+
   getData() {
     return {
-      feintSkill: game.settings.get('foundryvtt-swse', "feintSkill"),
-      skillFocusVariant: game.settings.get('foundryvtt-swse', "skillFocusVariant"),
-      skillFocusActivationLevel: game.settings.get('foundryvtt-swse', "skillFocusActivationLevel"),
+      feintSkill: safeGet("feintSkill"),
+      skillFocusVariant: safeGet("skillFocusVariant"),
+      skillFocusActivationLevel: safeGet("skillFocusActivationLevel"),
       isGM: game.user.isGM
     };
   }
-  
+
   async _updateObject(event, formData) {
-    await game.settings.set('foundryvtt-swse', "feintSkill", formData.feintSkill);
-    await game.settings.set('foundryvtt-swse', "skillFocusVariant", formData.skillFocusVariant);
-    if (formData.skillFocusActivationLevel) {
-      await game.settings.set('foundryvtt-swse', "skillFocusActivationLevel", Number(formData.skillFocusActivationLevel));
-    }
+    await safeSet("feintSkill", formData.feintSkill);
+    await safeSet("skillFocusVariant", formData.skillFocusVariant);
+    await safeSet("skillFocusActivationLevel", _num(formData.skillFocusActivationLevel));
+
     ui.notifications.info("Skills & Feats rules updated");
   }
 }
 
-// ==========================================
-// SPACE COMBAT MENU
-// ==========================================
+/* ========================================================================== */
+/*                         SPACE COMBAT MENU                                  */
+/* ========================================================================== */
+
 export class SpaceCombatMenu extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -301,84 +345,81 @@ export class SpaceCombatMenu extends FormApplication {
       template: "systems/foundryvtt-swse/templates/apps/houserules/space-combat.hbs",
       width: 600,
       height: "auto",
-      tabs: [{navSelector: ".tabs", contentSelector: ".content", initial: "initiative"}]
+      tabs: [{ navSelector: ".tabs", contentSelector: ".content", initial: "initiative" }]
     });
   }
-  
+
   getData() {
     return {
-      spaceInitiativeSystem: game.settings.get('foundryvtt-swse', "spaceInitiativeSystem"),
-      initiativeRolePriority: game.settings.get('foundryvtt-swse', "initiativeRolePriority"),
-      weaponsOperatorsRollInit: game.settings.get('foundryvtt-swse', "weaponsOperatorsRollInit"),
+      spaceInitiativeSystem: safeGet("spaceInitiativeSystem"),
+      initiativeRolePriority: safeGet("initiativeRolePriority"),
+      weaponsOperatorsRollInit: safeGet("weaponsOperatorsRollInit"),
       isGM: game.user.isGM
     };
   }
-  
+
   activateListeners(html) {
     super.activateListeners(html);
-    
-    // Drag and drop for role priority
-    const list = html.find('.role-priority-list')[0];
-    if (list) {
-      this._setupDragAndDrop(list);
-    }
+
+    const list = html[0].querySelector(".role-priority-list");
+    if (!list) return;
+
+    this._activateDragAndDrop(list);
   }
-  
-  _setupDragAndDrop(list) {
-    let draggedElement = null;
-    
-    list.querySelectorAll('li').forEach(item => {
-      item.addEventListener('dragstart', (e) => {
-        draggedElement = item;
-        e.dataTransfer.effectAllowed = 'move';
-        item.classList.add('dragging');
+
+  _activateDragAndDrop(list) {
+    let dragging = null;
+
+    list.querySelectorAll("li").forEach(li => {
+      li.draggable = true;
+
+      li.addEventListener("dragstart", evt => {
+        dragging = li;
+        li.classList.add("dragging");
+        evt.dataTransfer.effectAllowed = "move";
       });
-      
-      item.addEventListener('dragend', (e) => {
-        item.classList.remove('dragging');
+
+      li.addEventListener("dragend", () => {
+        li.classList.remove("dragging");
+        dragging = null;
       });
-      
-      item.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        
-        const afterElement = this._getDragAfterElement(list, e.clientY);
-        if (afterElement == null) {
-          list.appendChild(draggedElement);
-        } else {
-          list.insertBefore(draggedElement, afterElement);
-        }
+
+      li.addEventListener("dragover", evt => {
+        evt.preventDefault();
+
+        const after = this._getDragAfter(list, evt.clientY);
+        if (after) list.insertBefore(dragging, after);
+        else list.appendChild(dragging);
       });
     });
   }
-  
-  _getDragAfterElement(container, y) {
-    const draggableElements = [...container.querySelectorAll('li:not(.dragging)')];
-    
-    return draggableElements.reduce((closest, child) => {
-      const box = child.getBoundingClientRect();
-      const offset = y - box.top - box.height / 2;
-      
-      if (offset < 0 && offset > closest.offset) {
-        return { offset: offset, element: child };
-      } else {
-        return closest;
-      }
-    }, { offset: Number.NEGATIVE_INFINITY }).element;
+
+  _getDragAfter(container, y) {
+    const items = [...container.querySelectorAll("li:not(.dragging)")];
+
+    return items.reduce(
+      (closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - (box.top + box.height / 2);
+        return offset < 0 && offset > closest.offset
+          ? { offset, element: child }
+          : closest;
+      },
+      { offset: Number.NEGATIVE_INFINITY }
+    ).element;
   }
-  
+
   async _updateObject(event, formData) {
-    await game.settings.set('foundryvtt-swse', "spaceInitiativeSystem", formData.spaceInitiativeSystem);
-    await game.settings.set('foundryvtt-swse', "weaponsOperatorsRollInit", formData.weaponsOperatorsRollInit);
-    
-    // Get role priority from list order
-    const list = this.element.find('.role-priority-list')[0];
+    await safeSet("spaceInitiativeSystem", formData.spaceInitiativeSystem);
+    await safeSet("weaponsOperatorsRollInit", _bool(formData.weaponsOperatorsRollInit));
+
+    // Save new role priority
+    const list = this.element[0].querySelector(".role-priority-list");
     if (list) {
-      const roles = Array.from(list.querySelectorAll('li')).map(li => li.dataset.role);
-      await game.settings.set('foundryvtt-swse', "initiativeRolePriority", roles);
+      const ordered = [...list.querySelectorAll("li")].map(li => li.dataset.role);
+      await safeSet("initiativeRolePriority", ordered);
     }
-    
+
     ui.notifications.info("Space Combat rules updated");
   }
 }
-
