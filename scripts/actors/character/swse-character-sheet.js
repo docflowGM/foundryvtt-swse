@@ -82,13 +82,12 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // C. Data Preparation Engine (Optimized)
   // ----------------------------------------------------------
   async getData() {
-        // Inject feat actions
-        data.featActions = FeatSystem.buildFeatActions(this.actor);
-        // Inject skill actions
-        data.skillActions = await SkillSystem.buildSkillActions(this.actor);
     const context = await super.getData();
     const actor = this.actor;
     const system = actor.system;
+
+    // Inject skill actions
+    context.skillActions = await SkillSystem.buildSkillActions(this.actor);
 
     // --------------------------------------
     // 1. FEATS: Force Secrets / Techniques
