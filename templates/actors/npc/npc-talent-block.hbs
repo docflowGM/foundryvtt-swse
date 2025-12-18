@@ -1,0 +1,19 @@
+<div class="npc-block collapsible" data-npc-block="talents">
+
+  <div class="npc-block-header">
+    <span>Talents</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+
+  <div class="npc-block-content">
+    {{#each actor.items}}
+      {{#if (eq this.type "talent")}}
+        <div class="npc-talent-entry">
+          <strong>{{this.name}}</strong>
+          — {{this.system.description}}
+        </div>
+      {{/if}}
+    {{/each}}
+  </div>
+
+</div>

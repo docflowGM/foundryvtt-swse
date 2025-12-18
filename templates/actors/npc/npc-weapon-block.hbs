@@ -1,0 +1,21 @@
+<div class="npc-block collapsible" data-npc-block="weapons">
+
+  <div class="npc-block-header">
+    <span>Weapons</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+
+  <div class="npc-block-content">
+    {{#each actor.items}}
+      {{#if (eq this.type "weapon")}}
+        <div class="npc-weapon-entry">
+          <strong>{{this.name}}</strong> —
+          {{this.system.attackBonus}} to hit,
+          {{this.system.damage}} dmg,
+          {{this.system.range}} sq
+        </div>
+      {{/if}}
+    {{/each}}
+  </div>
+
+</div>
