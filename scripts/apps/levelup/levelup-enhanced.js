@@ -4,10 +4,10 @@
 
 import { ProgressionEngine } from "../../progression/engine/progression-engine-instance.js";
 import { SWSELogger } from "../../utils/logger.js";
-import { SkillRegistry } from "../../progression/skills/skill-registry.js";
-import { FeatRegistry } from "../../progression/feats/feat-registry.js";
-import { TalentRegistry } from "../../progression/talents/talent-registry.js";
-import { ForceRegistry } from "../../progression/force/force-registry.js";
+import { SkillRegistry } from "../../progression/skills/skill-registry-ui.js";
+import { FeatRegistry } from "../../progression/feats/feat-registry-ui.js";
+import { TalentRegistry } from "../../progression/talents/talent-registry-ui.js";
+import { ForceRegistry } from "../../progression/force/force-registry-ui.js";
 
 export class SWSELevelUpEnhanced extends FormApplication {
 

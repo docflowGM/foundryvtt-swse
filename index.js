@@ -301,6 +301,7 @@ Hooks.once("ready", async function () {
     initializeForcePowerHooks();
     initializeFollowerHooks();
     initializeProgressionHooks();
+    await initializeLevelUpUI();
 
     SWSELanguageModule.init();
 
