@@ -1,16 +1,16 @@
 /**
- * Modern SWSE Condition Track Component
- * - Supports Foundry VTT v11–v13 best practices
- * - Fully modular, UI/logic separation
- * - Smooth updating without redundant hook rebinds
- * - System-consistent with SWSE ActorEngine
+ * SWSE Condition Track Sheet Component (Updated for RAW + New CT System)
+ * - Correct CT penalties
+ * - Persistent condition restrictions
+ * - Consistent with Actor.moveConditionTrack()
+ * - UI safely triggers CT updates without breaking Active Effects
  */
 
 export class ConditionTrackComponent {
 
-  /** ------------------------------------
-   * PUBLIC API — Render & Refresh
-   * ------------------------------------ */
+  /* ---------------------------------------- */
+  /* Public Render API                        */
+  /* ---------------------------------------- */
 
   static render(actor, container) {
     container.innerHTML = this._template(actor);
@@ -21,14 +21,13 @@ export class ConditionTrackComponent {
     this.render(actor, container);
   }
 
-
-  /** ------------------------------------
-   * TEMPLATE GENERATION (HTML)
-   * ------------------------------------ */
+  /* ---------------------------------------- */
+  /* Template                                 */
+  /* ---------------------------------------- */
 
   static _template(actor) {
-    const current = actor.system.conditionTrack?.current ?? 0;
-    const persistent = actor.system.conditionTrack?.persistent ?? false;
+    const current = actor.system.conditionTrack.current ?? 0;
+    const persistent = actor.system.conditionTrack.persistent ?? false;
 
     const steps = this._defineSteps();
     const penaltyText = steps[current]?.penalty || "";
@@ -48,7 +47,7 @@ export class ConditionTrackComponent {
           </button>
 
           <button class="ct-btn worsen" data-ct="worsen">
-            <i class="fas fa-arrow-down"></i> Damage
+            <i class="fas fa-arrow-down"></i> Worsen
           </button>
 
           <label class="ct-persistent">
@@ -59,17 +58,16 @@ export class ConditionTrackComponent {
 
         ${current > 0 ? `
           <div class="ct-penalty">
-            Penalty: <strong>${penaltyText}</strong> to all d20 rolls
+            Penalty: <strong>${penaltyText}</strong> to Attacks, Defenses, Ability Checks, and Skill Checks
           </div>
         ` : ""}
       </div>
     `;
   }
 
-
-  /** ------------------------------------
-   * STEP DEFINITIONS — Easy to extend
-   * ------------------------------------ */
+  /* ---------------------------------------- */
+  /* Step Definitions                         */
+  /* ---------------------------------------- */
 
   static _defineSteps() {
     return [
@@ -77,15 +75,14 @@ export class ConditionTrackComponent {
       { index: 1, label: "-1", penalty: "-1", css: "ct-1" },
       { index: 2, label: "-2", penalty: "-2", css: "ct-2" },
       { index: 3, label: "-5", penalty: "-5", css: "ct-5" },
-      { index: 4, label: "-10", penalty: "-10", css: "ct-10" },
-      { index: 5, label: "Helpless", penalty: "", css: "ct-helpless" }
+      { index: 4, label: "-10", penalty: "-10 (Half Speed)", css: "ct-10" },
+      { index: 5, label: "Helpless", penalty: "Unconscious/Disabled", css: "ct-helpless" }
     ];
   }
 
-
-  /** ------------------------------------
-   * Subtemplates
-   * ------------------------------------ */
+  /* ---------------------------------------- */
+  /* Subtemplates                             */
+  /* ---------------------------------------- */
 
   static _headerHTML(persistent) {
     return `
@@ -112,53 +109,42 @@ export class ConditionTrackComponent {
     `;
   }
 
-
-  /** ------------------------------------
-   * EVENT LISTENERS
-   * ------------------------------------ */
+  /* ---------------------------------------- */
+  /* Event Activation                         */
+  /* ---------------------------------------- */
 
   static _activate(container, actor) {
-
     const $c = $(container);
 
-    // Set Condition Step
-    $c.find('[data-ct="set"]').on("click", async event => {
-      const step = Number(event.currentTarget.dataset.step);
-      await this._setCondition(actor, step);
+    // Set CT directly
+    $c.find('[data-ct="set"]').on("click", async ev => {
+      await this._setCondition(actor, Number(ev.currentTarget.dataset.step));
     });
 
-    // Improve
+    // Improve CT (respect persistent)
     $c.find('[data-ct="improve"]').on("click", async () => {
-      await this._move(actor, -1);
+      if (actor.system.conditionTrack.persistent) {
+        return ui.notifications.warn("Condition is Persistent and cannot be removed by the Recover Action.");
+      }
+      await actor.moveConditionTrack(-1);
     });
 
-    // Worsen
+    // Worsen CT
     $c.find('[data-ct="worsen"]').on("click", async () => {
-      await this._move(actor, 1);
+      await actor.moveConditionTrack(1);
     });
 
-    // Persistent Toggle
-    $c.find('[data-ct="persistent"]').on("change", async event => {
-      await actor.update({ "system.conditionTrack.persistent": event.target.checked });
+    // Persistent flag
+    $c.find('[data-ct="persistent"]').on("change", async ev => {
+      await actor.update({ "system.conditionTrack.persistent": ev.target.checked });
     });
   }
 
-
-  /** ------------------------------------
-   * LOGIC (MODULAR & CLEAN)
-   * ------------------------------------ */
+  /* ---------------------------------------- */
+  /* Logic                                    */
+  /* ---------------------------------------- */
 
   static async _setCondition(actor, step) {
-    const max = 5;
-    const value = Math.clamp(step, 0, max);
-
-    return actor.update({ "system.conditionTrack.current": value });
-  }
-
-  static async _move(actor, delta) {
-    const current = actor.system.conditionTrack?.current ?? 0;
-    const newValue = Math.clamp(current + delta, 0, 5);
-
-    return actor.update({ "system.conditionTrack.current": newValue });
+    return actor.update({ "system.conditionTrack.current": Math.clamp(step, 0, 5) });
   }
 }
