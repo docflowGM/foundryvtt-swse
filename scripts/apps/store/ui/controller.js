@@ -12,7 +12,7 @@
  */
 
 import { buildStoreIndex } from "../engine/index.js";
-import { getRandomDialogue } from "../store-shared.js";
+import { getRendarrLine } from "../dialogue/rendarr-dialogue.js";
 import { renderStoreUI, renderPurchaseHistory } from "./renderer.js";
 
 export class StoreController {
@@ -91,7 +91,7 @@ export class StoreController {
       if (!tab) return;
 
       this.state.activeTab = tab;
-      this._updateRendarrDialogue(tab);
+      this._updateRendarrDialogueForTab(tab);
       this.refreshView(html);
     });
   }
@@ -159,16 +159,26 @@ export class StoreController {
     const portrait = html.find(".rendarr-image");
     if (portrait.length) {
       portrait.on("click", () => {
-        const dialogue = getRandomDialogue(this.state.activeTab);
-        this._updateRendarrDialogue(dialogue);
+        this._updateRendarrDialogueForTab(this.state.activeTab);
       });
     }
   }
 
-  _updateRendarrDialogue(context) {
-    const msg = getRandomDialogue(context);
+  _updateRendarrDialogueForTab(tabName) {
+    const credits = this.app.actor?.system?.credits ?? 0;
+    const isGMPanel = tabName === "gm";
+
+    const line = getRendarrLine(tabName, {
+      isGMPanel,
+      isBroke: credits <= 0
+    });
+
+    this._displayDialogue(line);
+  }
+
+  _displayDialogue(line) {
     const container = this.app.element.find(".holo-message");
-    if (container.length) container.text(`"${msg}"`);
+    if (container.length) container.text(`"${line}"`);
   }
 
   /* ------------------------------------------ */
