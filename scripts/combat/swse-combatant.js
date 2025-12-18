@@ -1,47 +1,54 @@
 /**
- * Custom Combatant Document for SWSE
- * Extends Foundry's Combatant class to implement SWSE-specific features
+ * SWSE Combatant Document (v13+)
+ * Modernized for the new SWSE combat engine:
+ * - Numeric condition track (0–5)
+ * - Correct helpless/unconscious behavior
+ * - New action economy structure
+ * - No ActorEngine dependency
+ * - GM-safe action marking
  */
+
 export class SWSECombatant extends Combatant {
 
+  /* -------------------------------------------- */
+  /* INITIATIVE BONUS                             */
+  /* -------------------------------------------- */
+
   /**
-   * Get the initiative bonus for this combatant
-   * @type {number}
+   * SWSE initiative bonus comes from the Initiative skill total.
+   * (Actual roll handled in SWSECombatDocument)
    */
   get initiativeBonus() {
     const actor = this.actor;
     if (!actor) return 0;
-    return actor.system.initiative || 0;
+    return actor.system.skills?.initiative?.total ?? 0;
   }
 
-  /**
-   * Check if this combatant can act this turn
-   * Considers condition track and other status effects
-   * @type {boolean}
-   */
+  /* -------------------------------------------- */
+  /* CAN ACT? (Condition Track, Status Effects)   */
+  /* -------------------------------------------- */
+
   get canAct() {
     const actor = this.actor;
     if (!actor) return false;
 
-    // Check condition track
-    const condition = actor.system.conditionTrack?.current;
-    if (condition === "helpless" || condition === "unconscious" || condition === "dead") {
-      return false;
-    }
+    const ct = actor.system.conditionTrack?.current ?? 0;
 
-    // Other debilitating effects could be added here
+    // RAW: CT 5 = Helpless = unconscious/disabled
+    if (ct === 5) return false;
+
+    // Additional debilitating effects can be added here later
+    // Example: stunned, paralyzed, frozen, etc.
+
     return true;
   }
 
-  /**
-   * Get current action economy
-   * @type {object}
-   */
-  get actionEconomy() {
-    const actor = this.actor;
-    if (!actor) return {};
+  /* -------------------------------------------- */
+  /* ACTION ECONOMY ACCESS                         */
+  /* -------------------------------------------- */
 
-    return actor.system.actionEconomy || {
+  get actionEconomy() {
+    return this.actor?.system?.actionEconomy ?? {
       swift: true,
       move: true,
       standard: true,
@@ -50,102 +57,117 @@ export class SWSECombatant extends Combatant {
     };
   }
 
-  /**
-   * Check if the combatant has a specific action available
-   * @param {string} actionType
-   * @returns {boolean}
-   */
-  hasAction(actionType) {
-    return this.actionEconomy[actionType] === true;
+  hasAction(type) {
+    return this.actionEconomy?.[type] === true;
   }
 
-  /**
-   * Mark an action as used
-   * @param {string} actionType
-   * @returns {Promise<void>}
-   */
-  async useAction(actionType) {
+  /* -------------------------------------------- */
+  /* USE ACTION (Update Actor)                    */
+  /* -------------------------------------------- */
+
+  async useAction(type) {
     const actor = this.actor;
     if (!actor) return;
-
-    const updates = {};
-
-    // Full-round action consumes everything except reactions
-    if (actionType === "fullRound") {
-      updates["system.actionEconomy"] = {
-        swift: false,
-        move: false,
-        standard: false,
-        fullRound: false,
-        reaction: this.actionEconomy.reaction
-      };
-    }
-    // Standard consumes move + standard + disables full-round
-    else if (actionType === "standard") {
-      updates[`system.actionEconomy.${actionType}`] = false;
-      updates["system.actionEconomy.move"] = false;
-      updates["system.actionEconomy.fullRound"] = false;
-    }
-    // Move or swift? They remove full-round too
-    else {
-      updates[`system.actionEconomy.${actionType}`] = false;
-      if (actionType === "move" || actionType === "swift") {
-        updates["system.actionEconomy.fullRound"] = false;
-      }
+    if (!game.user.isGM && !this.isCurrentCombatant) {
+      return ui.notifications.warn("You may only use actions on your turn.");
     }
 
-    await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
+    const econ = foundry.utils.duplicate(this.actionEconomy);
+
+    switch (type) {
+      case "fullRound":
+        econ.swift = false;
+        econ.move = false;
+        econ.standard = false;
+        econ.fullRound = false;
+        break;
+
+      case "standard":
+        econ.standard = false;
+        econ.move = false;        // RAW: standard consumes move
+        econ.fullRound = false;    // Cannot take full-round afterward
+        break;
+
+      case "move":
+      case "swift":
+        econ[type] = false;
+        econ.fullRound = false;
+        break;
+
+      case "reaction":
+        econ.reaction = false;
+        break;
+    }
+
+    await actor.update({ "system.actionEconomy": econ }, { diff: true });
   }
 
-  /**
-   * Reset action economy for a new turn
-   * @returns {Promise<void>}
-   */
+  /* -------------------------------------------- */
+  /* RESET ACTIONS FOR NEW TURN                   */
+  /* -------------------------------------------- */
+
   async resetActions() {
     const actor = this.actor;
     if (!actor) return;
 
-    await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      "system.actionEconomy": {
-        swift: true,
-        move: true,
-        standard: true,
-        fullRound: true,
-        reaction: true
-      }
-    });
+    await actor.update(
+      {
+        "system.actionEconomy": {
+          swift: true,
+          move: true,
+          standard: true,
+          fullRound: true,
+          reaction: true
+        }
+      },
+      { diff: true }
+    );
   }
 
-  /**
-   * Prepare derived combatant data
-   */
+  /* -------------------------------------------- */
+  /* PREPARE DERIVED — SYNC INIT BONUS           */
+  /* -------------------------------------------- */
+
   prepareDerivedData() {
     super.prepareDerivedData();
 
-    const actor = this.actor;
-    if (actor) {
-      this._initiativeBonus = actor.system.initiative || 0;
-    }
+    // Store initiative bonus for the tracker if needed
+    this._initiativeBonus = this.initiativeBonus;
   }
 
-  /**
-   * Get resource data displayed in the combat tracker
-   */
+  /* -------------------------------------------- */
+  /* TRACKER RESOURCE DATA                        */
+  /* -------------------------------------------- */
+
   getResourceData() {
     const data = super.getResourceData();
     const actor = this.actor;
 
-    if (actor) {
-      // Show condition track state
-      const condition = actor.system.conditionTrack?.current;
-      if (condition && condition !== "normal") {
-        data.condition = condition;
-      }
+    if (!actor) return data;
 
-      // Show action economy indicators
-      data.actions = this.actionEconomy;
+    const ct = actor.system.conditionTrack?.current ?? 0;
+
+    if (ct > 0) {
+      // Show numeric CT state: 1,2,3,4,5
+      data.condition = ct;
     }
 
+    data.actions = {
+      swift: this.actionEconomy.swift,
+      move: this.actionEconomy.move,
+      standard: this.actionEconomy.standard,
+      full: this.actionEconomy.fullRound,
+      react: this.actionEconomy.reaction
+    };
+
     return data;
+  }
+
+  /* -------------------------------------------- */
+  /* Helper: Is This the Active Combatant?        */
+  /* -------------------------------------------- */
+
+  get isCurrentCombatant() {
+    return this.parent?.combatant?.id === this.id;
   }
 }
