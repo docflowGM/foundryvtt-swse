@@ -14,6 +14,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { HooksRegistry } from './hooks-registry.js';
+import { ThemeLoader } from '../theme-loader.js';
 import { registerCombatHooks } from './combat-hooks.js';
 import { registerActorHooks } from './actor-hooks.js';
 import { registerUIHooks } from './ui-hooks.js';
@@ -47,6 +48,9 @@ export function registerInitHooks() {
      */
     Hooks.once('ready', async function() {
         SWSELogger.log("SWSE System Ready");
+
+        // Initialize theme system
+        ThemeLoader.initialize();
 
         // Log hook statistics
         const stats = HooksRegistry.getStats();
