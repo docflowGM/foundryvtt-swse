@@ -1,0 +1,57 @@
+{{!-- =========================================================================
+     SKILL ACTION CARD (Holo, Collapsible, Favorites, Preview)
+     ========================================================================= --}}
+<div class="skill-action-card"
+     data-skill="{{skillKey}}"
+     data-name="{{action.name}}"
+     data-tooltip="{{action.preview}}">
+
+  <div class="card-header">
+
+    <div class="action-icon">
+      <i class="fas fa-dice-d20"></i>
+    </div>
+
+    <div class="action-title">
+      {{action.name}}
+    </div>
+
+    {{!-- Favorite Toggle --}}
+    <button class="skill-action-favorite"
+            data-skill="{{skillKey}}"
+            data-action="{{action.name}}"
+            title="Favorite this action">
+      <i class="fas fa-star"></i>
+    </button>
+
+    {{!-- Expand button --}}
+    <div class="action-expand">
+      <i class="fas fa-chevron-down"></i>
+    </div>
+
+  </div>
+
+
+  <div class="card-body">
+
+    {{#if action.dc}}
+    <div class="action-row"><strong>DC:</strong> {{action.dc}}</div>
+    {{/if}}
+
+    {{#if action.time}}
+    <div class="action-row"><strong>Time:</strong> {{action.time}}</div>
+    {{/if}}
+
+    {{#if action.effect}}
+    <div class="action-row"><strong>Effect:</strong> {{action.effect}}</div>
+    {{/if}}
+
+    <button class="skill-action-roll"
+            data-skill="{{skillKey}}"
+            data-action="{{action.name}}">
+      <i class="fas fa-dice-d20"></i> Roll
+    </button>
+
+  </div>
+
+</div>

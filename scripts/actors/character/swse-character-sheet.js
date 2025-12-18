@@ -25,6 +25,7 @@ import { CombatActionsMapper } from '../../combat/utils/combat-actions-mapper.js
 import { FeatActionsMapper } from '../../utils/feat-actions-mapper.js';
 import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
 import { FeatSystem } from "../../engine/FeatSystem.js";
+import { SkillSystem } from "../../engine/SkillSystem.js";
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
@@ -83,6 +84,8 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   async getData() {
         // Inject feat actions
         data.featActions = FeatSystem.buildFeatActions(this.actor);
+        // Inject skill actions
+        data.skillActions = await SkillSystem.buildSkillActions(this.actor);
     const context = await super.getData();
     const actor = this.actor;
     const system = actor.system;
@@ -212,7 +215,31 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       });
     };
 
-    // TODO: Add all action bindings from Patch 1 here.
+    // Skill System Event Listeners
+    html.find(".roll-skill").click(ev => {
+      ev.preventDefault();
+      const skill = ev.currentTarget.dataset.skill;
+      this._onSkillRoll(skill);
+    });
+
+    html.find(".skill-action-roll").click(ev => {
+      ev.preventDefault();
+      const skill = ev.currentTarget.dataset.skill;
+      const action = ev.currentTarget.dataset.action;
+      this._onSkillActionRoll(skill, action);
+    });
+
+    html.find(".skill-expand-btn").click(ev => {
+      ev.preventDefault();
+      const skill = ev.currentTarget.dataset.skill;
+      this._toggleSkillPanel(skill);
+    });
+
+    html.find(".skill-action-card .card-header").click(ev => {
+      ev.preventDefault();
+      const card = $(ev.currentTarget).closest(".skill-action-card");
+      this._toggleSkillActionCard(card);
+    });
 
     SWSELogger.log("SWSE | Character sheet listeners activated (full v13 routing)");
   }
@@ -787,4 +814,89 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // ----------------------------------------------------------
 
   // TODO: Additional helpers here.
+
+  /* ======================================================================
+     SKILL SYSTEM — SHEET HANDLERS
+     ====================================================================== */
+
+  /**
+   * Roll a basic skill check
+   */
+  async _onSkillRoll(skillKey) {
+    try {
+      const actor = this.actor;
+      const roll = await game.swse.RollEngine.skillRoll({
+        actor,
+        skill: skillKey,
+        flavor: `Skill Check — ${skillKey}`
+      });
+      roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }) });
+    } catch (err) {
+      console.error("Skill Roll Error:", err);
+      ui.notifications.error(`Failed to roll skill: ${skillKey}`);
+    }
+  }
+
+  /**
+   * Roll a specific action for a skill (skill-action-card)
+   */
+  async _onSkillActionRoll(skillKey, actionName) {
+    const actor = this.actor;
+
+    try {
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `<strong>${actionName}</strong><br>Performing skill action for <em>${skillKey}</em>.`
+      });
+
+      // Trigger a standard roll message for now
+      // (Your RollEngine can later be extended for action-specific logic)
+      const roll = await game.swse.RollEngine.skillRoll({
+        actor,
+        skill: skillKey,
+        flavor: `Skill Action — ${actionName}`
+      });
+      roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }) });
+
+    } catch (err) {
+      console.error("Skill Action Roll Error:", err);
+      ui.notifications.error(`Failed to perform action: ${actionName}`);
+    }
+  }
+
+  /**
+   * Show/hide full skill actions panel
+   */
+  _toggleSkillPanel(skillKey) {
+    const panel = $(`.swse-skill-actions-panel[data-skill="${skillKey}"]`);
+    const icon = $(`.skill-expand-btn[data-skill="${skillKey}"] i`);
+
+    const isVisible = panel.is(":visible");
+
+    if (isVisible) {
+      panel.slideUp(180);
+      icon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
+    } else {
+      panel.slideDown(200);
+      icon.removeClass("fa-chevron-down").addClass("fa-chevron-up");
+    }
+  }
+
+  /**
+   * Expand/collapse the body of a skill action card
+   */
+  _toggleSkillActionCard(cardElem) {
+    const body = cardElem.find(".card-body");
+    const icon = cardElem.find(".action-expand i");
+
+    const isVisible = body.is(":visible");
+
+    if (isVisible) {
+      body.slideUp(180);
+      icon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
+    } else {
+      body.slideDown(200);
+      icon.removeClass("fa-chevron-down").addClass("fa-chevron-up");
+    }
+  }
 }
