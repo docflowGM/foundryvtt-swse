@@ -198,6 +198,13 @@
   cursor: not-allowed;
 }
 
+.holo-btn.active {
+  background: rgba(255, 0, 255, 0.2);
+  border-color: var(--swse-secondary);
+  color: var(--swse-secondary);
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
+}
+
 .cart-btn {
   position: relative;
 }

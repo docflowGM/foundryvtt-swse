@@ -29,6 +29,7 @@ export class StoreController {
       search: "",
       availability: "all",
       sortMode: "name-asc",
+      canAfford: false,
     };
 
     /* Search debounce */
@@ -127,6 +128,13 @@ export class StoreController {
         this.refreshView(html);
       });
     }
+
+    // "Can Afford" filter button
+    html.find("#filter-can-afford").on("click", () => {
+      this.state.canAfford = !this.state.canAfford;
+      html.find("#filter-can-afford").toggleClass("active", this.state.canAfford);
+      this.refreshView(html);
+    });
   }
 
   /* ------------------------------------------ */
@@ -183,6 +191,12 @@ export class StoreController {
         if (!item.availability.includes(availability.toLowerCase())) {
           return false;
         }
+      }
+
+      // can afford match
+      if (this.state.canAfford) {
+        const credits = this.app.actor?.system?.credits ?? 0;
+        if ((item.finalCost ?? Infinity) > credits) return false;
       }
 
       return true;

@@ -24,10 +24,16 @@ export class StoreCheckout {
    *
    * @returns {Promise<boolean>}
    */
-  async processPurchase() {
+  async processPurchase(appId = null) {
     const buyer = this.actor;
     const credits = Number(buyer.system?.credits ?? 0);
     const subtotal = this.cart.subtotal;
+
+    // Get wallet element for animation (if app provided)
+    let walletEl = null;
+    if (appId && ui.windows[appId]) {
+      walletEl = ui.windows[appId].element?.find(".remaining-credits");
+    }
 
     /* ------------------------------------ */
     /* VALIDATION                            */
@@ -70,6 +76,12 @@ export class StoreCheckout {
 
       await buyer.update({ "system.credits": credits - subtotal });
       creditsDeducted = true;
+
+      // Animate wallet credits tick-down
+      if (walletEl?.length) {
+        const { animateNumber } = await import("../ui/components.js");
+        animateNumber(walletEl, credits, credits - subtotal, 1200);
+      }
 
       /* ------------------------------------ */
       /* CREATE ITEMS                          */

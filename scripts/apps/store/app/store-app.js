@@ -11,9 +11,10 @@
  */
 
 import { StoreController } from "../ui/controller.js";
-import { updateCartBadge } from "../ui/components.js";
+import { updateCartBadge, animateNumber } from "../ui/components.js";
 import { renderCart } from "../ui/renderer.js";
 import { StoreCart } from "./cart.js";
+import { StoreCheckout } from "./checkout.js";
 
 export class SWSEStoreApp extends Application {
 
@@ -263,33 +264,15 @@ export class SWSEStoreApp extends Application {
       return;
     }
 
-    const subtotal = this.cart.subtotal;
-    const credits = this.actor.system?.credits ?? 0;
+    // Use the dedicated checkout engine
+    const checkout = new StoreCheckout(this.actor, this.cart);
+    const success = await checkout.processPurchase(this.id);
 
-    if (subtotal > credits) {
-      ui.notifications.error(
-        `Insufficient credits. Need ${subtotal}, have ${credits}.`
-      );
-      return;
+    if (success) {
+      // Refresh cart UI after successful purchase
+      this._refreshCartPanel(this.element);
+      this._updateCartBadge();
     }
-
-    // GM approval prompt (optional)
-    if (game.user.id !== this.actor.owner && !game.user.isGM) {
-      ui.notifications.warn("Awaiting GM approval for purchase...");
-      // Future: emit socket event for GM approval
-      return;
-    }
-
-    // Process purchase
-    await this.actor.update({
-      "system.credits": credits - subtotal
-    });
-
-    // Create purchase log entry (future Phase 5 feature)
-    console.log(`Purchase completed for ${this.actor.name}: ${subtotal} cr`);
-
-    ui.notifications.info("Purchase successful!");
-    this.clearCart();
   }
 
   /* -------------------------------------------------- */

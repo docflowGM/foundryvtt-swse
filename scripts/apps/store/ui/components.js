@@ -262,3 +262,46 @@ export const Icons = {
   sort: `<i class="fas fa-sort"></i>`,
   info: `<i class="fas fa-info-circle"></i>`
 };
+
+/* -------------------------------------------------- */
+/* NUMBER ANIMATION (Credit Tick-Down)                */
+/* -------------------------------------------------- */
+
+/**
+ * Animate a number from start to end value.
+ * Used for credits tick-down after purchase.
+ *
+ * @param {jQuery} $element - jQuery element to update
+ * @param {number} start - Starting value
+ * @param {number} end - Ending value
+ * @param {number} duration - Animation duration in ms (default 800)
+ */
+export function animateNumber($element, start, end, duration = 800) {
+  if (!$element || !$element.length) return;
+
+  const range = start - end;
+  if (range === 0) {
+    $element.text(end.toLocaleString());
+    return;
+  }
+
+  let startTime = null;
+
+  function tick(timestamp) {
+    if (!startTime) startTime = timestamp;
+    const progress = Math.min((timestamp - startTime) / duration, 1);
+    const current = Math.round(start - range * progress);
+
+    try {
+      $element.text(current.toLocaleString());
+    } catch (err) {
+      $element.text(current);
+    }
+
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+    }
+  }
+
+  requestAnimationFrame(tick);
+}
