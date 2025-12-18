@@ -15,6 +15,8 @@ import { StartingFeatureRegistrar } from '../engine/starting-feature-registrar.j
 import { ProgressionStateNormalizer } from '../engine/progression-state-normalizer.js';
 import { SkillRegistry } from '../skills/skill-registry.js';
 import { SkillNormalizer } from '../skills/skill-normalizer.js';
+import { FeatRegistry } from '../feats/feat-registry.js';
+import { FeatNormalizer } from '../feats/feat-normalizer.js';
 
 export const SystemInitHooks = {
 
@@ -50,6 +52,9 @@ export const SystemInitHooks = {
 
             // Step 3: Build skill registry
             await this._buildSkillRegistry();
+
+            // Step 3b: Build feat registry
+            await this._buildFeatRegistry();
 
             // Step 4: Normalize actor progression states
             await this._normalizeActorProgression();
@@ -292,6 +297,40 @@ export const SystemInitHooks = {
 
         } catch (err) {
             SWSELogger.error('Failed to build skill registry:', err);
+        }
+    },
+
+    /**
+     * Step 3c: Build feat registry
+     * @private
+     */
+    async _buildFeatRegistry() {
+        try {
+            SWSELogger.log('Building feat registry...');
+
+            // Build registry
+            const success = await FeatRegistry.build();
+            if (!success) {
+                SWSELogger.warn('FeatRegistry.build() returned false');
+                return;
+            }
+
+            // Normalize all feats
+            const pack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
+            if (pack) {
+                const feats = await pack.getDocuments();
+                let normalized = 0;
+
+                for (const featDoc of feats) {
+                    FeatNormalizer.normalize(featDoc);
+                    normalized++;
+                }
+
+                SWSELogger.log(`Built feat registry with ${normalized} feats`);
+            }
+
+        } catch (err) {
+            SWSELogger.error('Failed to build feat registry:', err);
         }
     },
 
