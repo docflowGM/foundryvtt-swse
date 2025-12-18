@@ -1,127 +1,165 @@
 import { ProgressionEngine } from "../../progression/engine/progression-engine.js";
-/**
- * Droid-specific functionality
- */
 
+/**
+ * Droid-specific functionality handler
+ * Modernized and FVTT v13+/v15-safe
+ */
 export class SWSEDroidHandler {
 
+  // =========================================================================
+  // APPLY CHASSIS
+  // =========================================================================
   static async applyDroidChassis(actor, chassisItem) {
-    const chassis = chassisItem.system;
+    if (!actor || !chassisItem) {
+      console.error("SWSE | applyDroidChassis called without actor or chassisItem.");
+      return;
+    }
 
-    // Prepare updates for ability scores, size, speed, HP, and system slots
+    const chassis = foundry.utils.deepClone(chassisItem.system ?? {});
+    const flagScope = "foundryvtt-swse";
+
+    // -----------------------------
+    // Prepare safe updates structure
+    // -----------------------------
+    const abilityKeys = ["str", "dex", "con", "int", "wis", "cha"];
+    const abilities = {};
+
+    for (const key of abilityKeys) {
+      abilities[key] = {
+        base: Number(chassis[key]) || 10,
+        racial: 0,
+        temp: 0
+      };
+    }
+
     const updates = {
-      'system.abilities': {
-        str: { base: chassis.str || 10, racial: 0, temp: 0 },
-        dex: { base: chassis.dex || 10, racial: 0, temp: 0 },
-        con: { base: chassis.con || 10, racial: 0, temp: 0 },
-        int: { base: chassis.int || 10, racial: 0, temp: 0 },
-        wis: { base: chassis.wis || 10, racial: 0, temp: 0 },
-        cha: { base: chassis.cha || 10, racial: 0, temp: 0 }
-      },
-      'system.size': chassis.size || 'medium',
-      'system.speed': parseInt(chassis.speed) || 6,
-      'system.hp.max': chassis.hp || 10,
-      'system.hp.value': chassis.hp || 10, // Set current HP to max
-      'system.systemSlots': {
-        max: chassis.systemSlots || 0,
-        used: 0
-      }
+      "system.abilities": abilities,
+      "system.size": chassis.size || "medium",
+      "system.speed": Number(chassis.speed) || 6,
+      "system.hp.max": Number(chassis.hp) || 10,
+      "system.hp.value": Number(chassis.hp) || 10,
+      "system.systemSlots.max": Number(chassis.systemSlots) || 0,
+      "system.systemSlots.used": 0
     };
 
-    // Clear incompatible items (organic-only equipment)
+    // Apply the chassis stats
+    await actor.update(updates);
+
+    // -----------------------------
+    // Clear incompatible items
+    // -----------------------------
     const itemsToDelete = [];
+
     for (const item of actor.items) {
-      // Remove organic-only items like Force powers (droids can't use the Force naturally)
-      if (item.type === 'forcepower') {
+      const type = item.type?.toLowerCase() ?? "";
+      const sys = item.system ?? {};
+
+      // Force powers (various system definitions)
+      if (type === "forcepower" || type === "power") {
         itemsToDelete.push(item.id);
       }
-      // Remove biological equipment if flagged
-      if (item.system.organicOnly) {
+
+      // Organic-only equipment
+      if (sys.organicOnly === true) {
         itemsToDelete.push(item.id);
       }
     }
 
-    if (itemsToDelete.length > 0) {
-      await actor.deleteEmbeddedDocuments('Item', itemsToDelete);
-      ui.notifications.info(`Removed ${itemsToDelete.length} incompatible item(s) from ${actor.name}`);
+    if (itemsToDelete.length) {
+      await actor.deleteEmbeddedDocuments("Item", itemsToDelete);
+      ui.notifications.info(`Removed ${itemsToDelete.length} incompatible item(s) from ${actor.name}.`);
     }
 
-    // Apply updates
-    await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
+    // -----------------------------
+    // Replace existing chassis item
+    // -----------------------------
+    const existing = actor.items.find(i => i.type === "chassis");
 
-    // Add chassis item if not already present
-    const existingChassis = actor.items.find(i => i.type === 'chassis');
-    if (existingChassis) {
-      await actor.deleteEmbeddedDocuments('Item', [existingChassis.id]);
+    if (existing) {
+      await actor.deleteEmbeddedDocuments("Item", [existing.id]);
     }
-    await actor.createEmbeddedDocuments('Item', [chassisItem.toObject()]);
 
-    // Create chat message
+    // Clone item safely
+    const chassisData = chassisItem.toObject();
+    chassisData._id = undefined;
+
+    await actor.createEmbeddedDocuments("Item", [chassisData]);
+
+    // -----------------------------
+    // Chat message
+    // -----------------------------
     await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({actor}),
-      content: `<div class="swse chassis-applied">
-        <h3>Droid Chassis Applied</h3>
-        <p><strong>${actor.name}</strong> is now using the <strong>${chassisItem.name}</strong> chassis.</p>
-        <ul>
-          <li>System Slots: ${chassis.systemSlots || 0}</li>
-          <li>Size: ${chassis.size || 'medium'}</li>
-          <li>Speed: ${chassis.speed || 6} squares</li>
-          <li>Hit Points: ${chassis.hp || 10}</li>
-        </ul>
-      </div>`
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content: `
+        <div class="swse chassis-applied">
+          <h3>Droid Chassis Applied</h3>
+          <p><strong>${actor.name}</strong> is now using the <strong>${chassisItem.name}</strong> chassis.</p>
+          <ul>
+            <li>System Slots: ${chassis.systemSlots ?? 0}</li>
+            <li>Size: ${chassis.size ?? "medium"}</li>
+            <li>Speed: ${chassis.speed ?? 6} squares</li>
+            <li>Hit Points: ${chassis.hp ?? 10}</li>
+          </ul>
+        </div>`
     });
 
     ui.notifications.info(`${actor.name} chassis set to ${chassisItem.name}`);
   }
 
-  /**
-   * Check if droid has available system slots
-   */
+  // =========================================================================
+  // SLOT CHECK
+  // =========================================================================
   static hasAvailableSlots(actor) {
-    const slots = actor.system.systemSlots;
+    const slots = actor.system?.systemSlots;
     if (!slots) return false;
-    return slots.used < slots.max;
+    return (slots.used ?? 0) < (slots.max ?? 0);
   }
 
-  /**
-   * Install a droid system/upgrade
-   */
+  // =========================================================================
+  // INSTALL SYSTEM
+  // =========================================================================
   static async installSystem(actor, systemItem) {
-    const slots = actor.system.systemSlots;
-    const slotsRequired = systemItem.system.slotsRequired || 1;
+    const slots = actor.system?.systemSlots ?? {};
+    const used = Number(slots.used ?? 0);
+    const max = Number(slots.max ?? 0);
+    const cost = Number(systemItem.system?.slotsRequired ?? 1);
 
-    if (!slots || (slots.used + slotsRequired) > slots.max) {
-      ui.notifications.error(`Not enough system slots! Need ${slotsRequired}, have ${slots.max - slots.used} available.`);
+    if (used + cost > max) {
+      ui.notifications.error(
+        `Not enough system slots! Need ${cost}, available ${max - used}.`
+      );
       return false;
     }
 
-    // Add item and update slot usage
-    await actor.createEmbeddedDocuments('Item', [systemItem.toObject()]);
-    await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.systemSlots.used': slots.used + slotsRequired
+    const data = systemItem.toObject();
+    data._id = undefined;
+
+    await actor.createEmbeddedDocuments("Item", [data]);
+    await actor.update({
+      "system.systemSlots.used": used + cost
     });
 
+    ui.notifications.info(`Installed ${systemItem.name} (uses ${cost} slot(s)).`);
 
-
-    ui.notifications.info(`Installed ${systemItem.name} (uses ${slotsRequired} slot(s))`);
     return true;
   }
 
-  /**
-   * Uninstall a droid system/upgrade
-   */
+  // =========================================================================
+  // UNINSTALL SYSTEM
+  // =========================================================================
   static async uninstallSystem(actor, systemItem) {
-    const slots = actor.system.systemSlots;
-    const slotsRequired = systemItem.system.slotsRequired || 1;
+    const slots = actor.system?.systemSlots ?? {};
+    const used = Number(slots.used ?? 0);
+    const cost = Number(systemItem.system?.slotsRequired ?? 1);
 
-    await actor.deleteEmbeddedDocuments('Item', [systemItem.id]);
-    await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.systemSlots.used': Math.max(0, slots.used - slotsRequired)
+    await actor.deleteEmbeddedDocuments("Item", [systemItem.id]);
+
+    await actor.update({
+      "system.systemSlots.used": Math.max(0, used - cost)
     });
 
+    ui.notifications.info(`Uninstalled ${systemItem.name} (freed ${cost} slot(s)).`);
 
-
-    ui.notifications.info(`Uninstalled ${systemItem.name} (freed ${slotsRequired} slot(s))`);
     return true;
   }
 }
