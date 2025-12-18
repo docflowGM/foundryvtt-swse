@@ -1,157 +1,186 @@
-import { SWSELogger } from '../utils/logger.js';
-import { ProgressionEngine } from "../progression/engine/progression-engine.js";
+import { SWSELogger } from "../utils/logger.js";
+
 /**
- * Combat Automation
- * Handles automatic damage threshold checks, condition track, etc.
+ * SWSE Combat Automation (v13+)
+ * - Clean, modern hook registration
+ * - Uses refactored SWSEActorBase condition & damage logic
+ * - Safe asynchronous turn-handling
+ * - Optional resource reset on combat start
+ * - Updated for structured Active Effects (B3 format)
  */
 
 export class SWSECombatAutomation {
 
-    static getSelectedActor() {
-        return canvas.tokens.controlled[0]?.actor;
-    }
-
-
   static init() {
-    // Register combat hooks
+    SWSELogger.log("SWSE | Initializing Combat Automation");
     this._registerHooks();
   }
 
+  /* -------------------------------------------------------------------------- */
+  /* HOOK REGISTRATION                                                           */
+  /* -------------------------------------------------------------------------- */
+
   static _registerHooks() {
-    // Hook for turn start - prompt condition recovery
-    Hooks.on('combatTurn', async (combat, updateData, updateOptions) => {
-      const combatant = combat.combatant;
-      if (!combatant || !combatant.actor) return;
 
-      const actor = combatant.actor;
+    /**
+     * 🕒 Turn Start — Natural Condition Recovery
+     * If an actor has taken Condition Track steps, prompt them at the start
+     * of their turn unless Persistent.
+     */
+    Hooks.on("combatTurn", async combat => {
+      const combatant = combat?.combatant;
+      const actor = combatant?.actor;
+      if (!actor) return;
 
-      // Check if actor has condition track damage
-      if (actor.system.conditionTrack?.current > 0) {
-        await this.promptConditionRecovery(actor);
-      }
+      const ct = actor.system.conditionTrack?.current ?? 0;
+      if (ct > 0) await this._promptConditionRecovery(actor);
     });
 
-    // Hook for combat start - optionally reset resources
-    Hooks.on('combatStart', async (combat) => {
-      if (!game.settings.get('foundryvtt-swse', 'resetResourcesOnCombat')) return;
+    /**
+     * ⚔ Combat Start — Reset Resources
+     * Controlled by SWSE system setting: resetResourcesOnCombat
+     */
+    Hooks.on("combatStart", async combat => {
+      if (!game.settings.get("foundryvtt-swse", "resetResourcesOnCombat")) return;
 
       for (const combatant of combat.combatants) {
-        if (!combatant.actor) continue;
+        const actor = combatant.actor;
+        if (!actor) continue;
 
-        // Reset temporary resources like Second Wind
-        if (combatant.actor.type === 'character') {
-          await globalThis.SWSE.ActorEngine.updateActor(combatant.actor, {'system.secondWind.used': false});
+        if (actor.type === "character") {
+          await actor.update({ "system.secondWind.used": false }, { diff: true });
         }
       }
     });
 
-    // Hook for combat end - cleanup
-    Hooks.on('combatEnd', async (combat) => {
-      // Log combat end
-      SWSELogger.log('SWSE | Combat ended');
+    /**
+     * 🧹 Combat End — Cleanup & Logging
+     */
+    Hooks.on("combatEnd", () => {
+      SWSELogger.log("SWSE | Combat ended.");
     });
   }
 
+  /* -------------------------------------------------------------------------- */
+  /* DAMAGE THRESHOLD CHECKING (Legacy Hook)                                    */
+  /* -------------------------------------------------------------------------- */
+
+  /**
+   * This method remains available for external modules/macros,
+   * but threshold logic is already handled inside Actor.applyDamage().
+   */
   static async checkDamageThreshold(actor, damage) {
-    // This is handled in actor.applyDamage() method
-    // Just ensure threshold checking is enabled
     const threshold = actor.system.damageThreshold;
 
-    if (damage >= threshold) {
-      // Create chat message about threshold
+    if (damage < threshold) return false;
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content: `
+      <div class="swse threshold-exceeded">
+        <h3>⚠ Damage Threshold Exceeded!</h3>
+        <p><strong>${actor.name}</strong> takes ${damage} damage (Threshold: ${threshold})</p>
+        <p>Condition worsens by one step.</p>
+      </div>`,
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER
+    });
+
+    await actor.moveConditionTrack(1);
+
+    if (actor.system.hp.value === 0 && actor.isHelpless) {
       await ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({actor}),
-        content: `<div class="swse threshold-exceeded">
-          <h3>Damage Threshold Exceeded!</h3>
-          <p><strong>${actor.name}</strong> takes ${damage} damage (Threshold: ${threshold})</p>
-          <p>Condition worsens by one step.</p>
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `
+        <div class="swse death-notification">
+          <h3>☠ Character Defeated!</h3>
+          <p><strong>${actor.name}</strong> is Helpless at 0 HP.</p>
         </div>`,
         type: CONST.CHAT_MESSAGE_TYPES.OTHER
       });
-
-      // Move condition track (handled in applyDamage)
-      await actor.moveConditionTrack(1);
-
-      // Check for death
-      if (actor.system.hp.value === 0 && actor.isHelpless) {
-        await ChatMessage.create({
-          speaker: ChatMessage.getSpeaker({actor}),
-          content: `<div class="swse death-notification">
-            <h3>⚠️ Character Defeated!</h3>
-            <p><strong>${actor.name}</strong> is at 0 HP and Helpless!</p>
-          </div>`,
-          type: CONST.CHAT_MESSAGE_TYPES.OTHER
-        });
-      }
     }
+
+    return true;
   }
 
-  static async promptConditionRecovery(actor) {
-    // Check if persistent
-    const isPersistent = actor.system.conditionTrack?.persistent;
-    const current = actor.system.conditionTrack?.current || 0;
+  /* -------------------------------------------------------------------------- */
+  /* CONDITION RECOVERY PROMPT                                                  */
+  /* -------------------------------------------------------------------------- */
 
-    if (current === 0) return; // No condition to recover from
+  static async _promptConditionRecovery(actor) {
+    const ct = actor.system.conditionTrack?.current ?? 0;
+    const persistent = actor.system.conditionTrack?.persistent === true;
 
-    if (isPersistent) {
-      ui.notifications.warn(`${actor.name}'s condition is persistent and cannot naturally recover.`);
+    if (ct === 0) return;
+
+    if (persistent) {
+      ui.notifications.warn(`${actor.name}'s condition is persistent and does not naturally recover.`);
       return;
     }
 
-    // Prompt for recovery
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       new Dialog({
-        title: `${actor.name} - Condition Recovery`,
+        title: `${actor.name} — Condition Recovery`,
         content: `
           <div class="swse condition-recovery">
-            <p><strong>${actor.name}</strong> can attempt to recover from the Condition Track.</p>
-            <p>Current Condition: <strong>${this._getConditionLabel(current)}</strong></p>
+            <p><strong>${actor.name}</strong> may attempt natural Condition Track recovery.</p>
+            <p>Current Condition: <strong>${this._conditionLabel(ct)}</strong></p>
             <hr>
-            <p>Would you like to:</p>
+            <p>Select an option:</p>
           </div>
         `,
         buttons: {
-          improve: {
+          recover: {
             icon: '<i class="fas fa-heart"></i>',
-            label: 'Recover Naturally',
+            label: "Recover Naturally",
             callback: async () => {
               await actor.moveConditionTrack(-1);
-              await ChatMessage.create({
-                speaker: ChatMessage.getSpeaker({actor}),
-                content: `<p><strong>${actor.name}</strong> recovers one step on the Condition Track.</p>`
+
+              ChatMessage.create({
+                speaker: ChatMessage.getSpeaker({ actor }),
+                content: `<strong>${actor.name}</strong> recovers one step on the Condition Track.`
               });
+
               resolve(true);
             }
           },
           secondWind: {
             icon: '<i class="fas fa-wind"></i>',
-            label: 'Use Second Wind',
+            label: "Use Second Wind",
             callback: async () => {
-              if (actor.type !== 'character') {
-                ui.notifications.warn('Only characters can use Second Wind');
-                resolve(false);
-                return;
+              if (actor.type !== "character") {
+                ui.notifications.warn("Only characters can use Second Wind.");
+                return resolve(false);
               }
-              const success = await actor.useSecondWind();
-              resolve(success);
+              const ok = await actor.useSecondWind();
+              resolve(ok);
             }
           },
           skip: {
             icon: '<i class="fas fa-times"></i>',
-            label: 'Skip Recovery',
+            label: "Skip",
             callback: () => {
               ui.notifications.info(`${actor.name} does not attempt recovery.`);
               resolve(false);
             }
           }
         },
-        default: 'improve'
+        default: "recover"
       }).render(true);
     });
   }
 
-  static _getConditionLabel(step) {
-    const labels = ['Normal', '-1 Penalty', '-2 Penalty', '-5 Penalty', '-10 Penalty', 'Helpless'];
-    return labels[step] || 'Unknown';
+  static _conditionLabel(step) {
+    return (
+      ["Normal", "-1 Penalty", "-2 Penalty", "-5 Penalty", "-10 Penalty", "Helpless"][step] ??
+      "Unknown"
+    );
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* UTILITY                                                                    */
+  /* -------------------------------------------------------------------------- */
+
+  static getSelectedActor() {
+    return canvas.tokens.controlled[0]?.actor ?? null;
   }
 }
