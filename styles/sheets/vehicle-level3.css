@@ -1,0 +1,338 @@
+/* ==========================================================================
+   Level 3 Holographic Vehicle HUD Enhancement
+   Adds cinematic holographic effects to vehicle sheets
+   ========================================================================== */
+
+/* =============================================
+   HOLOGRAPHIC SCANNER & SHIP MODEL
+   ============================================= */
+
+.v-image.holo-layer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.holo-scanner {
+  position: absolute;
+  width: 140%;
+  height: 140%;
+  left: -20%;
+  top: -20%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.holo-scanner .scanner-ring {
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(0, 200, 255, 0.15);
+  border-radius: 50%;
+  opacity: 0.25;
+  animation: scanner-rotate 18s linear infinite;
+  box-shadow:
+    0 0 20px rgba(0, 200, 255, 0.3),
+    inset 0 0 40px rgba(0, 200, 255, 0.2);
+}
+
+.holo-scanner .scanner-ring::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(0, 255, 255, 0.8) 50%,
+    transparent 100%);
+  top: 50%;
+  left: 0;
+  transform-origin: center;
+  animation: scanner-sweep 6s linear infinite;
+}
+
+@keyframes scanner-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes scanner-sweep {
+  from { transform: rotate(0deg) translateY(-50%); }
+  to { transform: rotate(360deg) translateY(-50%); }
+}
+
+.ship-model {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  object-fit: contain;
+  z-index: 2;
+  filter:
+    drop-shadow(0 0 12px rgba(0, 255, 255, 0.45))
+    drop-shadow(0 0 24px rgba(0, 200, 255, 0.25))
+    brightness(1.15)
+    contrast(1.2);
+  animation: ship-pulse 4s ease-in-out infinite;
+}
+
+@keyframes ship-pulse {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 12px rgba(0, 255, 255, 0.45))
+      brightness(1.15);
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 20px rgba(0, 255, 255, 0.6))
+      brightness(1.25);
+  }
+}
+
+/* =============================================
+   DAMAGE OVERLAYS
+   ============================================= */
+
+.damage-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: overlay;
+  animation: damage-flicker 0.5s infinite;
+}
+
+.damage-overlay.mid {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    rgba(255, 120, 0, 0.15) 70%,
+    transparent 100%
+  );
+}
+
+.damage-overlay.critical {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 30%,
+    rgba(255, 0, 0, 0.25) 60%,
+    transparent 100%
+  );
+  animation: damage-flicker 0.3s infinite, damage-pulse 1.5s infinite;
+}
+
+@keyframes damage-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes damage-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.3); }
+}
+
+/* =============================================
+   HOLOGRAPHIC TILES (Callouts)
+   ============================================= */
+
+.callout.holo-tile {
+  position: absolute;
+  top: var(--top, 50%);
+  left: var(--left, 50%);
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  min-width: 120px;
+}
+
+.holo-tile .tile-inner {
+  background: rgba(0, 200, 255, 0.08);
+  backdrop-filter: blur(4px) saturate(180%);
+  border: 1px solid rgba(0, 200, 255, 0.4);
+  padding: 10px 14px;
+  border-radius: 6px;
+  box-shadow:
+    0 0 12px rgba(0, 200, 255, 0.25),
+    inset 0 0 18px rgba(0, 200, 255, 0.15);
+  animation: holo-flicker 4s infinite ease-in-out;
+  transition: all 0.3s ease;
+}
+
+.holo-tile:hover .tile-inner {
+  background: rgba(0, 220, 255, 0.12);
+  border-color: rgba(0, 255, 255, 0.6);
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.4),
+    inset 0 0 25px rgba(0, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+@keyframes holo-flicker {
+  0%, 100% { opacity: 1; }
+  48% { opacity: 0.92; }
+  51% { opacity: 1; }
+  80% { opacity: 0.95; }
+  82% { opacity: 1; }
+}
+
+.holo-tile .label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: rgba(0, 200, 255, 0.9);
+  font-weight: bold;
+  letter-spacing: 1.2px;
+  margin-bottom: 4px;
+  text-align: center;
+  text-shadow:
+    0 0 4px rgba(0, 200, 255, 0.8),
+    0 0 8px rgba(0, 200, 255, 0.4);
+}
+
+.holo-tile .value {
+  font-size: 16px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.95);
+  text-align: center;
+  text-shadow:
+    0 0 6px rgba(0, 255, 255, 0.6),
+    0 0 12px rgba(0, 200, 255, 0.3);
+  font-family: 'Orbitron', monospace;
+}
+
+/* =============================================
+   CONNECTOR LINES (SVG)
+   ============================================= */
+
+.connector-line {
+  width: 110px;
+  height: 30px;
+  position: absolute;
+  right: -110px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 9;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.holo-tile:hover .connector-line {
+  opacity: 1;
+}
+
+.connector-line line {
+  stroke: rgba(0, 200, 255, 0.6);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 4px rgba(0, 200, 255, 0.8));
+  animation: line-pulse 3s ease-in-out infinite;
+}
+
+@keyframes line-pulse {
+  0%, 100% {
+    stroke: rgba(0, 200, 255, 0.6);
+    stroke-width: 2;
+  }
+  50% {
+    stroke: rgba(0, 255, 255, 0.9);
+    stroke-width: 2.5;
+  }
+}
+
+/* =============================================
+   VEHICLE CENTER LAYOUT
+   ============================================= */
+
+.vehicle-center {
+  position: relative;
+  width: 100%;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 30, 60, 0.3) 0%,
+    rgba(0, 10, 30, 0.6) 100%
+  );
+  border-radius: 8px;
+  padding: 40px;
+}
+
+/* =============================================
+   STATE-BASED STYLING
+   ============================================= */
+
+.holo-tile.state-warning .tile-inner {
+  border-color: rgba(255, 170, 0, 0.5);
+  box-shadow:
+    0 0 12px rgba(255, 170, 0, 0.25),
+    inset 0 0 18px rgba(255, 170, 0, 0.15);
+}
+
+.holo-tile.state-warning .label {
+  color: rgba(255, 170, 0, 0.9);
+  text-shadow:
+    0 0 4px rgba(255, 170, 0, 0.8),
+    0 0 8px rgba(255, 170, 0, 0.4);
+}
+
+.holo-tile.state-critical .tile-inner {
+  border-color: rgba(255, 50, 50, 0.6);
+  box-shadow:
+    0 0 12px rgba(255, 50, 50, 0.3),
+    inset 0 0 18px rgba(255, 50, 50, 0.2);
+  animation: holo-flicker 4s infinite ease-in-out, critical-flash 1s infinite;
+}
+
+@keyframes critical-flash {
+  0%, 100% { background: rgba(0, 200, 255, 0.08); }
+  50% { background: rgba(255, 0, 0, 0.12); }
+}
+
+.holo-tile.state-critical .label {
+  color: rgba(255, 80, 80, 0.95);
+  text-shadow:
+    0 0 4px rgba(255, 50, 50, 0.9),
+    0 0 8px rgba(255, 50, 50, 0.5);
+}
+
+/* =============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================= */
+
+@media (max-width: 900px) {
+  .vehicle-center {
+    min-height: 350px;
+    padding: 20px;
+  }
+
+  .v-image.holo-layer {
+    min-height: 300px;
+  }
+
+  .ship-model {
+    max-width: 350px;
+  }
+
+  .holo-tile .tile-inner {
+    padding: 8px 10px;
+  }
+
+  .holo-tile .label {
+    font-size: 8px;
+  }
+
+  .holo-tile .value {
+    font-size: 14px;
+  }
+
+  .connector-line {
+    width: 80px;
+    right: -80px;
+  }
+}

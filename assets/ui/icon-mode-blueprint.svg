@@ -1,0 +1,20 @@
+<svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+  <!-- Blueprint Mode Icon: Wireframe Grid -->
+
+  <!-- Background square -->
+  <rect x="5" y="5" width="24" height="24" fill="rgba(0,200,255,0.1)" stroke="rgba(0,200,255,0.6)" stroke-width="2"/>
+
+  <!-- Grid lines vertical -->
+  <line x1="13" y1="5" x2="13" y2="29" stroke="rgba(0,200,255,0.4)" stroke-width="1"/>
+  <line x1="21" y1="5" x2="21" y2="29" stroke="rgba(0,200,255,0.4)" stroke-width="1"/>
+
+  <!-- Grid lines horizontal -->
+  <line x1="5" y1="13" x2="29" y2="13" stroke="rgba(0,200,255,0.4)" stroke-width="1"/>
+  <line x1="5" y1="21" x2="29" y2="21" stroke="rgba(0,200,255,0.4)" stroke-width="1"/>
+
+  <!-- Corner brackets -->
+  <polyline points="7,12 7,7 12,7" fill="none" stroke="rgba(0,255,255,0.9)" stroke-width="2"/>
+  <polyline points="27,12 27,7 22,7" fill="none" stroke="rgba(0,255,255,0.9)" stroke-width="2"/>
+  <polyline points="7,22 7,27 12,27" fill="none" stroke="rgba(0,255,255,0.9)" stroke-width="2"/>
+  <polyline points="27,22 27,27 22,27" fill="none" stroke="rgba(0,255,255,0.9)" stroke-width="2"/>
+</svg>

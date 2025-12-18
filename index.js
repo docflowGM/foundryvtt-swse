@@ -72,6 +72,7 @@ setTimeout(() => {
 
 import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engine/progression.js';
 import { FeatSystem } from './scripts/engine/FeatSystem.js';
+import { SkillSystem } from './scripts/engine/SkillSystem.js';
 import { SWSELanguageModule } from './scripts/progression/modules/language-module.js';
 
 import { SWSELogger, swseLogger } from './scripts/utils/logger.js';
@@ -318,6 +319,7 @@ Hooks.once("ready", async function () {
        --------------------------------------------------------- */
     Object.assign(window.SWSE, {
     FeatSystem,
+    SkillSystem,
 
         ActorEngine,
         cacheManager,

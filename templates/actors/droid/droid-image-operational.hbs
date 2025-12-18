@@ -1,0 +1,25 @@
+{{!-- Operational Mode Droid Hologram --}}
+<div class="droid-image operational">
+
+  {{!-- Rotating Scanner --}}
+  <div class="droid-scanner">
+    <div class="scanner-ring"></div>
+  </div>
+
+  {{!-- Portrait --}}
+  <img class="droid-portrait"
+       src="{{#if actor.img}}{{actor.img}}{{else}}/systems/foundryvtt-swse/assets/ui/droid-default.svg{{/if}}"
+       alt="{{actor.name}}" />
+
+  {{!-- Damage Overlays --}}
+  {{#if actor.system.health}}
+    {{#if (lt actor.system.health.value (divide actor.system.health.max 2))}}
+      <div class="damage-overlay mid"></div>
+    {{/if}}
+
+    {{#if (lt actor.system.health.value (divide actor.system.health.max 3))}}
+      <div class="damage-overlay critical"></div>
+    {{/if}}
+  {{/if}}
+
+</div>

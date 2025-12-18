@@ -1,0 +1,84 @@
+{{!-- Level 3 HUD Callouts With Holographic Tiles --}}
+
+{{#*inline "callout"}}
+  <div class="callout holo-tile callout-{{id}} state-{{state}}"
+       style="--top:{{top}}; --left:{{left}};">
+
+    <div class="tile-inner">
+      <div class="label">{{label}}</div>
+      <div class="value">{{value}}</div>
+    </div>
+
+    <svg class="connector-line">
+      <line x1="50%" y1="50%" x2="100%" y2="50%" />
+    </svg>
+
+  </div>
+{{/inline}}
+
+{{#let
+   hullPct=(multiply (divide actor.system.hull.current actor.system.hull.max) 100)
+   shieldsPct=(multiply (divide actor.system.shields.current actor.system.shields.max) 100)
+}}
+
+{{!-- SPEED --}}
+{{> callout
+  id="speed"
+  label="Speed"
+  value=(or actor.system.speed 0)
+  top="12%"
+  left="50%"
+  state="normal"
+}}
+
+{{!-- SHIELDS --}}
+{{> callout
+  id="shields"
+  label="Shields"
+  value=(if actor.system.shields (concat actor.system.shields.current " / " actor.system.shields.max) "0 / 0")
+  top="28%"
+  left="78%"
+  state="normal"
+}}
+
+{{!-- HULL --}}
+{{> callout
+  id="hull"
+  label="Hull"
+  value=(if actor.system.hull (concat actor.system.hull.current " / " actor.system.hull.max) "0 / 0")
+  top="72%"
+  left="78%"
+  state="normal"
+}}
+
+{{!-- DAMAGE REDUCTION --}}
+{{> callout
+  id="dr"
+  label="Damage Reduction"
+  value=(or actor.system.dr 0)
+  top="84%"
+  left="50%"
+  state="normal"
+}}
+
+{{!-- MAX VELOCITY --}}
+{{> callout
+  id="maxv"
+  label="Max Velocity"
+  value=(or actor.system.maxVelocity 0)
+  top="72%"
+  left="22%"
+  state="normal"
+}}
+
+{{!-- MANEUVER --}}
+{{> callout
+  id="maneuver"
+  label="Maneuver"
+  value=(or actor.system.maneuver 0)
+  top="28%"
+  left="22%"
+  state="normal"
+}}
+
+{{/let}}

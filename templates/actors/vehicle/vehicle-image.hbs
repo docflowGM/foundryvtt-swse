@@ -1,0 +1,25 @@
+{{!-- Level 3 Holographic Ship Image --}}
+<div class="v-image holo-layer">
+
+  {{!-- Rotating hologram scanner --}}
+  <div class="holo-scanner">
+    <div class="scanner-ring"></div>
+  </div>
+
+  {{!-- Ship Image --}}
+  <img class="ship-model"
+       src="{{#if actor.img}}{{actor.img}}{{else}}/assets/ui/vehicle-stats.png{{/if}}"
+       alt="{{actor.name}}" />
+
+  {{!-- Damage overlays --}}
+  {{#if actor.system.hull}}
+    {{#if (lt actor.system.hull.current (divide actor.system.hull.max 2))}}
+      <div class="damage-overlay mid"></div>
+    {{/if}}
+
+    {{#if (lt actor.system.hull.current (divide actor.system.hull.max 3))}}
+      <div class="damage-overlay critical"></div>
+    {{/if}}
+  {{/if}}
+
+</div>

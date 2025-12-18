@@ -1,0 +1,31 @@
+{{!-- =========================================================================
+     SKILL ACTION PANEL (Collapsible Categories)
+     ========================================================================= --}}
+<div class="swse-skill-actions-panel" data-skill="{{key}}">
+
+  {{#if actions.hasActions}}
+
+    {{!-- Iterate categories --}}
+    {{#each actions.categories}}
+      <div class="skill-category-card" data-category="{{@key}}">
+
+        <div class="skill-category-header">
+          <span>{{@key}}</span>
+          <i class="fas fa-chevron-down category-toggle"></i>
+        </div>
+
+        <div class="skill-category-body">
+          {{#each this}}
+            {{> "systems/foundryvtt-swse/templates/partials/skill-action-card.hbs"
+                action=this skillKey=../key }}
+          {{/each}}
+        </div>
+
+      </div>
+    {{/each}}
+
+  {{else}}
+    <p class="skill-no-actions">No additional actions for {{label}}.</p>
+  {{/if}}
+
+</div>

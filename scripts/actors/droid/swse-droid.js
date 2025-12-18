@@ -33,7 +33,17 @@ export class SWSEDroidSheet extends SWSECharacterSheet {
     // Only add listeners if not read-only
     if (!this.options.editable) return;
 
-    // Add droid-specific listeners here
+    // Droid Mode Toggle (Operational <-> Blueprint)
+    html.find("[data-toggle-mode]").click(async (ev) => {
+      ev.preventDefault();
+      const actor = this.actor;
+      const current = actor.getFlag("swse", "viewMode") || "operational";
+      const next = current === "operational" ? "blueprint" : "operational";
+
+      await actor.setFlag("swse", "viewMode", next);
+      this.render(false);
+    });
+
     SWSELogger.log("SWSE | Droid sheet listeners activated");
   }
 
