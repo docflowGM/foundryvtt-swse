@@ -1,0 +1,53 @@
+<div class="product-card droid-card" data-item-id="{{id}}" data-type="droid">
+  <!-- Droid Image -->
+  <div class="product-image">
+    <img src="{{img}}" alt="{{name}}" class="product-img" />
+  </div>
+
+  <!-- Droid Info -->
+  <div class="product-info">
+    <h4 class="product-name">{{name}}</h4>
+
+    <!-- Rarity Badge -->
+    {{#if rarityClass}}
+    <div class="badge-row">
+      <span class="rarity-badge rarity-{{rarityClass}}">
+        <i class="fas fa-star"></i> {{rarityLabel}}
+      </span>
+    </div>
+    {{/if}}
+
+    <!-- Droid Class/Type -->
+    {{#if system.class}}
+    <div class="detail-line">
+      <i class="fas fa-cube"></i>
+      <span class="droid-class">{{system.class}}</span>
+    </div>
+    {{/if}}
+
+    <!-- Droid Level -->
+    {{#if system.level}}
+    <div class="detail-line">
+      <i class="fas fa-level-up-alt"></i>
+      <span>Level {{system.level}}</span>
+    </div>
+    {{/if}}
+
+    <!-- Description -->
+    {{#if description}}
+    <p class="product-description">{{description}}</p>
+    {{/if}}
+  </div>
+
+  <!-- Pricing & Actions -->
+  <div class="product-actions">
+    <div class="product-price">
+      <span class="credits-icon">₢</span>
+      <span class="price-amount">{{cost}}</span>
+    </div>
+
+    <button class="holo-btn buy-droid" data-actor-id="{{id}}">
+      <i class="fas fa-shopping-cart"></i> Purchase Droid
+    </button>
+  </div>
+</div>

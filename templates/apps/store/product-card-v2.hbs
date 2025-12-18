@@ -1,0 +1,55 @@
+<div class="product-card" data-item-id="{{id}}" data-type="{{type}}">
+  <!-- Product Image -->
+  <div class="product-image">
+    <img src="{{img}}" alt="{{name}}" class="product-img" />
+  </div>
+
+  <!-- Product Info -->
+  <div class="product-info">
+    <h4 class="product-name">{{name}}</h4>
+
+    <!-- Rarity Badge -->
+    {{#if rarityClass}}
+    <div class="badge-row">
+      <span class="rarity-badge rarity-{{rarityClass}}">
+        <i class="fas fa-star"></i> {{rarityLabel}}
+      </span>
+    </div>
+    {{/if}}
+
+    <!-- Availability Tag -->
+    {{#if availability}}
+    <div class="availability-tag">
+      <span>{{availability}}</span>
+    </div>
+    {{/if}}
+
+    <!-- Type-specific Details -->
+    {{#if damage}}
+    <div class="detail-line">
+      <i class="fas fa-bolt"></i>
+      <span>{{damage}}</span>
+    </div>
+    {{/if}}
+
+    <!-- Description -->
+    {{#if description}}
+    <p class="product-description">{{description}}</p>
+    {{/if}}
+  </div>
+
+  <!-- Pricing & Actions -->
+  <div class="product-actions">
+    <div class="product-price">
+      <span class="credits-icon">₢</span>
+      <span class="price-amount">{{cost}}</span>
+    </div>
+
+    <!-- Standard Item Button -->
+    {{#unless costUsed}}
+    <button class="holo-btn buy-item" data-item-id="{{id}}">
+      <i class="fas fa-shopping-cart"></i> Add to Cart
+    </button>
+    {{/unless}}
+  </div>
+</div>

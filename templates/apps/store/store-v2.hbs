@@ -1,0 +1,223 @@
+<div class="swse-store-wrapper">
+  <!-- HOLOGRAPHIC BANNER WITH RENDARR -->
+  <div class="holo-banner">
+    <div class="shopkeeper-portrait">
+      <img src="systems/foundryvtt-swse/assets/rendarr.png" class="rendarr-image" alt="Rendarr the Shopkeeper" />
+    </div>
+    <div class="holo-content">
+      <div class="holo-speaker">
+        <i class="fas fa-volume-up"></i> RENDARR:
+      </div>
+      <div class="holo-message">"Welcome to the Galactic Marketplace!"</div>
+    </div>
+  </div>
+
+  <!-- CREDIT WALLET DISPLAY -->
+  <div class="credit-wallet">
+    <div class="wallet-header">
+      <i class="fas fa-wallet"></i> ACCOUNT BALANCE
+    </div>
+    <div class="wallet-amount">
+      <span class="credits-icon">₢</span>
+      <span class="remaining-credits">{{credits}}</span>
+      <span class="credits-label">credits</span>
+    </div>
+  </div>
+
+  <!-- NAVIGATION TABS -->
+  <div class="shop-navigation">
+    <button class="holo-btn" data-tab="weapons">
+      <i class="fas fa-sword"></i> Weapons
+    </button>
+    <button class="holo-btn" data-tab="armor">
+      <i class="fas fa-shield-alt"></i> Armor
+    </button>
+    <button class="holo-btn" data-tab="medical">
+      <i class="fas fa-heartbeat"></i> Medical
+    </button>
+    <button class="holo-btn" data-tab="tech">
+      <i class="fas fa-microchip"></i> Tech
+    </button>
+    <button class="holo-btn" data-tab="tools">
+      <i class="fas fa-tools"></i> Tools
+    </button>
+    <button class="holo-btn" data-tab="survival">
+      <i class="fas fa-backpack"></i> Survival
+    </button>
+    <button class="holo-btn" data-tab="security">
+      <i class="fas fa-lock"></i> Security
+    </button>
+    <button class="holo-btn" data-tab="equipment">
+      <i class="fas fa-box"></i> Equipment
+    </button>
+    <button class="holo-btn" data-tab="droids">
+      <i class="fas fa-robot"></i> Droids
+    </button>
+    <button class="holo-btn" data-tab="vehicles">
+      <i class="fas fa-rocket"></i> Vehicles
+    </button>
+
+    <div class="nav-spacer"></div>
+
+    <button class="holo-btn cart-btn" data-tab="cart">
+      <i class="fas fa-shopping-cart"></i> Cart
+      <span id="cart-count" class="cart-badge">0</span>
+    </button>
+
+    {{#if isGM}}
+    <button class="holo-btn secondary" data-tab="gm">
+      <i class="fas fa-cog"></i> GM
+    </button>
+    {{/if}}
+  </div>
+
+  <!-- FILTER & SEARCH BAR -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label for="shop-availability-filter">Availability:</label>
+      <select id="shop-availability-filter">
+        <option value="all">All Availability</option>
+        <option value="standard">Standard</option>
+        <option value="licensed">Licensed</option>
+        <option value="restricted">Restricted</option>
+        <option value="military">Military</option>
+        <option value="illegal">Illegal</option>
+        <option value="rare">Rare</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="shop-sort-select">Sort:</label>
+      <select id="shop-sort-select">
+        <option value="name-asc">Name (A–Z)</option>
+        <option value="name-desc">Name (Z–A)</option>
+        <option value="price-asc">Price (Low → High)</option>
+        <option value="price-desc">Price (High → Low)</option>
+        <option value="damage-desc">Damage (High → Low)</option>
+        <option value="availability">Availability</option>
+      </select>
+    </div>
+
+    <div class="filter-group search-group">
+      <label for="shop-search-input">Search:</label>
+      <input
+        id="shop-search-input"
+        type="text"
+        placeholder="Search items..."
+        autocomplete="off"
+      />
+    </div>
+  </div>
+
+  <!-- MAIN SHOP BODY -->
+  <div class="shop-body">
+    <!-- WEAPONS PANEL -->
+    <div class="shop-panel" data-panel="weapons">
+      <div class="products-list"></div>
+    </div>
+
+    <!-- ARMOR PANEL -->
+    <div class="shop-panel" data-panel="armor">
+      <div class="products-list"></div>
+    </div>
+
+    <!-- MEDICAL PANEL -->
+    <div class="shop-panel" data-panel="medical">
+      <div class="products-list"></div>
+    </div>
+
+    <!-- TECH PANEL -->
+    <div class="shop-panel" data-panel="tech">
+      <div class="products-list"></div>
+    </div>
+
+    <!-- TOOLS PANEL -->
+    <div class="shop-panel" data-panel="tools">
+      <div class="products-list"></div>
+    </div>
+
+    <!-- SURVIVAL PANEL -->
+    <div class="shop-panel" data-panel="survival">
+      <div class="products-list"></div>
+    </div>
+
+    <!-- SECURITY PANEL -->
+    <div class="shop-panel" data-panel="security">
+      <div class="products-list"></div>
+    </div>
+
+    <!-- EQUIPMENT PANEL -->
+    <div class="shop-panel" data-panel="equipment">
+      <div class="products-list"></div>
+    </div>
+
+    <!-- DROIDS PANEL -->
+    <div class="shop-panel" data-panel="droids">
+      <div class="products-list"></div>
+    </div>
+
+    <!-- VEHICLES PANEL -->
+    <div class="shop-panel" data-panel="vehicles">
+      <div class="products-list"></div>
+    </div>
+
+    <!-- CART PANEL -->
+    <div class="shop-panel cart-panel" data-panel="cart">
+      <div class="cart-container">
+        <h3>Shopping Cart</h3>
+        <div id="cart-items-list"></div>
+        <div class="cart-summary">
+          <div class="summary-line">
+            <span class="summary-label">Subtotal:</span>
+            <span id="cart-subtotal" class="summary-value">0</span>
+          </div>
+          <div class="summary-line total-line">
+            <span class="summary-label">Total:</span>
+            <span id="cart-total" class="summary-value">0</span>
+          </div>
+          <div class="summary-line">
+            <span class="summary-label">Remaining Credits:</span>
+            <span id="cart-remaining" class="summary-value remaining">{{credits}}</span>
+          </div>
+        </div>
+        <div class="cart-actions">
+          <button id="checkout-cart" class="holo-btn primary">
+            <i class="fas fa-credit-card"></i> Purchase
+          </button>
+          <button id="clear-cart" class="holo-btn secondary">
+            <i class="fas fa-trash"></i> Clear Cart
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GM SETTINGS PANEL -->
+    {{#if isGM}}
+    <div class="shop-panel gm-panel" data-panel="gm">
+      <h3>GM Store Settings</h3>
+
+      <div class="gm-settings-grid">
+        <div class="gm-setting">
+          <label for="gm-markup">Global Markup (%):</label>
+          <input type="number" id="gm-markup" data-setting="storeMarkup" min="-100" max="1000" />
+        </div>
+
+        <div class="gm-setting">
+          <label for="gm-discount">Global Discount (%):</label>
+          <input type="number" id="gm-discount" data-setting="storeDiscount" min="0" max="100" />
+        </div>
+      </div>
+
+      <div class="gm-actions">
+        <button id="gm-settings-save" class="holo-btn">
+          <i class="fas fa-save"></i> Save Settings
+        </button>
+
+        <button id="refresh-store-btn" class="holo-btn secondary">
+          <i class="fas fa-sync"></i> Refresh Store Index
+        </button>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+</div>
