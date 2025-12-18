@@ -1,0 +1,312 @@
+/* =====================================================
+   SWSE Combat Action Browser - Stylesheet
+   ===================================================== */
+
+.swse-action-browser {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 12px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* =====================================================
+   Search Bar
+   ===================================================== */
+
+.swse-action-search {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.swse-action-search::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.swse-action-search:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #ffce00;
+  box-shadow: 0 0 6px rgba(255, 206, 0, 0.3);
+}
+
+/* =====================================================
+   Tabs
+   ===================================================== */
+
+.swse-action-tabs {
+  display: flex;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #333;
+  gap: 0;
+}
+
+.swse-action-tab {
+  flex: 1;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  text-align: center;
+  border-bottom: 3px solid transparent;
+  color: #999;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.swse-action-tab:hover {
+  color: #ccc;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.swse-action-tab.active {
+  border-bottom-color: #ffce00;
+  color: #ffce00;
+  background: rgba(255, 206, 0, 0.08);
+}
+
+/* =====================================================
+   Content Area
+   ===================================================== */
+
+.swse-action-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.swse-action-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.swse-action-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.swse-action-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 206, 0, 0.4);
+  border-radius: 4px;
+}
+
+.swse-action-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 206, 0, 0.6);
+}
+
+/* =====================================================
+   Section Headers (Skill / Crew Role)
+   ===================================================== */
+
+.swse-character-actions h3,
+.swse-vehicle-actions h3 {
+  margin: 12px 0 8px 0;
+  padding: 8px 0;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #ffce00;
+  border-bottom: 1px solid rgba(255, 206, 0, 0.2);
+  letter-spacing: 0.5px;
+}
+
+/* =====================================================
+   Favorites Section
+   ===================================================== */
+
+.swse-favorites {
+  margin-bottom: 16px;
+  padding: 8px;
+  border-radius: 4px;
+  background: rgba(255, 206, 0, 0.05);
+  border: 1px solid rgba(255, 206, 0, 0.2);
+}
+
+/* =====================================================
+   Action Entries
+   ===================================================== */
+
+.swse-action-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  margin: 4px 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.swse-action-entry:hover:not(.disabled) {
+  background: rgba(255, 206, 0, 0.1);
+  border-color: rgba(255, 206, 0, 0.3);
+  transform: translateX(2px);
+}
+
+.swse-action-entry.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.swse-action-entry.disabled:hover {
+  transform: none;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Action Name */
+.swse-action-name {
+  flex: 1;
+  font-weight: 600;
+  font-size: 13px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse-action-entry.disabled .swse-action-name {
+  color: #999;
+}
+
+/* Enhancement Badge */
+.swse-action-enh-badge {
+  font-size: 10px;
+  color: #ffce00;
+  font-weight: bold;
+  margin-left: 4px;
+  opacity: 0.8;
+}
+
+/* =====================================================
+   Action Buttons & Controls
+   ===================================================== */
+
+.swse-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+}
+
+/* Execute Button */
+.swse-action-exec {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid #ffce00;
+  border-radius: 3px;
+  background: rgba(255, 206, 0, 0.15);
+  color: #ffce00;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.swse-action-exec:hover {
+  background: rgba(255, 206, 0, 0.25);
+  box-shadow: 0 0 8px rgba(255, 206, 0, 0.4);
+  transform: scale(1.05);
+}
+
+.swse-action-exec:active {
+  transform: scale(0.98);
+}
+
+/* Favorite Star */
+.swse-action-fav {
+  font-size: 14px;
+  cursor: pointer;
+  color: rgba(255, 206, 0, 0.3);
+  transition: all 0.2s ease;
+  user-select: none;
+  padding: 4px;
+}
+
+.swse-action-fav:hover {
+  color: rgba(255, 206, 0, 0.6);
+  transform: scale(1.2);
+}
+
+.swse-action-fav.active {
+  color: #ffce00;
+  text-shadow: 0 0 6px rgba(255, 206, 0, 0.6);
+}
+
+/* =====================================================
+   Sidebar Button
+   ===================================================== */
+
+#sidebar-tabs .swse-action-browser-tab {
+  flex: 0 0 32px;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #555;
+  border-left: none;
+  background: rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+#sidebar-tabs .swse-action-browser-tab:hover {
+  background: rgba(255, 206, 0, 0.15);
+  border-color: #ffce00;
+}
+
+#sidebar-tabs .swse-action-browser-tab i {
+  font-size: 16px;
+  color: #ffce00;
+}
+
+/* =====================================================
+   Token HUD Button
+   ===================================================== */
+
+.swse-action-hud {
+  font-size: 18px !important;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  color: #ffce00;
+}
+
+.swse-action-hud:hover {
+  transform: scale(1.15);
+  text-shadow: 0 0 8px rgba(255, 206, 0, 0.6);
+}
+
+/* =====================================================
+   Responsive & Scrollbar Styling
+   ===================================================== */
+
+/* Light scrollbar for action content */
+.swse-action-content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 206, 0, 0.4) transparent;
+}
+
+/* =====================================================
+   Empty State (if needed)
+   ===================================================== */
+
+.swse-action-browser .empty-state {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  font-style: italic;
+}

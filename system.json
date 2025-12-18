@@ -29,6 +29,7 @@
         "styles/swse-system.css",
         "styles/apps/chargen/chargen.css",
         "styles/apps/chargen/chargen-templates.css",
+        "styles/apps/combat-action-browser.css",
         "styles/sheets/character-sheet.css",
         "styles/sheets/vehicle-sheet.css",
         "styles/sheets/unified-sheets.css"

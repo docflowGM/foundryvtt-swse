@@ -1,0 +1,126 @@
+<div class="swse-action-browser">
+
+  <!-- Search Bar -->
+  <input type="text"
+         class="swse-action-search"
+         placeholder="Search actions..."
+         value="{{search}}" />
+
+  <!-- Tabs -->
+  <div class="swse-action-tabs">
+    {{#each tabs as |tab|}}
+      <div class="swse-action-tab {{#if (eq ../currentTab tab)}}active{{/if}}"
+           data-tab="{{tab}}">
+        {{#if (eq tab "character")}}Character Actions{{/if}}
+        {{#if (eq tab "vehicle")}}Vehicle Actions{{/if}}
+      </div>
+    {{/each}}
+  </div>
+
+  <!-- MAIN CONTENT AREA -->
+  <div class="swse-action-content">
+
+    {{!-- ======================== --}}
+    {{!-- CHARACTER ACTIONS TAB --}}
+    {{!-- ======================== --}}
+    {{#if (eq currentTab "character")}}
+      <div class="swse-character-actions">
+
+        <!-- Favorites -->
+        {{#if character.favorites}}
+          {{#if character.favorites.length}}
+            <h3>★ Favorite Actions</h3>
+            <div class="swse-favorites">
+              {{#each character.favorites as |action|}}
+                {{> actionEntry action=action}}
+              {{/each}}
+            </div>
+          {{/if}}
+        {{/if}}
+
+        <!-- Groups by Skill -->
+        {{#each character.groups as |actions skill|}}
+          {{#if actions}}
+            {{#if actions.length}}
+              <h3>{{lookup ../this '_getSkillDisplayName' skill}}</h3>
+              {{#each actions as |action|}}
+                {{> actionEntry action=action}}
+              {{/each}}
+            {{/if}}
+          {{/if}}
+        {{/each}}
+
+      </div>
+    {{/if}}
+
+    {{!-- ======================== --}}
+    {{!-- VEHICLE ACTIONS TAB --}}
+    {{!-- ======================== --}}
+    {{#if (eq currentTab "vehicle")}}
+      <div class="swse-vehicle-actions">
+
+        <!-- Favorites -->
+        {{#if vehicle.favorites}}
+          {{#if vehicle.favorites.length}}
+            <h3>★ Favorite Vehicle Actions</h3>
+            <div class="swse-favorites">
+              {{#each vehicle.favorites as |action|}}
+                {{> actionEntry action=action}}
+              {{/each}}
+            </div>
+          {{/if}}
+        {{/if}}
+
+        <!-- Groups by Crew Role -->
+        {{#each vehicle.groups as |actions role|}}
+          {{#if actions}}
+            {{#if actions.length}}
+              <h3>{{capitalize role}}</h3>
+              {{#each actions as |action|}}
+                {{> actionEntry action=action}}
+              {{/each}}
+            {{/if}}
+          {{/if}}
+        {{/each}}
+
+      </div>
+    {{/if}}
+
+  </div> <!-- end content -->
+
+</div> <!-- end browser -->
+
+
+<!-- =====================================================
+     PARTIAL: Action Entry
+     ===================================================== -->
+
+{{#*inline "actionEntry"}}
+  <div class="swse-action-entry {{#if action.disabled}}disabled{{/if}}"
+       {{#if action.tooltip}}title="{{action.tooltip}}"{{/if}}>
+
+    <div class="swse-action-name">
+      {{action.name}}
+
+      {{#if action.hasEnhancements}}
+        <span class="swse-action-enh-badge" title="Enhanced by talents">*</span>
+      {{/if}}
+    </div>
+
+    <div class="swse-action-buttons">
+      {{#unless action.disabled}}
+        <button class="swse-action-exec"
+                data-key="{{action.key}}"
+                data-action-type="{{action.actionType}}">
+          Execute
+        </button>
+      {{/unless}}
+
+      <span class="swse-action-fav {{#if action.isFavorite}}active{{/if}}"
+            data-key="{{action.key}}">
+        ★
+      </span>
+    </div>
+
+  </div>
+{{/inline}}
