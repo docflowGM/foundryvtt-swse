@@ -8,7 +8,7 @@ export function registerSWSEPartials() {
     "systems/foundryvtt-swse/templates/partials/ability-block.hbs",
     "systems/foundryvtt-swse/templates/partials/ability-scores.hbs",
     "systems/foundryvtt-swse/templates/partials/defenses.hbs",
-    "systems/foundryvtt-swse/templates/partials/skill-row.hbs",
+    "systems/foundryvtt-swse/templates/partials/skill-row-static.hbs",
     "systems/foundryvtt-swse/templates/partials/tab-navigation.hbs",
     "systems/foundryvtt-swse/templates/partials/item-controls.hbs"
   ];

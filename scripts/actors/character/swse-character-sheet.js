@@ -19,11 +19,12 @@
 //   L. Utility Functions
 // ============================================================
 
-import { SWSEActorSheetBase } from './base-sheet.js';
+import { SWSEActorSheetBase } from "../../sheets/base-sheet.js";
 import { SWSELogger } from '../../utils/logger.js';
 import { CombatActionsMapper } from '../../combat/utils/combat-actions-mapper.js';
 import { FeatActionsMapper } from '../../utils/feat-actions-mapper.js';
 import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
+import { FeatSystem } from "../../engine/FeatSystem.js";
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
@@ -80,6 +81,8 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // C. Data Preparation Engine (Optimized)
   // ----------------------------------------------------------
   async getData() {
+        // Inject feat actions
+        data.featActions = FeatSystem.buildFeatActions(this.actor);
     const context = await super.getData();
     const actor = this.actor;
     const system = actor.system;
@@ -185,6 +188,20 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // ----------------------------------------------------------
 
   activateListeners(html) {
+
+        // Feat Actions handlers
+        html.find('.feat-roll').click(ev => this._onFeatRoll(ev));
+        html.find('.feat-attack').click(ev => this._onFeatAttack(ev));
+        html.find('.feat-ct').click(ev => this._onFeatCT(ev));
+        html.find('.feat-force').click(ev => this._onFeatForce(ev));
+        html.find('.feat-card-header').click(ev => this._toggleFeatCard(ev));
+    
+
+        super.activateListeners(html);
+        html.find(".defense-input-sm, .defense-select-sm").change(ev => {
+            this.actor.prepareData();
+            this.render();
+        });
     super.activateListeners(html);
     const root = html[0];
 

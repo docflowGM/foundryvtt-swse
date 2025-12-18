@@ -1,0 +1,85 @@
+
+/* ==========================================================================
+   SWSE Feat Action Holo Cards
+   ========================================================================== */
+
+.swse-feat-actions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 6px;
+}
+
+/* Feat Card */
+.feat-card {
+  background: rgba(0, 20, 40, 0.75);
+  border: 1px solid rgba(0, 190, 255, 0.25);
+  border-radius: 8px;
+  padding: 6px;
+  transition: 0.2s ease;
+}
+.feat-card:hover {
+  border-color: rgba(0, 255, 255, 0.6);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.25);
+}
+
+/* Header */
+.feat-card-header {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.feat-icon { width: 24px; text-align: center; color: var(--holo-cyan); }
+.feat-title { flex: 1; font-weight: 900; font-size: 14px; margin-left: 4px; }
+.feat-type-label { color: #bbb; font-size: 11px; margin-right: 6px; }
+.feat-expand-icon { color: var(--holo-cyan); }
+
+/* Body */
+.feat-card-body {
+  display: none;
+  padding: 8px 4px 0 4px;
+}
+
+.feat-benefit {
+  color: #e0ffff;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+/* Buttons */
+.feat-btn {
+  padding: 4px 8px;
+  margin-bottom: 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  background: rgba(0, 150, 200, 0.5);
+  border: 1px solid rgba(0, 150, 200, 0.8);
+  color: white;
+  cursor: pointer;
+}
+.feat-btn:hover {
+  background: rgba(0, 180, 240, 0.8);
+}
+
+/* Tags */
+.feat-tags {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.feat-tag {
+  background: rgba(0, 150, 200, 0.3);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+
+/* Details Button */
+.feat-details-btn {
+  background: rgba(0, 80, 120, 0.6);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}

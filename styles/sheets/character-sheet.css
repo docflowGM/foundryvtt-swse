@@ -531,172 +531,172 @@ form.swse-app-datapad-sheet {
   background: rgba(0, 255, 136, 0.06);
   border: 1px solid rgba(0, 255, 136, 0.12);
 }
+/* ================================================================
+   SWSE CHARACTER SHEET — DEFENSES (COMPLETE REPLACEMENT)
+   Supports Expanded Hybrid Grid (Option B)
+   ================================================================ */
 
-/* =========================
-   DEFENSES SECTION
-   ========================= */
-.swse-app .defenses {
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.swse-app .defense {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0.75rem;
-  background: var(--color-bg-block);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
-}
-
-.swse-app .defense-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-secondary);
-  margin-bottom: 0.25rem;
-}
-
-.swse-app .defense-value {
-  font-size: 2rem;
-  font-weight: bold;
-  color: var(--color-text-emphatic);
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--border-radius);
-  transition: all 0.2s;
-}
-
-.swse-app .defense-value:hover {
-  color: var(--color-accent);
-  background: rgba(0, 217, 255, 0.1);
-  text-shadow: 0 0 8px var(--color-accent-glow, rgba(0, 217, 255, 0.6));
-}
-
-.swse-app .defense-breakdown {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.25rem;
-}
-
-.swse-app .breakdown-item {
-  padding: 0.125rem 0.25rem;
-}
-
-.swse-app .breakdown-item.active {
-  background: rgba(0, 217, 255, 0.2);
-  border-radius: 2px;
-  font-weight: 600;
-}
-
-.swse-app .defense-table {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.swse-app .defense-table-header {
+/* Defense Grid Row */
+.swse-app .defense-table-expanded {
   display: grid;
-  grid-template-columns: 75px 50px 40px 65px 55px 55px 55px;
-  gap: 4px;
-  padding: 4px;
-  background: linear-gradient(90deg, rgba(0, 168, 204, 0.15), rgba(0, 120, 160, 0.08));
-  border-radius: 4px;
-  font-size: 9px;
-  font-weight: 900;
-  text-transform: uppercase;
-  color: #e6faff;
-  text-align: center;
-}
-
-.swse-app .defense-table-row {
-  display: grid;
-  grid-template-columns: 75px 50px 40px 65px 55px 55px 55px;
+  grid-template-columns:
+      90px    /* Defense Name */
+      40px    /* Base 10+ */
+      150px   /* Ability Dropdown */
+      25px    /* + */
+      150px   /* Level / Armor / Source Dropdown */
+      25px    /* + */
+      75px    /* Class Bonus */
+      25px    /* + */
+      75px    /* Size (Reflex) OR Equipment (Fort/Will) */
+      25px    /* + */
+      115px   /* Misc Total + Dialog Button */
+      20px    /* = */
+      60px;   /* Total */
   gap: 4px;
   align-items: center;
   padding: 6px 4px;
-  border-radius: 4px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.02));
+  margin-bottom: 6px;
+
+  background: linear-gradient(180deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(255, 255, 255, 0.02)
+  );
+  border-radius: 6px;
   border: 1px solid rgba(0, 168, 204, 0.1);
 }
 
-.swse-app .defense-label-compact {
+/* ===============================
+   Columns
+   =============================== */
+
+.swse-app .defense-name {
   font-weight: 900;
   color: var(--holo-cyan);
   text-transform: uppercase;
   font-size: 11px;
+  letter-spacing: 0.04em;
 }
 
-.swse-app .defense-total-compact {
-  font-size: 16px;
-  font-weight: 900;
+.swse-app .defense-base,
+.swse-app .defense-plus,
+.swse-app .defense-equals {
   text-align: center;
-  padding: 6px;
-  border-radius: 4px;
-}
-
-.swse-app .reflex-total {
-  color: #2fe0c6;
-  background: rgba(47, 224, 198, 0.08);
-  border: 1px solid rgba(47, 224, 198, 0.15);
-}
-
-.swse-app .fortitude-total {
-  color: #ff8a8a;
-  background: rgba(255, 138, 138, 0.08);
-  border: 1px solid rgba(255, 138, 138, 0.15);
-}
-
-.swse-app .will-total {
-  color: #ffeaa7;
-  background: rgba(255, 234, 167, 0.08);
-  border: 1px solid rgba(255, 234, 167, 0.15);
-}
-
-.swse-app .defense-equals,
-.swse-app .defense-base {
-  text-align: center;
-  font-size: 11px;
+  font-weight: 700;
+  font-size: 12px;
   color: var(--muted);
 }
 
-.swse-app .defense-input-sm {
-  padding: 6px 4px;
-  border-radius: 6px;
-  text-align: center;
-  font-size: 12px;
-}
+/* ===============================
+   Selects (Ability, Reflex Source)
+   =============================== */
 
-.swse-app .defense-select-sm {
-  padding: 6px 4px;
+.swse-app select.defense-select-sm {
+  padding: 4px 6px;
   border-radius: 6px;
-  text-align: center;
-  font-size: 12px;
   background: rgba(0, 30, 50, 0.9);
   border: 1px solid rgba(0, 170, 204, 0.5);
   color: #ffffff;
   font-weight: 700;
+  font-size: 12px;
   cursor: pointer;
 }
 
-.swse-app .defense-select-sm:hover {
+.swse-app select.defense-select-sm:hover {
   background: rgba(0, 40, 70, 1);
   border-color: rgba(0, 200, 255, 0.7);
 }
 
-.swse-app .defense-select-sm:focus {
-  background: rgba(0, 50, 85, 1);
+.swse-app select.defense-select-sm:focus {
+  outline: none;
   border-color: var(--holo-cyan);
+  background: rgba(0, 60, 90, 1);
 }
 
-.swse-app .defense-notes {
-  margin-top: 8px;
+/* ===============================
+   Numeric Inputs (Level, Class, Size, Misc)
+   =============================== */
+
+.swse-app .defense-input-sm {
+  text-align: center;
+  padding: 4px;
+  border-radius: 4px;
+  background: rgba(0, 30, 50, 0.85);
+  border: 1px solid rgba(0, 150, 200, 0.4);
+  color: #fff;
+  font-size: 12px;
 }
+
+.swse-app .defense-input-sm:focus {
+  border-color: var(--holo-cyan);
+  background: rgba(0, 45, 70, 0.95);
+  outline: none;
+}
+
+/* ===============================
+   Misc Block
+   =============================== */
+
+.swse-app .misc-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.swse-app .misc-dialog-btn {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 120, 160, 0.4);
+  border: 1px solid rgba(0, 190, 230, 0.4);
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.swse-app .misc-dialog-btn:hover {
+  background: rgba(0, 120, 160, 0.7);
+  border-color: rgba(0, 210, 255, 0.6);
+}
+
+/* ===============================
+   Total Display
+   =============================== */
+
+.swse-app .defense-total {
+  font-size: 1.4rem;
+  font-weight: 900;
+  text-align: center;
+  padding: 4px 6px;
+  border-radius: 4px;
+
+  background: rgba(0, 60, 90, 0.3);
+  border: 1px solid rgba(0, 170, 204, 0.35);
+  color: #ffffff;
+  text-shadow: 0 0 4px rgba(0, 200, 255, 0.7);
+}
+
+/* Reflex / Fortitude / Will Color Themes (Optional) */
+
+.swse-app .defense-total.reflex-total {
+  color: #2fe0c6;
+  background: rgba(47, 224, 198, 0.08);
+  border-color: rgba(47, 224, 198, 0.15);
+}
+
+.swse-app .defense-total.fortitude-total {
+  color: #ff8a8a;
+  background: rgba(255, 138, 138, 0.08);
+  border-color: rgba(255, 138, 138, 0.15);
+}
+
+.swse-app .defense-total.will-total {
+  color: #ffeaa7;
+  background: rgba(255, 234, 167, 0.08);
+  border-color: rgba(255, 234, 167, 0.15);
+}
+
 
 /* =========================
    SKILLS SECTION

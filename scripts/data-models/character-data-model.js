@@ -1,3 +1,4 @@
+import { DefenseSystem } from "../engine/DefenseSystem.js";
 import { SWSELogger } from '../utils/logger.js';
 import { SWSEActorDataModel } from './actor-data-model.js';
 

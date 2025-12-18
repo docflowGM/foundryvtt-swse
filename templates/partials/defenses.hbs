@@ -1,16 +1,106 @@
-{{!-- Defense Calculations Component --}}
-{{#each defenses as |defense key|}}
-<div class="defense-row">
- <label>{{capitalize key}}</label>
- <div class="defense-calc">
- <span>10 +</span>
- <input name="system.defenses.{{key}}.armor" type="number" value="{{defense.armor}}" data-dtype="Number" placeholder="0"/>
- <span>+ Ability +</span>
- <input name="system.defenses.{{key}}.class" type="number" value="{{defense.class}}" data-dtype="Number" placeholder="0"/>
- <span>+</span>
- <input name="system.defenses.{{key}}.misc" type="number" value="{{defense.misc}}" data-dtype="Number" placeholder="0"/>
- <span>=</span>
- <div class="defense-total">{{defense.total}}</div>
- </div>
+{{!-- =============================== --}}
+{{!--   DEFENSES — Expanded Table     --}}
+{{!-- =============================== --}}
+
+{{#each system.defenses as |defense key|}}
+
+<div class="defense-table-expanded">
+
+  {{!-- Defense Name --}}
+  <div class="defense-name">{{capitalize key}}</div>
+
+  {{!-- Static base 10 --}}
+  <div class="defense-base">10 +</div>
+
+  {{!-- Ability Dropdown --}}
+  <select 
+    name="system.defenses.{{key}}.ability"
+    class="defense-select-sm">
+    {{#each ../system.abilities as |ability aKey|}}
+      <option value="{{aKey}}" {{#if (eq aKey ../defense.ability)}}selected{{/if}}>
+        {{capitalize aKey}} ({{ability.mod}})
+      </option>
+    {{/each}}
+  </select>
+
+  <div class="defense-plus">+</div>
+
+  {{!-- Reflex = special source selector --}}
+  {{#if (eq key "reflex")}}
+    <select 
+      name="system.defenses.reflex.source"
+      class="defense-select-sm">
+      <option value="level" {{#if (eq defense.source "level")}}selected{{/if}}>
+        Heroic Level ({{../system.level}})
+      </option>
+      <option value="armor" {{#if (eq defense.source "armor")}}selected{{/if}}>
+        Armor Bonus ({{defense.armorBonus}})
+      </option>
+      <option value="armored" {{#if (eq defense.source "armored")}}selected{{/if}}>
+        Armored Defense
+      </option>
+      <option value="improvedArmored" {{#if (eq defense.source "improvedArmored")}}selected{{/if}}>
+        Improved Armored Defense
+      </option>
+    </select>
+  {{else}}
+    {{!-- Fortitude & Will use level --}}
+    <input 
+      type="number" 
+      name="system.defenses.{{key}}.level"
+      class="defense-input-sm"
+      value="{{defense.level}}"
+      data-dtype="Number"/>
+  {{/if}}
+
+  <div class="defense-plus">+</div>
+
+  {{!-- Class Bonus (auto + override allowed) --}}
+  <input 
+    type="number"
+    name="system.defenses.{{key}}.classBonus"
+    class="defense-input-sm"
+    value="{{defense.classBonus}}"
+    data-dtype="Number"/>
+
+  {{!-- Size Mod (Reflex only) --}}
+  {{#if (eq key "reflex")}}
+    <div class="defense-plus">+</div>
+    <input 
+      type="number"
+      name="system.defenses.reflex.sizeMod"
+      class="defense-input-sm"
+      value="{{defense.sizeMod}}"
+      data-dtype="Number"/>
+  {{/if}}
+
+  <div class="defense-plus">+</div>
+
+  {{!-- Misc Total with dialog --}}
+  <div class="misc-block">
+    <input 
+      type="number"
+      class="defense-input-sm"
+      name="system.defenses.{{key}}.miscTotal"
+      value="{{defense.miscTotal}}"
+      readonly
+      data-dtype="Number"
+    />
+    <button 
+      type="button" 
+      class="misc-dialog-btn" 
+      data-defense="{{key}}">
+      →
+    </button>
+  </div>
+
+  <div class="defense-equals">=</div>
+
+  {{!-- TOTAL --}}
+  <div class="defense-total">
+    {{defense.total}}
+  </div>
+
 </div>
+
 {{/each}}

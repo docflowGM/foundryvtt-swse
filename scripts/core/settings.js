@@ -132,6 +132,28 @@ export function registerSystemSettings() {
     type: Boolean,
     default: false
   });
+  
+game.settings.register("foundryvtt-swse", "armoredDefenseForAll", {
+    name: "Armored Defense Applies Automatically",
+    hint: "Causes all characters to treat Armored Defense as if they had the feat.",
+    scope: "world",
+    config: true,
+    default: false,
+    type: Boolean
+});
 
+game.settings.register("foundryvtt-swse", "diagonalMovement", {
+    name: "Diagonal Movement Rule",
+    hint: "Choose diagonal movement style.",
+    scope: "world",
+    config: true,
+    default: "1-1-1",    // or whatever you used before
+    type: String,
+    choices: {
+        "1-1-1": "1-1-1 (No tax)",
+        "1-2-1": "1-2-1 (Classic D&D)",
+        "5-10": "5-10 (Alternative)"
+    }
+});
   SWSELogger.log("SWSE | Settings registered");
 }
