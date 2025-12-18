@@ -1,218 +1,196 @@
-import { SWSELogger } from "../utils/logger.js";
-import { SWSEActiveEffectsManager } from "./active-effects-manager.js";
-
 /**
- * SWSE Combat Integration (v13+)
- * - RAW Condition Track behavior with UI-assisted "Recover Action"
- * - Turn-start prompts only when appropriate
- * - Skip turn / skip encounter / never show again options
- * - Handles Second Wind availability
- * - Fully compatible with SWSEActorBase + new Active Effects engine
+ * SWSE Condition Track Sheet Component (Enhanced and RAW-accurate)
+ * - GM-only persistent toggle
+ * - Recover blocked for Persistent conditions
+ * - Helpless state enforced (no Recover)
+ * - Skip-prompt compatibility with CombatIntegration (turn, encounter, forever)
+ * - RAW-correct penalty descriptions
+ * - Future-proof for action economy integration
  */
-export class SWSECombatIntegration {
 
-  static init() {
-    SWSELogger.log("SWSE | Initializing combat integration…");
+export class ConditionTrackComponent {
 
-    Hooks.on("createCombat", this._onCombatStart.bind(this));
-    Hooks.on("deleteCombat", this._onCombatEnd.bind(this));
-    Hooks.on("combatRound", this._onCombatRound.bind(this));
-    Hooks.on("combatTurn", this._onCombatTurn.bind(this));
+  /* ---------------------------------------- */
+  /* Public API                               */
+  /* ---------------------------------------- */
 
-    SWSELogger.log("SWSE | Combat integration ready.");
+  static render(actor, container) {
+    container.innerHTML = this._template(actor);
+    this._activate(container, actor);
   }
 
-  /* -------------------------------------------------------------------------- */
-  /* COMBAT START                                                               */
-  /* -------------------------------------------------------------------------- */
-
-  static async _onCombatStart(combat) {
-    if (!game.user.isGM) return;
-
-    SWSELogger.log(`SWSE | Combat '${combat.id}' started.`);
-
-    // Reset encounter-only CT prompt opt-outs
-    for (const c of combat.combatants) {
-      await c.setFlag("foundryvtt-swse", "skipCtPromptsEncounter", false);
-    }
-
-    // Message
-    ChatMessage.create({
-      content: `<div class="swse-combat-start">
-        <h2><i class="fas fa-swords"></i> Combat Started!</h2>
-        <p>Roll initiative!</p>
-      </div>`,
-      speaker: { alias: "System" }
-    });
+  static refresh(actor, container) {
+    this.render(actor, container);
   }
 
-  /* -------------------------------------------------------------------------- */
-  /* COMBAT END                                                                 */
-  /* -------------------------------------------------------------------------- */
+  /* ---------------------------------------- */
+  /* Template                                 */
+  /* ---------------------------------------- */
 
-  static async _onCombatEnd(combat) {
-    if (!game.user.isGM) return;
-
-    SWSELogger.log(`SWSE | Combat '${combat.id}' ended.`);
-
-    ChatMessage.create({
-      content: `<div class="swse-combat-end">
-        <h2><i class="fas fa-flag-checkered"></i> Combat Ended</h2>
-      </div>`,
-      speaker: { alias: "System" }
-    });
-  }
-
-  /* -------------------------------------------------------------------------- */
-  /* NEW ROUND                                                                  */
-  /* -------------------------------------------------------------------------- */
-
-  static async _onCombatRound(combat) {
-    if (!game.user.isGM) return;
-
-    const round = combat.round;
-    SWSELogger.log(`SWSE | Round ${round}`);
-
-    if (game.settings.get("foundryvtt-swse", "announceRounds")) {
-      ChatMessage.create({
-        content: `<div class="swse-round-start">
-          <h3><i class="fas fa-circle-notch"></i> Round ${round}</h3>
-        </div>`,
-        speaker: { alias: "System" }
-      });
-    }
-  }
-
-  /* -------------------------------------------------------------------------- */
-  /* TURN START                                                                 */
-  /* -------------------------------------------------------------------------- */
-
-  static async _onCombatTurn(combat) {
-    const c = combat.combatant;
-    const actor = c?.actor;
-    if (!actor) return;
-
-    SWSELogger.log(`SWSE | Turn Start: ${actor.name}`);
-
-    // GM turn announcements
-    if (game.settings.get("foundryvtt-swse", "announceTurns")) {
-      ChatMessage.create({
-        content: `<div class="swse-turn-start"><h3>${actor.name}'s Turn</h3></div>`,
-        speaker: { alias: "System" }
-      });
-    }
-
-    // Only prompt for PCs (owned by players)
-    const isPlayerOwned = actor.hasPlayerOwner;
-    if (!isPlayerOwned && !game.user.isGM) return;
-
-    // Check if CT > 0
+  static _template(actor) {
     const ct = actor.system.conditionTrack.current ?? 0;
-    if (ct === 0) return;
+    const persistent = actor.system.conditionTrack.persistent ?? false;
 
-    // Check persistent condition
-    const persistent = actor.system.conditionTrack.persistent === true;
-    if (persistent) {
-      ui.notifications.warn(`${actor.name} has a Persistent Condition and cannot Recover naturally.`);
-      return;
-    }
+    const steps = this._defineSteps();
+    const penaltyText = steps[ct]?.penalty || "";
 
-    // Skip prompt if user opted out for this actor permanently
-    const skipForever = await actor.getFlag("foundryvtt-swse", "skipCtPromptsForever");
-    if (skipForever) return;
+    // Do not show recover button if actor disabled popups "forever" feature
+    const skipForever = actor.getFlag("foundryvtt-swse", "skipCtPromptsForever") === true;
 
-    // Skip prompt if user opted out for this encounter
-    const skipEncounter = await c.getFlag("foundryvtt-swse", "skipCtPromptsEncounter");
-    if (skipEncounter) return;
+    return `
+      <div class="swse-condition-track">
 
-    // Check if the actor has any Second Wind uses left
-    const canSecondWind =
-      actor.type === "character" &&
-      actor.system.secondWind &&
-      actor.system.secondWind.used === false;
+        ${this._headerHTML(persistent)}
 
-    // Build options list dynamically
-    const buttons = {
-      recover: {
-        icon: '<i class="fas fa-heart"></i>',
-        label: "Recover (3 Swift Actions)",
-        callback: async () => {
-          await actor.moveConditionTrack(-1);
-          ChatMessage.create({
-            speaker: ChatMessage.getSpeaker({ actor }),
-            content: `<strong>${actor.name}</strong> spends 3 swift actions to Recover and improves 1 step on the Condition Track.`
-          });
-        }
-      },
-      skip: {
-        icon: '<i class="fas fa-times"></i>',
-        label: "Skip",
-        callback: () => {
-          this._promptSkipOptions(actor, c);
+        <div class="ct-track">
+          ${steps.map(s => this._stepHTML(s, ct)).join("")}
+        </div>
+
+        <div class="ct-controls">
+          <button class="ct-btn improve" data-ct="improve" ${skipForever ? "disabled" : ""}>
+            <i class="fas fa-arrow-up"></i> Recover
+          </button>
+
+          <button class="ct-btn worsen" data-ct="worsen">
+            <i class="fas fa-arrow-down"></i> Worsen
+          </button>
+
+          <label class="ct-persistent">
+            <input type="checkbox" data-ct="persistent" ${persistent ? "checked" : ""}/>
+            Persistent
+          </label>
+        </div>
+
+        ${ct > 0 ? `
+          <div class="ct-penalty">
+            <strong>Penalty:</strong> ${penaltyText}
+          </div>
+        ` : ""}
+        
+        ${skipForever ? `
+          <div class="ct-skip-info">
+            <em>Condition prompts are disabled for this actor.</em>
+          </div>
+        ` : ""}
+      </div>
+    `;
+  }
+
+  /* ---------------------------------------- */
+  /* Step Definitions (matches CombatIntegration) */
+  /* ---------------------------------------- */
+
+  static _defineSteps() {
+    return [
+      { index: 0, label: "Normal", penalty: "", css: "normal" },
+      { index: 1, label: "-1", penalty: "-1 to Attacks, Defenses, Ability & Skill Checks", css: "ct-1" },
+      { index: 2, label: "-2", penalty: "-2 to Attacks, Defenses, Ability & Skill Checks", css: "ct-2" },
+      { index: 3, label: "-5", penalty: "-5 to Attacks, Defenses, Ability & Skill Checks", css: "ct-5" },
+      { index: 4, label: "-10", penalty: "-10 to all above, Half Speed", css: "ct-10" },
+      { index: 5, label: "Helpless", penalty: "Unconscious / Disabled", css: "ct-helpless" }
+    ];
+  }
+
+  /* ---------------------------------------- */
+  /* Subtemplates                             */
+  /* ---------------------------------------- */
+
+  static _headerHTML(persistent) {
+    return `
+      <div class="ct-header">
+        <h3><i class="fas fa-heart-crack"></i> Condition Track</h3>
+        ${persistent ? `<span class="ct-tag">PERSISTENT</span>` : ""}
+      </div>
+    `;
+  }
+
+  static _stepHTML(step, currentIndex) {
+    const active = currentIndex === step.index ? "active" : "";
+    const marker = active ? `<div class="ct-marker">▼</div>` : "";
+
+    return `
+      <div class="ct-step ${step.css} ${active}"
+           data-ct="set"
+           data-step="${step.index}"
+           title="Set condition to ${step.label}">
+        <span class="ct-label">${step.label}</span>
+        ${step.penalty ? `<span class="ct-pen">${step.penalty}</span>` : ""}
+        ${marker}
+      </div>
+    `;
+  }
+
+  /* ---------------------------------------- */
+  /* Event Activation                         */
+  /* ---------------------------------------- */
+
+  static _activate(container, actor) {
+    const $c = $(container);
+
+    /* --------------------------- */
+    /* Direct GM-Only CT Set       */
+    /* --------------------------- */
+    $c.find('[data-ct="set"]').on("click", async ev => {
+      if (!game.user.isGM) {
+        return ui.notifications.warn("Only the GM may directly set the Condition Track.");
+      }
+      const step = Number(ev.currentTarget.dataset.step);
+      await actor.update({ "system.conditionTrack.current": Math.clamp(step, 0, 5) });
+    });
+
+    /* --------------------------- */
+    /* Recover (Improve)           */
+    /* --------------------------- */
+    $c.find('[data-ct="improve"]').on("click", async () => {
+
+      // If actor chose "never show CT prompts" — reflect that here too
+      const skipForever = actor.getFlag("foundryvtt-swse", "skipCtPromptsForever") === true;
+      if (skipForever) {
+        return ui.notifications.info("CT recovery prompts disabled for this actor.");
+      }
+
+      const ct = actor.system.conditionTrack.current ?? 0;
+      const persistent = actor.system.conditionTrack.persistent === true;
+
+      if (ct === 5) {
+        return ui.notifications.warn("A Helpless creature cannot perform a Recover action.");
+      }
+
+      if (persistent) {
+        return ui.notifications.warn("This condition is Persistent and cannot be removed by natural recovery.");
+      }
+
+      // Optional future action economy check
+      if (actor.system.actionEconomy?.swift !== undefined) {
+        const swift = actor.system.actionEconomy.swift;
+        if (!swift) {
+          return ui.notifications.warn("Not enough Swift Actions remaining to Recover.");
         }
       }
-    };
 
-    if (canSecondWind) {
-      buttons.secondWind = {
-        icon: '<i class="fas fa-wind"></i>',
-        label: "Use Second Wind",
-        callback: async () => await actor.useSecondWind()
-      };
-    }
+      await actor.moveConditionTrack(-1);
+      ui.notifications.info(`${actor.name} improves 1 step on the Condition Track.`);
+    });
 
-    // CT labels
-    const ctLabels = ["Normal", "-1", "-2", "-5", "-10", "Helpless"];
+    /* --------------------------- */
+    /* Worsen (+1 Step)            */
+    /* --------------------------- */
+    $c.find('[data-ct="worsen"]').on("click", async () => {
+      await actor.moveConditionTrack(1);
+    });
 
-    new Dialog({
-      title: `${actor.name} — Condition Recovery`,
-      content: `
-        <div class="swse condition-recovery">
-          <p><strong>${actor.name}</strong> may Recover from the Condition Track.</p>
-          <p>Current Condition: <strong>${ctLabels[ct]}</strong></p>
-        </div>
-      `,
-      buttons,
-      default: "recover"
-    }).render(true);
-  }
-
-  /* -------------------------------------------------------------------------- */
-  /* SKIP OPTIONS POPUP                                                         */
-  /* -------------------------------------------------------------------------- */
-
-  static async _promptSkipOptions(actor, combatant) {
-    return new Dialog({
-      title: "Skip Condition Recovery",
-      content: `
-        <p>Choose how long to skip Condition Track recovery prompts:</p>
-      `,
-      buttons: {
-        skipTurn: {
-          icon: '<i class="fas fa-angle-right"></i>',
-          label: "Skip This Turn Only",
-          callback: () => {
-            ui.notifications.info("Skipping recovery for this turn.");
-          }
-        },
-        skipEncounter: {
-          icon: '<i class="fas fa-flag"></i>',
-          label: "Skip For This Encounter",
-          callback: async () => {
-            await combatant.setFlag("foundryvtt-swse", "skipCtPromptsEncounter", true);
-            ui.notifications.info("Skipping CT prompts for the rest of this encounter.");
-          }
-        },
-        skipForever: {
-          icon: '<i class="fas fa-ban"></i>',
-          label: "Never Show Again",
-          callback: async () => {
-            await actor.setFlag("foundryvtt-swse", "skipCtPromptsForever", true);
-            ui.notifications.info(`${actor.name} will never show CT recovery prompts again.`);
-          }
-        }
-      },
-      default: "skipTurn"
-    }).render(true);
+    /* --------------------------- */
+    /* Persistent Toggle (GM Only) */
+    /* --------------------------- */
+    $c.find('[data-ct="persistent"]').on("change", async ev => {
+      if (!game.user.isGM) {
+        ev.preventDefault();
+        ui.notifications.warn("Only the GM may toggle Persistent Conditions.");
+        // revert toggle
+        ev.target.checked = actor.system.conditionTrack.persistent;
+        return;
+      }
+      await actor.update({ "system.conditionTrack.persistent": ev.target.checked });
+    });
   }
 }
