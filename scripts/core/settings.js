@@ -166,5 +166,15 @@ game.settings.register("foundryvtt-swse", "diagonalMovement", {
     default: {}
   });
 
+  // Mentor Guidance Popups Setting
+  game.settings.register('foundryvtt-swse', 'mentorGuidanceEnabled', {
+    name: 'Enable Mentor Guidance Popups',
+    hint: 'Display mentor guidance popups when choosing class, skills, feats, and talents. Disable to receive messages only in chat.',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   SWSELogger.log("SWSE | Settings registered");
 }
