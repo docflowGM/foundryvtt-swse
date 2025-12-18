@@ -4,6 +4,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { warnGM } from '../../utils/warn-gm.js';
 import { getClassLevel } from './levelup-shared.js';
 import { filterQualifiedFeats } from './levelup-validation.js';
 import { getClassProperty } from '../chargen/chargen-property-accessor.js';
@@ -208,19 +209,27 @@ export async function loadFeats(actor, selectedClass, pendingData) {
       if (levelProgression && Array.isArray(levelProgression)) {
         const levelData = levelProgression.find(lp => lp.level === classLevel);
         if (levelData && levelData.features) {
-          // Find the feat_choice feature to see if it specifies a feat list
+          // Find the feat_choice feature (Option C: check for type === "feat_choice")
           const featFeature = levelData.features.find(f => f.type === 'feat_choice');
-          if (featFeature && featFeature.list) {
-            // This class has a specific feat list (e.g., "jedi_feats", "noble_feats")
-            SWSELogger.log(`SWSE LevelUp | Filtering feats by list: ${featFeature.list} for ${className}`);
+          if (featFeature) {
+            SWSELogger.log(`SWSE LevelUp | Bonus feat level detected for ${className}`);
 
-            // Filter to only feats that have this class in their bonus_feat_for array
+            // Filter feats based on RAW rule (Option C)
             featObjects = featObjects.filter(f => {
-              const bonusFeatFor = f.system?.bonus_feat_for || [];
-              return bonusFeatFor.includes(className) || bonusFeatFor.includes('all');
+              const allowed = f.system?.bonus_feat_for || [];
+              return allowed.includes(className) || allowed.includes("all");
             });
 
-            SWSELogger.log(`SWSE LevelUp | Filtered to ${featObjects.length} bonus feats for ${className}`);
+            SWSELogger.log(
+              `SWSE LevelUp | ${featObjects.length} eligible bonus feats for ${className}`
+            );
+
+            // GM Warning if none found
+            if (featObjects.length === 0) {
+              warnGM(
+                `${className} grants a Bonus Feat at this level, but no feats exist tagged with "bonus_feat_for": ["${className}"].`
+              );
+            }
           }
         }
       }
