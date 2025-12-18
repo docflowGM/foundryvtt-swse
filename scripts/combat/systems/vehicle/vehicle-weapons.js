@@ -1,9 +1,108 @@
 /**
- * Weapon systems: missiles, torpedoes, and weapon batteries
- * Implements lock-on missiles and battery firing modes
+ * SWSE Vehicle Weapons System
+ *
+ * Includes:
+ *  - Missile / Torpedo lock-on
+ *  - Homing (Pilot opposed vs Point Defense)
+ *  - Fire arcs
+ *  - Weapon batteries (multiple shots as one attack)
  */
 
-import { getDefaultGunner, getTargetReflexDefense } from './vehicle-shared.js';
+import { measureDistance, facingTowards } from "./vehicle-shared.js";
+import { SWSERoll } from "../rolls/rolls.js";
+
+export class SWSEVehicleWeapons {
+
+  /**
+   * RAW: Missile Lock-On requires an attack roll vs DC 15 (or target Pilot roll).
+   */
+  static async missileLock(attacker, weapon, target) {
+    const roll = await SWSERoll.rollSkill(attacker, "mechanics");
+    const dc = weapon.system?.lockDC ?? 15;
+
+    const success = roll.roll.total >= dc;
+
+    const html = `
+      <div class="swse-missile-lock">
+        <h3>${weapon.name} — Lock-On Attempt</h3>
+        <div>Roll: ${roll.roll.total} vs DC ${dc}</div>
+        <div class="${success ? "success" : "failure"}">
+          ${success ? "Lock Acquired!" : "Lock Failed"}
+        </div>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: attacker }),
+      content: html,
+      roll: roll.roll
+    });
+
+    return success;
+  }
+
+  /**
+   * Fire Arc Check (forward, aft, port, starboard)
+   */
+  static inFireArc(attacker, target, arc = "forward", tolerance = 75) {
+    const atkTok = attacker.getActiveTokens()[0];
+    const tgtTok = target.getActiveTokens()[0];
+    if (!atkTok || !tgtTok) return false;
+
+    const facing = atkTok.document.rotation * (Math.PI / 180);
+    const angleToTarget = Math.atan2(
+      tgtTok.center.y - atkTok.center.y,
+      tgtTok.center.x - atkTok.center.x
+    );
+
+    const deg = ((angleToTarget - facing) * 180) / Math.PI;
+
+    switch (arc) {
+      case "forward": return Math.abs(deg) <= tolerance;
+      case "aft": return Math.abs(deg) >= 180 - tolerance;
+      case "port": return deg > tolerance && deg < 180 - tolerance;
+      case "starboard": return deg < -tolerance && deg > -(180 - tolerance);
+    }
+
+    return true;
+  }
+
+  /**
+   * Weapon Battery Attack (multiple shots, single roll)
+   */
+  static async fireBattery(attacker, weaponGroup, target) {
+    const weapons = attacker.items.filter(
+      w => w.type === "vehicle-weapon" && w.system?.batteryGroup === weaponGroup
+    );
+
+    if (!weapons.length) {
+      ui.notifications.warn("No weapons found in this battery.");
+      return null;
+    }
+
+    const attackRoll = await SWSERoll.rollAttack(attacker, weapons[0], target);
+    const hits = attackRoll.roll.total >= target.system.defenses.reflex.total;
+
+    const html = `
+      <div class="swse-vehicle-battery">
+        <h3>Battery Fire — ${weaponGroup}</h3>
+        <div>Weapons Fired: ${weapons.length}</div>
+        <div>Attack Total: ${attackRoll.roll.total}</div>
+        <div class="${hits ? "success" : "failure"}">${hits ? "HIT!" : "MISS"}</div>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: attacker }),
+      content: html,
+      roll: attackRoll.roll
+    });
+
+    return { attackRoll, hits, weapons };
+  }
+}
+
+window.SWSEVehicleWeapons = SWSEVehicleWeapons;
 
 /**
  * Fire missile or torpedo (with lock-on capability)
