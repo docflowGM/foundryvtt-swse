@@ -1,77 +1,66 @@
-import { ProgressionEngine } from "../progression/engine/progression-engine.js";
+import { swseLogger } from "../utils/logger.js";
+
 /**
- * Custom Combat Document for SWSE
- * Extends Foundry's Combat class to implement SWSE-specific combat rules
+ * SWSE Combat Document (v13+)
+ * - Uses correct SWSE initiative (Skill-based)
+ * - Uses updated Second Wind + Action Economy systems
+ * - Removes deprecated ActorEngine calls
+ * - Fully v13-compatible combat lifecycle overrides
  */
 export class SWSECombatDocument extends Combat {
 
+  /* -------------------------------------------- */
+  /* INITIATIVE FORMULA                           */
+  /* -------------------------------------------- */
+
   /**
-   * Override initiative formula to use SWSE initiative calculation
-   * @param {SWSECombatant} combatant - The combatant whose initiative is being rolled
-   * @returns {string} The initiative formula
+   * SWSE Initiative = 1d20 + Initiative Skill Total
    */
   _getInitiativeFormula(combatant) {
     const actor = combatant.actor;
     if (!actor) return "1d20";
 
-    // Use the actor's initiative total from the initiative skill
-    const initiativeTotal = actor.system.initiative || 0;
-    return `1d20 + ${initiativeTotal}`;
+    const initTotal = actor.system.skills?.initiative?.total ?? 0;
+    return `1d20 + ${initTotal}`;
   }
 
-  /**
-   * Override rollInitiative to handle SWSE-specific initiative rolling
-   * @param {string|string[]} ids - Combatant IDs to roll initiative for
-   * @param {object} options - Additional options
-   * @returns {Promise<Combat>}
-   */
-  async rollInitiative(ids, {formula=null, updateTurn=true, messageOptions={}}={}) {
-    // Ensure array of IDs
+  /* -------------------------------------------- */
+  /* ROLL INITIATIVE                              */
+  /* -------------------------------------------- */
+
+  async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
     ids = typeof ids === "string" ? [ids] : ids;
 
-    // Iterate over Combatants and roll initiative
     const updates = [];
     const messages = [];
 
-    for (let id of ids) {
+    for (const id of ids) {
       const combatant = this.combatants.get(id);
       if (!combatant?.isOwner) continue;
 
-      // Get the initiative formula
-      const rollFormula = formula || this._getInitiativeFormula(combatant);
-      const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula).evaluate({async: true});
-
-      updates.push({_id: id, initiative: roll.total});
-
-      // Create chat message
       const actor = combatant.actor;
-      const messageData = foundry.utils.mergeObject({
-        speaker: ChatMessage.getSpeaker({
-          actor: actor,
-          token: combatant.token,
-          alias: combatant.name
-        }),
-        flavor: game.i18n.format("COMBAT.RollsInitiative", {name: combatant.name}),
-        flags: {"core.initiativeRoll": true}
-      }, messageOptions);
+      const rollFormula = formula || this._getInitiativeFormula(combatant);
 
-      const chatData = await roll.toMessage(messageData, {create: false});
+      const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula).evaluate({ async: true });
 
-      // Play dice sound
+      updates.push({ _id: id, initiative: roll.total });
+
+      const chatData = await roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor, token: combatant.token, alias: combatant.name }),
+        flavor: game.i18n.format("COMBAT.RollsInitiative", { name: combatant.name }),
+        flags: { "core.initiativeRoll": true },
+        ...messageOptions
+      }, { create: false });
+
       if (roll.dice.length) chatData.sound = CONFIG.sounds.dice;
-
       messages.push(chatData);
     }
 
-    if (!updates.length) return this;
+    if (updates.length) {
+      await this.updateEmbeddedDocuments("Combatant", updates);
+      await ChatMessage.implementation.create(messages);
+    }
 
-    // Update multiple combatants
-    await this.updateEmbeddedDocuments("Combatant", updates);
-
-    // Create multiple chat messages
-    await ChatMessage.implementation.create(messages);
-
-    // Optionally advance to the next turn
     if (updateTurn && this.round === 0) {
       await this.startCombat();
     }
@@ -79,90 +68,94 @@ export class SWSECombatDocument extends Combat {
     return this;
   }
 
-  /**
-   * Override rollAll to use SWSE initiative for all combatants
-   * @param {object} options - Additional options
-   * @returns {Promise<Combat>}
-   */
-  async rollAll(options={}) {
-    const ids = this.combatants.reduce((ids, c) => {
-      if (c.isOwner && (c.initiative === null)) ids.push(c.id);
-      return ids;
-    }, []);
+  /* -------------------------------------------- */
+  /* ROLL ALL INITIATIVE                          */
+  /* -------------------------------------------- */
+
+  async rollAll(options = {}) {
+    const ids = this.combatants
+      .filter(c => c.isOwner && c.initiative === null)
+      .map(c => c.id);
+
     return this.rollInitiative(ids, options);
   }
 
-  /**
-   * Override rollNPC to use SWSE initiative for NPC combatants
-   * @param {object} options - Additional options
-   * @returns {Promise<Combat>}
-   */
-  async rollNPC(options={}) {
-    const ids = this.combatants.reduce((ids, c) => {
-      if (c.isOwner && c.isNPC && (c.initiative === null)) ids.push(c.id);
-      return ids;
-    }, []);
+  /* -------------------------------------------- */
+  /* ROLL NPC INITIATIVE                          */
+  /* -------------------------------------------- */
+
+  async rollNPC(options = {}) {
+    const ids = this.combatants
+      .filter(c => c.isOwner && !c.actor.hasPlayerOwner && c.initiative === null)
+      .map(c => c.id);
+
     return this.rollInitiative(ids, options);
   }
 
-  /**
-   * Begin combat tracking - reset resources at start
-   * @override
-   */
+  /* -------------------------------------------- */
+  /* START COMBAT                                 */
+  /* -------------------------------------------- */
+
   async startCombat() {
-    // Reset Second Wind for all combatants
     if (game.user.isGM) {
       for (const combatant of this.combatants) {
-        if (combatant.actor) {
-          await globalThis.SWSE.ActorEngine.updateActor(combatant.actor, {
-            'system.secondWind.uses': 1,
-            'system.actionEconomy': {
-              swift: true,
-              move: true,
-              standard: true,
-              fullRound: true,
-              reaction: true
-            }
-          });
-        }
+        const actor = combatant.actor;
+        if (!actor) continue;
+
+        // Reset Second Wind (RAW: once per day, but many tables want per encounter)
+        await actor.update({ "system.secondWind.used": false }, { diff: true });
+
+        // Reset action economy
+        await actor.update({
+          "system.actionEconomy": {
+            swift: true,
+            move: true,
+            standard: true,
+            fullRound: true,
+            reaction: true
+          }
+        }, { diff: true });
       }
     }
 
     return super.startCombat();
   }
 
-  /**
-   * Advance to the next turn
-   * @override
-   */
+  /* -------------------------------------------- */
+  /* NEXT TURN                                    */
+  /* -------------------------------------------- */
+
   async nextTurn() {
     const result = await super.nextTurn();
 
-    // Reset action economy for the new combatant
-    const combatant = this.combatant;
-    if (combatant?.actor && game.user.isGM) {
-      await globalThis.SWSE.ActorEngine.updateActor(combatant.actor, {
-        'system.actionEconomy': {
-          swift: true,
-          move: true,
-          standard: true,
-          fullRound: true,
-          reaction: true
-        }
-      });
+    // Reset action economy when turn starts
+    if (game.user.isGM) {
+      const c = this.combatant;
+      const actor = c?.actor;
+
+      if (actor) {
+        await actor.update({
+          "system.actionEconomy": {
+            swift: true,
+            move: true,
+            standard: true,
+            fullRound: true,
+            reaction: true
+          }
+        }, { diff: true });
+      }
     }
 
     return result;
   }
 
-  /**
-   * Advance to the next round
-   * @override
-   */
+  /* -------------------------------------------- */
+  /* NEXT ROUND                                   */
+  /* -------------------------------------------- */
+
   async nextRound() {
     const result = await super.nextRound();
 
-    // Log round progression
     if (game.user.isGM) {
       swseLogger.log(`SWSE | Combat Round ${this.round}`);
     }
