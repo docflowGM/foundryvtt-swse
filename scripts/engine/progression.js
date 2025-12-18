@@ -1,6 +1,7 @@
 // scripts/engine/progression.js
 import { swseLogger } from '../utils/logger.js';
 import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
+import { FinalizeIntegration } from '../progression/integration/finalize-integration.js';
 
 /**
  * Unified SWSE Progression Engine
@@ -356,6 +357,9 @@ normalizeSteps(steps) {
       // Save progression state
       await this.saveStateToActor();
 
+      // Capture before-state for diff generation
+      const beforeSnapshot = this.actor.toObject(false);
+
       // Apply derived stats (HP, defenses, BAB, etc.)
       const { ActorProgressionUpdater } = await import('../progression/engine/progression-actor-updater.js');
       await ActorProgressionUpdater.finalize(this.actor);
@@ -363,7 +367,18 @@ normalizeSteps(steps) {
       // Create feat/talent/skill items from progression data
       await this._createProgressionItems();
 
-      // Trigger force powers (if applicable)
+      // Run integrated finalization with new subsystems
+      // This handles snapshots, specialized engines (Force, Language, Equipment),
+      // derived stat recalculation, and diff generation
+      try {
+        await FinalizeIntegration.quickIntegrate(this.actor, this.mode);
+        swseLogger.log('Integrated subsystem finalization completed');
+      } catch (integrationErr) {
+        swseLogger.warn('Integrated finalization encountered issues:', integrationErr);
+        // Continue with legacy flow as fallback
+      }
+
+      // Trigger force powers (if applicable) - Legacy handler for compatibility
       try {
         const { ForcePowerEngine } = await import('../progression/engine/force-power-engine.js');
         const progression = this.actor.system.progression || {};
