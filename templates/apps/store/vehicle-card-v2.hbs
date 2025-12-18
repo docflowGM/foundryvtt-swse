@@ -1,0 +1,72 @@
+<div class="product-card vehicle-card" data-item-id="{{id}}" data-type="vehicle">
+  <!-- Vehicle Image -->
+  <div class="product-image">
+    <img src="{{img}}" alt="{{name}}" class="product-img" />
+  </div>
+
+  <!-- Vehicle Info -->
+  <div class="product-info">
+    <h4 class="product-name">{{name}}</h4>
+
+    <!-- Rarity Badge -->
+    {{#if rarityClass}}
+    <div class="badge-row">
+      <span class="rarity-badge rarity-{{rarityClass}}">
+        <i class="fas fa-star"></i> {{rarityLabel}}
+      </span>
+    </div>
+    {{/if}}
+
+    <!-- Vehicle Type/Class -->
+    {{#if system.vehicleType}}
+    <div class="detail-line">
+      <i class="fas fa-car"></i>
+      <span>{{system.vehicleType}}</span>
+    </div>
+    {{/if}}
+
+    <!-- Speed -->
+    {{#if system.speed}}
+    <div class="detail-line">
+      <i class="fas fa-tachometer-alt"></i>
+      <span>{{system.speed}}</span>
+    </div>
+    {{/if}}
+
+    <!-- Description -->
+    {{#if description}}
+    <p class="product-description">{{description}}</p>
+    {{/if}}
+  </div>
+
+  <!-- Pricing & Actions -->
+  <div class="product-actions vehicle-actions">
+    <div class="vehicle-pricing">
+      <div class="price-option">
+        <span class="option-label">New:</span>
+        <span class="credits-icon">₢</span>
+        <span class="price-amount">{{cost}}</span>
+      </div>
+
+      {{#if costUsed}}
+      <div class="price-option">
+        <span class="option-label">Used:</span>
+        <span class="credits-icon">₢</span>
+        <span class="price-amount">{{costUsed}}</span>
+      </div>
+      {{/if}}
+    </div>
+
+    <div class="vehicle-buttons">
+      <button class="holo-btn buy-vehicle" data-actor-id="{{id}}" data-condition="new">
+        <i class="fas fa-shopping-cart"></i> Buy New
+      </button>
+
+      {{#if costUsed}}
+      <button class="holo-btn secondary buy-vehicle" data-actor-id="{{id}}" data-condition="used">
+        <i class="fas fa-shopping-cart"></i> Buy Used
+      </button>
+      {{/if}}
+    </div>
+  </div>
+</div>

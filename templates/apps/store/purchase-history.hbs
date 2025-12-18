@@ -1,0 +1,31 @@
+<div class="purchase-history">
+  {{#each entries}}
+  <div class="history-entry">
+    <div class="history-header">
+      <span class="history-date">
+        <i class="fas fa-calendar"></i> {{timestamp}}
+      </span>
+      <span class="history-total">
+        <span class="credits-icon">₢</span> {{total}}
+      </span>
+    </div>
+
+    <div class="history-items">
+      {{#each items}}
+      <div class="history-item">
+        <span class="item-name">{{name}}</span>
+        <span class="item-qty">×{{qty}}</span>
+        <span class="item-cost">
+          <span class="credits-icon">₢</span>{{cost}}
+        </span>
+        {{#if condition}}
+        {{#unless condition equals "new"}}
+        <span class="item-condition">({{condition}})</span>
+        {{/unless}}
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/each}}
+</div>
