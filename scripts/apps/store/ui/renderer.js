@@ -220,3 +220,66 @@ export function showMessage(app, message, type = "info") {
   const msg = ui.notifications[type](message);
   return msg;
 }
+
+/* ------------------------------------------------------------------ */
+/* PURCHASE HISTORY RENDERING                                         */
+/* ------------------------------------------------------------------ */
+
+export async function renderPurchaseHistory(container, actor) {
+  const tplPath = "systems/foundryvtt-swse/templates/apps/store/purchase-history.hbs";
+  const template = await loadTemplate(tplPath);
+
+  if (!actor) {
+    container.html(`
+      <div class="empty-message">
+        <i class="fas fa-ban"></i>
+        <p>No actor selected. Cannot view purchase history.</p>
+      </div>
+    `);
+    return;
+  }
+
+  const history = actor.getFlag("swse", "purchaseHistory") || [];
+
+  if (!history.length) {
+    container.html(`
+      <div class="empty-message">
+        <i class="fas fa-clock"></i>
+        <p>No purchase history found.</p>
+      </div>
+    `);
+    return;
+  }
+
+  if (!template) {
+    console.error("SWSE Store | Purchase history template failed to load");
+    return;
+  }
+
+  try {
+    const entries = history
+      .map(h => ({
+        timestamp: new Date(h.timestamp).toLocaleString(),
+        total: h.total.toLocaleString(),
+        items: h.entries.map(e => ({
+          name: e.name,
+          qty: e.qty,
+          cost: e.cost.toLocaleString(),
+          type: e.type,
+          condition: e.condition || "new"
+        }))
+      }))
+      .reverse();
+
+    const html = template({ entries });
+    container.html(html);
+  } catch (err) {
+    console.error("SWSE Store | Failed to render purchase history:", err);
+    container.html(`
+      <div class="empty-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Error loading purchase history.</p>
+      </div>
+    `);
+  }
+}

@@ -142,6 +142,25 @@ export class StoreCheckout {
       }
 
       /* ------------------------------------ */
+      /* LOG PURCHASE HISTORY                   */
+      /* ------------------------------------ */
+
+      const history = buyer.getFlag("swse", "purchaseHistory") || [];
+      history.push({
+        timestamp: Date.now(),
+        total: subtotal,
+        entries: this.cart.entries.map(e => ({
+          name: e.name,
+          id: e.id,
+          cost: e.cost,
+          qty: e.quantity,
+          type: e.type,
+          condition: e.condition
+        }))
+      });
+      await buyer.setFlag("swse", "purchaseHistory", history);
+
+      /* ------------------------------------ */
       /* SUCCESS                               */
       /* ------------------------------------ */
 

@@ -13,7 +13,7 @@
 
 import { buildStoreIndex } from "../engine/index.js";
 import { getRandomDialogue } from "../store-shared.js";
-import { renderStoreUI } from "./renderer.js";
+import { renderStoreUI, renderPurchaseHistory } from "./renderer.js";
 
 export class StoreController {
 
@@ -54,6 +54,7 @@ export class StoreController {
     this._bindSearchListener(html);
     this._bindSortListener(html);
     this._bindRendarrUI(html);
+    this._bindHistoryRender(html);
 
     this.refreshView(html);
   }
@@ -247,6 +248,7 @@ export class StoreController {
       case "droids": return this._flattenCategory("Droids");
       case "vehicles": return this._flattenCategory("Vehicles");
       case "cart": return []; // cart is dynamic
+      case "history": return []; // handled by custom renderer
       default: return [];
     }
   }
@@ -267,5 +269,17 @@ export class StoreController {
     const weaponsMap = this.index.byCategory.get("Weapons");
     const grenades = (weaponsMap?.get("Grenades") || []);
     return grenades;
+  }
+
+  /* ------------------------------------------ */
+  /* PURCHASE HISTORY                            */
+  /* ------------------------------------------ */
+
+  _bindHistoryRender(html) {
+    html.on("click", '[data-tab="history"]', () => {
+      const container = html.find("#purchase-history-list");
+      if (!container.length) return;
+      renderPurchaseHistory(container, this.app.actor);
+    });
   }
 }
