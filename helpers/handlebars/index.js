@@ -6,6 +6,7 @@ import { comparisonHelpers } from './comparison-helpers.js';
 import { arrayHelpers } from './array-helpers.js';
 import { swseHelpers } from './swse-helpers.js';
 import { utilityHelpers } from './utility-helpers.js';
+import { levelupHelpers } from './levelup-helpers.js';
 
 /**
  * Safely register a group of Handlebars helpers.
@@ -57,4 +58,5 @@ export function registerHandlebarsHelpers() {
   registerHelperGroup(arrayHelpers, 'arrayHelpers');
   registerHelperGroup(swseHelpers, 'swseHelpers');
   registerHelperGroup(utilityHelpers, 'utilityHelpers');
+  registerHelperGroup(levelupHelpers, 'levelupHelpers');
 }

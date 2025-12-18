@@ -1,0 +1,155 @@
+<div class="swse-levelup-wrapper">
+
+  {{!-- STEP HEADER --}}
+  <header class="step-header">
+    <h2>Level Up — {{actor.name}}</h2>
+    <div class="step-indicator">Step: {{step}}</div>
+  </header>
+
+  {{!-- STEP: CLASS --}}
+  {{#if (eq step "class")}}
+  <section>
+    <h3>Select Class</h3>
+    <div class="choice-grid">
+      {{#each available.classes}}
+        <button class="select-class" data-class="{{this.name}}">
+          <div class="class-name">{{this.name}}</div>
+        </button>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  {{!-- STEP: SKILLS --}}
+  {{#if (eq step "skills")}}
+  <section>
+    <h3>Select Skills</h3>
+    <div class="choice-grid">
+      {{#each available.skills}}
+        <button class="select-skill" data-skill="{{this.key}}">
+          {{this.name}}
+        </button>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  {{!-- STEP: FEATS --}}
+  {{#if (eq step "feats")}}
+  <section>
+    <h3>Select Feat</h3>
+    <div class="choice-grid">
+      {{#each available.feats}}
+        <button class="select-feat"
+                data-feat="{{this.name}}"
+                {{#unless this.isQualified}}disabled{{/unless}}>
+          <div class="feat-name">{{this.name}}</div>
+          {{#unless this.isQualified}}
+            <div class="feat-block">Not Qualified</div>
+          {{/unless}}
+        </button>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  {{!-- STEP: TALENTS --}}
+  {{#if (eq step "talents")}}
+  <section>
+    <h3>Select Talent</h3>
+
+    {{#each available.talents}}
+      <h4>{{this.treeName}}</h4>
+      <div class="choice-grid">
+        {{#each this.talents}}
+          <button class="select-talent"
+                  data-talent="{{this.name}}"
+                  {{#unless this.isQualified}}disabled{{/unless}}>
+            {{this.name}}
+          </button>
+        {{/each}}
+      </div>
+    {{/each}}
+
+  </section>
+  {{/if}}
+
+  {{!-- STEP: FORCE POWERS --}}
+  {{#if (eq step "forcePowers")}}
+  <section>
+    <h3>Select Force Power</h3>
+    <div class="choice-grid">
+      {{#each available.forcePowers}}
+        <button class="select-force-power"
+                data-power="{{this.name}}"
+                {{#unless this.isQualified}}disabled{{/unless}}>
+          {{this.name}}
+        </button>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  {{!-- STEP: FORCE SECRETS --}}
+  {{#if (eq step "forceSecrets")}}
+  <section>
+    <h3>Select Force Secret</h3>
+    <div class="choice-grid">
+      {{#each available.forceSecrets}}
+        <button class="select-force-secret"
+                data-secret="{{this.name}}"
+                {{#unless this.isQualified}}disabled{{/unless}}>
+          {{this.name}}
+        </button>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  {{!-- STEP: FORCE TECHNIQUES --}}
+  {{#if (eq step "forceTechniques")}}
+  <section>
+    <h3>Select Force Technique</h3>
+    <div class="choice-grid">
+      {{#each available.forceTechniques}}
+        <button class="select-force-technique"
+                data-technique="{{this.name}}"
+                {{#unless this.isQualified}}disabled{{/unless}}>
+          {{this.name}}
+        </button>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  {{!-- STEP: SUMMARY --}}
+  {{#if (eq step "summary")}}
+  <section class="summary">
+    <h3>Summary</h3>
+
+    <h4>Class</h4>
+    <pre>{{json pending.class}}</pre>
+
+    <h4>Skills</h4>
+    <pre>{{json pending.skills}}</pre>
+
+    <h4>Feats</h4>
+    <pre>{{json pending.feats}}</pre>
+
+    <h4>Talents</h4>
+    <pre>{{json pending.talents}}</pre>
+
+    <h4>Force Powers</h4>
+    <pre>{{json pending.forcePowers}}</pre>
+
+    <button class="finalize-levelup">Finalize Level Up</button>
+    <button class="rollback-levelup">Rollback</button>
+  </section>
+  {{/if}}
+
+  <footer class="nav-buttons">
+    <button class="prev-step">Back</button>
+    <button class="next-step">Next</button>
+  </footer>
+
+</div>
