@@ -1,10 +1,106 @@
 /**
- * Collision mechanics for vehicles
- * Handles vehicle collisions with objects, structures, and other vehicles
+ * SWSE Vehicle Collision System
+ * Implements RAW collision & ramming rules:
+ *  - Collision damage = speed-based + size-based modifier
+ *  - Ramming attacks (intentional collisions)
+ *  - Vehicle CT movement on major crashes
+ *  - Integration with DamageSystem + Active Effects
  */
 
-import { getDefaultPilot, getPilotBonus, getVehicleDamageThreshold } from './vehicle-shared.js';
-import { calculateCollisionDamage } from './vehicle-calculations.js';
+import { measureDistance, getVehicleCTPenalty, createVehicleCTEffect } from "./vehicle-shared.js";
+import { DamageSystem } from "../damage/damage-system.js";
+
+export class SWSEVehicleCollisions {
+
+  /**
+   * Perform a ramming attack.
+   * RAW:
+   *  - Attack is automatic if target cannot avoid
+   *  - Damage based on vehicle speed & size category
+   */
+  static async ram(attacker, target) {
+    if (!attacker || !target) return;
+
+    const atkTok = attacker.getActiveTokens()[0];
+    const tgtTok = target.getActiveTokens()[0];
+    if (!atkTok || !tgtTok) {
+      ui.notifications.warn("Tokens must be present on the scene.");
+      return null;
+    }
+
+    const speed = attacker.system.vehicle?.speed ?? 0;
+    const sizeMod = this._sizeCollisionModifier(attacker.system.size);
+
+    const dmg = Math.max(1, Math.floor(speed / 2) + sizeMod);
+
+    const html = `
+      <div class="swse-collision-card">
+        <h3>${attacker.name} RAMS ${target.name}!</h3>
+        <div>Speed: ${speed}</div>
+        <div>Collision Damage: <strong>${dmg}</strong></div>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: attacker }),
+      content: html
+    });
+
+    await DamageSystem.applyToSelected(dmg, { checkThreshold: true });
+
+    return dmg;
+  }
+
+  /**
+   * RAW collision damage from speed vector intersection.
+   */
+  static computeCollisionDamage(vehicleActor, impactVelocity) {
+    const sizeMod = this._sizeCollisionModifier(vehicleActor.system.size);
+    return Math.max(1, Math.floor(impactVelocity / 2) + sizeMod);
+  }
+
+  /**
+   * Apply a crash event and move vehicle CT accordingly.
+   * RAW guideline:
+   *  - Serious crashes move CT multiple steps
+   */
+  static async applyCrashCondition(vehicleActor, severity = 1) {
+    const current = vehicleActor.system.conditionTrack?.current ?? 0;
+    const next = Math.clamp(current + severity, 0, 5);
+
+    const ae = createVehicleCTEffect(next, vehicleActor.uuid);
+    await this._removeOldVCT(vehicleActor);
+    await vehicleActor.createEmbeddedDocuments("ActiveEffect", [ae]);
+
+    if (next >= 5) {
+      ui.notifications.error(`${vehicleActor.name} has been DESTROYED in a crash!`);
+    } else {
+      ui.notifications.warn(`${vehicleActor.name} suffers crash damage (CT step ${next}).`);
+    }
+  }
+
+  /**
+   * Remove old Vehicle CT effects.
+   */
+  static async _removeOldVCT(actor) {
+    const effects = actor.effects.filter(e => e.flags?.swse?.vehicleCT !== undefined);
+    if (effects.length) actor.deleteEmbeddedDocuments("ActiveEffect", effects.map(e => e.id));
+  }
+
+  /**
+   * Size modifier for collisions.
+   */
+  static _sizeCollisionModifier(size) {
+    const table = {
+      fine: 1, diminutive: 2, tiny: 4, small: 6,
+      medium: 8, large: 10, huge: 12, gargantuan: 16,
+      colossal: 20, colossal2: 24
+    };
+    return table[size?.toLowerCase()] ?? 8;
+  }
+}
+
+window.SWSEVehicleCollisions = SWSEVehicleCollisions;
 
 /**
  * Handle collision between vehicle and object
