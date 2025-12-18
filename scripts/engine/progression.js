@@ -230,6 +230,16 @@ normalizeSteps(steps) {
 
     this.current = id;
 
+    // Mentor guidance integration
+    try {
+      Hooks.call("swse:mentor:guidance", {
+        actor: this.actor,
+        step: id
+      });
+    } catch (e) {
+      swseLogger.warn("Mentor guidance hook failed:", e);
+    }
+
     // Emit events
     Hooks.call('swse:progression:stepChanged', id);
     Hooks.call('swse:progression:updated');
@@ -440,6 +450,129 @@ normalizeSteps(steps) {
       } catch (hookError) {
         swseLogger.warn('Error in progression completion hooks:', hookError);
         // Don't throw - hooks failing shouldn't prevent progression completion
+      }
+
+      // -------------------------
+      // Mentor Greeting Integration
+      // -------------------------
+      try {
+        const {
+          getMentorForClass,
+          getMentorGreeting,
+          getLevel1Class
+        } = await import('../apps/mentor-dialogues.js');
+
+        const newLevel = this.actor.system.level;
+
+        // Determine the character's starting class → mentor identity
+        const startingClass = getLevel1Class(this.actor);
+        const mentor = getMentorForClass(startingClass);
+
+        // Retrieve greeting text for this level
+        const message = getMentorGreeting(mentor, newLevel, this.actor);
+
+        // Create a styled chat card for the greeting
+        await ChatMessage.create({
+          speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+          content: `
+          <div class="swse-mentor-greeting">
+            <div style="display:flex; gap:10px; align-items:flex-start;">
+              <img src="${mentor.portrait}" width="64" height="64" style="border-radius:6px;" />
+              <div>
+                <h3 style="margin:0; font-size:1.2em;">${mentor.name}</h3>
+                <div style="opacity:0.75; margin-bottom:4px;">${mentor.title}</div>
+                <p style="margin:0;">${message}</p>
+              </div>
+            </div>
+          </div>
+          `
+        });
+
+        // Store the last greeting (useful for UI modules, recap panels, etc.)
+        await this.actor.setFlag("swse", "lastMentorGreeting", {
+          level: newLevel,
+          class: startingClass,
+          mentor: mentor.name,
+          message
+        });
+
+      } catch (err) {
+        swseLogger.warn("Mentor greeting failed:", err);
+      }
+
+      // -------------------------
+      // Dynamic Mentor Switching (Prestige Classes)
+      // -------------------------
+      try {
+        const { getMentorForPrestigeClass } = await import('../apps/mentor-transitions.js');
+        const { setMentorOverride, getActiveMentor } = await import('../apps/mentor-dialogues.js');
+
+        const progression = this.actor.system.progression || {};
+        const classLevels = progression.classLevels || [];
+
+        // Check the last class level to see if it's a prestige class
+        if (classLevels.length > 0) {
+          const lastClass = classLevels[classLevels.length - 1]?.class;
+          const newMentorKey = getMentorForPrestigeClass(lastClass);
+
+          // Only apply automatic mentor switching if:
+          // 1. This is a prestige class with a mentor transition
+          // 2. No manual override is already set
+          if (newMentorKey) {
+            const currentOverride = this.actor.getFlag("swse", "mentorOverride");
+
+            // Only auto-switch if no manual override has been set
+            if (!currentOverride) {
+              await setMentorOverride(this.actor, newMentorKey);
+              swseLogger.log(`Mentor switched to ${newMentorKey} for prestige class ${lastClass}`);
+            }
+          }
+        }
+      } catch (err) {
+        swseLogger.warn("Mentor transition failed:", err);
+      }
+
+      // -------------------------
+      // Mentor Logbook Tracking
+      // -------------------------
+      try {
+        const {
+          getActiveMentor,
+          getMentorGreeting,
+          getLevel1Class
+        } = await import('../apps/mentor-dialogues.js');
+
+        const newLevel = this.actor.system.level;
+        const activeMentor = getActiveMentor(this.actor);
+        const startingClass = getLevel1Class(this.actor);
+
+        // Get the greeting message if available
+        const message = getMentorGreeting(activeMentor, newLevel, this.actor);
+
+        // Retrieve existing logbook or create new one
+        const log = this.actor.getFlag("swse", "mentorLog") || [];
+
+        // Add new entry to logbook
+        log.push({
+          level: newLevel,
+          mentor: activeMentor.name,
+          class: startingClass,
+          message: message,
+          timestamp: new Date().toISOString()
+        });
+
+        // Store updated logbook
+        await this.actor.setFlag("swse", "mentorLog", log);
+
+        // Emit hook for other systems (UI panels, journal entries, etc.)
+        Hooks.callAll("swse:mentor:logUpdated", {
+          actor: this.actor,
+          log: log,
+          lastEntry: log[log.length - 1]
+        });
+
+      } catch (err) {
+        swseLogger.warn("Mentor logbook tracking failed:", err);
       }
 
       swseLogger.log(`Progression finalized for ${this.actor.name}`);
@@ -717,6 +850,16 @@ normalizeSteps(steps) {
     // Count how many levels of this specific class the character already has
     const existingLevelsInClass = classLevels.filter(cl => cl.class === classId).length;
     const levelInClass = existingLevelsInClass + 1;
+
+    // Store the character's starting class for mentor system
+    if (levelInClass === 1) {
+      try {
+        const { setLevel1Class } = await import('../apps/mentor-dialogues.js');
+        await setLevel1Class(this.actor, classId);
+      } catch (e) {
+        swseLogger.warn("Failed to record starting class for mentor system:", e);
+      }
+    }
 
     // Add class level entry
     // SWSE skill trainings: At character creation, you get (class trainings + INT mod + Human bonus) skills to train

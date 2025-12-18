@@ -1157,3 +1157,59 @@ export function getLevel1Class(actor) {
 export async function setLevel1Class(actor, className) {
     await actor.setFlag('swse', 'startingClass', className);
 }
+
+/**
+ * Set a manual mentor override for the character
+ * Allows players to change their mentor regardless of class
+ * @param {Actor} actor - The actor
+ * @param {string} mentorKey - The mentor key to use (must exist in MENTORS)
+ */
+export async function setMentorOverride(actor, mentorKey) {
+    if (!MENTORS[mentorKey]) {
+        throw new Error(`Invalid mentor key: ${mentorKey}`);
+    }
+
+    await actor.setFlag("swse", "mentorOverride", mentorKey);
+
+    // Emit hook for other systems to react to mentor change
+    Hooks.callAll("swse:mentor:changed", {
+        actor: actor,
+        newMentor: mentorKey,
+        source: "manual-override"
+    });
+}
+
+/**
+ * Get the currently active mentor for a character
+ * Respects manual overrides, prestige class transitions, and starting class mentors
+ * Priority: override > prestige class mentor > starting class mentor > Scoundrel (fallback)
+ * @param {Actor} actor - The actor
+ * @returns {Object} The active mentor object
+ */
+export function getActiveMentor(actor) {
+    // Check for manual override first
+    const override = actor.getFlag("swse", "mentorOverride");
+    if (override && MENTORS[override]) {
+        return MENTORS[override];
+    }
+
+    // Fall back to starting class mentor
+    const startClass = getLevel1Class(actor);
+    const mentor = getMentorForClass(startClass);
+
+    return mentor || MENTORS["Scoundrel"]; // Ultimate fallback
+}
+
+/**
+ * Clear any manual mentor override
+ * Reverts to automatic mentor selection based on class
+ * @param {Actor} actor - The actor
+ */
+export async function clearMentorOverride(actor) {
+    await actor.unsetFlag("swse", "mentorOverride");
+
+    Hooks.callAll("swse:mentor:changed", {
+        actor: actor,
+        source: "override-cleared"
+    });
+}

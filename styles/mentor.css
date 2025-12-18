@@ -1,0 +1,53 @@
+/**
+ * Mentor System Styling
+ * Styles for mentor greetings and guidance popups
+ */
+
+/* Mentor greeting in chat */
+.swse-mentor-greeting {
+    padding: 12px;
+    border-left: 4px solid #4a90e2;
+    background: rgba(74, 144, 226, 0.05);
+    border-radius: 4px;
+}
+
+.swse-mentor-greeting img {
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.swse-mentor-greeting h3 {
+    color: #2c3e50;
+}
+
+.swse-mentor-greeting p {
+    font-size: 14px;
+    line-height: 1.4em;
+    color: #34495e;
+}
+
+/* Mentor guidance in dialog */
+.swse-mentor-guidance {
+    padding: 12px;
+}
+
+.swse-mentor-guidance img {
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.swse-mentor-guidance h3 {
+    color: #2c3e50;
+    font-size: 1.1em;
+}
+
+.swse-mentor-guidance p {
+    color: #34495e;
+    line-height: 1.4em;
+}
+
+/* Mentor chat fallback */
+.swse-mentor-chat {
+    color: #2c3e50;
+    font-style: italic;
+}
