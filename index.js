@@ -84,6 +84,7 @@ import { dataPreloader } from './scripts/core/data-preloader.js';
 import { lazyLoader } from './scripts/core/lazy-loader.js';
 
 import { SWSE_SKILLS, getSkillConfig, getSkillsArray } from './scripts/config/skills.js';
+import { SWSE } from './scripts/core/config.js';
 import { registerSystemSettings } from './scripts/core/settings.js';
 
 import { SWSEActorBase } from './scripts/actors/base/swse-actor-base.js';
@@ -206,6 +207,7 @@ Hooks.once("init", async function () {
        System Settings
        --------------------------------------------------------- */
     registerSystemSettings();
+    registerHouseruleSettings();
 
     /* ---------------------------------------------------------
        Hook Registration
@@ -237,6 +239,11 @@ Hooks.once("init", async function () {
     CONFIG.Item.documentClass = SWSEItemBase;
     CONFIG.Combat.documentClass = SWSECombatDocument;
     CONFIG.Combatant.documentClass = SWSECombatant;
+
+    /* ---------------------------------------------------------
+       SWSE Config Setup
+       --------------------------------------------------------- */
+    CONFIG.SWSE = SWSE;
 
     /* ---------------------------------------------------------
        Sheet Registration
