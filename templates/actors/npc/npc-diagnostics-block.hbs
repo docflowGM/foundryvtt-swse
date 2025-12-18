@@ -1,0 +1,16 @@
+{{#if (eq actor.isOwner true)}}
+<div class="npc-block collapsible" data-npc-block="diagnostics">
+
+  <div class="npc-block-header">
+    <span>GM Diagnostics</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+
+  <div class="npc-block-content">
+    <div><strong>Resistances:</strong> {{system.resistances}}</div>
+    <div><strong>Immunities:</strong> {{system.immunities}}</div>
+    <div><strong>Active Conditions:</strong> {{system.conditions}}</div>
+  </div>
+
+</div>
+{{/if}}

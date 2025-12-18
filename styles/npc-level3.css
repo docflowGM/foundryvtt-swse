@@ -1,0 +1,106 @@
+/* Root Layout */
+.npc-level3 {
+  display: flex;
+  gap: 16px;
+}
+
+/* LEFT PANEL */
+.npc-left-panel {
+  width: 260px;
+}
+
+/* RIGHT PANEL */
+.npc-right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Portrait Frame */
+.npc-image-frame {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  border: 1px solid rgba(0,200,255,0.25);
+  background: rgba(0, 20, 40, 0.4);
+  border-radius: 6px;
+}
+
+.npc-portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Scanner Ring */
+.npc-scanner img {
+  position: absolute;
+  width: 180%;
+  top: -40%;
+  left: -40%;
+  opacity: 0.22;
+  animation: npc-scan-rotate 20s linear infinite;
+}
+
+@keyframes npc-scan-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Threat Ring */
+.npc-threat-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 22px rgba(0,0,0,0.8);
+  pointer-events:none;
+}
+
+.threat-minion  { border: 2px solid #888; }
+.threat-standard { border: 2px solid #00c0ff; }
+.threat-elite   { border: 2px solid #ffd860; }
+.threat-boss    { border: 2px solid #ff4040; }
+
+/* Core Stats List */
+.npc-core-stats {
+  margin-top: 10px;
+  padding: 8px;
+  background: rgba(0, 40, 70, 0.35);
+  border: 1px solid rgba(0,200,255,0.25);
+  border-radius: 6px;
+}
+
+.npc-stat {
+  display: flex;
+  justify-content: space-between;
+  color: #cfefff;
+  margin: 3px 0;
+}
+
+/* Collapsible Blocks */
+.npc-block {
+  border: 1px solid rgba(0,200,255,0.25);
+  background: rgba(0, 25, 45, 0.35);
+  border-radius: 6px;
+}
+
+.npc-block-header {
+  padding: 6px 8px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: bold;
+  color: #bde8ff;
+  background: rgba(0,50,80,0.3);
+}
+
+.npc-block-content {
+  padding: 8px;
+  display: none;
+}
+
+.npc-block.open .npc-block-content {
+  display: block;
+}

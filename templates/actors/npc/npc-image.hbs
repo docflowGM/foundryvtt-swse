@@ -1,0 +1,17 @@
+<div class="npc-image-frame">
+
+  {{!-- Threat Ring --}}
+  <div class="npc-threat-ring threat-{{actor.flags.swse.threatLevel}}">
+  </div>
+
+  {{!-- Scanner --}}
+  <div class="npc-scanner">
+    <img src="/systems/foundryvtt-swse/assets/ui/scanner-ring.png">
+  </div>
+
+  {{!-- Portrait --}}
+  <img class="npc-portrait"
+       src="{{actor.img}}"
+       alt="{{actor.name}}">
+
+</div>

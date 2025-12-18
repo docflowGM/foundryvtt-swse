@@ -1,0 +1,16 @@
+<div class="npc-block collapsible" data-npc-block="specials">
+
+  <div class="npc-block-header">
+    <span>Special Abilities</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+
+  <div class="npc-block-content">
+    {{#each system.specialQualities}}
+      <div class="npc-special-entry">
+        <strong>{{this.name}}</strong> — {{this.description}}
+      </div>
+    {{/each}}
+  </div>
+
+</div>

@@ -1,0 +1,26 @@
+<div class="npc-level3">
+
+  {{!-- Portrait Block --}}
+  <div class="npc-left-panel">
+    {{> "systems/foundryvtt-swse/templates/actors/npc/npc-image.hbs" actor=actor }}
+    {{> "systems/foundryvtt-swse/templates/actors/npc/npc-core-stats.hbs" actor=actor }}
+  </div>
+
+  {{!-- Extended Info --}}
+  <div class="npc-right-panel">
+
+    {{!-- Weapons --}}
+    {{> "systems/foundryvtt-swse/templates/actors/npc/npc-weapon-block.hbs" actor=actor }}
+
+    {{!-- Talents --}}
+    {{> "systems/foundryvtt-swse/templates/actors/npc/npc-talent-block.hbs" actor=actor }}
+
+    {{!-- Specials --}}
+    {{> "systems/foundryvtt-swse/templates/actors/npc/npc-specials-block.hbs" actor=actor }}
+
+    {{!-- GM Diagnostics --}}
+    {{> "systems/foundryvtt-swse/templates/actors/npc/npc-diagnostics-block.hbs" actor=actor }}
+
+  </div>
+
+</div>
