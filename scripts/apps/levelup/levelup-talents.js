@@ -4,6 +4,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { warnGM } from '../../utils/warn-gm.js';
 import { TalentTreeVisualizer } from '../talent-tree-visualizer.js';
 import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
 import { checkTalentPrerequisites } from './levelup-validation.js';
@@ -97,6 +98,41 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
 
     // Remove duplicates
     availableTrees = [...new Set(availableTrees)];
+  }
+
+  // -----------------------------------------------------------
+  // GM WARNINGS FOR TALENT TREE VALIDATION
+  // -----------------------------------------------------------
+
+  // Load all talent documents once for tree validation
+  const talentPack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
+  const allTalents = talentPack ? await talentPack.getDocuments() : [];
+
+  for (const treeName of availableTrees) {
+
+      // 1 — Check if tree exists in the talent tree compendium
+      const treePack = game.packs.get('foundryvtt-foundryvtt-swse.talenttrees');
+      const treeIndex = treePack?.index.find(t => t.name === treeName);
+
+      if (!treeIndex) {
+          warnGM(
+              `${selectedClass.name} references a Talent Tree "${treeName}" that does NOT exist in the talentTrees compendium.`
+          );
+          continue; // still check if any talents exist with that name
+      }
+
+      // 2 — Check if any talents actually belong to this tree
+      const talentsInTree = allTalents.filter(t => {
+          return t.system?.talent_tree === treeName ||
+                 t.system?.tree === treeName ||
+                 t.name.includes(treeName);
+      });
+
+      if (talentsInTree.length === 0) {
+          warnGM(
+              `Talent Tree "${treeName}" exists but contains ZERO talents. Class: ${selectedClass.name}`
+          );
+      }
   }
 
   return availableTrees;

@@ -74,6 +74,7 @@ import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/eng
 import { FeatSystem } from './scripts/engine/FeatSystem.js';
 import { SkillSystem } from './scripts/engine/SkillSystem.js';
 import { SWSELanguageModule } from './scripts/progression/modules/language-module.js';
+import { initializeLevelUpUI } from './scripts/progression/ui/levelup-module-init.js';
 
 import { SWSELogger, swseLogger } from './scripts/utils/logger.js';
 import { SWSENotifications } from './scripts/utils/notifications.js';

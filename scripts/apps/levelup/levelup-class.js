@@ -5,6 +5,7 @@ import { ProgressionEngine } from "../../progression/engine/progression-engine.j
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { warnGM } from '../../utils/warn-gm.js';
 import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } from '../mentor-dialogues.js';
 import { isBaseClass, getCharacterClasses, getClassDefenseBonuses, calculateHPGain } from './levelup-shared.js';
 import { meetsClassPrerequisites } from './levelup-validation.js';
@@ -78,12 +79,31 @@ export async function getAvailableClasses(actor, pendingData) {
   const allClasses = await classPack.getDocuments();
   const availableClasses = [];
 
+  // Load all skills for validation
+  const skillPack = game.packs.get('foundryvtt-foundryvtt-swse.skills');
+  const allSkills = skillPack ? await skillPack.getDocuments() : [];
+  const skillNames = allSkills.map(s => s.name);
+
   // Check prerequisites for each class
   for (const classDoc of allClasses) {
     const isBase = isBaseClass(classDoc.name) || classDoc.system.baseClass === true;
 
     // meetsClassPrerequisites is now async (loads from JSON)
     if (await meetsClassPrerequisites(classDoc, actor, pendingData)) {
+
+      // ------------------------------------------------------------
+      // VALIDATE CLASS SKILLS
+      // ------------------------------------------------------------
+      const classSkills = classDoc.system?.class_skills || [];
+
+      for (const skill of classSkills) {
+        if (!skillNames.includes(skill)) {
+          warnGM(
+            `${classDoc.name} lists "${skill}" as a class skill, but this skill does NOT exist in skills.db`
+          );
+        }
+      }
+
       const metadata = getClassMetadata(classDoc.name);
       availableClasses.push({
         id: classDoc._id,

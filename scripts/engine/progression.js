@@ -1,6 +1,7 @@
 // scripts/engine/progression.js
 import { swseLogger } from '../utils/logger.js';
 import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
+import { FinalizeIntegration } from '../progression/integration/finalize-integration.js';
 
 /**
  * Unified SWSE Progression Engine
@@ -167,6 +168,117 @@ normalizeSteps(steps) {
     completed: this._isStepCompleted(s.id),
     current: s.id === this.current
   }));
+}
+
+/* ========================
+ * HELPER METHODS
+ * Used by Feature Dispatcher and related systems
+ * ======================== */
+
+/**
+ * Get the currently selected class level
+ * Used by feature dispatcher for scaling expressions
+ */
+getSelectedClassLevel() {
+  const progression = this.actor.system.progression || {};
+  const classLevels = progression.classLevels || [];
+  return classLevels.length > 0 ? classLevels[classLevels.length - 1].level : 1;
+}
+
+/**
+ * Get the new character level after progression
+ * For chargen, returns 1; for level-up, returns current level + 1
+ */
+getNewCharacterLevel() {
+  if (this.mode === 'chargen') {
+    return 1;
+  }
+  return (this.actor.system.level || 0) + 1;
+}
+
+/**
+ * Get ability modifier for an ability score
+ */
+getAbilityMod(ability) {
+  return this.actor.system.abilities?.[ability]?.mod ?? 0;
+}
+
+/**
+ * Get all ability modifiers as an object
+ */
+getAllAbilityMods() {
+  const abilities = this.actor.system.abilities || {};
+  return {
+    str: abilities.str?.mod ?? 0,
+    dex: abilities.dex?.mod ?? 0,
+    con: abilities.con?.mod ?? 0,
+    int: abilities.int?.mod ?? 0,
+    wis: abilities.wis?.mod ?? 0,
+    cha: abilities.cha?.mod ?? 0
+  };
+}
+
+/**
+ * Grant a feat to the actor
+ */
+async grantFeat(name) {
+  const { ProgressionEngineHelpers: H } = await import('../progression/engine/engine-helpers.js');
+  const data = H.makeItemData(name, 'feat');
+  return await H.addItemIfMissing(this.actor, data);
+}
+
+/**
+ * Grant a class feature to the actor
+ */
+async grantClassFeature(name, feature) {
+  const { ProgressionEngineHelpers: H } = await import('../progression/engine/engine-helpers.js');
+  const data = H.makeItemData(name, 'classFeature', feature);
+  return await H.addItemIfMissing(this.actor, data);
+}
+
+/**
+ * Grant a force power to the actor
+ */
+async grantForcePower(name) {
+  const { ProgressionEngineHelpers: H } = await import('../progression/engine/engine-helpers.js');
+  const data = H.makeItemData(name, 'forcepower');
+  return await H.addItemIfMissing(this.actor, data);
+}
+
+/**
+ * Grant a language to the actor
+ */
+async grantLanguage(name) {
+  const { LanguageEngine } = await import('../progression/engine/language-engine.js');
+  return await LanguageEngine.grantLanguage(this.actor, name);
+}
+
+/**
+ * Grant equipment to the actor
+ */
+async grantEquipment(items) {
+  if (!items || !Array.isArray(items)) return;
+  const { EquipmentEngine } = await import('../progression/engine/equipment-engine.js');
+  for (const item of items) {
+    const itemObj = typeof item === 'string' ? { name: item, type: 'equipment' } : item;
+    await EquipmentEngine.grantEquipment(this.actor, [itemObj]);
+  }
+}
+
+/**
+ * Apply a scaling feature with formula resolution
+ */
+async applyScalingFeature(feature) {
+  const { ProgressionEngineHelpers: H } = await import('../progression/engine/engine-helpers.js');
+  const value = H.resolveScaling(feature, this);
+  const name = feature.name;
+
+  const data = H.makeItemData(name, 'scalingFeature', {
+    value,
+    description: `${name} (Scaling: ${value})`
+  });
+
+  return await H.grantOrReplace(this.actor, data);
 }
 
 
@@ -366,6 +478,9 @@ normalizeSteps(steps) {
       // Save progression state
       await this.saveStateToActor();
 
+      // Capture before-state for diff generation
+      const beforeSnapshot = this.actor.toObject(false);
+
       // Apply derived stats (HP, defenses, BAB, etc.)
       const { ActorProgressionUpdater } = await import('../progression/engine/progression-actor-updater.js');
       await ActorProgressionUpdater.finalize(this.actor);
@@ -373,7 +488,18 @@ normalizeSteps(steps) {
       // Create feat/talent/skill items from progression data
       await this._createProgressionItems();
 
-      // Trigger force powers (if applicable)
+      // Run integrated finalization with new subsystems
+      // This handles snapshots, specialized engines (Force, Language, Equipment),
+      // derived stat recalculation, and diff generation
+      try {
+        await FinalizeIntegration.quickIntegrate(this.actor, this.mode);
+        swseLogger.log('Integrated subsystem finalization completed');
+      } catch (integrationErr) {
+        swseLogger.warn('Integrated finalization encountered issues:', integrationErr);
+        // Continue with legacy flow as fallback
+      }
+
+      // Trigger force powers (if applicable) - Legacy handler for compatibility
       try {
         const { ForcePowerEngine } = await import('../progression/engine/force-power-engine.js');
         const progression = this.actor.system.progression || {};

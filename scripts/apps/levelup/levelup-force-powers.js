@@ -4,6 +4,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { warnGM } from '../../utils/warn-gm.js';
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 
 /**
@@ -46,6 +47,43 @@ export async function getAvailableForcePowers(actor, pendingData = {}) {
 
   const allPowers = await forcePowerPack.getDocuments();
   SWSELogger.log(`SWSE LevelUp | Loaded ${allPowers.length} force powers from compendium`);
+
+  // -----------------------------------------------------------
+  // VALIDATE FORCE POWER DATA STRUCTURE
+  // -----------------------------------------------------------
+
+  // Load all trees if your system stores them
+  const treePack = game.packs.get('foundryvtt-foundryvtt-swse.forcepowertrees');
+  const treeNames = treePack ? treePack.index.map(t => t.name) : [];
+
+  for (const power of allPowers) {
+
+      // 1 — Missing powerLevel
+      if (!power.system?.powerLevel) {
+          warnGM(
+              `Force Power "${power.name}" is missing a "powerLevel" property.`
+          );
+      }
+
+      // 2 — Unknown Force power tree
+      if (power.system?.tree && !treeNames.includes(power.system.tree)) {
+          warnGM(
+              `Force Power "${power.name}" references missing Force Power tree "${power.system.tree}".`
+          );
+      }
+
+      // 3 — Missing prerequisite power
+      if (power.system?.prerequisitePower) {
+          const prereq = power.system.prerequisitePower;
+          const exists = allPowers.some(p => p.name === prereq);
+
+          if (!exists) {
+              warnGM(
+                  `Force Power "${power.name}" requires missing prerequisite power "${prereq}".`
+              );
+          }
+      }
+  }
 
   // Filter by prerequisites and character level
   const characterLevel = actor.system.level || 1;
