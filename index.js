@@ -157,6 +157,7 @@ import { VehicleModificationManager } from './scripts/apps/vehicle-modification-
 import { VehicleModificationApp } from './scripts/apps/vehicle-modification-app.js';
 import { FollowerCreator } from './scripts/apps/follower-creator.js';
 import { FollowerManager } from './scripts/apps/follower-manager.js';
+import { SWSECombatActionBrowser } from './scripts/apps/combat-action-browser.js';
 
 import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
 import { HouseruleMechanics } from './scripts/houserules/houserule-mechanics.js';
@@ -312,6 +313,7 @@ Hooks.once("ready", async function () {
     SWSEActiveEffectsManager.init();
     SWSEGrappling.init();
     SWSEVehicleCombat.init();
+    SWSECombatActionBrowser.init();
     HouseruleMechanics.initialize();
 
     try {
