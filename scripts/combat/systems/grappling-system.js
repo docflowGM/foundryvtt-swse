@@ -1,524 +1,259 @@
-import { SWSELogger } from '../../utils/logger.js';
-import { ProgressionEngine } from "../../progression/engine/progression-engine.js";
 /**
- * Grappling System for SWSE
- * Implements the complete grappling subsystem including:
- * - Grab attacks (initial unarmed grapple attempt)
- * - Grapple checks (opposed rolls)
- * - Three grapple states: Grabbed, Grappled, Pinned
- * - Escape mechanics
- * - Pin feat support
+ * SWSE Grappling System (R1 — Strict RAW)
+ * Integrated with:
+ * - SWSECombat (attack coordinator)
+ * - SWSERoll (dice & FP system)
+ * - DamageSystem (damage application)
+ * - ActiveEffectsManager (states: Grabbed, Grappled, Pinned)
+ * - combat-utils (size modifiers, bonuses)
  */
+
+import { computeAttackBonus } from "../utils/combat-utils.js";
+import { SWSERoll } from "../rolls/rolls.js";
+import { DamageSystem } from "../damage/damage-system.js";
 
 export class SWSEGrappling {
 
-    static getSelectedActor() {
-        return canvas.tokens.controlled[0]?.actor;
-    }
+  static getSelectedActor() {
+    return canvas.tokens.controlled[0]?.actor ?? null;
+  }
 
+  // ---------------------------------------------------------------------------
+  // RAW STEP 1: Attempt Grab (Attack vs Reflex Defense)
+  // ---------------------------------------------------------------------------
 
-  /**
-   * Initiate a Grab attack
-   * @param {Actor} attacker - The grappling actor
-   * @param {Actor} target - The target being grabbed
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} Grab attempt result
-   */
-  static async attemptGrab(attacker, target, options = {}) {
-    // Grab is an unarmed attack with -5 penalty if untrained
-    const isTrainedUnarmed = this._hasUnarmedTraining(attacker);
-    const penalty = isTrainedUnarmed ? 0 : -5;
+  static async attemptGrab(attacker, target) {
+    if (!attacker || !target) return;
 
-    // Calculate attack bonus (similar to normal attack)
-    const system = attacker.system;
-    const bab = system.baseAttack || system.bab || 0;
-    const strMod = system.abilities?.str?.mod || 0;
-    const sizeMod = this._getSizeModifier(system.size);
-    const misc = options.bonus || 0;
+    const weapon = this._getUnarmedAttack(attacker);
+    const { roll, total } = await SWSERoll.rollAttack(attacker, weapon);
 
-    const attackBonus = bab + strMod + sizeMod + misc + penalty;
+    // Hit resolution pipeline
+    const reflex = target.system.defenses?.reflex?.total ?? 10;
+    const hit = (total >= reflex) || roll.dice[0].results[0].result === 20;
 
-    // Roll attack vs Reflex Defense
-    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackBonus}`).evaluate({async: true});
-    const reflexDefense = target.system.defenses?.reflex?.total || 10;
+    const result = { attacker, target, roll, total, reflex, hit };
 
-    const result = {
-      attacker,
-      target,
-      roll,
-      total: roll.total,
-      reflexDefense,
-      hits: roll.total >= reflexDefense,
-      penalty,
-      breakdown: { bab, strMod, sizeMod, penalty, misc }
-    };
-
-    // If hit, apply Grabbed condition
-    if (result.hits) {
-      await this.applyGrabbedCondition(target, attacker);
-
-      // Notify and offer grapple check
+    if (hit) {
+      await this._applyState(target, "grabbed", attacker);
       ui.notifications.info(`${attacker.name} grabs ${target.name}!`);
     }
 
-    // Create chat message
     await this._createGrabMessage(result);
-
     return result;
   }
 
-  /**
-   * Perform opposed Grapple check
-   * @param {Actor} attacker - The active grappler
-   * @param {Actor} defender - The defending grappler
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} Grapple check result
-   */
-  static async opposedGrappleCheck(attacker, defender, options = {}) {
-    // Calculate grapple bonuses for both
-    const attackerBonus = this._calculateGrappleBonus(attacker);
-    const defenderBonus = this._calculateGrappleBonus(defender);
+  // ---------------------------------------------------------------------------
+  // RAW STEP 2 (Next Round): Opposed Grapple Check
+  // ---------------------------------------------------------------------------
 
-    // Roll opposed checks
-    const attackerRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackerBonus}`).evaluate({async: true});
-    const defenderRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${defenderBonus}`).evaluate({async: true});
+  static async grappleCheck(attacker, defender, options = {}) {
+    const atk = await this._rollGrappleBonus(attacker);
+    const def = await this._rollGrappleBonus(defender);
+
+    const atkRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${atk}`).evaluate({ async: true });
+    const defRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${def}`).evaluate({ async: true });
+
+    const attackerWins = atkRoll.total > defRoll.total;
 
     const result = {
       attacker,
       defender,
-      attackerRoll,
-      defenderRoll,
-      attackerTotal: attackerRoll.total,
-      defenderTotal: defenderRoll.total,
-      attackerBonus,
-      defenderBonus,
-      attackerWins: attackerRoll.total > defenderRoll.total,
-      tie: attackerRoll.total === defenderRoll.total
+      attackerRoll: atkRoll,
+      defenderRoll: defRoll,
+      attackerWins,
+      isTie: atkRoll.total === defRoll.total
     };
 
-    // Handle tie (both maintain current state)
-    if (result.tie) {
-      ui.notifications.info(`Grapple check tied! Both maintain their positions.`);
-    } else if (result.attackerWins) {
-      ui.notifications.info(`${attacker.name} wins the grapple check!`);
-
-      // Offer options: maintain, move, damage, or pin
-      await this._showGrappleOptions(attacker, defender, options);
-    } else {
-      ui.notifications.info(`${defender.name} wins the grapple check!`);
-
-      // Defender can escape or reverse
-      await this._showDefenderOptions(defender, attacker, options);
-    }
-
-    // Create chat message
     await this._createGrappleCheckMessage(result);
+
+    if (result.isTie) return result;
+
+    if (attackerWins) {
+      await this._applyState(attacker, "grappled", defender);
+      await this._applyState(defender, "grappled", attacker);
+      ui.notifications.info(`${attacker.name} has grappled ${defender.name}!`);
+    }
 
     return result;
   }
 
-  /**
-   * Attempt to pin the target (requires Pin feat)
-   * @param {Actor} attacker - The pinner
-   * @param {Actor} target - The target being pinned
-   * @returns {Promise<boolean>} Success status
-   */
-  static async attemptPin(attacker, target) {
-    // Check if attacker has Pin feat
-    const hasPinFeat = this._hasFeat(attacker, 'Pin');
+  // ---------------------------------------------------------------------------
+  // Attempt Pin (requires Pin feat)
+  // ---------------------------------------------------------------------------
 
-    if (!hasPinFeat) {
-      ui.notifications.warn(`${attacker.name} does not have the Pin feat!`);
+  static async attemptPin(attacker, defender) {
+    if (!this._hasFeat(attacker, "Pin")) {
+      ui.notifications.warn(`${attacker.name} lacks the Pin feat.`);
       return false;
     }
 
-    // Must already be grappling
-    const isGrappling = this._hasCondition(attacker, 'Grappling') || this._hasCondition(attacker, 'Grabbed');
-    if (!isGrappling) {
-      ui.notifications.warn(`${attacker.name} must be grappling to pin!`);
+    if (!this._hasGrappledState(attacker) || !this._hasGrappledState(defender)) {
+      ui.notifications.warn(`Both creatures must already be Grappled.`);
       return false;
     }
 
-    // Perform grapple check
-    const result = await this.opposedGrappleCheck(attacker, target, { attemptPin: true });
+    const check = await this.grappleCheck(attacker, defender);
 
-    if (result.attackerWins) {
-      await this.applyPinnedCondition(target, attacker);
-      ui.notifications.info(`${attacker.name} pins ${target.name}!`);
+    if (check.attackerWins) {
+      await this._applyState(defender, "pinned", attacker);
+      ui.notifications.info(`${attacker.name} pins ${defender.name}!`);
       return true;
     }
 
     return false;
   }
 
-  /**
-   * Attempt to escape from grapple
-   * @param {Actor} escaper - The actor trying to escape
-   * @param {Actor} grappler - The grappler
-   * @returns {Promise<boolean>} Success status
-   */
-  static async attemptEscape(escaper, grappler) {
-    // Perform opposed grapple check
-    const result = await this.opposedGrappleCheck(escaper, grappler, { attemptEscape: true });
+  // ---------------------------------------------------------------------------
+  // Escape Grapple
+  // ---------------------------------------------------------------------------
+
+  static async escapeGrapple(escaper, grappler) {
+    const result = await this.grappleCheck(escaper, grappler);
 
     if (result.attackerWins) {
-      await this.removeGrappleConditions(escaper);
-      await this.removeGrappleConditions(grappler);
+      await this._clearState(escaper);
+      await this._clearState(grappler);
       ui.notifications.info(`${escaper.name} escapes the grapple!`);
       return true;
     }
 
-    ui.notifications.info(`${escaper.name} fails to escape!`);
     return false;
   }
 
-  /**
-   * Apply Grabbed condition
-   * @param {Actor} target - The grabbed actor
-   * @param {Actor} grabber - The grabbing actor
-   */
-  static async applyGrabbedCondition(target, grabber) {
-    const condition = {
-      id: `grabbed-${randomID()}`,
-      name: 'Grabbed',
-      type: 'grapple',
-      source: grabber.id,
-      effects: {
-        reflexDefense: -5,
-        cannotMoveAway: true
-      }
-    };
+  // ---------------------------------------------------------------------------
+  // Helpers
+  // ---------------------------------------------------------------------------
 
-    await this._addCondition(target, condition);
+  static async _rollGrappleBonus(actor) {
+    const lvl = actor.system.level ?? 1;
+    const bab = actor.system.bab ?? 0;
+    const str = actor.system.abilities.str?.mod ?? 0;
+    const sizeMod = this._sizeMod(actor.system.size);
+
+    return bab + str + sizeMod;
   }
 
-  /**
-   * Apply Grappled condition (both parties)
-   * @param {Actor} actor1 - First grappler
-   * @param {Actor} actor2 - Second grappler
-   */
-  static async applyGrappledCondition(actor1, actor2) {
-    const condition1 = {
-      id: `grappled-${randomID()}`,
-      name: 'Grappled',
-      type: 'grapple',
-      source: actor2.id,
-      effects: {
-        reflexDefense: -5,
-        cantMove: true,
-        canOnlyAttackGrappler: true
-      }
+  static _sizeMod(size) {
+    const table = {
+      fine: -16, diminutive: -12, tiny: -8, small: -4,
+      medium: 0, large: 4, huge: 8, gargantuan: 12, colossal: 16
     };
-
-    const condition2 = {
-      id: `grappled-${randomID()}`,
-      name: 'Grappled',
-      type: 'grapple',
-      source: actor1.id,
-      effects: {
-        reflexDefense: -5,
-        cantMove: true,
-        canOnlyAttackGrappler: true
-      }
-    };
-
-    await this._addCondition(actor1, condition1);
-    await this._addCondition(actor2, condition2);
+    return table[size?.toLowerCase()] ?? 0;
   }
 
-  /**
-   * Apply Pinned condition
-   * @param {Actor} target - The pinned actor
-   * @param {Actor} pinner - The pinner
-   */
-  static async applyPinnedCondition(target, pinner) {
-    const condition = {
-      id: `pinned-${randomID()}`,
-      name: 'Pinned',
-      type: 'grapple',
-      source: pinner.id,
-      effects: {
-        helpless: true,
-        reflexDefense: -10,
-        cannotMove: true,
-        cannotAttack: true
-      }
+  static _getUnarmedAttack(actor) {
+    return {
+      name: "Unarmed Grab",
+      img: "icons/svg/punch.svg",
+      system: { attackAttribute: "str", damage: "1d4", ranged: false }
     };
-
-    await this._addCondition(target, condition);
   }
 
-  /**
-   * Remove all grapple conditions from actor
-   * @param {Actor} actor - The actor
-   */
-  static async removeGrappleConditions(actor) {
-    const conditions = actor.system.conditions || [];
-    const grappleConditions = conditions.filter(c => c.type === 'grapple');
+  static async _applyState(actor, state, sourceActor) {
+    let effectData;
 
-    for (const condition of grappleConditions) {
-      await this._removeCondition(actor, condition.id);
+    switch (state) {
+      case "grabbed":
+        effectData = {
+          label: "Grabbed",
+          icon: "icons/svg/net.svg",
+          origin: sourceActor.uuid,
+          changes: [{
+            key: "system.defenses.reflex.bonus",
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+            value: -5
+          }],
+          flags: { swse: { grapple: "grabbed", source: sourceActor.id } }
+        };
+        break;
+
+      case "grappled":
+        effectData = {
+          label: "Grappled",
+          icon: "icons/svg/anchor.svg",
+          origin: sourceActor.uuid,
+          changes: [{
+            key: "system.defenses.reflex.bonus",
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+            value: -5
+          }],
+          flags: { swse: { grapple: "grappled", source: sourceActor.id } }
+        };
+        break;
+
+      case "pinned":
+        effectData = {
+          label: "Pinned",
+          icon: "icons/svg/trap.svg",
+          origin: sourceActor.uuid,
+          changes: [
+            { key: "system.defenses.reflex.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -10 },
+            { key: "system.conditionTrack.current", mode: "OVERRIDE", value: 5 }
+          ],
+          flags: { swse: { grapple: "pinned", source: sourceActor.id } }
+        };
+        break;
     }
+
+    await actor.createEmbeddedDocuments("ActiveEffect", [effectData]);
   }
 
-  // ========== Helper Methods ==========
-
-  /**
-   * Calculate grapple bonus
-   * @private
-   */
-  static _calculateGrappleBonus(actor) {
-    const system = actor.system;
-    const bab = system.baseAttack || system.bab || 0;
-    const strMod = system.abilities?.str?.mod || 0;
-    const sizeMod = this._getSizeModifier(system.size);
-    const grappleBonus = system.grappleBonus || 0;
-
-    return bab + strMod + sizeMod + grappleBonus;
+  static async _clearState(actor) {
+    const effects = actor.effects.filter(e => e.flags?.swse?.grapple);
+    await actor.deleteEmbeddedDocuments("ActiveEffect", effects.map(e => e.id));
   }
 
-  /**
-   * Get size modifier for grappling
-   * @private
-   */
-  static _getSizeModifier(size) {
-    const sizeModifiers = {
-      'fine': -16, 'diminutive': -12, 'tiny': -8, 'small': -4,
-      'medium': 0, 'large': 4, 'huge': 8, 'gargantuan': 12, 'colossal': 16
-    };
-    return sizeModifiers[size?.toLowerCase()] || 0;
+  static _hasFeat(actor, name) {
+    return actor.items.some(i => i.type === "feat" && i.name.toLowerCase().includes(name.toLowerCase()));
   }
 
-  /**
-   * Check if actor has unarmed training
-   * @private
-   */
-  static _hasUnarmedTraining(actor) {
-    // Check for Martial Arts feats or proficiency
-    return this._hasFeat(actor, 'Martial Arts') ||
-           this._hasFeat(actor, 'Weapon Proficiency (simple)');
+  static _hasGrappledState(actor) {
+    return actor.effects.some(e => e.flags?.swse?.grapple === "grappled");
   }
 
-  /**
-   * Check if actor has a feat
-   * @private
-   */
-  static _hasFeat(actor, featName) {
-    const feats = actor.items.filter(i => i.type === 'feat');
-    return feats.some(f => f.name.toLowerCase().includes(featName.toLowerCase()));
-  }
+  // ---------------------------------------------------------------------------
+  // Chat Messages
+  // ---------------------------------------------------------------------------
 
-  /**
-   * Check if actor has a condition
-   * @private
-   */
-  static _hasCondition(actor, conditionName) {
-    const conditions = actor.system.conditions || [];
-    return conditions.some(c => c.name.toLowerCase() === conditionName.toLowerCase());
-  }
+  static async _createGrabMessage(data) {
+    const { attacker, target, roll, total, reflex, hit } = data;
 
-  /**
-   * Add condition to actor
-   * @private
-   */
-  static async _addCondition(actor, condition) {
-    const conditions = actor.system.conditions || [];
-    conditions.push(condition);
-    await globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': conditions});
-  }
-
-  /**
-   * Remove condition from actor
-   * @private
-   */
-  static async _removeCondition(actor, conditionId) {
-    const conditions = actor.system.conditions || [];
-    const filtered = conditions.filter(c => c.id !== conditionId);
-    await globalThis.SWSE.ActorEngine.updateActor(actor, {'system.conditions': filtered});
-  }
-
-  /**
-   * Show grapple options dialog for attacker
-   * @private
-   */
-  static async _showGrappleOptions(attacker, defender, options) {
-    return new Promise((resolve) => {
-      new Dialog({
-        title: `${attacker.name} - Grapple Options`,
-        content: `
-          <div class="swse-grapple-options">
-            <p><strong>${attacker.name}</strong> won the grapple check!</p>
-            <p>Choose an action:</p>
-          </div>
-        `,
-        buttons: {
-          maintain: {
-            icon: '<i class="fas fa-hand-rock"></i>',
-            label: 'Maintain Grapple',
-            callback: async () => {
-              ui.notifications.info(`${attacker.name} maintains the grapple.`);
-              resolve('maintain');
-            }
-          },
-          move: {
-            icon: '<i class="fas fa-arrows-alt"></i>',
-            label: 'Move',
-            callback: async () => {
-              ui.notifications.info(`${attacker.name} moves while grappling.`);
-              resolve('move');
-            }
-          },
-          damage: {
-            icon: '<i class="fas fa-fist-raised"></i>',
-            label: 'Deal Damage',
-            callback: async () => {
-              // Roll unarmed damage
-              ui.notifications.info(`${attacker.name} deals damage while grappling.`);
-              resolve('damage');
-            }
-          },
-          pin: {
-            icon: '<i class="fas fa-lock"></i>',
-            label: 'Pin (requires feat)',
-            callback: async () => {
-              await this.attemptPin(attacker, defender);
-              resolve('pin');
-            }
-          }
-        },
-        default: 'maintain'
-      }).render(true);
-    });
-  }
-
-  /**
-   * Show defender options dialog
-   * @private
-   */
-  static async _showDefenderOptions(defender, attacker, options) {
-    return new Promise((resolve) => {
-      new Dialog({
-        title: `${defender.name} - Grapple Defense`,
-        content: `
-          <div class="swse-grapple-options">
-            <p><strong>${defender.name}</strong> won the grapple check!</p>
-            <p>Choose an action:</p>
-          </div>
-        `,
-        buttons: {
-          escape: {
-            icon: '<i class="fas fa-running"></i>',
-            label: 'Escape',
-            callback: async () => {
-              await this.removeGrappleConditions(defender);
-              await this.removeGrappleConditions(attacker);
-              ui.notifications.info(`${defender.name} escapes!`);
-              resolve('escape');
-            }
-          },
-          reverse: {
-            icon: '<i class="fas fa-exchange-alt"></i>',
-            label: 'Reverse Grapple',
-            callback: async () => {
-              ui.notifications.info(`${defender.name} reverses the grapple!`);
-              // Swap grappler/defender roles
-              resolve('reverse');
-            }
-          }
-        },
-        default: 'escape'
-      }).render(true);
-    });
-  }
-
-  /**
-   * Create grab attack chat message
-   * @private
-   */
-  static async _createGrabMessage(result) {
-    const { attacker, target, roll, total, reflexDefense, hits, breakdown } = result;
-
-    const content = `
-      <div class="swse-grapple-roll">
-        <div class="grapple-header">
-          <h3><i class="fas fa-hand-rock"></i> Grab Attempt</h3>
-        </div>
-        <div class="dice-roll">
-          <div class="dice-result">
-            <div class="dice-formula">${roll.formula}</div>
-            <div class="dice-total">${total}</div>
-          </div>
-        </div>
-        <div class="grapple-breakdown">
-          <strong>Breakdown:</strong>
-          BAB ${breakdown.bab >= 0 ? '+' : ''}${breakdown.bab},
-          STR ${breakdown.strMod >= 0 ? '+' : ''}${breakdown.strMod},
-          Size ${breakdown.sizeMod >= 0 ? '+' : ''}${breakdown.sizeMod}
-          ${breakdown.penalty !== 0 ? `, Untrained ${breakdown.penalty}` : ''}
-        </div>
-        <div class="grapple-result">
-          <strong>vs ${target.name}'s Reflex Defense (${reflexDefense})</strong>
-          <div class="result-text ${hits ? 'hit' : 'miss'}">
-            ${hits ? '<i class="fas fa-check-circle"></i> GRABBED!' : '<i class="fas fa-times-circle"></i> MISS!'}
-          </div>
-        </div>
+    const html = `
+      <div class="swse-grab-card">
+        <h3>${attacker.name} attempts to Grab ${target.name}</h3>
+        <div>Attack Roll: ${total} (d20=${roll.dice[0].results[0].result})</div>
+        <div>Target Reflex: ${reflex}</div>
+        <div class="${hit ? "success" : "failure"}">${hit ? "Grabbed!" : "Miss!"}</div>
       </div>
     `;
 
     await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({actor: attacker}),
-      content,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      speaker: ChatMessage.getSpeaker({ actor: attacker }),
+      content: html,
       roll
     });
   }
 
-  /**
-   * Create grapple check chat message
-   * @private
-   */
   static async _createGrappleCheckMessage(result) {
-    const { attacker, defender, attackerRoll, defenderRoll, attackerTotal, defenderTotal, attackerWins } = result;
+    const { attacker, defender, attackerRoll, defenderRoll, attackerWins } = result;
 
-    const content = `
-      <div class="swse-grapple-check">
-        <div class="grapple-header">
-          <h3><i class="fas fa-hand-rock"></i> Grapple Check</h3>
-        </div>
-        <div class="opposed-rolls">
-          <div class="grappler-roll">
-            <strong>${attacker.name}:</strong>
-            <div class="dice-total ${attackerWins ? 'winner' : ''}">${attackerTotal}</div>
-          </div>
-          <div class="vs">VS</div>
-          <div class="defender-roll">
-            <strong>${defender.name}:</strong>
-            <div class="dice-total ${!attackerWins ? 'winner' : ''}">${defenderTotal}</div>
-          </div>
-        </div>
-        <div class="grapple-result">
-          <strong>Result:</strong>
-          <div class="result-text ${attackerWins ? 'hit' : 'miss'}">
-            ${attackerWins ? `${attacker.name} wins!` : `${defender.name} wins!`}
-          </div>
+    const html = `
+      <div class="swse-grapple-check-card">
+        <h3>${attacker.name} vs ${defender.name} — Grapple Check</h3>
+        <div>${attacker.name}: ${attackerRoll.total}</div>
+        <div>${defender.name}: ${defenderRoll.total}</div>
+        <div class="${attackerWins ? "success" : "failure"}">
+          ${attackerWins ? `${attacker.name} wins!` : `${defender.name} wins!`}
         </div>
       </div>
     `;
 
     await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({actor: attacker}),
-      content,
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER
+      speaker: ChatMessage.getSpeaker({ actor: attacker }),
+      content: html
     });
-  }
-
-  /**
-   * Initialize grappling system
-   */
-  static init() {
-    SWSELogger.log('SWSE | Grappling system initialized');
   }
 }
 
-// Make available globally
 window.SWSEGrappling = SWSEGrappling;
