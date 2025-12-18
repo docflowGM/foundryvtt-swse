@@ -13,6 +13,8 @@ import { TalentTreeNormalizer } from '../engine/talent-tree-normalizer.js';
 import { ForceNormalizer } from '../engine/force-normalizer.js';
 import { StartingFeatureRegistrar } from '../engine/starting-feature-registrar.js';
 import { ProgressionStateNormalizer } from '../engine/progression-state-normalizer.js';
+import { SkillRegistry } from '../skills/skill-registry.js';
+import { SkillNormalizer } from '../skills/skill-normalizer.js';
 
 export const SystemInitHooks = {
 
@@ -46,10 +48,13 @@ export const SystemInitHooks = {
             // Step 2: Normalize all game data
             await this._normalizeGameData();
 
-            // Step 3: Normalize actor progression states
+            // Step 3: Build skill registry
+            await this._buildSkillRegistry();
+
+            // Step 4: Normalize actor progression states
             await this._normalizeActorProgression();
 
-            // Step 4: Register starting features
+            // Step 5: Register starting features
             await this._registerStartingFeatures();
 
             const elapsed = (performance.now() - startTime).toFixed(2);
@@ -257,7 +262,41 @@ export const SystemInitHooks = {
     },
 
     /**
-     * Step 4: Register all starting features from classes
+     * Step 3b: Build skill registry
+     * @private
+     */
+    async _buildSkillRegistry() {
+        try {
+            SWSELogger.log('Building skill registry...');
+
+            // Build registry
+            const success = await SkillRegistry.build();
+            if (!success) {
+                SWSELogger.warn('SkillRegistry.build() returned false');
+                return;
+            }
+
+            // Normalize all skills
+            const pack = game.packs.get('foundryvtt-foundryvtt-swse.skills');
+            if (pack) {
+                const skills = await pack.getDocuments();
+                let normalized = 0;
+
+                for (const skillDoc of skills) {
+                    SkillNormalizer.normalize(skillDoc);
+                    normalized++;
+                }
+
+                SWSELogger.log(`Built skill registry with ${normalized} skills`);
+            }
+
+        } catch (err) {
+            SWSELogger.error('Failed to build skill registry:', err);
+        }
+    },
+
+    /**
+     * Step 5: Register all starting features from classes
      * @private
      */
     async _registerStartingFeatures() {
