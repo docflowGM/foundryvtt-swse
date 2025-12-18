@@ -155,5 +155,16 @@ game.settings.register("foundryvtt-swse", "diagonalMovement", {
         "5-10": "5-10 (Alternative)"
     }
 });
+
+  // Skill Favorites (per-user storage of favorited skill actions)
+  game.settings.register('foundryvtt-swse', 'skillFavorites', {
+    name: 'Skill Favorites',
+    hint: 'Stores user-marked favorite skill actions',
+    scope: 'client',
+    config: false,
+    type: Object,
+    default: {}
+  });
+
   SWSELogger.log("SWSE | Settings registered");
 }
