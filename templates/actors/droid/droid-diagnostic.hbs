@@ -1,0 +1,31 @@
+{{!-- droid-diagnostic.hbs – Level 3 Hybrid Droid HUD --}}
+<div class="droid-level3">
+
+  {{!-- Floating Mode Toggle --}}
+  <div class="droid-mode-toggle" data-toggle-mode>
+    {{#if (eq actor.flags.swse.viewMode "blueprint")}}
+      <img src="/systems/foundryvtt-swse/assets/ui/icon-mode-blueprint.svg"
+           class="toggle-icon" title="Switch to Operational Mode" />
+    {{else}}
+      <img src="/systems/foundryvtt-swse/assets/ui/icon-mode-operational.svg"
+           class="toggle-icon" title="Switch to Blueprint Mode" />
+    {{/if}}
+  </div>
+
+  {{!-- Operational Mode --}}
+  {{#if (or (eq actor.flags.swse.viewMode null) (eq actor.flags.swse.viewMode "operational"))}}
+    <div class="droid-mode operational-mode fade-in">
+      {{> "systems/foundryvtt-swse/templates/actors/droid/droid-image-operational.hbs" actor=actor}}
+      {{> "systems/foundryvtt-swse/templates/actors/droid/droid-callouts-operational.hbs" actor=actor}}
+    </div>
+  {{/if}}
+
+  {{!-- Blueprint Mode --}}
+  {{#if (eq actor.flags.swse.viewMode "blueprint")}}
+    <div class="droid-mode blueprint-mode fade-in">
+      {{> "systems/foundryvtt-swse/templates/actors/droid/droid-image-blueprint.hbs" actor=actor}}
+      {{> "systems/foundryvtt-swse/templates/actors/droid/droid-callouts-blueprint.hbs" actor=actor}}
+    </div>
+  {{/if}}
+
+</div>

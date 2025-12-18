@@ -1,43 +1,45 @@
 <div class="swse-sheet">
-<form class="{{cssClass}} swse-character-sheet swse-droid-sheet" autocomplete="off">
+<form class="{{cssClass}} swse-character-sheet swse-droid-sheet level3-hud" autocomplete="off">
 
- {{!-- Persistent Header --}}
- {{> "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs"}}
+  {{!-- Persistent Header --}}
+  {{> "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs"}}
 
- {{!-- Navigation Tabs --}}
- <nav class="sheet-tabs tabs" data-group="primary">
- <a class="item active" data-tab="summary">Summary</a>
- <a class="item" data-tab="abilities">Abilities</a>
- <a class="item" data-tab="skills">Skills</a>
- <a class="item" data-tab="combat">Combat</a>
- <a class="item" data-tab="talents">Talents</a>
- <a class="item" data-tab="inventory">Inventory</a>
- <a class="item" data-tab="biography">Biography</a>
- </nav>
+  {{!-- Navigation Tabs --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="summary">Diagnostics</a>
+    <a class="item" data-tab="abilities">Abilities</a>
+    <a class="item" data-tab="skills">Skills</a>
+    <a class="item" data-tab="combat">Combat</a>
+    <a class="item" data-tab="talents">Talents</a>
+    <a class="item" data-tab="inventory">Inventory</a>
+    <a class="item" data-tab="biography">Biography</a>
+  </nav>
 
- {{!-- Sheet Body --}}
- <section class="sheet-body">
- {{!-- Summary Tab --}}
- {{> "systems/foundryvtt-swse/templates/actors/character/tabs/summary-tab.hbs"}}
+  <section class="sheet-body">
 
- {{!-- Abilities Tab --}}
- {{> "systems/foundryvtt-swse/templates/actors/character/tabs/abilities-tab.hbs"}}
+    {{!-- Level 3 Droid Diagnostic HUD Summary Tab --}}
+    <div class="tab summary" data-tab="summary">
+      {{> "systems/foundryvtt-swse/templates/actors/droid/droid-diagnostic.hbs" actor=actor }}
+    </div>
 
- {{!-- Skills Tab --}}
- {{> "systems/foundryvtt-swse/templates/actors/character/tabs/skills-tab.hbs"}}
+    {{!-- Abilities Tab --}}
+    {{> "systems/foundryvtt-swse/templates/actors/character/tabs/abilities-tab.hbs"}}
 
- {{!-- Combat Tab --}}
- {{> "systems/foundryvtt-swse/templates/actors/character/tabs/combat-tab.hbs"}}
+    {{!-- Skills Tab --}}
+    {{> "systems/foundryvtt-swse/templates/actors/character/tabs/skills-tab.hbs"}}
 
- {{!-- Talents Tab --}}
- {{> "systems/foundryvtt-swse/templates/actors/character/tabs/talents-tab.hbs"}}
+    {{!-- Combat Tab --}}
+    {{> "systems/foundryvtt-swse/templates/actors/character/tabs/combat-tab.hbs"}}
 
- {{!-- Inventory Tab --}}
- {{> "systems/foundryvtt-swse/templates/actors/character/tabs/inventory-tab.hbs"}}
+    {{!-- Talents Tab --}}
+    {{> "systems/foundryvtt-swse/templates/actors/character/tabs/talents-tab.hbs"}}
 
- {{!-- Biography Tab --}}
- {{> "systems/foundryvtt-swse/templates/actors/character/tabs/biography-tab.hbs"}}
- </section>
+    {{!-- Inventory Tab --}}
+    {{> "systems/foundryvtt-swse/templates/actors/character/tabs/inventory-tab.hbs"}}
+
+    {{!-- Biography Tab --}}
+    {{> "systems/foundryvtt-swse/templates/actors/character/tabs/biography-tab.hbs"}}
+  </section>
 
 </form>
 </div>

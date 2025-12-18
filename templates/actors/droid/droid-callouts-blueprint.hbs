@@ -1,0 +1,20 @@
+{{!-- Blueprint Callouts --}}
+{{#*inline "callout"}}
+  <div class="droid-callout blueprint-callout holo-tile" style="--top:{{top}}; --left:{{left}};">
+    <div class="tile-inner">
+      <div class="label">{{label}}</div>
+      <div class="value">{{value}}</div>
+    </div>
+
+    <svg class="callout-line">
+      <line x1="0" y1="50%" x2="100" y2="50%" />
+    </svg>
+  </div>
+{{/inline}}
+
+{{!-- Anchored to blueprint geometry --}}
+{{> callout label="Processor Core" value=(or actor.system.processor.tier "Standard") top="20%" left="35%"}}
+{{> callout label="Memory Banks" value=(or actor.system.memory.capacity "512GB") top="32%" left="70%"}}
+{{> callout label="Power Core" value=(or actor.system.power.rating "Class-II") top="48%" left="30%"}}
+{{> callout label="Motor Functions" value=(or actor.system.locomotion.type "Bipedal") top="70%" left="70%"}}
+{{> callout label="Chassis Class" value=(or actor.system.chassis.type "Medium") top="82%" left="50%"}}

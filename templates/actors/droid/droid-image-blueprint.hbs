@@ -1,0 +1,35 @@
+{{!-- Blueprint Mode – Droid Wireframe --}}
+<div class="droid-image blueprint">
+
+  <div class="droid-wireframe-container">
+
+    <svg class="droid-wireframe" viewBox="0 0 500 900">
+      {{!-- Droid body outline --}}
+      <polyline points="250,20 400,200 350,600 250,880 150,600 100,200 250,20"
+                class="wireframe-outline" />
+
+      {{!-- Processor Core (head) --}}
+      <circle cx="250" cy="180" r="40" class="wireframe-node processor" />
+      <text x="250" y="185" class="wireframe-label" text-anchor="middle">CPU</text>
+
+      {{!-- Power Core (chest) --}}
+      <circle cx="250" cy="430" r="55" class="wireframe-node powercore" />
+      <text x="250" y="438" class="wireframe-label" text-anchor="middle">PWR</text>
+
+      {{!-- Memory Banks --}}
+      <rect x="180" y="260" width="140" height="80" class="wireframe-node memory" />
+      <text x="250" y="305" class="wireframe-label" text-anchor="middle">MEM</text>
+
+      {{!-- Motor servos (limbs) --}}
+      <circle cx="150" cy="700" r="25" class="wireframe-node motor" />
+      <circle cx="350" cy="700" r="25" class="wireframe-node motor" />
+
+      {{!-- Connector lines --}}
+      <line x1="250" y1="220" x2="250" y2="260" class="wireframe-connector" />
+      <line x1="250" y1="340" x2="250" y2="375" class="wireframe-connector" />
+      <line x1="250" y1="485" x2="250" y2="600" class="wireframe-connector" />
+    </svg>
+
+  </div>
+
+</div>
