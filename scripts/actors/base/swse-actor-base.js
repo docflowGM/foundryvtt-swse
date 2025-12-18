@@ -2,16 +2,10 @@ import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
 import { ForcePointsUtil } from '../../utils/force-points.js';
 
 /**
- * SWSE Actor Base – Fully Modernized, Optimized, and Future-Proof
- * - Foundry v12–v14 compliant
- * - No deprecated APIs
- * - Batch updates for all operations
- * - RAW-only Condition Track
- * - Threshold automation + descriptive messaging
- * - Droids follow RAW rules for destruction/repair
- * - Smarter damage + healing
- * - Improved drop handling
- * - Hooked for modular expansion
+ * SWSE Actor Base – Fully Modernized for v13+ and Active Effect Engine
+ * - Structured SWSE effects are applied AFTER derived data
+ * - Preserves RAW Saga mechanics
+ * - Compatible with rewritten SWSEActiveEffectsManager
  */
 export class SWSEActorBase extends Actor {
 
@@ -27,7 +21,6 @@ export class SWSEActorBase extends Actor {
       const legacy = this.flags?.swse;
       if (!legacy) return undefined;
 
-      // Safe nested lookup
       return foundry.utils.getProperty
         ? foundry.utils.getProperty(legacy, key)
         : key.split(".").reduce((o, k) => (o?.[k] ?? undefined), legacy);
@@ -50,11 +43,71 @@ export class SWSEActorBase extends Actor {
   /* -------------------------------------------------------------------------- */
 
   prepareDerivedData() {
-  super.prepareDerivedData();
-  this._applyActiveEffects();
-}
-    // Data model already computes most values.
+    super.prepareDerivedData();
 
+    // Apply SWSE structured Active Effects AFTER the system calculates its base values
+    this._applyActiveEffects();
+  }
+
+  /**
+   * Apply SWSE structured Active Effects directly to Actor.system.*
+   * - E1: modifies system data directly
+   * - C1: manual application in derivedData
+   * - A: auto-create missing nested fields
+   * - M1: sequential multipliers
+   */
+  _applyActiveEffects() {
+    const effects = this.effects ?? [];
+    if (!effects.length) return;
+
+    for (const effect of effects) {
+      if (effect.disabled || !effect.updates) continue;
+
+      for (const [path, config] of Object.entries(effect.updates)) {
+        if (!config || typeof config.value === "undefined") continue;
+
+        const mode = config.mode ?? "ADD";
+        const value = config.value;
+
+        // Auto-create missing fields
+        let current = foundry.utils.getProperty(this, path);
+        if (current === undefined) {
+          foundry.utils.setProperty(this, path, 0);
+          current = 0;
+        }
+
+        let result = current;
+
+        switch (mode) {
+          case "ADD":
+            result = current + value;
+            break;
+
+          case "MULTIPLY":
+            result = current * value; // Sequential multiplier stacking
+            break;
+
+          case "OVERRIDE":
+            result = value;
+            break;
+
+          case "BASE":
+            if (current === 0 || current === null) result = value;
+            break;
+
+          default:
+            console.warn(`SWSE ActiveEffect: Unknown mode "${mode}"`);
+            break;
+        }
+
+        foundry.utils.setProperty(this, path, result);
+      }
+    }
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* CONDITION PENALTY + UTILITY GETTERS                                       */
+  /* -------------------------------------------------------------------------- */
 
   get conditionPenalty() {
     return this.system.conditionTrack?.penalty ?? 0;
@@ -68,13 +121,6 @@ export class SWSEActorBase extends Actor {
   /* DAMAGE & HEALING                                                           */
   /* -------------------------------------------------------------------------- */
 
-  /**
-   * Apply damage according to RAW Saga rules, including:
-   * - Temp HP first
-   * - Droid destruction logic
-   * - Threshold checks → CT movement + descriptive chat
-   * - Batch updates for performance
-   */
   async applyDamage(amount, options = {}) {
     if (typeof amount !== "number" || amount < 0) return;
 
@@ -84,25 +130,23 @@ export class SWSEActorBase extends Actor {
     let remaining = amount;
     const updates = {};
 
-    /* ------------------------------- TEMP HP -------------------------------- */
+    // TEMP HP
     if (hp.temp > 0 && !options.ignoreTemp) {
       const tempUsed = Math.min(hp.temp, remaining);
       remaining -= tempUsed;
       updates["system.hp.temp"] = hp.temp - tempUsed;
     }
 
-    /* ------------------------------ REAL HP -------------------------------- */
+    // REAL HP
     if (remaining > 0) {
       let newHP = hp.value - remaining;
 
-      /* Droid destruction threshold */
+      // Droid destruction (RAW)
       if (isDroid && options.checkThreshold !== false) {
         const threshold = this.system.damageThreshold ?? 10;
 
         if (amount >= threshold) {
-          newHP = -1; // destroyed (RAW)
-          updates["system.hp.value"] = newHP;
-
+          updates["system.hp.value"] = -1;
           ui.notifications.error(`${this.name} is DESTROYED! (Damage exceeded threshold)`);
 
           Hooks.callAll("swse.actorDamageApplied", this, amount, options);
@@ -111,35 +155,29 @@ export class SWSEActorBase extends Actor {
         }
       }
 
-      /* Living creatures cannot go below 0 */
       if (!isDroid) newHP = Math.max(0, newHP);
-
       updates["system.hp.value"] = newHP;
 
-      /* -------------------- RAW Threshold Check (your choice: B) -------------------- */
+      // RAW Threshold → CT movement
       if (!isDroid && options.checkThreshold !== false) {
         const threshold = this.system.damageThreshold ?? 0;
-
         if (amount >= threshold) {
           await this.moveConditionTrack(1);
+
           ChatMessage.create({
-            content: `<b>${this.name}</b> takes a heavy blow! Damage meets/exceeds threshold and moves down the Condition Track.`,
+            content: `<b>${this.name}</b> takes a heavy blow and moves down the Condition Track!`,
             speaker: { actor: this }
           });
         }
       }
 
-      /* -------------------- Droid state messaging -------------------- */
+      // Droid states
       if (isDroid) {
-        if (newHP <= -1) {
-          ui.notifications.error(`${this.name} is DESTROYED!`);
-        } else if (newHP === 0) {
-          ui.notifications.warn(`${this.name} is DISABLED! Limited actions only.`);
-        }
+        if (newHP <= -1) ui.notifications.error(`${this.name} is DESTROYED!`);
+        else if (newHP === 0) ui.notifications.warn(`${this.name} is DISABLED!`);
       } else {
-        if (newHP === 0 && this.isHelpless) {
+        if (newHP === 0 && this.isHelpless)
           ui.notifications.error(`${this.name} has been defeated!`);
-        }
       }
     }
 
@@ -148,12 +186,6 @@ export class SWSEActorBase extends Actor {
     return amount;
   }
 
-  /**
-   * Apply RAW healing:
-   * - Droids require Mechanics (unless isRepair = true)
-   * - Destroyed droids cannot be repaired
-   * - Batch updates for efficiency
-   */
   async applyHealing(amount, options = {}) {
     if (typeof amount !== "number" || amount < 0) return 0;
 
@@ -176,9 +208,8 @@ export class SWSEActorBase extends Actor {
     await this.update({ "system.hp.value": newHP }, { diff: true });
 
     ui.notifications.info(
-      isDroid
-        ? `${this.name} is repaired for ${healed} HP`
-        : `${this.name} heals ${healed} HP`
+      isDroid ? `${this.name} is repaired for ${healed} HP`
+              : `${this.name} heals ${healed} HP`
     );
 
     Hooks.callAll("swse.actorHealingApplied", this, healed, options);
@@ -186,7 +217,7 @@ export class SWSEActorBase extends Actor {
   }
 
   /* -------------------------------------------------------------------------- */
-  /* CONDITION TRACK (RAW ONLY)                                                 */
+  /* CONDITION TRACK                                                            */
   /* -------------------------------------------------------------------------- */
 
   async moveConditionTrack(steps) {
@@ -195,16 +226,11 @@ export class SWSEActorBase extends Actor {
 
     if (next === cur) return cur;
 
-    await this.update(
-      { "system.conditionTrack.current": next },
-      { diff: true }
-    );
+    await this.update({ "system.conditionTrack.current": next }, { diff: true });
 
     const labels = ["Normal", "-1", "-2", "-5", "-10", "Helpless"];
-    const dir = steps > 0 ? "worsens" : "improves";
-
     ui.notifications.info(
-      `${this.name} ${dir} to ${labels[next]} on the Condition Track`
+      `${this.name} ${steps > 0 ? "worsens" : "improves"} to ${labels[next]}`
     );
 
     Hooks.callAll("swse.actorConditionTrackChanged", this, next, cur);
@@ -235,6 +261,7 @@ export class SWSEActorBase extends Actor {
 
     if (improved) {
       await this.moveConditionTrack(-1);
+
       ChatMessage.create({
         content: `${this.name} uses Second Wind: heals ${healValue} HP and improves condition!`,
         speaker: { actor: this }
@@ -251,7 +278,7 @@ export class SWSEActorBase extends Actor {
   }
 
   /* -------------------------------------------------------------------------- */
-  /* FORCE POINT LOGIC                                                          */
+  /* FORCE POINTS                                                               */
   /* -------------------------------------------------------------------------- */
 
   async spendForcePoint(reason = "unspecified", options = {}) {
@@ -312,18 +339,12 @@ export class SWSEActorBase extends Actor {
   /* ROLLS                                                                      */
   /* -------------------------------------------------------------------------- */
 
-  async rollSkill(skillKey) {
-    return SWSERoll.rollSkill(this, skillKey);
-  }
-  async rollAttack(weapon) {
-    return SWSERoll.rollAttack(this, weapon);
-  }
-  async rollDamage(weapon) {
-    return SWSERoll.rollDamage(this, weapon);
-  }
+  async rollSkill(skillKey) { return SWSERoll.rollSkill(this, skillKey); }
+  async rollAttack(weapon) { return SWSERoll.rollAttack(this, weapon); }
+  async rollDamage(weapon) { return SWSERoll.rollDamage(this, weapon); }
 
   /* -------------------------------------------------------------------------- */
-  /* ROLL DATA SANITATION                                                       */
+  /* ROLL DATA                                                                  */
   /* -------------------------------------------------------------------------- */
 
   getRollData() {
@@ -333,8 +354,8 @@ export class SWSEActorBase extends Actor {
     data.conditionPenalty = this.conditionPenalty;
 
     data.abilities = {};
-    for (const [key, ability] of Object.entries(this.system.abilities ?? {}))
-      data.abilities[key] = ability.mod ?? 0;
+    for (const [k, ability] of Object.entries(this.system.abilities ?? {}))
+      data.abilities[k] = ability.mod ?? 0;
 
     data.skills = this.system.skills ?? {};
 
@@ -342,16 +363,16 @@ export class SWSEActorBase extends Actor {
   }
 
   /* -------------------------------------------------------------------------- */
-  /* DROP HANDLING (Species, Classes, Items)                                    */
+  /* DROP HANDLING                                                              */
   /* -------------------------------------------------------------------------- */
 
   async _onDropItem(data) {
-    const item = await fromUuid(data.uuid); // Not deprecated in v13; safe
+    const item = await fromUuid(data.uuid);
     if (!item) return false;
 
     const updates = {};
 
-    /* Apply species */
+    // Species
     if (item.type === "species") {
       const existing = this.items.find(i => i.type === "species");
       if (existing) await existing.delete();
@@ -361,13 +382,14 @@ export class SWSEActorBase extends Actor {
         updates[`system.abilities.${k}.racial`] = v;
     }
 
-    /* Update class */
+    // Class
     if (item.type === "class") {
       updates["system.class"] = item.name;
     }
 
-    if (Object.keys(updates).length > 0)
+    if (Object.keys(updates).length) {
       await this.update(updates, { diff: true });
+    }
 
     Hooks.callAll("swse.actorItemDropped", this, item);
     return super._onDropItem(data);
