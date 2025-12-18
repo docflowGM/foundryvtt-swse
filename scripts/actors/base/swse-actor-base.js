@@ -50,9 +50,11 @@ export class SWSEActorBase extends Actor {
   /* -------------------------------------------------------------------------- */
 
   prepareDerivedData() {
-    super.prepareDerivedData();
+  super.prepareDerivedData();
+  this._applyActiveEffects();
+}
     // Data model already computes most values.
-  }
+
 
   get conditionPenalty() {
     return this.system.conditionTrack?.penalty ?? 0;
