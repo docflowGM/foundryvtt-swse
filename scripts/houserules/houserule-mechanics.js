@@ -1,380 +1,344 @@
-import { SWSELogger } from '../utils/logger.js';
-import { HouserulesData, getFeintSkill, getSkillFocusBonus, canTakeForceSensitive, getForceTrainingAttribute, hasBlockDeflectCombined, hasDefaultWeaponFinesse, getRolePriorityOrder } from './houserules-data.js';
-/**
- * House Rules Mechanics
- * Applies house rule modifications to game mechanics
- */
+// scripts/houserules/houserules-mechanics.js
+import { SWSELogger } from "../utils/logger.js";
+import {
+  HouserulesData,
+  getFeintSkill,
+  getSkillFocusBonus,
+  canTakeForceSensitive,
+  getForceTrainingAttribute,
+  hasBlockDeflectCombined,
+  hasDefaultWeaponFinesse,
+  getRolePriorityOrder
+} from "./houserules-data.js";
 
+/**
+ * HouseruleMechanics
+ * Centralized container for rule-altering mechanics.
+ * Modernized for Foundry VTT V13+ with strict safety and performance improvements.
+ */
 export class HouseruleMechanics {
-  
   /**
-   * Initialize house rule mechanics
+   * Initialize all mechanics. Called during SWSE startup.
    */
   static initialize() {
-    SWSELogger.log("SWSE | Initializing house rule mechanics");
-    
-    // Set up hooks for house rule mechanics
-    this.setupCriticalHitVariants();
-    this.setupConditionTrackLimits();
-    this.setupDiagonalMovement();
-    this.setupDeathSystem();
-    this.setupFeintSkill();
-    this.setupSpaceCombatInitiative();
-    
-    SWSELogger.log("SWSE | House rule mechanics initialized");
+    SWSELogger.info("HouseruleMechanics | Initializing…");
+
+    try {
+      this._setupCriticalHitVariants();
+      this._setupConditionTrackLimits();
+      this._setupDiagonalMovement();
+      this._setupDeathSystem();
+      this._setupFeintSkill();
+      this._setupSpaceCombatInitiative();
+    } catch (err) {
+      SWSELogger.error("HouseruleMechanics initialization failed", err);
+    }
+
+    SWSELogger.info("HouseruleMechanics | Ready.");
   }
 
-  /**
-   * Apply critical hit variant rules
-   */
-  static setupCriticalHitVariants() {
-    Hooks.on('preRollDamage', (actor, item, options) => {
-      if (!options.critical) return;
-      
-      const variant = game.settings.get('foundryvtt-swse', 'criticalHitVariant');
-      
-      switch (variant) {
-        case 'maxplus':
-          options.criticalMode = 'maxplus';
-          break;
-        case 'exploding':
-          options.criticalMode = 'exploding';
-          break;
-        case 'trackonly':
-          options.criticalMode = 'trackonly';
-          break;
-        default:
-          options.criticalMode = 'standard';
+  // ========================================================================
+  //  CRITICAL HIT VARIANTS
+  // ========================================================================
+
+  static _setupCriticalHitVariants() {
+    Hooks.on("preRollDamage", (item, config, rollData) => {
+      try {
+        if (!config?.critical) return;
+
+        const variant = game.settings.get("foundryvtt-swse", "criticalHitVariant");
+        config.criticalMode = variant || "standard";
+      } catch (err) {
+        SWSELogger.error("Critical variant application failed", err);
       }
     });
   }
 
-  /**
-   * Apply condition track damage cap
-   */
-  static setupConditionTrackLimits() {
-    Hooks.on('preUpdateActor', (actor, changes, options, userId) => {
-      const cap = game.settings.get('foundryvtt-swse', 'conditionTrackCap');
-      
-      if (cap === 0) return; // No cap
-      
-      if (changes.system?.conditionTrack?.current !== undefined) {
-        const current = actor.system.conditionTrack?.current || 0;
-        const newValue = changes.system.conditionTrack.current;
-        const delta = newValue - current;
-        
-        // Cap the movement
+  // ========================================================================
+  //  CONDITION TRACK LIMITS
+  // ========================================================================
+
+  static _setupConditionTrackLimits() {
+    Hooks.on("preUpdateActor", (actor, update, options, userId) => {
+      try {
+        const cap = game.settings.get("foundryvtt-swse", "conditionTrackCap");
+        if (!cap || !update?.system?.conditionTrack?.current) return;
+
+        const current = actor.system.conditionTrack?.current ?? 0;
+        const target = update.system.conditionTrack.current;
+        const delta = target - current;
+
         if (delta > cap) {
-          changes.system.conditionTrack.current = current + cap;
+          update.system.conditionTrack.current = current + cap;
         }
+      } catch (err) {
+        SWSELogger.error("Condition track cap failed", err);
       }
     });
   }
 
-  /**
-   * Apply diagonal movement rules
-   */
-  static setupDiagonalMovement() {
-    // This would hook into token movement if needed
-    const movementType = game.settings.get('foundryvtt-swse', 'diagonalMovement');
-    
-    // Store for reference by movement calculations
-    CONFIG.SWSE.diagonalMovement = movementType;
+  // ========================================================================
+  //  DIAGONAL MOVEMENT SYSTEM
+  // ========================================================================
+
+  static _setupDiagonalMovement() {
+    try {
+      CONFIG.SWSE.diagonalMovement = game.settings.get(
+        "foundryvtt-swse",
+        "diagonalMovement"
+      );
+    } catch (err) {
+      SWSELogger.error("Diagonal movement handler failed", err);
+    }
   }
 
-  /**
-   * Apply death system rules
-   */
-  static setupDeathSystem() {
-    Hooks.on('preUpdateActor', (actor, changes, options, userId) => {
-      if (changes.system?.hp?.value === undefined) return;
-      
-      const deathSystem = game.settings.get('foundryvtt-swse', 'deathSystem');
-      const newHP = changes.system.hp.value;
-      
-      if (newHP > 0) return; // Not at risk of death
-      
-      switch (deathSystem) {
-        case 'standard':
-          // Death at -10 HP
-          if (newHP <= -10) {
-            ui.notifications.error(`${actor.name} has died!`);
-            changes.system.dead = true;
+  // ========================================================================
+  //  DEATH RULE HANDLING
+  // ========================================================================
+
+  static _setupDeathSystem() {
+    Hooks.on("preUpdateActor", (actor, update, options, userId) => {
+      try {
+        if (!update?.system?.hp?.value) return;
+
+        const system = game.settings.get("foundryvtt-swse", "deathSystem");
+        const newValue = update.system.hp.value;
+
+        if (newValue > 0) return;
+
+        switch (system) {
+          case "standard": {
+            if (newValue <= -10) update.system.dead = true;
+            break;
           }
-          break;
-          
-        case 'negativeCon':
-          // Death at negative CON score
-          const conScore = actor.system.abilities.con.total;
-          if (newHP <= -conScore) {
-            ui.notifications.error(`${actor.name} has died!`);
-            changes.system.dead = true;
+
+          case "negativeCon": {
+            const con = actor.system.abilities.con.total;
+            if (newValue <= -con) update.system.dead = true;
+            break;
           }
-          break;
-          
-        case 'threeStrikes':
-          // Death saves handled separately
-          break;
+
+          case "threeStrikes":
+            // handled elsewhere (death save system)
+            break;
+        }
+      } catch (err) {
+        SWSELogger.error("Death system handler failed", err);
       }
     });
   }
 
-  /**
-   * Calculate ability score modifiers based on method
-   */
+  // ========================================================================
+  //  ABILITY & HP GENERATION
+  // ========================================================================
+
   static calculateAbilityMod(score) {
     return Math.floor((score - 10) / 2);
   }
 
-  /**
-   * Apply HP generation rules
-   */
   static async generateHP(actor, classItem, level) {
-    const method = game.settings.get('foundryvtt-swse', 'hpGeneration');
-    const maxLevels = game.settings.get('foundryvtt-swse', 'maxHPLevels');
-    const hitDie = classItem.system.hitDie || 6;
-    const conMod = actor.system.abilities.con.mod || 0;
-    
-    let hp = 0;
-    
-    // First X levels get max HP
-    if (level <= maxLevels) {
-      hp = hitDie + conMod;
-    } else {
+    try {
+      const method = game.settings.get("foundryvtt-swse", "hpGeneration");
+      const maxLevels = game.settings.get("foundryvtt-swse", "maxHPLevels");
+      const hitDie = classItem.system.hitDie || 6;
+      const conMod = actor.system.abilities.con.mod ?? 0;
+
+      if (level <= maxLevels) return hitDie + conMod;
+
+      const rollEngine = globalThis.SWSE.RollEngine;
+
       switch (method) {
-        case 'maximum':
-          hp = hitDie + conMod;
-          break;
-          
-        case 'average':
-          hp = Math.floor(hitDie / 2) + 1 + conMod;
-          break;
-          
-        case 'average_minimum':
-          const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d${hitDie}`).evaluate({async: true});
-          const average = Math.floor(hitDie / 2) + 1;
-          hp = Math.max(roll.total, average) + conMod;
-          break;
-          
-        case 'roll':
-        default:
-          const rollResult = await globalThis.SWSE.RollEngine.safeRoll(`1d${hitDie}`).evaluate({async: true});
-          hp = rollResult.total + conMod;
-          break;
-      }
-    }
-    
-    // Minimum 1 HP per level
-    return Math.max(1, hp);
-  }
+        case "maximum":
+          return hitDie + conMod;
 
-  /**
-   * Apply weapon range multiplier
-   */
-  static getModifiedRange(baseRange) {
-    const multiplier = game.settings.get('foundryvtt-swse', 'weaponRangeMultiplier');
-    return Math.round(baseRange * multiplier);
-  }
+        case "average":
+          return Math.floor(hitDie / 2) + 1 + conMod;
 
-  /**
-   * Check if Second Wind improves condition track
-   */
-  static isSecondWindImproved() {
-    return game.settings.get('foundryvtt-swse', 'secondWindImproved');
-  }
-
-  /**
-   * Get Second Wind recovery timing
-   */
-  static getSecondWindRecovery() {
-    return game.settings.get('foundryvtt-swse', 'secondWindRecovery');
-  }
-
-  /**
-   * Apply critical hit damage based on variant
-   */
-  static async applyCriticalDamage(baseRoll, mode = 'standard') {
-    switch (mode) {
-      case 'maxplus':
-        // Maximum damage + one additional roll
-        const maxDamage = baseRoll.terms.map(t => {
-          if (t instanceof Die) {
-            return t.faces * t.number;
-          }
-          return t;
-        }).reduce((a, b) => a + b, 0);
-        
-        const additionalRoll = await baseRoll.reroll();
-        return maxDamage + additionalRoll.total;
-        
-      case 'exploding':
-        // Exploding dice on critical
-        const explodingFormula = baseRoll.formula.replace(/d(\d+)/g, 'd$1x');
-        const explodingRoll = await globalThis.SWSE.RollEngine.safeRoll(explodingFormula).evaluate({async: true});
-        return explodingRoll.total;
-        
-      case 'trackonly':
-        // Normal damage, but guaranteed condition track movement
-        return baseRoll.total;
-        
-      case 'standard':
-      default:
-        // Double damage
-        return baseRoll.total * 2;
-    }
-  }
-
-  /**
-   * Apply feint skill rules
-   */
-  static setupFeintSkill() {
-    Hooks.on('preRollSkill', (actor, skillName, options) => {
-      if (skillName === 'feint') {
-        const feintSkill = game.settings.get('foundryvtt-swse', 'feintSkill');
-        if (feintSkill === 'persuasion') {
-          options.useSkill = 'persuasion';
+        case "average_minimum": {
+          const roll = await rollEngine.safeRoll(`1d${hitDie}`).evaluate({
+            async: true,
+          });
+          const avg = Math.floor(hitDie / 2) + 1;
+          return Math.max(roll.total, avg) + conMod;
         }
+
+        case "roll":
+        default: {
+          const roll = await rollEngine.safeRoll(`1d${hitDie}`).evaluate({
+            async: true,
+          });
+          return roll.total + conMod;
+        }
+      }
+    } catch (err) {
+      SWSELogger.error("HP generation failed", err);
+      return 1;
+    }
+  }
+
+  // ========================================================================
+  //  RANGE, SECOND WIND, CRITICAL DAMAGE
+  // ========================================================================
+
+  static getModifiedRange(baseRange) {
+    try {
+      const mult = game.settings.get(
+        "foundryvtt-swse",
+        "weaponRangeMultiplier"
+      );
+      return Math.round(baseRange * mult);
+    } catch (err) {
+      SWSELogger.error("Range multiplier calculation failed", err);
+      return baseRange;
+    }
+  }
+
+  static isSecondWindImproved() {
+    return game.settings.get("foundryvtt-swse", "secondWindImproved");
+  }
+
+  static getSecondWindRecovery() {
+    return game.settings.get("foundryvtt-swse", "secondWindRecovery");
+  }
+
+  static async applyCriticalDamage(baseRoll, mode = "standard") {
+    try {
+      const rollEngine = globalThis.SWSE.RollEngine;
+
+      switch (mode) {
+        case "maxplus": {
+          const max = baseRoll.terms.reduce((sum, t) => {
+            if (t instanceof Die) return sum + t.number * t.faces;
+            return sum + (t.total ?? 0);
+          }, 0);
+
+          const extra = await baseRoll.reroll();
+          return max + extra.total;
+        }
+
+        case "exploding": {
+          const explodingFormula = baseRoll.formula.replace(/d(\d+)/g, "d$1x");
+          const newRoll = await rollEngine
+            .safeRoll(explodingFormula)
+            .evaluate({ async: true });
+          return newRoll.total;
+        }
+
+        case "trackonly":
+          return baseRoll.total;
+
+        case "standard":
+        default:
+          return baseRoll.total * 2;
+      }
+    } catch (err) {
+      SWSELogger.error("Critical damage calculation failed", err);
+      return baseRoll.total;
+    }
+  }
+
+  // ========================================================================
+  //  FEINT SKILL
+  // ========================================================================
+
+  static _setupFeintSkill() {
+    Hooks.on("swse.preSkillRoll", (actor, skillId, context) => {
+      try {
+        if (skillId !== "feint") return;
+
+        const setting = game.settings.get("foundryvtt-swse", "feintSkill");
+        if (setting === "persuasion") context.useSkill = "persuasion";
+      } catch (err) {
+        SWSELogger.error("Feint skill override failed", err);
       }
     });
   }
 
-  /**
-   * Calculate Skill Focus bonus based on variant
-   */
-  static getSkillFocusBonus(actor, skillName) {
-    const variant = game.settings.get('foundryvtt-swse', 'skillFocusVariant');
-    const level = actor.system.level || 1;
-    
-    switch (variant) {
-      case 'scaled':
-        return Math.min(5, Math.floor(level / 2));
-      
-      case 'delayed':
-        const activationLevel = game.settings.get('foundryvtt-swse', 'skillFocusActivationLevel');
-        return level >= activationLevel ? 5 : 0;
-      
-      case 'normal':
-      default:
-        return 5;
-    }
-  }
+  static getSkillFocusBonus(actor, skill) {
+    try {
+      const variant = game.settings.get(
+        "foundryvtt-swse",
+        "skillFocusVariant"
+      );
+      const level = actor.system.level || 1;
 
-  /**
-   * Get Force Training attribute
-   */
-  static getForceTrainingAttribute() {
-    return game.settings.get('foundryvtt-swse', 'forceTrainingAttribute');
-  }
+      switch (variant) {
+        case "scaled":
+          return Math.min(5, Math.floor(level / 2));
 
-  /**
-   * Check if Block and Deflect are combined
-   */
-  static isBlockDeflectCombined() {
-    return game.settings.get('foundryvtt-swse', 'blockDeflectTalents') === 'combined';
-  }
-
-  /**
-   * Check if Force Sensitive is restricted to Jedi
-   */
-  static isForceSensitiveRestricted() {
-    return game.settings.get('foundryvtt-swse', 'forceSensitiveJediOnly');
-  }
-
-  /**
-   * Check if Weapon Finesse is default
-   */
-  static hasDefaultWeaponFinesse(actor) {
-    return game.settings.get('foundryvtt-swse', 'weaponFinesseDefault');
-  }
-
-  /**
-   * Apply space combat initiative system
-   */
-  static setupSpaceCombatInitiative() {
-    const system = game.settings.get('foundryvtt-swse', 'spaceInitiativeSystem');
-    
-    if (system === 'shipBased') {
-      Hooks.on('preCreateCombatant', (combatant, data, options, userId) => {
-        // Check if this is a vehicle/ship combat
-        const actor = game.actors.get(data.actorId);
-        if (actor?.type === 'vehicle') {
-          // Set up ship-based initiative tracking
-          data.flags = data.flags || {};
-          data.flags.swse = data.flags.swse || {};
-          data.flags.swse.shipBasedInitiative = true;
+        case "delayed": {
+          const activation = game.settings.get(
+            "foundryvtt-swse",
+            "skillFocusActivationLevel"
+          );
+          return level >= activation ? 5 : 0;
         }
-      });
-      
-      Hooks.on('combatTurn', (combat, updateData, options) => {
-        // Handle role priority order
-        const rolePriority = game.settings.get('foundryvtt-swse', 'initiativeRolePriority');
-        // Implementation would depend on how crew roles are stored
-      });
+
+        case "normal":
+        default:
+          return 5;
+      }
+    } catch (err) {
+      SWSELogger.error("Skill Focus bonus calculation failed", err);
+      return 5;
     }
   }
 
-  /**
-   * Get space combat role priority
-   */
-  static getInitiativeRolePriority() {
-    return game.settings.get('foundryvtt-swse', 'initiativeRolePriority');
-  }
+  // ========================================================================
+  //  FORCE TRAINING, BLOCK/DEFLECT, WEAPON FINESSE
+  // ========================================================================
 
-
-  /**
-   * Import houserules data
-   */
-  static get data() {
-    return HouserulesData;
-  }
-
-  /**
-   * Apply feint skill houserule
-   */
-  static getFeintSkill() {
-    return getFeintSkill();
-  }
-
-  /**
-   * Calculate Skill Focus bonus with houserule variant
-   */
-  static calculateSkillFocusBonus(level) {
-    return getSkillFocusBonus(level);
-  }
-
-  /**
-   * Check if actor can take Force Sensitive feat
-   */
-  static canTakeForceSensitive(actor) {
-    return canTakeForceSensitive(actor);
-  }
-
-  /**
-   * Get the Force Training attribute
-   */
-  static getForceAttribute() {
+  static getForceTrainingAttribute() {
     return getForceTrainingAttribute();
   }
 
-  /**
-   * Check if Block and Deflect are combined
-   */
   static areBlockDeflectCombined() {
     return hasBlockDeflectCombined();
   }
 
-  /**
-   * Check if character has Weapon Finesse by default
-   */
   static hasWeaponFinesseByDefault() {
     return hasDefaultWeaponFinesse();
   }
 
-  /**
-   * Get space combat initiative role order
-   */
+  static canTakeForceSensitive(actor) {
+    return canTakeForceSensitive(actor);
+  }
+
+  // ========================================================================
+  //  SPACE COMBAT INITIATIVE
+  // ========================================================================
+
+  static _setupSpaceCombatInitiative() {
+    const system = game.settings.get(
+      "foundryvtt-swse",
+      "spaceInitiativeSystem"
+    );
+
+    if (system !== "shipBased") return;
+
+    Hooks.on("preCreateCombatant", (combatant, data) => {
+      try {
+        const actor = game.actors.get(data.actorId);
+        if (actor?.type === "vehicle") {
+          data.flags = foundry.utils.mergeObject(data.flags ?? {}, {
+            swse: { shipBasedInitiative: true },
+          });
+        }
+      } catch (err) {
+        SWSELogger.error("Ship-based initiative flagging failed", err);
+      }
+    });
+  }
+
   static getSpaceCombatRoleOrder() {
     return getRolePriorityOrder();
   }
 
+  // ========================================================================
+  //  DATA EXPORT
+  // ========================================================================
+
+  static get data() {
+    return HouserulesData;
+  }
 }
