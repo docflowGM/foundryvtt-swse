@@ -1,137 +1,264 @@
 /**
- * Force Suite Management Component
- * This handles the drag-and-drop interface for managing Force Powers.
- * Think of it as a deck of cards where you choose your hand.
+ * Force Suite Component (RAW SWSE Accurate)
+ * - All known powers are always available ("in suite")
+ * - Using a power spends it
+ * - Powers can be regained in several RAW-compliant ways
+ * - Two zones only: READY and SPENT
  */
 export class ForceSuiteComponent {
 
-  static render(actor) {
-    const powers = actor.items.filter(i => i.type === 'forcepower');
-    const knownPowers = powers.filter(p => !p.system.inSuite);
-    const suitePowers = powers.filter(p => p.system.inSuite);
-    const maxSuite = actor.system.forceSuite?.maxPowers || 6;
+  /** --------------------------
+   * PUBLIC RENDER/REFRESH
+   * -------------------------- */
+
+  static render(actor, container) {
+    container.innerHTML = this._template(actor);
+    this._activate(container, actor);
+  }
+
+  static refresh(actor, container) {
+    this.render(actor, container);
+  }
+
+
+  /** --------------------------
+   * STATE MANAGEMENT
+   * -------------------------- */
+
+  static _getPowers(actor) {
+    const all = actor.items.filter(i => i.type === "forcepower");
+
+    return {
+      ready: all.filter(p => !p.system.spent),
+      spent: all.filter(p => p.system.spent),
+      known: all.length
+    };
+  }
+
+
+  /** --------------------------
+   * HTML TEMPLATE
+   * -------------------------- */
+
+  static _template(actor) {
+    const { ready, spent, known } = this._getPowers(actor);
 
     return `
-      <div class="force-suite-component">
-        <div class="suite-container">
-          <div class="known-powers">
-            <h3>Known Powers</h3>
-            <div class="power-list" data-zone="known">
-              ${knownPowers.map(power => this.renderPowerCard(power, false)).join('')}
+      <div class="swse-force-suite">
+
+        <header class="fs-header">
+          <h2><i class="fas fa-jedi"></i> Force Powers (${known} known)</h2>
+        </header>
+
+        <section class="fs-layout">
+
+          <!-- READY Powers -->
+          <div class="fs-column ready" data-zone="ready">
+            <h3>Ready Powers</h3>
+            <div class="fs-list">
+              ${ready.map(p => this._cardHTML(p, false)).join("")}
             </div>
           </div>
 
-          <div class="suite-arrow">
-            <i class="fas fa-exchange-alt"></i>
+          <!-- Arrow -->
+          <div class="fs-arrow">
+            <i class="fas fa-arrow-right"></i>
           </div>
 
-          <div class="active-suite">
-            <h3>Active Suite (${suitePowers.length}/${maxSuite})</h3>
-            <div class="power-list suite-drop-zone" data-zone="suite">
-              ${suitePowers.map(power => this.renderPowerCard(power, true)).join('')}
-              ${suitePowers.length < maxSuite ? 
-                `<div class="empty-slot">Drag power here</div>`.repeat(maxSuite - suitePowers.length) : 
-                ''}
+          <!-- SPENT Powers -->
+          <div class="fs-column spent" data-zone="spent">
+            <h3>Spent Powers</h3>
+            <div class="fs-list spent-zone">
+              ${spent.length === 0
+                ? `<div class="fs-empty">No spent powers</div>`
+                : spent.map(p => this._cardHTML(p, true)).join("")
+              }
             </div>
           </div>
-        </div>
 
-        <div class="suite-info">
-          <p><i class="fas fa-info-circle"></i> 
-             Drag powers between columns to manage your Force Suite.
-             Powers in the suite can be used at-will.</p>
+        </section>
+
+        ${this._footerHTML(actor)}
+      </div>
+    `;
+  }
+
+
+  /** --------------------------
+   * CARD TEMPLATE
+   * -------------------------- */
+
+  static _cardHTML(power, spent) {
+    const cls = [
+      "fs-card",
+      power.system.discipline === "light-side" ? "light" : "",
+      power.system.discipline === "dark-side" ? "dark" : "",
+      power.system.discipline === "universal" ? "universal" : "",
+      spent ? "spent" : "ready"
+    ].join(" ");
+
+    const badge = spent
+      ? `<span class="fs-badge spent">SPENT</span>`
+      : `<span class="fs-badge ready">READY</span>`;
+
+    return `
+      <div class="${cls}"
+           draggable="true"
+           data-power="${power.id}">
+
+        ${badge}
+
+        <img src="${power.img}" class="fs-icon"/>
+        <div class="fs-name">${power.name}</div>
+
+        <div class="fs-actions">
+          ${!spent ? `
+            <button class="use-power" data-act="use" data-power="${power.id}">
+              <i class="fas fa-hand-sparkles"></i>
+            </button>
+          ` : `
+            <button class="regain-one" data-act="regainOne" data-power="${power.id}">
+              <i class="fas fa-undo"></i>
+            </button>
+          `}
         </div>
       </div>
     `;
   }
 
-  static renderPowerCard(power, inSuite) {
-    const lightSide = power.system.discipline === 'light-side';
-    const darkSide = power.system.discipline === 'dark-side';
 
+  /** --------------------------
+   * FOOTER
+   * -------------------------- */
+
+  static _footerHTML(actor) {
     return `
-      <div class="power-card ${lightSide ? 'light-side' : ''} ${darkSide ? 'dark-side' : ''}"
-           data-item-id="${power.id}"
-           draggable="true">
-        <img src="${power.img}" alt="${power.name}">
-        <div class="power-name">${power.name}</div>
-        <div class="power-actions">
-          <button class="use-power" data-action="usePower" data-power-id="${power.id}">
-            <i class="fas fa-hand-sparkles"></i>
+      <footer class="fs-footer">
+        <div class="fs-buttons">
+          <button class="fs-btn" data-act="restoreAll">
+            Restore All (1 minute rest)
           </button>
-          ${inSuite ? 
-            `<button class="remove-suite" data-action="removeFromSuite" data-power-id="${power.id}">
-              <i class="fas fa-minus-circle"></i>
-            </button>` : 
-            `<button class="add-suite" data-action="addToSuite" data-power-id="${power.id}">
-              <i class="fas fa-plus-circle"></i>
-            </button>`}
+
+          <button class="fs-btn" data-act="fpRegain">
+            Spend Force Point → Regain One
+          </button>
         </div>
-      </div>
+      </footer>
     `;
   }
 
-  static attachListeners(html, actor) {
+
+  /** --------------------------
+   * EVENT LISTENERS
+   * -------------------------- */
+
+  static _activate(container, actor) {
+    const $c = $(container);
+
     // Drag start
-    html.find('.power-card').on('dragstart', (event) => {
-      const powerId = event.currentTarget.dataset.itemId;
-      event.originalEvent.dataTransfer.setData('powerId', powerId);
+    $c.find(".fs-card").on("dragstart", evt => {
+      evt.originalEvent.dataTransfer.setData(
+        "power",
+        evt.currentTarget.dataset.power
+      );
     });
 
-    // Drop zones
-    html.find('.suite-drop-zone').on('dragover', (event) => {
-      event.preventDefault();
-      event.currentTarget.classList.add('drag-hover');
+    // Ready → Spent
+    $c.find("[data-zone='spent']").on("dragover", evt => evt.preventDefault());
+
+    $c.find("[data-zone='spent']").on("drop", async evt => {
+      const id = evt.originalEvent.dataTransfer.getData("power");
+      await this._moveToSpent(actor, id);
+      this.refresh(actor, container);
     });
 
-    html.find('.suite-drop-zone').on('dragleave', (event) => {
-      event.currentTarget.classList.remove('drag-hover');
-    });
+    // Spent → Ready
+    $c.find("[data-zone='ready']").on("dragover", evt => evt.preventDefault());
 
-    html.find('.suite-drop-zone').on('drop', async (event) => {
-      event.preventDefault();
-      event.currentTarget.classList.remove('drag-hover');
-
-      const powerId = event.originalEvent.dataTransfer.getData('powerId');
-      const power = actor.items.get(powerId);
-
-      if (power) {
-        const suitePowers = actor.items.filter(i => 
-          i.type === 'forcepower' && i.system.inSuite
-        );
-
-        if (suitePowers.length >= actor.system.forceSuite.maxPowers) {
-          ui.notifications.warn('Force Suite is full!');
-          return;
-        }
-
-        await power.update({'system.inSuite': true});
-      }
+    $c.find("[data-zone='ready']").on("drop", async evt => {
+      const id = evt.originalEvent.dataTransfer.getData("power");
+      await this._moveToReady(actor, id);
+      this.refresh(actor, container);
     });
 
     // Button actions
-    html.find('[data-action="usePower"]').click(async (event) => {
-      const powerId = event.currentTarget.dataset.powerId;
-      const power = actor.items.get(powerId);
-      if (power) {
-        await SWSERoll.rollUseTheForce(actor, power);
-      }
+    $c.find("[data-act]").on("click", async evt => {
+      const act = evt.currentTarget.dataset.act;
+      const id = evt.currentTarget.dataset.power;
+      await this._dispatchAction(actor, act, id);
+      this.refresh(actor, container);
+    });
+  }
+
+
+  /** --------------------------
+   * ACTION DISPATCHER
+   * -------------------------- */
+
+  static async _dispatchAction(actor, act, id) {
+    const map = {
+      use: () => this._usePower(actor, id),
+      regainOne: () => this._regain(actor, id),
+      restoreAll: () => this._restoreAll(actor),
+      fpRegain: () => this._fpRegain(actor)
+    };
+    return map[act]?.();
+  }
+
+
+  /** --------------------------
+   * RULES-ACCURATE LOGIC
+   * -------------------------- */
+
+  static async _moveToSpent(actor, id) {
+    return actor.items.get(id)?.update({ "system.spent": true });
+  }
+
+  static async _moveToReady(actor, id) {
+    return actor.items.get(id)?.update({ "system.spent": false });
+  }
+
+  static async _usePower(actor, id) {
+    const power = actor.items.get(id);
+    if (!power) return;
+
+    const result = await SWSERoll.rollUseTheForce(actor, power);
+
+    // Nat 20 → regain all at end of turn
+    if (result?.diceTotal === 20) {
+      ui.notifications.info("Natural 20! You will regain ALL powers at end of turn.");
+      await actor.setFlag("swse", "pendingFullRegain", true);
+    }
+
+    return this._moveToSpent(actor, id);
+  }
+
+  static async _regain(actor, id) {
+    return this._moveToReady(actor, id);
+  }
+
+  static async _restoreAll(actor) {
+    const all = actor.items.filter(i => i.type === "forcepower");
+    for (const p of all) {
+      await p.update({ "system.spent": false });
+    }
+  }
+
+  static async _fpRegain(actor) {
+    if (actor.system.forcePoints?.value < 1)
+      return ui.notifications.warn("No Force Points left!");
+
+    // Spend FP
+    await actor.update({
+      "system.forcePoints.value": actor.system.forcePoints.value - 1
     });
 
-    html.find('[data-action="addToSuite"]').click(async (event) => {
-      const powerId = event.currentTarget.dataset.powerId;
-      const power = actor.items.get(powerId);
-      if (power) {
-        await power.update({'system.inSuite': true});
-      }
-    });
+    // Find one spent power
+    const spent = actor.items.find(i => i.type === "forcepower" && i.system.spent);
+    if (!spent) return ui.notifications.info("No spent powers to regain.");
 
-    html.find('[data-action="removeFromSuite"]').click(async (event) => {
-      const powerId = event.currentTarget.dataset.powerId;
-      const power = actor.items.get(powerId);
-      if (power) {
-        await power.update({'system.inSuite': false});
-      }
-    });
+    await spent.update({ "system.spent": false });
+
+    ui.notifications.info(`Force Point spent → ${spent.name} regained.`);
   }
 }
