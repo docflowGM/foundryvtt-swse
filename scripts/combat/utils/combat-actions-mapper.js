@@ -1,113 +1,113 @@
-import { SWSELogger } from '../../utils/logger.js';
 /**
- * Combat Actions Mapper
- * Maps combat actions and extra skill uses to skills for display on character sheets
+ * SWSE Combat Actions Mapper (Modernized for Foundry v13+)
+ *
+ * Loads combat actions, extra skill uses, ship combat actions,
+ * and talent enhancements from compendiums rather than static JSON.
+ *
+ * Supports:
+ *  - Dynamic pack loading (P1 architecture)
+ *  - Actor-aware enhancements
+ *  - Unified data normalization
+ *  - Middleware extension hooks
  */
+
+import { SWSELogger } from "../../utils/logger.js";
 
 export class CombatActionsMapper {
 
-    static getSelectedActor() {
-        return canvas.tokens.controlled[0]?.actor;
-    }
-
-
-  static _combatActionsData = null;
-  static _extraSkillUsesData = null;
-  static _shipCombatActionsData = null;
-  static _talentEnhancementsData = null;
   static _initialized = false;
-  static _warnedNotInitialized = false;
+
+  static _combatActions = [];
+  static _extraSkillUses = [];
+  static _shipCombatActions = [];
+  static _talentEnhancements = {};
+
+  static getSelectedActor() {
+    return canvas.tokens.controlled[0]?.actor ?? null;
+  }
 
   /**
-   * Initialize by loading JSON data
+   * Load and cache compendium data
    */
   static async init() {
     if (this._initialized) return;
 
     try {
-      // Load combat actions
-      const combatResponse = await fetch('systems/foundryvtt-swse/data/combat-actions.json');
-      this._combatActionsData = await combatResponse.json();
+      this._combatActions =
+        await this._loadCompendiumItems("foundryvtt-swse.combat-actions");
 
-      // Load extra skill uses
-      const skillResponse = await fetch('systems/foundryvtt-swse/data/extraskilluses.json');
-      this._extraSkillUsesData = await skillResponse.json();
+      this._extraSkillUses =
+        await this._loadCompendiumItems("foundryvtt-swse.extra-skill-uses");
 
-      // Load ship combat actions
-      const shipResponse = await fetch('systems/foundryvtt-swse/data/ship-combat-actions.json');
-      this._shipCombatActionsData = await shipResponse.json();
+      this._shipCombatActions =
+        await this._loadCompendiumItems("foundryvtt-swse.ship-combat-actions");
 
-      // Load talent enhancements
-      const talentResponse = await fetch('systems/foundryvtt-swse/data/talent-enhancements.json');
-      this._talentEnhancementsData = await talentResponse.json();
+      const enhancementsArray =
+        await this._loadCompendiumItems("foundryvtt-swse.talent-enhancements");
+
+      this._talentEnhancements = this._indexEnhancements(enhancementsArray);
 
       this._initialized = true;
-      SWSELogger.log('SWSE | Combat Actions Mapper initialized (character & ship combat, talent enhancements)');
-    } catch (error) {
-      SWSELogger.error('SWSE | Failed to load combat actions data:', error);
-      this._combatActionsData = [];
-      this._extraSkillUsesData = [];
-      this._shipCombatActionsData = [];
-      this._talentEnhancementsData = {};
+      SWSELogger.log("SWSE | CombatActionsMapper initialized (compendium-based)");
+
+    } catch (err) {
+      SWSELogger.error("SWSE | Failed to load combat action packs:", err);
+      this._combatActions = [];
+      this._extraSkillUses = [];
+      this._shipCombatActions = [];
+      this._talentEnhancements = {};
     }
   }
 
   /**
-   * Get all combat actions and skill uses related to a specific skill
-   * @param {string} skillKey - The skill key (e.g., 'acrobatics', 'deception')
-   * @returns {Object} Object containing combat actions and extra uses for this skill
+   * Load all documents from a compendium pack
    */
+  static async _loadCompendiumItems(packId) {
+    const pack = game.packs.get(packId);
+    if (!pack) {
+      SWSELogger.warn(`SWSE | Missing compendium: ${packId}`);
+      return [];
+    }
+
+    const docs = await pack.getDocuments();
+    return docs.map(d => d.toObject());
+  }
+
+  /**
+   * Transform talent enhancement items into a keyed map
+   */
+  static _indexEnhancements(items) {
+    const result = {};
+    for (const item of items) {
+      const key = item.system?.actionKey;
+      if (!key) continue;
+
+      if (!result[key]) result[key] = [];
+      result[key].push({
+        name: item.name,
+        requiredTalent: item.system?.requiredTalent,
+        effect: item.system?.effect,
+      });
+    }
+    return result;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Lookup by Skill
+  // ---------------------------------------------------------------------------
+
   static getActionsForSkill(skillKey) {
-    if (!this._initialized || !this._combatActionsData) {
-      if (!this._warnedNotInitialized) {
-        SWSELogger.log('SWSE | Combat Actions Mapper not yet initialized (this is normal during startup)');
-        this._warnedNotInitialized = true;
-      }
-      return { combatActions: [], extraUses: [], hasActions: false };
-    }
+    if (!this._initialized) return this._notReady();
 
-    const skillName = this._getSkillDisplayName(skillKey);
-    const skillNameLower = skillName.toLowerCase();
+    const displayName = this._getSkillDisplayName(skillKey).toLowerCase();
 
-    const combatActions = [];
-    const extraUses = [];
+    const combatActions = this._combatActions
+      .filter(a => this._matchesSkill(a.system?.relatedSkills, skillKey, displayName))
+      .map(a => this._normalizeAction(a));
 
-    // Find combat actions that relate to this skill
-    for (const action of this._combatActionsData) {
-      if (!action.relatedSkills || action.relatedSkills.length === 0) continue;
-
-      for (const relatedSkill of action.relatedSkills) {
-        const relatedSkillName = (relatedSkill.skill || '').toLowerCase();
-
-        // Check if this action relates to the current skill
-        if (this._skillMatches(skillKey, skillNameLower, relatedSkillName)) {
-          combatActions.push({
-            name: action.name,
-            actionType: action.action.type,
-            cost: action.action.cost,
-            notes: action.notes,
-            dc: relatedSkill.dc,
-            outcome: relatedSkill.outcome,
-            when: relatedSkill.when
-          });
-          break; // Only add the action once even if it has multiple matching skills
-        }
-      }
-    }
-
-    // Find extra skill uses for this skill
-    for (const use of this._extraSkillUsesData) {
-      const useName = (use.application || use.name || '').toLowerCase();
-
-      if (this._skillMatches(skillKey, skillNameLower, useName)) {
-        extraUses.push({
-          name: use.application || use.name,
-          dc: use.DC,
-          time: use.time,
-          effect: use.effect
-        });
-      }
-    }
+    const extraUses = this._extraSkillUses
+      .filter(u => this._matchesSkill([u.system?.skill], skillKey, displayName))
+      .map(u => this._normalizeExtraUse(u));
 
     return {
       combatActions,
@@ -116,226 +116,141 @@ export class CombatActionsMapper {
     };
   }
 
-  /**
-   * Get display name for a skill key
-   */
-  static _getSkillDisplayName(skillKey) {
-    const skillNames = {
-      acrobatics: 'Acrobatics',
-      climb: 'Climb',
-      deception: 'Deception',
-      endurance: 'Endurance',
-      gatherInformation: 'Gather Information',
-      initiative: 'Initiative',
-      jump: 'Jump',
-      knowledge: 'Knowledge',
-      mechanics: 'Mechanics',
-      perception: 'Perception',
-      persuasion: 'Persuasion',
-      pilot: 'Pilot',
-      ride: 'Ride',
-      stealth: 'Stealth',
-      survival: 'Survival',
-      swim: 'Swim',
-      treatInjury: 'Treat Injury',
-      useComputer: 'Use Computer',
-      useTheForce: 'Use the Force'
-    };
+  // ---------------------------------------------------------------------------
+  // Lookup by Ship Crew Position
+  // ---------------------------------------------------------------------------
 
-    return skillNames[skillKey] || skillKey;
-  }
+  static getActionsForCrewPosition(position) {
+    if (!this._initialized) return [];
 
-  /**
-   * Check if a skill matches a related skill name
-   */
-  static _skillMatches(skillKey, skillNameLower, relatedSkillName) {
-    // Direct name match
-    if (relatedSkillName.includes(skillNameLower)) return true;
+    const pos = position.toLowerCase();
 
-    // Special mappings
-    const specialMappings = {
-      acrobatics: ['tumble', 'balance', 'dodge', 'escape', 'fall prone', 'stand up'],
-      climb: ['climb', 'catch self'],
-      deception: ['feint', 'deceptive', 'cheat', 'innuendo', 'create a diversion', 'hide item'],
-      endurance: ['endurance', 'run', 'second wind', 'hold breath'],
-      gatherInformation: ['gather information', 'contacts'],
-      initiative: ['initiative'],
-      mechanics: ['mechanics', 'jury-rig', 'repair', 'recharge shields', 'disable device'],
-      perception: ['perception', 'notice', 'search', 'spot'],
-      persuasion: ['persuade', 'diplomacy', 'negotiate'],
-      pilot: ['pilot', 'vehicle'],
-      stealth: ['stealth', 'hide', 'sneak', 'snipe'],
-      treatInjury: ['treat injury', 'first aid', 'surgery', 'revivify', 'medpac'],
-      useComputer: ['use computer', 'hack', 'access'],
-      useTheForce: ['use the force', 'utf', 'force power', 'move light object', 'breath control']
-    };
-
-    const mappings = specialMappings[skillKey] || [];
-    return mappings.some(mapping => relatedSkillName.includes(mapping));
-  }
-
-  /**
-   * Get all combat actions mapped by skill
-   * @returns {Object} Object with skill keys as properties, containing arrays of actions
-   */
-  static getAllActionsBySkill() {
-    const skills = [
-      'acrobatics', 'climb', 'deception', 'endurance', 'gatherInformation',
-      'initiative', 'jump', 'knowledge', 'mechanics', 'perception', 'persuasion',
-      'pilot', 'ride', 'stealth', 'survival', 'swim', 'treatInjury',
-      'useComputer', 'useTheForce'
-    ];
-
-    const actionsBySkill = {};
-
-    for (const skill of skills) {
-      actionsBySkill[skill] = this.getActionsForSkill(skill);
-    }
-
-    return actionsBySkill;
-  }
-
-  /**
-   * Get ship combat actions for a specific crew position
-   * @param {string} crewPosition - The crew position (pilot, gunner, engineer, shields, commander, etc.)
-   * @returns {Array} Array of actions available to that crew position
-   */
-  static getActionsForCrewPosition(crewPosition) {
-    if (!this._initialized || !this._shipCombatActionsData) {
-      SWSELogger.warn('SWSE | Combat Actions Mapper not initialized');
-      return [];
-    }
-
-    const normalizedPosition = crewPosition.toLowerCase();
-
-    return this._shipCombatActionsData
-      .filter(action => {
-        if (!action.crewPosition) return false;
-
-        // Match exact position or "any"
-        if (action.crewPosition === 'any') return true;
-
-        return action.crewPosition.toLowerCase() === normalizedPosition;
+    return this._shipCombatActions
+      .filter(a => {
+        const role = a.system?.crewPosition?.toLowerCase() ?? "";
+        return role === pos || role === "any";
       })
-      .map(action => ({
-        name: action.name,
-        actionType: action.action.type,
-        cost: action.action.cost,
-        notes: action.notes,
-        relatedSkills: action.relatedSkills || [],
-        crewPosition: action.crewPosition
-      }));
+      .map(a => this._normalizeShipAction(a));
   }
 
-  /**
-   * Get all ship combat actions organized by crew position
-   * @returns {Object} Object with crew positions as keys, arrays of actions as values
-   */
-  static getAllShipActionsByPosition() {
-    const positions = ['pilot', 'copilot', 'gunner', 'engineer', 'shields', 'commander', 'system operator'];
+  // ---------------------------------------------------------------------------
+  // Talent Enhancements
+  // ---------------------------------------------------------------------------
 
-    const actionsByPosition = {};
-
-    for (const position of positions) {
-      const actions = this.getActionsForCrewPosition(position);
-      if (actions.length > 0) {
-        actionsByPosition[position] = {
-          actions: actions,
-          hasActions: true
-        };
-      }
-    }
-
-    // Add "any" position actions to all positions
-    const anyActions = this._shipCombatActionsData
-      ?.filter(action => action.crewPosition === 'any') || [];
-
-    if (anyActions.length > 0) {
-      actionsByPosition['any'] = {
-        actions: anyActions.map(action => ({
-          name: action.name,
-          actionType: action.action.type,
-          cost: action.action.cost,
-          notes: action.notes,
-          relatedSkills: action.relatedSkills || [],
-          crewPosition: action.crewPosition
-        })),
-        hasActions: true
-      };
-    }
-
-    return actionsByPosition;
-  }
-
-  /**
-   * Get talent enhancements available for a combat action
-   * @param {string} actionKey - The action key (e.g., 'aim', 'attack_melee')
-   * @param {Actor} actor - The actor to check for talents
-   * @returns {Array} Array of available talent enhancements
-   */
   static getEnhancementsForAction(actionKey, actor) {
-    if (!this._initialized || !this._talentEnhancementsData) {
-      SWSELogger.warn('SWSE | Talent enhancements data not loaded');
-      return [];
-    }
+    if (!this._initialized) return [];
 
-    const enhancementData = this._talentEnhancementsData[actionKey];
-    if (!enhancementData || !enhancementData.enhancements) {
-      return [];
-    }
+    const enhancements = this._talentEnhancements[actionKey] ?? [];
+    if (!enhancements.length) return [];
 
-    // Get actor's talents
-    const actorTalents = actor?.items?.filter(i => i.type === 'talent') || [];
-    const talentNames = new Set(actorTalents.map(t => t.name));
+    const actorTalents = new Set(
+      actor.items.filter(i => i.type === "talent").map(i => i.name)
+    );
 
-    // Filter enhancements to only those the actor has
-    const availableEnhancements = enhancementData.enhancements.filter(enhancement => {
-      return talentNames.has(enhancement.requiredTalent);
-    });
-
-    return availableEnhancements;
+    return enhancements.filter(e => actorTalents.has(e.requiredTalent));
   }
 
-  /**
-   * Get talent enhancements for a combat action by action name
-   * @param {string} actionName - The combat action name (e.g., 'Aim', 'Attack (single)')
-   * @param {Actor} actor - The actor to check for talents
-   * @returns {Array} Array of available talent enhancements
-   */
-  static getEnhancementsForActionName(actionName, actor) {
-    if (!this._initialized || !this._talentEnhancementsData) {
-      return [];
-    }
-
-    // Find the enhancement key that matches this action name
-    for (const [key, data] of Object.entries(this._talentEnhancementsData)) {
-      if (data.baseAction === actionName) {
-        return this.getEnhancementsForAction(key, actor);
-      }
-    }
-
-    return [];
-  }
-
-  /**
-   * Add talent enhancements to combat actions for display
-   * @param {Array} actions - Array of combat actions
-   * @param {Actor} actor - The actor to check for talents
-   * @returns {Array} Actions with enhancements added
-   */
-  static addEnhancementsToActions(actions, actor) {
-    if (!this._initialized || !this._talentEnhancementsData) {
-      return actions;
-    }
-
+  static applyEnhancements(actions, actor) {
     return actions.map(action => {
-      const enhancements = this.getEnhancementsForActionName(action.name, actor);
-
+      const enh = this.getEnhancementsForAction(action.key, actor);
       return {
         ...action,
-        enhancements: enhancements,
-        hasEnhancements: enhancements.length > 0
+        enhancements: enh,
+        hasEnhancements: enh.length > 0
       };
     });
   }
+
+  // ---------------------------------------------------------------------------
+  // Normalization Helpers
+  // ---------------------------------------------------------------------------
+
+  static _normalizeAction(item) {
+    return {
+      key: item.system?.key ?? item._id,
+      name: item.name,
+      actionType: item.system?.actionType,
+      cost: item.system?.cost,
+      notes: item.system?.notes,
+      relatedSkills: item.system?.relatedSkills ?? [],
+      dc: item.system?.dc,
+      outcome: item.system?.outcome,
+      when: item.system?.when
+    };
+  }
+
+  static _normalizeExtraUse(item) {
+    return {
+      key: item.system?.key ?? item._id,
+      name: item.name,
+      dc: item.system?.dc,
+      time: item.system?.time,
+      effect: item.system?.effect
+    };
+  }
+
+  static _normalizeShipAction(item) {
+    return {
+      key: item.system?.key ?? item._id,
+      name: item.name,
+      actionType: item.system?.actionType,
+      cost: item.system?.cost,
+      crewPosition: item.system?.crewPosition,
+      notes: item.system?.notes,
+      relatedSkills: item.system?.relatedSkills ?? []
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Skill Matching
+  // ---------------------------------------------------------------------------
+
+  static _matchesSkill(relatedSkills, skillKey, displayNameLower) {
+    if (!relatedSkills) return false;
+
+    return relatedSkills.some(skill => {
+      const name = skill?.toLowerCase() ?? "";
+      return name.includes(displayNameLower) || name.includes(skillKey.toLowerCase());
+    });
+  }
+
+  static _getSkillDisplayName(skillKey) {
+    const map = {
+      acrobatics: "Acrobatics",
+      climb: "Climb",
+      deception: "Deception",
+      endurance: "Endurance",
+      gatherInformation: "Gather Information",
+      initiative: "Initiative",
+      jump: "Jump",
+      knowledge: "Knowledge",
+      mechanics: "Mechanics",
+      perception: "Perception",
+      persuasion: "Persuasion",
+      pilot: "Pilot",
+      ride: "Ride",
+      stealth: "Stealth",
+      survival: "Survival",
+      swim: "Swim",
+      treatInjury: "Treat Injury",
+      useComputer: "Use Computer",
+      useTheForce: "Use the Force"
+    };
+    return map[skillKey] ?? skillKey;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Default "not yet ready" response
+  // ---------------------------------------------------------------------------
+
+  static _notReady() {
+    SWSELogger.warn("CombatActionsMapper used before initialization completed.");
+    return { combatActions: [], extraUses: [], hasActions: false };
+  }
 }
+
+// Expose globally
+window.CombatActionsMapper = CombatActionsMapper;
+
+// Initialize on system ready
+Hooks.once("ready", () => CombatActionsMapper.init());
