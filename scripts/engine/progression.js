@@ -475,6 +475,11 @@ async applyScalingFeature(feature) {
    */
   async finalize() {
     try {
+      // Autoprompt required selections BEFORE modifying the actor
+      if (!(await this._autoPromptSelections())) {
+        return false; // User must finish choices
+      }
+
       // Save progression state
       await this.saveStateToActor();
 
@@ -699,6 +704,14 @@ async applyScalingFeature(feature) {
 
       } catch (err) {
         swseLogger.warn("Mentor logbook tracking failed:", err);
+      }
+
+      // Auto-recalculate derived stats after finalization
+      try {
+        const { recalcDerivedStats } = await import('../progression/engine/autocalc/derived-stats.js');
+        await recalcDerivedStats(this.actor);
+      } catch (err) {
+        swseLogger.warn("Derived stats recalculation failed:", err);
       }
 
       swseLogger.log(`Progression finalized for ${this.actor.name}`);
@@ -1074,6 +1087,15 @@ async applyScalingFeature(feature) {
       "system.progression.talentBudget": talentBudget
     });
 
+    // Apply class auto-grants (starting feats/proficiencies) for level 1 only
+    if (levelInClass === 1) {
+      try {
+        await this._applyClassAutoGrants(classId);
+      } catch (err) {
+        swseLogger.warn(`Failed to apply auto-grants for ${classId}:`, err);
+      }
+    }
+
     this.data.class = classId;
     await this.completeStep("class");
   }
@@ -1249,6 +1271,142 @@ async applyScalingFeature(feature) {
     }
 
     return totalCost;
+  }
+
+  /**
+   * Autoprompt required selections BEFORE modifying the actor.
+   * Returns false if user still must choose something.
+   * @private
+   */
+  async _autoPromptSelections() {
+    // Talent needed
+    if (this.mustChooseTalent() && !this.pending?.talents?.length) {
+      this.ui?.showTalentPrompt();
+      return false;
+    }
+
+    // Feat needed
+    if (this.mustChooseFeat() && !this.pending?.feats?.length) {
+      this.ui?.showFeatPrompt();
+      return false;
+    }
+
+    // Force Power (Feat: Force Training)
+    if (this.mustChooseForcePowers() && !this.pending?.forcePowers?.length) {
+      this.ui?.showForcePowerPrompt();
+      return false;
+    }
+
+    // Force Technique / Secret
+    if (this.mustChooseForceTechnique() && !this.pending?.forceTechniques?.length) {
+      this.ui?.showForceTechniquePrompt();
+      return false;
+    }
+
+    if (this.mustChooseForceSecret() && !this.pending?.forceSecrets?.length) {
+      this.ui?.showForceSecretPrompt();
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Check if talent selection is required
+   * @returns {boolean}
+   */
+  mustChooseTalent() {
+    const progression = this.actor.system.progression || {};
+    const talentBudget = progression.talentBudget || 0;
+    const currentTalents = progression.talents || [];
+    return currentTalents.length < talentBudget;
+  }
+
+  /**
+   * Check if feat selection is required
+   * @returns {boolean}
+   */
+  mustChooseFeat() {
+    const progression = this.actor.system.progression || {};
+    const featBudget = progression.featBudget || 0;
+    const currentFeats = progression.feats || [];
+    return currentFeats.length < featBudget;
+  }
+
+  /**
+   * Check if force power selection is required
+   * @returns {boolean}
+   */
+  mustChooseForcePowers() {
+    // TODO: Implement force power requirement check
+    return false;
+  }
+
+  /**
+   * Check if force technique selection is required
+   * @returns {boolean}
+   */
+  mustChooseForceTechnique() {
+    // TODO: Implement force technique requirement check
+    return false;
+  }
+
+  /**
+   * Check if force secret selection is required
+   * @returns {boolean}
+   */
+  mustChooseForceSecret() {
+    // TODO: Implement force secret requirement check
+    return false;
+  }
+
+  /**
+   * Apply class auto-grants (starting feats/proficiencies)
+   * @param {string} className - Name of the class
+   * @private
+   */
+  async _applyClassAutoGrants(className) {
+    const { ClassAutoGrants } = await import('../progression/engine/autogrants/class-autogrants.js');
+    const { canTakeFeat } = await import('../progression/engine/validators/feat-duplication.js');
+
+    const grants = ClassAutoGrants[className];
+    if (!grants || grants.length === 0) {
+      swseLogger.log(`No auto-grants for class: ${className}`);
+      return;
+    }
+
+    const featPack = game.packs.get("foundryvtt-swse.feats");
+    if (!featPack) {
+      swseLogger.warn("Feats compendium not found, skipping auto-grants");
+      return;
+    }
+
+    // Ensure pack index is loaded
+    await featPack.getIndex();
+
+    for (const name of grants) {
+      // Skip if actor already has this feat
+      if (!canTakeFeat(this.actor, name)) {
+        swseLogger.log(`Skipping ${name} - already granted`);
+        continue;
+      }
+
+      // Find feat in compendium
+      const entry = featPack.index.find(i => i.name === name);
+      if (!entry) {
+        swseLogger.warn(`Auto-grant feat not found in compendium: ${name}`);
+        continue;
+      }
+
+      try {
+        // Get the feat document and create it on the actor
+        const doc = await featPack.getDocument(entry._id);
+        await this.actor.createEmbeddedDocuments("Item", [doc.toObject()]);
+        swseLogger.log(`Auto-granted feat: ${name}`);
+      } catch (err) {
+        swseLogger.error(`Failed to auto-grant feat ${name}:`, err);
+      }
+    }
   }
 }
 
