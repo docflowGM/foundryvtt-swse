@@ -72,14 +72,34 @@ export const ForceRegistry = {
 
   /**
    * Get Force techniques available for an actor
+   * Checks if actor has required Force Power for techniques with relatedPower
    */
   listTechniquesForActor(actor) {
-    return this._techniques.map(t => ({
-      name: t.name,
-      id: t.id,
-      isQualified: true,
-      data: t
-    }));
+    return this._techniques.map(t => {
+      let qualified = true;
+
+      // Check if this technique requires a specific Force Power
+      const relatedPower = t.system?.relatedPower;
+      if (relatedPower) {
+        // Check if actor has the related power
+        const hasPower = actor.items.some(item =>
+          item.name.toLowerCase() === relatedPower.toLowerCase() &&
+          (item.type === 'forcepower' || item.system?.tags?.includes('force-power'))
+        );
+
+        if (!hasPower) {
+          qualified = false;
+        }
+      }
+
+      return {
+        name: t.name,
+        id: t.id,
+        isQualified: qualified,
+        relatedPower: relatedPower || null,
+        data: t
+      };
+    });
   },
 
   /**
