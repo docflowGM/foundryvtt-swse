@@ -728,6 +728,80 @@ async applyScalingFeature(feature) {
   }
 
   /**
+   * Dry run simulation of progression changes
+   * Returns a simulated actor state without actually applying changes
+   * @returns {Object} - Simulated actor object
+   */
+  async dryRun() {
+    try {
+      // Clone current actor state
+      const clone = foundry.utils.duplicate(this.actor.toObject());
+
+      // Simulate level increase
+      clone.system.level = (clone.system.level ?? 0) + 1;
+
+      // Simulate HP gain
+      if (this.data.hp?.value) {
+        clone.system.hp.max = (clone.system.hp?.max ?? 0) + this.data.hp.value;
+      }
+
+      // Simulate class level addition
+      if (this.data.class) {
+        const progression = clone.system.progression || {};
+        const classLevels = progression.classLevels || [];
+
+        // Find if class already exists
+        const existingLevelsInClass = classLevels.filter(cl => cl.class === this.data.class).length;
+        const levelInClass = existingLevelsInClass + 1;
+
+        classLevels.push({
+          class: this.data.class,
+          level: levelInClass,
+          choices: {}
+        });
+
+        clone.system.progression.classLevels = classLevels;
+      }
+
+      // Simulate feat additions
+      if (this.data.feats && Array.isArray(this.data.feats)) {
+        for (const featName of this.data.feats) {
+          clone.items.push({
+            name: featName,
+            type: 'feat',
+            system: { description: 'Simulated feat' }
+          });
+        }
+      }
+
+      // Simulate talent additions
+      if (this.data.talents && Array.isArray(this.data.talents)) {
+        for (const talentName of this.data.talents) {
+          clone.items.push({
+            name: talentName,
+            type: 'talent',
+            system: { description: 'Simulated talent' }
+          });
+        }
+      }
+
+      // Simulate ability score increases
+      if (this.data.abilityIncrease) {
+        const ability = this.data.abilityIncrease;
+        const currentBase = clone.system.abilities?.[ability]?.base || 10;
+        clone.system.abilities[ability].base = currentBase + 1;
+      }
+
+      swseLogger.log('Dry run simulation completed');
+
+      return clone;
+    } catch (err) {
+      swseLogger.error('Dry run simulation failed:', err);
+      throw err;
+    }
+  }
+
+  /**
    * Create Item documents from progression data
    * @private
    */
