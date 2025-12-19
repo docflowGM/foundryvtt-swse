@@ -12,6 +12,7 @@ import * as SharedModule from './chargen-shared.js';
 import { ChargenDataCache } from './chargen-shared.js';
 import * as DroidModule from './chargen-droid.js';
 import * as SpeciesModule from './chargen-species.js';
+import { _filterSpecies } from './chargen-species.js';
 import * as BackgroundsModule from './chargen-backgrounds.js';
 import * as ClassModule from './chargen-class.js';
 import * as AbilitiesModule from './chargen-abilities.js';
@@ -36,6 +37,11 @@ export default class CharacterGenerator extends Application {
       languages: [],  // Known languages
       racialSkillBonuses: [],  // Racial skill bonuses (e.g., "+2 Perception")
       speciesSource: "",  // Source book for species
+      speciesFilters: {  // Filters for species selection
+        attributeBonus: null,  // Filter by attribute bonus (str, dex, con, int, wis, cha)
+        attributePenalty: null,  // Filter by attribute penalty
+        size: null  // Filter by size category
+      },
       background: null,  // Selected background (Event, Occupation, or Planet)
       backgroundCategory: "events",  // Current background category tab
       backgroundSkills: [],  // Skills selected from background
@@ -278,6 +284,15 @@ export default class CharacterGenerator extends Application {
     context.isLevelUp = !!this.actor;
 
     context.packs = foundry.utils.deepClone(this._packs);
+
+    // Apply species filters if on species step
+    if (this.currentStep === "species" && context.packs.species) {
+      context.packs.species = _filterSpecies(
+        context.packs.species,
+        this.characterData.speciesFilters
+      );
+    }
+
     context.skillsJson = this._skillsJson || [];
 
     return context;
@@ -317,6 +332,10 @@ export default class CharacterGenerator extends Application {
     $html.find('.select-size').click(this._onSelectSize.bind(this));
     $html.find('.import-droid-btn').click(this._onImportDroid.bind(this));
     $html.find('.select-species').click(this._onSelectSpecies.bind(this));
+
+    // Species filters
+    $html.find('.species-filter-select').change(this._onSpeciesFilterChange.bind(this));
+    $html.find('.clear-species-filters').click(this._onClearSpeciesFilters.bind(this));
     $html.find('.select-class').click(this._onSelectClass.bind(this));
     $html.find('.class-choice-btn').click(this._onSelectClass.bind(this));
     $html.find('.select-feat').click(this._onSelectFeat.bind(this));
