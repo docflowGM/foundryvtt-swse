@@ -37,6 +37,12 @@ function buildDescription(secret) {
 function convertSecret(secret) {
   const description = buildDescription(secret);
 
+  // Build tags array - always include 'medical-secret', add 'homebrew' if applicable
+  const tags = ['medical-secret'];
+  if (secret.homebrew) {
+    tags.push('homebrew');
+  }
+
   return {
     _id: generateId(),
     name: secret.name,
@@ -50,14 +56,15 @@ function convertSecret(secret) {
       normalText: '',
       sourcebook: secret.source || 'Core',
       page: 0,
-      tags: ['medical-secret'],
+      tags: tags,
       bonus_feat_for: [],
       uses: {
         current: 0,
         max: 0,
         perDay: false
       },
-      description: description
+      description: description,
+      homebrew: secret.homebrew || false
     },
     effects: [],
     folder: null,

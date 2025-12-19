@@ -19,6 +19,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.engine = new ProgressionEngine(actor, "levelup");
 
     this.currentStep = "class";
+    this.showHomebrewMedicalSecrets = false; // Toggle for homebrew medical secrets
     this.available = {
       classes: [],
       skills: [],
@@ -55,6 +56,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     data.available = this.available;
     data.pending = this.engine.pending;
+    data.showHomebrewMedicalSecrets = this.showHomebrewMedicalSecrets;
 
     return data;
   }
@@ -71,6 +73,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
     html.find(".select-force-secret").on("click", this._onSelectForceSecret.bind(this));
     html.find(".select-force-technique").on("click", this._onSelectForceTechnique.bind(this));
     html.find(".select-medical-secret").on("click", this._onSelectMedicalSecret.bind(this));
+
+    html.find(".toggle-homebrew-medical").on("click", this._onToggleHomebrewMedical.bind(this));
 
     html.find(".next-step").on("click", this._next.bind(this));
     html.find(".prev-step").on("click", this._prev.bind(this));
@@ -145,6 +149,12 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
   async _onSelectMedicalSecret(ev) {
     await this.engine.confirmMedicalSecrets([ev.currentTarget.dataset.secret]);
+    this.render();
+  }
+
+  async _onToggleHomebrewMedical(ev) {
+    this.showHomebrewMedicalSecrets = !this.showHomebrewMedicalSecrets;
+    await this._loadAvailable();
     this.render();
   }
 
@@ -234,7 +244,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
       this.available.forcePowers = await ForceRegistry.listPowersForActor(this.actor);
       this.available.forceSecrets = await ForceRegistry.listSecretsForActor(this.actor);
       this.available.forceTechniques = await ForceRegistry.listTechniquesForActor(this.actor);
-      this.available.medicalSecrets = await MedicalRegistry.listSecretsForActor(this.actor);
+      this.available.medicalSecrets = await MedicalRegistry.listSecretsForActor(this.actor, {
+        showHomebrew: this.showHomebrewMedicalSecrets
+      });
     } catch (err) {
       SWSELogger.error("Failed to load available options:", err);
     }
