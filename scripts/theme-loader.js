@@ -107,12 +107,3 @@ export class ThemeLoader {
   }
 }
 
-/**
- * Legacy global function for backwards compatibility
- * @param {string} themeName - Name of the theme to apply
- * @deprecated Use ThemeLoader.applyTheme() instead
- */
-window.applyTheme = function(themeName) {
-  SWSELogger.warn('[SWSE Theme] applyTheme() is deprecated. Use ThemeLoader.applyTheme() instead.');
-  ThemeLoader.applyTheme(themeName);
-};

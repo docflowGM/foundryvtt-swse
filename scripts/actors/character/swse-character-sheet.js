@@ -812,8 +812,6 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // L. Utility Functions
   // ----------------------------------------------------------
 
-  // TODO: Additional helpers here.
-
   /* ======================================================================
      SKILL SYSTEM — SHEET HANDLERS
      ====================================================================== */

@@ -236,8 +236,6 @@ export class NonheroicUnitsBrowser extends Application {
 
       ui.notifications.info(`Imported ${unit.name} to NPC compendium!`);
 
-      // TODO: Add feats, talents, equipment as embedded items
-
     } catch (error) {
       swseLogger.error(`Error importing ${unit.name}:`, error);
       ui.notifications.error(`Failed to import ${unit.name}`);

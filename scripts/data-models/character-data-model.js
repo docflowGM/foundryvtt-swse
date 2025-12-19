@@ -625,7 +625,6 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       // Droids have restricted untrained skills
       if (this.isDroid && !skill.trained) {
         canUseUntrained = droidUntrainedSkills.includes(skillKey);
-        // TODO: Check for Heuristic Processor feat to override this
       }
 
       // Store calculated values
