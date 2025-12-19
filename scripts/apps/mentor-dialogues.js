@@ -39,6 +39,7 @@ export const MENTORS = {
     talentGuidance: "Select talents that enhance awareness, precision, and harmony. Every choice shapes who you become.",
     abilityGuidance: "Your mind and body grow stronger as your bond with the Force deepens. Let this guide your actions.",
     skillGuidance: "Knowledge and skill are tools of a Jedi. Master them as you master the Force itself.",
+    forceTechniqueGuidance: "Force Techniques deepen your bond with the Force. Choose those that resonate with your path—whether healing, protection, or insight. Each technique is a lesson the Force offers you.",
     multiclassGuidance: "Diversifying your skills can reveal truths hidden to the narrowly focused. Balance is key.",
     hpGuidance: "Your resilience grows. The Force protects those who walk in its light and serve the galaxy with dedication."
 },
@@ -251,6 +252,7 @@ export const MENTORS = {
     talentGuidance: "Choose talents that make healing faster, smarter, and, if needed, deadly with a sidearm.",
     abilityGuidance: "Strength to carry the wounded, brains to patch them up, and reflexes to survive? That's the full package.",
     skillGuidance: "Medical knowledge is your real weapon. The better you know it, the more lives you control.",
+    medicalSecretGuidance: "Advanced medicine, field surgery techniques, emergency triage—these secrets keep you and your squad alive when things go bad. Pick what saves the most lives.",
     multiclassGuidance: "Other skills are good. A medic who can fight a little—or a lot—stays alive longer.",
     hpGuidance: "You need to be breathing to save anyone else. Don't let the galaxy take you out first."
 },
@@ -305,6 +307,7 @@ export const MENTORS = {
         talentGuidance: "Choose talents that reflect your path as a Knight. You forge your own destiny now.",
         abilityGuidance: "Your growth continues. The Force rewards those who seek balance in all things.",
         skillGuidance: "Knowledge is a Jedi's greatest tool. Continue to learn and grow.",
+        forceTechniqueGuidance: "As a Knight, you refine your connection to the Force. Select techniques that complement your style and serve the greater good. The Force will guide you.",
         multiclassGuidance: "Your path diverges in interesting ways. The Force works through many disciplines.",
         hpGuidance: "Your vitality strengthens. May the Force protect you in all your endeavors."
     },
@@ -327,6 +330,8 @@ export const MENTORS = {
     talentGuidance: "Select what strengthens your bond with the Force and benefits those around you. Your judgment is wise and balanced.",
     abilityGuidance: "Even Masters grow. There is always more to learn, and the Force will reveal it to those who remain open.",
     skillGuidance: "Your knowledge and skill are gifts to the Order. Continue to expand them, for they inspire others.",
+    forceTechniqueGuidance: "Your mastery of the Force deepens with each technique. Trust your wisdom to guide these choices—you understand the Force's subtleties as well as I do.",
+    forceSecretGuidance: "Force Secrets represent the pinnacle of our understanding. Use them wisely, my friend, for they shape the very fabric of the Force itself. Your judgment has never failed you.",
     multiclassGuidance: "An unconventional path can reveal unexpected truths. I trust your discernment, my friend.",
     hpGuidance: "The Force protects those who honor it. May it watch over you as you continue to serve the galaxy."
 }
@@ -355,6 +360,7 @@ export const MENTORS = {
     talentGuidance: "Pick talents that amplify your hatred. Anything less wastes my time—and your miserable life.",
     abilityGuidance: "You grow stronger, but not nearly fast enough. Push harder, or bleed trying.",
     skillGuidance: "Knowledge is pain. Pain is power. Take what you need and crush what you don't.",
+    forceTechniqueGuidance: "Force Techniques are tools of domination. Choose those that crush your enemies and bend the weak to your will. Hesitation is death.",
     multiclassGuidance: "Splitting your focus? How adorably reckless. Make it serve you—or it will destroy you.",
     hpGuidance: "You are harder to kill now. Good. I am not finished breaking you."
     },
@@ -377,6 +383,8 @@ export const MENTORS = {
     talentGuidance: "Select powers that expand your mastery over the Force and your enemies. Do not waste potential on weakness.",
     abilityGuidance: "Power and control must grow together. Each step forward is a step toward dominion.",
     skillGuidance: "Knowledge is the foundation of mastery. Learn, adapt, and anticipate your enemies before they know you exist.",
+    forceTechniqueGuidance: "Master the techniques of the dark side. Each one is a weapon, a tool of control. Wield them with precision, and your enemies will know true fear.",
+    forceSecretGuidance: "The ancient Secrets of the Sith are yours to command. These are the pinnacle of dark side mastery—forbidden knowledge that separates Lords from pretenders. Choose wisely, for with them comes absolute power.",
     multiclassGuidance: "Divergence can unlock new avenues of strength. Only those who bend tradition truly shape the future of the Sith.",
     hpGuidance: "Survival is a weapon. The dark side is merciless, and only those who endure will inherit its secrets."
 },
