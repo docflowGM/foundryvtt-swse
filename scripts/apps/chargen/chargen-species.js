@@ -416,5 +416,117 @@ export function _sortSpeciesBySource(species) {
   });
 }
 
+/**
+ * Filter species by attribute bonuses, penalties, and size
+ * @param {Array} species - Array of species documents
+ * @param {Object} filters - Filter criteria {attributeBonus, attributePenalty, size}
+ * @returns {Array} Filtered species array
+ */
+export function _filterSpecies(species, filters) {
+  if (!species || species.length === 0) return species;
+  if (!filters) return species;
+
+  const { attributeBonus, attributePenalty, size } = filters;
+
+  // If no filters are active, return all species
+  if (!attributeBonus && !attributePenalty && !size) {
+    return species;
+  }
+
+  return species.filter(speciesDoc => {
+    const system = speciesDoc.system || {};
+
+    // Filter by size
+    if (size && system.size !== size) {
+      return false;
+    }
+
+    // Parse abilities to check bonuses and penalties
+    if (attributeBonus || attributePenalty) {
+      // Parse ability string inline (same logic as _parseAbilityString)
+      const abilityString = system.abilities || "None";
+      const abilities = {
+        str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0
+      };
+
+      if (abilityString && abilityString !== "None" && abilityString !== "none") {
+        const abilityMap = {
+          'str': 'str', 'strength': 'str',
+          'dex': 'dex', 'dexterity': 'dex',
+          'con': 'con', 'constitution': 'con',
+          'int': 'int', 'intelligence': 'int',
+          'wis': 'wis', 'wisdom': 'wis',
+          'cha': 'cha', 'charisma': 'cha'
+        };
+
+        const parts = abilityString.split(',').map(p => p.trim());
+        for (const part of parts) {
+          const match = part.match(/([+-]?\d+)\s*([a-zA-Z]+)/);
+          if (match) {
+            const value = parseInt(match[1]);
+            const abilityName = match[2].toLowerCase();
+            const abilityKey = abilityMap[abilityName];
+            if (abilityKey) {
+              abilities[abilityKey] = value;
+            }
+          }
+        }
+      }
+
+      // Filter by attribute bonus
+      if (attributeBonus) {
+        const bonus = abilities[attributeBonus];
+        if (!bonus || bonus <= 0) {
+          return false;
+        }
+      }
+
+      // Filter by attribute penalty
+      if (attributePenalty) {
+        const penalty = abilities[attributePenalty];
+        if (!penalty || penalty >= 0) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  });
+}
+
+/**
+ * Handle species filter change
+ */
+export async function _onSpeciesFilterChange(event) {
+  event.preventDefault();
+  const filterType = event.currentTarget.dataset.filter;
+  const value = event.currentTarget.value || null;
+
+  // Update the filter in characterData
+  if (this.characterData.speciesFilters) {
+    this.characterData.speciesFilters[filterType] = value;
+  }
+
+  // Re-render to apply filters
+  this.render();
+}
+
+/**
+ * Clear all species filters
+ */
+export async function _onClearSpeciesFilters(event) {
+  event.preventDefault();
+
+  // Reset all filters
+  this.characterData.speciesFilters = {
+    attributeBonus: null,
+    attributePenalty: null,
+    size: null
+  };
+
+  // Re-render to show all species
+  this.render();
+}
+
 // Pre-load config on module load
 _loadChargenConfig();

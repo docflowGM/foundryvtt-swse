@@ -258,6 +258,59 @@
  {{#if (eq currentStep "species")}}
  <section class="step-species">
  <h3>Select Species</h3>
+
+ {{!-- Species Filters --}}
+ <div class="species-filters">
+ <div class="filter-header">
+ <i class="fas fa-filter"></i>
+ <span class="filter-title">Filter Species</span>
+ </div>
+ <div class="filter-controls">
+ <div class="filter-group">
+ <label for="species-filter-bonus">Attribute Bonus:</label>
+ <select id="species-filter-bonus" class="species-filter-select" data-filter="attributeBonus">
+ <option value="">Any</option>
+ <option value="str" {{#if (eq characterData.speciesFilters.attributeBonus 'str')}}selected{{/if}}>STR</option>
+ <option value="dex" {{#if (eq characterData.speciesFilters.attributeBonus 'dex')}}selected{{/if}}>DEX</option>
+ <option value="con" {{#if (eq characterData.speciesFilters.attributeBonus 'con')}}selected{{/if}}>CON</option>
+ <option value="int" {{#if (eq characterData.speciesFilters.attributeBonus 'int')}}selected{{/if}}>INT</option>
+ <option value="wis" {{#if (eq characterData.speciesFilters.attributeBonus 'wis')}}selected{{/if}}>WIS</option>
+ <option value="cha" {{#if (eq characterData.speciesFilters.attributeBonus 'cha')}}selected{{/if}}>CHA</option>
+ </select>
+ </div>
+ <div class="filter-group">
+ <label for="species-filter-penalty">Attribute Penalty:</label>
+ <select id="species-filter-penalty" class="species-filter-select" data-filter="attributePenalty">
+ <option value="">Any</option>
+ <option value="str" {{#if (eq characterData.speciesFilters.attributePenalty 'str')}}selected{{/if}}>STR</option>
+ <option value="dex" {{#if (eq characterData.speciesFilters.attributePenalty 'dex')}}selected{{/if}}>DEX</option>
+ <option value="con" {{#if (eq characterData.speciesFilters.attributePenalty 'con')}}selected{{/if}}>CON</option>
+ <option value="int" {{#if (eq characterData.speciesFilters.attributePenalty 'int')}}selected{{/if}}>INT</option>
+ <option value="wis" {{#if (eq characterData.speciesFilters.attributePenalty 'wis')}}selected{{/if}}>WIS</option>
+ <option value="cha" {{#if (eq characterData.speciesFilters.attributePenalty 'cha')}}selected{{/if}}>CHA</option>
+ </select>
+ </div>
+ <div class="filter-group">
+ <label for="species-filter-size">Size:</label>
+ <select id="species-filter-size" class="species-filter-select" data-filter="size">
+ <option value="">Any</option>
+ <option value="Tiny" {{#if (eq characterData.speciesFilters.size 'Tiny')}}selected{{/if}}>Tiny</option>
+ <option value="Small" {{#if (eq characterData.speciesFilters.size 'Small')}}selected{{/if}}>Small</option>
+ <option value="Medium" {{#if (eq characterData.speciesFilters.size 'Medium')}}selected{{/if}}>Medium</option>
+ <option value="Large" {{#if (eq characterData.speciesFilters.size 'Large')}}selected{{/if}}>Large</option>
+ <option value="Huge" {{#if (eq characterData.speciesFilters.size 'Huge')}}selected{{/if}}>Huge</option>
+ <option value="Gargantuan" {{#if (eq characterData.speciesFilters.size 'Gargantuan')}}selected{{/if}}>Gargantuan</option>
+ <option value="Colossal" {{#if (eq characterData.speciesFilters.size 'Colossal')}}selected{{/if}}>Colossal</option>
+ </select>
+ </div>
+ <div class="filter-group">
+ <button type="button" class="clear-species-filters btn-secondary">
+ <i class="fas fa-times"></i> Clear Filters
+ </button>
+ </div>
+ </div>
+ </div>
+
  <div class="species-grid">
  {{#each packs.species}}
  <button type="button" class="select-species choice-button" data-species="{{this.name}}">
@@ -1526,6 +1579,73 @@
  font-size: 0.85rem;
  color: #aaa;
  font-style: italic;
+}
+
+.species-filters {
+ background: rgba(0, 0, 0, 0.3);
+ border: 2px solid rgba(10, 116, 218, 0.3);
+ border-radius: 8px;
+ padding: 1.5rem;
+ margin-bottom: 2rem;
+}
+
+.species-filters .filter-header {
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+ margin-bottom: 1rem;
+ color: #0a74da;
+ font-size: 1.1rem;
+ font-weight: bold;
+}
+
+.species-filters .filter-header i {
+ font-size: 1.2rem;
+}
+
+.species-filters .filter-controls {
+ display: grid;
+ grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+ gap: 1rem;
+ align-items: end;
+}
+
+.species-filters .filter-group {
+ display: flex;
+ flex-direction: column;
+ gap: 0.5rem;
+}
+
+.species-filters .filter-group label {
+ color: #aaa;
+ font-size: 0.9rem;
+ font-weight: 600;
+}
+
+.species-filters .species-filter-select {
+ padding: 0.5rem;
+ background: rgba(255, 255, 255, 0.1);
+ border: 2px solid #0a74da;
+ border-radius: 4px;
+ color: #fff;
+ font-size: 0.95rem;
+ cursor: pointer;
+ transition: all 0.3s;
+}
+
+.species-filters .species-filter-select:hover {
+ background: rgba(10, 116, 218, 0.2);
+ border-color: #00d9ff;
+}
+
+.species-filters .species-filter-select:focus {
+ outline: none;
+ box-shadow: 0 0 10px rgba(10, 116, 218, 0.5);
+}
+
+.species-filters .clear-species-filters {
+ padding: 0.5rem 1rem;
+ width: 100%;
 }
 
 .species-grid, .class-grid {
