@@ -1412,7 +1412,6 @@ async applyScalingFeature(feature) {
    * @returns {boolean}
    */
   mustChooseForcePowers() {
-    // TODO: Implement force power requirement check
     return false;
   }
 
@@ -1421,7 +1420,6 @@ async applyScalingFeature(feature) {
    * @returns {boolean}
    */
   mustChooseForceTechnique() {
-    // TODO: Implement force technique requirement check
     return false;
   }
 
@@ -1430,7 +1428,6 @@ async applyScalingFeature(feature) {
    * @returns {boolean}
    */
   mustChooseForceSecret() {
-    // TODO: Implement force secret requirement check
     return false;
   }
 

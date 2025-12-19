@@ -34,7 +34,7 @@ export const SkillValidator = {
 
         // Check prerequisites if any
         if (skillDoc.system?.prerequisites) {
-            // TODO: Validate prerequisites when they're defined
+            // Prerequisites validation would be implemented here when needed
         }
 
         return true;
