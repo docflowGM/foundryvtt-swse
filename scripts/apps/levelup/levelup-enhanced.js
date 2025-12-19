@@ -8,6 +8,7 @@ import { SkillRegistry } from "../../progression/skills/skill-registry-ui.js";
 import { FeatRegistry } from "../../progression/feats/feat-registry-ui.js";
 import { TalentRegistry } from "../../progression/talents/talent-registry-ui.js";
 import { ForceRegistry } from "../../progression/force/force-registry-ui.js";
+import { MedicalRegistry } from "../../progression/medical/medical-registry-ui.js";
 
 export class SWSELevelUpEnhanced extends FormApplication {
 
@@ -25,7 +26,8 @@ export class SWSELevelUpEnhanced extends FormApplication {
       talents: [],
       forcePowers: [],
       forceSecrets: [],
-      forceTechniques: []
+      forceTechniques: [],
+      medicalSecrets: []
     };
   }
 
@@ -68,6 +70,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     html.find(".select-force-power").on("click", this._onSelectForcePower.bind(this));
     html.find(".select-force-secret").on("click", this._onSelectForceSecret.bind(this));
     html.find(".select-force-technique").on("click", this._onSelectForceTechnique.bind(this));
+    html.find(".select-medical-secret").on("click", this._onSelectMedicalSecret.bind(this));
 
     html.find(".next-step").on("click", this._next.bind(this));
     html.find(".prev-step").on("click", this._prev.bind(this));
@@ -140,6 +143,11 @@ export class SWSELevelUpEnhanced extends FormApplication {
     this.render();
   }
 
+  async _onSelectMedicalSecret(ev) {
+    await this.engine.confirmMedicalSecrets([ev.currentTarget.dataset.secret]);
+    this.render();
+  }
+
   /* ------------------------
    * NAVIGATION
    * ----------------------*/
@@ -152,6 +160,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       "forcePowers",
       "forceSecrets",
       "forceTechniques",
+      "medicalSecrets",
       "summary"
     ];
 
@@ -171,6 +180,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       "forcePowers",
       "forceSecrets",
       "forceTechniques",
+      "medicalSecrets",
       "summary"
     ];
 
@@ -224,6 +234,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
       this.available.forcePowers = await ForceRegistry.listPowersForActor(this.actor);
       this.available.forceSecrets = await ForceRegistry.listSecretsForActor(this.actor);
       this.available.forceTechniques = await ForceRegistry.listTechniquesForActor(this.actor);
+      this.available.medicalSecrets = await MedicalRegistry.listSecretsForActor(this.actor);
     } catch (err) {
       SWSELogger.error("Failed to load available options:", err);
     }

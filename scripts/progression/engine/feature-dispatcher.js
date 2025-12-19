@@ -99,6 +99,36 @@ async function applyForcePowerGrant(feature, actor, engine) {
     SWSELogger.log(`Feature: Granted force power "${feature.name}"`);
 }
 
+async function applyForceSecretGrant(feature, actor, engine) {
+    // Automatically grant this force secret
+    if (!engine.data.grantedForceSecrets) {
+        engine.data.grantedForceSecrets = [];
+    }
+    engine.data.grantedForceSecrets.push(feature.name);
+
+    SWSELogger.log(`Feature: Granted force secret "${feature.name}"`);
+}
+
+async function applyForceTechniqueGrant(feature, actor, engine) {
+    // Automatically grant this force technique
+    if (!engine.data.grantedForceTechniques) {
+        engine.data.grantedForceTechniques = [];
+    }
+    engine.data.grantedForceTechniques.push(feature.name);
+
+    SWSELogger.log(`Feature: Granted force technique "${feature.name}"`);
+}
+
+async function applyMedicalSecretGrant(feature, actor, engine) {
+    // Automatically grant this medical secret
+    if (!engine.data.grantedMedicalSecrets) {
+        engine.data.grantedMedicalSecrets = [];
+    }
+    engine.data.grantedMedicalSecrets.push(feature.name);
+
+    SWSELogger.log(`Feature: Granted medical secret "${feature.name}"`);
+}
+
 async function handleMedicalSecretChoice(feature, actor, engine) {
     // Medical Secret choice (for medic prestige class)
     if (!engine.data.medicalSecretChoices) {
@@ -175,6 +205,9 @@ export const FEATURE_DISPATCH_TABLE = {
     // Grant features (automatic)
     "feat_grant": applyGrantedFeat,
     "force_power_grant": applyForcePowerGrant,
+    "force_secret_grant": applyForceSecretGrant,
+    "force_technique_grant": applyForceTechniqueGrant,
+    "medical_secret_grant": applyMedicalSecretGrant,
     "language_grant": applyLanguageGrant,
     "equipment_grant": applyEquipmentGrant,
     "force_point_grant": applyForcePointGrant,

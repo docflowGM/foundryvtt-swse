@@ -33,6 +33,7 @@ export class ProgressionEngine {
       forcePowers: [],
       forceSecrets: [],
       forceTechniques: [],
+      medicalSecrets: [],
       languages: [],
       equipment: []
     };
@@ -132,6 +133,16 @@ export class ProgressionEngine {
     SWSELogger.log(`Confirmed Force techniques: ${techniqueArray.join(', ')}`);
   }
 
+  /**
+   * Confirm one or more Medical secrets
+   * @param {string|string[]} secrets - Secret name(s)
+   */
+  async confirmMedicalSecrets(secrets) {
+    const secretArray = Array.isArray(secrets) ? secrets : [secrets];
+    this.pending.medicalSecrets = Array.from(new Set([...this.pending.medicalSecrets, ...secretArray]));
+    SWSELogger.log(`Confirmed Medical secrets: ${secretArray.join(', ')}`);
+  }
+
   /* ========================================
      FINALIZATION & ROLLBACK
      ======================================== */
@@ -210,6 +221,15 @@ export class ProgressionEngine {
           features.push({
             type: 'force_technique_grant',
             name: technique
+          });
+        }
+      }
+
+      if (this.pending.medicalSecrets.length > 0) {
+        for (const secret of this.pending.medicalSecrets) {
+          features.push({
+            type: 'medical_secret_grant',
+            name: secret
           });
         }
       }
@@ -293,7 +313,8 @@ export class ProgressionEngine {
            this.pending.talents.length > 0 ||
            this.pending.forcePowers.length > 0 ||
            this.pending.forceSecrets.length > 0 ||
-           this.pending.forceTechniques.length > 0;
+           this.pending.forceTechniques.length > 0 ||
+           this.pending.medicalSecrets.length > 0;
   }
 }
 

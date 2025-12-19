@@ -13,6 +13,7 @@ import { SkillRegistry } from "../skills/skill-registry-ui.js";
 import { FeatRegistry } from "../feats/feat-registry-ui.js";
 import { TalentRegistry } from "../talents/talent-registry-ui.js";
 import { ForceRegistry } from "../force/force-registry-ui.js";
+import { MedicalRegistry } from "../medical/medical-registry-ui.js";
 import { registerLevelUpSheetHooks } from "../../hooks/levelup-sheet-hooks.js";
 import { PrerequisiteValidator } from "../validation/prerequisite-validator.js";
 
@@ -33,6 +34,7 @@ export async function initializeLevelUpUI() {
     await FeatRegistry.build();
     await TalentRegistry.build();
     await ForceRegistry.build();
+    await MedicalRegistry.build();
 
     // Step 3: Set up the global prerequisite API (if not already done)
     if (!game.swse?.prereq) {

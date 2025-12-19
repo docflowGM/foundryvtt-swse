@@ -199,6 +199,13 @@
       "system": "foundryvtt-swse"
     },
     {
+      "name": "medicalsecrets",
+      "label": "SWSE.Compendium.MedicalSecrets",
+      "path": "packs/medicalsecrets.db",
+      "type": "Item",
+      "system": "foundryvtt-swse"
+    },
+    {
       "name": "lightsaberformpowers",
       "label": "SWSE.Compendium.LightsaberFormPowers",
       "path": "packs/lightsaberformpowers.db",
