@@ -34,6 +34,13 @@
   ],
   "styles": [
     "styles/swse-system.css",
+    "styles/core/swse-base.css",
+    "styles/themes/swse-theme-holo.css",
+    "styles/themes/swse-theme-high-contrast.css",
+    "styles/themes/swse-theme-starship.css",
+    "styles/themes/swse-theme-sand-people.css",
+    "styles/themes/swse-theme-jedi.css",
+    "styles/themes/swse-theme-high-republic.css",
     "styles/apps/chargen/chargen.css",
     "styles/apps/chargen/chargen-templates.css",
     "styles/apps/combat-action-browser.css",

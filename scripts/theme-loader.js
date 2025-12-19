@@ -19,7 +19,11 @@ export class ThemeLoader {
    */
   static themes = [
     'holo',
-    'high-contrast'
+    'high-contrast',
+    'starship',
+    'sand-people',
+    'jedi',
+    'high-republic'
   ];
 
   /**
@@ -28,7 +32,11 @@ export class ThemeLoader {
    */
   static themeFileMapping = {
     'holo': 'holo-default',
-    'high-contrast': 'high-contrast'
+    'high-contrast': 'high-contrast',
+    'starship': 'starship',
+    'sand-people': 'sand-people',
+    'jedi': 'jedi',
+    'high-republic': 'high-republic'
   };
 
   /**
