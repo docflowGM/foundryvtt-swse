@@ -75,6 +75,7 @@ import { FeatSystem } from './scripts/engine/FeatSystem.js';
 import { SkillSystem } from './scripts/engine/SkillSystem.js';
 import { SWSELanguageModule } from './scripts/progression/modules/language-module.js';
 import { initializeLevelUpUI } from './scripts/progression/ui/levelup-module-init.js';
+import { initializeRolls } from './scripts/core/rolls-init.js';
 
 import { SWSELogger, swseLogger } from './scripts/utils/logger.js';
 import { SWSENotifications } from './scripts/utils/notifications.js';
@@ -147,10 +148,14 @@ import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
 import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
 
 import { initializeFollowerHooks } from './scripts/hooks/follower-hooks.js';
+import { registerLevelUpSheetHooks } from './scripts/hooks/levelup-sheet-hooks.js';
+import { registerKeybindings } from './scripts/core/keybindings.js';
 import { ConditionTrackComponent } from './scripts/components/condition-track.js';
 import { ForceSuiteComponent } from './scripts/components/force-suite.js';
 
+import './init-talents.js';
 import './scripts/apps/chargen-init.js';
+import './scripts/hooks/assets-hooks.js';
 import { SWSEStore } from './scripts/apps/store/store-main.js';
 import { SWSELevelUp } from './scripts/apps/swse-levelup.js';
 import { SWSEUpgradeApp } from './scripts/apps/upgrade-app.js';
@@ -217,6 +222,8 @@ Hooks.once("init", async function () {
        Hook Registration
        --------------------------------------------------------- */
     registerInitHooks();
+    registerLevelUpSheetHooks();
+    registerKeybindings();
 
     /* ---------------------------------------------------------
        Document Classes
@@ -285,6 +292,7 @@ Hooks.once("ready", async function () {
     swseLogger.log("SWSE | System Ready");
 
     errorHandler.initialize();
+    initializeRolls();
 
     /* Data Preloading */
     await perfMonitor.measureAsync('Data Preloading', async () => {
