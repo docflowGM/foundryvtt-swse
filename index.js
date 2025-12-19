@@ -125,7 +125,6 @@ import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
 import { preloadHandlebarsTemplates } from './scripts/core/load-templates.js';
 
 import { WorldDataLoader } from './scripts/core/world-data-loader.js';
-import { ThemeLoader } from './scripts/theme-loader.js';
 import { createItemMacro } from './scripts/macros/item-macro.js';
 
 import './scripts/utils/skill-use-filter.js';
@@ -317,8 +316,6 @@ Hooks.once("ready", async function () {
     swseLogger.log('Lazy image loading initialized');
 
     if (game.user.isGM) await WorldDataLoader.autoLoad();
-
-    ThemeLoader.initialize();
 
     SWSECombat.init();
     SWSECombatIntegration.init();

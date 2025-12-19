@@ -7,7 +7,7 @@
 @import 'tokens/base';
 
 // 2. Foundry VTT Fixes (not scoped - fixes Foundry bugs)
-@import 'base/foundry-fixes';
+// @import 'base/foundry-fixes';
 
 // 3. Base Styles (scoped to .swse)
 @import 'base/reset';

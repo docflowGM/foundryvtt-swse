@@ -11,8 +11,8 @@
     "build": "npm run build:styles",
     "lint": "eslint scripts/ helpers/ --ext .js",
     "lint:fix": "eslint scripts/ helpers/ --ext .js --fix",
-    "format": "prettier --write "**/*.{js,json,css,scss,md}"",
-    "format:check": "prettier --check "**/*.{js,json,css,scss,md}""
+    "format": "prettier --write \"**/*.{js,json,css,scss,md}\"",
+    "format:check": "prettier --check \"**/*.{js,json,css,scss,md}\""
   },
   "devDependencies": {
     "sass": "^1.69.5",
