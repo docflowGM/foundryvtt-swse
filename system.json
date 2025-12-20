@@ -60,7 +60,10 @@
     "styles/combat/vehicle-combat.css",
     "styles/components/assets-tab.css",
     "styles/progression/ability-rolling.css",
-    "styles/mentor.css"
+    "styles/mentor.css",
+    "styles/sheets/droid-level3.css",
+    "styles/sheets/vehicle-level3.css",
+    "styles/npc-level3.css"
   ],
   "languages": [
     {

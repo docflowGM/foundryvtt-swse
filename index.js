@@ -88,6 +88,14 @@ import { lazyLoader } from './scripts/core/lazy-loader.js';
 import { SWSE_SKILLS, getSkillConfig, getSkillsArray } from './scripts/config/skills.js';
 import { SWSE } from './scripts/core/config.js';
 import { registerSystemSettings } from './scripts/core/settings.js';
+import { RulesEngine } from './scripts/rules/rules-engine.js';
+import { DDEngine } from './scripts/framework/dd-engine.js';
+import { ThemeLoader } from './scripts/theme-loader.js';
+import { DROID_SYSTEMS } from './scripts/data/droid-systems.js';
+import { Upkeep } from './scripts/automation/upkeep.js';
+import { initializeUtils } from './scripts/core/utils-init.js';
+import { SWSE_RACES } from './scripts/core/races.js';
+import * as SWSEData from './scripts/core/swse-data.js';
 
 import { SWSEActorBase } from './scripts/actors/base/swse-actor-base.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
@@ -168,6 +176,7 @@ import { FollowerManager } from './scripts/apps/follower-manager.js';
 import { SWSECombatActionBrowser } from './scripts/apps/combat-action-browser.js';
 import './scripts/apps/mentor-guidance.js';
 import { MentorSelectorWindow } from './scripts/apps/mentor-selector.js';
+import { ProficiencySelectionDialog } from './scripts/apps/proficiency-selection-dialog.js';
 
 import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
 import { HouseruleMechanics } from './scripts/houserules/houserule-mechanics.js';
@@ -328,6 +337,11 @@ Hooks.once("ready", async function () {
     SWSECombatActionBrowser.init();
     HouseruleMechanics.initialize();
 
+    RulesEngine.init();
+    Upkeep.init();
+    ThemeLoader.init();
+    initializeUtils();
+
     try {
         CanvasUIManager.initialize();
         swseLogger.log("SWSE | Canvas UI Tools initialized");
@@ -351,6 +365,14 @@ Hooks.once("ready", async function () {
         ForcePowerManager,
         CombatActionsMapper,
         DamageSystem,
+        RulesEngine,
+        DDEngine,
+        ThemeLoader,
+        DROID_SYSTEMS,
+        SWSE_RACES,
+        SWSEData,
+        Upkeep,
+        ProficiencySelectionDialog,
         debounce,
         throttle,
         logError,
