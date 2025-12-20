@@ -97,6 +97,14 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     context.forceTechniques = feats.filter(f => f.name.toLowerCase().includes("force technique"));
 
     // --------------------------------------
+    // 1b. TALENTS: Lightsaber Forms
+    // --------------------------------------
+    const talents = actor.items.filter(i => i.type === "talent");
+    context.lightsaberForms = talents.filter(t =>
+      t.system?.talent_tree?.toLowerCase() === "lightsaber forms"
+    );
+
+    // --------------------------------------
     // 2. FORCE POWERS: Known vs Suite
     // --------------------------------------
     const allPowers = actor.items.filter(i => ["forcepower", "force-power"].includes(i.type));
