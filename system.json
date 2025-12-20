@@ -29,12 +29,13 @@
     "./scripts/progression/utils/PrerequisiteEnricher.js",
     "./scripts/progression/RuleEngine.js",
     "./scripts/progression/talents/TalentTreeRegistry.js",
-    "./scripts/apps/talent-registry-ui.js",
     "./init-talents.js"
   ],
   "styles": [
     "styles/swse-system.css",
     "styles/core/swse-base.css",
+    "styles/core/canvas-safety.css",
+    "styles/fixes/canvas-viewport-fix.css",
     "styles/themes/swse-theme-holo.css",
     "styles/themes/swse-theme-high-contrast.css",
     "styles/themes/swse-theme-starship.css",
@@ -44,9 +45,22 @@
     "styles/apps/chargen/chargen.css",
     "styles/apps/chargen/chargen-templates.css",
     "styles/apps/combat-action-browser.css",
+    "styles/apps/force-power-picker.css",
+    "styles/apps/vehicle-modification.css",
+    "styles/apps/upgrade-app.css",
+    "styles/apps/houserules.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/vehicle-sheet.css",
-    "styles/sheets/unified-sheets.css"
+    "styles/sheets/unified-sheets.css",
+    "styles/sheets/skill-actions.css",
+    "styles/sheets/feat-actions.css",
+    "styles/sheets/sheet-improvements.css",
+    "styles/sheets/improved-contrast.css",
+    "styles/combat/combat-enhancements.css",
+    "styles/combat/vehicle-combat.css",
+    "styles/components/assets-tab.css",
+    "styles/progression/ability-rolling.css",
+    "styles/mentor.css"
   ],
   "languages": [
     {

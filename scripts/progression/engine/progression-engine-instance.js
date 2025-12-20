@@ -7,10 +7,10 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { SnapshotManager } from '../utils/snapshot-manager.js';
-import { FeatEngine } from './feat-engine.js';
-import { SkillEngine } from './skill-engine.js';
+import { FeatEngine } from '../feats/feat-engine.js';
+import { SkillEngine } from '../skills/skill-engine.js';
 import { ForceProgressionEngine } from './force-progression.js';
-import { ApplyHandlers } from '../integration/apply-handlers.js';
+import { ApplyHandlers } from '../utils/apply-handlers.js';
 import { FinalizeIntegration } from '../integration/finalize-integration.js';
 import { FeatureDispatcher } from './feature-dispatcher.js';
 
