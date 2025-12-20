@@ -1,6 +1,6 @@
 import { swseLogger } from "../../utils/logger.js";
 import { rollDamage } from "./damage.js";
-import { computeAttackBonus, computeDamageBonus } from "./attack-utils.js"; // You will get this file from me next if needed.
+import { computeAttackBonus, computeDamageBonus } from "../utils/combat-utils.js";
 
 /**
  * SWSERoll — Unified SWSE Rolling Engine for v13+

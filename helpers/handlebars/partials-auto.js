@@ -10,7 +10,10 @@ export function registerSWSEPartials() {
     "systems/foundryvtt-swse/templates/partials/defenses.hbs",
     "systems/foundryvtt-swse/templates/partials/skill-row-static.hbs",
     "systems/foundryvtt-swse/templates/partials/tab-navigation.hbs",
-    "systems/foundryvtt-swse/templates/partials/item-controls.hbs"
+    "systems/foundryvtt-swse/templates/partials/item-controls.hbs",
+    "systems/foundryvtt-swse/templates/partials/skill-actions-panel.hbs",
+    "systems/foundryvtt-swse/templates/partials/skill-action-card.hbs",
+    "systems/foundryvtt-swse/templates/partials/assets-panel.hbs"
   ];
 
   for (const path of paths) {

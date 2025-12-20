@@ -184,7 +184,7 @@ export class SWSEStore extends FormApplication {
 
   activateListeners(html) {
     super.activateListeners(html);
-    html.find(".buy-button").on("click", (ev) => {
+    html.find(".buy-item").on("click", (ev) => {
       const id = ev.currentTarget.dataset.id;
       if (!id) return;
       const item = this.itemsById.get(id);
