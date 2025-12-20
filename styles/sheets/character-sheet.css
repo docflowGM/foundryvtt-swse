@@ -1349,6 +1349,114 @@ form.swse-app-datapad-sheet {
 }
 
 /* =========================
+   LIGHTSABER FORMS
+   ========================= */
+.swse-app .lightsaber-forms-section {
+  margin-top: 1rem;
+}
+
+.swse-app .forms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.swse-app .form-item {
+  padding: 0.75rem;
+  background: rgba(138, 43, 226, 0.1);
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  border-radius: var(--border-radius, 4px);
+  transition: all 0.2s;
+}
+
+.swse-app .form-item:hover {
+  background: rgba(138, 43, 226, 0.15);
+  border-color: rgba(138, 43, 226, 0.5);
+  box-shadow: 0 0 8px rgba(138, 43, 226, 0.3);
+}
+
+.swse-app .form-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.swse-app .form-header img {
+  border-radius: 2px;
+}
+
+.swse-app .form-name {
+  flex: 1;
+  font-weight: 600;
+  color: var(--color-text-primary, #e0e0e0);
+}
+
+.swse-app .form-benefit {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(138, 43, 226, 0.2);
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #aaa);
+  line-height: 1.4;
+}
+
+/* Force Secrets and Techniques shared styling */
+.swse-app .force-secrets-section,
+.swse-app .force-techniques-section {
+  margin-top: 1rem;
+}
+
+.swse-app .secrets-list,
+.swse-app .techniques-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.swse-app .secret-item,
+.swse-app .technique-item {
+  padding: 0.75rem;
+  background: rgba(0, 168, 204, 0.1);
+  border: 1px solid rgba(0, 168, 204, 0.3);
+  border-radius: var(--border-radius, 4px);
+  transition: all 0.2s;
+}
+
+.swse-app .secret-item:hover,
+.swse-app .technique-item:hover {
+  background: rgba(0, 168, 204, 0.15);
+  border-color: rgba(0, 168, 204, 0.5);
+}
+
+.swse-app .secret-header,
+.swse-app .technique-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.swse-app .secret-name,
+.swse-app .technique-name {
+  flex: 1;
+  font-weight: 600;
+}
+
+.swse-app .secret-description,
+.swse-app .technique-description {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(0, 168, 204, 0.2);
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #aaa);
+}
+
+.swse-app .empty-list {
+  font-style: italic;
+  color: var(--color-text-secondary, #888);
+  padding: 0.5rem;
+}
+
+/* =========================
    TABS
    ========================= */
 .swse-app .sheet-tabs {
