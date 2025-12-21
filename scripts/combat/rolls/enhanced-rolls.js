@@ -239,6 +239,41 @@ export class SWSERoll {
   /* FORCE POWER ROLLS (Use the Force + DC Chart Evaluation)                 */
   /* ------------------------------------------------------------------------ */
 
+  /**
+   * Parse and roll damage dice from effect strings
+   * @param {string} effectText - Effect text like "6d6 lightning damage + stun"
+   * @returns {Object|null} - {formula, roll, total, type} or null if no damage found
+   */
+  static async _parsePowerDamage(effectText) {
+    if (!effectText) return null;
+
+    // Match damage patterns like "2d6", "4d6", "6d6 lightning", "8d6 damage"
+    const damagePattern = /(\d+d\d+)(?:\s+(?:lightning|energy|fire|cold|sonic|force)?\s*(?:damage|healing))?/i;
+    const match = effectText.match(damagePattern);
+
+    if (!match) return null;
+
+    const formula = match[1];
+    const damageRoll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
+
+    // Determine damage type
+    let damageType = "damage";
+    if (/healing/i.test(effectText)) damageType = "healing";
+    else if (/lightning/i.test(effectText)) damageType = "lightning";
+    else if (/energy/i.test(effectText)) damageType = "energy";
+    else if (/fire/i.test(effectText)) damageType = "fire";
+    else if (/cold/i.test(effectText)) damageType = "cold";
+    else if (/sonic/i.test(effectText)) damageType = "sonic";
+    else if (/force/i.test(effectText)) damageType = "force";
+
+    return {
+      formula,
+      roll: damageRoll,
+      total: damageRoll.total,
+      type: damageType
+    };
+  }
+
   static async rollUseTheForce(actor, power) {
     if (!actor || !power) {
       ui.notifications.error("Use the Force failed: missing actor or power.");
@@ -269,6 +304,12 @@ export class SWSERoll {
       resultTier = sorted.find(tier => roll.total >= tier.dc);
     }
 
+    // Roll damage if present in the result
+    let damageResult = null;
+    if (resultTier?.effect) {
+      damageResult = await this._parsePowerDamage(resultTier.effect);
+    }
+
     // Build breakdown components
     const parts = [];
     const halfLevel = Math.floor(actor.system.level / 2);
@@ -293,12 +334,28 @@ export class SWSERoll {
       ? `<div class="dark-side-warning"><i class="fas fa-skull"></i> Dark Side Power - Using gains 1 Dark Side Point</div>`
       : "";
 
+    // Damage display section
+    const damageHTML = damageResult
+      ? `
+        <div class="damage-roll ${damageResult.type}">
+          <div class="damage-header">
+            <i class="fas fa-${damageResult.type === 'healing' ? 'heart' : 'burst'}"></i>
+            ${damageResult.type === 'healing' ? 'Healing' : 'Damage'} Roll
+          </div>
+          <div class="damage-total">${damageResult.total}</div>
+          <div class="damage-formula">${damageResult.formula}</div>
+          <div class="damage-type">${damageResult.type}</div>
+        </div>
+      `
+      : "";
+
     const resultHTML = resultTier
       ? `
         <div class="power-result success">
           <h4><i class="fas fa-check-circle"></i> DC ${resultTier.dc} Achieved</h4>
           <p class="effect-description">${resultTier.description}</p>
           <p class="effect-short"><strong>Effect:</strong> ${resultTier.effect}</p>
+          ${damageHTML}
         </div>
       `
       : dcChart.length > 0
@@ -352,9 +409,15 @@ export class SWSERoll {
       roll
     });
 
-    if (game.dice3d) game.dice3d.showForRoll(roll, game.user, true);
+    if (game.dice3d) {
+      await game.dice3d.showForRoll(roll, game.user, true);
+      // Also show damage roll if it exists
+      if (damageResult?.roll) {
+        await game.dice3d.showForRoll(damageResult.roll, game.user, true);
+      }
+    }
 
-    return { roll, message, diceTotal: d20, resultTier };
+    return { roll, message, diceTotal: d20, resultTier, damageResult };
   }
 }
 
