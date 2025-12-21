@@ -1,0 +1,238 @@
+/**
+ * Custom Item Dialog Styling
+ * Styles for the enhanced custom item creation dialogs
+ */
+
+/* Dialog container */
+.dialog.custom-item-dialog {
+  min-width: 500px;
+}
+
+.dialog.force-power-dialog {
+  min-width: 700px;
+}
+
+/* Form container */
+.swse-custom-item-form {
+  padding: 0;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Form rows for multi-column layouts */
+.swse-custom-item-form .form-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.swse-custom-item-form .form-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Form groups */
+.swse-custom-item-form .form-group {
+  margin-bottom: 12px;
+}
+
+.swse-custom-item-form .form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: var(--swse-text-primary, #9ed0ff);
+}
+
+.swse-custom-item-form .form-group small {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.85em;
+  color: var(--swse-text-secondary, #6a9dcd);
+  font-style: italic;
+}
+
+/* Input fields */
+.swse-custom-item-form input[type="text"],
+.swse-custom-item-form input[type="number"],
+.swse-custom-item-form select,
+.swse-custom-item-form textarea {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+  background-color: var(--swse-bg-light, #1a2030);
+  color: var(--swse-text-primary, #9ed0ff);
+  border-radius: 4px;
+  font-family: var(--swse-font-secondary, "Roboto", sans-serif);
+  transition: border-color 0.2s;
+}
+
+.swse-custom-item-form input[type="text"]:focus,
+.swse-custom-item-form input[type="number"]:focus,
+.swse-custom-item-form select:focus,
+.swse-custom-item-form textarea:focus {
+  outline: none;
+  border-color: var(--swse-border-hover, #00aaff);
+  box-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
+}
+
+.swse-custom-item-form textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-family: var(--swse-font-secondary, "Roboto", sans-serif);
+}
+
+/* Checkbox groups */
+.swse-custom-item-form .checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  padding: 8px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+}
+
+.swse-custom-item-form .checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: normal;
+  margin: 0;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.swse-custom-item-form .checkbox-group label:hover {
+  background-color: var(--swse-bg-hover, rgba(0, 170, 255, 0.15));
+}
+
+.swse-custom-item-form .checkbox-group input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* DC Chart styling */
+#dc-chart-container {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding: 8px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+}
+
+.dc-chart-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.dc-chart-row:last-child {
+  margin-bottom: 0;
+}
+
+.dc-chart-row input.dc-input {
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.dc-chart-row input.effect-input {
+  flex: 2;
+  min-width: 120px;
+}
+
+.dc-chart-row input.description-input {
+  flex: 3;
+  min-width: 150px;
+}
+
+.dc-chart-row button.remove-dc-row {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  background-color: rgba(220, 53, 69, 0.2);
+  border: 1px solid #dc3545;
+  color: #ff6b7a;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+.dc-chart-row button.remove-dc-row:hover {
+  background-color: rgba(220, 53, 69, 0.4);
+  border-color: #ff6b7a;
+}
+
+/* Add button */
+button.add-button {
+  padding: 6px 12px;
+  background-color: rgba(40, 167, 69, 0.2);
+  border: 1px solid #28a745;
+  color: #5dff7a;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--swse-font-secondary, "Roboto", sans-serif);
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+button.add-button:hover {
+  background-color: rgba(40, 167, 69, 0.4);
+  border-color: #5dff7a;
+  box-shadow: 0 0 8px rgba(40, 167, 69, 0.4);
+}
+
+button.add-button i {
+  font-size: 0.9em;
+}
+
+/* Dialog buttons */
+.dialog.custom-item-dialog .dialog-buttons {
+  border-top: 1px solid var(--swse-border-default, #1c4b8e);
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+/* Inline checkbox labels */
+.swse-custom-item-form .form-group label input[type="checkbox"] {
+  width: auto;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.swse-custom-item-form .form-group label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .swse-custom-item-form .form-row {
+    flex-direction: column;
+  }
+
+  .swse-custom-item-form .checkbox-group {
+    grid-template-columns: 1fr;
+  }
+
+  .dc-chart-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dc-chart-row input.dc-input,
+  .dc-chart-row input.effect-input,
+  .dc-chart-row input.description-input {
+    width: 100%;
+  }
+}

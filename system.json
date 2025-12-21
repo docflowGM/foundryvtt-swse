@@ -49,6 +49,7 @@
     "styles/apps/vehicle-modification.css",
     "styles/apps/upgrade-app.css",
     "styles/apps/houserules.css",
+    "styles/apps/custom-item-dialog.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/vehicle-sheet.css",
     "styles/sheets/unified-sheets.css",
