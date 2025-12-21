@@ -242,9 +242,10 @@ export class SWSERoll {
   /**
    * Parse and roll damage dice from effect strings
    * @param {string} effectText - Effect text like "6d6 lightning damage + stun"
-   * @returns {Object|null} - {formula, roll, total, type} or null if no damage found
+   * @param {string} bonusDice - Optional bonus dice to add (e.g., "2d6" from FP effect)
+   * @returns {Object|null} - {formula, roll, total, type, bonusApplied} or null if no damage found
    */
-  static async _parsePowerDamage(effectText) {
+  static async _parsePowerDamage(effectText, bonusDice = null) {
     if (!effectText) return null;
 
     // Match damage patterns like "2d6", "4d6", "6d6 lightning", "8d6 damage"
@@ -253,7 +254,15 @@ export class SWSERoll {
 
     if (!match) return null;
 
-    const formula = match[1];
+    let formula = match[1];
+    let bonusApplied = false;
+
+    // If Force Point bonus dice are provided, add them to the formula
+    if (bonusDice) {
+      formula = `${formula} + ${bonusDice}`;
+      bonusApplied = true;
+    }
+
     const damageRoll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
 
     // Determine damage type
@@ -270,8 +279,52 @@ export class SWSERoll {
       formula,
       roll: damageRoll,
       total: damageRoll.total,
-      type: damageType
+      type: damageType,
+      bonusApplied
     };
+  }
+
+  /**
+   * Parse Force Point effect for mechanical bonuses
+   * @param {string} fpEffect - Force Point effect text
+   * @returns {Object} - {bonusDice, dcReduction, durationMultiplier, customEffect}
+   */
+  static _parseFPMechanics(fpEffect) {
+    if (!fpEffect) return {};
+
+    const result = {};
+
+    // Parse damage bonuses: "+2d6 damage", "+2 dice of damage", "deal +1d6"
+    const damageBonusPattern = /\+(\d+)(?:d(\d+))?\s*(?:dice|die)?\s*(?:of\s+)?damage/i;
+    const damageMatch = fpEffect.match(damageBonusPattern);
+
+    if (damageMatch) {
+      const numDice = damageMatch[1];
+      const dieSize = damageMatch[2] || "6"; // Default to d6 if not specified
+      result.bonusDice = `${numDice}d${dieSize}`;
+    }
+
+    // Parse DC reductions: "lower DC by 5", "reduce DC by 10"
+    const dcPattern = /(?:lower|reduce).*?DC.*?by\s*(\d+)/i;
+    const dcMatch = fpEffect.match(dcPattern);
+
+    if (dcMatch) {
+      result.dcReduction = parseInt(dcMatch[1]);
+    }
+
+    // Parse duration changes: "double duration", "extend duration by 1 round"
+    if (/double\s+duration/i.test(fpEffect)) {
+      result.durationMultiplier = 2;
+    } else if (/triple\s+duration/i.test(fpEffect)) {
+      result.durationMultiplier = 3;
+    }
+
+    // If no mechanical patterns detected, it's a custom effect
+    if (!result.bonusDice && !result.dcReduction && !result.durationMultiplier) {
+      result.customEffect = true;
+    }
+
+    return result;
   }
 
   static async rollUseTheForce(actor, power) {
@@ -288,8 +341,14 @@ export class SWSERoll {
 
     // FP before roll
     const fpBonus = await this.promptForcePointUse(actor, "Use the Force check");
+    const fpSpent = fpBonus > 0;
     const total = skill.total + fpBonus;
     const formula = `1d20 + ${total}`;
+
+    // Parse FP mechanics if FP was spent
+    const fpMechanics = fpSpent && power.system.forcePointEffect
+      ? this._parseFPMechanics(power.system.forcePointEffect)
+      : {};
 
     const roll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
     const d20 = roll.dice[0].results[0].result;
@@ -300,14 +359,20 @@ export class SWSERoll {
 
     if (dcChart.length > 0) {
       // Find highest DC threshold that was met
+      // Apply DC reduction if FP provides it
+      const dcReduction = fpMechanics.dcReduction || 0;
+      const adjustedTotal = roll.total + dcReduction;
+
       const sorted = [...dcChart].sort((a, b) => b.dc - a.dc);
-      resultTier = sorted.find(tier => roll.total >= tier.dc);
+      resultTier = sorted.find(tier => adjustedTotal >= tier.dc);
     }
 
     // Roll damage if present in the result
     let damageResult = null;
     if (resultTier?.effect) {
-      damageResult = await this._parsePowerDamage(resultTier.effect);
+      // Apply FP bonus damage dice if present
+      const bonusDice = fpMechanics.bonusDice || null;
+      damageResult = await this._parsePowerDamage(resultTier.effect, bonusDice);
     }
 
     // Build breakdown components
@@ -334,6 +399,18 @@ export class SWSERoll {
       ? `<div class="dark-side-warning"><i class="fas fa-skull"></i> Dark Side Power - Using gains 1 Dark Side Point</div>`
       : "";
 
+    // Force Point enhancement display
+    const fpEffectHTML = fpSpent && power.system.forcePointEffect
+      ? `
+        <div class="force-point-enhancement">
+          <div class="fp-enhancement-header">
+            <i class="fas fa-star-of-life"></i> Force Point Enhancement Active
+          </div>
+          <div class="fp-enhancement-text">${power.system.forcePointEffect}</div>
+        </div>
+      `
+      : "";
+
     // Damage display section
     const damageHTML = damageResult
       ? `
@@ -341,6 +418,7 @@ export class SWSERoll {
           <div class="damage-header">
             <i class="fas fa-${damageResult.type === 'healing' ? 'heart' : 'burst'}"></i>
             ${damageResult.type === 'healing' ? 'Healing' : 'Damage'} Roll
+            ${damageResult.bonusApplied ? '<span class="fp-bonus-indicator">(FP Bonus Applied)</span>' : ''}
           </div>
           <div class="damage-total">${damageResult.total}</div>
           <div class="damage-formula">${damageResult.formula}</div>
@@ -349,10 +427,14 @@ export class SWSERoll {
       `
       : "";
 
+    const dcReductionNote = fpMechanics.dcReduction
+      ? ` <span class="fp-dc-bonus">(Effective DC ${roll.total + fpMechanics.dcReduction} with FP -${fpMechanics.dcReduction} DC bonus)</span>`
+      : "";
+
     const resultHTML = resultTier
       ? `
         <div class="power-result success">
-          <h4><i class="fas fa-check-circle"></i> DC ${resultTier.dc} Achieved</h4>
+          <h4><i class="fas fa-check-circle"></i> DC ${resultTier.dc} Achieved${dcReductionNote}</h4>
           <p class="effect-description">${resultTier.description}</p>
           <p class="effect-short"><strong>Effect:</strong> ${resultTier.effect}</p>
           ${damageHTML}
@@ -384,6 +466,7 @@ export class SWSERoll {
         </div>
 
         ${darkSideWarning}
+        ${fpEffectHTML}
 
         <div class="utf-result">
           <div class="roll-total">${roll.total}</div>
@@ -398,7 +481,7 @@ export class SWSERoll {
           <p><strong>Time:</strong> ${power.system.time || "Standard Action"}</p>
           <p><strong>Range:</strong> ${power.system.range || "—"}</p>
           ${power.system.target ? `<p><strong>Target:</strong> ${power.system.target}</p>` : ""}
-          ${power.system.duration ? `<p><strong>Duration:</strong> ${power.system.duration}</p>` : ""}
+          ${power.system.duration ? `<p><strong>Duration:</strong> ${power.system.duration}${fpMechanics.durationMultiplier ? ` <span class="fp-duration-bonus">(×${fpMechanics.durationMultiplier} with FP)</span>` : ""}</p>` : ""}
         </div>
       </div>
     `;
@@ -417,7 +500,7 @@ export class SWSERoll {
       }
     }
 
-    return { roll, message, diceTotal: d20, resultTier, damageResult };
+    return { roll, message, diceTotal: d20, resultTier, damageResult, fpSpent, fpMechanics };
   }
 }
 
