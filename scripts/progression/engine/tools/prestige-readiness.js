@@ -55,19 +55,18 @@ export function evaluatePrestigeReadiness(actor, prestigeData) {
  */
 function checkClassPrerequisites(classData, actor, options = {}) {
   const prereqs = classData?.system?.prerequisites;
-  const valid = true;
   const reasons = [];
 
   if (!prereqs) {
     return { valid: true, reasons: [] };
   }
 
-  const progression = actor.system.progression || {};
-  const classLevels = progression.classLevels || [];
+  // FIX: Use actual actor data structures, not progression.classLevels
+  const classItems = actor.items.filter(i => i.type === 'class');
 
   // Check BAB prerequisite
   if (prereqs.bab !== undefined) {
-    const currentBAB = calculateActorBAB(classLevels);
+    const currentBAB = calculateActorBAB(actor);
     if (currentBAB < prereqs.bab) {
       reasons.push(`BAB +${prereqs.bab} required (current: +${currentBAB})`);
     }
@@ -75,7 +74,9 @@ function checkClassPrerequisites(classData, actor, options = {}) {
 
   // Check trained skills prerequisite
   if (prereqs.trainedSkills && Array.isArray(prereqs.trainedSkills)) {
-    const trainedSkills = progression.trainedSkills || [];
+    const trainedSkills = actor.items
+      .filter(i => i.type === 'skill' && i.system.trained)
+      .map(s => s.name);
     const missingSkills = prereqs.trainedSkills.filter(s => !trainedSkills.includes(s));
     if (missingSkills.length > 0) {
       reasons.push(`Missing trained skills: ${missingSkills.join(', ')}`);
@@ -84,7 +85,9 @@ function checkClassPrerequisites(classData, actor, options = {}) {
 
   // Check required feats prerequisite
   if (prereqs.feats && Array.isArray(prereqs.feats)) {
-    const allFeats = [...(progression.feats || []), ...(progression.startingFeats || [])];
+    const allFeats = actor.items
+      .filter(i => i.type === 'feat')
+      .map(f => f.name);
     const missingFeats = prereqs.feats.filter(f =>
       !allFeats.some(pf => pf.toLowerCase() === f.toLowerCase())
     );
@@ -95,13 +98,12 @@ function checkClassPrerequisites(classData, actor, options = {}) {
 
   // Check force sensitivity prerequisite
   if (prereqs.forceSensitive === true) {
-    const hasForceSensitivity = (progression.startingFeats || []).some(f =>
-      f.toLowerCase().includes('force sensitivity')
+    const hasForceSensitivity = actor.items.some(i =>
+      i.type === 'feat' && i.name.toLowerCase().includes('force sensitivity')
     );
 
-    const isForceSensitiveClass = classLevels.some(cl => {
-      // This would need access to class data to determine if class is force-sensitive
-      return cl.class === 'Jedi' || cl.class === 'Sith'; // Simplified check
+    const isForceSensitiveClass = classItems.some(cl => {
+      return cl.name === 'Jedi' || cl.name === 'Sith' || cl.system.forceSensitive === true;
     });
 
     if (!hasForceSensitivity && !isForceSensitiveClass) {
@@ -109,9 +111,9 @@ function checkClassPrerequisites(classData, actor, options = {}) {
     }
   }
 
-  // Check level prerequisite
+  // Check level prerequisite - FIX: Use actor.system.level, not classLevels.length
   if (prereqs.level !== undefined) {
-    const currentLevel = classLevels.length;
+    const currentLevel = actor.system.level || 0;
     if (currentLevel < prereqs.level) {
       reasons.push(`Character level ${prereqs.level} required (current: ${currentLevel})`);
     }
@@ -125,14 +127,40 @@ function checkClassPrerequisites(classData, actor, options = {}) {
 
 /**
  * Calculate actor's total BAB
- * @param {Array} classLevels - Array of class level objects
+ * @param {Actor} actor - The actor
  * @returns {number} - Total BAB
  */
-function calculateActorBAB(classLevels) {
-  // This is a simplified calculation
-  // In reality, would need to sum BAB from all class levels
-  // based on each class's BAB progression
-  return classLevels.length; // Simplified: assume +1 BAB per level
+function calculateActorBAB(actor) {
+  // FIX: Use actual class items instead of non-existent classLevels array
+  const classItems = actor.items.filter(i => i.type === 'class');
+  let totalBAB = 0;
+
+  for (const classItem of classItems) {
+    const classLevel = classItem.system.level || 1;
+    const className = classItem.name;
+
+    // Get BAB from class level progression if available
+    const levelProgression = classItem.system.levelProgression || [];
+    const levelData = levelProgression.find(lp => lp.level === classLevel);
+
+    if (levelData && typeof levelData.bab === 'number') {
+      totalBAB += levelData.bab;
+    } else {
+      // Fallback: Calculate from BAB progression
+      const babProgression = classItem.system.babProgression || 'medium';
+      const fullBABClasses = ['Jedi', 'Soldier'];
+
+      if (fullBABClasses.includes(className)) {
+        // Full BAB progression: +1 per level
+        totalBAB += classLevel;
+      } else {
+        // 3/4 BAB progression
+        totalBAB += Math.floor(classLevel * 0.75);
+      }
+    }
+  }
+
+  return totalBAB;
 }
 
 /**

@@ -195,17 +195,56 @@ export class SWSEStore extends FormApplication {
 
   async _onBuyItem(item){
     const view = this._prepareItemForView(item);
-    const content = `<p>Purchase ${escapeHTML(view.name)} for <strong>${escapeHTML(view.costText)}</strong>?</p>`;
+    const costValue = view.costValue || 0;
+
+    // Check if an actor is available to purchase
+    if (!this.actor) {
+      ui.notifications.error("No character selected to purchase for");
+      return;
+    }
+
+    const currentCredits = Number(this.actor.system?.credits) || 0;
+
+    // Check if actor has enough credits
+    if (currentCredits < costValue) {
+      ui.notifications.error(
+        `Insufficient credits! Need ${costValue}, have ${currentCredits}`
+      );
+      return;
+    }
+
+    const content = `<p>Purchase <strong>${escapeHTML(view.name)}</strong> for <strong>${escapeHTML(view.costText)}</strong>?</p>`;
     const confirmed = await new Promise((resolve) => {
       new Dialog({
         title: "Confirm Purchase",
         content,
-        buttons: { yes: { label: "Buy", callback: () => resolve(true) }, no: { label: "Cancel", callback: () => resolve(false) } },
+        buttons: {
+          yes: { label: "Buy", callback: () => resolve(true) },
+          no: { label: "Cancel", callback: () => resolve(false) }
+        },
         default: "yes",
       }).render(true);
     });
+
     if (!confirmed) return;
-    ui.notifications.info(`Purchased ${view.name} for ${view.costText}`);
+
+    try {
+      // Deduct credits
+      const newCredits = currentCredits - costValue;
+      await globalThis.SWSE.ActorEngine.updateActor(this.actor, {
+        "system.credits": newCredits
+      });
+
+      // Add item to actor's inventory
+      const itemData = view.raw.toObject ? view.raw.toObject() : view.raw;
+      await this.actor.createEmbeddedDocuments("Item", [itemData]);
+
+      ui.notifications.info(`Purchased ${view.name} for ${view.costText}`);
+      this.render(true);
+    } catch (err) {
+      swseLogger.error("SWSE Store | Purchase failed:", err);
+      ui.notifications.error("Purchase failed. Please check console.");
+    }
   }
 
   async render(force=false, options={}) {
