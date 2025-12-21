@@ -21,50 +21,90 @@ export class CustomItemDialog {
               <input type="text" name="name" value="Custom Weapon" required/>
             </div>
 
-            <div class="form-group">
-              <label>Damage:</label>
-              <input type="text" name="damage" value="1d6" placeholder="e.g., 2d8, 3d6"/>
-              <small>Examples: 1d6, 2d8, 3d10</small>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Damage:</label>
+                <input type="text" name="damage" value="1d8" placeholder="e.g., 2d8, 3d6"/>
+              </div>
+
+              <div class="form-group">
+                <label>Damage Type:</label>
+                <select name="damageType">
+                  <option value="energy" selected>Energy</option>
+                  <option value="kinetic">Kinetic</option>
+                  <option value="ion">Ion</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Range/Type:</label>
+                <select name="range">
+                  <option value="melee" selected>Melee</option>
+                  <option value="ranged">Ranged</option>
+                  <option value="thrown">Thrown</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Attack Attribute:</label>
+                <select name="attackAttribute">
+                  <option value="str" selected>Strength</option>
+                  <option value="dex">Dexterity</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Attack Bonus:</label>
+                <input type="number" name="attackBonus" value="0" placeholder="Additional attack bonus"/>
+              </div>
+
+              <div class="form-group">
+                <label>Weight (kg):</label>
+                <input type="number" name="weight" value="1" step="0.1"/>
+              </div>
+
+              <div class="form-group">
+                <label>Cost (credits):</label>
+                <input type="number" name="cost" value="0"/>
+              </div>
             </div>
 
             <div class="form-group">
-              <label>Range/Type:</label>
-              <select name="range">
-                <option value="Melee">Melee</option>
-                <option value="Ranged">Ranged</option>
-                <option value="Melee (2-handed)">Melee (2-handed)</option>
-                <option value="Thrown">Thrown</option>
-              </select>
+              <label>Special Properties (comma-separated):</label>
+              <input type="text" name="properties" placeholder="e.g., Stun, Accurate, Autofire"/>
+              <small>Separate multiple properties with commas</small>
             </div>
 
             <div class="form-group">
-              <label>Attack Bonus:</label>
-              <input type="number" name="attackBonus" value="0" placeholder="Additional attack bonus"/>
+              <label>Ammunition:</label>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Type:</label>
+                  <input type="text" name="ammoType" placeholder="e.g., Power Pack, Slugs" value="none"/>
+                </div>
+                <div class="form-group">
+                  <label>Current:</label>
+                  <input type="number" name="ammoCurrent" value="0" min="0"/>
+                </div>
+                <div class="form-group">
+                  <label>Max:</label>
+                  <input type="number" name="ammoMax" value="0" min="0"/>
+                </div>
+              </div>
             </div>
 
             <div class="form-group">
-              <label>Critical:</label>
-              <input type="text" name="critical" value="20" placeholder="e.g., 19-20, 20"/>
-            </div>
-
-            <div class="form-group">
-              <label>Weight (kg):</label>
-              <input type="number" name="weight" value="1" step="0.1"/>
-            </div>
-
-            <div class="form-group">
-              <label>Cost (credits):</label>
-              <input type="number" name="cost" value="0"/>
+              <label>Upgrade Slots:</label>
+              <input type="number" name="upgradeSlots" value="1" min="0"/>
             </div>
 
             <div class="form-group">
               <label>Description:</label>
               <textarea name="description" rows="4" placeholder="Describe your weapon..."></textarea>
-            </div>
-
-            <div class="form-group">
-              <label>Source:</label>
-              <input type="text" name="source" value="Homebrew" placeholder="Source book or homebrew"/>
             </div>
           </form>
         `,
@@ -76,19 +116,32 @@ export class CustomItemDialog {
               const form = html.find('form')[0];
               const formData = new FormDataExtended(form).object;
 
+              // Parse properties from comma-separated string
+              const properties = formData.properties
+                ? formData.properties.split(',').map(p => p.trim()).filter(p => p)
+                : [];
+
               const itemData = {
                 name: formData.name,
                 type: 'weapon',
                 img: 'icons/weapons/swords/sword-broad-worn.webp',
                 system: {
-                  damage: formData.damage,
-                  range: formData.range,
+                  damage: formData.damage || "1d8",
+                  damageType: formData.damageType || "energy",
+                  range: formData.range || "melee",
+                  attackAttribute: formData.attackAttribute || "str",
                   attackBonus: parseInt(formData.attackBonus) || 0,
-                  critical: formData.critical,
                   weight: parseFloat(formData.weight) || 0,
                   cost: parseInt(formData.cost) || 0,
-                  description: formData.description,
-                  source: formData.source,
+                  properties: properties,
+                  ammunition: {
+                    type: formData.ammoType || "none",
+                    current: parseInt(formData.ammoCurrent) || 0,
+                    max: parseInt(formData.ammoMax) || 0
+                  },
+                  upgradeSlots: parseInt(formData.upgradeSlots) || 1,
+                  installedUpgrades: [],
+                  description: formData.description || "",
                   equipped: false
                 }
               };
@@ -107,11 +160,11 @@ export class CustomItemDialog {
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
-        width: 500,
-        left: null,  // Let Foundry center the dialog
-        top: null,   // Let Foundry center the dialog
+        width: 600,
+        left: null,
+        top: null,
         draggable: true,
-        resizable: false
+        resizable: true
       });
 
       dialog.render(true);
@@ -137,46 +190,66 @@ export class CustomItemDialog {
             <div class="form-group">
               <label>Armor Type:</label>
               <select name="armorType">
-                <option value="light">Light Armor</option>
+                <option value="light" selected>Light Armor</option>
                 <option value="medium">Medium Armor</option>
                 <option value="heavy">Heavy Armor</option>
               </select>
             </div>
 
-            <div class="form-group">
-              <label>Reflex Defense Bonus:</label>
-              <input type="number" name="reflexBonus" value="0" placeholder="Bonus to Reflex Defense"/>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Reflex Defense Bonus:</label>
+                <input type="number" name="defenseBonus" value="0" placeholder="Bonus to Reflex Defense"/>
+                <small>Armor bonus to Reflex</small>
+              </div>
+
+              <div class="form-group">
+                <label>Fortitude Bonus:</label>
+                <input type="number" name="fortBonus" value="0" placeholder="Bonus to Fortitude"/>
+                <small>Usually 0</small>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Max Dexterity Bonus:</label>
+                <input type="number" name="maxDexBonus" value="" placeholder="Leave blank for unlimited"/>
+                <small>Light: blank, Medium: 2-5, Heavy: 0-2</small>
+              </div>
+
+              <div class="form-group">
+                <label>Armor Check Penalty:</label>
+                <input type="number" name="armorCheckPenalty" value="0" placeholder="Penalty to STR/DEX checks"/>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Speed Penalty:</label>
+                <input type="number" name="speedPenalty" value="0" placeholder="Reduction in speed"/>
+                <small>Typically 0-2 squares</small>
+              </div>
+
+              <div class="form-group">
+                <label>Weight (kg):</label>
+                <input type="number" name="weight" value="5" step="0.1"/>
+              </div>
+
+              <div class="form-group">
+                <label>Cost (credits):</label>
+                <input type="number" name="cost" value="0"/>
+              </div>
             </div>
 
             <div class="form-group">
-              <label>Max Dexterity Bonus:</label>
-              <input type="number" name="maxDex" value="999" placeholder="Maximum Dex bonus allowed"/>
-              <small>Light: usually 999, Medium: 2-5, Heavy: 0-2</small>
-            </div>
-
-            <div class="form-group">
-              <label>Armor Check Penalty:</label>
-              <input type="number" name="checkPenalty" value="0" placeholder="Penalty to STR/DEX checks"/>
-            </div>
-
-            <div class="form-group">
-              <label>Weight (kg):</label>
-              <input type="number" name="weight" value="5" step="0.1"/>
-            </div>
-
-            <div class="form-group">
-              <label>Cost (credits):</label>
-              <input type="number" name="cost" value="0"/>
+              <label>Upgrade Slots:</label>
+              <input type="number" name="upgradeSlots" value="1" min="0"/>
+              <small>Powered armor typically has 2 slots</small>
             </div>
 
             <div class="form-group">
               <label>Description:</label>
               <textarea name="description" rows="4" placeholder="Describe your armor..."></textarea>
-            </div>
-
-            <div class="form-group">
-              <label>Source:</label>
-              <input type="text" name="source" value="Homebrew" placeholder="Source book or homebrew"/>
             </div>
           </form>
         `,
@@ -188,19 +261,27 @@ export class CustomItemDialog {
               const form = html.find('form')[0];
               const formData = new FormDataExtended(form).object;
 
+              // Handle maxDexBonus - null if blank, otherwise parse as number
+              const maxDexBonus = formData.maxDexBonus === "" || formData.maxDexBonus === null
+                ? null
+                : parseInt(formData.maxDexBonus);
+
               const itemData = {
                 name: formData.name,
                 type: 'armor',
                 img: 'icons/equipment/chest/breastplate-cuirass-steel.webp',
                 system: {
-                  armorType: formData.armorType,
-                  reflexBonus: parseInt(formData.reflexBonus) || 0,
-                  maxDex: parseInt(formData.maxDex) || 999,
-                  checkPenalty: parseInt(formData.checkPenalty) || 0,
+                  armorType: formData.armorType || "light",
+                  defenseBonus: parseInt(formData.defenseBonus) || 0,
+                  fortBonus: parseInt(formData.fortBonus) || 0,
+                  maxDexBonus: maxDexBonus,
+                  armorCheckPenalty: parseInt(formData.armorCheckPenalty) || 0,
+                  speedPenalty: parseInt(formData.speedPenalty) || 0,
                   weight: parseFloat(formData.weight) || 0,
                   cost: parseInt(formData.cost) || 0,
-                  description: formData.description,
-                  source: formData.source,
+                  upgradeSlots: parseInt(formData.upgradeSlots) || 1,
+                  installedUpgrades: [],
+                  description: formData.description || "",
                   equipped: false
                 }
               };
@@ -219,11 +300,11 @@ export class CustomItemDialog {
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
-        width: 500,
-        left: null,  // Let Foundry center the dialog
-        top: null,   // Let Foundry center the dialog
+        width: 600,
+        left: null,
+        top: null,
         draggable: true,
-        resizable: false
+        resizable: true
       });
 
       dialog.render(true);
@@ -246,29 +327,27 @@ export class CustomItemDialog {
               <input type="text" name="name" value="Custom Item" required/>
             </div>
 
-            <div class="form-group">
-              <label>Quantity:</label>
-              <input type="number" name="quantity" value="1" min="1"/>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Weight (kg per unit):</label>
+                <input type="number" name="weight" value="0" step="0.1"/>
+              </div>
+
+              <div class="form-group">
+                <label>Cost (credits):</label>
+                <input type="number" name="cost" value="0"/>
+              </div>
             </div>
 
             <div class="form-group">
-              <label>Weight (kg):</label>
-              <input type="number" name="weight" value="0" step="0.1"/>
-            </div>
-
-            <div class="form-group">
-              <label>Cost (credits):</label>
-              <input type="number" name="cost" value="0"/>
+              <label>Upgrade Slots:</label>
+              <input type="number" name="upgradeSlots" value="1" min="0"/>
+              <small>For equipment that can be upgraded</small>
             </div>
 
             <div class="form-group">
               <label>Description:</label>
               <textarea name="description" rows="4" placeholder="Describe your equipment..."></textarea>
-            </div>
-
-            <div class="form-group">
-              <label>Source:</label>
-              <input type="text" name="source" value="Homebrew" placeholder="Source book or homebrew"/>
             </div>
           </form>
         `,
@@ -285,11 +364,11 @@ export class CustomItemDialog {
                 type: 'equipment',
                 img: 'icons/sundries/misc/pouch-simple-leather-brown.webp',
                 system: {
-                  quantity: parseInt(formData.quantity) || 1,
                   weight: parseFloat(formData.weight) || 0,
                   cost: parseInt(formData.cost) || 0,
-                  description: formData.description,
-                  source: formData.source
+                  upgradeSlots: parseInt(formData.upgradeSlots) || 1,
+                  installedUpgrades: [],
+                  description: formData.description || ""
                 }
               };
 
@@ -308,10 +387,10 @@ export class CustomItemDialog {
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
         width: 500,
-        left: null,  // Let Foundry center the dialog
-        top: null,   // Let Foundry center the dialog
+        left: null,
+        top: null,
         draggable: true,
-        resizable: false
+        resizable: true
       });
 
       dialog.render(true);
@@ -335,18 +414,52 @@ export class CustomItemDialog {
             </div>
 
             <div class="form-group">
+              <label>Feat Type:</label>
+              <select name="featType">
+                <option value="general" selected>General</option>
+                <option value="force">Force</option>
+                <option value="species">Species</option>
+              </select>
+            </div>
+
+            <div class="form-group">
               <label>Prerequisites:</label>
-              <textarea name="prerequisites" rows="2" placeholder="e.g., Base Attack Bonus +1, Proficiency (Rifles)"></textarea>
+              <textarea name="prerequisite" rows="2" placeholder="e.g., Base Attack Bonus +1, Proficiency (Rifles)"></textarea>
             </div>
 
             <div class="form-group">
-              <label>Benefit/Effect:</label>
-              <textarea name="description" rows="5" placeholder="Describe what this feat does..."></textarea>
+              <label>Benefit:</label>
+              <textarea name="benefit" rows="4" placeholder="Describe what this feat does..."></textarea>
             </div>
 
             <div class="form-group">
-              <label>Source:</label>
-              <input type="text" name="source" value="Homebrew" placeholder="Source book or homebrew"/>
+              <label>Special:</label>
+              <textarea name="special" rows="2" placeholder="Any special rules or notes..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Normal:</label>
+              <textarea name="normalText" rows="2" placeholder="What happens without this feat..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Bonus Feat For (comma-separated classes):</label>
+              <input type="text" name="bonusFeatFor" placeholder="e.g., Soldier, Scout, Jedi"/>
+              <small>Classes that can take this as a bonus feat</small>
+            </div>
+
+            <div class="form-group">
+              <label>Limited Uses:</label>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Max Uses:</label>
+                  <input type="number" name="usesMax" value="0" min="0" placeholder="0 = unlimited"/>
+                </div>
+                <div class="form-group">
+                  <label><input type="checkbox" name="usesPerDay"/> Per Day</label>
+                </div>
+              </div>
+              <small>For feats with limited daily uses</small>
             </div>
           </form>
         `,
@@ -358,14 +471,27 @@ export class CustomItemDialog {
               const form = html.find('form')[0];
               const formData = new FormDataExtended(form).object;
 
+              // Parse bonus feat classes from comma-separated string
+              const bonusFeatFor = formData.bonusFeatFor
+                ? formData.bonusFeatFor.split(',').map(c => c.trim()).filter(c => c)
+                : [];
+
               const itemData = {
                 name: formData.name,
                 type: 'feat',
                 img: 'icons/sundries/scrolls/scroll-bound-ruby-red.webp',
                 system: {
-                  prerequisites: formData.prerequisites,
-                  description: formData.description,
-                  source: formData.source
+                  featType: formData.featType || "general",
+                  prerequisite: formData.prerequisite || "",
+                  benefit: formData.benefit || "",
+                  special: formData.special || "",
+                  normalText: formData.normalText || "",
+                  bonusFeatFor: bonusFeatFor,
+                  uses: {
+                    current: parseInt(formData.usesMax) || 0,
+                    max: parseInt(formData.usesMax) || 0,
+                    perDay: formData.usesPerDay === 'on'
+                  }
                 }
               };
 
@@ -383,11 +509,11 @@ export class CustomItemDialog {
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
-        width: 500,
-        left: null,  // Let Foundry center the dialog
-        top: null,   // Let Foundry center the dialog
+        width: 600,
+        left: null,
+        top: null,
         draggable: true,
-        resizable: false
+        resizable: true
       });
 
       dialog.render(true);
@@ -402,7 +528,7 @@ export class CustomItemDialog {
   static async createTalent(actor) {
     return new Promise((resolve) => {
       const dialog = new Dialog({
-        title: "Add Talent",
+        title: "Create Custom Talent",
         content: `
           <form class="swse-custom-item-form">
             <div class="form-group">
@@ -417,17 +543,34 @@ export class CustomItemDialog {
 
             <div class="form-group">
               <label>Prerequisites:</label>
-              <textarea name="prerequisites" rows="2" placeholder="Previous talents required in tree"></textarea>
+              <textarea name="prerequisite" rows="2" placeholder="Previous talents required in tree"></textarea>
             </div>
 
             <div class="form-group">
-              <label>Benefit/Effect:</label>
-              <textarea name="description" rows="5" placeholder="Describe what this talent does..."></textarea>
+              <label>Benefit:</label>
+              <textarea name="benefit" rows="4" placeholder="Describe what this talent does..."></textarea>
             </div>
 
             <div class="form-group">
-              <label>Source:</label>
-              <input type="text" name="source" value="Homebrew" placeholder="Source book or homebrew"/>
+              <label>Special:</label>
+              <textarea name="special" rows="2" placeholder="Any special rules or notes..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Limited Uses:</label>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Max Uses:</label>
+                  <input type="number" name="usesMax" value="0" min="0" placeholder="0 = unlimited"/>
+                </div>
+                <div class="form-group">
+                  <label><input type="checkbox" name="usesPerEncounter"/> Per Encounter</label>
+                </div>
+                <div class="form-group">
+                  <label><input type="checkbox" name="usesPerDay"/> Per Day</label>
+                </div>
+              </div>
+              <small>For talents with limited uses</small>
             </div>
           </form>
         `,
@@ -444,10 +587,16 @@ export class CustomItemDialog {
                 type: 'talent',
                 img: 'icons/magic/symbols/runes-star-pentagon-orange.webp',
                 system: {
-                  tree: formData.tree,
-                  prerequisites: formData.prerequisites,
-                  description: formData.description,
-                  source: formData.source
+                  tree: formData.tree || "Custom",
+                  prerequisite: formData.prerequisite || "",
+                  benefit: formData.benefit || "",
+                  special: formData.special || "",
+                  uses: {
+                    current: parseInt(formData.usesMax) || 0,
+                    max: parseInt(formData.usesMax) || 0,
+                    perEncounter: formData.usesPerEncounter === 'on',
+                    perDay: formData.usesPerDay === 'on'
+                  }
                 }
               };
 
@@ -465,11 +614,11 @@ export class CustomItemDialog {
         close: () => resolve(null)
       }, {
         classes: ['swse', 'dialog', 'custom-item-dialog'],
-        width: 500,
-        left: null,  // Let Foundry center the dialog
-        top: null,   // Let Foundry center the dialog
+        width: 600,
+        left: null,
+        top: null,
         draggable: true,
-        resizable: false
+        resizable: true
       });
 
       dialog.render(true);
@@ -486,68 +635,179 @@ export class CustomItemDialog {
       const dialog = new Dialog({
         title: "Create Custom Force Power",
         content: `
-          <form class="swse-custom-item-form">
-            <div class="form-group">
-              <label>Force Power Name:</label>
-              <input type="text" name="name" value="Custom Force Power" required/>
+          <form class="swse-custom-item-form force-power-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Force Power Name:</label>
+                <input type="text" name="name" value="Custom Force Power" required/>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Power Level:</label>
+                <select name="powerLevel">
+                  <option value="1" selected>1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Discipline:</label>
+                <select name="discipline">
+                  <option value="telekinetic" selected>Telekinetic</option>
+                  <option value="telepathic">Telepathic</option>
+                  <option value="vital">Vital</option>
+                  <option value="dark-side">Dark Side</option>
+                  <option value="light-side">Light Side</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Base Use the Force DC:</label>
+                <input type="number" name="useTheForce" value="15" min="0"/>
+              </div>
+
+              <div class="form-group">
+                <label>Activation Time:</label>
+                <select name="time">
+                  <option value="Swift Action">Swift Action</option>
+                  <option value="Move Action">Move Action</option>
+                  <option value="Standard Action" selected>Standard Action</option>
+                  <option value="Full-Round Action">Full-Round Action</option>
+                  <option value="Reaction">Reaction</option>
+                  <option value="Free Action">Free Action</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Range:</label>
+                <input type="text" name="range" value="6 squares" placeholder="e.g., 6 squares, Personal, Touch"/>
+              </div>
+
+              <div class="form-group">
+                <label>Target:</label>
+                <input type="text" name="target" value="One target" placeholder="e.g., One target, Self, Area"/>
+              </div>
+
+              <div class="form-group">
+                <label>Duration:</label>
+                <input type="text" name="duration" value="Instantaneous" placeholder="e.g., Instantaneous, 1 minute, Concentration"/>
+              </div>
             </div>
 
             <div class="form-group">
-              <label>Power Level:</label>
-              <select name="level">
-                <option value="0">0 (At-Will)</option>
-                <option value="1" selected>1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Action Type:</label>
-              <select name="actionType">
-                <option value="Swift">Swift Action</option>
-                <option value="Move">Move Action</option>
-                <option value="Standard" selected>Standard Action</option>
-                <option value="Full-Round">Full-Round Action</option>
-                <option value="Reaction">Reaction</option>
-                <option value="Free">Free Action</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Force Point Cost:</label>
-              <input type="number" name="forcePointCost" value="0" min="0" placeholder="Force points to use"/>
-            </div>
-
-            <div class="form-group">
-              <label>Uses per Day:</label>
-              <input type="number" name="usesMax" value="99" min="1" placeholder="Maximum uses"/>
-              <small>Leave at 99 for unlimited</small>
-            </div>
-
-            <div class="form-group">
-              <label>Dark Side Power:</label>
-              <input type="checkbox" name="darkSide"/>
-              <small>Check if this is a Dark Side power</small>
-            </div>
-
-            <div class="form-group">
-              <label>Prerequisites:</label>
-              <textarea name="prerequisites" rows="2" placeholder="e.g., Force Sensitivity, Trained in Use the Force"></textarea>
+              <label>Descriptors/Tags:</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" name="tags" value="dark-side"/> Dark Side</label>
+                <label><input type="checkbox" name="tags" value="light-side"/> Light Side</label>
+                <label><input type="checkbox" name="tags" value="mind-affecting"/> Mind-Affecting</label>
+                <label><input type="checkbox" name="tags" value="telekinetic"/> Telekinetic</label>
+                <label><input type="checkbox" name="tags" value="telepathic"/> Telepathic</label>
+                <label><input type="checkbox" name="tags" value="vital"/> Vital</label>
+              </div>
             </div>
 
             <div class="form-group">
               <label>Effect:</label>
-              <textarea name="description" rows="5" placeholder="Describe what this Force power does..."></textarea>
+              <textarea name="effect" rows="4" placeholder="Describe what this Force power does..."></textarea>
             </div>
 
             <div class="form-group">
-              <label>Source:</label>
-              <input type="text" name="source" value="Homebrew" placeholder="Source book or homebrew"/>
+              <label>Special:</label>
+              <textarea name="special" rows="2" placeholder="Any special rules or notes..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>DC Chart:</label>
+              <div id="dc-chart-container">
+                <div class="dc-chart-row" data-index="0">
+                  <input type="number" name="dc-0" placeholder="DC" class="dc-input" value="15"/>
+                  <input type="text" name="effect-0" placeholder="Effect" class="effect-input" style="flex: 2"/>
+                  <input type="text" name="description-0" placeholder="Description" class="description-input" style="flex: 3"/>
+                  <button type="button" class="remove-dc-row" data-index="0"><i class="fas fa-times"></i></button>
+                </div>
+              </div>
+              <button type="button" id="add-dc-row" class="add-button"><i class="fas fa-plus"></i> Add DC Row</button>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label><input type="checkbox" name="maintainable"/> Maintainable (Swift action to sustain)</label>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Force Point Cost:</label>
+                <input type="number" name="forcePointCost" value="0" min="0" placeholder="Automatic Force Point cost"/>
+              </div>
+
+              <div class="form-group">
+                <label>Uses per Day:</label>
+                <input type="number" name="usesMax" value="0" min="0" placeholder="0 = unlimited"/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Force Point Enhancement:</label>
+              <textarea name="forcePointEffect" rows="3" placeholder="Enhanced effect if a Force Point is spent..."></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Sourcebook:</label>
+                <input type="text" name="sourcebook" value="Homebrew" placeholder="Source book"/>
+              </div>
+
+              <div class="form-group">
+                <label>Page:</label>
+                <input type="number" name="page" value="" placeholder="Page number"/>
+              </div>
             </div>
           </form>
+
+          <script>
+            (function() {
+              let dcRowIndex = 1;
+
+              document.getElementById('add-dc-row').addEventListener('click', function() {
+                const container = document.getElementById('dc-chart-container');
+                const newRow = document.createElement('div');
+                newRow.className = 'dc-chart-row';
+                newRow.dataset.index = dcRowIndex;
+                newRow.innerHTML = \`
+                  <input type="number" name="dc-\${dcRowIndex}" placeholder="DC" class="dc-input"/>
+                  <input type="text" name="effect-\${dcRowIndex}" placeholder="Effect" class="effect-input" style="flex: 2"/>
+                  <input type="text" name="description-\${dcRowIndex}" placeholder="Description" class="description-input" style="flex: 3"/>
+                  <button type="button" class="remove-dc-row" data-index="\${dcRowIndex}"><i class="fas fa-times"></i></button>
+                \`;
+                container.appendChild(newRow);
+
+                // Add event listener to the new remove button
+                newRow.querySelector('.remove-dc-row').addEventListener('click', function() {
+                  newRow.remove();
+                });
+
+                dcRowIndex++;
+              });
+
+              // Add event listener to initial remove button
+              document.querySelectorAll('.remove-dc-row').forEach(btn => {
+                btn.addEventListener('click', function() {
+                  this.closest('.dc-chart-row').remove();
+                });
+              });
+            })();
+          </script>
         `,
         buttons: {
           create: {
@@ -557,22 +817,52 @@ export class CustomItemDialog {
               const form = html.find('form')[0];
               const formData = new FormDataExtended(form).object;
 
+              // Gather tags from checkboxes
+              const tags = [];
+              html.find('input[name="tags"]:checked').each(function() {
+                tags.push($(this).val());
+              });
+
+              // Gather DC Chart rows
+              const dcChart = [];
+              html.find('.dc-chart-row').each(function() {
+                const index = $(this).data('index');
+                const dc = parseInt(html.find(`input[name="dc-${index}"]`).val());
+                const effect = html.find(`input[name="effect-${index}"]`).val();
+                const description = html.find(`input[name="description-${index}"]`).val();
+
+                if (dc && effect) {
+                  dcChart.push({ dc, effect, description: description || "" });
+                }
+              });
+
               const itemData = {
                 name: formData.name,
-                type: 'forcepower',
+                type: 'force-power',
                 img: 'icons/magic/light/orb-lightbulb-gray.webp',
                 system: {
-                  level: parseInt(formData.level) || 1,
-                  actionType: formData.actionType,
+                  powerLevel: parseInt(formData.powerLevel) || 1,
+                  discipline: formData.discipline || "telekinetic",
+                  useTheForce: parseInt(formData.useTheForce) || 15,
+                  time: formData.time || "Standard Action",
+                  range: formData.range || "6 squares",
+                  target: formData.target || "One target",
+                  duration: formData.duration || "Instantaneous",
+                  effect: formData.effect || "",
+                  special: formData.special || "",
+                  tags: tags,
+                  dcChart: dcChart,
+                  maintainable: formData.maintainable === 'on',
                   forcePointCost: parseInt(formData.forcePointCost) || 0,
-                  darkSide: formData.darkSide === 'on',
-                  prerequisites: formData.prerequisites,
+                  forcePointEffect: formData.forcePointEffect || "",
+                  sourcebook: formData.sourcebook || "Homebrew",
+                  page: parseInt(formData.page) || null,
                   uses: {
-                    current: parseInt(formData.usesMax) || 99,
-                    max: parseInt(formData.usesMax) || 99
+                    current: parseInt(formData.usesMax) || 0,
+                    max: parseInt(formData.usesMax) || 0
                   },
-                  description: formData.description,
-                  source: formData.source
+                  inSuite: false,
+                  spent: false
                 }
               };
 
@@ -589,12 +879,13 @@ export class CustomItemDialog {
         default: "create",
         close: () => resolve(null)
       }, {
-        classes: ['swse', 'dialog', 'custom-item-dialog'],
-        width: 500,
-        left: null,  // Let Foundry center the dialog
-        top: null,   // Let Foundry center the dialog
+        classes: ['swse', 'dialog', 'custom-item-dialog', 'force-power-dialog'],
+        width: 700,
+        height: 800,
+        left: null,
+        top: null,
         draggable: true,
-        resizable: false
+        resizable: true
       });
 
       dialog.render(true);

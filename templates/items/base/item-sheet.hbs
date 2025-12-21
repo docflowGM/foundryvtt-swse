@@ -69,6 +69,23 @@
  <input name="system.range" type="text" value="{{system.range}}" />
  </div>
  <div class="form-group">
+ <label>Properties (comma-separated)</label>
+ <input name="system.properties" type="text" value="{{#if system.properties}}{{join system.properties delimiter=', '}}{{/if}}" placeholder="e.g., Stun, Accurate, Autofire" />
+ <small>Separate multiple properties with commas</small>
+ </div>
+ <div class="form-group">
+ <label>Ammunition Type</label>
+ <input name="system.ammunition.type" type="text" value="{{system.ammunition.type}}" placeholder="e.g., Power Pack, Slugs" />
+ </div>
+ <div class="form-group">
+ <label>Ammo Current / Max</label>
+ <div style="display: flex; gap: 8px;">
+ <input name="system.ammunition.current" type="number" value="{{system.ammunition.current}}" data-dtype="Number" style="flex: 1;" />
+ <span style="line-height: 30px;">/</span>
+ <input name="system.ammunition.max" type="number" value="{{system.ammunition.max}}" data-dtype="Number" style="flex: 1;" />
+ </div>
+ </div>
+ <div class="form-group">
  <label>Weight (kg)</label>
  <input name="system.weight" type="number" value="{{system.weight}}" step="0.1" data-dtype="Number" />
  </div>
@@ -150,19 +167,33 @@
  </div>
  <div class="form-group">
  <label>Prerequisite</label>
- <textarea name="system.prerequisite">{{system.prerequisite}}</textarea>
+ <textarea name="system.prerequisite" rows="2">{{system.prerequisite}}</textarea>
  </div>
  <div class="form-group">
  <label>Benefit</label>
- <textarea name="system.benefit">{{system.benefit}}</textarea>
+ <textarea name="system.benefit" rows="4">{{system.benefit}}</textarea>
  </div>
  <div class="form-group">
  <label>Normal</label>
- <textarea name="system.normalText">{{system.normalText}}</textarea>
+ <textarea name="system.normalText" rows="2">{{system.normalText}}</textarea>
  </div>
  <div class="form-group">
  <label>Special</label>
- <textarea name="system.special">{{system.special}}</textarea>
+ <textarea name="system.special" rows="2">{{system.special}}</textarea>
+ </div>
+ <div class="form-group">
+ <label>Bonus Feat For (comma-separated)</label>
+ <input name="system.bonusFeatFor" type="text" value="{{#if system.bonusFeatFor}}{{join system.bonusFeatFor delimiter=', '}}{{/if}}" placeholder="e.g., Soldier, Scout, Jedi" />
+ <small>Classes that can take this as a bonus feat</small>
+ </div>
+ <div class="form-group">
+ <label>Uses: Current / Max</label>
+ <div style="display: flex; gap: 8px; align-items: center;">
+ <input name="system.uses.current" type="number" value="{{system.uses.current}}" data-dtype="Number" style="flex: 1;" />
+ <span>/</span>
+ <input name="system.uses.max" type="number" value="{{system.uses.max}}" data-dtype="Number" style="flex: 1;" />
+ <label style="margin: 0; white-space: nowrap;"><input name="system.uses.perDay" type="checkbox" {{#if system.uses.perDay}}checked{{/if}} /> Per Day</label>
+ </div>
  </div>
  {{/if}}
 
@@ -174,20 +205,30 @@
  </div>
  <div class="form-group">
  <label>Prerequisite</label>
- <textarea name="system.prerequisite">{{system.prerequisite}}</textarea>
+ <textarea name="system.prerequisite" rows="2">{{system.prerequisite}}</textarea>
  </div>
  <div class="form-group">
  <label>Benefit</label>
- <textarea name="system.benefit">{{system.benefit}}</textarea>
+ <textarea name="system.benefit" rows="4">{{system.benefit}}</textarea>
  </div>
  <div class="form-group">
  <label>Special</label>
- <textarea name="system.special">{{system.special}}</textarea>
+ <textarea name="system.special" rows="2">{{system.special}}</textarea>
+ </div>
+ <div class="form-group">
+ <label>Uses: Current / Max</label>
+ <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+ <input name="system.uses.current" type="number" value="{{system.uses.current}}" data-dtype="Number" style="flex: 1; min-width: 60px;" />
+ <span>/</span>
+ <input name="system.uses.max" type="number" value="{{system.uses.max}}" data-dtype="Number" style="flex: 1; min-width: 60px;" />
+ <label style="margin: 0; white-space: nowrap;"><input name="system.uses.perEncounter" type="checkbox" {{#if system.uses.perEncounter}}checked{{/if}} /> Per Encounter</label>
+ <label style="margin: 0; white-space: nowrap;"><input name="system.uses.perDay" type="checkbox" {{#if system.uses.perDay}}checked{{/if}} /> Per Day</label>
+ </div>
  </div>
  {{/if}}
 
  <!-- Force Powers -->
- {{#if (eq item.type "forcepower")}}
+ {{#if (or (eq item.type "forcepower") (eq item.type "force-power"))}}
  <div class="form-group">
  <label>Power Level</label>
  <input name="system.powerLevel" type="number" value="{{system.powerLevel}}" min="1" max="6" data-dtype="Number" />
@@ -223,12 +264,37 @@
  <input name="system.duration" type="text" value="{{system.duration}}" />
  </div>
  <div class="form-group">
+ <label>Maintainable</label>
+ <input name="system.maintainable" type="checkbox" {{#if system.maintainable}}checked{{/if}} />
+ </div>
+ <div class="form-group">
  <label>Effect</label>
- <textarea name="system.effect">{{system.effect}}</textarea>
+ <textarea name="system.effect" rows="4">{{system.effect}}</textarea>
  </div>
  <div class="form-group">
  <label>Special</label>
- <textarea name="system.special">{{system.special}}</textarea>
+ <textarea name="system.special" rows="2">{{system.special}}</textarea>
+ </div>
+ <div class="form-group">
+ <label>Force Point Cost</label>
+ <input name="system.forcePointCost" type="number" value="{{system.forcePointCost}}" data-dtype="Number" />
+ </div>
+ <div class="form-group">
+ <label>Force Point Enhancement</label>
+ <textarea name="system.forcePointEffect" rows="3">{{system.forcePointEffect}}</textarea>
+ </div>
+ <div class="form-group">
+ <label>Tags/Descriptors (comma-separated)</label>
+ <input name="system.tags" type="text" value="{{#if system.tags}}{{join system.tags delimiter=', '}}{{/if}}" placeholder="e.g., dark-side, mind-affecting, telekinetic" />
+ <small>Separate multiple tags with commas</small>
+ </div>
+ <div class="form-group">
+ <label>Sourcebook</label>
+ <input name="system.sourcebook" type="text" value="{{system.sourcebook}}" />
+ </div>
+ <div class="form-group">
+ <label>Page</label>
+ <input name="system.page" type="number" value="{{system.page}}" data-dtype="Number" />
  </div>
  {{/if}}
 
