@@ -300,12 +300,16 @@ export async function selectClass(classId, actor, context) {
     // For prestige classes, use the prestige class mentor
     context.mentor = getMentorForClass(classDoc.name);
     context.currentMentorClass = classDoc.name;
-    SWSELogger.log(`SWSE LevelUp | Switched to prestige class mentor: ${context.mentor.name}`);
+    if (context.mentor) {
+      SWSELogger.log(`SWSE LevelUp | Switched to prestige class mentor: ${context.mentor.name}`);
+    }
   } else if (currentLevel === 0 || currentLevel === 1) {
     // For level 0->1 or level 1->2, use the selected base class mentor
     context.mentor = getMentorForClass(classDoc.name);
     context.currentMentorClass = classDoc.name;
-    SWSELogger.log(`SWSE LevelUp | Switched to base class mentor: ${context.mentor.name}`);
+    if (context.mentor) {
+      SWSELogger.log(`SWSE LevelUp | Switched to base class mentor: ${context.mentor.name}`);
+    }
   } else {
     // For higher levels, use the level 1 class mentor
     const level1Class = getLevel1Class(actor);
@@ -316,7 +320,9 @@ export async function selectClass(classId, actor, context) {
   // Get appropriate greeting for the current class level
   currentClasses = getCharacterClasses(actor);
   const classLevel = (currentClasses[classDoc.name] || 0) + 1;
-  context.mentorGreeting = getMentorGreeting(context.mentor, classLevel, actor);
+  if (context.mentor) {
+    context.mentorGreeting = getMentorGreeting(context.mentor, classLevel, actor);
+  }
 
   return classDoc;
 }

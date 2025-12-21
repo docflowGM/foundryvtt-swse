@@ -274,10 +274,8 @@ export async function calculateSaveBonus(classLevels, saveType) {
 /* --- Force Power Data --- */
 export const FORCE_POWER_DATA = {
   feats: {
-  "Force Sensitivity": { grants: 1 },
-  "Force Training": { grants: 1, training: true },
-"Force Training": { grants: 1
-}
+    "Force Sensitivity": { grants: 1 },
+    "Force Training": { grants: 1, training: true }
   },
   classes: {
     Jedi: {

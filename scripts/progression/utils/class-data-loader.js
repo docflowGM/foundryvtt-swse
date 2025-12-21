@@ -170,11 +170,6 @@ function _normalizeClassData(doc) {
         talents: validFeatures.filter(f => f.type === 'talent_choice').length,
         forcePoints: Number(levelData.force_points || 0)
       };
-        features: validFeatures,
-        bonusFeats: validFeatures.filter(f => f.type === 'feat_choice' || f.name?.includes('Bonus Feat')).length,
-        talents: validFeatures.filter(f => f.type === 'talent_choice').length,
-        forcePoints: levelData.force_points || 0
-      };
     }
   }
 
