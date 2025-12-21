@@ -90,6 +90,13 @@ export async function buyService(actor, serviceName, serviceCost, updateDialogue
         return;
     }
 
+    // Check if SWSE system is initialized
+    if (!globalThis.SWSE?.ActorEngine) {
+        SWSELogger.error("SWSE ActorEngine not initialized");
+        ui.notifications.error("Character system not ready. Please refresh and try again.");
+        return;
+    }
+
     const currentCredits = Number(actor.system?.credits) || 0;
 
     // Check if actor has enough credits
@@ -126,12 +133,19 @@ export async function buyDroid(store, actorId) {
         return;
     }
 
+    // Check if SWSE system is initialized
+    if (!globalThis.SWSE?.ActorEngine) {
+        SWSELogger.error("SWSE ActorEngine not initialized");
+        ui.notifications.error("Character system not ready. Please refresh and try again.");
+        return;
+    }
+
     // Try to get from world actors first
     let droidTemplate = game.actors.get(actorId);
 
     // If not found in world, search compendiums
     if (!droidTemplate) {
-        const pack = game.packs.get('foundryvtt-foundryvtt-swse.droids');
+        const pack = game.packs.get('foundryvtt-swse.droids');  // Fixed typo: was 'foundryvtt-foundryvtt-swse'
         if (pack) {
             droidTemplate = await pack.getDocument(actorId);
         }
@@ -196,12 +210,19 @@ export async function buyVehicle(store, actorId, condition) {
         return;
     }
 
+    // Check if SWSE system is initialized
+    if (!globalThis.SWSE?.ActorEngine) {
+        SWSELogger.error("SWSE ActorEngine not initialized");
+        ui.notifications.error("Character system not ready. Please refresh and try again.");
+        return;
+    }
+
     // Try to get from world actors first
     let vehicleTemplate = game.actors.get(actorId);
 
     // If not found in world, search compendiums
     if (!vehicleTemplate) {
-        const pack = game.packs.get('foundryvtt-foundryvtt-swse.vehicles');
+        const pack = game.packs.get('foundryvtt-swse.vehicles');  // Fixed typo: was 'foundryvtt-foundryvtt-swse'
         if (pack) {
             vehicleTemplate = await pack.getDocument(actorId);
         }
@@ -399,6 +420,14 @@ export function calculateCartTotal(cart) {
  */
 export async function checkout(store, animateNumberCallback) {
     const actor = store.actor;
+
+    // Check if SWSE system is initialized
+    if (!globalThis.SWSE?.ActorEngine) {
+        SWSELogger.error("SWSE ActorEngine not initialized");
+        ui.notifications.error("Character system not ready. Please refresh and try again.");
+        return;
+    }
+
     const credits = Number(actor.system.credits) || 0;
 
     // Calculate total

@@ -157,17 +157,20 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     }
 
     // Create abilities alias for parent class compatibility
-    if (!this.abilities) {
-      this.abilities = {};
-      for (const [key, attr] of Object.entries(this.attributes)) {
-        this.abilities[key] = {
-          base: attr.base || 10,
-          racial: attr.racial || 0,
-          misc: (attr.enhancement || 0) + (attr.temp || 0),
-          total: attr.total || 10,
-          mod: attr.mod || 0
-        };
-      }
+    // IMPORTANT: ALWAYS update this, don't use if (!this.abilities) conditional
+    // because after initial creation, abilities will already exist in the template,
+    // and the conditional would prevent recalculation during levelup.
+    // This causes ability modifiers to stay at template default (0) instead of using
+    // the freshly calculated mod values.
+    this.abilities = {};
+    for (const [key, attr] of Object.entries(this.attributes)) {
+      this.abilities[key] = {
+        base: attr.base || 10,
+        racial: attr.racial || 0,
+        misc: (attr.enhancement || 0) + (attr.temp || 0),
+        total: attr.total || 10,
+        mod: attr.mod || 0
+      };
     }
 
     // Calculate half level (for skills and other calculations)
