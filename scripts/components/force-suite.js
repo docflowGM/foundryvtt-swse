@@ -1,3 +1,5 @@
+import { ForceEnhancementDialog } from "../utils/force-enhancement-dialog.js";
+
 /**
  * Force Suite Component (RAW SWSE Accurate)
  * - All known powers are always available ("in suite")
@@ -222,7 +224,11 @@ export class ForceSuiteComponent {
     const power = actor.items.get(id);
     if (!power) return;
 
-    const result = await SWSERoll.rollUseTheForce(actor, power);
+    // Check for applicable force techniques and secrets
+    const enhancements = await ForceEnhancementDialog.checkAndPrompt(actor, power);
+
+    // Roll the Use the Force check with enhancements
+    const result = await SWSERoll.rollUseTheForce(actor, power, enhancements);
 
     // Nat 20 → regain all at end of turn
     if (result?.diceTotal === 20) {
