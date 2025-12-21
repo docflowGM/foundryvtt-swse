@@ -364,7 +364,14 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.defenses.reflex.armor = 0;
     }
 
-    this.defenses.reflex.total = reflexBase + dexMod +
+    // Add equipment bonus from armor (only if proficient)
+    // SWSE Rule: When not proficient with armor, you do NOT gain equipment bonuses
+    let equipmentBonus = 0;
+    if (equippedArmor && this.armorProficient) {
+      equipmentBonus = equippedArmor.system.equipmentBonus || 0;
+    }
+
+    this.defenses.reflex.total = reflexBase + dexMod + equipmentBonus +
                                   (this.defenses.reflex.classBonus || 0) +
                                   (this.defenses.reflex.misc || 0) + conditionPenalty;
 
@@ -381,7 +388,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // SWSE Rule: When not proficient with armor, you do NOT gain equipment bonuses
     let armorFortBonus = 0;
     if (equippedArmor && this.armorProficient) {
-      armorFortBonus = equippedArmor.system.fortBonus || 0;
+      armorFortBonus = equippedArmor.system.equipmentBonus || equippedArmor.system.fortBonus || 0;
     }
 
     this.defenses.fortitude.total = 10 + level + fortAbility + armorFortBonus +

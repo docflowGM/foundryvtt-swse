@@ -13,6 +13,9 @@ export function calculateDefenses(actor) {
   // Get equipped armor
   const armor = actor.items.find(i => i.type === 'armor' && i.system.equipped);
 
+  // Check for armor proficiency
+  const isProficient = checkArmorProficiency(actor, armor);
+
   // Check for Armored Defense talents
   const hasArmored = actor.items.some(i =>
     i.type === 'talent' && i.name === 'Armored Defense'
@@ -28,13 +31,13 @@ export function calculateDefenses(actor) {
 
   // REFLEX DEFENSE
   sys.defenses.reflex.total = calculateReflex(
-    level, sys.abilities, armor, hasArmored, hasImproved, penalty, sizeMod, refClassBonus
+    level, sys.abilities, armor, hasArmored, hasImproved, penalty, sizeMod, refClassBonus, isProficient
   );
 
   // FORTITUDE DEFENSE
   const isDroid = sys.isDroid || false;
   sys.defenses.fortitude.total = calculateFortitude(
-    level, sys.abilities, armor, penalty, sizeMod, isDroid, fortClassBonus
+    level, sys.abilities, armor, penalty, sizeMod, isDroid, fortClassBonus, isProficient
   );
 
   // WILL DEFENSE
@@ -43,9 +46,10 @@ export function calculateDefenses(actor) {
   );
 }
 
-function calculateReflex(level, abilities, armor, hasArmored, hasImproved, penalty, sizeMod, classBonus = 0) {
+function calculateReflex(level, abilities, armor, hasArmored, hasImproved, penalty, sizeMod, classBonus = 0, isProficient = true) {
   let base = 10;
   let abilMod = abilities.dex?.mod || 0;
+  let equipmentBonus = 0;
 
   if (armor) {
     const armorBonus = armor.system.defenseBonus || 0;
@@ -63,15 +67,20 @@ function calculateReflex(level, abilities, armor, hasArmored, hasImproved, penal
     } else {
       base += armorBonus;
     }
+
+    // Equipment bonus only if proficient with armor
+    if (isProficient) {
+      equipmentBonus = armor.system.equipmentBonus || 0;
+    }
   } else {
     // No armor = level bonus
     base += level;
   }
 
-  return base + abilMod + penalty + sizeMod + classBonus;
+  return base + abilMod + equipmentBonus + penalty + sizeMod + classBonus;
 }
 
-function calculateFortitude(level, abilities, armor, penalty, sizeMod, isDroid = false, classBonus = 0) {
+function calculateFortitude(level, abilities, armor, penalty, sizeMod, isDroid = false, classBonus = 0, isProficient = true) {
   const base = 10 + level;
 
   // Droids use STR modifier for Fortitude Defense (they have no CON)
@@ -79,7 +88,11 @@ function calculateFortitude(level, abilities, armor, penalty, sizeMod, isDroid =
     ? (abilities.str?.mod || 0)
     : (abilities.con?.mod || 0);
 
-  const armorBonus = armor?.system.fortBonus || 0;
+  // Equipment bonus only if proficient with armor
+  let armorBonus = 0;
+  if (armor && isProficient) {
+    armorBonus = armor.system.equipmentBonus || armor.system.fortBonus || 0;
+  }
 
   return base + abilityMod + armorBonus + penalty + sizeMod + classBonus;
 }
@@ -89,4 +102,24 @@ function calculateWill(level, abilities, penalty, sizeMod, classBonus = 0) {
   const wisMod = abilities.wis?.mod || 0;
 
   return base + wisMod + penalty + sizeMod + classBonus;
+}
+
+function checkArmorProficiency(actor, armor) {
+  if (!armor) return true; // No armor equipped, always proficient
+
+  const armorType = armor.system.armorType?.toLowerCase() || 'light';
+
+  const armorProficiencies = actor.items.filter(i =>
+    (i.type === 'feat' || i.type === 'talent') &&
+    i.name.toLowerCase().includes('armor proficiency')
+  ) || [];
+
+  for (const prof of armorProficiencies) {
+    const profName = prof.name.toLowerCase();
+    if (profName.includes('light') && armorType === 'light') return true;
+    if (profName.includes('medium') && (armorType === 'light' || armorType === 'medium')) return true;
+    if (profName.includes('heavy')) return true; // Heavy includes all armor
+  }
+
+  return false;
 }

@@ -62,6 +62,7 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
         label: "Armor Type"
       }),
       defenseBonus: new fields.NumberField({required: true, initial: 0, min: 0, integer: true}),
+      equipmentBonus: new fields.NumberField({required: true, initial: 0, min: 0, max: 5, integer: true, label: "Equipment Bonus"}),
       maxDexBonus: new fields.NumberField({initial: null}),
       armorCheckPenalty: new fields.NumberField({required: true, initial: 0, integer: true}),
       fortBonus: new fields.NumberField({required: true, initial: 0, integer: true}),
