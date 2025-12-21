@@ -163,7 +163,7 @@ export async function calculateDefenseBonuses(actor) {
       if (classItem.system.defenses === undefined ||
           (!classItem.system.defenses.fortitude && !classItem.system.defenses.reflex && !classItem.system.defenses.will)) {
         SWSELogger.log(`SWSE LevelUp | Updating ${className} with defense bonuses: Fort +${progression.fortitude}, Ref +${progression.reflex}, Will +${progression.will}`);
-        classItem.update({
+        await classItem.update({
           'system.defenses': {
             fortitude: progression.fortitude,
             reflex: progression.reflex,

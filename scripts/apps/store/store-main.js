@@ -15,8 +15,10 @@ import {
 } from "./store-shared.js";
 
 export class SWSEStore extends FormApplication {
-  constructor(options={}) {
+  constructor(actor = null, options={}) {
     super({}, options);
+    // Store the actor for purchases - use provided actor, selected token's actor, or user's character
+    this.actor = actor || canvas?.tokens?.controlled?.[0]?.actor || game.user?.character || null;
     this.itemsById = new Map();
     this.items = [];
     this.groupedItems = { weapons: new Map(), armor: new Map(), equipment: new Map(), droids: new Map(), vehicles: new Map(), other: new Map() };
@@ -229,11 +231,15 @@ export class SWSEStore extends FormApplication {
     if (!confirmed) return;
 
     try {
-      // Deduct credits
+      // Deduct credits - use ActorEngine if available, otherwise direct update
       const newCredits = currentCredits - costValue;
-      await globalThis.SWSE.ActorEngine.updateActor(this.actor, {
-        "system.credits": newCredits
-      });
+      if (globalThis.SWSE?.ActorEngine?.updateActor) {
+        await globalThis.SWSE.ActorEngine.updateActor(this.actor, {
+          "system.credits": newCredits
+        });
+      } else {
+        await this.actor.update({ "system.credits": newCredits });
+      }
 
       // Add item to actor's inventory
       const itemData = view.raw.toObject ? view.raw.toObject() : view.raw;
