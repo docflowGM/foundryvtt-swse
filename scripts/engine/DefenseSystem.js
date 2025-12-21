@@ -105,6 +105,10 @@ export class DefenseSystem {
         }
 
         // ---------------------------------------------------------------------
+        // Equipment Bonus from Armor
+        // SWSE Rule: Only apply if proficient with armor
+        const equipmentBonus = DefenseSystem._getEquipmentBonus(actor);
+
         // Misc Bonuses
         // ---------------------------------------------------------------------
         const misc = DefenseSystem._computeMisc(d);
@@ -119,6 +123,7 @@ export class DefenseSystem {
                   abilityMod +
                   classFinal +
                   sizeMod +
+                  equipmentBonus +
                   misc;
 
         return d.total;
@@ -195,14 +200,43 @@ export class DefenseSystem {
     static _getArmorReflexBonus(actor) {
         const items = actor.items.filter(i => i.type === "armor" && i.system.equipped);
         if (items.length === 0) return 0;
-        return items[0].system?.reflex || 0;
+        return items[0].system?.defenseBonus || items[0].system?.armorBonus || 0;
+    }
+
+    /* Equipment Bonus (applies to both Reflex and Fortitude) */
+    static _getEquipmentBonus(actor) {
+        const items = actor.items.filter(i => i.type === "armor" && i.system.equipped);
+        if (items.length === 0) return 0;
+        // Only gain equipment bonus if proficient with armor
+        if (!DefenseSystem._isArmorProficient(actor)) return 0;
+        return items[0].system?.equipmentBonus || 0;
     }
 
     /* Ft Equipment Bonus */
     static _getFortEquipmentBonus(actor) {
-        const items = actor.items.filter(i => i.type === "armor" && i.system.equipped);
-        if (items.length === 0) return 0;
-        return items[0].system?.fort || 0;
+        return DefenseSystem._getEquipmentBonus(actor);
+    }
+
+    /* Check if character is proficient with equipped armor */
+    static _isArmorProficient(actor) {
+        const equippedArmor = actor?.items?.find(i => i.type === 'armor' && i.system.equipped);
+        if (!equippedArmor) return true; // No armor, always proficient
+
+        const armorType = equippedArmor.system.armorType?.toLowerCase() || 'light';
+
+        const armorProficiencies = actor?.items?.filter(i =>
+            (i.type === 'feat' || i.type === 'talent') &&
+            i.name.toLowerCase().includes('armor proficiency')
+        ) || [];
+
+        for (const prof of armorProficiencies) {
+            const profName = prof.name.toLowerCase();
+            if (profName.includes('light') && armorType === 'light') return true;
+            if (profName.includes('medium') && (armorType === 'light' || armorType === 'medium')) return true;
+            if (profName.includes('heavy')) return true; // Heavy includes all armor
+        }
+
+        return false;
     }
 
     /* Class Bonus (max across classes) */
