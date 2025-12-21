@@ -234,6 +234,128 @@ export class SWSERoll {
 
     return { roll, msg };
   }
+
+  /* ------------------------------------------------------------------------ */
+  /* FORCE POWER ROLLS (Use the Force + DC Chart Evaluation)                 */
+  /* ------------------------------------------------------------------------ */
+
+  static async rollUseTheForce(actor, power) {
+    if (!actor || !power) {
+      ui.notifications.error("Use the Force failed: missing actor or power.");
+      return null;
+    }
+
+    const skill = actor.system.skills.useTheForce;
+    if (!skill) {
+      ui.notifications.warn("Use the Force skill not found.");
+      return null;
+    }
+
+    // FP before roll
+    const fpBonus = await this.promptForcePointUse(actor, "Use the Force check");
+    const total = skill.total + fpBonus;
+    const formula = `1d20 + ${total}`;
+
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
+    const d20 = roll.dice[0].results[0].result;
+
+    // Evaluate DC chart if present
+    const dcChart = power.system.dcChart || [];
+    let resultTier = null;
+
+    if (dcChart.length > 0) {
+      // Find highest DC threshold that was met
+      const sorted = [...dcChart].sort((a, b) => b.dc - a.dc);
+      resultTier = sorted.find(tier => roll.total >= tier.dc);
+    }
+
+    // Build breakdown components
+    const parts = [];
+    const halfLevel = Math.floor(actor.system.level / 2);
+    parts.push(`½ Level +${halfLevel}`);
+
+    if (skill.trained) parts.push(`Trained +5`);
+    if (skill.focused) parts.push(`Skill Focus +5`);
+
+    const abilityMod = actor.system.abilities[skill.ability]?.mod ?? 0;
+    parts.push(`${skill.ability.toUpperCase()} ${abilityMod >= 0 ? "+" : ""}${abilityMod}`);
+
+    const misc = skill.misc ?? 0;
+    if (misc) parts.push(`Misc ${misc >= 0 ? "+" : ""}${misc}`);
+
+    const condition = actor.system.conditionTrack?.penalty ?? 0;
+    if (condition) parts.push(`Condition ${condition}`);
+
+    if (fpBonus) parts.push(`FP +${fpBonus}`);
+
+    // Build chat card
+    const darkSideWarning = power.system.discipline === "dark-side"
+      ? `<div class="dark-side-warning"><i class="fas fa-skull"></i> Dark Side Power - Using gains 1 Dark Side Point</div>`
+      : "";
+
+    const resultHTML = resultTier
+      ? `
+        <div class="power-result success">
+          <h4><i class="fas fa-check-circle"></i> DC ${resultTier.dc} Achieved</h4>
+          <p class="effect-description">${resultTier.description}</p>
+          <p class="effect-short"><strong>Effect:</strong> ${resultTier.effect}</p>
+        </div>
+      `
+      : dcChart.length > 0
+      ? `
+        <div class="power-result failure">
+          <h4><i class="fas fa-times-circle"></i> Failed to Meet Minimum DC</h4>
+          <p>Minimum DC required: ${Math.min(...dcChart.map(t => t.dc))}</p>
+        </div>
+      `
+      : `
+        <div class="power-result info">
+          <p>${power.system.effect || ""}</p>
+          ${power.system.special ? `<p class="special"><strong>Special:</strong> ${power.system.special}</p>` : ""}
+        </div>
+      `;
+
+    const html = `
+      <div class="swse-force-power-card">
+        <div class="power-header">
+          <img src="${power.img}" height="50" />
+          <div class="power-title">
+            <h3>${power.name}</h3>
+            <span class="power-level">Level ${power.system.powerLevel || 1}</span>
+            <span class="power-discipline">${power.system.discipline || "universal"}</span>
+          </div>
+        </div>
+
+        ${darkSideWarning}
+
+        <div class="utf-result">
+          <div class="roll-total">${roll.total}</div>
+          <div class="roll-d20">d20: ${d20}${d20 === 20 ? " <i class='fas fa-star'></i>" : ""}</div>
+          <div class="roll-formula">${formula}</div>
+          <div class="roll-breakdown">${parts.join(", ")}</div>
+        </div>
+
+        ${resultHTML}
+
+        <div class="power-details">
+          <p><strong>Time:</strong> ${power.system.time || "Standard Action"}</p>
+          <p><strong>Range:</strong> ${power.system.range || "—"}</p>
+          ${power.system.target ? `<p><strong>Target:</strong> ${power.system.target}</p>` : ""}
+          ${power.system.duration ? `<p><strong>Duration:</strong> ${power.system.duration}</p>` : ""}
+        </div>
+      </div>
+    `;
+
+    const message = await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content: html,
+      roll
+    });
+
+    if (game.dice3d) game.dice3d.showForRoll(roll, game.user, true);
+
+    return { roll, message, diceTotal: d20, resultTier };
+  }
 }
 
 /* -------------------------------------------------------------------------- */
