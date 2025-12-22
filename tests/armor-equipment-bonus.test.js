@@ -158,8 +158,9 @@ describe('Armor Equipment Bonus', () => {
 
       calculateDefenses(mockActor);
 
-      // With Improved Armored Defense: 10 + max(5 + 5, 10) + 1 (dex capped) + 3 (equipment bonus) = 19
-      expect(mockActor.system.defenses.reflex.total).toBe(19);
+      // With Improved Armored Defense: 10 + max(5 + floor(10/2), 10) + 1 (dex capped) + 3 (equipment bonus) = 24
+      // Formula: base + sourceValue + dexMod + equipmentBonus = 10 + 10 + 1 + 3 = 24
+      expect(mockActor.system.defenses.reflex.total).toBe(24);
     });
   });
 

@@ -3,6 +3,7 @@
   "version": "1.1.207",
   "description": "Star Wars Saga Edition system for Foundry VTT",
   "private": true,
+  "type": "module",
   "scripts": {
     "build:styles": "npm run build:base && npm run build:themes",
     "build:base": "sass styles/src/main.scss styles/core/swse-base.css --no-source-map && postcss styles/core/swse-base.css --replace --use autoprefixer cssnano",
@@ -12,7 +13,9 @@
     "lint": "eslint scripts/ helpers/ --ext .js",
     "lint:fix": "eslint scripts/ helpers/ --ext .js --fix",
     "format": "prettier --write \"**/*.{js,json,css,scss,md}\"",
-    "format:check": "prettier --check \"**/*.{js,json,css,scss,md}\""
+    "format:check": "prettier --check \"**/*.{js,json,css,scss,md}\"",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
   },
   "devDependencies": {
     "sass": "^1.69.5",
@@ -21,6 +24,7 @@
     "autoprefixer": "^10.4.16",
     "cssnano": "^6.0.2",
     "eslint": "^8.56.0",
-    "prettier": "^3.1.1"
+    "prettier": "^3.1.1",
+    "jest": "^29.7.0"
   }
 }

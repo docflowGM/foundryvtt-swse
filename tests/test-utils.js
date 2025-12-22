@@ -3,34 +3,52 @@
  */
 
 export class TestUtils {
-  
-  static async createMockActor(type = 'character', data = {}) {
+
+  static createMockActor(type = 'character', data = {}) {
+    // Merge provided abilities with defaults
+    const defaultAbilities = {
+      str: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
+      dex: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
+      con: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
+      int: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
+      wis: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
+      cha: {base: 10, racial: 0, temp: 0, total: 10, mod: 0}
+    };
+
+    const abilities = data.abilities
+      ? { ...defaultAbilities, ...data.abilities }
+      : defaultAbilities;
+
     return {
       type: type,
-      name: 'Test Actor',
+      name: data.name || 'Test Actor',
       system: {
-        level: 1,
-        abilities: {
-          str: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
-          dex: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
-          con: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
-          int: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
-          wis: {base: 10, racial: 0, temp: 0, total: 10, mod: 0},
-          cha: {base: 10, racial: 0, temp: 0, total: 10, mod: 0}
+        level: data.level || 1,
+        size: data.size || 'medium',
+        abilities: abilities,
+        hp: data.hp || {value: 20, max: 20, temp: 0},
+        conditionTrack: data.conditionTrack || 'normal',
+        defenses: {
+          reflex: { total: 0, class: 0, ...data.defenses?.reflex },
+          fortitude: { total: 0, class: 0, ...data.defenses?.fortitude },
+          will: { total: 0, class: 0, ...data.defenses?.will }
         },
-        hp: {value: 20, max: 20, temp: 0},
-        conditionTrack: 'normal',
+        isDroid: data.isDroid || false,
         ...data
       },
-      items: []
+      items: [],
+      conditionPenalty: data.conditionPenalty || 0
     };
   }
-  
-  static async createMockItem(type, data = {}) {
+
+  static createMockItem(type, data = {}) {
+    // Handle both old-style (data contains system) and new-style (data is the system object)
+    const hasSystemProperty = data.system !== undefined;
+
     return {
       type: type,
-      name: `Test ${type}`,
-      system: data
+      name: data.name || `Test ${type}`,
+      system: hasSystemProperty ? data.system : data
     };
   }
 }
