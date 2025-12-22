@@ -1,612 +1,19 @@
 import { SWSELogger } from '../utils/logger.js';
+
 export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
-  /**
-   * Migrate source data to ensure compatibility with current schema
-   * This runs before validation and ensures all fields have correct types
-   */
-  static shimData(data, options) {
-    const shimmed = super.shimData ? super.shimData(data, options) : data;
-
-    // Ensure defenses have integer ability values
-    if (shimmed.defenses) {
-      for (const defenseType of ['reflex', 'fortitude', 'will']) {
-        if (shimmed.defenses[defenseType]) {
-          const defense = shimmed.defenses[defenseType];
-
-          // Convert ability to integer
-          if (defense.ability !== undefined && defense.ability !== null) {
-            const num = Number(defense.ability);
-            defense.ability = Number.isNaN(num) ? 0 : Math.floor(num);
-          }
-
-          // Also ensure other defense fields are integers
-          for (const field of ['base', 'armor', 'classBonus', 'misc', 'total']) {
-            if (defense[field] !== undefined && defense[field] !== null) {
-              const num = Number(defense[field]);
-              defense[field] = Number.isNaN(num) ? (field === 'base' || field === 'total' ? 10 : 0) : Math.floor(num);
-            }
-          }
-        }
-      }
-    }
-
-    // Ensure initiative is an integer
-    if (shimmed.initiative !== undefined && shimmed.initiative !== null) {
-      const num = Number(shimmed.initiative);
-      shimmed.initiative = Number.isNaN(num) ? 0 : Math.floor(num);
-    }
-
-    // Ensure speed is an integer
-    if (shimmed.speed !== undefined && shimmed.speed !== null) {
-      const num = Number(shimmed.speed);
-      shimmed.speed = Number.isNaN(num) ? 6 : Math.floor(num);
-    }
-
-    // Ensure level is an integer
-    if (shimmed.level !== undefined && shimmed.level !== null) {
-      const num = Number(shimmed.level);
-      shimmed.level = Number.isNaN(num) ? 1 : Math.floor(num);
-    }
-
-    // Ensure experience is an integer
-    if (shimmed.experience !== undefined && shimmed.experience !== null) {
-      const num = Number(shimmed.experience);
-      shimmed.experience = Number.isNaN(num) ? 0 : Math.floor(num);
-    }
-
-    // Ensure hp values are integers
-    if (shimmed.hp) {
-      if (shimmed.hp.value !== undefined && shimmed.hp.value !== null) {
-        const num = Number(shimmed.hp.value);
-        shimmed.hp.value = Number.isNaN(num) ? 1 : Math.floor(num);
-      }
-      if (shimmed.hp.max !== undefined && shimmed.hp.max !== null) {
-        const num = Number(shimmed.hp.max);
-        shimmed.hp.max = Number.isNaN(num) ? 1 : Math.floor(num);
-      }
-      if (shimmed.hp.temp !== undefined && shimmed.hp.temp !== null) {
-        const num = Number(shimmed.hp.temp);
-        shimmed.hp.temp = Number.isNaN(num) ? 0 : Math.floor(num);
-      }
-    }
-
-    // Ensure credits is an integer
-    if (shimmed.credits !== undefined && shimmed.credits !== null) {
-      const num = Number(shimmed.credits);
-      shimmed.credits = Number.isNaN(num) ? 0 : Math.floor(num);
-    }
-
-    // Ensure condition track values are integers
-    if (shimmed.conditionTrack) {
-      if (shimmed.conditionTrack.current !== undefined && shimmed.conditionTrack.current !== null) {
-        const num = Number(shimmed.conditionTrack.current);
-        shimmed.conditionTrack.current = Number.isNaN(num) ? 0 : Math.floor(num);
-      }
-      if (shimmed.conditionTrack.penalty !== undefined && shimmed.conditionTrack.penalty !== null) {
-        const num = Number(shimmed.conditionTrack.penalty);
-        shimmed.conditionTrack.penalty = Number.isNaN(num) ? 0 : Math.floor(num);
-      }
-    }
-
-    // Ensure abilities have integer values
-    if (shimmed.abilities) {
-      for (const abilityType of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
-        if (shimmed.abilities[abilityType]) {
-          const ability = shimmed.abilities[abilityType];
-
-          for (const field of ['base', 'racial', 'misc', 'total', 'mod']) {
-            if (ability[field] !== undefined && ability[field] !== null) {
-              const num = Number(ability[field]);
-              ability[field] = Number.isNaN(num) ? (field === 'base' || field === 'total' ? 10 : 0) : Math.floor(num);
-            }
-          }
-        }
-      }
-    }
-
-    return shimmed;
-  }
-
-  static defineSchema() {
-    const fields = foundry.data.fields;
-
-    return {
-      // Abilities
-      abilities: new fields.SchemaField({
-        str: new fields.SchemaField(this._abilitySchema()),
-        dex: new fields.SchemaField(this._abilitySchema()),
-        con: new fields.SchemaField(this._abilitySchema()),
-        int: new fields.SchemaField(this._abilitySchema()),
-        wis: new fields.SchemaField(this._abilitySchema()),
-        cha: new fields.SchemaField(this._abilitySchema())
-      }),
-
-      // Defenses
-      defenses: new fields.SchemaField({
-        reflex: new fields.SchemaField(this._defenseSchema()),
-        fortitude: new fields.SchemaField(this._defenseSchema()),
-        will: new fields.SchemaField(this._defenseSchema())
-      }),
-
-      // HP
-      hp: new fields.SchemaField({
-        value: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 1,
-          min: 0,
-          integer: true,
-          clean: value => {
-            if (value === null || value === undefined || value === "") return 1;
-            const num = Number(value);
-            return Number.isNaN(num) ? 1 : Math.floor(num);
-          }
-        }),
-        max: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 1,
-          min: 1,
-          integer: true,
-          clean: value => {
-            if (value === null || value === undefined || value === "") return 1;
-            const num = Number(value);
-            return Number.isNaN(num) ? 1 : Math.floor(num);
-          }
-        }),
-        temp: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 0,
-          min: 0,
-          integer: true,
-          clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
-            const num = Number(value);
-            return Number.isNaN(num) ? 0 : Math.floor(num);
-          }
-        })
-      }),
-
-      // Condition Track
-      conditionTrack: new fields.SchemaField({
-        current: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 0,
-          min: 0,
-          max: 5,
-          integer: true,
-          clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
-            const num = Number(value);
-            return Number.isNaN(num) ? 0 : Math.floor(num);
-          }
-        }),
-        persistent: new fields.BooleanField({required: true, initial: false}),
-        penalty: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 0,
-          integer: true,
-          clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
-            const num = Number(value);
-            return Number.isNaN(num) ? 0 : Math.floor(num);
-          }
-        })
-      }),
-
-      // Level & Experience
-      level: new fields.NumberField({
-        required: true,
-        nullable: true,
-        initial: 1,
-        min: 1,
-        max: 20,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 1;
-          const num = Number(value);
-          return Number.isNaN(num) ? 1 : Math.floor(num);
-        }
-      }),
-      experience: new fields.NumberField({
-        required: true,
-        nullable: true,
-        initial: 0,
-        min: 0,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
-      }),
-
-      // Size (with automatic normalization for backwards compatibility)
-      size: new fields.StringField({
-        required: true,
-        initial: "medium",
-        clean: value => {
-          // Normalize capitalized values to lowercase for backwards compatibility
-          if (typeof value === 'string') {
-            const normalized = value.toLowerCase();
-            // Map any known valid sizes to their correct form
-            const validSizes = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal', 'colossal2'];
-            return validSizes.includes(normalized) ? normalized : "medium";
-          }
-          return "medium";
-        }
-      }),
-
-      // Combat (with automatic integer coercion for backwards compatibility)
-      bab: new fields.NumberField({
-        required: true,
-        nullable: false,
-        initial: 0,
-        integer: true
-      }),
-      baseAttack: new fields.NumberField({
-        required: true,
-        nullable: false,
-        initial: 0,
-        integer: true
-      }),
-      initiative: new fields.NumberField({
-        required: true,
-        nullable: true,
-        initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
-      }),
-      
-      speed: new fields.NumberField({
-        required: false,
-        nullable: true,
-        initial: 6,
-        min: 0,
-        /**
-         * Accept legacy string speeds like "6 Squares ( Hovering )"
-         * and coerce everything to a non-negative integer number of squares.
-         */
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 6;
-
-          // Strings like "6 Squares ( Hovering )"
-          if (typeof value === "string") {
-            const match = value.match(/\d+/);
-            if (match) return parseInt(match[0], 10);
-          }
-
-          const num = Number(value);
-          if (Number.isNaN(num)) return 6;
-          return Math.max(0, Math.floor(num));
-        },
-        /**
-         * Final guard: allow null/undefined, otherwise require a finite integer >= 0.
-         */
-        validate: value => {
-          if (value === null || value === undefined || value === "") return true;
-          const num = Number(value);
-          if (!Number.isFinite(num)) return false;
-          return num >= 0 && Number.isInteger(num);
-        }
-      }),
-      damageThreshold: new fields.NumberField({
-        required: true,
-        nullable: false,
-        initial: 10,
-        integer: true
-      }),
-
-      // Skills
-      skills: new fields.SchemaField(this._generateSkillsSchema()),
-
-      // Resources
-      credits: new fields.NumberField({
-        required: true,
-        nullable: true,
-        initial: 0,
-        min: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
-      }),
-
-      // Species/Race Information
-      race: new fields.StringField({
-        required: false,
-        initial: "",
-        blank: true
-      }),
-      speciesSource: new fields.StringField({
-        required: false,
-        initial: "",
-        blank: true
-      }),
-
-      // Background Information (Rebellion Era Campaign Guide)
-      event: new fields.StringField({
-        required: false,
-        initial: "",
-        blank: true,
-        label: "Event Background"
-      }),
-      profession: new fields.StringField({
-        required: false,
-        initial: "",
-        blank: true,
-        label: "Profession Background"
-      }),
-      planetOfOrigin: new fields.StringField({
-        required: false,
-        initial: "",
-        blank: true,
-        label: "Planet of Origin"
-      }),
-
-      // Force Sensitivity
-      forceSensitive: new fields.BooleanField({
-        required: true,
-        initial: false
-      }),
-      forcePoints: new fields.SchemaField({
-        value: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 0,
-          min: 0,
-          clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
-            const num = Number(value);
-            return Number.isNaN(num) ? 0 : Math.floor(num);
-          }
-        }),
-        max: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 0,
-          min: 0,
-          clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
-            const num = Number(value);
-            return Number.isNaN(num) ? 0 : Math.floor(num);
-          }
-        }),
-        die: new fields.StringField({
-          required: true,
-          initial: "1d6"
-        })
-      }),
-
-      // Destiny Points
-      destinyPoints: new fields.SchemaField({
-        value: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 1,
-          min: 0,
-          integer: true,
-          clean: value => {
-            if (value === null || value === undefined || value === "") return 1;
-            const num = Number(value);
-            return Number.isNaN(num) ? 1 : Math.floor(num);
-          }
-        }),
-        max: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 1,
-          min: 0,
-          integer: true,
-          clean: value => {
-            if (value === null || value === undefined || value === "") return 1;
-            const num = Number(value);
-            return Number.isNaN(num) ? 1 : Math.floor(num);
-          }
-        })
-      })
-    };
-  }
-
-  static _abilitySchema() {
-    const fields = foundry.data.fields;
-    return {
-      base: new fields.NumberField({
-        required: true,
-        nullable: true,
-        initial: 10,
-        min: 1,
-        max: 30,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 10;
-          const num = Number(value);
-          return Number.isNaN(num) ? 10 : Math.floor(num);
-        }
-      }),
-      racial: new fields.NumberField({
-        required: true,
-        nullable: true,
-        initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
-      }),
-      misc: new fields.NumberField({
-        required: true,
-        nullable: true,
-        initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
-      }),
-      total: new fields.NumberField({
-        required: true,
-        nullable: true,
-        initial: 10,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 10;
-          const num = Number(value);
-          return Number.isNaN(num) ? 10 : Math.floor(num);
-        }
-      }),
-      mod: new fields.NumberField({
-        required: true,
-        nullable: true,
-        initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
-      })
-    };
-  }
-
-  static _defenseSchema() {
-    const fields = foundry.data.fields;
-    return {
-      base: new fields.NumberField({
-        required: true,
-        nullable: false,
-        initial: 10,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 10;
-          const num = Number(value);
-          return Number.isNaN(num) ? 10 : Math.floor(num);
-        }
-      }),
-      armor: new fields.NumberField({
-        required: true,
-        nullable: false,
-        initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
-      }),
-      ability: new fields.NumberField({
-        required: true,
-        nullable: true,
-        initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
-      }),
-      classBonus: new fields.NumberField({
-        required: true,
-        nullable: false,
-        initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
-      }),
-      misc: new fields.NumberField({
-        required: true,
-        nullable: false,
-        initial: 0,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 0;
-          const num = Number(value);
-          return Number.isNaN(num) ? 0 : Math.floor(num);
-        }
-      }),
-      total: new fields.NumberField({
-        required: true,
-        nullable: false,
-        initial: 10,
-        integer: true,
-        clean: value => {
-          if (value === null || value === undefined || value === "") return 10;
-          const num = Number(value);
-          return Number.isNaN(num) ? 10 : Math.floor(num);
-        }
-      })
-    };
-  }
-
-  static _generateSkillsSchema() {
-    const fields = foundry.data.fields;
-    const skills = [
-      'acrobatics', 'climb', 'deception', 'endurance', 'gatherInformation',
-      'initiative', 'jump', 'knowledge', 'mechanics', 'perception',
-      'persuasion', 'pilot', 'ride', 'stealth', 'survival',
-      'swim', 'treatInjury', 'useComputer', 'useTheForce'
-    ];
-
-    const schema = {};
-    for (const skill of skills) {
-      schema[skill] = new fields.SchemaField({
-        trained: new fields.BooleanField({required: true, initial: false}),
-        focused: new fields.BooleanField({required: true, initial: false}),
-        armor: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 0,
-          integer: true,
-          clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
-            const num = Number(value);
-            return Number.isNaN(num) ? 0 : Math.floor(num);
-          }
-        }),
-        misc: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 0,
-          integer: true,
-          clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
-            const num = Number(value);
-            return Number.isNaN(num) ? 0 : Math.floor(num);
-          }
-        }),
-        total: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 0,
-          integer: true,
-          clean: value => {
-            if (value === null || value === undefined || value === "") return 0;
-            const num = Number(value);
-            return Number.isNaN(num) ? 0 : Math.floor(num);
-          }
-        })
-      });
-    }
-    return schema;
-  }
+  /* -------------------------------------------------------------------------- */
+  /* DERIVED DATA (CORE RULE ENGINE)                                            */
+  /* -------------------------------------------------------------------------- */
 
   prepareDerivedData() {
     this._calculateAbilities();
     this._applyConditionPenalties();
+
+    if (this.parent?.type === "droid") {
+      this._calculateDroidDerivedData();
+    }
+
     this._calculateDefenses();
     this._calculateSkills();
     this._calculateBaseAttack();
@@ -614,108 +21,145 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
     this._calculateInitiative();
   }
 
+  /* -------------------------------------------------------------------------- */
+  /* ABILITIES                                                                  */
+  /* -------------------------------------------------------------------------- */
+
   _calculateAbilities() {
-    for (const [key, ability] of Object.entries(this.abilities)) {
+    for (const ability of Object.values(this.abilities)) {
       ability.total = ability.base + ability.racial + ability.misc;
       ability.mod = Math.floor((ability.total - 10) / 2);
     }
   }
 
+  /* -------------------------------------------------------------------------- */
+  /* CONDITION TRACK                                                            */
+  /* -------------------------------------------------------------------------- */
+
   _applyConditionPenalties() {
-    const penalties = [0, -1, -2, -5, -10, 0]; // 0=Normal, 5=Helpless
+    const penalties = [0, -1, -2, -5, -10, 0];
     this.conditionTrack.penalty = penalties[this.conditionTrack.current] || 0;
   }
 
-  _calculateDefenses() {
-    // Ensure defenses object exists
-    if (!this.defenses) {
-      SWSELogger.warn('Actor defenses not initialized, skipping defense calculations');
-      return;
+  /* -------------------------------------------------------------------------- */
+  /* DROID DERIVED DATA                                                         */
+  /* -------------------------------------------------------------------------- */
+
+  _calculateDroidDerivedData() {
+    const system = this;
+
+    // --- STR replaces CON (except HP)
+    system.abilities.con.mod = system.abilities.str.mod;
+
+    // --- Locomotion speed
+    if (system.activeLocomotion && system.locomotion?.length) {
+      const loco = system.locomotion.find(l => l.id === system.activeLocomotion);
+      if (loco?.speedBySize) {
+        system.speed = loco.speedBySize[system.size] ?? system.speed;
+      }
     }
 
-    const level = this.level || 1;
+    // --- Built-in Droid Armor vs Worn Armor
+    let armorBonus = 0;
+    let maxDex = null;
+    let acp = 0;
 
-    // Ensure individual defense objects exist
-    if (!this.defenses.reflex || !this.defenses.fortitude || !this.defenses.will) {
-      SWSELogger.warn('Actor defense sub-objects not initialized, skipping defense calculations');
-      return;
+    const builtIn = system.droidArmor?.installed ? system.droidArmor : null;
+    const worn = this.parent.items.find(
+      i => i.type === "armor" && i.system?.equipped
+    )?.system;
+
+    const source =
+      builtIn && worn
+        ? (builtIn.armorBonus >= worn.armorBonus ? builtIn : worn)
+        : builtIn || worn;
+
+    if (source) {
+      armorBonus = source.armorBonus ?? 0;
+      maxDex = source.maxDex ?? null;
+      acp = source.armorCheckPenalty ?? 0;
     }
 
-    // Get condition track penalty
-    const conditionPenalty = this.conditionTrack?.penalty || 0;
+    system.defenses.reflex.armor = armorBonus;
 
-    // Reflex
-    const reflexAbility = this.abilities?.dex?.mod || 0;
-    const reflexArmor = this.defenses.reflex.armor > 0 ? this.defenses.reflex.armor : level;
-    this.defenses.reflex.ability = reflexAbility;
-    this.defenses.reflex.total = 10 + reflexArmor + reflexAbility +
-                                  (this.defenses.reflex.classBonus || 0) +
-                                  (this.defenses.reflex.misc || 0) + conditionPenalty;
+    // Clamp Dex
+    if (maxDex !== null) {
+      system.abilities.dex.mod = Math.min(system.abilities.dex.mod, maxDex);
+    }
 
-    // Fortitude
-    const fortAbility = Math.max(this.abilities?.con?.mod || 0, this.abilities?.str?.mod || 0);
-    this.defenses.fortitude.ability = fortAbility;
-    this.defenses.fortitude.total = 10 + level + fortAbility +
-                                     (this.defenses.fortitude.classBonus || 0) +
-                                     (this.defenses.fortitude.misc || 0) + conditionPenalty;
+    // Apply ACP to skills + attacks
+    const acpSkills = [
+      "acrobatics", "climb", "endurance", "initiative",
+      "jump", "stealth", "swim"
+    ];
 
-    // Will
-    const willAbility = this.abilities?.wis?.mod || 0;
-    this.defenses.will.ability = willAbility;
-    this.defenses.will.total = 10 + level + willAbility +
-                                (this.defenses.will.classBonus || 0) +
-                                (this.defenses.will.misc || 0) + conditionPenalty;
+    for (const skill of acpSkills) {
+      if (system.skills[skill]) {
+        system.skills[skill].armor = acp;
+      }
+    }
   }
+
+  /* -------------------------------------------------------------------------- */
+  /* DEFENSES                                                                   */
+  /* -------------------------------------------------------------------------- */
+
+  _calculateDefenses() {
+    const lvl = this.level;
+    const cond = this.conditionTrack.penalty;
+
+    this.defenses.reflex.total =
+      10 + this.defenses.reflex.armor +
+      this.abilities.dex.mod +
+      this.defenses.reflex.classBonus +
+      this.defenses.reflex.misc + cond;
+
+    this.defenses.fortitude.total =
+      10 + lvl + this.abilities.str.mod +
+      this.defenses.fortitude.classBonus +
+      this.defenses.fortitude.misc + cond;
+
+    this.defenses.will.total =
+      10 + lvl + this.abilities.wis.mod +
+      this.defenses.will.classBonus +
+      this.defenses.will.misc + cond;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* SKILLS                                                                     */
+  /* -------------------------------------------------------------------------- */
 
   _calculateSkills() {
-    const halfLevel = Math.floor((this.level || 1) / 2);
-    const abilityMap = {
-      acrobatics: 'dex', climb: 'str', deception: 'cha',
-      endurance: 'con', gatherInformation: 'cha', initiative: 'dex',
-      jump: 'str', knowledge: 'int', mechanics: 'int',
-      perception: 'wis', persuasion: 'cha', pilot: 'dex',
-      ride: 'dex', stealth: 'dex', survival: 'wis',
-      swim: 'str', treatInjury: 'wis', useComputer: 'int',
-      useTheForce: 'cha'
+    const half = Math.floor(this.level / 2);
+    const map = {
+      endurance: 'str'
     };
 
-    for (const [skillKey, skill] of Object.entries(this.skills)) {
-      const abilityKey = abilityMap[skillKey];
-      const abilityMod = this.abilities[abilityKey]?.mod || 0;
-
-      skill.total = halfLevel + abilityMod + 
-                    (skill.trained ? 5 : 0) + 
-                    (skill.focused ? 5 : 0) + 
-                    skill.armor + skill.misc + 
-                    this.conditionTrack.penalty;
-      
-      // Add mod property (same as total) for template compatibility
-      skill.mod = skill.total;
+    for (const [k, skill] of Object.entries(this.skills)) {
+      const ability = map[k] ?? skill.ability ?? 'dex';
+      skill.total =
+        half + this.abilities[ability].mod +
+        (skill.trained ? 5 : 0) +
+        (skill.focused ? 5 : 0) +
+        skill.armor + skill.misc +
+        this.conditionTrack.penalty;
     }
   }
 
+  /* -------------------------------------------------------------------------- */
+  /* DAMAGE THRESHOLD                                                           */
+  /* -------------------------------------------------------------------------- */
+
   _calculateDamageThreshold() {
-    // Ensure defenses and fortitude are initialized
-    if (!this.defenses || !this.defenses.fortitude) {
-      SWSELogger.warn('Actor defenses not initialized, skipping damage threshold calculation');
-      return;
-    }
     this.damageThreshold = this.defenses.fortitude.total;
   }
 
   _calculateInitiative() {
-    this.initiative = (this.skills.initiative?.total || 0);
+    this.initiative = this.skills.initiative.total;
   }
 
   _calculateBaseAttack() {
-    // Calculate base attack bonus based on level
-    // This is a simple calculation - should be overridden by class-specific logic
-    const level = this.level || 1;
-    
-    // Default to medium progression (3/4 level)
-    this.bab = Math.floor(level * 0.75);
-    
-    // Also set baseAttack for template compatibility
+    this.bab = Math.floor(this.level * 0.75);
     this.baseAttack = this.bab;
   }
 }
