@@ -1,17 +1,29 @@
 // ============================================
-// FILE: module/actors/swse-droid.js
-// Droid Actor Sheet (Blueprint + Operational)
+// FILE: scripts/actors/droid/swse-droid.js
+// Droid Actor Sheet
+// ============================================
+//
+// Responsibilities:
+// - Present droid structural (blueprint) data
+// - Present installed Item-based systems
+// - Surface warnings & conflicts (non-enforcing)
+// - Toggle Operational / Blueprint modes
+//
+// This file does NOT:
+// - Apply rules math
+// - Mutate actor state
+// - Resolve armor, speed, ACP, or shields
 // ============================================
 
 import { SWSECharacterSheet } from "../character/swse-character-sheet.js";
 import { SWSELogger } from "../../utils/logger.js";
-import { DROID_SYSTEMS } from "../../scripts/data/droid-systems.js";
+import { DROID_SYSTEMS } from "../../data/droid-systems.js";
 
 export class SWSEDroidSheet extends SWSECharacterSheet {
 
-  // -----------------------------------------------------------------------
+  // ---------------------------------------------------------------------
   // Default Options
-  // -----------------------------------------------------------------------
+  // ---------------------------------------------------------------------
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor", "droid", "swse-app"],
@@ -27,36 +39,36 @@ export class SWSEDroidSheet extends SWSECharacterSheet {
     });
   }
 
-  // -----------------------------------------------------------------------
+  // ---------------------------------------------------------------------
   // Data Preparation
-  // -----------------------------------------------------------------------
+  // ---------------------------------------------------------------------
   async getData(options = {}) {
     const context = await super.getData(options);
     const system = context.system;
 
-    // ---------------------------------------------------------------------
-    // View Mode
-    // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------
+    // View Mode (Operational / Blueprint)
+    // ---------------------------------------------------------------
     context.viewMode =
       this.actor.getFlag("foundryvtt-swse", "viewMode") || "operational";
 
-    // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------
     // Droid Identity
-    // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------
     system.isDroid = true;
 
-    // ---------------------------------------------------------------------
-    // Structural (Blueprint-Level) Context
-    // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------
+    // Blueprint Catalogs (STATIC DATA)
+    // ---------------------------------------------------------------
     context.droidBlueprint = {
-      locomotionCatalog: DROID_SYSTEMS.locomotion,
-      processorCatalog: DROID_SYSTEMS.processors,
-      appendageCatalog: DROID_SYSTEMS.appendages
+      locomotion: DROID_SYSTEMS.locomotion,
+      processors: DROID_SYSTEMS.processors,
+      appendages: DROID_SYSTEMS.appendages
     };
 
-    // ---------------------------------------------------------------------
-    // Actor Structural State
-    // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------
+    // Actor Structural State (MUTATED BY HANDLER)
+    // ---------------------------------------------------------------
     context.droidStructure = {
       locomotion: system.locomotion ?? [],
       activeLocomotion: system.activeLocomotion ?? null,
@@ -64,27 +76,27 @@ export class SWSEDroidSheet extends SWSECharacterSheet {
       appendages: system.appendages ?? []
     };
 
-    // ---------------------------------------------------------------------
-    // Equipment (Items)
-    // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------
+    // Installed Equipment (ITEMS)
+    // ---------------------------------------------------------------
     context.droidEquipment = this._prepareDroidEquipment(context.items);
 
-    // ---------------------------------------------------------------------
-    // Warnings / UX Hints (NON-ENFORCING)
-    // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------
+    // Non-Enforcing Warnings / UX Hints
+    // ---------------------------------------------------------------
     context.droidWarnings = this._prepareDroidWarnings(system, context.items);
 
     return context;
   }
 
-  // -----------------------------------------------------------------------
-  // Activate Listeners
-  // -----------------------------------------------------------------------
+  // ---------------------------------------------------------------------
+  // Activate UI Listeners
+  // ---------------------------------------------------------------------
   activateListeners(html) {
     super.activateListeners(html);
     if (!this.isEditable) return;
 
-    // Toggle Blueprint ↔ Operational
+    // Toggle Blueprint ↔ Operational Mode
     html.find("[data-toggle-mode]").on("click", async (event) => {
       event.preventDefault();
 
@@ -104,13 +116,13 @@ export class SWSEDroidSheet extends SWSECharacterSheet {
     SWSELogger.log("SWSE | Droid sheet listeners activated");
   }
 
-  // =======================================================================
+  // =====================================================================
   // PREPARATION HELPERS (READ-ONLY)
-  // =======================================================================
+  // =====================================================================
 
   _prepareDroidEquipment(items) {
     return {
-      armor: items.filter(i => i.type === "droidArmor"),
+      droidArmor: items.filter(i => i.type === "droidArmor"),
       shields: items.filter(i => i.type === "shieldGenerator"),
       systems: items.filter(i => i.type === "droidSystem"),
       weapons: items.filter(i => i.type === "weapon")
@@ -120,9 +132,9 @@ export class SWSEDroidSheet extends SWSECharacterSheet {
   _prepareDroidWarnings(system, items) {
     const warnings = [];
 
-    // --------------------------------------------------
-    // No locomotion
-    // --------------------------------------------------
+    // ------------------------------------------------------------
+    // Missing locomotion
+    // ------------------------------------------------------------
     if (!system.locomotion || system.locomotion.length === 0) {
       warnings.push({
         type: "locomotion",
@@ -130,25 +142,26 @@ export class SWSEDroidSheet extends SWSECharacterSheet {
       });
     }
 
-    // --------------------------------------------------
-    // Multiple locomotion, none active
-    // --------------------------------------------------
+    // ------------------------------------------------------------
+    // Multiple locomotion systems, no active selection
+    // ------------------------------------------------------------
     if (
       (system.locomotion?.length ?? 0) > 1 &&
       !system.activeLocomotion
     ) {
       warnings.push({
         type: "locomotion",
-        message: "Multiple locomotion systems installed; no active system selected."
+        message:
+          "Multiple locomotion systems installed, but none is marked active."
       });
     }
 
-    // --------------------------------------------------
-    // Built-in armor vs worn armor
-    // --------------------------------------------------
+    // ------------------------------------------------------------
+    // Built-in droid armor vs worn armor
+    // ------------------------------------------------------------
     const hasBuiltIn = system.droidArmor?.installed === true;
     const hasWorn = items.some(
-      i => i.type === "armor" && i.system?.equipped
+      i => i.type === "armor" && i.system?.equipped === true
     );
 
     if (hasBuiltIn && hasWorn) {
@@ -159,9 +172,9 @@ export class SWSEDroidSheet extends SWSECharacterSheet {
       });
     }
 
-    // --------------------------------------------------
+    // ------------------------------------------------------------
     // Missing processor
-    // --------------------------------------------------
+    // ------------------------------------------------------------
     if (!system.processor) {
       warnings.push({
         type: "processor",
@@ -169,23 +182,23 @@ export class SWSEDroidSheet extends SWSECharacterSheet {
       });
     }
 
-    // --------------------------------------------------
+    // ------------------------------------------------------------
     // Behavioral inhibitors disabled
-    // --------------------------------------------------
+    // ------------------------------------------------------------
     if (system.processor?.behavioralInhibitors === false) {
       warnings.push({
         type: "inhibitors",
         message:
-          "Behavioral inhibitors are disabled. Droid may act outside ethical constraints."
+          "Behavioral inhibitors are disabled. Droid may act outside standard ethical constraints."
       });
     }
 
     return warnings;
   }
 
-  // -----------------------------------------------------------------------
-  // Safe No-Op Stubs (Parent Compatibility)
-  // -----------------------------------------------------------------------
+  // ---------------------------------------------------------------------
+  // Safe no-op stubs (parent compatibility)
+  // ---------------------------------------------------------------------
   updateSummary() {}
   prepareItems() {}
 }
