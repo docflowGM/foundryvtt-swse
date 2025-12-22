@@ -114,11 +114,12 @@ function checkArmorProficiency(actor, armor) {
     i.name.toLowerCase().includes('armor proficiency')
   ) || [];
 
+  // SWSE Rule: Each armor proficiency only covers its specific type
   for (const prof of armorProficiencies) {
     const profName = prof.name.toLowerCase();
     if (profName.includes('light') && armorType === 'light') return true;
-    if (profName.includes('medium') && (armorType === 'light' || armorType === 'medium')) return true;
-    if (profName.includes('heavy')) return true; // Heavy includes all armor
+    if (profName.includes('medium') && armorType === 'medium') return true;
+    if (profName.includes('heavy') && armorType === 'heavy') return true;
   }
 
   return false;
