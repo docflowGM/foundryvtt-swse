@@ -1,30 +1,24 @@
-import { ProgressionEngine } from "../../progression/engine/progression-engine.js";
-
 /**
- * Droid-specific functionality handler
- * Modernized and FVTT v13+/v15-safe
+ * Droid-specific rules handler
+ * Star Wars Saga Edition – RAW compliant
+ * FVTT v13+ / v15 safe
  */
+
 export class SWSEDroidHandler {
 
   // =========================================================================
-  // APPLY CHASSIS
+  // APPLY DROID CHASSIS
   // =========================================================================
   static async applyDroidChassis(actor, chassisItem) {
-    if (!actor || !chassisItem) {
-      console.error("SWSE | applyDroidChassis called without actor or chassisItem.");
-      return;
-    }
+    if (!actor || !chassisItem) return;
 
     const chassis = foundry.utils.deepClone(chassisItem.system ?? {});
-    const flagScope = "foundryvtt-swse";
 
     // -----------------------------
-    // Prepare safe updates structure
+    // Abilities (NO CON)
     // -----------------------------
-    const abilityKeys = ["str", "dex", "con", "int", "wis", "cha"];
     const abilities = {};
-
-    for (const key of abilityKeys) {
+    for (const key of ["str", "dex", "int", "wis", "cha"]) {
       abilities[key] = {
         base: Number(chassis[key]) || 10,
         racial: 0,
@@ -32,134 +26,257 @@ export class SWSEDroidHandler {
       };
     }
 
-    const updates = {
-      "system.abilities": abilities,
-      "system.size": chassis.size || "medium",
-      "system.speed": Number(chassis.speed) || 6,
-      "system.hp.max": Number(chassis.hp) || 10,
-      "system.hp.value": Number(chassis.hp) || 10,
-      "system.systemSlots.max": Number(chassis.systemSlots) || 0,
-      "system.systemSlots.used": 0
+    // Constitution disabled
+    abilities.con = {
+      base: null,
+      disabled: true,
+      substitute: "str"
     };
 
-    // Apply the chassis stats
-    await actor.update(updates);
-
     // -----------------------------
-    // Clear incompatible items
+    // Core chassis update
     // -----------------------------
-    const itemsToDelete = [];
+    await actor.update({
+      "system.abilities": abilities,
+      "system.size": chassis.size ?? "medium",
+      "system.speed": Number(chassis.speed) || 6,
 
-    for (const item of actor.items) {
-      const type = item.type?.toLowerCase() ?? "";
-      const sys = item.system ?? {};
+      // HP = chassis + level only
+      "system.hp.base": Number(chassis.hp) || 10,
+      "system.hp.max": Number(chassis.hp) || 10,
+      "system.hp.value": Number(chassis.hp) || 10,
 
-      // Force powers (various system definitions)
-      if (type === "forcepower" || type === "power") {
-        itemsToDelete.push(item.id);
+      "system.systemSlots.max": Number(chassis.systemSlots) || 0,
+      "system.systemSlots.used": 0,
+
+      // Droid identity rules
+      "system.traits.isDroid": true,
+      "system.traits.useStrInsteadOfCon": true,
+      "system.traits.noAbilityHpBonus": true,
+
+      // Initialize subsystems
+      "system.locomotion": [],
+      "system.appendages": [],
+      "system.processor": {
+        quality: abilities.int.base,
+        behavioralInhibitors: true
       }
+    });
 
-      // Organic-only equipment
-      if (sys.organicOnly === true) {
-        itemsToDelete.push(item.id);
-      }
+    // Remove organic-only items
+    const toDelete = actor.items
+      .filter(i => i.system?.organicOnly === true || i.type === "forcepower")
+      .map(i => i.id);
+
+    if (toDelete.length) {
+      await actor.deleteEmbeddedDocuments("Item", toDelete);
     }
 
-    if (itemsToDelete.length) {
-      await actor.deleteEmbeddedDocuments("Item", itemsToDelete);
-      ui.notifications.info(`Removed ${itemsToDelete.length} incompatible item(s) from ${actor.name}.`);
-    }
-
-    // -----------------------------
-    // Replace existing chassis item
-    // -----------------------------
+    // Replace existing chassis
     const existing = actor.items.find(i => i.type === "chassis");
-
     if (existing) {
       await actor.deleteEmbeddedDocuments("Item", [existing.id]);
     }
 
-    // Clone item safely
     const chassisData = chassisItem.toObject();
     chassisData._id = undefined;
-
     await actor.createEmbeddedDocuments("Item", [chassisData]);
 
-    // -----------------------------
-    // Chat message
-    // -----------------------------
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `
-        <div class="swse chassis-applied">
-          <h3>Droid Chassis Applied</h3>
-          <p><strong>${actor.name}</strong> is now using the <strong>${chassisItem.name}</strong> chassis.</p>
-          <ul>
-            <li>System Slots: ${chassis.systemSlots ?? 0}</li>
-            <li>Size: ${chassis.size ?? "medium"}</li>
-            <li>Speed: ${chassis.speed ?? 6} squares</li>
-            <li>Hit Points: ${chassis.hp ?? 10}</li>
-          </ul>
-        </div>`
+    ui.notifications.info(`${actor.name} chassis applied: ${chassisItem.name}`);
+  }
+
+  // =========================================================================
+  // LOCOMOTION SYSTEMS
+  // =========================================================================
+  static async installLocomotion(actor, locomotionItem) {
+    const current = actor.system.locomotion ?? [];
+    const index = current.length;
+
+    // Cost scaling handled in item UI; store metadata only
+    current.push({
+      name: locomotionItem.name,
+      baseSpeed: locomotionItem.system.baseSpeed,
+      restricted: locomotionItem.system.restricted ?? false,
+      restrictionType: locomotionItem.system.restrictionType ?? null
     });
 
-    ui.notifications.info(`${actor.name} chassis set to ${chassisItem.name}`);
+    await actor.update({ "system.locomotion": current });
+    this._warnIfRestricted(locomotionItem);
   }
 
   // =========================================================================
-  // SLOT CHECK
+  // PROCESSOR SYSTEM
   // =========================================================================
-  static hasAvailableSlots(actor) {
-    const slots = actor.system?.systemSlots;
-    if (!slots) return false;
-    return (slots.used ?? 0) < (slots.max ?? 0);
+  static async installProcessor(actor, processorItem) {
+    const sys = processorItem.system ?? {};
+
+    await actor.update({
+      "system.processor": {
+        quality: actor.system.abilities.int.base,
+        behavioralInhibitors: sys.behavioralInhibitors !== false,
+        inhibitorNotes: sys.inhibitorNotes ?? ""
+      }
+    });
+
+    this._warnIfRestricted(processorItem);
   }
 
   // =========================================================================
-  // INSTALL SYSTEM
+  // APPENDAGES
   // =========================================================================
-  static async installSystem(actor, systemItem) {
-    const slots = actor.system?.systemSlots ?? {};
-    const used = Number(slots.used ?? 0);
-    const max = Number(slots.max ?? 0);
-    const cost = Number(systemItem.system?.slotsRequired ?? 1);
+  static async installAppendage(actor, appendageItem) {
+    const appendages = actor.system.appendages ?? [];
 
-    if (used + cost > max) {
-      ui.notifications.error(
-        `Not enough system slots! Need ${cost}, available ${max - used}.`
-      );
+    appendages.push({
+      name: appendageItem.name,
+      type: appendageItem.system.type, // probe, tool, claw, hand, etc.
+      locomotion: appendageItem.system.locomotion ?? false,
+      balance: appendageItem.system.balance ?? false,
+      unarmedDamageType: appendageItem.system.unarmedDamageType ?? null
+    });
+
+    await actor.update({ "system.appendages": appendages });
+  }
+
+  // =========================================================================
+  // SYSTEM SLOT CHECK
+  // =========================================================================
+  static hasAvailableSlots(actor, cost = 1) {
+    const slots = actor.system.systemSlots;
+    return (slots.used + cost) <= slots.max;
+  }
+
+  // =========================================================================
+  // GENERIC SYSTEM INSTALL
+  // =========================================================================
+  static async installSystem(actor, item) {
+    const cost = Number(item.system?.slotsRequired ?? 1);
+
+    if (!this.hasAvailableSlots(actor, cost)) {
+      ui.notifications.error("Not enough system slots.");
       return false;
     }
 
-    const data = systemItem.toObject();
+    const data = item.toObject();
     data._id = undefined;
 
     await actor.createEmbeddedDocuments("Item", [data]);
     await actor.update({
-      "system.systemSlots.used": used + cost
+      "system.systemSlots.used": actor.system.systemSlots.used + cost
     });
 
-    ui.notifications.info(`Installed ${systemItem.name} (uses ${cost} slot(s)).`);
-
+    this._warnIfRestricted(item);
     return true;
   }
 
   // =========================================================================
-  // UNINSTALL SYSTEM
+  // BUILT-IN DROID ARMOR
   // =========================================================================
-  static async uninstallSystem(actor, systemItem) {
-    const slots = actor.system?.systemSlots ?? {};
-    const used = Number(slots.used ?? 0);
-    const cost = Number(systemItem.system?.slotsRequired ?? 1);
-
-    await actor.deleteEmbeddedDocuments("Item", [systemItem.id]);
+  static async installDroidArmor(actor, armorItem) {
+    const sys = armorItem.system ?? {};
 
     await actor.update({
-      "system.systemSlots.used": Math.max(0, used - cost)
+      "system.droidArmor": {
+        installed: true,
+        name: armorItem.name,
+        category: sys.category,
+        armorBonus: sys.armorBonus,
+        maxDex: sys.maxDex,
+        armorCheckPenalty: sys.armorCheckPenalty,
+        runMultiplierOverride: sys.runMultiplierOverride ?? null,
+        availability: sys.availability ?? {}
+      }
     });
 
-    ui.notifications.info(`Uninstalled ${systemItem.name} (freed ${cost} slot(s)).`);
+    this._warnIfRestricted(armorItem);
+  }
 
+  // =========================================================================
+  // SHIELDS
+  // =========================================================================
+  static async installShieldGenerator(actor, shieldItem) {
+    const sys = shieldItem.system ?? {};
+
+    if (!this._meetsSizeRequirement(actor.system.size, sys.sizeMinimum)) {
+      ui.notifications.error("Droid is too small for this shield generator.");
+      return false;
+    }
+
+    await actor.update({
+      "system.shields": {
+        installed: true,
+        shieldRatingMax: sys.shieldRating,
+        shieldRatingCurrent: sys.shieldRating,
+        sizeMinimum: sys.sizeMinimum
+      }
+    });
+
+    this._warnIfRestricted(shieldItem);
     return true;
+  }
+
+  // =========================================================================
+  // HARDENED SYSTEMS
+  // =========================================================================
+  static async applyHardenedSystems(actor, item) {
+    if (!this._meetsSizeRequirement(actor.system.size, "large")) {
+      ui.notifications.error("Hardened Systems require Large or larger droids.");
+      return false;
+    }
+
+    await actor.update({
+      "system.hardenedSystems": {
+        multiplier: item.system.multiplier,
+        hpBonusBase: 10,
+        dtBonusBase: 5,
+        availability: item.system.availability
+      }
+    });
+
+    this._warnIfRestricted(item);
+    return true;
+  }
+
+  // =========================================================================
+  // INSTALL DISPATCHER
+  // =========================================================================
+  static async install(actor, item) {
+    switch (item.type) {
+      case "locomotion":
+        return this.installLocomotion(actor, item);
+      case "processor":
+        return this.installProcessor(actor, item);
+      case "appendage":
+        return this.installAppendage(actor, item);
+      case "droidArmor":
+        return this.installDroidArmor(actor, item);
+      case "shieldGenerator":
+        return this.installShieldGenerator(actor, item);
+      case "hardenedSystems":
+        return this.applyHardenedSystems(actor, item);
+      default:
+        return this.installSystem(actor, item);
+    }
+  }
+
+  // =========================================================================
+  // HELPERS
+  // =========================================================================
+  static _meetsSizeRequirement(actorSize, minimum) {
+    const order = ["tiny", "small", "medium", "large", "huge", "gargantuan"];
+    return order.indexOf(actorSize) >= order.indexOf(minimum);
+  }
+
+  static _warnIfRestricted(item) {
+    const avail = item.system?.availability;
+    if (!avail) return;
+
+    if (
+      avail.includes("Restricted") ||
+      avail.includes("Illegal") ||
+      avail.includes("Military")
+    ) {
+      ui.notifications.warn(`${item.name} is ${avail}.`);
+    }
   }
 }
