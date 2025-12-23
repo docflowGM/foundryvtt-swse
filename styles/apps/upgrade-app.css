@@ -1,393 +1,309 @@
 /**
  * SWSE Upgrade Application Styles
+ * Foundry V13+ compliant
  * Holographic Star Wars themed upgrade dialog
+ * Enhanced for accessibility, performance, and UX
  */
 
-.swse-app-upgrade-app {
-    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
-    border: 2px solid #00ffff;
-    border-radius: 8px;
-    padding: 0;
-    color: #00ffff;
-    font-family: 'Orbitron', sans-serif;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+/* ================================================================= */
+/* ROOT + THEME VARIABLES                                             */
+/* ================================================================= */
+
+.app.window-app.swse-upgrade-app {
+  --swse-cyan: #00ffff;
+  --swse-green: #00ff00;
+  --swse-yellow: #ffff00;
+  --swse-red: #ff4444;
+  --swse-orange: #ff9900;
+  --swse-purple: #ff00ff;
+
+  --swse-bg-dark: #0a0e27;
+  --swse-bg-light: #1a1f3a;
+
+  background: linear-gradient(135deg, var(--swse-bg-dark), var(--swse-bg-light));
+  border: 2px solid var(--swse-cyan);
+  border-radius: 8px;
+  color: var(--swse-cyan);
+  font-family: 'Orbitron', sans-serif;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
 }
 
-/* Header */
-.upgrade-header {
-    background: linear-gradient(90deg, rgba(0, 255, 255, 0.1) 0%, rgba(0, 255, 255, 0.05) 100%);
-    border-bottom: 2px solid #00ffff;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* Remove default Foundry padding */
+.app.window-app.swse-upgrade-app .window-content {
+  padding: 0;
+  background: transparent;
 }
 
-.npc-portrait {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+/* ================================================================= */
+/* ACCESSIBILITY & FOCUS                                              */
+/* ================================================================= */
+
+.swse-upgrade-app button:focus-visible,
+.swse-upgrade-app .install-upgrade:focus-visible,
+.swse-upgrade-app .remove-upgrade:focus-visible {
+  outline: 2px solid var(--swse-cyan);
+  outline-offset: 2px;
 }
 
-.npc-portrait img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    border: 2px solid #00ffff;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+/* ================================================================= */
+/* HEADER                                                             */
+/* ================================================================= */
+
+.swse-upgrade-app .upgrade-header {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 255, 255, 0.1),
+    rgba(0, 255, 255, 0.05)
+  );
+  border-bottom: 2px solid var(--swse-cyan);
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.npc-info h2 {
-    margin: 0;
-    font-size: 1.5em;
-    color: #00ffff;
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+.swse-upgrade-app .npc-portrait {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-.npc-title {
-    margin: 5px 0 0 0;
-    font-size: 0.9em;
-    color: #66d9ff;
-    font-style: italic;
+.swse-upgrade-app .npc-portrait img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid var(--swse-cyan);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
 }
 
-.item-info h3 {
-    margin: 0;
-    font-size: 1.3em;
-    color: #ffffff;
-    text-align: right;
+.swse-upgrade-app .npc-info h2 {
+  margin: 0;
+  font-size: 1.5em;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
 }
 
-.item-type {
-    margin: 5px 0 0 0;
-    font-size: 0.85em;
-    color: #aaaaaa;
-    text-align: right;
-    text-transform: capitalize;
+.swse-upgrade-app .npc-title {
+  font-size: 0.9em;
+  color: #66d9ff;
+  font-style: italic;
 }
 
-/* NPC Dialogue */
-.npc-dialogue {
-    padding: 20px;
-    background: rgba(0, 255, 255, 0.05);
-    border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+.swse-upgrade-app .item-info h3 {
+  margin: 0;
+  font-size: 1.3em;
+  color: #ffffff;
+  text-align: right;
 }
 
-.dialogue-bubble {
-    background: linear-gradient(135deg, rgba(0, 100, 100, 0.2) 0%, rgba(0, 50, 50, 0.1) 100%);
-    border-left: 3px solid #00ffff;
-    padding: 12px 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    position: relative;
+.swse-upgrade-app .item-type {
+  font-size: 0.85em;
+  color: #aaaaaa;
+  text-align: right;
+  text-transform: capitalize;
 }
 
-.dialogue-bubble:last-child {
-    margin-bottom: 0;
+/* ================================================================= */
+/* NPC DIALOGUE                                                       */
+/* ================================================================= */
+
+.swse-upgrade-app .npc-dialogue {
+  padding: 20px;
+  background: rgba(0, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(0, 255, 255, 0.3);
 }
 
-.dialogue-bubble p {
-    margin: 0;
-    color: #ffffff;
-    font-size: 0.95em;
-    line-height: 1.5;
+.swse-upgrade-app .dialogue-bubble {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 100, 100, 0.2),
+    rgba(0, 50, 50, 0.1)
+  );
+  border-left: 3px solid var(--swse-cyan);
+  padding: 12px 15px;
+  border-radius: 5px;
+  margin-bottom: 10px;
 }
 
-.dialogue-bubble.welcome {
-    border-left-color: #00ff00;
+.swse-upgrade-app .dialogue-bubble p {
+  margin: 0;
+  color: #ffffff;
+  font-size: 0.95em;
+  line-height: 1.5;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
 }
 
-.dialogue-bubble.examining {
-    border-left-color: #ffff00;
+.dialogue-bubble.welcome { border-left-color: var(--swse-green); }
+.dialogue-bubble.examining { border-left-color: var(--swse-yellow); }
+
+/* ================================================================= */
+/* SLOT STATUS                                                        */
+/* ================================================================= */
+
+.swse-upgrade-app .upgrade-slots-status {
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(0, 255, 255, 0.3);
 }
 
-/* Upgrade Slots Status */
-.upgrade-slots-status {
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.3);
-    border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+.swse-upgrade-app .slots-bar {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--swse-cyan);
+  border-radius: 5px;
+  height: 28px;
+  overflow: hidden;
 }
 
-.upgrade-slots-status h3 {
-    margin: 0 0 10px 0;
-    font-size: 1.1em;
-    color: #00ffff;
+.swse-upgrade-app .slots-used {
+  background: linear-gradient(90deg, var(--swse-cyan), #0088ff);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
-.slots-bar {
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid #00ffff;
-    border-radius: 5px;
-    height: 30px;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 10px;
+/* ================================================================= */
+/* UPGRADE SECTIONS                                                   */
+/* ================================================================= */
+
+.swse-upgrade-app .installed-upgrades-section h3,
+.swse-upgrade-app .available-upgrades-section h3 {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(135deg, var(--swse-bg-dark), var(--swse-bg-light));
+  z-index: 1;
+  padding: 10px 0;
 }
 
-.slots-used {
-    background: linear-gradient(90deg, #00ffff 0%, #0088ff 100%);
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: width 0.3s ease;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+/* ================================================================= */
+/* UPGRADE LISTS                                                      */
+/* ================================================================= */
+
+.swse-upgrade-app .installed-upgrades-list,
+.swse-upgrade-app .available-upgrades-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
-.slots-used span {
-    color: #000000;
-    font-weight: bold;
-    font-size: 0.9em;
-    text-shadow: none;
+.swse-upgrade-app .installed-upgrade,
+.swse-upgrade-app .available-upgrade {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 100, 100, 0.1),
+    rgba(0, 50, 50, 0.05)
+  );
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform, box-shadow;
 }
 
-.slots-available {
-    margin: 10px 0 0 0;
-    text-align: center;
+.swse-upgrade-app .available-upgrade:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
 }
 
-.slots-available .available {
-    color: #00ff00;
-    font-weight: bold;
+/* ================================================================= */
+/* AVAILABILITY                                                       */
+/* ================================================================= */
+
+.swse-upgrade-app .availability::before {
+  content: "●";
+  margin-right: 4px;
 }
 
-.slots-available .full {
-    color: #ff4444;
-    font-weight: bold;
+.availability.standard { color: var(--swse-green); }
+.availability.licensed { color: var(--swse-yellow); }
+.availability.restricted { color: var(--swse-orange); }
+.availability.military { color: #ff6600; }
+.availability.illegal { color: var(--swse-red); }
+.availability.rare { color: var(--swse-purple); }
+
+/* ================================================================= */
+/* BUTTONS                                                            */
+/* ================================================================= */
+
+.swse-upgrade-app button {
+  font-weight: bold;
+  cursor: pointer;
 }
 
-/* Sections */
-.installed-upgrades-section,
-.available-upgrades-section {
-    padding: 20px;
-    border-bottom: 1px solid rgba(0, 255, 255, 0.3);
-}
-
-.installed-upgrades-section h3,
-.available-upgrades-section h3 {
-    margin: 0 0 15px 0;
-    font-size: 1.2em;
-    color: #00ffff;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* Upgrade Lists */
-.installed-upgrades-list,
-.available-upgrades-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.installed-upgrade,
-.available-upgrade {
-    background: linear-gradient(135deg, rgba(0, 100, 100, 0.1) 0%, rgba(0, 50, 50, 0.05) 100%);
-    border: 1px solid rgba(0, 255, 255, 0.3);
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 12px;
-    transition: all 0.2s ease;
-}
-
-.installed-upgrade:hover,
-.available-upgrade:hover {
-    border-color: #00ffff;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
-}
-
-.upgrade-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.upgrade-header h4 {
-    margin: 0;
-    color: #ffffff;
-    font-size: 1.1em;
-}
-
-.upgrade-meta {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-.upgrade-meta span {
-    font-size: 0.85em;
-    padding: 3px 8px;
-    border-radius: 3px;
-    background: rgba(0, 0, 0, 0.3);
-}
-
-.upgrade-meta .cost {
-    color: #ffff00;
-    border: 1px solid rgba(255, 255, 0, 0.3);
-}
-
-.upgrade-meta .slots {
-    color: #00ffff;
-    border: 1px solid rgba(0, 255, 255, 0.3);
-}
-
-.upgrade-meta .availability {
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.upgrade-meta .availability.standard {
-    color: #00ff00;
-}
-
-.upgrade-meta .availability.licensed {
-    color: #ffff00;
-}
-
-.upgrade-meta .availability.restricted {
-    color: #ff9900;
-}
-
-.upgrade-meta .availability.military {
-    color: #ff6600;
-}
-
-.upgrade-meta .availability.illegal {
-    color: #ff0000;
-}
-
-.upgrade-meta .availability.rare {
-    color: #ff00ff;
-}
-
-.slots-used {
-    color: #00ffff;
-    font-size: 0.85em;
-    padding: 3px 8px;
-    border-radius: 3px;
-    background: rgba(0, 255, 255, 0.1);
-    border: 1px solid rgba(0, 255, 255, 0.3);
-}
-
-.upgrade-details {
-    color: #cccccc;
-    font-size: 0.9em;
-    line-height: 1.5;
-    margin-bottom: 10px;
-}
-
-.upgrade-details p {
-    margin: 5px 0;
-}
-
-.upgrade-details .notes {
-    color: #999999;
-    font-size: 0.85em;
-    margin-top: 8px;
-}
-
-.upgrade-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.install-upgrade,
-.remove-upgrade {
-    padding: 8px 16px;
-    border: 1px solid;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+.swse-upgrade-app button:disabled,
+.swse-upgrade-app .install-upgrade.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none !important;
 }
 
 .install-upgrade {
-    background: linear-gradient(135deg, #004400 0%, #006600 100%);
-    border-color: #00ff00;
-    color: #00ff00;
+  background: linear-gradient(135deg, #004400, #006600);
+  border: 1px solid var(--swse-green);
+  color: var(--swse-green);
 }
 
 .install-upgrade:hover {
-    background: linear-gradient(135deg, #006600 0%, #008800 100%);
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
 }
 
 .remove-upgrade {
-    background: linear-gradient(135deg, #440000 0%, #660000 100%);
-    border-color: #ff4444;
-    color: #ff4444;
+  background: linear-gradient(135deg, #440000, #660000);
+  border: 1px solid var(--swse-red);
+  color: var(--swse-red);
 }
 
 .remove-upgrade:hover {
-    background: linear-gradient(135deg, #660000 0%, #880000 100%);
-    box-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
 }
 
-.no-upgrades {
-    text-align: center;
-    color: #666666;
-    font-style: italic;
-    padding: 20px;
+/* ================================================================= */
+/* LOADING OVERLAY                                                    */
+/* ================================================================= */
+
+.swse-upgrade-app.loading {
+  pointer-events: none;
+  opacity: 0.85;
 }
 
-/* Footer */
-.upgrade-footer {
-    padding: 15px;
-    background: rgba(0, 0, 0, 0.3);
-    border-top: 1px solid rgba(0, 255, 255, 0.3);
-    display: flex;
-    justify-content: center;
+.swse-upgrade-app.loading::after {
+  content: "Processing Upgrade…";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 14, 39, 0.85);
+  color: var(--swse-cyan);
+  font-weight: bold;
+  letter-spacing: 1px;
+  z-index: 10;
 }
 
-.close-btn {
-    padding: 10px 30px;
-    background: linear-gradient(135deg, #1a1f3a 0%, #0a0e27 100%);
-    border: 1px solid #00ffff;
-    border-radius: 4px;
-    color: #00ffff;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+/* ================================================================= */
+/* FOOTER                                                            */
+/* ================================================================= */
+
+.swse-upgrade-app .upgrade-footer {
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(0, 255, 255, 0.3);
+  display: flex;
+  justify-content: center;
 }
 
-.close-btn:hover {
-    background: linear-gradient(135deg, #2a2f4a 0%, #1a1e37 100%);
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-}
+/* ================================================================= */
+/* SMALL SCREENS                                                      */
+/* ================================================================= */
 
-/* Scrollable sections */
-.available-upgrades-list,
-.installed-upgrades-list {
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-/* Custom scrollbar */
-.available-upgrades-list::-webkit-scrollbar,
-.installed-upgrades-list::-webkit-scrollbar {
-    width: 8px;
-}
-
-.available-upgrades-list::-webkit-scrollbar-track,
-.installed-upgrades-list::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-}
-
-.available-upgrades-list::-webkit-scrollbar-thumb,
-.installed-upgrades-list::-webkit-scrollbar-thumb {
-    background: rgba(0, 255, 255, 0.3);
-    border-radius: 4px;
-}
-
-.available-upgrades-list::-webkit-scrollbar-thumb:hover,
-.installed-upgrades-list::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 255, 255, 0.5);
+@media (max-height: 700px) {
+  .swse-upgrade-app .available-upgrades-list,
+  .swse-upgrade-app .installed-upgrades-list {
+    max-height: 220px;
+  }
 }
