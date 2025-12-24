@@ -1,0 +1,759 @@
+[
+  {
+    "name": "Advozse",
+    "racialTraits": [
+      "Advozse-Silver Tongue: An Advozse gains a +5 species bonus on Persuasion checks and may reroll any Persuasion check, but must accept the result of the reroll even if it is worse."
+    ]
+  },
+  {
+    "name": "Aleena",
+    "racialTraits": [
+      "Aleena-Small Size: As a Small creature, an Aleena gains a +5 species bonus to Stealth checks and a +1 species bonus to Reflex Defense, but takes a -5 penalty on grapple checks."
+    ]
+  },
+  {
+    "name": "Aqualish",
+    "racialTraits": [
+      "Aqualish-Ferocity: When reduced to half hit points or fewer, an Aqualish gains a +2 species bonus on melee attack rolls and damage rolls until the end of the encounter."
+    ]
+  },
+  {
+    "name": "Arkanian",
+    "racialTraits": [
+      "Arkanian-Darkvision: An Arkanian ignores concealment caused by darkness.",
+      "Arkanian-Genetic Memory: An Arkanian gains a +2 species bonus on Knowledge (life sciences) checks."
+    ]
+  },
+  {
+    "name": "Arkanian Offshoot",
+    "racialTraits": [
+      "Arkanian Offshoot-Resilient Physiology: An Arkanian Offshoot gains a +2 species bonus to Fortitude Defense."
+    ]
+  },
+  {
+    "name": "Balosar",
+    "racialTraits": [
+      "Balosar-Toxic Breath: As a standard action, a Balosar may emit toxic gas; creatures adjacent to the Balosar take a -2 penalty on attack rolls until the end of the Balosar's next turn."
+    ]
+  },
+  {
+    "name": "Barabel",
+    "racialTraits": [
+      "Barabel-Reptilian Ferocity: When reduced to half hit points or fewer, a Barabel gains a +2 species bonus on attack rolls and damage rolls until the end of the encounter."
+    ]
+  },
+  {
+    "name": "Bith",
+    "racialTraits": [
+      "Bith-Musical Savant: A Bith gains a +5 species bonus on Perform checks.",
+      "Bith-Fragile: A Bith takes a -2 species penalty to Fortitude Defense."
+    ]
+  },
+  {
+    "name": "Blood Carver",
+    "racialTraits": [
+      "Blood Carver-Battle Rage: When a Blood Carver takes damage, it gains a +2 species bonus on melee damage rolls until the end of its next turn."
+    ]
+  },
+  {
+    "name": "Bothan",
+    "racialTraits": [
+      "Bothan-Bothan Spy Network: A Bothan may reroll any Gather Information check, but must accept the result of the reroll even if it is worse."
+    ]
+  },
+  {
+    "name": "Caamasi",
+    "racialTraits": [
+      "Caamasi-Pacifist Insight: A Caamasi gains a +5 species bonus on Initiative checks and may reroll Initiative checks but must accept the new result."
+    ]
+  },
+  {
+    "name": "Cathar",
+    "racialTraits": [
+      "Cathar-Claws: A Cathar has natural claw attacks that deal 1d4 points of slashing damage.",
+      "Cathar-Feline Agility: A Cathar gains a +2 species bonus to Reflex Defense."
+    ]
+  },
+  {
+    "name": "Celegian",
+    "racialTraits": [
+      "Celegian-Force Adaptation: A Celegian may use the Force even without formal Force training."
+    ]
+  },
+  {
+    "name": "Cerean",
+    "racialTraits": [
+      "Cerean-Binary Brain: A Cerean gains a +2 species bonus on Will Defense and may reroll any Knowledge check, but must accept the result of the reroll."
+    ]
+  },
+  {
+    "name": "Chagrian",
+    "racialTraits": [
+      "Chagrian-Amphibious: A Chagrian can breathe both air and water without penalty."
+    ]
+  },
+  {
+    "name": "Chiss",
+    "racialTraits": [
+      "Chiss-Darkvision: A Chiss ignores concealment caused by darkness.",
+      "Chiss-Tactical Training: A Chiss gains a +2 species bonus on Initiative checks."
+    ]
+  },
+  {
+    "name": "Chistori",
+    "racialTraits": [
+      "Chistori-Brute Strength: A Chistori gains a +2 species bonus on melee damage rolls."
+    ]
+  },
+  {
+    "name": "Clawdite",
+    "racialTraits": [
+      "Clawdite-Shapeshifter: As a full-round action, a Clawdite may alter its appearance to resemble any Medium humanoid."
+    ]
+  },
+  {
+    "name": "Codru-Ji",
+    "racialTraits": [
+      "Codru-Ji-Quad-Limbed: A Codru-Ji gains a +2 species bonus on grapple checks."
+    ]
+  },
+  {
+    "name": "Dathomirian",
+    "racialTraits": [
+      "Dathomirian-Force Affinity: A Dathomirian gains a +2 species bonus on Use the Force checks."
+    ]
+  },
+  {
+    "name": "Dashade",
+    "racialTraits": [
+      "Dashade-Force Resistance: A Dashade gains a +5 species bonus to Reflex Defense against Force powers."
+    ]
+  },
+  {
+    "name": "Defel",
+    "racialTraits": [
+      "Defel-Shadow Blend: A Defel gains concealment in low-light or darker conditions."
+    ]
+  },
+  {
+    "name": "Draethos",
+    "racialTraits": [
+      "Draethos-Resilient Hide: A Draethos gains a +2 species bonus to Fortitude Defense."
+    ]
+  },
+  {
+    "name": "Dug",
+    "racialTraits": [
+      "Dug-Reverse Jointed: A Dug gains a +2 species bonus on Acrobatics checks."
+    ]
+  },
+  {
+    "name": "Duros",
+    "racialTraits": [
+      "Duros-Expert Pilot: As natural spacers, a Duros may choose to reroll any Pilot check, but the result of the reroll must be accepted even if it is worse."
+    ]
+  },
+  {
+    "name": "Elomin",
+    "racialTraits": [
+      "Elomin-Frail Build: An Elomin takes a -2 species penalty to Fortitude Defense.",
+      "Elomin-Technical Savant: An Elomin gains a +2 species bonus on Mechanics checks."
+    ]
+  },
+  {
+    "name": "Ewok",
+    "racialTraits": [
+      "Ewok-Small Size: As a Small creature, an Ewok gains a +5 species bonus to Stealth checks and a +1 species bonus to Reflex Defense, but takes a -5 penalty on grapple checks.",
+      "Ewok-Primitive Weapons: An Ewok gains proficiency with primitive weapons."
+    ]
+  },
+  {
+    "name": "Falleen",
+    "racialTraits": [
+      "Falleen-Pheromones: As a standard action, a Falleen may impose a -2 penalty to Will Defense on all living creatures within 6 squares until the end of the encounter."
+    ]
+  },
+  {
+    "name": "Felucian",
+    "racialTraits": [
+      "Felucian-Force Sensitivity: A Felucian may use the Force even if it does not have the Force Sensitivity feat."
+    ]
+  },
+  {
+    "name": "Feeorin",
+    "racialTraits": [
+      "Feeorin-Intimidating Presence: A Feeorin gains a +5 species bonus on Intimidate checks."
+    ]
+  },
+  {
+    "name": "Fosh",
+    "racialTraits": [
+      "Fosh-Subtle Influence: A Fosh gains a +5 species bonus on Deception checks."
+    ]
+  },
+  {
+    "name": "Gand",
+    "racialTraits": [
+      "Gand-Third Person Speech: A Gand gains a +2 species bonus on Will Defense.",
+      "Gand-Natural Tracker: A Gand gains a +5 species bonus on Survival checks."
+    ]
+  },
+  {
+    "name": "Gamorrean",
+    "racialTraits": [
+      "Gamorrean-Brutal Charge: A Gamorrean gains a +2 species bonus on melee damage rolls when charging.",
+      "Gamorrean-Low Cunning: A Gamorrean takes a -2 species penalty on Will Defense."
+    ]
+  },
+  {
+    "name": "Gen'Dai",
+    "racialTraits": [
+      "Gen'Dai-Regeneration: A Gen'Dai automatically regains hit points equal to its level at the start of each turn unless damaged by fire or acid."
+    ]
+  },
+  {
+    "name": "Geonosian",
+    "racialTraits": [
+      "Geonosian-Wings: A Geonosian may fly with a speed of 6 squares (clumsy).",
+      "Geonosian-Hive Mind: A Geonosian gains a +2 species bonus on Initiative checks."
+    ]
+  },
+  {
+    "name": "Givin",
+    "racialTraits": [
+      "Givin-Analytical Mind: A Givin gains a +5 species bonus on Mechanics and Knowledge (physical sciences) checks."
+    ]
+  },
+  {
+    "name": "Gotal",
+    "racialTraits": [
+      "Gotal-Force Awareness: A Gotal gains blindsense out to 6 squares."
+    ]
+  },
+  {
+    "name": "Gran",
+    "racialTraits": [
+      "Gran-Three-Eyed Vision: A Gran gains a +2 species bonus to Reflex Defense."
+    ]
+  },
+  {
+    "name": "Gungan",
+    "racialTraits": [
+      "Gungan-Amphibious: A Gungan can breathe both air and water.",
+      "Gungan-Lucky: Once per encounter, a Gungan may reroll an attack roll, skill check, or ability check but must accept the new result."
+    ]
+  },
+  {
+    "name": "Herglic",
+    "racialTraits": [
+      "Herglic-Massive Build: A Herglic gains a +5 species bonus on Strength checks."
+    ]
+  },
+  {
+    "name": "Houk",
+    "racialTraits": [
+      "Houk-Powerful Arms: A Houk gains a +2 species bonus on melee attack rolls."
+    ]
+  },
+  {
+    "name": "Human",
+    "racialTraits": [
+      "Human-Versatile: A Human gains a bonus feat at 1st level.",
+      "Human-Skilled: A Human gains one additional trained skill."
+    ]
+  },
+  {
+    "name": "Hutt",
+    "racialTraits": [
+      "Hutt-Immense Bulk: A Hutt gains a +5 species bonus to Fortitude Defense.",
+      "Hutt-Slow: A Hutt's base speed is reduced by 2 squares."
+    ]
+  },
+  {
+    "name": "Iktotchi",
+    "racialTraits": [
+      "Iktotchi-Prescient Vision: An Iktotchi gains a +2 species bonus on Initiative checks and may reroll Initiative checks."
+    ]
+  },
+  {
+    "name": "Ithorian",
+    "racialTraits": [
+      "Ithorian-Sonic Bellow: As a standard action, an Ithorian may emit a sonic bellow that deals 1d6 sonic damage to adjacent enemies.",
+      "Ithorian-Nature Affinity: An Ithorian gains a +5 species bonus on Knowledge (life sciences) checks."
+    ]
+  },
+  {
+    "name": "Jawa",
+    "racialTraits": [
+      "Jawa-Scavenger: A Jawa gains a +5 species bonus on Mechanics checks to repair or jury-rig devices."
+    ]
+  },
+  {
+    "name": "Kel Dor",
+    "racialTraits": [
+      "Kel Dor-Atmospheric Requirement: A Kel Dor must wear a breath mask to survive in oxygen-rich atmospheres.",
+      "Kel Dor-Force Awareness: A Kel Dor gains a +2 species bonus on Use the Force checks."
+    ]
+  },
+  {
+    "name": "Kaminoan",
+    "racialTraits": [
+      "Kaminoan-Genetic Expertise: A Kaminoan gains a +5 species bonus on Knowledge (life sciences) checks.",
+      "Kaminoan-Fragile: A Kaminoan takes a -2 species penalty to Fortitude Defense."
+    ]
+  },
+  {
+    "name": "Kaleesh",
+    "racialTraits": [
+      "Kaleesh-Fearsome Reputation: A Kaleesh gains a +5 species bonus on Intimidate checks."
+    ]
+  },
+  {
+    "name": "Kerkoiden",
+    "racialTraits": [
+      "Kerkoiden-Military Training: A Kerkoiden gains a +2 species bonus on Initiative checks."
+    ]
+  },
+  {
+    "name": "Khil",
+    "racialTraits": [
+      "Khil-Force Sensitivity: A Khil may use the Force even if it does not have the Force Sensitivity feat."
+    ]
+  },
+  {
+    "name": "Kissai",
+    "racialTraits": [
+      "Kissai-Dark Ritualist: A Kissai gains a +2 species bonus on Use the Force checks when using dark side powers."
+    ]
+  },
+  {
+    "name": "Klatooinian",
+    "racialTraits": [
+      "Klatooinian-Hard Laborer: A Klatooinian gains a +2 species bonus on Endurance checks."
+    ]
+  },
+  {
+    "name": "Lannik",
+    "racialTraits": [
+      "Lannik-Stocky Build: A Lannik gains a +2 species bonus to Fortitude Defense."
+    ]
+  },
+  {
+    "name": "Lurmen",
+    "racialTraits": [
+      "Lurmen-Pacifist Resolve: A Lurmen gains a +2 species bonus to Will Defense."
+    ]
+  },
+  {
+    "name": "Massassi",
+    "racialTraits": [
+      "Massassi-Brutal Strength: A Massassi gains a +2 species bonus on melee damage rolls.",
+      "Massassi-Dark Side Affinity: A Massassi gains a +2 species bonus on Use the Force checks when using dark side powers."
+    ]
+  },
+  {
+    "name": "Mantellian Savrip",
+    "racialTraits": [
+      "Mantellian Savrip-Brutish Physiology: A Mantellian Savrip gains a +2 species bonus on melee attack rolls."
+    ]
+  },
+  {
+    "name": "Miraluka",
+    "racialTraits": [
+      "Miraluka-Force Sight: A Miraluka is blind but perceives the world through the Force, ignoring concealment from darkness.",
+      "Miraluka-Force Sensitivity: A Miraluka gains the Force Sensitivity feat at 1st level."
+    ]
+  },
+  {
+    "name": "Mon Calamari",
+    "racialTraits": [
+      "Mon Calamari-Amphibious: A Mon Calamari can breathe both air and water.",
+      "Mon Calamari-Tech Savvy: A Mon Calamari gains a +2 species bonus on Mechanics checks."
+    ]
+  },
+  {
+    "name": "Mrlssi",
+    "racialTraits": [
+      "Mrlssi-Mercantile Instincts: A Mrlssi gains a +5 species bonus on Persuasion checks made to bargain or negotiate."
+    ]
+  },
+  {
+    "name": "Nagai",
+    "racialTraits": [
+      "Nagai-Cold Adaptation: A Nagai gains a +2 species bonus to Fortitude Defense against cold environments."
+    ]
+  },
+  {
+    "name": "Nautolan",
+    "racialTraits": [
+      "Nautolan-Aquatic: A Nautolan can breathe water and gains a swim speed equal to its base speed.",
+      "Nautolan-Tactile Awareness: A Nautolan gains blindsense out to 6 squares."
+    ]
+  },
+  {
+    "name": "Nelvaanian",
+    "racialTraits": [
+      "Nelvaanian-Feral Instincts: A Nelvaanian gains a +2 species bonus on Initiative checks."
+    ]
+  },
+  {
+    "name": "Neimoidian",
+    "racialTraits": [
+      "Neimoidian-Cowardly: A Neimoidian takes a -2 species penalty on Will Defense.",
+      "Neimoidian-Mercantile Training: A Neimoidian gains a +5 species bonus on Persuasion checks related to business."
+    ]
+  },
+  {
+    "name": "Noghri",
+    "racialTraits": [
+      "Noghri-Assassin Training: A Noghri gains a +2 species bonus on Stealth and Initiative checks."
+    ]
+  },
+  {
+    "name": "Nosaurian",
+    "racialTraits": [
+      "Nosaurian-Prehensile Tail: A Nosaurian gains a +2 species bonus on Acrobatics checks."
+    ]
+  },
+  {
+    "name": "Nyriaanan",
+    "racialTraits": [
+      "Nyriaanan-Winged Glide: A Nyriaanan may glide, reducing falling damage to zero if conscious."
+    ]
+  },
+  {
+    "name": "Quarren",
+    "racialTraits": [
+      "Quarren-Amphibious: A Quarren can breathe both air and water.",
+      "Quarren-Forceful Presence: A Quarren gains a +2 species bonus on Intimidate checks."
+    ]
+  },
+  {
+    "name": "Rakata",
+    "racialTraits": [
+      "Rakata-Dark Side Mastery: A Rakata gains a +2 species bonus on Use the Force checks and treats the Use the Force skill as trained."
+    ]
+  },
+  {
+    "name": "Replica Droid",
+    "racialTraits": [
+      "Replica Droid-Artificial Being: A Replica Droid is immune to poison and disease but cannot benefit from organic healing."
+    ]
+  },
+  {
+    "name": "Rodian",
+    "racialTraits": [
+      "Rodian-Keen Senses: A Rodian gains a +2 species bonus on Perception checks."
+    ]
+  },
+  {
+    "name": "Ryn",
+    "racialTraits": [
+      "Ryn-Natural Performer: A Ryn gains a +5 species bonus on Perform checks."
+    ]
+  },
+  {
+    "name": "Sakiyan",
+    "racialTraits": [
+      "Sakiyan-Aerial Hunter: A Sakiyan gains a +2 species bonus on Initiative checks while flying."
+    ]
+  },
+  {
+    "name": "Selkath",
+    "racialTraits": [
+      "Selkath-Amphibious: A Selkath can breathe both air and water.",
+      "Selkath-Aquatic Adaptation: A Selkath gains a +2 species bonus to Fortitude Defense."
+    ]
+  },
+  {
+    "name": "Shard",
+    "racialTraits": [
+      "Shard-Crystalline Body: A Shard is immune to poison and disease and does not need to breathe."
+    ]
+  },
+  {
+    "name": "Snivvian",
+    "racialTraits": [
+      "Snivvian-Craven: A Snivvian takes a -2 species penalty to Will Defense.",
+      "Snivvian-Opportunistic: A Snivvian gains a +2 species bonus on Deception checks."
+    ]
+  },
+  {
+    "name": "Sullustan",
+    "racialTraits": [
+      "Sullustan-Spatial Awareness: A Sullustan gains a +5 species bonus on Pilot checks and Initiative checks."
+    ]
+  },
+  {
+    "name": "Taung",
+    "racialTraits": [
+      "Taung-Warrior Culture: A Taung gains a +2 species bonus on melee attack rolls."
+    ]
+  },
+  {
+    "name": "Talz",
+    "racialTraits": [
+      "Talz-Cold Adaptation: A Talz gains a +5 species bonus to Fortitude Defense against cold environments."
+    ]
+  },
+  {
+    "name": "Thakwaash",
+    "racialTraits": [
+      "Thakwaash-Dual Brains: A Thakwaash gains a +2 species bonus to Will Defense and Reflex Defense."
+    ]
+  },
+  {
+    "name": "Togruta",
+    "racialTraits": [
+      "Togruta-Spatial Awareness: A Togruta gains blindsense out to 6 squares.",
+      "Togruta-Pack Instincts: A Togruta gains a +2 species bonus on Initiative checks."
+    ]
+  },
+  {
+    "name": "Togorian",
+    "racialTraits": [
+      "Togorian-Claws: A Togorian has natural claw attacks that deal 1d6 points of slashing damage."
+    ]
+  },
+  {
+    "name": "Toydarian",
+    "racialTraits": [
+      "Toydarian-Force Resistance: A Toydarian gains a +5 species bonus to Will Defense against Force powers.",
+      "Toydarian-Wings: A Toydarian may fly with a speed of 6 squares (clumsy)."
+    ]
+  },
+  {
+    "name": "Trandoshan",
+    "racialTraits": [
+      "Trandoshan-Regeneration: A Trandoshan regains hit points equal to its level once per encounter when reduced below half hit points.",
+      "Trandoshan-Claws: A Trandoshan has natural claw attacks that deal 1d6 points of slashing damage."
+    ]
+  },
+  {
+    "name": "Trianii",
+    "racialTraits": [
+      "Trianii-Feline Instincts: A Trianii gains a +2 species bonus on Initiative checks."
+    ]
+  },
+  {
+    "name": "Twi'lek",
+    "racialTraits": [
+      "Twi'lek-Graceful: A Twi'lek gains a +2 species bonus to Reflex Defense.",
+      "Twi'lek-Persuasion Training: A Twi'lek gains a +5 species bonus on Persuasion checks."
+    ]
+  },
+  {
+    "name": "Ubese",
+    "racialTraits": [
+      "Ubese-Survivalist: An Ubese gains a +2 species bonus on Endurance and Survival checks."
+    ]
+  },
+  {
+    "name": "Utai",
+    "racialTraits": [
+      "Utai-Underground Adaptation: An Utai gains darkvision and a +2 species bonus on Perception checks underground."
+    ]
+  },
+  {
+    "name": "Vahla",
+    "racialTraits": [
+      "Vahla-Dark Side Affinity: A Vahla gains a +2 species bonus on Use the Force checks when using dark side powers."
+    ]
+  },
+  {
+    "name": "Vurk",
+    "racialTraits": [
+      "Vurk-Powerful Swimmer: A Vurk gains a swim speed equal to its base speed and a +2 species bonus on Athletics checks while swimming."
+    ]
+  },
+  {
+    "name": "Weequay",
+    "racialTraits": [
+      "Weequay-Stoic Resolve: A Weequay gains a +2 species bonus to Will Defense."
+    ]
+  },
+  {
+    "name": "Whiphid",
+    "racialTraits": [
+      "Whiphid-Arctic Hunter: A Whiphid gains a +2 species bonus on Stealth and Survival checks in cold environments."
+    ]
+  },
+  {
+    "name": "Wookiee",
+    "racialTraits": [
+      "Wookiee-Mighty: A Wookiee gains a +4 species bonus to Strength.",
+      "Wookiee-Endurance: A Wookiee gains a +2 species bonus to Fortitude Defense.",
+      "Wookiee-Rage: When reduced to half hit points or fewer, a Wookiee gains a +2 bonus on melee attack rolls and damage rolls until the end of the encounter."
+    ]
+  },
+  {
+    "name": "Wroonian",
+    "racialTraits": [
+      "Wroonian-Elongated Reach: A Wroonian gains a +2 species bonus on grapple checks."
+    ]
+  },
+  {
+    "name": "Yarkora",
+    "racialTraits": [
+      "Yarkora-Brute Force: A Yarkora gains a +2 species bonus on melee damage rolls."
+    ]
+  },
+  {
+    "name": "Yevetha",
+    "racialTraits": [
+      "Yevetha-Militaristic Culture: A Yevetha gains a +2 species bonus on Initiative checks."
+    ]
+  },
+  {
+    "name": "Yuuzhan Vong",
+    "racialTraits": [
+      "Yuuzhan Vong-Force Immunity: A Yuuzhan Vong is immune to the effects of Force powers.",
+      "Yuuzhan Vong-Living Technology: A Yuuzhan Vong may only use organic equipment."
+    ]
+  },
+  {
+    "name": "Yuzzem",
+    "racialTraits": [
+      "Yuzzem-Rage: When reduced to half hit points or fewer, a Yuzzem gains a +2 species bonus on melee attack rolls until the end of the encounter."
+    ]
+  },
+  {
+    "name": "Zabrak",
+    "racialTraits": [
+      "Zabrak-Irrepressible: Once per encounter, a Zabrak may ignore the effects of being stunned or dazed for one turn.",
+      "Zabrak-Battle Hardened: A Zabrak gains a +2 species bonus to Fortitude Defense."
+    ]
+  },
+  {
+    "name": "Zeltron",
+    "racialTraits": [
+      "Zeltron-Pheromones: A Zeltron gains a +5 species bonus on Persuasion checks."
+    ]
+  },
+  {
+    "name": "Zygerrian",
+    "racialTraits": [
+      "Zygerrian-Dominating Presence: A Zygerrian gains a +2 species bonus on Intimidate checks."
+    ]
+  },
+  {
+    "name": "Adnerem",
+    "racialTraits": [
+      "Adnerem-Fearless: An Adnerem gains a +2 species bonus to Will Defense."
+    ]
+  },
+  {
+    "name": "Anzat",
+    "racialTraits": [
+      "Anzat-Quey Drain: As a standard action, an Anzat may deal 1d6 damage to a helpless living creature and regain hit points equal to the damage dealt."
+    ]
+  },
+  {
+    "name": "Besalisk",
+    "racialTraits": [
+      "Besalisk-Four Arms: A Besalisk may wield and hold items as if it had four hands, gaining a +2 species bonus on grapple checks."
+    ]
+  },
+  {
+    "name": "Besalisk (Four-Armed)",
+    "racialTraits": [
+      "Besalisk (Four-Armed)-Multi-Limbed Coordination: A Besalisk may ignore the penalty for using multiple weapons."
+    ]
+  },
+  {
+    "name": "Cathar (Savage)",
+    "racialTraits": [
+      "Cathar (Savage)-Blood Fury: When reduced to half hit points or fewer, a Cathar gains a +2 species bonus on melee damage rolls."
+    ]
+  },
+  {
+    "name": "Devaronian",
+    "racialTraits": [
+      "Devaronian-Force Resistance: A Devaronian gains a +2 species bonus to Will Defense against Force powers."
+    ]
+  },
+  {
+    "name": "Drall",
+    "racialTraits": [
+      "Drall-Technical Aptitude: A Drall gains a +5 species bonus on Mechanics checks."
+    ]
+  },
+  {
+    "name": "Echani",
+    "racialTraits": [
+      "Echani-Martial Culture: An Echani gains a +2 species bonus on melee attack rolls."
+    ]
+  },
+  {
+    "name": "Gossam",
+    "racialTraits": [
+      "Gossam-Commercial Instincts: A Gossam gains a +5 species bonus on Persuasion checks involving trade or negotiation."
+    ]
+  },
+  {
+    "name": "Ikkrukkian",
+    "racialTraits": [
+      "Ikkrukkian-War Cry: As a swift action, an Ikkrukkian may grant allies within 6 squares a +1 bonus on attack rolls until the end of the encounter."
+    ]
+  },
+  {
+    "name": "Karkarodon",
+    "racialTraits": [
+      "Karkarodon-Aquatic Predator: A Karkarodon gains a swim speed equal to its base speed and a +2 species bonus on melee attack rolls while swimming."
+    ]
+  },
+  {
+    "name": "Kiffar",
+    "racialTraits": [
+      "Kiffar-Psychometry: A Kiffar gains a +2 species bonus on Use the Force checks to sense Force impressions."
+    ]
+  },
+  {
+    "name": "Leporine",
+    "racialTraits": [
+      "Leporine-Quick Reflexes: A Leporine gains a +2 species bonus to Reflex Defense."
+    ]
+  },
+  {
+    "name": "Muun",
+    "racialTraits": [
+      "Muun-Financial Savant: A Muun gains a +5 species bonus on Persuasion and Knowledge (bureaucracy) checks."
+    ]
+  },
+  {
+    "name": "Nikto",
+    "racialTraits": [
+      "Nikto-Hardy Physiology: A Nikto gains a +2 species bonus to Fortitude Defense."
+    ]
+  },
+  {
+    "name": "Ortolan",
+    "racialTraits": [
+      "Ortolan-Auditory Savant: An Ortolan gains a +5 species bonus on Perception checks involving sound."
+    ]
+  },
+  {
+    "name": "Qel-Droma",
+    "racialTraits": [
+      "Qel-Droma-Force Legacy: A Qel-Droma gains a +2 species bonus on Use the Force checks."
+    ]
+  },
+  {
+    "name": "Rishi",
+    "racialTraits": [
+      "Rishi-Glide Wings: A Rishi may glide, reducing falling damage to zero if conscious."
+    ]
+  },
+  {
+    "name": "Ssi-Ruuvi",
+    "racialTraits": [
+      "Ssi-Ruuvi-Energy Drain: A Ssi-Ruuvi gains a +2 species bonus on Mechanics checks involving energy weapons."
+    ]
+  },
+  {
+    "name": "Ugnaught",
+    "racialTraits": [
+      "Ugnaught-Industrial Expertise: An Ugnaught gains a +5 species bonus on Mechanics checks involving machinery."
+    ]
+  }
+]

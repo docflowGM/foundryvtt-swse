@@ -114,6 +114,16 @@ export function registerSystemSettings() {
     default: ""
   });
 
+  // Species traits update migration tracking
+  game.settings.register('foundryvtt-swse', "speciesTraitsUpdate", {
+    name: "Species Traits Update Version",
+    hint: "Tracks the version of the species traits update migration that has been run",
+    scope: "world",
+    config: false,
+    type: String,
+    default: ""
+  });
+
   // World data loader tracking
   game.settings.register('foundryvtt-swse', "dataLoaded", {
     name: "World Data Loaded",
