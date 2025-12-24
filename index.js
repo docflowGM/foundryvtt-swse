@@ -187,7 +187,7 @@ import { CanvasUIManager } from './scripts/canvas-ui/canvas-ui-manager.js';
 import { DropHandler } from './scripts/drag-drop/drop-handler.js';
 import './scripts/chat/chat-commands.js';
 
-import { registerInitHooks } from './scripts/hooks/index.js';
+import { registerInitHooks, registerDestinyHooks } from './scripts/hooks/index.js';
 
 /* ==========================================================================  
    INIT HOOK
@@ -233,6 +233,7 @@ Hooks.once("init", async function () {
        Hook Registration
        --------------------------------------------------------- */
     registerInitHooks();
+    registerDestinyHooks();
     registerLevelUpSheetHooks();
     registerKeybindings();
 

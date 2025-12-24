@@ -147,9 +147,19 @@
  </label>
  </div>
 
- {{!-- Fulfill Button (GM only) --}}
- {{#if isGM}}
+ {{!-- Control Buttons --}}
  <div class="destiny-controls">
+ {{!-- Spend Button (available to all) --}}
+ {{#if (not system.destiny.fulfilled)}}
+ {{#if (gt system.destinyPoints.value 0)}}
+ <button class="spend-destiny-btn" type="button" title="Spend a Destiny Point">
+ <i class="fas fa-star"></i> Spend Destiny Point
+ </button>
+ {{/if}}
+ {{/if}}
+
+ {{!-- GM Controls --}}
+ {{#if isGM}}
  {{#if (not system.destiny.fulfilled)}}
  <button class="fulfill-destiny-btn" type="button" title="Mark this Destiny as fulfilled">
  <i class="fas fa-crown"></i> Fulfill Destiny
@@ -159,8 +169,8 @@
  <i class="fas fa-redo"></i> Reset Destiny
  </button>
  {{/if}}
- </div>
  {{/if}}
+ </div>
  </div>
  {{else}}
  <div class="no-destiny">

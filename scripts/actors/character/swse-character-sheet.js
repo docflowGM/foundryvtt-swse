@@ -267,6 +267,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._onEnableDestiny();
     });
 
+    html.find(".spend-destiny-btn").click(ev => {
+      ev.preventDefault();
+      this._onSpendDestinyPoint();
+    });
+
     SWSELogger.log("SWSE | Character sheet listeners activated (full v13 routing)");
   }
 
@@ -430,6 +435,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   async _onResetDestiny() {
     await this.actor.update({ "system.destiny.fulfilled": false });
     ui.notifications.info("Destiny reset to active.");
+  }
+
+  async _onSpendDestinyPoint() {
+    const { DestinySpendingDialog } = await import('../../apps/destiny-spending-dialog.js');
+    DestinySpendingDialog.open(this.actor);
   }
 
 

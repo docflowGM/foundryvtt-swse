@@ -731,6 +731,15 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     const heroic = this.heroicLevel !== 0;
     const destiny = this.destiny;
+    const isDroid = this.isDroid || false;
+    const allowDroidDestiny = game.settings?.get('foundryvtt-swse', 'allowDroidDestiny') || false;
+
+    // Droids don't normally get Destiny Points (can be enabled via house rule)
+    if (isDroid && !allowDroidDestiny) {
+      this.destinyPoints.max = 0;
+      this.destinyPoints.value = 0;
+      return;
+    }
 
     // If character is not heroic or doesn't have Destiny, they can't use Destiny Points
     if (!heroic || !destiny.hasDestiny) {
