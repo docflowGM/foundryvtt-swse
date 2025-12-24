@@ -1,6 +1,7 @@
 import { DefenseSystem } from "../engine/DefenseSystem.js";
 import { SWSELogger } from '../utils/logger.js';
 import { SWSEActorDataModel } from './actor-data-model.js';
+import { SpeciesTraitEngine } from '../species/species-trait-engine.js';
 
 export class SWSECharacterDataModel extends SWSEActorDataModel {
 
@@ -208,6 +209,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Call parent methods individually (skip parent's prepareDerivedData to avoid wrong level usage)
     this._calculateAbilities();
     this._applyConditionPenalties();
+
+    // Apply species trait bonuses BEFORE defense calculation
+    this._applySpeciesTraitBonuses();
+
     this._calculateDefenses(); // Use our overridden version
     // NOTE: Do NOT call _calculateBaseAttack() here - BAB is already calculated by _calculateMulticlassStats()
     this._calculateDamageThreshold();
@@ -388,9 +393,13 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       equipmentBonus = equippedArmor.system.equipmentBonus || 0;
     }
 
+    // Get species trait bonus for reflex
+    const reflexSpeciesBonus = this.defenses.reflex.speciesBonus || 0;
+
     this.defenses.reflex.total = reflexBase + dexMod + equipmentBonus +
                                   (this.defenses.reflex.classBonus || 0) +
-                                  (this.defenses.reflex.misc || 0) + conditionPenalty;
+                                  (this.defenses.reflex.misc || 0) +
+                                  reflexSpeciesBonus + conditionPenalty;
 
     // FORTITUDE DEFENSE
     // Droids use STR mod, organics use CON or STR (whichever is higher)
@@ -408,14 +417,22 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       armorFortBonus = equippedArmor.system.equipmentBonus || equippedArmor.system.fortBonus || 0;
     }
 
+    // Get species trait bonus for fortitude
+    const fortSpeciesBonus = this.defenses.fortitude.speciesBonus || 0;
+
     this.defenses.fortitude.total = 10 + level + fortAbility + armorFortBonus +
                                      (this.defenses.fortitude.classBonus || 0) +
-                                     (this.defenses.fortitude.misc || 0) + conditionPenalty;
+                                     (this.defenses.fortitude.misc || 0) +
+                                     fortSpeciesBonus + conditionPenalty;
 
     // WILL DEFENSE
+    // Get species trait bonus for will
+    const willSpeciesBonus = this.defenses.will.speciesBonus || 0;
+
     this.defenses.will.total = 10 + level + (this.abilities?.wis?.mod || 0) +
                                 (this.defenses.will.classBonus || 0) +
-                                (this.defenses.will.misc || 0) + conditionPenalty;
+                                (this.defenses.will.misc || 0) +
+                                willSpeciesBonus + conditionPenalty;
   }
 
   /**
@@ -604,6 +621,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       occupationBonus = this.parent.flags.swse.occupationBonus;
     }
 
+    // Get species skill bonuses (calculated in _applySpeciesTraitBonuses)
+    const speciesSkillBonuses = this.speciesSkillBonuses || {};
+
     for (const [skillKey, skill] of Object.entries(this.skills)) {
       const data = skillData[skillKey];
       if (!data) continue;
@@ -614,6 +634,13 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
       // Calculate total bonus
       let total = abilityMod + (skill.miscMod || 0);
+
+      // Add species trait bonus for this skill
+      const speciesBonus = speciesSkillBonuses[skillKey] || 0;
+      if (speciesBonus !== 0) {
+        total += speciesBonus;
+        skill.speciesBonus = speciesBonus; // Store for display
+      }
 
       // Add training bonus (+5)
       if (skill.trained) {
@@ -661,6 +688,75 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       skill.defaultAbility = data.defaultAbility;  // Store default for reference
       skill.untrained = canUseUntrained;
       skill.canUse = skill.trained || canUseUntrained;
+    }
+  }
+
+  /**
+   * Apply species trait bonuses using the Species Trait Engine
+   * This method processes all automated species traits and applies their bonuses
+   */
+  _applySpeciesTraitBonuses() {
+    const actor = this.parent;
+    if (!actor) return;
+
+    try {
+      // Get computed bonuses from species traits
+      const bonuses = SpeciesTraitEngine.computeTraitBonuses(actor);
+
+      // Store species trait bonuses for use in defense and skill calculations
+      this.speciesTraitBonuses = bonuses;
+
+      // Apply ability bonuses (these stack with racial ability modifiers from species selection)
+      // Note: The base racial modifiers (+2 Dex, -2 Con) are already in attributes.racial
+      // These are ADDITIONAL bonuses from traits like "Wookiee-Mighty: +4 Strength"
+      for (const [ability, bonus] of Object.entries(bonuses.abilities)) {
+        if (this.attributes[ability] && bonus !== 0) {
+          // Add to the racial component for now (could create separate species.traits component)
+          this.attributes[ability].racial = (this.attributes[ability].racial || 0) + bonus;
+          // Recalculate total and mod
+          const attr = this.attributes[ability];
+          attr.total = attr.base + attr.racial + attr.enhancement + attr.temp;
+          attr.mod = Math.floor((attr.total - 10) / 2);
+
+          // Update abilities alias
+          if (this.abilities[ability]) {
+            this.abilities[ability].racial = attr.racial;
+            this.abilities[ability].total = attr.total;
+            this.abilities[ability].mod = attr.mod;
+          }
+        }
+      }
+
+      // Store defense bonuses for _calculateDefenses to use
+      // Initialize defense misc.auto.species if not present
+      if (this.defenses) {
+        for (const defKey of ['reflex', 'fortitude', 'will']) {
+          const defBonus = bonuses.defenses[defKey] || 0;
+          if (defBonus !== 0) {
+            if (!this.defenses[defKey]) this.defenses[defKey] = {};
+            if (!this.defenses[defKey].misc) this.defenses[defKey].misc = 0;
+            // Store the species bonus to be added in defense calculation
+            this.defenses[defKey].speciesBonus = defBonus;
+          }
+        }
+      }
+
+      // Store skill bonuses for _prepareSkills to use
+      this.speciesSkillBonuses = bonuses.skills;
+
+      // Store combat bonuses for attack/damage calculations
+      this.speciesCombatBonuses = bonuses.combat;
+
+      // Store special traits (senses, movements, natural weapons, immunities)
+      this.speciesSenses = bonuses.senses;
+      this.speciesMovements = bonuses.movements;
+      this.speciesNaturalWeapons = bonuses.naturalWeapons;
+      this.speciesImmunities = bonuses.immunities;
+      this.speciesResistances = bonuses.resistances;
+      this.speciesProficiencies = bonuses.proficiencies;
+
+    } catch (err) {
+      SWSELogger.error('Error applying species trait bonuses:', err);
     }
   }
 

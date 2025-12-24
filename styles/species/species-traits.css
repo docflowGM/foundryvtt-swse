@@ -1,0 +1,208 @@
+/**
+ * Species Traits CSS
+ * Styles for species trait UI elements
+ */
+
+/* ================================
+   Species Reroll Dialog
+   ================================ */
+.species-reroll-dialog {
+  padding: 0.5rem;
+}
+
+.species-reroll-dialog .warning {
+  color: var(--color-text-dark-secondary, #666);
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+/* ================================
+   Reroll Button in Chat
+   ================================ */
+.species-reroll-section {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-border-light, #ccc);
+}
+
+.species-reroll-btn {
+  width: 100%;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85em;
+  background: linear-gradient(to bottom, #4a7c59, #2d5a3c);
+  border: 1px solid #1a3a24;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.species-reroll-btn:hover {
+  background: linear-gradient(to bottom, #5a8c69, #3d6a4c);
+  box-shadow: 0 0 6px rgba(74, 124, 89, 0.5);
+}
+
+.species-reroll-btn:disabled {
+  background: #666;
+  border-color: #444;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.species-reroll-btn i {
+  margin-right: 0.3rem;
+}
+
+/* ================================
+   Species Reroll Chat Card
+   ================================ */
+.swse-species-reroll-card {
+  background: linear-gradient(135deg, #1a2a1f 0%, #0d1a12 100%);
+  border: 1px solid #4a7c59;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin: 0.25rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.swse-species-reroll-card .swse-holo-header {
+  color: #7fcc8f;
+  font-weight: bold;
+  font-size: 1em;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #4a7c5966;
+}
+
+.swse-species-reroll-card .swse-holo-header i {
+  margin-right: 0.4rem;
+}
+
+.swse-species-reroll-card .swse-holo-breakdown {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+
+.swse-species-reroll-card .swse-holo-breakdown td {
+  padding: 0.2rem 0.4rem;
+  color: #b0d4b8;
+}
+
+.swse-species-reroll-card .swse-holo-breakdown td:first-child {
+  color: #7fcc8f;
+  font-weight: 500;
+}
+
+.swse-species-reroll-card .swse-holo-breakdown td:last-child {
+  text-align: right;
+}
+
+/* ================================
+   Species Trait Display on Sheet
+   ================================ */
+.species-traits-section {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.species-traits-section h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9em;
+  color: var(--color-text-dark-primary, #333);
+  border-bottom: 1px solid var(--color-border-light, #ccc);
+  padding-bottom: 0.25rem;
+}
+
+.species-trait-item {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0;
+  font-size: 0.85em;
+}
+
+.species-trait-item .trait-icon {
+  width: 1.2em;
+  text-align: center;
+  margin-right: 0.4rem;
+  color: var(--color-text-dark-secondary, #666);
+}
+
+.species-trait-item .trait-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.species-trait-item .trait-value {
+  color: var(--color-positive, #4a7c59);
+  font-weight: bold;
+}
+
+.species-trait-item .trait-value.penalty {
+  color: var(--color-negative, #c44);
+}
+
+.species-trait-item.automated {
+  opacity: 1;
+}
+
+.species-trait-item.narrative {
+  opacity: 0.8;
+  font-style: italic;
+}
+
+/* ================================
+   Skill Bonus Indicator
+   ================================ */
+.skill-species-bonus {
+  font-size: 0.75em;
+  color: #4a7c59;
+  margin-left: 0.3rem;
+}
+
+.skill-species-bonus::before {
+  content: "(";
+}
+
+.skill-species-bonus::after {
+  content: ")";
+}
+
+/* ================================
+   Defense Species Bonus Display
+   ================================ */
+.defense-species-bonus {
+  font-size: 0.8em;
+  color: #4a7c59;
+  font-weight: 500;
+}
+
+/* ================================
+   Once Per Encounter Trait Button
+   ================================ */
+.species-trait-use-btn {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8em;
+  background: #4a7c59;
+  border: 1px solid #2d5a3c;
+  color: #fff;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.species-trait-use-btn:hover {
+  background: #5a8c69;
+}
+
+.species-trait-use-btn.used {
+  background: #666;
+  border-color: #444;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.species-trait-use-btn.used::after {
+  content: " (Used)";
+}
