@@ -135,6 +135,10 @@ export class CombatMenu extends FormApplication {
       diagonalMovement: safeGet("diagonalMovement"),
       conditionTrackCap: safeGet("conditionTrackCap"),
       criticalHitVariant: safeGet("criticalHitVariant"),
+      weaponFinesseDefault: safeGet("weaponFinesseDefault"),
+      pointBlankShotDefault: safeGet("pointBlankShotDefault"),
+      powerAttackDefault: safeGet("powerAttackDefault"),
+      preciseShotDefault: safeGet("preciseShotDefault"),
       isGM: game.user.isGM
     };
   }
@@ -157,6 +161,10 @@ export class CombatMenu extends FormApplication {
     await safeSet("diagonalMovement", formData.diagonalMovement);
     await safeSet("conditionTrackCap", _num(formData.conditionTrackCap));
     await safeSet("criticalHitVariant", formData.criticalHitVariant);
+    await safeSet("weaponFinesseDefault", _bool(formData.weaponFinesseDefault));
+    await safeSet("pointBlankShotDefault", _bool(formData.pointBlankShotDefault));
+    await safeSet("powerAttackDefault", _bool(formData.powerAttackDefault));
+    await safeSet("preciseShotDefault", _bool(formData.preciseShotDefault));
 
     ui.notifications.info("Combat rules updated");
   }

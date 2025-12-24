@@ -19,6 +19,12 @@ const GRANT_MAPPINGS = {
   ],
   pointBlankShotDefault: [
     { type: "feat", name: "Point Blank Shot", id: "c301a0f533f15ce4" }
+  ],
+  powerAttackDefault: [
+    { type: "feat", name: "Power Attack", id: "3f76464c43c73f84" }
+  ],
+  preciseShotDefault: [
+    { type: "feat", name: "Precise Shot", id: "c180eee7d3bc29b2" }
   ]
 };
 

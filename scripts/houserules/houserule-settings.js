@@ -495,6 +495,24 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  register("powerAttackDefault", {
+    name: "Default Power Attack",
+    hint: "All characters automatically gain Power Attack.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("preciseShotDefault", {
+    name: "Default Precise Shot",
+    hint: "All characters automatically gain Precise Shot.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   /* -------------------------------------------------------------------------- */
   /*                                   TALENTS                                   */
   /* -------------------------------------------------------------------------- */
