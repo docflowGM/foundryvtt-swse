@@ -159,6 +159,15 @@ export function registerHouseruleSettings() {
     default: 5000
   });
 
+  register("allowDroidDestiny", {
+    name: "Allow Droids to Have Destiny",
+    hint: "If enabled, droid characters can have Destiny Points just like organics (normally disabled).",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   /* -------------------------------------------------------------------------- */
   /*                              HIT POINT SETTINGS                             */
   /* -------------------------------------------------------------------------- */

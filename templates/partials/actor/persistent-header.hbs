@@ -46,8 +46,8 @@
       {{!-- Reflex --}}
       <div class="defense reflex-defense">
         <label class="defense-label">Reflex Defense</label>
-        <div class="defense-value rollable" 
-             data-roll="1d20" 
+        <div class="defense-value rollable"
+             data-roll="1d20"
              data-label="Reflex Defense"
              role="button" tabindex="0"
              title="Click to roll vs. Reflex">
@@ -88,7 +88,7 @@
       {{!-- Will --}}
       <div class="defense will-defense">
         <label class="defense-label">Will Defense</label>
-        <div class="defense-value rollable" 
+        <div class="defense-value rollable"
              data-roll="1d20"
              data-label="Will Defense"
              role="button" tabindex="0"
@@ -110,9 +110,9 @@
       <div class="resource hp flex1">
         <label>Hit Points</label>
         <div class="resource-bar flexrow">
-          <input type="text" 
-                 name="system.hp.value" 
-                 value="{{system.hp.value}}" 
+          <input type="text"
+                 name="system.hp.value"
+                 value="{{system.hp.value}}"
                  data-dtype="Number"
                  class="resource-input"/>
           <span class="separator">/</span>
@@ -164,6 +164,7 @@
       </div>
 
       {{!-- Destiny Points --}}
+      {{#if system.destiny.hasDestiny}}
       <div class="resource destiny-points flex1">
         <label>Destiny Points</label>
 
@@ -173,24 +174,27 @@
                  value="{{system.destinyPoints.value}}"
                  data-dtype="Number"
                  class="resource-input"
-                 title="Current Destiny Points"/>
+                 title="Current Destiny Points"
+                 {{#if system.destiny.fulfilled}}disabled{{/if}}/>
 
           <span class="separator">/</span>
 
-          <input type="text"
-                 name="system.destinyPoints.max"
-                 value="{{system.destinyPoints.max}}"
-                 data-dtype="Number"
-                 class="resource-max-input"
-                 title="Maximum Destiny Points"/>
+          <span class="resource-max" title="Maximum Destiny Points">{{system.destinyPoints.max}}</span>
         </div>
 
-        <div class="destiny-point-controls flexrow">
-          <button class="spend-destiny" data-action="spendDestiny" title="Spend Destiny Point" role="button" tabindex="0">
-            <i class="fas fa-star" aria-hidden="true"></i> Spend
-          </button>
+        <div class="destiny-point-status">
+          {{#if system.destiny.fulfilled}}
+          <span class="destiny-fulfilled" title="Destiny has been fulfilled">
+            <i class="fas fa-crown" aria-hidden="true"></i> Fulfilled
+          </span>
+          {{else}}
+          <span class="destiny-active" title="Destiny is active">
+            <i class="fas fa-star" aria-hidden="true"></i> Active
+          </span>
+          {{/if}}
         </div>
       </div>
+      {{/if}}
     </div>
 
   </div>

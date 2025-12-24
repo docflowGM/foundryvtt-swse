@@ -18,3 +18,4 @@ export { registerCombatHooks } from './combat-hooks.js';
 export { registerActorHooks } from './actor-hooks.js';
 export { registerUIHooks } from './ui-hooks.js';
 export { registerLevelUpSheetHooks } from './levelup-sheet-hooks.js';
+export { registerDestinyHooks } from './destiny-hooks.js';
