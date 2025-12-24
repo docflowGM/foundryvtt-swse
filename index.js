@@ -187,6 +187,7 @@ import { ConditionTrackMechanics } from './scripts/houserules/houserule-conditio
 import { FlankingMechanics } from './scripts/houserules/houserule-flanking.js';
 import { SkillTrainingMechanics } from './scripts/houserules/houserule-skill-training.js';
 import { StatusEffectsMechanics } from './scripts/houserules/houserule-status-effects.js';
+import { HealingMechanics } from './scripts/houserules/houserule-healing.js';
 import { SWSEHomebrewManager } from './scripts/gm-tools/homebrew-manager.js';
 
 import { CanvasUIManager } from './scripts/canvas-ui/canvas-ui-manager.js';

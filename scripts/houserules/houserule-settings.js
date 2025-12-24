@@ -1028,5 +1028,185 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  /* -------------------------------------------------------------------------- */
+  /*                        HEALING SKILL INTEGRATION                           */
+  /* -------------------------------------------------------------------------- */
+
+  register("healingSkillEnabled", {
+    name: "Enable Healing Skill Integration",
+    hint: "Enables Treat Injury skill to provide direct HP recovery.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("firstAidEnabled", {
+    name: "Allow First Aid (DC 15)",
+    hint: "Enables First Aid as a Full-Round Action (requires Medpac).",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register("firstAidHealingType", {
+    name: "First Aid Healing Formula",
+    hint: "How much HP First Aid restores.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      levelOnly: "Character Level",
+      levelPlusDC: "Character Level + (Check - DC)",
+      fixed: "Fixed Amount"
+    },
+    default: "levelPlusDC"
+  });
+
+  register("firstAidFixedAmount", {
+    name: "First Aid Fixed Healing",
+    hint: "HP restored if Fixed Amount is selected.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 10
+  });
+
+  register("longTermCareEnabled", {
+    name: "Allow Long-Term Care",
+    hint: "8-hour healing care (8 hours per day max).",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register("longTermCareHealing", {
+    name: "Long-Term Care Healing",
+    hint: "How much HP Long-Term Care heals.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      characterLevel: "Character Level",
+      conBonus: "CON Bonus per Level",
+      fixed: "Fixed Amount"
+    },
+    default: "characterLevel"
+  });
+
+  register("longTermCareFixedAmount", {
+    name: "Long-Term Care Fixed Healing",
+    hint: "HP healed if Fixed Amount is selected.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 5
+  });
+
+  register("longTermCareMultipleTargets", {
+    name: "Long-Term Care Max Simultaneous Targets",
+    hint: "How many creatures can receive Long-Term Care simultaneously.",
+    scope: "world",
+    config: true,
+    type: Number,
+    choices: numericChoices({
+      1: "1 (Untrained Only)",
+      6: "6 (Trained)"
+    }),
+    default: 1
+  });
+
+  register("performSurgeryEnabled", {
+    name: "Allow Perform Surgery (DC 20)",
+    hint: "Requires 1 hour, Surgery Kit, and trained Treat Injury.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register("performSurgeryHealing", {
+    name: "Surgery Healing Formula",
+    hint: "How much damage surgery removes.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      conBonus: "CON Bonus × Level",
+      fixed: "Fixed Amount",
+      automatic: "Fully Heal"
+    },
+    default: "conBonus"
+  });
+
+  register("performSurgeryFixedAmount", {
+    name: "Surgery Fixed Healing",
+    hint: "HP healed by surgery if Fixed Amount is selected.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 20
+  });
+
+  register("surgeryFailureDamage", {
+    name: "Damage on Surgery Failure",
+    hint: "Creature takes damage equal to Damage Threshold on failed check.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register("revivifyEnabled", {
+    name: "Allow Revivify (DC 25)",
+    hint: "Trained Only - revive dying creature within 1 round.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register("revivifyWindow", {
+    name: "Revivify Time Window",
+    hint: "How many rounds after death can Revivify be attempted.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 1
+  });
+
+  register("criticalCareEnabled", {
+    name: "Allow Critical Care (DC 20)",
+    hint: "Multiple Medpacs in 24 hours (trained, penalties apply).",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("criticalCareHealing", {
+    name: "Critical Care Healing Formula",
+    hint: "How much Critical Care heals.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      levelPlusDC: "Level + (Check - DC)",
+      fixed: "Fixed Amount"
+    },
+    default: "levelPlusDC"
+  });
+
+  register("criticalCareFixedAmount", {
+    name: "Critical Care Fixed Healing",
+    hint: "HP healed if Fixed Amount is selected.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 15
+  });
+
   SWSELogger.info("SWSE | Houserule settings registered successfully.");
 }
