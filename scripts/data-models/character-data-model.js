@@ -131,6 +131,20 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
         }
       }),
 
+      // Destiny Points
+      destinyPoints: new fields.SchemaField({
+        value: new fields.NumberField({required: true, initial: 0, min: 0, integer: true}),
+        max: new fields.NumberField({required: true, initial: 0, min: 0, integer: true})
+      }),
+
+      // Destiny
+      destiny: new fields.SchemaField({
+        hasDestiny: new fields.BooleanField({required: true, initial: false}),
+        type: new fields.StringField({required: false, initial: ""}),
+        fulfilled: new fields.BooleanField({required: true, initial: false}),
+        secret: new fields.BooleanField({required: true, initial: false})
+      }),
+
       // Biography
       biography: new fields.StringField({required: false, initial: ""})
     };
@@ -200,6 +214,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Calculate Force Points
     this._calculateForcePoints();
+
+    // Calculate Destiny Points
+    this._calculateDestinyPoints();
 
     // Override skill calculations with our static skill system
     this._prepareSkills();
@@ -694,5 +711,47 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     } else {
       this.forcePoints.die = "1d6";
     }
+  }
+
+  _calculateDestinyPoints() {
+    // Ensure destinyPoints exists
+    if (!this.destinyPoints) {
+      this.destinyPoints = { value: 0, max: 0 };
+    }
+
+    // Ensure destiny exists
+    if (!this.destiny) {
+      this.destiny = {
+        hasDestiny: false,
+        type: "",
+        fulfilled: false,
+        secret: false
+      };
+    }
+
+    const heroic = this.heroicLevel !== 0;
+    const destiny = this.destiny;
+
+    // If character is not heroic or doesn't have Destiny, they can't use Destiny Points
+    if (!heroic || !destiny.hasDestiny) {
+      this.destinyPoints.max = 0;
+      this.destinyPoints.value = 0;
+      return;
+    }
+
+    // If Destiny is fulfilled, Destiny Points are locked at current value
+    if (destiny.fulfilled) {
+      this.destinyPoints.max = this.destinyPoints.value;
+      return;
+    }
+
+    // Active Destiny: Max = character level (heroic level only)
+    this.destinyPoints.max = this.heroicLevel;
+
+    // Clamp value to max
+    this.destinyPoints.value = Math.min(
+      this.destinyPoints.value,
+      this.destinyPoints.max
+    );
   }
 }
