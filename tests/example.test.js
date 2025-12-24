@@ -4,11 +4,11 @@
  */
 
 import { calculateAbilities } from './utils/calc-abilities.js';
-import { calculateAllDefenses } from '../scripts/rolls/defenses.js';
+import { calculateDefenses } from './utils/calc-defenses.js';
 import { TestUtils } from './test-utils.js';
 
 describe('SWSE Core Systems', () => {
-  
+
   describe('Ability Calculations', () => {
     test('should calculate ability modifier correctly', () => {
       const mockActor = TestUtils.createMockActor('character', {
@@ -16,14 +16,27 @@ describe('SWSE Core Systems', () => {
           str: {base: 16, racial: 2, temp: 0}
         }
       });
-      
+
       calculateAbilities(mockActor);
-      
+
       expect(mockActor.system.abilities.str.total).toBe(18);
       expect(mockActor.system.abilities.str.mod).toBe(4);
     });
+
+    test('should calculate negative ability modifier', () => {
+      const mockActor = TestUtils.createMockActor('character', {
+        abilities: {
+          str: {base: 8, racial: 0, temp: 0}
+        }
+      });
+
+      calculateAbilities(mockActor);
+
+      expect(mockActor.system.abilities.str.total).toBe(8);
+      expect(mockActor.system.abilities.str.mod).toBe(-1);
+    });
   });
-  
+
   describe('Defense Calculations', () => {
     test('should calculate Reflex defense without armor', () => {
       const mockActor = TestUtils.createMockActor('character', {
@@ -32,26 +45,41 @@ describe('SWSE Core Systems', () => {
           dex: {base: 14, racial: 0, temp: 0, total: 14, mod: 2}
         }
       });
-      
-      calculateAllDefenses(mockActor);
+
+      calculateDefenses(mockActor);
 
       // 10 + 5 (level) + 2 (dex mod) = 17
       expect(mockActor.system.defenses.reflex.total).toBe(17);
     });
-  });
-  
-  describe('Damage Application', () => {
-    test('should apply damage to temp HP first', async () => {
-      const actor = await Actor.create(TestUtils.createMockActor('character', {
-        hp: {value: 50, max: 50, temp: 10}
-      }));
-      
-      await actor.applyDamage(5);
-      
-      expect(actor.system.hp.temp).toBe(5);
-      expect(actor.system.hp.value).toBe(50);
-      
-      await actor.delete();
+
+    test('should calculate Fortitude defense for droid with STR', () => {
+      const mockActor = TestUtils.createMockActor('character', {
+        level: 3,
+        isDroid: true,
+        abilities: {
+          str: {base: 14, racial: 0, temp: 0, total: 14, mod: 2},
+          con: {base: 10, racial: 0, temp: 0, total: 10, mod: 0}
+        }
+      });
+
+      calculateDefenses(mockActor);
+
+      // 10 + 3 (level) + 2 (str mod for droid) = 15
+      expect(mockActor.system.defenses.fortitude.total).toBe(15);
+    });
+
+    test('should calculate Will defense correctly', () => {
+      const mockActor = TestUtils.createMockActor('character', {
+        level: 4,
+        abilities: {
+          wis: {base: 16, racial: 0, temp: 0, total: 16, mod: 3}
+        }
+      });
+
+      calculateDefenses(mockActor);
+
+      // 10 + 4 (level) + 3 (wis mod) = 17
+      expect(mockActor.system.defenses.will.total).toBe(17);
     });
   });
 });

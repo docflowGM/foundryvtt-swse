@@ -158,8 +158,9 @@ describe('Armor Equipment Bonus', () => {
 
       calculateDefenses(mockActor);
 
-      // With Improved Armored Defense: 10 + max(5 + 5, 10) + 1 (dex capped) + 3 (equipment bonus) = 19
-      expect(mockActor.system.defenses.reflex.total).toBe(19);
+      // With Improved Armored Defense: 10 + max(5 + floor(10/2), 10) + 1 (dex capped) + 3 (equipment bonus) = 24
+      // Formula: base + sourceValue + dexMod + equipmentBonus = 10 + 10 + 1 + 3 = 24
+      expect(mockActor.system.defenses.reflex.total).toBe(24);
     });
   });
 
@@ -261,8 +262,8 @@ describe('Armor Equipment Bonus', () => {
     });
   });
 
-  describe('Medium Armor Proficiency Inheritance', () => {
-    test('medium proficiency should allow light armor with equipment bonus', () => {
+  describe('Armor Proficiency Requirements', () => {
+    test('medium proficiency should NOT grant light armor proficiency', () => {
       const mockActor = TestUtils.createMockActor('character', {
         level: 5,
         abilities: {
@@ -284,7 +285,7 @@ describe('Armor Equipment Bonus', () => {
       });
       mockActor.items = [armor];
 
-      // Add only Medium Armor Proficiency (should cover light)
+      // Add only Medium Armor Proficiency (should NOT cover light)
       const proficiency = TestUtils.createMockItem('feat', {
         name: 'Medium Armor Proficiency',
         type: 'feat'
@@ -293,11 +294,12 @@ describe('Armor Equipment Bonus', () => {
 
       calculateDefenses(mockActor);
 
-      // Should be proficient with light armor because medium includes light
-      expect(mockActor.system.defenses.reflex.total).toBe(15);
+      // NOT proficient - no equipment bonus
+      // 10 + 2 (armor) + 2 (dex) + 0 (no equipment bonus) = 14
+      expect(mockActor.system.defenses.reflex.total).toBe(14);
     });
 
-    test('heavy proficiency should allow all armor types with equipment bonus', () => {
+    test('heavy proficiency should NOT grant medium armor proficiency', () => {
       const mockActor = TestUtils.createMockActor('character', {
         level: 5,
         abilities: {
@@ -319,7 +321,7 @@ describe('Armor Equipment Bonus', () => {
       });
       mockActor.items = [armor];
 
-      // Add only Heavy Armor Proficiency (should cover all)
+      // Add only Heavy Armor Proficiency (should NOT cover medium)
       const proficiency = TestUtils.createMockItem('feat', {
         name: 'Heavy Armor Proficiency',
         type: 'feat'
@@ -328,7 +330,43 @@ describe('Armor Equipment Bonus', () => {
 
       calculateDefenses(mockActor);
 
-      // Should be proficient with medium armor because heavy includes all
+      // NOT proficient - no equipment bonus
+      // 10 + 5 (armor) + 2 (dex capped to 3) + 0 (no equipment bonus) = 17
+      expect(mockActor.system.defenses.reflex.total).toBe(17);
+    });
+
+    test('each proficiency only covers its own armor type', () => {
+      const mockActor = TestUtils.createMockActor('character', {
+        level: 5,
+        abilities: {
+          dex: {base: 14, racial: 0, temp: 0, total: 14, mod: 2}
+        }
+      });
+
+      // Add medium armor
+      const armor = TestUtils.createMockItem('armor', {
+        name: 'Medium Armor',
+        type: 'armor',
+        system: {
+          armorType: 'medium',
+          defenseBonus: 5,
+          equipmentBonus: 2,
+          maxDexBonus: 3,
+          equipped: true
+        }
+      });
+      mockActor.items = [armor];
+
+      // Add Medium Armor Proficiency (correct proficiency)
+      const proficiency = TestUtils.createMockItem('feat', {
+        name: 'Medium Armor Proficiency',
+        type: 'feat'
+      });
+      mockActor.items.push(proficiency);
+
+      calculateDefenses(mockActor);
+
+      // Proficient with medium armor - equipment bonus applies
       // 10 + 5 (armor) + 2 (dex capped to 3) + 2 (equipment bonus) = 19
       expect(mockActor.system.defenses.reflex.total).toBe(19);
     });

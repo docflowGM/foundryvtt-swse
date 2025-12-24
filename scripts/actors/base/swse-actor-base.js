@@ -145,6 +145,33 @@ export class SWSEActorBase extends Actor {
   }
 
   /* -------------------------------------------------------------------------- */
+  /* DESTINY POINTS                                                             */
+  /* -------------------------------------------------------------------------- */
+
+  async spendDestinyPoint(reason = "unspecified") {
+    if (this.type !== "character") return false;
+
+    const current = this.system.destinyPoints?.value ?? 0;
+    if (current <= 0) {
+      ui.notifications.warn("No Destiny Points remaining!");
+      return false;
+    }
+
+    await this.update(
+      { "system.destinyPoints.value": current - 1 },
+      { diff: true }
+    );
+
+    ChatMessage.create({
+      content: `<p><strong>${this.name}</strong> spends a Destiny Point for ${reason}. (${current - 1} remaining)</p>`,
+      speaker: { actor: this }
+    });
+
+    Hooks.callAll("swse.destinyPointSpent", this, reason);
+    return true;
+  }
+
+  /* -------------------------------------------------------------------------- */
   /* ROLLS                                                                      */
   /* -------------------------------------------------------------------------- */
 
