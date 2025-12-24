@@ -116,6 +116,49 @@ export class SWSEActiveEffectsManager {
   /* COMBAT ACTION EFFECTS                                                      */
   /* -------------------------------------------------------------------------- */
 
+  /* -------------------------------------------------------------------------- */
+  /* DESTINY EFFECTS (Timed bonuses from Destiny Point spending)                */
+  /* -------------------------------------------------------------------------- */
+
+  static DESTINY_EFFECTS = {
+    "destiny-attack-bonus": {
+      name: "Destiny: Attack Bonus",
+      icon: "icons/svg/sword.svg",
+      duration: { hours: 24 },
+      updates: {
+        "system.attackBonus": { mode: "ADD", value: 2 }
+      },
+      flags: { destinyEffect: "attack-bonus", duration: "24h" }
+    },
+    "destiny-defense-bonus": {
+      name: "Destiny: Defense Bonus",
+      icon: "icons/svg/shield.svg",
+      duration: { hours: 24 },
+      updates: {
+        "system.defenses.reflex.misc": { mode: "ADD", value: 2 },
+        "system.defenses.fortitude.misc": { mode: "ADD", value: 2 },
+        "system.defenses.will.misc": { mode: "ADD", value: 2 }
+      },
+      flags: { destinyEffect: "defense-bonus", duration: "24h" }
+    },
+    "noble-sacrifice": {
+      name: "Noble Sacrifice",
+      icon: "icons/svg/heart.svg",
+      duration: { hours: 24 },
+      updates: {},
+      flags: { destinyEffect: "noble-sacrifice", duration: "24h" }
+    },
+    "vengeance": {
+      name: "Vengeance",
+      icon: "icons/svg/explosion.svg",
+      duration: { hours: 24 },
+      updates: {
+        "system.attackBonus": { mode: "ADD", value: 3 }
+      },
+      flags: { destinyEffect: "vengeance", duration: "24h" }
+    }
+  };
+
   static COMBAT_ACTION_EFFECTS = {
     "fighting-defensively": {
       name: "Fighting Defensively",
@@ -234,6 +277,45 @@ export class SWSEActiveEffectsManager {
   }
 
   /* -------------------------------------------------------------------------- */
+  /* DESTINY EFFECTS                                                            */
+  /* -------------------------------------------------------------------------- */
+
+  /**
+   * Apply a Destiny bonus effect
+   * @param {Actor} actor - The actor to apply the effect to
+   * @param {string} effectKey - Key from DESTINY_EFFECTS
+   * @returns {Promise<ActiveEffect>} - The created effect
+   */
+  static async applyDestinyEffect(actor, effectKey) {
+    const data = this.DESTINY_EFFECTS[effectKey];
+    if (!data) {
+      swseLogger.warn(`Unknown destiny effect: ${effectKey}`);
+      return null;
+    }
+
+    const effect = this._buildEffect(actor, {
+      name: data.name,
+      icon: data.icon,
+      updates: data.updates,
+      flags: data.flags,
+      duration: data.duration
+    });
+
+    return (await actor.effects.create(effect))[0];
+  }
+
+  /**
+   * Remove all Destiny bonus effects
+   * @param {Actor} actor - The actor
+   */
+  static async removeDestinyEffects(actor) {
+    const toRemove = actor.effects.filter(e => e.flags?.swse?.destinyEffect);
+    if (toRemove.length) {
+      await actor.effects.delete(toRemove.map(e => e.id));
+    }
+  }
+
+  /* -------------------------------------------------------------------------- */
   /* CUSTOM EFFECT CREATION                                                     */
   /* -------------------------------------------------------------------------- */
 
@@ -287,6 +369,14 @@ export class SWSEActiveEffectsManager {
     }
 
     for (const [key, data] of Object.entries(this.COMBAT_ACTION_EFFECTS)) {
+      effects.push({
+        id: key,
+        label: data.name,
+        icon: data.icon
+      });
+    }
+
+    for (const [key, data] of Object.entries(this.DESTINY_EFFECTS)) {
       effects.push({
         id: key,
         label: data.name,

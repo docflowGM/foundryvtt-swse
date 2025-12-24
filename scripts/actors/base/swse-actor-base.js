@@ -152,4 +152,70 @@ export class SWSEActorBase extends Actor {
   async rollAttack(weapon) { return SWSERoll.rollAttack(this, weapon); }
   async rollDamage(weapon) { return SWSERoll.rollDamage(this, weapon); }
 
+  /* -------------------------------------------------------------------------- */
+  /* DESTINY POINTS                                                             */
+  /* -------------------------------------------------------------------------- */
+
+  /**
+   * Spend a Destiny Point
+   * @param {string} type - The type of Destiny effect being triggered
+   * @param {Object} options - Additional options (effect, reason, etc.)
+   * @returns {Promise<boolean>} - True if successfully spent, false otherwise
+   */
+  async spendDestinyPoint(type, options = {}) {
+    const dp = this.system.destinyPoints;
+    const destiny = this.system.destiny;
+
+    // Check eligibility
+    if (!destiny?.hasDestiny) {
+      ui.notifications.warn(`${this.name} does not have Destiny!`);
+      return false;
+    }
+
+    if (destiny.fulfilled) {
+      ui.notifications.warn(`${this.name}'s Destiny has been fulfilled!`);
+      return false;
+    }
+
+    if (dp.value <= 0) {
+      ui.notifications.warn(`${this.name} has no Destiny Points remaining!`);
+      return false;
+    }
+
+    // Decrement Destiny Points
+    await this.update({ "system.destinyPoints.value": dp.value - 1 });
+
+    // Fire hook for other systems to respond
+    Hooks.callAll("swse.destinyPointSpent", this, type, options);
+
+    // Create chat message
+    this._createDestinyPointMessage(type, options);
+
+    return true;
+  }
+
+  /**
+   * Create a chat message when a Destiny Point is spent
+   * @private
+   */
+  _createDestinyPointMessage(type, options = {}) {
+    const effectLabel = options.effectLabel || type;
+    const reason = options.reason || "used a Destiny Point";
+
+    const message = `
+      <div class="destiny-point-message">
+        <p><strong>${this.name}</strong> ${reason}.</p>
+        <p>Effect: <em>${effectLabel}</em></p>
+        <p>Destiny Points Remaining: ${Math.max(0, this.system.destinyPoints.value)}/${this.system.destinyPoints.max}</p>
+      </div>
+    `;
+
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+      content: message,
+      type: CONST.CHAT_MESSAGE_TYPES.OOC
+    });
+  }
+
 }
