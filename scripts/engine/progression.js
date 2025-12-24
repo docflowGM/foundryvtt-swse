@@ -1252,15 +1252,12 @@ async applyScalingFeature(feature) {
     };
 
     if (progression.species === 'Miraluka' && trainedSkills.includes('useTheForce')) {
-      // Increment feat budget and add Force Training to starting feats
-      const currentFeatBudget = progression.featBudget || 0;
-      const currentStartingFeats = progression.startingFeats || [];
+      // Automatically grant Force Training feat (doesn't consume feat budget)
+      const currentFeats = progression.feats || [];
 
-      updateData["system.progression.featBudget"] = currentFeatBudget + 1;
-
-      // Add Force Training to starting feats if not already there
-      if (!currentStartingFeats.includes('Force Training')) {
-        updateData["system.progression.startingFeats"] = [...currentStartingFeats, 'Force Training'];
+      // Add Force Training if not already there
+      if (!currentFeats.includes('Force Training')) {
+        updateData["system.progression.feats"] = [...currentFeats, 'Force Training'];
       }
 
       swseLogger.log(`Progression: Miraluka has Use the Force trained - granting Force Training bonus feat`);
