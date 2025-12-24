@@ -1,1 +1,101 @@
-<form><p>TODO: Implement presets.hbs template</p></form>
+<div class="houserules-presets">
+  <div class="presets-header">
+    <h2>House Rule Presets</h2>
+    <p class="description">
+      Quick-load bundles of recommended house rule configurations. Select a preset to apply all settings at once.
+    </p>
+  </div>
+
+  <div class="presets-container">
+    <!-- Core Rules Only Preset -->
+    <div class="preset-card {{#if (eq currentPreset "core")}}active{{/if}}">
+      <div class="preset-header">
+        <h3>Core Rules Only</h3>
+        <span class="preset-tag">Standard</span>
+      </div>
+      <div class="preset-content">
+        <p class="preset-description">
+          Vanilla SWSE as written, using official rules with no modifications. Perfect for groups wanting the classic experience.
+        </p>
+        <ul class="preset-highlights">
+          <li><strong>4d6 Drop Lowest</strong> ability scores</li>
+          <li><strong>Standard diagonal</strong> movement (2 squares)</li>
+          <li><strong>Force Points</strong> recover on level up</li>
+          <li><strong>Strict RAW</strong> Dark Side temptation rules</li>
+          <li><strong>Talents</strong> at odd levels only</li>
+        </ul>
+      </div>
+      <button type="button" class="preset-action" data-action="apply-preset" data-preset="core">
+        <i class="fas fa-check"></i> {{#if (eq currentPreset "core")}}Active{{else}}Apply Preset{{/if}}
+      </button>
+    </div>
+
+    <!-- Balanced Campaign Preset -->
+    <div class="preset-card {{#if (eq currentPreset "balanced")}}active{{/if}}">
+      <div class="preset-header">
+        <h3>Balanced Campaign</h3>
+        <span class="preset-tag">Popular</span>
+      </div>
+      <div class="preset-content">
+        <p class="preset-description">
+          Community-recommended balance fixes that smooth out rough edges without changing the core experience. Great for most campaigns.
+        </p>
+        <ul class="preset-highlights">
+          <li><strong>Armored Defense</strong> available to all</li>
+          <li><strong>50% weapon ranges</strong> for tighter combat</li>
+          <li><strong>Improved Second Wind</strong> also heals condition track</li>
+          <li><strong>Lenient</strong> Dark Side temptation rules</li>
+          <li><strong>Retraining</strong> allowed during level up</li>
+        </ul>
+      </div>
+      <button type="button" class="preset-action" data-action="apply-preset" data-preset="balanced">
+        <i class="fas fa-check"></i> {{#if (eq currentPreset "balanced")}}Active{{else}}Apply Preset{{/if}}
+      </button>
+    </div>
+
+    <!-- Heroic Campaign Preset -->
+    <div class="preset-card {{#if (eq currentPreset "heroic")}}active{{/if}}">
+      <div class="preset-header">
+        <h3>Heroic Campaign</h3>
+        <span class="preset-tag">Cinematic</span>
+      </div>
+      <div class="preset-content">
+        <p class="preset-description">
+          High-powered, cinematic Star Wars with increased player agency and heroic moments. For groups wanting a more action-packed experience.
+        </p>
+        <ul class="preset-highlights">
+          <li><strong>Talents every level</strong> for more customization</li>
+          <li><strong>Cross-class skills</strong> trainable</li>
+          <li><strong>Simplified diagonal movement</strong> (1 square)</li>
+          <li><strong>Narrative Dark Side</strong> (GM discretion)</li>
+          <li><strong>Full retraining</strong> allowed</li>
+          <li><strong>Track blaster charges</strong> for detail</li>
+        </ul>
+      </div>
+      <button type="button" class="preset-action" data-action="apply-preset" data-preset="heroic">
+        <i class="fas fa-check"></i> {{#if (eq currentPreset "heroic")}}Active{{else}}Apply Preset{{/if}}
+      </button>
+    </div>
+  </div>
+
+  <div class="presets-utilities">
+    <h3>Preset Management</h3>
+    <p class="description">Export your current settings or import previously saved configurations.</p>
+
+    <div class="utility-buttons">
+      <button type="button" class="utility-btn" data-action="export-settings">
+        <i class="fas fa-download"></i> Export Current Settings
+      </button>
+      <button type="button" class="utility-btn" data-action="import-settings">
+        <i class="fas fa-upload"></i> Import Settings from File
+      </button>
+    </div>
+  </div>
+
+  <div class="presets-notes">
+    <p>
+      <strong>Note:</strong> Applying a preset will override all house rule settings. Make sure to save any custom configuration you want to keep.
+      Custom presets can be created by exporting your current settings, editing the JSON file, and importing it back.
+    </p>
+  </div>
+</div>

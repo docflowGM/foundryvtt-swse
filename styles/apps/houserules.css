@@ -314,3 +314,268 @@
   background: rgba(200, 50, 50, 0.3);
   border-color: #ff4444;
 }
+
+/* Nested form groups */
+.houserules-form .form-group-nested {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-left: 3px solid #4a90e2;
+  border-radius: 4px;
+  margin: 0.75rem 0;
+}
+
+.houserules-form .form-group-nested label {
+  margin-bottom: 0.5rem;
+}
+
+.houserules-form .form-group-nested input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+/* Preset cards styling */
+.houserules-presets {
+  padding: 1.5rem;
+}
+
+.presets-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #4a90e2;
+  padding-bottom: 1rem;
+}
+
+.presets-header h2 {
+  margin: 0 0 0.75rem 0;
+  font-size: 2rem;
+  color: #fff;
+}
+
+.presets-header .description {
+  margin: 0;
+  color: #aaa;
+  font-size: 0.95rem;
+}
+
+.presets-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.preset-card {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.preset-card:hover {
+  border-color: #4a90e2;
+  box-shadow: 0 4px 15px rgba(74, 144, 226, 0.2);
+  transform: translateY(-2px);
+}
+
+.preset-card.active {
+  border-color: #4a90e2;
+  background: rgba(74, 144, 226, 0.15);
+  box-shadow: 0 0 20px rgba(74, 144, 226, 0.3);
+}
+
+.preset-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.preset-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #fff;
+  flex: 1;
+}
+
+.preset-tag {
+  background: #4a90e2;
+  color: #fff;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.preset-content {
+  flex: 1;
+  margin-bottom: 1.5rem;
+}
+
+.preset-description {
+  margin: 0 0 1rem 0;
+  color: #ccc;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.preset-highlights {
+  margin: 0;
+  padding-left: 1.5rem;
+  list-style: none;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.preset-highlights li {
+  margin: 0.5rem 0;
+  padding-left: 1.25rem;
+  position: relative;
+  line-height: 1.3;
+}
+
+.preset-highlights li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #4a90e2;
+  font-weight: bold;
+}
+
+.preset-action {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #4a90e2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.preset-action:hover {
+  background: #6ab0ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+}
+
+.preset-card.active .preset-action {
+  background: #2ecc40;
+  cursor: default;
+}
+
+.preset-card.active .preset-action:hover {
+  background: #2ecc40;
+  transform: none;
+}
+
+/* Preset utilities */
+.presets-utilities {
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  margin-bottom: 1.5rem;
+}
+
+.presets-utilities h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.presets-utilities .description {
+  margin: 0 0 1rem 0;
+  color: #aaa;
+  font-size: 0.95rem;
+}
+
+.utility-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.utility-btn {
+  flex: 1;
+  min-width: 160px;
+  padding: 0.75rem 1rem;
+  background: #555;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.utility-btn:hover {
+  background: #6a6a6a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Preset notes */
+.presets-notes {
+  background: rgba(74, 144, 226, 0.1);
+  border-left: 3px solid #4a90e2;
+  padding: 1rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.presets-notes p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Enhanced notes styling for better readability */
+.houserules-form .form-group .notes {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.75rem;
+  border-left: 2px solid #4a90e2;
+  border-radius: 3px;
+  margin-top: 0.75rem;
+  color: #999;
+}
+
+.houserules-form .form-group .notes strong {
+  color: #bbb;
+}
+
+/* Responsive improvements */
+@media (max-width: 900px) {
+  .presets-container {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .presets-container {
+    grid-template-columns: 1fr;
+  }
+
+  .preset-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .preset-header h3 {
+    margin-bottom: 0.5rem;
+  }
+
+  .utility-buttons {
+    flex-direction: column;
+  }
+
+  .utility-btn {
+    min-width: auto;
+  }
+}

@@ -86,6 +86,8 @@ export class AdvancementMenu extends FormApplication {
       talentEveryLevel: safeGet("talentEveryLevel"),
       crossClassSkillTraining: safeGet("crossClassSkillTraining"),
       retrainingEnabled: safeGet("retrainingEnabled"),
+      skillFocusVariant: safeGet("skillFocusVariant"),
+      skillFocusActivationLevel: safeGet("skillFocusActivationLevel"),
       skillFocusRestriction: safeGet("skillFocusRestriction"),
       isGM: game.user.isGM
     };
@@ -95,10 +97,12 @@ export class AdvancementMenu extends FormApplication {
     await safeSet("talentEveryLevel", _bool(formData.talentEveryLevel));
     await safeSet("crossClassSkillTraining", _bool(formData.crossClassSkillTraining));
     await safeSet("retrainingEnabled", _bool(formData.retrainingEnabled));
+    await safeSet("skillFocusVariant", formData.skillFocusVariant);
+    await safeSet("skillFocusActivationLevel", _num(formData.skillFocusActivationLevel));
 
     const restriction = {
       useTheForce: _num(formData["skillFocusRestriction.useTheForce"]),
-      scaling: formData["skillFocusRestriction.scaling"]
+      scaling: _bool(formData["skillFocusRestriction.scaling"])
     };
 
     await safeSet("skillFocusRestriction", restriction);
@@ -177,6 +181,7 @@ export class ForceMenu extends FormApplication {
     return {
       forcePointRecovery: safeGet("forcePointRecovery"),
       darkSideTemptation: safeGet("darkSideTemptation"),
+      darkSidePowerIncreaseScore: safeGet("darkSidePowerIncreaseScore"),
       isGM: game.user.isGM
     };
   }
@@ -184,6 +189,7 @@ export class ForceMenu extends FormApplication {
   async _updateObject(event, formData) {
     await safeSet("forcePointRecovery", formData.forcePointRecovery);
     await safeSet("darkSideTemptation", formData.darkSideTemptation);
+    await safeSet("darkSidePowerIncreaseScore", _bool(formData.darkSidePowerIncreaseScore));
     ui.notifications.info("Force & Destiny rules updated");
   }
 }
