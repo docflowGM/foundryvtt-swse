@@ -5,6 +5,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { getTalentTrees, getTalentTreeName } from './chargen-property-accessor.js';
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
+import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 
 /**
  * Handle feat selection
@@ -270,27 +271,83 @@ export async function _onSelectTalent(event) {
     return;
   }
 
-  // Check for duplicates in characterData
-  const alreadySelected = this.characterData.talents.find(t => t.name === tal.name || t._id === tal._id);
-  if (alreadySelected) {
-    ui.notifications.warn(`You've already selected "${tal.name}"!`);
-    return;
-  }
+  // Check if this is the combined Block & Deflect talent
+  if (HouseRuleTalentCombination.isBlockDeflectCombined(tal)) {
+    // Get the actual talents to grant (Block and Deflect)
+    const talentNamesToGrant = HouseRuleTalentCombination.getActualTalentsToGrant(tal.name);
+    const talentsToAdd = [];
 
-  // If leveling up, also check existing actor items
-  if (this.actor) {
-    const existsOnActor = this.actor.items.some(item =>
-      item.type === 'talent' && (item.name === tal.name || item.id === tal._id)
-    );
-    if (existsOnActor) {
-      ui.notifications.warn(`"${tal.name}" is already on your character sheet!`);
+    // Find each talent and add it
+    for (const talentName of talentNamesToGrant) {
+      // Need to load the actual talent from the original data
+      // Since we processed the talents, we need to find the real ones
+      let actualTalent = null;
+
+      if (talentName === "Block") {
+        actualTalent = await game.packs.get("foundryvtt-foundryvtt-swse.talents")?.getDocuments().then(docs => docs.find(d => d.name === "Block"));
+      } else if (talentName === "Deflect") {
+        actualTalent = await game.packs.get("foundryvtt-foundryvtt-swse.talents")?.getDocuments().then(docs => docs.find(d => d.name === "Deflect"));
+      }
+
+      if (actualTalent) {
+        talentsToAdd.push(actualTalent.toObject());
+      }
+    }
+
+    if (talentsToAdd.length === 0) {
+      ui.notifications.error("Could not find Block or Deflect talents!");
       return;
     }
-  }
 
-  // DEFENSIVE CLONE: Prevent mutation of cached compendium data
-  this.characterData.talents.push(foundry.utils.deepClone(tal));
-  ui.notifications.info(`Selected talent: ${tal.name}`);
+    // Check for duplicates for each talent
+    for (const talentToAdd of talentsToAdd) {
+      const alreadySelected = this.characterData.talents.find(t => t.name === talentToAdd.name || t._id === talentToAdd._id);
+      if (alreadySelected) {
+        ui.notifications.warn(`You've already selected "${talentToAdd.name}"!`);
+        return;
+      }
+
+      if (this.actor) {
+        const existsOnActor = this.actor.items.some(item =>
+          item.type === 'talent' && (item.name === talentToAdd.name || item.id === talentToAdd._id)
+        );
+        if (existsOnActor) {
+          ui.notifications.warn(`"${talentToAdd.name}" is already on your character sheet!`);
+          return;
+        }
+      }
+    }
+
+    // Add both talents
+    for (const talentToAdd of talentsToAdd) {
+      this.characterData.talents.push(foundry.utils.deepClone(talentToAdd));
+    }
+
+    ui.notifications.info(`Selected combined talent: Block & Deflect (grants both Block and Deflect)`);
+  } else {
+    // Standard talent selection
+    // Check for duplicates in characterData
+    const alreadySelected = this.characterData.talents.find(t => t.name === tal.name || t._id === tal._id);
+    if (alreadySelected) {
+      ui.notifications.warn(`You've already selected "${tal.name}"!`);
+      return;
+    }
+
+    // If leveling up, also check existing actor items
+    if (this.actor) {
+      const existsOnActor = this.actor.items.some(item =>
+        item.type === 'talent' && (item.name === tal.name || item.id === tal._id)
+      );
+      if (existsOnActor) {
+        ui.notifications.warn(`"${tal.name}" is already on your character sheet!`);
+        return;
+      }
+    }
+
+    // DEFENSIVE CLONE: Prevent mutation of cached compendium data
+    this.characterData.talents.push(foundry.utils.deepClone(tal));
+    ui.notifications.info(`Selected talent: ${tal.name}`);
+  }
 
   // Clear selected tree and advance to next step
   this.selectedTalentTree = null;

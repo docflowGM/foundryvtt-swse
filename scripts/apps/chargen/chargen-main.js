@@ -6,6 +6,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { PrerequisiteValidator } from '../../utils/prerequisite-validator.js';
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from './chargen-property-accessor.js';
+import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 
 // Import all module functions
 import * as SharedModule from './chargen-shared.js';
@@ -191,6 +192,11 @@ export default class CharacterGenerator extends Application {
       // Use cached data if available, otherwise load
       const cachedPacks = await ChargenDataCache.getData();
       this._packs = foundry.utils.deepClone(cachedPacks);
+
+      // Apply Block/Deflect combination to talents if house rule enabled
+      if (this._packs.talents) {
+        this._packs.talents = HouseRuleTalentCombination.processBlockDeflectCombination(this._packs.talents);
+      }
 
       // Validate critical packs
       const criticalPacks = ['species', 'classes', 'feats'];
