@@ -86,6 +86,9 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     const actor = this.actor;
     const system = actor.system;
 
+    // Add GM flag for template rendering
+    context.isGM = game.user.isGM;
+
     // Inject skill actions
     context.skillActions = await SkillSystem.buildSkillActions(this.actor);
 
@@ -248,6 +251,22 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._toggleSkillActionCard(card);
     });
 
+    // Destiny System Event Listeners
+    html.find(".fulfill-destiny-btn").click(ev => {
+      ev.preventDefault();
+      this._onFulfillDestiny();
+    });
+
+    html.find(".reset-destiny-btn").click(ev => {
+      ev.preventDefault();
+      this._onResetDestiny();
+    });
+
+    html.find(".enable-destiny-btn").click(ev => {
+      ev.preventDefault();
+      this._onEnableDestiny();
+    });
+
     SWSELogger.log("SWSE | Character sheet listeners activated (full v13 routing)");
   }
 
@@ -394,7 +413,26 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
 
-  
+  // ----------------------------------------------------------
+  // E.6 Destiny Management
+  // ----------------------------------------------------------
+
+  async _onEnableDestiny() {
+    await this.actor.update({ "system.destiny.hasDestiny": true });
+    ui.notifications.info("Destiny enabled for this character.");
+  }
+
+  async _onFulfillDestiny() {
+    await this.actor.update({ "system.destiny.fulfilled": true });
+    ui.notifications.info("Destiny fulfilled!");
+  }
+
+  async _onResetDestiny() {
+    await this.actor.update({ "system.destiny.fulfilled": false });
+    ui.notifications.info("Destiny reset to active.");
+  }
+
+
   // ----------------------------------------------------------
   // F. Roll Engine (v13 Modernized)
   // ----------------------------------------------------------

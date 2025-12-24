@@ -162,6 +162,39 @@
           </button>
         </div>
       </div>
+
+      {{!-- Destiny Points --}}
+      {{#if system.destiny.hasDestiny}}
+      <div class="resource destiny-points flex1">
+        <label>Destiny Points</label>
+
+        <div class="resource-content flexrow">
+          <input type="text"
+                 name="system.destinyPoints.value"
+                 value="{{system.destinyPoints.value}}"
+                 data-dtype="Number"
+                 class="resource-input"
+                 title="Current Destiny Points"
+                 {{#if system.destiny.fulfilled}}disabled{{/if}}/>
+
+          <span class="separator">/</span>
+
+          <span class="resource-max" title="Maximum Destiny Points">{{system.destinyPoints.max}}</span>
+        </div>
+
+        <div class="destiny-point-status">
+          {{#if system.destiny.fulfilled}}
+          <span class="destiny-fulfilled" title="Destiny has been fulfilled">
+            <i class="fas fa-crown" aria-hidden="true"></i> Fulfilled
+          </span>
+          {{else}}
+          <span class="destiny-active" title="Destiny is active">
+            <i class="fas fa-star" aria-hidden="true"></i> Active
+          </span>
+          {{/if}}
+        </div>
+      </div>
+      {{/if}}
     </div>
 
   </div>

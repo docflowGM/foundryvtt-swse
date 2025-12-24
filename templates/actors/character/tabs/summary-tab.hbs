@@ -92,6 +92,92 @@
  </div>
  </section>
 
+ {{!-- Destiny Section --}}
+ <section class="destiny-section">
+ <h3 class="section-header"><i class="fas fa-star"></i> Destiny</h3>
+ <div class="destiny-content">
+ {{#if system.destiny.hasDestiny}}
+ <div class="destiny-grid">
+ {{!-- Status --}}
+ <div class="destiny-status">
+ <label>Status:</label>
+ <div class="status-display">
+ {{#if system.destiny.fulfilled}}
+ <span class="status-fulfilled">
+ <i class="fas fa-crown"></i> Fulfilled
+ </span>
+ {{else}}
+ <span class="status-active">
+ <i class="fas fa-star"></i> Active
+ </span>
+ {{/if}}
+ </div>
+ </div>
+
+ {{!-- Type --}}
+ {{#if system.destiny.type}}
+ <div class="destiny-type">
+ <label>Type:</label>
+ <input type="text"
+ name="system.destiny.type"
+ value="{{system.destiny.type}}"
+ placeholder="Destiny type (e.g., Hero, Villain)"
+ class="destiny-type-input"/>
+ </div>
+ {{else}}
+ <div class="destiny-type">
+ <label>Type:</label>
+ <input type="text"
+ name="system.destiny.type"
+ value=""
+ placeholder="Destiny type (e.g., Hero, Villain)"
+ class="destiny-type-input"/>
+ </div>
+ {{/if}}
+
+ {{!-- Secret Flag --}}
+ <div class="destiny-secret">
+ <label class="checkbox-label">
+ <input type="checkbox"
+ name="system.destiny.secret"
+ {{checked system.destiny.secret}}
+ title="Mark this Destiny as secret (hidden from players)"/>
+ <i class="fas fa-lock"></i>
+ <span>Secret Destiny</span>
+ </label>
+ </div>
+
+ {{!-- Fulfill Button (GM only) --}}
+ {{#if isGM}}
+ <div class="destiny-controls">
+ {{#if (not system.destiny.fulfilled)}}
+ <button class="fulfill-destiny-btn" type="button" title="Mark this Destiny as fulfilled">
+ <i class="fas fa-crown"></i> Fulfill Destiny
+ </button>
+ {{else}}
+ <button class="reset-destiny-btn" type="button" title="Reset this Destiny to active">
+ <i class="fas fa-redo"></i> Reset Destiny
+ </button>
+ {{/if}}
+ </div>
+ {{/if}}
+ </div>
+ {{else}}
+ <div class="no-destiny">
+ <p class="hint-text">
+ <i class="fas fa-info-circle"></i>
+ This character does not have a Destiny.
+ </p>
+ {{#if isGM}}
+ <button class="enable-destiny-btn" type="button" title="Enable Destiny for this character">
+ <i class="fas fa-plus"></i> Enable Destiny
+ </button>
+ {{/if}}
+ </div>
+ {{/if}}
+ </div>
+ </section>
+
  {{!-- Character Traits --}}
  <section class="character-traits">
  <h3 class="section-header">Character Traits</h3>
