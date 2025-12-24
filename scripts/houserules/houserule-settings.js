@@ -668,5 +668,545 @@ export function registerHouseruleSettings() {
     default: "standard"
   });
 
+  /* -------------------------------------------------------------------------- */
+  /*                              GRAPPLE RULES                                 */
+  /* -------------------------------------------------------------------------- */
+
+  register("grappleEnabled", {
+    name: "Enable Grapple",
+    hint: "Enables specialized grapple mechanics in combat.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("grappleVariant", {
+    name: "Grapple Variant",
+    hint: "Choose grapple rule variant.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      standard: "Standard SWSE",
+      simplified: "Simplified",
+      opposed: "Opposed Check"
+    },
+    default: "standard"
+  });
+
+  register("grappleDCBonus", {
+    name: "Grapple DC Bonus per BAB",
+    hint: "DC increases by this amount per opponent BAB point.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 1
+  });
+
+  /* -------------------------------------------------------------------------- */
+  /*                        RECOVERY & HEALING RULES                            */
+  /* -------------------------------------------------------------------------- */
+
+  register("recoveryEnabled", {
+    name: "Enable Recovery & Healing",
+    hint: "Enables specialized recovery mechanics during rest.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("recoveryHPType", {
+    name: "Recovery HP Amount",
+    hint: "How much HP is recovered per rest period.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      standard: "Standard (Class Hit Die)",
+      slow: "Slow (Half Hit Die)",
+      fast: "Fast (Full Hit Die + CON)",
+      custom: "Custom Amount"
+    },
+    default: "standard"
+  });
+
+  register("customRecoveryHP", {
+    name: "Custom Recovery HP",
+    hint: "Fixed HP recovered per rest (only if Custom Amount selected).",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 5
+  });
+
+  register("recoveryVitality", {
+    name: "Recover Vitality Points",
+    hint: "Also recover Vitality Points on rest.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("recoveryVitalityAmount", {
+    name: "Vitality Recovery Amount",
+    hint: "How many Vitality Points recovered per rest.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 5
+  });
+
+  register("recoveryTiming", {
+    name: "Recovery Timing",
+    hint: "When recovery applies during rest periods.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      afterRest: "After Extended Rest Only",
+      perDay: "Once Per Day",
+      both: "After Rest + Additional Daily"
+    },
+    default: "afterRest"
+  });
+
+  register("recoveryRequiresFullRest", {
+    name: "Recovery Requires Full Rest",
+    hint: "Must be a full night rest (8 hours) instead of short rest.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  /* -------------------------------------------------------------------------- */
+  /*                          CONDITION TRACK RULES                             */
+  /* -------------------------------------------------------------------------- */
+
+  register("conditionTrackEnabled", {
+    name: "Enable Enhanced Condition Track",
+    hint: "Enables advanced condition track mechanics.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("conditionTrackStartDamage", {
+    name: "Condition Track Start Damage",
+    hint: "Damage threshold before condition track penalties apply.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 0
+  });
+
+  register("conditionTrackProgression", {
+    name: "Condition Track Step Damage",
+    hint: "HP damage needed to advance one condition track step.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 5
+  });
+
+  register("conditionTrackVariant", {
+    name: "Condition Track Variant",
+    hint: "Determines condition track rule set.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      swseStandard: "SWSE Standard (Default)",
+      simplified: "Simplified 4-Step",
+      criticalConditions: "Critical Conditions Enhanced"
+    },
+    default: "swseStandard"
+  });
+
+  register("conditionTrackAutoApply", {
+    name: "Auto-Apply Condition Effects",
+    hint: "Automatically apply status effects when track advances.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  /* -------------------------------------------------------------------------- */
+  /*                              FLANKING RULES                                */
+  /* -------------------------------------------------------------------------- */
+
+  register("flankingEnabled", {
+    name: "Enable Flanking",
+    hint: "Enables flanking bonuses/penalties in combat.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("flankingBonus", {
+    name: "Flanking Bonus Type",
+    hint: "How much benefit flanking provides.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      plusTwo: "+2 Attack Bonus",
+      plusThree: "+3 Attack Bonus",
+      halfDamageReduction: "Half Damage Reduction",
+      acBonus: "+1 AC Penalty"
+    },
+    default: "plusTwo"
+  });
+
+  register("flankingRequiresConsciousness", {
+    name: "Flanking Requires Consciousness",
+    hint: "Flanking ally must be conscious/aware.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register("flankingLargeCreatures", {
+    name: "Flanking Large Creatures",
+    hint: "Can large creatures be flanked?",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      all: "All Creatures",
+      sameSizeOnly: "Same Size Only",
+      mediumOrSmaller: "Medium or Smaller"
+    },
+    default: "all"
+  });
+
+  register("flankingDiagonalCounts", {
+    name: "Diagonal Adjacency Counts",
+    hint: "Can diagonally adjacent allies provide flanking?",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  /* -------------------------------------------------------------------------- */
+  /*                        TRAINING-BASED SKILL ADVANCEMENT                    */
+  /* -------------------------------------------------------------------------- */
+
+  register("skillTrainingEnabled", {
+    name: "Enable Training-Based Skill Advancement",
+    hint: "Allows skills to improve through training points.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("trainingPointsPerLevel", {
+    name: "Training Points Per Level",
+    hint: "How many training points characters gain each level.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      two: "2 Points",
+      three: "3 Points",
+      standard: "Standard (5 + INT mod)"
+    },
+    default: "three"
+  });
+
+  register("trainingPointsPerRest", {
+    name: "Training Points Per Rest",
+    hint: "Bonus training points awarded for downtime/extended rest.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 0
+  });
+
+  register("skillTrainingCap", {
+    name: "Training Cap Per Skill",
+    hint: "Maximum training points that can be spent on one skill.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      none: "Unlimited",
+      classSkillOnly: "Class Skills Only",
+      maxLevel: "Max Equal to Character Level"
+    },
+    default: "none"
+  });
+
+  register("trainingCostScale", {
+    name: "Training Cost Scale",
+    hint: "How expensive training points are to spend.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      linear: "Linear (1 point = +1)",
+      exponential: "Exponential (Costs increase)",
+      byDC: "By Skill DC"
+    },
+    default: "linear"
+  });
+
+  register("trainingRequiresTrainer", {
+    name: "Training Requires Trainer",
+    hint: "Characters need an NPC trainer to use training points.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  /* -------------------------------------------------------------------------- */
+  /*                             STATUS EFFECTS RULES                           */
+  /* -------------------------------------------------------------------------- */
+
+  register("statusEffectsEnabled", {
+    name: "Enable Status Effects",
+    hint: "Enables condition/status effect tracking system.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("statusEffectsList", {
+    name: "Status Effects List",
+    hint: "Which status effects are available in your campaign.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      combatConditions: "Combat Conditions",
+      expanded: "Expanded Status Effects",
+      custom: "Custom List"
+    },
+    default: "combatConditions"
+  });
+
+  register("autoApplyFromConditionTrack", {
+    name: "Auto-Apply from Condition Track",
+    hint: "Condition track automatically applies matching status effects.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("statusEffectDurationTracking", {
+    name: "Status Effect Duration Tracking",
+    hint: "How long status effects last before removal.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      rounds: "Rounds (Combat)",
+      scenes: "Scenes",
+      manual: "Manual Removal Only"
+    },
+    default: "manual"
+  });
+
+  register("autoRemoveOnRest", {
+    name: "Auto-Remove Effects on Rest",
+    hint: "Remove temporary status effects when characters rest.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  /* -------------------------------------------------------------------------- */
+  /*                        HEALING SKILL INTEGRATION                           */
+  /* -------------------------------------------------------------------------- */
+
+  register("healingSkillEnabled", {
+    name: "Enable Healing Skill Integration",
+    hint: "Enables Treat Injury skill to provide direct HP recovery.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("firstAidEnabled", {
+    name: "Allow First Aid (DC 15)",
+    hint: "Enables First Aid as a Full-Round Action (requires Medpac).",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register("firstAidHealingType", {
+    name: "First Aid Healing Formula",
+    hint: "How much HP First Aid restores.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      levelOnly: "Character Level",
+      levelPlusDC: "Character Level + (Check - DC)",
+      fixed: "Fixed Amount"
+    },
+    default: "levelPlusDC"
+  });
+
+  register("firstAidFixedAmount", {
+    name: "First Aid Fixed Healing",
+    hint: "HP restored if Fixed Amount is selected.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 10
+  });
+
+  register("longTermCareEnabled", {
+    name: "Allow Long-Term Care",
+    hint: "8-hour healing care (8 hours per day max).",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register("longTermCareHealing", {
+    name: "Long-Term Care Healing",
+    hint: "How much HP Long-Term Care heals.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      characterLevel: "Character Level",
+      conBonus: "CON Bonus per Level",
+      fixed: "Fixed Amount"
+    },
+    default: "characterLevel"
+  });
+
+  register("longTermCareFixedAmount", {
+    name: "Long-Term Care Fixed Healing",
+    hint: "HP healed if Fixed Amount is selected.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 5
+  });
+
+  register("longTermCareMultipleTargets", {
+    name: "Long-Term Care Max Simultaneous Targets",
+    hint: "How many creatures can receive Long-Term Care simultaneously.",
+    scope: "world",
+    config: true,
+    type: Number,
+    choices: numericChoices({
+      1: "1 (Untrained Only)",
+      6: "6 (Trained)"
+    }),
+    default: 1
+  });
+
+  register("performSurgeryEnabled", {
+    name: "Allow Perform Surgery (DC 20)",
+    hint: "Requires 1 hour, Surgery Kit, and trained Treat Injury.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register("performSurgeryHealing", {
+    name: "Surgery Healing Formula",
+    hint: "How much damage surgery removes.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      conBonus: "CON Bonus × Level",
+      fixed: "Fixed Amount",
+      automatic: "Fully Heal"
+    },
+    default: "conBonus"
+  });
+
+  register("performSurgeryFixedAmount", {
+    name: "Surgery Fixed Healing",
+    hint: "HP healed by surgery if Fixed Amount is selected.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 20
+  });
+
+  register("surgeryFailureDamage", {
+    name: "Damage on Surgery Failure",
+    hint: "Creature takes damage equal to Damage Threshold on failed check.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register("revivifyEnabled", {
+    name: "Allow Revivify (DC 25)",
+    hint: "Trained Only - revive dying creature within 1 round.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register("revivifyWindow", {
+    name: "Revivify Time Window",
+    hint: "How many rounds after death can Revivify be attempted.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 1
+  });
+
+  register("criticalCareEnabled", {
+    name: "Allow Critical Care (DC 20)",
+    hint: "Multiple Medpacs in 24 hours (trained, penalties apply).",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("criticalCareHealing", {
+    name: "Critical Care Healing Formula",
+    hint: "How much Critical Care heals.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      levelPlusDC: "Level + (Check - DC)",
+      fixed: "Fixed Amount"
+    },
+    default: "levelPlusDC"
+  });
+
+  register("criticalCareFixedAmount", {
+    name: "Critical Care Fixed Healing",
+    hint: "HP healed if Fixed Amount is selected.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 15
+  });
+
   SWSELogger.info("SWSE | Houserule settings registered successfully.");
 }

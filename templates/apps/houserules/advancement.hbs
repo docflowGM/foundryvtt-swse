@@ -3,6 +3,7 @@
     <a class="item active" data-tab="levelup">Level Up</a>
     <a class="item" data-tab="skills">Skills</a>
     <a class="item" data-tab="talents">Talents</a>
+    <a class="item" data-tab="training">Skill Training</a>
     <a class="item" data-tab="retraining">Retraining</a>
   </nav>
 
@@ -80,6 +81,79 @@
           </p>
         </div>
       </div>
+    </div>
+
+    <div class="tab" data-group="primary-tabs" data-tab="training">
+      <div class="form-group">
+        <input type="checkbox" name="skillTrainingEnabled" {{#if skillTrainingEnabled}}checked{{/if}}/>
+        <label>Enable Training-Based Skill Advancement</label>
+        <p class="notes">
+          When enabled, characters gain training points that can be spent to improve skills independently of class levels.<br>
+          This allows for custom skill progression through practice and downtime training.
+        </p>
+      </div>
+
+      {{#if skillTrainingEnabled}}
+      <div class="form-group">
+        <label>Training Points Per Level</label>
+        <select name="trainingPointsPerLevel">
+          <option value="two" {{#if (eq trainingPointsPerLevel "two")}}selected{{/if}}>
+            2 Points
+          </option>
+          <option value="three" {{#if (eq trainingPointsPerLevel "three")}}selected{{/if}}>
+            3 Points
+          </option>
+          <option value="standard" {{#if (eq trainingPointsPerLevel "standard")}}selected{{/if}}>
+            Standard (5 + INT modifier)
+          </option>
+        </select>
+        <p class="notes">How many training points characters gain each character level.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Bonus Training Points Per Rest</label>
+        <input type="number" name="trainingPointsPerRest" value="{{trainingPointsPerRest}}" min="0" max="10"/>
+        <p class="notes">Extra training points awarded for downtime/extended rest periods (0 = disabled).</p>
+      </div>
+
+      <div class="form-group">
+        <label>Training Cap Per Skill</label>
+        <select name="skillTrainingCap">
+          <option value="none" {{#if (eq skillTrainingCap "none")}}selected{{/if}}>
+            Unlimited
+          </option>
+          <option value="classSkillOnly" {{#if (eq skillTrainingCap "classSkillOnly")}}selected{{/if}}>
+            Class Skills Only
+          </option>
+          <option value="maxLevel" {{#if (eq skillTrainingCap "maxLevel")}}selected{{/if}}>
+            Max Equal to Character Level
+          </option>
+        </select>
+        <p class="notes">Restrictions on how many training points can be spent on a single skill.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Training Cost Scale</label>
+        <select name="trainingCostScale">
+          <option value="linear" {{#if (eq trainingCostScale "linear")}}selected{{/if}}>
+            Linear (1 point = +1 bonus)
+          </option>
+          <option value="exponential" {{#if (eq trainingCostScale "exponential")}}selected{{/if}}>
+            Exponential (Costs increase)
+          </option>
+          <option value="byDC" {{#if (eq trainingCostScale "byDC")}}selected{{/if}}>
+            By Skill DC
+          </option>
+        </select>
+        <p class="notes">Determines how expensive training points are to spend.</p>
+      </div>
+
+      <div class="form-group">
+        <input type="checkbox" name="trainingRequiresTrainer" {{#if trainingRequiresTrainer}}checked{{/if}}/>
+        <label>Training Requires NPC Trainer</label>
+        <p class="notes">Characters must find an NPC trainer to use their training points.</p>
+      </div>
+      {{/if}}
     </div>
 
     <div class="tab" data-group="primary-tabs" data-tab="retraining">

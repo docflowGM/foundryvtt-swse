@@ -4,6 +4,11 @@
     <a class="item" data-tab="damage">Damage</a>
     <a class="item" data-tab="movement">Movement</a>
     <a class="item" data-tab="feats">Combat Feats</a>
+    <a class="item" data-tab="grapple">Grapple</a>
+    <a class="item" data-tab="recovery">Recovery</a>
+    <a class="item" data-tab="track">Condition Track</a>
+    <a class="item" data-tab="flanking">Flanking</a>
+    <a class="item" data-tab="status">Status Effects</a>
   </nav>
   
   <section class="content">
@@ -169,8 +174,263 @@
         </p>
       </div>
     </div>
+
+    <div class="tab" data-group="primary-tabs" data-tab="grapple">
+      <div class="form-group">
+        <input type="checkbox" name="grappleEnabled" {{#if grappleEnabled}}checked{{/if}}/>
+        <label>Enable Grapple Mechanics</label>
+        <p class="notes">Enables specialized grapple combat actions and checks.</p>
+      </div>
+
+      {{#if grappleEnabled}}
+      <div class="form-group">
+        <label>Grapple Variant</label>
+        <select name="grappleVariant">
+          <option value="standard" {{#if (eq grappleVariant "standard")}}selected{{/if}}>
+            Standard SWSE
+          </option>
+          <option value="simplified" {{#if (eq grappleVariant "simplified")}}selected{{/if}}>
+            Simplified
+          </option>
+          <option value="opposed" {{#if (eq grappleVariant "opposed")}}selected{{/if}}>
+            Opposed Check
+          </option>
+        </select>
+        <p class="notes">Choose grapple rule variant for your campaign.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Grapple DC Bonus per BAB</label>
+        <input type="number" name="grappleDCBonus" value="{{grappleDCBonus}}" min="0" max="5" step="1"/>
+        <p class="notes">DC increases by this amount for each opponent BAB point above +0.</p>
+      </div>
+      {{/if}}
+    </div>
+
+    <div class="tab" data-group="primary-tabs" data-tab="recovery">
+      <div class="form-group">
+        <input type="checkbox" name="recoveryEnabled" {{#if recoveryEnabled}}checked{{/if}}/>
+        <label>Enable Recovery & Healing</label>
+        <p class="notes">Enables automatic HP/Vitality recovery during rest periods.</p>
+      </div>
+
+      {{#if recoveryEnabled}}
+      <div class="form-group">
+        <label>Recovery HP Amount</label>
+        <select name="recoveryHPType">
+          <option value="standard" {{#if (eq recoveryHPType "standard")}}selected{{/if}}>
+            Standard (Class Hit Die)
+          </option>
+          <option value="slow" {{#if (eq recoveryHPType "slow")}}selected{{/if}}>
+            Slow (Half Hit Die)
+          </option>
+          <option value="fast" {{#if (eq recoveryHPType "fast")}}selected{{/if}}>
+            Fast (Full Hit Die + CON)
+          </option>
+          <option value="custom" {{#if (eq recoveryHPType "custom")}}selected{{/if}}>
+            Custom Amount
+          </option>
+        </select>
+      </div>
+
+      {{#if (eq recoveryHPType "custom")}}
+      <div class="form-group">
+        <label>Custom Recovery HP</label>
+        <input type="number" name="customRecoveryHP" value="{{customRecoveryHP}}" min="1" max="50"/>
+        <p class="notes">Fixed HP recovered per rest period.</p>
+      </div>
+      {{/if}}
+
+      <div class="form-group">
+        <input type="checkbox" name="recoveryVitality" {{#if recoveryVitality}}checked{{/if}}/>
+        <label>Also recover Vitality Points</label>
+      </div>
+
+      {{#if recoveryVitality}}
+      <div class="form-group">
+        <label>Vitality Recovery Amount</label>
+        <input type="number" name="recoveryVitalityAmount" value="{{recoveryVitalityAmount}}" min="1" max="50"/>
+        <p class="notes">Vitality Points recovered per rest period.</p>
+      </div>
+      {{/if}}
+
+      <div class="form-group">
+        <label>Recovery Timing</label>
+        <select name="recoveryTiming">
+          <option value="afterRest" {{#if (eq recoveryTiming "afterRest")}}selected{{/if}}>
+            After Extended Rest Only
+          </option>
+          <option value="perDay" {{#if (eq recoveryTiming "perDay")}}selected{{/if}}>
+            Once Per Day
+          </option>
+          <option value="both" {{#if (eq recoveryTiming "both")}}selected{{/if}}>
+            After Rest + Additional Daily
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <input type="checkbox" name="recoveryRequiresFullRest" {{#if recoveryRequiresFullRest}}checked{{/if}}/>
+        <label>Recovery Requires Full Rest (8 hours)</label>
+        <p class="notes">If unchecked, short rests also trigger recovery.</p>
+      </div>
+      {{/if}}
+    </div>
+
+    <div class="tab" data-group="primary-tabs" data-tab="track">
+      <div class="form-group">
+        <input type="checkbox" name="conditionTrackEnabled" {{#if conditionTrackEnabled}}checked{{/if}}/>
+        <label>Enable Enhanced Condition Track</label>
+        <p class="notes">Enables advanced condition track mechanics and status tracking.</p>
+      </div>
+
+      {{#if conditionTrackEnabled}}
+      <div class="form-group">
+        <label>Condition Track Variant</label>
+        <select name="conditionTrackVariant">
+          <option value="swseStandard" {{#if (eq conditionTrackVariant "swseStandard")}}selected{{/if}}>
+            SWSE Standard (Default)
+          </option>
+          <option value="simplified" {{#if (eq conditionTrackVariant "simplified")}}selected{{/if}}>
+            Simplified 4-Step
+          </option>
+          <option value="criticalConditions" {{#if (eq conditionTrackVariant "criticalConditions")}}selected{{/if}}>
+            Critical Conditions Enhanced
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Start Damage Threshold</label>
+        <input type="number" name="conditionTrackStartDamage" value="{{conditionTrackStartDamage}}" min="0" max="20"/>
+        <p class="notes">Damage before condition track penalties apply.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Damage Per Track Step</label>
+        <input type="number" name="conditionTrackProgression" value="{{conditionTrackProgression}}" min="1" max="20"/>
+        <p class="notes">HP damage required to advance one condition track step.</p>
+      </div>
+
+      <div class="form-group">
+        <input type="checkbox" name="conditionTrackAutoApply" {{#if conditionTrackAutoApply}}checked{{/if}}/>
+        <label>Auto-Apply Condition Effects</label>
+        <p class="notes">Automatically apply status effects when condition track advances.</p>
+      </div>
+      {{/if}}
+    </div>
+
+    <div class="tab" data-group="primary-tabs" data-tab="flanking">
+      <div class="form-group">
+        <input type="checkbox" name="flankingEnabled" {{#if flankingEnabled}}checked{{/if}}/>
+        <label>Enable Flanking</label>
+        <p class="notes">Enables flanking bonuses/penalties in tactical combat.</p>
+      </div>
+
+      {{#if flankingEnabled}}
+      <div class="form-group">
+        <label>Flanking Bonus Type</label>
+        <select name="flankingBonus">
+          <option value="plusTwo" {{#if (eq flankingBonus "plusTwo")}}selected{{/if}}>
+            +2 Attack Bonus
+          </option>
+          <option value="plusThree" {{#if (eq flankingBonus "plusThree")}}selected{{/if}}>
+            +3 Attack Bonus
+          </option>
+          <option value="halfDamageReduction" {{#if (eq flankingBonus "halfDamageReduction")}}selected{{/if}}>
+            Half Damage Reduction
+          </option>
+          <option value="acBonus" {{#if (eq flankingBonus "acBonus")}}selected{{/if}}>
+            +1 AC Penalty
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <input type="checkbox" name="flankingRequiresConsciousness" {{#if flankingRequiresConsciousness}}checked{{/if}}/>
+        <label>Flanking Requires Consciousness</label>
+        <p class="notes">Flanking ally must be conscious and aware.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Flanking Large Creatures</label>
+        <select name="flankingLargeCreatures">
+          <option value="all" {{#if (eq flankingLargeCreatures "all")}}selected{{/if}}>
+            All Creatures
+          </option>
+          <option value="sameSizeOnly" {{#if (eq flankingLargeCreatures "sameSizeOnly")}}selected{{/if}}>
+            Same Size Only
+          </option>
+          <option value="mediumOrSmaller" {{#if (eq flankingLargeCreatures "mediumOrSmaller")}}selected{{/if}}>
+            Medium or Smaller
+          </option>
+        </select>
+        <p class="notes">Determines size restrictions for flanking.</p>
+      </div>
+
+      <div class="form-group">
+        <input type="checkbox" name="flankingDiagonalCounts" {{#if flankingDiagonalCounts}}checked{{/if}}/>
+        <label>Diagonal Adjacency Counts</label>
+        <p class="notes">Can diagonally adjacent allies provide flanking?</p>
+      </div>
+      {{/if}}
+    </div>
+
+    <div class="tab" data-group="primary-tabs" data-tab="status">
+      <div class="form-group">
+        <input type="checkbox" name="statusEffectsEnabled" {{#if statusEffectsEnabled}}checked{{/if}}/>
+        <label>Enable Status Effects</label>
+        <p class="notes">Enables condition and status effect tracking system.</p>
+      </div>
+
+      {{#if statusEffectsEnabled}}
+      <div class="form-group">
+        <label>Status Effects List</label>
+        <select name="statusEffectsList">
+          <option value="combatConditions" {{#if (eq statusEffectsList "combatConditions")}}selected{{/if}}>
+            Combat Conditions
+          </option>
+          <option value="expanded" {{#if (eq statusEffectsList "expanded")}}selected{{/if}}>
+            Expanded Status Effects
+          </option>
+          <option value="custom" {{#if (eq statusEffectsList "custom")}}selected{{/if}}>
+            Custom List
+          </option>
+        </select>
+        <p class="notes">Choose which status effects are available in your campaign.</p>
+      </div>
+
+      <div class="form-group">
+        <input type="checkbox" name="autoApplyFromConditionTrack" {{#if autoApplyFromConditionTrack}}checked{{/if}}/>
+        <label>Auto-Apply from Condition Track</label>
+        <p class="notes">Condition track automatically applies matching status effects.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Duration Tracking</label>
+        <select name="statusEffectDurationTracking">
+          <option value="rounds" {{#if (eq statusEffectDurationTracking "rounds")}}selected{{/if}}>
+            Rounds (Combat)
+          </option>
+          <option value="scenes" {{#if (eq statusEffectDurationTracking "scenes")}}selected{{/if}}>
+            Scenes
+          </option>
+          <option value="manual" {{#if (eq statusEffectDurationTracking "manual")}}selected{{/if}}>
+            Manual Removal Only
+          </option>
+        </select>
+        <p class="notes">How long status effects persist.</p>
+      </div>
+
+      <div class="form-group">
+        <input type="checkbox" name="autoRemoveOnRest" {{#if autoRemoveOnRest}}checked{{/if}}/>
+        <label>Auto-Remove Effects on Rest</label>
+        <p class="notes">Remove temporary status effects when characters rest.</p>
+      </div>
+      {{/if}}
+    </div>
   </section>
-  
+
   <footer class="sheet-footer">
     <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
     <button type="button" class="reset-defaults"><i class="fas fa-undo"></i> Reset to Defaults</button>
