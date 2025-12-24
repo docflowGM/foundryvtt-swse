@@ -361,7 +361,8 @@
     "name": "Miraluka",
     "racialTraits": [
       "Miraluka-Force Sight: A Miraluka is blind but perceives the world through the Force, ignoring concealment from darkness.",
-      "Miraluka-Force Sensitivity: A Miraluka gains the Force Sensitivity feat at 1st level."
+      "Miraluka-Force Sensitivity: A Miraluka gains the Force Sensitivity feat at 1st level.",
+      "Miraluka-Conditional Bonus Feat: A Miraluka who has Use the Force as a Trained Skill gains Force Training as a bonus Feat."
     ]
   },
   {

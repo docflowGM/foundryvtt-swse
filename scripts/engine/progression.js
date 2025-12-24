@@ -1115,12 +1115,6 @@ async applyScalingFeature(feature) {
       const speciesData = PROGRESSION_RULES.species[progression.species];
       featBudget = 1; // Everyone gets 1 feat at level 1
       if (speciesData?.bonusFeat) featBudget++; // Humans get +1
-
-      // Miraluka get bonus feat "Force Training" when taking Jedi at level 1
-      if (progression.species === 'Miraluka' && classId === 'Jedi') {
-        featBudget++; // Miraluka Jedi get extra feat for Force Training
-        swseLogger.log(`Progression: Miraluka Jedi bonus - adding Force Training feat`);
-      }
     }
 
     // Add bonus feats from this class level
@@ -1136,13 +1130,7 @@ async applyScalingFeature(feature) {
 
     // Accumulate starting feats from all classes (level 1 of each class grants automatic feats)
     const existingStartingFeats = progression.startingFeats || [];
-    let classStartingFeats = (levelInClass === 1) ? (classData.startingFeats || []) : [];
-
-    // Add Force Training to Miraluka Jedi starting feats
-    if (classLevels.length === 1 && progression.species === 'Miraluka' && classId === 'Jedi') {
-      classStartingFeats = [...classStartingFeats, 'Force Training'];
-      swseLogger.log(`Progression: Miraluka Jedi - added Force Training to starting feats`);
-    }
+    const classStartingFeats = (levelInClass === 1) ? (classData.startingFeats || []) : [];
 
     // Deduplicate starting feats with case-insensitive comparison
     // Normalize feat names by trimming whitespace
@@ -1257,9 +1245,28 @@ async applyScalingFeature(feature) {
     // Store trained skills (deduplicated)
     const trainedSkills = [...new Set(selectedSkills)];
 
-    await applyActorUpdateAtomic(this.actor, {
+    // Check for Miraluka conditional bonus feat
+    // Miraluka who have Use the Force as a trained skill gain Force Training as a bonus feat
+    let updateData = {
       "system.progression.trainedSkills": trainedSkills
-    });
+    };
+
+    if (progression.species === 'Miraluka' && trainedSkills.includes('useTheForce')) {
+      // Increment feat budget and add Force Training to starting feats
+      const currentFeatBudget = progression.featBudget || 0;
+      const currentStartingFeats = progression.startingFeats || [];
+
+      updateData["system.progression.featBudget"] = currentFeatBudget + 1;
+
+      // Add Force Training to starting feats if not already there
+      if (!currentStartingFeats.includes('Force Training')) {
+        updateData["system.progression.startingFeats"] = [...currentStartingFeats, 'Force Training'];
+      }
+
+      swseLogger.log(`Progression: Miraluka has Use the Force trained - granting Force Training bonus feat`);
+    }
+
+    await applyActorUpdateAtomic(this.actor, updateData);
     this.data.skills = trainedSkills;
     await this.completeStep("skills");
   }
