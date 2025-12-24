@@ -246,6 +246,14 @@ export class SWSEActorSheetBase extends BaseSheet {
   }
 
   // -----------------------------
+  // Spend Destiny Point
+  // -----------------------------
+  async _onSpendDestiny(event) {
+    event.preventDefault();
+    return this.actor.spendDestinyPoint("a heroic action");
+  }
+
+  // -----------------------------
   // Drag & Drop Upgrade (v13)
   // -----------------------------
   async _onDrop(event) {

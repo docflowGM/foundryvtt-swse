@@ -162,6 +162,35 @@
           </button>
         </div>
       </div>
+
+      {{!-- Destiny Points --}}
+      <div class="resource destiny-points flex1">
+        <label>Destiny Points</label>
+
+        <div class="resource-content flexrow">
+          <input type="text"
+                 name="system.destinyPoints.value"
+                 value="{{system.destinyPoints.value}}"
+                 data-dtype="Number"
+                 class="resource-input"
+                 title="Current Destiny Points"/>
+
+          <span class="separator">/</span>
+
+          <input type="text"
+                 name="system.destinyPoints.max"
+                 value="{{system.destinyPoints.max}}"
+                 data-dtype="Number"
+                 class="resource-max-input"
+                 title="Maximum Destiny Points"/>
+        </div>
+
+        <div class="destiny-point-controls flexrow">
+          <button class="spend-destiny" data-action="spendDestiny" title="Spend Destiny Point" role="button" tabindex="0">
+            <i class="fas fa-star" aria-hidden="true"></i> Spend
+          </button>
+        </div>
+      </div>
     </div>
 
   </div>
