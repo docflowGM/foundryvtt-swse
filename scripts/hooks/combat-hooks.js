@@ -9,11 +9,12 @@ import { ProgressionEngine } from "../progression/engine/progression-engine.js";
  * - createCombat: Combat initialization
  * - combatRound: Round tracking
  * - combatTurn: Turn tracking, condition recovery, automation
- * - deleteCombat: Combat cleanup
+ * - deleteCombat: Combat cleanup, species trait reset
  */
 
 import { HooksRegistry } from './hooks-registry.js';
 import { SWSELogger } from '../utils/logger.js';
+import { SpeciesRerollHandler } from '../species/species-reroll-handler.js';
 
 /**
  * Register all combat-related hooks
@@ -60,6 +61,15 @@ export function registerCombatHooks() {
         description: 'Prompt for condition recovery at turn start',
         category: 'combat',
         enabled: conditionRecoveryEnabled
+    });
+
+    // Combat deletion - reset encounter traits
+    HooksRegistry.register('deleteCombat', handleCombatEnd, {
+        id: 'combat-end-species-reset',
+        priority: 0,
+        description: 'Reset once-per-encounter species traits when combat ends',
+        category: 'combat',
+        enabled: true // Always enabled - species traits should reset
     });
 }
 
@@ -156,5 +166,31 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
         ui.notifications.warn(
             game.i18n.format('SWSE.Notifications.Condition.RecoveryFailed', { name: actor.name })
         );
+    }
+}
+
+/**
+ * Handle combat end (deletion)
+ * Resets once-per-encounter species traits for all combatants
+ *
+ * @param {Combat} combat - The combat being deleted
+ * @param {Object} options - Deletion options
+ * @param {string} userId - The user ID deleting the combat
+ */
+async function handleCombatEnd(combat, options, userId) {
+    SWSELogger.log("Combat ended - resetting species encounter traits");
+
+    // Get all combatants from the combat
+    for (const combatant of combat.combatants) {
+        const actor = combatant.actor;
+        if (!actor) continue;
+
+        try {
+            // Reset species encounter traits
+            await SpeciesRerollHandler.resetEncounterTraits(actor);
+            SWSELogger.log(`Reset species traits for ${actor.name}`);
+        } catch (err) {
+            SWSELogger.error(`Error resetting species traits for ${actor.name}:`, err);
+        }
     }
 }

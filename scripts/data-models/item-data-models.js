@@ -459,7 +459,46 @@ export class SpeciesDataModel extends foundry.abstract.DataModel {
       description: new fields.HTMLField({label: "Description"}),
 
       // Tags for filtering
-      tags: new fields.ArrayField(new fields.StringField())
+      tags: new fields.ArrayField(new fields.StringField()),
+
+      // Racial traits text array (populated by migration from species-traits.json)
+      racialTraits: new fields.ArrayField(new fields.StringField()),
+
+      // Structured species traits data for the Species Trait Engine
+      // This enables automatic application of species bonuses
+      speciesTraitsData: new fields.ArrayField(new fields.SchemaField({
+        type: new fields.StringField({required: true}),
+        id: new fields.StringField({required: true}),
+        name: new fields.StringField(),
+        target: new fields.StringField(),
+        value: new fields.NumberField({integer: true}),
+        condition: new fields.StringField(),
+        scope: new fields.StringField(),
+        skill: new fields.StringField(),
+        frequency: new fields.StringField(),
+        acceptWorse: new fields.BooleanField(),
+        mode: new fields.StringField(),
+        speed: new fields.NumberField({integer: true}),
+        maneuverability: new fields.StringField(),
+        sense: new fields.StringField(),
+        range: new fields.NumberField({integer: true}),
+        weaponName: new fields.StringField(),
+        damage: new fields.StringField(),
+        damageType: new fields.StringField(),
+        effect: new fields.StringField(),
+        bonus: new fields.NumberField({integer: true}),
+        defense: new fields.StringField(),
+        amount: new fields.StringField(),
+        exceptions: new fields.ArrayField(new fields.StringField()),
+        environment: new fields.StringField(),
+        category: new fields.StringField(),
+        count: new fields.NumberField({integer: true}),
+        duration: new fields.StringField(),
+        used: new fields.BooleanField(),
+        displayText: new fields.StringField(),
+        description: new fields.StringField(),
+        automated: new fields.BooleanField({initial: true})
+      }))
     };
   }
 }

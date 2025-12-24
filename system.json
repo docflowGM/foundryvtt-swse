@@ -64,7 +64,8 @@
     "styles/mentor.css",
     "styles/sheets/droid-level3.css",
     "styles/sheets/vehicle-level3.css",
-    "styles/npc-level3.css"
+    "styles/npc-level3.css",
+    "styles/species/species-traits.css"
   ],
   "languages": [
     {

@@ -18,6 +18,7 @@ import { ThemeLoader } from '../theme-loader.js';
 import { registerCombatHooks } from './combat-hooks.js';
 import { registerActorHooks } from './actor-hooks.js';
 import { registerUIHooks } from './ui-hooks.js';
+import { registerRerollListeners } from '../species/species-reroll-handler.js';
 
 /**
  * Register initialization hooks
@@ -51,6 +52,10 @@ export function registerInitHooks() {
 
         // Initialize theme system
         ThemeLoader.initialize();
+
+        // Initialize species reroll system
+        registerRerollListeners();
+        SWSELogger.log("Species Trait Engine initialized");
 
         // Log hook statistics
         const stats = HooksRegistry.getStats();
