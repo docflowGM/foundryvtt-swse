@@ -1,5 +1,6 @@
 // scripts/houserules/houserules-mechanics.js
 import { SWSELogger } from "../utils/logger.js";
+import { HouseRuleFeatGrants } from "./houserule-feat-grants.js";
 import {
   HouserulesData,
   getFeintSkill,
@@ -30,6 +31,7 @@ export class HouseruleMechanics {
       this._setupDeathSystem();
       this._setupFeintSkill();
       this._setupSpaceCombatInitiative();
+      HouseRuleFeatGrants.initialize();
     } catch (err) {
       SWSELogger.error("HouseruleMechanics initialization failed", err);
     }
