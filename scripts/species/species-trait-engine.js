@@ -784,6 +784,12 @@ export class SpeciesTraitEngine {
       case SPECIES_TRAIT_TYPES.RESISTANCE:
         this._handleResistance(trait, bonuses, context);
         break;
+      case SPECIES_TRAIT_TYPES.FEAT_GRANT:
+        this._handleFeatGrant(trait, bonuses, context);
+        break;
+      case SPECIES_TRAIT_TYPES.SKILL_GRANT:
+        this._handleSkillGrant(trait, bonuses, context);
+        break;
       // Other trait types are handled differently (not via bonuses)
       default:
         break;
@@ -839,6 +845,26 @@ export class SpeciesTraitEngine {
     });
   }
 
+  static _handleFeatGrant(trait, bonuses, context) {
+    // Store feat grants for progression system to apply
+    bonuses.featsToGrant.push({
+      id: trait.id,
+      name: trait.name,
+      count: trait.count || 1,
+      displayText: trait.displayText
+    });
+  }
+
+  static _handleSkillGrant(trait, bonuses, context) {
+    // Store skill grants for progression system to apply
+    bonuses.skillsToGrant.push({
+      id: trait.id,
+      name: trait.name,
+      count: trait.count || 1,
+      displayText: trait.displayText
+    });
+  }
+
   static _checkCondition(condition, actor) {
     switch (condition) {
       case CONDITIONS.HALF_HP:
@@ -876,7 +902,9 @@ export class SpeciesTraitEngine {
       movements: [],    // [{ mode: 'fly', speed: 6, maneuverability: 'clumsy' }]
       naturalWeapons: [], // [{ name: 'Claws', damage: '1d6', type: 'slashing' }]
       immunities: [],   // ['poison', 'disease']
-      proficiencies: [] // ['primitiveWeapons']
+      proficiencies: [], // ['primitiveWeapons']
+      featsToGrant: [],  // [{ id: 'human-versatile', name: 'Bonus Feat', count: 1 }]
+      skillsToGrant: []  // [{ id: 'human-skilled', name: 'Additional Trained Skill', count: 1 }]
     };
   }
 
@@ -935,6 +963,28 @@ export class SpeciesTraitEngine {
       t.type === SPECIES_TRAIT_TYPES.REROLL &&
       (t.skill === skillKey || t.scope === 'any')
     );
+  }
+
+  /**
+   * Get feat grant traits for an actor's species
+   */
+  static getFeatGrantTraits(actor) {
+    const species = this.getActorSpecies(actor);
+    if (!species) return [];
+
+    const traits = this.getSpeciesTraitsData(species);
+    return traits.filter(t => t.type === SPECIES_TRAIT_TYPES.FEAT_GRANT);
+  }
+
+  /**
+   * Get skill grant traits for an actor's species
+   */
+  static getSkillGrantTraits(actor) {
+    const species = this.getActorSpecies(actor);
+    if (!species) return [];
+
+    const traits = this.getSpeciesTraitsData(species);
+    return traits.filter(t => t.type === SPECIES_TRAIT_TYPES.SKILL_GRANT);
   }
 }
 

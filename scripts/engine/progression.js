@@ -1245,9 +1245,25 @@ async applyScalingFeature(feature) {
     // Store trained skills (deduplicated)
     const trainedSkills = [...new Set(selectedSkills)];
 
-    await applyActorUpdateAtomic(this.actor, {
+    // Check for Miraluka conditional bonus feat
+    // Miraluka who have Use the Force as a trained skill gain Force Training as a bonus feat
+    let updateData = {
       "system.progression.trainedSkills": trainedSkills
-    });
+    };
+
+    if (progression.species === 'Miraluka' && trainedSkills.includes('useTheForce')) {
+      // Automatically grant Force Training feat (doesn't consume feat budget)
+      const currentFeats = progression.feats || [];
+
+      // Add Force Training if not already there
+      if (!currentFeats.includes('Force Training')) {
+        updateData["system.progression.feats"] = [...currentFeats, 'Force Training'];
+      }
+
+      swseLogger.log(`Progression: Miraluka has Use the Force trained - granting Force Training bonus feat`);
+    }
+
+    await applyActorUpdateAtomic(this.actor, updateData);
     this.data.skills = trainedSkills;
     await this.completeStep("skills");
   }
