@@ -141,6 +141,7 @@ import './scripts/migration/fix-actor-size.js';
 import './scripts/migration/actor-validation-migration.js';
 import './scripts/migration/item-validation-migration.js';
 import './scripts/migration/populate-force-compendiums.js';
+import './scripts/migration/update-species-traits-migration.js';
 
 import { DamageSystem } from './scripts/combat/damage-system.js';
 import { SWSECombatAutomation } from './scripts/combat/combat-automation.js';
