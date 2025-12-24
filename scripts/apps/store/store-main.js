@@ -36,7 +36,7 @@ export class SWSEStore extends FormApplication {
     });
   }
 
-  get title(){ return game.i18n ? game.i18n.localize("SWSE.Store.Title") : "SWSE Store"; }
+  get title(){ return game.i18n ? game.i18n.localize("SWSE.Dialogs.Store.Title") : "Galactic Trade Exchange"; }
 
   async _initialize(){
     if (this._loaded) return;
