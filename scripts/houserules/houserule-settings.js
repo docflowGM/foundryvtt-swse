@@ -513,6 +513,15 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  register("dodgeDefault", {
+    name: "Default Dodge",
+    hint: "All characters automatically gain Dodge feat.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   /* -------------------------------------------------------------------------- */
   /*                                   TALENTS                                   */
   /* -------------------------------------------------------------------------- */

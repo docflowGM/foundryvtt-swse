@@ -139,6 +139,7 @@ export class CombatMenu extends FormApplication {
       pointBlankShotDefault: safeGet("pointBlankShotDefault"),
       powerAttackDefault: safeGet("powerAttackDefault"),
       preciseShotDefault: safeGet("preciseShotDefault"),
+      dodgeDefault: safeGet("dodgeDefault"),
       isGM: game.user.isGM
     };
   }
@@ -165,6 +166,7 @@ export class CombatMenu extends FormApplication {
     await safeSet("pointBlankShotDefault", _bool(formData.pointBlankShotDefault));
     await safeSet("powerAttackDefault", _bool(formData.powerAttackDefault));
     await safeSet("preciseShotDefault", _bool(formData.preciseShotDefault));
+    await safeSet("dodgeDefault", _bool(formData.dodgeDefault));
 
     ui.notifications.info("Combat rules updated");
   }

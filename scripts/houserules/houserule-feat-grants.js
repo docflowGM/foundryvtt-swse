@@ -25,6 +25,9 @@ const GRANT_MAPPINGS = {
   ],
   preciseShotDefault: [
     { type: "feat", name: "Precise Shot", id: "c180eee7d3bc29b2" }
+  ],
+  dodgeDefault: [
+    { type: "feat", name: "Dodge", id: "45366d4f3a5e443d" }
   ]
 };
 
