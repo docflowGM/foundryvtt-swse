@@ -375,31 +375,31 @@
     "application": "First Aid (requires medpac)",
     "DC": 15,
     "time": "full-round",
-    "effect": "Heal HP = target level +1 per point over DC; cannot retry on same target for 24h"
+    "effect": "Heal HP = character level + (check result - 15); 24-hour cooldown per target"
   },
   {
-    "application": "Revivify (trained, medkit)",
+    "application": "Revivify (trained, medkit, within 1 round of death)",
     "DC": 25,
-    "time": "full-round (must be within 1 round of death)",
-    "effect": "Revive dead target but leaves them unconscious on success"
+    "time": "full-round",
+    "effect": "Revive dead target and restore to consciousness with 1 HP; trained use only"
   },
   {
-    "application": "Heal Damage (surgery kit, trained)",
+    "application": "Perform Surgery (trained, surgery kit, 1 hour)",
     "DC": 20,
     "time": "1 hour",
-    "effect": "Retemplates/apps/store HP = CON_mod (min 1) × level and remove persistent conditions; failure deals DT to target"
+    "effect": "Remove damage condition; heal HP = CON bonus × character level; failure deals damage threshold to target"
   },
   {
-    "application": "Long-term care",
-    "DC": "untrained or trained",
-    "time": "8 hours",
-    "effect": "Tend creature for 8h to regain additional HP = level; trained can tend up to 6 creatures"
+    "application": "Long-Term Care (8 hours per day max)",
+    "DC": "—",
+    "time": "8 hours continuous",
+    "effect": "Heal HP = character level per day; untrained can tend 1, trained can tend up to 6 creatures simultaneously; 24-hour cooldown per target"
   },
   {
-    "application": "Temporary Mending (biotech/vehicle)",
+    "application": "Critical Care (multiple medpacs in 24 hours)",
     "DC": 20,
-    "time": "full-round",
-    "effect": "Heal 1d8 HP & +2 CT to damaged biotech object or vehicle; +5 with biotech tool kit"
+    "time": "full-round per application",
+    "effect": "Apply medpac effects with penalties: -5 per previous application in 24h; failure with prior care = overdose (damage threshold);"
   },
   {
     "application": "Access information — General",

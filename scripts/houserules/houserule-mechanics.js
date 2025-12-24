@@ -18,6 +18,7 @@ import { FlankingMechanics } from "./houserule-flanking.js";
 import { SkillTrainingMechanics } from "./houserule-skill-training.js";
 import { StatusEffectsMechanics } from "./houserule-status-effects.js";
 import { HealingMechanics } from "./houserule-healing.js";
+import { HealingSkillIntegration } from "./houserule-healing-skill-integration.js";
 
 /**
  * HouseruleMechanics
@@ -48,6 +49,7 @@ export class HouseruleMechanics {
       SkillTrainingMechanics.initialize();
       StatusEffectsMechanics.initialize();
       HealingMechanics.initialize();
+      HealingSkillIntegration.initialize();
     } catch (err) {
       SWSELogger.error("HouseruleMechanics initialization failed", err);
     }
