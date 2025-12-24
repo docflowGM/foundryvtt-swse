@@ -60,15 +60,6 @@ export function registerSystemSettings() {
     default: false
   });
 
-  game.settings.register('foundryvtt-swse', "darkSideTemptation", {
-    name: "SWSE.Settings.DarkSideTemptation.Name",
-    hint: "SWSE.Settings.DarkSideTemptation.Hint",
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false
-  });
-
   // Theme Settings
   game.settings.register('foundryvtt-swse', "sheetTheme", {
     name: 'Sheet Theme',
@@ -132,30 +123,6 @@ export function registerSystemSettings() {
     type: Boolean,
     default: false
   });
-  
-game.settings.register("foundryvtt-swse", "armoredDefenseForAll", {
-    name: "Armored Defense Applies Automatically",
-    hint: "Causes all characters to treat Armored Defense as if they had the feat.",
-    scope: "world",
-    config: true,
-    default: false,
-    type: Boolean
-});
-
-game.settings.register("foundryvtt-swse", "diagonalMovement", {
-    name: "Diagonal Movement Rule",
-    hint: "Choose diagonal movement style.",
-    scope: "world",
-    config: true,
-    default: "1-1-1",    // or whatever you used before
-    type: String,
-    choices: {
-        "1-1-1": "1-1-1 (No tax)",
-        "1-2-1": "1-2-1 (Classic D&D)",
-        "5-10": "5-10 (Alternative)"
-    }
-});
-
   // Skill Favorites (per-user storage of favorited skill actions)
   game.settings.register('foundryvtt-swse', 'skillFavorites', {
     name: 'Skill Favorites',

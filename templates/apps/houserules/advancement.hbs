@@ -1,1 +1,102 @@
-<form><p>TODO: Implement advancement.hbs template</p></form>
+<form class="houserules-form">
+  <nav class="tabs" data-group="primary-tabs">
+    <a class="item active" data-tab="levelup">Level Up</a>
+    <a class="item" data-tab="skills">Skills</a>
+    <a class="item" data-tab="talents">Talents</a>
+    <a class="item" data-tab="retraining">Retraining</a>
+  </nav>
+
+  <section class="content">
+    <div class="tab active" data-group="primary-tabs" data-tab="levelup">
+      <div class="form-group">
+        <input type="checkbox" name="talentEveryLevel" {{#if talentEveryLevel}}checked{{/if}}/>
+        <label>Characters Gain Talent Every Level</label>
+        <p class="notes">
+          When enabled, characters gain a talent at every character level (including odd levels).<br>
+          <strong>Standard:</strong> Talents are granted only at odd-numbered character levels.<br>
+          <strong>Modified:</strong> Talents are granted at every character level, increasing the power and customization options available.
+        </p>
+      </div>
+    </div>
+
+    <div class="tab" data-group="primary-tabs" data-tab="skills">
+      <div class="form-group">
+        <input type="checkbox" name="crossClassSkillTraining" {{#if crossClassSkillTraining}}checked{{/if}}/>
+        <label>Allow Cross-Class Skill Training</label>
+        <p class="notes">
+          When enabled, characters can train non-class skills using their regular skill training grants.<br>
+          <strong>Standard:</strong> Characters can only train skills from their class skill list.<br>
+          <strong>Modified:</strong> Characters can train any skill, regardless of class list, making more builds viable.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label>Skill Focus Variant</label>
+        <select name="skillFocusVariant">
+          <option value="normal" {{#if (eq skillFocusVariant "normal")}}selected{{/if}}>
+            Normal (+5 bonus)
+          </option>
+          <option value="scaled" {{#if (eq skillFocusVariant "scaled")}}selected{{/if}}>
+            Scaled (+½ Character Level, Max +5)
+          </option>
+          <option value="delayed" {{#if (eq skillFocusVariant "delayed")}}selected{{/if}}>
+            Delayed (Activates at Set Level)
+          </option>
+        </select>
+        <p class="notes">
+          <strong>Normal:</strong> Skill Focus provides a constant +5 bonus (standard rules).<br>
+          <strong>Scaled:</strong> Skill Focus bonus increases with character level, peaking at +5.<br>
+          <strong>Delayed:</strong> Skill Focus only grants its bonus after reaching a specific level threshold.
+        </p>
+      </div>
+
+      {{#if (eq skillFocusVariant "delayed")}}
+      <div class="form-group">
+        <label>Delayed Skill Focus Activation Level</label>
+        <input type="number" name="skillFocusActivationLevel" value="{{skillFocusActivationLevel}}" min="1" max="20" step="1" />
+        <p class="notes">
+          The character level at which Skill Focus begins to provide its bonus (only applies if Delayed variant is selected).
+        </p>
+      </div>
+      {{/if}}
+    </div>
+
+    <div class="tab" data-group="primary-tabs" data-tab="talents">
+      <div class="form-group">
+        <label>Skill Focus Activation Requirements</label>
+        <div class="form-group-nested">
+          <label>Characters must have this many levels in "Use the Force" to take Skill Focus:</label>
+          <input type="number" name="skillFocusRestriction.useTheForce" value="{{skillFocusRestriction.useTheForce}}" min="0" max="20" step="1" />
+          <p class="notes">
+            Restricts the Skill Focus talent to characters with a minimum number of levels in the "Use the Force" talent tree. Set to 0 for no restriction.
+          </p>
+        </div>
+
+        <div class="form-group-nested">
+          <input type="checkbox" name="skillFocusRestriction.scaling" {{#if skillFocusRestriction.scaling}}checked{{/if}}/>
+          <label>Use Scaling Skill Focus Requirements</label>
+          <p class="notes">
+            When enabled, the minimum "Use the Force" requirement scales with the number of Skill Focus talents already selected.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab" data-group="primary-tabs" data-tab="retraining">
+      <div class="form-group">
+        <input type="checkbox" name="retrainingEnabled" {{#if retrainingEnabled}}checked{{/if}}/>
+        <label>Allow Retraining of Feats, Skills, and Talents</label>
+        <p class="notes">
+          When enabled, characters can retrain their feat choices, skill training grants, and talent selections during level-up.<br>
+          <strong>Standard:</strong> Once chosen, feats, skill training, and talents cannot be changed.<br>
+          <strong>Modified:</strong> Characters can freely retrain these choices to adapt to changing campaign conditions or character concepts.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="sheet-footer">
+    <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+    <button type="button" class="reset-defaults"><i class="fas fa-undo"></i> Reset to Defaults</button>
+  </footer>
+</form>

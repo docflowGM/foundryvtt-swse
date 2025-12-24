@@ -150,15 +150,6 @@ export function registerHouseruleSettings() {
     default: 1000
   });
 
-  register("standardDroidModelLimit", {
-    name: "Standard Droid Model Credit Limit",
-    hint: "Max cost including modifications.",
-    scope: "world",
-    config: true,
-    type: Number,
-    default: 5000
-  });
-
   register("allowDroidDestiny", {
     name: "Allow Droids to Have Destiny",
     hint: "If enabled, droid characters can have Destiny Points just like organics (normally disabled).",
@@ -298,6 +289,15 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  register("trackBlasterCharges", {
+    name: "Track Blaster Charges",
+    hint: "Enable tracking of blaster power cell usage and charges in combat.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   /* -------------------------------------------------------------------------- */
   /*                                SECOND WIND                                  */
   /* -------------------------------------------------------------------------- */
@@ -363,6 +363,29 @@ export function registerHouseruleSettings() {
     config: true,
     type: Number,
     default: 7
+  });
+
+  register("knowledgeSkillMode", {
+    name: "Knowledge Skills Consolidation",
+    hint: "How knowledge skills are consolidated or presented.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      standard: "Standard (Separate Knowledge Skills)",
+      consolidated: "Consolidated (Single Knowledge Skill)",
+      simplified: "Simplified (Limited Knowledge Options)"
+    },
+    default: "standard"
+  });
+
+  register("athleticsConsolidation", {
+    name: "Athletics & Acrobatics Consolidation",
+    hint: "Whether to consolidate Athletics and Acrobatics into a single skill.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
   });
 
   /* -------------------------------------------------------------------------- */
@@ -438,11 +461,16 @@ export function registerHouseruleSettings() {
 
   register("darkSideTemptation", {
     name: "Dark Side Temptation",
-    hint: "Structure defining Dark Side temptation rules.",
+    hint: "How Dark Side temptation is handled in the game.",
     scope: "world",
-    config: false,
-    type: Object,
-    default: { enabled: true, automatic: false }
+    config: true,
+    type: String,
+    choices: {
+      strict: "Strict RAW - Core rules only",
+      lenient: "Lenient - Broader interpretation",
+      narrative: "Narrative Only - GM discretion"
+    },
+    default: "strict"
   });
 
   /* -------------------------------------------------------------------------- */
@@ -461,6 +489,33 @@ export function registerHouseruleSettings() {
   register("pointBlankShotDefault", {
     name: "Default Point Blank Shot",
     hint: "All characters automatically gain Point Blank Shot.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("powerAttackDefault", {
+    name: "Default Power Attack",
+    hint: "All characters automatically gain Power Attack.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("preciseShotDefault", {
+    name: "Default Precise Shot",
+    hint: "All characters automatically gain Precise Shot.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register("dodgeDefault", {
+    name: "Default Dodge",
+    hint: "All characters automatically gain Dodge feat.",
     scope: "world",
     config: true,
     type: Boolean,

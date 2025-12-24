@@ -2,14 +2,23 @@
 import { swseLogger } from "../utils/logger.js";
 
 /**
- * House Rules Manager
- * Provides a centralized, scalable interface for SWSE houserules.
- * All houserules register through a uniform schema to avoid deprecated methods
- * and ensure forward compatibility with Foundry VTT V13+.
+ * DEPRECATED: House Rules Manager
+ * This file is LEGACY code and should not be used for new implementations.
+ * Use the modern houserule-settings.js and houserule-menus.js system instead.
+ *
+ * This class is kept for backwards compatibility but is no longer active.
  */
 export class HouseRules {
   /**
-   * Register all houserule settings with Foundry
+   * Initialize the house rules system (stub for backwards compatibility)
+   */
+  static init() {
+    swseLogger.warn("HouseRules.init() called - this is legacy code. Modern house rules system is used instead.");
+  }
+
+  /**
+   * DEPRECATED: Register all houserule settings with Foundry
+   * @deprecated Use houserule-settings.js instead
    */
   static registerSettings() {
     try {

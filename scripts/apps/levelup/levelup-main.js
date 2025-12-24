@@ -15,6 +15,7 @@
 import { SWSEProgressionEngine } from '../../engine/progression.js';
 import { SWSELogger, swseLogger } from '../../utils/logger.js';
 import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from '../mentor-dialogues.js';
+import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 
 // Import shared utilities
 import {
@@ -1018,8 +1019,19 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     const talent = selectTalent(talentName, this.talentData, this.actor, pendingData);
     if (talent) {
-      this.selectedTalent = talent;
-      ui.notifications.info(`Selected talent: ${talentName}`);
+      // Check if this is the combined Block & Deflect talent
+      if (HouseRuleTalentCombination.isBlockDeflectCombined(talent)) {
+        // Store the combined talent but with a flag indicating it should grant both
+        this.selectedTalent = {
+          ...talent,
+          isBlockDeflectCombined: true,
+          actualTalentsToGrant: HouseRuleTalentCombination.getActualTalentsToGrant(talentName)
+        };
+        ui.notifications.info(`Selected combined talent: Block & Deflect (will grant both Block and Deflect)`);
+      } else {
+        this.selectedTalent = talent;
+        ui.notifications.info(`Selected talent: ${talentName}`);
+      }
     }
   }
 
@@ -1289,8 +1301,13 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Add talent to progression if any
       if (this.selectedTalent) {
+        // Check if this is the combined Block & Deflect talent
+        const talentNamesToGrant = this.selectedTalent.isBlockDeflectCombined
+          ? this.selectedTalent.actualTalentsToGrant
+          : [this.selectedTalent.name];
+
         await this.progressionEngine.doAction('confirmTalents', {
-          talentIds: [this.selectedTalent.name]
+          talentIds: talentNamesToGrant
         });
       }
 

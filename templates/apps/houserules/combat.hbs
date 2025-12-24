@@ -110,7 +110,6 @@
     
     <div class="tab" data-group="primary-tabs" data-tab="feats">
       <div class="form-group">
-        <label>Weapon Finesse</label>
         <input type="checkbox" name="weaponFinesseDefault" {{#if weaponFinesseDefault}}checked{{/if}}/>
         <label>All characters gain Weapon Finesse by default</label>
         <p class="notes">
@@ -119,13 +118,55 @@
           <strong>Houserule:</strong> All characters have this ability innately, freeing up a feat slot.
         </p>
       </div>
-      
-      <div class="info-box">
-        <h4><i class="fas fa-sword"></i> Weapon Finesse Details</h4>
-        <p><strong>Applies to:</strong> Light melee weapons (vibrodagger, lightsaber, etc.)</p>
-        <p><strong>Attack Rolls:</strong> Use DEX modifier instead of STR</p>
-        <p><strong>Damage:</strong> Still uses STR modifier (unchanged)</p>
-        <p><strong>Why houserule:</strong> Makes DEX-based combatants viable without feat tax</p>
+
+      <div class="form-group">
+        <input type="checkbox" name="pointBlankShotDefault" {{#if pointBlankShotDefault}}checked{{/if}}/>
+        <label>All characters gain Point Blank Shot by default</label>
+        <p class="notes">
+          <strong>What this does:</strong> Characters gain +1 bonus on attack and damage rolls with ranged weapons against targets within 30 squares.<br>
+          <strong>Standard:</strong> Requires taking the Point Blank Shot feat.<br>
+          <strong>Houserule:</strong> All characters have this ability innately.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <input type="checkbox" name="powerAttackDefault" {{#if powerAttackDefault}}checked{{/if}}/>
+        <label>All characters gain Power Attack by default</label>
+        <p class="notes">
+          <strong>What this does:</strong> Characters can sacrifice accuracy for increased damage with melee attacks.<br>
+          <strong>Standard:</strong> Requires taking the Power Attack feat.<br>
+          <strong>Houserule:</strong> All characters have this ability innately, freeing up a feat slot.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <input type="checkbox" name="preciseShotDefault" {{#if preciseShotDefault}}checked{{/if}}/>
+        <label>All characters gain Precise Shot by default</label>
+        <p class="notes">
+          <strong>What this does:</strong> Characters can make ranged attacks against nearby enemies without penalty for attacks of opportunity.<br>
+          <strong>Standard:</strong> Requires taking the Precise Shot feat.<br>
+          <strong>Houserule:</strong> All characters have this ability innately.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <input type="checkbox" name="armoredDefenseForAll" {{#if armoredDefenseForAll}}checked{{/if}}/>
+        <label>All characters gain Armored Defense by default</label>
+        <p class="notes">
+          <strong>What this does:</strong> Characters gain bonus to Reflex Defense equal to armor bonus or character level (whichever is higher).<br>
+          <strong>Standard:</strong> Only Soldiers and characters with Armored Defense talent have this ability.<br>
+          <strong>Houserule:</strong> All characters gain this defensive benefit.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <input type="checkbox" name="dodgeDefault" {{#if dodgeDefault}}checked{{/if}}/>
+        <label>All characters gain Dodge by default</label>
+        <p class="notes">
+          <strong>What this does:</strong> Characters designate an opponent and gain +1 dodge bonus to Reflex Defense against that opponent (can change each turn).<br>
+          <strong>Standard:</strong> Requires taking the Dodge feat (Dex 13 prerequisite).<br>
+          <strong>Houserule:</strong> All characters have this defensive ability available.
+        </p>
       </div>
     </div>
   </section>

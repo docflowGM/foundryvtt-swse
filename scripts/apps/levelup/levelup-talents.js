@@ -9,6 +9,7 @@ import { TalentTreeVisualizer } from '../talent-tree-visualizer.js';
 import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
 import { checkTalentPrerequisites } from './levelup-validation.js';
 import { getClassProperty, getTalentTrees } from '../chargen/chargen-property-accessor.js';
+import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 
 /**
  * Check if the new level grants a talent from the selected class
@@ -146,7 +147,10 @@ export async function loadTalentData() {
   const talentPack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
   if (!talentPack) return [];
 
-  return await talentPack.getDocuments();
+  const talents = await talentPack.getDocuments();
+
+  // Apply Block/Deflect combination if house rule enabled
+  return HouseRuleTalentCombination.processBlockDeflectCombination(talents);
 }
 
 /**
