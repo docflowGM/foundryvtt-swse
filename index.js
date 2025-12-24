@@ -181,6 +181,12 @@ import { ProficiencySelectionDialog } from './scripts/apps/proficiency-selection
 import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
 import { HouseruleMechanics } from './scripts/houserules/houserule-mechanics.js';
 import { HouserulesConfig } from './scripts/houserules/houserules-config.js';
+import { GrappleMechanics } from './scripts/houserules/houserule-grapple.js';
+import { RecoveryMechanics } from './scripts/houserules/houserule-recovery.js';
+import { ConditionTrackMechanics } from './scripts/houserules/houserule-condition-track.js';
+import { FlankingMechanics } from './scripts/houserules/houserule-flanking.js';
+import { SkillTrainingMechanics } from './scripts/houserules/houserule-skill-training.js';
+import { StatusEffectsMechanics } from './scripts/houserules/houserule-status-effects.js';
 import { SWSEHomebrewManager } from './scripts/gm-tools/homebrew-manager.js';
 
 import { CanvasUIManager } from './scripts/canvas-ui/canvas-ui-manager.js';

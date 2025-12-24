@@ -11,6 +11,12 @@ import {
   hasDefaultWeaponFinesse,
   getRolePriorityOrder
 } from "./houserules-data.js";
+import { GrappleMechanics } from "./houserule-grapple.js";
+import { RecoveryMechanics } from "./houserule-recovery.js";
+import { ConditionTrackMechanics } from "./houserule-condition-track.js";
+import { FlankingMechanics } from "./houserule-flanking.js";
+import { SkillTrainingMechanics } from "./houserule-skill-training.js";
+import { StatusEffectsMechanics } from "./houserule-status-effects.js";
 
 /**
  * HouseruleMechanics
@@ -32,6 +38,14 @@ export class HouseruleMechanics {
       this._setupFeintSkill();
       this._setupSpaceCombatInitiative();
       HouseRuleFeatGrants.initialize();
+
+      // Initialize new house rules mechanics
+      GrappleMechanics.initialize();
+      RecoveryMechanics.initialize();
+      ConditionTrackMechanics.initialize();
+      FlankingMechanics.initialize();
+      SkillTrainingMechanics.initialize();
+      StatusEffectsMechanics.initialize();
     } catch (err) {
       SWSELogger.error("HouseruleMechanics initialization failed", err);
     }

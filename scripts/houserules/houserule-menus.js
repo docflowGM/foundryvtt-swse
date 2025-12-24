@@ -89,6 +89,12 @@ export class AdvancementMenu extends FormApplication {
       skillFocusVariant: safeGet("skillFocusVariant"),
       skillFocusActivationLevel: safeGet("skillFocusActivationLevel"),
       skillFocusRestriction: safeGet("skillFocusRestriction"),
+      skillTrainingEnabled: safeGet("skillTrainingEnabled"),
+      trainingPointsPerLevel: safeGet("trainingPointsPerLevel"),
+      trainingPointsPerRest: safeGet("trainingPointsPerRest"),
+      skillTrainingCap: safeGet("skillTrainingCap"),
+      trainingCostScale: safeGet("trainingCostScale"),
+      trainingRequiresTrainer: safeGet("trainingRequiresTrainer"),
       isGM: game.user.isGM
     };
   }
@@ -106,6 +112,15 @@ export class AdvancementMenu extends FormApplication {
     };
 
     await safeSet("skillFocusRestriction", restriction);
+
+    // Skill Training settings
+    await safeSet("skillTrainingEnabled", _bool(formData.skillTrainingEnabled));
+    await safeSet("trainingPointsPerLevel", formData.trainingPointsPerLevel);
+    await safeSet("trainingPointsPerRest", _num(formData.trainingPointsPerRest));
+    await safeSet("skillTrainingCap", formData.skillTrainingCap);
+    await safeSet("trainingCostScale", formData.trainingCostScale);
+    await safeSet("trainingRequiresTrainer", _bool(formData.trainingRequiresTrainer));
+
     ui.notifications.info("Advancement rules updated");
   }
 }
@@ -140,6 +155,31 @@ export class CombatMenu extends FormApplication {
       powerAttackDefault: safeGet("powerAttackDefault"),
       preciseShotDefault: safeGet("preciseShotDefault"),
       dodgeDefault: safeGet("dodgeDefault"),
+      grappleEnabled: safeGet("grappleEnabled"),
+      grappleVariant: safeGet("grappleVariant"),
+      grappleDCBonus: safeGet("grappleDCBonus"),
+      recoveryEnabled: safeGet("recoveryEnabled"),
+      recoveryHPType: safeGet("recoveryHPType"),
+      customRecoveryHP: safeGet("customRecoveryHP"),
+      recoveryVitality: safeGet("recoveryVitality"),
+      recoveryVitalityAmount: safeGet("recoveryVitalityAmount"),
+      recoveryTiming: safeGet("recoveryTiming"),
+      recoveryRequiresFullRest: safeGet("recoveryRequiresFullRest"),
+      conditionTrackEnabled: safeGet("conditionTrackEnabled"),
+      conditionTrackStartDamage: safeGet("conditionTrackStartDamage"),
+      conditionTrackProgression: safeGet("conditionTrackProgression"),
+      conditionTrackVariant: safeGet("conditionTrackVariant"),
+      conditionTrackAutoApply: safeGet("conditionTrackAutoApply"),
+      flankingEnabled: safeGet("flankingEnabled"),
+      flankingBonus: safeGet("flankingBonus"),
+      flankingRequiresConsciousness: safeGet("flankingRequiresConsciousness"),
+      flankingLargeCreatures: safeGet("flankingLargeCreatures"),
+      flankingDiagonalCounts: safeGet("flankingDiagonalCounts"),
+      statusEffectsEnabled: safeGet("statusEffectsEnabled"),
+      statusEffectsList: safeGet("statusEffectsList"),
+      autoApplyFromConditionTrack: safeGet("autoApplyFromConditionTrack"),
+      statusEffectDurationTracking: safeGet("statusEffectDurationTracking"),
+      autoRemoveOnRest: safeGet("autoRemoveOnRest"),
       isGM: game.user.isGM
     };
   }
@@ -167,6 +207,41 @@ export class CombatMenu extends FormApplication {
     await safeSet("powerAttackDefault", _bool(formData.powerAttackDefault));
     await safeSet("preciseShotDefault", _bool(formData.preciseShotDefault));
     await safeSet("dodgeDefault", _bool(formData.dodgeDefault));
+
+    // Grapple settings
+    await safeSet("grappleEnabled", _bool(formData.grappleEnabled));
+    await safeSet("grappleVariant", formData.grappleVariant);
+    await safeSet("grappleDCBonus", _num(formData.grappleDCBonus));
+
+    // Recovery & Healing settings
+    await safeSet("recoveryEnabled", _bool(formData.recoveryEnabled));
+    await safeSet("recoveryHPType", formData.recoveryHPType);
+    await safeSet("customRecoveryHP", _num(formData.customRecoveryHP));
+    await safeSet("recoveryVitality", _bool(formData.recoveryVitality));
+    await safeSet("recoveryVitalityAmount", _num(formData.recoveryVitalityAmount));
+    await safeSet("recoveryTiming", formData.recoveryTiming);
+    await safeSet("recoveryRequiresFullRest", _bool(formData.recoveryRequiresFullRest));
+
+    // Condition Track settings
+    await safeSet("conditionTrackEnabled", _bool(formData.conditionTrackEnabled));
+    await safeSet("conditionTrackStartDamage", _num(formData.conditionTrackStartDamage));
+    await safeSet("conditionTrackProgression", _num(formData.conditionTrackProgression));
+    await safeSet("conditionTrackVariant", formData.conditionTrackVariant);
+    await safeSet("conditionTrackAutoApply", _bool(formData.conditionTrackAutoApply));
+
+    // Flanking settings
+    await safeSet("flankingEnabled", _bool(formData.flankingEnabled));
+    await safeSet("flankingBonus", formData.flankingBonus);
+    await safeSet("flankingRequiresConsciousness", _bool(formData.flankingRequiresConsciousness));
+    await safeSet("flankingLargeCreatures", formData.flankingLargeCreatures);
+    await safeSet("flankingDiagonalCounts", _bool(formData.flankingDiagonalCounts));
+
+    // Status Effects settings
+    await safeSet("statusEffectsEnabled", _bool(formData.statusEffectsEnabled));
+    await safeSet("statusEffectsList", formData.statusEffectsList);
+    await safeSet("autoApplyFromConditionTrack", _bool(formData.autoApplyFromConditionTrack));
+    await safeSet("statusEffectDurationTracking", formData.statusEffectDurationTracking);
+    await safeSet("autoRemoveOnRest", _bool(formData.autoRemoveOnRest));
 
     ui.notifications.info("Combat rules updated");
   }
