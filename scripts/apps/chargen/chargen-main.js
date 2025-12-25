@@ -347,6 +347,15 @@ export default class CharacterGenerator extends Application {
     $html.find('#species-back-btn, #species-close-btn').click(this._onCloseSpeciesOverlay.bind(this));
     $html.find('#species-overlay').click(this._onSpeciesOverlayBackdropClick.bind(this));
 
+    // Near-Human builder
+    $html.find('.open-near-human-builder').click(this._onOpenNearHumanBuilder.bind(this));
+    $html.find('.adaptation-btn').click(this._onSelectNearHumanAdaptation.bind(this));
+    $html.find('.sacrifice-btn').click(this._onSelectNearHumanSacrifice.bind(this));
+    $html.find('.attr-plus, .attr-minus').click(this._onAdjustNearHumanAttribute.bind(this));
+    $html.find('#near-human-confirm-btn').click(this._onConfirmNearHuman.bind(this));
+    $html.find('#near-human-back-btn, #near-human-close-btn').click(this._onCloseNearHumanOverlay.bind(this));
+    $html.find('#near-human-overlay').click(this._onNearHumanOverlayBackdropClick.bind(this));
+
     // Species filters
     $html.find('.species-filter-select').change(this._onSpeciesFilterChange.bind(this));
     $html.find('.clear-species-filters').click(this._onClearSpeciesFilters.bind(this));

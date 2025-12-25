@@ -347,6 +347,22 @@
  </div>
  {{/if}}
  </button>
+ {{!-- Add Near-Human option right after Human --}}
+ {{#if (eq this.name "Human")}}
+ <button type="button" class="open-near-human-builder choice-button near-human-card">
+ <h4><i class="fas fa-dna"></i> Near-Human</h4>
+ <div class="species-size">
+ <span class="size-label">Size: Medium</span>
+ </div>
+ <div class="bonuses">
+ <span class="bonus">Custom (+2/-2)</span>
+ </div>
+ <div class="special-abilities">
+ <span class="special-ability">Build your own human variant</span>
+ <span class="special-ability">Choose 1 adaptation, 1 sacrifice</span>
+ </div>
+ </button>
+ {{/if}}
  {{/each}}
  </div>
 
@@ -356,6 +372,19 @@
      <button type="button" class="species-close-btn" id="species-close-btn">
        <i class="fas fa-times"></i>
      </button>
+
+     {{!-- Ol' Salty Dialogue Banner --}}
+     <div class="ol-salty-banner" id="ol-salty-banner">
+       <div class="ol-salty-portrait">
+         <i class="fas fa-anchor"></i>
+       </div>
+       <div class="ol-salty-content">
+         <div class="ol-salty-name">OL' SALTY</div>
+         <div class="ol-salty-dialogue" id="ol-salty-dialogue">
+           "Well, well... let's see what you've got."
+         </div>
+       </div>
+     </div>
 
      <div class="species-expanded-header">
        <h2 id="expanded-species-name">Species Name</h2>
@@ -394,6 +423,130 @@
        </button>
        <button type="button" class="species-confirm-btn" id="species-confirm-btn">
          <i class="fas fa-check"></i> Select Species
+       </button>
+     </div>
+   </div>
+ </div>
+
+ {{!-- Near-Human Builder Overlay --}}
+ <div class="species-overlay" id="near-human-overlay">
+   <div class="species-card-expanded near-human-forge">
+     <button type="button" class="species-close-btn" id="near-human-close-btn">
+       <i class="fas fa-times"></i>
+     </button>
+
+     <div class="species-expanded-header">
+       <h2>Near-Human Species Builder</h2>
+       <div class="species-subtitle">Create a custom near-human variant</div>
+     </div>
+
+     <div class="near-human-sections">
+       <section class="near-human-section adaptations-section">
+         <h3><i class="fas fa-dna"></i> Adaptation</h3>
+         <p class="section-hint">Choose one special ability that sets your near-human apart</p>
+         <div class="adaptation-options" id="adaptation-options">
+           <button type="button" class="adaptation-btn" data-adaptation="lowLightVision">
+             <strong>Low-Light Vision</strong>
+             <span>See twice as far in dim light</span>
+           </button>
+           <button type="button" class="adaptation-btn" data-adaptation="breatheUnderwater">
+             <strong>Breathe Underwater</strong>
+             <span>Can breathe water as well as air</span>
+           </button>
+           <button type="button" class="adaptation-btn" data-adaptation="naturalArmor">
+             <strong>Natural Armor</strong>
+             <span>+1 natural armor bonus to Reflex Defense</span>
+           </button>
+           <button type="button" class="adaptation-btn" data-adaptation="climbSpeed">
+             <strong>Climb Speed</strong>
+             <span>Climb speed equal to base speed</span>
+           </button>
+           <button type="button" class="adaptation-btn" data-adaptation="scent">
+             <strong>Scent</strong>
+             <span>Can detect creatures by smell within 10 squares</span>
+           </button>
+           <button type="button" class="adaptation-btn" data-adaptation="skillBonus">
+             <strong>Skill Affinity</strong>
+             <span>+2 species bonus to one skill</span>
+           </button>
+         </div>
+         <div class="selected-adaptation" id="selected-adaptation">
+           <span class="placeholder">No adaptation selected</span>
+         </div>
+       </section>
+
+       <section class="near-human-section sacrifice-section">
+         <h3><i class="fas fa-exchange-alt"></i> Sacrifice</h3>
+         <p class="section-hint">What your near-human gives up in exchange</p>
+         <div class="sacrifice-options" id="sacrifice-options">
+           <button type="button" class="sacrifice-btn" data-sacrifice="bonusFeat">
+             <strong>Bonus Feat</strong>
+             <span>Lose the human bonus feat at 1st level</span>
+           </button>
+           <button type="button" class="sacrifice-btn" data-sacrifice="bonusSkill">
+             <strong>Bonus Trained Skill</strong>
+             <span>Lose the human bonus trained skill</span>
+           </button>
+         </div>
+         <div class="selected-sacrifice" id="selected-sacrifice">
+           <span class="placeholder">No sacrifice selected</span>
+         </div>
+       </section>
+
+       <section class="near-human-section attributes-section">
+         <h3><i class="fas fa-chart-bar"></i> Attribute Modifiers</h3>
+         <p class="section-hint">One bonus (+2) and one penalty (-2)</p>
+         <div class="attribute-grid" id="near-human-attributes">
+           <div class="attribute-row" data-attr="str">
+             <span class="attr-label">STR</span>
+             <button type="button" class="attr-minus"><i class="fas fa-minus"></i></button>
+             <span class="attr-value" id="nh-str-value">0</span>
+             <button type="button" class="attr-plus"><i class="fas fa-plus"></i></button>
+           </div>
+           <div class="attribute-row" data-attr="dex">
+             <span class="attr-label">DEX</span>
+             <button type="button" class="attr-minus"><i class="fas fa-minus"></i></button>
+             <span class="attr-value" id="nh-dex-value">0</span>
+             <button type="button" class="attr-plus"><i class="fas fa-plus"></i></button>
+           </div>
+           <div class="attribute-row" data-attr="con">
+             <span class="attr-label">CON</span>
+             <button type="button" class="attr-minus"><i class="fas fa-minus"></i></button>
+             <span class="attr-value" id="nh-con-value">0</span>
+             <button type="button" class="attr-plus"><i class="fas fa-plus"></i></button>
+           </div>
+           <div class="attribute-row" data-attr="int">
+             <span class="attr-label">INT</span>
+             <button type="button" class="attr-minus"><i class="fas fa-minus"></i></button>
+             <span class="attr-value" id="nh-int-value">0</span>
+             <button type="button" class="attr-plus"><i class="fas fa-plus"></i></button>
+           </div>
+           <div class="attribute-row" data-attr="wis">
+             <span class="attr-label">WIS</span>
+             <button type="button" class="attr-minus"><i class="fas fa-minus"></i></button>
+             <span class="attr-value" id="nh-wis-value">0</span>
+             <button type="button" class="attr-plus"><i class="fas fa-plus"></i></button>
+           </div>
+           <div class="attribute-row" data-attr="cha">
+             <span class="attr-label">CHA</span>
+             <button type="button" class="attr-minus"><i class="fas fa-minus"></i></button>
+             <span class="attr-value" id="nh-cha-value">0</span>
+             <button type="button" class="attr-plus"><i class="fas fa-plus"></i></button>
+           </div>
+         </div>
+       </section>
+     </div>
+
+     <div class="near-human-validation" id="near-human-validation">
+       <span class="validation-message"></span>
+     </div>
+
+     <div class="species-expanded-actions">
+       <button type="button" class="species-back-btn" id="near-human-back-btn">
+         <i class="fas fa-arrow-left"></i> Back
+       </button>
+       <button type="button" class="species-confirm-btn" id="near-human-confirm-btn" disabled>
+         <i class="fas fa-check"></i> Confirm Near-Human
        </button>
      </div>
    </div>
