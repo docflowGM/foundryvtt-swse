@@ -302,64 +302,88 @@ export async function _onSelectSpecies(event) {
 /**
  * Apply all species data to character
  * @param {Object} speciesDoc - Species document from compendium
+ * @throws {Error} If species document is invalid
  */
 export function _applySpeciesData(speciesDoc) {
+  // Validate species document
+  if (!speciesDoc || typeof speciesDoc !== 'object') {
+    SWSELogger.error("CharGen | Invalid species document provided to _applySpeciesData");
+    throw new Error("Invalid species document");
+  }
+
   const system = speciesDoc.system || {};
+  const speciesName = speciesDoc.name || "Unknown";
 
-  // 1. Apply ability score modifiers
-  const abilityBonuses = this._parseAbilityString(system.abilities || "None");
-  for (const [ability, bonus] of Object.entries(abilityBonuses)) {
-    if (this.characterData.abilities[ability]) {
-      this.characterData.abilities[ability].racial = bonus;
+  try {
+    // 1. Apply ability score modifiers
+    const abilityBonuses = this._parseAbilityString(system.abilities || "None");
+
+    // Validate that bonuses are reasonable (SWSE standard is ±2 to ±4)
+    for (const [ability, bonus] of Object.entries(abilityBonuses)) {
+      if (Math.abs(bonus) > 6) {
+        SWSELogger.warn(`CharGen | Unusual ability bonus for ${speciesName}: ${ability} ${bonus}`);
+      }
+      if (this.characterData.abilities[ability]) {
+        this.characterData.abilities[ability].racial = bonus;
+      }
     }
+
+    // 2. Apply speed (validate it's a positive number)
+    if (system.speed) {
+      const speed = Number(system.speed);
+      if (!isNaN(speed) && speed > 0) {
+        this.characterData.speed = speed;
+      } else {
+        SWSELogger.warn(`CharGen | Invalid speed value for ${speciesName}: ${system.speed}`);
+      }
+    }
+
+    // 3. Store size and apply size modifiers
+    this.characterData.size = system.size || "Medium";
+    this._applySizeModifiers(this.characterData.size);
+
+    // 4. Store special abilities (ensure it's an array)
+    this.characterData.specialAbilities = Array.isArray(system.special) ? system.special :
+                                          (system.special ? [system.special] : []);
+
+    // 5. Check for Human racial bonuses and NPC status
+    const isNPC = this.actorType === "npc";
+    const isHuman = speciesName.toLowerCase() === "human";
+
+    if (isNPC) {
+      // NONHEROIC RULE: Nonheroic characters get 3 starting feats
+      // Non-human nonheroic characters get 2 feats (remove 1 for no human bonus)
+      this.characterData.featsRequired = isHuman ? 3 : 2;
+    } else {
+      // PCs: Humans get 2 feats, all other species get 1
+      this.characterData.featsRequired = isHuman ? 2 : 1;
+    }
+
+    // 6. Store languages (ensure it's an array)
+    this.characterData.languages = Array.isArray(system.languages) ? system.languages :
+                                   (system.languages ? [system.languages] : []);
+
+    // 7. Store and apply racial skill bonuses (ensure it's an array)
+    const skillBonuses = Array.isArray(system.skillBonuses) ? system.skillBonuses : [];
+    this.characterData.racialSkillBonuses = skillBonuses;
+    this._applyRacialSkillBonuses(skillBonuses);
+
+    // 8. Store source
+    this.characterData.speciesSource = system.source || "";
+
+    SWSELogger.log(`CharGen | Successfully applied species data for ${speciesName}:`, {
+      abilities: abilityBonuses,
+      speed: this.characterData.speed,
+      size: this.characterData.size,
+      specialAbilitiesCount: this.characterData.specialAbilities.length,
+      languagesCount: this.characterData.languages.length,
+      skillBonusesCount: this.characterData.racialSkillBonuses.length,
+      featsRequired: this.characterData.featsRequired
+    });
+  } catch (err) {
+    SWSELogger.error(`CharGen | Error applying species data for ${speciesName}:`, err);
+    throw err;
   }
-
-  // 2. Apply speed
-  if (system.speed) {
-    const speed = Number(system.speed);
-    this.characterData.speed = speed;
-  }
-
-  // 3. Store size and apply size modifiers
-  this.characterData.size = system.size || "Medium";
-  this._applySizeModifiers(this.characterData.size);
-
-  // 4. Store special abilities
-  this.characterData.specialAbilities = system.special || [];
-
-  // 5. Check for Human racial bonuses and NPC status
-  const isNPC = this.actorType === "npc";
-  const isHuman = speciesDoc.name === "Human" || speciesDoc.name === "human";
-
-  if (isNPC) {
-    // NONHEROIC RULE: Nonheroic characters get 3 starting feats
-    // Non-human nonheroic characters get 2 feats (remove 1 for no human bonus)
-    this.characterData.featsRequired = isHuman ? 3 : 2;
-    SWSELogger.log(`CharGen | NPC (${isHuman ? 'Human' : 'Non-human'}): ${this.characterData.featsRequired} starting feats`);
-  } else {
-    // PCs: Humans get 2 feats, all other species get 1
-    this.characterData.featsRequired = isHuman ? 2 : 1;
-    SWSELogger.log(`CharGen | PC (${isHuman ? 'Human' : 'Non-human'}): ${this.characterData.featsRequired} feats`);
-  }
-
-  // 6. Store languages
-  this.characterData.languages = system.languages || [];
-
-  // 7. Store and apply racial skill bonuses
-  this.characterData.racialSkillBonuses = system.skillBonuses || [];
-  this._applyRacialSkillBonuses(system.skillBonuses || []);
-
-  // 8. Store source
-  this.characterData.speciesSource = system.source || "";
-
-  SWSELogger.log(`CharGen | Applied species data for ${speciesDoc.name}:`, {
-    abilities: abilityBonuses,
-    speed: this.characterData.speed,
-    size: this.characterData.size,
-    special: this.characterData.specialAbilities,
-    languages: this.characterData.languages,
-    skillBonuses: this.characterData.racialSkillBonuses
-  });
 }
 
 /**
@@ -495,16 +519,39 @@ export function _parseAbilityString(abilityString) {
   const parts = abilityString.split(',').map(p => p.trim());
 
   for (const part of parts) {
-    // Match patterns like "+2 Dex", "-2 Con", "+4 Str"
-    const match = part.match(/([+-]?\d+)\s*([a-zA-Z]+)/);
+    if (!part) continue;
+
+    // Try multiple patterns to handle various ability string formats
+    // Pattern 1: "+2 Dex", "-2 Con", "+4 Str", etc. (value before ability)
+    let match = part.match(/([+-]?\d+)\s*([a-zA-Z\s]+)/);
     if (match) {
       const value = parseInt(match[1]);
-      const abilityName = match[2].toLowerCase();
+      const abilityName = match[2].toLowerCase().trim();
       const abilityKey = abilityMap[abilityName];
 
       if (abilityKey) {
-        bonuses[abilityKey] = value;
+        // Add to existing bonus if ability appears multiple times
+        bonuses[abilityKey] += value;
+        continue;
       }
+    }
+
+    // Pattern 2: "Dex +2", "Con -2", etc. (ability before value)
+    match = part.match(/([a-zA-Z\s]+)([+-]?\d+)/);
+    if (match) {
+      const value = parseInt(match[2]);
+      const abilityName = match[1].toLowerCase().trim();
+      const abilityKey = abilityMap[abilityName];
+
+      if (abilityKey) {
+        bonuses[abilityKey] += value;
+        continue;
+      }
+    }
+
+    // Log warning if we couldn't parse this part (helps with debugging)
+    if (part.length > 0) {
+      SWSELogger.warn(`CharGen | Could not parse ability modifier: "${part}"`);
     }
   }
 
@@ -679,35 +726,9 @@ export function _filterSpecies(species, filters) {
 
     // Parse abilities to check bonuses and penalties
     if (attributeBonus || attributePenalty) {
-      // Parse ability string inline (same logic as _parseAbilityString)
+      // Use shared parsing function to avoid duplication
       const abilityString = system.abilities || "None";
-      const abilities = {
-        str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0
-      };
-
-      if (abilityString && abilityString !== "None" && abilityString !== "none") {
-        const abilityMap = {
-          'str': 'str', 'strength': 'str',
-          'dex': 'dex', 'dexterity': 'dex',
-          'con': 'con', 'constitution': 'con',
-          'int': 'int', 'intelligence': 'int',
-          'wis': 'wis', 'wisdom': 'wis',
-          'cha': 'cha', 'charisma': 'cha'
-        };
-
-        const parts = abilityString.split(',').map(p => p.trim());
-        for (const part of parts) {
-          const match = part.match(/([+-]?\d+)\s*([a-zA-Z]+)/);
-          if (match) {
-            const value = parseInt(match[1]);
-            const abilityName = match[2].toLowerCase();
-            const abilityKey = abilityMap[abilityName];
-            if (abilityKey) {
-              abilities[abilityKey] = value;
-            }
-          }
-        }
-      }
+      const abilities = _parseAbilityString.call(this, abilityString);
 
       // Filter by attribute bonus
       if (attributeBonus) {

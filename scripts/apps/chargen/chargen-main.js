@@ -904,6 +904,15 @@ export default class CharacterGenerator extends Application {
       }
     };
 
+    // Persist Near-Human builder data to actor flags
+    if (this.characterData.nearHumanData) {
+      actorData.flags = {
+        'foundryvtt-swse': {
+          nearHumanData: this.characterData.nearHumanData
+        }
+      };
+    }
+
     let created = null;
     try {
       // Create the actor
