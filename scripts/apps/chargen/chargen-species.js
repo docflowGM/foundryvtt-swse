@@ -861,26 +861,78 @@ let _nearHumanState = {
 
 // Cache for loaded traits data
 let _nearHumanTraitsData = null;
+let _nearHumanHouseRulesData = null;
 
 /**
- * Load official Near-Human traits from JSON
+ * Load official Near-Human traits from JSON and optional house rules
  */
 async function loadNearHumanTraitsData() {
   if (_nearHumanTraitsData) return _nearHumanTraitsData;
 
   try {
+    // Load official traits
     const response = await fetch('systems/foundryvtt-swse/data/near-human-traits.json');
-    if (response.ok) {
-      _nearHumanTraitsData = await response.json();
-      SWSELogger.log("CharGen | Loaded official Near-Human traits data");
-      return _nearHumanTraitsData;
-    } else {
+    if (!response.ok) {
       SWSELogger.error("CharGen | Failed to load near-human-traits.json");
       return { traits: [], variants: [] };
     }
+
+    _nearHumanTraitsData = await response.json();
+    SWSELogger.log("CharGen | Loaded official Near-Human traits data");
+
+    // Load house rules if available
+    await loadNearHumanHouseRules();
+
+    // Merge house rules if enabled
+    if (_nearHumanHouseRulesData && _nearHumanHouseRulesData.enabled) {
+      if (_nearHumanHouseRulesData.traits && Array.isArray(_nearHumanHouseRulesData.traits)) {
+        _nearHumanTraitsData.traits = [
+          ..._nearHumanTraitsData.traits,
+          ..._nearHumanHouseRulesData.traits
+        ];
+        SWSELogger.log(`CharGen | Added ${_nearHumanHouseRulesData.traits.length} house rule traits`);
+      }
+
+      if (_nearHumanHouseRulesData.variants && Array.isArray(_nearHumanHouseRulesData.variants)) {
+        _nearHumanTraitsData.variants = [
+          ..._nearHumanTraitsData.variants,
+          ..._nearHumanHouseRulesData.variants
+        ];
+        SWSELogger.log(`CharGen | Added ${_nearHumanHouseRulesData.variants.length} house rule variants`);
+      }
+    }
+
+    return _nearHumanTraitsData;
   } catch (err) {
     SWSELogger.error("CharGen | Error loading near-human-traits.json:", err);
     return { traits: [], variants: [] };
+  }
+}
+
+/**
+ * Load house rules configuration for Near-Human traits
+ */
+async function loadNearHumanHouseRules() {
+  if (_nearHumanHouseRulesData) return _nearHumanHouseRulesData;
+
+  try {
+    const response = await fetch('systems/foundryvtt-swse/data/near-human-houserules.json');
+    if (response.ok) {
+      _nearHumanHouseRulesData = await response.json();
+      if (_nearHumanHouseRulesData.enabled) {
+        SWSELogger.log("CharGen | House rules enabled for Near-Human traits");
+      } else {
+        SWSELogger.log("CharGen | House rules available but disabled for Near-Human traits");
+      }
+      return _nearHumanHouseRulesData;
+    } else {
+      _nearHumanHouseRulesData = { enabled: false, traits: [], variants: [] };
+      return _nearHumanHouseRulesData;
+    }
+  } catch (err) {
+    SWSELogger.warn("CharGen | House rules file not found or error loading", err);
+    _nearHumanHouseRulesData = { enabled: false, traits: [], variants: [] };
+    return _nearHumanHouseRulesData;
   }
 }
 
@@ -1052,8 +1104,12 @@ function _renderNearHumanTraits(overlay) {
     typeGroup.append(`<h4 class="trait-type-header">${typeLabel}</h4>`);
 
     for (const trait of traits) {
+      const isHouseRule = trait.category === 'houserule';
+      const badge = isHouseRule ? '<span class="houserule-badge" title="House Rule - Optional">⚙️ HR</span>' : '';
+
       const btn = $(`
-        <button type="button" class="trait-btn" data-trait-id="${trait.id}">
+        <button type="button" class="trait-btn ${isHouseRule ? 'houserule-trait' : ''}" data-trait-id="${trait.id}">
+          ${badge}
           <strong>${trait.name}</strong>
           <span class="trait-description">${trait.description}</span>
         </button>
@@ -1075,9 +1131,13 @@ function _renderNearHumanVariants(overlay) {
   variantsList.empty();
 
   for (const variant of _nearHumanTraitsData.variants) {
+    const isHouseRule = variant.category === 'houserule';
+    const badge = isHouseRule ? '<span class="houserule-badge" title="House Rule - Optional">⚙️ HR</span>' : '';
+
     const label = $(`
-      <label class="variant-checkbox-label">
+      <label class="variant-checkbox-label ${isHouseRule ? 'houserule-variant' : ''}">
         <input type="checkbox" class="variant-checkbox" value="${variant.id}">
+        ${badge}
         <strong>${variant.name}</strong>
         <span class="variant-description">${variant.description}</span>
       </label>

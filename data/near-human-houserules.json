@@ -1,0 +1,106 @@
+{
+  "enabled": false,
+  "description": "Optional house rules for additional Near-Human traits. Set 'enabled': true to include these traits in character creation.",
+  "traits": [
+    {
+      "id": "adaptiveResilience",
+      "name": "Adaptive Resilience",
+      "description": "Once per encounter, can reroll a saving throw (Fortitude, Reflex, or Will save), but must accept the result. Reflects near-human ability to adapt to threats.",
+      "type": "defense",
+      "category": "houserule"
+    },
+    {
+      "id": "hybridVitality",
+      "name": "Hybrid Vitality",
+      "description": "Combine two different environmental or physiological adaptations. Start with Climb Speed AND Low-Light Vision, or Amphibious AND Natural Armor, etc. Choose two compatible traits at character creation.",
+      "type": "physiology",
+      "category": "houserule"
+    },
+    {
+      "id": "mentalDiscipline",
+      "name": "Mental Discipline",
+      "description": "Can reroll a Will save or Deception check once per encounter, but must accept the result. Represents enhanced mental fortitude.",
+      "type": "defense",
+      "category": "houserule"
+    },
+    {
+      "id": "metabolicFlex",
+      "name": "Metabolic Flexibility",
+      "description": "Can consume half rations and require only 4 hours of sleep instead of 8. Can also reroll an Endurance check once per day.",
+      "type": "physiology",
+      "category": "houserule"
+    },
+    {
+      "id": "hybridIntelligence",
+      "name": "Hybrid Intelligence",
+      "description": "Gain +2 species bonus to one Knowledge skill and one Profession skill. Reflects diverse genetic heritage providing multiple areas of expertise.",
+      "type": "skill",
+      "category": "houserule"
+    },
+    {
+      "id": "chameleonCasting",
+      "name": "Chameleon Adaptation",
+      "description": "Gain +2 species bonus to Stealth and can take 10 on Stealth checks when relaxed. Skin/appearance naturally blends with surroundings.",
+      "type": "skill",
+      "category": "houserule"
+    },
+    {
+      "id": "dualReflexes",
+      "name": "Dual Reflexes",
+      "description": "Increases Base Initiative by +1 and gain +1 species bonus to Reflex saves. Represents faster nerve conduction from mixed genetics.",
+      "type": "combat",
+      "category": "houserule"
+    },
+    {
+      "id": "generalistMastery",
+      "name": "Generalist Mastery",
+      "description": "Choose any 2 different Class Skills from different classes (Jedi, Soldier, Scoundrel, etc.). Those skills are considered class skills for you even if not normally available.",
+      "type": "skill",
+      "category": "houserule"
+    },
+    {
+      "id": "syntheticResonance",
+      "name": "Synthetic Resonance",
+      "description": "Can interact with droids and technology as if proficient with cybernetics. Gain +2 species bonus to Use Computer and Mechanics checks. Result of mixed human/synthetic ancestry.",
+      "type": "augmentation",
+      "category": "houserule"
+    },
+    {
+      "id": "secondWind",
+      "name": "Second Wind (Enhanced)",
+      "description": "Gain an extra use of Second Wind per day (total of 2 instead of 1). Represents enhanced physical recovery from hybrid genetics.",
+      "type": "defense",
+      "category": "houserule"
+    }
+  ],
+  "variants": [
+    {
+      "id": "luminousSkin",
+      "name": "Luminous Skin",
+      "description": "Skin naturally produces bioluminescence in various colors. Can dim/brighten as an action. No mechanical effect unless GM allows (roleplay only).",
+      "type": "cosmetic",
+      "category": "houserule"
+    },
+    {
+      "id": "crystallineFeatures",
+      "name": "Crystalline Features",
+      "description": "Parts of body have crystalline growths (hair, skin, nails). Purely cosmetic but visually striking. Does not affect armor or weapons.",
+      "type": "cosmetic",
+      "category": "houserule"
+    },
+    {
+      "id": "vestigialWings",
+      "name": "Vestigial Wings",
+      "description": "Small non-functional wings (bat-like, insect-like, or avian). Provide no flight capability but give dramatic appearance. GM may allow +1 bonus to Acrobatics in specific situations.",
+      "type": "cosmetic",
+      "category": "houserule"
+    },
+    {
+      "id": "hybridBiopattern",
+      "name": "Hybrid Bio-Pattern",
+      "description": "Body displays obvious mixed genetic traits (different skin tones in sections, mixed fur patterns, etc.). Striking appearance grants advantage in social situations where unique heritage is valued.",
+      "type": "cosmetic",
+      "category": "houserule"
+    }
+  ]
+}
