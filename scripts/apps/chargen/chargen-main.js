@@ -352,6 +352,11 @@ export default class CharacterGenerator extends Application {
     $html.find('.adaptation-btn').click(this._onSelectNearHumanAdaptation.bind(this));
     $html.find('.sacrifice-btn').click(this._onSelectNearHumanSacrifice.bind(this));
     $html.find('.attr-plus, .attr-minus').click(this._onAdjustNearHumanAttribute.bind(this));
+    $html.find('.trait-btn').click(this._onSelectNearHumanTrait.bind(this));
+    $html.find('.sacrifice-radio').change(this._onSelectNearHumanSacrifice.bind(this));
+    $html.find('.variant-checkbox').change(this._onToggleNearHumanVariant.bind(this));
+    $html.find('.ability-plus-btn, .ability-minus-btn').click(this._onAdjustNearHumanAbility.bind(this));
+    $html.find('#near-human-randomize-btn').click(this._onRandomizeNearHuman.bind(this));
     $html.find('#near-human-confirm-btn').click(this._onConfirmNearHuman.bind(this));
     $html.find('#near-human-back-btn, #near-human-close-btn').click(this._onCloseNearHumanOverlay.bind(this));
     $html.find('#near-human-overlay').click(this._onNearHumanOverlayBackdropClick.bind(this));
@@ -903,6 +908,15 @@ export default class CharacterGenerator extends Application {
         actorLink: true
       }
     };
+
+    // Persist Near-Human builder data to actor flags
+    if (this.characterData.nearHumanData) {
+      actorData.flags = {
+        'foundryvtt-swse': {
+          nearHumanData: this.characterData.nearHumanData
+        }
+      };
+    }
 
     let created = null;
     try {

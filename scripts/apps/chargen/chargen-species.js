@@ -168,6 +168,36 @@ export async function _onPreviewSpecies(event) {
     overlay.find('#expanded-special-section').hide();
   }
 
+  // Display a quick summary of key mechanical effects
+  const summaryList = overlay.find('#expanded-species-summary');
+  if (summaryList && summaryList.length > 0) {
+    summaryList.empty();
+
+    // Summarize key mechanical effects
+    const summary = [];
+
+    // Ability modifiers
+    if (abilities && abilities !== "None") {
+      summary.push(`Attributes: ${abilities}`);
+    }
+
+    // Speed
+    if (speed) {
+      summary.push(`Speed: ${speed} squares`);
+    }
+
+    // Size
+    if (size && size !== "Medium") {
+      summary.push(`Size: ${size}`);
+    }
+
+    if (summary.length > 0) {
+      summary.forEach(item => {
+        summaryList.append(`<li><strong>${item}</strong></li>`);
+      });
+    }
+  }
+
   // Show the overlay with animation
   overlay.addClass('active');
 
@@ -302,64 +332,88 @@ export async function _onSelectSpecies(event) {
 /**
  * Apply all species data to character
  * @param {Object} speciesDoc - Species document from compendium
+ * @throws {Error} If species document is invalid
  */
 export function _applySpeciesData(speciesDoc) {
+  // Validate species document
+  if (!speciesDoc || typeof speciesDoc !== 'object') {
+    SWSELogger.error("CharGen | Invalid species document provided to _applySpeciesData");
+    throw new Error("Invalid species document");
+  }
+
   const system = speciesDoc.system || {};
+  const speciesName = speciesDoc.name || "Unknown";
 
-  // 1. Apply ability score modifiers
-  const abilityBonuses = this._parseAbilityString(system.abilities || "None");
-  for (const [ability, bonus] of Object.entries(abilityBonuses)) {
-    if (this.characterData.abilities[ability]) {
-      this.characterData.abilities[ability].racial = bonus;
+  try {
+    // 1. Apply ability score modifiers
+    const abilityBonuses = this._parseAbilityString(system.abilities || "None");
+
+    // Validate that bonuses are reasonable (SWSE standard is ±2 to ±4)
+    for (const [ability, bonus] of Object.entries(abilityBonuses)) {
+      if (Math.abs(bonus) > 6) {
+        SWSELogger.warn(`CharGen | Unusual ability bonus for ${speciesName}: ${ability} ${bonus}`);
+      }
+      if (this.characterData.abilities[ability]) {
+        this.characterData.abilities[ability].racial = bonus;
+      }
     }
+
+    // 2. Apply speed (validate it's a positive number)
+    if (system.speed) {
+      const speed = Number(system.speed);
+      if (!isNaN(speed) && speed > 0) {
+        this.characterData.speed = speed;
+      } else {
+        SWSELogger.warn(`CharGen | Invalid speed value for ${speciesName}: ${system.speed}`);
+      }
+    }
+
+    // 3. Store size and apply size modifiers
+    this.characterData.size = system.size || "Medium";
+    this._applySizeModifiers(this.characterData.size);
+
+    // 4. Store special abilities (ensure it's an array)
+    this.characterData.specialAbilities = Array.isArray(system.special) ? system.special :
+                                          (system.special ? [system.special] : []);
+
+    // 5. Check for Human racial bonuses and NPC status
+    const isNPC = this.actorType === "npc";
+    const isHuman = speciesName.toLowerCase() === "human";
+
+    if (isNPC) {
+      // NONHEROIC RULE: Nonheroic characters get 3 starting feats
+      // Non-human nonheroic characters get 2 feats (remove 1 for no human bonus)
+      this.characterData.featsRequired = isHuman ? 3 : 2;
+    } else {
+      // PCs: Humans get 2 feats, all other species get 1
+      this.characterData.featsRequired = isHuman ? 2 : 1;
+    }
+
+    // 6. Store languages (ensure it's an array)
+    this.characterData.languages = Array.isArray(system.languages) ? system.languages :
+                                   (system.languages ? [system.languages] : []);
+
+    // 7. Store and apply racial skill bonuses (ensure it's an array)
+    const skillBonuses = Array.isArray(system.skillBonuses) ? system.skillBonuses : [];
+    this.characterData.racialSkillBonuses = skillBonuses;
+    this._applyRacialSkillBonuses(skillBonuses);
+
+    // 8. Store source
+    this.characterData.speciesSource = system.source || "";
+
+    SWSELogger.log(`CharGen | Successfully applied species data for ${speciesName}:`, {
+      abilities: abilityBonuses,
+      speed: this.characterData.speed,
+      size: this.characterData.size,
+      specialAbilitiesCount: this.characterData.specialAbilities.length,
+      languagesCount: this.characterData.languages.length,
+      skillBonusesCount: this.characterData.racialSkillBonuses.length,
+      featsRequired: this.characterData.featsRequired
+    });
+  } catch (err) {
+    SWSELogger.error(`CharGen | Error applying species data for ${speciesName}:`, err);
+    throw err;
   }
-
-  // 2. Apply speed
-  if (system.speed) {
-    const speed = Number(system.speed);
-    this.characterData.speed = speed;
-  }
-
-  // 3. Store size and apply size modifiers
-  this.characterData.size = system.size || "Medium";
-  this._applySizeModifiers(this.characterData.size);
-
-  // 4. Store special abilities
-  this.characterData.specialAbilities = system.special || [];
-
-  // 5. Check for Human racial bonuses and NPC status
-  const isNPC = this.actorType === "npc";
-  const isHuman = speciesDoc.name === "Human" || speciesDoc.name === "human";
-
-  if (isNPC) {
-    // NONHEROIC RULE: Nonheroic characters get 3 starting feats
-    // Non-human nonheroic characters get 2 feats (remove 1 for no human bonus)
-    this.characterData.featsRequired = isHuman ? 3 : 2;
-    SWSELogger.log(`CharGen | NPC (${isHuman ? 'Human' : 'Non-human'}): ${this.characterData.featsRequired} starting feats`);
-  } else {
-    // PCs: Humans get 2 feats, all other species get 1
-    this.characterData.featsRequired = isHuman ? 2 : 1;
-    SWSELogger.log(`CharGen | PC (${isHuman ? 'Human' : 'Non-human'}): ${this.characterData.featsRequired} feats`);
-  }
-
-  // 6. Store languages
-  this.characterData.languages = system.languages || [];
-
-  // 7. Store and apply racial skill bonuses
-  this.characterData.racialSkillBonuses = system.skillBonuses || [];
-  this._applyRacialSkillBonuses(system.skillBonuses || []);
-
-  // 8. Store source
-  this.characterData.speciesSource = system.source || "";
-
-  SWSELogger.log(`CharGen | Applied species data for ${speciesDoc.name}:`, {
-    abilities: abilityBonuses,
-    speed: this.characterData.speed,
-    size: this.characterData.size,
-    special: this.characterData.specialAbilities,
-    languages: this.characterData.languages,
-    skillBonuses: this.characterData.racialSkillBonuses
-  });
 }
 
 /**
@@ -495,16 +549,39 @@ export function _parseAbilityString(abilityString) {
   const parts = abilityString.split(',').map(p => p.trim());
 
   for (const part of parts) {
-    // Match patterns like "+2 Dex", "-2 Con", "+4 Str"
-    const match = part.match(/([+-]?\d+)\s*([a-zA-Z]+)/);
+    if (!part) continue;
+
+    // Try multiple patterns to handle various ability string formats
+    // Pattern 1: "+2 Dex", "-2 Con", "+4 Str", etc. (value before ability)
+    let match = part.match(/([+-]?\d+)\s*([a-zA-Z\s]+)/);
     if (match) {
       const value = parseInt(match[1]);
-      const abilityName = match[2].toLowerCase();
+      const abilityName = match[2].toLowerCase().trim();
       const abilityKey = abilityMap[abilityName];
 
       if (abilityKey) {
-        bonuses[abilityKey] = value;
+        // Add to existing bonus if ability appears multiple times
+        bonuses[abilityKey] += value;
+        continue;
       }
+    }
+
+    // Pattern 2: "Dex +2", "Con -2", etc. (ability before value)
+    match = part.match(/([a-zA-Z\s]+)([+-]?\d+)/);
+    if (match) {
+      const value = parseInt(match[2]);
+      const abilityName = match[1].toLowerCase().trim();
+      const abilityKey = abilityMap[abilityName];
+
+      if (abilityKey) {
+        bonuses[abilityKey] += value;
+        continue;
+      }
+    }
+
+    // Log warning if we couldn't parse this part (helps with debugging)
+    if (part.length > 0) {
+      SWSELogger.warn(`CharGen | Could not parse ability modifier: "${part}"`);
     }
   }
 
@@ -679,35 +756,9 @@ export function _filterSpecies(species, filters) {
 
     // Parse abilities to check bonuses and penalties
     if (attributeBonus || attributePenalty) {
-      // Parse ability string inline (same logic as _parseAbilityString)
+      // Use shared parsing function to avoid duplication
       const abilityString = system.abilities || "None";
-      const abilities = {
-        str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0
-      };
-
-      if (abilityString && abilityString !== "None" && abilityString !== "none") {
-        const abilityMap = {
-          'str': 'str', 'strength': 'str',
-          'dex': 'dex', 'dexterity': 'dex',
-          'con': 'con', 'constitution': 'con',
-          'int': 'int', 'intelligence': 'int',
-          'wis': 'wis', 'wisdom': 'wis',
-          'cha': 'cha', 'charisma': 'cha'
-        };
-
-        const parts = abilityString.split(',').map(p => p.trim());
-        for (const part of parts) {
-          const match = part.match(/([+-]?\d+)\s*([a-zA-Z]+)/);
-          if (match) {
-            const value = parseInt(match[1]);
-            const abilityName = match[2].toLowerCase();
-            const abilityKey = abilityMap[abilityName];
-            if (abilityKey) {
-              abilities[abilityKey] = value;
-            }
-          }
-        }
-      }
+      const abilities = _parseAbilityString.call(this, abilityString);
 
       // Filter by attribute bonus
       if (attributeBonus) {
@@ -743,8 +794,40 @@ export async function _onSpeciesFilterChange(event) {
     this.characterData.speciesFilters[filterType] = value;
   }
 
+  // Update filter UI indicators
+  this._updateFilterIndicators();
+
   // Re-render to apply filters
   this.render();
+}
+
+/**
+ * Update visual indicators for active filters
+ */
+function _updateFilterIndicators() {
+  const filters = this.characterData.speciesFilters || {};
+  const hasActiveFilters = Object.values(filters).some(v => v !== null && v !== '');
+
+  const filterHeader = document.querySelector('.filter-header');
+  if (filterHeader) {
+    if (hasActiveFilters) {
+      filterHeader.classList.add('has-active-filters');
+    } else {
+      filterHeader.classList.remove('has-active-filters');
+    }
+  }
+
+  // Update count badge if available
+  const activeCount = Object.values(filters).filter(v => v !== null && v !== '').length;
+  const badge = document.querySelector('.filter-badge');
+  if (badge) {
+    if (activeCount > 0) {
+      badge.textContent = activeCount;
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
 }
 
 /**
@@ -765,89 +848,162 @@ export async function _onClearSpeciesFilters(event) {
 }
 
 // ============================================
-// Near-Human Builder
+// Near-Human Builder - Official SWSE Rules
 // ============================================
 
-// Near-Human builder state
+// Near-Human builder state - Official system
 let _nearHumanState = {
-  adaptation: null,
-  sacrifice: null,
-  attributes: { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 }
-};
-
-// Adaptation definitions
-const NEAR_HUMAN_ADAPTATIONS = {
-  lowLightVision: {
-    name: "Low-Light Vision",
-    description: "See twice as far in dim light",
-    trait: { type: "sense", sense: "lowLightVision", displayText: "Low-Light Vision: Can see twice as far in dim light" }
-  },
-  breatheUnderwater: {
-    name: "Breathe Underwater",
-    description: "Can breathe water as well as air",
-    trait: { type: "environmental", effect: "breatheUnderwater", displayText: "Amphibious: Can breathe both air and water" }
-  },
-  naturalArmor: {
-    name: "Natural Armor",
-    description: "+1 natural armor bonus to Reflex Defense",
-    trait: { type: "bonus", target: "reflex", value: 1, displayText: "+1 natural armor bonus to Reflex Defense" }
-  },
-  climbSpeed: {
-    name: "Climb Speed",
-    description: "Climb speed equal to base speed",
-    trait: { type: "movement", mode: "climb", speed: 6, displayText: "Climb speed 6 squares" }
-  },
-  scent: {
-    name: "Scent",
-    description: "Can detect creatures by smell within 10 squares",
-    trait: { type: "sense", sense: "scent", range: 10, displayText: "Scent: Can detect creatures by smell within 10 squares" }
-  },
-  skillBonus: {
-    name: "Skill Affinity",
-    description: "+2 species bonus to one skill",
-    trait: { type: "bonus", target: "perception", value: 2, displayText: "+2 species bonus to Perception checks" }
+  traitId: null,          // Selected trait ID from 24 official traits
+  sacrifice: null,        // "feat" or "skill" - which human bonus to trade
+  variants: [],           // Array of variant IDs (0-3 allowed)
+  customAbilityChoices: null,  // For Ability Adjustment trait: {str, dex, con, int, wis, cha} with values from -1 to +1
+  abilityAdjustments: {   // Track ability adjustments for Ability Adjustment trait
+    str: 0,
+    dex: 0,
+    con: 0,
+    int: 0,
+    wis: 0,
+    cha: 0
   }
 };
 
-// Sacrifice definitions
-const NEAR_HUMAN_SACRIFICES = {
-  bonusFeat: {
-    name: "Bonus Feat",
-    description: "Lose the human bonus feat at 1st level"
-  },
-  bonusSkill: {
-    name: "Bonus Trained Skill",
-    description: "Lose the human bonus trained skill"
+// Cache for loaded traits data
+let _nearHumanTraitsData = null;
+let _nearHumanHouseRulesData = null;
+
+/**
+ * Load official Near-Human traits from JSON and optional house rules
+ */
+async function loadNearHumanTraitsData() {
+  if (_nearHumanTraitsData) return _nearHumanTraitsData;
+
+  try {
+    // Load official traits
+    const response = await fetch('systems/foundryvtt-swse/data/near-human-traits.json');
+    if (!response.ok) {
+      SWSELogger.error("CharGen | Failed to load near-human-traits.json");
+      return { traits: [], variants: [] };
+    }
+
+    _nearHumanTraitsData = await response.json();
+    SWSELogger.log("CharGen | Loaded official Near-Human traits data");
+
+    // Load house rules if available
+    await loadNearHumanHouseRules();
+
+    // Merge house rules if enabled
+    if (_nearHumanHouseRulesData && _nearHumanHouseRulesData.enabled) {
+      if (_nearHumanHouseRulesData.traits && Array.isArray(_nearHumanHouseRulesData.traits)) {
+        _nearHumanTraitsData.traits = [
+          ..._nearHumanTraitsData.traits,
+          ..._nearHumanHouseRulesData.traits
+        ];
+        SWSELogger.log(`CharGen | Added ${_nearHumanHouseRulesData.traits.length} house rule traits`);
+      }
+
+      if (_nearHumanHouseRulesData.variants && Array.isArray(_nearHumanHouseRulesData.variants)) {
+        _nearHumanTraitsData.variants = [
+          ..._nearHumanTraitsData.variants,
+          ..._nearHumanHouseRulesData.variants
+        ];
+        SWSELogger.log(`CharGen | Added ${_nearHumanHouseRulesData.variants.length} house rule variants`);
+      }
+    }
+
+    return _nearHumanTraitsData;
+  } catch (err) {
+    SWSELogger.error("CharGen | Error loading near-human-traits.json:", err);
+    return { traits: [], variants: [] };
   }
-};
+}
+
+/**
+ * Load house rules configuration for Near-Human traits
+ */
+async function loadNearHumanHouseRules() {
+  if (_nearHumanHouseRulesData) return _nearHumanHouseRulesData;
+
+  try {
+    const response = await fetch('systems/foundryvtt-swse/data/near-human-houserules.json');
+    if (response.ok) {
+      _nearHumanHouseRulesData = await response.json();
+      if (_nearHumanHouseRulesData.enabled) {
+        SWSELogger.log("CharGen | House rules enabled for Near-Human traits");
+      } else {
+        SWSELogger.log("CharGen | House rules available but disabled for Near-Human traits");
+      }
+      return _nearHumanHouseRulesData;
+    } else {
+      _nearHumanHouseRulesData = { enabled: false, traits: [], variants: [] };
+      return _nearHumanHouseRulesData;
+    }
+  } catch (err) {
+    SWSELogger.warn("CharGen | House rules file not found or error loading", err);
+    _nearHumanHouseRulesData = { enabled: false, traits: [], variants: [] };
+    return _nearHumanHouseRulesData;
+  }
+}
+
+/**
+ * Get a trait by ID
+ */
+function getNearHumanTrait(traitId) {
+  if (!_nearHumanTraitsData) return null;
+  return _nearHumanTraitsData.traits.find(t => t.id === traitId);
+}
+
+/**
+ * Get a variant by ID
+ */
+function getNearHumanVariant(variantId) {
+  if (!_nearHumanTraitsData) return null;
+  return _nearHumanTraitsData.variants.find(v => v.id === variantId);
+}
 
 /**
  * Reset Near-Human builder state
  */
 function resetNearHumanState() {
   _nearHumanState = {
-    adaptation: null,
+    traitId: null,
     sacrifice: null,
-    attributes: { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 }
+    variants: [],
+    customAbilityChoices: null,
+    abilityAdjustments: {
+      str: 0,
+      dex: 0,
+      con: 0,
+      int: 0,
+      wis: 0,
+      cha: 0
+    }
   };
 }
 
 /**
- * Validate Near-Human configuration
+ * Validate Near-Human configuration per official rules
  */
 function validateNearHuman() {
-  const positives = Object.values(_nearHumanState.attributes).filter(v => v > 0).length;
-  const negatives = Object.values(_nearHumanState.attributes).filter(v => v < 0).length;
+  const hasTrait = _nearHumanState.traitId !== null;
+  const hasSacrifice = _nearHumanState.sacrifice !== null;
+  const validVariantCount = _nearHumanState.variants.length <= 3;
+
+  // Check ability adjustments if Ability Adjustment trait is selected
+  let abilityAdjustmentsValid = true;
+  if (_nearHumanState.traitId === 'abilityAdjustment') {
+    const total = Object.values(_nearHumanState.abilityAdjustments).reduce((sum, val) => sum + val, 0);
+    abilityAdjustmentsValid = total === 0;
+  }
 
   return {
-    hasAdaptation: _nearHumanState.adaptation !== null,
-    hasSacrifice: _nearHumanState.sacrifice !== null,
-    hasBonus: positives === 1,
-    hasPenalty: negatives === 1,
-    isValid: _nearHumanState.adaptation !== null &&
-             _nearHumanState.sacrifice !== null &&
-             positives === 1 &&
-             negatives === 1
+    hasTrait: hasTrait,
+    hasSacrifice: hasSacrifice,
+    validVariantCount: validVariantCount,
+    abilityAdjustmentsValid: abilityAdjustmentsValid,
+    isValid: hasTrait &&
+             hasSacrifice &&
+             validVariantCount &&
+             abilityAdjustmentsValid
   };
 }
 
@@ -857,31 +1013,39 @@ function validateNearHuman() {
 function updateNearHumanUI(overlay) {
   const validation = validateNearHuman();
 
-  // Update selected adaptation display
-  const adaptationDisplay = overlay.find('#selected-adaptation');
-  if (_nearHumanState.adaptation) {
-    const adapt = NEAR_HUMAN_ADAPTATIONS[_nearHumanState.adaptation];
-    adaptationDisplay.html(`<strong>${adapt.name}:</strong> ${adapt.description}`);
+  // Update selected trait display
+  const traitDisplay = overlay.find('#selected-trait');
+  if (_nearHumanState.traitId) {
+    const trait = getNearHumanTrait(_nearHumanState.traitId);
+    if (trait) {
+      traitDisplay.html(`<strong>${trait.name}</strong> (${trait.type})<br/><em>${trait.description}</em>`);
+    }
   } else {
-    adaptationDisplay.html('<span class="placeholder">No adaptation selected</span>');
+    traitDisplay.html('<span class="placeholder">Select a trait above</span>');
   }
 
   // Update selected sacrifice display
   const sacrificeDisplay = overlay.find('#selected-sacrifice');
+  const sacrificeLabels = {
+    feat: "Lose your bonus Feat at 1st level",
+    skill: "Lose your bonus Trained Skill"
+  };
   if (_nearHumanState.sacrifice) {
-    const sac = NEAR_HUMAN_SACRIFICES[_nearHumanState.sacrifice];
-    sacrificeDisplay.html(`<strong>${sac.name}:</strong> ${sac.description}`);
+    sacrificeDisplay.html(`<strong>${_nearHumanState.sacrifice === 'feat' ? 'Bonus Feat' : 'Bonus Trained Skill'}:</strong> ${sacrificeLabels[_nearHumanState.sacrifice]}`);
   } else {
-    sacrificeDisplay.html('<span class="placeholder">No sacrifice selected</span>');
+    sacrificeDisplay.html('<span class="placeholder">Choose which human bonus to trade</span>');
   }
 
-  // Update attribute values
-  for (const [attr, value] of Object.entries(_nearHumanState.attributes)) {
-    const valueEl = overlay.find(`#nh-${attr}-value`);
-    valueEl.text(value > 0 ? `+${value}` : value);
-    valueEl.removeClass('positive negative');
-    if (value > 0) valueEl.addClass('positive');
-    if (value < 0) valueEl.addClass('negative');
+  // Update variant display
+  const variantDisplay = overlay.find('#selected-variants');
+  if (_nearHumanState.variants.length > 0) {
+    const variantNames = _nearHumanState.variants.map(vid => {
+      const v = getNearHumanVariant(vid);
+      return v ? v.name : vid;
+    }).join(', ');
+    variantDisplay.html(`<strong>Selected (${_nearHumanState.variants.length}/3):</strong> ${variantNames}`);
+  } else {
+    variantDisplay.html('<span class="placeholder">No variants selected (optional)</span>');
   }
 
   // Update validation message
@@ -891,128 +1055,349 @@ function updateNearHumanUI(overlay) {
     overlay.find('#near-human-confirm-btn').prop('disabled', false);
   } else {
     const missing = [];
-    if (!validation.hasAdaptation) missing.push('adaptation');
+    if (!validation.hasTrait) missing.push('trait');
     if (!validation.hasSacrifice) missing.push('sacrifice');
-    if (!validation.hasBonus) missing.push('+2 bonus');
-    if (!validation.hasPenalty) missing.push('-2 penalty');
+    if (_nearHumanState.traitId === 'abilityAdjustment' && !validation.abilityAdjustmentsValid) {
+      missing.push('ability adjustments must sum to 0');
+    }
     validationEl.text(`Missing: ${missing.join(', ')}`).removeClass('success').addClass('error');
     overlay.find('#near-human-confirm-btn').prop('disabled', true);
   }
 }
 
 /**
- * Open Near-Human builder overlay
+ * Open Near-Human builder overlay and render UI
  */
-export function _onOpenNearHumanBuilder(event) {
+export async function _onOpenNearHumanBuilder(event) {
   event.preventDefault();
   event.stopPropagation();
+
+  // Load official traits if not already loaded
+  await loadNearHumanTraitsData();
 
   resetNearHumanState();
 
   const overlay = this.element.find('#near-human-overlay');
 
-  // Clear previous selections
-  overlay.find('.adaptation-btn, .sacrifice-btn').removeClass('selected');
+  // Populate traits list
+  _renderNearHumanTraits(overlay);
 
-  // Reset attribute display
+  // Populate variants list
+  _renderNearHumanVariants(overlay);
+
+  // Clear previous selections
+  overlay.find('.trait-btn, .sacrifice-radio, .variant-checkbox').prop('checked', false).removeClass('selected');
+
+  // Reset display
   updateNearHumanUI(overlay);
 
   // Show overlay
   overlay.addClass('active');
 
-  SWSELogger.log("CharGen | Opened Near-Human builder");
+  SWSELogger.log("CharGen | Opened Near-Human builder with official SWSE traits");
 }
 
 /**
- * Handle adaptation selection
+ * Render traits UI from loaded data
  */
-export function _onSelectNearHumanAdaptation(event) {
+function _renderNearHumanTraits(overlay) {
+  if (!_nearHumanTraitsData || !_nearHumanTraitsData.traits) return;
+
+  const traitsList = overlay.find('#traits-list');
+  traitsList.empty();
+
+  // Group traits by type for better organization
+  const traitsByType = {};
+  for (const trait of _nearHumanTraitsData.traits) {
+    if (!traitsByType[trait.type]) {
+      traitsByType[trait.type] = [];
+    }
+    traitsByType[trait.type].push(trait);
+  }
+
+  // Render traits organized by type
+  const typeLabels = {
+    'customAbilities': 'Ability Customization',
+    'sense': 'Sensory',
+    'movement': 'Movement',
+    'physiology': 'Physical',
+    'combat': 'Combat',
+    'skill': 'Skills',
+    'defense': 'Defense',
+    'force': 'Force',
+    'augmentation': 'Augmentation',
+    'environmental': 'Environmental',
+    'charisma': 'Charisma'
+  };
+
+  for (const [type, traits] of Object.entries(traitsByType)) {
+    const typeLabel = typeLabels[type] || type;
+    const typeGroup = $('<div class="trait-type-group"></div>');
+    typeGroup.append(`<h4 class="trait-type-header">${typeLabel}</h4>`);
+
+    for (const trait of traits) {
+      const isHouseRule = trait.category === 'houserule';
+      const badge = isHouseRule ? '<span class="houserule-badge" title="House Rule - Optional">⚙️ HR</span>' : '';
+
+      const btn = $(`
+        <button type="button" class="trait-btn ${isHouseRule ? 'houserule-trait' : ''}" data-trait-id="${trait.id}">
+          ${badge}
+          <strong>${trait.name}</strong>
+          <span class="trait-description">${trait.description}</span>
+        </button>
+      `);
+      typeGroup.append(btn);
+    }
+
+    traitsList.append(typeGroup);
+  }
+}
+
+/**
+ * Render variants UI from loaded data
+ */
+function _renderNearHumanVariants(overlay) {
+  if (!_nearHumanTraitsData || !_nearHumanTraitsData.variants) return;
+
+  const variantsList = overlay.find('#variants-list');
+  variantsList.empty();
+
+  for (const variant of _nearHumanTraitsData.variants) {
+    const isHouseRule = variant.category === 'houserule';
+    const badge = isHouseRule ? '<span class="houserule-badge" title="House Rule - Optional">⚙️ HR</span>' : '';
+
+    const label = $(`
+      <label class="variant-checkbox-label ${isHouseRule ? 'houserule-variant' : ''}">
+        <input type="checkbox" class="variant-checkbox" value="${variant.id}">
+        ${badge}
+        <strong>${variant.name}</strong>
+        <span class="variant-description">${variant.description}</span>
+      </label>
+    `);
+    variantsList.append(label);
+  }
+}
+
+/**
+ * Render ability adjustment controls for Ability Adjustment trait
+ */
+function _renderAbilityAdjustments(overlay) {
+  const section = overlay.find('#ability-adjustment-section');
+  const container = overlay.find('#ability-adjustments');
+  container.empty();
+
+  const abilityLabels = {
+    str: 'Strength',
+    dex: 'Dexterity',
+    con: 'Constitution',
+    int: 'Intelligence',
+    wis: 'Wisdom',
+    cha: 'Charisma'
+  };
+
+  for (const [ability, label] of Object.entries(abilityLabels)) {
+    const adjustment = _nearHumanState.abilityAdjustments[ability] || 0;
+    const displayValue = adjustment >= 0 ? `+${adjustment}` : `${adjustment}`;
+
+    const row = $(`
+      <div class="ability-adjustment-row">
+        <label class="ability-label">${label}</label>
+        <div class="adjustment-controls">
+          <button type="button" class="ability-minus-btn" data-ability="${ability}" title="Decrease by 1">
+            <i class="fas fa-minus"></i>
+          </button>
+          <span class="adjustment-value">${displayValue}</span>
+          <button type="button" class="ability-plus-btn" data-ability="${ability}" title="Increase by 1">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+      </div>
+    `);
+    container.append(row);
+  }
+
+  // Show section if Ability Adjustment trait is selected
+  const isAbilityAdjustmentSelected = _nearHumanState.traitId === 'abilityAdjustment';
+  if (isAbilityAdjustmentSelected) {
+    section.show();
+  } else {
+    section.hide();
+  }
+}
+
+/**
+ * Update ability adjustment total display
+ */
+function _updateAbilityAdjustmentTotal(overlay) {
+  const adjustments = _nearHumanState.abilityAdjustments;
+  const total = Object.values(adjustments).reduce((sum, val) => sum + val, 0);
+  overlay.find('#adjustment-total-value').text(total);
+}
+
+/**
+ * Handle ability adjustment button clicks
+ */
+export function _onAdjustNearHumanAbility(event) {
   event.preventDefault();
   event.stopPropagation();
 
   const button = event.currentTarget;
-  const adaptation = button.dataset.adaptation;
+  const ability = button.dataset.ability;
+  const isPlus = button.classList.contains('ability-plus-btn');
 
-  // Toggle selection
-  const overlay = this.element.find('#near-human-overlay');
-  overlay.find('.adaptation-btn').removeClass('selected');
+  if (!ability) return;
 
-  if (_nearHumanState.adaptation === adaptation) {
-    _nearHumanState.adaptation = null;
+  // Adjust the value (allow -1 to +1 range only)
+  const current = _nearHumanState.abilityAdjustments[ability] || 0;
+  const newValue = isPlus ? current + 1 : current - 1;
+
+  // Clamp to -1 to +1 range
+  if (newValue >= -1 && newValue <= 1) {
+    _nearHumanState.abilityAdjustments[ability] = newValue;
   } else {
-    _nearHumanState.adaptation = adaptation;
+    ui.notifications.warn("Ability adjustments must be between -1 and +1");
+    return;
+  }
+
+  const overlay = this.element.find('#near-human-overlay');
+
+  // Re-render adjustment controls to show new values
+  _renderAbilityAdjustments(overlay);
+  _updateAbilityAdjustmentTotal(overlay);
+
+  // Reattach event listeners to new buttons
+  overlay.find('.ability-plus-btn, .ability-minus-btn').off('click').click(this._onAdjustNearHumanAbility.bind(this));
+}
+
+/**
+ * Handle trait selection (only one trait allowed)
+ */
+export function _onSelectNearHumanTrait(event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const button = event.currentTarget;
+  const traitId = button.dataset.traitId;
+
+  if (!traitId) return;
+
+  // Single selection - only one trait allowed
+  const overlay = this.element.find('#near-human-overlay');
+  overlay.find('.trait-btn').removeClass('selected');
+
+  if (_nearHumanState.traitId === traitId) {
+    _nearHumanState.traitId = null;
+    $(button).removeClass('selected');
+  } else {
+    _nearHumanState.traitId = traitId;
     $(button).addClass('selected');
   }
+
+  // Show/hide ability adjustment section based on trait selection
+  _renderAbilityAdjustments(overlay);
+  _updateAbilityAdjustmentTotal(overlay);
+
+  // Reattach event listeners to ability adjustment buttons
+  overlay.find('.ability-plus-btn, .ability-minus-btn').off('click').click(this._onAdjustNearHumanAbility.bind(this));
 
   updateNearHumanUI(overlay);
 }
 
 /**
- * Handle sacrifice selection
+ * Handle sacrifice selection (which human bonus to trade)
  */
 export function _onSelectNearHumanSacrifice(event) {
-  event.preventDefault();
-  event.stopPropagation();
+  const radio = event.currentTarget;
+  _nearHumanState.sacrifice = radio.value;
 
-  const button = event.currentTarget;
-  const sacrifice = button.dataset.sacrifice;
-
-  // Toggle selection
-  const overlay = this.element.find('#near-human-overlay');
-  overlay.find('.sacrifice-btn').removeClass('selected');
-
-  if (_nearHumanState.sacrifice === sacrifice) {
-    _nearHumanState.sacrifice = null;
-  } else {
-    _nearHumanState.sacrifice = sacrifice;
-    $(button).addClass('selected');
-  }
-
+  const overlay = this.element.closest('#near-human-overlay') || $(document).find('#near-human-overlay');
   updateNearHumanUI(overlay);
 }
 
 /**
- * Handle attribute adjustment
+ * Handle variant selection (0-3 optional cosmetic variants)
  */
-export function _onAdjustNearHumanAttribute(event) {
+export function _onToggleNearHumanVariant(event) {
   event.preventDefault();
   event.stopPropagation();
 
-  const button = event.currentTarget;
-  const isPlus = button.classList.contains('attr-plus');
-  const row = button.closest('.attribute-row');
-  const attr = row.dataset.attr;
-
-  const currentValue = _nearHumanState.attributes[attr];
-  const positives = Object.values(_nearHumanState.attributes).filter(v => v > 0).length;
-  const negatives = Object.values(_nearHumanState.attributes).filter(v => v < 0).length;
-
-  if (isPlus) {
-    // Adding bonus
-    if (currentValue === 0 && positives < 1) {
-      _nearHumanState.attributes[attr] = 2;
-    } else if (currentValue === -2) {
-      _nearHumanState.attributes[attr] = 0;
-    } else if (currentValue === 2) {
-      _nearHumanState.attributes[attr] = 0;
-    }
-  } else {
-    // Adding penalty
-    if (currentValue === 0 && negatives < 1) {
-      _nearHumanState.attributes[attr] = -2;
-    } else if (currentValue === 2) {
-      _nearHumanState.attributes[attr] = 0;
-    } else if (currentValue === -2) {
-      _nearHumanState.attributes[attr] = 0;
-    }
-  }
+  const checkbox = event.currentTarget;
+  const variantId = checkbox.value;
 
   const overlay = this.element.find('#near-human-overlay');
+
+  if (checkbox.checked) {
+    // Add variant if not already selected and limit not exceeded
+    if (_nearHumanState.variants.length < 3 && !_nearHumanState.variants.includes(variantId)) {
+      _nearHumanState.variants.push(variantId);
+    } else if (_nearHumanState.variants.length >= 3) {
+      // Revert checkbox if limit exceeded
+      checkbox.checked = false;
+      ui.notifications.warn("Near-Human variants limited to 3 maximum");
+      return;
+    }
+  } else {
+    // Remove variant
+    _nearHumanState.variants = _nearHumanState.variants.filter(v => v !== variantId);
+  }
+
   updateNearHumanUI(overlay);
 }
 
 /**
- * Handle Near-Human confirmation
+ * Randomize Near-Human selection
+ */
+export function _onRandomizeNearHuman(event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const overlay = this.element.find('#near-human-overlay');
+
+  if (!_nearHumanTraitsData || !_nearHumanTraitsData.traits || _nearHumanTraitsData.traits.length === 0) {
+    ui.notifications.warn("Trait data not loaded yet");
+    return;
+  }
+
+  // Randomly select one trait
+  const randomTrait = _nearHumanTraitsData.traits[Math.floor(Math.random() * _nearHumanTraitsData.traits.length)];
+  _nearHumanState.traitId = randomTrait.id;
+
+  // Randomly choose sacrifice (feat or skill)
+  _nearHumanState.sacrifice = Math.random() > 0.5 ? 'feat' : 'skill';
+
+  // Randomly select 0-3 variants
+  const availableVariants = _nearHumanTraitsData.variants || [];
+  const variantCount = Math.floor(Math.random() * 4); // 0-3
+  _nearHumanState.variants = [];
+
+  if (availableVariants.length > 0 && variantCount > 0) {
+    // Create a shuffled copy of available variants
+    const shuffled = [...availableVariants].sort(() => 0.5 - Math.random());
+    _nearHumanState.variants = shuffled.slice(0, variantCount).map(v => v.id);
+  }
+
+  // Update trait button selections
+  overlay.find('.trait-btn').removeClass('selected');
+  overlay.find(`.trait-btn[data-trait-id="${_nearHumanState.traitId}"]`).addClass('selected');
+
+  // Update sacrifice radio buttons
+  overlay.find('.sacrifice-radio').prop('checked', false);
+  overlay.find(`.sacrifice-radio[value="${_nearHumanState.sacrifice}"]`).prop('checked', true);
+
+  // Update variant checkboxes
+  overlay.find('.variant-checkbox').prop('checked', false);
+  for (const variantId of _nearHumanState.variants) {
+    overlay.find(`.variant-checkbox[value="${variantId}"]`).prop('checked', true);
+  }
+
+  // Update UI display
+  updateNearHumanUI(overlay);
+
+  SWSELogger.log("CharGen | Randomized Near-Human selection", _nearHumanState);
+}
+
+/**
+ * Handle Near-Human confirmation (official SWSE rules)
  */
 export async function _onConfirmNearHuman(event) {
   event.preventDefault();
@@ -1020,49 +1405,73 @@ export async function _onConfirmNearHuman(event) {
 
   const validation = validateNearHuman();
   if (!validation.isValid) {
-    ui.notifications.warn("Please complete all Near-Human configuration before confirming.");
+    ui.notifications.warn("Please select a trait and sacrifice before confirming.");
     return;
   }
 
-  // Build the Near-Human species data
-  const adaptation = NEAR_HUMAN_ADAPTATIONS[_nearHumanState.adaptation];
-
-  // Build ability string
-  const abilityParts = [];
-  for (const [attr, value] of Object.entries(_nearHumanState.attributes)) {
-    if (value !== 0) {
-      const attrNames = { str: 'Strength', dex: 'Dexterity', con: 'Constitution', int: 'Intelligence', wis: 'Wisdom', cha: 'Charisma' };
-      abilityParts.push(`${value > 0 ? '+' : ''}${value} ${attrNames[attr]}`);
-    }
+  // Get the selected trait
+  const selectedTrait = getNearHumanTrait(_nearHumanState.traitId);
+  if (!selectedTrait) {
+    ui.notifications.error("Selected trait not found in Near-Human traits data.");
+    return;
   }
 
-  // Store the custom Near-Human data
+  // Get selected variants
+  const selectedVariants = _nearHumanState.variants.map(vid => getNearHumanVariant(vid)).filter(v => v !== null);
+
+  // Store the official Near-Human data per SWSE rules
   this.characterData.species = "Near-Human";
   this.characterData.nearHumanData = {
-    adaptation: _nearHumanState.adaptation,
-    adaptationTrait: adaptation.trait,
-    sacrifice: _nearHumanState.sacrifice,
-    attributes: { ..._nearHumanState.attributes },
-    abilityString: abilityParts.join(', ')
+    // Official SWSE Near-Human structure
+    trait: {
+      id: _nearHumanState.traitId,
+      name: selectedTrait.name,
+      description: selectedTrait.description,
+      type: selectedTrait.type
+    },
+    sacrifice: _nearHumanState.sacrifice,  // "feat" or "skill"
+    variants: selectedVariants.map(v => ({
+      id: v.id,
+      name: v.name,
+      description: v.description,
+      type: v.type
+    })),
+    // Store ability adjustments if using Ability Adjustment trait
+    customAbilityChoices: _nearHumanState.traitId === 'abilityAdjustment' ? _nearHumanState.abilityAdjustments : null
   };
 
-  // Apply attribute modifiers
-  for (const [attr, value] of Object.entries(_nearHumanState.attributes)) {
-    if (value !== 0) {
-      this.characterData.abilities[attr].racial = value;
+  // Near-Humans use standard Human traits unless modified by their selected trait
+  // For now, apply default human parameters and let character sheet apply trait effects
+  this.characterData.size = "Medium";
+  this.characterData.speed = 6;
+  this.characterData.specialAbilities = [];  // Handled by character sheet
+
+  // Apply ability adjustments if using Ability Adjustment trait
+  if (_nearHumanState.traitId === 'abilityAdjustment') {
+    for (const [ability, adjustment] of Object.entries(_nearHumanState.abilityAdjustments)) {
+      if (this.characterData.abilities[ability] && adjustment !== 0) {
+        // Add to existing racial bonus
+        const currentBonus = this.characterData.abilities[ability].racial || 0;
+        this.characterData.abilities[ability].racial = currentBonus + adjustment;
+      }
     }
   }
 
-  // Set size and speed (same as Human)
-  this.characterData.size = "Medium";
-  this.characterData.speed = 6;
+  // Adjust feat requirement based on sacrifice
+  // Humans get 2 feats (1 bonus + 1 base at level 1)
+  // If sacrificing feat, only get 1; if sacrificing skill, keep 2
+  if (_nearHumanState.sacrifice === 'feat') {
+    this.characterData.featsRequired = 1;  // Just the base 1, lose human bonus
+  } else {
+    this.characterData.featsRequired = 2;  // Keep the bonus feat, lose bonus skill
+  }
 
   // Close overlay and move to next step
   this._onCloseNearHumanOverlay(event);
   this._recalcAbilities();
   await this._onNextStep(event);
 
-  SWSELogger.log("CharGen | Confirmed Near-Human species", this.characterData.nearHumanData);
+  SWSELogger.log("CharGen | Confirmed official SWSE Near-Human species", this.characterData.nearHumanData);
 }
 
 /**
