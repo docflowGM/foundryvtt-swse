@@ -158,6 +158,18 @@ export class SWSEUpgradeApp extends FormApplication {
     const slots = Number(upgrade.system.upgradeSlots ?? 1);
     const credits = Number(actor.system.credits ?? 0);
 
+    // Validate cost is a finite number
+    if (!isFinite(cost) || cost < 0) {
+      ui.notifications.error("Invalid upgrade cost data.");
+      return;
+    }
+
+    // Validate slots is a finite number
+    if (!isFinite(slots) || slots < 0) {
+      ui.notifications.error("Invalid upgrade slots data.");
+      return;
+    }
+
     if (credits < cost) {
       ui.notifications.warn("Not enough credits.");
       return;
@@ -172,8 +184,14 @@ export class SWSEUpgradeApp extends FormApplication {
       return;
     }
 
+    const newCredits = credits - cost;
+    if (newCredits < 0) {
+      ui.notifications.error("Insufficient credits for this upgrade.");
+      return;
+    }
+
     await actor.update(
-      { "system.credits": credits - cost },
+      { "system.credits": newCredits },
       { diff: true }
     );
 

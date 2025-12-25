@@ -63,10 +63,9 @@ export class VehicleModificationApp extends Application {
       context.availableModifications = VehicleModificationManager
         .getModificationsByCategory(this.selectedCategory);
 
-      // Filter out already installed modifications
-      context.availableModifications = context.availableModifications.filter(mod => {
-        return !this.modifications.find(installed => installed.id === mod.id);
-      });
+      // Filter out already installed modifications using O(n) Set lookup
+      const installedIds = new Set(this.modifications.map(m => m?.id).filter(id => id != null));
+      context.availableModifications = context.availableModifications.filter(mod => !installedIds.has(mod.id));
 
       context.installedModifications = this.modifications;
 
@@ -75,7 +74,10 @@ export class VehicleModificationApp extends Application {
         this.modifications,
         this.stockShip
       );
-      context.emplacementPoints = epStats;
+      // Validate EP calculation
+      if (epStats && isFinite(epStats.remaining)) {
+        context.emplacementPoints = epStats;
+      }
 
       context.totalCost = VehicleModificationManager.calculateTotalCost(
         this.modifications,
@@ -281,8 +283,10 @@ The Republic is going to execute me for this. They're going to space me. And I'l
 
   _getMovementCommentary(mod) {
     if (mod.id.startsWith('hyperdrive-')) {
-      const classMatch = mod.id.match(/hyperdrive-(\d+)/);
-      const hyperClass = classMatch ? parseFloat(classMatch[1].replace('0', '0.')) : 2;
+      // Extract class from mod.name (e.g., "Hyperdrive, Class 1.5" -> 1.5)
+      const modName = mod.name || '';
+      const nameMatch = modName.match(/Class\s+([\d.]+)/);
+      const hyperClass = nameMatch ? parseFloat(nameMatch[1]) : 2;
 
       if (hyperClass <= 1) {
         return `*Marl's jaw drops*
@@ -328,7 +332,8 @@ Not fast enough to be impressive, not slow enough to be memorable. Just... avera
 
   _getDefenseCommentary(mod) {
     if (mod.id.startsWith('shields-')) {
-      const srMatch = mod.name.match(/SR (\d+)/);
+      const modName = mod.name || '';
+      const srMatch = modName.match(/SR (\d+)/);
       const sr = srMatch ? parseInt(srMatch[1]) : 0;
 
       if (sr >= 100) {
@@ -604,12 +609,14 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
       this.stockShip
     );
 
+    const costDisplay = isFinite(cost) ? cost.toLocaleString() : 'Unknown';
+
     const content = `
       <div class="modification-details">
         <h3>${modification.name}</h3>
         <p><strong>Category:</strong> ${modification.category}</p>
         <p><strong>Emplacement Points:</strong> ${modification.emplacementPoints}</p>
-        <p><strong>Cost:</strong> ${cost.toLocaleString()} credits</p>
+        <p><strong>Cost:</strong> ${costDisplay} credits</p>
         <p><strong>Availability:</strong> ${modification.availability}</p>
         ${modification.sizeRestriction ? `<p><strong>Size Restriction:</strong> ${modification.sizeRestriction}</p>` : ''}
         ${modification.damage ? `<p><strong>Damage:</strong> ${modification.damage}</p>` : ''}
@@ -641,13 +648,20 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
       return;
     }
 
+    const totalCost = VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip);
+
+    if (!isFinite(totalCost)) {
+      ui.notifications.error("Invalid cost calculation - check modification data");
+      return;
+    }
+
     const confirmed = await Dialog.confirm({
       title: "Finalize Starship?",
       content: `
         <p>Finalize this starship configuration?</p>
         <p><strong>Ship:</strong> ${this.stockShip.name}</p>
         <p><strong>Modifications:</strong> ${this.modifications.length}</p>
-        <p><strong>Total Cost:</strong> ${VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip).toLocaleString()} credits</p>
+        <p><strong>Total Cost:</strong> ${totalCost.toLocaleString()} credits</p>
         <hr/>
         <p><em>Marl Skindar:</em> "Well, that's it then. She's all yours. Try not to crash her on the first flight. Or the second. Actually, just... try not to crash at all. Good luck out there!"</p>
       `
@@ -660,7 +674,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
       'system.vehicle': {
         stockShip: this.stockShip,
         modifications: this.modifications,
-        totalCost: VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip)
+        totalCost: totalCost
       }
     });
 
