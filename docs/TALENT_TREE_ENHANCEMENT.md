@@ -206,7 +206,7 @@ When hovering over a talent:
 
 ## Credits
 
-Enhanced by Claude for the Foundry VTT SWSE system, building upon the existing talent tree visualization framework by docflowGM.
+Based on the existing talent tree visualization framework by docflowGM.
 
 ---
 
