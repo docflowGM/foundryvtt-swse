@@ -1,0 +1,204 @@
+{
+  "traits": [
+    {
+      "id": "abilityAdjustment",
+      "name": "Ability Adjustment",
+      "description": "Increase one Ability Score by 2 and reduce another by 2 to account for emphasis in certain attributes (such as Strength or Intelligence).",
+      "type": "customAbilities"
+    },
+    {
+      "id": "additionalArms",
+      "name": "Additional Arms",
+      "description": "Up to 2 additional arms. When making multiple attacks, can reduce the penalty to the attack roll by 2.",
+      "type": "physiology"
+    },
+    {
+      "id": "biotechAugmentation",
+      "name": "Biotech Augmentation",
+      "description": "Augmented with biotechnology. Select one Bio-Implant at Character Creation.",
+      "type": "augmentation"
+    },
+    {
+      "id": "breatheUnderwater",
+      "name": "Breathe Underwater",
+      "description": "Amphibious and cannot drown in water. Can have gill slits or similar external features.",
+      "type": "environmental"
+    },
+    {
+      "id": "climateAdaptation",
+      "name": "Climate Adaptation",
+      "description": "Resistant to a specific climate. Select one: freezing, rarefied atmosphere, searing, smoky, tropical, or watery. When challenged by an environmental factor in that climate, can reroll an Endurance or Survival check, taking the better result.",
+      "type": "environmental"
+    },
+    {
+      "id": "conductive",
+      "name": "Conductive",
+      "description": "Naturally generate a small amount of electrical energy and use as a Natural Weapon in an Unarmed attack, dealing 1d6 points of Energy damage. Character is always considered armed with a Natural Weapon.",
+      "type": "combat"
+    },
+    {
+      "id": "culturalCybernetics",
+      "name": "Cultural Cybernetics",
+      "description": "Culture commonly augments members with cybernetics from birth. Select one Cybernetic Enhancement at Character Creation.",
+      "type": "augmentation"
+    },
+    {
+      "id": "darkvision",
+      "name": "Darkvision",
+      "description": "Can ignore Concealment (including Total Concealment) from darkness. However, you cannot perceive colors in total darkness.",
+      "type": "sense"
+    },
+    {
+      "id": "empath",
+      "name": "Empath",
+      "description": "Can use the Telepathy application of the Use the Force skill Untrained, and without having the Force Sensitivity Feat. Additionally, can sense the emotions of a target if the Use the Force check equals or exceeds the target's Will Defense.",
+      "type": "force"
+    },
+    {
+      "id": "expertSwimmer",
+      "name": "Expert Swimmer",
+      "description": "Can reroll a Swim check, but the result of the reroll must be accepted, even if it is worse. Can Take 10 on Swim checks when distracted or threatened.",
+      "type": "skill"
+    },
+    {
+      "id": "heightenedAwareness",
+      "name": "Heightened Awareness",
+      "description": "Can reroll a Perception check, but the result of the reroll must be accepted, even if it is worse.",
+      "type": "skill"
+    },
+    {
+      "id": "lowLightVision",
+      "name": "Low-Light Vision",
+      "description": "Can ignore Concealment (but not Total Concealment) from darkness.",
+      "type": "sense"
+    },
+    {
+      "id": "naturalArmor",
+      "name": "Natural Armor",
+      "description": "Thickened skin or natural armor plates grant a Natural Armor bonus of +1 to Reflex Defense.",
+      "type": "defense"
+    },
+    {
+      "id": "naturalWeapon",
+      "name": "Natural Weapon",
+      "description": "Can use natural claws in an Unarmed attack, dealing 1d6 points of Slashing damage instead of normal Unarmed damage. Character is always considered armed with the Natural Weapons.",
+      "type": "combat"
+    },
+    {
+      "id": "naturallyAcrobatic",
+      "name": "Naturally Acrobatic",
+      "description": "Considered Trained in the Acrobatics skill, even if it is not normally a Class Skill for the character.",
+      "type": "skill"
+    },
+    {
+      "id": "persistent",
+      "name": "Persistent",
+      "description": "Can reroll an Endurance check, but the result of the reroll must be accepted, even if it is worse.",
+      "type": "skill"
+    },
+    {
+      "id": "quick",
+      "name": "Quick",
+      "description": "Increases Base Speed by 1 square.",
+      "type": "physiology"
+    },
+    {
+      "id": "quickHealing",
+      "name": "Quick Healing",
+      "description": "At the end of an encounter, regain Hit Points equal to 1d4 + Constitution modifier (minimum 1).",
+      "type": "defense"
+    },
+    {
+      "id": "resistant",
+      "name": "Resistant",
+      "description": "Naturally resistant to Poisons, Diseases, Radiation, or other Hazards, gaining a +2 Species bonus to Fortitude Defense. Gamemaster can restrict resistance to a single, specific Hazard.",
+      "type": "defense"
+    },
+    {
+      "id": "scent",
+      "name": "Scent",
+      "description": "At close range (within 10 squares), ignore Concealment and Cover for purposes of Perception checks, and take no penalty from poor visibility when using the Track application of the Survival skill.",
+      "type": "sense"
+    },
+    {
+      "id": "springStep",
+      "name": "Spring Step",
+      "description": "When using the High Jump or Long Jump applications of the Jump skill, reduce the number of squares required for a running start by 2.",
+      "type": "skill"
+    },
+    {
+      "id": "strengthSurge",
+      "name": "Strength Surge",
+      "description": "Once per encounter, can reroll one Strength-based Ability or Skill Check, doubling the character's Strength modifier (minimum +1), or can add 2 to a single damage roll on a successful melee attack. This does not apply when Weapon Finesse is used.",
+      "type": "combat"
+    },
+    {
+      "id": "visuallyStriking",
+      "name": "Visually Striking",
+      "description": "Character's appearance is visually surprising or stunning. The character's Charisma bonus is doubled when using the Persuasion skill on Humans, Near-Humans, and similar humanoids (such as Twi'leks).",
+      "type": "charisma"
+    },
+    {
+      "id": "weaponFamiliarity",
+      "name": "Weapon Familiarity",
+      "description": "Character selects a single Exotic Weapon and treats it as a Simple Weapon instead. Must be commonly used by character's native culture.",
+      "type": "combat"
+    }
+  ],
+  "variants": [
+    {
+      "id": "eyeVariation",
+      "name": "Eye Variation",
+      "description": "Eyes are of an unusual color and/or pupils are of an unusual shape.",
+      "type": "cosmetic"
+    },
+    {
+      "id": "digitVariation",
+      "name": "Digit Variation",
+      "description": "Number of digits on each hand or foot is greater or fewer than 5, but without affecting Skill use in terms of game mechanics.",
+      "type": "cosmetic"
+    },
+    {
+      "id": "fins",
+      "name": "Fins",
+      "description": "Character has small fins that have no effect on swimming.",
+      "type": "cosmetic"
+    },
+    {
+      "id": "hairVariation",
+      "name": "Hair Variation",
+      "description": "Character's hair is naturally an unusual color, length, texture, or size.",
+      "type": "cosmetic"
+    },
+    {
+      "id": "shaped",
+      "name": "Shaped",
+      "description": "Character has been biologically altered by the Yuuzhan Vong shaping process. This can account for the character's Near-Human Trait, or the trait might be cosmetic or for roleplaying purposes. Shaped characters typically gain Yuuzhan Vong physical features or are otherwise physically altered.",
+      "type": "lore"
+    },
+    {
+      "id": "skinColor",
+      "name": "Skin Color",
+      "description": "Skin is naturally a color (or a combination of colors) not normally associated with Humans.",
+      "type": "cosmetic"
+    },
+    {
+      "id": "skinTexture",
+      "name": "Skin Texture",
+      "description": "Obviously unusual skin texture, such as leathery, especially smooth, overly wrinkled, or scaly.",
+      "type": "cosmetic"
+    },
+    {
+      "id": "teethVariation",
+      "name": "Teeth Variation",
+      "description": "Teeth are noticeably differently colored, sharper, larger, or smaller than those of typical Humans.",
+      "type": "cosmetic"
+    },
+    {
+      "id": "towering",
+      "name": "Towering",
+      "description": "Over 2 meters tall, although the additional height does not change the character's Size.",
+      "type": "cosmetic"
+    }
+  ]
+}
