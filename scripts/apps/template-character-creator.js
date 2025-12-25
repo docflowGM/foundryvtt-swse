@@ -189,7 +189,7 @@ export class TemplateCharacterCreator extends Application {
     `;
 
     // Show dialog
-    new Dialog({
+    const dialog = new Dialog({
       title: `${template.name} - ${mentor.name}`,
       content: content,
       buttons: {
@@ -208,13 +208,17 @@ export class TemplateCharacterCreator extends Application {
 
             // Store the name and call the original confirm callback
             template.characterName = charName;
+            dialog.close();
             onConfirm();
           }
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
           label: 'Go Back',
-          callback: onCancel || (() => {})
+          callback: () => {
+            dialog.close();
+            (onCancel || (() => {}))();
+          }
         }
       },
       default: 'confirm',
@@ -223,7 +227,8 @@ export class TemplateCharacterCreator extends Application {
       width: 600,
       height: 500,
       classes: ['swse', 'mentor-dialogue']
-    }).render(true);
+    });
+    dialog.render(true);
   }
 
   /**
@@ -383,7 +388,7 @@ export class TemplateCharacterCreator extends Application {
     // Build skill selection dialog
     const content = await this._buildSkillSelectionContent(actor, classSkills, remainingPoints);
 
-    new Dialog({
+    const dialog = new Dialog({
       title: `Train Skills - ${actor.name}`,
       content: content,
       buttons: {
@@ -401,6 +406,9 @@ export class TemplateCharacterCreator extends Application {
             if (selectedSkills.length > 0) {
               await this._applySkills(actor, selectedSkills);
             }
+
+            // Close the dialog
+            dialog.close();
 
             // Show success dialog
             const equipmentResults = await actor.getFlag('swse', 'equipmentResults');
@@ -436,7 +444,8 @@ export class TemplateCharacterCreator extends Application {
       width: 600,
       height: 500,
       classes: ['swse', 'skill-training-dialog']
-    }).render(true);
+    });
+    dialog.render(true);
   }
 
   /**
@@ -621,7 +630,7 @@ export class TemplateCharacterCreator extends Application {
    */
   static async _promptCharacterName(templateName) {
     return new Promise((resolve) => {
-      new Dialog({
+      const dialog = new Dialog({
         title: 'Character Name',
         content: `
           <div style="padding: 1rem;">
@@ -639,6 +648,7 @@ export class TemplateCharacterCreator extends Application {
                 ui.notifications.warn('Please enter a character name');
                 resolve(null);
               } else {
+                dialog.close();
                 resolve(name);
               }
             }
@@ -646,7 +656,10 @@ export class TemplateCharacterCreator extends Application {
           cancel: {
             icon: '<i class="fas fa-times"></i>',
             label: 'Cancel',
-            callback: () => resolve(null)
+            callback: () => {
+              dialog.close();
+              resolve(null);
+            }
           }
         },
         default: 'create',
@@ -658,7 +671,8 @@ export class TemplateCharacterCreator extends Application {
             }
           });
         }
-      }).render(true);
+      });
+      dialog.render(true);
     });
   }
 
