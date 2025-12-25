@@ -23,14 +23,14 @@ House rules are optional rule variants that GMs can enable to expand the officia
 ## Current House Rule Traits (10 Optional)
 
 ### Defense & Resilience
-- **Adaptive Resilience**: Once per encounter, reroll a saving throw (Fortitude, Reflex, or Will save)
-- **Mental Discipline**: Can reroll a Will save or Deception check once per encounter
+- **Adaptive Resilience**: Once per encounter, increase one defense (Fortitude, Reflex, or Will) by 2 against a single attack or effect
+- **Mental Discipline**: Once per encounter, increase Will Defense by 2 against one attack/effect, or reroll a Deception or Persuasion check
 - **Second Wind (Enhanced)**: Gain an extra use of Second Wind per day (2 instead of 1)
 
 ### Physical & Mobility
 - **Hybrid Vitality**: Combine two compatible physical/environmental adaptations (e.g., Climb Speed AND Low-Light Vision)
 - **Metabolic Flexibility**: Consume half rations, require only 4 hours sleep, and reroll Endurance once per day
-- **Dual Reflexes**: +1 to Initiative and +1 species bonus to Reflex saves
+- **Dual Reflexes**: +1 to Initiative and +1 species bonus to Reflex Defense
 
 ### Skills & Knowledge
 - **Hybrid Intelligence**: +2 species bonus to one Knowledge skill and one Profession skill

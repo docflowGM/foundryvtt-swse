@@ -5,7 +5,7 @@
     {
       "id": "adaptiveResilience",
       "name": "Adaptive Resilience",
-      "description": "Once per encounter, can reroll a saving throw (Fortitude, Reflex, or Will save), but must accept the result. Reflects near-human ability to adapt to threats.",
+      "description": "Once per encounter, increase one defense (Fortitude, Reflex, or Will) by 2 against a single attack or effect. Reflects near-human ability to adapt to threats.",
       "type": "defense",
       "category": "houserule"
     },
@@ -19,7 +19,7 @@
     {
       "id": "mentalDiscipline",
       "name": "Mental Discipline",
-      "description": "Can reroll a Will save or Deception check once per encounter, but must accept the result. Represents enhanced mental fortitude.",
+      "description": "Once per encounter, increase Will Defense by 2 against one attack or effect, or reroll a single Deception or Persuasion check (must accept result). Represents enhanced mental fortitude.",
       "type": "defense",
       "category": "houserule"
     },
@@ -47,7 +47,7 @@
     {
       "id": "dualReflexes",
       "name": "Dual Reflexes",
-      "description": "Increases Base Initiative by +1 and gain +1 species bonus to Reflex saves. Represents faster nerve conduction from mixed genetics.",
+      "description": "Increases Base Initiative by +1 and gain +1 species bonus to Reflex Defense. Represents faster nerve conduction from mixed genetics.",
       "type": "combat",
       "category": "houserule"
     },
