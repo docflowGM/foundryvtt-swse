@@ -37,6 +37,9 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
         max: new fields.NumberField({initial: 0, min: 0, integer: true})
       }),
 
+      // Equipment size (for size-based calculations)
+      size: new fields.StringField({initial: "small", label: "Equipment Size"}),
+
       // Upgrade system
       upgradeSlots: new fields.NumberField({required: true, initial: 1, min: 0, integer: true, label: "Upgrade Slots"}),
       installedUpgrades: new fields.ArrayField(new fields.SchemaField({
@@ -44,8 +47,28 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
         name: new fields.StringField({required: true}),
         cost: new fields.NumberField({required: true, initial: 0, min: 0}),
         slotsUsed: new fields.NumberField({required: true, initial: 1, min: 0, integer: true}),
-        description: new fields.HTMLField()
-      }))
+        description: new fields.HTMLField(),
+        restriction: new fields.StringField({initial: "common"})
+      })),
+
+      // Tracking which features have been stripped to gain upgrade slots
+      strippedFeatures: new fields.SchemaField({
+        damage: new fields.BooleanField({initial: false}),
+        range: new fields.BooleanField({initial: false}),
+        design: new fields.BooleanField({initial: false}),
+        stun: new fields.BooleanField({initial: false}),
+        autofire: new fields.BooleanField({initial: false})
+      }),
+
+      // Flag indicating this weapon's base damage was reduced through stripping
+      baseDamageStripped: new fields.StringField({initial: "", label: "Original Damage Before Stripping"}),
+      baseRangeStripped: new fields.StringField({initial: "", label: "Original Range Before Stripping"}),
+
+      // Whether equipment has been enlarged to gain a slot
+      sizeIncreaseApplied: new fields.BooleanField({initial: false, label: "Size Increased for Upgrade Slot"}),
+
+      // Restriction level (Licensed, Restricted, Military, Illegal, Common)
+      restriction: new fields.StringField({initial: "common", label: "Restriction Level"})
     };
   }
 }
@@ -72,6 +95,12 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       equipped: new fields.BooleanField({required: true, initial: false}),
       description: new fields.HTMLField({label: "Description"}),
 
+      // Armor size (for creatures it's designed to fit)
+      size: new fields.StringField({initial: "medium", label: "Armor Size"}),
+
+      // Powered Armor flag (automatically detected from name if contains "power")
+      isPoweredArmor: new fields.BooleanField({initial: false, label: "Powered Armor (2 upgrade slots)"}),
+
       // Upgrade system
       // Note: Powered armor gets 2 slots, regular armor gets 1
       upgradeSlots: new fields.NumberField({required: true, initial: 1, min: 0, integer: true, label: "Upgrade Slots"}),
@@ -80,8 +109,110 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
         name: new fields.StringField({required: true}),
         cost: new fields.NumberField({required: true, initial: 0, min: 0}),
         slotsUsed: new fields.NumberField({required: true, initial: 1, min: 0, integer: true}),
-        description: new fields.HTMLField()
-      }))
+        description: new fields.HTMLField(),
+        restriction: new fields.StringField({initial: "common"})
+      })),
+
+      // Tracking which features have been stripped to gain upgrade slots
+      strippedFeatures: new fields.SchemaField({
+        defensiveMaterial: new fields.BooleanField({initial: false}),
+        jointProtection: new fields.BooleanField({initial: false})
+      }),
+
+      // Store original values before stripping for reference
+      originalDefenseBonus: new fields.NumberField({initial: 0, label: "Original Defense Bonus"}),
+      originalEquipmentBonus: new fields.NumberField({initial: 0, label: "Original Equipment Bonus"}),
+      originalWeight: new fields.NumberField({initial: 0, label: "Original Weight"}),
+
+      // Whether equipment has been enlarged to gain a slot
+      sizeIncreaseApplied: new fields.BooleanField({initial: false, label: "Weight Class Increased for Upgrade Slot"}),
+
+      // Restriction level (Licensed, Restricted, Military, Illegal, Common)
+      restriction: new fields.StringField({initial: "common", label: "Restriction Level"})
+    };
+  }
+}
+
+// Equipment Data Model
+export class EquipmentDataModel extends foundry.abstract.DataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      weight: new fields.NumberField({required: true, initial: 1, min: 0}),
+      cost: new fields.NumberField({required: true, initial: 0, min: 0}),
+      equipped: new fields.BooleanField({required: true, initial: false}),
+      description: new fields.HTMLField({label: "Description"}),
+
+      // Equipment size (for size-based calculations)
+      size: new fields.StringField({initial: "small", label: "Equipment Size"}),
+
+      // Upgrade system
+      upgradeSlots: new fields.NumberField({required: true, initial: 1, min: 0, integer: true, label: "Upgrade Slots"}),
+      installedUpgrades: new fields.ArrayField(new fields.SchemaField({
+        id: new fields.StringField({required: true}),
+        name: new fields.StringField({required: true}),
+        cost: new fields.NumberField({required: true, initial: 0, min: 0}),
+        slotsUsed: new fields.NumberField({required: true, initial: 1, min: 0, integer: true}),
+        description: new fields.HTMLField(),
+        restriction: new fields.StringField({initial: "common"})
+      })),
+
+      // Whether equipment has been enlarged to gain a slot
+      sizeIncreaseApplied: new fields.BooleanField({initial: false, label: "Size Increased for Upgrade Slot"}),
+
+      // Restriction level (Licensed, Restricted, Military, Illegal, Common)
+      restriction: new fields.StringField({initial: "common", label: "Restriction Level"})
+    };
+  }
+}
+
+// Upgrade Data Model
+export class UpgradeDataModel extends foundry.abstract.DataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      description: new fields.HTMLField({label: "Description"}),
+
+      // Upgrade classification
+      upgradeType: new fields.StringField({
+        initial: "universal",
+        choices: ["universal", "weapon", "armor", "equipment"],
+        label: "Upgrade Type"
+      }),
+
+      // Mechanical stats
+      cost: new fields.NumberField({required: true, initial: 0, min: 0, label: "Cost in Credits"}),
+      upgradeSlots: new fields.NumberField({required: true, initial: 1, min: 0, integer: true, label: "Upgrade Slots Required"}),
+
+      // Availability and restrictions
+      availability: new fields.StringField({
+        initial: "common",
+        choices: ["common", "rare", "licensed", "restricted", "military", "illegal"],
+        label: "Availability"
+      }),
+
+      restriction: new fields.StringField({
+        initial: "common",
+        choices: ["common", "licensed", "restricted", "military", "illegal"],
+        label: "Restriction Level"
+      }),
+
+      // Requirements
+      prerequisite: new fields.StringField({label: "Prerequisites"}),
+
+      // Installation details
+      installationTime: new fields.StringField({label: "Installation Time (automated calculation)"}),
+      installationDC: new fields.NumberField({initial: 10, min: 0, integer: true, label: "Installation DC"}),
+
+      // Whether this is a scratch-built upgrade (costs twice as much)
+      scratchBuilt: new fields.BooleanField({initial: false, label: "Scratch-Built Upgrade"}),
+
+      // Sourcebook reference
+      source: new fields.StringField({initial: "Core", label: "Sourcebook"}),
+      page: new fields.NumberField({required: false, integer: true, label: "Page Number"}),
+
+      // Tags for filtering
+      tags: new fields.ArrayField(new fields.StringField(), {label: "Tags"})
     };
   }
 }
