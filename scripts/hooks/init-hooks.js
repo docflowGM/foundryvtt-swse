@@ -4,17 +4,13 @@
  *
  * @module init-hooks
  * @description
- * Manages system initialization:
- * - init: Core system setup
- * - ready: Post-initialization setup
- *
- * NOTE: These hooks are registered directly (not through HooksRegistry)
- * because they need to run before the registry itself is activated.
+ * Manages system initialization hook registration.
+ * Called from index.js during the init hook to register combat, actor, and UI hooks.
+ * Also registers a ready hook for species reroll system initialization.
  */
 
 import { SWSELogger } from '../utils/logger.js';
 import { HooksRegistry } from './hooks-registry.js';
-import { ThemeLoader } from '../theme-loader.js';
 import { registerCombatHooks } from './combat-hooks.js';
 import { registerActorHooks } from './actor-hooks.js';
 import { registerUIHooks } from './ui-hooks.js';
@@ -22,37 +18,26 @@ import { registerRerollListeners } from '../species/species-reroll-handler.js';
 
 /**
  * Register initialization hooks
- * These are registered directly, not through the registry
+ * Called from index.js during the init hook - executes immediately since init is already running
  */
 export function registerInitHooks() {
-    /**
-     * Init hook - runs once during system initialization
-     * This is where we register all other hooks
-     */
-    Hooks.once('init', async function() {
-        SWSELogger.log("Initializing SWSE System");
+    SWSELogger.log("Registering SWSE hook categories");
 
-        // Register all hook categories
-        registerCombatHooks();
-        registerActorHooks();
-        registerUIHooks();
+    // Register all hook categories - called directly since we're already in init hook
+    registerCombatHooks();
+    registerActorHooks();
+    registerUIHooks();
 
-        // Activate all registered hooks
-        HooksRegistry.activateAll();
+    // Activate all registered hooks
+    HooksRegistry.activateAll();
 
-        SWSELogger.log("SWSE Hooks activated");
-    });
+    SWSELogger.log("SWSE Hooks activated");
 
     /**
      * Ready hook - runs once after all systems are initialized
-     * This is for setup that requires other systems to be ready
+     * This registration is valid since ready hasn't fired yet
      */
     Hooks.once('ready', async function() {
-        SWSELogger.log("SWSE System Ready");
-
-        // Initialize theme system
-        ThemeLoader.initialize();
-
         // Initialize species reroll system
         registerRerollListeners();
         SWSELogger.log("Species Trait Engine initialized");
