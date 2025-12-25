@@ -168,6 +168,36 @@ export async function _onPreviewSpecies(event) {
     overlay.find('#expanded-special-section').hide();
   }
 
+  // Display a quick summary of key mechanical effects
+  const summaryList = overlay.find('#expanded-species-summary');
+  if (summaryList && summaryList.length > 0) {
+    summaryList.empty();
+
+    // Summarize key mechanical effects
+    const summary = [];
+
+    // Ability modifiers
+    if (abilities && abilities !== "None") {
+      summary.push(`Attributes: ${abilities}`);
+    }
+
+    // Speed
+    if (speed) {
+      summary.push(`Speed: ${speed} squares`);
+    }
+
+    // Size
+    if (size && size !== "Medium") {
+      summary.push(`Size: ${size}`);
+    }
+
+    if (summary.length > 0) {
+      summary.forEach(item => {
+        summaryList.append(`<li><strong>${item}</strong></li>`);
+      });
+    }
+  }
+
   // Show the overlay with animation
   overlay.addClass('active');
 
