@@ -794,8 +794,40 @@ export async function _onSpeciesFilterChange(event) {
     this.characterData.speciesFilters[filterType] = value;
   }
 
+  // Update filter UI indicators
+  this._updateFilterIndicators();
+
   // Re-render to apply filters
   this.render();
+}
+
+/**
+ * Update visual indicators for active filters
+ */
+function _updateFilterIndicators() {
+  const filters = this.characterData.speciesFilters || {};
+  const hasActiveFilters = Object.values(filters).some(v => v !== null && v !== '');
+
+  const filterHeader = document.querySelector('.filter-header');
+  if (filterHeader) {
+    if (hasActiveFilters) {
+      filterHeader.classList.add('has-active-filters');
+    } else {
+      filterHeader.classList.remove('has-active-filters');
+    }
+  }
+
+  // Update count badge if available
+  const activeCount = Object.values(filters).filter(v => v !== null && v !== '').length;
+  const badge = document.querySelector('.filter-badge');
+  if (badge) {
+    if (activeCount > 0) {
+      badge.textContent = activeCount;
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
 }
 
 /**
