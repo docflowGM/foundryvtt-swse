@@ -317,7 +317,7 @@
     "emplacementPoints": 7,
     "availability": "Military",
     "sizeRestriction": "Gargantuan or Smaller",
-    "cost": 30000,
+    "cost": 100000,
     "costType": "base",
     "description": "Exceptional sublight speed, only found on military interceptors.",
     "effect": "Starship Scale speed 6 squares"

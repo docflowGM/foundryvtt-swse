@@ -718,5 +718,41 @@
     "costType": "base",
     "description": "External launch rack for small craft.",
     "effect": "0.5 hangar space (can carry 1 fighter externally)"
+  },
+  {
+    "id": "plasma-punch",
+    "name": "Plasma Punch",
+    "category": "Accessory",
+    "emplacementPoints": 1,
+    "availability": "Military",
+    "sizeRestriction": "Colossal or Larger",
+    "cost": 25000,
+    "costType": "flat",
+    "description": "Plasma cutter for breaching hulls during boarding actions.",
+    "effect": "+5 to boarding attempts, can cut through armor"
+  },
+  {
+    "id": "plasma-torch",
+    "name": "Plasma Torch",
+    "category": "Accessory",
+    "emplacementPoints": 1,
+    "availability": "Military",
+    "sizeRestriction": "Colossal or Larger",
+    "cost": 6000,
+    "costType": "flat",
+    "description": "Industrial plasma cutting system for salvage and repairs.",
+    "effect": "Can cut through most materials, +2 to salvage operations"
+  },
+  {
+    "id": "tractor-clamp",
+    "name": "Tractor Clamp",
+    "category": "Accessory",
+    "emplacementPoints": 12,
+    "availability": "Military",
+    "sizeRestriction": null,
+    "cost": 15000,
+    "costType": "flat",
+    "description": "Enhanced tractor beam system with clamping mechanism.",
+    "effect": "Superior grappling, can hold larger vessels"
   }
 ]
