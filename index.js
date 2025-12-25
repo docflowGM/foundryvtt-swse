@@ -113,6 +113,8 @@ import { SWSEVehicleDataModel } from './scripts/data-models/vehicle-data-model.j
 import {
     WeaponDataModel,
     ArmorDataModel,
+    EquipmentDataModel,
+    UpgradeDataModel,
     FeatDataModel,
     TalentDataModel,
     ForcePowerDataModel,
@@ -259,6 +261,8 @@ Hooks.once("init", async function () {
     CONFIG.Item.dataModels = {
         weapon: WeaponDataModel,
         armor: ArmorDataModel,
+        equipment: EquipmentDataModel,
+        upgrade: UpgradeDataModel,
         feat: FeatDataModel,
         talent: TalentDataModel,
         forcepower: ForcePowerDataModel,
