@@ -16,7 +16,7 @@ export function normalizeClassData(rawClass) {
 
     if (!rawClass || !rawClass.system) return rawClass;
 
-    const cls = duplicate(rawClass);
+    const cls = foundry.utils.duplicate(rawClass);
 
     // --------------------------------------
     // 1. Normalize Talent Trees

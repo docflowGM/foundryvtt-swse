@@ -17,8 +17,8 @@ import { SWSEDogfighting } from "./vehicle-dogfighting.js";
 import { SWSEVehicleCollisions } from "./vehicle-collisions.js";
 import { SWSEVehicleWeapons } from "./vehicle-weapons.js";
 import { measureSquares, createVehicleCTEffect } from "./vehicle-shared.js";
-import { SWSERoll } from "../rolls/rolls.js";
-import { DamageSystem } from "../damage/damage-system.js";
+import { SWSERoll } from "../../rolls/enhanced-rolls.js";
+import { DamageSystem } from "../../damage-system.js";
 
 export class SWSEVehicleCombat {
 

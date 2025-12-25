@@ -19,7 +19,7 @@ export class RollManager {
     try {
       const speaker = chatData.speaker || ChatMessage.getSpeaker();
       const content = roll.render(); // default rendering
-      const messageData = mergeObject({
+      const messageData = foundry.utils.mergeObject({
         user: game.user?.id,
         speaker,
         content,

@@ -30,7 +30,7 @@ export const RollEngine = {
     if (!roll) return null;
     try {
       const content = await roll.render();
-      const message = mergeObject(
+      const message = foundry.utils.mergeObject(
         {
           user: game.user?.id,
           speaker: chatData.speaker || ChatMessage.getSpeaker(),

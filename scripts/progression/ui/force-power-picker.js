@@ -30,9 +30,9 @@ export class ForcePowerPicker extends FormApplication {
    * Default window configuration for the Force Power Picker.
    */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse-app", "force-power-picker"],
-      template: "scripts/progression/ui/templates/force-power-picker.hbs",
+      template: "systems/foundryvtt-swse/scripts/progression/ui/templates/force-power-picker.hbs",
       width: 720,
       height: 620,
       resizable: true

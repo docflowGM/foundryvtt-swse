@@ -14,7 +14,7 @@
  *  - vehicle-calculations (dogfighting modifiers)
  */
 
-import { SWSERoll } from "../rolls/rolls.js";
+import { SWSERoll } from "../../rolls/enhanced-rolls.js";
 import { computeDogfightingModifier } from "./vehicle-calculations.js";
 import { measureSquares, facingTowards } from "./vehicle-shared.js";
 

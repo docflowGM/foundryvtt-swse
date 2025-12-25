@@ -1,0 +1,36 @@
+<div class="swse-sheet swse-maintenance">
+  <form class="swse-maintenance-form" autocomplete="off">
+
+    {{!-- Header --}}
+    <header class="sheet-header">
+      <h2>SWSE Maintenance</h2>
+      <p class="hint">Rest and recovery options for your character</p>
+    </header>
+
+    {{!-- Sheet Body --}}
+    <section class="sheet-body">
+      <div class="maintenance-options">
+
+        {{!-- Short Rest --}}
+        <div class="rest-option">
+          <h3><i class="fas fa-bed"></i> Short Rest</h3>
+          <p>Take a short rest to catch your breath and recover some resources.</p>
+          <button type="button" class="swse-rest-short">
+            <i class="fas fa-clock"></i> Take Short Rest
+          </button>
+        </div>
+
+        {{!-- Long Rest --}}
+        <div class="rest-option">
+          <h3><i class="fas fa-moon"></i> Long Rest</h3>
+          <p>Take a full night's rest to fully recover hit points and resources.</p>
+          <button type="button" class="swse-rest-long">
+            <i class="fas fa-bed"></i> Take Long Rest
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </form>
+</div>

@@ -2,7 +2,7 @@
 import { swseLogger } from "../../utils/logger.js";
 export class MaintenanceApp extends Application {
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       id: "swse-maintenance",
       classes: ["swse", "swse-maintenance", "swse-app"],
       template: "systems/foundryvtt-swse/templates/apps/maintenance.hbs",

@@ -12,7 +12,7 @@ import { normalizeBackgroundData } from "./background-normalizer.js";
 // ============================================================
 
 export function normalizeFeatData(rawFeat) {
-    const feat = duplicate(rawFeat);
+    const feat = foundry.utils.duplicate(rawFeat);
 
     feat.system.featType =
         feat.system.featType ||
@@ -37,7 +37,7 @@ export function normalizeFeatData(rawFeat) {
 // ============================================================
 
 export function normalizeTalentData(rawTalent) {
-    const talent = duplicate(rawTalent);
+    const talent = foundry.utils.duplicate(rawTalent);
 
     // Normalize tree name
     talent.system.talent_tree =
@@ -64,7 +64,7 @@ export function normalizeTalentData(rawTalent) {
 // ============================================================
 
 export function normalizeForcePowerData(rawPower) {
-    const power = duplicate(rawPower);
+    const power = foundry.utils.duplicate(rawPower);
 
     // Normalize powerLevel
     if (!power.system.powerLevel) {

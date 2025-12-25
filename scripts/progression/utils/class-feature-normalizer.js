@@ -29,7 +29,7 @@ export function normalizeClassFeature(rawFeature) {
         };
     }
 
-    const f = duplicate(rawFeature);
+    const f = foundry.utils.duplicate(rawFeature);
 
     // Always ensure a name exists
     f.name = f.name || f.feature || "Unnamed Feature";
