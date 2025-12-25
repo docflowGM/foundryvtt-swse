@@ -2,7 +2,10 @@
  * SWSE Item Upgrade Application (Foundry v13+)
  * Handles weapon, armor, and equipment upgrades via Item mutation only.
  * Mechanical effects are resolved in actor-data-model derived data.
+ * Implements complete SWSE upgrade slot rules.
  */
+
+import { UpgradeRulesEngine } from "./upgrade-rules-engine.js";
 
 export class SWSEUpgradeApp extends FormApplication {
 
@@ -67,10 +70,13 @@ export class SWSEUpgradeApp extends FormApplication {
     const system = this.item.system;
 
     const installedUpgrades = system.installedUpgrades ?? [];
-    const totalSlots = Number(system.upgradeSlots ?? 1);
+
+    // Use rules engine to calculate proper slot count
+    const totalSlots = UpgradeRulesEngine.getBaseUpgradeSlots(this.item);
     const usedSlots = installedUpgrades.reduce(
       (sum, u) => sum + Number(u.slotsUsed ?? 1), 0
     );
+    const isPoweredArmor = this.item.type === "armor" && UpgradeRulesEngine.isPoweredArmor(this.item);
 
     return {
       item: this.item,
@@ -80,7 +86,10 @@ export class SWSEUpgradeApp extends FormApplication {
       availableUpgrades: await this._getAvailableUpgrades(),
       totalSlots,
       usedSlots,
-      availableSlots: Math.max(0, totalSlots - usedSlots)
+      availableSlots: Math.max(0, totalSlots - usedSlots),
+      isPoweredArmor,
+      strippedFeatures: system.strippedFeatures ?? {},
+      restriction: UpgradeRulesEngine.getEffectiveRestriction(this.item)
     };
   }
 
@@ -154,47 +163,25 @@ export class SWSEUpgradeApp extends FormApplication {
       return;
     }
 
-    const cost = Number(upgrade.system.cost ?? 0);
-    const slots = Number(upgrade.system.upgradeSlots ?? 1);
+    // Validate using rules engine
+    const validation = UpgradeRulesEngine.validateUpgradeInstallation(this.item, upgrade, actor);
+    if (!validation.valid) {
+      ui.notifications.warn(validation.reason);
+      return;
+    }
+
+    const cost = validation.cost;
+    const slots = validation.slotsNeeded;
     const credits = Number(actor.system.credits ?? 0);
 
-    // Validate cost is a finite number
-    if (!isFinite(cost) || cost < 0) {
-      ui.notifications.error("Invalid upgrade cost data.");
-      return;
-    }
-
-    // Validate slots is a finite number
-    if (!isFinite(slots) || slots < 0) {
-      ui.notifications.error("Invalid upgrade slots data.");
-      return;
-    }
-
-    if (credits < cost) {
-      ui.notifications.warn("Not enough credits.");
-      return;
-    }
-
-    const installed = this.item.system.installedUpgrades ?? [];
-    const usedSlots = installed.reduce((s, u) => s + (u.slotsUsed ?? 1), 0);
-    const maxSlots = Number(this.item.system.upgradeSlots ?? 1);
-
-    if (usedSlots + slots > maxSlots) {
-      ui.notifications.warn("Not enough upgrade slots.");
-      return;
-    }
-
     const newCredits = credits - cost;
-    if (newCredits < 0) {
-      ui.notifications.error("Insufficient credits for this upgrade.");
-      return;
-    }
 
     await actor.update(
       { "system.credits": newCredits },
       { diff: true }
     );
 
+    const installed = this.item.system.installedUpgrades ?? [];
     await this.item.update({
       "system.installedUpgrades": [
         ...installed,
@@ -202,7 +189,8 @@ export class SWSEUpgradeApp extends FormApplication {
           id: upgrade.id,
           name: upgrade.name,
           slotsUsed: slots,
-          cost
+          cost,
+          restriction: upgrade.system.restriction ?? "common"
         }
       ]
     });
