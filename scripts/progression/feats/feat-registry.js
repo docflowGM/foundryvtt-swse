@@ -20,7 +20,7 @@ export const FeatRegistry = {
      */
     async build() {
         try {
-            const pack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
+            const pack = game.packs.get('foundryvtt-swse.feats');
             if (!pack) {
                 SWSELogger.warn('Feats compendium not found');
                 return false;

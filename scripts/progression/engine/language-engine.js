@@ -62,7 +62,7 @@ export class LanguageEngine {
      * Apply languages from species
      */
     static async applySpeciesLanguages(actor, speciesName) {
-        const speciesPack = game.packs.get('foundryvtt-foundryvtt-swse.species');
+        const speciesPack = game.packs.get('foundryvtt-swse.species');
         if (!speciesPack) return [];
 
         const speciesIndex = speciesPack.index.find(s => s.name === speciesName);
@@ -85,7 +85,7 @@ export class LanguageEngine {
      * Apply languages from background
      */
     static async applyBackgroundLanguages(actor, backgroundName) {
-        const bgPack = game.packs.get('foundryvtt-foundryvtt-swse.backgrounds');
+        const bgPack = game.packs.get('foundryvtt-swse.backgrounds');
         if (!bgPack) return [];
 
         const bgIndex = bgPack.index.find(b => b.name === backgroundName);

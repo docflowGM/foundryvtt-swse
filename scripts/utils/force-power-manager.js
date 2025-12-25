@@ -75,7 +75,7 @@ export class ForcePowerManager {
         const cachedIndex = cache.get('_index');
 
         if (cachedIndex) {
-          const pack = game.packs.get('foundryvtt-foundryvtt-swse.forcepowers');
+          const pack = game.packs.get('foundryvtt-swse.forcepowers');
           if (!pack) return [];
 
           const powers = await pack.getDocuments();
@@ -84,7 +84,7 @@ export class ForcePowerManager {
       }
 
       // Fallback to direct pack access
-      const pack = game.packs.get('foundryvtt-foundryvtt-swse.forcepowers');
+      const pack = game.packs.get('foundryvtt-swse.forcepowers');
       if (!pack) {
         SWSELogger.warn('SWSE | Force powers compendium not found');
         return [];
@@ -305,7 +305,7 @@ export class ForcePowerManager {
       const powerData = availablePowers.find(p => p._id === powerId);
       if (powerData) {
         // Create a copy without the _id so Foundry generates a new one
-        const powerCopy = foundry.utils.duplicate(powerData);
+        const powerCopy = foundry.utils.deepClone(powerData);
         delete powerCopy._id;
         powersToCreate.push(powerCopy);
       }

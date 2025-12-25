@@ -30,7 +30,7 @@ export class SWSEStore extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "swse-store",
       classes: ["swse", "store", "swse-app"],
-      template: "systems/foundryvtt-swse/templates/apps/store/store.html",
+      template: "systems/foundryvtt-swse/templates/apps/store/store.hbs",
       width: 980,
       height: "auto",
     });

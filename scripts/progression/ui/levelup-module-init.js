@@ -52,7 +52,6 @@ export async function initializeLevelUpUI() {
     Hooks.call("swse:levelup:initialized");
 
     SWSELogger.log("=== Enhanced Level-Up UI initialized successfully ===");
-    console.log("SWSE LevelUp Engine — UI Integration Loaded");
 
     return true;
 

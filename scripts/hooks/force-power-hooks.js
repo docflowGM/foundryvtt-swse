@@ -59,7 +59,7 @@ export function initializeForcePowerHooks() {
     if (!changes.system?.abilities) return;
 
     // Store old abilities for comparison
-    options.oldAbilities = foundry.utils.duplicate(actor.system.abilities);
+    options.oldAbilities = foundry.utils.deepClone(actor.system.abilities);
   });
 
   Hooks.on('updateActor', async (actor, changes, options, userId) => {

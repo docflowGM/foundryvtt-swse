@@ -194,7 +194,7 @@ export class NonheroicUnitsBrowser extends Application {
   }
 
   async _importUnitToCompendium(unit) {
-    const npcPack = game.packs.get('foundryvtt-foundryvtt-swse.npc');
+    const npcPack = game.packs.get('foundryvtt-swse.npc');
 
     if (!npcPack) {
       ui.notifications.error('NPC compendium not found!');

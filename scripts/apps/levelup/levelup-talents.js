@@ -60,7 +60,7 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
 
   if (talentTreeRestriction === "unrestricted") {
     // Free build mode: all talent trees from all talents
-    const talentPack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
+    const talentPack = game.packs.get('foundryvtt-swse.talents');
     if (talentPack) {
       const allTalents = await talentPack.getDocuments();
       const treeSet = new Set();
@@ -78,7 +78,7 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
   } else {
     // Talent trees from any class the character has levels in
     const characterClasses = getCharacterClasses(actor);
-    const classPack = game.packs.get('foundryvtt-foundryvtt-swse.classes');
+    const classPack = game.packs.get('foundryvtt-swse.classes');
 
     for (const className of Object.keys(characterClasses)) {
       const classDoc = await classPack.index.find(c => c.name === className);
@@ -106,13 +106,13 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
   // -----------------------------------------------------------
 
   // Load all talent documents once for tree validation
-  const talentPack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
+  const talentPack = game.packs.get('foundryvtt-swse.talents');
   const allTalents = talentPack ? await talentPack.getDocuments() : [];
 
   for (const treeName of availableTrees) {
 
       // 1 — Check if tree exists in the talent tree compendium
-      const treePack = game.packs.get('foundryvtt-foundryvtt-swse.talenttrees');
+      const treePack = game.packs.get('foundryvtt-swse.talenttrees');
       const treeIndex = treePack?.index.find(t => t.name === treeName);
 
       if (!treeIndex) {
@@ -144,7 +144,7 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
  * @returns {Promise<Array>} Array of talent documents
  */
 export async function loadTalentData() {
-  const talentPack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
+  const talentPack = game.packs.get('foundryvtt-swse.talents');
   if (!talentPack) return [];
 
   const talents = await talentPack.getDocuments();

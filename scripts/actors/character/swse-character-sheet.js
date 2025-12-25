@@ -312,7 +312,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // E.1 Feat Picker
   // ----------------------------------------------------------
   async _showFeatPicker() {
-    const pack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
+    const pack = game.packs.get('foundryvtt-swse.feats');
     if (!pack) return ui.notifications.error("Feat pack not found.");
     const docs = await pack.getDocuments();
 
@@ -331,7 +331,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // E.2 Talent Picker
   // ----------------------------------------------------------
   async _showTalentPicker() {
-    const pack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
+    const pack = game.packs.get('foundryvtt-swse.talents');
     if (!pack) return ui.notifications.error("Talents pack not found.");
     const docs = await pack.getDocuments();
 
@@ -350,7 +350,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // E.3 Species Picker
   // ----------------------------------------------------------
   async _showSpeciesPicker() {
-    const pack = game.packs.get('foundryvtt-foundryvtt-swse.species');
+    const pack = game.packs.get('foundryvtt-swse.species');
     if (!pack) return ui.notifications.error("Species pack not found.");
 
     const index = await pack.getIndex();

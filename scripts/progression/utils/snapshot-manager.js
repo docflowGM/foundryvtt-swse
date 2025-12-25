@@ -102,7 +102,7 @@ export class SnapshotManager {
 
             // Full restore - replace actor data with snapshot
             // This resets: items, system, flags (except snapshots themselves)
-            const actorDataToRestore = foundry.utils.duplicate(snapshot.actorData);
+            const actorDataToRestore = foundry.utils.deepClone(snapshot.actorData);
 
             // Preserve the snapshots flag so we don't lose history
             const preservedSnapshots = actor.getFlag("foundryvtt-swse", "snapshots");

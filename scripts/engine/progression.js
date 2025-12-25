@@ -735,7 +735,7 @@ async applyScalingFeature(feature) {
   async dryRun() {
     try {
       // Clone current actor state
-      const clone = foundry.utils.duplicate(this.actor.toObject());
+      const clone = foundry.utils.deepClone(this.actor.toObject());
 
       // Simulate level increase
       clone.system.level = (clone.system.level ?? 0) + 1;

@@ -11,6 +11,13 @@ import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 export class ActorSizeMigration {
 
   static async fixActorSize() {
+    // Guard: Ensure SWSE engine is loaded
+    if (!globalThis.SWSE?.ActorEngine) {
+      SWSELogger.error("SWSE | Migration failed: ActorEngine not available. Please wait for the system to fully load.");
+      ui.notifications?.error("Migration failed: SWSE system not fully loaded.");
+      return;
+    }
+
     SWSELogger.log("SWSE | Starting actor size migration...");
 
     let fixed = 0;

@@ -114,7 +114,7 @@ export class FollowerManager {
      * @private
      */
     static async addFeatToAllFollowers(followers, featName) {
-        const featsPack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
+        const featsPack = game.packs.get('foundryvtt-swse.feats');
         const featIndex = await featsPack.getIndex({ fields: ['name'] });
         const featEntry = featIndex.find(f => f.name === featName);
 

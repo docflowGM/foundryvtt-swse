@@ -44,13 +44,13 @@ export const FeatureIndex = {
             this.secrets.clear();
 
             // Load main packs
-            await this._loadPack('foundryvtt-foundryvtt-swse.feats', this.feats);
-            await this._loadPack('foundryvtt-foundryvtt-swse.talents', this.talents);
-            await this._loadPack('foundryvtt-foundryvtt-swse.forcepowers', this.powers);
+            await this._loadPack('foundryvtt-swse.feats', this.feats);
+            await this._loadPack('foundryvtt-swse.talents', this.talents);
+            await this._loadPack('foundryvtt-swse.forcepowers', this.powers);
 
             // Load optional packs (may not exist in all installations)
-            await this._tryLoadPack('foundryvtt-foundryvtt-swse.forcetechniques', this.techniques);
-            await this._tryLoadPack('foundryvtt-foundryvtt-swse.forcesecrets', this.secrets);
+            await this._tryLoadPack('foundryvtt-swse.forcetechniques', this.techniques);
+            await this._tryLoadPack('foundryvtt-swse.forcesecrets', this.secrets);
 
             this.isBuilt = true;
             this.buildTimestamp = Date.now();

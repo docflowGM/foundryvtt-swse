@@ -20,7 +20,7 @@ export const SkillRegistry = {
      */
     async build() {
         try {
-            const pack = game.packs.get('foundryvtt-foundryvtt-swse.skills');
+            const pack = game.packs.get('foundryvtt-swse.skills');
             if (!pack) {
                 SWSELogger.warn('Skills compendium not found');
                 return false;

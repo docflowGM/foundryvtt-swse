@@ -8,10 +8,8 @@
    ========================================================================== */
 
 /* =========================
-   SWSE GLOBAL HARD DEBUG HOOKS
+   SWSE GLOBAL ERROR HANDLERS
    ========================= */
-
-console.log("%cSWSE DEBUG MODE ENABLED", "color:#0ff; font-size:20px;");
 
 /* HARD ERROR */
 window.addEventListener("error", (event) => {

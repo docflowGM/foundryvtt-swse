@@ -69,7 +69,7 @@ function getClassMetadata(className) {
  * @returns {Promise<Array>} Available classes
  */
 export async function getAvailableClasses(actor, pendingData) {
-  const classPack = game.packs.get('foundryvtt-foundryvtt-swse.classes');
+  const classPack = game.packs.get('foundryvtt-swse.classes');
   if (!classPack) {
     SWSELogger.error("SWSE LevelUp | Classes compendium pack not found!");
     ui.notifications.error("Failed to load classes compendium. Classes will not be available.");
@@ -80,7 +80,7 @@ export async function getAvailableClasses(actor, pendingData) {
   const availableClasses = [];
 
   // Load all skills for validation
-  const skillPack = game.packs.get('foundryvtt-foundryvtt-swse.skills');
+  const skillPack = game.packs.get('foundryvtt-swse.skills');
   const allSkills = skillPack ? await skillPack.getDocuments() : [];
   const skillNames = allSkills.map(s => s.name);
 
@@ -126,7 +126,7 @@ export async function getAvailableClasses(actor, pendingData) {
  * @returns {Promise<Array>} Array of species objects
  */
 export async function getAvailableSpecies() {
-  const speciesPack = game.packs.get('foundryvtt-foundryvtt-swse.species');
+  const speciesPack = game.packs.get('foundryvtt-swse.species');
   if (!speciesPack) {
     SWSELogger.error('SWSE LevelUp | Species compendium not found!');
     ui.notifications.error("Failed to load species compendium. Species will not be available.");
@@ -225,10 +225,10 @@ function sortSpeciesBySource(species) {
 export async function selectSpecies(speciesId, speciesName) {
   SWSELogger.log(`SWSE LevelUp | Attempting to select species: ${speciesName} (ID: ${speciesId})`);
 
-  const speciesPack = game.packs.get('foundryvtt-foundryvtt-swse.species');
+  const speciesPack = game.packs.get('foundryvtt-swse.species');
   if (!speciesPack) {
     SWSELogger.error('SWSE LevelUp | Species compendium not found!');
-    ui.notifications.error("Species compendium not found! Please check that the foundryvtt-foundryvtt-swse.species compendium exists.");
+    ui.notifications.error("Species compendium not found! Please check that the foundryvtt-swse.species compendium exists.");
     return null;
   }
 
@@ -263,7 +263,7 @@ export async function selectSpecies(speciesId, speciesName) {
  * @returns {Promise<Object|null>} The selected class document or null
  */
 export async function selectClass(classId, actor, context) {
-  const classPack = game.packs.get('foundryvtt-foundryvtt-swse.classes');
+  const classPack = game.packs.get('foundryvtt-swse.classes');
   const classDoc = await classPack.getDocument(classId);
 
   if (!classDoc) {

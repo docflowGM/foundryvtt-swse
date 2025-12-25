@@ -11,7 +11,7 @@
 export function normalizeSpeciesData(rawSpecies) {
     if (!rawSpecies?.system) return rawSpecies;
 
-    const sp = foundry.utils.duplicate(rawSpecies);
+    const sp = foundry.utils.deepClone(rawSpecies);
 
     // --------------------------------------------
     // 1. Normalize Ability Modifiers

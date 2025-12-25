@@ -199,9 +199,9 @@ export class TemplateEngine {
   static async _findItemInCompendiums(itemName) {
     // Search common compendiums for items
     const compendiumNames = [
-      'foundryvtt-foundryvtt-swse.equipment',
-      'foundryvtt-foundryvtt-swse.weapons',
-      'foundryvtt-foundryvtt-swse.armor',
+      'foundryvtt-swse.equipment',
+      'foundryvtt-swse.weapons',
+      'foundryvtt-swse.armor',
       'foundryvtt-swse.items'
     ];
 

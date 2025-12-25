@@ -6,7 +6,7 @@
 export function normalizeBackgroundData(rawBackground) {
     if (!rawBackground?.system) return rawBackground;
 
-    const bg = foundry.utils.duplicate(rawBackground);
+    const bg = foundry.utils.deepClone(rawBackground);
 
     // --------------------------------------------
     // 1. Normalize skill grants
