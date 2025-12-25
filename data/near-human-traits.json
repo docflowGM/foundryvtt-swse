@@ -3,7 +3,7 @@
     {
       "id": "abilityAdjustment",
       "name": "Ability Adjustment",
-      "description": "Increase one Ability Score by 2 and reduce another by 2 to account for emphasis in certain attributes (such as Strength or Intelligence).",
+      "description": "Customize your ability scores by adjusting each ability ±1 (total adjustments must sum to 0). For example: +1 Strength, +1 Dexterity, -1 Wisdom, -1 Charisma.",
       "type": "customAbilities"
     },
     {

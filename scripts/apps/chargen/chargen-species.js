@@ -856,7 +856,15 @@ let _nearHumanState = {
   traitId: null,          // Selected trait ID from 24 official traits
   sacrifice: null,        // "feat" or "skill" - which human bonus to trade
   variants: [],           // Array of variant IDs (0-3 allowed)
-  customAbilityChoices: null  // For Ability Adjustment trait: {bonusAbility, penaltyAbility}
+  customAbilityChoices: null,  // For Ability Adjustment trait: {str, dex, con, int, wis, cha} with values from -1 to +1
+  abilityAdjustments: {   // Track ability adjustments for Ability Adjustment trait
+    str: 0,
+    dex: 0,
+    con: 0,
+    int: 0,
+    wis: 0,
+    cha: 0
+  }
 };
 
 // Cache for loaded traits data
@@ -960,7 +968,15 @@ function resetNearHumanState() {
     traitId: null,
     sacrifice: null,
     variants: [],
-    customAbilityChoices: null
+    customAbilityChoices: null,
+    abilityAdjustments: {
+      str: 0,
+      dex: 0,
+      con: 0,
+      int: 0,
+      wis: 0,
+      cha: 0
+    }
   };
 }
 
@@ -968,13 +984,26 @@ function resetNearHumanState() {
  * Validate Near-Human configuration per official rules
  */
 function validateNearHuman() {
+  const hasTrait = _nearHumanState.traitId !== null;
+  const hasSacrifice = _nearHumanState.sacrifice !== null;
+  const validVariantCount = _nearHumanState.variants.length <= 3;
+
+  // Check ability adjustments if Ability Adjustment trait is selected
+  let abilityAdjustmentsValid = true;
+  if (_nearHumanState.traitId === 'abilityAdjustment') {
+    const total = Object.values(_nearHumanState.abilityAdjustments).reduce((sum, val) => sum + val, 0);
+    abilityAdjustmentsValid = total === 0;
+  }
+
   return {
-    hasTrait: _nearHumanState.traitId !== null,
-    hasSacrifice: _nearHumanState.sacrifice !== null,
-    validVariantCount: _nearHumanState.variants.length <= 3,
-    isValid: _nearHumanState.traitId !== null &&
-             _nearHumanState.sacrifice !== null &&
-             _nearHumanState.variants.length <= 3
+    hasTrait: hasTrait,
+    hasSacrifice: hasSacrifice,
+    validVariantCount: validVariantCount,
+    abilityAdjustmentsValid: abilityAdjustmentsValid,
+    isValid: hasTrait &&
+             hasSacrifice &&
+             validVariantCount &&
+             abilityAdjustmentsValid
   };
 }
 
@@ -1028,6 +1057,9 @@ function updateNearHumanUI(overlay) {
     const missing = [];
     if (!validation.hasTrait) missing.push('trait');
     if (!validation.hasSacrifice) missing.push('sacrifice');
+    if (_nearHumanState.traitId === 'abilityAdjustment' && !validation.abilityAdjustmentsValid) {
+      missing.push('ability adjustments must sum to 0');
+    }
     validationEl.text(`Missing: ${missing.join(', ')}`).removeClass('success').addClass('error');
     overlay.find('#near-human-confirm-btn').prop('disabled', true);
   }
@@ -1147,6 +1179,97 @@ function _renderNearHumanVariants(overlay) {
 }
 
 /**
+ * Render ability adjustment controls for Ability Adjustment trait
+ */
+function _renderAbilityAdjustments(overlay) {
+  const section = overlay.find('#ability-adjustment-section');
+  const container = overlay.find('#ability-adjustments');
+  container.empty();
+
+  const abilityLabels = {
+    str: 'Strength',
+    dex: 'Dexterity',
+    con: 'Constitution',
+    int: 'Intelligence',
+    wis: 'Wisdom',
+    cha: 'Charisma'
+  };
+
+  for (const [ability, label] of Object.entries(abilityLabels)) {
+    const adjustment = _nearHumanState.abilityAdjustments[ability] || 0;
+    const displayValue = adjustment >= 0 ? `+${adjustment}` : `${adjustment}`;
+
+    const row = $(`
+      <div class="ability-adjustment-row">
+        <label class="ability-label">${label}</label>
+        <div class="adjustment-controls">
+          <button type="button" class="ability-minus-btn" data-ability="${ability}" title="Decrease by 1">
+            <i class="fas fa-minus"></i>
+          </button>
+          <span class="adjustment-value">${displayValue}</span>
+          <button type="button" class="ability-plus-btn" data-ability="${ability}" title="Increase by 1">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+      </div>
+    `);
+    container.append(row);
+  }
+
+  // Show section if Ability Adjustment trait is selected
+  const isAbilityAdjustmentSelected = _nearHumanState.traitId === 'abilityAdjustment';
+  if (isAbilityAdjustmentSelected) {
+    section.show();
+  } else {
+    section.hide();
+  }
+}
+
+/**
+ * Update ability adjustment total display
+ */
+function _updateAbilityAdjustmentTotal(overlay) {
+  const adjustments = _nearHumanState.abilityAdjustments;
+  const total = Object.values(adjustments).reduce((sum, val) => sum + val, 0);
+  overlay.find('#adjustment-total-value').text(total);
+}
+
+/**
+ * Handle ability adjustment button clicks
+ */
+export function _onAdjustNearHumanAbility(event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const button = event.currentTarget;
+  const ability = button.dataset.ability;
+  const isPlus = button.classList.contains('ability-plus-btn');
+
+  if (!ability) return;
+
+  // Adjust the value (allow -1 to +1 range only)
+  const current = _nearHumanState.abilityAdjustments[ability] || 0;
+  const newValue = isPlus ? current + 1 : current - 1;
+
+  // Clamp to -1 to +1 range
+  if (newValue >= -1 && newValue <= 1) {
+    _nearHumanState.abilityAdjustments[ability] = newValue;
+  } else {
+    ui.notifications.warn("Ability adjustments must be between -1 and +1");
+    return;
+  }
+
+  const overlay = this.element.find('#near-human-overlay');
+
+  // Re-render adjustment controls to show new values
+  _renderAbilityAdjustments(overlay);
+  _updateAbilityAdjustmentTotal(overlay);
+
+  // Reattach event listeners to new buttons
+  overlay.find('.ability-plus-btn, .ability-minus-btn').off('click').click(this._onAdjustNearHumanAbility.bind(this));
+}
+
+/**
  * Handle trait selection (only one trait allowed)
  */
 export function _onSelectNearHumanTrait(event) {
@@ -1169,6 +1292,13 @@ export function _onSelectNearHumanTrait(event) {
     _nearHumanState.traitId = traitId;
     $(button).addClass('selected');
   }
+
+  // Show/hide ability adjustment section based on trait selection
+  _renderAbilityAdjustments(overlay);
+  _updateAbilityAdjustmentTotal(overlay);
+
+  // Reattach event listeners to ability adjustment buttons
+  overlay.find('.ability-plus-btn, .ability-minus-btn').off('click').click(this._onAdjustNearHumanAbility.bind(this));
 
   updateNearHumanUI(overlay);
 }
@@ -1215,6 +1345,58 @@ export function _onToggleNearHumanVariant(event) {
 }
 
 /**
+ * Randomize Near-Human selection
+ */
+export function _onRandomizeNearHuman(event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const overlay = this.element.find('#near-human-overlay');
+
+  if (!_nearHumanTraitsData || !_nearHumanTraitsData.traits || _nearHumanTraitsData.traits.length === 0) {
+    ui.notifications.warn("Trait data not loaded yet");
+    return;
+  }
+
+  // Randomly select one trait
+  const randomTrait = _nearHumanTraitsData.traits[Math.floor(Math.random() * _nearHumanTraitsData.traits.length)];
+  _nearHumanState.traitId = randomTrait.id;
+
+  // Randomly choose sacrifice (feat or skill)
+  _nearHumanState.sacrifice = Math.random() > 0.5 ? 'feat' : 'skill';
+
+  // Randomly select 0-3 variants
+  const availableVariants = _nearHumanTraitsData.variants || [];
+  const variantCount = Math.floor(Math.random() * 4); // 0-3
+  _nearHumanState.variants = [];
+
+  if (availableVariants.length > 0 && variantCount > 0) {
+    // Create a shuffled copy of available variants
+    const shuffled = [...availableVariants].sort(() => 0.5 - Math.random());
+    _nearHumanState.variants = shuffled.slice(0, variantCount).map(v => v.id);
+  }
+
+  // Update trait button selections
+  overlay.find('.trait-btn').removeClass('selected');
+  overlay.find(`.trait-btn[data-trait-id="${_nearHumanState.traitId}"]`).addClass('selected');
+
+  // Update sacrifice radio buttons
+  overlay.find('.sacrifice-radio').prop('checked', false);
+  overlay.find(`.sacrifice-radio[value="${_nearHumanState.sacrifice}"]`).prop('checked', true);
+
+  // Update variant checkboxes
+  overlay.find('.variant-checkbox').prop('checked', false);
+  for (const variantId of _nearHumanState.variants) {
+    overlay.find(`.variant-checkbox[value="${variantId}"]`).prop('checked', true);
+  }
+
+  // Update UI display
+  updateNearHumanUI(overlay);
+
+  SWSELogger.log("CharGen | Randomized Near-Human selection", _nearHumanState);
+}
+
+/**
  * Handle Near-Human confirmation (official SWSE rules)
  */
 export async function _onConfirmNearHuman(event) {
@@ -1253,7 +1435,9 @@ export async function _onConfirmNearHuman(event) {
       name: v.name,
       description: v.description,
       type: v.type
-    }))
+    })),
+    // Store ability adjustments if using Ability Adjustment trait
+    customAbilityChoices: _nearHumanState.traitId === 'abilityAdjustment' ? _nearHumanState.abilityAdjustments : null
   };
 
   // Near-Humans use standard Human traits unless modified by their selected trait
@@ -1261,6 +1445,17 @@ export async function _onConfirmNearHuman(event) {
   this.characterData.size = "Medium";
   this.characterData.speed = 6;
   this.characterData.specialAbilities = [];  // Handled by character sheet
+
+  // Apply ability adjustments if using Ability Adjustment trait
+  if (_nearHumanState.traitId === 'abilityAdjustment') {
+    for (const [ability, adjustment] of Object.entries(_nearHumanState.abilityAdjustments)) {
+      if (this.characterData.abilities[ability] && adjustment !== 0) {
+        // Add to existing racial bonus
+        const currentBonus = this.characterData.abilities[ability].racial || 0;
+        this.characterData.abilities[ability].racial = currentBonus + adjustment;
+      }
+    }
+  }
 
   // Adjust feat requirement based on sacrifice
   // Humans get 2 feats (1 bonus + 1 base at level 1)
