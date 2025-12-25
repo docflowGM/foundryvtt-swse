@@ -344,4 +344,3 @@ Turn off when you want to attack more aggressively!
 
 **Version:** 1.0
 **Last Updated:** 2025-11-15
-**Author:** Claude AI Assistant

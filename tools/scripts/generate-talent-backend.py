@@ -13,8 +13,6 @@
 #   - Updated talent-registry-ui.js
 #   - init-talents.js
 #   - system.json ES module patching (auto-backup)
-#
-# Author: ChatGPT (2025)
 # ======================================================================
 
 import os
