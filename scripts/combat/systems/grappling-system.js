@@ -9,8 +9,8 @@
  */
 
 import { computeAttackBonus } from "../utils/combat-utils.js";
-import { SWSERoll } from "../rolls/rolls.js";
-import { DamageSystem } from "../damage/damage-system.js";
+import { SWSERoll } from "../rolls/enhanced-rolls.js";
+import { DamageSystem } from "../damage-system.js";
 
 export class SWSEGrappling {
 

@@ -8,7 +8,7 @@
  */
 
 import { measureDistance, getVehicleCTPenalty, createVehicleCTEffect } from "./vehicle-shared.js";
-import { DamageSystem } from "../damage/damage-system.js";
+import { DamageSystem } from "../../damage-system.js";
 
 export class SWSEVehicleCollisions {
 

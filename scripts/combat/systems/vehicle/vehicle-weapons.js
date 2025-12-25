@@ -9,7 +9,7 @@
  */
 
 import { measureDistance, facingTowards } from "./vehicle-shared.js";
-import { SWSERoll } from "../rolls/rolls.js";
+import { SWSERoll } from "../../rolls/enhanced-rolls.js";
 
 export class SWSEVehicleWeapons {
 
