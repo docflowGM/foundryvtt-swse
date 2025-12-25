@@ -284,9 +284,9 @@ export async function _onSelectTalent(event) {
       let actualTalent = null;
 
       if (talentName === "Block") {
-        actualTalent = await game.packs.get("foundryvtt-foundryvtt-swse.talents")?.getDocuments().then(docs => docs.find(d => d.name === "Block"));
+        actualTalent = await game.packs.get("foundryvtt-swse.talents")?.getDocuments().then(docs => docs.find(d => d.name === "Block"));
       } else if (talentName === "Deflect") {
-        actualTalent = await game.packs.get("foundryvtt-foundryvtt-swse.talents")?.getDocuments().then(docs => docs.find(d => d.name === "Deflect"));
+        actualTalent = await game.packs.get("foundryvtt-swse.talents")?.getDocuments().then(docs => docs.find(d => d.name === "Deflect"));
       }
 
       if (actualTalent) {

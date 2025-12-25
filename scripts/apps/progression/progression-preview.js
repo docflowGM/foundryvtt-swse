@@ -17,7 +17,7 @@ export class ProgressionPreview {
     const { classId, level, selections = {} } = levelData;
 
     // Create a temporary clone of the actor
-    const tempActor = foundry.utils.duplicate(actor.toObject());
+    const tempActor = foundry.utils.deepClone(actor.toObject());
 
     // Preview changes
     const preview = {
@@ -324,8 +324,6 @@ export class ProgressionPreview {
     }
 
     const preview = await this.previewLevelUp(actor, levelData);
-    console.log('%c📋 LEVEL UP PREVIEW', 'color: cyan; font-weight: bold; font-size: 14px');
-    console.log(preview);
 
     await this.showPreviewDialog(preview);
 

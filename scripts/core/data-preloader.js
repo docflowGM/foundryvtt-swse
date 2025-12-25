@@ -140,7 +140,7 @@ export class DataPreloader {
    * @private
    */
   async _preloadClasses() {
-    const pack = game.packs.get('foundryvtt-foundryvtt-swse.classes');
+    const pack = game.packs.get('foundryvtt-swse.classes');
     if (!pack) return;
 
     const index = await pack.getIndex();
@@ -160,7 +160,7 @@ export class DataPreloader {
    * @private
    */
   async _preloadFeats() {
-    const pack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
+    const pack = game.packs.get('foundryvtt-swse.feats');
     if (!pack) return;
 
     const index = await pack.getIndex();
@@ -179,7 +179,7 @@ export class DataPreloader {
    * @private
    */
   async _preloadTalents() {
-    const pack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
+    const pack = game.packs.get('foundryvtt-swse.talents');
     if (!pack) return;
 
     const index = await pack.getIndex();
@@ -202,7 +202,7 @@ export class DataPreloader {
    * @private
    */
   async _preloadForcePowers() {
-    const pack = game.packs.get('foundryvtt-foundryvtt-swse.forcepowers');
+    const pack = game.packs.get('foundryvtt-swse.forcepowers');
     if (!pack) return;
 
     const index = await pack.getIndex();
@@ -221,7 +221,7 @@ export class DataPreloader {
    * @private
    */
   async _preloadSpecies() {
-    const pack = game.packs.get('foundryvtt-foundryvtt-swse.species');
+    const pack = game.packs.get('foundryvtt-swse.species');
     if (!pack) return;
 
     const index = await pack.getIndex();
@@ -240,7 +240,7 @@ export class DataPreloader {
    * @private
    */
   async _preloadSkills() {
-    const pack = game.packs.get('foundryvtt-foundryvtt-swse.skills');
+    const pack = game.packs.get('foundryvtt-swse.skills');
     if (!pack) return;
 
     const index = await pack.getIndex();
@@ -258,35 +258,35 @@ export class DataPreloader {
    * Get cached class by ID or name
    */
   async getClass(idOrName) {
-    return this._getCached(this._classesCache, 'foundryvtt-foundryvtt-swse.classes', idOrName);
+    return this._getCached(this._classesCache, 'foundryvtt-swse.classes', idOrName);
   }
 
   /**
    * Get cached feat by ID or name
    */
   async getFeat(idOrName) {
-    return this._getCached(this._featsCache, 'foundryvtt-foundryvtt-swse.feats', idOrName);
+    return this._getCached(this._featsCache, 'foundryvtt-swse.feats', idOrName);
   }
 
   /**
    * Get cached talent by ID or name
    */
   async getTalent(idOrName) {
-    return this._getCached(this._talentsCache, 'foundryvtt-foundryvtt-swse.talents', idOrName);
+    return this._getCached(this._talentsCache, 'foundryvtt-swse.talents', idOrName);
   }
 
   /**
    * Get cached force power by ID or name
    */
   async getForcePower(idOrName) {
-    return this._getCached(this._forcePowersCache, 'foundryvtt-foundryvtt-swse.forcepowers', idOrName);
+    return this._getCached(this._forcePowersCache, 'foundryvtt-swse.forcepowers', idOrName);
   }
 
   /**
    * Get cached species by ID or name
    */
   async getSpecies(idOrName) {
-    return this._getCached(this._speciesCache, 'foundryvtt-foundryvtt-swse.species', idOrName);
+    return this._getCached(this._speciesCache, 'foundryvtt-swse.species', idOrName);
   }
 
   /**
@@ -299,7 +299,7 @@ export class DataPreloader {
     }
 
     // Fallback to pack lookup
-    const pack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
+    const pack = game.packs.get('foundryvtt-swse.talents');
     if (!pack) return [];
 
     const index = await pack.getIndex();

@@ -75,7 +75,7 @@ export class FollowerCreator {
      */
     static async _showFollowerCreationDialog(owner, template, templateType, grantingTalent) {
         // Get available species
-        const speciesPack = game.packs.get('foundryvtt-foundryvtt-swse.species');
+        const speciesPack = game.packs.get('foundryvtt-swse.species');
         if (!speciesPack) {
             ui.notifications.error('Species compendium not found! Cannot create follower.');
             return null;
@@ -110,7 +110,8 @@ export class FollowerCreator {
                                 abilityChoice: formData.get('abilityChoice'),
                                 skillChoice: formData.get('skillChoice'),
                                 featChoice: formData.get('featChoice'),
-                                humanBonus: formData.get('humanBonus')
+                                humanBonus: formData.get('humanBonus'),
+                                templateType: templateType
                             };
                             resolve(data);
                         }
@@ -156,7 +157,7 @@ export class FollowerCreator {
         const followerLevel = ownerLevel; // Followers are same level as owner
 
         // Get species data
-        const speciesPack = game.packs.get('foundryvtt-foundryvtt-swse.species');
+        const speciesPack = game.packs.get('foundryvtt-swse.species');
         const speciesDoc = await speciesPack.getDocument(followerData.species);
 
         // Calculate base abilities (all start at 10)
@@ -395,7 +396,7 @@ export class FollowerCreator {
      * @returns {boolean} True if feat was added successfully
      */
     static async _addFeatByName(follower, featName) {
-        const featsPack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
+        const featsPack = game.packs.get('foundryvtt-swse.feats');
         if (!featsPack) {
             swseLogger.warn('FollowerCreator: Feats compendium not found');
             return false;

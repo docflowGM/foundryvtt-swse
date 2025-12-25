@@ -84,7 +84,7 @@ export class SWSEVehicleCollisions {
    */
   static async _removeOldVCT(actor) {
     const effects = actor.effects.filter(e => e.flags?.swse?.vehicleCT !== undefined);
-    if (effects.length) actor.deleteEmbeddedDocuments("ActiveEffect", effects.map(e => e.id));
+    if (effects.length) await actor.deleteEmbeddedDocuments("ActiveEffect", effects.map(e => e.id));
   }
 
   /**

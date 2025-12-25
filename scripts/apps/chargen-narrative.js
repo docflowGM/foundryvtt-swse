@@ -230,7 +230,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
   async _loadTalentData() {
     try {
       // Load talents from compendium
-      const talentPack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
+      const talentPack = game.packs.get('foundryvtt-swse.talents');
       if (talentPack) {
         const talents = await talentPack.getDocuments();
         this.talentData = talents;

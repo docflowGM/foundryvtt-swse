@@ -10,8 +10,15 @@ import { SWSELogger } from '../utils/logger.js';
 export class DefenseSchemaMigration {
   
   static async fixDefenseSchema() {
+    // Guard: Ensure SWSE engine is loaded
+    if (!globalThis.SWSE?.ActorEngine) {
+      SWSELogger.error("SWSE | Migration failed: ActorEngine not available. Please wait for the system to fully load.");
+      ui.notifications?.error("Migration failed: SWSE system not fully loaded.");
+      return;
+    }
+
     SWSELogger.log("SWSE | Starting defense schema migration...");
-    
+
     let fixed = 0;
     let skipped = 0;
     let errors = 0;

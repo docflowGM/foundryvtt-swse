@@ -134,7 +134,7 @@ export const StartingFeatureRegistrar = {
      */
     async registerAllClasses() {
         try {
-            const classPack = game.packs.get('foundryvtt-foundryvtt-swse.classes');
+            const classPack = game.packs.get('foundryvtt-swse.classes');
             if (!classPack) {
                 SWSELogger.warn('Classes compendium not found');
                 return;

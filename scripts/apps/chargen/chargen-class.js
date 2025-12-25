@@ -228,7 +228,7 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
           SWSELogger.log(`CharGen | Auto-granting Lightsaber weapon for Jedi`);
 
           // Load lightsaber from weapons pack
-          const weaponsPack = game.packs.get('foundryvtt-foundryvtt-swse.weapons');
+          const weaponsPack = game.packs.get('foundryvtt-swse.weapons');
           if (weaponsPack) {
             const docs = await weaponsPack.getDocuments();
             const lightsaber = docs.find(d => d.name === "Lightsaber");

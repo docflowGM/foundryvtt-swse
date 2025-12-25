@@ -77,7 +77,7 @@ export class ForceProgressionEngine {
         }
 
         // Find power in compendium
-        const powerPack = game.packs.get('foundryvtt-foundryvtt-swse.forcepowers');
+        const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
         if (!powerPack) {
             SWSELogger.warn('Force powers compendium not found');
             return false;
@@ -118,7 +118,7 @@ export class ForceProgressionEngine {
      * Used when class grants "Force Power Choice"
      */
     static async createForcePowerChoice(actor, count = 1, filters = {}) {
-        const powerPack = game.packs.get('foundryvtt-foundryvtt-swse.forcepowers');
+        const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
         if (!powerPack) return [];
 
         const allPowers = await powerPack.getDocuments();
@@ -177,7 +177,7 @@ export class ForceProgressionEngine {
         }
 
         // Find technique in feats compendium
-        const featPack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
+        const featPack = game.packs.get('foundryvtt-swse.feats');
         if (!featPack) {
             SWSELogger.warn('Feats compendium not found');
             return false;
@@ -214,7 +214,7 @@ export class ForceProgressionEngine {
         }
 
         // Find secret in talents compendium
-        const talentPack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
+        const talentPack = game.packs.get('foundryvtt-swse.talents');
         if (!talentPack) {
             SWSELogger.warn('Talents compendium not found');
             return false;
@@ -238,7 +238,7 @@ export class ForceProgressionEngine {
      * Create Force Technique choice selection
      */
     static async createForceTechniqueChoice(actor, count = 1) {
-        const featPack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
+        const featPack = game.packs.get('foundryvtt-swse.feats');
         if (!featPack) return [];
 
         const allFeats = await featPack.getDocuments();
@@ -254,7 +254,7 @@ export class ForceProgressionEngine {
      * Create Force Secret choice selection
      */
     static async createForceSecretChoice(actor, count = 1) {
-        const talentPack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
+        const talentPack = game.packs.get('foundryvtt-swse.talents');
         if (!talentPack) return [];
 
         const allTalents = await talentPack.getDocuments();

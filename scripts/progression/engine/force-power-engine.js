@@ -36,11 +36,11 @@ export class ForcePowerEngine {
 
     if (!featDoc) {
       try {
-        const pack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
+        const pack = game.packs.get('foundryvtt-swse.feats');
         if (!pack) {
           // Only warn once per session
           if (!ForcePowerEngine._featPackWarnShown) {
-            swseLogger.warn('ForcePowerEngine: foundryvtt-foundryvtt-swse.feats compendium not found. Feat-based force power grants may not work.');
+            swseLogger.warn('ForcePowerEngine: foundryvtt-swse.feats compendium not found. Feat-based force power grants may not work.');
             ForcePowerEngine._featPackWarnShown = true;
           }
         } else {
@@ -129,10 +129,10 @@ static async handleForcePowerTriggers(actor, updateSummary = {}) {
 
 static async collectAvailablePowers(actor) {
   try {
-    const pack = game.packs.get('foundryvtt-foundryvtt-swse.forcepowers');
+    const pack = game.packs.get('foundryvtt-swse.forcepowers');
 
     if (!pack) {
-      swseLogger.error('Force Power Engine: foundryvtt-foundryvtt-swse.forcepowers compendium not found!');
+      swseLogger.error('Force Power Engine: foundryvtt-swse.forcepowers compendium not found!');
       return [];
     }
 

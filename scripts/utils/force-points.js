@@ -14,6 +14,12 @@ export class ForcePointsUtil {
    * @returns {Promise<number>} The bonus from the Force Point roll
    */
   static async rollForcePoint(actor, options = {}) {
+    // Guard: Ensure SWSE engine is loaded
+    if (!globalThis.SWSE?.RollEngine) {
+      ui.notifications?.error("Force Point roll failed: SWSE system not fully loaded.");
+      return 0;
+    }
+
     const { reason = 'boost', useDarkSide = false } = options;
 
     // Get Force Point dice configuration based on level and dice type
@@ -70,7 +76,7 @@ export class ForcePointsUtil {
     // Increase Dark Side Score if using Dark Side
     if (darkSideUsed) {
       const currentDarkSide = actor.system.darkSideScore || 0;
-globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide + 1});
+      await globalThis.SWSE?.ActorEngine?.updateActor(actor, {'system.darkSideScore': currentDarkSide + 1});
     }
 
     return totalBonus;
@@ -211,7 +217,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentD
     if (!spent) return false;
 
     // Reduce Dark Side Score
-globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentDarkSide - 1});
+    await globalThis.SWSE?.ActorEngine?.updateActor(actor, {'system.darkSideScore': currentDarkSide - 1});
     ui.notifications.info(`Dark Side Score reduced to ${currentDarkSide - 1}`);
     return true;
   }
@@ -227,7 +233,7 @@ globalThis.SWSE.ActorEngine.updateActor(actor, {'system.darkSideScore': currentD
     if (!spent) return false;
 
     // Set HP to 0 and set condition track to helpless but alive
-    await globalThis.SWSE.ActorEngine.updateActor(actor, {
+    await globalThis.SWSE?.ActorEngine?.updateActor(actor, {
       'system.hp.value': 0,
       'system.conditionTrack.current': Math.min(4, actor.system.conditionTrack.current)
     });

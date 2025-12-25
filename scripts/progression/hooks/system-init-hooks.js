@@ -121,7 +121,7 @@ export const SystemInitHooks = {
      */
     async _normalizeClasses() {
         try {
-            const classPack = game.packs.get('foundryvtt-foundryvtt-swse.classes');
+            const classPack = game.packs.get('foundryvtt-swse.classes');
             if (!classPack) {
                 SWSELogger.warn('Classes compendium not found');
                 return;
@@ -148,7 +148,7 @@ export const SystemInitHooks = {
      */
     async _normalizeTalents() {
         try {
-            const talentPack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
+            const talentPack = game.packs.get('foundryvtt-swse.talents');
             if (!talentPack) {
                 SWSELogger.warn('Talents compendium not found');
                 return;
@@ -182,7 +182,7 @@ export const SystemInitHooks = {
     async _normalizeForceContent() {
         try {
             // Normalize Force powers
-            const powerPack = game.packs.get('foundryvtt-foundryvtt-swse.forcepowers');
+            const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
             if (powerPack) {
                 const powers = await powerPack.getDocuments();
                 let count = 0;
@@ -194,7 +194,7 @@ export const SystemInitHooks = {
             }
 
             // Normalize Force feats (techniques) if they exist in feats pack
-            const featPack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
+            const featPack = game.packs.get('foundryvtt-swse.feats');
             if (featPack) {
                 const feats = await featPack.getDocuments();
                 let count = 0;
@@ -210,7 +210,7 @@ export const SystemInitHooks = {
             }
 
             // Normalize Force talents (secrets) if they exist in talents pack
-            const talentPack = game.packs.get('foundryvtt-foundryvtt-swse.talents');
+            const talentPack = game.packs.get('foundryvtt-swse.talents');
             if (talentPack) {
                 const talents = await talentPack.getDocuments();
                 let count = 0;
@@ -282,7 +282,7 @@ export const SystemInitHooks = {
             }
 
             // Normalize all skills
-            const pack = game.packs.get('foundryvtt-foundryvtt-swse.skills');
+            const pack = game.packs.get('foundryvtt-swse.skills');
             if (pack) {
                 const skills = await pack.getDocuments();
                 let normalized = 0;
@@ -316,7 +316,7 @@ export const SystemInitHooks = {
             }
 
             // Normalize all feats
-            const pack = game.packs.get('foundryvtt-foundryvtt-swse.feats');
+            const pack = game.packs.get('foundryvtt-swse.feats');
             if (pack) {
                 const feats = await pack.getDocuments();
                 let normalized = 0;
@@ -342,7 +342,7 @@ export const SystemInitHooks = {
         try {
             SWSELogger.log('Registering starting features...');
 
-            const classPack = game.packs.get('foundryvtt-foundryvtt-swse.classes');
+            const classPack = game.packs.get('foundryvtt-swse.classes');
             if (!classPack) {
                 SWSELogger.warn('Classes compendium not found');
                 return;

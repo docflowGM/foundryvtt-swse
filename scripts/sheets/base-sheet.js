@@ -265,6 +265,6 @@ export class SWSEActorSheetBase extends BaseSheet {
 
   async _onDropItem(event, data) {
     const item = await Item.fromDropData(data);
-    return this.actor.createEmbeddedDocuments('Item', [item.toObject()]);
+    return await this.actor.createEmbeddedDocuments('Item', [item.toObject()]);
   }
 }

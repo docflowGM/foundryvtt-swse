@@ -213,11 +213,11 @@ export class ForceSuiteComponent {
    * -------------------------- */
 
   static async _moveToSpent(actor, id) {
-    return actor.items.get(id)?.update({ "system.spent": true });
+    return await actor.items.get(id)?.update({ "system.spent": true });
   }
 
   static async _moveToReady(actor, id) {
-    return actor.items.get(id)?.update({ "system.spent": false });
+    return await actor.items.get(id)?.update({ "system.spent": false });
   }
 
   static async _usePower(actor, id) {

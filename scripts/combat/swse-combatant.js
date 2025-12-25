@@ -72,7 +72,7 @@ export class SWSECombatant extends Combatant {
       return ui.notifications.warn("You may only use actions on your turn.");
     }
 
-    const econ = foundry.utils.duplicate(this.actionEconomy);
+    const econ = foundry.utils.deepClone(this.actionEconomy);
 
     switch (type) {
       case "fullRound":

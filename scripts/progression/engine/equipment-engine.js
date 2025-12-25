@@ -25,7 +25,7 @@ export class EquipmentEngine {
 
         // Get class starting credits
         if (className) {
-            const classPack = game.packs.get('foundryvtt-foundryvtt-swse.classes');
+            const classPack = game.packs.get('foundryvtt-swse.classes');
             if (classPack) {
                 const classIndex = classPack.index.find(c => c.name === className);
                 if (classIndex) {
@@ -39,7 +39,7 @@ export class EquipmentEngine {
 
         // Get background starting credits
         if (backgroundName) {
-            const bgPack = game.packs.get('foundryvtt-foundryvtt-swse.backgrounds');
+            const bgPack = game.packs.get('foundryvtt-swse.backgrounds');
             if (bgPack) {
                 const bgIndex = bgPack.index.find(b => b.name === backgroundName);
                 if (bgIndex) {
@@ -81,7 +81,7 @@ export class EquipmentEngine {
      * Get starting equipment from class
      */
     static async getClassStartingEquipment(className) {
-        const classPack = game.packs.get('foundryvtt-foundryvtt-swse.classes');
+        const classPack = game.packs.get('foundryvtt-swse.classes');
         if (!classPack) return [];
 
         const classIndex = classPack.index.find(c => c.name === className);
@@ -97,7 +97,7 @@ export class EquipmentEngine {
      * Get starting equipment from background
      */
     static async getBackgroundStartingEquipment(backgroundName) {
-        const bgPack = game.packs.get('foundryvtt-foundryvtt-swse.backgrounds');
+        const bgPack = game.packs.get('foundryvtt-swse.backgrounds');
         if (!bgPack) return [];
 
         const bgIndex = bgPack.index.find(b => b.name === backgroundName);
