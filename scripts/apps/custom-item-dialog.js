@@ -488,7 +488,7 @@ export class CustomItemDialog {
                   normalText: formData.normalText || "",
                   bonusFeatFor: bonusFeatFor,
                   uses: {
-                    current: parseInt(formData.usesMax) || 0,
+                    current: 0,
                     max: parseInt(formData.usesMax) || 0,
                     perDay: formData.usesPerDay === 'on'
                   }
@@ -592,7 +592,7 @@ export class CustomItemDialog {
                   benefit: formData.benefit || "",
                   special: formData.special || "",
                   uses: {
-                    current: parseInt(formData.usesMax) || 0,
+                    current: 0,
                     max: parseInt(formData.usesMax) || 0,
                     perEncounter: formData.usesPerEncounter === 'on',
                     perDay: formData.usesPerDay === 'on'
@@ -858,7 +858,7 @@ export class CustomItemDialog {
                   sourcebook: formData.sourcebook || "Homebrew",
                   page: parseInt(formData.page) || null,
                   uses: {
-                    current: parseInt(formData.usesMax) || 0,
+                    current: 0,
                     max: parseInt(formData.usesMax) || 0
                   },
                   inSuite: false,

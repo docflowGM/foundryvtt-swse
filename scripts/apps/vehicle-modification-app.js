@@ -281,8 +281,9 @@ The Republic is going to execute me for this. They're going to space me. And I'l
 
   _getMovementCommentary(mod) {
     if (mod.id.startsWith('hyperdrive-')) {
-      const classMatch = mod.id.match(/hyperdrive-(\d+)/);
-      const hyperClass = classMatch ? parseFloat(classMatch[1].replace('0', '0.')) : 2;
+      // Extract class from mod.name (e.g., "Hyperdrive, Class 1.5" -> 1.5)
+      const nameMatch = mod.name.match(/Class\s+([\d.]+)/);
+      const hyperClass = nameMatch ? parseFloat(nameMatch[1]) : 2;
 
       if (hyperClass <= 1) {
         return `*Marl's jaw drops*
