@@ -139,7 +139,7 @@ export class CustomItemDialog {
                     current: parseInt(formData.ammoCurrent) || 0,
                     max: parseInt(formData.ammoMax) || 0
                   },
-                  upgradeSlots: parseInt(formData.upgradeSlots) || 1,
+                  upgradeSlots: parseInt(formData.upgradeSlots) ?? 1,
                   installedUpgrades: [],
                   description: formData.description || "",
                   equipped: false
@@ -262,9 +262,13 @@ export class CustomItemDialog {
               const formData = new FormDataExtended(form).object;
 
               // Handle maxDexBonus - null if blank, otherwise parse as number
-              const maxDexBonus = formData.maxDexBonus === "" || formData.maxDexBonus === null
-                ? null
-                : parseInt(formData.maxDexBonus);
+              let maxDexBonus = null;
+              if (formData.maxDexBonus && formData.maxDexBonus !== "") {
+                const parsed = parseInt(formData.maxDexBonus);
+                if (!isNaN(parsed)) {
+                  maxDexBonus = parsed;
+                }
+              }
 
               const itemData = {
                 name: formData.name,
@@ -279,7 +283,7 @@ export class CustomItemDialog {
                   speedPenalty: parseInt(formData.speedPenalty) || 0,
                   weight: parseFloat(formData.weight) || 0,
                   cost: parseInt(formData.cost) || 0,
-                  upgradeSlots: parseInt(formData.upgradeSlots) || 1,
+                  upgradeSlots: parseInt(formData.upgradeSlots) ?? 1,
                   installedUpgrades: [],
                   description: formData.description || "",
                   equipped: false
@@ -366,7 +370,7 @@ export class CustomItemDialog {
                 system: {
                   weight: parseFloat(formData.weight) || 0,
                   cost: parseInt(formData.cost) || 0,
-                  upgradeSlots: parseInt(formData.upgradeSlots) || 1,
+                  upgradeSlots: parseInt(formData.upgradeSlots) ?? 1,
                   installedUpgrades: [],
                   description: formData.description || ""
                 }
@@ -827,12 +831,15 @@ export class CustomItemDialog {
               const dcChart = [];
               html.find('.dc-chart-row').each(function() {
                 const index = $(this).data('index');
-                const dc = parseInt(html.find(`input[name="dc-${index}"]`).val());
+                const dcValue = html.find(`input[name="dc-${index}"]`).val();
                 const effect = html.find(`input[name="effect-${index}"]`).val();
                 const description = html.find(`input[name="description-${index}"]`).val();
 
-                if (dc && effect) {
-                  dcChart.push({ dc, effect, description: description || "" });
+                const dc = parseInt(dcValue);
+                if (!isNaN(dc) && dc > 0 && effect && effect.trim()) {
+                  dcChart.push({ dc, effect, description: (description && description.trim()) || "" });
+                } else if (effect && effect.trim() && dcValue) {
+                  ui.notifications.warn(`Invalid DC value in power chart row ${index}: DC must be a positive number`);
                 }
               });
 
