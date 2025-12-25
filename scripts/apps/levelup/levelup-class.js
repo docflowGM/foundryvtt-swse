@@ -157,7 +157,7 @@ export async function getAvailableSpecies() {
 }
 
 /**
- * Sort species by source material, prioritizing Core Rulebook first
+ * Sort species by source material, prioritizing Human first, then Core Rulebook
  * @param {Array} species - Array of species documents
  * @returns {Array} Sorted species array
  */
@@ -184,6 +184,16 @@ function sortSpeciesBySource(species) {
 
   // Sort species
   return species.sort((a, b) => {
+    const nameA = a.name || "";
+    const nameB = b.name || "";
+
+    // PRIORITY 1: Human always comes first
+    const isHumanA = nameA.toLowerCase() === "human";
+    const isHumanB = nameB.toLowerCase() === "human";
+
+    if (isHumanA && !isHumanB) return -1;
+    if (!isHumanA && isHumanB) return 1;
+
     const sourceA = a.system?.source || "Unknown";
     const sourceB = b.system?.source || "Unknown";
 
@@ -191,18 +201,18 @@ function sortSpeciesBySource(species) {
     const priorityA = sourcePriority[sourceA] ?? 999;
     const priorityB = sourcePriority[sourceB] ?? 999;
 
-    // First sort by source priority
+    // PRIORITY 2: Sort by source priority
     if (priorityA !== priorityB) {
       return priorityA - priorityB;
     }
 
-    // If same priority (or both unknown), sort by source name alphabetically
+    // PRIORITY 3: If same priority (or both unknown), sort by source name alphabetically
     if (sourceA !== sourceB) {
       return sourceA.localeCompare(sourceB);
     }
 
-    // Within same source, sort by species name alphabetically
-    return (a.name || "").localeCompare(b.name || "");
+    // PRIORITY 4: Within same source, sort by species name alphabetically
+    return nameA.localeCompare(nameB);
   });
 }
 

@@ -313,7 +313,14 @@
 
  <div class="species-grid">
  {{#each packs.species}}
- <button type="button" class="select-species choice-button" data-species="{{this.name}}">
+ <button type="button" class="preview-species choice-button"
+         data-species="{{this.name}}"
+         data-size="{{this.system.size}}"
+         data-speed="{{this.system.speed}}"
+         data-abilities="{{this.system.abilities}}"
+         data-skill-bonuses="{{json this.system.skillBonuses}}"
+         data-special="{{json this.system.special}}"
+         data-racial-traits="{{json this.system.racialTraits}}">
  <h4>{{this.name}}</h4>
  {{#if this.system.size}}
  <div class="species-size">
@@ -342,6 +349,56 @@
  </button>
  {{/each}}
  </div>
+
+ {{!-- Species Expanded Card Overlay --}}
+ <div class="species-overlay" id="species-overlay">
+   <div class="species-card-expanded">
+     <button type="button" class="species-close-btn" id="species-close-btn">
+       <i class="fas fa-times"></i>
+     </button>
+
+     <div class="species-expanded-header">
+       <h2 id="expanded-species-name">Species Name</h2>
+       <div class="species-subtitle" id="expanded-species-source">Core Rulebook</div>
+     </div>
+
+     <div class="species-expanded-stats">
+       <div class="species-stat-box">
+         <span class="stat-label">Size</span>
+         <span class="stat-value" id="expanded-species-size">Medium</span>
+       </div>
+       <div class="species-stat-box">
+         <span class="stat-label">Speed</span>
+         <span class="stat-value" id="expanded-species-speed">6 squares</span>
+       </div>
+     </div>
+
+     <div class="species-expanded-section" id="expanded-abilities-section">
+       <h3>Ability Modifiers</h3>
+       <div id="expanded-species-abilities"></div>
+     </div>
+
+     <div class="species-expanded-section" id="expanded-skills-section">
+       <h3>Skill Bonuses</h3>
+       <ul class="skill-list" id="expanded-species-skills"></ul>
+     </div>
+
+     <div class="species-expanded-section" id="expanded-special-section">
+       <h3>Special Abilities</h3>
+       <ul class="special-list" id="expanded-species-special"></ul>
+     </div>
+
+     <div class="species-expanded-actions">
+       <button type="button" class="species-back-btn" id="species-back-btn">
+         <i class="fas fa-arrow-left"></i> Back
+       </button>
+       <button type="button" class="species-confirm-btn" id="species-confirm-btn">
+         <i class="fas fa-check"></i> Select Species
+       </button>
+     </div>
+   </div>
+ </div>
+
  <div class="form-actions">
  <button type="button" class="prev-step btn-secondary">
  <i class="fas fa-arrow-left"></i> Previous

@@ -4,6 +4,171 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 
+// Store the currently previewed species name for confirmation
+let _previewedSpeciesName = null;
+
+/**
+ * Handle species card click - opens expanded preview
+ */
+export function _onPreviewSpecies(event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const button = event.currentTarget;
+  const speciesName = button.dataset.species;
+  const size = button.dataset.size || "Medium";
+  const speed = button.dataset.speed || "6";
+  const abilities = button.dataset.abilities || "";
+
+  // Parse JSON data attributes
+  let skillBonuses = [];
+  let special = [];
+  let racialTraits = [];
+
+  try {
+    skillBonuses = JSON.parse(button.dataset.skillBonuses || "[]") || [];
+  } catch (e) {
+    skillBonuses = [];
+  }
+
+  try {
+    special = JSON.parse(button.dataset.special || "[]") || [];
+  } catch (e) {
+    special = [];
+  }
+
+  try {
+    racialTraits = JSON.parse(button.dataset.racialTraits || "[]") || [];
+  } catch (e) {
+    racialTraits = [];
+  }
+
+  // Store for confirmation
+  _previewedSpeciesName = speciesName;
+
+  // Populate the expanded card
+  const overlay = this.element.find('#species-overlay');
+  overlay.find('#expanded-species-name').text(speciesName);
+  overlay.find('#expanded-species-size').text(size);
+  overlay.find('#expanded-species-speed').text(`${speed} squares`);
+
+  // Parse and display ability modifiers
+  const abilitiesContainer = overlay.find('#expanded-species-abilities');
+  abilitiesContainer.empty();
+
+  if (abilities) {
+    // Parse abilities string like "+2 Dexterity, -2 Charisma"
+    const abilityParts = abilities.split(/,\s*/);
+    abilityParts.forEach(part => {
+      const trimmed = part.trim();
+      if (trimmed.startsWith('+')) {
+        abilitiesContainer.append(`<span class="ability-bonus">${trimmed}</span>`);
+      } else if (trimmed.startsWith('-')) {
+        abilitiesContainer.append(`<span class="ability-penalty">${trimmed}</span>`);
+      } else if (trimmed) {
+        abilitiesContainer.append(`<span class="ability-bonus">${trimmed}</span>`);
+      }
+    });
+  } else {
+    abilitiesContainer.append('<span class="ability-bonus">No modifiers (versatile)</span>');
+  }
+
+  // Show/hide abilities section
+  const abilitiesSection = overlay.find('#expanded-abilities-section');
+  abilitiesSection.show();
+
+  // Display skill bonuses
+  const skillsList = overlay.find('#expanded-species-skills');
+  skillsList.empty();
+
+  if (skillBonuses && skillBonuses.length > 0) {
+    skillBonuses.forEach(skill => {
+      skillsList.append(`<li>${skill}</li>`);
+    });
+    overlay.find('#expanded-skills-section').show();
+  } else {
+    overlay.find('#expanded-skills-section').hide();
+  }
+
+  // Display special abilities (combine special and racialTraits)
+  const specialList = overlay.find('#expanded-species-special');
+  specialList.empty();
+
+  const allSpecial = [...(special || []), ...(racialTraits || [])];
+
+  if (allSpecial.length > 0) {
+    allSpecial.forEach(trait => {
+      if (trait && typeof trait === 'string') {
+        specialList.append(`<li>${trait}</li>`);
+      }
+    });
+    overlay.find('#expanded-special-section').show();
+  } else {
+    overlay.find('#expanded-special-section').hide();
+  }
+
+  // Show the overlay with animation
+  overlay.addClass('active');
+
+  SWSELogger.log(`CharGen | Previewing species: ${speciesName}`);
+}
+
+/**
+ * Handle confirm button click in expanded species card
+ */
+export async function _onConfirmSpecies(event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  if (!_previewedSpeciesName) {
+    SWSELogger.warn("CharGen | No species previewed to confirm");
+    return;
+  }
+
+  // Close the overlay
+  this._onCloseSpeciesOverlay(event);
+
+  // Create a synthetic event with the species data for _onSelectSpecies
+  const syntheticEvent = {
+    preventDefault: () => {},
+    currentTarget: {
+      dataset: {
+        species: _previewedSpeciesName
+      }
+    }
+  };
+
+  // Call the original species selection handler
+  await this._onSelectSpecies(syntheticEvent);
+
+  _previewedSpeciesName = null;
+}
+
+/**
+ * Handle closing the species overlay (back button or close button)
+ */
+export function _onCloseSpeciesOverlay(event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const overlay = this.element.find('#species-overlay');
+  overlay.removeClass('active');
+
+  _previewedSpeciesName = null;
+
+  SWSELogger.log("CharGen | Closed species preview overlay");
+}
+
+/**
+ * Handle clicking on the overlay backdrop (outside the card)
+ */
+export function _onSpeciesOverlayBackdropClick(event) {
+  // Only close if clicking directly on the overlay, not on the card
+  if (event.target.id === 'species-overlay') {
+    this._onCloseSpeciesOverlay(event);
+  }
+}
+
 /**
  * Handle species selection
  */
@@ -374,7 +539,7 @@ async function _loadChargenConfig() {
 }
 
 /**
- * Sort species by source material, prioritizing Core Rulebook first
+ * Sort species by source material, prioritizing Human first, then Core Rulebook
  * @param {Array} species - Array of species documents
  * @returns {Array} Sorted species array
  */
@@ -394,6 +559,16 @@ export function _sortSpeciesBySource(species) {
 
   // Sort species
   return species.sort((a, b) => {
+    const nameA = a.name || "";
+    const nameB = b.name || "";
+
+    // PRIORITY 1: Human always comes first
+    const isHumanA = nameA.toLowerCase() === "human";
+    const isHumanB = nameB.toLowerCase() === "human";
+
+    if (isHumanA && !isHumanB) return -1;
+    if (!isHumanA && isHumanB) return 1;
+
     const sourceA = a.system?.source || "Unknown";
     const sourceB = b.system?.source || "Unknown";
 
@@ -401,18 +576,18 @@ export function _sortSpeciesBySource(species) {
     const priorityA = sourcePriority[sourceA] ?? 999;
     const priorityB = sourcePriority[sourceB] ?? 999;
 
-    // First sort by source priority
+    // PRIORITY 2: Sort by source priority
     if (priorityA !== priorityB) {
       return priorityA - priorityB;
     }
 
-    // If same priority (or both unknown), sort by source name alphabetically
+    // PRIORITY 3: If same priority (or both unknown), sort by source name alphabetically
     if (sourceA !== sourceB) {
       return sourceA.localeCompare(sourceB);
     }
 
-    // Within same source, sort by species name alphabetically
-    return (a.name || "").localeCompare(b.name || "");
+    // PRIORITY 4: Within same source, sort by species name alphabetically
+    return nameA.localeCompare(nameB);
   });
 }
 
