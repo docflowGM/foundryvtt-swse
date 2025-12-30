@@ -242,18 +242,92 @@
         {{/each}}
       </div>
 
+      {{!-- Suggested Classes Section (only show if there are suggestions) --}}
+      {{#if hasSuggestedClasses}}
+      <div class="class-selection-container suggested-classes-section">
+        <h4 class="class-category-title suggested-title">
+          <i class="fas fa-lightbulb"></i> Suggested for Your Build
+        </h4>
+        <div class="class-suggestion-legend">
+          <div class="class-suggestion-legend-item tier-prestige">
+            <span class="legend-icon"><i class="fas fa-star"></i></span>
+            <span>Qualified Prestige</span>
+          </div>
+          <div class="class-suggestion-legend-item tier-path">
+            <span class="legend-icon"><i class="fas fa-route"></i></span>
+            <span>Continue Path</span>
+          </div>
+          <div class="class-suggestion-legend-item tier-unlock">
+            <span class="legend-icon"><i class="fas fa-unlock"></i></span>
+            <span>Near Prestige</span>
+          </div>
+          <div class="class-suggestion-legend-item tier-synergy">
+            <span class="legend-icon"><i class="fas fa-cogs"></i></span>
+            <span>Build Synergy</span>
+          </div>
+        </div>
+        <div class="class-grid-enhanced suggested-grid">
+          {{#each availableClasses}}
+            {{#if this.isSuggested}}
+            <div class="class-choice-btn {{#if this.isPrestige}}prestige-class{{/if}} is-suggested {{this.suggestion.cssClass}}"
+                 data-class-id="{{this.id}}"
+                 data-suggestion-tier="{{this.suggestion.tier}}">
+              {{!-- Suggestion Badge --}}
+              {{#if this.suggestion.iconClass}}
+              <span class="class-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+                <i class="{{this.suggestion.iconClass}}"></i>
+              </span>
+              {{/if}}
+              <div class="class-icon {{#if this.isPrestige}}prestige-icon{{/if}}">
+                <i class="fas {{this.icon}}"></i>
+              </div>
+              <h3>{{this.name}}</h3>
+              <p class="class-desc">{{this.description}}</p>
+              <p class="suggestion-reason">{{this.suggestion.reason}}</p>
+              <div class="class-stats">
+                <span>Hit Die: d{{this.system.hitDie}}</span>
+                <span>{{this.system.babProgression}}</span>
+              </div>
+              {{!-- Missing Prerequisites Tooltip --}}
+              {{#if this.suggestion.hasMissingPrereqs}}
+              <div class="missing-prereqs-hint">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>{{#each this.suggestion.missingPrereqs}}{{#if @index}}, {{/if}}{{this.shortDisplay}}{{/each}}</span>
+              </div>
+              {{/if}}
+              <div class="select-overlay {{#if this.isPrestige}}prestige-overlay{{/if}}">
+                <span>Select {{this.name}}</span>
+              </div>
+            </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
       {{!-- Core Base Classes with beautiful UI --}}
       <div class="class-selection-container">
         <h4 class="class-category-title">Core Classes</h4>
         <div class="class-grid-enhanced">
           {{#each availableClasses}}
             {{#if (and this.isBase (or (eq this.name "Jedi") (eq this.name "Noble") (eq this.name "Scout") (eq this.name "Scoundrel") (eq this.name "Soldier")))}}
-            <div class="class-choice-btn" data-class-id="{{this.id}}">
+            <div class="class-choice-btn {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}"
+                 data-class-id="{{this.id}}"
+                 {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+              {{!-- Suggestion Badge --}}
+              {{#if this.suggestion.iconClass}}
+              <span class="class-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+                <i class="{{this.suggestion.iconClass}}"></i>
+              </span>
+              {{/if}}
               <div class="class-icon">
                 <i class="fas {{this.icon}}"></i>
               </div>
               <h3>{{this.name}}</h3>
               <p class="class-desc">{{this.description}}</p>
+              {{#if this.suggestion.reason}}
+              <p class="suggestion-reason">{{this.suggestion.reason}}</p>
+              {{/if}}
               <div class="class-stats">
                 <span>Hit Die: d{{this.system.hitDie}}</span>
                 <span>{{this.system.babProgression}}</span>
@@ -287,19 +361,53 @@
         <p class="subtitle">Advanced classes for experienced heroes (Level 7+)</p>
       </header>
 
+      {{!-- Suggestion Legend for Prestige Classes --}}
+      <div class="class-suggestion-legend prestige-legend">
+        <div class="class-suggestion-legend-item tier-prestige">
+          <span class="legend-icon"><i class="fas fa-star"></i></span>
+          <span>You Qualify Now</span>
+        </div>
+        <div class="class-suggestion-legend-item tier-unlock">
+          <span class="legend-icon"><i class="fas fa-unlock"></i></span>
+          <span>Almost Qualified</span>
+        </div>
+        <div class="class-suggestion-legend-item tier-synergy">
+          <span class="legend-icon"><i class="fas fa-cogs"></i></span>
+          <span>Build Synergy</span>
+        </div>
+      </div>
+
       <div class="class-grid-enhanced">
         {{#each availableClasses}}
           {{#if this.isPrestige}}
-          <div class="class-choice-btn prestige-class" data-class-id="{{this.id}}">
+          <div class="class-choice-btn prestige-class {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}"
+               data-class-id="{{this.id}}"
+               {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
+            {{!-- Suggestion Badge --}}
+            {{#if this.suggestion.iconClass}}
+            <span class="class-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+              <i class="{{this.suggestion.iconClass}}"></i>
+            </span>
+            {{/if}}
             <div class="class-icon prestige-icon">
-              <i class="fas fa-star"></i>
+              <i class="fas {{#if this.isSuggested}}fa-star{{else}}fa-crown{{/if}}"></i>
             </div>
             <h3>{{this.name}}</h3>
             <p class="class-desc">{{this.description}}</p>
+            {{#if this.suggestion.reason}}
+            <p class="suggestion-reason">{{this.suggestion.reason}}</p>
+            {{/if}}
             <div class="class-stats">
               <span>Hit Die: d{{this.system.hitDie}}</span>
               <span>{{this.system.babProgression}}</span>
             </div>
+            {{!-- Missing Prerequisites Hint --}}
+            {{#if this.suggestion.hasMissingPrereqs}}
+            <div class="missing-prereqs-hint">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span>Missing: {{#each this.suggestion.missingPrereqs}}{{#if @index}}, {{/if}}{{this.shortDisplay}}{{/each}}</span>
+            </div>
+            {{/if}}
             <div class="select-overlay prestige-overlay">
               <span>Select {{this.name}}</span>
             </div>

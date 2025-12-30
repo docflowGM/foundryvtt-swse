@@ -257,7 +257,7 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     const selectedFeats = pendingData?.selectedFeats || [];
 
     // Apply suggestion engine to add tier-based recommendations
-    const featsWithSuggestions = SuggestionEngine.suggestFeats(
+    const featsWithSuggestions = await SuggestionEngine.suggestFeats(
       filteredFeats,
       actor,
       pendingData,

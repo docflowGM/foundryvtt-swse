@@ -197,6 +197,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
     };
     data.availableClasses = await getAvailableClasses(this.actor, pendingData);
 
+    // Check if there are any suggested classes
+    data.hasSuggestedClasses = data.availableClasses.some(c => c.isSuggested);
+
     // Get character's current classes
     data.characterClasses = getCharacterClasses(this.actor);
 

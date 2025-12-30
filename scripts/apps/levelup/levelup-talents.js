@@ -161,7 +161,7 @@ export async function loadTalentData(actor = null, pendingData = {}) {
     const talentObjects = talents.map(t => t.toObject ? t.toObject() : t);
 
     // Apply suggestions
-    const talentsWithSuggestions = SuggestionEngine.suggestTalents(
+    const talentsWithSuggestions = await SuggestionEngine.suggestTalents(
       talentObjects,
       actor,
       pendingData
