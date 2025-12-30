@@ -4,6 +4,7 @@
  * Provides a unified, centralized interface for all suggestion engines:
  * - SuggestionEngine (feats/talents)
  * - ClassSuggestionEngine (classes)
+ * - ForceOptionSuggestionEngine (Force powers, secrets, techniques)
  * - BuildIntent (build direction analysis)
  * - CommunityMetaSynergies (meta synergy detection)
  *
@@ -18,6 +19,7 @@
 import { SWSELogger } from '../utils/logger.js';
 import { SuggestionEngine } from './SuggestionEngine.js';
 import { ClassSuggestionEngine } from './ClassSuggestionEngine.js';
+import { ForceOptionSuggestionEngine } from './ForceOptionSuggestionEngine.js';
 import { BuildIntent } from './BuildIntent.js';
 import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
 import { PathPreview } from './PathPreview.js';
@@ -52,12 +54,16 @@ export class SuggestionEngineCoordinator {
           this.suggestTalents(talents, actor, pendingData, options),
         suggestClasses: (classes, actor, pendingData, options) =>
           this.suggestClasses(classes, actor, pendingData, options),
+        suggestForceOptions: (options, actor, pendingData, contextOptions) =>
+          this.suggestForceOptions(options, actor, pendingData, contextOptions),
         analyzeBuildIntent: (actor, pendingData) =>
           this.analyzeBuildIntent(actor, pendingData),
         getActiveSynergies: (actor, pendingData) =>
           this.getActiveSynergies(actor, pendingData),
         generatePathPreviews: (actor, pendingData) =>
           this.generatePathPreviews(actor, pendingData),
+        getForceOptionCatalog: () =>
+          this.getForceOptionCatalog(),
         clearBuildIntentCache: (actorId) =>
           this.clearBuildIntentCache(actorId)
       };
@@ -266,6 +272,55 @@ export class SuggestionEngineCoordinator {
       SWSELogger.error('Path preview generation failed:', err);
       return [];
     }
+  }
+
+  /**
+   * Suggest Force options (powers, secrets, techniques)
+   * @param {Array} options - Array of Force options to suggest from
+   * @param {Actor} actor - The character
+   * @param {Object} pendingData - Pending selections
+   * @param {Object} contextOptions - Additional options (buildIntent, etc)
+   * @returns {Promise<Array>} Force options with suggestion metadata
+   */
+  static async suggestForceOptions(options, actor, pendingData = {}, contextOptions = {}) {
+    try {
+      // Get or compute BuildIntent for context
+      const buildIntent = contextOptions.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
+
+      // Call ForceOptionSuggestionEngine with BuildIntent context
+      const optionsSuggested = await ForceOptionSuggestionEngine.suggestForceOptions(
+        options,
+        actor,
+        pendingData,
+        {
+          ...contextOptions,
+          buildIntent
+        }
+      );
+
+      return optionsSuggested;
+    } catch (err) {
+      SWSELogger.error('Force option suggestion failed:', err);
+      // Return options without suggestions as fallback
+      return options.map(opt => ({
+        ...opt,
+        suggestion: {
+          tier: 0,
+          reason: 'Available',
+          icon: ''
+        },
+        isSuggested: false
+      }));
+    }
+  }
+
+  /**
+   * Get the Force option catalog
+   * Useful for UI components that need the full list of options
+   * @returns {Object} Force options catalog
+   */
+  static getForceOptionCatalog() {
+    return ForceOptionSuggestionEngine.FORCE_OPTIONS_CATALOG || {};
   }
 
   /**

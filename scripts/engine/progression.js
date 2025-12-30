@@ -1586,6 +1586,33 @@ async applyScalingFeature(feature) {
   }
 
   /**
+   * Get suggested Force options for the character
+   * Integrated with BuildIntent and other suggestion engines
+   * @param {Array} options - Array of Force option objects
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Array>} Force options with suggestion metadata
+   */
+  async getSuggestedForceOptions(options, pendingData = {}) {
+    if (!game.swse?.suggestions?.suggestForceOptions) {
+      swseLogger.warn('Force option suggestion engine not initialized');
+      return options;
+    }
+    return await game.swse.suggestions.suggestForceOptions(options, this.actor, pendingData);
+  }
+
+  /**
+   * Get the Force option catalog
+   * @returns {Object} Force options catalog
+   */
+  getForceOptionCatalog() {
+    if (!game.swse?.suggestions?.getForceOptionCatalog) {
+      swseLogger.warn('Force option catalog not available');
+      return {};
+    }
+    return game.swse.suggestions.getForceOptionCatalog();
+  }
+
+  /**
    * Clear cached BuildIntent for this actor when starting new progression
    */
   clearSuggestionCache() {
