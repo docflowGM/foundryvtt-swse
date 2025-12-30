@@ -20,13 +20,15 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { BuildIntent } from './BuildIntent.js';
+import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (ORDER MATTERS - HIGHER = BETTER)
 // ──────────────────────────────────────────────────────────────
 
 export const SUGGESTION_TIERS = {
-    PRESTIGE_PREREQ: 5,
+    PRESTIGE_PREREQ: 6,
+    META_SYNERGY: 5,        // Community-proven synergy combo
     CHAIN_CONTINUATION: 4,
     SKILL_PREREQ_MATCH: 3,
     ABILITY_PREREQ_MATCH: 2,
@@ -35,7 +37,8 @@ export const SUGGESTION_TIERS = {
 };
 
 export const TIER_REASONS = {
-    5: "Prerequisite for a prestige class you're building toward",
+    6: "Prerequisite for a prestige class you're building toward",
+    5: "Community-proven synergy with your current build",
     4: "Builds directly on a feat or talent you already have",
     3: "Uses a trained skill you possess",
     2: "Scales with your highest ability score",
@@ -44,7 +47,8 @@ export const TIER_REASONS = {
 };
 
 export const TIER_ICONS = {
-    5: "fa-crown",          // Crown for prestige prereq
+    6: "fa-crown",          // Crown for prestige prereq
+    5: "fa-fire",           // Fire for meta synergy
     4: "fa-link",           // Chain link icon for chain continuation
     3: "fa-bullseye",       // Target for skill match
     2: "fa-fist-raised",    // Strength for ability match
@@ -54,7 +58,8 @@ export const TIER_ICONS = {
 
 // FontAwesome classes for rendering
 export const TIER_ICON_CLASSES = {
-    5: "fas fa-crown suggestion-prestige",
+    6: "fas fa-crown suggestion-prestige",
+    5: "fas fa-fire suggestion-synergy",
     4: "fas fa-link suggestion-chain",
     3: "fas fa-bullseye suggestion-skill",
     2: "fas fa-fist-raised suggestion-ability",
@@ -64,7 +69,8 @@ export const TIER_ICON_CLASSES = {
 
 // CSS classes for styling suggestion badges
 export const TIER_CSS_CLASSES = {
-    5: "suggestion-tier-prestige",
+    6: "suggestion-tier-prestige",
+    5: "suggestion-tier-synergy",
     4: "suggestion-tier-chain",
     3: "suggestion-tier-skill",
     2: "suggestion-tier-ability",
@@ -112,7 +118,7 @@ export class SuggestionEngine {
                 };
             }
 
-            const suggestion = this._evaluateFeat(feat, actorState, featMetadata, buildIntent);
+            const suggestion = this._evaluateFeat(feat, actorState, featMetadata, buildIntent, actor, pendingData);
             return {
                 ...feat,
                 suggestion,
@@ -154,7 +160,7 @@ export class SuggestionEngine {
                 };
             }
 
-            const suggestion = this._evaluateTalent(talent, actorState, buildIntent);
+            const suggestion = this._evaluateTalent(talent, actorState, buildIntent, actor, pendingData);
             return {
                 ...talent,
                 suggestion,
@@ -413,12 +419,14 @@ export class SuggestionEngine {
      * @param {Object} actorState - Actor state
      * @param {Object} metadata - Feat metadata with chain info
      * @param {Object|null} buildIntent - Build intent analysis
+     * @param {Actor|null} actor - The actor (for synergy checks)
+     * @param {Object} pendingData - Pending selections
      * @returns {Object} Suggestion metadata
      */
-    static _evaluateFeat(feat, actorState, metadata = {}, buildIntent = null) {
+    static _evaluateFeat(feat, actorState, metadata = {}, buildIntent = null, actor = null, pendingData = {}) {
         // Check tiers in order of priority (highest first)
 
-        // Tier 5: Check if this feat is a priority prerequisite for a prestige class
+        // Tier 6: Check if this feat is a priority prerequisite for a prestige class
         if (buildIntent) {
             const alignment = BuildIntent.checkFeatAlignment(feat.name, buildIntent);
             if (alignment.aligned && buildIntent.priorityPrereqs.some(p =>
@@ -428,6 +436,18 @@ export class SuggestionEngine {
                     SUGGESTION_TIERS.PRESTIGE_PREREQ,
                     feat.name,
                     alignment.reason
+                );
+            }
+        }
+
+        // Tier 5: Community meta synergy
+        if (actor) {
+            const synergy = getSynergyForItem(feat.name, 'feat', actor, pendingData);
+            if (synergy) {
+                return this._buildSuggestion(
+                    SUGGESTION_TIERS.META_SYNERGY,
+                    feat.name,
+                    synergy.reason
                 );
             }
         }
@@ -473,22 +493,36 @@ export class SuggestionEngine {
      * @param {Object} talent - The talent to evaluate
      * @param {Object} actorState - Actor state
      * @param {Object|null} buildIntent - Build intent analysis
+     * @param {Actor|null} actor - The actor (for synergy checks)
+     * @param {Object} pendingData - Pending selections
      * @returns {Object} Suggestion metadata
      */
-    static _evaluateTalent(talent, actorState, buildIntent = null) {
+    static _evaluateTalent(talent, actorState, buildIntent = null, actor = null, pendingData = {}) {
         // Check tiers in order of priority (highest first)
 
-        // Tier 5: Check if this talent supports a prestige class path
+        // Tier 6: Check if this talent supports a prestige class path
         if (buildIntent) {
             const treeName = talent.system?.tree || '';
             const alignment = BuildIntent.checkTalentAlignment(talent.name, treeName, buildIntent);
             if (alignment.aligned && buildIntent.prestigeAffinities.length > 0 &&
                 buildIntent.prestigeAffinities[0].confidence >= 0.4) {
-                // Only use tier 5 if strongly aligned with top prestige target
+                // Only use tier 6 if strongly aligned with top prestige target
                 return this._buildSuggestion(
                     SUGGESTION_TIERS.PRESTIGE_PREREQ,
                     talent.name,
                     alignment.reason
+                );
+            }
+        }
+
+        // Tier 5: Community meta synergy
+        if (actor) {
+            const synergy = getSynergyForItem(talent.name, 'talent', actor, pendingData);
+            if (synergy) {
+                return this._buildSuggestion(
+                    SUGGESTION_TIERS.META_SYNERGY,
+                    talent.name,
+                    synergy.reason
                 );
             }
         }

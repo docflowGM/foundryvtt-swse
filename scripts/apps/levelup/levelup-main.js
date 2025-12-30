@@ -67,6 +67,12 @@ import {
   checkIntModifierIncrease
 } from './levelup-skills.js';
 
+// Import suggestion and roadmap features
+import { showPrestigeRoadmap } from './prestige-roadmap.js';
+import { showGMDebugPanel } from './debug-panel.js';
+import { PathPreview } from '../../engine/PathPreview.js';
+import { findActiveSynergies } from '../../engine/CommunityMetaSynergies.js';
+
 export class SWSELevelUpEnhanced extends FormApplication {
 
   static get defaultOptions() {
@@ -245,6 +251,9 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Free Build mode flag
     data.freeBuild = this.freeBuild;
 
+    // GM check for debug tools
+    data.isGM = game.user.isGM;
+
     // Progress indicator data
     const currentClasses = getCharacterClasses(this.actor);
     const isMulticlassing = this.selectedClass && Object.keys(currentClasses).length > 0 && !currentClasses[this.selectedClass.name];
@@ -320,6 +329,45 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
     // Tag filtering
     html.find('.feat-tag').click(this._onClickFeatTag.bind(this));
+
+    // Prestige Roadmap and Debug Panel
+    html.find('.show-prestige-roadmap').click(this._onShowPrestigeRoadmap.bind(this));
+    html.find('.show-gm-debug-panel').click(this._onShowGMDebugPanel.bind(this));
+  }
+
+  /**
+   * Show the Prestige Roadmap UI
+   */
+  async _onShowPrestigeRoadmap(event) {
+    event.preventDefault();
+    const pendingData = this._buildPendingData();
+    showPrestigeRoadmap(this.actor, pendingData);
+  }
+
+  /**
+   * Show the GM Debug Panel (GM only)
+   */
+  async _onShowGMDebugPanel(event) {
+    event.preventDefault();
+    if (!game.user.isGM) {
+      ui.notifications.warn('Debug panel is only available to GMs');
+      return;
+    }
+    const pendingData = this._buildPendingData();
+    showGMDebugPanel(this.actor, pendingData);
+  }
+
+  /**
+   * Build pending data object from current selections
+   */
+  _buildPendingData() {
+    return {
+      selectedClass: this.selectedClass,
+      selectedFeats: this.selectedFeats || [],
+      selectedTalents: this.selectedTalents || [],
+      selectedSkills: this.selectedSkills || [],
+      abilityIncreases: this.abilityIncreases || {}
+    };
   }
 
   // ========================================

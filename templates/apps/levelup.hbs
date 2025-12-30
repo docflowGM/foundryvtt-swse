@@ -13,6 +13,16 @@
         <span class="hint-text">Skip validation and build freely</span>
       </label>
     </div>
+    <div class="suggestion-tools">
+      <button type="button" class="show-prestige-roadmap" title="View prestige class progress and recommendations">
+        <i class="fas fa-route"></i> Prestige Roadmap
+      </button>
+      {{#if isGM}}
+      <button type="button" class="show-gm-debug-panel" title="View BuildIntent analysis (GM only)">
+        <i class="fas fa-bug"></i> Debug
+      </button>
+      {{/if}}
+    </div>
   </header>
 
   {{!-- PROGRESS INDICATOR --}}

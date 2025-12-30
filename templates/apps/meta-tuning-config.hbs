@@ -1,0 +1,722 @@
+<form class="meta-tuning-config">
+  <header class="config-header">
+    <h2><i class="fas fa-sliders-h"></i> Suggestion Engine Configuration</h2>
+    <p class="config-description">
+      Customize how the suggestion engine weights feats, talents, and classes.
+    </p>
+  </header>
+
+  {{!-- PRESET BUTTONS --}}
+  <div class="preset-section">
+    <label>Quick Presets:</label>
+    <div class="preset-buttons">
+      <button type="button" class="preset-btn" data-preset="balanced" title="Default balanced settings">
+        <i class="fas fa-balance-scale"></i> Balanced
+      </button>
+      <button type="button" class="preset-btn" data-preset="prestigeFocused" title="Prioritize prestige class progression">
+        <i class="fas fa-crown"></i> Prestige Focus
+      </button>
+      <button type="button" class="preset-btn" data-preset="combatOptimized" title="Emphasize combat effectiveness">
+        <i class="fas fa-sword"></i> Combat
+      </button>
+      <button type="button" class="preset-btn" data-preset="forceUser" title="Prioritize Force-related options">
+        <i class="fas fa-jedi"></i> Force User
+      </button>
+      <button type="button" class="preset-btn" data-preset="roleplay" title="Emphasize roleplay and social options">
+        <i class="fas fa-theater-masks"></i> Roleplay
+      </button>
+    </div>
+  </div>
+
+  <nav class="config-tabs">
+    <a class="tab" data-tab="tiers"><i class="fas fa-layer-group"></i> Tier Weights</a>
+    <a class="tab" data-tab="themes"><i class="fas fa-tags"></i> Themes</a>
+    <a class="tab" data-tab="display"><i class="fas fa-eye"></i> Display</a>
+    <a class="tab" data-tab="advanced"><i class="fas fa-cog"></i> Advanced</a>
+  </nav>
+
+  <div class="config-content">
+    {{!-- TIER WEIGHTS TAB --}}
+    <section class="tab-section" data-tab="tiers">
+      <h3>Feat/Talent Suggestion Tiers</h3>
+      <p class="section-description">Adjust the weight of each suggestion tier. Higher values = more important.</p>
+
+      <div class="slider-group">
+        <div class="slider-row">
+          <label>
+            <i class="fas fa-crown tier-prestige"></i>
+            Prestige Prerequisite
+          </label>
+          <div class="slider-control">
+            <input type="range" name="tierWeights.prestigePrereq" min="0" max="2" step="0.1"
+                   value="{{config.tierWeights.prestigePrereq}}">
+            <span class="slider-value">{{config.tierWeights.prestigePrereq}}</span>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <label>
+            <i class="fas fa-link tier-chain"></i>
+            Chain Continuation
+          </label>
+          <div class="slider-control">
+            <input type="range" name="tierWeights.chainContinuation" min="0" max="2" step="0.1"
+                   value="{{config.tierWeights.chainContinuation}}">
+            <span class="slider-value">{{config.tierWeights.chainContinuation}}</span>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <label>
+            <i class="fas fa-bullseye tier-skill"></i>
+            Skill Match
+          </label>
+          <div class="slider-control">
+            <input type="range" name="tierWeights.skillMatch" min="0" max="2" step="0.1"
+                   value="{{config.tierWeights.skillMatch}}">
+            <span class="slider-value">{{config.tierWeights.skillMatch}}</span>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <label>
+            <i class="fas fa-fist-raised tier-ability"></i>
+            Ability Match
+          </label>
+          <div class="slider-control">
+            <input type="range" name="tierWeights.abilityMatch" min="0" max="2" step="0.1"
+                   value="{{config.tierWeights.abilityMatch}}">
+            <span class="slider-value">{{config.tierWeights.abilityMatch}}</span>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <label>
+            <i class="fas fa-users-cog tier-class"></i>
+            Class Synergy
+          </label>
+          <div class="slider-control">
+            <input type="range" name="tierWeights.classSynergy" min="0" max="2" step="0.1"
+                   value="{{config.tierWeights.classSynergy}}">
+            <span class="slider-value">{{config.tierWeights.classSynergy}}</span>
+          </div>
+        </div>
+      </div>
+
+      <h3>Class Suggestion Tiers</h3>
+      <p class="section-description">Adjust weights for class suggestions during level-up.</p>
+
+      <div class="slider-group">
+        <div class="slider-row">
+          <label>
+            <i class="fas fa-star"></i>
+            Prestige Qualified Now
+          </label>
+          <div class="slider-control">
+            <input type="range" name="classTierWeights.prestigeNow" min="0" max="2" step="0.1"
+                   value="{{config.classTierWeights.prestigeNow}}">
+            <span class="slider-value">{{config.classTierWeights.prestigeNow}}</span>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <label>
+            <i class="fas fa-route"></i>
+            Path Continuation
+          </label>
+          <div class="slider-control">
+            <input type="range" name="classTierWeights.pathContinuation" min="0" max="2" step="0.1"
+                   value="{{config.classTierWeights.pathContinuation}}">
+            <span class="slider-value">{{config.classTierWeights.pathContinuation}}</span>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <label>
+            <i class="fas fa-unlock"></i>
+            Prestige Soon
+          </label>
+          <div class="slider-control">
+            <input type="range" name="classTierWeights.prestigeSoon" min="0" max="2" step="0.1"
+                   value="{{config.classTierWeights.prestigeSoon}}">
+            <span class="slider-value">{{config.classTierWeights.prestigeSoon}}</span>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <label>
+            <i class="fas fa-cogs"></i>
+            Mechanical Synergy
+          </label>
+          <div class="slider-control">
+            <input type="range" name="classTierWeights.mechanicalSynergy" min="0" max="2" step="0.1"
+                   value="{{config.classTierWeights.mechanicalSynergy}}">
+            <span class="slider-value">{{config.classTierWeights.mechanicalSynergy}}</span>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <label>
+            <i class="fas fa-heart"></i>
+            Thematic Fit
+          </label>
+          <div class="slider-control">
+            <input type="range" name="classTierWeights.thematic" min="0" max="2" step="0.1"
+                   value="{{config.classTierWeights.thematic}}">
+            <span class="slider-value">{{config.classTierWeights.thematic}}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-row prestige-priority">
+        <label>
+          <i class="fas fa-crown"></i>
+          Overall Prestige Priority
+        </label>
+        <div class="slider-control wide">
+          <input type="range" name="prestigePriority" min="0" max="2" step="0.1"
+                 value="{{config.prestigePriority}}">
+          <span class="slider-value">{{config.prestigePriority}}</span>
+        </div>
+        <p class="slider-hint">0 = Ignore prestige, 1 = Normal, 2 = High priority</p>
+      </div>
+    </section>
+
+    {{!-- THEMES TAB --}}
+    <section class="tab-section" data-tab="themes">
+      <h3>Theme Emphasis</h3>
+      <p class="section-description">
+        Adjust how strongly each theme type influences suggestions.
+        Higher values = stronger preference for that theme.
+      </p>
+
+      <div class="theme-grid">
+        <div class="theme-slider">
+          <label><i class="fas fa-jedi theme-force"></i> Force</label>
+          <input type="range" name="themeEmphasis.force" min="0" max="2" step="0.1"
+                 value="{{config.themeEmphasis.force}}">
+          <span class="slider-value">{{config.themeEmphasis.force}}</span>
+        </div>
+
+        <div class="theme-slider">
+          <label><i class="fas fa-crosshairs theme-ranged"></i> Ranged</label>
+          <input type="range" name="themeEmphasis.ranged" min="0" max="2" step="0.1"
+                 value="{{config.themeEmphasis.ranged}}">
+          <span class="slider-value">{{config.themeEmphasis.ranged}}</span>
+        </div>
+
+        <div class="theme-slider">
+          <label><i class="fas fa-fist-raised theme-melee"></i> Melee</label>
+          <input type="range" name="themeEmphasis.melee" min="0" max="2" step="0.1"
+                 value="{{config.themeEmphasis.melee}}">
+          <span class="slider-value">{{config.themeEmphasis.melee}}</span>
+        </div>
+
+        <div class="theme-slider">
+          <label><i class="fas fa-user-ninja theme-stealth"></i> Stealth</label>
+          <input type="range" name="themeEmphasis.stealth" min="0" max="2" step="0.1"
+                 value="{{config.themeEmphasis.stealth}}">
+          <span class="slider-value">{{config.themeEmphasis.stealth}}</span>
+        </div>
+
+        <div class="theme-slider">
+          <label><i class="fas fa-comments theme-social"></i> Social</label>
+          <input type="range" name="themeEmphasis.social" min="0" max="2" step="0.1"
+                 value="{{config.themeEmphasis.social}}">
+          <span class="slider-value">{{config.themeEmphasis.social}}</span>
+        </div>
+
+        <div class="theme-slider">
+          <label><i class="fas fa-microchip theme-tech"></i> Tech</label>
+          <input type="range" name="themeEmphasis.tech" min="0" max="2" step="0.1"
+                 value="{{config.themeEmphasis.tech}}">
+          <span class="slider-value">{{config.themeEmphasis.tech}}</span>
+        </div>
+
+        <div class="theme-slider">
+          <label><i class="fas fa-users theme-leadership"></i> Leadership</label>
+          <input type="range" name="themeEmphasis.leadership" min="0" max="2" step="0.1"
+                 value="{{config.themeEmphasis.leadership}}">
+          <span class="slider-value">{{config.themeEmphasis.leadership}}</span>
+        </div>
+
+        <div class="theme-slider">
+          <label><i class="fas fa-compass theme-exploration"></i> Exploration</label>
+          <input type="range" name="themeEmphasis.exploration" min="0" max="2" step="0.1"
+                 value="{{config.themeEmphasis.exploration}}">
+          <span class="slider-value">{{config.themeEmphasis.exploration}}</span>
+        </div>
+
+        <div class="theme-slider">
+          <label><i class="fas fa-space-shuttle theme-vehicle"></i> Vehicle</label>
+          <input type="range" name="themeEmphasis.vehicle" min="0" max="2" step="0.1"
+                 value="{{config.themeEmphasis.vehicle}}">
+          <span class="slider-value">{{config.themeEmphasis.vehicle}}</span>
+        </div>
+
+        <div class="theme-slider">
+          <label><i class="fas fa-hand-holding-heart theme-support"></i> Support</label>
+          <input type="range" name="themeEmphasis.support" min="0" max="2" step="0.1"
+                 value="{{config.themeEmphasis.support}}">
+          <span class="slider-value">{{config.themeEmphasis.support}}</span>
+        </div>
+
+        <div class="theme-slider">
+          <label><i class="fas fa-swords theme-combat"></i> Combat</label>
+          <input type="range" name="themeEmphasis.combat" min="0" max="2" step="0.1"
+                 value="{{config.themeEmphasis.combat}}">
+          <span class="slider-value">{{config.themeEmphasis.combat}}</span>
+        </div>
+
+        <div class="theme-slider">
+          <label><i class="fas fa-search-location theme-tracking"></i> Tracking</label>
+          <input type="range" name="themeEmphasis.tracking" min="0" max="2" step="0.1"
+                 value="{{config.themeEmphasis.tracking}}">
+          <span class="slider-value">{{config.themeEmphasis.tracking}}</span>
+        </div>
+      </div>
+    </section>
+
+    {{!-- DISPLAY TAB --}}
+    <section class="tab-section" data-tab="display">
+      <h3>Display Options</h3>
+      <p class="section-description">Control what suggestion features are shown in the UI.</p>
+
+      <div class="checkbox-group">
+        <label class="checkbox-row">
+          <input type="checkbox" name="display.showSuggestionBadges"
+                 {{#if config.display.showSuggestionBadges}}checked{{/if}}>
+          <span class="checkbox-label">Show suggestion badges on feats/talents</span>
+          <span class="checkbox-hint">Colored icons indicating why something is suggested</span>
+        </label>
+
+        <label class="checkbox-row">
+          <input type="checkbox" name="display.showPrestigeRoadmap"
+                 {{#if config.display.showPrestigeRoadmap}}checked{{/if}}>
+          <span class="checkbox-label">Enable Prestige Roadmap</span>
+          <span class="checkbox-hint">Visual progress tracker for prestige classes</span>
+        </label>
+
+        <label class="checkbox-row">
+          <input type="checkbox" name="display.showPathPreview"
+                 {{#if config.display.showPathPreview}}checked{{/if}}>
+          <span class="checkbox-label">Show path preview</span>
+          <span class="checkbox-hint">"In X levels you could qualify for..." messages</span>
+        </label>
+
+        <label class="checkbox-row">
+          <input type="checkbox" name="display.showMissingPrereqs"
+                 {{#if config.display.showMissingPrereqs}}checked{{/if}}>
+          <span class="checkbox-label">Show missing prerequisites</span>
+          <span class="checkbox-hint">Display what's needed for prestige classes</span>
+        </label>
+      </div>
+
+      <div class="slider-row standalone">
+        <label>Maximum suggestions per category</label>
+        <div class="slider-control">
+          <input type="range" name="display.maxSuggestionsPerCategory" min="1" max="10" step="1"
+                 value="{{config.display.maxSuggestionsPerCategory}}">
+          <span class="slider-value">{{config.display.maxSuggestionsPerCategory}}</span>
+        </div>
+      </div>
+    </section>
+
+    {{!-- ADVANCED TAB --}}
+    <section class="tab-section" data-tab="advanced">
+      <h3>Advanced Settings</h3>
+      <p class="section-description">Fine-tune the suggestion algorithm. Modify with caution.</p>
+
+      <div class="slider-group">
+        <div class="slider-row">
+          <label>Prestige confidence threshold</label>
+          <div class="slider-control">
+            <input type="range" name="advanced.prestigeConfidenceThreshold" min="0.1" max="0.8" step="0.05"
+                   value="{{config.advanced.prestigeConfidenceThreshold}}">
+            <span class="slider-value">{{config.advanced.prestigeConfidenceThreshold}}</span>
+          </div>
+          <p class="slider-hint">Minimum confidence to show prestige class recommendations</p>
+        </div>
+
+        <div class="slider-row">
+          <label>Path preview levels</label>
+          <div class="slider-control">
+            <input type="range" name="advanced.pathPreviewLevels" min="1" max="10" step="1"
+                   value="{{config.advanced.pathPreviewLevels}}">
+            <span class="slider-value">{{config.advanced.pathPreviewLevels}}</span>
+          </div>
+          <p class="slider-hint">How many levels ahead to show in path preview</p>
+        </div>
+
+        <div class="slider-row">
+          <label>Chain continuation bonus</label>
+          <div class="slider-control">
+            <input type="range" name="advanced.chainBonus" min="1" max="2" step="0.1"
+                   value="{{config.advanced.chainBonus}}">
+            <span class="slider-value">{{config.advanced.chainBonus}}</span>
+          </div>
+          <p class="slider-hint">Multiplier for options that continue existing chains</p>
+        </div>
+
+        <div class="slider-row">
+          <label>Primary theme bonus</label>
+          <div class="slider-control">
+            <input type="range" name="advanced.primaryThemeBonus" min="1" max="2" step="0.1"
+                   value="{{config.advanced.primaryThemeBonus}}">
+            <span class="slider-value">{{config.advanced.primaryThemeBonus}}</span>
+          </div>
+          <p class="slider-hint">Multiplier for options matching primary build themes</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="config-footer">
+    <button type="button" class="reset-defaults">
+      <i class="fas fa-undo"></i> Reset to Defaults
+    </button>
+    <button type="submit" class="save-config">
+      <i class="fas fa-save"></i> Save Configuration
+    </button>
+  </footer>
+</form>
+
+<style>
+.meta-tuning-config {
+  font-family: "Roboto", Arial, sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #e4e4e4;
+}
+
+.config-header {
+  padding: 1rem 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 2px solid #00d9ff;
+}
+
+.config-header h2 {
+  margin: 0;
+  color: #00d9ff;
+  font-size: 1.2rem;
+}
+
+.config-description {
+  margin: 0.5rem 0 0 0;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.preset-section {
+  padding: 1rem 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid #333;
+}
+
+.preset-section label {
+  display: block;
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.preset-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.preset-btn {
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 217, 255, 0.1);
+  border: 1px solid #00d9ff;
+  border-radius: 4px;
+  color: #00d9ff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.preset-btn:hover {
+  background: rgba(0, 217, 255, 0.3);
+}
+
+.preset-btn i {
+  margin-right: 0.25rem;
+}
+
+.config-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid #333;
+}
+
+.config-tabs .tab {
+  flex: 1;
+  padding: 0.75rem;
+  text-align: center;
+  color: #888;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.config-tabs .tab:hover {
+  color: #00d9ff;
+  background: rgba(0, 217, 255, 0.1);
+}
+
+.config-tabs .tab.active {
+  color: #00d9ff;
+  border-bottom-color: #00d9ff;
+}
+
+.config-tabs .tab i {
+  margin-right: 0.5rem;
+}
+
+.config-content {
+  padding: 1.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.tab-section {
+  display: none;
+}
+
+.tab-section.active {
+  display: block;
+}
+
+.tab-section h3 {
+  margin: 0 0 0.5rem 0;
+  color: #00d9ff;
+  font-size: 1rem;
+}
+
+.section-description {
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.slider-group {
+  margin-bottom: 1.5rem;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.slider-row.standalone {
+  border-bottom: none;
+  margin-top: 1rem;
+}
+
+.slider-row.prestige-priority {
+  flex-wrap: wrap;
+  background: rgba(255, 215, 0, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  margin-top: 1.5rem;
+}
+
+.slider-row label {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ccc;
+}
+
+.slider-row label i {
+  font-size: 1rem;
+}
+
+.tier-prestige { color: #ffd700; }
+.tier-chain { color: #4a90e2; }
+.tier-skill { color: #00d9ff; }
+.tier-ability { color: #a855f7; }
+.tier-class { color: #22c55e; }
+
+.slider-control {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 200px;
+}
+
+.slider-control.wide {
+  flex: 1;
+}
+
+.slider-control input[type="range"] {
+  flex: 1;
+  height: 6px;
+  -webkit-appearance: none;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+
+.slider-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #00d9ff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.5);
+}
+
+.slider-value {
+  min-width: 35px;
+  text-align: center;
+  font-weight: bold;
+  color: #00d9ff;
+}
+
+.slider-hint {
+  width: 100%;
+  margin: 0.5rem 0 0 0;
+  color: #666;
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+/* Theme Grid */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.theme-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+.theme-slider label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.theme-slider label i {
+  font-size: 1rem;
+}
+
+.theme-force { color: #8b5cf6; }
+.theme-ranged { color: #ef4444; }
+.theme-melee { color: #f97316; }
+.theme-stealth { color: #6b7280; }
+.theme-social { color: #ec4899; }
+.theme-tech { color: #06b6d4; }
+.theme-leadership { color: #eab308; }
+.theme-exploration { color: #22c55e; }
+.theme-vehicle { color: #3b82f6; }
+.theme-support { color: #14b8a6; }
+.theme-combat { color: #dc2626; }
+.theme-tracking { color: #a855f7; }
+
+.theme-slider input[type="range"] {
+  width: 100%;
+}
+
+.theme-slider .slider-value {
+  align-self: flex-end;
+  font-size: 0.85rem;
+}
+
+/* Checkbox Group */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.checkbox-row:hover {
+  background: rgba(0, 217, 255, 0.1);
+}
+
+.checkbox-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.checkbox-label {
+  flex: 1;
+  font-weight: 500;
+}
+
+.checkbox-hint {
+  width: 100%;
+  margin-left: 26px;
+  color: #666;
+  font-size: 0.8rem;
+}
+
+/* Footer */
+.config-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid #333;
+}
+
+.config-footer button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.reset-defaults {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid #ef4444 !important;
+}
+
+.reset-defaults:hover {
+  background: rgba(239, 68, 68, 0.4);
+}
+
+.save-config {
+  background: linear-gradient(135deg, #00d9ff, #0a74da);
+  color: white;
+}
+
+.save-config:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 217, 255, 0.4);
+}
+</style>
