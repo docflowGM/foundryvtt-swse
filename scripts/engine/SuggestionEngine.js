@@ -28,7 +28,9 @@ import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies
 
 export const SUGGESTION_TIERS = {
     PRESTIGE_PREREQ: 6,
+    MARTIAL_ARTS: 5,        // Martial arts feat with prerequisites met
     META_SYNERGY: 5,        // Community-proven synergy combo
+    SPECIES_EARLY: 4.5,     // Species feat at early levels (decays with level)
     CHAIN_CONTINUATION: 4,
     SKILL_PREREQ_MATCH: 3,
     ABILITY_PREREQ_MATCH: 2,
@@ -38,7 +40,8 @@ export const SUGGESTION_TIERS = {
 
 export const TIER_REASONS = {
     6: "Prerequisite for a prestige class you're building toward",
-    5: "Community-proven synergy with your current build",
+    5: "Strong recommendation for your build",
+    4.5: "Excellent species feat for your level",
     4: "Builds directly on a feat or talent you already have",
     3: "Uses a trained skill you possess",
     2: "Scales with your highest ability score",
@@ -48,7 +51,8 @@ export const TIER_REASONS = {
 
 export const TIER_ICONS = {
     6: "fa-crown",          // Crown for prestige prereq
-    5: "fa-fire",           // Fire for meta synergy
+    5: "fa-fire",           // Fire for strong recommendations
+    4.5: "fa-dna",          // DNA for species feats
     4: "fa-link",           // Chain link icon for chain continuation
     3: "fa-bullseye",       // Target for skill match
     2: "fa-fist-raised",    // Strength for ability match
@@ -60,6 +64,7 @@ export const TIER_ICONS = {
 export const TIER_ICON_CLASSES = {
     6: "fas fa-crown suggestion-prestige",
     5: "fas fa-fire suggestion-synergy",
+    4.5: "fas fa-dna suggestion-species",
     4: "fas fa-link suggestion-chain",
     3: "fas fa-bullseye suggestion-skill",
     2: "fas fa-fist-raised suggestion-ability",
@@ -71,6 +76,7 @@ export const TIER_ICON_CLASSES = {
 export const TIER_CSS_CLASSES = {
     6: "suggestion-tier-prestige",
     5: "suggestion-tier-synergy",
+    4.5: "suggestion-tier-species",
     4: "suggestion-tier-chain",
     3: "suggestion-tier-skill",
     2: "suggestion-tier-ability",
@@ -263,6 +269,13 @@ export class SuggestionEngine {
             classes.add(pendingData.selectedClass.name.toLowerCase());
         }
 
+        // Get character's species
+        const speciesItem = actor.items.find(i => i.type === 'species');
+        const species = speciesItem?.name?.toLowerCase() || null;
+
+        // Get character level
+        const level = actor.system?.level || 1;
+
         return {
             ownedFeats,
             ownedTalents,
@@ -270,6 +283,8 @@ export class SuggestionEngine {
             highestAbility,
             highestScore,
             classes,
+            species,
+            level,
             // Combined set for chain checking (feats + talents)
             ownedPrereqs: new Set([...ownedFeats, ...ownedTalents])
         };
@@ -409,6 +424,60 @@ export class SuggestionEngine {
         return false;
     }
 
+    /**
+     * Check if feat is a martial arts feat (Tier 5)
+     * @param {Object} feat - The feat being evaluated
+     * @returns {boolean}
+     */
+    static _isMartialArtsFeat(feat) {
+        return feat.system?.featType === 'martial_arts';
+    }
+
+    /**
+     * Check if feat has species prerequisite matching actor's species
+     * Returns a weighted tier based on character level (decays with level)
+     * @param {Object} feat - The feat being evaluated
+     * @param {Object} actorState - Actor state
+     * @returns {Object|null} { tier, reason } or null if no match
+     */
+    static _checkSpeciesPrerequisite(feat, actorState) {
+        if (!actorState.species) {
+            return null;
+        }
+
+        // Check if feat has species as featType
+        if (feat.system?.featType === 'species') {
+            // Check if prerequisite matches species
+            const prereqString = feat.system?.prerequisite || '';
+            if (prereqString.toLowerCase().includes(actorState.species)) {
+                // Calculate level-based decay (3-level half-life)
+                const level = actorState.level || 1;
+                const halfLife = 3;
+                const decayFactor = Math.pow(0.5, level / halfLife);
+
+                // Base tier is 4.5 (between chain continuation and meta synergy)
+                // Apply decay: at level 1-2, full strength; level 3, 50%; level 6, 25%; etc.
+                const adjustedTier = SUGGESTION_TIERS.FALLBACK +
+                    (SUGGESTION_TIERS.SPECIES_EARLY - SUGGESTION_TIERS.FALLBACK) * decayFactor;
+
+                // Check if also uses trained skill for extra boost
+                const usesTrainedSkill = this._usesTrainedSkill(feat, actorState);
+                const skillBoost = usesTrainedSkill ? 0.5 : 0;
+
+                const finalTier = Math.min(adjustedTier + skillBoost, SUGGESTION_TIERS.META_SYNERGY);
+
+                let reason = `Excellent ${actorState.species} feat for your level`;
+                if (usesTrainedSkill) {
+                    reason += ' (uses your trained skill)';
+                }
+
+                return { tier: finalTier, reason };
+            }
+        }
+
+        return null;
+    }
+
     // ──────────────────────────────────────────────────────────────
     // PRIVATE: EVALUATE FEAT/TALENT
     // ──────────────────────────────────────────────────────────────
@@ -440,6 +509,15 @@ export class SuggestionEngine {
             }
         }
 
+        // Tier 5: Martial arts feat (strong recommendation)
+        if (this._isMartialArtsFeat(feat)) {
+            return this._buildSuggestion(
+                SUGGESTION_TIERS.MARTIAL_ARTS,
+                feat.name,
+                "Martial arts feat - highly recommended when prerequisites are met"
+            );
+        }
+
         // Tier 5: Community meta synergy
         if (actor) {
             const synergy = getSynergyForItem(feat.name, 'feat', actor, pendingData);
@@ -450,6 +528,16 @@ export class SuggestionEngine {
                     synergy.reason
                 );
             }
+        }
+
+        // Tier 4.5 (with decay): Species prerequisite match
+        const speciesCheck = this._checkSpeciesPrerequisite(feat, actorState);
+        if (speciesCheck) {
+            return this._buildSuggestion(
+                speciesCheck.tier,
+                feat.name,
+                speciesCheck.reason
+            );
         }
 
         // Tier 4: Chain continuation
