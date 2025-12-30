@@ -25,8 +25,12 @@ export class MentorSuggestionDialog extends Dialog {
         return;
       }
 
+      // Use the mentor's character name (e.g., "Miraj") for voice generation
+      // mentorName parameter is the class key (e.g., "Jedi")
+      const mentorCharacterName = mentor.name;
+
       const voicedSuggestion = MentorSuggestionVoice.generateVoicedSuggestion(
-        mentorName,
+        mentorCharacterName,
         suggestion,
         context
       );

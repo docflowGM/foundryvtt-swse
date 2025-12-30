@@ -375,7 +375,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     event.preventDefault();
 
     // Get available feats
-    const availableFeats = this.featCategories
+    const availableFeats = (this.featData?.categories || [])
       .flatMap(cat => cat.feats)
       .filter(feat => !feat.isUnavailable && !feat.isSelected);
 
@@ -396,23 +396,15 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Get the top suggestion
       const topSuggestion = suggestions[0];
-      const mentorName = this.mentor;
 
-      // Add mentor voice
-      const voicedSuggestion = MentorSuggestionVoice.generateVoicedSuggestion(
-        mentorName,
-        topSuggestion,
-        'feat_selection'
-      );
-
-      // Show mentor dialog with suggestion
-      const result = await MentorSuggestionDialog.show(mentorName, topSuggestion, 'feat_selection');
+      // Show mentor dialog with suggestion (expects class key like "Jedi")
+      const result = await MentorSuggestionDialog.show(this.currentMentorClass, topSuggestion, 'feat_selection');
 
       if (result && result.applied) {
         // Auto-select the feat
         const featId = topSuggestion._id;
         await this._onSelectBonusFeat({ currentTarget: { dataset: { featId } } });
-        ui.notifications.info(`${mentorName} suggests: ${topSuggestion.name}`);
+        ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
       }
     } catch (err) {
       console.error('Error getting feat suggestion:', err);
@@ -427,13 +419,25 @@ export class SWSELevelUpEnhanced extends FormApplication {
     event.preventDefault();
 
     try {
-      // Get available talents
-      const availableTalents = [];
-      for (const tree of this.talentTrees || []) {
-        const talentsInTree = await this._getTalentsInTree(tree);
-        const available = talentsInTree.filter(t => !t.owned);
-        availableTalents.push(...available.map(t => ({ ...t, tree })));
+      // Load talent data if not already loaded
+      if (!this.talentData) {
+        this.talentData = await loadTalentData(this.actor, this._buildPendingData());
       }
+
+      // Get available talent trees for the selected class
+      const availableTrees = await getAvailableTalentTrees(this.selectedClass, this.actor);
+
+      if (!availableTrees || availableTrees.length === 0) {
+        ui.notifications.warn("No talent trees available for this class.");
+        return;
+      }
+
+      // Filter talents to only include those from available trees and not already owned
+      const ownedTalents = this.actor.items.filter(i => i.type === 'talent').map(t => t.name);
+      const availableTalents = this.talentData.filter(talent => {
+        const talentTree = talent.system?.tree || talent.tree;
+        return availableTrees.includes(talentTree) && !ownedTalents.includes(talent.name);
+      });
 
       if (availableTalents.length === 0) {
         ui.notifications.warn("No available talents to suggest.");
@@ -451,22 +455,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Get the top suggestion
       const topSuggestion = suggestions[0];
-      const mentorName = this.mentor;
 
-      // Add mentor voice
-      const voicedSuggestion = MentorSuggestionVoice.generateVoicedSuggestion(
-        mentorName,
-        topSuggestion,
-        'talent_selection'
-      );
-
-      // Show mentor dialog with suggestion
-      const result = await MentorSuggestionDialog.show(mentorName, topSuggestion, 'talent_selection');
+      // Show mentor dialog with suggestion (expects class key like "Jedi")
+      const result = await MentorSuggestionDialog.show(this.currentMentorClass, topSuggestion, 'talent_selection');
 
       if (result && result.applied) {
         // Auto-select the talent
         await this._selectTalent(topSuggestion.name);
-        ui.notifications.info(`${mentorName} suggests: ${topSuggestion.name}`);
+        ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
       }
     } catch (err) {
       console.error('Error getting talent suggestion:', err);
