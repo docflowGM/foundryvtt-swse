@@ -45,7 +45,7 @@ export class ProgressionUI {
         .map(([id, bg]) => `<option value="${id}">${bg.name}</option>`)
         .join("");
       backgroundField = `
-        <div class="form-group">
+        <div class="form-group background-selector" style="display: none;">
           <label>Background (optional)</label>
           <select name="background">
             <option value="">(default)</option>
@@ -72,6 +72,24 @@ export class ProgressionUI {
           }
         },
         cancel: { label: "Cancel" }
+      },
+      render: (html) => {
+        // Add change listener to template dropdown to show/hide background selector
+        html.find('[name="template"]').on('change', function() {
+          const selectedTemplateId = $(this).val();
+          const selectedTemplate = templates[selectedTemplateId];
+          const backgroundSelector = html.find('.background-selector');
+
+          // Only show background selector if template doesn't have a predefined background
+          if (selectedTemplate && !selectedTemplate.background) {
+            backgroundSelector.show();
+          } else {
+            backgroundSelector.hide();
+          }
+        });
+
+        // Trigger change on initial load to set correct visibility
+        html.find('[name="template"]').trigger('change');
       }
     }).render(true);
   }
