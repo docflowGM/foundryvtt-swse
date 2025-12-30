@@ -451,6 +451,26 @@
       </div>
 
       {{!-- FEAT CATEGORIES --}}
+      {{!-- Suggestion Legend --}}
+      <div class="suggestion-legend">
+        <div class="suggestion-legend-item tier-chain">
+          <span class="legend-icon"><i class="fas fa-link"></i></span>
+          <span>Chain Continuation</span>
+        </div>
+        <div class="suggestion-legend-item tier-skill">
+          <span class="legend-icon"><i class="fas fa-bullseye"></i></span>
+          <span>Uses Trained Skill</span>
+        </div>
+        <div class="suggestion-legend-item tier-ability">
+          <span class="legend-icon"><i class="fas fa-fist-raised"></i></span>
+          <span>Matches Highest Ability</span>
+        </div>
+        <div class="suggestion-legend-item tier-class">
+          <span class="legend-icon"><i class="fas fa-users-cog"></i></span>
+          <span>Class Synergy</span>
+        </div>
+      </div>
+
       <div class="feat-categories-container">
         {{#each featCategories}}
         <div class="feat-category" data-category="{{this.id}}">
@@ -471,18 +491,24 @@
           <div class="category-feats" style="display: none;">
             <div class="feat-selection-grid" data-category-grid="{{this.id}}">
               {{#each this.feats}}
-              <div class="feat-card feat-with-tooltip {{#if this.isSelected}}selected{{/if}} {{#if this.isUnavailable}}unavailable{{/if}} {{#if this.isOwned}}{{#unless this.isRepeatable}}owned{{/unless}}{{/if}} {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}}"
+              <div class="feat-card feat-with-tooltip {{#if this.isSelected}}selected{{/if}} {{#if this.isUnavailable}}unavailable{{/if}} {{#if this.isOwned}}{{#unless this.isRepeatable}}owned{{/unless}}{{/if}} {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.isSuggested}}is-suggested{{/if}} {{#if this.suggestion.cssClass}}{{this.suggestion.cssClass}}{{/if}}"
                    data-feat-id="{{this._id}}"
                    data-feat-name="{{this.name}}"
                    data-feat-tags="{{this.tagsString}}"
                    data-feat-category="{{../this.id}}"
                    data-indent-level="{{this.indentLevel}}"
                    data-is-repeatable="{{this.isRepeatable}}"
+                   data-suggestion-tier="{{this.suggestion.tier}}"
                    data-tooltip="{{this.system.benefit}}">
                 {{#if this.isOwned}}
                 <div class="feat-owned-badge {{#if this.isRepeatable}}repeatable{{/if}}">
                   <i class="fas fa-check-circle"></i> {{#if this.isRepeatable}}Owned (Repeatable){{else}}Owned{{/if}}
                 </div>
+                {{/if}}
+                {{#if this.isSuggested}}
+                <span class="suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+                  <i class="{{this.suggestion.iconClass}}"></i>
+                </span>
                 {{/if}}
                 <h4>{{this.name}}</h4>
 

@@ -10,6 +10,7 @@ import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
 import { checkTalentPrerequisites } from './levelup-validation.js';
 import { getClassProperty, getTalentTrees } from '../chargen/chargen-property-accessor.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
+import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
 
 /**
  * Check if the new level grants a talent from the selected class
@@ -141,16 +142,39 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
 
 /**
  * Load talent data from compendium
- * @returns {Promise<Array>} Array of talent documents
+ * @param {Actor} actor - Optional actor for suggestion generation
+ * @param {Object} pendingData - Optional pending data for suggestion context
+ * @returns {Promise<Array>} Array of talent documents with optional suggestions
  */
-export async function loadTalentData() {
+export async function loadTalentData(actor = null, pendingData = {}) {
   const talentPack = game.packs.get('foundryvtt-swse.talents');
   if (!talentPack) return [];
 
-  const talents = await talentPack.getDocuments();
+  let talents = await talentPack.getDocuments();
 
   // Apply Block/Deflect combination if house rule enabled
-  return HouseRuleTalentCombination.processBlockDeflectCombination(talents);
+  talents = HouseRuleTalentCombination.processBlockDeflectCombination(talents);
+
+  // If actor provided, apply suggestion engine
+  if (actor) {
+    // Convert to plain objects for suggestion processing
+    const talentObjects = talents.map(t => t.toObject ? t.toObject() : t);
+
+    // Apply suggestions
+    const talentsWithSuggestions = SuggestionEngine.suggestTalents(
+      talentObjects,
+      actor,
+      pendingData
+    );
+
+    // Log suggestion statistics
+    const suggestionCounts = SuggestionEngine.countByTier(talentsWithSuggestions);
+    SWSELogger.log(`SWSE LevelUp | Talent suggestions: Chain=${suggestionCounts[4]}, Skill=${suggestionCounts[3]}, Ability=${suggestionCounts[2]}, Class=${suggestionCounts[1]}`);
+
+    return talentsWithSuggestions;
+  }
+
+  return talents;
 }
 
 /**

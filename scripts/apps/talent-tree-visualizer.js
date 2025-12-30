@@ -4,6 +4,7 @@
  */
 
 import { PrerequisiteValidator } from '../utils/prerequisite-validator.js';
+import { SuggestionEngine } from '../engine/SuggestionEngine.js';
 
 export class TalentTreeVisualizer {
 
@@ -249,6 +250,9 @@ export class TalentTreeVisualizer {
     // Filter talents based on prerequisites - add isQualified property
     talents = PrerequisiteValidator.filterQualifiedTalents(talents, actor, {});
 
+    // Apply suggestion engine to add tier-based recommendations
+    talents = SuggestionEngine.suggestTalents(talents, actor, {});
+
     // Get owned talents
     const ownedTalents = new Set(
       actor.items
@@ -434,19 +438,31 @@ export class TalentTreeVisualizer {
       const hasPrereq = node.prereqs.length > 0;
       const isUnavailable = !talent.isQualified && !isOwned; // Don't mark owned talents as unavailable
 
+      // Get suggestion data
+      const isSuggested = talent.isSuggested && !isOwned && !isUnavailable;
+      const suggestionClass = isSuggested ? `is-suggested ${talent.suggestion?.cssClass || ''}` : '';
+      const suggestionBadge = isSuggested
+        ? `<span class="suggestion-badge ${talent.suggestion?.cssClass || ''}" title="${talent.suggestion?.reason || ''}">
+             <i class="${talent.suggestion?.iconClass || ''}"></i>
+           </span>`
+        : '';
+
       html += `
-        <div class="talent-node ${isOwned ? 'owned-talent' : ''} ${isGrouped ? 'grouped-talent' : ''} ${isUnavailable ? 'unavailable' : ''}"
+        <div class="talent-node ${isOwned ? 'owned-talent' : ''} ${isGrouped ? 'grouped-talent' : ''} ${isUnavailable ? 'unavailable' : ''} ${suggestionClass}"
              style="left: ${pos.x}%; top: ${pos.y}px;"
              data-talent-name="${talentName}"
+             data-suggestion-tier="${talent.suggestion?.tier || 0}"
              title="${talent.system?.benefit || 'No description'}">
           <div class="talent-icon-wrapper">
             <img src="${talent.img}" alt="${talentName}" class="talent-icon" />
             ${isOwned ? '<div class="owned-badge"><i class="fas fa-check"></i></div>' : ''}
+            ${suggestionBadge}
           </div>
           <div class="talent-label">${talentName}</div>
           ${hasPrereq ? '<div class="prereq-indicator"><i class="fas fa-link"></i></div>' : ''}
           <div class="talent-tooltip">
             <strong>${talentName}</strong>
+            ${isSuggested ? `<div class="tooltip-suggestion"><i class="${talent.suggestion?.iconClass || ''}"></i> ${talent.suggestion?.reason || ''}</div>` : ''}
             <p>${talent.system?.benefit || 'No description available'}</p>
             ${hasPrereq ? `<small><em>Requires: ${node.prereqs.join(', ')}</em></small>` : ''}
           </div>
@@ -470,6 +486,23 @@ export class TalentTreeVisualizer {
         <div class="legend-item">
           <div class="legend-icon locked"></div>
           <span>Locked (Prerequisites not met)</span>
+        </div>
+        <div class="legend-divider"></div>
+        <div class="legend-item suggestion-legend-item">
+          <span class="suggestion-badge suggestion-tier-chain"><i class="fas fa-link"></i></span>
+          <span>Chain</span>
+        </div>
+        <div class="legend-item suggestion-legend-item">
+          <span class="suggestion-badge suggestion-tier-skill"><i class="fas fa-bullseye"></i></span>
+          <span>Skill</span>
+        </div>
+        <div class="legend-item suggestion-legend-item">
+          <span class="suggestion-badge suggestion-tier-ability"><i class="fas fa-fist-raised"></i></span>
+          <span>Ability</span>
+        </div>
+        <div class="legend-item suggestion-legend-item">
+          <span class="suggestion-badge suggestion-tier-class"><i class="fas fa-users-cog"></i></span>
+          <span>Class</span>
         </div>
       </div>
     </div>
@@ -1178,6 +1211,107 @@ export class TalentTreeVisualizer {
         .legend-icon.locked {
           border-color: #666;
           background: rgba(100, 100, 100, 0.3);
+        }
+
+        .legend-divider {
+          width: 2px;
+          height: 20px;
+          background: rgba(255, 255, 255, 0.2);
+          margin: 0 0.5rem;
+        }
+
+        .suggestion-legend-item .suggestion-badge {
+          width: 20px;
+          height: 20px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          font-size: 10px;
+        }
+
+        /* Suggestion badges in talent nodes */
+        .talent-icon-wrapper .suggestion-badge {
+          position: absolute;
+          top: -8px;
+          left: -8px;
+          width: 22px;
+          height: 22px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          font-size: 10px;
+          z-index: 10;
+          animation: suggestion-pulse 2s infinite;
+        }
+
+        @keyframes suggestion-pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.15); opacity: 0.9; }
+        }
+
+        .suggestion-badge.suggestion-tier-chain {
+          background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+          color: #1a1a2e;
+          box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+        }
+
+        .suggestion-badge.suggestion-tier-skill {
+          background: linear-gradient(135deg, #00d9ff 0%, #00a8cc 100%);
+          color: #1a1a2e;
+          box-shadow: 0 0 8px rgba(0, 217, 255, 0.8);
+        }
+
+        .suggestion-badge.suggestion-tier-ability {
+          background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+          color: #ffffff;
+          box-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
+        }
+
+        .suggestion-badge.suggestion-tier-class {
+          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+          color: #ffffff;
+          box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
+        }
+
+        /* Suggested talent node highlight */
+        .talent-node.is-suggested .talent-icon-wrapper {
+          box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .talent-node.suggestion-tier-chain .talent-icon-wrapper {
+          border-color: #ffd700;
+        }
+
+        .talent-node.suggestion-tier-skill .talent-icon-wrapper {
+          border-color: #00d9ff;
+        }
+
+        .talent-node.suggestion-tier-ability .talent-icon-wrapper {
+          border-color: #a855f7;
+        }
+
+        .talent-node.suggestion-tier-class .talent-icon-wrapper {
+          border-color: #22c55e;
+        }
+
+        /* Tooltip suggestion info */
+        .tooltip-suggestion {
+          background: rgba(255, 215, 0, 0.15);
+          border: 1px solid rgba(255, 215, 0, 0.3);
+          border-radius: 4px;
+          padding: 0.4rem 0.6rem;
+          margin: 0.5rem 0;
+          font-size: 0.85rem;
+          color: #ffd700;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .tooltip-suggestion i {
+          font-size: 0.9rem;
         }
       </style>
     `;
