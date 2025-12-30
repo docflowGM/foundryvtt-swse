@@ -3,10 +3,12 @@
  *
  * Displays mentor-voiced suggestions during levelup with an "Apply Suggestion" button.
  * Styled to match the rest of the levelup UI.
+ * Features typing animation for mentor text for immersion.
  */
 
 import { MentorSuggestionVoice } from './mentor-suggestion-voice.js';
 import { MENTORS } from './mentor-dialogues.js';
+import { TypingAnimation } from '../utils/typing-animation.js';
 
 export class MentorSuggestionDialog extends Dialog {
   /**
@@ -25,8 +27,12 @@ export class MentorSuggestionDialog extends Dialog {
         return;
       }
 
+      // Use the mentor's character name (e.g., "Miraj") for voice generation
+      // mentorName parameter is the class key (e.g., "Jedi")
+      const mentorCharacterName = mentor.name;
+
       const voicedSuggestion = MentorSuggestionVoice.generateVoicedSuggestion(
-        mentorName,
+        mentorCharacterName,
         suggestion,
         context
       );
@@ -65,6 +71,29 @@ export class MentorSuggestionDialog extends Dialog {
             html.find('.dialog-content').addClass('mentor-suggestion-dialog');
             html.find('button[data-button="apply"]').addClass('btn-success');
             html.find('button[data-button="dismiss"]').addClass('btn-secondary');
+
+            // Animate mentor text with typing effect
+            const introElement = html.find('.mentor-intro')[0];
+            const explanationElement = html.find('.mentor-explanation')[0];
+
+            if (introElement && explanationElement) {
+              // Store original text
+              const introText = voicedSuggestion.introduction;
+              const explanationText = voicedSuggestion.explanation;
+
+              // Animate introduction first, then explanation
+              TypingAnimation.typeText(introElement, introText, {
+                speed: 50, // Faster for introduction
+                skipOnClick: true,
+                onComplete: () => {
+                  // Start explanation after intro completes
+                  TypingAnimation.typeText(explanationElement, explanationText, {
+                    speed: 45,
+                    skipOnClick: true
+                  });
+                }
+              });
+            }
           },
           close: () => {
             resolve(null);

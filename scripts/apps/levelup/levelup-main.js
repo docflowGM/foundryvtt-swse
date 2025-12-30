@@ -17,6 +17,7 @@ import { SWSELogger, swseLogger } from '../../utils/logger.js';
 import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from '../mentor-dialogues.js';
 import { MentorSurvey } from '../mentor-survey.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
+import { TypingAnimation } from '../../utils/typing-animation.js';
 
 // Import shared utilities
 import {
@@ -344,6 +345,43 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Mentor suggestion buttons
     html.find('.ask-mentor-feat-suggestion').click(this._onAskMentorFeatSuggestion.bind(this));
     html.find('.ask-mentor-talent-suggestion').click(this._onAskMentorTalentSuggestion.bind(this));
+
+    // Animate mentor text with typing effect
+    this._animateMentorText(html);
+  }
+
+  /**
+   * Animate mentor greeting and guidance text with typing effect
+   * @private
+   */
+  _animateMentorText(html) {
+    const greetingElement = html.find('.mentor-greeting p')[0];
+    const guidanceElement = html.find('.mentor-guidance p')[0];
+
+    // Animate greeting first
+    if (greetingElement && this.mentorGreeting) {
+      TypingAnimation.typeText(greetingElement, this.mentorGreeting, {
+        speed: 45,
+        skipOnClick: true,
+        onComplete: () => {
+          // Animate guidance after greeting completes
+          if (guidanceElement) {
+            const guidanceText = this._getMentorGuidanceForCurrentStep();
+            TypingAnimation.typeText(guidanceElement, guidanceText, {
+              speed: 45,
+              skipOnClick: true
+            });
+          }
+        }
+      });
+    } else if (guidanceElement) {
+      // If no greeting, just animate guidance
+      const guidanceText = this._getMentorGuidanceForCurrentStep();
+      TypingAnimation.typeText(guidanceElement, guidanceText, {
+        speed: 45,
+        skipOnClick: true
+      });
+    }
   }
 
   /**
@@ -375,7 +413,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     event.preventDefault();
 
     // Get available feats
-    const availableFeats = this.featCategories
+    const availableFeats = (this.featData?.categories || [])
       .flatMap(cat => cat.feats)
       .filter(feat => !feat.isUnavailable && !feat.isSelected);
 
@@ -396,23 +434,15 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Get the top suggestion
       const topSuggestion = suggestions[0];
-      const mentorName = this.mentor;
 
-      // Add mentor voice
-      const voicedSuggestion = MentorSuggestionVoice.generateVoicedSuggestion(
-        mentorName,
-        topSuggestion,
-        'feat_selection'
-      );
-
-      // Show mentor dialog with suggestion
-      const result = await MentorSuggestionDialog.show(mentorName, topSuggestion, 'feat_selection');
+      // Show mentor dialog with suggestion (expects class key like "Jedi")
+      const result = await MentorSuggestionDialog.show(this.currentMentorClass, topSuggestion, 'feat_selection');
 
       if (result && result.applied) {
         // Auto-select the feat
         const featId = topSuggestion._id;
         await this._onSelectBonusFeat({ currentTarget: { dataset: { featId } } });
-        ui.notifications.info(`${mentorName} suggests: ${topSuggestion.name}`);
+        ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
       }
     } catch (err) {
       console.error('Error getting feat suggestion:', err);
@@ -427,13 +457,25 @@ export class SWSELevelUpEnhanced extends FormApplication {
     event.preventDefault();
 
     try {
-      // Get available talents
-      const availableTalents = [];
-      for (const tree of this.talentTrees || []) {
-        const talentsInTree = await this._getTalentsInTree(tree);
-        const available = talentsInTree.filter(t => !t.owned);
-        availableTalents.push(...available.map(t => ({ ...t, tree })));
+      // Load talent data if not already loaded
+      if (!this.talentData) {
+        this.talentData = await loadTalentData(this.actor, this._buildPendingData());
       }
+
+      // Get available talent trees for the selected class
+      const availableTrees = await getAvailableTalentTrees(this.selectedClass, this.actor);
+
+      if (!availableTrees || availableTrees.length === 0) {
+        ui.notifications.warn("No talent trees available for this class.");
+        return;
+      }
+
+      // Filter talents to only include those from available trees and not already owned
+      const ownedTalents = this.actor.items.filter(i => i.type === 'talent').map(t => t.name);
+      const availableTalents = this.talentData.filter(talent => {
+        const talentTree = talent.system?.tree || talent.tree;
+        return availableTrees.includes(talentTree) && !ownedTalents.includes(talent.name);
+      });
 
       if (availableTalents.length === 0) {
         ui.notifications.warn("No available talents to suggest.");
@@ -451,22 +493,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
       // Get the top suggestion
       const topSuggestion = suggestions[0];
-      const mentorName = this.mentor;
 
-      // Add mentor voice
-      const voicedSuggestion = MentorSuggestionVoice.generateVoicedSuggestion(
-        mentorName,
-        topSuggestion,
-        'talent_selection'
-      );
-
-      // Show mentor dialog with suggestion
-      const result = await MentorSuggestionDialog.show(mentorName, topSuggestion, 'talent_selection');
+      // Show mentor dialog with suggestion (expects class key like "Jedi")
+      const result = await MentorSuggestionDialog.show(this.currentMentorClass, topSuggestion, 'talent_selection');
 
       if (result && result.applied) {
         // Auto-select the talent
         await this._selectTalent(topSuggestion.name);
-        ui.notifications.info(`${mentorName} suggests: ${topSuggestion.name}`);
+        ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
       }
     } catch (err) {
       console.error('Error getting talent suggestion:', err);

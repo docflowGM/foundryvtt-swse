@@ -680,7 +680,7 @@
           <i class="fas fa-arrow-left"></i> Back
         </button>
         <button class="ask-mentor-feat-suggestion btn-mentor" title="Get a suggestion from your mentor">
-          <i class="fas fa-star"></i> Ask {{mentorName}}
+          <i class="fas fa-star"></i> Ask {{mentor.name}}
         </button>
         <button class="skip-step btn-warning" title="Skip this step (you'll need to add missing selections later)">
           <i class="fas fa-forward"></i> Skip
@@ -747,7 +747,7 @@
           <i class="fas fa-arrow-left"></i> Back
         </button>
         <button class="ask-mentor-talent-suggestion btn-mentor" title="Get a suggestion from your mentor">
-          <i class="fas fa-star"></i> Ask {{mentorName}}
+          <i class="fas fa-star"></i> Ask {{mentor.name}}
         </button>
         <button class="skip-step btn-warning" title="Skip this step (you'll need to add missing selections later)">
           <i class="fas fa-forward"></i> Skip
@@ -1844,6 +1844,41 @@
 .btn-success:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 217, 102, 0.4);
+}
+
+.btn-mentor {
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border: 2px solid #ffd54f;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-mentor:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.5);
+  border-color: #ffeb3b;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-warning:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
 }
 
 /* Species Selection Styles */

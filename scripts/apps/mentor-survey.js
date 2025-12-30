@@ -4,9 +4,11 @@
  * Post-class survey that asks players about their character design intent.
  * Questions are asked in the mentor's voice for immersion.
  * Answers populate BuildIntent biases to personalize suggestions.
+ * Features typing animation for mentor text.
  */
 
 import { MENTORS } from './mentor-dialogues.js';
+import { TypingAnimation } from '../utils/typing-animation.js';
 
 /**
  * Survey questions with mentor voice variants
@@ -575,7 +577,18 @@ export class MentorSurvey {
               }
             }
           },
-          default: "accept"
+          default: "accept",
+          render: (html) => {
+            // Add typing animation to the survey question
+            const questionElement = html.find('.survey-question')[0];
+            if (questionElement) {
+              const questionText = questionElement.textContent;
+              TypingAnimation.typeText(questionElement, questionText, {
+                speed: 45,
+                skipOnClick: true
+              });
+            }
+          }
         },
         { classes: ['mentor-survey-dialog'] }
       );
@@ -658,7 +671,18 @@ export class MentorSurvey {
                 }
               }
             },
-            default: "next"
+            default: "next",
+            render: (html) => {
+              // Add typing animation to the question
+              const questionElement = html.find('.mentor-question')[0];
+              if (questionElement) {
+                const questionText = questionElement.textContent;
+                TypingAnimation.typeText(questionElement, questionText, {
+                  speed: 45,
+                  skipOnClick: true
+                });
+              }
+            }
           },
           { classes: ['mentor-survey-dialog'] }
         );
