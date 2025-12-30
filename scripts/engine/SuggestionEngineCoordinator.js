@@ -5,12 +5,15 @@
  * - SuggestionEngine (feats/talents)
  * - ClassSuggestionEngine (classes)
  * - ForceOptionSuggestionEngine (Force powers, secrets, techniques)
+ * - Level1SkillSuggestionEngine (skill training at character creation)
  * - BuildIntent (build direction analysis)
+ * - ProgressionAdvisor (attribute-weighted suggestions)
  * - CommunityMetaSynergies (meta synergy detection)
  *
  * This coordinator handles:
  * - Engine initialization
  * - BuildIntent computation and caching
+ * - Attribute-aware weighting across all suggestions
  * - API exposure through game.swse
  * - Integration with progression engine
  * - State management across level-ups
@@ -20,7 +23,9 @@ import { SWSELogger } from '../utils/logger.js';
 import { SuggestionEngine } from './SuggestionEngine.js';
 import { ClassSuggestionEngine } from './ClassSuggestionEngine.js';
 import { ForceOptionSuggestionEngine } from './ForceOptionSuggestionEngine.js';
+import { Level1SkillSuggestionEngine } from './Level1SkillSuggestionEngine.js';
 import { BuildIntent } from './BuildIntent.js';
+import { ProgressionAdvisor } from './ProgressionAdvisor.js';
 import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
 import { PathPreview } from './PathPreview.js';
 
@@ -56,14 +61,24 @@ export class SuggestionEngineCoordinator {
           this.suggestClasses(classes, actor, pendingData, options),
         suggestForceOptions: (options, actor, pendingData, contextOptions) =>
           this.suggestForceOptions(options, actor, pendingData, contextOptions),
+        suggestLevel1Skills: (skills, actor, pendingData) =>
+          this.suggestLevel1Skills(skills, actor, pendingData),
         analyzeBuildIntent: (actor, pendingData) =>
           this.analyzeBuildIntent(actor, pendingData),
+        deriveAttributeBuildIntent: (actor) =>
+          this.deriveAttributeBuildIntent(actor),
+        applyAttributeWeight: (baseTier, buildIntent, relevantAttribute, options) =>
+          this.applyAttributeWeight(baseTier, buildIntent, relevantAttribute, options),
         getActiveSynergies: (actor, pendingData) =>
           this.getActiveSynergies(actor, pendingData),
         generatePathPreviews: (actor, pendingData) =>
           this.generatePathPreviews(actor, pendingData),
         getForceOptionCatalog: () =>
           this.getForceOptionCatalog(),
+        getAbilityIcon: (ability) =>
+          this.getAbilityIcon(ability),
+        getAbilityName: (abbrev) =>
+          this.getAbilityName(abbrev),
         clearBuildIntentCache: (actorId) =>
           this.clearBuildIntentCache(actorId)
       };
@@ -321,6 +336,70 @@ export class SuggestionEngineCoordinator {
    */
   static getForceOptionCatalog() {
     return ForceOptionSuggestionEngine.FORCE_OPTIONS_CATALOG || {};
+  }
+
+  /**
+   * Suggest skills for level 1 characters with attribute weighting
+   * @param {Array} skills - Available skills to suggest from
+   * @param {Actor} actor - The character
+   * @param {Object} pendingData - Pending selections (class, abilities)
+   * @returns {Promise<Array>} Skills with suggestion metadata
+   */
+  static async suggestLevel1Skills(skills, actor, pendingData = {}) {
+    try {
+      return await ProgressionAdvisor.suggestLevel1Skills(skills, actor, pendingData);
+    } catch (err) {
+      SWSELogger.error('Level 1 skill suggestion failed:', err);
+      return skills.map(skill => ({
+        ...skill,
+        suggestion: {
+          tier: 0,
+          reason: 'Available',
+          icon: ''
+        },
+        isSuggested: false
+      }));
+    }
+  }
+
+  /**
+   * Derive attribute-aware build profile for a character
+   * @param {Actor} actor - The character
+   * @returns {Object} Attribute build profile with ability analysis
+   */
+  static deriveAttributeBuildIntent(actor) {
+    return ProgressionAdvisor.deriveAttributeBuildIntent(actor);
+  }
+
+  /**
+   * Apply attribute weighting to any suggestion tier
+   * Attributes influence PRIORITY, never legality
+   * @param {number} baseTier - Base suggestion tier
+   * @param {Object} buildIntent - Attribute build profile
+   * @param {string} relevantAttribute - Ability synergy
+   * @param {Object} options - Weighting options
+   * @returns {number} Weighted tier
+   */
+  static applyAttributeWeight(baseTier, buildIntent, relevantAttribute, options = {}) {
+    return ProgressionAdvisor.applyAttributeWeight(baseTier, buildIntent, relevantAttribute, options);
+  }
+
+  /**
+   * Get ability icon for UI rendering
+   * @param {string} ability - Ability name or abbrev
+   * @returns {string} FontAwesome class
+   */
+  static getAbilityIcon(ability) {
+    return ProgressionAdvisor.getAbilityIcon(ability);
+  }
+
+  /**
+   * Get ability full name
+   * @param {string} abbrev - Ability abbreviation
+   * @returns {string} Full ability name
+   */
+  static getAbilityName(abbrev) {
+    return ProgressionAdvisor.getAbilityName(abbrev);
   }
 
   /**

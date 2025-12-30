@@ -1613,6 +1613,49 @@ async applyScalingFeature(feature) {
   }
 
   /**
+   * Suggest skills for level 1 character with attribute weighting
+   * @param {Array} skills - Available skills
+   * @param {Object} pendingData - Pending selections
+   * @returns {Promise<Array>} Skills with suggestions
+   */
+  async getSuggestedLevel1Skills(skills, pendingData = {}) {
+    if (!game.swse?.suggestions?.suggestLevel1Skills) {
+      swseLogger.warn('Level 1 skill suggestion engine not initialized');
+      return skills;
+    }
+    return await game.swse.suggestions.suggestLevel1Skills(skills, this.actor, pendingData);
+  }
+
+  /**
+   * Derive attribute-aware build profile
+   * Identifies primary/secondary abilities and combat/force focus
+   * @returns {Object} Attribute build profile
+   */
+  deriveAttributeBuildIntent() {
+    if (!game.swse?.suggestions?.deriveAttributeBuildIntent) {
+      swseLogger.warn('Progression advisor not initialized');
+      return null;
+    }
+    return game.swse.suggestions.deriveAttributeBuildIntent(this.actor);
+  }
+
+  /**
+   * Apply attribute weighting to suggestion tiers
+   * Attributes influence PRIORITY, never legality
+   * @param {number} baseTier - Base tier
+   * @param {Object} buildIntent - Attribute profile
+   * @param {string} relevantAttribute - Ability for scoring
+   * @param {Object} options - Modifier options
+   * @returns {number} Weighted tier
+   */
+  applyAttributeWeight(baseTier, buildIntent, relevantAttribute, options = {}) {
+    if (!game.swse?.suggestions?.applyAttributeWeight) {
+      return baseTier;
+    }
+    return game.swse.suggestions.applyAttributeWeight(baseTier, buildIntent, relevantAttribute, options);
+  }
+
+  /**
    * Clear cached BuildIntent for this actor when starting new progression
    */
   clearSuggestionCache() {
