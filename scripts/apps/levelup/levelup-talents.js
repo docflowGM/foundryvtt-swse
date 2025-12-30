@@ -160,12 +160,21 @@ export async function loadTalentData(actor = null, pendingData = {}) {
     // Convert to plain objects for suggestion processing
     const talentObjects = talents.map(t => t.toObject ? t.toObject() : t);
 
-    // Apply suggestions
-    const talentsWithSuggestions = await SuggestionEngine.suggestTalents(
-      talentObjects,
-      actor,
-      pendingData
-    );
+    // Apply suggestions using coordinator API if available, otherwise fallback
+    let talentsWithSuggestions = talentObjects;
+    if (game.swse?.suggestions?.suggestTalents) {
+      talentsWithSuggestions = await game.swse.suggestions.suggestTalents(
+        talentObjects,
+        actor,
+        pendingData
+      );
+    } else {
+      talentsWithSuggestions = await SuggestionEngine.suggestTalents(
+        talentObjects,
+        actor,
+        pendingData
+      );
+    }
 
     // Log suggestion statistics
     const suggestionCounts = SuggestionEngine.countByTier(talentsWithSuggestions);

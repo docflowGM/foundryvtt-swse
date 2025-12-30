@@ -162,6 +162,10 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // This is the single source of truth for all progression data
     this.progressionEngine = new SWSEProgressionEngine(actor, 'levelup');
     this.progressionEngine.loadStateFromActor();
+
+    // Clear suggestion cache for fresh suggestions in this level-up session
+    this.progressionEngine.clearSuggestionCache();
+
     swseLogger.log('SWSE LevelUp | Initialized progression engine in levelup mode');
 
     // Mentor system - initially use base class mentor, will update when class is selected

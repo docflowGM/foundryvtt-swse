@@ -3,6 +3,7 @@
  *
  * This module coordinates the loading and initialization of:
  * - ProgressionEngine (instance-based)
+ * - Suggestion Engines (SuggestionEngine, ClassSuggestionEngine, BuildIntent)
  * - Registries (Skill, Feat, Talent, Force)
  * - Sheet integration hooks
  * - Prerequisite API
@@ -15,6 +16,7 @@ import { TalentRegistry } from "../talents/talent-registry-ui.js";
 import { ForceRegistry } from "../force/force-registry-ui.js";
 import { registerLevelUpSheetHooks } from "../../hooks/levelup-sheet-hooks.js";
 import { PrerequisiteValidator } from "../validation/prerequisite-validator.js";
+import { SuggestionEngineCoordinator } from "../../engine/SuggestionEngineCoordinator.js";
 
 /**
  * Initialize the Enhanced Level-Up UI system
@@ -34,9 +36,16 @@ export async function initializeLevelUpUI() {
     await TalentRegistry.build();
     await ForceRegistry.build();
 
-    // Step 3: Set up the global prerequisite API (if not already done)
+    // Step 3: Initialize suggestion engines
+    SWSELogger.log("Step 3: Initializing suggestion engines...");
+    const suggestionsInitialized = await SuggestionEngineCoordinator.initialize();
+    if (!suggestionsInitialized) {
+      SWSELogger.warn("Suggestion engines failed to initialize, but level-up UI will continue");
+    }
+
+    // Step 4: Set up the global prerequisite API (if not already done)
     if (!game.swse?.prereq) {
-      SWSELogger.log("Step 3: Setting up prerequisite API...");
+      SWSELogger.log("Step 4: Setting up prerequisite API...");
       game.swse = game.swse || {};
       game.swse.prereq = {
         checkFeatPrereq: (featDoc, actor, pending) => {

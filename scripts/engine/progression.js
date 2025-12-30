@@ -1495,6 +1495,186 @@ async applyScalingFeature(feature) {
       }
     }
   }
+
+  /* ========================
+   * SUGGESTION ENGINE INTEGRATION
+   * ======================== */
+
+  /**
+   * Get suggested feats for the character
+   * Integrated with BuildIntent and other suggestion engines
+   * @param {Array} feats - Array of feat objects to suggest from
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Array>} Feats with suggestion metadata
+   */
+  async getSuggestedFeats(feats, pendingData = {}) {
+    if (!game.swse?.suggestions?.suggestFeats) {
+      swseLogger.warn('Suggestion engines not initialized');
+      return feats;
+    }
+    return await game.swse.suggestions.suggestFeats(feats, this.actor, pendingData);
+  }
+
+  /**
+   * Get suggested talents for the character
+   * Integrated with BuildIntent and other suggestion engines
+   * @param {Array} talents - Array of talent objects to suggest from
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Array>} Talents with suggestion metadata
+   */
+  async getSuggestedTalents(talents, pendingData = {}) {
+    if (!game.swse?.suggestions?.suggestTalents) {
+      swseLogger.warn('Suggestion engines not initialized');
+      return talents;
+    }
+    return await game.swse.suggestions.suggestTalents(talents, this.actor, pendingData);
+  }
+
+  /**
+   * Get suggested classes for the character
+   * Integrated with BuildIntent and other suggestion engines
+   * @param {Array} classes - Array of class objects to suggest from
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Array>} Classes with suggestion metadata
+   */
+  async getSuggestedClasses(classes, pendingData = {}) {
+    if (!game.swse?.suggestions?.suggestClasses) {
+      swseLogger.warn('Suggestion engines not initialized');
+      return classes;
+    }
+    return await game.swse.suggestions.suggestClasses(classes, this.actor, pendingData);
+  }
+
+  /**
+   * Analyze character's build direction
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Object>} BuildIntent analysis
+   */
+  async analyzeBuildIntent(pendingData = {}) {
+    if (!game.swse?.suggestions?.analyzeBuildIntent) {
+      swseLogger.warn('Suggestion engines not initialized');
+      return null;
+    }
+    return await game.swse.suggestions.analyzeBuildIntent(this.actor, pendingData);
+  }
+
+  /**
+   * Get active meta synergies for the character
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Array>} Active synergy combinations
+   */
+  async getActiveSynergies(pendingData = {}) {
+    if (!game.swse?.suggestions?.getActiveSynergies) {
+      swseLogger.warn('Suggestion engines not initialized');
+      return [];
+    }
+    return await game.swse.suggestions.getActiveSynergies(this.actor, pendingData);
+  }
+
+  /**
+   * Generate prestige class qualification previews
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Array>} Path preview data
+   */
+  async generatePathPreviews(pendingData = {}) {
+    if (!game.swse?.suggestions?.generatePathPreviews) {
+      swseLogger.warn('Suggestion engines not initialized');
+      return [];
+    }
+    return await game.swse.suggestions.generatePathPreviews(this.actor, pendingData);
+  }
+
+  /**
+   * Get suggested Force options for the character
+   * Integrated with BuildIntent and other suggestion engines
+   * @param {Array} options - Array of Force option objects
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Array>} Force options with suggestion metadata
+   */
+  async getSuggestedForceOptions(options, pendingData = {}) {
+    if (!game.swse?.suggestions?.suggestForceOptions) {
+      swseLogger.warn('Force option suggestion engine not initialized');
+      return options;
+    }
+    return await game.swse.suggestions.suggestForceOptions(options, this.actor, pendingData);
+  }
+
+  /**
+   * Get the Force option catalog
+   * @returns {Object} Force options catalog
+   */
+  getForceOptionCatalog() {
+    if (!game.swse?.suggestions?.getForceOptionCatalog) {
+      swseLogger.warn('Force option catalog not available');
+      return {};
+    }
+    return game.swse.suggestions.getForceOptionCatalog();
+  }
+
+  /**
+   * Suggest skills for level 1 character with attribute weighting
+   * @param {Array} skills - Available skills
+   * @param {Object} pendingData - Pending selections
+   * @returns {Promise<Array>} Skills with suggestions
+   */
+  async getSuggestedLevel1Skills(skills, pendingData = {}) {
+    if (!game.swse?.suggestions?.suggestLevel1Skills) {
+      swseLogger.warn('Level 1 skill suggestion engine not initialized');
+      return skills;
+    }
+    return await game.swse.suggestions.suggestLevel1Skills(skills, this.actor, pendingData);
+  }
+
+  /**
+   * Get attribute increase suggestions for levels 4, 8, 12, 16, 20
+   * @param {Object} pendingData - Pending selections (trained skills, etc)
+   * @returns {Promise<Array>} Abilities with suggestion metadata
+   */
+  async getSuggestedAttributeIncreases(pendingData = {}) {
+    if (!game.swse?.suggestions?.suggestAttributeIncreases) {
+      swseLogger.warn('Attribute increase suggestion engine not initialized');
+      return [];
+    }
+    return await game.swse.suggestions.suggestAttributeIncreases(this.actor, pendingData);
+  }
+
+  /**
+   * Derive attribute-aware build profile
+   * Identifies primary/secondary abilities and combat/force focus
+   * @returns {Object} Attribute build profile
+   */
+  deriveAttributeBuildIntent() {
+    if (!game.swse?.suggestions?.deriveAttributeBuildIntent) {
+      swseLogger.warn('Progression advisor not initialized');
+      return null;
+    }
+    return game.swse.suggestions.deriveAttributeBuildIntent(this.actor);
+  }
+
+  /**
+   * Apply attribute weighting to suggestion tiers
+   * Attributes influence PRIORITY, never legality
+   * @param {number} baseTier - Base tier
+   * @param {Object} buildIntent - Attribute profile
+   * @param {string} relevantAttribute - Ability for scoring
+   * @param {Object} options - Modifier options
+   * @returns {number} Weighted tier
+   */
+  applyAttributeWeight(baseTier, buildIntent, relevantAttribute, options = {}) {
+    if (!game.swse?.suggestions?.applyAttributeWeight) {
+      return baseTier;
+    }
+    return game.swse.suggestions.applyAttributeWeight(baseTier, buildIntent, relevantAttribute, options);
+  }
+
+  /**
+   * Clear cached BuildIntent for this actor when starting new progression
+   */
+  clearSuggestionCache() {
+    if (game.swse?.suggestions?.clearBuildIntentCache) {
+      game.swse.suggestions.clearBuildIntentCache(this.actor.id);
+    }
+  }
 }
 
 /**

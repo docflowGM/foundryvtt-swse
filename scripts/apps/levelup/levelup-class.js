@@ -126,11 +126,22 @@ export async function getAvailableClasses(actor, pendingData, options = {}) {
   // Apply class suggestions if enabled and character is level 1+
   if (includeSuggestions && (actor.system?.level || 0) >= 1) {
     try {
-      const classesWithSuggestions = await ClassSuggestionEngine.suggestClasses(
-        availableClasses,
-        actor,
-        pendingData
-      );
+      // Use the coordinator API for suggestions
+      let classesWithSuggestions = availableClasses;
+      if (game.swse?.suggestions?.suggestClasses) {
+        classesWithSuggestions = await game.swse.suggestions.suggestClasses(
+          availableClasses,
+          actor,
+          pendingData
+        );
+      } else {
+        // Fallback to direct engine call
+        classesWithSuggestions = await ClassSuggestionEngine.suggestClasses(
+          availableClasses,
+          actor,
+          pendingData
+        );
+      }
 
       // Sort by suggestion tier
       const sortedClasses = ClassSuggestionEngine.sortBySuggestion(classesWithSuggestions);

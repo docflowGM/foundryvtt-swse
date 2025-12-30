@@ -257,12 +257,23 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     const selectedFeats = pendingData?.selectedFeats || [];
 
     // Apply suggestion engine to add tier-based recommendations
-    const featsWithSuggestions = await SuggestionEngine.suggestFeats(
-      filteredFeats,
-      actor,
-      pendingData,
-      { featMetadata: metadata.feats || {} }
-    );
+    // Use the coordinator API if available, otherwise fall back to direct engine call
+    let featsWithSuggestions = filteredFeats;
+    if (game.swse?.suggestions?.suggestFeats) {
+      featsWithSuggestions = await game.swse.suggestions.suggestFeats(
+        filteredFeats,
+        actor,
+        pendingData,
+        { featMetadata: metadata.feats || {} }
+      );
+    } else {
+      featsWithSuggestions = await SuggestionEngine.suggestFeats(
+        filteredFeats,
+        actor,
+        pendingData,
+        { featMetadata: metadata.feats || {} }
+      );
+    }
 
     const categories = organizeFeatsIntoCategories(featsWithSuggestions, metadata, selectedFeats, actor);
 
