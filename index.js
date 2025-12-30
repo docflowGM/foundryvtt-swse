@@ -71,6 +71,7 @@ setTimeout(() => {
 import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engine/progression.js';
 import { FeatSystem } from './scripts/engine/FeatSystem.js';
 import { SkillSystem } from './scripts/engine/SkillSystem.js';
+import { TalentAbilitiesEngine } from './scripts/engine/TalentAbilitiesEngine.js';
 import { SWSELanguageModule } from './scripts/progression/modules/language-module.js';
 import { initializeLevelUpUI } from './scripts/progression/ui/levelup-module-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
@@ -347,6 +348,7 @@ Hooks.once("ready", async function () {
     SWSEGrappling.init();
     SWSEVehicleCombat.init();
     SWSECombatActionBrowser.init();
+    TalentAbilitiesEngine.initCombatHooks();
     HouseruleMechanics.initialize();
 
     RulesEngine.init();
@@ -367,6 +369,7 @@ Hooks.once("ready", async function () {
     Object.assign(window.SWSE, {
     FeatSystem,
     SkillSystem,
+    TalentAbilitiesEngine,
 
         ActorEngine,
         cacheManager,

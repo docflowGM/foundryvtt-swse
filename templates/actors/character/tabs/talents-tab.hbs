@@ -1,6 +1,17 @@
 {{!-- Talents Tab with Visual Tree Interface --}}
 <div class="tab talents-tab" data-group="primary" data-tab="talents">
- 
+
+ {{!-- Talent Abilities Section (NEW) --}}
+ <section class="talent-abilities-section">
+  <h3 class="section-header">
+   <i class="fas fa-magic"></i> Talent Abilities
+   <span class="abilities-count">({{talentAbilities.all.length}} abilities)</span>
+  </h3>
+  {{> "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs" talentAbilities=talentAbilities}}
+ </section>
+
+ <h3 class="section-header"><i class="fas fa-sitemap"></i> Talent Trees</h3>
+
  <div class="talents-controls flexrow">
  <div class="filter-buttons">
  <button class="filter-btn active" data-filter="all" type="button">All Trees</button>
@@ -10,7 +21,7 @@
  </button>
  {{/each}}
  </div>
- 
+
  <div class="talent-points">
  <label>Available Talent Selections:</label>
  <span class="points-value">{{availableTalentSelections}}</span>

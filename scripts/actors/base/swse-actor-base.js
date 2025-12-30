@@ -245,4 +245,84 @@ export class SWSEActorBase extends Actor {
     });
   }
 
+  /* -------------------------------------------------------------------------- */
+  /* FORCE POINTS                                                               */
+  /* -------------------------------------------------------------------------- */
+
+  /**
+   * Check if actor has enough Force Points
+   * @param {number} amount - Number of Force Points required
+   * @returns {boolean} Whether actor has enough Force Points
+   */
+  hasForcePoints(amount = 1) {
+    const fp = this.system.forcePoints?.value ?? 0;
+    return fp >= amount;
+  }
+
+  /**
+   * Spend Force Points
+   * @param {string} reason - The reason for spending (for chat message)
+   * @param {number} amount - Number of Force Points to spend (default 1)
+   * @param {Object} options - Additional options
+   * @param {boolean} options.silent - If true, don't show chat message
+   * @returns {Promise<boolean>} Whether the spend was successful
+   */
+  async spendForcePoint(reason = 'unspecified', amount = 1, options = {}) {
+    const fp = this.system.forcePoints;
+
+    if (!fp || fp.value < amount) {
+      if (!options.silent) {
+        ui.notifications.warn(`${this.name} doesn't have enough Force Points! (${fp?.value ?? 0}/${amount} required)`);
+      }
+      return false;
+    }
+
+    // Deduct Force Points
+    await this.update({ 'system.forcePoints.value': fp.value - amount });
+
+    // Create chat message unless silent
+    if (!options.silent) {
+      const message = `
+        <div class="swse force-point-spend">
+          <h4><i class="fas fa-hand-sparkles"></i> Force Point Spent</h4>
+          <p><strong>${this.name}</strong> spends ${amount} Force Point${amount > 1 ? 's' : ''} for ${reason}.</p>
+          <p class="fp-remaining">Force Points Remaining: ${fp.value - amount}/${fp.max}</p>
+        </div>
+      `;
+
+      await ChatMessage.create({
+        user: game.user.id,
+        speaker: ChatMessage.getSpeaker({ actor: this }),
+        content: message
+      });
+    }
+
+    // Fire hook for other systems to respond
+    Hooks.callAll('swse.forcePointSpent', this, reason, amount);
+
+    return true;
+  }
+
+  /**
+   * Regain Force Points (e.g., after rest)
+   * @param {number} amount - Number of Force Points to regain (default: all)
+   * @returns {Promise<number>} New Force Point value
+   */
+  async regainForcePoints(amount = null) {
+    const fp = this.system.forcePoints;
+    if (!fp) return 0;
+
+    const newValue = amount !== null
+      ? Math.min(fp.max, fp.value + amount)
+      : fp.max;
+
+    await this.update({ 'system.forcePoints.value': newValue });
+
+    if (newValue > fp.value) {
+      ui.notifications.info(`${this.name} regains ${newValue - fp.value} Force Point(s).`);
+    }
+
+    return newValue;
+  }
+
 }
