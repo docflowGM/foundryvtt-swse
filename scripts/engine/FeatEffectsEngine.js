@@ -59,6 +59,10 @@ export class FeatEffectsEngine {
      * - "+2 bonus to Reflex Defense"
      * - "gain a +2 bonus on Will Defense"
      * - "+2 to Fortitude Defense"
+     *
+     * NOTE: This currently skips conditional bonuses (against X, while Y, etc.)
+     * Those should be handled as toggleable actions instead
+     *
      * @param {string} benefit - Benefit text
      * @param {string} featName - Feat name for logging
      * @returns {Array} Active Effect data objects
@@ -67,12 +71,33 @@ export class FeatEffectsEngine {
         const effects = [];
 
         // Pattern: +N bonus to/on [Defense Type] Defense
+        // But check for conditional phrases that indicate this shouldn't be permanent
+        const conditionalPhrases = [
+            'against',
+            'while',
+            'when',
+            'if you',
+            'during',
+            'once per',
+            'until'
+        ];
+
         const defensePattern = /\+(\d+)\s+(?:bonus\s+)?(?:to|on)\s+(reflex|fortitude|will)\s+defense/gi;
         let match;
 
         while ((match = defensePattern.exec(benefit)) !== null) {
             const bonus = parseInt(match[1]);
             const defenseType = match[2].toLowerCase();
+
+            // Check if this is a conditional bonus
+            const matchStart = match.index;
+            const contextWindow = benefit.substring(matchStart, matchStart + 100).toLowerCase();
+            const isConditional = conditionalPhrases.some(phrase => contextWindow.includes(phrase));
+
+            if (isConditional) {
+                SWSELogger.log(`FeatEffectsEngine | Skipping conditional defense bonus: ${defenseType} (${featName})`);
+                continue;
+            }
 
             effects.push({
                 name: `${featName} (Defense Bonus)`,
@@ -107,12 +132,24 @@ export class FeatEffectsEngine {
      * - "+2 bonus on Stealth checks"
      * - "gain a +5 bonus on all Perception checks"
      * - "+2 to Acrobatics"
+     *
+     * Skips conditional bonuses like "made to activate X" or "made to Y"
+     *
      * @param {string} benefit - Benefit text
      * @param {string} featName - Feat name for logging
      * @returns {Array} Active Effect data objects
      */
     static _parseSkillBonuses(benefit, featName) {
         const effects = [];
+
+        // Check for conditional phrases that indicate this is for specific uses only
+        const conditionalPhrases = [
+            'made to',
+            'to activate',
+            'made for',
+            'when making',
+            'when you make'
+        ];
 
         // Pattern: +N bonus on/to [Skill Name] checks?
         const skillPattern = /\+(\d+)\s+(?:bonus\s+)?(?:on|to)\s+(?:all\s+)?([a-z\s]+?)\s+(?:checks?|skill)/gi;
@@ -145,30 +182,42 @@ export class FeatEffectsEngine {
             const skillNameRaw = match[2].trim().toLowerCase();
             const skillKey = skillMap[skillNameRaw];
 
-            if (skillKey) {
-                effects.push({
-                    name: `${featName} (Skill Bonus)`,
-                    icon: "icons/svg/upgrade.svg",
-                    changes: [{
-                        key: `system.skills.${skillKey}.miscMod`,
-                        mode: 2, // ADD
-                        value: bonus.toString(),
-                        priority: 20
-                    }],
-                    disabled: false,
-                    duration: {},
-                    transfer: true,
-                    flags: {
-                        swse: {
-                            type: 'feat-skill-bonus',
-                            source: featName,
-                            skillKey: skillKey
-                        }
-                    }
-                });
-
-                SWSELogger.log(`FeatEffectsEngine | Found ${skillNameRaw} skill bonus: +${bonus} (${featName})`);
+            if (!skillKey) {
+                continue;
             }
+
+            // Check if this is a conditional bonus
+            const matchStart = match.index;
+            const contextWindow = benefit.substring(matchStart, matchStart + 150).toLowerCase();
+            const isConditional = conditionalPhrases.some(phrase => contextWindow.includes(phrase));
+
+            if (isConditional) {
+                SWSELogger.log(`FeatEffectsEngine | Skipping conditional skill bonus: ${skillNameRaw} (${featName})`);
+                continue;
+            }
+
+            effects.push({
+                name: `${featName} (Skill Bonus)`,
+                icon: "icons/svg/upgrade.svg",
+                changes: [{
+                    key: `system.skills.${skillKey}.miscMod`,
+                    mode: 2, // ADD
+                    value: bonus.toString(),
+                    priority: 20
+                }],
+                disabled: false,
+                duration: {},
+                transfer: true,
+                flags: {
+                    swse: {
+                        type: 'feat-skill-bonus',
+                        source: featName,
+                        skillKey: skillKey
+                    }
+                }
+            });
+
+            SWSELogger.log(`FeatEffectsEngine | Found ${skillNameRaw} skill bonus: +${bonus} (${featName})`);
         }
 
         return effects;
