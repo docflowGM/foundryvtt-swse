@@ -6,6 +6,7 @@
  * - ClassSuggestionEngine (classes)
  * - ForceOptionSuggestionEngine (Force powers, secrets, techniques)
  * - Level1SkillSuggestionEngine (skill training at character creation)
+ * - AttributeIncreaseSuggestionEngine (ability score increases at levels 4, 8, 12, 16, 20)
  * - BuildIntent (build direction analysis)
  * - ProgressionAdvisor (attribute-weighted suggestions)
  * - CommunityMetaSynergies (meta synergy detection)
@@ -24,6 +25,7 @@ import { SuggestionEngine } from './SuggestionEngine.js';
 import { ClassSuggestionEngine } from './ClassSuggestionEngine.js';
 import { ForceOptionSuggestionEngine } from './ForceOptionSuggestionEngine.js';
 import { Level1SkillSuggestionEngine } from './Level1SkillSuggestionEngine.js';
+import { AttributeIncreaseSuggestionEngine } from './AttributeIncreaseSuggestionEngine.js';
 import { BuildIntent } from './BuildIntent.js';
 import { ProgressionAdvisor } from './ProgressionAdvisor.js';
 import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
@@ -63,6 +65,8 @@ export class SuggestionEngineCoordinator {
           this.suggestForceOptions(options, actor, pendingData, contextOptions),
         suggestLevel1Skills: (skills, actor, pendingData) =>
           this.suggestLevel1Skills(skills, actor, pendingData),
+        suggestAttributeIncreases: (actor, pendingData, contextOptions) =>
+          this.suggestAttributeIncreases(actor, pendingData, contextOptions),
         analyzeBuildIntent: (actor, pendingData) =>
           this.analyzeBuildIntent(actor, pendingData),
         deriveAttributeBuildIntent: (actor) =>
@@ -359,6 +363,37 @@ export class SuggestionEngineCoordinator {
         },
         isSuggested: false
       }));
+    }
+  }
+
+  /**
+   * Suggest attribute increases with integrated BuildIntent context
+   * Called at levels 4, 8, 12, 16, 20
+   * @param {Actor} actor - The character
+   * @param {Object} pendingData - Pending selections (trained skills, etc)
+   * @param {Object} contextOptions - Additional options (buildIntent, etc)
+   * @returns {Promise<Array>} Abilities with suggestion metadata
+   */
+  static async suggestAttributeIncreases(actor, pendingData = {}, contextOptions = {}) {
+    try {
+      // Get or compute BuildIntent for context
+      const buildIntent = contextOptions.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
+
+      // Call AttributeIncreaseSuggestionEngine with BuildIntent context
+      const attributesSuggested = await AttributeIncreaseSuggestionEngine.suggestAttributeIncreases(
+        actor,
+        pendingData,
+        {
+          ...contextOptions,
+          buildIntent
+        }
+      );
+
+      return attributesSuggested;
+    } catch (err) {
+      SWSELogger.error('Attribute increase suggestion failed:', err);
+      // Return empty array as fallback (attribute increases are optional)
+      return [];
     }
   }
 

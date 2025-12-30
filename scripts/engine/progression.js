@@ -1627,6 +1627,19 @@ async applyScalingFeature(feature) {
   }
 
   /**
+   * Get attribute increase suggestions for levels 4, 8, 12, 16, 20
+   * @param {Object} pendingData - Pending selections (trained skills, etc)
+   * @returns {Promise<Array>} Abilities with suggestion metadata
+   */
+  async getSuggestedAttributeIncreases(pendingData = {}) {
+    if (!game.swse?.suggestions?.suggestAttributeIncreases) {
+      swseLogger.warn('Attribute increase suggestion engine not initialized');
+      return [];
+    }
+    return await game.swse.suggestions.suggestAttributeIncreases(this.actor, pendingData);
+  }
+
+  /**
    * Derive attribute-aware build profile
    * Identifies primary/secondary abilities and combat/force focus
    * @returns {Object} Attribute build profile
