@@ -8,6 +8,7 @@ import { warnGM } from '../../utils/warn-gm.js';
 import { getClassLevel } from './levelup-shared.js';
 import { filterQualifiedFeats } from './levelup-validation.js';
 import { getClassProperty } from '../chargen/chargen-property-accessor.js';
+import { SuggestionEngine } from '../../engine/SuggestionEngine.js';
 
 // Cache for feat metadata
 let _featMetadataCache = null;
@@ -99,7 +100,10 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
         isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
         isUnavailable: !feat.isQualified,
         isOwned: isOwned,
-        isRepeatable: isRepeatable
+        isRepeatable: isRepeatable,
+        // Suggestion engine metadata
+        suggestion: feat.suggestion || null,
+        isSuggested: feat.isSuggested || false
       };
       categories['misc'].feats.push(enhancedFeat);
       categories['misc'].count++;
@@ -116,7 +120,10 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
       isSelected: selectedFeats.some(sf => sf._id === feat._id || sf.name === feat.name),
       isUnavailable: !feat.isQualified,
       isOwned: isOwned,
-      isRepeatable: isRepeatable
+      isRepeatable: isRepeatable,
+      // Suggestion engine metadata
+      suggestion: feat.suggestion || null,
+      isSuggested: feat.isSuggested || false
     };
 
     const categoryId = featMeta.category || 'misc';
@@ -137,9 +144,16 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
 
   // Sort feats within each category and organize chains hierarchically
   sortedCategories.forEach(category => {
-    // First, sort all feats by chain and order
+    // Sort by: suggestion tier (higher first), then chain grouping, then alphabetically
     category.feats.sort((a, b) => {
-      // First, sort by chain (feats in same chain together)
+      // First, sort by suggestion tier (higher is better)
+      const tierA = a.suggestion?.tier ?? -1;
+      const tierB = b.suggestion?.tier ?? -1;
+      if (tierB !== tierA) {
+        return tierB - tierA;
+      }
+
+      // Then, sort by chain (feats in same chain together)
       if (a.chain && b.chain) {
         if (a.chain === b.chain) {
           return (a.chainOrder || 0) - (b.chainOrder || 0);
@@ -241,13 +255,25 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     // Load feat metadata and organize into categories
     const metadata = await loadFeatMetadata();
     const selectedFeats = pendingData?.selectedFeats || [];
-    const categories = organizeFeatsIntoCategories(filteredFeats, metadata, selectedFeats, actor);
 
+    // Apply suggestion engine to add tier-based recommendations
+    const featsWithSuggestions = SuggestionEngine.suggestFeats(
+      filteredFeats,
+      actor,
+      pendingData,
+      { featMetadata: metadata.feats || {} }
+    );
+
+    const categories = organizeFeatsIntoCategories(featsWithSuggestions, metadata, selectedFeats, actor);
+
+    // Log suggestion statistics
+    const suggestionCounts = SuggestionEngine.countByTier(featsWithSuggestions);
     SWSELogger.log(`SWSE LevelUp | Loaded ${filteredFeats.length} feats in ${categories.length} categories, ${filteredFeats.filter(f => f.isQualified).length} qualified`);
+    SWSELogger.log(`SWSE LevelUp | Suggestions: Chain=${suggestionCounts[4]}, Skill=${suggestionCounts[3]}, Ability=${suggestionCounts[2]}, Class=${suggestionCounts[1]}`);
 
     return {
       categories,
-      feats: filteredFeats  // Keep flat array for backward compatibility
+      feats: featsWithSuggestions  // Flat array with suggestion metadata
     };
   } catch (err) {
     SWSELogger.error("SWSE LevelUp | Failed to load feats:", err);
