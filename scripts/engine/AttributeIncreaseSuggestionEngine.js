@@ -16,7 +16,6 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
-import { Level1SkillSuggestionEngine } from './Level1SkillSuggestionEngine.js';
 
 export const ATTRIBUTE_INCREASE_LEVELS = new Set([4, 8, 12, 16, 20]);
 

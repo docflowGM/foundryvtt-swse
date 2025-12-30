@@ -2,7 +2,6 @@
 import { swseLogger } from '../utils/logger.js';
 import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
 import { FinalizeIntegration } from '../progression/integration/finalize-integration.js';
-import { SuggestionEngineCoordinator } from './SuggestionEngineCoordinator.js';
 
 /**
  * Unified SWSE Progression Engine
