@@ -17,6 +17,7 @@ import { SWSELogger, swseLogger } from '../../utils/logger.js';
 import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from '../mentor-dialogues.js';
 import { MentorSurvey } from '../mentor-survey.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
+import { TypingAnimation } from '../../utils/typing-animation.js';
 
 // Import shared utilities
 import {
@@ -344,6 +345,43 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Mentor suggestion buttons
     html.find('.ask-mentor-feat-suggestion').click(this._onAskMentorFeatSuggestion.bind(this));
     html.find('.ask-mentor-talent-suggestion').click(this._onAskMentorTalentSuggestion.bind(this));
+
+    // Animate mentor text with typing effect
+    this._animateMentorText(html);
+  }
+
+  /**
+   * Animate mentor greeting and guidance text with typing effect
+   * @private
+   */
+  _animateMentorText(html) {
+    const greetingElement = html.find('.mentor-greeting p')[0];
+    const guidanceElement = html.find('.mentor-guidance p')[0];
+
+    // Animate greeting first
+    if (greetingElement && this.mentorGreeting) {
+      TypingAnimation.typeText(greetingElement, this.mentorGreeting, {
+        speed: 45,
+        skipOnClick: true,
+        onComplete: () => {
+          // Animate guidance after greeting completes
+          if (guidanceElement) {
+            const guidanceText = this._getMentorGuidanceForCurrentStep();
+            TypingAnimation.typeText(guidanceElement, guidanceText, {
+              speed: 45,
+              skipOnClick: true
+            });
+          }
+        }
+      });
+    } else if (guidanceElement) {
+      // If no greeting, just animate guidance
+      const guidanceText = this._getMentorGuidanceForCurrentStep();
+      TypingAnimation.typeText(guidanceElement, guidanceText, {
+        speed: 45,
+        skipOnClick: true
+      });
+    }
   }
 
   /**

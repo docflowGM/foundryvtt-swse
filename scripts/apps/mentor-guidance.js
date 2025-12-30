@@ -1,6 +1,7 @@
 /**
  * Mentor Guidance System
  * Displays mentor guidance when players navigate to character progression steps
+ * Features typing animation for immersive mentor text.
  */
 
 import {
@@ -10,6 +11,7 @@ import {
 } from "./mentor-dialogues.js";
 
 import { swseLogger } from "../utils/logger.js";
+import { TypingAnimation } from "../utils/typing-animation.js";
 
 export class MentorGuidanceUI {
 
@@ -72,7 +74,7 @@ export class MentorGuidanceUI {
                         <div>
                             <h3 style="margin:0;">${mentor.name}</h3>
                             <p style="opacity:0.7; margin:0 0 6px 0;">${mentor.title}</p>
-                            <p style="font-size:14px; line-height:1.3em; margin:0;">${text}</p>
+                            <p class="mentor-guidance-text" style="font-size:14px; line-height:1.3em; margin:0;">${text}</p>
                         </div>
                     </div>
                 </div>
@@ -83,7 +85,17 @@ export class MentorGuidanceUI {
                     icon: '<i class="far fa-check-circle"></i>'
                 }
             },
-            default: "ok"
+            default: "ok",
+            render: (html) => {
+                // Add typing animation to guidance text
+                const guidanceElement = html.find('.mentor-guidance-text')[0];
+                if (guidanceElement) {
+                    TypingAnimation.typeText(guidanceElement, text, {
+                        speed: 45,
+                        skipOnClick: true
+                    });
+                }
+            }
         }).render(true);
     }
 }
