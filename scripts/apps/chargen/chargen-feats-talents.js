@@ -119,7 +119,7 @@ export async function _handleSkillFocusFeat(feat) {
 
   // Show dialog to select skill - use Promise to wait for selection
   return new Promise((resolve) => {
-    new Dialog({
+    const dialog = new Dialog({
       title: `${feat.name} - Select Skill`,
       content: `
         <div class="form-group">
@@ -158,6 +158,7 @@ export async function _handleSkillFocusFeat(feat) {
 
             this.characterData.feats.push(updatedFeat);
             ui.notifications.info(`${feat.name} applied to ${skillName}. You gain +5 to this skill.`);
+            dialog.close();
             resolve(true);
           }
         },
@@ -166,6 +167,7 @@ export async function _handleSkillFocusFeat(feat) {
           label: "Cancel",
           callback: () => {
             ui.notifications.warn("Skill Focus feat cancelled.");
+            dialog.close();
             resolve(false);
           }
         }
@@ -174,7 +176,8 @@ export async function _handleSkillFocusFeat(feat) {
       close: () => resolve(false)
     }, {
       width: 400
-    }).render(true);
+    });
+    dialog.render(true);
   });
 }
 

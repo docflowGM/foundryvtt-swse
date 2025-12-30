@@ -437,7 +437,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     }).join('');
 
     return new Promise((resolve) => {
-      new Dialog({
+      const dialog = new Dialog({
         title: `${feat.name} - Select Skill`,
         content: `
           <div class="form-group">
@@ -466,6 +466,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
               this.selectedFeats.push(modifiedFeat);
               ui.notifications.info(`Selected ${feat.name} for ${skillName}`);
+              dialog.close();
               resolve(true);
             }
           },
@@ -474,12 +475,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
             label: "Cancel",
             callback: () => {
               ui.notifications.warn("Skill Training feat cancelled.");
+              dialog.close();
               resolve(false);
             }
           }
         },
         default: "select"
-      }, { width: 400 }).render(true);
+      }, { width: 400 });
+      dialog.render(true);
     });
   }
 
@@ -528,7 +531,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     ).join('');
 
     return new Promise((resolve) => {
-      new Dialog({
+      const dialog = new Dialog({
         title: title,
         content: `
           <div class="form-group">
@@ -557,6 +560,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
 
               this.selectedFeats.push(modifiedFeat);
               ui.notifications.info(`Selected ${feat.name} for ${weaponLabel}`);
+              dialog.close();
               resolve(true);
             }
           },
@@ -565,12 +569,14 @@ export class SWSELevelUpEnhanced extends FormApplication {
             label: "Cancel",
             callback: () => {
               ui.notifications.warn("Feat selection cancelled.");
+              dialog.close();
               resolve(false);
             }
           }
         },
         default: "select"
-      }, { width: 400 }).render(true);
+      }, { width: 400 });
+      dialog.render(true);
     });
   }
 
