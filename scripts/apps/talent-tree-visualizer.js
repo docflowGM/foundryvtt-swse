@@ -251,7 +251,7 @@ export class TalentTreeVisualizer {
     talents = PrerequisiteValidator.filterQualifiedTalents(talents, actor, {});
 
     // Apply suggestion engine to add tier-based recommendations
-    talents = SuggestionEngine.suggestTalents(talents, actor, {});
+    talents = await SuggestionEngine.suggestTalents(talents, actor, {});
 
     // Get owned talents
     const ownedTalents = new Set(

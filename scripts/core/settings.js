@@ -1,4 +1,5 @@
 import { SWSELogger } from '../utils/logger.js';
+import { registerMetaTuningSettings } from '../engine/MetaTuning.js';
 
 /**
  * System settings for SWSE
@@ -152,6 +153,9 @@ export function registerSystemSettings() {
     type: Boolean,
     default: true
   });
+
+  // Register MetaTuning settings for suggestion engine
+  registerMetaTuningSettings();
 
   SWSELogger.log("SWSE | Settings registered");
 }

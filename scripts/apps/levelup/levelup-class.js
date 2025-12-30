@@ -10,6 +10,7 @@ import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } 
 import { isBaseClass, getCharacterClasses, getClassDefenseBonuses, calculateHPGain } from './levelup-shared.js';
 import { meetsClassPrerequisites } from './levelup-validation.js';
 import { getClassProperty } from '../chargen/chargen-property-accessor.js';
+import { ClassSuggestionEngine } from '../../engine/ClassSuggestionEngine.js';
 
 /**
  * Get class metadata (icon and description)
@@ -66,9 +67,13 @@ function getClassMetadata(className) {
  * Get available classes from the compendium
  * @param {Actor} actor - The actor
  * @param {Object} pendingData - Pending selections
- * @returns {Promise<Array>} Available classes
+ * @param {Object} options - Additional options
+ * @param {boolean} options.includeSuggestions - Whether to include class suggestions (default: true)
+ * @returns {Promise<Array>} Available classes with suggestion metadata
  */
-export async function getAvailableClasses(actor, pendingData) {
+export async function getAvailableClasses(actor, pendingData, options = {}) {
+  const { includeSuggestions = true } = options;
+
   const classPack = game.packs.get('foundryvtt-swse.classes');
   if (!classPack) {
     SWSELogger.error("SWSE LevelUp | Classes compendium pack not found!");
@@ -118,7 +123,40 @@ export async function getAvailableClasses(actor, pendingData) {
     }
   }
 
+  // Apply class suggestions if enabled and character is level 1+
+  if (includeSuggestions && (actor.system?.level || 0) >= 1) {
+    try {
+      const classesWithSuggestions = await ClassSuggestionEngine.suggestClasses(
+        availableClasses,
+        actor,
+        pendingData
+      );
+
+      // Sort by suggestion tier
+      const sortedClasses = ClassSuggestionEngine.sortBySuggestion(classesWithSuggestions);
+
+      SWSELogger.log('SWSE LevelUp | Class suggestions applied', {
+        totalClasses: sortedClasses.length,
+        suggested: sortedClasses.filter(c => c.isSuggested).length
+      });
+
+      return sortedClasses;
+    } catch (err) {
+      SWSELogger.error('SWSE LevelUp | Failed to apply class suggestions:', err);
+      // Fall back to unsorted classes
+      return availableClasses;
+    }
+  }
+
   return availableClasses;
+}
+
+/**
+ * Get the ClassSuggestionEngine for external use
+ * @returns {typeof ClassSuggestionEngine}
+ */
+export function getClassSuggestionEngine() {
+  return ClassSuggestionEngine;
 }
 
 /**

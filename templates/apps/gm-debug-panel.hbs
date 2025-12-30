@@ -1,0 +1,784 @@
+<div class="gm-debug-panel">
+  <header class="debug-header">
+    <div class="header-info">
+      <h2><i class="fas fa-bug"></i> BuildIntent Analysis</h2>
+      <p class="character-name">{{actor.name}} (Level {{actor.system.level}})</p>
+    </div>
+    <div class="header-actions">
+      <button class="refresh-analysis" title="Refresh Analysis">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+      <button class="copy-json" title="Copy JSON to Clipboard">
+        <i class="fas fa-copy"></i>
+      </button>
+    </div>
+  </header>
+
+  <nav class="debug-tabs">
+    <a class="tab" data-tab="overview"><i class="fas fa-chart-pie"></i> Overview</a>
+    <a class="tab" data-tab="prestige"><i class="fas fa-crown"></i> Prestige</a>
+    <a class="tab" data-tab="signals"><i class="fas fa-signal"></i> Signals</a>
+    <a class="tab" data-tab="classes"><i class="fas fa-users"></i> Classes</a>
+    <a class="tab" data-tab="raw"><i class="fas fa-code"></i> Raw JSON</a>
+  </nav>
+
+  <div class="debug-content">
+    {{!-- OVERVIEW TAB --}}
+    <section class="tab-section" data-tab="overview">
+      {{#if buildIntent}}
+      <div class="overview-grid">
+        {{!-- Combat Style --}}
+        <div class="overview-card">
+          <h3><i class="fas fa-sword"></i> Combat Style</h3>
+          <div class="combat-style {{combatStyle}}">
+            {{#if (eq combatStyle "lightsaber")}}
+            <i class="fas fa-jedi"></i> Lightsaber
+            {{else if (eq combatStyle "ranged")}}
+            <i class="fas fa-crosshairs"></i> Ranged
+            {{else if (eq combatStyle "melee")}}
+            <i class="fas fa-fist-raised"></i> Melee
+            {{else}}
+            <i class="fas fa-random"></i> Mixed
+            {{/if}}
+          </div>
+        </div>
+
+        {{!-- Force Focus --}}
+        <div class="overview-card">
+          <h3><i class="fas fa-atom"></i> Force Focus</h3>
+          <div class="force-focus {{#if forceFocus}}active{{/if}}">
+            {{#if forceFocus}}
+            <i class="fas fa-check-circle"></i> Force-Focused
+            {{else}}
+            <i class="fas fa-times-circle"></i> Non-Force
+            {{/if}}
+          </div>
+        </div>
+
+        {{!-- Primary Themes --}}
+        <div class="overview-card wide">
+          <h3><i class="fas fa-tags"></i> Primary Themes</h3>
+          <div class="primary-themes">
+            {{#each buildIntent.primaryThemes}}
+            <span class="theme-badge primary">{{this}}</span>
+            {{else}}
+            <span class="no-data">No strong themes detected</span>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+
+      {{!-- Theme Scores --}}
+      <div class="collapsible-section">
+        <div class="collapsible-header">
+          <h3><i class="fas fa-chart-bar"></i> Theme Scores</h3>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="collapsible-content">
+          <div class="theme-scores">
+            {{#each themeScores}}
+            <div class="theme-score-row {{#if isPrimary}}is-primary{{/if}}">
+              <span class="theme-name">
+                {{#if isPrimary}}<i class="fas fa-star"></i>{{/if}}
+                {{name}}
+              </span>
+              <div class="theme-bar-container">
+                <div class="theme-bar" style="width: {{percentage}}%; background-color: {{barColor}};"></div>
+              </div>
+              <span class="theme-value">{{percentage}}%</span>
+            </div>
+            {{else}}
+            <p class="no-data">No theme signals detected</p>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+
+      {{!-- Priority Prerequisites --}}
+      <div class="collapsible-section">
+        <div class="collapsible-header">
+          <h3><i class="fas fa-exclamation-triangle"></i> Priority Prerequisites</h3>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="collapsible-content">
+          <div class="priority-prereqs">
+            {{#each priorityPrereqs}}
+            <div class="prereq-item">
+              <i class="fas {{icon}}"></i>
+              <span class="prereq-name">{{name}}</span>
+              <span class="prereq-type">({{type}})</span>
+              <span class="prereq-for">for {{forClass}}</span>
+              <span class="prereq-confidence">{{confidence}}%</span>
+            </div>
+            {{else}}
+            <p class="no-data">No priority prerequisites identified</p>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+      {{else}}
+      <div class="error-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Failed to analyze build intent. Check console for errors.</p>
+      </div>
+      {{/if}}
+    </section>
+
+    {{!-- PRESTIGE TAB --}}
+    <section class="tab-section" data-tab="prestige">
+      <h3><i class="fas fa-crown"></i> Prestige Class Affinities</h3>
+      <p class="tab-description">Classes ranked by how well they match the character's build direction.</p>
+
+      <div class="prestige-affinities">
+        {{#each prestigeAffinities}}
+        <div class="affinity-card confidence-{{confidenceLevel}}">
+          <div class="affinity-header">
+            <h4>{{className}}</h4>
+            <span class="confidence-badge">{{confidence}}%</span>
+          </div>
+          <div class="confidence-bar-container">
+            <div class="confidence-bar" style="width: {{confidence}}%;"></div>
+          </div>
+          <div class="match-details">
+            <span class="match-summary">{{matchSummary}}</span>
+            {{#if matches.feats.length}}
+            <div class="match-group">
+              <strong>Feats:</strong> {{#each matches.feats}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
+            </div>
+            {{/if}}
+            {{#if matches.skills.length}}
+            <div class="match-group">
+              <strong>Skills:</strong> {{#each matches.skills}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
+            </div>
+            {{/if}}
+            {{#if matches.talentTrees.length}}
+            <div class="match-group">
+              <strong>Trees:</strong> {{#each matches.talentTrees}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
+            </div>
+            {{/if}}
+          </div>
+        </div>
+        {{else}}
+        <p class="no-data">No prestige class affinities detected. The character needs more progression signals.</p>
+        {{/each}}
+      </div>
+    </section>
+
+    {{!-- SIGNALS TAB --}}
+    <section class="tab-section" data-tab="signals">
+      <h3><i class="fas fa-signal"></i> Detected Signals</h3>
+      <p class="tab-description">Individual choices that influenced the build intent analysis.</p>
+
+      {{#if signals}}
+      <div class="signals-grid">
+        {{!-- Feat Signals --}}
+        <div class="signal-group">
+          <h4><i class="fas fa-star"></i> Feats ({{signals.feats.length}})</h4>
+          <div class="signal-list">
+            {{#each signals.feats}}
+            <div class="signal-item">
+              <span class="signal-name">{{name}}</span>
+              <span class="signal-theme" style="background-color: {{color}};">{{theme}}</span>
+            </div>
+            {{else}}
+            <p class="no-data">No feat signals</p>
+            {{/each}}
+          </div>
+        </div>
+
+        {{!-- Skill Signals --}}
+        <div class="signal-group">
+          <h4><i class="fas fa-book"></i> Skills ({{signals.skills.length}})</h4>
+          <div class="signal-list">
+            {{#each signals.skills}}
+            <div class="signal-item">
+              <span class="signal-name">{{name}}</span>
+              <span class="signal-theme" style="background-color: {{color}};">{{theme}}</span>
+            </div>
+            {{else}}
+            <p class="no-data">No skill signals</p>
+            {{/each}}
+          </div>
+        </div>
+
+        {{!-- Class Signals --}}
+        <div class="signal-group">
+          <h4><i class="fas fa-users"></i> Classes ({{signals.classes.length}})</h4>
+          <div class="signal-list">
+            {{#each signals.classes}}
+            <div class="signal-item">
+              <span class="signal-name">{{name}}</span>
+              <span class="signal-theme" style="background-color: {{color}};">{{theme}}</span>
+            </div>
+            {{else}}
+            <p class="no-data">No class signals</p>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+      {{else}}
+      <p class="no-data">No signal data available</p>
+      {{/if}}
+    </section>
+
+    {{!-- CLASSES TAB --}}
+    <section class="tab-section" data-tab="classes">
+      <h3><i class="fas fa-users"></i> Prestige Class Qualification</h3>
+      <p class="tab-description">Detailed prerequisite status for each prestige class.</p>
+
+      <div class="class-analysis">
+        {{#each classAnalysis}}
+        <div class="class-analysis-card {{#if qualified}}qualified{{else}}not-qualified{{/if}}">
+          <div class="class-header">
+            <h4>
+              {{#if qualified}}<i class="fas fa-check-circle"></i>{{else}}<i class="fas fa-times-circle"></i>{{/if}}
+              {{name}}
+            </h4>
+            <span class="synergy-score">Synergy: {{synergyScore}}</span>
+          </div>
+          {{#unless qualified}}
+          <div class="missing-prereqs">
+            <strong>Missing ({{missingCount}}):</strong>
+            <ul>
+              {{#each missing}}
+              <li class="{{#if unverifiable}}unverifiable{{/if}}">
+                {{display}}
+                {{#if unverifiable}}<span class="unverifiable-badge">(manual)</span>{{/if}}
+              </li>
+              {{/each}}
+            </ul>
+          </div>
+          {{/unless}}
+        </div>
+        {{else}}
+        <p class="no-data">No prestige class data available</p>
+        {{/each}}
+      </div>
+    </section>
+
+    {{!-- RAW JSON TAB --}}
+    <section class="tab-section" data-tab="raw">
+      <h3><i class="fas fa-code"></i> Raw BuildIntent JSON</h3>
+      <p class="tab-description">Complete BuildIntent data for debugging and export.</p>
+      <pre class="json-output">{{rawBuildIntent}}</pre>
+    </section>
+  </div>
+</div>
+
+<style>
+.gm-debug-panel {
+  font-family: "Roboto", Arial, sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #e4e4e4;
+  min-height: 100%;
+}
+
+.debug-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 2px solid #00d9ff;
+}
+
+.debug-header h2 {
+  margin: 0;
+  color: #00d9ff;
+  font-size: 1.3rem;
+}
+
+.debug-header h2 i {
+  margin-right: 0.5rem;
+}
+
+.character-name {
+  margin: 0.25rem 0 0 0;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.header-actions button {
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 217, 255, 0.2);
+  border: 1px solid #00d9ff;
+  border-radius: 4px;
+  color: #00d9ff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.header-actions button:hover {
+  background: rgba(0, 217, 255, 0.4);
+}
+
+.debug-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid #333;
+}
+
+.debug-tabs .tab {
+  flex: 1;
+  padding: 0.75rem;
+  text-align: center;
+  color: #888;
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.debug-tabs .tab:hover {
+  color: #00d9ff;
+  background: rgba(0, 217, 255, 0.1);
+}
+
+.debug-tabs .tab.active {
+  color: #00d9ff;
+  border-bottom-color: #00d9ff;
+}
+
+.debug-tabs .tab i {
+  margin-right: 0.5rem;
+}
+
+.debug-content {
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: 450px;
+}
+
+.tab-section {
+  display: none;
+}
+
+.tab-section.active {
+  display: block;
+}
+
+.tab-description {
+  color: #888;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+/* Overview Grid */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.overview-card {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+
+.overview-card.wide {
+  grid-column: span 2;
+}
+
+.overview-card h3 {
+  margin: 0 0 0.75rem 0;
+  color: #00d9ff;
+  font-size: 0.9rem;
+}
+
+.combat-style, .force-focus {
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.combat-style.lightsaber { background: rgba(139, 92, 246, 0.3); color: #a78bfa; }
+.combat-style.ranged { background: rgba(239, 68, 68, 0.3); color: #fca5a5; }
+.combat-style.melee { background: rgba(249, 115, 22, 0.3); color: #fdba74; }
+.combat-style.mixed { background: rgba(107, 114, 128, 0.3); color: #d1d5db; }
+
+.force-focus.active { background: rgba(139, 92, 246, 0.3); color: #a78bfa; }
+.force-focus:not(.active) { background: rgba(107, 114, 128, 0.3); color: #9ca3af; }
+
+.primary-themes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.theme-badge {
+  padding: 0.25rem 0.75rem;
+  background: rgba(0, 217, 255, 0.2);
+  border: 1px solid #00d9ff;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+.theme-badge.primary {
+  background: rgba(0, 217, 255, 0.4);
+  font-weight: bold;
+}
+
+/* Collapsible Sections */
+.collapsible-section {
+  margin-bottom: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.collapsible-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.collapsible-header:hover {
+  background: rgba(0, 217, 255, 0.1);
+}
+
+.collapsible-header h3 {
+  margin: 0;
+  color: #00d9ff;
+  font-size: 1rem;
+}
+
+.collapsible-section.collapsed .collapsible-content {
+  display: none;
+}
+
+.collapsible-section.collapsed .collapsible-header .fa-chevron-down {
+  transform: rotate(-90deg);
+}
+
+.collapsible-content {
+  padding: 1rem;
+}
+
+/* Theme Scores */
+.theme-score-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.theme-score-row.is-primary {
+  background: rgba(0, 217, 255, 0.1);
+  margin: 0 -1rem;
+  padding: 0.5rem 1rem;
+}
+
+.theme-name {
+  width: 120px;
+  font-weight: 500;
+}
+
+.theme-name i {
+  color: #ffd700;
+  margin-right: 0.25rem;
+}
+
+.theme-bar-container {
+  flex: 1;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.theme-bar {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.3s;
+}
+
+.theme-value {
+  width: 50px;
+  text-align: right;
+  font-weight: bold;
+  color: #00d9ff;
+}
+
+/* Priority Prerequisites */
+.prereq-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.prereq-item i {
+  color: #ffc107;
+}
+
+.prereq-name {
+  font-weight: bold;
+  color: #fff;
+}
+
+.prereq-type {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+.prereq-for {
+  color: #00d9ff;
+  font-style: italic;
+}
+
+.prereq-confidence {
+  margin-left: auto;
+  background: rgba(0, 217, 255, 0.3);
+  padding: 0.1rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
+/* Prestige Affinities */
+.prestige-affinities {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.affinity-card {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #333;
+  border-radius: 8px;
+  border-left: 4px solid;
+}
+
+.affinity-card.confidence-high { border-left-color: #22c55e; }
+.affinity-card.confidence-medium { border-left-color: #eab308; }
+.affinity-card.confidence-low { border-left-color: #ef4444; }
+
+.affinity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.affinity-header h4 {
+  margin: 0;
+  color: #fff;
+}
+
+.confidence-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.confidence-high .confidence-badge { background: rgba(34, 197, 94, 0.3); color: #22c55e; }
+.confidence-medium .confidence-badge { background: rgba(234, 179, 8, 0.3); color: #eab308; }
+.confidence-low .confidence-badge { background: rgba(239, 68, 68, 0.3); color: #ef4444; }
+
+.confidence-bar-container {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+}
+
+.confidence-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #00d9ff, #0a74da);
+  border-radius: 4px;
+}
+
+.match-summary {
+  display: block;
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.match-group {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-top: 0.25rem;
+}
+
+.match-group strong {
+  color: #00d9ff;
+}
+
+/* Signals Grid */
+.signals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.signal-group {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.signal-group h4 {
+  margin: 0 0 0.75rem 0;
+  color: #00d9ff;
+  font-size: 0.9rem;
+}
+
+.signal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.signal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.signal-name {
+  font-weight: 500;
+}
+
+.signal-theme {
+  padding: 0.1rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  color: #fff;
+}
+
+/* Class Analysis */
+.class-analysis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.class-analysis-card {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+
+.class-analysis-card.qualified {
+  border-color: #22c55e;
+}
+
+.class-analysis-card.not-qualified {
+  border-color: #ef4444;
+}
+
+.class-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.class-header h4 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.class-header h4 i {
+  font-size: 1rem;
+}
+
+.qualified .class-header h4 i { color: #22c55e; }
+.not-qualified .class-header h4 i { color: #ef4444; }
+
+.synergy-score {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.missing-prereqs {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.85rem;
+}
+
+.missing-prereqs strong {
+  color: #ffc107;
+}
+
+.missing-prereqs ul {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.5rem;
+}
+
+.missing-prereqs li {
+  color: #aaa;
+  margin-bottom: 0.25rem;
+}
+
+.missing-prereqs li.unverifiable {
+  font-style: italic;
+}
+
+.unverifiable-badge {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+/* Raw JSON */
+.json-output {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: "Fira Code", "Monaco", monospace;
+  font-size: 0.8rem;
+  color: #00d9ff;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-x: auto;
+  max-height: 350px;
+}
+
+/* Utility */
+.no-data {
+  color: #888;
+  font-style: italic;
+  padding: 0.5rem;
+}
+
+.error-state {
+  text-align: center;
+  padding: 2rem;
+  color: #ef4444;
+}
+
+.error-state i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+</style>

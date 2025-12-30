@@ -31,15 +31,36 @@
     font-size: 10px;
 }
 
-/* Tier 4: Chain Continuation - Gold/Yellow (highest priority) */
-.suggestion-badge.suggestion-tier-chain {
+/* Tier 5: Prestige Path - Gold with crown (highest priority) */
+.suggestion-badge.suggestion-tier-prestige {
     background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
     color: #1a1a2e;
-    box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    animation: suggestion-prestige-pulse 2s infinite;
+}
+
+.suggestion-badge.suggestion-tier-prestige:hover {
+    box-shadow: 0 0 15px rgba(255, 215, 0, 1);
+}
+
+@keyframes suggestion-prestige-pulse {
+    0%, 100% {
+        box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(255, 215, 0, 1), 0 0 20px rgba(255, 140, 0, 0.5);
+    }
+}
+
+/* Tier 4: Chain Continuation - Blue/Cyan */
+.suggestion-badge.suggestion-tier-chain {
+    background: linear-gradient(135deg, #4a90e2 0%, #2c5aa0 100%);
+    color: #ffffff;
+    box-shadow: 0 0 6px rgba(74, 144, 226, 0.6);
 }
 
 .suggestion-badge.suggestion-tier-chain:hover {
-    box-shadow: 0 0 12px rgba(255, 215, 0, 0.9);
+    box-shadow: 0 0 12px rgba(74, 144, 226, 0.9);
 }
 
 /* Tier 3: Skill Match - Cyan/Teal */
@@ -95,10 +116,16 @@
     border-radius: 2px 0 0 2px;
 }
 
-/* Chain continuation - gold indicator */
+/* Prestige path - gold indicator */
+.feat-item.suggestion-tier-prestige::before,
+.talent-item.suggestion-tier-prestige::before {
+    background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+}
+
+/* Chain continuation - blue indicator */
 .feat-item.suggestion-tier-chain::before,
 .talent-item.suggestion-tier-chain::before {
-    background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+    background: linear-gradient(180deg, #4a90e2 0%, #2c5aa0 100%);
 }
 
 /* Skill match - cyan indicator */
@@ -250,9 +277,14 @@
     font-size: 8px;
 }
 
-.suggestion-legend-item.tier-chain .legend-icon {
+.suggestion-legend-item.tier-prestige .legend-icon {
     background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
     color: #1a1a2e;
+}
+
+.suggestion-legend-item.tier-chain .legend-icon {
+    background: linear-gradient(135deg, #4a90e2 0%, #2c5aa0 100%);
+    color: #ffffff;
 }
 
 .suggestion-legend-item.tier-skill .legend-icon {
@@ -318,4 +350,306 @@
 
 .swse-dark-theme .suggestion-legend {
     background: rgba(0, 0, 0, 0.4);
+}
+
+/* ══════════════════════════════════════════════════════════════
+ * CLASS SUGGESTION ENGINE STYLES
+ * Styling for class progression suggestions during level-up
+ * ══════════════════════════════════════════════════════════════ */
+
+/* ──────────────────────────────────────────────────────────────
+ * CLASS SUGGESTION BADGE - Positioned on class cards
+ * ────────────────────────────────────────────────────────────── */
+
+.class-suggestion-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 12px;
+    z-index: 10;
+    cursor: help;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.class-suggestion-badge:hover {
+    transform: scale(1.15);
+}
+
+.class-suggestion-badge i {
+    font-size: 12px;
+}
+
+/* Tier 5: Prestige Qualified - Gold Star */
+.class-suggestion-badge.class-suggestion-tier-prestige {
+    background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+    color: #1a1a2e;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    animation: class-prestige-pulse 2s infinite;
+}
+
+/* Tier 4: Path Continuation - Blue Route */
+.class-suggestion-badge.class-suggestion-tier-path {
+    background: linear-gradient(135deg, #4a90e2 0%, #2c5aa0 100%);
+    color: #ffffff;
+    box-shadow: 0 0 8px rgba(74, 144, 226, 0.7);
+}
+
+/* Tier 3: Near Prestige - Teal Unlock */
+.class-suggestion-badge.class-suggestion-tier-unlock {
+    background: linear-gradient(135deg, #00d9ff 0%, #00a8cc 100%);
+    color: #1a1a2e;
+    box-shadow: 0 0 8px rgba(0, 217, 255, 0.7);
+}
+
+/* Tier 2: Mechanical Synergy - Purple Gears */
+.class-suggestion-badge.class-suggestion-tier-synergy {
+    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+    color: #ffffff;
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.7);
+}
+
+/* Tier 1: Thematic Fit - Green */
+.class-suggestion-badge.class-suggestion-tier-thematic {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: #ffffff;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+}
+
+@keyframes class-prestige-pulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 30px rgba(255, 140, 0, 0.5);
+    }
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * SUGGESTED CLASS CARD STYLING
+ * ────────────────────────────────────────────────────────────── */
+
+.class-choice-btn.is-suggested {
+    position: relative;
+}
+
+.class-choice-btn.is-suggested::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+}
+
+/* Tier-specific left borders */
+.class-choice-btn.class-suggestion-tier-prestige::before {
+    background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+}
+
+.class-choice-btn.class-suggestion-tier-path::before {
+    background: linear-gradient(180deg, #4a90e2 0%, #2c5aa0 100%);
+}
+
+.class-choice-btn.class-suggestion-tier-unlock::before {
+    background: linear-gradient(180deg, #00d9ff 0%, #00a8cc 100%);
+}
+
+.class-choice-btn.class-suggestion-tier-synergy::before {
+    background: linear-gradient(180deg, #a855f7 0%, #7c3aed 100%);
+}
+
+.class-choice-btn.class-suggestion-tier-thematic::before {
+    background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+}
+
+/* Subtle glow on suggested cards */
+.class-choice-btn.class-suggestion-tier-prestige {
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.5);
+}
+
+.class-choice-btn.class-suggestion-tier-path {
+    box-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
+    border-color: rgba(74, 144, 226, 0.5);
+}
+
+.class-choice-btn.class-suggestion-tier-unlock {
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+    border-color: rgba(0, 217, 255, 0.5);
+}
+
+.class-choice-btn.class-suggestion-tier-synergy {
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+    border-color: rgba(168, 85, 247, 0.5);
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * SUGGESTION REASON TEXT
+ * ────────────────────────────────────────────────────────────── */
+
+.class-choice-btn .suggestion-reason {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: #b0b0b0;
+    margin: 0.5rem 0;
+    padding: 0.25rem 0.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.class-suggestion-tier-prestige .suggestion-reason {
+    color: #ffd700;
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.class-suggestion-tier-path .suggestion-reason {
+    color: #4a90e2;
+    background: rgba(74, 144, 226, 0.1);
+}
+
+.class-suggestion-tier-unlock .suggestion-reason {
+    color: #00d9ff;
+    background: rgba(0, 217, 255, 0.1);
+}
+
+.class-suggestion-tier-synergy .suggestion-reason {
+    color: #a855f7;
+    background: rgba(168, 85, 247, 0.1);
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * MISSING PREREQUISITES HINT
+ * ────────────────────────────────────────────────────────────── */
+
+.missing-prereqs-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(255, 193, 7, 0.15);
+    border: 1px solid rgba(255, 193, 7, 0.4);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #ffc107;
+}
+
+.missing-prereqs-hint i {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.missing-prereqs-hint span {
+    line-height: 1.3;
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * CLASS SUGGESTION LEGEND
+ * ────────────────────────────────────────────────────────────── */
+
+.class-suggestion-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    font-size: 11px;
+    margin-bottom: 16px;
+    justify-content: center;
+}
+
+.class-suggestion-legend.prestige-legend {
+    margin-bottom: 20px;
+}
+
+.class-suggestion-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #b0b0b0;
+}
+
+.class-suggestion-legend-item .legend-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.class-suggestion-legend-item .legend-icon i {
+    font-size: 9px;
+}
+
+.class-suggestion-legend-item.tier-prestige .legend-icon {
+    background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+    color: #1a1a2e;
+}
+
+.class-suggestion-legend-item.tier-path .legend-icon {
+    background: linear-gradient(135deg, #4a90e2 0%, #2c5aa0 100%);
+    color: #ffffff;
+}
+
+.class-suggestion-legend-item.tier-unlock .legend-icon {
+    background: linear-gradient(135deg, #00d9ff 0%, #00a8cc 100%);
+    color: #1a1a2e;
+}
+
+.class-suggestion-legend-item.tier-synergy .legend-icon {
+    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+    color: #ffffff;
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * SUGGESTED CLASSES SECTION
+ * ────────────────────────────────────────────────────────────── */
+
+.suggested-classes-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+}
+
+.suggested-title {
+    color: #ffd700 !important;
+    border-bottom-color: rgba(255, 215, 0, 0.4) !important;
+}
+
+.suggested-title i {
+    margin-right: 8px;
+}
+
+.suggested-grid {
+    background: rgba(255, 215, 0, 0.03);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * ACCESSIBILITY - Reduced motion
+ * ────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .class-suggestion-badge {
+        animation: none;
+        transition: none;
+    }
+
+    .class-suggestion-badge:hover {
+        transform: none;
+    }
+
+    .class-suggestion-badge.class-suggestion-tier-prestige {
+        animation: none;
+    }
 }
