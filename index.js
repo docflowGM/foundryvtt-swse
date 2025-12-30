@@ -348,6 +348,7 @@ Hooks.once("ready", async function () {
     SWSEGrappling.init();
     SWSEVehicleCombat.init();
     SWSECombatActionBrowser.init();
+    TalentAbilitiesEngine.initCombatHooks();
     HouseruleMechanics.initialize();
 
     RulesEngine.init();

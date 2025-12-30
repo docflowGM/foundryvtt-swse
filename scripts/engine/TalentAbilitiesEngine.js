@@ -8,10 +8,112 @@
  * - Handling modifier talents that enhance base abilities
  * - Calculating uses (per-encounter, per-day)
  * - Providing roll data for ability cards
+ * - Active Effects integration for toggleable abilities
+ * - Combat hooks for reaction abilities (Block/Deflect)
+ * - Damage bonus integration (Sneak Attack, etc.)
+ * - Condition track automation
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { SWSEActiveEffectsManager } from '../combat/active-effects-manager.js';
 import talentAbilitiesData from '../../data/talent-granted-abilities.json' with { type: 'json' };
+
+/**
+ * Active Effect definitions for toggleable talent abilities
+ */
+const TALENT_ABILITY_EFFECTS = {
+    'ataru': {
+        name: 'Ataru Form',
+        icon: 'fas fa-wind',
+        duration: { rounds: 1 },
+        updates: {
+            'system.attackBonus': { mode: 'ADD', value: 2 },
+            'system.defenses.reflex.misc': { mode: 'ADD', value: -2 }
+        },
+        flags: { talentAbility: 'ataru', lightsaberForm: true }
+    },
+    'juyo': {
+        name: 'Juyo Form',
+        icon: 'fas fa-skull',
+        duration: { rounds: 1 },
+        updates: {
+            'system.damageBonus': { mode: 'ADD', value: 2 },
+            'system.defenses.reflex.misc': { mode: 'ADD', value: -2 },
+            'system.defenses.fortitude.misc': { mode: 'ADD', value: -2 },
+            'system.defenses.will.misc': { mode: 'ADD', value: -2 }
+        },
+        flags: { talentAbility: 'juyo', lightsaberForm: true }
+    },
+    'lightsaber-defense': {
+        name: 'Lightsaber Defense',
+        icon: 'fas fa-shield-alt',
+        updates: {
+            'system.defenses.reflex.misc': { mode: 'ADD', value: 1 }
+        },
+        flags: { talentAbility: 'lightsaber-defense', passive: true, condition: 'wieldingLightsaber' }
+    },
+    'armored-defense': {
+        name: 'Armored Defense',
+        icon: 'fas fa-shield-alt',
+        updates: {
+            'system.defenses.reflex.misc': { mode: 'ADD', value: 1 }
+        },
+        flags: { talentAbility: 'armored-defense', passive: true, condition: 'wearingArmor' }
+    },
+    'improved-armored-defense': {
+        name: 'Improved Armored Defense',
+        icon: 'fas fa-shield-alt',
+        updates: {
+            'system.defenses.reflex.misc': { mode: 'ADD', value: 2 }
+        },
+        flags: { talentAbility: 'improved-armored-defense', passive: true, condition: 'wearingArmor' }
+    },
+    'elusive-target': {
+        name: 'Elusive Target',
+        icon: 'fas fa-wind',
+        updates: {
+            'system.defenses.reflex.misc': { mode: 'ADD', value: 2 }
+        },
+        flags: { talentAbility: 'elusive-target', condition: 'fightingDefensively' }
+    }
+};
+
+/**
+ * Damage bonus talents - these add extra damage under certain conditions
+ */
+const DAMAGE_BONUS_TALENTS = {
+    'sneak-attack': {
+        bonus: '1d6',
+        stackable: true,
+        condition: 'targetDeniedDex',
+        perRound: true
+    },
+    'skirmisher': {
+        bonus: '1d6',
+        condition: 'differentTargetLastTurn'
+    },
+    'devastating-attack': {
+        bonus: '+1die',
+        perEncounter: true,
+        condition: 'focusedWeapon'
+    },
+    'melee-smash': {
+        bonus: 'halfLevel',
+        condition: 'oneHandedOrUnarmed'
+    }
+};
+
+/**
+ * Condition track effect talents
+ */
+const CONDITION_TRACK_TALENTS = {
+    'dastardly-strike': { steps: -1, condition: 'targetDeniedDex' },
+    'hunters-mark': { steps: -1, condition: 'afterAim' },
+    'debilitating-shot': { steps: -1, condition: 'afterAim' },
+    'stunning-strike': { steps: -1, condition: 'exceedsDamageThreshold' },
+    'knockdown-shot': { effect: 'prone', condition: 'afterAim' },
+    'vaapad': { steps: -1, condition: 'criticalHit' }
+};
 
 export class TalentAbilitiesEngine {
 
@@ -302,7 +404,7 @@ export class TalentAbilitiesEngine {
     }
 
     /**
-     * Toggle an ability on/off
+     * Toggle an ability on/off with Active Effects
      * @param {Actor} actor - The actor
      * @param {string} abilityId - The ability ID
      * @returns {Promise<boolean>} New toggle state
@@ -311,7 +413,93 @@ export class TalentAbilitiesEngine {
         const currentState = this._getToggleState(actor, abilityId);
         const newState = !currentState;
         await actor.setFlag('foundryvtt-swse', `ability-toggled-${abilityId}`, newState);
+
+        // Apply or remove Active Effect
+        await this._updateActiveEffect(actor, abilityId, newState);
+
         return newState;
+    }
+
+    /**
+     * Apply or remove an Active Effect for a toggleable ability
+     * @param {Actor} actor - The actor
+     * @param {string} abilityId - The ability ID
+     * @param {boolean} active - Whether to activate or deactivate
+     */
+    static async _updateActiveEffect(actor, abilityId, active) {
+        const effectData = TALENT_ABILITY_EFFECTS[abilityId];
+        if (!effectData) return;
+
+        // Remove existing effect for this ability
+        const existing = actor.effects.find(e => e.flags?.swse?.talentAbility === abilityId);
+        if (existing) {
+            await existing.delete();
+        }
+
+        // Create new effect if activating
+        if (active) {
+            try {
+                await SWSEActiveEffectsManager.createCustomEffect(actor, effectData);
+                SWSELogger.log(`TalentAbilitiesEngine | Applied ${effectData.name} effect to ${actor.name}`);
+            } catch (err) {
+                SWSELogger.warn(`TalentAbilitiesEngine | Failed to apply effect: ${err.message}`);
+            }
+        }
+    }
+
+    /**
+     * Check if actor meets condition for a talent effect
+     * @param {Actor} actor - The actor
+     * @param {string} condition - The condition to check
+     * @param {Object} context - Additional context (target, weapon, etc.)
+     * @returns {boolean}
+     */
+    static checkCondition(actor, condition, context = {}) {
+        switch (condition) {
+            case 'wieldingLightsaber':
+                return actor.items.some(i =>
+                    i.type === 'weapon' &&
+                    i.system?.equipped &&
+                    i.system?.type?.toLowerCase().includes('lightsaber')
+                );
+
+            case 'wearingArmor':
+                return actor.items.some(i =>
+                    i.type === 'armor' && i.system?.equipped
+                );
+
+            case 'fightingDefensively':
+                return actor.effects.some(e =>
+                    e.flags?.swse?.combatAction === 'fighting-defensively'
+                );
+
+            case 'targetDeniedDex':
+                return context.target?.system?.isDeniedDex ||
+                       context.target?.effects?.some(e => e.flags?.swse?.deniedDex);
+
+            case 'afterAim':
+                return context.aimedThisTurn === true;
+
+            case 'differentTargetLastTurn':
+                const lastTarget = actor.getFlag('foundryvtt-swse', 'lastAttackTarget');
+                return lastTarget !== context.target?.id;
+
+            case 'exceedsDamageThreshold':
+                return context.damageDealt >= (context.target?.system?.damageThreshold || 0);
+
+            case 'criticalHit':
+                return context.isCritical === true;
+
+            case 'focusedWeapon':
+                return context.weapon?.system?.focus === true;
+
+            case 'oneHandedOrUnarmed':
+                return context.weapon?.system?.hands === 1 ||
+                       context.weapon?.system?.type?.toLowerCase() === 'unarmed';
+
+            default:
+                return true;
+        }
     }
 
     /**
@@ -603,6 +791,454 @@ export class TalentAbilitiesEngine {
             },
             byTree: {},
             modifiers: []
+        };
+    }
+
+    // =========================================================================
+    // COMBAT INTEGRATION - Damage Bonuses
+    // =========================================================================
+
+    /**
+     * Calculate total damage bonus from talent abilities
+     * @param {Actor} actor - The attacking actor
+     * @param {Object} context - Attack context {target, weapon, isCritical, aimedThisTurn}
+     * @returns {Object} {formula: string, breakdown: Array, notifications: Array}
+     */
+    static calculateDamageBonus(actor, context = {}) {
+        const result = {
+            formula: '',
+            bonusDice: [],
+            flatBonus: 0,
+            breakdown: [],
+            notifications: []
+        };
+
+        const abilities = this.getAbilitiesForActor(actor);
+        const talentNames = new Set(abilities.all.map(a => a.id));
+
+        // Check Sneak Attack
+        if (talentNames.has('sneak-attack') &&
+            this.checkCondition(actor, 'targetDeniedDex', context)) {
+
+            // Count how many Sneak Attack talents actor has
+            const sneakCount = actor.items.filter(i =>
+                i.type === 'talent' &&
+                i.name.toLowerCase().includes('sneak attack')
+            ).length;
+
+            // Check if already used this round
+            const usedThisRound = actor.getFlag('foundryvtt-swse', 'sneakAttackUsedThisRound');
+            if (!usedThisRound) {
+                result.bonusDice.push(`${sneakCount}d6`);
+                result.breakdown.push(`Sneak Attack: +${sneakCount}d6`);
+                result.notifications.push(`Sneak Attack! +${sneakCount}d6 damage`);
+            }
+        }
+
+        // Check Skirmisher
+        if (talentNames.has('skirmisher') &&
+            this.checkCondition(actor, 'differentTargetLastTurn', context)) {
+            result.bonusDice.push('1d6');
+            result.breakdown.push('Skirmisher: +1d6');
+            result.notifications.push('Skirmisher bonus +1d6');
+        }
+
+        // Check Melee Smash
+        if (talentNames.has('melee-smash') &&
+            this.checkCondition(actor, 'oneHandedOrUnarmed', context)) {
+            const level = actor.system?.level || 1;
+            const bonus = Math.floor(level / 2);
+            if (bonus > 0) {
+                result.flatBonus += bonus;
+                result.breakdown.push(`Melee Smash: +${bonus}`);
+            }
+        }
+
+        // Check Devastating Attack (once per encounter)
+        if (talentNames.has('devastating-attack') &&
+            this.checkCondition(actor, 'focusedWeapon', context)) {
+            const used = actor.getFlag('foundryvtt-swse', 'devastatingAttackUsed');
+            if (!used) {
+                // Add one extra die of weapon damage
+                const weaponDie = context.weapon?.system?.damage?.match(/\d+d(\d+)/)?.[0] || '1d6';
+                result.bonusDice.push(weaponDie);
+                result.breakdown.push(`Devastating Attack: +${weaponDie}`);
+                result.notifications.push(`Devastating Attack! +${weaponDie}`);
+            }
+        }
+
+        // Build formula
+        const parts = [...result.bonusDice];
+        if (result.flatBonus !== 0) {
+            parts.push(result.flatBonus.toString());
+        }
+        result.formula = parts.join(' + ');
+
+        return result;
+    }
+
+    /**
+     * Apply post-damage talent effects (condition track, prone, etc.)
+     * @param {Actor} attacker - The attacking actor
+     * @param {Actor} target - The target actor
+     * @param {Object} context - {damageDealt, isCritical, aimedThisTurn, weapon}
+     * @returns {Promise<Array>} Array of applied effects
+     */
+    static async applyPostDamageEffects(attacker, target, context = {}) {
+        const appliedEffects = [];
+        const abilities = this.getAbilitiesForActor(attacker);
+        const talentNames = new Set(abilities.all.map(a => a.id));
+
+        // Dastardly Strike: -1 CT if target denied Dex
+        if (talentNames.has('dastardly-strike') &&
+            this.checkCondition(attacker, 'targetDeniedDex', context)) {
+            await this._moveConditionTrack(target, -1);
+            appliedEffects.push({ name: 'Dastardly Strike', effect: '-1 condition track' });
+        }
+
+        // Hunter's Mark: -1 CT after aim
+        if (talentNames.has('hunters-mark') &&
+            this.checkCondition(attacker, 'afterAim', context)) {
+            await this._moveConditionTrack(target, -1);
+            appliedEffects.push({ name: "Hunter's Mark", effect: '-1 condition track' });
+        }
+
+        // Debilitating Shot: -1 CT after aim (ranged)
+        if (talentNames.has('debilitating-shot') &&
+            this.checkCondition(attacker, 'afterAim', context)) {
+            await this._moveConditionTrack(target, -1);
+            appliedEffects.push({ name: 'Debilitating Shot', effect: '-1 condition track' });
+        }
+
+        // Stunning Strike: -1 CT if exceeds damage threshold
+        if (talentNames.has('stunning-strike') &&
+            this.checkCondition(attacker, 'exceedsDamageThreshold', context)) {
+            await this._moveConditionTrack(target, -1);
+            appliedEffects.push({ name: 'Stunning Strike', effect: '-1 condition track' });
+        }
+
+        // Knockdown Shot: prone after aim
+        if (talentNames.has('knockdown-shot') &&
+            this.checkCondition(attacker, 'afterAim', context)) {
+            await this._applyProne(target);
+            appliedEffects.push({ name: 'Knockdown Shot', effect: 'target knocked prone' });
+        }
+
+        // Vaapad: -1 CT on critical hit
+        if (talentNames.has('vaapad') &&
+            this.checkCondition(attacker, 'criticalHit', context)) {
+            await this._moveConditionTrack(target, -1);
+            appliedEffects.push({ name: 'Vaapad', effect: '-1 condition track' });
+        }
+
+        // Notify about applied effects
+        if (appliedEffects.length > 0) {
+            const effectList = appliedEffects.map(e => `${e.name}: ${e.effect}`).join(', ');
+            ui.notifications.info(`Applied: ${effectList}`);
+
+            // Post to chat
+            await this._postDamageEffectsToChat(attacker, target, appliedEffects);
+        }
+
+        return appliedEffects;
+    }
+
+    /**
+     * Move target on condition track
+     * @param {Actor} target - The target actor
+     * @param {number} steps - Steps to move (negative = down)
+     */
+    static async _moveConditionTrack(target, steps) {
+        if (!target?.system?.conditionTrack) return;
+
+        const current = target.system.conditionTrack.current || 0;
+        const newValue = Math.max(0, Math.min(5, current - steps)); // 0=normal, 5=helpless
+
+        await target.update({ 'system.conditionTrack.current': newValue });
+        SWSELogger.log(`TalentAbilitiesEngine | Moved ${target.name} to CT step ${newValue}`);
+    }
+
+    /**
+     * Apply prone condition to target
+     * @param {Actor} target - The target actor
+     */
+    static async _applyProne(target) {
+        // Check for existing prone effect
+        const hasProne = target.effects.some(e =>
+            e.flags?.swse?.statusId === 'prone' ||
+            e.name?.toLowerCase() === 'prone'
+        );
+
+        if (!hasProne) {
+            await target.createEmbeddedDocuments('ActiveEffect', [{
+                name: 'Prone',
+                icon: 'icons/svg/falling.svg',
+                flags: { swse: { statusId: 'prone' } }
+            }]);
+        }
+    }
+
+    /**
+     * Post damage effects to chat
+     */
+    static async _postDamageEffectsToChat(attacker, target, effects) {
+        const content = `
+            <div class="swse-talent-effects-message">
+                <h4><i class="fas fa-bolt"></i> Talent Effects Applied</h4>
+                <p><strong>${attacker.name}</strong> affects <strong>${target.name}</strong>:</p>
+                <ul>
+                    ${effects.map(e => `<li><strong>${e.name}:</strong> ${e.effect}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+
+        await ChatMessage.create({
+            speaker: ChatMessage.getSpeaker({ actor: attacker }),
+            content
+        });
+    }
+
+    // =========================================================================
+    // COMBAT INTEGRATION - Reaction Abilities (Block/Deflect)
+    // =========================================================================
+
+    /**
+     * Get available reaction abilities for defending against an attack
+     * @param {Actor} defender - The defending actor
+     * @param {string} attackType - 'melee' or 'ranged'
+     * @returns {Array} Available reaction abilities
+     */
+    static getAvailableReactions(defender, attackType) {
+        const abilities = this.getAbilitiesForActor(defender);
+        const reactions = [];
+
+        // Check for Block (melee only)
+        if (attackType === 'melee') {
+            const block = abilities.all.find(a => a.id === 'block');
+            if (block && this.checkCondition(defender, 'wieldingLightsaber')) {
+                reactions.push({
+                    ...block,
+                    type: 'block',
+                    label: 'Block (Use the Force vs Attack Roll)'
+                });
+            }
+        }
+
+        // Check for Deflect (ranged only)
+        if (attackType === 'ranged') {
+            const deflect = abilities.all.find(a => a.id === 'deflect');
+            if (deflect && this.checkCondition(defender, 'wieldingLightsaber')) {
+                reactions.push({
+                    ...deflect,
+                    type: 'deflect',
+                    label: 'Deflect (Use the Force vs Attack Roll)'
+                });
+
+                // Check for Redirect Shot
+                const redirect = abilities.all.find(a => a.id === 'redirect-shot');
+                if (redirect) {
+                    reactions.push({
+                        ...redirect,
+                        type: 'redirect',
+                        label: 'Redirect Shot (after successful Deflect)',
+                        requiresDeflect: true
+                    });
+                }
+            }
+        }
+
+        return reactions;
+    }
+
+    /**
+     * Prompt for reaction ability use
+     * @param {Actor} defender - The defending actor
+     * @param {number} attackRoll - The attack roll total
+     * @param {string} attackType - 'melee' or 'ranged'
+     * @param {Actor} attacker - The attacking actor
+     * @returns {Promise<Object|null>} Result of reaction or null if declined
+     */
+    static async promptForReaction(defender, attackRoll, attackType, attacker) {
+        const reactions = this.getAvailableReactions(defender, attackType);
+        if (reactions.length === 0) return null;
+
+        // Build dialog content
+        const content = `
+            <div class="swse-reaction-prompt">
+                <p><strong>${attacker?.name || 'Enemy'}</strong> attacks with roll: <strong>${attackRoll}</strong></p>
+                <p>Available reactions:</p>
+                <div class="reaction-options">
+                    ${reactions.map(r => `
+                        <div class="reaction-option" data-ability="${r.type}">
+                            <label>
+                                <input type="radio" name="reaction" value="${r.type}">
+                                <i class="${r.icon}"></i> ${r.label}
+                            </label>
+                        </div>
+                    `).join('')}
+                    <div class="reaction-option">
+                        <label>
+                            <input type="radio" name="reaction" value="none" checked>
+                            <i class="fas fa-times"></i> No reaction
+                        </label>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        return new Promise((resolve) => {
+            new Dialog({
+                title: `Reaction - ${defender.name}`,
+                content,
+                buttons: {
+                    confirm: {
+                        icon: '<i class="fas fa-check"></i>',
+                        label: 'Confirm',
+                        callback: async (html) => {
+                            const selected = html.find('input[name="reaction"]:checked').val();
+                            if (selected === 'none') {
+                                resolve(null);
+                                return;
+                            }
+
+                            const reaction = reactions.find(r => r.type === selected);
+                            if (reaction) {
+                                const result = await this.executeReaction(defender, reaction, attackRoll, attacker);
+                                resolve(result);
+                            } else {
+                                resolve(null);
+                            }
+                        }
+                    },
+                    cancel: {
+                        icon: '<i class="fas fa-times"></i>',
+                        label: 'Skip',
+                        callback: () => resolve(null)
+                    }
+                },
+                default: 'confirm'
+            }).render(true);
+        });
+    }
+
+    /**
+     * Execute a reaction ability
+     * @param {Actor} defender - The defending actor
+     * @param {Object} reaction - The reaction ability
+     * @param {number} attackRoll - The attack roll to beat
+     * @param {Actor} attacker - The attacker
+     * @returns {Promise<Object>} Result {success, roll, canRedirect}
+     */
+    static async executeReaction(defender, reaction, attackRoll, attacker) {
+        // Roll Use the Force
+        const utf = defender.system?.skills?.useTheForce;
+        const modifier = utf?.total || 0;
+        const roll = new Roll(`1d20 + ${modifier}`);
+        await roll.evaluate({ async: true });
+
+        const success = roll.total >= attackRoll;
+
+        // Build result message
+        let resultText = success
+            ? `<span class="success">Success!</span> Attack negated.`
+            : `<span class="failure">Failed.</span> Attack hits normally.`;
+
+        let canRedirect = false;
+        if (success && reaction.type === 'deflect') {
+            const hasRedirect = this.getAbilitiesForActor(defender).all.find(a => a.id === 'redirect-shot');
+            if (hasRedirect) {
+                canRedirect = true;
+                resultText += ` <em>Redirect Shot available!</em>`;
+            }
+        }
+
+        const content = `
+            <div class="swse-reaction-result">
+                <div class="ability-roll-header">
+                    <i class="${reaction.icon}"></i>
+                    <h3>${reaction.name}</h3>
+                    <span class="ability-type-badge type-reaction">Reaction</span>
+                </div>
+                <div class="ability-roll-body">
+                    <p>${defender.name} attempts to ${reaction.type} the attack!</p>
+                    <div class="dice-roll">
+                        <span class="roll-label">Use the Force:</span>
+                        <span class="roll-formula">${roll.formula}</span>
+                        <span class="roll-result-value">${roll.total}</span>
+                        <span class="roll-vs">vs ${attackRoll}</span>
+                    </div>
+                    <p class="roll-result">${resultText}</p>
+                </div>
+            </div>
+        `;
+
+        await ChatMessage.create({
+            speaker: ChatMessage.getSpeaker({ actor: defender }),
+            content,
+            rolls: [roll],
+            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+        });
+
+        return { success, roll, canRedirect, reaction };
+    }
+
+    // =========================================================================
+    // HOOKS INITIALIZATION
+    // =========================================================================
+
+    /**
+     * Initialize combat hooks for talent abilities
+     * Call this during system initialization
+     */
+    static initCombatHooks() {
+        SWSELogger.log('TalentAbilitiesEngine | Initializing combat hooks');
+
+        // Reset per-round abilities at turn start
+        Hooks.on('combatTurn', (combat, prior, current) => {
+            const actor = combat.combatant?.actor;
+            if (!actor) return;
+
+            // Reset per-round flags
+            actor.unsetFlag('foundryvtt-swse', 'sneakAttackUsedThisRound');
+
+            SWSELogger.log(`TalentAbilitiesEngine | Reset per-round abilities for ${actor.name}`);
+        });
+
+        // Reset per-encounter abilities when combat ends
+        Hooks.on('deleteCombat', (combat) => {
+            for (const combatant of combat.combatants) {
+                const actor = combatant.actor;
+                if (!actor) continue;
+
+                // Reset encounter abilities
+                this.resetAbilityUses(actor, 'encounter');
+
+                // Clear devastating attack flag
+                actor.unsetFlag('foundryvtt-swse', 'devastatingAttackUsed');
+            }
+
+            SWSELogger.log('TalentAbilitiesEngine | Reset encounter abilities for all combatants');
+        });
+
+        SWSELogger.log('TalentAbilitiesEngine | Combat hooks initialized');
+    }
+
+    /**
+     * Get summary of active talent effects for an actor
+     * @param {Actor} actor - The actor
+     * @returns {Object} Summary of active effects
+     */
+    static getActiveTalentEffects(actor) {
+        const activeEffects = actor.effects.filter(e => e.flags?.swse?.talentAbility);
+
+        return {
+            count: activeEffects.length,
+            effects: activeEffects.map(e => ({
+                name: e.name,
+                abilityId: e.flags.swse.talentAbility,
+                icon: e.icon
+            })),
+            hasLightsaberForm: activeEffects.some(e => e.flags?.swse?.lightsaberForm)
         };
     }
 }

@@ -806,3 +806,248 @@
   color: var(--swse-text-secondary, #6a9dcd);
   margin-top: 6px;
 }
+
+/* ================================
+   Reaction Prompt Dialog
+   ================================ */
+
+.swse-reaction-prompt {
+  padding: 8px;
+}
+
+.swse-reaction-prompt p {
+  margin: 8px 0;
+  color: var(--swse-text-primary, #9ed0ff);
+}
+
+.reaction-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.reaction-option {
+  padding: 10px 12px;
+  background: var(--swse-bg-mid, #0f1420);
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.reaction-option:hover {
+  background: var(--swse-bg-hover, rgba(0,170,255,0.15));
+  border-color: var(--swse-border-hover, #00aaff);
+}
+
+.reaction-option label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: var(--swse-text-primary, #9ed0ff);
+  font-size: 13px;
+}
+
+.reaction-option input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--swse-accent, #00d9ff);
+}
+
+.reaction-option i {
+  width: 24px;
+  text-align: center;
+  color: var(--swse-accent, #00d9ff);
+}
+
+/* ================================
+   Reaction Result (Chat)
+   ================================ */
+
+.swse-reaction-result {
+  background: var(--swse-bg-mid, #0f1420);
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.swse-reaction-result .dice-roll {
+  flex-wrap: wrap;
+}
+
+.roll-vs {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--swse-text-secondary, #6a9dcd);
+}
+
+.swse-reaction-result .roll-result {
+  font-size: 14px;
+}
+
+.swse-reaction-result .roll-result .success {
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.swse-reaction-result .roll-result .failure {
+  color: #ef4444;
+  font-weight: bold;
+}
+
+.swse-reaction-result .roll-result em {
+  display: block;
+  margin-top: 6px;
+  color: #a855f7;
+  font-style: italic;
+}
+
+/* ================================
+   Talent Effects Message (Chat)
+   ================================ */
+
+.swse-talent-effects-message {
+  background: var(--swse-bg-mid, #0f1420);
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+  border-left: 4px solid #f97316;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.swse-talent-effects-message h4 {
+  margin: 0 0 10px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--swse-border-default, #1c4b8e);
+  color: #f97316;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swse-talent-effects-message h4 i {
+  color: #f97316;
+}
+
+.swse-talent-effects-message p {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  color: var(--swse-text-primary, #9ed0ff);
+}
+
+.swse-talent-effects-message ul {
+  margin: 0;
+  padding: 0 0 0 20px;
+}
+
+.swse-talent-effects-message li {
+  margin: 6px 0;
+  font-size: 12px;
+  color: var(--swse-text-primary, #9ed0ff);
+}
+
+.swse-talent-effects-message li strong {
+  color: #f97316;
+}
+
+/* ================================
+   Active Effect Indicators
+   ================================ */
+
+.ability-card.has-active-effect {
+  box-shadow: 0 0 12px rgba(0,217,255,0.4);
+}
+
+.ability-card.has-active-effect .ability-card-header {
+  background: linear-gradient(90deg, rgba(0,217,255,0.2), transparent);
+}
+
+.active-effect-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(0,217,255,0.15);
+  border: 1px solid var(--swse-accent, #00d9ff);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--swse-accent, #00d9ff);
+}
+
+.active-effect-indicator i {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ================================
+   Damage Bonus Breakdown (Chat)
+   ================================ */
+
+.damage-bonus-breakdown {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(34,197,94,0.1);
+  border-left: 3px solid #22c55e;
+  border-radius: 0 4px 4px 0;
+}
+
+.damage-bonus-breakdown h5 {
+  margin: 0 0 6px 0;
+  font-size: 11px;
+  color: #22c55e;
+  text-transform: uppercase;
+}
+
+.damage-bonus-breakdown ul {
+  margin: 0;
+  padding: 0 0 0 16px;
+  list-style: none;
+}
+
+.damage-bonus-breakdown li {
+  font-size: 12px;
+  color: var(--swse-text-primary, #9ed0ff);
+  margin: 4px 0;
+}
+
+.damage-bonus-breakdown li::before {
+  content: '+';
+  color: #22c55e;
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+/* ================================
+   Condition Track Effect Indicator
+   ================================ */
+
+.condition-track-effect {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(239,68,68,0.15);
+  border: 1px solid #ef4444;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.condition-track-effect i {
+  color: #ef4444;
+  font-size: 16px;
+}
+
+.condition-track-effect .ct-change {
+  font-weight: bold;
+  color: #ef4444;
+}
+
+.condition-track-effect .ct-label {
+  font-size: 12px;
+  color: var(--swse-text-primary, #9ed0ff);
+}
