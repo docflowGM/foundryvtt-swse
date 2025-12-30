@@ -33,10 +33,31 @@ export class ProgressionUI {
   static async openTemplateQuickBuild(actor) {
     const templates = PROGRESSION_RULES.templates || {};
     const tplList = Object.entries(templates).map(([id, t]) => `<option value="${id}">${t.name}</option>`).join("");
+
+    // Check if backgrounds are enabled via houserule
+    const enableBackgrounds = game.settings.get('foundryvtt-swse', 'enableBackgrounds');
+
+    // Build background dropdown if enabled
+    let backgroundField = '';
+    if (enableBackgrounds) {
+      const backgrounds = PROGRESSION_RULES.backgrounds || {};
+      const bgList = Object.entries(backgrounds)
+        .map(([id, bg]) => `<option value="${id}">${bg.name}</option>`)
+        .join("");
+      backgroundField = `
+        <div class="form-group background-selector" style="display: none;">
+          <label>Background (optional)</label>
+          <select name="background">
+            <option value="">(default)</option>
+            ${bgList}
+          </select>
+        </div>`;
+    }
+
     const content = `
       <form>
         <div class="form-group"><label>Template</label><select name="template">${tplList}</select></div>
-        <div class="form-group"><label>Background (optional)</label><select name="background"><option value="">(default)</option></select></div>
+        ${backgroundField}
       </form>`;
     new Dialog({
       title: "Template Quick Build",
@@ -51,6 +72,24 @@ export class ProgressionUI {
           }
         },
         cancel: { label: "Cancel" }
+      },
+      render: (html) => {
+        // Add change listener to template dropdown to show/hide background selector
+        html.find('[name="template"]').on('change', function() {
+          const selectedTemplateId = $(this).val();
+          const selectedTemplate = templates[selectedTemplateId];
+          const backgroundSelector = html.find('.background-selector');
+
+          // Only show background selector if template doesn't have a predefined background
+          if (selectedTemplate && !selectedTemplate.background) {
+            backgroundSelector.show();
+          } else {
+            backgroundSelector.hide();
+          }
+        });
+
+        // Trigger change on initial load to set correct visibility
+        html.find('[name="template"]').trigger('change');
       }
     }).render(true);
   }
