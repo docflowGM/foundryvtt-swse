@@ -7,6 +7,14 @@
  * Key Principle: Attributes influence PRIORITY, never legality.
  * All options remain legal - attributes only adjust suggestion tier/priority.
  *
+ * Skill-Ability Associations (from skills.json):
+ * - STR: Climb, Jump, Swim
+ * - DEX: Acrobatics, Initiative, Pilot, Stealth
+ * - CON: Endurance
+ * - INT: Mechanics, Use Computer
+ * - WIS: Perception, Survival, Treat Injury
+ * - CHA: Deception, Gather Information, Persuasion, Use the Force
+ *
  * Integrates with:
  * - Level 1 Skill Suggestions (skill training at character creation)
  * - BuildIntent (derives primary/secondary abilities)
@@ -175,9 +183,11 @@ export class ProgressionAdvisor {
 
   /**
    * Get attribute for a skill
+   * Maps skill to its primary ability from skills.json
    * @private
    */
   static _getAttributeForSkill(skillName) {
+    // Import the mapping from Level1SkillSuggestionEngine
     const { ATTRIBUTE_SKILL_MAP } = Level1SkillSuggestionEngine;
     if (!ATTRIBUTE_SKILL_MAP) return null;
 

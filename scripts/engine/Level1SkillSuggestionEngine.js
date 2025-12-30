@@ -5,6 +5,22 @@
  * Analyzes class skills, ability scores, and attribute-skill synergies to suggest
  * which skills best fit the character's natural strengths.
  *
+ * Skill-Ability Mapping (from skills.json):
+ * - STR: Climb, Jump, Swim
+ * - DEX: Acrobatics, Initiative, Pilot, Stealth
+ * - CON: Endurance
+ * - INT: Mechanics, Use Computer
+ * - WIS: Perception, Survival, Treat Injury
+ * - CHA: Deception, Gather Information, Persuasion, Use the Force
+ *
+ * Core Recommended Skills (for most builds):
+ * - Use the Force (Force users)
+ * - Perception (Awareness and scouting)
+ * - Mechanics (Technical and problem-solving)
+ * - Pilot (Vehicle combat and exploration)
+ * - Stealth (Tactical positioning)
+ * - Persuasion (Social interactions)
+ *
  * Key Principle: Attributes influence PRIORITY, never legality.
  * Skills are suggested ONLY at level 1.
  */
@@ -26,23 +42,25 @@ export const TIER_REASONS = {
 };
 
 // Attribute-to-Skill Synergy Mapping
+// Derived from skills.json for accuracy
 export const ATTRIBUTE_SKILL_MAP = {
-  str: ['climb', 'swim', 'jump'],
-  dex: ['stealth', 'acrobatics', 'pilot', 'ride'],
-  con: ['endurance', 'survive'],
-  int: ['mechanics', 'useComputer', 'gatherInformation'],
-  wis: ['perception', 'survival', 'useTheForce', 'treatInjury', 'senseMotive'],
-  cha: ['persuasion', 'deception', 'gatherInformation']
+  str: ['climb', 'jump', 'swim'],
+  dex: ['acrobatics', 'initiative', 'pilot', 'stealth'],
+  con: ['endurance'],
+  int: ['mechanics', 'useComputer'],
+  wis: ['perception', 'survival', 'treatInjury'],
+  cha: ['deception', 'gatherInfo', 'persuasion', 'useTheForce']
 };
 
 // Core skills recommended across most builds
+// These are universally strong choices in SWSE
 export const CORE_SKILLS = new Set([
-  'useTheForce',
-  'perception',
-  'mechanics',
-  'persuasion',
-  'stealth',
-  'pilot'
+  'useTheForce',   // Force users
+  'perception',    // Awareness and scouting
+  'mechanics',     // Technical and problem-solving
+  'pilot',         // Vehicle combat and exploration
+  'stealth',       // Tactical positioning
+  'persuasion'     // Social interactions
 ]);
 
 export class Level1SkillSuggestionEngine {
