@@ -30,6 +30,8 @@ import { BuildIntent } from './BuildIntent.js';
 import { ProgressionAdvisor } from './ProgressionAdvisor.js';
 import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
 import { PathPreview } from './PathPreview.js';
+import { BiasPrecisionEngine } from './BiasPrecisionEngine.js';
+import { HybridMLEngine } from './HybridMLEngine.js';
 
 export class SuggestionEngineCoordinator {
   /**
@@ -84,7 +86,20 @@ export class SuggestionEngineCoordinator {
         getAbilityName: (abbrev) =>
           this.getAbilityName(abbrev),
         clearBuildIntentCache: (actorId) =>
-          this.clearBuildIntentCache(actorId)
+          this.clearBuildIntentCache(actorId),
+        // Hybrid ML and Bias Precision APIs
+        recordDecision: (actor, type, tier, accepted, itemName) =>
+          BiasPrecisionEngine.recordDecision(actor, type, tier, accepted, itemName),
+        getBiasStatistics: (actor, type) =>
+          BiasPrecisionEngine.getStatistics(actor, type),
+        clearBiasProfile: (actor) =>
+          BiasPrecisionEngine.clearProfile(actor),
+        analyzeArchetypes: (actor, pendingData) =>
+          HybridMLEngine.analyzeArchetypes(actor, pendingData),
+        getArchetypeRecommendations: (actor, itemType, pendingData) =>
+          HybridMLEngine.getArchetypeRecommendations(actor, itemType, pendingData),
+        getHybridWeight: (actor, itemName, itemType, baseTier, pendingData) =>
+          HybridMLEngine.getHybridWeight(actor, itemName, itemType, baseTier, pendingData)
       };
 
       SWSELogger.log('=== Suggestion Engine Coordinator initialized ===');
@@ -147,7 +162,7 @@ export class SuggestionEngineCoordinator {
   }
 
   /**
-   * Suggest feats with integrated BuildIntent context
+   * Suggest feats with integrated BuildIntent context and hybrid ML weighting
    * @param {Array} feats - Array of feat objects
    * @param {Actor} actor - The character
    * @param {Object} pendingData - Pending selections
@@ -160,7 +175,7 @@ export class SuggestionEngineCoordinator {
       const buildIntent = options.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
 
       // Call SuggestionEngine with BuildIntent context
-      const featsSuggested = await SuggestionEngine.suggestFeats(
+      let featsSuggested = await SuggestionEngine.suggestFeats(
         feats,
         actor,
         pendingData,
@@ -169,6 +184,19 @@ export class SuggestionEngineCoordinator {
           buildIntent
         }
       );
+
+      // Apply hybrid ML weighting if enabled (default: true)
+      if (options.applyHybridML !== false) {
+        featsSuggested = this._applyHybridMLWeighting(
+          featsSuggested,
+          actor,
+          'feat',
+          pendingData
+        );
+
+        // Re-sort after applying weights
+        featsSuggested = SuggestionEngine.sortBySuggestion(featsSuggested);
+      }
 
       return featsSuggested;
     } catch (err) {
@@ -186,7 +214,7 @@ export class SuggestionEngineCoordinator {
   }
 
   /**
-   * Suggest talents with integrated BuildIntent context
+   * Suggest talents with integrated BuildIntent context and hybrid ML weighting
    * @param {Array} talents - Array of talent objects
    * @param {Actor} actor - The character
    * @param {Object} pendingData - Pending selections
@@ -199,7 +227,7 @@ export class SuggestionEngineCoordinator {
       const buildIntent = options.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
 
       // Call SuggestionEngine with BuildIntent context
-      const talentsSuggested = await SuggestionEngine.suggestTalents(
+      let talentsSuggested = await SuggestionEngine.suggestTalents(
         talents,
         actor,
         pendingData,
@@ -208,6 +236,19 @@ export class SuggestionEngineCoordinator {
           buildIntent
         }
       );
+
+      // Apply hybrid ML weighting if enabled (default: true)
+      if (options.applyHybridML !== false) {
+        talentsSuggested = this._applyHybridMLWeighting(
+          talentsSuggested,
+          actor,
+          'talent',
+          pendingData
+        );
+
+        // Re-sort after applying weights
+        talentsSuggested = SuggestionEngine.sortBySuggestion(talentsSuggested);
+      }
 
       return talentsSuggested;
     } catch (err) {
@@ -435,6 +476,59 @@ export class SuggestionEngineCoordinator {
    */
   static getAbilityName(abbrev) {
     return ProgressionAdvisor.getAbilityName(abbrev);
+  }
+
+  /**
+   * Apply hybrid ML weighting to suggestions
+   * Combines online learning (player preferences) with archetype recognition
+   * @param {Array} items - Items with suggestion metadata
+   * @param {Actor} actor - The character
+   * @param {string} itemType - Type of items (feat, talent, class, etc)
+   * @param {Object} pendingData - Pending selections
+   * @returns {Array} Items with weighted suggestion tiers
+   * @private
+   */
+  static _applyHybridMLWeighting(items, actor, itemType, pendingData) {
+    return items.map(item => {
+      // Skip if no suggestion or fallback tier
+      if (!item.suggestion || item.suggestion.tier === 0) {
+        return item;
+      }
+
+      try {
+        // Get hybrid weight from ML engine
+        const hybridData = HybridMLEngine.getHybridWeight(
+          actor,
+          item.name,
+          itemType,
+          item.suggestion.tier,
+          pendingData
+        );
+
+        // Apply weight to tier (conceptual - tier stays same, but we add weight info)
+        // Weight > 1.0 means boosted, < 1.0 means reduced
+        const weightedTier = item.suggestion.tier * hybridData.weight;
+
+        return {
+          ...item,
+          suggestion: {
+            ...item.suggestion,
+            // Store original tier
+            baseTier: item.suggestion.tier,
+            // Store weighted tier for sorting (fractional tiers allow fine-grained ordering)
+            tier: weightedTier,
+            // Enhance reason with ML insights
+            mlReason: hybridData.reason,
+            mlSources: hybridData.sources,
+            // Store weight for debugging
+            mlWeight: hybridData.weight
+          }
+        };
+      } catch (err) {
+        SWSELogger.error(`Failed to apply hybrid ML weighting to ${item.name}:`, err);
+        return item;
+      }
+    });
   }
 
   /**
