@@ -2,6 +2,7 @@
 import { swseLogger } from '../utils/logger.js';
 import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
 import { FinalizeIntegration } from '../progression/integration/finalize-integration.js';
+import { SuggestionEngineCoordinator } from './SuggestionEngineCoordinator.js';
 
 /**
  * Unified SWSE Progression Engine
@@ -1493,6 +1494,103 @@ async applyScalingFeature(feature) {
       } catch (err) {
         swseLogger.error(`Failed to auto-grant feat ${name}:`, err);
       }
+    }
+  }
+
+  /* ========================
+   * SUGGESTION ENGINE INTEGRATION
+   * ======================== */
+
+  /**
+   * Get suggested feats for the character
+   * Integrated with BuildIntent and other suggestion engines
+   * @param {Array} feats - Array of feat objects to suggest from
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Array>} Feats with suggestion metadata
+   */
+  async getSuggestedFeats(feats, pendingData = {}) {
+    if (!game.swse?.suggestions?.suggestFeats) {
+      swseLogger.warn('Suggestion engines not initialized');
+      return feats;
+    }
+    return await game.swse.suggestions.suggestFeats(feats, this.actor, pendingData);
+  }
+
+  /**
+   * Get suggested talents for the character
+   * Integrated with BuildIntent and other suggestion engines
+   * @param {Array} talents - Array of talent objects to suggest from
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Array>} Talents with suggestion metadata
+   */
+  async getSuggestedTalents(talents, pendingData = {}) {
+    if (!game.swse?.suggestions?.suggestTalents) {
+      swseLogger.warn('Suggestion engines not initialized');
+      return talents;
+    }
+    return await game.swse.suggestions.suggestTalents(talents, this.actor, pendingData);
+  }
+
+  /**
+   * Get suggested classes for the character
+   * Integrated with BuildIntent and other suggestion engines
+   * @param {Array} classes - Array of class objects to suggest from
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Array>} Classes with suggestion metadata
+   */
+  async getSuggestedClasses(classes, pendingData = {}) {
+    if (!game.swse?.suggestions?.suggestClasses) {
+      swseLogger.warn('Suggestion engines not initialized');
+      return classes;
+    }
+    return await game.swse.suggestions.suggestClasses(classes, this.actor, pendingData);
+  }
+
+  /**
+   * Analyze character's build direction
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Object>} BuildIntent analysis
+   */
+  async analyzeBuildIntent(pendingData = {}) {
+    if (!game.swse?.suggestions?.analyzeBuildIntent) {
+      swseLogger.warn('Suggestion engines not initialized');
+      return null;
+    }
+    return await game.swse.suggestions.analyzeBuildIntent(this.actor, pendingData);
+  }
+
+  /**
+   * Get active meta synergies for the character
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Array>} Active synergy combinations
+   */
+  async getActiveSynergies(pendingData = {}) {
+    if (!game.swse?.suggestions?.getActiveSynergies) {
+      swseLogger.warn('Suggestion engines not initialized');
+      return [];
+    }
+    return await game.swse.suggestions.getActiveSynergies(this.actor, pendingData);
+  }
+
+  /**
+   * Generate prestige class qualification previews
+   * @param {Object} pendingData - Pending selections for context
+   * @returns {Promise<Array>} Path preview data
+   */
+  async generatePathPreviews(pendingData = {}) {
+    if (!game.swse?.suggestions?.generatePathPreviews) {
+      swseLogger.warn('Suggestion engines not initialized');
+      return [];
+    }
+    return await game.swse.suggestions.generatePathPreviews(this.actor, pendingData);
+  }
+
+  /**
+   * Clear cached BuildIntent for this actor when starting new progression
+   */
+  clearSuggestionCache() {
+    if (game.swse?.suggestions?.clearBuildIntentCache) {
+      game.swse.suggestions.clearBuildIntentCache(this.actor.id);
     }
   }
 }
