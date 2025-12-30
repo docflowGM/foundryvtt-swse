@@ -18,12 +18,17 @@ const testFeats = [
     {
         name: "Indomitable Will",
         benefit: "You gain a +2 bonus on Will Defense against mind-affecting effects and may reroll a failed Will Defense check once per encounter.",
-        expected: { defense: false } // conditional - should be skipped
+        expected: { defense: false, conditionalDefense: true } // Should create toggleable effect
     },
     {
         name: "Forceful Throw",
         benefit: "You gain a +2 bonus on Use the Force checks made to activate Move Object.",
-        expected: { skill: false } // conditional - should be skipped
+        expected: { skill: false, conditionalSkill: true } // Should create toggleable effect
+    },
+    {
+        name: "Mobile Fighting",
+        benefit: "You may move up to your speed when using the withdraw action, and you gain a +2 bonus to Reflex Defense against attacks of opportunity provoked by movement.",
+        expected: { conditionalDefense: true } // while/against - toggleable
     }
 ];
 
@@ -107,6 +112,78 @@ function testHPBonuses(benefit) {
     return results;
 }
 
+// Test conditional defense parsing
+function testConditionalDefenseBonuses(benefit) {
+    const conditionalPhrases = [
+        { phrase: 'against', label: 'vs' },
+        { phrase: 'while', label: 'while' },
+        { phrase: 'when', label: 'when' },
+        { phrase: 'during', label: 'during' }
+    ];
+
+    const defensePattern = /\+(\d+)\s+(?:bonus\s+)?(?:to|on)\s+(reflex|fortitude|will)\s+defense\s+(.{0,50})/gi;
+    const results = [];
+    let match;
+
+    while ((match = defensePattern.exec(benefit)) !== null) {
+        const bonus = parseInt(match[1]);
+        const defenseType = match[2].toLowerCase();
+        const context = match[3].toLowerCase();
+
+        const conditionalInfo = conditionalPhrases.find(cp => context.includes(cp.phrase));
+
+        if (conditionalInfo) {
+            const conditionMatch = context.match(new RegExp(`${conditionalInfo.phrase}\\s+([^.,;]+)`));
+            const condition = conditionMatch ? conditionMatch[1].trim() : 'certain conditions';
+            results.push({ defenseType, bonus, condition });
+            console.log(`  ✓ Found conditional defense: ${defenseType} +${bonus} (${conditionalInfo.label} ${condition})`);
+        }
+    }
+
+    return results;
+}
+
+// Test conditional skill parsing
+function testConditionalSkillBonuses(benefit) {
+    const conditionalPhrases = [
+        { phrase: 'made to', label: 'for' },
+        { phrase: 'to activate', label: 'to activate' },
+        { phrase: 'made for', label: 'for' },
+        { phrase: 'when making', label: 'when' },
+        { phrase: 'when you make', label: 'when' }
+    ];
+
+    const skillMap = {
+        'stealth': 'stealth',
+        'perception': 'perception',
+        'use the force': 'useTheForce'
+    };
+
+    const skillPattern = /\+(\d+)\s+(?:bonus\s+)?(?:on|to)\s+(?:all\s+)?([a-z\s]+?)\s+(?:checks?)\s+(.{0,80})/gi;
+    const results = [];
+    let match;
+
+    while ((match = skillPattern.exec(benefit)) !== null) {
+        const bonus = parseInt(match[1]);
+        const skillNameRaw = match[2].trim().toLowerCase();
+        const context = match[3].toLowerCase();
+        const skillKey = skillMap[skillNameRaw];
+
+        if (!skillKey) continue;
+
+        const conditionalInfo = conditionalPhrases.find(cp => context.includes(cp.phrase));
+
+        if (conditionalInfo) {
+            const conditionMatch = context.match(new RegExp(`${conditionalInfo.phrase}\\s+([^.,;]+)`));
+            const condition = conditionMatch ? conditionMatch[1].trim() : 'certain conditions';
+            results.push({ skillKey, bonus, condition });
+            console.log(`  ✓ Found conditional skill: ${skillNameRaw} +${bonus} (${conditionalInfo.label} ${condition})`);
+        }
+    }
+
+    return results;
+}
+
 // Run tests
 console.log("Testing FeatEffectsEngine Parsing Logic\n");
 console.log("=" .repeat(50));
@@ -121,6 +198,8 @@ testFeats.forEach(feat => {
     const skillResults = testSkillBonuses(feat.benefit);
     const defenseResults = testDefenseBonuses(feat.benefit);
     const hpResults = testHPBonuses(feat.benefit);
+    const conditionalDefenseResults = testConditionalDefenseBonuses(feat.benefit);
+    const conditionalSkillResults = testConditionalSkillBonuses(feat.benefit);
 
     // Verify expectations
     let testPassed = true;
@@ -146,6 +225,26 @@ testFeats.forEach(feat => {
             testPassed = false;
         } else if (!feat.expected.defense && defenseResults.length > 0) {
             console.log(`  ❌ FAIL: Expected no defense bonus, found one`);
+            testPassed = false;
+        }
+    }
+
+    if (feat.expected.conditionalDefense !== undefined) {
+        if (feat.expected.conditionalDefense && conditionalDefenseResults.length === 0) {
+            console.log(`  ❌ FAIL: Expected conditional defense bonus, found none`);
+            testPassed = false;
+        } else if (!feat.expected.conditionalDefense && conditionalDefenseResults.length > 0) {
+            console.log(`  ❌ FAIL: Expected no conditional defense bonus, found one`);
+            testPassed = false;
+        }
+    }
+
+    if (feat.expected.conditionalSkill !== undefined) {
+        if (feat.expected.conditionalSkill && conditionalSkillResults.length === 0) {
+            console.log(`  ❌ FAIL: Expected conditional skill bonus, found none`);
+            testPassed = false;
+        } else if (!feat.expected.conditionalSkill && conditionalSkillResults.length > 0) {
+            console.log(`  ❌ FAIL: Expected no conditional skill bonus, found one`);
             testPassed = false;
         }
     }
