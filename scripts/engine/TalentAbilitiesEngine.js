@@ -312,6 +312,15 @@ export class TalentAbilitiesEngine {
             enriched.isToggled = this._getToggleState(actor, ability.id);
         }
 
+        // Handle Force Point costs
+        if (ability.cost?.forcePoints) {
+            enriched.costData = {
+                forcePoints: ability.cost.forcePoints,
+                hasEnough: actor.hasForcePoints?.(ability.cost.forcePoints) ?? true,
+                currentFP: actor.system?.forcePoints?.value ?? 0
+            };
+        }
+
         return enriched;
     }
 
@@ -554,6 +563,15 @@ export class TalentAbilitiesEngine {
             return null;
         }
 
+        // Check and spend Force Points if required
+        if (ability.cost?.forcePoints && !options.freeUse) {
+            const fpCost = ability.cost.forcePoints;
+            const canAfford = await this._checkAndSpendForcePoints(actor, ability, fpCost);
+            if (!canAfford) {
+                return null; // Abort if can't afford
+            }
+        }
+
         const rollData = ability.rollData;
         let formula = rollData.formula;
 
@@ -581,6 +599,25 @@ export class TalentAbilitiesEngine {
         }
 
         return roll;
+    }
+
+    /**
+     * Check if actor can afford Force Point cost and spend it
+     * @param {Actor} actor - The actor
+     * @param {Object} ability - The ability being used
+     * @param {number} cost - Force Point cost
+     * @returns {Promise<boolean>} Whether the cost was paid
+     */
+    static async _checkAndSpendForcePoints(actor, ability, cost) {
+        // Check if actor has enough Force Points
+        if (!actor.hasForcePoints || !actor.hasForcePoints(cost)) {
+            ui.notifications.warn(`${actor.name} doesn't have enough Force Points for ${ability.name}! (Need ${cost})`);
+            return false;
+        }
+
+        // Spend the Force Points
+        const spent = await actor.spendForcePoint(`${ability.name}`, cost, { silent: false });
+        return spent;
     }
 
     /**
@@ -630,9 +667,19 @@ export class TalentAbilitiesEngine {
      * Post ability to chat (for passive/non-rolling abilities)
      * @param {Actor} actor - The actor
      * @param {Object} ability - The ability
+     * @param {Object} options - Options {freeUse: boolean}
      * @returns {Promise<ChatMessage>}
      */
-    static async postAbilityToChat(actor, ability) {
+    static async postAbilityToChat(actor, ability, options = {}) {
+        // Check and spend Force Points if required
+        if (ability.cost?.forcePoints && !options.freeUse) {
+            const fpCost = ability.cost.forcePoints;
+            const canAfford = await this._checkAndSpendForcePoints(actor, ability, fpCost);
+            if (!canAfford) {
+                return null; // Abort if can't afford
+            }
+        }
+
         const modifierHtml = ability.modifiers?.length > 0 ?
             `<div class="ability-modifiers">
                 <h4>Enhanced by:</h4>

@@ -47,7 +47,7 @@
       "name": "Redirect Shot",
       "talentName": "Redirect Shot",
       "talentTree": "Lightsaber Combat",
-      "description": "When you successfully deflect a ranged attack, you may redirect the attack at any target within 6 squares. Make a Use the Force check; if it equals or exceeds the new target's Reflex Defense, the attack hits.",
+      "description": "When you successfully deflect a ranged attack, you may redirect the attack at any target within 6 squares. Make a Use the Force check; if it equals or exceeds the new target's Reflex Defense, the attack hits. Alternatively, spend a Force Point to automatically hit.",
       "actionType": "reaction",
       "trigger": "After successfully using Deflect",
       "prerequisites": ["deflect"],
@@ -56,8 +56,13 @@
         "vsDefense": "reflex",
         "label": "Redirect Shot (Use the Force)"
       },
+      "alternativeAction": {
+        "name": "Auto-Hit Redirect",
+        "cost": { "forcePoints": 1 },
+        "effect": "Automatically redirect and hit any target within 6 squares"
+      },
       "uses": { "max": null, "perEncounter": false, "perDay": false },
-      "tags": ["offense", "force", "lightsaber", "reaction"],
+      "tags": ["offense", "force", "lightsaber", "reaction", "force-point"],
       "icon": "fas fa-exchange-alt"
     },
 
@@ -136,7 +141,7 @@
       "name": "Force Focus",
       "talentName": "Force Focus",
       "talentTree": "Jedi Consular",
-      "description": "Add one-half your character level (rounded down) to Use the Force checks. Once per encounter, you may regain one spent Force power as a swift action.",
+      "description": "Add one-half your character level (rounded down) to Use the Force checks. Once per encounter, you may regain one spent Force power as a swift action. You may also spend a Force Point as a swift action to regain a spent Force power.",
       "actionType": "passive",
       "effects": [
         { "type": "skillBonus", "skillKey": "useTheForce", "value": "floor(level/2)", "permanent": true }
@@ -147,7 +152,13 @@
         "uses": { "max": 1, "perEncounter": true },
         "effect": "Regain one spent Force power"
       },
-      "tags": ["force", "skill", "power-recovery"],
+      "alternativeAction": {
+        "name": "Regain via Force Point",
+        "actionType": "swift",
+        "cost": { "forcePoints": 1 },
+        "effect": "Spend a Force Point to regain one spent Force power (no limit)"
+      },
+      "tags": ["force", "skill", "power-recovery", "force-point"],
       "icon": "fas fa-atom"
     },
 
@@ -1360,6 +1371,112 @@
       ],
       "tags": ["lightsaber", "form", "passive"],
       "icon": "fas fa-bolt"
+    },
+
+    "severing-strike": {
+      "id": "severing-strike",
+      "name": "Severing Strike",
+      "talentName": "Severing Strike",
+      "talentTree": "Lightsaber Combat",
+      "description": "When you score a critical hit with a lightsaber, you may spend a Force Point to sever one of the target's limbs (your choice). The target loses the limb and takes a persistent -5 penalty to related checks.",
+      "actionType": "reaction",
+      "trigger": "Critical hit with lightsaber",
+      "cost": { "forcePoints": 1 },
+      "effects": [
+        { "type": "sever", "target": "limb" }
+      ],
+      "tags": ["lightsaber", "damage", "force-point", "reaction"],
+      "icon": "fas fa-cut"
+    },
+
+    "acrobatic-recovery": {
+      "id": "acrobatic-recovery",
+      "name": "Acrobatic Recovery",
+      "talentName": "Acrobatic Recovery",
+      "talentTree": "Martial Arts",
+      "description": "When knocked prone, you may spend a Force Point to immediately stand up as a free action.",
+      "actionType": "reaction",
+      "trigger": "Knocked prone",
+      "cost": { "forcePoints": 1 },
+      "effects": [
+        { "type": "standUp", "actionType": "free" }
+      ],
+      "tags": ["mobility", "force-point", "reaction"],
+      "icon": "fas fa-redo"
+    },
+
+    "force-haze": {
+      "id": "force-haze",
+      "name": "Force Haze",
+      "talentName": "Force Haze",
+      "talentTree": "Telekinesis",
+      "description": "Spend a Force Point as a standard action to create a distortion in the Force. All creatures within 6 squares must succeed on a Will save (DC 15 + your Cha modifier) or be dazed for 1 round.",
+      "actionType": "standard",
+      "cost": { "forcePoints": 1 },
+      "roll": {
+        "dc": "15 + charMod",
+        "dcLabel": "DC 15 + Charisma modifier",
+        "label": "Force Haze"
+      },
+      "effects": [
+        { "type": "condition", "condition": "dazed", "duration": 1, "target": "enemies", "range": 6 }
+      ],
+      "tags": ["force", "control", "force-point", "standard"],
+      "icon": "fas fa-cloud"
+    },
+
+    "improved-dark-rage": {
+      "id": "improved-dark-rage",
+      "name": "Improved Dark Rage",
+      "talentName": "Improved Dark Rage",
+      "talentTree": "Dark Side",
+      "description": "When using Dark Rage, you may spend a Force Point to gain an additional +2 bonus to attack rolls, damage rolls, and Fortitude Defense for the duration.",
+      "actionType": "modifier",
+      "modifies": "dark-rage",
+      "cost": { "forcePoints": 1 },
+      "effects": [
+        { "type": "attackBonus", "value": 2 },
+        { "type": "damageBonus", "value": 2 },
+        { "type": "defenseBonus", "defense": "fortitude", "value": 2 }
+      ],
+      "tags": ["dark-side", "force-point", "modifier"],
+      "icon": "fas fa-angry"
+    },
+
+    "surge-of-power": {
+      "id": "surge-of-power",
+      "name": "Surge of Power",
+      "talentName": "Surge of Power",
+      "talentTree": "Force Adept",
+      "description": "Spend a Force Point as a swift action to add your heroic level to the damage dealt by your next Force power used this turn.",
+      "actionType": "swift",
+      "cost": { "forcePoints": 1 },
+      "effects": [
+        { "type": "damageBonus", "value": "heroicLevel", "appliesTo": "forcePower", "duration": "turn" }
+      ],
+      "tags": ["force", "damage", "force-point", "swift"],
+      "icon": "fas fa-bolt"
+    },
+
+    "force-point-recovery": {
+      "id": "force-point-recovery",
+      "name": "Force Point Recovery",
+      "talentName": "Force Point Recovery",
+      "talentTree": "Jedi Master",
+      "description": "Once per day, when you spend a Force Point, you may immediately regain 1 Force Point. You may spend a second Force Point to regain 2 Force Points instead.",
+      "actionType": "reaction",
+      "trigger": "After spending a Force Point",
+      "alternativeAction": {
+        "name": "Enhanced Recovery",
+        "cost": { "forcePoints": 1 },
+        "effect": "Regain 2 Force Points instead of 1"
+      },
+      "uses": { "max": 1, "perDay": true },
+      "effects": [
+        { "type": "resourceRecovery", "resource": "forcePoints", "value": 1 }
+      ],
+      "tags": ["force", "recovery", "force-point", "reaction"],
+      "icon": "fas fa-sync"
     }
   }
 }

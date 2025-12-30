@@ -83,6 +83,18 @@
           </div>
           {{/if}}
 
+          {{!-- Force Point Cost --}}
+          {{#if ability.costData}}
+          <div class="ability-cost-info {{#unless ability.costData.hasEnough}}insufficient{{/unless}}">
+            <i class="fas fa-hand-sparkles"></i>
+            <strong>Cost:</strong> {{ability.costData.forcePoints}} Force Point{{#if (gt ability.costData.forcePoints 1)}}s{{/if}}
+            <span class="current-fp">(You have: {{ability.costData.currentFP}})</span>
+            {{#unless ability.costData.hasEnough}}
+            <span class="insufficient-warning">Insufficient!</span>
+            {{/unless}}
+          </div>
+          {{/if}}
+
           {{!-- Roll Button (for abilities with rolls) --}}
           {{#if ability.rollData.canRoll}}
           <div class="ability-roll-section">
