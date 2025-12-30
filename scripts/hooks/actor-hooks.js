@@ -13,6 +13,7 @@ import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 
 import { HooksRegistry } from './hooks-registry.js';
 import { SWSELogger } from '../utils/logger.js';
+import { FeatEffectsEngine } from '../engine/FeatEffectsEngine.js';
 
 /**
  * Register all actor-related hooks
@@ -108,6 +109,9 @@ async function handleItemCreate(item, options, userId) {
 
     // Only process feats on character actors
     if (item.type !== 'feat' || !item.parent || item.parent.type !== 'character') return;
+
+    // Apply automatic feat effects for permanent bonuses
+    await FeatEffectsEngine.applyEffectsToFeat(item);
 
     // Check if this is a Skill Focus feat (or Greater Skill Focus)
     const featName = item.name.toLowerCase();
