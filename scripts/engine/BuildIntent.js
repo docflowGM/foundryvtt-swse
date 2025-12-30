@@ -14,6 +14,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { CLASS_SYNERGY_DATA } from './ClassSuggestionEngine.js';
+import { MentorSurvey } from '../apps/mentor-survey.js';
 
 // ──────────────────────────────────────────────────────────────
 // BUILD THEME DEFINITIONS
@@ -339,6 +340,9 @@ export class BuildIntent {
 
         // Calculate prestige affinities
         this._calculatePrestigeAffinities(state, intent);
+
+        // Apply mentor survey biases if available
+        this._applyMentorBiases(actor, intent);
 
         // Determine primary themes
         this._determinePrimaryThemes(intent);
@@ -795,6 +799,59 @@ export class BuildIntent {
         }
 
         return "Aligns with your build direction";
+    }
+
+    /**
+     * Apply mentor survey biases to theme scores
+     * Mentor biases provide soft influence based on player intent questionnaire
+     * @private
+     * @param {Actor} actor - The actor being analyzed
+     * @param {Object} intent - The build intent object to update
+     */
+    static _applyMentorBiases(actor, intent) {
+        const mentorBiases = MentorSurvey.getMentorBiases(actor);
+        if (!mentorBiases || Object.keys(mentorBiases).length === 0) {
+            return; // No mentor biases to apply
+        }
+
+        // Map bias keys to theme keys
+        const biasToThemeMap = {
+            forceFocus: BUILD_THEMES.FORCE,
+            combatStyle: null, // Handled separately
+            melee: BUILD_THEMES.MELEE,
+            ranged: BUILD_THEMES.RANGED,
+            stealth: BUILD_THEMES.STEALTH,
+            social: BUILD_THEMES.SOCIAL,
+            tech: BUILD_THEMES.TECH,
+            leadership: BUILD_THEMES.LEADERSHIP,
+            awareness: null, // Handled as a signal
+            mobility: null, // Handled as a signal
+            survival: BUILD_THEMES.EXPLORATION,
+            control: null, // Influences prestige
+            damage: null, // Influences feat selection
+            survivability: null, // Influences survivability focus
+            utility: null, // Influences skill/versatility
+            support: BUILD_THEMES.SUPPORT,
+            specialization: null, // Meta-preference
+            generalist: null, // Meta-preference
+            balance: null, // Meta-preference
+            order: null, // Meta-preference
+            pragmatic: null, // Meta-preference
+            riskTolerance: null, // Meta-preference
+            authority: null, // Meta-preference
+        };
+
+        // Apply biases to themes with small weight (0.05x multiplier)
+        for (const [biasKey, biasValue] of Object.entries(mentorBiases)) {
+            const themeKey = biasToThemeMap[biasKey];
+            if (themeKey && biasValue > 0) {
+                // Apply bias with light weighting (don't let survey override actual choices)
+                intent.themes[themeKey] = (intent.themes[themeKey] || 0) + (biasValue * 0.05);
+            }
+        }
+
+        // Store mentor biases in intent for reference
+        intent.mentorBiases = mentorBiases;
     }
 }
 

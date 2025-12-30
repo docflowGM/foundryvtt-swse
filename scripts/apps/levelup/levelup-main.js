@@ -15,6 +15,7 @@
 import { SWSEProgressionEngine } from '../../engine/progression.js';
 import { SWSELogger, swseLogger } from '../../utils/logger.js';
 import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from '../mentor-dialogues.js';
+import { MentorSurvey } from '../mentor-survey.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 
 // Import shared utilities
@@ -72,6 +73,8 @@ import { showPrestigeRoadmap } from './prestige-roadmap.js';
 import { showGMDebugPanel } from './debug-panel.js';
 import { PathPreview } from '../../engine/PathPreview.js';
 import { findActiveSynergies } from '../../engine/CommunityMetaSynergies.js';
+import { MentorSuggestionVoice } from '../mentor-suggestion-voice.js';
+import { MentorSuggestionDialog } from '../mentor-suggestion-dialog.js';
 
 export class SWSELevelUpEnhanced extends FormApplication {
 
@@ -337,6 +340,10 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Prestige Roadmap and Debug Panel
     html.find('.show-prestige-roadmap').click(this._onShowPrestigeRoadmap.bind(this));
     html.find('.show-gm-debug-panel').click(this._onShowGMDebugPanel.bind(this));
+
+    // Mentor suggestion buttons
+    html.find('.ask-mentor-feat-suggestion').click(this._onAskMentorFeatSuggestion.bind(this));
+    html.find('.ask-mentor-talent-suggestion').click(this._onAskMentorTalentSuggestion.bind(this));
   }
 
   /**
@@ -359,6 +366,112 @@ export class SWSELevelUpEnhanced extends FormApplication {
     }
     const pendingData = this._buildPendingData();
     showGMDebugPanel(this.actor, pendingData);
+  }
+
+  /**
+   * Ask mentor for feat suggestion
+   */
+  async _onAskMentorFeatSuggestion(event) {
+    event.preventDefault();
+
+    // Get available feats
+    const availableFeats = this.featCategories
+      .flatMap(cat => cat.feats)
+      .filter(feat => !feat.isUnavailable && !feat.isSelected);
+
+    if (availableFeats.length === 0) {
+      ui.notifications.warn("No available feats to suggest.");
+      return;
+    }
+
+    try {
+      // Get suggestion from engine
+      const pendingData = this._buildPendingData();
+      const suggestions = await game.swse.suggestions.suggestFeats(availableFeats, this.actor, pendingData);
+
+      if (!suggestions || suggestions.length === 0) {
+        ui.notifications.warn("No feat suggestions available at this time.");
+        return;
+      }
+
+      // Get the top suggestion
+      const topSuggestion = suggestions[0];
+      const mentorName = this.mentor;
+
+      // Add mentor voice
+      const voicedSuggestion = MentorSuggestionVoice.generateVoicedSuggestion(
+        mentorName,
+        topSuggestion,
+        'feat_selection'
+      );
+
+      // Show mentor dialog with suggestion
+      const result = await MentorSuggestionDialog.show(mentorName, topSuggestion, 'feat_selection');
+
+      if (result && result.applied) {
+        // Auto-select the feat
+        const featId = topSuggestion._id;
+        await this._onSelectBonusFeat({ currentTarget: { dataset: { featId } } });
+        ui.notifications.info(`${mentorName} suggests: ${topSuggestion.name}`);
+      }
+    } catch (err) {
+      console.error('Error getting feat suggestion:', err);
+      ui.notifications.error("Error getting mentor suggestion. Check console.");
+    }
+  }
+
+  /**
+   * Ask mentor for talent suggestion
+   */
+  async _onAskMentorTalentSuggestion(event) {
+    event.preventDefault();
+
+    try {
+      // Get available talents
+      const availableTalents = [];
+      for (const tree of this.talentTrees || []) {
+        const talentsInTree = await this._getTalentsInTree(tree);
+        const available = talentsInTree.filter(t => !t.owned);
+        availableTalents.push(...available.map(t => ({ ...t, tree })));
+      }
+
+      if (availableTalents.length === 0) {
+        ui.notifications.warn("No available talents to suggest.");
+        return;
+      }
+
+      // Get suggestion from engine
+      const pendingData = this._buildPendingData();
+      const suggestions = await game.swse.suggestions.suggestTalents(availableTalents, this.actor, pendingData);
+
+      if (!suggestions || suggestions.length === 0) {
+        ui.notifications.warn("No talent suggestions available at this time.");
+        return;
+      }
+
+      // Get the top suggestion
+      const topSuggestion = suggestions[0];
+      const mentorName = this.mentor;
+
+      // Add mentor voice
+      const voicedSuggestion = MentorSuggestionVoice.generateVoicedSuggestion(
+        mentorName,
+        topSuggestion,
+        'talent_selection'
+      );
+
+      // Show mentor dialog with suggestion
+      const result = await MentorSuggestionDialog.show(mentorName, topSuggestion, 'talent_selection');
+
+      if (result && result.applied) {
+        // Auto-select the talent
+        await this._selectTalent(topSuggestion.name);
+        ui.notifications.info(`${mentorName} suggests: ${topSuggestion.name}`);
+      }
+    } catch (err) {
+      console.error('Error getting talent suggestion:', err);
+      ui.notifications.error("Error getting mentor suggestion. Check console.");
+    }
   }
 
   /**
@@ -894,6 +1007,19 @@ export class SWSELevelUpEnhanced extends FormApplication {
     // Apply prestige class level 1 features if applicable
     if (!isBase) {
       await applyPrestigeClassFeatures(classDoc);
+    }
+
+    // Offer mentor survey at level 1 if not yet completed
+    if (newLevel === 1 && isBase && !MentorSurvey.hasSurveyBeenCompleted(this.actor)) {
+      const acceptSurvey = await MentorSurvey.promptSurvey(this.actor, this.mentor);
+      if (acceptSurvey) {
+        const surveyAnswers = await MentorSurvey.showSurvey(this.actor, classDoc.name, this.mentor);
+        if (surveyAnswers) {
+          const biases = MentorSurvey.processSurveyAnswers(surveyAnswers);
+          await MentorSurvey.storeSurveyData(this.actor, surveyAnswers, biases);
+          ui.notifications.info("Survey completed! Your mentor will use this to personalize suggestions.");
+        }
+      }
     }
 
     this.render();
