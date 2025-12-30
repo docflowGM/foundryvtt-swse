@@ -1,0 +1,808 @@
+/* ============================================================================
+   SWSE Talent Abilities Panel — Card-based Ability Display
+   Functional, interactive ability cards with roll buttons and use tracking
+   ============================================================================ */
+
+/* ================================
+   Container & Layout
+   ================================ */
+
+.swse-talent-abilities-container {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ================================
+   Filter Tabs
+   ================================ */
+
+.ability-filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px;
+  background: var(--swse-bg-mid, #0f1420);
+  border-radius: 6px;
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+}
+
+.ability-filter-btn {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  font-size: 11px;
+  background: var(--swse-bg-dark, #0a0f1a);
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+  border-radius: 4px;
+  color: var(--swse-text-secondary, #6a9dcd);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ability-filter-btn:hover {
+  background: var(--swse-bg-hover, rgba(0,170,255,0.15));
+  border-color: var(--swse-border-hover, #00aaff);
+  color: var(--swse-text-primary, #9ed0ff);
+}
+
+.ability-filter-btn.active {
+  background: linear-gradient(180deg, var(--swse-secondary, #00aaff), var(--swse-primary, #9ed0ff));
+  border-color: var(--swse-accent, #00d9ff);
+  color: var(--swse-bg-dark, #0a0f1a);
+  font-weight: bold;
+}
+
+.ability-filter-btn i {
+  margin-right: 4px;
+}
+
+/* ================================
+   Cards Grid
+   ================================ */
+
+.ability-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+/* ================================
+   Individual Ability Card
+   ================================ */
+
+.ability-card {
+  background: var(--swse-bg-mid, #0f1420);
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.ability-card:hover {
+  border-color: var(--swse-border-hover, #00aaff);
+  box-shadow: 0 4px 12px rgba(0,170,255,0.2);
+  transform: translateY(-2px);
+}
+
+/* Card type colors */
+.ability-card.type-reaction {
+  border-left: 4px solid #ff6b6b;
+}
+
+.ability-card.type-standard {
+  border-left: 4px solid #4ecdc4;
+}
+
+.ability-card.type-swift {
+  border-left: 4px solid #ffe66d;
+}
+
+.ability-card.type-full-round {
+  border-left: 4px solid #a855f7;
+}
+
+.ability-card.type-free {
+  border-left: 4px solid #22c55e;
+}
+
+.ability-card.type-passive {
+  border-left: 4px solid #6b7280;
+}
+
+.ability-card.type-modifier {
+  border-left: 4px solid #f97316;
+}
+
+/* Toggleable card states */
+.ability-card.toggleable.toggled {
+  background: linear-gradient(180deg, rgba(0,170,255,0.15), var(--swse-bg-mid));
+  border-color: var(--swse-accent, #00d9ff);
+}
+
+/* ================================
+   Card Header
+   ================================ */
+
+.ability-card-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--swse-bg-light, #1a2030);
+  border-bottom: 1px solid var(--swse-border-default, #1c4b8e);
+  cursor: pointer;
+  gap: 8px;
+  transition: background 0.2s ease;
+}
+
+.ability-card-header:hover {
+  background: var(--swse-bg-hover, rgba(0,170,255,0.15));
+}
+
+.ability-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--swse-bg-dark, #0a0f1a);
+  border-radius: 50%;
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+  color: var(--swse-accent, #00d9ff);
+  font-size: 14px;
+}
+
+.ability-title-block {
+  flex: 1;
+  min-width: 0;
+}
+
+.ability-name {
+  display: block;
+  font-weight: bold;
+  color: var(--swse-text-primary, #9ed0ff);
+  font-size: 13px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ability-source-label {
+  display: block;
+  font-size: 10px;
+  color: var(--swse-text-secondary, #6a9dcd);
+  opacity: 0.8;
+}
+
+.ability-type-badge {
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.ability-type-badge.type-reaction {
+  background: rgba(255,107,107,0.2);
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+}
+
+.ability-type-badge.type-standard {
+  background: rgba(78,205,196,0.2);
+  color: #4ecdc4;
+  border: 1px solid #4ecdc4;
+}
+
+.ability-type-badge.type-swift {
+  background: rgba(255,230,109,0.2);
+  color: #ffe66d;
+  border: 1px solid #ffe66d;
+}
+
+.ability-type-badge.type-full-round {
+  background: rgba(168,85,247,0.2);
+  color: #a855f7;
+  border: 1px solid #a855f7;
+}
+
+.ability-type-badge.type-free {
+  background: rgba(34,197,94,0.2);
+  color: #22c55e;
+  border: 1px solid #22c55e;
+}
+
+.ability-type-badge.type-passive {
+  background: rgba(107,114,128,0.2);
+  color: #9ca3af;
+  border: 1px solid #6b7280;
+}
+
+.ability-type-badge.type-modifier {
+  background: rgba(249,115,22,0.2);
+  color: #f97316;
+  border: 1px solid #f97316;
+}
+
+.ability-expand-icon {
+  color: var(--swse-text-secondary, #6a9dcd);
+  transition: transform 0.2s ease;
+}
+
+.ability-card-header.expanded .ability-expand-icon {
+  transform: rotate(180deg);
+}
+
+/* ================================
+   Card Body
+   ================================ */
+
+.ability-card-body {
+  padding: 12px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--swse-bg-dark, #0a0f1a);
+}
+
+.ability-card.expanded .ability-card-body {
+  display: flex;
+}
+
+.ability-description {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--swse-text-primary, #9ed0ff);
+}
+
+/* Trigger & Condition Info */
+.ability-trigger-info,
+.ability-condition-info {
+  padding: 8px 10px;
+  background: rgba(255,107,107,0.1);
+  border-left: 3px solid #ff6b6b;
+  border-radius: 0 4px 4px 0;
+  font-size: 11px;
+  color: var(--swse-text-secondary, #6a9dcd);
+}
+
+.ability-condition-info {
+  background: rgba(78,205,196,0.1);
+  border-left-color: #4ecdc4;
+}
+
+.ability-trigger-info i,
+.ability-condition-info i {
+  margin-right: 6px;
+  color: inherit;
+}
+
+/* ================================
+   Roll Section
+   ================================ */
+
+.ability-roll-section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background: var(--swse-bg-mid, #0f1420);
+  border-radius: 6px;
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+}
+
+.ability-roll-btn {
+  flex: 1 1 auto;
+  min-width: 150px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: bold;
+  background: linear-gradient(180deg, #00aaff, #0088cc);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ability-roll-btn:hover {
+  background: linear-gradient(180deg, #00ccff, #00aaff);
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0,170,255,0.4);
+}
+
+.ability-roll-btn:active {
+  transform: scale(0.98);
+}
+
+.ability-roll-btn i {
+  font-size: 16px;
+}
+
+.roll-modifier {
+  padding: 2px 6px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.roll-vs-label,
+.roll-dc-label {
+  padding: 4px 8px;
+  background: var(--swse-bg-dark, #0a0f1a);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--swse-text-secondary, #6a9dcd);
+}
+
+.conditional-bonus-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(255,230,109,0.1);
+  border: 1px solid rgba(255,230,109,0.3);
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  color: #ffe66d;
+}
+
+.conditional-bonus-toggle input {
+  margin: 0;
+}
+
+/* ================================
+   Toggle Section
+   ================================ */
+
+.ability-toggle-section {
+  display: flex;
+  justify-content: center;
+}
+
+.ability-toggle-btn {
+  padding: 10px 24px;
+  font-size: 13px;
+  font-weight: bold;
+  background: var(--swse-bg-mid, #0f1420);
+  border: 2px solid var(--swse-border-default, #1c4b8e);
+  border-radius: 20px;
+  color: var(--swse-text-secondary, #6a9dcd);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ability-toggle-btn:hover {
+  border-color: var(--swse-accent, #00d9ff);
+  color: var(--swse-text-primary, #9ed0ff);
+}
+
+.ability-toggle-btn.active {
+  background: linear-gradient(180deg, rgba(0,170,255,0.3), rgba(0,170,255,0.1));
+  border-color: var(--swse-accent, #00d9ff);
+  color: var(--swse-accent, #00d9ff);
+}
+
+.ability-toggle-btn i {
+  font-size: 18px;
+}
+
+/* ================================
+   Choices Section
+   ================================ */
+
+.ability-choices-section {
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ability-choices-section h4 {
+  margin: 0;
+  padding: 8px 10px;
+  background: var(--swse-bg-light, #1a2030);
+  font-size: 11px;
+  color: var(--swse-text-secondary, #6a9dcd);
+}
+
+.ability-choices-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ability-choice-btn {
+  padding: 10px 12px;
+  background: var(--swse-bg-mid, #0f1420);
+  border: none;
+  border-top: 1px solid var(--swse-border-default, #1c4b8e);
+  color: var(--swse-text-primary, #9ed0ff);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ability-choice-btn:first-child {
+  border-top: none;
+}
+
+.ability-choice-btn:hover {
+  background: var(--swse-bg-hover, rgba(0,170,255,0.15));
+}
+
+.choice-type-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: rgba(0,170,255,0.2);
+  border-radius: 3px;
+  color: var(--swse-accent, #00d9ff);
+  margin-bottom: 2px;
+}
+
+.ability-choice-btn strong {
+  font-size: 12px;
+}
+
+.choice-effect {
+  font-size: 11px;
+  color: var(--swse-text-secondary, #6a9dcd);
+}
+
+/* ================================
+   Uses Tracker
+   ================================ */
+
+.ability-uses-tracker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--swse-bg-mid, #0f1420);
+  border-radius: 6px;
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+}
+
+.uses-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--swse-text-secondary, #6a9dcd);
+}
+
+.uses-pips {
+  display: flex;
+  gap: 4px;
+}
+
+.use-pip {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--swse-accent, #00d9ff);
+  transition: all 0.2s ease;
+}
+
+.use-pip.filled {
+  background: var(--swse-accent, #00d9ff);
+  box-shadow: 0 0 6px rgba(0,217,255,0.5);
+}
+
+.use-pip.empty {
+  background: transparent;
+}
+
+.uses-text {
+  font-size: 11px;
+  color: var(--swse-text-secondary, #6a9dcd);
+  margin-left: auto;
+}
+
+/* ================================
+   Modifiers Section
+   ================================ */
+
+.ability-modifiers-section {
+  padding: 10px;
+  background: rgba(249,115,22,0.1);
+  border: 1px solid rgba(249,115,22,0.3);
+  border-radius: 6px;
+}
+
+.ability-modifiers-section h4 {
+  margin: 0 0 8px 0;
+  font-size: 11px;
+  color: #f97316;
+}
+
+.modifiers-list {
+  margin: 0;
+  padding: 0 0 0 16px;
+  list-style: disc;
+}
+
+.modifiers-list li {
+  font-size: 11px;
+  margin-bottom: 4px;
+  color: var(--swse-text-primary, #9ed0ff);
+}
+
+.modifier-description {
+  display: block;
+  font-size: 10px;
+  color: var(--swse-text-secondary, #6a9dcd);
+}
+
+/* ================================
+   Action Buttons
+   ================================ */
+
+.ability-action-buttons {
+  display: flex;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--swse-border-default, #1c4b8e);
+}
+
+.ability-post-btn,
+.ability-view-talent-btn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 11px;
+  background: var(--swse-bg-mid, #0f1420);
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+  border-radius: 4px;
+  color: var(--swse-text-secondary, #6a9dcd);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.ability-post-btn:hover,
+.ability-view-talent-btn:hover {
+  background: var(--swse-bg-hover, rgba(0,170,255,0.15));
+  border-color: var(--swse-border-hover, #00aaff);
+  color: var(--swse-text-primary, #9ed0ff);
+}
+
+/* ================================
+   Tags
+   ================================ */
+
+.ability-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-top: 8px;
+}
+
+.ability-tag {
+  padding: 2px 8px;
+  font-size: 9px;
+  text-transform: uppercase;
+  background: var(--swse-bg-light, #1a2030);
+  border-radius: 10px;
+  color: var(--swse-text-secondary, #6a9dcd);
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+}
+
+/* ================================
+   Reset Section
+   ================================ */
+
+.ability-reset-section {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+  border-top: 1px solid var(--swse-border-default, #1c4b8e);
+}
+
+.ability-reset-btn {
+  padding: 8px 16px;
+  font-size: 12px;
+  background: var(--swse-bg-mid, #0f1420);
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+  border-radius: 6px;
+  color: var(--swse-text-secondary, #6a9dcd);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ability-reset-btn:hover {
+  background: var(--swse-bg-hover, rgba(0,170,255,0.15));
+  border-color: var(--swse-border-hover, #00aaff);
+  color: var(--swse-text-primary, #9ed0ff);
+}
+
+/* ================================
+   Empty State
+   ================================ */
+
+.talent-abilities-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--swse-text-secondary, #6a9dcd);
+}
+
+.talent-abilities-empty i {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.talent-abilities-empty p {
+  margin: 8px 0;
+}
+
+.empty-hint {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* ================================
+   Chat Message Styles
+   ================================ */
+
+.swse-ability-roll,
+.swse-ability-card {
+  background: var(--swse-bg-mid, #0f1420);
+  border: 1px solid var(--swse-border-default, #1c4b8e);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ability-roll-header,
+.ability-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--swse-bg-light, #1a2030);
+  border-bottom: 1px solid var(--swse-border-default, #1c4b8e);
+}
+
+.ability-roll-body,
+.ability-card-body {
+  padding: 12px;
+}
+
+.ability-source {
+  font-size: 11px;
+  color: var(--swse-text-secondary, #6a9dcd);
+  margin-bottom: 8px;
+}
+
+.ability-trigger,
+.ability-condition {
+  padding: 6px 10px;
+  background: rgba(0,170,255,0.1);
+  border-left: 3px solid var(--swse-accent, #00d9ff);
+  margin: 8px 0;
+  font-size: 12px;
+}
+
+.roll-result {
+  padding: 10px;
+  text-align: center;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+.roll-result.success {
+  background: rgba(34,197,94,0.2);
+  border: 1px solid #22c55e;
+  color: #22c55e;
+}
+
+.roll-result.failure {
+  background: rgba(239,68,68,0.2);
+  border: 1px solid #ef4444;
+  color: #ef4444;
+}
+
+.roll-target {
+  text-align: center;
+  font-size: 12px;
+  color: var(--swse-text-secondary, #6a9dcd);
+  margin-top: 8px;
+}
+
+.dice-roll {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--swse-bg-dark, #0a0f1a);
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+.roll-label {
+  font-size: 12px;
+  color: var(--swse-text-secondary, #6a9dcd);
+}
+
+.roll-formula {
+  font-size: 12px;
+  color: var(--swse-text-primary, #9ed0ff);
+}
+
+.roll-result-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--swse-accent, #00d9ff);
+}
+
+/* ================================
+   Alternative & Special Actions
+   ================================ */
+
+.ability-alternative-section,
+.ability-special-action-section {
+  padding: 10px;
+  background: rgba(168,85,247,0.1);
+  border: 1px solid rgba(168,85,247,0.3);
+  border-radius: 6px;
+}
+
+.alternative-label {
+  font-size: 11px;
+  color: #a855f7;
+  margin-bottom: 6px;
+}
+
+.ability-special-action-btn {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 12px;
+  background: linear-gradient(180deg, rgba(168,85,247,0.3), rgba(168,85,247,0.1));
+  border: 1px solid #a855f7;
+  border-radius: 6px;
+  color: #a855f7;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ability-special-action-btn:hover {
+  background: linear-gradient(180deg, rgba(168,85,247,0.5), rgba(168,85,247,0.2));
+}
+
+.special-action-type {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.special-action-uses {
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  color: var(--swse-text-secondary, #6a9dcd);
+  margin-top: 6px;
+}

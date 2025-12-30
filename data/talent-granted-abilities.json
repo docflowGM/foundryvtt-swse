@@ -1,0 +1,1365 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "Comprehensive talent ability definitions for SWSE Foundry system",
+    "totalAbilities": 106
+  },
+
+  "abilities": {
+    "block": {
+      "id": "block",
+      "name": "Block",
+      "talentName": "Block",
+      "talentTree": "Lightsaber Combat",
+      "description": "Make a Use the Force check to negate a melee attack. If your check equals or exceeds the attack roll, the attack deals no damage.",
+      "actionType": "reaction",
+      "trigger": "When hit by a melee attack",
+      "roll": {
+        "skillKey": "useTheForce",
+        "vsTarget": "attackRoll",
+        "label": "Block (Use the Force)"
+      },
+      "uses": { "max": null, "perEncounter": false, "perDay": false },
+      "tags": ["defense", "force", "lightsaber", "reaction"],
+      "icon": "fas fa-shield-alt"
+    },
+
+    "deflect": {
+      "id": "deflect",
+      "name": "Deflect",
+      "talentName": "Deflect",
+      "talentTree": "Lightsaber Combat",
+      "description": "Make a Use the Force check to negate a ranged attack. If your check equals or exceeds the attack roll, the attack deals no damage.",
+      "actionType": "reaction",
+      "trigger": "When hit by a ranged attack",
+      "roll": {
+        "skillKey": "useTheForce",
+        "vsTarget": "attackRoll",
+        "label": "Deflect (Use the Force)"
+      },
+      "uses": { "max": null, "perEncounter": false, "perDay": false },
+      "tags": ["defense", "force", "lightsaber", "reaction"],
+      "icon": "fas fa-shield-alt"
+    },
+
+    "redirect-shot": {
+      "id": "redirect-shot",
+      "name": "Redirect Shot",
+      "talentName": "Redirect Shot",
+      "talentTree": "Lightsaber Combat",
+      "description": "When you successfully deflect a ranged attack, you may redirect the attack at any target within 6 squares. Make a Use the Force check; if it equals or exceeds the new target's Reflex Defense, the attack hits.",
+      "actionType": "reaction",
+      "trigger": "After successfully using Deflect",
+      "prerequisites": ["deflect"],
+      "roll": {
+        "skillKey": "useTheForce",
+        "vsDefense": "reflex",
+        "label": "Redirect Shot (Use the Force)"
+      },
+      "uses": { "max": null, "perEncounter": false, "perDay": false },
+      "tags": ["offense", "force", "lightsaber", "reaction"],
+      "icon": "fas fa-exchange-alt"
+    },
+
+    "adept-negotiator": {
+      "id": "adept-negotiator",
+      "name": "Adept Negotiator",
+      "talentName": "Adept Negotiator",
+      "talentTree": "Jedi Consular",
+      "description": "As a standard action, make a Persuasion check against the target's Will Defense. If successful, move the target -1 step on the condition track. You gain +5 bonus if opponent is higher level. If at bottom of track, target cannot attack unless attacked first.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "persuasion",
+        "vsDefense": "will",
+        "conditionalBonus": {
+          "condition": "Target is higher level",
+          "bonus": 5
+        },
+        "label": "Adept Negotiator (Persuasion vs Will)"
+      },
+      "effects": [
+        { "type": "conditionTrack", "value": -1, "target": "enemy" }
+      ],
+      "uses": { "max": null, "perEncounter": false, "perDay": false },
+      "tags": ["diplomacy", "condition-track", "standard"],
+      "icon": "fas fa-handshake"
+    },
+
+    "master-negotiator": {
+      "id": "master-negotiator",
+      "name": "Master Negotiator",
+      "talentName": "Master Negotiator",
+      "talentTree": "Jedi Consular",
+      "description": "As Adept Negotiator, but the target moves -2 steps on the condition track instead of -1.",
+      "actionType": "modifier",
+      "modifies": "adept-negotiator",
+      "prerequisites": ["adept-negotiator"],
+      "effects": [
+        { "type": "conditionTrack", "value": -2, "target": "enemy", "replaces": "adept-negotiator" }
+      ],
+      "tags": ["diplomacy", "condition-track", "modifier"],
+      "icon": "fas fa-handshake"
+    },
+
+    "skilled-advisor": {
+      "id": "skilled-advisor",
+      "name": "Skilled Advisor",
+      "talentName": "Skilled Advisor",
+      "talentTree": "Jedi Consular",
+      "description": "As a full-round action, grant one ally within line of sight +5 bonus on their next skill check. If you spend a Force Point, the bonus increases to +10.",
+      "actionType": "full-round",
+      "effects": [
+        { "type": "skillBonus", "value": 5, "target": "ally", "duration": "nextCheck" },
+        { "type": "skillBonus", "value": 10, "target": "ally", "duration": "nextCheck", "condition": "Spend Force Point" }
+      ],
+      "uses": { "max": null, "perEncounter": false, "perDay": false },
+      "tags": ["support", "ally-buff", "force-point-enhanced"],
+      "icon": "fas fa-user-graduate"
+    },
+
+    "force-persuasion": {
+      "id": "force-persuasion",
+      "name": "Force Persuasion",
+      "talentName": "Force Persuasion",
+      "talentTree": "Jedi Consular",
+      "description": "You may use your Use the Force skill modifier instead of your Persuasion skill modifier when making Persuasion checks.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "skillSubstitution", "replaceSkill": "persuasion", "withSkill": "useTheForce" }
+      ],
+      "tags": ["force", "skill", "passive"],
+      "icon": "fas fa-brain"
+    },
+
+    "force-focus": {
+      "id": "force-focus",
+      "name": "Force Focus",
+      "talentName": "Force Focus",
+      "talentTree": "Jedi Consular",
+      "description": "Add one-half your character level (rounded down) to Use the Force checks. Once per encounter, you may regain one spent Force power as a swift action.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "skillBonus", "skillKey": "useTheForce", "value": "floor(level/2)", "permanent": true }
+      ],
+      "specialAction": {
+        "name": "Regain Force Power",
+        "actionType": "swift",
+        "uses": { "max": 1, "perEncounter": true },
+        "effect": "Regain one spent Force power"
+      },
+      "tags": ["force", "skill", "power-recovery"],
+      "icon": "fas fa-atom"
+    },
+
+    "inspire-confidence": {
+      "id": "inspire-confidence",
+      "name": "Inspire Confidence",
+      "talentName": "Inspire Confidence",
+      "talentTree": "Inspiration",
+      "description": "As a standard action, grant all allies within line of sight a +1 morale bonus to attack rolls and skill checks for the encounter. Alternatively, as a swift action, allow one unconscious ally to immediately regain consciousness with 1 HP.",
+      "actionType": "standard",
+      "alternativeAction": {
+        "actionType": "swift",
+        "effect": "One unconscious ally within line of sight regains consciousness with 1 HP"
+      },
+      "effects": [
+        { "type": "attackBonus", "value": 1, "bonusType": "morale", "target": "allies", "duration": "encounter" },
+        { "type": "skillBonus", "value": 1, "bonusType": "morale", "target": "allies", "duration": "encounter" }
+      ],
+      "uses": { "max": 1, "perEncounter": true },
+      "tags": ["leadership", "support", "ally-buff", "healing"],
+      "icon": "fas fa-bullhorn"
+    },
+
+    "bolster-ally": {
+      "id": "bolster-ally",
+      "name": "Bolster Ally",
+      "talentName": "Bolster Ally",
+      "talentTree": "Inspiration",
+      "description": "As a standard action, move one ally within line of sight +1 step on the condition track.",
+      "actionType": "standard",
+      "effects": [
+        { "type": "conditionTrack", "value": 1, "target": "ally" }
+      ],
+      "uses": { "max": null, "perEncounter": false, "perDay": false },
+      "tags": ["leadership", "support", "condition-track"],
+      "icon": "fas fa-heart"
+    },
+
+    "ignite-fervor": {
+      "id": "ignite-fervor",
+      "name": "Ignite Fervor",
+      "talentName": "Ignite Fervor",
+      "talentTree": "Inspiration",
+      "description": "When you hit with an attack, as a swift action, you may grant one ally within line of sight a bonus to their next damage roll equal to their level.",
+      "actionType": "swift",
+      "trigger": "After you hit with an attack",
+      "prerequisites": ["bolster-ally", "inspire-confidence"],
+      "effects": [
+        { "type": "damageBonus", "value": "allyLevel", "target": "ally", "duration": "nextAttack" }
+      ],
+      "uses": { "max": null, "perEncounter": false, "perDay": false },
+      "tags": ["leadership", "support", "damage"],
+      "icon": "fas fa-fire"
+    },
+
+    "willpower": {
+      "id": "willpower",
+      "name": "Willpower",
+      "talentName": "Willpower",
+      "talentTree": "Inspiration",
+      "description": "Once per encounter, as a swift action, grant all allies within line of sight a +2 morale bonus to Will Defense for the rest of the encounter.",
+      "actionType": "swift",
+      "effects": [
+        { "type": "defenseBonus", "defense": "will", "value": 2, "bonusType": "morale", "target": "allies", "duration": "encounter" }
+      ],
+      "uses": { "max": 1, "perEncounter": true },
+      "tags": ["leadership", "support", "defense"],
+      "icon": "fas fa-brain"
+    },
+
+    "beloved": {
+      "id": "beloved",
+      "name": "Beloved",
+      "talentName": "Beloved",
+      "talentTree": "Inspiration",
+      "description": "Choose one effect: (1) Swift action - grant one ally +2 Reflex Defense until your next turn; (2) Immediate action - grant one ally a free attack; (3) Reaction - allow all allies within 6 squares to move up to their speed.",
+      "actionType": "swift",
+      "choices": [
+        {
+          "name": "Defensive Aid",
+          "actionType": "swift",
+          "effect": "Grant one ally +2 Reflex Defense until your next turn"
+        },
+        {
+          "name": "Offensive Aid",
+          "actionType": "immediate",
+          "effect": "Grant one ally a free attack"
+        },
+        {
+          "name": "Tactical Retreat",
+          "actionType": "reaction",
+          "effect": "All allies within 6 squares may move up to their speed"
+        }
+      ],
+      "uses": { "max": 1, "perEncounter": true },
+      "tags": ["leadership", "versatile", "support"],
+      "icon": "fas fa-heart"
+    },
+
+    "sneak-attack": {
+      "id": "sneak-attack",
+      "name": "Sneak Attack",
+      "talentName": "Sneak Attack",
+      "talentTree": "Misfortune",
+      "description": "Once per round, when you hit a target denied its Dexterity bonus to Reflex Defense, deal +1d6 extra damage. Additional Sneak Attack talents increase this by +1d6 each.",
+      "actionType": "passive",
+      "trigger": "Target is denied Dex bonus to Reflex Defense",
+      "effects": [
+        { "type": "bonusDamage", "value": "1d6", "stackable": true }
+      ],
+      "uses": { "max": 1, "perRound": true },
+      "tags": ["damage", "stealth", "passive"],
+      "icon": "fas fa-user-ninja"
+    },
+
+    "skirmisher": {
+      "id": "skirmisher",
+      "name": "Skirmisher",
+      "talentName": "Skirmisher",
+      "talentTree": "Misfortune",
+      "description": "Deal +1d6 extra damage when you hit a target you did not attack on your previous turn.",
+      "actionType": "passive",
+      "trigger": "Hit a target you didn't attack last turn",
+      "effects": [
+        { "type": "bonusDamage", "value": "1d6" }
+      ],
+      "tags": ["damage", "mobility", "passive"],
+      "icon": "fas fa-running"
+    },
+
+    "dastardly-strike": {
+      "id": "dastardly-strike",
+      "name": "Dastardly Strike",
+      "talentName": "Dastardly Strike",
+      "talentTree": "Misfortune",
+      "description": "When you deal damage to an opponent denied their Dex bonus to Reflex Defense, move them -1 step on the condition track.",
+      "actionType": "passive",
+      "trigger": "Deal damage to target denied Dex bonus",
+      "effects": [
+        { "type": "conditionTrack", "value": -1, "target": "enemy" }
+      ],
+      "tags": ["damage", "condition-track", "passive"],
+      "icon": "fas fa-skull-crossbones"
+    },
+
+    "devastating-attack": {
+      "id": "devastating-attack",
+      "name": "Devastating Attack",
+      "talentName": "Devastating Attack",
+      "talentTree": "Weapon Specialist",
+      "description": "Once per encounter, when you hit with a melee attack using a weapon in which you have Weapon Focus, deal +1 die of damage.",
+      "actionType": "passive",
+      "trigger": "Hit with focused melee weapon",
+      "effects": [
+        { "type": "bonusDamage", "value": "+1 die" }
+      ],
+      "uses": { "max": 1, "perEncounter": true },
+      "tags": ["damage", "melee", "passive"],
+      "icon": "fas fa-fist-raised"
+    },
+
+    "weapon-specialization": {
+      "id": "weapon-specialization",
+      "name": "Weapon Specialization",
+      "talentName": "Weapon Specialization",
+      "talentTree": "Weapon Specialist",
+      "description": "Deal +2 damage with weapons of a selected weapon group.",
+      "actionType": "passive",
+      "variable": true,
+      "variableType": "weaponGroup",
+      "effects": [
+        { "type": "damageBonus", "value": 2, "permanent": true }
+      ],
+      "tags": ["damage", "passive", "variable"],
+      "icon": "fas fa-crosshairs"
+    },
+
+    "greater-weapon-specialization": {
+      "id": "greater-weapon-specialization",
+      "name": "Greater Weapon Specialization",
+      "talentName": "Greater Weapon Specialization",
+      "talentTree": "Weapon Specialist",
+      "description": "Deal +2 additional damage (total +4) with weapons of a selected weapon group. Requires Weapon Specialization in same group.",
+      "actionType": "passive",
+      "prerequisites": ["weapon-specialization"],
+      "modifies": "weapon-specialization",
+      "effects": [
+        { "type": "damageBonus", "value": 2, "stacks": true }
+      ],
+      "tags": ["damage", "passive", "modifier"],
+      "icon": "fas fa-crosshairs"
+    },
+
+    "uncanny-dodge-1": {
+      "id": "uncanny-dodge-1",
+      "name": "Uncanny Dodge I",
+      "talentName": "Uncanny Dodge I",
+      "talentTree": "Survivor",
+      "description": "You retain your Dexterity bonus to Reflex Defense even when flat-footed.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "keepDexBonus", "when": "flatFooted" }
+      ],
+      "tags": ["defense", "passive"],
+      "icon": "fas fa-eye"
+    },
+
+    "uncanny-dodge-2": {
+      "id": "uncanny-dodge-2",
+      "name": "Uncanny Dodge II",
+      "talentName": "Uncanny Dodge II",
+      "talentTree": "Survivor",
+      "description": "You cannot be flanked. Sneak attacks against you only work if the attacker is 4+ levels higher.",
+      "actionType": "passive",
+      "prerequisites": ["uncanny-dodge-1"],
+      "effects": [
+        { "type": "immunity", "to": "flanking" },
+        { "type": "sneakAttackResistance", "levelDifference": 4 }
+      ],
+      "tags": ["defense", "passive"],
+      "icon": "fas fa-eye"
+    },
+
+    "evasion": {
+      "id": "evasion",
+      "name": "Evasion",
+      "talentName": "Evasion",
+      "talentTree": "Survivor",
+      "description": "If an attack against your Reflex Defense deals half damage on a miss, you take no damage on a miss instead.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "noDamageOnMiss", "defenseType": "reflex" }
+      ],
+      "tags": ["defense", "passive"],
+      "icon": "fas fa-wind"
+    },
+
+    "improved-evasion": {
+      "id": "improved-evasion",
+      "name": "Improved Evasion",
+      "talentName": "Improved Evasion",
+      "talentTree": "Survivor",
+      "description": "If an attack against your Reflex Defense deals half damage on a miss, you take half damage on a hit instead of full damage.",
+      "actionType": "passive",
+      "prerequisites": ["evasion"],
+      "modifies": "evasion",
+      "effects": [
+        { "type": "halfDamageOnHit", "defenseType": "reflex" }
+      ],
+      "tags": ["defense", "passive", "modifier"],
+      "icon": "fas fa-wind"
+    },
+
+    "hide-in-plain-sight": {
+      "id": "hide-in-plain-sight",
+      "name": "Hide in Plain Sight",
+      "talentName": "Hide in Plain Sight",
+      "talentTree": "Camouflage",
+      "description": "You can make Stealth checks to hide even while being observed, without needing cover or concealment.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "stealthEnhancement", "allowsHidingWhileObserved": true }
+      ],
+      "tags": ["stealth", "passive"],
+      "icon": "fas fa-ghost"
+    },
+
+    "improved-stealth": {
+      "id": "improved-stealth",
+      "name": "Improved Stealth",
+      "talentName": "Improved Stealth",
+      "talentTree": "Camouflage",
+      "description": "You can move at full speed while using Stealth without taking a penalty.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "stealthEnhancement", "noMovementPenalty": true }
+      ],
+      "tags": ["stealth", "passive"],
+      "icon": "fas fa-shoe-prints"
+    },
+
+    "total-concealment": {
+      "id": "total-concealment",
+      "name": "Total Concealment",
+      "talentName": "Total Concealment",
+      "talentTree": "Camouflage",
+      "description": "When hidden, you gain total concealment (+5 to Stealth checks and attackers have 50% miss chance).",
+      "actionType": "passive",
+      "trigger": "While hidden",
+      "effects": [
+        { "type": "stealthBonus", "value": 5 },
+        { "type": "missChance", "value": 50 }
+      ],
+      "tags": ["stealth", "defense", "passive"],
+      "icon": "fas fa-mask"
+    },
+
+    "hunters-mark": {
+      "id": "hunters-mark",
+      "name": "Hunter's Mark",
+      "talentName": "Hunter's Mark",
+      "talentTree": "Bounty Hunter",
+      "description": "When you aim and then hit with your next attack, move the target -1 step on the condition track in addition to normal damage.",
+      "actionType": "passive",
+      "trigger": "Hit after using Aim action",
+      "effects": [
+        { "type": "conditionTrack", "value": -1, "target": "enemy" }
+      ],
+      "tags": ["damage", "condition-track", "passive"],
+      "icon": "fas fa-crosshairs"
+    },
+
+    "familiar-foe": {
+      "id": "familiar-foe",
+      "name": "Familiar Foe",
+      "talentName": "Familiar Foe",
+      "talentTree": "Bounty Hunter",
+      "description": "Gain +1 insight bonus to attack rolls against a designated target until the end of the encounter. You can designate a new target as a swift action.",
+      "actionType": "swift",
+      "effects": [
+        { "type": "attackBonus", "value": 1, "bonusType": "insight", "target": "designated", "duration": "encounter" }
+      ],
+      "tags": ["offense", "tracking", "swift"],
+      "icon": "fas fa-user-secret"
+    },
+
+    "hunters-target": {
+      "id": "hunters-target",
+      "name": "Hunter's Target",
+      "talentName": "Hunter's Target",
+      "talentTree": "Bounty Hunter",
+      "description": "Gain +2 insight bonus to damage rolls against your designated Familiar Foe target.",
+      "actionType": "passive",
+      "prerequisites": ["familiar-foe"],
+      "effects": [
+        { "type": "damageBonus", "value": 2, "bonusType": "insight", "target": "designated" }
+      ],
+      "tags": ["damage", "tracking", "passive"],
+      "icon": "fas fa-bullseye"
+    },
+
+    "acute-senses": {
+      "id": "acute-senses",
+      "name": "Acute Senses",
+      "talentName": "Acute Senses",
+      "talentTree": "Awareness",
+      "description": "You can reroll any Perception check, but you must keep the second result even if it's worse.",
+      "actionType": "passive",
+      "roll": {
+        "skillKey": "perception",
+        "reroll": true,
+        "keepSecond": true,
+        "label": "Perception (Acute Senses)"
+      },
+      "tags": ["perception", "reroll", "passive"],
+      "icon": "fas fa-search"
+    },
+
+    "keen-shot": {
+      "id": "keen-shot",
+      "name": "Keen Shot",
+      "talentName": "Keen Shot",
+      "talentTree": "Awareness",
+      "description": "Gain +1 insight bonus to ranged attack rolls against targets within 6 squares.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "attackBonus", "value": 1, "bonusType": "insight", "range": "within6Squares", "attackType": "ranged" }
+      ],
+      "tags": ["offense", "ranged", "passive"],
+      "icon": "fas fa-bullseye"
+    },
+
+    "armored-defense": {
+      "id": "armored-defense",
+      "name": "Armored Defense",
+      "talentName": "Armored Defense",
+      "talentTree": "Armored Defense",
+      "description": "When wearing armor, gain +1 bonus to Reflex Defense. This stacks with the armor's bonus.",
+      "actionType": "passive",
+      "condition": "Wearing armor",
+      "effects": [
+        { "type": "defenseBonus", "defense": "reflex", "value": 1, "condition": "wearingArmor" }
+      ],
+      "tags": ["defense", "armor", "passive"],
+      "icon": "fas fa-shield-alt"
+    },
+
+    "improved-armored-defense": {
+      "id": "improved-armored-defense",
+      "name": "Improved Armored Defense",
+      "talentName": "Improved Armored Defense",
+      "talentTree": "Armored Defense",
+      "description": "Increase armored defense bonus to +2.",
+      "actionType": "passive",
+      "prerequisites": ["armored-defense"],
+      "modifies": "armored-defense",
+      "effects": [
+        { "type": "defenseBonus", "defense": "reflex", "value": 1, "stacks": true }
+      ],
+      "tags": ["defense", "armor", "passive", "modifier"],
+      "icon": "fas fa-shield-alt"
+    },
+
+    "juggernaut": {
+      "id": "juggernaut",
+      "name": "Juggernaut",
+      "talentName": "Juggernaut",
+      "talentTree": "Armored Defense",
+      "description": "While wearing heavy armor, reduce damage from non-area attacks by an amount equal to your armor's equipment bonus to Reflex Defense.",
+      "actionType": "passive",
+      "condition": "Wearing heavy armor",
+      "effects": [
+        { "type": "damageReduction", "value": "armorBonus", "condition": "heavyArmor", "excludes": "areaAttacks" }
+      ],
+      "tags": ["defense", "armor", "passive"],
+      "icon": "fas fa-user-shield"
+    },
+
+    "second-skin": {
+      "id": "second-skin",
+      "name": "Second Skin",
+      "talentName": "Second Skin",
+      "talentTree": "Armored Defense",
+      "description": "Increase your armor's maximum Dexterity bonus by +1.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "armorEnhancement", "maxDexBonus": 1 }
+      ],
+      "tags": ["armor", "mobility", "passive"],
+      "icon": "fas fa-tshirt"
+    },
+
+    "melee-smash": {
+      "id": "melee-smash",
+      "name": "Melee Smash",
+      "talentName": "Melee Smash",
+      "talentTree": "Brawler",
+      "description": "When making a melee attack with a one-handed weapon or unarmed strike, add one-half your heroic level to damage.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "damageBonus", "value": "floor(level/2)", "attackType": "melee", "weapon": "oneHandedOrUnarmed" }
+      ],
+      "tags": ["damage", "melee", "passive"],
+      "icon": "fas fa-fist-raised"
+    },
+
+    "stunning-strike": {
+      "id": "stunning-strike",
+      "name": "Stunning Strike",
+      "talentName": "Stunning Strike",
+      "talentTree": "Brawler",
+      "description": "When you deal damage with a melee attack that exceeds the target's damage threshold, move target -1 step on condition track.",
+      "actionType": "passive",
+      "prerequisites": ["melee-smash"],
+      "trigger": "Melee damage exceeds target's damage threshold",
+      "effects": [
+        { "type": "conditionTrack", "value": -1, "target": "enemy" }
+      ],
+      "tags": ["damage", "condition-track", "passive"],
+      "icon": "fas fa-dizzy"
+    },
+
+    "unbalancing-attack": {
+      "id": "unbalancing-attack",
+      "name": "Unbalancing Attack",
+      "talentName": "Unbalancing Attack",
+      "talentTree": "Brawler",
+      "description": "After hitting with a melee attack, you may attempt to knock the target prone as a free action.",
+      "actionType": "free",
+      "trigger": "After hitting with a melee attack",
+      "effects": [
+        { "type": "condition", "value": "prone", "target": "enemy" }
+      ],
+      "roll": {
+        "type": "opposed",
+        "yourSkill": "athletics",
+        "vsSkill": "athletics",
+        "label": "Unbalancing Attack (Trip)"
+      },
+      "tags": ["melee", "control", "free"],
+      "icon": "fas fa-level-down-alt"
+    },
+
+    "draw-fire": {
+      "id": "draw-fire",
+      "name": "Draw Fire",
+      "talentName": "Draw Fire",
+      "talentTree": "Commando",
+      "description": "As a standard action, make a Persuasion check vs target's Will Defense. If successful, target must attack you if able, and cannot attack allies within 6 squares of you unless you have cover.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "persuasion",
+        "vsDefense": "will",
+        "label": "Draw Fire (Persuasion vs Will)"
+      },
+      "effects": [
+        { "type": "taunt", "target": "enemy", "range": 6 }
+      ],
+      "tags": ["control", "tank", "standard"],
+      "icon": "fas fa-bullseye"
+    },
+
+    "keep-them-at-bay": {
+      "id": "keep-them-at-bay",
+      "name": "Keep Them at Bay",
+      "talentName": "Keep Them at Bay",
+      "talentTree": "Commando",
+      "description": "When you aid another to suppress an attack, increase the suppression penalty from -2 to -5.",
+      "actionType": "modifier",
+      "modifies": "suppress",
+      "effects": [
+        { "type": "suppressionPenalty", "value": -5, "replaces": -2 }
+      ],
+      "tags": ["support", "suppression", "modifier"],
+      "icon": "fas fa-hand-paper"
+    },
+
+    "cover-fire": {
+      "id": "cover-fire",
+      "name": "Cover Fire",
+      "talentName": "Cover Fire",
+      "talentTree": "Commando",
+      "description": "When you make a ranged attack, allies within 6 squares gain +1 to all Defenses until your next turn.",
+      "actionType": "passive",
+      "trigger": "When you make a ranged attack",
+      "effects": [
+        { "type": "defenseBonus", "defense": "all", "value": 1, "target": "allies", "range": 6, "duration": "untilYourNextTurn" }
+      ],
+      "tags": ["support", "defense", "passive"],
+      "icon": "fas fa-shield-alt"
+    },
+
+    "battle-analysis": {
+      "id": "battle-analysis",
+      "name": "Battle Analysis",
+      "talentName": "Battle Analysis",
+      "talentTree": "Commando",
+      "description": "As a swift action, make a Knowledge (tactics) check DC 15. Success grants allies within 6 squares +1 insight bonus to attack rolls for the round.",
+      "actionType": "swift",
+      "roll": {
+        "skillKey": "knowledge",
+        "dc": 15,
+        "label": "Battle Analysis (Knowledge: Tactics)"
+      },
+      "effects": [
+        { "type": "attackBonus", "value": 1, "bonusType": "insight", "target": "allies", "range": 6, "duration": "round" }
+      ],
+      "tags": ["support", "tactics", "swift"],
+      "icon": "fas fa-chess"
+    },
+
+    "trigger-work": {
+      "id": "trigger-work",
+      "name": "Trigger Work",
+      "talentName": "Trigger Work",
+      "talentTree": "Gunslinger",
+      "description": "Negate the -2 penalty from Rapid Shot feat when making ranged attacks.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "negatesPenalty", "from": "rapidShot", "value": 2 }
+      ],
+      "tags": ["offense", "ranged", "passive"],
+      "icon": "fas fa-bullseye"
+    },
+
+    "debilitating-shot": {
+      "id": "debilitating-shot",
+      "name": "Debilitating Shot",
+      "talentName": "Debilitating Shot",
+      "talentTree": "Gunslinger",
+      "description": "When you aim and hit with a ranged attack, move the target -1 step on the condition track.",
+      "actionType": "passive",
+      "trigger": "Hit after Aim action",
+      "effects": [
+        { "type": "conditionTrack", "value": -1, "target": "enemy" }
+      ],
+      "tags": ["damage", "condition-track", "passive"],
+      "icon": "fas fa-crosshairs"
+    },
+
+    "knockdown-shot": {
+      "id": "knockdown-shot",
+      "name": "Knockdown Shot",
+      "talentName": "Knockdown Shot",
+      "talentTree": "Gunslinger",
+      "description": "When you aim and hit with a ranged attack, knock the target prone if they are no more than two size categories larger.",
+      "actionType": "passive",
+      "trigger": "Hit after Aim action",
+      "effects": [
+        { "type": "condition", "value": "prone", "target": "enemy", "sizeLimit": 2 }
+      ],
+      "tags": ["control", "ranged", "passive"],
+      "icon": "fas fa-level-down-alt"
+    },
+
+    "multiattack-proficiency": {
+      "id": "multiattack-proficiency",
+      "name": "Multiattack Proficiency",
+      "talentName": "Multiattack Proficiency",
+      "talentTree": "Weapon Master",
+      "description": "Reduce the penalty for making multiple attacks by 2 with a specific weapon group.",
+      "actionType": "passive",
+      "variable": true,
+      "variableType": "weaponGroup",
+      "effects": [
+        { "type": "attackPenaltyReduction", "value": 2, "condition": "multipleAttacks" }
+      ],
+      "tags": ["offense", "multiattack", "passive"],
+      "icon": "fas fa-clone"
+    },
+
+    "controlled-burst": {
+      "id": "controlled-burst",
+      "name": "Controlled Burst",
+      "talentName": "Controlled Burst",
+      "talentTree": "Weapon Master",
+      "description": "Reduce autofire or burst-fire penalty by 2. If braced, no penalty.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "attackPenaltyReduction", "value": 2, "condition": "autofire" },
+        { "type": "attackPenaltyReduction", "value": "full", "condition": "braced" }
+      ],
+      "tags": ["offense", "autofire", "passive"],
+      "icon": "fas fa-compress-arrows-alt"
+    },
+
+    "force-warning": {
+      "id": "force-warning",
+      "name": "Force Warning",
+      "talentName": "Force Warning",
+      "talentTree": "Force Sensitivity",
+      "description": "You cannot be surprised. You always act during a surprise round, even if you would not normally be aware of your opponents.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "immunity", "to": "surprise" },
+        { "type": "alwaysActInSurpriseRound" }
+      ],
+      "tags": ["force", "defense", "passive"],
+      "icon": "fas fa-exclamation-triangle"
+    },
+
+    "gauge-force-potential": {
+      "id": "gauge-force-potential",
+      "name": "Gauge Force Potential",
+      "talentName": "Gauge Force Potential",
+      "talentTree": "Force Sensitivity",
+      "description": "As a standard action, make a Use the Force check to determine a creature's Force Sensitivity, heroic level, and dark side score.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "useTheForce",
+        "dcTable": [
+          { "dc": 15, "result": "Determine if target is Force-sensitive" },
+          { "dc": 20, "result": "Determine target's heroic level" },
+          { "dc": 25, "result": "Determine target's dark side score" }
+        ],
+        "label": "Gauge Force Potential"
+      },
+      "tags": ["force", "sense", "standard"],
+      "icon": "fas fa-eye"
+    },
+
+    "force-treatment": {
+      "id": "force-treatment",
+      "name": "Force Treatment",
+      "talentName": "Force Treatment",
+      "talentTree": "Force Sensitivity",
+      "description": "As a standard action, make a Use the Force check instead of a Treat Injury check to treat an injured creature.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "useTheForce",
+        "substitutesFor": "treatInjury",
+        "label": "Force Treatment (Use the Force)"
+      },
+      "tags": ["force", "healing", "standard"],
+      "icon": "fas fa-hand-holding-medical"
+    },
+
+    "temporal-awareness": {
+      "id": "temporal-awareness",
+      "name": "Temporal Awareness",
+      "talentName": "Temporal Awareness",
+      "talentTree": "Force Sensitivity",
+      "description": "Once per encounter, when attacked, you may move up to your speed as an immediate reaction before the attack is resolved.",
+      "actionType": "reaction",
+      "trigger": "When attacked",
+      "effects": [
+        { "type": "movement", "value": "speed", "timing": "beforeAttack" }
+      ],
+      "uses": { "max": 1, "perEncounter": true },
+      "tags": ["force", "defense", "reaction"],
+      "icon": "fas fa-clock"
+    },
+
+    "rapid-reaction": {
+      "id": "rapid-reaction",
+      "name": "Rapid Reaction",
+      "talentName": "Rapid Reaction",
+      "talentTree": "Vanguard",
+      "description": "You can take one additional swift action per round.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "extraAction", "actionType": "swift", "perRound": 1 }
+      ],
+      "tags": ["action-economy", "passive"],
+      "icon": "fas fa-bolt"
+    },
+
+    "electronic-sabotage": {
+      "id": "electronic-sabotage",
+      "name": "Electronic Sabotage",
+      "talentName": "Electronic Sabotage",
+      "talentTree": "Slicer",
+      "description": "As a standard action, use Computer to sabotage electronics. Success causes penalties or disables the target system.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "useComputer",
+        "vsDefense": "system",
+        "label": "Electronic Sabotage (Use Computer)"
+      },
+      "effects": [
+        { "type": "systemPenalty", "target": "electronics" }
+      ],
+      "tags": ["tech", "sabotage", "standard"],
+      "icon": "fas fa-microchip"
+    },
+
+    "trace": {
+      "id": "trace",
+      "name": "Trace",
+      "talentName": "Trace",
+      "talentTree": "Slicer",
+      "description": "When you access a computer system, make a Use Computer check to trace any remote users.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "useComputer",
+        "vsSkill": "useComputer",
+        "label": "Trace (Use Computer)"
+      },
+      "tags": ["tech", "tracking", "standard"],
+      "icon": "fas fa-search-location"
+    },
+
+    "vehicular-evasion": {
+      "id": "vehicular-evasion",
+      "name": "Vehicular Evasion",
+      "talentName": "Vehicular Evasion",
+      "talentTree": "Ace Pilot",
+      "description": "When piloting a vehicle, if an attack against the vehicle's Reflex Defense would deal half damage on miss, it deals no damage instead.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "vehicleEvasion", "noDamageOnMiss": true }
+      ],
+      "tags": ["vehicle", "defense", "passive"],
+      "icon": "fas fa-plane"
+    },
+
+    "full-throttle": {
+      "id": "full-throttle",
+      "name": "Full Throttle",
+      "talentName": "Full Throttle",
+      "talentTree": "Ace Pilot",
+      "description": "When piloting, you may increase vehicle speed by 1 square per round as a free action.",
+      "actionType": "free",
+      "effects": [
+        { "type": "speedBonus", "value": 1, "target": "vehicle" }
+      ],
+      "tags": ["vehicle", "mobility", "free"],
+      "icon": "fas fa-tachometer-alt"
+    },
+
+    "juke": {
+      "id": "juke",
+      "name": "Juke",
+      "talentName": "Juke",
+      "talentTree": "Ace Pilot",
+      "description": "Once per encounter, as a reaction when your vehicle is attacked, add your heroic level to vehicle's Reflex Defense.",
+      "actionType": "reaction",
+      "trigger": "When vehicle is attacked",
+      "effects": [
+        { "type": "defenseBonus", "defense": "reflex", "value": "level", "target": "vehicle" }
+      ],
+      "uses": { "max": 1, "perEncounter": true },
+      "tags": ["vehicle", "defense", "reaction"],
+      "icon": "fas fa-random"
+    },
+
+    "starship-tactics": {
+      "id": "starship-tactics",
+      "name": "Starship Tactics",
+      "talentName": "Starship Tactics",
+      "talentTree": "Ace Pilot",
+      "description": "As a swift action, grant all gunners on your starship +2 to attack rolls until the start of your next turn.",
+      "actionType": "swift",
+      "effects": [
+        { "type": "attackBonus", "value": 2, "target": "crewGunners", "duration": "untilYourNextTurn" }
+      ],
+      "tags": ["vehicle", "support", "swift"],
+      "icon": "fas fa-rocket"
+    },
+
+    "elusive-target": {
+      "id": "elusive-target",
+      "name": "Elusive Target",
+      "talentName": "Elusive Target",
+      "talentTree": "Fringer",
+      "description": "When fighting defensively or using total defense, gain an additional +2 to Reflex Defense.",
+      "actionType": "passive",
+      "condition": "Fighting defensively or total defense",
+      "effects": [
+        { "type": "defenseBonus", "defense": "reflex", "value": 2, "condition": "defensive" }
+      ],
+      "tags": ["defense", "passive"],
+      "icon": "fas fa-wind"
+    },
+
+    "fringe-savant": {
+      "id": "fringe-savant",
+      "name": "Fringe Savant",
+      "talentName": "Fringe Savant",
+      "talentTree": "Fringer",
+      "description": "Choose one trained skill. You gain +5 competence bonus on checks with that skill.",
+      "actionType": "passive",
+      "variable": true,
+      "variableType": "skill",
+      "effects": [
+        { "type": "skillBonus", "value": 5, "bonusType": "competence", "permanent": true }
+      ],
+      "tags": ["skill", "passive", "variable"],
+      "icon": "fas fa-graduation-cap"
+    },
+
+    "long-stride": {
+      "id": "long-stride",
+      "name": "Long Stride",
+      "talentName": "Long Stride",
+      "talentTree": "Fringer",
+      "description": "Increase your base speed by 2 squares.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "speedBonus", "value": 2, "permanent": true }
+      ],
+      "tags": ["mobility", "passive"],
+      "icon": "fas fa-running"
+    },
+
+    "barter": {
+      "id": "barter",
+      "name": "Barter",
+      "talentName": "Barter",
+      "talentTree": "Influence",
+      "description": "When buying goods or services, reduce the cost by 10% by succeeding on a Persuasion check.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "persuasion",
+        "dc": "vendorWill",
+        "label": "Barter (Persuasion)"
+      },
+      "effects": [
+        { "type": "costReduction", "value": 10, "unit": "percent" }
+      ],
+      "tags": ["social", "economy", "standard"],
+      "icon": "fas fa-handshake"
+    },
+
+    "weaken-resolve": {
+      "id": "weaken-resolve",
+      "name": "Weaken Resolve",
+      "talentName": "Weaken Resolve",
+      "talentTree": "Influence",
+      "description": "As a standard action, make a Persuasion check vs Will Defense. Success imposes -2 to all defenses until end of your next turn.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "persuasion",
+        "vsDefense": "will",
+        "label": "Weaken Resolve (Persuasion vs Will)"
+      },
+      "effects": [
+        { "type": "defensePenalty", "defense": "all", "value": -2, "duration": "untilYourNextTurn" }
+      ],
+      "tags": ["social", "debuff", "standard"],
+      "icon": "fas fa-frown"
+    },
+
+    "presence": {
+      "id": "presence",
+      "name": "Presence",
+      "talentName": "Presence",
+      "talentTree": "Influence",
+      "description": "You can use Persuasion instead of Deception to feint in combat.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "skillSubstitution", "replaceSkill": "deception", "withSkill": "persuasion", "for": "feint" }
+      ],
+      "tags": ["social", "combat", "passive"],
+      "icon": "fas fa-user-tie"
+    },
+
+    "demand-surrender": {
+      "id": "demand-surrender",
+      "name": "Demand Surrender",
+      "talentName": "Demand Surrender",
+      "talentTree": "Influence",
+      "description": "Once per encounter, as a standard action, make Persuasion vs Will. If target is below half HP and you succeed by 5+, target surrenders.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "persuasion",
+        "vsDefense": "will",
+        "successBy": 5,
+        "label": "Demand Surrender (Persuasion vs Will)"
+      },
+      "condition": "Target below half HP",
+      "effects": [
+        { "type": "condition", "value": "surrendered", "target": "enemy" }
+      ],
+      "uses": { "max": 1, "perEncounter": true },
+      "tags": ["social", "control", "standard"],
+      "icon": "fas fa-flag"
+    },
+
+    "lucky-shot": {
+      "id": "lucky-shot",
+      "name": "Lucky Shot",
+      "talentName": "Lucky Shot",
+      "talentTree": "Fortune",
+      "description": "Once per day, reroll one attack roll and take the better result.",
+      "actionType": "free",
+      "trigger": "After making an attack roll",
+      "effects": [
+        { "type": "reroll", "rollType": "attack", "keepBetter": true }
+      ],
+      "uses": { "max": 1, "perDay": true },
+      "tags": ["luck", "offense", "free"],
+      "icon": "fas fa-dice"
+    },
+
+    "fortunes-favor": {
+      "id": "fortunes-favor",
+      "name": "Fortune's Favor",
+      "talentName": "Fortune's Favor",
+      "talentTree": "Fortune",
+      "description": "Once per day, add +1d6 to any d20 roll after seeing the result.",
+      "actionType": "free",
+      "trigger": "After making a d20 roll",
+      "effects": [
+        { "type": "rollBonus", "value": "1d6", "timing": "afterRoll" }
+      ],
+      "uses": { "max": 1, "perDay": true },
+      "tags": ["luck", "universal", "free"],
+      "icon": "fas fa-clover"
+    },
+
+    "knack": {
+      "id": "knack",
+      "name": "Knack",
+      "talentName": "Knack",
+      "talentTree": "Fortune",
+      "description": "Once per day, treat a skill check as if you rolled a natural 20.",
+      "actionType": "free",
+      "trigger": "When making a skill check",
+      "effects": [
+        { "type": "guaranteedResult", "value": 20, "rollType": "skill" }
+      ],
+      "uses": { "max": 1, "perDay": true },
+      "tags": ["luck", "skill", "free"],
+      "icon": "fas fa-star"
+    },
+
+    "droidcraft": {
+      "id": "droidcraft",
+      "name": "Droidcraft",
+      "talentName": "Droidcraft",
+      "talentTree": "Droid Specialist",
+      "description": "You can create droids in half the normal time. Gain +5 to Mechanics checks to repair or modify droids.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "craftingTime", "reduction": 50, "unit": "percent", "itemType": "droid" },
+        { "type": "skillBonus", "skillKey": "mechanics", "value": 5, "condition": "droids" }
+      ],
+      "tags": ["tech", "crafting", "passive"],
+      "icon": "fas fa-robot"
+    },
+
+    "master-slicer": {
+      "id": "master-slicer",
+      "name": "Master Slicer",
+      "talentName": "Master Slicer",
+      "talentTree": "Slicer",
+      "description": "Gain +5 competence bonus to Use Computer checks.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "skillBonus", "skillKey": "useComputer", "value": 5, "bonusType": "competence" }
+      ],
+      "tags": ["tech", "skill", "passive"],
+      "icon": "fas fa-laptop-code"
+    },
+
+    "lightsaber-defense": {
+      "id": "lightsaber-defense",
+      "name": "Lightsaber Defense",
+      "talentName": "Lightsaber Defense",
+      "talentTree": "Lightsaber Combat",
+      "description": "While wielding a lightsaber, gain +1 deflection bonus to Reflex Defense.",
+      "actionType": "passive",
+      "condition": "Wielding a lightsaber",
+      "effects": [
+        { "type": "defenseBonus", "defense": "reflex", "value": 1, "bonusType": "deflection" }
+      ],
+      "tags": ["defense", "lightsaber", "passive"],
+      "icon": "fas fa-shield-alt"
+    },
+
+    "lightsaber-throw": {
+      "id": "lightsaber-throw",
+      "name": "Lightsaber Throw",
+      "talentName": "Lightsaber Throw",
+      "talentTree": "Lightsaber Combat",
+      "description": "As a standard action, make a ranged attack with your lightsaber against a target within 6 squares. The lightsaber returns to your hand.",
+      "actionType": "standard",
+      "range": 6,
+      "roll": {
+        "type": "attack",
+        "attackType": "ranged",
+        "weapon": "lightsaber",
+        "label": "Lightsaber Throw"
+      },
+      "tags": ["offense", "lightsaber", "standard"],
+      "icon": "fas fa-satellite"
+    },
+
+    "severing-strike": {
+      "id": "severing-strike",
+      "name": "Severing Strike",
+      "talentName": "Severing Strike",
+      "talentTree": "Lightsaber Combat",
+      "description": "When you deal damage exceeding target's damage threshold with a lightsaber, you may choose to sever a limb instead of moving them down condition track.",
+      "actionType": "passive",
+      "trigger": "Lightsaber damage exceeds target's damage threshold",
+      "effects": [
+        { "type": "sever", "target": "limb", "optional": true }
+      ],
+      "tags": ["offense", "lightsaber", "passive"],
+      "icon": "fas fa-cut"
+    },
+
+    "dark-side-sense": {
+      "id": "dark-side-sense",
+      "name": "Dark Side Sense",
+      "talentName": "Dark Side Sense",
+      "talentTree": "Force Sensitivity",
+      "description": "As a standard action, make a Use the Force check to sense the presence of the dark side within 100 meters per level.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "useTheForce",
+        "dc": 15,
+        "label": "Dark Side Sense"
+      },
+      "tags": ["force", "sense", "standard"],
+      "icon": "fas fa-moon"
+    },
+
+    "force-intuition": {
+      "id": "force-intuition",
+      "name": "Force Intuition",
+      "talentName": "Force Intuition",
+      "talentTree": "Force Sensitivity",
+      "description": "You may use your Use the Force skill modifier instead of Initiative when making Initiative checks.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "skillSubstitution", "replaceSkill": "initiative", "withSkill": "useTheForce" }
+      ],
+      "tags": ["force", "initiative", "passive"],
+      "icon": "fas fa-lightbulb"
+    },
+
+    "ataru": {
+      "id": "ataru",
+      "name": "Ataru",
+      "talentName": "Ataru",
+      "talentTree": "Lightsaber Forms",
+      "description": "When making acrobatic maneuvers, gain +2 to attack rolls but -2 to Reflex Defense until your next turn.",
+      "actionType": "passive",
+      "toggleable": true,
+      "effects": [
+        { "type": "attackBonus", "value": 2, "condition": "acrobaticManeuvers" },
+        { "type": "defensePenalty", "defense": "reflex", "value": -2 }
+      ],
+      "tags": ["lightsaber", "form", "toggleable"],
+      "icon": "fas fa-wind"
+    },
+
+    "djem-so": {
+      "id": "djem-so",
+      "name": "Djem So",
+      "talentName": "Djem So",
+      "talentTree": "Lightsaber Forms",
+      "description": "When you successfully block or deflect an attack, you may make an immediate counterattack against the attacker.",
+      "actionType": "reaction",
+      "trigger": "After successfully using Block or Deflect",
+      "prerequisites": ["block", "deflect"],
+      "effects": [
+        { "type": "counterattack", "target": "attacker" }
+      ],
+      "tags": ["lightsaber", "form", "reaction"],
+      "icon": "fas fa-exchange-alt"
+    },
+
+    "makashi": {
+      "id": "makashi",
+      "name": "Makashi",
+      "talentName": "Makashi",
+      "talentTree": "Lightsaber Forms",
+      "description": "When wielding a lightsaber in one hand with nothing in the other, gain +2 to attack rolls against targets wielding melee weapons.",
+      "actionType": "passive",
+      "condition": "Lightsaber in one hand, other hand empty",
+      "effects": [
+        { "type": "attackBonus", "value": 2, "condition": "vsmeleeWielders" }
+      ],
+      "tags": ["lightsaber", "form", "passive"],
+      "icon": "fas fa-fencing"
+    },
+
+    "niman": {
+      "id": "niman",
+      "name": "Niman",
+      "talentName": "Niman",
+      "talentTree": "Lightsaber Forms",
+      "description": "When you use a Force power as a standard action, you may make a single lightsaber attack as a swift action.",
+      "actionType": "swift",
+      "trigger": "After using a Force power as standard action",
+      "effects": [
+        { "type": "bonusAttack", "weapon": "lightsaber", "actionType": "swift" }
+      ],
+      "tags": ["lightsaber", "form", "swift"],
+      "icon": "fas fa-atom"
+    },
+
+    "shien": {
+      "id": "shien",
+      "name": "Shien",
+      "talentName": "Shien",
+      "talentTree": "Lightsaber Forms",
+      "description": "When you successfully deflect a ranged attack, you may spend a Force Point to automatically redirect it back at the attacker.",
+      "actionType": "reaction",
+      "trigger": "After successfully using Deflect",
+      "cost": { "forcePoints": 1 },
+      "effects": [
+        { "type": "autoRedirect", "target": "attacker" }
+      ],
+      "tags": ["lightsaber", "form", "reaction", "force-point"],
+      "icon": "fas fa-shield-alt"
+    },
+
+    "shii-cho": {
+      "id": "shii-cho",
+      "name": "Shii-Cho",
+      "talentName": "Shii-Cho",
+      "talentTree": "Lightsaber Forms",
+      "description": "When wielding a lightsaber and fighting multiple opponents, gain +1 to attack and damage for each opponent beyond the first adjacent to you.",
+      "actionType": "passive",
+      "condition": "Multiple adjacent opponents",
+      "effects": [
+        { "type": "attackBonus", "value": 1, "perAdditionalOpponent": true },
+        { "type": "damageBonus", "value": 1, "perAdditionalOpponent": true }
+      ],
+      "tags": ["lightsaber", "form", "passive"],
+      "icon": "fas fa-users"
+    },
+
+    "soresu": {
+      "id": "soresu",
+      "name": "Soresu",
+      "talentName": "Soresu",
+      "talentTree": "Lightsaber Forms",
+      "description": "While wielding a lightsaber, once per round you may Block or Deflect without using your reaction.",
+      "actionType": "passive",
+      "effects": [
+        { "type": "freeReaction", "ability": "block-or-deflect", "perRound": 1 }
+      ],
+      "tags": ["lightsaber", "form", "passive"],
+      "icon": "fas fa-shield-alt"
+    },
+
+    "juyo": {
+      "id": "juyo",
+      "name": "Juyo",
+      "talentName": "Juyo",
+      "talentTree": "Lightsaber Forms",
+      "description": "When making a full attack with a lightsaber, gain +2 to damage rolls but -2 to all defenses until your next turn.",
+      "actionType": "passive",
+      "toggleable": true,
+      "effects": [
+        { "type": "damageBonus", "value": 2, "condition": "fullAttack" },
+        { "type": "defensePenalty", "defense": "all", "value": -2 }
+      ],
+      "tags": ["lightsaber", "form", "toggleable"],
+      "icon": "fas fa-skull"
+    },
+
+    "vaapad": {
+      "id": "vaapad",
+      "name": "Vaapad",
+      "talentName": "Vaapad",
+      "talentTree": "Lightsaber Forms",
+      "description": "When you score a critical hit with a lightsaber, move the target -1 step on the condition track in addition to extra damage.",
+      "actionType": "passive",
+      "trigger": "Critical hit with lightsaber",
+      "prerequisites": ["juyo"],
+      "effects": [
+        { "type": "conditionTrack", "value": -1, "target": "enemy", "trigger": "criticalHit" }
+      ],
+      "tags": ["lightsaber", "form", "passive"],
+      "icon": "fas fa-bolt"
+    }
+  }
+}

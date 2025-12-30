@@ -26,6 +26,7 @@ import { FeatActionsMapper } from '../../utils/feat-actions-mapper.js';
 import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
 import { FeatSystem } from "../../engine/FeatSystem.js";
 import { SkillSystem } from "../../engine/SkillSystem.js";
+import { TalentAbilitiesEngine } from "../../engine/TalentAbilitiesEngine.js";
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
@@ -194,6 +195,11 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       ? classes.map(c => `${c.name} ${c.system.level || 1}`).join(" / ")
       : "No classes";
 
+    // --------------------------------------
+    // 8. TALENT ABILITIES (NEW)
+    // --------------------------------------
+    context.talentAbilities = TalentAbilitiesEngine.getAbilitiesForActor(actor);
+
     return context;
   }
 // ----------------------------------------------------------
@@ -208,7 +214,18 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
         html.find('.feat-ct').click(ev => this._onFeatCT(ev));
         html.find('.feat-force').click(ev => this._onFeatForce(ev));
         html.find('.feat-card-header').click(ev => this._toggleFeatCard(ev));
-    
+
+        // Talent Abilities handlers
+        html.find('.ability-card-header').click(ev => this._onExpandAbilityCard(ev));
+        html.find('.ability-roll-btn').click(ev => this._onRollTalentAbility(ev));
+        html.find('.ability-toggle-btn').click(ev => this._onToggleTalentAbility(ev));
+        html.find('.ability-post-btn').click(ev => this._onPostTalentAbility(ev));
+        html.find('.ability-view-talent-btn').click(ev => this._onViewTalentFromAbility(ev));
+        html.find('.ability-choice-btn').click(ev => this._onUseAbilityChoice(ev));
+        html.find('.ability-special-action-btn').click(ev => this._onUseSpecialAction(ev));
+        html.find('.ability-reset-btn').click(ev => this._onResetAbilityUses(ev));
+        html.find('.ability-filter-btn').click(ev => this._onFilterAbilities(ev));
+
 
         super.activateListeners(html);
         html.find(".defense-input-sm, .defense-select-sm").change(ev => {
@@ -711,7 +728,234 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
 
-  
+  // ----------------------------------------------------------
+  // I.2 Talent Abilities Engine (NEW)
+  // ----------------------------------------------------------
+
+  /**
+   * Expand/collapse an ability card
+   */
+  _onExpandAbilityCard(event) {
+    event.preventDefault();
+    const header = event.currentTarget;
+    const card = header.closest('.ability-card');
+    const body = card.querySelector('.ability-card-body');
+    const icon = header.querySelector('.ability-expand-icon i');
+
+    card.classList.toggle('expanded');
+
+    if (card.classList.contains('expanded')) {
+      body.style.display = 'flex';
+      icon?.classList.replace('fa-chevron-down', 'fa-chevron-up');
+    } else {
+      body.style.display = 'none';
+      icon?.classList.replace('fa-chevron-up', 'fa-chevron-down');
+    }
+  }
+
+  /**
+   * Roll a talent ability check
+   */
+  async _onRollTalentAbility(event) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const abilityId = btn.dataset.abilityId;
+    const talentId = btn.dataset.talentId;
+
+    // Get the ability data
+    const abilities = TalentAbilitiesEngine.getAbilitiesForActor(this.actor);
+    const ability = abilities.all.find(a => a.id === abilityId);
+
+    if (!ability) {
+      return ui.notifications.warn("Ability not found.");
+    }
+
+    // Check for conditional bonus checkbox
+    const card = btn.closest('.ability-card');
+    const conditionalCheckbox = card?.querySelector('.conditional-bonus-checkbox');
+    const applyConditionalBonus = conditionalCheckbox?.checked || false;
+
+    // Roll the ability
+    await TalentAbilitiesEngine.rollAbility(this.actor, ability, {
+      applyConditionalBonus
+    });
+
+    // Re-render to update uses
+    this.render();
+  }
+
+  /**
+   * Toggle a toggleable talent ability
+   */
+  async _onToggleTalentAbility(event) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const abilityId = btn.dataset.abilityId;
+
+    const newState = await TalentAbilitiesEngine.toggleAbility(this.actor, abilityId);
+    ui.notifications.info(newState ? "Ability activated" : "Ability deactivated");
+
+    this.render();
+  }
+
+  /**
+   * Post talent ability details to chat
+   */
+  async _onPostTalentAbility(event) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const abilityId = btn.dataset.abilityId;
+
+    const abilities = TalentAbilitiesEngine.getAbilitiesForActor(this.actor);
+    const ability = abilities.all.find(a => a.id === abilityId);
+
+    if (!ability) {
+      return ui.notifications.warn("Ability not found.");
+    }
+
+    await TalentAbilitiesEngine.postAbilityToChat(this.actor, ability);
+  }
+
+  /**
+   * View the source talent for an ability
+   */
+  async _onViewTalentFromAbility(event) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const talentId = btn.dataset.talentId;
+
+    const talent = this.actor.items.get(talentId);
+    if (talent) {
+      talent.sheet.render(true);
+    } else {
+      ui.notifications.warn("Source talent not found.");
+    }
+  }
+
+  /**
+   * Use an ability choice (for multi-option abilities)
+   */
+  async _onUseAbilityChoice(event) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const abilityId = btn.dataset.abilityId;
+    const choiceIndex = parseInt(btn.dataset.choiceIndex);
+
+    const abilities = TalentAbilitiesEngine.getAbilitiesForActor(this.actor);
+    const ability = abilities.all.find(a => a.id === abilityId);
+
+    if (!ability || !ability.choices?.[choiceIndex]) {
+      return ui.notifications.warn("Choice not found.");
+    }
+
+    const choice = ability.choices[choiceIndex];
+
+    // Post choice to chat
+    const content = `
+      <div class="swse-ability-card">
+        <div class="ability-card-header">
+          <i class="${ability.icon}"></i>
+          <h3>${ability.name}: ${choice.name}</h3>
+          <span class="ability-type-badge type-${choice.actionType}">${choice.actionType}</span>
+        </div>
+        <div class="ability-card-body">
+          <p class="ability-source"><em>From: ${ability.sourceTalentName}</em></p>
+          <p class="ability-description">${choice.effect}</p>
+        </div>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content
+    });
+
+    // Decrement uses if limited
+    if (ability.usesData?.isLimited) {
+      await TalentAbilitiesEngine.useAbility(this.actor, ability.sourceTalentId);
+      this.render();
+    }
+  }
+
+  /**
+   * Use special action (like Force Focus recharge)
+   */
+  async _onUseSpecialAction(event) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const abilityId = btn.dataset.abilityId;
+    const talentId = btn.dataset.talentId;
+
+    const abilities = TalentAbilitiesEngine.getAbilitiesForActor(this.actor);
+    const ability = abilities.all.find(a => a.id === abilityId);
+
+    if (!ability?.specialAction) {
+      return ui.notifications.warn("Special action not found.");
+    }
+
+    // Post special action to chat
+    const content = `
+      <div class="swse-ability-card">
+        <div class="ability-card-header">
+          <i class="${ability.icon}"></i>
+          <h3>${ability.specialAction.name}</h3>
+          <span class="ability-type-badge type-${ability.specialAction.actionType}">${ability.specialActionData?.typeLabel || ability.specialAction.actionType}</span>
+        </div>
+        <div class="ability-card-body">
+          <p class="ability-source"><em>From: ${ability.name} (${ability.sourceTalentName})</em></p>
+          <p class="ability-description">${ability.specialAction.effect}</p>
+        </div>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content
+    });
+
+    ui.notifications.info(`Used ${ability.specialAction.name}`);
+  }
+
+  /**
+   * Reset ability uses (encounter or day)
+   */
+  async _onResetAbilityUses(event) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const resetType = btn.dataset.action === 'resetDayUses' ? 'day' : 'encounter';
+
+    await TalentAbilitiesEngine.resetAbilityUses(this.actor, resetType);
+    ui.notifications.info(`Reset ${resetType} ability uses.`);
+
+    this.render();
+  }
+
+  /**
+   * Filter abilities by type
+   */
+  _onFilterAbilities(event) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const filter = btn.dataset.filter;
+    const container = btn.closest('.swse-talent-abilities-container');
+
+    // Update active button
+    container.querySelectorAll('.ability-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Filter cards
+    const cards = container.querySelectorAll('.ability-card');
+    cards.forEach(card => {
+      if (filter === 'all') {
+        card.style.display = '';
+      } else {
+        const cardType = card.dataset.actionType;
+        card.style.display = cardType === filter ? '' : 'none';
+      }
+    });
+  }
+
+
   // ----------------------------------------------------------
   // J. Force Suite Engine
   // ----------------------------------------------------------
