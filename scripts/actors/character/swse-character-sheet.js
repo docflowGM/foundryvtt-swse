@@ -452,7 +452,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
   // ----------------------------------------------------------
-  // E.4 Class Picker (uses levelup API)
+  // E.4 Class Picker (Progression Engine Integrated)
   // ----------------------------------------------------------
   async _showClassPicker() {
     const { getAvailableClasses } = await import('../../apps/levelup/levelup-class.js');
@@ -464,7 +464,32 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       classes,
       cls => `<strong>${cls.name}</strong> — ${cls.description ?? ""}`,
       async cls => {
-        await this._addClassToActor(cls.id, cls.name, 1);
+        // Use progression engine if available
+        try {
+          const { SWSEProgressionEngine } = await import('../../engine/progression.js');
+          const engine = new SWSEProgressionEngine(this.actor, "chargen");
+
+          // Call the progression engine action
+          await engine.doAction('confirmClass', {
+            classId: cls.id,
+            skipPrerequisites: false
+          });
+
+          ui.notifications.info(`Class selected: ${cls.name}`);
+        } catch (err) {
+          // Fallback to direct item creation if progression engine fails
+          console.warn("Progression engine failed for class, using fallback:", err);
+          const classItem = {
+            name: cls.name,
+            type: 'class',
+            system: {
+              level: 1,
+              description: cls.description || ''
+            }
+          };
+          await this.actor.createEmbeddedDocuments("Item", [classItem]);
+          ui.notifications.info(`Class added: ${cls.name}`);
+        }
       }
     );
   }
