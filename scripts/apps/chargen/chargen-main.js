@@ -469,7 +469,8 @@ export default class CharacterGenerator extends Application {
     } else {
       // PC workflow: normal flow with class and talents
       // Note: skills before feats to allow Skill Focus validation
-      steps.push("abilities", "class", "background", "skills", "feats", "talents");
+      // Note: languages after skills (INT-dependent) for both living and droid characters
+      steps.push("abilities", "class", "background", "skills", "languages", "feats", "talents");
 
       // Add force powers step if character is Force-sensitive
       if (this.characterData.forceSensitive && this._getForcePowersNeeded() > 0) {
