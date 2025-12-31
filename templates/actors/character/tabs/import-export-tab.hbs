@@ -1,0 +1,188 @@
+{{!-- Import/Export Tab --}}
+<div class="tab import-export-tab" data-group="primary" data-tab="import-export">
+  <div class="import-export-container">
+
+    <div class="import-export-section">
+      <h2>
+        <i class="fas fa-file-export"></i> Export Character
+      </h2>
+      <p class="section-description">
+        Export your character data to a JSON file that can be saved to your computer,
+        shared with others, or used as a backup.
+      </p>
+
+      <div class="export-options">
+        <button class="export-character-json-btn" title="Export character to JSON file">
+          <i class="fas fa-download"></i> Export Character
+        </button>
+
+        <button class="export-template-btn" title="Download a blank character template">
+          <i class="fas fa-file-alt"></i> Download Template
+        </button>
+      </div>
+
+      <div class="export-info">
+        <p><strong>What's included in the export:</strong></p>
+        <ul>
+          <li>All character attributes and stats</li>
+          <li>Classes, feats, talents, and force powers</li>
+          <li>Equipment and inventory</li>
+          <li>Active effects and conditions</li>
+          <li>Biography and notes</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <div class="import-export-section">
+      <h2>
+        <i class="fas fa-file-import"></i> Import Character
+      </h2>
+      <p class="section-description">
+        Import a character from a JSON or text file. You can import a previously exported
+        character or create a character using the provided template.
+      </p>
+
+      <div class="import-options">
+        <button class="import-character-btn" title="Import character from file">
+          <i class="fas fa-upload"></i> Import Character
+        </button>
+      </div>
+
+      <div class="import-info">
+        <p><strong>Supported formats:</strong></p>
+        <ul>
+          <li><strong>.json</strong> - Exported character files</li>
+          <li><strong>.txt</strong> - Text files containing valid JSON data</li>
+        </ul>
+
+        <p class="hint">
+          <i class="fas fa-info-circle"></i>
+          <strong>Tip:</strong> Download a template file, fill it out, and import it to quickly
+          create a new character!
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .import-export-tab {
+    padding: 20px;
+  }
+
+  .import-export-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .import-export-section {
+    margin-bottom: 30px;
+  }
+
+  .import-export-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 1.4em;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+    padding-bottom: 8px;
+  }
+
+  .section-description {
+    margin-bottom: 15px;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  .export-options,
+  .import-options {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .export-character-json-btn,
+  .export-template-btn,
+  .import-character-btn {
+    padding: 12px 24px;
+    font-size: 1em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+
+  .export-character-json-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .export-character-json-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  .export-template-btn {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+
+  .export-template-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
+  }
+
+  .import-character-btn {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+  }
+
+  .import-character-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
+  }
+
+  .export-info,
+  .import-info {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 15px;
+    border-radius: 4px;
+    font-size: 0.95em;
+  }
+
+  .export-info ul,
+  .import-info ul {
+    margin: 10px 0;
+    padding-left: 25px;
+  }
+
+  .export-info li,
+  .import-info li {
+    margin: 5px 0;
+  }
+
+  .section-divider {
+    margin: 40px 0;
+    border: none;
+    border-top: 2px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .hint {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(79, 172, 254, 0.1);
+    border-left: 3px solid #4facfe;
+    border-radius: 4px;
+  }
+
+  .hint i {
+    color: #4facfe;
+  }
+</style>
