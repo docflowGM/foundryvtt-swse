@@ -354,7 +354,15 @@
   {
     "name": "Mantellian Savrip",
     "racialTraits": [
-      "Mantellian Savrip-Brutish Physiology: A Mantellian Savrip gains a +2 species bonus on melee attack rolls."
+      "Mantellian Savrip-Ability Modifiers: All Mantellian Savrips receive a +4 bonus to both their Strength and Constitution, but suffer -4 penalties to their Intelligence, Wisdom, and Charisma, as well as a -2 penalty to their Dexterity.",
+      "Mantellian Savrip-Large Size: As Large creatures, Mantellian Savrips take a -1 size penalty to their Reflex Defense and a -5 size penalty on Stealth checks, and they gain a +5 size bonus to their Damage Threshold. Their lifting and carrying limits are double those of Medium characters.",
+      "Mantellian Savrip-Speed: Mantellian Savrips have a base speed of 8 squares.",
+      "Mantellian Savrip-Natural Armor: Mantellian Savrips gain a +2 Natural Armor bonus to their Reflex Defense. A Natural Armor bonus stacks with an Armor bonus.",
+      "Mantellian Savrip-Natural Weapons: A Mantellian Savrip has Natural Weapons, in the form of tough claws. When making an Unarmed attack, it may choose to use its Natural Weapons, dealing 1d6 points of Slashing damage instead of normal Unarmed damage. Mantellian Savrips are always considered armed with their Natural Weapons.",
+      "Mantellian Savrip-Poison: If the Natural Weapons of a Mantellian Savrip deal damage to a living target, the target is also Poisoned. If the Poison succeeds on an attack roll (1d20 + Character Level) against the target's Fortitude Defense, the target moves -1 step along the Condition Track. A target moved to the end of the Condition Track by the Poison is Immobilized, but not Unconscious.",
+      "Mantellian Savrip-Primitive: Mantellian Savrips do not gain Weapon Proficiency (Heavy Weapons), Weapon Proficiency (Pistols), or Weapon Proficiency (Rifles) as starting Feats at first level, even if their Class normally grants them.",
+      "Mantellian Savrip-Rage: Once per day, a Mantellian Savrip can fly into a Rage as a Swift Action. While Raging, the Mantellian Savrip temporarily gains a +2 Rage bonus on melee attack rolls and melee damage rolls, but cannot use Skills that require patience and concentration (Mechanics, Stealth, Use the Force). A fit of Rage lasts for a number of rounds equal to 5 + the Mantellian Savrip's Constitution modifier. At the end of its Rage, the Mantellian Savrip moves -1 Persistent step along the Condition Track. The penalties persist until the Mantellian Savrip takes at least 10 minutes to recuperate.",
+      "Mantellian Savrip-Automatic Languages: All Mantellian Savrips can speak Savrip."
     ]
   },
   {
