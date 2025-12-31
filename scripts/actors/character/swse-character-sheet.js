@@ -208,6 +208,9 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
   activateListeners(html) {
 
+        // Progression Engine Integrated Buttons
+        html.find('.roll-attributes-btn').click(ev => this._onRollAttributes(ev));
+
         // Feat Actions handlers
         html.find('.feat-roll').click(ev => this._onFeatRoll(ev));
         html.find('.feat-attack').click(ev => this._onFeatAttack(ev));
@@ -232,7 +235,6 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
             this.actor.prepareData();
             this.render();
         });
-    super.activateListeners(html);
     const root = html[0];
 
     const on = (event, selector, handler) => {
@@ -326,7 +328,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   }
 
   // ----------------------------------------------------------
-  // E.1 Feat Picker
+  // E.1 Feat Picker (Progression Engine Integrated)
   // ----------------------------------------------------------
   async _showFeatPicker() {
     const pack = game.packs.get('foundryvtt-swse.feats');
@@ -338,14 +340,35 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       docs,
       feat => `<strong>${feat.name}</strong><br><small>${feat.system.description ?? ""}</small>`,
       async feat => {
-        await this.actor.createEmbeddedDocuments("Item", [feat.toObject()]);
-        ui.notifications.info(`Added feat: ${feat.name}`);
+        // Use progression engine if available
+        try {
+          const { SWSEProgressionEngine } = await import('../../engine/progression.js');
+          const engine = new SWSEProgressionEngine(this.actor, "chargen");
+
+          // Get current feats from progression data
+          const feats = engine.data.feats || [];
+          if (!feats.includes(feat.name)) {
+            feats.push(feat.name);
+          }
+
+          // Call the progression engine action
+          await engine.doAction('confirmFeats', {
+            featIds: feats
+          });
+
+          ui.notifications.info(`Added feat: ${feat.name}`);
+        } catch (err) {
+          // Fallback to old method if progression engine fails
+          console.warn("Progression engine failed, using fallback:", err);
+          await this.actor.createEmbeddedDocuments("Item", [feat.toObject()]);
+          ui.notifications.info(`Added feat: ${feat.name}`);
+        }
       }
     );
   }
 
   // ----------------------------------------------------------
-  // E.2 Talent Picker
+  // E.2 Talent Picker (Progression Engine Integrated)
   // ----------------------------------------------------------
   async _showTalentPicker() {
     const pack = game.packs.get('foundryvtt-swse.talents');
@@ -357,14 +380,35 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       docs,
       tal => `<strong>${tal.name}</strong><br><small>${tal.system.description ?? ""}</small>`,
       async tal => {
-        await this.actor.createEmbeddedDocuments("Item", [tal.toObject()]);
-        ui.notifications.info(`Added talent: ${tal.name}`);
+        // Use progression engine if available
+        try {
+          const { SWSEProgressionEngine } = await import('../../engine/progression.js');
+          const engine = new SWSEProgressionEngine(this.actor, "chargen");
+
+          // Get current talents from progression data
+          const talents = engine.data.talents || [];
+          if (!talents.includes(tal.name)) {
+            talents.push(tal.name);
+          }
+
+          // Call the progression engine action
+          await engine.doAction('confirmTalents', {
+            talentIds: talents
+          });
+
+          ui.notifications.info(`Added talent: ${tal.name}`);
+        } catch (err) {
+          // Fallback to old method if progression engine fails
+          console.warn("Progression engine failed, using fallback:", err);
+          await this.actor.createEmbeddedDocuments("Item", [tal.toObject()]);
+          ui.notifications.info(`Added talent: ${tal.name}`);
+        }
       }
     );
   }
 
   // ----------------------------------------------------------
-  // E.3 Species Picker
+  // E.3 Species Picker (Progression Engine Integrated)
   // ----------------------------------------------------------
   async _showSpeciesPicker() {
     const pack = game.packs.get('foundryvtt-swse.species');
@@ -383,9 +427,26 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       sp => `<strong>${sp.name}</strong>`,
       async sp => {
         const doc = await pack.getDocument(sp.id);
-        const { DropHandler } = await import('../../drag-drop/drop-handler.js');
-        await DropHandler.handleSpeciesDrop(this.actor, doc);
-        ui.notifications.info(`Species set to ${doc.name}`);
+
+        // Use progression engine if available
+        try {
+          const { SWSEProgressionEngine } = await import('../../engine/progression.js');
+          const engine = new SWSEProgressionEngine(this.actor, "chargen");
+
+          // Call the progression engine action
+          await engine.doAction('confirmSpecies', {
+            speciesId: doc.name,
+            abilityChoice: null // Will prompt separately if needed (human bonus)
+          });
+
+          ui.notifications.info(`Species set to ${doc.name}`);
+        } catch (err) {
+          // Fallback to old method if progression engine fails
+          console.warn("Progression engine failed, using fallback:", err);
+          const { DropHandler } = await import('../../drag-drop/drop-handler.js');
+          await DropHandler.handleSpeciesDrop(this.actor, doc);
+          ui.notifications.info(`Species set to ${doc.name}`);
+        }
       }
     );
   }
@@ -434,9 +495,86 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     );
   }
 
+  // ----------------------------------------------------------
+  // E.5B Background Picker (Progression Engine Integrated)
+  // ----------------------------------------------------------
+  async _showBackgroundPicker() {
+    // Check if backgrounds are enabled
+    const enableBackgrounds = game.settings.get('foundryvtt-swse', 'enableBackgrounds');
+    if (!enableBackgrounds) {
+      return ui.notifications.warn("Backgrounds are not enabled in this world.");
+    }
+
+    // Load backgrounds from progression data
+    try {
+      const { PROGRESSION_RULES } = await import('../../progression/data/progression-data.js');
+      const backgrounds = Object.entries(PROGRESSION_RULES.backgrounds || {})
+        .map(([id, bg]) => ({
+          id,
+          name: bg.name,
+          trainedSkills: bg.trainedSkills || [],
+          description: bg.description || ""
+        }));
+
+      if (!backgrounds.length) {
+        return ui.notifications.warn("No backgrounds available.");
+      }
+
+      return this._showSelectionDialog(
+        "Select Background",
+        backgrounds,
+        bg => `<strong>${bg.name}</strong><br><small>Skills: ${(bg.trainedSkills || []).join(", ")}</small>`,
+        async bg => {
+          // Use progression engine if available
+          try {
+            const { SWSEProgressionEngine } = await import('../../engine/progression.js');
+            const engine = new SWSEProgressionEngine(this.actor, "chargen");
+
+            // Call the progression engine action
+            await engine.doAction('confirmBackground', {
+              backgroundId: bg.id
+            });
+
+            ui.notifications.info(`Background set to ${bg.name}`);
+          } catch (err) {
+            // Fallback - just apply to actor directly
+            console.warn("Progression engine failed for background, using fallback:", err);
+            await this.actor.update({
+              "system.progression.background": bg.id,
+              "system.progression.backgroundTrainedSkills": bg.trainedSkills || []
+            });
+            ui.notifications.info(`Background set to ${bg.name}`);
+          }
+        }
+      );
+    } catch (err) {
+      console.error("Failed to load backgrounds:", err);
+      ui.notifications.error("Failed to load backgrounds.");
+    }
+  }
 
   // ----------------------------------------------------------
-  // E.6 Destiny Management
+  // E.6 Roll Attributes (Progression Engine Integrated)
+  // ----------------------------------------------------------
+  async _onRollAttributes(event) {
+    event.preventDefault();
+
+    try {
+      // Open the character generator which has the progression engine UI
+      // for attribute rolling and other selections
+      const CharacterGenerator = (await import('../../apps/chargen/chargen-main.js')).default;
+      const chargen = new CharacterGenerator(this.actor);
+      chargen.currentStep = 'attributes';
+      chargen.render(true);
+
+    } catch (err) {
+      console.warn("Failed to open character generator:", err);
+      ui.notifications.error("Failed to open attribute rolling interface. Please try again.");
+    }
+  }
+
+  // ----------------------------------------------------------
+  // E.7 Destiny Management
   // ----------------------------------------------------------
 
   async _onEnableDestiny() {
