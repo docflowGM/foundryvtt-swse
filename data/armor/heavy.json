@@ -185,7 +185,7 @@
     "max_dex_bonus": 0,
     "cost": 15000,
     "weight": "35 kg",
-    "availability": "-",
+    "availability": null,
     "sourcebook": "Clone Wars Campaign Guide",
     "tags": [
       "Environmental",
