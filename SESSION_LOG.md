@@ -97,7 +97,7 @@ Comprehensive update to Scout and Soldier character templates, including species
 ---
 
 ## Scout Templates Summary
-Total Scout templates: 5
+Total Scout templates: 6
 1. **Scout Sniper** - Duros, Pilot/Marksmanship focus
 2. **Scout Engineer** - Mon Calamari, Technology/Mechanics focus
 3. **Scout Pistoleer** - Codru-Ji, Speeder bike/Dual-weapon focus
