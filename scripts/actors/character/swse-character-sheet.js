@@ -1483,40 +1483,6 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   // ----------------------------------------------------------
 
   async _onDrop(event) {
-
-    // ----------------------------------------------------------
-    // PATCH: Asset auto-add for Droids & Vehicles on drag/drop
-    // ----------------------------------------------------------
-    // If dropped item is a Droid
-    if (itemData.type === "droid") {
-      const prev = this.actor.system.droids || [];
-      const entry = {
-        _id: itemData._id || foundry.utils.randomID(),
-        name: itemData.name,
-        model: itemData.system?.model || "Unknown",
-        sourceItemId: created?.id ?? created?._id
-      };
-
-      await this.actor.update({ "system.droids": [...prev, entry] });
-      ui.notifications.info(`Added droid asset: ${entry.name}`);
-      return;
-    }
-
-    // If dropped item is a Vehicle
-    if (itemData.type === "vehicle") {
-      const prev = this.actor.system.vehicles || [];
-      const entry = {
-        _id: itemData._id || foundry.utils.randomID(),
-        name: itemData.name,
-        vehicleClass: itemData.system?.vehicleClass || "Unknown",
-        sourceItemId: created?.id ?? created?._id
-      };
-
-      await this.actor.update({ "system.vehicles": [...prev, entry] });
-      ui.notifications.info(`Added vehicle asset: ${entry.name}`);
-      return;
-    }
-
     event.preventDefault();
 
     const dt = event.dataTransfer;
@@ -1545,6 +1511,37 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     }
 
     const [created] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+
+    // ----------------------------------------------------------
+    // PATCH: Asset auto-add for Droids & Vehicles on drag/drop
+    // ----------------------------------------------------------
+    // If dropped item is a Droid, add to character's droid assets
+    if (itemData.type === "droid") {
+      const prev = this.actor.system.droids || [];
+      const entry = {
+        _id: itemData._id || foundry.utils.randomID(),
+        name: itemData.name,
+        model: itemData.system?.model || "Unknown",
+        sourceItemId: created?.id ?? created?._id
+      };
+
+      await this.actor.update({ "system.droids": [...prev, entry] });
+      ui.notifications.info(`Added droid asset: ${entry.name}`);
+    }
+
+    // If dropped item is a Vehicle, add to character's vehicle assets
+    if (itemData.type === "vehicle") {
+      const prev = this.actor.system.vehicles || [];
+      const entry = {
+        _id: itemData._id || foundry.utils.randomID(),
+        name: itemData.name,
+        vehicleClass: itemData.system?.vehicleClass || "Unknown",
+        sourceItemId: created?.id ?? created?._id
+      };
+
+      await this.actor.update({ "system.vehicles": [...prev, entry] });
+      ui.notifications.info(`Added vehicle asset: ${entry.name}`);
+    }
 
     const applyEffects = game.settings.get("swse", "applyItemsAsEffects");
     if (applyEffects && created) {
