@@ -542,7 +542,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
     this.modifications = [];
     this.currentStep = 'modification';
     this.marlDialogue = this._getShipChoiceCommentary(shipName);
-    this.render(true);
+    await this.render(true);
   }
 
   /**
@@ -582,7 +582,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
     // Update Marl's dialogue
     this.marlDialogue = this._getModificationCommentary();
 
-    this.render(false);
+    await this.render(false);
   }
 
   /**
@@ -598,7 +598,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
 
 "Second thoughts? That's fine. Better to change your mind now than after you're in a firefight and realize you needed those shields after all."`;
 
-    this.render(false);
+    await this.render(false);
   }
 
   /**
@@ -708,7 +708,7 @@ Just remember to keep your story straight. Nothing blows your cover faster than 
     this.modifications = [];
     this.currentStep = 'intro';
     this.marlDialogue = '';
-    this.render(true);
+    await this.render(true);
   }
 
   /**

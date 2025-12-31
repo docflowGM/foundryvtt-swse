@@ -1,5 +1,6 @@
-/**
 import { SWSELogger } from '../../utils/logger.js';
+
+/**
  * Vehicle-specific functionality
  * Handles applying vehicle templates to vehicle actors
  */
@@ -11,6 +12,12 @@ export class SWSEVehicleHandler {
    * This transforms the actor into the templated vehicle
    */
   static async applyVehicleTemplate(actor, vehicleItem) {
+    // Validate inputs
+    if (!actor || !vehicleItem) {
+      ui.notifications.warn('Missing actor or vehicle item');
+      return false;
+    }
+
     if (actor.type !== 'vehicle') {
       ui.notifications.warn('Can only apply vehicle templates to vehicle actors!');
       return false;
@@ -24,30 +31,55 @@ export class SWSEVehicleHandler {
     SWSELogger.log('SWSE | Applying vehicle template:', vehicleItem.name);
 
     const template = vehicleItem.system;
+    if (!template) {
+      ui.notifications.error('Vehicle item has no system data');
+      return false;
+    }
+
+    // Helper function to get attribute block with derived fields
+    const getAttributeBlock = (attr) => ({
+      base: attr?.base ?? 10,
+      racial: attr?.racial ?? 0,
+      temp: attr?.temp ?? 0
+    });
 
     // Build update object - the template now uses the migrated schema
     const updates = {
       name: vehicleItem.name,
-      img: vehicleItem.img || actor.img,
+      img: vehicleItem.img ?? actor.img,
 
       // Attributes (copy from template if present, supports both attributes and abilities for compatibility)
       // Vehicles use 'attributes' field (see vehicle-data-model.js), not 'abilities' like characters/droids
-      'system.attributes': template.attributes || template.abilities || {
-        str: { base: 10, racial: 0, temp: 0 },
-        dex: { base: 10, racial: 0, temp: 0 },
-        con: { base: 10, racial: 0, temp: 0 },
-        int: { base: 10, racial: 0, temp: 0 },
-        wis: { base: 10, racial: 0, temp: 0 },
-        cha: { base: 10, racial: 0, temp: 0 }
-      },
+      'system.attributes': template.attributes ? {
+        str: getAttributeBlock(template.attributes.str),
+        dex: getAttributeBlock(template.attributes.dex),
+        con: getAttributeBlock(template.attributes.con),
+        int: getAttributeBlock(template.attributes.int),
+        wis: getAttributeBlock(template.attributes.wis),
+        cha: getAttributeBlock(template.attributes.cha)
+      } : (template.abilities ? {
+        str: getAttributeBlock(template.abilities.str),
+        dex: getAttributeBlock(template.abilities.dex),
+        con: getAttributeBlock(template.abilities.con),
+        int: getAttributeBlock(template.abilities.int),
+        wis: getAttributeBlock(template.abilities.wis),
+        cha: getAttributeBlock(template.abilities.cha)
+      } : {
+        str: getAttributeBlock(null),
+        dex: getAttributeBlock(null),
+        con: getAttributeBlock(null),
+        int: getAttributeBlock(null),
+        wis: getAttributeBlock(null),
+        cha: getAttributeBlock(null)
+      }),
 
-      // Hull (already in correct format)
-      'system.hull.value': template.hull?.value || template.hull?.max || 50,
-      'system.hull.max': template.hull?.max || 50,
+      // Hull (use nullish coalescing, not logical OR)
+      'system.hull.value': template.hull?.value ?? template.hull?.max ?? 50,
+      'system.hull.max': template.hull?.max ?? 50,
 
-      // Shields (already in correct format)
-      'system.shields.value': template.shields?.value || 0,
-      'system.shields.max': template.shields?.max || 0,
+      // Shields (use nullish coalescing, not logical OR)
+      'system.shields.value': template.shields?.value ?? 0,
+      'system.shields.max': template.shields?.max ?? 0,
 
       // Defenses (already flattened in migrated schema)
       'system.reflexDefense': template.reflexDefense || 10,
@@ -120,10 +152,22 @@ export class SWSEVehicleHandler {
       'system.page': template.page || null
     };
 
-    await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
+    // Validate ActorEngine exists
+    if (!globalThis.SWSE?.ActorEngine?.updateActor) {
+      ui.notifications.error('Actor engine not available');
+      SWSELogger.error('SWSE | ActorEngine not found');
+      return false;
+    }
 
-    ui.notifications.info(`${vehicleItem.name} applied to ${actor.name}`);
-    return true;
+    try {
+      await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
+      ui.notifications.info(`${vehicleItem.name} applied to ${actor.name}`);
+      return true;
+    } catch (error) {
+      SWSELogger.error('SWSE | Error applying vehicle template:', error);
+      ui.notifications.error('Failed to apply vehicle template');
+      return false;
+    }
   }
   
   /**

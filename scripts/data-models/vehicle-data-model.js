@@ -661,7 +661,10 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
   _getPilot() {
     if (!this.crewPositions?.pilot) return null;
 
-    const pilotName = this.crewPositions.pilot;
+    const pilot = this.crewPositions.pilot;
+    const pilotName = typeof pilot === 'string' ? pilot : pilot?.name;
+    if (!pilotName) return null;
+
     return game.actors?.getName(pilotName) || null;
   }
 }
