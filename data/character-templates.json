@@ -521,41 +521,45 @@
       "quote": "One shot, one kill. That's all it takes.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_sniper.webp",
       "mentor": "lead",
+      "background": "Profession, Pilot",
       "abilityScores": {
         "str": 8,
         "dex": 16,
-        "con": 12,
+        "con": 10,
         "int": 14,
         "wis": 12,
-        "cha": 10
+        "cha": 12
       },
       "species": "Duros",
+      "speciesFeat": "Flawless Pilot",
       "className": "Scout",
       "level": 1,
-      "feat": "Point-Blank Shot",
-      "talent": "Acute Senses",
-      "talentTree": "Awareness",
+      "feats": [
+        "Weapon Proficiency (Rifles)",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Simple Weapons)"
+      ],
+      "talent": "Surveillance",
+      "talentTree": "Reconnaissance",
       "trainedSkills": [
-        "perception",
+        "pilot",
         "stealth",
         "initiative",
-        "survival",
         "mechanics",
-        "pilot",
-        "knowledgeTactics",
-        "endurance"
+        "perception",
+        "useComputers",
+        "knowledgeGalacticLore"
       ],
       "forcePowers": [],
       "startingEquipment": [
-        "Blaster Rifle",
-        "Thinsuit",
-        "Electrobinoculars",
-        "Medpac",
-        "Comlink, Short-Range",
-        "Utility Belt (Standard)"
+        "Targeting Blaster Rifle",
+        "Pulse-Wave Pistol",
+        "Power Packs x10",
+        "Hands Free Commlink",
+        "Electrobinoculars"
       ],
-      "credits": -1650,
-      "notes": "Attack +4, Reflex Defense 19, HP 34. Acute Senses allows rerolling Perception checks."
+      "credits": 150,
+      "notes": "Professional pilot with exceptional reflexes and marksmanship. Flawless Pilot allows rerolling Pilot checks and taking the better result. Surveillance talent provides enhanced reconnaissance capabilities."
     },
     {
       "id": "scout_skirmisher",
