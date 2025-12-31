@@ -95,7 +95,7 @@
       "quote": "I can't afford to lose this fight! There are people depending on me.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_defender.webp",
       "mentor": "miraj",
-      "background": "Iridonia Origin",
+      "background": "Scarred",
       "abilityScores": {
         "str": 14,
         "dex": 12,
@@ -124,7 +124,7 @@
         "Comlink, Short-Range"
       ],
       "credits": 475,
-      "notes": "HP 35, Fort Defense 19, Use the Force +9 for Deflect checks. Zabrak CON bonus makes this an excellent tank."
+      "notes": "HP 35, Fort Defense 19, Use the Force +9 for Deflect checks. Zabrak CON bonus makes this an excellent tank. Scarred background grants Favorable Circumstances when Intimidating."
     },
     {
       "id": "jedi_sentinel",
@@ -312,7 +312,7 @@
       "quote": "Elegance in both word and blade—a true noble's art.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/noble_duelist.webp",
       "mentor": "j0n1",
-      "background": "Naboo Origin",
+      "background": "Scarred",
       "abilityScores": {
         "str": 8,
         "dex": 14,
@@ -342,7 +342,7 @@
         "Comlink, Short-Range"
       ],
       "credits": 475,
-      "notes": "Melee attack +5 using CHA, 2d6 damage, HP 19. Noble Fencing Style allows using CHA for light melee attacks."
+      "notes": "Melee attack +5 using CHA, 2d6 damage, HP 19. Noble Fencing Style allows using CHA for light melee attacks. Scarred background grants Favorable Circumstances when Intimidating."
     },
     {
       "id": "scoundrel_pistoleer",
@@ -443,7 +443,7 @@
       "quote": "No such thing as a fair fight when survival's on the line.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_knuckledragger.webp",
       "mentor": "salty",
-      "background": "Duro Origin",
+      "background": "Enslaved",
       "abilityScores": {
         "str": 10,
         "dex": 16,
@@ -477,7 +477,7 @@
         "Medpac"
       ],
       "credits": 600,
-      "notes": "Attack +5 with DEX 18. Dastardly Strike moves targets -1 condition track when denied DEX bonus."
+      "notes": "Attack +5 with DEX 18. Dastardly Strike moves targets -1 condition track when denied DEX bonus. Enslaved background grants +2 competence to Grapple checks."
     },
     {
       "id": "scoundrel_outlaw",
@@ -939,7 +939,7 @@
       "quote": "Behind me, soldier. I'll handle this.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_tank.webp",
       "mentor": "breach",
-      "background": "Kalee Origin",
+      "background": "Crippled",
       "abilityScores": {
         "str": 12,
         "dex": 14,
@@ -968,7 +968,7 @@
         "Power Pack"
       ],
       "credits": 225,
-      "notes": "HP 40, Reflex 21, Fort 19. Gen'Dai damage threshold is doubled! Extremely durable frontline tank."
+      "notes": "HP 40, Reflex 21, Fort 19. Gen'Dai damage threshold is doubled! Crippled background means Damage Threshold ignores Condition Track penalties - perfect synergy for an unkillable tank."
     },
     {
       "id": "soldier_commando",
