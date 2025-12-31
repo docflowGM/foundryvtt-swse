@@ -7,6 +7,9 @@ import { categorizeEquipment, sortWeapons, sortArmor } from './store-shared.js';
 import { addFinalCost, addActorFinalCost } from './store-pricing.js';
 import { STORE_PACKS } from './store-constants.js';
 
+// Safe logger reference
+const getLogger = () => globalThis.swseLogger || console;
+
 /**
  * Load and prepare all store inventory data
  * @param {Object} itemsById - Map to populate with items for quick lookup
@@ -29,7 +32,7 @@ export async function loadInventoryData(itemsById) {
             // Include all items from compendium - many items have cost "0" that need to be displayed
             packItems.push(...documents);
         } else {
-            swseLogger.warn(`SWSE Store | Compendium pack not found: ${packName}`);
+            getLogger().warn(`SWSE Store | Compendium pack not found: ${packName}`);
         }
     }
 
@@ -40,7 +43,7 @@ export async function loadInventoryData(itemsById) {
     const validItems = allItems.filter(item => {
         const hasValidId = !!(item.id || item._id);
         if (!hasValidId) {
-            swseLogger.warn(`SWSE Store | Excluding item without ID: ${item.name || 'Unknown'}`);
+            getLogger().warn(`SWSE Store | Excluding item without ID: ${item.name || 'Unknown'}`);
         }
         return hasValidId;
     });
@@ -72,16 +75,16 @@ export async function loadInventoryData(itemsById) {
                     try {
                         return (a.system?.cost ?? 0) > 0;
                     } catch (err) {
-                        swseLogger.warn(`SWSE | Skipping invalid actor in ${packName}:`, err.message);
+                        getLogger().warn(`SWSE | Skipping invalid actor in ${packName}:`, err.message);
                         return false;
                     }
                 });
                 packActors.push(...validActors);
             } catch (err) {
-                swseLogger.warn(`SWSE | Failed to load actors from ${packName}:`, err.message);
+                getLogger().warn(`SWSE | Failed to load actors from ${packName}:`, err.message);
             }
         } else {
-            swseLogger.warn(`SWSE Store | Compendium pack not found: ${packName}`);
+            getLogger().warn(`SWSE Store | Compendium pack not found: ${packName}`);
         }
     }
 
@@ -92,7 +95,7 @@ export async function loadInventoryData(itemsById) {
     const validActors = allActors.filter(actor => {
         const hasValidId = !!(actor.id || actor._id);
         if (!hasValidId) {
-            swseLogger.warn(`SWSE Store | Excluding actor without ID: ${actor.name || 'Unknown'}`);
+            getLogger().warn(`SWSE Store | Excluding actor without ID: ${actor.name || 'Unknown'}`);
         }
         return hasValidId;
     });
