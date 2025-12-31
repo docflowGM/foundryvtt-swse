@@ -191,18 +191,17 @@ function calculateSkills(actor) {
 
   for (let [skillKey, skill] of Object.entries(actor.system.skills)) {
     // Get the ability modifier
-    const abilityKey = abilityMap[skill.ability] || skill.ability;
+    const abilityKey = abilityMap[skill.selectedAbility] || skill.selectedAbility;
     const ability = abilities[abilityKey];
     const abilityMod = calculateAbilityModifier(ability?.total || 10);
 
     // Calculate total
-    skill.total = 
+    skill.total =
       abilityMod +           // Ability modifier
       halfLevel +             // Half character level
       (skill.trained ? 5 : 0) +  // Trained bonus
       (skill.focused ? 5 : 0) +  // Skill Focus bonus
-      (skill.armor || 0) +       // Armor penalty (usually negative)
-      (skill.misc || 0);         // Miscellaneous modifiers
+      (skill.miscMod || 0);      // Miscellaneous modifiers
 
     // Special case: Use the Force requires training
     if (skillKey === 'useTheForce' && !skill.trained) {
@@ -283,7 +282,7 @@ class SWSEActor extends Actor {
     };
 
     for (let [skillKey, skill] of Object.entries(this.system.skills)) {
-      const abilityKey = abilityMap[skill.ability];
+      const abilityKey = abilityMap[skill.selectedAbility];
       const abilityMod = abilities[abilityKey]?.mod || 0;
 
       skill.total =
@@ -291,8 +290,7 @@ class SWSEActor extends Actor {
         halfLevel +
         (skill.trained ? 5 : 0) +
         (skill.focused ? 5 : 0) +
-        (skill.armor || 0) +
-        (skill.misc || 0) +
+        (skill.miscMod || 0) +
         conditionPenalty;
 
       // Use the Force requires training

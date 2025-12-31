@@ -500,11 +500,12 @@ export class TalentAbilitiesEngine {
                 return context.isCritical === true;
 
             case 'focusedWeapon':
-                return context.weapon?.system?.focus === true;
+                // Note: focus property not in current weapon data model
+                return false;
 
             case 'oneHandedOrUnarmed':
-                return context.weapon?.system?.hands === 1 ||
-                       context.weapon?.system?.type?.toLowerCase() === 'unarmed';
+                // Note: hands property not in current weapon data model
+                return false;
 
             default:
                 return true;

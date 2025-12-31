@@ -204,10 +204,10 @@ export class SWSERoll {
     if (skill.trained) parts.push(`Trained +5`);
     if (skill.focused) parts.push(`Skill Focus +5`);
 
-    const abilityMod = actor.system.abilities[skill.ability]?.mod ?? 0;
-    parts.push(`${skill.ability.toUpperCase()} ${abilityMod >= 0 ? "+" : ""}${abilityMod}`);
+    const abilityMod = actor.system.abilities[skill.selectedAbility]?.mod ?? 0;
+    parts.push(`${skill.selectedAbility.toUpperCase()} ${abilityMod >= 0 ? "+" : ""}${abilityMod}`);
 
-    const misc = skill.misc ?? 0;
+    const misc = skill.miscMod ?? 0;
     if (misc) parts.push(`Misc ${misc >= 0 ? "+" : ""}${misc}`);
 
     const condition = actor.system.conditionTrack?.penalty ?? 0;
@@ -658,10 +658,10 @@ export class SWSERoll {
     if (skill.trained) parts.push(`Trained +5`);
     if (skill.focused) parts.push(`Skill Focus +5`);
 
-    const abilityMod = actor.system.abilities[skill.ability]?.mod ?? 0;
-    parts.push(`${skill.ability.toUpperCase()} ${abilityMod >= 0 ? "+" : ""}${abilityMod}`);
+    const abilityMod = actor.system.abilities[skill.selectedAbility]?.mod ?? 0;
+    parts.push(`${skill.selectedAbility.toUpperCase()} ${abilityMod >= 0 ? "+" : ""}${abilityMod}`);
 
-    const misc = skill.misc ?? 0;
+    const misc = skill.miscMod ?? 0;
     if (misc) parts.push(`Misc ${misc >= 0 ? "+" : ""}${misc}`);
 
     const condition = actor.system.conditionTrack?.penalty ?? 0;

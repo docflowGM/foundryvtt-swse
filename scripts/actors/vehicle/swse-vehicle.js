@@ -248,7 +248,7 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
 
     if (hit) {
       const damage = await game.swse.RollEngine.safeRoll(
-        weapon.damage,
+        weapon.system?.damage || "1d6",
         rollData
       );
 

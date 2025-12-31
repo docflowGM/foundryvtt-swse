@@ -21,8 +21,7 @@ function computeAttackBonus(actor, weapon) {
   // Use new data model: abilities[xxx].mod
   const abilityMod = actor.system.abilities[weapon.system?.attackAttribute ?? "str"]?.mod ?? 0;
 
-  const focusBonus = weapon.system?.focus ? 1 : 0;
-  const miscBonus = weapon.system?.modifier ?? 0;
+  const miscBonus = weapon.system?.attackBonus ?? 0;
 
   // Condition Track penalty (RAW)
   const ctPenalty = actor.system.conditionTrack?.penalty ?? 0;
@@ -42,7 +41,6 @@ function computeAttackBonus(actor, weapon) {
     bab +
     halfLvl +
     abilityMod +
-    focusBonus +
     miscBonus +
     sizeMod +
     attackPenalty +
