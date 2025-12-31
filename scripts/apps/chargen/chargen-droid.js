@@ -114,6 +114,11 @@ export function _populateDroidBuilder(root) {
   const doc = root || this.element[0];
   if (!doc) return;
 
+  // Mark that droid was built (at least attempted) in initial step if we're in droid-builder step
+  if (this.currentStep === "droid-builder") {
+    this.characterData.droidBuiltInInitial = true;
+  }
+
   // Get house rule settings for credits
   const baseCredits = game.settings.get('foundryvtt-swse', "droidConstructionCredits") || 1000;
   this.characterData.droidCredits.base = baseCredits;
@@ -799,6 +804,82 @@ export function _validateDroidBuilder() {
   }
 
   return true;
+}
+
+/**
+ * Handle "Build Later" button click
+ */
+export async function _onBuildLater(event) {
+  event.preventDefault();
+
+  // Mark that player skipped initial droid building
+  this.characterData.droidBuiltInInitial = false;
+
+  SWSELogger.log("SWSE CharGen | Player deferred droid building until final step");
+
+  // Show info message
+  ui.notifications.info("You can customize your droid after selecting your class and background!");
+
+  // Proceed to next step
+  await this._onNextStep(event);
+}
+
+/**
+ * Populate final droid builder (after class/background selection)
+ */
+export function _populateFinalDroidBuilder(root) {
+  const doc = root || this.element[0];
+  if (!doc) return;
+
+  // Get equipment engine to calculate final credits
+  const EquipmentEngine = globalThis.SWSE?.EquipmentEngine;
+  let totalCredits = this.characterData.droidCredits?.base || 1000;
+
+  // Add class and background starting credits
+  if (EquipmentEngine && EquipmentEngine.getStartingCredits) {
+    const additionalCredits = EquipmentEngine.getStartingCredits(this.characterData.classes, this.characterData.background);
+    totalCredits += additionalCredits;
+
+    SWSELogger.log(`SWSE CharGen | Final droid credits calculation:`, {
+      base: this.characterData.droidCredits?.base || 1000,
+      additional: additionalCredits,
+      total: totalCredits
+    });
+  }
+
+  // Update base credits to final total
+  this.characterData.droidCredits.base = totalCredits;
+  this.characterData.droidCredits.spent = 0;
+  this.characterData.droidCredits.remaining = totalCredits;
+
+  // Reset droid systems if not already built
+  if (!this.characterData.droidBuiltInInitial) {
+    this.characterData.droidSystems = {
+      locomotion: null,
+      processor: null,
+      appendages: [],
+      accessories: [],
+      totalCost: 0,
+      totalWeight: 0
+    };
+  }
+
+  // Now populate the droid builder with final credits
+  this._populateDroidBuilder(doc);
+
+  // Add note about final credit amount
+  const creditsDisplay = doc.querySelector('.base-credits');
+  if (creditsDisplay) {
+    const parentDiv = creditsDisplay.parentElement;
+    let noteEl = parentDiv.querySelector('.final-credits-note');
+    if (!noteEl) {
+      noteEl = document.createElement('div');
+      noteEl.className = 'final-credits-note';
+      noteEl.style.cssText = 'font-size: 0.9em; color: #4ade80; margin-top: 3px; font-style: italic;';
+      parentDiv.appendChild(noteEl);
+    }
+    noteEl.textContent = '(Including class & background starting credits)';
+  }
 }
 
 /**
