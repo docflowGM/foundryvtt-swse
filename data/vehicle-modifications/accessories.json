@@ -162,7 +162,7 @@
     "emplacementPoints": 40,
     "availability": "Restricted",
     "sizeRestriction": "Colossal (Frigate) or Larger",
-    "cost": 1000,
+    "cost": 100000,
     "costType": "base",
     "description": "Hidden hangar bay.",
     "effect": "1 concealed hangar space, DC 25 Perception to detect"
