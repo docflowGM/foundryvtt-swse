@@ -75,25 +75,177 @@ export function computeAttackBonus(actor, weapon) {
 /* -------------------------------------------------------------------------- */
 
 /**
+ * Determine if a weapon is a melee weapon
+ * @param {Item} weapon - The weapon item
+ * @returns {boolean}
+ */
+export function isMeleeWeapon(weapon) {
+  const range = (weapon.system?.range || '').toLowerCase();
+  return range === 'melee' || range === '';
+}
+
+/**
+ * Determine if a weapon is a light weapon (smaller than character size)
+ * Light weapons do NOT get 2x STR bonus when used two-handed
+ * @param {Item} weapon - The weapon item
+ * @param {Actor} actor - The actor wielding the weapon
+ * @returns {boolean}
+ */
+export function isLightWeapon(weapon, actor) {
+  // Check explicit light weapon flag
+  if (weapon.system?.isLight === true) return true;
+
+  // Check weapon size vs actor size
+  const weaponSize = (weapon.system?.size || '').toLowerCase();
+  const actorSize = (actor.system?.size || 'medium').toLowerCase();
+
+  const sizeOrder = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
+  const actorSizeIndex = sizeOrder.indexOf(actorSize);
+  const weaponSizeIndex = sizeOrder.indexOf(weaponSize);
+
+  // Weapon is light if it's smaller than character size
+  if (weaponSizeIndex !== -1 && actorSizeIndex !== -1) {
+    return weaponSizeIndex < actorSizeIndex;
+  }
+
+  // Check name for common light weapons
+  const name = (weapon.name || '').toLowerCase();
+  const lightWeapons = [
+    'knife', 'dagger', 'vibrodagger', 'shiv', 'stiletto',
+    'hold-out', 'holdout', 'derringer', 'pocket pistol'
+  ];
+  return lightWeapons.some(lw => name.includes(lw));
+}
+
+/**
+ * Determine if a weapon should be wielded two-handed
+ * @param {Item} weapon - The weapon item
+ * @param {Actor} actor - The actor wielding the weapon
+ * @returns {boolean}
+ */
+export function isTwoHandedWeapon(weapon, actor) {
+  // Check explicit flag
+  if (weapon.system?.twoHanded === true) return true;
+  if (weapon.system?.hands === 2) return true;
+
+  // Check weapon category/type
+  const category = (weapon.system?.category || weapon.system?.subcategory || '').toLowerCase();
+  const name = (weapon.name || '').toLowerCase();
+
+  // Two-handed weapon categories
+  const twoHandedCategories = [
+    'two-handed', 'twohanded', '2h', '2-handed',
+    'heavy', 'rifle', 'carbine', 'repeating',
+    'quarterstaff', 'staff', 'pike', 'polearm', 'spear',
+    'electrostaff', 'force pike', 'vibro-ax', 'vibroax',
+    'double-bladed', 'double bladed'
+  ];
+
+  if (twoHandedCategories.some(cat => category.includes(cat) || name.includes(cat))) {
+    return true;
+  }
+
+  // Check weapon size - weapons larger than character size require two hands
+  const weaponSize = (weapon.system?.size || '').toLowerCase();
+  const actorSize = (actor.system?.size || 'medium').toLowerCase();
+
+  const sizeOrder = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
+  const actorSizeIndex = sizeOrder.indexOf(actorSize);
+  const weaponSizeIndex = sizeOrder.indexOf(weaponSize);
+
+  // Weapons one size larger than character require two hands
+  if (weaponSizeIndex !== -1 && actorSizeIndex !== -1) {
+    return weaponSizeIndex > actorSizeIndex;
+  }
+
+  return false;
+}
+
+/**
+ * Check if actor has a talent that allows DEX for melee damage
+ * @param {Actor} actor - The actor
+ * @returns {boolean}
+ */
+export function hasDexToDamageTalent(actor) {
+  // Common talents that allow DEX for damage
+  const dexDamageTalents = [
+    'weapon finesse',
+    'dexterous damage',
+    'precise strike',
+    'melee finesse'
+  ];
+
+  for (const item of actor.items) {
+    if (item.type !== 'talent' && item.type !== 'feat') continue;
+    const name = (item.name || '').toLowerCase();
+    if (dexDamageTalents.some(t => name.includes(t))) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
  * Compute SWSE RAW damage bonus.
- * @param {Actor} actor
- * @param {Item} weapon
+ * - Half level
+ * - Ability-based (STR or DEX)
+ * - Two-handed melee weapons add 2x STR (not light weapons)
+ * - Talents may allow DEX for melee damage
+ *
+ * @param {Actor} actor - The actor
+ * @param {Item} weapon - The weapon
+ * @param {Object} [options] - Options
+ * @param {boolean} [options.forceTwoHanded] - Force two-handed calculation
  * @returns {number}
  */
-export function computeDamageBonus(actor, weapon) {
+export function computeDamageBonus(actor, weapon, options = {}) {
   const lvl = actor.system.level ?? 1;
   const halfLvl = Math.floor(lvl / 2);
 
   let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
 
-  const str = actor.system.abilities.str?.mod ?? 0;
-  const dex = actor.system.abilities.dex?.mod ?? 0;
+  const strMod = actor.system.abilities?.str?.mod ?? 0;
+  const dexMod = actor.system.abilities?.dex?.mod ?? 0;
 
-  switch (weapon.system?.attackAttribute) {
-    case "str": bonus += str; break;
-    case "dex": bonus += dex; break;
-    case "2str": bonus += str * 2; break;
-    case "2dex": bonus += dex * 2; break;
+  // Check for explicit attack attribute setting
+  const attackAttr = weapon.system?.attackAttribute;
+
+  if (attackAttr) {
+    // Use explicit attribute setting
+    switch (attackAttr) {
+      case "str": bonus += strMod; break;
+      case "dex": bonus += dexMod; break;
+      case "2str": bonus += strMod * 2; break;
+      case "2dex": bonus += dexMod * 2; break;
+    }
+  } else {
+    // Auto-detect based on weapon type
+    const isMelee = isMeleeWeapon(weapon);
+    const isLight = isLightWeapon(weapon, actor);
+    const isTwoHanded = options.forceTwoHanded || isTwoHandedWeapon(weapon, actor);
+    const hasDexDamage = hasDexToDamageTalent(actor);
+
+    if (isMelee) {
+      // Melee weapons
+      if (hasDexDamage && dexMod > strMod) {
+        // Use DEX if talent allows and DEX is higher
+        if (isTwoHanded && !isLight) {
+          bonus += (dexMod * 2);
+        } else {
+          bonus += dexMod;
+        }
+      } else {
+        // Use STR
+        if (isTwoHanded && !isLight) {
+          // Two-handed melee: 2x STR (not for light weapons)
+          bonus += (strMod * 2);
+        } else {
+          bonus += strMod;
+        }
+      }
+    }
+    // Ranged weapons: no ability mod to damage in RAW SWSE
   }
 
   return bonus;
