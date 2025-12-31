@@ -955,6 +955,54 @@
       "notes": "HP 40, Reflex 21, Fort 19. Gen'Dai damage threshold is doubled! Extremely durable frontline tank."
     },
     {
+      "id": "soldier_commando",
+      "name": "Commando",
+      "class": "Soldier",
+      "archetype": "Commando",
+      "description": "A specialized commando operative trained for elite strike missions and team-based combat operations.",
+      "quote": "With my squad at my side, we can handle anything.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_commando.webp",
+      "mentor": "breach",
+      "background": "Event, Orphaned",
+      "abilityScores": {
+        "str": 12,
+        "dex": 16,
+        "con": 12,
+        "int": 12,
+        "wis": 10,
+        "cha": 8
+      },
+      "species": "Sullustan",
+      "className": "Soldier",
+      "level": 1,
+      "feats": [
+        "Armor Proficiency (Light)",
+        "Armor Proficiency (Medium)",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Rifles)",
+        "Weapon Proficiency (Simple Weapons)"
+      ],
+      "talent": "Comrades in Arms",
+      "talentTree": "Trooper",
+      "trainedSkills": [
+        "initiative",
+        "perception",
+        "endurance",
+        "knowledgeTactics"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Tracker Utility Vest",
+        "Bryar Rifle with Targeting Scope",
+        "Power Packs x5",
+        "CryoBan Grenade",
+        "Adhesive Grenade x2",
+        "Smoke Grenade"
+      ],
+      "credits": 0,
+      "notes": "Elite commando with Sullustan darkvision and heightened awareness. Comrades in Arms grants +1 bonus to all melee and ranged attacks when within 3 squares of an ally. Tracker Utility Vest provides excellent mobility and carry capacity. Fully equipped with diverse grenade arsenal for tactical flexibility."
+    },
+    {
       "id": "nonheroic_worker",
       "name": "Worker",
       "class": "Nonheroic",
