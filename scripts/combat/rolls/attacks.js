@@ -19,10 +19,10 @@ function computeAttackBonus(actor, weapon) {
   const bab = actor.system.bab ?? 0;
 
   // Use new data model: abilities[xxx].mod
-  const abilityMod = actor.system.abilities[weapon.attackAttr]?.mod ?? 0;
+  const abilityMod = actor.system.abilities[weapon.system?.attackAttribute ?? "str"]?.mod ?? 0;
 
-  const focusBonus = weapon.focus ? 1 : 0;
-  const miscBonus = weapon.modifier ?? 0;
+  const focusBonus = weapon.system?.focus ? 1 : 0;
+  const miscBonus = weapon.system?.modifier ?? 0;
 
   // Condition Track penalty (RAW)
   const ctPenalty = actor.system.conditionTrack?.penalty ?? 0;
@@ -80,13 +80,13 @@ function computeDamageBonus(actor, weapon) {
   const lvl = actor.system.level ?? 1;
   const halfLvl = Math.floor(lvl / 2);
 
-  let bonus = halfLvl + (weapon.modifier ?? 0);
+  let bonus = halfLvl + (weapon.system?.modifier ?? 0);
 
   // STR or DEX based weapon damage
   const strMod = actor.system.abilities.str?.mod ?? 0;
   const dexMod = actor.system.abilities.dex?.mod ?? 0;
 
-  switch (weapon.damageAttr) {
+  switch (weapon.system?.damageAttr) {
     case "str": bonus += strMod; break;
     case "dex": bonus += dexMod; break;
     case "2str": bonus += strMod * 2; break;
