@@ -30,8 +30,9 @@ export class SWSEVehicleHandler {
       name: vehicleItem.name,
       img: vehicleItem.img || actor.img,
 
-      // Abilities (copy from template if present, supports both attributes and abilities for compatibility)
-      'system.abilities': template.abilities || template.attributes || {
+      // Attributes (copy from template if present, supports both attributes and abilities for compatibility)
+      // Vehicles use 'attributes' field (see vehicle-data-model.js), not 'abilities' like characters/droids
+      'system.attributes': template.attributes || template.abilities || {
         str: { base: 10, racial: 0, temp: 0 },
         dex: { base: 10, racial: 0, temp: 0 },
         con: { base: 10, racial: 0, temp: 0 },
