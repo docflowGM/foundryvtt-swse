@@ -683,7 +683,6 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
       // Store calculated values
       skill.total = total;
-      skill.ability = abilityKey;  // Store the selected ability
       skill.abilityMod = abilityMod;
       skill.defaultAbility = data.defaultAbility;  // Store default for reference
       skill.untrained = canUseUntrained;
