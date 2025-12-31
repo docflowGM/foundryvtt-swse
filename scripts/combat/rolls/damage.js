@@ -218,7 +218,9 @@ export async function rollDamage(actor, weapon, context = {}) {
   }
 
   const baseFormula = weapon.system?.damage ?? "1d6";
-  const dmgBonus = computeDamageBonus(actor, weapon);
+  const dmgBonus = computeDamageBonus(actor, weapon, {
+    forceTwoHanded: context.twoHanded || false
+  });
 
   // Calculate talent-based damage bonuses
   const talentContext = { ...context, weapon };

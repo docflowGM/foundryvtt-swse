@@ -378,6 +378,24 @@ export async function showRollModifiersDialog(options = {}) {
     `;
   }
 
+  // Check if weapon is melee for two-handed option
+  const isMeleeWeapon = weapon && (
+    (weapon.system?.range || '').toLowerCase() === 'melee' ||
+    (weapon.system?.range || '') === ''
+  );
+
+  // Two-handed option for melee weapons (adds 2x STR to damage)
+  if (rollType === 'attack' && isMeleeWeapon) {
+    content += `
+      <div class="form-group">
+        <label>
+          <input type="checkbox" name="twoHanded" />
+          Wielding Two-Handed <span style="color: #888; font-weight: normal;">(2× STR/DEX to damage)</span>
+        </label>
+      </div>
+    `;
+  }
+
   // Situational modifiers
   content += `
     <div class="form-group">
@@ -437,6 +455,7 @@ export async function showRollModifiersDialog(options = {}) {
               concealment: data.get('concealment') || 'none',
               customModifier: parseInt(data.get('customModifier')) || 0,
               useForcePoint: data.get('useForcePoint') === 'on',
+              twoHanded: data.get('twoHanded') === 'on',
               situational: {
                 aiming: data.get('aiming') === 'on',
                 charging: data.get('charging') === 'on',

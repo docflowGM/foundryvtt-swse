@@ -413,7 +413,7 @@ export class SWSERoll {
 
           ${hitMissHTML}
 
-          <button class="swse-roll-damage" data-weapon-id="${weapon.id}" data-is-crit="${critConfirmed}" data-crit-mult="${critMultiplier}">
+          <button class="swse-roll-damage" data-weapon-id="${weapon.id}" data-is-crit="${critConfirmed}" data-crit-mult="${critMultiplier}" data-two-handed="${modifiers.twoHanded || false}">
             <i class="fas fa-burst"></i> Roll Damage${critConfirmed ? ` (×${critMultiplier})` : ''}
           </button>
         </div>
@@ -1510,6 +1510,7 @@ Hooks.on("renderChatMessage", (message, html) => {
     const weaponId = btn.dataset.weaponId;
     const isCrit = btn.dataset.isCrit === 'true';
     const critMult = parseInt(btn.dataset.critMult) || 2;
+    const twoHanded = btn.dataset.twoHanded === 'true';
 
     const actor = game.actors.get(message.speaker.actor);
     const weapon = actor?.items.get(weaponId);
@@ -1517,7 +1518,8 @@ Hooks.on("renderChatMessage", (message, html) => {
     if (actor && weapon) {
       await SWSERoll.rollDamage(actor, weapon, {
         isCritical: isCrit,
-        critMultiplier: critMult
+        critMultiplier: critMult,
+        twoHanded
       });
     }
   });
