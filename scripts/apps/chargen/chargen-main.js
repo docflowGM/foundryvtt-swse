@@ -295,6 +295,15 @@ export default class CharacterGenerator extends Application {
 
     context.packs = foundry.utils.deepClone(this._packs);
 
+    // Filter out Jedi class for droids at level 1 (they can multiclass into Jedi later)
+    if (this.currentStep === "class" && this.characterData.isDroid && context.packs.classes) {
+      context.packs.classes = context.packs.classes.filter(c => c.name !== "Jedi");
+      if (this.characterData.classes.length === 0 || this.characterData.classes[0].name === "Jedi") {
+        // If Jedi was previously selected for a droid (shouldn't happen, but be safe), clear it
+        this.characterData.classes = [];
+      }
+    }
+
     // Apply species filters and sorting if on species step
     if (this.currentStep === "species" && context.packs.species) {
       // First filter by user criteria
@@ -337,11 +346,27 @@ export default class CharacterGenerator extends Application {
       // Add suggestion engine suggestions to talents
       if (this.currentStep === "talents" && context.packs.talents) {
         try {
-          const talentsWithSuggestions = await SuggestionEngine.suggestTalents(
+          let talentsWithSuggestions = await SuggestionEngine.suggestTalents(
             context.packs.talents,
             tempActor,
             pendingData
           );
+
+          // Filter out Force-dependent talents for droids (they cannot be Force-sensitive)
+          if (this.characterData.isDroid) {
+            talentsWithSuggestions = talentsWithSuggestions.filter(talent => {
+              const prereqs = talent.system?.prerequisites || "";
+              const preqsLower = prereqs.toLowerCase();
+              // Exclude talents that require Force Sensitivity, Force Techniques, or Force Secrets
+              return !(
+                preqsLower.includes("force sensitivity") ||
+                preqsLower.includes("force technique") ||
+                preqsLower.includes("force secret") ||
+                preqsLower.includes("force point")
+              );
+            });
+          }
+
           context.packs.talents = talentsWithSuggestions;
           // Sort by suggestion tier
           context.packs.talents = SuggestionEngine.sortBySuggestion(context.packs.talents);
@@ -378,6 +403,29 @@ export default class CharacterGenerator extends Application {
 
     context.skillsJson = context.skillsJson || this._skillsJson || [];
     context.availableSkills = context.availableSkills || context.skillsJson;
+
+    // Filter talents for the selected talent tree
+    if (this.selectedTalentTree && context.packs.talents) {
+      context.packs.talentsInTree = context.packs.talents.filter(talent => {
+        const talentTree = talent.system?.talentTree || talent.system?.tree || "";
+        return talentTree === this.selectedTalentTree;
+      });
+
+      // Filter out Force-dependent talents for droids in the tree view
+      if (this.characterData.isDroid) {
+        context.packs.talentsInTree = context.packs.talentsInTree.filter(talent => {
+          const prereqs = talent.system?.prerequisites || "";
+          const preqsLower = prereqs.toLowerCase();
+          // Exclude talents that require Force Sensitivity, Force Techniques, or Force Secrets
+          return !(
+            preqsLower.includes("force sensitivity") ||
+            preqsLower.includes("force technique") ||
+            preqsLower.includes("force secret") ||
+            preqsLower.includes("force point")
+          );
+        });
+      }
+    }
 
     return context;
   }
