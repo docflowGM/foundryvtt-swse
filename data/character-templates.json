@@ -521,6 +521,56 @@
       "quote": "One shot, one kill. That's all it takes.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_sniper.webp",
       "mentor": "lead",
+      "background": "Profession, Pilot",
+      "abilityScores": {
+        "str": 8,
+        "dex": 16,
+        "con": 10,
+        "int": 14,
+        "wis": 12,
+        "cha": 12
+      },
+      "species": "Duros",
+      "speciesFeat": "Flawless Pilot",
+      "className": "Scout",
+      "level": 1,
+      "feats": [
+        "Weapon Proficiency (Rifles)",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Simple Weapons)"
+      ],
+      "talent": "Surveillance",
+      "talentTree": "Reconnaissance",
+      "trainedSkills": [
+        "pilot",
+        "stealth",
+        "initiative",
+        "mechanics",
+        "perception",
+        "useComputers",
+        "knowledgeGalacticLore"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Targeting Blaster Rifle",
+        "Pulse-Wave Pistol",
+        "Power Packs x10",
+        "Hands Free Commlink",
+        "Electrobinoculars"
+      ],
+      "credits": 150,
+      "notes": "Professional pilot with exceptional reflexes and marksmanship. Flawless Pilot allows rerolling Pilot checks and taking the better result. Surveillance talent provides enhanced reconnaissance capabilities."
+    },
+    {
+      "id": "scout_engineer",
+      "name": "Engineer",
+      "class": "Scout",
+      "archetype": "Engineer",
+      "description": "A skilled technician who specializes in maintenance, repair, and engineering solutions in the field.",
+      "quote": "Every problem has a technical solution.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_engineer.webp",
+      "mentor": "lead",
+      "background": "Profession, Technology",
       "abilityScores": {
         "str": 8,
         "dex": 16,
@@ -529,36 +579,91 @@
         "wis": 12,
         "cha": 10
       },
-      "species": "Duros",
+      "species": "Mon Calamari",
+      "speciesFeat": "Mon Calamari Shipwright",
       "className": "Scout",
       "level": 1,
-      "feat": "Point-Blank Shot",
-      "talent": "Acute Senses",
-      "talentTree": "Awareness",
+      "feats": [
+        "Weapon Proficiency (Rifles)",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Simple Weapons)",
+        "Skill Focus (Perception)"
+      ],
+      "talent": "Sizing Up",
+      "talentTree": "Versatility",
       "trainedSkills": [
-        "perception",
-        "stealth",
         "initiative",
-        "survival",
+        "perception",
         "mechanics",
-        "pilot",
-        "knowledgeTactics",
-        "endurance"
+        "knowledgePhysicalSciences",
+        "knowledgeTechnology",
+        "stealth",
+        "swim",
+        "useComputers"
       ],
       "forcePowers": [],
       "startingEquipment": [
-        "Blaster Rifle",
-        "Thinsuit",
-        "Electrobinoculars",
-        "Medpac",
-        "Comlink, Short-Range",
-        "Utility Belt (Standard)"
+        "Sonic Rifle with Targeting Scope",
+        "Stun Pistol",
+        "Power Packs x5",
+        "Power Recharger",
+        "Tool Kit",
+        "Hands-Free Commlink",
+        "Camouflage Poncho"
       ],
-      "credits": -1650,
-      "notes": "Attack +4, Reflex Defense 19, HP 34. Acute Senses allows rerolling Perception checks."
+      "credits": 0,
+      "notes": "Master technician with exceptional perception and intelligence. Mon Calamari Shipwright provides expertise in starship systems. Skill Focus (Perception) reflects Mon Calamari natural observational abilities. Use Computers is a class skill due to Technology background."
     },
     {
-      "id": "scout_skirmisher",
+      "id": "scout_pistoleer",
+      "name": "Pistoleer",
+      "class": "Scout",
+      "archetype": "Pistoleer",
+      "description": "A skilled rider specializing in hit-and-run tactics from a speeder bike, utilizing dual-weapon mastery.",
+      "quote": "Speed and precision - that's all you need.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_pistoleer.webp",
+      "mentor": "lead",
+      "background": "Scarred",
+      "abilityScores": {
+        "str": 8,
+        "dex": 16,
+        "con": 14,
+        "int": 12,
+        "wis": 12,
+        "cha": 10
+      },
+      "species": "Codru-Ji",
+      "speciesFeat": "Dual Weapon Mastery I",
+      "className": "Scout",
+      "level": 1,
+      "feats": [
+        "Weapon Proficiency (Rifles)",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Simple Weapons)",
+        "Shake It Off"
+      ],
+      "talent": "Mechanized Rider",
+      "talentTree": "Mobile Scout",
+      "trainedSkills": [
+        "initiative",
+        "endurance",
+        "perception",
+        "pilot",
+        "ride",
+        "stealth"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "FC-20 Speeder Bike (Used)",
+        "Sporting Blaster Rifle",
+        "Pulse-Wave Rifle",
+        "Power Packs x8",
+        "Tool Kit"
+      ],
+      "credits": 0,
+      "notes": "Elite rider with exceptional dexterity and extra arms. Codru-Ji Dual Weapon Mastery I allows dual-wielding with extra arms advantage. Mechanized Rider talent allows advanced speeder bike maneuvers. Skilled Grappler provides +5 bonus to Grab and Grapple checks. Fully equipped with minimal credits remaining."
+    },
+    {
       "name": "Skirmisher",
       "class": "Scout",
       "archetype": "Skirmisher",
@@ -566,6 +671,7 @@
       "quote": "Speed and precision win battles. Stand still and you're already dead.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_skirmisher.webp",
       "mentor": "lead",
+      "background": "Widowed",
       "abilityScores": {
         "str": 10,
         "dex": 16,
@@ -608,6 +714,7 @@
       "quote": "The wilderness doesn't forgive mistakes. Neither do I.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_survivalist.webp",
       "mentor": "lead",
+      "background": "Bankrupt",
       "abilityScores": {
         "str": 12,
         "dex": 14,
@@ -653,6 +760,7 @@
       "quote": "The best battles are the ones your enemy never knew you fought.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_infiltrator.webp",
       "mentor": "lead",
+      "background": "Disgraced",
       "abilityScores": {
         "str": 8,
         "dex": 16,
@@ -845,6 +953,54 @@
       ],
       "credits": 225,
       "notes": "HP 40, Reflex 21, Fort 19. Gen'Dai damage threshold is doubled! Extremely durable frontline tank."
+    },
+    {
+      "id": "soldier_commando",
+      "name": "Commando",
+      "class": "Soldier",
+      "archetype": "Commando",
+      "description": "A specialized commando operative trained for elite strike missions and team-based combat operations.",
+      "quote": "With my squad at my side, we can handle anything.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_commando.webp",
+      "mentor": "breach",
+      "background": "Event, Orphaned",
+      "abilityScores": {
+        "str": 12,
+        "dex": 16,
+        "con": 12,
+        "int": 12,
+        "wis": 10,
+        "cha": 8
+      },
+      "species": "Sullustan",
+      "className": "Soldier",
+      "level": 1,
+      "feats": [
+        "Armor Proficiency (Light)",
+        "Armor Proficiency (Medium)",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Rifles)",
+        "Weapon Proficiency (Simple Weapons)"
+      ],
+      "talent": "Comrades in Arms",
+      "talentTree": "Trooper",
+      "trainedSkills": [
+        "initiative",
+        "perception",
+        "endurance",
+        "knowledgeTactics"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Tracker Utility Vest",
+        "Bryar Rifle with Targeting Scope",
+        "Power Packs x5",
+        "CryoBan Grenade",
+        "Adhesive Grenade x2",
+        "Smoke Grenade"
+      ],
+      "credits": 0,
+      "notes": "Elite commando with Sullustan darkvision and heightened awareness. Comrades in Arms grants +1 bonus to all melee and ranged attacks when within 3 squares of an ally. Tracker Utility Vest provides excellent mobility and carry capacity. Fully equipped with diverse grenade arsenal for tactical flexibility."
     },
     {
       "id": "nonheroic_worker",
