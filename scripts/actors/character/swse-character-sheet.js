@@ -291,6 +291,12 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._onSpendDestinyPoint();
     });
 
+    // Export Character Event Listener
+    html.find(".export-character-json").click(ev => {
+      ev.preventDefault();
+      this._onExportCharacterJSON();
+    });
+
     SWSELogger.log("SWSE | Character sheet listeners activated (full v13 routing)");
   }
 
@@ -620,6 +626,58 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   async _onSpendDestinyPoint() {
     const { DestinySpendingDialog } = await import('../../apps/destiny-spending-dialog.js');
     DestinySpendingDialog.open(this.actor);
+  }
+
+  /**
+   * Export character data to JSON file
+   */
+  async _onExportCharacterJSON() {
+    try {
+      // Get complete actor data including all embedded items
+      const actorData = this.actor.toObject();
+
+      // Create a clean export object
+      const exportData = {
+        name: actorData.name,
+        type: actorData.type,
+        img: actorData.img,
+        system: actorData.system,
+        items: actorData.items,
+        effects: actorData.effects,
+        flags: actorData.flags,
+        exportedAt: new Date().toISOString(),
+        exportedBy: game.user.name,
+        systemVersion: game.system.version
+      };
+
+      // Convert to JSON string with nice formatting
+      const jsonString = JSON.stringify(exportData, null, 2);
+
+      // Create a blob from the JSON string
+      const blob = new Blob([jsonString], { type: 'application/json' });
+
+      // Create a download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+
+      // Generate filename with character name and timestamp
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+      const safeName = actorData.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      link.download = `${safeName}_${timestamp}.json`;
+
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      ui.notifications.info(`Exported ${actorData.name} to JSON`);
+    } catch (error) {
+      console.error("Error exporting character:", error);
+      ui.notifications.error("Failed to export character. See console for details.");
+    }
   }
 
 
