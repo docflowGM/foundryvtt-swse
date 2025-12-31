@@ -49,6 +49,10 @@
  <span class="chevron-label">Class</span>
  </div>
 
+ <div class="chevron-step {{#if (eq currentStep 'background')}}active{{/if}} {{#if characterData.background}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'background') freeBuild)}}clickable{{/if}}" data-step="background">
+ <span class="chevron-label">Background</span>
+ </div>
+
  <div class="chevron-step {{#if (eq currentStep 'skills')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'skills') freeBuild)}}clickable{{/if}}" data-step="skills">
  <span class="chevron-label">Skills</span>
  </div>
@@ -57,22 +61,31 @@
  <span class="chevron-label">Languages</span>
  </div>
 
- {{#if characterData.forceSensitive}}
- <div class="progress-step {{#if (eq currentStep 'force-powers')}}active{{/if}} {{#if (gte characterData.powers.length characterData.forcePowersRequired)}}completed{{/if}}" data-step="force-powers">
- <div class="step-number">{{#if characterData.isDroid}}11{{else}}9{{/if}}</div>
- <div class="step-label">Force Powers</div>
+ <div class="chevron-step {{#if (eq currentStep 'feats')}}active{{/if}} {{#if (gte characterData.feats.length characterData.featsRequired)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'feats') freeBuild)}}clickable{{/if}}" data-step="feats">
+ <span class="chevron-label">Feats</span>
  </div>
- <div class="progress-connector"></div>
+
+ <div class="chevron-step {{#if (eq currentStep 'talents')}}active{{/if}} {{#if (gt characterData.talents.length 0)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'talents') freeBuild)}}clickable{{/if}}" data-step="talents">
+ <span class="chevron-label">Talents</span>
+ </div>
+
+ {{!-- Force powers only for Force-sensitive living characters (droids cannot be Force-sensitive in SWSE) --}}
+ {{#if characterData.forceSensitive}}
+ {{#unless characterData.isDroid}}
+ <div class="chevron-step {{#if (eq currentStep 'force-powers')}}active{{/if}} {{#if (gte characterData.powers.length characterData.forcePowersRequired)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'force-powers') freeBuild)}}clickable{{/if}}" data-step="force-powers">
+ <span class="chevron-label">Force Powers</span>
+ </div>
+ {{/unless}}
  {{/if}}
 
- <div class="progress-step {{#if (eq currentStep 'skills')}}active{{/if}}" data-step="skills">
- <div class="step-number">{{#if characterData.isDroid}}{{#if characterData.forceSensitive}}12{{else}}11{{/if}}{{else}}{{#if characterData.forceSensitive}}10{{else}}9{{/if}}{{/if}}</div>
- <div class="step-label">Skills</div>
+ {{#if characterData.isDroid}}
+ <div class="chevron-step {{#if (eq currentStep 'droid-final')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'droid-final') freeBuild)}}clickable{{/if}}" data-step="droid-final">
+ <span class="chevron-label">Finalize Droid</span>
  </div>
+ {{/if}}
 
- <div class="progress-step {{#if (eq currentStep 'summary')}}active{{/if}}" data-step="summary">
- <div class="step-number">{{#if characterData.isDroid}}{{#if characterData.forceSensitive}}13{{else}}12{{/if}}{{else}}{{#if characterData.forceSensitive}}11{{else}}10{{/if}}{{/if}}</div>
- <div class="step-label">Summary</div>
+ <div class="chevron-step {{#if (eq currentStep 'summary')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'summary') freeBuild)}}clickable{{/if}}" data-step="summary">
+ <span class="chevron-label">Summary</span>
  </div>
  </div>
 
