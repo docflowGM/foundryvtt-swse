@@ -136,12 +136,12 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
     };
 
     for (const [k, skill] of Object.entries(this.skills)) {
-      const ability = map[k] ?? skill.ability ?? 'dex';
+      const ability = map[k] ?? skill.selectedAbility ?? 'dex';
       skill.total =
         half + this.abilities[ability].mod +
         (skill.trained ? 5 : 0) +
         (skill.focused ? 5 : 0) +
-        skill.armor + skill.misc +
+        (skill.miscMod || 0) +
         this.conditionTrack.penalty;
     }
   }

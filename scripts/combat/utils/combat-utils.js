@@ -44,7 +44,6 @@ export function computeAttackBonus(actor, weapon) {
 
   // Weapon-based bonuses
   const misc = weapon.system?.attackBonus ?? 0;
-  const focusBonus = weapon.system?.focus ? 1 : 0;
 
   // Condition Track penalties
   const ctPenalty = actor.system.conditionTrack?.penalty ?? 0;
@@ -63,7 +62,6 @@ export function computeAttackBonus(actor, weapon) {
     bab +
     halfLvl +
     abilityMod +
-    focusBonus +
     misc +
     sizeMod +
     aePenalty +
@@ -86,20 +84,17 @@ export function computeDamageBonus(actor, weapon) {
   const lvl = actor.system.level ?? 1;
   const halfLvl = Math.floor(lvl / 2);
 
-  let bonus = halfLvl + (weapon.system?.modifier ?? 0);
+  let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
 
   const str = actor.system.abilities.str?.mod ?? 0;
   const dex = actor.system.abilities.dex?.mod ?? 0;
 
-  switch (weapon.system?.damageAttr) {
+  switch (weapon.system?.attackAttribute) {
     case "str": bonus += str; break;
     case "dex": bonus += dex; break;
     case "2str": bonus += str * 2; break;
     case "2dex": bonus += dex * 2; break;
   }
-
-  // Weapon Specialization (RAW: +2)
-  if (weapon.system?.specialization) bonus += 2;
 
   return bonus;
 }

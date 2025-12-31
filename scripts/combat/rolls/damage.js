@@ -13,22 +13,17 @@ function computeDamageBonus(actor, weapon) {
   const lvl = actor.system.level ?? 1;
   const halfLvl = Math.floor(lvl / 2);
 
-  let bonus = halfLvl + (weapon.system?.modifier ?? 0);
+  let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
 
   // Ability modifiers
   const strMod = actor.system.abilities?.str?.mod ?? 0;
   const dexMod = actor.system.abilities?.dex?.mod ?? 0;
 
-  switch (weapon.system?.damageAttr) {
+  switch (weapon.system?.attackAttribute) {
     case "str": bonus += strMod; break;
     case "dex": bonus += dexMod; break;
     case "2str": bonus += (strMod * 2); break;
     case "2dex": bonus += (dexMod * 2); break;
-  }
-
-  // Weapon Specialization RAW = +2 damage
-  if (weapon.system?.specialization === true) {
-    bonus += 2;
   }
 
   return bonus;

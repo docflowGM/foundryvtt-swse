@@ -206,15 +206,14 @@ export class SkillUseFilter {
 
     // Calculate skill modifier
     const halfLevel = Math.floor((actor.system.level || 1) / 2);
-    const abilityKey = skill.ability || 'cha';
+    const abilityKey = skill.selectedAbility || 'cha';
     const abilityScore = actor.system.abilities[abilityKey]?.total || 10;
     const abilityMod = Math.floor((abilityScore - 10) / 2);
 
     let modifier = halfLevel + abilityMod;
     if (skill.trained) modifier += 5;
     if (skill.focused) modifier += 5;
-    modifier += (skill.misc || 0);
-    modifier += (skill.armor || 0);
+    modifier += (skill.miscMod || 0);
     modifier += (actor.conditionPenalty || 0);
 
     // Add any situational modifiers from options

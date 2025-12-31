@@ -19,10 +19,9 @@ function computeAttackBonus(actor, weapon) {
   const bab = actor.system.bab ?? 0;
 
   // Use new data model: abilities[xxx].mod
-  const abilityMod = actor.system.abilities[weapon.attackAttr]?.mod ?? 0;
+  const abilityMod = actor.system.abilities[weapon.system?.attackAttribute ?? "str"]?.mod ?? 0;
 
-  const focusBonus = weapon.focus ? 1 : 0;
-  const miscBonus = weapon.modifier ?? 0;
+  const miscBonus = weapon.system?.attackBonus ?? 0;
 
   // Condition Track penalty (RAW)
   const ctPenalty = actor.system.conditionTrack?.penalty ?? 0;
@@ -42,7 +41,6 @@ function computeAttackBonus(actor, weapon) {
     bab +
     halfLvl +
     abilityMod +
-    focusBonus +
     miscBonus +
     sizeMod +
     attackPenalty +
@@ -80,26 +78,18 @@ function computeDamageBonus(actor, weapon) {
   const lvl = actor.system.level ?? 1;
   const halfLvl = Math.floor(lvl / 2);
 
-  let bonus = halfLvl + (weapon.modifier ?? 0);
+  let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
 
   // STR or DEX based weapon damage
   const strMod = actor.system.abilities.str?.mod ?? 0;
   const dexMod = actor.system.abilities.dex?.mod ?? 0;
 
-  switch (weapon.damageAttr) {
+  switch (weapon.system?.attackAttribute) {
     case "str": bonus += strMod; break;
     case "dex": bonus += dexMod; break;
     case "2str": bonus += strMod * 2; break;
     case "2dex": bonus += dexMod * 2; break;
   }
-
-  // Weapon Specialization
-  if (weapon.system?.specialization === true) {
-    bonus += 2; // RAW Weapon Specialization = +2 damage
-  }
-
-  // Condition Track penalty applies to damage roll? (RAW: No)
-  // So we skip CT penalty for damage.
 
   return bonus;
 }
