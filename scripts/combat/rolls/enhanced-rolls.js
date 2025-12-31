@@ -789,7 +789,7 @@ export class SWSERoll {
 /* CHAT BUTTONS                                                               */
 /* -------------------------------------------------------------------------- */
 
-Hooks.on("renderChatMessageHTML", (message, html) => {
+Hooks.on("renderChatMessage", (message, html) => {
   $(html).find(".swse-roll-damage").on("click", async ev => {
     const weaponId = ev.currentTarget.dataset.weaponId;
     const actor = game.actors.get(message.speaker.actor);

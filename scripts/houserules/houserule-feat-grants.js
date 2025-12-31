@@ -47,7 +47,7 @@ export class HouseRuleFeatGrants {
 
     // Grant feats to newly created actors
     Hooks.on("createActor", (actor, options, userId) => {
-      if (game.userId === userId) {
+      if (game.user.id === userId) {
         this._grantFeatsToActor(actor);
       }
     });
