@@ -277,11 +277,39 @@ export class PrerequisiteValidator {
                 return { valid: true, reasons: [] };
             }
 
-            // Split by comma, semicolon, or " and " (case insensitive)
-            prereqTalentNames = prereqData
-                .split(/[,;]|(?:\s+and\s+)/i)
-                .map(p => p.trim())
-                .filter(p => p && p.toLowerCase() !== 'and');
+            // Smart split: prefer semicolons and " or "/, then " and ", avoid splitting commas within talent names
+            // First normalize by replacing " or " with semicolon
+            let normalized = prereqData.replace(/\s+or\s+/gi, ';');
+
+            // Split by semicolon first (unambiguous delimiter)
+            if (normalized.includes(';')) {
+                prereqTalentNames = normalized
+                    .split(';')
+                    .map(p => p.trim())
+                    .filter(p => p);
+            } else {
+                // No semicolons - try " and " as delimiter (less ambiguous than comma)
+                // Only split on " and " when surrounded by spaces to avoid matching "Command"
+                prereqTalentNames = normalized
+                    .split(/\s+and\s+/i)
+                    .map(p => p.trim())
+                    .filter(p => p && p.toLowerCase() !== 'and');
+
+                // If we still have only one item and it contains a comma, warn but try splitting
+                // This is the problematic case: "Talent A, Talent B" where comma is the delimiter
+                if (prereqTalentNames.length === 1 && prereqTalentNames[0].includes(',')) {
+                    // Check if comma is likely a delimiter (followed by capital letter or common words)
+                    const commaPattern = /,\s+(?=[A-Z]|the\s|a\s)/;
+                    if (commaPattern.test(prereqTalentNames[0])) {
+                        // Looks like comma is a delimiter
+                        prereqTalentNames = prereqTalentNames[0]
+                            .split(',')
+                            .map(p => p.trim())
+                            .filter(p => p);
+                    }
+                    // Otherwise keep as single talent name (comma is part of the name)
+                }
+            }
         } else {
             // No prerequisites
             return { valid: true, reasons: [] };
