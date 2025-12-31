@@ -21,6 +21,7 @@
 
 import { SWSEActorSheetBase } from "../../sheets/base-sheet.js";
 import { SWSELogger } from '../../utils/logger.js';
+import { debounce } from '../../utils/performance-utils.js';
 import { CombatActionsMapper } from '../../combat/utils/combat-actions-mapper.js';
 import { FeatActionsMapper } from '../../utils/feat-actions-mapper.js';
 import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
@@ -29,6 +30,12 @@ import { SkillSystem } from "../../engine/SkillSystem.js";
 import { TalentAbilitiesEngine } from "../../engine/TalentAbilitiesEngine.js";
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
+
+  // Debounced handler for defense input changes
+  _debouncedDefenseChange = debounce(function() {
+    this.actor.prepareData();
+    this.render();
+  }, 300);
 
   // ----------------------------------------------------------
   // B. Rendering & Scroll State
@@ -55,27 +62,42 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     this._restoreScrollPositions();
   }
 
-  _saveScrollPositions() {
-    this._scrollPositions = {};
+  // PERFORMANCE: Cache scroll container references to avoid repeated DOM queries
+  _cacheScrollContainers() {
+    if (this._scrollContainers) return;
     const root = this.element?.[0];
     if (!root) return;
+    this._scrollContainers = root.querySelectorAll('.sheet-body, .tab');
+  }
 
-    root.querySelectorAll('.sheet-body, .tab').forEach(el => {
+  _saveScrollPositions() {
+    this._scrollPositions = {};
+    this._cacheScrollContainers();
+    if (!this._scrollContainers) return;
+
+    this._scrollContainers.forEach(el => {
       const key = el.dataset.scrollKey || el.className;
       this._scrollPositions[key] = el.scrollTop;
     });
   }
 
   _restoreScrollPositions() {
-    const root = this.element?.[0];
-    if (!root || !this._scrollPositions) return;
+    if (!this._scrollPositions) return;
+    this._cacheScrollContainers();
+    if (!this._scrollContainers) return;
 
-    root.querySelectorAll('.sheet-body, .tab').forEach(el => {
+    this._scrollContainers.forEach(el => {
       const key = el.dataset.scrollKey || el.className;
       if (this._scrollPositions[key] !== undefined) {
         el.scrollTop = this._scrollPositions[key];
       }
     });
+  }
+
+  // Clear cache when sheet is closed
+  async close() {
+    this._scrollContainers = null;
+    return super.close();
   }
 
   
@@ -93,17 +115,39 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // Inject skill actions
     context.skillActions = await SkillSystem.buildSkillActions(this.actor);
 
+    // PERFORMANCE: Single-pass item categorization (O(n) instead of O(n*k))
+    const itemsByType = new Map();
+    const itemsWithLowerNames = [];
+
+    for (const item of actor.items) {
+      const type = item.type;
+      if (!itemsByType.has(type)) itemsByType.set(type, []);
+      itemsByType.get(type).push(item);
+      itemsWithLowerNames.push({ item, lowerName: item.name.toLowerCase() });
+    }
+
+    // Pre-compute commonly needed collections
+    const feats = itemsByType.get("feat") || [];
+    const talents = itemsByType.get("talent") || [];
+    const allPowers = itemsByType.get("forcepower") || itemsByType.get("force-power") || [];
+    const classes = itemsByType.get("class") || [];
+
+    // Pre-compute lowercase names for feats to avoid repeated toLowerCase()
+    const featsWithLowerNames = feats.map(f => ({ feat: f, lowerName: f.name.toLowerCase() }));
+
     // --------------------------------------
     // 1. FEATS: Force Secrets / Techniques
     // --------------------------------------
-    const feats = actor.items.filter(i => i.type === "feat");
-    context.forceSecrets = feats.filter(f => f.name.toLowerCase().includes("force secret"));
-    context.forceTechniques = feats.filter(f => f.name.toLowerCase().includes("force technique"));
+    context.forceSecrets = featsWithLowerNames
+      .filter(f => f.lowerName.includes("force secret"))
+      .map(f => f.feat);
+    context.forceTechniques = featsWithLowerNames
+      .filter(f => f.lowerName.includes("force technique"))
+      .map(f => f.feat);
 
     // --------------------------------------
     // 1b. TALENTS: Lightsaber Forms
     // --------------------------------------
-    const talents = actor.items.filter(i => i.type === "talent");
     context.lightsaberForms = talents.filter(t =>
       t.system?.talent_tree?.toLowerCase() === "lightsaber forms"
     );
@@ -111,7 +155,6 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // --------------------------------------
     // 2. FORCE POWERS: Known vs Suite
     // --------------------------------------
-    const allPowers = actor.items.filter(i => ["forcepower", "force-power"].includes(i.type));
     const suite = system.forceSuite || { powers: [], max: 6 };
 
     context.activeSuite = allPowers.filter(p => suite.powers.includes(p.id));
@@ -187,9 +230,8 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     }
 
     // --------------------------------------
-    // 7. CLASS DISPLAY
+    // 7. CLASS DISPLAY (classes already filtered above)
     // --------------------------------------
-    const classes = actor.items.filter(i => i.type === "class");
     context.chargenComplete = classes.length > 0;
     context.classDisplay = classes.length > 0
       ? classes.map(c => `${c.name} ${c.system.level || 1}`).join(" / ")
@@ -232,8 +274,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
         super.activateListeners(html);
         html.find(".defense-input-sm, .defense-select-sm").change(ev => {
-            this.actor.prepareData();
-            this.render();
+            this._debouncedDefenseChange.call(this);
         });
     const root = html[0];
 
@@ -377,6 +418,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
         } catch (err) {
           // Fallback to old method if progression engine fails
           console.warn("Progression engine failed, using fallback:", err);
+          ui.notifications.warn("Using fallback mode. Progression engine encountered an error.");
           await this.actor.createEmbeddedDocuments("Item", [feat.toObject()]);
           ui.notifications.info(`Added feat: ${feat.name}`);
         }

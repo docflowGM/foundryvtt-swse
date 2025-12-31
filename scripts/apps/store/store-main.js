@@ -163,26 +163,25 @@ export class SWSEStore extends FormApplication {
 
   _sortAllGroups(){
     for (const [bucketName, map] of Object.entries(this.groupedItems)) {
-      for (const [cat, arr] of map.entries()) {
+      // PERFORMANCE: In-place sorting of arrays, skip Map reconstruction
+      // Keys are sorted during template rendering in getData()
+      for (const arr of map.values()) {
         arr.sort((a,b)=> {
           const an = (a.costValue!==null && a.costValue!==undefined) ? a.costValue : Infinity;
           const bn = (b.costValue!==null && b.costValue!==undefined) ? b.costValue : Infinity;
           if (an !== bn) return an - bn;
           return a.name.localeCompare(b.name);
         });
-        map.set(cat, arr);
       }
-      const sortedKeys = Array.from(map.keys()).sort((a,b)=>a.localeCompare(b));
-      const newMap = new Map();
-      for (const k of sortedKeys) newMap.set(k, map.get(k));
-      this.groupedItems[bucketName] = newMap;
     }
   }
 
   getData(){
     const groupsForTemplate = {};
     for (const [bucket, map] of Object.entries(this.groupedItems)) {
-      groupsForTemplate[bucket] = Array.from(map.entries()).map(([category, items])=>({category, items, count: items.length}));
+      // PERFORMANCE: Sort keys during rendering instead of reconstructing Map
+      const sortedEntries = Array.from(map.entries()).sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
+      groupsForTemplate[bucket] = sortedEntries.map(([category, items])=>({category, items, count: items.length}));
     }
     return { title: this.title, loading: !this._loaded, itemCount: this.items.length, groups: groupsForTemplate };
   }

@@ -69,9 +69,9 @@
  <input name="system.range" type="text" value="{{system.range}}" />
  </div>
  <div class="form-group">
- <label>Properties (comma-separated)</label>
- <input name="system.properties" type="text" value="{{#if system.properties}}{{join system.properties delimiter=', '}}{{/if}}" placeholder="e.g., Stun, Accurate, Autofire" />
- <small>Separate multiple properties with commas</small>
+ <label for="item-properties">Properties (comma-separated)</label>
+ <input id="item-properties" name="system.properties" type="text" value="{{#if system.properties}}{{join system.properties delimiter=', '}}{{/if}}" placeholder="e.g., Stun, Accurate, Autofire" aria-describedby="properties-help" />
+ <small id="properties-help">Separate multiple properties with commas</small>
  </div>
  <div class="form-group">
  <label>Ammunition Type</label>

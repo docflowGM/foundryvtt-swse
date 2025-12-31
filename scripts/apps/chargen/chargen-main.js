@@ -221,7 +221,9 @@ export default class CharacterGenerator extends Application {
     try {
       // Use cached data if available, otherwise load
       const cachedPacks = await ChargenDataCache.getData();
-      this._packs = foundry.utils.deepClone(cachedPacks);
+      // PERFORMANCE: Use structural sharing - only clone if modifications are needed
+      // The house rule below requires cloning for talents
+      this._packs = { ...cachedPacks };
 
       // Apply Block/Deflect combination to talents if house rule enabled
       if (this._packs.talents) {
@@ -319,7 +321,24 @@ export default class CharacterGenerator extends Application {
     context.freeBuild = this.freeBuild;
     context.isLevelUp = !!this.actor;
 
-    context.packs = foundry.utils.deepClone(this._packs);
+    // PERFORMANCE: Only clone packs that will be modified on this step
+    // Use shallow reference sharing for read-only packs
+    const packsToClone = {};
+    if (this.currentStep === "class") {
+      packsToClone.classes = true;
+    } else if (this.currentStep === "species") {
+      packsToClone.species = true;
+    } else if (this.currentStep === "feats") {
+      packsToClone.feats = true;
+    } else if (this.currentStep === "talents") {
+      packsToClone.talents = true;
+    }
+
+    // Build context.packs with shallow references for unchanged packs
+    context.packs = {};
+    for (const [key, data] of Object.entries(this._packs)) {
+      context.packs[key] = packsToClone[key] ? foundry.utils.deepClone(data) : data;
+    }
 
     // Filter out Jedi class for droids at level 1 (they can multiclass into Jedi later)
     if (this.currentStep === "class" && this.characterData.isDroid && context.packs.classes) {

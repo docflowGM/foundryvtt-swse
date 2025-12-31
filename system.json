@@ -93,7 +93,53 @@
     { "type": "icon", "url": "assets/ui/title-logo.png" }
   ],
 
-  "packs": [ /* unchanged — your existing packs block is valid */ ],
+  "packs": [
+    { "name": "species", "label": "Species", "type": "Item", "system": "foundryvtt-swse", "path": "packs/species.db" },
+    { "name": "classes", "label": "Classes", "type": "Item", "system": "foundryvtt-swse", "path": "packs/classes.db" },
+    { "name": "talents", "label": "Talents", "type": "Item", "system": "foundryvtt-swse", "path": "packs/talents.db" },
+    { "name": "feats", "label": "Feats", "type": "Item", "system": "foundryvtt-swse", "path": "packs/feats.db" },
+    { "name": "forcepowers", "label": "Force Powers", "type": "Item", "system": "foundryvtt-swse", "path": "packs/forcepowers.db" },
+    { "name": "forcesecrets", "label": "Force Secrets", "type": "Item", "system": "foundryvtt-swse", "path": "packs/forcesecrets.db" },
+    { "name": "forcetechniques", "label": "Force Techniques", "type": "Item", "system": "foundryvtt-swse", "path": "packs/forcetechniques.db" },
+    { "name": "skills", "label": "Skills", "type": "Item", "system": "foundryvtt-swse", "path": "packs/skills.db" },
+    { "name": "backgrounds", "label": "Backgrounds", "type": "Item", "system": "foundryvtt-swse", "path": "packs/backgrounds.db" },
+    { "name": "languages", "label": "Languages", "type": "Item", "system": "foundryvtt-swse", "path": "packs/languages.db" },
+
+    { "name": "weapons-pistols", "label": "Weapons - Pistols", "type": "Item", "system": "foundryvtt-swse", "path": "packs/weapons-pistols.db" },
+    { "name": "weapons-rifles", "label": "Weapons - Rifles", "type": "Item", "system": "foundryvtt-swse", "path": "packs/weapons-rifles.db" },
+    { "name": "weapons-heavy", "label": "Weapons - Heavy", "type": "Item", "system": "foundryvtt-swse", "path": "packs/weapons-heavy.db" },
+    { "name": "weapons-grenades", "label": "Weapons - Grenades & Explosives", "type": "Item", "system": "foundryvtt-swse", "path": "packs/weapons-grenades.db" },
+    { "name": "weapons-exotic", "label": "Weapons - Exotic", "type": "Item", "system": "foundryvtt-swse", "path": "packs/weapons-exotic.db" },
+    { "name": "weapons-simple", "label": "Weapons - Simple/Melee", "type": "Item", "system": "foundryvtt-swse", "path": "packs/weapons-simple.db" },
+    { "name": "weapons", "label": "Weapons (All)", "type": "Item", "system": "foundryvtt-swse", "path": "packs/weapons.db" },
+
+    { "name": "armor-light", "label": "Armor - Light", "type": "Item", "system": "foundryvtt-swse", "path": "packs/armor-light.db" },
+    { "name": "armor-medium", "label": "Armor - Medium", "type": "Item", "system": "foundryvtt-swse", "path": "packs/armor-medium.db" },
+    { "name": "armor-heavy", "label": "Armor - Heavy", "type": "Item", "system": "foundryvtt-swse", "path": "packs/armor-heavy.db" },
+    { "name": "armor", "label": "Armor (All)", "type": "Item", "system": "foundryvtt-swse", "path": "packs/armor.db" },
+
+    { "name": "vehicles-starships", "label": "Vehicles - Starships", "type": "Item", "system": "foundryvtt-swse", "path": "packs/vehicles-starships.db" },
+    { "name": "vehicles-stations", "label": "Vehicles - Stations", "type": "Item", "system": "foundryvtt-swse", "path": "packs/vehicles-stations.db" },
+    { "name": "vehicles-walkers", "label": "Vehicles - Walkers", "type": "Item", "system": "foundryvtt-swse", "path": "packs/vehicles-walkers.db" },
+    { "name": "vehicles-speeders", "label": "Vehicles - Speeders", "type": "Item", "system": "foundryvtt-swse", "path": "packs/vehicles-speeders.db" },
+    { "name": "vehicles", "label": "Vehicles (All)", "type": "Item", "system": "foundryvtt-swse", "path": "packs/vehicles.db" },
+
+    { "name": "equipment-comlinks", "label": "Equipment - Communications", "type": "Item", "system": "foundryvtt-swse", "path": "packs/equipment-comlinks.db" },
+    { "name": "equipment-tools", "label": "Equipment - Tools & Kits", "type": "Item", "system": "foundryvtt-swse", "path": "packs/equipment-tools.db" },
+    { "name": "equipment-survival", "label": "Equipment - Survival Gear", "type": "Item", "system": "foundryvtt-swse", "path": "packs/equipment-survival.db" },
+    { "name": "equipment-medical", "label": "Equipment - Medical", "type": "Item", "system": "foundryvtt-swse", "path": "packs/equipment-medical.db" },
+    { "name": "equipment-tech", "label": "Equipment - Technology", "type": "Item", "system": "foundryvtt-swse", "path": "packs/equipment-tech.db" },
+    { "name": "equipment-security", "label": "Equipment - Security", "type": "Item", "system": "foundryvtt-swse", "path": "packs/equipment-security.db" },
+    { "name": "equipment-other", "label": "Equipment - Other", "type": "Item", "system": "foundryvtt-swse", "path": "packs/equipment-other.db" },
+    { "name": "equipment", "label": "Equipment (All)", "type": "Item", "system": "foundryvtt-swse", "path": "packs/equipment.db" },
+
+    { "name": "conditions", "label": "Conditions", "type": "Item", "system": "foundryvtt-swse", "path": "packs/conditions.db" },
+    { "name": "special-combat-condition", "label": "Combat Conditions", "type": "Item", "system": "foundryvtt-swse", "path": "packs/special-combat-condition.db" },
+    { "name": "attributes", "label": "Attributes", "type": "Item", "system": "foundryvtt-swse", "path": "packs/attributes.db" },
+    { "name": "extraskilluses", "label": "Extra Skill Uses", "type": "Item", "system": "foundryvtt-swse", "path": "packs/extraskilluses.db" },
+    { "name": "npc", "label": "NPCs", "type": "Actor", "system": "foundryvtt-swse", "path": "packs/npc.db" },
+    { "name": "droids", "label": "Droids", "type": "Actor", "system": "foundryvtt-swse", "path": "packs/droids.db" }
+  ],
 
   "settings": {
     "foundryvtt-swse.actorValidationMigration": {
