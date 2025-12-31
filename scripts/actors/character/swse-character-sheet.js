@@ -291,10 +291,21 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       this._onSpendDestinyPoint();
     });
 
-    // Export Character Event Listener
-    html.find(".export-character-json").click(ev => {
+    // Export Character Event Listeners (Import/Export Tab)
+    html.find(".export-character-json-btn").click(ev => {
       ev.preventDefault();
       this._onExportCharacterJSON();
+    });
+
+    html.find(".export-template-btn").click(ev => {
+      ev.preventDefault();
+      this._onExportTemplate();
+    });
+
+    // Import Character Event Listener
+    html.find(".import-character-btn").click(ev => {
+      ev.preventDefault();
+      this._onImportCharacter();
     });
 
     SWSELogger.log("SWSE | Character sheet listeners activated (full v13 routing)");
@@ -677,6 +688,118 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     } catch (error) {
       console.error("Error exporting character:", error);
       ui.notifications.error("Failed to export character. See console for details.");
+    }
+  }
+
+  /**
+   * Export a blank character template
+   */
+  async _onExportTemplate() {
+    try {
+      // Create a template with all fields but minimal/example data
+      const template = {
+        name: "Character Name",
+        type: "character",
+        img: "icons/svg/mystery-man.svg",
+        system: {
+          level: 1,
+          race: "Human",
+          size: "Medium",
+          forceSensitive: false,
+          biography: "Character background and description",
+          attributes: {
+            str: { base: 10, racial: 0, enhancement: 0, temp: 0, total: 10, mod: 0 },
+            dex: { base: 10, racial: 0, enhancement: 0, temp: 0, total: 10, mod: 0 },
+            con: { base: 10, racial: 0, enhancement: 0, temp: 0, total: 10, mod: 0 },
+            int: { base: 10, racial: 0, enhancement: 0, temp: 0, total: 10, mod: 0 },
+            wis: { base: 10, racial: 0, enhancement: 0, temp: 0, total: 10, mod: 0 },
+            cha: { base: 10, racial: 0, enhancement: 0, temp: 0, total: 10, mod: 0 }
+          },
+          hp: {
+            value: 30,
+            max: 30,
+            temp: 0
+          },
+          forcePoints: {
+            value: 5,
+            max: 5,
+            diceType: "d6"
+          },
+          destinyPoints: {
+            value: 1,
+            max: 1
+          },
+          conditionTrack: {
+            current: 0,
+            penalty: 0,
+            persistent: 0
+          },
+          destiny: {
+            hasDestiny: false,
+            type: "",
+            fulfilled: false,
+            secret: ""
+          },
+          darkSideScore: 0
+        },
+        items: [],
+        effects: [],
+        flags: {},
+        _instructions: {
+          description: "SWSE Character Template",
+          usage: "Fill in the fields above with your character information, then import this file using the Import button in the Import/Export tab.",
+          fields: {
+            name: "Your character's name",
+            type: "Must be 'character', 'npc', 'vehicle', or 'droid'",
+            img: "Path to character portrait image",
+            "system.level": "Character level (1-20)",
+            "system.race": "Character species/race",
+            "system.attributes": "Ability scores - modify the 'base' values, totals will be calculated",
+            "system.hp": "Hit points",
+            "system.forcePoints": "Force points (if applicable)",
+            items: "Array of item objects (classes, feats, talents, equipment, etc.)",
+            effects: "Array of active effect objects",
+            flags: "Additional system-specific data"
+          }
+        }
+      };
+
+      // Convert to JSON string with nice formatting
+      const jsonString = JSON.stringify(template, null, 2);
+
+      // Create a blob from the JSON string
+      const blob = new Blob([jsonString], { type: 'application/json' });
+
+      // Create a download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+
+      link.download = 'swse_character_template.json';
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      ui.notifications.info('Character template downloaded');
+    } catch (error) {
+      console.error("Error exporting template:", error);
+      ui.notifications.error("Failed to export template. See console for details.");
+    }
+  }
+
+  /**
+   * Open the character import wizard
+   */
+  async _onImportCharacter() {
+    try {
+      const { CharacterImportWizard } = await import('../../apps/character-import-wizard.js');
+      CharacterImportWizard.open();
+    } catch (error) {
+      console.error("Error opening import wizard:", error);
+      ui.notifications.error("Failed to open import wizard. See console for details.");
     }
   }
 
