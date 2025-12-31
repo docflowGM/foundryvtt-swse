@@ -34,6 +34,10 @@
   border-color: rgba(66,165,255,0.6);
   transform: translateY(-3px);
 }
+.swse-app.force-power-picker .power-card:focus-visible {
+  outline: 2px solid rgba(66,165,255,0.8);
+  outline-offset: 2px;
+}
 .swse-app.force-power-picker .power-meta { flex: 1; }
 .swse-app.force-power-picker .power-name { font-weight: 600; margin-bottom: 4px; }
 .swse-app.force-power-picker .force-picker-footer { display:flex; justify-content:space-between; padding-top:8px; }

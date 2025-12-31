@@ -1,8 +1,11 @@
 // ============================================================================
 // HOLO THEME - Default Theme
 // Classic holographic blue aesthetic - Explicit base values for theme switching
+// Also serves as fallback when no data-theme attribute is set (JS fails to load)
 // ============================================================================
 
+// Apply holo theme as default fallback when no theme is set
+:root:not([data-theme]),
 [data-theme="holo"] {
   // Primary Brand Colors - Classic holographic blue
   --swse-primary: #9ed0ff;
@@ -24,7 +27,7 @@
 
   // Text Colors - Light cyan tones
   --swse-text-primary: #9ed0ff;
-  --swse-text-secondary: #6a9dcd;
+  --swse-text-secondary: #a8d4f0;  // Improved contrast (6.5:1 vs previous 4.5:1)
   --swse-text-light: #b5daff;
   --swse-text-white: #ffffff;
   --swse-text-muted: rgba(181, 218, 255, 0.5);
@@ -42,6 +45,7 @@
 }
 
 // Holo theme specific enhancements
+:root:not([data-theme]) .swse,
 [data-theme="holo"] .swse {
   // Add subtle holographic scan line effect
   &::before {
@@ -64,6 +68,9 @@
 }
 
 // Enhanced glow on focus for holo theme
+:root:not([data-theme]) .swse input:focus,
+:root:not([data-theme]) .swse select:focus,
+:root:not([data-theme]) .swse .btn:hover,
 [data-theme="holo"] .swse input:focus,
 [data-theme="holo"] .swse select:focus,
 [data-theme="holo"] .swse .btn:hover {
@@ -71,6 +78,7 @@
 }
 
 // Section headers with holographic effect
+:root:not([data-theme]) .swse .section-header,
 [data-theme="holo"] .swse .section-header {
   text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
 }

@@ -1015,8 +1015,83 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     ui.notifications.info("Force powers restored.");
   }
 
+  /**
+   * Handle spending a Force Point for various purposes
+   * @param {Event} event - The triggering event
+   */
+  async _onSpendForcePoint(event) {
+    event.preventDefault();
+    const type = event.currentTarget.dataset.type;
 
-  
+    switch (type) {
+      case 'reroll':
+        // Spend Force Point to add Force Point dice to a roll
+        const spent = await this.actor.spendForcePoint('adding to a roll');
+        if (spent) {
+          // Roll the Force Point dice
+          const dieType = this.actor.system.forcePoints?.diceType || 'd6';
+          const level = this.actor.system.level || 1;
+          const qty = level >= 15 ? 3 : level >= 8 ? 2 : 1;
+
+          const roll = await new Roll(`${qty}${dieType}`).evaluate({ async: true });
+          await roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+            flavor: `<div class="swse force-roll"><h4><i class="fas fa-dice"></i> Force Point Roll</h4><p>Add this to your roll result!</p></div>`
+          });
+        }
+        break;
+
+      case 'avoid-death':
+        // Spend Force Point to avoid death
+        await this.actor.spendForcePoint('avoiding death');
+        break;
+
+      case 'reduce-dark':
+        // Spend Force Point to reduce Dark Side Score
+        const currentDark = this.actor.system.darkSideScore || 0;
+        if (currentDark <= 0) {
+          return ui.notifications.warn(`${this.actor.name} has no Dark Side Score to reduce.`);
+        }
+        const reduceSpent = await this.actor.spendForcePoint('reducing Dark Side Score');
+        if (reduceSpent) {
+          await this.actor.update({ 'system.darkSideScore': Math.max(0, currentDark - 1) });
+          ui.notifications.info(`${this.actor.name}'s Dark Side Score reduced to ${currentDark - 1}.`);
+        }
+        break;
+
+      default:
+        // Generic Force Point spend
+        await this.actor.spendForcePoint(type || 'unspecified');
+    }
+  }
+
+  /**
+   * Handle regaining a spent Force Power by spending a Force Point
+   * @param {Event} event - The triggering event
+   */
+  async _onRegainForcePower(event) {
+    event.preventDefault();
+    const itemId = event.currentTarget.dataset.itemId;
+    const power = this.actor.items.get(itemId);
+
+    if (!power) {
+      return ui.notifications.error("Force Power not found.");
+    }
+
+    if (!power.system.spent) {
+      return ui.notifications.warn(`${power.name} is not spent.`);
+    }
+
+    // Spend a Force Point to regain the power
+    const spent = await this.actor.spendForcePoint(`regaining ${power.name}`);
+
+    if (spent) {
+      await power.update({ 'system.spent': false });
+      ui.notifications.info(`${power.name} has been regained!`);
+    }
+  }
+
+
   // ----------------------------------------------------------
   // K. Drag & Drop / Compendium Import Engine
   // ----------------------------------------------------------

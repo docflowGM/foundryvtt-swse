@@ -32,6 +32,11 @@
   box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
 }
 
+.houserule-menu-button:focus-visible {
+  outline: 2px solid #6ab0ff;
+  outline-offset: 2px;
+}
+
 .houserule-menu-button i {
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
@@ -211,6 +216,11 @@
   box-shadow: 0 2px 8px rgba(74, 144, 226, 0.4);
 }
 
+.sheet-footer button:focus-visible {
+  outline: 2px solid #6ab0ff;
+  outline-offset: 2px;
+}
+
 .sheet-footer button i {
   margin-right: 0.5rem;
 }
@@ -236,6 +246,11 @@
 .preset-buttons button:hover {
   background: rgba(74, 144, 226, 0.3);
   border-color: #6ab0ff;
+}
+
+.preset-buttons button:focus-visible {
+  outline: 2px solid #6ab0ff;
+  outline-offset: 2px;
 }
 
 /* Responsive design */
@@ -464,6 +479,11 @@
   box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
 }
 
+.preset-action:focus-visible {
+  outline: 2px solid #6ab0ff;
+  outline-offset: 2px;
+}
+
 .preset-card.active .preset-action {
   background: #2ecc40;
   cursor: default;
@@ -519,6 +539,11 @@
   background: #6a6a6a;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.utility-btn:focus-visible {
+  outline: 2px solid #6ab0ff;
+  outline-offset: 2px;
 }
 
 /* Preset notes */

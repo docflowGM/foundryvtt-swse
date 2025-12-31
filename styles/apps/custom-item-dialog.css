@@ -168,6 +168,11 @@
   border-color: #ff6b7a;
 }
 
+.dc-chart-row button.remove-dc-row:focus-visible {
+  outline: 2px solid #ff6b7a;
+  outline-offset: 2px;
+}
+
 /* Add button */
 button.add-button {
   padding: 6px 12px;
@@ -188,6 +193,11 @@ button.add-button:hover {
   background-color: rgba(40, 167, 69, 0.4);
   border-color: #5dff7a;
   box-shadow: 0 0 8px rgba(40, 167, 69, 0.4);
+}
+
+button.add-button:focus-visible {
+  outline: 2px solid #5dff7a;
+  outline-offset: 2px;
 }
 
 button.add-button i {

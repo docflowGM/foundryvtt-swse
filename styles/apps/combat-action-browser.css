@@ -74,6 +74,11 @@
   background: rgba(255, 206, 0, 0.08);
 }
 
+.swse-action-tab:focus-visible {
+  outline: 2px solid #ffce00;
+  outline-offset: -2px;
+}
+
 /* =====================================================
    Content Area
    ===================================================== */
@@ -224,6 +229,11 @@
   transform: scale(0.98);
 }
 
+.swse-action-exec:focus-visible {
+  outline: 2px solid #ffce00;
+  outline-offset: 2px;
+}
+
 /* Favorite Star */
 .swse-action-fav {
   font-size: 14px;
@@ -242,6 +252,12 @@
 .swse-action-fav.active {
   color: #ffce00;
   text-shadow: 0 0 6px rgba(255, 206, 0, 0.6);
+}
+
+.swse-action-fav:focus-visible {
+  outline: 2px solid #ffce00;
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 /* =====================================================

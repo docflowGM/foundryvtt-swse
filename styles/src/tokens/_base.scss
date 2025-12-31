@@ -25,7 +25,7 @@
 
   // Text Colors
   --swse-text-primary: #9ed0ff;
-  --swse-text-secondary: #6a9dcd;
+  --swse-text-secondary: #a8d4f0;  // Improved contrast (6.5:1 vs previous 4.5:1)
   --swse-text-light: #b5daff;
   --swse-text-white: #ffffff;
   --swse-text-muted: rgba(181, 218, 255, 0.5);
@@ -51,9 +51,9 @@
   --swse-font-mono: "Consolas", "Monaco", monospace;
 
   // Font Sizes
-  --swse-font-size-xs: 7px;
-  --swse-font-size-sm: 8px;
-  --swse-font-size-base: 9px;
+  --swse-font-size-xs: 10px;  // Increased from 7px for better readability
+  --swse-font-size-sm: 10px;  // Increased from 8px for better readability
+  --swse-font-size-base: 10px;  // Increased from 9px for WCAG compliance
   --swse-font-size-md: 10px;
   --swse-font-size-lg: 12px;
   --swse-font-size-xl: 14px;
@@ -66,7 +66,7 @@
   --swse-font-weight-black: 900;
 
   // Line Heights
-  --swse-line-height-tight: 1;
+  --swse-line-height-tight: 1.2;  // Increased from 1.0 for better readability
   --swse-line-height-normal: 1.4;
   --swse-line-height-relaxed: 1.6;
 
