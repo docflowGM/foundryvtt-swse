@@ -895,20 +895,20 @@
       "name": "Brawler",
       "class": "Soldier",
       "archetype": "Brawler",
-      "description": "A powerful melee combatant dealing massive damage in close quarters combat.",
-      "quote": "Let them feel the fury of my blade!",
+      "description": "A fearsome Mantellian Savrip brawler wielding natural claws and innate ferocity. Solid walls of muscle and primal power, devastating in close combat.",
+      "quote": "Feel the wrath of the claws!",
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_brawler.webp",
       "mentor": "breach",
-      "background": "Kashyyyk Origin",
+      "background": "Orphaned",
       "abilityScores": {
-        "str": 16,
-        "dex": 14,
-        "con": 14,
+        "str": 18,
+        "dex": 12,
+        "con": 16,
         "int": 10,
-        "wis": 12,
+        "wis": 10,
         "cha": 8
       },
-      "species": "Wookiee",
+      "species": "Mantellian Savrip",
       "className": "Soldier",
       "level": 1,
       "feat": "Weapon Proficiency (Advanced Melee)",
@@ -921,14 +921,13 @@
       ],
       "forcePowers": [],
       "startingEquipment": [
-        "Vibroblade",
-        "Blast Helmet and Vest",
         "Combat Jumpsuit",
+        "Blast Helmet and Vest",
         "Comlink, Short-Range",
         "Medpac"
       ],
       "credits": -750,
-      "notes": "Attack +6, 2d10+7 damage (with 2-handed STR bonus). HP 36. Wookiee STR bonus makes this devastating."
+      "notes": "Natural Weapons (claws) deal 1d6 slashing damage and poison targets on hit. Large size provides +5 damage threshold but -1 reflex penalty. Rage ability grants +2 melee bonus once per day. STR 22 (after +4 racial), CON 20 (after +4 racial). Natural Armor +2 to Reflex Defense. Speed 8 squares. Cannot take Heavy Weapons, Pistol, or Rifle proficiencies."
     },
     {
       "id": "soldier_tank",

@@ -556,8 +556,53 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
         required: true,
         initial: 'total',
         choices: ['none', 'normal', 'improved', 'total']
+      }),
+
+      // Emplacement Points for vehicle modifications
+      emplacementPoints: new fields.NumberField({
+        required: true,
+        nullable: true,
+        initial: value => {
+          // This will be calculated in prepareDerivedData
+          return null;
+        },
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return null;
+          const num = Number(value);
+          return Number.isNaN(num) ? null : Math.floor(num);
+        }
+      }),
+      unusedEmplacementPoints: new fields.NumberField({
+        required: true,
+        nullable: true,
+        initial: 0,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === "") return 0;
+          const num = Number(value);
+          return Number.isNaN(num) ? 0 : Math.floor(num);
+        }
       })
     };
+  }
+
+  /**
+   * Get default emplacement points for a given size
+   * @param {string} size - The vehicle size
+   * @returns {number} The default EP for the size
+   */
+  static getDefaultEmplacementPoints(size) {
+    const sizeMap = {
+      'huge': 1,
+      'gargantuan': 2,
+      'colossal': 4,
+      'colossal (frigate)': 2,
+      'colossal (cruiser)': 8,
+      'colossal (station)': 16,
+      'large': 0
+    };
+    return sizeMap[size?.toLowerCase()] || 0;
   }
 
   prepareDerivedData() {
@@ -566,6 +611,11 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       const total = ability.base + ability.racial + ability.temp;
       ability.total = total;
       ability.mod = Math.floor((total - 10) / 2);
+    }
+
+    // Set default emplacement points based on size if not explicitly set
+    if (this.emplacementPoints === null || this.emplacementPoints === undefined) {
+      this.emplacementPoints = SWSEVehicleDataModel.getDefaultEmplacementPoints(this.size);
     }
 
     // Get size modifier
