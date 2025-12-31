@@ -93,10 +93,13 @@ export class DerivedCalculator {
 
     /**
      * Calculate saving throws (Reflex, Fortitude, Will)
+     * @param {Actor} actor - Character actor
+     * @param {Array} cachedFeats - Pre-filtered feat items (PERFORMANCE)
      */
-    static _calculateSaves(actor) {
+    static _calculateSaves(actor, cachedFeats = null) {
         const progression = actor.system.progression || {};
         const classLevels = progression.classLevels || [];
+        const feats = cachedFeats || actor.items.filter(i => i.type === 'feat');
 
         const saves = {
             reflex: 0,
@@ -120,8 +123,8 @@ export class DerivedCalculator {
         saves.fortitude += actor.system.abilities?.con?.mod || 0;
         saves.will += actor.system.abilities?.wis?.mod || 0;
 
-        // Add feat bonuses
-        const featSaveBonus = this._calculateFeatSaveBonus(actor);
+        // Add feat bonuses (pass cached feats)
+        const featSaveBonus = this._calculateFeatSaveBonus(actor, feats);
         saves.reflex += featSaveBonus.reflex || 0;
         saves.fortitude += featSaveBonus.fortitude || 0;
         saves.will += featSaveBonus.will || 0;
@@ -147,13 +150,16 @@ export class DerivedCalculator {
 
     /**
      * Calculate feat-based save bonuses
+     * @param {Actor} actor - Character actor
+     * @param {Array} cachedFeats - Pre-filtered feat items (PERFORMANCE)
      */
-    static _calculateFeatSaveBonus(actor) {
+    static _calculateFeatSaveBonus(actor, cachedFeats = null) {
         const bonuses = { reflex: 0, fortitude: 0, will: 0 };
+        const feats = cachedFeats || actor.items.filter(i => i.type === 'feat');
 
         // Check for feats that grant save bonuses
         // Example: Iron Will +2 will saves
-        actor.items.filter(i => i.type === 'feat').forEach(feat => {
+        feats.forEach(feat => {
             if (feat.name.includes('Iron Will')) bonuses.will += 2;
             if (feat.name.includes('Dodge')) bonuses.reflex += 1;
             if (feat.name.includes('Toughness')) bonuses.fortitude += 1;
@@ -164,10 +170,13 @@ export class DerivedCalculator {
 
     /**
      * Calculate skill modifiers
+     * @param {Actor} actor - Character actor
+     * @param {Array} cachedFeats - Pre-filtered feat items (PERFORMANCE)
      */
-    static _calculateSkills(actor) {
+    static _calculateSkills(actor, cachedFeats = null) {
         const skills = actor.system.skills || {};
         const calculated = {};
+        const feats = cachedFeats || actor.items.filter(i => i.type === 'feat');
 
         for (const [skillKey, skillData] of Object.entries(skills)) {
             const ability = skillData.ability || 'str';
@@ -176,8 +185,8 @@ export class DerivedCalculator {
 
             let total = abilityMod + (skillData.misc || 0) + classSkillBonus;
 
-            // Add feat bonuses
-            total += this._calculateSkillFeatBonus(actor, skillKey);
+            // Add feat bonuses (pass cached feats)
+            total += this._calculateSkillFeatBonus(actor, skillKey, feats);
 
             calculated[skillKey] = {
                 ...skillData,
@@ -190,13 +199,17 @@ export class DerivedCalculator {
 
     /**
      * Calculate feat-based skill bonuses
+     * @param {Actor} actor - Character actor
+     * @param {string} skillKey - Skill identifier
+     * @param {Array} cachedFeats - Pre-filtered feat items (PERFORMANCE)
      */
-    static _calculateSkillFeatBonus(actor, skillKey) {
+    static _calculateSkillFeatBonus(actor, skillKey, cachedFeats = null) {
         // This would look for relevant feats
         // For now, simple implementation
         let bonus = 0;
+        const feats = cachedFeats || actor.items.filter(i => i.type === 'feat');
 
-        actor.items.filter(i => i.type === 'feat').forEach(feat => {
+        feats.forEach(feat => {
             if (feat.name.includes('Skill Focus') && feat.name.includes(skillKey)) {
                 bonus += 3;
             }
@@ -207,10 +220,13 @@ export class DerivedCalculator {
 
     /**
      * Calculate force points
+     * @param {Actor} actor - Character actor
+     * @param {Array} cachedFeats - Pre-filtered feat items (PERFORMANCE)
      */
-    static _calculateForcePoints(actor) {
+    static _calculateForcePoints(actor, cachedFeats = null) {
         const progression = actor.system.progression || {};
         const classLevels = progression.classLevels || [];
+        const feats = cachedFeats || actor.items.filter(i => i.type === 'feat');
 
         let forcePoints = 0;
 
@@ -225,9 +241,7 @@ export class DerivedCalculator {
         }
 
         // Add force points from feats (Force Training)
-        const forceTrainingFeats = actor.items.filter(i =>
-            i.type === 'feat' && i.name === 'Force Training'
-        );
+        const forceTrainingFeats = feats.filter(f => f.name === 'Force Training');
         forcePoints += forceTrainingFeats.length;
 
         return Math.max(0, forcePoints);
@@ -235,14 +249,17 @@ export class DerivedCalculator {
 
     /**
      * Calculate initiative
+     * @param {Actor} actor - Character actor
+     * @param {Array} cachedFeats - Pre-filtered feat items (PERFORMANCE)
      */
-    static _calculateInitiative(actor) {
+    static _calculateInitiative(actor, cachedFeats = null) {
         const dexMod = actor.system.abilities?.dex?.mod || 0;
         let initiative = dexMod;
+        const feats = cachedFeats || actor.items.filter(i => i.type === 'feat');
 
         // Add feat bonuses
-        const initiativeFeats = actor.items.filter(i =>
-            i.type === 'feat' && (i.name.includes('Initiative') || i.name.includes('Improved Initiative'))
+        const initiativeFeats = feats.filter(f =>
+            f.name.includes('Initiative') || f.name.includes('Improved Initiative')
         );
         initiative += initiativeFeats.length * 4;
 
@@ -251,18 +268,21 @@ export class DerivedCalculator {
 
     /**
      * Calculate movement speed
+     * @param {Actor} actor - Character actor
+     * @param {Array} cachedFeats - Pre-filtered feat items (PERFORMANCE)
      */
-    static _calculateSpeed(actor) {
+    static _calculateSpeed(actor, cachedFeats = null) {
         let speed = 6; // Default: 30 feet = 6 squares
 
         const progression = actor.system.progression || {};
         const species = progression.species || '';
+        const feats = cachedFeats || actor.items.filter(i => i.type === 'feat');
 
         // Species modifiers would go here
         // For now, use default
 
         // Check for speed-affecting feats
-        actor.items.filter(i => i.type === 'feat').forEach(feat => {
+        feats.forEach(feat => {
             if (feat.name.includes('Run')) speed += 2;
         });
 
@@ -321,17 +341,23 @@ export class DerivedCalculator {
     /**
      * Run all registered calculations
      * Returns object with all calculated stats
+     *
+     * PERFORMANCE: Pre-cache frequently accessed item collections
      */
     static recalculate(actor) {
         if (!this._calculators) {
             this.initializeCalculations();
         }
 
+        // PERFORMANCE: Cache frequently accessed collections (single-pass O(n))
+        const cachedFeats = actor.items.filter(i => i.type === 'feat');
+        const cachedFeatNames = new Set(cachedFeats.map(f => f.name.toLowerCase()));
+
         const results = {};
 
         for (const [name, calculator] of this._calculators) {
             try {
-                results[name] = calculator(actor);
+                results[name] = calculator(actor, cachedFeats, cachedFeatNames);
             } catch (err) {
                 SWSELogger.error(`Calculation "${name}" failed:`, err);
                 results[name] = null;
