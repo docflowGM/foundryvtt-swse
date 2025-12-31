@@ -450,7 +450,12 @@ export function _createTempActorForValidation() {
       bab: this.characterData.bab || 0,
       abilities: foundry.utils.deepClone(this.characterData.abilities),
       skills: {},
-      defenses: foundry.utils.deepClone(this.characterData.defenses)
+      defenses: foundry.utils.deepClone(this.characterData.defenses),
+      // Include mentor biases for suggestion engine
+      swse: {
+        mentorBuildIntentBiases: this.characterData.mentorBiases || {},
+        mentorSurveyCompleted: this.characterData.mentorSurveyCompleted || false
+      }
     },
     items: {
       filter: (filterFn) => {
