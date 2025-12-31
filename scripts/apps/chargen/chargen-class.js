@@ -95,7 +95,8 @@ export async function _onSelectClass(event) {
     SWSELogger.log(`CharGen | Skill trainings: ${classSkills} (class) + ${intMod} (INT) + ${humanBonus} (Human) = ${this.characterData.trainedSkillsAllowed}`);
 
     // Force Points (if Force-sensitive class)
-    if (classDoc.system.forceSensitive) {
+    // Note: Droids cannot be Force-sensitive in SWSE
+    if (classDoc.system.forceSensitive && !this.characterData.isDroid) {
       this.characterData.forceSensitive = true; // Set force sensitivity flag
       this.characterData.forcePoints.max = 5 + Math.floor(this.characterData.level / 2);
       this.characterData.forcePoints.value = this.characterData.forcePoints.max;

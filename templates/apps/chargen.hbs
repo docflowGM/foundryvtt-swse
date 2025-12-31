@@ -69,10 +69,13 @@
  <span class="chevron-label">Talents</span>
  </div>
 
+ {{!-- Force powers only for Force-sensitive living characters (droids cannot be Force-sensitive in SWSE) --}}
  {{#if characterData.forceSensitive}}
+ {{#unless characterData.isDroid}}
  <div class="chevron-step {{#if (eq currentStep 'force-powers')}}active{{/if}} {{#if (gte characterData.powers.length characterData.forcePowersRequired)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'force-powers') freeBuild)}}clickable{{/if}}" data-step="force-powers">
  <span class="chevron-label">Force Powers</span>
  </div>
+ {{/unless}}
  {{/if}}
 
  {{#if characterData.isDroid}}

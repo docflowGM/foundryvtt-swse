@@ -209,9 +209,21 @@ The chevron navigation now shows:
 8. languages
 9. feats (NEW)
 10. talents (NEW)
-11. (force-powers - conditional)
+11. (force-powers - living only, conditional)
 12. (droid-final - droids only, NEW)
 13. summary
+
+### Fix 3: Droids Cannot Be Force-Sensitive
+**Files:**
+- `scripts/apps/chargen/chargen-class.js:99`
+- `scripts/apps/chargen/chargen-main.js:477`
+- `templates/apps/chargen.hbs:72-79`
+
+In Star Wars Saga Edition, droids cannot be Force-sensitive. This rule is now enforced:
+
+1. **Class Selection:** When selecting a Force-sensitive class (like Jedi), the `forceSensitive` flag is only set if the character is NOT a droid.
+2. **Step Logic:** The force-powers step is explicitly excluded for droids in `_getSteps()`.
+3. **Chevron Navigation:** The force-powers chevron uses `{{#unless characterData.isDroid}}` to hide for droids.
 
 ## Updated Step Flows (After Fixes)
 
@@ -246,11 +258,11 @@ The chevron navigation now shows:
 10. languages (NEW - was missing)
 11. feats
 12. talents
-13. (force-powers - conditional if Force-sensitive)
-14. droid-final
-15. summary
-16. shop
+13. droid-final
+14. summary
+15. shop
 ```
+Note: Droids cannot be Force-sensitive in SWSE, so the force-powers step never appears for droids.
 
 ## Testing Recommendations
 
