@@ -70,3 +70,49 @@ export function _getBackgroundNarratorComment(cat) {
     default: return "";
   }
 }
+
+/**
+ * Handle random background selection
+ * @param {Event} event - The click event
+ */
+export function _onRandomBackground(event) {
+  event.preventDefault();
+
+  if (!this.backgrounds || this.backgrounds.length === 0) {
+    ui.notifications.warn("No backgrounds available to choose from.");
+    return;
+  }
+
+  // Pick a random background
+  const randomIndex = Math.floor(Math.random() * this.backgrounds.length);
+  const selected = this.backgrounds[randomIndex];
+
+  this.characterData.background = {
+    id: selected.id,
+    name: selected.name,
+    icon: selected.icon || '🎲',
+    narrativeDescription: selected.narrativeDescription || selected.description || '',
+    specialAbility: selected.specialAbility || null,
+    bonusLanguage: selected.bonusLanguage || null,
+    trainedSkills: selected.trainedSkills || [],
+    category: this.characterData.backgroundCategory || "events"
+  };
+
+  ui.notifications.info(`Random background selected: ${selected.name}`);
+  this.render();
+}
+
+/**
+ * Handle changing the selected background (clearing it to select a new one)
+ * @param {Event} event - The click event
+ */
+export function _onChangeBackground(event) {
+  event.preventDefault();
+
+  // Clear the current background selection
+  this.characterData.background = null;
+  this.characterData.backgroundSkills = [];
+
+  ui.notifications.info("Background cleared. Please select a new background.");
+  this.render();
+}
