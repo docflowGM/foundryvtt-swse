@@ -72,9 +72,9 @@
             <label>Base Cost</label>
             <span>₢{{baseCost}}</span>
           </div>
-          <div class="stat-box {{#if (gt emplacementPoints.used emplacementPoints.total)}}over-limit{{/if}}">
+          <div class="stat-box {{#if (gt emplacementPoints.used emplacementPoints.available)}}over-limit{{/if}}">
             <label>Emplacement Points</label>
-            <span>{{emplacementPoints.used}} / {{emplacementPoints.total}}</span>
+            <span>{{emplacementPoints.used}} / {{emplacementPoints.available}} available ({{emplacementPoints.total}} total)</span>
           </div>
           <div class="stat-box">
             <label>Total Cost</label>
