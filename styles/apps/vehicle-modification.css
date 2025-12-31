@@ -94,3 +94,8 @@
   background: linear-gradient(135deg, rgba(0, 150, 255, 0.4), rgba(0, 100, 200, 0.3));
   box-shadow: none;
 }
+
+.holo-btn:focus-visible {
+  outline: 2px solid rgba(0, 200, 255, 0.9);
+  outline-offset: 2px;
+}
