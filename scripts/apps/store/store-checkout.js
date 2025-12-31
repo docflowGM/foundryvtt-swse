@@ -287,10 +287,11 @@ export async function buyVehicle(store, actorId, condition) {
  * @param {Function} closeCallback - Callback to close the store
  */
 export async function createCustomDroid(actor, closeCallback) {
+    const baseCredits = game.settings.get('foundryvtt-swse', "droidConstructionCredits") || 1000;
     const credits = Number(actor.system.credits) || 0;
 
-    if (credits < 1000) {
-        ui.notifications.warn("You need at least 1,000 credits to build a custom droid.");
+    if (credits < baseCredits) {
+        ui.notifications.warn(`You need at least ${baseCredits.toLocaleString()} credits to build a custom droid.`);
         return;
     }
 
@@ -299,7 +300,7 @@ export async function createCustomDroid(actor, closeCallback) {
         title: "Build Custom Droid",
         content: `<p>Enter the droid construction system?</p>
                  <p>You will design a non-heroic droid at level ${actor.system.level || 1}.</p>
-                 <p><strong>Minimum cost:</strong> 1,000 credits</p>`,
+                 <p><strong>Minimum cost:</strong> ${baseCredits.toLocaleString()} credits</p>`,
         defaultYes: true
     });
 
@@ -316,7 +317,8 @@ export async function createCustomDroid(actor, closeCallback) {
             droidBuilderMode: true,
             ownerActor: actor,
             droidLevel: actor.system.level || 1,
-            availableCredits: credits
+            availableCredits: credits,
+            droidConstructionCredits: baseCredits
         });
 
         chargen.render(true);

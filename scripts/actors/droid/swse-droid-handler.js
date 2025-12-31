@@ -263,7 +263,7 @@ export class SWSEDroidHandler {
   // HELPERS
   // =========================================================================
   static _meetsSizeRequirement(actorSize, minimum) {
-    const order = ["tiny", "small", "medium", "large", "huge", "gargantuan"];
+    const order = ["tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"];
     return order.indexOf(actorSize) >= order.indexOf(minimum);
   }
 

@@ -143,6 +143,20 @@ export function _populateDroidBuilder(root) {
     }
   }
 
+  // Initialize default processor (Heuristic - free) if not already set
+  if (!this.characterData.droidSystems.processor) {
+    const heuristicSystem = DROID_SYSTEMS.processors.find(p => p.id === "heuristic");
+    if (heuristicSystem) {
+      this.characterData.droidSystems.processor = {
+        id: heuristicSystem.id,
+        name: heuristicSystem.name,
+        cost: 0,
+        weight: heuristicSystem.weight || 5
+      };
+      // Don't add to spent credits - Heuristic is free
+    }
+  }
+
   // Update credits display
   this._updateDroidCreditsDisplay(doc);
 
@@ -248,7 +262,8 @@ export function _populateAppendageSystems(doc) {
       ? app.weightFormula(costFactor)
       : (app.weight || 0);
     const purchaseCount = this.characterData.droidSystems.appendages.filter(a => a.id === app.id).length;
-    const isFree = app.id === 'hand' && purchaseCount < 2;
+    const freeHandCount = this.characterData.droidSystems.appendages.filter(a => a.id === 'hand' && a.cost === 0).length;
+    const isFree = app.id === 'hand' && freeHandCount < 2;
 
     html += `
       <div class="system-item ${purchaseCount > 0 ? 'purchased' : ''} ${isFree ? 'free-item' : ''}">
@@ -428,8 +443,8 @@ export function _onPurchaseSystem(event) {
     system = DROID_SYSTEMS.appendages.find(s => s.id === id);
     if (system) {
       // Check if this is a free hand
-      const handCount = this.characterData.droidSystems.appendages.filter(a => a.id === 'hand').length;
-      const actualCost = (id === 'hand' && handCount < 2) ? 0 : cost;
+      const freeHandCount = this.characterData.droidSystems.appendages.filter(a => a.id === 'hand' && a.cost === 0).length;
+      const actualCost = (id === 'hand' && freeHandCount < 2) ? 0 : cost;
 
       this.characterData.droidSystems.appendages.push({
         id: system.id,
@@ -488,11 +503,12 @@ export function _onRemoveSystem(event) {
     const system = this.characterData.droidSystems.processor;
     if (system && system.id !== 'heuristic') { // Can't remove free heuristic
       this.characterData.droidCredits.spent -= system.cost;
+      const heuristic = DROID_SYSTEMS.processors.find(p => p.id === 'heuristic');
       this.characterData.droidSystems.processor = {
-        name: "Heuristic Processor",
+        name: heuristic?.name || "Heuristic Processor",
         id: "heuristic",
         cost: 0,
-        weight: 5
+        weight: heuristic?.weight || 5
       };
     }
   } else if (category === 'appendage') {
@@ -608,23 +624,23 @@ export function _updateDroidCreditsDisplay(doc) {
  * Update cart count
  */
 export function _updateCartCount(doc) {
-  // Count total items (locomotion + appendages + accessories, not counting free processor and free hands)
+  // Count total systems/items
   let count = 0;
 
+  // Locomotion (always counts if present)
   if (this.characterData.droidSystems.locomotion) count++;
 
-  // Count appendages beyond the 2 free hands
-  const extraAppendages = this.characterData.droidSystems.appendages.length;
-  count += extraAppendages;
+  // Processor (always free Heuristic, but still counts as a system)
+  if (this.characterData.droidSystems.processor) count++;
 
-  // Count accessories
+  // Appendages (all count, including the 2 free hands)
+  count += this.characterData.droidSystems.appendages.length;
+
+  // Accessories
   count += this.characterData.droidSystems.accessories.length;
 
-  // Add 2 for the free items (processor + 2 hands)
-  const totalCount = count + 2;
-
   const cartCountEl = doc.querySelector('#cart-count');
-  if (cartCountEl) cartCountEl.textContent = totalCount;
+  if (cartCountEl) cartCountEl.textContent = count;
 }
 
 /**
@@ -900,6 +916,11 @@ export async function _onImportDroid(event) {
 export async function _importDroidType(droid) {
   SWSELogger.log(`SWSE CharGen | Importing droid type: ${droid.name}`, droid);
 
+  // Validate droid data completeness
+  if (!droid.system || !droid.system.abilities) {
+    ui.notifications.warn(`${droid.name} is missing ability data. Using defaults.`);
+  }
+
   // Apply droid's ability scores
   if (droid.system && droid.system.abilities) {
     for (const [ability, value] of Object.entries(droid.system.abilities)) {
@@ -916,6 +937,8 @@ export async function _importDroidType(droid) {
 
   // Droids don't have CON
   this.characterData.abilities.con.base = 0;
+  this.characterData.abilities.con.racial = 0;
+  this.characterData.abilities.con.temp = 0;
   this.characterData.abilities.con.total = 0;
   this.characterData.abilities.con.mod = 0;
 
@@ -933,69 +956,6 @@ export async function _importDroidType(droid) {
   await this.render();
 }
 
-/**
- * Create imported droid actor
- */
-export async function _createImportedDroidActor(droid) {
-  try {
-    // Build actor data from imported droid
-    const actorData = {
-      name: this.characterData.name || droid.name,
-      type: "character",
-      system: {
-        isDroid: true,
-        droidDegree: droid.system.droidDegree || "2nd-degree",
-        species: droid.system.droidDegree || "Droid",
-        abilities: {},
-        hp: droid.system.hp || { value: 10, max: 10, temp: 0 },
-        level: 1,
-        defenses: droid.system.defenses || {
-          fortitude: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
-          reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 },
-          will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10 }
-        },
-        bab: 0,
-        speed: droid.system.speed || 6,
-        skills: droid.system.skills || {},
-        damageThresholdMisc: 0
-      }
-    };
-
-    // Copy abilities
-    if (droid.system && droid.system.abilities) {
-      for (const [ability, value] of Object.entries(droid.system.abilities)) {
-        actorData.system.abilities[ability] = {
-          base: value.value || value || 10,
-          racial: 0,
-          temp: 0
-        };
-      }
-    }
-
-    // Ensure CON is 0 for droids
-    actorData.system.abilities.con = { base: 0, racial: 0, temp: 0 };
-
-    SWSELogger.log("SWSE CharGen | Creating imported droid actor with data:", actorData);
-
-    const actor = await Actor.create(actorData);
-
-    // Add equipment from droid if any
-    if (droid.system && droid.system.equipment) {
-      const items = Array.isArray(droid.system.equipment)
-        ? droid.system.equipment
-        : Object.values(droid.system.equipment || {});
-
-      if (items.length > 0) {
-        await actor.createEmbeddedDocuments("Item", items);
-      }
-    }
-
-    return actor;
-  } catch (err) {
-    SWSELogger.error("SWSE CharGen | Error creating imported droid actor:", err);
-    return null;
-  }
-}
 
 /**
  * Get Seraphim's dialogue for droid creation
