@@ -71,7 +71,9 @@ export class VehicleModificationManager {
    * Get all modifications by category
    */
   static getModificationsByCategory(category) {
-    switch(category.toLowerCase()) {
+    // Normalize category to lowercase for comparison
+    const normalizedCategory = (category || '').toLowerCase();
+    switch(normalizedCategory) {
       case 'movement':
         return this._movementSystems || [];
       case 'defense':
@@ -114,12 +116,15 @@ export class VehicleModificationManager {
    * @returns {number} - The calculated cost in credits
    */
   static calculateModificationCost(modification, stockShip, isNonstandard = false) {
+    if (!modification) return 0;
+    if (!stockShip) return modification.cost || 0;
+
     let baseCost = modification.cost || 0;
 
     // Handle cost type
     if (modification.costType === 'base') {
       // Cost scales with ship size via costModifier
-      baseCost *= stockShip.costModifier;
+      baseCost *= (stockShip.costModifier || 1);
     } else if (modification.costType === 'flat') {
       // Flat cost type uses the cost as-is, no scaling
       // baseCost already set above
@@ -203,6 +208,16 @@ export class VehicleModificationManager {
       }
     }
 
+    // Check emplacement points availability
+    const epStats = this.calculateEmplacementPointsTotal(currentModifications, stockShip);
+    const modEP = modification.emplacementPoints || 0;
+    if (epStats.remaining < modEP) {
+      return {
+        canInstall: false,
+        reason: `Insufficient emplacement points: needs ${modEP}, available ${epStats.remaining}`
+      };
+    }
+
     return {
       canInstall: true,
       reason: ''
@@ -215,32 +230,35 @@ export class VehicleModificationManager {
    */
   static _checkSizeRestriction(shipSize, restriction) {
     const sizeOrder = [
-      'Huge',
-      'Gargantuan',
-      'Colossal',
-      'Colossal (Frigate)',
-      'Colossal (Cruiser)',
-      'Colossal (Station)'
+      'large',
+      'huge',
+      'gargantuan',
+      'colossal',
+      'colossal (frigate)',
+      'colossal (cruiser)',
+      'colossal (station)'
     ];
 
-    const shipIndex = sizeOrder.indexOf(shipSize);
+    // Normalize to lowercase for comparison
+    const normalizedShipSize = (shipSize || '').toLowerCase();
+    const shipIndex = sizeOrder.indexOf(normalizedShipSize);
 
     // Handle "X or Larger" restrictions
     if (restriction.includes('or Larger')) {
-      const requiredSize = restriction.replace(' or Larger', '');
+      const requiredSize = restriction.replace(' or Larger', '').toLowerCase();
       const requiredIndex = sizeOrder.indexOf(requiredSize);
-      return shipIndex >= requiredIndex;
+      return shipIndex >= requiredIndex && shipIndex !== -1;
     }
 
     // Handle "X or Smaller" restrictions
     if (restriction.includes('or Smaller')) {
-      const requiredSize = restriction.replace(' or Smaller', '');
+      const requiredSize = restriction.replace(' or Smaller', '').toLowerCase();
       const requiredIndex = sizeOrder.indexOf(requiredSize);
-      return shipIndex <= requiredIndex;
+      return shipIndex <= requiredIndex && shipIndex !== -1;
     }
 
-    // Exact match
-    return shipSize === restriction;
+    // Exact match (also normalized)
+    return normalizedShipSize === restriction.toLowerCase();
   }
 
   /**
@@ -251,8 +269,8 @@ export class VehicleModificationManager {
    */
   static calculateEmplacementPointsTotal(modifications, stockShip) {
     // Calculate EP used by modifications
-    const usedByModifications = modifications.reduce((sum, mod) => {
-      return sum + (mod.emplacementPoints || 0);
+    const usedByModifications = (Array.isArray(modifications) ? modifications : []).reduce((sum, mod) => {
+      return sum + (mod?.emplacementPoints || 0);
     }, 0);
 
     // Total available EP pool is the sum of baseline and unused
@@ -281,6 +299,9 @@ export class VehicleModificationManager {
    * @returns {number} - Total cost in credits
    */
   static calculateTotalCost(modifications, stockShip) {
+    if (!stockShip) return 0;
+    if (!Array.isArray(modifications)) return stockShip.cost || 0;
+
     const modCost = modifications.reduce((sum, mod) => {
       return sum + this.calculateModificationCost(mod, stockShip);
     }, 0);
@@ -297,17 +318,22 @@ export class VehicleModificationManager {
    * @returns {number} - Installation time in days
    */
   static calculateInstallationTime(modification, stockShip, workers = null, lacksEmplacementPoints = 0) {
-    // Minimum work force by size
+    if (!modification) return 1;
+    if (!stockShip) return Math.max(1, Math.ceil(modification.emplacementPoints || 0));
+
+    // Minimum work force by size (normalized to lowercase)
     const minWorkForce = {
-      'Huge': 1,
-      'Gargantuan': 1,
-      'Colossal': 5,
-      'Colossal (Frigate)': 10,
-      'Colossal (Cruiser)': 20,
-      'Colossal (Station)': 50
+      'large': 1,
+      'huge': 1,
+      'gargantuan': 1,
+      'colossal': 5,
+      'colossal (frigate)': 10,
+      'colossal (cruiser)': 20,
+      'colossal (station)': 50
     };
 
-    const actualWorkers = workers || minWorkForce[stockShip.size] || 1;
+    const shipSize = (stockShip.size || 'colossal').toLowerCase();
+    const actualWorkers = workers || minWorkForce[shipSize] || 1;
     const ep = modification.emplacementPoints || 0;
     const costMod = stockShip.costModifier || 1;
 

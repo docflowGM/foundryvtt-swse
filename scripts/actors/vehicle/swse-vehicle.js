@@ -208,9 +208,16 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
 
   async _onRemoveWeapon(event) {
     const index = Number(event.currentTarget.dataset.index);
+
+    // Validate index
+    if (Number.isNaN(index) || index < 0) {
+      SWSELogger.warn('SWSE | Invalid weapon index for removal');
+      return;
+    }
+
     const list = [...(this.actor.system.weapons ?? [])];
 
-    if (index >= 0 && index < list.length) {
+    if (index < list.length) {
       list.splice(index, 1);
       await this.actor.update({ "system.weapons": list });
     }
@@ -220,51 +227,81 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
   // VEHICLE WEAPON ROLLS
   // =========================================================================
   async _onRollWeapon(event) {
-    const index = Number(event.currentTarget.dataset.index);
-    const weapon = this.actor.system.weapons?.[index];
+    try {
+      const index = Number(event.currentTarget.dataset.index);
 
-    if (!weapon) return;
+      // Validate index
+      if (Number.isNaN(index) || index < 0) {
+        SWSELogger.warn('SWSE | Invalid weapon index for roll');
+        return;
+      }
 
-    const rollData = this.actor.getRollData();
-    const rollMode = game.settings.get("core", "rollMode");
+      const weapon = this.actor.system.weapons?.[index];
 
-    // Attack roll
-    const attack = await game.swse.RollEngine.safeRoll(
-      `1d20${weapon.bonus}`,
-      rollData
-    );
+      if (!weapon) {
+        ui.notifications.warn('Weapon not found');
+        return;
+      }
 
-    await attack.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `<strong>${weapon.name}</strong> Attack Roll`,
-      rollMode
-    });
+      // Validate roll engine exists
+      if (!game?.swse?.RollEngine?.safeRoll) {
+        ui.notifications.error('Roll engine not available');
+        SWSELogger.error('SWSE | RollEngine not found');
+        return;
+      }
 
-    // Confirm hit → damage roll
-    const hit = await Dialog.confirm({
-      title: "Roll Damage?",
-      content: "<p>Did the attack hit?</p>"
-    });
+      const rollData = this.actor.getRollData();
+      const rollMode = game.settings?.get("core", "rollMode") ?? "public";
 
-    if (hit) {
-      const damage = await game.swse.RollEngine.safeRoll(
-        weapon.system?.damage || "1d6",
+      // Attack roll
+      const attack = await game.swse.RollEngine.safeRoll(
+        `1d20${weapon.bonus}`,
         rollData
       );
 
-      await damage.toMessage({
+      await attack.toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        flavor: `<strong>${weapon.name}</strong> Damage`,
+        flavor: `<strong>${weapon.name}</strong> Attack Roll`,
         rollMode
       });
+
+      // Confirm hit → damage roll
+      const hit = await Dialog.confirm({
+        title: "Roll Damage?",
+        content: "<p>Did the attack hit?</p>"
+      });
+
+      if (hit) {
+        const damage = await game.swse.RollEngine.safeRoll(
+          weapon.damage || "1d6",
+          rollData
+        );
+
+        await damage.toMessage({
+          speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+          flavor: `<strong>${weapon.name}</strong> Damage`,
+          rollMode
+        });
+      }
+    } catch (error) {
+      SWSELogger.error('SWSE | Error rolling weapon:', error);
+      ui.notifications.error('Failed to roll weapon');
     }
   }
 
   // =========================================================================
   // CREW ASSIGNMENT
   // =========================================================================
+  static VALID_CREW_POSITIONS = ['pilot', 'copilot', 'gunner', 'engineer', 'shields', 'commander'];
+
   async _onCrewDrop(event) {
     const slot = event.currentTarget.dataset.slot;
+
+    // Validate crew position
+    if (!this.constructor.VALID_CREW_POSITIONS.includes(slot)) {
+      SWSELogger.warn(`SWSE | Invalid crew position: ${slot}`);
+      return;
+    }
 
     const TextEditorImpl =
       foundry.applications?.ux?.TextEditor?.implementation || TextEditor;
@@ -273,7 +310,10 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     if (!data || data.type !== "Actor") return;
 
     const actor = await fromUuid(data.uuid);
-    if (!actor) return;
+    if (!actor) {
+      ui.notifications.warn('Actor not found');
+      return;
+    }
 
     await this.actor.update({
       [`system.crewPositions.${slot}`]: {
@@ -323,42 +363,53 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
   }
 
   async _onCrewSkillRoll(event) {
-    const btn = event.currentTarget;
-    const position = btn.dataset.position;
-    const skillName = btn.dataset.skill;
-    const actionName = btn.dataset.actionName;
-    const dc = btn.dataset.dc ? Number(btn.dataset.dc) : null;
+    try {
+      const btn = event.currentTarget;
+      const position = btn.dataset.position;
+      const skillName = btn.dataset.skill;
+      const actionName = btn.dataset.actionName;
+      const dc = btn.dataset.dc ? Number(btn.dataset.dc) : null;
 
-    const skillKey = this._mapSkillNameToKey(skillName);
-    const crew = this.actor.system.crewPositions?.[position];
+      // Validate position
+      if (!this.constructor.VALID_CREW_POSITIONS.includes(position)) {
+        ui.notifications.warn(`Invalid crew position: ${position}`);
+        return;
+      }
 
-    if (!crew) {
-      ui.notifications.warn(`No crew assigned to ${position}.`);
-      return;
+      const skillKey = this._mapSkillNameToKey(skillName);
+      const crew = this.actor.system.crewPositions?.[position];
+
+      if (!crew) {
+        ui.notifications.warn(`No crew assigned to ${position}.`);
+        return;
+      }
+
+      const uuid = crew.uuid;
+      if (!uuid) {
+        ui.notifications.error(
+          `Crew member data outdated. Please reassign crew to ${position}.`
+        );
+        return;
+      }
+
+      const crewActor = await fromUuid(uuid);
+      if (!crewActor) {
+        ui.notifications.error(`Crew actor not found.`);
+        return;
+      }
+
+      const { SWSERoll } = await import("../../combat/rolls/enhanced-rolls.js");
+
+      await SWSERoll.rollSkillCheck(crewActor, skillKey, {
+        dc,
+        actionName,
+        vehicleName: this.actor.name,
+        positionName: position
+      });
+    } catch (error) {
+      SWSELogger.error('SWSE | Error rolling crew skill:', error);
+      ui.notifications.error('Failed to roll crew skill');
     }
-
-    const uuid = crew.uuid;
-    if (!uuid) {
-      ui.notifications.error(
-        `Crew member data outdated. Please reassign crew to ${position}.`
-      );
-      return;
-    }
-
-    const crewActor = await fromUuid(uuid);
-    if (!crewActor) {
-      ui.notifications.error(`Crew actor not found.`);
-      return;
-    }
-
-    const { SWSERoll } = await import("../../combat/rolls/enhanced-rolls.js");
-
-    await SWSERoll.rollSkillCheck(crewActor, skillKey, {
-      dc,
-      actionName,
-      vehicleName: this.actor.name,
-      positionName: position
-    });
   }
 
   // =========================================================================
