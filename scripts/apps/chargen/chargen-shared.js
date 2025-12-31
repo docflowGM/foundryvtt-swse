@@ -59,6 +59,8 @@ export class ChargenDataCache {
 
     const packs = {};
     const errors = [];
+    const criticalPacks = ['species', 'classes', 'feats']; // Required for basic chargen
+    const missingCritical = [];
 
     for (const [key, packName] of Object.entries(packNames)) {
       try {
@@ -67,6 +69,9 @@ export class ChargenDataCache {
           SWSELogger.error(`ChargenDataCache | Pack not found: ${packName}`);
           packs[key] = [];
           errors.push(key);
+          if (criticalPacks.includes(key)) {
+            missingCritical.push(packName);
+          }
           continue;
         }
         const docs = await pack.getDocuments();
@@ -76,11 +81,21 @@ export class ChargenDataCache {
         SWSELogger.error(`ChargenDataCache | Failed to load ${packName}:`, err);
         packs[key] = [];
         errors.push(key);
+        if (criticalPacks.includes(key)) {
+          missingCritical.push(packName);
+        }
       }
     }
 
     if (errors.length > 0) {
       SWSELogger.warn(`ChargenDataCache | Failed to load: ${errors.join(', ')}`);
+    }
+
+    // Block chargen if critical packs are missing
+    if (missingCritical.length > 0) {
+      const errorMsg = `Character generation cannot continue. Missing critical compendium packs: ${missingCritical.join(', ')}`;
+      ui.notifications.error(errorMsg);
+      throw new Error(errorMsg);
     }
 
     return packs;

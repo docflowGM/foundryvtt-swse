@@ -867,7 +867,7 @@ export default class CharacterGenerator extends Application {
 
     const system = {
       level: this.characterData.level,
-      race: this.characterData.species,  // Map species → race for actor system
+      species: this.characterData.species,  // Use consistent 'species' property
       size: this.characterData.size || "medium", // Lowercase for DataModel schema
       isDroid: this.characterData.isDroid || false, // DataModel requires this field
       droidDegree: this.characterData.droidDegree || "", // DataModel field for droids

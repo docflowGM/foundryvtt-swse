@@ -52,7 +52,9 @@ export async function _onSelectFeat(event) {
       selectedFeats: this.characterData.feats || [],
       selectedClass: this.characterData.classes?.[0],
       abilityIncreases: {},
-      selectedSkills: Object.keys(this.characterData.skills || {}).filter(k => this.characterData.skills[k]?.trained),
+      selectedSkills: Object.keys(this.characterData.skills || {})
+        .filter(k => this.characterData.skills[k]?.trained)
+        .map(k => ({ key: k })), // Convert to object format expected by prerequisite validator
       selectedTalents: this.characterData.talents || []
     };
 
