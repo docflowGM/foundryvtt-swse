@@ -449,5 +449,115 @@ Fix critical and high-priority droid creation bugs
 
 ---
 
+## VEHICLE SYSTEM BUGS FOUND 🚀
+
+### Bug #1: Incorrect Emplacement Points Calculation
+**Location:** `/scripts/apps/vehicle-modification-manager.js:246-259`
+**Severity:** MEDIUM - Incorrect Stat Display/Balance
+
+**Problem:**
+The `calculateEmplacementPointsTotal()` method incorrectly calculates available emplacement points:
+```javascript
+const available = (stockShip.emplacementPoints || 0) + (stockShip.unusedEmplacementPoints || 0);
+return {
+  used,
+  available,
+  total: available,
+  remaining: available - used
+};
+```
+
+This adds both `emplacementPoints` AND `unusedEmplacementPoints`, which double-counts the pool. The method should use only one source of truth.
+
+**Impact:** Shows incorrect remaining emplacement points to the player, potentially allowing over-spec'd ships or confusing the UI display.
+
+**Recommendation:** Clarify which field represents the actual available pool and use only that.
+
+---
+
+### Bug #2: Unhandled Multiplier Cost Type
+**Location:** `/scripts/apps/vehicle-modification-manager.js:116-135`
+**Severity:** MEDIUM - Silent Failure
+
+**Problem:**
+The `calculateModificationCost()` method has a placeholder for multiplier-type costs:
+```javascript
+if (modification.costType === 'multiplier') {
+  // Multiplier type requires a base weapon/system cost
+  // This would be handled differently in actual usage
+  baseCost = 0; // Placeholder
+}
+```
+
+If any modification has `costType: 'multiplier'`, the cost is silently calculated as 0, which is likely incorrect.
+
+**Impact:** Multiplier-based modifications (if used) would cost nothing, breaking the economy model.
+
+**Recommendation:** Implement proper multiplier cost handling or remove support for this type if unused.
+
+---
+
+### Bug #3: Vehicle Modification Data Load Failure Handling
+**Location:** `/scripts/apps/vehicle-modification-app.js:40-90`
+**Severity:** MEDIUM - Poor UX
+
+**Problem:**
+When `VehicleModificationManager.init()` fails in the catch block, it silently initializes empty arrays but the app doesn't show an error state. The getData() method tries to work with empty modification lists without informing the user.
+
+**Impact:** If JSON files fail to load, the app shows a blank modification list with no explanation, confusing the user into thinking there are no modifications available.
+
+**Recommendation:** Check if `VehicleModificationManager` has any modifications loaded and show an error message if initialization failed.
+
+---
+
+### Bug #4: Schema Inconsistency in Vehicle Handler
+**Location:** `/scripts/actors/vehicle/swse-vehicle-handler.js:34-41`
+**Severity:** LOW - Data Quality
+
+**Problem:**
+The vehicle handler references `attributes` when the modern schema likely uses `abilities`:
+```javascript
+'system.attributes': template.attributes || {
+  str: { base: 10, racial: 0, temp: 0 },
+  ...
+}
+```
+
+This is inconsistent with the droid/character system which uses `abilities`. If the vehicle system was migrated but templates still reference old data, this creates confusion.
+
+**Impact:** Vehicles might get incorrect ability scores if templates don't have the expected `attributes` field.
+
+**Recommendation:** Standardize on `abilities` across all actor types or add migration logic.
+
+---
+
+### Bug #5: Missing Credit Validation in createCustomStarship
+**Location:** `/scripts/apps/store/store-checkout.js:289-306` (Previously reviewed)
+**Severity:** LOW - Redundant Check
+
+**Problem:**
+Actually upon re-review, this is NOT a bug - the function properly checks credits on line 291-295. The validation is correct.
+
+**Status:** No issue found here. ✅
+
+---
+
+### Additional Vehicle System Notes
+
+**Positive Findings:**
+- Ship selection and modification system is well-structured
+- Emplacement point validation on line 78 provides safeguards
+- Modification conflict detection (shields, hyperdrives) is properly implemented
+- Cost calculation multiplier for nonstandard mods is correct
+
+**Recommendations for Enhancement:**
+1. Add logging to VehicleModificationManager when data fails to load
+2. Display error message to user if modifications can't be loaded
+3. Clarify and fix the emplacement points calculation logic
+4. Test multiplier cost type with actual data or remove if unused
+5. Add unit tests for cost calculations to catch balance issues early
+
+---
+
 **Report Generated:** 2025-12-31
-**Status:** ✅ ALL BUGS FIXED
+**Status:** ✅ DROID BUGS FIXED | 🔍 VEHICLE BUGS DOCUMENTED
