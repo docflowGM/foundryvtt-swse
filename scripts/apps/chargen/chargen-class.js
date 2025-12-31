@@ -10,6 +10,7 @@ import {
   getTalentTrees,
   validateClassDocument
 } from './chargen-property-accessor.js';
+import { MentorSurvey } from '../mentor-survey.js';
 
 /**
  * Handle class selection
@@ -143,6 +144,21 @@ export async function _onSelectClass(event) {
   // Check for background skill overlap (if backgrounds are enabled and selected)
   if (this.characterData.background && this.characterData.backgroundSkills && this.characterData.backgroundSkills.length > 0) {
     await this._checkBackgroundSkillOverlap(classDoc);
+  }
+
+  // Offer mentor survey at class selection if not yet completed (for both droid and living characters)
+  if (!MentorSurvey.hasSurveyBeenCompleted(this._createTempActorForValidation())) {
+    const acceptSurvey = await MentorSurvey.promptSurvey(this._createTempActorForValidation(), this.mentor);
+    if (acceptSurvey) {
+      const surveyAnswers = await MentorSurvey.showSurvey(this._createTempActorForValidation(), className, this.mentor);
+      if (surveyAnswers) {
+        const biases = MentorSurvey.processSurveyAnswers(surveyAnswers);
+        // Store biases in characterData for later use when creating suggestions
+        this.characterData.mentorBiases = biases;
+        this.characterData.mentorSurveyCompleted = true;
+        ui.notifications.info("Survey completed! Your mentor will use this to personalize suggestions.");
+      }
+    }
   }
 
   // Re-render to show the selected class and enable the Next button

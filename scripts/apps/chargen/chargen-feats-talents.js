@@ -47,6 +47,21 @@ export async function _onSelectFeat(event) {
 
   // Check prerequisites (unless in Free Build mode)
   if (!this.freeBuild) {
+    // Droids cannot select feats that require Force Sensitivity or Force Points
+    if (this.characterData.isDroid) {
+      const prereqs = feat.system?.prerequisites || "";
+      const preqsLower = prereqs.toLowerCase();
+      if (
+        preqsLower.includes("force sensitivity") ||
+        preqsLower.includes("force technique") ||
+        preqsLower.includes("force secret") ||
+        preqsLower.includes("force point")
+      ) {
+        ui.notifications.warn(`Droids cannot select "${feat.name}" because they cannot be Force-sensitive.`);
+        return;
+      }
+    }
+
     const tempActor = this.actor || this._createTempActorForValidation();
     const pendingData = {
       selectedFeats: this.characterData.feats || [],
@@ -345,6 +360,21 @@ export async function _onSelectTalent(event) {
       );
       if (existsOnActor) {
         ui.notifications.warn(`"${tal.name}" is already on your character sheet!`);
+        return;
+      }
+    }
+
+    // Droids cannot select talents that require Force Sensitivity or Force Points (unless in Free Build mode)
+    if (this.characterData.isDroid && !this.freeBuild) {
+      const prereqs = tal.system?.prerequisites || "";
+      const preqsLower = prereqs.toLowerCase();
+      if (
+        preqsLower.includes("force sensitivity") ||
+        preqsLower.includes("force technique") ||
+        preqsLower.includes("force secret") ||
+        preqsLower.includes("force point")
+      ) {
+        ui.notifications.warn(`Droids cannot select "${tal.name}" because they cannot be Force-sensitive.`);
         return;
       }
     }
