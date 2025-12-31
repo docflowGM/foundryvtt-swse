@@ -9,6 +9,7 @@
       "quote": "Through the Force, I am the shield that guards the innocent.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_guardian.webp",
       "mentor": "miraj",
+      "background": "Alderaan Origin",
       "abilityScores": {
         "str": 10,
         "dex": 16,
@@ -51,6 +52,7 @@
       "quote": "The Force flows through all things. Let it guide your path to peace.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_consular.webp",
       "mentor": "miraj",
+      "background": "Alpheridies Origin",
       "abilityScores": {
         "str": 8,
         "dex": 12,
@@ -93,6 +95,7 @@
       "quote": "I can't afford to lose this fight! There are people depending on me.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_defender.webp",
       "mentor": "miraj",
+      "background": "Iridonia Origin",
       "abilityScores": {
         "str": 14,
         "dex": 12,
@@ -132,6 +135,7 @@
       "quote": "Darkness cannot hide from those who seek the light.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_sentinel.webp",
       "mentor": "miraj",
+      "background": "Nar Shaddaa Origin",
       "abilityScores": {
         "str": 10,
         "dex": 14,
@@ -164,7 +168,7 @@
         "Binder Cuffs"
       ],
       "credits": 450,
-      "notes": "Use the Force +9, Will Defense 18. Force Sight ignores concealment. Dark Side Sense allows rerolls to detect dark siders."
+      "notes": "Use the Force +9, Will Defense 18. Force Sight ignores concealment. Dark Side Sense allows rerolls to detect dark siders. Nar Shaddaa Origin adds Stealth as class skill for +3 bonus."
     },
     {
       "id": "noble_diplomat",
@@ -175,6 +179,7 @@
       "quote": "Words can open doors that even the strongest blade cannot.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/noble_diplomat.webp",
       "mentor": "j0n1",
+      "background": "Alderaan Origin",
       "abilityScores": {
         "str": 8,
         "dex": 12,
@@ -216,6 +221,7 @@
       "quote": "Victory belongs to those who fight together as one!",
       "imagePath": "systems/foundryvtt-swse/assets/templates/noble_leader.webp",
       "mentor": "j0n1",
+      "background": "Coruscant Origin",
       "abilityScores": {
         "str": 10,
         "dex": 12,
@@ -257,6 +263,7 @@
       "quote": "Information is the galaxy's most valuable currency, and I am very wealthy.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/noble_aristocrat.webp",
       "mentor": "j0n1",
+      "background": "Fondor Origin",
       "abilityScores": {
         "str": 8,
         "dex": 10,
@@ -294,7 +301,7 @@
         "Bioscanner"
       ],
       "credits": 465,
-      "notes": "10 trained skills, 6,500 starting credits with Wealth talent. Bothan bonuses to Gather Information."
+      "notes": "10 trained skills, 6,500 starting credits with Wealth talent. Bothan bonuses to Gather Information. Fondor Origin adds Mechanics as class skill for +3 bonus."
     },
     {
       "id": "noble_duelist",
@@ -305,6 +312,7 @@
       "quote": "Elegance in both word and blade—a true noble's art.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/noble_duelist.webp",
       "mentor": "j0n1",
+      "background": "Naboo Origin",
       "abilityScores": {
         "str": 8,
         "dex": 14,
@@ -345,6 +353,7 @@
       "quote": "They never see it coming. That's the whole point.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_pistoleer.webp",
       "mentor": "salty",
+      "background": "Corellia Origin",
       "abilityScores": {
         "str": 10,
         "dex": 16,
@@ -389,6 +398,7 @@
       "quote": "Every problem has a solution. You just need the right skills.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_skill_monkey.webp",
       "mentor": "salty",
+      "background": "Bothawui Origin",
       "abilityScores": {
         "str": 8,
         "dex": 14,
@@ -433,6 +443,7 @@
       "quote": "No such thing as a fair fight when survival's on the line.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_knuckledragger.webp",
       "mentor": "salty",
+      "background": "Duro Origin",
       "abilityScores": {
         "str": 10,
         "dex": 16,
@@ -477,6 +488,7 @@
       "quote": "Luck? I make my own luck, friend.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_outlaw.webp",
       "mentor": "salty",
+      "background": "Ryloth Origin",
       "abilityScores": {
         "str": 8,
         "dex": 14,
@@ -521,7 +533,7 @@
       "quote": "One shot, one kill. That's all it takes.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_sniper.webp",
       "mentor": "lead",
-      "background": "Profession, Pilot",
+      "background": "Duro Origin",
       "abilityScores": {
         "str": 8,
         "dex": 16,
@@ -547,7 +559,7 @@
         "initiative",
         "mechanics",
         "perception",
-        "useComputers",
+        "useComputer",
         "knowledgeGalacticLore"
       ],
       "forcePowers": [],
@@ -559,7 +571,7 @@
         "Electrobinoculars"
       ],
       "credits": 150,
-      "notes": "Professional pilot with exceptional reflexes and marksmanship. Flawless Pilot allows rerolling Pilot checks and taking the better result. Surveillance talent provides enhanced reconnaissance capabilities."
+      "notes": "Professional pilot with exceptional reflexes and marksmanship. Flawless Pilot allows rerolling Pilot checks and taking the better result. Surveillance talent provides enhanced reconnaissance capabilities. Duro Origin adds Use Computer as class skill for +3 bonus."
     },
     {
       "id": "scout_engineer",
@@ -570,7 +582,7 @@
       "quote": "Every problem has a technical solution.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_engineer.webp",
       "mentor": "lead",
-      "background": "Profession, Technology",
+      "background": "Fondor Origin",
       "abilityScores": {
         "str": 8,
         "dex": 16,
@@ -599,7 +611,7 @@
         "knowledgeTechnology",
         "stealth",
         "swim",
-        "useComputers"
+        "useComputer"
       ],
       "forcePowers": [],
       "startingEquipment": [
@@ -612,7 +624,7 @@
         "Camouflage Poncho"
       ],
       "credits": 0,
-      "notes": "Master technician with exceptional perception and intelligence. Mon Calamari Shipwright provides expertise in starship systems. Skill Focus (Perception) reflects Mon Calamari natural observational abilities. Use Computers is a class skill due to Technology background."
+      "notes": "Master technician with exceptional perception and intelligence. Mon Calamari Shipwright provides expertise in starship systems. Skill Focus (Perception) reflects Mon Calamari natural observational abilities. Fondor Origin adds Use Computer as class skill for +3 bonus."
     },
     {
       "id": "scout_pistoleer",
@@ -623,7 +635,7 @@
       "quote": "Speed and precision - that's all you need.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_pistoleer.webp",
       "mentor": "lead",
-      "background": "Scarred",
+      "background": "Tatooine Origin",
       "abilityScores": {
         "str": 8,
         "dex": 16,
@@ -661,7 +673,7 @@
         "Tool Kit"
       ],
       "credits": 0,
-      "notes": "Elite rider with exceptional dexterity and extra arms. Codru-Ji Dual Weapon Mastery I allows dual-wielding with extra arms advantage. Mechanized Rider talent allows advanced speeder bike maneuvers. Skilled Grappler provides +5 bonus to Grab and Grapple checks. Fully equipped with minimal credits remaining."
+      "notes": "Elite rider with exceptional dexterity and extra arms. Codru-Ji Dual Weapon Mastery I allows dual-wielding with extra arms advantage. Mechanized Rider talent allows advanced speeder bike maneuvers. Tatooine Origin adds Ride as class skill for +3 bonus."
     },
     {
       "name": "Skirmisher",
@@ -760,7 +772,7 @@
       "quote": "The best battles are the ones your enemy never knew you fought.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_infiltrator.webp",
       "mentor": "lead",
-      "background": "Disgraced",
+      "background": "Bothawui Origin",
       "abilityScores": {
         "str": 8,
         "dex": 16,
@@ -794,7 +806,7 @@
         "Medpac"
       ],
       "credits": -900,
-      "notes": "Stealth +18 at level 1. Improved Stealth reduces movement penalty from -10 to -5."
+      "notes": "Stealth +18 at level 1. Improved Stealth reduces movement penalty from -10 to -5. Bothawui Origin adds Deception as class skill for +3 bonus."
     },
     {
       "id": "soldier_rifleman",
@@ -805,6 +817,7 @@
       "quote": "Discipline and precision. Every shot matters.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_rifleman.webp",
       "mentor": "breach",
+      "background": "Anaxes Origin",
       "abilityScores": {
         "str": 12,
         "dex": 16,
@@ -845,6 +858,7 @@
       "quote": "More firepower solves most problems.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_gunner.webp",
       "mentor": "breach",
+      "background": "Anaxes Origin",
       "abilityScores": {
         "str": 14,
         "dex": 16,
@@ -885,6 +899,7 @@
       "quote": "Let them feel the fury of my blade!",
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_brawler.webp",
       "mentor": "breach",
+      "background": "Kashyyyk Origin",
       "abilityScores": {
         "str": 16,
         "dex": 14,
@@ -924,6 +939,7 @@
       "quote": "Behind me, soldier. I'll handle this.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_tank.webp",
       "mentor": "breach",
+      "background": "Kalee Origin",
       "abilityScores": {
         "str": 12,
         "dex": 14,
@@ -963,7 +979,7 @@
       "quote": "With my squad at my side, we can handle anything.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_commando.webp",
       "mentor": "breach",
-      "background": "Event, Orphaned",
+      "background": "Sullust Origin",
       "abilityScores": {
         "str": 12,
         "dex": 16,
@@ -988,7 +1004,7 @@
         "initiative",
         "perception",
         "endurance",
-        "knowledgeTactics"
+        "stealth"
       ],
       "forcePowers": [],
       "startingEquipment": [
@@ -1000,7 +1016,7 @@
         "Smoke Grenade"
       ],
       "credits": 0,
-      "notes": "Elite commando with Sullustan darkvision and heightened awareness. Comrades in Arms grants +1 bonus to all melee and ranged attacks when within 3 squares of an ally. Tracker Utility Vest provides excellent mobility and carry capacity. Fully equipped with diverse grenade arsenal for tactical flexibility."
+      "notes": "Elite commando with Sullustan darkvision and heightened awareness. Comrades in Arms grants +1 bonus to all melee and ranged attacks when within 3 squares of an ally. Sullust Origin adds Stealth as class skill for +3 bonus, perfect for elite strike missions."
     },
     {
       "id": "nonheroic_worker",
