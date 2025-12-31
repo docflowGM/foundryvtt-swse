@@ -562,6 +562,59 @@
       "notes": "Professional pilot with exceptional reflexes and marksmanship. Flawless Pilot allows rerolling Pilot checks and taking the better result. Surveillance talent provides enhanced reconnaissance capabilities."
     },
     {
+      "id": "scout_engineer",
+      "name": "Engineer",
+      "class": "Scout",
+      "archetype": "Engineer",
+      "description": "A skilled technician who specializes in maintenance, repair, and engineering solutions in the field.",
+      "quote": "Every problem has a technical solution.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_engineer.webp",
+      "mentor": "lead",
+      "background": "Profession, Technology",
+      "abilityScores": {
+        "str": 8,
+        "dex": 16,
+        "con": 12,
+        "int": 14,
+        "wis": 12,
+        "cha": 10
+      },
+      "species": "Mon Calamari",
+      "speciesFeat": "Mon Calamari Shipwright",
+      "className": "Scout",
+      "level": 1,
+      "feats": [
+        "Weapon Proficiency (Rifles)",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Simple Weapons)",
+        "Skill Focus (Perception)"
+      ],
+      "talent": "Sizing Up",
+      "talentTree": "Versatility",
+      "trainedSkills": [
+        "initiative",
+        "perception",
+        "mechanics",
+        "knowledgePhysicalSciences",
+        "knowledgeTechnology",
+        "stealth",
+        "swim",
+        "useComputers"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Sonic Rifle with Targeting Scope",
+        "Stun Pistol",
+        "Power Packs x5",
+        "Power Recharger",
+        "Tool Kit",
+        "Hands-Free Commlink",
+        "Camouflage Poncho"
+      ],
+      "credits": 0,
+      "notes": "Master technician with exceptional perception and intelligence. Mon Calamari Shipwright provides expertise in starship systems. Skill Focus (Perception) reflects Mon Calamari natural observational abilities. Use Computers is a class skill due to Technology background."
+    },
+    {
       "id": "scout_skirmisher",
       "name": "Skirmisher",
       "class": "Scout",
