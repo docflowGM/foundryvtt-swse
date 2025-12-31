@@ -5,6 +5,9 @@
 
 import { getRarityClass, getRarityLabel } from './store-shared.js';
 
+// Safe logger reference
+const swseLogger = globalThis.swseLogger || console;
+
 /**
  * Calculate final cost with markup/discount
  * @param {number} baseCost - Base cost of item

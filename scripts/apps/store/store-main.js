@@ -14,6 +14,9 @@ import {
   isValidItemForStore
 } from "./store-shared.js";
 
+// Safe logger reference
+const swseLogger = globalThis.swseLogger || console;
+
 export class SWSEStore extends FormApplication {
   constructor(actor = null, options={}) {
     super({}, options);
