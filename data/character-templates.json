@@ -671,6 +671,7 @@
       "quote": "Speed and precision win battles. Stand still and you're already dead.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_skirmisher.webp",
       "mentor": "lead",
+      "background": "Widowed",
       "abilityScores": {
         "str": 10,
         "dex": 16,
@@ -713,6 +714,7 @@
       "quote": "The wilderness doesn't forgive mistakes. Neither do I.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_survivalist.webp",
       "mentor": "lead",
+      "background": "Bankrupt",
       "abilityScores": {
         "str": 12,
         "dex": 14,
@@ -758,6 +760,7 @@
       "quote": "The best battles are the ones your enemy never knew you fought.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_infiltrator.webp",
       "mentor": "lead",
+      "background": "Disgraced",
       "abilityScores": {
         "str": 8,
         "dex": 16,
