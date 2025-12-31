@@ -31,6 +31,7 @@ export default class CharacterGenerator extends Application {
     super(options);
     this.actor = actor;
     this.actorType = options.actorType || "character"; // "character" for PCs, "npc" for NPCs
+    this.mentor = null; // Mentor character for survey prompts (initialized when needed)
     this.characterData = {
       name: "",
       isDroid: false,
@@ -184,6 +185,31 @@ export default class CharacterGenerator extends Application {
     });
   }
 
+  /**
+   * Filter out Force-dependent talents/feats for droids
+   * Droids cannot be Force-sensitive in SWSE rules
+   * @param {Array} items - Array of talents or feats
+   * @returns {Array} Filtered array
+   * @private
+   */
+  _filterForceDependentItems(items) {
+    if (!this.characterData.isDroid) {
+      return items; // Not a droid, no filtering needed
+    }
+
+    return items.filter(item => {
+      const prereqs = item.system?.prerequisites || "";
+      const preqsLower = prereqs.toLowerCase();
+      // Exclude items that require Force Sensitivity, Force Techniques, Force Secrets, or Force Points
+      return !(
+        preqsLower.includes("force sensitivity") ||
+        preqsLower.includes("force technique") ||
+        preqsLower.includes("force secret") ||
+        preqsLower.includes("force point")
+      );
+    });
+  }
+
   async _loadData() {
     // Show loading notification (only if cache is empty)
     const showLoading = !ChargenDataCache.isCached();
@@ -330,11 +356,14 @@ export default class CharacterGenerator extends Application {
       // Add suggestion engine suggestions to feats
       if (this.currentStep === "feats" && context.packs.feats) {
         try {
-          const featsWithSuggestions = await SuggestionEngine.suggestFeats(
+          let featsWithSuggestions = await SuggestionEngine.suggestFeats(
             context.packs.feats,
             tempActor,
             pendingData
           );
+          // Filter out Force-dependent feats for droids (they cannot be Force-sensitive)
+          featsWithSuggestions = this._filterForceDependentItems(featsWithSuggestions);
+
           context.packs.feats = featsWithSuggestions;
           // Sort by suggestion tier
           context.packs.feats = SuggestionEngine.sortBySuggestion(context.packs.feats);
@@ -353,19 +382,7 @@ export default class CharacterGenerator extends Application {
           );
 
           // Filter out Force-dependent talents for droids (they cannot be Force-sensitive)
-          if (this.characterData.isDroid) {
-            talentsWithSuggestions = talentsWithSuggestions.filter(talent => {
-              const prereqs = talent.system?.prerequisites || "";
-              const preqsLower = prereqs.toLowerCase();
-              // Exclude talents that require Force Sensitivity, Force Techniques, or Force Secrets
-              return !(
-                preqsLower.includes("force sensitivity") ||
-                preqsLower.includes("force technique") ||
-                preqsLower.includes("force secret") ||
-                preqsLower.includes("force point")
-              );
-            });
-          }
+          talentsWithSuggestions = this._filterForceDependentItems(talentsWithSuggestions);
 
           context.packs.talents = talentsWithSuggestions;
           // Sort by suggestion tier
@@ -412,19 +429,7 @@ export default class CharacterGenerator extends Application {
       });
 
       // Filter out Force-dependent talents for droids in the tree view
-      if (this.characterData.isDroid) {
-        context.packs.talentsInTree = context.packs.talentsInTree.filter(talent => {
-          const prereqs = talent.system?.prerequisites || "";
-          const preqsLower = prereqs.toLowerCase();
-          // Exclude talents that require Force Sensitivity, Force Techniques, or Force Secrets
-          return !(
-            preqsLower.includes("force sensitivity") ||
-            preqsLower.includes("force technique") ||
-            preqsLower.includes("force secret") ||
-            preqsLower.includes("force point")
-          );
-        });
-      }
+      context.packs.talentsInTree = this._filterForceDependentItems(context.packs.talentsInTree);
     }
 
     return context;
