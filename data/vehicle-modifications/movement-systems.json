@@ -302,6 +302,7 @@
   {
     "id": "sublight-drive-5",
     "name": "Sublight Drive (Speed 5 Squares)",
+    "category": "Movement",
     "emplacementPoints": 6,
     "availability": "Military",
     "sizeRestriction": "Colossal or Smaller",

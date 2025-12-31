@@ -66,7 +66,7 @@
     "emplacementPoints": 1,
     "availability": "Military",
     "sizeRestriction": "Huge or Larger",
-    "cost": 100000000,
+    "cost": 100000,
     "costType": "base",
     "description": "Perfect cloaking device, extremely rare.",
     "effect": "Perfect invisibility, undetectable"
@@ -150,7 +150,7 @@
     "emplacementPoints": 8,
     "availability": "Common",
     "sizeRestriction": "Colossal (Frigate) or Larger",
-    "cost": 10,
+    "cost": 10000,
     "costType": "base",
     "description": "Internal hangar for small craft.",
     "effect": "1 hangar space (1 fighter or equivalent)"
