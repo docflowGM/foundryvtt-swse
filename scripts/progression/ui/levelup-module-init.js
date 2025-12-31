@@ -15,7 +15,7 @@ import { FeatRegistry } from "../feats/feat-registry-ui.js";
 import { TalentRegistry } from "../talents/talent-registry-ui.js";
 import { ForceRegistry } from "../force/force-registry-ui.js";
 import { registerLevelUpSheetHooks } from "../../hooks/levelup-sheet-hooks.js";
-import { PrerequisiteValidator } from "../validation/prerequisite-validator.js";
+import { PrerequisiteValidator } from "../../utils/prerequisite-validator.js";
 import { SuggestionEngineCoordinator } from "../../engine/SuggestionEngineCoordinator.js";
 
 /**

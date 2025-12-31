@@ -4,7 +4,7 @@
  */
 
 import { SWSELogger } from "../../utils/logger.js";
-import { PrerequisiteValidator } from "../validation/prerequisite-validator.js";
+import { PrerequisiteValidator } from "../../utils/prerequisite-validator.js";
 
 export const TalentRegistry = {
   _trees: {},

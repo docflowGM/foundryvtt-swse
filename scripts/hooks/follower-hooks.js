@@ -35,7 +35,7 @@ export function initializeFollowerHooks() {
      */
     Hooks.on('createItem', async (item, options, userId) => {
         // Only process for the user who created the item
-        if (game.userId !== userId) return;
+        if (game.user.id !== userId) return;
 
         // Only process talents
         if (item.type !== 'talent') return;
@@ -82,7 +82,7 @@ export function initializeFollowerHooks() {
      */
     Hooks.on('deleteItem', async (item, options, userId) => {
         // Only process for the user who deleted the item
-        if (game.userId !== userId) return;
+        if (game.user.id !== userId) return;
 
         // Only process talents
         if (item.type !== 'talent') return;
@@ -114,7 +114,7 @@ export function initializeFollowerHooks() {
      */
     Hooks.on('updateActor', async (actor, changes, options, userId) => {
         // Only process for the user who updated the actor
-        if (game.userId !== userId) return;
+        if (game.user.id !== userId) return;
 
         // Check if level changed
         if (changes.system?.level) {

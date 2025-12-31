@@ -146,7 +146,6 @@ import './scripts/migration/update-species-traits-migration.js';
 
 import { DamageSystem } from './scripts/combat/damage-system.js';
 import { SWSECombatAutomation } from './scripts/combat/combat-automation.js';
-import { SWSECombatIntegration } from './scripts/combat/combat-integration.js';
 import { SWSEActiveEffectsManager } from './scripts/combat/active-effects-manager.js';
 import { CombatActionsMapper } from './scripts/combat/utils/combat-actions-mapper.js';
 import { SWSECombat } from './scripts/combat/systems/enhanced-combat-system.js';

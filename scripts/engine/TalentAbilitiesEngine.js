@@ -1242,7 +1242,7 @@ export class TalentAbilitiesEngine {
         SWSELogger.log('TalentAbilitiesEngine | Initializing combat hooks');
 
         // Reset per-round abilities at turn start
-        Hooks.on('combatTurn', (combat, prior, current) => {
+        Hooks.on('combatTurn', (combat, updateData, updateOptions) => {
             const actor = combat.combatant?.actor;
             if (!actor) return;
 

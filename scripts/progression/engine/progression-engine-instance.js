@@ -12,7 +12,7 @@ import { SkillEngine } from '../skills/skill-engine.js';
 import { ForceProgressionEngine } from './force-progression.js';
 import { ApplyHandlers } from '../utils/apply-handlers.js';
 import { FinalizeIntegration } from '../integration/finalize-integration.js';
-import { FeatureDispatcher } from './feature-dispatcher.js';
+import { dispatchFeature } from './feature-dispatcher.js';
 
 export class ProgressionEngine {
   /**
@@ -217,7 +217,7 @@ export class ProgressionEngine {
       // Dispatch all features through the feature dispatcher
       for (const feature of features) {
         try {
-          await FeatureDispatcher.dispatchFeature(feature, this.actor, this);
+          await dispatchFeature(feature, this.actor, this);
           SWSELogger.log(`Applied feature: ${feature.type} - ${feature.name}`);
         } catch (err) {
           SWSELogger.error(`Failed to apply feature ${feature.name}:`, err);
