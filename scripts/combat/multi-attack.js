@@ -315,22 +315,33 @@ export function getEquippedWeapons(actor) {
 
 /**
  * Calculate full attack configuration for an actor
+ *
+ * SWSE Full Attack Rules:
+ * - Double Attack: 2 attacks with ONE weapon, each at -5 penalty
+ * - Triple Attack: 3 attacks with ONE weapon, each at -10 penalty
+ * - Two-Weapon Fighting: 2 attacks (one per weapon/end), each at -10 (reduced by DWM)
+ * - Combining: Player chooses which weapon makes which extra attack
+ * - Penalties are PER SOURCE, not cumulative across sources
+ *
  * @param {Actor} actor - The actor
  * @param {Item} primaryWeapon - The primary weapon being used
  * @param {Item} [offhandWeapon] - Optional offhand weapon
+ * @param {Object} [options] - Configuration options
+ * @param {string} [options.doubleAttackWeapon='primary'] - Which weapon uses Double/Triple Attack
  * @returns {Object} Full attack configuration
  */
-export function calculateFullAttackConfig(actor, primaryWeapon, offhandWeapon = null) {
+export function calculateFullAttackConfig(actor, primaryWeapon, offhandWeapon = null, options = {}) {
   const config = {
     attacks: [],
-    totalPenalty: 0,
     breakdown: [],
     isFullAttack: true,
     dwmLevel: 0,
     hasDoubleAttack: false,
     hasTripleAttack: false,
     usingDualWeapons: false,
-    usingDoubleWeapon: false
+    usingDoubleWeapon: false,
+    doubleAttackPenalty: 0,
+    twoWeaponPenalty: 0
   };
 
   if (!actor || !primaryWeapon) {
@@ -338,6 +349,7 @@ export function calculateFullAttackConfig(actor, primaryWeapon, offhandWeapon = 
   }
 
   const primaryGroup = getWeaponGroup(primaryWeapon);
+  const offhandGroup = offhandWeapon ? getWeaponGroup(offhandWeapon) : null;
   const doubleAttackGroups = getDoubleAttackGroups(actor);
   const tripleAttackGroups = getTripleAttackGroups(actor);
   const dwmLevel = getDualWeaponMasteryLevel(actor);
@@ -347,74 +359,107 @@ export function calculateFullAttackConfig(actor, primaryWeapon, offhandWeapon = 
   // Check if using double weapon or two weapons
   const isDouble = isDoubleWeapon(primaryWeapon);
   const hasTwoWeapons = offhandWeapon && offhandWeapon.id !== primaryWeapon.id;
-  const usingMultipleWeapons = isDouble || hasTwoWeapons || (offhandWeapon && isDouble);
+  const usingMultipleWeapons = isDouble || hasTwoWeapons;
 
   config.usingDoubleWeapon = isDouble;
   config.usingDualWeapons = usingMultipleWeapons;
 
-  // Base attacks
-  // Attack 1: Primary weapon
+  // Calculate two-weapon penalty (applies only to two-weapon attacks)
+  const twoWeaponPenalty = usingMultipleWeapons ? getDualWeaponPenalty(dwmLevel) : 0;
+  config.twoWeaponPenalty = twoWeaponPenalty;
+
+  // Check for Double/Triple Attack with matching weapon group
+  // Player can choose which weapon to use for Double/Triple Attack
+  const doubleAttackWeapon = options.doubleAttackWeapon || 'primary';
+  const selectedWeapon = doubleAttackWeapon === 'offhand' && offhandWeapon ? offhandWeapon : primaryWeapon;
+  const selectedGroup = doubleAttackWeapon === 'offhand' && offhandGroup ? offhandGroup : primaryGroup;
+
+  const hasDoubleAttack = selectedGroup && doubleAttackGroups.has(selectedGroup);
+  const hasTripleAttack = selectedGroup && tripleAttackGroups.has(selectedGroup) && hasDoubleAttack;
+
+  config.hasDoubleAttack = hasDoubleAttack;
+  config.hasTripleAttack = hasTripleAttack;
+
+  // Determine penalty for Double/Triple Attack
+  // Double Attack = -5 on all attacks made with it
+  // Triple Attack = -10 on all attacks made with it (includes Double Attack prerequisite)
+  config.doubleAttackPenalty = hasTripleAttack ? -10 : (hasDoubleAttack ? -5 : 0);
+
+  // Build attack list
+  // Attack 1: Primary weapon (standard attack, no penalty unless using Double/Triple Attack)
+  const primaryLabel = isDouble ? `${primaryWeapon.name} (Primary End)` : primaryWeapon.name;
+  const primaryPenalty = (doubleAttackWeapon === 'primary' && hasDoubleAttack) ? config.doubleAttackPenalty : 0;
+
   config.attacks.push({
     weapon: primaryWeapon,
-    label: isDouble ? `${primaryWeapon.name} (Primary End)` : primaryWeapon.name,
+    label: primaryLabel,
     attackNumber: 1,
-    source: 'primary'
+    source: 'primary',
+    penalty: primaryPenalty,
+    penaltySource: primaryPenalty !== 0 ? (hasTripleAttack ? 'Triple Attack' : 'Double Attack') : null
   });
 
-  // If using two weapons or double weapon, add second attack
-  if (usingMultipleWeapons) {
-    const dualPenalty = getDualWeaponPenalty(dwmLevel);
-    config.totalPenalty += dualPenalty;
+  // If using Double/Triple Attack, add extra attacks with that weapon
+  if (hasDoubleAttack) {
+    // Double Attack gives 1 extra attack
+    config.attacks.push({
+      weapon: selectedWeapon,
+      label: `${selectedWeapon.name} (Double Attack)`,
+      attackNumber: 2,
+      source: 'doubleAttack',
+      penalty: config.doubleAttackPenalty,
+      penaltySource: hasTripleAttack ? 'Triple Attack' : 'Double Attack'
+    });
 
-    if (dualPenalty !== 0) {
-      config.breakdown.push(`Dual Weapons: ${dualPenalty}`);
-    } else {
-      config.breakdown.push(`Dual Weapons: no penalty (DWM III)`);
+    if (hasTripleAttack) {
+      // Triple Attack gives 1 more extra attack (total 3 with this weapon)
+      config.attacks.push({
+        weapon: selectedWeapon,
+        label: `${selectedWeapon.name} (Triple Attack)`,
+        attackNumber: 3,
+        source: 'tripleAttack',
+        penalty: config.doubleAttackPenalty,
+        penaltySource: 'Triple Attack'
+      });
     }
+
+    config.breakdown.push(
+      hasTripleAttack
+        ? `Triple Attack: -10 on all ${selectedWeapon.name} attacks`
+        : `Double Attack: -5 on all ${selectedWeapon.name} attacks`
+    );
+  }
+
+  // If using two weapons or double weapon, add attack with other weapon/end
+  if (usingMultipleWeapons) {
+    const offhandLabel = isDouble
+      ? `${primaryWeapon.name} (Secondary End)`
+      : (offhandWeapon?.name || 'Off-hand');
 
     config.attacks.push({
       weapon: offhandWeapon || primaryWeapon,
-      label: isDouble
-        ? `${primaryWeapon.name} (Secondary End)`
-        : (offhandWeapon?.name || 'Off-hand'),
-      attackNumber: 2,
-      source: 'offhand'
-    });
-  }
-
-  // Check for Double Attack with matching weapon group
-  const hasDoubleAttack = primaryGroup && doubleAttackGroups.has(primaryGroup);
-  config.hasDoubleAttack = hasDoubleAttack;
-
-  if (hasDoubleAttack) {
-    config.totalPenalty += -5;
-    config.breakdown.push(`Double Attack: -5`);
-
-    config.attacks.push({
-      weapon: primaryWeapon,
-      label: `${primaryWeapon.name} (Double Attack)`,
+      label: offhandLabel,
       attackNumber: config.attacks.length + 1,
-      source: 'doubleAttack'
+      source: 'offhand',
+      penalty: twoWeaponPenalty,
+      penaltySource: twoWeaponPenalty !== 0
+        ? `Two-Weapon${dwmLevel > 0 ? ` (DWM ${['I', 'II', 'III'][dwmLevel - 1]})` : ''}`
+        : 'Two-Weapon (DWM III)'
     });
+
+    if (twoWeaponPenalty !== 0) {
+      config.breakdown.push(`Two-Weapon Fighting: ${twoWeaponPenalty} on off-hand attack`);
+    } else {
+      config.breakdown.push(`Two-Weapon Fighting: no penalty (DWM III)`);
+    }
+
+    // If the off-hand weapon has Double/Triple Attack AND player chose offhand
+    if (doubleAttackWeapon === 'offhand' && hasDoubleAttack) {
+      // Already handled above - the Double/Triple attacks are with the offhand weapon
+    }
   }
 
-  // Check for Triple Attack with matching weapon group
-  const hasTripleAttack = primaryGroup && tripleAttackGroups.has(primaryGroup) && hasDoubleAttack;
-  config.hasTripleAttack = hasTripleAttack;
-
-  if (hasTripleAttack) {
-    config.totalPenalty += -5;
-    config.breakdown.push(`Triple Attack: -5`);
-
-    config.attacks.push({
-      weapon: primaryWeapon,
-      label: `${primaryWeapon.name} (Triple Attack)`,
-      attackNumber: config.attacks.length + 1,
-      source: 'tripleAttack'
-    });
-  }
-
-  // Number attacks
+  // Re-number attacks
   config.attacks.forEach((atk, idx) => {
     atk.attackNumber = idx + 1;
   });
@@ -429,23 +474,46 @@ export function calculateFullAttackConfig(actor, primaryWeapon, offhandWeapon = 
  * @returns {Promise<Object|null>} Configuration or null if cancelled
  */
 export async function showFullAttackDialog(actor, equippedWeapons) {
-  const { primary, offhand, isDoubleWeapon } = equippedWeapons;
+  const { primary, offhand, isDoubleWeapon: isDouble } = equippedWeapons;
 
   if (!primary) {
     ui.notifications.warn("No weapon equipped for Full Attack.");
     return null;
   }
 
-  const config = calculateFullAttackConfig(actor, primary, offhand);
+  // Check if player can choose which weapon uses Double/Triple Attack
+  const primaryGroup = getWeaponGroup(primary);
+  const offhandGroup = offhand ? getWeaponGroup(offhand) : null;
+  const doubleAttackGroups = getDoubleAttackGroups(actor);
+
+  const primaryHasDoubleAttack = primaryGroup && doubleAttackGroups.has(primaryGroup);
+  const offhandHasDoubleAttack = offhandGroup && doubleAttackGroups.has(offhandGroup);
+  const canChooseWeapon = primaryHasDoubleAttack && offhandHasDoubleAttack && offhand;
+
+  // Default to primary weapon for Double/Triple Attack
+  let selectedDoubleAttackWeapon = 'primary';
+
+  // Calculate initial config
+  let config = calculateFullAttackConfig(actor, primary, offhand, {
+    doubleAttackWeapon: selectedDoubleAttackWeapon
+  });
 
   // Build dialog content
-  const attackList = config.attacks.map((atk, i) =>
-    `<li>Attack ${i + 1}: ${atk.label}</li>`
-  ).join('');
+  const buildAttackList = (cfg) => cfg.attacks.map((atk, i) => {
+    const penaltyText = atk.penalty !== 0 ? ` <span class="penalty">(${atk.penalty})</span>` : '';
+    const sourceText = atk.penaltySource ? ` <span class="source">[${atk.penaltySource}]</span>` : '';
+    return `<li>Attack ${i + 1}: ${atk.label}${penaltyText}${sourceText}</li>`;
+  }).join('');
 
-  const penaltyInfo = config.totalPenalty !== 0
-    ? `<p class="penalty-warning"><strong>Total Penalty:</strong> ${config.totalPenalty} on all attacks</p>`
-    : `<p class="no-penalty"><strong>No penalty</strong> on attacks</p>`;
+  const weaponChoiceHtml = canChooseWeapon ? `
+    <div class="form-group">
+      <label>Use Double/Triple Attack with:</label>
+      <select name="doubleAttackWeapon">
+        <option value="primary">${primary.name}</option>
+        <option value="offhand">${offhand.name}</option>
+      </select>
+    </div>
+  ` : '';
 
   const breakdownHtml = config.breakdown.length > 0
     ? `<ul class="breakdown">${config.breakdown.map(b => `<li>${b}</li>`).join('')}</ul>`
@@ -457,32 +525,50 @@ export async function showFullAttackDialog(actor, equippedWeapons) {
         .swse-full-attack-dialog { padding: 10px; }
         .swse-full-attack-dialog h4 { margin: 5px 0; }
         .swse-full-attack-dialog ul { margin: 5px 0; padding-left: 20px; }
-        .swse-full-attack-dialog .penalty-warning { color: #f44; font-weight: bold; }
+        .swse-full-attack-dialog .penalty { color: #f44; font-weight: bold; }
+        .swse-full-attack-dialog .source { color: #888; font-size: 0.85em; }
         .swse-full-attack-dialog .no-penalty { color: #4f4; }
-        .swse-full-attack-dialog .breakdown { font-size: 0.9em; color: #888; }
+        .swse-full-attack-dialog .breakdown { font-size: 0.9em; color: #aaa; margin-top: 10px; }
+        .swse-full-attack-dialog .form-group { margin: 10px 0; }
+        .swse-full-attack-dialog .form-group label { display: block; margin-bottom: 4px; }
+        .swse-full-attack-dialog .attack-list { margin: 10px 0; }
       </style>
 
       <h4>Full Attack Action</h4>
-      <p>You will make <strong>${config.attacks.length} attack(s)</strong>:</p>
-      <ul>${attackList}</ul>
 
-      ${penaltyInfo}
+      ${weaponChoiceHtml}
+
+      <div class="attack-list">
+        <p>You will make <strong>${config.attacks.length} attack(s)</strong>:</p>
+        <ul id="attack-list">${buildAttackList(config)}</ul>
+      </div>
+
       ${breakdownHtml}
 
       <hr>
-      <p><em>Full Attack uses your entire turn (Full-Round Action).</em></p>
+      <p><em>Full Attack uses your entire turn (Full-Round Action). You may only take a 5-foot step.</em></p>
     </div>
   `;
 
   return new Promise(resolve => {
-    new Dialog({
+    const dialog = new Dialog({
       title: "Full Attack",
       content,
       buttons: {
         attack: {
           icon: '<i class="fas fa-crosshairs"></i>',
           label: `Attack (${config.attacks.length}x)`,
-          callback: () => resolve(config)
+          callback: html => {
+            // Get selected weapon for Double/Triple Attack
+            const select = html.find('select[name="doubleAttackWeapon"]');
+            if (select.length) {
+              selectedDoubleAttackWeapon = select.val();
+              config = calculateFullAttackConfig(actor, primary, offhand, {
+                doubleAttackWeapon: selectedDoubleAttackWeapon
+              });
+            }
+            resolve(config);
+          }
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
@@ -490,8 +576,19 @@ export async function showFullAttackDialog(actor, equippedWeapons) {
           callback: () => resolve(null)
         }
       },
-      default: "attack"
-    }).render(true);
+      default: "attack",
+      render: html => {
+        // Update attack list when weapon selection changes
+        html.find('select[name="doubleAttackWeapon"]').on('change', (ev) => {
+          selectedDoubleAttackWeapon = ev.target.value;
+          const newConfig = calculateFullAttackConfig(actor, primary, offhand, {
+            doubleAttackWeapon: selectedDoubleAttackWeapon
+          });
+          html.find('#attack-list').html(buildAttackList(newConfig));
+        });
+      }
+    });
+    dialog.render(true);
   });
 }
 
@@ -508,12 +605,15 @@ export function generateFullAttackCard(actor, results, config) {
     const isHit = result.isHit;
     const isCrit = result.critConfirmed;
     const outcomeClass = isCrit ? 'critical' : (isHit ? 'hit' : (isHit === false ? 'miss' : ''));
+    const penalty = atk.penalty || 0;
+    const penaltyText = penalty !== 0 ? `<span class="attack-penalty">${penalty}</span>` : '';
 
     return `
       <div class="full-attack-entry ${outcomeClass}">
         <div class="attack-header">
           <span class="attack-number">#${i + 1}</span>
           <span class="attack-label">${atk.label}</span>
+          ${penaltyText}
         </div>
         <div class="attack-result">
           <span class="roll-total">${result.total}</span>
@@ -529,16 +629,21 @@ export function generateFullAttackCard(actor, results, config) {
                 ? '<i class="fas fa-times"></i> Miss'
                 : ''}
         </div>
+        ${atk.penaltySource ? `<div class="attack-source">${atk.penaltySource}</div>` : ''}
       </div>
     `;
   }).join('');
 
+  const hitCount = results.filter(r => r.isHit).length;
+  const critCount = results.filter(r => r.critConfirmed).length;
+  const missCount = results.filter(r => r.isHit === false).length;
+
   const summaryHtml = `
     <div class="full-attack-summary">
       <span class="total-attacks">${results.length} Attacks</span>
-      <span class="hits">${results.filter(r => r.isHit).length} Hits</span>
-      <span class="crits">${results.filter(r => r.critConfirmed).length} Crits</span>
-      ${config.totalPenalty ? `<span class="penalty">${config.totalPenalty} penalty</span>` : ''}
+      ${hitCount > 0 ? `<span class="hits">${hitCount} Hit${hitCount > 1 ? 's' : ''}</span>` : ''}
+      ${critCount > 0 ? `<span class="crits">${critCount} Crit${critCount > 1 ? 's' : ''}!</span>` : ''}
+      ${missCount > 0 ? `<span class="misses">${missCount} Miss${missCount > 1 ? 'es' : ''}</span>` : ''}
     </div>
   `;
 
@@ -555,9 +660,11 @@ export function generateFullAttackCard(actor, results, config) {
         ${attacksHtml}
       </div>
 
-      <div class="breakdown-info">
-        ${config.breakdown.map(b => `<span>${b}</span>`).join(' | ')}
-      </div>
+      ${config.breakdown.length > 0 ? `
+        <div class="breakdown-info">
+          ${config.breakdown.map(b => `<span>${b}</span>`).join(' | ')}
+        </div>
+      ` : ''}
     </div>
 
     <style>
@@ -586,8 +693,8 @@ export function generateFullAttackCard(actor, results, config) {
         font-size: 0.9em;
       }
       .swse-full-attack-card .full-attack-summary .hits { color: #4f4; }
-      .swse-full-attack-card .full-attack-summary .crits { color: #ffd700; }
-      .swse-full-attack-card .full-attack-summary .penalty { color: #f44; }
+      .swse-full-attack-card .full-attack-summary .crits { color: #ffd700; font-weight: bold; }
+      .swse-full-attack-card .full-attack-summary .misses { color: #f44; }
       .swse-full-attack-card .full-attack-entry {
         background: rgba(0,0,0,0.3);
         border-radius: 4px;
@@ -602,8 +709,11 @@ export function generateFullAttackCard(actor, results, config) {
         display: flex;
         gap: 10px;
         font-weight: bold;
+        align-items: center;
       }
       .swse-full-attack-card .attack-number { color: #888; }
+      .swse-full-attack-card .attack-penalty { color: #f44; font-size: 0.85em; margin-left: auto; }
+      .swse-full-attack-card .attack-source { color: #666; font-size: 0.8em; font-style: italic; }
       .swse-full-attack-card .attack-result {
         display: flex;
         gap: 10px;

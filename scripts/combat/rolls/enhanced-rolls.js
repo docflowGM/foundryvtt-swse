@@ -585,9 +585,10 @@ export class SWSERoll {
       for (const attack of config.attacks) {
         const weapon = attack.weapon;
 
-        // Calculate attack bonus with full attack penalty
+        // Calculate attack bonus with this attack's specific penalty
         const baseAttackBonus = computeAttackBonus(actor, weapon);
-        const totalBonus = baseAttackBonus + config.totalPenalty + fpBonus;
+        const attackPenalty = attack.penalty || 0;
+        const totalBonus = baseAttackBonus + attackPenalty + fpBonus;
 
         // Build formula
         const formula = `1d20 + ${totalBonus}`;
@@ -640,7 +641,9 @@ export class SWSERoll {
           d20,
           total: roll.total,
           attackBonus: totalBonus,
-          penalty: config.totalPenalty,
+          baseBonus: baseAttackBonus,
+          penalty: attackPenalty,
+          penaltySource: attack.penaltySource,
           weapon,
           label: attack.label,
           source: attack.source,
@@ -698,7 +701,9 @@ export class SWSERoll {
           hits: results.filter(r => r.isHit).length,
           crits: results.filter(r => r.critConfirmed).length,
           misses: results.filter(r => r.isHit === false).length,
-          totalPenalty: config.totalPenalty
+          hasDoubleAttack: config.hasDoubleAttack,
+          hasTripleAttack: config.hasTripleAttack,
+          usingDualWeapons: config.usingDualWeapons
         }
       };
 
