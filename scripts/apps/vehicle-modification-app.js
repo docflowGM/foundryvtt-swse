@@ -45,6 +45,13 @@ export class VehicleModificationApp extends Application {
     context.currentStep = this.currentStep;
     context.marlDialogue = this.getMarlDialogue();
 
+    // Check if vehicle data loaded successfully
+    if (!VehicleModificationManager._initialized) {
+      context.loadError = true;
+      context.errorMessage = "Failed to load vehicle modification data. Check the browser console for details.";
+      return context;
+    }
+
     // Stock ships
     context.stockShips = VehicleModificationManager.getStockShips();
     context.selectedShip = this.stockShip;

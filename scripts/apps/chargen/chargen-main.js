@@ -330,6 +330,7 @@ export default class CharacterGenerator extends Application {
     // Navigation
     $html.find('.next-step').click(this._onNextStep.bind(this));
     $html.find('.prev-step').click(this._onPrevStep.bind(this));
+    $html.find('.build-later-droid').click(this._onBuildLater.bind(this));
 
     // Chevron step navigation (clickable for previous steps or in Free Build mode)
     $html.find('.chevron-step.clickable').click(this._onJumpToStep.bind(this));
@@ -422,6 +423,11 @@ export default class CharacterGenerator extends Application {
       this._populateDroidBuilder($html[0]);
     }
 
+    // Final Droid Customization UI (after class/background for final credits)
+    if (this.currentStep === "droid-final") {
+      this._populateFinalDroidBuilder($html[0]);
+    }
+
     // Class change
     $html.find('[name="class_select"]').change(async (ev) => {
       await this._onClassChanged(ev, $html[0]);
@@ -468,6 +474,12 @@ export default class CharacterGenerator extends Application {
       // Add force powers step if character is Force-sensitive
       if (this.characterData.forceSensitive && this._getForcePowersNeeded() > 0) {
         steps.push("force-powers");
+      }
+
+      // Add final droid customization step if droid character
+      // This allows player to finalize droid after class/background selection for final credit total
+      if (this.characterData.isDroid) {
+        steps.push("droid-final");
       }
 
       steps.push("summary", "shop");
@@ -649,6 +661,11 @@ export default class CharacterGenerator extends Application {
         }
         break;
       case "droid-builder":
+        // Droid builder is optional - player can skip and build later
+        // Always return true to allow proceeding
+        return true;
+      case "droid-final":
+        // Final droid step is required - must have built the droid or be skipping to it
         return this._validateDroidBuilder();
       case "species":
         if (!this.characterData.species) {
