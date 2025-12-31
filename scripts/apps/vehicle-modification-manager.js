@@ -118,15 +118,21 @@ export class VehicleModificationManager {
 
     // Handle cost type
     if (modification.costType === 'base') {
+      // Cost scales with ship size via costModifier
       baseCost *= stockShip.costModifier;
+    } else if (modification.costType === 'flat') {
+      // Flat cost type uses the cost as-is, no scaling
+      // baseCost already set above
     } else if (modification.costType === 'multiplier') {
-      // Multiplier type requires a base weapon/system cost
-      // This would be handled differently in actual usage
-      baseCost = 0; // Placeholder
+      // Multiplier type is not currently supported - would require base item cost
+      SWSELogger.warn(`SWSE | Modification "${modification.name}" uses unsupported cost type: multiplier. Treating as flat cost.`);
+      // Fall through to use flat cost
+    } else {
+      // Default to flat cost for unknown types
+      SWSELogger.warn(`SWSE | Modification "${modification.name}" has unknown cost type: ${modification.costType}. Treating as flat cost.`);
     }
-    // 'flat' cost type uses the cost as-is
 
-    // Nonstandard modifications cost x5
+    // Nonstandard modifications cost 5x more
     if (isNonstandard) {
       baseCost *= 5;
     }
@@ -241,20 +247,30 @@ export class VehicleModificationManager {
    * Calculate total emplacement points used
    * @param {Array} modifications - Array of installed modifications
    * @param {Object} stockShip - The stock ship
-   * @returns {Object} - {used, available, total}
+   * @returns {Object} - {used, available, total, remaining}
    */
   static calculateEmplacementPointsTotal(modifications, stockShip) {
-    const used = modifications.reduce((sum, mod) => {
+    // Calculate EP used by modifications
+    const usedByModifications = modifications.reduce((sum, mod) => {
       return sum + (mod.emplacementPoints || 0);
     }, 0);
 
-    const available = (stockShip.emplacementPoints || 0) + (stockShip.unusedEmplacementPoints || 0);
+    // Total available EP pool is the sum of baseline and unused
+    const totalAvailable = (stockShip.emplacementPoints || 0) + (stockShip.unusedEmplacementPoints || 0);
+
+    // EP used by stock configuration (already allocated in emplacementPoints)
+    const usedByStock = stockShip.emplacementPoints || 0;
+
+    // Remaining available for modifications
+    const available = (stockShip.unusedEmplacementPoints || 0);
 
     return {
-      used,
-      available,
-      total: available,
-      remaining: available - used
+      used: usedByModifications,
+      available: available,
+      total: totalAvailable,
+      remaining: available - usedByModifications,
+      usedByStock: usedByStock,
+      totalAvailable: totalAvailable
     };
   }
 

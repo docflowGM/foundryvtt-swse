@@ -30,8 +30,8 @@ export class SWSEVehicleHandler {
       name: vehicleItem.name,
       img: vehicleItem.img || actor.img,
 
-      // Attributes (copy from template if present)
-      'system.attributes': template.attributes || {
+      // Abilities (copy from template if present, supports both attributes and abilities for compatibility)
+      'system.abilities': template.abilities || template.attributes || {
         str: { base: 10, racial: 0, temp: 0 },
         dex: { base: 10, racial: 0, temp: 0 },
         con: { base: 10, racial: 0, temp: 0 },
