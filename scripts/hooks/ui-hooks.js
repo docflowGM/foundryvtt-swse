@@ -84,7 +84,7 @@ export function registerUIHooks() {
     COMMENTED BY fix_ui_js.py - disabled-hook END */
 
     // Chat message rendering
-    HooksRegistry.register('renderChatMessageHTML', handleRenderChatMessage, {
+    HooksRegistry.register('renderChatMessage', handleRenderChatMessage, {
         id: 'render-chat-message',
         priority: 0,
         description: 'Process chat message HTML',
