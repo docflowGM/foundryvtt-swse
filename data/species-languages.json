@@ -241,6 +241,10 @@
     "languages": ["Cheunh", "Basic"],
     "canSpeakAll": true
   },
+  "Codru-Ji": {
+    "languages": ["Codruese", "Basic"],
+    "canSpeakAll": true
+  },
   "Devaronian": {
     "languages": ["Devaronese", "Basic"],
     "canSpeakAll": true

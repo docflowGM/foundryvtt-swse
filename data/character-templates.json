@@ -615,7 +615,55 @@
       "notes": "Master technician with exceptional perception and intelligence. Mon Calamari Shipwright provides expertise in starship systems. Skill Focus (Perception) reflects Mon Calamari natural observational abilities. Use Computers is a class skill due to Technology background."
     },
     {
-      "id": "scout_skirmisher",
+      "id": "scout_pistoleer",
+      "name": "Pistoleer",
+      "class": "Scout",
+      "archetype": "Pistoleer",
+      "description": "A skilled rider specializing in hit-and-run tactics from a speeder bike, utilizing dual-weapon mastery.",
+      "quote": "Speed and precision - that's all you need.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_pistoleer.webp",
+      "mentor": "lead",
+      "background": "Scarred",
+      "abilityScores": {
+        "str": 8,
+        "dex": 16,
+        "con": 14,
+        "int": 12,
+        "wis": 12,
+        "cha": 10
+      },
+      "species": "Codru-Ji",
+      "speciesFeat": "Dual Weapon Mastery I",
+      "className": "Scout",
+      "level": 1,
+      "feats": [
+        "Weapon Proficiency (Rifles)",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Simple Weapons)",
+        "Shake It Off"
+      ],
+      "talent": "Mechanized Rider",
+      "talentTree": "Fringer",
+      "trainedSkills": [
+        "initiative",
+        "endurance",
+        "perception",
+        "pilot",
+        "ride",
+        "stealth"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "FC-20 Speeder Bike (Used)",
+        "Sporting Blaster Rifle",
+        "Pulse-Wave Rifle",
+        "Power Packs x8",
+        "Tool Kit"
+      ],
+      "credits": 0,
+      "notes": "Elite rider with exceptional dexterity and extra arms. Codru-Ji Dual Weapon Mastery I allows dual-wielding with extra arms advantage. Mechanized Rider talent allows advanced speeder bike maneuvers. Skilled Grappler provides +5 bonus to Grab and Grapple checks. Fully equipped with minimal credits remaining."
+    },
+    {
       "name": "Skirmisher",
       "class": "Scout",
       "archetype": "Skirmisher",
