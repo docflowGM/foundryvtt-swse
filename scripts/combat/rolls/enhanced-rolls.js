@@ -12,6 +12,12 @@ import {
   rollCriticalConfirmation,
   rollConcealmentCheck
 } from "../../rolls/roll-config.js";
+import {
+  getEquippedWeapons,
+  calculateFullAttackConfig,
+  showFullAttackDialog,
+  generateFullAttackCard
+} from "../multi-attack.js";
 
 /**
  * SWSERoll — Unified SWSE Rolling Engine for v13+
@@ -497,6 +503,222 @@ export class SWSERoll {
     }
 
     return results;
+  }
+
+  /**
+   * Execute a Full Attack action with multiple attacks
+   *
+   * Handles:
+   * - Two-weapon fighting (double weapons and dual wielding)
+   * - Double Attack feat (-5 penalty on all attacks)
+   * - Triple Attack feat (additional -5 penalty)
+   * - Dual Weapon Mastery I/II/III (reduces two-weapon penalty)
+   *
+   * @param {Actor} actor - The attacking actor
+   * @param {Object} [options={}] - Full attack options
+   * @param {Item} [options.primaryWeapon] - Override primary weapon
+   * @param {Item} [options.offhandWeapon] - Override offhand weapon
+   * @param {boolean} [options.skipDialog=false] - Skip confirmation dialog
+   * @param {Actor} [options.target] - The target actor
+   * @param {string} [options.cover='none'] - Target's cover level
+   * @param {string} [options.concealment='none'] - Target's concealment level
+   * @returns {Promise<Object|null>} Full attack result with all attack rolls
+   */
+  static async rollFullAttack(actor, options = {}) {
+    if (!actor) {
+      ui.notifications.error("Full Attack failed: no actor selected.");
+      return null;
+    }
+
+    try {
+      // Get equipped weapons
+      const equippedWeapons = getEquippedWeapons(actor);
+
+      // Allow overrides
+      if (options.primaryWeapon) {
+        equippedWeapons.primary = options.primaryWeapon;
+      }
+      if (options.offhandWeapon) {
+        equippedWeapons.offhand = options.offhandWeapon;
+      }
+
+      if (!equippedWeapons.primary) {
+        ui.notifications.warn("No weapon equipped for Full Attack.");
+        return null;
+      }
+
+      // Show dialog to confirm full attack configuration
+      let config;
+      if (options.skipDialog) {
+        config = calculateFullAttackConfig(actor, equippedWeapons.primary, equippedWeapons.offhand);
+      } else {
+        config = await showFullAttackDialog(actor, equippedWeapons);
+        if (!config) return null; // User cancelled
+      }
+
+      // Get target
+      const target = options.target || this.getTargetActor();
+      const targetReflex = target
+        ? (target.system?.defenses?.reflex?.total || 10) + getCoverBonus(options.cover || 'none')
+        : null;
+
+      // Create context for hooks
+      const context = {
+        actor,
+        config,
+        target,
+        targetReflex,
+        isFullAttack: true
+      };
+
+      // Call pre-roll hook for full attack
+      if (!callPreRollHook(ROLL_HOOKS.PRE_ATTACK, context)) {
+        return { cancelled: true };
+      }
+
+      // Prompt for Force Point once for the entire full attack
+      const fpBonus = await this.promptForcePointUse(actor, "Full Attack");
+
+      // Roll each attack
+      const results = [];
+
+      for (const attack of config.attacks) {
+        const weapon = attack.weapon;
+
+        // Calculate attack bonus with full attack penalty
+        const baseAttackBonus = computeAttackBonus(actor, weapon);
+        const totalBonus = baseAttackBonus + config.totalPenalty + fpBonus;
+
+        // Build formula
+        const formula = `1d20 + ${totalBonus}`;
+
+        // Roll the attack
+        const roll = await this._safeRoll(formula);
+        if (!roll) continue;
+
+        const d20 = roll.dice[0].results[0].result;
+
+        // Get weapon crit properties
+        const critRange = weapon.system?.critRange || 20;
+        const critMultiplier = weapon.system?.critMultiplier || 2;
+
+        // Analyze critical threat
+        const critAnalysis = analyzeCriticalThreat(d20, critRange);
+
+        // Check concealment
+        let concealmentHit = true;
+        const missChance = getConcealmentMissChance(options.concealment || 'none');
+        if (missChance > 0) {
+          const concealResult = await rollConcealmentCheck(missChance, actor);
+          concealmentHit = concealResult.hit;
+        }
+
+        // Determine hit/miss
+        const isHit = targetReflex !== null
+          ? roll.total >= targetReflex && concealmentHit
+          : null;
+
+        // Handle critical confirmation
+        let critConfirmed = critAnalysis.autoConfirmed;
+        let confirmationRoll = null;
+
+        if (critAnalysis.needsConfirmation && isHit !== false && targetReflex !== null) {
+          const confirmResult = await rollCriticalConfirmation({
+            actor,
+            weapon,
+            attackBonus: totalBonus,
+            targetDefense: targetReflex,
+            fpBonus: 0, // FP already applied to main roll
+            originalD20: d20
+          });
+          confirmationRoll = confirmResult.roll;
+          critConfirmed = confirmResult.confirmed;
+        }
+
+        const attackResult = {
+          roll,
+          d20,
+          total: roll.total,
+          attackBonus: totalBonus,
+          penalty: config.totalPenalty,
+          weapon,
+          label: attack.label,
+          source: attack.source,
+          isNat20: critAnalysis.isNat20,
+          isCritThreat: critAnalysis.isThreat,
+          critConfirmed,
+          critMultiplier,
+          confirmationRoll,
+          targetReflex,
+          isHit,
+          concealmentMiss: !concealmentHit
+        };
+
+        results.push(attackResult);
+
+        // Record each attack in history
+        RollHistory.record({
+          roll,
+          actor,
+          type: 'attack',
+          result: {
+            isHit,
+            isCrit: critConfirmed,
+            targetReflex,
+            isFullAttack: true,
+            attackNumber: attack.attackNumber
+          },
+          context: { ...context, weapon, attack }
+        });
+      }
+
+      // Generate combined chat card
+      const cardHtml = generateFullAttackCard(actor, results, config);
+
+      // Create chat message
+      const message = await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: cardHtml
+      });
+
+      // Show 3D dice if available
+      if (game.dice3d) {
+        for (const result of results) {
+          await game.dice3d.showForRoll(result.roll, game.user, true);
+        }
+      }
+
+      // Build final result object
+      const fullResult = {
+        config,
+        results,
+        message,
+        summary: {
+          totalAttacks: results.length,
+          hits: results.filter(r => r.isHit).length,
+          crits: results.filter(r => r.critConfirmed).length,
+          misses: results.filter(r => r.isHit === false).length,
+          totalPenalty: config.totalPenalty
+        }
+      };
+
+      // Call post-roll hook
+      callPostRollHook(ROLL_HOOKS.POST_ATTACK, { ...context, result: fullResult });
+
+      // Notify user
+      const summary = fullResult.summary;
+      ui.notifications.info(
+        `Full Attack: ${summary.hits}/${summary.totalAttacks} hits` +
+        (summary.crits > 0 ? ` (${summary.crits} critical!)` : '')
+      );
+
+      return fullResult;
+
+    } catch (err) {
+      swseLogger.error('Full Attack failed:', err);
+      ui.notifications.error('Full Attack failed. Check console for details.');
+      return null;
+    }
   }
 
   /* ========================================================================== */
