@@ -8,7 +8,7 @@ import { addFinalCost, addActorFinalCost } from './store-pricing.js';
 import { STORE_PACKS } from './store-constants.js';
 
 // Safe logger reference
-const getLogger = () => globalThis.getLogger() || console;
+const getLogger = () => globalThis.swseLogger || console;
 
 /**
  * Load and prepare all store inventory data
