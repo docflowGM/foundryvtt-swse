@@ -206,7 +206,6 @@ export class SWSERoll {
    * - Cover/concealment integration
    * - Auto-compare vs target defense
    * - Roll history logging
-   * - Advantage/disadvantage support
    *
    * @param {Actor} actor - The attacking actor
    * @param {Item} weapon - The weapon being used
@@ -214,7 +213,6 @@ export class SWSERoll {
    * @param {boolean} [options.showDialog=false] - Show roll modifiers dialog
    * @param {boolean} [options.skipFP=false] - Skip Force Point prompt
    * @param {Actor} [options.target] - Specific target actor
-   * @param {string} [options.rollType='normal'] - 'normal', 'advantage', or 'disadvantage'
    * @param {string} [options.cover='none'] - Target's cover level
    * @param {string} [options.concealment='none'] - Target's concealment level
    * @param {number} [options.customModifier=0] - Additional modifier
@@ -230,7 +228,6 @@ export class SWSERoll {
     try {
       // Get modifiers from dialog if requested
       let modifiers = {
-        rollType: options.rollType || 'normal',
         cover: options.cover || 'none',
         concealment: options.concealment || 'none',
         customModifier: options.customModifier || 0,
@@ -277,27 +274,16 @@ export class SWSERoll {
       const totalBonus = atkBonus + fpBonus + modifiers.customModifier + modifiers.situationalBonus;
       context.attackBonus = totalBonus;
 
-      // Build formula based on roll type (advantage/disadvantage)
-      let formula;
-      switch (modifiers.rollType) {
-        case 'advantage':
-          formula = `2d20kh1 + ${totalBonus}`;
-          break;
-        case 'disadvantage':
-          formula = `2d20kl1 + ${totalBonus}`;
-          break;
-        default:
-          formula = `1d20 + ${totalBonus}`;
-      }
+      // Build formula
+      const formula = `1d20 + ${totalBonus}`;
       context.formula = formula;
 
       // Perform the roll
       const roll = await this._safeRoll(formula);
       if (!roll) return null;
 
-      // Get the d20 result (account for advantage/disadvantage)
-      const d20Die = roll.dice.find(d => d.faces === 20);
-      const d20 = d20Die.results.find(r => r.active)?.result ?? d20Die.results[0].result;
+      // Get the d20 result
+      const d20 = roll.dice[0].results[0].result;
 
       // Get weapon crit properties
       const critRange = weapon.system?.critRange || 20;
@@ -407,7 +393,6 @@ export class SWSERoll {
               ${modifiers.situationalBonus ? `, Sit. +${modifiers.situationalBonus}` : ""}
               ${modifiers.customModifier ? `, Custom ${modifiers.customModifier >= 0 ? '+' : ''}${modifiers.customModifier}` : ""}
             </div>
-            ${modifiers.rollType !== 'normal' ? `<div class="roll-type">${modifiers.rollType === 'advantage' ? 'Advantage' : 'Disadvantage'}</div>` : ''}
           </div>
 
           ${critAnalysis.isThreat ? `
@@ -441,7 +426,6 @@ export class SWSERoll {
           .swse-attack-card .attack-outcome.hit { background: rgba(68, 255, 68, 0.2); color: #4f4; }
           .swse-attack-card .attack-outcome.critical { background: rgba(255, 215, 0, 0.3); color: #ffd700; }
           .swse-attack-card .attack-outcome.miss { background: rgba(255, 68, 68, 0.2); color: #f44; }
-          .swse-attack-card .roll-type { font-style: italic; color: #8af; }
           .swse-attack-card .crit-banner.confirmed { background: linear-gradient(90deg, #ffd700, #ff8c00); color: #000; }
           .swse-attack-card .crit-banner.unconfirmed { background: rgba(255, 215, 0, 0.3); color: #ffd700; }
         </style>
@@ -573,7 +557,6 @@ export class SWSERoll {
    * @param {Object} [options={}] - Skill check options
    * @param {boolean} [options.showDialog=false] - Show modifiers dialog
    * @param {number} [options.dc] - DC to compare against
-   * @param {string} [options.rollType='normal'] - 'normal', 'advantage', or 'disadvantage'
    * @returns {Promise<Object|null>} Skill check result
    */
   static async rollSkill(actor, skillKey, options = {}) {
@@ -586,7 +569,6 @@ export class SWSERoll {
     try {
       // Get modifiers from dialog if requested
       let modifiers = {
-        rollType: options.rollType || 'normal',
         customModifier: 0,
         useForcePoint: false
       };
@@ -626,23 +608,12 @@ export class SWSERoll {
       const total = skill.total + fpBonus + modifiers.customModifier;
 
       // Build formula
-      let formula;
-      switch (modifiers.rollType) {
-        case 'advantage':
-          formula = `2d20kh1 + ${total}`;
-          break;
-        case 'disadvantage':
-          formula = `2d20kl1 + ${total}`;
-          break;
-        default:
-          formula = `1d20 + ${total}`;
-      }
+      const formula = `1d20 + ${total}`;
 
       const roll = await this._safeRoll(formula);
       if (!roll) return null;
 
-      const d20Die = roll.dice.find(d => d.faces === 20);
-      const d20 = d20Die.results.find(r => r.active)?.result ?? d20Die.results[0].result;
+      const d20 = roll.dice[0].results[0].result;
 
       // Breakdown components
       const parts = [];
@@ -706,7 +677,6 @@ export class SWSERoll {
           <div class="roll-d20">d20: ${d20}${d20 === 20 ? ' <i class="fas fa-star"></i>' : d20 === 1 ? ' <i class="fas fa-skull"></i>' : ''}</div>
           <div class="roll-formula">${formula}</div>
           <div class="roll-breakdown">${parts.join(", ")}</div>
-          ${modifiers.rollType !== 'normal' ? `<div class="roll-type">${modifiers.rollType === 'advantage' ? 'Advantage' : 'Disadvantage'}</div>` : ''}
           ${dcHTML}
         </div>
         <style>

@@ -280,14 +280,9 @@ export const ROLL_MODIFIERS = Object.freeze({
     prone: { label: 'Prone (-2 melee, +2 ranged)', meleeValue: -2, rangedValue: 2 },
     higherGround: { label: 'Higher Ground (+1)', value: 1 },
     pointBlank: { label: 'Point Blank Shot (+1)', value: 1 }
-  },
-
-  // Roll type modifiers
-  rollType: {
-    normal: { label: 'Normal Roll', formula: '1d20' },
-    advantage: { label: 'Advantage (2d20, keep highest)', formula: '2d20kh1' },
-    disadvantage: { label: 'Disadvantage (2d20, keep lowest)', formula: '2d20kl1' }
   }
+  // Note: SWSE does not have advantage/disadvantage. Some species have reroll abilities
+  // which are handled separately by the SpeciesRerollHandler.
 });
 
 /**
@@ -300,7 +295,6 @@ export const ROLL_MODIFIERS = Object.freeze({
  * @param {boolean} [options.showCover=true] - Show cover options
  * @param {boolean} [options.showConcealment=true] - Show concealment options
  * @param {boolean} [options.showForcePoint=true] - Show Force Point option
- * @param {boolean} [options.showAdvantage=true] - Show advantage/disadvantage
  * @returns {Promise<Object|null>} The selected modifiers or null if cancelled
  */
 export async function showRollModifiersDialog(options = {}) {
@@ -311,8 +305,7 @@ export async function showRollModifiersDialog(options = {}) {
     weapon,
     showCover = true,
     showConcealment = true,
-    showForcePoint = true,
-    showAdvantage = true
+    showForcePoint = true
   } = options;
 
   const fp = actor?.system?.forcePoints;
@@ -355,20 +348,6 @@ export async function showRollModifiersDialog(options = {}) {
         }
       </style>
   `;
-
-  // Roll type (advantage/disadvantage)
-  if (showAdvantage) {
-    content += `
-      <div class="form-group">
-        <label>Roll Type</label>
-        <select name="rollType">
-          <option value="normal">Normal Roll</option>
-          <option value="advantage">Advantage (roll twice, keep highest)</option>
-          <option value="disadvantage">Disadvantage (roll twice, keep lowest)</option>
-        </select>
-      </div>
-    `;
-  }
 
   // Cover options
   if (showCover && rollType === 'attack') {
@@ -454,7 +433,6 @@ export async function showRollModifiersDialog(options = {}) {
             const data = new FormDataEntries(form);
 
             const result = {
-              rollType: data.get('rollType') || 'normal',
               cover: data.get('cover') || 'none',
               concealment: data.get('concealment') || 'none',
               customModifier: parseInt(data.get('customModifier')) || 0,
