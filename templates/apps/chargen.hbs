@@ -1035,11 +1035,19 @@
  <p class="category-description">{{../description}}</p>
  <div class="feats-grid">
  {{#each this.feats}}
- <div class="feat-card feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}">
+ <div class="feat-card feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
  <button type="button" class="select-feat choice-button" data-featid="{{this._id}}">
+ {{#if this.suggestion.iconClass}}
+ <span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+ <i class="{{this.suggestion.iconClass}}"></i>
+ </span>
+ {{/if}}
  <h5>{{this.name}}</h5>
  {{#if this.system.prerequisites}}
  <p class="feat-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>
+ {{/if}}
+ {{#if this.suggestion.reason}}
+ <p class="suggestion-reason">{{this.suggestion.reason}}</p>
  {{/if}}
  {{#if this.metadata.chain}}
  <span class="feat-chain-badge">{{this.metadata.chain}}</span>
@@ -1056,11 +1064,19 @@
  {{else}}
  <div class="feats-list">
  {{#each packs.feats}}
- <div class="feat-item feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}">
+ <div class="feat-item feat-with-tooltip {{#if this.indentLevel}}feat-indent-{{this.indentLevel}}{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}" data-tooltip="{{this.system.benefit}}" data-indent-level="{{this.indentLevel}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
  <button type="button" class="select-feat choice-button" data-featid="{{this._id}}">
+ {{#if this.suggestion.iconClass}}
+ <span class="feat-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+ <i class="{{this.suggestion.iconClass}}"></i>
+ </span>
+ {{/if}}
  <h4>{{this.name}}</h4>
  {{#if this.system.prerequisites}}
  <p class="feat-prereqs"><strong>Prerequisites:</strong> {{this.system.prerequisites}}</p>
+ {{/if}}
+ {{#if this.suggestion.reason}}
+ <p class="suggestion-reason">{{this.suggestion.reason}}</p>
  {{/if}}
  </button>
  </div>
@@ -1115,14 +1131,22 @@
 
  <div class="talents-list">
  {{#each packs.talentsInTree}}
- <div class="talent-item">
+ <div class="talent-item {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
  <button type="button" class="select-talent choice-button" data-talentid="{{this._id}}">
+ {{#if this.suggestion.iconClass}}
+ <span class="talent-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+ <i class="{{this.suggestion.iconClass}}"></i>
+ </span>
+ {{/if}}
  <h4>{{this.name}}</h4>
  {{#if this.system.description}}
  <p class="talent-description">{{this.system.description}}</p>
  {{/if}}
  {{#if this.system.prerequisites}}
  <p class="talent-prereqs"><em>Prerequisites: {{this.system.prerequisites}}</em></p>
+ {{/if}}
+ {{#if this.suggestion.reason}}
+ <p class="suggestion-reason">{{this.suggestion.reason}}</p>
  {{/if}}
  </button>
  </div>
@@ -1205,7 +1229,7 @@
  <div class="skills-list-chargen">
  {{#each availableSkills}}
  {{#if this.isClassSkill}}
- <div class="skill-row-chargen {{#if this.trained}}trained{{/if}}">
+ <div class="skill-row-chargen {{#if this.trained}}trained{{/if}} {{#if this.isSuggested}}is-suggested {{this.suggestion.cssClass}}{{/if}}" {{#if this.suggestion}}data-suggestion-tier="{{this.suggestion.tier}}"{{/if}}>
  <div class="skill-checkbox">
  <input type="checkbox"
  class="skill-select"
@@ -1214,8 +1238,16 @@
  {{#if (and (not this.trained) (gte ../characterData.trainedSkillsCount ../characterData.trainedSkillsAllowed))}}disabled{{/if}}/>
  </div>
  <div class="skill-name-col">
+ {{#if this.suggestion.iconClass}}
+ <span class="skill-suggestion-badge {{this.suggestion.cssClass}}" title="{{this.suggestion.reason}}">
+ <i class="{{this.suggestion.iconClass}}"></i>
+ </span>
+ {{/if}}
  <strong>{{this.name}}</strong>
  <span class="skill-ability-label">({{uppercase this.ability}})</span>
+ {{#if this.suggestion.reason}}
+ <p class="suggestion-reason" style="margin-top: 0.5rem; font-size: 0.9rem;">{{this.suggestion.reason}}</p>
+ {{/if}}
  </div>
  <div class="skill-bonus-col">
  {{#if this.trained}}
