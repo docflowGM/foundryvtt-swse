@@ -117,50 +117,6 @@ export class CharacterImportWizard extends Dialog {
         }
       </style>
 
-      <script>
-        // Toggle between file upload and paste methods
-        document.getElementById('import-method').addEventListener('change', (e) => {
-          const method = e.target.value;
-          const fileSection = document.querySelector('.file-upload-section');
-          const pasteSection = document.querySelector('.paste-section');
-
-          if (method === 'file') {
-            fileSection.style.display = 'block';
-            pasteSection.style.display = 'none';
-          } else {
-            fileSection.style.display = 'none';
-            pasteSection.style.display = 'block';
-          }
-        });
-
-        // Preview JSON data when file is selected
-        document.getElementById('character-file')?.addEventListener('change', async (e) => {
-          const file = e.target.files[0];
-          if (!file) return;
-
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            try {
-              const data = JSON.parse(event.target.result);
-              const preview = document.getElementById('import-preview');
-              const previewContent = preview.querySelector('.preview-content');
-
-              previewContent.innerHTML = \`
-                <p><strong>Name:</strong> \${data.name || 'Unknown'}</p>
-                <p><strong>Type:</strong> \${data.type || 'Unknown'}</p>
-                \${data.system?.level ? \`<p><strong>Level:</strong> \${data.system.level}</p>\` : ''}
-                \${data.system?.race ? \`<p><strong>Species:</strong> \${data.system.race}</p>\` : ''}
-                <p><strong>Items:</strong> \${data.items?.length || 0}</p>
-              \`;
-
-              preview.style.display = 'block';
-            } catch (err) {
-              ui.notifications.error('Invalid JSON file');
-            }
-          };
-          reader.readAsText(file);
-        });
-      </script>
     `;
   }
 
@@ -334,18 +290,39 @@ export class CharacterImportWizard extends Dialog {
   }
 
   /**
+   * Clean item/effect data for import by removing IDs that would cause conflicts
+   */
+  _cleanEmbeddedData(documents) {
+    if (!Array.isArray(documents)) return [];
+
+    return documents.map(doc => {
+      const cleaned = foundry.utils.deepClone(doc);
+      // Remove _id so Foundry generates new ones
+      delete cleaned._id;
+      // Remove any ownership data
+      delete cleaned.ownership;
+      // Remove sort order
+      delete cleaned.sort;
+      return cleaned;
+    });
+  }
+
+  /**
    * Import character into the game
    */
   async _importCharacter(data, createNew = true) {
     try {
-      // Clean up the data for import
+      // Clean up the data for import - remove _id fields from items/effects
+      const cleanedItems = this._cleanEmbeddedData(data.items);
+      const cleanedEffects = this._cleanEmbeddedData(data.effects);
+
       const actorData = {
         name: data.name,
         type: data.type,
         img: data.img,
         system: data.system || {},
-        items: data.items || [],
-        effects: data.effects || [],
+        items: cleanedItems,
+        effects: cleanedEffects,
         flags: data.flags || {}
       };
 
@@ -387,12 +364,12 @@ export class CharacterImportWizard extends Dialog {
         await targetActor.deleteEmbeddedDocuments("Item", targetActor.items.map(i => i.id));
         await targetActor.deleteEmbeddedDocuments("ActiveEffect", targetActor.effects.map(e => e.id));
 
-        // Add new items and effects
-        if (actorData.items.length > 0) {
-          await targetActor.createEmbeddedDocuments("Item", actorData.items);
+        // Add new items and effects (using already cleaned data)
+        if (cleanedItems.length > 0) {
+          await targetActor.createEmbeddedDocuments("Item", cleanedItems);
         }
-        if (actorData.effects.length > 0) {
-          await targetActor.createEmbeddedDocuments("ActiveEffect", actorData.effects);
+        if (cleanedEffects.length > 0) {
+          await targetActor.createEmbeddedDocuments("ActiveEffect", cleanedEffects);
         }
 
         ui.notifications.info(`Successfully updated ${targetActor.name}`);
