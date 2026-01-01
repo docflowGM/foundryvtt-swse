@@ -46,25 +46,44 @@ export class StarshipManeuversEngine {
    * Requires Starship Tactics feat to be learned
    *
    * @param {Actor} actor - The actor to get maneuvers for
-   * @returns {Array} Array of ability objects for available maneuvers
+   * @returns {Object} Object containing maneuvers array and metadata
    */
   static getManeuversForActor(actor) {
     // Check if actor has Starship Tactics feat
-    const hasStartechTactics = this._hasStartshipTacticsFeat(actor);
-    if (!hasStartechTactics) {
+    const hasStartshipTactics = this._hasStartshipTacticsFeat(actor);
+    if (!hasStartshipTactics) {
       return {
         maneuvers: [],
+        organized: {
+          attackPatterns: [],
+          dogfight: [],
+          force: [],
+          gunner: [],
+          general: []
+        },
         total: 0,
         hasStartshipTactics: false,
         message: 'Requires Starship Tactics feat'
       };
     }
 
-    // Get all talent abilities for this actor
-    const allAbilities = TalentAbilitiesEngine.getAbilitiesForActor(actor);
+    // Get all maneuver items from the actor
+    const maneuverItems = actor.items.filter(item => item.type === 'maneuver');
 
-    // Filter to only Starship Maneuvers
-    const maneuvers = this._filterManeuvers(allAbilities);
+    // Convert items to ability-like objects for display
+    const maneuvers = maneuverItems.map(item => ({
+      id: item.id,
+      _id: item.id,
+      name: item.name,
+      img: item.img,
+      talentName: item.name,
+      description: item.system?.description || '',
+      actionType: item.system?.actionType || 'standard',
+      tags: item.system?.tags || [],
+      spent: item.system?.spent || false,
+      inSuite: item.system?.inSuite || false,
+      mechanics: item.system?.mechanics || null
+    }));
 
     // Organize by descriptor type
     const organized = this._organizeByDescriptor(maneuvers);
