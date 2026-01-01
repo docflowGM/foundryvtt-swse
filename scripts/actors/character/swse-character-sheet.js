@@ -28,6 +28,7 @@ import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
 import { FeatSystem } from "../../engine/FeatSystem.js";
 import { SkillSystem } from "../../engine/SkillSystem.js";
 import { TalentAbilitiesEngine } from "../../engine/TalentAbilitiesEngine.js";
+import { StarshipManeuversEngine } from "../../engine/StarshipManeuversEngine.js";
 
 export class SWSECharacterSheet extends SWSEActorSheetBase {
 
@@ -248,6 +249,19 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // --------------------------------------
     context.talentAbilities = TalentAbilitiesEngine.getAbilitiesForActor(actor);
 
+    // --------------------------------------
+    // 9. STARSHIP MANEUVERS
+    // --------------------------------------
+    const hasStartshipTactics = actor.items.some(item =>
+      item.type === 'feat' &&
+      (item.name === 'Starship Tactics' || item.name.includes('Starship Tactics'))
+    );
+    context.system.hasStartshipTactics = hasStartshipTactics;
+
+    if (hasStartshipTactics) {
+      context.starshipManeuvers = StarshipManeuversEngine.getManeuversForActor(actor);
+    }
+
     return context;
   }
 // ----------------------------------------------------------
@@ -279,6 +293,19 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
         html.find('.ability-reset-btn').click(ev => this._onResetAbilityUses(ev));
         html.find('.ability-filter-btn').click(ev => this._onFilterAbilities(ev));
 
+        // Starship Maneuvers handlers (reuse ability card handlers)
+        html.find('.starship-maneuvers-section .ability-card-header').click(ev => this._onExpandAbilityCard(ev));
+        html.find('.starship-maneuvers-section .ability-roll-btn').click(ev => this._onRollTalentAbility(ev));
+        html.find('.starship-maneuvers-section .ability-toggle-btn').click(ev => this._onToggleTalentAbility(ev));
+        html.find('.starship-maneuvers-section .ability-post-btn').click(ev => this._onPostTalentAbility(ev));
+        html.find('.starship-maneuvers-section .ability-reset-btn').click(ev => this._onResetAbilityUses(ev));
+
+        // Starship Maneuvers rules collapsible
+        html.find('.maneuvers-rules-header').click(ev => {
+          const header = $(ev.currentTarget);
+          const content = header.next('.maneuvers-rules-content');
+          content.slideToggle(200);
+        });
 
         super.activateListeners(html);
         html.find(".defense-input-sm, .defense-select-sm").change(ev => {

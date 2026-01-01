@@ -1,0 +1,154 @@
+{{!-- Starship Maneuvers Panel Partial --}}
+{{!-- Displays ability cards for Starship Maneuvers learned by the character --}}
+
+<div class="maneuvers-panel">
+  {{#if maneuvers.organized}}
+    {{!-- Attack Patterns Section --}}
+    {{#if maneuvers.organized.attackPatterns.length}}
+      <div class="maneuver-category">
+        <div class="category-header">
+          <i class="fas fa-cube"></i>
+          <h4>Attack Patterns</h4>
+          <span class="category-count">{{maneuvers.organized.attackPatterns.length}}</span>
+        </div>
+        <div class="category-cards">
+          {{#each maneuvers.organized.attackPatterns}}
+            {{> "partials/ability-card" this context="starship-maneuver"}}
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- Dogfight Maneuvers Section --}}
+    {{#if maneuvers.organized.dogfight.length}}
+      <div class="maneuver-category">
+        <div class="category-header">
+          <i class="fas fa-crosshairs"></i>
+          <h4>Dogfight Maneuvers</h4>
+          <span class="category-count">{{maneuvers.organized.dogfight.length}}</span>
+        </div>
+        <div class="category-cards">
+          {{#each maneuvers.organized.dogfight}}
+            {{> "partials/ability-card" this context="starship-maneuver"}}
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- Force Maneuvers Section --}}
+    {{#if maneuvers.organized.force.length}}
+      <div class="maneuver-category">
+        <div class="category-header">
+          <i class="fas fa-yin-yang"></i>
+          <h4>Force Maneuvers</h4>
+          <span class="category-count">{{maneuvers.organized.force.length}}</span>
+        </div>
+        <div class="category-cards">
+          {{#each maneuvers.organized.force}}
+            {{> "partials/ability-card" this context="starship-maneuver"}}
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- Gunner Maneuvers Section --}}
+    {{#if maneuvers.organized.gunner.length}}
+      <div class="maneuver-category">
+        <div class="category-header">
+          <i class="fas fa-gun"></i>
+          <h4>Gunner Maneuvers</h4>
+          <span class="category-count">{{maneuvers.organized.gunner.length}}</span>
+        </div>
+        <div class="category-cards">
+          {{#each maneuvers.organized.gunner}}
+            {{> "partials/ability-card" this context="starship-maneuver"}}
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- General Maneuvers Section --}}
+    {{#if maneuvers.organized.general.length}}
+      <div class="maneuver-category">
+        <div class="category-header">
+          <i class="fas fa-fighter-jet"></i>
+          <h4>General Maneuvers</h4>
+          <span class="category-count">{{maneuvers.organized.general.length}}</span>
+        </div>
+        <div class="category-cards">
+          {{#each maneuvers.organized.general}}
+            {{> "partials/ability-card" this context="starship-maneuver"}}
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+  {{else}}
+    {{!-- Fallback: Display all maneuvers if not organized --}}
+    <div class="category-cards">
+      {{#each maneuvers.maneuvers}}
+        {{> "partials/ability-card" this context="starship-maneuver"}}
+      {{/each}}
+    </div>
+  {{/if}}
+</div>
+
+<style>
+  .maneuvers-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .maneuver-category {
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background: #fafafa;
+  }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(to right, #f4f1de, #ede8df);
+    border-bottom: 1px solid #ddd;
+  }
+
+  .category-header i {
+    font-size: 1.1rem;
+    color: #8b7355;
+  }
+
+  .category-header h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    flex: 1;
+    color: #333;
+  }
+
+  .category-count {
+    background: #8b7355;
+    color: white;
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    min-width: 24px;
+    text-align: center;
+  }
+
+  .category-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .category-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

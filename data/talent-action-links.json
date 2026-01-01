@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "Mapping of 418 active talents to base action system",
-  "totalTalents": 418,
+  "totalTalents": 445,
   "unmapped": 161,
   "talentToAction": {
     "Acrobatic Recovery": "acrobatics-check",
@@ -421,7 +421,34 @@
     "Willpower": "reflex-defense",
     "Wingman": "pilot-check",
     "Wingman Retribution": "melee-attack",
-    "Wrong Decision": "reflex-defense"
+    "Wrong Decision": "reflex-defense",
+    "Ackbar Slash": "pilot-check",
+    "Afterburn": "pilot-check",
+    "Angle Deflector Shields": "swift-action",
+    "Attack Formation Zeta Nine": "swift-action",
+    "Attack Pattern Delta": "swift-action",
+    "Corellian Slip": "pilot-check",
+    "Counter": "reaction",
+    "Darklighter Spin": "pilot-check",
+    "Devastating Hit": "pilot-check",
+    "Engine Hit": "pilot-check",
+    "Evasive Action": "pilot-check",
+    "Explosive Shot": "pilot-check",
+    "Howlrunner Formation": "swift-action",
+    "I Have You Now": "pilot-check",
+    "Intercept": "pilot-check",
+    "Overwhelming Assault": "swift-action",
+    "Segnor's Loop": "pilot-check",
+    "Shield Hit": "pilot-check",
+    "Skim the Surface": "pilot-check",
+    "Skywalker Loop": "pilot-check",
+    "Snap Roll": "pilot-check",
+    "Strike Formation": "swift-action",
+    "Tallon Roll": "pilot-check",
+    "Target Lock": "pilot-check",
+    "Target Sense": "use-the-force-check",
+    "Thruster Hit": "pilot-check",
+    "Wotan Weave": "pilot-check"
   },
   "actionToTalents": {
     "acrobatics-check": [
@@ -691,7 +718,8 @@
       "Unclouded Judgment",
       "Unsettling Presence",
       "Visionary Attack",
-      "WatchCircle Initiate"
+      "WatchCircle Initiate",
+      "Target Sense"
     ],
     "persuasion-check": [
       "Aggressive Negotiator",
@@ -792,7 +820,26 @@
       "Problem Solver",
       "Relentless Pursuit",
       "Renowned Pilot",
-      "Wingman"
+      "Wingman",
+      "Ackbar Slash",
+      "Afterburn",
+      "Corellian Slip",
+      "Darklighter Spin",
+      "Devastating Hit",
+      "Engine Hit",
+      "Evasive Action",
+      "Explosive Shot",
+      "I Have You Now",
+      "Intercept",
+      "Segnor's Loop",
+      "Shield Hit",
+      "Skim the Surface",
+      "Skywalker Loop",
+      "Snap Roll",
+      "Tallon Roll",
+      "Target Lock",
+      "Thruster Hit",
+      "Wotan Weave"
     ],
     "gather-information-check": [
       "Bothan Resources",
@@ -830,7 +877,13 @@
       "Skilled Demolitionist",
       "Sniping Master",
       "Tactical Edge",
-      "Tactical Withdrawal"
+      "Tactical Withdrawal",
+      "Angle Deflector Shields",
+      "Attack Formation Zeta Nine",
+      "Attack Pattern Delta",
+      "Howlrunner Formation",
+      "Overwhelming Assault",
+      "Strike Formation"
     ],
     "deception-check": [
       "Dark Deception",
@@ -893,6 +946,9 @@
     ],
     "deflect-defense": [
       "Redirect Shot"
+    ],
+    "reaction": [
+      "Counter"
     ]
   },
   "unmappedTalents": [

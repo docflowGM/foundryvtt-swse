@@ -2,10 +2,10 @@
   "_meta": {
     "version": "1.0.3",
     "description": "Comprehensive talent ability definitions for SWSE Foundry system",
-    "totalAbilities": 414,
+    "totalAbilities": 441,
     "lastModified": "2026-01-01",
     "multiOptionTalents": 9,
-    "notes": "Includes 9 multi-option talents with 27 total sub-abilities (Pistol Duelist, Fool's Luck, Beloved, Dumb Luck, Cunning Strategist, Experienced Brawler, Shadow Striker, Swift Strider, Two-Faced)"
+    "notes": "Includes 9 multi-option talents with 27 total sub-abilities (Pistol Duelist, Fool's Luck, Beloved, Dumb Luck, Cunning Strategist, Experienced Brawler, Shadow Striker, Swift Strider, Two-Faced) (27 Starship Maneuvers from Ace Pilot tree)"
   },
   "abilities": {
     "block": {
@@ -2589,7 +2589,7 @@
       "name": "Gang Leader",
       "talentName": "Gang Leader",
       "talentTree": "Soldier",
-      "description": "Once per encounter, when you intimidate, gain +1 per ally within 6 squares and the target\u2019s line of sight (maximum +5).",
+      "description": "Once per encounter, when you intimidate, gain +1 per ally within 6 squares and the target’s line of sight (maximum +5).",
       "actionType": "passive_trigger",
       "effect": "intimidate_bonus",
       "uses": {
@@ -3093,7 +3093,7 @@
       "name": "Weak Point",
       "talentName": "Weak Point",
       "talentTree": "Scout",
-      "description": "Once per encounter, ignore a single target\u2019s DR for the rest of your turn.",
+      "description": "Once per encounter, ignore a single target’s DR for the rest of your turn.",
       "actionType": "passive_trigger",
       "effect": "dr_negation",
       "uses": {
@@ -3319,7 +3319,7 @@
       "name": "Crippling Strike",
       "talentName": "Crippling Strike",
       "talentTree": "Force Adept",
-      "description": "On a critical hit, you can reduce the target\u2019s speed by half until fully healed.",
+      "description": "On a critical hit, you can reduce the target’s speed by half until fully healed.",
       "actionType": "passive_trigger",
       "effect": "speed_reduction",
       "tags": [
@@ -3410,7 +3410,7 @@
       "name": "Distant Command",
       "talentName": "Distant Command",
       "talentTree": "Noble",
-      "description": "You do not lose Born Leader\u2019s benefits if out of line of sight.",
+      "description": "You do not lose Born Leader’s benefits if out of line of sight.",
       "actionType": "passive",
       "effect": "unknown",
       "tags": [
@@ -3775,7 +3775,7 @@
       "name": "Influential Friends",
       "talentName": "Influential Friends",
       "talentTree": "Noble",
-      "description": "Once per day, friends may take 20 on a skill check with modifier equal to 5 + half your heroic level; time taken is 10 \u00d7 result minimum.",
+      "description": "Once per day, friends may take 20 on a skill check with modifier equal to 5 + half your heroic level; time taken is 10 × result minimum.",
       "actionType": "passive",
       "effect": "skill_bonus",
       "tags": [
@@ -3958,7 +3958,7 @@
       "name": "Psychic Defenses",
       "talentName": "Psychic Defenses",
       "talentTree": "Force Adept",
-      "description": "When targeted by mind-affecting powers, they automatically take damage equal to 1d6 \u00d7 your Wisdom modifier (minimum \u00d71).",
+      "description": "When targeted by mind-affecting powers, they automatically take damage equal to 1d6 × your Wisdom modifier (minimum ×1).",
       "actionType": "passive",
       "effect": "damage_bonus",
       "tags": [
@@ -4049,7 +4049,7 @@
       "name": "Reduce Mobility",
       "talentName": "Reduce Mobility",
       "talentTree": "Elite Trooper",
-      "description": "On a critical hit, target\u2019s speed is halved until healed to full hit points.",
+      "description": "On a critical hit, target’s speed is halved until healed to full hit points.",
       "actionType": "passive",
       "effect": "movement",
       "tags": [
@@ -4101,7 +4101,7 @@
       "name": "Shaped Explosion",
       "talentName": "Shaped Explosion",
       "talentTree": "Saboteur",
-      "description": "Create blasts in a line or cone: length = 2\u00d7 radius; cone length = 3\u00d7 blast radius; origin from explosive\u2019s square.",
+      "description": "Create blasts in a line or cone: length = 2× radius; cone length = 3× blast radius; origin from explosive’s square.",
       "actionType": "passive",
       "effect": "special",
       "tags": [
@@ -4679,7 +4679,7 @@
       "name": "Droid Jammer",
       "talentName": "Droid Jammer",
       "talentTree": "Saboteur",
-      "description": "Mechanics vs a droid\u2019s Will Defense within 6 squares; on success the droid can take only swift actions; affects one droid at a time.",
+      "description": "Mechanics vs a droid’s Will Defense within 6 squares; on success the droid can take only swift actions; affects one droid at a time.",
       "actionType": "passive",
       "effect": "special",
       "tags": [
@@ -5043,7 +5043,7 @@
       "name": "Acrobatic Strike",
       "featName": "Acrobatic Strike",
       "featTree": "General",
-      "description": "You can use Acrobatics to tumble through an enemy\u2019s space and gain a +2 bonus on your next melee attack against that enemy.",
+      "description": "You can use Acrobatics to tumble through an enemy’s space and gain a +2 bonus on your next melee attack against that enemy.",
       "actionType": "passive",
       "effect": "special",
       "tags": [
@@ -5365,7 +5365,7 @@
       "name": "Force Regimen Mastery",
       "featName": "Force Regimen Mastery",
       "featTree": "General",
-      "description": "You may spend a Force Point to gain the benefit of a Force Regimen you\u2019ve completed within the last 24 hours.",
+      "description": "You may spend a Force Point to gain the benefit of a Force Regimen you’ve completed within the last 24 hours.",
       "actionType": "passive",
       "effect": "force_point_ability",
       "tags": [
@@ -5529,9 +5529,9 @@
       ],
       "icon": "fas fa-star"
     },
-    "harm\u2019s-way": {
-      "name": "Harm\u2019s Way",
-      "featName": "Harm\u2019s Way",
+    "harm’s-way": {
+      "name": "Harm’s Way",
+      "featName": "Harm’s Way",
       "featTree": "General",
       "description": "As a reaction, you may take damage dealt to an adjacent ally instead of them.",
       "actionType": "passive",
@@ -6467,12 +6467,12 @@
       "name": "Connections",
       "talentName": "Connections",
       "talentTree": "Lineage",
-      "description": "Acquire equipment worth your character level \u00d7 1000 credits; reduce black market multiplier by 1. Your social network provides economic advantages.",
+      "description": "Acquire equipment worth your character level × 1000 credits; reduce black market multiplier by 1. Your social network provides economic advantages.",
       "actionType": "passive",
       "effects": [
         {
           "type": "economy",
-          "value": "level \u00d7 1000 credits equipment",
+          "value": "level × 1000 credits equipment",
           "bonusType": "acquisition"
         },
         {
@@ -7360,6 +7360,586 @@
         "reaction"
       ],
       "icon": "fas fa-crosshairs"
+    },
+    "ackbar-slash": {
+      "id": "ackbar-slash",
+      "name": "Ackbar Slash",
+      "talentName": "Ackbar Slash",
+      "talentTree": "Ace Pilot",
+      "description": "A starship tactic made famous by the Mon Calamari Admiral Ackbar. Move into the midst of enemy forces to cause an opponent to strike its own allies.",
+      "actionType": "reaction",
+      "trigger": "When you move through enemy formation",
+      "roll": {
+        "skillKey": "pilot",
+        "vsTarget": "attack",
+        "label": "Ackbar Slash (Pilot Check)"
+      },
+      "tags": [
+        "vehicle",
+        "pilot",
+        "tactics",
+        "reaction"
+      ],
+      "icon": "fas fa-directions",
+      "linkedAction": "starship-maneuver"
+    },
+    "afterburn": {
+      "id": "afterburn",
+      "name": "Afterburn",
+      "talentName": "Afterburn",
+      "talentTree": "Ace Pilot",
+      "description": "Throttle up and blast past enemies to avoid becoming entangled in Dogfights.",
+      "actionType": "fullRound",
+      "roll": {
+        "skillKey": "pilot",
+        "label": "Afterburn (Pilot Check)"
+      },
+      "tags": [
+        "vehicle",
+        "pilot",
+        "mobility",
+        "fullround"
+      ],
+      "icon": "fas fa-fire",
+      "linkedAction": "starship-maneuver"
+    },
+    "angle-deflector-shields": {
+      "id": "angle-deflector-shields",
+      "name": "Angle Deflector Shields",
+      "talentName": "Angle Deflector Shields",
+      "talentTree": "Ace Pilot",
+      "description": "[Attack Pattern] Focus deflector shields in a particular direction, making it easier to absorb incoming attacks from a certain angle.",
+      "actionType": "swift",
+      "tags": [
+        "vehicle",
+        "defense",
+        "shields",
+        "attack-pattern",
+        "swift"
+      ],
+      "icon": "fas fa-shield-alt",
+      "linkedAction": "starship-maneuver",
+      "effects": [
+        {
+          "type": "defenseBonus",
+          "defense": "reflex",
+          "value": 2,
+          "condition": "from one direction",
+          "duration": "untilEncounterEnd"
+        }
+      ]
+    },
+    "attack-formation-zeta-nine": {
+      "id": "attack-formation-zeta-nine",
+      "name": "Attack Formation Zeta Nine",
+      "talentName": "Attack Formation Zeta Nine",
+      "talentTree": "Ace Pilot",
+      "description": "[Attack Pattern] Typically used to approach Capital Ships or other vessels with heavy firepower. Emphasizes shields over firepower.",
+      "actionType": "swift",
+      "tags": [
+        "vehicle",
+        "formation",
+        "defense",
+        "attack-pattern",
+        "swift"
+      ],
+      "icon": "fas fa-cube",
+      "linkedAction": "starship-maneuver",
+      "effects": [
+        {
+          "type": "defenseBonus",
+          "defense": "reflex",
+          "value": 3,
+          "duration": "untilEncounterEnd"
+        }
+      ]
+    },
+    "attack-pattern-delta": {
+      "id": "attack-pattern-delta",
+      "name": "Attack Pattern Delta",
+      "talentName": "Attack Pattern Delta",
+      "talentTree": "Ace Pilot",
+      "description": "[Attack Pattern] Utilizes close-range maneuvering by allied ships to make it more difficult to target individual vessels. Vessels typically fly in a straight line toward target.",
+      "actionType": "swift",
+      "tags": [
+        "vehicle",
+        "formation",
+        "defense",
+        "attack-pattern",
+        "swift"
+      ],
+      "icon": "fas fa-arrows-alt",
+      "linkedAction": "starship-maneuver",
+      "effects": [
+        {
+          "type": "defenseBonus",
+          "defense": "reflex",
+          "value": 2,
+          "condition": "to rear ships",
+          "duration": "untilEncounterEnd"
+        }
+      ]
+    },
+    "corellian-slip": {
+      "id": "corellian-slip",
+      "name": "Corellian Slip",
+      "talentName": "Corellian Slip",
+      "talentTree": "Ace Pilot",
+      "description": "A teamwork-focused Starfighter tactic. Destroy an opposing Starship that threatens one of your allies by flying at the enemy vessel head-on.",
+      "actionType": "fullRound",
+      "roll": {
+        "skillKey": "pilot",
+        "vsDefense": "reflex",
+        "label": "Corellian Slip (Pilot Check)"
+      },
+      "tags": [
+        "vehicle",
+        "pilot",
+        "offense",
+        "teamwork",
+        "fullround"
+      ],
+      "icon": "fas fa-arrow-right",
+      "linkedAction": "starship-maneuver"
+    },
+    "counter": {
+      "id": "counter",
+      "name": "Counter",
+      "talentName": "Counter",
+      "talentTree": "Ace Pilot",
+      "description": "[Dogfight] Take a quick action while engaged in a Dogfight after being the target of an attack.",
+      "actionType": "reaction",
+      "trigger": "After being targeted in a Dogfight",
+      "tags": [
+        "vehicle",
+        "pilot",
+        "defense",
+        "dogfight",
+        "reaction"
+      ],
+      "icon": "fas fa-reply",
+      "linkedAction": "starship-maneuver"
+    },
+    "darklighter-spin": {
+      "id": "darklighter-spin",
+      "name": "Darklighter Spin",
+      "talentName": "Darklighter Spin",
+      "talentTree": "Ace Pilot",
+      "description": "Originally an improvised combat maneuver. Attack multiple targets with your Starship's weapons.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "pilot",
+        "label": "Darklighter Spin (Pilot Check)"
+      },
+      "tags": [
+        "vehicle",
+        "pilot",
+        "offense",
+        "standard"
+      ],
+      "icon": "fas fa-sync",
+      "linkedAction": "starship-maneuver"
+    },
+    "devastating-hit": {
+      "id": "devastating-hit",
+      "name": "Devastating Hit",
+      "talentName": "Devastating Hit",
+      "talentTree": "Ace Pilot",
+      "description": "[Gunner] Score an incredibly precise hit on the target, punching holes in vital systems and potentially disabling your target.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "pilot",
+        "vsDefense": "reflex",
+        "label": "Devastating Hit (Gunner Check)"
+      },
+      "tags": [
+        "vehicle",
+        "gunner",
+        "offense",
+        "standard"
+      ],
+      "icon": "fas fa-bullseye",
+      "linkedAction": "starship-maneuver"
+    },
+    "engine-hit": {
+      "id": "engine-hit",
+      "name": "Engine Hit",
+      "talentName": "Engine Hit",
+      "talentTree": "Ace Pilot",
+      "description": "[Gunner] Target an opponent's engines, slowing them down with a successful hit.",
+      "actionType": "reaction",
+      "roll": {
+        "skillKey": "pilot",
+        "vsDefense": "reflex",
+        "label": "Engine Hit (Gunner Check)"
+      },
+      "tags": [
+        "vehicle",
+        "gunner",
+        "debuff",
+        "reaction"
+      ],
+      "icon": "fas fa-fan",
+      "linkedAction": "starship-maneuver"
+    },
+    "evasive-action": {
+      "id": "evasive-action",
+      "name": "Evasive Action",
+      "talentName": "Evasive Action",
+      "talentTree": "Ace Pilot",
+      "description": "[Dogfight] Slip free of close pursuit, escaping from a Dogfight more easily.",
+      "actionType": "move",
+      "roll": {
+        "skillKey": "pilot",
+        "label": "Evasive Action (Pilot Check)"
+      },
+      "tags": [
+        "vehicle",
+        "pilot",
+        "mobility",
+        "dogfight",
+        "move"
+      ],
+      "icon": "fas fa-wind",
+      "linkedAction": "starship-maneuver"
+    },
+    "explosive-shot": {
+      "id": "explosive-shot",
+      "name": "Explosive Shot",
+      "talentName": "Explosive Shot",
+      "talentTree": "Ace Pilot",
+      "description": "[Gunner] Target critical ship systems and fuel cells, causing your target to explode with incredible force.",
+      "actionType": "reaction",
+      "roll": {
+        "skillKey": "pilot",
+        "vsDefense": "reflex",
+        "label": "Explosive Shot (Gunner Check)"
+      },
+      "tags": [
+        "vehicle",
+        "gunner",
+        "offense",
+        "reaction"
+      ],
+      "icon": "fas fa-explosion",
+      "linkedAction": "starship-maneuver"
+    },
+    "howlrunner-formation": {
+      "id": "howlrunner-formation",
+      "name": "Howlrunner Formation",
+      "talentName": "Howlrunner Formation",
+      "talentTree": "Ace Pilot",
+      "description": "[Attack Pattern] Divide an attacking force into two or more groups, making it easier to attack an enemy's flanks.",
+      "actionType": "swift",
+      "tags": [
+        "vehicle",
+        "formation",
+        "offense",
+        "attack-pattern",
+        "swift"
+      ],
+      "icon": "fas fa-expand",
+      "linkedAction": "starship-maneuver"
+    },
+    "i-have-you-now": {
+      "id": "i-have-you-now",
+      "name": "I Have You Now",
+      "talentName": "I Have You Now",
+      "talentTree": "Ace Pilot",
+      "description": "Close in on your target, striking from short range with devastating effect.",
+      "actionType": "swift",
+      "roll": {
+        "skillKey": "pilot",
+        "vsDefense": "reflex",
+        "label": "I Have You Now (Pilot Check)"
+      },
+      "tags": [
+        "vehicle",
+        "pilot",
+        "offense",
+        "swift"
+      ],
+      "icon": "fas fa-crosshairs",
+      "linkedAction": "starship-maneuver"
+    },
+    "intercept": {
+      "id": "intercept",
+      "name": "Intercept",
+      "talentName": "Intercept",
+      "talentTree": "Ace Pilot",
+      "description": "Fire thrusters and intercept a passing target, engaging in a Dogfight.",
+      "actionType": "reaction",
+      "roll": {
+        "skillKey": "pilot",
+        "label": "Intercept (Pilot Check)"
+      },
+      "tags": [
+        "vehicle",
+        "pilot",
+        "dogfight",
+        "reaction"
+      ],
+      "icon": "fas fa-arrow-up",
+      "linkedAction": "starship-maneuver"
+    },
+    "overwhelming-assault": {
+      "id": "overwhelming-assault",
+      "name": "Overwhelming Assault",
+      "talentName": "Overwhelming Assault",
+      "talentTree": "Ace Pilot",
+      "description": "[Attack Pattern] Concentrate fire on a single target to the exclusion of all others.",
+      "actionType": "swift",
+      "tags": [
+        "vehicle",
+        "formation",
+        "offense",
+        "attack-pattern",
+        "swift"
+      ],
+      "icon": "fas fa-bolt",
+      "linkedAction": "starship-maneuver",
+      "effects": [
+        {
+          "type": "attackBonus",
+          "value": 2,
+          "condition": "when all ships attack same target",
+          "duration": "untilEncounterEnd"
+        }
+      ]
+    },
+    "segnors-loop": {
+      "id": "segnors-loop",
+      "name": "Segnor's Loop",
+      "talentName": "Segnor's Loop",
+      "talentTree": "Ace Pilot",
+      "description": "Accelerate quickly away from an opponent before returning to make an attack.",
+      "actionType": "reaction",
+      "roll": {
+        "skillKey": "pilot",
+        "label": "Segnor's Loop (Pilot Check)"
+      },
+      "tags": [
+        "vehicle",
+        "pilot",
+        "mobility",
+        "reaction"
+      ],
+      "icon": "fas fa-redo",
+      "linkedAction": "starship-maneuver"
+    },
+    "shield-hit": {
+      "id": "shield-hit",
+      "name": "Shield Hit",
+      "talentName": "Shield Hit",
+      "talentTree": "Ace Pilot",
+      "description": "[Gunner] Target an opponent's shield generators, reducing their effectiveness with a successful hit.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "pilot",
+        "vsDefense": "reflex",
+        "label": "Shield Hit (Gunner Check)"
+      },
+      "tags": [
+        "vehicle",
+        "gunner",
+        "debuff",
+        "standard"
+      ],
+      "icon": "fas fa-ban",
+      "linkedAction": "starship-maneuver"
+    },
+    "skim-the-surface": {
+      "id": "skim-the-surface",
+      "name": "Skim the Surface",
+      "talentName": "Skim the Surface",
+      "talentTree": "Ace Pilot",
+      "description": "Get beneath a larger ship's shields, dealing damage that bypasses shields and directly impacts the hull.",
+      "actionType": "fullRound",
+      "roll": {
+        "skillKey": "pilot",
+        "label": "Skim the Surface (Pilot Check)"
+      },
+      "tags": [
+        "vehicle",
+        "pilot",
+        "offense",
+        "fullround"
+      ],
+      "icon": "fas fa-water",
+      "linkedAction": "starship-maneuver"
+    },
+    "skywalker-loop": {
+      "id": "skywalker-loop",
+      "name": "Skywalker Loop",
+      "talentName": "Skywalker Loop",
+      "talentTree": "Ace Pilot",
+      "description": "[Dogfight] Loop a Vehicle through the same location it just left, launching a surprise attack on an unsuspecting opponent.",
+      "actionType": "reaction",
+      "trigger": "During a Dogfight",
+      "tags": [
+        "vehicle",
+        "pilot",
+        "dogfight",
+        "reaction"
+      ],
+      "icon": "fas fa-circle",
+      "linkedAction": "starship-maneuver"
+    },
+    "snap-roll": {
+      "id": "snap-roll",
+      "name": "Snap Roll",
+      "talentName": "Snap Roll",
+      "talentTree": "Ace Pilot",
+      "description": "Peel away from current location with incredible speed, causing attackers to fire at where you were moments ago.",
+      "actionType": "reaction",
+      "roll": {
+        "skillKey": "pilot",
+        "label": "Snap Roll (Pilot Check)"
+      },
+      "tags": [
+        "vehicle",
+        "pilot",
+        "defense",
+        "reaction"
+      ],
+      "icon": "fas fa-vial",
+      "linkedAction": "starship-maneuver"
+    },
+    "strike-formation": {
+      "id": "strike-formation",
+      "name": "Strike Formation",
+      "talentName": "Strike Formation",
+      "talentTree": "Ace Pilot",
+      "description": "[Attack Pattern] Devote yourself to overwhelming an enemy with damage rather than concerning yourself with your own defense.",
+      "actionType": "swift",
+      "tags": [
+        "vehicle",
+        "formation",
+        "offense",
+        "attack-pattern",
+        "swift"
+      ],
+      "icon": "fas fa-hammer",
+      "linkedAction": "starship-maneuver",
+      "effects": [
+        {
+          "type": "attackBonus",
+          "value": 2,
+          "duration": "untilEncounterEnd",
+          "penalty": "defenseBonus",
+          "penaltyValue": -2
+        }
+      ]
+    },
+    "tallon-roll": {
+      "id": "tallon-roll",
+      "name": "Tallon Roll",
+      "talentName": "Tallon Roll",
+      "talentTree": "Ace Pilot",
+      "description": "[Dogfight] Stay with a maneuvering opponent even when its target is attempting to escape.",
+      "actionType": "reaction",
+      "roll": {
+        "skillKey": "pilot",
+        "label": "Tallon Roll (Pilot Check)"
+      },
+      "tags": [
+        "vehicle",
+        "pilot",
+        "dogfight",
+        "reaction"
+      ],
+      "icon": "fas fa-infinity",
+      "linkedAction": "starship-maneuver"
+    },
+    "target-lock": {
+      "id": "target-lock",
+      "name": "Target Lock",
+      "talentName": "Target Lock",
+      "talentTree": "Ace Pilot",
+      "description": "[Dogfight] Focus on single target, lining up a shot with careful precision.",
+      "actionType": "standard",
+      "roll": {
+        "skillKey": "pilot",
+        "label": "Target Lock (Pilot Check)"
+      },
+      "tags": [
+        "vehicle",
+        "pilot",
+        "offense",
+        "dogfight",
+        "standard"
+      ],
+      "icon": "fas fa-lock",
+      "linkedAction": "starship-maneuver"
+    },
+    "target-sense": {
+      "id": "target-sense",
+      "name": "Target Sense",
+      "talentName": "Target Sense",
+      "talentTree": "Ace Pilot",
+      "description": "[Force] Target opponents without the use of a Vehicle's targeting computer.",
+      "actionType": "swift",
+      "roll": {
+        "skillKey": "useTheForce",
+        "label": "Target Sense (Use the Force)"
+      },
+      "tags": [
+        "vehicle",
+        "force",
+        "pilot",
+        "swift"
+      ],
+      "icon": "fas fa-eye",
+      "linkedAction": "starship-maneuver"
+    },
+    "thruster-hit": {
+      "id": "thruster-hit",
+      "name": "Thruster Hit",
+      "talentName": "Thruster Hit",
+      "talentTree": "Ace Pilot",
+      "description": "[Gunner] Target an opponent's maneuvering thrusters, reducing the maneuverability they provide to a ship.",
+      "actionType": "reaction",
+      "roll": {
+        "skillKey": "pilot",
+        "vsDefense": "reflex",
+        "label": "Thruster Hit (Gunner Check)"
+      },
+      "tags": [
+        "vehicle",
+        "gunner",
+        "debuff",
+        "reaction"
+      ],
+      "icon": "fas fa-forward",
+      "linkedAction": "starship-maneuver"
+    },
+    "wotan-weave": {
+      "id": "wotan-weave",
+      "name": "Wotan Weave",
+      "talentName": "Wotan Weave",
+      "talentTree": "Ace Pilot",
+      "description": "Fly in a corkscrew, moving forward as normal but making the ship difficult to hit.",
+      "actionType": "swift",
+      "roll": {
+        "skillKey": "pilot",
+        "label": "Wotan Weave (Pilot Check)"
+      },
+      "tags": [
+        "vehicle",
+        "pilot",
+        "defense",
+        "swift"
+      ],
+      "icon": "fas fa-spiral",
+      "linkedAction": "starship-maneuver",
+      "effects": [
+        {
+          "type": "defenseBonus",
+          "defense": "reflex",
+          "value": 2,
+          "duration": "nextTurn"
+        }
+      ]
     }
   }
 }
