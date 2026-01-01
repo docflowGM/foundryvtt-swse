@@ -271,6 +271,13 @@
  </div>
  {{/if}}
 
+ {{!-- Linked Talent Bonuses (from TalentActionLinker) --}}
+ {{#if action.hasTalentBonus}}
+ <div class="linked-talent-bonus">
+ <span class="bonus-indicator">{{action.talentBonus.description}}</span>
+ </div>
+ {{/if}}
+
  </div>
  </div>
  {{/each}}

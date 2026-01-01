@@ -161,6 +161,44 @@ export class CombatActionsMapper {
     });
   }
 
+  /**
+   * Add enhancements to actions from both compendium sources and TalentActionLinker
+   * This is the primary method called by the character sheet
+   * @param {Array} actions - Array of action objects
+   * @param {Actor} actor - Character actor
+   * @returns {Array} Actions with enhancement information
+   */
+  static addEnhancementsToActions(actions, actor) {
+    return actions.map(action => {
+      const enh = this.getEnhancementsForAction(action.key, actor);
+
+      // If no compendium enhancements found, try TalentActionLinker for generic talent bonuses
+      let talentBonus = null;
+      if (!enh.length && typeof TalentActionLinker !== 'undefined' && TalentActionLinker.MAPPING) {
+        // Map action key to TalentActionLinker action ID
+        // This provides a fallback for talents not in the compendium enhancements
+        const linkedTalents = TalentActionLinker.getTalentsForAction(actor, action.key);
+        if (linkedTalents.length > 0) {
+          const bonusInfo = TalentActionLinker.calculateBonusForAction(actor, action.key);
+          talentBonus = {
+            type: 'talent-bonus',
+            talents: linkedTalents,
+            value: bonusInfo.value,
+            description: bonusInfo.description
+          };
+        }
+      }
+
+      return {
+        ...action,
+        enhancements: enh,
+        hasEnhancements: enh.length > 0,
+        talentBonus: talentBonus,
+        hasTalentBonus: !!talentBonus
+      };
+    });
+  }
+
   // ---------------------------------------------------------------------------
   // Normalization Helpers
   // ---------------------------------------------------------------------------

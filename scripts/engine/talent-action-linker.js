@@ -146,7 +146,9 @@ Hooks.once('ready', () => {
   TalentActionLinker.initialize();
 });
 
-// Export for use in other modules
+// Export for use in other modules (ES6 and CommonJS)
+export default TalentActionLinker;
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = TalentActionLinker;
 }
