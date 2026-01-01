@@ -25,6 +25,7 @@ import * as SkillsModule from './chargen-skills.js';
 import * as LanguagesModule from './chargen-languages.js';
 import * as FeatsTalentsModule from './chargen-feats-talents.js';
 import * as ForcePowersModule from './chargen-force-powers.js';
+import * as StarshipManeuversModule from './chargen-starship-maneuvers.js';
 
 export default class CharacterGenerator extends Application {
   constructor(actor = null, options = {}) {
@@ -88,6 +89,8 @@ export default class CharacterGenerator extends Application {
       talents: [],
       powers: [],
       forcePowersRequired: 0, // Calculated based on Force Sensitivity and Force Training feats
+      starshipManeuvers: [],
+      starshipManeuversRequired: 0, // Calculated based on Starship Tactics feats
       level: 1,
       hp: { value: 1, max: 1, temp: 0 },
       forcePoints: { value: 5, max: 5, die: "1d6" },
@@ -114,7 +117,8 @@ export default class CharacterGenerator extends Application {
       talents: null,
       classes: null,
       droids: null,
-      forcePowers: null
+      forcePowers: null,
+      maneuvers: null
     };
     this._skillsJson = null;
     this._featMetadata = null;
@@ -440,6 +444,17 @@ export default class CharacterGenerator extends Application {
     context.skillsJson = context.skillsJson || this._skillsJson || [];
     context.availableSkills = context.availableSkills || context.skillsJson;
 
+    // Prepare force powers and starship maneuvers for template
+    if (this.currentStep === "force-powers") {
+      context.availableForcePowers = await this._getAvailableForcePowers();
+      context.characterData.forcePowersRequired = this._getForcePowersNeeded();
+    }
+
+    if (this.currentStep === "starship-maneuvers") {
+      context.availableStarshipManeuvers = await this._getAvailableStarshipManeuvers();
+      context.characterData.starshipManeuversRequired = this._getStarshipManeuversNeeded();
+    }
+
     // Filter talents for the selected talent tree
     if (this.selectedTalentTree && context.packs.talents) {
       context.packs.talentsInTree = context.packs.talents.filter(talent => {
@@ -521,6 +536,8 @@ export default class CharacterGenerator extends Application {
     $html.find('.select-talent').click(this._onSelectTalent.bind(this));
     $html.find('.select-power').click(this._onSelectForcePower.bind(this));
     $html.find('.remove-power').click(this._onRemoveForcePower.bind(this));
+    $html.find('.select-maneuver').click(this._onSelectStarshipManeuver.bind(this));
+    $html.find('.remove-maneuver').click(this._onRemoveStarshipManeuver.bind(this));
     $html.find('.skill-select').change(this._onSkillSelect.bind(this));
     $html.find('.train-skill-btn').click(this._onTrainSkill.bind(this));
     $html.find('.untrain-skill-btn').click(this._onUntrainSkill.bind(this));
@@ -623,6 +640,11 @@ export default class CharacterGenerator extends Application {
       // Note: Droids cannot be Force-sensitive in SWSE
       if (this.characterData.forceSensitive && !this.characterData.isDroid && this._getForcePowersNeeded() > 0) {
         steps.push("force-powers");
+      }
+
+      // Add starship maneuvers step if character has Starship Tactics feat
+      if (this._getStarshipManeuversNeeded() > 0) {
+        steps.push("starship-maneuvers");
       }
 
       // Add final droid customization step if droid character
@@ -1508,3 +1530,4 @@ Object.assign(CharacterGenerator.prototype, SkillsModule);
 Object.assign(CharacterGenerator.prototype, LanguagesModule);
 Object.assign(CharacterGenerator.prototype, FeatsTalentsModule);
 Object.assign(CharacterGenerator.prototype, ForcePowersModule);
+Object.assign(CharacterGenerator.prototype, StarshipManeuversModule);
