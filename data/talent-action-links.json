@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "Mapping of 418 active talents to base action system",
-  "totalTalents": 445,
+  "totalTalents": 472,
   "unmapped": 161,
   "talentToAction": {
     "Acrobatic Recovery": "acrobatics-check",
