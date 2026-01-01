@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0.0",
     "description": "Comprehensive talent ability definitions for SWSE Foundry system",
-    "totalAbilities": 237
+    "totalAbilities": 281
   },
   "abilities": {
     "block": {
@@ -4436,6 +4436,597 @@
         "complex"
       ],
       "icon": "fas fa-star"
+    },
+    "adversary-lore": {
+      "name": "Adversary Lore",
+      "talentName": "Adversary Lore",
+      "talentTree": "Jedi",
+      "description": "Standard action; make a Use the Force check vs Will on a creature within 12 squares and line of sight; target takes -2 Reflex Defense against you and allies until the end of your next turn.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "attract-minion": {
+      "name": "Attract Minion",
+      "talentName": "Attract Minion",
+      "talentTree": "Crime Lord",
+      "description": "Attract nonheroic minions with levels equal to 3/4 your level; may have multiple minions.",
+      "actionType": "passive",
+      "effect": "grant_follower",
+      "tags": [
+        "follower",
+        "grant_follower"
+      ],
+      "icon": "fas fa-users"
+    },
+    "attract-privateer": {
+      "name": "Attract Privateer",
+      "talentName": "Attract Privateer",
+      "talentTree": "Master Privateer",
+      "description": "Attract nonheroic minions with levels equal to 3/4 your level; may have multiple minions.",
+      "actionType": "passive",
+      "effect": "grant_follower",
+      "tags": [
+        "follower",
+        "grant_follower"
+      ],
+      "icon": "fas fa-users"
+    },
+    "bodyguard-i": {
+      "name": "Bodyguard I",
+      "talentName": "Bodyguard I",
+      "talentTree": "Crime Lord",
+      "description": "Once per turn, redirect an attack to an attracted minion.",
+      "actionType": "passive",
+      "effect": "grant_follower",
+      "tags": [
+        "follower",
+        "grant_follower"
+      ],
+      "icon": "fas fa-users"
+    },
+    "bodyguard-ii": {
+      "name": "Bodyguard II",
+      "talentName": "Bodyguard II",
+      "talentTree": "Crime Lord",
+      "description": "Once per turn, redirect an attack to an attracted minion; the minion gains Reflex Defense equal to half your class level.",
+      "actionType": "passive",
+      "effect": "grant_follower",
+      "tags": [
+        "follower",
+        "grant_follower"
+      ],
+      "icon": "fas fa-users"
+    },
+    "bodyguard-iii": {
+      "name": "Bodyguard III",
+      "talentName": "Bodyguard III",
+      "talentTree": "Crime Lord",
+      "description": "Once per turn, redirect an attack to an attracted minion; the minion gains Reflex Defense equal to your class level and makes a free attack against the attacker.",
+      "actionType": "passive",
+      "effect": "grant_follower",
+      "tags": [
+        "follower",
+        "grant_follower"
+      ],
+      "icon": "fas fa-users"
+    },
+    "capture-droid": {
+      "name": "Capture Droid",
+      "talentName": "Capture Droid",
+      "talentTree": "Improviser",
+      "description": "Once per encounter against an adjacent droid reduced to 0 hp, Mechanics vs Will Defense to capture: target moves +2 up the track, gains d8 hp and becomes friendly.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "close-combat-assault": {
+      "name": "Close-Combat Assault",
+      "talentName": "Close-Combat Assault",
+      "talentTree": "Scout",
+      "description": "Each follower gains the Point Blank Shot feat.",
+      "actionType": "passive",
+      "effect": "enhance_follower",
+      "tags": [
+        "follower",
+        "enhance_follower",
+        "follower-enhancement"
+      ],
+      "icon": "fas fa-users",
+      "followerEnhancement": true
+    },
+    "combined-fire-naval": {
+      "name": "Combined Fire (Naval)",
+      "talentName": "Combined Fire (Naval)",
+      "talentTree": "Officer",
+      "description": "Designate a single vehicle, object, or creature in line of sight; gain extra damage dice for batteries (scaling every 2 batteries) and may designate one weapon or battery to make a single attack.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "commanding-officer": {
+      "name": "Commanding Officer",
+      "talentName": "Commanding Officer",
+      "talentTree": "Soldier",
+      "description": "Gain one follower with Armor Proficiency and Weapon Proficiency (rifles); may be taken up to three times.",
+      "actionType": "passive",
+      "effect": "grant_follower",
+      "tags": [
+        "follower",
+        "grant_follower",
+        "follower-generator"
+      ],
+      "icon": "fas fa-users",
+      "followerGenerator": true
+    },
+    "coordinated-tactics": {
+      "name": "Coordinated Tactics",
+      "talentName": "Coordinated Tactics",
+      "talentTree": "Soldier",
+      "description": "Each follower gains the Coordinated Attack feat.",
+      "actionType": "passive",
+      "effect": "enhance_follower",
+      "tags": [
+        "follower",
+        "enhance_follower",
+        "follower-enhancement"
+      ],
+      "icon": "fas fa-users",
+      "followerEnhancement": true
+    },
+    "counterpunch": {
+      "name": "Counterpunch",
+      "talentName": "Counterpunch",
+      "talentTree": "Soldier",
+      "description": "When you fight defensively, any adjacent creature that attacks provokes an attack of opportunity from you.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "dark-healing": {
+      "name": "Dark Healing",
+      "talentName": "Dark Healing",
+      "talentTree": "Sith Apprentice",
+      "description": "Life-drain attack vs a creature within 6 squares: ranged attack vs Fortitude; on hit deals and heals d6 per class level.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "dark-healing-field": {
+      "name": "Dark Healing Field",
+      "talentName": "Dark Healing Field",
+      "talentTree": "Sith Apprentice",
+      "description": "Once per encounter, affect up to 3 creatures within 12 squares with Dark Healing using Use the Force vs Fortitude; on success you heal half the damage dealt.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "dark-side-bane": {
+      "name": "Dark Side Bane",
+      "talentName": "Dark Side Bane",
+      "talentTree": "Jedi",
+      "description": "When you use a damage-dealing Force power against a creature with Dark Side Score 1+, deal extra damage equal to your Charisma modifier (minimum 1).",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "dark-side-scourge": {
+      "name": "Dark Side Scourge",
+      "talentName": "Dark Side Scourge",
+      "talentTree": "Jedi",
+      "description": "Deal extra damage on melee attacks against Dark Side creatures equal to your Charisma modifier (minimum +1).",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "droid-expert": {
+      "name": "Droid Expert",
+      "talentName": "Droid Expert",
+      "talentTree": "Military Engineer",
+      "description": "Repair droids gain +1 hp for every point your Mechanics check exceeds DC 20.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "droid-jammer": {
+      "name": "Droid Jammer",
+      "talentName": "Droid Jammer",
+      "talentTree": "Saboteur",
+      "description": "Mechanics vs a droid\u2019s Will Defense within 6 squares; on success the droid can take only swift actions; affects one droid at a time.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "fear-me": {
+      "name": "Fear Me",
+      "talentName": "Fear Me",
+      "talentTree": "Crime Lord",
+      "description": "Once per encounter if a minion is down the track, you may reduce them by 1 and the target regains hit points equal to your heroic level unless at 0 hp.",
+      "actionType": "passive",
+      "effect": "follower_mechanic",
+      "tags": [
+        "follower",
+        "follower_mechanic"
+      ],
+      "icon": "fas fa-users"
+    },
+    "fire-at-will": {
+      "name": "Fire at Will",
+      "talentName": "Fire at Will",
+      "talentTree": "Soldier",
+      "description": "You and one follower each make a ranged attack against a target in line of sight, each taking -5 to attack.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "frighten": {
+      "name": "Frighten",
+      "talentName": "Frighten",
+      "talentTree": "Crime Lord",
+      "description": "Once per encounter force all enemies to move 1 square away from one minion; they cannot make attacks of opportunity.",
+      "actionType": "passive",
+      "effect": "offensive_support",
+      "tags": [
+        "follower",
+        "offensive_support"
+      ],
+      "icon": "fas fa-users"
+    },
+    "get-into-position": {
+      "name": "Get Into Position",
+      "talentName": "Get Into Position",
+      "talentTree": "Scout",
+      "description": "One of your followers gains +2 speed.",
+      "actionType": "passive",
+      "effect": "enhance_follower",
+      "tags": [
+        "follower",
+        "enhance_follower",
+        "follower-enhancement"
+      ],
+      "icon": "fas fa-users",
+      "followerEnhancement": true
+    },
+    "ignore-damage-reduction": {
+      "name": "Ignore Damage Reduction",
+      "talentName": "Ignore Damage Reduction",
+      "talentTree": "General",
+      "description": "If your damage exceeds a creature's DR, you ignore that DR for that attack.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "improved-soft-cover": {
+      "name": "Improved Soft Cover",
+      "talentName": "Improved Soft Cover",
+      "talentTree": "Charlatan",
+      "description": "If adjacent to a creature, gain +2 Reflex Defense until you are no longer adjacent or until your next turn.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "inspire-loyalty": {
+      "name": "Inspire Loyalty",
+      "talentName": "Inspire Loyalty",
+      "talentTree": "Noble",
+      "description": "Gain one follower with Armor Proficiency feat and trained in Perception; may be taken up to three times.",
+      "actionType": "passive",
+      "effect": "grant_follower",
+      "tags": [
+        "follower",
+        "grant_follower",
+        "follower-generator"
+      ],
+      "icon": "fas fa-users",
+      "followerGenerator": true
+    },
+    "mind-probe": {
+      "name": "Mind Probe",
+      "talentName": "Mind Probe",
+      "talentTree": "Force Adept",
+      "description": "Touch a creature with Int 3+; Use the Force vs Will to probe its mind as Gather Information if unwilling.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "protector-actions": {
+      "name": "Protector Actions",
+      "talentName": "Protector Actions",
+      "talentTree": "Noble",
+      "description": "When you attack: redirect the attack to your follower, move your follower toward the target, or impose -1 attack per follower on ranged attacks against the target.",
+      "actionType": "passive",
+      "effect": "defensive_support",
+      "tags": [
+        "follower",
+        "defensive_support"
+      ],
+      "icon": "fas fa-users"
+    },
+    "punishing-protection": {
+      "name": "Punishing Protection",
+      "talentName": "Punishing Protection",
+      "talentTree": "Noble",
+      "description": "Once per encounter, as a reaction when you are damaged by an attack or Force power, your follower may attack that opponent.",
+      "actionType": "passive",
+      "effect": "offensive_support",
+      "tags": [
+        "follower",
+        "offensive_support"
+      ],
+      "icon": "fas fa-users"
+    },
+    "reap-retribution": {
+      "name": "Reap Retribution",
+      "talentName": "Reap Retribution",
+      "talentTree": "Jedi",
+      "description": "If you take damage from a Force power, you deal +2 damage against that creature until the end of the encounter.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "reconnaissance-actions": {
+      "name": "Reconnaissance Actions",
+      "talentName": "Reconnaissance Actions",
+      "talentTree": "Scout",
+      "description": "When you attack: grant +2 ranged attack to each follower; or +1 Stealth to each; or +1 Perception to each if armed with ranged weapons.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special",
+        "follower-enhancement"
+      ],
+      "icon": "fas fa-users",
+      "followerEnhancement": true
+    },
+    "reconnaissance-team-leader": {
+      "name": "Reconnaissance Team Leader",
+      "talentName": "Reconnaissance Team Leader",
+      "talentTree": "Scout",
+      "description": "Gain a follower trained in Perception and Stealth (max 3 times); follower can make Stealth checks with you.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "regroup": {
+      "name": "Regroup",
+      "talentName": "Regroup",
+      "talentTree": "Ace Pilot",
+      "description": "Once per encounter, move every ship in your squadron +1 up the condition track.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "repairs-on-the-fly": {
+      "name": "Repairs on the Fly",
+      "talentName": "Repairs on the Fly",
+      "talentTree": "Military Engineer",
+      "description": "Repair as a standard action once per day per droid, object, or vehicle.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "shared-notoriety": {
+      "name": "Shared Notoriety",
+      "talentName": "Shared Notoriety",
+      "talentTree": "Crime Lord",
+      "description": "Your minions may reroll Persuasion checks to Intimidate.",
+      "actionType": "passive",
+      "effect": "follower_mechanic",
+      "tags": [
+        "follower",
+        "follower_mechanic"
+      ],
+      "icon": "fas fa-users"
+    },
+    "shelter": {
+      "name": "Shelter",
+      "talentName": "Shelter",
+      "talentTree": "Crime Lord",
+      "description": "Any cover bonus to your Reflex Defense is +2 when adjacent to a minion.",
+      "actionType": "passive",
+      "effect": "follower_mechanic",
+      "tags": [
+        "follower",
+        "follower_mechanic"
+      ],
+      "icon": "fas fa-users"
+    },
+    "squad-actions": {
+      "name": "Squad Actions",
+      "talentName": "Squad Actions",
+      "talentTree": "Soldier",
+      "description": "When you attack: extend autofire by 1 square; or gain +2 damage; or gain +1 attack per follower if armed with ranged weapons.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "tactical-superiority": {
+      "name": "Tactical Superiority",
+      "talentName": "Tactical Superiority",
+      "talentTree": "Crime Lord",
+      "description": "Any cover bonus to your Reflex Defense is +2 when adjacent to a minion.",
+      "actionType": "passive",
+      "effect": "follower_mechanic",
+      "tags": [
+        "follower",
+        "follower_mechanic"
+      ],
+      "icon": "fas fa-users"
+    },
+    "tech-savant": {
+      "name": "Tech Savant",
+      "talentName": "Tech Savant",
+      "talentTree": "Military Engineer",
+      "description": "Trained in Knowledge (technology); increase speed of a droid or vehicle by 1 square if you occupy or are adjacent to it (once per round).",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "treacherous": {
+      "name": "Treacherous",
+      "talentName": "Treacherous",
+      "talentTree": "Charlatan",
+      "description": "If not adjacent to an attacker and you attack another adjacent target and then move 1 square, you may provoke an attack of opportunity from the attacked creature.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "undying-loyalty": {
+      "name": "Undying Loyalty",
+      "talentName": "Undying Loyalty",
+      "talentTree": "Noble",
+      "description": "Followers gain the Toughness feat.",
+      "actionType": "passive",
+      "effect": "enhance_follower",
+      "tags": [
+        "follower",
+        "enhance_follower",
+        "follower-enhancement"
+      ],
+      "icon": "fas fa-users",
+      "followerEnhancement": true
+    },
+    "unsettling-presence": {
+      "name": "Unsettling Presence",
+      "talentName": "Unsettling Presence",
+      "talentTree": "Force Adept",
+      "description": "Use the Force vs Will against all in 6 squares; affected creatures take -2 to attack and skill checks until end of encounter.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "follower",
+        "special"
+      ],
+      "icon": "fas fa-users"
+    },
+    "wealth-of-allies": {
+      "name": "Wealth of Allies",
+      "talentName": "Wealth of Allies",
+      "talentTree": "Crime Lord",
+      "description": "If a minion is killed, they are replaced by one of the same level after 24 hours.",
+      "actionType": "passive",
+      "effect": "follower_mechanic",
+      "tags": [
+        "follower",
+        "follower_mechanic"
+      ],
+      "icon": "fas fa-users"
+    },
+    "idealist": {
+      "name": "Idealist",
+      "talentName": "Idealist",
+      "talentTree": "Noble",
+      "description": "Add your Charisma bonus instead of your Wisdom bonus to Will Defense",
+      "actionType": "passive",
+      "effect": "defense_substitution",
+      "substitution": "cha_for_wis_will",
+      "tags": [
+        "defense",
+        "substitution"
+      ],
+      "icon": "fas fa-shield-alt",
+      "fromAttribute": "wisdom",
+      "toAttribute": "charisma",
+      "targetDefense": "will"
+    },
+    "weakening-strike": {
+      "name": "Weakening Strike",
+      "talentName": "Weakening Strike",
+      "talentTree": "Scoundrel",
+      "description": "If you deal damage to an opponent denied Dexterity to Defense, impose -5 to attack and melee damage instead of moving them down the condition track",
+      "actionType": "passive",
+      "effect": "defense_substitution",
+      "substitution": "deny_dex_mechanics",
+      "tags": [
+        "defense",
+        "substitution"
+      ],
+      "icon": "fas fa-shield-alt"
     }
   }
 }
