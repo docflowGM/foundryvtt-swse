@@ -5,8 +5,6 @@
  * for pilots and gunners during Starship Scale combat.
  */
 
-import { TalentAbilitiesEngine } from './TalentAbilitiesEngine.js';
-
 export class StarshipManeuversEngine {
   /**
    * List of all available Starship Maneuvers (27 total)
@@ -159,7 +157,7 @@ export class StarshipManeuversEngine {
    * Private: Check if actor has Starship Tactics feat
    */
   static _hasStartshipTacticsFeat(actor) {
-    if (!actor.system.feats) return false;
+    if (!actor?.items) return false;
 
     // Check for "Starship Tactics" feat in actor's items
     const feats = actor.items.filter(item => item.type === 'feat');
@@ -221,8 +219,11 @@ export class StarshipManeuversEngine {
    * @returns {Number} Number of maneuvers learned
    */
   static getManeuverCount(actor) {
+    if (!actor?.items) return 0;
+
     // 1 + WIS modifier per Starship Tactics feat taken
-    const wisModifier = Math.floor((actor.system.abilities.wis.value - 10) / 2);
+    const wisValue = actor.system?.abilities?.wis?.value ?? 10;
+    const wisModifier = Math.floor((wisValue - 10) / 2);
     const wisBonus = Math.max(1, 1 + wisModifier);
 
     // Count how many Starship Tactics feats are taken

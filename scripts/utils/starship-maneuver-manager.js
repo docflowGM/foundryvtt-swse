@@ -123,7 +123,8 @@ export class StarshipManeuverManager {
    */
   static async handleStartshipTactics(actor) {
     // Starship Tactics grants 1 + WIS modifier maneuvers
-    const wisModifier = Math.floor((actor.system.abilities.wis.value - 10) / 2);
+    const wisValue = actor.system?.abilities?.wis?.value ?? 10;
+    const wisModifier = Math.floor((wisValue - 10) / 2);
     const maneuverCount = 1 + Math.max(0, wisModifier);
 
     const selectedManeuvers = await this.selectManeuvers(
@@ -164,8 +165,8 @@ export class StarshipManeuverManager {
    * @returns {Promise<void>}
    */
   static async handleAbilityIncrease(actor, oldAbilities, newAbilities) {
-    const oldMod = Math.floor((oldAbilities.wis?.value || 10) - 10) / 2;
-    const newMod = Math.floor((newAbilities.wis?.value || 10) - 10) / 2;
+    const oldMod = Math.floor(((oldAbilities.wis?.value ?? 10) - 10) / 2);
+    const newMod = Math.floor(((newAbilities.wis?.value ?? 10) - 10) / 2);
 
     // Check if WIS modifier increased
     if (newMod > oldMod) {
@@ -206,7 +207,8 @@ export class StarshipManeuverManager {
    * @returns {Number} Max maneuvers in suite
    */
   static calculateManeuverSuiteSize(actor) {
-    const wisModifier = Math.floor((actor.system.abilities.wis.value - 10) / 2);
+    const wisValue = actor.system?.abilities?.wis?.value ?? 10;
+    const wisModifier = Math.floor((wisValue - 10) / 2);
     const baseFromWis = 1 + Math.max(0, wisModifier);
 
     // Multiply by number of Starship Tactics feats
