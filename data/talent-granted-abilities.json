@@ -1,8 +1,8 @@
 {
   "_meta": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Comprehensive talent ability definitions for SWSE Foundry system",
-    "totalAbilities": 381
+    "totalAbilities": 387
   },
   "abilities": {
     "block": {
@@ -6435,6 +6435,155 @@
         "limited_use"
       ],
       "icon": "fas fa-star"
+    },
+    "closed-mind": {
+      "id": "closed-mind",
+      "name": "Closed Mind",
+      "talentName": "Closed Mind",
+      "talentTree": "Mystic",
+      "description": "Mind-affecting effects against you are rolled twice and you take the lower result. Your mental defenses are exceptionally strong.",
+      "actionType": "passive",
+      "effects": [
+        {
+          "type": "defenseBonus",
+          "bonusType": "special",
+          "defense": "will",
+          "condition": "vs mind-affecting"
+        }
+      ],
+      "tags": [
+        "defense",
+        "force",
+        "passive",
+        "mind-affecting"
+      ],
+      "icon": "fas fa-brain"
+    },
+    "connections": {
+      "id": "connections",
+      "name": "Connections",
+      "talentName": "Connections",
+      "talentTree": "Lineage",
+      "description": "Acquire equipment worth your character level × 1000 credits; reduce black market multiplier by 1. Your social network provides economic advantages.",
+      "actionType": "passive",
+      "effects": [
+        {
+          "type": "economy",
+          "value": "level × 1000 credits equipment",
+          "bonusType": "acquisition"
+        },
+        {
+          "type": "economy",
+          "value": -1,
+          "bonusType": "black market multiplier"
+        }
+      ],
+      "tags": [
+        "social",
+        "economy",
+        "passive",
+        "noble"
+      ],
+      "icon": "fas fa-handshake"
+    },
+    "expert-grappler": {
+      "id": "expert-grappler",
+      "name": "Expert Grappler",
+      "talentName": "Expert Grappler",
+      "talentTree": "Brawler",
+      "description": "Gain +2 on opposed grapple checks. Your wrestling and grappling technique is highly refined.",
+      "actionType": "passive",
+      "effects": [
+        {
+          "type": "skillBonus",
+          "skillKey": "grapple",
+          "value": 2,
+          "bonusType": "competence"
+        }
+      ],
+      "tags": [
+        "combat",
+        "grapple",
+        "passive",
+        "soldier"
+      ],
+      "icon": "fas fa-hand-rock"
+    },
+    "great-shot": {
+      "id": "great-shot",
+      "name": "Great Shot",
+      "talentName": "Great Shot",
+      "talentTree": "Gunner",
+      "description": "Reduce range penalties by one category (for example, short becomes point-blank). You are exceptionally accurate at extended ranges.",
+      "actionType": "passive",
+      "effects": [
+        {
+          "type": "rangePenalty",
+          "value": -1,
+          "bonusType": "category reduction"
+        }
+      ],
+      "tags": [
+        "ranged",
+        "passive",
+        "pilot",
+        "accuracy"
+      ],
+      "icon": "fas fa-bullseye"
+    },
+    "master-advisor": {
+      "id": "master-advisor",
+      "name": "Master Advisor",
+      "talentName": "Master Advisor",
+      "talentTree": "Jedi Archivist",
+      "description": "An ally you aid with Skilled Advisor gains a Force Point to spend before the end of the encounter. Your guidance is so insightful it empowers others.",
+      "actionType": "modifier",
+      "modifies": "skilled-advisor",
+      "prerequisites": [
+        "skilled-advisor"
+      ],
+      "effects": [
+        {
+          "type": "grant",
+          "resource": "forcePoints",
+          "value": 1,
+          "target": "ally",
+          "condition": "on Skilled Advisor success"
+        }
+      ],
+      "tags": [
+        "force",
+        "support",
+        "modifier",
+        "jedi"
+      ],
+      "icon": "fas fa-graduation-cap"
+    },
+    "penetrating-attack": {
+      "id": "penetrating-attack",
+      "name": "Penetrating Attack",
+      "talentName": "Penetrating Attack",
+      "talentTree": "Weapon Specialist",
+      "description": "Reduce opponent's DR by 5 with a single weapon group. Your attacks find weak points in armor and natural defenses.",
+      "actionType": "passive",
+      "prerequisites": [
+        "weapon-focus"
+      ],
+      "effects": [
+        {
+          "type": "damageReductionPenetration",
+          "value": 5,
+          "condition": "with focused weapon group"
+        }
+      ],
+      "tags": [
+        "combat",
+        "damage",
+        "passive",
+        "soldier",
+        "weapon-specific"
+      ],
+      "icon": "fas fa-crosshairs"
     }
   }
 }

@@ -282,5 +282,269 @@
     "effects": [],
     "notes": "When you make a ranged attack, allies within 6 squares gain +1 Defense until your next turn. Requires Commando talent tree.",
     "relatedSkills": ["attack"]
+  },
+  "melee-defense": {
+    "name": "Melee Defense",
+    "actionType": "swift",
+    "requiredFeat": "Melee Defense",
+    "description": "Trade attack for defense against melee",
+    "toggleable": true,
+    "effects": [
+      {
+        "type": "penalty",
+        "target": "system.attackBonus.melee",
+        "value": -5
+      },
+      {
+        "type": "bonus",
+        "target": "system.defenses.reflex.bonus",
+        "value": 5
+      }
+    ],
+    "notes": "Swift action. Take -5 to melee attacks, gain +5 to Reflex Defense vs melee until your next turn.",
+    "relatedSkills": []
+  },
+  "acrobatic-strike": {
+    "name": "Acrobatic Strike",
+    "actionType": "standard",
+    "requiredFeat": "Acrobatic Strike",
+    "description": "Tumble through enemy space for attack bonus",
+    "toggleable": false,
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.attackBonus.melee",
+        "value": 2,
+        "condition": "after tumbling through enemy space"
+      }
+    ],
+    "notes": "Use Acrobatics to tumble through enemy space. Gain +2 on your next melee attack against that enemy.",
+    "relatedSkills": ["acrobatics", "attack"]
+  },
+  "whirlwind-attack": {
+    "name": "Whirlwind Attack",
+    "actionType": "full-round",
+    "requiredFeat": "Whirlwind Attack",
+    "description": "Attack all adjacent enemies",
+    "toggleable": false,
+    "effects": [],
+    "notes": "Full-round action. Make one melee attack against each adjacent enemy. Requires BAB +4, Dex 13, Dodge, Mobility.",
+    "relatedSkills": ["attack"]
+  },
+  "block-feat": {
+    "name": "Block (Feat)",
+    "actionType": "reaction",
+    "requiredFeat": "Block",
+    "description": "Negate melee attack with Use the Force",
+    "toggleable": false,
+    "trigger": "You are hit by a melee attack",
+    "effects": [],
+    "notes": "Once per round. Make Use the Force check. If result >= attack roll, the attack is negated. Requires lightsaber.",
+    "relatedSkills": ["useTheForce"]
+  },
+  "deflect-feat": {
+    "name": "Deflect (Feat)",
+    "actionType": "reaction",
+    "requiredFeat": "Deflect",
+    "description": "Negate ranged attack with Use the Force",
+    "toggleable": false,
+    "trigger": "You are hit by a ranged attack",
+    "effects": [],
+    "notes": "Once per round. Make Use the Force check. If result >= attack roll, the attack is negated. Requires lightsaber.",
+    "relatedSkills": ["useTheForce"]
+  },
+  "redirect-shot-feat": {
+    "name": "Redirect Shot (Feat)",
+    "actionType": "reaction",
+    "requiredFeat": "Redirect Shot",
+    "description": "Redirect deflected shot to new target",
+    "toggleable": false,
+    "trigger": "You successfully negate a ranged attack with Deflect",
+    "effects": [],
+    "notes": "When you successfully Deflect, you may redirect the shot. Make Use the Force check vs target's Reflex Defense.",
+    "relatedSkills": ["useTheForce"]
+  },
+  "bantha-rush": {
+    "name": "Bantha Rush",
+    "actionType": "swift",
+    "requiredFeat": "Bantha Rush",
+    "description": "Bull rush after melee hit",
+    "toggleable": false,
+    "trigger": "You hit with a melee attack",
+    "effects": [],
+    "notes": "Swift action after melee hit. Make a free bull rush attempt against the target.",
+    "relatedSkills": ["attack"]
+  },
+  "mighty-swing": {
+    "name": "Mighty Swing",
+    "actionType": "modifier",
+    "requiredFeat": "Mighty Swing",
+    "description": "Reroll melee attack once per encounter",
+    "toggleable": false,
+    "uses": {
+      "max": 1,
+      "perEncounter": true
+    },
+    "effects": [],
+    "notes": "Once per encounter. Reroll a melee attack roll and take the better result.",
+    "relatedSkills": ["attack"]
+  },
+  "pin": {
+    "name": "Pin",
+    "actionType": "standard",
+    "requiredFeat": "Pin",
+    "description": "Immobilize a grappled opponent",
+    "toggleable": false,
+    "effects": [],
+    "notes": "Standard action. Make grapple check. If successful, target is immobilized until they escape.",
+    "relatedSkills": ["grapple"]
+  },
+  "trip": {
+    "name": "Trip",
+    "actionType": "standard",
+    "requiredFeat": "Trip",
+    "description": "Knock opponent prone",
+    "toggleable": false,
+    "effects": [],
+    "notes": "Standard action. Make attack roll vs Reflex Defense. If successful, target is knocked prone.",
+    "relatedSkills": ["attack"]
+  },
+  "shake-it-off": {
+    "name": "Shake It Off",
+    "actionType": "swift",
+    "requiredFeat": "Shake It Off",
+    "description": "Move up the condition track",
+    "toggleable": false,
+    "uses": {
+      "max": 1,
+      "perEncounter": true
+    },
+    "effects": [],
+    "notes": "Swift action. Move +1 step on condition track. Once per encounter.",
+    "relatedSkills": []
+  },
+  "sniper-shot": {
+    "name": "Sniper Shot",
+    "actionType": "standard",
+    "requiredFeat": "Sniper Shot",
+    "description": "Aim and fire with bonus damage",
+    "toggleable": false,
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.damageBonus.ranged",
+        "value": 5,
+        "condition": "when aiming before attack"
+      }
+    ],
+    "notes": "After using Aim action, add +5 damage to next ranged attack. Stacks with Aim bonus.",
+    "relatedSkills": ["attack"]
+  },
+  "improved-disarm": {
+    "name": "Improved Disarm",
+    "actionType": "standard",
+    "requiredFeat": "Improved Disarm",
+    "description": "Attempt to disarm opponent",
+    "toggleable": false,
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.attackBonus.disarm",
+        "value": 5
+      }
+    ],
+    "notes": "+5 to disarm attempts. No attack of opportunity provoked.",
+    "relatedSkills": ["attack"]
+  },
+  "improved-grapple": {
+    "name": "Improved Grapple",
+    "actionType": "standard",
+    "requiredFeat": "Improved Grapple",
+    "description": "Enhanced grappling ability",
+    "toggleable": false,
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.grapple.bonus",
+        "value": 5
+      }
+    ],
+    "notes": "+5 to grapple checks. No attack of opportunity provoked.",
+    "relatedSkills": ["grapple"]
+  },
+  "elusive-target-feat": {
+    "name": "Elusive Target",
+    "actionType": "modifier",
+    "requiredFeat": "Elusive Target",
+    "description": "Redirect missed attacks when fighting defensively",
+    "toggleable": false,
+    "condition": "When fighting defensively or using total defense",
+    "effects": [],
+    "notes": "When fighting defensively, missed melee attacks against you may be redirected to another adjacent target.",
+    "relatedSkills": []
+  },
+  "burst-of-speed": {
+    "name": "Burst of Speed",
+    "actionType": "swift",
+    "requiredFeat": "Burst of Speed",
+    "description": "Increase speed by 2 squares",
+    "toggleable": true,
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.speed.bonus",
+        "value": 2
+      }
+    ],
+    "notes": "Swift action. Increase your speed by 2 squares until end of your turn.",
+    "relatedSkills": []
+  },
+  "strong-in-the-force": {
+    "name": "Strong in the Force",
+    "actionType": "passive",
+    "requiredFeat": "Strong in the Force",
+    "description": "+1 to Use the Force checks",
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.skills.useTheForce.miscMod",
+        "value": 1
+      }
+    ],
+    "notes": "Passive +1 bonus to Use the Force checks.",
+    "relatedSkills": ["useTheForce"]
+  },
+  "force-sensitivity": {
+    "name": "Force Sensitivity",
+    "actionType": "passive",
+    "requiredFeat": "Force Sensitivity",
+    "description": "Enables Use the Force skill",
+    "effects": [],
+    "notes": "You can use the Force. This feat is a prerequisite for many Force-related abilities.",
+    "relatedSkills": ["useTheForce"]
+  },
+  "skill-focus": {
+    "name": "Skill Focus",
+    "actionType": "passive",
+    "requiredFeat": null,
+    "description": "+5 to chosen skill",
+    "effects": [],
+    "notes": "Gain +5 competence bonus to one skill. Can be taken multiple times for different skills.",
+    "relatedSkills": []
+  },
+  "toughness": {
+    "name": "Toughness",
+    "actionType": "passive",
+    "requiredFeat": "Toughness",
+    "description": "Bonus hit points per level",
+    "effects": [
+      {
+        "type": "bonus",
+        "target": "system.hitPoints.bonusPerLevel",
+        "value": 1
+      }
+    ],
+    "notes": "+1 hit point per character level. Can be taken multiple times.",
+    "relatedSkills": []
   }
 }
