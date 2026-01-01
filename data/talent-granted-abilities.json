@@ -1,8 +1,9 @@
 {
   "_meta": {
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Comprehensive talent ability definitions for SWSE Foundry system",
-    "totalAbilities": 387
+    "totalAbilities": 390,
+    "lastModified": "2026-01-01"
   },
   "abilities": {
     "block": {
@@ -6464,12 +6465,12 @@
       "name": "Connections",
       "talentName": "Connections",
       "talentTree": "Lineage",
-      "description": "Acquire equipment worth your character level × 1000 credits; reduce black market multiplier by 1. Your social network provides economic advantages.",
+      "description": "Acquire equipment worth your character level \u00d7 1000 credits; reduce black market multiplier by 1. Your social network provides economic advantages.",
       "actionType": "passive",
       "effects": [
         {
           "type": "economy",
-          "value": "level × 1000 credits equipment",
+          "value": "level \u00d7 1000 credits equipment",
           "bonusType": "acquisition"
         },
         {
@@ -6584,6 +6585,94 @@
         "weapon-specific"
       ],
       "icon": "fas fa-crosshairs"
+    },
+    "pistol-duelist-end-game": {
+      "id": "pistol-duelist-end-game",
+      "name": "End Game",
+      "talentName": "Pistol Duelist",
+      "talentTree": "Gunslinger",
+      "description": "You make a single ranged attack with a Pistol against an opponent within Range. The opponent's Damage Threshold is halved (rounded down) for the purpose of this attack.",
+      "actionType": "standard",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "special",
+          "description": "Target's DT is halved for this attack",
+          "value": "halveDT"
+        }
+      ],
+      "tags": [
+        "pistol",
+        "offense",
+        "standard",
+        "damage"
+      ],
+      "icon": "fas fa-crosshairs",
+      "linkedAction": "ranged-attack"
+    },
+    "pistol-duelist-snap-aiming": {
+      "id": "pistol-duelist-snap-aiming",
+      "name": "Snap Aiming",
+      "talentName": "Pistol Duelist",
+      "talentTree": "Gunslinger",
+      "description": "You make a single ranged attack with the benefits of Aiming (+2 bonus to attack roll).",
+      "actionType": "standard",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "roll": {
+        "skillKey": "attack",
+        "bonus": 2,
+        "label": "Snap Aiming (Ranged Attack)"
+      },
+      "tags": [
+        "pistol",
+        "offense",
+        "standard",
+        "aim",
+        "bonus"
+      ],
+      "icon": "fas fa-bullseye",
+      "linkedAction": "ranged-attack"
+    },
+    "pistol-duelist-stand-ready": {
+      "id": "pistol-duelist-stand-ready",
+      "name": "Stand Ready",
+      "talentName": "Pistol Duelist",
+      "talentTree": "Gunslinger",
+      "description": "You gain a +4 bonus to your Reflex Defense until the end of your next turn and make a single ranged attack.",
+      "actionType": "standard",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "defenseBonus",
+          "defense": "reflex",
+          "value": 4,
+          "duration": "endOfNextTurn"
+        }
+      ],
+      "roll": {
+        "skillKey": "attack",
+        "label": "Stand Ready (Ranged Attack)"
+      },
+      "tags": [
+        "pistol",
+        "defense",
+        "offense",
+        "standard"
+      ],
+      "icon": "fas fa-user-shield",
+      "linkedAction": "ranged-attack"
     }
   }
 }
