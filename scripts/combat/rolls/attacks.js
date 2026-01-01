@@ -10,9 +10,10 @@
  * Compute complete attack bonus from all SWSE factors.
  * @param {Actor} actor
  * @param {Item} weapon
+ * @param {string} actionId - Optional action ID for talent bonus lookup (e.g., 'melee-attack', 'ranged-attack')
  * @returns {number}
  */
-function computeAttackBonus(actor, weapon) {
+function computeAttackBonus(actor, weapon, actionId = null) {
   const lvl = actor.system.level ?? 1;
   const halfLvl = Math.floor(lvl / 2);
 
@@ -36,6 +37,13 @@ function computeAttackBonus(actor, weapon) {
   // Size modifier (optional, if your system supports it)
   const sizeMod = actor.system.sizeMod ?? 0;
 
+  // Talent bonuses from linked talents
+  let talentBonus = 0;
+  if (actionId && typeof TalentActionLinker !== 'undefined' && TalentActionLinker.MAPPING) {
+    const bonusInfo = TalentActionLinker.calculateBonusForAction(actor, actionId);
+    talentBonus = bonusInfo.value;
+  }
+
   // Total attack bonus (RAW)
   return (
     bab +
@@ -45,7 +53,8 @@ function computeAttackBonus(actor, weapon) {
     sizeMod +
     attackPenalty +
     ctPenalty +
-    proficiencyPenalty
+    proficiencyPenalty +
+    talentBonus
   );
 }
 
