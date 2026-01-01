@@ -1,0 +1,78 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "Follower enhancement effects from talents",
+    "totalEnhancements": 5
+  },
+  "enhancements": {
+    "undying-loyalty": {
+      "name": "Undying Loyalty",
+      "talentName": "Undying Loyalty",
+      "description": "Followers gain the Toughness feat",
+      "effect": "toughness_feat",
+      "changes": [
+        {
+          "key": "system.feats.toughness",
+          "mode": 5,
+          "value": "true"
+        }
+      ],
+      "flag": "Toughness",
+      "appliesToFollowers": true
+    },
+    "close-combat-assault": {
+      "name": "Close-Combat Assault",
+      "talentName": "Close-Combat Assault",
+      "description": "Each follower gains the Point Blank Shot feat",
+      "effect": "point_blank_shot_feat",
+      "changes": [
+        {
+          "key": "system.feats.pointBlankShot",
+          "mode": 5,
+          "value": "true"
+        }
+      ],
+      "flag": "Point Blank Shot",
+      "appliesToFollowers": true
+    },
+    "coordinated-tactics": {
+      "name": "Coordinated Tactics",
+      "talentName": "Coordinated Tactics",
+      "description": "Each follower gains the Coordinated Attack feat",
+      "effect": "coordinated_attack_feat",
+      "changes": [
+        {
+          "key": "system.feats.coordinatedAttack",
+          "mode": 5,
+          "value": "true"
+        }
+      ],
+      "flag": "Coordinated Attack",
+      "appliesToFollowers": true
+    },
+    "get-into-position": {
+      "name": "Get Into Position",
+      "talentName": "Get Into Position",
+      "description": "One of your followers gains +2 speed",
+      "effect": "follower_speed_bonus",
+      "changes": [
+        {
+          "key": "system.speed",
+          "mode": 2,
+          "value": "2"
+        }
+      ],
+      "flag": "+2 Speed",
+      "appliesToFollowers": true
+    },
+    "reconnaissance-actions": {
+      "name": "Reconnaissance Actions",
+      "talentName": "Reconnaissance Actions",
+      "description": "Grant +2 ranged attack, +1 Stealth, or +1 Perception to each follower",
+      "effect": "reconnaissance_bonus",
+      "changes": [],
+      "flag": "Reconnaissance Bonus",
+      "appliesToFollowers": true
+    }
+  }
+}

@@ -35,9 +35,10 @@ export async function rollSkill(actor, skillKey) {
  * Calculate skill modifier
  * @param {Actor} actor - The actor
  * @param {object} skill - The skill object
+ * @param {string} actionId - Optional action ID for talent bonus lookup
  * @returns {number} Total skill modifier
  */
-export function calculateSkillMod(actor, skill) {
+export function calculateSkillMod(actor, skill, actionId = null) {
   const utils = game.swse.utils;
 
   const abilityScore = actor.system.abilities[skill.selectedAbility]?.base || 10;
@@ -48,7 +49,15 @@ export function calculateSkillMod(actor, skill) {
   const misc = skill.miscMod || 0;
   const conditionPenalty = actor.system.conditionTrack?.penalty || 0;
 
-  return abilMod + trained + focus + halfLvl + misc + conditionPenalty;
+  let talentBonus = 0;
+
+  // Apply talent bonuses if action ID is provided and TalentActionLinker is available
+  if (actionId && typeof TalentActionLinker !== 'undefined' && TalentActionLinker.MAPPING) {
+    const bonusInfo = TalentActionLinker.calculateBonusForAction(actor, actionId);
+    talentBonus = bonusInfo.value;
+  }
+
+  return abilMod + trained + focus + halfLvl + misc + conditionPenalty + talentBonus;
 }
 
 /**
