@@ -14,6 +14,8 @@ import { ProgressionEngine } from "../progression/engine/progression-engine.js";
 import { HooksRegistry } from './hooks-registry.js';
 import { SWSELogger } from '../utils/logger.js';
 import { FeatEffectsEngine } from '../engine/FeatEffectsEngine.js';
+import { initializeStarshipManeuverHooks } from './starship-maneuver-hooks.js';
+import { initializeForcePowerHooks } from './force-power-hooks.js';
 
 /**
  * Register all actor-related hooks
@@ -61,6 +63,13 @@ export function registerActorHooks() {
         description: 'Show skill selection dialog when INT modifier increases',
         category: 'actor'
     });
+
+    // Initialize special progression hooks
+    SWSELogger.log("Initializing Force Power hooks");
+    initializeForcePowerHooks();
+
+    SWSELogger.log("Initializing Starship Maneuver hooks");
+    initializeStarshipManeuverHooks();
 }
 
 /**
