@@ -1238,7 +1238,7 @@
  {{#each characterData.starshipManeuvers}}
  <div class="selected-maneuver-badge">
  <span>{{this.name}}</span>
- <button type="button" class="remove-maneuver" data-maneuverid="{{this._id}}">×</button>
+ <button type="button" class="remove-maneuver" data-maneuverid="{{this.name}}">×</button>
  </div>
  {{/each}}
  </div>
@@ -1247,10 +1247,10 @@
  <div class="maneuvers-list">
  {{#each availableStarshipManeuvers}}
  <div class="maneuver-item maneuver-with-tooltip {{#unless this.prerequisitesMet}}disabled{{/unless}}" data-tooltip="{{this.description}}">
- <button type="button" class="select-maneuver choice-button {{#unless this.prerequisitesMet}}disabled{{/unless}}" data-maneuverid="{{this._id}}" {{#unless this.prerequisitesMet}}disabled{{/unless}}>
+ <button type="button" class="select-maneuver choice-button {{#unless this.prerequisitesMet}}disabled{{/unless}}" data-maneuverid="{{this.name}}" {{#unless this.prerequisitesMet}}disabled{{/unless}}>
  <h4>{{this.name}}</h4>
- {{#if this.system.actionType}}
- <p class="maneuver-action"><strong>Action:</strong> {{this.system.actionType}}</p>
+ {{#if this.actionType}}
+ <p class="maneuver-action"><strong>Action:</strong> {{this.actionType}}</p>
  {{/if}}
  {{#if this.prerequisiteReasons.length}}
  <p class="maneuver-prereqs"><em style="color: #d32f2f;">{{#each this.prerequisiteReasons}}{{this}}{{#unless @last}}<br/>{{/unless}}{{/each}}</em></p>

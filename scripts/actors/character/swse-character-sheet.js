@@ -314,6 +314,13 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
           content.slideToggle(200);
         });
 
+        // Starship Maneuvers suite management handlers
+        html.find('.add-to-suite').click(ev => this._onAddManeuverToSuite(ev));
+        html.find('.remove-from-suite').click(ev => this._onRemoveManeuverFromSuite(ev));
+        html.find('.use-maneuver').click(ev => this._onUseManeuver(ev));
+        html.find('.regain-maneuver').click(ev => this._onRegainManeuver(ev));
+        html.find('.rest-maneuvers').click(ev => this._onRestManeuvers(ev));
+
         super.activateListeners(html);
         html.find(".defense-input-sm, .defense-select-sm").change(ev => {
             this._debouncedDefenseChange.call(this);
@@ -1445,6 +1452,110 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     }
 
     ui.notifications.info("Force powers restored.");
+  }
+
+  // ----------------------------------------------------------
+  // K. Starship Maneuvers Suite Engine
+  // ----------------------------------------------------------
+
+  /**
+   * Add a maneuver to the active suite
+   */
+  async _onAddManeuverToSuite(event) {
+    event.preventDefault();
+    const id = event.currentTarget.dataset.itemId;
+    const maneuver = this.actor.items.get(id);
+    if (!maneuver) return;
+
+    const suite = this.actor.system.starshipManeuverSuite || { maneuvers: [], max: 6 };
+    const currentIds = suite.maneuvers || [];
+    const max = suite.max || 6;
+
+    if (currentIds.length >= max) {
+      return ui.notifications.warn(`Suite full (${max} maneuvers maximum).`);
+    }
+
+    if (currentIds.includes(id)) {
+      return ui.notifications.warn(`${maneuver.name} is already in your suite.`);
+    }
+
+    await this.actor.update({
+      'system.starshipManeuverSuite.maneuvers': [...currentIds, id]
+    });
+    ui.notifications.info(`Added ${maneuver.name} to active suite.`);
+  }
+
+  /**
+   * Remove a maneuver from the active suite
+   */
+  async _onRemoveManeuverFromSuite(event) {
+    event.preventDefault();
+    const id = event.currentTarget.dataset.itemId;
+    const maneuver = this.actor.items.get(id);
+    if (!maneuver) return;
+
+    const suite = this.actor.system.starshipManeuverSuite || { maneuvers: [] };
+    const currentIds = suite.maneuvers || [];
+
+    await this.actor.update({
+      'system.starshipManeuverSuite.maneuvers': currentIds.filter(mId => mId !== id)
+    });
+    ui.notifications.info(`Removed ${maneuver.name} from active suite.`);
+  }
+
+  /**
+   * Mark a maneuver as spent (used)
+   */
+  async _onUseManeuver(event) {
+    event.preventDefault();
+    const id = event.currentTarget.dataset.itemId;
+    const maneuver = this.actor.items.get(id);
+    if (!maneuver) return;
+
+    await maneuver.update({ 'system.spent': true });
+    ui.notifications.info(`${maneuver.name} has been spent.`);
+  }
+
+  /**
+   * Regain a single spent maneuver
+   */
+  async _onRegainManeuver(event) {
+    event.preventDefault();
+    const id = event.currentTarget.dataset.itemId;
+    const maneuver = this.actor.items.get(id);
+    if (!maneuver) return;
+
+    await maneuver.update({ 'system.spent': false });
+    ui.notifications.info(`${maneuver.name} has been regained.`);
+  }
+
+  /**
+   * Rest to regain all spent maneuvers in the suite
+   */
+  async _onRestManeuvers(event) {
+    event.preventDefault();
+
+    const suiteIds = this.actor.system.starshipManeuverSuite?.maneuvers || [];
+    const spentManeuvers = this.actor.items.filter(i =>
+      i.type === 'maneuver' && i.system.spent && suiteIds.includes(i.id)
+    );
+
+    if (!spentManeuvers.length) {
+      return ui.notifications.info("All maneuvers are already available.");
+    }
+
+    const ok = await Dialog.confirm({
+      title: "Rest - Regain Maneuvers",
+      content: `<p>Rest for 1 minute to regain all spent maneuvers?</p><p>${spentManeuvers.length} maneuver(s) will be restored.</p>`
+    });
+
+    if (!ok) return;
+
+    for (const m of spentManeuvers) {
+      await m.update({ 'system.spent': false });
+    }
+
+    ui.notifications.info(`${spentManeuvers.length} maneuver(s) regained.`);
   }
 
   /**

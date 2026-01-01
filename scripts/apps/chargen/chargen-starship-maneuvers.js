@@ -13,10 +13,9 @@ export async function _onSelectStarshipManeuver(event) {
   event.preventDefault();
   const id = event.currentTarget.dataset.maneuverid;
 
+  // Lazy-initialize maneuvers from the StarshipManeuverManager's static definitions
   if (!this._packs.maneuvers || this._packs.maneuvers.length === 0) {
-    ui.notifications.error("Starship Maneuvers data not loaded!");
-    SWSELogger.error("CharGen | Starship Maneuvers pack is null or empty");
-    return;
+    this._packs.maneuvers = StarshipManeuverManager._getAllManeuverDefinitions();
   }
 
   const maneuver = this._packs.maneuvers.find(m => m._id === id || m.name === id);
@@ -105,8 +104,9 @@ export function _getStarshipManeuversNeeded() {
  * Get available starship maneuvers for selection during chargen
  */
 export async function _getAvailableStarshipManeuvers() {
+  // Lazy-initialize maneuvers from the StarshipManeuverManager's static definitions
   if (!this._packs.maneuvers || this._packs.maneuvers.length === 0) {
-    return [];
+    this._packs.maneuvers = StarshipManeuverManager._getAllManeuverDefinitions();
   }
 
   const tempActor = this.actor || this._createTempActorForValidation();
