@@ -1124,3 +1124,162 @@
   padding-top: 6px;
   border-top: 1px solid var(--swse-border-default, #1c4b8e);
 }
+
+/* Multi-Option Talent Cards */
+.ability-card .multi-option-header {
+  cursor: pointer;
+  background: linear-gradient(135deg, #2a5298 0%, #1e3a8a 100%);
+}
+
+.ability-card .multi-option-header:hover {
+  background: linear-gradient(135deg, #3461b8 0%, #2448aa 100%);
+}
+
+.ability-type-badge.multi-option {
+  background: #5b21b6;
+  border-color: #7c3aed;
+}
+
+/* Sub-Ability Cards in Modal */
+.multi-option-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--color-bg-primary, #1a1a2e);
+  border: 2px solid var(--color-border-highlight, #4a5568);
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.multi-option-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+}
+
+.multi-option-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--color-border-highlight, #4a5568);
+}
+
+.multi-option-modal-title {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: var(--color-text-primary, #fff);
+}
+
+.multi-option-modal-close {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary, #aaa);
+  font-size: 1.5em;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.multi-option-modal-close:hover {
+  color: var(--color-text-primary, #fff);
+}
+
+.sub-ability-card {
+  background: var(--color-bg-secondary, #16213e);
+  border: 1px solid var(--color-border-light, #3a4556);
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  transition: all 0.2s ease;
+}
+
+.sub-ability-card:hover {
+  border-color: var(--color-border-highlight, #4a5568);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sub-ability-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.sub-ability-icon {
+  font-size: 1.5em;
+  color: var(--color-primary, #4a90e2);
+}
+
+.sub-ability-title {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.sub-ability-title strong {
+  font-size: 1.1em;
+  color: var(--color-text-primary, #fff);
+}
+
+.sub-ability-type {
+  font-size: 0.85em;
+  color: var(--color-text-secondary, #aaa);
+  text-transform: uppercase;
+}
+
+.sub-ability-uses {
+  background: var(--color-bg-tertiary, #0f3460);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  font-weight: bold;
+  color: var(--color-success, #4ade80);
+}
+
+.sub-ability-description {
+  color: var(--color-text-secondary, #bbb);
+  font-size: 0.95em;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.sub-ability-use-btn {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.sub-ability-use-btn:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+.sub-ability-use-btn:active {
+  transform: translateY(0);
+}
+
+.sub-ability-use-btn i {
+  font-size: 1.1em;
+}

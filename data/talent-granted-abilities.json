@@ -1,8 +1,11 @@
 {
   "_meta": {
-    "version": "1.0.1",
+    "version": "1.0.3",
     "description": "Comprehensive talent ability definitions for SWSE Foundry system",
-    "totalAbilities": 387
+    "totalAbilities": 414,
+    "lastModified": "2026-01-01",
+    "multiOptionTalents": 9,
+    "notes": "Includes 9 multi-option talents with 27 total sub-abilities (Pistol Duelist, Fool's Luck, Beloved, Dumb Luck, Cunning Strategist, Experienced Brawler, Shadow Striker, Swift Strider, Two-Faced)"
   },
   "abilities": {
     "block": {
@@ -6464,12 +6467,12 @@
       "name": "Connections",
       "talentName": "Connections",
       "talentTree": "Lineage",
-      "description": "Acquire equipment worth your character level × 1000 credits; reduce black market multiplier by 1. Your social network provides economic advantages.",
+      "description": "Acquire equipment worth your character level \u00d7 1000 credits; reduce black market multiplier by 1. Your social network provides economic advantages.",
       "actionType": "passive",
       "effects": [
         {
           "type": "economy",
-          "value": "level × 1000 credits equipment",
+          "value": "level \u00d7 1000 credits equipment",
           "bonusType": "acquisition"
         },
         {
@@ -6582,6 +6585,779 @@
         "passive",
         "soldier",
         "weapon-specific"
+      ],
+      "icon": "fas fa-crosshairs"
+    },
+    "pistol-duelist-end-game": {
+      "id": "pistol-duelist-end-game",
+      "name": "End Game",
+      "talentName": "Pistol Duelist",
+      "talentTree": "Gunslinger",
+      "description": "You make a single ranged attack with a Pistol against an opponent within Range. The opponent's Damage Threshold is halved (rounded down) for the purpose of this attack.",
+      "actionType": "standard",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "special",
+          "description": "Target's DT is halved for this attack",
+          "value": "halveDT"
+        }
+      ],
+      "tags": [
+        "pistol",
+        "offense",
+        "standard",
+        "damage"
+      ],
+      "icon": "fas fa-crosshairs",
+      "linkedAction": "ranged-attack"
+    },
+    "pistol-duelist-snap-aiming": {
+      "id": "pistol-duelist-snap-aiming",
+      "name": "Snap Aiming",
+      "talentName": "Pistol Duelist",
+      "talentTree": "Gunslinger",
+      "description": "You make a single ranged attack with the benefits of Aiming (+2 bonus to attack roll).",
+      "actionType": "standard",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "roll": {
+        "skillKey": "attack",
+        "bonus": 2,
+        "label": "Snap Aiming (Ranged Attack)"
+      },
+      "tags": [
+        "pistol",
+        "offense",
+        "standard",
+        "aim",
+        "bonus"
+      ],
+      "icon": "fas fa-bullseye",
+      "linkedAction": "ranged-attack"
+    },
+    "pistol-duelist-stand-ready": {
+      "id": "pistol-duelist-stand-ready",
+      "name": "Stand Ready",
+      "talentName": "Pistol Duelist",
+      "talentTree": "Gunslinger",
+      "description": "You gain a +4 bonus to your Reflex Defense until the end of your next turn and make a single ranged attack.",
+      "actionType": "standard",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "defenseBonus",
+          "defense": "reflex",
+          "value": 4,
+          "duration": "endOfNextTurn"
+        }
+      ],
+      "roll": {
+        "skillKey": "attack",
+        "label": "Stand Ready (Ranged Attack)"
+      },
+      "tags": [
+        "pistol",
+        "defense",
+        "offense",
+        "standard"
+      ],
+      "icon": "fas fa-user-shield",
+      "linkedAction": "ranged-attack"
+    },
+    "fools-luck-attack-boost": {
+      "id": "fools-luck-attack-boost",
+      "name": "Attack Boost",
+      "talentName": "Fool's Luck",
+      "talentTree": "Fortune",
+      "description": "For the rest of the encounter, you gain a +1 bonus to all attack rolls.",
+      "actionType": "swift",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "attackBonus",
+          "value": 1,
+          "duration": "encounter"
+        }
+      ],
+      "tags": [
+        "scoundrel",
+        "fortune",
+        "offense",
+        "swift"
+      ],
+      "icon": "fas fa-crosshairs"
+    },
+    "fools-luck-skill-boost": {
+      "id": "fools-luck-skill-boost",
+      "name": "Skill Boost",
+      "talentName": "Fool's Luck",
+      "talentTree": "Fortune",
+      "description": "For the rest of the encounter, you gain a +5 bonus to all skill checks.",
+      "actionType": "swift",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "skillBonus",
+          "value": 5,
+          "duration": "encounter",
+          "skills": "all"
+        }
+      ],
+      "tags": [
+        "scoundrel",
+        "fortune",
+        "skill",
+        "swift"
+      ],
+      "icon": "fas fa-hand-sparkles"
+    },
+    "fools-luck-defense-boost": {
+      "id": "fools-luck-defense-boost",
+      "name": "Defense Boost",
+      "talentName": "Fool's Luck",
+      "talentTree": "Fortune",
+      "description": "For the rest of the encounter, you gain a +1 bonus to all defenses (Reflex, Fortitude, and Will).",
+      "actionType": "swift",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "defenseBonus",
+          "defense": "all",
+          "value": 1,
+          "duration": "encounter"
+        }
+      ],
+      "tags": [
+        "scoundrel",
+        "fortune",
+        "defense",
+        "swift"
+      ],
+      "icon": "fas fa-shield-alt"
+    },
+    "beloved-protective-stance": {
+      "id": "beloved-protective-stance",
+      "name": "Protective Stance",
+      "talentName": "Beloved",
+      "talentTree": "Inspiration",
+      "description": "As a swift action, an ally within 6 squares gains a +2 bonus to Reflex Defense until the start of your next turn.",
+      "actionType": "swift",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "allyDefenseBonus",
+          "defense": "reflex",
+          "value": 2,
+          "range": 6,
+          "duration": "startOfNextTurn"
+        }
+      ],
+      "tags": [
+        "noble",
+        "inspiration",
+        "support",
+        "swift"
+      ],
+      "icon": "fas fa-shield-alt"
+    },
+    "beloved-coordinated-attack": {
+      "id": "beloved-coordinated-attack",
+      "name": "Coordinated Attack",
+      "talentName": "Beloved",
+      "talentTree": "Inspiration",
+      "description": "When you attack and are attacked, an ally within 6 squares makes a free attack against your attacker.",
+      "actionType": "reaction",
+      "trigger": "When you attack and are attacked",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "allyFreeAttack",
+          "range": 6
+        }
+      ],
+      "tags": [
+        "noble",
+        "inspiration",
+        "support",
+        "reaction"
+      ],
+      "icon": "fas fa-fist-raised"
+    },
+    "beloved-tactical-retreat": {
+      "id": "beloved-tactical-retreat",
+      "name": "Tactical Retreat",
+      "talentName": "Beloved",
+      "talentTree": "Inspiration",
+      "description": "As a reaction when attacked, all allies in line of sight may move 2 squares as a reaction.",
+      "actionType": "reaction",
+      "trigger": "When you are attacked",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "allyMovement",
+          "distance": 2,
+          "condition": "in line of sight"
+        }
+      ],
+      "tags": [
+        "noble",
+        "inspiration",
+        "support",
+        "reaction"
+      ],
+      "icon": "fas fa-running"
+    },
+    "dumb-luck-defensive-stance": {
+      "id": "dumb-luck-defensive-stance",
+      "name": "Defensive Stance",
+      "talentName": "Dumb Luck",
+      "talentTree": "Fortune",
+      "description": "If you damage the target with an attack, you gain a +2 bonus to Reflex Defense against that target until the end of the encounter.",
+      "actionType": "reaction",
+      "trigger": "After you attack and damage a target",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "defenseBonus",
+          "defense": "reflex",
+          "value": 2,
+          "condition": "against damaged target",
+          "duration": "encounter"
+        }
+      ],
+      "tags": [
+        "scoundrel",
+        "fortune",
+        "defense",
+        "reaction"
+      ],
+      "icon": "fas fa-shield-alt"
+    },
+    "dumb-luck-evasive-move": {
+      "id": "dumb-luck-evasive-move",
+      "name": "Evasive Move",
+      "talentName": "Dumb Luck",
+      "talentTree": "Fortune",
+      "description": "If you are damaged by an attack, you may immediately move 2 squares as a reaction.",
+      "actionType": "reaction",
+      "trigger": "After you are damaged",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "movement",
+          "distance": 2
+        }
+      ],
+      "tags": [
+        "scoundrel",
+        "fortune",
+        "mobility",
+        "reaction"
+      ],
+      "icon": "fas fa-running"
+    },
+    "dumb-luck-lucky-shot": {
+      "id": "dumb-luck-lucky-shot",
+      "name": "Lucky Shot",
+      "talentName": "Dumb Luck",
+      "talentTree": "Fortune",
+      "description": "If you miss with an attack, you gain a +2 bonus on your next attack roll.",
+      "actionType": "reaction",
+      "trigger": "After you miss an attack",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "attackBonus",
+          "value": 2,
+          "duration": "nextAttack"
+        }
+      ],
+      "tags": [
+        "scoundrel",
+        "fortune",
+        "offense",
+        "reaction"
+      ],
+      "icon": "fas fa-bullseye"
+    },
+    "cunning-strategist-expose-weakness": {
+      "id": "cunning-strategist-expose-weakness",
+      "name": "Expose Weakness",
+      "talentName": "Cunning Strategist",
+      "talentTree": "Misfortune",
+      "description": "If you damage a target with an attack, that target takes a -5 penalty to Reflex Defense until the end of the encounter.",
+      "actionType": "reaction",
+      "trigger": "After you attack and damage a target",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "targetDefensePenalty",
+          "defense": "reflex",
+          "value": -5,
+          "duration": "encounter"
+        }
+      ],
+      "tags": [
+        "scoundrel",
+        "misfortune",
+        "debuff",
+        "reaction"
+      ],
+      "icon": "fas fa-crosshairs"
+    },
+    "cunning-strategist-hamstring": {
+      "id": "cunning-strategist-hamstring",
+      "name": "Hamstring",
+      "talentName": "Cunning Strategist",
+      "talentTree": "Misfortune",
+      "description": "After you attack, reduce the target's speed by 2 squares until the end of the encounter.",
+      "actionType": "reaction",
+      "trigger": "After you attack",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "targetSpeedReduction",
+          "value": 2,
+          "duration": "encounter"
+        }
+      ],
+      "tags": [
+        "scoundrel",
+        "misfortune",
+        "debuff",
+        "reaction"
+      ],
+      "icon": "fas fa-shoe-prints"
+    },
+    "cunning-strategist-divide-attention": {
+      "id": "cunning-strategist-divide-attention",
+      "name": "Divide Attention",
+      "talentName": "Cunning Strategist",
+      "talentTree": "Misfortune",
+      "description": "After you attack, you may target two opponents within 2 squares of each other. Each takes a -5 penalty to attack rolls, but you roll damage only once and apply it to both.",
+      "actionType": "reaction",
+      "trigger": "After you attack",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "multiTargetDebuff",
+          "attackPenalty": -5,
+          "targets": 2,
+          "maxDistance": 2
+        }
+      ],
+      "tags": [
+        "scoundrel",
+        "misfortune",
+        "debuff",
+        "reaction"
+      ],
+      "icon": "fas fa-users-slash"
+    },
+    "experienced-brawler-dodge-stance": {
+      "id": "experienced-brawler-dodge-stance",
+      "name": "Dodge Stance",
+      "talentName": "Experienced Brawler",
+      "talentTree": "Brawler",
+      "description": "After you attack, you gain a +5 dodge bonus to Reflex Defense until the start of your next turn.",
+      "actionType": "reaction",
+      "trigger": "After you attack",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "defenseBonus",
+          "defense": "reflex",
+          "value": 5,
+          "bonusType": "dodge",
+          "duration": "startOfNextTurn"
+        }
+      ],
+      "tags": [
+        "soldier",
+        "brawler",
+        "defense",
+        "reaction"
+      ],
+      "icon": "fas fa-shield-alt"
+    },
+    "experienced-brawler-fortify": {
+      "id": "experienced-brawler-fortify",
+      "name": "Fortify",
+      "talentName": "Experienced Brawler",
+      "talentTree": "Brawler",
+      "description": "After you attack, you gain a +5 bonus to either Fortitude Defense or Will Defense (your choice) until the start of your next turn.",
+      "actionType": "reaction",
+      "trigger": "After you attack",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "defenseBonus",
+          "defense": "fortitude-or-will",
+          "value": 5,
+          "duration": "startOfNextTurn"
+        }
+      ],
+      "tags": [
+        "soldier",
+        "brawler",
+        "defense",
+        "reaction"
+      ],
+      "icon": "fas fa-shield-alt"
+    },
+    "experienced-brawler-tactical-reposition": {
+      "id": "experienced-brawler-tactical-reposition",
+      "name": "Tactical Reposition",
+      "talentName": "Experienced Brawler",
+      "talentTree": "Brawler",
+      "description": "After you attack, you may move 2 squares without provoking attacks of opportunity.",
+      "actionType": "reaction",
+      "trigger": "After you attack",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "movement",
+          "distance": 2,
+          "noAoO": true
+        }
+      ],
+      "tags": [
+        "soldier",
+        "brawler",
+        "mobility",
+        "reaction"
+      ],
+      "icon": "fas fa-running"
+    },
+    "shadow-striker-vanish": {
+      "id": "shadow-striker-vanish",
+      "name": "Vanish",
+      "talentName": "Shadow Striker",
+      "talentTree": "Camouflage",
+      "description": "If you deal damage with an attack, you gain total concealment against that target until the end of the encounter.",
+      "actionType": "reaction",
+      "trigger": "After you attack and deal damage",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "concealment",
+          "level": "total",
+          "condition": "against damaged target",
+          "duration": "encounter"
+        }
+      ],
+      "tags": [
+        "scout",
+        "camouflage",
+        "stealth",
+        "reaction"
+      ],
+      "icon": "fas fa-eye-slash"
+    },
+    "shadow-striker-disable": {
+      "id": "shadow-striker-disable",
+      "name": "Disable",
+      "talentName": "Shadow Striker",
+      "talentTree": "Camouflage",
+      "description": "If the opponent lacks Dex to Defense or you are concealed and deal damage, the target can only take a swift action on its next turn.",
+      "actionType": "reaction",
+      "trigger": "After you attack and deal damage (with conditions)",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "targetActionLimit",
+          "allowedAction": "swift",
+          "duration": "nextTurn",
+          "condition": "target lacks Dex to Defense or you are concealed"
+        }
+      ],
+      "tags": [
+        "scout",
+        "camouflage",
+        "debuff",
+        "reaction"
+      ],
+      "icon": "fas fa-ban"
+    },
+    "shadow-striker-precision-strike": {
+      "id": "shadow-striker-precision-strike",
+      "name": "Precision Strike",
+      "talentName": "Shadow Striker",
+      "talentTree": "Camouflage",
+      "description": "If you have concealment, you gain a +2 bonus to attack rolls (+5 if you have total concealment).",
+      "actionType": "reaction",
+      "trigger": "After you attack with concealment",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "roll": {
+        "skillKey": "attack",
+        "conditionalBonus": {
+          "bonus": 2,
+          "condition": "with concealment",
+          "bonusIfTotal": 5
+        }
+      },
+      "tags": [
+        "scout",
+        "camouflage",
+        "offense",
+        "reaction"
+      ],
+      "icon": "fas fa-crosshairs"
+    },
+    "swift-strider-fleet-footed": {
+      "id": "swift-strider-fleet-footed",
+      "name": "Fleet Footed",
+      "talentName": "Swift Strider",
+      "talentTree": "Fringer",
+      "description": "You move your speed and gain a +2 bonus to Reflex Defense until the end of the encounter.",
+      "actionType": "swift",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "movement",
+          "distance": "speed"
+        },
+        {
+          "type": "defenseBonus",
+          "defense": "reflex",
+          "value": 2,
+          "duration": "encounter"
+        }
+      ],
+      "tags": [
+        "scout",
+        "fringer",
+        "mobility",
+        "swift"
+      ],
+      "icon": "fas fa-running"
+    },
+    "swift-strider-charging-assault": {
+      "id": "swift-strider-charging-assault",
+      "name": "Charging Assault",
+      "talentName": "Swift Strider",
+      "talentTree": "Fringer",
+      "description": "You take no Defense penalty when making a charge attack.",
+      "actionType": "swift",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "chargeBenefit",
+          "defensePenalty": 0
+        }
+      ],
+      "tags": [
+        "scout",
+        "fringer",
+        "offense",
+        "swift"
+      ],
+      "icon": "fas fa-horse-head"
+    },
+    "swift-strider-nimble-movement": {
+      "id": "swift-strider-nimble-movement",
+      "name": "Nimble Movement",
+      "talentName": "Swift Strider",
+      "talentTree": "Fringer",
+      "description": "You move and gain a +2 bonus to Reflex Defense against attacks of opportunity until your next turn.",
+      "actionType": "swift",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "movement",
+          "distance": "speed"
+        },
+        {
+          "type": "defenseBonus",
+          "defense": "reflex",
+          "value": 2,
+          "condition": "vs attacks of opportunity",
+          "duration": "nextTurn"
+        }
+      ],
+      "tags": [
+        "scout",
+        "fringer",
+        "mobility",
+        "swift"
+      ],
+      "icon": "fas fa-running"
+    },
+    "two-faced-repeat-offense": {
+      "id": "two-faced-repeat-offense",
+      "name": "Repeat Offense",
+      "talentName": "Two-Faced",
+      "talentTree": "Disgrace",
+      "description": "If you use the same attack you just used, you may make the attack as a reaction.",
+      "actionType": "reaction",
+      "trigger": "After you attack",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "bonusAttack",
+          "condition": "same attack as previous"
+        }
+      ],
+      "tags": [
+        "noble",
+        "disgrace",
+        "offense",
+        "reaction"
+      ],
+      "icon": "fas fa-redo"
+    },
+    "two-faced-defensive-posture": {
+      "id": "two-faced-defensive-posture",
+      "name": "Defensive Posture",
+      "talentName": "Two-Faced",
+      "talentTree": "Disgrace",
+      "description": "An opponent cannot attack you on their next turn.",
+      "actionType": "reaction",
+      "trigger": "After you attack",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "effects": [
+        {
+          "type": "targetAttackPrevention",
+          "duration": "targetNextTurn"
+        }
+      ],
+      "tags": [
+        "noble",
+        "disgrace",
+        "defense",
+        "reaction"
+      ],
+      "icon": "fas fa-hand-paper"
+    },
+    "two-faced-opportunistic-strike": {
+      "id": "two-faced-opportunistic-strike",
+      "name": "Opportunistic Strike",
+      "talentName": "Two-Faced",
+      "talentTree": "Disgrace",
+      "description": "You gain a +2 bonus to attack if the opponent hasn't attacked you yet.",
+      "actionType": "reaction",
+      "trigger": "After you attack an opponent who hasn't attacked you",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "roll": {
+        "skillKey": "attack",
+        "conditionalBonus": {
+          "bonus": 2,
+          "condition": "if opponent hasn't attacked you"
+        }
+      },
+      "tags": [
+        "noble",
+        "disgrace",
+        "offense",
+        "reaction"
       ],
       "icon": "fas fa-crosshairs"
     }

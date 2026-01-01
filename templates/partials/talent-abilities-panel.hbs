@@ -44,24 +44,77 @@
            data-action-type="{{ability.actionType}}">
 
         {{!-- Card Header --}}
-        <div class="ability-card-header" data-action="expandAbility" data-ability-id="{{ability.id}}">
+        <div class="ability-card-header {{#if ability.isMultiOption}}multi-option-header{{/if}}"
+             data-action="{{#if ability.isMultiOption}}showMultiOptions{{else}}expandAbility{{/if}}"
+             data-ability-id="{{ability.id}}">
           <div class="ability-icon">
             <i class="{{ability.icon}}"></i>
           </div>
           <div class="ability-title-block">
             <span class="ability-name">{{ability.name}}</span>
+            {{#if ability.isMultiOption}}
+            <span class="ability-source-label">{{ability.subAbilityCount}} Options</span>
+            {{else}}
             <span class="ability-source-label">{{ability.talentTree}}</span>
+            {{/if}}
           </div>
           <div class="ability-type-badge {{ability.typeBadgeClass}}">
             {{ability.typeLabel}}
           </div>
           <div class="ability-expand-icon">
+            {{#if ability.isMultiOption}}
+            <i class="fas fa-caret-right"></i>
+            {{else}}
             <i class="fas fa-chevron-down"></i>
+            {{/if}}
           </div>
         </div>
 
         {{!-- Card Body (expandable) --}}
         <div class="ability-card-body" id="ability-body-{{ability.id}}">
+
+          {{!-- Multi-Option Sub-Abilities (displayed in popup/modal) --}}
+          {{#if ability.isMultiOption}}
+          <div class="multi-option-sub-abilities" style="display: none;">
+            {{#each ability.subAbilities as |subAbility|}}
+            <div class="sub-ability-card"
+                 data-sub-ability-id="{{subAbility.id}}"
+                 data-parent-ability-id="{{../ability.id}}">
+
+              <div class="sub-ability-header">
+                <div class="sub-ability-icon">
+                  <i class="{{subAbility.icon}}"></i>
+                </div>
+                <div class="sub-ability-title">
+                  <strong>{{subAbility.name}}</strong>
+                  <span class="sub-ability-type">{{subAbility.typeLabel}}</span>
+                </div>
+                {{#if subAbility.usesData.isLimited}}
+                <div class="sub-ability-uses">
+                  {{subAbility.usesData.current}}/{{subAbility.usesData.max}}
+                </div>
+                {{/if}}
+              </div>
+
+              <div class="sub-ability-description">
+                {{subAbility.description}}
+              </div>
+
+              {{#if subAbility.rollData.canRoll}}
+              <button class="sub-ability-use-btn"
+                      data-action="useSubAbility"
+                      data-sub-ability-id="{{subAbility.id}}"
+                      data-talent-id="{{subAbility.sourceTalentId}}"
+                      type="button">
+                <i class="fas fa-dice-d20"></i>
+                Use {{subAbility.name}}
+              </button>
+              {{/if}}
+
+            </div>
+            {{/each}}
+          </div>
+          {{/if}}
 
           {{!-- Description --}}
           <div class="ability-description">
