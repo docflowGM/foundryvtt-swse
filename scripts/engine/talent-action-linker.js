@@ -11,9 +11,10 @@
 
 class TalentActionLinker {
   static MAPPING = null;
+  static ABILITIES = null;
 
   /**
-   * Load the talent-action-links mapping
+   * Load the talent-action-links mapping and talent abilities
    */
   static async initialize() {
     try {
@@ -23,6 +24,16 @@ class TalentActionLinker {
     } catch (error) {
       console.error('[TalentActionLinker] Failed to load talent-action-links.json', error);
       this.MAPPING = { talentToAction: {}, actionToTalents: {} };
+    }
+
+    // Load talent abilities for bonus values
+    try {
+      const abilitiesResponse = await fetch('systems/foundryvtt-swse/data/talent-granted-abilities.json');
+      this.ABILITIES = await abilitiesResponse.json();
+      console.log(`[TalentActionLinker] Loaded ${this.ABILITIES?._meta?.totalAbilities || 0} talent abilities`);
+    } catch (error) {
+      console.error('[TalentActionLinker] Failed to load talent-granted-abilities.json', error);
+      this.ABILITIES = { abilities: {} };
     }
   }
 
@@ -55,24 +66,72 @@ class TalentActionLinker {
    * Calculate bonus for a specific action from linked talents
    * @param {Actor} actor - Character actor
    * @param {string} actionId - The base action ID
-   * @returns {Object} Bonus information { value, talents, description }
+   * @returns {Object} Bonus information { value, talents, description, details }
    */
   static calculateBonusForAction(actor, actionId) {
     const linkedTalents = this.getTalentsForAction(actor, actionId);
     if (linkedTalents.length === 0) {
-      return { value: 0, talents: [], description: '' };
+      return { value: 0, talents: [], description: '', details: [] };
     }
 
-    // For now, simple +1 per talent bonus (can be refined based on talent specifics)
-    // In future, could read specific bonus values from talent-granted-abilities.json
-    const baseBonus = linkedTalents.length;
+    let totalBonus = 0;
+    const bonusDetails = [];
+
+    // Look up actual bonus values from talent-granted-abilities.json
+    for (const talentName of linkedTalents) {
+      const ability = this._findAbilityForTalent(talentName);
+
+      if (ability) {
+        // Check for direct bonus value in roll.conditionalBonus or effects
+        let talentBonus = 1; // Default to +1 if no specific bonus found
+
+        if (ability.roll?.conditionalBonus?.bonus) {
+          talentBonus = ability.roll.conditionalBonus.bonus;
+        } else if (ability.effects) {
+          // Look for skill or attack bonuses in effects
+          const bonusEffect = ability.effects.find(e =>
+            e.type === 'skillBonus' || e.type === 'attackBonus' || e.type === 'bonus'
+          );
+          if (bonusEffect?.value) {
+            talentBonus = bonusEffect.value;
+          }
+        }
+
+        totalBonus += talentBonus;
+        bonusDetails.push({ name: talentName, bonus: talentBonus, ability: ability });
+      } else {
+        // Fallback: +1 if ability definition not found
+        totalBonus += 1;
+        bonusDetails.push({ name: talentName, bonus: 1, ability: null });
+      }
+    }
 
     return {
-      value: baseBonus,
+      value: totalBonus,
       talents: linkedTalents,
-      description: `+${baseBonus} from ${linkedTalents.length} linked talent${linkedTalents.length > 1 ? 's' : ''}`,
-      talentList: linkedTalents.join(', ')
+      description: `+${totalBonus} from ${linkedTalents.length} linked talent${linkedTalents.length > 1 ? 's' : ''}`,
+      talentList: linkedTalents.join(', '),
+      details: bonusDetails
     };
+  }
+
+  /**
+   * Find ability definition for a talent by name
+   * @param {string} talentName - The talent name
+   * @returns {Object|null} Ability definition or null
+   * @private
+   */
+  static _findAbilityForTalent(talentName) {
+    if (!this.ABILITIES?.abilities) return null;
+
+    // Search by talent name (abilities are keyed by ID, but have talentName property)
+    for (const [id, ability] of Object.entries(this.ABILITIES.abilities)) {
+      if (ability.talentName === talentName) {
+        return ability;
+      }
+    }
+
+    return null;
   }
 
   /**
