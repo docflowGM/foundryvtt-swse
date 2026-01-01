@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0.0",
     "description": "Comprehensive talent ability definitions for SWSE Foundry system",
-    "totalAbilities": 281
+    "totalAbilities": 381
   },
   "abilities": {
     "block": {
@@ -30,7 +30,8 @@
         "reaction"
       ],
       "icon": "fas fa-shield-alt",
-      "linkedAction": "block-defense"
+      "linkedAction": "block-defense",
+      "alsoFeat": true
     },
     "deflect": {
       "id": "deflect",
@@ -57,7 +58,8 @@
         "reaction"
       ],
       "icon": "fas fa-shield-alt",
-      "linkedAction": "deflect-defense"
+      "linkedAction": "deflect-defense",
+      "alsoFeat": true
     },
     "redirect-shot": {
       "id": "redirect-shot",
@@ -94,7 +96,8 @@
         "reaction",
         "force-point"
       ],
-      "icon": "fas fa-exchange-alt"
+      "icon": "fas fa-exchange-alt",
+      "alsoFeat": true
     },
     "adept-negotiator": {
       "id": "adept-negotiator",
@@ -958,7 +961,8 @@
         "condition-track",
         "passive"
       ],
-      "icon": "fas fa-dizzy"
+      "icon": "fas fa-dizzy",
+      "alsoFeat": true
     },
     "unbalancing-attack": {
       "id": "unbalancing-attack",
@@ -1492,7 +1496,8 @@
         "passive"
       ],
       "icon": "fas fa-wind",
-      "linkedAction": "reflex-defensive"
+      "linkedAction": "reflex-defensive",
+      "alsoFeat": true
     },
     "fringe-savant": {
       "id": "fringe-savant",
@@ -1676,7 +1681,8 @@
         "free"
       ],
       "icon": "fas fa-dice",
-      "linkedAction": "attack-reroll"
+      "linkedAction": "attack-reroll",
+      "alsoFeat": true
     },
     "fortunes-favor": {
       "id": "fortunes-favor",
@@ -3759,7 +3765,8 @@
         "special",
         "complex"
       ],
-      "icon": "fas fa-shield-virus"
+      "icon": "fas fa-shield-virus",
+      "alsoFeat": true
     },
     "influential-friends": {
       "name": "Influential Friends",
@@ -3876,7 +3883,8 @@
         "special",
         "complex"
       ],
-      "icon": "fas fa-sword"
+      "icon": "fas fa-sword",
+      "alsoFeat": true
     },
     "one-for-the-team": {
       "name": "One for the Team",
@@ -5027,6 +5035,1406 @@
         "substitution"
       ],
       "icon": "fas fa-shield-alt"
+    },
+    "acrobatic-strike": {
+      "name": "Acrobatic Strike",
+      "featName": "Acrobatic Strike",
+      "featTree": "General",
+      "description": "You can use Acrobatics to tumble through an enemy\u2019s space and gain a +2 bonus on your next melee attack against that enemy.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "adaptable-talent": {
+      "name": "Adaptable Talent",
+      "featName": "Adaptable Talent",
+      "featTree": "General",
+      "description": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "assured-attack": {
+      "name": "Assured Attack",
+      "featName": "Assured Attack",
+      "featTree": "General",
+      "description": "Once per encounter, you may reroll an attack roll and take the better result.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "bantha-rush": {
+      "name": "Bantha Rush",
+      "featName": "Bantha Rush",
+      "featTree": "General",
+      "description": "You may make a bull rush attempt as a swift action after hitting with a melee attack.",
+      "actionType": "passive",
+      "effect": "action_ability",
+      "tags": [
+        "feat",
+        "active",
+        "action_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "battle-meditation": {
+      "name": "Battle Meditation",
+      "featName": "Battle Meditation",
+      "featTree": "General",
+      "description": "You may spend a Force Point to grant allies within line of sight a +1 bonus to attack rolls, skill checks, and Will Defense for 1 minute.",
+      "actionType": "passive",
+      "effect": "force_point_ability",
+      "tags": [
+        "feat",
+        "active",
+        "force_point_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "burst-of-speed": {
+      "name": "Burst of Speed",
+      "featName": "Burst of Speed",
+      "featTree": "General",
+      "description": "Once per encounter, you may move an additional 2 squares as a swift action.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "charging-fire": {
+      "name": "Charging Fire",
+      "featName": "Charging Fire",
+      "featTree": "General",
+      "description": "You may make a ranged attack at the end of a charge, taking a -2 penalty on the attack roll.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "clawed-subspecies": {
+      "name": "Clawed Subspecies",
+      "featName": "Clawed Subspecies",
+      "featTree": "General",
+      "description": "You have Natural Weapons in the form of claws. When you make an Unarmed Attack, you can use your claws, dealing 1d6 points of Slashing damage with that attack instead of normal Unarmed damage. You are always considered armed with your Natural Weapons",
+      "actionType": "passive",
+      "effect": "conditional",
+      "tags": [
+        "feat",
+        "active",
+        "conditional"
+      ],
+      "icon": "fas fa-star"
+    },
+    "cleave": {
+      "name": "Cleave",
+      "featName": "Cleave",
+      "featTree": "General",
+      "description": "If you deal enough damage to drop a target, you may make an immediate melee attack against another target within reach.",
+      "actionType": "passive",
+      "effect": "conditional",
+      "tags": [
+        "feat",
+        "active",
+        "conditional"
+      ],
+      "icon": "fas fa-star"
+    },
+    "combat-reflexes": {
+      "name": "Combat Reflexes",
+      "featName": "Combat Reflexes",
+      "featTree": "General",
+      "description": "You may make a number of attacks of opportunity per round equal to your Dexterity modifier.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "conditioned": {
+      "name": "Conditioned",
+      "featName": "Conditioned",
+      "featTree": "General",
+      "description": "You gain a +2 bonus on Endurance checks and may reroll a failed Endurance check once per encounter.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "confident-success": {
+      "name": "Confident Success",
+      "featName": "Confident Success",
+      "featTree": "General",
+      "description": "Whenever you successfully use the Learn Secret Information application of the Gather Information Skill, you gain 1 Force Point. You cannot gain more than 3 Force Points each level, and you cannot have more Force Points than you gained when you reache",
+      "actionType": "passive",
+      "effect": "conditional",
+      "tags": [
+        "feat",
+        "active",
+        "conditional"
+      ],
+      "icon": "fas fa-star"
+    },
+    "crush": {
+      "name": "Crush",
+      "featName": "Crush",
+      "featTree": "General",
+      "description": "You may spend a Force Point to move a target -1 step down the condition track when using Force Grip.",
+      "actionType": "passive",
+      "effect": "force_point_ability",
+      "tags": [
+        "feat",
+        "active",
+        "force_point_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "deadeye": {
+      "name": "Deadeye",
+      "featName": "Deadeye",
+      "featTree": "General",
+      "description": "You may reroll a ranged attack roll once per encounter and take the better result.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "deep-sight": {
+      "name": "Deep Sight",
+      "featName": "Deep Sight",
+      "featTree": "General",
+      "description": "You gain Darkvision, ignoring Concealment (including Total Concealment) from darkness. You cannot perceive colors in total darkness.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "delay-damage": {
+      "name": "Delay Damage",
+      "featName": "Delay Damage",
+      "featTree": "General",
+      "description": "Once per encounter, you may delay the effects of damage taken until the end of your next turn.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "desperate-gambit": {
+      "name": "Desperate Gambit",
+      "featName": "Desperate Gambit",
+      "featTree": "General",
+      "description": "Once per day, you may take a -5 penalty on a skill check to treat the result as if you had rolled a natural 20.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "dodge": {
+      "name": "Dodge",
+      "featName": "Dodge",
+      "featTree": "General",
+      "description": "During your turn, you designate an opponent and receive a +1 dodge bonus to your Reflex Defense against attacks from that opponent. You can select a new opponent on any action. A situation that makes you lose your Dexterity bonus to Reflex Defense (i",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "double-attack": {
+      "name": "Double Attack",
+      "featName": "Double Attack",
+      "featTree": "General",
+      "description": "You may make two attacks on your turn as a full-round action, each at a -5 penalty.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "echani-training": {
+      "name": "Echani Training",
+      "featName": "Echani Training",
+      "featTree": "General",
+      "description": "You can double the damage bonus provided by your Strength modifier to Unarmed Attacks (minimum +1) provided you make only one Unarmed attack this turn.\n\nOnce per encounter when you deal damage to a target with an Unarmed Attack you may make an immedi",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "fast-surge": {
+      "name": "Fast Surge",
+      "featName": "Fast Surge",
+      "featTree": "General",
+      "description": "You may activate Surge as a swift action instead of a standard action.",
+      "actionType": "passive",
+      "effect": "action_ability",
+      "tags": [
+        "feat",
+        "active",
+        "action_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "fast-talk": {
+      "name": "Fast Talk",
+      "featName": "Fast Talk",
+      "featTree": "General",
+      "description": "You may make a Persuasion check to feint in combat as a swift action instead of a standard action.",
+      "actionType": "passive",
+      "effect": "action_ability",
+      "tags": [
+        "feat",
+        "active",
+        "action_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "flawless-pilot": {
+      "name": "Flawless Pilot",
+      "featName": "Flawless Pilot",
+      "featTree": "General",
+      "description": "Whenever you reroll a Pilot check, you always keep the better result, even if you have multiple reroll abilities.",
+      "actionType": "passive",
+      "effect": "reroll",
+      "tags": [
+        "feat",
+        "active",
+        "reroll"
+      ],
+      "icon": "fas fa-star"
+    },
+    "force-regimen-mastery": {
+      "name": "Force Regimen Mastery",
+      "featName": "Force Regimen Mastery",
+      "featTree": "General",
+      "description": "You may spend a Force Point to gain the benefit of a Force Regimen you\u2019ve completed within the last 24 hours.",
+      "actionType": "passive",
+      "effect": "force_point_ability",
+      "tags": [
+        "feat",
+        "active",
+        "force_point_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "forceful-blast": {
+      "name": "Forceful Blast",
+      "featName": "Forceful Blast",
+      "featTree": "General",
+      "description": "You may spend a Force Point to move a target -1 step down the condition track when using Force Slam.",
+      "actionType": "passive",
+      "effect": "force_point_ability",
+      "tags": [
+        "feat",
+        "active",
+        "force_point_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "forceful-recovery": {
+      "name": "Forceful Recovery",
+      "featName": "Forceful Recovery",
+      "featTree": "General",
+      "description": "You may spend a Force Point to reroll a failed Endurance check to recover from a condition or persistent effect.",
+      "actionType": "passive",
+      "effect": "reroll",
+      "tags": [
+        "feat",
+        "active",
+        "reroll"
+      ],
+      "icon": "fas fa-star"
+    },
+    "forceful-strike": {
+      "name": "Forceful Strike",
+      "featName": "Forceful Strike",
+      "featTree": "General",
+      "description": "You may spend a Force Point to move a target -1 step down the condition track when using Force Stun.",
+      "actionType": "passive",
+      "effect": "force_point_ability",
+      "tags": [
+        "feat",
+        "active",
+        "force_point_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "forceful-telekinesis": {
+      "name": "Forceful Telekinesis",
+      "featName": "Forceful Telekinesis",
+      "featTree": "General",
+      "description": "You may spend a Force Point to move a target -1 step down the condition track when using Move Object.",
+      "actionType": "passive",
+      "effect": "force_point_ability",
+      "tags": [
+        "feat",
+        "active",
+        "force_point_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "forceful-vitality": {
+      "name": "Forceful Vitality",
+      "featName": "Forceful Vitality",
+      "featTree": "General",
+      "description": "You gain a +2 bonus on Endurance checks and may reroll a failed Endurance check once per encounter.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "forceful-will": {
+      "name": "Forceful Will",
+      "featName": "Forceful Will",
+      "featTree": "General",
+      "description": "You gain a +2 bonus on Will Defense against mind-affecting effects and may reroll a failed Will Defense check once per encounter.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "forest-stalker": {
+      "name": "Forest Stalker",
+      "featName": "Forest Stalker",
+      "featTree": "General",
+      "description": "Whenever you reroll a Stealth check, you always keep the better result, even if you have multiple reroll abilities.",
+      "actionType": "passive",
+      "effect": "reroll",
+      "tags": [
+        "feat",
+        "active",
+        "reroll"
+      ],
+      "icon": "fas fa-star"
+    },
+    "friendly-fire-avoidance": {
+      "name": "Friendly Fire Avoidance",
+      "featName": "Friendly Fire Avoidance",
+      "featTree": "General",
+      "description": "You may choose to exclude a number of squares equal to your Dexterity modifier from the area of effect of your autofire attacks.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "frightening-presence": {
+      "name": "Frightening Presence",
+      "featName": "Frightening Presence",
+      "featTree": "General",
+      "description": "When you use Frightful Presence, targets that fail their Will Defense check move -2 steps down the condition track instead of -1.",
+      "actionType": "passive",
+      "effect": "conditional",
+      "tags": [
+        "feat",
+        "active",
+        "conditional"
+      ],
+      "icon": "fas fa-star"
+    },
+    "frightful-presence": {
+      "name": "Frightful Presence",
+      "featName": "Frightful Presence",
+      "featTree": "General",
+      "description": "As a standard action, you may make a Persuasion check to intimidate all enemies within 6 squares. On a success, targets move -1 step down the condition track.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "grappling-strike": {
+      "name": "Grappling Strike",
+      "featName": "Grappling Strike",
+      "featTree": "General",
+      "description": "When you hit with a melee attack, you may initiate a grapple as a free action without provoking an attack of opportunity.",
+      "actionType": "passive",
+      "effect": "action_ability",
+      "tags": [
+        "feat",
+        "active",
+        "action_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "harm\u2019s-way": {
+      "name": "Harm\u2019s Way",
+      "featName": "Harm\u2019s Way",
+      "featTree": "General",
+      "description": "As a reaction, you may take damage dealt to an adjacent ally instead of them.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "headstrong": {
+      "name": "Headstrong",
+      "featName": "Headstrong",
+      "featTree": "General",
+      "description": "You gain a +2 bonus on Will Defense against fear effects and may reroll a failed Will Defense check once per encounter.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "heroic-surge": {
+      "name": "Heroic Surge",
+      "featName": "Heroic Surge",
+      "featTree": "General",
+      "description": "Once per encounter, you may take an additional standard or move action on your turn.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "hijkata-training": {
+      "name": "Hijkata Training",
+      "featName": "Hijkata Training",
+      "featTree": "General",
+      "description": "Once per round, when an adjacent enemy successfully damages you with a melee attack, you can make an Attack of Opportunity with an Unarmed Attack at a -5 penalty against that enemy, even if the enemy's attack normally would not provoke an Attack of O",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "hunters-instincts": {
+      "name": "Hunter's Instincts",
+      "featName": "Hunter's Instincts",
+      "featTree": "General",
+      "description": "Whenever you reroll a Perception check, you always keep the better result, even if you have multiple reroll abilities.",
+      "actionType": "passive",
+      "effect": "reroll",
+      "tags": [
+        "feat",
+        "active",
+        "reroll"
+      ],
+      "icon": "fas fa-star"
+    },
+    "inborn-resilience": {
+      "name": "Inborn Resilience",
+      "featName": "Inborn Resilience",
+      "featTree": "General",
+      "description": "You can reduce your Species bonus to any one Defense to +0 and increase your Species bonus to another Defense to +2. Once you change your Species bonuses in this way, they cannot be changed back.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "instinctive-perception": {
+      "name": "Instinctive Perception",
+      "featName": "Instinctive Perception",
+      "featTree": "General",
+      "description": "Whenever you reroll a Perception check and take the second result, if your second result is lower than your first result, you gain a temporary Force Point. This Force Point can be spent only to add to the result of a Perception check, and if it is no",
+      "actionType": "passive",
+      "effect": "reroll",
+      "tags": [
+        "feat",
+        "active",
+        "reroll"
+      ],
+      "icon": "fas fa-star"
+    },
+    "intimidating-presence": {
+      "name": "Intimidating Presence",
+      "featName": "Intimidating Presence",
+      "featTree": "General",
+      "description": "You may use Persuasion to intimidate as a swift action instead of a standard action.",
+      "actionType": "passive",
+      "effect": "action_ability",
+      "tags": [
+        "feat",
+        "active",
+        "action_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "intuitive-initiative": {
+      "name": "Intuitive Initiative",
+      "featName": "Intuitive Initiative",
+      "featTree": "General",
+      "description": "You may reroll your Initiative check and take the better result. You must keep the new result even if it is worse.",
+      "actionType": "passive",
+      "effect": "reroll",
+      "tags": [
+        "feat",
+        "active",
+        "reroll"
+      ],
+      "icon": "fas fa-star"
+    },
+    "jack-of-all-trades": {
+      "name": "Jack of All Trades",
+      "featName": "Jack of All Trades",
+      "featTree": "General",
+      "description": "You may make untrained skill checks with any skill, even those that normally require training.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "ktara-training": {
+      "name": "K'tara Training",
+      "featName": "K'tara Training",
+      "featTree": "General",
+      "description": "You roll an extra die of damage against a Flat-Footed enemy on one Unarmed Attack during your turn.\n\nOnce per encounter, when you deal damage with an Unarmed Attack to a target that has been denied its Dexterity bonus to Reflex Defense, make a second",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "kthri-training": {
+      "name": "K'thri Training",
+      "featName": "K'thri Training",
+      "featTree": "General",
+      "description": "Once per round, you can spend a Swift Action to make a single Unarmed Attack against one enemy within Reach, dealing your base Unarmed damage with no bonus to the damage roll from your Strength or Heroic Level.\n\nOnce per encounter, when you make an U",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "knock-prone": {
+      "name": "Knock Prone",
+      "featName": "Knock Prone",
+      "featTree": "General",
+      "description": "You may attempt to knock an opponent prone with a melee attack. If successful, the target falls prone.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "linguist": {
+      "name": "Linguist",
+      "featName": "Linguist",
+      "featTree": "General",
+      "description": "You learn three additional languages. You may take this feat multiple times.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "low-profile": {
+      "name": "Low Profile",
+      "featName": "Low Profile",
+      "featTree": "General",
+      "description": "You gain cover from enemies at long range and may reroll Stealth checks made to avoid detection.",
+      "actionType": "passive",
+      "effect": "reroll",
+      "tags": [
+        "feat",
+        "active",
+        "reroll"
+      ],
+      "icon": "fas fa-star"
+    },
+    "melee-defense": {
+      "name": "Melee Defense",
+      "featName": "Melee Defense",
+      "featTree": "General",
+      "description": "As a swift action, you may take a -5 penalty on melee attack rolls to gain a +5 bonus to your Reflex Defense against melee attacks until the start of your next turn.",
+      "actionType": "passive",
+      "effect": "action_ability",
+      "tags": [
+        "feat",
+        "active",
+        "action_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "mighty-swing": {
+      "name": "Mighty Swing",
+      "featName": "Mighty Swing",
+      "featTree": "General",
+      "description": "Once per encounter, you may reroll a melee attack roll and take the better result.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "mind-of-reason": {
+      "name": "Mind of Reason",
+      "featName": "Mind of Reason",
+      "featTree": "General",
+      "description": "You may use your Wisdom bonus instead of your Intelligence bonus for all Intelligence-based Skill Checks.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "mobile-fighting": {
+      "name": "Mobile Fighting",
+      "featName": "Mobile Fighting",
+      "featTree": "General",
+      "description": "You may move up to your speed when using the withdraw action, and you gain a +2 bonus to Reflex Defense against attacks of opportunity provoked by movement.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "mounted-combat": {
+      "name": "Mounted Combat",
+      "featName": "Mounted Combat",
+      "featTree": "General",
+      "description": "Once per round, when your mount is hit in combat, you may make a Ride check to negate the hit.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "mounted-regiment": {
+      "name": "Mounted Regiment",
+      "featName": "Mounted Regiment",
+      "featTree": "General",
+      "description": "You gain a +3 competence bonus on Ride checks. At the time you make a check, for each ally within 12 squares of you who also has this Feat, the competence bonus increases by +1 (to a maximum of +7).\n\nAdditionally, once per round as a Reaction to your",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "natural-leader": {
+      "name": "Natural Leader",
+      "featName": "Natural Leader",
+      "featTree": "General",
+      "description": "You may grant allies within line of sight a +1 bonus on attack rolls and skill checks for 1 minute as a standard action once per encounter.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "nimble-team": {
+      "name": "Nimble Team",
+      "featName": "Nimble Team",
+      "featTree": "General",
+      "description": "You gain a +3 competence bonus on Acrobatics checks. At the time you make a check, for each ally within 12 squares of you who also has this Feat, the competence bonus increases by +1 (to a maximum of +7).\n\nAdditionally, when you use the Acrobatics sk",
+      "actionType": "passive",
+      "effect": "conditional",
+      "tags": [
+        "feat",
+        "active",
+        "conditional"
+      ],
+      "icon": "fas fa-star"
+    },
+    "perfect-intuition": {
+      "name": "Perfect Intuition",
+      "featName": "Perfect Intuition",
+      "featTree": "General",
+      "description": "Whenever you reroll an Initiative check, you always keep the better result, even if you have multiple reroll abilities.",
+      "actionType": "passive",
+      "effect": "reroll",
+      "tags": [
+        "feat",
+        "active",
+        "reroll"
+      ],
+      "icon": "fas fa-star"
+    },
+    "perfect-swimmer": {
+      "name": "Perfect Swimmer",
+      "featName": "Perfect Swimmer",
+      "featTree": "General",
+      "description": "Whenever you reroll a Swim check, you always keep the better result, even if you have multiple reroll abilities.",
+      "actionType": "passive",
+      "effect": "reroll",
+      "tags": [
+        "feat",
+        "active",
+        "reroll"
+      ],
+      "icon": "fas fa-star"
+    },
+    "pin": {
+      "name": "Pin",
+      "featName": "Pin",
+      "featTree": "General",
+      "description": "You may attempt to pin a grappled opponent. If successful, the target is immobilized until they escape the grapple.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "power-attack": {
+      "name": "Power Attack",
+      "featName": "Power Attack",
+      "featTree": "General",
+      "description": "You may take a penalty on melee attack rolls to gain a bonus on melee damage rolls equal to the penalty.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "quick-comeback": {
+      "name": "Quick Comeback",
+      "featName": "Quick Comeback",
+      "featTree": "General",
+      "description": "Whenever you are moved down the Condition Track by an attack that deals damage that equals or exceeds your Damage Threshold, until the end of your next turn you can move +1 step on the Condition Track as a single Swift Action. You can use this Feat o",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "quick-draw": {
+      "name": "Quick Draw",
+      "featName": "Quick Draw",
+      "featTree": "General",
+      "description": "You may draw or holster a weapon as a swift action instead of a move action.",
+      "actionType": "passive",
+      "effect": "action_ability",
+      "tags": [
+        "feat",
+        "active",
+        "action_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "rapid-shot": {
+      "name": "Rapid Shot",
+      "featName": "Rapid Shot",
+      "featTree": "General",
+      "description": "When making a full attack with a ranged weapon, you may make one additional attack. All attacks take a -2 penalty.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "rapid-strike": {
+      "name": "Rapid Strike",
+      "featName": "Rapid Strike",
+      "featTree": "General",
+      "description": "When making a full attack with a melee weapon, you may make one additional attack. All attacks take a -2 penalty.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "reactive-awareness": {
+      "name": "Reactive Awareness",
+      "featName": "Reactive Awareness",
+      "featTree": "General",
+      "description": "Once per encounter, you may reroll a Perception check and take the better result.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "reactive-stealth": {
+      "name": "Reactive Stealth",
+      "featName": "Reactive Stealth",
+      "featTree": "General",
+      "description": "Once per encounter, you may reroll a Stealth check and take the better result.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "regenerative-healing": {
+      "name": "Regenerative Healing",
+      "featName": "Regenerative Healing",
+      "featTree": "General",
+      "description": "Once per day when you catch a Second Wind, you can regain no Hit Points immediately and instead regain 5 Hit Points at the end of each of your turns until you reach full Hit Points or until the end of the encounter (whichever comes first).",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "resilient-reflexes": {
+      "name": "Resilient Reflexes",
+      "featName": "Resilient Reflexes",
+      "featTree": "General",
+      "description": "You gain a +2 bonus on Reflex Defense against effects that target Dexterity and may reroll a failed check once per encounter.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "resilient-strength": {
+      "name": "Resilient Strength",
+      "featName": "Resilient Strength",
+      "featTree": "General",
+      "description": "You gain a +2 bonus on Fortitude Defense against effects that target Strength and may reroll a failed check once per encounter.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "resilient-talent": {
+      "name": "Resilient Talent",
+      "featName": "Resilient Talent",
+      "featTree": "General",
+      "description": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute. You may use this talent even if you do not meet its prerequisites.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "resilient-will": {
+      "name": "Resilient Will",
+      "featName": "Resilient Will",
+      "featTree": "General",
+      "description": "You gain a +2 bonus on Will Defense against effects that target Wisdom and may reroll a failed check once per encounter.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "running-attack": {
+      "name": "Running Attack",
+      "featName": "Running Attack",
+      "featTree": "General",
+      "description": "You may make a single melee or ranged attack at any point during a move action taken on your turn.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "saber-throw": {
+      "name": "Saber Throw",
+      "featName": "Saber Throw",
+      "featTree": "General",
+      "description": "You may throw your lightsaber as a ranged attack using Use the Force instead of a ranged attack roll. The lightsaber returns to your hand at the end of the turn.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "savage-attack": {
+      "name": "Savage Attack",
+      "featName": "Savage Attack",
+      "featTree": "General",
+      "description": "You may reroll a damage roll and take the better result. You must keep the new result even if it is worse.",
+      "actionType": "passive",
+      "effect": "reroll",
+      "tags": [
+        "feat",
+        "active",
+        "reroll"
+      ],
+      "icon": "fas fa-star"
+    },
+    "scavenger": {
+      "name": "Scavenger",
+      "featName": "Scavenger",
+      "featTree": "General",
+      "description": "You may reroll a Mechanics check made to disable or salvage a device and take the better result.",
+      "actionType": "passive",
+      "effect": "reroll",
+      "tags": [
+        "feat",
+        "active",
+        "reroll"
+      ],
+      "icon": "fas fa-star"
+    },
+    "skill-training": {
+      "name": "Skill Training",
+      "featName": "Skill Training",
+      "featTree": "General",
+      "description": "You become trained in one additional skill. You may take this feat multiple times.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "slippery-maneuver": {
+      "name": "Slippery Maneuver",
+      "featName": "Slippery Maneuver",
+      "featTree": "General",
+      "description": "You may reroll a check made to escape a grapple or avoid being pinned and take the better result.",
+      "actionType": "passive",
+      "effect": "reroll",
+      "tags": [
+        "feat",
+        "active",
+        "reroll"
+      ],
+      "icon": "fas fa-star"
+    },
+    "sniper": {
+      "name": "Sniper",
+      "featName": "Sniper",
+      "featTree": "General",
+      "description": "You may aim as a move action instead of a standard action when using a rifle or pistol.",
+      "actionType": "passive",
+      "effect": "action_ability",
+      "tags": [
+        "feat",
+        "active",
+        "action_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "spring-attack": {
+      "name": "Spring Attack",
+      "featName": "Spring Attack",
+      "featTree": "General",
+      "description": "When making a melee attack, you may move both before and after the attack, up to your speed, without provoking attacks of opportunity from the target.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "staggering-attack": {
+      "name": "Staggering Attack",
+      "featName": "Staggering Attack",
+      "featTree": "General",
+      "description": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "stava-training": {
+      "name": "Stava Training",
+      "featName": "Stava Training",
+      "featTree": "General",
+      "description": "When making a Grab attack, you are considered to be one size category larger for the purpose of determining the size of the opponent that you can Grab. If you are capable of making a Grapple attack, you are considered to be one size category larger f",
+      "actionType": "passive",
+      "effect": "action_ability",
+      "tags": [
+        "feat",
+        "active",
+        "action_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "stealthy": {
+      "name": "Stealthy",
+      "featName": "Stealthy",
+      "featTree": "General",
+      "description": "You gain a +2 bonus on Stealth checks and may reroll a failed Stealth check once per encounter.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "strong-bellow": {
+      "name": "Strong Bellow",
+      "featName": "Strong Bellow",
+      "featTree": "General",
+      "description": "Once per encounter when you use your Bellow ability, you move one less step down the Condition Track.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "surgical-precision": {
+      "name": "Surgical Precision",
+      "featName": "Surgical Precision",
+      "featTree": "General",
+      "description": "You gain a +2 bonus on Treat Injury checks and may reroll a failed check once per encounter.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "survivor-of-ryloth": {
+      "name": "Survivor of Ryloth",
+      "featName": "Survivor of Ryloth",
+      "featTree": "General",
+      "description": "Once per hour when you and your allies are in an environment of Extreme Heat or Extreme Cold, you can make a Survival check. You and up to 10 allies can use the results of the Survival check in place of your Fortitude Defense when the Extreme Heat or",
+      "actionType": "passive",
+      "effect": "conditional",
+      "tags": [
+        "feat",
+        "active",
+        "conditional"
+      ],
+      "icon": "fas fa-star"
+    },
+    "tae-jitsu-training": {
+      "name": "Tae-Jitsu Training",
+      "featName": "Tae-Jitsu Training",
+      "featTree": "General",
+      "description": "When you score a Critical Hit with an Unarmed Attack, the damage dealt by your attack increases by one die step, to a maximum of d12.\n\nOnce per encounter, when you make a successful Unarmed Attack against an enemy, you can spend a Swift Action to des",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "tech-specialist": {
+      "name": "Tech Specialist",
+      "featName": "Tech Specialist",
+      "featTree": "General",
+      "description": "You may modify equipment, weapons, armor, or droids to grant a +2 equipment bonus to one skill or ability. Takes 1 hour and requires a workshop.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "triple-crit": {
+      "name": "Triple Crit",
+      "featName": "Triple Crit",
+      "featTree": "General",
+      "description": "When you score a critical hit with the selected weapon group, you deal triple damage instead of double.",
+      "actionType": "passive",
+      "effect": "conditional",
+      "tags": [
+        "feat",
+        "active",
+        "conditional"
+      ],
+      "icon": "fas fa-star"
+    },
+    "triple-crit-specialist": {
+      "name": "Triple Crit Specialist",
+      "featName": "Triple Crit Specialist",
+      "featTree": "General",
+      "description": "When you score a critical hit with the selected weapon group, you deal triple damage and move the target -1 step down the condition track.",
+      "actionType": "passive",
+      "effect": "conditional",
+      "tags": [
+        "feat",
+        "active",
+        "conditional"
+      ],
+      "icon": "fas fa-star"
+    },
+    "trustworthy": {
+      "name": "Trustworthy",
+      "featName": "Trustworthy",
+      "featTree": "General",
+      "description": "You gain a +2 bonus on Persuasion checks and may reroll a failed Persuasion check once per encounter.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "unstoppable-force": {
+      "name": "Unstoppable Force",
+      "featName": "Unstoppable Force",
+      "featTree": "General",
+      "description": "You may spend a Force Point to ignore damage reduction or energy resistance when using a damaging Force power.",
+      "actionType": "passive",
+      "effect": "force_point_ability",
+      "tags": [
+        "feat",
+        "active",
+        "force_point_ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "unwavering-focus": {
+      "name": "Unwavering Focus",
+      "featName": "Unwavering Focus",
+      "featTree": "General",
+      "description": "Whenever you are targeted by a Mind-Affecting effect that requires a Skill Check against your Will Defense, as a Reaction you can impose a -2 penalty to that Skill Check.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "vehicular-combat": {
+      "name": "Vehicular Combat",
+      "featName": "Vehicular Combat",
+      "featTree": "General",
+      "description": "Once per round, when your vehicle is hit in combat, you may make a Pilot check to negate the hit.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "wary-sentries": {
+      "name": "Wary Sentries",
+      "featName": "Wary Sentries",
+      "featTree": "General",
+      "description": "You gain a +3 competence bonus on Perception checks. At the time you make a check, for each ally within 12 squares of you who also has this Feat, the competence bonus increases by +1 (to a maximum of +7).\n\nAdditionally, you can Take 10 on Perception ",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "weapon-finesse": {
+      "name": "Weapon Finesse",
+      "featName": "Weapon Finesse",
+      "featTree": "General",
+      "description": "You may use your Dexterity modifier instead of Strength for attack rolls with light melee weapons.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "whirlwind-attack": {
+      "name": "Whirlwind Attack",
+      "featName": "Whirlwind Attack",
+      "featTree": "General",
+      "description": "When making a melee attack, you may attack all adjacent enemies once each as a full-round action.",
+      "actionType": "passive",
+      "effect": "special",
+      "tags": [
+        "feat",
+        "active",
+        "special"
+      ],
+      "icon": "fas fa-star"
+    },
+    "wounding-strike": {
+      "name": "Wounding Strike",
+      "featName": "Wounding Strike",
+      "featTree": "General",
+      "description": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack.",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
+    },
+    "wrruushi-training": {
+      "name": "Wrruushi Training",
+      "featName": "Wrruushi Training",
+      "featTree": "General",
+      "description": "Once per round when you make a successful Unarmed Attack, you gain a number of Bonus Hit Points equal to your Constitution modifier. Damage is subtracted from the Bonus Hit Points first, and any Bonus Hit Points remaining at the end of the encounter ",
+      "actionType": "passive",
+      "effect": "limited_use",
+      "tags": [
+        "feat",
+        "active",
+        "limited_use"
+      ],
+      "icon": "fas fa-star"
     }
   }
 }
