@@ -135,7 +135,7 @@ export class TalentAbilitiesEngine {
     }
 
     /**
-     * Get ability by talent name
+     * Get ability by talent name (returns first match)
      * @param {string} talentName - The talent name
      * @returns {Object|null} Ability definition or null
      */
@@ -149,6 +149,24 @@ export class TalentAbilitiesEngine {
             }
         }
         return null;
+    }
+
+    /**
+     * Get ALL abilities for a talent name (for multi-option talents)
+     * @param {string} talentName - The talent name
+     * @returns {Array} Array of ability definitions
+     */
+    static getAbilitiesByTalentName(talentName) {
+        const normalized = talentName.toLowerCase().trim();
+        const abilities = this.getAllAbilities();
+        const matches = [];
+
+        for (const [id, ability] of Object.entries(abilities)) {
+            if (ability.talentName?.toLowerCase().trim() === normalized) {
+                matches.push({ ...ability, id });
+            }
+        }
+        return matches;
     }
 
     /**
@@ -179,40 +197,72 @@ export class TalentAbilitiesEngine {
             modifiers: []
         };
 
-        // First pass: collect all base abilities
+        // First pass: collect all base abilities and group by talent name
+        const abilitiesByTalent = new Map(); // Map<talentName, Array<ability>>
+
         for (const talent of talents) {
-            const ability = this.getAbilityByTalentName(talent.name);
-            if (!ability) continue;
+            const matchingAbilities = this.getAbilitiesByTalentName(talent.name);
+            if (!matchingAbilities || matchingAbilities.length === 0) continue;
 
-            // Check if this is a modifier ability
-            if (ability.actionType === 'modifier' && ability.modifies) {
-                result.modifiers.push({
-                    ...ability,
-                    sourceTalent: talent,
-                    sourceTalentId: talent.id
-                });
-                continue;
+            for (const ability of matchingAbilities) {
+                // Check if this is a modifier ability
+                if (ability.actionType === 'modifier' && ability.modifies) {
+                    result.modifiers.push({
+                        ...ability,
+                        sourceTalent: talent,
+                        sourceTalentId: talent.id
+                    });
+                    continue;
+                }
+
+                // Check prerequisites
+                const prereqsMet = this._checkPrerequisites(ability, talentNames);
+                if (!prereqsMet) continue;
+
+                const enrichedAbility = this._enrichAbility(ability, actor, talent);
+
+                // Group abilities by talent name
+                const key = talent.name;
+                if (!abilitiesByTalent.has(key)) {
+                    abilitiesByTalent.set(key, []);
+                }
+                abilitiesByTalent.get(key).push(enrichedAbility);
             }
+        }
 
-            // Check prerequisites
-            const prereqsMet = this._checkPrerequisites(ability, talentNames);
-            if (!prereqsMet) continue;
+        // Second pass: create parent cards for multi-option talents
+        for (const [talentName, abilities] of abilitiesByTalent) {
+            if (abilities.length === 1) {
+                // Single ability - add directly
+                const ability = abilities[0];
+                result.all.push(ability);
 
-            const enrichedAbility = this._enrichAbility(ability, actor, talent);
-            result.all.push(enrichedAbility);
+                const typeKey = this._getTypeKey(ability.actionType);
+                if (result.byType[typeKey]) {
+                    result.byType[typeKey].push(ability);
+                }
 
-            // Categorize by action type
-            const typeKey = this._getTypeKey(ability.actionType);
-            if (result.byType[typeKey]) {
-                result.byType[typeKey].push(enrichedAbility);
+                const tree = ability.talentTree || 'Other';
+                if (!result.byTree[tree]) {
+                    result.byTree[tree] = [];
+                }
+                result.byTree[tree].push(ability);
+            } else {
+                // Multiple abilities - create parent card with sub-options
+                const parentAbility = this._createMultiOptionParent(talentName, abilities, actor);
+                result.all.push(parentAbility);
+
+                const typeKey = this._getTypeKey(parentAbility.actionType);
+                if (result.byType[typeKey]) {
+                    result.byType[typeKey].push(parentAbility);
+                }
+
+                const tree = parentAbility.talentTree || 'Other';
+                if (!result.byTree[tree]) {
+                    result.byTree[tree] = [];
+                }
+                result.byTree[tree].push(parentAbility);
             }
-
-            // Categorize by tree
-            const tree = ability.talentTree || 'Other';
-            if (!result.byTree[tree]) {
-                result.byTree[tree] = [];
-            }
-            result.byTree[tree].push(enrichedAbility);
         }
 
         // Second pass: apply modifiers to base abilities
@@ -322,6 +372,48 @@ export class TalentAbilitiesEngine {
         }
 
         return enriched;
+    }
+
+    /**
+     * Create a parent ability card for multi-option talents
+     * @param {string} talentName - The talent name
+     * @param {Array} subAbilities - Array of sub-abilities
+     * @param {Actor} actor - The actor
+     * @returns {Object} Parent ability card
+     */
+    static _createMultiOptionParent(talentName, subAbilities, actor) {
+        // Use first sub-ability as template for shared properties
+        const template = subAbilities[0];
+
+        return {
+            id: `multi-${talentName.toLowerCase().replace(/\s+/g, '-')}`,
+            name: talentName,
+            talentName: talentName,
+            talentTree: template.talentTree,
+            description: `Choose one of ${subAbilities.length} options`,
+            actionType: 'multi-option',
+            icon: template.icon || 'fas fa-list',
+            typeLabel: 'Multi-Option',
+            typeBadgeClass: 'multi-option',
+            sourceTalent: template.sourceTalent,
+            sourceTalentId: template.sourceTalentId,
+            sourceTalentName: talentName,
+
+            // Multi-option specific properties
+            isMultiOption: true,
+            hasMultipleOptions: true,
+            subAbilities: subAbilities,
+            subAbilityCount: subAbilities.length,
+
+            // For display purposes
+            hasChoices: false,  // Don't use the old choices system
+            usesData: {
+                isLimited: false
+            },
+            rollData: {
+                canRoll: false
+            }
+        };
     }
 
     /**
