@@ -147,7 +147,12 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       }),
 
       // Biography
-      biography: new fields.StringField({required: false, initial: ""})
+      biography: new fields.StringField({required: false, initial: ""}),
+
+      // Background information for Biography tab
+      event: new fields.StringField({required: false, initial: ""}),
+      profession: new fields.StringField({required: false, initial: ""}),
+      planetOfOrigin: new fields.StringField({required: false, initial: ""})
     };
   }
 
