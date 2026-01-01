@@ -402,7 +402,8 @@ const starshipManeuvers = {
     },
     tags: ["vehicle", "force", "pilot", "swift"],
     icon: "fas fa-eye",
-    linkedAction: "starship-maneuver"
+    linkedAction: "starship-maneuver",
+    prerequisites: ["use-the-force-trained"]
   },
   "thruster-hit": {
     id: "thruster-hit",
