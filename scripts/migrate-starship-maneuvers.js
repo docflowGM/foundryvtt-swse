@@ -25,12 +25,23 @@ const starshipManeuvers = {
     talentTree: "Ace Pilot",
     description: "A starship tactic made famous by the Mon Calamari Admiral Ackbar. Move into the midst of enemy forces to cause an opponent to strike its own allies.",
     actionType: "reaction",
-    trigger: "When you move through enemy formation",
+    trigger: "When an adjacent opponent misses an attack against you",
+    targets: "One adjacent opponent",
     roll: {
       skillKey: "pilot",
-      vsTarget: "attack",
       label: "Ackbar Slash (Pilot Check)"
     },
+    mechanics: {
+      type: "tiered",
+      baseDC: 20,
+      effects: [
+        { dc: 20, effect: "Redirect missed attack to different adjacent opponent" },
+        { dc: 25, effect: "Redirect attack with +1 maneuver bonus" },
+        { dc: 30, effect: "Redirect attack with +2 maneuver bonus" },
+        { dc: 35, effect: "Redirect attack with +5 maneuver bonus" }
+      ]
+    },
+    special: "The new target of the redirected attack may not in turn use the Ackbar Slash maneuver to redirect that attack.",
     tags: ["vehicle", "pilot", "tactics", "reaction"],
     icon: "fas fa-directions",
     linkedAction: "starship-maneuver"
@@ -42,10 +53,22 @@ const starshipManeuvers = {
     talentTree: "Ace Pilot",
     description: "Throttle up and blast past enemies to avoid becoming entangled in Dogfights.",
     actionType: "fullRound",
+    targets: "Self",
     roll: {
       skillKey: "pilot",
       label: "Afterburn (Pilot Check)"
     },
+    mechanics: {
+      type: "tiered",
+      baseDC: 15,
+      effects: [
+        { dc: 15, effect: "All-Out Movement + +1 maneuver bonus to resist Dogfight initiation" },
+        { dc: 20, effect: "All-Out Movement + +2 maneuver bonus to resist Dogfight initiation" },
+        { dc: 25, effect: "All-Out Movement + +5 maneuver bonus to resist Dogfight initiation" },
+        { dc: 30, effect: "All-Out Movement + +10 maneuver bonus to resist Dogfight initiation" }
+      ]
+    },
+    special: "You take the All-Out Movement Action as a Free Action. The bonuses apply during this action to Pilot checks made to resist Dogfight initiation.",
     tags: ["vehicle", "pilot", "mobility", "fullround"],
     icon: "fas fa-fire",
     linkedAction: "starship-maneuver"
@@ -57,16 +80,20 @@ const starshipManeuvers = {
     talentTree: "Ace Pilot",
     description: "[Attack Pattern] Focus deflector shields in a particular direction, making it easier to absorb incoming attacks from a certain angle.",
     actionType: "swift",
+    targets: "Self (special, choose one other vehicle)",
+    roll: {
+      skillKey: "pilot",
+      label: "Angle Deflector Shields (Pilot Check)"
+    },
+    mechanics: {
+      type: "fixed",
+      baseDC: 15,
+      effect: "Shield Rating doubled against chosen target, halved against all others. Change target as swift action."
+    },
+    special: "Requires vehicle with SR 5+. Shield Rating is considered double for chosen target, halved (rounded down) for all others. You may change target as a Swift Action. Deactivate as Swift Action.",
     tags: ["vehicle", "defense", "shields", "attack-pattern", "swift"],
     icon: "fas fa-shield-alt",
-    linkedAction: "starship-maneuver",
-    effects: [{
-      type: "defenseBonus",
-      defense: "reflex",
-      value: 2,
-      condition: "from one direction",
-      duration: "untilEncounterEnd"
-    }]
+    linkedAction: "starship-maneuver"
   },
   "attack-formation-zeta-nine": {
     id: "attack-formation-zeta-nine",
@@ -75,15 +102,20 @@ const starshipManeuvers = {
     talentTree: "Ace Pilot",
     description: "[Attack Pattern] Typically used to approach Capital Ships or other vessels with heavy firepower. Emphasizes shields over firepower.",
     actionType: "swift",
+    targets: "Self",
+    roll: {
+      skillKey: "pilot",
+      label: "Attack Formation Zeta Nine (Pilot Check)"
+    },
+    mechanics: {
+      type: "fixed",
+      baseDC: 20,
+      effect: "Subtract 1 die of damage from weapon damage rolls to add +20 to Shield Rating"
+    },
+    special: "Requires vehicle with SR 5+. Formation emphasizes defense over offense. Deactivate as Swift Action.",
     tags: ["vehicle", "formation", "defense", "attack-pattern", "swift"],
     icon: "fas fa-cube",
-    linkedAction: "starship-maneuver",
-    effects: [{
-      type: "defenseBonus",
-      defense: "reflex",
-      value: 3,
-      duration: "untilEncounterEnd"
-    }]
+    linkedAction: "starship-maneuver"
   },
   "attack-pattern-delta": {
     id: "attack-pattern-delta",
@@ -92,16 +124,20 @@ const starshipManeuvers = {
     talentTree: "Ace Pilot",
     description: "[Attack Pattern] Utilizes close-range maneuvering by allied ships to make it more difficult to target individual vessels. Vessels typically fly in a straight line toward target.",
     actionType: "swift",
+    targets: "Self",
+    roll: {
+      skillKey: "pilot",
+      label: "Attack Pattern Delta (Pilot Check)"
+    },
+    mechanics: {
+      type: "fixed",
+      baseDC: 20,
+      effect: "+1 maneuver bonus to Reflex Defense when adjacent to allied Starfighter or Airspeeder (+2 if allies also using Attack Pattern Delta)"
+    },
+    special: "Gain +1 maneuver bonus to vehicle Reflex Defense when adjacent to an allied Starfighter or Airspeeder. Bonus increases to +2 if any adjacent allies are also using Attack Pattern Delta.",
     tags: ["vehicle", "formation", "defense", "attack-pattern", "swift"],
     icon: "fas fa-arrows-alt",
-    linkedAction: "starship-maneuver",
-    effects: [{
-      type: "defenseBonus",
-      defense: "reflex",
-      value: 2,
-      condition: "to rear ships",
-      duration: "untilEncounterEnd"
-    }]
+    linkedAction: "starship-maneuver"
   },
   "corellian-slip": {
     id: "corellian-slip",
@@ -110,11 +146,23 @@ const starshipManeuvers = {
     talentTree: "Ace Pilot",
     description: "A teamwork-focused Starfighter tactic. Destroy an opposing Starship that threatens one of your allies by flying at the enemy vessel head-on.",
     actionType: "fullRound",
+    targets: "One enemy Airspeeder or Starfighter within (2 x your Vehicle's Speed) squares",
     roll: {
       skillKey: "pilot",
-      vsDefense: "reflex",
       label: "Corellian Slip (Pilot Check)"
     },
+    mechanics: {
+      type: "tiered",
+      baseDC: 15,
+      effects: [
+        { dc: 15, effect: "Move through opponent, make attack as free action. No Collision if target destroyed." },
+        { dc: 20, effect: "As above + +1 circumstance bonus to attack roll" },
+        { dc: 25, effect: "As above + +1 die of damage" },
+        { dc: 30, effect: "+2 circumstance bonus to attack roll + +1 die of damage" },
+        { dc: 35, effect: "+2 circumstance bonus to attack roll + +2 dice of damage" }
+      ]
+    },
+    special: "Move up to twice your Vehicle's Speed in a straight line through opponent's square. Make an attack as Free Action when entering opponent's square. If movement is halted (such as being drawn into Dogfight), maneuver fails. If failed, you still move through opponent's square and Collision occurs normally—you don't get an attack and can't attempt to Avoid Collision. Opponent may attempt to Avoid Collision.",
     tags: ["vehicle", "pilot", "offense", "teamwork", "fullround"],
     icon: "fas fa-arrow-right",
     linkedAction: "starship-maneuver"
@@ -126,7 +174,22 @@ const starshipManeuvers = {
     talentTree: "Ace Pilot",
     description: "[Dogfight] Take a quick action while engaged in a Dogfight after being the target of an attack.",
     actionType: "reaction",
-    trigger: "After being targeted in a Dogfight",
+    trigger: "When attacked by adjacent opponent in Dogfight",
+    targets: "Self",
+    roll: {
+      skillKey: "pilot",
+      label: "Counter (Pilot Check)"
+    },
+    mechanics: {
+      type: "tiered",
+      baseDC: 20,
+      effects: [
+        { dc: 20, effect: "Immediately take one Swift Action" },
+        { dc: 25, effect: "Immediately take one Move Action" },
+        { dc: 30, effect: "Immediately take one Standard Action" }
+      ]
+    },
+    special: "Activate as Reaction to being attacked by a Vehicle in Dogfight. Attack is resolved before you take your Action. Initiative Order is not modified.",
     tags: ["vehicle", "pilot", "defense", "dogfight", "reaction"],
     icon: "fas fa-reply",
     linkedAction: "starship-maneuver"
@@ -138,10 +201,21 @@ const starshipManeuvers = {
     talentTree: "Ace Pilot",
     description: "Originally an improvised combat maneuver. Attack multiple targets with your Starship's weapons.",
     actionType: "standard",
+    targets: "Self",
     roll: {
       skillKey: "pilot",
       label: "Darklighter Spin (Pilot Check)"
     },
+    mechanics: {
+      type: "tiered",
+      baseDC: 25,
+      effects: [
+        { dc: 25, effect: "Make Autofire attack at -5 penalty" },
+        { dc: 30, effect: "Make Autofire attack at -2 penalty" },
+        { dc: 35, effect: "Make Autofire attack without penalty" }
+      ]
+    },
+    special: "Make Starship Scale Area Attack with Autofire weapon even if not normally capable. Weapon must be capable of Autofire.",
     tags: ["vehicle", "pilot", "offense", "standard"],
     icon: "fas fa-sync",
     linkedAction: "starship-maneuver"
@@ -153,11 +227,21 @@ const starshipManeuvers = {
     talentTree: "Ace Pilot",
     description: "[Gunner] Score an incredibly precise hit on the target, punching holes in vital systems and potentially disabling your target.",
     actionType: "standard",
+    targets: "A single Vehicle within range",
     roll: {
       skillKey: "pilot",
       vsDefense: "reflex",
       label: "Devastating Hit (Gunner Check)"
     },
+    mechanics: {
+      type: "margin",
+      effects: [
+        { margin: 0, effect: "Normal weapon damage + 1 extra die" },
+        { margin: 5, effect: "Normal weapon damage + 2 extra dice" },
+        { margin: 10, effect: "Normal weapon damage + 3 extra dice" }
+      ]
+    },
+    special: "Make attack roll. Compare to target's Reflex Defense. Effects depend on how much you exceed the defense.",
     tags: ["vehicle", "gunner", "offense", "standard"],
     icon: "fas fa-bullseye",
     linkedAction: "starship-maneuver"
@@ -169,11 +253,22 @@ const starshipManeuvers = {
     talentTree: "Ace Pilot",
     description: "[Gunner] Target an opponent's engines, slowing them down with a successful hit.",
     actionType: "reaction",
+    trigger: "After dealing Critical Hit or damage >= Damage Threshold",
+    targets: "One Vehicle you just attacked",
     roll: {
       skillKey: "pilot",
       vsDefense: "reflex",
       label: "Engine Hit (Gunner Check)"
     },
+    mechanics: {
+      type: "margin",
+      effects: [
+        { margin: 0, effect: "Target's Speed reduced by 1 square (DC 20 Mechanics to repair)" },
+        { margin: 5, effect: "Target's Speed reduced by 2 squares (DC 25 Mechanics to repair)" },
+        { margin: 10, effect: "Target's Speed reduced by 3 squares (DC 30 Mechanics to repair)" }
+      ]
+    },
+    special: "Activate as Reaction after dealing Critical Hit or damage >= Damage Threshold. Reduction lasts remainder of encounter. Engineer on target can repair with Full-Round Action.",
     tags: ["vehicle", "gunner", "debuff", "reaction"],
     icon: "fas fa-fan",
     linkedAction: "starship-maneuver"
@@ -185,10 +280,22 @@ const starshipManeuvers = {
     talentTree: "Ace Pilot",
     description: "[Dogfight] Slip free of close pursuit, escaping from a Dogfight more easily.",
     actionType: "move",
+    targets: "Self",
     roll: {
       skillKey: "pilot",
       label: "Evasive Action (Pilot Check)"
     },
+    mechanics: {
+      type: "tiered",
+      baseDC: 15,
+      effects: [
+        { dc: 15, effect: "Disengage from Dogfight (no action) + +2 bonus on Disengage check" },
+        { dc: 20, effect: "Disengage from Dogfight (no action) + +5 bonus on Disengage check" },
+        { dc: 25, effect: "Disengage from Dogfight (no action) + +10 bonus on Disengage check" },
+        { dc: 30, effect: "Disengage from Dogfight (no action) + +20 bonus on Disengage check" }
+      ]
+    },
+    special: "Immediately attempt to disengage from Dogfight with no action required.",
     tags: ["vehicle", "pilot", "mobility", "dogfight", "move"],
     icon: "fas fa-wind",
     linkedAction: "starship-maneuver"
@@ -200,11 +307,22 @@ const starshipManeuvers = {
     talentTree: "Ace Pilot",
     description: "[Gunner] Target critical ship systems and fuel cells, causing your target to explode with incredible force.",
     actionType: "reaction",
+    trigger: "After destroying a Vehicle",
+    targets: "All targets adjacent to ship you just destroyed",
     roll: {
       skillKey: "pilot",
       vsDefense: "reflex",
       label: "Explosive Shot (Gunner Check)"
     },
+    mechanics: {
+      type: "margin",
+      effects: [
+        { margin: 0, effect: "3d10x2 damage" },
+        { margin: 5, effect: "4d10x2 damage" },
+        { margin: 10, effect: "5d10x2 damage" }
+      ]
+    },
+    special: "Activate as Reaction to attack that destroys a Vehicle (reduces to 0 HP with damage >= Damage Threshold).",
     tags: ["vehicle", "gunner", "offense", "reaction"],
     icon: "fas fa-explosion",
     linkedAction: "starship-maneuver"
