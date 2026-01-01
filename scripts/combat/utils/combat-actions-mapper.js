@@ -12,6 +12,7 @@
  */
 
 import { SWSELogger } from "../../utils/logger.js";
+import TalentActionLinker from "../../engine/talent-action-linker.js";
 
 export class CombatActionsMapper {
 
@@ -174,7 +175,7 @@ export class CombatActionsMapper {
 
       // If no compendium enhancements found, try TalentActionLinker for generic talent bonuses
       let talentBonus = null;
-      if (!enh.length && typeof TalentActionLinker !== 'undefined' && TalentActionLinker.MAPPING) {
+      if (!enh.length && TalentActionLinker.MAPPING) {
         // Map action key to TalentActionLinker action ID
         // This provides a fallback for talents not in the compendium enhancements
         const linkedTalents = TalentActionLinker.getTalentsForAction(actor, action.key);

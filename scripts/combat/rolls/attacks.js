@@ -39,7 +39,8 @@ function computeAttackBonus(actor, weapon, actionId = null) {
 
   // Talent bonuses from linked talents
   let talentBonus = 0;
-  if (actionId && typeof TalentActionLinker !== 'undefined' && TalentActionLinker.MAPPING) {
+  const TalentActionLinker = window.SWSE?.TalentActionLinker;
+  if (actionId && TalentActionLinker?.MAPPING) {
     const bonusInfo = TalentActionLinker.calculateBonusForAction(actor, actionId);
     talentBonus = bonusInfo.value;
   }

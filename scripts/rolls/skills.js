@@ -52,7 +52,8 @@ export function calculateSkillMod(actor, skill, actionId = null) {
   let talentBonus = 0;
 
   // Apply talent bonuses if action ID is provided and TalentActionLinker is available
-  if (actionId && typeof TalentActionLinker !== 'undefined' && TalentActionLinker.MAPPING) {
+  const TalentActionLinker = window.SWSE?.TalentActionLinker;
+  if (actionId && TalentActionLinker?.MAPPING) {
     const bonusInfo = TalentActionLinker.calculateBonusForAction(actor, actionId);
     talentBonus = bonusInfo.value;
   }
