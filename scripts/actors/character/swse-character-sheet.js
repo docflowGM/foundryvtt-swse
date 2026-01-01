@@ -260,6 +260,13 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
     if (hasStartshipTactics) {
       context.starshipManeuvers = StarshipManeuversEngine.getManeuversForActor(actor);
+
+      // Prepare suite data for suite management UI
+      const allManeuvers = actor.items.filter(item => item.type === 'maneuver');
+      const suiteIds = actor.system.starshipManeuverSuite?.maneuvers || [];
+
+      context.starshipManeuvers.all = allManeuvers;
+      context.activeSuite = allManeuvers.filter(m => suiteIds.includes(m.id));
     }
 
     return context;

@@ -10,7 +10,72 @@
     </div>
 
     {{#if starshipManeuvers.total}}
-      <div class="maneuvers-container">
+      <!-- Starship Maneuver Suite Management -->
+      <h3 class="section-header" style="margin-top: 1.5rem;">Starship Maneuver Suite</h3>
+      <div class="maneuver-suite-manager flexrow">
+        <div class="maneuvers-column known-maneuvers">
+          <h4>Known Maneuvers</h4>
+          <div class="maneuvers-list drop-zone" data-zone="known">
+            {{#each starshipManeuvers.all as |maneuver|}}
+            <div class="maneuver-card"
+              draggable="true"
+              data-item-id="{{maneuver._id}}">
+              <img src="{{maneuver.img}}" width="32" height="32" alt="{{maneuver.name}}"/>
+              <span class="maneuver-name">{{maneuver.name}}</span>
+              <div class="maneuver-controls">
+                <a class="add-to-suite" data-action="addToSuite" data-item-id="{{maneuver._id}}" title="Add to suite">
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="suite-arrow">
+          <i class="fas fa-exchange-alt"></i>
+        </div>
+
+        <div class="maneuvers-column active-suite">
+          <h4>Active Suite ({{activeSuite.length}}/{{system.starshipManeuverSuite.max}})</h4>
+          <div class="maneuvers-list drop-zone suite-zone" data-zone="suite">
+            {{#each activeSuite as |maneuver|}}
+            <div class="maneuver-card in-suite {{#if maneuver.system.spent}}maneuver-spent{{/if}}"
+              draggable="true"
+              data-item-id="{{maneuver._id}}">
+              <img src="{{maneuver.img}}" width="32" height="32" alt="{{maneuver.name}}"/>
+              <span class="maneuver-name">{{maneuver.name}}{{#if maneuver.system.spent}} <span class="spent-indicator">(SPENT)</span>{{/if}}</span>
+              <div class="maneuver-controls">
+                {{#if maneuver.system.spent}}
+                <a class="regain-maneuver" data-action="regainManeuver" data-item-id="{{maneuver._id}}" title="Rest to regain maneuver">
+                  <i class="fas fa-redo"></i>
+                </a>
+                {{else}}
+                <a class="use-maneuver" data-action="useManeuver" data-item-id="{{maneuver._id}}" title="Mark as used">
+                  <i class="fas fa-fighter-jet"></i>
+                </a>
+                {{/if}}
+                <a class="remove-from-suite" data-action="removeFromSuite" data-item-id="{{maneuver._id}}" title="Remove from suite">
+                  <i class="fas fa-arrow-left"></i>
+                </a>
+              </div>
+            </div>
+            {{/each}}
+
+            {{#times (subtract system.starshipManeuverSuite.max activeSuite.length)}}
+            <div class="empty-slot">Empty Slot</div>
+            {{/times}}
+          </div>
+
+          <div class="suite-actions">
+            <button class="rest-maneuvers" data-action="restManeuvers" title="Rest to regain all maneuvers">
+              <i class="fas fa-bed"></i> Rest (Regain All)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="maneuvers-container" style="margin-top: 2rem;">
         <!-- Maneuver Ability Cards Panel -->
         {{> "partials/starship-maneuvers-panel" maneuvers=starshipManeuvers}}
       </div>
@@ -243,6 +308,201 @@
     margin: 0;
     color: #856404;
     font-size: 0.9rem;
+  }
+
+  /* Suite Management Styles */
+  .maneuver-suite-manager {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin: 1.5rem 0;
+  }
+
+  .maneuvers-column {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fafafa;
+    padding: 1rem;
+  }
+
+  .maneuvers-column h4 {
+    margin: 0 0 1rem 0;
+    font-size: 0.95rem;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+  }
+
+  .maneuvers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 150px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .maneuver-card {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    cursor: move;
+  }
+
+  .maneuver-card img {
+    width: 32px;
+    height: 32px;
+    border-radius: 2px;
+    border: 1px solid #ccc;
+  }
+
+  .maneuver-name {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .maneuver-card.in-suite {
+    background: #f0f7ff;
+    border-color: #4a90e2;
+  }
+
+  .maneuver-card.maneuver-spent {
+    opacity: 0.6;
+    background: #ffe8e8;
+  }
+
+  .spent-indicator {
+    color: #d32f2f;
+    font-weight: bold;
+    font-size: 0.8rem;
+  }
+
+  .maneuver-controls {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .maneuver-controls a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: #666;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+
+  .maneuver-controls a:hover {
+    background: #ddd;
+    color: #333;
+  }
+
+  .add-to-suite:hover {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .remove-from-suite:hover {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .use-maneuver:hover {
+    background: #cfe2ff;
+    color: #0c63e4;
+  }
+
+  .regain-maneuver:hover {
+    background: #d1ecf1;
+    color: #0c5460;
+  }
+
+  .empty-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    border: 2px dashed #ddd;
+    border-radius: 3px;
+    color: #999;
+    font-size: 0.85rem;
+    background: #fafafa;
+  }
+
+  .suite-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: #8b7355;
+    font-size: 1.5rem;
+  }
+
+  .suite-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+  }
+
+  .rest-maneuvers {
+    width: 100%;
+    padding: 0.5rem;
+    background: #f4f1de;
+    border: 1px solid #8b7355;
+    border-radius: 3px;
+    color: #333;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+  }
+
+  .rest-maneuvers:hover {
+    background: #ede8df;
+    border-color: #6b5545;
+  }
+
+  .section-header {
+    margin: 1.5rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #333;
+    font-size: 1.2rem;
+    color: #333;
+  }
+
+  @media (max-width: 768px) {
+    .maneuver-suite-manager {
+      flex-direction: column;
+    }
+
+    .suite-arrow {
+      transform: rotate(90deg);
+      height: 30px;
+      order: 2;
+    }
+
+    .maneuvers-column:nth-child(1) {
+      order: 1;
+    }
+
+    .maneuvers-column:nth-child(3) {
+      order: 3;
+    }
   }
 </style>
 </div>
