@@ -370,6 +370,7 @@ Hooks.once("ready", async function () {
     FeatSystem,
     SkillSystem,
     TalentAbilitiesEngine,
+    TalentActionLinker,
 
         ActorEngine,
         cacheManager,

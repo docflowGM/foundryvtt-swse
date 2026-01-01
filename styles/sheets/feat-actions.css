@@ -83,3 +83,164 @@
   border-radius: 4px;
   cursor: pointer;
 }
+
+/* Notes */
+.feat-notes {
+  color: #9ed0ff;
+  font-size: 12px;
+  font-style: italic;
+  margin: 8px 0;
+  padding: 6px 10px;
+  background: rgba(0, 100, 150, 0.2);
+  border-left: 3px solid var(--holo-cyan, #00d9ff);
+  border-radius: 0 4px 4px 0;
+}
+
+.feat-notes i {
+  margin-right: 6px;
+  color: var(--holo-cyan, #00d9ff);
+}
+
+/* Toggle Button */
+.feat-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: bold;
+  background: rgba(0, 60, 100, 0.4);
+  border: 2px solid rgba(0, 150, 200, 0.5);
+  border-radius: 20px;
+  color: #9ed0ff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.feat-toggle:hover {
+  background: rgba(0, 100, 150, 0.5);
+  border-color: rgba(0, 200, 255, 0.7);
+}
+
+.feat-toggle.active {
+  background: linear-gradient(180deg, rgba(0, 200, 255, 0.3), rgba(0, 150, 200, 0.2));
+  border-color: var(--holo-cyan, #00d9ff);
+  color: var(--holo-cyan, #00d9ff);
+}
+
+.feat-toggle i {
+  font-size: 16px;
+}
+
+/* Toggled Card State */
+.feat-card.toggled {
+  background: rgba(0, 50, 80, 0.85);
+  border-color: rgba(0, 200, 255, 0.6);
+  box-shadow: 0 0 12px rgba(0, 200, 255, 0.25);
+}
+
+/* Variable Control (slider) */
+.feat-variable-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(0, 60, 100, 0.3);
+  border-radius: 6px;
+  margin: 8px 0;
+}
+
+.feat-variable-control label {
+  font-size: 12px;
+  color: #9ed0ff;
+  white-space: nowrap;
+}
+
+.feat-variable-slider {
+  flex: 1;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(0, 100, 150, 0.5);
+  border-radius: 3px;
+  outline: none;
+}
+
+.feat-variable-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--holo-cyan, #00d9ff);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(0, 217, 255, 0.5);
+}
+
+.feat-variable-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--holo-cyan, #00d9ff);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.feat-variable-control .variable-value {
+  min-width: 24px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--holo-cyan, #00d9ff);
+}
+
+/* Source */
+.feat-source {
+  font-size: 11px;
+  color: #6a9dcd;
+  margin-top: 8px;
+}
+
+.feat-source i {
+  margin-right: 4px;
+}
+
+/* Empty State */
+.feat-actions-empty {
+  text-align: center;
+  padding: 30px 20px;
+  color: #6a9dcd;
+}
+
+.feat-actions-empty i {
+  font-size: 32px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+/* Type-specific card colors */
+.feat-card.type-passive {
+  border-left: 4px solid #6b7280;
+}
+
+.feat-card.type-modifier {
+  border-left: 4px solid #f97316;
+}
+
+.feat-card.type-swift {
+  border-left: 4px solid #ffe66d;
+}
+
+.feat-card.type-standard {
+  border-left: 4px solid #4ecdc4;
+}
+
+.feat-card.type-fullRound {
+  border-left: 4px solid #a855f7;
+}
+
+.feat-card.type-reaction {
+  border-left: 4px solid #ff6b6b;
+}

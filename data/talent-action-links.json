@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "description": "Mapping of 337+ active talents to base action system",
+  "description": "Mapping of 418 active talents to base action system",
   "totalTalents": 418,
   "unmapped": 161,
   "talentToAction": {

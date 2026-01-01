@@ -1,66 +1,75 @@
-
 {{!-- ====================================================================== --}}
 {{!-- SWSE Feat Actions Panel — Holo Card System                             --}}
-{{!-- Dynamically powered by FeatSystem.js                                   --}}
+{{!-- Dynamically powered by FeatActionsMapper                               --}}
 {{!-- ====================================================================== --}}
 
 <div class="swse-feat-actions-container">
 
-  {{#if featActions}}
-  
-    {{#each featActions.all as |feat|}}
-      <div class="feat-card {{feat.type}}">
+  {{#if featActions.all.length}}
 
-        <div class="feat-card-header" data-expand="{{feat._id}}">
-          <div class="feat-icon"><i class="{{feat.icon}}"></i></div>
+    {{#each featActions.all as |feat|}}
+      <div class="feat-card {{feat.type}} {{#if feat.toggled}}toggled{{/if}}">
+
+        <div class="feat-card-header" data-expand="{{feat.key}}">
+          <div class="feat-icon">
+            <i class="{{#if feat.toggleable}}fas fa-toggle-on{{else if feat.variable}}fas fa-sliders-h{{else}}fas fa-fist-raised{{/if}}"></i>
+          </div>
           <div class="feat-title">{{feat.name}}</div>
           <div class="feat-type-label">{{feat.typeLabel}}</div>
           <div class="feat-expand-icon"><i class="fas fa-chevron-down"></i></div>
         </div>
 
-        <div class="feat-card-body" id="feat-body-{{feat._id}}">
-            
-            <div class="feat-benefit">{{feat.benefit}}</div>
+        <div class="feat-card-body" id="feat-body-{{feat.key}}">
 
-            {{#if feat.actions.skill}}
-              <button class="feat-btn feat-roll" data-type="skill" data-id="{{feat._id}}">
-                <i class="fas fa-dice-d20"></i> Roll {{feat.actions.skill.skillName}}
+            <div class="feat-benefit">{{feat.description}}</div>
+
+            {{#if feat.notes}}
+            <div class="feat-notes">
+              <i class="fas fa-info-circle"></i> {{feat.notes}}
+            </div>
+            {{/if}}
+
+            {{!-- Toggleable actions --}}
+            {{#if feat.toggleable}}
+              <button class="feat-btn feat-toggle {{#if feat.toggled}}active{{/if}}"
+                      data-action="toggleFeatAction"
+                      data-key="{{feat.key}}">
+                <i class="fas {{#if feat.toggled}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i>
+                {{#if feat.toggled}}Active{{else}}Inactive{{/if}}
               </button>
             {{/if}}
 
-            {{#if feat.actions.attack}}
-              <button class="feat-btn feat-attack" data-type="attack" data-id="{{feat._id}}">
-                <i class="fas fa-crosshairs"></i> Attack
-              </button>
-            {{/if}}
-
-            {{#if feat.actions.conditionTrack}}
-              <button class="feat-btn feat-ct" data-type="ct" data-id="{{feat._id}}">
-                <i class="fas fa-arrow-circle-down"></i> Apply CT Shift
-              </button>
-            {{/if}}
-
-            {{#if feat.actions.force}}
-              <button class="feat-btn feat-force" data-type="force" data-id="{{feat._id}}">
-                <i class="fas fa-meteor"></i> Force Effect
-              </button>
-            {{/if}}
-
-            {{#if feat.uses}}
-              <div class="feat-uses">
-                Uses: {{feat.uses.current}} / {{feat.uses.max}}
+            {{!-- Variable actions (like Power Attack) --}}
+            {{#if feat.variable}}
+              <div class="feat-variable-control">
+                <label>{{feat.name}} Value:</label>
+                <input type="range"
+                       class="feat-variable-slider"
+                       data-action="updateFeatVariable"
+                       data-key="{{feat.key}}"
+                       min="{{feat.variableOptions.min}}"
+                       max="{{feat.variableOptions.max}}"
+                       step="{{feat.variableOptions.step}}"
+                       value="{{feat.variableValue}}" />
+                <span class="variable-value">{{feat.variableValue}}</span>
               </div>
             {{/if}}
 
+            {{!-- Source info --}}
+            {{#if feat.source}}
+            <div class="feat-source">
+              <i class="fas fa-book"></i> Source: {{feat.source}}
+            </div>
+            {{/if}}
+
+            {{!-- Related skills --}}
+            {{#if feat.relatedSkills.length}}
             <div class="feat-tags">
-              {{#each feat.tags}}
+              {{#each feat.relatedSkills}}
                 <span class="feat-tag">{{this}}</span>
               {{/each}}
             </div>
-
-            <button class="feat-details-btn" data-id="{{feat._id}}">
-              <i class="fas fa-info-circle"></i> Details
-            </button>
+            {{/if}}
 
         </div>
       </div>
@@ -69,7 +78,8 @@
   {{else}}
 
     <p class="feat-actions-empty">
-      No feat actions available. Gain feats to unlock special abilities!
+      <i class="fas fa-scroll"></i>
+      No feat actions available. Gain feats to unlock special combat abilities!
     </p>
 
   {{/if}}

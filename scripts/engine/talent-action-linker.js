@@ -17,7 +17,7 @@ class TalentActionLinker {
    */
   static async initialize() {
     try {
-      const response = await fetch('data/talent-action-links.json');
+      const response = await fetch('systems/foundryvtt-swse/data/talent-action-links.json');
       this.MAPPING = await response.json();
       console.log(`[TalentActionLinker] Loaded mapping for ${this.MAPPING.totalTalents} talents`);
     } catch (error) {

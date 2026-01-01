@@ -216,16 +216,22 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     const rawFeatActions = FeatActionsMapper.getActionsByType(actor);
     const fx = actor.effects.filter(e => e.flags?.swse?.type === "feat-action");
 
-    context.featActions = {};
-    for (const cat of ["toggleable", "variable", "standard", "passive"]) {
-      if (!rawFeatActions[cat]) continue;
+    // Process each action category and build the all array
+    context.featActions = { all: [] };
+    const actionCategories = ["passive", "modifier", "swift", "standard", "fullRound", "reaction"];
+    for (const cat of actionCategories) {
+      if (!rawFeatActions[cat] || rawFeatActions[cat].length === 0) continue;
       context.featActions[cat] = rawFeatActions[cat].map(action => {
         const eff = fx.find(e => e.flags?.swse?.actionKey === action.key);
-        return {
+        const enriched = {
           ...action,
           toggled: !!eff,
-          variableValue: eff?.flags?.swse?.variableValue || action.variableOptions?.min || 0
+          variableValue: eff?.flags?.swse?.variableValue || action.variableOptions?.min || 0,
+          typeLabel: cat.charAt(0).toUpperCase() + cat.slice(1).replace(/([A-Z])/g, ' $1'),
+          type: `type-${cat}`
         };
+        context.featActions.all.push(enriched);
+        return enriched;
       });
     }
 
@@ -259,6 +265,8 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
         html.find('.feat-ct').click(ev => this._onFeatCT(ev));
         html.find('.feat-force').click(ev => this._onFeatForce(ev));
         html.find('.feat-card-header').click(ev => this._toggleFeatCard(ev));
+        html.find('.feat-toggle').click(ev => this._onToggleFeatAction(ev));
+        html.find('.feat-variable-slider').on('input', ev => this._onUpdateVariableAction(ev));
 
         // Talent Abilities handlers
         html.find('.ability-card-header').click(ev => this._onExpandAbilityCard(ev));
@@ -995,21 +1003,25 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
   async _onToggleFeatAction(event) {
     event.preventDefault();
-    const key = event.currentTarget.dataset.actionKey;
+    const key = event.currentTarget.dataset.key;
+    if (!key) return;
 
     const updated = await FeatActionsMapper.toggleAction(this.actor, key);
     ui.notifications.info(updated ? "Feat Action Enabled" : "Feat Action Disabled");
+    this.render();
   }
 
   async _onUpdateVariableAction(event) {
     event.preventDefault();
 
-    const key = event.currentTarget.dataset.actionKey;
+    const key = event.currentTarget.dataset.key;
     const value = Number(event.currentTarget.value);
+    if (!key) return;
 
-    const wrapper = event.currentTarget.closest(".feat-action-slider");
+    // Update the displayed value next to the slider
+    const wrapper = event.currentTarget.closest(".feat-variable-control");
     if (wrapper) {
-      const out = wrapper.querySelector(".slider-value");
+      const out = wrapper.querySelector(".variable-value");
       if (out) out.textContent = value;
     }
 
