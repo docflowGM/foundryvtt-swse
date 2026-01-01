@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0.0",
     "description": "Comprehensive talent ability definitions for SWSE Foundry system",
-    "totalAbilities": 106
+    "totalAbilities": 134
   },
   "abilities": {
     "block": {
@@ -2282,6 +2282,821 @@
       ],
       "icon": "fas fa-sync",
       "linkedAction": "force-point-recovery"
+    },
+    "force-fortification": {
+      "name": "Force Fortification",
+      "talentName": "Force Fortification",
+      "talentTree": "Force Defender",
+      "description": "Use your Will Defense in place of your Fortitude Defense. This allows Force-based defense against physical attacks.",
+      "actionType": "passive",
+      "substitution": {
+        "from": "fortitude",
+        "to": "will",
+        "type": "defense"
+      },
+      "tags": [
+        "defense",
+        "force",
+        "substitution"
+      ],
+      "icon": "fas fa-shield-alt"
+    },
+    "defensive-measures": {
+      "name": "Defensive Measures",
+      "talentName": "Defensive Measures",
+      "talentTree": "Soldier",
+      "description": "When you are flat-footed, use your Will Defense instead of being treated as flat-footed. This maintains your full defense capability.",
+      "actionType": "passive",
+      "substitution": {
+        "from": "flatfooted",
+        "to": "will",
+        "type": "defense"
+      },
+      "tags": [
+        "defense",
+        "substitution"
+      ],
+      "icon": "fas fa-shield-alt"
+    },
+    "rifle-master": {
+      "name": "Rifle Master",
+      "talentName": "Rifle Master",
+      "talentTree": "Gunslinger",
+      "description": "Pistol-class weapons now count as rifles for the purposes of talents and abilities that require rifles.",
+      "actionType": "passive",
+      "substitution": {
+        "from": "pistol",
+        "to": "rifle",
+        "type": "weapon_classification"
+      },
+      "tags": [
+        "weapon",
+        "substitution"
+      ],
+      "icon": "fas fa-gun"
+    },
+    "exotic-weapons-master": {
+      "name": "Exotic Weapons Master",
+      "talentName": "Exotic Weapons Master",
+      "talentTree": "Weapon Master",
+      "description": "You gain the benefits of Weapon Focus (exotic melee weapons) with any weapon group you use.",
+      "actionType": "passive",
+      "substitution": {
+        "from": "weapon_focus_type",
+        "to": "exotic_melee",
+        "type": "weapon_focus"
+      },
+      "tags": [
+        "weapon",
+        "substitution",
+        "focus"
+      ],
+      "icon": "fas fa-sword"
+    },
+    "armored-spacer": {
+      "name": "Armored Spacer",
+      "talentName": "Armored Spacer",
+      "talentTree": "Scoundrel",
+      "description": "Treat your armor proficiency as Armor Proficiency (heavy). You can wear any armor without penalty.",
+      "actionType": "passive",
+      "substitution": {
+        "from": "armor_proficiency",
+        "to": "heavy_proficiency",
+        "type": "proficiency"
+      },
+      "tags": [
+        "armor",
+        "substitution"
+      ],
+      "icon": "fas fa-vest"
+    },
+    "take-them-alive": {
+      "name": "Take Them Alive",
+      "talentName": "Take Them Alive",
+      "talentTree": "Scoundrel",
+      "description": "Use opposed Persuasion checks instead of opposed combat rolls when attempting to capture or subdue opponents without killing them.",
+      "actionType": "passive",
+      "substitution": {
+        "from": "combat_roll",
+        "to": "persuasion",
+        "type": "opposed_check"
+      },
+      "tags": [
+        "social",
+        "substitution"
+      ],
+      "icon": "fas fa-handshake"
+    },
+    "advantageous-positioning": {
+      "name": "Advantageous Positioning",
+      "talentName": "Advantageous Positioning",
+      "talentTree": "Soldier",
+      "description": "An opponent you flank is treated as flat-footed against your attacks, even if they are not flat-footed against others.",
+      "actionType": "passive",
+      "substitution": {
+        "from": "flanking",
+        "to": "flatfoot",
+        "type": "flanking_bonus"
+      },
+      "tags": [
+        "combat",
+        "substitution"
+      ],
+      "icon": "fas fa-arrow-right"
+    },
+    "avert-disaster": {
+      "name": "Avert Disaster",
+      "talentName": "Avert Disaster",
+      "talentTree": "Scoundrel",
+      "description": "Turn a critical hit against you into a normal hit.",
+      "actionType": "reaction",
+      "trigger": "When you are hit by a critical hit",
+      "effect": "negate_critical",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "tags": [
+        "defense",
+        "reaction",
+        "once-per-encounter"
+      ],
+      "icon": "fas fa-shield-alt"
+    },
+    "aggressive-surge": {
+      "name": "Aggressive Surge",
+      "talentName": "Aggressive Surge",
+      "talentTree": "Scout",
+      "description": "When you use Second Wind, immediately make a free charge action.",
+      "actionType": "free_action",
+      "trigger": "When you use Second Wind",
+      "effect": "free_charge",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "tags": [
+        "action",
+        "movement",
+        "once-per-encounter"
+      ],
+      "icon": "fas fa-bolt"
+    },
+    "cleanse-mind": {
+      "name": "Cleanse Mind",
+      "talentName": "Cleanse Mind",
+      "talentTree": "Jedi",
+      "description": "Remove an ongoing mind-affecting effect from an ally in line of sight.",
+      "actionType": "reaction",
+      "trigger": "As a reaction during an encounter",
+      "effect": "remove_condition",
+      "requires": "target_has_mind_effect",
+      "uses": {
+        "max": 1,
+        "perEncounter": false,
+        "perTurn": true
+      },
+      "tags": [
+        "support",
+        "condition",
+        "reaction"
+      ],
+      "icon": "fas fa-head-side-virus"
+    },
+    "dirty-fighting": {
+      "name": "Dirty Fighting",
+      "talentName": "Dirty Fighting",
+      "talentTree": "Soldier",
+      "description": "When you damage an opponent, reduce their damage threshold by 2 for the encounter.",
+      "actionType": "passive_trigger",
+      "trigger": "When you deal damage to an opponent",
+      "effect": "reduce_threshold",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "tags": [
+        "offense",
+        "damage",
+        "once-per-encounter"
+      ],
+      "icon": "fas fa-fist-raised"
+    },
+    "entreat-aid": {
+      "name": "Entreat Aid",
+      "talentName": "Entreat Aid",
+      "talentTree": "Jedi",
+      "description": "An adjacent ally can aid another as a reaction to assist you, even if they have already aided once.",
+      "actionType": "passive",
+      "trigger": "When an adjacent ally could aid another",
+      "effect": "allow_extra_aid",
+      "uses": {
+        "max": 1,
+        "perEncounter": false,
+        "perTurn": true
+      },
+      "tags": [
+        "support",
+        "cooperative"
+      ],
+      "icon": "fas fa-handshake"
+    },
+    "adrenaline-implant": {
+      "name": "Adrenaline Implant",
+      "talentName": "Adrenaline Implant",
+      "talentTree": "Shaper",
+      "description": "Once per encounter an adjacent ally gains 10 hit points at the start of each of its turns while adjacent (effects do not stack).",
+      "actionType": "passive_aura",
+      "effect": "heal_ally",
+      "uses": {
+        "max": 1,
+        "perEncounter": false,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-plus-circle"
+    },
+    "crucial-advice": {
+      "name": "Crucial Advice",
+      "talentName": "Crucial Advice",
+      "talentTree": "General",
+      "description": "Once per encounter, reroll a failed skill check with a +2 bonus.",
+      "actionType": "reaction",
+      "effect": "reroll_bonus",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-dice"
+    },
+    "fight-to-the-death": {
+      "name": "Fight to the Death",
+      "talentName": "Fight to the Death",
+      "talentTree": "Master Privateer",
+      "description": "Once per encounter, all allies within 6 squares heal hit points equal to your heroic level.",
+      "actionType": "passive",
+      "effect": "heal_all_allies",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-heart"
+    },
+    "force-harmony": {
+      "name": "Force Harmony",
+      "talentName": "Force Harmony",
+      "talentTree": "General",
+      "description": "Once per encounter, activate a Force talent that requires a Force Point without spending one.",
+      "actionType": "passive_trigger",
+      "effect": "force_activation",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-star"
+    },
+    "gang-leader": {
+      "name": "Gang Leader",
+      "talentName": "Gang Leader",
+      "talentTree": "Soldier",
+      "description": "Once per encounter, when you intimidate, gain +1 per ally within 6 squares and the target\u2019s line of sight (maximum +5).",
+      "actionType": "passive_trigger",
+      "effect": "intimidate_bonus",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-mask"
+    },
+    "grand-leader": {
+      "name": "Grand Leader",
+      "talentName": "Grand Leader",
+      "talentTree": "Officer",
+      "description": "Once per encounter, grant hit points equal to 5 + half your class level to all allies within 20 squares and line of sight.",
+      "actionType": "passive",
+      "effect": "heal_all_allies",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-crown"
+    },
+    "hasty-withdrawal": {
+      "name": "Hasty Withdrawal",
+      "talentName": "Hasty Withdrawal",
+      "talentTree": "Officer",
+      "description": "Once per turn a number of allies equal to your Charisma bonus (minimum 1) within 12 squares and line of sight may withdraw as a free action.",
+      "actionType": "passive_trigger",
+      "effect": "ally_movement",
+      "uses": {
+        "max": 1,
+        "perEncounter": false,
+        "perTurn": true
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-running"
+    },
+    "higher-yield": {
+      "name": "Higher Yield",
+      "talentName": "Higher Yield",
+      "talentTree": "Elite Trooper",
+      "description": "Once per encounter, add +1 damage die to a grenade or explosive.",
+      "actionType": "passive_trigger",
+      "effect": "damage_bonus",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-bomb"
+    },
+    "hunter's-target": {
+      "name": "Hunter's Target",
+      "talentName": "Hunter's Target",
+      "talentTree": "Bounty Hunter",
+      "description": "Once per encounter designate an opponent as your Hunter's Target; damage vs that target increases by an amount tied to your bounty hunter level.",
+      "actionType": "passive_trigger",
+      "effect": "damage_marked",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-crosshairs"
+    },
+    "it's-a-trap": {
+      "name": "It's a Trap",
+      "talentName": "It's a Trap",
+      "talentTree": "Officer",
+      "description": "Once per encounter set a trap for a single vehicle in line of sight that activates on that vehicle's immediate move action.",
+      "actionType": "passive_trigger",
+      "effect": "trap_activation",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-exclamation"
+    },
+    "jet-pack-withdraw": {
+      "name": "Jet Pack Withdraw",
+      "talentName": "Jet Pack Withdraw",
+      "talentTree": "Soldier",
+      "description": "Once per encounter, when an enemy moves adjacent, expend one charge to fly, move your speed, or withdraw.",
+      "actionType": "reaction",
+      "effect": "movement_reaction",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-jet-fighter"
+    },
+    "labyrinthine-mind": {
+      "name": "Labyrinthine Mind",
+      "talentName": "Labyrinthine Mind",
+      "talentTree": "Scoundrel",
+      "description": "Once per encounter, you become immune to mind-affecting effects until your next turn; the effect ends early if you choose to lose it.",
+      "actionType": "passive",
+      "effect": "immunity",
+      "uses": {
+        "max": 1,
+        "perEncounter": false,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-brain"
+    },
+    "lifesaver": {
+      "name": "Lifesaver",
+      "talentName": "Lifesaver",
+      "talentTree": "Elite Trooper",
+      "description": "Once per encounter, when an adjacent ally is reduced to 0 hp or below threshold, you may move your speed to become adjacent and take the damage instead.",
+      "actionType": "reaction",
+      "effect": "save_ally",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-shield-heart"
+    },
+    "lightsaber-form-savant": {
+      "name": "Lightsaber Form Savant",
+      "talentName": "Lightsaber Form Savant",
+      "talentTree": "Jedi Knight",
+      "description": "Once per encounter, return one lightsaber form to your suite without spending a Force Point.",
+      "actionType": "passive",
+      "effect": "ability_recovery",
+      "uses": {
+        "max": 1,
+        "perEncounter": false,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-sword"
+    },
+    "mandalorian-advance": {
+      "name": "Mandalorian Advance",
+      "talentName": "Mandalorian Advance",
+      "talentTree": "Elite Trooper",
+      "description": "Once per encounter on your turn, move your speed as a free action before taking other actions.",
+      "actionType": "free_action",
+      "effect": "movement_action",
+      "uses": {
+        "max": 1,
+        "perEncounter": false,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-forward"
+    },
+    "power-of-hatred": {
+      "name": "Power of Hatred",
+      "talentName": "Power of Hatred",
+      "talentTree": "Sith Apprentice",
+      "description": "Once per encounter allies in line of sight with less than half hit points gain hit points equal to your class level.",
+      "actionType": "passive",
+      "effect": "damage_buff",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-fire"
+    },
+    "quick-fix": {
+      "name": "Quick Fix",
+      "talentName": "Quick Fix",
+      "talentTree": "Scoundrel",
+      "description": "Once per encounter, jury-rig an object that is not disabled.",
+      "actionType": "passive_trigger",
+      "effect": "repair",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-tools"
+    },
+    "quick-on-your-feet": {
+      "name": "Quick on Your Feet",
+      "talentName": "Quick on Your Feet",
+      "talentTree": "Scout",
+      "description": "Once per encounter, move your speed.",
+      "actionType": "free_action",
+      "effect": "movement",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-running"
+    },
+    "rally": {
+      "name": "Rally",
+      "talentName": "Rally",
+      "talentTree": "Noble",
+      "description": "Once per encounter, allies in line of sight with less than half hit points gain +2 Reflex, +2 Will, and +2 damage.",
+      "actionType": "passive",
+      "effect": "defense_buff",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-shield-alt"
+    },
+    "renew-vision": {
+      "name": "Renew Vision",
+      "talentName": "Renew Vision",
+      "talentTree": "Jedi",
+      "description": "Once per encounter, regain all expended uses of Farseeing.",
+      "actionType": "passive",
+      "effect": "ability_recovery",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-eye"
+    },
+    "resilience-implant": {
+      "name": "Resilience Implant",
+      "talentName": "Resilience Implant",
+      "talentTree": "Shaper",
+      "description": "Once per encounter an adjacent ally gains +5 to threshold.",
+      "actionType": "passive_aura",
+      "effect": "threshold_boost",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-plus"
+    },
+    "seize-object": {
+      "name": "Seize Object",
+      "talentName": "Seize Object",
+      "talentTree": "Scoundrel",
+      "description": "Once per encounter, seize an object from an adjacent target with +10 to Disarm; must have a free hand and cannot conceal the object.",
+      "actionType": "passive_trigger",
+      "effect": "disarm_bonus",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-hand-fist"
+    },
+    "squadron-maneuvers": {
+      "name": "Squadron Maneuvers",
+      "talentName": "Squadron Maneuvers",
+      "talentTree": "Ace Pilot",
+      "description": "Once per encounter, grant the prerequisite of a chosen talent to every ship in your squadron until the end of the encounter.",
+      "actionType": "passive",
+      "effect": "squadron_buff",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-plane"
+    },
+    "squadron-tactics": {
+      "name": "Squadron Tactics",
+      "talentName": "Squadron Tactics",
+      "talentTree": "Ace Pilot",
+      "description": "Once per encounter, grant a maneuver you use to every ship in your squadron next round.",
+      "actionType": "passive",
+      "effect": "squadron_buff",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-plane"
+    },
+    "strength-implant": {
+      "name": "Strength Implant",
+      "talentName": "Strength Implant",
+      "talentTree": "Shaper",
+      "description": "Once per encounter an adjacent ally gains +1 damage die.",
+      "actionType": "passive_aura",
+      "effect": "damage_bonus_ally",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-fist-raised"
+    },
+    "strike-and-run": {
+      "name": "Strike and Run",
+      "talentName": "Strike and Run",
+      "talentTree": "Scoundrel",
+      "description": "Once per encounter, after you damage an opponent, you may move your speed.",
+      "actionType": "passive_trigger",
+      "effect": "movement_offensive",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-arrow-right"
+    },
+    "surge": {
+      "name": "Surge",
+      "talentName": "Surge",
+      "talentTree": "Scout",
+      "description": "Once per encounter, move up to your speed.",
+      "actionType": "free_action",
+      "effect": "movement",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-arrow-up"
+    },
+    "surge-of-light": {
+      "name": "Surge of Light",
+      "talentName": "Surge of Light",
+      "talentTree": "General",
+      "description": "Once per encounter, return any light side power without spending a Force Point.",
+      "actionType": "passive",
+      "effect": "power_recovery",
+      "uses": {
+        "max": 1,
+        "perEncounter": false,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-sun"
+    },
+    "telekinetic-savant": {
+      "name": "Telekinetic Savant",
+      "talentName": "Telekinetic Savant",
+      "talentTree": "General",
+      "description": "Once per encounter, return Force disarm, slam, thrust, or Move Object to your suite without spending a Force Point.",
+      "actionType": "passive",
+      "effect": "ability_recovery",
+      "uses": {
+        "max": 1,
+        "perEncounter": false,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-hand"
+    },
+    "uncanny-luck": {
+      "name": "Uncanny Luck",
+      "talentName": "Uncanny Luck",
+      "talentTree": "Scoundrel",
+      "description": "Once per encounter, any roll of 16 or higher is treated as a natural 20.",
+      "actionType": "passive",
+      "effect": "nat20_conversion",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-dice-d20"
+    },
+    "urgency": {
+      "name": "Urgency",
+      "talentName": "Urgency",
+      "talentTree": "Crime Lord",
+      "description": "Once per encounter, increase the speed of allies in line of sight by 2.",
+      "actionType": "passive",
+      "effect": "speed_buff",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-bolt"
+    },
+    "vital-encouragement": {
+      "name": "Vital Encouragement",
+      "talentName": "Vital Encouragement",
+      "talentTree": "General",
+      "description": "Once per encounter, you gain hit points equal to 10 + half your Heroic Level.",
+      "actionType": "passive_trigger",
+      "effect": "self_heal",
+      "uses": {
+        "max": 1,
+        "perEncounter": true,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-heart"
+    },
+    "weak-point": {
+      "name": "Weak Point",
+      "talentName": "Weak Point",
+      "talentTree": "Scout",
+      "description": "Once per encounter, ignore a single target\u2019s DR for the rest of your turn.",
+      "actionType": "passive_trigger",
+      "effect": "dr_negation",
+      "uses": {
+        "max": 1,
+        "perEncounter": false,
+        "perTurn": false
+      },
+      "tags": [
+        "once-per-encounter",
+        "ability"
+      ],
+      "icon": "fas fa-target"
     }
   }
 }
