@@ -525,6 +525,53 @@
       "notes": "Persuasion +9 (+14 with Fool's Luck). Fool's Luck spends Force Point for +1 attack OR +5 skills OR +1 defenses."
     },
     {
+      "id": "scoundrel_brigand",
+      "name": "Brigand",
+      "class": "Scoundrel",
+      "archetype": "Brigand",
+      "description": "A roguish brigand who combines exceptional piloting skills with tactical combat prowess, striking from unexpected angles with deadly precision.",
+      "quote": "The galaxy's wealth flows to those bold enough to take it.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_brigand.webp",
+      "mentor": "salty",
+      "background": "Disgraced",
+      "abilityScores": {
+        "str": 8,
+        "dex": 18,
+        "con": 8,
+        "int": 14,
+        "wis": 12,
+        "cha": 14
+      },
+      "species": "Duros",
+      "speciesFeat": "Flawless Pilot",
+      "className": "Scoundrel",
+      "level": 1,
+      "feats": [
+        "Point-Blank Shot",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Simple Weapons)"
+      ],
+      "talent": "Opportunistic Strike",
+      "talentTree": "Run and Gun",
+      "trainedSkills": [
+        "deception",
+        "initiative",
+        "perception",
+        "persuasion",
+        "pilot",
+        "stealth"
+      ],
+      "forcePowers": [],
+      "startingEquipment": [
+        "Pulse-Wave Pistol",
+        "Power Packs x2",
+        "Clips x2",
+        "Needler"
+      ],
+      "credits": -700,
+      "notes": "Attack +6 with exceptional Dexterity (18), Reflex Defense 18. Flawless Pilot allows rerolling Pilot checks and taking the better result. Opportunistic Strike enables bonus attacks against enemies that provoke for allies. Starting equipment emphasizes point-blank precision strikes with the Needler as backup poison option."
+    },
+    {
       "id": "scout_sniper",
       "name": "Sniper",
       "class": "Scout",
