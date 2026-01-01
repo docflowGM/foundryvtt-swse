@@ -78,6 +78,13 @@
  {{/unless}}
  {{/if}}
 
+ {{!-- Starship Maneuvers only for characters with Starship Tactics feat --}}
+ {{#if characterData.starshipManeuversRequired}}
+ <div class="chevron-step {{#if (eq currentStep 'starship-maneuvers')}}active{{/if}} {{#if (gte characterData.starshipManeuvers.length characterData.starshipManeuversRequired)}}completed{{/if}} {{#if (or (stepIsPrevious currentStep 'starship-maneuvers') freeBuild)}}clickable{{/if}}" data-step="starship-maneuvers">
+ <span class="chevron-label">Starship Maneuvers</span>
+ </div>
+ {{/if}}
+
  {{#if characterData.isDroid}}
  <div class="chevron-step {{#if (eq currentStep 'droid-final')}}active{{/if}} {{#if (or (stepIsPrevious currentStep 'droid-final') freeBuild)}}clickable{{/if}}" data-step="droid-final">
  <span class="chevron-label">Finalize Droid</span>
@@ -1206,6 +1213,58 @@
  <i class="fas fa-arrow-left"></i> Previous
  </button>
  {{#if (gte characterData.powers.length characterData.forcePowersRequired)}}
+ <button type="button" class="next-step btn-primary">
+ Next <i class="fas fa-arrow-right"></i>
+ </button>
+ {{/if}}
+ </div>
+ </section>
+ {{/if}}
+
+ {{#if (eq currentStep "starship-maneuvers")}}
+ <section class="step-starship-maneuvers">
+ <h3>Select Starship Maneuver{{#if (gt characterData.starshipManeuversRequired 1)}}s{{/if}}</h3>
+ <p class="help-text">
+ {{#if (eq characterData.starshipManeuversRequired 1)}}
+ Starship Tactics grants you 1 starship maneuver.
+ {{else}}
+ Select {{characterData.starshipManeuversRequired}} starship maneuver(s) from your Starship Tactics feat.
+ {{/if}}
+ </p>
+
+ <div class="selected-maneuvers-summary">
+ <h4>Selected Starship Maneuvers ({{characterData.starshipManeuvers.length}}/{{characterData.starshipManeuversRequired}})</h4>
+ <div class="selected-maneuvers-list">
+ {{#each characterData.starshipManeuvers}}
+ <div class="selected-maneuver-badge">
+ <span>{{this.name}}</span>
+ <button type="button" class="remove-maneuver" data-maneuverid="{{this._id}}">×</button>
+ </div>
+ {{/each}}
+ </div>
+ </div>
+
+ <div class="maneuvers-list">
+ {{#each availableStarshipManeuvers}}
+ <div class="maneuver-item maneuver-with-tooltip {{#unless this.prerequisitesMet}}disabled{{/unless}}" data-tooltip="{{this.description}}">
+ <button type="button" class="select-maneuver choice-button {{#unless this.prerequisitesMet}}disabled{{/unless}}" data-maneuverid="{{this._id}}" {{#unless this.prerequisitesMet}}disabled{{/unless}}>
+ <h4>{{this.name}}</h4>
+ {{#if this.system.actionType}}
+ <p class="maneuver-action"><strong>Action:</strong> {{this.system.actionType}}</p>
+ {{/if}}
+ {{#if this.prerequisiteReasons.length}}
+ <p class="maneuver-prereqs"><em style="color: #d32f2f;">{{#each this.prerequisiteReasons}}{{this}}{{#unless @last}}<br/>{{/unless}}{{/each}}</em></p>
+ {{/if}}
+ </button>
+ </div>
+ {{/each}}
+ </div>
+
+ <div class="form-actions">
+ <button type="button" class="prev-step btn-secondary">
+ <i class="fas fa-arrow-left"></i> Previous
+ </button>
+ {{#if (gte characterData.starshipManeuvers.length characterData.starshipManeuversRequired)}}
  <button type="button" class="next-step btn-primary">
  Next <i class="fas fa-arrow-right"></i>
  </button>

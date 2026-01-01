@@ -1,0 +1,509 @@
+<div class="tab starship-maneuvers-tab" data-group="primary" data-tab="starship-maneuvers">
+<div class="starship-maneuvers-section">
+  {{#if starshipManeuvers.hasStartshipTactics}}
+    <div class="maneuvers-header">
+      <h3>Starship Maneuvers</h3>
+      <div class="maneuver-count">
+        <span class="label">Maneuvers Learned:</span>
+        <span class="value">{{starshipManeuvers.total}}</span>
+      </div>
+    </div>
+
+    {{#if starshipManeuvers.total}}
+      <!-- Starship Maneuver Suite Management -->
+      <h3 class="section-header" style="margin-top: 1.5rem;">Starship Maneuver Suite</h3>
+      <div class="maneuver-suite-manager flexrow">
+        <div class="maneuvers-column known-maneuvers">
+          <h4>Known Maneuvers</h4>
+          <div class="maneuvers-list drop-zone" data-zone="known">
+            {{#each starshipManeuvers.all as |maneuver|}}
+            <div class="maneuver-card"
+              draggable="true"
+              data-item-id="{{maneuver._id}}">
+              <img src="{{maneuver.img}}" width="32" height="32" alt="{{maneuver.name}}"/>
+              <span class="maneuver-name">{{maneuver.name}}</span>
+              <div class="maneuver-controls">
+                <a class="add-to-suite" data-action="addToSuite" data-item-id="{{maneuver._id}}" title="Add to suite">
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="suite-arrow">
+          <i class="fas fa-exchange-alt"></i>
+        </div>
+
+        <div class="maneuvers-column active-suite">
+          <h4>Active Suite ({{activeSuite.length}}/{{system.starshipManeuverSuite.max}})</h4>
+          <div class="maneuvers-list drop-zone suite-zone" data-zone="suite">
+            {{#each activeSuite as |maneuver|}}
+            <div class="maneuver-card in-suite {{#if maneuver.system.spent}}maneuver-spent{{/if}}"
+              draggable="true"
+              data-item-id="{{maneuver._id}}">
+              <img src="{{maneuver.img}}" width="32" height="32" alt="{{maneuver.name}}"/>
+              <span class="maneuver-name">{{maneuver.name}}{{#if maneuver.system.spent}} <span class="spent-indicator">(SPENT)</span>{{/if}}</span>
+              <div class="maneuver-controls">
+                {{#if maneuver.system.spent}}
+                <a class="regain-maneuver" data-action="regainManeuver" data-item-id="{{maneuver._id}}" title="Rest to regain maneuver">
+                  <i class="fas fa-redo"></i>
+                </a>
+                {{else}}
+                <a class="use-maneuver" data-action="useManeuver" data-item-id="{{maneuver._id}}" title="Mark as used">
+                  <i class="fas fa-fighter-jet"></i>
+                </a>
+                {{/if}}
+                <a class="remove-from-suite" data-action="removeFromSuite" data-item-id="{{maneuver._id}}" title="Remove from suite">
+                  <i class="fas fa-arrow-left"></i>
+                </a>
+              </div>
+            </div>
+            {{/each}}
+
+            {{#times (subtract system.starshipManeuverSuite.max activeSuite.length)}}
+            <div class="empty-slot">Empty Slot</div>
+            {{/times}}
+          </div>
+
+          <div class="suite-actions">
+            <button class="rest-maneuvers" data-action="restManeuvers" title="Rest to regain all maneuvers">
+              <i class="fas fa-bed"></i> Rest (Regain All)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="maneuvers-container" style="margin-top: 2rem;">
+        <!-- Maneuver Ability Cards Panel -->
+        {{> "partials/starship-maneuvers-panel" maneuvers=starshipManeuvers}}
+      </div>
+
+      <!-- Maneuver Rules Reference -->
+      <div class="maneuvers-rules-section collapsible">
+        <h4 class="maneuvers-rules-header">
+          <i class="fas fa-book"></i>
+          Starship Maneuvers Rules Reference
+        </h4>
+
+        <div class="maneuvers-rules-content" style="display: none;">
+          <div class="rule-block">
+            <h5>Using Starship Maneuvers</h5>
+            <p>When you use a Starship Maneuver, make a Pilot check. The result determines the maneuver's effect.</p>
+            <ul>
+              <li><strong>Multi-tiered effects:</strong> Your check result determines the maximum effect you can achieve</li>
+              <li><strong>Attack Patterns:</strong> Effects last until the end of the encounter; only one can be active at a time</li>
+              <li><strong>Failed check:</strong> The maneuver is spent and the action is wasted</li>
+            </ul>
+          </div>
+
+          <div class="rule-block">
+            <h5>Starship Maneuver Suite</h5>
+            <p>Your maneuvers form a suite. Once used, a maneuver is spent until recovered.</p>
+          </div>
+
+          <div class="rule-block">
+            <h5>Regaining Maneuvers</h5>
+            <ul>
+              <li>Rest for 1 minute after combat ends</li>
+              <li>Roll a Natural 20 on a Pilot check (regains all at end of turn)</li>
+              <li>Spend a Force Point as a Reaction (regains one maneuver)</li>
+            </ul>
+          </div>
+
+          <div class="rule-block">
+            <h5>[Attack Pattern] Descriptor</h5>
+            <p>These maneuvers represent formations and flying patterns that form an overall Starship Combat strategy. Once activated, effects last until the encounter ends. You may only gain the benefit from one Attack Pattern at a time.</p>
+          </div>
+
+          <div class="rule-block">
+            <h5>[Dogfight] Descriptor</h5>
+            <p>These tactics apply only in close combat situations. May only be activated while engaged in a Dogfight with another Starship or group of Starships.</p>
+          </div>
+
+          <div class="rule-block">
+            <h5>[Force] Descriptor</h5>
+            <p>Relies on connection to The Force. Only characters trained in Use the Force skill may use these maneuvers. Activating counts as using The Force.</p>
+          </div>
+
+          <div class="rule-block">
+            <h5>[Gunner] Descriptor</h5>
+            <p>Does not require being the Pilot. May be activated by Pilot, Copilot, or Gunner using their position's weapon systems.</p>
+          </div>
+        </div>
+      </div>
+
+    {{else}}
+      <div class="no-maneuvers-message">
+        <p>You have Starship Tactics but no maneuvers have been granted yet. Check your feat configuration.</p>
+      </div>
+    {{/if}}
+
+  {{else}}
+    <div class="no-feature-message">
+      <div class="feature-locked">
+        <i class="fas fa-lock"></i>
+        <h3>Starship Maneuvers Locked</h3>
+        <p>Take the <strong>Starship Tactics Feat</strong> to learn Starship Maneuvers.</p>
+        <p class="description">
+          When you take this feat, you learn <strong>1 + your Wisdom modifier</strong> (minimum 1) maneuvers.
+          You can learn additional maneuvers by taking the feat again or increasing your Wisdom.
+        </p>
+      </div>
+    </div>
+  {{/if}}
+</div>
+
+<style>
+  .starship-maneuvers-section {
+    padding: 1rem;
+  }
+
+  .maneuvers-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #333;
+  }
+
+  .maneuvers-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  .maneuver-count {
+    font-size: 0.9rem;
+  }
+
+  .maneuver-count .label {
+    margin-right: 0.5rem;
+    font-weight: bold;
+  }
+
+  .maneuver-count .value {
+    background: #f4f1de;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .maneuvers-container {
+    margin-bottom: 2rem;
+  }
+
+  .maneuvers-rules-section {
+    background: #f9f7f4;
+    border-left: 4px solid #8b7355;
+    padding: 0;
+    margin-top: 2rem;
+  }
+
+  .maneuvers-rules-header {
+    padding: 1rem;
+    margin: 0;
+    cursor: pointer;
+    background: #f4f1de;
+    border-bottom: 1px solid #e8e5dd;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    user-select: none;
+  }
+
+  .maneuvers-rules-header:hover {
+    background: #ede8df;
+  }
+
+  .maneuvers-rules-content {
+    padding: 1.5rem;
+  }
+
+  .rule-block {
+    margin-bottom: 1.5rem;
+  }
+
+  .rule-block:last-child {
+    margin-bottom: 0;
+  }
+
+  .rule-block h5 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .rule-block p {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.85rem;
+    color: #555;
+    line-height: 1.4;
+  }
+
+  .rule-block ul {
+    margin: 0.5rem 0 0 1.5rem;
+    padding: 0;
+    font-size: 0.85rem;
+    color: #555;
+  }
+
+  .rule-block li {
+    margin-bottom: 0.3rem;
+    line-height: 1.4;
+  }
+
+  .no-feature-message {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+
+  .feature-locked {
+    background: linear-gradient(135deg, #f4f1de 0%, #ede8df 100%);
+    border: 2px solid #8b7355;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    max-width: 500px;
+  }
+
+  .feature-locked i {
+    font-size: 3rem;
+    color: #8b7355;
+    margin-bottom: 1rem;
+  }
+
+  .feature-locked h3 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+  }
+
+  .feature-locked p {
+    margin: 0.5rem 0;
+    color: #555;
+    font-size: 0.95rem;
+  }
+
+  .feature-locked p.description {
+    font-size: 0.85rem;
+    color: #777;
+    margin-top: 1rem;
+    font-style: italic;
+  }
+
+  .no-maneuvers-message {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .no-maneuvers-message p {
+    margin: 0;
+    color: #856404;
+    font-size: 0.9rem;
+  }
+
+  /* Suite Management Styles */
+  .maneuver-suite-manager {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin: 1.5rem 0;
+  }
+
+  .maneuvers-column {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fafafa;
+    padding: 1rem;
+  }
+
+  .maneuvers-column h4 {
+    margin: 0 0 1rem 0;
+    font-size: 0.95rem;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+  }
+
+  .maneuvers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 150px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .maneuver-card {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    cursor: move;
+  }
+
+  .maneuver-card img {
+    width: 32px;
+    height: 32px;
+    border-radius: 2px;
+    border: 1px solid #ccc;
+  }
+
+  .maneuver-name {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .maneuver-card.in-suite {
+    background: #f0f7ff;
+    border-color: #4a90e2;
+  }
+
+  .maneuver-card.maneuver-spent {
+    opacity: 0.6;
+    background: #ffe8e8;
+  }
+
+  .spent-indicator {
+    color: #d32f2f;
+    font-weight: bold;
+    font-size: 0.8rem;
+  }
+
+  .maneuver-controls {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .maneuver-controls a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: #666;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+
+  .maneuver-controls a:hover {
+    background: #ddd;
+    color: #333;
+  }
+
+  .add-to-suite:hover {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .remove-from-suite:hover {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .use-maneuver:hover {
+    background: #cfe2ff;
+    color: #0c63e4;
+  }
+
+  .regain-maneuver:hover {
+    background: #d1ecf1;
+    color: #0c5460;
+  }
+
+  .empty-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    border: 2px dashed #ddd;
+    border-radius: 3px;
+    color: #999;
+    font-size: 0.85rem;
+    background: #fafafa;
+  }
+
+  .suite-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: #8b7355;
+    font-size: 1.5rem;
+  }
+
+  .suite-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+  }
+
+  .rest-maneuvers {
+    width: 100%;
+    padding: 0.5rem;
+    background: #f4f1de;
+    border: 1px solid #8b7355;
+    border-radius: 3px;
+    color: #333;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+  }
+
+  .rest-maneuvers:hover {
+    background: #ede8df;
+    border-color: #6b5545;
+  }
+
+  .section-header {
+    margin: 1.5rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #333;
+    font-size: 1.2rem;
+    color: #333;
+  }
+
+  @media (max-width: 768px) {
+    .maneuver-suite-manager {
+      flex-direction: column;
+    }
+
+    .suite-arrow {
+      transform: rotate(90deg);
+      height: 30px;
+      order: 2;
+    }
+
+    .maneuvers-column:nth-child(1) {
+      order: 1;
+    }
+
+    .maneuvers-column:nth-child(3) {
+      order: 3;
+    }
+  }
+</style>
+</div>
+</div>
