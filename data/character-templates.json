@@ -812,42 +812,54 @@
       "id": "soldier_rifleman",
       "name": "Rifleman",
       "class": "Soldier",
-      "archetype": "Rifleman",
-      "description": "A precision marksman who manipulates the condition track with devastating attacks.",
-      "quote": "Discipline and precision. Every shot matters.",
+      "archetype": "Just A Dude",
+      "description": "A straightforward soldier carrying a slugthrower rifle and a big pistol. Perfect for new players learning weapon versatility and the practical Bandolier.",
+      "quote": "I've got firepower. Let's see what you've got.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_rifleman.webp",
       "mentor": "breach",
-      "background": "Anaxes Origin",
+      "background": "Orphaned",
       "abilityScores": {
-        "str": 12,
+        "str": 16,
         "dex": 16,
         "con": 14,
         "int": 12,
-        "wis": 10,
-        "cha": 8
+        "wis": 8,
+        "cha": 6
       },
-      "species": "Human",
+      "species": "Houk",
+      "speciesFeats": [
+        "Natural Armor (+1 to Reflex Defense)",
+        "Physically Intimidating (use STR for Persuasion/Intimidation)"
+      ],
       "className": "Soldier",
       "level": 1,
-      "feat": "Point-Blank Shot",
-      "talent": "Devastating Attack (Rifles)",
-      "talentTree": "Weapon Specialist",
+      "feats": [
+        "Armor Proficiency (Light)",
+        "Armor Proficiency (Medium)",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Rifles)",
+        "Weapon Proficiency (Simple Weapons)"
+      ],
+      "talent": "Commanding Presence",
+      "talentTree": "Mercenary",
       "trainedSkills": [
         "initiative",
         "perception",
-        "knowledgeTactics",
-        "mechanics"
+        "endurance",
+        "persuasion"
       ],
       "forcePowers": [],
       "startingEquipment": [
-        "Blaster Rifle",
-        "Blast Helmet and Vest",
-        "Comlink, Short-Range",
-        "Medpac",
-        "Power Pack"
+        "Slugthrower Rifle",
+        "Clips x10",
+        "Targeting Scope",
+        "Bandolier",
+        "Model 434 DeathHammer",
+        "Power packs x2",
+        "Snap Baton"
       ],
-      "credits": 225,
-      "notes": "Attack +5, 3d8+3 damage. Devastating Attack treats target DT as 5 points lower."
+      "credits": -1125,
+      "notes": "Houk physiology provides natural durability. Commanding Presence: Once per encounter (Swift Action), all opponents within 6 squares take -2 penalty to Will Defense (Mind-Affecting Fear effect). Persuasion is a Class Skill for this character. Introduces the Bandolier (retrieve ammo/grenades with move action). When able, swap Slugthrower Rifle for a Heavy Weapon. Starting equipment includes Force Unleashed and Commanding Presence talents."
     },
     {
       "id": "soldier_gunner",
