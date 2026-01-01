@@ -91,6 +91,9 @@
         "level": 1,
         "race": "custom",
         "size": "medium",
+        "event": "",
+        "profession": "",
+        "planetOfOrigin": "",
         "conditionTrack": "normal",
         "speed": 6,
         "forcePoints": {
