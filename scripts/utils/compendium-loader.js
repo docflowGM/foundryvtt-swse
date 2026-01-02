@@ -1,5 +1,6 @@
 // scripts/utils/compendium-loader.js
 import { swseLogger } from './logger.js';
+import { sanitizeInput } from './validation-utils.js';
 
 /**
  * Enhanced Compendium Loader
@@ -89,8 +90,28 @@ class CompendiumLoader {
       return Array.from(pack.index.values());
     } else {
       // Load full documents
-      return await pack.getDocuments();
+      const documents = await pack.getDocuments();
+      // Sanitize item names for security (prevent XSS from compendium data)
+      return documents.map(doc => this._sanitizeDocument(doc));
     }
+  }
+
+  /**
+   * Sanitize document data to prevent XSS
+   * @private
+   */
+  _sanitizeDocument(doc) {
+    if (!doc) return doc;
+
+    // Sanitize name field if present and it's an item type
+    if (doc.name && ['weapon', 'armor', 'equipment', 'upgrade', 'feat', 'talent', 'power'].includes(doc.type)) {
+      // Only sanitize if name contains potentially dangerous characters
+      if (doc.name.includes('<') || doc.name.includes('>') || doc.name.includes('"') || doc.name.includes("'")) {
+        doc.name = sanitizeInput(doc.name);
+      }
+    }
+
+    return doc;
   }
 
   /**
