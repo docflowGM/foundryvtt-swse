@@ -127,9 +127,15 @@ export class SWSEDroidHandler {
   static async installAppendage(actor, appendageItem) {
     const appendages = actor.system.appendages ?? [];
 
+    // Validate appendage type
+    const appendageType = appendageItem.system.type ?? "generic";
+    if (!appendageType) {
+      SWSELogger.warn(`Appendage ${appendageItem.name} missing type field, using default`);
+    }
+
     appendages.push({
       name: appendageItem.name,
-      type: appendageItem.system.type, // probe, tool, claw, hand, etc.
+      type: appendageType, // probe, tool, claw, hand, etc.
       locomotion: appendageItem.system.locomotion ?? false,
       balance: appendageItem.system.balance ?? false,
       unarmedDamageType: appendageItem.system.unarmedDamageType ?? null

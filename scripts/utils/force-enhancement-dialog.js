@@ -284,7 +284,7 @@ export class ForceEnhancementDialog {
 
     // Get all checked technique checkboxes
     html.find('input[data-type="technique"]:checked').each((i, el) => {
-      const index = parseInt(el.dataset.index);
+      const index = parseInt(el.dataset.index, 10);
       if (techniques[index]) {
         selected.techniques.push(techniques[index]);
       }
@@ -292,7 +292,7 @@ export class ForceEnhancementDialog {
 
     // Get all checked secret checkboxes
     html.find('input[data-type="secret"]:checked').each((i, el) => {
-      const index = parseInt(el.dataset.index);
+      const index = parseInt(el.dataset.index, 10);
       if (secrets[index]) {
         selected.secrets.push(secrets[index]);
       }

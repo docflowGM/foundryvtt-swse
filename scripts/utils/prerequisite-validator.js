@@ -451,7 +451,7 @@ export class PrerequisiteValidator {
             return {
                 type: 'ability',
                 ability: abilityMap[abilityMatch[1].toLowerCase()],
-                value: parseInt(abilityMatch[2])
+                value: parseInt(abilityMatch[2], 10)
             };
         }
 
@@ -461,7 +461,7 @@ export class PrerequisiteValidator {
         if (babMatch) {
             return {
                 type: 'bab',
-                value: parseInt(babMatch[1] || babMatch[2])
+                value: parseInt(babMatch[1] || babMatch[2], 10)
             };
         }
 
@@ -471,7 +471,7 @@ export class PrerequisiteValidator {
         if (levelMatch) {
             return {
                 type: 'level',
-                value: parseInt(levelMatch[1] || levelMatch[2])
+                value: parseInt(levelMatch[1] || levelMatch[2], 10)
             };
         }
 
@@ -488,7 +488,7 @@ export class PrerequisiteValidator {
                 return {
                     type: 'class',
                     className: className,
-                    level: parseInt(classLevelMatch[2])
+                    level: parseInt(classLevelMatch[2], 10)
                 };
             }
         }
@@ -500,7 +500,7 @@ export class PrerequisiteValidator {
             return {
                 type: 'skill_rank',
                 skillName: skillRankMatch[1].trim(),
-                ranks: parseInt(skillRankMatch[2])
+                ranks: parseInt(skillRankMatch[2], 10)
             };
         }
 

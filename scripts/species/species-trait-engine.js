@@ -219,7 +219,7 @@ export class SpeciesTraitEngine {
         id: id,
         name: name,
         target: match[2].toLowerCase(),
-        value: parseInt(match[1]),
+        value: parseInt(match[1], 10),
         displayText: originalText,
         automated: true
       };
@@ -236,7 +236,7 @@ export class SpeciesTraitEngine {
         id: id,
         name: name,
         target: match[2].toLowerCase(),
-        value: -parseInt(match[1]),
+        value: -parseInt(match[1], 10),
         displayText: originalText,
         automated: true
       };
@@ -255,7 +255,7 @@ export class SpeciesTraitEngine {
           id: id,
           name: name,
           target: skillKey,
-          value: parseInt(match[1]),
+          value: parseInt(match[1], 10),
           displayText: originalText,
           automated: true
         };
