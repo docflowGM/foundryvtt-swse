@@ -5,6 +5,7 @@
  * - Consistent with Actor.moveConditionTrack()
  * - UI safely triggers CT updates without breaking Active Effects
  */
+import { escapeHTML } from "../utils/security-utils.js";
 
 export class ConditionTrackComponent {
 
@@ -101,9 +102,9 @@ export class ConditionTrackComponent {
       <div class="ct-step ${step.css} ${active}"
            data-ct="set"
            data-step="${step.index}"
-           title="Set condition to ${step.label}">
-        <span class="ct-label">${step.label}</span>
-        ${step.penalty ? `<span class="ct-pen">${step.penalty}</span>` : ""}
+           title="Set condition to ${escapeHTML(step.label)}">
+        <span class="ct-label">${escapeHTML(step.label)}</span>
+        ${step.penalty ? `<span class="ct-pen">${escapeHTML(step.penalty)}</span>` : ""}
         ${marker}
       </div>
     `;

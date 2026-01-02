@@ -86,7 +86,7 @@ export class PrerequisiteValidator {
                 // ABILITY SCORE REQUIREMENT
                 // --------------------------------------------------------
                 case "ability": {
-                    const ability = actor.system.abilities[prereq.ability]?.value;
+                    const ability = actor.system.abilities[prereq.ability]?.total ?? 10;
                     if (ability < prereq.minimum) {
                         reasons.push(
                             `${nameForError} requires ${prereq.ability.toUpperCase()} ${prereq.minimum} (you have ${ability})`

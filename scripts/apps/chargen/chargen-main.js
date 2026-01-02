@@ -156,8 +156,8 @@ export default class CharacterGenerator extends Application {
     if (system.abilities) {
       for (const [key, value] of Object.entries(system.abilities)) {
         if (this.characterData.abilities[key]) {
-          this.characterData.abilities[key].total = value.total || value.value || 10;
-          this.characterData.abilities[key].base = value.base || value.value || 10;
+          this.characterData.abilities[key].total = value.total ?? 10;
+          this.characterData.abilities[key].base = value.base ?? 10;
         }
       }
     }

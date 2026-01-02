@@ -156,7 +156,7 @@ export class SWSELevelUpEnhanced extends FormApplication {
     ];
 
     let idx = order.indexOf(this.currentStep);
-    if (idx < order.length - 1) this.currentStep = order[idx + 1];
+    if (idx >= 0 && idx < order.length - 1) this.currentStep = order[idx + 1];
 
     await this._loadAvailable();
     this.render();

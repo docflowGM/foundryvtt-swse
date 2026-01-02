@@ -1,4 +1,5 @@
 import { swseLogger } from "../utils/logger.js";
+import { escapeHTML } from "../utils/security-utils.js";
 
 /**
  * SWSE Damage System (v13+)
@@ -73,7 +74,7 @@ export class DamageSystem {
 
     return new Promise(resolve => {
       new Dialog({
-        title: game.i18n.format("SWSE.Dialogs.ApplyDamage.Title", { name: target.name }),
+        title: game.i18n.format("SWSE.Dialogs.ApplyDamage.Title", { name: escapeHTML(target.name) }),
         content: `
           <form>
             <div class="form-group">

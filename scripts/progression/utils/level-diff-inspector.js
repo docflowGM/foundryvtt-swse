@@ -122,8 +122,8 @@ export class LevelDiffInspector {
         const abilityIncreases = {};
 
         for (const ability of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
-            const before = abilitiesBefore[ability]?.value || 10;
-            const after = abilitiesAfter[ability]?.value || 10;
+            const before = abilitiesBefore[ability]?.total || 10;
+            const after = abilitiesAfter[ability]?.total || 10;
 
             if (after > before) {
                 abilityIncreases[ability] = {

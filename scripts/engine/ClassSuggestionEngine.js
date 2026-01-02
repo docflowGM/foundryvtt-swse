@@ -438,7 +438,7 @@ export class ClassSuggestionEngine {
         const abilityScores = {};
 
         for (const [abilityKey, abilityData] of Object.entries(abilities)) {
-            const score = abilityData?.total || abilityData?.value || 10;
+            const score = abilityData?.total ?? 10;
             abilityScores[abilityKey.toLowerCase()] = score;
             if (score > highestScore) {
                 highestScore = score;

@@ -1006,7 +1006,9 @@ export async function _importDroidType(droid) {
   if (droid.system && droid.system.abilities) {
     for (const [ability, value] of Object.entries(droid.system.abilities)) {
       if (this.characterData.abilities[ability]) {
-        this.characterData.abilities[ability].base = value.value || value || 10;
+        // Handle both structured abilities (objects with .base) and plain numbers
+        const baseScore = typeof value === 'object' ? (value.base ?? value.total ?? 10) : (value ?? 10);
+        this.characterData.abilities[ability].base = baseScore;
       }
     }
   }

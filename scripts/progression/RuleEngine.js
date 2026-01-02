@@ -78,7 +78,7 @@ export class RuleEngine {
   _checkAbility(req) {
     const ability = this.actor.system?.abilities?.[req.ability];
     if (!ability) return false;
-    return (ability?.value ?? 0) >= req.minimum;
+    return (ability?.total ?? 10) >= req.minimum;
   }
 
   _checkBAB(req) {
