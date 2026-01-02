@@ -33,6 +33,7 @@ export default class CharacterGenerator extends Application {
     this.actor = actor;
     this.actorType = options.actorType || "character"; // "character" for PCs, "npc" for NPCs
     this.mentor = null; // Mentor character for survey prompts (initialized when needed)
+    this._creatingActor = false; // Re-entry guard for character creation
     this.characterData = {
       name: "",
       isDroid: false,
@@ -695,15 +696,20 @@ export default class CharacterGenerator extends Application {
       }
 
       // Create character when moving from summary to shop
-      if (this.currentStep === "summary" && nextStep === "shop") {
-        this._finalizeCharacter();
-        if (!this.actor) {
-          // Validate before creating
-          const isValid = await this._validateFinalCharacter();
-          if (!isValid) {
-            return; // Don't proceed to shop if validation fails
+      if (this.currentStep === "summary" && nextStep === "shop" && !this._creatingActor) {
+        this._creatingActor = true;
+        try {
+          this._finalizeCharacter();
+          if (!this.actor) {
+            // Validate before creating
+            const isValid = await this._validateFinalCharacter();
+            if (!isValid) {
+              return; // Don't proceed to shop if validation fails
+            }
+            await this._createActor();
           }
-          await this._createActor();
+        } finally {
+          this._creatingActor = false;
         }
       }
 
