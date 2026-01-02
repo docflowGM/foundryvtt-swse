@@ -34,6 +34,7 @@
  <div class="threshold-value">{{system.damageThreshold}}</div>
  </div>
 
+ {{#if system.shields}}
  <div class="combat-stat shields-stat">
  <label>Shield Rating (SR)</label>
  <div class="shields-display">
@@ -55,6 +56,7 @@
  <small>Recharge: DC 20 Mechanics (3 Swift Actions) restores +5 SR</small>
  </div>
  </div>
+ {{/if}}
 
  <div class="combat-stat dr-stat">
  <label>Damage Reduction (DR)</label>
