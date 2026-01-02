@@ -235,8 +235,8 @@ export class HealingMechanics {
     try {
       if (success) {
         // Apply healing
-        const currentHP = patient.system?.health?.hp?.value || 0;
-        const maxHP = patient.system?.health?.hp?.max || 0;
+        const currentHP = patient.system?.hp?.value || 0;
+        const maxHP = patient.system?.hp?.max || 0;
         const newHP = Math.min(currentHP + healing, maxHP);
 
         await patient.update({ "system.hp.value": newHP });
@@ -254,7 +254,7 @@ export class HealingMechanics {
       } else {
         // Apply failure damage
         if (damageFromFailure > 0) {
-          const currentHP = patient.system?.health?.hp?.value || 0;
+          const currentHP = patient.system?.hp?.value || 0;
           const newHP = Math.max(0, currentHP - damageFromFailure);
 
           await patient.update({ "system.hp.value": newHP });
@@ -399,21 +399,26 @@ export class HealingMechanics {
 
     // Check for overdose risk
     if (!success && recentCare.length > 0) {
-      // Apply overdose damage
-      const damageThreshold = patient.system?.traits?.damageThreshold || 5;
-      const currentHP = patient.system?.health?.hp?.value || 0;
-      const newHP = Math.max(0, currentHP - damageThreshold);
+      try {
+        // Apply overdose damage
+        const damageThreshold = patient.system?.traits?.damageThreshold || 5;
+        const currentHP = patient.system?.hp?.value || 0;
+        const newHP = Math.max(0, currentHP - damageThreshold);
 
-      await patient.update({ "system.hp.value": newHP });
+        await patient.update({ "system.hp.value": newHP });
 
-      return {
-        success: false,
-        overdose: true,
-        damageFromOverdose: damageThreshold,
-        newHP,
-        previousCareAttempts: recentCare.length,
-        message: "Patient overdosed from too many Medpac applications!"
-      };
+        return {
+          success: false,
+          overdose: true,
+          damageFromOverdose: damageThreshold,
+          newHP,
+          previousCareAttempts: recentCare.length,
+          message: "Patient overdosed from too many Medpac applications!"
+        };
+      } catch (err) {
+        SWSELogger.error("Critical Care overdose damage failed", err);
+        return { success: false, message: err.message };
+      }
     }
 
     if (!success) {
@@ -427,8 +432,8 @@ export class HealingMechanics {
 
     try {
       const healing = this._calculateCriticalCareHealing(patient, checkResult, dc);
-      const currentHP = patient.system?.health?.hp?.value || 0;
-      const maxHP = patient.system?.health?.hp?.max || 0;
+      const currentHP = patient.system?.hp?.value || 0;
+      const maxHP = patient.system?.hp?.max || 0;
       const newHP = Math.min(currentHP + healing, maxHP);
 
       await patient.update({ "system.hp.value": newHP });
