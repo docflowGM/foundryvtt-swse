@@ -920,3 +920,396 @@ async load(packName, options = {}) {
 13. Add null checks for droid armor properties
 14. Add validation for appendage type
 15. Document data structure standards
+
+---
+
+## ITEM, FEAT, AND TALENT COMPENDIUM NORMALIZATION ISSUES
+
+### CRITICAL: Ability Score `.value` Property Access Bug
+
+**Issue**: Multiple files try to access `abilities[ability].value` but this property does NOT exist in schema
+
+**Files Accessing Non-Existent Property**:
+- `/home/user/foundryvtt-swse/scripts/progression/feats/feat-requirements.js:65, 73`
+- `/home/user/foundryvtt-swse/scripts/engine/StarshipManeuversEngine.js:225`
+- `/home/user/foundryvtt-swse/scripts/apps/levelup/levelup-starship-maneuvers.js:38`
+- `/home/user/foundryvtt-swse/scripts/apps/chargen/ability-rolling.js:360`
+- `/home/user/foundryvtt-swse/scripts/apps/chargen/chargen-droid.js:1009`
+- `/home/user/foundryvtt-swse/scripts/progression/engine/equipment-engine.js:272`
+- `/home/user/foundryvtt-swse/scripts/utils/prerequisite-validator.js:89`
+- `/home/user/foundryvtt-swse/scripts/utils/starship-maneuver-manager.js:126, 210`
+
+**Actual Schema Structure**:
+Abilities have: `base`, `racial`, `misc`, `enhancement`, `temp`, `total`, `mod`
+- There is NO `.value` field defined
+
+**Code Example - BROKEN**:
+```javascript
+// feat-requirements.js:65
+const score = actor.system.abilities?.[ability]?.value || 10;
+```
+
+**Should Be One Of**:
+```javascript
+const score = actor.system.abilities?.[ability]?.total || 10;  // Calculated total
+// OR
+const score = actor.system.abilities?.[ability]?.base || 10;   // Base score
+```
+
+**Impact**:
+- Ability score requirements in feats always fall back to 10 (default)
+- Feat requirement validation broken for all ability checks
+- Starship maneuver validation broken
+- Character generation ability rolling may not work correctly
+
+**Recommendation**: Replace all `.value` accesses with `.total` (for final calculated score) or `.base` (for base score)
+
+---
+
+### HIGH: Prerequisite Field Type Inconsistency
+
+**Issue**: Prerequisites defined with different field types across item compendiums
+
+**Upgrade Data Model** (line 201):
+```javascript
+prerequisite: new fields.StringField({label: "Prerequisites"}),
+```
+
+**Feat Data Model** (line 230):
+```javascript
+prerequisite: new fields.HTMLField({label: "Prerequisites"}),
+```
+
+**Talent Data Model** (line 257):
+```javascript
+prerequisite: new fields.HTMLField({label: "Prerequisites"}),
+```
+
+**Impact**:
+- Upgrades store prerequisites as plain text
+- Feats/talents store as HTML (can contain formatting)
+- Prerequisite validation code doesn't account for type difference
+- Searching/filtering prerequisites may fail due to type mismatch
+
+**Recommendation**: Standardize on single type (recommend HTMLField for consistency with feats/talents)
+
+---
+
+### HIGH: Ability Score `.total` vs `.base` Inconsistency in Chargen
+
+**File**: `/home/user/foundryvtt-swse/scripts/apps/chargen/chargen-main.js:159-160`
+
+**Issue**: Chargen conflates `.total` and `.value` without clear semantics
+
+```javascript
+this.characterData.abilities[key].total = value.total || value.value || 10;
+this.characterData.abilities[key].base = value.base || value.value || 10;
+```
+
+**Problem**:
+- Uses `.value` as fallback for both `.total` and `.base` (but `.value` doesn't exist)
+- If `.total` is missing, falls back to non-existent `.value`
+- If `.base` is missing, falls back to non-existent `.value`
+- No way to distinguish between base and total ability scores
+
+**Recommendation**: Ensure incoming data has both `.base` and derived fields calculated
+
+---
+
+### MEDIUM: Size Field Inconsistency in Item Types
+
+**Weapon Size** (line 41):
+```javascript
+size: new fields.StringField({initial: "small", label: "Equipment Size"}),
+```
+
+**Armor Size** (line 99):
+```javascript
+size: new fields.StringField({initial: "medium", label: "Armor Size"}),
+```
+
+**Equipment Size** (line 147):
+```javascript
+size: new fields.StringField({initial: "small", label: "Equipment Size"}),
+```
+
+**Issues**:
+- Weapons default to "small", armor to "medium", equipment to "small"
+- No validation that size is from standard list (tiny, small, medium, large, huge, gargantuan, colossal)
+- Label "Equipment Size" confusing for weapons/armor
+- No enforcement of standard size values
+
+**Recommendation**:
+- Use SIZE_CONSTANTS for all three
+- Add validators to enforce standard values
+- Use consistent labels
+
+---
+
+### MEDIUM: Restriction Field Inconsistency
+
+**Weapon/Armor/Equipment Restriction** (lines 71, 131, 164):
+```javascript
+restriction: new fields.StringField({initial: "common", label: "Restriction Level"})
+```
+
+**Upgrade Availability** (line 188):
+```javascript
+availability: new fields.StringField({
+  initial: "common",
+  choices: ["common", "rare", "licensed", "restricted", "military", "illegal"],
+  label: "Availability"
+}),
+
+restriction: new fields.StringField({
+  initial: "common",
+  choices: ["common", "licensed", "restricted", "military", "illegal"],
+  label: "Restriction Level"
+}),
+```
+
+**Issues**:
+1. **Field Name Inconsistency**: Some use `restriction`, others use `availability`
+2. **Value Inconsistency**:
+   - Upgrades allow "rare", others don't
+   - Upgrade availability has 6 choices, restriction has 5 (missing "rare")
+3. **Missing Validation**: Weapons/armor/equipment don't enforce choices
+4. **No Case Normalization**: Values could be "Common", "COMMON", "common"
+
+**Recommendation**:
+- Standardize on single field name: `restriction`
+- Use consistent choice values across all item types
+- Add validator to enforce lowercase and standard values
+
+---
+
+### MEDIUM: Feat Type Field Missing Normalization
+
+**File**: `/home/user/foundryvtt-swse/scripts/data-models/item-data-models.js:225-229`
+
+```javascript
+featType: new fields.StringField({
+  initial: "general",
+  choices: ["general", "force", "species"],
+  label: "Feat Type"
+}),
+```
+
+**Issues**:
+1. No validation during import ensures feat type is one of choices
+2. No case normalization ("General" vs "general")
+3. No handling of legacy feat type names if any existed
+
+**Recommendation**: Add clean function to normalize and validate feat types
+
+---
+
+### MEDIUM: Feat and Talent Uses Tracking Different
+
+**Feat Uses** (lines 242-246):
+```javascript
+uses: new fields.SchemaField({
+  current: new fields.NumberField({initial: 0, min: 0, integer: true}),
+  max: new fields.NumberField({initial: 0, min: 0, integer: true}),
+  perDay: new fields.BooleanField({initial: false})
+})
+```
+
+**Talent Uses** (lines 262-267):
+```javascript
+uses: new fields.SchemaField({
+  current: new fields.NumberField({initial: 0, min: 0, integer: true}),
+  max: new fields.NumberField({initial: 0, min: 0, integer: true}),
+  perEncounter: new fields.BooleanField({initial: false}),
+  perDay: new fields.BooleanField({initial: false})
+})
+```
+
+**Issue**:
+- Feats use `perDay`
+- Talents use both `perEncounter` AND `perDay`
+- No validation on data ensures consistency
+- Templates may expect different structure for feats vs talents
+
+**Recommendation**: Standardize structure and add validation
+
+---
+
+### MEDIUM: Missing Fields in Feat Data Model
+
+**File**: `/home/user/foundryvtt-swse/scripts/data-models/item-data-models.js:220-249`
+
+**Missing Fields That Should Exist**:
+1. **sourcebook** / **source** - Other items have this (upgrades have `source`), feats don't
+2. **page** - Upgrades have page number field, feats don't
+3. **description** - No description field defined for searchability/display
+
+**Current Fields**:
+- `featType` (general, force, species)
+- `prerequisite` (HTMLField)
+- `benefit` (HTMLField)
+- `special` (HTMLField)
+- `normalText` (HTMLField)
+- `bonusFeatFor` (array of classes)
+- `uses` (tracking)
+
+**Gap**: No description field for searching/display
+
+**Recommendation**: Add missing fields for completeness and consistency with other item types
+
+---
+
+### MEDIUM: Talent Tree Validation Missing
+
+**File**: `/home/user/foundryvtt-swse/scripts/data-models/item-data-models.js:256`
+
+```javascript
+tree: new fields.StringField({required: true, label: "Talent Tree"}),
+```
+
+**Issues**:
+1. No choices defined - any string accepted
+2. No validation on import ensures tree name is valid
+3. No normalization (case sensitivity issues possible)
+4. No reference to list of available talent trees
+
+**Recommendation**:
+- Define choices based on actual talent trees in system
+- Add validator to ensure talent tree exists
+- Normalize tree names
+
+---
+
+### LOW: Property Naming - `bonusFeatFor` Ambiguity
+
+**File**: `/home/user/foundryvtt-swse/scripts/data-models/item-data-models.js:236-239`
+
+```javascript
+bonusFeatFor: new fields.ArrayField(
+  new fields.StringField(),
+  {label: "Bonus Feat For Classes"}
+),
+```
+
+**Issue**:
+- Field uses camelCase `bonusFeatFor`
+- Label says "Bonus Feat For Classes" (unclear if class names or class IDs)
+- No validation on values - any string accepted
+
+**Recommendation**:
+- Add choices or validation
+- Clarify if storing class names or IDs
+- Consider renaming to `bonusClassesFor` for clarity
+
+---
+
+### LOW: Force Power Tags vs Descriptor Field Confusion
+
+**File**: `/home/user/foundryvtt-swse/scripts/data-models/item-data-models.js:305-340`
+
+```javascript
+// Descriptors (e.g., [Mind-Affecting], [Dark Side], [Telekinetic])
+// NOTE: Use 'tags' field for descriptors - this field is deprecated
+descriptor: new fields.ArrayField(
+  new fields.StringField(),
+  {label: "Descriptors (Deprecated - use tags)"}
+),
+
+// ...
+
+// Tags for categorization and filtering
+tags: new fields.ArrayField(
+  new fields.StringField(),
+  {label: "Tags/Descriptors", hint: "e.g., dark-side, light-side, mind-affecting, telekinetic"}
+),
+```
+
+**Issues**:
+1. Deprecated `descriptor` field still in schema (creates confusion)
+2. Two fields for same concept (bad practice)
+3. Comments suggest use `tags` but deprecated field still accepted
+4. No migration to move data from `descriptor` to `tags`
+
+**Recommendation**:
+- Remove deprecated `descriptor` field
+- Create migration to move existing data to `tags`
+- Update all references to use `tags` only
+
+---
+
+### LOW: Weapon Damage Type Validation Missing
+
+**File**: `/home/user/foundryvtt-swse/scripts/data-models/item-data-models.js:12-16`
+
+```javascript
+damageType: new fields.StringField({
+  required: true,
+  initial: "energy",
+  label: "Damage Type"
+}),
+```
+
+**Issues**:
+1. No choices defined - any string accepted
+2. No validation ensures damage type is standard (energy, kinetic, etc.)
+3. Case sensitivity not handled
+4. Typos in weapon damage types would break rolls
+
+**Recommendation**:
+- Define standard damage types in choices
+- Add validator for case normalization
+
+---
+
+## ITEM/FEAT/TALENT COMPENDIUM NORMALIZATION SUMMARY TABLE
+
+| Issue | Type | Severity | Impact | Files |
+|-------|------|----------|--------|-------|
+| abilities.value doesn't exist | Missing Property | CRITICAL | Feat validation broken | 8+ files |
+| prerequisite type inconsistency | Field Type | HIGH | Data inconsistency | 3 data models |
+| chargen ability score fallback | Logic Error | HIGH | Chargen may fail | chargen-main.js |
+| size field defaults differ | Consistency | MEDIUM | Confusion in data | 3 item types |
+| restriction vs availability naming | Naming | MEDIUM | Inconsistent queries | item-data-models.js |
+| restriction not validated | Validation Gap | MEDIUM | Invalid data accepted | weapons/armor/equipment |
+| feat type not normalized | Normalization | MEDIUM | Data quality | feats |
+| talent uses different from feats | Structural | MEDIUM | Different tracking | both types |
+| missing feat fields | Data Completeness | MEDIUM | Incomplete data model | feats |
+| talent tree not validated | Validation Gap | MEDIUM | Invalid trees created | talents |
+| bonusFeatFor ambiguous | Naming | LOW | Unclear usage | feats |
+| descriptor field deprecated | Legacy | LOW | Code confusion | force powers |
+| damage type not validated | Validation Gap | LOW | Typos possible | weapons |
+
+---
+
+## UPDATED ACTION ITEMS FOR ITEMS/FEATS/TALENTS
+
+### MUST DO FIRST:
+
+1. **Fix Ability Score `.value` Property Access** (CRITICAL)
+   - Replace all `.abilities[x].value` with `.total` or `.base`
+   - 8+ files affected
+   - Breaks feat validation
+
+2. **Standardize Prerequisite Fields** (HIGH)
+   - Choose: HTMLField (recommended) for all
+   - Migrate upgrade prerequisites
+   - Add HTML sanitization
+
+### HIGH PRIORITY:
+
+3. Fix chargen ability score fallback logic
+4. Standardize restriction/availability fields and values
+5. Add size constants for item types
+6. Remove deprecated Force Power descriptor field
+7. Add missing feat fields (source, page, description)
+8. Validate talent tree names on import
+
+### MEDIUM PRIORITY:
+
+9. Standardize feat and talent uses tracking structure
+10. Add feat type normalization
+11. Validate weapon damage types
+12. Clarify bonusFeatFor field intent and add validation
+13. Add upgrade installationTime auto-calculation
+
+---
