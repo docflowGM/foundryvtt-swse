@@ -66,7 +66,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   // LEVEL SELECTION
   // ========================================
   async _onLevelChange(event) {
-    const newLevel = Math.max(1, Math.min(20, parseInt(event.target.value) || 1));
+    const newLevel = Math.max(1, Math.min(20, parseInt(event.target.value, 10) || 1));
 
     // Warn user about multi-level limitations
     if (newLevel > 1 && this.targetLevel === 1) {

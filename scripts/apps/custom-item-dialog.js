@@ -130,16 +130,16 @@ export class CustomItemDialog {
                   damageType: formData.damageType || "energy",
                   range: formData.range || "melee",
                   attackAttribute: formData.attackAttribute || "str",
-                  attackBonus: parseInt(formData.attackBonus) || 0,
+                  attackBonus: parseInt(formData.attackBonus, 10) || 0,
                   weight: parseFloat(formData.weight) || 0,
-                  cost: parseInt(formData.cost) || 0,
+                  cost: parseInt(formData.cost, 10) || 0,
                   properties: properties,
                   ammunition: {
                     type: formData.ammoType || "none",
-                    current: parseInt(formData.ammoCurrent) || 0,
-                    max: parseInt(formData.ammoMax) || 0
+                    current: parseInt(formData.ammoCurrent, 10) || 0,
+                    max: parseInt(formData.ammoMax, 10) || 0
                   },
-                  upgradeSlots: parseInt(formData.upgradeSlots) ?? 1,
+                  upgradeSlots: parseInt(formData.upgradeSlots, 10) ?? 1,
                   installedUpgrades: [],
                   description: formData.description || "",
                   equipped: false
@@ -264,7 +264,7 @@ export class CustomItemDialog {
               // Handle maxDexBonus - null if blank, otherwise parse as number
               let maxDexBonus = null;
               if (formData.maxDexBonus && formData.maxDexBonus !== "") {
-                const parsed = parseInt(formData.maxDexBonus);
+                const parsed = parseInt(formData.maxDexBonus, 10);
                 if (!isNaN(parsed)) {
                   maxDexBonus = parsed;
                 }
@@ -276,14 +276,14 @@ export class CustomItemDialog {
                 img: 'icons/equipment/chest/breastplate-cuirass-steel.webp',
                 system: {
                   armorType: formData.armorType || "light",
-                  defenseBonus: parseInt(formData.defenseBonus) || 0,
-                  fortBonus: parseInt(formData.fortBonus) || 0,
+                  defenseBonus: parseInt(formData.defenseBonus, 10) || 0,
+                  fortBonus: parseInt(formData.fortBonus, 10) || 0,
                   maxDexBonus: maxDexBonus,
-                  armorCheckPenalty: parseInt(formData.armorCheckPenalty) || 0,
-                  speedPenalty: parseInt(formData.speedPenalty) || 0,
+                  armorCheckPenalty: parseInt(formData.armorCheckPenalty, 10) || 0,
+                  speedPenalty: parseInt(formData.speedPenalty, 10) || 0,
                   weight: parseFloat(formData.weight) || 0,
-                  cost: parseInt(formData.cost) || 0,
-                  upgradeSlots: parseInt(formData.upgradeSlots) ?? 1,
+                  cost: parseInt(formData.cost, 10) || 0,
+                  upgradeSlots: parseInt(formData.upgradeSlots, 10) ?? 1,
                   installedUpgrades: [],
                   description: formData.description || "",
                   equipped: false
@@ -369,8 +369,8 @@ export class CustomItemDialog {
                 img: 'icons/sundries/misc/pouch-simple-leather-brown.webp',
                 system: {
                   weight: parseFloat(formData.weight) || 0,
-                  cost: parseInt(formData.cost) || 0,
-                  upgradeSlots: parseInt(formData.upgradeSlots) ?? 1,
+                  cost: parseInt(formData.cost, 10) || 0,
+                  upgradeSlots: parseInt(formData.upgradeSlots, 10) ?? 1,
                   installedUpgrades: [],
                   description: formData.description || ""
                 }
@@ -493,7 +493,7 @@ export class CustomItemDialog {
                   bonusFeatFor: bonusFeatFor,
                   uses: {
                     current: 0,
-                    max: parseInt(formData.usesMax) || 0,
+                    max: parseInt(formData.usesMax, 10) || 0,
                     perDay: formData.usesPerDay === 'on'
                   }
                 }
@@ -597,7 +597,7 @@ export class CustomItemDialog {
                   special: formData.special || "",
                   uses: {
                     current: 0,
-                    max: parseInt(formData.usesMax) || 0,
+                    max: parseInt(formData.usesMax, 10) || 0,
                     perEncounter: formData.usesPerEncounter === 'on',
                     perDay: formData.usesPerDay === 'on'
                   }
@@ -835,7 +835,7 @@ export class CustomItemDialog {
                 const effect = html.find(`input[name="effect-${index}"]`).val();
                 const description = html.find(`input[name="description-${index}"]`).val();
 
-                const dc = parseInt(dcValue);
+                const dc = parseInt(dcValue, 10);
                 if (!isNaN(dc) && dc > 0 && effect && effect.trim()) {
                   dcChart.push({ dc, effect, description: (description && description.trim()) || "" });
                 } else if (effect && effect.trim() && dcValue) {
@@ -848,9 +848,9 @@ export class CustomItemDialog {
                 type: 'force-power',
                 img: 'icons/magic/light/orb-lightbulb-gray.webp',
                 system: {
-                  powerLevel: parseInt(formData.powerLevel) || 1,
+                  powerLevel: parseInt(formData.powerLevel, 10) || 1,
                   discipline: formData.discipline || "telekinetic",
-                  useTheForce: parseInt(formData.useTheForce) || 15,
+                  useTheForce: parseInt(formData.useTheForce, 10) || 15,
                   time: formData.time || "Standard Action",
                   range: formData.range || "6 squares",
                   target: formData.target || "One target",
@@ -860,13 +860,13 @@ export class CustomItemDialog {
                   tags: tags,
                   dcChart: dcChart,
                   maintainable: formData.maintainable === 'on',
-                  forcePointCost: parseInt(formData.forcePointCost) || 0,
+                  forcePointCost: parseInt(formData.forcePointCost, 10) || 0,
                   forcePointEffect: formData.forcePointEffect || "",
                   sourcebook: formData.sourcebook || "Homebrew",
-                  page: parseInt(formData.page) || null,
+                  page: parseInt(formData.page, 10) || null,
                   uses: {
                     current: 0,
-                    max: parseInt(formData.usesMax) || 0
+                    max: parseInt(formData.usesMax, 10) || 0
                   },
                   inSuite: false,
                   spent: false

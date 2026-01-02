@@ -97,7 +97,7 @@ export function getWeaponGroup(weapon) {
   // Default ranged to pistols if short range
   const rangeMatch = range.match(/(\d+)/);
   if (rangeMatch) {
-    const rangeNum = parseInt(rangeMatch[1]);
+    const rangeNum = parseInt(rangeMatch[1], 10);
     if (rangeNum <= 20) return WEAPON_GROUPS.PISTOLS;
     if (rangeNum <= 60) return WEAPON_GROUPS.RIFLES;
     return WEAPON_GROUPS.HEAVY;

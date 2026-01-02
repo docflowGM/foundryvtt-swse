@@ -1278,7 +1278,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     event.preventDefault();
     const btn = event.currentTarget;
     const abilityId = btn.dataset.abilityId;
-    const choiceIndex = parseInt(btn.dataset.choiceIndex);
+    const choiceIndex = parseInt(btn.dataset.choiceIndex, 10);
 
     const abilities = TalentAbilitiesEngine.getAbilitiesForActor(this.actor);
     const ability = abilities.all.find(a => a.id === abilityId);

@@ -452,7 +452,7 @@ export function _applyRacialSkillBonuses(bonuses) {
     const match = bonusString.match(/([+-]?\d+)\s+(.+)/i);
     if (!match) continue;
 
-    const bonusValue = parseInt(match[1]);
+    const bonusValue = parseInt(match[1], 10);
     const skillName = match[2].trim().toLowerCase();
 
     // Find matching skill key
@@ -555,7 +555,7 @@ export function _parseAbilityString(abilityString) {
     // Pattern 1: "+2 Dex", "-2 Con", "+4 Str", etc. (value before ability)
     let match = part.match(/([+-]?\d+)\s*([a-zA-Z\s]+)/);
     if (match) {
-      const value = parseInt(match[1]);
+      const value = parseInt(match[1], 10);
       const abilityName = match[2].toLowerCase().trim();
       const abilityKey = abilityMap[abilityName];
 
@@ -569,7 +569,7 @@ export function _parseAbilityString(abilityString) {
     // Pattern 2: "Dex +2", "Con -2", etc. (ability before value)
     match = part.match(/([a-zA-Z\s]+)([+-]?\d+)/);
     if (match) {
-      const value = parseInt(match[2]);
+      const value = parseInt(match[2], 10);
       const abilityName = match[1].toLowerCase().trim();
       const abilityKey = abilityMap[abilityName];
 

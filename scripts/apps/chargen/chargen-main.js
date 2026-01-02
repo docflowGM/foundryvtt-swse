@@ -567,7 +567,7 @@ export default class CharacterGenerator extends Application {
 
     // Level input
     $html.find('input[name="target-level"]').on('input change', (ev) => {
-      this.targetLevel = parseInt(ev.target.value) || 1;
+      this.targetLevel = parseInt(ev.target.value, 10) || 1;
     });
 
     // Shop button

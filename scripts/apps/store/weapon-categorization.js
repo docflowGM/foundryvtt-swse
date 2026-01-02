@@ -64,7 +64,7 @@ export function categorizeWeapon(weapon) {
     }
 
     // Default: Use range and attack attribute to determine
-    const rangeNum = parseInt(range);
+    const rangeNum = parseInt(range, 10);
     if (!isNaN(rangeNum)) {
         if (rangeNum <= 5) {
             // Very short range - likely thrown/exotic

@@ -111,14 +111,14 @@ function _normalizeClassData(doc) {
   if (system.hit_die) {
     const match = system.hit_die.match(/\d+d(\d+)/);
     if (match) {
-      hitDie = parseInt(match[1]);
+      hitDie = parseInt(match[1], 10);
     }
   }
 
   // Determine skill points from trained skills or default
   let skillPoints = 4; // Default
   if (system.trainedSkills !== null && system.trainedSkills !== undefined) {
-    skillPoints = parseInt(system.trainedSkills) || 4;
+    skillPoints = parseInt(system.trainedSkills, 10) || 4;
   }
 
   // Map babProgression to baseAttackBonus format
@@ -157,7 +157,7 @@ function _normalizeClassData(doc) {
       // Normalize level number (compendium often stores as string)
       const levelKey = typeof levelData.level === "number"
         ? levelData.level
-        : parseInt(levelData.level);
+        : parseInt(levelData.level, 10);
 
       // Extract features array
       const features = Array.isArray(levelData.features) ? levelData.features : [];

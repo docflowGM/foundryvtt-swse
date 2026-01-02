@@ -110,9 +110,9 @@ export async function _onSelectClass(event) {
       // Parse format like "3d4 x 400"
       const match = creditsString.match(/(\d+)d(\d+)\s*x\s*(\d+)/i);
       if (match) {
-        const numDice = parseInt(match[1]);
-        const dieSize = parseInt(match[2]);
-        const multiplier = parseInt(match[3]);
+        const numDice = parseInt(match[1], 10);
+        const dieSize = parseInt(match[2], 10);
+        const multiplier = parseInt(match[3], 10);
 
         // Check for house rule to take maximum credits
         // Default to rolling dice

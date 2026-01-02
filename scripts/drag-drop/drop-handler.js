@@ -89,14 +89,14 @@ export class DropHandler {
     }
 
     // Update other stats - ensure all numeric values are proper integers
-    if (template.level) updates['system.level'] = parseInt(template.level) || 1;
-    if (template.challengeLevel) updates['system.challengeLevel'] = parseInt(template.challengeLevel) || 1;
+    if (template.level) updates['system.level'] = parseInt(template.level, 10) || 1;
+    if (template.challengeLevel) updates['system.challengeLevel'] = parseInt(template.challengeLevel, 10) || 1;
     if (template.size) updates['system.size'] = template.size;
-    if (template.speed !== undefined) updates['system.speed'] = parseInt(template.speed) || 6;
-    if (template.bab !== undefined) updates['system.bab'] = parseInt(template.bab) || 0;
-    if (template.initiative !== undefined) updates['system.initiative'] = parseInt(template.initiative) || 0;
-    if (template.damageThreshold) updates['system.damageThreshold'] = parseInt(template.damageThreshold) || 10;
-    if (template.perception !== undefined) updates['system.perception'] = parseInt(template.perception) || 0;
+    if (template.speed !== undefined) updates['system.speed'] = parseInt(template.speed, 10) || 6;
+    if (template.bab !== undefined) updates['system.bab'] = parseInt(template.bab, 10) || 0;
+    if (template.initiative !== undefined) updates['system.initiative'] = parseInt(template.initiative, 10) || 0;
+    if (template.damageThreshold) updates['system.damageThreshold'] = parseInt(template.damageThreshold, 10) || 10;
+    if (template.perception !== undefined) updates['system.perception'] = parseInt(template.perception, 10) || 0;
     if (template.senses) updates['system.senses'] = template.senses;
 
     // Update condition track
@@ -244,7 +244,7 @@ export class DropHandler {
       'system.attributes.wis.racial': abilityMods.wis || 0,
       'system.attributes.cha.racial': abilityMods.cha || 0,
       'system.size': species.system.size || 'Medium',
-      'system.speed': parseInt(species.system.speed) || 6,
+      'system.speed': parseInt(species.system.speed, 10) || 6,
       'system.race': species.name  // Store species name for display
     };
 
@@ -290,7 +290,7 @@ export class DropHandler {
       // Match patterns like "+2 Dex", "-2 Con", "+4 Str"
       const match = part.match(/([+-]?\d+)\s*([a-zA-Z]+)/);
       if (match) {
-        const value = parseInt(match[1]);
+        const value = parseInt(match[1], 10);
         const abilityName = match[2].toLowerCase();
         const abilityKey = abilityMap[abilityName];
 
@@ -357,7 +357,7 @@ export class DropHandler {
       'system.abilities.cha.base': chassis.system.abilities?.cha || 10,
       'system.hp.max': chassis.system.hp || 30,
       'system.hp.value': chassis.system.hp || 30,
-      'system.speed': parseInt(chassis.system.speed) || 6
+      'system.speed': parseInt(chassis.system.speed, 10) || 6
     };
 
     await globalThis.SWSE.ActorEngine.updateActor(actor, updates);

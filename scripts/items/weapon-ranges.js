@@ -111,7 +111,7 @@ export function determineWeaponType(weapon) {
   }
 
   // Default based on range if specified
-  const rangeNum = parseInt(range);
+  const rangeNum = parseInt(range, 10);
   if (!isNaN(rangeNum)) {
     if (rangeNum <= 6) return 'thrown';
     if (rangeNum <= 20) return attackAttr === 'dex' ? 'pistol' : 'simple';

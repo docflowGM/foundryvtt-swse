@@ -233,7 +233,7 @@ export class SWSEActorSheetBase extends BaseSheet {
     event.stopPropagation();
 
     const skillKey = event.currentTarget.dataset.skill;
-    const dc = parseInt(event.currentTarget.dataset.dc);
+    const dc = parseInt(event.currentTarget.dataset.dc, 10);
 
     const skill = this.actor.system.skills?.[skillKey];
     if (!skill) return ui.notifications.error(`Skill ${skillKey} missing on actor.`);

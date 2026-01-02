@@ -239,7 +239,7 @@ export class SWSECombat {
           btn.dataset.attacker,
           btn.dataset.target,
           btn.dataset.weapon,
-          parseInt(btn.dataset.amount)
+          parseInt(btn.dataset.amount, 10)
         );
       });
     });

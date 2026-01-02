@@ -15,7 +15,7 @@ function calculateAbilityMod(score) {
 function extractNumber(str) {
   if (!str || str === "") return null;
   const match = str.toString().match(/-?\d+/);
-  return match ? parseInt(match[0]) : null;
+  return match ? parseInt(match[0], 10) : null;
 }
 
 // Helper function to parse size
@@ -48,7 +48,7 @@ function cleanTextField(str) {
 function extractSpeed(speedStr) {
   if (!speedStr || speedStr === "") return 6; // Default
   const match = speedStr.match(/(\d+)\s*Squares?/i);
-  return match ? parseInt(match[1]) : 6;
+  return match ? parseInt(match[1], 10) : 6;
 }
 
 // Main sanitization function

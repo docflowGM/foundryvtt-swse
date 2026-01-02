@@ -284,7 +284,7 @@ export function calculateHPGain(classDoc, actor, newLevel) {
     if (!hitDie) {
       // Fallback: parse from class data
       const hitDieString = getClassProperty(classDoc, 'hitDie', '1d6');
-      hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6");
+      hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || "6", 10);
       SWSELogger.warn(`SWSE LevelUp | Class "${className}" not in hit dice map, using ${hitDie} from class data`);
     }
   }

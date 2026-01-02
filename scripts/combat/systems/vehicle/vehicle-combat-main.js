@@ -161,7 +161,7 @@ export class SWSEVehicleCombat {
         await SWSEVehicleCombat.applyVehicleDamage(
           btn.dataset.att,
           btn.dataset.tgt,
-          parseInt(btn.dataset.amount)
+          parseInt(btn.dataset.amount, 10)
         );
       });
     });
