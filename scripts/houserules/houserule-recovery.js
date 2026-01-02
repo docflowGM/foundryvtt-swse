@@ -74,23 +74,23 @@ export class RecoveryMechanics {
     try {
       // Recover HP
       if (hpRecovery > 0) {
-        const currentHP = actor.system?.health?.hp?.value || 0;
-        const maxHP = actor.system?.health?.hp?.max || 0;
+        const currentHP = actor.system?.hp?.value || 0;
+        const maxHP = actor.system?.hp?.max || 0;
         const newHP = Math.min(currentHP + hpRecovery, maxHP);
 
         await actor.update({
-          "system.health.hp.value": newHP
+          "system.hp.value": newHP
         });
       }
 
       // Recover Vitality Points
       if (vitalityRecovery > 0) {
-        const currentVitality = actor.system?.health?.vp?.value || 0;
-        const maxVitality = actor.system?.health?.vp?.max || 0;
+        const currentVitality = actor.system?.vp?.value || 0;
+        const maxVitality = actor.system?.vp?.max || 0;
         const newVitality = Math.min(currentVitality + vitalityRecovery, maxVitality);
 
         await actor.update({
-          "system.health.vp.value": newVitality
+          "system.vp.value": newVitality
         });
       }
 

@@ -321,7 +321,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Use heroicLevel for defense calculations (nonheroic levels don't add to defense)
     // If heroicLevel isn't set yet (before _calculateMulticlassStats), fall back to total level
-    const level = this.heroicLevel !== undefined ? this.heroicLevel : (this.level || 1);
+    const level = this.heroicLevel ?? this.level ?? 1;
 
     // Ensure individual defense objects exist
     if (!this.defenses.reflex || !this.defenses.fortitude || !this.defenses.will) {
@@ -362,7 +362,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
       // Apply max dex bonus restriction
       let maxDex = equippedArmor.system.maxDexBonus;
-      if (maxDex !== null && maxDex !== undefined && Number.isInteger(maxDex)) {
+      if (Number.isInteger(maxDex)) {
         // Armor Mastery talent increases max dex bonus by +1
         if (hasArmorMastery) {
           maxDex += 1;
@@ -772,7 +772,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // NONHEROIC RULE: Nonheroic characters do not gain Force Points
     // Only use heroic level for Force Point calculation
-    const heroicLevel = this.heroicLevel !== undefined ? this.heroicLevel : (this.level || 1);
+    const heroicLevel = this.heroicLevel ?? this.level ?? 1;
 
     // If character has no heroic levels, they get no Force Points
     if (heroicLevel === 0) {

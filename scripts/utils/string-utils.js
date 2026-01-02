@@ -121,9 +121,9 @@ export function getAverageDiceValue(diceNotation) {
     if (!match) return 0;
     
     const [, numDice, dieSize, modifier] = match;
-    const avgPerDie = (parseInt(dieSize) + 1) / 2;
-    const avgTotal = parseInt(numDice) * avgPerDie;
-    const mod = parseInt(modifier || 0);
+    const avgPerDie = (parseInt(dieSize, 10) + 1) / 2;
+    const avgTotal = parseInt(numDice, 10) * avgPerDie;
+    const mod = parseInt(modifier || 0, 10);
     
     return Math.floor(avgTotal + mod);
 }

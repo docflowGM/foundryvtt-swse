@@ -161,26 +161,37 @@ export class SWSERoll {
 
     result = result * fpContext.multiplier + fpContext.flatBonus;
 
-    // Spend FP
-    await actor.update({
-      "system.forcePoints.value": Math.max(0, actor.system.forcePoints.value - 1)
-    });
+    // Get force points with defensive checks
+    const currentFP = actor.system.forcePoints?.value ?? 0;
+    const maxFP = actor.system.forcePoints?.max ?? 0;
+    const newFP = Math.max(0, currentFP - 1);
 
-    // Chat message
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `
-        <div class="swse-forcepoint-roll">
-          <h3>Force Point Used</h3>
-          <p>Rolled: ${formula}</p>
-          <p>Result Applied: <strong>+${result}</strong></p>
-          <p>FP Remaining: ${actor.system.forcePoints.value}/${actor.system.forcePoints.max}</p>
-        </div>
-      `
-    });
+    // Spend FP with error handling
+    try {
+      await actor.update({
+        "system.forcePoints.value": newFP
+      });
 
-    // Post-roll hook
-    Hooks.callAll(ROLL_HOOKS.POST_FORCE_POINT, actor, { roll, result, reason });
+      // Chat message (use calculated value instead of stale reference)
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `
+          <div class="swse-forcepoint-roll">
+            <h3>Force Point Used</h3>
+            <p>Rolled: ${formula}</p>
+            <p>Result Applied: <strong>+${result}</strong></p>
+            <p>FP Remaining: ${newFP}/${maxFP}</p>
+          </div>
+        `
+      });
+
+      // Post-roll hook
+      Hooks.callAll(ROLL_HOOKS.POST_FORCE_POINT, actor, { roll, result, reason });
+    } catch (err) {
+      console.error("Failed to spend Force Point:", err);
+      ui.notifications.error("Failed to spend Force Point. Please try again.");
+      return 0; // Return 0 since operation failed
+    }
 
     return result;
   }

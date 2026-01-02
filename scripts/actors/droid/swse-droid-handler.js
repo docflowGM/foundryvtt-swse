@@ -127,9 +127,15 @@ export class SWSEDroidHandler {
   static async installAppendage(actor, appendageItem) {
     const appendages = actor.system.appendages ?? [];
 
+    // Validate appendage type
+    const appendageType = appendageItem.system.type ?? "generic";
+    if (!appendageType) {
+      SWSELogger.warn(`Appendage ${appendageItem.name} missing type field, using default`);
+    }
+
     appendages.push({
       name: appendageItem.name,
-      type: appendageItem.system.type, // probe, tool, claw, hand, etc.
+      type: appendageType, // probe, tool, claw, hand, etc.
       locomotion: appendageItem.system.locomotion ?? false,
       balance: appendageItem.system.balance ?? false,
       unarmedDamageType: appendageItem.system.unarmedDamageType ?? null
@@ -179,10 +185,10 @@ export class SWSEDroidHandler {
       "system.droidArmor": {
         installed: true,
         name: armorItem.name,
-        category: sys.category,
-        armorBonus: sys.armorBonus,
-        maxDex: sys.maxDex,
-        armorCheckPenalty: sys.armorCheckPenalty,
+        category: sys.category ?? "Light",
+        armorBonus: sys.armorBonus ?? 0,
+        maxDex: sys.maxDex ?? null,
+        armorCheckPenalty: sys.armorCheckPenalty ?? 0,
         runMultiplierOverride: sys.runMultiplierOverride ?? null,
         availability: sys.availability ?? {}
       }

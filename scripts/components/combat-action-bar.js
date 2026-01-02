@@ -1,5 +1,6 @@
 import { SWSEActiveEffectsManager } from '../combat/active-effects-manager.js';
 import { SWSECombat } from '../combat/systems/enhanced-combat-system.js';
+import { escapeHTML } from '../utils/security-utils.js';
 
 /**
  * Modernized Combat Action Bar
@@ -52,7 +53,7 @@ export class CombatActionBar {
   static _headerHTML(actor, inCombat) {
     return `
       <header class="swse-bar-header">
-        <h3><i class="fas fa-swords"></i> ${actor.name} — Combat</h3>
+        <h3><i class="fas fa-swords"></i> ${escapeHTML(actor.name)} — Combat</h3>
         ${inCombat ? `<span class="in-combat">In Combat</span>` : ""}
       </header>`;
   }
@@ -197,7 +198,7 @@ export class CombatActionBar {
   static async _doAttack(actor) {
     const weapons = actor.items.filter(i => i.type === "weapon");
     if (!weapons.length)
-      return ui.notifications.warn(`${actor.name} has no weapons.`);
+      return ui.notifications.warn(`${escapeHTML(actor.name)} has no weapons.`);
 
     let weapon = weapons[0];
     if (weapons.length > 1)
@@ -212,7 +213,7 @@ export class CombatActionBar {
   static async _doFullAttack(actor) {
     const weapons = actor.items.filter(i => i.type === "weapon");
     if (!weapons.length)
-      return ui.notifications.warn(`${actor.name} has no weapons.`);
+      return ui.notifications.warn(`${escapeHTML(actor.name)} has no weapons.`);
 
     const weapon = await this._weaponDialog(weapons);
     const target = this._getTarget();
@@ -270,7 +271,7 @@ export class CombatActionBar {
 
     ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<b>${actor.name}</b> regains <strong>${heal}</strong> HP!`
+      content: `<b>${escapeHTML(actor.name)}</b> regains <strong>${heal}</strong> HP!`
     });
 
     this._useAction(actor, "swift");
@@ -294,7 +295,7 @@ export class CombatActionBar {
       title: "Choose Weapon",
       content: `
         <select name="weapon">
-          ${weapons.map(w => `<option value="${w.id}">${w.name}</option>`).join("")}
+          ${weapons.map(w => `<option value="${w.id}">${escapeHTML(w.name)}</option>`).join("")}
         </select>`,
       callback: html => weapons.find(w => w.id === html.find("select").val())
     });

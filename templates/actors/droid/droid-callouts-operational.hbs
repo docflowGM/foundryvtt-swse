@@ -9,9 +9,9 @@
 {{/inline}}
 
 {{!-- System Stats - adjust paths to match actual droid data model --}}
-{{> callout label="Processor" value=(or actor.system.processor.tier "Standard") top="12%" left="22%"}}
+{{> callout label="Processor" value=(or actor.system.processor.quality "Standard") top="12%" left="22%"}}
 {{> callout label="Memory" value=(or actor.system.memory.capacity "512GB") top="22%" left="78%"}}
 {{> callout label="Power Core" value=(or actor.system.power.rating "Class-II") top="72%" left="78%"}}
 {{> callout label="Chassis" value=(or actor.system.chassis.type "Medium") top="84%" left="50%"}}
-{{> callout label="Locomotion" value=(or actor.system.locomotion.type "Bipedal") top="72%" left="22%"}}
-{{> callout label="Systems" value=(if actor.system.health (concat actor.system.health.value " / " actor.system.health.max) "100 / 100") top="50%" left="50%"}}
+{{> callout label="Locomotion" value=(or actor.system.locomotion.name "Bipedal") top="72%" left="22%"}}
+{{> callout label="Systems" value=(if actor.system.hp (concat actor.system.hp.value " / " actor.system.hp.max) "100 / 100") top="50%" left="50%"}}

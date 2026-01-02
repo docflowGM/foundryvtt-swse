@@ -992,21 +992,77 @@ export async function _onImportDroid(event) {
 }
 
 /**
+ * Validate droid chassis data completeness
+ * @param {Object} droid - The droid data object
+ * @returns {Array} Array of missing field names
+ */
+function _validateDroidChassis(droid) {
+  const missingFields = [];
+  const validSizes = ['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
+
+  if (!droid.system) {
+    return ['system'];
+  }
+
+  // Check required ability scores
+  const requiredAbilities = ['str', 'dex', 'int', 'wis', 'cha'];
+  for (const ability of requiredAbilities) {
+    if (!droid.system.abilities || !(ability in droid.system.abilities)) {
+      missingFields.push(`abilities.${ability}`);
+    }
+  }
+
+  // Check size validity
+  if (!droid.system.size) {
+    missingFields.push('size');
+  } else if (!validSizes.includes(String(droid.system.size).toLowerCase())) {
+    SWSELogger.warn(`Invalid droid size: ${droid.system.size}, expected one of: ${validSizes.join(', ')}`);
+  }
+
+  // Check speed
+  if (droid.system.speed === undefined || droid.system.speed === null) {
+    missingFields.push('speed');
+  } else if (!Number.isInteger(parseInt(droid.system.speed, 10)) || parseInt(droid.system.speed, 10) < 0) {
+    SWSELogger.warn(`Invalid droid speed: ${droid.system.speed}, expected positive integer`);
+  }
+
+  // Check HP structure
+  if (!droid.system.hp || typeof droid.system.hp !== 'object') {
+    missingFields.push('hp');
+  } else {
+    if (!('value' in droid.system.hp) || !('max' in droid.system.hp)) {
+      missingFields.push('hp.value/max');
+    }
+  }
+
+  // Check system slots (optional but log if missing)
+  if (droid.system.systemSlots === undefined || droid.system.systemSlots === null) {
+    SWSELogger.warn(`Droid ${droid.name} missing systemSlots field`);
+  }
+
+  return missingFields;
+}
+
+/**
  * Import a droid type
  */
 export async function _importDroidType(droid) {
   SWSELogger.log(`SWSE CharGen | Importing droid type: ${droid.name}`, droid);
 
   // Validate droid data completeness
-  if (!droid.system || !droid.system.abilities) {
-    ui.notifications.warn(`${droid.name} is missing ability data. Using defaults.`);
+  const missingFields = _validateDroidChassis(droid);
+  if (missingFields.length > 0) {
+    SWSELogger.warn(`Droid ${droid.name} missing fields:`, missingFields);
+    ui.notifications.warn(`${droid.name} is missing: ${missingFields.join(', ')}. Using defaults for missing fields.`);
   }
 
   // Apply droid's ability scores
   if (droid.system && droid.system.abilities) {
     for (const [ability, value] of Object.entries(droid.system.abilities)) {
       if (this.characterData.abilities[ability]) {
-        this.characterData.abilities[ability].base = value.value || value || 10;
+        // Handle both structured abilities (objects with .base) and plain numbers
+        const baseScore = typeof value === 'object' ? (value.base ?? value.total ?? 10) : (value ?? 10);
+        this.characterData.abilities[ability].base = baseScore;
       }
     }
   }

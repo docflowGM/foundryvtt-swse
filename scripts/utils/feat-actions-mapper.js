@@ -127,7 +127,7 @@ export class FeatActionsMapper {
         // Replace {value} with variableValue
         const formula = effect.formula
           .replace(/{value}/g, variableValue)
-          .replace(/{value\*(\d+)}/g, (match, multiplier) => variableValue * parseInt(multiplier))
+          .replace(/{value\*(\d+)}/g, (match, multiplier) => variableValue * parseInt(multiplier, 10))
           .replace(/{dex_mod}/g, actor.system.attributes?.dex?.mod || 0);
 
         try {

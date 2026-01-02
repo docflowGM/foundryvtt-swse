@@ -13,11 +13,11 @@
 
   {{!-- Damage overlays --}}
   {{#if actor.system.hull}}
-    {{#if (lt actor.system.hull.current (divide actor.system.hull.max 2))}}
+    {{#if (lt actor.system.hull.value (divide actor.system.hull.max 2))}}
       <div class="damage-overlay mid"></div>
     {{/if}}
 
-    {{#if (lt actor.system.hull.current (divide actor.system.hull.max 3))}}
+    {{#if (lt actor.system.hull.value (divide actor.system.hull.max 3))}}
       <div class="damage-overlay critical"></div>
     {{/if}}
   {{/if}}

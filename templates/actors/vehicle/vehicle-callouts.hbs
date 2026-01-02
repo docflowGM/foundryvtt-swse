@@ -17,8 +17,8 @@
 {{/inline}}
 
 {{#let
-   hullPct=(multiply (divide actor.system.hull.current actor.system.hull.max) 100)
-   shieldsPct=(multiply (divide actor.system.shields.current actor.system.shields.max) 100)
+   hullPct=(multiply (divide actor.system.hull.value actor.system.hull.max) 100)
+   shieldsPct=(multiply (divide actor.system.shields.value actor.system.shields.max) 100)
 }}
 
 {{!-- SPEED --}}
@@ -35,7 +35,7 @@
 {{> callout
   id="shields"
   label="Shields"
-  value=(if actor.system.shields (concat actor.system.shields.current " / " actor.system.shields.max) "0 / 0")
+  value=(if actor.system.shields (concat actor.system.shields.value " / " actor.system.shields.max) "0 / 0")
   top="28%"
   left="78%"
   state="normal"
@@ -45,7 +45,7 @@
 {{> callout
   id="hull"
   label="Hull"
-  value=(if actor.system.hull (concat actor.system.hull.current " / " actor.system.hull.max) "0 / 0")
+  value=(if actor.system.hull (concat actor.system.hull.value " / " actor.system.hull.max) "0 / 0")
   top="72%"
   left="78%"
   state="normal"
@@ -55,7 +55,7 @@
 {{> callout
   id="dr"
   label="Damage Reduction"
-  value=(or actor.system.dr 0)
+  value=(or actor.system.damageReduction 0)
   top="84%"
   left="50%"
   state="normal"

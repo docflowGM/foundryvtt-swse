@@ -12,6 +12,7 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
       damageType: new fields.StringField({
         required: true,
         initial: "energy",
+        choices: ["energy", "kinetic", "sonic", "ion", "fire", "cold", "acid", "force", "stun"],
         label: "Damage Type"
       }),
       attackBonus: new fields.NumberField({required: true, initial: 0, integer: true}),
@@ -38,7 +39,11 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
       }),
 
       // Equipment size (for size-based calculations)
-      size: new fields.StringField({initial: "small", label: "Equipment Size"}),
+      size: new fields.StringField({
+        initial: "medium",
+        choices: ["tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"],
+        label: "Equipment Size"
+      }),
 
       // Upgrade system
       upgradeSlots: new fields.NumberField({required: true, initial: 1, min: 0, integer: true, label: "Upgrade Slots"}),
@@ -68,7 +73,11 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
       sizeIncreaseApplied: new fields.BooleanField({initial: false, label: "Size Increased for Upgrade Slot"}),
 
       // Restriction level (Licensed, Restricted, Military, Illegal, Common)
-      restriction: new fields.StringField({initial: "common", label: "Restriction Level"})
+      restriction: new fields.StringField({
+        initial: "common",
+        choices: ["common", "licensed", "restricted", "military", "illegal"],
+        label: "Restriction Level"
+      })
     };
   }
 }
@@ -96,7 +105,11 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       description: new fields.HTMLField({label: "Description"}),
 
       // Armor size (for creatures it's designed to fit)
-      size: new fields.StringField({initial: "medium", label: "Armor Size"}),
+      size: new fields.StringField({
+        initial: "medium",
+        choices: ["tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"],
+        label: "Armor Size"
+      }),
 
       // Powered Armor flag (automatically detected from name if contains "power")
       isPoweredArmor: new fields.BooleanField({initial: false, label: "Powered Armor (2 upgrade slots)"}),
@@ -128,7 +141,11 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       sizeIncreaseApplied: new fields.BooleanField({initial: false, label: "Weight Class Increased for Upgrade Slot"}),
 
       // Restriction level (Licensed, Restricted, Military, Illegal, Common)
-      restriction: new fields.StringField({initial: "common", label: "Restriction Level"})
+      restriction: new fields.StringField({
+        initial: "common",
+        choices: ["common", "licensed", "restricted", "military", "illegal"],
+        label: "Restriction Level"
+      })
     };
   }
 }
@@ -144,7 +161,11 @@ export class EquipmentDataModel extends foundry.abstract.DataModel {
       description: new fields.HTMLField({label: "Description"}),
 
       // Equipment size (for size-based calculations)
-      size: new fields.StringField({initial: "small", label: "Equipment Size"}),
+      size: new fields.StringField({
+        initial: "medium",
+        choices: ["tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"],
+        label: "Equipment Size"
+      }),
 
       // Upgrade system
       upgradeSlots: new fields.NumberField({required: true, initial: 1, min: 0, integer: true, label: "Upgrade Slots"}),
@@ -161,7 +182,11 @@ export class EquipmentDataModel extends foundry.abstract.DataModel {
       sizeIncreaseApplied: new fields.BooleanField({initial: false, label: "Size Increased for Upgrade Slot"}),
 
       // Restriction level (Licensed, Restricted, Military, Illegal, Common)
-      restriction: new fields.StringField({initial: "common", label: "Restriction Level"})
+      restriction: new fields.StringField({
+        initial: "common",
+        choices: ["common", "licensed", "restricted", "military", "illegal"],
+        label: "Restriction Level"
+      })
     };
   }
 }
@@ -198,7 +223,7 @@ export class UpgradeDataModel extends foundry.abstract.DataModel {
       }),
 
       // Requirements
-      prerequisite: new fields.StringField({label: "Prerequisites"}),
+      prerequisite: new fields.HTMLField({label: "Prerequisites"}),
 
       // Installation details
       installationTime: new fields.StringField({label: "Installation Time (automated calculation)"}),
@@ -233,9 +258,10 @@ export class FeatDataModel extends foundry.abstract.DataModel {
       normalText: new fields.HTMLField({label: "Normal"}),
 
       // Bonus feat specification - which classes can take this as a bonus feat
+      // Stores class names (e.g., "Soldier", "Scout") that qualify for this bonus feat
       bonusFeatFor: new fields.ArrayField(
         new fields.StringField(),
-        {label: "Bonus Feat For Classes"}
+        {label: "Bonus Feat For Classes", hint: "Specify class names that can take this feat as a bonus feat"}
       ),
 
       // Tracking
@@ -302,11 +328,13 @@ export class ForcePowerDataModel extends foundry.abstract.DataModel {
       effect: new fields.HTMLField({label: "Effect"}),
       special: new fields.HTMLField({label: "Special"}),
 
-      // Descriptors (e.g., [Mind-Affecting], [Dark Side], [Telekinetic])
-      // NOTE: Use 'tags' field for descriptors - this field is deprecated
+      // DEPRECATED: Use 'tags' field instead
+      // This field is maintained for backward compatibility only
+      // Migration: Move all descriptor data to tags field
+      // Examples: 'mind-affecting', 'dark-side', 'light-side', 'telekinetic', 'telepathic', 'vital'
       descriptor: new fields.ArrayField(
         new fields.StringField(),
-        {label: "Descriptors (Deprecated - use tags)"}
+        {label: "Descriptors (DEPRECATED - use tags field instead)", hint: "This field is deprecated. Use tags for all descriptor data."}
       ),
 
       // DC Chart for powers with variable effects based on check result

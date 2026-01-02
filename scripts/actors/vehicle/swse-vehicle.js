@@ -171,7 +171,7 @@ export class SWSEVehicleSheet extends SWSECharacterSheet {
     const converted = {
       name: item.name,
       arc: "Forward",
-      bonus: this._formatAttackBonus(item.system.attackBonus ?? 0),
+      attackBonus: this._formatAttackBonus(item.system.attackBonus ?? 0),
       damage: item.system.damage ?? "0d0",
       range: item.system.range ?? "Close"
     };

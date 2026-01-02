@@ -100,7 +100,7 @@ export class FeatEffectsEngine {
         let match;
 
         while ((match = defensePattern.exec(benefit)) !== null) {
-            const bonus = parseInt(match[1]);
+            const bonus = parseInt(match[1], 10);
             const defenseType = match[2].toLowerCase();
 
             // Check if this is a conditional bonus
@@ -169,7 +169,7 @@ export class FeatEffectsEngine {
         let match;
 
         while ((match = defensePattern.exec(benefit)) !== null) {
-            const bonus = parseInt(match[1]);
+            const bonus = parseInt(match[1], 10);
             const defenseType = match[2].toLowerCase();
             const context = match[3].toLowerCase();
 
@@ -262,7 +262,7 @@ export class FeatEffectsEngine {
         };
 
         while ((match = skillPattern.exec(benefit)) !== null) {
-            const bonus = parseInt(match[1]);
+            const bonus = parseInt(match[1], 10);
             const skillNameRaw = match[2].trim().toLowerCase();
             const skillKey = skillMap[skillNameRaw];
 
@@ -358,7 +358,7 @@ export class FeatEffectsEngine {
         let match;
 
         while ((match = skillPattern.exec(benefit)) !== null) {
-            const bonus = parseInt(match[1]);
+            const bonus = parseInt(match[1], 10);
             const skillNameRaw = match[2].trim().toLowerCase();
             const context = match[3].toLowerCase();
             const skillKey = skillMap[skillNameRaw];
@@ -423,7 +423,7 @@ export class FeatEffectsEngine {
         let match;
 
         while ((match = attackPattern.exec(benefit)) !== null) {
-            const bonus = parseInt(match[1]);
+            const bonus = parseInt(match[1], 10);
             const attackType = match[2]?.toLowerCase() || 'all';
 
             let changeKey;
@@ -478,7 +478,7 @@ export class FeatEffectsEngine {
         let match;
 
         while ((match = damagePattern.exec(benefit)) !== null) {
-            const bonus = parseInt(match[1]);
+            const bonus = parseInt(match[1], 10);
             const damageType = match[2]?.toLowerCase() || 'all';
 
             let changeKey;
@@ -532,7 +532,7 @@ export class FeatEffectsEngine {
         let match;
 
         while ((match = hpPattern.exec(benefit)) !== null) {
-            const bonus = parseInt(match[1]);
+            const bonus = parseInt(match[1], 10);
 
             effects.push({
                 name: `${featName} (Hit Points)`,

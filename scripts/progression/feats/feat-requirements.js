@@ -62,7 +62,7 @@ export const FeatRequirements = {
             // Pattern: "Str 13", "Dex 15", etc.
             const pattern = new RegExp(`${ability}\\s*13`, 'i');
             if (pattern.test(prereq)) {
-                const score = actor.system.abilities?.[ability]?.value || 10;
+                const score = actor.system.abilities?.[ability]?.total || 10;
                 if (score < 13) {
                     reasons.push(`Requires ${ability.toUpperCase()} 13 (you have ${score})`);
                 }
@@ -70,7 +70,7 @@ export const FeatRequirements = {
 
             const pattern15 = new RegExp(`${ability}\\s*15`, 'i');
             if (pattern15.test(prereq)) {
-                const score = actor.system.abilities?.[ability]?.value || 10;
+                const score = actor.system.abilities?.[ability]?.total || 10;
                 if (score < 15) {
                     reasons.push(`Requires ${ability.toUpperCase()} 15 (you have ${score})`);
                 }

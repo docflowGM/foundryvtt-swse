@@ -250,7 +250,7 @@ export class SuggestionEngine {
         let highestScore = 0;
 
         for (const [abilityKey, abilityData] of Object.entries(abilities)) {
-            const score = abilityData?.total || abilityData?.value || 10;
+            const score = abilityData?.total ?? 10;
             if (score > highestScore) {
                 highestScore = score;
                 highestAbility = abilityKey.toLowerCase();

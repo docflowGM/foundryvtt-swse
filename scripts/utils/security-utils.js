@@ -62,7 +62,11 @@ export function sanitizeHTML(html, options = {}) {
     if (!allowedTags.includes(el.tagName.toLowerCase())) {
       // Keep the text content but remove the tag
       const textNode = document.createTextNode(el.textContent);
-      el.parentNode?.replaceChild(textNode, el);
+      if (el.parentNode) {
+        el.parentNode.replaceChild(textNode, el);
+      } else {
+        el.remove();
+      }
       return;
     }
 

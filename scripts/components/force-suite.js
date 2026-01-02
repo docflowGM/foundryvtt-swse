@@ -1,4 +1,5 @@
 import { ForceEnhancementDialog } from "../utils/force-enhancement-dialog.js";
+import { escapeHTML } from "../utils/security-utils.js";
 
 /**
  * Force Suite Component (RAW SWSE Accurate)
@@ -111,7 +112,7 @@ export class ForceSuiteComponent {
         ${badge}
 
         <img src="${power.img}" class="fs-icon"/>
-        <div class="fs-name">${power.name}</div>
+        <div class="fs-name">${escapeHTML(power.name)}</div>
 
         <div class="fs-actions">
           ${!spent ? `
@@ -265,6 +266,6 @@ export class ForceSuiteComponent {
 
     await spent.update({ "system.spent": false });
 
-    ui.notifications.info(`Force Point spent → ${spent.name} regained.`);
+    ui.notifications.info(`Force Point spent → ${escapeHTML(spent.name)} regained.`);
   }
 }
