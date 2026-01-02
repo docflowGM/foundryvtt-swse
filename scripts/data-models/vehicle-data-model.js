@@ -488,7 +488,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       weapons: new fields.ArrayField(new fields.SchemaField({
         name: new fields.StringField({required: false, initial: ""}),
         arc: new fields.StringField({required: false, initial: ""}),
-        bonus: new fields.StringField({required: false, initial: ""}),
+        attackBonus: new fields.StringField({required: false, initial: ""}),
         damage: new fields.StringField({required: false, initial: ""}),
         range: new fields.StringField({required: false, initial: ""})
       }), {initial: []}),

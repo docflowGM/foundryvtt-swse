@@ -144,7 +144,7 @@ export class SWSEVehicleCore {
           type: "vehicle-weapon",
           system: {
             arc: w.arc ?? "Forward",
-            attackBonus: w.bonus ?? "+0",
+            attackBonus: w.attackBonus ?? "+0",
             damage: w.damage ?? "0d0",
             range: w.range ?? "Close"
           }

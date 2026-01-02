@@ -38,7 +38,11 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
       }),
 
       // Equipment size (for size-based calculations)
-      size: new fields.StringField({initial: "small", label: "Equipment Size"}),
+      size: new fields.StringField({
+        initial: "medium",
+        choices: ["tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"],
+        label: "Equipment Size"
+      }),
 
       // Upgrade system
       upgradeSlots: new fields.NumberField({required: true, initial: 1, min: 0, integer: true, label: "Upgrade Slots"}),
@@ -68,7 +72,11 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
       sizeIncreaseApplied: new fields.BooleanField({initial: false, label: "Size Increased for Upgrade Slot"}),
 
       // Restriction level (Licensed, Restricted, Military, Illegal, Common)
-      restriction: new fields.StringField({initial: "common", label: "Restriction Level"})
+      restriction: new fields.StringField({
+        initial: "common",
+        choices: ["common", "licensed", "restricted", "military", "illegal"],
+        label: "Restriction Level"
+      })
     };
   }
 }
@@ -96,7 +104,11 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       description: new fields.HTMLField({label: "Description"}),
 
       // Armor size (for creatures it's designed to fit)
-      size: new fields.StringField({initial: "medium", label: "Armor Size"}),
+      size: new fields.StringField({
+        initial: "medium",
+        choices: ["tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"],
+        label: "Armor Size"
+      }),
 
       // Powered Armor flag (automatically detected from name if contains "power")
       isPoweredArmor: new fields.BooleanField({initial: false, label: "Powered Armor (2 upgrade slots)"}),
@@ -128,7 +140,11 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       sizeIncreaseApplied: new fields.BooleanField({initial: false, label: "Weight Class Increased for Upgrade Slot"}),
 
       // Restriction level (Licensed, Restricted, Military, Illegal, Common)
-      restriction: new fields.StringField({initial: "common", label: "Restriction Level"})
+      restriction: new fields.StringField({
+        initial: "common",
+        choices: ["common", "licensed", "restricted", "military", "illegal"],
+        label: "Restriction Level"
+      })
     };
   }
 }
@@ -144,7 +160,11 @@ export class EquipmentDataModel extends foundry.abstract.DataModel {
       description: new fields.HTMLField({label: "Description"}),
 
       // Equipment size (for size-based calculations)
-      size: new fields.StringField({initial: "small", label: "Equipment Size"}),
+      size: new fields.StringField({
+        initial: "medium",
+        choices: ["tiny", "small", "medium", "large", "huge", "gargantuan", "colossal"],
+        label: "Equipment Size"
+      }),
 
       // Upgrade system
       upgradeSlots: new fields.NumberField({required: true, initial: 1, min: 0, integer: true, label: "Upgrade Slots"}),
@@ -161,7 +181,11 @@ export class EquipmentDataModel extends foundry.abstract.DataModel {
       sizeIncreaseApplied: new fields.BooleanField({initial: false, label: "Size Increased for Upgrade Slot"}),
 
       // Restriction level (Licensed, Restricted, Military, Illegal, Common)
-      restriction: new fields.StringField({initial: "common", label: "Restriction Level"})
+      restriction: new fields.StringField({
+        initial: "common",
+        choices: ["common", "licensed", "restricted", "military", "illegal"],
+        label: "Restriction Level"
+      })
     };
   }
 }
@@ -198,7 +222,7 @@ export class UpgradeDataModel extends foundry.abstract.DataModel {
       }),
 
       // Requirements
-      prerequisite: new fields.StringField({label: "Prerequisites"}),
+      prerequisite: new fields.HTMLField({label: "Prerequisites"}),
 
       // Installation details
       installationTime: new fields.StringField({label: "Installation Time (automated calculation)"}),

@@ -179,10 +179,10 @@ export class SWSEDroidHandler {
       "system.droidArmor": {
         installed: true,
         name: armorItem.name,
-        category: sys.category,
-        armorBonus: sys.armorBonus,
-        maxDex: sys.maxDex,
-        armorCheckPenalty: sys.armorCheckPenalty,
+        category: sys.category ?? "Light",
+        armorBonus: sys.armorBonus ?? 0,
+        maxDex: sys.maxDex ?? null,
+        armorCheckPenalty: sys.armorCheckPenalty ?? 0,
         runMultiplierOverride: sys.runMultiplierOverride ?? null,
         availability: sys.availability ?? {}
       }
