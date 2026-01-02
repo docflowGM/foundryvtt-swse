@@ -272,7 +272,7 @@ export class SpeciesTraitEngine {
           id: id,
           name: name,
           target: skillKey,
-          value: parseInt(match2[1]),
+          value: parseInt(match2[1], 10),
           displayText: originalText,
           automated: true
         };
@@ -340,7 +340,7 @@ export class SpeciesTraitEngine {
           name: name,
           condition: CONDITIONS.HALF_HP,
           target: target,
-          value: parseInt(bonusMatch[1]),
+          value: parseInt(bonusMatch[1], 10),
           displayText: originalText,
           automated: true
         };
@@ -361,7 +361,7 @@ export class SpeciesTraitEngine {
           name: name,
           condition: CONDITIONS.CHARGING,
           target: target,
-          value: parseInt(bonusMatch[1]),
+          value: parseInt(bonusMatch[1], 10),
           displayText: originalText,
           automated: true
         };
@@ -381,7 +381,7 @@ export class SpeciesTraitEngine {
           name: name,
           condition: CONDITIONS.AFTER_DAMAGE,
           target: target,
-          value: parseInt(bonusMatch[1]),
+          value: parseInt(bonusMatch[1], 10),
           duration: 'untilEndOfNextTurn',
           displayText: originalText,
           automated: true
@@ -400,7 +400,7 @@ export class SpeciesTraitEngine {
         id: id,
         name: name,
         mode: 'fly',
-        speed: parseInt(flyMatch[1]),
+        speed: parseInt(flyMatch[1], 10),
         maneuverability: flyMatch[2]?.toLowerCase() || 'average',
         displayText: originalText,
         automated: true
@@ -415,7 +415,7 @@ export class SpeciesTraitEngine {
         id: id,
         name: name,
         mode: 'swim',
-        speed: speedMatch ? parseInt(speedMatch[1]) : 'base',
+        speed: speedMatch ? parseInt(speedMatch[1], 10) : 'base',
         displayText: originalText,
         automated: true
       };
@@ -457,7 +457,7 @@ export class SpeciesTraitEngine {
         id: id,
         name: name,
         sense: 'blindsense',
-        range: parseInt(blindsenseMatch[1]),
+        range: parseInt(blindsenseMatch[1], 10),
         displayText: originalText,
         automated: true
       };
@@ -545,7 +545,7 @@ export class SpeciesTraitEngine {
         name: name,
         defense: match[2].toLowerCase(),
         effect: againstType,
-        bonus: parseInt(match[1]),
+        bonus: parseInt(match[1], 10),
         displayText: originalText,
         automated: true
       };
@@ -691,7 +691,7 @@ export class SpeciesTraitEngine {
     const match = bonusString.match(/([+-]?\d+)\s+(.+)/i);
     if (!match) return null;
 
-    const value = parseInt(match[1]);
+    const value = parseInt(match[1], 10);
     const skillKey = this._normalizeSkillName(match[2].trim());
 
     if (!skillKey) return null;

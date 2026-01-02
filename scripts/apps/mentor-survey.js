@@ -649,7 +649,7 @@ export class MentorSurvey {
                 icon: '<i class="fas fa-arrow-right"></i>',
                 label: index === questionIds.length - 1 ? "Finish" : "Next",
                 callback: (html) => {
-                  const selectedIndex = parseInt(html.find('input[name="answer"]:checked').val());
+                  const selectedIndex = parseInt(html.find('input[name="answer"]:checked').val(), 10);
                   if (selectedIndex !== undefined) {
                     answers[questionId] = {
                       questionId: questionId,

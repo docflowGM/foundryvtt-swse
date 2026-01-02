@@ -280,7 +280,7 @@ export function registerRerollListeners() {
       const actorId = button.dataset.actorId;
       const skillKey = button.dataset.skill;
       const traitId = button.dataset.traitId;
-      const originalTotal = parseInt(button.dataset.rollTotal);
+      const originalTotal = parseInt(button.dataset.rollTotal, 10);
 
       const actor = game.actors.get(actorId);
       if (!actor) {

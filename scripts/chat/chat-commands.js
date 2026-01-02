@@ -142,9 +142,9 @@ async function cmdForce(args) {
 
     let newValue;
 
-    if (value.startsWith("+")) newValue = cur + parseInt(value.slice(1));
-    else if (value.startsWith("-")) newValue = cur - parseInt(value.slice(1));
-    else newValue = parseInt(value);
+    if (value.startsWith("+")) newValue = cur + parseInt(value.slice(1), 10);
+    else if (value.startsWith("-")) newValue = cur - parseInt(value.slice(1), 10);
+    else newValue = parseInt(value, 10);
 
     if (Number.isNaN(newValue)) {
       ui.notifications.warn("Usage: /force <value | +n | -n>");

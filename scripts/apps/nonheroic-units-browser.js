@@ -100,7 +100,7 @@ export class NonheroicUnitsBrowser extends Application {
 
       // Challenge level filter
       const matchesCL = this.challengeLevelFilter === 'all' ||
-        unit.challengeLevel === parseInt(this.challengeLevelFilter);
+        unit.challengeLevel === parseInt(this.challengeLevelFilter, 10);
 
       return matchesSearch && matchesCL;
     });
@@ -109,7 +109,7 @@ export class NonheroicUnitsBrowser extends Application {
   }
 
   _onDragStart(event) {
-    const unitIndex = parseInt(event.currentTarget.dataset.index);
+    const unitIndex = parseInt(event.currentTarget.dataset.index, 10);
     const unit = this.filteredUnits[unitIndex];
 
     if (!unit) return;
@@ -125,7 +125,7 @@ export class NonheroicUnitsBrowser extends Application {
 
   async _onUnitClick(event) {
     event.preventDefault();
-    const unitIndex = parseInt(event.currentTarget.dataset.index);
+    const unitIndex = parseInt(event.currentTarget.dataset.index, 10);
     const unit = this.filteredUnits[unitIndex];
 
     if (!unit) return;
@@ -185,7 +185,7 @@ export class NonheroicUnitsBrowser extends Application {
   async _onImportUnit(event) {
     event.preventDefault();
     event.stopPropagation();
-    const unitIndex = parseInt(event.currentTarget.closest('.unit-entry').dataset.index);
+    const unitIndex = parseInt(event.currentTarget.closest('.unit-entry').dataset.index, 10);
     const unit = this.filteredUnits[unitIndex];
 
     if (!unit) return;

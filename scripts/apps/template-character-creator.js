@@ -292,10 +292,10 @@ export class TemplateCharacterCreator extends Application {
         name: name,
         type: 'character',
         system: {
-          level: parseInt(template.level) || 1,
+          level: parseInt(template.level, 10) || 1,
           race: template.species,
-          credits: parseInt(template.credits) || 1000,
-          speed: parseInt(template.speed) || 6  // Ensure speed is an integer
+          credits: parseInt(template.credits, 10) || 1000,
+          speed: parseInt(template.speed, 10) || 6  // Ensure speed is an integer
         }
       };
 
@@ -310,7 +310,7 @@ export class TemplateCharacterCreator extends Application {
       // Apply ability scores
       const abilityUpdates = {};
       for (const [ability, value] of Object.entries(template.abilityScores)) {
-        abilityUpdates[`system.abilities.${ability}.base`] = parseInt(value) || 10;
+        abilityUpdates[`system.abilities.${ability}.base`] = parseInt(value, 10) || 10;
       }
 
       // Apply species bonuses
@@ -714,7 +714,7 @@ export class TemplateCharacterCreator extends Application {
         abilityUpdates['system.size'] = speciesData.size;
       }
       if (speciesData.speed) {
-        abilityUpdates['system.speed'] = parseInt(speciesData.speed) || 6;
+        abilityUpdates['system.speed'] = parseInt(speciesData.speed, 10) || 6;
       }
 
     } catch (error) {

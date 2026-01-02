@@ -1200,7 +1200,7 @@ export class SWSERoll {
     const dcMatch = fpEffect.match(dcPattern);
 
     if (dcMatch) {
-      result.dcReduction = parseInt(dcMatch[1]);
+      result.dcReduction = parseInt(dcMatch[1], 10);
     }
 
     if (/double\s+duration/i.test(fpEffect)) {
@@ -1520,7 +1520,7 @@ Hooks.on("renderChatMessage", (message, html) => {
     const btn = ev.currentTarget;
     const weaponId = btn.dataset.weaponId;
     const isCrit = btn.dataset.isCrit === 'true';
-    const critMult = parseInt(btn.dataset.critMult) || 2;
+    const critMult = parseInt(btn.dataset.critMult, 10) || 2;
     const twoHanded = btn.dataset.twoHanded === 'true';
 
     const actor = game.actors.get(message.speaker.actor);

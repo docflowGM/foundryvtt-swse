@@ -205,7 +205,7 @@ export function _bindAbilitiesUI(root) {
           e.preventDefault();
           zone.classList.remove('drag-over');
 
-          const value = parseInt(e.dataTransfer.getData('text/plain'));
+          const value = parseInt(e.dataTransfer.getData('text/plain'), 10);
           const index = e.dataTransfer.getData('index');
           const ability = zone.dataset.ability;
           const dragged = pool.querySelector(`.draggable-roll[data-index="${index}"]`);
@@ -379,7 +379,7 @@ export function _bindAbilitiesUI(root) {
           e.preventDefault();
           zone.classList.remove('drag-over');
 
-          const value = parseInt(e.dataTransfer.getData('die-value'));
+          const value = parseInt(e.dataTransfer.getData('die-value'), 10);
           const index = e.dataTransfer.getData('die-index');
           const die = dicePool.querySelector(`.organic-die[data-index="${index}"]`);
 
@@ -434,7 +434,7 @@ export function _bindAbilitiesUI(root) {
           e.preventDefault();
           zone.classList.remove('drag-over');
 
-          const value = parseInt(e.dataTransfer.getData('group-total'));
+          const value = parseInt(e.dataTransfer.getData('group-total'), 10);
           const groupIndex = e.dataTransfer.getData('group-index');
           const ability = zone.dataset.ability;
           const groupDiv = container.querySelector(`.dice-group[data-group="${groupIndex}"]`);

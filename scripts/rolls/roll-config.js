@@ -453,7 +453,7 @@ export async function showRollModifiersDialog(options = {}) {
             const result = {
               cover: data.get('cover') || 'none',
               concealment: data.get('concealment') || 'none',
-              customModifier: parseInt(data.get('customModifier')) || 0,
+              customModifier: parseInt(data.get('customModifier'), 10) || 0,
               useForcePoint: data.get('useForcePoint') === 'on',
               twoHanded: data.get('twoHanded') === 'on',
               situational: {

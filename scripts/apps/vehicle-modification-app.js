@@ -341,7 +341,7 @@ Not fast enough to be impressive, not slow enough to be memorable. Just... avera
     if (mod.id.startsWith('shields-')) {
       const modName = mod.name || '';
       const srMatch = modName.match(/SR (\d+)/);
-      const sr = srMatch ? parseInt(srMatch[1]) : 0;
+      const sr = srMatch ? parseInt(srMatch[1], 10) : 0;
 
       if (sr >= 100) {
         return `*Marl throws his hands up*
