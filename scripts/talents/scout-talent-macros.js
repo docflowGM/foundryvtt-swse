@@ -260,6 +260,114 @@ export class ScoutTalentMacros {
       ui.notifications.info(message);
     }
   }
+
+  // ============================================================================
+  // SHADOW STRIKER ABILITY MACROS
+  // ============================================================================
+
+  /**
+   * Macro: Trigger Blinding Strike ability
+   * Usage: game.swse.macros.triggerBlindingStrikeMacro(actor, targetToken)
+   */
+  static async triggerBlindingStrikeMacro(actor = null, targetToken = null) {
+    const selectedActor = actor || game.user.character;
+
+    if (!selectedActor) {
+      ui.notifications.error('Please select a character to use Blinding Strike');
+      return;
+    }
+
+    if (!ScoutTalentMechanics.hasShadowStriker(selectedActor)) {
+      ui.notifications.warn(`${selectedActor.name} does not have the Shadow Striker talent`);
+      return;
+    }
+
+    // If no target provided, use currently targeted token
+    const target = targetToken || game.user.targets.values().next().value;
+
+    Hooks.callAll('blindingStrikeTriggered', selectedActor, target);
+  }
+
+  /**
+   * Macro: Trigger Confusing Strike ability
+   * Usage: game.swse.macros.triggerConfusingStrikeMacro(actor, targetToken)
+   */
+  static async triggerConfusingStrikeMacro(actor = null, targetToken = null) {
+    const selectedActor = actor || game.user.character;
+
+    if (!selectedActor) {
+      ui.notifications.error('Please select a character to use Confusing Strike');
+      return;
+    }
+
+    if (!ScoutTalentMechanics.hasShadowStriker(selectedActor)) {
+      ui.notifications.warn(`${selectedActor.name} does not have the Shadow Striker talent`);
+      return;
+    }
+
+    // If no target provided, use currently targeted token
+    const target = targetToken || game.user.targets.values().next().value;
+
+    Hooks.callAll('confusingStrikeTriggered', selectedActor, target);
+  }
+
+  /**
+   * Macro: Trigger Unexpected Attack ability
+   * Usage: game.swse.macros.triggerUnexpectedAttackMacro(actor, targetToken)
+   */
+  static async triggerUnexpectedAttackMacro(actor = null, targetToken = null) {
+    const selectedActor = actor || game.user.character;
+
+    if (!selectedActor) {
+      ui.notifications.error('Please select a character to use Unexpected Attack');
+      return;
+    }
+
+    if (!ScoutTalentMechanics.hasShadowStriker(selectedActor)) {
+      ui.notifications.warn(`${selectedActor.name} does not have the Shadow Striker talent`);
+      return;
+    }
+
+    // If no target provided, use currently targeted token
+    const target = targetToken || game.user.targets.values().next().value;
+
+    Hooks.callAll('unexpectedAttackTriggered', selectedActor, target);
+  }
+
+  /**
+   * Macro: Check Shadow Striker abilities
+   * Usage: game.swse.macros.checkShadowStrikerMacro(actor)
+   */
+  static async checkShadowStrikerMacro(actor = null) {
+    const selectedActor = actor || game.user.character;
+
+    if (!selectedActor) {
+      ui.notifications.error('Please select a character');
+      return;
+    }
+
+    if (!ScoutTalentMechanics.hasShadowStriker(selectedActor)) {
+      ui.notifications.warn(`${selectedActor.name} does not have the Shadow Striker talent`);
+      return;
+    }
+
+    const message = `
+      <strong>${selectedActor.name} - Shadow Striker Abilities:</strong>
+      <br><br>
+      <strong>Blinding Strike:</strong> Standard action, once per encounter
+      Make a melee or ranged attack. If you hit, gain Total Concealment against the target until your next turn.
+      <br><br>
+      <strong>Confusing Strike:</strong> Standard action, once per encounter
+      Make a melee or ranged attack. Requires: target denied Dex OR you have concealment.
+      If you hit, target can only take a Swift Action on their next turn.
+      <br><br>
+      <strong>Unexpected Attack:</strong> Standard action, once per encounter
+      Make a melee or ranged attack from concealment. Requires: you have concealment from target.
+      Gain +2 bonus if you have concealment, or +5 if you have Total Concealment.
+    `;
+
+    ui.notifications.info(message);
+  }
 }
 
 export default ScoutTalentMacros;
