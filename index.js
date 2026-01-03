@@ -154,6 +154,7 @@ import { SWSECombat } from './scripts/combat/systems/enhanced-combat-system.js';
 import { SWSEGrappling } from './scripts/combat/systems/grappling-system.js';
 import { FeintMechanics } from './scripts/combat/feint-mechanics.js';
 import { SaberLockMechanics } from './scripts/combat/saber-lock-mechanics.js';
+import { DeceptionUses } from './scripts/skills/deception-uses.js';
 import { SWSEVehicleCombat } from './scripts/combat/systems/vehicle-combat-system.js';
 
 import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
@@ -308,7 +309,8 @@ Hooks.once("init", async function () {
         lazyLoader,
         perfMonitor,
         FeintMechanics,
-        SaberLockMechanics
+        SaberLockMechanics,
+        DeceptionUses
     };
 });
 
