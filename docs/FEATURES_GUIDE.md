@@ -111,14 +111,13 @@ This comprehensive guide lists every feature in the SWSE system with description
 
 **Description:** Choose your character class which determines ability progression, hit points, feats, talents, and class features.
 
-**Available Classes:** 50+ including:
+**Available Classes:** 5 base classes plus prestige classes:
 - **Jedi** - Force-sensitive warrior
 - **Scoundrel** - Skill-focused rogue
 - **Soldier** - Combat specialist
-- **Scout** - Mobile damage dealer
+- **Scout** - Mobile ranger/explorer
 - **Noble** - Leader/diplomat
-- **Sith** - Dark side Force user
-- And many prestige classes!
+- Plus 20+ prestige classes (Jedi Knight, Jedi Master, Crime Lord, Elite Trooper, etc.)
 
 **How to Use:**
 1. Step 2 of character generator: Choose class
@@ -284,23 +283,23 @@ This comprehensive guide lists every feature in the SWSE system with description
 
 ### 13. Skills Tab
 
-**Description:** Manage and track all 100+ skills with training, bonuses, and skill uses.
+**Description:** Manage and track all 19 SWSE skills with training, bonuses, and skill uses.
 
 **How to Use:**
 1. Click **Skills** tab
-2. View all available skills organized by category
-3. Click a skill to toggle training (adds +3 bonus)
-4. Trained skills show total modifier (ability modifier + training bonus + any feat bonuses)
+2. View all 19 SWSE skills
+3. Click a skill to toggle training (adds +5 bonus)
+4. Trained skills show total modifier (half level + ability modifier + training bonus + any feat bonuses)
 5. Use **Favorite Skills** to filter to only selected skills
 6. Click skill name to make a skill check
 
 **Features:**
-- 100+ skills across 8 categories
-- Training tracking (+3 bonus when trained)
-- Skill focus bonuses
+- All 19 SWSE skills (Acrobatics, Climb, Deception, Endurance, Gather Information, Initiative, Jump, Knowledge, Mechanics, Perception, Persuasion, Pilot, Ride, Stealth, Survival, Swim, Treat Injury, Use Computer, Use the Force)
+- Training tracking (+5 bonus when trained)
+- Skill Focus feat bonuses (+5)
+- Half-level bonus to all skills
 - Ability modifier application
 - Feat bonus application
-- Skill synergy detection
 - Skill action suggestions
 
 ---
@@ -572,26 +571,28 @@ This comprehensive guide lists every feature in the SWSE system with description
 
 ### 25. Condition Track
 
-**Description:** Visual representation of character health status from healthy to dead.
+**Description:** Visual representation of character combat condition with cumulative penalties.
 
 **Stages:**
-- **Healthy:** 0 to -10 HP (no penalties)
-- **Wounded:** -10 to -20 HP (takes penalties)
-- **Incapacitated:** -20 HP (unconscious)
-- **Dead:** -CON score HP (character dies)
+- **Normal:** No penalties
+- **-1 step:** -1 to attacks, defenses, ability checks, and skill checks
+- **-2 steps:** -2 penalty
+- **-5 steps:** -5 penalty
+- **-10 steps:** -10 penalty and half speed
+- **Helpless:** Unconscious/Disabled
 
 **How to Use:**
 1. View condition track on Summary or Combat tabs
-2. Track shows current HP threshold
-3. Appears as visual bar showing progression
-4. Automatically updates as damage is applied
-5. Triggers unconsciousness at -10 HP
+2. Track shows current condition step
+3. You move down when damage exceeds your Damage Threshold (= Fortitude Defense) in one hit
+4. Recover/Worsen buttons let you adjust manually
+5. Persistent conditions cannot be recovered normally
 
 **Features:**
-- Visual health indicator
-- Automatic threshold calculation
-- Stage-specific penalties
-- Death tracking
+- Visual condition indicator
+- Automatic penalty application
+- Damage Threshold integration
+- Persistent condition support
 
 ---
 
@@ -900,26 +901,25 @@ This comprehensive guide lists every feature in the SWSE system with description
 
 ### 40. Damage & Damage Thresholds
 
-**Description:** Deal damage to enemies and track your own damage.
+**Description:** Deal damage to enemies and track damage thresholds for condition track effects.
 
 **How to Use:**
 1. After successful attack, click **Damage**
 2. System rolls damage: weapon damage dice + ability modifier
-3. Subtract from target's HP
-4. Damage applied automatically
-5. If HP reaches thresholds, penalties apply
+3. Damage is subtracted from target's HP
+4. If damage in a single hit exceeds target's Damage Threshold (= Fortitude Defense), they move down the Condition Track
+5. At 0 HP, character falls unconscious; at -10 HP, character dies
 
-**Damage Thresholds:**
-- **Healthy:** 0 to -10 HP
-- **Wounded:** -10 to -20 HP (penalties)
-- **Incapacitated:** -20 HP (unconscious)
-- **Dead:** -Constitution score HP
+**Damage Threshold:**
+- **Damage Threshold** = Fortitude Defense
+- Exceeding it in one hit moves target down the Condition Track
+- Multiple threshold excesses in one hit can move multiple steps
 
 **Features:**
 - Automatic critical damage doubling
-- Damage reduction application
+- Damage Threshold comparison
+- Condition Track integration
 - Damage type tracking
-- Temp HP management
 
 ---
 
@@ -1192,44 +1192,45 @@ This comprehensive guide lists every feature in the SWSE system with description
 
 ### 54. Force Points & Recovery
 
-**Description:** Track Force points used to fuel Force powers.
+**Description:** Track Force Points used to enhance rolls and fuel special abilities.
 
 **How to Use:**
-1. View Force points on Force tab
-2. Maximum = Wisdom modifier × 5 (typical)
-3. Use points to activate certain Force powers
-4. Points regenerate based on houserule settings
-5. Resting recovers Force points (per GM ruling)
+1. View Force Points on Force tab
+2. Maximum = typically 5 + half your character level (varies by campaign)
+3. Spend to add bonus dice to any d20 roll (1d6 at low levels, up to 3d6 at high levels)
+4. Can also spend to activate certain powers or avoid death
+5. Recovery timing set by houserules (on level up, extended rest, or per session)
 
 **Features:**
-- Daily recovery
-- Spending tracking
-- Reroll dice system
-- Dark Side conversion
+- Level-based dice scaling (1d6/2d6/3d6)
+- Take highest when rolling multiple dice
+- Dark Side temptation option for extra dice
+- Flexible recovery settings
 
 ---
 
 ### 55. Dark Side Score
 
-**Description:** Track your corruption by the Dark Side (0-10 scale).
+**Description:** Track your corruption by the Dark Side (0 to Wisdom score scale).
 
 **How It Works:**
-- **0-2:** Light Side (restricted from Dark powers)
-- **3-7:** Neutral (can use both Light and Dark)
-- **8-10:** Dark Side (restricted from Light powers)
+- **Score Range:** 0 to your Wisdom score (by default)
+- **Dark Side Temptation:** Can call on Dark Side for bonus dice if score ≤ half Wisdom
+- **Falling:** When Dark Side Score equals or exceeds Wisdom, you fall to the Dark Side
+- **Redemption:** Spend a Force Point to reduce Dark Side Score by 1
 
 **How to Use:**
 1. View Dark Side Score on Force tab
-2. Use Dark Side powers to increase score
-3. At score 5+, become neutral (can use both)
-4. At score 8+, become fully Dark Side
-5. Light Side actions may reduce score (per GM)
+2. Using [Dark Side] tagged powers or temptation increases score
+3. Track your score relative to your Wisdom
+4. Spend Force Points for redemption when needed
+5. GM may grant other redemption opportunities
 
 **Features:**
-- Alignment tracking
-- Power access control
-- Alignment gates
-- Redemption mechanics
+- Wisdom-based maximum (configurable via houserules)
+- Automatic increase from Dark Side power use
+- Force Point redemption system
+- Dark Side temptation mechanics
 
 ---
 
@@ -2064,24 +2065,26 @@ This comprehensive guide lists every feature in the SWSE system with description
 
 **Description:** Customize game rules to match your table's preferences.
 
-**Available Houserules:** 50+ options including:
-- Ability score generation methods
-- Grappling variants
-- Healing system options
-- Condition tracking methods
-- Flanking mechanics
-- Skill training variants
+**Available Houserules:** 80+ configurable settings including:
+- Character creation options (ability score methods, point buy pools)
+- Hit points and death systems
+- Combat rules (criticals, diagonal movement, weapon ranges, armored defense)
+- Force rules (training attribute, Block/Deflect variants, Dark Side mechanics)
+- Skill and feat variants (Skill Focus, cross-class training)
+- Condition track and recovery options
+- Grappling, flanking, and healing skill integration
+- Space combat initiative
 - And more!
 
 **How to Use:**
 1. Go to **Settings > System Settings** (GM only)
-2. Scroll to "Houserules Configuration"
-3. Toggle houserules on/off
+2. Browse the categorized houserule settings
+3. Toggle or configure each setting
 4. Changes apply immediately to all characters
 
 **Features:**
-- 50+ customizable rules
-- Toggle on/off
+- 80+ customizable settings
+- Categorized organization
 - Immediate application
 - No restart needed
 
@@ -2296,14 +2299,17 @@ This comprehensive guide lists every feature in the SWSE system with description
 
 ### 104. Compendium Management
 
-**Description:** Organize and access 1000+ game items.
+**Description:** Organize and access hundreds of game items across 40+ packs.
 
-**Packs Included:** 27 compendium packs:
-- Core game content (classes, feats, talents, species)
-- Force system (powers, secrets, techniques)
-- Equipment (weapons, armor, tools)
-- Vehicles & Droids
-- Special content (conditions, NPCs)
+**Packs Included:** 40+ compendium packs:
+- Core game content (classes, feats, talents, species, skills, backgrounds, languages)
+- Force system (powers, secrets, techniques, lightsaber form powers)
+- Weapons (pistols, rifles, heavy, grenades, exotic, simple/melee)
+- Armor (light, medium, heavy)
+- Equipment (communications, tools, survival, medical, tech, security)
+- Vehicles (starships, stations, walkers, speeders)
+- Actors (droids, NPCs)
+- Special content (conditions, combat conditions, attributes, extra skill uses)
 
 **How to Use:**
 1. Open Compendium sidebar
@@ -2313,8 +2319,8 @@ This comprehensive guide lists every feature in the SWSE system with description
 5. Or right-click to preview
 
 **Features:**
-- 1000+ items
-- Organized categories
+- 40+ organized packs
+- Category-based organization
 - Easy searching
 - Drag-and-drop
 
@@ -2444,17 +2450,17 @@ This comprehensive guide lists every feature in the SWSE system with description
 
 | Category | Count | Key Features |
 |----------|-------|--------------|
-| Character Creation | 10 | 7-step wizard, templates, ability methods, species, classes, feats, talents, backgrounds |
+| Character Creation | 10 | 7-step wizard, templates, 6 ability methods, species, 5 base classes + prestige, feats, talents, backgrounds |
 | Character Sheet | 10 | 10 tabs covering all aspects of character |
-| Progression | 10 | Level-up, multi-class, feats, talents, abilities, skills, Force, lightsaber forms |
-| Combat | 15 | Initiative, attacks, defense, damage, grappling, conditions, vehicles |
+| Progression | 10 | Level-up, multi-class, feats, talents, abilities, 19 skills, Force, lightsaber forms |
+| Combat | 15 | Initiative, attacks, defense, damage threshold, condition track, grappling, vehicles |
 | Force System | 10 | Powers, points, dark side, enhancements, secrets, techniques, forms, checks |
 | Equipment | 9 | Store, weapons, armor, upgrades, weight, credits, management, consumables, items |
 | Vehicles | 8 | Actor creation, stats, weapons, crew, modifications, maneuvers, combat, stock ships |
 | Droids | 6 | Actor creation, sophistication, systems, dual modes, equipment, wizard |
 | NPCs | 5 | Creation, templates, followers, nonheroic units, combat |
-| Customization | 10 | Houserules (50+ options), presets, themes, variants (ability, death, skills, Force, combat) |
-| Management | 10 | World data, import, maintenance, compendiums, chat, canvas, macros, drag-drop, notifications, export |
+| Customization | 10 | Houserules (80+ settings), presets, 6 themes, variants (ability, death, skills, Force, combat) |
+| Management | 10 | World data, import, maintenance, 40+ compendiums, chat, canvas, macros, drag-drop, notifications, export |
 | **TOTAL** | **110+** | **Complete SWSE game system** |
 
 ---

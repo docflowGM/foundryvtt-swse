@@ -21,7 +21,7 @@ Welcome to the comprehensive FAQ for the Foundry VTT Star Wars Saga Edition syst
 ## Getting Started
 
 ### Q: What is the Star Wars Saga Edition System for Foundry VTT?
-**A:** This is a complete implementation of the Star Wars Saga Edition (SWSE) d20 RPG system for Foundry Virtual Tabletop. It automates character creation, combat mechanics, Force powers, progression, and all game mechanics. The system includes 1000+ pre-built game items across 27 compendium packs.
+**A:** This is a complete implementation of the Star Wars Saga Edition (SWSE) d20 RPG system for Foundry Virtual Tabletop. It automates character creation, combat mechanics, Force powers, progression, and all game mechanics. The system includes hundreds of pre-built game items across 40+ compendium packs.
 
 ### Q: What version of Foundry VTT do I need?
 **A:** The system requires Foundry VTT v11 or later. It's fully compatible with v12 and v13. For best performance, use the latest stable version of Foundry VTT.
@@ -138,14 +138,14 @@ Both are selected from compendiums and automatically track prerequisites.
 When you level up, you can roll for HP or accept the average.
 
 ### Q: How do I add skills to my character?
-**A:** Skills are added through the **Skills tab** on your character sheet:
+**A:** Skills are managed through the **Skills tab** on your character sheet:
 
 1. Click on a skill to toggle training
-2. Trained skills automatically gain a +3 bonus plus related ability modifiers
-3. You can also apply bonus increases from feats, talents, and equipment
+2. Trained skills automatically gain a +5 bonus plus related ability modifiers plus half your character level
+3. You can also apply bonus increases from feats (like Skill Focus for +5), talents, and equipment
 4. Skill totals are calculated automatically
 
-The system includes 100+ skills across 8 categories.
+The system includes all 19 SWSE skills: Acrobatics, Climb, Deception, Endurance, Gather Information, Initiative, Jump, Knowledge, Mechanics, Perception, Persuasion, Pilot, Ride, Stealth, Survival, Swim, Treat Injury, Use Computer, and Use the Force.
 
 ### Q: What is the background system?
 **A:** Backgrounds provide:
@@ -184,11 +184,11 @@ The system automatically handles feature progression.
 ### Q: How are defenses calculated?
 **A:** The system uses 3 defense types:
 
-- **Fortitude Defense** = 10 + class bonus + Constitution modifier + armor/shield bonuses
-- **Reflex Defense** = 10 + class bonus + Dexterity modifier + armor/shield bonuses
-- **Will Defense** = 10 + class bonus + Wisdom modifier + armor/shield bonuses
+- **Fortitude Defense** = 10 + half level + class bonus + higher of CON or STR modifier + misc bonuses
+- **Reflex Defense** = 10 + half level + class bonus + DEX modifier + armor bonus (or heroic level if higher) + misc bonuses
+- **Will Defense** = 10 + half level + class bonus + WIS modifier + misc bonuses
 
-These are calculated automatically based on your equipment and abilities.
+These are calculated automatically based on your level, class, equipment, and abilities.
 
 ### Q: How do I add equipment bonuses?
 **A:** Equipment bonuses apply automatically:
@@ -265,11 +265,11 @@ Criticals (natural 20s) automatically double damage dice.
 ### Q: How do defenses work in combat?
 **A:** Rather than armor class, SWSE uses three defense types:
 
-- **Fortitude** - Resists physical damage (armor, might)
-- **Reflex** - Dodges quick attacks (acrobatics, positioning)
-- **Will** - Resists mental/Force attacks (determination, concentration)
+- **Fortitude** - Resists physical effects and determines Damage Threshold
+- **Reflex** - Dodges attacks and area effects
+- **Will** - Resists mental effects and Force powers
 
-When you attack, the GM specifies which defense you're attacking. Your attack roll must meet or exceed the target's defense.
+When you attack, the attack targets a specific defense (usually Reflex for weapon attacks). Your attack roll must meet or exceed the target's defense. Damage Threshold equals Fortitude Defense; exceeding it in one hit moves the target down the Condition Track.
 
 ### Q: How do I deal damage?
 **A:**
@@ -281,15 +281,19 @@ When you attack, the GM specifies which defense you're attacking. Your attack ro
 
 Damage is tracked in the **Health** section of the character sheet.
 
-### Q: What are the threshold stages for damage?
-**A:** Characters progress through HP thresholds:
+### Q: How does the Condition Track work?
+**A:** SWSE uses a Condition Track instead of HP-based wound levels:
 
-- **Healthy**: 0 to -10 HP (varies with CON)
-- **Wounded**: -10 to -20 HP
-- **Incapacitated**: -20 HP or lower
-- **Dead**: -CON score in HP
+- **Normal**: No penalties
+- **-1 step**: -1 to attacks, defenses, ability checks, and skill checks
+- **-2 steps**: -2 penalty
+- **-5 steps**: -5 penalty
+- **-10 steps**: -10 penalty and half speed
+- **Helpless**: Unconscious/Disabled
 
-System indicators show the current threshold visually.
+You move down the Condition Track when you take damage exceeding your **Damage Threshold** (equal to your Fortitude Defense) in a single hit. Characters at 0 HP fall unconscious; at -10 HP they die.
+
+System indicators show the current Condition Track step visually.
 
 ### Q: How does grappling work?
 **A:** Grappling has four stages:
@@ -350,27 +354,27 @@ See the Vehicles section below for details.
 5. **Effects**: Powers apply automatically (bonus, damage, conditions, etc.)
 
 ### Q: How do I manage Force Points?
-**A:** Force Points track a character's connection to the Force:
+**A:** Force Points are a limited resource that enhance your character:
 
 1. **Current Force Points**: Displayed on the **Force tab**
-2. **Maximum**: Determined by Force sensitivity (usually Wisdom modifier × 5)
-3. **Regeneration**: Force Points regenerate at a rate based on your training (typically 1 per round in most campaigns)
+2. **Maximum**: Typically 5 + half your character level (can vary by campaign settings)
+3. **Recovery**: Force Points typically refresh when you level up or per campaign settings (extended rest, per session)
 4. **Spending**: Use Force Points to:
-   - Activate certain powers
-   - Boost ability checks
-   - Improve attack/defense rolls
-5. **Dark Side Conversion**: Overusing Dark Side powers increases Dark Side Score
+   - Add bonus dice to any d20 roll (1d6 at low levels, up to 3d6 at higher levels, take highest)
+   - Activate certain Force powers
+   - Avoid death (fall unconscious instead)
+5. **Dark Side Temptation**: You can call on the Dark Side for extra dice, but this increases your Dark Side Score
 
 ### Q: What is the Dark Side Score?
-**A:** The Dark Side Score represents corruption from Dark Side power usage:
+**A:** The Dark Side Score represents corruption from the Dark Side of the Force:
 
-- **Score**: Ranges from 0-10 (0 is fully Light Side, 10 is fully Dark Side)
-- **Gaining Points**: Using Dark Side powers or Sith talents increases the score
+- **Score Range**: 0 to your Wisdom score (default, can be modified by houserules)
+- **Gaining Points**: Using [Dark Side] tagged Force powers, calling on Dark Side temptation, or committing evil acts
 - **Effects**:
-  - At 5: Neutral alignment (can access both Light/Dark powers)
-  - At 7+: Restricted from Light Side powers
-  - At 10: Fully Dark Side (cannot use Light Side powers)
-- **Redemption**: Light Side actions may reduce the score (per GM discretion)
+  - When Dark Side Score equals or exceeds your Wisdom, you fall to the Dark Side
+  - Dark Side characters may lose access to certain Light Side powers
+  - Can use Dark Side temptation for bonus dice if Dark Side Score ≤ half Wisdom
+- **Redemption**: Spending a Force Point can reduce Dark Side Score by 1; other acts of atonement per GM discretion
 
 ### Q: How do I select available Force Powers?
 **A:**
@@ -565,14 +569,16 @@ Each vehicle has modification slots based on size/type.
 ### Q: What are Houserules?
 **A:** Houserules let you customize game mechanics:
 
-- **18 Built-in Houserules** available
+- **80+ configurable houserule settings** available
 - **Categories**:
-  - Grappling variants (simplified vs. complex)
-  - Healing system options
-  - Condition tracking methods
-  - Flanking bonuses
-  - Skill training variants
-  - Status effects handling
+  - Character creation (ability score methods, point buy pools)
+  - Hit points and death systems
+  - Combat rules (criticals, diagonal movement, weapon ranges)
+  - Force rules (training attribute, Block/Deflect, Dark Side)
+  - Skill and feat variants
+  - Condition track and recovery options
+  - Grappling, flanking, and healing integration
+  - Space combat initiative
   - And more!
 
 ### Q: How do I enable/disable Houserules?
@@ -584,7 +590,7 @@ Each vehicle has modification slots based on size/type.
 4. Rules affect character sheets and mechanics automatically
 
 ### Q: Can I create custom Houserules?
-**A:** Currently, the system includes 18 pre-configured houserules. Custom rules require code modification. Contact the development team on GitHub for feature requests.
+**A:** The system includes 80+ pre-configured houserule settings covering most common variations. For additional custom rules not covered, code modification would be required. Contact the development team on GitHub for feature requests.
 
 ### Q: How do I change themes?
 **A:**
@@ -629,17 +635,17 @@ If still broken, file a bug report on GitHub with:
 - Expected vs. actual defense values
 
 ### Q: My character isn't getting the right number of Force Points!
-**A:** Force Points are calculated based on:
+**A:** Force Points are typically calculated as 5 + half your character level (varies by campaign settings):
 
-- **Wisdom modifier** (primary factor)
-- **Force sensitivity level** (untrained, trained, Jedi, etc.)
-- **Feats** that grant bonus Force Points
+- **Base**: 5 Force Points
+- **Level bonus**: +1 per 2 character levels
+- **Recovery**: Set by houserule (on level up, extended rest, or per session)
 
 Check:
-1. Your Wisdom score in the Abilities section
-2. That Force Sensitivity talent/feat is selected
-3. Check the **Force tab** for the calculation breakdown
-4. Verify no conflicting feats are applied
+1. Your character level is correct
+2. Check the **Force tab** for current/maximum display
+3. Check houserule settings for Force Point recovery timing
+4. The GM may have custom settings that affect Force Point calculations
 
 ### Q: Combat actions aren't available or are grayed out!
 **A:** Action availability depends on:
@@ -761,13 +767,16 @@ Detailed reports help us fix issues faster!
 - **FEATURES.md** - Full feature breakdown
 - **docs/Design.md** - Technical architecture
 
-### Compendium Packs (1000+ items)
+### Compendium Packs (40+ packs)
 - Classes, Talents, Feats, Species
 - Skills, Languages, Backgrounds
 - Force Powers, Secrets, Techniques
-- Weapons, Armor, Equipment
-- Vehicles, Droids, NPCs
-- Conditions, Status Effects
+- Weapons (Pistols, Rifles, Heavy, Grenades, Exotic, Simple/Melee)
+- Armor (Light, Medium, Heavy)
+- Equipment (Communications, Tools, Survival, Medical, Tech, Security)
+- Vehicles (Starships, Stations, Walkers, Speeders)
+- Droids, NPCs
+- Conditions, Combat Conditions, Attributes
 
 ### External Resources
 - **Star Wars Saga Edition Official Website**: Official rules reference
