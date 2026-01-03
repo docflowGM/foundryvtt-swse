@@ -628,7 +628,25 @@ export class DarkSidePowers {
     const defenseText = isGreater ? 'all Defenses' : selectedDefense || 'one Defense';
     const defenseBonus = isGreater ? 'all' : selectedDefense;
 
+    // Create the talisman item
+    const talismanName = `${isGreater ? 'Greater ' : ''}Dark Side Talisman`;
+    const itemData = {
+      name: talismanName,
+      type: 'equipment',
+      system: {
+        description: `A mystical talisman imbued with Dark Side energy. Grants +2 Force bonus to ${defenseText} against Light Side Force Powers.`,
+        equipped: true,
+        quantity: 1,
+        rarity: isGreater ? 'legendary' : 'rare'
+      }
+    };
+
+    // Create the item in the actor's inventory
+    const createdItems = await actor.createEmbeddedDocuments('Item', [itemData]);
+    const itemId = createdItems[0].id;
+
     const talismantInfo = {
+      itemId: itemId,
       isGreater: isGreater,
       defense: defenseBonus,
       createdAt: new Date().toISOString(),
@@ -639,7 +657,7 @@ export class DarkSidePowers {
 
     const chatContent = `
       <div class="swse-dark-side-talisman">
-        <h3><img src="icons/svg/amulet.svg" style="width: 20px; height: 20px;"> ${isGreater ? 'Greater Dark Side' : 'Dark Side'} Talisman Created</h3>
+        <h3><img src="icons/svg/amulet.svg" style="width: 20px; height: 20px;"> ${talismanName} Created</h3>
         <p><strong>${actor.name}</strong> imbues an object with the Dark Side, creating a protective talisman.</p>
         <p><strong>Defense Boost:</strong> +2 Force bonus to ${defenseText} against Light Side Force Powers</p>
         <p><em>The talisman remains active until destroyed. If destroyed, you cannot create another one for 24 hours.</em></p>
@@ -649,13 +667,14 @@ export class DarkSidePowers {
     await ChatMessage.create({
       speaker: { actor: actor },
       content: chatContent,
-      flavor: `${isGreater ? 'Greater ' : ''}Dark Side Talisman Created`
+      flavor: `${talismanName} Created`
     });
 
-    SWSELogger.log(`SWSE Talents | ${actor.name} created a ${isGreater ? 'Greater ' : ''}Dark Side Talisman`);
+    SWSELogger.log(`SWSE Talents | ${actor.name} created a ${talismanName}`);
 
     return {
       success: true,
+      itemId: itemId,
       isGreater: isGreater,
       defense: defenseBonus,
       actionTime: 'Full-Round Action'
@@ -666,6 +685,14 @@ export class DarkSidePowers {
     const talisman = actor.getFlag('swse', 'activeDarkSideTalisman');
     if (!talisman) {
       return { success: false, message: 'Actor does not have an active Dark Side Talisman' };
+    }
+
+    // Delete the actual item from inventory if it exists
+    if (talisman.itemId) {
+      const item = actor.items.get(talisman.itemId);
+      if (item) {
+        await actor.deleteEmbeddedDocuments('Item', [talisman.itemId]);
+      }
     }
 
     await actor.unsetFlag('swse', 'activeDarkSideTalisman');
@@ -1330,7 +1357,24 @@ export class DarkSidePowers {
       'system.darkSideScore': currentDSP + 1
     });
 
+    // Create the talisman item
+    const itemData = {
+      name: 'Sith Talisman',
+      type: 'equipment',
+      system: {
+        description: 'A dark artifact imbued with Sith sorcery. When worn, grants +1d6 to damage rolls with Force Powers and Lightsaber attacks.',
+        equipped: true,
+        quantity: 1,
+        rarity: 'legendary'
+      }
+    };
+
+    // Create the item in the actor's inventory
+    const createdItems = await actor.createEmbeddedDocuments('Item', [itemData]);
+    const itemId = createdItems[0].id;
+
     const talismantInfo = {
+      itemId: itemId,
       createdAt: new Date().toISOString(),
       createdRound: game.combat?.round || 0,
       dspIncreaseApplied: true
@@ -1358,6 +1402,7 @@ export class DarkSidePowers {
 
     return {
       success: true,
+      itemId: itemId,
       dspIncreased: 1,
       newDSP: currentDSP + 1,
       actionTime: 'Full-Round Action'
@@ -1368,6 +1413,14 @@ export class DarkSidePowers {
     const talisman = actor.getFlag('swse', 'activeSithTalisman');
     if (!talisman) {
       return { success: false, message: 'Actor does not have an active Sith Talisman' };
+    }
+
+    // Delete the actual item from inventory if it exists
+    if (talisman.itemId) {
+      const item = actor.items.get(talisman.itemId);
+      if (item) {
+        await actor.deleteEmbeddedDocuments('Item', [talisman.itemId]);
+      }
     }
 
     await actor.unsetFlag('swse', 'activeSithTalisman');
