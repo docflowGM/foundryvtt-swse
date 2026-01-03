@@ -169,6 +169,12 @@ import {
   RideUses
 } from './scripts/skills/skill-uses.js';
 import { SWSEVehicleCombat } from './scripts/combat/systems/vehicle-combat-system.js';
+import ScoutTalentMechanics from './scripts/talents/scout-talent-mechanics.js';
+import { ScoutTalentMacros } from './scripts/talents/scout-talent-macros.js';
+import LightSideTalentMechanics from './scripts/talents/light-side-talent-mechanics.js';
+import { LightSideTalentMacros } from './scripts/talents/light-side-talent-macros.js';
+import DarkSideTalentMechanics from './scripts/talents/dark-side-talent-mechanics.js';
+import { DarkSideTalentMacros } from './scripts/talents/dark-side-talent-macros.js';
 
 import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
 import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
@@ -334,7 +340,13 @@ Hooks.once("init", async function () {
         PerceptionUses,
         PersuasionUses,
         PilotUses,
-        RideUses
+        RideUses,
+        ScoutTalentMechanics,
+        ScoutTalentMacros,
+        LightSideTalentMechanics,
+        LightSideTalentMacros,
+        DarkSideTalentMechanics,
+        DarkSideTalentMacros
     };
 });
 

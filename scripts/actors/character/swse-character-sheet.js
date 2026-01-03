@@ -113,6 +113,9 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     // Add GM flag for template rendering
     context.isGM = game.user.isGM;
 
+    // Check Force Sensitivity for UI display
+    context.canUseTheForce = SkillSystem._canUseTheForce(this.actor);
+
     // Inject skill actions
     context.skillActions = await SkillSystem.buildSkillActions(this.actor);
 

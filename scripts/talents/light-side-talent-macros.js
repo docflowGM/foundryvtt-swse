@@ -303,7 +303,7 @@ export class LightSideTalentMacros {
 
     if (result.requiresSelection) {
       const allyOptions = result.allies
-        .map(t => `<option value="${t.actor.id}">${t.actor.name} (Use the Force: ${t.actor.system.skills?.useTheForce?.modifier || 0})</option>`)
+        .map(t => `<option value="${t.actor.id}">${t.actor.name} (Use the Force: ${t.actor.system.skills?.useTheForce?.total || 0})</option>`)
         .join('');
 
       const dialog = new Dialog({

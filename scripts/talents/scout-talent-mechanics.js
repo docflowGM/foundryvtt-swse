@@ -1140,7 +1140,7 @@ export class ScoutTalentMechanics {
     }
 
     // Count existing reconnaissance team members
-    const recon Flag = actor.getFlag('swse', 'reconnaissanceTeamCount') || 0;
+    const reconCount = actor.getFlag('swse', 'reconnaissanceTeamCount') || 0;
 
     if (reconCount >= 3) {
       return {
