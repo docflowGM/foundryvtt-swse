@@ -155,6 +155,19 @@ import { SWSEGrappling } from './scripts/combat/systems/grappling-system.js';
 import { FeintMechanics } from './scripts/combat/feint-mechanics.js';
 import { SaberLockMechanics } from './scripts/combat/saber-lock-mechanics.js';
 import { DeceptionUses } from './scripts/skills/deception-uses.js';
+import { AcrobaticsUses } from './scripts/skills/acrobatics-uses.js';
+import { ClimbUses } from './scripts/skills/climb-uses.js';
+import { EnduranceUses } from './scripts/skills/endurance-uses.js';
+import { GatherInformationUses } from './scripts/skills/gather-information-uses.js';
+import {
+  JumpUses,
+  KnowledgeUses,
+  MechanicsUses,
+  PerceptionUses,
+  PersuasionUses,
+  PilotUses,
+  RideUses
+} from './scripts/skills/skill-uses.js';
 import { SWSEVehicleCombat } from './scripts/combat/systems/vehicle-combat-system.js';
 
 import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
@@ -310,7 +323,18 @@ Hooks.once("init", async function () {
         perfMonitor,
         FeintMechanics,
         SaberLockMechanics,
-        DeceptionUses
+        DeceptionUses,
+        AcrobaticsUses,
+        ClimbUses,
+        EnduranceUses,
+        GatherInformationUses,
+        JumpUses,
+        KnowledgeUses,
+        MechanicsUses,
+        PerceptionUses,
+        PersuasionUses,
+        PilotUses,
+        RideUses
     };
 });
 
