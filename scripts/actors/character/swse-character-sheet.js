@@ -878,6 +878,13 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
 
       if (!power) return;
 
+      // Post announcement to chat
+      const announcement = await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `<div class="dark-inspiration-announcement"><p><strong>${actor.name}</strong> embraced the dark side and uses <strong>${power.name}</strong>...</p></div>`,
+        type: CONST.CHAT_MESSAGE_TYPES.OOC
+      });
+
       // Cast the power (use it as if the character knows it)
       const { ForceEnhancementDialog } = await import('../../utils/force-enhancement-dialog.js');
       const { SWSERoll } = await import('../../combat/rolls/enhanced-rolls.js');
