@@ -101,6 +101,7 @@ import { SWSEActorBase } from './scripts/actors/base/swse-actor-base.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
 import { ActorEngine } from './scripts/actors/engine/actor-engine.js';
 import { DefenseSystem } from './scripts/engine/DefenseSystem.js';
+import { BonusHitPointsEngine } from './scripts/engine/BonusHitPointsEngine.js';
 import { RollEngine } from './scripts/engine/roll-engine.js';
 import { applyActorUpdateAtomic, batchActorUpdates, safeActorUpdate, prepareUpdatePayload, validateActorFields } from './scripts/utils/actor-utils.js';
 import { sanitizeHTML, sanitizeChatMessage, canUserModifyActor, canUserModifyItem, withPermissionCheck, withGMCheck, escapeHTML, validateUserInput } from './scripts/utils/security-utils.js';
@@ -151,6 +152,9 @@ import { SWSEActiveEffectsManager } from './scripts/combat/active-effects-manage
 import { CombatActionsMapper } from './scripts/combat/utils/combat-actions-mapper.js';
 import { SWSECombat } from './scripts/combat/systems/enhanced-combat-system.js';
 import { SWSEGrappling } from './scripts/combat/systems/grappling-system.js';
+import { FeintMechanics } from './scripts/combat/feint-mechanics.js';
+import { SaberLockMechanics } from './scripts/combat/saber-lock-mechanics.js';
+import { DeceptionUses } from './scripts/skills/deception-uses.js';
 import { SWSEVehicleCombat } from './scripts/combat/systems/vehicle-combat-system.js';
 
 import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
@@ -303,7 +307,10 @@ Hooks.once("init", async function () {
         ActorEngine,
         RollEngine,
         lazyLoader,
-        perfMonitor
+        perfMonitor,
+        FeintMechanics,
+        SaberLockMechanics,
+        DeceptionUses
     };
 });
 

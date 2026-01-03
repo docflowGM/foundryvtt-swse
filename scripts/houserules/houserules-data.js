@@ -16,7 +16,7 @@ export const HouserulesData = Object.freeze({
       id: "combat-actions-feint",
       name: "Feint",
       description:
-        "Make a Deception check vs opponent's Will Defense to make them flat-footed.",
+        "Make a Deception check as a Standard Action to set the DC of your opponent's Initiative check. If you beat their roll, they are treated as Flat-Footed against the first attack you make against them in the next round. Trained in Deception: Can target multiple foes as a Full-Round Action (-5 per extra target).",
       standardSkill: "deception",
       alternateSkill: "persuasion"
     }),

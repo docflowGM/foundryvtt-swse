@@ -14,14 +14,48 @@ export class SWSECombatDocument extends Combat {
   /* -------------------------------------------- */
 
   /**
-   * SWSE Initiative = 1d20 + Initiative Skill Total
+   * SWSE Initiative = 1d20 + Initiative Skill Total + Vehicle Size Modifier (if applicable)
+   *
+   * Vehicle Size Modifiers (SWSE Rules):
+   * Colossal: -10, Gargantuan: -5, Huge: -2, Large: -1, Medium/Small/Tiny: 0
    */
   _getInitiativeFormula(combatant) {
     const actor = combatant.actor;
     if (!actor) return "1d20";
 
-    const initTotal = actor.system.skills?.initiative?.total ?? 0;
+    let initTotal = actor.system.skills?.initiative?.total ?? 0;
+
+    // Add vehicle size modifier if this is a vehicle
+    if (actor.type === 'vehicle') {
+      const sizeMod = this._getVehicleSizeModifier(actor);
+      initTotal += sizeMod;
+    }
+
     return `1d20 + ${initTotal}`;
+  }
+
+  /**
+   * Get the size modifier for a vehicle's Initiative
+   * Follows SWSE rules for vehicle-scale combat
+   * @param {Actor} vehicle - The vehicle actor
+   * @returns {number} The size modifier to apply to Initiative
+   */
+  _getVehicleSizeModifier(vehicle) {
+    const size = vehicle.system.size?.toLowerCase() || 'medium';
+
+    const sizeModifiers = {
+      'colossal': -10,
+      'gargantuan': -5,
+      'huge': -2,
+      'large': -1,
+      'medium': 0,
+      'small': 0,
+      'tiny': 0,
+      'diminutive': 0,
+      'fine': 0
+    };
+
+    return sizeModifiers[size] ?? 0;
   }
 
   /* -------------------------------------------- */
