@@ -1,0 +1,793 @@
+/**
+ * DARK SIDE POWERS - Comprehensive Dark Side Talent System
+ *
+ * Houses all mechanics and macros for:
+ * - Dark Side Talents (Swift Power, Dark Side Savant, Wrath of the Dark Side)
+ * - Dark Side Devotee Tree (Channel Aggression, Channel Anger, Crippling Strike, etc.)
+ *
+ * This consolidated module provides a unified API for all Dark Side talent functionality.
+ */
+
+import { SWSELogger } from '../utils/logger.js';
+
+export class DarkSidePowers {
+
+  // ========================================================================
+  // DARK SIDE TALENT TREE - Swift Power, Savant, Wrath
+  // ========================================================================
+
+  /**
+   * SWIFT POWER - Use Force Power as Swift Action
+   * Once per day, use a Force Power that normally takes Standard/Move Action as Swift Action
+   */
+  static hasSwiftPower(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Swift Power'
+    );
+  }
+
+  static async triggerSwiftPower(actor, forcePower) {
+    if (!this.hasSwiftPower(actor)) {
+      return false;
+    }
+
+    // Check if already used today
+    const lastUsed = actor.getFlag('swse', 'swiftPowerUsedToday');
+    const today = new Date().toDateString();
+
+    if (lastUsed === today) {
+      ui.notifications.warn('Swift Power has already been used today. It refreshes at the next dawn.');
+      return false;
+    }
+
+    // Record usage
+    await actor.setFlag('swse', 'swiftPowerUsedToday', today);
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} used Swift Power on ${forcePower.name}`);
+    ui.notifications.info(`${forcePower.name} is being used as a Swift Action!`);
+
+    return true;
+  }
+
+  // ========================================================================
+  // DARK SIDE SAVANT - Return Dark Side power without FP cost
+  // ========================================================================
+
+  static hasDarkSideSavant(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Dark Side Savant'
+    );
+  }
+
+  static async triggerDarkSideSavant(actor) {
+    if (!this.hasDarkSideSavant(actor)) {
+      return { success: false, message: 'Actor does not have Dark Side Savant talent' };
+    }
+
+    // Check encounter status
+    const combatEncounterActive = game.combats?.active;
+    if (!combatEncounterActive) {
+      return {
+        success: false,
+        message: 'Dark Side Savant can only be used during an encounter (combat active)'
+      };
+    }
+
+    // Check if already used this encounter
+    const combatId = combatEncounterActive.id;
+    const savantUsageFlag = `darkSideSavant_${combatId}`;
+    const alreadyUsed = actor.getFlag('swse', savantUsageFlag);
+
+    if (alreadyUsed) {
+      return {
+        success: false,
+        message: 'Dark Side Savant has already been used this encounter. It resets at the start of the next encounter.'
+      };
+    }
+
+    // Get all Dark Side Force Powers that are spent
+    const darkSidePowers = actor.items.filter(item =>
+      item.type === 'forcepower' &&
+      item.system?.spent === true &&
+      (item.system?.discipline === 'dark-side' || item.name.toLowerCase().includes('dark'))
+    );
+
+    if (darkSidePowers.length === 0) {
+      return {
+        success: false,
+        message: 'No spent Dark Side Force Powers available to return'
+      };
+    }
+
+    // If single power, return it directly
+    if (darkSidePowers.length === 1) {
+      const power = darkSidePowers[0];
+      await actor.updateEmbeddedDocuments('Item', [{
+        _id: power.id,
+        'system.spent': false
+      }]);
+
+      await actor.setFlag('swse', savantUsageFlag, true);
+
+      SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Side Savant to return ${power.name}`);
+      ui.notifications.info(`${power.name} has been returned to your Force Power Suite without spending a Force Point!`);
+
+      return { success: true, power: power.name };
+    }
+
+    // Multiple powers - return selection data
+    return {
+      success: true,
+      requiresSelection: true,
+      powers: darkSidePowers,
+      combatId: combatId,
+      savantUsageFlag: savantUsageFlag
+    };
+  }
+
+  static async completeDarkSideSavantSelection(actor, powerIdToReturn, combatId, savantUsageFlag) {
+    const power = actor.items.get(powerIdToReturn);
+    if (!power) {
+      ui.notifications.error('Power not found');
+      return false;
+    }
+
+    await actor.updateEmbeddedDocuments('Item', [{
+      _id: power.id,
+      'system.spent': false
+    }]);
+
+    await actor.setFlag('swse', savantUsageFlag, true);
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Side Savant to return ${power.name}`);
+    ui.notifications.info(`${power.name} has been returned to your Force Power Suite!`);
+
+    return true;
+  }
+
+  // ========================================================================
+  // WRATH OF THE DARK SIDE - Half damage repeat on Natural 20
+  // ========================================================================
+
+  static hasWrathOfDarkSide(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Wrath of the Dark Side'
+    );
+  }
+
+  static WRATH_APPLICABLE_POWERS = [
+    'Corruption',
+    'Force Blast',
+    'Force Grip',
+    'Force Lightning',
+    'Force Slam',
+    'Force Thrust',
+    'Repulse'
+  ];
+
+  static canUseWrath(forcePowerName) {
+    return this.WRATH_APPLICABLE_POWERS.includes(forcePowerName);
+  }
+
+  static async triggerWrathOfDarkSide(actor, roll, forcePower, targetToken, damageDealt) {
+    if (!this.hasWrathOfDarkSide(actor)) {
+      return { success: false, message: 'Actor does not have Wrath of the Dark Side' };
+    }
+
+    if (!this.canUseWrath(forcePower.name)) {
+      return {
+        success: false,
+        message: `Wrath of the Dark Side only applies to: ${this.WRATH_APPLICABLE_POWERS.join(', ')}`
+      };
+    }
+
+    // Check for Natural 20 on the roll
+    if (roll.terms?.[0]?.results?.[0]?.result !== 20) {
+      return {
+        success: false,
+        message: 'Wrath of the Dark Side only triggers on a Natural 20'
+      };
+    }
+
+    const halfDamage = Math.floor(damageDealt / 2);
+    const wrathFlagId = `wrath_${Date.now()}_${targetToken.id}`;
+
+    // Store the delayed damage on the target
+    const targetActor = targetToken.actor;
+    const wrathFlags = targetActor.getFlag('swse', 'wrathDamage') || [];
+    wrathFlags.push({
+      id: wrathFlagId,
+      damage: halfDamage,
+      sourceName: actor.name,
+      sourceId: actor.id,
+      triggerRound: game.combat?.round,
+      triggeredAt: new Date().toISOString()
+    });
+
+    await targetActor.setFlag('swse', 'wrathDamage', wrathFlags);
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} triggered Wrath of the Dark Side on ${targetActor.name}. Will deal ${halfDamage} damage at start of next turn.`);
+    ui.notifications.info(`${targetActor.name} will take ${halfDamage} additional damage at the start of their next turn from Wrath of the Dark Side!`);
+
+    return {
+      success: true,
+      halfDamage: halfDamage,
+      targetId: targetActor.id
+    };
+  }
+
+  static async applyWrathDamageAtTurnStart(token) {
+    const actor = token.actor;
+    const wrathFlags = actor.getFlag('swse', 'wrathDamage') || [];
+
+    if (wrathFlags.length === 0) {
+      return;
+    }
+
+    // Filter to damages from this turn or earlier
+    const applicableDamages = wrathFlags.filter(flag => {
+      return flag.triggerRound < game.combat?.round ||
+             (flag.triggerRound === game.combat?.round && game.combat?.turn > 0);
+    });
+
+    for (const dmg of applicableDamages) {
+      const newHp = Math.max(0, actor.system.hp?.value - dmg.damage);
+      await actor.update({ 'system.hp.value': newHp });
+
+      const messageContent = `
+        <div class="swse-wrath-damage">
+          <h3><img src="icons/svg/skull.svg" style="width: 20px; height: 20px;"> Wrath of the Dark Side</h3>
+          <p><strong>${actor.name}</strong> takes <strong>${dmg.damage}</strong> damage from ${dmg.sourceName}'s Wrath!</p>
+        </div>
+      `;
+
+      await ChatMessage.create({
+        speaker: { actor: actor },
+        content: messageContent,
+        flavor: 'Wrath of the Dark Side - Delayed Damage',
+        flags: { swse: { wrathDamage: true } }
+      });
+
+      SWSELogger.log(`SWSE Talents | Applied ${dmg.damage} Wrath damage to ${actor.name} from ${dmg.sourceName}`);
+    }
+
+    const remainingDamages = wrathFlags.filter(flag =>
+      !(flag.triggerRound < game.combat?.round ||
+        (flag.triggerRound === game.combat?.round && game.combat?.turn > 0))
+    );
+
+    if (remainingDamages.length === 0) {
+      await actor.unsetFlag('swse', 'wrathDamage');
+    } else {
+      await actor.setFlag('swse', 'wrathDamage', remainingDamages);
+    }
+  }
+
+  static async clearWrathFlagsOnCombatEnd() {
+    for (const combatant of game.combat?.combatants || []) {
+      const actor = combatant.actor;
+      if (actor?.getFlag('swse', 'wrathDamage')) {
+        await actor.unsetFlag('swse', 'wrathDamage');
+      }
+    }
+  }
+
+  // ========================================================================
+  // DARK SIDE DEVOTEE - Channel Aggression, Anger, Crippling, etc.
+  // ========================================================================
+
+  static hasChannelAggression(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Channel Aggression'
+    );
+  }
+
+  static async triggerChannelAggression(actor, targetToken, characterLevel, spendFP = true) {
+    if (!this.hasChannelAggression(actor)) {
+      return { success: false, message: 'Actor does not have Channel Aggression' };
+    }
+
+    const damageDice = Math.min(characterLevel, 10);
+
+    if (spendFP) {
+      const currentFP = actor.system.forcePoints?.value || 0;
+      if (currentFP < 1) {
+        return {
+          success: false,
+          message: 'Not enough Force Points. Channel Aggression requires 1 Force Point.'
+        };
+      }
+
+      await actor.update({
+        'system.forcePoints.value': currentFP - 1
+      });
+    }
+
+    const roll = new Roll(`${damageDice}d6`);
+    await roll.evaluate({ async: true });
+    const damageAmount = roll.total;
+
+    const newHp = Math.max(0, targetToken.actor.system.hp.value - damageAmount);
+    await targetToken.actor.update({ 'system.hp.value': newHp });
+
+    const chatContent = `
+      <div class="swse-channel-aggression">
+        <h3><img src="icons/svg/blood.svg" style="width: 20px; height: 20px;"> Channel Aggression</h3>
+        <p><strong>${actor.name}</strong> channels their aggression, dealing <strong>${damageAmount}</strong> additional damage to the flanked <strong>${targetToken.actor.name}</strong>!</p>
+        <div class="damage-roll">${roll.result}</div>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: { actor: actor },
+      content: chatContent,
+      flavor: 'Channel Aggression - Bonus Damage',
+      rolls: [roll],
+      flags: { swse: { channelAggression: true } }
+    });
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} used Channel Aggression for ${damageAmount} damage`);
+
+    return {
+      success: true,
+      damageDice: damageDice,
+      damageRoll: roll,
+      damageAmount: damageAmount
+    };
+  }
+
+  static hasChannelAnger(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Channel Anger'
+    );
+  }
+
+  static async triggerChannelAnger(actor, spendFP = true) {
+    if (!this.hasChannelAnger(actor)) {
+      return { success: false, message: 'Actor does not have Channel Anger' };
+    }
+
+    const isRaging = actor.getFlag('swse', 'isChannelAngerRaging');
+    if (isRaging) {
+      return {
+        success: false,
+        message: `${actor.name} is already Channeling Anger. Rage ends at the beginning of round ${isRaging.endRound}.`
+      };
+    }
+
+    if (spendFP) {
+      const currentFP = actor.system.forcePoints?.value || 0;
+      if (currentFP < 1) {
+        return {
+          success: false,
+          message: 'Not enough Force Points. Channel Anger requires 1 Force Point.'
+        };
+      }
+
+      await actor.update({
+        'system.forcePoints.value': currentFP - 1
+      });
+    }
+
+    const conModifier = actor.system.abilities.con?.mod || 0;
+    const durationRounds = 5 + conModifier;
+    const currentRound = game.combat?.round || 0;
+    const endRound = currentRound + durationRounds;
+
+    const rageInfo = {
+      startRound: currentRound,
+      endRound: endRound,
+      durationRounds: durationRounds,
+      conModifier: conModifier
+    };
+
+    await actor.setFlag('swse', 'isChannelAngerRaging', rageInfo);
+
+    const chatContent = `
+      <div class="swse-channel-anger">
+        <h3><img src="icons/svg/skull.svg" style="width: 20px; height: 20px;"> Channel Anger</h3>
+        <p><strong>${actor.name}</strong> channels their anger into a <strong>RAGE</strong>!</p>
+        <p><strong>Bonuses:</strong> +2 to melee attacks and damage rolls</p>
+        <p><strong>Duration:</strong> ${durationRounds} rounds (until end of round ${endRound})</p>
+        <p><em style="color: #ff6b6b;">⚠️ Cannot use Skills requiring patience (Mechanics, Stealth, Use the Force)</em></p>
+        <p><em style="color: #ff6b6b;">⚠️ Will move -1 on Condition Track when rage ends</em></p>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: { actor: actor },
+      content: chatContent,
+      flavor: 'Channel Anger - Rage Activated'
+    });
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} used Channel Anger for ${durationRounds} rounds`);
+
+    return {
+      success: true,
+      durationRounds: durationRounds,
+      endRound: endRound,
+      rageBonus: 2
+    };
+  }
+
+  static async endChannelAnger(actor) {
+    const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
+    if (!rageInfo) {
+      return { success: false, message: 'Actor is not currently raging' };
+    }
+
+    await actor.unsetFlag('swse', 'isChannelAngerRaging');
+
+    const currentCondition = actor.system.conditionTrack?.value || 0;
+    const newCondition = Math.max(0, currentCondition - 1);
+
+    await actor.update({
+      'system.conditionTrack.value': newCondition
+    });
+
+    const chatContent = `
+      <div class="swse-channel-anger-end">
+        <h3><img src="icons/svg/skull.svg" style="width: 20px; height: 20px;"> Rage Ends</h3>
+        <p><strong>${actor.name}</strong>'s rage subsides, but the exertion takes its toll.</p>
+        <p><strong>Effect:</strong> Moves -1 step along the Condition Track</p>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: { actor: actor },
+      content: chatContent,
+      flavor: 'Channel Anger - Rage Ended'
+    });
+
+    SWSELogger.log(`SWSE Talents | ${actor.name}'s rage ended, moved to condition ${newCondition}`);
+
+    return { success: true, newConditionRank: newCondition };
+  }
+
+  static isCurrentlyRaging(actor) {
+    const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
+    if (!rageInfo) return false;
+
+    const currentRound = game.combat?.round || 0;
+    return currentRound <= rageInfo.endRound;
+  }
+
+  static hasCripplingStrike(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Crippling Strike'
+    );
+  }
+
+  static async triggerCripplingStrike(actor, targetToken, spendFP = true) {
+    if (!this.hasCripplingStrike(actor)) {
+      return { success: false, message: 'Actor does not have Crippling Strike' };
+    }
+
+    if (spendFP) {
+      const currentFP = actor.system.forcePoints?.value || 0;
+      if (currentFP < 1) {
+        return {
+          success: false,
+          message: 'Not enough Force Points. Crippling Strike requires 1 Force Point.'
+        };
+      }
+
+      await actor.update({
+        'system.forcePoints.value': currentFP - 1
+      });
+    }
+
+    const targetActor = targetToken.actor;
+    const originalSpeed = targetActor.system.speed?.base || 6;
+    const crippledSpeed = Math.ceil(originalSpeed / 2);
+
+    await targetActor.setFlag('swse', 'isCrippled', {
+      sourceActor: actor.id,
+      sourceName: actor.name,
+      originalSpeed: originalSpeed,
+      crippledSpeed: crippledSpeed,
+      maxHpWhenCrippled: targetActor.system.hp.max
+    });
+
+    await targetActor.update({
+      'system.speed.current': crippledSpeed
+    });
+
+    const chatContent = `
+      <div class="swse-crippling-strike">
+        <h3><img src="icons/svg/boot.svg" style="width: 20px; height: 20px;"> Crippling Strike</h3>
+        <p><strong>${actor.name}</strong>'s critical hit leaves <strong>${targetActor.name}</strong> crippled!</p>
+        <p><strong>Speed Reduced:</strong> ${originalSpeed} squares → ${crippledSpeed} squares</p>
+        <p><em>Effect lasts until target is fully healed (restored to maximum HP)</em></p>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: { actor: actor },
+      content: chatContent,
+      flavor: 'Crippling Strike - Speed Reduced'
+    });
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} crippled ${targetActor.name} (speed ${originalSpeed} → ${crippledSpeed})`);
+
+    return {
+      success: true,
+      originalSpeed: originalSpeed,
+      crippledSpeed: crippledSpeed
+    };
+  }
+
+  static checkCripplingStrikeExpiry(targetActor) {
+    const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
+    if (!crippledInfo) return false;
+
+    if (targetActor.system.hp.value >= crippledInfo.maxHpWhenCrippled) {
+      return false;
+    }
+
+    return true;
+  }
+
+  static async removeCripplingStrike(targetActor) {
+    const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
+    if (!crippledInfo) return;
+
+    await targetActor.update({
+      'system.speed.current': crippledInfo.originalSpeed
+    });
+
+    await targetActor.unsetFlag('swse', 'isCrippled');
+
+    const chatContent = `
+      <div class="swse-crippling-strike-end">
+        <h3><img src="icons/svg/boot.svg" style="width: 20px; height: 20px;"> Crippling Effect Removed</h3>
+        <p><strong>${targetActor.name}</strong> has recovered from the crippling wound.</p>
+        <p><strong>Speed Restored:</strong> ${crippledInfo.crippledSpeed} squares → ${crippledInfo.originalSpeed} squares</p>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: { actor: targetActor },
+      content: chatContent,
+      flavor: 'Crippling Strike - Effect Ended'
+    });
+
+    SWSELogger.log(`SWSE Talents | Removed crippling effect from ${targetActor.name}`);
+  }
+
+  static hasEmbraceDarkSide(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Embrace the Dark Side'
+    );
+  }
+
+  static canUseLightSidePowers(actor) {
+    return !this.hasEmbraceDarkSide(actor);
+  }
+
+  static async allowDarkSidePowerReroll(actor, originalRoll) {
+    if (!this.hasEmbraceDarkSide(actor)) {
+      return {
+        success: false,
+        message: 'Actor does not have Embrace the Dark Side'
+      };
+    }
+
+    return {
+      success: true,
+      originalRoll: originalRoll,
+      canReroll: true,
+      mustAccept: true,
+      message: 'You may reroll your Use the Force check. You must accept the result of the reroll, even if it is worse.'
+    };
+  }
+
+  static hasDarkSideTalisman(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Dark Side Talisman'
+    );
+  }
+
+  static hasGreaterDarkSideTalisman(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Greater Dark Side Talisman'
+    );
+  }
+
+  static async createDarkSideTalisman(actor, selectedDefense, spendFP = true) {
+    if (!this.hasDarkSideTalisman(actor) && !this.hasGreaterDarkSideTalisman(actor)) {
+      return {
+        success: false,
+        message: 'Actor does not have Dark Side Talisman or Greater Dark Side Talisman'
+      };
+    }
+
+    const activeTalisman = actor.getFlag('swse', 'activeDarkSideTalisman');
+    if (activeTalisman) {
+      return {
+        success: false,
+        message: `Already carrying an active Dark Side Talisman. Only one can be active at a time.`
+      };
+    }
+
+    if (spendFP) {
+      const currentFP = actor.system.forcePoints?.value || 0;
+      if (currentFP < 1) {
+        return {
+          success: false,
+          message: 'Not enough Force Points. Creating a talisman requires 1 Force Point.'
+        };
+      }
+
+      await actor.update({
+        'system.forcePoints.value': currentFP - 1
+      });
+    }
+
+    const isGreater = this.hasGreaterDarkSideTalisman(actor);
+    const defenseText = isGreater ? 'all Defenses' : selectedDefense || 'one Defense';
+    const defenseBonus = isGreater ? 'all' : selectedDefense;
+
+    const talismantInfo = {
+      isGreater: isGreater,
+      defense: defenseBonus,
+      createdAt: new Date().toISOString(),
+      createdRound: game.combat?.round || 0
+    };
+
+    await actor.setFlag('swse', 'activeDarkSideTalisman', talismantInfo);
+
+    const chatContent = `
+      <div class="swse-dark-side-talisman">
+        <h3><img src="icons/svg/amulet.svg" style="width: 20px; height: 20px;"> ${isGreater ? 'Greater Dark Side' : 'Dark Side'} Talisman Created</h3>
+        <p><strong>${actor.name}</strong> imbues an object with the Dark Side, creating a protective talisman.</p>
+        <p><strong>Defense Boost:</strong> +2 Force bonus to ${defenseText} against Light Side Force Powers</p>
+        <p><em>The talisman remains active until destroyed. If destroyed, you cannot create another one for 24 hours.</em></p>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: { actor: actor },
+      content: chatContent,
+      flavor: `${isGreater ? 'Greater ' : ''}Dark Side Talisman Created`
+    });
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} created a ${isGreater ? 'Greater ' : ''}Dark Side Talisman`);
+
+    return {
+      success: true,
+      isGreater: isGreater,
+      defense: defenseBonus,
+      actionTime: 'Full-Round Action'
+    };
+  }
+
+  static async destroyDarkSideTalisman(actor) {
+    const talisman = actor.getFlag('swse', 'activeDarkSideTalisman');
+    if (!talisman) {
+      return { success: false, message: 'Actor does not have an active Dark Side Talisman' };
+    }
+
+    await actor.unsetFlag('swse', 'activeDarkSideTalisman');
+
+    const cooldownUntil = new Date();
+    cooldownUntil.setHours(cooldownUntil.getHours() + 24);
+
+    await actor.setFlag('swse', 'darkSideTalismanCooldown', cooldownUntil.toISOString());
+
+    const chatContent = `
+      <div class="swse-dark-side-talisman-destroyed">
+        <h3><img src="icons/svg/amulet.svg" style="width: 20px; height: 20px;"> Talisman Destroyed</h3>
+        <p><strong>${actor.name}</strong>'s Dark Side Talisman has been destroyed!</p>
+        <p><em>Cannot create a new talisman for 24 hours.</em></p>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: { actor: actor },
+      content: chatContent,
+      flavor: 'Dark Side Talisman - Destroyed'
+    });
+
+    SWSELogger.log(`SWSE Talents | ${actor.name}'s Dark Side Talisman was destroyed`);
+
+    return { success: true, cooldownHours: 24 };
+  }
+
+  static canCreateNewTalisman(actor) {
+    const cooldown = actor.getFlag('swse', 'darkSideTalismanCooldown');
+    if (!cooldown) return true;
+
+    const cooldownTime = new Date(cooldown);
+    const now = new Date();
+
+    return now >= cooldownTime;
+  }
+
+  static getActiveTalisman(actor) {
+    return actor.getFlag('swse', 'activeDarkSideTalisman');
+  }
+}
+
+// ============================================================================
+// HOOKS - Auto-trigger mechanics
+// ============================================================================
+
+Hooks.on('combatRoundChange', async (combat) => {
+  for (const combatant of combat.combatants) {
+    const actor = combatant.actor;
+    const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
+
+    if (rageInfo && combat.round >= rageInfo.endRound) {
+      await DarkSidePowers.endChannelAnger(actor);
+    }
+  }
+});
+
+Hooks.on('preUpdateActor', async (actor, update, options, userId) => {
+  if (update.system?.hp?.value !== undefined) {
+    const crippledInfo = actor.getFlag('swse', 'isCrippled');
+    if (crippledInfo && update.system.hp.value >= crippledInfo.maxHpWhenCrippled) {
+      await DarkSidePowers.removeCripplingStrike(actor);
+    }
+  }
+});
+
+Hooks.on('combatTurnChange', async (combat, combatantData) => {
+  const token = canvas.tokens.get(combatantData.tokenId);
+  if (token) {
+    await DarkSidePowers.applyWrathDamageAtTurnStart(token);
+  }
+});
+
+Hooks.on('combatEnd', async (combat) => {
+  await DarkSidePowers.clearWrathFlagsOnCombatEnd();
+});
+
+Hooks.on('darkSideSavantTriggered', async (actor) => {
+  const result = await DarkSidePowers.triggerDarkSideSavant(actor);
+
+  if (!result.success) {
+    ui.notifications.warn(result.message);
+    return;
+  }
+
+  if (result.requiresSelection && result.powers.length > 1) {
+    const powerOptions = result.powers
+      .map(p => `<option value="${p.id}">${p.name}</option>`)
+      .join('');
+
+    const dialog = new Dialog({
+      title: 'Dark Side Savant - Select Power to Return',
+      content: `
+        <div class="form-group">
+          <label>Choose a Dark Side Force Power to return to your suite (no Force Point cost):</label>
+          <select id="power-select" style="width: 100%;">
+            ${powerOptions}
+          </select>
+        </div>
+      `,
+      buttons: {
+        select: {
+          label: 'Return to Suite',
+          callback: async (html) => {
+            const powerIdToReturn = html.find('#power-select').val();
+            await DarkSidePowers.completeDarkSideSavantSelection(
+              actor,
+              powerIdToReturn,
+              result.combatId,
+              result.savantUsageFlag
+            );
+          }
+        },
+        cancel: {
+          label: 'Cancel'
+        }
+      }
+    });
+
+    dialog.render(true);
+  }
+});
+
+export default DarkSidePowers;

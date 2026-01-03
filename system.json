@@ -31,9 +31,8 @@
     "scripts/progression/RuleEngine.js",
     "scripts/progression/talents/TalentTreeRegistry.js",
     "init-talents.js",
-    "scripts/talents/dark-side-talent-mechanics.js",
-    "scripts/talents/dark-side-talent-macros.js",
-    "scripts/talents/dark-side-init.js"
+    "scripts/talents/DarkSidePowers.js",
+    "scripts/talents/dark-side-powers-init.js"
   ],
 
   "styles": [
