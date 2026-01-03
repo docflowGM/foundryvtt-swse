@@ -31,6 +31,19 @@ import { ProgressionAdvisor } from './ProgressionAdvisor.js';
 import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
 import { PathPreview } from './PathPreview.js';
 
+// Phase 1B: Suggestion Engine Enhancement Classes
+import { SuggestionConfidence } from './SuggestionConfidence.js';
+import { PlayerHistoryTracker } from './PlayerHistoryTracker.js';
+import { BuildIdentityAnchor } from './BuildIdentityAnchor.js';
+import { PivotDetector } from './PivotDetector.js';
+import { SuggestionExplainer } from './SuggestionExplainer.js';
+import { MentorProfile } from './MentorProfile.js';
+import { SynergyEvaluator } from './SynergyEvaluator.js';
+import { BuildCoherenceAnalyzer } from './BuildCoherenceAnalyzer.js';
+import { OpportunityCostAnalyzer } from './OpportunityCostAnalyzer.js';
+import { SuggestionEngineHooks } from './SuggestionEngineHooks.js';
+import { getArchetypeConfig } from './ArchetypeDefinitions.js';
+
 export class SuggestionEngineCoordinator {
   /**
    * Initialize all suggestion engines
@@ -50,6 +63,11 @@ export class SuggestionEngineCoordinator {
       if (!BuildIntent) {
         throw new Error('BuildIntent not available');
       }
+
+      // Phase 1B: Initialize enhancement classes
+      SWSELogger.log('[Coordinator] Initializing Phase 1B suggestion engine classes');
+      // Note: These are stubs in Phase 1B. Phase 1C will implement actual logic.
+      // For now, they just validate imports and initialize storage structures.
 
       // Store reference in game.swse for global access
       game.swse = game.swse || {};
@@ -86,6 +104,10 @@ export class SuggestionEngineCoordinator {
         clearBuildIntentCache: (actorId) =>
           this.clearBuildIntentCache(actorId)
       };
+
+      // Phase 1B: Wire event hooks (callbacks implemented in Phase 1C)
+      SWSELogger.log('[Coordinator] Wiring suggestion engine event hooks');
+      SuggestionEngineHooks.initialize();
 
       SWSELogger.log('=== Suggestion Engine Coordinator initialized ===');
       Hooks.callAll('swse:suggestions:initialized');
