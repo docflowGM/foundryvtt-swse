@@ -181,6 +181,8 @@ import ScoundrelTalentMechanics from './scripts/talents/scoundrel-talent-mechani
 import { ScoundrelTalentMacros } from './scripts/talents/scoundrel-talent-macros.js';
 import SoldierTalentMechanics from './scripts/talents/soldier-talent-mechanics.js';
 import { SoldierTalentMacros } from './scripts/talents/soldier-talent-macros.js';
+import PrestigeTalentMechanics from './scripts/talents/prestige-talent-mechanics.js';
+import { PrestigeTalentMacros } from './scripts/talents/prestige-talent-macros.js';
 
 import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
 import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
@@ -358,7 +360,9 @@ Hooks.once("init", async function () {
         ScoundrelTalentMechanics,
         ScoundrelTalentMacros,
         SoldierTalentMechanics,
-        SoldierTalentMacros
+        SoldierTalentMacros,
+        PrestigeTalentMechanics,
+        PrestigeTalentMacros
     };
 });
 
