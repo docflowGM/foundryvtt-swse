@@ -665,6 +665,124 @@ Hooks.once('ready', () => {
     }
   };
 
+  // Sith Alchemy (create) - Unified macro for creating talismans or weapons
+  window.SWSE.macros.sithAlchemyCreate = async () => {
+    const actor = game.user.character;
+    if (!actor) {
+      ui.notifications.error('Please select a character');
+      return;
+    }
+
+    if (!DarkSidePowers.hasSithAlchemy(actor)) {
+      ui.notifications.error('You do not have Sith Alchemy talent');
+      return;
+    }
+
+    // Check if cooldown applies for talisman
+    const hasTalismanCooldown = !DarkSidePowers.canCreateNewSithTalisman(actor);
+    const hasActiveTalisman = DarkSidePowers.getActiveSithTalisman(actor);
+
+    // Check available melee weapons
+    const meleeWeapons = actor.items.filter(item =>
+      item.type === 'weapon' &&
+      (item.system?.weaponType === 'advanced-melee' || item.system?.weaponType === 'simple-melee')
+    );
+
+    const buttons = {};
+
+    // Add talisman option if available
+    if (!hasActiveTalisman && !hasTalismanCooldown) {
+      buttons.talisman = {
+        label: 'Create Sith Talisman (Full-Round Action, 1 FP)',
+        callback: async () => {
+          const result = await DarkSidePowers.createSithTalisman(actor);
+          if (!result.success) {
+            ui.notifications.warn(result.message);
+          }
+        }
+      };
+    }
+
+    // Add weapon option if weapons available
+    if (meleeWeapons.length > 0) {
+      buttons.weapon = {
+        label: 'Create Sith Alchemical Weapon (Full-Round Action)',
+        callback: async () => {
+          if (meleeWeapons.length === 1) {
+            // Only one weapon, enhance it directly
+            const result = await DarkSidePowers.createSithAlchemicalWeapon(actor, meleeWeapons[0]);
+            if (!result.success) {
+              ui.notifications.warn(result.message);
+            }
+          } else {
+            // Multiple weapons, show selection dialog
+            const weaponOptions = meleeWeapons
+              .map(w => `<option value="${w.id}">${w.name}</option>`)
+              .join('');
+
+            const weaponDialog = new Dialog({
+              title: 'Select Weapon to Enhance',
+              content: `
+                <div class="form-group">
+                  <label>Choose a melee weapon to enhance with Sith Alchemy:</label>
+                  <select id="weapon-select" style="width: 100%;">
+                    ${weaponOptions}
+                  </select>
+                </div>
+              `,
+              buttons: {
+                enhance: {
+                  label: 'Create Sith Alchemical Weapon',
+                  callback: async (html) => {
+                    const weaponId = html.find('#weapon-select').val();
+                    const weapon = actor.items.get(weaponId);
+                    const result = await DarkSidePowers.createSithAlchemicalWeapon(actor, weapon);
+                    if (!result.success) {
+                      ui.notifications.warn(result.message);
+                    }
+                  }
+                },
+                cancel: {
+                  label: 'Cancel'
+                }
+              }
+            });
+
+            weaponDialog.render(true);
+          }
+        }
+      };
+    }
+
+    buttons.cancel = {
+      label: 'Cancel'
+    };
+
+    // Build status message
+    let statusMessage = '<p>What would you like to create?</p>';
+    if (hasActiveTalisman) {
+      statusMessage += '<p class="warning-text"><strong>⚠ You already have an active Sith Talisman.</strong> You cannot create another until this one is destroyed.</p>';
+    }
+    if (hasTalismanCooldown) {
+      statusMessage += '<p class="warning-text"><strong>⚠ Sith Talisman on cooldown.</strong> You must wait 24 hours after destroying one to create another.</p>';
+    }
+    if (meleeWeapons.length === 0) {
+      statusMessage += '<p class="warning-text"><strong>⚠ No melee weapons available.</strong> Sith Alchemical Weapons require a melee weapon to enhance.</p>';
+    }
+
+    const dialog = new Dialog({
+      title: 'Sith Alchemy (create) - Choose Creation Type',
+      content: `
+        <div class="form-group">
+          ${statusMessage}
+        </div>
+      `,
+      buttons: buttons
+    });
+
+    dialog.render(true);
+  };
+
   SWSELogger.log('SWSE System | Dark Side Powers loaded successfully');
   console.log('Dark Side Powers available at: window.SWSE.talents.darkSidePowers');
   console.log('Available Macros:', {
@@ -689,7 +807,9 @@ Hooks.once('ready', () => {
     createSithTalisman: 'game.swse.macros.createSithTalisman()',
     destroySithTalisman: 'game.swse.macros.destroySithTalisman()',
     checkSithTalismanStatus: 'game.swse.macros.checkSithTalismanStatus()',
-    // Sith Alchemical Weapons
+    // Sith Alchemy (create) - Unified macro
+    sithAlchemyCreate: 'game.swse.macros.sithAlchemyCreate()',
+    // Sith Alchemical Weapons (individual macros for manual use)
     createSithAlchemicalWeapon: 'game.swse.macros.createSithAlchemicalWeapon()',
     activateSithAlchemicalBonus: 'game.swse.macros.activateSithAlchemicalBonus()'
   });
