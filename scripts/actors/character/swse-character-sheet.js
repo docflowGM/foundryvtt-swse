@@ -179,6 +179,7 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     const maxDS = Math.max(wis * mult, 1);
     const cur = system.darkSideScore || 0;
 
+    context.darkSideMax = maxDS;
     context.darkSideSegments = [];
     for (let i = 1; i <= maxDS; i++) {
       const t = (i - 1) / (maxDS - 1 || 1);
@@ -187,7 +188,8 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       context.darkSideSegments.push({
         index: i,
         color: `rgb(${r}, 0, ${b})`,
-        active: i <= cur
+        active: i <= cur,
+        isCurrent: i === cur
       });
     }
 
