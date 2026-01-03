@@ -11,6 +11,7 @@
  * - Sprint: Run up to five times your speed
  * - Surefooted: Speed not reduced by difficult terrain
  * - Shadow Striker: Grants 3 encounter abilities (Blinding Strike, Confusing Strike, Unexpected Attack)
+ * - Swift Strider: Grants 3 encounter abilities (Blurring Burst, Sudden Assault, Weaving Stride)
  * - Close-Combat Assault: Followers gain Point Blank Shot
  * - Get Into Position: One follower gains +2 speed
  * - Reconnaissance Actions: Grant follower bonuses
@@ -108,6 +109,15 @@ export class ScoutTalentMechanics {
   static hasShadowStriker(actor) {
     return actor?.items?.some(item =>
       item.type === 'talent' && item.name === 'Shadow Striker'
+    );
+  }
+
+  /**
+   * Check if actor has Swift Strider talent
+   */
+  static hasSwiftStrider(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Swift Strider'
     );
   }
 
@@ -432,6 +442,235 @@ export class ScoutTalentMechanics {
     ui.notifications.info(`${actor.name} makes an Unexpected Attack with ${bonusText} bonus!`);
 
     return { success: true, bonus: attackBonus };
+  }
+
+  // ============================================================================
+  // SWIFT STRIDER TALENTS (grants 3 encounter abilities)
+  // ============================================================================
+
+  /**
+   * BLURRING BURST - Move action, gain +2 Reflex Defense until end of encounter
+   * Move action, once per encounter
+   */
+  static async triggerBlurringBurst(actor) {
+    if (!this.hasSwiftStrider(actor)) {
+      return { success: false, message: 'Actor does not have Swift Strider talent' };
+    }
+
+    // Check encounter status
+    const combatEncounterActive = game.combats?.active;
+    if (!combatEncounterActive) {
+      return {
+        success: false,
+        message: 'Blurring Burst can only be used during an encounter'
+      };
+    }
+
+    // Check if already used this encounter
+    const combatId = combatEncounterActive.id;
+    const usageFlag = `blurringBurst_${combatId}`;
+    const alreadyUsed = actor.getFlag('swse', usageFlag);
+
+    if (alreadyUsed) {
+      return {
+        success: false,
+        message: 'Blurring Burst has already been used this encounter.'
+      };
+    }
+
+    const movementSpeed = actor.system.movement?.groundSpeed || 30;
+
+    return {
+      success: true,
+      movementSpeed: movementSpeed,
+      combatId: combatId,
+      usageFlag: usageFlag
+    };
+  }
+
+  /**
+   * Complete Blurring Burst - Apply Reflex Defense bonus
+   */
+  static async completeBlurringBurst(actor, combatId, usageFlag) {
+    await actor.setFlag('swse', usageFlag, true);
+
+    const movementSpeed = actor.system.movement?.groundSpeed || 30;
+
+    // Apply +2 Reflex Defense bonus until end of encounter
+    await actor.createEmbeddedDocuments('ActiveEffect', [{
+      name: 'Blurring Burst - Reflex Bonus',
+      icon: 'icons/svg/aura.svg',
+      changes: [{
+        key: 'system.defenses.reflex.bonus',
+        mode: 2, // ADD
+        value: 2,
+        priority: 20
+      }],
+      duration: {
+        combat: combatId
+      },
+      flags: {
+        swse: {
+          source: 'talent',
+          sourceId: 'blurring-burst',
+          sourceActorId: actor.id
+        }
+      }
+    }]);
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} used Blurring Burst, moved ${movementSpeed} feet and gained +2 Reflex Defense`);
+    ui.notifications.info(`${actor.name} blurs into action! Move ${movementSpeed} feet and gain +2 to Reflex Defense until the end of the encounter!`);
+
+    return { success: true, movementSpeed: movementSpeed };
+  }
+
+  /**
+   * SUDDEN ASSAULT - Make a charge attack without Reflex Defense penalty
+   * Standard action, once per encounter
+   */
+  static async triggerSuddenAssault(actor, targetToken) {
+    if (!this.hasSwiftStrider(actor)) {
+      return { success: false, message: 'Actor does not have Swift Strider talent' };
+    }
+
+    // Check encounter status
+    const combatEncounterActive = game.combats?.active;
+    if (!combatEncounterActive) {
+      return {
+        success: false,
+        message: 'Sudden Assault can only be used during an encounter'
+      };
+    }
+
+    // Check if already used this encounter
+    const combatId = combatEncounterActive.id;
+    const usageFlag = `suddenAssault_${combatId}`;
+    const alreadyUsed = actor.getFlag('swse', usageFlag);
+
+    if (alreadyUsed) {
+      return {
+        success: false,
+        message: 'Sudden Assault has already been used this encounter.'
+      };
+    }
+
+    if (!targetToken) {
+      return {
+        success: false,
+        message: 'Please select a target for Sudden Assault'
+      };
+    }
+
+    const targetActor = targetToken.actor;
+    if (!targetActor) {
+      return { success: false, message: 'Target is not valid' };
+    }
+
+    return {
+      success: true,
+      requiresRoll: true,
+      targetToken: targetToken,
+      targetActor: targetActor,
+      combatId: combatId,
+      usageFlag: usageFlag
+    };
+  }
+
+  /**
+   * Complete Sudden Assault - Mark as used
+   */
+  static async completeSuddenAssault(actor, targetActor, combatId, usageFlag) {
+    await actor.setFlag('swse', usageFlag, true);
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} used Sudden Assault on ${targetActor.name}`);
+    ui.notifications.info(`${actor.name} makes a Sudden Assault against ${targetActor.name} with no Reflex Defense penalty!`);
+
+    return { success: true };
+  }
+
+  /**
+   * WEAVING STRIDE - Move action, gain cumulative +2 dodge bonus for each AoO made against you
+   * Move action, once per encounter
+   */
+  static async triggerWeavingStride(actor) {
+    if (!this.hasSwiftStrider(actor)) {
+      return { success: false, message: 'Actor does not have Swift Strider talent' };
+    }
+
+    // Check encounter status
+    const combatEncounterActive = game.combats?.active;
+    if (!combatEncounterActive) {
+      return {
+        success: false,
+        message: 'Weaving Stride can only be used during an encounter'
+      };
+    }
+
+    // Check if already used this encounter
+    const combatId = combatEncounterActive.id;
+    const usageFlag = `weavingStride_${combatId}`;
+    const alreadyUsed = actor.getFlag('swse', usageFlag);
+
+    if (alreadyUsed) {
+      return {
+        success: false,
+        message: 'Weaving Stride has already been used this encounter.'
+      };
+    }
+
+    const movementSpeed = actor.system.movement?.groundSpeed || 30;
+
+    return {
+      success: true,
+      movementSpeed: movementSpeed,
+      combatId: combatId,
+      usageFlag: usageFlag
+    };
+  }
+
+  /**
+   * Complete Weaving Stride activation
+   */
+  static async completeWeavingStride(actor, aooCount, combatId, usageFlag) {
+    await actor.setFlag('swse', usageFlag, true);
+
+    const movementSpeed = actor.system.movement?.groundSpeed || 30;
+    const dodgeBonus = aooCount * 2;
+
+    // If there were any AoOs made, apply bonus
+    if (aooCount > 0) {
+      await actor.createEmbeddedDocuments('ActiveEffect', [{
+        name: `Weaving Stride - Dodge Bonus (${dodgeBonus})`,
+        icon: 'icons/svg/daze.svg',
+        changes: [{
+          key: 'system.defenses.reflex.bonus',
+          mode: 2, // ADD
+          value: dodgeBonus,
+          priority: 20
+        }],
+        duration: {
+          rounds: 1,
+          startRound: game.combat?.round,
+          startTurn: game.combat?.turn
+        },
+        flags: {
+          swse: {
+            source: 'talent',
+            sourceId: 'weaving-stride',
+            sourceActorId: actor.id,
+            aooCount: aooCount
+          }
+        }
+      }]);
+
+      SWSELogger.log(`SWSE Talents | ${actor.name} used Weaving Stride, moved ${movementSpeed} feet and gained +${dodgeBonus} dodge bonus from ${aooCount} AoO(s)`);
+      ui.notifications.info(`${actor.name} weaves through combat! Move ${movementSpeed} feet and gain +${dodgeBonus} dodge bonus to Reflex Defense from ${aooCount} Attack(s) of Opportunity!`);
+    } else {
+      SWSELogger.log(`SWSE Talents | ${actor.name} used Weaving Stride, moved ${movementSpeed} feet (no AoOs)`);
+      ui.notifications.info(`${actor.name} weaves through combat! Move ${movementSpeed} feet. No AoOs triggered, so no dodge bonus.`);
+    }
+
+    return { success: true, movementSpeed: movementSpeed, dodgeBonus: dodgeBonus };
   }
 
   // ============================================================================
@@ -1110,10 +1349,24 @@ Hooks.on('getIntoPosTriggered', async (actor) => {
 });
 
 /**
- * Hook: When user initiates Blinding Strike
+ * Hook: When user initiates Blurring Burst
  */
-Hooks.on('blindingStrikeTriggered', async (actor, targetToken) => {
-  const result = await ScoutTalentMechanics.triggerBlindingStrike(actor, targetToken);
+Hooks.on('blurringBurstTriggered', async (actor) => {
+  const result = await ScoutTalentMechanics.triggerBlurringBurst(actor);
+
+  if (!result.success) {
+    ui.notifications.warn(result.message);
+    return;
+  }
+
+  await ScoutTalentMechanics.completeBlurringBurst(actor, result.combatId, result.usageFlag);
+});
+
+/**
+ * Hook: When user initiates Sudden Assault
+ */
+Hooks.on('suddenAssaultTriggered', async (actor, targetToken) => {
+  const result = await ScoutTalentMechanics.triggerSuddenAssault(actor, targetToken);
 
   if (!result.success) {
     ui.notifications.warn(result.message);
@@ -1122,11 +1375,11 @@ Hooks.on('blindingStrikeTriggered', async (actor, targetToken) => {
 
   if (result.requiresRoll) {
     const dialog = new Dialog({
-      title: 'Blinding Strike - Attack Roll',
+      title: 'Sudden Assault - Charge Attack',
       content: `
         <div class="form-group">
-          <p>Make a melee or ranged attack against <strong>${result.targetActor.name}</strong>.</p>
-          <p>If you hit, you gain Total Concealment against this target until the start of your next turn.</p>
+          <p>Make a Charge attack against <strong>${result.targetActor.name}</strong>.</p>
+          <p>You take no penalty to your Reflex Defense for this attack.</p>
           <label>Did your attack hit?</label>
           <select id="hit-select" style="width: 100%;">
             <option value="true">Yes, I hit!</option>
@@ -1139,10 +1392,9 @@ Hooks.on('blindingStrikeTriggered', async (actor, targetToken) => {
           label: 'Confirm',
           callback: async (html) => {
             const hitValue = html.find('#hit-select').val() === 'true';
-            await ScoutTalentMechanics.completeBlindingStrike(
+            await ScoutTalentMechanics.completeSuddenAssault(
               actor,
               result.targetActor,
-              hitValue,
               result.combatId,
               result.usageFlag
             );
@@ -1159,102 +1411,46 @@ Hooks.on('blindingStrikeTriggered', async (actor, targetToken) => {
 });
 
 /**
- * Hook: When user initiates Confusing Strike
+ * Hook: When user initiates Weaving Stride
  */
-Hooks.on('confusingStrikeTriggered', async (actor, targetToken) => {
-  const result = await ScoutTalentMechanics.triggerConfusingStrike(actor, targetToken);
+Hooks.on('weavingStrideTriggered', async (actor) => {
+  const result = await ScoutTalentMechanics.triggerWeavingStride(actor);
 
   if (!result.success) {
     ui.notifications.warn(result.message);
     return;
   }
 
-  if (result.requiresRoll) {
-    const dialog = new Dialog({
-      title: 'Confusing Strike - Attack Roll',
-      content: `
-        <div class="form-group">
-          <p>Make a melee or ranged attack against <strong>${result.targetActor.name}</strong>.</p>
-          <p>If you hit, <strong>${result.targetActor.name}</strong> can only take a Swift Action on their next turn.</p>
-          <label>Did your attack hit?</label>
-          <select id="hit-select" style="width: 100%;">
-            <option value="true">Yes, I hit!</option>
-            <option value="false">No, I missed.</option>
-          </select>
-        </div>
-      `,
-      buttons: {
-        confirm: {
-          label: 'Confirm',
-          callback: async (html) => {
-            const hitValue = html.find('#hit-select').val() === 'true';
-            await ScoutTalentMechanics.completeConfusingStrike(
-              actor,
-              result.targetActor,
-              hitValue,
-              result.combatId,
-              result.usageFlag
-            );
-          }
-        },
-        cancel: {
-          label: 'Cancel'
+  const dialog = new Dialog({
+    title: 'Weaving Stride - Movement',
+    content: `
+      <div class="form-group">
+        <p>Move up to <strong>${result.movementSpeed} feet</strong> as a Move Action.</p>
+        <p>You gain a cumulative +2 dodge bonus to your Reflex Defense for each Attack of Opportunity made against you during this movement.</p>
+        <label>How many Attacks of Opportunity were made against you?</label>
+        <input type="number" id="aoo-count" min="0" max="10" value="0" style="width: 100%;">
+      </div>
+    `,
+    buttons: {
+      confirm: {
+        label: 'Confirm',
+        callback: async (html) => {
+          const aooCount = parseInt(html.find('#aoo-count').val()) || 0;
+          await ScoutTalentMechanics.completeWeavingStride(
+            actor,
+            aooCount,
+            result.combatId,
+            result.usageFlag
+          );
         }
+      },
+      cancel: {
+        label: 'Cancel'
       }
-    });
+    }
+  });
 
-    dialog.render(true);
-  }
-});
-
-/**
- * Hook: When user initiates Unexpected Attack
- */
-Hooks.on('unexpectedAttackTriggered', async (actor, targetToken) => {
-  const result = await ScoutTalentMechanics.triggerUnexpectedAttack(actor, targetToken);
-
-  if (!result.success) {
-    ui.notifications.warn(result.message);
-    return;
-  }
-
-  if (result.requiresRoll) {
-    const bonusText = result.hasTotal ? '+5 bonus (Total Concealment)' : '+2 bonus (Concealment)';
-    const dialog = new Dialog({
-      title: 'Unexpected Attack - Attack Roll',
-      content: `
-        <div class="form-group">
-          <p>Make a melee or ranged attack against <strong>${result.targetActor.name}</strong>.</p>
-          <p>You gain a <strong>${bonusText}</strong> on this attack roll.</p>
-          <label>Did your attack hit?</label>
-          <select id="hit-select" style="width: 100%;">
-            <option value="true">Yes, I hit!</option>
-            <option value="false">No, I missed.</option>
-          </select>
-        </div>
-      `,
-      buttons: {
-        confirm: {
-          label: 'Confirm',
-          callback: async (html) => {
-            const hitValue = html.find('#hit-select').val() === 'true';
-            await ScoutTalentMechanics.completeUnexpectedAttack(
-              actor,
-              result.targetActor,
-              result.bonus,
-              result.combatId,
-              result.usageFlag
-            );
-          }
-        },
-        cancel: {
-          label: 'Cancel'
-        }
-      }
-    });
-
-    dialog.render(true);
-  }
+  dialog.render(true);
 });
 
 /**
@@ -1273,6 +1469,9 @@ Hooks.on('deleteCombat', async (combat) => {
     await actor.unsetFlag('swse', `blindingStrike_${combatId}`);
     await actor.unsetFlag('swse', `confusingStrike_${combatId}`);
     await actor.unsetFlag('swse', `unexpectedAttack_${combatId}`);
+    await actor.unsetFlag('swse', `blurringBurst_${combatId}`);
+    await actor.unsetFlag('swse', `suddenAssault_${combatId}`);
+    await actor.unsetFlag('swse', `weavingStride_${combatId}`);
   }
 });
 

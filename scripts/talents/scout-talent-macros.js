@@ -368,6 +368,106 @@ export class ScoutTalentMacros {
 
     ui.notifications.info(message);
   }
+
+  // ============================================================================
+  // SWIFT STRIDER ABILITY MACROS
+  // ============================================================================
+
+  /**
+   * Macro: Trigger Blurring Burst ability
+   * Usage: game.swse.macros.triggerBlurringBurstMacro(actor)
+   */
+  static async triggerBlurringBurstMacro(actor = null) {
+    const selectedActor = actor || game.user.character;
+
+    if (!selectedActor) {
+      ui.notifications.error('Please select a character to use Blurring Burst');
+      return;
+    }
+
+    if (!ScoutTalentMechanics.hasSwiftStrider(selectedActor)) {
+      ui.notifications.warn(`${selectedActor.name} does not have the Swift Strider talent`);
+      return;
+    }
+
+    Hooks.callAll('blurringBurstTriggered', selectedActor);
+  }
+
+  /**
+   * Macro: Trigger Sudden Assault ability
+   * Usage: game.swse.macros.triggerSuddenAssaultMacro(actor, targetToken)
+   */
+  static async triggerSuddenAssaultMacro(actor = null, targetToken = null) {
+    const selectedActor = actor || game.user.character;
+
+    if (!selectedActor) {
+      ui.notifications.error('Please select a character to use Sudden Assault');
+      return;
+    }
+
+    if (!ScoutTalentMechanics.hasSwiftStrider(selectedActor)) {
+      ui.notifications.warn(`${selectedActor.name} does not have the Swift Strider talent`);
+      return;
+    }
+
+    // If no target provided, use currently targeted token
+    const target = targetToken || game.user.targets.values().next().value;
+
+    Hooks.callAll('suddenAssaultTriggered', selectedActor, target);
+  }
+
+  /**
+   * Macro: Trigger Weaving Stride ability
+   * Usage: game.swse.macros.triggerWeavingStrideMacro(actor)
+   */
+  static async triggerWeavingStrideMacro(actor = null) {
+    const selectedActor = actor || game.user.character;
+
+    if (!selectedActor) {
+      ui.notifications.error('Please select a character to use Weaving Stride');
+      return;
+    }
+
+    if (!ScoutTalentMechanics.hasSwiftStrider(selectedActor)) {
+      ui.notifications.warn(`${selectedActor.name} does not have the Swift Strider talent`);
+      return;
+    }
+
+    Hooks.callAll('weavingStrideTriggered', selectedActor);
+  }
+
+  /**
+   * Macro: Check Swift Strider abilities
+   * Usage: game.swse.macros.checkSwiftStriderMacro(actor)
+   */
+  static async checkSwiftStriderMacro(actor = null) {
+    const selectedActor = actor || game.user.character;
+
+    if (!selectedActor) {
+      ui.notifications.error('Please select a character');
+      return;
+    }
+
+    if (!ScoutTalentMechanics.hasSwiftStrider(selectedActor)) {
+      ui.notifications.warn(`${selectedActor.name} does not have the Swift Strider talent`);
+      return;
+    }
+
+    const message = `
+      <strong>${selectedActor.name} - Swift Strider Abilities:</strong>
+      <br><br>
+      <strong>Blurring Burst:</strong> Move action, once per encounter
+      Move up to your speed and gain +2 to Reflex Defense until the end of the encounter.
+      <br><br>
+      <strong>Sudden Assault:</strong> Standard action, once per encounter
+      Make a Charge attack against an enemy within range. You take no penalty to your Reflex Defense for this attack.
+      <br><br>
+      <strong>Weaving Stride:</strong> Move action, once per encounter
+      Move up to your speed. You gain a cumulative +2 dodge bonus to Reflex Defense for each Attack of Opportunity made against you during this movement (lasts until start of next turn).
+    `;
+
+    ui.notifications.info(message);
+  }
 }
 
 export default ScoutTalentMacros;
