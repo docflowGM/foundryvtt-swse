@@ -337,6 +337,26 @@ Hooks.once('ready', () => {
     }
   };
 
+  window.SWSE.macros.darkHealingField = async () => {
+    const actor = game.user.character;
+    const targetTokens = canvas.tokens.controlled;
+
+    if (!actor) {
+      ui.notifications.error('Please select a character');
+      return;
+    }
+
+    if (targetTokens.length === 0) {
+      ui.notifications.error('Please select up to 3 target tokens');
+      return;
+    }
+
+    const result = await DarkSidePowers.triggerDarkHealingField(actor, targetTokens);
+    if (!result.success) {
+      ui.notifications.warn(result.message);
+    }
+  };
+
   window.SWSE.macros.wickedStrike = async () => {
     const actor = game.user.character;
     const targetToken = canvas.tokens.controlled[0];
@@ -479,6 +499,7 @@ Hooks.once('ready', () => {
     // Sith Talents
     darkHealing: 'game.swse.macros.darkHealing()',
     improvedDarkHealing: 'game.swse.macros.improvedDarkHealing()',
+    darkHealingField: 'game.swse.macros.darkHealingField()',
     wickedStrike: 'game.swse.macros.wickedStrike()',
     drainForce: 'game.swse.macros.drainForce()',
     createSithTalisman: 'game.swse.macros.createSithTalisman()',

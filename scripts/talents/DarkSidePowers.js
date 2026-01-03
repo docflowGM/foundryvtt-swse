@@ -923,6 +923,153 @@ export class DarkSidePowers {
   }
 
   /**
+   * DARK HEALING FIELD - Multi-target life-force draining
+   * Prerequisite: Dark Healing, Improved Dark Healing
+   * Range 12, Standard Action, costs 1 FP
+   * Targets up to 3 creatures, each makes Use the Force check vs Fortitude
+   * Damage: 1d6 per Sith class level per target (Sith Apprentice + Sith Lord)
+   * Healing: Half the total damage dealt from all targets (cumulative)
+   * On miss: Target takes half damage, you heal that amount
+   */
+  static hasDarkHealingField(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Dark Healing Field'
+    );
+  }
+
+  static async triggerDarkHealingField(actor, targetTokens, spendFP = true) {
+    // Validate actor has the talent
+    if (!this.hasDarkHealingField(actor)) {
+      return { success: false, message: 'Actor does not have Dark Healing Field' };
+    }
+
+    // Validate prerequisites
+    if (!this.hasDarkHealing(actor) || !this.hasImprovedDarkHealing(actor)) {
+      return {
+        success: false,
+        message: 'Dark Healing Field requires Dark Healing and Improved Dark Healing'
+      };
+    }
+
+    // Validate Force Points
+    if (spendFP) {
+      const currentFP = actor.system.forcePoints?.value || 0;
+      if (currentFP < 1) {
+        return {
+          success: false,
+          message: 'Not enough Force Points. Dark Healing Field requires 1 Force Point.'
+        };
+      }
+
+      await actor.update({
+        'system.forcePoints.value': currentFP - 1
+      });
+    }
+
+    // Validate targets (up to 3)
+    if (!targetTokens || targetTokens.length === 0) {
+      return { success: false, message: 'Please select up to 3 target tokens' };
+    }
+
+    if (targetTokens.length > 3) {
+      return {
+        success: false,
+        message: 'Dark Healing Field can only target up to 3 creatures'
+      };
+    }
+
+    // Get Sith class level
+    const sithLevel = this.getSithClassLevel(actor);
+
+    // Process each target
+    let totalDamageDealt = 0;
+    const targetResults = [];
+
+    for (const targetToken of targetTokens) {
+      const targetActor = targetToken.actor;
+
+      // Roll Use the Force check vs target's Fortitude Defense
+      const useForceRoll = new Roll('1d20');
+      await useForceRoll.evaluate({ async: true });
+      const useForceTotal = useForceRoll.total + (actor.system.skills?.useTheForce?.mod || 0);
+      const targetFortitude = targetActor.system.defenses?.fortitude?.value || 10;
+
+      // Roll damage for this target
+      const damageRoll = new Roll(`${sithLevel}d6`);
+      await damageRoll.evaluate({ async: true });
+      const fullDamage = damageRoll.total;
+
+      let damageDealt = fullDamage;
+
+      if (useForceTotal < targetFortitude) {
+        // On miss: half damage
+        damageDealt = Math.floor(fullDamage / 2);
+      }
+
+      // Apply damage to target
+      const newTargetHp = Math.max(0, targetActor.system.hp.value - damageDealt);
+      await targetActor.update({ 'system.hp.value': newTargetHp });
+
+      totalDamageDealt += damageDealt;
+
+      targetResults.push({
+        targetName: targetActor.name,
+        check: useForceTotal,
+        defense: targetFortitude,
+        success: useForceTotal >= targetFortitude,
+        damageDealt: damageDealt,
+        roll: useForceRoll,
+        damageRoll: damageRoll
+      });
+    }
+
+    // Calculate healing as half the total damage from all targets
+    const healAmount = Math.floor(totalDamageDealt / 2);
+    const newActorHp = Math.min(actor.system.hp.max, actor.system.hp.value + healAmount);
+    await actor.update({ 'system.hp.value': newActorHp });
+
+    // Create chat message
+    const targetSummary = targetResults
+      .map(
+        t =>
+          `<li><strong>${t.targetName}</strong>: Check ${t.check} vs Fortitude ${t.defense} - ${t.success ? '<strong>HIT</strong>' : '<strong>MISS (half damage)</strong>'} - ${t.damageDealt} damage</li>`
+      )
+      .join('');
+
+    const chatContent = `
+      <div class="swse-dark-healing-field">
+        <h3><img src="icons/svg/skull.svg" style="width: 20px; height: 20px;"> Dark Healing Field</h3>
+        <p><strong>${actor.name}</strong> drains life energy from multiple targets!</p>
+        <ul>
+          ${targetSummary}
+        </ul>
+        <p><strong>Total Damage Dealt:</strong> ${totalDamageDealt}</p>
+        <p><strong>HP Healed (50% of total):</strong> ${healAmount}</p>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: { actor: actor },
+      content: chatContent,
+      flavor: 'Dark Healing Field - Mass Life Drain',
+      rolls: targetResults.map(t => t.roll).concat(targetResults.map(t => t.damageRoll)),
+      flags: { swse: { darkHealingField: true } }
+    });
+
+    SWSELogger.log(
+      `SWSE Talents | ${actor.name} used Dark Healing Field on ${targetTokens.length} targets for ${totalDamageDealt} total damage, healed ${healAmount}`
+    );
+
+    return {
+      success: true,
+      totalDamageDealt: totalDamageDealt,
+      healAmount: healAmount,
+      targetResults: targetResults,
+      targetsAffected: targetTokens.length
+    };
+  }
+
+  /**
    * WICKED STRIKE - Move enemy -2 on Condition Track on critical hit
    * Prerequisite: Weapon Focus (Lightsabers), Weapon Specialization (Lightsabers)
    */
