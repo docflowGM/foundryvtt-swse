@@ -6,17 +6,149 @@ This comprehensive guide lists every feature in the SWSE system with description
 
 ## Table of Contents
 
-1. [Character Creation & Generation](#character-creation--generation)
-2. [Character Sheet Systems](#character-sheet-systems)
-3. [Progression & Leveling](#progression--leveling)
-4. [Combat Systems](#combat-systems)
-5. [Force Powers & Abilities](#force-powers--abilities)
-6. [Equipment & Inventory](#equipment--inventory)
-7. [Vehicles & Starships](#vehicles--starships)
-8. [Droids](#droids)
-9. [NPCs & Followers](#npcs--followers)
-10. [Customization & Houserules](#customization--houserules)
-11. [Game Management Tools](#game-management-tools)
+1. [Core Systems Overview](#core-systems-overview)
+2. [Character Creation & Generation](#character-creation--generation)
+3. [Character Sheet Systems](#character-sheet-systems)
+4. [Progression & Leveling](#progression--leveling)
+5. [Combat Systems](#combat-systems)
+6. [Force Powers & Abilities](#force-powers--abilities)
+7. [Equipment & Inventory](#equipment--inventory)
+8. [Vehicles & Starships](#vehicles--starships)
+9. [Droids](#droids)
+10. [NPCs & Followers](#npcs--followers)
+11. [Customization & Houserules](#customization--houserules)
+12. [Game Management Tools](#game-management-tools)
+
+---
+
+## Core Systems Overview
+
+### What is the Progression Engine?
+
+The **Progression Engine** is the core system that drives all character advancement and feature management in the SWSE system. It is a sophisticated, multi-layered system located in `/scripts/progression/` that handles:
+
+**Character Generation (Chargen)**
+- Guided 7-8 step wizard for creating level 1 characters
+- Species selection with automatic ability modifiers
+- Background selection with skill bonuses
+- Ability score generation (6 different methods available)
+- Class selection from 50+ base and prestige classes
+- Skill allocation based on class and INT modifier
+- Feat selection with prerequisite validation
+- Talent selection from class-specific talent trees
+- Starting equipment configuration
+
+**Character Leveling & Advancement**
+- Multi-class support (add additional classes at each level)
+- Hit point calculation per level
+- Ability score increases every 4 levels
+- Class feature granting at appropriate levels
+- Feat selection at bonus feat levels
+- Talent selection from updated talent trees
+- Force power progression (for Force-sensitive characters)
+- Skill point allocation
+
+**Feature Management**
+- Automatic normalization of class features
+- Talent tree validation and enforcement
+- Feat prerequisite checking and conflict detection
+- Force power level-gating
+- Derived stat calculation (defenses, BAB, damage thresholds)
+- Equipment granting based on background/class
+- Language bonus application
+
+**System Architecture**
+The Progression Engine consists of multiple specialized components:
+- **Feature Dispatcher** - Routes feature application to appropriate handlers
+- **Attribute Increase Handler** - Manages ability score increases at levels 4, 8, 12, 16, 20
+- **Derived Calculator** - Automatically calculates defenses, initiative, and other derived stats
+- **Force Power Engine** - Manages Force power availability and progression
+- **Language Engine** - Handles language bonuses from species/backgrounds
+- **Equipment Engine** - Applies starting equipment and background grants
+- **Validators** - Prevent feat duplication and check prerequisites
+
+**Key Capability**: The engine intelligently tracks player choices and automatically applies all mechanical changes without manual intervention, keeping characters' sheets always up-to-date.
+
+---
+
+### What is the Mentor System?
+
+The **Mentor System** is an interactive guidance and suggestion engine that enhances the character creation experience by providing contextual advice and recommendations from in-universe mentor characters. It's located in `/scripts/apps/` and consists of several integrated components:
+
+**Five Mentor Personalities**
+
+1. **Miraj** (Jedi Mentor)
+   - Philosophical and Force-centric guidance
+   - Focuses on balance, wisdom, and the Force
+   - Recommends Force powers, defensive feats, and contemplative talents
+   - Ideal for players wanting Jedi-style characters
+
+2. **Lead** (Scout Mentor)
+   - Tactical and field-experienced advice
+   - Focuses on practical survival and mobility
+   - Recommends ranger-style talents, movement bonuses, and scout abilities
+   - Ideal for adventurous, exploration-focused characters
+
+3. **Breach** (Mandalorian Mentor)
+   - Direct, discipline-oriented guidance
+   - Focuses on combat readiness and profession
+   - Recommends soldier talents, combat feats, and weapon specialization
+   - Ideal for tough, no-nonsense combatants
+
+4. **Ol' Salty** (Pirate Mentor)
+   - Colorful, irreverent advice
+   - Focuses on cunning, charm, and adventure
+   - Recommends scoundrel talents, deception, and charisma-based abilities
+   - Ideal for roguish, charismatic characters
+
+5. **J0-N1** (Protocol Droid Mentor)
+   - Formal, efficient, protocol-minded guidance
+   - Focuses on rules, optimization, and technical details
+   - Recommends optimal feat combinations and mechanical efficiency
+   - Ideal for players wanting to optimize character builds
+
+**Mentor System Features**
+
+**Contextual Guidance Popups**
+- Displayed at each character creation step with typing animation
+- Mentor-specific guidance text varies by personality
+- Encourages immersive roleplaying during character creation
+- Can be disabled in settings for streamlined creation
+
+**Suggestion Engine Integration**
+- Generates mentor-voiced feat suggestions during feat selection
+- Provides class recommendations with personality flavoring
+- Suggests talents matching mentor's expertise
+- Offers ability score allocation advice
+- Creates BuildIntent biases to influence future recommendations
+
+**Post-Class Survey**
+- Presented after class selection to understand player intent
+- Asks questions like: "Are you optimizing for combat?" or "Do you prefer support roles?"
+- Results inform subsequent mentor suggestions and recommendations
+- Helps mentors tailor advice to player preferences
+
+**Personality-Driven Text Variation**
+- Same mechanical recommendation presented differently by each mentor
+- Miraj: Philosophical framing of feat benefits
+- Lead: Practical tactical applications
+- Breach: Combat discipline and readiness implications
+- Ol' Salty: Swashbuckling and adventurous angles
+- J0-N1: Optimization metrics and mechanical details
+
+**Immersive Features**
+- Mentor dialogue displayed with character-by-character typing animation
+- Visual UI styled to match chosen mentor's personality
+- Mentor portrait displayed during guidance
+- Chat integration for fallback when popups disabled
+- Seamless integration with character creation flow
+
+**System Integration Points**
+- Hooks into chargen step completion
+- Connected to feat/talent/class selection UI
+- Influences automatic suggestion system
+- Tracks player choices to refine recommendations
+- Coordinates with template builder for archetype suggestions
 
 ---
 

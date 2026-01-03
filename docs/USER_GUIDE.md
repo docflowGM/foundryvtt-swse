@@ -3,6 +3,7 @@
 Comprehensive how-to guide for all features in Star Wars Saga Edition for Foundry VTT.
 
 **Table of Contents**
+- [Core Systems Overview](#core-systems-overview)
 - [Character Creation](#character-creation)
 - [Character Sheet Navigation](#character-sheet-navigation)
 - [Skills & Ability Checks](#skills--ability-checks)
@@ -13,6 +14,99 @@ Comprehensive how-to guide for all features in Star Wars Saga Edition for Foundr
 - [Leveling & Advancement](#leveling--advancement)
 - [Game Master Tools](#game-master-tools)
 - [Advanced Features](#advanced-features)
+
+---
+
+## Core Systems Overview
+
+### Understanding the Progression Engine
+
+The **Progression Engine** is the backbone of character management in this SWSE system. It automatically handles all the complex logic of building and advancing your character so you don't have to manually calculate or track changes.
+
+**What it does:**
+- **During Character Creation:** Walks you through a guided 7-8 step process (species → background → abilities → class → skills → feats → talents → finalize)
+- **At Each Level:** Automatically determines what new features you unlock, handles ability score increases, calculates new HP, and grants new talents
+- **All the Time:** Recalculates defenses, maintains talent tree prerequisites, enforces feat requirements, and applies all bonuses automatically
+
+**Why it matters:**
+Instead of manually tracking "what feats can I take" or "what are my new defenses," the engine does this automatically. You make choices, and the system handles the rest.
+
+**Key Features:**
+- **Automatic Calculations** - Defenses, initiative, BAB, damage thresholds all update instantly
+- **Prerequisite Validation** - Can't select incompatible feats/talents; the UI shows what's available
+- **Multi-Class Support** - Add classes at any level; features from all classes stack correctly
+- **Force Power Progression** - Force-sensitive characters automatically unlock new powers at each level
+- **No Manual Recalculation** - Everything updates automatically when you level or change equipment
+
+---
+
+### Understanding the Mentor System
+
+The **Mentor System** is an optional guidance feature that makes character creation more immersive and helpful by providing in-character advice from mentor characters.
+
+**Five Mentor Personalities**
+
+When you start character creation, you'll optionally be guided by one of five mentors, each with a distinct personality and teaching style:
+
+1. **Miraj** (Jedi Mentor)
+   - Speaks philosophically about the Force and balance
+   - Recommends Force powers, defensive abilities, and wisdom-based choices
+   - Best for: Players interested in Jedi characters and Force sensitivity
+
+2. **Lead** (Scout Mentor)
+   - Offers tactical, field-proven advice
+   - Recommends mobility talents, practical abilities, and ranger-style skills
+   - Best for: Adventurers, scouts, and explorers
+
+3. **Breach** (Mandalorian Mentor)
+   - Direct, discipline-focused, all-business guidance
+   - Recommends combat talents, soldier abilities, and weapon specialization
+   - Best for: Combat-focused characters and soldiers
+
+4. **Ol' Salty** (Pirate Mentor)
+   - Colorful, adventurous, irreverent advice
+   - Recommends roguish talents, deception, charm, and cunning abilities
+   - Best for: Scoundrels, rogues, and charismatic characters
+
+5. **J0-N1** (Protocol Droid Mentor)
+   - Formal, efficient, optimization-focused guidance
+   - Recommends optimal feat combinations and mechanical efficiency
+   - Best for: Players who want to optimize their character mathematically
+
+**How Mentors Assist You**
+
+**During Character Creation:**
+- Mentors provide guidance popups at each step with text that types out character-by-character
+- Guidance is specific to your chosen mentor's personality and expertise
+- You can disable these popups in settings if you prefer faster, streamlined creation
+
+**When Selecting Feats & Talents:**
+- Mentors offer contextual suggestions based on your class and choices
+- Each mentor recommends the same mechanical options but presents them through their personality
+  - Miraj frames it philosophically ("This feat channels the Force better...")
+  - Lead frames it tactically ("On the field, this ability...")
+  - Breach frames it militarily ("This sharpens your combat edge...")
+  - Ol' Salty frames it adventurously ("For swashbuckling swagger...")
+  - J0-N1 frames it mathematically ("This increases your efficiency by...")
+
+**Post-Class Survey:**
+- After selecting your class, mentors may ask about your playstyle preferences
+- Questions like "Do you prefer offense or defense?" or "Do you want healing abilities?"
+- Your answers help mentors tailor future suggestions to your preferred playstyle
+
+**Visual Experience:**
+- Mentor portraits appear during guidance
+- Text types out smoothly for immersion
+- Styling matches each mentor's personality
+- Can be toggled off entirely if you prefer silent creation
+
+**Disabling the Mentor System**
+
+If you prefer faster character creation without guidance:
+1. In the settings, disable "Mentor Guidance Enabled"
+2. Character creation skips mentor popups
+3. You can still see recommendations but without the roleplay flavor
+4. You create characters in streamlined, mechanical fashion
 
 ---
 
