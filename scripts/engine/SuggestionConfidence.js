@@ -53,8 +53,11 @@ export class SuggestionConfidence {
       // Class synergy: feat/talent fits with class
       const classSynergy = this.synergyEvaluator?.evaluateSynergy?.(item, actor) ?? 0.5;
 
-      // Build coherence: internal consistency (MAD, weapon spread, etc.)
-      const buildCoherence = this.coherenceAnalyzer?.scoreCoherence?.(actor) ?? 0.5;
+      // Build coherence: how well suggestion fits actor's existing build
+      const coherenceResult = this.coherenceAnalyzer?.analyzeSuggestionCoherence?.(item, actor);
+      const buildCoherence = coherenceResult?.score ?? 0.5;
+      // Note: coherenceResult.breakdown { attributeCoherence, talentClustering, combatStyle, classProgression }
+      // available for detailed debugging but not included in top-level confidence breakdown
 
       // History modifier: acceptance rate from PlayerHistoryTracker
       const historyModifier = this.historyTracker?.getAcceptanceRateByTheme?.(actor, theme) ?? 0.5;
