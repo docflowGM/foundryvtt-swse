@@ -517,6 +517,352 @@ export class SWSERoll {
   }
 
   /**
+   * Roll an Autofire attack against a 2×2 area
+   *
+   * Autofire mechanics:
+   * - Targets a 2×2 square area
+   * - Single attack roll at -5 penalty (-2 if braced)
+   * - Hits deal full damage, misses deal half damage
+   * - Consumes 10 shots/slugs
+   * - Evasion talent: half damage becomes no damage on miss
+   * - Improved Evasion: half damage on hit instead
+   *
+   * Burst Fire mechanics:
+   * - Targets single target instead of area
+   * - Single attack roll at -5 penalty
+   * - Adds 2 extra dice of the weapon's damage type
+   * - Consumes only 5 shots/slugs
+   * - Not an area attack, so Evasion doesn't reduce damage
+   *
+   * @param {Actor} actor - The attacking actor
+   * @param {Item} weapon - The weapon being used (must have autofire property)
+   * @param {Object} [options={}] - Autofire options
+   * @param {Array<Actor>} [options.targets] - Target actors in the area (or single target for Burst Fire)
+   * @param {boolean} [options.braced=false] - Whether weapon is braced (-2 instead of -5)
+   * @param {boolean} [options.burstFire=false] - Use Burst Fire feat (single target, +2 dice damage, 5 ammo)
+   * @param {boolean} [options.showDialog=false] - Show roll modifiers dialog
+   * @returns {Promise<Object|null>} Autofire result with area effects
+   */
+  static async rollAutofire(actor, weapon, options = {}) {
+    if (!actor || !weapon) {
+      ui.notifications.error("Autofire failed: missing actor or weapon.");
+      return null;
+    }
+
+    try {
+      // Check if weapon has autofire capability
+      const hasAutofire = weapon.system?.properties?.includes('autofire') ||
+                          weapon.system?.strippedFeatures?.autofire === true;
+      if (!hasAutofire) {
+        ui.notifications.warn(`${weapon.name} does not have autofire capability.`);
+        return null;
+      }
+
+      // Get ammunition info
+      const ammo = weapon.system?.ammunition;
+      const ammoRequired = options.burstFire ? 5 : 10;
+      const currentAmmo = ammo?.current ?? 0;
+
+      if (currentAmmo < ammoRequired) {
+        ui.notifications.error(
+          `${weapon.name} requires ${ammoRequired} shots but only has ${currentAmmo}.`
+        );
+        return null;
+      }
+
+      // Get modifiers from dialog if requested
+      let modifiers = {
+        customModifier: options.customModifier || 0,
+        situationalBonus: 0,
+        useForcePoint: false
+      };
+
+      if (options.showDialog) {
+        const dialogResult = await showRollModifiersDialog({
+          title: `${weapon.name} ${options.burstFire ? 'Burst Fire' : 'Autofire'}`,
+          rollType: 'attack',
+          actor,
+          weapon
+        });
+
+        if (!dialogResult) return null;
+        modifiers = { ...modifiers, ...dialogResult };
+      }
+
+      // Create roll context for hooks
+      const context = {
+        actor,
+        weapon,
+        targets: options.targets || [],
+        attackBonus: 0,
+        formula: '',
+        fpBonus: 0,
+        isAutofire: true,
+        isBurstFire: options.burstFire || false,
+        isBraced: options.braced || false,
+        ammoConsumed: ammoRequired
+      };
+
+      // Call pre-roll hook
+      if (!callPreRollHook(ROLL_HOOKS.PRE_ATTACK, context)) {
+        return { cancelled: true };
+      }
+
+      // Force Point before roll
+      const fpBonus = (options.skipFP || !modifiers.useForcePoint)
+        ? 0
+        : await this.promptForcePointUse(actor, `${options.burstFire ? 'Burst Fire' : 'Autofire'} attack`);
+      context.fpBonus = fpBonus;
+
+      // Calculate attack penalty
+      // Autofire: -5 normally, -2 if braced
+      // Burst Fire: -5 (same as autofire)
+      const autofirePenalty = (options.braced && !options.burstFire) ? -2 : -5;
+
+      // Calculate attack bonus
+      const atkBonus = computeAttackBonus(actor, weapon);
+      const totalBonus = atkBonus + autofirePenalty + fpBonus + modifiers.customModifier + modifiers.situationalBonus;
+      context.attackBonus = totalBonus;
+
+      // Build formula
+      const formula = `1d20 + ${totalBonus}`;
+      context.formula = formula;
+
+      // Perform the roll
+      const roll = await this._safeRoll(formula);
+      if (!roll) return null;
+
+      // Analyze critical threat (even for autofire)
+      const d20 = roll.dice[0].results[0].result;
+      const critAnalysis = analyzeCriticalThreat(weapon, d20, roll.total);
+      let critConfirmed = false;
+      let critMultiplier = 2;
+
+      if (critAnalysis.isThreat && !critAnalysis.isNat20) {
+        critConfirmed = await rollCriticalConfirmation(actor, weapon, context.attackBonus);
+      } else if (critAnalysis.isNat20) {
+        critConfirmed = true;
+      }
+
+      // Process damage for each target
+      const targetResults = [];
+
+      if (context.targets && context.targets.length > 0) {
+        for (const target of context.targets) {
+          const targetReflex = target.system?.defenses?.reflex?.total ?? 10;
+
+          // Determine if hit or miss
+          const isHit = roll.total >= targetReflex;
+
+          // Roll damage
+          let damageRoll = null;
+
+          // Burst Fire adds 2 extra damage dice (same type as weapon)
+          if (options.burstFire) {
+            // Extract the dice type from weapon damage (e.g., "3d10" -> "d10")
+            const baseFormula = weapon.system?.damage ?? "1d6";
+            const diceMatch = baseFormula.match(/d(\d+)/);
+            const diceType = diceMatch ? diceMatch[0] : "d6";
+
+            // Temporarily modify weapon damage for burst fire calculation
+            const originalDamage = weapon.system?.damage;
+            const modifiedDamage = `${baseFormula} + 2${diceType}`;
+            await weapon.update({ 'system.damage': modifiedDamage });
+
+            try {
+              damageRoll = await rollDamage(actor, weapon, {
+                isCrit: critConfirmed,
+                critMultiplier: critConfirmed ? critMultiplier : 1
+              });
+            } finally {
+              // Restore original damage formula
+              await weapon.update({ 'system.damage': originalDamage });
+            }
+          } else {
+            damageRoll = await rollDamage(actor, weapon, {
+              isCrit: critConfirmed,
+              critMultiplier: critConfirmed ? critMultiplier : 1
+            });
+          }
+
+          // Check for Evasion talent
+          const hasEvasion = actor.items.some(item =>
+            (item.type === 'talent') &&
+            (item.name?.toLowerCase().includes('evasion') || item.name?.toLowerCase().includes('improved evasion'))
+          );
+          const hasImprovedEvasion = actor.items.some(item =>
+            (item.type === 'talent') &&
+            (item.name?.toLowerCase().includes('improved evasion'))
+          );
+
+          // Apply damage reduction for area attacks (not burst fire)
+          let finalDamage = damageRoll?.total ?? 0;
+          let damageType = 'full';
+
+          if (!options.burstFire) {
+            // Area attack - apply Evasion talent rules
+            if (isHit) {
+              damageType = 'full';
+            } else {
+              if (hasEvasion) {
+                damageType = 'noDamage';
+                finalDamage = 0;
+              } else {
+                damageType = 'half';
+                finalDamage = Math.ceil(finalDamage / 2);
+              }
+            }
+          } else {
+            // Burst Fire - single target, not an area attack
+            // Evasion doesn't apply to burst fire
+            if (!isHit) {
+              damageType = 'half';
+              finalDamage = Math.ceil(finalDamage / 2);
+            }
+          }
+
+          targetResults.push({
+            target,
+            roll: roll.total,
+            targetReflex,
+            isHit,
+            damageRoll,
+            finalDamage,
+            damageType,
+            isCrit: critConfirmed
+          });
+        }
+      }
+
+      // Consume ammunition
+      const newAmmo = currentAmmo - ammoRequired;
+      await weapon.update({
+        'system.ammunition.current': newAmmo
+      });
+
+      // Build HTML result
+      const attackTypeLabel = options.burstFire ? 'Burst Fire' : 'Autofire';
+      const penaltyLabel = options.braced && !options.burstFire ? '-2' : '-5';
+
+      const targetHTMLs = targetResults.map(tr => `
+        <div class="autofire-target-result">
+          <div class="target-name"><strong>${tr.target.name}</strong></div>
+          <div class="target-vs-defense">
+            Target Reflex: ${tr.targetReflex}
+          </div>
+          <div class="attack-result">
+            <div class="roll-total">${tr.roll}</div>
+            ${tr.isHit
+              ? `<div class="attack-outcome hit">HIT — Full Damage (${tr.finalDamage})</div>`
+              : (options.burstFire
+                ? `<div class="attack-outcome miss">MISS — Half Damage (${tr.finalDamage})</div>`
+                : `<div class="attack-outcome ${tr.damageType === 'noDamage' ? 'evaded' : 'miss'}">
+                    MISS — ${tr.damageType === 'noDamage' ? 'No Damage (Evasion)' : `Half Damage (${tr.finalDamage})`}
+                  </div>`)
+            }
+          </div>
+        </div>
+      `).join('');
+
+      const html = `
+        <div class="swse-autofire-card">
+          <div class="header">
+            <h3>${weapon.name} — ${attackTypeLabel}</h3>
+          </div>
+
+          <div class="attack-info">
+            <div class="roll-result">
+              <span class="label">Attack Roll:</span>
+              <span class="roll">${roll.total}</span>
+              <span class="formula">(${formula})</span>
+            </div>
+            <div class="attack-penalty">
+              Penalty: ${penaltyLabel}
+              ${options.braced && !options.burstFire ? ' <i title="Weapon is braced">(Braced)</i>' : ''}
+              ${fpBonus ? `, FP +${fpBonus}` : ''}
+            </div>
+            <div class="ammo-consumption">
+              Ammunition: ${currentAmmo} → ${newAmmo} (${ammoRequired} shots used)
+            </div>
+          </div>
+
+          <div class="targets-header">
+            <h4>${options.burstFire ? 'Target' : '2×2 Area Targets'}</h4>
+          </div>
+
+          ${targetResults.length > 0
+            ? targetHTMLs
+            : '<div class="no-targets">No targets in area</div>'}
+
+          <style>
+            .swse-autofire-card { font-family: monospace; padding: 10px; }
+            .swse-autofire-card .header { margin-bottom: 10px; }
+            .swse-autofire-card h3 { margin: 0; color: #ff6600; }
+            .swse-autofire-card .attack-info { margin: 8px 0; font-size: 0.9em; }
+            .swse-autofire-card .roll-result { display: flex; gap: 8px; }
+            .swse-autofire-card .roll { font-weight: bold; color: #fff; }
+            .swse-autofire-card .formula { color: #aaa; }
+            .swse-autofire-card .attack-penalty { color: #ff6600; margin: 4px 0; }
+            .swse-autofire-card .ammo-consumption { color: #4af; margin: 4px 0; }
+            .swse-autofire-card .targets-header { margin-top: 10px; margin-bottom: 5px; }
+            .swse-autofire-card h4 { margin: 0; }
+            .swse-autofire-card .autofire-target-result {
+              border-left: 2px solid #ff6600;
+              padding-left: 8px;
+              margin: 5px 0;
+            }
+            .swse-autofire-card .target-name { font-weight: bold; margin-bottom: 3px; }
+            .swse-autofire-card .target-vs-defense { color: #aaa; font-size: 0.9em; }
+            .swse-autofire-card .attack-outcome {
+              font-weight: bold;
+              padding: 4px 6px;
+              border-radius: 3px;
+              margin-top: 3px;
+            }
+            .swse-autofire-card .attack-outcome.hit { background: rgba(68, 255, 68, 0.2); color: #4f4; }
+            .swse-autofire-card .attack-outcome.miss { background: rgba(255, 68, 68, 0.2); color: #f44; }
+            .swse-autofire-card .attack-outcome.evaded { background: rgba(100, 200, 255, 0.2); color: #4af; }
+            .swse-autofire-card .no-targets { color: #999; font-style: italic; padding: 5px; }
+          </style>
+        </div>
+      `;
+
+      const message = await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: html,
+        roll
+      });
+
+      const result = {
+        success: true,
+        roll,
+        formula,
+        totalBonus,
+        fpBonus,
+        targets: targetResults,
+        ammoConsumed: ammoRequired,
+        newAmmoTotal: newAmmo,
+        message
+      };
+
+      // Show 3D dice if available
+      if (game.dice3d) {
+        await game.dice3d.showForRoll(roll, game.user, true);
+      }
+
+      // Call post-roll hook
+      callPostRollHook(ROLL_HOOKS.POST_ATTACK, { ...context, result });
+
+      return result;
+
+    } catch (err) {
+      swseLogger.error('Autofire roll failed:', err);
+      ui.notifications.error('Autofire roll failed. Check console for details.');
+      return null;
+    }
+  }
+
+  /**
    * Execute a Full Attack action with multiple attacks
    *
    * Handles:
