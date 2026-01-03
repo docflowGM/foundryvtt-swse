@@ -118,8 +118,8 @@ export class SynergyEvaluator {
       }
 
       // Score based on how many prerequisites are met
-      // Full chain met: 1.0, half met: 0.75, no chain: 0.5
-      return 0.5 + (metCount / totalCount) * 0.5;
+      // Full chain met: 0.9, half met: 0.7, no chain: 0.5
+      return 0.5 + (metCount / totalCount) * 0.4;
     } catch (err) {
       SWSELogger.warn('[SynergyEvaluator] Error evaluating feat chains:', err);
       return 0.5;
