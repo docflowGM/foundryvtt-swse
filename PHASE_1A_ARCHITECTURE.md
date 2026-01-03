@@ -42,36 +42,28 @@ actor.system.suggestionEngine = {
   // PLAYER HISTORY (tracking shown/accepted/ignored/rejected)
   // ──────────────────────────────────────────────────────────────
   history: {
-    suggestions: [
+    // Recent events (memory, not archive)
+    // Keeps only recent levels to avoid overfitting to old decisions
+    recent: [
       {
-        id: uuid,                      // Unique per suggestion
-        itemId: string,                // ID of feat/talent/attribute
-        itemName: string,              // "Power Attack", "Dastardly Strike", etc
-        category: string,              // "feat" | "talent" | "attribute" | "prestige"
-        theme: string,                 // Build theme from BUILD_THEMES
-        suggestedAtLevel: number,      // What level was this suggested
-        suggestedAtTime: timestamp,    // When shown to player
-
-        // Feedback states (only one is set)
-        accepted: timestamp | null,    // Player chose this
-        ignored: timestamp | null,     // Player didn't pick it (mentor dialog)
-        passiveIgnored: timestamp | null, // Shown but never took (sheet exposure)
-        rejected: timestamp | null,    // Player explicitly declined / said no
-
-        // Context
-        confidenceAtTime: number,      // 0-1 confidence when suggested
-        confidenceLevel: string,       // "Strong" | "Suggested" | "Possible"
+        level: number,                 // At what level did this happen
+        type: "feat" | "talent" | "attribute",
+        id: string,                    // Item ID
+        name: string,                  // Human-readable name
+        outcome: "accepted" | "ignored" | "passiveIgnored" | "rejected",
+        timestamp: timestamp,
         context: {
-          mentorAlignment: number,     // How well it matched mentor intent
-          classSynergy: number,        // How synergistic with class
-          buildCoherence: number       // How coherent with current build
+          mentorAlignment: number,     // 0-1
+          classSynergy: number,        // 0-1
+          buildCoherence: number       // 0-1
         }
       }
-      // ... (array, one per suggestion shown)
+      // Keep only last 10-15 selections (not entire history)
+      // Prevents old decisions from biasing current intent detection
     ],
 
-    // Derived metrics (recalculated on level-up)
-    metrics: {
+    // Aggregated metrics (recalculated on level-up)
+    aggregates: {
       acceptanceRateByTheme: {
         force: 0.7,
         melee: 0.4,
@@ -81,9 +73,10 @@ actor.system.suggestionEngine = {
       },
       ignoredThemeWeights: {
         // Negative weights for ignored categories
+        // Only calculated from themes with 2+ mentor ignores
         defensive: -0.2,
         force: -0.15,
-        // ... (only for themes with 2+ ignores)
+        // ... (weighted differently than passive ignores)
       },
       lastSuggestionTime: timestamp,   // Prevent spam cooldown
       totalSuggestionsShown: number,
@@ -224,11 +217,17 @@ actor.system.suggestionEngine = {
   },
 
   // ──────────────────────────────────────────────────────────────
-  // VERSION & METADATA
+  // TELEMETRY & VERSION TRACKING
   // ──────────────────────────────────────────────────────────────
-  version: 1,                         // For migrations
-  lastUpdatedAtLevel: number,
-  createdAt: timestamp
+  meta: {
+    version: 1,                        // For future migrations
+    created: timestamp,
+    lastUpdated: timestamp,
+    lastUpdatedAtLevel: number,
+    totalSuggestionsShown: number,     // Aggregated counter
+    totalSuggestionsAccepted: number,  // How many did they take?
+    totalSuggestionsIgnored: number    // How many did they skip?
+  }
 };
 ```
 
@@ -247,25 +246,30 @@ class SuggestionConfidence {
    * Calculate confidence for a single suggestion
    * @param {Object} suggestion - { itemId, itemName, tier, category }
    * @param {Actor} actor - The character
-   * @param {Object} context - { mentorAlignment, classSynergy, buildCoherence }
+   * @param {Object} context - { mentorAlignment, classSynergy, buildCoherence, opportunityCost }
    * @returns {Object} { confidence: 0-1, level: "Strong|Suggested|Possible", score: number }
    */
   static calculateConfidence(suggestion, actor, context) {
-    // Inputs:
+    // Positive Inputs:
     // - mentorAlignment: 0-1 (how well does it match mentor intent)
     // - classSynergy: 0-1 (does it fit the class)
     // - playerAcceptanceHistory: 0-1 (% of similar suggestions they've accepted)
     // - buildCoherence: 0-1 (no conflicts, chains complete)
     // - tierLevel: base multiplier from SUGGESTION_TIERS
 
+    // Dampening Input:
+    // - opportunityCost: 0-1 (penalty for prestige locks, stat conflicts, etc)
+
     // Formula:
-    // confidence = (mentorAlignment * 0.3) +
-    //              (classSynergy * 0.25) +
-    //              (playerAcceptanceHistory * 0.25) +
-    //              (buildCoherence * 0.2)
-    // Apply tier multiplier
-    // Apply anchor affinity bonus/penalty
-    // Apply strictness modifier (from preferences)
+    // baseScore = (mentorAlignment * 0.3) +
+    //             (classSynergy * 0.25) +
+    //             (playerAcceptanceHistory * 0.25) +
+    //             (buildCoherence * 0.2)
+    //
+    // confidence = baseScore * (1 - opportunityCost)  // Apply dampener
+    // confidence *= tierMultiplier                    // Apply tier boost
+    // confidence += anchorBonus/penalty               // Apply anchor affinity
+    // confidence *= strictnessModifier                // Apply user preference
 
     // Return:
     // { confidence: 0.78, level: "Strong", score: 78 }
@@ -410,24 +414,36 @@ class BuildIdentityAnchor {
    * @returns {Object} { name, confidence, evidence }
    */
   static detectAnchor(actor, pendingData) {
-    // Analyze:
-    // - Attribute distribution (highest stat?)
+    // Uses hardcoded archetype definitions with world-configurable weights
+    // Archetypes are stable concepts; weights are tunable
+
+    // Analyze character against predefined archetypes:
+    // - Attribute distribution (which ability is highest?)
     // - Talent tree clustering (which trees trained?)
     // - Feat themes (what kind of feats?)
     // - Skill focus (which skills trained?)
     // - Class affinity (which prestige classes fit?)
 
-    // Return archetype:
-    // "Frontline damage dealer"
-    // "Battlefield controller"
-    // "Face / social manipulator"
-    // "Skill monkey"
-    // "Force specialist (DPS)"
-    // "Force specialist (Control)"
-    // "Tech specialist"
-    // "Sniper/Ranged"
-    // "Assassin/Stealth"
-    // etc
+    // Hardcoded Archetypes (stable across updates):
+    // "Frontline Damage Dealer"
+    // "Battlefield Controller"
+    // "Face / Social Manipulator"
+    // "Skill Monkey"
+    // "Force DPS"
+    // "Force Control / Support"
+    // "Tech Specialist"
+    // "Sniper / Ranged"
+    // + more as needed
+
+    // World-configurable: weights per signal
+    // Example config:
+    // archetypes.frontline_damage = {
+    //   triggers: {
+    //     meleeTalents: 0.4,
+    //     strengthInvestment: 0.3,
+    //     hpGrowth: 0.3
+    //   }
+    // }
 
     // Return: { name, confidence: 0-1, evidence: {...} }
   }
@@ -679,6 +695,26 @@ class SuggestionExplainer {
 - Display confidence level as visual indicator (⭐ Strong | ◼ Suggested | ◻ Possible)
 - Show explanation below suggestion name
 
+### 3.1.1 Low-Confidence Suggestion Display ("Possible Synergy")
+
+**Default Behavior** (< 0.4 confidence):
+- Group under collapsible section: "Possible Synergies (Optional)"
+- Collapsed by default
+- Expandable on click (shows all low-confidence suggestions)
+- Maintains mentor tone: "You might consider…"
+
+**Show Prominently When**:
+- Player enables "Show All Suggestions" toggle
+- Player sets strictness to "Exploratory"
+- Character is in EXPLORATORY or PIVOTING pivot state
+- Last 3 levels show consistent off-theme picks
+
+**Why Collapsed, Not Hidden**:
+- Respects experienced players (less noise)
+- Still allows discovery
+- Accessible to players who want to explore
+- Avoids "hidden suggestions feel arbitrary" complaint
+
 ### 3.2 Modifications to BuildIntent.js
 
 **Integration points**:
@@ -830,13 +866,38 @@ Before moving to Phase 1B (implement + wire), verify:
 
 ---
 
-## 8. DECISIONS ALREADY MADE (From User)
+## 8. DECISIONS LOCKED (Architecture Phase Complete)
 
+### Data & Storage
 ✅ Store in `actor.system.suggestionEngine` (portable, per-character)
-✅ Track both mentor and passive ignores (mentor weighted higher)
-✅ Show all suggestions, ranked by confidence (no hiding)
+✅ Add `meta` block for telemetry (version, counts, timestamps)
+✅ Restructure history into `recent` (10-15 recent selections) + `aggregates` (metrics)
+
+### Confidence Scoring
+✅ Use 4 core inputs: mentorAlignment, classSynergy, playerAcceptanceHistory, buildCoherence
+✅ Add optional `opportunityCost` dampener (prestige locks, stat conflicts, etc)
+✅ Formula: baseScore * (1 - opportunityCost) * tierMultiplier * strictnessModifier
+
+### Archetype Detection
+✅ Use hardcoded archetype definitions (stable concepts)
+✅ Make detection weights world-configurable (per-world tuning)
+✅ ~8 archetypes: Frontline Damage, Controller, Face, Skill Monkey, Force DPS, Force Support, Tech, Sniper
+
+### Pivot & Anchor Management
 ✅ Auto-detect anchors → soft-lock → player-confirm (3-step flow)
-✅ Start with Phase 1A (architecture before implementation)
+✅ Track recent events (not full history) to avoid overfitting to old decisions
+✅ State machine: STABLE → EXPLORATORY → PIVOTING → LOCKED
+
+### UI Behavior
+✅ Show all suggestions, ranked by confidence (no hiding of legitimate options)
+✅ Low-confidence suggestions (< 0.4) collapsed by default under "Possible Synergies"
+✅ Expandable on click; shown prominently during EXPLORATORY/PIVOTING phases
+✅ Display confidence as visual indicators: ⭐ Strong | ◼ Suggested | ◻ Possible
+✅ Always show one-line "why" explanation
+
+### Phase Progression
+✅ Complete Phase 1A (architecture design)
+✅ Ready for Phase 1B (scaffold 5 classes + wire hooks)
 
 ---
 
