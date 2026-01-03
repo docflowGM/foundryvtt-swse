@@ -316,9 +316,70 @@ Hooks.once('ready', () => {
       return;
     }
 
-    const result = await DarkSidePowers.triggerDarkHealing(actor, targetToken);
-    if (!result.success) {
-      ui.notifications.warn(result.message);
+    // Check which Dark Healing variants the actor has
+    const hasImproved = DarkSidePowers.hasImprovedDarkHealing(actor);
+    const hasField = DarkSidePowers.hasDarkHealingField(actor);
+
+    // If they have enhanced versions, show a dialog to choose
+    if (hasImproved || hasField) {
+      const buttons = {
+        basic: {
+          label: 'Dark Healing (Basic)',
+          callback: async () => {
+            const result = await DarkSidePowers.triggerDarkHealing(actor, targetToken);
+            if (!result.success) {
+              ui.notifications.warn(result.message);
+            }
+          }
+        }
+      };
+
+      if (hasImproved) {
+        buttons.improved = {
+          label: 'Improved Dark Healing',
+          callback: async () => {
+            const result = await DarkSidePowers.triggerImprovedDarkHealing(actor, targetToken);
+            if (!result.success) {
+              ui.notifications.warn(result.message);
+            }
+          }
+        };
+      }
+
+      if (hasField) {
+        buttons.field = {
+          label: 'Dark Healing Field (Multi-target)',
+          callback: async () => {
+            const targetTokens = canvas.tokens.controlled;
+            const result = await DarkSidePowers.triggerDarkHealingField(actor, targetTokens);
+            if (!result.success) {
+              ui.notifications.warn(result.message);
+            }
+          }
+        };
+      }
+
+      buttons.cancel = {
+        label: 'Cancel'
+      };
+
+      const dialog = new Dialog({
+        title: 'Dark Healing - Select Variant',
+        content: `
+          <div class="form-group">
+            <p>You have multiple Dark Healing variants available. Choose one:</p>
+          </div>
+        `,
+        buttons: buttons
+      });
+
+      dialog.render(true);
+    } else {
+      // Only basic version available
+      const result = await DarkSidePowers.triggerDarkHealing(actor, targetToken);
+      if (!result.success) {
+        ui.notifications.warn(result.message);
+      }
     }
   };
 
