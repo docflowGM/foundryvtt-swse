@@ -117,6 +117,15 @@ export class LightSideTalentMechanics {
   }
 
   /**
+   * Check if actor has Steel Resolve talent
+   */
+  static hasSteelResolve(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Steel Resolve'
+    );
+  }
+
+  /**
    * DIRECT - Return one Force power to any ally within 6 squares
    * Swift action, once per encounter
    */
@@ -798,6 +807,98 @@ export class LightSideTalentMechanics {
     ui.notifications.info(`${ally.name} can use ${forceSecret.name} this turn!`);
 
     return true;
+  }
+
+  /**
+   * STEEL RESOLVE - Trade attack penalty for Will Defense bonus
+   * When making a melee attack (Standard Action), take -1 to -5 penalty on attack
+   * Gain twice that value (+2 to +10) as insight bonus to Will Defense
+   * Bonus may not exceed Base Attack Bonus
+   * Lasts until start of your next turn
+   */
+  static async triggerSteelResolve(actor) {
+    if (!this.hasSteelResolve(actor)) {
+      return { success: false, message: 'Actor does not have Steel Resolve talent' };
+    }
+
+    // Get actor's BAB
+    const bab = actor.system.bab || 0;
+
+    if (bab < 1) {
+      return {
+        success: false,
+        message: 'You need at least +1 Base Attack Bonus to use Steel Resolve'
+      };
+    }
+
+    // Maximum penalty is the lesser of 5 or BAB
+    const maxPenalty = Math.min(5, bab);
+
+    return {
+      success: true,
+      requiresSelection: true,
+      maxPenalty: maxPenalty,
+      bab: bab
+    };
+  }
+
+  /**
+   * Complete Steel Resolve - Apply the selected penalty and bonus
+   */
+  static async completeSteelResolveSelection(actor, penaltyAmount) {
+    // Validate penalty amount
+    const bab = actor.system.bab || 0;
+    const maxPenalty = Math.min(5, bab);
+
+    if (penaltyAmount < 1 || penaltyAmount > maxPenalty) {
+      ui.notifications.error(`Invalid penalty amount. Must be between 1 and ${maxPenalty}`);
+      return false;
+    }
+
+    // Calculate Will Defense bonus (twice the penalty, capped by BAB)
+    let willBonus = penaltyAmount * 2;
+    if (willBonus > bab) {
+      willBonus = bab;
+    }
+
+    // Create active effect that lasts until start of next turn
+    const effectData = {
+      name: `Steel Resolve (-${penaltyAmount} attack, +${willBonus} Will)`,
+      icon: "icons/svg/shield.svg",
+      duration: {
+        rounds: 1,
+        startRound: game.combat?.round,
+        startTurn: game.combat?.turn
+      },
+      changes: [
+        {
+          key: "system.attackPenalty",
+          mode: 2, // ADD
+          value: -penaltyAmount,
+          priority: 20
+        },
+        {
+          key: "system.defenses.will.bonus",
+          mode: 2, // ADD
+          value: willBonus,
+          priority: 20
+        }
+      ],
+      flags: {
+        swse: {
+          source: 'talent',
+          sourceId: 'steel-resolve',
+          sourceActorId: actor.id
+        }
+      }
+    };
+
+    await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} used Steel Resolve: -${penaltyAmount} attack, +${willBonus} Will Defense`);
+    ui.notifications.info(`Steel Resolve activated: -${penaltyAmount} to attack rolls, +${willBonus} to Will Defense until start of your next turn!`);
+
+    return { success: true, penalty: penaltyAmount, bonus: willBonus };
   }
 
   // ============================================================================
