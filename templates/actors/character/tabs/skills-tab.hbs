@@ -111,10 +111,10 @@
  {{> "systems/foundryvtt-swse/templates/partials/skill-row-static.hbs" skill=skill key="useComputer" label="Use Computer" defaultAbility="int"}}
  {{/with}}
 
- {{#unless @root.system.isDroid}}
+ {{#if @root.canUseTheForce}}
  {{#with system.skills.useTheForce as |skill|}}
  {{> "systems/foundryvtt-swse/templates/partials/skill-row-static.hbs" skill=skill key="useTheForce" label="Use the Force" defaultAbility="cha"}}
  {{/with}}
- {{/unless}}
+ {{/if}}
  </div>
 </div>
