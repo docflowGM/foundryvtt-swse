@@ -97,7 +97,14 @@ export class SWSEActorBase extends Actor {
     let remaining = amount;
     const updates = {};
 
-    // Temp HP
+    // Bonus HP (damage buffer from abilities/talents - consumed first)
+    if (hp.bonus > 0 && !options.ignoreBonus) {
+      const used = Math.min(hp.bonus, remaining);
+      remaining -= used;
+      updates["system.hp.bonus"] = hp.bonus - used;
+    }
+
+    // Temp HP (from Active Effects)
     if (hp.temp > 0 && !options.ignoreTemp) {
       const used = Math.min(hp.temp, remaining);
       remaining -= used;

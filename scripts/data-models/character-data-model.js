@@ -107,7 +107,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       hp: new fields.SchemaField({
         value: new fields.NumberField({required: true, initial: 30, min: 0, integer: true}),
         max: new fields.NumberField({required: true, initial: 30, min: 1, integer: true}),
-        temp: new fields.NumberField({required: true, initial: 0, integer: true})
+        temp: new fields.NumberField({required: true, initial: 0, integer: true}),
+        bonus: new fields.NumberField({required: true, initial: 0, integer: true})
       }),
 
 

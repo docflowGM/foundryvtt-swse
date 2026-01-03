@@ -101,6 +101,7 @@ import { SWSEActorBase } from './scripts/actors/base/swse-actor-base.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
 import { ActorEngine } from './scripts/actors/engine/actor-engine.js';
 import { DefenseSystem } from './scripts/engine/DefenseSystem.js';
+import { BonusHitPointsEngine } from './scripts/engine/BonusHitPointsEngine.js';
 import { RollEngine } from './scripts/engine/roll-engine.js';
 import { applyActorUpdateAtomic, batchActorUpdates, safeActorUpdate, prepareUpdatePayload, validateActorFields } from './scripts/utils/actor-utils.js';
 import { sanitizeHTML, sanitizeChatMessage, canUserModifyActor, canUserModifyItem, withPermissionCheck, withGMCheck, escapeHTML, validateUserInput } from './scripts/utils/security-utils.js';
