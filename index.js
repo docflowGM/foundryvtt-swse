@@ -159,13 +159,15 @@ import { AcrobaticsUses } from './scripts/skills/acrobatics-uses.js';
 import { ClimbUses } from './scripts/skills/climb-uses.js';
 import { EnduranceUses } from './scripts/skills/endurance-uses.js';
 import { GatherInformationUses } from './scripts/skills/gather-information-uses.js';
-import { JumpUses } from './scripts/skills/jump-uses.js';
-import { KnowledgeUses } from './scripts/skills/knowledge-uses.js';
-import { MechanicsUses } from './scripts/skills/mechanics-uses.js';
-import { PerceptionUses } from './scripts/skills/perception-uses.js';
-import { PersuasionUses } from './scripts/skills/persuasion-uses.js';
-import { PilotUses } from './scripts/skills/pilot-uses.js';
-import { RideUses } from './scripts/skills/ride-uses.js';
+import {
+  JumpUses,
+  KnowledgeUses,
+  MechanicsUses,
+  PerceptionUses,
+  PersuasionUses,
+  PilotUses,
+  RideUses
+} from './scripts/skills/skill-uses.js';
 import { SWSEVehicleCombat } from './scripts/combat/systems/vehicle-combat-system.js';
 
 import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
