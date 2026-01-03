@@ -41,7 +41,7 @@
   <div class="header-center flex2">
 
     {{!-- Defenses Grid --}}
-    <div class="defenses grid grid-3col">
+    <div class="defenses grid grid-4col">
 
       {{!-- Reflex --}}
       <div class="defense reflex-defense">
@@ -61,6 +61,23 @@
           <span class="breakdown-item active">10 + Level {{system.level}}</span>
           {{/if}}
           <span class="breakdown-item">+ Dex {{numberFormat system.abilities.dex.mod sign=true}}</span>
+        </div>
+      </div>
+
+      {{!-- Flat-Footed --}}
+      <div class="defense flatfooted-defense">
+        <label class="defense-label">Flat-Footed</label>
+        <div class="defense-value rollable"
+             data-roll="1d20"
+             data-label="Flat-Footed Defense"
+             role="button" tabindex="0"
+             title="Click to roll vs. Flat-Footed (Reflex without Dex bonus)">
+          {{system.defenses.flatFooted.total}}
+        </div>
+
+        <div class="defense-breakdown">
+          <span class="breakdown-item">Reflex - Dex</span>
+          <span class="breakdown-item">({{system.defenses.reflex.total}} - {{numberFormat system.abilities.dex.mod sign=false}})</span>
         </div>
       </div>
 

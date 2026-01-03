@@ -32,7 +32,8 @@
     "scripts/progression/talents/TalentTreeRegistry.js",
     "init-talents.js",
     "scripts/talents/DarkSidePowers.js",
-    "scripts/talents/dark-side-powers-init.js"
+    "scripts/talents/dark-side-powers-init.js",
+    "scripts/talents/light-side-init.js"
   ],
 
   "styles": [
