@@ -179,6 +179,14 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     const maxDS = Math.max(wis * mult, 1);
     const cur = system.darkSideScore || 0;
 
+    context.darkSideMax = maxDS;
+    context.hasForceSensitivity = actor.items.some(i =>
+      i.type === 'feat' && (
+        i.name.toLowerCase().includes('force sensitivity') ||
+        i.name.toLowerCase() === 'force sensitive'
+      )
+    );
+    context.darkInspirationEnabled = game.settings.get("foundryvtt-swse", "darkInspirationEnabled") || false;
     context.darkSideSegments = [];
     for (let i = 1; i <= maxDS; i++) {
       const t = (i - 1) / (maxDS - 1 || 1);
@@ -187,7 +195,8 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
       context.darkSideSegments.push({
         index: i,
         color: `rgb(${r}, 0, ${b})`,
-        active: i <= cur
+        active: i <= cur,
+        isCurrent: i === cur
       });
     }
 
@@ -379,6 +388,22 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
     html.find(".spend-destiny-btn").click(ev => {
       ev.preventDefault();
       this._onSpendDestinyPoint();
+    });
+
+    // Dark Side Points handlers
+    html.find(".reduce-dsp").click(ev => {
+      ev.preventDefault();
+      this._onReduceDSP();
+    });
+
+    html.find(".increase-dsp").click(ev => {
+      ev.preventDefault();
+      this._onIncreaseDSP();
+    });
+
+    html.find(".dark-inspiration").click(ev => {
+      ev.preventDefault();
+      this._onDarkInspiration();
     });
 
     // Export Character Event Listeners (Import/Export Tab)
@@ -728,6 +753,156 @@ export class SWSECharacterSheet extends SWSEActorSheetBase {
   async _onSpendDestinyPoint() {
     const { DestinySpendingDialog } = await import('../../apps/destiny-spending-dialog.js');
     DestinySpendingDialog.open(this.actor);
+  }
+
+  /**
+   * Open reduce DSP dialog
+   */
+  async _onReduceDSP() {
+    const actor = this.actor;
+    const currentDSP = actor.system.darkSideScore || 0;
+
+    if (currentDSP === 0) {
+      ui.notifications.info("Your Dark Side Points are already at 0.");
+      return;
+    }
+
+    const buttons = {
+      free: {
+        label: "Free",
+        callback: () => {
+          // Free option doesn't actually do anything - just close the dialog
+          ui.notifications.info("You have chosen not to reduce your Dark Side Points.");
+        }
+      },
+      dramatic: {
+        label: "Dramatic Heroism",
+        callback: () => {
+          actor.update({ "system.darkSideScore": 1 });
+          ui.notifications.info("Through dramatic heroism, you've reduced your Dark Side corruption to 1!");
+        }
+      },
+      atonement: {
+        label: "Atonement (1 Force Point)",
+        callback: async () => {
+          const fpData = actor.system.forcePoints || {};
+          const fpValue = fpData.value || 0;
+
+          if (fpValue <= 0) {
+            ui.notifications.warn("You don't have a Force Point to spend for atonement.");
+            return;
+          }
+
+          // Reduce DSP by 1 and spend a force point
+          const newDSP = Math.max(currentDSP - 1, 0);
+          await actor.update({
+            "system.darkSideScore": newDSP,
+            "system.forcePoints.value": fpValue - 1
+          });
+          ui.notifications.info("Through atonement, you've reduced your Dark Side Points and spent a Force Point.");
+        }
+      }
+    };
+
+    new Dialog({
+      title: "Reduce Dark Side Points",
+      content: `<p>How would you like to reduce your Dark Side Points?</p>
+                <p><strong>Current DSP:</strong> ${currentDSP}</p>`,
+      buttons,
+      default: "free"
+    }).render(true);
+  }
+
+  /**
+   * Increase DSP by 1
+   */
+  async _onIncreaseDSP() {
+    const actor = this.actor;
+    const system = actor.system;
+    const wis = system.abilities?.wis?.total ?? 10;
+    const mult = game.settings.get("foundryvtt-swse", "darkSideMaxMultiplier") || 1;
+    const maxDS = Math.max(wis * mult, 1);
+    const currentDSP = system.darkSideScore || 0;
+
+    if (currentDSP >= maxDS) {
+      ui.notifications.warn(`You are already at maximum Dark Side corruption (${maxDS}/${maxDS}).`);
+      return;
+    }
+
+    await actor.update({ "system.darkSideScore": currentDSP + 1 });
+    ui.notifications.info(`Dark Side Points increased to ${currentDSP + 1}.`);
+  }
+
+  /**
+   * Open dark inspiration dialog showing dark side force powers
+   */
+  async _onDarkInspiration() {
+    const actor = this.actor;
+
+    // Get all force powers with "dark side" descriptor
+    const darkSidePowers = actor.items.filter(item => {
+      if (item.type !== 'forcepower') return false;
+      const desc = (item.system.descriptors || "").toLowerCase();
+      return desc.includes('dark side');
+    });
+
+    if (darkSidePowers.length === 0) {
+      ui.notifications.info("There are no Dark Side Force Powers available.");
+      return;
+    }
+
+    // Build the dialog content
+    const powerRows = darkSidePowers.map((power, idx) => `
+      <div class="swse-option dark-power-option" data-power-id="${power.id}" data-power-index="${idx}">
+        <strong>${power.name}</strong><br/>
+        <small>${power.system.descriptors || 'Force Power'}</small>
+      </div>
+    `).join("");
+
+    const dialog = new Dialog({
+      title: "Dark Inspiration - Select a Dark Side Power",
+      content: `<div class="swse-dialog-list dark-powers-list">${powerRows}</div>`,
+      buttons: {
+        cancel: { label: "Cancel" }
+      },
+      default: "cancel"
+    });
+
+    // Attach click handlers after rendering
+    dialog.render(true);
+
+    dialog._element?.on('click', '.dark-power-option', async (ev) => {
+      ev.preventDefault();
+      const powerId = ev.currentTarget.dataset.powerId;
+      const power = actor.items.get(powerId);
+
+      if (!power) return;
+
+      // Post announcement to chat
+      const announcement = await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `<div class="dark-inspiration-announcement"><p><strong>${actor.name}</strong> embraced the dark side and uses <strong>${power.name}</strong>...</p></div>`,
+        type: CONST.CHAT_MESSAGE_TYPES.OOC
+      });
+
+      // Cast the power (use it as if the character knows it)
+      const { ForceEnhancementDialog } = await import('../../utils/force-enhancement-dialog.js');
+      const { SWSERoll } = await import('../../combat/rolls/enhanced-rolls.js');
+
+      // Check for enhancements/techniques
+      const enhancements = await ForceEnhancementDialog.checkAndPrompt(actor, power);
+
+      // Roll the power usage
+      await SWSERoll.rollUseTheForce(actor, power, enhancements);
+
+      // Increase DSP by 1
+      const currentDSP = actor.system.darkSideScore || 0;
+      await actor.update({ "system.darkSideScore": currentDSP + 1 });
+
+      ui.notifications.info(`You've used Dark Inspiration to cast ${power.name} and increased your Dark Side Points!`);
+
+      dialog.close();
+    });
   }
 
   /**
