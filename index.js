@@ -175,6 +175,12 @@ import LightSideTalentMechanics from './scripts/talents/light-side-talent-mechan
 import { LightSideTalentMacros } from './scripts/talents/light-side-talent-macros.js';
 import DarkSideTalentMechanics from './scripts/talents/dark-side-talent-mechanics.js';
 import { DarkSideTalentMacros } from './scripts/talents/dark-side-talent-macros.js';
+import NobleTalentMechanics from './scripts/talents/noble-talent-mechanics.js';
+import { NobleTalentMacros } from './scripts/talents/noble-talent-macros.js';
+import ScoundrelTalentMechanics from './scripts/talents/scoundrel-talent-mechanics.js';
+import { ScoundrelTalentMacros } from './scripts/talents/scoundrel-talent-macros.js';
+import SoldierTalentMechanics from './scripts/talents/soldier-talent-mechanics.js';
+import { SoldierTalentMacros } from './scripts/talents/soldier-talent-macros.js';
 
 import { ForcePowerManager } from './scripts/utils/force-power-manager.js';
 import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
@@ -346,7 +352,13 @@ Hooks.once("init", async function () {
         LightSideTalentMechanics,
         LightSideTalentMacros,
         DarkSideTalentMechanics,
-        DarkSideTalentMacros
+        DarkSideTalentMacros,
+        NobleTalentMechanics,
+        NobleTalentMacros,
+        ScoundrelTalentMechanics,
+        ScoundrelTalentMacros,
+        SoldierTalentMechanics,
+        SoldierTalentMacros
     };
 });
 
