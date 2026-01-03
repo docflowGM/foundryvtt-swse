@@ -1463,6 +1463,205 @@ export class DarkSidePowers {
     return actor.getFlag('swse', 'activeSithTalisman');
   }
 
+  // ========================================================================
+  // SITH ALCHEMICAL WEAPON - Sith Alchemy weapon enhancement
+  // ========================================================================
+
+  /**
+   * Check if actor has Sith Alchemy (create) talent
+   */
+  static hasSithAlchemyCreate(actor) {
+    return actor?.items?.some(item =>
+      item.type === 'talent' && item.name === 'Sith Alchemy (create)'
+    );
+  }
+
+  /**
+   * Check if a weapon is a Sith Alchemical Weapon
+   */
+  static isSithAlchemicalWeapon(weapon) {
+    return weapon?.flags?.swse?.sithAlchemical === true;
+  }
+
+  /**
+   * Create a Sith Alchemical Weapon by enhancing an existing weapon
+   * Cost: 20% or 2,000 credits more (whichever is higher)
+   * Applicable to: Any Advanced Melee Weapon or Simple Weapon (Melee)
+   *
+   * Effects:
+   * - Lightsabers don't ignore Damage Reduction
+   * - Treat as Lightsaber for Block, Deflect, Redirect Shot talents
+   * - Swift Action: Spend FP to gain bonus to damage = Dark Side Score
+   *   (applies to next attack, increases DSP by 1)
+   */
+  static async createSithAlchemicalWeapon(actor, weaponItem) {
+    if (!this.hasSithAlchemyCreate(actor)) {
+      return {
+        success: false,
+        message: 'Actor does not have Sith Alchemy (create) talent'
+      };
+    }
+
+    // Validate weapon type
+    const validWeaponTypes = ['advanced-melee', 'simple-melee'];
+    if (!validWeaponTypes.includes(weaponItem.system?.weaponType)) {
+      return {
+        success: false,
+        message: 'Sith Alchemical Weapons can only be created from melee weapons (Advanced or Simple Melee)'
+      };
+    }
+
+    // Check if already enhanced
+    if (this.isSithAlchemicalWeapon(weaponItem)) {
+      return {
+        success: false,
+        message: `${weaponItem.name} is already a Sith Alchemical Weapon`
+      };
+    }
+
+    // Calculate enhancement cost
+    const baseCost = weaponItem.system?.cost || 0;
+    const percentCost = Math.floor(baseCost * 0.2);
+    const enhancementCost = Math.max(percentCost, 2000);
+
+    // Check actor credits
+    const actorCredits = actor.system.credits || 0;
+    if (actorCredits < enhancementCost) {
+      return {
+        success: false,
+        message: `Insufficient credits. Enhancement requires ${enhancementCost} credits (you have ${actorCredits})`
+      };
+    }
+
+    // Spend the credits
+    await actor.update({
+      'system.credits': actorCredits - enhancementCost
+    });
+
+    // Update the weapon with Sith Alchemical flag and enhanced description
+    const originalDescription = weaponItem.system?.description || '';
+    const enhancedDescription = `${originalDescription}\n\n**Sith Alchemical Enhancement:** This weapon has been imbued with Sith sorcery. Lightsabers do not ignore its Damage Reduction. Proficient users treat it as a Lightsaber for Block, Deflect, and Redirect Shot talents.`;
+
+    await actor.updateEmbeddedDocuments('Item', [{
+      _id: weaponItem.id,
+      'flags.swse.sithAlchemical': true,
+      'system.description': enhancedDescription
+    }]);
+
+    const chatContent = `
+      <div class="swse-sith-alchemical-weapon">
+        <h3><img src="icons/svg/sword.svg" style="width: 20px; height: 20px;"> Sith Alchemical Weapon Created</h3>
+        <p><strong>${actor.name}</strong> enhances ${weaponItem.name} with Sith sorcery.</p>
+        <p><strong>Cost:</strong> ${enhancementCost} credits</p>
+        <p><strong>Effects:</strong></p>
+        <ul>
+          <li>Lightsabers do not ignore this weapon's Damage Reduction</li>
+          <li>Treat as Lightsaber for Block, Deflect, and Redirect Shot talents</li>
+          <li><strong>Swift Action Ability:</strong> Spend a Force Point to gain a bonus to damage equal to your Dark Side Score on your next attack (increases your DSP by 1)</li>
+        </ul>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: { actor: actor },
+      content: chatContent,
+      flavor: 'Sith Alchemical Weapon Enhanced'
+    });
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} created Sith Alchemical Weapon: ${weaponItem.name}`);
+
+    return {
+      success: true,
+      weaponId: weaponItem.id,
+      weaponName: weaponItem.name,
+      costSpent: enhancementCost
+    };
+  }
+
+  /**
+   * Activate Sith Alchemical Weapon damage bonus
+   * Spend a Force Point to gain bonus to damage = Dark Side Score
+   * Applies to next attack before end of encounter
+   * Increases Dark Side Score by 1
+   */
+  static async activateSithAlchemicalBonus(actor, weaponItem) {
+    if (!this.isSithAlchemicalWeapon(weaponItem)) {
+      return {
+        success: false,
+        message: `${weaponItem.name} is not a Sith Alchemical Weapon`
+      };
+    }
+
+    // Check Force Points
+    const currentFP = actor.system.forcePoints?.value || 0;
+    if (currentFP < 1) {
+      return {
+        success: false,
+        message: 'Not enough Force Points. Sith Alchemical Weapon ability requires 1 Force Point.'
+      };
+    }
+
+    // Spend Force Point
+    await actor.update({
+      'system.forcePoints.value': currentFP - 1
+    });
+
+    // Get Dark Side Score
+    const dspBonus = actor.system.darkSideScore || 0;
+
+    // Increase DSP by 1
+    const newDSP = dspBonus + 1;
+    await actor.update({
+      'system.darkSideScore': newDSP
+    });
+
+    // Store active bonus
+    const bonusFlag = {
+      weaponId: weaponItem.id,
+      weaponName: weaponItem.name,
+      bonusDamage: dspBonus,
+      activatedAt: new Date().toISOString(),
+      activatedRound: game.combat?.round || 0,
+      activatedTurn: game.combat?.turn || 0
+    };
+
+    const activeBonus = actor.getFlag('swse', 'sithAlchemicalBonus');
+    const bonuses = activeBonus ? [activeBonus, bonusFlag] : [bonusFlag];
+    await actor.setFlag('swse', 'sithAlchemicalBonus', bonuses[0]); // Keep only the latest (one per encounter typically)
+
+    const chatContent = `
+      <div class="swse-sith-alchemical-bonus">
+        <h3><img src="icons/svg/sword.svg" style="width: 20px; height: 20px;"> Sith Alchemical Weapon Activated</h3>
+        <p><strong>${actor.name}</strong> channels Dark Side energy through ${weaponItem.name}.</p>
+        <p><strong>Damage Bonus:</strong> +${dspBonus} on next attack</p>
+        <p><strong>Dark Side Score:</strong> +1 (now ${newDSP})</p>
+        <p><em>This bonus applies to your next attack before the end of the encounter.</em></p>
+      </div>
+    `;
+
+    await ChatMessage.create({
+      speaker: { actor: actor },
+      content: chatContent,
+      flavor: 'Sith Alchemical Power Activated'
+    });
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} activated Sith Alchemical Weapon: ${weaponItem.name} (+${dspBonus} damage, DSP: ${dspBonus} → ${newDSP})`);
+
+    return {
+      success: true,
+      weaponName: weaponItem.name,
+      damageBonus: dspBonus,
+      newDSP: newDSP
+    };
+  }
+
+  /**
+   * Clear Sith Alchemical bonus after attack is made
+   */
+  static async clearSithAlchemicalBonus(actor) {
+    await actor.unsetFlag('swse', 'sithAlchemicalBonus');
+  }
+
   /**
    * DARK SCOURGE - +1 bonus vs Jedi characters
    * Passive bonus applied to attack rolls against Jedi

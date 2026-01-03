@@ -542,6 +542,129 @@ Hooks.once('ready', () => {
     }
   };
 
+  // Sith Alchemical Weapon macros
+  window.SWSE.macros.createSithAlchemicalWeapon = async () => {
+    const actor = game.user.character;
+    if (!actor) {
+      ui.notifications.error('Please select a character');
+      return;
+    }
+
+    // Get all melee weapons
+    const meleeWeapons = actor.items.filter(item =>
+      item.type === 'weapon' &&
+      (item.system?.weaponType === 'advanced-melee' || item.system?.weaponType === 'simple-melee')
+    );
+
+    if (meleeWeapons.length === 0) {
+      ui.notifications.warn('No melee weapons available. Sith Alchemical Weapons require a melee weapon to enhance.');
+      return;
+    }
+
+    const weaponOptions = meleeWeapons
+      .map(w => `<option value="${w.id}">${w.name}</option>`)
+      .join('');
+
+    const dialog = new Dialog({
+      title: 'Create Sith Alchemical Weapon',
+      content: `
+        <div class="form-group">
+          <label>Select a melee weapon to enhance with Sith Alchemy:</label>
+          <select id="weapon-select" style="width: 100%;">
+            ${weaponOptions}
+          </select>
+          <p class="hint-text" style="margin-top: 10px;">
+            <i class="fas fa-info-circle"></i>
+            Cost: 20% of weapon cost or 2,000 credits (whichever is higher). The enhanced weapon gains Sith Alchemical properties and a special Swift Action ability.
+          </p>
+        </div>
+      `,
+      buttons: {
+        create: {
+          label: 'Create Sith Alchemical Weapon (Full-Round Action)',
+          callback: async (html) => {
+            const weaponId = html.find('#weapon-select').val();
+            const weapon = actor.items.get(weaponId);
+            const result = await DarkSidePowers.createSithAlchemicalWeapon(actor, weapon);
+            if (!result.success) {
+              ui.notifications.warn(result.message);
+            }
+          }
+        },
+        cancel: {
+          label: 'Cancel'
+        }
+      }
+    });
+
+    dialog.render(true);
+  };
+
+  window.SWSE.macros.activateSithAlchemicalBonus = async () => {
+    const actor = game.user.character;
+    if (!actor) {
+      ui.notifications.error('Please select a character');
+      return;
+    }
+
+    // Get all Sith Alchemical Weapons
+    const alchemicalWeapons = actor.items.filter(item =>
+      item.type === 'weapon' && DarkSidePowers.isSithAlchemicalWeapon(item)
+    );
+
+    if (alchemicalWeapons.length === 0) {
+      ui.notifications.warn('No Sith Alchemical Weapons available. You must first create one using Sith Alchemy.');
+      return;
+    }
+
+    if (alchemicalWeapons.length === 1) {
+      // Only one weapon, activate it directly
+      const result = await DarkSidePowers.activateSithAlchemicalBonus(actor, alchemicalWeapons[0]);
+      if (!result.success) {
+        ui.notifications.warn(result.message);
+      }
+    } else {
+      // Multiple weapons, show selection dialog
+      const weaponOptions = alchemicalWeapons
+        .map(w => `<option value="${w.id}">${w.name}</option>`)
+        .join('');
+
+      const dialog = new Dialog({
+        title: 'Activate Sith Alchemical Weapon Bonus',
+        content: `
+          <div class="form-group">
+            <label>Select which Sith Alchemical Weapon to activate:</label>
+            <select id="weapon-select" style="width: 100%;">
+              ${weaponOptions}
+            </select>
+            <p class="hint-text" style="margin-top: 10px;">
+              <i class="fas fa-info-circle"></i>
+              This is a Swift Action. Spend 1 Force Point to gain a bonus to damage equal to your Dark Side Score on your next attack (increases your DSP by 1).
+            </p>
+          </div>
+        `,
+        buttons: {
+          activate: {
+            label: 'Activate Bonus (Swift Action, 1 FP)',
+            callback: async (html) => {
+              const weaponId = html.find('#weapon-select').val();
+              const weapon = actor.items.get(weaponId);
+              const result = await DarkSidePowers.activateSithAlchemicalBonus(actor, weapon);
+              if (!result.success) {
+                ui.notifications.warn(result.message);
+              }
+            }
+          },
+          cancel: {
+            label: 'Cancel'
+          }
+        }
+      });
+
+      dialog.render(true);
+    }
+  };
+
   SWSELogger.log('SWSE System | Dark Side Powers loaded successfully');
   console.log('Dark Side Powers available at: window.SWSE.talents.darkSidePowers');
   console.log('Available Macros:', {
@@ -565,7 +688,10 @@ Hooks.once('ready', () => {
     drainForce: 'game.swse.macros.drainForce()',
     createSithTalisman: 'game.swse.macros.createSithTalisman()',
     destroySithTalisman: 'game.swse.macros.destroySithTalisman()',
-    checkSithTalismanStatus: 'game.swse.macros.checkSithTalismanStatus()'
+    checkSithTalismanStatus: 'game.swse.macros.checkSithTalismanStatus()',
+    // Sith Alchemical Weapons
+    createSithAlchemicalWeapon: 'game.swse.macros.createSithAlchemicalWeapon()',
+    activateSithAlchemicalBonus: 'game.swse.macros.activateSithAlchemicalBonus()'
   });
 });
 
