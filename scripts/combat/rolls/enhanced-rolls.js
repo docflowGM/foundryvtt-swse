@@ -527,12 +527,19 @@ export class SWSERoll {
    * - Evasion talent: half damage becomes no damage on miss
    * - Improved Evasion: half damage on hit instead
    *
+   * Burst Fire mechanics:
+   * - Targets single target instead of area
+   * - Single attack roll at -5 penalty
+   * - Adds 2 extra dice of the weapon's damage type
+   * - Consumes only 5 shots/slugs
+   * - Not an area attack, so Evasion doesn't reduce damage
+   *
    * @param {Actor} actor - The attacking actor
    * @param {Item} weapon - The weapon being used (must have autofire property)
    * @param {Object} [options={}] - Autofire options
-   * @param {Array<Actor>} [options.targets] - Target actors in the area
+   * @param {Array<Actor>} [options.targets] - Target actors in the area (or single target for Burst Fire)
    * @param {boolean} [options.braced=false] - Whether weapon is braced (-2 instead of -5)
-   * @param {boolean} [options.burstFire=false] - Use Burst Fire feat (single target, +2d6 damage, 5 ammo)
+   * @param {boolean} [options.burstFire=false] - Use Burst Fire feat (single target, +2 dice damage, 5 ammo)
    * @param {boolean} [options.showDialog=false] - Show roll modifiers dialog
    * @returns {Promise<Object|null>} Autofire result with area effects
    */
@@ -649,15 +656,28 @@ export class SWSERoll {
 
           // Roll damage
           let damageRoll = null;
-          let damageBonus = computeDamageBonus(actor, weapon);
 
-          // Burst Fire adds +2d6 damage
+          // Burst Fire adds 2 extra damage dice (same type as weapon)
           if (options.burstFire) {
-            damageRoll = await rollDamage(actor, weapon, {
-              bonusDice: 2,
-              isCrit: critConfirmed,
-              critMultiplier: critConfirmed ? critMultiplier : 1
-            });
+            // Extract the dice type from weapon damage (e.g., "3d10" -> "d10")
+            const baseFormula = weapon.system?.damage ?? "1d6";
+            const diceMatch = baseFormula.match(/d(\d+)/);
+            const diceType = diceMatch ? diceMatch[0] : "d6";
+
+            // Temporarily modify weapon damage for burst fire calculation
+            const originalDamage = weapon.system?.damage;
+            const modifiedDamage = `${baseFormula} + 2${diceType}`;
+            await weapon.update({ 'system.damage': modifiedDamage });
+
+            try {
+              damageRoll = await rollDamage(actor, weapon, {
+                isCrit: critConfirmed,
+                critMultiplier: critConfirmed ? critMultiplier : 1
+              });
+            } finally {
+              // Restore original damage formula
+              await weapon.update({ 'system.damage': originalDamage });
+            }
           } else {
             damageRoll = await rollDamage(actor, weapon, {
               isCrit: critConfirmed,
