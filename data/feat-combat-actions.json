@@ -546,5 +546,15 @@
     ],
     "notes": "+1 hit point per character level. Can be taken multiple times.",
     "relatedSkills": []
+  },
+  "burst-fire": {
+    "name": "Burst Fire",
+    "actionType": "full-round",
+    "requiredFeat": "Burst Fire",
+    "description": "Use autofire against single target with +2d6 damage",
+    "toggleable": false,
+    "effects": [],
+    "notes": "Full-round action. Make an autofire attack against a single target instead of an area. Takes -5 penalty (not reduced by Evasion), deals +2d6 bonus damage, uses 5 shots instead of 10. This is not considered an area attack, so Evasion talent does not reduce damage.",
+    "relatedSkills": ["attack"]
   }
 }
