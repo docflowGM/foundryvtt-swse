@@ -306,11 +306,168 @@ Hooks.once('ready', () => {
     }
   };
 
+  // Sith Talents (Dark Healing, Wicked Strike, Sith Alchemy, etc.)
+  window.SWSE.macros.darkHealing = async () => {
+    const actor = game.user.character;
+    const targetToken = canvas.tokens.controlled[0];
+
+    if (!actor || !targetToken) {
+      ui.notifications.error('Please select a character and target token');
+      return;
+    }
+
+    const result = await DarkSidePowers.triggerDarkHealing(actor, targetToken);
+    if (!result.success) {
+      ui.notifications.warn(result.message);
+    }
+  };
+
+  window.SWSE.macros.improvedDarkHealing = async () => {
+    const actor = game.user.character;
+    const targetToken = canvas.tokens.controlled[0];
+
+    if (!actor || !targetToken) {
+      ui.notifications.error('Please select a character and target token');
+      return;
+    }
+
+    const result = await DarkSidePowers.triggerImprovedDarkHealing(actor, targetToken);
+    if (!result.success) {
+      ui.notifications.warn(result.message);
+    }
+  };
+
+  window.SWSE.macros.wickedStrike = async () => {
+    const actor = game.user.character;
+    const targetToken = canvas.tokens.controlled[0];
+
+    if (!actor || !targetToken) {
+      ui.notifications.error('Please select a character and target token');
+      return;
+    }
+
+    const confirmDialog = new Dialog({
+      title: 'Wicked Strike - Confirm Critical Hit',
+      content: `
+        <p>Confirm that you scored a <strong>Critical Hit</strong> with a lightsaber against ${targetToken.actor.name}.</p>
+        <p>Wicked Strike will:</p>
+        <ul>
+          <li>Cost 1 Force Point</li>
+          <li>Move target -2 steps along Condition Track</li>
+        </ul>
+      `,
+      buttons: {
+        apply: {
+          label: 'Apply Wicked Strike',
+          callback: async () => {
+            const result = await DarkSidePowers.triggerWickedStrike(actor, targetToken);
+            if (!result.success) {
+              ui.notifications.warn(result.message);
+            }
+          }
+        },
+        cancel: {
+          label: 'Cancel'
+        }
+      }
+    });
+
+    confirmDialog.render(true);
+  };
+
+  window.SWSE.macros.drainForce = async () => {
+    const actor = game.user.character;
+    const targetToken = canvas.tokens.controlled[0];
+
+    if (!actor || !targetToken) {
+      ui.notifications.error('Please select a character and target token');
+      return;
+    }
+
+    const result = await DarkSidePowers.triggerDrainForce(actor, targetToken);
+    if (!result.success) {
+      ui.notifications.warn(result.message);
+    }
+  };
+
+  window.SWSE.macros.createSithTalisman = async () => {
+    const actor = game.user.character;
+    if (!actor) {
+      ui.notifications.error('Please select a character');
+      return;
+    }
+
+    if (!DarkSidePowers.canCreateNewSithTalisman(actor)) {
+      ui.notifications.warn('Cannot create a new talisman yet. Must wait 24 hours after destruction.');
+      return;
+    }
+
+    const result = await DarkSidePowers.createSithTalisman(actor);
+    if (!result.success) {
+      ui.notifications.warn(result.message);
+    }
+  };
+
+  window.SWSE.macros.destroySithTalisman = async () => {
+    const actor = game.user.character;
+    if (!actor) {
+      ui.notifications.error('Please select a character');
+      return;
+    }
+
+    const confirmDialog = new Dialog({
+      title: 'Destroy Sith Talisman',
+      content: `
+        <p>This will destroy the active Sith Talisman and trigger a 24-hour cooldown before you can create a new one.</p>
+      `,
+      buttons: {
+        destroy: {
+          label: 'Destroy Talisman',
+          callback: async () => {
+            const result = await DarkSidePowers.destroySithTalisman(actor);
+            if (!result.success) {
+              ui.notifications.warn(result.message);
+            }
+          }
+        },
+        cancel: {
+          label: 'Cancel'
+        }
+      }
+    });
+
+    confirmDialog.render(true);
+  };
+
+  window.SWSE.macros.checkSithTalismanStatus = () => {
+    const actor = game.user.character;
+    if (!actor) {
+      ui.notifications.error('Please select a character');
+      return;
+    }
+
+    const talisman = DarkSidePowers.getActiveSithTalisman(actor);
+    if (talisman) {
+      ui.notifications.info(
+        `${actor.name} is carrying an active Sith Talisman! +1d6 to Force Power and Lightsaber damage.`
+      );
+    } else {
+      const canCreate = DarkSidePowers.canCreateNewSithTalisman(actor);
+      if (!canCreate) {
+        ui.notifications.info(`${actor.name} does not have an active talisman and must wait 24 hours before creating a new one.`);
+      } else {
+        ui.notifications.info(`${actor.name} does not have an active talisman.`);
+      }
+    }
+  };
+
   SWSELogger.log('SWSE System | Dark Side Powers loaded successfully');
   console.log('Dark Side Powers available at: window.SWSE.talents.darkSidePowers');
   console.log('Available Macros:', {
+    // Dark Side Talents
     swiftPower: 'game.swse.macros.swiftPower()',
     darkSideSavant: 'game.swse.macros.darkSideSavant()',
+    // Dark Side Devotee
     channelAggression: 'game.swse.macros.channelAggression()',
     channelAnger: 'game.swse.macros.channelAnger()',
     endChannelAnger: 'game.swse.macros.endChannelAnger()',
@@ -318,7 +475,15 @@ Hooks.once('ready', () => {
     createDarkSideTalisman: 'game.swse.macros.createDarkSideTalisman()',
     destroyDarkSideTalisman: 'game.swse.macros.destroyDarkSideTalisman()',
     checkChannelAngerStatus: 'game.swse.macros.checkChannelAngerStatus()',
-    checkTalismanStatus: 'game.swse.macros.checkTalismanStatus()'
+    checkTalismanStatus: 'game.swse.macros.checkTalismanStatus()',
+    // Sith Talents
+    darkHealing: 'game.swse.macros.darkHealing()',
+    improvedDarkHealing: 'game.swse.macros.improvedDarkHealing()',
+    wickedStrike: 'game.swse.macros.wickedStrike()',
+    drainForce: 'game.swse.macros.drainForce()',
+    createSithTalisman: 'game.swse.macros.createSithTalisman()',
+    destroySithTalisman: 'game.swse.macros.destroySithTalisman()',
+    checkSithTalismanStatus: 'game.swse.macros.checkSithTalismanStatus()'
   });
 });
 
