@@ -665,6 +665,84 @@ Hooks.once('ready', () => {
     }
   };
 
+  // Stolen Form - Select and copy a Lightsaber Form or Force Technique
+  window.SWSE.macros.stolenForm = async () => {
+    const actor = game.user.character;
+    if (!actor) {
+      ui.notifications.error('Please select a character');
+      return;
+    }
+
+    if (!DarkSidePowers.hasStolenForm(actor)) {
+      ui.notifications.error('You do not have the Stolen Form talent');
+      return;
+    }
+
+    // Get all available Lightsaber Forms
+    const lightsaberForms = game.items.filter(item =>
+      item.type === 'talent' &&
+      item.system?.talent_tree === 'Lightsaber Forms'
+    );
+
+    // Get Force Techniques - these come from multiple trees related to Force powers
+    // Including: Sense, Control, Alter, Force Adept, and combat techniques like Block, Deflect
+    const forceTrees = ['Sense', 'Control', 'Alter', 'Force Adept'];
+    const forceTechniques = game.items.filter(item =>
+      item.type === 'talent' &&
+      (forceTrees.includes(item.system?.talent_tree) ||
+       ['Block', 'Deflect', 'Redirect Shot', 'Force Sensitive', 'Force Technique'].includes(item.name))
+    );
+
+    // Combine and sort available options
+    const availableOptions = [...lightsaberForms, ...forceTechniques]
+      .filter(item => item && item.name) // Filter out any invalid items
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    if (availableOptions.length === 0) {
+      ui.notifications.warn('No Lightsaber Forms or Force Techniques available');
+      return;
+    }
+
+    // Build options HTML
+    const optionsHTML = availableOptions
+      .map(t => `<option value="${t.name}">${t.name}</option>`)
+      .join('');
+
+    const dialog = new Dialog({
+      title: 'Stolen Form - Select Form or Technique',
+      content: `
+        <div class="form-group">
+          <label>Choose a Lightsaber Form or Force Technique to steal and add to your usable options:</label>
+          <select id="form-select" style="width: 100%; margin-top: 10px;">
+            ${optionsHTML}
+          </select>
+          <p class="hint-text" style="margin-top: 15px;">
+            <i class="fas fa-info-circle"></i>
+            <strong>Note:</strong> You gain all the benefits of this talent, but still must meet any prerequisites.
+          </p>
+        </div>
+      `,
+      buttons: {
+        steal: {
+          label: 'Steal This Form/Technique',
+          callback: async (html) => {
+            const formName = html.find('#form-select').val();
+            const selectedForm = availableOptions.find(t => t.name === formName);
+
+            if (selectedForm) {
+              await DarkSidePowers.setStolenFormTalent(actor, selectedForm.name);
+            }
+          }
+        },
+        cancel: {
+          label: 'Cancel'
+        }
+      }
+    });
+
+    dialog.render(true);
+  };
+
   // Sith Alchemy (create) - Unified macro for creating talismans or weapons
   window.SWSE.macros.sithAlchemyCreate = async () => {
     const actor = game.user.character;
@@ -807,6 +885,7 @@ Hooks.once('ready', () => {
     createSithTalisman: 'game.swse.macros.createSithTalisman()',
     destroySithTalisman: 'game.swse.macros.destroySithTalisman()',
     checkSithTalismanStatus: 'game.swse.macros.checkSithTalismanStatus()',
+    stolenForm: 'game.swse.macros.stolenForm()',
     // Sith Alchemy (create) - Unified macro
     sithAlchemyCreate: 'game.swse.macros.sithAlchemyCreate()',
     // Sith Alchemical Weapons (individual macros for manual use)
