@@ -103,6 +103,16 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
   }
 
   // -----------------------------------------------------------
+  // FILTER TREES BASED ON ACTOR REQUIREMENTS
+  // -----------------------------------------------------------
+
+  // Dark Side talent tree requires DSP > 0
+  const darkSideScore = actor?.system?.darkSideScore || 0;
+  if (darkSideScore === 0) {
+    availableTrees = availableTrees.filter(tree => tree !== "Dark Side");
+  }
+
+  // -----------------------------------------------------------
   // GM WARNINGS FOR TALENT TREE VALIDATION
   // -----------------------------------------------------------
 

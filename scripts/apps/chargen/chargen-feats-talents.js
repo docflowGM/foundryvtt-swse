@@ -396,6 +396,8 @@ export function _getAvailableTalentTrees() {
   // Check for unrestricted mode (free build)
   const talentTreeRestriction = game.settings.get('foundryvtt-swse', "talentTreeRestriction");
 
+  let trees = [];
+
   if (talentTreeRestriction === "unrestricted") {
     // Free build mode: return all talent trees from all talents
     const allTrees = new Set();
@@ -407,23 +409,33 @@ export function _getAvailableTalentTrees() {
         }
       });
     }
-    const trees = Array.from(allTrees);
+    trees = Array.from(allTrees);
     SWSELogger.log(`CharGen | Available talent trees (unrestricted mode):`, trees);
-    return trees;
+  } else {
+    // Class-restricted mode
+    if (!this.characterData.classes || this.characterData.classes.length === 0) {
+      return [];
+    }
+
+    const selectedClass = this._packs.classes?.find(c => c.name === this.characterData.classes[0].name);
+    if (!selectedClass) {
+      return [];
+    }
+
+    trees = getTalentTrees(selectedClass);
+    SWSELogger.log(`CharGen | Available talent trees for ${selectedClass.name}:`, trees);
   }
 
-  // Class-restricted mode
-  if (!this.characterData.classes || this.characterData.classes.length === 0) {
-    return [];
-  }
+  // -----------------------------------------------------------
+  // FILTER TREES BASED ON CHARACTER REQUIREMENTS
+  // -----------------------------------------------------------
 
-  const selectedClass = this._packs.classes?.find(c => c.name === this.characterData.classes[0].name);
-  if (!selectedClass) {
-    return [];
+  // Dark Side talent tree requires DSP > 0
+  // In chargen, characters start with 0 DSP, so filter it out
+  const darkSideScore = this.characterData?.darkSideScore || 0;
+  if (darkSideScore === 0) {
+    trees = trees.filter(tree => tree !== "Dark Side");
   }
-
-  const trees = getTalentTrees(selectedClass);
-  SWSELogger.log(`CharGen | Available talent trees for ${selectedClass.name}:`, trees);
 
   return trees;
 }
