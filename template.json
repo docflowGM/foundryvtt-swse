@@ -41,6 +41,9 @@
             "class": 0,
             "armorMastery": 0,
             "modifier": 0
+          },
+          "flatFooted": {
+            "total": 10
           }
         },
         "abilities": {

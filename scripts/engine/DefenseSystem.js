@@ -30,6 +30,9 @@ export class DefenseSystem {
         DefenseSystem._calcFortitude(actor, sys);
         DefenseSystem._calcWill(actor, sys);
 
+        // Calculate flat-footed defense (Reflex - Dex bonus)
+        DefenseSystem._calcFlatFooted(actor, sys);
+
         Hooks.call("swse:defenses:updated", actor);
     }
 
@@ -150,7 +153,7 @@ export class DefenseSystem {
         return d.total;
     }
 
-    /* ==========================================================================  
+    /* ==========================================================================
        WILL DEFENSE
        ========================================================================== */
     static _calcWill(actor, sys) {
@@ -169,7 +172,27 @@ export class DefenseSystem {
         return d.total;
     }
 
-    /* ==========================================================================  
+    /* ==========================================================================
+       FLAT-FOOTED DEFENSE
+       Flat-footed defense = Reflex Defense - Dexterity bonus
+       This is used when a character is caught off-guard or surprised
+       ========================================================================== */
+    static _calcFlatFooted(actor, sys) {
+        // Initialize flat-footed defense object if it doesn't exist
+        if (!sys.defenses.flatFooted) {
+            sys.defenses.flatFooted = { total: 10 };
+        }
+
+        const reflexTotal = sys.defenses.reflex?.total || 10;
+        const dexMod = actor.system.abilities?.dex?.mod || 0;
+
+        // Flat-footed = Reflex Defense - Dex modifier
+        sys.defenses.flatFooted.total = reflexTotal - dexMod;
+
+        return sys.defenses.flatFooted.total;
+    }
+
+    /* ==========================================================================
        HELPERS
        ========================================================================== */
 
