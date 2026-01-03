@@ -294,7 +294,7 @@ export class LightSideTalentMechanics {
     }
 
     // Get actor's Wisdom bonus
-    const wisdomBonus = actor.system.abilities?.wis?.modifier || 0;
+    const wisdomBonus = actor.system.abilities?.wis?.mod || 0;
 
     // Create effect on ally
     await ally.createEmbeddedDocuments('ActiveEffect', [{
@@ -491,7 +491,7 @@ export class LightSideTalentMechanics {
     }
 
     // Get actor's Charisma bonus (minimum +1)
-    const chaBonus = Math.max(1, actor.system.abilities?.cha?.modifier || 1);
+    const chaBonus = Math.max(1, actor.system.abilities?.cha?.mod || 1);
 
     const totalDamage = baseDamage + chaBonus;
 
@@ -629,14 +629,14 @@ export class LightSideTalentMechanics {
     }
 
     // Get actor's Use the Force modifier
-    const actorUseTheForce = actor.system.skills?.useTheForce?.modifier || 0;
+    const actorUseTheForce = actor.system.skills?.useTheForce?.total || 0;
 
     // Get all allies within 12 squares
     const allies = this.getAlliesInRange(actor, 12);
 
     // Filter allies with lower Use the Force modifier
     const eligibleAllies = allies.filter(ally => {
-      const allyUseTheForce = ally.actor.system.skills?.useTheForce?.modifier || 0;
+      const allyUseTheForce = ally.actor.system.skills?.useTheForce?.total || 0;
       return allyUseTheForce < actorUseTheForce;
     });
 
@@ -977,13 +977,13 @@ export class LightSideTalentMechanics {
     }
 
     // Get actor's Persuasion modifier
-    let persuasionModifier = actor.system.skills?.persuasion?.modifier || 0;
+    let persuasionModifier = actor.system.skills?.persuasion?.total || 0;
 
     // Check if actor has Force Persuasion talent - if so, can use Use the Force instead
     let useForceModifier = false;
     if (this.hasForcePersuasion(actor)) {
       useForceModifier = true;
-      const useTheForceModifier = actor.system.skills?.useTheForce?.modifier || 0;
+      const useTheForceModifier = actor.system.skills?.useTheForce?.total || 0;
       persuasionModifier = useTheForceModifier;
     }
 
@@ -1132,9 +1132,9 @@ export class LightSideTalentMechanics {
    */
   static getPersuasionModifier(actor, forcePersuasion = false) {
     if (forcePersuasion && this.hasForcePersuasion(actor)) {
-      return actor.system.skills?.useTheForce?.modifier || 0;
+      return actor.system.skills?.useTheForce?.total || 0;
     }
-    return actor.system.skills?.persuasion?.modifier || 0;
+    return actor.system.skills?.persuasion?.total || 0;
   }
 
   /**
