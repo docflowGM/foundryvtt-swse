@@ -1,7 +1,8 @@
 # SWSE Suggestion Engine Phase 1B: Scaffolding Plan
 
 **Status**: Implementation Scaffolding (Stub Classes + Event Wiring)
-**Objective**: Create 5 core classes with all method stubs, validate integration points, wire event hooks
+**Objective**: Create core + supporting classes with all method stubs, validate integration points, wire event hooks
+**Class Count**: 10 total (5 core + 5 supporting) = optimal separation of concerns
 **Deliverables**: Working skeleton that compiles, no logic yet
 
 ---
@@ -12,17 +13,18 @@ All files created in `/scripts/engine/` directory.
 
 ### Core Engine Classes (5 files)
 
-1. **SuggestionConfidence.js** (NEW)
+1. **SuggestionConfidence.js** (NEW) — ConfidenceCalculator
    - Calculates 0-1 confidence for each suggestion
+   - Orchestrates confidence inputs, weighting, modifiers
    - ~300 lines (stubs + docstrings)
 
-2. **PlayerHistoryTracker.js** (NEW)
+2. **PlayerHistoryTracker.js** (NEW) — HistoryTracker
    - Records suggestion feedback (shown/accepted/ignored/rejected)
    - Calculates acceptance rates and ignored weights
    - ~250 lines
 
-3. **BuildIdentityAnchor.js** (NEW)
-   - Detects build archetypes
+3. **BuildIdentityAnchor.js** (NEW) — ArchetypeDetector
+   - Detects build archetypes / identity anchors
    - Manages anchor lifecycle (proposed → confirmed → locked)
    - ~350 lines
 
@@ -31,23 +33,50 @@ All files created in `/scripts/engine/` directory.
    - State machine: STABLE → EXPLORATORY → PIVOTING → LOCKED
    - ~300 lines
 
-5. **SuggestionExplainer.js** (NEW)
+5. **SuggestionExplainer.js** (NEW) — Part of SuggestionPresenter
    - Generates one-line "why" explanations
    - Template system + context filling
    - ~200 lines
 
-### Integration/Hook Files (2 files)
+### Supporting Specialist Classes (5 files)
 
-6. **SuggestionEngineHooks.js** (NEW)
-   - Centralizes all event hook registrations
-   - Wires callbacks for feat selection, level-up, etc.
+6. **MentorProfile.js** (NEW) — BiasProfile
+   - Encapsulates mentor questionnaire results
+   - Manages intent biasing from mentor survey
+   - Enables mentor re-ask / profile evolution
    - ~150 lines
 
-7. **ArchetypeDefinitions.js** (NEW)
-   - Hardcoded archetype catalog
-   - Default detection weights
-   - World-configurable overrides
+7. **SynergyEvaluator.js** (NEW)
+   - Evaluates how well a suggestion fits class/talents/feats
+   - Prevents ConfidenceCalculator from bloating
+   - Reusable across feats, talents, attributes
    - ~200 lines
+
+8. **BuildCoherenceAnalyzer.js** (NEW)
+   - Measures internal consistency of the build
+   - Checks for MAD vs SAD, weapon spread, talent clustering
+   - Detects bizarre hybrid recommendations
+   - ~250 lines
+
+9. **OpportunityCostAnalyzer.js** (NEW)
+   - Identifies hidden costs of choices (prestige delay, locked trees, stat issues)
+   - Enables regret-prevention warnings
+   - ~150 lines
+
+10. **SuggestionEngineHooks.js** (NEW)
+    - Centralizes event hook registrations
+    - Wires callbacks for feat selection, level-up, etc.
+    - ~150 lines
+
+### Configuration File (1 file)
+
+11. **ArchetypeDefinitions.js** (NEW)
+    - Hardcoded archetype catalog
+    - Default detection weights
+    - World-configurable overrides
+    - ~200 lines
+
+**Total: 11 files, ~2400 lines of stub code**
 
 ---
 
@@ -471,6 +500,254 @@ export class SuggestionExplainer {
 }
 ```
 
+### 2.6 MentorProfile.js
+
+```javascript
+export class MentorProfile {
+  /**
+   * Get bias weight for a specific dimension
+   * @param {Actor} actor
+   * @param {string} dimension - "combatStyle", "forceFocus", "melee", etc
+   * @returns {number} 0-1 bias weight
+   */
+  static getBias(actor, dimension) {
+    // TODO: Retrieve from actor.system.suggestionEngine.mentorProfile.biases
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Get all mentor biases as object
+   * @param {Actor} actor
+   * @returns {Object} { forceFocus: 0.3, melee: 0.2, ... }
+   */
+  static getAllBiases(actor) {
+    // TODO: Return entire bias profile
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Update a single bias dimension
+   * @param {Actor} actor
+   * @param {string} dimension
+   * @param {number} weight - 0-1
+   * @returns {Promise<void>}
+   */
+  static async setBias(actor, dimension, weight) {
+    // TODO: Update and save
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Check if mentor profile has been completed
+   * @param {Actor} actor
+   * @returns {boolean}
+   */
+  static isComplete(actor) {
+    // TODO: Check completedAt timestamp
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Initialize mentor profile from survey answers
+   * @param {Actor} actor
+   * @param {Object} surveyAnswers - { question: biases }
+   * @returns {Promise<void>}
+   */
+  static async initializeFromSurvey(actor, surveyAnswers) {
+    // TODO: Aggregate survey biases into profile
+    throw new Error('Not yet implemented');
+  }
+}
+```
+
+### 2.7 SynergyEvaluator.js
+
+```javascript
+export class SynergyEvaluator {
+  /**
+   * Score how well a feat/talent synergizes with actor's build
+   * @param {Object} suggestion - { itemId, itemName, category }
+   * @param {Actor} actor
+   * @returns {number} 0-1 synergy score
+   */
+  static evaluateSynergy(suggestion, actor) {
+    // TODO: Check feat/talent chains, class alignment, etc
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Check if suggestion builds on existing feat/talent
+   * @param {Object} suggestion
+   * @param {Actor} actor
+   * @returns {Object|null} { baseItem, chainScore: 0-1 } or null
+   */
+  static findChainBase(suggestion, actor) {
+    // TODO: Detect prerequisite-based chains
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Check if suggestion synergizes with talents
+   * @param {Object} suggestion
+   * @param {Actor} actor
+   * @returns {Object} { synergizes: boolean, talentNames: [], score: 0-1 }
+   */
+  static checkTalentSynergy(suggestion, actor) {
+    // TODO: Check if suggestion works with trained talents
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Check class-specific synergy
+   * @param {Object} suggestion
+   * @param {Actor} actor
+   * @returns {number} 0-1 class synergy score
+   */
+  static evaluateClassSynergy(suggestion, actor) {
+    // TODO: Check if prestige class signals match
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Get all synergies for a suggestion
+   * @param {Object} suggestion
+   * @param {Actor} actor
+   * @returns {Array} Array of { type, target, score }
+   */
+  static getAllSynergies(suggestion, actor) {
+    // TODO: Aggregate all synergy checks
+    throw new Error('Not yet implemented');
+  }
+}
+```
+
+### 2.8 BuildCoherenceAnalyzer.js
+
+```javascript
+export class BuildCoherenceAnalyzer {
+  /**
+   * Score the overall coherence of a character build
+   * @param {Actor} actor
+   * @returns {number} 0-1 coherence score
+   */
+  static scoreCoherence(actor) {
+    // TODO: Analyze all signals, return coherence
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Check for multiple attribute dependency (MAD)
+   * @param {Actor} actor
+   * @returns {Object} { isMad: boolean, attributes: [abbrev], count: number }
+   */
+  static checkMAD(actor) {
+    // TODO: Count how many attributes are needed
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Check single attribute dependency (SAD)
+   * @param {Actor} actor
+   * @returns {Object} { dominantAttribute: string, score: 0-1 }
+   */
+  static checkSAD(actor) {
+    // TODO: Find dominant attribute
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Analyze weapon/tool spread (are they scattered?)
+   * @param {Actor} actor
+   * @returns {Object} { weaponFocus: string, spreadScore: 0-1 }
+   */
+  static analyzeWeaponFocus(actor) {
+    // TODO: Check for split weapon focuses
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Analyze talent tree clustering
+   * @param {Actor} actor
+   * @returns {Object} { clusteredTrees: [names], coherence: 0-1 }
+   */
+  static analyzeTalentClustering(actor) {
+    // TODO: Check if talents focus in few trees or scattered
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Get coherence issues (problems to flag)
+   * @param {Actor} actor
+   * @returns {Array} Array of { type, severity, message }
+   */
+  static getCoherenceIssues(actor) {
+    // TODO: Identify MAD, spread, clustering issues
+    throw new Error('Not yet implemented');
+  }
+}
+```
+
+### 2.9 OpportunityCostAnalyzer.js
+
+```javascript
+export class OpportunityCostAnalyzer {
+  /**
+   * Compute opportunity cost of a suggestion
+   * @param {Object} suggestion
+   * @param {Actor} actor
+   * @param {Object} pendingData - Pending selections
+   * @returns {Object} { hasCost: boolean, cost: 0-1, reasons: [strings] }
+   */
+  static computeCost(suggestion, actor, pendingData) {
+    // TODO: Check for prestige locks, tree locks, stat issues
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Check if suggestion delays prestige class entry
+   * @param {Object} suggestion
+   * @param {Actor} actor
+   * @returns {Object} { delaysPrestige: boolean, prestigeName: string, delayLevels: number }
+   */
+  static checkPrestigeLock(suggestion, actor) {
+    // TODO: Analyze if taking this delays prestige prereqs
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Check if suggestion causes stat conflicts
+   * @param {Object} suggestion
+   * @param {Actor} actor
+   * @returns {Object} { hasConflict: boolean, conflicts: [{ stat, reason }] }
+   */
+  static checkStatConflict(suggestion, actor) {
+    // TODO: Check for MAD issues, scaling conflicts
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Check if suggestion locks out alternative paths
+   * @param {Object} suggestion
+   * @param {Actor} actor
+   * @returns {Object} { locksOut: [alternatives], severity: 0-1 }
+   */
+  static checkPathLockout(suggestion, actor) {
+    // TODO: Check for talent tree exclusivity, etc
+    throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Get human-readable cost warnings
+   * @param {Object} costAnalysis - From computeCost()
+   * @returns {Array} Array of warning messages
+   */
+  static getWarningMessages(costAnalysis) {
+    // TODO: Convert cost analysis to UI messages
+    throw new Error('Not yet implemented');
+  }
+}
+```
+
 ---
 
 ## 3. NEW SUPPORTING FILES
@@ -758,46 +1035,131 @@ export async function ensureSuggestionEngineStorage(actor) {
 
 ## 6. PHASE 1B DELIVERABLES
 
-### Files Created
-- ✅ SuggestionConfidence.js (stub class)
-- ✅ PlayerHistoryTracker.js (stub class)
-- ✅ BuildIdentityAnchor.js (stub class)
-- ✅ PivotDetector.js (stub class)
-- ✅ SuggestionExplainer.js (stub class)
-- ✅ ArchetypeDefinitions.js (archetype catalog)
-- ✅ SuggestionEngineHooks.js (hook registry)
+### Core Files Created (5)
+- ✅ SuggestionConfidence.js (stub class) - Orchestrates confidence calculation
+- ✅ PlayerHistoryTracker.js (stub class) - Records/analyzes player feedback
+- ✅ BuildIdentityAnchor.js (stub class) - Detects & manages anchors
+- ✅ PivotDetector.js (stub class) - Tracks build pivots
+- ✅ SuggestionExplainer.js (stub class) - Generates explanations
+
+### Supporting Files Created (5)
+- ✅ MentorProfile.js (stub class) - Encapsulates mentor bias
+- ✅ SynergyEvaluator.js (stub class) - Evaluates feat/talent synergy
+- ✅ BuildCoherenceAnalyzer.js (stub class) - Measures build consistency
+- ✅ OpportunityCostAnalyzer.js (stub class) - Detects hidden costs
+- ✅ SuggestionEngineHooks.js (stub class) - Hook registry
+
+### Configuration Files Created (1)
+- ✅ ArchetypeDefinitions.js (archetype catalog + weights)
+
+**Total: 11 files, ~2400 lines of stub code**
 
 ### Integration Points Wired
-- ✅ SuggestionEngineCoordinator imports all classes
-- ✅ SuggestionEngine calls confidence + explanation methods
-- ✅ BuildIntent calls anchor + pivot detection
-- ✅ Event hooks registered
+- ✅ SuggestionEngineCoordinator imports all 10 classes
+- ✅ SuggestionEngine calls confidence → synergy → coherence → cost pipeline
+- ✅ SuggestionEngine calls explanation generation
+- ✅ BuildIntent calls anchor detection + pivot detection
+- ✅ Event hooks registered for feat/talent/level-up/mentor-dialog
+- ✅ Storage initialization for all modules
 
-### What's NOT yet implemented
-- ❌ Actual confidence calculation logic
+### What's NOT yet implemented (reserved for Phase 1C)
+- ❌ Actual confidence calculation formulas
 - ❌ History tracking database operations
-- ❌ Anchor detection algorithm
-- ❌ Pivot state machine logic
-- ❌ Explanation generation
-- ❌ Hook callbacks
+- ❌ Anchor detection algorithms
+- ❌ Pivot state machine transitions
+- ❌ Explanation template filling
+- ❌ Synergy scoring logic
+- ❌ Coherence analysis
+- ❌ Cost detection algorithms
+- ❌ Hook callback implementations
 
-All will be filled in Phase 1C (implementation) once architecture is validated.
+All will be filled in Phase 1C (implementation) once Phase 1B architecture is validated.
 
 ---
 
-## 7. TEST READINESS
+## 7. CLASS INTERACTION DIAGRAM
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                  SuggestionEngine.js                            │
+│                 (Orchestrator)                                   │
+└────────────────┬────────────────────────────────────────────────┘
+                 │
+      ┌──────────┼──────────┐
+      ▼          ▼          ▼
+ ┌─────────┐ ┌──────────────┐ ┌──────────────────────┐
+ │ BuildIntent
+ │           │ MentorProfile  │ │ SuggestionExplainer  │
+ │ (context) │ (bias context) │ │ (one-line why)       │
+ └──────┬────┘ └────┬─────────┘ └──────────┬──────────┘
+        │           │                       │
+        │    ┌──────┴────────┐              │
+        │    ▼               ▼              │
+        │ ┌─────────────────────────────┐  │
+        │ │ SuggestionConfidence        │  │
+        │ │ (main orchestrator)         │  │
+        │ │                             │  │
+        │ │  1. Get mentor alignment    │  │
+        │ │  2. Get synergy score       │  │
+        │ │  3. Get history acceptance  │  │
+        │ │  4. Get coherence score     │  │
+        │ │  5. Get opportunity cost    │  │
+        │ │  6. Apply modifications     │  │
+        │ └─────────┬───────────────────┘  │
+        │           │                       │
+ ┌──────┴────┐  ┌───┴─────────────┬─────────┴────┬──────────────┐
+ │           │  │                 │              │              │
+ ▼           ▼  ▼                 ▼              ▼              ▼
+SynergyEval  BuildCohrence  OpportunityCost  PlayerHistory   Explainer
+uator        Analyzer       Analyzer         Tracker          (from 1)
+
+ (scoring)   (consistency)  (hidden costs)   (feedback)       (display)
+```
+
+### Data Flow: Suggestion to Display
+
+```
+Suggestion Event
+  ↓
+SuggestionEngine.suggestFeats(actor, feats)
+  ↓
+For each feat:
+  1. SynergyEvaluator.evaluateSynergy() → 0-1
+  2. BuildCoherenceAnalyzer.scoreCoherence() → 0-1
+  3. OpportunityCostAnalyzer.computeCost() → cost: 0-1
+  4. SuggestionConfidence.calculateConfidence() → confidence: 0-1, level
+  5. PlayerHistoryTracker.recordSuggestionShown() → id
+  6. SuggestionExplainer.generateExplanation() → "why" string
+  ↓
+Return suggestions sorted by: tier, confidence, alphabetical
+  ↓
+Mentor Dialog renders:
+  ⭐ Strong Recommendation: Name
+  "Explanation string"
+
+  ◼ Suggested Option: Name
+  "Explanation string"
+
+  [Possible Synergies (Optional)]
+  ...
+```
+
+---
+
+## 8. TEST READINESS
 
 Once Phase 1B is complete, we can verify:
 
-1. **Compilation**: All 5 classes import correctly, no syntax errors
+1. **Compilation**: All 11 classes import correctly, no syntax errors
 2. **Method Stubs**: All methods exist with correct signatures
 3. **Storage**: Initialization creates correct structure
 4. **Hooks**: Events fire (console logs for now)
-5. **Data Flow**: Suggestion → confidence → history → storage path works
+5. **Data Pipeline**: Suggestion → confidence → explanation → display path works
+6. **Separation**: Each class has clear single responsibility
 
 No unit tests required at this stage (Phase 1C).
 
 ---
 
-**Status**: Ready for implementation.
-Next: Begin Phase 1B scaffolding (create stub files, wire integrations).
+**Status**: Ready for Phase 1B implementation.
+**Next Step**: Confirm class set, then begin scaffolding (create 11 stub files + wire integrations).
