@@ -37,6 +37,9 @@ export class SkillSystem {
         // Merge extra-skill-uses (Compendium)
         SkillSystem._mergeExtraUses(extraUses, actionMap);
 
+        // Merge programmatic skill uses (skill-uses.js)
+        SkillSystem._mergeProgrammaticSkillUses(actor, actionMap);
+
         // Finalize (favorites, categories, GM tools)
         SkillSystem._finalizeGroups(actor, actionMap);
 
@@ -74,7 +77,7 @@ export class SkillSystem {
             combatActions: [],
             extraUses: [],
 
-            // Category ’ array of actions
+            // Category ï¿½ array of actions
             categories: {},
 
             // Favorites (loaded from game.settings)
@@ -131,6 +134,108 @@ export class SkillSystem {
                 effect: use.effect,
                 category: SkillSystem._detectCategory(use),
                 raw: use
+            };
+
+            actionMap[key].extraUses.push(entry);
+        }
+    }
+
+    /* ======================================================================
+       MERGE PROGRAMMATIC SKILL USES
+       ====================================================================== */
+    static _mergeProgrammaticSkillUses(actor, actionMap) {
+        // Access the programmatic skill use classes from global namespace
+        const SWSE = globalThis.SWSE || game.swse || {};
+
+        // Define programmatic skill uses with their configurations
+        const programmaticUses = [
+            // ==== JUMP ====
+            { skillKey: 'jump', name: 'Long Jump (Enhanced)', dc: 'distance Ã— 3', time: 'part of movement',
+              effect: 'Leap horizontally; DC doubled without running start', category: 'Movement',
+              handler: SWSE.JumpUses?.longJump },
+            { skillKey: 'jump', name: 'High Jump (Enhanced)', dc: 'distance Ã— 12', time: 'part of movement',
+              effect: 'Leap vertically; DC halved with pole, doubled without running start', category: 'Movement',
+              handler: SWSE.JumpUses?.highJump },
+            { skillKey: 'jump', name: 'Jump Down (Enhanced)', dc: '15', time: 'reaction',
+              effect: 'Reduce falling damage by 3m, +3m per 10 over DC', category: 'Movement',
+              handler: SWSE.JumpUses?.jumpDown },
+
+            // ==== KNOWLEDGE ====
+            { skillKey: 'knowledge', name: 'Common Knowledge (Enhanced)', dc: '10', time: 'reaction',
+              effect: 'Recall general info anyone might know', category: 'Recall',
+              handler: SWSE.KnowledgeUses?.commonKnowledge },
+            { skillKey: 'knowledge', name: 'Expert Knowledge (Enhanced)', dc: '15-30', time: 'reaction',
+              effect: 'Recall specialized expert knowledge', category: 'Recall',
+              handler: SWSE.KnowledgeUses?.expertKnowledge },
+
+            // ==== MECHANICS ====
+            { skillKey: 'mechanics', name: 'Disable Device (Enhanced)', dc: 'varies', time: 'full-round',
+              effect: 'Disable mechanical or electronic device', category: 'Technical',
+              handler: SWSE.MechanicsUses?.disableDevice },
+            { skillKey: 'mechanics', name: 'Jury-Rig (Enhanced)', dc: '25', time: 'full-round',
+              effect: 'Temporarily repair disabled device', category: 'Technical',
+              handler: SWSE.MechanicsUses?.juryRig },
+            { skillKey: 'mechanics', name: 'Repair (Enhanced)', dc: 'varies', time: '1 hour',
+              effect: 'Repair damaged vehicle or device', category: 'Technical',
+              handler: SWSE.MechanicsUses?.repair },
+
+            // ==== PERCEPTION ====
+            { skillKey: 'perception', name: 'Avoid Surprise (Enhanced)', dc: 'varies', time: 'reaction',
+              effect: 'Notice ambush or surprise attack', category: 'Awareness',
+              handler: SWSE.PerceptionUses?.avoidSurprise },
+            { skillKey: 'perception', name: 'Notice Targets (Enhanced)', dc: 'opposed', time: 'reaction',
+              effect: 'Spot hidden or stealthed targets', category: 'Awareness',
+              handler: SWSE.PerceptionUses?.noticeTargets },
+            { skillKey: 'perception', name: 'Search (Enhanced)', dc: 'varies', time: 'full-round',
+              effect: 'Search area for hidden objects or clues', category: 'Awareness',
+              handler: SWSE.PerceptionUses?.search },
+
+            // ==== PERSUASION ====
+            { skillKey: 'persuasion', name: 'Change Attitude (Enhanced)', dc: 'opposed', time: 'full-round',
+              effect: 'Improve or worsen NPC attitude', category: 'Social',
+              handler: SWSE.PersuasionUses?.changeAttitude },
+            { skillKey: 'persuasion', name: 'Intimidate (Enhanced)', dc: 'opposed', time: 'standard',
+              effect: 'Force target to become friendly or flee', category: 'Social',
+              handler: SWSE.PersuasionUses?.intimidate },
+            { skillKey: 'persuasion', name: 'Haggle (Enhanced)', dc: 'varies', time: '10 min',
+              effect: 'Negotiate better prices', category: 'Social',
+              handler: SWSE.PersuasionUses?.haggle },
+
+            // ==== PILOT ====
+            { skillKey: 'pilot', name: 'Increase Vehicle Speed (Enhanced)', dc: '20', time: 'swift',
+              effect: 'Increase speed by +1 square, +1 per 5 over DC', category: 'Vehicle',
+              handler: SWSE.PilotUses?.increaseVehicleSpeed },
+            { skillKey: 'pilot', name: 'Fly Casual (Enhanced)', dc: 'opposed', time: 'swift',
+              effect: 'Appear routine to avoid suspicion', category: 'Vehicle',
+              handler: SWSE.PilotUses?.flyCasual },
+
+            // ==== RIDE ====
+            { skillKey: 'ride', name: 'Guide with Knees (Enhanced)', dc: '10', time: 'free',
+              effect: 'Control mount hands-free', category: 'Mounted',
+              handler: SWSE.RideUses?.guideWithKnees },
+            { skillKey: 'ride', name: 'Soft Fall (Enhanced)', dc: '15', time: 'reaction',
+              effect: 'Reduce fall damage when dismounting', category: 'Mounted',
+              handler: SWSE.RideUses?.softFall }
+        ];
+
+        for (const use of programmaticUses) {
+            if (!use.handler) continue; // Skip if handler not available
+
+            const key = use.skillKey;
+            if (!actionMap[key]) {
+                actionMap[key] = SkillSystem._emptySkillGroup(key, {
+                    label: SkillSystem._labelFromKey(key)
+                });
+            }
+
+            const entry = {
+                name: use.name,
+                dc: use.dc,
+                time: use.time,
+                effect: use.effect,
+                category: use.category || 'Programmatic',
+                isProgrammatic: true,
+                handler: use.handler
             };
 
             actionMap[key].extraUses.push(entry);
@@ -242,7 +347,7 @@ export class SkillSystem {
 
     /* ======================================================================
        LABEL NORMALIZER
-       - Converts "knowledge_tactics" ’ "Knowledge (Tactics)"
+       - Converts "knowledge_tactics" ï¿½ "Knowledge (Tactics)"
        ====================================================================== */
     static _labelFromKey(key) {
         if (key.startsWith("knowledge")) {
